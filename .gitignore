@@ -1,0 +1,30 @@
+# agent / editor
+.claude/
+.idea/
+.vscode/
+.mcp.json
+
+# build artifacts (C + CMake + SDL2)
+/build/
+/out/
+/.out/
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.exe
+compile_commands.json
+.cache/
+
+# generated headers + extracted data (never commit; rebuilt from the disassembly)
+generated/
+*.gbc
+*.sym
+*.map
+
+# runtime / cruft
+imgui.ini
+*.sav
+*.log
+.DS_Store
