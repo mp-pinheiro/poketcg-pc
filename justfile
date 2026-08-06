@@ -20,15 +20,15 @@ changelog:
 release:
     #!/usr/bin/env bash
     set -euo pipefail
-    next="$$(just next-version)"
-    [ -n "$$next" ] || { echo "nothing to release (no unreleased Conventional Commits)"; exit 0; }
-    cur="$$(cat VERSION 2>/dev/null || echo none)"
-    [ "$$next" != "$$cur" ] || { echo "VERSION already at $$next; nothing to release"; exit 0; }
-    printf '%s\n' "$$next" > VERSION
+    next="$(just next-version)"
+    [ -n "$next" ] || { echo "nothing to release (no unreleased Conventional Commits)"; exit 0; }
+    cur="$(cat VERSION 2>/dev/null || echo none)"
+    [ "$next" != "$cur" ] || { echo "VERSION already at $next; nothing to release"; exit 0; }
+    printf '%s\n' "$next" > VERSION
     git cliff --bump --unreleased -o CHANGELOG.md
-    jj commit VERSION CHANGELOG.md -m "chore(release): v$${next}"
-    sha="$$(jj log -r '@-' --no-graph -T 'commit_id' | head -1 | tr -d ' ')"
-    git tag "v$${next}" "$$sha"
-    jj git push --allow-new
-    git push origin "v$${next}"
-    echo "released v$$next"
+    jj commit VERSION CHANGELOG.md -m "chore(release): v${next}"
+    sha="$(jj log -r '@-' --no-graph -T 'commit_id' | head -1 | tr -d ' \n')"
+    git tag "v${next}" "$sha"
+    jj git push --bookmark main
+    git push origin "v${next}"
+    echo "released v${next}"
