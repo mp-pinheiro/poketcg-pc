@@ -29,7 +29,7 @@ jobs:
         id: ver
         run: |
           set -euo pipefail
-          next=$(git cliff --bump --unreleased --context | jq -r 'map(select(.version != null)) | .[0].version // empty')
+          next=$(git cliff --bump --unreleased --context | jq -r 'map(select(.version != null and ((.commits // []) | length > 0))) | .[0].version // empty | ltrimstr("v")')
           cur=$(tr -d '[:space:]' < VERSION 2>/dev/null || echo none)
           {
             echo "next=$next"

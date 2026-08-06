@@ -8,7 +8,7 @@ default:
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
     @git cliff --bump --unreleased --context 2>/dev/null \
-        | jq -r 'map(select(.version != null)) | .[0].version // empty'
+        | jq -r 'map(select(.version != null and ((.commits // []) | length > 0))) | .[0].version // empty | ltrimstr("v")'
 
 # Regenerate CHANGELOG.md from Conventional Commits (bumped, unreleased).
 changelog:

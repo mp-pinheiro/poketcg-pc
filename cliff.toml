@@ -5,7 +5,7 @@
 header = "# Changelog\n\nAll notable changes to this project are documented here.\nThis changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).\n"
 body = """
 {% if version %}\
-    ## {{ version }} - {{ date | date(format="%Y-%m-%d") }}
+    ## {{ version }}{% if timestamp %} - {{ timestamp | date(format="%Y-%m-%d") }}{% endif %}
 {% else %}\
     ## unreleased
 {% endif %}\
