@@ -1,8 +1,9 @@
 # poketcg-pc — native port plan
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
-from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C99
-+ SDL2. No emulator bundled, no ROM required at runtime. Widescreen and other
+from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11
+(`static_assert` locks the generated WRAM/HRAM/SRAM layout headers against the
+disassembly) + SDL2. No emulator bundled, no ROM required at runtime. Widescreen and other
 quality-of-life features land later, strictly on top of verified code.
 
 This document is the synthesis of ten parallel investigations: four on prior art
