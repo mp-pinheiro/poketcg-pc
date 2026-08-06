@@ -1,0 +1,25 @@
+name: ci
+# Validates that git-cliff can parse the history and cliff.toml. Because
+# cliff.toml sets require_conventional = true, this also enforces Conventional
+# Commits on every pushed commit (belt-and-suspenders for the local hook).
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Install git-cliff
+        run: |
+          v=v2.13.1
+          curl -fsSL "https://github.com/orhun/git-cliff/releases/download/$v/git-cliff-$v-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz --strip-components=1 -C /tmp
+          sudo install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Validate changelog generation
+        run: git cliff --unreleased --strip header >/dev/null

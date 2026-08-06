@@ -1,0 +1,74 @@
+# git-cliff configuration — https://git-cliff.org/docs/configuration
+# Changelog + semver are derived entirely from Conventional Commits.
+
+[changelog]
+header = "# Changelog\n\nAll notable changes to this project are documented here.\nThis changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).\n"
+body = """
+{% if version %}\
+    ## {{ version }} - {{ date | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## unreleased
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | upper_first }}
+    {% for commit in commits %}
+        - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
+            {% if commit.breaking %}[**breaking**] {% endif %}\
+            {{ commit.message | upper_first }}\
+    {% endfor %}
+{% endfor %}\
+"""
+trim = true
+footer = ""
+
+[git]
+# Parse Conventional Commits (type(scope): subject, `!` for breaking).
+conventional_commits = true
+# Keep non-conventional commits visible under "Other" rather than dropping them.
+filter_unconventional = false
+# Reject non-conventional commits outright — matches the local PreToolUse hook.
+require_conventional = true
+split_commits = false
+# Only derive versions from `v*` tags.
+tag_pattern = "v?[0-9].*"
+
+[[git.commit_parsers]]
+message = "^chore\\(release\\)"
+skip = true
+[[git.commit_parsers]]
+message = "^feat"
+group = "Features"
+[[git.commit_parsers]]
+message = "^fix"
+group = "Bug Fixes"
+[[git.commit_parsers]]
+message = "^perf"
+group = "Performance"
+[[git.commit_parsers]]
+message = "^refactor"
+group = "Refactor"
+[[git.commit_parsers]]
+message = "^doc"
+group = "Documentation"
+[[git.commit_parsers]]
+message = "^test"
+group = "Tests"
+[[git.commit_parsers]]
+message = "^style"
+group = "Styling"
+[[git.commit_parsers]]
+message = "^build"
+group = "Build"
+[[git.commit_parsers]]
+message = "^ci"
+group = "CI/CD"
+[[git.commit_parsers]]
+message = "^chore"
+group = "Miscellaneous"
+[[git.commit_parsers]]
+message = "^revert"
+group = "Reverts"
+
+[bump]
+# Auto-bump: breaking → major, feat → minor, everything else → patch.
+# Triggered by `git cliff --bump`; no tag is created by git-cliff itself.

@@ -1,0 +1,55 @@
+name: release
+# Auto changelog + auto semver: on every push to main, git-cliff derives the
+# next version from Conventional Commits. If it differs from VERSION, the bot
+# bumps VERSION, regenerates CHANGELOG.md, tags vX.Y.Z, and publishes a Release.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'mp-pinheiro/poketcg-pc'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Install git-cliff
+        run: |
+          v=v2.13.1
+          curl -fsSL "https://github.com/orhun/git-cliff/releases/download/$v/git-cliff-$v-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz --strip-components=1 -C /tmp
+          sudo install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Compute next version
+        id: ver
+        run: |
+          set -euo pipefail
+          next=$(git cliff --bump --unreleased --context | jq -r 'map(select(.version != null)) | .[0].version // empty')
+          cur=$(tr -d '[:space:]' < VERSION 2>/dev/null || echo none)
+          {
+            echo "next=$next"
+            echo "current=$cur"
+            if [ -n "$next" ] && [ "$next" != "$cur" ]; then echo "cut=true"; else echo "cut=false"; fi
+          } >> "$GITHUB_OUTPUT"
+      - name: Cut release
+        if: steps.ver.outputs.cut == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          next="${{ steps.ver.outputs.next }}"
+          printf '%s\n' "$next" > VERSION
+          git cliff --bump --unreleased -o CHANGELOG.md
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(release): v${next}"
+          git tag "v${next}"
+          git push origin main --tags
+          git cliff --latest --strip header > /tmp/notes.md
+          gh release create "v${next}" --title "v${next}" --notes-file /tmp/notes.md --latest
