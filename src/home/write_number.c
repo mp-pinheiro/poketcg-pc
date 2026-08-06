@@ -1,0 +1,34 @@
+#include "home/write_number.h"
+
+#include "mem.h"
+
+/* TwoByteNumberToText.get_digit:: poketcg/src/home/write_number.asm:144-158 */
+static void get_digit(uint16_t *hl, uint16_t bc, uint16_t *de)
+{
+	uint8_t digit = (uint8_t)('0' - 1);
+	uint16_t h = *hl;
+	uint32_t sum;
+
+	do {
+		digit++;
+		sum = (uint32_t)h + bc;
+		h = (uint16_t)sum;
+	} while (sum > 0xFFFF); /* carry out of `add hl, bc`, i.e. the subtraction stayed non-negative */
+
+	gb_write8(*de, digit);
+	*de = (uint16_t)(*de + 1);
+	*hl = (uint16_t)(h - bc); /* undo the final overshooting add */
+}
+
+/* TwoByteNumberToText:: poketcg/src/home/write_number.asm:128-143 */
+void TwoByteNumberToText(uint16_t hl, uint16_t *de)
+{
+	static const uint16_t place[5] = {
+		(uint16_t)-10000, (uint16_t)-1000, (uint16_t)-100, (uint16_t)-10, (uint16_t)-1,
+	};
+
+	for (int i = 0; i < 5; i++)
+		get_digit(&hl, place[i], de);
+
+	gb_write8(*de, 0x00); /* TX_END, written without an inc de: six bytes out, de advanced by five */
+}
