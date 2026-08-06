@@ -8,4 +8,10 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 
 - Correct cliff template and version logic
 - Correct dollar escaping in release recipe
+## v0.1.0 - 2026-08-06
+
+### Miscellaneous
+
+- Initialize project scaffold
+- Add release pipeline
 

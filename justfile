@@ -10,9 +10,9 @@ next-version:
     @git cliff --bump --unreleased --context 2>/dev/null \
         | jq -r 'map(select(.version != null and ((.commits // []) | length > 0))) | .[0].version // empty | ltrimstr("v")'
 
-# Regenerate CHANGELOG.md from Conventional Commits (bumped, unreleased).
+# Regenerate the full CHANGELOG.md (all releases + the bumped unreleased section).
 changelog:
-    git cliff --bump --unreleased -o CHANGELOG.md
+    git cliff --bump -o CHANGELOG.md
 
 # Cut a release locally: bump VERSION, regenerate CHANGELOG, commit, tag, push.
 # Requires a clean working copy. Run after merging feature work to main.
@@ -25,7 +25,7 @@ release:
     cur="$(cat VERSION 2>/dev/null || echo none)"
     [ "$next" != "$cur" ] || { echo "VERSION already at $next; nothing to release"; exit 0; }
     printf '%s\n' "$next" > VERSION
-    git cliff --bump --unreleased -o CHANGELOG.md
+    git cliff --bump -o CHANGELOG.md
     jj commit VERSION CHANGELOG.md -m "chore(release): v${next}"
     sha="$(jj log -r '@-' --no-graph -T 'commit_id' | head -1 | tr -d ' \n')"
     git tag "v${next}" "$sha"
