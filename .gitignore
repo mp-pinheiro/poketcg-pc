@@ -6,6 +6,7 @@
 
 # build artifacts (C + CMake + SDL2)
 /build/
+/build-*/
 /out/
 /.out/
 *.o
@@ -19,6 +20,10 @@ compile_commands.json
 
 # generated headers + extracted data (never commit; rebuilt from the disassembly)
 generated/
+/include/generated/
+
+# pret/poketcg disassembly: build-time input, cloned by `just bootstrap`
+/poketcg/
 *.gbc
 *.sym
 *.map
@@ -26,5 +31,7 @@ generated/
 # runtime / cruft
 imgui.ini
 *.sav
+__pycache__/
+*.pyc
 *.log
 .DS_Store
