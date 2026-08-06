@@ -1,0 +1,165 @@
+"""Per-function oracle: run one home-bank routine on PyBoy and capture the exit state.
+
+PyBoy 2.7.0 has no run-to-return API, so a call frame is synthesized: push a
+sentinel return address, point PC at the routine, and hook the sentinel. Four
+details are load-bearing and were each confirmed against PyBoy 2.7.0:
+
+1. $FF50 must be written before invoking. PyBoy always maps a boot ROM, and the
+   CGB boot ROM shadows $0200-$08FF, which covers most of these routines
+   (UpdateRNGSources sits at $089B).
+2. The sentinel and spin addresses must live in $C000-$CFFF. mb.breakpoint_add
+   pokes ram.internal_ram0 directly, which is only correct for WRAM bank 0.
+3. There are no individual H/L registers on PyBoyRegisterFile, only HL.
+4. The F setter masks with $F0, and pyboy.mb is not reachable on the compiled
+   wheel, so everything here goes through the public PyBoy surface.
+
+The callback fires with PC still at the sentinel; it captures state and parks PC
+on a `jr -2` spin so the remainder of the frame cannot disturb the snapshot.
+"""
+
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from pyboy import PyBoy
+
+SENTINEL = 0xCFF0  # return address pushed for the routine under test
+SPIN = 0xCFF4  # `jr -2`, parked here once the snapshot is taken
+STACK_TOP = 0xCF00  # frame grows down from here
+
+# Cases must not use this window: it holds the synthesized frame and its stack.
+RESERVED = range(0xCE00, 0xD000)
+
+WRAM_BASE, WRAM_END = 0xC000, 0xE000
+HRAM_BASE, HRAM_END = 0xFF80, 0x10000
+
+MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
+
+
+@dataclass
+class Result:
+    a: int
+    f: int
+    b: int
+    c: int
+    d: int
+    e: int
+    hl: int
+    sp: int
+    pc: int
+    wram: bytes = field(repr=False)
+    hram: bytes = field(repr=False)
+
+    def mem(self, addr: int, n: int = 1) -> bytes:
+        if WRAM_BASE <= addr and addr + n <= WRAM_END:
+            off = addr - WRAM_BASE
+            return self.wram[off:off + n]
+        if HRAM_BASE <= addr and addr + n <= HRAM_END:
+            off = addr - HRAM_BASE
+            return self.hram[off:off + n]
+        raise ValueError(f"address ${addr:04X}+{n} is outside the captured WRAM/HRAM snapshot")
+
+
+class OracleError(RuntimeError):
+    pass
+
+
+class Oracle:
+    def __init__(self, rom: str | os.PathLike, symbols: str | os.PathLike | None = None):
+        rom = str(rom)
+        if symbols is None:
+            guess = Path(rom).with_suffix(".sym")
+            if not guess.exists():
+                raise OracleError(f"no symbol file next to {rom} (expected {guess})")
+            symbols = guess
+        self.pyboy = PyBoy(
+            rom,
+            window="null",
+            sound_emulated=False,
+            symbols=str(symbols),
+            no_input=True,
+            log_level="CRITICAL",
+        )
+        self._hit: Result | None = None
+
+    def close(self) -> None:
+        self.pyboy.stop(save=False)
+
+    def __enter__(self) -> "Oracle":
+        return self
+
+    def __exit__(self, *_exc) -> None:
+        self.close()
+
+    def _capture(self, _ctx) -> None:
+        pb = self.pyboy
+        rf = pb.register_file
+        self._hit = Result(
+            a=rf.A, f=rf.F, b=rf.B, c=rf.C, d=rf.D, e=rf.E,
+            hl=rf.HL, sp=rf.SP, pc=rf.PC,
+            wram=bytes(pb.memory[WRAM_BASE:WRAM_END]),
+            hram=bytes(pb.memory[HRAM_BASE:HRAM_END]),
+        )
+        rf.PC = SPIN
+
+    def _arm(self) -> None:
+        # The hook is keyed on the opcode saved at registration time, and firing
+        # removes the breakpoint. Re-arming from a known byte keeps that key stable.
+        try:
+            self.pyboy.hook_deregister(0, SENTINEL)
+        except ValueError:
+            pass
+        self.pyboy.memory[SENTINEL] = 0x00
+        self.pyboy.hook_register(0, SENTINEL, self._capture, None)
+
+    def _reset_ram(self) -> None:
+        pb = self.pyboy
+        pb.memory[WRAM_BASE:WRAM_END] = [0] * (WRAM_END - WRAM_BASE)
+        pb.memory[HRAM_BASE:HRAM_END] = [0] * (HRAM_END - HRAM_BASE)
+        pb.memory[0xFF0F] = 0  # IF
+        pb.memory[0xFF50] = 0x11  # unmap the boot ROM
+        # Writes below $8000 are MBC commands, not memory writes, so a routine that
+        # walks the whole address space (a 64 KiB copy) leaves the cartridge banked
+        # somewhere else. Restore MBC5 power-on state so cases cannot leak into
+        # each other; this matches mem_reset() on the C side.
+        pb.memory[0x0000] = 0x00  # SRAM disable
+        pb.memory[0x2000] = 0x01  # ROM bank low
+        pb.memory[0x3000] = 0x00  # ROM bank high
+        pb.memory[0x4000] = 0x00  # SRAM bank
+
+    def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
+             d: int = 0, e: int = 0, hl: int = 0,
+             wram: dict[int, bytes] | None = None) -> Result:
+        pb = self.pyboy
+        bank, addr = pb.symbol_lookup(symbol)
+        if bank != 0:
+            raise OracleError(f"{symbol} resolves to bank {bank}; only home-bank routines are supported")
+
+        self._reset_ram()
+        for at, data in (wram or {}).items():
+            if any(x in RESERVED for x in range(at, at + len(data))):
+                raise OracleError(
+                    f"${at:04X}+{len(data)} overlaps the synthesized call frame "
+                    f"(${RESERVED.start:04X}-${RESERVED.stop - 1:04X})")
+            for i, byte in enumerate(data):
+                pb.memory[at + i] = byte
+
+        pb.memory[SPIN] = 0x18  # jr
+        pb.memory[SPIN + 1] = 0xFE  # -2
+        pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
+        pb.memory[STACK_TOP - 1] = SENTINEL >> 8
+
+        rf = pb.register_file
+        rf.SP = STACK_TOP - 2
+        rf.PC = addr
+        rf.A, rf.F, rf.B, rf.C, rf.D, rf.E, rf.HL = a, f, b, c, d, e, hl
+
+        self._hit = None
+        self._arm()
+        for _ in range(MAX_FRAMES):
+            pb.tick(1, False, False)
+            if self._hit is not None:
+                return self._hit
+        raise OracleError(f"{symbol} did not return within {MAX_FRAMES} frames")
