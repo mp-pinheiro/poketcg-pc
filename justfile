@@ -86,9 +86,14 @@ oracleb-replay:
         args+=(--input "$POKETCG_SCENE_INPUT")
     fi
     python3 tests/scene_diff.py "${args[@]}"
-data-verify:
+data-verify: assets-verify
     python3 tools/gen_data.py --verify
     python3 tools/gen_data.py --check
+assets-verify:
+    python3 tools/gen_assets.py --verify
+    python3 tools/gen_assets.py --check
+    python3 tools/gen_lz.py --verify
+    python3 tools/gen_lz.py --check
 
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
