@@ -64,7 +64,9 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "InvalidateSaveData", "UpdateAlbumProgress", "LoadAlbumProgressFromSRAM",
              "LoadBackupSaveData", "_LoadGeneralSaveData",
              "_AddCardToCollectionAndUpdateAlbumProgress",
-             "ValidateBackupGeneralSaveData", "_ValidateGeneralSaveData"),
+             "ValidateBackupGeneralSaveData", "_ValidateGeneralSaveData",
+             "SaveGeneralSaveDataFromDE", "_SaveGeneralSaveData",
+             "SaveAndBackupData", "_SaveGame"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

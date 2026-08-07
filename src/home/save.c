@@ -11,6 +11,8 @@
 /* WRAMToSRAMMapper:: save.asm:461-497, ROM bank 4. 6 bytes/entry: dw addr, dw count,
  * db min, db max; terminated by a zero address word. */
 #define WRAM_TO_SRAM_MAPPER 0x5498u
+#define NUM_PC_PACKS 15
+#define PACK_UNOPENED 0x80
 
 static const uint8_t *mapper_entry(unsigned index)
 {
@@ -373,4 +375,177 @@ void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
 
 	AddCardToCollection(gb_read8(wCardToAddToCollection_ADDR));
 	UpdateAlbumProgress(0xB8FE);
+}
+
+/* EventVarMasks and MedalEvents live in ROM bank 3 (scripting.asm:388/355), read
+ * via the code bank there -- a farcall target. Both are 2- and 1-byte records. */
+#define EVENT_VAR_MASKS 0x4B37u
+#define MEDAL_EVENTS    0x4B15u
+#define EV_ISHIHARA_MENT 0x1eu
+#define EV_LEGENDARY     0x22u
+#define EV_MEDAL_COUNT   0x2eu
+#define OWMAP_ISHIHARA   0x02u
+#define OWMAP_MYSTERY    0x0du
+#define OWMAP_MASON      0x01u
+#define MAP_MASON        0x01u
+#define DIR_SOUTH        0x02u
+
+/* GetEventVar:: scripting.asm:366-382. Returns wEventVars+offset and stashes the
+ * mask in wLoadedEventBits, exactly as the asm leaves it for Get/SetEventValue. */
+static uint16_t get_event_var(uint8_t ev)
+{
+	const uint8_t *p = rom_ptr(0x03, (uint16_t)(EVENT_VAR_MASKS + (uint16_t)ev * 2u));
+
+	gb_write8(wLoadedEventBits_ADDR, p[1]);
+	return (uint16_t)(wEventVars_ADDR + p[0]);
+}
+
+/* GetEventValue:: scripting.asm:213-230. */
+static uint8_t get_event_value(uint8_t ev)
+{
+	uint16_t addr = get_event_var(ev);
+	uint8_t mask = gb_read8(wLoadedEventBits_ADDR);
+	uint8_t c = gb_read8(addr);
+
+	while (!(mask & 1)) {
+		mask = (uint8_t)(mask >> 1);
+		c = (uint8_t)(c >> 1);
+	}
+	return (uint8_t)(mask & c);
+}
+
+/* SetEventValue:: scripting.asm:248-270. The shift loop uses a copy; the merge
+ * re-reads the original field mask from wLoadedEventBits, as the asm does. */
+static void set_event_value(uint8_t ev, uint8_t value)
+{
+	uint16_t addr = get_event_var(ev);
+	uint8_t mask = gb_read8(wLoadedEventBits_ADDR);
+	uint8_t c = value;
+	uint8_t m = mask;
+
+	while (!(m & 1)) {
+		m = (uint8_t)(m >> 1);
+		c = (uint8_t)(c << 1);
+	}
+	gb_write8(addr, (uint8_t)((gb_read8(addr) & (uint8_t)~mask) | (uint8_t)(c & mask)));
+}
+
+/* TryGivePCPack:: mail.asm:509-544. */
+static void try_give_pc_pack(uint8_t id)
+{
+	uint16_t hl = wPCPacks_ADDR;
+	uint8_t c = NUM_PC_PACKS;
+
+	do {
+		if ((uint8_t)(gb_read8(hl) & 0x7f) == id)
+			return;
+		hl++;
+	} while (--c);
+
+	hl = wPCPacks_ADDR;
+	c = NUM_PC_PACKS;
+	do {
+		if ((uint8_t)(gb_read8(hl) & 0x7f) == 0) {
+			gb_write8(hl, (uint8_t)(id | PACK_UNOPENED));
+			return;
+		}
+		hl++;
+	} while (--c);
+}
+
+/* TryGiveMedalPCPacks:: scripting.asm:311-353. The three grants are fall-through
+ * (not else-if): >=8 gives $c/$b/$a, >=7 gives $b/$a, >=3 gives $a. Returns the
+ * medal count, restored from a pushed copy after the grants. */
+static uint8_t try_give_medal_pc_packs(void)
+{
+	const uint8_t *events = rom_ptr(0x03, MEDAL_EVENTS);
+	uint8_t count = 0;
+	int i;
+
+	for (i = 0; i < 8; i++)
+		if (get_event_value(events[i]))
+			count++;
+
+	set_event_value(EV_MEDAL_COUNT, count);
+	if (count >= 8)
+		try_give_pc_pack(0x0c);
+	if (count >= 7)
+		try_give_pc_pack(0x0b);
+	if (count >= 3)
+		try_give_pc_pack(0x0a);
+	return count;
+}
+
+/* OverworldMap_GetOWMapID:: overworld_map.asm:165-179. */
+static uint8_t overworld_map_get_owmap_id(void)
+{
+	uint8_t sel = gb_read8(wOverworldMapSelection_ADDR);
+
+	if (sel != OWMAP_ISHIHARA)
+		return sel;
+	if (get_event_value(EV_ISHIHARA_MENT))
+		return sel;
+	return OWMAP_MYSTERY;
+}
+
+/* GetReceivedLegendaryCards:: map.asm:148-154. */
+static void get_received_legendary_cards(void)
+{
+	uint8_t a = get_event_value(EV_LEGENDARY);
+
+	EnableSRAM();
+	gb_write8(sReceivedLegendaryCards_ADDR, a);
+	DisableSRAM();
+}
+
+/* BackupPlayerPosition:: overworld.asm:279-288. */
+static void backup_player_position(void)
+{
+	gb_write8(wTempMap_ADDR, gb_read8(wCurMap_ADDR));
+	gb_write8(wTempPlayerXCoord_ADDR, gb_read8(wPlayerXCoord_ADDR));
+	gb_write8(wTempPlayerYCoord_ADDR, gb_read8(wPlayerYCoord_ADDR));
+	gb_write8(wTempPlayerDirection_ADDR, gb_read8(wPlayerDirection_ADDR));
+}
+
+/* SaveGeneralSaveDataFromDE:: save.asm:52-68. */
+void SaveGeneralSaveDataFromDE(uint16_t de)
+{
+	EnableSRAM();
+	gb_write8(wMedalCount_ADDR, try_give_medal_pc_packs());
+	gb_write8(wCurOverworldMap_ADDR, overworld_map_get_owmap_id());
+	CopyGeneralSaveDataToSRAM(de);
+	DisableSRAM();
+}
+
+/* _SaveGeneralSaveData:: save.asm:41-49. */
+void _SaveGeneralSaveData(void)
+{
+	get_received_legendary_cards();
+	SaveGeneralSaveDataFromDE(sGeneralSaveData_ADDR);
+	UpdateAlbumProgress(sAlbumProgress_ADDR);
+}
+
+/* SaveAndBackupData:: save.asm:30-39. */
+void SaveAndBackupData(void)
+{
+	SaveGeneralSaveDataFromDE(sGeneralSaveData_ADDR);
+	UpdateAlbumProgress(sAlbumProgress_ADDR);
+	WriteBackupGeneralSaveData();
+	WriteBackupCardAndDeckSaveData();
+}
+
+/* _SaveGame:: save.asm:506-527. The farcall to BackupPlayerPosition becomes a
+ * plain call under the Phase 1 transform. */
+void _SaveGame(uint8_t c)
+{
+	if (c) {
+		gb_write8(wTempPlayerXCoord_ADDR, 0x02);
+		gb_write8(wTempPlayerYCoord_ADDR, 0x04);
+		gb_write8(wTempPlayerDirection_ADDR, DIR_SOUTH);
+		gb_write8(wTempMap_ADDR, MAP_MASON);
+		gb_write8(wOverworldMapSelection_ADDR, OWMAP_MASON);
+	} else {
+		backup_player_position();
+	}
+	SaveAndBackupData();
 }

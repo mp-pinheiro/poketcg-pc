@@ -25,6 +25,10 @@ void LoadBackupSaveData(void);
 void _LoadGeneralSaveData(void);
 void _AddCardToCollectionAndUpdateAlbumProgress(uint8_t a);
 ValidateResult ValidateBackupGeneralSaveData(void);
+void SaveGeneralSaveDataFromDE(uint16_t de);
+void SaveAndBackupData(void);
+void _SaveGeneralSaveData(void);
+void _SaveGame(uint8_t c);
 ValidateResult _ValidateGeneralSaveData(void);
 
 #endif /* POKETCG_HOME_SAVE_H */

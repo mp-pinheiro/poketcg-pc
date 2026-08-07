@@ -98,6 +98,28 @@ static void adapt__AddCardToCollectionAndUpdateAlbumProgress(ProbeState *s)
 	_AddCardToCollectionAndUpdateAlbumProgress(s->a);
 }
 
+static void adapt_SaveGeneralSaveDataFromDE(ProbeState *s)
+{
+	SaveGeneralSaveDataFromDE((uint16_t)(s->d << 8 | s->e));
+}
+
+static void adapt__SaveGeneralSaveData(ProbeState *s)
+{
+	(void)s;
+	_SaveGeneralSaveData();
+}
+
+static void adapt_SaveAndBackupData(ProbeState *s)
+{
+	(void)s;
+	SaveAndBackupData();
+}
+
+static void adapt__SaveGame(ProbeState *s)
+{
+	_SaveGame(s->c);
+}
+
 const ProbeEntry probe_entries_save[] = {
 	{ "CopyGeneralSaveDataToSRAM", adapt_CopyGeneralSaveDataToSRAM },
 	{ "ValidateGeneralSaveDataFromDE", adapt_ValidateGeneralSaveDataFromDE },
@@ -116,5 +138,9 @@ const ProbeEntry probe_entries_save[] = {
 	{ "LoadBackupSaveData", adapt_LoadBackupSaveData },
 	{ "_LoadGeneralSaveData", adapt__LoadGeneralSaveData },
 	{ "_AddCardToCollectionAndUpdateAlbumProgress", adapt__AddCardToCollectionAndUpdateAlbumProgress },
+	{ "SaveGeneralSaveDataFromDE", adapt_SaveGeneralSaveDataFromDE },
+	{ "_SaveGeneralSaveData", adapt__SaveGeneralSaveData },
+	{ "SaveAndBackupData", adapt_SaveAndBackupData },
+	{ "_SaveGame", adapt__SaveGame },
 	{ NULL, NULL },
 };

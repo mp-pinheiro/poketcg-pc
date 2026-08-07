@@ -35,6 +35,20 @@ sAlbumProgress = 0xB8FE
 sBackupGeneralSaveData = 0xB800  # bank 2, same GB address as sGeneralSaveData
 wTotalNumCardsCollected = 0xD3CD
 wTotalNumCardsToCollect = 0xD3CE
+wLoadedEventBits = 0xD3D1
+wPCPacks = 0xD11E
+wMedalCount = 0xD3CC
+wCurOverworldMap = 0xD3CB
+wOverworldMapSelection = 0xD32E
+wCurMap = 0xD32F
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wPlayerDirection = 0xD334
+wTempMap = 0xD0BB
+wTempPlayerXCoord = 0xD0BC
+wTempPlayerYCoord = 0xD0BD
+wTempPlayerDirection = 0xD0BE
+sReceivedLegendaryCards = 0xA00A
 
 ROM_SLOT = 0x556C  # WRAMToSRAMMapper.EmptySRAMSlot, ROM bank 4: always reads 0
 
@@ -87,6 +101,20 @@ def build_image(payload):
     """Header + the 2 never-written/never-checked filler bytes + payload, i.e. the
     full $B800-$B8BA span CopyGeneralSaveDataToSRAM/ValidateGeneralSaveDataFromDE use."""
     return header_for(payload) + b"\x00\x00" + payload
+
+
+def medal_bits(count):
+	return (0xFF << (8 - count) & 0xFF) if count else 0
+
+
+def event_vars_for(medal_count, ishihara_mentioned=False, legendary=False):
+	ev = bytearray((i * 7 + 3) & 0xFF or 1 for i in range(64))
+	ev[0] = medal_bits(medal_count)
+	if ishihara_mentioned:
+		ev[5] |= 0x10
+	if legendary:
+		ev[6] |= 0x02
+	return bytes(ev)
 
 
 _BASE_WRAM = poison_wram()
@@ -182,6 +210,16 @@ CONTRACT = {
     # trailing `ld a,[wNumSRAMValidationErrors] / cp 1`.
     "ValidateBackupGeneralSaveData": ("a", "f", "d", "e"),
     "_ValidateGeneralSaveData": ("a", "f", "d", "e"),
+    # push hl/bc + de saved/restored across the farcalls and CopyGeneralSaveDataToSRAM
+    # (save.asm:53-54/56/61-64/66-67); a/f scratch, set by the farcalls then clobbered.
+    "SaveGeneralSaveDataFromDE": ("b", "c", "d", "e", "hl"),
+    # de push/pop-preserved (save.asm:42/48); a/b/c/hl/f all clobbered by the callees.
+    "_SaveGeneralSaveData": ("d", "e"),
+    # de push/pop-preserved (save.asm:31/38); a/b/c/hl/f clobbered by the callees.
+    "SaveAndBackupData": ("d", "e"),
+    # de preserved through SaveAndBackupData (save.asm:526); c is the consumed branch
+    # input (save.asm:507-509). a/b/c/hl/f clobbered.
+    "_SaveGame": ("d", "e"),
 }
 
 CASES = {
@@ -419,5 +457,108 @@ CASES = {
         {"a": 0x10,
          "sram": {2: {sCardCollection: _P2_COLLECTION}, 0: {sCardCollection: _P0_COLLECTION}},
          "sread": {2: {sAlbumProgress: 2}, 0: {sAlbumProgress: 2}}},
+    ],
+    # These four reach TryGiveMedalPCPacks / OverworldMap_GetOWMapID / BackupPlayerPosition
+    # via farcall, whose return restores the ROM bank from hBankROM ($FF80). The oracle's
+    # synthesized frame selects the entry bank in the MBC but never sets hBankROM, so each
+    # case seeds it to bank 4 (this file's home) -- the same trick LoadBackupSaveData uses
+    # for its bank1call. Without it the first farcall restores bank 0 mid-routine and the
+    # oracle blocks (a single tick hangs on the corrupted path); with it the farcall
+    # round-trip is symmetric and the routine returns cleanly.
+    "SaveGeneralSaveDataFromDE": [
+        {"d": 0xB8, "e": 0x00, "wram": {hBankROM: b"\x04"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+        dict(POISON, d=0xB8, e=0x00, wram={hBankROM: b"\x04"}),
+        {"d": 0xB8, "e": 0x00,
+         "wram": {hBankROM: b"\x04", **poison_wram(seed=7), wEventVars: event_vars_for(3),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x05"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+        {"d": 0xB8, "e": 0x00,
+         "wram": {hBankROM: b"\x04", **poison_wram(seed=9), wEventVars: event_vars_for(8),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x06"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+        {"d": 0xB8, "e": 0x00,
+         "wram": {hBankROM: b"\x04", **poison_wram(seed=11), wEventVars: event_vars_for(2),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x02"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+    ],
+    "_SaveGeneralSaveData": [
+        {"wram": {hBankROM: b"\x04"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+        dict(POISON, wram={hBankROM: b"\x04"}),
+        {"wram": {hBankROM: b"\x04", **poison_wram(seed=14),
+                  wEventVars: event_vars_for(4, True, True),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x02"},
+         "sram": {0: {sGeneralSaveData: bytes(187), sCardCollection: _CARD_PATTERN[:256]}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sReceivedLegendaryCards: 1}}},
+    ],
+    "SaveAndBackupData": [
+        {"wram": {hBankROM: b"\x04"},
+         "sram": {0: {sGeneralSaveData: bytes(256)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2}}},
+        dict(POISON, wram={hBankROM: b"\x04"}),
+        {"wram": {hBankROM: b"\x04", **poison_wram(seed=13), wEventVars: event_vars_for(5),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x03"},
+         "sram": {0: {sGeneralSaveData: bytes(256),
+                      sCardCollection: _CARD_PATTERN[:4000],
+                      sCardCollection + 4000: _CARD_PATTERN[4000:5639]}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2},
+                   2: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}},
+    ],
+    "_SaveGame": [
+        {"c": 0x00,
+         "wram": {hBankROM: b"\x04", **poison_wram(seed=15), wEventVars: event_vars_for(6),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x04",
+                  wCurMap: b"\x07", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34",
+                  wPlayerDirection: b"\x01"},
+         "sram": {0: {sGeneralSaveData: bytes(256),
+                      sCardCollection: _CARD_PATTERN[:4000],
+                      sCardCollection + 4000: _CARD_PATTERN[4000:5639]}},
+         "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1,
+                  wTempPlayerDirection: 1, wMedalCount: 1, wCurOverworldMap: 1,
+                  wLoadedEventBits: 1, wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2},
+                   2: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}},
+        {"c": 0x01,
+         "wram": {hBankROM: b"\x04", **poison_wram(seed=16), wEventVars: event_vars_for(7),
+                  wPCPacks: bytes(15)},
+         "sram": {0: {sGeneralSaveData: bytes(256),
+                      sCardCollection: _CARD_PATTERN[:4000],
+                      sCardCollection + 4000: _CARD_PATTERN[4000:5639]}},
+         "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1,
+                  wTempPlayerDirection: 1, wOverworldMapSelection: 1,
+                  wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2},
+                   2: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}},
+        dict(POISON, c=0x01, wram={hBankROM: b"\x04"}),
     ],
 }
