@@ -106,16 +106,9 @@ static void adapt_GenerateTextTile(ProbeState *s)
 }
 static void adapt_TwoByteNumberToTxSymbol_PadSpace(ProbeState *s)
 {
-	uint16_t value = s->hl;
-	TwoByteNumberToTxSymbol_PadSpace(value);
-	if (value == 0) {
-		s->a = 0x20;
-	} else {
-		uint16_t divisor = 10000;
-		while (value < divisor) divisor /= 10;
-		s->a = (uint8_t)(0x20 + value / divisor);
-	}
-	s->hl = value >= 10000 ? 0xCAA0 : 0xCAA8;
+	NumberTextResult r = TwoByteNumberToTxSymbol_PadSpace(s->hl);
+	s->a = r.a;
+	s->hl = r.hl;
 }
 
 static void adapt_ProcessText(ProbeState *s);

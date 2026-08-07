@@ -9,6 +9,9 @@
 #include "home/write_number.h"
 #define TX_CTRL_START 0x05
 #define TX_SYMBOL 0x05
+#define SYM_SPACE 0x00
+#define SYM_0 0x20
+#define FW_SPACE 0x70
 #define TX_HALFWIDTH 0x06
 #define TX_HIRAGANA 0x0e
 #define TX_KATAKANA 0x0f
@@ -202,25 +205,45 @@ uint8_t GenerateTextTile(uint8_t b, uint8_t d, uint8_t e)
 }
 
 
-uint8_t TwoByteNumberToTxSymbol_PadSpace(uint16_t hl)
+/* Returns the asm's two live exit registers: a is the FIRST non-SYM_0 digit byte
+ * (SYM_0 when every digit was trimmed), and hl points one before it. bc and de are
+ * pushed and popped, so they are preserved. */
+NumberTextResult TwoByteNumberToTxSymbol_PadSpace(uint16_t value)
 {
-	uint16_t p = wStringBuffer_ADDR;
-	uint16_t value = hl;
 	static const uint16_t places[] = {10000, 1000, 100, 10, 1};
-	uint8_t digits[5];
+	uint16_t p = wStringBuffer_ADDR;
+	uint8_t a = SYM_0;
+
 	for (uint8_t i = 0; i < 5; i++) {
 		gb_write8(p++, TX_SYMBOL);
-		digits[i] = 0;
-		while (value >= places[i]) { value = (uint16_t)(value - places[i]); digits[i]++; }
-		gb_write8(p++, (uint8_t)(0x20 + digits[i]));
+		a = SYM_0;
+		while (value >= places[i]) {
+			value = (uint16_t)(value - places[i]);
+			a++;
+		}
+		gb_write8(p++, a);
 	}
-	gb_write8(p, 0);
-	uint8_t first = 0;
-	while (first < 4 && digits[first] == 0) {
-		gb_write8((uint16_t)(wStringBuffer_ADDR + 1 + first * 2), 0);
-		first++;
+	gb_write8(p, 0); /* TX_END */
+
+	uint16_t hl = wStringBuffer_ADDR;
+	uint8_t e = 5;
+
+	for (;;) {
+		hl++;
+		a = gb_read8(hl);
+		if (a != SYM_0)
+			break;
+		gb_write8(hl, SYM_SPACE);
+		hl++;
+		if (--e == 0) {
+			/* every digit was a zero: put the last one back */
+			hl--;
+			gb_write8(hl, SYM_0);
+			break;
+		}
 	}
-	return (uint8_t)(0x20 + digits[4]);
+	hl--;
+	return (NumberTextResult){a, hl};
 }
 
 
@@ -433,42 +456,53 @@ void InitTextPrinting_ProcessText(uint16_t *hl)
 CopyTextResult CopyTextData(uint8_t a, uint16_t hl, uint16_t de)
 {
 	wTextMaxLength = a;
+
 	uint8_t half = gb_read8(hl) == TX_HALFWIDTH;
-	uint16_t max = half ? (uint16_t)a * 2u : a;
-	uint16_t original_max = max;
-	uint16_t src = hl, dst = de;
-	uint8_t count = 0;
+	/* the half-width branch pads with an ascii space, the full-width one with its
+	 * own space tile; `add a` doubling the budget is 8-bit, so it wraps */
+	uint8_t fill = half ? ' ' : FW_SPACE;
+	uint8_t d = half ? (uint8_t)(a * 2u) : a;
+	uint16_t src = hl;
+	uint16_t dst = de;
+	uint8_t e = 0;
+	int truncated = 0;
+
 	for (;;) {
 		uint8_t ch = gb_read8(src);
-		if (!ch) {
-			uint16_t fill = max;
-			while (fill) {
-				gb_write8(dst++, ' ');
-				fill--;
-			}
-			gb_write8(dst, 0);
-			return (CopyTextResult){count, 0, count, (uint16_t)(de + original_max - 1)};
-		}
-		if (!max) {
-			gb_write8(dst, 0);
-			return (CopyTextResult){count, 0, count, dst};
-		}
+
+		if (!ch)
+			break;
 		src++;
 		gb_write8(dst++, ch);
-		max--;
-		if (ch < TX_CTRL_START || ch >= TX_CTRL_END) {
-			uint8_t second = gb_read8(src);
-			uint8_t pair_d = second, pair_e = ch;
-			if (ClassifyTextCharacterPair(&pair_d, &pair_e) & 0x10 && max) {
-				src++;
-				gb_write8(dst++, second);
-				max--;
-			}
+		/* a plain control character is copied but neither counts towards e nor
+		 * spends budget: the asm jumps straight back to .loop */
+		if (ch >= TX_CTRL_START && ch < TX_CTRL_END)
+			continue;
+
+		uint8_t pair_e = ch;
+		uint8_t pair_d = gb_read8(src);
+
+		if (ClassifyTextCharacterPair(&pair_d, &pair_e) & 0x10) {
+			gb_write8(dst++, gb_read8(src));
+			src++;
 		}
-		count++;
-		if (!max) {
-			gb_write8(dst, 0);
-			return (CopyTextResult){count, 0, count, dst};
+		e++;
+		if (--d == 0) {
+			gb_write8(dst, 0); /* TX_END */
+			truncated = 1;
+			break;
 		}
 	}
+
+	if (!truncated) {
+		/* pad out the rest of the budget, then terminate. The asm brackets this
+		 * with push hl / pop hl, so the exit pointer is the pre-fill one. */
+		uint16_t end = dst;
+
+		do {
+			gb_write8(end++, fill);
+		} while (--d);
+		gb_write8(end, 0);
+	}
+	return (CopyTextResult){e, 0, e, dst};
 }

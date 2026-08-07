@@ -2,6 +2,8 @@
 
 #include "generated/wram.h"
 #include "generated/hram.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
 #include "mem.h"
 #include "ppu.h"
 
@@ -142,3 +144,4 @@ void CopyCurrentLineAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	hBankVRAM = 0;
 	gb_write8(0xff4f, 0);
 }
+

@@ -90,9 +90,26 @@ CASES.update({
     "TerminateHalfWidthText": [{}, dict(POISON)],
     "Func_235e": [{}, dict(POISON)],
     "Func_2325": [{}, dict(POISON)],
-    "CopyTextData": [{"a": 1, "hl": SRC, "d": 0xc2, "e": 0,
-                       "wram": {SRC: b"\x00"}},
-                      dict(POISON, a=1, hl=SRC, d=0xc2, e=1, wram={SRC: b"\x00"})],
+    # The zero-length path alone leaves the whole copy loop unexercised, so these
+    # also drive: the early-TX_END fill, truncation at the budget, and a plain
+    # control character (>= TX_CTRL_START, < TX_CTRL_END), which the asm copies
+    # without counting it in e or spending budget.
+    "CopyTextData": [
+        {"a": 1, "hl": SRC, "d": 0xc2, "e": 0, "wram": {SRC: b"\x00"}},
+        dict(POISON, a=1, hl=SRC, d=0xc2, e=1, wram={SRC: b"\x00"}),
+        # full-width source, ends before the budget: pads with the $70 space tile
+        {"a": 4, "hl": SRC, "d": 0xc2, "e": 0,
+         "wram": {SRC: b"\x41\x42\x00"}, "read": {0xC200: 8}},
+        # half-width source ($06 lead byte) doubles the budget and pads with $20
+        {"a": 2, "hl": SRC, "d": 0xc2, "e": 0,
+         "wram": {SRC: b"\x06\x41\x42\x00"}, "read": {0xC200: 8}},
+        # more characters than the budget allows: truncates and sets carry
+        {"a": 2, "hl": SRC, "d": 0xc2, "e": 0,
+         "wram": {SRC: b"\x41\x42\x43\x44\x45\x00"}, "read": {0xC200: 8}},
+        # a plain control character is copied but must not consume budget
+        {"a": 3, "hl": SRC, "d": 0xc2, "e": 0,
+         "wram": {SRC: b"\x07\x41\x42\x00"}, "read": {0xC200: 8}},
+    ],
     # Every CONTRACT field is push/pop-preserved, so the only observable effect is what
     # the dispatched callees write: wCurTextTile ($CD05), the tile at
     # hTextBGMap0Address ($FFAA, pointed into VRAM here), and the advanced

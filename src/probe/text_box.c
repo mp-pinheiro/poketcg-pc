@@ -70,6 +70,7 @@ static void adapt_CopyCurrentLineAttrCGB(ProbeState *s)
 	CopyCurrentLineAttrCGB(&s->hl, s->a, s->b, s->d, s->e);
 }
 
+
 const ProbeEntry probe_entries_text_box[] = {
 	{ "SafeCopyDataDEtoHL", adapt_SafeCopyDataDEtoHL },
 	{ "DECoordToBGMap0Address", adapt_DECoordToBGMap0Address },
@@ -82,5 +83,4 @@ const ProbeEntry probe_entries_text_box[] = {
 	{ "ContinueDrawingTextBoxCGB", adapt_ContinueDrawingTextBoxCGB },
 	{ "CopyCurrentLineTilesAndAttrCGB", adapt_CopyCurrentLineTilesAndAttrCGB },
 	{ "CopyCurrentLineAttrCGB", adapt_CopyCurrentLineAttrCGB },
-	{ NULL, NULL },
 };

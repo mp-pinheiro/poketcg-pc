@@ -91,4 +91,5 @@ CASES = {
     "CopyCurrentLineAttrCGB": [
         {"b": 4, "hl": DST, "wram": {0xccf3: b"\x03"}, "read": {DST: 32}},
     ],
+
 }

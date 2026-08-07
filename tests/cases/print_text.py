@@ -15,6 +15,17 @@ CONTRACT = {
     "CountLinesOfTextFromID": ("a", "b", "c", "d", "e", "hl"),
     "LoadTxRam2": ("b", "c", "d", "e", "hl"),
     "LoadTxRam3": ("b", "c", "d", "e", "hl"),
+    "ProcessTextHeader": ("a", "d", "e", "f", "hl"),
+    "HandleTxRam2Or3": ("a", "b", "c", "d", "e", "hl"),
+    "CopyTextData_FromTextID": ("a", "d", "e", "hl"),
+    "CopyPlayerNameOrTurnDuelistName": ("a", "b", "c", "d", "e", "hl"),
+    # These four end in ProcessText, whose own CONTRACT is ("hl",): its exit d/e are
+    # path-dependent residue, clobbered by Func_22ca on the half-width path and left
+    # alone when wFontWidth is FULL_WIDTH. They inherit that, so d/e stay out.
+    "InitTextPrinting_ProcessTextFromID": ("b", "c", "hl"),
+    "InitTextPrinting_ProcessTextFromPointerToID": ("b", "c", "hl"),
+    "ProcessTextFromID": ("b", "c", "hl"),
+    "ProcessTextFromPointerToID": ("b", "c", "hl"),
 }
 
 CASES = {
@@ -77,7 +88,10 @@ CASES = {
     ],
     "CopyText": [
         {"hl": 1, "d": 0xC1, "e": 0x00, "read": {0xC100: 32}},
-        dict(POISON, hl=1, d=0xC1, e=0x40, read={0xC140: 32}),
+        {"hl": 0, "d": 0xC1, "e": 0x00, "wram": {0xFF97: b"\x00"},
+         "sram": {0: {0xA010: b"\x21\x00"}}, "read": {0xC100: 2}},
+        {"hl": 0, "d": 0xC1, "e": 0x20, "wram": {0xFF97: b"\x01", 0xC500: b"\x31\x00"},
+         "read": {0xC120: 2}},
     ],
     "CountLinesOfTextFromID": [{"hl": 1}, dict(POISON, hl=1)],
     # wTxRam2 is $CE3F and the asm writes it and $CE40. wTxRam2_b is a DIFFERENT
@@ -98,3 +112,93 @@ CASES = {
              wram={0xCE43: b"\xff\xff\xff"}, expect={0xCE43: b"\xff\xff\xff"}),
     ],
 }
+
+CASES.update({
+    # No text engine involved: a bounded copy of at most a tiles, so this runs on the
+    # oracle against the real ROM. e comes back as the actual character count.
+    "CopyTextData_FromTextID": [
+        {"a": 8, "hl": 1, "d": 0xC1, "e": 0x00, "read": {0xC100: 10}},
+        {"a": 2, "hl": 1, "d": 0xC1, "e": 0x00, "read": {0xC100: 4}},
+        dict(POISON, a=8, hl=1, d=0xC1, e=0x00, read={0xC100: 10}),
+    ],
+    # hWhoseTurn selects the callee; hl always comes back as the buffer the asm
+    # pushed and popped, whichever name was copied.
+    "CopyPlayerNameOrTurnDuelistName": [
+        {"wram": {0xFF97: b"\x00"}, "sram": {0: {0xA010: b"\x41\x42\x00"}},
+         "read": {BUFFER: 4}},
+        # OPPONENT_TURN is HIGH(wOpponentDuelVariables) = $C3. With no text ID at
+        # wOpponentName the opponent path falls back to the name buffer.
+        {"wram": {0xFF97: b"\xC3", 0xCC16: b"\x00\x00", 0xC500: b"\x43\x44\x00"},
+         "read": {BUFFER: 4}},
+        dict(POISON, wram={0xFF97: b"\x00"}, sram={0: {0xA010: b"\x45\x00"}},
+             read={BUFFER: 3}),
+    ],
+    # Text ID 0 resolves to an immediately terminated text, so ProcessText returns
+    # without generating tiles. A real ID drives the text engine over the tile
+    # cache, which only a prior SetupText makes acyclic, and the oracle then never
+    # returns -- see the note above CASES.
+    "ProcessTextFromID": [
+        {"hl": 0, "wram": {0xCABB: b"\x00"}},
+        dict(POISON, hl=0, wram={0xCABB: b"\x00"}),
+    ],
+    "InitTextPrinting_ProcessTextFromID": [
+        {"hl": 0, "d": 0, "e": 0, "wram": {0xCABB: b"\x00"}},
+        dict(POISON, hl=0, d=1, e=2, wram={0xCABB: b"\x00"}),
+    ],
+    # ReadTextHeader resolves inside wTextHeader1 ($CE2B), which lives in the
+    # oracle's synthesized call frame, so these are asm-derived rather than run.
+    # TX_END with no pending header level: TerminateHalfWidthText returns at once
+    # when wFontWidth is FULL_WIDTH, then `scf` makes carry the only flag output.
+    # ReadTextHeader resolves inside wTextHeader1 ($CE2B), which lives in the
+    # oracle's synthesized call frame, so these are derived from the asm.
+    # A header is five bytes: syllabary, font width, bank, text lo, text hi.
+    # With FULL_WIDTH set, TerminateHalfWidthText returns at once and leaves d, e
+    # and hl alone, so `scf` makes carry the only flag the TX_END path produces.
+    "ProcessTextHeader": [
+        {"d": 3, "e": 4,
+         "wram": {HEADER: b"\x0f\x00\x01\x00\xC1", 0xCE48: b"\x00",
+                  0xC100: b"\x00"},
+         "oracle": False, "why": "the text header lives in the synthesized call frame",
+         "expect_regs": {"d": 3, "e": 4, "f": 0x10, "hl": 0xC101}},
+        # A pending header level is popped and the routine re-runs one level up:
+        # wWhichTextHeader selects the header, five bytes per level.
+        {"d": 5, "e": 6,
+         "wram": {HEADER: b"\x0f\x00\x01\x00\xC1",
+                  HEADER + 5: b"\x0f\x00\x01\x00\xC1",
+                  0xCE48: b"\x01", 0xC100: b"\x00"},
+         "oracle": False, "why": "the text header lives in the synthesized call frame",
+         "expect": {0xCE48: b"\x00"},
+         "expect_regs": {"d": 5, "e": 6, "f": 0x10, "hl": 0xC101}},
+    ],
+    # The zero-ID early exit returns before any text processing, so it is the one
+    # path of this pair the emulator can run end to end.
+    "InitTextPrinting_ProcessTextFromPointerToID": [
+        {"hl": 0xC100, "d": 0, "e": 0, "wram": {0xC100: b"\x00\x00"},
+         "read": {0xC100: 2}},
+        dict(POISON, hl=0xC100, d=0, e=0, wram={0xC100: b"\x00\x00"},
+             read={0xC100: 2}),
+    ],
+
+    "HandleTxRam2Or3": [
+        # The asm ends `ld a, [hli] / ld h, [hl] / ld l, a`, so hl is the 16-bit value
+        # held in the slot, not the slot address. Index 0 reads the first slot.
+        {"hl": 0xCE49, "d": 0xCE, "e": 0x3F, "wram": {0xCE49: b"\x00", 0xCE3F: b"\x34\x12"},
+         "oracle": False, "why": "text buffers are in the synthesized call frame",
+         "expect": {0xCE49: b"\x01"}, "expect_regs": {"hl": 0x1234}},
+        # Index 2 selects the third slot: `add a` doubles it, so the offset is 4.
+        {"hl": 0xCE49, "d": 0xCE, "e": 0x3F,
+         "wram": {0xCE49: b"\x02", 0xCE43: b"\x78\x56"},
+         "oracle": False, "why": "text buffers are in the synthesized call frame",
+         "expect": {0xCE49: b"\x03"}, "expect_regs": {"hl": 0x5678}},
+        # `add a` is 8-bit, so an index of $80 doubles to 0 and wraps onto slot 0.
+        {"hl": 0xCE49, "d": 0xCE, "e": 0x3F,
+         "wram": {0xCE49: b"\x80", 0xCE3F: b"\xCD\xAB"},
+         "oracle": False, "why": "text buffers are in the synthesized call frame",
+         "expect": {0xCE49: b"\x81"}, "expect_regs": {"hl": 0xABCD}},
+    ],
+    "ProcessTextFromPointerToID": [
+        {"hl": 0xC100, "wram": {0xC100: b"\x00\x00"}, "oracle": False,
+         "why": "the zero text ID path is independent of the ROM text table",
+         "expect": {0xC100: b"\x00\x00"}, "expect_regs": {"hl": 0xC101}},
+    ],
+})

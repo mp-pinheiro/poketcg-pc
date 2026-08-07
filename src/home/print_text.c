@@ -4,9 +4,12 @@
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/process_text.h"
+#include "home/duel.h"
 #include "home/switch_rom.h"
-#include "mem.h"
 #include "home/write_number.h"
+
+/* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
+#define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 
 static uint16_t text_header(void)
 {
@@ -84,43 +87,50 @@ uint16_t ResetTxRam_WriteToTextHeader(uint16_t text)
 	return write_text_header(text);
 }
 
-uint8_t TwoByteNumberToText_CountLeadingZeros(uint16_t value, uint16_t *text)
+/* Contract fields are b, c, d, e, hl. b is preserved on both paths; c and de are
+ * preserved on the full-width path only, so they come in to be echoed back out. */
+LeadingZerosResult TwoByteNumberToText_CountLeadingZeros(uint16_t value, uint8_t c, uint16_t de)
 {
-	if (wFontWidth == 0) {
-		uint8_t first = 0;
-		TwoByteNumberToTxSymbol_PadSpace(value);
-		while (first < 4 && (gb_read8((uint16_t)(wStringBuffer_ADDR + first * 2u + 1u)) == 0 ||
-			gb_read8((uint16_t)(wStringBuffer_ADDR + first * 2u + 1u)) == 0x20))
-			first++;
-		*text = (uint16_t)(wStringBuffer_ADDR + first * 2u);
-		return first == 4 ? 0 : gb_read8((uint16_t)(wStringBuffer_ADDR + first * 2u + 1u));
+	/* `jp z` is a tail call, and PadSpace pushes and pops both bc and de. */
+	if (wFontWidth == 0)
+		return (LeadingZerosResult){c, de, TwoByteNumberToTxSymbol_PadSpace(value).hl};
+
+	de = wStringBuffer_ADDR;
+	TwoByteNumberToText(value, &de); /* leaves de on the TX_END slot, five bytes along */
+
+	uint16_t hl = wStringBuffer_ADDR;
+
+	c = 4;
+	while (gb_read8(hl) == '0') {
+		hl++;
+		if (--c == 0)
+			break;
+	}
+	return (LeadingZerosResult){c, de, hl};
+}
+
+/* Returns the asm's three live exit registers: a (the restored bank on the text-ID
+ * path, 0 on the name paths), de backed up onto the terminator, and hl past it. */
+CopyTextResult CopyText(uint16_t text_id, uint16_t de)
+{
+	if (!text_id) {
+		if (hWhoseTurn == OPPONENT_TURN)
+			return CopyOpponentName(de);
+		return CopyPlayerName(de);
 	}
 
-	uint16_t destination = wStringBuffer_ADDR;
-	TwoByteNumberToText(value, &destination);
-	uint16_t p = wStringBuffer_ADDR;
-	uint8_t count = 4;
-	while (count && gb_read8(p) == '0') {
-		p++;
-		count--;
-	}
-	*text = p;
-	return count;
-}
-uint16_t CopyText(uint16_t text_id, uint16_t *destination)
-{
 	uint8_t saved = hBankROM;
-	uint16_t source = GetTextOffsetFromTextID(text_id);
-	uint16_t dst = *destination;
-	uint8_t value;
+	uint16_t hl = GetTextOffsetFromTextID(text_id);
+	uint8_t a;
 
 	do {
-		value = gb_read8(source++);
-		gb_write8(dst++, value);
-	} while (value);
+		a = gb_read8(hl++);
+		gb_write8(de++, a);
+	} while (a);
 	BankswitchROM(saved);
-	*destination = (uint16_t)(dst - 1u);
-	return source;
+	de--;
+	/* `pop af` restores the saved bank into a, and BankswitchROM preserves it. */
+	return (CopyTextResult){saved, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
 
 uint8_t CountLinesOfTextFromID(uint16_t text_id)
@@ -161,3 +171,130 @@ void LoadTxRam3(uint16_t value)
 	gb_write8((uint16_t)(wTxRam3_ADDR + 1), (uint8_t)(value >> 8));
 }
 
+static ProcessTextHeaderResult header_result(uint8_t a, uint8_t d, uint8_t e,
+	uint8_t f, uint16_t hl)
+{
+	return (ProcessTextHeaderResult){a, d, e, f, hl};
+}
+
+/* Returns the 16-bit value held in the slot, not the slot address: the asm finishes
+ * with `ld a, [hli] / ld h, [hl] / ld l, a`. The index doubling is an 8-bit `add a`,
+ * so it wraps. */
+uint16_t HandleTxRam2Or3(uint16_t de, uint16_t hl)
+{
+	uint8_t index = gb_read8(hl);
+
+	gb_write8(hl, (uint8_t)(index + 1u));
+
+	uint16_t slot = (uint16_t)(de + (uint8_t)(index * 2u));
+
+	return (uint16_t)(gb_read8(slot) | (uint16_t)gb_read8((uint16_t)(slot + 1u)) << 8);
+}
+
+/* a and de fall out of the callee; hl is the buffer address the asm pushed and popped. */
+CopyTextResult CopyPlayerNameOrTurnDuelistName(void)
+{
+	uint16_t de = wStringBuffer_ADDR;
+	CopyTextResult result = hWhoseTurn == OPPONENT_TURN ? CopyOpponentName(de)
+							   : CopyPlayerName(de);
+
+	result.hl = de;
+	return result;
+}
+CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de)
+{
+	uint8_t saved = hBankROM;
+	uint16_t source = GetTextOffsetFromTextID(hl);
+	CopyTextResult result = CopyTextData(a, source, de);
+
+	BankswitchROM(saved);
+	/* `pop af` puts the entry bank back in a, overriding CopyTextData's count. */
+	result.a = saved;
+	return result;
+}
+
+/* d and e are live on entry: the TX_END path hands d to TerminateHalfWidthText,
+ * and both are preserved across every path that does not set them itself. */
+ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
+{
+	uint16_t text = ReadTextHeader();
+	uint8_t a = gb_read8(text++);
+	if (!a) {
+		if (wWhichTextHeader) {
+			wWhichTextHeader--;
+			return ProcessTextHeader(d, e);
+		}
+
+		ProcessTextResult ended = TerminateHalfWidthText(d, e, text);
+		return header_result(ended.a, ended.d, ended.e, 0x10, ended.hl);
+	}
+	if (a >= 0x05 && a < 0x10) {
+		ProcessTextResult special = ProcessSpecialTextCharacter(a, text);
+		if (special.f & 0x10) {
+			if (a == 0x0b) {
+				WriteToTextHeader_MoveToNext(text);
+				hJapaneseSyllabary = 0x0f;
+				wFontWidth = 0;
+				uint16_t ptr = HandleTxRam2Or3(wTxRam2_ADDR, wWhichTxRam2_ADDR);
+				WriteToTextHeader(ptr ? GetTextOffsetFromTextID(ptr) : wDefaultText_ADDR);
+				return ProcessTextHeader(d, e);
+			}
+			if (a == 0x0c) {
+				WriteToTextHeader_MoveToNext(text);
+				uint16_t ptr = HandleTxRam2Or3(wTxRam3_ADDR, wWhichTxRam3_ADDR);
+				WriteToTextHeader(TwoByteNumberToText_CountLeadingZeros(ptr, 0, 0).hl);
+				return ProcessTextHeader(d, e);
+			}
+			if (a == 0x09) {
+				WriteToTextHeader_MoveToNext(text);
+				uint16_t out = CopyPlayerNameOrTurnDuelistName().hl;
+				if (gb_read8(wStringBuffer_ADDR) != 0x06)
+					ProcessSpecialTextCharacter(0x07, out);
+				WriteToTextHeader(out);
+				return ProcessTextHeader(d, e);
+			}
+		}
+		WriteToTextHeader(text);
+		return header_result(special.a, d, e, 0, text);
+	}
+	e = a;
+	d = gb_read8(text);
+
+	uint8_t carry = ClassifyTextCharacterPair(&d, &e);
+	if (carry & 0x10)
+		text++;
+	Func_22ca(d, e);
+	ProcessSpecialTextCharacter(0, text);
+	WriteToTextHeader(text);
+	return header_result(0, d, e, 0, text);
+}
+
+ProcessTextHeaderResult ProcessTextFromID(uint16_t hl)
+{
+	uint8_t saved = hBankROM;
+	uint16_t text = GetTextOffsetFromTextID(hl);
+	ProcessText(&text);
+	BankswitchROM(saved);
+	return header_result(0, 0, 0, 0, text);
+}
+
+ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl)
+{
+	uint8_t lo = gb_read8(hl++);
+	uint8_t hi = gb_read8(hl);
+	if (!(lo | hi))
+		return header_result(0, 0, 0, 0, hl);
+	return ProcessTextFromID((uint16_t)(lo | (uint16_t)hi << 8));
+}
+
+ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl)
+{
+	InitTextPrinting(d, e);
+	return ProcessTextFromID(hl);
+}
+
+ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, uint8_t e, uint16_t hl)
+{
+	InitTextPrinting(d, e);
+	return ProcessTextFromPointerToID(hl);
+}
