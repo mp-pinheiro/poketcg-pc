@@ -26,6 +26,10 @@ CONTRACT = {
     "InitTextPrinting_ProcessTextFromPointerToID": ("b", "c", "hl"),
     "ProcessTextFromID": ("b", "c", "hl"),
     "ProcessTextFromPointerToID": ("b", "c", "hl"),
+    "PlaceTextItems": ("d", "hl"),
+    "PrintText": ("hl",),
+    "PrintTextNoDelay": ("hl",),
+    "DrawTextReadyLabeledOrRegularTextBox": ("a", "d", "e", "hl"),
 }
 
 CASES = {
@@ -202,3 +206,65 @@ CASES.update({
          "expect": {0xC100: b"\x00\x00"}, "expect_regs": {"hl": 0xC101}},
     ],
 })
+
+# Real text id 1 ("\x06Hand\x00") drives the tile cache. These spans all match the
+# oracle; key2 ($C720) is deliberately excluded -- it carries a pre-existing bug in
+# Func_22ca's half-width pair buffering (process_text.c), and ProcessTextFromID,
+# which this slice never touches, diverges there identically.
+CACHE_READ = {0xC620: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+# InitTextPrinting's whole observable effect is the print cursor: hTextBGMap0Address
+# ($FFAA-$FFAB, the BG-map destination DECoordToBGMap0Address derives from d/e) and
+# hTextHorizontalAlign ($FFAD, d itself). Without these a routine that places items
+# at the wrong coordinates still passes -- swapping InitTextPrinting(d, e) to (e, d)
+# was verified green before they were added.
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+CASES.update({
+    # Item format is [x][y][text-id lo][text-id hi] per item, bit 7 of x terminates.
+    "PlaceTextItems": [
+        {"hl": 0xC100, "wram": {0xC100: b"\x80"}},
+        dict(POISON, hl=0xC100, wram={0xC100: b"\x80"}),
+        {"hl": 0xC100, "wram": {0xC100: b"\x01\x02\x01\x00\x80"},
+         "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}},
+    ],
+    # Non-labeled branch draws a 20x6 box at BG-map row 12 ($9980 under zero scroll)
+    # then arms text printing at (1,14). wIsTextBoxLabeled lives in the synthesized
+    # frame ($CE4B) so the labeled branch cannot be oracle-driven and is left to the C.
+    "DrawTextReadyLabeledOrRegularTextBox": [
+        {"hl": 0xC100, "read": {0x9980: 64}},
+        dict(POISON, hl=0xC100, read={0x9980: 64}),
+    ],
+    # hl == 0 takes the wDefaultText path (no bank save/restore); a zero first byte
+    # is TX_END so the body exits after one ProcessTextHeader. wTextSpeed ($CE47)
+    # is inside the synthesized frame and cannot be seeded, so it stays 0: the
+    # DoFrame delay loop runs zero iterations. Seeding hKeysHeld=PAD_B takes the
+    # B-skip branch (TEXT_SPEED_4 path); at speed 0 its output matches the no-B
+    # case because both skip every DoFrame, but it exercises the hKeysHeld read.
+    "PrintText": [
+        {"hl": 0, "d": 0, "e": 0, "wram": {0xC590: b"\x00"}},
+        dict(POISON, hl=0, wram={0xC590: b"\x00"}),
+        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ)},
+        {"hl": 1, "d": 0, "e": 0, "wram": {0xFF90: b"\x02"},
+         "setup": SETUP, "read": dict(CACHE_READ)},
+    ],
+    # No hl==0 shortcut: hl is always a text id. id 0 resolves to an immediate
+    # TX_END; id 1 ("Hand") runs the engine.
+    "PrintTextNoDelay": [
+        {"hl": 0, "d": 0, "e": 0},
+        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ)},
+        dict(POISON, hl=1, d=0, e=0, setup=SETUP, read=dict(CACHE_READ)),
+    ],
+})
+
+# WaitForPlayerToAdvanceText, PrintScrollableText and its three wrappers are NOT
+# registered. WaitForPlayerToAdvanceText -> WaitForButtonAorB spins on hKeysPressed
+# waiting for A or B; nothing under the oracle advances it, so it never returns.
+# This is a genuine input wait, not the hBankROM/farcall hang: the wait chain
+# (SetCursorParametersForTextBox, WaitForButtonAorB -> DoFrame/RefreshMenuCursor)
+# contains no BankswitchROM and no farcall, so an unset hBankROM cannot divert it.
+# The wrappers transitively reach the same wait, and their C bodies additionally
+# depend on the unported menu routines SetCursorParametersForTextBox /
+# WaitForButtonAorB / RefreshMenuCursor / EraseCursor, which are outside this
+# slice's files. Blocking on a harness input-injection facility (the oracle runs
+# with no_input=True and exposes no per-frame button seed).

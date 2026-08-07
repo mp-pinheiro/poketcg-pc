@@ -36,4 +36,13 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, u
 ProcessTextHeaderResult ProcessTextFromID(uint16_t hl);
 ProcessTextHeaderResult ProcessTextFromPointerToID(uint16_t hl);
 
+typedef struct {
+	uint8_t a, b, c, d, e;
+	uint16_t hl;
+} TextResult;
+
+TextResult PlaceTextItems(uint16_t hl);
+TextResult PrintText(uint16_t hl, uint8_t d, uint8_t e);
+TextResult PrintTextNoDelay(uint16_t hl, uint8_t d, uint8_t e);
+TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl);
 #endif

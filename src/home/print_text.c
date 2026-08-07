@@ -7,6 +7,9 @@
 #include "home/duel.h"
 #include "home/switch_rom.h"
 #include "home/write_number.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/text_box.h"
 
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
@@ -297,4 +300,108 @@ ProcessTextHeaderResult InitTextPrinting_ProcessTextFromPointerToID(uint8_t d, u
 {
 	InitTextPrinting(d, e);
 	return ProcessTextFromPointerToID(hl);
+}
+
+#define TEXT_SPEED_3 2u
+#define PAD_B        0x02u
+
+TextResult PlaceTextItems(uint16_t hl)
+{
+	uint8_t d;
+
+	for (;;) {
+		d = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (d & 0x80u)
+			return (TextResult){0, 0, 0, d, 0, hl};
+		uint8_t e = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		InitTextPrinting(d, e);
+		(void)ProcessTextFromPointerToID(hl);
+		hl = (uint16_t)(hl + 2u);
+	}
+}
+
+static TextResult print_text_body(uint16_t text, uint8_t d, uint8_t e)
+{
+	uint8_t b = 0;
+	uint8_t a = 0;
+	uint16_t hl = ResetTxRam_WriteToTextHeader(text);
+
+	for (;;) {
+		b = hKeysHeld;
+		uint8_t speed = (uint8_t)(wTextSpeed + 1u);
+		if (speed >= (uint8_t)(TEXT_SPEED_3 + 1u) || !(b & PAD_B)) {
+			do {
+				speed = (uint8_t)(speed - 1u);
+				if (speed == 0u)
+					break;
+				DoFrame();
+			} while (1);
+		}
+		ProcessTextHeaderResult ph = ProcessTextHeader(d, e);
+		a = ph.a;
+		d = ph.d;
+		e = ph.e;
+		hl = ph.hl;
+		if (ph.f & 0x10u)
+			break;
+	}
+	return (TextResult){a, b, 0, d, e, hl};
+}
+
+TextResult PrintText(uint16_t hl, uint8_t d, uint8_t e)
+{
+	if (hl == 0) {
+		return print_text_body(wDefaultText_ADDR, d, e);
+	}
+	uint8_t saved = hBankROM;
+	uint16_t text = GetTextOffsetFromTextID(hl);
+	TextResult r = print_text_body(text, d, e);
+	BankswitchROM(saved);
+	r.a = saved;
+	return r;
+}
+
+TextResult PrintTextNoDelay(uint16_t hl, uint8_t d, uint8_t e)
+{
+	uint8_t saved = hBankROM;
+	uint16_t text = GetTextOffsetFromTextID(hl);
+
+	ResetTxRam_WriteToTextHeader(text);
+	uint16_t hout = 0;
+	for (;;) {
+		ProcessTextHeaderResult ph = ProcessTextHeader(d, e);
+		d = ph.d;
+		e = ph.e;
+		hout = ph.hl;
+		if (ph.f & 0x10u)
+			break;
+	}
+	BankswitchROM(saved);
+	return (TextResult){saved, 0, 0, d, e, hout};
+}
+
+TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl)
+{
+	uint8_t b = 20;
+	uint8_t c = 6;
+	uint8_t d = 0;
+	uint8_t e = 12;
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+	if (wIsTextBoxLabeled) {
+		uint16_t label = (uint16_t)(gb_read8(wTextBoxLabel_ADDR)
+			| (uint16_t)gb_read8((uint16_t)(wTextBoxLabel_ADDR + 1u)) << 8);
+		DrawLabeledTextBox(&label, (uint8_t)label, b, c, d, e);
+	} else {
+		uint16_t box = hl;
+		DrawRegularTextBox(&box, wIsTextBoxLabeled, b, c, d, e);
+		EnableLCD();
+	}
+	d = 1;
+	e = 14;
+	AdjustCoordinatesForBGScroll(&d, &e);
+	InitTextPrintingInTextbox(19, d, e);
+	return (TextResult){19, 0, 0, d, e, hl};
 }

@@ -115,6 +115,34 @@ static void adapt_ProcessTextFromPointerToID(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_PlaceTextItems(ProbeState *s)
+{
+	TextResult r = PlaceTextItems(s->hl);
+	s->d = r.d;
+	s->hl = r.hl;
+}
+
+static void adapt_PrintText(ProbeState *s)
+{
+	TextResult r = PrintText(s->hl, s->d, s->e);
+	s->hl = r.hl;
+}
+
+static void adapt_PrintTextNoDelay(ProbeState *s)
+{
+	TextResult r = PrintTextNoDelay(s->hl, s->d, s->e);
+	s->hl = r.hl;
+}
+
+static void adapt_DrawTextReadyLabeledOrRegularTextBox(ProbeState *s)
+{
+	TextResult r = DrawTextReadyLabeledOrRegularTextBox(s->hl);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_print_text[] = {
 	{ "GetTextOffsetFromTextID", adapt_GetTextOffsetFromTextID },
 	{ "GetPointerToTextHeader", adapt_GetPointerToTextHeader },
@@ -135,5 +163,9 @@ const ProbeEntry probe_entries_print_text[] = {
 	{ "InitTextPrinting_ProcessTextFromPointerToID", adapt_InitTextPrinting_ProcessTextFromPointerToID },
 	{ "ProcessTextFromID", adapt_ProcessTextFromID },
 	{ "ProcessTextFromPointerToID", adapt_ProcessTextFromPointerToID },
+	{ "PlaceTextItems", adapt_PlaceTextItems },
+	{ "PrintText", adapt_PrintText },
+	{ "PrintTextNoDelay", adapt_PrintTextNoDelay },
+	{ "DrawTextReadyLabeledOrRegularTextBox", adapt_DrawTextReadyLabeledOrRegularTextBox },
 	{ NULL, NULL },
 };
