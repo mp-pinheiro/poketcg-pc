@@ -213,3 +213,5 @@ uint8_t TwoByteNumberToTxSymbol_PadSpace(uint16_t hl)
 	}
 	return (uint8_t)(0x20 + digits[4]);
 }
+
+

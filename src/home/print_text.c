@@ -147,14 +147,17 @@ uint8_t CountLinesOfTextFromID(uint16_t text_id)
 	return (uint8_t)(lines + 1);
 }
 
+/* The asm stores to wTxRam2 and wTxRam2 + 1. wTxRam2_b is a separate symbol two bytes
+ * along ($CE41), not the high half of this pair, so writing it would miss $CE40. */
 void LoadTxRam2(uint16_t text_id)
 {
-	wTxRam2 = (uint8_t)text_id;
-	wTxRam2_b = (uint8_t)(text_id >> 8);
+	gb_write8(wTxRam2_ADDR, (uint8_t)text_id);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1), (uint8_t)(text_id >> 8));
 }
 
 void LoadTxRam3(uint16_t value)
 {
-	wTxRam3 = (uint8_t)value;
-	wTxRam3_b = (uint8_t)(value >> 8);
+	gb_write8(wTxRam3_ADDR, (uint8_t)value);
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1), (uint8_t)(value >> 8));
 }
+

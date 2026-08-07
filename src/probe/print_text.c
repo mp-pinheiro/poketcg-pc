@@ -76,6 +76,7 @@ static void adapt_LoadTxRam3(ProbeState *s)
 	LoadTxRam3(s->hl);
 }
 
+
 const ProbeEntry probe_entries_print_text[] = {
 	{ "GetTextOffsetFromTextID", adapt_GetTextOffsetFromTextID },
 	{ "GetPointerToTextHeader", adapt_GetPointerToTextHeader },
@@ -88,5 +89,4 @@ const ProbeEntry probe_entries_print_text[] = {
 	{ "CountLinesOfTextFromID", adapt_CountLinesOfTextFromID },
 	{ "LoadTxRam2", adapt_LoadTxRam2 },
 	{ "LoadTxRam3", adapt_LoadTxRam3 },
-	{ NULL, NULL },
 };

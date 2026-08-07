@@ -80,6 +80,21 @@ CASES = {
         dict(POISON, hl=1, d=0xC1, e=0x40, read={0xC140: 32}),
     ],
     "CountLinesOfTextFromID": [{"hl": 1}, dict(POISON, hl=1)],
-    "LoadTxRam2": [{"hl": 1}, dict(POISON, hl=0x1234)],
-    "LoadTxRam3": [{"hl": 0}, dict(POISON, hl=0xFFFF)],
+    # wTxRam2 is $CE3F and the asm writes it and $CE40. wTxRam2_b is a DIFFERENT
+    # symbol at $CE41 and must stay untouched -- the third expect byte pins that.
+    # Inside the reserved $CE00-$CFFF frame, so oracle:False with an asm-derived map.
+    "LoadTxRam2": [
+        {"hl": 1, "oracle": False, "why": "wTxRam2 is inside the synthesized call frame",
+         "wram": {0xCE3F: b"\xff\xff\xff"}, "expect": {0xCE3F: b"\x01\x00\xff"}},
+        dict(POISON, hl=0x1234, oracle=False,
+             why="wTxRam2 is inside the synthesized call frame",
+             wram={0xCE3F: b"\xff\xff\xff"}, expect={0xCE3F: b"\x34\x12\xff"}),
+    ],
+    "LoadTxRam3": [
+        {"hl": 0, "oracle": False, "why": "wTxRam3 is inside the synthesized call frame",
+         "wram": {0xCE43: b"\xff\xff\xff"}, "expect": {0xCE43: b"\x00\x00\xff"}},
+        dict(POISON, hl=0xFFFF, oracle=False,
+             why="wTxRam3 is inside the synthesized call frame",
+             wram={0xCE43: b"\xff\xff\xff"}, expect={0xCE43: b"\xff\xff\xff"}),
+    ],
 }
