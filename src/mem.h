@@ -16,8 +16,8 @@ extern uint8_t g_sram[0x8000]; /* 4 banks x 8 KiB, windowed at $A000-$BFFF */
 extern uint8_t *g_rom;
 extern size_t g_rom_size;
 
-/* MBC5 latches. BankswitchROM() writes g_rom_bank; BankswitchSRAM() writes
- * g_sram_bank and g_sram_enabled. */
+/* MBC5 latches, written only through mbc5_write() -- the single decoder for every
+ * register write below $8000, so the port has exactly one MBC5 model. */
 extern uint8_t g_rom_bank;
 extern uint8_t g_sram_bank;
 extern int g_sram_enabled;
@@ -35,7 +35,8 @@ const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
  * PPU, so VRAM/OAM/IO are plain read-write bytes with no side effects. */
 uint8_t *gb_ptr(uint16_t addr);
 uint8_t gb_read8(uint16_t addr);
-void gb_write8(uint16_t addr, uint8_t v); /* writes below $8000 are discarded */
+void gb_write8(uint16_t addr, uint8_t v); /* writes below $8000 decode as MBC5 registers */
+void mbc5_write(uint16_t addr, uint8_t v); /* MBC5 register decode; mirrors PyBoy's MBC5.setitem */
 
 /* Reset every region and both bank latches to power-on state. Leaves g_rom alone. */
 void mem_reset(void);

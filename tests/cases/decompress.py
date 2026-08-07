@@ -81,22 +81,33 @@ LITERAL = b"".join(bytes([0xFF]) + bytes((i * 8 + k) & 0xFF for k in range(8))
 # run on the oracle. Seeding every byte the decompressor can read with $AA makes the
 # run a fixed point: a literal copies $AA out of the source, a repeat copies $AA out
 # of the secondary buffer, and each output byte written back into memory is $AA
-# again, so every one of the 65536 bytes is $AA no matter what the sweep overwrites.
-# $8000-$BFFF is seeded because the source pointer walks it: with every source byte
-# $AA a command byte yields 4 literals and 4 repeats of 12 bytes each, i.e. 11 source
-# bytes per 52 output bytes, and no reachable state can push that past 13 per 52, so
-# 65536 output bytes consume at most 16384 source bytes.
-AA_SEED = {at: b"\xaa" * 0x800 for at in range(0x8000, 0x9000, 0x800)}
-# $9000-$9FFF is out of the source pointer's reach ($8000-$8337 before the sweep
-# reaches the state, $AAAA onwards after), so it starts as $55 and can only become
-# $AA by being written, which happens 45569 output bytes in.
-AA_SEED.update({at: b"\x55" * 0x800 for at in range(0x9000, 0xA000, 0x800)})
-AA_SEED[BUF] = b"\xaa" * 0x100
+# again. That survives the sweep walking over the state block at $CAD6: the source
+# pointer, the buffer page and every length field become $AA too, and $AAxx is still
+# inside the seeded window.
+#
+# Writes below $8000 are live MBC5 register writes, so the output start address
+# decides how long the fixed point lasts. $AA into $0000-$1FFF is not $0A, so it
+# turns SRAM off and every later source read in $A000-$BFFF is open bus. Starting at
+# $2000 puts that region last: output bytes 1..57344 cover $2000-$FFFF, and only
+# bytes 57345..65536 land on RAMG, where nothing is stored. Measured: the first
+# non-$AA output byte is 57345, writing to $0001.
+#
+# Two more consequences of the live decode. $2000-$2FFF selects ROM bank $AA % 64,
+# which is never read: the source pointer's measured reach is $8000-$C371 and it
+# never drops below $8000. $4000-$5FFF selects SRAM bank ($AA & $F) % 4 = 2, which is
+# why all four banks are seeded and not just the one live at entry. $C000-$C3FF is
+# seeded so the source's WRAM tail does not depend on the sweep having overwritten it
+# first.
+AA_SEED = {at: b"\xaa" * 0x800 for at in range(0x8000, 0xA000, 0x800)}
+AA_SEED[BUF] = b"\xaa" * 0x400
 AA_SEED[STATE] = state(src=0x8000)
-# Bank 0 holds the same $AA and is left enabled, so the sweep's source reads return $AA for
-# the whole run: BankswitchSRAM drives rRAMG/rRAMB directly, so the sweep's own writes to
-# $0000/$4000 are inert and the selected bank never moves off 0.
-AA_SRAM = {0x00: {at: b"\xaa" * 0x800 for at in range(0xA000, 0xC000, 0x800)}}
+# Witnesses: neither address is ever read (the source stops at $C371 and the buffer
+# page is $C0 then $AA), so $55 can only become $AA by being written. $D000 is output
+# byte 45057 and $FF80 is 57217, both far past the 256 an 8-bit counter would stop at.
+AA_SEED[0xD000] = b"\x55"
+AA_SEED[0xFF80] = b"\x55"
+AA_SRAM = {bank: {at: b"\xaa" * 0x800 for at in range(0xA000, 0xC000, 0x800)}
+           for bank in range(4)}
 # The state block itself is not checked: the sweep does overwrite it, but every later
 # .Decompress call writes its own fields again, so its final value is not derivable.
 
@@ -156,16 +167,15 @@ CASES = {
         {"b": 0x01, "c": 0x01, "d": OUT_LIT >> 8, "e": OUT_LIT & 0xFF,
          "wram": {SRC_LIT: LITERAL, STATE: state(src=SRC_LIT)},
          "read": {OUT_LIT: 0x101, BUF: 0x100}},
-        {"b": 0x00, "c": 0x00, "d": 0xDE, "e": 0x00, "oracle": False,
+        {"b": 0x00, "c": 0x00, "d": 0x20, "e": 0x00, "oracle": False,
          "why": "bc == 0 is 65536 output bytes: it overwrites the whole address "
                 "space, including the oracle's synthesized call frame and stack, "
                 "so no emulator run can survive it",
          "wram": AA_SEED,
          "sram": AA_SRAM,
          "expect": {
-             0xDE00: b"\xaa",       # first output byte
-             0x9000: b"\xaa" * 16,  # $55 until output byte 45569
-             0x9FF0: b"\xaa" * 16,  # $55 until output byte 49649
+             0xD000: b"\xaa",  # seeded $55; written as output byte 45057
+             0xFF80: b"\xaa",  # seeded $55; written as output byte 57217
          }},
     ],
     "DecompressData.Decompress": [

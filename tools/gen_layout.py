@@ -9,6 +9,13 @@ guess either way would be wrong for half the symbols:
     #define wRNG1_ADDR 0xCACAu
     #define wRNG1      (*(uint8_t *)(g_wram + (0xCACAu - 0xC000u)))
     #define wRNG1_PTR  ((uint8_t  *)(g_wram + (0xCACAu - 0xC000u)))
+
+sram additionally accepts banks 1-3 (the cart has 4 SRAM banks). A banked
+symbol has no valid flat lvalue under the single-window ``g_sram`` array, so
+it gets only two macros instead of three:
+
+    #define sBackupGeneralSaveData_ADDR 0xB800u
+    #define sBackupGeneralSaveData_BANK 2u
 """
 
 from __future__ import annotations
@@ -22,11 +29,11 @@ SYM_RE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
 # Trailing block of the .sym: bare `<hex> Label` text IDs, not addresses.
 TEXTID_RE = re.compile(r"^[0-9A-Fa-f]{1,4}\s+\S+\s*$")
 
-# region, base, end (inclusive), backing array, array size
+# region, base, end (inclusive), backing array, array size, max bank
 REGIONS = [
-    ("wram", 0xC000, 0xDFFF, "g_wram", 0x2000),
-    ("hram", 0xFF80, 0xFFFE, "g_hram", 0x80),
-    ("sram", 0xA000, 0xBFFF, "g_sram", 0x8000),
+    ("wram", 0xC000, 0xDFFF, "g_wram", 0x2000, 0),
+    ("hram", 0xFF80, 0xFFFE, "g_hram", 0x80, 0),
+    ("sram", 0xA000, 0xBFFF, "g_sram", 0x8000, 3),
 ]
 
 HEADER = """\
@@ -67,32 +74,38 @@ def parse(sym_path: Path) -> list[tuple[int, int, str]]:
     return out
 
 
-def emit(region: str, base: int, end: int, array: str, size: int,
+def emit(region: str, base: int, end: int, array: str, size: int, max_bank: int,
          syms: list[tuple[int, int, str]], sym_path: Path, out_dir: Path) -> int:
-    seen: dict[str, int] = {}
-    rows: list[tuple[str, int]] = []
+    seen: dict[str, tuple[int, int]] = {}
+    rows: list[tuple[int, str, int]] = []
     for bank, addr, name in syms:
-        if bank != 0 or not (base <= addr <= end):
+        if not (0 <= bank <= max_bank) or not (base <= addr <= end):
             continue
         if name in seen:
-            if seen[name] != addr:
+            if seen[name] != (bank, addr):
+                prev_bank, prev_addr = seen[name]
                 raise SystemExit(
-                    f"symbol {name} appears at both ${seen[name]:04X} and ${addr:04X}")
+                    f"symbol {name} appears at both {prev_bank:02d}:${prev_addr:04X} "
+                    f"and {bank:02d}:${addr:04X}")
             continue
-        seen[name] = addr
-        rows.append((name, addr))
+        seen[name] = (bank, addr)
+        rows.append((bank, name, addr))
 
-    rows.sort(key=lambda r: (r[1], r[0]))
-    high = max((a for _, a in rows), default=base)
+    rows.sort(key=lambda r: (r[0], r[2], r[1]))
+    high = max((a for bank, _, a in rows if bank == 0), default=base)
 
     guard = region.upper()
     body = [HEADER.format(sym=sym_path.name, GUARD=guard)]
-    width = max((len(n) for n, _ in rows), default=1)
-    for name, addr in rows:
-        off = f"(0x{addr:04X}u - 0x{base:04X}u)"
-        body.append(f"#define {name + '_ADDR':<{width + 5}} 0x{addr:04X}u\n")
-        body.append(f"#define {name:<{width + 5}} (*(uint8_t *)({array} + {off}))\n")
-        body.append(f"#define {name + '_PTR':<{width + 5}} ((uint8_t *)({array} + {off}))\n")
+    width = max((len(n) for _, n, _ in rows), default=1)
+    for bank, name, addr in rows:
+        if bank == 0:
+            off = f"(0x{addr:04X}u - 0x{base:04X}u)"
+            body.append(f"#define {name + '_ADDR':<{width + 5}} 0x{addr:04X}u\n")
+            body.append(f"#define {name:<{width + 5}} (*(uint8_t *)({array} + {off}))\n")
+            body.append(f"#define {name + '_PTR':<{width + 5}} ((uint8_t *)({array} + {off}))\n")
+        else:
+            body.append(f"#define {name + '_ADDR':<{width + 5}} 0x{addr:04X}u\n")
+            body.append(f"#define {name + '_BANK':<{width + 5}} {bank}u\n")
     body.append(FOOTER.format(high=f"0x{high:04X}", base=f"0x{base:04X}", size=f"0x{size:X}",
                               region=region, array=array, GUARD=guard))
 
@@ -114,8 +127,8 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
 
     syms = parse(args.sym)
-    for region, base, end, array, size in REGIONS:
-        n = emit(region, base, end, array, size, syms, args.sym, args.out)
+    for region, base, end, array, size, max_bank in REGIONS:
+        n = emit(region, base, end, array, size, max_bank, syms, args.sym, args.out)
         print(f"gen_layout: {region}.h  {n} symbols")
     return 0
 

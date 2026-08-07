@@ -1,0 +1,6 @@
+#ifndef POKETCG_HOME_CLEAR_SAVED_DUEL_H
+#define POKETCG_HOME_CLEAR_SAVED_DUEL_H
+
+void ClearSavedDuel(void);
+
+#endif /* POKETCG_HOME_CLEAR_SAVED_DUEL_H */

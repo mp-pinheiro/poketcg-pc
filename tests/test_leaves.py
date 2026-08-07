@@ -7,7 +7,8 @@ port cannot pick the inputs that make it look correct. Each case module exports:
     CONTRACT = {"<pret symbol>": ("a", "b", "c", "d", "e", "hl")}   # fields to diff
     CASES    = {"<pret symbol>": [ {"a":..., "wram": {addr: bytes}}, ... ]}
 
-Every address a case supplies under "wram" is read back and diffed too. A routine
+Every address a case supplies under "wram" is read back and diffed too, and every
+span under a bank in "sram" is read back and diffed against that bank. A routine
 listed in tests/routines.py with no cases fails; it is never reported as a pass.
 """
 
@@ -51,7 +52,8 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
     return cases, contracts
 
 
-def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int]) -> dict:
+def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
+               sreads: dict[int, dict[int, int]] | None = None) -> dict:
     req = {"fn": fn}
     for r in REGS:
         req[r] = int(case.get(r, 0))
@@ -62,6 +64,13 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int]) -> dict:
             str(b): {str(a): bytes(d).hex() for a, d in sp.items()}
             for b, sp in case["sram"].items()
         }
+    if sreads:
+        req["sread"] = {
+            str(bank): {str(addr): n for addr, n in spans.items()}
+            for bank, spans in sreads.items()
+        }
+    if case.get("ramg") is not None:
+        req["ramg"] = 1 if case["ramg"] else 0
     out = subprocess.run([str(probe)], input=json.dumps(req), capture_output=True, text=True)
     if out.returncode != 0 and not out.stdout.strip():
         raise RuntimeError(f"probe failed ({out.returncode}): {out.stderr.strip()}")
@@ -101,10 +110,16 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
         d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0),
         wram=case.get("wram"),
         sram=case.get("sram"),
+        ramg=case.get("ramg"),
     )
     reads = {addr: len(data) for addr, data in case.get("wram", {}).items()}
     reads.update(case.get("read", {}))
-    got = run_probe(probe, fn, case, reads)
+    sreads: dict[int, dict[int, int]] = {}
+    for bank, spans in case.get("sread", {}).items():
+        sreads.setdefault(bank, {}).update(spans)
+    for bank, spans in case.get("sram", {}).items():
+        sreads.setdefault(bank, {}).update({addr: len(data) for addr, data in spans.items()})
+    got = run_probe(probe, fn, case, reads, sreads)
 
     for field in fields:
         want, have = getattr(ref, field), got[field]
@@ -116,14 +131,28 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
         have = bytes.fromhex(got["wram"][str(addr)])
         if want != have:
             bad.append(f"${addr:04X}: oracle {want.hex()} != C {have.hex()}")
+    for bank in sorted(sreads):
+        for addr, n in sorted(sreads[bank].items()):
+            want = ref.mem(addr, n, bank=bank)
+            have = bytes.fromhex(got["sram"][str(bank)][str(addr)])
+            if want != have:
+                bad.append(f"sram{bank}:${addr:04X}: oracle {want.hex()} != C {have.hex()}")
     return bad
 
 
 def describe(case: dict) -> str:
     regs = " ".join(f"{r}=${case[r]:X}" for r in REGS if case.get(r))
     mem = " ".join(f"${a:04X}={bytes(d).hex()}" for a, d in case.get("wram", {}).items())
+    # sram/sread spans too: several routines have cases whose entire input is an sram
+    # seed, and without these they all print as "all-zero" and cannot be told apart.
+    sram = " ".join(f"sram{b}:${a:04X}={bytes(d).hex()}"
+                    for b, sp in case.get("sram", {}).items() for a, d in sp.items())
+    sread = " ".join(f"sread{b}:${a:04X}+{n}"
+                     for b, sp in case.get("sread", {}).items() for a, n in sp.items())
+    latch = "" if case.get("ramg") is None else f"ramg={int(bool(case['ramg']))}"
     tag = "" if case.get("oracle", True) else "[c-only] "
-    return tag + (" ".join(x for x in (regs, mem) if x) or "all-zero")
+    parts = [x for x in (regs, mem, sram, sread, latch) if x]
+    return tag + (" ".join(parts) or "all-zero")
 
 
 def main() -> int:

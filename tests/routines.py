@@ -16,6 +16,17 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
     "write_number": ("TwoByteNumberToText",),
     "clear_sram_bg_maps": ("ClearSRAMBGMaps",),
+    "clear_saved_duel": ("ClearSavedDuel",),
+    "card_collection": ("CreateTempCardCollection", "AddCardToCollection",
+                        "GetCardAlbumProgress"),
+    "save": ("CopyGeneralSaveDataToSRAM", "ValidateGeneralSaveDataFromDE",
+             "LoadGeneralSaveDataFromDE", "WriteDataToBackup", "LoadDataFromBackup",
+             "WriteBackupGeneralSaveData", "WriteBackupCardAndDeckSaveData",
+             "LoadBackupGeneralSaveData", "LoadBackupCardAndDeckSaveData",
+             "InvalidateSaveData", "UpdateAlbumProgress", "LoadAlbumProgressFromSRAM",
+             "LoadBackupSaveData", "_LoadGeneralSaveData",
+             "_AddCardToCollectionAndUpdateAlbumProgress",
+             "ValidateBackupGeneralSaveData", "_ValidateGeneralSaveData"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

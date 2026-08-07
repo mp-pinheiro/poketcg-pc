@@ -103,10 +103,26 @@ uint8_t gb_read8(uint16_t addr)
 	return *gb_ptr(addr);
 }
 
+/* MBC5 register decode, mirroring PyBoy's MBC5.setitem exactly (PyBoy is the oracle).
+ * RAMG is an exact byte compare, not a low-nibble mask: PyBoy checks the whole byte.
+ * $3000-$3FFF (the ROM bank's 9th bit) and $6000-$7FFF are no-ops on this cart: it has
+ * 64 banks, so (v & 1) << 8 always vanishes under the resulting modulo. */
+void mbc5_write(uint16_t addr, uint8_t v)
+{
+	if (addr < 0x2000)
+		g_sram_enabled = (v == 0x0A);
+	else if (addr < 0x3000)
+		g_rom_bank = v % 64;
+	else if (addr >= 0x4000 && addr < 0x6000)
+		g_sram_bank = (v & 0x0F) % 4;
+}
+
 void gb_write8(uint16_t addr, uint8_t v)
 {
-	if (addr < 0x8000)
-		return; /* ROM: MBC register writes are modelled by BankswitchROM */
+	if (addr < 0x8000) {
+		mbc5_write(addr, v);
+		return;
+	}
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return;
 	*gb_ptr(addr) = v;

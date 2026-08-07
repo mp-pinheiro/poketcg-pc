@@ -3,14 +3,19 @@
  *   in : {"fn":"UpdateRNGSources","a":170,"f":240,"b":187,"c":204,"d":221,"e":238,
  *         "hl":4660,"wram":{"51914":"12","51915":"34","51916":"56"}}
  *   out: {"a":196,"f":0,"b":187,"c":204,"d":221,"e":238,"hl":4660,
- *         "wram":{"51914":"88","51915":"4c","51916":"57"}}
+ *         "wram":{"51914":"88","51915":"4c","51916":"57"},"sram":{}}
  *
  * "wram" keys are decimal Game Boy addresses and values are lowercase hex byte
  * strings of any even length; writes and read-back go through the whole bus, so
  * HRAM (hBankROM = 65408) and SRAM work through the same field. An optional
  * "read" object maps decimal addresses to byte counts read back after the call
- * without seeding them first. The response echoes every requested span, in
- * request order, under "wram".
+ * without seeding them first. "sram" seeds a bank explicitly:
+ * {"sram":{"<bank 0-3>":{"<decimal addr>":"<hex>"}}}, writing g_sram directly so
+ * the seed does not depend on g_sram_bank/g_sram_enabled at request time. An
+ * optional "sread" object, {"sread":{"<bank>":{"<decimal addr>":<count>}}}, reads
+ * banked SRAM back after the call the same way, independent of the bank/enable
+ * latch at return. The response echoes every requested span, in request order,
+ * under "wram"; sread spans come back grouped by bank under "sram", after "wram".
  */
 
 #include <stdio.h>
@@ -20,11 +25,17 @@
 #include "mem.h"
 #include "probe.h"
 
-#define MAX_SPANS 64
+#define MAX_SPANS 256
 #define MAX_SPAN_BYTES 8192
 #define MAX_NAME 96
 
 struct span {
+	uint16_t addr;
+	uint16_t len;
+};
+
+struct sread_span {
+	uint8_t bank;
 	uint16_t addr;
 	uint16_t len;
 };
@@ -156,6 +167,9 @@ int main(void)
 	char fn[MAX_NAME] = { 0 };
 	struct span spans[MAX_SPANS];
 	size_t nspans = 0;
+	struct sread_span sreads[MAX_SPANS];
+	size_t nsreads = 0;
+	int ramg = -1; /* -1 = leave whatever the seeds left; 0/1 = force the latch */
 	ProbeState st = { 0 };
 
 	mem_reset();
@@ -186,6 +200,11 @@ int main(void)
 				st.e = (uint8_t)jnum();
 			} else if (strcmp(key, "hl") == 0) {
 				st.hl = (uint16_t)jnum();
+			} else if (strcmp(key, "ramg") == 0) {
+				/* Applied after every seed, whatever the key order: the "sram"
+				 * seed enables the latch as a side effect, so this is the only
+				 * way to enter with non-zero SRAM and the latch off. */
+				ramg = jnum() != 0;
 			} else if (strcmp(key, "wram") == 0) {
 				need('{');
 				if (!eat('}')) {
@@ -196,7 +215,7 @@ int main(void)
 						size_t hn = jstr(hex, sizeof hex);
 						if (hn % 2)
 							die("wram value needs an even hex digit count");
-						if (nspans == MAX_SPANS)
+						if (nspans + nsreads == MAX_SPANS)
 							die("too many wram spans");
 						uint16_t at = (uint16_t)strtoul(addr_s, NULL, 10);
 						for (size_t i = 0; i < hn; i += 2) {
@@ -222,7 +241,7 @@ int main(void)
 						long n = jnum();
 						if (n < 0 || n > MAX_SPAN_BYTES / 2)
 							die("read length out of range");
-						if (nspans == MAX_SPANS)
+						if (nspans + nsreads == MAX_SPANS)
 							die("too many wram spans");
 						spans[nspans].addr =
 							(uint16_t)strtoul(addr_s, NULL, 10);
@@ -268,6 +287,40 @@ int main(void)
 					} while (eat(','));
 					need('}');
 				}
+			} else if (strcmp(key, "sread") == 0) {
+				need('{');
+				if (!eat('}')) {
+					do {
+						char bank_s[MAX_NAME];
+						jstr(bank_s, sizeof bank_s);
+						need(':');
+						unsigned bank = (unsigned)strtoul(bank_s, NULL, 10);
+						if (bank > 3)
+							die("sread bank out of range");
+						need('{');
+						if (!eat('}')) {
+							do {
+								char addr_s[MAX_NAME];
+								jstr(addr_s, sizeof addr_s);
+								need(':');
+								long n = jnum();
+								if (n < 0 || n > MAX_SPAN_BYTES / 2)
+									die("sread length out of range");
+								uint16_t at = (uint16_t)strtoul(addr_s, NULL, 10);
+								if (at < 0xA000 || (size_t)at + (size_t)n > 0xC000)
+									die("sread span outside $A000-$BFFF");
+								if (nspans + nsreads == MAX_SPANS)
+									die("too many wram spans");
+								sreads[nsreads].bank = (uint8_t)bank;
+								sreads[nsreads].addr = at;
+								sreads[nsreads].len = (uint16_t)n;
+								nsreads++;
+							} while (eat(','));
+							need('}');
+						}
+					} while (eat(','));
+					need('}');
+				}
 			} else {
 				jskip();
 			}
@@ -283,6 +336,9 @@ int main(void)
 		return 1;
 	}
 
+	if (ramg >= 0)
+		g_sram_enabled = ramg;
+
 	call(&st);
 
 	printf("{\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,\"wram\":{",
@@ -292,6 +348,26 @@ int main(void)
 		for (uint16_t k = 0; k < spans[i].len; k++)
 			printf("%02x", *gb_ptr((uint16_t)(spans[i].addr + k)));
 		printf("\"");
+	}
+	printf("},\"sram\":{");
+	{
+		int first_bank = 1;
+		for (size_t i = 0; i < nsreads;) {
+			size_t j = i;
+			printf("%s\"%u\":{", first_bank ? "" : ",", sreads[i].bank);
+			first_bank = 0;
+			for (int first_entry = 1; j < nsreads && sreads[j].bank == sreads[i].bank; j++, first_entry = 0) {
+				printf("%s\"%u\":\"", first_entry ? "" : ",", sreads[j].addr);
+				/* Direct g_sram index, not gb_ptr: must bypass g_sram_bank /
+				 * g_sram_enabled, matching PyBoy's rambanks[bank, x] capture. */
+				for (uint16_t k = 0; k < sreads[j].len; k++)
+					printf("%02x", g_sram[(size_t)sreads[j].bank * 0x2000 +
+							       (sreads[j].addr - 0xA000) + k]);
+				printf("\"");
+			}
+			printf("}");
+			i = j;
+		}
 	}
 	printf("}}\n");
 

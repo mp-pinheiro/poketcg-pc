@@ -8,5 +8,5 @@
 void BankswitchROM(uint8_t bank)
 {
 	hBankROM = bank;
-	g_rom_bank = bank;
+	mbc5_write(0x2000, bank);
 }

@@ -39,6 +39,17 @@ SRAM_BASE, SRAM_END = 0xA000, 0xC000
 MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 
 
+def _read_bank(pb: PyBoy, bank: int) -> bytes:
+    """One whole 8 KiB cartridge RAM bank, bypassing the RAMG gate.
+
+    PyBoy's banked reader bounds the slice with `stop < 0x2000` while its writer uses
+    `stop <= 0x2000`, so a full $A000-$BFFF slice raises. Read all but the last byte as
+    a slice and fetch $BFFF on its own.
+    """
+    body = pb.memory[bank, SRAM_BASE:SRAM_END - 1]
+    return bytes(body) + bytes([pb.memory[bank, SRAM_END - 1]])
+
+
 @dataclass
 class Result:
     a: int
@@ -53,8 +64,16 @@ class Result:
     wram: bytes = field(repr=False)
     hram: bytes = field(repr=False)
     sram: bytes = field(repr=False)
+    sram_banks: tuple[bytes, ...] = field(repr=False)
 
-    def mem(self, addr: int, n: int = 1) -> bytes:
+    def mem(self, addr: int, n: int = 1, *, bank: int | None = None) -> bytes:
+        if bank is not None:
+            if not (SRAM_BASE <= addr and addr + n <= SRAM_END):
+                raise ValueError(
+                    f"bank={bank} is only valid for SRAM addresses (${SRAM_BASE:04X}-"
+                    f"${SRAM_END - 1:04X}), not ${addr:04X}+{n}")
+            off = addr - SRAM_BASE
+            return self.sram_banks[bank][off:off + n]
         if WRAM_BASE <= addr and addr + n <= WRAM_END:
             off = addr - WRAM_BASE
             return self.wram[off:off + n]
@@ -108,6 +127,7 @@ class Oracle:
             wram=bytes(pb.memory[WRAM_BASE:WRAM_END]),
             hram=bytes(pb.memory[HRAM_BASE:HRAM_END]),
             sram=bytes(pb.memory[SRAM_BASE:SRAM_END]),
+            sram_banks=tuple(_read_bank(pb, bank) for bank in range(4)),
         )
         rf.PC = SPIN
 
@@ -127,6 +147,11 @@ class Oracle:
         pb.memory[HRAM_BASE:HRAM_END] = [0] * (HRAM_END - HRAM_BASE)
         pb.memory[0xFF0F] = 0  # IF
         pb.memory[0xFF50] = 0x11  # unmap the boot ROM
+        # One Oracle instance serves the whole run; the banked setter writes
+        # rambanks[bank, x] directly (bypassing RAMG), so every bank is cleared
+        # here regardless of which one is selected, matching mem_reset() on the C side.
+        for bank in range(4):
+            pb.memory[bank, SRAM_BASE:SRAM_END] = 0
         # Writes below $8000 are MBC commands, not memory writes, so a routine that
         # walks the whole address space (a 64 KiB copy) leaves the cartridge banked
         # somewhere else. Restore MBC5 power-on state so cases cannot leak into
@@ -139,7 +164,8 @@ class Oracle:
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
              wram: dict[int, bytes] | None = None,
-             sram: dict[int, dict[int, bytes]] | None = None) -> Result:
+             sram: dict[int, dict[int, bytes]] | None = None,
+             ramg: bool | None = None) -> Result:
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
 
@@ -158,6 +184,12 @@ class Oracle:
             for at, data in spans.items():
                 for i, byte in enumerate(data):
                     pb.memory[at + i] = byte
+
+        # Seeding SRAM enables the latch as a side effect, so a case that needs to
+        # enter with non-zero SRAM and RAM disabled -- the only way a routine's own
+        # EnableSRAM becomes observable -- forces it back here, after every seed.
+        if ramg is not None:
+            pb.memory[0x0000] = 0x0A if ramg else 0x00
 
         # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
         # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
