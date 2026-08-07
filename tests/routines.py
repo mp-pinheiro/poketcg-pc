@@ -80,6 +80,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                 "DisableInt_LYCoincidence"),
     "load_animation": ("GetFirstSpriteAnimBufferProperty", "GetSpriteAnimBufferProperty",
                         "GetSpriteAnimBufferProperty_SpriteInA", "Func_3ddb", "Func_3de7"),
+    "play_animation": ("CheckAnyAnimationPlaying", "SetDoFrameFunction", "ResetDoFrameFunction"),
     "damage": ("AddToDamage",),
     "objects": ("SetOneObjectAttributes", "ZeroObjectPositions"),
     "time": ("IncrementPlayTimeCounter", "CheckForCGB"),

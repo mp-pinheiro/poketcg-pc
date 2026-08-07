@@ -1,0 +1,30 @@
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+ACTIVE = 0xD42A
+WD4C0 = 0xD4C0
+QUEUE = 0xD423
+DO_FRAME_FUNCTION = 0xCAD3
+
+CONTRACT = {
+    "CheckAnyAnimationPlaying": ("a", "f", "b", "c", "d", "e", "hl"),
+    "SetDoFrameFunction": ("a", "f", "b", "c", "d", "e", "hl"),
+    "ResetDoFrameFunction": ("a", "f", "b", "c", "d", "e", "hl"),
+}
+
+ALL_FF = {ACTIVE: b"\xff", WD4C0: b"\xff", QUEUE: b"\xff" * 7}
+ONE_ACTIVE = {ACTIVE: b"\xff", WD4C0: b"\xff", QUEUE: b"\xff\xff\xff\xff\xff\xff\xfe"}
+
+CASES = {
+    "CheckAnyAnimationPlaying": [
+        {"wram": ALL_FF},
+        dict(POISON, wram=ONE_ACTIVE),
+    ],
+    "SetDoFrameFunction": [
+        {"hl": 0x1234, "read": {DO_FRAME_FUNCTION: 2}},
+        dict(POISON, hl=0x0000, read={DO_FRAME_FUNCTION: 2}),
+    ],
+    "ResetDoFrameFunction": [
+        {"hl": 0x5678, "read": {DO_FRAME_FUNCTION: 2}},
+        dict(POISON, hl=0xABCD, read={DO_FRAME_FUNCTION: 2}),
+    ],
+}
