@@ -18,6 +18,7 @@ CONTRACT = {
     "ContinueDrawingTextBoxCGB": ("b", "hl"),
     "CopyCurrentLineTilesAndAttrCGB": ("b", "hl"),
     "CopyCurrentLineAttrCGB": ("b", "hl"),
+    "DrawLabeledTextBox": ("b", "hl"),
 }
 
 CASES = {
@@ -93,3 +94,23 @@ CASES = {
     ],
 
 }
+
+CASES.update({
+    # The text engine keeps its generated tiles in a linked list across $C6-$C9;
+    # Func_235e walks it and only terminates because index 0 holds a zero key.
+    # SetupText is what establishes that, so it runs as a prelude -- without it the
+    # walk finds next[0] == 0, treats node 0 as its own successor, and never returns.
+    "DrawLabeledTextBox": [
+        {"hl": 0, "b": 20, "c": 6, "d": 0, "e": 0,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "wram": {0xCAB4: b"\x00", 0xCABB: b"\x00", 0xFF97: b"\x00"},
+         "sram": {0: {0xA010: b"\x41\x42\x00"}},
+         "read": {0x9800: 192, 0xFFAA: 2, 0xFFA9: 1, 0xFFB0: 1, 0xC000: 8}},
+        dict(POISON, hl=0, b=20, c=6, d=0, e=0,
+             setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+             wram={0xCAB4: b"\x02", 0xCCF3: b"\x03", 0xCABB: b"\x00", 0xFF97: b"\x00"},
+             sram={0: {0xA010: b"\x41\x42\x00"}},
+             read={0x9800: 192},
+             vread={0: {0x9800: 192}, 1: {0x9800: 192}}),
+    ],
+})

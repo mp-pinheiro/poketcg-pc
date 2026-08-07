@@ -177,13 +177,45 @@ class Oracle:
         pb.memory[0x3000] = 0x00  # ROM bank high
         pb.memory[0x4000] = 0x00  # SRAM bank
 
+    def _run(self, symbol: str, regs: dict) -> Result:
+        """Drive one routine to the sentinel, leaving RAM exactly as it lands."""
+        pb = self.pyboy
+        fn_bank, addr = pb.symbol_lookup(symbol)
+
+        if fn_bank != 0:
+            pb.memory[0x2000] = fn_bank & 0xFF
+            pb.memory[0x3000] = (fn_bank >> 8) & 1
+        pb.memory[SPIN] = 0x18  # jr
+        pb.memory[SPIN + 1] = 0xFE  # -2
+        pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
+        pb.memory[STACK_TOP - 1] = SENTINEL >> 8
+
+        rf = pb.register_file
+        rf.SP = STACK_TOP - 2
+        rf.PC = addr
+        rf.A = regs.get("a", 0)
+        rf.F = regs.get("f", 0)
+        rf.B = regs.get("b", 0)
+        rf.C = regs.get("c", 0)
+        rf.D = regs.get("d", 0)
+        rf.E = regs.get("e", 0)
+        rf.HL = regs.get("hl", 0)
+
+        self._hit = None
+        self._arm()
+        for _ in range(MAX_FRAMES):
+            pb.tick(1, False, False)
+            if self._hit is not None:
+                return self._hit
+        raise OracleError(f"{symbol} did not return within {MAX_FRAMES} frames")
+
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
              wram: dict[int, bytes] | None = None,
              sram: dict[int, dict[int, bytes]] | None = None,
-             ramg: bool | None = None) -> Result:
+             ramg: bool | None = None,
+             setup: list[dict] | None = None) -> Result:
         pb = self.pyboy
-        fn_bank, addr = pb.symbol_lookup(symbol)
 
         self._reset_ram()
         for at, data in (wram or {}).items():
@@ -207,26 +239,14 @@ class Oracle:
         if ramg is not None:
             pb.memory[0x0000] = 0x0A if ramg else 0x00
 
+        # Some routines need warm state that a single call cannot build -- the text
+        # engine's tile cache is a linked list only SetupText makes acyclic. Each
+        # setup routine runs to completion here, after every seed, and whatever it
+        # leaves in RAM is the entry state for the routine under test.
+        for pre in setup or []:
+            self._run(pre["fn"], pre)
+
         # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
         # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
         # jumping in. Home-bank (0) routines already sit in the always-mapped $0000-$3FFF.
-        if fn_bank != 0:
-            pb.memory[0x2000] = fn_bank & 0xFF
-            pb.memory[0x3000] = (fn_bank >> 8) & 1
-        pb.memory[SPIN] = 0x18  # jr
-        pb.memory[SPIN + 1] = 0xFE  # -2
-        pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
-        pb.memory[STACK_TOP - 1] = SENTINEL >> 8
-
-        rf = pb.register_file
-        rf.SP = STACK_TOP - 2
-        rf.PC = addr
-        rf.A, rf.F, rf.B, rf.C, rf.D, rf.E, rf.HL = a, f, b, c, d, e, hl
-
-        self._hit = None
-        self._arm()
-        for _ in range(MAX_FRAMES):
-            pb.tick(1, False, False)
-            if self._hit is not None:
-                return self._hit
-        raise OracleError(f"{symbol} did not return within {MAX_FRAMES} frames")
+        return self._run(symbol, {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl})

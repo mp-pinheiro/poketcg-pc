@@ -12,6 +12,7 @@
 #define SYM_SPACE 0x00
 #define SYM_0 0x20
 #define FW_SPACE 0x70
+#define TX_HALF2FULL 0x07
 #define TX_HALFWIDTH 0x06
 #define TX_HIRAGANA 0x0e
 #define TX_KATAKANA 0x0f
@@ -272,39 +273,54 @@ ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 		if (key == e && gb_read8((uint16_t)(0xc700u + i)) == d) break;
 		i = gb_read8((uint16_t)(0xc800u + i));
 	}
-	if (hffa9 != i) {
-		uint8_t old = hffa9;
-		uint8_t prev = gb_read8((uint16_t)(0xc900u + i));
-		gb_write8((uint16_t)(0xc900u + old), i);
-		hffa9 = i;
-		gb_write8((uint16_t)(0xc900u + i), 0);
-		uint8_t next = gb_read8((uint16_t)(0xc800u + i));
-		gb_write8((uint16_t)(0xc800u + i), old);
-		gb_write8((uint16_t)(0xc800u + prev), next);
-		if (next) gb_write8((uint16_t)(0xc900u + next), prev);
-	}
-	return text_result(hffa9, d, e, 0x10, 0);
+	/* Already the head: `cp l` leaves Z, and the relink is skipped. */
+	if (hffa9 == i)
+		return text_result(i, d, e, 0x90, 0);
+
+	uint8_t old = hffa9;
+	uint8_t prev = gb_read8((uint16_t)(0xc900u + i));
+	uint8_t next = gb_read8((uint16_t)(0xc800u + i));
+
+	gb_write8((uint16_t)(0xc900u + old), i);
+	hffa9 = i;
+	gb_write8((uint16_t)(0xc900u + i), 0);
+	gb_write8((uint16_t)(0xc800u + i), old);
+	gb_write8((uint16_t)(0xc800u + prev), next);
+	if (next)
+		gb_write8((uint16_t)(0xc900u + next), prev);
+	/* `ld a, c` puts the OLD head back in a before the exit -- the trailing comment
+	 * in the asm claims the new one. `inc c / dec c` sets Z from next[i], and the
+	 * following `scf` leaves it alone. */
+	return text_result(old, d, e, (uint8_t)(0x10 | (next ? 0 : 0x80)), 0);
 }
 
 ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 {
 	ProcessTextResult found = Func_235e(d, e);
-	if (found.f & 0x10 || found.a) return found;
+
+	if (found.f & 0x10 || found.a)
+		return found;
+
 	uint8_t index;
+
 	if (hffa8 == wcd04) {
+		/* cache full: walk to the tail and reuse that node */
 		index = hffa9;
 		while (gb_read8((uint16_t)(0xc800u + index)))
 			index = gb_read8((uint16_t)(0xc800u + index));
-		uint8_t prev = gb_read8((uint16_t)(0xc900u + index));
-		gb_write8((uint16_t)(0xc800u + prev), 0);
-		index = prev;
+		gb_write8((uint16_t)(0xc800u + gb_read8((uint16_t)(0xc900u + index))), 0);
 	} else {
+		/* allocate the next node, stepping over index 0: it is the terminator */
 		wcd04++;
-		if (!wcd04) wcd04++;
+		if (!wcd04)
+			wcd04++;
 		index = wcd04;
 	}
+
 	uint8_t old = hffa9;
-	gb_write8((uint16_t)(0xc900u + index), 0);
+
+	hffa9 = index;
+	gb_write8((uint16_t)(0xc900u + old), index);
 	gb_write8((uint16_t)(0xc800u + index), old);
 	gb_write8((uint16_t)(0xc600u + index), e);
 	gb_write8((uint16_t)(0xc700u + index), d);
@@ -352,42 +368,69 @@ ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
 	return text_result(0, d, e, 0, hl);
 }
 
+/* hTextBGMap0Address is a 16-bit pair at $FFAA/$FFAB; the asm carries the low-byte
+ * add into the high byte with `adc $0`. */
+static void next_line(void)
+{
+	uint8_t b = (uint8_t)(hTextHorizontalAlign + 32u);
+	uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + b);
+
+	hTextLineCurPos = 0;
+	hTextBGMap0Address = (uint8_t)bg;
+	gb_write8(0xffabu, (uint8_t)(gb_read8(0xffabu) + (bg >> 8)));
+	wCurTextLine++;
+}
+
+/* `call z, .next_line` falls through into .next_line, so a DOUBLE_SPACED line
+ * advances twice. */
+static void end_of_line(uint16_t hl)
+{
+	TerminateHalfWidthText(0, 0, hl);
+	if (!wLineSeparation)
+		next_line();
+	next_line();
+}
+
 ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)
 {
-	if (!a) return text_result(0, 0, 0, 0, hl);
-	if (a == TX_HIRAGANA || a == TX_KATAKANA) {
-		hJapaneseSyllabary = a;
-		return text_result(0, 0, 0, 0, hl);
-	}
-	if (a == '\n') {
-		TerminateHalfWidthText(0, 0, hl);
-		if (!wLineSeparation) {
-			hTextLineCurPos = 0;
-			uint8_t x = (uint8_t)(hTextHorizontalAlign + 32);
-			uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + x);
-			hTextBGMap0Address = (uint8_t)bg;
-			gb_write8(0xffabu, (uint8_t)(bg >> 8));
-			wCurTextLine++;
+	if (a) {
+		if (a == TX_HIRAGANA || a == TX_KATAKANA) {
+			hJapaneseSyllabary = a;
+			return text_result(0, 0, 0, 0, hl);
 		}
-		hTextLineCurPos = 0;
-		uint8_t x = (uint8_t)(hTextHorizontalAlign + 32);
-		uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + x);
-		hTextBGMap0Address = (uint8_t)bg;
-		gb_write8(0xffabu, (uint8_t)(bg >> 8));
-		wCurTextLine++;
-		return text_result(0, 0, 0, 0, hl);
+		if (a == '\n') {
+			end_of_line(hl);
+			return text_result(0, 0, 0, 0, hl);
+		}
+		if (a == TX_SYMBOL) {
+			/* forced HALF_WIDTH so the pending half-width pair is flushed
+			 * before the symbol tile lands, then restored */
+			uint8_t saved = wFontWidth;
+
+			wFontWidth = 1;
+			TerminateHalfWidthText(0, 0, hl);
+			wFontWidth = saved;
+			if (!hffb0)
+				PlaceNextTextTile(gb_read8(hl));
+			hl++;
+			/* falls through to the shared line-length check */
+		} else if (a == TX_HALFWIDTH) {
+			wFontWidth = 1;
+			return text_result(1, 0, 0, 0, hl);
+		} else if (a == TX_HALF2FULL) {
+			TerminateHalfWidthText(0, 0, hl);
+			wFontWidth = 0;
+			hJapaneseSyllabary = TX_KATAKANA;
+			return text_result(TX_KATAKANA, 0, 0, 0, hl);
+		} else {
+			return text_result(a, 0, 0, 0x10, hl);
+		}
 	}
-	if (a == TX_HALFWIDTH) {
-		wFontWidth = 1;
-		return text_result(0, 0, 0, 0, hl);
-	}
-	if (a == 0x07) {
-		TerminateHalfWidthText(0, 0, hl);
-		wFontWidth = 0;
-		hJapaneseSyllabary = TX_KATAKANA;
-		return text_result(0, 0, 0, 0, hl);
-	}
-	return text_result(a, 0, 0, 0x10, hl);
+
+	/* .tx_end: TX_END and the symbol path share the end-of-line test */
+	if (hTextLineLength && hTextLineCurPos == hTextLineLength)
+		end_of_line(hl);
+	return text_result(0, 0, 0, 0, hl);
 }
 
 uint16_t SetupText(uint8_t d, uint8_t e)
@@ -427,7 +470,10 @@ static void process_text_core(uint16_t *hl)
 	uint8_t a;
 	while ((a = gb_read8((*hl)++)) != 0) {
 		if (a >= TX_CTRL_START && a < TX_CTRL_END) {
-			ProcessSpecialTextCharacter(a, *hl);
+			/* hl stays in a register across the asm's call, so whatever the
+			 * handler leaves there -- past any payload byte it consumed -- is
+			 * where the next character is read from. */
+			*hl = ProcessSpecialTextCharacter(a, *hl).hl;
 			continue;
 		}
 		uint8_t e = a;
@@ -435,7 +481,7 @@ static void process_text_core(uint16_t *hl)
 		uint8_t carry = ClassifyTextCharacterPair(&d, &e);
 		if (carry & 0x10) (*hl)++;
 		Func_22ca(d, e);
-		ProcessSpecialTextCharacter(0, *hl);
+		*hl = ProcessSpecialTextCharacter(0, *hl).hl;
 	}
 	TerminateHalfWidthText(0, 0, *hl);
 }

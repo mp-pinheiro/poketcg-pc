@@ -7,6 +7,15 @@
 #include "mem.h"
 #include "ppu.h"
 
+#define TX_SYMBOL 0x05
+#define TX_HALF2FULL 0x07
+#define TX_END 0x00
+#define SYM_BOX_TOP_L 0x18
+#define SYM_BOX_TOP_R 0x19
+#define SYM_BOX_TOP 0x1c
+#define FW_SPACE 0x70
+#define CONSOLE_CGB 0x02
+
 void SafeCopyDataDEtoHL(uint16_t *de, uint16_t *hl, uint8_t c)
 {
 	uint32_t count = c ? c : 0x100;
@@ -83,7 +92,7 @@ void DrawRegularTextBoxDMG(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 void DrawRegularTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e)
 {
-	if (wConsole == 2)
+	if (wConsole == CONSOLE_CGB)
 		DrawRegularTextBoxCGB(hl, a, b, c, d, e);
 	else
 		DrawRegularTextBoxDMG(hl, a, b, c, d, e);
@@ -145,3 +154,54 @@ void CopyCurrentLineAttrCGB(uint16_t *hl, uint8_t a, uint8_t b,
 	gb_write8(0xff4f, 0);
 }
 
+/* Draws a b x c box at de whose top border carries the text labelled by hl.
+ * The SGB colorisation tail (ColorizeTextBoxSGB) is dropped along with the rest of
+ * the SGB path, as DrawRegularTextBoxSGB and AttrBlkPacket_TextBox already are. */
+void DrawLabeledTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	uint16_t label = wLabeledTextBoxTopBorder_ADDR;
+
+	gb_write8(label++, TX_SYMBOL);
+	gb_write8(label++, SYM_BOX_TOP_L);
+	gb_write8(label++, FW_SPACE);
+
+	CopyTextResult copied = CopyText(*hl, label);
+	TextLength length = GetTextLengthInTiles((uint16_t)(wLabeledTextBoxTopBorder_ADDR + 3u));
+
+	/* GetTextLengthInTiles preserves de, so the asm's `ld l, e / ld h, d` picks up
+	 * CopyText's exit de -- the terminator it just wrote, not its source pointer. */
+	label = (uint16_t)((uint16_t)copied.d << 8 | copied.e);
+	gb_write8(label++, TX_HALF2FULL);
+	gb_write8(label++, FW_SPACE);
+
+	/* The `pop de` here pops the bc that was pushed, so d is the caller's width.
+	 * The subtraction is 8-bit, and the asm skips the run entirely when it is 0. */
+	uint8_t remaining = (uint8_t)(b - length.b - 4u);
+
+	if (remaining) {
+		do {
+			gb_write8(label++, TX_SYMBOL);
+			gb_write8(label++, SYM_BOX_TOP);
+		} while (--remaining);
+	}
+	gb_write8(label++, TX_SYMBOL);
+	gb_write8(label++, SYM_BOX_TOP_R);
+	gb_write8(label, TX_END);
+
+	InitTextPrinting(d, e);
+
+	uint16_t text = wLabeledTextBoxTopBorder_ADDR;
+
+	ProcessText(&text);
+
+	if (wConsole == CONSOLE_CGB) {
+		*hl = DECoordToBGMap0Address(d, e);
+		CopyCurrentLineAttrCGB(hl, a, b, d, e);
+		e++;
+		ContinueDrawingTextBoxCGB(hl, a, b, c, d, e);
+		return;
+	}
+	e++;
+	*hl = DECoordToBGMap0Address(d, e);
+	ContinueDrawingTextBoxDMGorSGB(hl, a, b, c, d, e);
+}

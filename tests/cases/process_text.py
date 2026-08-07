@@ -88,8 +88,37 @@ CASES.update({
     "ProcessSpecialTextCharacter": [{"a": 0, "hl": SRC},
                                      dict(POISON, a=0, hl=SRC)],
     "TerminateHalfWidthText": [{}, dict(POISON)],
-    "Func_235e": [{}, dict(POISON)],
-    "Func_2325": [{}, dict(POISON)],
+    # Both maintain the generated-tile cache as a linked list over $C6 key1,
+    # $C7 key2, $C8 next and $C9 prev, with index 0 reserved as the terminator.
+    # Without reading those pages back the list surgery is invisible, so each
+    # case warms the cache with SetupText and then diffs all four pages.
+    "Func_235e": [
+        {}, dict(POISON),
+        {"d": 0x41, "e": 0x42,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "read": {0xC600: 4, 0xC700: 4, 0xC800: 4, 0xC900: 4, 0xFFA9: 1}},
+    ],
+    "Func_2325": [
+        {}, dict(POISON),
+        # one miss allocates the first node past the reserved index 0
+        {"d": 0x41, "e": 0x42,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "read": {0xC620: 2, 0xC720: 2, 0xC820: 2, 0xC920: 2, 0xFFA9: 1,
+                  0xCD04: 1}},
+        # a second distinct pair allocates again and relinks the head
+        {"d": 0x43, "e": 0x44,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40},
+                   {"fn": "Func_2325", "d": 0x41, "e": 0x42}],
+         "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xFFA9: 1,
+                  0xCD04: 1}},
+        # repeating the first pair must hit the cache and hoist it, not allocate
+        {"d": 0x41, "e": 0x42,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40},
+                   {"fn": "Func_2325", "d": 0x41, "e": 0x42},
+                   {"fn": "Func_2325", "d": 0x43, "e": 0x44}],
+         "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xFFA9: 1,
+                  0xCD04: 1}},
+    ],
     # The zero-length path alone leaves the whole copy loop unexercised, so these
     # also drive: the early-TX_END fill, truncation at the budget, and a plain
     # control character (>= TX_CTRL_START, < TX_CTRL_END), which the asm copies

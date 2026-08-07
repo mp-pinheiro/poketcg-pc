@@ -28,6 +28,7 @@
 #define MAX_SPANS 256
 #define MAX_SPAN_BYTES 8192
 #define MAX_NAME 96
+#define MAX_SETUPS 8
 
 struct span {
 	uint16_t addr;
@@ -179,6 +180,11 @@ int main(void)
 	size_t nvreads = 0;
 	int ramg = -1; /* -1 = leave whatever the seeds left; 0/1 = force the latch */
 	ProbeState st = { 0 };
+	/* Routines that need warm state a single call cannot build -- the text engine's
+	 * tile cache, for one -- name the routines that establish it. Each runs after
+	 * every seed and before the routine under test, exactly as the oracle does. */
+	struct { char fn[MAX_NAME]; ProbeState st; } setups[MAX_SETUPS];
+	size_t nsetups = 0;
 
 	mem_reset();
 
@@ -213,6 +219,44 @@ int main(void)
 				 * seed enables the latch as a side effect, so this is the only
 				 * way to enter with non-zero SRAM and the latch off. */
 				ramg = jnum() != 0;
+			} else if (strcmp(key, "setup") == 0) {
+				need('[');
+				if (!eat(']')) {
+					do {
+						if (nsetups >= MAX_SETUPS)
+							die("too many setup calls");
+						memset(&setups[nsetups], 0, sizeof setups[0]);
+						need('{');
+						if (!eat('}')) {
+							do {
+								char sk[MAX_NAME];
+								jstr(sk, sizeof sk);
+								need(':');
+								if (strcmp(sk, "fn") == 0)
+									jstr(setups[nsetups].fn, MAX_NAME);
+								else if (strcmp(sk, "a") == 0)
+									setups[nsetups].st.a = (uint8_t)jnum();
+								else if (strcmp(sk, "f") == 0)
+									setups[nsetups].st.f = (uint8_t)jnum() & 0xF0;
+								else if (strcmp(sk, "b") == 0)
+									setups[nsetups].st.b = (uint8_t)jnum();
+								else if (strcmp(sk, "c") == 0)
+									setups[nsetups].st.c = (uint8_t)jnum();
+								else if (strcmp(sk, "d") == 0)
+									setups[nsetups].st.d = (uint8_t)jnum();
+								else if (strcmp(sk, "e") == 0)
+									setups[nsetups].st.e = (uint8_t)jnum();
+								else if (strcmp(sk, "hl") == 0)
+									setups[nsetups].st.hl = (uint16_t)jnum();
+								else
+									die("unknown setup key");
+							} while (eat(','));
+							need('}');
+						}
+						nsetups++;
+					} while (eat(','));
+					need(']');
+				}
 			} else if (strcmp(key, "wram") == 0) {
 				need('{');
 				if (!eat('}')) {
@@ -380,6 +424,16 @@ int main(void)
 
 	if (ramg >= 0)
 		g_sram_enabled = ramg;
+
+	for (size_t i = 0; i < nsetups; i++) {
+		ProbeFn pre = probe_lookup(setups[i].fn);
+
+		if (!pre) {
+			printf("{\"error\":\"unknown setup routine: %s\"}\n", setups[i].fn);
+			return 1;
+		}
+		pre(&setups[i].st);
+	}
 
 	call(&st);
 

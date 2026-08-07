@@ -77,6 +77,9 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         }
     if case.get("ramg") is not None:
         req["ramg"] = 1 if case["ramg"] else 0
+    if case.get("setup"):
+        req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
+                        for pre in case["setup"]]
     out = subprocess.run([str(probe)], input=json.dumps(req), capture_output=True, text=True)
     if out.returncode != 0 and not out.stdout.strip():
         raise RuntimeError(f"probe failed ({out.returncode}): {out.stderr.strip()}")
@@ -127,6 +130,7 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
         wram=case.get("wram"),
         sram=case.get("sram"),
         ramg=case.get("ramg"),
+        setup=case.get("setup"),
     )
     reads = {addr: len(data) for addr, data in case.get("wram", {}).items()}
     reads.update(case.get("read", {}))

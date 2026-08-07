@@ -14,5 +14,6 @@ void DrawRegularTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c, uint8_
 void ContinueDrawingTextBoxCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 void CopyCurrentLineTilesAndAttrCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t d, uint8_t e);
 void CopyCurrentLineAttrCGB(uint16_t *hl, uint8_t a, uint8_t b, uint8_t d, uint8_t e);
+void DrawLabeledTextBox(uint16_t *hl, uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 
 #endif
