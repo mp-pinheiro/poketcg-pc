@@ -34,6 +34,12 @@ struct span {
 	uint16_t len;
 };
 
+struct vread_span {
+	uint8_t bank;
+	uint16_t addr;
+	uint16_t len;
+};
+
 struct sread_span {
 	uint8_t bank;
 	uint16_t addr;
@@ -169,6 +175,8 @@ int main(void)
 	size_t nspans = 0;
 	struct sread_span sreads[MAX_SPANS];
 	size_t nsreads = 0;
+	struct vread_span vreads[MAX_SPANS];
+	size_t nvreads = 0;
 	int ramg = -1; /* -1 = leave whatever the seeds left; 0/1 = force the latch */
 	ProbeState st = { 0 };
 
@@ -321,6 +329,40 @@ int main(void)
 					} while (eat(','));
 					need('}');
 				}
+			} else if (strcmp(key, "vread") == 0) {
+				need('{');
+				if (!eat('}')) {
+					do {
+						char bank_s[MAX_NAME];
+						jstr(bank_s, sizeof bank_s);
+						need(':');
+						unsigned bank = (unsigned)strtoul(bank_s, NULL, 10);
+						if (bank > 1)
+							die("vread bank out of range");
+						need('{');
+						if (!eat('}')) {
+							do {
+								char addr_s[MAX_NAME];
+								jstr(addr_s, sizeof addr_s);
+								need(':');
+								long n = jnum();
+								if (n < 0 || n > MAX_SPAN_BYTES / 2)
+									die("vread length out of range");
+								uint16_t at = (uint16_t)strtoul(addr_s, NULL, 10);
+								if (at < 0x8000 || (size_t)at + (size_t)n > 0xA000)
+									die("vread span outside $8000-$9FFF");
+								if (nspans + nvreads == MAX_SPANS)
+									die("too many wram spans");
+								vreads[nvreads].bank = (uint8_t)bank;
+								vreads[nvreads].addr = at;
+								vreads[nvreads].len = (uint16_t)n;
+								nvreads++;
+							} while (eat(','));
+							need('}');
+						}
+					} while (eat(','));
+					need('}');
+				}
 			} else {
 				jskip();
 			}
@@ -363,6 +405,27 @@ int main(void)
 				for (uint16_t k = 0; k < sreads[j].len; k++)
 					printf("%02x", g_sram[(size_t)sreads[j].bank * 0x2000 +
 							       (sreads[j].addr - 0xA000) + k]);
+				printf("\"");
+			}
+			printf("}");
+			i = j;
+		}
+	}
+	printf("},\"vram\":{");
+	{
+		int first_bank = 1;
+		for (size_t i = 0; i < nvreads;) {
+			size_t j = i;
+			printf("%s\"%u\":{", first_bank ? "" : ",", vreads[i].bank);
+			first_bank = 0;
+			for (int first_entry = 1; j < nvreads && vreads[j].bank == vreads[i].bank; j++, first_entry = 0) {
+				printf("%s\"%u\":\"", first_entry ? "" : ",", vreads[j].addr);
+				/* Direct g_vram index, not gb_ptr: must bypass g_vram_bank, so a
+				 * routine that restores bank 0 before returning cannot hide what
+				 * it wrote to bank 1. */
+				for (uint16_t k = 0; k < vreads[j].len; k++)
+					printf("%02x", g_vram[(size_t)vreads[j].bank * 0x2000 +
+							       (vreads[j].addr - 0x8000) + k]);
 				printf("\"");
 			}
 			printf("}");

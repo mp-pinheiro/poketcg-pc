@@ -35,10 +35,52 @@ static void adapt_CopyLine(ProbeState *s)
 	split(original_hl, &s->d, &s->e);
 }
 
+static void adapt_DrawRegularTextBox(ProbeState *s)
+{
+	DrawRegularTextBox(&s->hl, s->a, s->b, s->c, s->d, s->e);
+}
+
+static void adapt_DrawRegularTextBoxDMG(ProbeState *s)
+{
+	DrawRegularTextBoxDMG(&s->hl, s->a, s->b, s->c, s->d, s->e);
+}
+
+static void adapt_ContinueDrawingTextBoxDMGorSGB(ProbeState *s)
+{
+	ContinueDrawingTextBoxDMGorSGB(&s->hl, s->a, s->b, s->c, s->d, s->e);
+}
+
+static void adapt_DrawRegularTextBoxCGB(ProbeState *s)
+{
+	DrawRegularTextBoxCGB(&s->hl, s->a, s->b, s->c, s->d, s->e);
+}
+
+static void adapt_ContinueDrawingTextBoxCGB(ProbeState *s)
+{
+	ContinueDrawingTextBoxCGB(&s->hl, s->a, s->b, s->c, s->d, s->e);
+}
+
+static void adapt_CopyCurrentLineTilesAndAttrCGB(ProbeState *s)
+{
+	CopyCurrentLineTilesAndAttrCGB(&s->hl, s->a, s->b, s->d, s->e);
+}
+
+static void adapt_CopyCurrentLineAttrCGB(ProbeState *s)
+{
+	CopyCurrentLineAttrCGB(&s->hl, s->a, s->b, s->d, s->e);
+}
+
 const ProbeEntry probe_entries_text_box[] = {
 	{ "SafeCopyDataDEtoHL", adapt_SafeCopyDataDEtoHL },
 	{ "DECoordToBGMap0Address", adapt_DECoordToBGMap0Address },
 	{ "AdjustCoordinatesForBGScroll", adapt_AdjustCoordinatesForBGScroll },
 	{ "CopyLine", adapt_CopyLine },
+	{ "DrawRegularTextBox", adapt_DrawRegularTextBox },
+	{ "DrawRegularTextBoxDMG", adapt_DrawRegularTextBoxDMG },
+	{ "ContinueDrawingTextBoxDMGorSGB", adapt_ContinueDrawingTextBoxDMGorSGB },
+	{ "DrawRegularTextBoxCGB", adapt_DrawRegularTextBoxCGB },
+	{ "ContinueDrawingTextBoxCGB", adapt_ContinueDrawingTextBoxCGB },
+	{ "CopyCurrentLineTilesAndAttrCGB", adapt_CopyCurrentLineTilesAndAttrCGB },
+	{ "CopyCurrentLineAttrCGB", adapt_CopyCurrentLineAttrCGB },
 	{ NULL, NULL },
 };

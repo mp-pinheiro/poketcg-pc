@@ -53,7 +53,8 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
 
 
 def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
-               sreads: dict[int, dict[int, int]] | None = None) -> dict:
+               sreads: dict[int, dict[int, int]] | None = None,
+               vreads: dict[int, dict[int, int]] | None = None) -> dict:
     req = {"fn": fn}
     for r in REGS:
         req[r] = int(case.get(r, 0))
@@ -68,6 +69,11 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         req["sread"] = {
             str(bank): {str(addr): n for addr, n in spans.items()}
             for bank, spans in sreads.items()
+        }
+    if vreads:
+        req["vread"] = {
+            str(bank): {str(addr): n for addr, n in spans.items()}
+            for bank, spans in vreads.items()
         }
     if case.get("ramg") is not None:
         req["ramg"] = 1 if case["ramg"] else 0
@@ -129,7 +135,10 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
         sreads.setdefault(bank, {}).update(spans)
     for bank, spans in case.get("sram", {}).items():
         sreads.setdefault(bank, {}).update({addr: len(data) for addr, data in spans.items()})
-    got = run_probe(probe, fn, case, reads, sreads)
+    vreads: dict[int, dict[int, int]] = {}
+    for bank, spans in case.get("vread", {}).items():
+        vreads.setdefault(bank, {}).update(spans)
+    got = run_probe(probe, fn, case, reads, sreads, vreads)
 
     for field in fields:
         want, have = getattr(ref, field), got[field]
@@ -147,6 +156,12 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
             have = bytes.fromhex(got["sram"][str(bank)][str(addr)])
             if want != have:
                 bad.append(f"sram{bank}:${addr:04X}: oracle {want.hex()} != C {have.hex()}")
+    for bank in sorted(vreads):
+        for addr, n in sorted(vreads[bank].items()):
+            want = ref.mem(addr, n, bank=bank)
+            have = bytes.fromhex(got["vram"][str(bank)][str(addr)])
+            if want != have:
+                bad.append(f"vram{bank}:${addr:04X}: oracle {want.hex()} != C {have.hex()}")
     return bad
 
 
