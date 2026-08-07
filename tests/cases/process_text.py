@@ -55,3 +55,63 @@ CASES = {
     "GenerateTextTile": [{"b": 0, "d": 0x20, "e": 0x20}, {"b": 1, "d": 0x20, "e": 0x20}],
     "TwoByteNumberToTxSymbol_PadSpace": [{"hl": 0}, {"hl": 1}, {"hl": 0xFFFF}, dict(POISON, hl=12345)],
 }
+
+CONTRACT.update({
+    "ProcessText": ("hl",),
+    "InitTextPrinting_ProcessText": ("hl",),
+    "SetupText": ("b", "c", "d", "e", "hl"),
+    "InitTextPrinting": ("b", "c", "hl"),
+    "InitTextPrintingInTextbox": ("b", "c", "hl"),
+    "PlaceNextTextTile": ("a", "b", "c", "d", "e", "hl"),
+    "ProcessSpecialTextCharacter": ("a", "hl"),
+    "TerminateHalfWidthText": ("a", "d", "e", "hl"),
+    "Func_235e": ("a", "d", "e", "f"),
+    "Func_2325": ("a", "d", "e", "f"),
+    "Func_22ca": ("b", "c", "d", "e", "hl"),
+    "CopyTextData": ("a", "d", "e", "hl"),
+})
+
+CASES.update({
+    "ProcessText": [{"hl": SRC, "wram": {SRC: b"\x00"}},
+                     dict(POISON, hl=SRC, wram={SRC: b"\x00"})],
+    "InitTextPrinting_ProcessText": [{"hl": SRC, "wram": {SRC: b"\x00\x00\x00"}},
+                                      dict(POISON, hl=SRC, wram={SRC: b"\x00\x00\x00"})],
+    "SetupText": [{"d": 1, "e": 2, "read": {0xc600: 256}},
+                   dict(POISON, d=3, e=4, read={0xc600: 256})],
+    "InitTextPrinting": [{"d": 0, "e": 0}, dict(POISON, d=3, e=4)],
+    "InitTextPrintingInTextbox": [{"a": 1, "d": 0, "e": 0},
+                                   dict(POISON, a=2, d=3, e=4)],
+    "PlaceNextTextTile": [{"a": 0, "wram": {0xffaa: b"\x00", 0xffab: b"\xc0",
+                                               0xcd05: b"\x22", 0xc000: b"\x00"}},
+                           dict(POISON, a=0x44, wram={0xffaa: b"\x00", 0xffab: b"\xc0",
+                                                      0xcd05: b"\x33", 0xc000: b"\x00"})],
+    "ProcessSpecialTextCharacter": [{"a": 0, "hl": SRC},
+                                     dict(POISON, a=0, hl=SRC)],
+    "TerminateHalfWidthText": [{}, dict(POISON)],
+    "Func_235e": [{}, dict(POISON)],
+    "Func_2325": [{}, dict(POISON)],
+    "CopyTextData": [{"a": 1, "hl": SRC, "d": 0xc2, "e": 0,
+                       "wram": {SRC: b"\x00"}},
+                      dict(POISON, a=1, hl=SRC, d=0xc2, e=1, wram={SRC: b"\x00"})],
+    # Every CONTRACT field is push/pop-preserved, so the only observable effect is what
+    # the dispatched callees write: wCurTextTile ($CD05), the tile at
+    # hTextBGMap0Address ($FFAA, pointed into VRAM here), and the advanced
+    # hTextBGMap0Address / hTextLineCurPos ($FFAC). Without reading those back the
+    # cases cannot fail -- stubbing the body left them green.
+    # hffb0 ($FFB0) selects the branch: bit0 set -> Func_235e; bit0 clear -> the
+    # Func_2325 / GenerateTextTile path, with bit1 gating PlaceNextTextTile.
+    "Func_22ca": [
+        {"d": 1, "e": 2,
+         "wram": {0xffb0: b"\x01", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
+         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+        dict(POISON, d=3, e=4,
+             wram={0xffb0: b"\x01", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
+             read={0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}),
+        {"d": 1, "e": 2,
+         "wram": {0xffb0: b"\x00", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
+         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+        {"d": 1, "e": 2,
+         "wram": {0xffb0: b"\x02", 0xffa9: b"\x2a", 0xffaa: b"\x00\x98", 0xffac: b"\x00"},
+         "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
+    ],
+})

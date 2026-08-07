@@ -224,3 +224,251 @@ uint8_t TwoByteNumberToTxSymbol_PadSpace(uint16_t hl)
 }
 
 
+
+static ProcessTextResult text_result(uint8_t a, uint8_t d, uint8_t e, uint8_t f,
+	uint16_t hl)
+{
+	return (ProcessTextResult){a, d, e, f, hl};
+}
+
+ProcessTextResult Func_235e(uint8_t d, uint8_t e)
+{
+	if (wFontWidth) {
+		CaseHalfWidthLetter(&e);
+		d = wHalfWidthPrintState;
+		if (!d) {
+			wHalfWidthPrintState = e;
+			return text_result(1, d, e, 0, 0);
+		}
+		wHalfWidthPrintState = 0;
+	}
+	uint8_t i = hffa9;
+	for (;;) {
+		uint8_t key = gb_read8((uint16_t)(0xc600u + i));
+		if (!key) return text_result(0, d, e, 0x80, 0);
+		if (key == e && gb_read8((uint16_t)(0xc700u + i)) == d) break;
+		i = gb_read8((uint16_t)(0xc800u + i));
+	}
+	if (hffa9 != i) {
+		uint8_t old = hffa9;
+		uint8_t prev = gb_read8((uint16_t)(0xc900u + i));
+		gb_write8((uint16_t)(0xc900u + old), i);
+		hffa9 = i;
+		gb_write8((uint16_t)(0xc900u + i), 0);
+		uint8_t next = gb_read8((uint16_t)(0xc800u + i));
+		gb_write8((uint16_t)(0xc800u + i), old);
+		gb_write8((uint16_t)(0xc800u + prev), next);
+		if (next) gb_write8((uint16_t)(0xc900u + next), prev);
+	}
+	return text_result(hffa9, d, e, 0x10, 0);
+}
+
+ProcessTextResult Func_2325(uint8_t d, uint8_t e)
+{
+	ProcessTextResult found = Func_235e(d, e);
+	if (found.f & 0x10 || found.a) return found;
+	uint8_t index;
+	if (hffa8 == wcd04) {
+		index = hffa9;
+		while (gb_read8((uint16_t)(0xc800u + index)))
+			index = gb_read8((uint16_t)(0xc800u + index));
+		uint8_t prev = gb_read8((uint16_t)(0xc900u + index));
+		gb_write8((uint16_t)(0xc800u + prev), 0);
+		index = prev;
+	} else {
+		wcd04++;
+		if (!wcd04) wcd04++;
+		index = wcd04;
+	}
+	uint8_t old = hffa9;
+	gb_write8((uint16_t)(0xc900u + index), 0);
+	gb_write8((uint16_t)(0xc800u + index), old);
+	gb_write8((uint16_t)(0xc600u + index), e);
+	gb_write8((uint16_t)(0xc700u + index), d);
+	return text_result(0, d, e, 0x80, 0);
+}
+
+
+/* Exported: four callers outside this file (print_text.asm:289,
+ * deck_machine.asm:970/1002, printer.asm:715). */
+void Func_22ca(uint8_t d, uint8_t e)
+{
+	if (hffb0 & 1) {
+		Func_235e(d, e);
+		return;
+	}
+	ProcessTextResult out = Func_2325(d, e);
+	if (!(out.f & 0x10)) {
+		if (out.a) return;
+		GenerateTextTile(out.a, d, e);
+	}
+	if (!(hffb0 & 2))
+		PlaceNextTextTile(gb_read8(hffa9_ADDR));
+}
+
+PlaceTextResult PlaceNextTextTile(uint8_t a)
+{
+	wCurTextTile = a;
+	uint16_t address = (uint16_t)(hTextBGMap0Address |
+		((uint16_t)gb_read8(0xffabu) << 8));
+	address++;
+	hTextBGMap0Address = (uint8_t)address;
+	gb_write8(0xffabu, (uint8_t)(address >> 8));
+	uint16_t destination = (uint16_t)(address - 1);
+	uint16_t source = wCurTextTile_ADDR;
+	SafeCopyDataDEtoHL(&source, &destination, 1);
+	hTextLineCurPos++;
+	return (PlaceTextResult){a, 0, 0, (uint8_t)(source >> 8), (uint8_t)source, hTextLineCurPos_ADDR};
+}
+
+ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
+{
+	if (!wFontWidth || !wHalfWidthPrintState) return text_result(0, d, e, 0, hl);
+	uint8_t pair = ' ';
+	Func_22ca(d, pair);
+	return text_result(0, d, e, 0, hl);
+}
+
+ProcessTextResult ProcessSpecialTextCharacter(uint8_t a, uint16_t hl)
+{
+	if (!a) return text_result(0, 0, 0, 0, hl);
+	if (a == TX_HIRAGANA || a == TX_KATAKANA) {
+		hJapaneseSyllabary = a;
+		return text_result(0, 0, 0, 0, hl);
+	}
+	if (a == '\n') {
+		TerminateHalfWidthText(0, 0, hl);
+		if (!wLineSeparation) {
+			hTextLineCurPos = 0;
+			uint8_t x = (uint8_t)(hTextHorizontalAlign + 32);
+			uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + x);
+			hTextBGMap0Address = (uint8_t)bg;
+			gb_write8(0xffabu, (uint8_t)(bg >> 8));
+			wCurTextLine++;
+		}
+		hTextLineCurPos = 0;
+		uint8_t x = (uint8_t)(hTextHorizontalAlign + 32);
+		uint16_t bg = (uint16_t)((hTextBGMap0Address & 0xe0u) + x);
+		hTextBGMap0Address = (uint8_t)bg;
+		gb_write8(0xffabu, (uint8_t)(bg >> 8));
+		wCurTextLine++;
+		return text_result(0, 0, 0, 0, hl);
+	}
+	if (a == TX_HALFWIDTH) {
+		wFontWidth = 1;
+		return text_result(0, 0, 0, 0, hl);
+	}
+	if (a == 0x07) {
+		TerminateHalfWidthText(0, 0, hl);
+		wFontWidth = 0;
+		hJapaneseSyllabary = TX_KATAKANA;
+		return text_result(0, 0, 0, 0, hl);
+	}
+	return text_result(a, 0, 0, 0x10, hl);
+}
+
+uint16_t SetupText(uint8_t d, uint8_t e)
+{
+	wcd04 = (uint8_t)(d - 1);
+	hffa8 = e;
+	InitTextFormat();
+	hffb0 = 0;
+	hffa9 = 0;
+	wTilePatternSelector = 0x88;
+	wTilePatternSelectorCorrection = 0x80;
+	for (uint16_t i = 0xc600; i != 0xc700; i++) gb_write8(i, 0);
+	return 0xc600;
+}
+
+void InitTextPrinting(uint8_t d, uint8_t e)
+{
+	hTextHorizontalAlign = d;
+	hTextLineLength = 0;
+	wCurTextLine = 0;
+	uint16_t bg = DECoordToBGMap0Address(d, e);
+	hTextBGMap0Address = (uint8_t)bg;
+	gb_write8(0xffabu, (uint8_t)(bg >> 8));
+	InitTextFormat();
+	wHalfWidthPrintState = 0;
+}
+
+void InitTextPrintingInTextbox(uint8_t a, uint8_t d, uint8_t e)
+{
+	InitTextPrinting(d, e);
+	hTextLineLength = a;
+}
+
+static void process_text_core(uint16_t *hl)
+{
+	InitTextFormat();
+	uint8_t a;
+	while ((a = gb_read8((*hl)++)) != 0) {
+		if (a >= TX_CTRL_START && a < TX_CTRL_END) {
+			ProcessSpecialTextCharacter(a, *hl);
+			continue;
+		}
+		uint8_t e = a;
+		uint8_t d = gb_read8(*hl);
+		uint8_t carry = ClassifyTextCharacterPair(&d, &e);
+		if (carry & 0x10) (*hl)++;
+		Func_22ca(d, e);
+		ProcessSpecialTextCharacter(0, *hl);
+	}
+	TerminateHalfWidthText(0, 0, *hl);
+}
+
+void ProcessText(uint16_t *hl)
+{
+	process_text_core(hl);
+}
+
+void InitTextPrinting_ProcessText(uint16_t *hl)
+{
+	uint8_t d = gb_read8(*hl); (*hl)++;
+	uint8_t e = gb_read8(*hl); (*hl)++;
+	InitTextPrinting(d, e);
+	process_text_core(hl);
+}
+
+CopyTextResult CopyTextData(uint8_t a, uint16_t hl, uint16_t de)
+{
+	wTextMaxLength = a;
+	uint8_t half = gb_read8(hl) == TX_HALFWIDTH;
+	uint16_t max = half ? (uint16_t)a * 2u : a;
+	uint16_t original_max = max;
+	uint16_t src = hl, dst = de;
+	uint8_t count = 0;
+	for (;;) {
+		uint8_t ch = gb_read8(src);
+		if (!ch) {
+			uint16_t fill = max;
+			while (fill) {
+				gb_write8(dst++, ' ');
+				fill--;
+			}
+			gb_write8(dst, 0);
+			return (CopyTextResult){count, 0, count, (uint16_t)(de + original_max - 1)};
+		}
+		if (!max) {
+			gb_write8(dst, 0);
+			return (CopyTextResult){count, 0, count, dst};
+		}
+		src++;
+		gb_write8(dst++, ch);
+		max--;
+		if (ch < TX_CTRL_START || ch >= TX_CTRL_END) {
+			uint8_t second = gb_read8(src);
+			uint8_t pair_d = second, pair_e = ch;
+			if (ClassifyTextCharacterPair(&pair_d, &pair_e) & 0x10 && max) {
+				src++;
+				gb_write8(dst++, second);
+				max--;
+			}
+		}
+		count++;
+		if (!max) {
+			gb_write8(dst, 0);
+			return (CopyTextResult){count, 0, count, dst};
+		}
+	}
+}

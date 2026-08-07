@@ -118,6 +118,22 @@ static void adapt_TwoByteNumberToTxSymbol_PadSpace(ProbeState *s)
 	s->hl = value >= 10000 ? 0xCAA0 : 0xCAA8;
 }
 
+static void adapt_ProcessText(ProbeState *s);
+static void adapt_InitTextPrinting_ProcessText(ProbeState *s);
+static void adapt_SetupText(ProbeState *s);
+static void adapt_InitTextPrinting(ProbeState *s);
+static void adapt_InitTextPrintingInTextbox(ProbeState *s);
+static void adapt_PlaceNextTextTile(ProbeState *s);
+static void adapt_ProcessSpecialTextCharacter(ProbeState *s);
+static void adapt_TerminateHalfWidthText(ProbeState *s);
+static void adapt_Func_235e(ProbeState *s);
+static void adapt_Func_2325(ProbeState *s);
+static void adapt_Func_22ca(ProbeState *s)
+{
+	Func_22ca(s->d, s->e);
+}
+
+static void adapt_CopyTextData(ProbeState *s);
 const ProbeEntry probe_entries_process_text[] = {
 	{"InitTextFormat", adapt_InitTextFormat},
 	{"CaseHalfWidthLetter", adapt_CaseHalfWidthLetter},
@@ -132,7 +148,96 @@ const ProbeEntry probe_entries_process_text[] = {
 	{"CreateFullWidthFontTile_ConvertToTileDataAddress", adapt_CreateFullWidthFontTile_ConvertToTileDataAddress},
 	{"GenerateTextTile", adapt_GenerateTextTile},
 	{"TwoByteNumberToTxSymbol_PadSpace", adapt_TwoByteNumberToTxSymbol_PadSpace},
+	{"ProcessText", adapt_ProcessText},
+	{"InitTextPrinting_ProcessText", adapt_InitTextPrinting_ProcessText},
+	{"SetupText", adapt_SetupText},
+	{"InitTextPrinting", adapt_InitTextPrinting},
+	{"InitTextPrintingInTextbox", adapt_InitTextPrintingInTextbox},
+	{"PlaceNextTextTile", adapt_PlaceNextTextTile},
+	{"ProcessSpecialTextCharacter", adapt_ProcessSpecialTextCharacter},
+	{"TerminateHalfWidthText", adapt_TerminateHalfWidthText},
+	{"Func_235e", adapt_Func_235e},
+	{"Func_2325", adapt_Func_2325},
+	{"Func_22ca", adapt_Func_22ca},
+	{"CopyTextData", adapt_CopyTextData},
 	{NULL, NULL},
 };
+
+static void adapt_ProcessText(ProbeState *s)
+{
+	ProcessText(&s->hl);
+}
+
+static void adapt_InitTextPrinting_ProcessText(ProbeState *s)
+{
+	InitTextPrinting_ProcessText(&s->hl);
+}
+
+static void adapt_SetupText(ProbeState *s)
+{
+	s->hl = SetupText(s->d, s->e);
+}
+
+static void adapt_InitTextPrinting(ProbeState *s)
+{
+	InitTextPrinting(s->d, s->e);
+}
+
+static void adapt_InitTextPrintingInTextbox(ProbeState *s)
+{
+	InitTextPrintingInTextbox(s->a, s->d, s->e);
+}
+
+static void adapt_PlaceNextTextTile(ProbeState *s)
+{
+	PlaceTextResult out = PlaceNextTextTile(s->a);
+	s->a = out.a;
+	s->c = out.c;
+	s->d = out.d;
+	s->e = out.e;
+	s->hl = out.hl;
+}
+
+static void adapt_ProcessSpecialTextCharacter(ProbeState *s)
+{
+	ProcessTextResult out = ProcessSpecialTextCharacter(s->a, s->hl);
+	s->a = out.a;
+	s->hl = out.hl;
+	s->f = out.f;
+}
+
+static void adapt_TerminateHalfWidthText(ProbeState *s)
+{
+	ProcessTextResult out = TerminateHalfWidthText(s->d, s->e, s->hl);
+	s->a = out.a;
+	s->f = out.f;
+}
+
+static void adapt_Func_235e(ProbeState *s)
+{
+	ProcessTextResult out = Func_235e(s->d, s->e);
+	s->a = out.a;
+	s->d = out.d;
+	s->e = out.e;
+	s->f = out.f;
+}
+
+static void adapt_Func_2325(ProbeState *s)
+{
+	ProcessTextResult out = Func_2325(s->d, s->e);
+	s->a = out.a;
+	s->d = out.d;
+	s->e = out.e;
+	s->f = out.f;
+}
+
+static void adapt_CopyTextData(ProbeState *s)
+{
+	CopyTextResult out = CopyTextData(s->a, s->hl, (uint16_t)(s->d << 8 | s->e));
+	s->a = out.a;
+	s->d = out.d;
+	s->e = out.e;
+	s->hl = out.hl;
+}
 
 
