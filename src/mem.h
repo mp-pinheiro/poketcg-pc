@@ -33,6 +33,18 @@ extern int g_sram_enabled;
 
 /* VBK ($FF4F) low bit: which half of g_vram the $8000-$9FFF window resolves to. */
 extern uint8_t g_vram_bank;
+typedef struct {
+	uint32_t tick;
+	uint16_t address;
+	uint8_t value;
+} ApuWrite;
+
+#define APU_TRACE_CAPACITY 65536u
+void apu_trace_clear(void);
+void apu_trace_set_tick(uint32_t tick);
+size_t apu_trace_count(void);
+const ApuWrite *apu_trace_data(void);
+
 
 int rom_load(const char *path); /* 0 on success, -1 with errno set */
 void rom_free(void);

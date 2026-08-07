@@ -24,6 +24,41 @@ int g_sram_enabled = 0;
  * Writable through gb_write8, so the snapshot vector has to cover it. */
 uint8_t g_scratch[MEM_SCRATCH_SIZE];
 
+static ApuWrite g_apu_trace[APU_TRACE_CAPACITY];
+static size_t g_apu_trace_count;
+static uint32_t g_apu_trace_tick;
+
+void apu_trace_clear(void)
+{
+	g_apu_trace_count = 0;
+	g_apu_trace_tick = 0;
+}
+
+void apu_trace_set_tick(uint32_t tick)
+{
+	g_apu_trace_tick = tick;
+}
+
+size_t apu_trace_count(void)
+{
+	return g_apu_trace_count;
+}
+
+const ApuWrite *apu_trace_data(void)
+{
+	return g_apu_trace;
+}
+
+static void apu_trace_record(uint16_t addr, uint8_t value)
+{
+	if (!((addr >= 0xFF10u && addr <= 0xFF26u) ||
+	      (addr >= 0xFF30u && addr <= 0xFF3Fu)))
+		return;
+	if (g_apu_trace_count < APU_TRACE_CAPACITY) {
+		g_apu_trace[g_apu_trace_count++] = (ApuWrite){g_apu_trace_tick, addr, value};
+	}
+}
+
 int rom_load(const char *path)
 {
 	FILE *f = fopen(path, "rb");
@@ -79,6 +114,7 @@ void mem_reset(void)
 	g_sram_bank = 0;
 	g_vram_bank = 0;
 	g_sram_enabled = 0;
+	apu_trace_clear();
 }
 
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)
@@ -143,5 +179,6 @@ void gb_write8(uint16_t addr, uint8_t v)
 	 * resolves to, so it has to latch before the store lands. */
 	if (addr == 0xFF4F)
 		g_vram_bank = v & 1;
+	apu_trace_record(addr, v);
 	*gb_ptr(addr) = v;
 }
