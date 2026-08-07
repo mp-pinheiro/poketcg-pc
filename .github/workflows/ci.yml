@@ -23,3 +23,11 @@ jobs:
           sudo install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
       - name: Validate changelog generation
         run: git cliff --unreleased --strip header >/dev/null
+
+  # Gate against probe adapters that reimplement the routine they marshal (#19).
+  adapters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint probe adapters
+        run: python3 tools/lint_adapters.py

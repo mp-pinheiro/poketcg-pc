@@ -39,11 +39,15 @@ oracle-diff FN: build
     /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe
 
 # Diff every routine in tests/routines.py. Non-zero if any fails or has no cases.
-oracle-diff-all: build
+oracle-diff-all: build lint-adapters
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
     /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
+
+# Reject probe adapters that reimplement the routine they marshal (issue #19).
+lint-adapters:
+    python3 tools/lint_adapters.py
 
 
 oracleb-regenerate:
