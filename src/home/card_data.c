@@ -1,0 +1,111 @@
+#include "home/card_data.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/copy.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+
+/* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
+ * reaches them through BankpushROM2/BankpopROM, whose net effect is a temporary bank
+ * switch -- collapsed here to direct rom_ptr reads. */
+#define BANK_CARD_DATA      0x0cu
+#define CARD_POINTERS       0x4c5cu
+#define CARD_DATA_TYPE      0x00u
+#define CARD_DATA_NAME      0x03u
+#define CARD_DATA_RARITY    0x05u
+#define CARD_DATA_SET       0x06u
+#define PKMN_CARD_DATA_LEN  0x41u
+
+static uint16_t get_card_pointer(uint8_t cardid)
+{
+	const uint8_t *p = rom_ptr(BANK_CARD_DATA, (uint16_t)(CARD_POINTERS + (uint16_t)cardid * 2u));
+	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
+}
+
+static const uint8_t *card_data(uint8_t cardid)
+{
+	return rom_ptr(BANK_CARD_DATA, get_card_pointer(cardid));
+}
+
+/* card_data.asm:84-96 */
+uint8_t GetCardType(uint8_t e)
+{
+	return card_data(e)[CARD_DATA_TYPE];
+}
+
+/* card_data.asm:99-114 */
+uint16_t GetCardName(uint8_t e)
+{
+	const uint8_t *p = card_data(e) + CARD_DATA_NAME;
+	return (uint16_t)(p[0] | (uint16_t)p[1] << 8);
+}
+
+/* card_data.asm:117-138 */
+CardTRS GetCardTypeRarityAndSet(uint8_t a)
+{
+	const uint8_t *p = card_data(a);
+	return (CardTRS){p[CARD_DATA_TYPE], p[CARD_DATA_RARITY], p[CARD_DATA_SET]};
+}
+
+/* card_data.asm:48-81. Both buffer wrappers fall through to LoadCardDataToHL, which is
+ * not directly callable (it pops one more word than it pushes; the wrappers' leading
+ * push hl balances it). Inlined as a single copy. Read via the switched bank, not
+ * rom_ptr: the last card's 0x41-byte copy runs hl past $7fff into VRAM ($8000+). */
+static void load_card_data(uint8_t cardid, uint16_t dest)
+{
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_CARD_DATA);
+	uint16_t ptr = get_card_pointer(cardid);
+	for (uint8_t i = 0; i < PKMN_CARD_DATA_LEN; i++)
+		gb_write8((uint16_t)(dest + i), gb_read8((uint16_t)(ptr + i)));
+	BankswitchROM(saved);
+}
+
+/* card_data.asm:1-45. Scans CardPointers[1..] (skipping the leading NULL) for the
+ * first card whose CARD_DATA_NAME matches de; on a hit copies it to wLoadedCard1.
+ * CardPointers[229] is the NULL terminator. */
+void LoadCardDataToBuffer1_FromName(uint16_t de)
+{
+	for (uint8_t i = 1u;; i++) {
+		const uint8_t *tp = rom_ptr(BANK_CARD_DATA, (uint16_t)(CARD_POINTERS + (uint16_t)i * 2u));
+		uint16_t ptr = (uint16_t)(tp[0] | (uint16_t)tp[1] << 8);
+		if (ptr == 0)
+			return;
+		const uint8_t *cd = rom_ptr(BANK_CARD_DATA, ptr);
+		uint16_t name = (uint16_t)(cd[CARD_DATA_NAME] | (uint16_t)cd[CARD_DATA_NAME + 1u] << 8);
+		if (name == de) {
+			load_card_data(i, wLoadedCard1_ADDR);
+			return;
+		}
+	}
+}
+
+void LoadCardDataToBuffer1_FromCardID(uint8_t e)
+{
+	load_card_data(e, wLoadedCard1_ADDR);
+}
+
+void LoadCardDataToBuffer2_FromCardID(uint8_t e)
+{
+	load_card_data(e, wLoadedCard2_ADDR);
+}
+
+#define BANK_CARD_GFX 0x31u
+#define PAL_SIZE      0x08u
+
+/* card_data.asm:176-205. The gfx index encodes its bank offset in bits 15-11
+ * (bank = BANK(CardGraphics) + idx>>11) and the tile address in the rest (*8,
+ * normalized into $4000-$7fff). */
+void LoadCardGfx(uint16_t hl, uint16_t de, uint8_t b, uint8_t c)
+{
+	uint8_t saved = hBankROM;
+	BankswitchROM((uint8_t)(BANK_CARD_GFX + (hl >> 11)));
+	uint16_t src = (uint16_t)(hl << 3);
+	src = (uint16_t)(((src & 0x7F00u) | 0x4000u) | (src & 0x00FFu));
+	CopyGfxData(&src, &de, b, c);
+	uint16_t pal = wCardPalette_ADDR;
+	for (uint8_t i = 0; i < PAL_SIZE; i++)
+		gb_write8(pal++, gb_read8(src++));
+	BankswitchROM(saved);
+}

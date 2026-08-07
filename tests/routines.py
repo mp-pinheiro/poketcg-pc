@@ -73,6 +73,21 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "unsafe_bg_map": ("UnsafeWriteDataBlockToBGMap0",),
     "sram": ("BankswitchSRAM",),
     "lcd_enable_frame": ("DoFrameIfLCDEnabled",),
+    "palettes": ("FlushAllPalettes", "FlushPalette", "SetBGP", "FlushPalette0",
+                  "FlushPalettes", "SetOBP0", "SetOBP1", "FlushPalettesIfRequested"),
+    "scroll": ("Func_3e44", "GetNextBackgroundScroll", "EnableInt_LYCoincidence",
+                "DisableInt_LYCoincidence"),
+    "damage": ("AddToDamage",),
+    "objects": ("SetOneObjectAttributes", "ZeroObjectPositions"),
+    "time": ("IncrementPlayTimeCounter", "CheckForCGB"),
+    "coin_toss": ("CompareDEtoBC",),
+    "clear_sram": ("ClearSRAMBank", "RestartSRAM"),
+    "card_data": ("GetCardType", "GetCardName", "GetCardTypeRarityAndSet",
+                  "LoadCardDataToBuffer1_FromCardID", "LoadCardDataToBuffer2_FromCardID",
+                  "LoadCardDataToBuffer1_FromName", "LoadCardGfx"),
+    "load_deck": ("LoadDeck",),
+    "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
+                   "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
