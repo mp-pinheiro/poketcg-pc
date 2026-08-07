@@ -63,6 +63,24 @@ oracleb-scene:
     if [ -n "${POKETCG_SCENE_INPUT:-}" ]; then
         args+=(--input "$POKETCG_SCENE_INPUT")
     fi
+    # A scene diff without a C state vector compares nothing, so this recipe demands
+    # one. Use `just oracleb-replay` for the determinism half on its own.
+    if [ -z "${POKETCG_SCENE_CSTATE:-}" ]; then
+        echo "oracleb-scene needs POKETCG_SCENE_CSTATE=<snapshot.json>" >&2
+        echo "for the replay-determinism half alone, run: just oracleb-replay" >&2
+        exit 2
+    fi
+    args+=(--c-state "$POKETCG_SCENE_CSTATE")
+    python3 tests/scene_diff.py "${args[@]}"
+
+# Replay-determinism half only: run a scene twice and require identical state.
+oracleb-replay:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    args=(--frames "${POKETCG_SCENE_FRAMES:-30}" --replay-only)
+    if [ -n "${POKETCG_SCENE_INPUT:-}" ]; then
+        args+=(--input "$POKETCG_SCENE_INPUT")
+    fi
     python3 tests/scene_diff.py "${args[@]}"
 data-verify:
     python3 tools/gen_data.py --verify

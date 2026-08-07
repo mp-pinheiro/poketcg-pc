@@ -111,6 +111,8 @@ def main() -> int:
     parser.add_argument("--oracle", type=Path)
     parser.add_argument("--timeout", type=float, default=30.0)
     parser.add_argument("--perturb", help="perturb a C region for failure testing, REGION:OFFSET")
+    parser.add_argument("--replay-only", action="store_true",
+                        help="check replay determinism only; do not claim a C comparison")
     args = parser.parse_args()
     try:
         with Oracle(args.oracle, timeout=args.timeout) as oracle:
@@ -120,6 +122,8 @@ def main() -> int:
             print("replay mismatch: repeated scene states differ", file=sys.stderr)
             return 1
         print(f"replay: identical ({first.completed_frames} completed frames)")
+        if args.replay_only and not args.c_state:
+            return 0
         c_state = json.loads(args.c_state.read_text()) if args.c_state else None
         return 1 if compare(first, c_state, perturb=args.perturb) else 0
     except (OSError, ValueError, OracleError) as exc:
