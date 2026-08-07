@@ -40,4 +40,9 @@ CASES = {
         dict(POISON, a=15, wram={SPRITE_BUFFER + 15 * 16 + 15: b"\x01"},
              read={SPRITE_BUFFER + 15 * 16 + 15: 1}),
     ],
+# The remaining exports are intentionally unregistered: ClearSpriteAnimations,
+# HandleAllSpriteAnimations, DrawSpriteAnimationFrame, GetAnimationFramePointer,
+# LoadScene, DrawPlayerPortrait, DrawPortrait, DrawOpponentPortrait, and Func_3e31
+# farcall unported engine/gfx/scene code or consume banked animation-frame tables.
+# They are not made into no-op adapters.
 }

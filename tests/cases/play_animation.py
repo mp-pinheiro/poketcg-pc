@@ -27,4 +27,8 @@ CASES = {
         {"hl": 0x5678, "read": {DO_FRAME_FUNCTION: 2}},
         dict(POISON, hl=0xABCD, read={DO_FRAME_FUNCTION: 2}),
     ],
+# PlayDuelAnimation, UpdateQueuedAnimations, and Func_3bb5 remain unregistered:
+# each farcalls the unported duel-animation engine or sprite-animation dispatcher.
+# The runnable status and DoFrame-function leaves above are kept separate from
+# those orchestrators rather than represented by no-op adapters.
 }
