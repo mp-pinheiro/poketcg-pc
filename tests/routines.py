@@ -83,7 +83,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "play_animation": ("CheckAnyAnimationPlaying", "SetDoFrameFunction", "ResetDoFrameFunction"),
     "damage": ("AddToDamage",),
     "objects": ("SetOneObjectAttributes", "ZeroObjectPositions"),
-    "time": ("IncrementPlayTimeCounter", "CheckForCGB"),
+    "time": ("IncrementPlayTimeCounter", "CheckForCGB", "SetupTimer"),
     "coin_toss": ("CompareDEtoBC",),
     "clear_sram": ("ClearSRAMBank", "RestartSRAM"),
     "card_data": ("GetCardType", "GetCardName", "GetCardTypeRarityAndSet",

@@ -51,3 +51,26 @@ uint8_t CheckForCGB(void)
 		return (uint8_t)(0x40u | 0x80u);
 	return 0x10u;
 }
+
+#define rTMA 0xFF06u
+#define rTAC 0xFF07u
+#define rSPD 0xFF4Du
+#define SPD_DOUBLE 0x80u
+
+TimerSetupResult SetupTimer(void)
+{
+	uint8_t b = 0xBCu;
+	uint8_t f;
+	if (wConsole != CONSOLE_CGB) {
+		f = 0x10u;
+	} else if (gb_read8(rSPD) & SPD_DOUBLE) {
+		b = 0x78u;
+		f = 0;
+	} else {
+		f = 0xA0u;
+	}
+	gb_write8(rTMA, b);
+	gb_write8(rTAC, 0x03u);
+	gb_write8(rTAC, 0x07u);
+	return (TimerSetupResult){0x07u, b, f};
+}
