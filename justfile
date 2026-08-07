@@ -45,6 +45,25 @@ oracle-diff-all: build
     export POKETCG_ROM=poketcg/poketcg.gbc
     /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
 
+
+oracleb-regenerate:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    generator="${POKETCG_GBRECOMP:-$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp}"
+    output="${POKETCG_ORACLEB_DIR:-$HOME/.local/share/gbrecompiled/poketcg}"
+    "$generator" poketcg/poketcg.gbc --symbols poketcg/poketcg.sym -o "$output" -j 8
+    cmake -G Ninja -S "$output" -B "$output/build"
+    ninja -C "$output/build"
+    cp "$output/build/poketcg" "$output/poketcg"
+
+oracleb-scene:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    args=(--frames "${POKETCG_SCENE_FRAMES:-30}")
+    if [ -n "${POKETCG_SCENE_INPUT:-}" ]; then
+        args+=(--input "$POKETCG_SCENE_INPUT")
+    fi
+    python3 tests/scene_diff.py "${args[@]}"
 data-verify:
     python3 tools/gen_data.py --verify
     python3 tools/gen_data.py --check
