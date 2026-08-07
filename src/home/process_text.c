@@ -34,21 +34,30 @@ uint8_t CaseHalfWidthLetter(uint8_t *e)
 	return *e;
 }
 
+/* Returns the exit flag byte. The carry is the real output -- callers branch on it to
+ * decide whether the pair was swapped -- so it has to be modelled rather than reported
+ * as a bool in `a`, which the asm leaves holding path-dependent residue.
+ * Every path ends on `or a` (Z from the value in a, carry clear) except the swap, which
+ * ends on `scf`; the `cp` before it excludes equality, so Z is clear there. */
 uint8_t ClassifyTextCharacterPair(uint8_t *d, uint8_t *e)
 {
-	if (wFontWidth) return 0;
+	if (wFontWidth)
+		return wFontWidth ? 0x00 : 0x80;
 	if (*e >= TX_CTRL_END && *e < 0x60 && hJapaneseSyllabary == TX_KATAKANA) {
 		*d = TX_KATAKANA;
-		return 0;
+		return hJapaneseSyllabary ? 0x00 : 0x80;
 	}
 	if (*e < TX_CTRL_START) {
 		uint8_t first = *e;
 		*e = *d;
 		*d = first;
-		return 1;
+		return 0x10;
 	}
+	/* a holds e on the >= $60 and >= TX_CTRL_START paths, and hJapaneseSyllabary on
+	 * the wrong-syllabary path; only the latter can be zero and set Z. */
+	uint8_t resid = (*e >= TX_CTRL_END && *e < 0x60) ? hJapaneseSyllabary : *e;
 	*d = 0;
-	return 0;
+	return resid ? 0x00 : 0x80;
 }
 
 TextLength GetTextLengthInHalfTiles(uint16_t hl)

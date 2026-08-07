@@ -22,7 +22,7 @@ static void adapt_CaseHalfWidthLetter(ProbeState *s)
 
 static void adapt_ClassifyTextCharacterPair(ProbeState *s)
 {
-	s->a = ClassifyTextCharacterPair(&s->d, &s->e);
+	s->f = ClassifyTextCharacterPair(&s->d, &s->e);
 }
 
 static void adapt_GetTextLengthInHalfTiles(ProbeState *s)

@@ -5,7 +5,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 CONTRACT = {
     "InitTextFormat": ("b", "c", "d", "e", "hl"),
     "CaseHalfWidthLetter": ("a", "b", "c", "d", "e", "hl"),
-    "ClassifyTextCharacterPair": ("a", "b", "c", "d", "e", "hl"),
+    # Carry is the real output (callers branch on it); exit a is path-dependent
+    # residue no caller reads, so f is in and a is out.
+    "ClassifyTextCharacterPair": ("f", "b", "c", "d", "e", "hl"),
     "GetTextLengthInHalfTiles": ("a", "b", "c", "d", "e", "hl"),
     "GetTextLengthInTiles": ("a", "b", "c", "d", "e", "hl"),
     "GetFullWidthFontTileOffset": ("a", "b", "c", "d", "e", "hl"),
@@ -21,7 +23,18 @@ CONTRACT = {
 CASES = {
     "InitTextFormat": [{}, dict(POISON)],
     "CaseHalfWidthLetter": [{"e": 0x61}, dict(POISON, e=0x7A)],
-    "ClassifyTextCharacterPair": [{"d": 0x20, "e": 0x01}, dict(POISON, d=0x22, e=0x01)],
+    # All four exit paths: swap (e < TX_CTRL_START, carry set), half-width, katakana,
+    # and not-katakana. Previously both cases used e=0x01 and drove only the swap.
+    "ClassifyTextCharacterPair": [
+        {"d": 0x20, "e": 0x01},
+        dict(POISON, d=0x22, e=0x01),
+        {"d": 0x20, "e": 0x08},
+        {"d": 0x20, "e": 0x20, "wram": {0xFFAF: b"\x0f"}},
+        {"d": 0x20, "e": 0x20, "wram": {0xFFAF: b"\x0e"}},
+        {"d": 0x20, "e": 0x70, "wram": {0xFFAF: b"\x0f"}},
+        {"d": 0x20, "e": 0x01, "wram": {0xCD0A: b"\x01"}},
+        {"d": 0x20, "e": 0x20, "wram": {0xCD0A: b"\x01", 0xFFAF: b"\x0f"}},
+    ],
     "GetTextLengthInHalfTiles": [
         {"hl": SRC, "wram": {SRC: b"\x00"}},
         {"hl": SRC, "wram": {SRC: b"\x01\x02\x00"}},
