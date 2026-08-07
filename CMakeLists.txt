@@ -59,7 +59,7 @@ if(PORT_FILES)
   message(STATUS "PORT_FILES subset build: ${PORT_FILES}")
 endif()
 
-add_library(gbmem STATIC src/mem.c ${HOME_SOURCES})
+add_library(gbmem STATIC src/mem.c src/ppu.c ${HOME_SOURCES})
 add_dependencies(gbmem gen_layout)
 target_include_directories(gbmem PUBLIC "${CMAKE_SOURCE_DIR}/src" "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(gbmem PRIVATE -Wall -Wextra)

@@ -7,17 +7,21 @@
 uint8_t g_wram[0x2000];
 uint8_t g_hram[0x80];
 uint8_t g_sram[0x8000];
+uint8_t g_vram[0x4000];
+uint8_t g_oam[0xA0];
+uint8_t g_io[0x80];
+uint8_t g_pal[0x80];
 
 uint8_t *g_rom = NULL;
 size_t g_rom_size = 0;
 
 uint8_t g_rom_bank = 1;
 uint8_t g_sram_bank = 0;
+uint8_t g_vram_bank = 0;
 int g_sram_enabled = 0;
 
-/* Backs VRAM/OAM/IO and out-of-image ROM reads. Not a PPU: plain scratch bytes so
- * the bus is total and a stray access cannot run off an array. */
-static uint8_t g_scratch[0x2000];
+/* Out-of-image ROM reads and the unusable $FEA0-$FEFF hole, so gb_ptr stays total. */
+static uint8_t g_scratch[0x100];
 
 int rom_load(const char *path)
 {
@@ -65,9 +69,14 @@ void mem_reset(void)
 	memset(g_wram, 0, sizeof g_wram);
 	memset(g_hram, 0, sizeof g_hram);
 	memset(g_sram, 0, sizeof g_sram);
+	memset(g_vram, 0, sizeof g_vram);
+	memset(g_oam, 0, sizeof g_oam);
+	memset(g_io, 0, sizeof g_io);
+	memset(g_pal, 0, sizeof g_pal);
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
 	g_sram_bank = 0;
+	g_vram_bank = 0;
 	g_sram_enabled = 0;
 }
 
@@ -84,15 +93,19 @@ uint8_t *gb_ptr(uint16_t addr)
 	if (addr < 0x8000)
 		return (uint8_t *)rom_ptr(addr < 0x4000 ? 0 : g_rom_bank, addr);
 	if (addr < 0xA000)
-		return g_scratch + (addr - 0x8000);
+		return g_vram + (size_t)(g_vram_bank & 1) * 0x2000 + (addr - 0x8000);
 	if (addr < 0xC000)
 		return g_sram + (size_t)(g_sram_bank & 3) * 0x2000 + (addr - 0xA000);
 	if (addr < 0xE000)
 		return g_wram + (addr - 0xC000);
 	if (addr < 0xFE00)
 		return g_wram + (addr - 0xE000); /* echo RAM */
+	if (addr < 0xFEA0)
+		return g_oam + (addr - 0xFE00);
+	if (addr < 0xFF00)
+		return g_scratch + (addr - 0xFEA0); /* unusable region */
 	if (addr < 0xFF80)
-		return g_scratch + (addr - 0xFE00);
+		return g_io + (addr - 0xFF00);
 	return g_hram + (addr - 0xFF80);
 }
 
@@ -125,5 +138,9 @@ void gb_write8(uint16_t addr, uint8_t v)
 	}
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return;
+	/* VBK: the low bit selects which 8 KiB half of g_vram the $8000-$9FFF window
+	 * resolves to, so it has to latch before the store lands. */
+	if (addr == 0xFF4F)
+		g_vram_bank = v & 1;
 	*gb_ptr(addr) = v;
 }

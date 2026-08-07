@@ -3,6 +3,8 @@
 SRC = 0xC100
 DST = 0xC500
 wLCDC = 0xCABB
+VRAM_DST = 0x8000
+OAM_DST = 0xFE00
 
 # $DDEE is where the d=$DD/e=$EE poison lands: real WRAM, clear of the oracle's
 # $CE00-$CFFF frame, so the poisoned registers can be used verbatim as a
@@ -43,6 +45,15 @@ CASES = {
         # wLCDC bit 7 set takes .hblank_copy in the asm; the C has one path.
         {"b": 4, "c": 8, "hl": SRC, "d": DST >> 8, "e": DST & 0xFF,
          "wram": {wLCDC: b"\x80", SRC: PAT[:32]}, "read": {DST: 36}},
+        # WRAM -> VRAM ($8000); reads back through the VRAM window, not WRAM.
+        {"b": 3, "c": 0x10, "hl": SRC, "d": VRAM_DST >> 8, "e": VRAM_DST & 0xFF,
+         "wram": {SRC: PAT[:0x30]}, "read": {VRAM_DST: 0x34}},
+        # c=0 is 256 bytes/block into VRAM, not zero.
+        {"b": 1, "c": 0, "hl": SRC, "d": VRAM_DST >> 8, "e": VRAM_DST & 0xFF,
+         "wram": {SRC: PAT[:256]}, "read": {VRAM_DST: 260}},
+        # OAM ($FE00) destination; reads back through the OAM capture.
+        {"b": 1, "c": 4, "hl": SRC, "d": OAM_DST >> 8, "e": OAM_DST & 0xFF,
+         "wram": {SRC: PAT[:4]}, "read": {OAM_DST: 8}},
     ],
     "CopyDataHLtoDE": [
         {},
