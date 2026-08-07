@@ -109,3 +109,21 @@ uint8_t GetCardSymbolData(void)
 	uint16_t address = (uint16_t)(CARD_SYMBOL_TABLE + (uint16_t)id * 2);
 	return gb_read8(address);
 }
+
+CursorTileResult SetCursorParametersForTextBox(uint8_t d, uint8_t e, uint8_t b, uint8_t c)
+{
+	gb_write8(wCurMenuItem_ADDR, 0);
+	gb_write8(wMenuCursorXOffset_ADDR, d);
+	gb_write8(wMenuCursorYOffset_ADDR, e);
+	gb_write8(wMenuYSeparation_ADDR, 0);
+	gb_write8(wNumMenuItems_ADDR, 1);
+	gb_write8(wMenuVisibleCursorTile_ADDR, b);
+	gb_write8(wMenuInvisibleCursorTile_ADDR, c);
+	gb_write8(wCursorBlinkCounter_ADDR, 0);
+	return (CursorTileResult){b, c, wMenuInvisibleCursorTile_ADDR};
+}
+
+CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
+{
+	return SetCursorParametersForTextBox(d, e, 0x0f, 0x00);
+}

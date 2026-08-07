@@ -52,6 +52,22 @@ static void adapt_GetCardSymbolData(ProbeState *s)
 	s->hl = (uint16_t)(0x29dd + id * 2);
 }
 
+static void adapt_SetCursorParametersForTextBox(ProbeState *s)
+{
+	CursorTileResult result = SetCursorParametersForTextBox(s->d, s->e, s->b, s->c);
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+
+static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
+{
+	CursorTileResult result = SetCursorParametersForTextBox_Default(s->d, s->e);
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -61,5 +77,7 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign", adapt_OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign },
 	{ "CardTypeToSymbolID", adapt_CardTypeToSymbolID },
 	{ "GetCardSymbolData", adapt_GetCardSymbolData },
+	{ "SetCursorParametersForTextBox", adapt_SetCursorParametersForTextBox },
+	{ "SetCursorParametersForTextBox_Default", adapt_SetCursorParametersForTextBox_Default },
 	{ NULL, NULL },
 };
