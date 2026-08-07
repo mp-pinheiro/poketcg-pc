@@ -78,6 +78,8 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                   "FlushPalettes", "SetOBP0", "SetOBP1", "FlushPalettesIfRequested"),
     "scroll": ("Func_3e44", "GetNextBackgroundScroll", "EnableInt_LYCoincidence",
                 "DisableInt_LYCoincidence"),
+    "load_animation": ("GetFirstSpriteAnimBufferProperty", "GetSpriteAnimBufferProperty",
+                        "GetSpriteAnimBufferProperty_SpriteInA", "Func_3ddb", "Func_3de7"),
     "damage": ("AddToDamage",),
     "objects": ("SetOneObjectAttributes", "ZeroObjectPositions"),
     "time": ("IncrementPlayTimeCounter", "CheckForCGB"),

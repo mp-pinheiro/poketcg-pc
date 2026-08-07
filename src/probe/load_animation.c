@@ -1,0 +1,37 @@
+#include "home/load_animation.h"
+#include "probe.h"
+#include "generated/wram.h"
+
+static void adapt_GetFirstSpriteAnimBufferProperty(ProbeState *s)
+{
+	s->hl = GetFirstSpriteAnimBufferProperty();
+}
+
+static void adapt_GetSpriteAnimBufferProperty(ProbeState *s)
+{
+	s->hl = GetSpriteAnimBufferProperty(s->c);
+}
+
+static void adapt_GetSpriteAnimBufferProperty_SpriteInA(ProbeState *s)
+{
+	s->hl = GetSpriteAnimBufferProperty_SpriteInA(s->a, s->c);
+}
+
+static void adapt_Func_3ddb(ProbeState *s)
+{
+	Func_3ddb(s->a);
+}
+
+static void adapt_Func_3de7(ProbeState *s)
+{
+	Func_3de7(s->a);
+}
+
+const ProbeEntry probe_entries_load_animation[] = {
+	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
+	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
+	{ "GetSpriteAnimBufferProperty_SpriteInA", adapt_GetSpriteAnimBufferProperty_SpriteInA },
+	{ "Func_3ddb", adapt_Func_3ddb },
+	{ "Func_3de7", adapt_Func_3de7 },
+	{ NULL, NULL },
+};
