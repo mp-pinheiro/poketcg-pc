@@ -219,6 +219,7 @@ CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 # was verified green before they were added.
 PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
 CASES.update({
     # Item format is [x][y][text-id lo][text-id hi] per item, bit 7 of x terminates.
@@ -226,7 +227,8 @@ CASES.update({
         {"hl": 0xC100, "wram": {0xC100: b"\x80"}},
         dict(POISON, hl=0xC100, wram={0xC100: b"\x80"}),
         {"hl": 0xC100, "wram": {0xC100: b"\x01\x02\x01\x00\x80"},
-         "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}},
+         "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
     ],
     # Non-labeled branch draws a 20x6 box at BG-map row 12 ($9980 under zero scroll)
     # then arms text printing at (1,14). wIsTextBoxLabeled lives in the synthesized
@@ -244,33 +246,25 @@ CASES.update({
     "PrintText": [
         {"hl": 0, "d": 0, "e": 0, "wram": {0xC590: b"\x00"}},
         dict(POISON, hl=0, wram={0xC590: b"\x00"}),
-        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ)},
+        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ),
+         "vread": VRAM_READ},
         {"hl": 1, "d": 0, "e": 0, "wram": {0xFF90: b"\x02"},
-         "setup": SETUP, "read": dict(CACHE_READ)},
+         "setup": SETUP, "read": dict(CACHE_READ), "vread": VRAM_READ},
     ],
     # No hl==0 shortcut: hl is always a text id. id 0 resolves to an immediate
     # TX_END; id 1 ("Hand") runs the engine.
     "PrintTextNoDelay": [
         {"hl": 0, "d": 0, "e": 0},
-        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ)},
-        dict(POISON, hl=1, d=0, e=0, setup=SETUP, read=dict(CACHE_READ)),
+        {"hl": 1, "d": 0, "e": 0, "setup": SETUP, "read": dict(CACHE_READ),
+         "vread": VRAM_READ},
+        dict(POISON, hl=1, d=0, e=0, setup=SETUP, read=dict(CACHE_READ), vread=VRAM_READ),
     ],
 })
 # GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread
 # the cache keys are checked but the generated tile is not: swapping its d/e
 # arguments was verified green before this span was added.
 CASES["ProcessTextFromID"].append(
-    # id 1 is four half-width chars = two pairs; it goes through
-    # process_text_core -> Func_22ca -> Func_2325, proving the key2 fix reaches
-    # the text engine and not just the PrintText caller.
-    #
-    # No `vread` here yet: observing VRAM exposes a separate, unfixed defect
-    # (issue #21) -- the oracle writes a generated font tile at $9202-$921F that
-    # the C port never writes at all. Until that is fixed, a vread span covering
-    # $9000-$97FF fails for a reason unrelated to this case's purpose. That gap
-    # also means GenerateTextTile's d/e arguments are currently unobserved:
-    # swapping them is a green mutation. Restore the span with #21.
-    {"hl": 1, "setup": SETUP, "read": dict(CACHE_READ)})
+    {"hl": 1, "setup": SETUP, "read": dict(CACHE_READ), "vread": VRAM_READ})
 
 # WaitForPlayerToAdvanceText, PrintScrollableText and its three wrappers are NOT
 # registered. WaitForPlayerToAdvanceText -> WaitForButtonAorB spins on hKeysPressed

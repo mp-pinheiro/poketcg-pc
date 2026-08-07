@@ -47,7 +47,9 @@ CASES = {
         dict(POISON, hl=SRC, wram={SRC: b"\x01\x02\x03\x00"}),
     ],
     "GetFullWidthFontTileOffset": [{"d": 0, "e": 1}, {"d": 0x0F, "e": 0x20}, dict(POISON, d=0x0E, e=0x20)],
-    "ConvertTileNumberToTileDataAddress": [{"b": 0}, {"b": 1}, dict(POISON, b=0x80)],
+    "ConvertTileNumberToTileDataAddress": [
+        {"b": 0}, {"b": 1}, dict(POISON, b=0x80),
+        {"b": 0x20, "wram": {0xCD06: b"\x88", 0xCD07: b"\x80"}}],
     "CopyHalfWidthCharacterToDE": [{"a": 0x20, "d": 0xC1, "e": 0}, dict(POISON, a=0x41, d=0xC1, e=0)],
     "CreateHalfWidthFontTile": [{"d": 0x20, "e": 0x20}, dict(POISON, d=0x41, e=0x42)],
     "CreateFullWidthFontTile": [{"hl": 0x4000}, dict(POISON, hl=0x4000)],

@@ -118,7 +118,8 @@ uint16_t GetFullWidthFontTileOffset(uint8_t d, uint8_t e)
 uint16_t ConvertTileNumberToTileDataAddress(uint8_t *b, uint8_t *c)
 {
 	uint8_t n = (uint8_t)(*b ^ wTilePatternSelectorCorrection);
-	uint16_t out = (uint16_t)(wTilePatternSelector + (uint16_t)n * TILE_SIZE);
+	uint16_t out = (uint16_t)(((uint16_t)wTilePatternSelector << 8) +
+		(uint16_t)n * TILE_SIZE);
 	*b = wTilePatternSelector;
 	*c = TILE_SIZE;
 	return out;
@@ -339,7 +340,7 @@ void Func_22ca(uint8_t d, uint8_t e)
 	ProcessTextResult out = Func_2325(d, e);
 	if (!(out.f & 0x10)) {
 		if (out.a) return;
-		GenerateTextTile(out.a, out.d, out.e);
+		GenerateTextTile(hffa9, out.d, out.e);
 	}
 	if (!(hffb0 & 2))
 		PlaceNextTextTile(gb_read8(hffa9_ADDR));
