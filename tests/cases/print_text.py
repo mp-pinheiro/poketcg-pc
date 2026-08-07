@@ -138,9 +138,9 @@ CASES.update({
              read={BUFFER: 3}),
     ],
     # Text ID 0 resolves to an immediately terminated text, so ProcessText returns
-    # without generating tiles. A real ID drives the text engine over the tile
-    # cache, which only a prior SetupText makes acyclic, and the oracle then never
-    # returns -- see the note above CASES.
+    # without generating tiles. The multi-pair half-width case (id 1, "Hand") is
+    # appended after CACHE_READ is defined -- it needs a SetupText prelude so the
+    # cache is acyclic and the oracle returns.
     "ProcessTextFromID": [
         {"hl": 0, "wram": {0xCABB: b"\x00"}},
         dict(POISON, hl=0, wram={0xCABB: b"\x00"}),
@@ -207,11 +207,11 @@ CASES.update({
     ],
 })
 
-# Real text id 1 ("\x06Hand\x00") drives the tile cache. These spans all match the
-# oracle; key2 ($C720) is deliberately excluded -- it carries a pre-existing bug in
-# Func_22ca's half-width pair buffering (process_text.c), and ProcessTextFromID,
-# which this slice never touches, diverges there identically.
-CACHE_READ = {0xC620: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+# Real text id 1 ("\x06Hand\x00") drives the half-width tile cache across two
+# character pairs, so the whole cache -- key1 $C6xx, key2 $C7xx, next $C8xx,
+# prev $C9xx -- is diffed against the oracle. wCurTextTile ($CD05) and
+# wFontWidth ($CD0A) pin the placed tile id and the half-width mode.
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 # InitTextPrinting's whole observable effect is the print cursor: hTextBGMap0Address
 # ($FFAA-$FFAB, the BG-map destination DECoordToBGMap0Address derives from d/e) and
 # hTextHorizontalAlign ($FFAD, d itself). Without these a routine that places items
@@ -256,6 +256,21 @@ CASES.update({
         dict(POISON, hl=1, d=0, e=0, setup=SETUP, read=dict(CACHE_READ)),
     ],
 })
+# GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread
+# the cache keys are checked but the generated tile is not: swapping its d/e
+# arguments was verified green before this span was added.
+CASES["ProcessTextFromID"].append(
+    # id 1 is four half-width chars = two pairs; it goes through
+    # process_text_core -> Func_22ca -> Func_2325, proving the key2 fix reaches
+    # the text engine and not just the PrintText caller.
+    #
+    # No `vread` here yet: observing VRAM exposes a separate, unfixed defect
+    # (issue #21) -- the oracle writes a generated font tile at $9202-$921F that
+    # the C port never writes at all. Until that is fixed, a vread span covering
+    # $9000-$97FF fails for a reason unrelated to this case's purpose. That gap
+    # also means GenerateTextTile's d/e arguments are currently unobserved:
+    # swapping them is a green mutation. Restore the span with #21.
+    {"hl": 1, "setup": SETUP, "read": dict(CACHE_READ)})
 
 # WaitForPlayerToAdvanceText, PrintScrollableText and its three wrappers are NOT
 # registered. WaitForPlayerToAdvanceText -> WaitForButtonAorB spins on hKeysPressed

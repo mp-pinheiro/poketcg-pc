@@ -322,9 +322,9 @@ ProcessTextResult Func_2325(uint8_t d, uint8_t e)
 	hffa9 = index;
 	gb_write8((uint16_t)(0xc900u + old), index);
 	gb_write8((uint16_t)(0xc800u + index), old);
-	gb_write8((uint16_t)(0xc600u + index), e);
-	gb_write8((uint16_t)(0xc700u + index), d);
-	return text_result(0, d, e, 0x80, 0);
+	gb_write8((uint16_t)(0xc600u + index), found.e);
+	gb_write8((uint16_t)(0xc700u + index), found.d);
+	return text_result(0, found.d, found.e, 0x80, 0);
 }
 
 
@@ -339,7 +339,7 @@ void Func_22ca(uint8_t d, uint8_t e)
 	ProcessTextResult out = Func_2325(d, e);
 	if (!(out.f & 0x10)) {
 		if (out.a) return;
-		GenerateTextTile(out.a, d, e);
+		GenerateTextTile(out.a, out.d, out.e);
 	}
 	if (!(hffb0 & 2))
 		PlaceNextTextTile(gb_read8(hffa9_ADDR));
