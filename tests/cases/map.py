@@ -4,6 +4,8 @@ W_PERMISSION_MAP = 0xD133
 PERMISSIONS = bytes((i * 3 + 7) & 0xFF for i in range(256))
 READ_MAP = {W_PERMISSION_MAP: 256}
 NPC_BASE = 0xD34A
+NPC_DATA = bytes((i * 5 + 1) & 0xFF for i in range(96))
+NPC_READ = {NPC_BASE: 96}
 
 CONTRACT = {
     "GetPermissionByteOfMapPosition": ("a", "b", "c", "d", "e", "hl"),
@@ -33,13 +35,13 @@ CASES = {
         dict(POISON, a=0xF0, b=31, c=47, wram={W_PERMISSION_MAP: PERMISSIONS}, read=READ_MAP),
     ],
     "GetLoadedNPCID": [
-        {"a": 0},
-        dict(POISON, a=7),
-        {"a": 255},
+        {"a": 0, "wram": {NPC_BASE: NPC_DATA}, "read": NPC_READ},
+        dict(POISON, a=7, wram={NPC_BASE: NPC_DATA}, read=NPC_READ),
+        {"a": 255, "wram": {NPC_BASE: NPC_DATA}, "read": NPC_READ},
     ],
     "GetItemInLoadedNPCIndex": [
-        {"a": 0, "hl": 0},
-        dict(POISON, a=3, hl=0x000B),
-        {"a": 8, "hl": 0x0000},
+        {"a": 0, "hl": 0, "wram": {NPC_BASE: NPC_DATA}, "read": NPC_READ},
+        dict(POISON, a=3, hl=0x000B, wram={NPC_BASE: NPC_DATA}, read=NPC_READ),
+        {"a": 8, "hl": 0x0000, "wram": {NPC_BASE: NPC_DATA}, "read": NPC_READ},
     ],
 }
