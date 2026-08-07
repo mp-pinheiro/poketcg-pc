@@ -45,6 +45,10 @@ oracle-diff-all: build
     export POKETCG_ROM=poketcg/poketcg.gbc
     /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
 
+data-verify:
+    python3 tools/gen_data.py --verify
+    python3 tools/gen_data.py --check
+
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
     @git cliff --bump --unreleased --context 2>/dev/null \

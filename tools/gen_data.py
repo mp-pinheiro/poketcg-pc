@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+"""Extract selected linked-ROM sections into generated C arrays."""
+
+from __future__ import annotations
+
+import argparse
+import zlib
+import re
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+SCHEMA = (
+    {"name": "decks", "section": "Decks", "ctype": "uint8_t", "symbol": "DeckPointers"},
+    {"name": "cards", "section": "Cards", "ctype": "uint8_t", "symbol": "CardPointers"},
+    {"name": "text_1", "section": "Text 1", "ctype": "uint8_t", "symbol": "TextOffsets"},
+    {"name": "text_2", "section": "Text 2", "ctype": "uint8_t", "symbol": "AcidCheckText"},
+    {"name": "text_3", "section": "Text 3", "ctype": "uint8_t", "symbol": "YouDoNotOwnAllCardsNeededToBuildThisDeckText"},
+    {"name": "text_4", "section": "Text 4", "ctype": "uint8_t", "symbol": "Mail3Part1Text"},
+    {"name": "text_5", "section": "Text 5", "ctype": "uint8_t", "symbol": "ChrisFightingClubDeclinedDuelText"},
+    {"name": "text_6", "section": "Text 6", "ctype": "uint8_t", "symbol": "RonaldChallengeCup2Missed2Text"},
+    {"name": "text_7", "section": "Text 7", "ctype": "uint8_t", "symbol": "Text05db"},
+    {"name": "text_8", "section": "Text 8", "ctype": "uint8_t", "symbol": "Text0684"},
+    {"name": "text_9", "section": "Text 9", "ctype": "uint8_t", "symbol": "Text073f"},
+    {"name": "text_10", "section": "Text 10", "ctype": "uint8_t", "symbol": "KakunaDescription"},
+    {"name": "text_11", "section": "Text 11", "ctype": "uint8_t", "symbol": "HorseaDescription"},
+    {"name": "text_12", "section": "Text 12", "ctype": "uint8_t", "symbol": "DamageSwapDescription"},
+    {"name": "text_13", "section": "Text 13", "ctype": "uint8_t", "symbol": "ScoopUpDescription"},
+    {"name": "gfx_1", "section": "Gfx 1", "ctype": "uint8_t", "symbol": "Fonts"},
+    {"name": "gfx_3", "section": "Gfx 3", "ctype": "uint8_t", "symbol": "WaterClubTilemap"},
+    {"name": "gfx_4", "section": "Gfx 4", "ctype": "uint8_t", "symbol": "OverworldMapTiles"},
+    {"name": "gfx_5", "section": "Gfx 5", "ctype": "uint8_t", "symbol": "LightningClubTilesetGfx"},
+    {"name": "gfx_6", "section": "Gfx 6", "ctype": "uint8_t", "symbol": "CardPopGfx"},
+)
+
+SECTION_RE = re.compile(
+    r'^\s*SECTION:\s*\$([0-9A-Fa-f]{4})-\$([0-9A-Fa-f]{4})\s+\(\$[0-9A-Fa-f]{4}\s+bytes\)\s+\["([^"]+)"\]$'
+)
+BANK_RE = re.compile(r'^\s*(ROM0|ROMX) bank #([0-9]+):\s*$')
+SYM_RE = re.compile(r"^([0-9A-Fa-f]{2}):([0-9A-Fa-f]{4})\s+(\S+)\s*$")
+TEXTID_RE = re.compile(r"^[0-9A-Fa-f]{1,4}\s+\S+\s*$")
+ARRAY_RE = re.compile(r"^static const (\w+) (\w+)\[\] = \{$")
+
+
+@dataclass(frozen=True)
+class Section:
+    name: str
+    bank: int
+    start: int
+    end: int
+
+
+def parse_map(path: Path) -> dict[str, Section]:
+    sections: dict[str, Section] = {}
+    bank: int | None = None
+    for lineno, line in enumerate(path.read_text().splitlines(), 1):
+        header = BANK_RE.match(line)
+        if header:
+            bank = int(header[2]) if header[1] == "ROMX" else 0
+            continue
+        match = SECTION_RE.match(line)
+        if not match or bank is None:
+            continue
+        section = Section(match[3], bank, int(match[1], 16), int(match[2], 16))
+        if section.name in sections:
+            raise ValueError(f"{path}:{lineno}: duplicate section {section.name!r}")
+        if section.bank >= 0:
+            sections[section.name] = section
+    return sections
+
+
+def parse_symbols(path: Path) -> dict[str, tuple[int, int]]:
+    symbols: dict[str, tuple[int, int]] = {}
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        match = SYM_RE.match(line)
+        if not match:
+            if line and not line.startswith(";") and not TEXTID_RE.match(line):
+                continue
+            continue
+        symbols[match[3]] = (int(match[1], 16), int(match[2], 16))
+    return symbols
+
+
+def rom_offset(bank: int, address: int) -> int:
+    if address < 0x4000:
+        if bank != 0:
+            raise ValueError(f"bank {bank} has non-bank address ${address:04X}")
+        return address
+    if not 0x4000 <= address <= 0x7FFF:
+        raise ValueError(f"ROM address out of range: ${address:04X}")
+    return 0x4000 * bank + address - 0x4000
+
+
+def resolve(entry: dict[str, str], sections: dict[str, Section], symbols: dict[str, tuple[int, int]]) -> Section:
+    try:
+        section = sections[entry["section"]]
+    except KeyError as exc:
+        raise ValueError(f"schema section not found: {entry['section']}") from exc
+    symbol_name = entry.get("symbol")
+    if symbol_name:
+        try:
+            bank, address = symbols[symbol_name]
+        except KeyError as exc:
+            raise ValueError(f"schema symbol not found: {symbol_name}") from exc
+        if (bank, address) != (section.bank, section.start):
+            raise ValueError(
+                f"symbol {symbol_name} is {bank:02X}:${address:04X}, "
+                f"not {section.name} start {section.bank:02X}:${section.start:04X}"
+            )
+    return section
+
+
+def slices(schema: tuple[dict[str, str], ...], sections: dict[str, Section], symbols: dict[str, tuple[int, int]], rom: bytes) -> list[tuple[dict[str, str], Section, bytes]]:
+    result = []
+    for entry in schema:
+        section = resolve(entry, sections, symbols)
+        start = rom_offset(section.bank, section.start)
+        end = start + section.end - section.start + 1
+        if end > len(rom):
+            raise ValueError(f"section {section.name} exceeds ROM: {start:#x}-{end:#x}")
+        result.append((entry, section, rom[start:end]))
+    return result
+
+
+def render(items: list[tuple[dict[str, str], Section, bytes]], rom_name: str) -> str:
+    lines = [f"/* Generated from {rom_name} by tools/gen_data.py. Do not edit. */", "#ifndef POKETCG_GENERATED_DATA_H", "#define POKETCG_GENERATED_DATA_H", "", "#include <stdint.h>", ""]
+    for entry, section, data in items:
+        lines.append(f"static const {entry['ctype']} poketcg_{entry['name']}[] = {{")
+        for offset in range(0, len(data), 16):
+            lines.append("    " + ", ".join(f"0x{byte:02X}" for byte in data[offset:offset + 16]) + ",")
+        lines.extend(["};", ""])
+    lines.append("#endif")
+    return "\n".join(lines)
+
+
+def parse_generated(text: str, items: list[tuple[dict[str, str], Section, bytes]]) -> dict[str, bytes]:
+    lines = text.splitlines()
+    arrays: dict[str, bytes] = {}
+    index = 0
+    while index < len(lines):
+        match = ARRAY_RE.match(lines[index])
+        if not match:
+            index += 1
+            continue
+        values: list[int] = []
+        index += 1
+        while index < len(lines) and lines[index] != "};":
+            for token in lines[index].strip().rstrip(",").split(","):
+                token = token.strip()
+                if token:
+                    values.append(int(token, 0))
+            index += 1
+        arrays[match[2]] = bytes(values)
+        index += 1
+    expected = {f"poketcg_{entry['name']}" for entry, _, _ in items}
+    if set(arrays) != expected:
+        raise ValueError(f"generated arrays differ from schema: {sorted(set(arrays) ^ expected)}")
+    return arrays
+
+
+def verify(items: list[tuple[dict[str, str], Section, bytes]], arrays: dict[str, bytes], rom: bytes) -> tuple[int, int]:
+    total = 0
+    for entry, section, _ in items:
+        start = rom_offset(section.bank, section.start)
+        expected = rom[start:start + section.end - section.start + 1]
+        actual = arrays[f"poketcg_{entry['name']}"]
+        if len(actual) != len(expected):
+            raise ValueError(f"section {section.name}: size {len(actual)} != {len(expected)}")
+        for offset, (left, right) in enumerate(zip(actual, expected)):
+            if left != right:
+                raise ValueError(f"section {section.name}: first differing offset {offset:#x} (ROM {right:#04x}, generated {left:#04x})")
+        total += len(expected)
+    return len(items), total
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rom", type=Path, default=Path("poketcg/poketcg.gbc"))
+    parser.add_argument("--map", type=Path, default=Path("poketcg/poketcg.map"))
+    parser.add_argument("--sym", type=Path, default=Path("poketcg/poketcg.sym"))
+    parser.add_argument("--out", type=Path, default=Path("include/generated/data.h"))
+    parser.add_argument("--verify", action="store_true")
+    # --check validates the artifact already on disk instead of a freshly rendered
+    # string, so a corrupted or stale include/generated/data.h is actually caught.
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    for path in (args.rom, args.map, args.sym):
+        if not path.exists():
+            raise SystemExit(f"input not found: {path} (run `just bootstrap`)")
+    sections = parse_map(args.map)
+    symbols = parse_symbols(args.sym)
+    rom = args.rom.read_bytes()
+    items = slices(SCHEMA, sections, symbols, rom)
+    if args.check:
+        if not args.out.exists():
+            raise SystemExit(f"nothing to check: {args.out} does not exist")
+        arrays = parse_generated(args.out.read_text(), items)
+        count, total = verify(items, arrays, rom)
+        print(f"gen_data: checked {args.out} -- {count} sections, {total} bytes")
+        return 0
+    text = render(items, args.rom.name)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(text)
+    print(f"gen_data: wrote {args.out} ({len(items)} sections, {sum(len(data) for _, _, data in items)} bytes)")
+    if args.verify:
+        arrays = parse_generated(text, items)
+        print(f"gen_data: checksum {zlib.crc32(b''.join(data for _, _, data in items)):08x}")
+        count, total = verify(items, arrays, rom)
+        print(f"gen_data: verified {count} sections, {total} bytes")
+        perturbed = bytearray(rom)
+        first_entry, first_section, _ = items[0]
+        first_offset = rom_offset(first_section.bank, first_section.start)
+        perturbed[first_offset] ^= 1
+        try:
+            verify(items, arrays, bytes(perturbed))
+        except ValueError as error:
+            print(f"gen_data: perturbation caught: {error}")
+        else:
+            raise ValueError(f"perturbation was not detected in {first_section.name}")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (OSError, ValueError) as error:
+        print(f"gen_data: error: {error}", file=sys.stderr)
+        raise SystemExit(1)
