@@ -89,6 +89,8 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "card_data": ("GetCardType", "GetCardName", "GetCardTypeRarityAndSet",
                   "LoadCardDataToBuffer1_FromCardID", "LoadCardDataToBuffer2_FromCardID",
                   "LoadCardDataToBuffer1_FromName", "LoadCardGfx"),
+    "map": ("GetPermissionByteOfMapPosition", "GetPermissionOfMapPosition",
+             "SetPermissionOfMapPosition", "UpdatePermissionOfMapPosition"),
     "load_deck": ("LoadDeck",),
     "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                    "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance"),
