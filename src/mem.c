@@ -20,8 +20,9 @@ uint8_t g_sram_bank = 0;
 uint8_t g_vram_bank = 0;
 int g_sram_enabled = 0;
 
-/* Out-of-image ROM reads and the unusable $FEA0-$FEFF hole, so gb_ptr stays total. */
-static uint8_t g_scratch[0x100];
+/* Out-of-image ROM reads and the unusable $FEA0-$FEFF hole, so gb_ptr stays total.
+ * Writable through gb_write8, so the snapshot vector has to cover it. */
+uint8_t g_scratch[MEM_SCRATCH_SIZE];
 
 int rom_load(const char *path)
 {

@@ -14,6 +14,11 @@ extern uint8_t g_oam[0xA0];    /* $FE00-$FE9F */
 extern uint8_t g_io[0x80];     /* $FF00-$FF7F */
 extern uint8_t g_pal[0x80];    /* CGB palette RAM; reached through $FF68-$FF6B, not mapped */
 
+/* $FEA0-$FEFF, the unusable hole, plus the landing page for out-of-image ROM reads.
+ * Writable through the bus, so it belongs in any full-state snapshot. */
+#define MEM_SCRATCH_SIZE 0x100
+extern uint8_t g_scratch[MEM_SCRATCH_SIZE];
+
 /* ROM image, loaded from $POKETCG_ROM. Only exists because three ported routines
  * read banked ROM (GetFarByte, DecompressDataFromBank, CopyBankedDataToDE); the
  * data-extraction phase replaces those reads with generated C arrays. */
