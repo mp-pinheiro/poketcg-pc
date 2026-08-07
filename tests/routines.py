@@ -69,6 +69,10 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "ValidateBackupGeneralSaveData", "_ValidateGeneralSaveData",
              "SaveGeneralSaveDataFromDE", "_SaveGeneralSaveData",
              "SaveAndBackupData", "_SaveGame"),
+    "dma": ("DMA",),
+    "unsafe_bg_map": ("UnsafeWriteDataBlockToBGMap0",),
+    "sram": ("BankswitchSRAM",),
+    "lcd_enable_frame": ("DoFrameIfLCDEnabled",),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
