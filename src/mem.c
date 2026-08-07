@@ -13,6 +13,7 @@ size_t g_rom_size = 0;
 
 uint8_t g_rom_bank = 1;
 uint8_t g_sram_bank = 0;
+int g_sram_enabled = 0;
 
 /* Backs VRAM/OAM/IO and out-of-image ROM reads. Not a PPU: plain scratch bytes so
  * the bus is total and a stray access cannot run off an array. */
@@ -67,6 +68,7 @@ void mem_reset(void)
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
 	g_sram_bank = 0;
+	g_sram_enabled = 0;
 }
 
 const uint8_t *rom_ptr(uint8_t bank, uint16_t addr)
@@ -96,6 +98,8 @@ uint8_t *gb_ptr(uint16_t addr)
 
 uint8_t gb_read8(uint16_t addr)
 {
+	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
+		return 0xFF; /* open bus, as on hardware */
 	return *gb_ptr(addr);
 }
 
@@ -103,5 +107,7 @@ void gb_write8(uint16_t addr, uint8_t v)
 {
 	if (addr < 0x8000)
 		return; /* ROM: MBC register writes are modelled by BankswitchROM */
+	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
+		return;
 	*gb_ptr(addr) = v;
 }

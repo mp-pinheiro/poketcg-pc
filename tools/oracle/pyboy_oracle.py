@@ -34,6 +34,7 @@ RESERVED = range(0xCE00, 0xD000)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000
+SRAM_BASE, SRAM_END = 0xA000, 0xC000
 
 MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 
@@ -51,6 +52,7 @@ class Result:
     pc: int
     wram: bytes = field(repr=False)
     hram: bytes = field(repr=False)
+    sram: bytes = field(repr=False)
 
     def mem(self, addr: int, n: int = 1) -> bytes:
         if WRAM_BASE <= addr and addr + n <= WRAM_END:
@@ -59,7 +61,10 @@ class Result:
         if HRAM_BASE <= addr and addr + n <= HRAM_END:
             off = addr - HRAM_BASE
             return self.hram[off:off + n]
-        raise ValueError(f"address ${addr:04X}+{n} is outside the captured WRAM/HRAM snapshot")
+        if SRAM_BASE <= addr and addr + n <= SRAM_END:
+            off = addr - SRAM_BASE
+            return self.sram[off:off + n]
+        raise ValueError(f"address ${addr:04X}+{n} is outside the captured WRAM/HRAM/SRAM snapshot")
 
 
 class OracleError(RuntimeError):
@@ -96,11 +101,13 @@ class Oracle:
     def _capture(self, _ctx) -> None:
         pb = self.pyboy
         rf = pb.register_file
+        pb.memory[0x0000] = 0x0A
         self._hit = Result(
             a=rf.A, f=rf.F, b=rf.B, c=rf.C, d=rf.D, e=rf.E,
             hl=rf.HL, sp=rf.SP, pc=rf.PC,
             wram=bytes(pb.memory[WRAM_BASE:WRAM_END]),
             hram=bytes(pb.memory[HRAM_BASE:HRAM_END]),
+            sram=bytes(pb.memory[SRAM_BASE:SRAM_END]),
         )
         rf.PC = SPIN
 
@@ -131,7 +138,8 @@ class Oracle:
 
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
-             wram: dict[int, bytes] | None = None) -> Result:
+             wram: dict[int, bytes] | None = None,
+             sram: dict[int, dict[int, bytes]] | None = None) -> Result:
         pb = self.pyboy
         bank, addr = pb.symbol_lookup(symbol)
         if bank != 0:
@@ -145,6 +153,13 @@ class Oracle:
                     f"(${RESERVED.start:04X}-${RESERVED.stop - 1:04X})")
             for i, byte in enumerate(data):
                 pb.memory[at + i] = byte
+
+        for bank, spans in (sram or {}).items():
+            pb.memory[0x0000] = 0x0A
+            pb.memory[0x4000] = bank & 0xFF
+            for at, data in spans.items():
+                for i, byte in enumerate(data):
+                    pb.memory[at + i] = byte
 
         pb.memory[SPIN] = 0x18  # jr
         pb.memory[SPIN + 1] = 0xFE  # -2

@@ -231,6 +231,43 @@ int main(void)
 					} while (eat(','));
 					need('}');
 				}
+			} else if (strcmp(key, "sram") == 0) {
+				need('{');
+				if (!eat('}')) {
+					do {
+						char bank_s[MAX_NAME];
+						jstr(bank_s, sizeof bank_s);
+						need(':');
+						unsigned bank = (unsigned)strtoul(bank_s, NULL, 10);
+						if (bank > 3)
+							die("sram bank out of range");
+						g_sram_bank = (uint8_t)bank;
+						g_sram_enabled = 1;
+						need('{');
+						if (!eat('}')) {
+							do {
+								char addr_s[MAX_NAME], hex[MAX_SPAN_BYTES];
+								jstr(addr_s, sizeof addr_s);
+								need(':');
+								size_t hn = jstr(hex, sizeof hex);
+								if (hn % 2)
+									die("sram value needs an even hex digit count");
+								uint16_t at = (uint16_t)strtoul(addr_s, NULL, 10);
+								if (at < 0xA000 || (size_t)at + hn / 2 > 0xC000)
+									die("sram span outside $A000-$BFFF");
+								for (size_t i = 0; i < hn; i += 2) {
+									int hi = hexdig(hex[i]), lo = hexdig(hex[i + 1]);
+									if (hi < 0 || lo < 0)
+										die("sram value is not hex");
+									g_sram[(size_t)bank * 0x2000 + (at - 0xA000) + i / 2] =
+										(uint8_t)(hi << 4 | lo);
+								}
+							} while (eat(','));
+							need('}');
+						}
+					} while (eat(','));
+					need('}');
+				}
 			} else {
 				jskip();
 			}
@@ -253,7 +290,7 @@ int main(void)
 	for (size_t i = 0; i < nspans; i++) {
 		printf("%s\"%u\":\"", i ? "," : "", spans[i].addr);
 		for (uint16_t k = 0; k < spans[i].len; k++)
-			printf("%02x", gb_read8((uint16_t)(spans[i].addr + k)));
+			printf("%02x", *gb_ptr((uint16_t)(spans[i].addr + k)));
 		printf("\"");
 	}
 	printf("}}\n");

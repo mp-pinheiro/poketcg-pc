@@ -87,13 +87,16 @@ LITERAL = b"".join(bytes([0xFF]) + bytes((i * 8 + k) & 0xFF for k in range(8))
 # bytes per 52 output bytes, and no reachable state can push that past 13 per 52, so
 # 65536 output bytes consume at most 16384 source bytes.
 AA_SEED = {at: b"\xaa" * 0x800 for at in range(0x8000, 0x9000, 0x800)}
-AA_SEED.update({at: b"\xaa" * 0x800 for at in range(0xA000, 0xC000, 0x800)})
 # $9000-$9FFF is out of the source pointer's reach ($8000-$8337 before the sweep
 # reaches the state, $AAAA onwards after), so it starts as $55 and can only become
 # $AA by being written, which happens 45569 output bytes in.
 AA_SEED.update({at: b"\x55" * 0x800 for at in range(0x9000, 0xA000, 0x800)})
 AA_SEED[BUF] = b"\xaa" * 0x100
 AA_SEED[STATE] = state(src=0x8000)
+# Bank 0 holds the same $AA and is left enabled, so the sweep's source reads return $AA for
+# the whole run: BankswitchSRAM drives rRAMG/rRAMB directly, so the sweep's own writes to
+# $0000/$4000 are inert and the selected bank never moves off 0.
+AA_SRAM = {0x00: {at: b"\xaa" * 0x800 for at in range(0xA000, 0xC000, 0x800)}}
 # The state block itself is not checked: the sweep does overwrite it, but every later
 # .Decompress call writes its own fields again, so its final value is not derivable.
 
@@ -158,6 +161,7 @@ CASES = {
                 "space, including the oracle's synthesized call frame and stack, "
                 "so no emulator run can survive it",
          "wram": AA_SEED,
+         "sram": AA_SRAM,
          "expect": {
              0xDE00: b"\xaa",       # first output byte
              0x9000: b"\xaa" * 16,  # $55 until output byte 45569

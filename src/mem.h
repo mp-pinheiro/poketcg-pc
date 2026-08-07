@@ -8,10 +8,7 @@
  * The generated layout headers in include/generated/ index straight into these. */
 extern uint8_t g_wram[0x2000]; /* $C000-$DFFF; every rgbds section is WRAM0 */
 extern uint8_t g_hram[0x80];   /* $FF80-$FFFF */
-extern uint8_t g_sram[0x8000]; /* 4 banks x 8 KiB, windowed at $A000-$BFFF. Always
-                                * readable: the MBC5 SRAM-enable latch is not modelled,
-                                * so a read before enabling returns 0 here and $FF on
-                                * hardware. */
+extern uint8_t g_sram[0x8000]; /* 4 banks x 8 KiB, windowed at $A000-$BFFF */
 
 /* ROM image, loaded from $POKETCG_ROM. Only exists because three ported routines
  * read banked ROM (GetFarByte, DecompressDataFromBank, CopyBankedDataToDE); the
@@ -19,9 +16,11 @@ extern uint8_t g_sram[0x8000]; /* 4 banks x 8 KiB, windowed at $A000-$BFFF. Alwa
 extern uint8_t *g_rom;
 extern size_t g_rom_size;
 
-/* MBC5 latches. BankswitchROM() writes g_rom_bank; hBankSRAM writes g_sram_bank. */
+/* MBC5 latches. BankswitchROM() writes g_rom_bank; BankswitchSRAM() writes
+ * g_sram_bank and g_sram_enabled. */
 extern uint8_t g_rom_bank;
 extern uint8_t g_sram_bank;
+extern int g_sram_enabled;
 
 int rom_load(const char *path); /* 0 on success, -1 with errno set */
 void rom_free(void);

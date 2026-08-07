@@ -150,5 +150,7 @@ CASES = {
         {"a": 0x02, "hl": 0xC200, "wram": {0xC200: b"\x5a", hBankROM: b"\x04"}},
         {"a": 0x11, "hl": 0xFF90, "wram": {0xFF90: b"\x77"}, "read": {hBankROM: 1}},
         {"a": 0x05, "hl": 0xDFFF, "wram": {0xDFFF: b"\xa3"}, "read": {hBankROM: 1}},
+        # $A000 with SRAM disabled at power-on: the bus read is open bus, $FF.
+        {"a": 0x02, "hl": 0xA000, "wram": {hBankROM: b"\x04"}, "read": {hBankROM: 1}},
     ],
 }
