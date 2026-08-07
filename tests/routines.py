@@ -21,6 +21,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),
     "empty_screen": ("EmptyScreen", "BCCoordToBGMap0Address"),
+    "tiles": ("FillRectangle", "Copy1bppTiles"),
     "card_collection": ("CreateTempCardCollection", "AddCardToCollection",
                         "GetCardAlbumProgress"),
     "save": ("CopyGeneralSaveDataToSRAM", "ValidateGeneralSaveDataFromDE",
