@@ -1,0 +1,34 @@
+#ifndef POKETCG_HOME_PROCESS_TEXT_H
+#define POKETCG_HOME_PROCESS_TEXT_H
+
+#include <stdint.h>
+
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+} TextLength;
+
+void InitTextFormat(void);
+uint8_t CaseHalfWidthLetter(uint8_t *e);
+uint8_t ClassifyTextCharacterPair(uint8_t *d, uint8_t *e);
+TextLength GetTextLengthInHalfTiles(uint16_t hl);
+TextLength GetTextLengthInTiles(uint16_t hl);
+uint16_t GetFullWidthFontTileOffset(uint8_t d, uint8_t e);
+uint16_t ConvertTileNumberToTileDataAddress(uint8_t *b, uint8_t *c);
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint16_t de;
+	uint16_t hl;
+} FontTileResult;
+FontTileResult CopyHalfWidthCharacterToDE(uint8_t a, uint16_t de);
+FontTileResult CreateHalfWidthFontTile(uint8_t d, uint8_t e);
+FontTileResult CreateFullWidthFontTile(uint16_t hl);
+FontTileResult CreateFullWidthFontTile_ConvertToTileDataAddress(uint8_t d, uint8_t e,
+	uint8_t b);
+uint8_t GenerateTextTile(uint8_t b, uint8_t d, uint8_t e);
+uint8_t TwoByteNumberToTxSymbol_PadSpace(uint16_t hl);
+
+#endif
