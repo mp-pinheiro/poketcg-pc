@@ -33,3 +33,16 @@ uint8_t UpdatePermissionOfMapPosition(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(address, result);
 	return result;
 }
+
+PermissionResult GetItemInLoadedNPCIndex(uint8_t a, uint8_t l)
+{
+	if (a >= 8u)
+		a = 0;
+	uint8_t offset = (uint8_t)(a * 12u + l);
+	return (PermissionResult){offset, (uint16_t)(wLoadedNPCs_ADDR + offset)};
+}
+
+PermissionResult GetLoadedNPCID(uint8_t a)
+{
+	return GetItemInLoadedNPCIndex(a, 0);
+}
