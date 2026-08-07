@@ -39,7 +39,7 @@ file(GLOB HOME_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.c")
 file(GLOB PROBE_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/probe/*.c")
 
 if(PORT_FILES)
-  set(KEEP ${PORT_FILES} switch_rom)
+  set(KEEP ${PORT_FILES} switch_rom switch_sram)
   set(_home "")
   foreach(src ${HOME_SOURCES})
     get_filename_component(n "${src}" NAME_WE)

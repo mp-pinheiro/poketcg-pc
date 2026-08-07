@@ -141,9 +141,7 @@ class Oracle:
              wram: dict[int, bytes] | None = None,
              sram: dict[int, dict[int, bytes]] | None = None) -> Result:
         pb = self.pyboy
-        bank, addr = pb.symbol_lookup(symbol)
-        if bank != 0:
-            raise OracleError(f"{symbol} resolves to bank {bank}; only home-bank routines are supported")
+        fn_bank, addr = pb.symbol_lookup(symbol)
 
         self._reset_ram()
         for at, data in (wram or {}).items():
@@ -161,6 +159,12 @@ class Oracle:
                 for i, byte in enumerate(data):
                     pb.memory[at + i] = byte
 
+        # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
+        # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
+        # jumping in. Home-bank (0) routines already sit in the always-mapped $0000-$3FFF.
+        if fn_bank != 0:
+            pb.memory[0x2000] = fn_bank & 0xFF
+            pb.memory[0x3000] = (fn_bank >> 8) & 1
         pb.memory[SPIN] = 0x18  # jr
         pb.memory[SPIN + 1] = 0xFE  # -2
         pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF

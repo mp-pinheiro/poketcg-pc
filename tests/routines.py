@@ -15,6 +15,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "random": ("HtimesL", "Random", "UpdateRNGSources"),
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
     "write_number": ("TwoByteNumberToText",),
+    "clear_sram_bg_maps": ("ClearSRAMBGMaps",),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
