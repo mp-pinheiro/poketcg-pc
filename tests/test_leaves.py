@@ -93,15 +93,25 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
     if not case.get("oracle", True):
         if not case.get("why"):
             return ["oracle=False case must carry a `why` string"]
-        expect = case.get("expect")
-        if not expect:
-            return ["oracle=False case must carry an `expect` map"]
+        expect = case.get("expect") or {}
+        # A routine whose only output is a register writes no memory, so an `expect`
+        # map alone cannot fail for it. `expect_regs` pins those, still derived from
+        # the asm rather than read off the oracle.
+        expect_regs = case.get("expect_regs") or {}
+        if not expect and not expect_regs:
+            return ["oracle=False case must carry an `expect` or `expect_regs` map"]
         reads = {a: len(v) for a, v in expect.items()}
+        reads.update(case.get("read", {}))
         got = run_probe(probe, fn, case, reads)
         for addr, want in expect.items():
             have = bytes.fromhex(got["wram"][str(addr)])
             if bytes(want) != have:
                 bad.append(f"${addr:04X}: asm expects {bytes(want).hex()} != C {have.hex()}")
+        for field, want in expect_regs.items():
+            have = got[field]
+            if want != have:
+                width = 4 if field == "hl" else 2
+                bad.append(f"{field}: asm expects ${want:0{width}X} != C ${have:0{width}X}")
         return bad
 
     ref = oracle.call(
