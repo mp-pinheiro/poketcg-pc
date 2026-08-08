@@ -359,6 +359,14 @@ HandSortResult SortHandCardsByID(void)
 				0xC0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DUELVARS_HAND - 1u)};
 }
 
+/* duel.asm:1915-1922. The table is `db $80, $40, $20, $10, $08, $04, $02, $01`
+ * (InvertedPowersOf2, 00:1A1A). Entry a is a color index; all other registers
+ * are preserved. */
+uint8_t TranslateColorToWR(uint8_t a)
+{
+	return rom_ptr(0u, 0x1A1Au)[a];
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

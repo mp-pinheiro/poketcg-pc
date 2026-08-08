@@ -34,6 +34,7 @@ CONTRACT = {
     "SortCardsInListByID": ("a", "b", "c", "d", "e", "f", "hl"),
     "SortCardsInDuelTempListByID": ("a", "b", "c", "d", "e", "f", "hl"),
     "SortHandCardsByID": ("a", "b", "c", "d", "e", "f", "hl"),
+    "TranslateColorToWR": ("a", "b", "c", "d", "e", "hl"),
 }
 
 CASES = {
@@ -238,5 +239,12 @@ CASES = {
                   0xC243: b"\x01", 0xC242: b"\x00",
                   wPlayerDeck: b"\x01\x02"},
          "read": {0xC242: 2, 0xC510: 4}},
+    ],
+    # Color index -> $80 >> index.
+    "TranslateColorToWR": [
+        {"a": 0},
+        {"a": 3},
+        {"a": 7},
+        dict(POISON, a=5),
     ],
 }

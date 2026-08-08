@@ -216,6 +216,11 @@ static void adapt_SortHandCardsByID(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_TranslateColorToWR(ProbeState *s)
+{
+	s->a = TranslateColorToWR(s->a);
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -241,5 +246,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "SortCardsInListByID", adapt_SortCardsInListByID },
 	{ "SortCardsInDuelTempListByID", adapt_SortCardsInDuelTempListByID },
 	{ "SortHandCardsByID", adapt_SortHandCardsByID },
+	{ "TranslateColorToWR", adapt_TranslateColorToWR },
 	{ NULL, NULL },
 };

@@ -39,7 +39,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "FindLastCardInHand", "CreateHandCardList",
              "CreateArenaOrBenchEnergyCardList", "ShuffleCards",
              "SortCardsInListByID", "SortCardsInDuelTempListByID",
-             "SortHandCardsByID"),
+             "SortHandCardsByID", "TranslateColorToWR"),
     "process_text": ("InitTextFormat", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
                      "GetTextLengthInHalfTiles", "GetTextLengthInTiles",
                      "GetFullWidthFontTileOffset", "ConvertTileNumberToTileDataAddress",

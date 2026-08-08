@@ -143,4 +143,8 @@ typedef struct {
 } HandSortResult;
 HandSortResult SortHandCardsByID(void);
 
+/* TranslateColorToWR (duel.asm:1915-1922): color index in a -> InvertedPowersOf2[a]
+ * ($80 >> a). Pure ROM table read; hl/b/c/d/e preserved. */
+uint8_t TranslateColorToWR(uint8_t a);
+
 #endif
