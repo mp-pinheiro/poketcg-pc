@@ -45,3 +45,59 @@ CASES = {
              sread={0: {0xA800: SREAD_LEN}}),
     ],
 }
+
+# Audio wrapper CONTRACT + CASES — home/sound.asm farcall trampolines
+# Wrappers dissolve to direct C calls into Music1_* routines.
+# CONTRACT matches the underlying Music1_* routine.
+wCurSongID = 0xDD80
+
+CONTRACT.update({
+    "SetupSound": (),
+    "StopMusic": ("hl",),
+    "PlaySong": ("hl",),
+    "AssertSongFinished": ("a",),
+    "AssertSFXFinished": ("a",),
+    "PlaySFX_InvalidChoice": ("b", "c", "hl"),
+    "PlaySFX": ("b", "c", "hl"),
+    "PauseSong": (),
+    "ResumeSong": (),
+})
+
+CASES.update({
+    "SetupSound": [
+        {"read": {wCurSongID: 1}},
+        dict(POISON, read={wCurSongID: 1}),
+    ],
+    "StopMusic": [
+        {"read": {wCurSongID: 1}},
+    ],
+    "PlaySong": [
+        {"a": 0, "read": {wCurSongID: 1}},
+        {"a": 30, "read": {wCurSongID: 1}},
+        dict(POISON, a=15, read={wCurSongID: 1}),
+    ],
+    "AssertSongFinished": [
+        {"wram": {wCurSongID: b"\x80"}},
+        {"wram": {wCurSongID: b"\x00"}},
+        dict(POISON, wram={wCurSongID: b"\x80"}),
+    ],
+    "AssertSFXFinished": [
+        {"wram": {0xDD82: b"\x80"}},
+        {"wram": {0xDD82: b"\x00"}},
+        dict(POISON, wram={0xDD82: b"\x80"}),
+    ],
+    "PlaySFX_InvalidChoice": [
+        {"read": {0xDD82: 1, 0xDD83: 1}},
+    ],
+    "PlaySFX": [
+        {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
+        {"a": 1, "read": {0xDD82: 1, 0xDD83: 1}},
+        dict(POISON, a=5, read={0xDD82: 1, 0xDD83: 1}),
+    ],
+    "PauseSong": [
+        {"wram": {wCurSongID: b"\x01"}, "read": {wCurSongID: 1}},
+    ],
+    "ResumeSong": [
+        {"wram": {wCurSongID: b"\x01"}, "read": {wCurSongID: 1}},
+    ],
+})

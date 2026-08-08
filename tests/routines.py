@@ -200,6 +200,11 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                "Music1_Init", "Music1_StopAllChannels", "Music1_f4980",
                "Music1_CopyData", "Music1_BeginSong"),
     "sfx": ("SFX_PlaySFX", "SFX_UpdateSFX"),
+    "sound": ("Func_37c5", "Func_37a5",
+              "SetupSound", "StopMusic", "PlaySong",
+              "AssertSongFinished", "AssertSFXFinished",
+              "PlaySFX_InvalidChoice", "PlaySFX",
+              "PauseSong", "ResumeSong"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

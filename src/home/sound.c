@@ -1,5 +1,6 @@
 #include "home/sound.h"
 
+#include "home/music1.h"
 #include "generated/hram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
@@ -85,3 +86,16 @@ TileConvertWrapResult Func_37a5(uint16_t hl, uint16_t de)
 	BankswitchROM(saved);
 	return (TileConvertWrapResult){r.hl, r.de, saved};
 }
+
+/* home/sound.asm audio wrappers — farcall trampolines dissolved to direct calls */
+#define SFX_DENIED 0x04u
+
+void SetupSound(void)       { Music1_Init(); }
+void StopMusic(void)        { Music1_PlaySong(0); }
+void PlaySong(uint8_t a)    { Music1_PlaySong(a); }
+uint8_t AssertSongFinished(void)  { return Music1_AssertSongFinished(); }
+uint8_t AssertSFXFinished(void)   { return Music1_AssertSFXFinished(); }
+void PlaySFX_InvalidChoice(void)  { Music1_PlaySFX(SFX_DENIED); }
+void PlaySFX(uint8_t a)     { Music1_PlaySFX(a); }
+void PauseSong(void)        { Music1_PauseSong(); }
+void ResumeSong(void)       { Music1_ResumeSong(); }
