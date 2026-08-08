@@ -15,32 +15,43 @@
 #define NUM_BACKGROUND_PALETTES 8u
 #define STAT_BUSY               0x02u
 
-/* CGB palette RAM sits behind $FF68-$FF6B (auto-incrementing index/data ports),
- * which the flat g_io array has no model for, and PyBoy writes real palette RAM the
- * oracle snapshot cannot capture. Deliberately unregistered; documented in the case file. */
-static void CopyCGBPalettes(uint8_t a, uint8_t b)
+/* CGB palette RAM behind $FF68-$FF6B is a 64-byte indexed store the flat g_io
+ * model doesn't have, so only the register tail is compared -- oracle:False,
+ * see the case file. */
+CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)
 {
 	uint8_t off = (uint8_t)(a * 8u);
 	uint16_t hl = (uint16_t)(wBackgroundPalettesCGB_ADDR + off);
 	uint8_t c = (uint8_t)((off & 0x40u) ? 0x6Au : 0x68u);
+	uint8_t d = 0;
 	uint8_t e = (uint8_t)(off & 0xBFu);
+	uint8_t data = 0;
 
 	do {
 		gb_write8((uint16_t)(0xFF00u + c), e);
 		c++;
 		while (gb_read8(rSTAT) & STAT_BUSY)
 			;
-		gb_write8((uint16_t)(0xFF00u + c), gb_read8(hl));
+		data = gb_read8(hl);
+		gb_write8((uint16_t)(0xFF00u + c), data);
+		data = gb_read8((uint16_t)(0xFF00u + c));
 		hl++;
 		c--;
 		e++;
 	} while (--b);
+
+	return (CopyCGBPalettesResult){data, b, c, d, e, hl};
 }
 
-static void FlushAllCGBPalettes(void)
+/* Falls into FlushPalettesIfRequested.done in the asm, so clearing
+ * wFlushPaletteFlags is this routine's own effect too, not just a caller's. */
+FlushAllCGBPalettesResult FlushAllCGBPalettes(void)
 {
 	CopyCGBPalettes(0, (uint8_t)(8u * PAL_SIZE));
-	CopyCGBPalettes(NUM_BACKGROUND_PALETTES, (uint8_t)(8u * PAL_SIZE));
+	CopyCGBPalettesResult r = CopyCGBPalettes(NUM_BACKGROUND_PALETTES, (uint8_t)(8u * PAL_SIZE));
+
+	gb_write8(wFlushPaletteFlags_ADDR, 0);
+	return (FlushAllCGBPalettesResult){r.b, r.c, r.d, r.e, r.hl};
 }
 
 void FlushPalettesIfRequested(void)
