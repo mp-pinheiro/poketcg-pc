@@ -1,5 +1,7 @@
 #include "home/music1.h"
 #include "probe.h"
+#include "mem.h"
+#include "generated/wram.h"
 
 /* ── Leaf adapters ───────────────────────────────────────────────────── */
 
@@ -181,13 +183,38 @@ static void adapt_Music1_LoadWaveInstrument(ProbeState *s)
 /* ── Vibrato ─────────────────────────────────────────────────────────── */
 
 static void adapt_Music1_UpdateVibrato(ProbeState *s)
-{ Music1_UpdateVibrato(s->a); }
+{
+	uint8_t ch = s->c;
+	Music1_UpdateVibrato(ch);
+	s->e = gb_read8(wMusicCh1CurPitch_ADDR + ((uint16_t)ch << 1));
+	s->d = gb_read8(wMusicCh1CurPitch_ADDR + ((uint16_t)ch << 1) + 1);
+}
 
 static void adapt_Music1_f490b(ProbeState *s)
 { Music1_f490b(s->a); }
 
 static void adapt_Music1_f4967(ProbeState *s)
-{ Music1_f4967(s->a); }
+{
+	uint16_t addr;
+	uint8_t ch = s->c;
+	addr = wMusicCh1CurPitch_ADDR + ((uint16_t)ch << 1);
+	gb_write8(addr, s->e);
+	gb_write8(addr + 1, s->d);
+	Music1_f4967(ch);
+	s->e = gb_read8(addr);
+	s->d = gb_read8(addr + 1);
+}
+
+static void adapt_Music1_GetChannelStackPointer(ProbeState *s)
+{
+	uint16_t sp = Music1_GetChannelStackPointer(s->c);
+	s->hl = sp;
+}
+
+static void adapt_Music1_SetChannelStackPointer(ProbeState *s)
+{
+	Music1_SetChannelStackPointer(s->c, s->hl);
+}
 
 /* ── Pause / resume ──────────────────────────────────────────────────── */
 
@@ -265,5 +292,7 @@ const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_ResumeSong",        adapt_Music1_ResumeSong },
 	{ "Music1_BackupSong",        adapt_Music1_BackupSong },
 	{ "Music1_LoadBackup",        adapt_Music1_LoadBackup },
+	{ "Music1_GetChannelStackPointer", adapt_Music1_GetChannelStackPointer },
+	{ "Music1_SetChannelStackPointer", adapt_Music1_SetChannelStackPointer },
 	{ NULL, NULL },
 };

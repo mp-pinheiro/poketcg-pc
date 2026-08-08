@@ -49,7 +49,7 @@ NON_CALLS = {
 	"long", "short", "float", "double", "bool", "_Bool",
 	"sizeof", "alignof", "_Alignof", "defined", "_Generic",
 	"if", "for", "while", "switch", "return", "do", "else", "goto",
-	"pair", "split",
+	"pair", "split", "gb_read8", "gb_write8",
 }
 
 # adapter -> {rule: why it is allowed}. Keep this tiny.
