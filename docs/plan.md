@@ -15,8 +15,8 @@
 | W1-H small leaves (8 files) | 8/11 (3 excluded) | landed | 876d82ea |
 | W1-I setup + palettes | 9/9 | landed | 2056acad |
 | W1-J harness: keys | — | landed | 9e383124 |
-| W2-K input waiters + scrollable text | 10 | pending | — |
-| W2-L damage modifiers + colours | 6 | pending | — |
+| W2-K input waiters + scrollable text | 10/10 (7 oracle:False) | landed | — |
+| W2-L damage modifiers + colours | 6/6 | landed | — |
 | Wave 3 — inline (4 routines) | 4 | pending | — |
 
 This table is the resumption point for a compacted or cleared session: each
