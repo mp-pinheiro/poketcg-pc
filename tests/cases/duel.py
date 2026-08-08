@@ -31,6 +31,8 @@ CONTRACT = {
     "CreateHandCardList": ("a", "b", "c", "d", "e", "f", "hl"),
     "CreateArenaOrBenchEnergyCardList": ("a", "b", "c", "d", "e", "f", "hl"),
     "ShuffleCards": ("a", "b", "c", "d", "e", "f", "hl"),
+    "SortCardsInListByID": ("a", "b", "c", "d", "e", "f", "hl"),
+    "SortCardsInDuelTempListByID": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -191,5 +193,36 @@ CASES = {
         dict(POISON, a=2, hl=0xC27E,
              wram={0xC27E: b"\x05\x06\x07", 0xCACA: b"\x00\x00\x00"},
              read={0xC27E: 3}),
+    ],
+    # Sort by card id: deck index -> id at $C400. The sort is unstable (equal ids
+    # swap the later card forward), so the deck seeds use distinct ids to pin order.
+    "SortCardsInDuelTempListByID": [
+        # ids: idx0=$CB, idx1=$01, idx2=$02 -> sorted [1, 2, 0].
+        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\xCB\x01\x02",
+                  0xC510: b"\x00\x02\x01\xff"},
+         "read": {0xC510: 4, 0xFF99: 2}},
+        # Already sorted: identity passes.
+        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\xCB",
+                  0xC510: b"\x00\x01\x02\xff"},
+         "read": {0xC510: 4, 0xFF99: 2}},
+        # Empty list.
+        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01", 0xC510: b"\xff"},
+         "read": {0xC510: 2, 0xFF99: 2}},
+        # Equal ids: the later card moves to the front (unstable).
+        {"wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x01",
+                  0xC510: b"\x00\x01\xff"},
+         "read": {0xC510: 3, 0xFF99: 2}},
+    ],
+    # hTempListPtr_ff99 preselects the list to sort. The direct entry reads [ptr]
+    # as a card index and scans from [ptr+1], so a well-formed list ends with the
+    # terminator at [ptr+1]; the sort stops once the pointer itself lands on $FF.
+    "SortCardsInListByID": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x10\xC5",
+                  0xC510: b"\x02\x01\x00\xff", wPlayerDeck: b"\x03\x02\x01"},
+         "read": {0xC510: 4, 0xFF99: 2}},
+        # Single card at [ptr], terminator at [ptr+1].
+        {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5",
+                  0xC500: b"\x00\xff", wPlayerDeck: b"\x01"},
+         "read": {0xC500: 2, 0xFF99: 2}},
     ],
 }

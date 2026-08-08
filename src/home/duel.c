@@ -271,6 +271,68 @@ ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
 	return (ShuffleCardsResult){last, 0xC0u};
 }
 
+#define HTEMP_LIST_PTR 0xFF99u
+#define HTEMP_CARD_ID 0xFF9Bu
+
+static uint16_t list_ptr(void)
+{
+	return (uint16_t)(gb_read8(HTEMP_LIST_PTR) |
+			  (uint16_t)gb_read8((uint16_t)(HTEMP_LIST_PTR + 1u)) << 8);
+}
+
+static void list_set_ptr(uint16_t ptr)
+{
+	gb_write8(HTEMP_LIST_PTR, (uint8_t)ptr);
+	gb_write8((uint16_t)(HTEMP_LIST_PTR + 1u), (uint8_t)(ptr >> 8));
+}
+
+/* duel.asm:589-648. The terminator is $FF, whose bit 7 is the loop-exit test. Each
+ * pass finds the lowest-ID card in the remaining span and swaps it to the front,
+ * then advances the pointer; the final `bit 7, [hl]` on the terminator leaves
+ * Z clear and H set. */
+SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de)
+{
+	for (;;) {
+		uint16_t ptr = list_ptr();
+		if (gb_read8(ptr) & 0x80u) {
+			/* `bit 7, [hl]` on the $FF terminator: Z clear, H set. */
+			return (SortResult){(uint8_t)ptr, b, c, (uint8_t)(de >> 8), (uint8_t)de,
+						0x20u, ptr};
+		}
+		uint16_t lowest_pos = ptr;
+		uint16_t lowest_id = GetCardIDFromDeckIndex_bc(gb_read8(ptr), 0).a;
+		uint16_t scan = (uint16_t)(ptr + 1u);
+		while (!(gb_read8(scan) & 0x80u)) {
+			uint16_t candidate = GetCardIDFromDeckIndex_bc(gb_read8(scan), 0).a;
+			/* The asm's `cp / jr c, .not_lower_id` updates the slot on EQUAL ids
+			 * too (only a strictly smaller current-lowest keeps the slot), so the
+			 * sort is unstable: the last equal card moves to the front. */
+			if (candidate <= lowest_id) {
+				lowest_id = candidate;
+				lowest_pos = scan;
+			}
+			scan++;
+		}
+		uint8_t front = gb_read8(ptr);
+		gb_write8(ptr, gb_read8(lowest_pos));
+		gb_write8(lowest_pos, front);
+		/* Every pass ends with b = 0 (GetCardIDFromDeckIndex_bc's `ld b, $0`),
+		 * c = the swapped-out front, de = the lowest-card position. */
+		b = 0;
+		c = front;
+		de = lowest_pos;
+		list_set_ptr((uint16_t)(ptr + 1u));
+	}
+}
+
+/* duel.asm:578-587. Point the list pointer at wDuelTempList and sort it. On an
+ * empty list the first terminator check returns with the entry registers intact. */
+SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de)
+{
+	list_set_ptr(wDuelTempList_ADDR);
+	return SortCardsInListByID(b, c, de);
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

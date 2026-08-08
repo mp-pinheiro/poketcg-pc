@@ -113,4 +113,20 @@ typedef struct {
 } ShuffleCardsResult;
 ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl);
 
+/* SortCardsInListByID (duel.asm:589-648): selection-sort the FF-terminated deck-
+ * index list at hTempListPtr_ff99 ascending by card id. SortCardsInDuelTempListByID
+ * (578-587) first points that pointer at wDuelTempList. Exit a is the terminator
+ * position's low byte; f is $20 (bit 7 of $FF: Z clear, H set). */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} SortResult;
+SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de);
+SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de);
+
 #endif

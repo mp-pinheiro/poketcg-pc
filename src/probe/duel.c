@@ -180,6 +180,30 @@ static void adapt_ShuffleCards(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_SortCardsInListByID(ProbeState *s)
+{
+	SortResult r = SortCardsInListByID(s->b, s->c, pair(s->d, s->e));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_SortCardsInDuelTempListByID(ProbeState *s)
+{
+	SortResult r = SortCardsInDuelTempListByID(s->b, s->c, pair(s->d, s->e));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -202,5 +226,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "CreateHandCardList", adapt_CreateHandCardList },
 	{ "CreateArenaOrBenchEnergyCardList", adapt_CreateArenaOrBenchEnergyCardList },
 	{ "ShuffleCards", adapt_ShuffleCards },
+	{ "SortCardsInListByID", adapt_SortCardsInListByID },
+	{ "SortCardsInDuelTempListByID", adapt_SortCardsInDuelTempListByID },
 	{ NULL, NULL },
 };
