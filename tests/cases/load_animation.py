@@ -3,12 +3,32 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 W_WHICH_SPRITE = 0xD4CF
 SPRITE_BUFFER = 0xD4D0
 
+hBankROM = 0xFF80
+wCurrSpriteAttributes = 0xD5D0
+wCurrSpriteXPos = 0xD5D1
+wCurrSpriteYPos = 0xD5D2
+wCurrSpriteTileID = 0xD5D3
+wCurrSpriteRightEdgeCheck = 0xD5D4
+wCurrSpriteFrameBank = 0xD5D6
+wOAM = 0xCA00
+wOAMOffset = 0xCAB5
+wWhichAnimationFrame = 0xD4CA
+wTempPointer = 0xD4C4
+
+
+def wtemp_seed(bank, addr, tail=b""):
+    """wTempPointer/+1 (addr) + wTempPointerBank (bank), contiguous in WRAM."""
+    return bytes([addr & 0xFF, addr >> 8, bank]) + tail
+
+
 CONTRACT = {
     "GetFirstSpriteAnimBufferProperty": ("b", "c", "d", "e", "hl"),
     "GetSpriteAnimBufferProperty": ("b", "c", "d", "e", "hl"),
     "GetSpriteAnimBufferProperty_SpriteInA": ("b", "c", "d", "e", "hl"),
     "Func_3ddb": ("b", "c", "d", "e", "hl"),
     "Func_3de7": ("b", "c", "d", "e", "hl"),
+    "DrawSpriteAnimationFrame": ("a", "f", "b", "hl"),
+    "GetAnimationFramePointer": ("a", "f", "hl"),
 }
 
 CASES = {
@@ -40,9 +60,66 @@ CASES = {
         dict(POISON, a=15, wram={SPRITE_BUFFER + 15 * 16 + 15: b"\x01"},
              read={SPRITE_BUFFER + 15 * 16 + 15: 1}),
     ],
-# The remaining exports are intentionally unregistered: ClearSpriteAnimations,
-# HandleAllSpriteAnimations, DrawSpriteAnimationFrame, GetAnimationFramePointer,
-# LoadScene, DrawPlayerPortrait, DrawPortrait, DrawOpponentPortrait, and Func_3e31
-# farcall unported engine/gfx/scene code or consume banked animation-frame tables.
-# They are not made into no-op adapters.
+    "DrawSpriteAnimationFrame": [
+        # Baseline: no flip, no edge clipping, single record.
+        {"hl": 0xC100, "wram": {
+            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x50", wCurrSpriteYPos: b"\x60",
+            wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x10", wOAMOffset: b"\x00",
+            0xC100: bytes((1, 0x05, 0x08, 0x02, 0x00))},
+         "read": {wOAM: 4, wOAMOffset: 1, wCurrSpriteRightEdgeCheck: 2}},
+        # Poison hl (the only field this routine consumes) to a controlled address;
+        # count=0 exits immediately, but the edge checks still run unconditionally.
+        dict(POISON, hl=0xC300, wram={
+            hBankROM: b"\x0A", wCurrSpriteFrameBank: b"\x01",
+            wCurrSpriteXPos: b"\xF5", wCurrSpriteYPos: b"\x10", 0xC300: b"\x00"},
+             read={wCurrSpriteRightEdgeCheck: 2}),
+        # Both Y and X flip, with a palette/flip-bit attribute delta.
+        {"hl": 0xC100, "wram": {
+            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x50", wCurrSpriteYPos: b"\x60",
+            wCurrSpriteAttributes: b"\x60", wCurrSpriteTileID: b"\x20", wOAMOffset: b"\x00",
+            0xC100: bytes((1, 0x05, 0x03, 0x0A, 0x11))},
+         "read": {wOAM: 4, wOAMOffset: 1}},
+        # Y offset carries a non-edge sprite past the 256 boundary: clipped, so
+        # wOAM/wOAMOffset must stay untouched even though hl still advances.
+        {"hl": 0xC200, "wram": {
+            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x10", wCurrSpriteYPos: b"\x90",
+            wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x00", wOAMOffset: b"\x08",
+            wOAM + 8: bytes((0x11, 0x22, 0x33, 0x44)),
+            0xC200: bytes((1, 0x7F, 0x00, 0x00, 0x00))},
+         "read": {wOAM + 8: 4, wOAMOffset: 1}},
+        # Three records in one frame: hl advances 1 + 4*3 and wOAMOffset by 12.
+        {"hl": 0xC400, "wram": {
+            wCurrSpriteFrameBank: b"\x00", wCurrSpriteXPos: b"\x10", wCurrSpriteYPos: b"\x10",
+            wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x00", wOAMOffset: b"\x00",
+            0xC400: bytes((3, 1, 1, 1, 0, 2, 2, 2, 0, 3, 3, 3, 0))},
+         "read": {wOAM: 12, wOAMOffset: 1}},
+        # Real bank switch: frame data comes from bank 3's actual ROM image.
+        {"hl": 0x4000, "wram": {
+            wCurrSpriteFrameBank: b"\x03", wCurrSpriteXPos: b"\x10", wCurrSpriteYPos: b"\x10",
+            wCurrSpriteAttributes: b"\x00", wCurrSpriteTileID: b"\x00", wOAMOffset: b"\x00",
+            hBankROM: b"\x00"},
+         "read": {hBankROM: 1}},
+    ],
+    "GetAnimationFramePointer": [
+        # wWhichAnimationFrame == $FF: the SpriteNullAnimationPointer branch,
+        # a real, fixed ROM address and bank.
+        {"hl": 0xC500, "wram": {wWhichAnimationFrame: b"\xFF"}, "read": {0xC50B: 3}},
+        # Ordinary table lookup, frame index 3.
+        {"hl": 0xC500, "wram": {
+            wWhichAnimationFrame: b"\x03", wTempPointer: wtemp_seed(0x02, 0xC300),
+            0xC300: bytes((0x02, 0x00, 0xC3)), 0xC306: bytes((0x78, 0x56))},
+         "read": {0xC50B: 3}},
+        # Poison hl (the only field this routine consumes); frame index 0 exercises
+        # the rotate(0)==0 boundary.
+        dict(POISON, hl=0xC600, wram={
+            hBankROM: b"\x09", wWhichAnimationFrame: b"\x00",
+            wTempPointer: wtemp_seed(0x00, 0xC300),
+            0xC300: bytes((0x00, 0x80, 0xC3)), 0xC380: bytes((0xAB, 0xCD))},
+             read={0xC60B: 3, hBankROM: 1}),
+        # frame index $FE: rotate($FE) == $FD, carries into the high byte.
+        {"hl": 0xC500, "wram": {
+            wWhichAnimationFrame: b"\xFE", wTempPointer: wtemp_seed(0x01, 0xC700),
+            0xC700: bytes((0x01, 0x80, 0xC7)), 0xC87D: bytes((0x11, 0x22))},
+         "read": {0xC50B: 3}},
+    ],
 }
