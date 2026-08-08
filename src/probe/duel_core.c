@@ -56,8 +56,6 @@ static void adapt_ApplyStatusConditionQueue(ProbeState *s)
 	s->f = ApplyStatusConditionQueue();
 }
 
-
-
 static void adapt_GetCardOneStageBelow(ProbeState *s)
 {
 	CardOneStageBelowResult r = GetCardOneStageBelow(s->d, s->e);
@@ -68,6 +66,11 @@ static void adapt_GetCardOneStageBelow(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_SetDefaultConsolePalettes(ProbeState *s)
+{
+	(void)s;
+	SetDefaultConsolePalettes();
+}
 const ProbeEntry probe_entries_duel_core[] = {
 	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
 	{ "ResetAttackAnimationIsPlaying", adapt_ResetAttackAnimationIsPlaying },
@@ -78,5 +81,6 @@ const ProbeEntry probe_entries_duel_core[] = {
 	{ "WaitAttackAnimation", adapt_WaitAttackAnimation },
 	{ "ApplyStatusConditionQueue", adapt_ApplyStatusConditionQueue },
 	{ "GetCardOneStageBelow", adapt_GetCardOneStageBelow },
+	{ "SetDefaultConsolePalettes", adapt_SetDefaultConsolePalettes },
 	{ NULL, NULL },
 };

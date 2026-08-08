@@ -51,6 +51,7 @@ CONTRACT = {
     "WaitAttackAnimation": ("b", "c", "d", "e", "hl"),
     "ApplyStatusConditionQueue": ("f",),
     "GetCardOneStageBelow": ("a", "d", "e", "hl", "f"),
+    "SetDefaultConsolePalettes": ("b",),
 }
 
 CASES = {
@@ -365,4 +366,32 @@ CASES["WaitAttackAnimation"] = [
                HPAD_REPEAT: b"\x00\x00\x00\x00\x00"},
          keys=0x01,
          read={HPAD_REPEAT: 5, ACTIVE_ANIM: 1, WD4C0_ANIM: 1, QUEUE_ANIM: 7}),
+]
+
+WCONSOLE = 0xCAB4
+WBGP = 0xCABC
+WOBP0 = 0xCABD
+WFLAG = 0xCABF
+WBG = 0xCAF0
+WOBJ = 0xCB30
+WTEXT = 0xCCF3
+HBANK = 0xFF80
+
+CASES["SetDefaultConsolePalettes"] = [
+    {"wram": {WCONSOLE: b"\x00", WBGP: b"\xff", WOBP0: b"\xff",
+              WFLAG: b"\xff", 0xFF47: b"\xfc", 0xFF48: b"\xff",
+              0xFF49: b"\xff"},
+     "read": {WBGP: 1, WOBP0: 1, WFLAG: 1,
+              0xFF47: 1, 0xFF48: 1, 0xFF49: 1}},
+    dict(POISON,
+         wram={WCONSOLE: b"\x00", WBGP: b"\x11", WOBP0: b"\x22",
+               WFLAG: b"\x33", 0xFF47: b"\xfc", 0xFF48: b"\xff",
+               0xFF49: b"\xff"},
+         read={WBGP: 1, WOBP0: 1, WFLAG: 1,
+               0xFF47: 1, 0xFF48: 1, 0xFF49: 1}),
+    {"b": 1,
+     "wram": {WCONSOLE: b"\x02", HBANK: b"\x01", WBG: b"\x00" * 40,
+              WOBJ: b"\x00" * 8, WTEXT: b"\x00", WFLAG: b"\xff"},
+     "read": {WBG: 40, WOBJ: 8, WTEXT: 1, WFLAG: 1,
+              0xFF47: 1, 0xFF48: 1, 0xFF49: 1}},
 ]

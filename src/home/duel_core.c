@@ -2,6 +2,7 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "home/palettes.h"
 #include "mem.h"
 #include "home/frames.h"
 #include "home/play_animation.h"
@@ -286,3 +287,27 @@ uint16_t PrintThereWasNoEffectFromStatusText(void)
 		return THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT;
 	return THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT;
 }
+
+void SetDefaultConsolePalettes(void)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+	if (console == 0x01u)
+		return;
+	if (console == 0x02u) {
+		gb_write8(wTextBoxFrameType_ADDR, 4);
+		uint16_t src = 0x5B44u;
+		for (uint8_t i = 0; i < 40; i++)
+			gb_write8((uint16_t)(wBackgroundPalettesCGB_ADDR + i),
+			          gb_read8((uint16_t)(src + i)));
+		for (uint8_t i = 0; i < 8; i++)
+			gb_write8((uint16_t)(wObjectPalettesCGB_ADDR + i),
+			          gb_read8((uint16_t)(src + i)));
+		FlushAllPalettes();
+		return;
+	}
+	uint8_t palette = 0xE4u;
+	gb_write8(wOBP0_ADDR, palette);
+	gb_write8(wBGP_ADDR, palette);
+	gb_write8(wFlushPaletteFlags_ADDR, 0x01u);
+}
+

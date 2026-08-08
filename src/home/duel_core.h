@@ -27,9 +27,8 @@ typedef struct {
 CardOneStageBelowResult GetCardOneStageBelow(uint8_t d, uint8_t e);
 
 uint16_t PrintThereWasNoEffectFromStatusText(void);
-
 void WaitAttackAnimation(void);
 uint8_t ApplyStatusConditionQueue(void);
 
-
+void SetDefaultConsolePalettes(void);
 #endif
