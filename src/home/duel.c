@@ -115,6 +115,56 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 	return (SubtractHPResult){remaining, f};
 }
 
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
+#define DUELVARS_DECK_CARDS 0x7eu
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xedu
+#define DECK_SIZE 60u
+
+/* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
+ * The `or a; ret` tail leaves carry clear on the non-empty path, so the exit is
+ * Z-only; the empty path is `scf`. Exit hl is page + $BA on both paths (the
+ * GetTurnDuelistVariable residue equals where the copy loop ends). */
+CardListResult CreateDeckCardList(uint8_t c, uint16_t de)
+{
+	DuelistVarResult not_in_deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (not_in_deck.a >= DECK_SIZE) {
+		/* b/c/de are never touched on this path. The `cp DECK_SIZE` above left Z
+		 * set iff n == 60 exactly, and `scf` preserves it. */
+		gb_write8(wDuelTempList_ADDR, 0xFF);
+		uint8_t f = (uint8_t)(0x10u | (not_in_deck.a == DECK_SIZE ? 0x80u : 0x00u));
+		return (CardListResult){0xFF, 0, c, (uint8_t)(de >> 8), (uint8_t)de, f,
+					not_in_deck.hl};
+	}
+	uint8_t count = (uint8_t)(DECK_SIZE - not_in_deck.a);
+	uint16_t src = (uint16_t)(((uint16_t)hWhoseTurn << 8) |
+				  (DUELVARS_DECK_CARDS + not_in_deck.a));
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t i = 0; i < count; i++)
+		gb_write8((uint16_t)(dst + i), gb_read8((uint16_t)(src + i)));
+	gb_write8((uint16_t)(dst + count), 0xFF);
+	/* `dec b / jr nz` leaves b = 0; c is the count it was loaded with. */
+	return (CardListResult){count, 0, count, (uint8_t)((dst + count) >> 8),
+				(uint8_t)(dst + count), 0x00u, not_in_deck.hl};
+}
+
+/* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
+ * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
+ * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */
+CardListResult CreateDiscardPileCardList(uint8_t c)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE).a;
+	uint16_t src = (uint16_t)(((uint16_t)hWhoseTurn << 8) | (DUELVARS_DECK_CARDS - 1u) + count);
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t i = 0; i < count; i++)
+		gb_write8((uint16_t)(dst + i), gb_read8((uint16_t)(src - i)));
+	gb_write8((uint16_t)(dst + count), 0xFF);
+	uint8_t f = count ? 0x00u : 0x90u;
+	return (CardListResult){count, 0, c, (uint8_t)((dst + count) >> 8),
+				(uint8_t)(dst + count), f,
+				(uint16_t)(((uint16_t)hWhoseTurn << 8) |
+					      DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE)};
+}
+
 /* Text ID of the fallback opponent name. */
 #define PLAYER2_TEXT_ID 0x0092u
 

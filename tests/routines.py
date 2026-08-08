@@ -34,7 +34,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "GetCardIDFromDeckIndex_bc", "GetCardInDuelTempList_OnlyDeckIndex",
              "GetCardInDuelTempList",
              "LoadCardDataToBuffer1_FromDeckIndex", "LoadCardDataToBuffer2_FromDeckIndex",
-             "SubtractHP"),
+             "SubtractHP", "CreateDeckCardList", "CreateDiscardPileCardList"),
     "process_text": ("InitTextFormat", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
                      "GetTextLengthInHalfTiles", "GetTextLengthInTiles",
                      "GetFullWidthFontTileOffset", "ConvertTileNumberToTileDataAddress",

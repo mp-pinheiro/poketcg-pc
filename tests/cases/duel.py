@@ -23,6 +23,8 @@ CONTRACT = {
     "LoadCardDataToBuffer1_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
     "LoadCardDataToBuffer2_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
     "SubtractHP": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CreateDeckCardList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CreateDiscardPileCardList": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -107,5 +109,24 @@ CASES = {
         {"hl": 0xC400, "d": 0x01, "e": 0, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
         {"hl": 0xC400, "d": 0x00, "e": 0, "wram": {0xC400: b"\x00"}, "read": {0xC400: 1}},
         dict(POISON, hl=0xC400, d=0x00, e=5, wram={0xC400: b"\x64"}, read={0xC400: 1}),
+    ],
+    # wDuelTempList = $C510. Deck cards occupy $C27E-$C2B9 in the player page.
+    "CreateDeckCardList": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x00"},
+         "read": {0xC510: 62}},
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x3c"},
+         "read": {0xC510: 26}},
+        # All cards drawn: empty path, terminator only, carry set.
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2BA: b"\x3c"},
+         "read": {0xC510: 2}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3BA: b"\x05"},
+             read={0xC510: 60}),
+    ],
+    "CreateDiscardPileCardList": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11",
+                  0xC27F: b"\x22"}, "read": {0xC510: 4}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x01", 0xC37F: b"\x33"},
+             read={0xC510: 4}),
     ],
 }

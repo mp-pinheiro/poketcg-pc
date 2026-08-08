@@ -99,6 +99,30 @@ static void adapt_SubtractHP(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_CreateDeckCardList(ProbeState *s)
+{
+	CardListResult r = CreateDeckCardList(s->c, pair(s->d, s->e));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CreateDiscardPileCardList(ProbeState *s)
+{
+	CardListResult r = CreateDiscardPileCardList(s->c);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -113,5 +137,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "LoadCardDataToBuffer1_FromDeckIndex", adapt_LoadCardDataToBuffer1_FromDeckIndex },
 	{ "LoadCardDataToBuffer2_FromDeckIndex", adapt_LoadCardDataToBuffer2_FromDeckIndex },
 	{ "SubtractHP", adapt_SubtractHP },
+	{ "CreateDeckCardList", adapt_CreateDeckCardList },
+	{ "CreateDiscardPileCardList", adapt_CreateDiscardPileCardList },
 	{ NULL, NULL },
 };
