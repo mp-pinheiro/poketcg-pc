@@ -25,6 +25,8 @@ CONTRACT = {
     "SubtractHP": ("a", "b", "c", "d", "e", "f", "hl"),
     "CreateDeckCardList": ("a", "b", "c", "d", "e", "f", "hl"),
     "CreateDiscardPileCardList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "RemoveCardFromDuelTempList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CountCardsInDuelTempList": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -128,5 +130,17 @@ CASES = {
                   0xC27F: b"\x22"}, "read": {0xC510: 4}},
         dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x01", 0xC37F: b"\x33"},
              read={0xC510: 4}),
+    ],
+    # Remove the card id in a from the FF-terminated wDuelTempList.
+    "RemoveCardFromDuelTempList": [
+        {"a": 3, "wram": {0xC510: b"\x01\x02\x03\x04\xff"}, "read": {0xC510: 5}},
+        {"a": 1, "wram": {0xC510: b"\x01\xff"}, "read": {0xC510: 2}},
+        {"a": 9, "wram": {0xC510: b"\x01\x02\xff"}, "read": {0xC510: 4}},
+        dict(POISON, a=2, wram={0xC510: b"\x02\x02\xff"}, read={0xC510: 3}),
+    ],
+    "CountCardsInDuelTempList": [
+        {"wram": {0xC510: b"\xff"}},
+        {"wram": {0xC510: b"\x01\x02\x03\xff"}},
+        dict(POISON, wram={0xC510: b"\x01\xff"}),
     ],
 }

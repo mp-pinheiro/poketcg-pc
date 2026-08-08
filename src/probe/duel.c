@@ -123,6 +123,20 @@ static void adapt_CreateDiscardPileCardList(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_RemoveCardFromDuelTempList(ProbeState *s)
+{
+	TempListResult r = RemoveCardFromDuelTempList(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_CountCardsInDuelTempList(ProbeState *s)
+{
+	TempListResult r = CountCardsInDuelTempList();
+	s->a = r.a;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -139,5 +153,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "SubtractHP", adapt_SubtractHP },
 	{ "CreateDeckCardList", adapt_CreateDeckCardList },
 	{ "CreateDiscardPileCardList", adapt_CreateDiscardPileCardList },
+	{ "RemoveCardFromDuelTempList", adapt_RemoveCardFromDuelTempList },
+	{ "CountCardsInDuelTempList", adapt_CountCardsInDuelTempList },
 	{ NULL, NULL },
 };

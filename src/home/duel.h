@@ -75,4 +75,15 @@ typedef struct {
 CardListResult CreateDeckCardList(uint8_t c, uint16_t de);
 CardListResult CreateDiscardPileCardList(uint8_t c);
 
+/* wDuelTempList helpers. RemoveCardFromDuelTempList (duel.asm:713-746) compacts
+ * the FF-terminated list around the card id in a; all registers are pushed and
+ * popped, so exit a is the remaining count and carry is set iff it is zero.
+ * CountCardsInDuelTempList (747-761) returns the entry count in a. */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} TempListResult;
+TempListResult RemoveCardFromDuelTempList(uint8_t a);
+TempListResult CountCardsInDuelTempList(void);
+
 #endif

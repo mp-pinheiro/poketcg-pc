@@ -147,6 +147,38 @@ CardListResult CreateDeckCardList(uint8_t c, uint16_t de)
 				(uint8_t)(dst + count), 0x00u, not_in_deck.hl};
 }
 
+/* duel.asm:713-746. `ld a, b / or a / jr nz / scf` sets carry iff the compacted
+ * list is empty; every other register is pushed and popped, so a is the only
+ * remaining output besides the flag. */
+TempListResult RemoveCardFromDuelTempList(uint8_t a)
+{
+	uint16_t src = wDuelTempList_ADDR;
+	uint16_t dst = wDuelTempList_ADDR;
+	uint8_t count = 0;
+	for (;;) {
+		uint8_t entry = gb_read8(src++);
+		if (entry == 0xFF)
+			break;
+		if (entry != a) {
+			gb_write8(dst++, entry);
+			count++;
+		}
+	}
+	gb_write8(dst, 0xFF);
+	/* `or a` set Z on the empty exit, then `scf` keeps it: Z+C. */
+	return (TempListResult){count, count ? 0x00u : 0x90u};
+}
+
+/* duel.asm:747-761. The terminator `cp $ff` on the $FF byte leaves Z+N ($C0);
+ * only a carries the count. */
+TempListResult CountCardsInDuelTempList(void)
+{
+	uint8_t count = 0;
+	while (gb_read8((uint16_t)(wDuelTempList_ADDR + count)) != 0xFF)
+		count++;
+	return (TempListResult){count, 0xC0u};
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */
