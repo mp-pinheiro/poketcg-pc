@@ -1,9 +1,16 @@
 """Oracle-diff cases for poketcg/src/home/card_data.asm.
 
-GetCardPointer (internal helper, zero external callsites) and LoadCardDataToHL_FromCardID
-(not directly callable: it pops one more word than it pushes -- the buffer wrappers'
-leading push hl balances it) are not registered; both are covered transitively by the
-routines below.
+CopyFontsOrDuelGraphicsTiles2 (card_data.asm:208) is excluded: zero callsites
+anywhere in poketcg/src (only the definition itself; grep confirmed no `call`,
+`jp`, or pointer-table reference exists) -- dead code.
+
+LoadCardDataToHL_FromCardID is excluded: it is a fallthrough continuation of
+LoadCardDataToBuffer1_FromCardID/_2, not an independent entry point. Those two
+wrappers `push hl` before falling/jumping in, and LoadCardDataToHL_FromCardID's
+tail does one `pop hl` more than this routine itself pushes -- balanced only by
+that wrapper push. Called directly (`call LoadCardDataToHL_FromCardID`), the
+extra pop consumes the return address itself and `ret` jumps to garbage. Its
+behavior is already covered transitively by the two wrappers below.
 """
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -20,6 +27,7 @@ CONTRACT = {
     "LoadCardDataToBuffer2_FromCardID": ("b", "c", "d", "e", "hl"),
     "LoadCardDataToBuffer1_FromName": (),
     "LoadCardGfx": (),
+    "GetCardPointer": ("f", "b", "c", "d", "e", "hl"),
 }
 CASES = {
     "GetCardType": [
@@ -52,5 +60,14 @@ CASES = {
     "LoadCardGfx": [
         {"hl": 0x02A7, "d": 0x88, "e": 0x00, "b": 0x30, "c": 0x10, "vread": {0: {0x8800: 0x300}}},
         {"hl": 0x1800, "d": 0x90, "e": 0x00, "b": 0x30, "c": 0x10, "vread": {0: {0x9000: 0x300}}},
+    ],
+    "GetCardPointer": [
+        {"e": 0},
+        {"e": 228},  # last valid index (0xE4 == NUM_CARDS)
+        {"e": 229},  # first out-of-bounds index, lands exactly on the boundary
+        {"e": 230},  # out of bounds, past the boundary
+        {"e": 255},
+        dict(POISON, e=8),
+        dict(POISON, e=229),
     ],
 }

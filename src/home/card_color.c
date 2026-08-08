@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/card_data.h"
+#include "home/substatus.h"
 #include "mem.h"
 
 /* card_color.asm's duel-variable and deck-index helpers (duel.asm:1316, 762) reduce to
@@ -80,4 +81,24 @@ uint8_t GetPlayAreaCardResistance(uint8_t a)
 	if (a == 0)
 		return GetArenaCardResistance();
 	return card_resistance_of((uint8_t)(a + DUELVARS_ARENA_CARD));
+}
+
+#define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
+#define HAS_CHANGED_COLOR_F_MASK 0x80u
+#define TYPE_TRAINER 0x10u
+#define COLORLESS 0x06u
+
+/* card_color.asm:1-39, a=PLAY_AREA_ARENA(0) specialization of the general
+ * (unported this wave) GetPlayAreaCardColor. Venomoth's Shift Pokemon Power
+ * overrides the color while active; falls back to the card's own type
+ * otherwise, with Trainer cards reporting COLORLESS. */
+uint8_t GetArenaCardColor(void)
+{
+	if (turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_TYPE) & HAS_CHANGED_COLOR_F_MASK) {
+		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(0);
+		if (!(incapable.f & 0x10u))
+			return (uint8_t)(turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_TYPE) & 0x0Fu);
+	}
+	uint8_t type = GetCardType(deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD)));
+	return type == TYPE_TRAINER ? COLORLESS : type;
 }

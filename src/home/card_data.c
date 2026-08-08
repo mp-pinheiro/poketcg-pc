@@ -109,3 +109,19 @@ void LoadCardGfx(uint16_t hl, uint16_t de, uint8_t b, uint8_t c)
 		gb_write8(pal++, gb_read8(src++));
 	BankswitchROM(saved);
 }
+
+#define NUM_CARDS 228u
+#define GETCARDPTR_BOUND ((uint16_t)(CARD_POINTERS + 2u + 2u * NUM_CARDS))
+
+/* card_data.asm:140-168. e indexes CardPointers (2 bytes/entry, skipping neither
+ * the leading NULL nor the trailing terminator here -- e > NUM_CARDS is out of
+ * bounds). bound_zero mirrors the asm's own `cp`-pair Z bit at the boundary
+ * check, needed by the probe adapter to reproduce the exact exit flags. */
+CardPtrResult GetCardPointer(uint8_t e)
+{
+	uint16_t hl = (uint16_t)(CARD_POINTERS + (uint16_t)e * 2u);
+	if (hl >= GETCARDPTR_BOUND)
+		return (CardPtrResult){hl, 1, (uint8_t)(hl == GETCARDPTR_BOUND)};
+	const uint8_t *p = rom_ptr(BANK_CARD_DATA, hl);
+	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0, 0};
+}

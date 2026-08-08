@@ -41,6 +41,13 @@ static void adapt_LoadCardGfx(ProbeState *s)
 	LoadCardGfx(s->hl, (uint16_t)(s->d << 8 | s->e), s->b, s->c);
 }
 
+static void adapt_GetCardPointer(ProbeState *s)
+{
+	CardPtrResult r = GetCardPointer(s->e);
+	s->hl = r.hl;
+	s->f = r.carry ? (uint8_t)(0x10u | (r.bound_zero ? 0x80u : 0u)) : 0x00u;
+}
+
 const ProbeEntry probe_entries_card_data[] = {
 	{ "GetCardType", adapt_GetCardType },
 	{ "GetCardName", adapt_GetCardName },
@@ -49,5 +56,6 @@ const ProbeEntry probe_entries_card_data[] = {
 	{ "LoadCardDataToBuffer2_FromCardID", adapt_LoadCardDataToBuffer2_FromCardID },
 	{ "LoadCardDataToBuffer1_FromName", adapt_LoadCardDataToBuffer1_FromName },
 	{ "LoadCardGfx", adapt_LoadCardGfx },
+	{ "GetCardPointer", adapt_GetCardPointer },
 	{ NULL, NULL },
 };
