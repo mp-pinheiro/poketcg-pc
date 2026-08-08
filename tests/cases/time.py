@@ -32,18 +32,11 @@ CASES = {
         {"wram": {wConsole: b"\x03"}},
         dict(POISON, wram={wConsole: b"\x02"}),
     ],
+    # Oracle-run: the snapshot now captures $FF00-$FF7F, so TMA/TAC are diffed
+    # against the real ROM rather than against an asm-derived expectation.
     "SetupTimer": [
-        {"wram": {wConsole: b"\x00", rSPD: b"\x00"}, "oracle": False,
-         "why": "timer registers are I/O outside the PyBoy leaf snapshot",
-         "expect": {rTMA: b"\xbc", rTAC: b"\x07"},
-         "expect_regs": {"a": 0x07, "b": 0xBC, "f": 0x10}},
-        {"wram": {wConsole: b"\x02", rSPD: b"\x00"}, "oracle": False,
-         "why": "timer registers are I/O outside the PyBoy leaf snapshot",
-         "expect": {rTMA: b"\xbc", rTAC: b"\x07"},
-         "expect_regs": {"a": 0x07, "b": 0xBC, "f": 0xA0}},
-        dict(POISON, wram={wConsole: b"\x02", rSPD: b"\x80"}, oracle=False,
-             why="timer registers are I/O outside the PyBoy leaf snapshot",
-             expect={rTMA: b"\x78", rTAC: b"\x07"},
-             expect_regs={"a": 0x07, "b": 0x78, "f": 0x00}),
+        {"wram": {wConsole: b"\x00", rSPD: b"\x00"}, "read": {rTMA: 1, rTAC: 1}},
+        {"wram": {wConsole: b"\x02", rSPD: b"\x00"}, "read": {rTMA: 1, rTAC: 1}},
+        dict(POISON, wram={wConsole: b"\x02", rSPD: b"\x80"}, read={rTMA: 1, rTAC: 1}),
     ],
 }

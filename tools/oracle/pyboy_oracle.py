@@ -37,6 +37,7 @@ HRAM_BASE, HRAM_END = 0xFF80, 0x10000
 SRAM_BASE, SRAM_END = 0xA000, 0xC000
 VRAM_BASE, VRAM_END = 0x8000, 0xA000
 OAM_BASE, OAM_END = 0xFE00, 0xFEA0
+IO_BASE, IO_END = 0xFF00, 0xFF80
 
 MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 
@@ -71,6 +72,7 @@ class Result:
     vram: bytes = field(repr=False)
     vram_banks: tuple[bytes, ...] = field(repr=False)
     oam: bytes = field(repr=False)
+    io: bytes = field(repr=False)
 
     def mem(self, addr: int, n: int = 1, *, bank: int | None = None) -> bytes:
         if VRAM_BASE <= addr and addr + n <= VRAM_END:
@@ -86,6 +88,9 @@ class Result:
         if HRAM_BASE <= addr and addr + n <= HRAM_END:
             off = addr - HRAM_BASE
             return self.hram[off:off + n]
+        if IO_BASE <= addr and addr + n <= IO_END:
+            off = addr - IO_BASE
+            return self.io[off:off + n]
         if SRAM_BASE <= addr and addr + n <= SRAM_END:
             off = addr - SRAM_BASE
             if bank is not None:
@@ -140,6 +145,7 @@ class Oracle:
             vram=bytes(pb.memory[VRAM_BASE:VRAM_END]),
             vram_banks=tuple(_read_bank(pb, bank, VRAM_BASE, VRAM_END) for bank in range(2)),
             oam=bytes(pb.memory[OAM_BASE:OAM_END]),
+            io=bytes(pb.memory[IO_BASE:IO_END]),
         )
         rf.PC = SPIN
 

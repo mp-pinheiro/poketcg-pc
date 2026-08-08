@@ -150,6 +150,11 @@ uint8_t gb_read8(uint16_t addr)
 {
 	if (addr >= 0xA000 && addr < 0xC000 && !g_sram_enabled)
 		return 0xFF; /* open bus, as on hardware */
+	/* STAT bit 7 is unused and reads back as 1 on real hardware, so a
+	 * read-modify-write of $FF41 stores it too. PyBoy models this; without it
+	 * every rSTAT diff is off by $80. */
+	if (addr == 0xFF41u)
+		return (uint8_t)(*gb_ptr(addr) | 0x80u);
 	return *gb_ptr(addr);
 }
 

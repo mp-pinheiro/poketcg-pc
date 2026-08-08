@@ -64,8 +64,10 @@ TimerSetupResult SetupTimer(void)
 	if (wConsole != CONSOLE_CGB) {
 		f = 0x10u;
 	} else if (gb_read8(rSPD) & SPD_DOUBLE) {
+		/* `and SPD_DOUBLE` always sets H and clears N/C; a non-zero result
+		 * leaves Z clear, so the double-speed exit is H alone. */
 		b = 0x78u;
-		f = 0;
+		f = 0x20u;
 	} else {
 		f = 0xA0u;
 	}
