@@ -14,6 +14,12 @@ extern uint8_t g_oam[0xA0];    /* $FE00-$FE9F */
 extern uint8_t g_io[0x80];     /* $FF00-$FF7F */
 extern uint8_t g_pal[0x80];    /* CGB palette RAM; reached through $FF68-$FF6B, not mapped */
 
+/* Held-button state a case seeds via the "keys" probe key, laid out exactly like
+ * hKeysHeld (src/constants/hardware.inc): bit0 A, 1 B, 2 SELECT, 3 START, 4 RIGHT,
+ * 5 LEFT, 6 UP, 7 DOWN. 1 = pressed. gb_read8($FF00) resolves the joypad matrix
+ * against it so ReadJoypad (and anything that waits on it) can observe input. */
+extern uint8_t g_keys;
+
 /* $FEA0-$FEFF, the unusable hole, plus the landing page for out-of-image ROM reads.
  * Writable through the bus, so it belongs in any full-state snapshot. */
 #define MEM_SCRATCH_SIZE 0x100

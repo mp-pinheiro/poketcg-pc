@@ -164,6 +164,11 @@ authoritative source:
 - `oracle: False` + `why` + `expect` and/or `expect_regs` — for a boundary
   the oracle physically cannot run (see below); diffed against the C alone
   using values derived from the asm, never read off the oracle.
+- `keys` — `int`, buttons held for the whole call. Bit layout matches the
+  game's own `hKeysHeld` (`poketcg/src/constants/hardware.inc:88-105`): bit0
+  `A`, 1 `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
+  The only way to test a routine that spins on `ReadJoypad`/
+  `WaitForButtonAorB` — with `keys` unset (0) it waits forever.
 
 Required coverage per routine:
 

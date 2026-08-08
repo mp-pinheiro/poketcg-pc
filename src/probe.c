@@ -179,6 +179,7 @@ int main(void)
 	struct vread_span vreads[MAX_SPANS];
 	size_t nvreads = 0;
 	int ramg = -1; /* -1 = leave whatever the seeds left; 0/1 = force the latch */
+	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
 	ProbeState st = { 0 };
 	/* Routines that need warm state a single call cannot build -- the text engine's
 	 * tile cache, for one -- name the routines that establish it. Each runs after
@@ -219,6 +220,8 @@ int main(void)
 				 * seed enables the latch as a side effect, so this is the only
 				 * way to enter with non-zero SRAM and the latch off. */
 				ramg = jnum() != 0;
+			} else if (strcmp(key, "keys") == 0) {
+				keys = jnum();
 			} else if (strcmp(key, "setup") == 0) {
 				need('[');
 				if (!eat(']')) {
@@ -424,6 +427,7 @@ int main(void)
 
 	if (ramg >= 0)
 		g_sram_enabled = ramg;
+	g_keys = (uint8_t)keys;
 
 	for (size_t i = 0; i < nsetups; i++) {
 		ProbeFn pre = probe_lookup(setups[i].fn);

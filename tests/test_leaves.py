@@ -80,6 +80,8 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
     if case.get("setup"):
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]
+    if case.get("keys"):
+        req["keys"] = int(case["keys"])
     out = subprocess.run([str(probe)], input=json.dumps(req), capture_output=True, text=True)
     if out.returncode != 0 and not out.stdout.strip():
         raise RuntimeError(f"probe failed ({out.returncode}): {out.stderr.strip()}")
@@ -131,6 +133,7 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
         sram=case.get("sram"),
         ramg=case.get("ramg"),
         setup=case.get("setup"),
+        keys=case.get("keys", 0),
     )
     reads = {addr: len(data) for addr, data in case.get("wram", {}).items()}
     reads.update(case.get("read", {}))
@@ -179,8 +182,9 @@ def describe(case: dict) -> str:
     sread = " ".join(f"sread{b}:${a:04X}+{n}"
                      for b, sp in case.get("sread", {}).items() for a, n in sp.items())
     latch = "" if case.get("ramg") is None else f"ramg={int(bool(case['ramg']))}"
+    keys = f"keys=${case['keys']:02X}" if case.get("keys") else ""
     tag = "" if case.get("oracle", True) else "[c-only] "
-    parts = [x for x in (regs, mem, sram, sread, latch) if x]
+    parts = [x for x in (regs, mem, sram, sread, latch, keys) if x]
     return tag + (" ".join(parts) or "all-zero")
 
 

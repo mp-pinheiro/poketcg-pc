@@ -46,6 +46,10 @@ IO_BASE, IO_END = 0xFF00, 0xFF80
 
 MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 
+# hKeysHeld bit order (src/constants/hardware.inc): bit0 A, 1 B, 2 SELECT, 3 START,
+# 4 RIGHT, 5 LEFT, 6 UP, 7 DOWN.
+BUTTONS = ("a", "b", "select", "start", "right", "left", "up", "down")
+
 
 def _read_bank(pb: PyBoy, bank: int, base: int, end: int) -> bytes:
     """One whole 8 KiB banked region (SRAM $A000-$BFFF or CGB VRAM $8000-$9FFF).
@@ -225,8 +229,19 @@ class Oracle:
              wram: dict[int, bytes] | None = None,
              sram: dict[int, dict[int, bytes]] | None = None,
              ramg: bool | None = None,
-             setup: list[dict] | None = None) -> Result:
+             setup: list[dict] | None = None,
+             keys: int = 0) -> Result:
         pb = self.pyboy
+
+        # Release every button before pressing the held ones, so a case's `keys`
+        # never inherits state left by a previous call. `no_input=True` (set in
+        # __init__) only skips the window plugin in `_handle_events`; these API
+        # events still reach `mb.buttonevent` on the next tick.
+        for button in BUTTONS:
+            pb.button_release(button)
+        for bit, button in enumerate(BUTTONS):
+            if keys & (1 << bit):
+                pb.button_press(button)
 
         self._reset_ram()
         for at, data in (wram or {}).items():

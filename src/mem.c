@@ -11,6 +11,7 @@ uint8_t g_vram[0x4000];
 uint8_t g_oam[0xA0];
 uint8_t g_io[0x80];
 uint8_t g_pal[0x80];
+uint8_t g_keys;
 
 uint8_t *g_rom = NULL;
 size_t g_rom_size = 0;
@@ -109,6 +110,7 @@ void mem_reset(void)
 	memset(g_oam, 0, sizeof g_oam);
 	memset(g_io, 0, sizeof g_io);
 	memset(g_pal, 0, sizeof g_pal);
+	g_keys = 0;
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
 	g_sram_bank = 0;
@@ -155,6 +157,18 @@ uint8_t gb_read8(uint16_t addr)
 	 * every rSTAT diff is off by $80. */
 	if (addr == 0xFF41u)
 		return (uint8_t)(*gb_ptr(addr) | 0x80u);
+	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
+	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
+	 * every read, matching hardware's active-low matrix. */
+	if (addr == 0xFF00u) {
+		uint8_t sel = (uint8_t)(*gb_ptr(addr) & 0x30u);
+		uint8_t low = 0x0Fu;
+		if (!(sel & 0x10u)) /* P14 low: d-pad */
+			low &= (uint8_t)~(g_keys >> 4);
+		if (!(sel & 0x20u)) /* P15 low: buttons */
+			low &= (uint8_t)~(g_keys & 0x0Fu);
+		return (uint8_t)(0xC0u | sel | low);
+	}
 	return *gb_ptr(addr);
 }
 
