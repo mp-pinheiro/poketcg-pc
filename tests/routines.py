@@ -94,6 +94,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "load_deck": ("LoadDeck",),
     "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                    "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance"),
+    "serial": ("SerialTimerHandler",),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
