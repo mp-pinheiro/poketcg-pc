@@ -30,6 +30,7 @@ CONTRACT = {
     "FindLastCardInHand": ("a", "b", "c", "d", "e", "f", "hl"),
     "CreateHandCardList": ("a", "b", "c", "d", "e", "f", "hl"),
     "CreateArenaOrBenchEnergyCardList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "ShuffleCards": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -173,5 +174,22 @@ CASES = {
          "read": {0xC510: 4}},
         # No cards in the requested location (1 = bench): empty list, carry set.
         {"a": 1, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x00"}, "read": {0xC510: 2}},
+    ],
+    # Shuffle uses Random over the seeded RNG state ($CACA-$CACC), so the
+    # outcome is deterministic and diffed against the real ROM.
+    "ShuffleCards": [
+        {"a": 0, "hl": 0xC27E, "wram": {0xC27E: b"\x01\x02\x03\x04"},
+         "read": {0xC27E: 4}},
+        {"a": 3, "hl": 0xC27E,
+         "wram": {0xC27E: b"\x01\x02\x03\x04",
+                  0xCACA: b"\x11\x22\x33"},
+         "read": {0xC27E: 4}},
+        {"a": 4, "hl": 0xC27E,
+         "wram": {0xC27E: b"\x0a\x0b\x0c\x0d\x0e",
+                  0xCACA: b"\x00\x00\x00"},
+         "read": {0xC27E: 5}},
+        dict(POISON, a=2, hl=0xC27E,
+             wram={0xC27E: b"\x05\x06\x07", 0xCACA: b"\x00\x00\x00"},
+             read={0xC27E: 3}),
     ],
 }

@@ -247,6 +247,30 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 				f, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DECK_SIZE)};
 }
 
+#include "home/random.h"
+
+/* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
+ * deck bytes with [de + Random(c)], where de starts at hl. Exit a is the byte
+ * swapped into the last position; the tail pops restore every other register. */
+ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl)
+{
+	if (!a)
+		return (ShuffleCardsResult){0, 0x80u};
+	uint8_t c = a;
+	uint16_t de = hl;
+	uint8_t last = 0;
+	for (uint8_t i = 0; i < a; i++) {
+		uint16_t target = (uint16_t)(de + Random(c));
+		uint8_t swap = gb_read8(target);
+		uint8_t moving = gb_read8((uint16_t)(hl + i));
+		gb_write8((uint16_t)(hl + i), swap);
+		gb_write8(target, moving);
+		last = moving;
+	}
+	/* The final `dec b` from 1 leaves Z+N on the way out. */
+	return (ShuffleCardsResult){last, 0xC0u};
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

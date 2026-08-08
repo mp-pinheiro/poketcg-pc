@@ -37,7 +37,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "SubtractHP", "CreateDeckCardList", "CreateDiscardPileCardList",
              "RemoveCardFromDuelTempList", "CountCardsInDuelTempList",
              "FindLastCardInHand", "CreateHandCardList",
-             "CreateArenaOrBenchEnergyCardList"),
+             "CreateArenaOrBenchEnergyCardList", "ShuffleCards"),
     "process_text": ("InitTextFormat", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
                      "GetTextLengthInHalfTiles", "GetTextLengthInTiles",
                      "GetFullWidthFontTileOffset", "ConvertTileNumberToTileDataAddress",

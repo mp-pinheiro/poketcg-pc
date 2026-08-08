@@ -173,6 +173,13 @@ static void adapt_CreateArenaOrBenchEnergyCardList(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_ShuffleCards(ProbeState *s)
+{
+	ShuffleCardsResult r = ShuffleCards(s->a, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -194,5 +201,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "FindLastCardInHand", adapt_FindLastCardInHand },
 	{ "CreateHandCardList", adapt_CreateHandCardList },
 	{ "CreateArenaOrBenchEnergyCardList", adapt_CreateArenaOrBenchEnergyCardList },
+	{ "ShuffleCards", adapt_ShuffleCards },
 	{ NULL, NULL },
 };

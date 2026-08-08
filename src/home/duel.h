@@ -104,4 +104,13 @@ HandListResult FindLastCardInHand(uint8_t c);
 HandListResult CreateHandCardList(uint8_t c);
 HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a);
 
+/* ShuffleCards (duel.asm:541-563): swap a cards of the deck region at hl with
+ * positions chosen by Random. Exit a is the last swapped byte; all other
+ * registers are pushed and popped. */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} ShuffleCardsResult;
+ShuffleCardsResult ShuffleCards(uint8_t a, uint16_t hl);
+
 #endif
