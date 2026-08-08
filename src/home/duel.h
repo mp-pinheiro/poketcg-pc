@@ -50,4 +50,13 @@ DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl);
 uint8_t LoadCardDataToBuffer1_FromDeckIndex(uint8_t a);
 uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a);
 
+/* Subtract the 16-bit damage in de from the HP byte at hl, clamping at zero
+ * (duel.asm:2011-2030). Exit a is the remaining HP; exit carry is set iff it is
+ * non-zero, which is what callers branch on (knocked out when clear). */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} SubtractHPResult;
+SubtractHPResult SubtractHP(uint16_t hl, uint16_t de);
+
 #endif

@@ -95,6 +95,26 @@ uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a)
 					      LoadCardDataToBuffer2_FromCardID);
 }
 
+/* duel.asm:2011-2030. `sub e` then `sbc d` borrows the high byte; `and $80` on the
+ * 8-bit result is the sign of the 16-bit subtraction, so a set sign means the
+ * damage exceeded the HP and it clamps to zero. The tail is `or a / jr z / scf`,
+ * so carry is set exactly when HP remains non-zero. */
+SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
+{
+	uint8_t hp = gb_read8(hl);
+	uint16_t damage = de;
+	uint8_t remaining;
+	if ((uint16_t)hp >= damage) {
+		remaining = (uint8_t)(hp - damage);
+	} else {
+		remaining = 0;
+	}
+	gb_write8(hl, remaining);
+	/* `or a` sets Z on zero; `scf` then sets C on non-zero. */
+	uint8_t f = remaining ? 0x10u : 0x80u;
+	return (SubtractHPResult){remaining, f};
+}
+
 /* Text ID of the fallback opponent name. */
 #define PLAYER2_TEXT_ID 0x0092u
 

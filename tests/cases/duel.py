@@ -22,6 +22,7 @@ CONTRACT = {
     "GetCardInDuelTempList": ("a", "b", "c", "d", "e", "hl"),
     "LoadCardDataToBuffer1_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
     "LoadCardDataToBuffer2_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
+    "SubtractHP": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -98,5 +99,13 @@ CASES = {
          "read": {0xCC65: 64}},
         dict(POISON, a=4, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 4: b"\x25"},
              read={0xCC65: 64}),
+    ],
+    # HP minus damage, clamped at zero; carry set iff HP remains.
+    "SubtractHP": [
+        {"hl": 0xC400, "d": 0x00, "e": 3, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
+        {"hl": 0xC400, "d": 0x00, "e": 10, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
+        {"hl": 0xC400, "d": 0x01, "e": 0, "wram": {0xC400: b"\x0a"}, "read": {0xC400: 1}},
+        {"hl": 0xC400, "d": 0x00, "e": 0, "wram": {0xC400: b"\x00"}, "read": {0xC400: 1}},
+        dict(POISON, hl=0xC400, d=0x00, e=5, wram={0xC400: b"\x64"}, read={0xC400: 1}),
     ],
 }

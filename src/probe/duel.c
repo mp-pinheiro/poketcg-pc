@@ -92,6 +92,13 @@ static void adapt_LoadCardDataToBuffer2_FromDeckIndex(ProbeState *s)
 	s->a = LoadCardDataToBuffer2_FromDeckIndex(s->a);
 }
 
+static void adapt_SubtractHP(ProbeState *s)
+{
+	SubtractHPResult r = SubtractHP(s->hl, pair(s->d, s->e));
+	s->a = r.a;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -105,5 +112,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "GetCardInDuelTempList", adapt_GetCardInDuelTempList },
 	{ "LoadCardDataToBuffer1_FromDeckIndex", adapt_LoadCardDataToBuffer1_FromDeckIndex },
 	{ "LoadCardDataToBuffer2_FromDeckIndex", adapt_LoadCardDataToBuffer2_FromDeckIndex },
+	{ "SubtractHP", adapt_SubtractHP },
 	{ NULL, NULL },
 };
