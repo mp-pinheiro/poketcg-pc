@@ -140,14 +140,30 @@ the adapter. Flag-preservation guarantees belong in `CONTRACT` only when every
 instruction on the path is flag-neutral; seed `f=0xF0` (the low nibble is always
 0 on hardware, and both probe and oracle mask it).
 
-Case dict keys:
+### Case-key reference
+
+One line each, matching `diff_case` (`tests/test_leaves.py:95-169`), the
+authoritative source:
 
 - `a f b c d e hl` — entry registers, default 0.
-- `wram` — `{addr: bytes}` seeded before the call **and** diffed after.
-- `read` — `{addr: count}` diffed after the call without seeding.
-- `oracle: False` + `why: "..."` + `expect: {addr: bytes}` — for a boundary the
-  oracle physically cannot run; diffed against the C alone using values derived
-  from the asm.
+- `wram` — `{addr: bytes}`, seeded before the call **and** diffed after.
+- `read` — `{addr: count}`, diffed after the call without seeding.
+- `sram` — `{bank: {addr: bytes}}`, seeded before the call **and** diffed
+  after (readback size = seed length).
+- `sread` — `{bank: {addr: count}}`, diffed without seeding.
+- `vread` — `{bank: {addr: count}}`, diffed without seeding. VRAM has no
+  seeding key — routines that read pre-existing tile data drive it through a
+  `setup` prelude instead.
+- `ramg` — `bool`, applied **after every seed**. The only way a routine's own
+  `EnableSRAM`/`DisableSRAM` becomes observable; without it every case starts
+  SRAM-enabled and the latch's own effect is invisible.
+- `setup` — `[{"fn": ..., <regs>}]`, preludes that run after seeding, in
+  order, with RAM **not** reset between them. Use this for warm state a
+  routine depends on (e.g. `SetupText` before anything that drives the text
+  engine) rather than hand-deriving the expected warm values.
+- `oracle: False` + `why` + `expect` and/or `expect_regs` — for a boundary
+  the oracle physically cannot run (see below); diffed against the C alone
+  using values derived from the asm, never read off the oracle.
 
 Required coverage per routine:
 
@@ -168,6 +184,93 @@ overwrites the whole address space including the call frame, on real hardware as
 much as here. Use the `oracle: False` form, with `why` stating that, and an
 `expect` map derived from the asm that proves the routine wrote far more than zero
 bytes.
+
+## Mutation testing is mandatory
+
+Five false greens have shipped in this repo, every one a routine whose only
+effect was invisible to its cases: `GetPointerToTextHeader` (register-only
+output hidden under `oracle:False`), the CGB textbox chain (attributes landed
+in VRAM bank 1, cases only read bank 0), `LoadTxRam2`/`LoadTxRam3` (no case
+read any memory the routine touched), `Func_22ca` (every field was
+push/pop-preserved, so a broken body never showed), and
+`TwoByteNumberToTxSymbol_PadSpace` (the adapter recomputed the answer instead
+of marshalling it).
+
+The check, for every routine, before it counts as done: **what happens if I
+delete this body?** Apply one shape-preserving mutation — structure intact,
+meaning corrupted (flip a comparison, drop a term, swap an operand) — run
+`just oracle-diff <Fn>`, confirm it goes RED, restore the body, confirm PASS.
+Record the mutation and the result. A routine whose cases cannot go red is
+not done.
+
+## Adapter rules
+
+Enforced by `tools/lint_adapters.py` and CI (`ci.yml` `adapters` job):
+
+- **R1** — no integer literal `>= 0x8000` in an adapter body. `0x8000` is
+  VRAM's origin; a marshalling layer has no business hardcoding an address in
+  that range.
+- **R3** — exactly one routine call per adapter. `pair`/`split` helpers that
+  assemble or break down 16-bit register pairs are marshalling, not calls;
+  casts and C keywords do not count either. An adapter calling more than one
+  routine is reimplementing logic instead of marshalling it.
+
+The allowlist in `tools/lint_adapters.py` is deliberately tiny. A stale entry
+is itself a lint failure — do not add to it as a shortcut.
+
+## Concurrency protocol
+
+```sh
+export POKETCG_BUILD=build-<slice>          # private build dir
+export POKETCG_PORTS="<pret basenames>"     # semicolon list this slice owns
+```
+
+`CMakeLists.txt:34-60` restricts the build to `POKETCG_PORTS`. Agents working
+concurrently never run `just oracle-diff-all` — a routine registered in
+`tests/routines.py` without cases is a hard FAIL for everyone, so mid-flight
+registrations would red the shared gate. Only the barrier, run centrally
+after every slice lands, runs the full gate.
+
+## Exclusion taxonomy
+
+A home-bank routine is legitimately unported for exactly one of five reasons.
+Record the reason; never stub, never no-op-shim:
+
+1. **SGB path**, dropped by Phase 1 (#2) — SGB packets and their senders.
+2. **Deleted or dissolved by the Phase-1 transform** (`docs/phase1-transform.md`)
+   — banking trampolines, HBlank gating, interrupts, DMA busy-waits, speed
+   switching.
+3. **Dead code** — zero callsites in `poketcg/src`.
+4. **Tail dispatch into unported engine** — `jp hl` / `CallHL` /
+   `JumpToFunctionInTable` whose targets are not yet ported. Becomes a C
+   function-pointer table once the targets land, not before.
+5. **Callee still unported** — the routine itself is portable but calls
+   something that is not yet ported (e.g. `_PlaySFX`/`_PlaySong` in bank
+   `$3d`, or an unported `engine/` routine).
+
+## Fallthrough is a dependency
+
+A label with no terminator (`ret`/`jp`/`jr` unconditional) before the next
+label falls through into it and inherits its blockers. A call-graph sweep
+that ignores fallthrough reports routines as ready when they are not.
+Examples already hit in this repo: `StopMusic` → `PlaySong`,
+`PlaySFX_InvalidChoice` → `PlaySFX`, `DrawPlayerPortrait` → `DrawPortrait`,
+`LoadSymbolsFont` → `CopyFontsOrDuelGraphicsTiles`,
+`SetCursorParametersForTextBox_Default` → `WaitForButtonAorB`.
+
+## The four recurring traps
+
+- **`ld a,[hl]` is a bus read**, resolved under the *caller's* bank via
+  `gb_read8` — never `rom_ptr(BANK(Table), addr)` for a table the routine
+  does not bank-switch for itself.
+- **A wrong signature presents as a scatter of unrelated register
+  mismatches** and reads like "unportable". Derive the exit registers from
+  the asm tail before concluding a routine is blocked.
+- **A `_b`-suffixed pret symbol is a distinct adjacent field**, not the high
+  byte of a pair.
+- **The oracle's synthesized call frame occupies `$CF00-$CFFF`**
+  (`tools/oracle/pyboy_oracle.py:33-38`). Cases must not write it.
+
 
 ## Verification is not just the oracle
 

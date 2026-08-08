@@ -1,5 +1,22 @@
 # poketcg-pc — native port plan
 
+## Status
+
+- **Phase 0 — Substrate** (#1): closed.
+- **Phase 1 — Delete the hardware** (#2): transform recorded in
+  `docs/phase1-transform.md`; applied per-slice as each routine ports.
+- **Phase 2 — Leaves and save** (#3): closed.
+- **Phase 3 — Timer, APU, audio** (#4): open.
+- **Phase 4 — Text, tiles, menus** (#5, #18): open.
+- **Phase 5 — Duel engine** (#6): open.
+- **Phase 6 — Overworld and scripts** (#7): open.
+- **Phase 7 — Link, IR, printer** (#8): open.
+- **Phase 8 — Widescreen and features** (#9): open.
+
+Current gate: **223 routines**, `just oracle-diff-all` exit 0
+(commit `fccb938`). Live execution plan and per-slice status:
+`docs/plan.md`.
+
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
 from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11
 (`static_assert` locks the generated WRAM/HRAM/SRAM layout headers against the

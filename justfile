@@ -21,6 +21,34 @@ bootstrap:
     make -C poketcg DEBUG=1
     cd poketcg && sha1sum -c rom.sha1
 
+# Per-clone VCS setup: jj --repo config lives outside the repo, so a fresh
+# clone loses trunk auto-advance until this runs. Idempotent.
+init-repo:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    jj config set --repo experimental-advance-branches.enabled-branches '["main"]'
+    jj bookmark list --all-remotes | grep -q '^main@origin:' && jj bookmark track main --remote=origin || true
+    just verify-hooks
+
+# Prove the PreToolUse guards still block what they must and allow the workflow.
+verify-hooks:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    fail=0
+    check() {  # check <expected-exit> <hook> <command>
+        rc=0
+        printf '{"tool_input":{"command":"%s"}}' "$3" | bash ".claude/hooks/$2" >/dev/null 2>&1 || rc=$?
+        [ "$rc" = "$1" ] || { echo "hook $2: [$3] want exit $1, got $rc" >&2; fail=1; }
+    }
+    check 2 enforce-jj.sh                     'git commit -m x'
+    check 2 enforce-jj.sh                     'git push origin main'
+    check 0 enforce-jj.sh                     'jj git push'
+    check 0 enforce-jj.sh                     'git status --short'
+    check 0 enforce-jj.sh                     'git tag v1.0.0'
+    check 2 enforce-conventional-commits.sh   'jj commit -m wip'
+    check 0 enforce-conventional-commits.sh   'jj commit -m "feat: x"'
+    exit $fail
+
 # Python venv holding PyBoy, used only by the oracle.
 oracle-venv:
     uv venv /tmp/pbenv

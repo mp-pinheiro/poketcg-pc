@@ -1,5 +1,7 @@
 # agent / editor
-.claude/
+.claude/*
+!.claude/hooks/
+!.claude/settings.json
 .idea/
 .vscode/
 .mcp.json
