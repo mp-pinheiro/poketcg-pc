@@ -103,6 +103,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "serial": ("SerialTimerHandler",),
     "duel_core": ("ConvertSpecialTrainerCardToPokemon",),
     "substatus": ("CheckSandAttackOrSmokescreenSubstatus",),
+    "script": ("GetMapScriptPointer",),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
