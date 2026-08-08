@@ -182,9 +182,32 @@ TempListResult CountCardsInDuelTempList(void)
 #define DUELVARS_HAND 0x42u
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
 #define DUELVARS_CARD_LOCATIONS 0x00u
+#define DUELVARS_ARENA_CARD 0xbbu
+#define DUELVARS_ARENA_CARD_HP 0xc8u
 #define CARD_LOCATION_JUST_DRAWN 0x40u
 #define TYPE_ENERGY_F 3u
 #define PLAY_AREA_MASK 0x10u
+
+/* duel.asm:2306-2320. The final `sub [hl]` borrows when the damage exceeds the
+ * max HP; c keeps the HP, a the difference, and the borrow is the exit carry. */
+CardDamageResult GetCardDamageAndMaxHP(uint8_t e)
+{
+	uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+	(void)LoadCardDataToBuffer2_FromDeckIndex(deck_index);
+	uint8_t damage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).a;
+	uint8_t max_hp = gb_read8(wLoadedCard2HP_ADDR);
+	uint8_t difference = (uint8_t)(max_hp - damage);
+	/* `sub [hl]`: N always, H on the low-nibble borrow, C on the full-byte borrow,
+	 * Z when the difference is zero. */
+	uint8_t f = 0x40u;
+	if ((max_hp & 0x0Fu) < (damage & 0x0Fu))
+		f |= 0x20u;
+	if (max_hp < damage)
+		f |= 0x10u;
+	if (!difference)
+		f |= 0x80u;
+	return (CardDamageResult){difference, max_hp, f};
+}
 
 /* duel.asm:526-533: b = hand count, hl = page + $41 + count, de = wDuelTempList. */
 HandListResult FindLastCardInHand(uint8_t c)

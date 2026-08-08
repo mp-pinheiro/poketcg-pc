@@ -163,4 +163,14 @@ typedef struct {
 } AttackFlagResult;
 AttackFlagResult CheckLoadedAttackFlag(uint8_t a);
 
+/* GetCardDamageAndMaxHP (duel.asm:2306-2320): arena/bench slot e. Exit a = the
+ * loaded card's max HP minus its damage, c = max HP, carry = damage exceeded HP.
+ * All other registers restored. */
+typedef struct {
+	uint8_t a;
+	uint8_t c;
+	uint8_t f;
+} CardDamageResult;
+CardDamageResult GetCardDamageAndMaxHP(uint8_t e);
+
 #endif

@@ -37,6 +37,7 @@ CONTRACT = {
     "TranslateColorToWR": ("a", "b", "c", "d", "e", "hl"),
     "CountCardIDInLocation": ("a", "b", "c", "d", "e", "hl"),
     "CheckLoadedAttackFlag": ("a", "b", "c", "d", "e", "f", "hl"),
+    "GetCardDamageAndMaxHP": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -268,5 +269,27 @@ CASES = {
         {"a": 0x08, "wram": {0xCCB5: b"\x02"}},
         {"a": 0x02, "wram": {0xCCB4: b"\x00"}},
         dict(POISON, a=0x10, wram={0xCCB6: b"\x80"}),
+    ],
+    # Arena slot 0: deck index at $C2BB, damage at $C2C8. Deck card $01 loads
+    # with max HP $C9 (verified against the ROM).
+    "GetCardDamageAndMaxHP": [
+        {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+                          wPlayerDeck: b"\x01"}},
+        {"e": 0, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05",
+                          wPlayerDeck: b"\x01"}},
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x00",
+                          wPlayerDeck: b"\x01"}},
+        # Damage above max HP: full-byte borrow sets C (nibble 9-0 does not set H).
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\xD0",
+                          wPlayerDeck: b"\x01"}},
+        # Low-nibble borrow only: H without C.
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x3A",
+                          wPlayerDeck: b"\x01"}},
+        # Damage exactly at max HP ($71 for the loaded card): zero, no borrow.
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\x71",
+                          wPlayerDeck: b"\x01"}},
+        # Damage above max HP with nibble borrow: H and C both.
+        {"e": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2BC: b"\x00", 0xC2C9: b"\xC9",
+                          wPlayerDeck: b"\x01"}},
     ],
 }

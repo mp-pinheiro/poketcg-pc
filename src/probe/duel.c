@@ -235,6 +235,14 @@ static void adapt_CheckLoadedAttackFlag(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_GetCardDamageAndMaxHP(ProbeState *s)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(s->e);
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -263,5 +271,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "TranslateColorToWR", adapt_TranslateColorToWR },
 	{ "CountCardIDInLocation", adapt_CountCardIDInLocation },
 	{ "CheckLoadedAttackFlag", adapt_CheckLoadedAttackFlag },
+	{ "GetCardDamageAndMaxHP", adapt_GetCardDamageAndMaxHP },
 	{ NULL, NULL },
 };
