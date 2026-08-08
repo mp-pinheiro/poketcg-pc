@@ -535,6 +535,22 @@ static void adapt_MoveCardToDiscardPileIfInPlayArea(ProbeState *s)
 	s->f = r.f;
 	s->hl = r.hl;
 }
+static void adapt_ApplyDamageModifiers_DamageToTarget(ProbeState *s)
+{
+	uint16_t de = ApplyDamageModifiers_DamageToTarget();
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+static void adapt_ApplyDamageModifiers_DamageToSelf(ProbeState *s)
+{
+	uint16_t de = ApplyDamageModifiers_DamageToSelf();
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+static void adapt_GetPlayAreaCardRetreatCost(ProbeState *s)
+{
+	s->a = GetPlayAreaCardRetreatCost();
+}
 
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -600,5 +616,8 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ApplyAttachedPlusPower", adapt_ApplyAttachedPlusPower },
 	{ "ApplyAttachedDefender", adapt_ApplyAttachedDefender },
 	{ "MoveCardToDiscardPileIfInPlayArea", adapt_MoveCardToDiscardPileIfInPlayArea },
+	{ "ApplyDamageModifiers_DamageToTarget", adapt_ApplyDamageModifiers_DamageToTarget },
+	{ "ApplyDamageModifiers_DamageToSelf", adapt_ApplyDamageModifiers_DamageToSelf },
+	{ "GetPlayAreaCardRetreatCost", adapt_GetPlayAreaCardRetreatCost },
 	{ NULL, NULL },
 };

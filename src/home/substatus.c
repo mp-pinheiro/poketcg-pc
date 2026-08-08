@@ -5,6 +5,7 @@
 #include "home/card_data.h"
 #include "home/coin_toss.h"
 #include "home/duel.h"
+#include "home/card_color.h"
 #include "mem.h"
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -461,4 +462,21 @@ void ClearChangedTypesIfMuk(uint8_t a)
 	zero_changed_type_run();
 	SwapTurn();
 	zero_changed_type_run();
+}
+
+
+#define TYPE_ENERGY_WATER 0x0Bu
+#define TYPE_PKMN_WATER   0x03u
+
+RainDanceResult CheckRainDanceScenario(void)
+{
+	uint8_t card_idx = hTempCardIndex_ff98;
+	uint16_t card_id = GetCardIDFromDeckIndex(card_idx);
+	uint8_t card_type = GetCardType((uint8_t)card_id);
+	if (card_type != TYPE_ENERGY_WATER)
+		return (RainDanceResult){card_type, 0x00u};
+	uint8_t color = GetPlayAreaCardColor(hTempPlayAreaLocation_ff9d);
+	if (color != TYPE_PKMN_WATER)
+		return (RainDanceResult){color, 0x00u};
+	return (RainDanceResult){TYPE_PKMN_WATER, 0x90u};
 }

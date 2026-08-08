@@ -135,4 +135,7 @@ PkmnPowerCountResult IsRainDanceActive(void);
  * both duelists' CHANGED_TYPE runs get cleared, not just one. */
 void ClearChangedTypesIfMuk(uint8_t a);
 
+typedef struct { uint8_t a, f; } RainDanceResult;
+RainDanceResult CheckRainDanceScenario(void);
+
 #endif

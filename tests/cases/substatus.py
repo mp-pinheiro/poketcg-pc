@@ -1,6 +1,8 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
+hTempCardIndex_ff98_ADDR = 0xFF98
+hTempPlayAreaLocation_ff9d_ADDR = 0xFF9D
 hWhoseTurn = 0xFF97
 wGotHeads = 0xCC0A
 ARENA_SUBSTATUS2 = 0xC200 + 0xE8  # player page, duelvar $E8
@@ -71,6 +73,7 @@ CONTRACT = {
     "UpdateSubstatusConditions_StartOfTurn": (),
     "UpdateSubstatusConditions_EndOfTurn": (),
     "IsRainDanceActive": ("a", "f", "b", "c", "d", "e"),
+    "CheckRainDanceScenario": ("a", "f"),
     "ClearChangedTypesIfMuk": (),
 }
 
@@ -336,5 +339,23 @@ CASES = {
         dict(POISON, wram=mw(PLAYER_TURN,
              {wPlayerDeck: bytes([MUK]), ARENA_CHANGED_TYPE: b"\x01\x02\x03\x04\x05\x06",
               OPP_CHANGED_TYPE: b"\x07\x08\x09\x0a\x0b\x0c"})),
+    ],
+    "CheckRainDanceScenario": [
+        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  wPlayerDeck + 0: b"\x08",
+                  0xFF9D: b"\x00",
+                  0xC2BB: b"\x00", 0xC2D4: b"\x00"}},
+        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  wPlayerDeck + 0: b"\x03",
+                  0xFF9D: b"\x00",
+                  0xC2BB: b"\x01", wPlayerDeck + 1: b"\x08", 0xC2D4: b"\x00"}},
+        {"wram": {hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                  wPlayerDeck + 0: b"\x03",
+                  0xFF9D: b"\x00",
+                  0xC2BB: b"\x01", wPlayerDeck + 1: b"\x43", 0xC2D4: b"\x00"}},
+        dict(POISON, wram={hWhoseTurn: bytes((0xC2,)), 0xFF98: b"\x00",
+                           wPlayerDeck + 0: b"\x03",
+                           0xFF9D: b"\x00",
+                           0xC2BB: b"\x01", wPlayerDeck + 1: b"\x43", 0xC2D4: b"\x00"}),
     ],
 }

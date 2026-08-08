@@ -5,6 +5,8 @@
 #include "generated/wram.h"
 #include "home/card_data.h"
 #include "home/duel_core.h"
+#include "home/card_color.h"
+#include "home/substatus.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
 #include "mem.h"
@@ -1146,4 +1148,112 @@ DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t pag
 	}
 	return (DiscardIfInPlayResult){DECK_SIZE, b, c, 0xC0u,
 				       (uint16_t)(((uint16_t)page << 8) | DECK_SIZE)};
+}
+
+#define CARD_LOCATION_ARENA 0x10u
+#define WEAKNESS  (1u << 1)
+#define RESISTANCE (1u << 2)
+
+uint16_t ApplyDamageModifiers_DamageToTarget(void)
+{
+	gb_write8(wDamageEffectiveness_ADDR, 0);
+
+	uint8_t lo = gb_read8(wDamage_ADDR);
+	uint8_t hi_byte = gb_read8((uint16_t)(wDamage_ADDR + 1u));
+	if (!(hi_byte | lo))
+		return 0;
+
+	hTempPlayAreaLocation_ff9d = 0;
+	uint16_t de = (uint16_t)((uint16_t)hi_byte << 8 | lo);
+
+	if (hi_byte & 0x80u) {
+		de &= (uint16_t)~0x8000u;
+		gb_write8(wDamageEffectiveness_ADDR, 0);
+		de = HandleDoubleDamageSubstatus(de);
+	} else {
+		de = HandleDoubleDamageSubstatus(de);
+		if (!de)
+			return 0;
+
+		uint8_t color = GetPlayAreaCardColor(hTempPlayAreaLocation_ff9d);
+		uint8_t wr = TranslateColorToWR(color);
+
+		SwapTurn();
+		uint8_t weakness = GetArenaCardWeakness();
+		SwapTurn();
+		if (weakness & wr) {
+			de <<= 1;
+			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | WEAKNESS));
+		}
+
+		SwapTurn();
+		uint8_t resistance = GetArenaCardResistance();
+		SwapTurn();
+		if (resistance & wr) {
+			de = (uint16_t)(de - 30u);
+			gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | RESISTANCE));
+		}
+	}
+
+	{
+		PowerModifierResult r = ApplyAttachedPlusPower(CARD_LOCATION_ARENA, de);
+		de = r.de;
+	}
+	SwapTurn();
+	{
+		PowerModifierResult r = ApplyAttachedDefender(CARD_LOCATION_ARENA, de);
+		de = r.de;
+	}
+	de = HandleDamageReduction(de);
+	if (de & 0x8000u)
+		de = 0;
+	SwapTurn();
+	return de;
+}
+
+uint16_t ApplyDamageModifiers_DamageToSelf(void)
+{
+	gb_write8(wDamageEffectiveness_ADDR, 0);
+
+	uint8_t lo = gb_read8(wDamage_ADDR);
+	uint8_t hi_byte = gb_read8((uint16_t)(wDamage_ADDR + 1u));
+	uint8_t nonzero = (uint8_t)(hi_byte | lo);
+	if (!nonzero)
+		return 0;
+
+	uint16_t de = (uint16_t)((uint16_t)hi_byte << 8 | lo);
+	uint8_t color = GetArenaCardColor();
+	uint8_t wr = TranslateColorToWR(color);
+
+	uint8_t weakness = GetArenaCardWeakness();
+	if (weakness & wr) {
+		de <<= 1;
+		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | WEAKNESS));
+	}
+	uint8_t resistance = GetArenaCardResistance();
+	if (resistance & wr) {
+		de = (uint16_t)(de - 30u);
+		gb_write8(wDamageEffectiveness_ADDR, (uint8_t)(gb_read8(wDamageEffectiveness_ADDR) | RESISTANCE));
+	}
+
+	{
+		PowerModifierResult r = ApplyAttachedPlusPower(CARD_LOCATION_ARENA, de);
+		de = r.de;
+	}
+	{
+		PowerModifierResult r = ApplyAttachedDefender(CARD_LOCATION_ARENA, de);
+		de = r.de;
+	}
+
+
+	if (de & 0x8000u)
+		return 0;
+	return de;
+}
+uint8_t GetPlayAreaCardRetreatCost(void)
+{
+	uint8_t slot = hTempPlayAreaLocation_ff9d;
+	uint8_t deck_idx = GetTurnDuelistVariable((uint8_t)(slot + 0xBBu)).a;
+	LoadCardDataToBuffer1_FromDeckIndex(deck_idx);
+	return GetLoadedCard1RetreatCost();
 }

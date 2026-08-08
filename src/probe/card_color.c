@@ -8,6 +8,8 @@ static void adapt_GetCardResistance(ProbeState *s) { s->a = GetCardResistance(s-
 static void adapt_GetArenaCardResistance(ProbeState *s) { s->a = GetArenaCardResistance(); }
 static void adapt_GetPlayAreaCardResistance(ProbeState *s) { s->a = GetPlayAreaCardResistance(s->a); }
 static void adapt_GetArenaCardColor(ProbeState *s) { s->a = GetArenaCardColor(); }
+static void adapt_GetPlayAreaCardColor(ProbeState *s) { s->a = GetPlayAreaCardColor(s->a); }
+static void adapt_HandleEnergyBurn(ProbeState *s) { HandleEnergyBurn(); }
 
 const ProbeEntry probe_entries_card_color[] = {
 	{ "GetCardWeakness", adapt_GetCardWeakness },
@@ -17,5 +19,7 @@ const ProbeEntry probe_entries_card_color[] = {
 	{ "GetArenaCardResistance", adapt_GetArenaCardResistance },
 	{ "GetPlayAreaCardResistance", adapt_GetPlayAreaCardResistance },
 	{ "GetArenaCardColor", adapt_GetArenaCardColor },
+	{ "GetPlayAreaCardColor", adapt_GetPlayAreaCardColor },
+	{ "HandleEnergyBurn", adapt_HandleEnergyBurn },
 	{ NULL, NULL },
 };

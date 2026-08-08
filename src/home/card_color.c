@@ -88,17 +88,37 @@ uint8_t GetPlayAreaCardResistance(uint8_t a)
 #define TYPE_TRAINER 0x10u
 #define COLORLESS 0x06u
 
-/* card_color.asm:1-39, a=PLAY_AREA_ARENA(0) specialization of the general
- * (unported this wave) GetPlayAreaCardColor. Venomoth's Shift Pokemon Power
- * overrides the color while active; falls back to the card's own type
- * otherwise, with Trainer cards reporting COLORLESS. */
+uint8_t GetPlayAreaCardColor(uint8_t a)
+{
+	uint8_t changed = turn_duel_var((uint8_t)(a + DUELVARS_ARENA_CARD_CHANGED_TYPE));
+	if (changed & HAS_CHANGED_COLOR_F_MASK) {
+		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(a);
+		if (!(incapable.f & 0x10u))
+			return (uint8_t)(changed & 0x0Fu);
+	}
+	uint8_t idx = turn_duel_var((uint8_t)(a + DUELVARS_ARENA_CARD));
+	uint8_t type = GetCardType(deck_card_id(idx));
+	return type == TYPE_TRAINER ? COLORLESS : type;
+}
+
 uint8_t GetArenaCardColor(void)
 {
-	if (turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_TYPE) & HAS_CHANGED_COLOR_F_MASK) {
-		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(0);
-		if (!(incapable.f & 0x10u))
-			return (uint8_t)(turn_duel_var(DUELVARS_ARENA_CARD_CHANGED_TYPE) & 0x0Fu);
-	}
-	uint8_t type = GetCardType(deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD)));
-	return type == TYPE_TRAINER ? COLORLESS : type;
+	return GetPlayAreaCardColor(0);
+}
+
+#define NUM_COLORED_TYPES 6u
+#define FIRE 0u
+#define CHARIZARD 0x32u
+
+void HandleEnergyBurn(void)
+{
+	uint8_t card_id = deck_card_id(turn_duel_var(DUELVARS_ARENA_CARD));
+	if (card_id != CHARIZARD)
+		return;
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(0);
+	if (incapable.f & 0x10u)
+		return;
+	for (uint8_t i = 0; i < NUM_COLORED_TYPES; i++)
+		gb_write8((uint16_t)(wAttachedEnergies_ADDR + i), 0);
+	gb_write8((uint16_t)(wAttachedEnergies_ADDR + FIRE), wTotalAttachedEnergies);
 }

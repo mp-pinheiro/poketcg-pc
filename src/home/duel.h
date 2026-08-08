@@ -512,5 +512,9 @@ typedef struct {
 } DiscardIfInPlayResult;
 DiscardIfInPlayResult MoveCardToDiscardPileIfInPlayArea(uint16_t de, uint8_t page);
 
+uint16_t ApplyDamageModifiers_DamageToTarget(void);
+uint16_t ApplyDamageModifiers_DamageToSelf(void);
+uint8_t GetPlayAreaCardRetreatCost(void);
+
 
 #endif

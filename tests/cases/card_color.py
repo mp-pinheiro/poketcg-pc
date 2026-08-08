@@ -24,11 +24,16 @@ CONTRACT = {
     "GetArenaCardResistance": ("a", "b", "c", "d", "e"),
     "GetPlayAreaCardResistance": ("a", "b", "c", "d", "e"),
     "GetArenaCardColor": ("a", "b", "c", "d", "e"),
+    "GetPlayAreaCardColor": ("a", "b", "c", "d", "e"),
+    "HandleEnergyBurn": (),
 }
 
 wChangedType = 0xC2D4       # DUELVARS_ARENA_CARD_CHANGED_TYPE
 wArenaCardStatus = 0xC2F0   # DUELVARS_ARENA_CARD_STATUS
 wBench = 0xC2BC             # DUELVARS_BENCH
+CHARIZARD = 0x32
+wAttachedEnergies_ADDR = 0xCC1B
+wTotalAttachedEnergies_ADDR = 0xCC23
 RECYCLE = 0xE4              # a real TYPE_TRAINER card (ai_trainer_card_logic.asm)
 
 
@@ -87,4 +92,37 @@ CASES = {
                   wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff"}},
         dict(POISON, wram={**arena(0x40, idx=3), wChangedType: b"\x00"}),
     ],
+    "GetPlayAreaCardColor": [
+        {"a": 0, "wram": {**arena(8), wChangedType: b"\x00"}},
+        {"a": 1, "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 1: bytes((3,)),
+                          wPlayerDeck + 3: bytes((0x40,)), wChangedType + 1: b"\x00"}},
+        {"a": 0, "wram": {**arena(RECYCLE), wChangedType: b"\x00"}},
+        {"a": 0, "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wChangedType: b"\x83",
+                          wArenaCardStatus: b"\x00", wPlayerArenaCard: b"\xff",
+                          wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff"}},
+        {"a": 0, "wram": {**arena(8), wChangedType: b"\x80", wArenaCardStatus: b"\x01"}},
+        dict(POISON, a=0, wram={**arena(0x40, idx=3), wChangedType: b"\x00"}),
+    ],
+    "HandleEnergyBurn": [
+        {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((0,)),
+                  wPlayerDeck + 0: bytes((0x08,))}},
+        dict(POISON, wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((2,)),
+                           wPlayerDeck + 2: bytes((CHARIZARD,)),
+                           wArenaCardStatus: b"\x01"}),
+        {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((5,)),
+                  wPlayerDeck + 5: bytes((CHARIZARD,)),
+                  wChangedType: b"\x00", wArenaCardStatus: b"\x00",
+                  wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff",
+                  wAttachedEnergies_ADDR: b"\x01\x02\x03\x04\x05\x06",
+                  wTotalAttachedEnergies_ADDR: b"\x07"},
+         "read": {wAttachedEnergies_ADDR: 6}},
+        {"wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: bytes((7,)),
+                  wPlayerDeck + 7: bytes((CHARIZARD,)),
+                  wChangedType: b"\x00", wArenaCardStatus: b"\x00",
+                  wBench: b"\xff", 0xC3BB: b"\xff", 0xC3BC: b"\xff",
+                  wAttachedEnergies_ADDR: b"\x02\x03\x01\x00\x00\x00",
+                  wTotalAttachedEnergies_ADDR: b"\x06"},
+         "read": {wAttachedEnergies_ADDR: 6}},
+    ],
 }
+

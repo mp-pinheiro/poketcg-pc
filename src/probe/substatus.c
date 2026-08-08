@@ -157,6 +157,7 @@ static void adapt_ClearChangedTypesIfMuk(ProbeState *s)
 {
 	ClearChangedTypesIfMuk(s->a);
 }
+static void adapt_CheckRainDanceScenario(ProbeState *s) { RainDanceResult r = CheckRainDanceScenario(); s->a = r.a; s->f = r.f; }
 
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
@@ -180,6 +181,7 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "UpdateSubstatusConditions_StartOfTurn", adapt_UpdateSubstatusConditions_StartOfTurn },
 	{ "UpdateSubstatusConditions_EndOfTurn", adapt_UpdateSubstatusConditions_EndOfTurn },
 	{ "IsRainDanceActive", adapt_IsRainDanceActive },
+	{ "CheckRainDanceScenario", adapt_CheckRainDanceScenario },
 	{ "ClearChangedTypesIfMuk", adapt_ClearChangedTypesIfMuk },
 	{ NULL, NULL },
 };
