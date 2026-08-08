@@ -187,18 +187,21 @@ static ProcessTextHeaderResult header_result(uint8_t a, uint8_t d, uint8_t e,
 	return (ProcessTextHeaderResult){a, d, e, f, hl};
 }
 
-/* Returns the 16-bit value held in the slot, not the slot address: the asm finishes
- * with `ld a, [hli] / ld h, [hl] / ld l, a`. The index doubling is an 8-bit `add a`,
- * so it wraps. */
-uint16_t HandleTxRam2Or3(uint16_t de, uint16_t hl)
+/* Returns the 16-bit value held in the slot, not the slot address. Exit a is the
+ * slot's low byte, and the index doubling is an 8-bit `add a` that leaves d = 0 and
+ * e = the resulting byte offset, so the caller's d/e do not survive. */
+TxRamSlot HandleTxRam2Or3(uint16_t de, uint16_t hl)
 {
 	uint8_t index = gb_read8(hl);
 
 	gb_write8(hl, (uint8_t)(index + 1u));
 
-	uint16_t slot = (uint16_t)(de + (uint8_t)(index * 2u));
+	uint8_t offset = (uint8_t)(index * 2u);
+	uint16_t slot = (uint16_t)(de + offset);
+	uint8_t lo = gb_read8(slot);
+	uint16_t value = (uint16_t)(lo | (uint16_t)gb_read8((uint16_t)(slot + 1u)) << 8);
 
-	return (uint16_t)(gb_read8(slot) | (uint16_t)gb_read8((uint16_t)(slot + 1u)) << 8);
+	return (TxRamSlot){lo, 0, offset, value};
 }
 
 /* a and de fall out of the callee; hl is the buffer address the asm pushed and popped. */
@@ -252,13 +255,13 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 				WriteToTextHeader_MoveToNext(text);
 				hJapaneseSyllabary = 0x0f;
 				wFontWidth = 0;
-				uint16_t ptr = HandleTxRam2Or3(wTxRam2_ADDR, wWhichTxRam2_ADDR);
+				uint16_t ptr = HandleTxRam2Or3(wTxRam2_ADDR, wWhichTxRam2_ADDR).hl;
 				WriteToTextHeader(ptr ? GetTextOffsetFromTextID(ptr) : wDefaultText_ADDR);
 				return ProcessTextHeader(d, e);
 			}
 			if (a == 0x0c) {
 				WriteToTextHeader_MoveToNext(text);
-				uint16_t ptr = HandleTxRam2Or3(wTxRam3_ADDR, wWhichTxRam3_ADDR);
+				uint16_t ptr = HandleTxRam2Or3(wTxRam3_ADDR, wWhichTxRam3_ADDR).hl;
 				WriteToTextHeader(TwoByteNumberToText_CountLeadingZeros(ptr, 0, 0).hl);
 				return ProcessTextHeader(d, e);
 			}

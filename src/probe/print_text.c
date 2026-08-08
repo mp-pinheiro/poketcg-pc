@@ -66,7 +66,11 @@ static void adapt_ProcessTextHeader(ProbeState *s)
 
 static void adapt_HandleTxRam2Or3(ProbeState *s)
 {
-	s->hl = HandleTxRam2Or3(pair(s->d, s->e), s->hl);
+	TxRamSlot r = HandleTxRam2Or3(pair(s->d, s->e), s->hl);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
 }
 
 static void adapt_CopyTextData_FromTextID(ProbeState *s)

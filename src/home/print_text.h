@@ -35,7 +35,15 @@ typedef struct {
 } ProcessTextHeaderResult;
 
 ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e);
-uint16_t HandleTxRam2Or3(uint16_t de, uint16_t hl);
+/* The tail is `ld a, [hli] / ld h, [hl] / ld l, a` (print_text.asm), so exit a is the
+ * slot's low byte, and the index doubling leaves d = 0 with e = the byte offset. */
+typedef struct {
+	uint8_t a;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} TxRamSlot;
+TxRamSlot HandleTxRam2Or3(uint16_t de, uint16_t hl);
 CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de);
 CopyTextResult CopyPlayerNameOrTurnDuelistName(void);
 ProcessTextHeaderResult InitTextPrinting_ProcessTextFromID(uint8_t d, uint8_t e, uint16_t hl);

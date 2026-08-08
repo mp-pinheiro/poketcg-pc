@@ -165,23 +165,18 @@ CASES.update({
         # The asm ends `ld a, [hli] / ld h, [hl] / ld l, a`, so hl is the 16-bit value
         # held in the slot, not the slot address. Index 0 reads the first slot.
         {"hl": 0xCE49, "d": 0xCE, "e": 0x3F, "wram": {0xCE49: b"\x00", 0xCE3F: b"\x34\x12"},
-         "oracle": False, "why": "text buffers are in the synthesized call frame",
-         "expect": {0xCE49: b"\x01"}, "expect_regs": {"hl": 0x1234}},
+         "read": {0xCE49: 1, 0xCE3F: 2}},
         # Index 2 selects the third slot: `add a` doubles it, so the offset is 4.
         {"hl": 0xCE49, "d": 0xCE, "e": 0x3F,
          "wram": {0xCE49: b"\x02", 0xCE43: b"\x78\x56"},
-         "oracle": False, "why": "text buffers are in the synthesized call frame",
-         "expect": {0xCE49: b"\x03"}, "expect_regs": {"hl": 0x5678}},
+         "read": {0xCE49: 1, 0xCE43: 2}},
         # `add a` is 8-bit, so an index of $80 doubles to 0 and wraps onto slot 0.
         {"hl": 0xCE49, "d": 0xCE, "e": 0x3F,
          "wram": {0xCE49: b"\x80", 0xCE3F: b"\xCD\xAB"},
-         "oracle": False, "why": "text buffers are in the synthesized call frame",
-         "expect": {0xCE49: b"\x81"}, "expect_regs": {"hl": 0xABCD}},
+         "read": {0xCE49: 1, 0xCE3F: 2}},
     ],
     "ProcessTextFromPointerToID": [
-        {"hl": 0xC100, "wram": {0xC100: b"\x00\x00"}, "oracle": False,
-         "why": "the zero text ID path is independent of the ROM text table",
-         "expect": {0xC100: b"\x00\x00"}, "expect_regs": {"hl": 0xC101}},
+        {"hl": 0xC100, "wram": {0xC100: b"\x00\x00"}, "read": {0xC100: 2}},
     ],
 })
 
