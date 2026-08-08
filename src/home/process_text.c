@@ -363,7 +363,9 @@ PlaceTextResult PlaceNextTextTile(uint8_t a)
 
 ProcessTextResult TerminateHalfWidthText(uint8_t d, uint8_t e, uint16_t hl)
 {
-	if (!wFontWidth || !wHalfWidthPrintState) return text_result(0, d, e, 0, hl);
+	/* Both early exits are `or a / ret z` (process_text.asm:264-269), so the Z
+	 * flag is set on the way out; callers scf on top of it. */
+	if (!wFontWidth || !wHalfWidthPrintState) return text_result(0, d, e, 0x80, hl);
 	uint8_t pair = ' ';
 	Func_22ca(d, pair);
 	return text_result(0, d, e, 0, hl);

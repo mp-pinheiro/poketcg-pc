@@ -223,12 +223,18 @@ CopyTextResult CopyTextData_FromTextID(uint8_t a, uint16_t hl, uint16_t de)
 	return result;
 }
 
-/* d and e are live on entry: the TX_END path hands d to TerminateHalfWidthText,
- * and both are preserved across every path that does not set them itself. */
+/* ReadTextHeader -> GetPointerToTextHeader sets e = wWhichTextHeader * 5 and d = 0
+ * (print_text.asm:220-230), so the caller's d/e do NOT survive the read. The TX_END
+ * tail is `call TerminateHalfWidthText / scf / ret`, so the exit flags are that
+ * callee's Z plus the carry scf sets. */
 ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 {
+	uint8_t selector = wWhichTextHeader;
 	uint16_t text = ReadTextHeader();
 	uint8_t a = gb_read8(text++);
+
+	d = 0;
+	e = (uint8_t)(selector * 5u);
 	if (!a) {
 		if (wWhichTextHeader) {
 			wWhichTextHeader--;
@@ -236,7 +242,8 @@ ProcessTextHeaderResult ProcessTextHeader(uint8_t d, uint8_t e)
 		}
 
 		ProcessTextResult ended = TerminateHalfWidthText(d, e, text);
-		return header_result(ended.a, ended.d, ended.e, 0x10, ended.hl);
+		return header_result(ended.a, ended.d, ended.e,
+				     (uint8_t)((ended.f & 0x80u) | 0x10u), ended.hl);
 	}
 	if (a >= 0x05 && a < 0x10) {
 		ProcessTextResult special = ProcessSpecialTextCharacter(a, text);

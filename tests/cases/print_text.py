@@ -86,21 +86,15 @@ CASES = {
     ],
     "CountLinesOfTextFromID": [{"hl": 1}, dict(POISON, hl=1)],
     # wTxRam2 is $CE3F and the asm writes it and $CE40. wTxRam2_b is a DIFFERENT
-    # symbol at $CE41 and must stay untouched -- the third expect byte pins that.
-    # Inside the reserved $CE00-$CFFF frame, so oracle:False with an asm-derived map.
+    # symbol at $CE41 and must stay untouched -- the third read byte pins that.
+    # Oracle-run now that the synthesized frame moved out to $CF00-$CFFF.
     "LoadTxRam2": [
-        {"hl": 1, "oracle": False, "why": "wTxRam2 is inside the synthesized call frame",
-         "wram": {0xCE3F: b"\xff\xff\xff"}, "expect": {0xCE3F: b"\x01\x00\xff"}},
-        dict(POISON, hl=0x1234, oracle=False,
-             why="wTxRam2 is inside the synthesized call frame",
-             wram={0xCE3F: b"\xff\xff\xff"}, expect={0xCE3F: b"\x34\x12\xff"}),
+        {"hl": 1, "wram": {0xCE3F: b"\xff\xff\xff"}, "read": {0xCE3F: 3}},
+        dict(POISON, hl=0x1234, wram={0xCE3F: b"\xff\xff\xff"}, read={0xCE3F: 3}),
     ],
     "LoadTxRam3": [
-        {"hl": 0, "oracle": False, "why": "wTxRam3 is inside the synthesized call frame",
-         "wram": {0xCE43: b"\xff\xff\xff"}, "expect": {0xCE43: b"\x00\x00\xff"}},
-        dict(POISON, hl=0xFFFF, oracle=False,
-             why="wTxRam3 is inside the synthesized call frame",
-             wram={0xCE43: b"\xff\xff\xff"}, expect={0xCE43: b"\xff\xff\xff"}),
+        {"hl": 0, "wram": {0xCE43: b"\xff\xff\xff"}, "read": {0xCE43: 3}},
+        dict(POISON, hl=0xFFFF, wram={0xCE43: b"\xff\xff\xff"}, read={0xCE43: 3}),
     ],
 }
 
@@ -149,17 +143,14 @@ CASES.update({
         {"d": 3, "e": 4,
          "wram": {HEADER: b"\x0f\x00\x01\x00\xC1", 0xCE48: b"\x00",
                   0xC100: b"\x00"},
-         "oracle": False, "why": "the text header lives in the synthesized call frame",
-         "expect_regs": {"d": 3, "e": 4, "f": 0x10, "hl": 0xC101}},
+         "read": {HEADER: 5, 0xCE48: 1, 0xC100: 1}},
         # A pending header level is popped and the routine re-runs one level up:
         # wWhichTextHeader selects the header, five bytes per level.
         {"d": 5, "e": 6,
          "wram": {HEADER: b"\x0f\x00\x01\x00\xC1",
                   HEADER + 5: b"\x0f\x00\x01\x00\xC1",
                   0xCE48: b"\x01", 0xC100: b"\x00"},
-         "oracle": False, "why": "the text header lives in the synthesized call frame",
-         "expect": {0xCE48: b"\x00"},
-         "expect_regs": {"d": 5, "e": 6, "f": 0x10, "hl": 0xC101}},
+         "read": {HEADER: 10, 0xCE48: 1, 0xC100: 1}},
     ],
     # The zero-ID early exit returns before any text processing, so it is the one
     # path of this pair the emulator can run end to end.
