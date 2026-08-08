@@ -25,12 +25,17 @@ from pathlib import Path
 
 from pyboy import PyBoy
 
+# The frame is confined to $CF00-$CFFF so the text-header block at $CE2B-$CE4B is
+# case-addressable and oracle-diffable. It deliberately does NOT move to the top of
+# WRAM: $DFFF is the last WRAM byte and several cases probe it as a boundary
+# (SetNextElementOfList walks a list pointer there, GetFarByte bus-reads it), so a
+# frame at $DF00-$DFFF would collide with the very addresses those cases exist to test.
 SENTINEL = 0xCFF0  # return address pushed for the routine under test
 SPIN = 0xCFF4  # `jr -2`, parked here once the snapshot is taken
-STACK_TOP = 0xCF00  # frame grows down from here
+STACK_TOP = 0xCFC0  # frame grows down from here
 
 # Cases must not use this window: it holds the synthesized frame and its stack.
-RESERVED = range(0xCE00, 0xD000)
+RESERVED = range(0xCF00, 0xD000)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000

@@ -17,17 +17,25 @@ static void adapt_GetPointerToTextHeader(ProbeState *s) { s->hl = GetPointerToTe
 static void adapt_ReadTextHeader(ProbeState *s) { s->hl = ReadTextHeader(); }
 static void adapt_WriteToTextHeader(ProbeState *s)
 {
-	uint16_t text = s->hl;
-	s->hl = WriteToTextHeader(text);
-	split(text, &s->b, &s->c);
+	TextHeaderWrite r = WriteToTextHeader(s->hl);
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
 static void adapt_WriteToTextHeader_MoveToNext(ProbeState *s)
 {
-	uint16_t text = s->hl;
-	s->hl = WriteToTextHeader_MoveToNext(text);
-	split(text, &s->b, &s->c);
+	TextHeaderWrite r = WriteToTextHeader_MoveToNext(s->hl);
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
 }
-static void adapt_ResetTxRam_WriteToTextHeader(ProbeState *s) { s->hl = ResetTxRam_WriteToTextHeader(s->hl); }
+static void adapt_ResetTxRam_WriteToTextHeader(ProbeState *s)
+{
+	TextHeaderWrite r = ResetTxRam_WriteToTextHeader(s->hl);
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
 static void adapt_TwoByteNumberToText_CountLeadingZeros(ProbeState *s)
 {
 	LeadingZerosResult r = TwoByteNumberToText_CountLeadingZeros(s->hl, s->c, pair(s->d, s->e));

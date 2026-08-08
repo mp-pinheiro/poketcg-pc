@@ -6,9 +6,16 @@
 uint16_t GetTextOffsetFromTextID(uint16_t text_id);
 uint16_t GetPointerToTextHeader(void);
 uint16_t ReadTextHeader(void);
-uint16_t WriteToTextHeader(uint16_t text);
-uint16_t WriteToTextHeader_MoveToNext(uint16_t text);
-uint16_t ResetTxRam_WriteToTextHeader(uint16_t text);
+/* WriteToTextHeader does `push hl / call GetPointerToTextHeader / pop bc`
+ * (print_text.asm:180-182), so exit b/c are the entry pointer's halves. */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} TextHeaderWrite;
+TextHeaderWrite WriteToTextHeader(uint16_t text);
+TextHeaderWrite WriteToTextHeader_MoveToNext(uint16_t text);
+TextHeaderWrite ResetTxRam_WriteToTextHeader(uint16_t text);
 typedef struct {
 	uint8_t c;
 	uint16_t de;

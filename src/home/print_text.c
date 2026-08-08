@@ -57,7 +57,10 @@ uint16_t ReadTextHeader(void)
 	return text;
 }
 
-static uint16_t write_text_header(uint16_t text)
+/* print_text.asm:179-192. `push hl / call GetPointerToTextHeader / pop bc` puts the
+ * entry pointer's halves in b/c, and the final `ld [hl], b` has no inc after it, so
+ * exit hl is header+4. */
+static TextHeaderWrite write_text_header(uint16_t text)
 {
 	uint16_t header = text_header();
 
@@ -66,22 +69,26 @@ static uint16_t write_text_header(uint16_t text)
 	gb_write8(header++, hBankROM);
 	gb_write8(header++, (uint8_t)text);
 	gb_write8(header, (uint8_t)(text >> 8));
-	return header;
+	return (TextHeaderWrite){(uint8_t)(text >> 8), (uint8_t)text, header};
 }
 
-uint16_t WriteToTextHeader(uint16_t text)
+TextHeaderWrite WriteToTextHeader(uint16_t text)
 {
 	return write_text_header(text);
 }
 
-uint16_t WriteToTextHeader_MoveToNext(uint16_t text)
+/* print_text.asm:197-201. The tail is `ld hl, wWhichTextHeader / inc [hl]`, so the
+ * exit pointer is that address, not the header the write advanced through. */
+TextHeaderWrite WriteToTextHeader_MoveToNext(uint16_t text)
 {
-	uint16_t header = write_text_header(text);
+	TextHeaderWrite out = write_text_header(text);
+
 	wWhichTextHeader++;
-	return header;
+	out.hl = wWhichTextHeader_ADDR;
+	return out;
 }
 
-uint16_t ResetTxRam_WriteToTextHeader(uint16_t text)
+TextHeaderWrite ResetTxRam_WriteToTextHeader(uint16_t text)
 {
 	wWhichTextHeader = 0;
 	wWhichTxRam2 = 0;
@@ -326,7 +333,7 @@ static TextResult print_text_body(uint16_t text, uint8_t d, uint8_t e)
 {
 	uint8_t b = 0;
 	uint8_t a = 0;
-	uint16_t hl = ResetTxRam_WriteToTextHeader(text);
+	uint16_t hl = ResetTxRam_WriteToTextHeader(text).hl;
 
 	for (;;) {
 		b = hKeysHeld;
