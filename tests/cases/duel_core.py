@@ -25,6 +25,20 @@ wNoDamageOrEffect = 0xCCC7
 wIsDamageToSelf = 0xCCE6
 wPlayerArenaCardStatus = 0xC2F0
 wOpponentArenaCardStatus = 0xC3F0
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC480
+wPlayerArenaCard = 0xC2BB
+wOpponentArenaCard = 0xC3BB
+wPlayerArenaCardStage = 0xC2CE
+wOpponentArenaCardStage = 0xC3CE
+wAllStagesIndices = 0xCCCA
+wLoadedCard2 = 0xCC65
+wLoadedCard2Type = 0xCC65
+wLoadedCard2Stage = 0xCC6E
+hBankROM = 0xFF80
+
+
 
 
 CONTRACT = {
@@ -36,6 +50,7 @@ CONTRACT = {
     "PrintThereWasNoEffectFromStatusText": ("b", "d", "e", "hl"),
     "WaitAttackAnimation": ("b", "c", "d", "e", "hl"),
     "ApplyStatusConditionQueue": ("f",),
+    "GetCardOneStageBelow": ("a", "d", "e", "hl", "f"),
 }
 
 CASES = {
@@ -230,6 +245,110 @@ CASES = {
     ],
 
 }
+
+CASES["GetCardOneStageBelow"] = [
+    {
+        "name": "all-zero basic card returns early with carry",
+        "a": 0, "d": 0, "e": 0, "hl": 0, "f": 0,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wPlayerArenaCard: b"\x00",
+            LOCATION: b"\x10",
+            wPlayerDeck: b"\x08",
+        },
+        "read": {
+            wLoadedCard2Stage: 1,
+        },
+    },
+    {
+        "name": "poisoned stage-1 card returns basic index",
+        **POISON,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wPlayerArenaCard: b"\x01",
+            wPlayerArenaCardStage: b"\x01",
+            LOCATION: b"\x10\x10",
+            wPlayerDeck: b"\x08\x09",
+        },
+        "read": {
+            wLoadedCard2: 64,
+            wAllStagesIndices: 3,
+        },
+    },
+    {
+        "name": "stage-2 filters energy and returns stage-1",
+        "a": 0, "d": 0, "e": 0, "hl": 0, "f": 0,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wPlayerArenaCard: b"\x02",
+            wPlayerArenaCardStage: b"\x02",
+            LOCATION: b"\x10\x10\x10\x10",
+            wPlayerDeck: b"\x08\x09\x0a\x01",
+        },
+        "read": {
+            wLoadedCard2: 64,
+            wAllStagesIndices: 3,
+        },
+    },
+    {
+        "name": "stage-2 without stage-1 returns 0xFF",
+        "a": 0, "d": 0, "e": 0, "hl": 0, "f": 0,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wPlayerArenaCard: b"\x01",
+            wPlayerArenaCardStage: b"\x02",
+            LOCATION: b"\x10\x10",
+            wPlayerDeck: b"\x08\x0a",
+        },
+        "read": {
+            wLoadedCard2: 64,
+            wAllStagesIndices: 3,
+        },
+    },
+    {
+        "name": "opponent page stage-1 card",
+        **POISON,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC3",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wOpponentArenaCard: b"\x01",
+            wOpponentArenaCardStage: b"\x01",
+            OPP_ARENA: b"\x10\x10",
+            wOpponentDeck: b"\x08\x09",
+        },
+        "read": {
+            wLoadedCard2: 64,
+            wAllStagesIndices: 3,
+        },
+    },
+    {
+        "name": "60-entry scan finds card at last index",
+        "a": 0, "d": 0, "e": 0, "hl": 0, "f": 0,
+        "wram": {
+            hBankROM: b"\x01",
+            hWhoseTurn: b"\xC2",
+            hTempPlayAreaLocation_ff9d: b"\x00",
+            wPlayerArenaCard: b"\x3B",
+            wPlayerArenaCardStage: b"\x01",
+            LOCATION: b"\x00" * 59 + b"\x10",
+            wPlayerDeck: b"\x00" * 59 + b"\x09",
+        },
+        "read": {
+            wLoadedCard2: 64,
+            wAllStagesIndices: 3,
+        },
+    },
+]
+
 
 ACTIVE_ANIM = 0xD42A
 WD4C0_ANIM = 0xD4C0

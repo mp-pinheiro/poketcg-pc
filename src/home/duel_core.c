@@ -7,6 +7,8 @@
 #include "home/play_animation.h"
 #include "home/menus.h"
 #include "home/substatus.h"
+#include "home/duel.h"
+
 #define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 
@@ -81,6 +83,14 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 	return (TrainerConvertResult){table[CARD_DATA_AI_INFO - CARD_DATA_HP - 1u],
 				      0, (uint16_t)(hl + CARD_DATA_AI_INFO)};
 }
+
+#define STAGE1 0x01u
+#define STAGE2_WITHOUT_STAGE1 0x03u
+#define TYPE_ENERGY 0x08u
+#define DECK_SIZE 60u
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define DUELVARS_ARENA_CARD 0xBBu
+#define DUELVARS_ARENA_CARD_STAGE 0xCEu
 
 #define DUELVARS_ARENA_CARD_STATUS                0xF0u
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX  0xF2u
@@ -173,6 +183,49 @@ uint8_t ApplyStatusConditionQueue(void)
 	return 0x90u;
 }
 
+
+CardOneStageBelowResult GetCardOneStageBelow(uint8_t d, uint8_t e)
+{
+	uint8_t slot = hTempPlayAreaLocation_ff9d;
+
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + slot));
+	(void)LoadCardDataToBuffer2_FromDeckIndex(arena.a);
+	uint8_t stage = wLoadedCard2Stage;
+
+	if (stage == 0)
+		return (CardOneStageBelowResult){stage, d, e, arena.hl, 0x90u};
+
+	gb_write8(wAllStagesIndices_ADDR, 0xFFu);
+	gb_write8((uint16_t)(wAllStagesIndices_ADDR + 1u), 0xFFu);
+	gb_write8((uint16_t)(wAllStagesIndices_ADDR + 2u), 0xFFu);
+
+	uint8_t target_location = (uint8_t)(slot | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint16_t hl = locations.hl;
+
+	for (uint8_t i = 0; i < DECK_SIZE; i++) {
+		if (gb_read8(hl) == target_location) {
+			LoadCardDataToBuffer2_FromDeckIndex(i);
+			if (wLoadedCard2Type < TYPE_ENERGY) {
+				uint8_t stage = wLoadedCard2Stage;
+				gb_write8((uint16_t)(wAllStagesIndices_ADDR + stage), i);
+			}
+		}
+		hl = (uint16_t)(hl + 1u);
+	}
+
+	DuelistVarResult stage_var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + slot));
+	uint16_t stage_addr = wAllStagesIndices_ADDR;
+	if (stage_var.a != STAGE1 && stage_var.a != STAGE2_WITHOUT_STAGE1)
+		stage_addr = (uint16_t)(stage_addr + 1u);
+	uint8_t d_result = gb_read8(stage_addr);
+
+	DuelistVarResult arena2 = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + slot));
+	uint8_t a_result = arena2.a;
+	uint8_t f_result = (a_result == 0) ? 0x80u : 0x00u;
+
+	return (CardOneStageBelowResult){a_result, d_result, a_result, arena2.hl, f_result};
+}
 
 /* core.asm:7804-7816 */
 void ClearNonTurnTemporaryDuelvars(void)

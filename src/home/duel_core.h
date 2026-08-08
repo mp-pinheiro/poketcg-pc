@@ -16,6 +16,16 @@ void ResetAttackAnimationIsPlaying(void);
 void ClearNonTurnTemporaryDuelvars(void);
 void ClearNonTurnTemporaryDuelvars_CopyStatus(void);
 void UpdateArenaCardLastTurnDamage(void);
+typedef struct {
+	uint8_t a;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+	uint8_t f;
+} CardOneStageBelowResult;
+
+CardOneStageBelowResult GetCardOneStageBelow(uint8_t d, uint8_t e);
+
 uint16_t PrintThereWasNoEffectFromStatusText(void);
 
 void WaitAttackAnimation(void);
