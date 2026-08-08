@@ -40,6 +40,7 @@ static void adapt_GetNonTurnDuelistVariable(ProbeState *s)
 
 static void adapt_SwapTurn(ProbeState *s)
 {
+	(void)s;
 	SwapTurn();
 }
 
@@ -243,6 +244,298 @@ static void adapt_GetCardDamageAndMaxHP(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_CopyDeckData(ProbeState *s)
+{
+	CardListResult r = CopyDeckData(pair(s->d, s->e));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CountPrizes(ProbeState *s)
+{
+	s->a = CountPrizes();
+}
+
+static void adapt_ShuffleDeck(ProbeState *s)
+{
+	ShuffleDeckResult r = ShuffleDeck(s->c, s->e);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_DrawCardFromDeck(ProbeState *s)
+{
+	DrawCardResult r = DrawCardFromDeck();
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_ReturnCardToDeck(ProbeState *s)
+{
+	ReturnCardToDeck(s->a);
+}
+
+static void adapt_SearchCardInDeckAndAddToHand(ProbeState *s)
+{
+	SearchCardInDeckAndAddToHand(s->a);
+}
+
+static void adapt_AddCardToHand(ProbeState *s)
+{
+	AddCardToHand(s->a);
+}
+
+static void adapt_RemoveCardFromHand(ProbeState *s)
+{
+	RemoveCardFromHand(s->a);
+}
+
+static void adapt_MoveHandCardToDiscardPile(ProbeState *s)
+{
+	MoveCardResult r = MoveHandCardToDiscardPile(s->a);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_PutCardInDiscardPile(ProbeState *s)
+{
+	PutCardInDiscardPile(s->a);
+}
+
+static void adapt_MoveDiscardPileCardToHand(ProbeState *s)
+{
+	MoveDiscardResult r = MoveDiscardPileCardToHand(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_CheckPrizeTaken(ProbeState *s)
+{
+	CheckPrizeResult r = CheckPrizeTaken(s->a);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_SortCardsInListByID_CheckForListTerminator(ProbeState *s)
+{
+	SortResult r = SortCardsInListByID_CheckForListTerminator(s->b, s->c, pair(s->d, s->e));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CheckIfCanEvolveInto(ProbeState *s)
+{
+	EvolveResult r = CheckIfCanEvolveInto(s->d, s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CheckIfCanEvolveInto_BasicToStage2(ProbeState *s)
+{
+	EvolveResult r = CheckIfCanEvolveInto_BasicToStage2(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_EvolvePokemonCardIfPossible(ProbeState *s)
+{
+	EvolveResult r = EvolvePokemonCardIfPossible(s->c);
+	s->a = r.a;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_EvolvePokemonCard(ProbeState *s)
+{
+	EvolveResult r = EvolvePokemonCard();
+	s->a = r.a;
+	s->c = r.c;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_ClearAllStatusConditions(ProbeState *s)
+{
+	(void)s;
+	ClearAllStatusConditions();
+}
+
+static void adapt_PutHandCardInPlayArea(ProbeState *s)
+{
+	PutHandResult r = PutHandCardInPlayArea(s->a, s->e);
+	s->a = r.a;
+	s->hl = r.hl;
+}
+
+static void adapt_PutHandPokemonCardInPlayArea(ProbeState *s)
+{
+	PutHandPokemonResult r = PutHandPokemonCardInPlayArea(s->a, s->f);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_EmptyPlayAreaSlot(ProbeState *s)
+{
+	EmptySlotResult r = EmptyPlayAreaSlot(s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_MovePlayAreaCardToDiscardPile(ProbeState *s)
+{
+	MoveAreaResult r = MovePlayAreaCardToDiscardPile(s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_SwapPlayAreaPokemon(ProbeState *s)
+{
+	SwapAreaResult r = SwapPlayAreaPokemon(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_SwapArenaWithBenchPokemon(ProbeState *s)
+{
+	SwapAreaResult r = SwapArenaWithBenchPokemon(s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->f = r.f;
+}
+
+static void adapt_ShiftTurnPokemonToFirstPlayAreaSlots(ProbeState *s)
+{
+	ShiftResult r = ShiftTurnPokemonToFirstPlayAreaSlots();
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_ShiftAllPokemonToFirstPlayAreaSlots(ProbeState *s)
+{
+	ShiftResult r = ShiftAllPokemonToFirstPlayAreaSlots();
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_GetPlayAreaCardAttachedEnergies(ProbeState *s)
+{
+	EnergiesResult r = GetPlayAreaCardAttachedEnergies(s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_CopyAttackDataAndDamage(ProbeState *s)
+{
+	AttackCopyResult r = CopyAttackDataAndDamage(s->e);
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_CopyAttackDataAndDamage_FromDeckIndex(ProbeState *s)
+{
+	AttackCopyResult r = CopyAttackDataAndDamage_FromDeckIndex(s->d, s->e);
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_CopyAttackDataAndDamage_FromCardID(ProbeState *s)
+{
+	AttackCopyResult r = CopyAttackDataAndDamage_FromCardID(s->a, s->d, s->e);
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_ReturnCarry(ProbeState *s)
+{
+	s->f = ReturnCarry(s->f);
+}
+
+static void adapt_LoadNonPokemonCardEffectCommands(ProbeState *s)
+{
+	LoadEffectResult r = LoadNonPokemonCardEffectCommands();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_ApplyAttachedPlusPower(ProbeState *s)
+{
+	PowerModifierResult r = ApplyAttachedPlusPower(s->b, pair(s->d, s->e));
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_ApplyAttachedDefender(ProbeState *s)
+{
+	PowerModifierResult r = ApplyAttachedDefender(s->b, pair(s->d, s->e));
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+
+static void adapt_MoveCardToDiscardPileIfInPlayArea(ProbeState *s)
+{
+	DiscardIfInPlayResult r = MoveCardToDiscardPileIfInPlayArea(pair(s->d, s->e),
+								     (uint8_t)(s->hl >> 8));
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -272,5 +565,40 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "CountCardIDInLocation", adapt_CountCardIDInLocation },
 	{ "CheckLoadedAttackFlag", adapt_CheckLoadedAttackFlag },
 	{ "GetCardDamageAndMaxHP", adapt_GetCardDamageAndMaxHP },
+	{ "CopyDeckData", adapt_CopyDeckData },
+	{ "CountPrizes", adapt_CountPrizes },
+	{ "ShuffleDeck", adapt_ShuffleDeck },
+	{ "DrawCardFromDeck", adapt_DrawCardFromDeck },
+	{ "ReturnCardToDeck", adapt_ReturnCardToDeck },
+	{ "SearchCardInDeckAndAddToHand", adapt_SearchCardInDeckAndAddToHand },
+	{ "AddCardToHand", adapt_AddCardToHand },
+	{ "RemoveCardFromHand", adapt_RemoveCardFromHand },
+	{ "MoveHandCardToDiscardPile", adapt_MoveHandCardToDiscardPile },
+	{ "PutCardInDiscardPile", adapt_PutCardInDiscardPile },
+	{ "MoveDiscardPileCardToHand", adapt_MoveDiscardPileCardToHand },
+	{ "CheckPrizeTaken", adapt_CheckPrizeTaken },
+	{ "SortCardsInListByID_CheckForListTerminator", adapt_SortCardsInListByID_CheckForListTerminator },
+	{ "CheckIfCanEvolveInto", adapt_CheckIfCanEvolveInto },
+	{ "CheckIfCanEvolveInto_BasicToStage2", adapt_CheckIfCanEvolveInto_BasicToStage2 },
+	{ "EvolvePokemonCardIfPossible", adapt_EvolvePokemonCardIfPossible },
+	{ "EvolvePokemonCard", adapt_EvolvePokemonCard },
+	{ "ClearAllStatusConditions", adapt_ClearAllStatusConditions },
+	{ "PutHandCardInPlayArea", adapt_PutHandCardInPlayArea },
+	{ "PutHandPokemonCardInPlayArea", adapt_PutHandPokemonCardInPlayArea },
+	{ "EmptyPlayAreaSlot", adapt_EmptyPlayAreaSlot },
+	{ "MovePlayAreaCardToDiscardPile", adapt_MovePlayAreaCardToDiscardPile },
+	{ "SwapPlayAreaPokemon", adapt_SwapPlayAreaPokemon },
+	{ "SwapArenaWithBenchPokemon", adapt_SwapArenaWithBenchPokemon },
+	{ "ShiftTurnPokemonToFirstPlayAreaSlots", adapt_ShiftTurnPokemonToFirstPlayAreaSlots },
+	{ "ShiftAllPokemonToFirstPlayAreaSlots", adapt_ShiftAllPokemonToFirstPlayAreaSlots },
+	{ "GetPlayAreaCardAttachedEnergies", adapt_GetPlayAreaCardAttachedEnergies },
+	{ "CopyAttackDataAndDamage", adapt_CopyAttackDataAndDamage },
+	{ "CopyAttackDataAndDamage_FromDeckIndex", adapt_CopyAttackDataAndDamage_FromDeckIndex },
+	{ "CopyAttackDataAndDamage_FromCardID", adapt_CopyAttackDataAndDamage_FromCardID },
+	{ "ReturnCarry", adapt_ReturnCarry },
+	{ "LoadNonPokemonCardEffectCommands", adapt_LoadNonPokemonCardEffectCommands },
+	{ "ApplyAttachedPlusPower", adapt_ApplyAttachedPlusPower },
+	{ "ApplyAttachedDefender", adapt_ApplyAttachedDefender },
+	{ "MoveCardToDiscardPileIfInPlayArea", adapt_MoveCardToDiscardPileIfInPlayArea },
 	{ NULL, NULL },
 };
