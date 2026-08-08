@@ -24,8 +24,30 @@ static void adapt_CopyOpponentName(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_GetTurnDuelistVariable(ProbeState *s)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(s->a);
+	s->a = r.a;
+	s->hl = r.hl;
+}
+
+static void adapt_GetNonTurnDuelistVariable(ProbeState *s)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(s->a);
+	s->a = r.a;
+	s->hl = r.hl;
+}
+
+static void adapt_SwapTurn(ProbeState *s)
+{
+	SwapTurn();
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
+	{ "GetTurnDuelistVariable", adapt_GetTurnDuelistVariable },
+	{ "GetNonTurnDuelistVariable", adapt_GetNonTurnDuelistVariable },
+	{ "SwapTurn", adapt_SwapTurn },
 	{ NULL, NULL },
 };
