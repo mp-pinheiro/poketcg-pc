@@ -4,7 +4,7 @@
 
 | slice | routines | state | commit |
 |---|---|---|---|
-| Step 0 — substrate | — | pending | — |
+| Step 0 — substrate | — | landed | a5a8bf56 |
 | W1-A tiles | 21 | pending | — |
 | W1-B duel | 36 | pending | — |
 | W1-C substatus | 19 | pending | — |
