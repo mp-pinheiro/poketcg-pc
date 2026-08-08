@@ -138,4 +138,8 @@ void ClearChangedTypesIfMuk(uint8_t a);
 typedef struct { uint8_t a, f; } RainDanceResult;
 RainDanceResult CheckRainDanceScenario(void);
 
+typedef struct { uint8_t a, f; } StrikesBackResult;
+StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de);
+
+
 #endif

@@ -78,6 +78,9 @@ CONTRACT = {
     "ApplyDamageModifiers_DamageToTarget": ("d", "e"),
     "ApplyDamageModifiers_DamageToSelf": ("d", "e"),
     "GetPlayAreaCardRetreatCost": ("a",),
+    "DrawWideTextBox_WaitForInput_ReturnCarry": ("f",),
+    "PrintKnockedOut": ("f",),
+    "PrintPlayAreaCardKnockedOutIfNoHP": ("a", "f"),
 }
 
 CASES = {
@@ -758,3 +761,40 @@ CASES = {
                            0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08"}),
     ],
 }
+
+# PrintPlayAreaCardKnockedOutIfNoHP: HP≠0 path is oracle-testable (early return).
+# HP=0 path calls PrintKnockedOut (EnableLCD+DoFrame → oracle:False).
+HP_ADDR = 0xC2C8  # player page (0xC2) + DUELVARS_ARENA_CARD_HP (0xC8)
+CASES.update({
+    "PrintPlayAreaCardKnockedOutIfNoHP": [
+        # HP=30 (non-zero) → early return, a=30, f=0x00 (no carry)
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", HP_ADDR: b"\x30"}},
+        # HP=10, different play area location
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", 0xC2C9: b"\x0A"}},
+        # Poisoned registers, HP=50
+        dict(POISON, a=2, wram={hWhoseTurn: b"\xC2", 0xC2CA: b"\x32"}),
+        # HP=0 → calls PrintKnockedOut (EnableLCD hang)
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", HP_ADDR: b"\x00",
+                          0xC2BB: b"\x00", wPlayerDeck + 0: b"\x08",
+                          0xCCC4: b"\x08"},
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "oracle": False,
+         "why": "HP=0 path calls PrintKnockedOut which does EnableLCD+DoFrame loop",
+         "expect": {0x9980: b"\x18"}, "expect_regs": {"a": 0x08, "f": 0x10}},
+    ],
+    "PrintKnockedOut": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xCCC4: b"\x08"},
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "oracle": False,
+         "why": "EnableLCD+40-frame DoFrame loop hangs without VBlank ISR",
+         "expect": {0x9980: b"\x18"}, "expect_regs": {"f": 0x10}},
+    ],
+    "DrawWideTextBox_WaitForInput_ReturnCarry": [
+        {"hl": 0, "keys": 0x01,
+         "wram": {0xC590: b"\x00"},
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "oracle": False,
+         "why": "DrawWideTextBox_WaitForInput enables LCD then DoFrame halts",
+         "expect": {0x9980: b"\x18", 0x9A32: b"\x1d"}, "expect_regs": {"f": 0x10}},
+    ],
+})

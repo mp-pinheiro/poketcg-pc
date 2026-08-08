@@ -517,4 +517,12 @@ uint16_t ApplyDamageModifiers_DamageToSelf(void);
 uint8_t GetPlayAreaCardRetreatCost(void);
 
 
+typedef struct { uint8_t a, f; } KnockoutCheckResult;
+
+/* Wave 3 */
+uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl);
+uint8_t PrintKnockedOut(void);
+KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a);
+
+
 #endif

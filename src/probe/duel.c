@@ -552,6 +552,22 @@ static void adapt_GetPlayAreaCardRetreatCost(ProbeState *s)
 	s->a = GetPlayAreaCardRetreatCost();
 }
 
+static void adapt_DrawWideTextBox_WaitForInput_ReturnCarry(ProbeState *s)
+{
+	s->f = DrawWideTextBox_WaitForInput_ReturnCarry(s->hl);
+}
+
+static void adapt_PrintKnockedOut(ProbeState *s)
+{
+	s->f = PrintKnockedOut();
+}
+static void adapt_PrintPlayAreaCardKnockedOutIfNoHP(ProbeState *s)
+{
+	KnockoutCheckResult r = PrintPlayAreaCardKnockedOutIfNoHP(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -619,5 +635,8 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ApplyDamageModifiers_DamageToTarget", adapt_ApplyDamageModifiers_DamageToTarget },
 	{ "ApplyDamageModifiers_DamageToSelf", adapt_ApplyDamageModifiers_DamageToSelf },
 	{ "GetPlayAreaCardRetreatCost", adapt_GetPlayAreaCardRetreatCost },
+	{ "DrawWideTextBox_WaitForInput_ReturnCarry", adapt_DrawWideTextBox_WaitForInput_ReturnCarry },
+	{ "PrintKnockedOut", adapt_PrintKnockedOut },
+	{ "PrintPlayAreaCardKnockedOutIfNoHP", adapt_PrintPlayAreaCardKnockedOutIfNoHP },
 	{ NULL, NULL },
 };

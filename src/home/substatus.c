@@ -6,6 +6,9 @@
 #include "home/coin_toss.h"
 #include "home/duel.h"
 #include "home/card_color.h"
+#include "home/menus.h"
+#include "home/frames.h"
+#include "home/print_text.h"
 #include "mem.h"
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -479,4 +482,60 @@ RainDanceResult CheckRainDanceScenario(void)
 	if (color != TYPE_PKMN_WATER)
 		return (RainDanceResult){color, 0x00u};
 	return (RainDanceResult){TYPE_PKMN_WATER, 0x90u};
+}
+
+#define MACHAMP_ID 0x7Fu
+#define MUK_ID     0x27u
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+#define RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT 0x0105u
+static uint8_t f_or(uint8_t result) { return (uint8_t)(result ? 0x00u : 0x80u); }
+static uint8_t f_cp(uint8_t a, uint8_t val)
+{
+	uint8_t f = 0x40u;
+	if (a == val) f |= 0x80u;
+	if ((a & 0x0Fu) < (val & 0x0Fu)) f |= 0x20u;
+	if (a < val) f |= 0x10u;
+	return f;
+}
+
+StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de)
+{
+	uint8_t a;
+	if (!de) {
+		a = (uint8_t)de;
+		return (StrikesBackResult){a, f_or(a)};
+	}
+	a = wIsDamageToSelf;
+	if (a)
+		return (StrikesBackResult){a, f_or(a)};
+	a = wTempNonTurnDuelistCardID;
+	if (a != MACHAMP_ID)
+		return (StrikesBackResult){a, f_cp(a, MACHAMP_ID)};
+	uint8_t count_f = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK_ID).f;
+	if (count_f & 0x10u)
+		return (StrikesBackResult){a, count_f};
+	a = wLoadedAttackCategory;
+	if (a == 0x04u)
+		return (StrikesBackResult){a, f_cp(a, 0x04u)};
+	if (!wTempPlayAreaLocation_cceb) {
+		uint8_t inc_f = CheckIsIncapableOfUsingPkmnPower_ArenaCard().f;
+		if (inc_f & 0x10u)
+			return (StrikesBackResult){a, inc_f};
+	}
+	SwapTurn();
+	uint8_t deck_idx = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(deck_idx);
+	DuelistVarResult hp_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t hp = hp_var.a;
+	(void)SubtractHP(hp_var.hl, 10);
+	wTempNonTurnDuelistCardID = wLoadedCard2ID;
+	LoadTxRam3(10);
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name);
+	DrawWideTextBox_WaitForInput(RECEIVES_DAMAGE_DUE_TO_STRIKES_BACK_TEXT);
+	if (hp)
+		PrintPlayAreaCardKnockedOutIfNoHP(0);
+	SwapTurn();
+	return (StrikesBackResult){0, 0x10u};
 }

@@ -9,6 +9,8 @@
 #include "home/substatus.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
+#include "home/menus.h"
+#include "home/frames.h"
 #include "mem.h"
 
 /* HIGH(wOpponentDuelVariables), the value hWhoseTurn carries on the opponent's turn. */
@@ -1256,4 +1258,38 @@ uint8_t GetPlayAreaCardRetreatCost(void)
 	uint8_t deck_idx = GetTurnDuelistVariable((uint8_t)(slot + 0xBBu)).a;
 	LoadCardDataToBuffer1_FromDeckIndex(deck_idx);
 	return GetLoadedCard1RetreatCost();
+}
+
+#define WAS_KNOCKED_OUT_TEXT 0x0081u
+
+uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl)
+{
+	DrawWideTextBox_WaitForInput(hl);
+	return 0x10u;
+}
+
+uint8_t PrintKnockedOut(void)
+{
+	uint8_t card_id = wTempNonTurnDuelistCardID;
+	LoadCardDataToBuffer1_FromCardID(card_id);
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name);
+	DrawWideTextBox_PrintText(WAS_KNOCKED_OUT_TEXT);
+	DoAFrames(40);
+	return 0x10u;
+}
+KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
+{
+	uint8_t e_val = a;
+	uint8_t hp = GetTurnDuelistVariable((uint8_t)(a + DUELVARS_ARENA_CARD_HP)).a;
+	if (hp)
+		return (KnockoutCheckResult){hp, 0x00u};
+	uint8_t saved = wTempNonTurnDuelistCardID;
+	uint8_t deck_idx = GetTurnDuelistVariable((uint8_t)(e_val + DUELVARS_ARENA_CARD)).a;
+	LoadCardDataToBuffer1_FromDeckIndex(deck_idx);
+	wTempNonTurnDuelistCardID = wLoadedCard1ID;
+	PrintKnockedOut();
+	wTempNonTurnDuelistCardID = saved;
+	return (KnockoutCheckResult){saved, 0x10u};
 }

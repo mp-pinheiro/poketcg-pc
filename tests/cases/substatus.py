@@ -75,6 +75,7 @@ CONTRACT = {
     "IsRainDanceActive": ("a", "f", "b", "c", "d", "e"),
     "CheckRainDanceScenario": ("a", "f"),
     "ClearChangedTypesIfMuk": (),
+    "HandleStrikesBack_AgainstDamagingAttack": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -359,3 +360,18 @@ CASES = {
                            0xC2BB: b"\x01", wPlayerDeck + 1: b"\x43", 0xC2D4: b"\x00"}),
     ],
 }
+
+STRIKES_WRAM = {hWhoseTurn: bytes((0xC2,)), 0xCCC4: bytes((0x7F,))}
+CASES.update({
+    "HandleStrikesBack_AgainstDamagingAttack": [
+        # de=0 → immediate return, no carry
+        {"d": 0, "e": 0, "wram": STRIKES_WRAM},
+        # damage to self → return, no carry
+        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, 0xCCE6: b"\x01"}},
+        # not MACHAMP → return, no carry
+        {"d": 0, "e": 10, "wram": {hWhoseTurn: bytes((0xC2,)), 0xCCC4: b"\x01"}},
+        # POKEMON_POWER category → return, no carry
+        {"d": 0, "e": 10, "wram": {**STRIKES_WRAM, 0xCCB1: b"\x04"}},
+        dict(POISON, d=0, e=0, wram=STRIKES_WRAM),
+    ],
+})

@@ -157,6 +157,13 @@ static void adapt_ClearChangedTypesIfMuk(ProbeState *s)
 {
 	ClearChangedTypesIfMuk(s->a);
 }
+static void adapt_HandleStrikesBack_AgainstDamagingAttack(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	StrikesBackResult r = HandleStrikesBack_AgainstDamagingAttack(de);
+	s->a = r.a;
+	s->f = r.f;
+}
 static void adapt_CheckRainDanceScenario(ProbeState *s) { RainDanceResult r = CheckRainDanceScenario(); s->a = r.a; s->f = r.f; }
 
 const ProbeEntry probe_entries_substatus[] = {
@@ -183,5 +190,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "IsRainDanceActive", adapt_IsRainDanceActive },
 	{ "CheckRainDanceScenario", adapt_CheckRainDanceScenario },
 	{ "ClearChangedTypesIfMuk", adapt_ClearChangedTypesIfMuk },
+	{ "HandleStrikesBack_AgainstDamagingAttack", adapt_HandleStrikesBack_AgainstDamagingAttack },
 	{ NULL, NULL },
 };
