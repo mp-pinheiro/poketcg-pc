@@ -86,4 +86,22 @@ typedef struct {
 TempListResult RemoveCardFromDuelTempList(uint8_t a);
 TempListResult CountCardsInDuelTempList(void);
 
+/* Hand/energy list builders. FindLastCardInHand (duel.asm:526-533) returns the
+ * hand's last card pointer: b = count, hl = page + $41 + count, de = wDuelTempList.
+ * CreateHandCardList (473-500) fills wDuelTempList with non-just-drawn hand cards.
+ * CreateArenaOrBenchEnergyCardList (435-470) fills it with energy cards of the
+ * play-area location in entry a. Both set carry iff the resulting list is empty. */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} HandListResult;
+HandListResult FindLastCardInHand(uint8_t c);
+HandListResult CreateHandCardList(uint8_t c);
+HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a);
+
 #endif

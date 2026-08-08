@@ -179,6 +179,74 @@ TempListResult CountCardsInDuelTempList(void)
 	return (TempListResult){count, 0xC0u};
 }
 
+#define DUELVARS_HAND 0x42u
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_JUST_DRAWN 0x40u
+#define TYPE_ENERGY_F 3u
+#define PLAY_AREA_MASK 0x10u
+
+/* duel.asm:526-533: b = hand count, hl = page + $41 + count, de = wDuelTempList. */
+HandListResult FindLastCardInHand(uint8_t c)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	return (HandListResult){(uint8_t)(DUELVARS_HAND - 1u + count), count, c,
+				(uint8_t)(wDuelTempList_ADDR >> 8), (uint8_t)wDuelTempList_ADDR,
+				0x00u, (uint16_t)(((uint16_t)hWhoseTurn << 8) |
+						  (DUELVARS_HAND - 1u + count))};
+}
+
+/* duel.asm:473-500. Walks the hand backward from the last card, skipping
+ * just-drawn cards. Exit a = hand count, carry iff the hand is empty. */
+HandListResult CreateHandCardList(uint8_t c)
+{
+	HandListResult last = FindLastCardInHand(c);
+	uint8_t count = last.b;
+	uint16_t src = last.hl;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t i = 0; i < count; i++) {
+		uint8_t deck_index = gb_read8(src--);
+		uint8_t location = gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) | deck_index));
+		if (!(location & CARD_LOCATION_JUST_DRAWN))
+			gb_write8(dst++, deck_index);
+	}
+	gb_write8(dst, 0xFF);
+	uint8_t hand_count = gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) |
+						   DUELVARS_NUMBER_OF_CARDS_IN_HAND));
+	uint8_t f = hand_count ? 0x00u : 0x90u;
+	return (HandListResult){hand_count, 0, c, (uint8_t)(dst >> 8), (uint8_t)dst, f,
+				(uint16_t)(((uint16_t)hWhoseTurn << 8) |
+					   DUELVARS_NUMBER_OF_CARDS_IN_HAND)};
+}
+
+/* duel.asm:435-470. Location-masked scan of the 60 card locations; energies of the
+ * requested play-area location go into wDuelTempList. Exit a = the first entry,
+ * carry iff the list is empty. */
+HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
+{
+	uint8_t location_mask = (uint8_t)(a | PLAY_AREA_MASK);
+	uint16_t dst = wDuelTempList_ADDR;
+	uint8_t first = 0xFF;
+	for (uint8_t i = 0; i < DECK_SIZE; i++) {
+		if (gb_read8((uint16_t)(((uint16_t)hWhoseTurn << 8) | i)) != location_mask)
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(i);
+		if (!(gb_read8(wLoadedCard2Type_ADDR) & (uint8_t)(1u << TYPE_ENERGY_F)))
+			continue;
+		gb_write8(dst++, i);
+		if (first == 0xFF)
+			first = i;
+	}
+	gb_write8(dst, 0xFF);
+	uint8_t f;
+	if (first == 0xFF)
+		f = 0x90u; /* `cp $ff` set Z, `scf` kept it */
+	else
+		f = first ? 0x00u : 0x80u; /* `or a` on the first entry */
+	return (HandListResult){first, 0, location_mask, (uint8_t)(dst >> 8), (uint8_t)dst,
+				f, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DECK_SIZE)};
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

@@ -137,6 +137,42 @@ static void adapt_CountCardsInDuelTempList(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_FindLastCardInHand(ProbeState *s)
+{
+	HandListResult r = FindLastCardInHand(s->c);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CreateHandCardList(ProbeState *s)
+{
+	HandListResult r = CreateHandCardList(s->c);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
+static void adapt_CreateArenaOrBenchEnergyCardList(ProbeState *s)
+{
+	HandListResult r = CreateArenaOrBenchEnergyCardList(s->a);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -155,5 +191,8 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "CreateDiscardPileCardList", adapt_CreateDiscardPileCardList },
 	{ "RemoveCardFromDuelTempList", adapt_RemoveCardFromDuelTempList },
 	{ "CountCardsInDuelTempList", adapt_CountCardsInDuelTempList },
+	{ "FindLastCardInHand", adapt_FindLastCardInHand },
+	{ "CreateHandCardList", adapt_CreateHandCardList },
+	{ "CreateArenaOrBenchEnergyCardList", adapt_CreateArenaOrBenchEnergyCardList },
 	{ NULL, NULL },
 };

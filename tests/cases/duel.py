@@ -27,6 +27,9 @@ CONTRACT = {
     "CreateDiscardPileCardList": ("a", "b", "c", "d", "e", "f", "hl"),
     "RemoveCardFromDuelTempList": ("a", "b", "c", "d", "e", "f", "hl"),
     "CountCardsInDuelTempList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "FindLastCardInHand": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CreateHandCardList": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CreateArenaOrBenchEnergyCardList": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -142,5 +145,33 @@ CASES = {
         {"wram": {0xC510: b"\xff"}},
         {"wram": {0xC510: b"\x01\x02\x03\xff"}},
         dict(POISON, wram={0xC510: b"\x01\xff"}),
+    ],
+    # Hand cards live at $C242+; count at $C2EE. Locations at $C200+.
+    "FindLastCardInHand": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02"}},
+        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}),
+    ],
+    # Just-drawn cards (location bit 6) are skipped.
+    "CreateHandCardList": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
+                  0xC243: b"\x03", 0xC242: b"\x01",
+                  0xC201: b"\x00", 0xC203: b"\x40"},
+         "read": {0xC510: 4}},
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01",
+                  0xC242: b"\x02", 0xC202: b"\x40"},
+         "read": {0xC510: 3}},
+        # Empty hand: carry set, terminator only.
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 2}},
+        # Poisoned c is preserved (the routine never touches it).
+        dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 2}),
+    ],
+    # Energy scan: deck index 0 is GRASS_ENERGY (id $01, energy type) in the play
+    # area; deck index 1 is CLEFAIRY_DOLL (id $CB, trainer) so it is skipped.
+    "CreateArenaOrBenchEnergyCardList": [
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC201: b"\x10",
+                          wPlayerDeck: b"\x01", wPlayerDeck + 1: b"\xCB"},
+         "read": {0xC510: 4}},
+        # No cards in the requested location (1 = bench): empty list, carry set.
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x00"}, "read": {0xC510: 2}},
     ],
 }
