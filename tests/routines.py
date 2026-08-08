@@ -194,7 +194,12 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "script": ("GetMapScriptPointer",),
     "effect_commands": ("CheckMatchingCommand",),
     "ai": ("LoadOpponentDeck",),
-    "sound": ("Func_37c5", "Func_37a5"),
+    "music1": ("Music1_EmptyFunc", "Music1_f404e", "Music1_f4066", "Music1_f406f",
+               "Music1_PlaySong", "Music1_PlaySFX", "Music1_AssertSongFinished",
+               "Music1_AssertSFXFinished", "Music1_CheckForEndOfSong",
+               "Music1_Init", "Music1_StopAllChannels", "Music1_f4980",
+               "Music1_CopyData", "Music1_BeginSong"),
+    "sfx": ("SFX_PlaySFX", "SFX_UpdateSFX"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

@@ -153,6 +153,7 @@ static void adapt_DrawWideTextBox_WaitForInput(ProbeState *s)
 
 static void adapt_WaitForWideTextBoxInput(ProbeState *s)
 {
+	(void)s;
 	WaitForWideTextBoxInput();
 }
 

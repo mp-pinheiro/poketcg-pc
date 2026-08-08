@@ -18,6 +18,7 @@
 | W2-K input waiters + scrollable text | 10/10 (7 oracle:False) | landed | — |
 | W2-L damage modifiers + colours | 6/6 | landed | — |
 | Wave 3 — inline (4 routines) | 4/4 | landed | — |
+| Phase 3 — audio (partial) | 16/75 | in progress | — |
 
 This table is the resumption point for a compacted or cleared session: each
 slice flips its own row to `landed` (with the jj commit id) when its barrier
