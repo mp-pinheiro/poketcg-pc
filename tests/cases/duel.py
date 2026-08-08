@@ -33,6 +33,7 @@ CONTRACT = {
     "ShuffleCards": ("a", "b", "c", "d", "e", "f", "hl"),
     "SortCardsInListByID": ("a", "b", "c", "d", "e", "f", "hl"),
     "SortCardsInDuelTempListByID": ("a", "b", "c", "d", "e", "f", "hl"),
+    "SortHandCardsByID": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -224,5 +225,18 @@ CASES = {
         {"wram": {hWhoseTurn: b"\xC2", 0xFF99: b"\x00\xC5",
                   0xC500: b"\x00\xff", wPlayerDeck: b"\x01"},
          "read": {0xC500: 2, 0xFF99: 2}},
+    ],
+    # Hand cards at $C242 (count 2): sorted ascending by id and written back so
+    # the lowest id is at the newest slot ($C243).
+    "SortHandCardsByID": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
+                  0xC243: b"\x00", 0xC242: b"\x01",
+                  wPlayerDeck: b"\xCB\x01"},
+         "read": {0xC242: 2, 0xC510: 4}},
+        # Already sorted: the write-back reverses the order.
+        {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02",
+                  0xC243: b"\x01", 0xC242: b"\x00",
+                  wPlayerDeck: b"\x01\x02"},
+         "read": {0xC242: 2, 0xC510: 4}},
     ],
 }

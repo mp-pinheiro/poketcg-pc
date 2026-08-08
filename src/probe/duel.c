@@ -204,6 +204,18 @@ static void adapt_SortCardsInDuelTempListByID(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_SortHandCardsByID(ProbeState *s)
+{
+	HandSortResult r = SortHandCardsByID();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -228,5 +240,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ShuffleCards", adapt_ShuffleCards },
 	{ "SortCardsInListByID", adapt_SortCardsInListByID },
 	{ "SortCardsInDuelTempListByID", adapt_SortCardsInDuelTempListByID },
+	{ "SortHandCardsByID", adapt_SortHandCardsByID },
 	{ NULL, NULL },
 };

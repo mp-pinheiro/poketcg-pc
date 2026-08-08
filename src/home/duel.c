@@ -333,6 +333,32 @@ SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de)
 	return SortCardsInListByID(b, c, de);
 }
 
+/* duel.asm:502-525. Copies the hand (newest last) into wDuelTempList, sorts it,
+ * then writes it back from the last hand position down, so the lowest id lands at
+ * the newest slot. The trailing `dec b` leaves Z+N and a = the last copied value;
+ * hl ends one before the first hand card (page + $41). */
+HandSortResult SortHandCardsByID(void)
+{
+	HandListResult last = FindLastCardInHand(0);
+	uint8_t count = last.b;
+	uint16_t src = last.hl;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t i = 0; i < count; i++)
+		gb_write8(dst++, gb_read8(src--));
+	gb_write8(dst, 0xFF);
+	/* The sort's exit c (its last swap front) survives to the routine's exit. */
+	SortResult sorted = SortCardsInDuelTempListByID(0, 0, wDuelTempList_ADDR);
+	dst = wDuelTempList_ADDR;
+	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | (DUELVARS_HAND - 1u + count));
+	uint8_t last_card = 0;
+	for (uint8_t i = 0; i < count; i++) {
+		last_card = gb_read8(dst++);
+		gb_write8(hand--, last_card);
+	}
+	return (HandSortResult){last_card, 0, sorted.c, (uint8_t)(dst >> 8), (uint8_t)dst,
+				0xC0u, (uint16_t)(((uint16_t)hWhoseTurn << 8) + DUELVARS_HAND - 1u)};
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

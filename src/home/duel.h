@@ -129,4 +129,18 @@ typedef struct {
 SortResult SortCardsInListByID(uint8_t b, uint8_t c, uint16_t de);
 SortResult SortCardsInDuelTempListByID(uint8_t b, uint8_t c, uint16_t de);
 
+/* SortHandCardsByID (duel.asm:502-525): copy the hand to wDuelTempList, sort by
+ * id, write back with the lowest id at the newest hand position. Exit a = the
+ * last copied card value, b = 0, hl = page + $40, de past the list terminator. */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} HandSortResult;
+HandSortResult SortHandCardsByID(void);
+
 #endif
