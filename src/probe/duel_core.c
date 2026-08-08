@@ -14,7 +14,42 @@ static void adapt_ConvertSpecialTrainerCardToPokemon(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_ResetAttackAnimationIsPlaying(ProbeState *s)
+{
+	(void)s;
+	ResetAttackAnimationIsPlaying();
+}
+
+static void adapt_ClearNonTurnTemporaryDuelvars(ProbeState *s)
+{
+	(void)s;
+	ClearNonTurnTemporaryDuelvars();
+}
+
+static void adapt_ClearNonTurnTemporaryDuelvars_CopyStatus(ProbeState *s)
+{
+	(void)s;
+	ClearNonTurnTemporaryDuelvars_CopyStatus();
+}
+
+static void adapt_UpdateArenaCardLastTurnDamage(ProbeState *s)
+{
+	(void)s;
+	UpdateArenaCardLastTurnDamage();
+}
+
+static void adapt_PrintThereWasNoEffectFromStatusText(ProbeState *s)
+{
+	(void)s;
+	s->hl = PrintThereWasNoEffectFromStatusText();
+}
+
 const ProbeEntry probe_entries_duel_core[] = {
 	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
+	{ "ResetAttackAnimationIsPlaying", adapt_ResetAttackAnimationIsPlaying },
+	{ "ClearNonTurnTemporaryDuelvars", adapt_ClearNonTurnTemporaryDuelvars },
+	{ "ClearNonTurnTemporaryDuelvars_CopyStatus", adapt_ClearNonTurnTemporaryDuelvars_CopyStatus },
+	{ "UpdateArenaCardLastTurnDamage", adapt_UpdateArenaCardLastTurnDamage },
+	{ "PrintThereWasNoEffectFromStatusText", adapt_PrintThereWasNoEffectFromStatusText },
 	{ NULL, NULL },
 };

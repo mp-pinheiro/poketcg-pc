@@ -12,5 +12,10 @@ typedef struct {
 } TrainerConvertResult;
 
 TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, uint16_t de);
+void ResetAttackAnimationIsPlaying(void);
+void ClearNonTurnTemporaryDuelvars(void);
+void ClearNonTurnTemporaryDuelvars_CopyStatus(void);
+void UpdateArenaCardLastTurnDamage(void);
+uint16_t PrintThereWasNoEffectFromStatusText(void);
 
 #endif

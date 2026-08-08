@@ -3,6 +3,22 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
+#define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
+
+static uint16_t get_non_turn_duelvar_addr(uint8_t offset)
+{
+	uint8_t turn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;
+	return (uint16_t)(((uint16_t)turn << 8) | offset);
+}
+
+static void load_tx_ram2(uint16_t text_id)
+{
+	gb_write8(wTxRam2_ADDR, (uint8_t)text_id);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1), (uint8_t)(text_id >> 8));
+}
+
+
 
 #define TYPE_TRAINER 0x10u
 #define TYPE_PKMN_COLORLESS 0x06u
@@ -60,4 +76,91 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 		gb_write8((uint16_t)(hl + CARD_DATA_HP + i), table[i]);
 	return (TrainerConvertResult){table[CARD_DATA_AI_INFO - CARD_DATA_HP - 1u],
 				      0, (uint16_t)(hl + CARD_DATA_AI_INFO)};
+}
+
+#define DUELVARS_ARENA_CARD_STATUS                0xF0u
+#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX  0xF2u
+#define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE       0xF3u
+
+#define NO_STATUS       0x00u
+#define CONFUSED        0x01u
+#define ASLEEP          0x02u
+#define PARALYZED       0x03u
+#define POISONED        0x80u
+#define DOUBLE_POISONED 0xC0u
+#define CNF_SLP_PRZ     0x0Fu
+#define PSN_DBLPSN      0xF0u
+
+#define THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT         0x014Bu
+#define THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT 0x0183u
+#define THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT        0x0181u
+#define THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT            0x0180u
+#define THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT        0x0182u
+#define THERE_WAS_NO_EFFECT_FROM_POISON_TEXT           0x017Fu
+#define THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT            0x017Eu
+
+/* core.asm:8264-8267 */
+void ResetAttackAnimationIsPlaying(void)
+{
+	wAttackAnimationIsPlaying = 0;
+}
+
+/* core.asm:7804-7816 */
+void ClearNonTurnTemporaryDuelvars(void)
+{
+	uint16_t hl = get_non_turn_duelvar_addr(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl++, 0);
+	gb_write8(hl, 0);
+}
+
+/* core.asm:7820-7825 */
+void ClearNonTurnTemporaryDuelvars_CopyStatus(void)
+{
+	uint16_t addr = get_non_turn_duelvar_addr(DUELVARS_ARENA_CARD_STATUS);
+	wUnused_DefendingPkmnStatus = gb_read8(addr);
+	ClearNonTurnTemporaryDuelvars();
+}
+
+/* core.asm:7830-7845 */
+void UpdateArenaCardLastTurnDamage(void)
+{
+	uint16_t hl = get_non_turn_duelvar_addr(DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE);
+	if (wDefendingWasForcedToSwitch) {
+		gb_write8(hl, 0);
+		gb_write8((uint16_t)(hl + 1), 0);
+	} else {
+		gb_write8(hl, wDealtDamage);
+		gb_write8((uint16_t)(hl + 1), gb_read8((uint16_t)(wDealtDamage_ADDR + 1)));
+	}
+}
+
+/* core.asm:7533-7566 */
+uint16_t PrintThereWasNoEffectFromStatusText(void)
+{
+	uint8_t status = wNoEffectFromWhichStatus;
+	if (!status) {
+		uint16_t name = (uint16_t)((uint16_t)gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1)) << 8
+					 | gb_read8(wLoadedAttackName_ADDR));
+		load_tx_ram2(name);
+		return THERE_WAS_NO_EFFECT_FROM_TX_RAM2_TEXT;
+	}
+	if (status == (POISONED | CONFUSED))
+		return THERE_WAS_NO_EFFECT_FROM_POISON_CONFUSION_TEXT;
+	if (status & PSN_DBLPSN) {
+		if ((status & PSN_DBLPSN) == POISONED)
+			return THERE_WAS_NO_EFFECT_FROM_POISON_TEXT;
+		return THERE_WAS_NO_EFFECT_FROM_TOXIC_TEXT;
+	}
+	uint8_t cnf = status & CNF_SLP_PRZ;
+	if (cnf == PARALYZED)
+		return THERE_WAS_NO_EFFECT_FROM_PARALYSIS_TEXT;
+	if (cnf == ASLEEP)
+		return THERE_WAS_NO_EFFECT_FROM_SLEEP_TEXT;
+	return THERE_WAS_NO_EFFECT_FROM_CONFUSION_TEXT;
 }
