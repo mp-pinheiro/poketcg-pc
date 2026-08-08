@@ -1,0 +1,20 @@
+#include "home/duel_core.h"
+#include "probe.h"
+
+static uint16_t pair(uint8_t hi, uint8_t lo)
+{
+	return (uint16_t)((uint16_t)hi << 8 | lo);
+}
+
+static void adapt_ConvertSpecialTrainerCardToPokemon(ProbeState *s)
+{
+	TrainerConvertResult r = ConvertSpecialTrainerCardToPokemon(s->a, s->hl, pair(s->d, s->e));
+	s->a = r.a;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+
+const ProbeEntry probe_entries_duel_core[] = {
+	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
+	{ NULL, NULL },
+};
