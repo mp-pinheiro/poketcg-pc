@@ -20,6 +20,8 @@ CONTRACT = {
     "GetCardIDFromDeckIndex_bc": ("a", "b", "c", "d", "e", "hl"),
     "GetCardInDuelTempList_OnlyDeckIndex": ("a", "b", "c", "d", "e", "hl"),
     "GetCardInDuelTempList": ("a", "b", "c", "d", "e", "hl"),
+    "LoadCardDataToBuffer1_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
+    "LoadCardDataToBuffer2_FromDeckIndex": ("a", "b", "c", "d", "e", "hl"),
 }
 
 CASES = {
@@ -82,5 +84,19 @@ CASES = {
                           wPlayerDeck + 1: b"\x44"}, "read": {0xFF98: 1}},
         dict(POISON, a=1, wram={hWhoseTurn: b"\xC3", wDuelTempList + 1: b"\x02",
                                 wOpponentDeck + 2: b"\x55"}, read={0xFF98: 1}),
+    ],
+    # Deck card loaded into wLoadedCard1: the type byte lands in the buffer and
+    # exit a is the card id's low byte. wLoadedCard1 = $CC24.
+    "LoadCardDataToBuffer1_FromDeckIndex": [
+        {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10"},
+         "read": {0xCC24: 64}},
+        dict(POISON, a=3, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 3: b"\x20"},
+             read={0xCC24: 64}),
+    ],
+    "LoadCardDataToBuffer2_FromDeckIndex": [
+        {"a": 1, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x15"},
+         "read": {0xCC65: 64}},
+        dict(POISON, a=4, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 4: b"\x25"},
+             read={0xCC65: 64}),
     ],
 }

@@ -3,6 +3,8 @@
 #include "generated/hram.h"
 #include "generated/sram.h"
 #include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/duel_core.h"
 #include "home/print_text.h"
 #include "home/switch_sram.h"
 #include "mem.h"
@@ -68,6 +70,29 @@ DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
 	hTempCardIndex_ff98 = entry;
 	uint16_t id = GetCardIDFromDeckIndex(entry);
 	return (DeckEntryResult){entry, (uint8_t)(id >> 8), (uint8_t)id, hl};
+}
+
+/* duel.asm:778-812. `push af` keeps the deck index for the trainer conversion;
+ * de carries the card id through both calls, so the final `ld a, e` is the id's
+ * low byte. Every other register is restored by the pops. */
+static uint8_t load_card_data_from_deck_index(uint8_t a, uint16_t buffer, void (*load)(uint8_t))
+{
+	uint16_t id = GetCardIDFromDeckIndex(a);
+	load((uint8_t)id);
+	(void)ConvertSpecialTrainerCardToPokemon(a, buffer, id);
+	return (uint8_t)id;
+}
+
+uint8_t LoadCardDataToBuffer1_FromDeckIndex(uint8_t a)
+{
+	return load_card_data_from_deck_index(a, wLoadedCard1_ADDR,
+					      LoadCardDataToBuffer1_FromCardID);
+}
+
+uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a)
+{
+	return load_card_data_from_deck_index(a, wLoadedCard2_ADDR,
+					      LoadCardDataToBuffer2_FromCardID);
 }
 
 /* Text ID of the fallback opponent name. */

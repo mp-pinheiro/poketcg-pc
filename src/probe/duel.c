@@ -82,6 +82,16 @@ static void adapt_GetCardInDuelTempList(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_LoadCardDataToBuffer1_FromDeckIndex(ProbeState *s)
+{
+	s->a = LoadCardDataToBuffer1_FromDeckIndex(s->a);
+}
+
+static void adapt_LoadCardDataToBuffer2_FromDeckIndex(ProbeState *s)
+{
+	s->a = LoadCardDataToBuffer2_FromDeckIndex(s->a);
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -93,5 +103,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "GetCardIDFromDeckIndex_bc", adapt_GetCardIDFromDeckIndex_bc },
 	{ "GetCardInDuelTempList_OnlyDeckIndex", adapt_GetCardInDuelTempList_OnlyDeckIndex },
 	{ "GetCardInDuelTempList", adapt_GetCardInDuelTempList },
+	{ "LoadCardDataToBuffer1_FromDeckIndex", adapt_LoadCardDataToBuffer1_FromDeckIndex },
+	{ "LoadCardDataToBuffer2_FromDeckIndex", adapt_LoadCardDataToBuffer2_FromDeckIndex },
 	{ NULL, NULL },
 };

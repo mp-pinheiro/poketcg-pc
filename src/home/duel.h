@@ -44,4 +44,10 @@ DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl);
 DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl);
 DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl);
 
+/* Load deck card `a` (0-59) into wLoadedCard1/2, applying the trainer-to-Pokemon
+ * conversion. Exit a is the card id's low byte (captured as `ld a, e` before the
+ * register pops); every other register is restored. */
+uint8_t LoadCardDataToBuffer1_FromDeckIndex(uint8_t a);
+uint8_t LoadCardDataToBuffer2_FromDeckIndex(uint8_t a);
+
 #endif
