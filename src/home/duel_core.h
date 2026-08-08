@@ -18,4 +18,6 @@ void ClearNonTurnTemporaryDuelvars_CopyStatus(void);
 void UpdateArenaCardLastTurnDamage(void);
 uint16_t PrintThereWasNoEffectFromStatusText(void);
 
+void WaitAttackAnimation(void);
+
 #endif

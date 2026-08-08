@@ -3,6 +3,8 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+#include "home/frames.h"
+#include "home/play_animation.h"
 #define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 
@@ -103,6 +105,16 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 void ResetAttackAnimationIsPlaying(void)
 {
 	wAttackAnimationIsPlaying = 0;
+}
+
+/* core.asm:8343-8350 */
+void WaitAttackAnimation(void)
+{
+	if (gb_read8(wLoadedAttackAnimation_ADDR) == 0)
+		return;
+	do {
+		DoFrame();
+	} while (CheckAnyAnimationPlaying().f & 0x10u);
 }
 
 /* core.asm:7804-7816 */

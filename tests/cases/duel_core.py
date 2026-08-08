@@ -12,6 +12,7 @@ wDealtDamage = 0xCCBF
 wNoEffectFromWhichStatus = 0xCCF1
 wLoadedAttackName = 0xCCAA
 wTxRam2 = 0xCE3F
+wLoadedAttackAnimation = 0xCCB8
 
 PLAYER_ARENA = 0xC200
 OPP_ARENA  = 0xC300
@@ -23,6 +24,7 @@ CONTRACT = {
     "ClearNonTurnTemporaryDuelvars_CopyStatus": ("b", "c", "d", "e"),
     "UpdateArenaCardLastTurnDamage": ("b", "c", "d", "e"),
     "PrintThereWasNoEffectFromStatusText": ("b", "d", "e", "hl"),
+    "WaitAttackAnimation": ("b", "c", "d", "e", "hl"),
 }
 
 CASES = {
@@ -137,3 +139,20 @@ CASES = {
              read={}),
     ],
 }
+
+ACTIVE_ANIM = 0xD42A
+WD4C0_ANIM = 0xD4C0
+QUEUE_ANIM = 0xD423
+ALL_FF_ANIM = {ACTIVE_ANIM: b"\xff", WD4C0_ANIM: b"\xff", QUEUE_ANIM: b"\xff" * 7}
+HPAD_REPEAT = 0xFF8D
+
+CASES["WaitAttackAnimation"] = [
+    {"wram": {wLoadedAttackAnimation: b"\x00"}},
+    dict(POISON, wram={wLoadedAttackAnimation: b"\x00"}),
+    dict(POISON,
+         wram={wLoadedAttackAnimation: b"\x01",
+               **ALL_FF_ANIM,
+               HPAD_REPEAT: b"\x00\x00\x00\x00\x00"},
+         keys=0x01,
+         read={HPAD_REPEAT: 5, ACTIVE_ANIM: 1, WD4C0_ANIM: 1, QUEUE_ANIM: 7}),
+]

@@ -44,6 +44,13 @@ static void adapt_PrintThereWasNoEffectFromStatusText(ProbeState *s)
 	s->hl = PrintThereWasNoEffectFromStatusText();
 }
 
+static void adapt_WaitAttackAnimation(ProbeState *s)
+{
+	(void)s;
+	WaitAttackAnimation();
+}
+
+
 const ProbeEntry probe_entries_duel_core[] = {
 	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
 	{ "ResetAttackAnimationIsPlaying", adapt_ResetAttackAnimationIsPlaying },
@@ -51,5 +58,6 @@ const ProbeEntry probe_entries_duel_core[] = {
 	{ "ClearNonTurnTemporaryDuelvars_CopyStatus", adapt_ClearNonTurnTemporaryDuelvars_CopyStatus },
 	{ "UpdateArenaCardLastTurnDamage", adapt_UpdateArenaCardLastTurnDamage },
 	{ "PrintThereWasNoEffectFromStatusText", adapt_PrintThereWasNoEffectFromStatusText },
+	{ "WaitAttackAnimation", adapt_WaitAttackAnimation },
 	{ NULL, NULL },
 };
