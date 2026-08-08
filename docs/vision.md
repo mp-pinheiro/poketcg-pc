@@ -13,9 +13,9 @@
 - **Phase 7 — Link, IR, printer** (#8): open.
 - **Phase 8 — Widescreen and features** (#9): open.
 
-Current gate: **223 routines**, `just oracle-diff-all` exit 0
-(commit `fccb938`). Live execution plan and per-slice status:
-`docs/plan.md`.
+Current gate: **354 routines**, `just oracle-diff-all` exit 0
+(commit `a8dff214`, Wave 1 barrier). Live execution plan and per-slice
+status: `docs/plan.md`.
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
 from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11

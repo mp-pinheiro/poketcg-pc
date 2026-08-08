@@ -5,16 +5,16 @@
 | slice | routines | state | commit |
 |---|---|---|---|
 | Step 0 — substrate | — | landed | a5a8bf56 |
-| W1-A tiles | 21 | pending | — |
-| W1-B duel | 36 | pending | — |
-| W1-C substatus | 19 | pending | — |
-| W1-D save + card_collection | 9 | pending | — |
-| W1-E serial + printer | 18 | pending | — |
-| W1-F map + load_animation | 9 | pending | — |
-| W1-G menus cursor/text-box | 12 | pending | — |
-| W1-H small leaves (8 files) | 11 | pending | — |
-| W1-I setup + palettes | 9 | pending | — |
-| W1-J harness: keys | — | pending | — |
+| W1-A tiles | 16/21 (5 excluded) | landed | 9fa8e9bd |
+| W1-B duel | 35/36 | landed | 8322f430 |
+| W1-C substatus | 19/19 | landed | 5c8e9257 |
+| W1-D save + card_collection | 9/9 | landed | 5274fae5 |
+| W1-E serial + printer | 16/18 (2 excluded) | landed | 2af7b747 |
+| W1-F map + load_animation | 9/9 | landed | 0603005d |
+| W1-G menus cursor/text-box | 11/12 (1 internal-only) | landed | 1e265e48 |
+| W1-H small leaves (8 files) | 8/11 (3 excluded) | landed | 876d82ea |
+| W1-I setup + palettes | 9/9 | landed | 2056acad |
+| W1-J harness: keys | — | landed | 9e383124 |
 | W2-K input waiters + scrollable text | 10 | pending | — |
 | W2-L damage modifiers + colours | 6 | pending | — |
 | Wave 3 — inline (4 routines) | 4 | pending | — |
@@ -22,6 +22,15 @@
 This table is the resumption point for a compacted or cleared session: each
 slice flips its own row to `landed` (with the jj commit id) when its barrier
 check passes.
+
+**Barrier 1 (Wave 1)**: `just oracle-diff-all` — 354/354 routines clean,
+`just build` warning-free, `just data-verify` and `just oracleb-replay` both
+exit 0. Also fixed at the barrier: `src/home/input.c`'s `read_joypad()`
+unconditionally OR'd in `0x0F`, so `ReadJoypad` could never observe a held
+button regardless of W1-J's `g_keys` model (commit `73154dd8`); and one
+hazardous `Func_0e8e` case whose poisoned `rIE`/`rIF` seed enabled real
+interrupt sources with pending IF bits, causing PyBoy to dispatch an actual
+interrupt mid-call — re-seeded with only unused/non-hazardous bits.
 
 ## Working agreement — applies to every slice
 
