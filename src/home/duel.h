@@ -21,4 +21,27 @@ DuelistVarResult GetTurnDuelistVariable(uint8_t a);
 DuelistVarResult GetNonTurnDuelistVariable(uint8_t a);
 void SwapTurn(void);
 
+/* Deck-index lookup family (duel.asm:661-712, 762-777). Exit contracts derived
+ * from each member's asm tail, not guessed:
+ *  - _GetCardIDFromDeckIndex: a = id, hl = deck base + a
+ *  - GetCardIDFromDeckIndex:   id in de, af/hl preserved
+ *  - GetCardIDFromDeckIndex_bc: id in a and c, b = 0, hl preserved
+ *  - GetCardInDuelTempList_OnlyDeckIndex: a = entry, hl preserved
+ *  - GetCardInDuelTempList: a = entry, de = id, hl preserved */
+typedef struct {
+	uint8_t a;
+	uint16_t hl;
+} DeckCardResult;
+typedef struct {
+	uint8_t a;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} DeckEntryResult;
+DeckCardResult _GetCardIDFromDeckIndex(uint8_t a);
+uint16_t GetCardIDFromDeckIndex(uint8_t a);
+DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl);
+DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl);
+DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl);
+
 #endif

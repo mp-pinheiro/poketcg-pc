@@ -32,6 +32,44 @@ void SwapTurn(void)
 	hWhoseTurn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;
 }
 
+/* duel.asm:762-777: deck index -> card id, from the turn holder's deck.
+ * `ld hl, wPlayerDeck / add hl, de / ld a, [hl]` leaves hl = deck + a. */
+DeckCardResult _GetCardIDFromDeckIndex(uint8_t a)
+{
+	uint16_t deck = hWhoseTurn == PLAYER_TURN ? wPlayerDeck_ADDR : wOpponentDeck_ADDR;
+	return (DeckCardResult){gb_read8((uint16_t)(deck + a)), (uint16_t)(deck + a)};
+}
+
+/* duel.asm:701-711: id in de, af and hl preserved (both pushed and popped). */
+uint16_t GetCardIDFromDeckIndex(uint8_t a)
+{
+	return _GetCardIDFromDeckIndex(a).a;
+}
+
+/* duel.asm:661-668: id in a and c, b = 0, hl preserved. */
+DeckCardResult GetCardIDFromDeckIndex_bc(uint8_t a, uint16_t hl)
+{
+	return (DeckCardResult){_GetCardIDFromDeckIndex(a).a, hl};
+}
+
+/* duel.asm:670-684: the temp-list entry in a, shadowed in hTempCardIndex_ff98,
+ * hl and de preserved. */
+DeckCardResult GetCardInDuelTempList_OnlyDeckIndex(uint8_t a, uint16_t hl)
+{
+	uint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));
+	hTempCardIndex_ff98 = entry;
+	return (DeckCardResult){entry, hl};
+}
+
+/* duel.asm:686-699: entry in a (reloaded after the call), id in de, hl preserved. */
+DeckEntryResult GetCardInDuelTempList(uint8_t a, uint16_t hl)
+{
+	uint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + a));
+	hTempCardIndex_ff98 = entry;
+	uint16_t id = GetCardIDFromDeckIndex(entry);
+	return (DeckEntryResult){entry, (uint8_t)(id >> 8), (uint8_t)id, hl};
+}
+
 /* Text ID of the fallback opponent name. */
 #define PLAYER2_TEXT_ID 0x0092u
 
