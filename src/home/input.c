@@ -11,7 +11,7 @@
 
 static uint8_t read_joypad(void)
 {
-	return (uint8_t)(gb_read8(JOYP) | JOYP_INPUTS);
+	return gb_read8(JOYP);
 }
 
 void SaveButtonsHeld(uint8_t c)

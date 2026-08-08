@@ -15,6 +15,8 @@ CASES = {
          "read": {0xFF8D: 5}},
         dict(POISON, wram={0xFF8D: b"\x12\x34\x56\x78\x9A"},
              read={0xFF8D: 5}),
+        {"keys": 0x01, "wram": {0xFF8D: b"\x00\x00\x00\x00\x00"},
+         "read": {0xFF8D: 5}},
     ],
     "SaveButtonsHeld": [
         {"c": 0x00, "read": {0xFF90: 1}},
