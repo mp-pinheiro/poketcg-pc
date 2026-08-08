@@ -13,6 +13,11 @@ sDeck3Name = 0xA2A8
 sDeck4Name = 0xA2FC
 DECK_SIZE = 60
 
+sDeck1Cards = 0xA218
+sDeck2Cards = 0xA26C
+sDeck3Cards = 0xA2C0
+sDeck4Cards = 0xA314
+
 
 def deck(built, cards=None):
     """24-byte name field (first byte nonzero iff built) + 60 card-id bytes."""
@@ -37,6 +42,17 @@ CONTRACT = {
     # a/b/c are never referenced by the asm at all, so they pass through
     # untouched; hl is pushed/popped. f is clobbered by `bit` with no restore.
     "GetCardAlbumProgress": ("a", "b", "c", "d", "e", "hl"),
+    # hl is the sum output; b/c/d/e are push/pop-preserved (:3-4/39-40). a/f scratch.
+    "GetAmountOfCardsOwned": ("b", "c", "d", "e", "hl"),
+    # a/f are real outputs (masked count, carry set iff a==0); hl/de/bc are
+    # push/pop-preserved around the whole body (:47-49/86-89).
+    "GetCardCountInCollectionAndDecks": ("a", "f", "b", "c", "d", "e", "hl"),
+    # a/f are real outputs; hl is push/pop-preserved (:98/104); b/c/d/e are never
+    # referenced by the asm at all, so they pass through untouched.
+    "GetCardCountInCollection": ("a", "f", "b", "c", "d", "e", "hl"),
+    # hl is push/pop-preserved (:178/189); b/c/d/e are never referenced. a/f are
+    # scratch -- no caller reads either (scripting.asm:1068-1069/1110-1111/1229-1230).
+    "RemoveCardFromCollection": ("b", "c", "d", "e", "hl"),
 }
 
 CASES = {
@@ -200,5 +216,114 @@ CASES = {
          "sram": {0: {sCardCollection: b"\x80" * 256},
                   2: {sCardCollection: bytes(0x00 if i == 0x0A else 0x80 for i in range(256))}},
          "read": {hBankSRAM: 1}},
+    ],
+    "GetAmountOfCardsOwned": [
+        # All-zero: all four decks empty (first Cards byte 0) and every collection
+        # byte owned with a 0 count.
+        {"sram": {0: {sCardCollection: b"\x00" * 256, sDeck1Cards: b"\x00" * DECK_SIZE,
+                      sDeck2Cards: b"\x00" * DECK_SIZE, sDeck3Cards: b"\x00" * DECK_SIZE,
+                      sDeck4Cards: b"\x00" * DECK_SIZE}}},
+        # Poisoned b/c/d/e must survive; all four decks built (first byte nonzero)
+        # contribute DECK_SIZE each regardless of their actual card ids, plus every
+        # collection byte's own count.
+        dict(POISON,
+             sram={0: {
+                 sCardCollection: bytes((i * 3) & 0x7F for i in range(256)),
+                 sDeck1Cards: bytes(((i + 1) % 256) for i in range(DECK_SIZE)),
+                 sDeck2Cards: bytes(((i + 5) % 256) for i in range(DECK_SIZE)),
+                 sDeck3Cards: bytes(((i + 9) % 256) for i in range(DECK_SIZE)),
+                 sDeck4Cards: bytes(((i + 13) % 256) for i in range(DECK_SIZE)),
+             }}),
+        # Deck 1's built check reads only offset +0 (`ld a,[de]`): its first byte is
+        # 0 despite 59 nonzero bytes after it, so it must count as empty and
+        # contribute nothing. Deck 2 is built; decks 3/4 stay empty.
+        {"sram": {0: {
+            sCardCollection: b"\x00" * 256,
+            sDeck1Cards: bytes([0] + [0xFF] * (DECK_SIZE - 1)),
+            sDeck2Cards: bytes([7] * DECK_SIZE),
+            sDeck3Cards: b"\x00" * DECK_SIZE,
+            sDeck4Cards: b"\x00" * DECK_SIZE,
+        }}},
+        # CARD_NOT_OWNED_F set with nonzero low bits: excluded from the sum
+        # entirely, not added as its masked low-7-bit value.
+        {"sram": {0: {
+            sCardCollection: bytes(0xB3 if i == 9 else 0x00 for i in range(256)),
+            sDeck1Cards: b"\x00" * DECK_SIZE, sDeck2Cards: b"\x00" * DECK_SIZE,
+            sDeck3Cards: b"\x00" * DECK_SIZE, sDeck4Cards: b"\x00" * DECK_SIZE,
+        }}},
+        # ramg:False after seeding: the routine's own EnableSRAM must still make
+        # the all-zero pattern above observable, or every read comes back as open
+        # bus $FF (nonzero, so both the deck-built checks and the sum would be
+        # very different from 0).
+        {"ramg": False,
+         "sram": {0: {sCardCollection: b"\x00" * 256, sDeck1Cards: b"\x00" * DECK_SIZE,
+                      sDeck2Cards: b"\x00" * DECK_SIZE, sDeck3Cards: b"\x00" * DECK_SIZE,
+                      sDeck4Cards: b"\x00" * DECK_SIZE}}},
+    ],
+    "GetCardCountInCollectionAndDecks": [
+        # All-zero: id 0, decks empty, collection[0] owned with count 0.
+        {"sram": {0: {sCardCollection: b"\x00" * 256, sDeck1Cards: b"\x00" * DECK_SIZE,
+                      sDeck2Cards: b"\x00" * DECK_SIZE, sDeck3Cards: b"\x00" * DECK_SIZE,
+                      sDeck4Cards: b"\x00" * DECK_SIZE}}},
+        # Poisoned entry (id = 0xAA); collection[0xAA] owned with a nonzero count,
+        # decks left empty.
+        dict(POISON,
+             sram={0: {sCardCollection: bytes(11 if i == 0xAA else 0 for i in range(256))}}),
+        # Deck 1 built and lists id 7 three times: matches add onto the owned count.
+        {"a": 0x07,
+         "sram": {0: {
+             sCardCollection: bytes(10 if i == 7 else 0 for i in range(256)),
+             sDeck1Cards: bytes([7, 7, 1] + [2] * 56 + [7]),
+         }}},
+        # collection[20] has CARD_NOT_OWNED_F set: the add is skipped entirely, so
+        # deck 2's five matches of id 20 must not appear in the result at all.
+        {"a": 20,
+         "sram": {0: {
+             sCardCollection: bytes(0x80 if i == 20 else 0 for i in range(256)),
+             sDeck2Cards: bytes([20] * 5 + [0] * (DECK_SIZE - 5)),
+         }}},
+        # 8-bit wraparound in the un-masked `add b` before the final mask:
+        # 0x7F + 2 matches wraps to 0x81, masked down to 0x01.
+        {"a": 3,
+         "sram": {0: {
+             sCardCollection: bytes(0x7F if i == 3 else 0 for i in range(256)),
+             sDeck1Cards: bytes([3, 3] + [0] * (DECK_SIZE - 2)),
+         }}},
+        # ramg:False after seeding, over the deck-1-matches-id-7 case above.
+        {"a": 0x07, "ramg": False,
+         "sram": {0: {
+             sCardCollection: bytes(10 if i == 7 else 0 for i in range(256)),
+             sDeck1Cards: bytes([7, 7, 1] + [2] * 56 + [7]),
+         }}},
+    ],
+    "GetCardCountInCollection": [
+        {"sram": {0: {sCardCollection: b"\x00" * 256}}},
+        dict(POISON, sram={0: {sCardCollection: bytes(42 if i == 0xAA else 0 for i in range(256))}}),
+        # CARD_NOT_OWNED_F set but nonzero low bits: unlike *AndDecks, this routine
+        # never tests the bit, only masks it, so the low 7 bits still come through.
+        {"a": 5, "sram": {0: {sCardCollection: bytes(0xAA if i == 5 else 0 for i in range(256))}}},
+        # Masked-zero via the not-owned flag alone (low 7 bits also 0): carry set.
+        {"a": 6, "sram": {0: {sCardCollection: bytes(0x80 if i == 6 else 0 for i in range(256))}}},
+        # id 0xFF: last byte of the page-aligned collection table.
+        {"a": 0xFF, "sram": {0: {sCardCollection: bytes(0x33 if i == 0xFF else 0 for i in range(256))}}},
+        {"a": 5, "ramg": False, "sram": {0: {sCardCollection: bytes(0xAA if i == 5 else 0 for i in range(256))}}},
+    ],
+    "RemoveCardFromCollection": [
+        # All-zero: count already 0, so the store is skipped and the byte is
+        # unchanged (idempotent at the floor).
+        {"sram": {0: {sCardCollection: b"\x00" * 256}}},
+        # Poisoned b/c/d/e/hl must survive; id 5 decrements 10 -> 9.
+        dict(POISON, a=5, sram={0: {sCardCollection: bytes(10 if i == 5 else 0 for i in range(256))}}),
+        # Decrement to exactly 0.
+        {"a": 6, "sram": {0: {sCardCollection: bytes(1 if i == 6 else 0 for i in range(256))}}},
+        # CARD_NOT_OWNED_F set alongside a nonzero masked count (0x81 = flag + 1):
+        # the stored result is the masked-then-decremented value, so the flag bit
+        # is dropped -- the byte lands on $00, not $80.
+        {"a": 8, "sram": {0: {sCardCollection: bytes(0x81 if i == 8 else 0 for i in range(256))}}},
+        # Boundary: max masked value 0x7F decrements to 0x7E.
+        {"a": 9, "sram": {0: {sCardCollection: bytes(0x7F if i == 9 else 0 for i in range(256))}}},
+        # ramg:False: the write only lands if the routine's own EnableSRAM/DisableSRAM
+        # pair actually gates it.
+        {"a": 5, "ramg": False, "sram": {0: {sCardCollection: bytes(10 if i == 5 else 0 for i in range(256))}}},
     ],
 }

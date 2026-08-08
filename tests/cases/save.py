@@ -220,6 +220,14 @@ CONTRACT = {
     # de preserved through SaveAndBackupData (save.asm:526); c is the consumed branch
     # input (save.asm:507-509). a/b/c/hl/f clobbered.
     "_SaveGame": ("d", "e"),
+    # Same trampoline shape as SaveGeneralSaveData; identical contract to the callee.
+    "SaveGeneralSaveData": ("d", "e"),
+    "LoadGeneralSaveData": ("d", "e"),
+    "ValidateGeneralSaveData": ("a", "f", "d", "e"),
+    "AddCardToCollectionAndUpdateAlbumProgress": ("b", "c", "d", "e", "hl"),
+    # push af/bc/de/hl wraps the farcall (save.asm:20-29), so every entry register
+    # is restored regardless of what _SaveGame(0) does internally.
+    "SaveGame": ("a", "f", "b", "c", "d", "e", "hl"),
 }
 
 CASES = {
@@ -560,5 +568,86 @@ CASES = {
                    2: {sGeneralSaveData: 187, sAlbumProgress: 2,
                        sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}},
         dict(POISON, c=0x01, wram={hBankROM: b"\x04"}),
+    ],
+    "SaveGeneralSaveData": [
+        {"wram": {hBankROM: b"\x04"},
+         "sram": {0: {sGeneralSaveData: bytes(187)}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187}}},
+        dict(POISON, wram={hBankROM: b"\x04"}),
+        {"wram": {hBankROM: b"\x04", **poison_wram(seed=14),
+                  wEventVars: event_vars_for(4, True, True),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x02"},
+         "sram": {0: {sGeneralSaveData: bytes(187), sCardCollection: _CARD_PATTERN[:256]}},
+         "read": {wMedalCount: 1, wCurOverworldMap: 1, wLoadedEventBits: 1,
+                  wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sReceivedLegendaryCards: 1}}},
+    ],
+    "LoadGeneralSaveData": [
+        {},
+        POISON,
+        {"sram": {0: {sGeneralSaveData: build_image(_BASE_PAYLOAD)}},
+         "read": {MAPPER[0][0]: 1, wEventVars: 64}},
+    ],
+    "ValidateGeneralSaveData": [
+        {},
+        POISON,
+        {"sram": {0: {sGeneralSaveData: _VALID_IMAGE}},
+         "read": {wNumSRAMValidationErrors: 1}},
+        {"sram": {0: {sGeneralSaveData: _BAD_CHECKSUM_IMAGE}},
+         "read": {wNumSRAMValidationErrors: 1}},
+        {"sram": {0: {sGeneralSaveData: _MULTI_ERROR_IMAGE}},
+         "read": {wNumSRAMValidationErrors: 1}},
+        {"sram": {2: {sAlbumProgress: b"\x99\x88"},
+                  0: {sGeneralSaveData: _VALID_IMAGE, sAlbumProgress: b"\x2a\x37"}},
+         "read": {wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1}},
+    ],
+    "AddCardToCollectionAndUpdateAlbumProgress": [
+        {},
+        POISON,
+        {"a": 0x10,
+         "sram": {2: {sCardCollection: _P2_COLLECTION}, 0: {sCardCollection: _P0_COLLECTION}},
+         "sread": {2: {sAlbumProgress: 2}, 0: {sAlbumProgress: 2}}},
+    ],
+    # SaveGame always calls _SaveGame(0) -- save.asm:24 hardcodes c before the
+    # farcall, so the caller's c is dead despite being preserved back out. Both
+    # cases seed the same wCurMap/wPlayer* source data that the c==0 branch reads,
+    # then case 2's poisoned c=0xCC (rather than 0) proves the branch taken is
+    # still "current position", not the "force Mason lab" branch: a c-pass-through
+    # bug would report wTempPlayerDirection=$02 (DIR_SOUTH) and wTempMap=MAP_MASON
+    # instead of the seeded $01/$07.
+    "SaveGame": [
+        {"wram": {hBankROM: b"\x04", **poison_wram(seed=15), wEventVars: event_vars_for(6),
+                  wPCPacks: bytes(15), wOverworldMapSelection: b"\x04",
+                  wCurMap: b"\x07", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34",
+                  wPlayerDirection: b"\x01"},
+         "sram": {0: {sGeneralSaveData: bytes(256),
+                      sCardCollection: _CARD_PATTERN[:4000],
+                      sCardCollection + 4000: _CARD_PATTERN[4000:5639]}},
+         "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1,
+                  wTempPlayerDirection: 1, wMedalCount: 1, wCurOverworldMap: 1,
+                  wLoadedEventBits: 1, wEventVars: 64, wPCPacks: 15,
+                  wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+         "sread": {0: {sGeneralSaveData: 187, sAlbumProgress: 2},
+                   2: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                       sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}},
+        dict(POISON,
+             wram={hBankROM: b"\x04", **poison_wram(seed=15), wEventVars: event_vars_for(6),
+                   wPCPacks: bytes(15), wOverworldMapSelection: b"\x04",
+                   wCurMap: b"\x07", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34",
+                   wPlayerDirection: b"\x01"},
+             sram={0: {sGeneralSaveData: bytes(256),
+                       sCardCollection: _CARD_PATTERN[:4000],
+                       sCardCollection + 4000: _CARD_PATTERN[4000:5639]}},
+             read={wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1,
+                   wTempPlayerDirection: 1, wMedalCount: 1, wCurOverworldMap: 1,
+                   wLoadedEventBits: 1, wEventVars: 64, wPCPacks: 15,
+                   wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1, **ACCUMULATORS},
+             sread={0: {sGeneralSaveData: 187, sAlbumProgress: 2},
+                    2: {sGeneralSaveData: 187, sAlbumProgress: 2,
+                        sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}),
     ],
 }

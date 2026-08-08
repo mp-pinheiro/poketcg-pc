@@ -549,3 +549,39 @@ void _SaveGame(uint8_t c)
 	}
 	SaveAndBackupData();
 }
+
+/* SaveGeneralSaveData:: save.asm:1-3. farcall trampoline, no push/pop around it,
+ * so it is register-transparent to _SaveGeneralSaveData. */
+void SaveGeneralSaveData(void)
+{
+	_SaveGeneralSaveData();
+}
+
+/* LoadGeneralSaveData:: save.asm:5-7. Same trampoline shape as SaveGeneralSaveData. */
+void LoadGeneralSaveData(void)
+{
+	_LoadGeneralSaveData();
+}
+
+/* ValidateGeneralSaveData:: save.asm:9-11. Same trampoline shape. */
+ValidateResult ValidateGeneralSaveData(void)
+{
+	return _ValidateGeneralSaveData();
+}
+
+/* AddCardToCollectionAndUpdateAlbumProgress:: save.asm:15-17. Same trampoline
+ * shape; a is the consumed card ID, passed straight through. */
+void AddCardToCollectionAndUpdateAlbumProgress(uint8_t a)
+{
+	_AddCardToCollectionAndUpdateAlbumProgress(a);
+}
+
+/* SaveGame:: save.asm:19-30. Unlike its four siblings above, this pushes af/bc/de/hl
+ * before the farcall and pops them back after, so every entry register survives
+ * regardless of what _SaveGame does -- and c is hardcoded to 0 (the "save at current
+ * position" branch) before the farcall, so the caller's c is never actually read by
+ * the callee despite being preserved back out. */
+void SaveGame(void)
+{
+	_SaveGame(0);
+}
