@@ -367,6 +367,35 @@ uint8_t TranslateColorToWR(uint8_t a)
 	return rom_ptr(0u, 0x1A1Au)[a];
 }
 
+/* duel.asm:1290-1315. Entry hl must already hold the card-locations page; the
+ * routine only walks l from 0 to 60. `ld a, c / pop bc` leaves a = the count and
+ * restores bc, so the only other exit is hl = page + 60. */
+CardCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl)
+{
+	uint8_t count = 0;
+	for (uint8_t l = 0; l < DECK_SIZE; l++) {
+		if (gb_read8((uint16_t)(hl + l)) != b)
+			continue;
+		if (_GetCardIDFromDeckIndex(l).a != e)
+			continue;
+		count++;
+	}
+	return (CardCountResult){count, (uint16_t)(hl + DECK_SIZE)};
+}
+
+/* duel.asm:2331-2357. PowersOf2 (00:11B7) is `db $01..$80`. The rra x3 folds a's
+ * top five bits into the group index. */
+AttackFlagResult CheckLoadedAttackFlag(uint8_t a)
+{
+	uint8_t bit = (uint8_t)(1u << (a & 0x07u));
+	uint8_t group = (uint8_t)((a >> 3) & 0x1Fu);
+	uint8_t value = (uint8_t)(gb_read8((uint16_t)(wLoadedAttackFlag1_ADDR + group)) & bit);
+	/* Oracle-observed exits: scf on the set path leaves C only; the clear path
+	 * carries Z+H from the final `and b` (0xA0). */
+	uint8_t f = value ? 0x10u : 0xA0u;
+	return (AttackFlagResult){value, f};
+}
+
 /* duel.asm:369-397. Reads the discard pile backward into wDuelTempList; carry is
  * set iff the pile is empty (`or a / ret nz / scf`, so the empty exit is Z+C).
  * `inc b / dec b` leaves b = 0 on both paths; c is never touched. */

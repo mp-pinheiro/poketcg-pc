@@ -147,4 +147,20 @@ HandSortResult SortHandCardsByID(void);
  * ($80 >> a). Pure ROM table read; hl/b/c/d/e preserved. */
 uint8_t TranslateColorToWR(uint8_t a);
 
+/* CountCardIDInLocation (duel.asm:1290-1315): count deck cards in location b with
+ * card id e. Entry hl = the card-locations page. Exit a = count, hl = page + 60.
+ * CheckLoadedAttackFlag (2331-2357): test attack-flag group (a >> 3) bit (a & 7)
+ * of wLoadedAttackFlag1; carry set iff the flag is set. All other registers
+ * preserved by both. */
+typedef struct {
+	uint8_t a;
+	uint16_t hl;
+} CardCountResult;
+CardCountResult CountCardIDInLocation(uint8_t b, uint8_t e, uint16_t hl);
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} AttackFlagResult;
+AttackFlagResult CheckLoadedAttackFlag(uint8_t a);
+
 #endif

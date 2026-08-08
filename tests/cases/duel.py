@@ -35,6 +35,8 @@ CONTRACT = {
     "SortCardsInDuelTempListByID": ("a", "b", "c", "d", "e", "f", "hl"),
     "SortHandCardsByID": ("a", "b", "c", "d", "e", "f", "hl"),
     "TranslateColorToWR": ("a", "b", "c", "d", "e", "hl"),
+    "CountCardIDInLocation": ("a", "b", "c", "d", "e", "hl"),
+    "CheckLoadedAttackFlag": ("a", "b", "c", "d", "e", "f", "hl"),
 }
 
 CASES = {
@@ -246,5 +248,25 @@ CASES = {
         {"a": 3},
         {"a": 7},
         dict(POISON, a=5),
+    ],
+    # Count cards in location $10 (play area) with id $01; entry hl = $C200 page.
+    "CountCardIDInLocation": [
+        {"b": 0x10, "e": 0x01, "hl": 0xC200,
+         "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02\x01",
+                  0xC200: b"\x10\x00\x10"}},
+        {"b": 0x10, "e": 0x02, "hl": 0xC200,
+         "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x02",
+                  0xC200: b"\x10\x00"}},
+        dict(POISON, b=0x10, e=0x01, hl=0xC200,
+             wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01\x01\x01",
+                   0xC200: b"\x10\x10\x00"}),
+    ],
+    # Attack flag: a = group<<3 | bit. wLoadedAttackFlag1 = $CCB4.
+    "CheckLoadedAttackFlag": [
+        {"a": 0x00, "wram": {0xCCB4: b"\x01"}},
+        {"a": 0x03, "wram": {0xCCB4: b"\x08"}},
+        {"a": 0x08, "wram": {0xCCB5: b"\x02"}},
+        {"a": 0x02, "wram": {0xCCB4: b"\x00"}},
+        dict(POISON, a=0x10, wram={0xCCB6: b"\x80"}),
     ],
 }
