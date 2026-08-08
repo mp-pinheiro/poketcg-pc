@@ -68,6 +68,69 @@ static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 	s->hl = result.hl;
 }
 
+static void adapt_DrawCursor(ProbeState *s)
+{
+	DrawCursor(s->a);
+}
+
+static void adapt_EraseCursor(ProbeState *s)
+{
+	(void)s;
+	EraseCursor();
+}
+
+static void adapt_DrawCursor2(ProbeState *s)
+{
+	(void)s;
+	DrawCursor2();
+}
+
+static void adapt_RefreshMenuCursor(ProbeState *s)
+{
+	(void)s;
+	RefreshMenuCursor();
+}
+
+static void adapt_DrawCardSymbol(ProbeState *s)
+{
+	DrawCardSymbol(s->d, s->e);
+}
+
+static void adapt_DrawNarrowTextBox(ProbeState *s)
+{
+	s->hl = DrawNarrowTextBox();
+}
+
+static void adapt_DrawWideTextBox(ProbeState *s)
+{
+	s->hl = DrawWideTextBox();
+}
+
+static void adapt_DrawNarrowTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawNarrowTextBox_PrintTextNoDelay(s->hl).hl;
+}
+
+static void adapt_DrawWideTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawWideTextBox_PrintTextNoDelay(s->hl).hl;
+}
+
+static void adapt_DrawWideTextBox_PrintText(ProbeState *s)
+{
+	s->hl = DrawWideTextBox_PrintText(s->hl).hl;
+}
+
+static void adapt_PrintYesOrNoItems(ProbeState *s)
+{
+	ProcessTextHeaderResult r = PrintYesOrNoItems(s->d, s->e);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -79,5 +142,16 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "GetCardSymbolData", adapt_GetCardSymbolData },
 	{ "SetCursorParametersForTextBox", adapt_SetCursorParametersForTextBox },
 	{ "SetCursorParametersForTextBox_Default", adapt_SetCursorParametersForTextBox_Default },
+	{ "DrawCursor", adapt_DrawCursor },
+	{ "EraseCursor", adapt_EraseCursor },
+	{ "DrawCursor2", adapt_DrawCursor2 },
+	{ "RefreshMenuCursor", adapt_RefreshMenuCursor },
+	{ "DrawCardSymbol", adapt_DrawCardSymbol },
+	{ "DrawNarrowTextBox", adapt_DrawNarrowTextBox },
+	{ "DrawWideTextBox", adapt_DrawWideTextBox },
+	{ "DrawNarrowTextBox_PrintTextNoDelay", adapt_DrawNarrowTextBox_PrintTextNoDelay },
+	{ "DrawWideTextBox_PrintTextNoDelay", adapt_DrawWideTextBox_PrintTextNoDelay },
+	{ "DrawWideTextBox_PrintText", adapt_DrawWideTextBox_PrintText },
+	{ "PrintYesOrNoItems", adapt_PrintYesOrNoItems },
 	{ NULL, NULL },
 };

@@ -2,6 +2,11 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#include "home/text_box.h"
 #include "mem.h"
 
 #define SYM_0 0x20
@@ -9,6 +14,8 @@
 #define TYPE_ENERGY 0x08
 #define TYPE_TRAINER 0x10
 #define CARD_SYMBOL_TABLE 0x29dd
+#define CONSOLE_CGB 0x02
+#define YES_OR_NO_TEXT_ID 0x2f
 
 void InitializeCardListParameters(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 {
@@ -126,4 +133,140 @@ CursorTileResult SetCursorParametersForTextBox(uint8_t d, uint8_t e, uint8_t b, 
 CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
 {
 	return SetCursorParametersForTextBox(d, e, 0x0f, 0x00);
+}
+
+void DrawCursor(uint8_t a)
+{
+	uint16_t product = HtimesL((uint16_t)((uint16_t)wCurMenuItem << 8 | wMenuYSeparation));
+	uint8_t d = wMenuCursorXOffset;
+	uint8_t e = (uint8_t)((uint8_t)product + wMenuCursorYOffset);
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+	WriteByteToBGMap0(a, d, e);
+}
+
+void EraseCursor(void)
+{
+	DrawCursor(wMenuInvisibleCursorTile);
+}
+
+void DrawCursor2(void)
+{
+	DrawCursor(wMenuVisibleCursorTile);
+}
+
+void RefreshMenuCursor(void)
+{
+	uint8_t old = wCursorBlinkCounter;
+
+	wCursorBlinkCounter = (uint8_t)(old + 1);
+	if (old & 0x0f)
+		return;
+	if (!(wCursorBlinkCounter & 0x10))
+		DrawCursor(wMenuVisibleCursorTile);
+	else
+		EraseCursor();
+}
+
+/* menus.asm:654-683 always fills a fixed 2x2 block (`lb bc, 2, 2`). Not using
+ * the shared FillRectangle: its hl split is backwards vs hardware (H is the
+ * per-column step, L the per-row step -- verified against the oracle here;
+ * FillRectangle has them swapped), so this unrolls the two writes directly. */
+static void fill_symbol_2x2(uint8_t tile, uint8_t x, uint8_t y, uint8_t col_step, uint8_t row_step)
+{
+	for (uint8_t row = 0; row < 2; row++) {
+		uint16_t pos = DECoordToBGMap0Address(x, (uint8_t)(y + row));
+		uint8_t t = (uint8_t)(tile + row_step * row);
+
+		gb_write8(pos, t);
+		gb_write8((uint16_t)(pos + 1), (uint8_t)(t + col_step));
+	}
+}
+
+void DrawCardSymbol(uint8_t d, uint8_t e)
+{
+	uint8_t id = CardTypeToSymbolID();
+	uint16_t entry = (uint16_t)(CARD_SYMBOL_TABLE + (uint16_t)id * 2);
+	uint8_t tile = gb_read8(entry);
+	uint8_t x = (uint8_t)(d - 2);
+	uint8_t y = (uint8_t)(e - 1);
+
+	if (wConsole == CONSOLE_CGB) {
+		uint8_t attr = gb_read8((uint16_t)(entry + 1));
+
+		hBankVRAM = 1;
+		gb_write8(0xff4f, 1);
+		fill_symbol_2x2(attr, x, y, 0, 0);
+		hBankVRAM = 0;
+		gb_write8(0xff4f, 0);
+	}
+	fill_symbol_2x2(tile, x, y, 1, 2);
+}
+
+uint16_t DrawNarrowTextBox(void)
+{
+	uint8_t d = 0, e = 12;
+	uint16_t hl = 0;
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+	DrawRegularTextBox(&hl, 0, 12, 6, d, e);
+	return hl;
+}
+
+uint16_t DrawWideTextBox(void)
+{
+	uint8_t d = 0, e = 12;
+	uint16_t hl = 0;
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+	DrawRegularTextBox(&hl, 0, 20, 6, d, e);
+	return hl;
+}
+
+/* menus.asm:775-784 is only ever reached by fallthrough from the two callers
+ * below, both of which `push hl` first; a synthesized direct call has no such
+ * value on the stack, so `pop hl` there grabs the return address and the
+ * routine never reaches the oracle's sentinel (times out at MAX_FRAMES). Not
+ * independently oracle-testable -- exercised transitively through both callers. */
+static TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)
+{
+	uint8_t d = 1, e = 14;
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+	InitTextPrintingInTextbox(a, d, e);
+	if (hl)
+		return PrintTextNoDelay(hl, d, e);
+
+	uint16_t ptr = wDefaultText_ADDR;
+	ProcessText(&ptr);
+	return (TextResult){0, 0, 0, d, e, ptr};
+}
+
+TextResult DrawNarrowTextBox_PrintTextNoDelay(uint16_t hl)
+{
+	DrawNarrowTextBox();
+	return DrawTextBox_PrintTextNoDelay(11, hl);
+}
+
+TextResult DrawWideTextBox_PrintTextNoDelay(uint16_t hl)
+{
+	DrawWideTextBox();
+	return DrawTextBox_PrintTextNoDelay(19, hl);
+}
+
+TextResult DrawWideTextBox_PrintText(uint16_t hl)
+{
+	uint8_t d = 1, e = 14;
+
+	DrawWideTextBox();
+	AdjustCoordinatesForBGScroll(&d, &e);
+	InitTextPrintingInTextbox(19, d, e);
+	EnableLCD();
+	return PrintText(hl, d, e);
+}
+
+ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
+{
+	AdjustCoordinatesForBGScroll(&d, &e);
+	return InitTextPrinting_ProcessTextFromID(d, e, YES_OR_NO_TEXT_ID);
 }

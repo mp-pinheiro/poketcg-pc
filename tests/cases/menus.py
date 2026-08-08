@@ -89,3 +89,132 @@ CASES = {
              expect_regs={"b": 0x0F, "c": 0, "hl": 0xCD16}),
     ],
 }
+
+def menu_state(counter=0, item=0, xoff=0, yoff=0, ysep=0, vis=0, invis=0):
+    return {
+        0xCD0F: bytes([counter]),
+        0xCD10: bytes([item]),
+        0xCD11: bytes([xoff]),
+        0xCD12: bytes([yoff]),
+        0xCD13: bytes([ysep]),
+        0xCD15: bytes([vis]),
+        0xCD16: bytes([invis]),
+    }
+
+
+CONTRACT.update({
+    # No push/pop at all: every register the asm touches (a/b/c/d/e/hl) is
+    # recomputed from WRAM on every call, so nothing is a preserved input --
+    # the drawn tile is the whole contract.
+    "DrawCursor": (),
+    "EraseCursor": (),
+    "DrawCursor2": (),
+    "RefreshMenuCursor": (),
+    # push hl/de/bc; pop hl/de/bc restores them unchanged before ret (a is not
+    # restored -- FillRectangle's internal residue, not a contractual output).
+    "DrawCardSymbol": ("b", "c", "hl"),
+    "DrawNarrowTextBox": ("hl",),
+    "DrawWideTextBox": ("hl",),
+    "DrawNarrowTextBox_PrintTextNoDelay": ("hl",),
+    "DrawWideTextBox_PrintTextNoDelay": ("hl",),
+    "DrawWideTextBox_PrintText": ("hl",),
+    "PrintYesOrNoItems": ("b", "c", "hl"),
+})
+
+BOX_READ = {0x9980: 192}  # BG-map row 12, 6 rows x 32 cols, zero scroll
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1, 0xFFAE: 1}
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 192}, 1: {0x9980: 192}}
+
+CASES.update({
+    "DrawCursor": [
+        {"a": 5, "wram": menu_state(), "vread": {0: {0x9800: 1}, 1: {0x9800: 1}}},
+        dict(POISON, a=0xAA, wram=menu_state(item=3, xoff=5, yoff=7, ysep=4),
+             vread={0: {0x9a65: 1}, 1: {0x9a65: 1}}),
+        # low byte of item*ysep, plus yoff, both wrap mod 256 before landing
+        # in a valid VRAM address: 250*1 mod 256 = 250, +10 mod 256 = 4.
+        {"a": 7, "wram": menu_state(item=250, xoff=15, yoff=10, ysep=1),
+         "vread": {0: {0x988f: 1}}},
+    ],
+    "EraseCursor": [
+        {"wram": menu_state(item=1, xoff=2, yoff=3, ysep=2, invis=7),
+         "vread": {0: {0x98a2: 1}, 1: {0x98a2: 1}}},
+        dict(POISON, wram=menu_state(item=6, xoff=9, yoff=11, ysep=5, invis=0x2A),
+             vread={0: {0x9d29: 1}}),
+    ],
+    "DrawCursor2": [
+        {"wram": menu_state(item=2, xoff=1, yoff=1, ysep=3, vis=9),
+         "vread": {0: {0x98e1: 1}, 1: {0x98e1: 1}}},
+        dict(POISON, wram=menu_state(item=8, xoff=4, yoff=6, ysep=7, vis=0x3B),
+             vread={0: {0x9fc4: 1}}),
+    ],
+    "RefreshMenuCursor": [
+        # old&0xf == 5 != 0 -> early return; DrawCursor2 (setup) plants a
+        # sentinel tile at the same cursor position first, so a buggy
+        # implementation that draws anyway is caught, not just a wrong count.
+        {"wram": menu_state(counter=5, item=3, xoff=1, yoff=1, ysep=2, vis=0xAB),
+         "setup": [{"fn": "DrawCursor2"}], "read": {0x98e1: 1}},
+        # old == 0 -> new&0x10 == 0 -> draws the visible tile.
+        {"wram": menu_state(counter=0, item=3, xoff=2, yoff=2, ysep=1, vis=0x11),
+         "read": {0x98a2: 1}},
+        # old == 16 -> new&0x10 != 0 -> falls into EraseCursor (invisible tile).
+        {"wram": menu_state(counter=16, item=4, xoff=2, yoff=1, ysep=5, invis=0x22),
+         "read": {0x9aa2: 1}},
+        # old == 255: low nibble 0xf != 0 -> early return, and the counter
+        # itself wraps 255 -> 0 (checked automatically via the wram readback).
+        dict(POISON, wram=menu_state(counter=255, item=9, xoff=10, yoff=2, ysep=6, vis=0x44),
+             setup=[{"fn": "DrawCursor2"}], read={0x9f0a: 1}),
+    ],
+    "DrawCardSymbol": [
+        # DMG, pokemon basic (type=0 -> id = stage+8 = 8, tile $d0).
+        {"d": 5, "e": 5, "vread": {0: {0x9883: 2, 0x98a3: 2}, 1: {0x9883: 2, 0x98a3: 2}}},
+        # CGB, trainer (type>=TYPE_TRAINER -> id=11, tile $dc, attr $02).
+        {"d": 10, "e": 10, "wram": {0xCAB4: b"\x02", 0xCC24: b"\x10"},
+         "vread": {0: {0x9928: 2, 0x9948: 2}, 1: {0x9928: 2, 0x9948: 2}}},
+        # poisoned b/c/hl (must survive the whole push/pop body unchanged) plus
+        # d=0,e=1, wrapping x to $fe while y stays 0; energy type=$09 -> id=1, tile $e4.
+        dict(POISON, d=0, e=1, wram={0xCC24: b"\x09"},
+             vread={0: {0x98fe: 2, 0x991e: 2}}),
+        # type == TYPE_ENERGY exactly -> id = type&7 = 0, tile $e0.
+        {"d": 20, "e": 3, "wram": {0xCC24: b"\x08"},
+         "vread": {0: {0x9852: 2, 0x9872: 2}}},
+    ],
+    "DrawNarrowTextBox": [
+        {"read": BOX_READ},
+        {"wram": {0xCAB4: b"\x02"}, "read": BOX_READ, "vread": {1: {0x9980: 192}}},
+        dict(POISON, read=BOX_READ),
+    ],
+    "DrawWideTextBox": [
+        {"read": BOX_READ},
+        {"wram": {0xCAB4: b"\x02"}, "read": BOX_READ, "vread": {1: {0x9980: 192}}},
+        dict(POISON, read=BOX_READ),
+    ],
+    "DrawNarrowTextBox_PrintTextNoDelay": [
+        {"hl": 0, "read": BOX_READ},
+        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+             vread=VRAM_READ),
+    ],
+    "DrawWideTextBox_PrintTextNoDelay": [
+        {"hl": 0, "read": BOX_READ},
+        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+             vread=VRAM_READ),
+    ],
+    "DrawWideTextBox_PrintText": [
+        {"hl": 0, "wram": {0xC590: b"\x00"}, "read": BOX_READ},
+        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+             vread=VRAM_READ),
+    ],
+    "PrintYesOrNoItems": [
+        {"d": 7, "e": 16, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+        dict(POISON, d=3, e=16, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
+             vread=VRAM_READ),
+    ],
+})
