@@ -13,8 +13,8 @@
 - **Phase 7 — Link, IR, printer** (#8): open.
 - **Phase 8 — Widescreen and features** (#9): open.
 
-Current gate: **354 routines**, `just oracle-diff-all` exit 0
-(commit `a8dff214`, Wave 1 barrier). Live execution plan and per-slice
+Current gate: **375 routines**, `just oracle-diff-all` exit 0
+(home bank complete — Waves 1-3 landed). Live execution plan and per-slice
 status: `docs/plan.md`.
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
