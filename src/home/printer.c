@@ -1,0 +1,111 @@
+#include "home/printer.h"
+
+#include "generated/wram.h"
+#include "mem.h"
+
+#define rSB 0xFF01u
+#define rSC 0xFF02u
+#define SC_INTERNAL 0x01u
+#define SC_START 0x80u
+
+SendNextPrinterPacketByteResult SendNextPrinterPacketByte(void)
+{
+	uint16_t ptr = (uint16_t)(gb_read8(wSerialDataPtr_ADDR) |
+				   (gb_read8((uint16_t)(wSerialDataPtr_ADDR + 1u)) << 8));
+	uint8_t byte = gb_read8(ptr);
+	uint16_t advanced = (uint16_t)(ptr + 1u);
+	gb_write8((uint16_t)(wSerialDataPtr_ADDR + 1u), (uint8_t)(advanced >> 8));
+	gb_write8(wSerialDataPtr_ADDR, (uint8_t)advanced);
+
+	uint16_t sum = (uint16_t)(gb_read8(wPrinterPacketChecksum_ADDR) + byte);
+	gb_write8(wPrinterPacketChecksum_ADDR, (uint8_t)sum);
+	uint8_t hi = (uint8_t)(gb_read8((uint16_t)(wPrinterPacketChecksum_ADDR + 1u)) +
+				(sum > 0xFFu ? 1u : 0u));
+	gb_write8((uint16_t)(wPrinterPacketChecksum_ADDR + 1u), hi);
+
+	SendByteThroughSerialData(byte);
+	return (SendNextPrinterPacketByteResult){(uint8_t)(advanced >> 8), byte};
+}
+
+void SendByteThroughSerialData(uint8_t a)
+{
+	gb_write8(rSB, a);
+	gb_write8(rSC, SC_INTERNAL);
+	gb_write8(rSC, (uint8_t)(SC_START | SC_INTERNAL));
+}
+
+static void increment_sequence(void)
+{
+	gb_write8(wPrinterPacketSequence_ADDR, (uint8_t)(gb_read8(wPrinterPacketSequence_ADDR) + 1u));
+}
+
+static ExecutePrinterPacketSequenceResult send_checksum_byte(uint8_t byte, uint8_t d, uint8_t e)
+{
+	SendByteThroughSerialData(byte);
+	increment_sequence();
+	return (ExecutePrinterPacketSequenceResult){0x81u, d, e};
+}
+
+static ExecutePrinterPacketSequenceResult send_rest_of_data_section(void)
+{
+	SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
+
+	uint8_t lo = gb_read8(wPrinterPacketDataSize_ADDR);
+	gb_write8(wPrinterPacketDataSize_ADDR, (uint8_t)(lo - 1u));
+	if (lo == 0) {
+		uint8_t hi = gb_read8((uint16_t)(wPrinterPacketDataSize_ADDR + 1u));
+		gb_write8((uint16_t)(wPrinterPacketDataSize_ADDR + 1u), (uint8_t)(hi - 1u));
+	}
+
+	uint8_t remaining = (uint8_t)(gb_read8(wPrinterPacketDataSize_ADDR) |
+				       gb_read8((uint16_t)(wPrinterPacketDataSize_ADDR + 1u)));
+	if (remaining == 0) {
+		increment_sequence();
+		return (ExecutePrinterPacketSequenceResult){0, r.d, r.e};
+	}
+	return (ExecutePrinterPacketSequenceResult){remaining, r.d, r.e};
+}
+
+ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8_t d, uint8_t e)
+{
+	switch (a) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5: {
+		SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
+		increment_sequence();
+		return (ExecutePrinterPacketSequenceResult){0x81u, r.d, r.e};
+	}
+	case 6: {
+		increment_sequence();
+		uint8_t lo = gb_read8(wPrinterPacketDataSize_ADDR);
+		uint8_t hi = gb_read8((uint16_t)(wPrinterPacketDataSize_ADDR + 1u));
+		if (lo != 0 || hi != 0) {
+			gb_write8(wSerialDataPtr_ADDR, gb_read8(wPrinterPacketDataPtr_ADDR));
+			gb_write8((uint16_t)(wSerialDataPtr_ADDR + 1u),
+				  gb_read8((uint16_t)(wPrinterPacketDataPtr_ADDR + 1u)));
+			return send_rest_of_data_section();
+		}
+		increment_sequence();
+		return send_checksum_byte(gb_read8(wPrinterPacketChecksum_ADDR), d, e);
+	}
+	case 7:
+		return send_rest_of_data_section();
+	case 8:
+		return send_checksum_byte(gb_read8(wPrinterPacketChecksum_ADDR), d, e);
+	case 9:
+		return send_checksum_byte(gb_read8((uint16_t)(wPrinterPacketChecksum_ADDR + 1u)), d, e);
+	case 10:
+		return send_checksum_byte(0, d, e);
+	case 11:
+		gb_write8(wSerialTransferData_ADDR, gb_read8(rSB));
+		return send_checksum_byte(0, d, e);
+	case 12:
+	default:
+		gb_write8(wPrinterStatus_ADDR, gb_read8(rSB));
+		gb_write8(wPrinterPacketSequence_ADDR, 0);
+		return (ExecutePrinterPacketSequenceResult){0, d, e};
+	}
+}
