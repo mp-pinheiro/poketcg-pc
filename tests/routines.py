@@ -109,7 +109,9 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                    "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance"),
     "serial": ("SerialTimerHandler",),
     "duel_core": ("ConvertSpecialTrainerCardToPokemon",),
-    "substatus": ("CheckSandAttackOrSmokescreenSubstatus",),
+    "substatus": ("CheckSandAttackOrSmokescreenSubstatus",
+                  "CountTurnDuelistPokemonWithActivePkmnPower",
+                  "CountPokemonWithActivePkmnPowerInBothPlayAreas"),
     "script": ("GetMapScriptPointer",),
 }
 

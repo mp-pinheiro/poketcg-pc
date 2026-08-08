@@ -16,7 +16,23 @@ static void adapt_CheckSandAttackOrSmokescreenSubstatus(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_CountTurnDuelistPokemonWithActivePkmnPower(ProbeState *s)
+{
+	PkmnPowerCountResult r = CountTurnDuelistPokemonWithActivePkmnPower(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+
+static void adapt_CountPokemonWithActivePkmnPowerInBothPlayAreas(ProbeState *s)
+{
+	PkmnPowerCountResult r = CountPokemonWithActivePkmnPowerInBothPlayAreas(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
+	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
+	{ "CountPokemonWithActivePkmnPowerInBothPlayAreas", adapt_CountPokemonWithActivePkmnPowerInBothPlayAreas },
 	{ NULL, NULL },
 };

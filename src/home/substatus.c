@@ -10,6 +10,48 @@
 #define SUBSTATUS2_SAND_ATTACK 0x02u
 #define SAND_ATTACK_CHECK_TEXT 0x00deu
 #define SMOKESCREEN_CHECK_TEXT 0x00dfu
+#define DUELVARS_ARENA_CARD 0xbbu
+#define DUELVARS_BENCH 0xbcu
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+#define CNF_SLP_PRZ 0x0fu
+#define wTempPokemonID_ADDR 0xce7cu
+
+/* substatus.asm:544-590. Counts arena (if not status-incapable) plus bench
+ * slots matching the target id. The bench walk ends at its $FF terminator. */
+PkmnPowerCountResult CountTurnDuelistPokemonWithActivePkmnPower(uint8_t a)
+{
+	gb_write8(wTempPokemonID_ADDR, a);
+	uint8_t count = 0;
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	if (arena != 0xFF) {
+		uint16_t arena_id = GetCardIDFromDeckIndex(arena);
+		if ((uint8_t)arena_id == gb_read8(wTempPokemonID_ADDR)) {
+			uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+			if (!(status & CNF_SLP_PRZ))
+				count++;
+		}
+	}
+	uint16_t bench = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
+	while (gb_read8(bench) != 0xFF) {
+		uint16_t slot_id = GetCardIDFromDeckIndex(gb_read8(bench));
+		if ((uint8_t)slot_id == gb_read8(wTempPokemonID_ADDR))
+			count++;
+		bench++;
+	}
+	/* `or a / scf / jr nz / or a`: found = Z clear + C set. */
+	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
+}
+
+/* substatus.asm:522-543: both duelists' play areas. */
+PkmnPowerCountResult CountPokemonWithActivePkmnPowerInBothPlayAreas(uint8_t a)
+{
+	gb_write8(wTempPokemonID_ADDR, a);
+	uint8_t count = CountTurnDuelistPokemonWithActivePkmnPower(a).a;
+	SwapTurn();
+	count = (uint8_t)(count + CountTurnDuelistPokemonWithActivePkmnPower(a).a);
+	SwapTurn();
+	return (PkmnPowerCountResult){count, count ? 0x10u : 0x80u};
+}
 
 /* substatus.asm:346-366. Returns carry iff the turn holder's arena card has the
  * sand-attack or smokescreen substatus active AND the coin toss came up tails.
