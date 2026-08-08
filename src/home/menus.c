@@ -3,6 +3,7 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "home/bg_map.h"
+#include "home/frames.h"
 #include "home/lcd.h"
 #include "home/process_text.h"
 #include "home/random.h"
@@ -269,4 +270,68 @@ ProcessTextHeaderResult PrintYesOrNoItems(uint8_t d, uint8_t e)
 {
 	AdjustCoordinatesForBGScroll(&d, &e);
 	return InitTextPrinting_ProcessTextFromID(d, e, YES_OR_NO_TEXT_ID);
+}
+
+#define PAD_A        0x01u
+#define PAD_B        0x02u
+#define NTBM_PARAMS  0x2a96u
+#define WTBM_PARAMS  0x2ac8u
+
+WaitResult WaitForButtonAorB(void)
+{
+	for (;;) {
+		DoFrame();
+		RefreshMenuCursor();
+		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		if (keys & PAD_A) {
+			EraseCursor();
+			return (WaitResult){0x00u};
+		}
+		if (keys & PAD_B) {
+			EraseCursor();
+			return (WaitResult){0x10u};
+		}
+	}
+}
+
+void DrawWideTextBox_PrintTextNoDelay_Wait(uint16_t hl)
+{
+	(void)DrawWideTextBox_PrintTextNoDelay(hl);
+	WaitForWideTextBoxInput();
+}
+
+void DrawNarrowTextBox_WaitForInput(uint16_t hl)
+{
+	(void)DrawNarrowTextBox_PrintTextNoDelay(hl);
+	uint16_t params = NTBM_PARAMS;
+	InitializeMenuParameters(0, &params);
+	EnableLCD();
+	for (;;) {
+		DoFrame();
+		RefreshMenuCursor();
+		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		if (keys & (PAD_A | PAD_B))
+			break;
+	}
+}
+
+void DrawWideTextBox_WaitForInput(uint16_t hl)
+{
+	(void)DrawWideTextBox_PrintText(hl);
+	WaitForWideTextBoxInput();
+}
+
+void WaitForWideTextBoxInput(void)
+{
+	uint16_t params = WTBM_PARAMS;
+	InitializeMenuParameters(0, &params);
+	EnableLCD();
+	for (;;) {
+		DoFrame();
+		RefreshMenuCursor();
+		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		if (keys & (PAD_A | PAD_B))
+			break;
+	}
+	EraseCursor();
 }

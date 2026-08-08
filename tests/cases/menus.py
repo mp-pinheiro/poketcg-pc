@@ -119,6 +119,11 @@ CONTRACT.update({
     "DrawWideTextBox_PrintTextNoDelay": ("hl",),
     "DrawWideTextBox_PrintText": ("hl",),
     "PrintYesOrNoItems": ("b", "c", "hl"),
+    "DrawWideTextBox_PrintTextNoDelay_Wait": (),
+    "DrawNarrowTextBox_WaitForInput": (),
+    "DrawWideTextBox_WaitForInput": (),
+    "WaitForWideTextBoxInput": (),
+    "WaitForButtonAorB": ("f",),
 })
 
 BOX_READ = {0x9980: 192}  # BG-map row 12, 6 rows x 32 cols, zero scroll
@@ -216,5 +221,55 @@ CASES.update({
          "vread": VRAM_READ},
         dict(POISON, d=3, e=16, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
              vread=VRAM_READ),
+    ],
+})
+
+# WaitForButtonAorB returns carry set (f=$90) if B, clear (f=$00) if A, and
+# erases the cursor on both paths. The erased tile must be diffed, not just the
+# flag, or a dropped EraseCursor call stays green.
+CASES.update({
+    "WaitForButtonAorB": [
+        {"keys": 0x01, "wram": menu_state(counter=5, item=1, xoff=4, yoff=1,
+         ysep=0, invis=0x11), "read": {0x9884: 1}},
+        {"keys": 0x02, "wram": menu_state(counter=5, item=1, xoff=4, yoff=1,
+         ysep=0, invis=0x11), "read": {0x9884: 1}},
+        dict(POISON, keys=0x01, wram=menu_state(counter=0, item=2, xoff=1, yoff=2,
+             ysep=0, invis=0x33), read={0x9841: 1}),
+    ],
+    # EnableLCD turns on the LCD; DoFrame's WaitForVBlank then halts waiting for
+    # a VBlank ISR that never fires in a synthesized oracle call. oracle:False
+    # with expect values derived from the asm/probe. Menu state is seeded so
+    # InitializeMenuParameters overwrites are observable, and the EraseCursor
+    # tile at the cursor's BG-map position is checked.
+    "DrawWideTextBox_PrintTextNoDelay_Wait": [
+        {"hl": 0, "keys": 0x01,
+         "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
+         "oracle": False,
+         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
+         "expect": {0x9980: b"\x18", 0x9A32: b"\x1d",
+                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+    ],
+    "DrawNarrowTextBox_WaitForInput": [
+        {"hl": 0, "keys": 0x01,
+         "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
+         "oracle": False,
+         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
+         "expect": {0x9980: b"\x18",
+                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+    ],
+    "DrawWideTextBox_WaitForInput": [
+        {"hl": 0, "keys": 0x01,
+         "wram": {0xC590: b"\x00", **menu_state(counter=5, item=1, xoff=4, invis=0x22)},
+         "oracle": False,
+         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
+         "expect": {0x9980: b"\x18", 0x9A32: b"\x1d",
+                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+    ],
+    "WaitForWideTextBoxInput": [
+        {"keys": 0x01, "wram": menu_state(counter=5, item=0, xoff=2, yoff=3,
+         ysep=0, invis=0x22),
+         "oracle": False,
+         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
+         "expect": {0x9A32: b"\x1d"}},
     ],
 })

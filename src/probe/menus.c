@@ -131,6 +131,31 @@ static void adapt_PrintYesOrNoItems(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_WaitForButtonAorB(ProbeState *s)
+{
+	s->f = WaitForButtonAorB().f;
+}
+
+static void adapt_DrawWideTextBox_PrintTextNoDelay_Wait(ProbeState *s)
+{
+	DrawWideTextBox_PrintTextNoDelay_Wait(s->hl);
+}
+
+static void adapt_DrawNarrowTextBox_WaitForInput(ProbeState *s)
+{
+	DrawNarrowTextBox_WaitForInput(s->hl);
+}
+
+static void adapt_DrawWideTextBox_WaitForInput(ProbeState *s)
+{
+	DrawWideTextBox_WaitForInput(s->hl);
+}
+
+static void adapt_WaitForWideTextBoxInput(ProbeState *s)
+{
+	WaitForWideTextBoxInput();
+}
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -153,5 +178,10 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "DrawWideTextBox_PrintTextNoDelay", adapt_DrawWideTextBox_PrintTextNoDelay },
 	{ "DrawWideTextBox_PrintText", adapt_DrawWideTextBox_PrintText },
 	{ "PrintYesOrNoItems", adapt_PrintYesOrNoItems },
+	{ "WaitForButtonAorB", adapt_WaitForButtonAorB },
+	{ "DrawWideTextBox_PrintTextNoDelay_Wait", adapt_DrawWideTextBox_PrintTextNoDelay_Wait },
+	{ "DrawNarrowTextBox_WaitForInput", adapt_DrawNarrowTextBox_WaitForInput },
+	{ "DrawWideTextBox_WaitForInput", adapt_DrawWideTextBox_WaitForInput },
+	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
 	{ NULL, NULL },
 };

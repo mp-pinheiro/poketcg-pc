@@ -2,6 +2,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 HEADER = 0xCE2B
 BUFFER = 0xCAA0
+BOX_READ = {0x9980: 192}
+CURSOR_STATE = {0xCD0F: bytes([5]), 0xCD10: bytes([0]), 0xCD11: bytes([18]),
+                0xCD12: bytes([17]), 0xCD13: bytes([0]), 0xCD14: bytes([1]),
+                0xCD15: bytes([0x0F]), 0xCD16: bytes([0x00])}
 
 CONTRACT = {
     "GetTextOffsetFromTextID": ("b", "c", "d", "e", "hl"),
@@ -30,6 +34,11 @@ CONTRACT = {
     "PrintText": ("hl",),
     "PrintTextNoDelay": ("hl",),
     "DrawTextReadyLabeledOrRegularTextBox": ("a", "d", "e", "hl"),
+    "WaitForPlayerToAdvanceText": ("f",),
+    "PrintScrollableText": ("a", "d", "e", "hl"),
+    "PrintScrollableText_NoTextBoxLabel": ("f",),
+    "PrintScrollableText_WithTextBoxLabel_NoWait": ("a", "d", "e", "hl"),
+    "PrintScrollableText_WithTextBoxLabel": ("f",),
 }
 
 CASES = {
@@ -203,13 +212,6 @@ CASES.update({
          "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
     ],
-    # Non-labeled branch draws a 20x6 box at BG-map row 12 ($9980 under zero scroll)
-    # then arms text printing at (1,14). wIsTextBoxLabeled lives in the synthesized
-    # frame ($CE4B) so the labeled branch cannot be oracle-driven and is left to the C.
-    "DrawTextReadyLabeledOrRegularTextBox": [
-        {"hl": 0xC100, "read": {0x9980: 64}},
-        dict(POISON, hl=0xC100, read={0x9980: 64}),
-    ],
     # hl == 0 takes the wDefaultText path (no bank save/restore); a zero first byte
     # is TX_END so the body exits after one ProcessTextHeader. wTextSpeed ($CE47)
     # is inside the synthesized frame and cannot be seeded, so it stays 0: the
@@ -232,21 +234,50 @@ CASES.update({
          "vread": VRAM_READ},
         dict(POISON, hl=1, d=0, e=0, setup=SETUP, read=dict(CACHE_READ), vread=VRAM_READ),
     ],
+    "DrawTextReadyLabeledOrRegularTextBox": [
+        {"hl": 0, "read": BOX_READ},
+        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+    ],
+    "WaitForPlayerToAdvanceText": [
+        {"keys": 0x01, "read": {0x9A32: 1}},
+        {"keys": 0x02, "read": {0x9A32: 1}},
+        dict(POISON, keys=0x01, read={0x9A32: 1}),
+    ],
+    "PrintScrollableText": [
+        {"a": 0, "hl": 0, "keys": 0x01,
+         "wram": {0xC590: b"\x00"}, "read": BOX_READ},
+        {"a": 0, "hl": 1, "keys": 0x02, "setup": SETUP,
+         "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+         "vread": VRAM_READ},
+    ],
+    "PrintScrollableText_NoTextBoxLabel": [
+        {"hl": 0, "keys": 0x01,
+         "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05",
+                  0xCD10: b"\x04", 0xCD16: b"\x22"},
+         "oracle": False, "why": "non-labeled path enables LCD then WaitForPlayerToAdvanceText needs DoFrame",
+         "expect": {0x9A32: b"\x1d", 0xCE4B: b"\x00",
+                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+    ],
+    "PrintScrollableText_WithTextBoxLabel_NoWait": [
+        {"hl": 0, "d": 0x34, "e": 0x12,
+         "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCE4C: b"\xff\xff"},
+         "oracle": False, "why": "labeled path oracle runs too many frames",
+         "expect": {0x9980: b"\x18", 0xCE4B: b"\x01",
+                    0xCE4C: bytes([0x12, 0x34])}},
+    ],
+    "PrintScrollableText_WithTextBoxLabel": [
+        {"hl": 0, "d": 0x34, "e": 0x12, "keys": 0x01,
+         "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCE4C: b"\xff\xff",
+                  0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+         "oracle": False, "why": "labeled path ok but WaitForPlayerToAdvanceText hangs with LCD on",
+         "expect": {0x9980: b"\x18", 0xCE4B: b"\x01",
+                    0xCE4C: bytes([0x12, 0x34]),
+                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+    ],
 })
 # GenerateTextTile's product is the tile itself, copied into VRAM. Without a vread
 # the cache keys are checked but the generated tile is not: swapping its d/e
 # arguments was verified green before this span was added.
 CASES["ProcessTextFromID"].append(
     {"hl": 1, "setup": SETUP, "read": dict(CACHE_READ), "vread": VRAM_READ})
-
-# WaitForPlayerToAdvanceText, PrintScrollableText and its three wrappers are NOT
-# registered. WaitForPlayerToAdvanceText -> WaitForButtonAorB spins on hKeysPressed
-# waiting for A or B; nothing under the oracle advances it, so it never returns.
-# This is a genuine input wait, not the hBankROM/farcall hang: the wait chain
-# (SetCursorParametersForTextBox, WaitForButtonAorB -> DoFrame/RefreshMenuCursor)
-# contains no BankswitchROM and no farcall, so an unset hBankROM cannot divert it.
-# The wrappers transitively reach the same wait, and their C bodies additionally
-# depend on the unported menu routines SetCursorParametersForTextBox /
-# WaitForButtonAorB / RefreshMenuCursor / EraseCursor, which are outside this
-# slice's files. Blocking on a harness input-injection facility (the oracle runs
-# with no_input=True and exposes no per-frame button seed).

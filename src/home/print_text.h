@@ -59,5 +59,13 @@ typedef struct {
 TextResult PlaceTextItems(uint16_t hl);
 TextResult PrintText(uint16_t hl, uint8_t d, uint8_t e);
 TextResult PrintTextNoDelay(uint16_t hl, uint8_t d, uint8_t e);
+typedef struct {
+	uint8_t f;
+} WaitResult;
 TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl);
+WaitResult WaitForPlayerToAdvanceText(void);
+TextResult PrintScrollableText(uint8_t a, uint16_t hl);
+WaitResult PrintScrollableText_NoTextBoxLabel(uint16_t hl);
+TextResult PrintScrollableText_WithTextBoxLabel_NoWait(uint16_t hl, uint16_t de);
+WaitResult PrintScrollableText_WithTextBoxLabel(uint16_t hl, uint16_t de);
 #endif

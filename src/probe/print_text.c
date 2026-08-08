@@ -155,6 +155,41 @@ static void adapt_DrawTextReadyLabeledOrRegularTextBox(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_WaitForPlayerToAdvanceText(ProbeState *s)
+{
+	s->f = WaitForPlayerToAdvanceText().f;
+}
+
+static void adapt_PrintScrollableText(ProbeState *s)
+{
+	TextResult r = PrintScrollableText(s->a, s->hl);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+
+static void adapt_PrintScrollableText_NoTextBoxLabel(ProbeState *s)
+{
+	s->f = PrintScrollableText_NoTextBoxLabel(s->hl).f;
+}
+
+static void adapt_PrintScrollableText_WithTextBoxLabel_NoWait(ProbeState *s)
+{
+	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
+	TextResult r = PrintScrollableText_WithTextBoxLabel_NoWait(s->hl, de);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+
+static void adapt_PrintScrollableText_WithTextBoxLabel(ProbeState *s)
+{
+	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
+	s->f = PrintScrollableText_WithTextBoxLabel(s->hl, de).f;
+}
+
 const ProbeEntry probe_entries_print_text[] = {
 	{ "GetTextOffsetFromTextID", adapt_GetTextOffsetFromTextID },
 	{ "GetPointerToTextHeader", adapt_GetPointerToTextHeader },
@@ -179,5 +214,10 @@ const ProbeEntry probe_entries_print_text[] = {
 	{ "PrintText", adapt_PrintText },
 	{ "PrintTextNoDelay", adapt_PrintTextNoDelay },
 	{ "DrawTextReadyLabeledOrRegularTextBox", adapt_DrawTextReadyLabeledOrRegularTextBox },
+	{ "WaitForPlayerToAdvanceText", adapt_WaitForPlayerToAdvanceText },
+	{ "PrintScrollableText", adapt_PrintScrollableText },
+	{ "PrintScrollableText_NoTextBoxLabel", adapt_PrintScrollableText_NoTextBoxLabel },
+	{ "PrintScrollableText_WithTextBoxLabel_NoWait", adapt_PrintScrollableText_WithTextBoxLabel_NoWait },
+	{ "PrintScrollableText_WithTextBoxLabel", adapt_PrintScrollableText_WithTextBoxLabel },
 	{ NULL, NULL },
 };

@@ -8,6 +8,7 @@
 #include "home/switch_rom.h"
 #include "home/write_number.h"
 #include "home/frames.h"
+#include "home/menus.h"
 #include "home/lcd.h"
 #include "home/text_box.h"
 
@@ -421,4 +422,69 @@ TextResult DrawTextReadyLabeledOrRegularTextBox(uint16_t hl)
 	AdjustCoordinatesForBGScroll(&d, &e);
 	InitTextPrintingInTextbox(19, d, e);
 	return (TextResult){19, 0, 0, d, e, hl};
+}
+
+#define SYM_CURSOR_D 0x2Fu
+#define SYM_BOX_BOTTOM 0x1Du
+
+WaitResult WaitForPlayerToAdvanceText(void)
+{
+	SetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);
+	return WaitForButtonAorB();
+}
+
+TextResult PrintScrollableText(uint8_t a, uint16_t hl)
+{
+	wIsTextBoxLabeled = a;
+	uint8_t saved_bank = hBankROM;
+	uint16_t text_offset = GetTextOffsetFromTextID(hl);
+	TextResult box = DrawTextReadyLabeledOrRegularTextBox(text_offset);
+	uint8_t d = box.d;
+	uint8_t e = box.e;
+	uint16_t hl_out = ResetTxRam_WriteToTextHeader(text_offset).hl;
+
+	for (;;) {
+		uint8_t speed = wTextSpeed;
+		uint8_t c = (uint8_t)(speed + 1u);
+		while (--c != 0u) {
+			if (speed < TEXT_SPEED_3) {
+				if (hKeysHeld & PAD_B)
+					break;
+			}
+			DoFrame();
+		}
+		ProcessTextHeaderResult ph = ProcessTextHeader(d, e);
+		d = ph.d;
+		e = ph.e;
+		hl_out = ph.hl;
+		if (ph.f & 0x10u)
+			break;
+		if (wCurTextLine >= 3u) {
+			WaitForPlayerToAdvanceText();
+			box = DrawTextReadyLabeledOrRegularTextBox(text_offset);
+			d = box.d;
+			e = box.e;
+		}
+	}
+	BankswitchROM(saved_bank);
+	return (TextResult){saved_bank, 0, 0, d, e, hl_out};
+}
+
+WaitResult PrintScrollableText_NoTextBoxLabel(uint16_t hl)
+{
+	(void)PrintScrollableText(0, hl);
+	return WaitForPlayerToAdvanceText();
+}
+
+TextResult PrintScrollableText_WithTextBoxLabel_NoWait(uint16_t hl, uint16_t de)
+{
+	gb_write8(wTextBoxLabel_ADDR, (uint8_t)de);
+	gb_write8((uint16_t)(wTextBoxLabel_ADDR + 1u), (uint8_t)(de >> 8));
+	return PrintScrollableText(1, hl);
+}
+
+WaitResult PrintScrollableText_WithTextBoxLabel(uint16_t hl, uint16_t de)
+{
+	(void)PrintScrollableText_WithTextBoxLabel_NoWait(hl, de);
+	return WaitForPlayerToAdvanceText();
 }
