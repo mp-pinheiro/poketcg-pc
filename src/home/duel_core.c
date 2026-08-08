@@ -5,6 +5,8 @@
 #include "mem.h"
 #include "home/frames.h"
 #include "home/play_animation.h"
+#include "home/menus.h"
+#include "home/substatus.h"
 #define PLAYER_TURN  ((uint8_t)(wPlayerDuelVariables_ADDR >> 8))
 #define OPPONENT_TURN ((uint8_t)(wOpponentDuelVariables_ADDR >> 8))
 
@@ -83,6 +85,7 @@ TrainerConvertResult ConvertSpecialTrainerCardToPokemon(uint8_t a, uint16_t hl, 
 #define DUELVARS_ARENA_CARD_STATUS                0xF0u
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX  0xF2u
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE       0xF3u
+#define DUELVARS_ARENA_CARD_LAST_TURN_STATUS       0xF5u
 
 #define NO_STATUS       0x00u
 #define CONFUSED        0x01u
@@ -116,6 +119,60 @@ void WaitAttackAnimation(void)
 		DoFrame();
 	} while (CheckAnyAnimationPlaying().f & 0x10u);
 }
+
+static void ApplyStatusConditionToArenaPokemon(uint8_t side, uint16_t *hl_addr)
+{
+	uint16_t arena_addr = (uint16_t)((uint16_t)side << 8 | DUELVARS_ARENA_CARD_STATUS);
+	uint16_t lt_addr = (uint16_t)((uint16_t)side << 8 | DUELVARS_ARENA_CARD_LAST_TURN_STATUS);
+	uint8_t remove_mask = gb_read8(*hl_addr);
+	uint8_t add_mask = gb_read8((uint16_t)(*hl_addr + 1u));
+	gb_write8(arena_addr,
+		  (uint8_t)((gb_read8(arena_addr) & remove_mask) | add_mask));
+	gb_write8(lt_addr,
+		  (uint8_t)((gb_read8(lt_addr) & remove_mask) | add_mask));
+	*hl_addr = (uint16_t)(*hl_addr + 2u);
+}
+
+/* core.asm:7181-7252 */
+uint8_t ApplyStatusConditionQueue(void)
+{
+	wPlayerArenaCardLastTurnStatus = 0;
+	wOpponentArenaCardLastTurnStatus = 0;
+
+	uint8_t index = wStatusConditionQueueIndex;
+	if (index == 0) return 0x80u;
+
+	uint16_t term_addr = (uint16_t)(wStatusConditionQueue_ADDR + index);
+	gb_write8(term_addr, 0);
+
+	NoDamageOrEffectCheckResult ndoe = CheckNoDamageOrEffect(term_addr);
+	if (ndoe.f & 0x10u) {
+		if (ndoe.hl != 0)
+			(void)DrawWideTextBox_PrintText(ndoe.hl);
+		uint8_t whose_turn = wWhoseTurn;
+		uint16_t hl = wStatusConditionQueue_ADDR;
+		for (unsigned i = 0; i < 8u; i++) {
+			uint8_t side = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			if (side == 0) break;
+			if (side == whose_turn)
+				ApplyStatusConditionToArenaPokemon(side, &hl);
+			else
+				hl = (uint16_t)(hl + 2u);
+		}
+		return 0x80u;
+	}
+
+	uint16_t hl = wStatusConditionQueue_ADDR;
+	for (unsigned i = 0; i < 8u; i++) {
+		uint8_t side = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (side == 0) break;
+		ApplyStatusConditionToArenaPokemon(side, &hl);
+	}
+	return 0x90u;
+}
+
 
 /* core.asm:7804-7816 */
 void ClearNonTurnTemporaryDuelvars(void)

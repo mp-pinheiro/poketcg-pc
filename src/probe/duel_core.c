@@ -50,6 +50,13 @@ static void adapt_WaitAttackAnimation(ProbeState *s)
 	WaitAttackAnimation();
 }
 
+static void adapt_ApplyStatusConditionQueue(ProbeState *s)
+{
+	(void)s;
+	s->f = ApplyStatusConditionQueue();
+}
+
+
 
 const ProbeEntry probe_entries_duel_core[] = {
 	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
@@ -59,5 +66,6 @@ const ProbeEntry probe_entries_duel_core[] = {
 	{ "UpdateArenaCardLastTurnDamage", adapt_UpdateArenaCardLastTurnDamage },
 	{ "PrintThereWasNoEffectFromStatusText", adapt_PrintThereWasNoEffectFromStatusText },
 	{ "WaitAttackAnimation", adapt_WaitAttackAnimation },
+	{ "ApplyStatusConditionQueue", adapt_ApplyStatusConditionQueue },
 	{ NULL, NULL },
 };

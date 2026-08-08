@@ -16,6 +16,16 @@ wLoadedAttackAnimation = 0xCCB8
 
 PLAYER_ARENA = 0xC200
 OPP_ARENA  = 0xC300
+wPlayerArenaCardLastTurnStatus = 0xC2F5
+wOpponentArenaCardLastTurnStatus = 0xC3F5
+wWhoseTurn = 0xCC05
+wStatusConditionQueueIndex = 0xCCCD
+wStatusConditionQueue = 0xCCCE
+wNoDamageOrEffect = 0xCCC7
+wIsDamageToSelf = 0xCCE6
+wPlayerArenaCardStatus = 0xC2F0
+wOpponentArenaCardStatus = 0xC3F0
+
 
 CONTRACT = {
     "ConvertSpecialTrainerCardToPokemon": ("a", "b", "c", "d", "e", "hl"),
@@ -25,6 +35,7 @@ CONTRACT = {
     "UpdateArenaCardLastTurnDamage": ("b", "c", "d", "e"),
     "PrintThereWasNoEffectFromStatusText": ("b", "d", "e", "hl"),
     "WaitAttackAnimation": ("b", "c", "d", "e", "hl"),
+    "ApplyStatusConditionQueue": ("f",),
 }
 
 CASES = {
@@ -138,6 +149,86 @@ CASES = {
              wram={wNoEffectFromWhichStatus: b"\x81"},
              read={}),
     ],
+    "ApplyStatusConditionQueue": [
+        {
+            "name": "empty queue clears last-turn statuses",
+            "wram": {
+                wPlayerArenaCardLastTurnStatus: b"\xff",
+                wOpponentArenaCardLastTurnStatus: b"\xff",
+                wStatusConditionQueueIndex: b"\x00",
+            },
+            "read": {
+                wPlayerArenaCardLastTurnStatus: 1,
+                wOpponentArenaCardLastTurnStatus: 1,
+            },
+            "expect_regs": {"f": 0x80},
+        },
+        {
+            "name": "poisoned apply-one-record sets carry",
+            **POISON,
+            "wram": {
+                wStatusConditionQueueIndex: b"\x03",
+                wStatusConditionQueue: b"\xc2\x00\x02",
+                wPlayerArenaCardStatus: b"\xf1",
+                wPlayerArenaCardLastTurnStatus: b"\xff",
+                wOpponentArenaCardLastTurnStatus: b"\xff",
+            },
+            "read": {
+                wStatusConditionQueue + 3: 1,
+                wPlayerArenaCardStatus: 1,
+                wPlayerArenaCardLastTurnStatus: 1,
+                wOpponentArenaCardLastTurnStatus: 1,
+            },
+            "expect_regs": {"f": 0x90},
+        },
+        {
+            "name": "no-damage-or-effect applies only own side",
+            "wram": {
+                wNoDamageOrEffect: b"\x80",
+                wWhoseTurn: b"\xc2",
+                wStatusConditionQueueIndex: b"\x06",
+                wStatusConditionQueue: b"\xc2\x00\x04" + b"\xc3\x00\x08",
+                wPlayerArenaCardStatus: b"\xf1",
+                wOpponentArenaCardStatus: b"\xe2",
+                wPlayerArenaCardLastTurnStatus: b"\xff",
+                wOpponentArenaCardLastTurnStatus: b"\xff",
+            },
+            "read": {
+                wPlayerArenaCardStatus: 1,
+                wOpponentArenaCardStatus: 1,
+                wPlayerArenaCardLastTurnStatus: 1,
+                wOpponentArenaCardLastTurnStatus: 1,
+                wNoDamageOrEffect: 1,
+                wStatusConditionQueue + 6: 1,
+            },
+            "expect_regs": {"f": 0x80},
+        },
+        {
+            "name": "maximum queue all eight records applied",
+            "wram": {
+                wStatusConditionQueueIndex: b"\x18",
+                wStatusConditionQueue:
+                    b"\xc2\x00\x01"
+                    + b"\xc3\x00\x02"
+                    + b"\xc2\x00\x04"
+                    + b"\xc3\x00\x08"
+                    + b"\xc2\x00\x10"
+                    + b"\xc3\x00\x20"
+                    + b"\xc2\x00\x40"
+                    + b"\xc3\x00\x80",
+                wPlayerArenaCardStatus: b"\x00",
+                wOpponentArenaCardStatus: b"\x00",
+                wPlayerArenaCardLastTurnStatus: b"\xff",
+                wOpponentArenaCardLastTurnStatus: b"\xff",
+            },
+            "read": {
+                wStatusConditionQueue: 24,
+                wIsDamageToSelf: 1,
+            },
+            "expect_regs": {"f": 0x90},
+        },
+    ],
+
 }
 
 ACTIVE_ANIM = 0xD42A

@@ -19,5 +19,7 @@ void UpdateArenaCardLastTurnDamage(void);
 uint16_t PrintThereWasNoEffectFromStatusText(void);
 
 void WaitAttackAnimation(void);
+uint8_t ApplyStatusConditionQueue(void);
+
 
 #endif
