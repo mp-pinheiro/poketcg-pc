@@ -164,6 +164,8 @@ uint8_t gb_read8(uint16_t addr)
 	 * every read, matching hardware's active-low matrix. */
 	if (addr == 0xFF00u) {
 		uint8_t sel = (uint8_t)(*gb_ptr(addr) & 0x30u);
+		if (sel == 0x30u)
+			return sel;
 		uint8_t low = 0x0Fu;
 		if (!(sel & 0x10u)) /* P14 low: d-pad */
 			low &= (uint8_t)~(g_keys >> 4);

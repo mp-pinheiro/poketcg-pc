@@ -60,7 +60,8 @@ CASES = {
         # All decks empty (default-zero name fields): temp collection is a
         # straight copy of sCardCollection, which is itself left untouched.
         {"sram": {0: {sCardCollection: bytes(range(256))}},
-         "read": {wTempCardCollection: CARD_COLLECTION_SIZE, sCardCollection: CARD_COLLECTION_SIZE}},
+         "sread": {0: {sCardCollection: CARD_COLLECTION_SIZE}},
+         "read": {wTempCardCollection: CARD_COLLECTION_SIZE}},
         # All four decks built and non-overlapping: each deck's 60 ids get a
         # single increment on top of a zeroed collection. Poisoned registers,
         # since the routine takes no arguments and must ignore them.
@@ -129,25 +130,26 @@ CASES = {
     "AddCardToCollection": [
         # All-zero: card 0 with an empty collection and no decks. Increments 0 -> 1.
         {"sram": {0: {sCardCollection: b"\x00" * 256}},
-         "read": {sCardCollection + 0: 1}},
+         "sread": {0: {sCardCollection + 0: 1}}},
         # Poisoned hl/de/bc must survive both the internal CreateTempCardCollection
         # call and the increment itself.
         dict(POISON, a=0x10,
              sram={0: {sCardCollection: b"\x00" * 256}},
-             read={sCardCollection + 0x10: 1, wTempCardCollection: CARD_COLLECTION_SIZE}),
+             sread={0: {sCardCollection + 0x10: 1}},
+             read={wTempCardCollection: CARD_COLLECTION_SIZE}),
         # Count below 99: increments.
         {"a": 0x05, "sram": {0: {sCardCollection: bytes([5 if i == 5 else 0 for i in range(256)])}},
-         "read": {sCardCollection + 5: 1}},
+         "sread": {0: {sCardCollection + 5: 1}}},
         # Count exactly 99: cp 99 / jr nc takes the already_max branch, no increment.
         {"a": 0x06, "sram": {0: {sCardCollection: bytes([99 if i == 6 else 0 for i in range(256)])}},
-         "read": {sCardCollection + 6: 1}},
+         "sread": {0: {sCardCollection + 6: 1}}},
         # Count above 99 (masked value 110): also already_max, no increment.
         {"a": 0x07, "sram": {0: {sCardCollection: bytes([110 if i == 7 else 0 for i in range(256)])}},
-         "read": {sCardCollection + 7: 1}},
+         "sread": {0: {sCardCollection + 7: 1}}},
         # Not-owned bit set (0x80, masked count 0): increment stores the
         # masked-then-incremented value, so bit 7 is dropped on the way out.
         {"a": 0xFF, "sram": {0: {sCardCollection: bytes([0x80 if i == 0xFF else 0 for i in range(256)])}},
-         "read": {sCardCollection + 0xFF: 1}},
+         "sread": {0: {sCardCollection + 0xFF: 1}}},
         # Deck contributions push the temp count to exactly 99 while
         # sCardCollection alone reads 50: still already_max, sCardCollection
         # must not be incremented past 50.
@@ -156,12 +158,12 @@ CASES = {
              sCardCollection: bytes([50 if i == 0 else 0 for i in range(256)]),
              sDeck1Name: deck(True, [0x00] * 49 + list(range(1, 12))),
          }},
-         "read": {sCardCollection + 0: 1, wTempCardCollection + 0: 1}},
+         "sread": {0: {sCardCollection + 0: 1}}, "read": {wTempCardCollection + 0: 1}},
         # 98 is the largest masked temp count that still increments. Without it the
         # threshold is only pinned from above (99 skips), so `owned < 98` -- or any
         # cut in [6, 99] -- would diff clean.
         {"a": 0x08, "sram": {0: {sCardCollection: bytes([98 if i == 8 else 0 for i in range(256)])}},
-         "read": {sCardCollection + 8: 1}},
+         "sread": {0: {sCardCollection + 8: 1}}},
         # The stored value is RE-READ from sCardCollection (asm :164-168); only the
         # threshold test reads wTempCardCollection. Every case above leaves the decks
         # empty, so the two tables are byte-identical and a port that incremented the
@@ -173,7 +175,8 @@ CASES = {
              sCardCollection: bytes([0xFF if i == 5 else 0 for i in range(256)]),
              sDeck1Name: deck(True, [5] + [0] * 59),
          }},
-         "read": {sCardCollection + 5: 1, wTempCardCollection: CARD_COLLECTION_SIZE}},
+         "sread": {0: {sCardCollection + 5: 1}},
+         "read": {wTempCardCollection: CARD_COLLECTION_SIZE}},
         # Neither this routine nor CreateTempCardCollection bank-switches, so both
         # tables resolve under whichever bank the caller left selected -- bank 2 on
         # the shipped path (save.asm:536-539). Bank 2 is seeded last, so it is live:

@@ -304,7 +304,7 @@ CASES = {
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
                 "exceeds the oracle's 240-frame synthesized-call-frame budget.",
-         "expect": {0xA100: b"\xde\xad\xbe\xef"}},
+         "expect_sram": {0: {0xA100: b"\xde\xad\xbe\xef"}}},
         dict(POISON, hl=0xA100, b=0x00, c=0x04,
              sram={0: {0xA100: b"\xde\xad\xbe\xef"}},
              sread={2: {0xA100: 4}}),
@@ -323,7 +323,7 @@ CASES = {
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
                 "exceeds the oracle's 240-frame synthesized-call-frame budget.",
-         "expect": {0xA100: b"\xde\xad\xbe\xef"}},
+         "expect_sram": {2: {0xA100: b"\xde\xad\xbe\xef"}}},
         dict(POISON, hl=0xA100, b=0x00, c=0x04,
              sram={2: {0xA100: b"\xde\xad\xbe\xef"}},
              sread={0: {0xA100: 4}}),
