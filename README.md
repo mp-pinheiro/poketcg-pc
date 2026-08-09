@@ -15,6 +15,7 @@ The project also uses:
 - `just` for repository commands.
 - `jj` for version control writes.
 - `uv` for the PyBoy virtual environment.
+- `git-cliff` for the generated `CHANGELOG.md` and release recipe.
 - Python packages installed by `just oracle-venv`.
 
 The CMake project requires CMake 3.20 or newer, C11, Python 3, and usable SDL2 headers and libraries. The native build uses Ninja.
@@ -71,9 +72,12 @@ curl -L --fail --silent --show-error \
 printf '%s  %s\n' \
   b77fbf8913a9dd770097df81e8e0f84cf2e0d9e3a44dc1a1ee4d1846c5035535 \
   /tmp/gb-recompiled-linux-x64.tar.gz | sha256sum -c -
+
 tar -xzf /tmp/gb-recompiled-linux-x64.tar.gz -C "$HOME/.local/gbrecomp"
 "$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp" --version
 ```
+For a lower-memory build, set `POKETCG_GBRECOMP_JOBS=1`; the regeneration
+recipe defaults to one job.
 
 Then regenerate and build the replay executable:
 

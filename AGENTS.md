@@ -20,7 +20,7 @@ In this order:
 ## 3. Dependencies
 
 Linux setup requires `build-essential`, CMake 3.20+, Ninja, Python 3, Git,
-SDL2 development headers/libraries, `just`, `jj`, and `uv`.
+SDL2 development headers/libraries, `just`, `jj`, `uv`, and `git-cliff`.
 
 `just bootstrap` creates the pinned `poketcg/` disassembly checkout.
 `just oracle-venv` creates `/tmp/pbenv` and installs PyBoy.
@@ -33,7 +33,8 @@ then emits the replay binary under
 the SHA256 value in `README.md` before extracting it.
 
 `oracleb-regenerate` performs whole-ROM static analysis and is substantially
-more resource-intensive than the routine oracle. A run that exhausts available
+more resource-intensive than the routine oracle. It defaults to one build job;
+set `POKETCG_GBRECOMP_JOBS` to raise parallelism. A run that exhausts available
 resources may terminate before producing the replay binary; in that case
 `just oracleb-replay` remains unavailable.
 

@@ -128,9 +128,10 @@ oracleb-regenerate:
     set -euo pipefail
     generator="${POKETCG_GBRECOMP:-$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp}"
     output="${POKETCG_ORACLEB_DIR:-$HOME/.local/share/gbrecompiled/poketcg}"
-    "$generator" poketcg/poketcg.gbc --symbols poketcg/poketcg.sym -o "$output" -j 8
+    jobs="${POKETCG_GBRECOMP_JOBS:-1}"
+    "$generator" poketcg/poketcg.gbc --symbols poketcg/poketcg.sym -o "$output" -j "$jobs"
     cmake -G Ninja -S "$output" -B "$output/build"
-    ninja -C "$output/build"
+    ninja -C "$output/build" -j "$jobs"
     cp "$output/build/poketcg" "$output/poketcg"
 
 oracleb-scene:
