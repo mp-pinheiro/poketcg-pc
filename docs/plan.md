@@ -14,7 +14,7 @@
 | W1-G menus cursor/text-box | 11/12 (1 internal-only) | landed | 1e265e48 |
 | W1-H small leaves (8 files) | 8/11 (3 excluded) | landed | 876d82ea |
 | W1-I setup + palettes | 9/9 | landed | 2056acad |
-| W1-K gfx loaders + fades | 47/49 (2 excluded) | landed | pending |
+| W1-K gfx loaders + fades | 47/49 (2 excluded) | landed | ea4b8ad7 |
 | W1-J harness: keys | — | landed | 9e383124 |
 | W2-K input waiters + scrollable text | 10/10 (7 oracle:False) | landed | — |
 | W2-L damage modifiers + colours | 6/6 | landed | — |
