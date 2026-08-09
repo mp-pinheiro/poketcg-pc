@@ -8,7 +8,7 @@ already follow this; every later phase should too.
 
 ```sh
 just bootstrap                 # one-time: builds poketcg.gbc + poketcg.sym
-just oracle-venv               # one-time: PyBoy into /tmp/pbenv
+just oracle-venv               # PyBoy into /tmp/pbenv (one-time)
 just oracle-diff <PretSymbol>  # configures, builds, diffs C vs PyBoy
 just oracle-diff-all           # all routines; exits non-zero on any failure
 ```
@@ -147,26 +147,30 @@ authoritative source:
 
 - `a f b c d e hl` — entry registers, default 0.
 - `wram` — `{addr: bytes}`, seeded before the call **and** diffed after.
-- `read` — `{addr: count}`, diffed after the call without seeding.
+- `read` — `{addr: count}`, diffed after the call as a live bus read.
 - `sram` — `{bank: {addr: bytes}}`, seeded before the call **and** diffed
   after (readback size = seed length).
-- `sread` — `{bank: {addr: count}}`, diffed without seeding.
-- `vread` — `{bank: {addr: count}}`, diffed without seeding. VRAM has no
-  seeding key — routines that read pre-existing tile data drive it through a
-  `setup` prelude instead.
+- `sread` — `{bank: {addr: count}}`, diffed without seeding and read directly
+  from the selected SRAM bank.
+- `vread` — `{bank: {addr: count}}`, diffed without seeding and read directly
+  from the selected VRAM bank. VRAM has no seeding key — routines that read
+  pre-existing tile data drive it through a `setup` prelude instead.
 - `ramg` — `bool`, applied **after every seed**. The only way a routine's own
   `EnableSRAM`/`DisableSRAM` becomes observable; without it every case starts
   SRAM-enabled and the latch's own effect is invisible.
 - `setup` — `[{"fn": ..., <regs>}]`, preludes that run after seeding, in
-  order, with RAM **not** reset between them. Use this for warm state a
-  routine depends on (e.g. `SetupText` before anything that drives the text
-  engine) rather than hand-deriving the expected warm values.
-- `oracle: False` + `why` + `expect` and/or `expect_regs` — for a boundary
-  the oracle physically cannot run (see below); diffed against the C alone
-  using values derived from the asm, never read off the oracle.
-- `keys` — `int`, buttons held for the whole call. Bit layout matches the
-  game's own `hKeysHeld` (`poketcg/src/constants/hardware.inc:88-105`): bit0
-  `A`, 1 `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
+  order, with RAM **not** reset between them. Use this for warm state a routine
+  depends on (e.g. `SetupText` before anything that drives the text engine)
+  rather than hand-deriving the expected warm values.
+- `oracle: False` + `why` + one or more of `expect`, `expect_regs`,
+  `expect_sram`, and `expect_vram` — a boundary the oracle physically cannot
+  run. `expect` is `{addr: bytes}`, while `expect_sram` is
+  `{bank: {addr: bytes}}` and `expect_vram` has the same shape. All are derived
+  from the asm, never read off the oracle; seeded `wram`/`sram` and requested
+  banked reads are not compared automatically in a C-only case.
+- `keys` — `int`, buttons held for the whole call. Bit layout matches the game's
+  own `hKeysHeld` (`poketcg/src/constants/hardware.inc:88-105`): bit0 `A`, 1
+  `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
   The only way to test a routine that spins on `ReadJoypad`/
   `WaitForButtonAorB` — with `keys` unset (0) it waits forever.
 
@@ -180,15 +184,15 @@ Required coverage per routine:
    no-op), plus counts of 1 and 256/257. 256/257 is where a port that decrements
    only the low byte breaks.
 
-**Reserved WRAM: `$CE00-$CFFF`.** That window holds the oracle's synthesized call
-frame; the oracle raises if a case writes into it. Use `$C100-$CA00` for buffers,
-or the real pret WRAM symbol when the routine has one.
+**Reserved WRAM: `$CF00-$CFFF`.** That window holds the oracle's synthesized
+call frame; the oracle raises if a case writes into it. Use `$C100-$CA00` for
+buffers, or the real pret WRAM symbol when the routine has one.
 
-**`bc == 0` on a 16-bit counted routine is not oracle-testable:** 65536 bytes
-overwrites the whole address space including the call frame, on real hardware as
-much as here. Use the `oracle: False` form, with `why` stating that, and an
-`expect` map derived from the asm that proves the routine wrote far more than zero
-bytes.
+**`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
+`oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
+another documented dissolved execution context). Otherwise run the case against
+the oracle. A C-only case still needs expectations derived from the asm that
+prove its observable writes or register outputs.
 
 ## Mutation testing is mandatory
 

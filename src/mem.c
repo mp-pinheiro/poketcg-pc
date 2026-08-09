@@ -157,6 +157,8 @@ uint8_t gb_read8(uint16_t addr)
 	 * every rSTAT diff is off by $80. */
 	if (addr == 0xFF41u)
 		return (uint8_t)(*gb_ptr(addr) | 0x80u);
+	if (addr == 0xFF4Fu)
+		return (uint8_t)(0xFEu | g_vram_bank);
 	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
 	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
 	 * every read, matching hardware's active-low matrix. */

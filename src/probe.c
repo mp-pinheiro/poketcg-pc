@@ -445,8 +445,13 @@ int main(void)
 	       st.a, st.f, st.b, st.c, st.d, st.e, st.hl);
 	for (size_t i = 0; i < nspans; i++) {
 		printf("%s\"%u\":\"", i ? "," : "", spans[i].addr);
-		for (uint16_t k = 0; k < spans[i].len; k++)
-			printf("%02x", *gb_ptr((uint16_t)(spans[i].addr + k)));
+		for (uint16_t k = 0; k < spans[i].len; k++) {
+			uint16_t addr = (uint16_t)(spans[i].addr + k);
+			uint8_t value = ((addr >= 0xA000u && addr < 0xC000u) || addr == 0xFF00u)
+			                ? *gb_ptr(addr)
+			                : gb_read8(addr);
+			printf("%02x", value);
+		}
 		printf("\"");
 	}
 	printf("},\"sram\":{");

@@ -32,6 +32,8 @@ void HandleDPadRepeat(void)
 
 void DoFrame(void)
 {
+	gb_write8(wVBlankCounter_ADDR,
+	          (uint8_t)(gb_read8(wVBlankCounter_ADDR) + 1u));
 	ReadJoypad();
 	HandleDPadRepeat();
 }

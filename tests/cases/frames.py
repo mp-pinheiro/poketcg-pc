@@ -15,6 +15,11 @@ CASES = {
     "DoFrame": [
         {"wram": {0xFF8D: b"\0\0\0\0\0"}, "read": {0xFF8D: 5}},
         dict(POISON, wram={0xFF8D: b"\0\0\0\0\0"}, read={0xFF8D: 5}),
+        dict(POISON, wram={0xCAB8: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+             oracle=False,
+             why="LCD-on DoFrame reaches the dissolved VBlank boundary",
+             expect={0xCAB8: b"\x00"},
+             expect_regs={"b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
     ],
     "HandleDPadRepeat": [
         {"wram": {0xFF8D: b"\0\0\0\0\0"}, "read": {0xFF8D: 5}},

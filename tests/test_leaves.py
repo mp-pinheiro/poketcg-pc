@@ -97,23 +97,29 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
 def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], case: dict) -> list[str]:
     bad: list[str] = []
 
-    # A handful of documented boundaries cannot run on the oracle: bc=0 on a
-    # counted routine means 65536, which overwrites the whole address space
-    # including the synthesized call frame. Those carry oracle=False plus an
-    # `expect` map derived from the asm, and are diffed against the C alone.
+    # A documented boundary cannot run on the oracle: its execution context is
+    # dissolved or its writes would overwrite the synthesized call frame. These
+    # cases carry expectations derived from the asm and are diffed against C.
     if not case.get("oracle", True):
         if not case.get("why"):
             return ["oracle=False case must carry a `why` string"]
         expect = case.get("expect") or {}
-        # A routine whose only output is a register writes no memory, so an `expect`
-        # map alone cannot fail for it. `expect_regs` pins those, still derived from
-        # the asm rather than read off the oracle.
         expect_regs = case.get("expect_regs") or {}
-        if not expect and not expect_regs:
-            return ["oracle=False case must carry an `expect` or `expect_regs` map"]
+        expect_sram = case.get("expect_sram") or {}
+        expect_vram = case.get("expect_vram") or {}
+        if not (expect or expect_regs or expect_sram or expect_vram):
+            return ["oracle=False case must carry a derived expectation"]
         reads = {a: len(v) for a, v in expect.items()}
         reads.update(case.get("read", {}))
-        got = run_probe(probe, fn, case, reads)
+        sreads = {
+            bank: {addr: len(data) for addr, data in spans.items()}
+            for bank, spans in expect_sram.items()
+        }
+        vreads = {
+            bank: {addr: len(data) for addr, data in spans.items()}
+            for bank, spans in expect_vram.items()
+        }
+        got = run_probe(probe, fn, case, reads, sreads, vreads)
         for addr, want in expect.items():
             have = bytes.fromhex(got["wram"][str(addr)])
             if bytes(want) != have:
@@ -123,6 +129,20 @@ def diff_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], cas
             if want != have:
                 width = 4 if field == "hl" else 2
                 bad.append(f"{field}: asm expects ${want:0{width}X} != C ${have:0{width}X}")
+        for bank, spans in expect_sram.items():
+            for addr, want in spans.items():
+                have = bytes.fromhex(got["sram"][str(bank)][str(addr)])
+                if bytes(want) != have:
+                    bad.append(
+                        f"sram{bank}:${addr:04X}: asm expects {bytes(want).hex()} != C {have.hex()}"
+                    )
+        for bank, spans in expect_vram.items():
+            for addr, want in spans.items():
+                have = bytes.fromhex(got["vram"][str(bank)][str(addr)])
+                if bytes(want) != have:
+                    bad.append(
+                        f"vram{bank}:${addr:04X}: asm expects {bytes(want).hex()} != C {have.hex()}"
+                    )
         return bad
 
     ref = oracle.call(
