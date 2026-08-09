@@ -58,6 +58,51 @@ oracle-venv:
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
+# Rebuild an already configured private tree without re-running CMake.
+build-incremental:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cache="{{build_dir}}/CMakeCache.txt"
+    [ -f "{{build_dir}}/build.ninja" ] && [ -f "$cache" ] || {
+        echo "run just build after choosing a new POKETCG_BUILD or POKETCG_PORTS" >&2
+        exit 2
+    }
+    grep -Fqx 'PORT_FILES:STRING={{port_files}}' "$cache" || {
+        echo "run just build after choosing a new POKETCG_BUILD or POKETCG_PORTS" >&2
+        exit 2
+    }
+    ninja -C "{{build_dir}}"
+
+oracle-warm FN: build-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+
+oracle-warm-group GROUP: build-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+
+oracle-diff-fast FN: build-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+
+oracle-diff-fast-group GROUP: build-incremental
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+
+oracle-diff-group GROUP: build
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode live --probe {{build_dir}}/poketcg_probe
+
 
 # Diff one routine's C port against PyBoy running the real ROM.
 oracle-diff FN: build

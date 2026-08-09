@@ -33,8 +33,10 @@ CONTRACT = {
 
 CASES = {
     "GetFirstSpriteAnimBufferProperty": [
-        {"c": 0},
-        dict(POISON, c=15),
+        {"c": 0, "wram": {W_WHICH_SPRITE: b"\x00"}},
+        dict(POISON, c=15, wram={W_WHICH_SPRITE: b"\x0f"}),
+        {"wram": {W_WHICH_SPRITE: b"\x10"}},
+        dict(POISON, wram={W_WHICH_SPRITE: b"\xff"}),
     ],
     "GetSpriteAnimBufferProperty": [
         {"c": 0, "wram": {W_WHICH_SPRITE: b"\x00"}},

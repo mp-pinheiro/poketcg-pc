@@ -246,6 +246,19 @@ ROUTINES: dict[str, tuple[str, ...]] = {
               "FadePalIntoAnother.GetFadedColor", "FadePalIntoAnother.FadeColor",
               "FlashScreenToWhite", "CopyPalsToSRAMBuffer", "LoadPalsFromSRAMBuffer",
               "Func_10d74"),
+    "sprite_animations": ("_ClearSpriteAnimations",
+                          "CreateSpriteAndAnimBufferEntry",
+                          "FillNewSpriteAnimBufferEntry",
+                          "DisableCurSpriteAnim", "DisableSpriteAnim",
+                          "GetSpriteAnimCounter", "_HandleAllSpriteAnimations",
+                          "LoadSpriteDataForAnimationFrame",
+                          "TryHandleSpriteAnimationFrame",
+                          "StartNewSpriteAnimation", "StartSpriteAnimation",
+                          "Func_12ac9", "LoadSpriteAnimPointers",
+                          "HandleAnimationFrame", "GetAnimFramePointerFromOffset",
+                          "SetAnimationCounterAndLoop", "Func_12ba7", "Func_12bcd",
+                          "ClearSpriteVRAMBuffer", "Func_12c05", "Func_12c4f",
+                          "Func_12c5e"),
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

@@ -65,7 +65,7 @@ uint16_t GetSpriteAnimBufferProperty(uint8_t c)
 
 uint16_t GetFirstSpriteAnimBufferProperty(void)
 {
-	return GetSpriteAnimBufferProperty_SpriteInA(SPRITE_ANIM_ENABLED, 0);
+	return GetSpriteAnimBufferProperty(SPRITE_ANIM_ENABLED);
 }
 
 void Func_3ddb(uint8_t a)

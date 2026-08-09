@@ -9,18 +9,35 @@ already follow this; every later phase should too.
 ```sh
 just bootstrap                 # one-time: builds poketcg.gbc + poketcg.sym
 just oracle-venv               # PyBoy into /tmp/pbenv (one-time)
-just oracle-diff <PretSymbol>  # configures, builds, diffs C vs PyBoy
-just oracle-diff-all           # all routines; exits non-zero on any failure
+export POKETCG_BUILD=build-<slice>
+export POKETCG_PORTS=<file>    # semicolon-list of pret basenames
+just build                     # configure this private tree once
+just oracle-warm-group <basename>
+just oracle-diff-fast <PretSymbol>
+just oracle-diff-group <basename>
+just oracle-diff-all           # live barrier gate; exits non-zero on any failure
 ```
 
+`just oracle-diff` remains the live, configure-and-build authority command.
+`oracle-warm` captures PyBoy references; `oracle-diff-fast` compares only against
+those references and never falls back to PyBoy. Any case, contract, ROM, symbol,
+PyBoy, or harness change causes a cache miss; warm the affected routine or group
+again. A refresh can retain valid references even when the C probe is red.
+
+During implementation, run `just oracle-diff-fast <PretSymbol>` after each
+correction and shape-preserving mutation. Require RED for the mutation and PASS
+after restoration. Once the group is fast-green, run the live group check, then
+the unchanged full live gate. Cached results accelerate iteration; they are not
+accepted evidence without the live checks.
+
 `just oracle-diff` runs cmake+ninja itself. Iterate until `PASS`. When porting
-concurrently with other agents, build in a private directory over a private file
-subset so neither ninja state nor someone else's in-flight compile error touches
-you:
+concurrently with other agents, build in a private directory over a private
+file subset so neither ninja state nor someone else's in-flight compile error
+touches you:
 
 ```sh
 export POKETCG_BUILD=build-<file>      # private build dir
-export POKETCG_PORTS=<file>            # semicolon-list of pret basenames to compile
+export POKETCG_PORTS=<file>            # semicolon-list of pret basenames
 ```
 
 ## Files per pret source
@@ -193,6 +210,12 @@ buffers, or the real pret WRAM symbol when the routine has one.
 another documented dissolved execution context). Otherwise run the case against
 the oracle. A C-only case still needs expectations derived from the asm that
 prove its observable writes or register outputs.
+
+
+For a configured private build, the equivalent iteration uses the cache:
+`just oracle-diff-fast <Fn>`. Warm once with `just oracle-warm <Fn>` (or the
+group warmer), require the mutation to go RED and restoration to return PASS,
+then use the live routine/group command as the authority check.
 
 ## Mutation testing is mandatory
 
