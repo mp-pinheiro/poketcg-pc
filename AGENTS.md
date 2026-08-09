@@ -17,9 +17,29 @@ In this order:
 2. `docs/vision.md` — architecture and phase order. Descriptive.
 3. `docs/plan.md` — what is being worked on right now, and by which slice.
 
-## 3. Commands
+## 3. Dependencies
 
-The six that matter, from the `justfile`:
+Linux setup requires `build-essential`, CMake 3.20+, Ninja, Python 3, Git,
+SDL2 development headers/libraries, `just`, `jj`, and `uv`.
+
+`just bootstrap` creates the pinned `poketcg/` disassembly checkout.
+`just oracle-venv` creates `/tmp/pbenv` and installs PyBoy.
+
+The optional replay oracle uses GB Recompiled 0.1.0. Install its Linux x64
+prebuilt archive so the generator is executable at
+`$HOME/.local/gbrecomp/gb-recompiled-linux/gbrecomp`; `just oracleb-regenerate`
+then emits the replay binary under
+`$HOME/.local/share/gbrecompiled/poketcg/poketcg`. Verify the archive against
+the SHA256 value in `README.md` before extracting it.
+
+`oracleb-regenerate` performs whole-ROM static analysis and is substantially
+more resource-intensive than the routine oracle. A run that exhausts available
+resources may terminate before producing the replay binary; in that case
+`just oracleb-replay` remains unavailable.
+
+## 4. Commands
+
+The commands that matter, from the `justfile`:
 
 | command | what |
 |---|---|
@@ -29,9 +49,11 @@ The six that matter, from the `justfile`:
 | `just oracle-diff <Fn>` | diff one routine's C port against the PyBoy oracle |
 | `just oracle-diff-all` | the gate — every registered routine, also runs `lint-adapters` |
 | `just data-verify` | data/asset extraction round-trip |
+| `just oracleb-regenerate` | generate and build the GB Recompiled replay executable |
 | `just oracleb-replay` | replay-determinism half of the gb-recompiled oracle |
 
-## 4. Concurrency protocol
+
+## 5. Concurrency protocol
 
 Each concurrent agent owns a private build directory and a private file subset:
 
@@ -44,7 +66,7 @@ Agents **never** run `just oracle-diff-all`. A routine registered in
 `tests/routines.py` without cases is a hard FAIL for everyone, so only the
 barrier — run centrally, after every slice lands — runs the full gate.
 
-## 5. File ownership
+## 6. File ownership
 
 Four files per pret source: `src/home/<f>.c`, `src/home/<f>.h`, `src/probe/<f>.c`,
 `tests/cases/<f>.py`.
@@ -55,7 +77,7 @@ Shared, not owned by any slice: `CMakeLists.txt`, `src/mem.*`, `src/probe.c`,
 `tests/routines.py` is shared but **partitioned** — a slice edits only its own
 `ROUTINES["<basename>"]` tuple, never a neighbouring entry.
 
-## 6. Definition of done
+## 7. Definition of done
 
 - `just oracle-diff <Fn>` prints `PASS`.
 - Required case coverage exists (`docs/port-contract.md`): an all-zero case, a
@@ -66,7 +88,7 @@ Shared, not owned by any slice: `CMakeLists.txt`, `src/mem.*`, `src/probe.c`,
   `keys` in its case — see `docs/port-contract.md`'s case-key reference.
 - No stubs, no `TODO`, no dead routines, no changes outside the four owned files.
 
-## 7. VCS
+## 8. VCS
 
 jj only — git writes are hook-blocked (`.claude/hooks/enforce-jj.sh`). Commit with
 
@@ -79,7 +101,7 @@ jj commit -m "type(scope): subject"
 commit; never `git commit` / `git push` — use `jj git push`. Full workflow:
 `docs/jj-workflow.md`.
 
-## 8. `tests/cases/*.py` are not unit tests
+## 9. `tests/cases/*.py` are not unit tests
 
 They are the oracle's input matrix — the thing that makes the port provable. The
 ambient house rule says never write unit tests; it does not apply here. An agent
