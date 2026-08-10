@@ -42,6 +42,14 @@ def main() -> int:
         raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
     if not args.rom.is_file() or not args.symbols.is_file():
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
+    if not isinstance(case.get("mapper"), dict) or set(case["mapper"]) != {
+        "rom_bank", "ram_bank", "ram_enable"
+    }:
+        raise SystemExit("SCHEMA mapper must declare rom_bank, ram_bank, ram_enable")
+    if any(case.get(name) for name in ("bus", "sram", "vram", "setup", "input_events")):
+        raise SystemExit("SCHEMA non-register state is not supported by this runner slice")
+    if args.fn not in args.symbols.read_text():
+        raise SystemExit("ARTIFACT function is absent from symbols")
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
