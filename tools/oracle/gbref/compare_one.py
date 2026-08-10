@@ -33,6 +33,38 @@ def main() -> int:
         if args.index < 0 or args.index >= len(records):
             raise SystemExit(f"SCHEMA case index {args.index} is out of range for {args.fn}")
         case = records[args.index]
+        completion = case.get("completion")
+        mode = completion.get("mode") if isinstance(completion, dict) else completion
+        contract = getattr(module, "CONTRACT", {}).get(args.fn, {})
+        if isinstance(contract, dict):
+            compare_fields = list(contract.get("compare", ()))
+            preserve_fields = list(contract.get("preserve", ()))
+        else:
+            compare_fields = list(contract)
+            preserve_fields = compare_fields[1:]
+        entry = next(
+            int(parts[0].split(":", 1)[1], 16)
+            for parts in (line.split() for line in args.symbols.read_text().splitlines())
+            if len(parts) >= 2 and parts[-1] == args.fn and ":" in parts[0]
+        )
+        case.update({
+            "fn": args.fn,
+            "entry": entry,
+            "compare": compare_fields,
+            "preserve": preserve_fields,
+            "state": {"wram": [], "sram": [], "vram": []},
+            "sram": {},
+            "vram": {},
+        })
+        mapper = dict(case["mapper"])
+        mapper.pop("vram_bank", None)
+        mapper.pop("mode", None)
+        case["mapper"] = mapper
+        seeds = case.pop("seeds", {})
+        if any(seeds.values()):
+            raise SystemExit("SCHEMA canonical seeds require runner state support")
+        case["completion"] = mode
+        case["evidence"] = case.get("evidence", "primary")
     else:
         case = json.loads(args.case.read_text())
     if case.get("fn") != args.fn:

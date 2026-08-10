@@ -33,17 +33,29 @@ def main() -> int:
     args = parser.parse_args()
     failures = 0
     for path, module in load_modules():
-        cases = getattr(module, "CASES", {})
-        if not isinstance(cases, dict):
-            print(f"SCHEMA {path}: CASES must be a mapping")
+        if not hasattr(module, "SCHEMA2_CASES") and getattr(module, "CASES", {}):
+            print(f"MIGRATION_PENDING {path}: legacy CASES has no SCHEMA2_CASES")
             failures += 1
             continue
+        cases = getattr(module, "SCHEMA2_CASES", {})
+        flattened = {}
+        for fn, records in cases.items():
+            if not isinstance(records, list):
+                print(f"SCHEMA {path}: {fn} cases must be a list")
+                failures += 1
+                continue
+            for record in records:
+                if not isinstance(record, dict) or not isinstance(record.get("id"), str):
+                    print(f"SCHEMA {path}: {fn} case must have a stable id")
+                    failures += 1
+                    continue
+                flattened[record["id"]] = record
         try:
-            validate_cases(cases)
+            validate_cases(flattened)
         except SchemaValidationError as exc:
             print(f"SCHEMA {path}: {exc}")
             failures += 1
-        if args.stage == "release" and not hasattr(module, "MUTATIONS"):
+        if args.stage == "release" and flattened and not hasattr(module, "MUTATIONS"):
             print(f"SCHEMA {path}: release stage requires MUTATIONS")
             failures += 1
     if failures:
