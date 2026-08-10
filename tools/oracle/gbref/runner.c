@@ -150,14 +150,19 @@ static void print_result(const GBContext *ctx, const char *completion,
                               (ctx->f_h ? 0x20u : 0u) |
                               (ctx->f_c ? 0x10u : 0u));
     uint16_t af = (uint16_t)(((uint16_t)ctx->a << 8) | flags);
+    uint16_t fixed_rom_bank = gb_resolve_rom_bank(ctx, 0x0000);
+    uint16_t switch_rom_bank = gb_resolve_rom_bank(ctx, 0x4000);
     printf("{\"status\":\"REFERENCE_OK\",\"completion\":\"%s\","
            "\"pc\":%" PRIu16 ",\"sp\":%" PRIu16 ","
            "\"af\":%" PRIu16 ",\"bc\":%" PRIu16 ","
            "\"de\":%" PRIu16 ",\"hl\":%" PRIu16 ","
            "\"rom_bank\":%" PRIu16 ",\"ram_bank\":%" PRIu8 ","
-           "\"wram\":\"",
+           "\"ram_enable\":%" PRIu8 ",\"rom_bank_low\":%" PRIu8 ","
+           "\"rom_bank_upper\":%" PRIu8 ",\"fixed_rom_bank\":%" PRIu16 ","
+           "\"switch_rom_bank\":%" PRIu16 ",\"wram\":\"",
            completion, ctx->pc, ctx->sp, af, ctx->bc, ctx->de, ctx->hl,
-           ctx->rom_bank, ctx->ram_bank);
+           ctx->rom_bank, ctx->ram_bank, ctx->ram_enabled, ctx->rom_bank_low,
+           ctx->rom_bank_upper, fixed_rom_bank, switch_rom_bank);
     print_hex(ctx->wram, 0x2000);
     printf("\",\"hram\":\"");
     print_hex(ctx->hram, 0x7f);
@@ -224,10 +229,14 @@ int main(int argc, char **argv) {
     int reg_d_state = json_number(request, "d", &reg_d);
     int reg_e_state = json_number(request, "e", &reg_e);
     int reg_hl_state = json_number(request, "hl", &reg_hl);
+    char mapper_mode[16] = "seeded";
+    int mapper_mode_state = json_string(request, "mapper_mode", mapper_mode,
+                                        sizeof mapper_mode);
     uint64_t mapper_rom_bank = 1, mapper_ram_bank = 0, mapper_ram_enable = 0;
     int mapper_rom_state = json_number(request, "rom_bank", &mapper_rom_bank);
     int mapper_ram_state = json_number(request, "ram_bank", &mapper_ram_bank);
     int mapper_enable_state = json_number(request, "ram_enable", &mapper_ram_enable);
+    if (mapper_mode_state == 0) mapper_mode_state = 1;
     free(request);
     if (
         (strcmp(completion, "event") == 0 &&
@@ -237,12 +246,14 @@ int main(int argc, char **argv) {
         seed_wram_state < 0 || seed_sram_state < 0 || seed_vram_state < 0 ||
         entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
-        (strcmp(completion, "pre-ret") == 0 && (stop_state != 1 || stop_pc > 0xffff)) ||
+        instruction_state < 0 || cycle_state < 0 ||
         reg_a_state < 0 || reg_f_state < 0 || reg_b_state < 0 ||
         reg_c_state < 0 || reg_d_state < 0 || reg_e_state < 0 ||
         reg_hl_state < 0 || reg_a > 0xff || reg_f > 0xff ||
         reg_b > 0xff || reg_c > 0xff || reg_d > 0xff || reg_e > 0xff ||
-        reg_hl > 0xffff || mapper_rom_state < 0 || mapper_ram_state < 0 ||
+        reg_hl > 0xffff || mapper_mode_state < 0 ||
+        (strcmp(mapper_mode, "reset") != 0 && strcmp(mapper_mode, "seeded") != 0) ||
+        mapper_rom_state < 0 || mapper_ram_state < 0 ||
         mapper_enable_state < 0 || mapper_rom_bank > 0x1ff ||
         mapper_ram_bank > 0xff || mapper_ram_enable > 1) {
         fail("SCHEMA", "entry, registers, mapper, and finite budgets are required");
@@ -265,11 +276,12 @@ int main(int argc, char **argv) {
         fail("ARTIFACT", "runtime rejected ROM");
     }
     gb_context_reset(ctx, true);
-    ctx->rom_bank = (uint16_t)mapper_rom_bank;
-    ctx->rom_bank_low = (uint8_t)(mapper_rom_bank & 0xffu);
-    ctx->rom_bank_upper = (uint8_t)((mapper_rom_bank >> 8) & 1u);
-    ctx->ram_bank = (uint8_t)mapper_ram_bank;
-    ctx->ram_enabled = (uint8_t)mapper_ram_enable;
+    if (strcmp(mapper_mode, "seeded") == 0) {
+        gb_write8(ctx, 0x2000, (uint8_t)mapper_rom_bank);
+        gb_write8(ctx, 0x3000, (uint8_t)((mapper_rom_bank >> 8) & 1u));
+        gb_write8(ctx, 0x4000, (uint8_t)mapper_ram_bank);
+        gb_write8(ctx, 0x0000, mapper_ram_enable ? 0x0A : 0x00);
+    }
     ctx->sp = 0xfffe;
     gb_push16(ctx, 0xfea0);
     ctx->pc = (uint16_t)entry;

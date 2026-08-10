@@ -65,7 +65,7 @@ oracle-venv:
 oracle-health-pyboy:
     PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py
 
-oracle-health-gbref: oracle-build-gbref
+oracle-health-gbref: oracle-build-gbref build-barrier
     python3 tools/oracle/gbref_health.py
 oracle-health: oracle-health-gbref oracle-health-pyboy
 oracle-build-gbref:

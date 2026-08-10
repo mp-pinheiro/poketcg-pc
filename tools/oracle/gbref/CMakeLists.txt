@@ -8,13 +8,44 @@ if(NOT IS_DIRECTORY "${GBRT_RUNTIME_DIR}/include" OR
         "ARTIFACT: GBRT runtime headers missing; expected ${GBRT_RUNTIME_DIR}/include/gbrt.h")
 endif()
 
+set(GBRT_BUILD_DIR "${CMAKE_BINARY_DIR}/gbrt-source")
+set(GBRT_PATCH "${CMAKE_CURRENT_SOURCE_DIR}/gbrt-mbc5.patch")
+file(REMOVE_RECURSE "${GBRT_BUILD_DIR}")
+file(COPY "${GBRT_RUNTIME_DIR}/" DESTINATION "${GBRT_BUILD_DIR}")
+find_program(GBRT_PATCH_EXECUTABLE patch)
+if(NOT GBRT_PATCH_EXECUTABLE)
+    message(FATAL_ERROR "GBRT MBC5 patch requires the patch executable")
+endif()
+execute_process(
+    COMMAND "${GBRT_PATCH_EXECUTABLE}" --dry-run --batch --forward -p1
+        --input "${GBRT_PATCH}"
+    WORKING_DIRECTORY "${GBRT_BUILD_DIR}"
+    RESULT_VARIABLE GBRT_PATCH_CHECK_RESULT
+    OUTPUT_VARIABLE GBRT_PATCH_CHECK_OUTPUT
+    ERROR_VARIABLE GBRT_PATCH_CHECK_ERROR)
+if(NOT GBRT_PATCH_CHECK_RESULT EQUAL 0)
+    message(FATAL_ERROR
+        "GBRT MBC5 patch check failed: ${GBRT_PATCH_CHECK_ERROR}${GBRT_PATCH_CHECK_OUTPUT}")
+endif()
+execute_process(
+    COMMAND "${GBRT_PATCH_EXECUTABLE}" --batch --forward -p1
+        --input "${GBRT_PATCH}"
+    WORKING_DIRECTORY "${GBRT_BUILD_DIR}"
+    RESULT_VARIABLE GBRT_PATCH_RESULT
+    OUTPUT_VARIABLE GBRT_PATCH_OUTPUT
+    ERROR_VARIABLE GBRT_PATCH_ERROR)
+if(NOT GBRT_PATCH_RESULT EQUAL 0)
+    message(FATAL_ERROR
+        "GBRT MBC5 patch application failed: ${GBRT_PATCH_ERROR}${GBRT_PATCH_OUTPUT}")
+endif()
+
 set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GBRECOMP_ENABLE_NATIVE_PATCHES OFF CACHE BOOL "" FORCE)
-add_subdirectory("${GBRT_RUNTIME_DIR}" "${CMAKE_BINARY_DIR}/gbrt")
+add_subdirectory("${GBRT_BUILD_DIR}" "${CMAKE_BINARY_DIR}/gbrt")
 
 add_executable(gbref_runner runner.c)
 target_compile_features(gbref_runner PRIVATE c_std_11)
-target_include_directories(gbref_runner PRIVATE "${GBRT_RUNTIME_DIR}/include")
+target_include_directories(gbref_runner PRIVATE "${GBRT_BUILD_DIR}/include")
 target_link_libraries(gbref_runner PRIVATE gbrt)
 
 install(TARGETS gbref_runner RUNTIME DESTINATION bin)

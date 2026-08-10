@@ -39,9 +39,10 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
             if name in cases:
                 raise SystemExit(f"duplicate CASES entry for {name} in {path}")
             cases[name] = entries
-        for name, fields in getattr(mod, "CONTRACT", {}).items():
+        for name, contract in getattr(mod, "CONTRACT", {}).items():
             if name in contracts:
-                raise SystemExit(f"duplicate CONTRACT entry for {name} in {path}")
+                raise SystemExit(f"duplicate CONTRACT entry for {name}")
+            fields = contract["compare"] if isinstance(contract, dict) else contract
             contracts[name] = tuple(fields)
     return cases, contracts
 

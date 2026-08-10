@@ -441,8 +441,10 @@ int main(void)
 
 	call(&st);
 
-	printf("{\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,\"wram\":{",
-	       st.a, st.f, st.b, st.c, st.d, st.e, st.hl);
+	printf("{\"a\":%u,\"f\":%u,\"b\":%u,\"c\":%u,\"d\":%u,\"e\":%u,\"hl\":%u,"
+	       "\"rom_bank\":%u,\"ram_bank\":%u,\"ram_enable\":%u,\"wram\":{",
+	       st.a, st.f, st.b, st.c, st.d, st.e, st.hl,
+	       g_rom_bank, g_sram_bank, g_sram_enabled != 0);
 	for (size_t i = 0; i < nspans; i++) {
 		printf("%s\"%u\":\"", i ? "," : "", spans[i].addr);
 		for (uint16_t k = 0; k < spans[i].len; k++) {

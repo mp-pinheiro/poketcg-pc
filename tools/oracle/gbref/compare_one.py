@@ -94,8 +94,9 @@ def main() -> int:
         seed_wram_spec = ";".join(seed_parts)
         seed_sram_spec = ";".join(seed_sram_parts)
         seed_vram_spec = ";".join(seed_vram_parts)
+        if mode == "pre-ret" and isinstance(completion, dict):
+            case["stop_pc"] = int(completion["pc"])
         case["completion"] = mode
-        case["evidence"] = case.get("evidence", "primary")
     else:
         case = json.loads(args.case.read_text())
     if case.get("fn") != args.fn:
@@ -226,9 +227,16 @@ def main() -> int:
         if reference.get(name) != registers[name]
     }
     if preservation:
-        print(json.dumps({"status": "PORT", "fn": case["fn"],
-                          "mismatches": {f"preserve:{name}": values
-                                         for name, values in preservation.items()}}))
+        print(json.dumps({
+            "status": "REFERENCE_DIVERGENCE",
+            "fn": case["fn"],
+            "mismatches": {f"preserve:{name}": values
+                           for name, values in preservation.items()},
+            "instructions": reference.get("instructions"),
+            "cycles": reference.get("cycles"),
+            "pc": reference.get("pc"),
+            "sp": reference.get("sp"),
+        }, sort_keys=True))
         return 1
     wram_spans = tuple((int(addr), int(size)) for addr, size in case["state"]["wram"])
     sram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["sram"])

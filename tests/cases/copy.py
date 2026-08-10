@@ -15,12 +15,18 @@ POISON_SRC = 0x1234
 PAT = bytes((i * 7 + 3) & 0xFF for i in range(512))
 
 CONTRACT = {
-    "CopyGfxData": ("c", "d", "e", "hl"),
+    "CopyGfxData": {
+        "compare": ("c", "d", "e", "hl"),
+        "preserve": ("c",),
+    },
     "CopyDataHLtoDE": {
         "compare": ("d", "e", "hl"),
         "preserve": (),
     },
-    "CopyDataHLtoDE_SaveRegisters": ("b", "c", "d", "e", "hl"),
+    "CopyDataHLtoDE_SaveRegisters": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
 }
 
 CASES = {
@@ -118,14 +124,6 @@ SCHEMA2_CASES["CopyDataHLtoDE"] = [{
     "evidence": "primary",
 }]
 
-CONTRACT["CopyGfxData"] = {
-    "compare": ("c", "d", "e", "hl"),
-    "preserve": ("c",),
-}
-CONTRACT["CopyDataHLtoDE_SaveRegisters"] = {
-    "compare": ("b", "c", "d", "e", "hl"),
-    "preserve": ("b", "c", "d", "e", "hl"),
-}
 SCHEMA2_CASES["CopyGfxData"] = [{
     "id": "CopyGfxData-primary-1",
     "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
@@ -158,6 +156,61 @@ SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"] = [{
     "completion": {"mode": "return"},
     "evidence": "primary",
 }]
+
+def _copy_primary(identifier, registers, seeds, budget=10000, completion=None, evidence="primary"):
+    return {
+        "id": identifier,
+        "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+        "registers": registers,
+        "bus": {},
+        "seeds": seeds,
+        "setup": [],
+        "input_events": [],
+        "instruction_budget": budget,
+        "cycle_budget": budget * 16,
+        "completion": completion or {"mode": "return"},
+        "evidence": evidence,
+    }
+
+SCHEMA2_CASES["CopyGfxData"].extend([
+    _copy_primary("CopyGfxData-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 20_000_000, {"mode": "pre-ret", "pc": 0x0731}, "native-stress"),
+    _copy_primary(
+        "CopyGfxData-poison",
+        {"a": 0xAA, "f": 0xF0, "b": 4, "c": 3, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
+        {"wram": {0xDDEE: b"\x00" * 12}},
+    ),
+    _copy_primary(
+        "CopyGfxData-c-zero",
+        {"a": 0, "f": 0, "b": 1, "c": 0, "d": DST >> 8, "e": DST & 0xFF, "hl": SRC},
+        {"wram": {SRC: PAT[:256], DST: b"\x00" * 256}},
+    ),
+])
+SCHEMA2_CASES["CopyDataHLtoDE"].extend([
+    _copy_primary("CopyDataHLtoDE-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": 0x0744}, "native-stress"),
+    _copy_primary(
+        "CopyDataHLtoDE-poison",
+        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 16, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
+        {"wram": {0xDDEE: b"\x00" * 16}},
+    ),
+    _copy_primary(
+        "CopyDataHLtoDE-one",
+        {"a": 0, "f": 0, "b": 0, "c": 1, "d": DST >> 8, "e": DST & 0xFF, "hl": SRC},
+        {"wram": {SRC: PAT[:1], DST: b"\x00"}},
+    ),
+])
+SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"].extend([
+    _copy_primary("CopyDataHLtoDE_SaveRegisters-zero", {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}, {}, 2_000_000, {"mode": "pre-ret", "pc": 0x073b}, "dependency-blocked"),
+    _copy_primary(
+        "CopyDataHLtoDE_SaveRegisters-poison",
+        {"a": 0xAA, "f": 0xF0, "b": 0, "c": 16, "d": 0xDD, "e": 0xEE, "hl": 0x1234},
+        {"wram": {0xDDEE: b"\x00" * 16}},
+    ),
+    _copy_primary(
+        "CopyDataHLtoDE_SaveRegisters-one",
+        {"a": 0, "f": 0, "b": 0, "c": 1, "d": DST >> 8, "e": DST & 0xFF, "hl": SRC},
+        {"wram": {SRC: PAT[:1], DST: b"\x00"}},
+    ),
+])
 
 MUTATIONS = {
     "CopyDataHLtoDE": {

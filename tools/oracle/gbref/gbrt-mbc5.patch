@@ -1,0 +1,24 @@
+diff --git a/src/gbrt.c b/src/gbrt.c
+--- a/src/gbrt.c
++++ b/src/gbrt.c
+@@ -2860,7 +2860,7 @@
+         else if (ctx->mbc_type >= 0x19 && ctx->mbc_type <= 0x1E) {
+             if (addr < 0x2000) {
+                 /* RAM Enable */
+-                ctx->ram_enabled = ((value & 0x0F) == 0x0A);
++                ctx->ram_enabled = (value == 0x0A);
+             } else if (addr < 0x3000) {
+                 /* ROM Bank Number (lower 8 bits) */
+                 ctx->rom_bank_low = value;
+@@ -2872,7 +2872,10 @@
+                 ctx->rom_bank = gb_resolve_rom_bank(ctx, 0x4000);
+             } else if (addr < 0x6000) {
+                 /* RAM Bank Number (0-15) */
+-                ctx->ram_bank = value & 0x0F;
++                const uint32_t physical_ram_banks = ctx->eram_size / 0x2000u;
++                ctx->ram_bank = physical_ram_banks == 0
++                    ? 0
++                    : (uint8_t)((value & 0x0F) % physical_ram_banks);
+             }
+             /* 0x6000-0x7FFF: Unused for MBC5 */
+         }
