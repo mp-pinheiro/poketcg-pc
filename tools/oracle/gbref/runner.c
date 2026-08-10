@@ -126,13 +126,26 @@ int main(int argc, char **argv) {
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
     int instruction_state = json_number(request, "instruction_budget", &instruction_budget);
     int cycle_state = json_number(request, "cycle_budget", &cycle_budget);
+    uint64_t reg_a = 0, reg_f = 0, reg_b = 0, reg_c = 0;
+    uint64_t reg_d = 0, reg_e = 0, reg_hl = 0;
+    int reg_a_state = json_number(request, "a", &reg_a);
+    int reg_f_state = json_number(request, "f", &reg_f);
+    int reg_b_state = json_number(request, "b", &reg_b);
+    int reg_c_state = json_number(request, "c", &reg_c);
+    int reg_d_state = json_number(request, "d", &reg_d);
+    int reg_e_state = json_number(request, "e", &reg_e);
+    int reg_hl_state = json_number(request, "hl", &reg_hl);
     free(request);
-    if (entry_state != 1 || instruction_state < 0 || cycle_state < 0 || entry > 0xffff ||
-        instruction_budget == 0 || cycle_budget == 0 || instruction_budget > UINT32_MAX ||
-        cycle_budget > UINT32_MAX) {
-        fail("SCHEMA", "entry and finite positive budgets are required");
+    if (entry_state != 1 || instruction_state < 0 || cycle_state < 0 ||
+        entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
+        instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
+        reg_a_state < 0 || reg_f_state < 0 || reg_b_state < 0 ||
+        reg_c_state < 0 || reg_d_state < 0 || reg_e_state < 0 ||
+        reg_hl_state < 0 || reg_a > 0xff || reg_f > 0xff ||
+        reg_b > 0xff || reg_c > 0xff || reg_d > 0xff || reg_e > 0xff ||
+        reg_hl > 0xffff) {
+        fail("SCHEMA", "entry, registers, and finite positive budgets are required");
     }
-
     size_t rom_size = 0;
     uint8_t *rom = read_file(argv[2], &rom_size);
     if (!rom) fail("ARTIFACT", "ROM could not be read");
@@ -155,6 +168,10 @@ int main(int argc, char **argv) {
     gb_push16(ctx, 0xfea0);
     ctx->pc = (uint16_t)entry;
 
+    ctx->af = (uint16_t)((reg_a << 8) | reg_f);
+    ctx->bc = (uint16_t)((reg_b << 8) | reg_c);
+    ctx->de = (uint16_t)((reg_d << 8) | reg_e);
+    ctx->hl = (uint16_t)reg_hl;
     uint64_t steps = 0;
     uint64_t cycles = 0;
     while (ctx->pc != 0xfea0) {
