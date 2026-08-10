@@ -1,0 +1,47 @@
+name: "Copilot Setup Steps"
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build libsdl2-dev python3 python3-pip python3-venv byacc flex pkg-config libpng-dev
+
+      - name: Install just
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash
+          sudo cp just /usr/local/bin/
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install rgbds
+        run: |
+          RGBDS_URL=$(curl -sSf https://api.github.com/repos/gbdev/rgbds/releases/latest | python3 -c "import sys,json; r=json.load(sys.stdin); [print(a['browser_download_url']) for a in r['assets'] if 'linux-x86_64' in a['name'] and a['name'].endswith('.tar.xz')]")
+          curl -LsSf "$RGBDS_URL" -o /tmp/rgbds.tar.xz
+          sudo tar -xJf /tmp/rgbds.tar.xz --strip-components=1 -C /usr/local/bin
+
+      - name: Bootstrap pret disassembly
+        run: just bootstrap
+
+      - name: Install oracle venv
+        run: just oracle-venv
+
+      - name: Build C probe
+        run: just build
