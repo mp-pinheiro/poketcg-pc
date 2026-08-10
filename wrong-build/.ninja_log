@@ -1,0 +1,18 @@
+# ninja log v5
+1	6	0	/home/matheus/git/poketcg/wrong-build/CMakeFiles/cmake.verify_globs	976a1ceeacd9869c
+6	41	1786068864593819325	/home/matheus/git/poketcg/include/generated/wram.h	a840f1868b59a04a
+6	41	1786068864593819325	/home/matheus/git/poketcg/include/generated/hram.h	a840f1868b59a04a
+6	41	1786068864593819325	/home/matheus/git/poketcg/include/generated/sram.h	a840f1868b59a04a
+41	57	1786372528660914177	CMakeFiles/gbmem.dir/src/home/switch_rom.c.o	cff141fe85d580db
+43	59	1786372528660914177	CMakeFiles/poketcg.dir/src/main.c.o	61c505d72b28647d
+41	60	1786372528664914176	CMakeFiles/gbmem.dir/src/mem.c.o	69662230d6c272ce
+41	63	1786372528664914176	CMakeFiles/gbmem.dir/src/ppu.c.o	39d47e820344e4e0
+42	68	1786372528672914176	CMakeFiles/poketcg_probe.dir/src/probe_table.c.o	3b5944bba7dc4d8a
+42	70	1786372528672914176	CMakeFiles/gbmem.dir/src/home/switch_sram.c.o	89e693e4c004c55f
+48	72	1786372528676914176	CMakeFiles/poketcg.dir/src/replay.c.o	5e349559c309750b
+70	77	1786372528680914177	libgbmem.a	dc54c1e8bbd2c70f
+42	78	1786372528680914177	CMakeFiles/poketcg_probe.dir/src/probe.c.o	ddd7fa638c4ed90d
+44	79	1786372528680914177	CMakeFiles/poketcg.dir/src/snapshot.c.o	8dc272b0a7282c38
+43	237	1786372528840914167	CMakeFiles/poketcg.dir/src/shell.c.o	eb7879a508af69c6
+78	365	1786372528968914160	poketcg_probe	9bc3939cd889dc1d
+237	532	1786372529132914153	poketcg	4daf7b4d8e990234

@@ -70,8 +70,17 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
                         for pre in case["setup"]]
     if case.get("keys"):
         req["keys"] = int(case["keys"])
-    out = subprocess.run([str(probe)], input=json.dumps(req), capture_output=True, text=True)
-    if out.returncode != 0 and not out.stdout.strip():
+    try:
+        out = subprocess.run(
+            [str(probe)],
+            input=json.dumps(req),
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise RuntimeError("probe timed out after 30 seconds") from exc
+    if out.returncode != 0:
         raise RuntimeError(f"probe failed ({out.returncode}): {out.stderr.strip()}")
     try:
         result = json.loads(out.stdout)

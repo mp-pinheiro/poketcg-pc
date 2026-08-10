@@ -1,0 +1,6 @@
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/gen_layout.dir
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/gbmem.dir
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/poketcg_probe.dir
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/poketcg.dir
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/edit_cache.dir
+/home/matheus/git/poketcg/wrong-build/CMakeFiles/rebuild_cache.dir
