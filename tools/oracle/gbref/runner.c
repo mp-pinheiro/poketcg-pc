@@ -104,14 +104,15 @@ static void print_hex(const uint8_t *data, size_t size) {
     }
 }
 
-static void print_result(const GBContext *ctx, uint64_t steps, uint64_t cycles) {
-    printf("{\"status\":\"REFERENCE_OK\",\"completion\":\"return\","
+static void print_result(const GBContext *ctx, const char *completion,
+                         uint64_t steps, uint64_t cycles) {
+    printf("{\"status\":\"REFERENCE_OK\",\"completion\":\"%s\","
            "\"pc\":%" PRIu16 ",\"sp\":%" PRIu16 ","
            "\"af\":%" PRIu16 ",\"bc\":%" PRIu16 ","
            "\"de\":%" PRIu16 ",\"hl\":%" PRIu16 ","
            "\"rom_bank\":%" PRIu16 ",\"ram_bank\":%" PRIu8 ","
            "\"wram\":\"",
-           ctx->pc, ctx->sp, ctx->af, ctx->bc, ctx->de, ctx->hl,
+           completion, ctx->pc, ctx->sp, ctx->af, ctx->bc, ctx->de, ctx->hl,
            ctx->rom_bank, ctx->ram_bank);
     print_hex(ctx->wram, 0x2000);
     printf("\",\"hram\":\"");
@@ -136,15 +137,17 @@ int main(int argc, char **argv) {
     char *request = read_request();
     char completion[16];
     if (json_string(request, "completion", completion, sizeof completion) != 1 ||
-        strcmp(completion, "return") != 0) {
+        (strcmp(completion, "return") != 0 && strcmp(completion, "pre-ret") != 0)) {
         free(request);
-        fail("SCHEMA", "only completion=return is supported by this slice");
+        fail("SCHEMA", "completion must be return or pre-ret");
     }
 
     uint64_t entry = 0;
     int entry_state = json_number(request, "entry", &entry);
     uint64_t instruction_budget = DEFAULT_INSTRUCTION_BUDGET;
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
+    uint64_t stop_pc = 0;
+    int stop_state = json_number(request, "stop_pc", &stop_pc);
     int instruction_state = json_number(request, "instruction_budget", &instruction_budget);
     int cycle_state = json_number(request, "cycle_budget", &cycle_budget);
     uint64_t reg_a = 0, reg_f = 0, reg_b = 0, reg_c = 0;
@@ -164,6 +167,7 @@ int main(int argc, char **argv) {
     if (entry_state != 1 || instruction_state < 0 || cycle_state < 0 ||
         entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
+        (strcmp(completion, "pre-ret") == 0 && (stop_state != 1 || stop_pc > 0xffff)) ||
         reg_a_state < 0 || reg_f_state < 0 || reg_b_state < 0 ||
         reg_c_state < 0 || reg_d_state < 0 || reg_e_state < 0 ||
         reg_hl_state < 0 || reg_a > 0xff || reg_f > 0xff ||
@@ -204,7 +208,7 @@ int main(int argc, char **argv) {
     ctx->hl = (uint16_t)reg_hl;
     uint64_t steps = 0;
     uint64_t cycles = 0;
-    while (ctx->pc != 0xfea0) {
+    while (ctx->pc != (strcmp(completion, "pre-ret") == 0 ? stop_pc : 0xfea0)) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
             fprintf(stdout, "{\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
                     "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
@@ -222,7 +226,7 @@ int main(int argc, char **argv) {
         steps++;
         cycles += delta;
     }
-    print_result(ctx, steps, cycles);
+    print_result(ctx, completion, steps, cycles);
     gb_context_destroy(ctx);
     free(rom);
     return 0;
