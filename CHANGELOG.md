@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.2.0 - 2026-08-09
+## v0.2.0 - 2026-08-10
 
 ### Bug Fixes
 
@@ -33,6 +33,8 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 - *(plan)* Record gfx commit
 - *(plan)* Checkpoint sprite phase 2
 - Document project dependencies
+- Harden replay oracle setup
+- *(plan)* Record sprite animations
 
 ### Features
 
@@ -110,6 +112,7 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 - *(gfx)* Port default palettes
 - *(gfx)* Port loaders and fades
 - *(gfx)* Port sprite animations
+- *(port)* Complete engine slices
 
 ### Miscellaneous
 
