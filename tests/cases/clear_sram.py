@@ -28,3 +28,5 @@ CASES = {
         dict(POISON, sram={0: {0xA000: b"\xaa\xbb\xcc"}, 3: {0xBFFF: b"\xff"}}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

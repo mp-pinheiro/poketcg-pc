@@ -32,3 +32,5 @@ CASES = {
 # The runnable status and DoFrame-function leaves above are kept separate from
 # those orchestrators rather than represented by no-op adapters.
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

@@ -156,4 +156,52 @@ SCHEMA2_CASES = {
             "evidence": "primary",
         },
     ],
+    "Random": [
+        {
+            "id": "Random-zero",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON, a=0),
+            "bus": {},
+            "seeds": {"wram": {wRNG1: b"\x12\x34\x56"}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 1000,
+            "cycle_budget": 10000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+        {
+            "id": "Random-one",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON, a=1),
+            "bus": {},
+            "seeds": {"wram": {wRNG1: b"\xff\xff\xff"}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 1000,
+            "cycle_budget": 10000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+    ],
+}
+MUTATIONS = {
+    "UpdateRNGSources": {
+        "source_symbol": "UpdateRNGSources",
+        "before": "uint8_t feedback = (uint8_t)(((r2 >> 6) ^ r1) & 1);",
+        "after": "uint8_t feedback = (uint8_t)((((r2 >> 6) ^ r1) & 1) ^ 1u);",
+        "case_ids": ["UpdateRNGSources-zero", "UpdateRNGSources-poison", "UpdateRNGSources-boundary"],
+    },
+    "HtimesL": {
+        "source_symbol": "HtimesL",
+        "before": "acc = (uint16_t)(acc + de);",
+        "after": "acc = (uint16_t)(acc + (uint16_t)(de + 1u));",
+        "case_ids": ["HtimesL-zero", "HtimesL-poison", "HtimesL-max"],
+    },
+    "Random": {
+        "source_symbol": "Random",
+        "before": "return (uint8_t)(HtimesL((uint16_t)(a << 8 | l)) >> 8);",
+        "after": "return (uint8_t)(HtimesL((uint16_t)(a << 8 | (uint8_t)(l + 1u))) >> 8);",
+        "case_ids": ["Random-zero", "Random-one"],
+    },
 }

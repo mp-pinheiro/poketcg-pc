@@ -8,7 +8,11 @@ import importlib.util
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests" / "cases"))
 
 REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
 
@@ -19,11 +23,13 @@ def main() -> int:
     parser.add_argument("--index", type=int, default=0)
     parser.add_argument("--case", type=Path, required=True)
     parser.add_argument("--rom", type=Path, required=True)
+    seed_wram_spec = ""
+    seed_sram_spec = ""
+    seed_vram_spec = ""
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
-    seed_wram_spec = ""
     if args.case.suffix == ".py":
         spec = importlib.util.spec_from_file_location("schema2_case", args.case)
         if spec is None or spec.loader is None:
@@ -67,11 +73,27 @@ def main() -> int:
             encoded = bytes(payload).hex()
             seed_wram_map[str(parsed_address)] = encoded
             seed_parts.append(f"{parsed_address:04x}={encoded}")
-        if any(seeds.get(region) for region in ("hram", "sram", "vram", "oam", "palette")):
-            raise SystemExit("SCHEMA canonical non-WRAM seeds require runner state support")
+        seed_sram_parts = []
+        for bank, spans in seeds.get("sram", {}).items():
+            for address, payload in spans.items():
+                parsed_bank = int(bank, 0) if isinstance(bank, str) else int(bank)
+                parsed_address = int(address, 0) if isinstance(address, str) else int(address)
+                encoded = bytes(payload).hex()
+                seed_sram_parts.append(f"{parsed_bank:x}:{parsed_address:x}={encoded}")
+                case["state"]["sram"].append([parsed_bank, parsed_address, len(bytes(payload))])
+        seed_vram_parts = []
+        for bank, spans in seeds.get("vram", {}).items():
+            for address, payload in spans.items():
+                parsed_bank = int(bank, 0) if isinstance(bank, str) else int(bank)
+                parsed_address = int(address, 0) if isinstance(address, str) else int(address)
+                encoded = bytes(payload).hex()
+                seed_vram_parts.append(f"{parsed_bank:x}:{parsed_address:x}={encoded}")
+                case["state"]["vram"].append([parsed_bank, parsed_address, len(bytes(payload))])
         case["state"]["wram"] = [[int(address, 0) if isinstance(address, str) else int(address), len(bytes(payload))]
                                  for address, payload in seeds.get("wram", {}).items()]
         seed_wram_spec = ";".join(seed_parts)
+        seed_sram_spec = ";".join(seed_sram_parts)
+        seed_vram_spec = ";".join(seed_vram_parts)
         case["completion"] = mode
         case["evidence"] = case.get("evidence", "primary")
     else:
@@ -137,8 +159,8 @@ def main() -> int:
         "rom_bank", "ram_bank", "ram_enable"
     }:
         raise SystemExit("SCHEMA mapper must declare rom_bank, ram_bank, ram_enable")
-    if any(case.get(name) for name in ("bus", "sram", "vram", "setup", "input_events")):
-        raise SystemExit("SCHEMA non-register state is not supported by this runner slice")
+    if any(seeds.get(region) for region in ("hram", "oam", "palette")):
+        raise SystemExit("SCHEMA canonical HRAM/OAM/palette seeds require runner state support")
     if args.fn not in args.symbols.read_text():
         raise SystemExit("ARTIFACT function is absent from symbols")
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
@@ -166,6 +188,10 @@ def main() -> int:
             )
     if seed_wram_spec:
         request["seed_wram"] = seed_wram_spec
+    if seed_sram_spec:
+        request["seed_sram"] = seed_sram_spec
+    if seed_vram_spec:
+        request["seed_vram"] = seed_vram_spec
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,

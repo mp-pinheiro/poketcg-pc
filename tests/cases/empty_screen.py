@@ -28,3 +28,5 @@ CASES = {
         {"b": 0x01, "c": 0x20},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

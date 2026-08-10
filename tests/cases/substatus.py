@@ -375,3 +375,5 @@ CASES.update({
         dict(POISON, d=0, e=0, wram=STRIKES_WRAM),
     ],
 })
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

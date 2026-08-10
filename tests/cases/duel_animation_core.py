@@ -3,7 +3,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 QUEUE = 0xD423
 BUFFER = 0xD42C
 CONTRACT = {
-    "_ResetAnimationQueue": ("b", "c", "hl"),
+    "_ResetAnimationQueue": {
+        "compare": ("b", "c", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
     "PlayLoadedDuelAnimation": ("b", "c", "d", "e", "hl"),
     "LoadDuelAnimationToBuffer": ("a", "b", "c", "d", "e", "hl"),
     "_UpdateQueuedAnimations": ("a", "b", "c", "d", "e", "hl"),
@@ -51,4 +54,43 @@ CASES = {
              expect={QUEUE: b"\xff" * 7, 0xD4AC: b"\x00\x00"}),
         {"wram": {0xCAD3: b"\x01\x00", 0xD42A: b"\xFF", QUEUE: b"\x01" * 7, 0xD4AC: b"\x01\x02"}},
     ],
+}
+
+SCHEMA2_CASES = {
+    "_ResetAnimationQueue": [
+        {
+            "id": "_ResetAnimationQueue-zero",
+            "mapper": {"rom_bank": 7, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0},
+            "bus": {},
+            "seeds": {"wram": {QUEUE: b"\x00" * 7, 0xD4AC: b"\x7f\x7f\x7f"}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 1000,
+            "cycle_budget": 10000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+        {
+            "id": "_ResetAnimationQueue-poison",
+            "mapper": {"rom_bank": 7, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON),
+            "bus": {},
+            "seeds": {"wram": {QUEUE: b"\x01" * 7, 0xD4AC: b"\xaa\xbb\xcc"}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 1000,
+            "cycle_budget": 10000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+    ],
+}
+MUTATIONS = {
+    "_ResetAnimationQueue": {
+        "source_symbol": "_ResetAnimationQueue",
+        "before": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++) write((uint16_t)(QUEUE_ADDR + i), 0xff);\n    write(wActiveScreenAnim_ADDR, 0xff);",
+        "after": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++) write((uint16_t)(QUEUE_ADDR + i), 0xfe);\n    write(wActiveScreenAnim_ADDR, 0xff);",
+        "case_ids": ["_ResetAnimationQueue-zero", "_ResetAnimationQueue-poison"],
+    },
 }

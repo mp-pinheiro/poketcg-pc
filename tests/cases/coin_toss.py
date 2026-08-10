@@ -68,3 +68,11 @@ SCHEMA2_CASES = {
         },
     ],
 }
+MUTATIONS = {
+    "CompareDEtoBC": {
+        "source_symbol": "CompareDEtoBC",
+        "before": "if (d != b)",
+        "after": "if (d == b)",
+        "case_ids": ["CompareDEtoBC-equal", "CompareDEtoBC-less", "CompareDEtoBC-poison"],
+    },
+}

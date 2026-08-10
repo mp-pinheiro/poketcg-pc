@@ -42,3 +42,5 @@ CASES = {
                            OPPONENT_DISCARD_COUNT: b"\x00", 0xC300: b"\x10", OPPONENT_DECK: b"\xD9"}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

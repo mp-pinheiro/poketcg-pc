@@ -28,3 +28,5 @@ CASES = {
         {"wram": {0xFF8D: b"\xF0\x00\x00\x00\x00"}, "read": {0xFF8D: 5}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

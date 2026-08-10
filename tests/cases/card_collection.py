@@ -330,3 +330,5 @@ CASES = {
         {"a": 5, "ramg": False, "sram": {0: {sCardCollection: bytes(10 if i == 5 else 0 for i in range(256))}}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

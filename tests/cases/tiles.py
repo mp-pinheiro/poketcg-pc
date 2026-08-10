@@ -179,3 +179,5 @@ CASES = {
              vread={0: {V0_TILES0: 1024, V0_TILES1: 1024, V0_TILES2: 1024}}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

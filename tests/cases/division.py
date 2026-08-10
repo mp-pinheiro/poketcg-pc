@@ -93,3 +93,11 @@ SCHEMA2_CASES = {
         },
     ],
 }
+MUTATIONS = {
+    "DivideBCbyDE": {
+        "source_symbol": "DivideBCbyDE",
+        "before": "bc = (uint16_t)(bc << 1);",
+        "after": "bc = (uint16_t)(bc << 1 | 1u);",
+        "case_ids": ["DivideBCbyDE-zero", "DivideBCbyDE-poison", "DivideBCbyDE-divisor-zero"],
+    },
+}

@@ -11,6 +11,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "oracle"))
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tests" / "cases"))
+sys.path.insert(0, str(ROOT))
 from schema import SchemaValidationError, validate_cases
 
 def load_modules() -> list[tuple[Path, object]]:
@@ -55,9 +57,14 @@ def main() -> int:
         except SchemaValidationError as exc:
             print(f"SCHEMA {path}: {exc}")
             failures += 1
-        if args.stage == "release" and flattened and not hasattr(module, "MUTATIONS"):
-            print(f"SCHEMA {path}: release stage requires MUTATIONS")
-            failures += 1
+        if args.stage == "release":
+            mutations = getattr(module, "MUTATIONS", None)
+            if flattened and not isinstance(mutations, dict):
+                print(f"SCHEMA {path}: release stage requires MUTATIONS mapping")
+                failures += 1
+            elif flattened and not mutations:
+                print(f"SCHEMA {path}: release stage requires non-empty MUTATIONS")
+                failures += 1
     if failures:
         print(f"AUDIT_FAIL stage={args.stage} failures={failures}")
         return 2

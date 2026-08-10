@@ -73,3 +73,11 @@ SCHEMA2_CASES = {
         },
     ],
 }
+MUTATIONS = {
+    "ATimes10": {
+        "source_symbol": "ATimes10",
+        "before": "a = (uint8_t)(a + e);",
+        "after": "a = (uint8_t)(a + (uint8_t)(e + 1u));",
+        "case_ids": ["ATimes10-zero", "ATimes10-poison-25", "ATimes10-wrap"],
+    },
+}

@@ -281,3 +281,5 @@ CASES.update({
 # arguments was verified green before this span was added.
 CASES["ProcessTextFromID"].append(
     {"hl": 1, "setup": SETUP, "read": dict(CACHE_READ), "vread": VRAM_READ})
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

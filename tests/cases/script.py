@@ -18,3 +18,5 @@ CASES = {
         dict(POISON, hl=0x0004, wram={wCurMap: b"\x03"}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

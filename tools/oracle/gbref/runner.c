@@ -122,6 +122,26 @@ static int apply_seed_spans(GBContext *ctx, char *spec) {
     }
     return 1;
 }
+static int apply_banked_spans(GBContext *ctx, char *spec, uint8_t *region,
+                               size_t region_size, unsigned base, unsigned banks) {
+    for (char *item = strtok(spec, ";"); item; item = strtok(NULL, ";")) {
+        unsigned bank = 0;
+        unsigned address = 0;
+        char hex[65536];
+        if (sscanf(item, "%x:%x=%65535s", &bank, &address, hex) != 3 ||
+            bank >= banks || address < base || address >= base + 0x2000u) return 0;
+        size_t length = strlen(hex);
+        if ((length & 1u) != 0u || address + length / 2u > base + 0x2000u) return 0;
+        size_t offset = (size_t)bank * 0x2000u + address - base;
+        if (offset + length / 2u > region_size) return 0;
+        for (size_t i = 0; i < length; i += 2) {
+            unsigned byte = 0;
+            if (sscanf(hex + i, "%2x", &byte) != 1) return 0;
+            region[offset + i / 2u] = (uint8_t)byte;
+        }
+    }
+    return 1;
+}
 
 static void print_result(const GBContext *ctx, const char *completion,
                          uint64_t steps, uint64_t cycles) {
@@ -173,6 +193,12 @@ int main(int argc, char **argv) {
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
     uint64_t stop_pc = 0;
     int stop_state = json_number(request, "stop_pc", &stop_pc);
+    char seed_wram[65536];
+    char seed_sram[65536];
+    char seed_vram[65536];
+    int seed_wram_state = json_string(request, "seed_wram", seed_wram, sizeof seed_wram);
+    int seed_sram_state = json_string(request, "seed_sram", seed_sram, sizeof seed_sram);
+    int seed_vram_state = json_string(request, "seed_vram", seed_vram, sizeof seed_vram);
     char predicate[96];
     int predicate_state = json_string(request, "predicate", predicate, sizeof predicate);
     uint64_t event_addr = 0, event_value = 0, event_mask = 0xff;
@@ -192,8 +218,6 @@ int main(int argc, char **argv) {
     uint64_t reg_a = 0, reg_f = 0, reg_b = 0, reg_c = 0;
     uint64_t reg_d = 0, reg_e = 0, reg_hl = 0;
     int reg_a_state = json_number(request, "a", &reg_a);
-    char seed_wram[65536];
-    int seed_wram_state = json_string(request, "seed_wram", seed_wram, sizeof seed_wram);
     int reg_f_state = json_number(request, "f", &reg_f);
     int reg_b_state = json_number(request, "b", &reg_b);
     int reg_c_state = json_number(request, "c", &reg_c);
@@ -210,7 +234,7 @@ int main(int argc, char **argv) {
          (predicate_state != 1 || event_addr_state != 1 || event_value_state != 1 ||
           event_mask_state != 1 || event_addr > 0xffff || event_value > 0xff ||
           event_mask > 0xff)) ||
-        seed_wram_state < 0 ||
+        seed_wram_state < 0 || seed_sram_state < 0 || seed_vram_state < 0 ||
         entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
         (strcmp(completion, "pre-ret") == 0 && (stop_state != 1 || stop_pc > 0xffff)) ||
@@ -242,20 +266,41 @@ int main(int argc, char **argv) {
     }
     gb_context_reset(ctx, true);
     ctx->rom_bank = (uint16_t)mapper_rom_bank;
+    ctx->rom_bank_low = (uint8_t)(mapper_rom_bank & 0xffu);
+    ctx->rom_bank_upper = (uint8_t)((mapper_rom_bank >> 8) & 1u);
     ctx->ram_bank = (uint8_t)mapper_ram_bank;
     ctx->ram_enabled = (uint8_t)mapper_ram_enable;
     ctx->sp = 0xfffe;
     gb_push16(ctx, 0xfea0);
     ctx->pc = (uint16_t)entry;
 
-    ctx->af = (uint16_t)((reg_a << 8) | reg_f);
-    ctx->bc = (uint16_t)((reg_b << 8) | reg_c);
-    ctx->de = (uint16_t)((reg_d << 8) | reg_e);
-    ctx->hl = (uint16_t)reg_hl;
+    ctx->a = (uint8_t)reg_a;
+    ctx->f_z = (uint8_t)((reg_f >> 7) & 1u);
+    ctx->f_n = (uint8_t)((reg_f >> 6) & 1u);
+    ctx->f_h = (uint8_t)((reg_f >> 5) & 1u);
+    ctx->f_c = (uint8_t)((reg_f >> 4) & 1u);
+    ctx->b = (uint8_t)reg_b;
+    ctx->c = (uint8_t)reg_c;
+    ctx->d = (uint8_t)reg_d;
+    ctx->e = (uint8_t)reg_e;
+    ctx->h = (uint8_t)(reg_hl >> 8);
+    ctx->l = (uint8_t)reg_hl;
     if (seed_wram_state == 1 && !apply_seed_spans(ctx, seed_wram)) {
         gb_context_destroy(ctx);
         free(rom);
         fail("SCHEMA", "seed_wram must contain address=hex spans");
+    }
+    if (seed_sram_state == 1 &&
+        !apply_banked_spans(ctx, seed_sram, ctx->eram, ctx->eram_size, 0xa000, 4)) {
+        gb_context_destroy(ctx);
+        free(rom);
+        fail("SCHEMA", "seed_sram must contain bank:address=hex spans");
+    }
+    if (seed_vram_state == 1 &&
+        !apply_banked_spans(ctx, seed_vram, ctx->vram, 2u * 0x2000u, 0x8000, 2)) {
+        gb_context_destroy(ctx);
+        free(rom);
+        fail("SCHEMA", "seed_vram must contain bank:address=hex spans");
     }
     uint64_t steps = 0;
     uint64_t cycles = 0;

@@ -53,3 +53,5 @@ CASES = {
         {"hl": SRC, "wram": {wOAMOffset: b"\xC8"}, "read": {wOAMOffset: 1}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

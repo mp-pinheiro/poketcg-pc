@@ -163,3 +163,5 @@ CASES.update({
          "read": {0xCD05: 1, 0xFFAA: 2, 0xFFAC: 1, 0x9800: 4}},
     ],
 })
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

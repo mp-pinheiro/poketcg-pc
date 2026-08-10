@@ -114,3 +114,5 @@ CASES.update({
              vread={0: {0x9800: 192}, 1: {0x9800: 192}}),
     ],
 })
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

@@ -395,3 +395,5 @@ CASES["SetDefaultConsolePalettes"] = [
      "read": {WBG: 40, WOBJ: 8, WTEXT: 1, WFLAG: 1,
               0xFF47: 1, 0xFF48: 1, 0xFF49: 1}},
 ]
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

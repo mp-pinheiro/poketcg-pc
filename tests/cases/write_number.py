@@ -49,3 +49,11 @@ SCHEMA2_CASES = {
         },
     ],
 }
+MUTATIONS = {
+    "TwoByteNumberToText": {
+        "source_symbol": "TwoByteNumberToText",
+        "before": "(uint16_t)-10, (uint16_t)-1,",
+        "after": "(uint16_t)-10, (uint16_t)-2,",
+        "case_ids": ["TwoByteNumberToText-12345"],
+    },
+}

@@ -24,3 +24,5 @@ CASES = {
          "expect": {HRAM: b"\x11\x44\x00\x00\x00", JOYP: b"\x30"}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

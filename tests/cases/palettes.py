@@ -144,3 +144,5 @@ CASES = {
              expect={WFLAG: b"\x00"}, expect_regs=_flush_all_cgb_palettes()),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

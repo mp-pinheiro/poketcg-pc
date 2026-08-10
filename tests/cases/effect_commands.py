@@ -38,3 +38,5 @@ CASES = {
         dict(POISON, a=EFFECTCMDTYPE_AI, hl=0),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

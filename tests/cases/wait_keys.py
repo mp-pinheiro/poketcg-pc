@@ -32,3 +32,5 @@ CASES = {
          "read": {HRAM_KEYS_PRESSED: 1}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

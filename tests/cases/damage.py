@@ -57,3 +57,17 @@ SCHEMA2_CASES = {
         _schema_case("SubtractFromDamage-boundary", {"a": 1, "_damage": b"\x00\x00"}),
     ],
 }
+MUTATIONS = {
+    "AddToDamage": {
+        "source_symbol": "AddToDamage",
+        "before": "uint16_t lo = (uint16_t)((uint16_t)gb_read8(wDamage_ADDR) + a);",
+        "after": "uint16_t lo = (uint16_t)((uint16_t)gb_read8(wDamage_ADDR) + (uint8_t)(a + 1u));",
+        "case_ids": ["AddToDamage-zero", "AddToDamage-boundary"],
+    },
+    "SubtractFromDamage": {
+        "source_symbol": "SubtractFromDamage",
+        "before": "uint8_t borrow = (uint8_t)(low < a ? 1u : 0u);",
+        "after": "uint8_t borrow = (uint8_t)(low <= a ? 1u : 0u);",
+        "case_ids": ["SubtractFromDamage-zero", "SubtractFromDamage-boundary"],
+    },
+}

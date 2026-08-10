@@ -559,3 +559,5 @@ CASES["Music2_Update"] = [
                        0xDD82: b"\x80"},
          read={0xDD8D: 4}),
 ]
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

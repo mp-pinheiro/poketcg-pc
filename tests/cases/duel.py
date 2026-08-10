@@ -798,3 +798,5 @@ CASES.update({
          "expect": {0x9980: b"\x18", 0x9A32: b"\x1d"}, "expect_regs": {"f": 0x10}},
     ],
 })
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

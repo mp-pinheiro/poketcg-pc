@@ -66,21 +66,7 @@ oracle-health-pyboy:
     PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py
 
 oracle-health-gbref: oracle-build-gbref
-    #!/usr/bin/env bash
-    set -euo pipefail
-    rom="$(mktemp)"
-    python3 tools/oracle/conformance_rom.py "$rom"
-    request='{"completion":"return","entry":256,"instruction_budget":1,"cycle_budget":4}'
-    result="$(printf '%s' "$request" | tools/oracle/gbref/build/gbref_runner --rom "$rom")"
-    if [[ "$result" != *REFERENCE_OK* ||
-          "$result" != *'"pc":65184'* ||
-          "$result" != *'"sp":65534'* ]]; then
-        printf '%s\n' "$result" >&2
-        rm -f "$rom"
-        exit 3
-    fi
-    printf '%s\n' "$result"
-    rm -f "$rom"
+    python3 tools/oracle/gbref_health.py
 oracle-health: oracle-health-gbref oracle-health-pyboy
 oracle-build-gbref:
     #!/usr/bin/env bash
@@ -92,8 +78,6 @@ oracle-build-gbref:
 oracle-audit-cases STAGE:
     python3 tools/audit_oracle_cases.py --stage {{STAGE}}
 
-oracle-fn-gate: oracle-health-gbref lint-adapters build-barrier
-    python3 tools/audit_oracle_cases.py --stage routine
 
 # Configure + build the C side (gbmem, poketcg_probe).
 build:
@@ -111,6 +95,7 @@ oracle-fn-all-legacy: build-barrier lint-adapters
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
     /tmp/pbenv/bin/python tests/test_leaves.py --all --probe build-barrier/poketcg_probe
+
 
 # Rebuild an already configured private tree without re-running CMake.
 build-incremental:
@@ -170,8 +155,17 @@ oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
     python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
-# Full routine gate: backend health, adapter/schema checks, fixed inventory.
-oracle-gate: oracle-health-gbref oracle-fn-all
+# Primary function gate: GBRT health, adapters, schema, and inventory.
+oracle-fn-gate: oracle-health-gbref oracle-fn-all
+    python3 tools/audit_oracle_cases.py --stage routine
+
+# Independent PyBoy audit lane; a health failure quarantines this lane.
+oracle-audit-all: oracle-health-pyboy
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe
+
+# Aggregate function gate adds the independent PyBoy audit.
+oracle-gate: oracle-fn-gate oracle-audit-all
     python3 tools/audit_oracle_cases.py --stage routine
 oracle-diff FN: build
     #!/usr/bin/env bash

@@ -220,3 +220,5 @@ CASES = {
              read={0xC100: 0x100}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

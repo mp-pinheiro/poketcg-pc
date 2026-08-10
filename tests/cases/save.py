@@ -651,3 +651,5 @@ CASES = {
                         sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}}),
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

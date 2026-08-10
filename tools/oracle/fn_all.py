@@ -10,12 +10,13 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
 from routines import ALL  # noqa: E402
 
 
-def load_cases() -> dict[str, list[Path]]:
-    found: dict[str, list[Path]] = {}
+def load_cases() -> dict[str, list[tuple[Path, dict]]]:
+    found: dict[str, list[tuple[Path, dict]]] = {}
     for path in sorted((ROOT / "tests" / "cases").glob("*.py")):
         spec = importlib.util.spec_from_file_location(f"barrier_{path.stem}", path)
         if spec is None or spec.loader is None:
@@ -23,7 +24,7 @@ def load_cases() -> dict[str, list[Path]]:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         for fn, records in getattr(module, "SCHEMA2_CASES", {}).items():
-            found.setdefault(fn, []).extend([path] * len(records))
+            found.setdefault(fn, []).extend((path, record) for record in records)
     return found
 
 
@@ -41,13 +42,28 @@ def main() -> int:
     cases = load_cases()
     failures = 0
     migrated = 0
+    skipped = {"scene": 0, "intentional-transform": 0, "native-stress": 0, "dependency-blocked": 0}
+    primary_missing = 0
     for fn in ALL:
-        paths = cases.get(fn, [])
-        if not paths:
+        records = cases.get(fn, [])
+        primary_records = [record for _, record in records if record.get("evidence") == "primary"]
+        if not records:
             print(f"SCHEMA missing schema-2 cases {fn}")
             failures += 1
             continue
-        for index, path in enumerate(paths):
+        if not primary_records:
+            primary_missing += 1
+            print(f"BOUNDARY no primary case {fn}")
+            continue
+        for index, (path, record) in enumerate(records):
+            evidence = record.get("evidence")
+            if evidence != "primary":
+                if evidence in skipped:
+                    skipped[evidence] += 1
+                else:
+                    print(f"SCHEMA invalid evidence {fn} case={record.get('id')}")
+                    failures += 1
+                continue
             migrated += 1
             command = [
                 sys.executable, str(ROOT / "tools/oracle/gbref/compare_one.py"),
@@ -61,8 +77,9 @@ def main() -> int:
             print(output[-1] if output else result.stderr.strip())
             if result.returncode:
                 failures += 1
-    print(f"INVENTORY routines={len(ALL)} migrated_cases={migrated} failures={failures}")
-    return 2 if failures else 0
+    counts = " ".join(f"{key}={value}" for key, value in skipped.items())
+    print(f"INVENTORY routines={len(ALL)} migrated_cases={migrated} primary_missing={primary_missing} skipped_{counts} failures={failures}")
+    return 2 if failures or primary_missing else 0
 
 
 if __name__ == "__main__":

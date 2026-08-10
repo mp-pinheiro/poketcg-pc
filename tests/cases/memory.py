@@ -154,3 +154,5 @@ CASES = {
         {"a": 0x02, "hl": 0xA000, "wram": {hBankROM: b"\x04"}, "read": {hBankROM: 1}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

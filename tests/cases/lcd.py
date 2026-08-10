@@ -37,3 +37,5 @@ CASES = {
     "SetWindowOn": [{"wram": {0xCABB: b"\0"}, "read": {0xCABB: 1}}, dict(POISON, wram={0xCABB: b"\x04"}, read={0xCABB: 1})],
     "SetWindowOff": [{"wram": {0xCABB: b"\xFF"}, "read": {0xCABB: 1}}, dict(POISON, wram={0xCABB: b"\x20"}, read={0xCABB: 1})],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

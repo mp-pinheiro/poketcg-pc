@@ -1,0 +1,7 @@
+{
+  "fn": "ATimes10",
+  "case": "tests/cases/math.py",
+  "index": 0,
+  "status": "RED",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ATimes10\", \"mismatches\": {\"a\": [0, 2]}}\n"
+}

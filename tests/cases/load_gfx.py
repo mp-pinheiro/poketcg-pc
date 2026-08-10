@@ -187,3 +187,5 @@ for _name in (
     for _case in CASES[_name]:
         _case.setdefault("wram", {})[0xff80] = b"\x20"
 
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

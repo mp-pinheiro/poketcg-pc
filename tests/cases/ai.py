@@ -66,3 +66,5 @@ CASES = {
          "expect_regs": {"a": 0x81}},
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
