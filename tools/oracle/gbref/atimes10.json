@@ -1,0 +1,16 @@
+{
+  "id": "ATimes10-poison-25",
+  "fn": "ATimes10",
+  "entry": 3147,
+  "completion": "return",
+  "instruction_budget": 1000,
+  "cycle_budget": 10000,
+  "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": false},
+  "registers": {"a": 25, "f": 240, "b": 187, "c": 204, "d": 221, "e": 238, "hl": 4660},
+  "bus": {},
+  "sram": {},
+  "vram": {},
+  "setup": [],
+  "input_events": [],
+  "evidence": "primary"
+}
