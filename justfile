@@ -112,9 +112,6 @@ oracle-fn-all-legacy: build-barrier lint-adapters
     export POKETCG_ROM=poketcg/poketcg.gbc
     /tmp/pbenv/bin/python tests/test_leaves.py --all --probe build-barrier/poketcg_probe
 
-# Fixed registry-derived barrier; refuses legacy PyBoy execution.
-oracle-fn-all: build-barrier lint-adapters
-    python3 tools/oracle/fn_gate.py
 # Rebuild an already configured private tree without re-running CMake.
 build-incremental:
     #!/usr/bin/env bash
