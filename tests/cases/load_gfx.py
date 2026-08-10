@@ -58,31 +58,31 @@ NAMES = (
 )
 
 CONTRACT = {
-    "LoadTilemap_ToSRAM": ("b", "c", "d", "e", "hl"),
-    "LoadTilemap_ToVRAM": ("b", "c", "d", "e", "hl"),
-    "LoadTilemap": ("b", "c", "d", "e", "hl"),
-    "LoadTilemap.InitAndDecompressBGMap": ("b", "c", "d", "e", "hl"),
-    "LoadTilemap.Decompress": ("b", "d", "e", "hl"),
-    "Func_80148": ("b", "c", "d", "e", "hl"),
-    "CopyBGDataToVRAMOrSRAM": ("c", "d", "e", "hl"),
-    "SafelyCopyBGMapFromSRAMToVRAM": ("f", "b", "c", "d", "e", "hl"),
-    "ClearSRAMBGMaps": ("f", "b", "c", "d", "e", "hl"),
-    "GetMapDataPointer": ("a", "f", "b", "c", "d", "e", "hl"),
-    "LoadGraphicsPointerFromHL": ("b", "c", "d", "e", "hl"),
-    "LoadSpriteGfx": ("a", "b", "c", "d", "e", "hl"),
-    "LoadGfxDataFromTempPointerToVRAMBank": ("b", "c", "d", "e", "hl"),
-    "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2": ("b", "c", "d", "e", "hl"),
-    "LoadGfxDataFromTempPointer": ("b", "c", "d", "e", "hl"),
-    "GetTileOffsetPointerAndSwitchVRAM": ("b", "c", "d", "e", "hl"),
-    "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": ("f", "b", "c", "d", "e", "hl"),
-    "LoadTilesetGfx": ("b", "c", "d", "e", "hl"),
-    "LoadTilesetGfx.LoadTileGfx": ("b", "c", "d", "e", "hl"),
-    "LoadTilesetGfx.CopyGfxData": ("a", "f", "b", "c", "d", "e", "hl"),
-    "Func_803b9": ("b", "c", "d", "e"),
-    "LoadBGPalette": ("b", "c", "d", "e", "hl"),
-    "LoadPaletteDataFromHL": ("b", "c", "d", "e", "hl"),
-    "LoadOBPalette": ("b", "c", "d", "e", "hl"),
-    "LoadPaletteDataToBuffer": ("b", "c", "d", "e", "hl"),
+    "LoadTilemap_ToSRAM": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilemap_ToVRAM": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilemap": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilemap.InitAndDecompressBGMap": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilemap.Decompress": {"compare": ("b", "d", "e", "hl"), "preserve": ("hl",)},
+    "Func_80148": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "CopyBGDataToVRAMOrSRAM": {"compare": ("c", "d", "e", "hl"), "preserve": ("c",)},
+    "SafelyCopyBGMapFromSRAMToVRAM": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "ClearSRAMBGMaps": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetMapDataPointer": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "LoadGraphicsPointerFromHL": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "LoadSpriteGfx": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadGfxDataFromTempPointerToVRAMBank": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadGfxDataFromTempPointer": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetTileOffsetPointerAndSwitchVRAM": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")},
+    "LoadTilesetGfx": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilesetGfx.LoadTileGfx": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadTilesetGfx.CopyGfxData": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "Func_803b9": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "LoadBGPalette": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadPaletteDataFromHL": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadOBPalette": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadPaletteDataToBuffer": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -189,3 +189,12 @@ for _name in (
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "LoadBGPalette": {
+        "source_symbol": "LoadBGPalette",
+        "before": "SetBGP(p[1]);",
+        "after": "SetBGP((uint8_t)(p[1] ^ 1u));",
+        "case_ids": ["LoadBGPalette-0", "LoadBGPalette-1"],
+    },
+}

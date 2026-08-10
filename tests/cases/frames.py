@@ -2,9 +2,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "DoAFrames": ("b", "c", "d", "e", "hl"),
-    "DoFrame": ("b", "c", "d", "e", "hl"),
-    "HandleDPadRepeat": ("b", "c", "d", "e", "hl"),
+    "DoAFrames": {"compare": ("b", "c", "d", "e", "hl"),
+                  "preserve": ("b", "c", "d", "e", "hl")},
+    "DoFrame": {"compare": ("b", "c", "d", "e", "hl"),
+                "preserve": ("b", "c", "d", "e", "hl")},
+    "HandleDPadRepeat": {"compare": ("b", "c", "d", "e", "hl"),
+                         "preserve": ("b", "c", "d", "e")},
 }
 
 CASES = {
@@ -30,3 +33,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "DoAFrames": {
+        "source_symbol": "DoAFrames",
+        "before": "uint16_t count = a ? a : 0x100u;",
+        "after": "uint16_t count = a ? a : 0x200u;",
+        "case_ids": ["DoAFrames-0", "DoAFrames-1"],
+    },
+}

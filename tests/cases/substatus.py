@@ -52,30 +52,102 @@ def mw(*dicts):
 
 
 CONTRACT = {
-    "CheckSandAttackOrSmokescreenSubstatus": ("a", "b", "c", "d", "e", "f", "hl"),
-    "CountTurnDuelistPokemonWithActivePkmnPower": ("a", "b", "c", "d", "e", "f", "hl"),
-    "CountPokemonWithActivePkmnPowerInBothPlayAreas": ("a", "b", "c", "d", "e", "f", "hl"),
-    "CheckIsIncapableOfUsingPkmnPower": ("f", "hl", "b", "c", "d", "e"),
-    "CheckIsIncapableOfUsingPkmnPower_ArenaCard": ("f", "hl", "b", "c", "d", "e"),
-    "HandleDoubleDamageSubstatus": ("b", "c", "d", "e"),
-    "HandleDamageReductionExceptSubstatus2": ("d", "e"),
-    "HandleDamageReduction": ("d", "e"),
-    "HandleCantAttackSubstatus": ("f", "hl", "b", "c", "d", "e"),
-    "HandleAmnesiaSubstatus": ("f", "hl", "b", "c", "d", "e"),
-    "HandleNoDamageOrEffectSubstatus": ("f", "e", "hl", "b", "c"),
-    "CheckNoDamageOrEffect": ("f", "hl", "b", "c"),
-    "IsClairvoyanceActive": ("a", "f", "b", "c", "d", "e", "hl"),
-    "GetLoadedCard1RetreatCost": ("a",),
-    "CheckUnableToRetreatDueToEffect": ("f", "hl", "b", "c", "d", "e"),
-    "CheckCantUseTrainerDueToEffect": ("f", "hl", "b", "c", "d", "e"),
-    "IsPrehistoricPowerActive": ("a", "f", "hl", "b", "c", "d", "e"),
-    "ClearDamageReductionSubstatus2": (),
-    "UpdateSubstatusConditions_StartOfTurn": (),
-    "UpdateSubstatusConditions_EndOfTurn": (),
-    "IsRainDanceActive": ("a", "f", "b", "c", "d", "e"),
-    "CheckRainDanceScenario": ("a", "f"),
-    "ClearChangedTypesIfMuk": (),
-    "HandleStrikesBack_AgainstDamagingAttack": ("a", "b", "c", "d", "e", "f", "hl"),
+    "CheckSandAttackOrSmokescreenSubstatus": {
+        "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+        "preserve": ("b", "c"),
+    },
+    "CountTurnDuelistPokemonWithActivePkmnPower": {
+        "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+        "preserve": (),
+    },
+    "CountPokemonWithActivePkmnPowerInBothPlayAreas": {
+        "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+        "preserve": (),
+    },
+    "CheckIsIncapableOfUsingPkmnPower": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": (),
+    },
+    "CheckIsIncapableOfUsingPkmnPower_ArenaCard": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": (),
+    },
+    "HandleDoubleDamageSubstatus": {
+        "compare": ("b", "c", "d", "e"),
+        "preserve": ("b", "c"),
+    },
+    "HandleDamageReductionExceptSubstatus2": {
+        "compare": ("d", "e"),
+        "preserve": (),
+    },
+    "HandleDamageReduction": {
+        "compare": ("d", "e"),
+        "preserve": (),
+    },
+    "HandleCantAttackSubstatus": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "HandleAmnesiaSubstatus": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "HandleNoDamageOrEffectSubstatus": {
+        "compare": ("f", "e", "hl", "b", "c"),
+        "preserve": (),
+    },
+    "CheckNoDamageOrEffect": {
+        "compare": ("f", "hl", "b", "c"),
+        "preserve": ("b", "c"),
+    },
+    "IsClairvoyanceActive": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
+    "GetLoadedCard1RetreatCost": {
+        "compare": ("a",),
+        "preserve": (),
+    },
+    "CheckUnableToRetreatDueToEffect": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "CheckCantUseTrainerDueToEffect": {
+        "compare": ("f", "hl", "b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "IsPrehistoricPowerActive": {
+        "compare": ("a", "f", "hl", "b", "c", "d", "e"),
+        "preserve": (),
+    },
+    "ClearDamageReductionSubstatus2": {
+        "compare": (),
+        "preserve": (),
+    },
+    "UpdateSubstatusConditions_StartOfTurn": {
+        "compare": (),
+        "preserve": (),
+    },
+    "UpdateSubstatusConditions_EndOfTurn": {
+        "compare": (),
+        "preserve": (),
+    },
+    "IsRainDanceActive": {
+        "compare": ("a", "f", "b", "c", "d", "e"),
+        "preserve": (),
+    },
+    "CheckRainDanceScenario": {
+        "compare": ("a", "f"),
+        "preserve": (),
+    },
+    "ClearChangedTypesIfMuk": {
+        "compare": (),
+        "preserve": (),
+    },
+    "HandleStrikesBack_AgainstDamagingAttack": {
+        "compare": ("a", "b", "c", "d", "e", "f", "hl"),
+        "preserve": (),
+    },
 }
 
 CASES = {
@@ -361,7 +433,12 @@ CASES = {
     ],
 }
 
-STRIKES_WRAM = {hWhoseTurn: bytes((0xC2,)), 0xCCC4: bytes((0x7F,))}
+STRIKES_WRAM = {
+    hWhoseTurn: bytes((0xC2,)),
+    0xC2BC: b"\xFF",
+    0xC3BC: b"\xFF",
+    0xCCC4: bytes((0x7F,)),
+}
 CASES.update({
     "HandleStrikesBack_AgainstDamagingAttack": [
         # de=0 → immediate return, no carry
@@ -377,3 +454,12 @@ CASES.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "HandleDoubleDamageSubstatus": {
+        "source_symbol": "HandleDoubleDamageSubstatus",
+        "before": "de = (uint16_t)(de << 1);",
+        "after": "de = (uint16_t)(de >> 1);",
+        "case_ids": ["HandleDoubleDamageSubstatus-0", "HandleDoubleDamageSubstatus-1", "HandleDoubleDamageSubstatus-2", "HandleDoubleDamageSubstatus-3", "HandleDoubleDamageSubstatus-4"],
+    },
+}

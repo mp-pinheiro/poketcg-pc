@@ -15,9 +15,6 @@
 #define NUM_BACKGROUND_PALETTES 8u
 #define STAT_BUSY               0x02u
 
-/* CGB palette RAM behind $FF68-$FF6B is a 64-byte indexed store the flat g_io
- * model doesn't have, so only the register tail is compared -- oracle:False,
- * see the case file. */
 CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)
 {
 	uint8_t off = (uint8_t)(a * 8u);
@@ -30,11 +27,13 @@ CopyCGBPalettesResult CopyCGBPalettes(uint8_t a, uint8_t b)
 	do {
 		gb_write8((uint16_t)(0xFF00u + c), e);
 		c++;
-		while (gb_read8(rSTAT) & STAT_BUSY)
-			;
-		data = gb_read8(hl);
-		gb_write8((uint16_t)(0xFF00u + c), data);
-		data = gb_read8((uint16_t)(0xFF00u + c));
+		do {
+			while (gb_read8(rSTAT) & STAT_BUSY)
+				;
+			data = gb_read8(hl);
+			gb_write8((uint16_t)(0xFF00u + c), data);
+			data = gb_read8((uint16_t)(0xFF00u + c));
+		} while (data != gb_read8(hl));
 		hl++;
 		c--;
 		e++;

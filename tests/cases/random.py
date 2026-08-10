@@ -77,6 +77,7 @@ SCHEMA2_CASES = {
     "HtimesL": [
         {
             "id": "HtimesL-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
             "bus": {},
@@ -90,6 +91,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "HtimesL-poison",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
             "bus": {},
@@ -103,6 +105,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "HtimesL-max",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, hl=0xffff),
             "bus": {},
@@ -118,6 +121,7 @@ SCHEMA2_CASES = {
     "UpdateRNGSources": [
         {
             "id": "UpdateRNGSources-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
             "bus": {},
@@ -131,6 +135,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "UpdateRNGSources-poison",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
             "bus": {},
@@ -144,6 +149,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "UpdateRNGSources-boundary",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
             "bus": {},
@@ -159,6 +165,7 @@ SCHEMA2_CASES = {
     "Random": [
         {
             "id": "Random-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, a=0),
             "bus": {},
@@ -172,6 +179,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "Random-one",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, a=1),
             "bus": {},

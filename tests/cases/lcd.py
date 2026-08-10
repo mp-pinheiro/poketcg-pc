@@ -2,18 +2,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "EnableLCD": ("b", "c", "d", "e", "hl"),
-    # DisableLCD spins on rLY waiting for vblank, so under the oracle the PPU really
-    # advances and the ROM's interrupt handlers run during the wait. On the LCD-on
-    # path that leaves residue in c/d/e and hl ($CABA) that I have NOT derived from
-    # the asm, so it is not asserted rather than hardcoded. `b` is preserved on both
-    # paths. The routine's real product -- rLCDC, wLCDC, the white palettes and rIE --
-    # is diffed against the ROM in the cases below.
-    "DisableLCD": ("b",),
-    "Set_OBJ_8x8": ("b", "c", "d", "e", "hl"),
-    "Set_OBJ_8x16": ("b", "c", "d", "e", "hl"),
-    "SetWindowOn": ("b", "c", "d", "e", "hl"),
-    "SetWindowOff": ("b", "c", "d", "e", "hl"),
+    "EnableLCD": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "DisableLCD": {"compare": ("b",), "preserve": ("b",)},
+    "Set_OBJ_8x8": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "Set_OBJ_8x16": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "SetWindowOn": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "SetWindowOff": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -39,3 +33,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "EnableLCD": {
+        "source_symbol": "EnableLCD",
+        "before": "if (value & LCDC_ON)",
+        "after": "if (value | LCDC_ON)",
+        "case_ids": ["EnableLCD-0", "EnableLCD-1"],
+    },
+}

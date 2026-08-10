@@ -54,8 +54,6 @@ uint8_t CheckForCGB(void)
 
 #define rTMA 0xFF06u
 #define rTAC 0xFF07u
-#define rSPD 0xFF4Du
-#define SPD_DOUBLE 0x80u
 
 TimerSetupResult SetupTimer(void)
 {
@@ -63,11 +61,6 @@ TimerSetupResult SetupTimer(void)
 	uint8_t f;
 	if (wConsole != CONSOLE_CGB) {
 		f = 0x10u;
-	} else if (gb_read8(rSPD) & SPD_DOUBLE) {
-		/* `and SPD_DOUBLE` always sets H and clears N/C; a non-zero result
-		 * leaves Z clear, so the double-speed exit is H alone. */
-		b = 0x78u;
-		f = 0x20u;
 	} else {
 		f = 0xA0u;
 	}

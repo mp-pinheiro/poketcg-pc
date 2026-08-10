@@ -143,12 +143,12 @@ void SafelyCopyBGMapFromSRAMToVRAM(void)
 	for (row = 0; row < 32; row++) {
 		uint16_t src = (uint16_t)(0xa000u + row * 32u);
 		uint16_t dst = (uint16_t)(0x9800u + row * 32u);
-		CopyDataHLtoDE(&src, &dst, 0x20u);
+		SafeCopyDataHLtoDE(&src, &dst, 0x20u);
 		if (wConsole == 2u) {
 			switch_vram(1);
 			src = (uint16_t)(0xa400u + row * 32u);
 			dst = (uint16_t)(0x9800u + row * 32u);
-			CopyDataHLtoDE(&src, &dst, 0x20u);
+			SafeCopyDataHLtoDE(&src, &dst, 0x20u);
 			switch_vram(0);
 		}
 	}

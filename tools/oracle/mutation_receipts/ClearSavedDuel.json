@@ -1,0 +1,9 @@
+{
+  "fn": "ClearSavedDuel",
+  "case": "tests/cases/clear_saved_duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearSavedDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearSavedDuel\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"000000\", \"native\": \"ff0000\"}}}\n",
+  "restored": "{\"fn\": \"ClearSavedDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

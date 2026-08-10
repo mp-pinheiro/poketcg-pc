@@ -168,7 +168,7 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Diff one routine's C port against PyBoy running the real ROM.
 
-# Run migrated schema-2 cases; intentionally incomplete until registry migration closes.
+# Run every schema-2 primary case.
 oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
     python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Fixed GBRT primary inventory barrier.
@@ -192,6 +192,12 @@ oracle-audit-all: oracle-health-pyboy
 # Aggregate function gate adds the independent PyBoy audit.
 oracle-gate: oracle-fn-gate oracle-audit-all
     python3 tools/audit_oracle_cases.py --stage routine
+
+# Release barrier: primary and independent oracles, data round-trip, complete
+# schema inventory, and one source-backed mutation declaration per case module.
+oracle-release-gate: oracle-gate data-verify
+    python3 tools/audit_oracle_cases.py --stage release
+    python3 tools/audit_mutations.py --stage release
 oracle-diff FN: build
     #!/usr/bin/env bash
     set -euo pipefail

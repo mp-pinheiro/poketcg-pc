@@ -1114,9 +1114,9 @@ PowerModifierResult ApplyAttachedPlusPower(uint8_t b, uint16_t de)
 {
 	uint16_t page = (uint16_t)((uint16_t)hWhoseTurn << 8);
 	uint8_t count = CountCardIDInLocation(b, PLUSPOWER, page).a;
-	uint16_t sum = (uint16_t)(de + (uint16_t)(count * 10u));
+	uint16_t product = (uint16_t)(count * 10u);
 
-	return (PowerModifierResult){sum, sum};
+	return (PowerModifierResult){product, (uint16_t)(de + product)};
 }
 
 PowerModifierResult ApplyAttachedDefender(uint8_t b, uint16_t de)
@@ -1264,8 +1264,7 @@ uint8_t GetPlayAreaCardRetreatCost(void)
 
 uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl)
 {
-	DrawWideTextBox_WaitForInput(hl);
-	return 0x10u;
+	return (uint8_t)(DrawWideTextBox_WaitForInput(hl).f | 0x10u);
 }
 
 uint8_t PrintKnockedOut(void)
@@ -1277,7 +1276,7 @@ uint8_t PrintKnockedOut(void)
 	LoadTxRam2(name);
 	DrawWideTextBox_PrintText(WAS_KNOCKED_OUT_TEXT);
 	DoAFrames(40);
-	return 0x10u;
+	return 0x90u;
 }
 KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 {
@@ -1291,5 +1290,5 @@ KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 	wTempNonTurnDuelistCardID = wLoadedCard1ID;
 	PrintKnockedOut();
 	wTempNonTurnDuelistCardID = saved;
-	return (KnockoutCheckResult){saved, 0x10u};
+	return (KnockoutCheckResult){saved, 0x90u};
 }

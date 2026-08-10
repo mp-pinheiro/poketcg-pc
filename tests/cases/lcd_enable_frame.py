@@ -8,7 +8,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "DoFrameIfLCDEnabled": ("a", "f", "b", "c", "d", "e", "hl"),
+    "DoFrameIfLCDEnabled": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -26,3 +26,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "DoFrameIfLCDEnabled": {
+        "source_symbol": "DoFrameIfLCDEnabled",
+        "before": "if (gb_read8(rLCDC) & LCDC_ON)",
+        "after": "if (!(gb_read8(rLCDC) & LCDC_ON))",
+        "case_ids": ["DoFrameIfLCDEnabled-0", "DoFrameIfLCDEnabled-1", "DoFrameIfLCDEnabled-2"],
+    },
+}

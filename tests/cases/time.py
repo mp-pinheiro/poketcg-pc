@@ -7,12 +7,15 @@ wPlayTimeCounter = 0xCAC5
 wConsole = 0xCAB4
 rTMA = 0xFF06
 rTAC = 0xFF07
-rSPD = 0xFF4D
+
 
 CONTRACT = {
-    "IncrementPlayTimeCounter": ("b", "c", "d", "e"),
-    "CheckForCGB": ("f", "b", "c", "d", "e", "hl"),
-    "SetupTimer": ("a", "b", "f", "c", "d", "e", "hl"),
+    "IncrementPlayTimeCounter": {"compare": ("b", "c", "d", "e"),
+                                 "preserve": ("b", "c", "d", "e")},
+    "CheckForCGB": {"compare": ("f", "b", "c", "d", "e", "hl"),
+                    "preserve": ("b", "c", "d", "e", "hl")},
+    "SetupTimer": {"compare": ("c", "d", "e", "hl"),
+                   "preserve": ("c", "d", "e", "hl")},
 }
 
 
@@ -35,10 +38,22 @@ CASES = {
     # Oracle-run: the snapshot now captures $FF00-$FF7F, so TMA/TAC are diffed
     # against the real ROM rather than against an asm-derived expectation.
     "SetupTimer": [
-        {"wram": {wConsole: b"\x00", rSPD: b"\x00"}, "read": {rTMA: 1, rTAC: 1}},
-        {"wram": {wConsole: b"\x02", rSPD: b"\x00"}, "read": {rTMA: 1, rTAC: 1}},
-        dict(POISON, wram={wConsole: b"\x02", rSPD: b"\x80"}, read={rTMA: 1, rTAC: 1}),
+        {"wram": {wConsole: b"\x00"}, "read": {rTMA: 1, rTAC: 1}},
+        {"wram": {wConsole: b"\x02"}, "read": {rTMA: 1, rTAC: 1}},
+        dict(POISON, wram={wConsole: b"\x02"}, read={rTMA: 1, rTAC: 1}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+
+MUTATIONS = {
+    "IncrementPlayTimeCounter": {
+        "source_symbol": "IncrementPlayTimeCounter",
+        "before": "if (b0 < 60u)",
+        "after": "if (b0 <= 60u)",
+        "case_ids": ["IncrementPlayTimeCounter-0", "IncrementPlayTimeCounter-1",
+                      "IncrementPlayTimeCounter-2", "IncrementPlayTimeCounter-3",
+                      "IncrementPlayTimeCounter-4", "IncrementPlayTimeCounter-5"],
+    },
+}

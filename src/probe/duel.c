@@ -512,7 +512,7 @@ static void adapt_LoadNonPokemonCardEffectCommands(ProbeState *s)
 static void adapt_ApplyAttachedPlusPower(ProbeState *s)
 {
 	PowerModifierResult r = ApplyAttachedPlusPower(s->b, pair(s->d, s->e));
-	s->hl = r.hl;
+	s->hl = r.de;
 	s->d = (uint8_t)(r.de >> 8);
 	s->e = (uint8_t)r.de;
 }

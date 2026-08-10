@@ -6,9 +6,18 @@ QUEUE = 0xD423
 DO_FRAME_FUNCTION = 0xCAD3
 
 CONTRACT = {
-    "CheckAnyAnimationPlaying": ("a", "f", "b", "c", "d", "e", "hl"),
-    "SetDoFrameFunction": ("a", "f", "b", "c", "d", "e", "hl"),
-    "ResetDoFrameFunction": ("a", "f", "b", "c", "d", "e", "hl"),
+    "CheckAnyAnimationPlaying": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "SetDoFrameFunction": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("f", "b", "c", "d", "e", "hl"),
+    },
+    "ResetDoFrameFunction": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("f", "b", "c", "d", "e", "hl"),
+    },
 }
 
 ALL_FF = {ACTIVE: b"\xff", WD4C0: b"\xff", QUEUE: b"\xff" * 7}
@@ -34,3 +43,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "CheckAnyAnimationPlaying": {
+        "source_symbol": "CheckAnyAnimationPlaying",
+        "before": "\tif (value == 0xffu)",
+        "after": "\tif (value != 0xffu)",
+        "case_ids": ["CheckAnyAnimationPlaying-0", "CheckAnyAnimationPlaying-1"],
+    },
+}

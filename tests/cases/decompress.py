@@ -21,11 +21,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 CONTRACT = {
     # bc and de are read but never written; hl and a are clobbered.
-    "InitDataDecompression": ("b", "c", "d", "e"),
+    "InitDataDecompression": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
     # push hl / push de ... pop de / pop hl. bc ends at 0 and a at 0 as loop residue.
-    "DecompressData": ("d", "e", "hl"),
-    # returns the byte in a, clobbers bc and hl.
-    "DecompressData.Decompress": ("a", "d", "e"),
+    "DecompressData": {"compare": ("d", "e", "hl"), "preserve": ("d", "e", "hl")},
+    # returns the byte in a, clobbers bc and hl; d/e are untouched.
+    "DecompressData.Decompress": {"compare": ("a", "d", "e"), "preserve": ("d", "e")},
 }
 
 
@@ -219,6 +219,15 @@ CASES = {
                            0xC100: bytes(0x100)},
              read={0xC100: 0x100}),
     ],
+}
+
+MUTATIONS = {
+    "DecompressData": {
+        "source_symbol": "DecompressData",
+        "before": "de = (uint16_t)(de + 1);",
+        "after": "de = (uint16_t)(de + 2);",
+        "case_ids": ["DecompressData-0", "DecompressData-1", "DecompressData-2", "DecompressData-3", "DecompressData-4", "DecompressData-5", "DecompressData-6", "DecompressData-7", "DecompressData-8", "DecompressData-9"],
+    },
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

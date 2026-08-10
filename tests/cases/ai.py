@@ -18,7 +18,7 @@ wPlayerDuelistType = 0xC2F1
 wOpponentDuelistType = 0xC3F1
 
 CONTRACT = {
-    "LoadOpponentDeck": ("a", "hl"),
+    "LoadOpponentDeck": {"compare": ("a", "hl"), "preserve": ()},
 }
 
 CASES = {
@@ -68,3 +68,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "LoadOpponentDeck": {
+        "source_symbol": "LoadOpponentDeck",
+        "before": "\t\t\twIsPracticeDuel = 1;",
+        "after": "\t\t\twIsPracticeDuel = 0;",
+        "case_ids": ["LoadOpponentDeck-1", "LoadOpponentDeck-4"],
+    },
+}

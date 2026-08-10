@@ -18,7 +18,10 @@ EFFECTCMDTYPE_AI = 0x09
 EFFECTCMDTYPE_INITIAL_EFFECT_1 = 0x01
 
 CONTRACT = {
-    "CheckMatchingCommand": ("f", "b", "c", "d", "e", "hl"),
+    "CheckMatchingCommand": {
+        "compare": ("f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "d", "e"),
+    },
 }
 
 CASES = {
@@ -40,3 +43,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "CheckMatchingCommand": {
+        "source_symbol": "CheckMatchingCommand",
+        "before": "if (type == a)",
+        "after": "if (type != a)",
+        "case_ids": ["CheckMatchingCommand-1", "CheckMatchingCommand-2", "CheckMatchingCommand-4", "CheckMatchingCommand-5"],
+    },
+}

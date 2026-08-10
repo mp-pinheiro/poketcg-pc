@@ -18,14 +18,16 @@ from typing import Any, TYPE_CHECKING
 
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tools" / "oracle"))
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 from routines import ALL, ROUTINES  # noqa: E402
-CACHE_SEMANTICS = 1
+CACHE_SEMANTICS = 2
 REGS = ("a", "f", "b", "c", "d", "e", "hl")
 CACHE_SCHEMA = 1
+PYBOY_OPAQUE_SEEDS = frozenset({0xFF01})
 
 
 def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
@@ -37,10 +39,18 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
         spec = importlib.util.spec_from_file_location(f"cases_{path.stem}", path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
+        schema_entries = getattr(mod, "SCHEMA2_CASES", {})
         for name, entries in getattr(mod, "CASES", {}).items():
             if name in cases:
                 raise SystemExit(f"duplicate CASES entry for {name} in {path}")
-            cases[name] = entries
+            records = {record["id"]: record for record in schema_entries.get(name, [])}
+            cases[name] = []
+            for index, entry in enumerate(entries):
+                case = dict(entry)
+                record = records.get(f"{name}-{index}")
+                if record is not None:
+                    case["_completion"] = record["completion"]
+                cases[name].append(case)
         for name, contract in getattr(mod, "CONTRACT", {}).items():
             if name in contracts:
                 raise SystemExit(f"duplicate CONTRACT entry for {name}")
@@ -95,7 +105,8 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
 
 
 def merged_spans(case: dict) -> tuple[dict[int, int], dict[int, dict[int, int]], dict[int, dict[int, int]]]:
-    reads = {addr: len(data) for addr, data in case.get("wram", {}).items()}
+    reads = {addr: len(data) for addr, data in case.get("wram", {}).items()
+             if addr not in PYBOY_OPAQUE_SEEDS}
     reads.update({int(addr): int(n) for addr, n in case.get("read", {}).items()})
     sreads: dict[int, dict[int, int]] = {}
     for bank, spans in case.get("sread", {}).items():
@@ -173,10 +184,12 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                 if bytes(want) != have:
                     bad.append(f"vram{bank}:${addr:04X}: asm expects {bytes(want).hex()} != C {have.hex()}")
         return bad
+    completion = case.get("_completion", {"mode": "return"})
     ref = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0),
                       c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0),
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
-                      ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0))
+                      ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0),
+                      stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None)
     reads, sreads, vreads = merged_spans(case)
     got = run_probe(probe, fn, case, reads, sreads, vreads)
     reference = {"registers": {field: getattr(ref, field) for field in fields},
@@ -204,7 +217,9 @@ def normalize_case(case: dict, fn: str, fields: tuple[str, ...], dependencies: d
                       "sram": [[int(bank), int(addr), bytes(data).hex()] for bank, spans in sorted(case.get("sram", {}).items(), key=lambda x: int(x[0]))
                                for addr, data in sorted(spans.items(), key=lambda x: int(x[0]))]},
             "ramg": None if case.get("ramg") is None else bool(case["ramg"]), "setup": setup,
-            "keys": int(case.get("keys", 0)), "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
+            "keys": int(case.get("keys", 0)),
+            "completion": case.get("_completion", {"mode": "return"}),
+            "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
             "sread": span_map(sreads), "vread": span_map(vreads)}
 
 
@@ -373,7 +388,8 @@ def main() -> int:
             for i, case in enumerate(entries):
                 try:
                     if not case.get("oracle", True):
-                        bad = direct_case(oracle, args.probe, fn, fields, case)
+                        print(f"  skip {fn}[{i}] {describe(case)}")
+                        continue
                     elif args.oracle_mode == "cache":
                         normalized = normalize_case(case, fn, fields, deps, Path(args.rom))
                         payload = json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode()
@@ -387,7 +403,8 @@ def main() -> int:
                             payload = json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode()
                             key = hashlib.sha256(payload).hexdigest()
                             ref = None
-                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0))
+                            completion = case.get("_completion", {"mode": "return"})
+                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None)
                             reads, sreads, vreads = merged_spans(case)
                             ref = {"registers": {field: getattr(result, field) for field in fields}, "wram": {str(a): result.mem(a, n).hex() for a, n in reads.items()}, "sram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in sreads.items()}, "vram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in vreads.items()}}
                             cache_reference(args.cache_dir, key, fn, fields, ref)

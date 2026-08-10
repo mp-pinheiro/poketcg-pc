@@ -18,8 +18,8 @@ HSCROLL = 0xFF92
 OAM_SEED = b"\xff\x00\x00\x00" * 40
 
 CONTRACT = {
-    "SetDefaultPalettes": ("b", "c", "d", "e", "hl"),
-    "Func_12871": ("b", "d", "e"),
+    "SetDefaultPalettes": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "Func_12871": {"compare": ("b", "d", "e"), "preserve": ("b", "d", "e")},
 }
 
 CASES = {
@@ -53,6 +53,15 @@ CASES = {
              read={OAM: 160, WVBL: 1, WLCDC: 1, HSCROLL: 4,
                    0xFF42: 2, 0xFF4A: 2}),
     ],
+}
+
+MUTATIONS = {
+    "SetDefaultPalettes": {
+        "source_symbol": "SetDefaultPalettes",
+        "before": "gb_write8(wBGP_ADDR, 0xE4u);",
+        "after": "gb_write8(wBGP_ADDR, 0x00u);",
+        "case_ids": ["SetDefaultPalettes-0", "SetDefaultPalettes-1", "SetDefaultPalettes-2"],
+    },
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

@@ -20,14 +20,14 @@ def banked_src(src, bank):
 
 
 CONTRACT = {
-    # Exit a is the bank the wrapper restored (memory.asm:12,29); bc==0 is loop
-    # residue and stays out.
-    "DecompressDataFromBank": ("a", "f", "d", "e", "hl"),
-    "CopyBankedDataToDE": ("a", "f", "b", "c", "d", "e", "hl"),
+    # BankswitchROM leaves A as the restored bank; DecompressData clobbers AF.
+    "DecompressDataFromBank": {"compare": ("d", "e", "hl"), "preserve": ("d", "e", "hl")},
+    # CopyDataHLtoDE_SaveRegisters preserves BC/DE/HL, but clobbers AF.
+    "CopyBankedDataToDE": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     # Both fills preserve bc/de/hl. Exit a==0 and F=Z are loop residue.
-    "FillMemoryWithA": ("b", "c", "d", "e", "hl"),
-    "FillMemoryWithDE": ("b", "c", "d", "e", "hl"),
-    "GetFarByte": ("a", "f", "b", "c", "d", "e", "hl"),
+    "FillMemoryWithA": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "FillMemoryWithDE": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetFarByte": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -70,7 +70,13 @@ CASES = {
          "read": {0xC200: 0x0A, wDecompressionSecondaryBuffer: 0x100}},
     ],
     "CopyBankedDataToDE": [
-        {"wram": {0xC100: b"\x5a\xa5\x5a\xa5"}, "read": {hBankROM: 1}},
+        # bc=0 is 65536 bytes, so this sweep overwrites the oracle call frame.
+        {"oracle": False,
+         "why": "bc=0 copies 65536 bytes and sweeps the whole address space, "
+                "burying the oracle's synthesized call frame.",
+         "wram": {0xC100: b"\x5a\xa5\x5a\xa5"},
+         "expect": {hBankROM: b"\x00"},
+         "expect_regs": {"b": 0, "c": 0, "d": 0xC1, "e": 0x00, "hl": 0}},
         dict(POISON, b=0x00, c=0x20, d=0xC1, e=0x00,
              wram={wTempPointer: banked_src(0x4000, 2), hBankROM: b"\x05",
                    0xC100: b"\x11" * 0x22}),
@@ -156,3 +162,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "FillMemoryWithA": {
+        "source_symbol": "FillMemoryWithA",
+        "before": "gb_write8(hl++, a);",
+        "after": "gb_write8(hl, a);",
+        "case_ids": ["FillMemoryWithA-0", "FillMemoryWithA-1", "FillMemoryWithA-2", "FillMemoryWithA-3", "FillMemoryWithA-4", "FillMemoryWithA-5"],
+    },
+}

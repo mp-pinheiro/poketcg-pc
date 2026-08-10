@@ -128,12 +128,14 @@ CursorTileResult SetCursorParametersForTextBox(uint8_t d, uint8_t e, uint8_t b, 
 	gb_write8(wMenuVisibleCursorTile_ADDR, b);
 	gb_write8(wMenuInvisibleCursorTile_ADDR, c);
 	gb_write8(wCursorBlinkCounter_ADDR, 0);
-	return (CursorTileResult){b, c, wMenuInvisibleCursorTile_ADDR};
+	return (CursorTileResult){.b = b, .c = c, .hl = wMenuInvisibleCursorTile_ADDR};
 }
 
 CursorTileResult SetCursorParametersForTextBox_Default(uint8_t d, uint8_t e)
 {
-	return SetCursorParametersForTextBox(d, e, 0x0f, 0x00);
+	CursorTileResult result = SetCursorParametersForTextBox(d, e, 0x0f, 0x00);
+	result.f = WaitForButtonAorB().f;
+	return result;
 }
 
 void DrawCursor(uint8_t a)
@@ -283,13 +285,15 @@ WaitResult WaitForButtonAorB(void)
 		DoFrame();
 		RefreshMenuCursor();
 		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		uint8_t zero = (gb_read8(wLCDC_ADDR) & 0x80u) != 0u
+			|| gb_read8(wMenuInvisibleCursorTile_ADDR) == 0u ? 0x80u : 0x00u;
 		if (keys & PAD_A) {
 			EraseCursor();
-			return (WaitResult){0x00u};
+			return (WaitResult){zero};
 		}
 		if (keys & PAD_B) {
 			EraseCursor();
-			return (WaitResult){0x10u};
+			return (WaitResult){(uint8_t)(zero | 0x10u)};
 		}
 	}
 }
@@ -315,13 +319,13 @@ void DrawNarrowTextBox_WaitForInput(uint16_t hl)
 	}
 }
 
-void DrawWideTextBox_WaitForInput(uint16_t hl)
+WaitResult DrawWideTextBox_WaitForInput(uint16_t hl)
 {
 	(void)DrawWideTextBox_PrintText(hl);
-	WaitForWideTextBoxInput();
+	return WaitForWideTextBoxInput();
 }
 
-void WaitForWideTextBoxInput(void)
+WaitResult WaitForWideTextBoxInput(void)
 {
 	uint16_t params = WTBM_PARAMS;
 	InitializeMenuParameters(0, &params);
@@ -330,8 +334,9 @@ void WaitForWideTextBoxInput(void)
 		DoFrame();
 		RefreshMenuCursor();
 		uint8_t keys = gb_read8(hKeysPressed_ADDR);
-		if (keys & (PAD_A | PAD_B))
-			break;
+		if (keys & (PAD_A | PAD_B)) {
+			EraseCursor();
+			return (WaitResult){0x80u};
+		}
 	}
-	EraseCursor();
 }

@@ -6,16 +6,16 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 CONTRACT = {
-    "InitializeCardListParameters": ("b", "c", "d", "e", "hl"),
-    "InitializeMenuParameters": ("c", "hl"),
-    "SetMenuItem": ("b", "c", "d", "e", "hl"),
-    "OneByteNumberToTxSymbol": ("b", "c", "d", "hl"),
-    "OneByteNumberToTxSymbol_PadSpace": ("b", "c", "d", "hl"),
-    "OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign": ("b", "c", "d", "hl"),
-    "CardTypeToSymbolID": ("b", "c", "d", "e", "hl"),
-    "GetCardSymbolData": ("d", "e", "hl"),
-    "SetCursorParametersForTextBox": ("b", "c", "d", "e", "hl"),
-    "SetCursorParametersForTextBox_Default": ("b", "c", "d", "e", "hl"),
+    "InitializeCardListParameters": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "InitializeMenuParameters": {"compare": ("c", "hl"), "preserve": ("c",)},
+    "SetMenuItem": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "OneByteNumberToTxSymbol": {"compare": ("a", "hl"), "preserve": ()},
+    "OneByteNumberToTxSymbol_PadSpace": {"compare": ("a", "hl"), "preserve": ()},
+    "OneByteNumberToTxSymbol_TrimLeadingZeroAndAlign": {"compare": ("b", "c", "d", "hl"), "preserve": ("b", "c", "d")},
+    "CardTypeToSymbolID": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetCardSymbolData": {"compare": ("d", "e", "hl"), "preserve": ("d", "e")},
+    "SetCursorParametersForTextBox": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("d", "e")},
+    "SetCursorParametersForTextBox_Default": {"compare": ("d", "e", "f"), "preserve": ("d", "e")},
 }
 
 PARAMS8 = bytes(range(8))
@@ -79,14 +79,10 @@ CASES = {
     # setup call (menus.asm:709-716), so a standalone oracle invocation waits
     # forever. SYM_CURSOR_R is resolved from charmaps.asm:444 as $0F.
     "SetCursorParametersForTextBox_Default": [
-        {"d": 2, "e": 5, "oracle": False,
-         "why": "intentional fallthrough into the genuine A/B input wait; SYM_CURSOR_R=$0F from charmaps.asm:444",
-         "expect": {CURSOR_STATE: bytes([0, 0, 2, 5, 0, 1, 0x0F, 0])},
-         "expect_regs": {"b": 0x0F, "c": 0, "hl": 0xCD16}},
-        dict(POISON, d=9, e=1, oracle=False,
-             why="intentional fallthrough into the genuine A/B input wait; SYM_CURSOR_R=$0F from charmaps.asm:444",
-             expect={CURSOR_STATE: bytes([0, 0, 9, 1, 0, 1, 0x0F, 0])},
-             expect_regs={"b": 0x0F, "c": 0, "hl": 0xCD16}),
+        {"d": 2, "e": 5, "keys": 0x01,
+         "read": {CURSOR_STATE: 8}},
+        dict(POISON, d=9, e=1, keys=0x01,
+             read={CURSOR_STATE: 8}),
     ],
 }
 
@@ -103,27 +99,22 @@ def menu_state(counter=0, item=0, xoff=0, yoff=0, ysep=0, vis=0, invis=0):
 
 
 CONTRACT.update({
-    # No push/pop at all: every register the asm touches (a/b/c/d/e/hl) is
-    # recomputed from WRAM on every call, so nothing is a preserved input --
-    # the drawn tile is the whole contract.
-    "DrawCursor": (),
-    "EraseCursor": (),
-    "DrawCursor2": (),
-    "RefreshMenuCursor": (),
-    # push hl/de/bc; pop hl/de/bc restores them unchanged before ret (a is not
-    # restored -- FillRectangle's internal residue, not a contractual output).
-    "DrawCardSymbol": ("b", "c", "hl"),
-    "DrawNarrowTextBox": ("hl",),
-    "DrawWideTextBox": ("hl",),
-    "DrawNarrowTextBox_PrintTextNoDelay": ("hl",),
-    "DrawWideTextBox_PrintTextNoDelay": ("hl",),
-    "DrawWideTextBox_PrintText": ("hl",),
-    "PrintYesOrNoItems": ("b", "c", "hl"),
-    "DrawWideTextBox_PrintTextNoDelay_Wait": (),
-    "DrawNarrowTextBox_WaitForInput": (),
-    "DrawWideTextBox_WaitForInput": (),
-    "WaitForWideTextBoxInput": (),
-    "WaitForButtonAorB": ("f",),
+    "DrawCursor": {"compare": (), "preserve": ()},
+    "EraseCursor": {"compare": (), "preserve": ()},
+    "DrawCursor2": {"compare": (), "preserve": ()},
+    "RefreshMenuCursor": {"compare": (), "preserve": ()},
+    "DrawCardSymbol": {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")},
+    "DrawNarrowTextBox": {"compare": ("hl",), "preserve": ()},
+    "DrawWideTextBox": {"compare": ("hl",), "preserve": ()},
+    "DrawNarrowTextBox_PrintTextNoDelay": {"compare": ("hl",), "preserve": ()},
+    "DrawWideTextBox_PrintTextNoDelay": {"compare": ("hl",), "preserve": ()},
+    "DrawWideTextBox_PrintText": {"compare": ("hl",), "preserve": ()},
+    "PrintYesOrNoItems": {"compare": ("b", "c", "hl"), "preserve": ("b", "c")},
+    "DrawWideTextBox_PrintTextNoDelay_Wait": {"compare": (), "preserve": ()},
+    "DrawNarrowTextBox_WaitForInput": {"compare": (), "preserve": ()},
+    "DrawWideTextBox_WaitForInput": {"compare": (), "preserve": ()},
+    "WaitForWideTextBoxInput": {"compare": (), "preserve": ()},
+    "WaitForButtonAorB": {"compare": ("f",), "preserve": ()},
 })
 
 BOX_READ = {0x9980: 192}  # BG-map row 12, 6 rows x 32 cols, zero scroll
@@ -186,34 +177,34 @@ CASES.update({
          "vread": {0: {0x9852: 2, 0x9872: 2}}},
     ],
     "DrawNarrowTextBox": [
-        {"read": BOX_READ},
-        {"wram": {0xCAB4: b"\x02"}, "read": BOX_READ, "vread": {1: {0x9980: 192}}},
-        dict(POISON, read=BOX_READ),
+        {"vread": {0: BOX_READ}},
+        {"wram": {0xCAB4: b"\x02"}, "vread": {1: {0x9980: 192}}},
+        dict(POISON, vread={0: BOX_READ}),
     ],
     "DrawWideTextBox": [
-        {"read": BOX_READ},
-        {"wram": {0xCAB4: b"\x02"}, "read": BOX_READ, "vread": {1: {0x9980: 192}}},
-        dict(POISON, read=BOX_READ),
+        {"vread": {0: BOX_READ}},
+        {"wram": {0xCAB4: b"\x02"}, "vread": {1: {0x9980: 192}}},
+        dict(POISON, vread={0: BOX_READ}),
     ],
     "DrawNarrowTextBox_PrintTextNoDelay": [
-        {"hl": 0, "read": BOX_READ},
-        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        {"hl": 0, "vread": {0: BOX_READ}},
+        {"hl": 1, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
-        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
              vread=VRAM_READ),
     ],
     "DrawWideTextBox_PrintTextNoDelay": [
-        {"hl": 0, "read": BOX_READ},
-        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        {"hl": 0, "vread": {0: BOX_READ}},
+        {"hl": 1, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
-        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
              vread=VRAM_READ),
     ],
     "DrawWideTextBox_PrintText": [
-        {"hl": 0, "wram": {0xC590: b"\x00"}, "read": BOX_READ},
-        {"hl": 1, "setup": SETUP, "read": {**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        {"hl": 0, "wram": {0xC590: b"\x00"}, "vread": {0: BOX_READ}},
+        {"hl": 1, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ},
          "vread": VRAM_READ},
-        dict(POISON, hl=1, setup=SETUP, read={**BOX_READ, **CACHE_READ, **PLACEMENT_READ},
+        dict(POISON, hl=1, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ},
              vread=VRAM_READ),
     ],
     "PrintYesOrNoItems": [
@@ -230,48 +221,44 @@ CASES.update({
 CASES.update({
     "WaitForButtonAorB": [
         {"keys": 0x01, "wram": menu_state(counter=5, item=1, xoff=4, yoff=1,
-         ysep=0, invis=0x11), "read": {0x9884: 1}},
+         ysep=0, invis=0x11), "vread": {0: {0x9884: 1}}},
         {"keys": 0x02, "wram": menu_state(counter=5, item=1, xoff=4, yoff=1,
-         ysep=0, invis=0x11), "read": {0x9884: 1}},
+         ysep=0, invis=0x11), "vread": {0: {0x9884: 1}}},
         dict(POISON, keys=0x01, wram=menu_state(counter=0, item=2, xoff=1, yoff=2,
-             ysep=0, invis=0x33), read={0x9841: 1}),
+             ysep=0, invis=0x33), vread={0: {0x9841: 1}}),
     ],
-    # EnableLCD turns on the LCD; DoFrame's WaitForVBlank then halts waiting for
-    # a VBlank ISR that never fires in a synthesized oracle call. oracle:False
-    # with expect values derived from the asm/probe. Menu state is seeded so
-    # InitializeMenuParameters overwrites are observable, and the EraseCursor
-    # tile at the cursor's BG-map position is checked.
     "DrawWideTextBox_PrintTextNoDelay_Wait": [
         {"hl": 0, "keys": 0x01,
          "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "oracle": False,
-         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
-         "expect": {0x9980: b"\x18", 0x9A32: b"\x1d",
-                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
     "DrawNarrowTextBox_WaitForInput": [
         {"hl": 0, "keys": 0x01,
          "wram": {**menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "oracle": False,
-         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
-         "expect": {0x9980: b"\x18",
-                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "vread": {0: {0x9980: 1}}},
     ],
     "DrawWideTextBox_WaitForInput": [
         {"hl": 0, "keys": 0x01,
          "wram": {0xC590: b"\x00", **menu_state(counter=5, item=1, xoff=4, invis=0x22)},
-         "oracle": False,
-         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
-         "expect": {0x9980: b"\x18", 0x9A32: b"\x1d",
-                    0xCD0F: b"\x01", 0xCD10: b"\x00", 0xCD16: b"\x1d"}},
+         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
     "WaitForWideTextBoxInput": [
         {"keys": 0x01, "wram": menu_state(counter=5, item=0, xoff=2, yoff=3,
          ysep=0, invis=0x22),
-         "oracle": False,
-         "why": "EnableLCD+DoFrame halts on WaitForVBlank without VBlank ISR",
-         "expect": {0x9A32: b"\x1d"}},
+         "vread": {0: {0x9A32: 1}}},
     ],
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "OneByteNumberToTxSymbol": {
+        "source_symbol": "OneByteNumberToTxSymbol",
+        "before": "return tx_symbol_core(a);",
+        "after": "return tx_symbol_core((uint8_t)(a + 1u));",
+        "case_ids": ["OneByteNumberToTxSymbol-0", "OneByteNumberToTxSymbol-1", "OneByteNumberToTxSymbol-2", "OneByteNumberToTxSymbol-3", "OneByteNumberToTxSymbol-4"],
+    },
+}

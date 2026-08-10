@@ -10,7 +10,7 @@ wOpponentDeck = 0xC480
 wDeckName = 0xCCE9
 
 CONTRACT = {
-    "LoadDeck": ("f", "hl"),
+    "LoadDeck": {"compare": ("f", "hl"), "preserve": ("hl",)},
 }
 
 CASES = {
@@ -31,3 +31,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "LoadDeck": {
+        "source_symbol": "LoadDeck",
+        "before": "uint8_t carry = 1;",
+        "after": "uint8_t carry = 0;",
+        "case_ids": ["LoadDeck-0", "LoadDeck-1", "LoadDeck-2", "LoadDeck-3", "LoadDeck-4", "LoadDeck-5"],
+    },
+}

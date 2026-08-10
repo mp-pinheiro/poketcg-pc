@@ -26,7 +26,7 @@
 #include "probe.h"
 
 #define MAX_SPANS 256
-#define MAX_SPAN_BYTES 8192
+#define MAX_SPAN_BYTES 65536
 #define MAX_NAME 96
 #define MAX_SETUPS 8
 
@@ -178,7 +178,12 @@ int main(void)
 	size_t nsreads = 0;
 	struct vread_span vreads[MAX_SPANS];
 	size_t nvreads = 0;
+	struct span preads[MAX_SPANS];
+	size_t npreads = 0;
 	int ramg = -1; /* -1 = leave whatever the seeds left; 0/1 = force the latch */
+	long romb = -1; /* -1 = retain reset/default mapper state for home-bank calls */
+	long ramb = -1;
+	long vramb = -1;
 	long keys = 0; /* hKeysHeld bit layout; applied after every seed, like ramg */
 	ProbeState st = { 0 };
 	/* Routines that need warm state a single call cannot build -- the text engine's
@@ -215,6 +220,18 @@ int main(void)
 				st.e = (uint8_t)jnum();
 			} else if (strcmp(key, "hl") == 0) {
 				st.hl = (uint16_t)jnum();
+			} else if (strcmp(key, "rom_bank") == 0) {
+				romb = jnum();
+				if (romb < 0 || romb > 0xff)
+					die("rom_bank out of range");
+			} else if (strcmp(key, "ram_bank") == 0) {
+				ramb = jnum();
+				if (ramb < 0 || ramb > 3)
+					die("ram_bank out of range");
+			} else if (strcmp(key, "vram_bank") == 0) {
+				vramb = jnum();
+				if (vramb < 0 || vramb > 1)
+					die("vram_bank out of range");
 			} else if (strcmp(key, "ramg") == 0) {
 				/* Applied after every seed, whatever the key order: the "sram"
 				 * seed enables the latch as a side effect, so this is the only
@@ -305,6 +322,25 @@ int main(void)
 					} while (eat(','));
 					need('}');
 				}
+			} else if (strcmp(key, "pread") == 0) {
+				need('{');
+				if (!eat('}')) {
+					do {
+						char offset_s[MAX_NAME];
+						jstr(offset_s, sizeof offset_s);
+						need(':');
+						long n = jnum();
+						unsigned offset = (unsigned)strtoul(offset_s, NULL, 10);
+						if (n < 0 || offset + (unsigned)n > sizeof g_pal)
+							die("palette read span out of range");
+						if (nspans + nsreads + nvreads + npreads == MAX_SPANS)
+							die("too many read spans");
+						preads[npreads].addr = (uint16_t)offset;
+						preads[npreads].len = (uint16_t)n;
+						npreads++;
+					} while (eat(','));
+					need('}');
+				}
 			} else if (strcmp(key, "sram") == 0) {
 				need('{');
 				if (!eat('}')) {
@@ -376,6 +412,41 @@ int main(void)
 					} while (eat(','));
 					need('}');
 				}
+			} else if (strcmp(key, "vram") == 0) {
+				need('{');
+				if (!eat('}')) {
+					do {
+						char bank_s[MAX_NAME];
+						jstr(bank_s, sizeof bank_s);
+						need(':');
+						unsigned bank = (unsigned)strtoul(bank_s, NULL, 10);
+						if (bank > 1)
+							die("vram bank out of range");
+						need('{');
+						if (!eat('}')) {
+							do {
+								char addr_s[MAX_NAME], hex[MAX_SPAN_BYTES];
+								jstr(addr_s, sizeof addr_s);
+								need(':');
+								size_t hn = jstr(hex, sizeof hex);
+								if (hn % 2)
+									die("vram value needs an even hex digit count");
+								uint16_t at = (uint16_t)strtoul(addr_s, NULL, 10);
+								if (at < 0x8000 || (size_t)at + hn / 2 > 0xA000)
+									die("vram span outside $8000-$9FFF");
+								for (size_t i = 0; i < hn; i += 2) {
+									int hi = hexdig(hex[i]), lo = hexdig(hex[i + 1]);
+									if (hi < 0 || lo < 0)
+										die("vram value is not hex");
+									g_vram[(size_t)bank * 0x2000 + (at - 0x8000) + i / 2] =
+										(uint8_t)(hi << 4 | lo);
+								}
+							} while (eat(','));
+							need('}');
+						}
+					} while (eat(','));
+					need('}');
+				}
 			} else if (strcmp(key, "vread") == 0) {
 				need('{');
 				if (!eat('}')) {
@@ -425,6 +496,16 @@ int main(void)
 		return 1;
 	}
 
+	if (romb >= 0) {
+		gb_write8(0x2000, (uint8_t)romb);
+		gb_write8(0xFF80, (uint8_t)romb);
+	}
+	if (ramb >= 0) {
+		gb_write8(0xFF81, (uint8_t)ramb);
+		g_sram_bank = (uint8_t)ramb;
+	}
+	if (vramb >= 0)
+		g_vram_bank = (uint8_t)vramb;
 	if (ramg >= 0)
 		g_sram_enabled = ramg;
 	g_keys = (uint8_t)keys;
@@ -493,6 +574,13 @@ int main(void)
 			printf("}");
 			i = j;
 		}
+	}
+	printf("},\"palette\":{");
+	for (size_t i = 0; i < npreads; i++) {
+		printf("%s\"%u\":\"", i ? "," : "", preads[i].addr);
+		for (uint16_t k = 0; k < preads[i].len; k++)
+			printf("%02x", g_pal[preads[i].addr + k]);
+		printf("\"");
 	}
 	printf("}}\n");
 

@@ -5,7 +5,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "PrintLabels": ("b", "c", "d", "e", "hl"),
+    "PrintLabels": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
 }
 CASES = {
     "PrintLabels": [
@@ -35,3 +38,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "PrintLabels": {
+        "source_symbol": "PrintLabels",
+        "before": "hffb0 = 0x02;",
+        "after": "hffb0 = 0x01;",
+        "case_ids": ["PrintLabels-0", "PrintLabels-1", "PrintLabels-2", "PrintLabels-3", "PrintLabels-4"],
+    },
+}

@@ -20,14 +20,14 @@ wLoadedCard2 = 0xCC65
 CARD_LEN = 0x41
 
 CONTRACT = {
-    "GetCardType": ("a", "b", "c", "d", "e", "hl"),
-    "GetCardName": ("b", "c", "d", "e", "hl"),
-    "GetCardTypeRarityAndSet": ("a", "b", "c", "d", "e", "hl"),
-    "LoadCardDataToBuffer1_FromCardID": ("b", "c", "d", "e", "hl"),
-    "LoadCardDataToBuffer2_FromCardID": ("b", "c", "d", "e", "hl"),
-    "LoadCardDataToBuffer1_FromName": (),
-    "LoadCardGfx": (),
-    "GetCardPointer": ("f", "b", "c", "d", "e", "hl"),
+    "GetCardType": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GetCardName": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")},
+    "GetCardTypeRarityAndSet": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")},
+    "LoadCardDataToBuffer1_FromCardID": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadCardDataToBuffer2_FromCardID": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "LoadCardDataToBuffer1_FromName": {"compare": (), "preserve": ()},
+    "LoadCardGfx": {"compare": (), "preserve": ()},
+    "GetCardPointer": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
 }
 CASES = {
     "GetCardType": [
@@ -73,3 +73,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "GetCardType": {
+        "source_symbol": "GetCardType",
+        "before": "\treturn card_data(e)[CARD_DATA_TYPE];",
+        "after": "\treturn card_data(e)[CARD_DATA_RARITY];",
+        "case_ids": ["GetCardType-0", "GetCardType-1", "GetCardType-2", "GetCardType-3", "GetCardType-4", "GetCardType-5"],
+    },
+}

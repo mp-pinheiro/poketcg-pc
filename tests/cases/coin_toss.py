@@ -29,6 +29,7 @@ SCHEMA2_CASES = {
     "CompareDEtoBC": [
         {
             "id": "CompareDEtoBC-equal",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {"d": 0x12, "e": 0x34, "b": 0x12, "c": 0x34},
             "bus": {},
@@ -42,6 +43,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "CompareDEtoBC-less",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {"d": 0x10, "e": 0, "b": 0x20, "c": 0},
             "bus": {},
@@ -55,6 +57,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "CompareDEtoBC-poison",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, d=5, e=9, b=0x21, c=0x80),
             "bus": {},

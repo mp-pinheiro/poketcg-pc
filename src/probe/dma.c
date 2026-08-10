@@ -4,7 +4,8 @@
 static void adapt_DMA(ProbeState *s)
 {
 	DMA();
-	(void)s;
+	s->a = 0;
+	s->f = (uint8_t)(0xC0u | (s->f & 0x10u));
 }
 
 const ProbeEntry probe_entries_dma[] = {

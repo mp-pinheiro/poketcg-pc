@@ -15,7 +15,7 @@ just build                     # configure this private tree once
 just oracle-warm-group <basename>
 just oracle-diff-fast <PretSymbol>
 just oracle-diff-group <basename>
-just oracle-diff-all           # live barrier gate; exits non-zero on any failure
+just oracle-release-gate       # central release barrier; exits non-zero on any failure
 ```
 
 `just oracle-diff` remains the live, configure-and-build authority command.
@@ -258,10 +258,10 @@ export POKETCG_PORTS="<pret basenames>"     # semicolon list this slice owns
 ```
 
 `CMakeLists.txt:34-60` restricts the build to `POKETCG_PORTS`. Agents working
-concurrently never run `just oracle-diff-all` — a routine registered in
+concurrently never run `just oracle-release-gate` — a routine registered in
 `tests/routines.py` without cases is a hard FAIL for everyone, so mid-flight
 registrations would red the shared gate. Only the barrier, run centrally
-after every slice lands, runs the full gate.
+after every slice lands, runs the full release gate.
 
 ## Exclusion taxonomy
 

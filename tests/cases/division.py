@@ -54,6 +54,7 @@ SCHEMA2_CASES = {
     "DivideBCbyDE": [
         {
             "id": "DivideBCbyDE-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
             "bus": {},
@@ -67,6 +68,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "DivideBCbyDE-poison",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON),
             "bus": {},
@@ -80,6 +82,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "DivideBCbyDE-divisor-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": _case(0x1234, 0),
             "bus": {},

@@ -7,9 +7,9 @@ OAM_SIZE = 160
 wOAMOffset = 0xCAB5
 
 CONTRACT = {
-    "SetOneObjectAttributes": ("b", "c", "d", "e", "hl"),
-    "ZeroObjectPositions": ("b", "d", "e"),
-    "SetManyObjectsAttributes": ("f", "d", "e", "hl"),
+    "SetOneObjectAttributes": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "ZeroObjectPositions": {"compare": ("b", "d", "e"), "preserve": ("b", "d", "e")},
+    "SetManyObjectsAttributes": {"compare": ("f", "d", "e", "hl"), "preserve": ("d", "e")},
 }
 
 OBJ = bytes((0x11, 0x22, 0x33, 0x44)) * 40
@@ -55,3 +55,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SetOneObjectAttributes": {
+        "source_symbol": "SetOneObjectAttributes",
+        "before": "\tif (off >= OAM_SIZE)",
+        "after": "\tif (off > OAM_SIZE)",
+        "case_ids": ["SetOneObjectAttributes-0", "SetOneObjectAttributes-1", "SetOneObjectAttributes-2", "SetOneObjectAttributes-3"],
+    },
+}

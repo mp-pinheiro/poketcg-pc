@@ -17,19 +17,73 @@ sys.path.insert(0, str(ROOT))
 
 REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
 
+def _merge_spans(spans):
+    merged = []
+    for address, size in sorted(set(spans)):
+        end = address + size
+        if merged and address <= merged[-1][0] + merged[-1][1]:
+            start, previous_size = merged[-1]
+            merged[-1] = (start, max(start + previous_size, end) - start)
+        else:
+            merged.append((address, size))
+    return tuple(merged)
+
+
+def _merge_banked_spans(spans):
+    merged = []
+    for bank in sorted({bank for bank, _address, _size in spans}):
+        merged.extend(
+            (bank, address, size)
+            for address, size in _merge_spans(
+                (address, size)
+                for candidate, address, size in spans
+                if candidate == bank
+            )
+        )
+    return tuple(merged)
+
+
+
+def _number(value, label):
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise SystemExit(f"SCHEMA {label} must be an integer")
+    return value
+
+
+def _symbols(path):
+    result = {}
+    for line in path.read_text().splitlines():
+        parts = line.split()
+        if len(parts) >= 2 and ":" in parts[0]:
+            bank, address = parts[0].split(":", 1)
+            try:
+                result[parts[-1]] = (int(bank, 16), int(address, 16))
+            except ValueError:
+                continue
+    return result
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fn", required=True)
     parser.add_argument("--index", type=int, default=0)
     parser.add_argument("--case", type=Path, required=True)
     parser.add_argument("--rom", type=Path, required=True)
-    seed_wram_spec = ""
-    seed_sram_spec = ""
-    seed_vram_spec = ""
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
+    seed_wram_spec = ""
+    seed_sram_spec = ""
+    seed_vram_spec = ""
+    seed_wram_map = {}
+    seed_sram_map = {}
+    seed_vram_map = {}
+    seeds = {}
+    seed_native_rom_bank = False
+    native_vram_bank = 0
+    symbols = _symbols(args.symbols)
+    if args.fn not in symbols:
+        raise SystemExit("ARTIFACT function is absent from symbols")
     if args.case.suffix == ".py":
         spec = importlib.util.spec_from_file_location("schema2_case", args.case)
         if spec is None or spec.loader is None:
@@ -47,23 +101,31 @@ def main() -> int:
             raise SystemExit("SCHEMA contract must declare compare and preserve")
         compare_fields = list(contract["compare"])
         preserve_fields = list(contract["preserve"])
-        entry = next(
-            int(parts[0].split(":", 1)[1], 16)
-            for parts in (line.split() for line in args.symbols.read_text().splitlines())
-            if len(parts) >= 2 and parts[-1] == args.fn and ":" in parts[0]
-        )
+        entry = symbols[args.fn][1]
         case.update({
             "fn": args.fn,
             "entry": entry,
             "compare": compare_fields,
             "preserve": preserve_fields,
-            "state": {"wram": [], "sram": [], "vram": []},
-            "sram": {},
-            "vram": {},
+            "state": case.get(
+                "state",
+                {"wram": [], "sram": [], "vram": [], "palette": []},
+            ),
+            "sram": case.get("sram", {}),
+            "vram": case.get("vram", {}),
         })
+        case["state"] = {
+            name: list(case["state"].get(name, []))
+            for name in ("wram", "sram", "vram", "palette")
+        }
         mapper = dict(case["mapper"])
-        mapper.pop("vram_bank", None)
-        mapper.pop("mode", None)
+        native_vram_bank = int(mapper.pop("vram_bank"))
+        mapper_mode = mapper.pop("mode", "fixed")
+        seed_native_rom_bank = True
+        if mapper_mode == "symbol" and entry >= 0x4000:
+            mapper["rom_bank"] = symbols[args.fn][0]
+        elif mapper_mode not in {"fixed", "symbol"}:
+            raise SystemExit("SCHEMA mapper mode must be fixed or symbol")
         case["mapper"] = mapper
         seeds = case.pop("seeds", {})
         seed_wram_map = {}
@@ -79,6 +141,7 @@ def main() -> int:
                 parsed_bank = int(bank, 0) if isinstance(bank, str) else int(bank)
                 parsed_address = int(address, 0) if isinstance(address, str) else int(address)
                 encoded = bytes(payload).hex()
+                seed_sram_map.setdefault(str(parsed_bank), {})[str(parsed_address)] = encoded
                 seed_sram_parts.append(f"{parsed_bank:x}:{parsed_address:x}={encoded}")
                 case["state"]["sram"].append([parsed_bank, parsed_address, len(bytes(payload))])
         seed_vram_parts = []
@@ -87,10 +150,9 @@ def main() -> int:
                 parsed_bank = int(bank, 0) if isinstance(bank, str) else int(bank)
                 parsed_address = int(address, 0) if isinstance(address, str) else int(address)
                 encoded = bytes(payload).hex()
+                seed_vram_map.setdefault(str(parsed_bank), {})[str(parsed_address)] = encoded
                 seed_vram_parts.append(f"{parsed_bank:x}:{parsed_address:x}={encoded}")
                 case["state"]["vram"].append([parsed_bank, parsed_address, len(bytes(payload))])
-        case["state"]["wram"] = [[int(address, 0) if isinstance(address, str) else int(address), len(bytes(payload))]
-                                 for address, payload in seeds.get("wram", {}).items()]
         seed_wram_spec = ";".join(seed_parts)
         seed_sram_spec = ";".join(seed_sram_parts)
         seed_vram_spec = ";".join(seed_vram_parts)
@@ -99,6 +161,11 @@ def main() -> int:
         case["completion"] = mode
     else:
         case = json.loads(args.case.read_text())
+    case.setdefault("state", {"wram": [], "sram": [], "vram": []})
+    case.setdefault("sram", {})
+    case.setdefault("vram", {})
+    case.setdefault("setup", [])
+    case.setdefault("input_events", [])
     if case.get("fn") != args.fn:
         raise SystemExit("SCHEMA case function does not match --fn")
     completion = case.get("completion")
@@ -110,9 +177,9 @@ def main() -> int:
     if not args.rom.is_file() or not args.symbols.is_file():
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
     required = {
-        "id", "fn", "entry", "completion", "instruction_budget", "cycle_budget",
-        "mapper", "registers", "compare", "preserve", "state", "bus", "sram", "vram",
-        "setup", "input_events", "evidence",
+        "id", "hardware", "fn", "entry", "completion", "instruction_budget",
+        "cycle_budget", "mapper", "registers", "compare", "preserve", "state",
+        "bus", "sram", "vram", "setup", "input_events", "evidence",
     }
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
@@ -121,10 +188,12 @@ def main() -> int:
             required.update({"event_addr", "event_value", "event_mask"})
     if set(case) != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
+    if case["hardware"] not in {"dmg", "cgb"}:
+        raise SystemExit("SCHEMA hardware must be dmg or cgb")
     if not isinstance(case["registers"], dict) or not set(case["registers"]).issubset(REGISTERS):
         raise SystemExit("SCHEMA registers contain unknown fields")
     if (not isinstance(case["compare"], list) or not isinstance(case["preserve"], list)
-            or not case["compare"] or not set(case["preserve"]).issubset(case["compare"])
+            or not set(case["preserve"]).issubset(case["compare"])
             or any(field not in REGISTERS for field in case["compare"] + case["preserve"])):
         raise SystemExit("SCHEMA compare/preserve contract is invalid")
     if case["evidence"] != "primary":
@@ -150,16 +219,58 @@ def main() -> int:
         raise SystemExit("SCHEMA id must be non-empty")
     if not all(isinstance(case[name], dict) for name in ("bus", "sram", "vram")):
         raise SystemExit("SCHEMA state sections must be objects")
+    state_regions = ("wram", "sram", "vram", "palette")
+    if not isinstance(case["state"], dict) or set(case["state"]) != set(state_regions):
+        raise SystemExit("SCHEMA state must declare wram, sram, vram, and palette spans")
+    if not all(isinstance(case["state"][name], list) for name in state_regions):
+        raise SystemExit("SCHEMA state spans must be arrays")
     if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
         raise SystemExit("SCHEMA setup and input_events must be arrays")
-    if not isinstance(case["state"], dict) or set(case["state"]) != {"wram", "sram", "vram"}:
-        raise SystemExit("SCHEMA state must declare wram, sram, and vram spans")
-    if not all(isinstance(case["state"][name], list) for name in ("wram", "sram", "vram")):
-        raise SystemExit("SCHEMA state spans must be arrays")
+    if len(case["input_events"]) > 1 or (
+        case["input_events"] and
+        (not isinstance(case["input_events"][0], dict)
+         or set(case["input_events"][0]) != {"keys"}
+         or isinstance(case["input_events"][0]["keys"], bool)
+         or not isinstance(case["input_events"][0]["keys"], int)
+         or not 0 <= case["input_events"][0]["keys"] <= 0xff)
+    ):
+        raise SystemExit("SCHEMA input_events must be [] or [{keys: 0..255}]")
+    resolved_setup = []
+    for setup in case["setup"]:
+        if not isinstance(setup, dict) or "fn" not in setup or not isinstance(setup["fn"], str):
+            raise SystemExit("SCHEMA setup entries require a function name")
+        if setup["fn"] not in symbols:
+            raise SystemExit(f"SCHEMA setup function is absent from symbols: {setup['fn']}")
+        if set(setup) - {"fn", *REGISTERS}:
+            raise SystemExit("SCHEMA setup contains unknown fields")
+        regs = {}
+        for name in set(setup) & set(REGISTERS):
+            value = _number(setup[name], f"setup.{name}")
+            if not 0 <= value <= (0xffff if name == "hl" else 0xff):
+                raise SystemExit(f"SCHEMA setup.{name} is out of range")
+            regs[name] = value
+        bank, address = symbols[setup["fn"]]
+        resolved_setup.append({"fn": setup["fn"], "entry": address, "rom_bank": bank, **regs})
     if not isinstance(case["mapper"], dict) or set(case["mapper"]) != {
         "rom_bank", "ram_bank", "ram_enable"
     }:
         raise SystemExit("SCHEMA mapper must declare rom_bank, ram_bank, ram_enable")
+    def span_number(value, label, minimum, maximum):
+        value = _number(value, label)
+        if not minimum <= value <= maximum:
+            raise SystemExit(f"SCHEMA {label} is out of range")
+        return value
+    for address, size in case["bus"].items():
+        span_number(int(address, 0) if isinstance(address, str) else address,
+                    "bus address", 0, 0xffff)
+        span_number(size, "bus size", 1, 0x10000)
+    for name in ("wram", "sram", "vram", "palette"):
+        width = 2 if name in {"wram", "palette"} else 3
+        for span in case["state"][name]:
+            if not isinstance(span, (list, tuple)) or len(span) != width:
+                raise SystemExit(f"SCHEMA state.{name} spans are invalid")
+            for value in span:
+                _number(value, f"state.{name}")
     if any(seeds.get(region) for region in ("hram", "oam", "palette")):
         raise SystemExit("SCHEMA canonical HRAM/OAM/palette seeds require runner state support")
     if args.fn not in args.symbols.read_text():
@@ -167,14 +278,19 @@ def main() -> int:
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
+    keys = case["input_events"][0]["keys"] if case["input_events"] else 0
     request = {
         "completion": mode,
+        "hardware": case["hardware"],
         "entry": int(case["entry"]),
         "instruction_budget": int(case["instruction_budget"]),
         "cycle_budget": int(case["cycle_budget"]),
         "rom_bank": int(case["mapper"]["rom_bank"]),
         "ram_bank": int(case["mapper"]["ram_bank"]),
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
+        "vram_bank": native_vram_bank,
+        "setup": resolved_setup,
+        "input_events": case["input_events"],
         **registers,
     }
     if mode == "pre-ret":
@@ -193,6 +309,41 @@ def main() -> int:
         request["seed_sram"] = seed_sram_spec
     if seed_vram_spec:
         request["seed_vram"] = seed_vram_spec
+    wram_spans = _merge_spans(
+        (int(addr), int(size)) for addr, size in case["state"]["wram"]
+    )
+    sram_candidates = [
+        (int(bank), int(addr), int(size))
+        for bank, addr, size in case["state"]["sram"]
+    ]
+    sram_candidates.extend(
+        (int(bank), int(addr), len(bytes.fromhex(encoded)))
+        for bank, spans in seed_sram_map.items()
+        for addr, encoded in spans.items()
+    )
+    sram_spans = _merge_banked_spans(sram_candidates)
+    vram_candidates = [
+        (int(bank), int(addr), int(size))
+        for bank, addr, size in case["state"]["vram"]
+    ]
+    vram_candidates.extend(
+        (int(bank), int(addr), len(bytes.fromhex(encoded)))
+        for bank, spans in seed_vram_map.items()
+        for addr, encoded in spans.items()
+    )
+    vram_spans = _merge_banked_spans(vram_candidates)
+    palette_spans = _merge_spans(
+        (int(addr), int(size)) for addr, size in case["state"]["palette"]
+    )
+    bus_candidates = [
+        (int(address, 0) if isinstance(address, str) else int(address), int(size))
+        for address, size in case["bus"].items()
+    ]
+    bus_candidates.extend((int(address), len(bytes.fromhex(encoded)))
+                          for address, encoded in seed_wram_map.items())
+    bus_candidates.extend(wram_spans)
+    bus_spans = _merge_spans(bus_candidates)
+    request["read_bus"] = ";".join(f"{addr:x}:{size:x}" for addr, size in bus_spans)
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
@@ -238,24 +389,32 @@ def main() -> int:
             "sp": reference.get("sp"),
         }, sort_keys=True))
         return 1
-    wram_spans = tuple((int(addr), int(size)) for addr, size in case["state"]["wram"])
-    sram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["sram"])
-    vram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["vram"])
     probe_request = {
         "fn": case["fn"], **registers,
         "wram": seed_wram_map,
-        "read": {str(addr): size for addr, size in wram_spans},
+        "sram": seed_sram_map,
+        "vram": seed_vram_map,
+        "ram_bank": int(case["mapper"]["ram_bank"]),
+        "vram_bank": native_vram_bank,
+        "ramg": int(bool(case["mapper"]["ram_enable"])),
+        "read": {str(addr): size for addr, size in bus_spans},
         "sread": {str(bank): {str(addr): size for bb, addr, size in sram_spans if bb == bank}
                   for bank in sorted({bank for bank, _, _ in sram_spans})},
         "vread": {str(bank): {str(addr): size for bb, addr, size in vram_spans if bb == bank}
                   for bank in sorted({bank for bank, _, _ in vram_spans})},
+        "pread": {str(addr): size for addr, size in palette_spans},
+        "setup": case["setup"],
+        "keys": keys,
     }
+    if seed_native_rom_bank:
+        probe_request["rom_bank"] = int(case["mapper"]["rom_bank"])
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps(probe_request),
         text=True, capture_output=True, check=False, timeout=30, env=env,
     )
     if probe.returncode != 0:
-        raise SystemExit(probe.stderr)
+        raise SystemExit(probe.stderr or probe.stdout or
+                         f"BACKEND native probe exited {probe.returncode}")
     native = json.loads(probe.stdout)
     mismatches = {
         name: (reference.get(name), native.get(name))
@@ -279,24 +438,74 @@ def main() -> int:
             for bank in sorted({bank for bank, _address, _size in spans})
         )
 
-    expected_wram = reference_spans("wram", 0xC000, wram_spans)
-    actual_wram = native_spans("wram", tuple((0, address, size) for address, size in wram_spans))
-    if expected_wram != actual_wram:
-        mismatches["wram"] = "reference/native state differs"
+    expected_bus = reference.get("bus", "")
+    actual_bus = "".join(native.get("wram", {}).get(str(addr), "") for addr, _size in bus_spans)
+    if expected_bus != actual_bus:
+        mismatch_nibble = next(
+            (index for index, (left, right) in enumerate(zip(expected_bus, actual_bus))
+             if left != right),
+            min(len(expected_bus), len(actual_bus)),
+        )
+        mismatch_byte = mismatch_nibble // 2
+        offset = mismatch_byte
+        mismatch_address = None
+        for address, size in bus_spans:
+            if offset < size:
+                mismatch_address = address + offset
+                break
+            offset -= size
+        start = max(0, mismatch_byte - 4) * 2
+        end = (mismatch_byte + 5) * 2
+        mismatches["bus"] = {
+            "address": mismatch_address,
+            "reference": expected_bus[start:end],
+            "native": actual_bus[start:end],
+            "reference_size": len(expected_bus) // 2,
+            "native_size": len(actual_bus) // 2,
+            "spans": bus_spans,
+        }
+    reference_vram = bytes.fromhex(reference["vram"])
     expected_vram = "".join(
-        reference_spans("vram", 0x8000, tuple((address, size) for bb, address, size in vram_spans if bb == bank))
-        for bank in sorted({bank for bank, _address, _size in vram_spans})
+        reference_vram[
+            bank * 0x2000 + address - 0x8000:
+            bank * 0x2000 + address - 0x8000 + size
+        ].hex()
+        for bank, address, size in vram_spans
     )
     if expected_vram != native_spans("vram", vram_spans):
         mismatches["vram"] = "reference/native state differs"
+    reference_palette = bytes.fromhex(reference["palette"])
+    expected_palette = "".join(
+        reference_palette[address:address + size].hex()
+        for address, size in palette_spans
+    )
+    actual_palette = "".join(
+        native.get("palette", {}).get(str(address), "")
+        for address, _size in palette_spans
+    )
+    if expected_palette != actual_palette:
+        mismatches["palette"] = "reference/native state differs"
     reference_sram = bytes.fromhex(reference["sram"])
     expected_sram = "".join(
         reference_sram[bank * 0x2000 + address - 0xA000:
                        bank * 0x2000 + address - 0xA000 + size].hex()
         for bank, address, size in sram_spans
     )
-    if expected_sram != native_spans("sram", sram_spans):
-        mismatches["sram"] = "reference/native state differs"
+    actual_sram = native_spans("sram", sram_spans)
+    if expected_sram != actual_sram:
+        mismatch_nibble = next(
+            (index for index, (left, right) in enumerate(zip(expected_sram, actual_sram))
+             if left != right),
+            min(len(expected_sram), len(actual_sram)),
+        )
+        mismatch_byte = mismatch_nibble // 2
+        start = max(0, mismatch_byte - 4) * 2
+        end = (mismatch_byte + 5) * 2
+        mismatches["sram"] = {
+            "byte": mismatch_byte,
+            "reference": expected_sram[start:end],
+            "native": actual_sram[start:end],
+        }
     if mismatches:
         print(json.dumps({"status": "PORT", "fn": case["fn"], "mismatches": mismatches}))
         return 1

@@ -4,8 +4,14 @@ wListPointer = 0xCB72
 BUF = 0xC200
 
 CONTRACT = {
-    "SetListPointer": ("a", "f", "b", "c", "d", "e", "hl"),
-    "SetNextElementOfList": ("a", "f", "b", "c", "d", "e", "hl"),
+    "SetListPointer": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+    },
+    "SetNextElementOfList": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -36,3 +42,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SetListPointer": {
+        "source_symbol": "SetListPointer",
+        "before": "gb_write8(wListPointer_ADDR, (uint8_t)de);",
+        "after": "gb_write8(wListPointer_ADDR, (uint8_t)(de ^ 0xFF));",
+        "case_ids": ["SetListPointer-0", "SetListPointer-1", "SetListPointer-2", "SetListPointer-3"],
+    },
+}

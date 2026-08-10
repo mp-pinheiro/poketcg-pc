@@ -19,10 +19,22 @@ rWX = 0xFF4B
 rIE = 0xFFFF
 
 CONTRACT = {
-	"Func_3e44": ("a", "f", "b", "c", "d", "e", "hl"),
-	"GetNextBackgroundScroll": ("a", "d", "e"),
-	"EnableInt_LYCoincidence": ("b", "c", "d", "e", "hl"),
-	"DisableInt_LYCoincidence": ("b", "c", "d", "e", "hl"),
+	"Func_3e44": {
+		"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+		"preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+	},
+	"GetNextBackgroundScroll": {
+		"compare": ("a", "d", "e"),
+		"preserve": ("d", "e"),
+	},
+	"EnableInt_LYCoincidence": {
+		"compare": ("b", "c", "d", "e", "hl"),
+		"preserve": ("b", "c", "d", "e", "hl"),
+	},
+	"DisableInt_LYCoincidence": {
+		"compare": ("b", "c", "d", "e", "hl"),
+		"preserve": ("b", "c", "d", "e", "hl"),
+	},
 }
 
 # ApplyBackgroundScroll (scroll.asm:60) is intentionally absent: its .wait_ly
@@ -85,3 +97,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "Func_3e44": {
+        "source_symbol": "Func_3e44",
+        "before": "if (guard & 0x01)",
+        "after":  "if (guard & 0x02)",
+        "case_ids": ["Func_3e44-0", "Func_3e44-1", "Func_3e44-2", "Func_3e44-3", "Func_3e44-4", "Func_3e44-5", "Func_3e44-6"],
+    },
+}

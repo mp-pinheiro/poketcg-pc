@@ -7,16 +7,16 @@ CASES = {}
 
 # -- existing 14 routines -------------------------------------------------
 
-CONTRACT["Music1_EmptyFunc"] = ()
+CONTRACT["Music1_EmptyFunc"] = {"compare": (), "preserve": ()}
 CASES["Music1_EmptyFunc"] = [{}, POISON]
 
-CONTRACT["Music1_f404e"] = ()
+CONTRACT["Music1_f404e"] = {"compare": (), "preserve": ()}
 CASES["Music1_f404e"] = [
     {"a": 0x42, "read": {0xDDF0: 1}},
     dict(POISON, read={0xDDF0: 1}),
 ]
 
-CONTRACT["Music1_f4066"] = ()
+CONTRACT["Music1_f4066"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4066"] = [
     {"wram": {0xDDF2: b"\x00"}},
     {"wram": {0xDDF2: b"\x01"}},
@@ -24,7 +24,7 @@ CASES["Music1_f4066"] = [
     dict(POISON, wram={0xDDF2: b"\x05"}),
 ]
 
-CONTRACT["Music1_f406f"] = ("b", "c")
+CONTRACT["Music1_f406f"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
 CASES["Music1_f406f"] = [
     {"a": 0x00, "read": {0xDDF1: 1}},
     {"a": 0x07, "read": {0xDDF1: 1}},
@@ -33,7 +33,7 @@ CASES["Music1_f406f"] = [
     dict(POISON, read={0xDDF1: 1}),
 ]
 
-CONTRACT["Music1_PlaySong"] = ("hl",)
+CONTRACT["Music1_PlaySong"] = {"compare": ("hl",), "preserve": ("hl",)}
 CASES["Music1_PlaySong"] = [
     {"a": 0x00, "read": {0xDD80: 1}},
     {"a": 0x1E, "read": {0xDD80: 1}},
@@ -42,7 +42,7 @@ CASES["Music1_PlaySong"] = [
     dict(POISON, read={0xDD80: 1}),
 ]
 
-CONTRACT["Music1_PlaySFX"] = ("b", "c", "hl")
+CONTRACT["Music1_PlaySFX"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")}
 CASES["Music1_PlaySFX"] = [
     {"a": 0x00, "read": {0xDD83: 1, 0xDD82: 1}},
     {"a": 0x01, "read": {0xDD83: 1, 0xDD82: 1}},
@@ -51,7 +51,7 @@ CASES["Music1_PlaySFX"] = [
     dict(POISON, read={0xDD83: 1, 0xDD82: 1}),
 ]
 
-CONTRACT["Music1_AssertSongFinished"] = ("a",)
+CONTRACT["Music1_AssertSongFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["Music1_AssertSongFinished"] = [
     {"wram": {0xDD80: b"\x80"}},
     {"wram": {0xDD80: b"\x00"}},
@@ -59,14 +59,14 @@ CASES["Music1_AssertSongFinished"] = [
     dict(POISON, wram={0xDD80: b"\xFF"}),
 ]
 
-CONTRACT["Music1_AssertSFXFinished"] = ("a",)
+CONTRACT["Music1_AssertSFXFinished"] = {"compare": ("a",), "preserve": ()}
 CASES["Music1_AssertSFXFinished"] = [
     {"wram": {0xDD82: b"\x80"}},
     {"wram": {0xDD82: b"\x00"}},
     dict(POISON, wram={0xDD82: b"\x55"}),
 ]
 
-CONTRACT["Music1_CheckForEndOfSong"] = ()
+CONTRACT["Music1_CheckForEndOfSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_CheckForEndOfSong"] = [
     {"wram": {0xDD8D: b"\x01\x01\x01\x01"}},
     {"wram": {0xDD8D: b"\x00\x00\x00\x00", 0xDD80: b"\x05"}},
@@ -74,14 +74,14 @@ CASES["Music1_CheckForEndOfSong"] = [
     dict(POISON, wram={0xDD8D: b"\x00\x00\x00\x00", 0xDD80: b"\x05"}),
 ]
 
-CONTRACT["Music1_f4980"] = ()
+CONTRACT["Music1_f4980"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4980"] = [
     {"wram": {0xDD8C: b"\x00"}},
     {"wram": {0xDD8C: b"\x0F"}},
     dict(POISON, wram={0xDD8C: b"\x00"}),
 ]
 
-CONTRACT["Music1_CopyData"] = ("hl", "d", "e")
+CONTRACT["Music1_CopyData"] = {"compare": ("hl", "d", "e"), "preserve": ()}
 CASES["Music1_CopyData"] = [
     {"a": 0, "hl": 0xC100, "d": 0xC2, "e": 0x00, "read": {0xC200: 0}},
     {"a": 5, "hl": 0xC100, "d": 0xC2, "e": 0x00,
@@ -90,7 +90,7 @@ CASES["Music1_CopyData"] = [
          wram={0xC100: b"\xAA\xBB\xCC"}, read={0xC200: 3}),
 ]
 
-CONTRACT["Music1_Init"] = ()
+CONTRACT["Music1_Init"] = {"compare": (), "preserve": ()}
 CASES["Music1_Init"] = [
     {"read": {0xDD80: 1, 0xDD82: 1, 0xDD8D: 4, 0xDD91: 4, 0xDDB3: 4,
               0xDDCB: 4, 0xDDBF: 4, 0xDDF1: 1, 0xDDF3: 8, 0xDDF0: 1,
@@ -101,7 +101,7 @@ CASES["Music1_Init"] = [
                        0xDD84: 1, 0xDD81: 1, 0xDDEF: 1}),
 ]
 
-CONTRACT["Music1_StopAllChannels"] = ()
+CONTRACT["Music1_StopAllChannels"] = {"compare": (), "preserve": ()}
 CASES["Music1_StopAllChannels"] = [
     {"wram": {0xDD8C: b"\x00"}, "read": {0xDD8D: 4}},
     {"wram": {0xDD8C: b"\x0F"}, "read": {0xDD8D: 4}},
@@ -109,7 +109,7 @@ CASES["Music1_StopAllChannels"] = [
     dict(POISON, wram={0xDD8C: b"\x00"}, read={0xDD8D: 4}),
 ]
 
-CONTRACT["Music1_BeginSong"] = ()
+CONTRACT["Music1_BeginSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_BeginSong"] = [
     {"a": 0x00, "read": {0xDD81: 1, 0xDD95: 8, 0xDD9D: 8, 0xDDBB: 4,
                           0xDD8D: 4, 0xDD91: 4, 0xDDEA: 4, 0xDDBF: 4,
@@ -121,7 +121,7 @@ CASES["Music1_BeginSong"] = [
 
 # -- Stack helpers --------------------------------------------------------
 
-CONTRACT["Music1_GetChannelStackPointer"] = ("hl", "c")
+CONTRACT["Music1_GetChannelStackPointer"] = {"compare": ("hl", "c"), "preserve": ("c",)}
 CASES["Music1_GetChannelStackPointer"] = [
     {"c": 0, "wram": {0xDDF3: b"\x00\xC1"}, "read": {0xDDF3: 8}},
     {"c": 1, "wram": {0xDDF3: b"\x00\xC1\x00\xC2\x00\xC3\x00\xC4"}, "read": {0xDDF3: 8}},
@@ -131,7 +131,7 @@ CASES["Music1_GetChannelStackPointer"] = [
          read={0xDDF3: 8}),
 ]
 
-CONTRACT["Music1_SetChannelStackPointer"] = ("c",)
+CONTRACT["Music1_SetChannelStackPointer"] = {"compare": ("c",), "preserve": ("c",)}
 CASES["Music1_SetChannelStackPointer"] = [
     {"c": 0, "hl": 0xC100, "read": {0xDDF3: 2}},
     {"c": 2, "hl": 0xC200, "read": {0xDDF3: 8}},
@@ -143,7 +143,7 @@ CASES["Music1_SetChannelStackPointer"] = [
 
 # -- Channel output routines ----------------------------------------------
 
-CONTRACT["Music1_f4714"] = ()
+CONTRACT["Music1_f4714"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4714"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDB7: b"\x00", 0xDD91: b"\x00"},
      "read": {0xDD91: 1}},
@@ -161,7 +161,7 @@ CASES["Music1_f4714"] = [
          read={0xDD91: 1, 0xDDB7: 1}),
 ]
 
-CONTRACT["Music1_f475a"] = ()
+CONTRACT["Music1_f475a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f475a"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDB8: b"\x00", 0xDD92: b"\x00"},
      "read": {0xDD92: 1}},
@@ -179,7 +179,7 @@ CASES["Music1_f475a"] = [
          read={0xDD92: 1, 0xDDB8: 1}),
 ]
 
-CONTRACT["Music1_f479c"] = ()
+CONTRACT["Music1_f479c"] = {"compare": (), "preserve": ()}
 CASES["Music1_f479c"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDB9: b"\x00", 0xDD8B: b"\x00", 0xDD93: b"\x00"},
      "read": {0xDD93: 1}},
@@ -197,7 +197,7 @@ CASES["Music1_f479c"] = [
          read={0xDD93: 1, 0xDDB9: 1}),
 ]
 
-CONTRACT["Music1_f480a"] = ()
+CONTRACT["Music1_f480a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f480a"] = [
     {"wram": {0xDD8C: b"\x00", 0xDDBA: b"\x00"},
      "read": {0xDDEF: 1, 0xDDAB: 4}},
@@ -210,7 +210,7 @@ CASES["Music1_f480a"] = [
          read={0xDDAB: 4}),
 ]
 
-CONTRACT["Music1_f4839"] = ()
+CONTRACT["Music1_f4839"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4839"] = [
     {"wram": {0xDD8C: b"\x08", 0xDDEF: b"\x01"},
      "read": {0xDDEF: 1}},
@@ -225,7 +225,7 @@ CASES["Music1_f4839"] = [
          read={0xDDED: 2, 0xDDEF: 1}),
 ]
 
-CONTRACT["Music1_LoadWaveInstrument"] = ()
+CONTRACT["Music1_LoadWaveInstrument"] = {"compare": (), "preserve": ()}
 CASES["Music1_LoadWaveInstrument"] = [
     {"wram": {0xDD8A: b"\x00", 0xDD8B: b"\x01"},
      "read": {0xDD8B: 1}},
@@ -237,7 +237,7 @@ CASES["Music1_LoadWaveInstrument"] = [
 
 # -- Vibrato --------------------------------------------------------------
 
-CONTRACT["Music1_UpdateVibrato"] = ("d", "e", "c")
+CONTRACT["Music1_UpdateVibrato"] = {"compare": ("d", "e", "c"), "preserve": ("c",)}
 CASES["Music1_UpdateVibrato"] = [
     {"c": 0, "wram": {0xDDDF: b"\x00", 0xDDA5: b"\x2C\x00"},
      "read": {0xDDA5: 2}},
@@ -251,7 +251,7 @@ CASES["Music1_UpdateVibrato"] = [
          read={0xDDA9: 2}),
 ]
 
-CONTRACT["Music1_f490b"] = ()
+CONTRACT["Music1_f490b"] = {"compare": (), "preserve": ()}
 CASES["Music1_f490b"] = [
     {"a": 0, "wram": {0xDDDF: b"\x00", 0xDD8C: b"\x00",
                        0xDDA5: b"\x2C\x00"}},
@@ -276,7 +276,7 @@ CASES["Music1_f490b"] = [
                              0xDDA5: b"\x06\x03"}),
 ]
 
-CONTRACT["Music1_f4967"] = ("d", "e", "c")
+CONTRACT["Music1_f4967"] = {"compare": ("d", "e", "c"), "preserve": ("c",)}
 CASES["Music1_f4967"] = [
     {"c": 0, "d": 0x00, "e": 0x2C, "wram": {0xDDEA: b"\x00"}},
     {"c": 0, "d": 0x00, "e": 0x2C, "wram": {0xDDEA: b"\x10"}},
@@ -285,7 +285,7 @@ CASES["Music1_f4967"] = [
     dict(POISON, b=0, c=2, d=0x03, e=0x00, wram={0xDDEC: b"\xFF"}),
 ]
 
-CONTRACT["Music1_f485a"] = ()
+CONTRACT["Music1_f485a"] = {"compare": (), "preserve": ()}
 CASES["Music1_f485a"] = [
     {"a": 0, "wram": {0xDDDF: b"\x00", 0xDD8C: b"\x00",
                        0xDDA5: b"\x2C\x00"}},
@@ -297,7 +297,7 @@ CASES["Music1_f485a"] = [
 
 # -- Panning / output select ----------------------------------------------
 
-CONTRACT["Music1_f4866"] = ()
+CONTRACT["Music1_f4866"] = {"compare": (), "preserve": ()}
 CASES["Music1_f4866"] = [
     {"wram": {0xDDF1: b"\x77", 0xDD8C: b"\x00", 0xDD84: b"\xFF",
               0xDDF0: b"\x00"}},
@@ -311,7 +311,7 @@ CASES["Music1_f4866"] = [
 
 # -- Channel updaters -----------------------------------------------------
 
-CONTRACT["Music1_UpdateChannel1"] = ()
+CONTRACT["Music1_UpdateChannel1"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel1"] = [
     {"wram": {0xDD8D: b"\x00", 0xDD8C: b"\x00",
               0xDD95: b"\x00\xC1",
@@ -330,7 +330,7 @@ CASES["Music1_UpdateChannel1"] = [
                        0xDDA5: b"\x2C\x00"}),
 ]
 
-CONTRACT["Music1_UpdateChannel2"] = ()
+CONTRACT["Music1_UpdateChannel2"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel2"] = [
     {"wram": {0xDD8E: b"\x00", 0xDD8C: b"\x00",
               0xDD97: b"\x00\xC1",
@@ -349,7 +349,7 @@ CASES["Music1_UpdateChannel2"] = [
                        0xDDA7: b"\x2C\x00"}),
 ]
 
-CONTRACT["Music1_UpdateChannel3"] = ()
+CONTRACT["Music1_UpdateChannel3"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel3"] = [
     {"wram": {0xDD8F: b"\x00", 0xDD8C: b"\x00",
               0xDD99: b"\x00\xC1",
@@ -368,7 +368,7 @@ CASES["Music1_UpdateChannel3"] = [
                        0xDDA9: b"\x2C\x00", 0xDD8B: b"\x00"}),
 ]
 
-CONTRACT["Music1_UpdateChannel4"] = ()
+CONTRACT["Music1_UpdateChannel4"] = {"compare": (), "preserve": ()}
 CASES["Music1_UpdateChannel4"] = [
     {"wram": {0xDD90: b"\x00", 0xDD8C: b"\x00",
               0xDD9B: b"\x00\xC1",
@@ -388,7 +388,7 @@ CASES["Music1_UpdateChannel4"] = [
 
 # -- Pause / Resume / Backup / LoadBackup ---------------------------------
 
-CONTRACT["Music1_PauseSong"] = ()
+CONTRACT["Music1_PauseSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_PauseSong"] = [
     {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x00",
               0xDD8D: b"\x00\x00\x00\x00"}},
@@ -396,7 +396,7 @@ CASES["Music1_PauseSong"] = [
                        0xDD8D: b"\x01\x01\x01\x01"}),
 ]
 
-CONTRACT["Music1_ResumeSong"] = ()
+CONTRACT["Music1_ResumeSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_ResumeSong"] = [
     {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x00",
               0xDE55: b"\x80", 0xDE56: b"\x3D",
@@ -406,7 +406,7 @@ CASES["Music1_ResumeSong"] = [
                        0xDD8D: b"\x01\x01\x01\x01"}),
 ]
 
-CONTRACT["Music1_BackupSong"] = ()
+CONTRACT["Music1_BackupSong"] = {"compare": (), "preserve": ()}
 CASES["Music1_BackupSong"] = [
     {"wram": {0xDD80: b"\x05", 0xDD81: b"\x3D",
               0xDD84: b"\xFF", 0xDD86: b"\x01\x02\x03\x04",
@@ -459,7 +459,7 @@ CASES["Music1_BackupSong"] = [
                        0xDDFB: b"\x00" * 48}),
 ]
 
-CONTRACT["Music1_LoadBackup"] = ()
+CONTRACT["Music1_LoadBackup"] = {"compare": (), "preserve": ()}
 CASES["Music1_LoadBackup"] = [
     {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D",
               0xDE55: b"\x05", 0xDE56: b"\x3E",
@@ -519,7 +519,7 @@ CASES["Music1_LoadBackup"] = [
 
 # -- High-level -----------------------------------------------------------
 
-CONTRACT["Music1_CheckForNewSound"] = ()
+CONTRACT["Music1_CheckForNewSound"] = {"compare": (), "preserve": ()}
 CASES["Music1_CheckForNewSound"] = [
     {"wram": {0xDD80: b"\x80", 0xDD82: b"\x80"}},
     {"wram": {0xDD80: b"\x00", 0xDD82: b"\x80",
@@ -532,7 +532,7 @@ CASES["Music1_CheckForNewSound"] = [
          read={0xDD80: 1, 0xDD82: 1}),
 ]
 
-CONTRACT["Music1_Update"] = ()
+CONTRACT["Music1_Update"] = {"compare": (), "preserve": ()}
 CASES["Music1_Update"] = [
     {"wram": {0xDD81: b"\x3D", 0xDDF2: b"\x01",
               0xDD8C: b"\x0F", 0xDD80: b"\x80",
@@ -561,3 +561,12 @@ CASES["Music1_Update"] = [
 ]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "Music1_CopyData": {
+        "source_symbol": "Music1_CopyData",
+        "before": "\tdo { gb_write8((*de)++, gb_read8((*hl)++)); } while (--c);",
+        "after": "\tdo { gb_write8((*de)++, gb_read8((*hl)++)); } while (c--);",
+        "case_ids": ["Music1_CopyData-0", "Music1_CopyData-1", "Music1_CopyData-2"],
+    },
+}

@@ -15,13 +15,34 @@ OPPONENT_DECK = 0xC480
 PRIZES = 0xEC
 
 CONTRACT = {
-    "InitVariablesToBeginTurn": ("a", "b", "c", "d", "e", "hl"),
-    "SetAllPlayAreaPokemonCanEvolve": ("a", "b", "c", "d", "e", "hl"),
-    "InitializeDuelVariables": ("a", "b", "c", "d", "e", "hl"),
-    "InitTurnDuelistPrizes": ("a", "b", "c", "d", "e", "hl"),
-    "TakeAPrizes": ("a", "b", "c", "d", "e", "hl"),
-    "CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut": ("a", "b", "c", "d", "e", "hl"),
-    "CountKnockedOutPokemon": ("a", "b", "c", "d", "e", "hl"),
+    "InitVariablesToBeginTurn": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "SetAllPlayAreaPokemonCanEvolve": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "d", "e"),
+    },
+    "InitializeDuelVariables": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
+    "InitTurnDuelistPrizes": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
+    "TakeAPrizes": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
+    "CheckIfTurnDuelistPlayAreaPokemonAreAllKnockedOut": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "d", "e"),
+    },
+    "CountKnockedOutPokemon": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
 }
 
 CASES = {
@@ -71,20 +92,22 @@ CASES = {
     "CountKnockedOutPokemon": [
         {"wram": {H_WHOSE_TURN: b"\xC2", PLAYER + 0xC8: b"\x00" * 5 + b"\xFF",
                   PLAYER + 0xBB: b"\x00" * 5 + b"\xFF", PLAYER_DECK: bytes(range(60))},
-         "oracle": False,
-         "why": "GetCardType enters banked card data unavailable to the oracle",
-         "expect": {NUMBER_PRIZES: b"\x05"},
-         "expect_regs": {"a": 5, "b": 5, "c": 0, "d": 0xC2, "e": 0xC1,
-                         "hl": 0xC2CE}},
-        dict(POISON, wram={H_WHOSE_TURN: b"\xC3", OPPONENT + 0xC8: b"\x00" * 5 + b"\xFF",
+         "read": {NUMBER_PRIZES: 1}},
+        dict(POISON, wram={H_WHOSE_TURN: b"\xC3",
+                           OPPONENT + 0xC8: b"\x00" * 5 + b"\xFF",
                            OPPONENT + 0xBB: b"\x00" * 5 + b"\xFF",
                            OPPONENT_DECK: bytes(range(60))},
-             oracle=False,
-             why="GetCardType enters banked card data unavailable to the oracle",
-             expect={NUMBER_PRIZES: b"\x05"},
-             expect_regs={"a": 5, "b": 5, "c": 0, "d": 0xC3, "e": 0xC1,
-                         "hl": 0xC3CE}),
+             read={NUMBER_PRIZES: 1}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "InitVariablesToBeginTurn": {
+        "source_symbol": "InitVariablesToBeginTurn",
+        "before": "return (DuelCoreStateResult){hWhoseTurn, 0, 0, 0, 0x80};",
+        "after": "return (DuelCoreStateResult){hWhoseTurn, 0, 0, 1, 0x00};",
+        "case_ids": ["InitVariablesToBeginTurn-0", "InitVariablesToBeginTurn-1"],
+    },
+}

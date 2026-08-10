@@ -42,16 +42,46 @@ hBankROM = 0xFF80
 
 
 CONTRACT = {
-    "ConvertSpecialTrainerCardToPokemon": ("a", "b", "c", "d", "e", "hl"),
-    "ResetAttackAnimationIsPlaying": ("b", "c", "d", "e", "hl"),
-    "ClearNonTurnTemporaryDuelvars": ("b", "c", "d", "e"),
-    "ClearNonTurnTemporaryDuelvars_CopyStatus": ("b", "c", "d", "e"),
-    "UpdateArenaCardLastTurnDamage": ("b", "c", "d", "e"),
-    "PrintThereWasNoEffectFromStatusText": ("b", "d", "e", "hl"),
-    "WaitAttackAnimation": ("b", "c", "d", "e", "hl"),
-    "ApplyStatusConditionQueue": ("f",),
-    "GetCardOneStageBelow": ("a", "d", "e", "hl", "f"),
-    "SetDefaultConsolePalettes": ("b",),
+    "ConvertSpecialTrainerCardToPokemon": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
+    "ResetAttackAnimationIsPlaying": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "ClearNonTurnTemporaryDuelvars": {
+        "compare": ("b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "ClearNonTurnTemporaryDuelvars_CopyStatus": {
+        "compare": ("b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "UpdateArenaCardLastTurnDamage": {
+        "compare": ("b", "c", "d", "e"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "PrintThereWasNoEffectFromStatusText": {
+        "compare": ("b", "d", "e", "hl"),
+        "preserve": ("b", "d", "e"),
+    },
+    "WaitAttackAnimation": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
+    "ApplyStatusConditionQueue": {
+        "compare": ("f",),
+        "preserve": (),
+    },
+    "GetCardOneStageBelow": {
+        "compare": ("a", "d", "e", "hl", "f"),
+        "preserve": (),
+    },
+    "SetDefaultConsolePalettes": {
+        "compare": ("b",),
+        "preserve": ("b",),
+    },
 }
 
 CASES = {
@@ -397,3 +427,13 @@ CASES["SetDefaultConsolePalettes"] = [
 ]
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "ResetAttackAnimationIsPlaying": {
+        "source_symbol": "ResetAttackAnimationIsPlaying",
+        "before": "wAttackAnimationIsPlaying = 0;",
+        "after": "wAttackAnimationIsPlaying = 0xFF;",
+        "case_ids": ["ResetAttackAnimationIsPlaying-0", "ResetAttackAnimationIsPlaying-1"],
+    },
+}
+
