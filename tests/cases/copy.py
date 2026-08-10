@@ -118,6 +118,47 @@ SCHEMA2_CASES["CopyDataHLtoDE"] = [{
     "evidence": "primary",
 }]
 
+CONTRACT["CopyGfxData"] = {
+    "compare": ("c", "d", "e", "hl"),
+    "preserve": ("c",),
+}
+CONTRACT["CopyDataHLtoDE_SaveRegisters"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+SCHEMA2_CASES["CopyGfxData"] = [{
+    "id": "CopyGfxData-primary-1",
+    "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+    "registers": {
+        "a": 0, "f": 0, "b": 1, "c": 1,
+        "d": DST >> 8, "e": DST & 0xFF, "hl": SRC,
+    },
+    "bus": {},
+    "seeds": {"wram": {SRC: PAT[:1], DST: b"\x00"}},
+    "setup": [],
+    "input_events": [],
+    "instruction_budget": 10000,
+    "cycle_budget": 40000,
+    "completion": {"mode": "return"},
+    "evidence": "primary",
+}]
+SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"] = [{
+    "id": "CopyDataHLtoDE_SaveRegisters-primary-257",
+    "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+    "registers": {
+        "a": 0, "f": 0, "b": 1, "c": 1,
+        "d": DST >> 8, "e": DST & 0xFF, "hl": SRC,
+    },
+    "bus": {},
+    "seeds": {"wram": {SRC: PAT[:257], DST: b"\x00" * 257}},
+    "setup": [],
+    "input_events": [],
+    "instruction_budget": 20000,
+    "cycle_budget": 80000,
+    "completion": {"mode": "return"},
+    "evidence": "primary",
+}]
+
 MUTATIONS = {
     "CopyDataHLtoDE": {
         "source_symbol": "CopyDataHLtoDE",
