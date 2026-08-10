@@ -6,6 +6,7 @@ import argparse
 import importlib
 import importlib.util
 import json
+import os
 import subprocess
 from pathlib import Path
 
@@ -14,6 +15,7 @@ REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
 
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--fn", required=True)
     parser.add_argument("--case", type=Path, required=True)
     parser.add_argument("--rom", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
@@ -26,12 +28,14 @@ def main() -> int:
             raise SystemExit("SCHEMA cannot load case module")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        records = getattr(module, "SCHEMA2_CASES", {}).get("ATimes10", [])
+        records = getattr(module, "SCHEMA2_CASES", {}).get(args.fn, [])
         if len(records) != 1:
-            raise SystemExit("SCHEMA expected one ATimes10 schema-2 case")
+            raise SystemExit(f"SCHEMA expected one {args.fn} schema-2 case")
         case = records[0]
     else:
         case = json.loads(args.case.read_text())
+    if case.get("fn") != args.fn:
+        raise SystemExit("SCHEMA case function does not match --fn")
     if case.get("completion") != "return" or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return and registers")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():
@@ -39,6 +43,8 @@ def main() -> int:
     if not args.rom.is_file() or not args.symbols.is_file():
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
+    env = os.environ.copy()
+    env["POKETCG_ROM"] = str(args.rom.resolve())
     request = {
         "completion": "return",
         "entry": int(case["entry"]),
@@ -49,6 +55,7 @@ def main() -> int:
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
+        timeout=30, env=env,
     )
     if primary.returncode != 0:
         raise SystemExit(primary.stdout or primary.stderr)
@@ -75,7 +82,7 @@ def main() -> int:
     })
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps({"fn": case["fn"], **registers}),
-        text=True, capture_output=True, check=False,
+        text=True, capture_output=True, check=False, timeout=30, env=env,
     )
     if probe.returncode != 0:
         raise SystemExit(probe.stderr)
