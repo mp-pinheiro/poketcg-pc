@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.3.5 - 2026-08-10
+## v0.3.6 - 2026-08-10
 
-### Bug Fixes
+### Performance
 
-- *(ci)* Drop cache, install uv to /usr/local/bin
+- *(ci)* Pre-built oracle venv release asset
 
