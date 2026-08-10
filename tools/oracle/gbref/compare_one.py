@@ -42,7 +42,30 @@ def main() -> int:
         raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
     if not args.rom.is_file() or not args.symbols.is_file():
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
-    if not isinstance(case.get("mapper"), dict) or set(case["mapper"]) != {
+    required = {
+        "id", "fn", "entry", "completion", "instruction_budget", "cycle_budget",
+        "mapper", "registers", "bus", "sram", "vram", "setup",
+        "input_events", "evidence",
+    }
+    if set(case) != required:
+        raise SystemExit("SCHEMA case keys do not match schema-2")
+    if set(case["registers"]) != set(REGISTERS):
+        raise SystemExit("SCHEMA registers must declare exactly seven fields")
+    if case["evidence"] != "primary":
+        raise SystemExit("SCHEMA comparator slice requires primary evidence")
+    for name in ("entry", "instruction_budget", "cycle_budget"):
+        value = case[name]
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise SystemExit(f"SCHEMA invalid positive integer {name}")
+    if case["entry"] > 0xffff or case["instruction_budget"] > 0xffffffff or case["cycle_budget"] > 0xffffffff:
+        raise SystemExit("SCHEMA numeric field out of range")
+    if not isinstance(case["id"], str) or not case["id"]:
+        raise SystemExit("SCHEMA id must be non-empty")
+    if not all(isinstance(case[name], dict) for name in ("bus", "sram", "vram")):
+        raise SystemExit("SCHEMA state sections must be objects")
+    if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
+        raise SystemExit("SCHEMA setup and input_events must be arrays")
+    if not isinstance(case["mapper"], dict) or set(case["mapper"]) != {
         "rom_bank", "ram_bank", "ram_enable"
     }:
         raise SystemExit("SCHEMA mapper must declare rom_bank, ram_bank, ram_enable")
