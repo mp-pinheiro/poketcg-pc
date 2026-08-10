@@ -19,6 +19,7 @@ from typing import Any, TYPE_CHECKING
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools" / "oracle"))
+sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT / "tests"))
 
 from routines import ALL, ROUTINES  # noqa: E402
