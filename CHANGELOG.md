@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.3.2 - 2026-08-10
+## v0.3.3 - 2026-08-10
 
-### Bug Fixes
+### Performance
 
-- *(ci)* Use direct rgbds download URL
+- *(ci)* Cache pret checkout and oracle venv
 
