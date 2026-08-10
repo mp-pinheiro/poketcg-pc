@@ -267,7 +267,7 @@ generate-port-issues TIER="":
 launch-port:
     #!/usr/bin/env bash
     set -euo pipefail
-    issue=$(gh issue list --label port --state open --json number,title,labels --jq 'sort_by(.labels | map(.name | ltrimstr("tier-") | tonumber) | .[0]) | .[0].number' 2>/dev/null || true)
+    issue=$(gh issue list --label port --state open --limit 200 --json number,title,labels --jq 'sort_by(.labels | map(.name | select(startswith("tier-")) | ltrimstr("tier-") | tonumber) | .[0]) | .[0].number' 2>/dev/null || true)
     if [ -z "$issue" ]; then
         echo "no open port issues; run: python3 tools/progress/gen_port_issues.py --tier 1"
         exit 1
