@@ -29,40 +29,18 @@ jobs:
       - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          sudo cp ~/.local/bin/uv /usr/local/bin/
 
       - name: Install rgbds
         run: |
           curl -LsSf "https://github.com/gbdev/rgbds/releases/latest/download/rgbds-linux-x86_64.tar.xz" -o /tmp/rgbds.tar.xz
           sudo tar -xJf /tmp/rgbds.tar.xz -C /usr/local/bin
 
-      - name: Restore pret checkout cache
-        id: cache-pret
-        uses: actions/cache@v4
-        with:
-          path: poketcg
-          key: pret-poketcg-${{ hashFiles('tools/verify_oracle_artifacts.py') }}
-
       - name: Bootstrap pret disassembly
         run: just bootstrap
 
-      - name: Restore oracle venv cache
-        id: cache-venv
-        uses: actions/cache@v4
-        with:
-          path: /tmp/pbenv
-          key: pbenv-${{ hashFiles('tools/oracle/uv.lock') }}
-
       - name: Install oracle venv
-        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: just oracle-venv
-
-      - name: Restore C build cache
-        id: cache-build
-        uses: actions/cache@v4
-        with:
-          path: build
-          key: build-${{ hashFiles('CMakeLists.txt', 'src/mem.c', 'src/mem.h', 'src/probe.c', 'src/probe.h', 'src/probe_table.c') }}
 
       - name: Build C probe
         run: just build
