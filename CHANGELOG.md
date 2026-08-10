@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.3.6 - 2026-08-10
+## v0.3.7 - 2026-08-10
 
-### Performance
+### Bug Fixes
 
-- *(ci)* Pre-built oracle venv release asset
+- *(ci)* Use gh release download for venv
 
