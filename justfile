@@ -164,8 +164,8 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Diff one routine's C port against PyBoy running the real ROM.
 
-# Run all migrated schema-2 cases; missing registry coverage is a hard schema failure.
-oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
+# Run migrated schema-2 cases; intentionally incomplete until registry migration closes.
+oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
     python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 oracle-diff FN: build
     #!/usr/bin/env bash
