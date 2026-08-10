@@ -4,9 +4,10 @@ DEST = 0xC300
 FILL = b"\xff" * 7  # seven bytes: the seventh proves de stops after five digits
 
 CONTRACT = {
-    # bc is pushed/popped; de is the advanced write pointer. hl (0) and a (0) on
-    # exit are residue no caller reads.
-    "TwoByteNumberToText": ("b", "c", "d", "e"),
+    "TwoByteNumberToText": {
+        "compare": ("b", "c", "d", "e"),
+        "preserve": ("b", "c"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -29,5 +30,22 @@ CASES = {
         case(65535),
         # de advanced by five, read back without seeding the buffer first.
         dict(POISON, hl=54321, d=DEST >> 8, e=DEST & 0xFF, read={DEST: 6}),
+    ],
+}
+SCHEMA2_CASES = {
+    "TwoByteNumberToText": [
+        {
+            "id": "TwoByteNumberToText-12345",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON, hl=12345, d=DEST >> 8, e=DEST & 0xFF),
+            "bus": {},
+            "seeds": {"wram": {DEST: FILL}},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 10000,
+            "cycle_budget": 100000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
     ],
 }
