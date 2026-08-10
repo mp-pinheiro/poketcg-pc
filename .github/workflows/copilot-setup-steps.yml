@@ -41,7 +41,7 @@ jobs:
 
       - name: Install oracle venv
         run: |
-          if gh release download oracle-venv --pattern 'pbenv.tar.zst' -O /tmp/pbenv.tar.zst 2>/dev/null; then
+          if gh release download oracle-venv --repo mp-pinheiro/poketcg-pc --pattern 'pbenv.tar.zst' -O /tmp/pbenv.tar.zst; then
             echo "extracting pre-built venv..."
             sudo mkdir -p /tmp/pbenv
             sudo tar -xaf /tmp/pbenv.tar.zst -C /tmp
