@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import importlib.util
 import sys
 from pathlib import Path
@@ -67,12 +68,18 @@ def main() -> int:
                 print(f"EXCLUSION {basename}:{fn}: requires kind/source/reason")
                 failures += 1
                 continue
-            if exclusion["kind"] not in ALLOWED_EXCLUSION_KINDS:
-                print(f"EXCLUSION {basename}:{fn}: invalid kind {exclusion['kind']}")
+            match = re.fullmatch(r"(.+):([1-9][0-9]*)-([1-9][0-9]*)", exclusion["source"])
+            if match is None:
+                print(f"EXCLUSION {basename}:{fn}: source must include line range")
                 failures += 1
-            source = ROOT / exclusion["source"].split(":", 1)[0]
+                continue
+            source = ROOT / match.group(1)
+            start, end = int(match.group(2)), int(match.group(3))
             if not source.is_file():
                 print(f"EXCLUSION {basename}:{fn}: missing source {exclusion['source']}")
+                failures += 1
+            elif not start <= end <= len(source.read_text().splitlines()):
+                print(f"EXCLUSION {basename}:{fn}: source range out of bounds")
                 failures += 1
             if fn in owned:
                 print(f"EXCLUSION {basename}:{fn}: cannot also declare schema cases")
