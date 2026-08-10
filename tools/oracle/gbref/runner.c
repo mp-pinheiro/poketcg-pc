@@ -103,6 +103,25 @@ static void print_hex(const uint8_t *data, size_t size) {
         putchar(digits[data[i] & 0x0f]);
     }
 }
+static int apply_seed_spans(GBContext *ctx, char *spec) {
+    for (char *item = strtok(spec, ";"); item; item = strtok(NULL, ";")) {
+        unsigned address = 0;
+        char hex[65536];
+        if (sscanf(item, "%x=%65535s", &address, hex) != 2 || address > 0xffffu) {
+            return 0;
+        }
+        size_t length = strlen(hex);
+        if ((length & 1u) != 0u || address + length / 2u > 0x10000u) {
+            return 0;
+        }
+        for (size_t i = 0; i < length; i += 2) {
+            unsigned byte = 0;
+            if (sscanf(hex + i, "%2x", &byte) != 1) return 0;
+            gb_write8(ctx, (uint16_t)(address + i / 2), (uint8_t)byte);
+        }
+    }
+    return 1;
+}
 
 static void print_result(const GBContext *ctx, const char *completion,
                          uint64_t steps, uint64_t cycles) {
@@ -173,6 +192,8 @@ int main(int argc, char **argv) {
     uint64_t reg_a = 0, reg_f = 0, reg_b = 0, reg_c = 0;
     uint64_t reg_d = 0, reg_e = 0, reg_hl = 0;
     int reg_a_state = json_number(request, "a", &reg_a);
+    char seed_wram[65536];
+    int seed_wram_state = json_string(request, "seed_wram", seed_wram, sizeof seed_wram);
     int reg_f_state = json_number(request, "f", &reg_f);
     int reg_b_state = json_number(request, "b", &reg_b);
     int reg_c_state = json_number(request, "c", &reg_c);
@@ -187,9 +208,10 @@ int main(int argc, char **argv) {
     if (
         (strcmp(completion, "event") == 0 &&
          (predicate_state != 1 || event_addr_state != 1 || event_value_state != 1 ||
-          event_mask_state < 0 || event_addr > 0xffff || event_value > 0xff ||
+          event_mask_state != 1 || event_addr > 0xffff || event_value > 0xff ||
           event_mask > 0xff)) ||
-        entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
+        seed_wram_state < 0 ||
+        entry_state != 1 || entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
         (strcmp(completion, "pre-ret") == 0 && (stop_state != 1 || stop_pc > 0xffff)) ||
         reg_a_state < 0 || reg_f_state < 0 || reg_b_state < 0 ||
@@ -230,6 +252,11 @@ int main(int argc, char **argv) {
     ctx->bc = (uint16_t)((reg_b << 8) | reg_c);
     ctx->de = (uint16_t)((reg_d << 8) | reg_e);
     ctx->hl = (uint16_t)reg_hl;
+    if (seed_wram_state == 1 && !apply_seed_spans(ctx, seed_wram)) {
+        gb_context_destroy(ctx);
+        free(rom);
+        fail("SCHEMA", "seed_wram must contain address=hex spans");
+    }
     uint64_t steps = 0;
     uint64_t cycles = 0;
     while (strcmp(completion, "event") == 0

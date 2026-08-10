@@ -23,6 +23,7 @@ def main() -> int:
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
+    seed_wram_spec = ""
     if args.case.suffix == ".py":
         spec = importlib.util.spec_from_file_location("schema2_case", args.case)
         if spec is None or spec.loader is None:
@@ -59,8 +60,18 @@ def main() -> int:
         mapper.pop("mode", None)
         case["mapper"] = mapper
         seeds = case.pop("seeds", {})
-        if any(seeds.values()):
-            raise SystemExit("SCHEMA canonical seeds require runner state support")
+        seed_wram_map = {}
+        seed_parts = []
+        for address, payload in seeds.get("wram", {}).items():
+            parsed_address = int(address, 0) if isinstance(address, str) else int(address)
+            encoded = bytes(payload).hex()
+            seed_wram_map[str(parsed_address)] = encoded
+            seed_parts.append(f"{parsed_address:04x}={encoded}")
+        if any(seeds.get(region) for region in ("hram", "sram", "vram", "oam", "palette")):
+            raise SystemExit("SCHEMA canonical non-WRAM seeds require runner state support")
+        case["state"]["wram"] = [[int(address, 0) if isinstance(address, str) else int(address), len(bytes(payload))]
+                                 for address, payload in seeds.get("wram", {}).items()]
+        seed_wram_spec = ";".join(seed_parts)
         case["completion"] = mode
         case["evidence"] = case.get("evidence", "primary")
     else:
@@ -153,6 +164,8 @@ def main() -> int:
                 f"mem:{int(case['event_addr']):#x}=={int(case['event_value']):#x}"
                 f"&{int(case['event_mask']):#x}"
             )
+    if seed_wram_spec:
+        request["seed_wram"] = seed_wram_spec
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
@@ -196,6 +209,7 @@ def main() -> int:
     vram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["vram"])
     probe_request = {
         "fn": case["fn"], **registers,
+        "wram": seed_wram_map,
         "read": {str(addr): size for addr, size in wram_spans},
         "sread": {str(bank): {str(addr): size for bb, addr, size in sram_spans if bb == bank}
                   for bank in sorted({bank for bank, _, _ in sram_spans})},
