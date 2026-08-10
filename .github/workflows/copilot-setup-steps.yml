@@ -42,9 +42,8 @@ jobs:
       - name: Install oracle venv
         run: |
           uv python install 3.12.3
-          export UV_PROJECT_ENVIRONMENT=/tmp/pbenv
-          uv venv --python 3.12.3 --managed-python
-          uv pip install numpy cython pysdl2 pysdl2-dll packaging setuptools wheel
+          uv venv /tmp/pbenv --python 3.12.3 --managed-python
+          uv pip install --python /tmp/pbenv/bin/python numpy cython pysdl2 pysdl2-dll packaging setuptools wheel
 
           ASSET_URL=$(curl -fsSL \
             -H "Authorization: Bearer ${{ github.token }}" \
