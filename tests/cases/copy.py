@@ -15,12 +15,11 @@ POISON_SRC = 0x1234
 PAT = bytes((i * 7 + 3) & 0xFF for i in range(512))
 
 CONTRACT = {
-    # b ends at 0 and a holds the last byte copied: both are loop residue.
-    # c survives the push bc / pop bc around every block.
     "CopyGfxData": ("c", "d", "e", "hl"),
-    # bc ends at 0 and a at 0 (`ld a, c / or b`): residue, not outputs.
-    "CopyDataHLtoDE": ("d", "e", "hl"),
-    # "preserves all registers except af" — copy.asm:37.
+    "CopyDataHLtoDE": {
+        "compare": ("d", "e", "hl"),
+        "preserve": (),
+    },
     "CopyDataHLtoDE_SaveRegisters": ("b", "c", "d", "e", "hl"),
 }
 
@@ -102,3 +101,28 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES["CopyDataHLtoDE"] = [{
+    "id": "CopyDataHLtoDE-primary-4",
+    "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+    "registers": {
+        "a": 0, "f": 0, "b": 0, "c": 1,
+        "d": DST >> 8, "e": DST & 0xFF, "hl": SRC,
+    },
+    "bus": {},
+    "seeds": {"wram": {SRC: PAT[:4], DST: b"\x00" * 4}},
+    "setup": [],
+    "input_events": [],
+    "instruction_budget": 10000,
+    "cycle_budget": 40000,
+    "completion": {"mode": "return"},
+    "evidence": "primary",
+}]
+
+MUTATIONS = {
+    "CopyDataHLtoDE": {
+        "source_symbol": "CopyDataHLtoDE",
+        "before": "\tdo {\n\t\tgb_write8(dst++, gb_read8(src++));",
+        "after": "\tdo {\n\t\tgb_write8(dst++, gb_read8(src++));\n\t\tgb_write8(dst++, gb_read8(src++));",
+        "case_ids": ["CopyDataHLtoDE-primary-4"],
+    },
+}

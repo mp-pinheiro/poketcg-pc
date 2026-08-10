@@ -8,9 +8,11 @@ import json
 import shutil
 import subprocess
 import tempfile
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
 
 def load_case(path: Path):
@@ -36,6 +38,17 @@ def main() -> int:
     original = source_path.read_text()
     if original.count(mutation["before"]) != 1:
         raise SystemExit("mutation anchor is not unique")
+    baseline_command = [
+        "python3", "tools/oracle/gbref/compare_one.py", "--fn", args.fn,
+        "--index", str(args.index), "--case", str(case_path.relative_to(ROOT)),
+        "--rom", str((ROOT / "poketcg/poketcg.gbc").resolve()),
+        "--symbols", str((ROOT / "poketcg/poketcg.sym").resolve()),
+        "--probe", str((ROOT / "build-barrier/poketcg_probe").resolve()),
+        "--runner", str((ROOT / "tools/oracle/gbref/build/gbref_runner").resolve()),
+    ]
+    baseline = subprocess.run(baseline_command, cwd=ROOT, text=True, capture_output=True, check=False)
+    if baseline.returncode != 0:
+        raise SystemExit(f"MUTATION_BASELINE_FAILED: {baseline.stdout or baseline.stderr}")
     with tempfile.TemporaryDirectory(prefix="poketcg-mutation-") as tmp_name:
         tmp = Path(tmp_name)
         for name in ("CMakeLists.txt", "cmake", "src", "poketcg", "tests", "tools"):
@@ -60,9 +73,17 @@ def main() -> int:
         result = subprocess.run(command, cwd=tmp, text=True, capture_output=True, check=False)
         if result.returncode == 0:
             raise SystemExit("MUTATION_GREEN: corrupted routine still passed")
+        restored = subprocess.run(baseline_command, cwd=ROOT, text=True, capture_output=True, check=False)
+        if restored.returncode != 0:
+            raise SystemExit(f"MUTATION_RESTORE_FAILED: {restored.stdout or restored.stderr}")
         receipt = ROOT / "tools/oracle/mutation_receipts"
         receipt.mkdir(parents=True, exist_ok=True)
-        output = {"fn": args.fn, "case": str(args.case), "index": args.index, "status": "RED", "output": result.stdout or result.stderr}
+        output = {
+            "fn": args.fn, "case": str(args.case), "index": args.index,
+            "status": "RED", "baseline": baseline.stdout,
+            "output": result.stdout or result.stderr,
+            "restored": restored.stdout,
+        }
         (receipt / f"{args.fn}.json").write_text(json.dumps(output, indent=2) + "\n")
         print(f"MUTATION_RED fn={args.fn} index={args.index}")
     return 0
