@@ -16,6 +16,7 @@ REGISTERS = ("a", "f", "b", "c", "d", "e", "hl")
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fn", required=True)
+    parser.add_argument("--index", type=int, default=0)
     parser.add_argument("--case", type=Path, required=True)
     parser.add_argument("--rom", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
@@ -29,9 +30,9 @@ def main() -> int:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         records = getattr(module, "SCHEMA2_CASES", {}).get(args.fn, [])
-        if len(records) != 1:
-            raise SystemExit(f"SCHEMA expected one {args.fn} schema-2 case")
-        case = records[0]
+        if args.index < 0 or args.index >= len(records):
+            raise SystemExit(f"SCHEMA case index {args.index} is out of range for {args.fn}")
+        case = records[args.index]
     else:
         case = json.loads(args.case.read_text())
     if case.get("fn") != args.fn:
@@ -44,13 +45,17 @@ def main() -> int:
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
     required = {
         "id", "fn", "entry", "completion", "instruction_budget", "cycle_budget",
-        "mapper", "registers", "bus", "sram", "vram", "setup",
-        "input_events", "evidence",
+        "mapper", "registers", "compare", "preserve", "bus", "sram", "vram",
+        "setup", "input_events", "evidence",
     }
     if set(case) != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
     if set(case["registers"]) != set(REGISTERS):
         raise SystemExit("SCHEMA registers must declare exactly seven fields")
+    if (not isinstance(case["compare"], list) or not isinstance(case["preserve"], list)
+            or not case["compare"] or not set(case["preserve"]).issubset(case["compare"])
+            or any(field not in REGISTERS for field in case["compare"] + case["preserve"])):
+        raise SystemExit("SCHEMA compare/preserve contract is invalid")
     if case["evidence"] != "primary":
         raise SystemExit("SCHEMA comparator slice requires primary evidence")
     for name in ("entry", "instruction_budget", "cycle_budget"):
@@ -121,11 +126,17 @@ def main() -> int:
     if probe.returncode != 0:
         raise SystemExit(probe.stderr)
     native = json.loads(probe.stdout)
+    preservation = {
+        name: (registers[name], reference.get(name))
+        for name in case["preserve"]
+        if reference.get(name) != registers[name]
+    }
     mismatches = {
         name: (reference.get(name), native.get(name))
-        for name in REGISTERS
+        for name in case["compare"]
         if reference.get(name) != native.get(name)
     }
+    mismatches.update({f"preserve:{name}": values for name, values in preservation.items()})
     if mismatches:
         print(json.dumps({"status": "PORT", "fn": case["fn"], "mismatches": mismatches}))
         return 1

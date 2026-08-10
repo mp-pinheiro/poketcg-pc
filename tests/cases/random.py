@@ -59,3 +59,24 @@ CASES = {
         dict(POISON, a=10, wram={wRNG1: b"\x01\x00\x80"}),
     ],
 }
+
+SCHEMA2_CASES = {
+    "HtimesL": [{
+        "id": "HtimesL-poison",
+        "fn": "HtimesL",
+        "entry": 0x0879,
+        "completion": "return",
+        "instruction_budget": 1000,
+        "cycle_budget": 10000,
+        "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
+        "registers": dict(POISON),
+        "compare": ["b", "c", "d", "e", "hl"],
+        "preserve": ["b", "c", "d", "e"],
+        "bus": {},
+        "sram": {},
+        "vram": {},
+        "setup": [],
+        "input_events": [],
+        "evidence": "primary",
+    }],
+}

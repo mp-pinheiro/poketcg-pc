@@ -32,6 +32,8 @@ SCHEMA2_CASES = {
         "cycle_budget": 10000,
         "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
         "registers": dict(POISON, a=25),
+        "compare": ["a", "b", "c", "d", "e", "hl"],
+        "preserve": ["b", "c", "d", "e", "hl"],
         "bus": {},
         "sram": {},
         "vram": {},
