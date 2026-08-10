@@ -62,25 +62,24 @@ oracle-venv:
     uv sync --project tools/oracle --python 3.12.3 --managed-python --frozen --reinstall-package pyboy
 
 
-# Build, pack, and upload the oracle venv as a release asset so Copilot setup
-# can download it instead of rebuilding PyBoy from source every session.
-# Rerun whenever tools/oracle/uv.lock changes.
+
 oracle-venv-release: oracle-venv
     #!/usr/bin/env bash
     set -euo pipefail
-    tarball=/tmp/pbenv.tar.zst
-    echo "packing /tmp/pbenv → $tarball ..."
-    tar -caf "$tarball" -C /tmp pbenv
+    tarball=/tmp/pyboy-prebuilt.tar.zst
+    sitepkg=/tmp/pbenv/lib/python3.12/site-packages
+    echo "packing pyboy → $tarball ..."
+    tar -caf "$tarball" -C "$sitepkg" pyboy
     echo "uploading to GitHub release oracle-venv ..."
     if gh release view oracle-venv &>/dev/null; then
         gh release upload oracle-venv "$tarball" --clobber
     else
         gh release create oracle-venv "$tarball" \
-            --title "Oracle venv" \
-            --notes "Pre-built /tmp/pbenv for Copilot setup." \
+            --title "Pre-built PyBoy" \
+            --notes "Compiled PyBoy extension for Copilot setup." \
             --prerelease
     fi
-    echo "done — setup workflow will use this on next run"
+    echo "done"
 # Validate the installed PyBoy execution path before replacing it.
 oracle-health-pyboy:
     PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py

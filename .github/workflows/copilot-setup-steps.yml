@@ -41,26 +41,30 @@ jobs:
 
       - name: Install oracle venv
         run: |
+          uv python install 3.12.3
+          export UV_PROJECT_ENVIRONMENT=/tmp/pbenv
+          uv venv --python 3.12.3 --managed-python
+          uv pip install numpy cython pysdl2 pysdl2-dll packaging setuptools wheel
+
           ASSET_URL=$(curl -fsSL \
             -H "Authorization: Bearer ${{ github.token }}" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/oracle-venv" \
             | python3 -c "import sys,json; r=json.load(sys.stdin); print(r['assets'][0]['url'])" 2>/dev/null) || true
           if [ -n "$ASSET_URL" ]; then
-            echo "downloading pre-built venv..."
+            echo "downloading pre-built pyboy..."
             curl -fsSL \
               -H "Authorization: Bearer ${{ github.token }}" \
               -H "Accept: application/octet-stream" \
               -H "X-GitHub-Api-Version: 2022-11-28" \
-              -o /tmp/pbenv.tar.zst \
+              -o /tmp/pyboy.tar.zst \
               "$ASSET_URL"
-            sudo mkdir -p /tmp/pbenv
-            sudo tar -xaf /tmp/pbenv.tar.zst -C /tmp
-            /tmp/pbenv/bin/python --version
+            tar -xf /tmp/pyboy.tar.zst -C /tmp/pbenv/lib/python3.12/site-packages/
           else
-            echo "no pre-built venv found, building from source..."
-            just oracle-venv
+            echo "building pyboy from source..."
+            uv pip install pyboy
           fi
+          /tmp/pbenv/bin/python -c "import pyboy; print('pyboy ok')"
 
       - name: Build C probe
         run: just build
