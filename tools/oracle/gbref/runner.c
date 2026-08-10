@@ -106,13 +106,18 @@ static void print_hex(const uint8_t *data, size_t size) {
 
 static void print_result(const GBContext *ctx, const char *completion,
                          uint64_t steps, uint64_t cycles) {
+    uint8_t flags = (uint8_t)((ctx->f_z ? 0x80u : 0u) |
+                              (ctx->f_n ? 0x40u : 0u) |
+                              (ctx->f_h ? 0x20u : 0u) |
+                              (ctx->f_c ? 0x10u : 0u));
+    uint16_t af = (uint16_t)(((uint16_t)ctx->a << 8) | flags);
     printf("{\"status\":\"REFERENCE_OK\",\"completion\":\"%s\","
            "\"pc\":%" PRIu16 ",\"sp\":%" PRIu16 ","
            "\"af\":%" PRIu16 ",\"bc\":%" PRIu16 ","
            "\"de\":%" PRIu16 ",\"hl\":%" PRIu16 ","
            "\"rom_bank\":%" PRIu16 ",\"ram_bank\":%" PRIu8 ","
            "\"wram\":\"",
-           completion, ctx->pc, ctx->sp, ctx->af, ctx->bc, ctx->de, ctx->hl,
+           completion, ctx->pc, ctx->sp, af, ctx->bc, ctx->de, ctx->hl,
            ctx->rom_bank, ctx->ram_bank);
     print_hex(ctx->wram, 0x2000);
     printf("\",\"hram\":\"");
