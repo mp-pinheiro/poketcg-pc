@@ -17,10 +17,15 @@ def main() -> int:
     parser.add_argument("--rom", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
+    parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
     case = json.loads(args.case.read_text())
     if case.get("completion") != "return" or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return and registers")
+    if not args.rom.is_absolute() or not args.symbols.is_absolute():
+        raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
+    if not args.rom.is_file() or not args.symbols.is_file():
+        raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     request = {
         "completion": "return",
