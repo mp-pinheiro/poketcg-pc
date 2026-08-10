@@ -65,12 +65,46 @@ oracle-venv:
 oracle-health-pyboy:
     PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py
 
-oracle-health: oracle-health-pyboy
+oracle-health-gbref: oracle-build-gbref
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rom="$(mktemp)"
+    python3 tools/oracle/conformance_rom.py "$rom"
+    request='{"completion":"return","entry":256,"instruction_budget":1,"cycle_budget":4}'
+    result="$(printf '%s' "$request" | tools/oracle/gbref/build/gbref_runner --rom "$rom")"
+    if [[ "$result" != *REFERENCE_OK* ||
+          "$result" != *'"pc":65184'* ||
+          "$result" != *'"sp":65534'* ]]; then
+        printf '%s\n' "$result" >&2
+        rm -f "$rom"
+        exit 3
+    fi
+    printf '%s\n' "$result"
+    rm -f "$rom"
+oracle-health: oracle-health-gbref oracle-health-pyboy
+oracle-build-gbref:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    runtime="${GBRT_RUNTIME_DIR:-$HOME/.local/gbrecomp/gb-recompiled-linux/runtime}"
+    cmake -G Ninja -S tools/oracle/gbref -B tools/oracle/gbref/build -DGBRT_RUNTIME_DIR="$runtime" -DCMAKE_BUILD_TYPE=Debug
+    ninja -C tools/oracle/gbref/build gbref_runner
 
 # Configure + build the C side (gbmem, poketcg_probe).
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES="{{port_files}}"
     ninja -C {{build_dir}}
+
+# Fixed central barrier build; ignores slice-scoped environment variables.
+build-barrier:
+    cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES=""
+    ninja -C build-barrier
+
+# Legacy full inventory remains PyBoy-backed until the GBRT driver lands.
+oracle-fn-all-legacy: build-barrier lint-adapters
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe build-barrier/poketcg_probe
 # Rebuild an already configured private tree without re-running CMake.
 build-incremental:
     #!/usr/bin/env bash
