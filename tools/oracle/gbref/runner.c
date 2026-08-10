@@ -96,13 +96,34 @@ static uint8_t *read_file(const char *path, size_t *size) {
     return data;
 }
 
+static void print_hex(const uint8_t *data, size_t size) {
+    static const char digits[] = "0123456789abcdef";
+    for (size_t i = 0; i < size; i++) {
+        putchar(digits[data[i] >> 4]);
+        putchar(digits[data[i] & 0x0f]);
+    }
+}
+
 static void print_result(const GBContext *ctx, uint64_t steps, uint64_t cycles) {
     printf("{\"status\":\"REFERENCE_OK\",\"completion\":\"return\","
            "\"pc\":%" PRIu16 ",\"sp\":%" PRIu16 ","
            "\"af\":%" PRIu16 ",\"bc\":%" PRIu16 ","
            "\"de\":%" PRIu16 ",\"hl\":%" PRIu16 ","
-           "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
-           ctx->pc, ctx->sp, ctx->af, ctx->bc, ctx->de, ctx->hl, steps, cycles);
+           "\"rom_bank\":%" PRIu16 ",\"ram_bank\":%" PRIu8 ","
+           "\"wram\":\"",
+           ctx->pc, ctx->sp, ctx->af, ctx->bc, ctx->de, ctx->hl,
+           ctx->rom_bank, ctx->ram_bank);
+    print_hex(ctx->wram, 0x2000);
+    printf("\",\"hram\":\"");
+    print_hex(ctx->hram, 0x7f);
+    printf("\",\"vram\":\"");
+    print_hex(ctx->vram, 0x4000);
+    printf("\",\"oam\":\"");
+    print_hex(ctx->oam, 0xa0);
+    printf("\",\"sram\":\"");
+    print_hex(ctx->eram, ctx->eram_size);
+    printf("\",\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
+           steps, cycles);
 }
 
 int main(int argc, char **argv) {

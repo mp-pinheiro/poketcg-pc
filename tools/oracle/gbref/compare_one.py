@@ -119,6 +119,16 @@ def main() -> int:
         "b": pairs["bc"] >> 8, "c": pairs["bc"] & 0xff,
         "d": pairs["de"] >> 8, "e": pairs["de"] & 0xff,
     })
+    preservation = {
+        name: (registers[name], reference.get(name))
+        for name in case["preserve"]
+        if reference.get(name) != registers[name]
+    }
+    if preservation:
+        print(json.dumps({"status": "PORT", "fn": case["fn"],
+                          "mismatches": {f"preserve:{name}": values
+                                         for name, values in preservation.items()}}))
+        return 1
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps({"fn": case["fn"], **registers}),
         text=True, capture_output=True, check=False, timeout=30, env=env,
@@ -126,17 +136,11 @@ def main() -> int:
     if probe.returncode != 0:
         raise SystemExit(probe.stderr)
     native = json.loads(probe.stdout)
-    preservation = {
-        name: (registers[name], reference.get(name))
-        for name in case["preserve"]
-        if reference.get(name) != registers[name]
-    }
     mismatches = {
         name: (reference.get(name), native.get(name))
         for name in case["compare"]
         if reference.get(name) != native.get(name)
     }
-    mismatches.update({f"preserve:{name}": values for name, values in preservation.items()})
     if mismatches:
         print(json.dumps({"status": "PORT", "fn": case["fn"], "mismatches": mismatches}))
         return 1
