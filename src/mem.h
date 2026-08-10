@@ -66,7 +66,7 @@ const uint8_t *rom_ptr(uint8_t bank, uint16_t addr);
 uint8_t *gb_ptr(uint16_t addr);
 uint8_t gb_read8(uint16_t addr);
 void gb_write8(uint16_t addr, uint8_t v); /* writes below $8000 decode as MBC5 registers */
-void mbc5_write(uint16_t addr, uint8_t v); /* MBC5 register decode; mirrors PyBoy's MBC5.setitem */
+void mbc5_conformance_vector(void);
 
 /* Reset every region and both bank latches to power-on state. Leaves g_rom alone. */
 void mem_reset(void);

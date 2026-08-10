@@ -281,6 +281,9 @@ int main(int argc, char **argv) {
         gb_write8(ctx, 0x3000, (uint8_t)((mapper_rom_bank >> 8) & 1u));
         gb_write8(ctx, 0x4000, (uint8_t)mapper_ram_bank);
         gb_write8(ctx, 0x0000, mapper_ram_enable ? 0x0A : 0x00);
+        gb_write8(ctx, 0xFF80, (uint8_t)mapper_rom_bank);
+        gb_write8(ctx, 0xFF81, (uint8_t)mapper_ram_bank);
+        gb_write8(ctx, 0xFF82, 0);
     }
     ctx->sp = 0xfffe;
     gb_push16(ctx, 0xfea0);

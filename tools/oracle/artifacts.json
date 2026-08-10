@@ -11,5 +11,20 @@
   "pyboy": {
     "version": "2.7.0",
     "sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180"
+  },
+  "identity": {
+    "python_implementation": "CPython",
+    "python_version": "3.12.3",
+    "soabi_family": "cpython-312",
+    "pyboy_sdist_version": "2.7.0",
+    "pyboy_sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180",
+    "wheel_tag": "cp312-cp312-linux_x86_64",
+    "uv_lock_sha256": "a976dacaf1ade74779091bac174874886f8f7e74081e7e75b485fa7f90b0bbd5",
+    "compiled_modules": [
+      "pyboy",
+      "pyboy.core.cpu",
+      "pyboy.core.mb",
+      "pyboy.core.opcodes"
+    ]
   }
 }

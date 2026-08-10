@@ -20,6 +20,9 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
 REAL_ROM = ROOT / "poketcg" / "poketcg.gbc"
 COPY_RET_ANCHORS = (("CopyGfxData", 0x0731), ("CopyDataHLtoDE", 0x0744))
+RESET_ANIMATION_ENTRY = 0x48BC
+RESET_ANIMATION_QUEUE = 0xD423
+RESET_ANIMATION_STATE = 0xD4AC
 PROBE = ROOT / "build-barrier/poketcg_probe"
 
 
@@ -147,6 +150,31 @@ def main() -> int:
                         for key, value in copy_expected.items() if key != "status")):
                 return unhealthy(f"copy-ret-anchors {label}", copy_expected, copy_actual)
 
+        reset_animation, diagnostic = run_runner(
+            REAL_ROM, {
+                "entry": RESET_ANIMATION_ENTRY, "instruction_budget": 1000,
+                "cycle_budget": 10000, "rom_bank": 7, "ram_bank": 0,
+                "ram_enable": 0, "completion": "return",
+                "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+                "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+                "seed_wram": (
+                    f"{RESET_ANIMATION_QUEUE:04x}=" + "01" * 7 + ";"
+                    f"{RESET_ANIMATION_STATE:04x}=aabbcc"
+                ),
+            })
+        reset_expected = {
+            "status": "REFERENCE_OK", "completion": "return",
+            "pc": 0xFEA0, "sp": 0xFFFE, "bc": 0xBBCC, "hl": 0x1234,
+        }
+        reset_actual = ({key: reset_animation.get(key) for key in reset_expected}
+                        if reset_animation is not None else diagnostic)
+        if (reset_animation is None or
+                not all(type(reset_animation.get(key)) is type(value)
+                        for key, value in reset_expected.items()
+                        if key not in ("status", "completion")) or
+                any(reset_animation.get(key) != value
+                    for key, value in reset_expected.items())):
+            return unhealthy("reset-animation", reset_expected, reset_actual)
 
         if not PROBE.is_file():
             return unhealthy("native probe", "MBC5ConformanceVector", str(PROBE))
@@ -171,7 +199,8 @@ def main() -> int:
         if native_latches != expected_latches:
             return unhealthy("native latches", expected_latches, native_latches)
 
-    print("BACKEND_HEALTHY gbrt conformance=registers,calls,stack,wram,hram,pre-ret,copy-ret-anchors,mbc5-rom,mbc5-ram,latches")
+    print("BACKEND_HEALTHY gbrt conformance=registers,calls,stack,wram,hram,pre-ret,"
+          "copy-ret-anchors,reset-animation,mbc5-rom,mbc5-ram,latches")
     return 0
 
 
