@@ -33,9 +33,8 @@ jobs:
 
       - name: Install rgbds
         run: |
-          RGBDS_URL=$(curl -sSf https://api.github.com/repos/gbdev/rgbds/releases/latest | python3 -c "import sys,json; r=json.load(sys.stdin); [print(a['browser_download_url']) for a in r['assets'] if 'linux-x86_64' in a['name'] and a['name'].endswith('.tar.xz')]")
-          curl -LsSf "$RGBDS_URL" -o /tmp/rgbds.tar.xz
-          sudo tar -xJf /tmp/rgbds.tar.xz --strip-components=1 -C /usr/local/bin
+          curl -LsSf "https://github.com/gbdev/rgbds/releases/latest/download/rgbds-linux-x86_64.tar.xz" -o /tmp/rgbds.tar.xz
+          sudo tar -xJf /tmp/rgbds.tar.xz -C /usr/local/bin
 
       - name: Bootstrap pret disassembly
         run: just bootstrap
