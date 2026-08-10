@@ -1,10 +1,10 @@
 """Oracle-diff cases for poketcg/src/home/division.asm."""
 
 CONTRACT = {
-    # Quotient in bc, remainder in hl, divisor preserved in de. Carry is not an
-    # output (exit carry == entry carry) and `a` holds loop-counter residue, so
-    # neither is diffed.
-    "DivideBCbyDE": ("b", "c", "d", "e", "hl"),
+    "DivideBCbyDE": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -48,5 +48,48 @@ CASES = {
         _case(0xABCD, 0x0100),
         # Divisor with a zero high byte and a borrow out of the low byte.
         _case(0xABCD, 0x00FF),
+    ],
+}
+SCHEMA2_CASES = {
+    "DivideBCbyDE": [
+        {
+            "id": "DivideBCbyDE-zero",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": {r: 0 for r in POISON},
+            "bus": {},
+            "seeds": {},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 10000,
+            "cycle_budget": 100000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+        {
+            "id": "DivideBCbyDE-poison",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": dict(POISON),
+            "bus": {},
+            "seeds": {},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 10000,
+            "cycle_budget": 100000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
+        {
+            "id": "DivideBCbyDE-divisor-zero",
+            "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
+            "registers": _case(0x1234, 0),
+            "bus": {},
+            "seeds": {},
+            "setup": [],
+            "input_events": [],
+            "instruction_budget": 10000,
+            "cycle_budget": 100000,
+            "completion": {"mode": "return"},
+            "evidence": "primary",
+        },
     ],
 }

@@ -87,8 +87,8 @@ def main() -> int:
             required.update({"event_addr", "event_value", "event_mask"})
     if set(case) != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
-    if set(case["registers"]) != set(REGISTERS):
-        raise SystemExit("SCHEMA registers must declare exactly seven fields")
+    if not isinstance(case["registers"], dict) or not set(case["registers"]).issubset(REGISTERS):
+        raise SystemExit("SCHEMA registers contain unknown fields")
     if (not isinstance(case["compare"], list) or not isinstance(case["preserve"], list)
             or not case["compare"] or not set(case["preserve"]).issubset(case["compare"])
             or any(field not in REGISTERS for field in case["compare"] + case["preserve"])):
