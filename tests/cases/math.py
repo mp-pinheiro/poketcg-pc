@@ -22,6 +22,11 @@ CASES = {
     ],
 }
 
+STATE = {
+    "wram": [[0xC000, 4096], [0xD000, 4096]],
+    "sram": [[bank, addr, 4096] for bank in range(4) for addr in (0xA000, 0xB000)],
+    "vram": [[bank, addr, 4096] for bank in range(2) for addr in (0x8000, 0x9000)],
+}
 SCHEMA2_CASES = {
     "ATimes10": [
         {
@@ -32,6 +37,7 @@ SCHEMA2_CASES = {
             "instruction_budget": 1000,
             "cycle_budget": 10000,
             "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
+            "state": STATE,
             "registers": {r: 0 for r in POISON},
             "compare": ["a", "b", "c", "d", "e", "hl"],
             "preserve": ["b", "c", "d", "e", "hl"],
@@ -50,6 +56,7 @@ SCHEMA2_CASES = {
             "instruction_budget": 1000,
             "cycle_budget": 10000,
             "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
+            "state": STATE,
             "registers": dict(POISON, a=25),
             "compare": ["a", "b", "c", "d", "e", "hl"],
             "preserve": ["b", "c", "d", "e", "hl"],
@@ -68,6 +75,7 @@ SCHEMA2_CASES = {
             "instruction_budget": 1000,
             "cycle_budget": 10000,
             "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
+            "state": STATE,
             "registers": dict(POISON, a=255),
             "compare": ["a", "b", "c", "d", "e", "hl"],
             "preserve": ["b", "c", "d", "e", "hl"],

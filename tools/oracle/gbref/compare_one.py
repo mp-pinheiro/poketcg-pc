@@ -45,7 +45,7 @@ def main() -> int:
         raise SystemExit("ARTIFACT ROM or symbols path is unavailable")
     required = {
         "id", "fn", "entry", "completion", "instruction_budget", "cycle_budget",
-        "mapper", "registers", "compare", "preserve", "bus", "sram", "vram",
+        "mapper", "registers", "compare", "preserve", "state", "bus", "sram", "vram",
         "setup", "input_events", "evidence",
     }
     if set(case) != required:
@@ -70,6 +70,10 @@ def main() -> int:
         raise SystemExit("SCHEMA state sections must be objects")
     if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
         raise SystemExit("SCHEMA setup and input_events must be arrays")
+    if not isinstance(case["state"], dict) or set(case["state"]) != {"wram", "sram", "vram"}:
+        raise SystemExit("SCHEMA state must declare wram, sram, and vram spans")
+    if not all(isinstance(case["state"][name], list) for name in ("wram", "sram", "vram")):
+        raise SystemExit("SCHEMA state spans must be arrays")
     if not isinstance(case["mapper"], dict) or set(case["mapper"]) != {
         "rom_bank", "ram_bank", "ram_enable"
     }:
@@ -129,11 +133,16 @@ def main() -> int:
                           "mismatches": {f"preserve:{name}": values
                                          for name, values in preservation.items()}}))
         return 1
+    wram_spans = tuple((int(addr), int(size)) for addr, size in case["state"]["wram"])
+    sram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["sram"])
+    vram_spans = tuple((int(bank), int(addr), int(size)) for bank, addr, size in case["state"]["vram"])
     probe_request = {
         "fn": case["fn"], **registers,
-        "read": {"49152": 4096, "53248": 4096},
-        "sread": {str(bank): {"40960": 4096, "45056": 4096} for bank in range(4)},
-        "vread": {str(bank): {"32768": 4096, "36864": 4096} for bank in range(2)},
+        "read": {str(addr): size for addr, size in wram_spans},
+        "sread": {str(bank): {str(addr): size for bb, addr, size in sram_spans if bb == bank}
+                  for bank in sorted({bank for bank, _, _ in sram_spans})},
+        "vread": {str(bank): {str(addr): size for bb, addr, size in vram_spans if bb == bank}
+                  for bank in sorted({bank for bank, _, _ in vram_spans})},
     }
     probe = subprocess.run(
         [str(args.probe)], input=json.dumps(probe_request),
@@ -148,23 +157,39 @@ def main() -> int:
         if reference.get(name) != native.get(name)
     }
 
-    def span_value(mapping: dict, addresses: tuple[int, ...]) -> str:
-        try:
-            return "".join(mapping[str(address)] for address in addresses)
-        except (KeyError, TypeError):
-            return ""
+    def reference_spans(field: str, base: int, spans: tuple[tuple[int, int], ...]) -> str:
+        data = bytes.fromhex(reference[field])
+        return "".join(data[address - base:address - base + size].hex()
+                       for address, size in spans)
 
-    if reference["wram"] != span_value(native.get("wram", {}), (49152, 53248)):
+    def native_spans(field: str, spans: tuple[tuple[int, int, int], ...]) -> str:
+        grouped = native.get(field, {})
+        if field == "wram":
+            return "".join(grouped.get(str(address), "")
+                           for _bank, address, _size in spans)
+        return "".join(
+            "".join(grouped.get(str(bank), {}).get(str(address), "")
+                    for bb, address, _size in spans if bb == bank)
+            for bank in sorted({bank for bank, _address, _size in spans})
+        )
+
+    expected_wram = reference_spans("wram", 0xC000, wram_spans)
+    actual_wram = native_spans("wram", tuple((0, address, size) for address, size in wram_spans))
+    if expected_wram != actual_wram:
         mismatches["wram"] = "reference/native state differs"
-    if reference["vram"] != "".join(
-        span_value(native.get("vram", {}).get(str(bank), {}), (32768, 36864))
-        for bank in range(2)
-    ):
+    expected_vram = "".join(
+        reference_spans("vram", 0x8000, tuple((address, size) for bb, address, size in vram_spans if bb == bank))
+        for bank in sorted({bank for bank, _address, _size in vram_spans})
+    )
+    if expected_vram != native_spans("vram", vram_spans):
         mismatches["vram"] = "reference/native state differs"
-    if reference["sram"] != "".join(
-        span_value(native.get("sram", {}).get(str(bank), {}), (40960, 45056))
-        for bank in range(4)
-    ):
+    reference_sram = bytes.fromhex(reference["sram"])
+    expected_sram = "".join(
+        reference_sram[bank * 0x2000 + address - 0xA000:
+                       bank * 0x2000 + address - 0xA000 + size].hex()
+        for bank, address, size in sram_spans
+    )
+    if expected_sram != native_spans("sram", sram_spans):
         mismatches["sram"] = "reference/native state differs"
     if mismatches:
         print(json.dumps({"status": "PORT", "fn": case["fn"], "mismatches": mismatches}))
