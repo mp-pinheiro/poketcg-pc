@@ -292,4 +292,29 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                          "DiscardAttachedPlusPowers", "DiscardAttachedDefenders"),
 }
 
+EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
+    "duel_animation_core": {
+        "PlayLoadedDuelAnimation": {
+            "kind": "dependency-pending",
+            "source": "poketcg/src/engine/duel/animations/core.asm:28-43",
+            "reason": "requires animation state and callee setup before standalone return",
+        },
+        "LoadDuelAnimationToBuffer": {
+            "kind": "dependency-pending",
+            "source": "poketcg/src/engine/duel/animations/core.asm:177-213",
+            "reason": "requires animation buffer and card-data setup before standalone return",
+        },
+        "_UpdateQueuedAnimations": {
+            "kind": "dependency-pending",
+            "source": "poketcg/src/engine/duel/animations/core.asm:214-260",
+            "reason": "requires active animation queue and frame scheduler state",
+        },
+        "ClearAndDisableQueuedAnimations": {
+            "kind": "dependency-pending",
+            "source": "poketcg/src/engine/duel/animations/core.asm:261-300",
+            "reason": "requires queued animation state and scheduler-owned memory",
+        },
+    },
+}
+
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

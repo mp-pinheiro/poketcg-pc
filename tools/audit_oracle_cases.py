@@ -14,6 +14,17 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT))
 from schema import SchemaValidationError, validate_cases
+sys.path.insert(0, str(ROOT / "tests"))
+from routines import ALL, EXCLUSIONS
+
+ALLOWED_EXCLUSION_KINDS = {
+    "dead-zero-callsites",
+    "hardware-transform",
+    "sgb-only",
+    "fallthrough-only",
+    "trampoline-direct-call",
+    "dependency-pending",
+}
 
 def load_modules() -> list[tuple[Path, object]]:
     result = []
@@ -34,6 +45,41 @@ def main() -> int:
     parser.add_argument("--stage", choices=("routine", "release"), required=True)
     args = parser.parse_args()
     failures = 0
+    modules = load_modules()
+    for basename, entries in EXCLUSIONS.items():
+        if not isinstance(entries, dict):
+            print(f"EXCLUSION {basename}: entries must be a mapping")
+            failures += 1
+            continue
+        owned = set()
+        for path, module in modules:
+            if path.stem == basename:
+                owned = set(getattr(module, "SCHEMA2_CASES", {}))
+                break
+        for fn, exclusion in entries.items():
+            if fn not in ALL:
+                print(f"EXCLUSION {basename}:{fn}: not in registry")
+                failures += 1
+            if not isinstance(exclusion, dict) or any(
+                not isinstance(exclusion.get(key), str) or not exclusion[key].strip()
+                for key in ("kind", "source", "reason")
+            ):
+                print(f"EXCLUSION {basename}:{fn}: requires kind/source/reason")
+                failures += 1
+                continue
+            if exclusion["kind"] not in ALLOWED_EXCLUSION_KINDS:
+                print(f"EXCLUSION {basename}:{fn}: invalid kind {exclusion['kind']}")
+                failures += 1
+            source = ROOT / exclusion["source"].split(":", 1)[0]
+            if not source.is_file():
+                print(f"EXCLUSION {basename}:{fn}: missing source {exclusion['source']}")
+                failures += 1
+            if fn in owned:
+                print(f"EXCLUSION {basename}:{fn}: cannot also declare schema cases")
+                failures += 1
+            if args.stage == "release" and exclusion["kind"] == "dependency-pending":
+                print(f"EXCLUSION dependency-pending blocks release {basename}:{fn}")
+                failures += 1
     for path, module in load_modules():
         if not hasattr(module, "SCHEMA2_CASES") and getattr(module, "CASES", {}):
             print(f"MIGRATION_PENDING {path}: legacy CASES has no SCHEMA2_CASES")

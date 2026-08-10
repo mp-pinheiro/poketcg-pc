@@ -12,7 +12,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "tests"))
-from routines import ALL  # noqa: E402
+from routines import ALL, EXCLUSIONS  # noqa: E402
+EXCLUDED = {
+    fn: entry
+    for basename, entries in EXCLUSIONS.items()
+    for fn, entry in entries.items()
+}
 
 
 def load_cases() -> dict[str, list[tuple[Path, dict]]]:
@@ -46,11 +51,20 @@ def main() -> int:
     primary_missing = 0
     for fn in ALL:
         records = cases.get(fn, [])
-        primary_records = [record for _, record in records if record.get("evidence") == "primary"]
+        if fn in EXCLUDED:
+            entry = EXCLUDED[fn]
+            if entry.get("kind") != "dependency-pending":
+                print(f"SCHEMA invalid exclusion kind {fn}")
+                failures += 1
+            else:
+                skipped["dependency-blocked"] += 1
+                print(f"EXCLUSION dependency-pending {fn}: {entry['reason']}")
+            continue
         if not records:
             print(f"SCHEMA missing schema-2 cases {fn}")
             failures += 1
             continue
+        primary_records = [record for _, record in records if record.get("evidence") == "primary"]
         if not primary_records:
             primary_missing += 1
             print(f"BOUNDARY no primary case {fn}")
