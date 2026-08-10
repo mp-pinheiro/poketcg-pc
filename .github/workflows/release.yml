@@ -22,7 +22,7 @@ jobs:
       - name: Install git-cliff
         run: |
           v=v2.13.1
-          curl -fsSL "https://github.com/orhun/git-cliff/releases/download/$v/git-cliff-$v-x86_64-unknown-linux-gnu.tar.gz" \
+          curl -sSL -H "User-Agent: curl" "https://github.com/orhun/git-cliff/releases/download/$v/git-cliff-$v-x86_64-unknown-linux-gnu.tar.gz" \
             | tar -xz --strip-components=1 -C /tmp
           sudo install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
       - name: Compute next version
