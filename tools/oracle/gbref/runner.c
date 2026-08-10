@@ -135,6 +135,10 @@ int main(int argc, char **argv) {
     int reg_d_state = json_number(request, "d", &reg_d);
     int reg_e_state = json_number(request, "e", &reg_e);
     int reg_hl_state = json_number(request, "hl", &reg_hl);
+    uint64_t mapper_rom_bank = 1, mapper_ram_bank = 0, mapper_ram_enable = 0;
+    int mapper_rom_state = json_number(request, "rom_bank", &mapper_rom_bank);
+    int mapper_ram_state = json_number(request, "ram_bank", &mapper_ram_bank);
+    int mapper_enable_state = json_number(request, "ram_enable", &mapper_ram_enable);
     free(request);
     if (entry_state != 1 || instruction_state < 0 || cycle_state < 0 ||
         entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
@@ -143,8 +147,10 @@ int main(int argc, char **argv) {
         reg_c_state < 0 || reg_d_state < 0 || reg_e_state < 0 ||
         reg_hl_state < 0 || reg_a > 0xff || reg_f > 0xff ||
         reg_b > 0xff || reg_c > 0xff || reg_d > 0xff || reg_e > 0xff ||
-        reg_hl > 0xffff) {
-        fail("SCHEMA", "entry, registers, and finite positive budgets are required");
+        reg_hl > 0xffff || mapper_rom_state < 0 || mapper_ram_state < 0 ||
+        mapper_enable_state < 0 || mapper_rom_bank > 0x1ff ||
+        mapper_ram_bank > 0xff || mapper_ram_enable > 1) {
+        fail("SCHEMA", "entry, registers, mapper, and finite budgets are required");
     }
     size_t rom_size = 0;
     uint8_t *rom = read_file(argv[2], &rom_size);
@@ -164,6 +170,9 @@ int main(int argc, char **argv) {
         fail("ARTIFACT", "runtime rejected ROM");
     }
     gb_context_reset(ctx, true);
+    ctx->rom_bank = (uint16_t)mapper_rom_bank;
+    ctx->ram_bank = (uint8_t)mapper_ram_bank;
+    ctx->ram_enabled = (uint8_t)mapper_ram_enable;
     ctx->sp = 0xfffe;
     gb_push16(ctx, 0xfea0);
     ctx->pc = (uint16_t)entry;

@@ -58,6 +58,9 @@ def main() -> int:
         "entry": int(case["entry"]),
         "instruction_budget": int(case["instruction_budget"]),
         "cycle_budget": int(case["cycle_budget"]),
+        "rom_bank": int(case["mapper"]["rom_bank"]),
+        "ram_bank": int(case["mapper"]["ram_bank"]),
+        "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         **registers,
     }
     primary = subprocess.run(
