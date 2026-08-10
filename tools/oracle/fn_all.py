@@ -6,6 +6,8 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import subprocess
+import json
+import time
 import sys
 from pathlib import Path
 
@@ -39,15 +41,38 @@ def main() -> int:
     parser.add_argument("--symbols", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
+    parser.add_argument("--report", type=Path, help="write gate record to JSON")
     args = parser.parse_args()
     if not all(path.is_absolute() and path.is_file()
                for path in (args.rom, args.symbols, args.probe, args.runner)):
         print("ARTIFACT missing absolute barrier input", file=sys.stderr)
         return 2
+    report_data = None
+    report_commit = None
+    if args.report:
+        try:
+            rr = subprocess.run(
+                ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if rr.returncode == 0:
+                report_commit = rr.stdout.strip()
+        except Exception:
+            pass
+        report_data = {
+            "schema": 1,
+            "generated_at": 0,
+            "commit": report_commit,
+            "complete": False,
+            "routines": {},
+        }
     cases = load_cases()
     failures = 0
+    fn_failures = {}
     migrated = 0
     skipped = {"scene": 0, "intentional-transform": 0, "native-stress": 0, "dependency-blocked": 0}
+    for fn in ALL:
+        fn_failures.setdefault(fn, 0)
     primary_missing = 0
     for fn in ALL:
         records = cases.get(fn, [])
@@ -90,9 +115,29 @@ def main() -> int:
             output = result.stdout.strip().splitlines()
             print(output[-1] if output else result.stderr.strip())
             if result.returncode:
+                fn_failures[fn] += 1
                 failures += 1
+        if report_data is not None and fn in fn_failures:
+            total_cases = len(primary_records)
+            failing = fn_failures[fn]
+            report_data["routines"][fn] = {
+                "status": "fail" if failing else "pass",
+                "cases": total_cases,
+                "failing": failing,
+            }
+            report_data["generated_at"] = int(time.time())
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(
+                json.dumps(report_data, sort_keys=True, separators=(",", ":"))
+            )
     counts = " ".join(f"{key}={value}" for key, value in skipped.items())
     print(f"INVENTORY routines={len(ALL)} migrated_cases={migrated} primary_missing={primary_missing} skipped_{counts} failures={failures}")
+    if report_data is not None:
+        report_data["complete"] = True
+        report_data["generated_at"] = int(time.time())
+        args.report.write_text(
+            json.dumps(report_data, sort_keys=True, separators=(",", ":"))
+        )
     return 2 if failures or primary_missing else 0
 
 

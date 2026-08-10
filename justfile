@@ -154,10 +154,16 @@ oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
     python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
-    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+    mkdir -p site/data
+    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)" --report site/data/gate.json
 # Primary function gate: GBRT health, adapters, schema, and inventory.
 oracle-fn-gate: oracle-health-gbref oracle-fn-all
     python3 tools/audit_oracle_cases.py --stage routine
+
+
+# Run the GBRT primary gate and regenerate the progress report from the result.
+gate-report: oracle-fn-all
+    python3 tools/progress/report.py build
 
 # Independent PyBoy audit lane; a health failure quarantines this lane.
 oracle-audit-all: oracle-health-pyboy
