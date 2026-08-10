@@ -1,7 +1,10 @@
 """Oracle-diff cases for poketcg/src/home/math.asm."""
 
 CONTRACT = {
-    "ATimes10": ("a", "b", "c", "d", "e", "hl"),
+    "ATimes10": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}

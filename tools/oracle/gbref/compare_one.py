@@ -36,12 +36,10 @@ def main() -> int:
         completion = case.get("completion")
         mode = completion.get("mode") if isinstance(completion, dict) else completion
         contract = getattr(module, "CONTRACT", {}).get(args.fn, {})
-        if isinstance(contract, dict):
-            compare_fields = list(contract.get("compare", ()))
-            preserve_fields = list(contract.get("preserve", ()))
-        else:
-            compare_fields = list(contract)
-            preserve_fields = compare_fields[1:]
+        if not isinstance(contract, dict) or "compare" not in contract or "preserve" not in contract:
+            raise SystemExit("SCHEMA contract must declare compare and preserve")
+        compare_fields = list(contract["compare"])
+        preserve_fields = list(contract["preserve"])
         entry = next(
             int(parts[0].split(":", 1)[1], 16)
             for parts in (line.split() for line in args.symbols.read_text().splitlines())
