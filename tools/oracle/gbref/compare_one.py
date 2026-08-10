@@ -37,8 +37,8 @@ def main() -> int:
         case = json.loads(args.case.read_text())
     if case.get("fn") != args.fn:
         raise SystemExit("SCHEMA case function does not match --fn")
-    if case.get("completion") not in ("return", "pre-ret") or not isinstance(case.get("registers"), dict):
-        raise SystemExit("SCHEMA case requires completion=return|pre-ret and registers")
+    if case.get("completion") not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
+        raise SystemExit("SCHEMA case requires completion=return|pre-ret|event and registers")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():
         raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
     if not args.rom.is_file() or not args.symbols.is_file():
@@ -50,6 +50,8 @@ def main() -> int:
     }
     if case["completion"] == "pre-ret":
         required.add("stop_pc")
+    if case["completion"] == "event":
+        required.update({"event_addr", "event_value", "event_mask"})
     if set(case) != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
     if set(case["registers"]) != set(REGISTERS):
@@ -71,6 +73,12 @@ def main() -> int:
         or not 0 <= case["stop_pc"] <= 0xffff
     ):
         raise SystemExit("SCHEMA pre-ret requires stop_pc in address range")
+    if case["completion"] == "event" and any(
+        isinstance(case[name], bool) or not isinstance(case[name], int)
+        or case[name] < 0 or case[name] > (0xffff if name == "event_addr" else 0xff)
+        for name in ("event_addr", "event_value", "event_mask")
+    ):
+        raise SystemExit("SCHEMA event predicate is out of range")
     if not isinstance(case["id"], str) or not case["id"]:
         raise SystemExit("SCHEMA id must be non-empty")
     if not all(isinstance(case[name], dict) for name in ("bus", "sram", "vram")):
@@ -104,6 +112,12 @@ def main() -> int:
     }
     if case["completion"] == "pre-ret":
         request["stop_pc"] = int(case["stop_pc"])
+    if case["completion"] == "event":
+        request.update({
+            "event_addr": int(case["event_addr"]),
+            "event_value": int(case["event_value"]),
+            "event_mask": int(case["event_mask"]),
+        })
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
