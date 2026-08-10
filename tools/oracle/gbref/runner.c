@@ -149,10 +149,20 @@ int main(int argc, char **argv) {
     uint64_t cycle_budget = DEFAULT_CYCLE_BUDGET;
     uint64_t stop_pc = 0;
     int stop_state = json_number(request, "stop_pc", &stop_pc);
+    char predicate[96];
+    int predicate_state = json_string(request, "predicate", predicate, sizeof predicate);
     uint64_t event_addr = 0, event_value = 0, event_mask = 0xff;
     int event_addr_state = json_number(request, "event_addr", &event_addr);
     int event_value_state = json_number(request, "event_value", &event_value);
     int event_mask_state = json_number(request, "event_mask", &event_mask);
+    if (predicate_state == 1 && sscanf(predicate, "mem:%" SCNx64 "==%" SCNx64 "&%" SCNx64,
+                                        &event_addr, &event_value, &event_mask) == 3) {
+        event_addr_state = event_value_state = event_mask_state = 1;
+    } else if (predicate_state == 1 &&
+               sscanf(predicate, "mem:%" SCNx64 "==%" SCNx64,
+                      &event_addr, &event_value) == 2) {
+        event_addr_state = event_value_state = event_mask_state = 1;
+    }
     int instruction_state = json_number(request, "instruction_budget", &instruction_budget);
     int cycle_state = json_number(request, "cycle_budget", &cycle_budget);
     uint64_t reg_a = 0, reg_f = 0, reg_b = 0, reg_c = 0;
@@ -171,8 +181,9 @@ int main(int argc, char **argv) {
     free(request);
     if (
         (strcmp(completion, "event") == 0 &&
-         (event_addr_state != 1 || event_value_state != 1 || event_mask_state < 0 ||
-          event_addr > 0xffff || event_value > 0xff || event_mask > 0xff)) ||
+         (predicate_state != 1 || event_addr_state != 1 || event_value_state != 1 ||
+          event_mask_state < 0 || event_addr > 0xffff || event_value > 0xff ||
+          event_mask > 0xff)) ||
         entry > 0xffff || instruction_budget == 0 || cycle_budget == 0 ||
         instruction_budget > UINT32_MAX || cycle_budget > UINT32_MAX ||
         (strcmp(completion, "pre-ret") == 0 && (stop_state != 1 || stop_pc > 0xffff)) ||

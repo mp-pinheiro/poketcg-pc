@@ -37,7 +37,9 @@ def main() -> int:
         case = json.loads(args.case.read_text())
     if case.get("fn") != args.fn:
         raise SystemExit("SCHEMA case function does not match --fn")
-    if case.get("completion") not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
+    completion = case.get("completion")
+    mode = completion if isinstance(completion, str) else completion.get("mode") if isinstance(completion, dict) else None
+    if mode not in ("return", "pre-ret", "event") or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return|pre-ret|event and registers")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():
         raise SystemExit("SCHEMA --rom and --symbols must be absolute paths")
@@ -48,10 +50,11 @@ def main() -> int:
         "mapper", "registers", "compare", "preserve", "state", "bus", "sram", "vram",
         "setup", "input_events", "evidence",
     }
-    if case["completion"] == "pre-ret":
-        required.add("stop_pc")
-    if case["completion"] == "event":
-        required.update({"event_addr", "event_value", "event_mask"})
+    if mode == "pre-ret":
+        required.add("stop_pc" if isinstance(completion, str) else "completion")
+    if mode == "event":
+        if isinstance(completion, str):
+            required.update({"event_addr", "event_value", "event_mask"})
     if set(case) != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
     if set(case["registers"]) != set(REGISTERS):
@@ -68,12 +71,12 @@ def main() -> int:
             raise SystemExit(f"SCHEMA invalid positive integer {name}")
     if case["entry"] > 0xffff or case["instruction_budget"] > 0xffffffff or case["cycle_budget"] > 0xffffffff:
         raise SystemExit("SCHEMA numeric field out of range")
-    if case["completion"] == "pre-ret" and (
+    if mode == "pre-ret" and (
         isinstance(case["stop_pc"], bool) or not isinstance(case["stop_pc"], int)
         or not 0 <= case["stop_pc"] <= 0xffff
     ):
         raise SystemExit("SCHEMA pre-ret requires stop_pc in address range")
-    if case["completion"] == "event" and any(
+    if mode == "event" and isinstance(completion, str) and any(
         isinstance(case[name], bool) or not isinstance(case[name], int)
         or case[name] < 0 or case[name] > (0xffff if name == "event_addr" else 0xff)
         for name in ("event_addr", "event_value", "event_mask")
@@ -101,7 +104,7 @@ def main() -> int:
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
     request = {
-        "completion": case["completion"],
+        "completion": mode,
         "entry": int(case["entry"]),
         "instruction_budget": int(case["instruction_budget"]),
         "cycle_budget": int(case["cycle_budget"]),
@@ -110,14 +113,16 @@ def main() -> int:
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         **registers,
     }
-    if case["completion"] == "pre-ret":
-        request["stop_pc"] = int(case["stop_pc"])
-    if case["completion"] == "event":
-        request.update({
-            "event_addr": int(case["event_addr"]),
-            "event_value": int(case["event_value"]),
-            "event_mask": int(case["event_mask"]),
-        })
+    if mode == "pre-ret":
+        request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
+    if mode == "event":
+        if isinstance(completion, dict):
+            request["predicate"] = completion["predicate"]
+        else:
+            request["predicate"] = (
+                f"mem:{int(case['event_addr']):#x}=={int(case['event_value']):#x}"
+                f"&{int(case['event_mask']):#x}"
+            )
     primary = subprocess.run(
         [str(args.runner), "--rom", str(args.rom.resolve())],
         input=json.dumps(request), text=True, capture_output=True, check=False,
@@ -130,7 +135,7 @@ def main() -> int:
     if payload is None:
         raise SystemExit("BACKEND missing JSON result")
     reference = json.loads(payload)
-    if reference.get("status") != "REFERENCE_OK" or reference.get("completion") != case["completion"]:
+    if reference.get("status") != "REFERENCE_OK" or reference.get("completion") != mode:
         raise SystemExit("BACKEND invalid completion result")
     pairs = {}
     for pair in ("af", "bc", "de"):
