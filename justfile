@@ -89,6 +89,12 @@ oracle-build-gbref:
     cmake -G Ninja -S tools/oracle/gbref -B tools/oracle/gbref/build -DGBRT_RUNTIME_DIR="$runtime" -DCMAKE_BUILD_TYPE=Debug
     ninja -C tools/oracle/gbref/build gbref_runner
 
+oracle-audit-cases STAGE:
+    python3 tools/audit_oracle_cases.py --stage {{STAGE}}
+
+oracle-fn-gate: oracle-health-gbref lint-adapters build-barrier
+    python3 tools/audit_oracle_cases.py --stage routine
+
 # Configure + build the C side (gbmem, poketcg_probe).
 build:
     cmake -G Ninja -B {{build_dir}} -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES="{{port_files}}"
