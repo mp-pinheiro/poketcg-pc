@@ -2,6 +2,7 @@
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
 #include "mem.h"
+#include "home/lcd.h"
 
 #define QUEUE_ADDR 0xd423u
 #define QUEUE_LENGTH 7u
@@ -56,26 +57,36 @@ static void LoadAnimCoordsAndFlags(uint8_t slot)
     write((uint16_t)(addr + 3u), y);
     write((uint16_t)(addr + 15u), (uint8_t)(flags | (read((uint16_t)(addr + 15u)) & (SPRITE_X_INVERTED | SPRITE_Y_INVERTED))));
 }
+static void DefaultScreenAnimationUpdate(void)
+{
+    write(wActiveScreenAnim_ADDR, 0xff);
+    write(wScreenAnimUpdatePtr_ADDR, (uint8_t)DEFAULT_SCREEN_UPDATE_ADDR);
+    write((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u),
+          (uint8_t)(DEFAULT_SCREEN_UPDATE_ADDR >> 8));
+}
+
+static void EnableAndClearSpriteAnimations(void)
+{
+    write(wAllSpriteAnimationsDisabled_ADDR, 0);
+    _ClearSpriteAnimations();
+}
+
 
 void _ResetAnimationQueue(void)
 {
-    uint8_t lcdc = read(wLCDC_ADDR);
-    write(wLCDC_ADDR, (uint8_t)(lcdc & (uint8_t)~0x04u));
-    for (uint8_t i = 0; i < QUEUE_LENGTH; i++) write((uint16_t)(QUEUE_ADDR + i), 0xff);
+    Set_OBJ_8x8();
+    write(wDoFrameFunction_ADDR, (uint8_t)UPDATE_ADDR);
+    write((uint16_t)(wDoFrameFunction_ADDR + 1u),
+          (uint8_t)(UPDATE_ADDR >> 8));
+    for (uint8_t i = 0; i < QUEUE_LENGTH; i++)
+        write((uint16_t)(QUEUE_ADDR + i), 0xff);
     write(wActiveScreenAnim_ADDR, 0xff);
     write(wd4c0_ADDR, 0xff);
     write(wDuelAnimBufferCurPos_ADDR, 0);
     write(wDuelAnimBufferSize_ADDR, 0);
     write(wDuelAnimSetScreen_ADDR, 0);
-    write(wScreenAnimUpdatePtr_ADDR, (uint8_t)DEFAULT_SCREEN_UPDATE_ADDR);
-    write((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u),
-          (uint8_t)(DEFAULT_SCREEN_UPDATE_ADDR >> 8));
-    write(wDoFrameFunction_ADDR, (uint8_t)UPDATE_ADDR);
-    write((uint16_t)(wDoFrameFunction_ADDR + 1u),
-          (uint8_t)(UPDATE_ADDR >> 8));
-    write(wAllSpriteAnimationsDisabled_ADDR, 0);
-    write(wVBlankOAMCopyToggle_ADDR,
-          (uint8_t)(read(wVBlankOAMCopyToggle_ADDR) + 1u));
+    DefaultScreenAnimationUpdate();
+    EnableAndClearSpriteAnimations();
     return;
 }
 

@@ -89,8 +89,8 @@ SCHEMA2_CASES = {
 MUTATIONS = {
     "_ResetAnimationQueue": {
         "source_symbol": "_ResetAnimationQueue",
-        "before": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++) write((uint16_t)(QUEUE_ADDR + i), 0xff);\n    write(wActiveScreenAnim_ADDR, 0xff);",
-        "after": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++) write((uint16_t)(QUEUE_ADDR + i), 0xfe);\n    write(wActiveScreenAnim_ADDR, 0xff);",
+        "before": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++)\n        write((uint16_t)(QUEUE_ADDR + i), 0xff);",
+        "after": "for (uint8_t i = 0; i < QUEUE_LENGTH; i++)\n        write((uint16_t)(QUEUE_ADDR + i), 0xfe);",
         "case_ids": ["_ResetAnimationQueue-zero", "_ResetAnimationQueue-poison"],
     },
 }

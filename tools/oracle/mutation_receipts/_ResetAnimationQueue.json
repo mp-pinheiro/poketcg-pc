@@ -1,0 +1,7 @@
+{
+  "fn": "_ResetAnimationQueue",
+  "case": "tests/cases/duel_animation_core.py",
+  "index": 0,
+  "status": "RED",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_ResetAnimationQueue\", \"mismatches\": {\"wram\": \"reference/native state differs\"}}\n"
+}
