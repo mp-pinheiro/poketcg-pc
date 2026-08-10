@@ -2,8 +2,9 @@
 """Compare one schema-2 function case through GBRT and the native probe."""
 
 from __future__ import annotations
-
 import argparse
+import importlib
+import importlib.util
 import json
 import subprocess
 from pathlib import Path
@@ -19,7 +20,18 @@ def main() -> int:
     parser.add_argument("--runner", type=Path, required=True)
     parser.add_argument("--symbols", type=Path, required=True)
     args = parser.parse_args()
-    case = json.loads(args.case.read_text())
+    if args.case.suffix == ".py":
+        spec = importlib.util.spec_from_file_location("schema2_case", args.case)
+        if spec is None or spec.loader is None:
+            raise SystemExit("SCHEMA cannot load case module")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        records = getattr(module, "SCHEMA2_CASES", {}).get("ATimes10", [])
+        if len(records) != 1:
+            raise SystemExit("SCHEMA expected one ATimes10 schema-2 case")
+        case = records[0]
+    else:
+        case = json.loads(args.case.read_text())
     if case.get("completion") != "return" or not isinstance(case.get("registers"), dict):
         raise SystemExit("SCHEMA case requires completion=return and registers")
     if not args.rom.is_absolute() or not args.symbols.is_absolute():

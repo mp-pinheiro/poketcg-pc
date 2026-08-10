@@ -21,3 +21,22 @@ CASES = {
         dict(POISON, a=255),
     ],
 }
+
+SCHEMA2_CASES = {
+    "ATimes10": [{
+        "id": "ATimes10-poison-25",
+        "fn": "ATimes10",
+        "entry": 0x0C4B,
+        "completion": "return",
+        "instruction_budget": 1000,
+        "cycle_budget": 10000,
+        "mapper": {"rom_bank": 1, "ram_bank": 0, "ram_enable": False},
+        "registers": dict(POISON, a=25),
+        "bus": {},
+        "sram": {},
+        "vram": {},
+        "setup": [],
+        "input_events": [],
+        "evidence": "primary",
+    }],
+}
