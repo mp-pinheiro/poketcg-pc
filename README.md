@@ -42,7 +42,7 @@ just oracle-diff-all
 just data-verify
 ```
 `just progress-serve` serves a port-progress dashboard at `http://127.0.0.1:8765`.
-The published URL depends on the GitHub Pages configuration of the repository.
+Published at `https://poketcg-pc.pages.dev` via Cloudflare Pages.
 
 The full oracle gate requires the ROM produced by `just bootstrap`. Concurrent work should use a private `POKETCG_BUILD` directory and a semicolon-separated `POKETCG_PORTS` list.
 
