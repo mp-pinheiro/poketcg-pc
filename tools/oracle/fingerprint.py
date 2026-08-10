@@ -33,10 +33,24 @@ def main() -> None:
             modules[name] = {"path": str(resolved), "sha256": sha256(resolved)}
     lock = ROOT / "tools/oracle/uv.lock"
     distribution = importlib.metadata.distribution("pyboy")
-    record = next(
-        (distribution.locate_file(path) for path in (distribution.files or []) if path.name == "RECORD"),
-        None,
-    )
+    distribution_files = {}
+    record = None
+    wheel = None
+    for relative in distribution.files or ():
+        candidate = distribution.locate_file(relative)
+        if not candidate.is_file():
+            continue
+        if relative.name in {"RECORD", "WHEEL"}:
+            digest = sha256(candidate)
+            if relative.name == "RECORD":
+                record = {"path": str(candidate.resolve()), "sha256": digest}
+            else:
+                wheel = {"path": str(candidate.resolve()), "sha256": digest}
+        if relative.parts and relative.parts[0] == "pyboy" and candidate.suffix in {".py", ".so", ".pyc"}:
+            distribution_files[str(relative)] = {
+                "path": str(candidate.resolve()),
+                "sha256": sha256(candidate),
+            }
     result = {
         "python": {
             "implementation": platform.python_implementation(),
@@ -46,8 +60,10 @@ def main() -> None:
         },
         "pyboy": {
             "version": distribution.version,
-            "distribution_record": str(record) if record else None,
+            "distribution_record": record,
+            "wheel": wheel,
             "modules": modules,
+            "distribution_files": distribution_files,
         },
         "uv_lock_sha256": sha256(lock),
     }
