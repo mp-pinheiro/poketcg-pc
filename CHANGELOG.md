@@ -17,6 +17,25 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 - Model HandleTxRam2Or3 exit registers, diff remaining text cases
 - ReadJoypad input line was forced high
 - *(harness)* Canonicalize bus readback
+- *(animation)* Model reset output
+- *(animation)* Preserve reset registers
+- *(oracle)* Fail probe crashes and timeouts
+- *(oracle)* Remove unusable barrier
+- *(oracle)* Require comparator artifacts
+- *(oracle)* Generalize timed comparator
+- *(oracle)* Reject unsupported case state
+- *(oracle)* Validate schema case shape
+- *(oracle)* Enforce state and preservation checks
+- *(oracle)* Label incomplete barrier
+- *(oracle)* Serialize SM83 flags
+- *(oracle)* Validate exclusion anchors
+- *(duel)* Preserve reset animation callees
+- *(oracle)* Load schema case helpers
+- *(oracle)* Stabilize GBRT copy proofs
+- *(oracle)* Harden backend verification
+- *(progress)* Add tests/cases path for gate imports
+- *(ci)* Add User-Agent to git-cliff download
+- *(ci)* Use gh release download for git-cliff
 
 ### Documentation
 
@@ -113,27 +132,57 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 - *(gfx)* Port loaders and fades
 - *(gfx)* Port sprite animations
 - *(port)* Complete engine slices
+- *(oracle)* Pin reference environment
+- *(oracle)* Add GBRT runner
+- *(oracle)* Add case audit gate
+- *(oracle)* Seed GBRT registers
+- *(oracle)* Parse GBRT register seeds
+- *(oracle)* Restore function barrier
+- *(oracle)* Compare GBRT function case
+- *(oracle)* Migrate first schema case
+- *(oracle)* Apply mapper case state
+- *(oracle)* Add GBRT function command
+- *(oracle)* Add contract-aware cases
+- *(oracle)* Add HtimesL case matrix
+- *(oracle)* Expand primary case matrices
+- *(oracle)* Emit GBRT state projection
+- *(oracle)* Compare memory projections
+- *(oracle)* Derive state spans from cases
+- *(oracle)* Add migrated case barrier
+- *(oracle)* Support pre-ret completion
+- *(oracle)* Route completion modes
+- *(oracle)* Support event completion
+- *(oracle)* Add event predicate protocol
+- *(oracle)* Normalize event predicates
+- *(oracle)* Execute schema two cases
+- *(oracle)* Apply WRAM seed spans
+- *(oracle)* Add fixed inventory gate
+- *(oracle)* Add GBRT verification lanes
+- *(oracle)* Validate routine exclusions
+- *(oracle)* Fingerprint PyBoy distribution files
+- *(oracle)* Migrate copy routine proof
+- *(oracle)* Complete copy primary cases
+- *(progress)* Port progress dashboard
+- *(progress)* Add --report to GBRT gate (oracle-fn-all)
+- *(progress)* Deploy to Cloudflare Pages
 
 ### Miscellaneous
 
 - Register wave 1 routines in the gate
 - Register wave 2 routines and update plan
 - *(feat)* Duel core wip
+- *(oracle)* Record animation exclusions
+
+### Refactor
+
+- *(oracle)* Require explicit contracts
 
 ### Tests
 
 - Ground NPC pointer cases in table data
 - Diff IO registers against the real ROM
-## v0.1.1 - 2026-08-06
-
-### Bug Fixes
-
-- Correct cliff template and version logic
-- Correct dollar escaping in release recipe
-## v0.1.0 - 2026-08-06
-
-### Miscellaneous
-
-- Initialize project scaffold
-- Add release pipeline
+- *(oracle)* Migrate division cases
+- *(oracle)* Migrate write-number case
+- *(oracle)* Migrate damage cases
+- *(oracle)* Migrate RNG cases
 
