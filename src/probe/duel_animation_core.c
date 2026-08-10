@@ -3,8 +3,8 @@
 
 static void adapt_ResetAnimationQueue(ProbeState *s)
 {
-    DuelAnimationResetResult result = _ResetAnimationQueue();
-    s->c = result.c;
+    _ResetAnimationQueue();
+    (void)s;
 }
 
 static void adapt_PlayLoadedDuelAnimation(ProbeState *s)

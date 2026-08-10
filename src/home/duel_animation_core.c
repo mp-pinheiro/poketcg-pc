@@ -57,7 +57,7 @@ static void LoadAnimCoordsAndFlags(uint8_t slot)
     write((uint16_t)(addr + 15u), (uint8_t)(flags | (read((uint16_t)(addr + 15u)) & (SPRITE_X_INVERTED | SPRITE_Y_INVERTED))));
 }
 
-DuelAnimationResetResult _ResetAnimationQueue(void)
+void _ResetAnimationQueue(void)
 {
     uint8_t lcdc = read(wLCDC_ADDR);
     write(wLCDC_ADDR, (uint8_t)(lcdc & (uint8_t)~0x04u));
@@ -76,7 +76,7 @@ DuelAnimationResetResult _ResetAnimationQueue(void)
     write(wAllSpriteAnimationsDisabled_ADDR, 0);
     write(wVBlankOAMCopyToggle_ADDR,
           (uint8_t)(read(wVBlankOAMCopyToggle_ADDR) + 1u));
-    return (DuelAnimationResetResult){ .c = 0 };
+    return;
 }
 
 void PlayLoadedDuelAnimation(void)
