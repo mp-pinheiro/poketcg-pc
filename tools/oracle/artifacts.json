@@ -1,0 +1,15 @@
+{
+  "pret": {
+    "commit": "0e7157e",
+    "rom_sha1": "0f8670a583255cff3e5b7ca71b5d7454d928fc48"
+  },
+  "gbrecomp": {
+    "version": "0.1.0",
+    "archive_sha256": "b77fbf8913a9dd770097df81e8e0f84cf2e0d9e3a44dc1a1ee4d1846c5035535",
+    "runtime_tree_sha256": "23121a2c5969ab4062a436d7156b8999784fe68600501e4263a9de80e5ae526d"
+  },
+  "pyboy": {
+    "version": "2.7.0",
+    "sdist_sha256": "b97db94c366f5e54af04f94641c6107454821543015716b7182df29684ad9180"
+  }
+}

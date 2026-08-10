@@ -18,8 +18,12 @@ bootstrap:
         git clone https://github.com/pret/poketcg poketcg
         git -C poketcg checkout 0e7157e
     fi
+    if [ -f poketcg/poketcg.gbc ]; then
+        python3 tools/verify_oracle_artifacts.py
+    fi
     make -C poketcg DEBUG=1
-    cd poketcg && sha1sum -c rom.sha1
+    python3 tools/verify_oracle_artifacts.py
+
 
 # Per-clone VCS setup: jj --repo config lives outside the repo, so a fresh
 # clone loses trunk auto-advance until this runs. Idempotent.
@@ -51,8 +55,17 @@ verify-hooks:
 
 # Python venv holding PyBoy, used only by the oracle.
 oracle-venv:
-    uv venv /tmp/pbenv
-    uv pip install --python /tmp/pbenv/bin/python pyboy
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export UV_PROJECT_ENVIRONMENT=/tmp/pbenv
+    uv python install 3.12.3
+    uv sync --project tools/oracle --python 3.12.3 --managed-python --frozen --reinstall-package pyboy
+
+# Validate the installed PyBoy execution path before replacing it.
+oracle-health-pyboy:
+    PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py
+
+oracle-health: oracle-health-pyboy
 
 # Configure + build the C side (gbmem, poketcg_probe).
 build:

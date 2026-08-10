@@ -1,0 +1,17 @@
+[project]
+name = "poketcg-oracle"
+version = "0.1.0"
+description = "Pinned verification environments for the poketcg port"
+requires-python = "==3.12.3"
+dependencies = [
+  "pyboy==2.7.0",
+  "cython==3.0.9",
+  "setuptools",
+  "wheel",
+  "numpy",
+]
+
+[tool.uv]
+no-binary-package = ["pyboy"]
+no-build-isolation-package = ["pyboy"]
+reinstall-package = ["pyboy"]
