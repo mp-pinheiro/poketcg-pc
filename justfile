@@ -167,6 +167,12 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
 # Run migrated schema-2 cases; intentionally incomplete until registry migration closes.
 oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
     python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+# Fixed GBRT primary inventory barrier.
+oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
+    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
+# Full routine gate: backend health, adapter/schema checks, fixed inventory.
+oracle-gate: oracle-health-gbref oracle-fn-all
+    python3 tools/audit_oracle_cases.py --stage routine
 oracle-diff FN: build
     #!/usr/bin/env bash
     set -euo pipefail
