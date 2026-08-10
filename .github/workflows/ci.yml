@@ -17,10 +17,11 @@ jobs:
         with: { fetch-depth: 0 }
       - name: Install git-cliff
         run: |
-          v=v2.13.1
-          curl -sSL -H "User-Agent: curl" "https://github.com/orhun/git-cliff/releases/download/$v/git-cliff-$v-x86_64-unknown-linux-gnu.tar.gz" \
-            | tar -xz --strip-components=1 -C /tmp
+          gh release download v2.13.1 -R orhun/git-cliff -p "*x86_64-unknown-linux-gnu.tar.gz" -D /tmp --clobber
+          tar -xzf /tmp/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz --strip-components=1 -C /tmp
           sudo install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Validate changelog generation
         run: git cliff --unreleased --strip header >/dev/null
 
