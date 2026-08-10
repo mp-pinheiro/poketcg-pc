@@ -1,0 +1,194 @@
+const HEADLINE = document.getElementById('headline');
+const SUBHEAD = document.getElementById('subhead');
+const COMMIT_INFO = document.getElementById('commit-info');
+const CHART = document.getElementById('chart');
+const CATEGORIES = document.getElementById('categories');
+const UNITS = document.getElementById('units');
+const FILTER = document.getElementById('filter');
+const FRONTIER = document.getElementById('frontier');
+
+let progressData = null;
+let PRET_SHORT = '';
+
+function pct(n, total) {
+  return total ? (n * 100 / total).toFixed(2) : '0.00';
+}
+
+function statusChip(status) {
+  return `<span class="chip chip-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
+}
+
+function bar(pctVal) {
+  return `<div class="bar"><div class="bar-fill" style="width:${pctVal}%"></div></div>`;
+}
+
+function renderHeader(p) {
+  const m = p.measures;
+  HEADLINE.textContent = pct(m.code, m['code/total']) + '% ported';
+  let sub = `${m.code.toLocaleString()} / ${m['code/total'].toLocaleString()} code bytes`;
+  sub += ` \u00b7 ${m.functions.toLocaleString()} / ${m['functions/total'].toLocaleString()} functions`;
+  if (p.gate.present) {
+    const v = m.verified_functions > 0
+      ? m.verified_functions.toLocaleString() + ' verified'
+      : 'verification in progress';
+    sub += ` \u00b7 ${v}`;
+  } else {
+    sub += ' \u00b7 verification not recorded';
+  }
+  SUBHEAD.textContent = sub;
+  let commitHtml = '';
+  if (p.commit_url && p.commit) {
+    commitHtml = `<a href="${p.commit_url}" target="_blank" rel="noopener">${p.commit}</a>`;
+  }
+  if (p.pret_commit) {
+    commitHtml += (commitHtml ? ' \u00b7 ' : '') + `pret ${p.pret_commit.slice(0, 7)}`;
+  }
+  COMMIT_INFO.innerHTML = commitHtml;
+}
+
+function renderChart(points) {
+  if (!points || points.length < 2) { CHART.innerHTML = ''; return; }
+  const minTs = points[0].timestamp;
+  const maxTs = points[points.length - 1].timestamp;
+  const dur = Math.max(maxTs - minTs, 1);
+  const padX = 40, padY = 14, w = 800 - 2 * padX, h = 200 - 2 * padY;
+  let maxPct = 0;
+  const coords = points.map(pt => {
+    const yPct = pt.code_total ? pt.code / pt.code_total : 0;
+    if (yPct > maxPct) maxPct = yPct;
+    return { x: padX + ((pt.timestamp - minTs) / dur) * w,
+             y: padY + h - (yPct / Math.max(maxPct, 0.01)) * h,
+             pct: yPct, commit: pt.commit };
+  });
+  const poly = coords.map(c => `${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(' ');
+  let svg = `<polyline points="${poly}" fill="none" stroke="#4caf50" stroke-width="2"/>`;
+  svg += `<line x1="${padX}" y1="${padY + h}" x2="${padX + w}" y2="${padY + h}" stroke="#333" stroke-width="1"/>`;
+  svg += `<text x="${padX - 6}" y="${padY + h + 3}" text-anchor="end" font-size="10" fill="#888">0%</text>`;
+  svg += `<text x="${padX - 6}" y="${padY + 4}" text-anchor="end" font-size="10" fill="#888">${(maxPct * 100).toFixed(0)}%</text>`;
+  for (const c of coords) {
+    svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="2" fill="#4caf50"><title>${c.commit} ${(c.pct * 100).toFixed(2)}%</title></circle>`;
+  }
+  CHART.innerHTML = svg;
+}
+
+function renderCategories(cats) {
+  CATEGORIES.innerHTML = cats.map(c => {
+    const pp = pct(c.code, c.code_total);
+    return `<div class="category">
+      <div class="name"><span class="pct">${pp}%</span>${c.name}</div>
+      ${bar(pp)}
+      <div class="detail">${c.code.toLocaleString()} / ${c.code_total.toLocaleString()} bytes \u00b7 ${c.functions} / ${c.functions_total} functions</div>
+    </div>`;
+  }).join('');
+}
+
+function makeFnRow(f) {
+  let extra = '';
+  if (f.refs === 0 && f.status === 'todo') extra = ' <span class="chip chip-unreferenced">#unreferenced</span>';
+  const link = f.file
+    ? `<a href="https://github.com/pret/poketcg/blob/${PRET_SHORT}/${f.file}#L${f.line}" target="_blank" rel="noopener">${f.file}:${f.line}</a>`
+    : '\u2014';
+  return `<tr>
+    <td>${statusChip(f.status)}${f.name}${extra}</td>
+    <td style="text-align:right">${f.size}b</td>
+    <td style="text-align:left;font-size:0.8rem;color:var(--muted)">${link}</td>
+  </tr>`;
+}
+
+function renderUnits(unitsData, funcs) {
+  const funcByFile = {};
+  for (const f of funcs) {
+    if (!f.file) continue;
+    if (!funcByFile[f.file]) funcByFile[f.file] = [];
+    funcByFile[f.file].push(f);
+  }
+  const tbody = UNITS.querySelector('tbody');
+  tbody.innerHTML = '';
+  for (const u of unitsData) {
+    const pp = pct(u.code, u.code_total);
+    const row = document.createElement('tr');
+    row.className = 'unit-row';
+    row.innerHTML = `<td>${u.file}</td><td style="text-align:right">${pp}%</td><td style="text-align:right">${u.functions}/${u.functions_total}</td><td>${bar(pp)}</td>`;
+    row.addEventListener('click', () => {
+      const next = row.nextElementSibling;
+      if (next && next.classList.contains('fn-list')) {
+        next.remove(); row.classList.remove('open');
+      } else {
+        const fns = funcByFile[u.file] || [];
+        const fnTr = document.createElement('tr');
+        fnTr.className = 'fn-list open';
+        const fnTd = document.createElement('td');
+        fnTd.colSpan = 4;
+        fnTd.innerHTML = '<table>' + fns.map(makeFnRow).join('') + '</table>';
+        fnTr.appendChild(fnTd);
+        row.after(fnTr); row.classList.add('open');
+      }
+    });
+    tbody.appendChild(row);
+  }
+}
+
+function sortUnits(col) {
+  const tbody = UNITS.querySelector('tbody');
+  if (!tbody) return;
+  const rows = Array.from(tbody.querySelectorAll('tr.unit-row'));
+  const colIdx = { file: 0, pct: 1, funcs: 2 }[col] || 0;
+  const dir = UNITS.dataset.sortCol === col && UNITS.dataset.sortDir === 'asc' ? -1 : 1;
+  rows.sort((a, b) => {
+    const aText = a.children[colIdx].textContent.trim();
+    const bText = b.children[colIdx].textContent.trim();
+    const aNum = parseFloat(aText), bNum = parseFloat(bText);
+    return (!isNaN(aNum) && !isNaN(bNum)) ? (aNum - bNum) * dir : aText.localeCompare(bText) * dir;
+  });
+  UNITS.dataset.sortCol = col;
+  UNITS.dataset.sortDir = dir > 0 ? 'asc' : 'desc';
+  for (const row of rows) {
+    const fnList = row.nextElementSibling;
+    tbody.appendChild(row);
+    if (fnList && fnList.classList.contains('fn-list')) tbody.appendChild(fnList);
+  }
+}
+
+function renderFrontier(ready) {
+  FRONTIER.innerHTML = ready.slice(0, 30).map(f => {
+    let extra = '';
+    if (f.refs === 0) extra = ' <span class="chip chip-unreferenced">#unreferenced</span>';
+    return `<div class="fn-row">${statusChip(f.status)}<span class="size">${f.size}b</span>${f.name}${extra} ${f.file}:${f.line}</div>`;
+  }).join('');
+}
+
+function applyFilter() {
+  const q = FILTER.value.toLowerCase();
+  for (const row of UNITS.querySelectorAll('tr.unit-row')) {
+    row.classList.toggle('hidden', q && !row.textContent.toLowerCase().includes(q));
+  }
+}
+
+async function main() {
+  const [progResp, histResp] = await Promise.all([
+    fetch('data/progress.json'),
+    fetch('data/history.jsonl').catch(() => null),
+  ]);
+  progressData = await progResp.json();
+  PRET_SHORT = progressData.pret_commit.slice(0, 7);
+
+  renderHeader(progressData);
+  renderCategories(progressData.categories);
+  renderUnits(progressData.units, progressData.functions);
+
+  const ready = progressData.functions.filter(f => f.status === 'todo' && f.ready);
+  renderFrontier(ready);
+
+  FILTER.addEventListener('input', () => applyFilter());
+
+  for (const th of document.querySelectorAll('#units th[data-sort]')) {
+    th.addEventListener('click', () => sortUnits(th.dataset.sort));
+  }
+
+  if (histResp && histResp.ok) {
+    const text = await histResp.text();
+    const points = text.trim().split('\n').filter(Boolean).map(JSON.parse);
+    renderChart(points);
+  }
+}
+main();

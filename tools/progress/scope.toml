@@ -1,0 +1,21 @@
+# Code the port will never contain. Removed from the denominator, listed on the site.
+# Sources: docs/plan.md:120-129 (exclusion table), docs/port-contract.md:266-281 (taxonomy).
+
+[[exclude]]
+kind = "sgb"
+reason = "SGB path dropped by Phase 1 (#2)"
+files = ["src/engine/sgb.asm"]
+symbols = ["DrawRegularTextBoxSGB", "ColorizeTextBoxSGB"]
+
+[[exclude]]
+kind = "hardware"
+reason = "deleted or dissolved by the Phase-1 transform (docs/phase1-transform.md)"
+files = ["src/home/farcall.asm", "src/home/jumptable.asm", "src/home/call_regs.asm",
+         "src/home/interrupt.asm", "src/home/hblank.asm", "src/home/vblank.asm",
+         "src/home/double_speed.asm", "src/home/vram.asm"]
+symbols = ["CopyDMAFunction", "WaitForVBlank"]
+
+[[exclude]]
+kind = "dead"
+reason = "zero callsites in poketcg/src (docs/plan.md:124)"
+symbols = ["HLTimes10", "ADividedBy10", "GetNextElementOfList", "SetListToNextPosition"]

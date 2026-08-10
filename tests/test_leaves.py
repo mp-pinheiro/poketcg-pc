@@ -11,6 +11,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import tempfile
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
@@ -309,11 +310,14 @@ def main() -> int:
     ap.add_argument("--cache-dir", type=Path)
     ap.add_argument("--probe", type=Path, default=ROOT / "build" / "poketcg_probe")
     ap.add_argument("--rom", default=os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc")))
+    ap.add_argument("--report", type=Path, help="write gate record to JSON (requires --all)")
     args = ap.parse_args()
     if args.oracle_mode in ("refresh", "cache") and args.cache_dir is None:
         ap.error("--cache-dir is required for refresh and cache modes")
     if not args.probe.exists():
         raise SystemExit(f"{args.probe} not built; run `just build`")
+    if args.report and not args.all:
+        ap.error("--report requires --all")
     os.environ.setdefault("POKETCG_ROM", args.rom)
     cases, contracts = load_cases()
     if args.fn:
@@ -336,6 +340,25 @@ def main() -> int:
         from pyboy_oracle import Oracle, OracleError
         oracle = Oracle(args.rom)
     failures = 0
+    report_data = None
+    report_commit = None
+    if args.report:
+        try:
+            rr = subprocess.run(
+                ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if rr.returncode == 0:
+                report_commit = rr.stdout.strip()
+        except Exception:
+            pass
+        report_data = {
+            "schema": 1,
+            "generated_at": 0,
+            "commit": report_commit,
+            "complete": False,
+            "routines": {},
+        }
     try:
         deps = dependencies(Path(args.rom)) if args.oracle_mode in ("refresh", "cache") else None
         for fn in wanted:
@@ -380,9 +403,24 @@ def main() -> int:
                 failures += 1; print(f"FAIL {fn}: {bad_cases}/{len(entries)} cases differ")
             else:
                 print(f"PASS {fn}: {len(entries)} cases")
+            if report_data is not None:
+                status = "fail" if bad_cases else "pass"
+                report_data["routines"][fn] = {
+                    "status": status, "cases": len(entries), "failing": bad_cases,
+                }
+                report_data["generated_at"] = int(time.time())
+                args.report.write_text(
+                    json.dumps(report_data, sort_keys=True, separators=(",", ":"))
+                )
     finally:
         if oracle is not None:
             oracle.close()
+        if report_data is not None:
+            report_data["complete"] = True
+            report_data["generated_at"] = int(time.time())
+            args.report.write_text(
+                json.dumps(report_data, sort_keys=True, separators=(",", ":"))
+            )
     print(f"\n{len(wanted) - failures}/{len(wanted)} routines clean")
     return 1 if failures else 0
 

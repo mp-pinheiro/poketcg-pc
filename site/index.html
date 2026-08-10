@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>poketcg-pc progress</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1 id="headline">loading…</h1>
+  <div id="subhead"></div>
+  <div id="commit-info"></div>
+</header>
+<section id="chart-section">
+  <svg id="chart" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet"></svg>
+</section>
+<section id="categories-section"><h2>Categories</h2><div id="categories"></div></section>
+<section><input id="filter" type="text" placeholder="filter by name or file…" autocomplete="off"></section>
+<section id="units-section"><h2>Files</h2>
+  <table id="units">
+    <thead><tr><th data-sort="file">File</th><th data-sort="pct">%</th><th data-sort="funcs">Functions</th><th>Progress</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+<section id="frontier-section"><h2>Ready to port</h2><div id="frontier"></div></section>
+<footer><p>History computed against today's inventory and scope; series stays self-consistent across scope changes.</p></footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

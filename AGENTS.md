@@ -52,6 +52,9 @@ The commands that matter, from the `justfile`:
 | `just data-verify` | data/asset extraction round-trip |
 | `just oracleb-regenerate` | generate and build the GB Recompiled replay executable |
 | `just oracleb-replay` | replay-determinism half of the gb-recompiled oracle |
+| `just progress` | recompute progress report from registry + gate |
+| `just frontier` | print unported routines whose callees are all ported |
+| `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
 
 
 ## 5. Concurrency protocol
@@ -73,7 +76,7 @@ Four files per pret source: `src/home/<f>.c`, `src/home/<f>.h`, `src/probe/<f>.c
 `tests/cases/<f>.py`.
 
 Shared, not owned by any slice: `CMakeLists.txt`, `src/mem.*`, `src/probe.c`,
-`src/probe.h`, `src/probe_table.c`, `tests/test_leaves.py`, `tools/`, `justfile`.
+`tools/progress/`, `site/`, `src/probe.h`, `src/probe_table.c`, `tests/test_leaves.py`, `tools/`, `justfile`.
 
 `tests/routines.py` is shared but **partitioned** — a slice edits only its own
 `ROUTINES["<basename>"]` tuple, never a neighbouring entry.

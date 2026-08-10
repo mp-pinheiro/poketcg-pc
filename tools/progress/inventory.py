@@ -1,0 +1,311 @@
+#!/usr/bin/env python3
+"""Build site/data/inventory.json: byte-weighted code/data labels from the
+bootstrapped pret/poketcg checkout (poketcg.map sizes, asm source classification).
+
+Run only when the pret pin in tools/oracle/artifacts.json moves (see just
+progress-inventory). Requires `just bootstrap` to have populated poketcg/.
+"""
+from __future__ import annotations
+
+import glob
+import json
+import re
+import subprocess
+import sys
+from collections import Counter
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent.parent
+PRET = ROOT / "poketcg"
+MAP_FILE = PRET / "poketcg.map"
+SRC_DIR = PRET / "src"
+OUT_FILE = ROOT / "site" / "data" / "inventory.json"
+
+BANK_RE = re.compile(r'^(ROM0|ROMX|SRAM|WRAM0|WRAM|HRAM|VRAM|OAM) bank #(\d+):$')
+SEC_RE = re.compile(r'^\tSECTION: \$([0-9a-f]{4})-\$([0-9a-f]{4}) \(\$([0-9a-f]{4}) bytes\) \["(.*)"\]$')
+SYM_RE = re.compile(r'^\t {9}\$([0-9a-f]{4}) = (\S+)$')
+LAB_RE = re.compile(r'^([A-Za-z_][A-Za-z0-9_#@]*):{1,2}\s*$')
+CALL_RE = re.compile(r'^\s*(?:call|jp|jr|farcall|bank1call|homecall|callab|callba)\b(.*)$', re.I)
+TERM_RE = re.compile(r'^(ret|reti)\b(?!\s*,)|^(jp|jr)\s+(?!(z|nz|c|nc)\s*,)', re.I)
+TOKEN_RE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+
+INSTR = set("""adc add and bit call ccf cp cpl daa dec di ei halt inc jp jr ld ldh ldi ldd
+nop or pop push res ret reti rl rla rlc rlca rr rra rrc rrca rst sbc scf set sla sra srl
+stop sub swap xor""".split())
+CODE_MACROS = {"farcall", "bank1call", "homecall", "callab", "callba", "ldtx", "lb",
+               "jumptable", "fallthrough", "jp_hl", "debug_ret", "rst",
+               "handle_dmg_or_cgb", "sgb_command"}
+SKIP_TOKENS = {"SECTION", "INCLUDE", "ENDC", "IF", "ELSE", "ENDM", "MACRO", "REPT",
+               "ENDR", "ASSERT", "UNION", "NEXTU", "ENDU", "DEF", "CHARMAP", "PUSHS",
+               "POPS", "RSSET", "EXPORT"}
+COND = {"z", "nz", "c", "nc"}
+ROM_BANK_TYPES = ("ROM0", "ROMX")
+
+
+def fail(msg: str) -> None:
+    print(f"inventory: {msg}", file=sys.stderr)
+    raise SystemExit(2)
+
+
+def parent_name(name: str) -> str:
+    return name.split(".", 1)[0]
+
+
+def classify_line(stripped: str) -> str | None:
+    first = stripped.split()[0].lower()
+    if first in INSTR or first in CODE_MACROS:
+        return "code"
+    return "data"
+
+
+def extract_callee(line_stripped: str, code_names: set[str], cur_parent: str) -> str | None:
+    m = CALL_RE.match(line_stripped)
+    if not m:
+        return None
+    operand = m.group(1).strip()
+    if not operand:
+        return None
+    parts = [p.strip() for p in operand.split(",")]
+    target = parts[-1] if (len(parts) > 1 and parts[0].lower() in COND) else parts[0]
+    target = target.split(";")[0].strip()
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?", target):
+        return None
+    p = parent_name(target)
+    if p == cur_parent or p not in code_names:
+        return None
+    return p
+
+
+def parse_map() -> tuple[dict[str, dict], int]:
+    if not MAP_FILE.exists():
+        fail("run just bootstrap first")
+    labels: dict[str, dict] = {}
+    bank_type = None
+    bank_num = None
+    sec_start = sec_end = None
+    sec_name = None
+    sec_syms: list[tuple[int, str]] = []
+
+    def flush_section():
+        if bank_type not in ROM_BANK_TYPES or sec_start is None:
+            return
+        top = [(a, n) for a, n in sec_syms if "." not in n]
+        for i, (addr, name) in enumerate(top):
+            next_addr = top[i + 1][0] if i + 1 < len(top) else sec_end + 1
+            size = next_addr - addr
+            if name not in labels:
+                labels[name] = {
+                    "addr": addr, "size": size, "bank": bank_num, "section": sec_name,
+                }
+
+    for raw in MAP_FILE.read_text().splitlines():
+        m = BANK_RE.match(raw)
+        if m:
+            flush_section()
+            bank_type, bank_num = m.group(1), int(m.group(2))
+            sec_start = None
+            continue
+        m = SEC_RE.match(raw)
+        if m:
+            flush_section()
+            sec_start = int(m.group(1), 16)
+            sec_end = int(m.group(2), 16)
+            sec_name = m.group(4)
+            sec_syms = []
+            continue
+        m = SYM_RE.match(raw)
+        if m:
+            sec_syms.append((int(m.group(1), 16), m.group(2)))
+    flush_section()
+
+    text = MAP_FILE.read_text()
+    rm = re.search(r"ROM0: (\d+) bytes used.*?ROMX: (\d+) bytes used", text, re.S)
+    rom_bytes = int(rm.group(1)) + int(rm.group(2)) if rm else None
+
+    return labels, rom_bytes
+
+
+def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dict[str, int], list[str]]:
+    files = sorted(glob.glob(str(SRC_DIR / "**" / "*.asm"), recursive=True))
+    if not files:
+        fail("no .asm sources found under poketcg/src")
+
+    defs: dict[str, dict] = {}
+    refs: Counter[str] = Counter()
+
+    for fp in files:
+        rel = str(Path(fp).relative_to(PRET))
+        text = Path(fp).read_text(errors="replace")
+        lines = text.splitlines()
+
+        for line in lines:
+            cstripped = line.split(";", 1)[0].rstrip("\n")
+            if cstripped.strip():
+                refs.update(TOKEN_RE.findall(cstripped.strip()))
+
+        pending_labels: list[tuple[str, int]] = []
+        cur_top: str | None = None
+        last_body: str | None = None
+        prev_kind: str | None = None
+
+        for lineno, raw in enumerate(lines, start=1):
+            stripped = raw.split(";", 1)[0].strip()
+            if not stripped:
+                continue
+            if stripped.startswith("."):
+                continue
+            m = LAB_RE.match(stripped)
+            if m:
+                name = m.group(1)
+                if "." not in name:
+                    if cur_top and last_body is not None and prev_kind == "code":
+                        if not TERM_RE.match(last_body):
+                            if cur_top in defs:
+                                defs[cur_top]["fallthrough"] = name
+                    pending_labels.append((name, lineno))
+                else:
+                    pending_labels.append((name, lineno))
+                continue
+            first_tok = stripped.split()[0].upper()
+            if first_tok in SKIP_TOKENS:
+                if first_tok == "SECTION":
+                    pending_labels = []
+                    cur_top = None
+                    last_body = None
+                    prev_kind = None
+                continue
+            if pending_labels:
+                kind = classify_line(stripped)
+                for lab_name, lab_line in pending_labels:
+                    if lab_name not in defs:
+                        defs[lab_name] = {
+                            "file": rel, "line": lab_line, "kind": kind,
+                            "deps": set(), "fallthrough": None,
+                        }
+                cur_top = parent_name(pending_labels[-1][0])
+                prev_kind = kind
+                pending_labels = []
+            else:
+                kind = classify_line(stripped)
+            callee = extract_callee(stripped, set(), cur_top or "")
+            if callee and cur_top and cur_top in defs:
+                defs[cur_top]["deps"].add(callee)
+            last_body = stripped
+
+        if cur_top and last_body is not None and prev_kind == "code":
+            if not TERM_RE.match(last_body):
+                pass
+
+    code_names = {n for n, d in defs.items() if n in map_labels and d["kind"] == "code"}
+
+    for fp in files:
+        text = Path(fp).read_text(errors="replace")
+        lines = text.splitlines()
+        pending_labels: list[tuple[str, int]] = []
+        cur_top: str | None = None
+
+        for lineno, raw in enumerate(lines, start=1):
+            stripped = raw.split(";", 1)[0].strip()
+            if not stripped:
+                continue
+            if stripped.startswith("."):
+                continue
+            m = LAB_RE.match(stripped)
+            if m:
+                name = m.group(1)
+                if "." not in name:
+                    pending_labels = [(name, lineno)]
+                else:
+                    pending_labels.append((name, lineno))
+                continue
+            first_tok = stripped.split()[0].upper()
+            if first_tok in SKIP_TOKENS:
+                if first_tok == "SECTION":
+                    pending_labels = []
+                    cur_top = None
+                continue
+            if pending_labels:
+                cur_top = parent_name(pending_labels[-1][0])
+                pending_labels = []
+            callee = extract_callee(stripped, code_names, cur_top or "")
+            if callee and cur_top and cur_top in defs:
+                defs[cur_top]["deps"].add(callee)
+
+    unknown = sorted(n for n in map_labels if n not in defs)
+    for n in unknown:
+        defs[n] = {"file": None, "line": None, "kind": "unknown", "deps": set(),
+                    "fallthrough": None}
+
+    ref_map = {}
+    for name in defs:
+        r = refs.get(name, 0)
+        if "." not in name:
+            def_lines = 1
+        else:
+            def_lines = 0
+        ref_map[name] = max(r - def_lines, 0)
+
+    return defs, ref_map, unknown
+
+
+def main() -> int:
+    map_labels, rom_bytes = parse_map()
+    defs, refs_map, unknown = process_asm_files(map_labels)
+
+    functions = {}
+    data_labels = 0
+    data_bytes = 0
+    for name, info in map_labels.items():
+        d = defs.get(name)
+        if d is None:
+            continue
+        if d["kind"] == "data":
+            data_labels += 1
+            data_bytes += info["size"]
+            continue
+        if d["kind"] != "code":
+            continue
+        dep_set = set(d["deps"])
+        if d.get("fallthrough"):
+            dep_set.add(d["fallthrough"])
+        functions[name] = {
+            "file": d["file"], "line": d["line"], "bank": info["bank"],
+            "addr": info["addr"], "size": info["size"],
+            "deps": sorted(dep_set),
+            "fallthrough": d.get("fallthrough"),
+            "refs": refs_map.get(name, 0),
+        }
+
+    for n in unknown:
+        print(f"inventory: unknown label with no asm definition: {n}", file=sys.stderr)
+
+    pret_commit = subprocess.run(
+        ["git", "-C", str(PRET), "rev-parse", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+
+    out = {
+        "schema": 1,
+        "pret_commit": pret_commit,
+        "rom_bytes": rom_bytes,
+        "totals": {
+            "code_functions": len(functions),
+            "code_bytes": sum(f["size"] for f in functions.values()),
+            "data_labels": data_labels,
+            "data_bytes": data_bytes,
+        },
+        "unknown_labels": unknown,
+        "functions": functions,
+    }
+
+    OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    OUT_FILE.write_text(json.dumps(out, sort_keys=True, separators=(",", ":")))
+    print(f"inventory: code_functions={out['totals']['code_functions']}, "
+          f"code_bytes={out['totals']['code_bytes']}, "
+          f"data_labels={out['totals']['data_labels']}, "
+          f"data_bytes={out['totals']['data_bytes']}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

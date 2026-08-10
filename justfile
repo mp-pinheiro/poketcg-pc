@@ -178,7 +178,8 @@ oracle-diff-all: build lint-adapters
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
+    mkdir -p site/data
+    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe --report site/data/gate.json
 
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:
@@ -230,6 +231,22 @@ assets-verify:
     python3 tools/gen_assets.py --check
     python3 tools/gen_lz.py --verify
     python3 tools/gen_lz.py --check
+# Regenerate the pret code inventory (needs `just bootstrap`; rerun when the pret pin moves).
+progress-inventory:
+    python3 tools/progress/inventory.py
+
+# Recompute site/data/progress.json + history point from the registry and gate record.
+progress:
+    python3 tools/progress/report.py build
+
+# Unported routines whose callees are all ported — the porting work queue.
+frontier LIMIT="30":
+    python3 tools/progress/report.py frontier --limit {{LIMIT}}
+
+# Serve the dashboard at http://127.0.0.1:8765
+progress-serve:
+    python3 -m http.server 8765 --directory site
+
 
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
