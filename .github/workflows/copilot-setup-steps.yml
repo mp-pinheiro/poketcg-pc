@@ -41,7 +41,7 @@ jobs:
 
       - name: Install oracle venv
         run: |
-          if curl -fsSL "https://github.com/mp-pinheiro/poketcg-pc/releases/download/oracle-venv/pbenv.tar.zst" -o /tmp/pbenv.tar.zst; then
+          if gh release download oracle-venv --pattern 'pbenv.tar.zst' -O /tmp/pbenv.tar.zst 2>/dev/null; then
             echo "extracting pre-built venv..."
             sudo mkdir -p /tmp/pbenv
             sudo tar -xaf /tmp/pbenv.tar.zst -C /tmp
