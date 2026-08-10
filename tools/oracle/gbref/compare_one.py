@@ -129,8 +129,14 @@ def main() -> int:
                           "mismatches": {f"preserve:{name}": values
                                          for name, values in preservation.items()}}))
         return 1
+    probe_request = {
+        "fn": case["fn"], **registers,
+        "read": {"49152": 4096, "53248": 4096},
+        "sread": {str(bank): {"40960": 4096, "45056": 4096} for bank in range(4)},
+        "vread": {str(bank): {"32768": 4096, "36864": 4096} for bank in range(2)},
+    }
     probe = subprocess.run(
-        [str(args.probe)], input=json.dumps({"fn": case["fn"], **registers}),
+        [str(args.probe)], input=json.dumps(probe_request),
         text=True, capture_output=True, check=False, timeout=30, env=env,
     )
     if probe.returncode != 0:
@@ -141,6 +147,25 @@ def main() -> int:
         for name in case["compare"]
         if reference.get(name) != native.get(name)
     }
+
+    def span_value(mapping: dict, addresses: tuple[int, ...]) -> str:
+        try:
+            return "".join(mapping[str(address)] for address in addresses)
+        except (KeyError, TypeError):
+            return ""
+
+    if reference["wram"] != span_value(native.get("wram", {}), (49152, 53248)):
+        mismatches["wram"] = "reference/native state differs"
+    if reference["vram"] != "".join(
+        span_value(native.get("vram", {}).get(str(bank), {}), (32768, 36864))
+        for bank in range(2)
+    ):
+        mismatches["vram"] = "reference/native state differs"
+    if reference["sram"] != "".join(
+        span_value(native.get("sram", {}).get(str(bank), {}), (40960, 45056))
+        for bank in range(4)
+    ):
+        mismatches["sram"] = "reference/native state differs"
     if mismatches:
         print(json.dumps({"status": "PORT", "fn": case["fn"], "mismatches": mismatches}))
         return 1
