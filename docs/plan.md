@@ -15,6 +15,7 @@
 | W1-H small leaves (8 files) | 8/11 (3 excluded) | landed | 876d82ea |
 | W1-I setup + palettes | 9/9 | landed | 2056acad |
 | W1-K gfx loaders + fades | 47/49 (2 excluded) | landed | ea4b8ad7 |
+| W1-L sprite animations | 22/22 | landed | c51830c7 |
 | W1-J harness: keys | — | landed | 9e383124 |
 | W2-K input waiters + scrollable text | 10/10 (7 oracle:False) | landed | — |
 | W2-L damage modifiers + colours | 6/6 | landed | — |
@@ -25,9 +26,10 @@
 This table is the resumption point for a compacted or cleared session: each
 slice flips its own row to `landed` (with the jj commit id) when its barrier
 check passes.
-**Barrier 1 (Wave 1)**: `just oracle-diff-all` — 480/480 routines clean,
+**Barrier 1 (Wave 1)**: `just oracle-diff-all` — 502/502 routines clean,
 `just build` warning-free, `just data-verify` and `just oracleb-replay` both
-exit 0. The gfx-loader/fade row above adds the recovered palette and graphics
+exit 0. The sprite-animation row adds 22 verified graphics routines to the
+gate. The gfx-loader/fade row above adds the recovered palette and graphics
 loading routines to the gate. Also fixed at the barrier: `src/home/input.c`'s
 `read_joypad()` unconditionally OR'd in `0x0F`, so `ReadJoypad` could never
 observe a held button regardless of W1-J's `g_keys` model (commit `73154dd8`);
