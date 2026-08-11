@@ -22,7 +22,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "challenge_machine": ("ChallengeMachine_CheckIfOpponentAlreadySelected", "ChallengeMachine_PrintText"),
     "challenge_hall": ("Func_f5e9", "Func_f5db", "Script_Host"),
     "config": ("DrawConfigMenuCursor",),
-    "attacks": ("RetrievePlayAreaAIScoreFromBackup2",),
+    "deck_check": ("DrawCheckMenuCursor", "PlaySFXConfirmOrCancel"),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),

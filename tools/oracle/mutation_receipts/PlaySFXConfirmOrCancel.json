@@ -1,0 +1,9 @@
+{
+  "fn": "PlaySFXConfirmOrCancel",
+  "case": "tests/cases/deck_check.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlaySFXConfirmOrCancel\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"030a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlaySFXConfirmOrCancel\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"030a\", \"native\": \"020a\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56706, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlaySFXConfirmOrCancel\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"030a\"}}, \"status\": \"PASS\"}\n"
+}
