@@ -166,7 +166,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "SetPermissionOfMapPosition", "UpdatePermissionOfMapPosition",
              "GetLoadedNPCID", "GetItemInLoadedNPCIndex", "GameEvent_Overworld",
              "CopyGfxDataFromTempBank", "FindLoadedNPC", "GetNextNPCMovementByte",
-             "GetDefaultSong"),
+             "GetDefaultSong", "PlayDefaultSong"),
     "map_events": ("ClearOWMapEvents",),
     "load_deck": ("LoadDeck",),
 "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",

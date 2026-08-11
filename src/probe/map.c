@@ -72,6 +72,14 @@ static void adapt_GetDefaultSong(ProbeState *s)
 	s->a = GetDefaultSong();
 }
 
+static void adapt_PlayDefaultSong(ProbeState *s)
+{
+	SongResult result = PlayDefaultSong();
+	s->a = result.a;
+	s->f = result.f;
+}
+
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -84,5 +92,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "FindLoadedNPC", adapt_FindLoadedNPC },
 	{ "GetNextNPCMovementByte", adapt_GetNextNPCMovementByte },
 	{ "GetDefaultSong", adapt_GetDefaultSong },
+	{ "PlayDefaultSong", adapt_PlayDefaultSong },
 	{ NULL, NULL },
 };
