@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.23.1 - 2026-08-11
+## v0.23.2 - 2026-08-11
 
-### Miscellaneous
+### Bug Fixes
 
-- *(gate)* Refresh release report
+- *(progress)* Refresh report
 
