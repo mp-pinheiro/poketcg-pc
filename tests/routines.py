@@ -291,6 +291,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "duel_core_status": ("IsArenaPokemonAsleepOrPoisoned",
                          "DiscardAttachedPlusPowers", "DiscardAttachedDefenders"),
     "give_booster_pack": ("_PauseMenu_Exit",),
+    "retreat": ("SetAIRetreatFlags",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {

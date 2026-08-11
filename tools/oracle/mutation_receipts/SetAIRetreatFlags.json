@@ -1,0 +1,9 @@
+{
+  "fn": "SetAIRetreatFlags",
+  "case": "tests/cases/retreat.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetAIRetreatFlags\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52401\": \"04\", \"52698\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetAIRetreatFlags\", \"mismatches\": {\"bus\": {\"address\": 52698, \"reference\": \"c20400\", \"native\": \"c204ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52229, 1], [52401, 1], [52698, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetAIRetreatFlags\", \"registers\": {\"a\": 4, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52401\": \"04\", \"52698\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
