@@ -1,4 +1,5 @@
 #include "home/tiles.h"
+#include "home/bg_map.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -14,6 +15,13 @@ static uint16_t bg_map0_address(uint16_t xy)
 	uint8_t x = (uint8_t)(xy >> 8);
 	uint8_t y = (uint8_t)xy;
 	return (uint16_t)(0x9800u + (uint16_t)y * TILEMAP_W + x);
+}
+
+
+uint8_t Func_2057(uint8_t e, uint8_t x, uint8_t offset, uint8_t y)
+{
+	uint8_t c = (uint8_t)(x + offset);
+	return HblankWriteByteToBGMap0(e, y, c);
 }
 
 void FillRectangle(uint8_t a, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)

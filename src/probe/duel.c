@@ -568,6 +568,37 @@ static void adapt_PrintPlayAreaCardKnockedOutIfNoHP(ProbeState *s)
 	s->f = r.f;
 }
 
+static void adapt_UpdateArenaCardIDsAndClearTwoTurnDuelVars(ProbeState *s)
+{
+	DuelRoutineResult r = UpdateArenaCardIDsAndClearTwoTurnDuelVars(
+		s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+
+static void adapt_ClearNonTurnTemporaryDuelvars_ResetCarry(ProbeState *s)
+{
+	DuelRoutineResult r = ClearNonTurnTemporaryDuelvars_ResetCarry(
+		s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+
+static void adapt_PrintKnockedOutIfHLZero(ProbeState *s)
+{
+	s->f = PrintKnockedOutIfHLZero(s->hl);
+}
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -637,6 +668,9 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "GetPlayAreaCardRetreatCost", adapt_GetPlayAreaCardRetreatCost },
 	{ "DrawWideTextBox_WaitForInput_ReturnCarry", adapt_DrawWideTextBox_WaitForInput_ReturnCarry },
 	{ "PrintKnockedOut", adapt_PrintKnockedOut },
+	{ "UpdateArenaCardIDsAndClearTwoTurnDuelVars", adapt_UpdateArenaCardIDsAndClearTwoTurnDuelVars },
+	{ "ClearNonTurnTemporaryDuelvars_ResetCarry", adapt_ClearNonTurnTemporaryDuelvars_ResetCarry },
+	{ "PrintKnockedOutIfHLZero", adapt_PrintKnockedOutIfHLZero },
 	{ "PrintPlayAreaCardKnockedOutIfNoHP", adapt_PrintPlayAreaCardKnockedOutIfNoHP },
 	{ NULL, NULL },
 };

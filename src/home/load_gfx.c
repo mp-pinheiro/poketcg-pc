@@ -194,6 +194,16 @@ void LoadGraphicsPointerFromHL(uint16_t *hl)
 	BankswitchROM(saved);
 	*hl = (uint16_t)(p + 1u);
 }
+void Func_80238(void)
+{
+	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
+	LoadGraphicsPointerFromHL(&hl);
+	wTotalNumTiles = gb_read8(hl);
+	wCurSpriteTileSize = TILE_SIZE;
+	wWhichVRAMBank = 0;
+	wVRAMTileOffset = 0x80u;
+	LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2();
+}
 
 uint8_t LoadSpriteGfx(uint8_t a)
 {

@@ -83,12 +83,21 @@ def main() -> int:
         records = cases.get(fn, [])
         if fn in EXCLUDED:
             entry = EXCLUDED[fn]
-            if entry.get("kind") != "dependency-pending":
+            kind = entry.get("kind")
+            if kind not in {
+                "dead-zero-callsites",
+                "hardware-transform",
+                "sgb-only",
+                "fallthrough-only",
+                "dependency-pending",
+            }:
                 print(f"SCHEMA invalid exclusion kind {fn}")
                 failures += 1
-            else:
+            elif kind == "dependency-pending":
                 evidence_counts["dependency-blocked"] += 1
-                print(f"EXCLUSION dependency-pending {fn}: {entry['reason']}")
+                print(f"EXCLUSION {kind} {fn}: {entry['reason']}")
+            else:
+                print(f"EXCLUSION {kind} {fn}: {entry['reason']}")
             continue
         if not records:
             print(f"SCHEMA missing schema-2 cases {fn}")

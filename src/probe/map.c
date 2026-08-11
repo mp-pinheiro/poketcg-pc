@@ -2,6 +2,7 @@
 #include "probe.h"
 
 #include "generated/hram.h"
+#include "generated/wram.h"
 
 static void adapt_GetPermissionByteOfMapPosition(ProbeState *s)
 {
@@ -72,6 +73,19 @@ static void adapt_GetDefaultSong(ProbeState *s)
 	s->a = GetDefaultSong();
 }
 
+static void adapt_PlayDefaultSong(ProbeState *s)
+{
+	(void)s;
+	PlayDefaultSong();
+}
+static void adapt_ExecuteGameEvent(ProbeState *s)
+{
+	ExecuteGameEventResult result = _ExecuteGameEvent(s->f);
+	s->a = result.a;
+	s->f = result.f;
+}
+
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -84,5 +98,7 @@ const ProbeEntry probe_entries_map[] = {
 	{ "FindLoadedNPC", adapt_FindLoadedNPC },
 	{ "GetNextNPCMovementByte", adapt_GetNextNPCMovementByte },
 	{ "GetDefaultSong", adapt_GetDefaultSong },
+	{ "PlayDefaultSong", adapt_PlayDefaultSong },
+	{ "_ExecuteGameEvent", adapt_ExecuteGameEvent },
 	{ NULL, NULL },
 };

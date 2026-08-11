@@ -125,4 +125,9 @@ typedef struct {
 } SerialRecvBytesResult;
 SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc);
 
+void UnreferencedSaveSerialReturnAddress(void);
+uint8_t UnreferencedGoToSerialReturnAddress(void);
+void DuelTransmissionError(void);
+
+
 #endif

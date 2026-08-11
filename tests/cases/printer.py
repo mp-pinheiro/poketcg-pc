@@ -16,6 +16,7 @@ CONTRACT = {
     "SendNextPrinterPacketByte": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")},
     "SendByteThroughSerialData": ("b", "c", "d", "e", "hl"),
     "ExecutePrinterPacketSequence": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c")},
+    "PrinterMenu_QuitPrint": {"compare": (), "preserve": ()},
 }
 
 
@@ -85,10 +86,35 @@ CASES = {
         {"a": 12, "d": 0xDD, "e": 0xEE, "wram": {rSB: b"\xFF", wPrinterPacketSequence: b"\x0C"},
          "read": {wPrinterPacketSequence: 1, wPrinterStatus: 1}},
     ],
+    "PrinterMenu_QuitPrint": [
+        # All-zero state with A input: the warning text still renders and
+        # returns from the wait loop.
+        {"keys": 0x01,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "wram": {0xCD0F: b"\x05", 0xCD10: b"\x00", 0xCD11: b"\x00",
+                  0xCD12: b"\x00", 0xCD13: b"\x00", 0xCD16: b"\x00"},
+         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "vread": {0: {0x9980: 1}}},
+        # Poisoned registers and B input must not alter the routine's
+        # register contract.
+        dict(POISON, keys=0x02,
+             setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+             wram={0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x04",
+                   0xCD12: b"\x00", 0xCD13: b"\x00", 0xCD16: b"\x22"},
+             read={0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+             vread={0: {0x9980: 1, 0x9A32: 1}}),
+        # Both input bits set exercises the input boundary accepted by the
+        # A/B wait loop.
+        {"keys": 0x03,
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "wram": {0xCD0F: b"\x01", 0xCD10: b"\xFF", 0xCD11: b"\xFF",
+                  0xCD12: b"\xFF", 0xCD13: b"\xFF", 0xCD16: b"\xFF"},
+         "read": {0xCD0F: 1, 0xCD10: 1, 0xCD16: 1},
+         "vread": {0: {0x9980: 1}}},
+    ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-
 MUTATIONS = {
     "SendByteThroughSerialData": {
         "source_symbol": "SendByteThroughSerialData",
@@ -106,6 +132,15 @@ MUTATIONS = {
             "ExecutePrinterPacketSequence-4", "ExecutePrinterPacketSequence-5",
             "ExecutePrinterPacketSequence-6", "ExecutePrinterPacketSequence-7",
             "ExecutePrinterPacketSequence-8", "ExecutePrinterPacketSequence-9",
+        ],
+    },
+    "PrinterMenu_QuitPrint": {
+        "source_symbol": "PrinterMenu_QuitPrint",
+        "before": "\t(void)DrawWideTextBox_WaitForInput(PRINTER_OFF_TEXT_ID);",
+        "after": "\t(void)DrawWideTextBox_WaitForInput((uint16_t)(PRINTER_OFF_TEXT_ID + 1u));",
+        "case_ids": [
+            "PrinterMenu_QuitPrint-0", "PrinterMenu_QuitPrint-1",
+            "PrinterMenu_QuitPrint-2",
         ],
     },
 }

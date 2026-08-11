@@ -40,4 +40,8 @@ typedef struct {
 } ExecutePrinterPacketSequenceResult;
 ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8_t d, uint8_t e);
 
+/* printer.asm:261-269. Displays the printer shutdown warning and waits for
+ * A/B input before returning to the caller. */
+void PrinterMenu_QuitPrint(void);
+
 #endif

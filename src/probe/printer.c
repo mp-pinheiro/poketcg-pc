@@ -1,6 +1,7 @@
 #include "home/printer.h"
 #include "probe.h"
 
+
 static void adapt_SendNextPrinterPacketByte(ProbeState *s)
 {
 	SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
@@ -21,9 +22,16 @@ static void adapt_ExecutePrinterPacketSequence(ProbeState *s)
 	s->e = r.e;
 }
 
+static void adapt_PrinterMenu_QuitPrint(ProbeState *s)
+{
+	(void)s;
+	PrinterMenu_QuitPrint();
+}
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
 	{ "ExecutePrinterPacketSequence", adapt_ExecutePrinterPacketSequence },
+	{ "PrinterMenu_QuitPrint", adapt_PrinterMenu_QuitPrint },
 	{ NULL, NULL },
 };

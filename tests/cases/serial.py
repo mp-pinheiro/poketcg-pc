@@ -23,8 +23,18 @@ rSB = 0xFF01
 rSC = 0xFF02
 rIF = 0xFF0F
 rIE = 0xFFFF
+wSerialReturnSP = 0xCB79
+wSerialReturnAddress = 0xCB7B
+wDuelReturnAddress = 0xCBE5
+wDuelResult = 0xD0C3
 
 CONTRACT = {
+    "UnreferencedSaveSerialReturnAddress": {"compare": ("a", "b", "c", "d", "e", "f", "hl"),
+                                            "preserve": ("a", "b", "c", "d", "e", "f", "hl")},
+    "UnreferencedGoToSerialReturnAddress": {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                                           "preserve": ("a", "b", "c", "d", "e", "hl")},
+    "DuelTransmissionError": {"compare": ("a", "b", "c", "d", "e", "f", "hl"),
+                              "preserve": ("a", "b", "c", "d", "e", "f", "hl")},
     "SerialTimerHandler": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
     "Func_0cc5": {"compare": ("a", "b", "c", "d", "e", "f"), "preserve": ("d",)},
     "SerialHandler": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "f", "hl")},
@@ -302,6 +312,21 @@ CASES = {
                   wSerialRecvBuf: b"\x88", wSerialFlags: b"\x40"},
          "read": {0xC100: 1, wcba3: 1}},
     ],
+    "UnreferencedSaveSerialReturnAddress": [
+        {"wram": {0xFFFC: b"\x34\x12"}, "read": {0xCB79: 2, 0xCB7B: 2}},
+        dict(POISON, wram={0xFFFC: b"\x00\x00"}),
+    ],
+    "UnreferencedGoToSerialReturnAddress": [
+        {"wram": {0xCB7B: b"\x00\x00"}},
+        {"wram": {0xCB7B: b"\x34\x12", 0xCB79: b"\x56\x78"},
+         "read": {0x7856: 2}},
+        dict(POISON, wram={0xCB7B: b"\x00\x00"}),
+    ],
+    "DuelTransmissionError": [
+        {"wram": {wSerialFlags: b"\x00", wDuelResult: b"\x00"},
+         "read": {wDuelResult: 1, wSerialFlags: 1}},
+        dict(POISON, wram={wSerialFlags: b"\x00"}),
+    ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -312,5 +337,23 @@ MUTATIONS = {
         "before": "if (op == 0x29u)",
         "after":  "if (op == 0x28u)",
         "case_ids": ["SerialTimerHandler-0", "SerialTimerHandler-1", "SerialTimerHandler-2", "SerialTimerHandler-3", "SerialTimerHandler-4", "SerialTimerHandler-5", "SerialTimerHandler-6"],
+    },
+    "UnreferencedSaveSerialReturnAddress": {
+        "source_symbol": "UnreferencedSaveSerialReturnAddress",
+        "before": "uint16_t sp = 0xFFFCu",
+        "after": "uint16_t sp = 0xFFFDu",
+        "case_ids": ["UnreferencedSaveSerialReturnAddress-0", "UnreferencedSaveSerialReturnAddress-1"],
+    },
+    "UnreferencedGoToSerialReturnAddress": {
+        "source_symbol": "UnreferencedGoToSerialReturnAddress",
+        "before": "if (target == 0)",
+        "after": "if (target != 0)",
+        "case_ids": ["UnreferencedGoToSerialReturnAddress-0", "UnreferencedGoToSerialReturnAddress-1", "UnreferencedGoToSerialReturnAddress-2"],
+    },
+    "DuelTransmissionError": {
+        "source_symbol": "DuelTransmissionError",
+        "before": "gb_write8(wDuelResult_ADDR, 0xFFu)",
+        "after": "gb_write8(wDuelResult_ADDR, 0xFEu)",
+        "case_ids": ["DuelTransmissionError-0", "DuelTransmissionError-1"],
     },
 }

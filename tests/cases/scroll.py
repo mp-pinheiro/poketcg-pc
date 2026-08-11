@@ -12,13 +12,23 @@ wd665 = 0xD665
 wVBlankCounter = 0xCAB8
 wBGScrollMod = 0xD666
 
-rLCDC = 0xFF40
+rLY = 0xFF44
+rSCX = 0xFF43
+hSCX = 0xFF92
+wApplyBGScroll = 0xD667
+wNextScrollLY = 0xD668
+
 rSTAT = 0xFF41
+rLCDC = 0xFF40
 rLYC = 0xFF45
 rWX = 0xFF4B
 rIE = 0xFFFF
 
 CONTRACT = {
+	"ApplyBackgroundScroll": {
+		"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+		"preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+	},
 	"Func_3e44": {
 		"compare": ("a", "f", "b", "c", "d", "e", "hl"),
 		"preserve": ("a", "f", "b", "c", "d", "e", "hl"),
@@ -37,12 +47,19 @@ CONTRACT = {
 	},
 }
 
-# ApplyBackgroundScroll (scroll.asm:60) is intentionally absent: its .wait_ly
-# loop polls rLY ($FF44), which only advances on a PPU tick, and the leaf oracle
-# drives no PPU ticks -- so it spins past MAX_FRAMES and never returns. Its only
-# helper not already covered, GetNextBackgroundScroll, IS ported on its own.
-
 CASES = {
+	"ApplyBackgroundScroll": [
+		{"wram": {rLY: b"\x60", wApplyBGScroll: b"\x00"},
+		 "read": {rSTAT: 1, rIE: 1, rSCX: 1, rLYC: 1, hSCX: 1,
+		          wApplyBGScroll: 1, wNextScrollLY: 1}},
+		dict(POISON, wram={rLY: b"\x60", wApplyBGScroll: b"\x01"},
+		     read={rSTAT: 1, rIE: 1, wApplyBGScroll: 1}),
+		{"wram": {rLY: b"\x5f", wApplyBGScroll: b"\x01"},
+		 "read": {rSTAT: 1, rIE: 1, wApplyBGScroll: 1}},
+		{"wram": {rLY: b"\x60", wApplyBGScroll: b"\x00",
+		          wVBlankCounter: b"\x00", wBGScrollMod: b"\x01"},
+		 "read": {rSCX: 1, rLYC: 1, hSCX: 1}},
+	],
 	"Func_3e44": [
 		{"wram": {wd657: b"\x00", wd658: b"\x00", wd64b: b"\x00" * 6,
 		          wd651: b"\x00" * 6, wd665: b"\x00"}},
@@ -99,10 +116,16 @@ from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
-    "Func_3e44": {
-        "source_symbol": "Func_3e44",
-        "before": "if (guard & 0x01)",
-        "after":  "if (guard & 0x02)",
-        "case_ids": ["Func_3e44-0", "Func_3e44-1", "Func_3e44-2", "Func_3e44-3", "Func_3e44-4", "Func_3e44-5", "Func_3e44-6"],
-    },
+	"ApplyBackgroundScroll": {
+		"source_symbol": "ApplyBackgroundScroll",
+		"before": "if (gb_read8(wApplyBGScroll_ADDR) != 0)",
+		"after": "if (gb_read8(wApplyBGScroll_ADDR) == 0)",
+		"case_ids": ["ApplyBackgroundScroll-0", "ApplyBackgroundScroll-1", "ApplyBackgroundScroll-2", "ApplyBackgroundScroll-3"],
+	},
+	"Func_3e44": {
+		"source_symbol": "Func_3e44",
+		"before": "if (guard & 0x01)",
+		"after": "if (guard & 0x02)",
+		"case_ids": ["Func_3e44-0", "Func_3e44-1", "Func_3e44-2", "Func_3e44-3", "Func_3e44-4", "Func_3e44-5", "Func_3e44-6"],
+	},
 }

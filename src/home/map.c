@@ -4,7 +4,7 @@
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "home/switch_rom.h"
-#include "mem.h"
+#include "home/sound.h"
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
 #define LOADED_NPC_MAX            8u
@@ -115,4 +115,30 @@ uint8_t GetDefaultSong(void)
 	    || wOverworldMapSelection == OWMAP_POKEMON_DOME)
 		return wDefaultSong;
 	return MUSIC_RONALD;
+}
+
+void PlayDefaultSong(void)
+{
+	uint8_t finished = AssertSongFinished();
+	uint8_t song = GetDefaultSong();
+
+	if (!finished || song != wSongOverride) {
+		if (song < 0x1Fu) {
+			wSongOverride = song;
+			PlaySong(song);
+		}
+	}
+}
+/*
+ * Event handlers 1-6 are banked routines outside this port's dependency set.
+ * Preserve their dispatch selection and entry flags until those handlers land.
+ */
+ExecuteGameEventResult _ExecuteGameEvent(uint8_t f)
+{
+	uint8_t event = wGameEvent;
+
+	if (event == 0)
+		return (ExecuteGameEventResult){event, GameEvent_Overworld(f)};
+
+	return (ExecuteGameEventResult){event >= 7 ? 6 : event, f};
 }

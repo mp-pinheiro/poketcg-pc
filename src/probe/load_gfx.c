@@ -14,6 +14,8 @@ static void adapt_SafelyCopyBGMapFromSRAMToVRAM(ProbeState *s){ (void)s; SafelyC
 static void adapt_ClearSRAMBGMaps(ProbeState *s){ (void)s; ClearSRAMBGMaps(); }
 static void adapt_GetMapDataPointer(ProbeState *s){ MapDataPointerResult r=GetMapDataPointer(s->a,(uint8_t)s->hl); s->hl=r.hl; s->f=r.f; }
 static void adapt_LoadGraphicsPointerFromHL(ProbeState *s){ LoadGraphicsPointerFromHL(&s->hl); }
+static void (*const call_func)(void) = Func_80238;
+static void adapt_Func_80238(ProbeState *s){ (void)s; call_func(); }
 static void adapt_LoadSpriteGfx(ProbeState *s){ s->a=LoadSpriteGfx(s->a); }
 static void adapt_LoadGfxDataFromTempPointerToVRAMBank(ProbeState *s){ (void)s; LoadGfxDataFromTempPointerToVRAMBank(); }
 static void adapt_LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2(ProbeState *s){ (void)s; LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2(); }
@@ -33,8 +35,8 @@ const ProbeEntry probe_entries_load_gfx[] = {
  {"LoadTilemap_ToSRAM",adapt_LoadTilemap_ToSRAM},{"LoadTilemap_ToVRAM",adapt_LoadTilemap_ToVRAM},{"LoadTilemap",adapt_LoadTilemap},
  {"LoadTilemap.InitAndDecompressBGMap",adapt_LoadTilemap_InitAndDecompressBGMap},{"LoadTilemap.Decompress",adapt_LoadTilemap_Decompress},
  {"Func_80148",adapt_Func_80148},{"CopyBGDataToVRAMOrSRAM",adapt_CopyBGDataToVRAMOrSRAM},
- {"SafelyCopyBGMapFromSRAMToVRAM",adapt_SafelyCopyBGMapFromSRAMToVRAM},{"ClearSRAMBGMaps",adapt_ClearSRAMBGMaps},
- {"GetMapDataPointer",adapt_GetMapDataPointer},{"LoadGraphicsPointerFromHL",adapt_LoadGraphicsPointerFromHL},{"LoadSpriteGfx",adapt_LoadSpriteGfx},
+ {"GetMapDataPointer",adapt_GetMapDataPointer},{"LoadGraphicsPointerFromHL",adapt_LoadGraphicsPointerFromHL},
+ {"Func_80238",adapt_Func_80238},{"LoadSpriteGfx",adapt_LoadSpriteGfx},
  {"LoadGfxDataFromTempPointerToVRAMBank",adapt_LoadGfxDataFromTempPointerToVRAMBank},
  {"LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",adapt_LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2},
  {"LoadGfxDataFromTempPointer",adapt_LoadGfxDataFromTempPointer},{"GetTileOffsetPointerAndSwitchVRAM",adapt_GetTileOffsetPointerAndSwitchVRAM},

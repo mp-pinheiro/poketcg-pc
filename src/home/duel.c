@@ -119,9 +119,10 @@ SubtractHPResult SubtractHP(uint16_t hl, uint16_t de)
 	return (SubtractHPResult){remaining, f};
 }
 
-#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
+#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xf2u
 #define DUELVARS_DECK_CARDS 0x7eu
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0xedu
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
 #define DECK_SIZE 60u
 
 /* duel.asm:398-431. Copies DECK_SIZE - n remaining deck ids into wDuelTempList.
@@ -1291,4 +1292,54 @@ KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a)
 	PrintKnockedOut();
 	wTempNonTurnDuelistCardID = saved;
 	return (KnockoutCheckResult){saved, 0x90u};
+}
+
+
+DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	hTempCardIndex_ff9f = arena.a;
+	uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
+	wTempTurnDuelistCardID = (uint8_t)card_id;
+	SwapTurn();
+	arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	card_id = GetCardIDFromDeckIndex(arena.a);
+	wTempNonTurnDuelistCardID = (uint8_t)card_id;
+	SwapTurn();
+	wSentAttackDataToLinkOpponent = 0;
+	wStatusConditionQueueIndex = 0;
+	wEffectFailed = 0;
+	wIsDamageToSelf = 0;
+	wDefendingWasForcedToSwitch = 0;
+	wMetronomeEnergyCost = 0;
+	wNoEffectFromWhichStatus = 0;
+	ClearNonTurnTemporaryDuelvars_CopyStatus();
+	(void)a;
+	(void)e;
+	(void)f;
+	DuelistVarResult clear_start =
+		GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX);
+	return (DuelRoutineResult){0, 0x80u, b, c,
+		(uint8_t)(card_id >> 8), (uint8_t)card_id,
+		(uint16_t)(clear_start.hl + 7u)};
+}
+
+DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ClearNonTurnTemporaryDuelvars();
+	(void)a;
+	(void)f;
+	(void)hl;
+	return (DuelRoutineResult){0, 0x80u, b, c, d, e,
+		(uint16_t)(GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX).hl + 7u)};
+}
+
+uint8_t PrintKnockedOutIfHLZero(uint16_t hl)
+{
+	if (gb_read8(hl) != 0)
+		return 0x00u;
+	(void)PrintKnockedOut();
+	return 0xd0u;
 }

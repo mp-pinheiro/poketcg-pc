@@ -2,7 +2,16 @@
 
 #include "generated/wram.h"
 #include "home/printer.h"
-#include "mem.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "sound.h"
+#include "home/duel.h"
+#include "home/play_song.h"
+
+#define wSerialReturnSP_ADDR 0xCB79u
+#define wSerialReturnAddress_ADDR 0xCB7Bu
+#define wDuelReturnAddress_ADDR 0xCBE5u
+#define wDuelResult_ADDR 0xD0C3u
 
 #define rSB 0xFF01u
 #define rSC 0xFF02u
@@ -301,4 +310,36 @@ SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc)
 		if (--n == 0)
 			return (SerialRecvBytesResult){0, 0x80u, hl};
 	}
+}
+void UnreferencedSaveSerialReturnAddress(void)
+{
+	uint16_t sp = 0xFFFCu;
+	uint16_t ret = (uint16_t)gb_read8(sp) | (uint16_t)gb_read8((uint16_t)(sp + 1u)) << 8;
+	gb_write8(wSerialReturnSP_ADDR, (uint8_t)sp);
+	gb_write8((uint16_t)(wSerialReturnSP_ADDR + 1u), (uint8_t)(sp >> 8));
+	gb_write8(wSerialReturnAddress_ADDR, (uint8_t)ret);
+	gb_write8((uint16_t)(wSerialReturnAddress_ADDR + 1u), (uint8_t)(ret >> 8));
+}
+
+uint8_t UnreferencedGoToSerialReturnAddress(void)
+{
+	uint16_t target = (uint16_t)gb_read8(wSerialReturnAddress_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wSerialReturnAddress_ADDR + 1u)) << 8;
+	if (target == 0)
+		return 0;
+	uint8_t low = gb_read8(wSerialReturnSP_ADDR);
+	uint16_t sp = (uint16_t)low << 8 | low;
+	gb_write8(sp, (uint8_t)target);
+	gb_write8((uint16_t)(sp + 1u), (uint8_t)(target >> 8));
+	return 0x10u;
+}
+
+void DuelTransmissionError(void)
+{
+	uint16_t flags = gb_read8(wSerialFlags_ADDR);
+	LoadTxRam3(flags);
+	DrawWideTextBox_WaitForInput(0);
+	gb_write8(wDuelResult_ADDR, 0xFFu);
+	PlaySong(0);
+	ResetSerial();
 }

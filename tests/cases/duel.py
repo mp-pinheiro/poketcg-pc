@@ -10,6 +10,15 @@ wOpponentDeck = 0xC480
 wDuelTempList = 0xC510
 wDamage_ADDR = 0xCCB9
 wDamageEffectiveness_ADDR = 0xCCC1
+wTempTurnDuelistCardID = 0xCCC3
+wTempNonTurnDuelistCardID = 0xCCC4
+wSentAttackDataToLinkOpponent = 0xCCEC
+wStatusConditionQueueIndex = 0xCCCD
+wEffectFailed = 0xCCED
+wIsDamageToSelf = 0xCCE6
+wDefendingWasForcedToSwitch = 0xCCEF
+wMetronomeEnergyCost = 0xCCF0
+wNoEffectFromWhichStatus = 0xCCF1
 
 CONTRACT = {
     "CopyPlayerName": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
@@ -80,6 +89,15 @@ CONTRACT = {
     "DrawWideTextBox_WaitForInput_ReturnCarry": {"compare": ("f",), "preserve": ()},
     "PrintKnockedOut": {"compare": ("f",), "preserve": ()},
     "PrintPlayAreaCardKnockedOutIfNoHP": {"compare": ("a", "f"), "preserve": ()},
+    "UpdateArenaCardIDsAndClearTwoTurnDuelVars": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c"),
+    },
+    "ClearNonTurnTemporaryDuelvars_ResetCarry": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "PrintKnockedOutIfHLZero": {"compare": ("f",), "preserve": ()},
     "MovePlayAreaCardToDiscardPile": {
         "compare": ("b", "c", "e"),
         "preserve": ("b", "c", "e"),
@@ -803,6 +821,55 @@ CASES.update({
          "vread": {0: {0x9980: 1, 0x9A32: 1}}},
     ],
 })
+CASES.update({
+    "UpdateArenaCardIDsAndClearTwoTurnDuelVars": [
+        {"wram": {
+            hWhoseTurn: b"\xC2",
+            0xC2BB: b"\x00", 0xC3BB: b"\x01",
+            wPlayerDeck: b"\x12", wOpponentDeck + 1: b"\x34",
+            wTempTurnDuelistCardID: b"\xFF", wTempNonTurnDuelistCardID: b"\xFF",
+            wSentAttackDataToLinkOpponent: b"\xFF",
+            wStatusConditionQueueIndex: b"\xFF",
+            wEffectFailed: b"\xFF",
+            wIsDamageToSelf: b"\xFF", wDefendingWasForcedToSwitch: b"\xFF",
+            wMetronomeEnergyCost: b"\xFF", wNoEffectFromWhichStatus: b"\xFF",
+            0xC3F2: b"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF"},
+         "read": {0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1,
+                  wSentAttackDataToLinkOpponent: 1, wStatusConditionQueueIndex: 1,
+                  wEffectFailed: 1, wIsDamageToSelf: 1, wDefendingWasForcedToSwitch: 1,
+                  wMetronomeEnergyCost: 1, wNoEffectFromWhichStatus: 1, 0xC3F2: 9}},
+        dict(POISON, wram={
+            hWhoseTurn: b"\xC2", 0xC2BB: b"\x02", 0xC3BB: b"\x03",
+            wPlayerDeck + 2: b"\x56", wOpponentDeck + 3: b"\x78",
+            0xC3F2: b"\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA\xAA"},
+             read={0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1, 0xC3F2: 9}),
+        {"a": 0x01, "f": 0xF0, "b": 0x10, "c": 0x20, "d": 0x30,
+         "e": 0x40, "hl": 0xC1FF,
+         "wram": {hWhoseTurn: b"\xC3", 0xC3BB: b"\x3A",
+                  0xC2BB: b"\x3B", wOpponentDeck + 0x3A: b"\x9A",
+                  wPlayerDeck + 0x3B: b"\x9B", 0xC2F2: b"\xCC" * 9},
+         "read": {0xCCC3: 1, 0xCCC4: 1, 0xFF9F: 1, 0xC2F2: 9}},
+    ],
+    "ClearNonTurnTemporaryDuelvars_ResetCarry": [
+        {"wram": {hWhoseTurn: b"\xC2", 0xC3F2: b"\xFF" * 8},
+         "read": {0xC3F2: 8}},
+        dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC2F2: b"\xAA" * 8},
+             read={0xC2F2: 8}),
+        {"hl": 0xC1FF, "wram": {hWhoseTurn: b"\xC2", 0xC3F2: b"\x01" * 8},
+         "read": {0xC3F2: 8}},
+    ],
+    "PrintKnockedOutIfHLZero": [
+        {"hl": 0xC100, "wram": {0xC100: b"\x01"}},
+        dict(POISON, hl=0xC101, wram={0xC101: b"\x02"}),
+        {"hl": 0xC1FF, "wram": {0xC1FF: b"\x7F"}},
+        {"hl": 0xC100, "wram": {0xC100: b"\x00", wTempNonTurnDuelistCardID: b"\x08",
+                                0xCAD3: b"\x48\x03"},
+         "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         "instruction_budget": 1000000, "cycle_budget": 4000000,
+         "vread": {0: {0x9980: 1}}},
+    ],
+})
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -812,5 +879,27 @@ MUTATIONS = {
         "before": "hWhoseTurn = hWhoseTurn == PLAYER_TURN ? OPPONENT_TURN : PLAYER_TURN;",
         "after": "hWhoseTurn = hWhoseTurn == PLAYER_TURN ? PLAYER_TURN : OPPONENT_TURN;",
         "case_ids": ["SwapTurn-0", "SwapTurn-1", "SwapTurn-2"],
+    },
+    "UpdateArenaCardIDsAndClearTwoTurnDuelVars": {
+        "source_symbol": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+        "before": "wNoEffectFromWhichStatus = 0;",
+        "after": "wNoEffectFromWhichStatus = 1;",
+        "case_ids": ["UpdateArenaCardIDsAndClearTwoTurnDuelVars-0",
+                     "UpdateArenaCardIDsAndClearTwoTurnDuelVars-1"],
+    },
+    "ClearNonTurnTemporaryDuelvars_ResetCarry": {
+        "source_symbol": "ClearNonTurnTemporaryDuelvars_ResetCarry",
+        "before": "ClearNonTurnTemporaryDuelvars();",
+        "after": "(void)0;",
+        "case_ids": ["ClearNonTurnTemporaryDuelvars_ResetCarry-0",
+                     "ClearNonTurnTemporaryDuelvars_ResetCarry-1"],
+    },
+    "PrintKnockedOutIfHLZero": {
+        "source_symbol": "PrintKnockedOutIfHLZero",
+        "before": "return 0xd0u;",
+        "after": "return 0x90u;",
+        "case_ids": ["PrintKnockedOutIfHLZero-0",
+                     "PrintKnockedOutIfHLZero-1",
+                     "PrintKnockedOutIfHLZero-3"],
     },
 }

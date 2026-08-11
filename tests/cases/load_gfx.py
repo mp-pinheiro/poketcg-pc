@@ -49,7 +49,7 @@ NAMES = (
     "LoadTilemap_ToSRAM", "LoadTilemap_ToVRAM", "LoadTilemap",
     "LoadTilemap.InitAndDecompressBGMap", "LoadTilemap.Decompress", "Func_80148",
     "CopyBGDataToVRAMOrSRAM", "SafelyCopyBGMapFromSRAMToVRAM", "ClearSRAMBGMaps",
-    "GetMapDataPointer", "LoadGraphicsPointerFromHL", "LoadSpriteGfx",
+    "GetMapDataPointer", "LoadGraphicsPointerFromHL", "Func_80238", "LoadSpriteGfx",
     "LoadGfxDataFromTempPointerToVRAMBank", "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
     "LoadGfxDataFromTempPointer", "GetTileOffsetPointerAndSwitchVRAM",
     "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2", "LoadTilesetGfx",
@@ -69,6 +69,7 @@ CONTRACT = {
     "ClearSRAMBGMaps": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetMapDataPointer": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
     "LoadGraphicsPointerFromHL": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "Func_80238": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "LoadSpriteGfx": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "LoadGfxDataFromTempPointerToVRAMBank": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -97,6 +98,7 @@ CASES = {
     "ClearSRAMBGMaps": [{"wram": {0xff81: b"\x01"}, "sram": {1: {0xa000: b"\xaa" * 0x800}}, "sread": {1: {0xa000: 0x800}}}, dict(POISON)],
     "GetMapDataPointer": [{}, dict(POISON), {"a": 0, "hl": 0}, {"a": 0xff, "hl": 4}],
     "LoadGraphicsPointerFromHL": [{}, dict(POISON), {"hl": 0x7fff}, {"hl": 0x8000}],
+    "Func_80238": [{}, dict(POISON), {"wram": {0xd239: b"\xff"}}],
     "LoadSpriteGfx": [{}, dict(POISON)],
     "LoadGfxDataFromTempPointerToVRAMBank": [
         dict(GFX_BOUNDED_STATE), dict(GFX_POISON_STATE), dict(GFX_BOUNDED_STATE),
@@ -168,7 +170,7 @@ for _name in (
 ):
     for _case in CASES[_name]:
         _case.setdefault("wram", {})[0xff80] = b"\x20"
-for _name in ("LoadTilesetGfx", "LoadTilesetGfx.LoadTileGfx"):
+for _name in ("LoadTilesetGfx", "LoadTilesetGfx.LoadTileGfx", "Func_80238"):
     for _case in CASES[_name]:
         _case.setdefault("wram", {})[0xff80] = b"\x20"
 for _name in (
@@ -196,5 +198,11 @@ MUTATIONS = {
         "before": "SetBGP(p[1]);",
         "after": "SetBGP((uint8_t)(p[1] ^ 1u));",
         "case_ids": ["LoadBGPalette-0", "LoadBGPalette-1"],
+    },
+    "Func_80238": {
+        "source_symbol": "Func_80238",
+        "before": "wWhichVRAMBank = 0;",
+        "after": "wWhichVRAMBank = 1;",
+        "case_ids": ["Func_80238-0", "Func_80238-1"],
     },
 }

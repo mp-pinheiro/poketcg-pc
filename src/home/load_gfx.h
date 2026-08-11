@@ -20,6 +20,7 @@ typedef struct {
 } MapDataPointerResult;
 MapDataPointerResult GetMapDataPointer(uint8_t a, uint8_t l);
 void LoadGraphicsPointerFromHL(uint16_t *hl);
+void Func_80238(void);
 uint8_t LoadSpriteGfx(uint8_t a);
 void LoadGfxDataFromTempPointerToVRAMBank(void);
 void LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2(void);

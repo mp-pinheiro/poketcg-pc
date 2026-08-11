@@ -1,4 +1,5 @@
 #include "home/printer.h"
+#include "home/menus.h"
 
 #include "generated/wram.h"
 #include "mem.h"
@@ -108,4 +109,11 @@ ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8
 		gb_write8(wPrinterPacketSequence_ADDR, 0);
 		return (ExecutePrinterPacketSequenceResult){0, d, e};
 	}
+}
+
+#define PRINTER_OFF_TEXT_ID 0x027Bu
+
+void PrinterMenu_QuitPrint(void)
+{
+	(void)DrawWideTextBox_WaitForInput(PRINTER_OFF_TEXT_ID);
 }

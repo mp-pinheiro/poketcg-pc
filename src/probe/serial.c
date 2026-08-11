@@ -115,6 +115,24 @@ static void adapt_SerialRecvBytes(ProbeState *s)
 	s->hl = r.hl;
 }
 
+static void adapt_UnreferencedSaveSerialReturnAddress(ProbeState *s)
+{
+	(void)s;
+	UnreferencedSaveSerialReturnAddress();
+}
+
+static void adapt_UnreferencedGoToSerialReturnAddress(ProbeState *s)
+{
+	s->f = (uint8_t)((s->f & (uint8_t)~0x10u) | UnreferencedGoToSerialReturnAddress());
+}
+
+static void adapt_DuelTransmissionError(ProbeState *s)
+{
+	(void)s;
+	DuelTransmissionError();
+}
+
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -127,7 +145,9 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SerialExchangeBytes", adapt_SerialExchangeBytes },
 	{ "Func_0e8e", adapt_Func_0e8e },
 	{ "ResetSerial", adapt_ResetSerial },
-	{ "ClearSerialData", adapt_ClearSerialData },
+	{ "UnreferencedSaveSerialReturnAddress", adapt_UnreferencedSaveSerialReturnAddress },
+	{ "UnreferencedGoToSerialReturnAddress", adapt_UnreferencedGoToSerialReturnAddress },
+	{ "DuelTransmissionError", adapt_DuelTransmissionError },
 	{ "SerialSendBytes", adapt_SerialSendBytes },
 	{ "SerialRecvBytes", adapt_SerialRecvBytes },
 	{ NULL, NULL },

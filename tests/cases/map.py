@@ -14,6 +14,9 @@ wTempPointerBank = 0xD4C6
 wRonaldIsInMap = 0xD3B8
 wOverworldMapSelection = 0xD32E
 wDefaultSong = 0xD111
+wGameEvent = 0xD0B5
+wSongOverride = 0xD112
+wCurSongID = 0xDD80
 OWMAP_ISHIHARAS_HOUSE = 0x02
 OWMAP_CHALLENGE_HALL = 0x0B
 OWMAP_POKEMON_DOME = 0x0C
@@ -42,6 +45,8 @@ CONTRACT = {
     "GameEvent_Overworld": {"compare": ("f", "a", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")},
     # CopyGfxData decrements B to zero, preserves C, and final pop af restores A/F.
     "CopyGfxDataFromTempBank": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "c")},
+    "PlayDefaultSong": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "_ExecuteGameEvent": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "FindLoadedNPC": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetNextNPCMovementByte": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetDefaultSong": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -125,6 +130,22 @@ CASES = {
         # Real bank switch: bc=$4000 is read under bank 3's ROM image.
         {"b": 0x40, "c": 0x00, "wram": {hBankROM: b"\x05"}, "read": {hBankROM: 1}},
     ],
+    "PlayDefaultSong": [
+        {},
+        dict(POISON, wram={wRonaldIsInMap: b"\x00", wDefaultSong: b"\x05",
+                           wSongOverride: b"\x00", wCurSongID: b"\x80"},
+             read={wSongOverride: 1, wCurSongID: 1}),
+        {"wram": {wRonaldIsInMap: b"\x00", wDefaultSong: b"\x1E",
+                  wSongOverride: b"\x00", wCurSongID: b"\x80"},
+         "read": {wSongOverride: 1, wCurSongID: 1}},
+        {"wram": {wRonaldIsInMap: b"\x00", wDefaultSong: b"\x1F",
+                  wSongOverride: b"\x00", wCurSongID: b"\x80"},
+         "read": {wSongOverride: 1, wCurSongID: 1}},
+    ],
+    "_ExecuteGameEvent": [
+        {},
+        dict(POISON, a=0, wram={wGameEvent: b"\x00"}),
+    ],
     "GetDefaultSong": [
         {},
         {"wram": {wRonaldIsInMap: b"\x01", wDefaultSong: b"\x05",
@@ -146,5 +167,17 @@ MUTATIONS = {
         "before": "return gb_read8(permission_address(b, c));",
         "after": "return (uint8_t)(gb_read8(permission_address(b, c)) ^ 1u);",
         "case_ids": ["GetPermissionOfMapPosition-0", "GetPermissionOfMapPosition-1"],
+    },
+    "PlayDefaultSong": {
+        "source_symbol": "PlayDefaultSong",
+        "before": "\t\tif (song < 0x1Fu) {",
+        "after": "\t\tif (song <= 0x1Fu) {",
+        "case_ids": ["PlayDefaultSong-2", "PlayDefaultSong-3"],
+    },
+    "_ExecuteGameEvent": {
+        "source_symbol": "_ExecuteGameEvent",
+        "before": "if (event == 0)",
+        "after": "if (event == 1)",
+        "case_ids": ["_ExecuteGameEvent-0", "_ExecuteGameEvent-1"],
     },
 }

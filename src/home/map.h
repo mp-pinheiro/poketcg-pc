@@ -20,6 +20,13 @@ uint8_t UpdatePermissionOfMapPosition(uint8_t a, uint8_t b, uint8_t c);
 PermissionResult GetLoadedNPCID(uint8_t a);
 PermissionResult GetItemInLoadedNPCIndex(uint8_t a, uint8_t l);
 uint8_t GameEvent_Overworld(uint8_t f);
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} ExecuteGameEventResult;
+
+void PlayDefaultSong(void);
+ExecuteGameEventResult _ExecuteGameEvent(uint8_t f);
 void CopyGfxDataFromTempBank(uint16_t *hl, uint16_t *de, uint8_t b, uint8_t c);
 NPCSearchResult FindLoadedNPC(void);
 uint8_t GetNextNPCMovementByte(uint16_t bc);

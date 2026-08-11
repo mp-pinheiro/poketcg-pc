@@ -40,6 +40,8 @@ CONTRACT = {
     "Func_212f": {"compare": ("d", "e", "hl"), "preserve": ()},
     "DrawDuelBoxMessage": {"compare": (), "preserve": ()},
     "LoadFullWidthFontTiles": {"compare": (), "preserve": ()},
+    "Func_2057": {"compare": ("a", "b", "c", "d", "e", "hl"),
+                  "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -178,6 +180,15 @@ CASES = {
         dict(POISON,
              vread={0: {V0_TILES0: 1024, V0_TILES1: 1024, V0_TILES2: 1024}}),
     ],
+    "Func_2057": [
+        {"read": {MAP: 1}},
+        dict(POISON, a=0xA5, b=9, c=6, d=4,
+             read={MAP + 4 * 32 + 15: 1}),
+        {"a": 0x5A, "b": 0xFF, "c": 1, "d": 0,
+         "read": {MAP: 1}},
+        {"a": 0x3C, "b": 31, "c": 0, "d": 31,
+         "read": {MAP + 31 * 32 + 31: 1}},
+    ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -188,5 +199,11 @@ MUTATIONS = {
         "before": "uint8_t col_step = (uint8_t)(hl >> 8);",
         "after": "uint8_t col_step = (uint8_t)hl;",
         "case_ids": ["FillRectangle-1", "FillRectangle-2", "FillRectangle-3", "FillRectangle-4"],
+    },
+    "Func_2057": {
+        "source_symbol": "Func_2057",
+        "before": "\tuint8_t c = (uint8_t)(x + offset);",
+        "after": "\tuint8_t c = (uint8_t)(x - offset);",
+        "case_ids": ["Func_2057-1", "Func_2057-2"],
     },
 }
