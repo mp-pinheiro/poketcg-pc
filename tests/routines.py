@@ -14,6 +14,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "memory": ("DecompressDataFromBank", "CopyBankedDataToDE", "FillMemoryWithA",
                "FillMemoryWithDE", "GetFarByte"),
     "random": ("HtimesL", "Random", "UpdateRNGSources"),
+    "sams_practice": ("SetSamsStartingPlayArea", "IsAIPracticeScriptedTurn"),
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
     "write_number": ("TwoByteNumberToText",),
     "clear_saved_duel": ("ClearSavedDuel",),
