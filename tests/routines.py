@@ -300,6 +300,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "card_pop": ("CreateCardPopCandidateList", "CalculateNameHash"),
     "credits_sequence_commands": ("SetCreditsSequenceCmdPtr", "ExecuteCreditsSequenceCmd",
                                   "AdvanceCreditsSequenceCmdPtr"),
+    "debug_player_coordinates": ("JumpSetWindowOff",),
     "deck_machine_room": ("Func_d96c", "Script_BeatAaron"),
     "warp": ("_HandleMapWarp",),
 }
