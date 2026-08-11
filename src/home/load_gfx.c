@@ -251,6 +251,17 @@ void LoadTilesetGfx(void)
 	switch_vram(0);
 }
 
+void Func_80238(void)
+{
+	uint16_t hl = GetMapDataPointer(wCurTileset, GFX_TABLE_TILESETS).hl;
+	LoadGraphicsPointerFromHL(&hl);
+	wTotalNumTiles = gb_read8(hl);
+	wCurSpriteTileSize = TILE_SIZE;
+	wWhichVRAMBank = 0;
+	wVRAMTileOffset = 0x80;
+	LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2();
+}
+
 void LoadTilesetGfx_LoadTileGfx(void)
 {
 	uint16_t hl = state16(wTempPointer_ADDR);

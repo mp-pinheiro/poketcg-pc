@@ -1,0 +1,9 @@
+{
+  "fn": "DrawConfigMenuCursor",
+  "case": "tests/cases/config.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawConfigMenuCursor\", \"registers\": {\"a\": 51, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"39111\": \"33\", \"53528\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawConfigMenuCursor\", \"mismatches\": {\"bus\": {\"address\": 39111, \"reference\": \"3301\", \"native\": \"0001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[39111, 1], [53528, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawConfigMenuCursor\", \"registers\": {\"a\": 51, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"39111\": \"33\", \"53528\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

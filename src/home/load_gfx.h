@@ -27,6 +27,7 @@ void LoadGfxDataFromTempPointer(void);
 void GetTileOffsetPointerAndSwitchVRAM(void);
 void GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2(void);
 void LoadTilesetGfx(void);
+void Func_80238(void);
 void LoadTilesetGfx_LoadTileGfx(void);
 LoadTilesetChunkResult LoadTilesetGfx_CopyGfxData(uint8_t b, uint8_t c);
 void Func_803b9(void);

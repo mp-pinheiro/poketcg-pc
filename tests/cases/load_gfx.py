@@ -52,7 +52,7 @@ NAMES = (
     "GetMapDataPointer", "LoadGraphicsPointerFromHL", "LoadSpriteGfx",
     "LoadGfxDataFromTempPointerToVRAMBank", "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
     "LoadGfxDataFromTempPointer", "GetTileOffsetPointerAndSwitchVRAM",
-    "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2", "LoadTilesetGfx",
+    "Func_80238",
     "LoadTilesetGfx.LoadTileGfx", "LoadTilesetGfx.CopyGfxData", "Func_803b9",
     "LoadBGPalette", "LoadPaletteDataFromHL", "LoadOBPalette", "LoadPaletteDataToBuffer",
 )
@@ -68,6 +68,7 @@ CONTRACT = {
     "SafelyCopyBGMapFromSRAMToVRAM": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "ClearSRAMBGMaps": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetMapDataPointer": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "Func_80238": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "LoadGraphicsPointerFromHL": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
     "LoadSpriteGfx": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "LoadGfxDataFromTempPointerToVRAMBank": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
@@ -131,6 +132,12 @@ CASES = {
     "GetTileOffsetPointerAndSwitchVRAM": [{}, dict(POISON), {"wram": {0xd4ca: b"\x00", 0xd4cb: b"\x00"}, "read": {0xd4ca: 1, 0xd4cb: 1}}],
     "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2": [{}, dict(POISON), {"wram": {0xd4ca: b"\x80", 0xd4cb: b"\x01"}, "read": {0xd4ca: 1, 0xd4cb: 1}}],
     "LoadTilesetGfx": [{}, dict(POISON)],
+    "Func_80238": [
+        {"vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
+        {**POISON, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
+        {"a": 0, "hl": 0, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
+        {"a": 0xff, "hl": 0xffff, "vread": {0: {0x8000: 0x10, 0x9000: 0x10}}},
+    ],
     "LoadTilesetGfx.LoadTileGfx": [
         {}, dict(POISON),
         {"wram": {0xd4c2: b"\x80\x00", 0xd4ca: b"\x80",
@@ -171,6 +178,8 @@ for _name in (
 for _name in ("LoadTilesetGfx", "LoadTilesetGfx.LoadTileGfx"):
     for _case in CASES[_name]:
         _case.setdefault("wram", {})[0xff80] = b"\x20"
+for _case in CASES["Func_80238"]:
+    _case.setdefault("wram", {})[0xff80] = b"\x20"
 for _name in (
     "LoadGfxDataFromTempPointerToVRAMBank",
     "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
@@ -196,5 +205,11 @@ MUTATIONS = {
         "before": "SetBGP(p[1]);",
         "after": "SetBGP((uint8_t)(p[1] ^ 1u));",
         "case_ids": ["LoadBGPalette-0", "LoadBGPalette-1"],
+    },
+    "Func_80238": {
+        "source_symbol": "Func_80238",
+        "before": "\twVRAMTileOffset = 0x80;",
+        "after": "\twVRAMTileOffset = 0x00;",
+        "case_ids": ["Func_80238-0", "Func_80238-1"],
     },
 }
