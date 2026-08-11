@@ -33,6 +33,9 @@ split_commits = false
 tag_pattern = "v?[0-9].*"
 
 [[git.commit_parsers]]
+message = "^chore\\(release\\)"
+skip = true
+[[git.commit_parsers]]
 message = "^Merge (pull request|branch|remote-tracking branch)"
 skip = true
 [[git.commit_parsers]]
