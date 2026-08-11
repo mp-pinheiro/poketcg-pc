@@ -1,0 +1,9 @@
+{
+  "fn": "TwoByteNumberToText",
+  "case": "tests/cases/write_number.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TwoByteNumberToText\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 195, \"e\": 5, \"f\": 240, \"hl\": 12345, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"313233343500ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TwoByteNumberToText\", \"mismatches\": {\"bus\": {\"address\": 49924, \"reference\": \"313233343500ff\", \"native\": \"313233343200ff\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49920, 7]]}}}\n",
+  "restored": "{\"fn\": \"TwoByteNumberToText\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 195, \"e\": 5, \"f\": 240, \"hl\": 12345, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"313233343500ff\"}}, \"status\": \"PASS\"}\n"
+}

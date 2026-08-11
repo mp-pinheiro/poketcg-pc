@@ -14,7 +14,8 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                "FillMemoryWithDE", "GetFarByte"),
     "random": ("HtimesL", "Random", "UpdateRNGSources"),
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
-    "write_number": ("TwoByteNumberToText",),
+    "write_number": ("TwoByteNumberToText", "WriteOneByteNumber",
+                     "WriteTwoByteNumber", "WriteBCDDigitInTextFormat"),
     "clear_saved_duel": ("ClearSavedDuel",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
@@ -295,6 +296,24 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "debug_sprites": ("Func_1c890", "Func_1c866", "Func_1c865"),
 }
 
-EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}
+EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
+    "write_number": {
+        "WriteBCDDigitInTextFormat": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:78-86",
+            "reason": "definition plus dead-family internal calls; zero live callsites in poketcg/src",
+        },
+        "WriteOneByteNumber": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:90-111",
+            "reason": "definition only; zero callsites in poketcg/src",
+        },
+        "WriteTwoByteNumber": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:115-125",
+            "reason": "definition only; zero callsites in poketcg/src",
+        },
+    },
+}
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

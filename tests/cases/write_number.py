@@ -1,4 +1,12 @@
-"""Oracle-diff cases for poketcg/src/home/write_number.asm."""
+"""Oracle-diff cases for poketcg/src/home/write_number.asm.
+
+The issue's requested display wrappers are contract-supported exclusions, not
+standalone C ABIs. The pinned ASM defines WriteBCDDigitInTextFormat at lines
+78-86, WriteOneByteNumber at 90-111, and WriteTwoByteNumber at 115-125.
+An exhaustive source search found no callsites in poketcg/src beyond the
+WriteBCDDigitInTextFormat references internal to the same dead display family;
+the normative port contract records this family as dead code at lines 370-372.
+"""
 
 DEST = 0xC300
 FILL = b"\xff" * 7  # seven bytes: the seventh proves de stops after five digits
