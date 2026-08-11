@@ -203,6 +203,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                  "LoadGfxDataFromTempPointerToVRAMBank_Tiles0ToTiles2",
                  "LoadGfxDataFromTempPointer", "GetTileOffsetPointerAndSwitchVRAM",
                  "GetTileOffsetPointerAndSwitchVRAM_Tiles0ToTiles2", "LoadTilesetGfx",
+                 "Func_80238",
                  "LoadTilesetGfx.LoadTileGfx", "LoadTilesetGfx.CopyGfxData",
                  "Func_803b9", "LoadBGPalette", "LoadPaletteDataFromHL",
                  "LoadOBPalette", "LoadPaletteDataToBuffer"),
