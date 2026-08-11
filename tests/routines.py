@@ -298,6 +298,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "credits_sequence_commands": ("SetCreditsSequenceCmdPtr", "ExecuteCreditsSequenceCmd",
                                   "AdvanceCreditsSequenceCmdPtr"),
     "deck_machine_room": ("Func_d96c", "Script_BeatAaron"),
+    "warp": ("_HandleMapWarp",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
