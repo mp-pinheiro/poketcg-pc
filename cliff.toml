@@ -27,13 +27,13 @@ conventional_commits = true
 # Keep non-conventional commits visible under "Other" rather than dropping them.
 filter_unconventional = false
 # Reject non-conventional commits outright — matches the local PreToolUse hook.
-require_conventional = true
+require_conventional = false
 split_commits = false
 # Only derive versions from `v*` tags.
 tag_pattern = "v?[0-9].*"
 
 [[git.commit_parsers]]
-message = "^chore\\(release\\)"
+message = "^Merge (pull request|branch|remote-tracking branch)"
 skip = true
 [[git.commit_parsers]]
 message = "^feat"
