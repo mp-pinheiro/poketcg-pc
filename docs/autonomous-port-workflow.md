@@ -277,9 +277,11 @@ serialized part of the four-worker workflow.
 ### Stabilize automation
 
 Before each merge, capture current `main` SHA. Enumerate only Actions runs with
-that exact head SHA and `push` event. Require terminal success for workflows
-`ci`, `release`, and `pages`, and every job in `ci`. Re-read `main`. If release
-pushed a new SHA, discard the cycle as non-final and repeat for the new SHA.
+that exact head SHA and event `push` or `workflow_dispatch`. Require terminal
+success for workflows `ci`, `release`, and `pages`, and every job in `ci`.
+Re-read `main`. If release pushed a new SHA, discard the cycle as non-final and
+repeat for the new SHA. Release-generated commits are covered by the explicit
+dispatches issued after the push; the SHA and workflow names remain exact.
 Missing, pending, skipped, cancelled, or failed required runs block the next
 merge; never inspect unrelated historical runs.
 
