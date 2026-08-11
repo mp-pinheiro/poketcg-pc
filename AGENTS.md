@@ -105,7 +105,18 @@ jj commit -m "type(scope): subject"
 commit; never `git commit` / `git push` — use `jj git push`. Full workflow:
 `docs/jj-workflow.md`.
 
-## 9. `tests/cases/*.py` are not unit tests
+## 9. Autonomous port start
+
+When, and only when, the user's trimmed message is exactly `start` (case-sensitive),
+immediately read and execute `docs/autonomous-port-workflow.md`. `/start`, `Start`,
+`start <issue>`, and prose containing `start` follow normal request handling.
+
+The orchestrator, not workers, selects and claims distinct issues. Only the
+orchestrator runs `just oracle-diff-all` or `just oracle-release-gate`; workers
+run only their private routine-level proofs.
+
+## 10. `tests/cases/*.py` are not unit tests
+
 
 They are the oracle's input matrix — the thing that makes the port provable. The
 ambient house rule says never write unit tests; it does not apply here. An agent
