@@ -111,6 +111,17 @@ When, and only when, the user's trimmed message is exactly `start` (case-sensiti
 immediately read and execute `docs/autonomous-port-workflow.md`. `/start`, `Start`,
 `start <issue>`, and prose containing `start` follow normal request handling.
 
+Before selecting or claiming an issue, fetch remote metadata with
+`jj --config 'experimental-advance-branches.enabled-branches=[]' git fetch`,
+record the local `main` and `main@origin` commit IDs, and require them to
+match. Verify that the current working copy exposes this trigger and
+`docs/autonomous-port-workflow.md`. If the working copy is clean but either
+the tree is stale or local `main` differs from `main@origin`, create a new
+empty working copy on `main@origin` with `jj new main@origin`, then verify
+again. If it is dirty or still stale, stop before issue selection and report
+the checkout mismatch; never run the workflow from an unpublished or stale
+tree.
+
 The orchestrator, not workers, selects and claims distinct issues. Only the
 orchestrator runs `just oracle-diff-all` or `just oracle-release-gate`; workers
 run only their private routine-level proofs.

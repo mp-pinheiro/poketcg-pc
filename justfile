@@ -47,6 +47,8 @@ verify-hooks:
     check 2 enforce-jj.sh                     'git commit -m x'
     check 2 enforce-jj.sh                     'git push origin main'
     check 0 enforce-jj.sh                     'jj git push'
+    check 0 enforce-jj.sh                     "jj --config 'experimental-advance-branches.enabled-branches=[]' git push --bookmark main"
+    check 0 enforce-jj.sh                     "jj --config 'experimental-advance-branches.enabled-branches=[]' git fetch"
     check 0 enforce-jj.sh                     'git status --short'
     check 0 enforce-jj.sh                     'git tag v1.0.0'
     check 2 enforce-conventional-commits.sh   'jj commit -m wip'

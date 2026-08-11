@@ -12,7 +12,7 @@ command -v jq >/dev/null 2>&1 || exit 0
 
 # jq parses the command field only (raw-JSON grep also matches descriptions,
 # diverging from the omp mirror); gsub kills `jj git` sans PCRE lookbehind
-cmd=$(jq -r '(.tool_input.command // .command // empty) | gsub("jj\\s+git"; "JJ_GIT")' 2>/dev/null)
+cmd=$(jq -r '(.tool_input.command // .command // empty) | gsub("jj\\s+(--config\\s+[^\\s]+\\s+)*git"; "JJ_GIT")' 2>/dev/null)
 [ -n "$cmd" ] || exit 0
 
 if printf '%s' "$cmd" | grep -Eq 'git[[:space:]]+(commit|add|rebase|merge|reset|restore|switch|checkout|cherry-pick|revert|stash|clean|am|apply)([[:space:]"\\]|$)'; then
