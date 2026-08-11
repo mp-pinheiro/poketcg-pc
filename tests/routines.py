@@ -164,6 +164,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "GetDefaultSong"),
     "load_deck": ("LoadDeck",),
     "hall_of_honor": ("HallOfHonorLoadMap",),
+    "challenge_hall_lobby": ("Preload_ChallengeHallNPCs2",),
 "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance",
                "GetArenaCardColor", "GetPlayAreaCardColor", "HandleEnergyBurn"),
