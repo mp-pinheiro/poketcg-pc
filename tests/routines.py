@@ -234,6 +234,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "water_club": ("Preload_Amy",),
     "effect_commands": ("CheckMatchingCommand",),
     "ai": ("LoadOpponentDeck",),
+    "special_attacks": ("CheckIfAnyBasicPokemonInDeck",),
     "music1": ("Music1_EmptyFunc", "Music1_f404e", "Music1_f4066", "Music1_f406f",
                "Music1_PlaySong", "Music1_PlaySFX", "Music1_AssertSongFinished",
                "Music1_AssertSFXFinished", "Music1_CheckForEndOfSong",
