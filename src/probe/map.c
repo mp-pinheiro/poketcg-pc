@@ -91,6 +91,7 @@ const ProbeEntry probe_entries_map[] = {
 	{ "CopyGfxDataFromTempBank", adapt_CopyGfxDataFromTempBank },
 	{ "FindLoadedNPC", adapt_FindLoadedNPC },
 	{ "GetNextNPCMovementByte", adapt_GetNextNPCMovementByte },
+	{ "GetDefaultSong", adapt_GetDefaultSong },
 	{ "PlayDefaultSong", adapt_PlayDefaultSong },
 	{ NULL, NULL },
 };
