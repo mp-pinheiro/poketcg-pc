@@ -146,6 +146,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "animation": ("GetOWFramesetSubgroupData", "LoadOWFramesetSubgroup", "StoreOWFramesetSubgroup", "ClearOWFramesetSubgroups", "ClearNumLoadedFramesetSubgroups"),
     "play_animation": ("CheckAnyAnimationPlaying", "SetDoFrameFunction", "ResetDoFrameFunction"),
     "play_song": ("ScriptPlaySong", "Func_3c87", "WaitForSongToFinish"),
+    "ir_functions": ("PlayCardPopSong",),
     "duel_animation_core": ("_ResetAnimationQueue", "PlayLoadedDuelAnimation",
                             "LoadDuelAnimationToBuffer", "_UpdateQueuedAnimations",
                             "ClearAndDisableQueuedAnimations"),
