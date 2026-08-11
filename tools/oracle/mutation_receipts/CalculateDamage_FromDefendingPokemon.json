@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateDamage_FromDefendingPokemon",
+  "case": "tests/cases/damage_calculation.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateDamage_FromDefendingPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 128, \"hl\": 52409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000ffffffffff\", \"49904\": \"00\", \"50107\": \"0000ffffffffff\", \"50160\": \"00\", \"50176\": \"00\", \"50304\": \"00\", \"52409\": \"010101\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateDamage_FromDefendingPokemon\", \"mismatches\": {\"e\": [1, 2], \"bus\": {\"address\": 52409, \"reference\": \"ff000000010101c200\", \"native\": \"ff000000020102c200\", \"reference_size\": 23, \"native_size\": 23, \"spans\": [[49851, 7], [49904, 1], [50107, 7], [50160, 1], [50176, 1], [50304, 1], [52409, 3], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"CalculateDamage_FromDefendingPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 128, \"hl\": 52409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"0000ffffffffff\", \"49904\": \"00\", \"50107\": \"0000ffffffffff\", \"50160\": \"00\", \"50176\": \"00\", \"50304\": \"00\", \"52409\": \"010101\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

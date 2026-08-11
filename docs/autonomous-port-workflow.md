@@ -191,10 +191,10 @@ Proof and publication loop:
 8. Open one non-draft PR titled feat(port): <basename>, with every routine PASS,
    mutation RED/restored PASS, audit, adapter lint, progress, and standalone
    Fixes #<N> evidence.
-9. Capture headRefOid, run gh pr checks <PR> --watch --fail-fast, query
-   gh pr checks <PR> --json name,bucket,state,link and capture headRefOid again.
-   Restart if the SHA changed. Require exactly changelog, adapters, hooks, and
-   progress, each with bucket pass.
+9. Capture headRefOid, run `gh pr checks <PR> --watch --fail-fast`, query
+   `gh pr checks <PR> --json name,bucket,state,link` and capture headRefOid
+   again. Restart if the SHA changed. Require the single `quality` check with
+   bucket `pass`.
 
 Return exactly one terminal status:
 READY_FOR_MERGE issue=<N> workspace=<path> routines=<list> commit=<SHA>
@@ -249,8 +249,8 @@ The worker loops until all proof and publication conditions pass:
 9. Capture `headRefOid` with `gh pr view`; run `gh pr checks <PR> --watch
    --fail-fast`; query `gh pr checks <PR> --json name,bucket,state,link`; and
    capture `headRefOid` again. Restart the watch if the SHA changed. Require
-   exactly `changelog`, `adapters`, `hooks`, and `progress`, each with bucket
-   `pass`; missing, pending, skipped, cancelled, and failed jobs block the PR.
+   the single `quality` check with bucket `pass`; missing, pending, skipped,
+   cancelled, and failed checks block the PR.
 10. Fix CI, scope, body, or evidence gaps with additive Conventional Commits,
     advance and push the same bookmark using the safe prefix, and restart the
     complete current-head watch. Never rewrite a pushed commit or create a
@@ -276,12 +276,19 @@ serialized part of the four-worker workflow.
 
 ### Stabilize automation
 
-Before each merge, capture current `main` SHA. Enumerate only Actions runs with
-that exact head SHA and `push` event. Require terminal success for workflows
-`ci`, `release`, and `pages`, and every job in `ci`. Re-read `main`. If release
-pushed a new SHA, discard the cycle as non-final and repeat for the new SHA.
-Missing, pending, skipped, cancelled, or failed required runs block the next
-merge; never inspect unrelated historical runs.
+Before each merge, capture current `main` SHA as the integration target. Require
+terminal success for the `quality` check from `ci` on that exact SHA. Then
+require successful `release` and `pages` workflow-run events whose triggering
+`ci` run has the same exact head SHA. Normal merge stabilization accepts only
+these event/SHA pairs; manual runs, missing, pending, skipped, cancelled, or
+failed checks do not satisfy the barrier.
+
+Re-read `main` after the automation settles. The release workflow may append
+one generated `chore(release): vX.Y.Z` commit containing only `VERSION` and
+`CHANGELOG.md`. Verify its tag and GitHub Release, then adopt that generated
+commit as the next integration base without demanding a second full CI/Pages
+cycle. If `main` advanced with any other commit, discard the cycle and restart
+from the new target SHA. Never inspect unrelated historical runs.
 
 ### Resynchronize a stale PR
 
@@ -392,7 +399,8 @@ and merges production issues. Verify the installation read-only:
 4. Verify each Acceptance checkbox maps to observed routine PASS, mutation
    RED/restored PASS, progress, and a real jj Conventional Commit. The workflow
    edits the issue body, not only the PR checklist.
-5. Verify the merge barrier requires all four named CI jobs on the approved head,
-   central release-gate PASS, exact-head squash merge, automatic issue closure,
-   and green post-merge Actions before the next PR.
+5. Verify the merge barrier requires the `quality` CI check plus successful
+   release and Pages workflow-run events on the approved source head, central
+   release-gate PASS, exact-head squash merge, automatic issue closure, and
+   green post-merge Actions before the next PR.
 6. Do not alter `just launch-port` or `.github/copilot-instructions.md`.

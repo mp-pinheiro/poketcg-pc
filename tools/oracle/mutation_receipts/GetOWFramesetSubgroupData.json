@@ -1,0 +1,9 @@
+{
+  "fn": "GetOWFramesetSubgroupData",
+  "case": "tests/cases/animation.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetOWFramesetSubgroupData\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 2, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"49666\": \"05\", \"49669\": \"33\", \"54048\": \"0500\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetOWFramesetSubgroupData\", \"mismatches\": {\"bus\": {\"address\": 54048, \"reference\": \"05330500\", \"native\": \"05339988\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49666, 1], [49669, 1], [54048, 2]]}}}\n",
+  "restored": "{\"fn\": \"GetOWFramesetSubgroupData\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 2, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"49666\": \"05\", \"49669\": \"33\", \"54048\": \"0500\"}}, \"status\": \"PASS\"}\n"
+}
