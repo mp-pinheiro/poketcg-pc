@@ -231,7 +231,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                "CheckRainDanceScenario",
                "ClearChangedTypesIfMuk",
                "HandleStrikesBack_AgainstDamagingAttack"),
-    "script": ("GetMapScriptPointer",),
+    "water_club": ("Preload_Amy",),
     "effect_commands": ("CheckMatchingCommand",),
     "ai": ("LoadOpponentDeck",),
     "music1": ("Music1_EmptyFunc", "Music1_f404e", "Music1_f4066", "Music1_f406f",
