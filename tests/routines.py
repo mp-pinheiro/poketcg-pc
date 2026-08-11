@@ -265,6 +265,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
               "AssertSongFinished", "AssertSFXFinished",
               "PlaySFX_InvalidChoice", "PlaySFX",
               "PauseSong", "ResumeSong"),
+    "sgb": ("Wait",),
     "init_menu": ("InitMenuScreen", "FlashWhiteScreen"),
     "color": ("LoadConsolePaletteData", "FadeScreenToWhite",
               "FadeScreenFromWhite.BackupPalsAndSetWhite", "SetWhitePalettes",
