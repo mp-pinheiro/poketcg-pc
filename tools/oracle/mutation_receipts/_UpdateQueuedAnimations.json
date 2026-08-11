@@ -1,0 +1,9 @@
+{
+  "fn": "_UpdateQueuedAnimations",
+  "case": "tests/cases/duel_animation_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_UpdateQueuedAnimations\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54314, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54307\": \"ffffffffffffffff\", \"54464\": \"01\", \"54479\": \"0000\", \"54494\": \"ff\", \"54743\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_UpdateQueuedAnimations\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"_UpdateQueuedAnimations\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54314, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54307\": \"ffffffffffffffff\", \"54464\": \"01\", \"54479\": \"0000\", \"54494\": \"ff\", \"54743\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
