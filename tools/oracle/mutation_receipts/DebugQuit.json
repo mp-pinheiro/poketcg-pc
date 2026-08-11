@@ -1,0 +1,9 @@
+{
+  "fn": "DebugQuit",
+  "case": "tests/cases/debug.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DebugQuit\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DebugQuit\", \"mismatches\": {\"f\": [0, 128]}}\n",
+  "restored": "{\"fn\": \"DebugQuit\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "DebugSGBFrame",
+  "case": "tests/cases/debug.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DebugSGBFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51895\": \"ff\", \"51899\": \"80\", \"54297\": \"00\", \"65344\": \"00\", \"65535\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DebugSGBFrame\", \"mismatches\": {\"a\": [0, 4], \"f\": [144, 16], \"bus\": {\"address\": 54297, \"reference\": \"00ff800000ff\", \"native\": \"00ff800400ff\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51892, 1], [51895, 1], [51899, 1], [54297, 1], [65344, 1], [65535, 1]]}}}\n",
+  "restored": "{\"fn\": \"DebugSGBFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51895\": \"ff\", \"51899\": \"80\", \"54297\": \"00\", \"65344\": \"00\", \"65535\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

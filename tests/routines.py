@@ -134,6 +134,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "LoadGeneralSaveData", "ValidateGeneralSaveData",
              "AddCardToCollectionAndUpdateAlbumProgress", "SaveGame"),
     "dma": ("DMA",),
+    "debug": ("DebugSGBFrame", "DebugStandardBGCharacter", "DebugQuit"),
     "unsafe_bg_map": ("UnsafeWriteDataBlockToBGMap0",),
     "sram": ("BankswitchSRAM",),
     "lcd_enable_frame": ("DoFrameIfLCDEnabled",),
