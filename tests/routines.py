@@ -18,6 +18,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "write_number": ("TwoByteNumberToText",),
     "clear_saved_duel": ("ClearSavedDuel",),
     "challenge_machine": ("ChallengeMachine_CheckIfOpponentAlreadySelected", "ChallengeMachine_PrintText"),
+    "config": ("DrawConfigMenuCursor",),
     "attacks": ("RetrievePlayAreaAIScoreFromBackup2",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
