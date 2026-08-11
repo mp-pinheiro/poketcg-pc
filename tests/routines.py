@@ -293,6 +293,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                          "DiscardAttachedPlusPowers", "DiscardAttachedDefenders"),
     "give_booster_pack": ("_PauseMenu_Exit",),
     "debug_sprites": ("Func_1c890", "Func_1c866", "Func_1c865"),
+    "warp": ("_HandleMapWarp",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}

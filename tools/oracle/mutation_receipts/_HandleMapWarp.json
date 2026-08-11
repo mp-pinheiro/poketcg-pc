@@ -1,0 +1,9 @@
+{
+  "fn": "_HandleMapWarp",
+  "case": "tests/cases/warp.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_HandleMapWarp\", \"registers\": {\"a\": 2, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53435\": \"02020a02\", \"54063\": \"011a0a\", \"54068\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_HandleMapWarp\", \"mismatches\": {\"a\": [2, 0], \"bus\": {\"address\": 53435, \"reference\": \"02020a0201\", \"native\": \"0000000001\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[53435, 4], [54063, 3], [54068, 1]]}}}\n",
+  "restored": "{\"fn\": \"_HandleMapWarp\", \"registers\": {\"a\": 2, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53435\": \"02020a02\", \"54063\": \"011a0a\", \"54068\": \"02\"}}, \"status\": \"PASS\"}\n"
+}
