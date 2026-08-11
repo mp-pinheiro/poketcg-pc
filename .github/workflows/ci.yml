@@ -23,7 +23,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Validate changelog generation
-        run: git cliff --unreleased --strip header >/dev/null
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git cliff "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" --strip header >/dev/null
+          else
+            git cliff --unreleased --strip header >/dev/null
+          fi
 
   # Gate against probe adapters that reimplement the routine they marshal (#19).
   adapters:
