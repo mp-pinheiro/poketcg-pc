@@ -3,6 +3,7 @@
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "mem.h"
+#include "generated/hram.h"
 
 #define rLCDC 0xFF40u
 #define rSTAT 0xFF41u
@@ -73,4 +74,27 @@ void DisableInt_LYCoincidence(void)
 {
 	gb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) & (uint8_t)~STAT_LYC));
 	gb_write8(rIE, (uint8_t)(gb_read8(rIE) & (uint8_t)~IE_STAT));
+}
+
+void ApplyBackgroundScroll(void)
+{
+	DisableInt_LYCoincidence();
+	gb_write8(rSTAT, (uint8_t)(gb_read8(rSTAT) & (uint8_t)~0x04u));
+	if (gb_read8(wApplyBGScroll_ADDR) != 0)
+		return;
+
+	gb_write8(wApplyBGScroll_ADDR, 1);
+	gb_write8(wNextScrollLY_ADDR, 0);
+	if (gb_read8(0xFF44u) < 0x60u) {
+		for (uint8_t target = 0; target < 0x60u; target++) {
+			uint8_t scroll = GetNextBackgroundScroll(target);
+			gb_write8(0xFF43u, scroll);
+			gb_write8(wNextScrollLY_ADDR, (uint8_t)(target + 1u));
+		}
+	}
+	gb_write8(0xFF43u, 0);
+	gb_write8(rLYC, 0);
+	gb_write8(hSCX_ADDR, GetNextBackgroundScroll(0));
+	gb_write8(wApplyBGScroll_ADDR, 0);
+	EnableInt_LYCoincidence();
 }
