@@ -1,0 +1,9 @@
+{
+  "fn": "RetrievePlayAreaAIScoreFromBackup2",
+  "case": "tests/cases/attacks.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RetrievePlayAreaAIScoreFromBackup2\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52670\": \"cd0123456789ab\", \"52701\": \"0123456789abcd\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RetrievePlayAreaAIScoreFromBackup2\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"cd01234567\", \"native\": \"0001234567\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[52670, 7], [52701, 7]]}}}\n",
+  "restored": "{\"fn\": \"RetrievePlayAreaAIScoreFromBackup2\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52670\": \"cd0123456789ab\", \"52701\": \"0123456789abcd\"}}, \"status\": \"PASS\"}\n"
+}
