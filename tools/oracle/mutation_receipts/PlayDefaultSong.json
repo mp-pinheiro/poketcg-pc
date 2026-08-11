@@ -1,0 +1,9 @@
+{
+  "fn": "PlayDefaultSong",
+  "case": "tests/cases/map.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayDefaultSong\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53521\": \"0505\", \"56704\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayDefaultSong\", \"mismatches\": {\"bus\": {\"address\": 53522, \"reference\": \"050505\", \"native\": \"050405\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53521, 2], [56704, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayDefaultSong\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53521\": \"0505\", \"56704\": \"05\"}}, \"status\": \"PASS\"}\n"
+}
