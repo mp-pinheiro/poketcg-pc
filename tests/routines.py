@@ -16,6 +16,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
     "write_number": ("TwoByteNumberToText",),
     "clear_saved_duel": ("ClearSavedDuel",),
+    "challenge_machine": ("ChallengeMachine_CheckIfOpponentAlreadySelected", "ChallengeMachine_PrintText"),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),
