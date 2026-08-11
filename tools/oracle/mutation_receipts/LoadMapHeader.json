@@ -1,0 +1,9 @@
+{
+  "fn": "LoadMapHeader",
+  "case": "tests/cases/load_map_header.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadMapHeader\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"53521\": \"fc\", \"53553\": \"af0d\", \"53903\": \"2220\", \"54063\": \"23\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadMapHeader\", \"mismatches\": {\"bus\": {\"address\": 53553, \"reference\": \"02fcaf0d222023\", \"native\": \"02fc600d222023\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51892, 1], [53521, 1], [53553, 2], [53903, 2], [54063, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadMapHeader\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"53521\": \"fc\", \"53553\": \"af0d\", \"53903\": \"2220\", \"54063\": \"23\"}}, \"status\": \"PASS\"}\n"
+}
