@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateNameHash",
+  "case": "tests/cases/card_pop.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateNameHash\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 120, \"f\": 0, \"hl\": 49424, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"000102030405060708090a0b0c0d0e0f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateNameHash\", \"mismatches\": {\"d\": [0, 120]}}\n",
+  "restored": "{\"fn\": \"CalculateNameHash\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 120, \"f\": 0, \"hl\": 49424, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"000102030405060708090a0b0c0d0e0f\"}}, \"status\": \"PASS\"}\n"
+}

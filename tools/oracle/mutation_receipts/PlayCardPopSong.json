@@ -1,0 +1,9 @@
+{
+  "fn": "PlayCardPopSong",
+  "case": "tests/cases/ir_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayCardPopSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56704\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayCardPopSong\", \"mismatches\": {\"bus\": {\"address\": 56704, \"reference\": \"08\", \"native\": \"09\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[56704, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayCardPopSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56704\": \"08\"}}, \"status\": \"PASS\"}\n"
+}

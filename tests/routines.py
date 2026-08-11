@@ -14,7 +14,8 @@ ROUTINES: dict[str, tuple[str, ...]] = {
                "FillMemoryWithDE", "GetFarByte"),
     "random": ("HtimesL", "Random", "UpdateRNGSources"),
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
-    "write_number": ("TwoByteNumberToText",),
+    "write_number": ("TwoByteNumberToText", "WriteOneByteNumber",
+                     "WriteTwoByteNumber", "WriteBCDDigitInTextFormat"),
     "clear_saved_duel": ("ClearSavedDuel",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
@@ -64,11 +65,11 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "CopyAttackDataAndDamage_FromCardID", "ReturnCarry",
              "LoadNonPokemonCardEffectCommands", "ApplyAttachedPlusPower",
              "ApplyAttachedDefender", "MoveCardToDiscardPileIfInPlayArea",
-             "ApplyDamageModifiers_DamageToTarget",
-             "ApplyDamageModifiers_DamageToSelf",
              "GetPlayAreaCardRetreatCost",
              "DrawWideTextBox_WaitForInput_ReturnCarry",
              "PrintKnockedOut", "PrintPlayAreaCardKnockedOutIfNoHP"),
+    "damage_calculation": ("CalculateDamage_FromDefendingPokemon",
+                           "CalculateDamage_VersusDefendingPokemon"),
     "process_text": ("InitTextFormat", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
                      "GetTextLengthInHalfTiles", "GetTextLengthInTiles",
                      "GetFullWidthFontTileOffset", "ConvertTileNumberToTileDataAddress",
@@ -138,10 +139,11 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "setup": ("NoOp", "DetectConsole", "SetupPalettes", "FillTileMap",
               "SetupVRAM", "SetupRegisters", "ZeroRAM"),
     "scroll": ("Func_3e44", "GetNextBackgroundScroll", "EnableInt_LYCoincidence",
-                "DisableInt_LYCoincidence"),
+               "DisableInt_LYCoincidence", "ApplyBackgroundScroll"),
     "load_animation": ("GetFirstSpriteAnimBufferProperty", "GetSpriteAnimBufferProperty",
                         "GetSpriteAnimBufferProperty_SpriteInA", "Func_3ddb", "Func_3de7",
                         "DrawSpriteAnimationFrame", "GetAnimationFramePointer"),
+    "animation": ("GetOWFramesetSubgroupData", "LoadOWFramesetSubgroup", "StoreOWFramesetSubgroup", "ClearOWFramesetSubgroups", "ClearNumLoadedFramesetSubgroups"),
     "play_animation": ("CheckAnyAnimationPlaying", "SetDoFrameFunction", "ResetDoFrameFunction"),
     "play_song": ("ScriptPlaySong", "Func_3c87", "WaitForSongToFinish"),
     "duel_animation_core": ("_ResetAnimationQueue", "PlayLoadedDuelAnimation",
@@ -161,6 +163,9 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "CopyGfxDataFromTempBank", "FindLoadedNPC", "GetNextNPCMovementByte",
              "GetDefaultSong"),
     "load_deck": ("LoadDeck",),
+    "hall_of_honor": ("HallOfHonorLoadMap",),
+    "challenge_hall_lobby": ("Preload_ChallengeHallNPCs2",),
+    "ir_functions": ("PlayCardPopSong",),
 "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance",
                "GetArenaCardColor", "GetPlayAreaCardColor", "HandleEnergyBurn"),
@@ -291,30 +296,39 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "duel_core_status": ("IsArenaPokemonAsleepOrPoisoned",
                          "DiscardAttachedPlusPowers", "DiscardAttachedDefenders"),
     "give_booster_pack": ("_PauseMenu_Exit",),
+    "debug_sprites": ("Func_1c890", "Func_1c866", "Func_1c865"),
+    "card_pop": ("CreateCardPopCandidateList", "CalculateNameHash"),
+    "credits_sequence_commands": ("SetCreditsSequenceCmdPtr", "ExecuteCreditsSequenceCmd",
+                                  "AdvanceCreditsSequenceCmdPtr"),
+    "debug_player_coordinates": ("JumpSetWindowOff",),
     "play_area": ("ZeroObjectPositionsAndToggleOAMCopy_Bank6",),
+    "deck_machine_room": ("Func_d96c", "Script_BeatAaron"),
+    "warp": ("_HandleMapWarp",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
-    "duel_animation_core": {
-        "PlayLoadedDuelAnimation": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:28-43",
-            "reason": "requires animation state and callee setup before standalone return",
+    "write_number": {
+        "WriteBCDDigitInTextFormat": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:78-86",
+            "reason": "definition plus dead-family internal calls; zero live callsites in poketcg/src",
         },
-        "LoadDuelAnimationToBuffer": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:177-213",
-            "reason": "requires animation buffer and card-data setup before standalone return",
+        "WriteOneByteNumber": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:90-111",
+            "reason": "definition only; zero callsites in poketcg/src",
         },
-        "_UpdateQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:214-260",
-            "reason": "requires active animation queue and frame scheduler state",
+        "WriteTwoByteNumber": {
+            "kind": "dead-zero-callsites",
+            "source": "poketcg/src/home/write_number.asm:115-125",
+            "reason": "definition only; zero callsites in poketcg/src",
         },
-        "ClearAndDisableQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:261-300",
-            "reason": "requires queued animation state and scheduler-owned memory",
+    },
+    "deck_machine_room": {
+        "Script_BeatAaron": {
+            "kind": "hardware-transform",
+            "source": "poketcg/src/scripts/deck_machine_room.asm:62-76",
+            "reason": "script engine commands start_script, print_npc_text, give_booster_packs, and script_jump expand into unported engine dependencies",
         },
     },
 }

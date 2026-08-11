@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: write
 concurrency:
   group: release
   cancel-in-progress: false
@@ -54,3 +55,6 @@ jobs:
           git push origin main --tags
           git cliff --latest --strip header > /tmp/notes.md
           gh release create "v${next}" --title "v${next}" --notes-file /tmp/notes.md --latest
+          for workflow in ci.yml release.yml pages.yml; do
+            gh workflow run "$workflow" --ref main
+          done

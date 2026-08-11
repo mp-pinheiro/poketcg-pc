@@ -1,0 +1,9 @@
+{
+  "fn": "LoadOWFramesetSubgroup",
+  "case": "tests/cases/animation.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOWFramesetSubgroup\", \"registers\": {\"a\": 86, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54044\": \"5678\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOWFramesetSubgroup\", \"mismatches\": {\"a\": [86, 120]}}\n",
+  "restored": "{\"fn\": \"LoadOWFramesetSubgroup\", \"registers\": {\"a\": 86, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54044\": \"5678\"}}, \"status\": \"PASS\"}\n"
+}
