@@ -11,6 +11,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "math": ("ATimes10",),
     "division": ("DivideBCbyDE",),
     "list": ("SetListPointer", "SetNextElementOfList"),
+    "masters_beaten_list": ("AddMasterBeatenToList", "ClearMasterBeatenList"),
     "memory": ("DecompressDataFromBank", "CopyBankedDataToDE", "FillMemoryWithA",
                "FillMemoryWithDE", "GetFarByte"),
     "random": ("HtimesL", "Random", "UpdateRNGSources"),
