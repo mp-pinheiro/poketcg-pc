@@ -1,0 +1,9 @@
+{
+  "fn": "PlayLoadedDuelAnimation",
+  "case": "tests/cases/duel_animation_core.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayLoadedDuelAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a200\", \"54305\": \"0001\", \"54463\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayLoadedDuelAnimation\", \"mismatches\": {\"bus\": {\"address\": 54463, \"reference\": \"a200000100\", \"native\": \"a200000101\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51923, 2], [54305, 2], [54463, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayLoadedDuelAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a200\", \"54305\": \"0001\", \"54463\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

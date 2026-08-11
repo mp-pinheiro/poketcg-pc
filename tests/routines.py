@@ -64,11 +64,11 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "CopyAttackDataAndDamage_FromCardID", "ReturnCarry",
              "LoadNonPokemonCardEffectCommands", "ApplyAttachedPlusPower",
              "ApplyAttachedDefender", "MoveCardToDiscardPileIfInPlayArea",
-             "ApplyDamageModifiers_DamageToTarget",
-             "ApplyDamageModifiers_DamageToSelf",
              "GetPlayAreaCardRetreatCost",
              "DrawWideTextBox_WaitForInput_ReturnCarry",
              "PrintKnockedOut", "PrintPlayAreaCardKnockedOutIfNoHP"),
+    "damage_calculation": ("CalculateDamage_FromDefendingPokemon",
+                           "CalculateDamage_VersusDefendingPokemon"),
     "process_text": ("InitTextFormat", "CaseHalfWidthLetter", "ClassifyTextCharacterPair",
                      "GetTextLengthInHalfTiles", "GetTextLengthInTiles",
                      "GetFullWidthFontTileOffset", "ConvertTileNumberToTileDataAddress",
@@ -293,29 +293,6 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "give_booster_pack": ("_PauseMenu_Exit",),
 }
 
-EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
-    "duel_animation_core": {
-        "PlayLoadedDuelAnimation": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:28-43",
-            "reason": "requires animation state and callee setup before standalone return",
-        },
-        "LoadDuelAnimationToBuffer": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:177-213",
-            "reason": "requires animation buffer and card-data setup before standalone return",
-        },
-        "_UpdateQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:214-260",
-            "reason": "requires active animation queue and frame scheduler state",
-        },
-        "ClearAndDisableQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:261-300",
-            "reason": "requires queued animation state and scheduler-owned memory",
-        },
-    },
-}
+EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
