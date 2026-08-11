@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.28.0 - 2026-08-11
+## v0.29.0 - 2026-08-11
 
 ### Features
 
-- *(port)* Config (#161)
+- *(port)* Load_gfx (#162)
 
