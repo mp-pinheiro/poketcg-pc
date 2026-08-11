@@ -3,17 +3,17 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wCardPopCardCandidates = 0xC400
 
 CONTRACT = {
-    "CreateCardPopCandidateList": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "CreateCardPopCandidateList": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
     "CalculateNameHash": {"compare": ("b", "d", "e", "hl"), "preserve": ("b",)},
 }
 
 CASES = {
     "CreateCardPopCandidateList": [
-        {"wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
-        {"a": 1, "wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
-        {"a": 2, "wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
-        dict(POISON, a=0, wram={wCardPopCardCandidates: b"\xaa" * 0x80}, read={wCardPopCardCandidates: 0x80}),
-        dict(POISON, a=0xff, wram={wCardPopCardCandidates: b"\xaa" * 0x80}, read={wCardPopCardCandidates: 0x80}),
+        {"instruction_budget": 500000, "cycle_budget": 5000000, "wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
+        {"instruction_budget": 500000, "cycle_budget": 5000000, "a": 1, "wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
+        {"instruction_budget": 500000, "cycle_budget": 5000000, "a": 2, "wram": {wCardPopCardCandidates: b"\xaa" * 0x80}, "read": {wCardPopCardCandidates: 0x80}},
+        dict(POISON, a=0, instruction_budget=500000, cycle_budget=5000000, wram={wCardPopCardCandidates: b"\xaa" * 0x80}, read={wCardPopCardCandidates: 0x80}),
+        dict(POISON, a=0xff, instruction_budget=500000, cycle_budget=5000000, wram={wCardPopCardCandidates: b"\xaa" * 0x80}, read={wCardPopCardCandidates: 0x80}),
     ],
     "CalculateNameHash": [
         {"wram": {0xC100: b"\x00" * 16}},
@@ -35,8 +35,8 @@ MUTATIONS = {
     },
     "CalculateNameHash": {
         "source_symbol": "CalculateNameHash",
-        "before": "\t\thigh ^= value;",
-        "after": "\t\thigh += value;",
+        "before": "\t\tlow = (uint8_t)(low + value);",
+        "after": "\t\tlow = (uint8_t)(low ^ value);",
         "case_ids": ["CalculateNameHash-1", "CalculateNameHash-2", "CalculateNameHash-3"],
     },
 }

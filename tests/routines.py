@@ -319,6 +319,13 @@ EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
             "reason": "definition only; zero callsites in poketcg/src",
         },
     },
+    "deck_machine_room": {
+        "Script_BeatAaron": {
+            "kind": "hardware-transform",
+            "source": "poketcg/src/scripts/deck_machine_room.asm:62-76",
+            "reason": "script engine commands start_script, print_npc_text, give_booster_packs, and script_jump expand into unported engine dependencies",
+        },
+    },
 }
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)
