@@ -1,9 +1,9 @@
 {
   "fn": "Bankswitch3dTo3f",
   "case": "tests/cases/audio_callback.py",
-  "index": 3,
+  "index": 2,
   "status": "RED",
-  "baseline": "{\"fn\": \"Bankswitch3dTo3f\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 16366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"3d\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"Bankswitch3dTo3f\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 16366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"3d\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"Bankswitch3dTo3f\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"3d\", \"native\": \"3e\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[65408, 1]]}}}\n",
-  "restored": "{\"fn\": \"Bankswitch3dTo3f\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 16366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"3d\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"Bankswitch3dTo3f\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 16366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"3d\"}}, \"status\": \"PASS\"}\n"
 }

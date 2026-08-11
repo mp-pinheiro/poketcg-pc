@@ -17,6 +17,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "decompress": ("InitDataDecompression", "DecompressData", "DecompressData.Decompress"),
     "write_number": ("TwoByteNumberToText",),
     "clear_saved_duel": ("ClearSavedDuel",),
+    "attacks": ("RetrievePlayAreaAIScoreFromBackup2",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),
