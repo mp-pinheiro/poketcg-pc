@@ -294,6 +294,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "give_booster_pack": ("_PauseMenu_Exit",),
     "debug_sprites": ("Func_1c890", "Func_1c866", "Func_1c865"),
     "card_pop": ("CreateCardPopCandidateList", "CalculateNameHash"),
+    "warp": ("_HandleMapWarp",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}
