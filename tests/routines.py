@@ -327,6 +327,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "sprite_vblank": ("BackupVBlankFunctionTrampoline",),
     "switch_rom": ("BankswitchROM",),
     "warp": ("_HandleMapWarp",),
+    "load_map_header": ("LoadMapHeader",),
     "start": ("ShowCardPopCGBDisclaimer",),
 }
 
