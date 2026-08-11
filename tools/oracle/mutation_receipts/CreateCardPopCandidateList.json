@@ -1,0 +1,10 @@
+{
+  "fn": "CreateCardPopCandidateList",
+  "case": "tests/cases/card_pop.py",
+  "index": 0,
+  "status": "RED",
+  "method": "just oracle-diff",
+  "baseline": "PASS CreateCardPopCandidateList: 5 cases",
+  "output": "FAIL CreateCardPopCandidateList: 4/5 cases differ; mutated energy comparison changed candidate list and A",
+  "restored": "PASS CreateCardPopCandidateList: 5 cases"
+}
