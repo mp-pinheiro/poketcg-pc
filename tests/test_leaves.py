@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT / "tools" / "oracle"))
 sys.path.insert(0, str(ROOT / "tests" / "cases"))
 sys.path.insert(0, str(ROOT / "tests"))
 
-from routines import ALL, ROUTINES  # noqa: E402
+from routines import ALL, EXCLUSIONS, ROUTINES  # noqa: E402
 CACHE_SEMANTICS = 2
 REGS = ("a", "f", "b", "c", "d", "e", "hl")
 CACHE_SCHEMA = 1
@@ -347,6 +347,10 @@ def main() -> int:
         wanted = list(dict.fromkeys(wanted))
     else:
         wanted = list(ALL)
+    excluded = {
+        name for entries in EXCLUSIONS.values() for name in entries
+    }
+    wanted = [fn for fn in wanted if fn not in excluded]
     if args.group:
         warm_hint = "just oracle-warm-group " + args.group[0]
     else:

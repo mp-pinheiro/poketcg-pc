@@ -11,6 +11,11 @@ wd65f = 0xD65F
 wd665 = 0xD665
 wVBlankCounter = 0xCAB8
 wBGScrollMod = 0xD666
+rLY = 0xFF44
+rSCX = 0xFF43
+hSCX = 0xFF92
+wApplyBGScroll = 0xD667
+wNextScrollLY = 0xD668
 
 rLCDC = 0xFF40
 rSTAT = 0xFF41
@@ -35,12 +40,11 @@ CONTRACT = {
 		"compare": ("b", "c", "d", "e", "hl"),
 		"preserve": ("b", "c", "d", "e", "hl"),
 	},
+	"ApplyBackgroundScroll": {
+		"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+		"preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+	},
 }
-
-# ApplyBackgroundScroll (scroll.asm:60) is intentionally absent: its .wait_ly
-# loop polls rLY ($FF44), which only advances on a PPU tick, and the leaf oracle
-# drives no PPU ticks -- so it spins past MAX_FRAMES and never returns. Its only
-# helper not already covered, GetNextBackgroundScroll, IS ported on its own.
 
 CASES = {
 	"Func_3e44": [
@@ -94,6 +98,25 @@ CASES = {
 		{"wram": {rSTAT: b"\x40", rIE: b"\x02"},
 		 "read": {rSTAT: 1, rIE: 1}},
 	],
+	"ApplyBackgroundScroll": [
+		{"oracle": False,
+		 "why": "The leaf oracle does not advance the PPU LY register.",
+		 "wram": {rLY: b"\x00", wApplyBGScroll: b"\x00"},
+		 "expect": {rSTAT: b"\x40", rIE: b"\x02", rSCX: b"\x00",
+		            rLYC: b"\x00", hSCX: b"\x00",
+		            wApplyBGScroll: b"\x00", wNextScrollLY: b"\x60"}},
+		dict(POISON, wram={rLY: b"\x00", wApplyBGScroll: b"\x01"},
+		     read={rSTAT: 1, rIE: 1, wApplyBGScroll: 1}),
+		{"oracle": False,
+		 "why": "The leaf oracle does not advance the PPU LY register.",
+		 "wram": {rLY: b"\x00", wApplyBGScroll: b"\x01"},
+		 "expect": {rSTAT: b"\x00", rIE: b"\x00", wApplyBGScroll: b"\x01"}},
+		{"oracle": False,
+		 "why": "The leaf oracle does not advance the PPU LY register.",
+		 "wram": {rLY: b"\x00", wApplyBGScroll: b"\x00",
+		          wVBlankCounter: b"\x00", wBGScrollMod: b"\x01"},
+		 "expect": {hSCX: b"\x00", wNextScrollLY: b"\x60"}},
+	],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -105,4 +128,10 @@ MUTATIONS = {
         "after":  "if (guard & 0x02)",
         "case_ids": ["Func_3e44-0", "Func_3e44-1", "Func_3e44-2", "Func_3e44-3", "Func_3e44-4", "Func_3e44-5", "Func_3e44-6"],
     },
+	"ApplyBackgroundScroll": {
+		"source_symbol": "ApplyBackgroundScroll",
+		"before": "if (gb_read8(wApplyBGScroll_ADDR) != 0)",
+		"after": "if (gb_read8(wApplyBGScroll_ADDR) == 0)",
+		"case_ids": ["ApplyBackgroundScroll-0", "ApplyBackgroundScroll-1", "ApplyBackgroundScroll-2", "ApplyBackgroundScroll-3"],
+	},
 }

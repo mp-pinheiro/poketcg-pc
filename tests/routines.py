@@ -160,6 +160,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "GetLoadedNPCID", "GetItemInLoadedNPCIndex", "GameEvent_Overworld",
              "CopyGfxDataFromTempBank", "FindLoadedNPC", "GetNextNPCMovementByte",
              "GetDefaultSong"),
+    "map_events": ("ClearOWMapEvents",),
     "load_deck": ("LoadDeck",),
 "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance",
@@ -264,7 +265,9 @@ ROUTINES: dict[str, tuple[str, ...]] = {
               "AssertSongFinished", "AssertSFXFinished",
               "PlaySFX_InvalidChoice", "PlaySFX",
               "PauseSong", "ResumeSong"),
+    "sgb": ("Wait",),
     "init_menu": ("InitMenuScreen", "FlashWhiteScreen"),
+    "game_loop": ("SetupResetBackUpRamScreen",),
     "color": ("LoadConsolePaletteData", "FadeScreenToWhite",
               "FadeScreenFromWhite.BackupPalsAndSetWhite", "SetWhitePalettes",
               "Func_10d17", "Func_10d50", "FadeScreenFromWhite",
@@ -294,29 +297,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "retreat": ("SetAIRetreatFlags",),
 }
 
-EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {
-    "duel_animation_core": {
-        "PlayLoadedDuelAnimation": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:28-43",
-            "reason": "requires animation state and callee setup before standalone return",
-        },
-        "LoadDuelAnimationToBuffer": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:177-213",
-            "reason": "requires animation buffer and card-data setup before standalone return",
-        },
-        "_UpdateQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:214-260",
-            "reason": "requires active animation queue and frame scheduler state",
-        },
-        "ClearAndDisableQueuedAnimations": {
-            "kind": "dependency-pending",
-            "source": "poketcg/src/engine/duel/animations/core.asm:261-300",
-            "reason": "requires queued animation state and scheduler-owned memory",
-        },
-    },
-}
+EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}
+
 
 ALL = tuple(fn for group in ROUTINES.values() for fn in group)

@@ -1,0 +1,9 @@
+{
+  "fn": "HallOfHonorLoadMap",
+  "case": "tests/cases/hall_of_honor.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HallOfHonorLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"100a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HallOfHonorLoadMap\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"100a\", \"native\": \"110a\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56706, 2]]}}}\n",
+  "restored": "{\"fn\": \"HallOfHonorLoadMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"100a\"}}, \"status\": \"PASS\"}\n"
+}
