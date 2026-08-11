@@ -6,6 +6,7 @@ trampolines that become direct C calls at their callsites are deliberately absen
 """
 
 ROUTINES: dict[str, tuple[str, ...]] = {
+    "audio_callback": ("Bankswitch3dTo3f",),
     "copy": ("CopyGfxData", "CopyDataHLtoDE_SaveRegisters", "CopyDataHLtoDE"),
     "math": ("ATimes10",),
     "division": ("DivideBCbyDE",),
@@ -17,6 +18,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "write_number": ("TwoByteNumberToText",),
     "clear_saved_duel": ("ClearSavedDuel",),
     "challenge_machine": ("ChallengeMachine_CheckIfOpponentAlreadySelected", "ChallengeMachine_PrintText"),
+    "attacks": ("RetrievePlayAreaAIScoreFromBackup2",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),
