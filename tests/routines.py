@@ -161,6 +161,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
              "CopyGfxDataFromTempBank", "FindLoadedNPC", "GetNextNPCMovementByte",
              "GetDefaultSong"),
     "load_deck": ("LoadDeck",),
+    "hall_of_honor": ("HallOfHonorLoadMap",),
 "card_color": ("GetCardWeakness", "GetArenaCardWeakness", "GetPlayAreaCardWeakness",
                "GetCardResistance", "GetArenaCardResistance", "GetPlayAreaCardResistance",
                "GetArenaCardColor", "GetPlayAreaCardColor", "HandleEnergyBurn"),
