@@ -237,7 +237,7 @@ not done.
 
 ## Adapter rules
 
-Enforced by `tools/lint_adapters.py` and CI (`ci.yml` `adapters` job):
+Enforced by `tools/lint_adapters.py` and the `quality` check in CI (`ci.yml`):
 
 - **R1** — no integer literal `>= 0x8000` in an adapter body. `0x8000` is
   VRAM's origin; a marshalling layer has no business hardcoding an address in

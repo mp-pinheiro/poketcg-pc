@@ -1,0 +1,9 @@
+{
+  "fn": "BackupVBlankFunctionTrampoline",
+  "case": "tests/cases/sprite_vblank.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BackupVBlankFunctionTrampoline\", \"registers\": {\"a\": 52, \"b\": 187, \"c\": 204, \"d\": 197, \"e\": 1, \"f\": 240, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"1234\", \"50432\": \"1234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BackupVBlankFunctionTrampoline\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"12341234\", \"native\": \"1234ed34\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49408, 2], [50432, 2]]}}}\n",
+  "restored": "{\"fn\": \"BackupVBlankFunctionTrampoline\", \"registers\": {\"a\": 52, \"b\": 187, \"c\": 204, \"d\": 197, \"e\": 1, \"f\": 240, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"1234\", \"50432\": \"1234\"}}, \"status\": \"PASS\"}\n"
+}

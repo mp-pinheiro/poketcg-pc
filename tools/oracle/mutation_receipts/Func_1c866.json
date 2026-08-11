@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1c866",
+  "case": "tests/cases/debug_sprites.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1c866\", \"registers\": {\"a\": 128, \"b\": 128, \"c\": 128, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"65424\": \"f0\", \"65426\": \"8080\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1c866\", \"mismatches\": {\"b\": [128, 130], \"bus\": {\"address\": 65426, \"reference\": \"f08080\", \"native\": \"f08280\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[65424, 1], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_1c866\", \"registers\": {\"a\": 128, \"b\": 128, \"c\": 128, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"65424\": \"f0\", \"65426\": \"8080\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "ClearOWFramesetSubgroups",
+  "case": "tests/cases/animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearOWFramesetSubgroups\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54042\": \"ffffffffffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearOWFramesetSubgroups\", \"mismatches\": {\"bus\": {\"address\": 54042, \"reference\": \"ffffffffff\", \"native\": \"0000000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[54042, 6]]}}}\n",
+  "restored": "{\"fn\": \"ClearOWFramesetSubgroups\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54042\": \"ffffffffffff\"}}, \"status\": \"PASS\"}\n"
+}
