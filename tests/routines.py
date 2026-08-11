@@ -131,6 +131,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "dma": ("DMA",),
     "unsafe_bg_map": ("UnsafeWriteDataBlockToBGMap0",),
     "sram": ("BankswitchSRAM",),
+    "switch_rom": ("BankswitchROM",),
     "lcd_enable_frame": ("DoFrameIfLCDEnabled",),
     "wait_keys": ("WaitUntilKeysArePressed",),
     "palettes": ("FlushAllPalettes", "FlushPalette", "SetBGP", "FlushPalette0",
