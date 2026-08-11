@@ -138,7 +138,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "setup": ("NoOp", "DetectConsole", "SetupPalettes", "FillTileMap",
               "SetupVRAM", "SetupRegisters", "ZeroRAM"),
     "scroll": ("Func_3e44", "GetNextBackgroundScroll", "EnableInt_LYCoincidence",
-                "DisableInt_LYCoincidence"),
+               "DisableInt_LYCoincidence", "ApplyBackgroundScroll"),
     "load_animation": ("GetFirstSpriteAnimBufferProperty", "GetSpriteAnimBufferProperty",
                         "GetSpriteAnimBufferProperty_SpriteInA", "Func_3ddb", "Func_3de7",
                         "DrawSpriteAnimationFrame", "GetAnimationFramePointer"),
