@@ -1,0 +1,9 @@
+{
+  "fn": "DrawCheckMenuCursor",
+  "case": "tests/cases/deck_check.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawCheckMenuCursor\", \"registers\": {\"a\": 90, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 90, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"39435\": \"5a\", \"52911\": \"0101\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawCheckMenuCursor\", \"mismatches\": {\"bus\": {\"address\": 39435, \"reference\": \"5a0101\", \"native\": \"000101\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[39435, 1], [52911, 2]]}}}\n",
+  "restored": "{\"fn\": \"DrawCheckMenuCursor\", \"registers\": {\"a\": 90, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 90, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"39435\": \"5a\", \"52911\": \"0101\"}}, \"status\": \"PASS\"}\n"
+}
