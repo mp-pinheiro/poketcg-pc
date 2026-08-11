@@ -1,0 +1,9 @@
+{
+  "fn": "Func_f782",
+  "case": "tests/cases/pokemon_dome.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_f782\", \"registers\": {\"a\": 254, \"b\": 255, \"c\": 254, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"fffe\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_f782\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"fffe\", \"native\": \"fefe\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54188, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_f782\", \"registers\": {\"a\": 254, \"b\": 255, \"c\": 254, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"fffe\"}}, \"status\": \"PASS\"}\n"
+}
