@@ -142,6 +142,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "load_animation": ("GetFirstSpriteAnimBufferProperty", "GetSpriteAnimBufferProperty",
                         "GetSpriteAnimBufferProperty_SpriteInA", "Func_3ddb", "Func_3de7",
                         "DrawSpriteAnimationFrame", "GetAnimationFramePointer"),
+    "animation": ("GetOWFramesetSubgroupData", "LoadOWFramesetSubgroup", "StoreOWFramesetSubgroup", "ClearOWFramesetSubgroups", "ClearNumLoadedFramesetSubgroups"),
     "play_animation": ("CheckAnyAnimationPlaying", "SetDoFrameFunction", "ResetDoFrameFunction"),
     "play_song": ("ScriptPlaySong", "Func_3c87", "WaitForSongToFinish"),
     "duel_animation_core": ("_ResetAnimationQueue", "PlayLoadedDuelAnimation",
