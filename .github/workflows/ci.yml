@@ -1,7 +1,6 @@
 name: ci
-# Validates that git-cliff can parse the history and cliff.toml. Because
-# cliff.toml sets require_conventional = true, this also enforces Conventional
-# Commits on every pushed commit (belt-and-suspenders for the local hook).
+# Validates the repository's lightweight quality gates. The PR concurrency
+# policy cancels obsolete commits while main and manual runs remain durable.
 on:
   push:
     branches: [main]
@@ -9,10 +8,14 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  changelog:
+  quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }
@@ -30,31 +33,12 @@ jobs:
           else
             git cliff --unreleased --strip header >/dev/null
           fi
-
-  # Gate against probe adapters that reimplement the routine they marshal (#19).
-  adapters:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - name: Lint probe adapters
         run: python3 tools/lint_adapters.py
-
-  # Verify the jj/git PreToolUse guards still enforce (docs/jj-workflow.md).
-  hooks:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - uses: extractions/setup-just@v2
-      - name: Ensure .jj marker (hooks no-op without it; CI has no real jj repo)
+      - name: Ensure .jj marker
         run: mkdir -p .jj
       - name: Verify PreToolUse guards
         run: just verify-hooks
-
-
-  # Committed progress data must match tests/routines.py + the pinned inventory.
-  progress:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
       - name: Check progress report is current
         run: python3 tools/progress/report.py check
