@@ -17,6 +17,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "write_number": ("TwoByteNumberToText", "WriteOneByteNumber",
                      "WriteTwoByteNumber", "WriteBCDDigitInTextFormat"),
     "clear_saved_duel": ("ClearSavedDuel",),
+    "debug_player_coordinates": ("JumpSetWindowOff",),
     "bg_map": ("WriteDataBlocksToBGMap0", "WriteDataBlockToBGMap0", "WriteByteToBGMap0",
                "HblankWriteByteToBGMap0", "CopyDataToBGMap0", "SafeCopyDataHLtoDE",
                "JPHblankCopyDataHLtoDE"),
