@@ -237,6 +237,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "pokemon_dome": ("PlacePokemonDomeOpponentAtDuelTable", "Func_f762", "Func_f782",),
     "effect_commands": ("CheckMatchingCommand",),
     "ai": ("LoadOpponentDeck",),
+    "special_attacks": ("CheckIfAnyBasicPokemonInDeck",),
     "music1": ("Music1_EmptyFunc", "Music1_f404e", "Music1_f4066", "Music1_f406f",
                "Music1_PlaySong", "Music1_PlaySFX", "Music1_AssertSongFinished",
                "Music1_AssertSFXFinished", "Music1_CheckForEndOfSong",
