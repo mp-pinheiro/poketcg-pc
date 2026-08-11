@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateNameHash",
+  "case": "tests/cases/card_pop.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "PASS CalculateNameHash: 4 cases",
+  "output": "MUTATION_RED fn=CalculateNameHash index=1",
+  "restored": "PASS CalculateNameHash: 4 cases"
+}
