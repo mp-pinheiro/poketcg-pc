@@ -328,6 +328,9 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "switch_rom": ("BankswitchROM",),
     "warp": ("_HandleMapWarp",),
     "mail": ("TryGivePCPack", "GePCPackSelectionCoordinates",),
+    "intro": ("LoadTitleScreenSprites",),
+    "load_map_header": ("LoadMapHeader",),
+    "start": ("ShowCardPopCGBDisclaimer",),
 }
 
 EXCLUSIONS: dict[str, dict[str, dict[str, str]]] = {}
