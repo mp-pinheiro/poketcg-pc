@@ -297,6 +297,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
     "duel_core_status": ("IsArenaPokemonAsleepOrPoisoned",
                          "DiscardAttachedPlusPowers", "DiscardAttachedDefenders"),
     "debug_main": ("Func_126b3",),
+    "sprite_vblank": ("BackupVBlankFunctionTrampoline",),
     "give_booster_pack": ("_PauseMenu_Exit",),
     "debug_sprites": ("Func_1c890", "Func_1c866", "Func_1c865"),
     "card_pop": ("CreateCardPopCandidateList", "CalculateNameHash"),
