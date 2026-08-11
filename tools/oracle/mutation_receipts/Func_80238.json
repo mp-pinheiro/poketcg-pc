@@ -1,0 +1,9 @@
+{
+  "fn": "Func_80238",
+  "case": "tests/cases/load_gfx.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_80238\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {\"0\": {\"32768\": \"00000000000000000000000000000000\", \"36864\": \"f0b0f0b0f0b0f0b0f0b0f0b0f0b0f0b0\"}}, \"wram\": {\"65408\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_80238\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"Func_80238\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {\"0\": {\"32768\": \"00000000000000000000000000000000\", \"36864\": \"f0b0f0b0f0b0f0b0f0b0f0b0f0b0f0b0\"}}, \"wram\": {\"65408\": \"20\"}}, \"status\": \"PASS\"}\n"
+}
