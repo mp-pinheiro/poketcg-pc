@@ -1,0 +1,9 @@
+{
+  "fn": "GePCPackSelectionCoordinates",
+  "case": "tests/cases/mail.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 170, \"b\": 13, \"c\": 10, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"0e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GePCPackSelectionCoordinates\", \"mismatches\": {\"b\": [13, 10]}}\n",
+  "restored": "{\"fn\": \"GePCPackSelectionCoordinates\", \"registers\": {\"a\": 170, \"b\": 13, \"c\": 10, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"0e\"}}, \"status\": \"PASS\"}\n"
+}
