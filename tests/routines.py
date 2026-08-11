@@ -267,6 +267,7 @@ ROUTINES: dict[str, tuple[str, ...]] = {
               "PauseSong", "ResumeSong"),
     "sgb": ("Wait",),
     "init_menu": ("InitMenuScreen", "FlashWhiteScreen"),
+    "game_loop": ("SetupResetBackUpRamScreen",),
     "color": ("LoadConsolePaletteData", "FadeScreenToWhite",
               "FadeScreenFromWhite.BackupPalsAndSetWhite", "SetWhitePalettes",
               "Func_10d17", "Func_10d50", "FadeScreenFromWhite",
