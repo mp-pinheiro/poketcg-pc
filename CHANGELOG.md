@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.30.0 - 2026-08-11
+## v0.32.0 - 2026-08-11
 
 ### Features
 
-- *(port)* Water_club (#160)
+- *(port)* Sams_practice (#164)
 
