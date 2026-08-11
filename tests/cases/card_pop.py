@@ -35,8 +35,8 @@ MUTATIONS = {
     },
     "CalculateNameHash": {
         "source_symbol": "CalculateNameHash",
-        "before": "\t\tlow = (uint8_t)(low + value);",
-        "after": "\t\tlow = (uint8_t)(low ^ value);",
+        "before": "\t\thigh ^= value;",
+        "after": "\t\thigh += value;",
         "case_ids": ["CalculateNameHash-1", "CalculateNameHash-2", "CalculateNameHash-3"],
     },
 }
