@@ -1,0 +1,9 @@
+{
+  "fn": "BankswitchSRAM",
+  "case": "tests/cases/sram.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BankswitchSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"40960\": \"aa\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BankswitchSRAM\", \"mismatches\": {\"bus\": \"reference/native bus state differs\"}}\n",
+  "restored": "{\"fn\": \"BankswitchSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"40960\": \"aa\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

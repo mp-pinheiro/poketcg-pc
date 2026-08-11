@@ -1,5 +1,6 @@
 #include "home/serial.h"
 #include "probe.h"
+#include "mem.h"
 
 static uint16_t pair(uint8_t hi, uint8_t lo)
 {

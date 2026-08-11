@@ -22,13 +22,15 @@ def wtemp_seed(bank, addr, tail=b""):
 
 
 CONTRACT = {
-    "GetFirstSpriteAnimBufferProperty": ("b", "c", "d", "e", "hl"),
-    "GetSpriteAnimBufferProperty": ("b", "c", "d", "e", "hl"),
-    "GetSpriteAnimBufferProperty_SpriteInA": ("b", "c", "d", "e", "hl"),
-    "Func_3ddb": ("b", "c", "d", "e", "hl"),
-    "Func_3de7": ("b", "c", "d", "e", "hl"),
-    "DrawSpriteAnimationFrame": ("a", "f", "b", "hl"),
-    "GetAnimationFramePointer": ("a", "f", "hl"),
+    "GetFirstSpriteAnimBufferProperty": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GetSpriteAnimBufferProperty": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GetSpriteAnimBufferProperty_SpriteInA": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "Func_3ddb": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "Func_3de7": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    # Final pop af restores flags; BankswitchROM then leaves A as the restored bank.
+    "DrawSpriteAnimationFrame": {"compare": ("f", "hl"), "preserve": ("f",)},
+    # The routine restores AF and HL; its final bank switch makes A scratch.
+    "GetAnimationFramePointer": {"compare": ("f", "hl"), "preserve": ("f", "hl")},
 }
 
 CASES = {
@@ -127,3 +129,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "DrawSpriteAnimationFrame": {
+        "source_symbol": "DrawSpriteAnimationFrame",
+        "before": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0xF0u) ? 0xFFu : 0x00u;",
+        "after": "wCurrSpriteRightEdgeCheck = (wCurrSpriteXPos >= 0x80u) ? 0xFFu : 0x00u;",
+        "case_ids": ["DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
+    },
+}

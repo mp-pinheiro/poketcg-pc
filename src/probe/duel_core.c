@@ -71,6 +71,7 @@ static void adapt_SetDefaultConsolePalettes(ProbeState *s)
 	(void)s;
 	SetDefaultConsolePalettes();
 }
+
 const ProbeEntry probe_entries_duel_core[] = {
 	{ "ConvertSpecialTrainerCardToPokemon", adapt_ConvertSpecialTrainerCardToPokemon },
 	{ "ResetAttackAnimationIsPlaying", adapt_ResetAttackAnimationIsPlaying },

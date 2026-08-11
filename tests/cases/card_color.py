@@ -17,15 +17,15 @@ wPlayerArenaCard = 0xC2BB   # DUELVARS_ARENA_CARD ($BB); bench1 at +1, etc.
 wChangedWeakness = 0xC2E9   # DUELVARS_ARENA_CARD_CHANGED_WEAKNESS
 wChangedResistance = 0xC2EA
 CONTRACT = {
-    "GetCardWeakness": ("a", "b", "c", "d", "e"),
-    "GetArenaCardWeakness": ("a", "b", "c", "d", "e"),
-    "GetPlayAreaCardWeakness": ("a", "b", "c", "d", "e"),
-    "GetCardResistance": ("a", "b", "c", "d", "e"),
-    "GetArenaCardResistance": ("a", "b", "c", "d", "e"),
-    "GetPlayAreaCardResistance": ("a", "b", "c", "d", "e"),
-    "GetArenaCardColor": ("a", "b", "c", "d", "e"),
-    "GetPlayAreaCardColor": ("a", "b", "c", "d", "e"),
-    "HandleEnergyBurn": (),
+    "GetCardWeakness": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetArenaCardWeakness": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetPlayAreaCardWeakness": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetCardResistance": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetArenaCardResistance": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetPlayAreaCardResistance": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetArenaCardColor": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "GetPlayAreaCardColor": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "HandleEnergyBurn": {"compare": (), "preserve": ()},
 }
 
 wChangedType = 0xC2D4       # DUELVARS_ARENA_CARD_CHANGED_TYPE
@@ -128,3 +128,12 @@ CASES = {
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "GetArenaCardColor": {
+        "source_symbol": "GetArenaCardColor",
+        "before": "\treturn GetPlayAreaCardColor(0);",
+        "after": "\treturn GetPlayAreaCardColor(1);",
+        "case_ids": ["GetArenaCardColor-0", "GetArenaCardColor-1", "GetArenaCardColor-2", "GetArenaCardColor-3", "GetArenaCardColor-4"],
+    },
+}

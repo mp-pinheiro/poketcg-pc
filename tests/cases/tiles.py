@@ -22,24 +22,24 @@ DUEL_CARD_HEADER_GFX_FAR = 0x2ce8
 DUEL_OTHER_GFX = 0x4008
 
 CONTRACT = {
-    "FillRectangle": ("d", "e"),
-    "Copy1bppTiles": ("d", "e", "hl"),
-    "CopyFontsOrDuelGraphicsTiles": ("d", "e", "hl"),
-    "LoadSymbolsFont": ("d", "e", "hl"),
-    "LoadCardSet2Tiles": ("d", "e", "hl"),
-    "LoadDuelDrawCardsScreenTiles": ("d", "e", "hl"),
-    "LoadCardOrDuelMenuBorderTiles": ("d", "e", "hl"),
-    "LoadCardTypeHeaderTiles": ("d", "e", "hl"),
-    "LoadDuelCardSymbolTiles": ("d", "e", "hl"),
-    "LoadDuelCardSymbolTiles2": ("d", "e", "hl"),
-    "LoadDuelFaceDownCardTiles": ("d", "e", "hl"),
-    "LoadDuelCheckPokemonScreenTiles": ("d", "e", "hl"),
-    "LoadPlacingThePrizesScreenTiles": ("d", "e", "hl"),
-    "LoadDeckAndDiscardPileIcons": ("d", "e", "hl"),
-    "LoadDuelCoinTossResultTiles": ("d", "e", "hl"),
-    "Func_212f": ("d", "e", "hl"),
-    "DrawDuelBoxMessage": (),
-    "LoadFullWidthFontTiles": (),
+    "FillRectangle": {"compare": ("d", "e"), "preserve": ("d", "e")},
+    "Copy1bppTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "CopyFontsOrDuelGraphicsTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadSymbolsFont": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadCardSet2Tiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelDrawCardsScreenTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadCardOrDuelMenuBorderTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadCardTypeHeaderTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelCardSymbolTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelCardSymbolTiles2": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelFaceDownCardTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelCheckPokemonScreenTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadPlacingThePrizesScreenTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDeckAndDiscardPileIcons": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "LoadDuelCoinTossResultTiles": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "Func_212f": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "DrawDuelBoxMessage": {"compare": (), "preserve": ()},
+    "LoadFullWidthFontTiles": {"compare": (), "preserve": ()},
 }
 
 CASES = {
@@ -181,3 +181,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "FillRectangle": {
+        "source_symbol": "FillRectangle",
+        "before": "uint8_t col_step = (uint8_t)(hl >> 8);",
+        "after": "uint8_t col_step = (uint8_t)hl;",
+        "case_ids": ["FillRectangle-1", "FillRectangle-2", "FillRectangle-3", "FillRectangle-4"],
+    },
+}

@@ -511,9 +511,9 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de)
 	a = wTempNonTurnDuelistCardID;
 	if (a != MACHAMP_ID)
 		return (StrikesBackResult){a, f_cp(a, MACHAMP_ID)};
-	uint8_t count_f = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK_ID).f;
-	if (count_f & 0x10u)
-		return (StrikesBackResult){a, count_f};
+	PkmnPowerCountResult count = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK_ID);
+	if (count.f & 0x10u)
+		return (StrikesBackResult){count.a, count.f};
 	a = wLoadedAttackCategory;
 	if (a == 0x04u)
 		return (StrikesBackResult){a, f_cp(a, 0x04u)};

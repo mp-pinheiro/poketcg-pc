@@ -4,7 +4,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wCurMap = 0xD32F
 
 CONTRACT = {
-    "GetMapScriptPointer": ("a", "b", "c", "d", "e", "f", "hl"),
+    "GetMapScriptPointer": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")},
 }
 
 CASES = {
@@ -20,3 +20,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "GetMapScriptPointer": {
+        "source_symbol": "GetMapScriptPointer",
+        "before": "(uint16_t)(MAP_SCRIPTS + (uint16_t)wCurMap * 16u + l)",
+        "after":  "(uint16_t)(MAP_SCRIPTS + (uint16_t)wCurMap * 15u + l)",
+        "case_ids": ["GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-2", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
+    },
+}

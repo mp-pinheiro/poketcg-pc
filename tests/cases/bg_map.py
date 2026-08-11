@@ -9,13 +9,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "WriteDataBlocksToBGMap0": ("a", "b", "c", "d", "e", "hl"),
-    "WriteDataBlockToBGMap0": ("a", "b", "c", "d", "e", "hl"),
-    "WriteByteToBGMap0": ("a", "b", "c", "d", "e", "hl"),
-    "HblankWriteByteToBGMap0": ("a", "b", "c", "d", "e", "hl"),
-    "CopyDataToBGMap0": ("d", "e", "hl"),
-    "SafeCopyDataHLtoDE": ("c", "d", "e", "hl"),
-    "JPHblankCopyDataHLtoDE": ("c", "d", "e", "hl"),
+    "WriteDataBlocksToBGMap0": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "WriteDataBlockToBGMap0": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "WriteByteToBGMap0": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "HblankWriteByteToBGMap0": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "CopyDataToBGMap0": {"compare": ("d", "e", "hl"), "preserve": ()},
+    "SafeCopyDataHLtoDE": {"compare": ("c", "d", "e", "hl"), "preserve": ("c",)},
+    "JPHblankCopyDataHLtoDE": {"compare": ("c", "d", "e", "hl"), "preserve": ("c",)},
 }
 
 BLOCK = bytes((2, 3, 0x11, 0x22, 0))
@@ -57,3 +57,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "WriteDataBlockToBGMap0": {
+        "source_symbol": "WriteDataBlockToBGMap0",
+        "before": "\tuint16_t source = data;",
+        "after": "\tuint16_t source = (uint16_t)(data + 1);",
+        "case_ids": ["WriteDataBlockToBGMap0-0", "WriteDataBlockToBGMap0-1"],
+    },
+}

@@ -5,7 +5,12 @@
 
 /* poketcg/src/home/clear_sram.asm */
 
-void ClearSRAMBank(uint8_t bank);
-void RestartSRAM(void);
+typedef struct {
+	uint8_t a, f, b, c;
+	uint16_t hl;
+} ClearSRAMResult;
+
+ClearSRAMResult ClearSRAMBank(uint8_t bank, uint8_t f);
+ClearSRAMResult RestartSRAM(void);
 
 #endif /* POKETCG_HOME_CLEAR_SRAM_H */

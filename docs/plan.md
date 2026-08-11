@@ -22,20 +22,16 @@
 | Wave 3 — inline (4 routines) | 4/4 | landed | — |
 | Phase 3 — audio | 50/75 | in progress | — |
 | Phase 5 — duel core (partial) | 6/22 | in progress | — |
+| Oracle stabilization | 561/561 | verified | — |
 
 This table is the resumption point for a compacted or cleared session: each
 slice flips its own row to `landed` (with the jj commit id) when its barrier
 check passes.
-**Barrier 1 (Wave 1)**: `just oracle-diff-all` — 502/502 routines clean,
-`just build` warning-free, `just data-verify` and `just oracleb-replay` both
-exit 0. The sprite-animation row adds 22 verified graphics routines to the
-gate. The gfx-loader/fade row above adds the recovered palette and graphics
-loading routines to the gate. Also fixed at the barrier: `src/home/input.c`'s
-`read_joypad()` unconditionally OR'd in `0x0F`, so `ReadJoypad` could never
-observe a held button regardless of W1-J's `g_keys` model (commit `73154dd8`);
-and one hazardous `Func_0e8e` case whose poisoned `rIE`/`rIF` seed enabled
-real interrupt sources with pending IF bits, causing PyBoy to dispatch an
-actual interrupt mid-call — re-seeded with only unused/non-hazardous bits.
+**Current barrier**: `just oracle-release-gate` — 561/561 routines clean in
+both the schema-2 GBRT primary lane and the independent source-built PyBoy
+audit; 1,913 primary cases, no missing primaries, and no function failures.
+The release barrier also validates the schema and mutation inventories and
+runs `just data-verify`.
 
 ## Working agreement — applies to every slice
 
@@ -527,16 +523,17 @@ Depends on both W2 slices, so run it directly rather than as a tenth agent:
 
 ## Verification
 
-Barrier command set, from the repo root, after every wave:
+Barrier command, from the repo root, after every wave:
 
 ```sh
 unset POKETCG_BUILD POKETCG_PORTS
-just build && just oracle-diff-all && just data-verify && just oracleb-replay
+just oracle-release-gate
 ```
 
-`just oracle-diff-all` also runs `lint-adapters`. Prerequisites: `just
-bootstrap` (builds `poketcg/poketcg.gbc` + `.sym`) and `just oracle-venv`
-(PyBoy into `/tmp/pbenv`) — both already satisfied in this checkout.
+The release barrier runs the GBRT function inventory, independent PyBoy audit,
+adapter lint, schema and mutation audits, and the data round-trip. Prerequisites:
+`just bootstrap` (builds `poketcg/poketcg.gbc` + `.sym`) and `just oracle-venv`
+(builds the pinned source PyBoy environment in `/tmp/pbenv`).
 
 New-behaviour checks, beyond "the suite is green":
 

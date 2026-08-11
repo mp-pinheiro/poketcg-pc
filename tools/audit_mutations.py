@@ -35,8 +35,6 @@ def main() -> int:
                 print(f"MUTATION missing {case_path}")
                 failures += 1
             continue
-        source_path = ROOT / "src/home" / f"{case_path.stem}.c"
-        source = source_path.read_text() if source_path.is_file() else ""
         for fn, mutation in mutations.items():
             declarations += 1
             required = ("source_symbol", "before", "after", "case_ids")
@@ -45,6 +43,15 @@ def main() -> int:
                 print(f"MUTATION schema {case_path}:{fn}")
                 failures += 1
                 continue
+            source_value = mutation.get("source", f"src/home/{case_path.stem}.c")
+            if (not isinstance(source_value, str) or not source_value
+                    or Path(source_value).is_absolute() or ".." in Path(source_value).parts
+                    or Path(source_value).parts[:2] != ("src", "home")):
+                print(f"MUTATION source {case_path}:{fn}")
+                failures += 1
+                continue
+            source_path = ROOT / source_value
+            source = source_path.read_text() if source_path.is_file() else ""
             if source.count(before) < 1:
                 print(f"MUTATION anchor {case_path}:{fn} occurrences={source.count(before)}")
                 failures += 1

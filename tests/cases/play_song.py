@@ -4,9 +4,10 @@ CUR_SONG_ID = 0xDD80
 LCDC = 0xFF40
 
 CONTRACT = {
-    "ScriptPlaySong": ("hl",),
-    "Func_3c87": (),
-    "WaitForSongToFinish": ("b", "c", "d", "e", "hl"),
+    "ScriptPlaySong": {"compare": ("hl",), "preserve": ("hl",)},
+    "Func_3c87": {"compare": (), "preserve": ()},
+    "WaitForSongToFinish": {"compare": ("b", "c", "d", "e", "hl"),
+                            "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -34,3 +35,11 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+MUTATIONS = {
+    "ScriptPlaySong": {
+        "source_symbol": "ScriptPlaySong",
+        "before": "\tPlaySong(a);",
+        "after": "\tPlaySong((uint8_t)(a + 1u));",
+        "case_ids": ["ScriptPlaySong-0", "ScriptPlaySong-1", "ScriptPlaySong-2", "ScriptPlaySong-3"],
+    },
+}

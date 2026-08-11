@@ -108,6 +108,7 @@ CASES = {
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["CopyDataHLtoDE"] = [{
+    "hardware": "cgb",
     "id": "CopyDataHLtoDE-primary-4",
     "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
     "registers": {
@@ -125,6 +126,7 @@ SCHEMA2_CASES["CopyDataHLtoDE"] = [{
 }]
 
 SCHEMA2_CASES["CopyGfxData"] = [{
+    "hardware": "cgb",
     "id": "CopyGfxData-primary-1",
     "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
     "registers": {
@@ -141,6 +143,7 @@ SCHEMA2_CASES["CopyGfxData"] = [{
     "evidence": "primary",
 }]
 SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"] = [{
+    "hardware": "cgb",
     "id": "CopyDataHLtoDE_SaveRegisters-primary-257",
     "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
     "registers": {
@@ -160,6 +163,7 @@ SCHEMA2_CASES["CopyDataHLtoDE_SaveRegisters"] = [{
 def _copy_primary(identifier, registers, seeds, budget=10000, completion=None, evidence="primary"):
     return {
         "id": identifier,
+        "hardware": "cgb",
         "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
         "registers": registers,
         "bus": {},

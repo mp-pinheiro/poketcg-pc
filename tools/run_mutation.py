@@ -24,6 +24,16 @@ def load_case(path: Path):
     spec.loader.exec_module(module)
     return module
 
+def comparison_status(result: subprocess.CompletedProcess[str]) -> str | None:
+    for line in reversed(result.stdout.splitlines()):
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict) and isinstance(payload.get("status"), str):
+            return payload["status"]
+    return None
+
 
 def main() -> int:
     parser = argparse.ArgumentParser()
@@ -34,7 +44,14 @@ def main() -> int:
     case_path = (ROOT / args.case).resolve()
     module = load_case(case_path)
     mutation = module.MUTATIONS[args.fn]
-    source_path = ROOT / "src/home" / f"{case_path.stem}.c"
+    source_value = mutation.get("source", f"src/home/{case_path.stem}.c")
+    if not isinstance(source_value, str) or not source_value:
+        raise SystemExit("mutation source must be a relative src/home path")
+    source_rel = Path(source_value)
+    if (source_rel.is_absolute() or ".." in source_rel.parts
+            or source_rel.parts[:2] != ("src", "home")):
+        raise SystemExit("mutation source must be a relative src/home path")
+    source_path = ROOT / source_rel
     original = source_path.read_text()
     if original.count(mutation["before"]) != 1:
         raise SystemExit("mutation anchor is not unique")
@@ -47,7 +64,7 @@ def main() -> int:
         "--runner", str((ROOT / "tools/oracle/gbref/build/gbref_runner").resolve()),
     ]
     baseline = subprocess.run(baseline_command, cwd=ROOT, text=True, capture_output=True, check=False)
-    if baseline.returncode != 0:
+    if baseline.returncode != 0 or comparison_status(baseline) != "PASS":
         raise SystemExit(f"MUTATION_BASELINE_FAILED: {baseline.stdout or baseline.stderr}")
     with tempfile.TemporaryDirectory(prefix="poketcg-mutation-") as tmp_name:
         tmp = Path(tmp_name)
@@ -58,7 +75,7 @@ def main() -> int:
             elif source.is_file():
                 shutil.copy2(source, tmp / name)
         mutated = original.replace(mutation["before"], mutation["after"], 1)
-        (tmp / "src/home" / source_path.name).write_text(mutated)
+        (tmp / source_rel).write_text(mutated)
         build = tmp / "build-mutation"
         subprocess.run(["cmake", "-G", "Ninja", "-B", str(build), "-DPORT_FILES="], cwd=tmp, check=True)
         subprocess.run(["ninja", "-C", str(build)], cwd=tmp, check=True)
@@ -71,10 +88,19 @@ def main() -> int:
             "--runner", str((ROOT / "tools/oracle/gbref/build/gbref_runner").resolve()),
         ]
         result = subprocess.run(command, cwd=tmp, text=True, capture_output=True, check=False)
-        if result.returncode == 0:
-            raise SystemExit("MUTATION_GREEN: corrupted routine still passed")
+        result_status = comparison_status(result)
+        if result.returncode == 0 and result_status == "PASS":
+            raise SystemExit(
+                "MUTATION_GREEN: corrupted routine still passed\n"
+                + (result.stdout or result.stderr)
+            )
+        if result.returncode != 1 or result_status != "PORT":
+            raise SystemExit(
+                "MUTATION_EXECUTION_FAILED: comparator did not report a port mismatch\n"
+                + (result.stdout or result.stderr)
+            )
         restored = subprocess.run(baseline_command, cwd=ROOT, text=True, capture_output=True, check=False)
-        if restored.returncode != 0:
+        if restored.returncode != 0 or comparison_status(restored) != "PASS":
             raise SystemExit(f"MUTATION_RESTORE_FAILED: {restored.stdout or restored.stderr}")
         receipt = ROOT / "tools/oracle/mutation_receipts"
         receipt.mkdir(parents=True, exist_ok=True)

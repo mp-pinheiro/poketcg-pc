@@ -3,21 +3,19 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "InitTextFormat": ("b", "c", "d", "e", "hl"),
-    "CaseHalfWidthLetter": ("a", "b", "c", "d", "e", "hl"),
-    # Carry is the real output (callers branch on it); exit a is path-dependent
-    # residue no caller reads, so f is in and a is out.
-    "ClassifyTextCharacterPair": ("f", "b", "c", "d", "e", "hl"),
-    "GetTextLengthInHalfTiles": ("a", "b", "c", "d", "e", "hl"),
-    "GetTextLengthInTiles": ("a", "b", "c", "d", "e", "hl"),
-    "GetFullWidthFontTileOffset": ("a", "b", "c", "d", "e", "hl"),
-    "ConvertTileNumberToTileDataAddress": ("a", "b", "c", "d", "e", "hl"),
-    "CopyHalfWidthCharacterToDE": ("a", "d", "e", "hl"),
-    "CreateHalfWidthFontTile": ("a", "b", "c", "d", "e", "hl"),
-    "CreateFullWidthFontTile": ("a", "b", "d", "e", "hl"),
-    "CreateFullWidthFontTile_ConvertToTileDataAddress": ("a", "b", "c", "d", "e", "hl"),
-    "GenerateTextTile": ("a", "b", "c", "d", "e", "hl"),
-    "TwoByteNumberToTxSymbol_PadSpace": ("a", "b", "c", "d", "e", "hl"),
+    "InitTextFormat": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
+    "CaseHalfWidthLetter": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "ClassifyTextCharacterPair": {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "GetTextLengthInHalfTiles": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "GetTextLengthInTiles": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "GetFullWidthFontTileOffset": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "ConvertTileNumberToTileDataAddress": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "CopyHalfWidthCharacterToDE": {"compare": ("a", "d", "e", "hl"), "preserve": ()},
+    "CreateHalfWidthFontTile": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "CreateFullWidthFontTile": {"compare": ("a", "b", "d", "e", "hl"), "preserve": ()},
+    "CreateFullWidthFontTile_ConvertToTileDataAddress": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "GenerateTextTile": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "TwoByteNumberToTxSymbol_PadSpace": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
 }
 
 CASES = {
@@ -59,18 +57,18 @@ CASES = {
 }
 
 CONTRACT.update({
-    "ProcessText": ("hl",),
-    "InitTextPrinting_ProcessText": ("hl",),
-    "SetupText": ("b", "c", "d", "e", "hl"),
-    "InitTextPrinting": ("b", "c", "hl"),
-    "InitTextPrintingInTextbox": ("b", "c", "hl"),
-    "PlaceNextTextTile": ("a", "b", "c", "d", "e", "hl"),
-    "ProcessSpecialTextCharacter": ("a", "hl"),
-    "TerminateHalfWidthText": ("a", "d", "e", "hl"),
-    "Func_235e": ("a", "d", "e", "f"),
-    "Func_2325": ("a", "d", "e", "f"),
-    "Func_22ca": ("b", "c", "d", "e", "hl"),
-    "CopyTextData": ("a", "d", "e", "hl"),
+    "ProcessText": {"compare": ("hl",), "preserve": ()},
+    "InitTextPrinting_ProcessText": {"compare": ("hl",), "preserve": ()},
+    "SetupText": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
+    "InitTextPrinting": {"compare": ("b", "c", "hl"), "preserve": ()},
+    "InitTextPrintingInTextbox": {"compare": ("b", "c", "hl"), "preserve": ()},
+    "PlaceNextTextTile": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ()},
+    "ProcessSpecialTextCharacter": {"compare": ("a", "hl"), "preserve": ()},
+    "TerminateHalfWidthText": {"compare": ("a", "d", "e", "hl"), "preserve": ()},
+    "Func_235e": {"compare": ("f",), "preserve": ()},
+    "Func_2325": {"compare": ("f",), "preserve": ()},
+    "Func_22ca": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
+    "CopyTextData": {"compare": ("a", "d", "e", "hl"), "preserve": ()},
 })
 
 CASES.update({
@@ -165,3 +163,11 @@ CASES.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+MUTATIONS = {
+    "InitTextFormat": {
+        "source_symbol": "InitTextFormat",
+        "before": "\thJapaneseSyllabary = TX_KATAKANA;",
+        "after": "\thJapaneseSyllabary = TX_HIRAGANA;",
+        "case_ids": ["InitTextFormat-0", "InitTextFormat-1"],
+    },
+}

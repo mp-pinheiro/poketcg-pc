@@ -25,8 +25,14 @@ PALETTE_SEED = {
 }
 
 CONTRACT = {
-    "InitMenuScreen": ("b", "c", "d", "e", "hl"),
-    "FlashWhiteScreen": ("a", "b", "c", "d", "e", "hl"),
+    "InitMenuScreen": {
+        "compare": (),
+        "preserve": (),
+    },
+    "FlashWhiteScreen": {
+        "compare": (),
+        "preserve": (),
+    },
 }
 
 CASES = {
@@ -44,32 +50,27 @@ CASES = {
     "FlashWhiteScreen": [
         {"wram": {R_LCDC: b"\x00", LCDC: b"\x00", H_BANK_SRAM: b"\x00", **PALETTE_SEED},
          "sram": {1: {SRAM_PALS: b"\x00" * 131}},
-         "oracle": False,
-         "why": "EnableLCD followed by DoFrameIfLCDEnabled exceeds the 240-frame oracle budget",
-         "expect": {H_BANK_SRAM: b"\x00", **PALETTE_SEED},
-         "expect_sram": {1: {SRAM_PALS: SRAM_PALETTE}},
-         "expect_regs": {"b": 0x00, "c": 0x10, "d": 0x93, "e": 0x80, "hl": 0x6CE8},
          "read": {H_BANK_SRAM: 1, BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 128, OBJ_PALS: 128},
          "sread": {1: {SRAM_PALS: 131}}},
         dict(POISON, wram={R_LCDC: b"\x00", LCDC: b"\x00", H_BANK_SRAM: b"\x03", **PALETTE_SEED},
              sram={1: {SRAM_PALS: b"\x55" * 131}, 3: {SRAM_PALS: b"\xaa" * 131}},
-             oracle=False,
-             why="EnableLCD followed by DoFrameIfLCDEnabled exceeds the 240-frame oracle budget",
-             expect={H_BANK_SRAM: b"\x03", **PALETTE_SEED},
-             expect_sram={1: {SRAM_PALS: SRAM_PALETTE}, 3: {SRAM_PALS: b"\xaa" * 131}},
-             expect_regs={"a": 0xAA, "b": 0x00, "c": 0x10, "d": 0x93, "e": 0x80, "hl": 0x6CE8},
              read={H_BANK_SRAM: 1, BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 128, OBJ_PALS: 128},
              sread={1: {SRAM_PALS: 131}, 3: {SRAM_PALS: 131}}),
         dict(POISON, wram={R_LCDC: b"\x80", LCDC: b"\x80", H_BANK_SRAM: b"\x02", **PALETTE_SEED},
              sram={1: {SRAM_PALS: b"\x11" * 131}, 2: {SRAM_PALS: b"\x22" * 131}},
-             oracle=False,
-             why="EnableLCD followed by DoFrameIfLCDEnabled does not return within the 240-frame oracle budget",
-             expect={H_BANK_SRAM: b"\x02", BGP: b"\x11", OBP0: b"\x22", OBP1: b"\x33",
-                     BG_PALS: bytes(range(128)), OBJ_PALS: bytes(range(64, 128)) + b"\x00" * 64},
-             expect_sram={1: {SRAM_PALS: SRAM_PALETTE}, 2: {SRAM_PALS: b"\x22" * 131}},
-             expect_regs={"a": 0xAA, "b": 0x00, "c": 0x10, "d": 0x93, "e": 0x80,
-                          "hl": 0x6CE8}),
+             read={H_BANK_SRAM: 1, BGP: 1, OBP0: 1, OBP1: 1,
+                   BG_PALS: 128, OBJ_PALS: 128},
+             sread={1: {SRAM_PALS: 131}, 2: {SRAM_PALS: 131}}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "InitMenuScreen": {
+        "source_symbol": "InitMenuScreen",
+        "before": "if (!(wLCDC & LCDC_ON)) {",
+        "after": "if ((wLCDC & LCDC_ON)) {",
+        "case_ids": ["InitMenuScreen-0", "InitMenuScreen-1", "InitMenuScreen-2"],
+    },
+}

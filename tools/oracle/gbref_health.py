@@ -150,6 +150,40 @@ def main() -> int:
                         for key, value in copy_expected.items() if key != "status")):
                 return unhealthy(f"copy-ret-anchors {label}", copy_expected, copy_actual)
 
+        setup_entry = PRE_RET_PC
+        ambush = {
+            "setup": [{
+                "entry": setup_entry,
+                "rom_bank": 7, "ram_bank": 3, "ram_enable": 1,
+                "a": 0xFF, "f": 0xF0, "b": 0xEE, "c": 0xDD,
+                "d": 0xCC, "e": 0xBB, "hl": 0xAA,
+            }],
+            **base,
+            "completion": "return",
+        }
+        parsed, diagnostic = run_runner(rom, ambush)
+        if parsed is None:
+            return unhealthy("top-level-keys", {"status": "REFERENCE_OK"}, diagnostic)
+        try:
+            tls_wram = bytes.fromhex(str(parsed.get("wram", "")))
+            tls_sram = bytes.fromhex(str(parsed.get("sram", "")))
+        except ValueError:
+            return unhealthy("top-level-keys", "hex state", parsed)
+        tls_trace = tls_wram[:len(TRACE_BYTES)]
+        if tls_trace != TRACE_BYTES:
+            return unhealthy("top-level-keys mapper", {"trace": TRACE_BYTES.hex()},
+                             {"trace": tls_trace.hex()})
+        tls_sram0 = tls_sram[SRAM_TRACE_ADDRESS - 0xA000:SRAM_TRACE_ADDRESS - 0xA000 + 1]
+        tls_sram3 = tls_sram[3 * 0x2000 + SRAM_TRACE_ADDRESS - 0xA000:
+                             3 * 0x2000 + SRAM_TRACE_ADDRESS - 0xA000 + 1]
+        expected_top_sram = {"sram0": f"{SRAM_BANK0_VALUE:02x}", "sram3": f"{SRAM_BANK3_VALUE:02x}"}
+        if tls_sram0.hex() != expected_top_sram["sram0"] or tls_sram3.hex() != expected_top_sram["sram3"]:
+            return unhealthy("top-level-keys sram", expected_top_sram,
+                             {"sram0": tls_sram0.hex(), "sram3": tls_sram3.hex()})
+        top_latches = {key: parsed.get(key) for key in expected_latches}
+        if top_latches != expected_latches:
+            return unhealthy("top-level-keys latches", expected_latches, top_latches)
+
         reset_animation, diagnostic = run_runner(
             REAL_ROM, {
                 "entry": RESET_ANIMATION_ENTRY, "instruction_budget": 1000,
@@ -200,7 +234,7 @@ def main() -> int:
             return unhealthy("native latches", expected_latches, native_latches)
 
     print("BACKEND_HEALTHY gbrt conformance=registers,calls,stack,wram,hram,pre-ret,"
-          "copy-ret-anchors,reset-animation,mbc5-rom,mbc5-ram,latches")
+          "copy-ret-anchors,top-level-keys,reset-animation,mbc5-rom,mbc5-ram,latches")
     return 0
 
 

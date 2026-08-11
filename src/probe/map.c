@@ -49,6 +49,7 @@ static void adapt_CopyGfxDataFromTempBank(ProbeState *s)
 	uint16_t de = (uint16_t)(s->d << 8 | s->e);
 
 	CopyGfxDataFromTempBank(&s->hl, &de, s->b, s->c);
+	s->b = 0;
 	s->d = (uint8_t)(de >> 8);
 	s->e = (uint8_t)de;
 	s->a = hBankROM;

@@ -20,8 +20,9 @@ EVIDENCE = frozenset({
 COMPLETIONS = frozenset({"return", "pre-ret", "event"})
 
 _CASE_KEYS = frozenset({
-    "id", "mapper", "registers", "bus", "seeds", "setup", "input_events",
-    "instruction_budget", "cycle_budget", "completion", "evidence",
+    "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "setup",
+    "input_events", "instruction_budget", "cycle_budget", "completion", "evidence",
+    "reason",
 })
 _MAPPER_KEYS = frozenset({
     "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode",
@@ -120,6 +121,63 @@ def _validate_seeds(seeds: Any) -> None:
                 _span_seeds(spans, f"seeds.{region}.{bank}")
         else:
             _span_seeds(value, f"seeds.{region}")
+def _validate_bus(value: Any) -> None:
+    entries = _mapping(value, "case.bus")
+    for address, size in entries.items():
+        address = _address(address, f"case.bus.{address}")
+        size = _integer(size, f"case.bus.{address}", minimum=1)
+        if address + size > 0x10000:
+            _fail(f"case.bus.{address}", "span exceeds address space")
+
+
+def _validate_state(value: Any) -> None:
+    state = _mapping(value, "case.state")
+    _check_unknown(state, frozenset({"wram", "sram", "vram", "palette"}), "case.state")
+    for region, entries in state.items():
+        if not isinstance(entries, list):
+            _fail(f"case.state.{region}", "must be an array")
+        width = 2 if region in {"wram", "palette"} else 3
+        for index, entry in enumerate(entries):
+            if not isinstance(entry, list) or len(entry) != width:
+                _fail(f"case.state.{region}[{index}]", f"must contain {width} integers")
+            offset = 0
+            if region in {"sram", "vram"}:
+                _integer(entry[0], f"case.state.{region}[{index}].bank", maximum=255)
+                offset = 1
+            maximum = 0x7F if region == "palette" else 0xFFFF
+            address = _integer(
+                entry[offset],
+                f"case.state.{region}[{index}].address",
+                maximum=maximum,
+            )
+            size = _integer(entry[offset + 1], f"case.state.{region}[{index}].size", minimum=1)
+            limit = 0x80 if region == "palette" else 0x10000
+            if address + size > limit:
+                _fail(f"case.state.{region}[{index}]", "span exceeds address space")
+
+
+def _validate_setup(value: Any) -> None:
+    if not isinstance(value, list):
+        _fail("case.setup", "must be an array")
+    allowed = frozenset({"fn", "a", "f", "b", "c", "d", "e", "hl"})
+    for index, item in enumerate(value):
+        item = _mapping(item, f"case.setup[{index}]")
+        _check_unknown(item, allowed, f"case.setup[{index}]")
+        if not isinstance(item.get("fn"), str) or not item["fn"].strip():
+            _fail(f"case.setup[{index}].fn", "must be a non-empty string")
+        for name, register in item.items():
+            if name != "fn":
+                _integer(register, f"case.setup[{index}].{name}", maximum=0xFFFF if name == "hl" else 255)
+
+
+def _validate_input_events(value: Any) -> None:
+    if not isinstance(value, list):
+        _fail("case.input_events", "must be an array")
+    for index, event in enumerate(value):
+        event = _mapping(event, f"case.input_events[{index}]")
+        if set(event) != {"keys"}:
+            _fail(f"case.input_events[{index}]", "must contain exactly the keys field")
+        _integer(event["keys"], f"case.input_events[{index}].keys", maximum=255)
 def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Mapping[str, Any]:
     """Validate one schema-2 case and return it unchanged.
 
@@ -133,6 +191,8 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _fail("case.id", "must be a non-empty string")
     if case_id is not None and declared_id != case_id:
         _fail("case.id", f"does not match registry id {case_id!r}")
+    if case.get("hardware") not in {"dmg", "cgb"}:
+        _fail("case.hardware", "must be dmg or cgb")
 
     mapper = _mapping(case.get("mapper"), "case.mapper")
     _check_unknown(mapper, _MAPPER_KEYS, "case.mapper")
@@ -151,12 +211,12 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _integer(value, f"case.registers.{name}", maximum=0xFFFF if name in {"hl", "sp"} else 255)
 
     if "bus" in case:
-        _span_seeds(case["bus"], "case.bus")
+        _validate_bus(case["bus"])
     _validate_seeds(case.get("seeds", {}))
-    if not isinstance(case.get("setup", []), list):
-        _fail("case.setup", "must be an array")
-    if not isinstance(case.get("input_events", []), list):
-        _fail("case.input_events", "must be an array")
+    if "state" in case:
+        _validate_state(case["state"])
+    _validate_setup(case.get("setup", []))
+    _validate_input_events(case.get("input_events", []))
     _integer(case.get("instruction_budget"), "case.instruction_budget", minimum=1)
     _integer(case.get("cycle_budget"), "case.cycle_budget", minimum=1)
 
@@ -170,10 +230,12 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _integer(completion.get("pc"), "case.completion.pc", maximum=0xFFFF)
     elif mode == "event" and (not isinstance(completion.get("predicate"), str) or not completion["predicate"].strip()):
         _fail("case.completion.predicate", "must be a non-empty string")
-
     evidence = case.get("evidence")
     if evidence not in EVIDENCE:
         _fail("case.evidence", "must be one of the declared evidence kinds")
+    if "reason" in case:
+        if evidence == "primary" or not isinstance(case["reason"], str) or not case["reason"].strip():
+            _fail("case.reason", "must be a non-empty string on a non-primary case")
     return case
 
 

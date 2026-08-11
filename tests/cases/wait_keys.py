@@ -5,7 +5,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "WaitUntilKeysArePressed": ("a", "f", "b", "c", "d", "e", "hl"),
+    "WaitUntilKeysArePressed": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
 }
 
 CASES = {
@@ -34,3 +37,15 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+
+MUTATIONS = {
+    "WaitUntilKeysArePressed": {
+        "source_symbol": "WaitUntilKeysArePressed",
+        "before": "if (pressed != 0)",
+        "after": "if (pressed == 0)",
+        "case_ids": ["WaitUntilKeysArePressed-0", "WaitUntilKeysArePressed-1",
+                      "WaitUntilKeysArePressed-2", "WaitUntilKeysArePressed-3",
+                      "WaitUntilKeysArePressed-4"],
+    },
+}

@@ -14,8 +14,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 SREAD_LEN = 3280
 
 CONTRACT = {
-    "Func_37c5": ("a", "d", "e", "hl"),
-    "Func_37a5": ("a", "f", "d", "e", "hl"),
+    "Func_37c5": {"compare": ("a", "d", "e", "hl"), "preserve": ()},
+    "Func_37a5": {"compare": ("a", "f", "d", "e", "hl"), "preserve": ("f",)},
 }
 
 CASES = {
@@ -52,15 +52,15 @@ CASES = {
 wCurSongID = 0xDD80
 
 CONTRACT.update({
-    "SetupSound": (),
-    "StopMusic": ("hl",),
-    "PlaySong": ("hl",),
-    "AssertSongFinished": ("a",),
-    "AssertSFXFinished": ("a",),
-    "PlaySFX_InvalidChoice": ("b", "c", "hl"),
-    "PlaySFX": ("b", "c", "hl"),
-    "PauseSong": (),
-    "ResumeSong": (),
+    "SetupSound": {"compare": (), "preserve": ()},
+    "StopMusic": {"compare": ("hl",), "preserve": ("hl",)},
+    "PlaySong": {"compare": ("hl",), "preserve": ("hl",)},
+    "AssertSongFinished": {"compare": ("a",), "preserve": ()},
+    "AssertSFXFinished": {"compare": ("a",), "preserve": ()},
+    "PlaySFX_InvalidChoice": {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")},
+    "PlaySFX": {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")},
+    "PauseSong": {"compare": (), "preserve": ()},
+    "ResumeSong": {"compare": (), "preserve": ()},
 })
 
 CASES.update({
@@ -103,3 +103,12 @@ CASES.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "Func_37c5": {
+        "source_symbol": "Func_37c5",
+        "before": "for (uint8_t outer = 0; outer < 8; outer++)",
+        "after": "for (uint8_t outer = 0; outer < 7; outer++)",
+        "case_ids": ["Func_37c5-0", "Func_37c5-1", "Func_37c5-2", "Func_37c5-3"],
+    },
+}

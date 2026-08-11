@@ -10,20 +10,14 @@ wPrinterStatus = 0xCE6F
 wSerialDataPtr = 0xCE70
 rSC = 0xFF02
 rIE = 0xFFFF
+rSB = 0xFF01
 
 CONTRACT = {
-    "SendNextPrinterPacketByte": ("b", "c", "d", "e"),
+    "SendNextPrinterPacketByte": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")},
     "SendByteThroughSerialData": ("b", "c", "d", "e", "hl"),
-    "ExecutePrinterPacketSequence": ("a", "b", "c", "d", "e"),
+    "ExecutePrinterPacketSequence": {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c")},
 }
 
-# pyboy's serial model hardcodes SB ($FF01) to always read back $FF
-# ("Always 0xFF for a disconnected link cable", pyboy/core/serial.py), for
-# both real ROM writes and case seeds -- confirmed empirically via
-# ResetSerial's unconditional `xor a / ldh [rSB],a` still reading back $FF
-# on the oracle. rSB is therefore never diffed via `read`, and any handler
-# that reads rSB as data (.GetDeviceNumber, .GetStatusAndFinishSequence)
-# always sees exactly $FF, never a seeded value.
 
 CASES = {
     "SendNextPrinterPacketByte": [
@@ -86,15 +80,32 @@ CASES = {
          "read": {wPrinterPacketSequence: 1}},
         {"a": 10, "d": 0xDD, "e": 0xEE, "wram": {wPrinterPacketSequence: b"\x0A"},
          "read": {wPrinterPacketSequence: 1}},
-        # a==11: rSB always reads $FF, so wSerialTransferData captures $FF.
-        {"a": 11, "d": 0xDD, "e": 0xEE, "wram": {wPrinterPacketSequence: b"\x0B"},
-         "setup": [{"fn": "SendByteThroughSerialData", "a": 0xFF}],
+        {"a": 11, "d": 0xDD, "e": 0xEE, "wram": {rSB: b"\xFF", wPrinterPacketSequence: b"\x0B"},
          "read": {wPrinterPacketSequence: 1, wSerialTransferData: 1}},
-        # a==12: same rSB==$FF capture, into wPrinterStatus this time.
-        {"a": 12, "d": 0xDD, "e": 0xEE, "wram": {wPrinterPacketSequence: b"\x0C"},
-         "setup": [{"fn": "SendByteThroughSerialData", "a": 0xFF}],
+        {"a": 12, "d": 0xDD, "e": 0xEE, "wram": {rSB: b"\xFF", wPrinterPacketSequence: b"\x0C"},
          "read": {wPrinterPacketSequence: 1, wPrinterStatus: 1}},
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SendByteThroughSerialData": {
+        "source_symbol": "SendByteThroughSerialData",
+        "before": "\tgb_write8(rSB, a);",
+        "after": "\tgb_write8(rSB, (uint8_t)(a ^ 1u));",
+        "case_ids": ["SendByteThroughSerialData-0", "SendByteThroughSerialData-1", "SendByteThroughSerialData-2"],
+    },
+    "ExecutePrinterPacketSequence": {
+        "source_symbol": "ExecutePrinterPacketSequence",
+        "before": "\t\tgb_write8(wSerialTransferData_ADDR, gb_read8(rSB));",
+        "after": "\t\tgb_write8(wSerialTransferData_ADDR, (uint8_t)(gb_read8(rSB) ^ 0xFFu));",
+        "case_ids": [
+            "ExecutePrinterPacketSequence-0", "ExecutePrinterPacketSequence-1",
+            "ExecutePrinterPacketSequence-2", "ExecutePrinterPacketSequence-3",
+            "ExecutePrinterPacketSequence-4", "ExecutePrinterPacketSequence-5",
+            "ExecutePrinterPacketSequence-6", "ExecutePrinterPacketSequence-7",
+            "ExecutePrinterPacketSequence-8", "ExecutePrinterPacketSequence-9",
+        ],
+    },
+}

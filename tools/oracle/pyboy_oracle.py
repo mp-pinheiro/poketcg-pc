@@ -19,6 +19,7 @@ on a `jr -2` spin so the remainder of the frame cannot disturb the snapshot.
 
 from __future__ import annotations
 
+import io
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -49,6 +50,7 @@ MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
 # hKeysHeld bit order (src/constants/hardware.inc): bit0 A, 1 B, 2 SELECT, 3 START,
 # 4 RIGHT, 5 LEFT, 6 UP, 7 DOWN.
 BUTTONS = ("a", "b", "select", "start", "right", "left", "up", "down")
+
 
 
 def _read_bank(pb: PyBoy, bank: int, base: int, end: int) -> bytes:
@@ -99,7 +101,14 @@ class Result:
             return self.hram[off:off + n]
         if IO_BASE <= addr and addr + n <= IO_END:
             off = addr - IO_BASE
-            return self.io[off:off + n]
+            data = bytearray(self.io[off:off + n])
+            for i in range(n):
+                io_addr = addr + i
+                if io_addr == 0xFF02:
+                    data[i] |= 0x7C
+                elif io_addr == 0xFF0F:
+                    data[i] |= 0xE0
+            return bytes(data)
         if SRAM_BASE <= addr and addr + n <= SRAM_END:
             off = addr - SRAM_BASE
             if bank is not None:
@@ -130,6 +139,10 @@ class Oracle:
             log_level="CRITICAL",
         )
         self._hit: Result | None = None
+        self._armed_addr: int | None = None
+        self._baseline = io.BytesIO()
+        self._reset_ram()
+        self.pyboy.save_state(self._baseline)
 
     def close(self) -> None:
         self.pyboy.stop(save=False)
@@ -158,21 +171,23 @@ class Oracle:
         )
         rf.PC = SPIN
 
-    def _arm(self) -> None:
-        # The hook is keyed on the opcode saved at registration time, and firing
-        # removes the breakpoint. Re-arming from a known byte keeps that key stable.
-        try:
-            self.pyboy.hook_deregister(0, SENTINEL)
-        except ValueError:
-            pass
-        self.pyboy.memory[SENTINEL] = 0x00
-        self.pyboy.hook_register(0, SENTINEL, self._capture, None)
+    def _arm(self, addr: int = SENTINEL) -> None:
+        if self._armed_addr is not None:
+            try:
+                self.pyboy.hook_deregister(0, self._armed_addr)
+            except (ValueError, KeyError):
+                pass
+        if addr == SENTINEL:
+            self.pyboy.memory[SENTINEL] = 0x00
+        self.pyboy.hook_register(0, addr, self._capture, None)
+        self._armed_addr = addr
 
     def _reset_ram(self) -> None:
         pb = self.pyboy
         pb.memory[WRAM_BASE:WRAM_END] = [0] * (WRAM_END - WRAM_BASE)
         pb.memory[HRAM_BASE:HRAM_END] = [0] * (HRAM_END - HRAM_BASE)
         pb.memory[0xFF0F] = 0  # IF
+        pb.memory[0xFFFF] = 0x00
         pb.memory[0xFF50] = 0x11  # unmap the boot ROM
         # One Oracle instance serves the whole run; the banked setter writes
         # rambanks[bank, x] directly (bypassing RAMG), so every bank is cleared
@@ -192,14 +207,24 @@ class Oracle:
         pb.memory[0x3000] = 0x00  # ROM bank high
         pb.memory[0x4000] = 0x00  # SRAM bank
 
-    def _run(self, symbol: str, regs: dict) -> Result:
-        """Drive one routine to the sentinel, leaving RAM exactly as it lands."""
+    _VBLANK_HALT = 0x0270
+    _VBLANK_NOP = 0x0271
+    _WVBLANK_COUNTER = 0xCAB8
+
+    def _service_vblank(self, _ctx) -> None:
+        pb = self.pyboy
+        pb.memory[self._WVBLANK_COUNTER] = (pb.memory[self._WVBLANK_COUNTER] + 1) & 0xFF
+        self.pyboy.register_file.PC = self._VBLANK_NOP
+
+    def _run(self, symbol: str, regs: dict, stop_pc: int | None = None) -> Result:
+        """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
 
         if fn_bank != 0:
             pb.memory[0x2000] = fn_bank & 0xFF
             pb.memory[0x3000] = (fn_bank >> 8) & 1
+            pb.memory[0xFF80] = fn_bank & 0xFF
         pb.memory[SPIN] = 0x18  # jr
         pb.memory[SPIN + 1] = 0xFE  # -2
         pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
@@ -217,21 +242,36 @@ class Oracle:
         rf.HL = regs.get("hl", 0)
 
         self._hit = None
-        self._arm()
+        self._arm(SENTINEL if stop_pc is None else stop_pc)
+        try:
+            pb.hook_deregister(0, self._VBLANK_HALT)
+        except (ValueError, KeyError):
+            pass
+        pb.hook_register(0, self._VBLANK_HALT, self._service_vblank, None)
         for _ in range(MAX_FRAMES):
             pb.tick(1, False, False)
             if self._hit is not None:
+                try:
+                    pb.hook_deregister(0, self._VBLANK_HALT)
+                except (ValueError, KeyError):
+                    pass
                 return self._hit
+        try:
+            pb.hook_deregister(0, self._VBLANK_HALT)
+        except (ValueError, KeyError):
+            pass
         raise OracleError(f"{symbol} did not return within {MAX_FRAMES} frames")
-
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
              wram: dict[int, bytes] | None = None,
              sram: dict[int, dict[int, bytes]] | None = None,
              ramg: bool | None = None,
              setup: list[dict] | None = None,
-             keys: int = 0) -> Result:
+             keys: int = 0,
+             stop_pc: int | None = None) -> Result:
         pb = self.pyboy
+        self._baseline.seek(0)
+        pb.load_state(self._baseline)
 
         # Release every button before pressing the held ones, so a case's `keys`
         # never inherits state left by a previous call. `no_input=True` (set in
@@ -275,4 +315,8 @@ class Oracle:
         # Banked (non-home) routines run out of the $4000-$7FFF window; select the ROM
         # bank exactly as a farcall would, after _reset_ram's power-on bank=1 and before
         # jumping in. Home-bank (0) routines already sit in the always-mapped $0000-$3FFF.
-        return self._run(symbol, {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl})
+        return self._run(
+            symbol,
+            {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl},
+            stop_pc,
+        )

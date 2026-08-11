@@ -274,7 +274,7 @@ ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 		if (key == e && gb_read8((uint16_t)(0xc700u + i)) == d) break;
 		i = gb_read8((uint16_t)(0xc800u + i));
 	}
-	/* Already the head: `cp l` leaves Z, and the relink is skipped. */
+	/* `cp l` leaves N set on a hit; `scf` sets C, clears N/H, leaves Z. */
 	if (hffa9 == i)
 		return text_result(i, d, e, 0x90, 0);
 
@@ -289,10 +289,10 @@ ProcessTextResult Func_235e(uint8_t d, uint8_t e)
 	gb_write8((uint16_t)(0xc800u + prev), next);
 	if (next)
 		gb_write8((uint16_t)(0xc900u + next), prev);
-	/* `ld a, c` puts the OLD head back in a before the exit -- the trailing comment
-	 * in the asm claims the new one. `inc c / dec c` sets Z from next[i], and the
-	 * following `scf` leaves it alone. */
-	return text_result(old, d, e, (uint8_t)(0x10 | (next ? 0 : 0x80)), 0);
+	/* `inc c / dec c` leaves N set; `scf` sets C, clears N/H, leaves Z.
+	 * Z is set only when next == 0 (the inc/dec pair returns to zero). */
+	uint8_t f = (uint8_t)(0x10 | (next ? 0 : 0x80));
+	return text_result(old, d, e, f, 0);
 }
 
 ProcessTextResult Func_2325(uint8_t d, uint8_t e)

@@ -16,28 +16,28 @@ VBLANK = 0xCAB8
 WD317 = 0xD317
 
 CONTRACT = {
-    "LoadConsolePaletteData": ("b", "c", "d", "e", "hl"),
-    "FadeScreenToWhite": (),
-    "FadeScreenFromWhite.BackupPalsAndSetWhite": (),
-    "SetWhitePalettes": (),
-    "Func_10d17": (),
-    "Func_10d50": (),
-    "FadeScreenFromWhite": ("a",),
-    "FadeScreenToTempPals": ("a",),
-    "RestoreFirstColorInOBPals": ("b",),
-    "FadeDMGPalettes": ("b", "c"),
-    "FadeDMGPalettes.CalculateMixPalette": ("a", "b", "c", "d", "e", "hl"),
-    "FadeDMGPalettes.GetMixShadeValue": ("a", "b", "c", "d", "e", "hl"),
-    "FadeOBPalIntoTemp": ("b", "c"),
-    "FadeBGPalIntoTemp1": ("b", "c"),
-    "FadeBGPalIntoTemp2": ("b", "c"),
-    "FadeBGPalIntoTemp3": ("b", "c"),
-    "FadePalIntoAnother.GetFadedColor": ("a", "c", "d", "e", "hl"),
-    "FadePalIntoAnother.FadeColor": ("a", "b", "c", "d", "e", "hl"),
-    "FlashScreenToWhite": ("f",),
-    "CopyPalsToSRAMBuffer": ("f",),
-    "LoadPalsFromSRAMBuffer": ("f",),
-    "Func_10d74": ("b",),
+    "LoadConsolePaletteData": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "FadeScreenToWhite": {"compare": (), "preserve": ()},
+    "FadeScreenFromWhite.BackupPalsAndSetWhite": {"compare": (), "preserve": ()},
+    "SetWhitePalettes": {"compare": (), "preserve": ()},
+    "Func_10d17": {"compare": (), "preserve": ()},
+    "Func_10d50": {"compare": (), "preserve": ()},
+    "FadeScreenFromWhite": {"compare": ("a",), "preserve": ()},
+    "FadeScreenToTempPals": {"compare": ("a",), "preserve": ()},
+    "RestoreFirstColorInOBPals": {"compare": ("b",), "preserve": ("b",)},
+    "FadeDMGPalettes": {"compare": ("b", "c"), "preserve": ("b", "c")},
+    "FadeDMGPalettes.CalculateMixPalette": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "FadeDMGPalettes.GetMixShadeValue": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "FadeOBPalIntoTemp": {"compare": ("b", "c"), "preserve": ("b", "c")},
+    "FadeBGPalIntoTemp1": {"compare": ("b", "c"), "preserve": ("b", "c")},
+    "FadeBGPalIntoTemp2": {"compare": ("b", "c"), "preserve": ("b", "c")},
+    "FadeBGPalIntoTemp3": {"compare": ("b", "c"), "preserve": ("b", "c")},
+    "FadePalIntoAnother.GetFadedColor": {"compare": ("a", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")},
+    "FadePalIntoAnother.FadeColor": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "FlashScreenToWhite": {"compare": ("f",), "preserve": ()},
+    "CopyPalsToSRAMBuffer": {"compare": ("f",), "preserve": ()},
+    "LoadPalsFromSRAMBuffer": {"compare": ("f",), "preserve": ()},
+    "Func_10d74": {"compare": ("b",), "preserve": ("b",)},
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -87,28 +87,28 @@ CASES = {
         dict(POISON, wram={CONSOLE: b"\x1C", **PALETTE_SEED}, read={TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1, TEMP_BG_PALS: 128, WD317: 1}),
     ],
     "FadeScreenFromWhite": [
-        {"wram": {LCDC: b"\x00", VBLANK: b"\xFE"}, "oracle": False,
-         "why": "EnableLCD enters dissolved VBlank context",
-         "expect": {LCDC: b"\x80", RLCDC: b"\x80", VBLANK: b"\x06", BGP: b"\x00", OBP0: b"\x00", OBP1: b"\x00", BG_PALS: bytes(64), OBJ_PALS: bytes(64), TEMP_BGP: b"\x00", TEMP_OBP0: b"\x00", TEMP_OBP1: b"\x00", TEMP_BG_PALS: bytes(64), TEMP_OBJ_PALS: bytes(64)},
-         "expect_regs": {"a": 8},
-         "read": {LCDC: 1, RLCDC: 1, VBLANK: 1, BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64, TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}},
-        dict(POISON, wram={LCDC: b"\x00", VBLANK: b"\xFE"}, oracle=False,
-             why="EnableLCD enters dissolved VBlank context",
-             expect={LCDC: b"\x80", RLCDC: b"\x80", VBLANK: b"\x06", BGP: b"\x00", OBP0: b"\x00", OBP1: b"\x00", BG_PALS: bytes(64), OBJ_PALS: bytes(64), TEMP_BGP: b"\x00", TEMP_OBP0: b"\x00", TEMP_OBP1: b"\x00", TEMP_BG_PALS: bytes(64), TEMP_OBJ_PALS: bytes(64)},
-             expect_regs={"a": 8},
-             read={LCDC: 1, RLCDC: 1, VBLANK: 1, BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64, TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}),
+        {"wram": {LCDC: b"\x00", VBLANK: b"\xFE"},
+         "instruction_budget": 1000000, "cycle_budget": 4000000,
+         "read": {LCDC: 1, RLCDC: 1, VBLANK: 1, BGP: 1, OBP0: 1, OBP1: 1,
+                  BG_PALS: 64, OBJ_PALS: 64, TEMP_BGP: 1, TEMP_OBP0: 1,
+                  TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}},
+        dict(POISON, wram={LCDC: b"\x00", VBLANK: b"\xFE"},
+             instruction_budget=1000000, cycle_budget=4000000,
+             read={LCDC: 1, RLCDC: 1, VBLANK: 1, BGP: 1, OBP0: 1, OBP1: 1,
+                   BG_PALS: 64, OBJ_PALS: 64, TEMP_BGP: 1, TEMP_OBP0: 1,
+                   TEMP_OBP1: 1, TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}),
     ],
     "FadeScreenToTempPals": [
-        {"wram": {LCDC: b"\x00", **PALETTE_SEED}, "read": {BGP: 3, BG_PALS: 64, OBJ_PALS: 64}},
-        dict(POISON, wram={LCDC: b"\x00", **PALETTE_SEED}, read={BGP: 3, BG_PALS: 64, OBJ_PALS: 64}),
+        {"wram": {LCDC: b"\x00", **PALETTE_SEED},
+         "read": {BGP: 3, BG_PALS: 64, OBJ_PALS: 64}},
+        dict(POISON, wram={LCDC: b"\x00", **PALETTE_SEED},
+             read={BGP: 3, BG_PALS: 64, OBJ_PALS: 64}),
         {"wram": {LCDC: b"\x80", RLCDC: b"\x80", VBLANK: b"\xFE", **PALETTE_SEED,
                   BG_PALS: bytes([0x42] * 64), TEMP_BG_PALS: bytes([0x42] * 64),
-                  OBJ_PALS: bytes([0x18] * 64), TEMP_OBJ_PALS: bytes([0x18] * 64)}, "oracle": False,
-         "why": "LCD-on path dissolves VBlank context",
-         "expect": {VBLANK: b"\x06", LCDC: b"\x80", RLCDC: b"\x80",
-                    BG_PALS: bytes([0x42] * 64), TEMP_BG_PALS: bytes([0x42] * 64),
-                    OBJ_PALS: bytes([0x18] * 64), TEMP_OBJ_PALS: bytes([0x18] * 64)},
-         "expect_regs": {"a": 8}, "read": {VBLANK: 1, LCDC: 1, RLCDC: 1, BG_PALS: 64, TEMP_BG_PALS: 64, OBJ_PALS: 64, TEMP_OBJ_PALS: 64}},
+                  OBJ_PALS: bytes([0x18] * 64), TEMP_OBJ_PALS: bytes([0x18] * 64)},
+         "instruction_budget": 1000000, "cycle_budget": 4000000,
+         "read": {VBLANK: 1, LCDC: 1, RLCDC: 1, BG_PALS: 64,
+                  TEMP_BG_PALS: 64, OBJ_PALS: 64, TEMP_OBJ_PALS: 64}},
     ],
     "RestoreFirstColorInOBPals": [
         {"wram": {OBJ_PALS: bytes([0x10, 0x11, 0x20, 0x21, 0x30, 0x31, 0x40, 0x41] * 8), TEMP_OBJ_PALS: bytes(range(128))}, "read": {OBJ_PALS: 16}},
@@ -195,5 +195,18 @@ CASES = {
     ],
 }
 
+MUTATIONS = {
+    "LoadConsolePaletteData": {
+        "source_symbol": "LoadConsolePaletteData",
+        "before": "gb_write8(wConsolePaletteData_ADDR, 0);",
+        "after": "gb_write8(wConsolePaletteData_ADDR, 0xFF);",
+        "case_ids": ["LoadConsolePaletteData-0", "LoadConsolePaletteData-1"],
+    },
+}
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+FADE_EVENTS = [{"keys": 0}]
+for _i, _rec in enumerate(SCHEMA2_CASES["FadeScreenFromWhite"]):
+    _rec["input_events"] = list(FADE_EVENTS)

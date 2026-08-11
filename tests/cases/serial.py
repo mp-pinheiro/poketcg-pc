@@ -25,26 +25,26 @@ rIF = 0xFF0F
 rIE = 0xFFFF
 
 CONTRACT = {
-    "SerialTimerHandler": ("b", "c", "d", "e"),
-    "Func_0cc5": ("a", "b", "c", "d", "e", "f"),
-    "SerialHandler": ("a", "b", "c", "d", "e", "f", "hl"),
-    "SerialHandleRecv": ("a", "b", "c", "d", "e", "hl"),
-    "SerialHandleSend": ("a", "b", "c", "d", "e", "hl"),
-    "SerialSendByte": ("a", "b", "c", "d", "e", "f", "hl"),
-    "Func_0e32": ("a", "b", "c", "d", "e", "f", "hl"),
-    "SerialRecvByte": ("a", "b", "c", "d", "e", "f", "hl"),
-    "SerialExchangeBytes": ("a", "b", "c", "d", "e", "f", "hl"),
-    "Func_0e8e": ("a", "d", "e"),
-    "ResetSerial": ("d", "e"),
-    "ClearSerialData": ("d", "e"),
-    "SerialSendBytes": ("a", "b", "c", "d", "e", "f", "hl"),
-    "SerialRecvBytes": ("a", "b", "c", "d", "e", "f", "hl"),
+    "SerialTimerHandler": {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")},
+    "Func_0cc5": {"compare": ("a", "b", "c", "d", "e", "f"), "preserve": ("d",)},
+    "SerialHandler": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "f", "hl")},
+    "SerialHandleRecv": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
+    "SerialHandleSend": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
+    "SerialSendByte": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")},
+    "Func_0e32": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "SerialRecvByte": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "SerialExchangeBytes": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()},
+    "Func_0e8e": {"compare": ("a", "d", "e"), "preserve": ("d", "e")},
+    "ResetSerial": {"compare": ("d", "e"), "preserve": ("d", "e")},
+    "ClearSerialData": {"compare": ("d", "e"), "preserve": ("d", "e")},
+    "SerialSendBytes": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")},
+    "SerialRecvBytes": {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e")},
 }
 
 CASES = {
     # Opcode 0 is neither $29 nor $12: pure early return, nothing touched.
     "SerialTimerHandler": [
-        {"wram": {wSerialOp: b"\x00"},
+        {"wram": {wSerialOp: b"\x00", rSC: b"\x00"},
          "read": {wSerialOp: 1, wSerialFlags: 1, wSerialTimeoutCounter: 1, rSC: 1}},
         # Begin a transfer: internal clock, then start. rSC lands at $81.
         {"wram": {wSerialOp: b"\x29", rSC: b"\x00"},
@@ -305,3 +305,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SerialTimerHandler": {
+        "source_symbol": "SerialTimerHandler",
+        "before": "if (op == 0x29u)",
+        "after":  "if (op == 0x28u)",
+        "case_ids": ["SerialTimerHandler-0", "SerialTimerHandler-1", "SerialTimerHandler-2", "SerialTimerHandler-3", "SerialTimerHandler-4", "SerialTimerHandler-5", "SerialTimerHandler-6"],
+    },
+}

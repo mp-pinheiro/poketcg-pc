@@ -201,6 +201,7 @@ void WriteDataToBackup(uint16_t hl, uint16_t bc)
 	uint8_t saved = hBankSRAM;
 	uint32_t n = bc ? bc : 0x10000u;
 
+	EnableSRAM();
 	while (n--) {
 		uint8_t v;
 
@@ -221,6 +222,7 @@ void LoadDataFromBackup(uint16_t hl, uint16_t bc)
 	uint8_t saved = hBankSRAM;
 	uint32_t n = bc ? bc : 0x10000u;
 
+	EnableSRAM();
 	while (n--) {
 		uint8_t v;
 

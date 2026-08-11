@@ -3,8 +3,8 @@
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "SFX_PlaySFX": (),
-    "SFX_UpdateSFX": (),
+    "SFX_PlaySFX": {"compare": (), "preserve": ()},
+    "SFX_UpdateSFX": {"compare": (), "preserve": ()},
 }
 
 CASES = {
@@ -49,3 +49,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SFX_PlaySFX": {
+        "source_symbol": "SFX_PlaySFX",
+        "before": "if (sfx_id >= max_sfx)",
+        "after":  "if (sfx_id > max_sfx)",
+        "case_ids": ["SFX_PlaySFX-0", "SFX_PlaySFX-1", "SFX_PlaySFX-2", "SFX_PlaySFX-3"],
+    },
+}

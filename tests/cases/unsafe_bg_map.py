@@ -7,7 +7,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "UnsafeWriteDataBlockToBGMap0": ("d", "e", "hl"),
+    "UnsafeWriteDataBlockToBGMap0": {"compare": ("d", "e", "hl"), "preserve": ()},
 }
 
 
@@ -28,3 +28,15 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+
+MUTATIONS = {
+    "UnsafeWriteDataBlockToBGMap0": {
+        "source_symbol": "UnsafeWriteDataBlockToBGMap0",
+        "before": "if (a)",
+        "after": "if (!a)",
+        "case_ids": ["UnsafeWriteDataBlockToBGMap0-0",
+                      "UnsafeWriteDataBlockToBGMap0-1",
+                      "UnsafeWriteDataBlockToBGMap0-2"],
+    },
+}

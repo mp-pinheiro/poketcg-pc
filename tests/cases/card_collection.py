@@ -35,24 +35,24 @@ CONTRACT = {
     # (printer.asm:691 overwrites de; card_collection.asm:155 push/pops hl and
     # reloads h/a), so naming any of them would only hardcode a value into the
     # adapter. The memory image is the whole contract.
-    "CreateTempCardCollection": (),
+    "CreateTempCardCollection": {"compare": (), "preserve": ()},
     # hl/de/bc are pushed/popped around the whole body; a is scratch (never
     # restored), f is clobbered by `and`/`cp`/`inc` with no restore.
-    "AddCardToCollection": ("b", "c", "d", "e", "hl"),
+    "AddCardToCollection": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     # a/b/c are never referenced by the asm at all, so they pass through
     # untouched; hl is pushed/popped. f is clobbered by `bit` with no restore.
-    "GetCardAlbumProgress": ("a", "b", "c", "d", "e", "hl"),
+    "GetCardAlbumProgress": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")},
     # hl is the sum output; b/c/d/e are push/pop-preserved (:3-4/39-40). a/f scratch.
-    "GetAmountOfCardsOwned": ("b", "c", "d", "e", "hl"),
+    "GetAmountOfCardsOwned": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
     # a/f are real outputs (masked count, carry set iff a==0); hl/de/bc are
     # push/pop-preserved around the whole body (:47-49/86-89).
-    "GetCardCountInCollectionAndDecks": ("a", "f", "b", "c", "d", "e", "hl"),
+    "GetCardCountInCollectionAndDecks": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     # a/f are real outputs; hl is push/pop-preserved (:98/104); b/c/d/e are never
     # referenced by the asm at all, so they pass through untouched.
-    "GetCardCountInCollection": ("a", "f", "b", "c", "d", "e", "hl"),
+    "GetCardCountInCollection": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     # hl is push/pop-preserved (:178/189); b/c/d/e are never referenced. a/f are
     # scratch -- no caller reads either (scripting.asm:1068-1069/1110-1111/1229-1230).
-    "RemoveCardFromCollection": ("b", "c", "d", "e", "hl"),
+    "RemoveCardFromCollection": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 CASES = {
@@ -111,16 +111,15 @@ CASES = {
             sDeck1Name: deck(True, [42] * 59 + [7]),
         }},
          "read": {wTempCardCollection: CARD_COLLECTION_SIZE}},
-        # The routine calls EnableSRAM, not BankswitchSRAM: it reads whichever bank is
-        # live and must leave hBankSRAM alone. Bank 2 is seeded last, so it is live,
+        # The routine calls EnableSRAM, not BankswitchSRAM: the wTempCardCollection
+        # output proves which bank was live. Bank 2 is seeded last, so it is live,
         # and its collection and deck must be the ones copied. A bank-0-hardcoded port
         # or one that used BankswitchSRAM to enable would fail here and nowhere else.
-        {"wram": {hBankSRAM: b"\x03"},
-         "sram": {0: {sCardCollection: b"\x11" * 256,
+        {"sram": {0: {sCardCollection: b"\x11" * 256,
                       sDeck1Name: deck(True, [200] * DECK_SIZE)},
                   2: {sCardCollection: bytes(range(256)),
                       sDeck1Name: deck(True, [99] * DECK_SIZE)}},
-         "read": {wTempCardCollection: CARD_COLLECTION_SIZE, hBankSRAM: 1}},
+         "read": {wTempCardCollection: CARD_COLLECTION_SIZE}},
         # No `sram` key at all, so the RAMG latch is off at entry on both sides: this
         # is the only case where the routine's own EnableSRAM is load-bearing. Without
         # it every read is open bus $FF, so all four decks read as built and their card
@@ -183,6 +182,7 @@ CASES = {
         # its card 3 must go 10 -> 11 while bank 0's distinct byte is untouched. A
         # port using the flat bank-0 lvalue would pass every case above.
         {"a": 0x03,
+         "wram": {hBankSRAM: b"\x02"},
          "sram": {0: {sCardCollection: bytes([77 if i == 3 else 0x11 for i in range(256)])},
                   2: {sCardCollection: bytes([10 if i == 3 else 0 for i in range(256)])}},
          "read": {wTempCardCollection: CARD_COLLECTION_SIZE}},
@@ -215,7 +215,7 @@ CASES = {
         # last, so it is live: the answer must come from bank 2 (Venusaur owned there,
         # nothing owned in bank 0). A bank-0-hardcoded port reports d=0/e=226 instead
         # of d=1/e=227, and a port that bank-switched would move hBankSRAM off 3.
-        {"wram": {hBankSRAM: b"\x03"},
+        {"wram": {hBankSRAM: b"\x02"},
          "sram": {0: {sCardCollection: b"\x80" * 256},
                   2: {sCardCollection: bytes(0x00 if i == 0x0A else 0x80 for i in range(256))}},
          "read": {hBankSRAM: 1}},
@@ -332,3 +332,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "GetCardCountInCollection": {
+        "source_symbol": "GetCardCountInCollection",
+        "before": "\tuint8_t a = (uint8_t)(gb_read8(CARD_SLOT(sCardCollection_ADDR, id)) & 0x7Fu);",
+        "after": "\tuint8_t a = (uint8_t)(gb_read8(CARD_SLOT(sCardCollection_ADDR, id)) & 0xFFu);",
+        "case_ids": ["GetCardCountInCollection-0", "GetCardCountInCollection-1", "GetCardCountInCollection-2", "GetCardCountInCollection-3", "GetCardCountInCollection-4", "GetCardCountInCollection-5"],
+    },
+}

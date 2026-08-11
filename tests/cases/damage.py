@@ -35,6 +35,7 @@ def _schema_case(identifier, registers):
     seed = registers.pop("_damage")
     return {
         "id": identifier,
+        "hardware": "cgb",
         "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
         "registers": registers,
         "bus": {},

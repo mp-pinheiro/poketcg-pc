@@ -1,4 +1,5 @@
 #include "home/setup.h"
+#include "home/time.h"
 
 #include "generated/hram.h"
 #include "generated/wram.h"

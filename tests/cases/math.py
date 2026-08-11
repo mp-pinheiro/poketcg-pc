@@ -34,6 +34,7 @@ SCHEMA2_CASES = {
     "ATimes10": [
         {
             "id": "ATimes10-zero",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": {r: 0 for r in POISON},
             "bus": {},
@@ -47,6 +48,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "ATimes10-poison-25",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, a=25),
             "bus": {},
@@ -60,6 +62,7 @@ SCHEMA2_CASES = {
         },
         {
             "id": "ATimes10-wrap",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, a=255),
             "bus": {},

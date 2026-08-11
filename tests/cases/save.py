@@ -178,56 +178,110 @@ _P0_COLLECTION = bytes((i * 3 + 5) & 0xFF for i in range(256))
 _P2_COLLECTION = bytes((i * 7 + 11) & 0xFF for i in range(256))
 
 CONTRACT = {
-    # Preserved per save.asm:94-96/133/146-148 (push hl,bc,de,de.../pop hl,de,bc,hl);
-    # a/f are scratch throughout with no top-level push af, so excluded.
-    "CopyGeneralSaveDataToSRAM": ("b", "c", "d", "e", "hl"),
-    # Preserved per save.asm:219-221/324/342-343 (push hl,bc,de.../pop de,bc,hl); a/f scratch.
-    "ValidateGeneralSaveDataFromDE": ("b", "c", "d", "e", "hl"),
-    # Preserved per save.asm:381-382 (outer) and 391-393/445-447 (inner .LoadData); a/f scratch.
-    "LoadGeneralSaveDataFromDE": ("b", "c", "d", "e", "hl"),
-    # hl/bc are consumed inputs, not preserved outputs; de is never touched at all.
-    "WriteDataToBackup": ("d", "e"),
-    "LoadDataFromBackup": ("d", "e"),
-    "WriteBackupGeneralSaveData": ("d", "e"),
-    "WriteBackupCardAndDeckSaveData": ("d", "e"),
-    "LoadBackupGeneralSaveData": ("d", "e"),
-    "LoadBackupCardAndDeckSaveData": ("d", "e"),
-    # hl is explicitly push/pop-preserved (save.asm:5,24); a/f are scratch, no top pop af.
-    "InvalidateSaveData": ("hl",),
-    # de/hl are the de argument and hl, both push/pop-preserved around the whole body
-    # (save.asm:74-75/79/87-88); a/f scratch.
-    "UpdateAlbumProgress": ("d", "e", "hl"),
-    # de push/pop-preserved (save.asm:347/353); hl never touched.
-    "LoadAlbumProgressFromSRAM": ("d", "e"),
-    # de/hl push/pop-preserved (save.asm:359-360/368-369); a/f scratch.
-    "LoadBackupSaveData": ("d", "e", "hl"),
-    # de push/pop-preserved (save.asm:373/376); hl never touched.
-    "_LoadGeneralSaveData": ("d", "e"),
-    # b,c,d,e,hl push/pop-preserved (save.asm:531-533/552-554); a is a consumed input,
-    # not an output (both passes reload it from wCardToAddToCollection); f scratch.
-    "_AddCardToCollectionAndUpdateAlbumProgress": ("b", "c", "d", "e", "hl"),
-    # de push/pop-preserved (save.asm:184/196); a/f are the real outputs of the
-    # trailing `ld a,[wNumSRAMValidationErrors] / cp 1`.
-    "ValidateBackupGeneralSaveData": ("a", "f", "d", "e"),
-    "_ValidateGeneralSaveData": ("a", "f", "d", "e"),
-    # push hl/bc + de saved/restored across the farcalls and CopyGeneralSaveDataToSRAM
-    # (save.asm:53-54/56/61-64/66-67); a/f scratch, set by the farcalls then clobbered.
-    "SaveGeneralSaveDataFromDE": ("b", "c", "d", "e", "hl"),
-    # de push/pop-preserved (save.asm:42/48); a/b/c/hl/f all clobbered by the callees.
-    "_SaveGeneralSaveData": ("d", "e"),
-    # de push/pop-preserved (save.asm:31/38); a/b/c/hl/f clobbered by the callees.
-    "SaveAndBackupData": ("d", "e"),
-    # de preserved through SaveAndBackupData (save.asm:526); c is the consumed branch
-    # input (save.asm:507-509). a/b/c/hl/f clobbered.
-    "_SaveGame": ("d", "e"),
-    # Same trampoline shape as SaveGeneralSaveData; identical contract to the callee.
-    "SaveGeneralSaveData": ("d", "e"),
-    "LoadGeneralSaveData": ("d", "e"),
-    "ValidateGeneralSaveData": ("a", "f", "d", "e"),
-    "AddCardToCollectionAndUpdateAlbumProgress": ("b", "c", "d", "e", "hl"),
-    # push af/bc/de/hl wraps the farcall (save.asm:20-29), so every entry register
-    # is restored regardless of what _SaveGame(0) does internally.
-    "SaveGame": ("a", "f", "b", "c", "d", "e", "hl"),
+    "CopyGeneralSaveDataToSRAM": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "ValidateGeneralSaveDataFromDE": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "LoadGeneralSaveDataFromDE": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "WriteDataToBackup": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "LoadDataFromBackup": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "WriteBackupGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "WriteBackupCardAndDeckSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "LoadBackupGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "LoadBackupCardAndDeckSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "InvalidateSaveData": {
+        "compare": ("hl",),
+        "preserve": ("hl",),
+    },
+    "UpdateAlbumProgress": {
+        "compare": ("d", "e", "hl"),
+        "preserve": ("d", "e", "hl"),
+    },
+    "LoadAlbumProgressFromSRAM": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "_LoadGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "_AddCardToCollectionAndUpdateAlbumProgress": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "ValidateBackupGeneralSaveData": {
+        "compare": ("a", "f", "d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "_ValidateGeneralSaveData": {
+        "compare": ("a", "f", "d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "SaveGeneralSaveDataFromDE": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "_SaveGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "SaveAndBackupData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "_SaveGame": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "SaveGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "LoadGeneralSaveData": {
+        "compare": ("d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "ValidateGeneralSaveData": {
+        "compare": ("a", "f", "d", "e"),
+        "preserve": ("d", "e"),
+    },
+    "AddCardToCollectionAndUpdateAlbumProgress": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "SaveGame": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+    },
+    "LoadBackupSaveData": {
+        "compare": ("d", "e", "hl"),
+        "preserve": ("d", "e", "hl"),
+    },
 }
 
 CASES = {
@@ -235,7 +289,7 @@ CASES = {
         {},
         dict(POISON, d=0xDD, e=0xEE),
         # Round trip half 1: poisoned WRAM sources -> full $B800-$B8BA span.
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "wram": {a: d for a, d in _BASE_WRAM.items()},
          "sram": {0: {sGeneralSaveData: bytes(187)}},
          "read": {sGeneralSaveData: 187, **ACCUMULATORS}},
@@ -245,29 +299,29 @@ CASES = {
         dict(POISON, d=0xDD, e=0xEE),
         # Checksum is actually checked: valid image -> 0 errors, one flipped payload
         # byte (still in-range) -> exactly 1 error.
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "sram": {0: {sGeneralSaveData: _VALID_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, **ACCUMULATORS, **PLAYTIME_OUT}},
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "sram": {0: {sGeneralSaveData: _BAD_CHECKSUM_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, **ACCUMULATORS, **PLAYTIME_OUT}},
         # Range check is actually reached: wPCPackSelection pushed to 15 (max is 14),
         # checksum kept self-consistent so this is the *only* violation. The play-time,
         # medal and map copies are read back here too: the asm makes them
         # unconditionally, after the error counting, so they must land even at errors>0.
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "sram": {0: {sGeneralSaveData: _BAD_RANGE_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, **ACCUMULATORS, **PLAYTIME_OUT}},
         # `jr z, .next_byte` on the max compare means v == max is NOT an error. The
         # base payload puts 12 in wPCPackSelection and the range case puts 15, so
         # without exactly 14 the asm's z-branch is never taken.
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "sram": {0: {sGeneralSaveData: _AT_MAX_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, **ACCUMULATORS, **PLAYTIME_OUT}},
         # Every image above carries the true count 179, so the byte-count residue is 0
         # and its two OR terms in the header test are dead. A header claiming 178
         # leaves a non-zero residue and is the only case that exercises them.
-        {"d": 0xB8, "e": 0x00,
+        {"d": 0xB8, "e": 0x00, "ramg": True,
          "sram": {0: {sGeneralSaveData: _BAD_COUNT_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, **ACCUMULATORS, **PLAYTIME_OUT}},
     ],
@@ -299,48 +353,45 @@ CASES = {
         # at the end leaves bank 2 selected; a plain post-call read at the seeded
         # SRAM address then observes bank 2's mirrored content without needing
         # `sread`, proving the sweep actually ran rather than no-op'd on bc=0.
-        {"wram": {hBankSRAM: b"\x02"},
+        {"wram": {hBankSRAM: b"\x02"}, "ramg": True,
          "sram": {0: {0xA100: b"\xde\xad\xbe\xef"}},
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
-                "exceeds the oracle's 240-frame synthesized-call-frame budget.",
+         "exceeds the oracle's 240-frame synthesized-call-frame budget.",
          "expect_sram": {0: {0xA100: b"\xde\xad\xbe\xef"}}},
-        dict(POISON, hl=0xA100, b=0x00, c=0x04,
+        dict(POISON, hl=0xA100, b=0x00, c=0x04, ramg=True,
              sram={0: {0xA100: b"\xde\xad\xbe\xef"}},
              sread={2: {0xA100: 4}}),
-        {"hl": 0xA100, "b": 0x00, "c": 0x01,
+        {"hl": 0xA100, "b": 0x00, "c": 0x01, "ramg": True,
          "sram": {0: {0xA100: b"\x42"}}, "sread": {2: {0xA100: 1}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x00,
+        {"hl": 0xA100, "b": 0x01, "c": 0x00, "ramg": True,
          "sram": {0: {0xA100: bytes(range(256))}}, "sread": {2: {0xA100: 256}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x01,
+        {"hl": 0xA100, "b": 0x01, "c": 0x01, "ramg": True,
          "sram": {0: {0xA100: bytes(range(256)) + b"\xaa"}}, "sread": {2: {0xA100: 257}}},
     ],
     "LoadDataFromBackup": [
         # Mirror of WriteDataToBackup's bc=0 case: hBankSRAM defaults to 0, which
         # BankswitchSRAM(saved) restores at the end, so a plain post-call read at
         # the seeded address observes bank 0's mirrored content (from bank 2).
-        {"sram": {2: {0xA100: b"\xde\xad\xbe\xef"}},
+        {"sram": {2: {0xA100: b"\xde\xad\xbe\xef"}}, "ramg": True,
          "oracle": False,
          "why": "bc=0 is 65536 iterations (two SRAM bank switches each), which "
-                "exceeds the oracle's 240-frame synthesized-call-frame budget.",
+         "exceeds the oracle's 240-frame synthesized-call-frame budget.",
          "expect_sram": {2: {0xA100: b"\xde\xad\xbe\xef"}}},
-        dict(POISON, hl=0xA100, b=0x00, c=0x04,
+        dict(POISON, hl=0xA100, b=0x00, c=0x04, ramg=True,
              sram={2: {0xA100: b"\xde\xad\xbe\xef"}},
              sread={0: {0xA100: 4}}),
-        {"hl": 0xA100, "b": 0x00, "c": 0x01,
+        {"hl": 0xA100, "b": 0x00, "c": 0x01, "ramg": True,
          "sram": {2: {0xA100: b"\x42"}}, "sread": {0: {0xA100: 1}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x00,
+        {"hl": 0xA100, "b": 0x01, "c": 0x00, "ramg": True,
          "sram": {2: {0xA100: bytes(range(256))}}, "sread": {0: {0xA100: 256}}},
-        {"hl": 0xA100, "b": 0x01, "c": 0x01,
+        {"hl": 0xA100, "b": 0x01, "c": 0x01, "ramg": True,
          "sram": {2: {0xA100: bytes(range(256)) + b"\xaa"}}, "sread": {0: {0xA100: 257}}},
     ],
     "WriteBackupGeneralSaveData": [
         {},
         dict(POISON, d=0xDD, e=0xEE),
-        # Cross-bank mirroring: poison bank 0's whole $B800-$B8FF, confirm bank 2
-        # matches and bank 0 is untouched; hBankSRAM (seeded away from 0/2) pins the
-        # per-byte flip actually restoring the entry bank rather than leaking it.
-        {"wram": {hBankSRAM: b"\x03"},
+        {"ramg": True,
          "sram": {0: {sGeneralSaveData: bytes((i * 31 + 7) & 0xFF for i in range(256))}},
          "sread": {0: {sGeneralSaveData: 256}, 2: {sGeneralSaveData: 256}},
          "read": {hBankSRAM: 1}},
@@ -351,17 +402,18 @@ CASES = {
         # 5639 bytes exceeds both the 4096-byte sread cap and the probe's per-span
         # hex-string buffer (8192 hex chars = 4096 bytes exactly overflows it), so
         # both the seed and the readback split into two sub-4096-byte spans.
-        {"wram": {hBankSRAM: b"\x03"},
+        {"ramg": True,
          "sram": {0: {sCardCollection: _CARD_PATTERN[:4000],
                       sCardCollection + 4000: _CARD_PATTERN[4000:]}},
          "sread": {0: {sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000},
                    2: {sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000}},
          "read": {hBankSRAM: 1}},
     ],
+
     "LoadBackupGeneralSaveData": [
         {},
         dict(POISON, d=0xDD, e=0xEE),
-        {"wram": {hBankSRAM: b"\x03"},
+        {"ramg": True,
          "sram": {2: {sGeneralSaveData: bytes((i * 31 + 7) & 0xFF for i in range(256))}},
          "sread": {2: {sGeneralSaveData: 256}, 0: {sGeneralSaveData: 256}},
          "read": {hBankSRAM: 1}},
@@ -369,7 +421,7 @@ CASES = {
     "LoadBackupCardAndDeckSaveData": [
         {},
         dict(POISON, d=0xDD, e=0xEE),
-        {"wram": {hBankSRAM: b"\x03"},
+        {"wram": {hBankSRAM: b"\x03"}, "ramg": True,
          "sram": {2: {sCardCollection: _CARD_PATTERN[:4000],
                       sCardCollection + 4000: _CARD_PATTERN[4000:]}},
          "sread": {2: {sCardCollection: 4000, sCardCollection + 4000: 5639 - 4000},
@@ -381,7 +433,7 @@ CASES = {
         dict(POISON, wram={hBankROM: b"\x04"}),
         # Header magic: bank 2's header bytes become the complement of $08/$00;
         # bank 0 at the same address is untouched, and hBankSRAM is restored.
-        {"wram": {hBankROM: b"\x04", hBankSRAM: b"\x03"},
+        {"wram": {hBankROM: b"\x04", hBankSRAM: b"\x03"}, "ramg": True,
          "sram": {2: {sBackupGeneralSaveData: _VALID_BACKUP_IMAGE[:2]},
                   0: {sGeneralSaveData: bytes([0x11, 0x22])}},
          "sread": {2: {sBackupGeneralSaveData: 2}, 0: {sGeneralSaveData: 2}},
@@ -402,7 +454,8 @@ CASES = {
     "LoadAlbumProgressFromSRAM": [
         {},
         dict(POISON, d=0xDD, e=0xEE),
-        {"d": 0xB8, "e": 0xFE, "sram": {0: {sAlbumProgress: b"\x2a\x37"}},
+        {"d": 0xB8, "e": 0xFE, "ramg": True,
+         "sram": {0: {sAlbumProgress: b"\x2a\x37"}},
          "read": {wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1}},
         # de+1 wraps $FFFF -> $0000: a real 16-bit address wraparound, not a no-op.
         {"d": 0xFF, "e": 0xFF,
@@ -411,19 +464,20 @@ CASES = {
     "ValidateBackupGeneralSaveData": [
         {},
         POISON,
-        {"wram": {hBankSRAM: b"\x03"},
+        {"wram": {hBankSRAM: b"\x03"}, "ramg": True,
          "sram": {2: {sBackupGeneralSaveData: _VALID_BACKUP_IMAGE}},
          "read": {wNumSRAMValidationErrors: 1, hBankSRAM: 1}},
         # Header magic outcome: InvalidateSaveData's complemented header, error count
         # rises from 0 (above) to 1.
-        {"sram": {2: {sBackupGeneralSaveData: _INVALID_HEADER_BACKUP_IMAGE}},
+        {"sram": {2: {sBackupGeneralSaveData: _INVALID_HEADER_BACKUP_IMAGE}}, "ramg": True,
          "read": {wNumSRAMValidationErrors: 1}},
-        {"sram": {2: {sBackupGeneralSaveData: _MULTI_ERROR_IMAGE}},
+        {"sram": {2: {sBackupGeneralSaveData: _MULTI_ERROR_IMAGE}}, "ramg": True,
          "read": {wNumSRAMValidationErrors: 1}},
         # Bank asymmetry: this validator switches to bank 2 explicitly, so it reads
         # sAlbumProgress from bank 2 regardless of the entry-selected bank (here 0).
         {"sram": {0: {sAlbumProgress: b"\x99\x88"},
                   2: {sBackupGeneralSaveData: _VALID_BACKUP_IMAGE, sAlbumProgress: b"\x2a\x37"}},
+         "ramg": True,
          "read": {wTotalNumCardsCollected: 1, wTotalNumCardsToCollect: 1}},
     ],
     "_ValidateGeneralSaveData": [
@@ -449,7 +503,8 @@ CASES = {
         # which then loads into WRAM through the mapper walk.
         {"wram": {hBankROM: b"\x04"},
          "sram": {2: {sGeneralSaveData: build_image(_BASE_PAYLOAD)}},
-         "read": {MAPPER[0][0]: 1, wEventVars: 64}},
+         "read": {MAPPER[0][0]: 1, wEventVars: 64},
+         "sread": {0: {sGeneralSaveData: 256}}},
     ],
     "_LoadGeneralSaveData": [
         {},
@@ -653,3 +708,19 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for _function in (
+        "WriteBackupGeneralSaveData", "WriteBackupCardAndDeckSaveData",
+        "LoadBackupGeneralSaveData", "LoadBackupCardAndDeckSaveData",
+        "LoadBackupSaveData",
+        "SaveAndBackupData", "_SaveGame", "SaveGame"):
+    for _record in SCHEMA2_CASES[_function]:
+        _record["instruction_budget"] = 500_000
+        _record["cycle_budget"] = 2_000_000
+MUTATIONS = {
+    "InvalidateSaveData": {
+        "source_symbol": "InvalidateSaveData",
+        "before": "\tgb_write8(sBackupGeneralSaveData_ADDR + 0, (uint8_t)(0x08 ^ 0xFF));",
+        "after": "\tgb_write8(sBackupGeneralSaveData_ADDR + 0, (uint8_t)(0x08));",
+        "case_ids": ["InvalidateSaveData-0", "InvalidateSaveData-1", "InvalidateSaveData-2"],
+    },
+}

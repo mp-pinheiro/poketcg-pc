@@ -69,8 +69,13 @@ def main() -> int:
     cases = load_cases()
     failures = 0
     fn_failures = {}
-    migrated = 0
-    skipped = {"scene": 0, "intentional-transform": 0, "native-stress": 0, "dependency-blocked": 0}
+    primary = 0
+    evidence_counts = {
+        "scene": 0,
+        "intentional-transform": 0,
+        "native-stress": 0,
+        "dependency-blocked": 0,
+    }
     for fn in ALL:
         fn_failures.setdefault(fn, 0)
     primary_missing = 0
@@ -82,7 +87,7 @@ def main() -> int:
                 print(f"SCHEMA invalid exclusion kind {fn}")
                 failures += 1
             else:
-                skipped["dependency-blocked"] += 1
+                evidence_counts["dependency-blocked"] += 1
                 print(f"EXCLUSION dependency-pending {fn}: {entry['reason']}")
             continue
         if not records:
@@ -97,13 +102,13 @@ def main() -> int:
         for index, (path, record) in enumerate(records):
             evidence = record.get("evidence")
             if evidence != "primary":
-                if evidence in skipped:
-                    skipped[evidence] += 1
+                if evidence in evidence_counts:
+                    evidence_counts[evidence] += 1
                 else:
                     print(f"SCHEMA invalid evidence {fn} case={record.get('id')}")
                     failures += 1
                 continue
-            migrated += 1
+            primary += 1
             command = [
                 sys.executable, str(ROOT / "tools/oracle/gbref/compare_one.py"),
                 "--fn", fn, "--index", str(index), "--case", str(path),
@@ -130,9 +135,21 @@ def main() -> int:
             args.report.write_text(
                 json.dumps(report_data, sort_keys=True, separators=(",", ":"))
             )
-    counts = " ".join(f"{key}={value}" for key, value in skipped.items())
-    print(f"INVENTORY routines={len(ALL)} migrated_cases={migrated} primary_missing={primary_missing} skipped_{counts} failures={failures}")
+    counts = " ".join(
+        f"{key}={value}" for key, value in evidence_counts.items()
+    )
+    print(
+        f"INVENTORY routines={len(ALL)} primary={primary} "
+        f"primary_missing={primary_missing} {counts} failures={failures}"
+    )
     if report_data is not None:
+        report_data["inventory"] = {
+            "routines": len(ALL),
+            "primary": primary,
+            "primary_missing": primary_missing,
+            **evidence_counts,
+            "failures": failures,
+        }
         report_data["complete"] = True
         report_data["generated_at"] = int(time.time())
         args.report.write_text(

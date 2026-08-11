@@ -38,13 +38,17 @@ just build
 export POKETCG_BUILD=build
 export POKETCG_PORTS=""
 just oracle-diff <RoutineName>
-just oracle-diff-all
-just data-verify
+just oracle-fn-gate
+just oracle-audit-all
+just oracle-release-gate
 ```
 `just progress-serve` serves a port-progress dashboard at `http://127.0.0.1:8765`.
 Published at `https://poketcg-pc.pages.dev` via Cloudflare Pages.
 
-The full oracle gate requires the ROM produced by `just bootstrap`. Concurrent work should use a private `POKETCG_BUILD` directory and a semicolon-separated `POKETCG_PORTS` list.
+The release gate requires the ROM produced by `just bootstrap`; it runs the
+GBRT primary inventory, the independent PyBoy audit, schema and mutation
+audits, and the data round-trip. Concurrent work should use a private
+`POKETCG_BUILD` directory and a semicolon-separated `POKETCG_PORTS` list.
 
 ## GB Recompiled replay oracle
 

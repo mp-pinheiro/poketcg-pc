@@ -62,8 +62,7 @@ void SetWhitePalettes(void)
     gb_write8(wBGP_ADDR, value);
     gb_write8(wOBP0_ADDR, value);
     gb_write8(wOBP1_ADDR, value);
-    white_cgb(wBackgroundPalettesCGB_ADDR, 64);
-    white_cgb(wObjectPalettesCGB_ADDR, 64);
+    white_cgb(wBackgroundPalettesCGB_ADDR, 128);
 }
 
 void FadeScreenFromWhite_BackupPalsAndSetWhite(void)

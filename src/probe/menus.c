@@ -66,6 +66,7 @@ static void adapt_SetCursorParametersForTextBox_Default(ProbeState *s)
 	s->b = result.b;
 	s->c = result.c;
 	s->hl = result.hl;
+	s->f = result.f;
 }
 
 static void adapt_DrawCursor(ProbeState *s)

@@ -7,18 +7,18 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "SafeCopyDataDEtoHL": ("b", "d", "e", "hl"),
-    "DECoordToBGMap0Address": ("d", "e", "hl"),
-    "AdjustCoordinatesForBGScroll": ("a", "f", "b", "c", "d", "e"),
-    "CopyLine": ("b", "c", "d", "e", "hl"),
-    "DrawRegularTextBox": ("b", "hl"),
-    "DrawRegularTextBoxDMG": ("b", "hl"),
-    "ContinueDrawingTextBoxDMGorSGB": ("b", "hl"),
-    "DrawRegularTextBoxCGB": ("b", "hl"),
-    "ContinueDrawingTextBoxCGB": ("b", "hl"),
-    "CopyCurrentLineTilesAndAttrCGB": ("b", "hl"),
-    "CopyCurrentLineAttrCGB": ("b", "hl"),
-    "DrawLabeledTextBox": ("b", "hl"),
+    "SafeCopyDataDEtoHL": {"compare": ("b", "d", "e", "hl"), "preserve": ("b",)},
+    "DECoordToBGMap0Address": {"compare": ("d", "e", "hl"), "preserve": ("d", "e")},
+    "AdjustCoordinatesForBGScroll": {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("a", "f", "b", "c")},
+    "CopyLine": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c")},
+    "DrawRegularTextBox": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "DrawRegularTextBoxDMG": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "ContinueDrawingTextBoxDMGorSGB": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "DrawRegularTextBoxCGB": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "ContinueDrawingTextBoxCGB": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "CopyCurrentLineTilesAndAttrCGB": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "CopyCurrentLineAttrCGB": {"compare": ("b", "hl"), "preserve": ("b",)},
+    "DrawLabeledTextBox": {"compare": ("b",), "preserve": ("b",)},
 }
 
 CASES = {
@@ -116,3 +116,12 @@ CASES.update({
 })
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "SafeCopyDataDEtoHL": {
+        "source_symbol": "SafeCopyDataDEtoHL",
+        "before": "*de = source;",
+        "after": "*de = (uint16_t)(source + 1u);",
+        "case_ids": ["SafeCopyDataDEtoHL-0", "SafeCopyDataDEtoHL-1", "SafeCopyDataDEtoHL-2", "SafeCopyDataDEtoHL-3"],
+    },
+}

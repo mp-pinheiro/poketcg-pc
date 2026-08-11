@@ -33,17 +33,18 @@ CG_DST = 0xC500
 CG_PAT = bytes((i * 11 + 5) & 0xFF for i in range(300))
 
 CONTRACT = {
-    "GetPermissionByteOfMapPosition": ("a", "b", "c", "d", "e", "hl"),
-    "GetPermissionOfMapPosition": ("a", "b", "c", "d", "e", "hl"),
-    "SetPermissionOfMapPosition": ("a", "b", "c", "d", "e", "hl"),
-    "UpdatePermissionOfMapPosition": ("a", "b", "c", "d", "e", "hl"),
-    "GetLoadedNPCID": ("a", "b", "c", "d", "e", "hl"),
-    "GetItemInLoadedNPCIndex": ("a", "b", "c", "d", "e", "hl"),
-    "GameEvent_Overworld": ("f", "a", "b", "c", "d", "e", "hl"),
-    "CopyGfxDataFromTempBank": ("a", "f", "c", "d", "e", "hl"),
-    "FindLoadedNPC": ("a", "f", "b", "c", "d", "e", "hl"),
-    "GetNextNPCMovementByte": ("a", "f", "b", "c", "d", "e", "hl"),
-    "GetDefaultSong": ("a", "b", "c", "d", "e", "hl"),
+    "GetPermissionByteOfMapPosition": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GetPermissionOfMapPosition": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "SetPermissionOfMapPosition": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")},
+    "UpdatePermissionOfMapPosition": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetLoadedNPCID": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GetItemInLoadedNPCIndex": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")},
+    "GameEvent_Overworld": {"compare": ("f", "a", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")},
+    # CopyGfxData decrements B to zero, preserves C, and final pop af restores A/F.
+    "CopyGfxDataFromTempBank": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "c")},
+    "FindLoadedNPC": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetNextNPCMovementByte": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "GetDefaultSong": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
 }
 
 
@@ -81,7 +82,9 @@ CASES = {
         {"f": 0x80},
     ],
     "CopyGfxDataFromTempBank": [
-        {},
+        {"b": 1, "c": 1, "hl": CG_SRC, "d": CG_DST >> 8, "e": CG_DST & 0xFF,
+         "wram": {hBankROM: b"\x01", wTempPointerBank: b"\x01", CG_SRC: CG_PAT[:1]},
+         "read": {hBankROM: 1}},
         dict(POISON, b=4, c=3, hl=CG_SRC, d=CG_DST >> 8, e=CG_DST & 0xFF,
              wram={hBankROM: b"\x07", wTempPointerBank: b"\x02", CG_SRC: CG_PAT[:16]},
              read={CG_DST: 16, hBankROM: 1}),
@@ -92,6 +95,13 @@ CASES = {
         # Real bank switch: reads bank 3 ROM, not whatever bank happened to be live.
         {"b": 1, "c": 8, "hl": 0x4000, "d": CG_DST >> 8, "e": CG_DST & 0xFF,
          "wram": {wTempPointerBank: b"\x03"}, "read": {CG_DST: 8, hBankROM: 1}},
+        {
+            "evidence": "dependency-blocked",
+            "reason": (
+                "b=c=0 requests a 64 KiB nested copy; it overwrites the wrapper's "
+                "saved bank and return frames before wrapper restoration can run"
+            ),
+        },
     ],
     "FindLoadedNPC": [
         {"wram": {NPC_BASE: npc_table([0, 1, 2, 3, 4, 5, 6, 7]),
@@ -129,3 +139,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "GetPermissionOfMapPosition": {
+        "source_symbol": "GetPermissionOfMapPosition",
+        "before": "return gb_read8(permission_address(b, c));",
+        "after": "return (uint8_t)(gb_read8(permission_address(b, c)) ^ 1u);",
+        "case_ids": ["GetPermissionOfMapPosition-0", "GetPermissionOfMapPosition-1"],
+    },
+}

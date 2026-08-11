@@ -8,8 +8,14 @@ no memory and yields only a carry flag -- not enough coverage to register.
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
-    "ClearSRAMBank": ("a", "d", "e", "f"),
-    "RestartSRAM": ("d", "e"),
+    "ClearSRAMBank": {
+        "compare": ("a", "d", "e", "f"),
+        "preserve": ("a", "d", "e", "f"),
+    },
+    "RestartSRAM": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("d", "e"),
+    },
 }
 
 SIG = b"\x04\x21\x05"
@@ -22,11 +28,22 @@ CASES = {
         dict(POISON, a=3, sram={3: {0xA000: b"\x99\x88\x77\x66\x55\x44"}}),
     ],
     "RestartSRAM": [
-        {"sram": {0: {0xA000: b"\xff" * 8}, 1: {0xA000: b"\xee" * 4},
+        {"instruction_budget": 300_000, "cycle_budget": 2_000_000,
+         "sram": {0: {0xA000: b"\xff" * 8}, 1: {0xA000: b"\xee" * 4},
                   2: {0xA000: b"\x01"}, 3: {0xA000: b"\x02"}},
          "sread": {0: {0xBFFF: 1}, 1: {0xBFFF: 1}, 2: {0xBFFF: 1}, 3: {0xBFFF: 1}}},
-        dict(POISON, sram={0: {0xA000: b"\xaa\xbb\xcc"}, 3: {0xBFFF: b"\xff"}}),
+        dict(POISON, instruction_budget=300_000, cycle_budget=2_000_000,
+             sram={0: {0xA000: b"\xaa\xbb\xcc"}, 3: {0xBFFF: b"\xff"}}),
     ],
+}
+
+MUTATIONS = {
+    "ClearSRAMBank": {
+        "source_symbol": "ClearSRAMBank",
+        "before": "for (uint16_t i = 0; i < 0x2000u; i++)",
+        "after": "for (uint16_t i = 0; i < 0x1FFFu; i++)",
+        "case_ids": ["ClearSRAMBank-0", "ClearSRAMBank-1", "ClearSRAMBank-2", "ClearSRAMBank-3"],
+    },
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

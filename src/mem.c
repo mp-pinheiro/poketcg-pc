@@ -157,8 +157,16 @@ uint8_t gb_read8(uint16_t addr)
 	 * every rSTAT diff is off by $80. */
 	if (addr == 0xFF41u)
 		return (uint8_t)(*gb_ptr(addr) | 0x80u);
+	if (addr == 0xFF02u)
+		return (uint8_t)(*gb_ptr(addr) | 0x7Cu);
+	if (addr == 0xFF0Fu)
+		return (uint8_t)(*gb_ptr(addr) | 0xE0u);
 	if (addr == 0xFF4Fu)
 		return (uint8_t)(0xFEu | g_vram_bank);
+	if (addr == 0xFF69u)
+		return g_pal[g_io[0x68] & 0x3Fu];
+	if (addr == 0xFF6Bu)
+		return g_pal[0x40u + (g_io[0x6A] & 0x3Fu)];
 	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
 	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
 	 * every read, matching hardware's active-low matrix. */
@@ -234,6 +242,15 @@ void gb_write8(uint16_t addr, uint8_t v)
 	 * resolves to, so it has to latch before the store lands. */
 	if (addr == 0xFF4F)
 		g_vram_bank = v & 1;
+	if (addr == 0xFF68u || addr == 0xFF6Au)
+		v &= 0xBFu;
+	if (addr == 0xFF69u || addr == 0xFF6Bu) {
+		uint8_t *index = &g_io[addr == 0xFF69u ? 0x68u : 0x6Au];
+		size_t offset = (addr == 0xFF69u ? 0u : 0x40u) + (*index & 0x3Fu);
+		g_pal[offset] = v;
+		if (*index & 0x80u)
+			*index = (uint8_t)(0x80u | ((*index + 1u) & 0x3Fu));
+	}
 	apu_trace_record(addr, v);
 	*gb_ptr(addr) = v;
 }

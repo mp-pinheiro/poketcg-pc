@@ -36,6 +36,7 @@ SCHEMA2_CASES = {
     "TwoByteNumberToText": [
         {
             "id": "TwoByteNumberToText-12345",
+            "hardware": "cgb",
             "mapper": {"rom_bank": 1, "ram_bank": 0, "vram_bank": 0, "ram_enable": False},
             "registers": dict(POISON, hl=12345, d=DEST >> 8, e=DEST & 0xFF),
             "bus": {},

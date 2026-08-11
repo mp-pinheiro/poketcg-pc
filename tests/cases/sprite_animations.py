@@ -20,28 +20,94 @@ TEMP_BANK = 0xD4C6
 LOADED_FRAME = 0xD23E
 
 CONTRACT = {
-    "_ClearSpriteAnimations": ("b", "c", "d", "e", "hl"),
-    "CreateSpriteAndAnimBufferEntry": ("f", "b", "c", "d", "e", "hl"),
-    "FillNewSpriteAnimBufferEntry": ("b", "c", "d", "e", "hl"),
-    "DisableCurSpriteAnim": ("b", "c", "d", "e", "hl"),
-    "DisableSpriteAnim": ("b", "c", "d", "e", "hl"),
-    "GetSpriteAnimCounter": ("a", "b", "c", "d", "e", "hl"),
-    "_HandleAllSpriteAnimations": ("a", "f", "b", "c", "d", "e", "hl"),
-    "LoadSpriteDataForAnimationFrame": ("b", "c", "hl"),
-    "TryHandleSpriteAnimationFrame": ("b", "c", "d", "e", "hl"),
-    "StartNewSpriteAnimation": ("b", "d", "e", "hl"),
-    "StartSpriteAnimation": ("b", "c", "d", "e", "hl"),
-    "Func_12ac9": ("b", "c", "d", "e", "hl"),
-    "LoadSpriteAnimPointers": ("b", "c", "d", "e", "hl"),
-    "HandleAnimationFrame": ("b", "c", "d", "e", "hl"),
-    "GetAnimFramePointerFromOffset": ("b", "c", "d", "e", "hl"),
-    "SetAnimationCounterAndLoop": ("f", "b", "c", "d", "e", "hl"),
-    "Func_12ba7": ("b", "c", "d", "e", "hl"),
-    "Func_12bcd": ("b", "c", "d", "e", "hl"),
-    "ClearSpriteVRAMBuffer": ("b", "c", "d", "e", "hl"),
-    "Func_12c05": ("a", "f", "b", "c", "d", "e", "hl"),
-    "Func_12c4f": ("a", "b", "c", "d", "e", "hl"),
-    "Func_12c5e": ("b", "c", "d", "e", "hl"),
+    "_ClearSpriteAnimations": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "CreateSpriteAndAnimBufferEntry": {
+        "compare": ("f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
+    "FillNewSpriteAnimBufferEntry": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "DisableCurSpriteAnim": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "DisableSpriteAnim": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "GetSpriteAnimCounter": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "_HandleAllSpriteAnimations": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+    },
+    "LoadSpriteDataForAnimationFrame": {
+        "compare": ("b", "c", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
+    "TryHandleSpriteAnimationFrame": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "StartNewSpriteAnimation": {
+        "compare": ("b", "d", "e", "hl"),
+        "preserve": ("hl",),
+    },
+    "StartSpriteAnimation": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
+    "Func_12ac9": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
+    "LoadSpriteAnimPointers": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c"),
+    },
+    "HandleAnimationFrame": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "GetAnimFramePointerFromOffset": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "SetAnimationCounterAndLoop": {
+        "compare": ("f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "Func_12ba7": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "Func_12bcd": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "ClearSpriteVRAMBuffer": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "Func_12c05": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "Func_12c4f": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
+    "Func_12c5e": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
 }
 
 
@@ -227,8 +293,17 @@ CASES = {
         {"wram": {H_BANK: b"\x04", CACHE: bytes((1, 0, 0, 1)) + b"\x00" * 60},
          "read": {CACHE: 64, H_BANK: 1}, "vread": {0: {0x8000: 16}}},
         dict(POISON, wram={H_BANK: b"\x04", CACHE: b"\x00" * 60 + bytes((1, 7, 0x7f, 1))},
-             read={CACHE: 64, H_BANK: 1}, vread={1: {0x87f0: 16}}),
+             read={CACHE: 64, H_BANK: 1}, vread={0: {0x87f0: 16}}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "_ClearSpriteAnimations": {
+        "source_symbol": "_ClearSpriteAnimations",
+        "before": "gb_write8(slot_addr(i, 0), 0);",
+        "after": "gb_write8(slot_addr(i, 0), 1);",
+        "case_ids": ["_ClearSpriteAnimations-0", "_ClearSpriteAnimations-1", "_ClearSpriteAnimations-2"],
+    },
+}

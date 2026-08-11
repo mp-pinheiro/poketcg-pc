@@ -14,9 +14,18 @@ PLAYER_DECK = 0xC400
 OPPONENT_DECK = 0xC480
 
 CONTRACT = {
-    "IsArenaPokemonAsleepOrPoisoned": ("a", "f", "hl"),
-    "DiscardAttachedPlusPowers": ("a", "b", "c", "f", "hl"),
-    "DiscardAttachedDefenders": ("a", "b", "c", "f", "hl"),
+    "IsArenaPokemonAsleepOrPoisoned": {
+        "compare": ("a", "f", "hl"),
+        "preserve": (),
+    },
+    "DiscardAttachedPlusPowers": {
+        "compare": ("a", "b", "c", "f", "hl"),
+        "preserve": (),
+    },
+    "DiscardAttachedDefenders": {
+        "compare": ("a", "b", "c", "f", "hl"),
+        "preserve": (),
+    },
 }
 
 CASES = {
@@ -44,3 +53,12 @@ CASES = {
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+
+MUTATIONS = {
+    "IsArenaPokemonAsleepOrPoisoned": {
+        "source_symbol": "IsArenaPokemonAsleepOrPoisoned",
+        "before": "value &= (POISONED | DOUBLE_POISONED);",
+        "after": "value &= (DOUBLE_POISONED);",
+        "case_ids": ["IsArenaPokemonAsleepOrPoisoned-0", "IsArenaPokemonAsleepOrPoisoned-1", "IsArenaPokemonAsleepOrPoisoned-2", "IsArenaPokemonAsleepOrPoisoned-3", "IsArenaPokemonAsleepOrPoisoned-4"],
+    },
+}

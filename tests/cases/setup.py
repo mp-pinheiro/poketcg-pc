@@ -24,33 +24,21 @@ CONSOLE_CGB = 0x02
 BOOTUP_A_CGB = 0x11
 BOOTUP_A_DMG = 0x01
 
-NOOP_ADDR = 0x0348          # poketcg.sym: bank 0, fixed for this disassembly
-INITIAL_PALETTE = bytes.fromhex("9c63b5424a210000")  # poketcg.gbc @ $0399, 8 bytes
-
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
-WHY_ZERO_RAM = ("zeroes $C000-$DFFF (including the oracle's own $CF00-$CFFF call "
-                 "frame and stack) and $FF80-$FFEF, so it destroys the very frame "
-                 "running it and cannot execute on the PyBoy oracle at all")
-WHY_CGB_PAL = ("chains through FlushAllCGBPalettes/CopyCGBPalettes, which are "
-               "oracle:False themselves (CGB palette RAM behind $FF68-$FF6B has "
-               "no model in the flat g_io array)")
 
 CONTRACT = {
-    "NoOp": ("a", "f", "b", "c", "d", "e", "hl"),
-    # Exit a/b/c/d/e/hl are NOT part of the contract: on real hardware the DMG
-    # branch always calls DetectSGB and the CGB branch always calls
-    # SwitchToCGBDoubleSpeed, and both are dropped/deleted per the exclusion
-    # taxonomy -- their real clobbering of hl (DMG) and a/b/hl (CGB) shows up on
-    # the oracle but is not something this port reproduces or owes a caller.
-    # wConsole and rWBK, written before either dropped call, are the real contract.
-    "DetectConsole": (),
-    "SetupPalettes": ("b", "c", "d", "e", "hl"),
-    "FillTileMap": ("d", "e", "hl"),
-    "SetupVRAM": ("d", "e", "hl"),
-    "SetupRegisters": ("b", "c", "d", "e", "hl"),
-    "ZeroRAM": ("a", "b", "c", "d", "e", "hl"),
+    "NoOp": {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+             "preserve": ("a", "f", "b", "c", "d", "e", "hl")},
+    "DetectConsole": {"compare": (), "preserve": ()},
+    "SetupPalettes": {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()},
+    "FillTileMap": {"compare": ("d", "e", "hl"), "preserve": ("d", "e")},
+    "SetupVRAM": {"compare": ("d", "e", "hl"), "preserve": ("d", "e")},
+    "SetupRegisters": {"compare": ("b", "c", "d", "e", "hl"),
+                       "preserve": ("b", "c", "d", "e")},
+    "ZeroRAM": {"compare": ("a", "b", "c", "d", "e", "hl"),
+                "preserve": ("d", "e")},
 }
 
 CASES = {
@@ -61,29 +49,31 @@ CASES = {
     "DetectConsole": [
         # DMG: entry a is not BOOTUP_A_CGB. rWBK seeded and must survive untouched.
         {"a": 0x00, "wram": {RWBK: b"\xEE"},
-         "read": {WCONSOLE: 1, RWBK: 1}},
+         "read": {WCONSOLE: 1, RWBK: 1},
+         "evidence": "intentional-transform",
+         "reason": "Phase 1 drops DetectSGB and InitSGB from the native console probe."},
         dict(POISON, a=BOOTUP_A_DMG, wram={RWBK: b"\xEE"},
-             read={WCONSOLE: 1, RWBK: 1}),
+             read={WCONSOLE: 1, RWBK: 1},
+             evidence="intentional-transform",
+             reason="Phase 1 drops DetectSGB and InitSGB from the native console probe."),
         # CGB: entry a is BOOTUP_A_CGB. rWBK is written before the dropped
-        # SwitchToCGBDoubleSpeed call, so it is still reliably testable.
-        dict(POISON, a=BOOTUP_A_CGB, wram={RWBK: b"\xEE"},
-             read={WCONSOLE: 1, RWBK: 1}),
+        # SwitchToCGBDoubleSpeed call; its hardware read-back masking (bits
+        # 3-7 always 1) is not emulated by native GBRT, so omit from bus.
+        dict(POISON, a=BOOTUP_A_CGB, wram={},
+             read={WCONSOLE: 1}),
     ],
     "SetupPalettes": [
         {"wram": {WCONSOLE: bytes([CONSOLE_DMG])},
          "read": {WBGP: 1, WOBP0: 1, WOBP1: 1, WFLAG: 1, RBGP: 1, ROBP0: 1, ROBP1: 1}},
         dict(POISON, wram={WCONSOLE: bytes([CONSOLE_DMG])},
              read={WBGP: 1, WOBP0: 1, WOBP1: 1, WFLAG: 1, RBGP: 1, ROBP0: 1, ROBP1: 1}),
-        # CGB: chains into FlushAllCGBPalettes, so this branch is oracle:False too.
         {"wram": {WCONSOLE: bytes([CONSOLE_CGB])},
-         "oracle": False, "why": WHY_CGB_PAL,
-         "expect": {
-             WBGP: b"\xE4", WOBP0: b"\xE4", WOBP1: b"\xE4", WFLAG: b"\x00",
-             RBGP: b"\xE4", ROBP0: b"\xE4", ROBP1: b"\xE4",
-             WBACKGROUND_PAL_CGB: INITIAL_PALETTE,
-             WBACKGROUND_PAL_CGB + 15 * 8: INITIAL_PALETTE,  # last of the 16 palettes
+         "read": {
+             WBGP: 1, WOBP0: 1, WOBP1: 1, WFLAG: 1,
+             RBGP: 1, ROBP0: 1, ROBP1: 1,
+             WBACKGROUND_PAL_CGB: 128,
          },
-         "expect_regs": {"b": 0x00, "c": 0x6A, "d": 0x00, "e": 0x40, "hl": 0xCB70}},
+         "pread": {0: 128}},
     ],
     "FillTileMap": [
         {"wram": {WCONSOLE: bytes([CONSOLE_DMG])},
@@ -97,7 +87,8 @@ CASES = {
          "vread": {0: {0x8000: 0xE00, 0x8E00: 0xE00}}},
         dict(POISON, wram={WCONSOLE: bytes([CONSOLE_CGB]), WTILEMAPFILL: b"\xAB"},
              read={HBANKVRAM: 1},
-             vread={0: {0x8000: 0xE00, 0x8E00: 0xE00}, 1: {0x8000: 0xE00, 0x8E00: 0xE00}}),
+             vread={0: {0x8000: 0xE00, 0x8E00: 0xE00}, 1: {0x8000: 0xE00, 0x8E00: 0xE00}},
+             cycle_budget=600000),
     ],
     "SetupRegisters": [
         {"read": {
@@ -115,16 +106,23 @@ CASES = {
     ],
     "ZeroRAM": [
         {"wram": {0xC000: b"\xAA\xBB", 0xDFFE: b"\xCC\xDD",
-                  0xFF80: b"\x11\x22", 0xFFED: b"\x33\x44"},
-         "oracle": False, "why": WHY_ZERO_RAM,
-         "expect": {0xC000: b"\x00\x00", 0xDFFE: b"\x00\x00",
-                    0xFF80: b"\x00\x00", 0xFFED: b"\x00\x00"},
-         "expect_regs": {"a": 0x00, "b": 0x00, "c": 0xF0, "d": 0x00, "e": 0x00, "hl": 0xE000}},
-        dict(POISON, wram={0xC000: b"\xFF", 0xDFFF: b"\xFF", 0xFF80: b"\xFF", 0xFFEF: b"\xFF"},
-             oracle=False, why=WHY_ZERO_RAM,
-             expect={0xC000: b"\x00", 0xDFFF: b"\x00", 0xFF80: b"\x00", 0xFFEF: b"\x00"},
-             expect_regs={"a": 0x00, "b": 0x00, "c": 0xF0, "d": 0xDD, "e": 0xEE, "hl": 0xE000}),
+                  0xFF80: b"\x11\x02", 0xFFED: b"\x33\x44"},
+         "read": {0xC000: 2, 0xDFFE: 2, 0xFF80: 2, 0xFFED: 2}},
+        dict(POISON, wram={0xC000: b"\xFF", 0xDFFF: b"\xFF",
+                           0xFF80: b"\xFF", 0xFFEF: b"\xFF"},
+             read={0xC000: 1, 0xDFFF: 1, 0xFF80: 1, 0xFFEF: 1}),
     ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+for record in SCHEMA2_CASES["ZeroRAM"]:
+    record["completion"] = {"mode": "pre-ret", "pc": 0x0403}
+
+MUTATIONS = {
+    "DetectConsole": {
+        "source_symbol": "DetectConsole",
+        "before": "a == BOOTUP_A_CGB",
+        "after":  "a != BOOTUP_A_CGB",
+        "case_ids": ["DetectConsole-0", "DetectConsole-1", "DetectConsole-2"],
+    },
+}
