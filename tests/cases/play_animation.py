@@ -70,6 +70,26 @@ CASES["PlayDuelAnimation"] = [
 ]
 # <<< factory PlayDuelAnimation
 
+# >>> factory UpdateQueuedAnimations
+CONTRACT["UpdateQueuedAnimations"] = {
+    "compare": ("a", "f", "hl"),
+    "preserve": ("f",),
+}
+
+CUR_POS = 0xD4AC
+BUF_SIZE = 0xD4AD
+
+CASES["UpdateQueuedAnimations"] = [
+    {"wram": {ACTIVE: b"\xff", WD4C0: b"\x00"}},
+    dict(POISON, wram={ACTIVE: b"\xff", WD4C0: b"\x80", CUR_POS: b"\x00", BUF_SIZE: b"\x00"},
+         read={WD4C0: 1}),
+    {"hl": 0xABCD, "wram": {ACTIVE: b"\xff", WD4C0: b"\x00"}},
+    {"hl": 0x1234, "wram": {ACTIVE: b"\xff", WD4C0: b"\xff", QUEUE: b"\xff" * 7,
+                             CUR_POS: b"\x00", BUF_SIZE: b"\x00"},
+     "read": {QUEUE: 7, WD4C0: 1}},
+]
+# <<< factory UpdateQueuedAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -89,3 +109,11 @@ MUTATIONS["PlayDuelAnimation"] = {
     "case_ids": ["PlayDuelAnimation-3", "PlayDuelAnimation-4"],
 }
 # <<< factory-mutation PlayDuelAnimation
+# >>> factory-mutation UpdateQueuedAnimations
+MUTATIONS["UpdateQueuedAnimations"] = {
+    "source_symbol": "UpdateQueuedAnimations",
+    "before": "_UpdateQueuedAnimations(hl)",
+    "after": "_UpdateQueuedAnimations(0)",
+    "case_ids": ["UpdateQueuedAnimations-1", "UpdateQueuedAnimations-2"],
+}
+# <<< factory-mutation UpdateQueuedAnimations

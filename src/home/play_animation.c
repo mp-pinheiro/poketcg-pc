@@ -9,6 +9,9 @@
 
 #define DUEL_SPECIAL_ANIMS 0x61u
 #define BANK_LOAD_DUEL_ANIM_BUFFER 7u
+
+#include "home/load_animation.h"
+#define BANK_UPDATE_QUEUED_ANIMATIONS 7u
 /* <<< factory statics */
 
 #define ANIMATION_QUEUE_LENGTH 7u
@@ -64,3 +67,16 @@ PlayDuelAnimationResult PlayDuelAnimation(uint8_t a)
 	return (PlayDuelAnimationResult){saved};
 }
 /* <<< factory PlayDuelAnimation */
+
+/* >>> factory UpdateQueuedAnimations */
+/* play_animation.asm:64-73 */
+UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl)
+{
+	uint8_t saved = gb_read8(hBankROM_ADDR);
+	BankswitchROM(BANK_UPDATE_QUEUED_ANIMATIONS);
+	DuelAnimationUpdateResult result = _UpdateQueuedAnimations(hl);
+	HandleAllSpriteAnimations();
+	BankswitchROM(saved);
+	return (UpdateQueuedAnimationsResult){saved, result.hl};
+}
+/* <<< factory UpdateQueuedAnimations */

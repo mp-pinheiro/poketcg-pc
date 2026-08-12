@@ -34,10 +34,22 @@ static void adapt_PlayDuelAnimation(ProbeState *s)
 }
 /* <<< factory PlayDuelAnimation */
 
+/* >>> factory UpdateQueuedAnimations */
+static void adapt_UpdateQueuedAnimations(ProbeState *s)
+{
+	uint8_t f = s->f;
+	UpdateQueuedAnimationsResult result = UpdateQueuedAnimations(s->hl);
+	s->a = result.a;
+	s->f = f;
+	s->hl = result.hl;
+}
+/* <<< factory UpdateQueuedAnimations */
+
 const ProbeEntry probe_entries_play_animation[] = {
 	{ "CheckAnyAnimationPlaying", adapt_CheckAnyAnimationPlaying },
 	{ "SetDoFrameFunction", adapt_SetDoFrameFunction },
 	{ "ResetDoFrameFunction", adapt_ResetDoFrameFunction },
 	{ "PlayDuelAnimation", adapt_PlayDuelAnimation },
+	{ "UpdateQueuedAnimations", adapt_UpdateQueuedAnimations },
 	{ NULL, NULL },
 };

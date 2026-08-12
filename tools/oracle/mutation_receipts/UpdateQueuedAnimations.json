@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateQueuedAnimations",
+  "case": "tests/cases/play_animation.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateQueuedAnimations\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54314\": \"ff\", \"54444\": \"0000\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateQueuedAnimations\", \"mismatches\": {\"hl\": [4660, 0]}}\n",
+  "restored": "{\"fn\": \"UpdateQueuedAnimations\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54314\": \"ff\", \"54444\": \"0000\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

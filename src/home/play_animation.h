@@ -25,4 +25,12 @@ typedef struct {
 
 PlayDuelAnimationResult PlayDuelAnimation(uint8_t a);
 /* <<< factory PlayDuelAnimation */
+/* >>> factory UpdateQueuedAnimations */
+typedef struct {
+	uint8_t a;
+	uint16_t hl;
+} UpdateQueuedAnimationsResult;
+
+UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl);
+/* <<< factory UpdateQueuedAnimations */
 #endif
