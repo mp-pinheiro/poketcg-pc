@@ -1,0 +1,9 @@
+{
+  "fn": "PlayDuelAnimation",
+  "case": "tests/cases/play_animation.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayDuelAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a23b\", \"54307\": \"fffffffffffffeff\", \"54445\": \"08\", \"54463\": \"00ff\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayDuelAnimation\", \"mismatches\": {\"bus\": {\"address\": 54307, \"reference\": \"a23bffffffffff\", \"native\": \"a23b00ffffffff\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[51923, 2], [54307, 8], [54445, 1], [54463, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlayDuelAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a23b\", \"54307\": \"fffffffffffffeff\", \"54445\": \"08\", \"54463\": \"00ff\", \"54464\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

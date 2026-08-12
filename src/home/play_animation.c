@@ -2,6 +2,14 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "generated/hram.h"
+#include "home/switch_rom.h"
+#include "home/duel_animation_core.h"
+
+#define DUEL_SPECIAL_ANIMS 0x61u
+#define BANK_LOAD_DUEL_ANIM_BUFFER 7u
+/* <<< factory statics */
 
 #define ANIMATION_QUEUE_LENGTH 7u
 #define rQUEUE 0xD423u
@@ -34,3 +42,25 @@ FrameFunctionResult ResetDoFrameFunction(uint16_t hl)
 	SetDoFrameFunction(0);
 	return (FrameFunctionResult){0, 0x80, hl};
 }
+
+/* >>> factory PlayDuelAnimation */
+/* play_animation.asm:26-62 */
+PlayDuelAnimationResult PlayDuelAnimation(uint8_t a)
+{
+	gb_write8(wTempAnimation_ADDR, a);
+	uint8_t saved = gb_read8(hBankROM_ADDR);
+	gb_write8(wDuelAnimReturnBank_ADDR, saved);
+
+	BankswitchROM(BANK_LOAD_DUEL_ANIM_BUFFER);
+	if (a < DUEL_SPECIAL_ANIMS
+	    && gb_read8(wDuelAnimBufferCurPos_ADDR) == gb_read8(wDuelAnimBufferSize_ADDR)
+	    && !(CheckAnyAnimationPlaying().f & 0x10u)) {
+		PlayLoadedDuelAnimation();
+	} else {
+		LoadDuelAnimationToBuffer();
+	}
+
+	BankswitchROM(saved);
+	return (PlayDuelAnimationResult){saved};
+}
+/* <<< factory PlayDuelAnimation */

@@ -26,9 +26,18 @@ static void adapt_ResetDoFrameFunction(ProbeState *s)
 	s->hl = result.hl;
 }
 
+/* >>> factory PlayDuelAnimation */
+static void adapt_PlayDuelAnimation(ProbeState *s)
+{
+	PlayDuelAnimationResult r = PlayDuelAnimation(s->a);
+	s->a = r.a;
+}
+/* <<< factory PlayDuelAnimation */
+
 const ProbeEntry probe_entries_play_animation[] = {
 	{ "CheckAnyAnimationPlaying", adapt_CheckAnyAnimationPlaying },
 	{ "SetDoFrameFunction", adapt_SetDoFrameFunction },
 	{ "ResetDoFrameFunction", adapt_ResetDoFrameFunction },
+	{ "PlayDuelAnimation", adapt_PlayDuelAnimation },
 	{ NULL, NULL },
 };

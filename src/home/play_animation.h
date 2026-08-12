@@ -18,4 +18,11 @@ AnimationStatusResult CheckAnyAnimationPlaying(void);
 FrameFunctionResult SetDoFrameFunction(uint16_t hl);
 FrameFunctionResult ResetDoFrameFunction(uint16_t hl);
 
+/* >>> factory PlayDuelAnimation */
+typedef struct {
+	uint8_t a;
+} PlayDuelAnimationResult;
+
+PlayDuelAnimationResult PlayDuelAnimation(uint8_t a);
+/* <<< factory PlayDuelAnimation */
 #endif
