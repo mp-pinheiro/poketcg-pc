@@ -44,20 +44,17 @@ def _resolve_ast_name(node: ast.AST) -> str | None:
 
 
 def load_routines() -> tuple[set[str], dict[str, str]]:
-    tree = ast.parse(REGISTRY.read_text())
-    routines_node = None
-    for stmt in ast.iter_child_nodes(tree):
-        if isinstance(stmt, (ast.AnnAssign, ast.Assign)):
-            targets = stmt.targets if isinstance(stmt, ast.Assign) else [stmt.target]
-            for target in targets:
-                if _resolve_ast_name(target) == "ROUTINES":
-                    routines_node = stmt.value
-                    break
-        if routines_node is not None:
-            break
-    if routines_node is None:
-        fail("ROUTINES not found in tests/routines.py")
-    raw: dict[str, tuple[str, ...]] = ast.literal_eval(routines_node)
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("routines_registry", REGISTRY)
+    if spec is None or spec.loader is None:
+        fail(f"cannot load {REGISTRY}")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except Exception as exc:  # noqa: BLE001 - surface registry defects verbatim
+        fail(f"tests/routines.py failed to import: {exc}")
+    raw: dict[str, tuple[str, ...]] = module.ROUTINES
     ported_parents: set[str] = set()
     name_to_parent: dict[str, str] = {}
     for entries in raw.values():

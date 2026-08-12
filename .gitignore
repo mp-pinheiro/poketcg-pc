@@ -42,3 +42,4 @@ saves/
 # Oracle-generated environments and focused builds
 /tools/oracle/.venv/
 /tools/oracle/gbref/build/
+.factory/
