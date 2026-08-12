@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateExpectedAIDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateExpectedAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"00\", \"52411\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateExpectedAIDamage\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"000000\", \"native\": \"010000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52409, 1], [52411, 2]]}}}\n",
+  "restored": "{\"fn\": \"UpdateExpectedAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"00\", \"52411\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}
