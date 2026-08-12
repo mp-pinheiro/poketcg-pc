@@ -44,6 +44,37 @@ CASES = {
     ],
 }
 
+# >>> factory GetPlayAreaLocationOfRaticateOrRattata
+CONTRACT["GetPlayAreaLocationOfRaticateOrRattata"] = {"compare": (), "preserve": ()}
+CASES["GetPlayAreaLocationOfRaticateOrRattata"] = [
+    # found via RATICATE search, not on the very first bench slot scanned
+    {"wram": {0xFF97: b"\xC2", 0xC2BC: b"\x01", 0xC2BD: b"\x00", 0xC2BE: b"\xFF",
+              0xC2BF: b"\xFF", 0xC2C0: b"\xFF",
+              0xC400: b"\xA8", 0xC401: b"\xA3"},
+     "read": {0xFF9D: 1}},
+    # RATICATE absent (empty slot after two real cards); RATTATA found on the
+    # second bench slot during the fallback search
+    {"wram": {0xFF97: b"\xC2", 0xC2BC: b"\x00", 0xC2BD: b"\x01", 0xC2BE: b"\xFF",
+              0xC400: b"\xA3", 0xC401: b"\xA7"},
+     "read": {0xFF9D: 1}},
+    # neither card present; both searches end via the empty bench1 slot
+    {"wram": {0xFF97: b"\xC2", 0xC2BC: b"\x00", 0xC2BD: b"\xFF",
+              0xC400: b"\xA3"},
+     "read": {0xFF9D: 1}},
+    # bench is completely full with no match and no empty slot: the search
+    # loop exhausts (b reaches MAX_PLAY_AREA_POKEMON) and the caller's
+    # `cp $ff` test misses it, so it is reported as "found" at location 6
+    {"wram": {0xFF97: b"\xC2", 0xC2BC: b"\x00", 0xC2BD: b"\x00", 0xC2BE: b"\x00",
+              0xC2BF: b"\x00", 0xC2C0: b"\x00",
+              0xC400: b"\xA3"},
+     "read": {0xFF9D: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BC: b"\x01", 0xC2BD: b"\x00",
+                        0xC2BE: b"\xFF", 0xC2BF: b"\xFF", 0xC2C0: b"\xFF",
+                        0xC400: b"\xA8", 0xC401: b"\xA3"},
+         read={0xFF9D: 1}),
+]
+# <<< factory GetPlayAreaLocationOfRaticateOrRattata
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -61,3 +92,11 @@ MUTATIONS = {
         "case_ids": ["IsAIPracticeScriptedTurn-2"],
     },
 }
+# >>> factory-mutation GetPlayAreaLocationOfRaticateOrRattata
+MUTATIONS["GetPlayAreaLocationOfRaticateOrRattata"] = {
+    "source_symbol": "GetPlayAreaLocationOfRaticateOrRattata",
+    "before": "	hTempPlayAreaLocation_ff9d = PLAY_AREA_BENCH_1;",
+    "after": "	hTempPlayAreaLocation_ff9d = 0u;",
+    "case_ids": ["GetPlayAreaLocationOfRaticateOrRattata-2"],
+}
+# <<< factory-mutation GetPlayAreaLocationOfRaticateOrRattata
