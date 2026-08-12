@@ -455,3 +455,30 @@ void DragonairSlam_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory DragonairSlam_AIEffect */
+
+/* >>> factory CheckIfPlayAreaHasAnyDamage */
+/* effect_functions.asm:517-531. Zero-means-max: the count is post-tested
+ * (dec+jr nz after the call), so an 8-bit count of 0 runs 256 times. */
+CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void)
+{
+	/* DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEFu (duel_constants.asm);
+	 * not the local macro of the same name, which is defined wrong above. */
+	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
+	uint32_t n = count.a ? count.a : 0x100u;
+	uint8_t e = PLAY_AREA_ARENA;
+	for (uint32_t i = 0; i < n; i++) {
+		if (GetCardDamageAndMaxHP(e).a != 0u)
+			return (CheckIfPlayAreaHasAnyDamageResult){0x00u, count.hl};
+		e++;
+	}
+	return (CheckIfPlayAreaHasAnyDamageResult){0x90u, count.hl};
+}
+/* <<< factory CheckIfPlayAreaHasAnyDamage */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+/* effect_functions.asm:581-583 */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_OnlyBasic(void)
+{
+	return CreateEnergyCardListFromDiscardPile(0x01u);
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */

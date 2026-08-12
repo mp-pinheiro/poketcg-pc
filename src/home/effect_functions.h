@@ -89,4 +89,11 @@ void DodrioRage_DamageBoostEffect(void);
 /* >>> factory DragonairSlam_AIEffect */
 void DragonairSlam_AIEffect(void);
 /* <<< factory DragonairSlam_AIEffect */
+/* >>> factory CheckIfPlayAreaHasAnyDamage */
+typedef struct { uint8_t f; uint16_t hl; } CheckIfPlayAreaHasAnyDamageResult;
+CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void);
+/* <<< factory CheckIfPlayAreaHasAnyDamage */
+/* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_OnlyBasic(void);
+/* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

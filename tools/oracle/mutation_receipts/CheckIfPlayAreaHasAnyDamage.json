@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfPlayAreaHasAnyDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfPlayAreaHasAnyDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"1e\", \"49903\": \"00\", \"50176\": \"08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfPlayAreaHasAnyDamage\", \"mismatches\": {\"f\": [0, 144]}}\n",
+  "restored": "{\"fn\": \"CheckIfPlayAreaHasAnyDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"1e\", \"49903\": \"00\", \"50176\": \"08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -367,6 +367,28 @@ CASES["DragonairSlam_AIEffect"] = [
 ]
 # <<< factory DragonairSlam_AIEffect
 
+# >>> factory CheckIfPlayAreaHasAnyDamage
+CONTRACT["CheckIfPlayAreaHasAnyDamage"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["CheckIfPlayAreaHasAnyDamage"] = [
+    {},
+    dict(POISON),
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x01", 0xC2BB: b"\x00",
+              0xC400: b"\x08", 0xC2C8: b"\x28"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x01", 0xC2BB: b"\x00",
+              0xC400: b"\x08", 0xC2C8: b"\x1E"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x00", 0xC2BB: b"\x00",
+              0xC400: b"\x08", 0xC2C8: b"\x1E"}},
+]
+# <<< factory CheckIfPlayAreaHasAnyDamage
+
+# >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic
+CONTRACT["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -569,3 +591,19 @@ MUTATIONS["DragonairSlam_AIEffect"] = {
     "case_ids": ["DragonairSlam_AIEffect-0", "DragonairSlam_AIEffect-1", "DragonairSlam_AIEffect-2"],
 }
 # <<< factory-mutation DragonairSlam_AIEffect
+# >>> factory-mutation CheckIfPlayAreaHasAnyDamage
+MUTATIONS["CheckIfPlayAreaHasAnyDamage"] = {
+    "source_symbol": "CheckIfPlayAreaHasAnyDamage",
+    "before": "uint32_t n = count.a ? count.a : 0x100u;",
+    "after": "uint32_t n = count.a;",
+    "case_ids": ["CheckIfPlayAreaHasAnyDamage-4"],
+}
+# <<< factory-mutation CheckIfPlayAreaHasAnyDamage
+# >>> factory-mutation CreateEnergyCardListFromDiscardPile_OnlyBasic
+MUTATIONS["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = {
+    "source_symbol": "CreateEnergyCardListFromDiscardPile_OnlyBasic",
+    "before": "\treturn CreateEnergyCardListFromDiscardPile(0x01u);",
+    "after": "\tCreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile(0x01u); return (CreateEnergyCardListFromDiscardPileResult){r.hl, 0x00u};",
+    "case_ids": ["CreateEnergyCardListFromDiscardPile_OnlyBasic-0", "CreateEnergyCardListFromDiscardPile_OnlyBasic-1"],
+}
+# <<< factory-mutation CreateEnergyCardListFromDiscardPile_OnlyBasic

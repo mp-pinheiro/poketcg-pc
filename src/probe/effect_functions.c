@@ -214,6 +214,24 @@ static void adapt_DragonairSlam_AIEffect(ProbeState *s)
 }
 /* <<< factory DragonairSlam_AIEffect */
 
+/* >>> factory CheckIfPlayAreaHasAnyDamage */
+static void adapt_CheckIfPlayAreaHasAnyDamage(ProbeState *s)
+{
+	CheckIfPlayAreaHasAnyDamageResult r = CheckIfPlayAreaHasAnyDamage();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfPlayAreaHasAnyDamage */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+static void adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic(ProbeState *s)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -241,5 +259,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
 	{ "DragonairSlam_AIEffect", adapt_DragonairSlam_AIEffect },
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
+	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
+	{ "CreateEnergyCardListFromDiscardPile_OnlyBasic", adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic },
 	{ NULL, NULL },
 };
