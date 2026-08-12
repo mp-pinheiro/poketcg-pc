@@ -73,6 +73,34 @@ CASES["AdvanceCreditsSequenceCmdPtrBy5"] = [
 ]
 # <<< factory AdvanceCreditsSequenceCmdPtrBy5
 
+# >>> factory AdvanceCreditsSequenceCmdPtrBy6
+CONTRACT["AdvanceCreditsSequenceCmdPtrBy6"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["AdvanceCreditsSequenceCmdPtrBy6"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+    {"wram": {wSequenceCmdPtr: b"\xFA\x10"}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xF9\x10"}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFC\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceCreditsSequenceCmdPtrBy6
+
+# >>> factory AdvanceCreditsSequenceCmdPtrBy4
+CONTRACT["AdvanceCreditsSequenceCmdPtrBy4"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["AdvanceCreditsSequenceCmdPtrBy4"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+    {"wram": {wSequenceCmdPtr: b"\xFC\x10"}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFB\x10"}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFE\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceCreditsSequenceCmdPtrBy4
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -120,3 +148,21 @@ MUTATIONS["AdvanceCreditsSequenceCmdPtrBy5"] = {
     "case_ids": ["AdvanceCreditsSequenceCmdPtrBy5-0", "AdvanceCreditsSequenceCmdPtrBy5-2"],
 }
 # <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy5
+# >>> factory-mutation AdvanceCreditsSequenceCmdPtrBy6
+MUTATIONS["AdvanceCreditsSequenceCmdPtrBy6"] = {
+    "source_symbol": "AdvanceCreditsSequenceCmdPtrBy6",
+    "before": "void AdvanceCreditsSequenceCmdPtrBy6(void)\n{\n\tAdvanceCreditsSequenceCmdPtr(6u);\n}",
+    "after": "void AdvanceCreditsSequenceCmdPtrBy6(void)\n{\n\tAdvanceCreditsSequenceCmdPtr(7u);\n}",
+    "case_ids": ["AdvanceCreditsSequenceCmdPtrBy6-0", "AdvanceCreditsSequenceCmdPtrBy6-2",
+                 "AdvanceCreditsSequenceCmdPtrBy6-3", "AdvanceCreditsSequenceCmdPtrBy6-4"],
+}
+# <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy6
+# >>> factory-mutation AdvanceCreditsSequenceCmdPtrBy4
+MUTATIONS["AdvanceCreditsSequenceCmdPtrBy4"] = {
+    "source_symbol": "AdvanceCreditsSequenceCmdPtrBy4",
+    "before": "void AdvanceCreditsSequenceCmdPtrBy4(void)\n{\n\tAdvanceCreditsSequenceCmdPtr(4u);\n}",
+    "after": "void AdvanceCreditsSequenceCmdPtrBy4(void)\n{\n\tAdvanceCreditsSequenceCmdPtr(5u);\n}",
+    "case_ids": ["AdvanceCreditsSequenceCmdPtrBy4-0", "AdvanceCreditsSequenceCmdPtrBy4-2",
+                 "AdvanceCreditsSequenceCmdPtrBy4-3", "AdvanceCreditsSequenceCmdPtrBy4-4"],
+}
+# <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy4

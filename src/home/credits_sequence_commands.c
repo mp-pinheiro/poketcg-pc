@@ -53,3 +53,19 @@ void AdvanceCreditsSequenceCmdPtrBy5(void)
 	AdvanceCreditsSequenceCmdPtr(5u);
 }
 /* <<< factory AdvanceCreditsSequenceCmdPtrBy5 */
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy6 */
+/* credits_sequence_commands.asm:57-59 */
+void AdvanceCreditsSequenceCmdPtrBy6(void)
+{
+	AdvanceCreditsSequenceCmdPtr(6u);
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy6 */
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy4 */
+/* credits_sequence_commands.asm:61-65 (fallthrough into AdvanceCreditsSequenceCmdPtr) */
+void AdvanceCreditsSequenceCmdPtrBy4(void)
+{
+	AdvanceCreditsSequenceCmdPtr(4u);
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy4 */

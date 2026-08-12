@@ -16,4 +16,10 @@ void AdvanceCreditsSequenceCmdPtrBy3(void);
 /* >>> factory AdvanceCreditsSequenceCmdPtrBy5 */
 void AdvanceCreditsSequenceCmdPtrBy5(void);
 /* <<< factory AdvanceCreditsSequenceCmdPtrBy5 */
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy6 */
+void AdvanceCreditsSequenceCmdPtrBy6(void);
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy6 */
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy4 */
+void AdvanceCreditsSequenceCmdPtrBy4(void);
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy4 */
 #endif

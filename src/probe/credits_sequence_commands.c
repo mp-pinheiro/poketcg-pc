@@ -42,6 +42,22 @@ static void adapt_AdvanceCreditsSequenceCmdPtrBy5(ProbeState *s)
 }
 /* <<< factory AdvanceCreditsSequenceCmdPtrBy5 */
 
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy6 */
+static void adapt_AdvanceCreditsSequenceCmdPtrBy6(ProbeState *s)
+{
+	(void)s;
+	AdvanceCreditsSequenceCmdPtrBy6();
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy6 */
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy4 */
+static void adapt_AdvanceCreditsSequenceCmdPtrBy4(ProbeState *s)
+{
+	(void)s;
+	AdvanceCreditsSequenceCmdPtrBy4();
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy4 */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -49,5 +65,7 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "AdvanceCreditsSequenceCmdPtrBy2", adapt_AdvanceCreditsSequenceCmdPtrBy2 },
 	{ "AdvanceCreditsSequenceCmdPtrBy3", adapt_AdvanceCreditsSequenceCmdPtrBy3 },
 	{ "AdvanceCreditsSequenceCmdPtrBy5", adapt_AdvanceCreditsSequenceCmdPtrBy5 },
+	{ "AdvanceCreditsSequenceCmdPtrBy6", adapt_AdvanceCreditsSequenceCmdPtrBy6 },
+	{ "AdvanceCreditsSequenceCmdPtrBy4", adapt_AdvanceCreditsSequenceCmdPtrBy4 },
 	{ NULL, NULL },
 };
