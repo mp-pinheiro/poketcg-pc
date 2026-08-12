@@ -138,6 +138,13 @@ static void adapt_LoadFullWidthFontTiles(ProbeState *s)
 	LoadFullWidthFontTiles();
 }
 
+/* >>> factory Func_2057 */
+static void adapt_Func_2057(ProbeState *s)
+{
+	s->e = Func_2057(s->hl, s->a, s->b, s->c);
+}
+/* <<< factory Func_2057 */
+
 const ProbeEntry probe_entries_tiles[] = {
 	{ "FillRectangle", adapt_FillRectangle },
 	{ "Copy1bppTiles", adapt_Copy1bppTiles },
@@ -157,5 +164,6 @@ const ProbeEntry probe_entries_tiles[] = {
 	{ "Func_212f", adapt_Func_212f },
 	{ "DrawDuelBoxMessage", adapt_DrawDuelBoxMessage },
 	{ "LoadFullWidthFontTiles", adapt_LoadFullWidthFontTiles },
+	{ "Func_2057", adapt_Func_2057 },
 	{ NULL, NULL },
 };

@@ -8,6 +8,9 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 #include "ppu.h"
+/* >>> factory statics */
+#include "home/bg_map.h"
+/* <<< factory statics */
 
 static uint16_t bg_map0_address(uint16_t xy)
 {
@@ -282,3 +285,21 @@ void LoadFullWidthFontTiles(void)
 
 	BankswitchROM(saved);
 }
+
+/* >>> factory Func_2057 */
+/* tiles.asm:200-211. Only reached by `jr` from Func_2051 (hl = sp+9) or
+ * fallthrough from Func_2055 (hl = sp+8), both inside the not-yet-ported
+ * Func_1f96 stack frame; `ld hl, sp+2` and `sp+6` there read two more bytes
+ * of that same caller frame. In C the frame becomes explicit parameters --
+ * frame_c (sp+2), frame_lo (sp+6), frame_hi (sp+7) -- that Func_1f96 will
+ * pass from its own locals once it is ported. Returns the byte written,
+ * which callers read back out of e. */
+uint8_t Func_2057(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)
+{
+	uint8_t value = gb_read8(hl);
+	uint8_t row = (uint8_t)(frame_c + frame_lo);
+
+	HblankWriteByteToBGMap0(value, frame_hi, row);
+	return value;
+}
+/* <<< factory Func_2057 */

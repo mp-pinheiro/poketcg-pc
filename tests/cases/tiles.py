@@ -179,6 +179,22 @@ CASES = {
              vread={0: {V0_TILES0: 1024, V0_TILES1: 1024, V0_TILES2: 1024}}),
     ],
 }
+# >>> factory Func_2057
+CONTRACT["Func_2057"] = {"compare": ("d", "e"), "preserve": ("d",)}
+CASES["Func_2057"] = [
+        {"vread": {0: {MAP: 1}}},
+        {"hl": SRC, "wram": {SRC: b"\x99"}, "vread": {0: {MAP: 1}}},
+        dict(POISON,
+             oracle=False,
+             why="a/b/c stand in for Func_1f96's not-yet-ported local frame "
+                 "(sp+2/sp+6/sp+7); a live call can only supply the "
+                 "harness's own zeroed $CF00-$CFFF window there, never "
+                 "these poison bytes, so the frame arithmetic is asm-"
+                 "derived rather than oracle-run.",
+             expect_regs={"e": 0xFF, "d": 0xDD}),
+    ]
+# <<< factory Func_2057
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -190,3 +206,11 @@ MUTATIONS = {
         "case_ids": ["FillRectangle-1", "FillRectangle-2", "FillRectangle-3", "FillRectangle-4"],
     },
 }
+# >>> factory-mutation Func_2057
+MUTATIONS["Func_2057"] = {
+        "source_symbol": "Func_2057",
+        "before": "uint8_t value = gb_read8(hl);",
+        "after": "uint8_t value = gb_read8((uint16_t)(hl + 1u));",
+        "case_ids": ["Func_2057-1"],
+    }
+# <<< factory-mutation Func_2057
