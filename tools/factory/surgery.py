@@ -203,6 +203,8 @@ def extract(root: Path, packet: dict) -> dict:
         open_py, close_py = f"# >>> factory {fn}", f"# <<< factory {fn}"
         open_mut = f"# >>> factory-mutation {fn}"
         close_mut = f"# <<< factory-mutation {fn}"
+        open_comp = f"# >>> factory-completion {fn}"
+        close_comp = f"# <<< factory-completion {fn}"
         routines[fn] = {
             "C": _block_body(c_text, open_c, close_c, fn, "C"),
             "H": _block_body(h_text, open_c, close_c, fn, "H"),
@@ -210,6 +212,13 @@ def extract(root: Path, packet: dict) -> dict:
             "CASES": _block_body(cases_text, open_py, close_py, fn, "CASES"),
             "MUTATION": _block_body(cases_text, open_mut, close_mut, fn, "MUTATION"),
         }
+        # Optional: a schema-2 completion override, applied after
+        # SCHEMA2_CASES exists. Needed by routines whose asm tail never
+        # reaches either oracle's fixed completion address (e.g. a computed
+        # `ld sp, hl` unwind); absent for almost every routine.
+        if _span(cases_text, open_comp, close_comp):
+            routines[fn]["COMPLETION"] = _block_body(
+                cases_text, open_comp, close_comp, fn, "COMPLETION")
     return {"statics": statics, "routines": routines}
 
 
@@ -437,6 +446,15 @@ def apply(root: Path, packet: dict, translation: dict,
         mut_block = f"{open_mut}\n{blocks['MUTATION'].rstrip()}\n{close_mut}\n"
         cases_text = _replace_span(cases_text, open_mut, close_mut, mut_block,
                                    len(cases_text))
+
+        if blocks.get("COMPLETION"):
+            open_comp = f"# >>> factory-completion {fn}"
+            close_comp = f"# <<< factory-completion {fn}"
+            comp_block = (f"{open_comp}\n{blocks['COMPLETION'].rstrip()}\n"
+                          f"{close_comp}\n")
+            # appended at end so it runs after SCHEMA2_CASES is assigned
+            cases_text = _replace_span(cases_text, open_comp, close_comp,
+                                       comp_block, len(cases_text))
 
     check_includes(root, c_text)
     check_includes(root, probe_text)

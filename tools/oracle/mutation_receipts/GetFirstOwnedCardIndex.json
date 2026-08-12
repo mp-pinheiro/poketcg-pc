@@ -1,0 +1,9 @@
+{
+  "fn": "GetFirstOwnedCardIndex",
+  "case": "tests/cases/card_album.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetFirstOwnedCardIndex\", \"registers\": {\"a\": 3, \"b\": 3, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 53100, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetFirstOwnedCardIndex\", \"mismatches\": {\"a\": [3, 0], \"b\": [3, 0]}}\n",
+  "restored": "{\"fn\": \"GetFirstOwnedCardIndex\", \"registers\": {\"a\": 3, \"b\": 3, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 53100, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
