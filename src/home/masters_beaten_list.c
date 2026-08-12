@@ -53,3 +53,17 @@ uint8_t AddMasterBeatenToList(uint8_t a, uint8_t *f)
 	*f = 0x80u;
 	return a;
 }
+
+/* >>> factory AddAllMastersToMastersBeatenList */
+/* masters_beaten_list.asm:46-55 */
+uint8_t AddAllMastersToMastersBeatenList(uint8_t *f)
+{
+	uint8_t master_id;
+	for (master_id = 1u; master_id <= MASTERS_BEATEN_COUNT; ++master_id) {
+		uint8_t discard_f;
+		AddMasterBeatenToList(master_id, &discard_f);
+	}
+	*f = 0xC0u;
+	return master_id;
+}
+/* <<< factory AddAllMastersToMastersBeatenList */

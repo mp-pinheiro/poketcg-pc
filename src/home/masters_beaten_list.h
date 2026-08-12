@@ -6,4 +6,7 @@
 uint8_t ClearMasterBeatenList(uint8_t *f);
 uint8_t AddMasterBeatenToList(uint8_t a, uint8_t *f);
 
+/* >>> factory AddAllMastersToMastersBeatenList */
+uint8_t AddAllMastersToMastersBeatenList(uint8_t *f);
+/* <<< factory AddAllMastersToMastersBeatenList */
 #endif

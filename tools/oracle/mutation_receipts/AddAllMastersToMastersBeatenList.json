@@ -1,0 +1,9 @@
+{
+  "fn": "AddAllMastersToMastersBeatenList",
+  "case": "tests/cases/masters_beaten_list.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddAllMastersToMastersBeatenList\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54203\": \"0102030405060708090a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddAllMastersToMastersBeatenList\", \"mismatches\": {\"a\": [11, 10], \"bus\": {\"address\": 54212, \"reference\": \"060708090a\", \"native\": \"0607080900\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[54203, 10]]}}}\n",
+  "restored": "{\"fn\": \"AddAllMastersToMastersBeatenList\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54203\": \"0102030405060708090a\"}}, \"status\": \"PASS\"}\n"
+}

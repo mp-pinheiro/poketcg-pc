@@ -33,6 +33,19 @@ CASES = {
     ],
 }
 
+# >>> factory AddAllMastersToMastersBeatenList
+CONTRACT["AddAllMastersToMastersBeatenList"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["AddAllMastersToMastersBeatenList"] = [
+    {"wram": {wMastersBeatenList: b"\x00" * 10}, "read": {wMastersBeatenList: 10}},
+    dict(POISON, wram={wMastersBeatenList: b"\x00" * 10}, read={wMastersBeatenList: 10}),
+    {"wram": {wMastersBeatenList: b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a"}, "read": {wMastersBeatenList: 10}},
+    {"wram": {GUARD_LOW: b"\x5a", wMastersBeatenList: b"\x03\x00\x00\x00\x00\x00\x00\x00\x00\x00", GUARD_HIGH: b"\xa5"}, "read": {GUARD_LOW: 12}},
+]
+# <<< factory AddAllMastersToMastersBeatenList
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -51,3 +64,16 @@ MUTATIONS = {
 }
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation AddAllMastersToMastersBeatenList
+MUTATIONS["AddAllMastersToMastersBeatenList"] = {
+    "source_symbol": "AddAllMastersToMastersBeatenList",
+    "before": "master_id <= MASTERS_BEATEN_COUNT",
+    "after": "master_id < MASTERS_BEATEN_COUNT",
+    "case_ids": [
+        "AddAllMastersToMastersBeatenList-0",
+        "AddAllMastersToMastersBeatenList-1",
+        "AddAllMastersToMastersBeatenList-2",
+        "AddAllMastersToMastersBeatenList-3",
+    ],
+}
+# <<< factory-mutation AddAllMastersToMastersBeatenList
