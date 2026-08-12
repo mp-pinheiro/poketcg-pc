@@ -38,6 +38,37 @@ CASES = {
     ],
 }
 
+# >>> factory Func_f5cc
+CONTRACT["Func_f5cc"] = {
+    "compare": ("a", "f", "c", "d", "e"),
+    "preserve": ("c", "d", "e"),
+}
+CASES["Func_f5cc"] = [
+    {"c": 0, "wram": {FLAGS: b"\x00\x00\x00\x00"}},
+    dict(POISON, c=0, wram={FLAGS: b"\x80\x00\x00\x00"}),
+    {"c": 0, "wram": {FLAGS: b"\x80\x00\x00\x00"}},
+    {"c": 7, "wram": {FLAGS: b"\x01\x00\x00\x00"}},
+    {"c": 8, "wram": {FLAGS: b"\x00\x80\x00\x00"}},
+    {"c": 31, "wram": {FLAGS: b"\x00\x00\x00\x01"}},
+    dict(POISON, c=31, wram={FLAGS: b"\x00\x00\x00\x00"}),
+]
+# <<< factory Func_f5cc
+
+# >>> factory Func_f5d4
+CONTRACT["Func_f5d4"] = {
+    "compare": ("a", "f", "c", "d", "e"),
+    "preserve": ("c", "d", "e"),
+}
+CASES["Func_f5d4"] = [
+    {"c": 0, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
+    dict(POISON, c=0, wram={FLAGS: b"\x7F\x00\x00\x00"}, read={FLAGS: 4}),
+    {"c": 7, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
+    {"c": 8, "wram": {FLAGS: b"\x00\x00\x00\x00"}, "read": {FLAGS: 4}},
+    {"c": 31, "wram": {FLAGS: b"\xFF\xFF\xFF\xFE"}, "read": {FLAGS: 4}},
+    dict(POISON, c=31, wram={FLAGS: b"\x00\x00\x00\x00"}, read={FLAGS: 4}),
+]
+# <<< factory Func_f5d4
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -61,3 +92,21 @@ MUTATIONS = {
         "case_ids": ["Script_Host-0", "Script_Host-1"],
     },
 }
+# >>> factory-mutation Func_f5cc
+MUTATIONS["Func_f5cc"] = {
+    "source_symbol": "Func_f5cc",
+    "before": "uint8_t f = a ? 0x10u : 0xA0u;",
+    "after": "uint8_t f = a ? 0xA0u : 0x10u;",
+    "case_ids": ["Func_f5cc-0", "Func_f5cc-1", "Func_f5cc-2",
+                  "Func_f5cc-3", "Func_f5cc-4", "Func_f5cc-5", "Func_f5cc-6"],
+}
+# <<< factory-mutation Func_f5cc
+# >>> factory-mutation Func_f5d4
+MUTATIONS["Func_f5d4"] = {
+    "source_symbol": "Func_f5d4",
+    "before": "uint8_t a = (uint8_t)(gb_read8(bit.hl) | bit.b);",
+    "after": "uint8_t a = (uint8_t)(gb_read8(bit.hl) & bit.b);",
+    "case_ids": ["Func_f5d4-0", "Func_f5d4-1", "Func_f5d4-2",
+                  "Func_f5d4-3", "Func_f5d4-4", "Func_f5d4-5"],
+}
+# <<< factory-mutation Func_f5d4

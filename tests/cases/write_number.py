@@ -1,11 +1,11 @@
 """Oracle-diff cases for poketcg/src/home/write_number.asm.
 
-The issue's requested display wrappers are contract-supported exclusions, not
-standalone C ABIs. The pinned ASM defines WriteBCDDigitInTextFormat at lines
-78-86, WriteOneByteNumber at 90-111, and WriteTwoByteNumber at 115-125.
-An exhaustive source search found no callsites in poketcg/src beyond the
-WriteBCDDigitInTextFormat references internal to the same dead display family;
-the normative port contract records this family as dead code at lines 370-372.
+WriteOneByteNumber (90-111) and WriteTwoByteNumber (115-125) drive
+TwoByteNumberToText. WriteBCDDigitInTextFormat (78-86) is a standalone BCD
+digit primitive, portable even though its own callers
+(WriteOneDigitBCDNumber, WriteTwoDigitBCDNumber, WriteFourDigitBCDNumber,
+WriteBCDNumberInTextFormat) remain dead code per docs/port-contract.md:370-372
+(zero external callsites in poketcg/src).
 """
 
 DEST = 0xC300
@@ -16,6 +16,10 @@ CONTRACT = {
         "compare": ("b", "c", "d", "e"),
         "preserve": ("b", "c"),
     },
+    "WriteBCDDigitInTextFormat": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -23,6 +27,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 def case(hl, **kw):
     return dict(POISON, hl=hl, d=DEST >> 8, e=DEST & 0xFF, wram={DEST: FILL}, **kw)
+
+
+BCD_DST = 0xC110
+
+
+def bcd_case(a, **kw):
+    return dict(POISON, a=a, hl=BCD_DST, wram={BCD_DST: b"\xff"}, read={BCD_DST: 1}, **kw)
 
 
 CASES = {
@@ -38,6 +49,14 @@ CASES = {
         case(65535),
         # de advanced by five, read back without seeding the buffer first.
         dict(POISON, hl=54321, d=DEST >> 8, e=DEST & 0xFF, read={DEST: 6}),
+    ],
+    "WriteBCDDigitInTextFormat": [
+        {},
+        bcd_case(0xF0),
+        bcd_case(0x09),
+        bcd_case(0x0A),
+        bcd_case(0x0F),
+        bcd_case(0xAA),
     ],
 }
 SCHEMA2_CASES = {
@@ -58,11 +77,23 @@ SCHEMA2_CASES = {
         },
     ],
 }
+from tests.cases._schema_migration import legacy_to_schema
+
+SCHEMA2_CASES["WriteBCDDigitInTextFormat"] = legacy_to_schema(
+    {"WriteBCDDigitInTextFormat": CASES["WriteBCDDigitInTextFormat"]},
+    {"WriteBCDDigitInTextFormat": CONTRACT["WriteBCDDigitInTextFormat"]},
+)["WriteBCDDigitInTextFormat"]
 MUTATIONS = {
     "TwoByteNumberToText": {
         "source_symbol": "TwoByteNumberToText",
         "before": "(uint16_t)-10, (uint16_t)-1,",
         "after": "(uint16_t)-10, (uint16_t)-2,",
         "case_ids": ["TwoByteNumberToText-12345"],
+    },
+    "WriteBCDDigitInTextFormat": {
+        "source_symbol": "WriteBCDDigitInTextFormat",
+        "before": "c = (uint8_t)(c + 0x07u);",
+        "after": "c = (uint8_t)(c + 0x08u);",
+        "case_ids": ["WriteBCDDigitInTextFormat-3", "WriteBCDDigitInTextFormat-4"],
     },
 }

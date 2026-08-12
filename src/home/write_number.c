@@ -32,3 +32,15 @@ void TwoByteNumberToText(uint16_t hl, uint16_t *de)
 
 	gb_write8(*de, 0x00); /* TX_END, written without an inc de: six bytes out, de advanced by five */
 }
+
+/* WriteBCDDigitInTextFormat:: poketcg/src/home/write_number.asm:78-86 */
+uint8_t WriteBCDDigitInTextFormat(uint8_t a, uint16_t *hl)
+{
+	uint8_t c = (uint8_t)((a & 0x0Fu) + '0');
+
+	if (c > '9')
+		c = (uint8_t)(c + 0x07u);
+	gb_write8(*hl, c);
+	*hl = (uint16_t)(*hl + 1u);
+	return c;
+}

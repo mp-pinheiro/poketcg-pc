@@ -22,3 +22,26 @@ ChallengeHallBitResult Func_f5e9(uint8_t c)
 void Script_Host(void)
 {
 }
+
+/* >>> factory Func_f5cc */
+/* challenge_hall.asm:517-523 */
+ChallengeHallTestBitResult Func_f5cc(uint8_t c)
+{
+	ChallengeHallBitResult bit = Func_f5e9(c);
+	uint8_t a = (uint8_t)(gb_read8(bit.hl) & bit.b);
+	uint8_t f = a ? 0x10u : 0xA0u;
+	return (ChallengeHallTestBitResult){a, f};
+}
+/* <<< factory Func_f5cc */
+
+/* >>> factory Func_f5d4 */
+/* challenge_hall.asm:525-530 */
+ChallengeHallSetBitResult Func_f5d4(uint8_t c)
+{
+	ChallengeHallBitResult bit = Func_f5e9(c);
+	uint8_t a = (uint8_t)(gb_read8(bit.hl) | bit.b);
+	gb_write8(bit.hl, a);
+	uint8_t f = a ? 0x00u : 0x80u;
+	return (ChallengeHallSetBitResult){a, f};
+}
+/* <<< factory Func_f5d4 */

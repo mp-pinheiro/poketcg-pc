@@ -1,0 +1,9 @@
+{
+  "fn": "Func_f5d4",
+  "case": "tests/cases/challenge_hall.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_f5d4\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54936\": \"80000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_f5d4\", \"mismatches\": {\"a\": [128, 0], \"f\": [0, 128], \"bus\": {\"address\": 54936, \"reference\": \"80000000\", \"native\": \"00000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54936, 4]]}}}\n",
+  "restored": "{\"fn\": \"Func_f5d4\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54936\": \"80000000\"}}, \"status\": \"PASS\"}\n"
+}

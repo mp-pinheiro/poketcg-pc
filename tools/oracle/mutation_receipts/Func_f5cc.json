@@ -1,0 +1,9 @@
+{
+  "fn": "Func_f5cc",
+  "case": "tests/cases/challenge_hall.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_f5cc\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54936\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_f5cc\", \"mismatches\": {\"f\": [160, 16]}}\n",
+  "restored": "{\"fn\": \"Func_f5cc\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54936\": \"00000000\"}}, \"status\": \"PASS\"}\n"
+}

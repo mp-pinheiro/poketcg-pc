@@ -1,0 +1,9 @@
+{
+  "fn": "WriteBCDDigitInTextFormat",
+  "case": "tests/cases/write_number.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteBCDDigitInTextFormat\", \"registers\": {\"a\": 65, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49425, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"41\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteBCDDigitInTextFormat\", \"mismatches\": {\"a\": [65, 66], \"bus\": {\"address\": 49424, \"reference\": \"41\", \"native\": \"42\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[49424, 1]]}}}\n",
+  "restored": "{\"fn\": \"WriteBCDDigitInTextFormat\", \"registers\": {\"a\": 65, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49425, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"41\"}}, \"status\": \"PASS\"}\n"
+}

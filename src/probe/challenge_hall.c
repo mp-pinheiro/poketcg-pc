@@ -21,9 +21,29 @@ static void adapt_Script_Host(ProbeState *s)
 	Script_Host();
 }
 
+/* >>> factory Func_f5cc */
+static void adapt_Func_f5cc(ProbeState *s)
+{
+	ChallengeHallTestBitResult out = Func_f5cc(s->c);
+	s->a = out.a;
+	s->f = out.f;
+}
+/* <<< factory Func_f5cc */
+
+/* >>> factory Func_f5d4 */
+static void adapt_Func_f5d4(ProbeState *s)
+{
+	ChallengeHallSetBitResult out = Func_f5d4(s->c);
+	s->a = out.a;
+	s->f = out.f;
+}
+/* <<< factory Func_f5d4 */
+
 const ProbeEntry probe_entries_challenge_hall[] = {
 	{ "Func_f5db", adapt_Func_f5db },
 	{ "Func_f5e9", adapt_Func_f5e9 },
 	{ "Script_Host", adapt_Script_Host },
+	{ "Func_f5cc", adapt_Func_f5cc },
+	{ "Func_f5d4", adapt_Func_f5d4 },
 	{ NULL, NULL },
 };
