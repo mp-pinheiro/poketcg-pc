@@ -11,4 +11,13 @@ typedef struct {
 PCPackCoordinates GePCPackSelectionCoordinates(void);
 void TryGivePCPack(uint8_t id);
 
+/* >>> factory InitPCPacks */
+void InitPCPacks(void);
+/* <<< factory InitPCPacks */
+/* >>> factory DrawMailMenuCursor */
+void DrawMailMenuCursor(uint8_t symbol);
+/* <<< factory DrawMailMenuCursor */
+/* >>> factory GetPCPackCoordinates */
+PCPackCoordinates GetPCPackCoordinates(uint8_t pack);
+/* <<< factory GetPCPackCoordinates */
 #endif

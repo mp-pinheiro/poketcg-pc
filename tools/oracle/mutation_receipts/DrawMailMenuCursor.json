@@ -1,0 +1,9 @@
+{
+  "fn": "DrawMailMenuCursor",
+  "case": "tests/cases/mail.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawMailMenuCursor\", \"registers\": {\"a\": 63, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"3f\"}, \"1\": {\"38977\": \"00\"}}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawMailMenuCursor\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawMailMenuCursor\", \"registers\": {\"a\": 63, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"3f\"}, \"1\": {\"38977\": \"00\"}}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

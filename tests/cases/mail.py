@@ -23,6 +23,37 @@ CASES = {
     ],
 }
 
+# >>> factory InitPCPacks
+
+CONTRACT["InitPCPacks"] = {"compare": (), "preserve": ()}
+CASES["InitPCPacks"] = [
+	{"wram": {wPCPacks: bytes(15), wPCPackSelection: b"\x05"},
+	 "read": {wPCPacks: 15}},
+	dict(POISON, wram={wPCPacks: bytes([0xff] * 15), wPCPackSelection: b"\x0e"},
+	     read={wPCPacks: 15}),
+]
+# <<< factory InitPCPacks
+
+# >>> factory DrawMailMenuCursor
+
+CONTRACT["DrawMailMenuCursor"] = {"compare": (), "preserve": ()}
+CASES["DrawMailMenuCursor"] = [
+	{"a": 0x3f, "wram": {wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
+	{"a": 1, "wram": {wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
+	dict(POISON, a=2, wram={wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
+]
+# <<< factory DrawMailMenuCursor
+
+# >>> factory GetPCPackCoordinates
+
+CONTRACT["GetPCPackCoordinates"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["GetPCPackCoordinates"] = [
+	{"a": 0, "wram": {wPCPackSelection: b"\x00"}},
+	{"a": 14, "wram": {wPCPackSelection: b"\x00"}},
+	dict(POISON, a=7, wram={wPCPackSelection: b"\x03"}),
+]
+# <<< factory GetPCPackCoordinates
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -41,3 +72,30 @@ MUTATIONS = {
         "case_ids": ["TryGivePCPack-0", "TryGivePCPack-1", "TryGivePCPack-3", "TryGivePCPack-4"],
     },
 }
+# >>> factory-mutation InitPCPacks
+
+MUTATIONS["InitPCPacks"] = {
+	"source_symbol": "InitPCPacks",
+	"before": "TryGivePCPack(1u);",
+	"after": "TryGivePCPack(0u);",
+	"case_ids": ["InitPCPacks-0", "InitPCPacks-1"],
+}
+# <<< factory-mutation InitPCPacks
+# >>> factory-mutation DrawMailMenuCursor
+
+MUTATIONS["DrawMailMenuCursor"] = {
+	"source_symbol": "DrawMailMenuCursor",
+	"before": "WriteByteToBGMap0(symbol, coords.b, coords.c);",
+	"after": "WriteByteToBGMap0(symbol, coords.c, coords.b);",
+	"case_ids": ["DrawMailMenuCursor-0", "DrawMailMenuCursor-1", "DrawMailMenuCursor-2"],
+}
+# <<< factory-mutation DrawMailMenuCursor
+# >>> factory-mutation GetPCPackCoordinates
+
+MUTATIONS["GetPCPackCoordinates"] = {
+	"source_symbol": "GetPCPackCoordinates",
+	"before": "coords.b++;",
+	"after": "coords.b--;",
+	"case_ids": ["GetPCPackCoordinates-0", "GetPCPackCoordinates-1", "GetPCPackCoordinates-2"],
+}
+# <<< factory-mutation GetPCPackCoordinates

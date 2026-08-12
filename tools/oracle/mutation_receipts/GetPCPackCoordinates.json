@@ -1,0 +1,9 @@
+{
+  "fn": "GetPCPackCoordinates",
+  "case": "tests/cases/mail.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetPCPackCoordinates\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetPCPackCoordinates\", \"mismatches\": {\"b\": [2, 0]}}\n",
+  "restored": "{\"fn\": \"GetPCPackCoordinates\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53533\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

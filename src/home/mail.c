@@ -1,6 +1,9 @@
 #include "home/mail.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/bg_map.h"
+/* <<< factory statics */
 
 #define NUM_PC_PACKS 15
 #define PACK_UNOPENED 0x80
@@ -43,3 +46,45 @@ void TryGivePCPack(uint8_t id)
 		slot++;
 	} while (--count);
 }
+
+/* >>> factory InitPCPacks */
+
+/* mail.asm:5-20 */
+void InitPCPacks(void)
+{
+	gb_write8(wPCPackSelection_ADDR, 0u);
+
+	uint16_t addr = wPCPacks_ADDR;
+	uint8_t count = NUM_PC_PACKS;
+	do {
+		gb_write8(addr, 0u);
+		addr++;
+	} while (--count);
+
+	TryGivePCPack(1u);
+}
+/* <<< factory InitPCPacks */
+
+/* >>> factory DrawMailMenuCursor */
+
+/* mail.asm:328-333 */
+void DrawMailMenuCursor(uint8_t symbol)
+{
+	PCPackCoordinates coords = GePCPackSelectionCoordinates();
+	WriteByteToBGMap0(symbol, coords.b, coords.c);
+}
+/* <<< factory DrawMailMenuCursor */
+
+/* >>> factory GetPCPackCoordinates */
+
+/* mail.asm:459-470 */
+PCPackCoordinates GetPCPackCoordinates(uint8_t pack)
+{
+	uint8_t saved = gb_read8(wPCPackSelection_ADDR);
+	gb_write8(wPCPackSelection_ADDR, pack);
+	PCPackCoordinates coords = GePCPackSelectionCoordinates();
+	coords.b++;
+	gb_write8(wPCPackSelection_ADDR, saved);
+	return coords;
+}
+/* <<< factory GetPCPackCoordinates */
