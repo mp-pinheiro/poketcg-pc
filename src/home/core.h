@@ -62,4 +62,11 @@ LookResult LookForCardIDInPlayArea_Bank5(uint8_t a, uint8_t b);
 /* >>> factory ClearMemory_Bank5 */
 void ClearMemory_Bank5(uint8_t a, uint16_t hl);
 /* <<< factory ClearMemory_Bank5 */
+/* >>> factory CheckCardPageExists */
+typedef struct { uint8_t a; uint8_t zero; } CardPageExistsResult;
+CardPageExistsResult CheckCardPageExists(uint16_t *hl);
+/* <<< factory CheckCardPageExists */
+/* >>> factory CardPageSwitch_PokemonEnd */
+CardPageResult CardPageSwitch_PokemonEnd(void);
+/* <<< factory CardPageSwitch_PokemonEnd */
 #endif /* POKETCG_HOME_CORE_H */

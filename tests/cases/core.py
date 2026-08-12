@@ -216,6 +216,26 @@ CASES["ClearMemory_Bank5"] = [
 ]
 # <<< factory ClearMemory_Bank5
 
+# >>> factory CheckCardPageExists
+CONTRACT["CheckCardPageExists"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["CheckCardPageExists"] = [
+    {"hl": 0xC100, "wram": {0xC100: b"\x00\x00"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x0F\xF0"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x00\x01"}},
+    {"hl": 0xC100, "wram": {0xC100: b"\x80\x00"}},
+    dict(POISON, hl=0xC200, wram={0xC200: b"\x12\x34"}),
+]
+# <<< factory CheckCardPageExists
+
+# >>> factory CardPageSwitch_PokemonEnd
+CONTRACT["CardPageSwitch_PokemonEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CardPageSwitch_PokemonEnd"] = [
+    {},
+    dict(POISON),
+    {"f": 0x80},
+]
+# <<< factory CardPageSwitch_PokemonEnd
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -372,3 +392,19 @@ MUTATIONS["ClearMemory_Bank5"] = {
     "case_ids": ["ClearMemory_Bank5-0"],
 }
 # <<< factory-mutation ClearMemory_Bank5
+# >>> factory-mutation CheckCardPageExists
+MUTATIONS["CheckCardPageExists"] = {
+    "source_symbol": "CheckCardPageExists",
+    "before": "\ta |= gb_read8(*hl);",
+    "after": "\ta &= gb_read8(*hl);",
+    "case_ids": ["CheckCardPageExists-2", "CheckCardPageExists-3", "CheckCardPageExists-4"],
+}
+# <<< factory-mutation CheckCardPageExists
+# >>> factory-mutation CardPageSwitch_PokemonEnd
+MUTATIONS["CardPageSwitch_PokemonEnd"] = {
+    "source_symbol": "CardPageSwitch_PokemonEnd",
+    "before": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 1u};",
+    "after": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};",
+    "case_ids": ["CardPageSwitch_PokemonEnd-0", "CardPageSwitch_PokemonEnd-1", "CardPageSwitch_PokemonEnd-2"],
+}
+# <<< factory-mutation CardPageSwitch_PokemonEnd

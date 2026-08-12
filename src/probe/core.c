@@ -149,6 +149,24 @@ static void adapt_ClearMemory_Bank5(ProbeState *s)
 }
 /* <<< factory ClearMemory_Bank5 */
 
+/* >>> factory CheckCardPageExists */
+static void adapt_CheckCardPageExists(ProbeState *s)
+{
+	CardPageExistsResult r = CheckCardPageExists(&s->hl);
+	s->a = r.a;
+	s->f = r.zero ? (uint8_t)0x80u : (uint8_t)0x00u;
+}
+/* <<< factory CheckCardPageExists */
+
+/* >>> factory CardPageSwitch_PokemonEnd */
+static void adapt_CardPageSwitch_PokemonEnd(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_PokemonEnd();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+}
+/* <<< factory CardPageSwitch_PokemonEnd */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -169,5 +187,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
 	{ "LookForCardIDInPlayArea_Bank5", adapt_LookForCardIDInPlayArea_Bank5 },
 	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
+	{ "CheckCardPageExists", adapt_CheckCardPageExists },
+	{ "CardPageSwitch_PokemonEnd", adapt_CardPageSwitch_PokemonEnd },
 	{ NULL, NULL },
 };

@@ -107,6 +107,8 @@ static uint32_t duel_save_total_size(void)
 
 #define MAX_PLAY_AREA_POKEMON 0x06u
 #define DUELVARS_ARENA_CARD   0x00u
+
+#define CARDPAGE_POKEMON_OVERVIEW 0x01u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -377,3 +379,22 @@ void ClearMemory_Bank5(uint8_t a, uint16_t hl)
 		gb_write8((uint16_t)(hl + (uint16_t)i), 0u);
 }
 /* <<< factory ClearMemory_Bank5 */
+
+/* >>> factory CheckCardPageExists */
+/* core.asm:3827-3830 */
+CardPageExistsResult CheckCardPageExists(uint16_t *hl)
+{
+	uint8_t a = gb_read8(*hl);
+	*hl = (uint16_t)(*hl + 1u);
+	a |= gb_read8(*hl);
+	return (CardPageExistsResult){a, (uint8_t)(a == 0u)};
+}
+/* <<< factory CheckCardPageExists */
+
+/* >>> factory CardPageSwitch_PokemonEnd */
+/* core.asm:3833-3836. scf leaves Z untouched, clears N/H, sets C. */
+CardPageResult CardPageSwitch_PokemonEnd(void)
+{
+	return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 1u};
+}
+/* <<< factory CardPageSwitch_PokemonEnd */
