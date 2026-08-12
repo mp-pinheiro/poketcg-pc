@@ -98,3 +98,25 @@ nothing dispatches from them, nothing claims them, no new ones are generated.
 - `tests/routines.py` is derived from case modules — never hand-edited.
 - Every landed routine carries live-oracle PASS and a mutation receipt.
 - `jj bookmark list` shows exactly one bookmark: `main`.
+
+## Pilot calibration (measured 2026-08-12)
+
+| configuration | packets | green | tokens/routine | notes |
+|---|---|---|---|---|
+| smol, 8 routines/packet | 8 | 0 | ~4.4k | all-or-nothing gate over 8 routines is fatal |
+| smol, 3 routines/packet | 8 | 3 (38%) | ~6.8k | 2 of the 3 were partial salvage |
+| default, 3 routines/packet | 3 | 2 (67%) | ~8.3k | frontier guard + compile-cause feedback active |
+
+Production configuration: `--max-routines 3`, `model="default"`, `max_rounds=3`,
+`lanes_count=8`. Waves run ~5 min wall regardless of lane count because
+translation is one `parallel()` batch per round.
+
+Calibration findings worth keeping:
+- Packet size dominates. A packet is green only when every routine in it is
+  green, so success decays as p^n; 3 is the working size.
+- Partial salvage matters: escalating packets still land their passing
+  routines and spill the failures into `<id>-rest`.
+- Every early wave failure was a packet-content gap, not model weakness:
+  missing RAM symbol addresses, unparsed `const_def`/`DEF..EQU` constants,
+  missing struct typedefs for struct-returning callees, invented include
+  paths, and ninja's link-command echo crowding out the real compile cause.
