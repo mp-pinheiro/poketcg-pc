@@ -59,34 +59,90 @@ def _pret_number(text: str, default: int = 0) -> int:
         return default
 
 
+_NUMERIC_EXPR = re.compile(r"^[0-9A-Fa-fxX+\-*/()\s]+$")
+
+
+def _eval_const(text: str, numeric: dict[str, int]) -> int | None:
+    """Best-effort numeric value of a pret constant expression.
+
+    Handles ``$1f`` / ``0x1f`` / decimal literals and arithmetic over
+    already-known constant names (``TYPE_PKMN_UNUSED + 1 - TYPE_PKMN_FIRE``).
+    Returns None when a name is still unknown or the text is not arithmetic —
+    callers fall back to storing the raw text.
+    """
+    expr = text.strip()
+    if not expr:
+        return None
+    expr = re.sub(r"\$([0-9A-Fa-f]+)", r"0x\1", expr)
+    expr = re.sub(r"\b([A-Za-z_][A-Za-z0-9_]*)\b",
+                  lambda m: str(numeric[m.group(1)]) if m.group(1) in numeric else m.group(0),
+                  expr)
+    if not _NUMERIC_EXPR.match(expr):
+        return None
+    try:
+        return int(eval(expr, {"__builtins__": {}}, {}))  # noqa: S307 - arithmetic only
+    except Exception:
+        return None
+
+
 def load_constants() -> dict[str, str]:
-    """NAME -> value text for every pret constant (EQU, DEF..EQU, const_def)."""
+    """NAME -> value text for every pret constant (EQU, EQUS, const_def).
+
+    Two classes were silently missing before, and both produced invented
+    constants downstream:
+    - ``DEF X EQUS "LOW(wSym)"`` (every ``DUELVARS_*``) — resolved here against
+      the generated RAM symbol table.
+    - ``const_def <expression>`` — an unparsed expression left the whole
+      following ``const`` block offset (``TYPE_TRAINER`` resolved to $08
+      instead of $10).
+    """
     table: dict[str, str] = {}
+    numeric: dict[str, int] = {}
+    symbols = {name: int(addr, 16) for name, addr in load_symbols().items()}
     equ = re.compile(r"^\s*(?:DEF\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+EQU\s+(.+?)\s*$")
-    const_def = re.compile(r"^\s*const_def(?:\s+(\S+))?(?:\s*,\s*(\S+))?")
+    equs_byte = re.compile(
+        r"^\s*(?:DEF\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+EQUS\s+\"(LOW|HIGH)\(([A-Za-z_][A-Za-z0-9_]*)\)\"")
+    const_def = re.compile(r"^\s*const_def(?:\s+([^,]+?))?(?:\s*,\s*(\S+))?\s*$")
     const_line = re.compile(r"^\s*const\s+([A-Za-z_][A-Za-z0-9_]*)")
     const_skip = re.compile(r"^\s*const_skip(?:\s+(\S+))?")
+
+    def record(name: str, value: int | None, text: str) -> None:
+        if name in table:
+            return
+        table[name] = f"${value:02x}" if value is not None else text
+        if value is not None:
+            numeric[name] = value
+
     for path in sorted((PRET / "src" / "constants").rglob("*.asm")):
         current, step = 0, 1
         for raw in path.read_text(errors="replace").splitlines():
             line = raw.split(";", 1)[0]
+            numeric["const_value"] = current  # rgbasm's running const counter
             match = const_def.match(line)
             if match:
-                current = _pret_number(match.group(1) or "0")
-                step = _pret_number(match.group(2) or "1", 1)
+                start = _eval_const(match.group(1) or "0", numeric)
+                current = start if start is not None else 0
+                step = _eval_const(match.group(2) or "1", numeric) or 1
                 continue
             match = const_skip.match(line)
             if match:
-                current += step * _pret_number(match.group(1) or "1", 1)
+                current += step * (_eval_const(match.group(1) or "1", numeric) or 1)
                 continue
             match = const_line.match(line)
             if match:
-                table.setdefault(match.group(1), f"${current:02X}")
+                record(match.group(1), current, f"${current:02x}")
                 current += step
+                continue
+            match = equs_byte.match(line)
+            if match:
+                name, half, symbol = match.groups()
+                addr = symbols.get(symbol)
+                if addr is not None:
+                    record(name, addr & 0xFF if half == "LOW" else (addr >> 8) & 0xFF, "")
                 continue
             match = equ.match(line)
             if match:
-                table.setdefault(match.group(1), match.group(2))
+                record(match.group(1), _eval_const(match.group(2), numeric), match.group(2))
     return table
 
 
