@@ -7,4 +7,13 @@ void SetCreditsSequenceCmdPtr(void);
 void ExecuteCreditsSequenceCmd(void);
 void AdvanceCreditsSequenceCmdPtr(uint8_t a);
 
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy2 */
+void AdvanceCreditsSequenceCmdPtrBy2(void);
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy2 */
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy3 */
+void AdvanceCreditsSequenceCmdPtrBy3(void);
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy3 */
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy5 */
+void AdvanceCreditsSequenceCmdPtrBy5(void);
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy5 */
 #endif

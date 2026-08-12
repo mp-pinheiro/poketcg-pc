@@ -40,6 +40,39 @@ CASES = {
          "read": {wSequenceCmdPtr: 2}},
     ],
 }
+# >>> factory AdvanceCreditsSequenceCmdPtrBy2
+CONTRACT["AdvanceCreditsSequenceCmdPtrBy2"] = {"compare": ("b", "c", "d", "e", "hl"),
+                     "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceCreditsSequenceCmdPtrBy2"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+    {"wram": {wSequenceCmdPtr: bytes([254, 0x00])}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFF\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceCreditsSequenceCmdPtrBy2
+
+# >>> factory AdvanceCreditsSequenceCmdPtrBy3
+CONTRACT["AdvanceCreditsSequenceCmdPtrBy3"] = {"compare": ("b", "c", "d", "e", "hl"),
+                     "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceCreditsSequenceCmdPtrBy3"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+    {"wram": {wSequenceCmdPtr: bytes([253, 0x00])}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFF\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceCreditsSequenceCmdPtrBy3
+
+# >>> factory AdvanceCreditsSequenceCmdPtrBy5
+CONTRACT["AdvanceCreditsSequenceCmdPtrBy5"] = {"compare": ("b", "c", "d", "e", "hl"),
+                     "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceCreditsSequenceCmdPtrBy5"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+    {"wram": {wSequenceCmdPtr: bytes([251, 0x00])}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\xFF\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceCreditsSequenceCmdPtrBy5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -63,3 +96,27 @@ MUTATIONS = {
                      "AdvanceCreditsSequenceCmdPtr-4"],
     },
 }
+# >>> factory-mutation AdvanceCreditsSequenceCmdPtrBy2
+MUTATIONS["AdvanceCreditsSequenceCmdPtrBy2"] = {
+    "source_symbol": "AdvanceCreditsSequenceCmdPtrBy2",
+    "before": "AdvanceCreditsSequenceCmdPtr(2u);",
+    "after": "AdvanceCreditsSequenceCmdPtr(3u);",
+    "case_ids": ["AdvanceCreditsSequenceCmdPtrBy2-0", "AdvanceCreditsSequenceCmdPtrBy2-2"],
+}
+# <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy2
+# >>> factory-mutation AdvanceCreditsSequenceCmdPtrBy3
+MUTATIONS["AdvanceCreditsSequenceCmdPtrBy3"] = {
+    "source_symbol": "AdvanceCreditsSequenceCmdPtrBy3",
+    "before": "AdvanceCreditsSequenceCmdPtr(3u);",
+    "after": "AdvanceCreditsSequenceCmdPtr(4u);",
+    "case_ids": ["AdvanceCreditsSequenceCmdPtrBy3-0", "AdvanceCreditsSequenceCmdPtrBy3-2"],
+}
+# <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy3
+# >>> factory-mutation AdvanceCreditsSequenceCmdPtrBy5
+MUTATIONS["AdvanceCreditsSequenceCmdPtrBy5"] = {
+    "source_symbol": "AdvanceCreditsSequenceCmdPtrBy5",
+    "before": "AdvanceCreditsSequenceCmdPtr(5u);",
+    "after": "AdvanceCreditsSequenceCmdPtr(6u);",
+    "case_ids": ["AdvanceCreditsSequenceCmdPtrBy5-0", "AdvanceCreditsSequenceCmdPtrBy5-2"],
+}
+# <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy5

@@ -29,3 +29,27 @@ void AdvanceCreditsSequenceCmdPtr(uint8_t a)
 	gb_write8(wSequenceCmdPtr_ADDR, (uint8_t)ptr);
 	gb_write8((uint16_t)(wSequenceCmdPtr_ADDR + 1u), (uint8_t)(ptr >> 8));
 }
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy2 */
+/* credits_sequence_commands.asm:45-47 */
+void AdvanceCreditsSequenceCmdPtrBy2(void)
+{
+	AdvanceCreditsSequenceCmdPtr(2u);
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy2 */
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy3 */
+/* credits_sequence_commands.asm:49-51 */
+void AdvanceCreditsSequenceCmdPtrBy3(void)
+{
+	AdvanceCreditsSequenceCmdPtr(3u);
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy3 */
+
+/* >>> factory AdvanceCreditsSequenceCmdPtrBy5 */
+/* credits_sequence_commands.asm:53-55 */
+void AdvanceCreditsSequenceCmdPtrBy5(void)
+{
+	AdvanceCreditsSequenceCmdPtr(5u);
+}
+/* <<< factory AdvanceCreditsSequenceCmdPtrBy5 */
