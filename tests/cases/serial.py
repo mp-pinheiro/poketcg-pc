@@ -303,6 +303,34 @@ CASES = {
          "read": {0xC100: 1, wcba3: 1}},
     ],
 }
+# >>> factory DuelTransmissionError
+wDuelReturnAddress = 0xCBE5
+wDuelResult = 0xD0C3
+wCurSongID = 0xDD80
+wTxRam3 = 0xCE43
+wTxRam3_b = 0xCE45
+DUEL_TRANSMISSION_ERROR_RET_PC = 0x0F57
+
+CONTRACT["DuelTransmissionError"] = {"compare": (), "preserve": ()}
+TRANSMISSION_ERROR_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+TRANSMISSION_ERROR_READ = {wTxRam3: 1, wTxRam3_b: 1, wDuelResult: 1, wCurSongID: 1,
+                            wSerialOp: wSerialEnd - wSerialOp}
+TRANSMISSION_ERROR_VREAD = {0: {0x9980: 1, 0x9A32: 1}}
+CASES["DuelTransmissionError"] = [
+    {"keys": 0x01, "wram": {wSerialFlags: b"\x00", wDuelReturnAddress: b"\x00\xC3"},
+     "setup": TRANSMISSION_ERROR_SETUP,
+     "read": TRANSMISSION_ERROR_READ, "vread": TRANSMISSION_ERROR_VREAD},
+    # wSerialFlags == 0xFF: `ld h, 0` zero-extends into hl, so wTxRam3_b must
+    # read back 0x00, never 0xFF.
+    {"keys": 0x01, "wram": {wSerialFlags: b"\xFF", wDuelReturnAddress: b"\x00\xC3"},
+     "setup": TRANSMISSION_ERROR_SETUP,
+     "read": TRANSMISSION_ERROR_READ, "vread": TRANSMISSION_ERROR_VREAD},
+    dict(POISON, keys=0x01, wram={wSerialFlags: b"\x2A", wDuelReturnAddress: b"\x00\xC3"},
+         setup=TRANSMISSION_ERROR_SETUP,
+         read=TRANSMISSION_ERROR_READ, vread=TRANSMISSION_ERROR_VREAD),
+]
+# <<< factory DuelTransmissionError
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -314,3 +342,22 @@ MUTATIONS = {
         "case_ids": ["SerialTimerHandler-0", "SerialTimerHandler-1", "SerialTimerHandler-2", "SerialTimerHandler-3", "SerialTimerHandler-4", "SerialTimerHandler-5", "SerialTimerHandler-6"],
     },
 }
+# >>> factory-mutation DuelTransmissionError
+MUTATIONS["DuelTransmissionError"] = {
+    "source_symbol": "DuelTransmissionError",
+    "before": "gb_write8(wDuelResult_ADDR, (uint8_t)-1);",
+    "after": "gb_write8(wDuelResult_ADDR, 0);",
+    "case_ids": ["DuelTransmissionError-0", "DuelTransmissionError-1", "DuelTransmissionError-2"],
+}
+# <<< factory-mutation DuelTransmissionError
+# >>> factory-completion DuelTransmissionError
+# The asm tail (`ld sp, hl` then `ret`) never lands on a fixed address
+# either oracle can arm as a sentinel -- it unwinds to whatever the real
+# caller saved at wDuelReturnAddress. Stop at the `ret` opcode itself
+# (poketcg.sym DuelTransmissionError+0x22) instead: every observable write
+# has already happened by then, so wDuelReturnAddress only needs to be a
+# safe scratch cell for PlaySong/ResetSerial's own call/ret pairs, not a
+# real target.
+for record in SCHEMA2_CASES["DuelTransmissionError"]:
+    record["completion"] = {"mode": "pre-ret", "pc": DUEL_TRANSMISSION_ERROR_RET_PC}
+# <<< factory-completion DuelTransmissionError

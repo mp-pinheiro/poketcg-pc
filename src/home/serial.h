@@ -125,4 +125,7 @@ typedef struct {
 } SerialRecvBytesResult;
 SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc);
 
+/* >>> factory DuelTransmissionError */
+void DuelTransmissionError(void);
+/* <<< factory DuelTransmissionError */
 #endif

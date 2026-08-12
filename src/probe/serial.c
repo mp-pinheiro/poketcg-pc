@@ -115,6 +115,14 @@ static void adapt_SerialRecvBytes(ProbeState *s)
 	s->hl = r.hl;
 }
 
+/* >>> factory DuelTransmissionError */
+static void adapt_DuelTransmissionError(ProbeState *s)
+{
+	(void)s;
+	DuelTransmissionError();
+}
+/* <<< factory DuelTransmissionError */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -130,5 +138,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "ClearSerialData", adapt_ClearSerialData },
 	{ "SerialSendBytes", adapt_SerialSendBytes },
 	{ "SerialRecvBytes", adapt_SerialRecvBytes },
+	{ "DuelTransmissionError", adapt_DuelTransmissionError },
 	{ NULL, NULL },
 };

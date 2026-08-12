@@ -3,6 +3,14 @@
 #include "generated/wram.h"
 #include "home/printer.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/sound.h"
+
+#define MUSIC_STOP 0x00u
+#define TransmissionErrorText 0x0055u
+/* <<< factory statics */
 
 #define rSB 0xFF01u
 #define rSC 0xFF02u
@@ -302,3 +310,18 @@ SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc)
 			return (SerialRecvBytesResult){0, 0x80u, hl};
 	}
 }
+
+/* >>> factory DuelTransmissionError */
+/* serial.asm:523-540. The tail (`ld sp, hl` from wDuelReturnAddress, then
+ * `ret`) unwinds the real GB stack straight back to the outer duel loop's
+ * saved frame instead of returning to this routine's own caller; that has
+ * no C equivalent and no observable register contract of its own. */
+void DuelTransmissionError(void)
+{
+	LoadTxRam3(gb_read8(wSerialFlags_ADDR));
+	(void)DrawWideTextBox_WaitForInput(TransmissionErrorText);
+	gb_write8(wDuelResult_ADDR, (uint8_t)-1);
+	PlaySong(MUSIC_STOP);
+	ResetSerial();
+}
+/* <<< factory DuelTransmissionError */
