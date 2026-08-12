@@ -78,6 +78,27 @@ CASES["_DebugVEffect"] = [
 ]
 # <<< factory _DebugVEffect
 
+# >>> factory Func_80c64
+CONTRACT["Func_80c64"] = {"compare": (), "preserve": ()}
+CASES["Func_80c64"] = [
+    {"wram": {0xCD08: b"\x00", 0xCC16: b"\x00\x00", 0xCC14: b"\x00",
+              0xCC18: b"\x00", 0xCC19: b"\x00", 0xCD11: b"\xff" * 8},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCD08: 1, 0xCE3F: 2, 0xCE43: 2, 0xCE45: 2, 0xCD0F: 1,
+              0xCD10: 1, 0xCD11: 8, 0xFFB1: 1}},
+    dict(POISON, wram={0xCD08: b"\x00", 0xCC16: b"\x00\x00", 0xCC14: b"\x00",
+                        0xCC18: b"\x00", 0xCC19: b"\x00", 0xCD11: b"\xff" * 8},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCD08: 1, 0xCE3F: 2, 0xCE43: 2, 0xCE45: 2, 0xCD0F: 1,
+               0xCD10: 1, 0xCD11: 8, 0xFFB1: 1}),
+    {"wram": {0xCD08: b"\x02", 0xCC16: b"\x12\x34", 0xCC14: b"\x05",
+              0xCC18: b"\x07", 0xCC19: b"\x09", 0xCD11: b"\xff" * 8},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCD08: 1, 0xCE3F: 2, 0xCE43: 2, 0xCE45: 2, 0xCD0F: 1,
+              0xCD10: 1, 0xCD11: 8, 0xFFB1: 1}},
+]
+# <<< factory Func_80c64
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -119,3 +140,11 @@ MUTATIONS["_DebugVEffect"] = {
     "case_ids": ["_DebugVEffect-0", "_DebugVEffect-1"],
 }
 # <<< factory-mutation _DebugVEffect
+# >>> factory-mutation Func_80c64
+MUTATIONS["Func_80c64"] = {
+    "source_symbol": "Func_80c64",
+    "before": "for (uint8_t i = 0; i < 8u; i++)",
+    "after": "for (uint8_t i = 0; i < 7u; i++)",
+    "case_ids": ["Func_80c64-0", "Func_80c64-1", "Func_80c64-2"],
+}
+# <<< factory-mutation Func_80c64

@@ -7,6 +7,16 @@
 /* >>> factory statics */
 #include "home/random.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+
+#define SINGLE_SPACED 0x01u
+#define FUNC_80C64_BANK 0x20u
+#define FUNC_80C64_MENU_PARAMS_ADDR 0x4cbbu
+#define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
+#define FUNC_80C64_USE_DUELISTS_DECK_TEXT 0x0386u
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -72,3 +82,47 @@ void _DebugVEffect(void)
 {
 }
 /* <<< factory _DebugVEffect */
+
+/* >>> factory Func_80c64 */
+/* engine/gfx/debug.asm:3-42. Unreferenced. Loads the opponent's name, the
+ * duel prize count and the NPC's deck id into the shared print-text buffer,
+ * prints the "you win/lose N prizes with duelist X" and "duelist uses deck
+ * Y" labels for the abandoned prize/deck confirmation screen with a
+ * temporary single-line spacing (restored before returning), then re-arms
+ * the standard two-item cursor menu from its own local parameter table
+ * (debug.asm:44-50, 8 bytes right after this routine in the same ROM bank).
+ * That table is read via rom_ptr(bank $20, ...) rather than the bus: the
+ * routine itself never bankswitches, relying on bank $20 already being
+ * mapped in by whatever farcalled it -- the probe harness instead resets
+ * the ROM bank to 1 before every call, so a bus read here would pull the
+ * wrong bank's bytes. */
+void Func_80c64(void)
+{
+	uint8_t saved_line_sep = wLineSeparation;
+	wLineSeparation = SINGLE_SPACED;
+
+	wTxRam2 = wOpponentName;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wOpponentName_ADDR + 1u)));
+	wTxRam3_b = wNPCDuelistCopy;
+	gb_write8((uint16_t)(wTxRam3_b_ADDR + 1u), 0);
+
+	wTxRam3 = wNPCDuelPrizes;
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0);
+	InitTextPrinting(2u, 13u);
+	(void)PrintTextNoDelay(FUNC_80C64_WIN_LOSE_PRIZES_TEXT, 2u, 13u);
+
+	wTxRam3 = wNPCDuelDeckID;
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0);
+	InitTextPrinting(2u, 15u);
+	(void)PrintTextNoDelay(FUNC_80C64_USE_DUELISTS_DECK_TEXT, 2u, 15u);
+
+	wLineSeparation = saved_line_sep;
+
+	wCurMenuItem = 0;
+	hCurMenuItem = 0;
+	const uint8_t *params = rom_ptr(FUNC_80C64_BANK, FUNC_80C64_MENU_PARAMS_ADDR);
+	for (uint8_t i = 0; i < 8u; i++)
+		gb_write8((uint16_t)(wMenuCursorXOffset_ADDR + i), params[i]);
+	wCursorBlinkCounter = 0;
+}
+/* <<< factory Func_80c64 */

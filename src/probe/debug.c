@@ -50,11 +50,20 @@ static void adapt_DebugVEffect(ProbeState *s)
 }
 /* <<< factory _DebugVEffect */
 
+/* >>> factory Func_80c64 */
+static void adapt_Func_80c64(ProbeState *s)
+{
+	(void)s;
+	Func_80c64();
+}
+/* <<< factory Func_80c64 */
+
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
 	{"DebugQuit", adapt_DebugQuit},
 	{ "UnreferencedFillVRAMWithRandomData", adapt_UnreferencedFillVRAMWithRandomData },
 	{ "_DebugVEffect", adapt_DebugVEffect },
+	{ "Func_80c64", adapt_Func_80c64 },
 	{NULL, NULL},
 };

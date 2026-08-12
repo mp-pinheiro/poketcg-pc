@@ -45,4 +45,7 @@ UnreferencedFillVRAMWithRandomDataResult UnreferencedFillVRAMWithRandomData(void
 /* >>> factory _DebugVEffect */
 void _DebugVEffect(void);
 /* <<< factory _DebugVEffect */
+/* >>> factory Func_80c64 */
+void Func_80c64(void);
+/* <<< factory Func_80c64 */
 #endif
