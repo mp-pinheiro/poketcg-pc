@@ -1,0 +1,9 @@
+{
+  "fn": "LoadCardNameToTxRam2",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadCardNameToTxRam2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52260\": \"c900000000000000c900000000000000c900000000000000c3ae090000000000c3424c0000000000c3e9090000000000c900000000000000c900000000000000c3\", \"52799\": \"0000aaaa\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardNameToTxRam2\", \"mismatches\": {\"bus\": {\"address\": 52800, \"reference\": \"0000c30000aaaa\", \"native\": \"0000c300aa00aa\", \"reference_size\": 69, \"native_size\": 69, \"spans\": [[52260, 65], [52799, 4]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardNameToTxRam2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52260\": \"c900000000000000c900000000000000c900000000000000c3ae090000000000c3424c0000000000c3e9090000000000c900000000000000c900000000000000c3\", \"52799\": \"0000aaaa\"}}, \"status\": \"PASS\"}\n"
+}

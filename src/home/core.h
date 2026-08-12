@@ -72,4 +72,10 @@ CardPageResult CardPageSwitch_PokemonEnd(void);
 /* >>> factory SetCardListInfoBoxText */
 void SetCardListInfoBoxText(uint16_t hl);
 /* <<< factory SetCardListInfoBoxText */
+/* >>> factory LoadCardNameToTxRam2 */
+void LoadCardNameToTxRam2(uint8_t a);
+/* <<< factory LoadCardNameToTxRam2 */
+/* >>> factory LoadCardNameToTxRam2_b */
+void LoadCardNameToTxRam2_b(uint8_t a);
+/* <<< factory LoadCardNameToTxRam2_b */
 #endif /* POKETCG_HOME_CORE_H */

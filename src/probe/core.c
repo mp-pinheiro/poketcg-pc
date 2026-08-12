@@ -174,6 +174,20 @@ static void adapt_SetCardListInfoBoxText(ProbeState *s)
 }
 /* <<< factory SetCardListInfoBoxText */
 
+/* >>> factory LoadCardNameToTxRam2 */
+static void adapt_LoadCardNameToTxRam2(ProbeState *s)
+{
+	LoadCardNameToTxRam2(s->a);
+}
+/* <<< factory LoadCardNameToTxRam2 */
+
+/* >>> factory LoadCardNameToTxRam2_b */
+static void adapt_LoadCardNameToTxRam2_b(ProbeState *s)
+{
+	LoadCardNameToTxRam2_b(s->a);
+}
+/* <<< factory LoadCardNameToTxRam2_b */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -197,5 +211,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckCardPageExists", adapt_CheckCardPageExists },
 	{ "CardPageSwitch_PokemonEnd", adapt_CardPageSwitch_PokemonEnd },
 	{ "SetCardListInfoBoxText", adapt_SetCardListInfoBoxText },
+	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
+	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ NULL, NULL },
 };

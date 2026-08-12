@@ -245,6 +245,25 @@ CASES["SetCardListInfoBoxText"] = [
 ]
 # <<< factory SetCardListInfoBoxText
 
+# >>> factory LoadCardNameToTxRam2
+CONTRACT["LoadCardNameToTxRam2"] = {"compare": (), "preserve": ()}
+CASES["LoadCardNameToTxRam2"] = [
+    {"a": 0, "wram": {0xCE3F: b"\xaa\xaa\xaa\xaa"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
+    {"a": 0x10, "wram": {0xCE3F: b"\x55\x55\x55\x55"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
+    {"a": 0x3B, "wram": {0xCE3F: b"\xaa\xaa\xaa\xaa"}, "read": {0xCC24: 0x41, 0xCE3F: 4}},
+    dict(POISON, a=0x20, wram={0xCE3F: b"\xaa\xaa\xaa\xaa"}, read={0xCC24: 0x41, 0xCE3F: 4}),
+]
+# <<< factory LoadCardNameToTxRam2
+
+# >>> factory LoadCardNameToTxRam2_b
+CONTRACT["LoadCardNameToTxRam2_b"] = {"compare": (), "preserve": ()}
+CASES["LoadCardNameToTxRam2_b"] = [
+    {"wram": {0xCE3F: b"\x11\x22\xA5\x5A"}, "read": {0xCC27: 2}},
+    dict(POISON, a=5, wram={0xCE3F: b"\x11\x22\xA5\x5A"}, read={0xCC27: 2}),
+    {"a": 0x3B, "wram": {0xCE3F: b"\x11\x22\xA5\x5A"}, "read": {0xCC27: 2}},
+]
+# <<< factory LoadCardNameToTxRam2_b
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -425,3 +444,19 @@ MUTATIONS["SetCardListInfoBoxText"] = {
     "case_ids": ["SetCardListInfoBoxText-1", "SetCardListInfoBoxText-2"],
 }
 # <<< factory-mutation SetCardListInfoBoxText
+# >>> factory-mutation LoadCardNameToTxRam2
+MUTATIONS["LoadCardNameToTxRam2"] = {
+    "source_symbol": "LoadCardNameToTxRam2",
+    "before": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));",
+    "after": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));",
+    "case_ids": ["LoadCardNameToTxRam2-0", "LoadCardNameToTxRam2-1", "LoadCardNameToTxRam2-2", "LoadCardNameToTxRam2-3"],
+}
+# <<< factory-mutation LoadCardNameToTxRam2
+# >>> factory-mutation LoadCardNameToTxRam2_b
+MUTATIONS["LoadCardNameToTxRam2_b"] = {
+    "source_symbol": "LoadCardNameToTxRam2_b",
+    "before": "\twTxRam2_b = wLoadedCard1Name;",
+    "after": "\twTxRam2 = wLoadedCard1Name;",
+    "case_ids": ["LoadCardNameToTxRam2_b-0", "LoadCardNameToTxRam2_b-1", "LoadCardNameToTxRam2_b-2"],
+}
+# <<< factory-mutation LoadCardNameToTxRam2_b

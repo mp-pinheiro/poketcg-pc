@@ -419,3 +419,23 @@ void SetCardListInfoBoxText(uint16_t hl)
 	gb_write8((uint16_t)(wCardListInfoBoxText_ADDR + 1u), (uint8_t)(hl >> 8));
 }
 /* <<< factory SetCardListInfoBoxText */
+
+/* >>> factory LoadCardNameToTxRam2 */
+/* core.asm:6796 */
+void LoadCardNameToTxRam2(uint8_t a)
+{
+	LoadCardDataToBuffer1_FromDeckIndex(a);
+	wTxRam2 = wLoadedCard1Name;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+}
+/* <<< factory LoadCardNameToTxRam2 */
+
+/* >>> factory LoadCardNameToTxRam2_b */
+/* core.asm:6806-6813 */
+void LoadCardNameToTxRam2_b(uint8_t a)
+{
+	LoadCardDataToBuffer1_FromDeckIndex(a);
+	wTxRam2_b = wLoadedCard1Name;
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+}
+/* <<< factory LoadCardNameToTxRam2_b */
