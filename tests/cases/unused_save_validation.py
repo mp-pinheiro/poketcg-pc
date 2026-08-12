@@ -29,7 +29,8 @@ CASES["UnusedCalculateSaveDataValidationByte"] = [
     {"wram": {hBankSRAM: b"\x01"}, "sram": {0: {sUnusedSaveDataValidationByte: b"\x77"}}},
     dict(POISON, wram={hBankSRAM: b"\x00"},
          sram={0: {sCardCollection: _CHECKSUM_PATTERN_2, sUnusedSaveDataValidationByte: b"\x00"}}),
-    dict(POISON, wram={hBankSRAM: b"\x05"}),
+    # nonzero-bank early exit; 0..3 is the probe's valid ram_bank domain
+    dict(POISON, wram={hBankSRAM: b"\x03"}),
 ]
 # <<< factory UnusedCalculateSaveDataValidationByte
 
