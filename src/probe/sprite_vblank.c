@@ -9,7 +9,25 @@ static void adapt_BackupVBlankFunctionTrampoline(ProbeState *s)
 	s->e = (uint8_t)de;
 }
 
+/* >>> factory SetSpriteAnimationsAsVBlankFunction */
+static void adapt_SetSpriteAnimationsAsVBlankFunction(ProbeState *s)
+{
+	(void)s;
+	SetSpriteAnimationsAsVBlankFunction();
+}
+/* <<< factory SetSpriteAnimationsAsVBlankFunction */
+
+/* >>> factory RestoreVBlankFunction */
+static void adapt_RestoreVBlankFunction(ProbeState *s)
+{
+	(void)s;
+	RestoreVBlankFunction();
+}
+/* <<< factory RestoreVBlankFunction */
+
 const ProbeEntry probe_entries_sprite_vblank[] = {
 	{"BackupVBlankFunctionTrampoline", adapt_BackupVBlankFunctionTrampoline},
+	{ "SetSpriteAnimationsAsVBlankFunction", adapt_SetSpriteAnimationsAsVBlankFunction },
+	{ "RestoreVBlankFunction", adapt_RestoreVBlankFunction },
 	{NULL, NULL},
 };

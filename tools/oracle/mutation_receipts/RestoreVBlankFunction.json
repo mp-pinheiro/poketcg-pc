@@ -1,0 +1,9 @@
+{
+  "fn": "RestoreVBlankFunction",
+  "case": "tests/cases/sprite_vblank.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RestoreVBlankFunction\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51921\": \"3344\", \"52877\": \"3344\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RestoreVBlankFunction\", \"mismatches\": {\"bus\": {\"address\": 51921, \"reference\": \"0133443344\", \"native\": \"0100000000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51904, 1], [51921, 2], [52877, 2]]}}}\n",
+  "restored": "{\"fn\": \"RestoreVBlankFunction\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51921\": \"3344\", \"52877\": \"3344\"}}, \"status\": \"PASS\"}\n"
+}

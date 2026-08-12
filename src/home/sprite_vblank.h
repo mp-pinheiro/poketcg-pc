@@ -5,4 +5,10 @@
 
 uint8_t BackupVBlankFunctionTrampoline(uint16_t *hl, uint16_t *de);
 
+/* >>> factory SetSpriteAnimationsAsVBlankFunction */
+void SetSpriteAnimationsAsVBlankFunction(void);
+/* <<< factory SetSpriteAnimationsAsVBlankFunction */
+/* >>> factory RestoreVBlankFunction */
+void RestoreVBlankFunction(void);
+/* <<< factory RestoreVBlankFunction */
 #endif
