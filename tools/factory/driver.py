@@ -171,6 +171,15 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 8,
     Packets are processed in chunks of ``lanes_count`` so each active packet
     keeps a pinned lane for its repair rounds.
     """
+    # One packet per basename per wave: same basename = same four files.
+    scheduled, deferred, seen = [], [], set()
+    for pid in packet_ids:
+        basename = load_packet(pid)["basename"]
+        (deferred if basename in seen else scheduled).append(pid)
+        seen.add(basename)
+    if deferred:
+        print(f"deferred (same basename): {deferred}")
+    packet_ids = scheduled
     results: list[dict] = []
 
     def finalize(run: _Run) -> None:

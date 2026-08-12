@@ -31,10 +31,31 @@ def run(command: list[str], timeout: int = 1800, cwd: Path = ROOT,
     return result
 
 
+def contract_keys(path: Path, tag: str) -> set[str]:
+    if not path.exists():
+        return set()
+    import importlib.util
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    spec = importlib.util.spec_from_file_location(f"contract_{tag}", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return set(getattr(module, "CONTRACT", {}))
+
+
 def land(packet: dict) -> None:
     bundle = BUNDLES / packet["id"]
     if not bundle.is_dir():
         raise SystemExit(f"bundle missing for {packet['id']}")
+    basename = packet["basename"]
+    cases_rel = Path("tests") / "cases" / f"{basename}.py"
+    lost = (contract_keys(ROOT / cases_rel, f"repo_{basename}")
+            - contract_keys(bundle / cases_rel, f"bundle_{basename}"))
+    if lost:
+        raise SystemExit(
+            f"STOP-THE-LINE {packet['id']} would unregister {sorted(lost)}; "
+            f"its lane predates those routines — rebuild the packet from the "
+            f"current tip")
     for source in sorted(bundle.rglob("*")):
         if source.is_file():
             dest = ROOT / source.relative_to(bundle)
