@@ -121,6 +121,9 @@ def assert_fast_forward() -> None:
 
 def gate_and_push(push: bool) -> None:
     run([sys.executable, "tools/lint_adapters.py"], check_message="adapter lint failed")
+    run([sys.executable, "tools/audit_constants.py"],
+        check_message="constant audit failed: a locally #define'd value "
+                      "disagrees with pret and is live-used")
     run(["just", "oracle-fn-all"], check_message="GBRT inventory gate failed")
     run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine"],
         check_message="schema audit failed")

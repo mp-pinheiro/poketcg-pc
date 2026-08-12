@@ -196,10 +196,14 @@ oracle-gate: oracle-fn-gate oracle-audit-all
     python3 tools/audit_oracle_cases.py --stage routine
 
 # Release barrier: primary and independent oracles, data round-trip, complete
-# schema inventory, and one source-backed mutation declaration per case module.
+# schema inventory, one source-backed mutation declaration per case module, and
+# locally-defined constants checked against pret (a wrong value is invisible to
+# both the compiler and the oracle when no case seeds the address).
 oracle-release-gate: oracle-gate data-verify
     python3 tools/audit_oracle_cases.py --stage release
     python3 tools/audit_mutations.py --stage release
+    python3 tools/audit_constants.py
+
 oracle-diff FN: build
     #!/usr/bin/env bash
     set -euo pipefail
