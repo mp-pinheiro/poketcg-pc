@@ -482,3 +482,20 @@ CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_On
 	return CreateEnergyCardListFromDiscardPile(0x01u);
 }
 /* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+
+/* >>> factory KabutoArmorEffect */
+/* effect_functions.asm:5939-5941. scf: sets carry, clears N/H, keeps Z. */
+uint8_t KabutoArmorEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory KabutoArmorEffect */
+
+/* >>> factory CuboneRage_DamageBoostEffect */
+/* effect_functions.asm:5970-5974 */
+void CuboneRage_DamageBoostEffect(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(r.a);
+}
+/* <<< factory CuboneRage_DamageBoostEffect */

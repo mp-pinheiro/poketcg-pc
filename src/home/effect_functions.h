@@ -96,4 +96,10 @@ CheckIfPlayAreaHasAnyDamageResult CheckIfPlayAreaHasAnyDamage(void);
 /* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
 CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_OnlyBasic(void);
 /* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
+/* >>> factory KabutoArmorEffect */
+uint8_t KabutoArmorEffect(uint8_t f);
+/* <<< factory KabutoArmorEffect */
+/* >>> factory CuboneRage_DamageBoostEffect */
+void CuboneRage_DamageBoostEffect(void);
+/* <<< factory CuboneRage_DamageBoostEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

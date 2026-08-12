@@ -389,6 +389,36 @@ CASES["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = [
 ]
 # <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic
 
+# >>> factory KabutoArmorEffect
+CONTRACT["KabutoArmorEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["KabutoArmorEffect"] = [
+    {},
+    dict(POISON),
+    {"f": 0x80},
+]
+# <<< factory KabutoArmorEffect
+
+# >>> factory CuboneRage_DamageBoostEffect
+CONTRACT["CuboneRage_DamageBoostEffect"] = {"compare": ("b", "d", "hl"), "preserve": ("b", "d", "hl")}
+CR_HWT = 0xFF97
+CR_ARENA_IDX = 0xC2BB
+CR_ARENA_HP = 0xC2C8
+CR_PDECK = 0xC400
+CR_WDMG = 0xCCB9
+CASES["CuboneRage_DamageBoostEffect"] = [
+    {"wram": {CR_HWT: b"\xC2", CR_ARENA_IDX: b"\x00", CR_ARENA_HP: b"\x00",
+              CR_PDECK: b"\x01", CR_WDMG: b"\x00\x00"}},
+    {"wram": {CR_HWT: b"\xC2", CR_ARENA_IDX: b"\x00", CR_ARENA_HP: b"\x71",
+              CR_PDECK: b"\x01", CR_WDMG: b"\x00\x00"}},
+    {"wram": {CR_HWT: b"\xC2", CR_ARENA_IDX: b"\x00", CR_ARENA_HP: b"\xD0",
+              CR_PDECK: b"\x01", CR_WDMG: b"\x00\x00"}},
+    {"wram": {CR_HWT: b"\xC2", CR_ARENA_IDX: b"\x00", CR_ARENA_HP: b"\x00",
+              CR_PDECK: b"\x01", CR_WDMG: b"\xFF\x00"}},
+    dict(POISON, wram={CR_HWT: b"\xC2", CR_ARENA_IDX: b"\x00", CR_ARENA_HP: b"\x05",
+                        CR_PDECK: b"\x01", CR_WDMG: b"\x10\x00"}),
+]
+# <<< factory CuboneRage_DamageBoostEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -607,3 +637,21 @@ MUTATIONS["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = {
     "case_ids": ["CreateEnergyCardListFromDiscardPile_OnlyBasic-0", "CreateEnergyCardListFromDiscardPile_OnlyBasic-1"],
 }
 # <<< factory-mutation CreateEnergyCardListFromDiscardPile_OnlyBasic
+# >>> factory-mutation KabutoArmorEffect
+MUTATIONS["KabutoArmorEffect"] = {
+    "source_symbol": "KabutoArmorEffect",
+    "before": "uint8_t KabutoArmorEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x10u);\n}",
+    "after": "uint8_t KabutoArmorEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x20u);\n}",
+    "case_ids": ["KabutoArmorEffect-0", "KabutoArmorEffect-1", "KabutoArmorEffect-2"],
+}
+# <<< factory-mutation KabutoArmorEffect
+# >>> factory-mutation CuboneRage_DamageBoostEffect
+MUTATIONS["CuboneRage_DamageBoostEffect"] = {
+    "source_symbol": "CuboneRage_DamageBoostEffect",
+    "before": "\tAddToDamage(r.a);",
+    "after": "\tAddToDamage((uint8_t)(r.a + 1u));",
+    "case_ids": ["CuboneRage_DamageBoostEffect-0", "CuboneRage_DamageBoostEffect-1",
+                 "CuboneRage_DamageBoostEffect-2", "CuboneRage_DamageBoostEffect-3",
+                 "CuboneRage_DamageBoostEffect-4"],
+}
+# <<< factory-mutation CuboneRage_DamageBoostEffect

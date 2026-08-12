@@ -232,6 +232,21 @@ static void adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic(ProbeState *s)
 }
 /* <<< factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
 
+/* >>> factory KabutoArmorEffect */
+static void adapt_KabutoArmorEffect(ProbeState *s)
+{
+	s->f = KabutoArmorEffect(s->f);
+}
+/* <<< factory KabutoArmorEffect */
+
+/* >>> factory CuboneRage_DamageBoostEffect */
+static void adapt_CuboneRage_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	CuboneRage_DamageBoostEffect();
+}
+/* <<< factory CuboneRage_DamageBoostEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -261,5 +276,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "CreateEnergyCardListFromDiscardPile_OnlyBasic", adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic },
+	{ "KabutoArmorEffect", adapt_KabutoArmorEffect },
+	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
 	{ NULL, NULL },
 };
