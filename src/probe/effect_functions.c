@@ -247,6 +247,22 @@ static void adapt_CuboneRage_DamageBoostEffect(ProbeState *s)
 }
 /* <<< factory CuboneRage_DamageBoostEffect */
 
+/* >>> factory PoisonEffect */
+static void adapt_PoisonEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = PoisonEffect();
+	s->f = r.f;
+}
+/* <<< factory PoisonEffect */
+
+/* >>> factory DoublePoisonEffect */
+static void adapt_DoublePoisonEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = DoublePoisonEffect();
+	s->f = r.f;
+}
+/* <<< factory DoublePoisonEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -278,5 +294,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateEnergyCardListFromDiscardPile_OnlyBasic", adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic },
 	{ "KabutoArmorEffect", adapt_KabutoArmorEffect },
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
+	{ "PoisonEffect", adapt_PoisonEffect },
+	{ "DoublePoisonEffect", adapt_DoublePoisonEffect },
 	{ NULL, NULL },
 };

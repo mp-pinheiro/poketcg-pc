@@ -84,6 +84,11 @@
 #define DUELVARS_ARENA_CARD_HP    0xC8u
 #define DUELVARS_ARENA_CARD_STAGE 0xCEu
 #define POKEMON_POWER             0x04u
+
+#define CONFUSED   0x01u
+#define PARALYZED  0x03u
+#define PSN_DBLPSN 0xf0u
+#define CNF_SLP_PRZ 0x0fu
 /* <<< factory statics */
 
 
@@ -499,3 +504,19 @@ void CuboneRage_DamageBoostEffect(void)
 	AddToDamage(r.a);
 }
 /* <<< factory CuboneRage_DamageBoostEffect */
+
+/* >>> factory PoisonEffect */
+/* effect_functions.asm:6-8 */
+QueueStatusConditionResult PoisonEffect(void)
+{
+	return QueueStatusCondition(CNF_SLP_PRZ, POISONED);
+}
+/* <<< factory PoisonEffect */
+
+/* >>> factory DoublePoisonEffect */
+/* effect_functions.asm:10-12 */
+QueueStatusConditionResult DoublePoisonEffect(void)
+{
+	return QueueStatusCondition(CNF_SLP_PRZ, DOUBLE_POISONED);
+}
+/* <<< factory DoublePoisonEffect */

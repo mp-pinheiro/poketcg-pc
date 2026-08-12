@@ -102,4 +102,10 @@ uint8_t KabutoArmorEffect(uint8_t f);
 /* >>> factory CuboneRage_DamageBoostEffect */
 void CuboneRage_DamageBoostEffect(void);
 /* <<< factory CuboneRage_DamageBoostEffect */
+/* >>> factory PoisonEffect */
+QueueStatusConditionResult PoisonEffect(void);
+/* <<< factory PoisonEffect */
+/* >>> factory DoublePoisonEffect */
+QueueStatusConditionResult DoublePoisonEffect(void);
+/* <<< factory DoublePoisonEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

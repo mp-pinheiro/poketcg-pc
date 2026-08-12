@@ -419,6 +419,22 @@ CASES["CuboneRage_DamageBoostEffect"] = [
 ]
 # <<< factory CuboneRage_DamageBoostEffect
 
+# >>> factory PoisonEffect
+CONTRACT["PoisonEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["PoisonEffect"] = [
+    {"read": {0xCB00: 0x100, 0xCC00: 0x100}},
+    dict(POISON, read={0xCB00: 0x100, 0xCC00: 0x100}),
+]
+# <<< factory PoisonEffect
+
+# >>> factory DoublePoisonEffect
+CONTRACT["DoublePoisonEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["DoublePoisonEffect"] = [
+    {"read": {0xCB00: 0x100, 0xCC00: 0x100}},
+    dict(POISON, read={0xCB00: 0x100, 0xCC00: 0x100}),
+]
+# <<< factory DoublePoisonEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -655,3 +671,19 @@ MUTATIONS["CuboneRage_DamageBoostEffect"] = {
                  "CuboneRage_DamageBoostEffect-4"],
 }
 # <<< factory-mutation CuboneRage_DamageBoostEffect
+# >>> factory-mutation PoisonEffect
+MUTATIONS["PoisonEffect"] = {
+    "source_symbol": "PoisonEffect",
+    "before": "return QueueStatusCondition(CNF_SLP_PRZ, POISONED);",
+    "after": "return QueueStatusCondition(CNF_SLP_PRZ, DOUBLE_POISONED);",
+    "case_ids": ["PoisonEffect-0", "PoisonEffect-1"],
+}
+# <<< factory-mutation PoisonEffect
+# >>> factory-mutation DoublePoisonEffect
+MUTATIONS["DoublePoisonEffect"] = {
+    "source_symbol": "DoublePoisonEffect",
+    "before": "return QueueStatusCondition(CNF_SLP_PRZ, DOUBLE_POISONED);",
+    "after": "return QueueStatusCondition(CNF_SLP_PRZ, POISONED);",
+    "case_ids": ["DoublePoisonEffect-0", "DoublePoisonEffect-1"],
+}
+# <<< factory-mutation DoublePoisonEffect
