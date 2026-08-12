@@ -524,5 +524,16 @@ uint8_t DrawWideTextBox_WaitForInput_ReturnCarry(uint16_t hl);
 uint8_t PrintKnockedOut(void);
 KnockoutCheckResult PrintPlayAreaCardKnockedOutIfNoHP(uint8_t a);
 
+typedef struct {
+	uint8_t a, f, b, c, d, e;
+	uint16_t hl;
+} DuelRoutineResult;
+
+DuelRoutineResult UpdateArenaCardIDsAndClearTwoTurnDuelVars(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+uint8_t PrintKnockedOutIfHLZero(uint16_t hl);
+
 
 #endif

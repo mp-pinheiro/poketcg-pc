@@ -1,0 +1,9 @@
+{
+  "fn": "ClearNonTurnTemporaryDuelvars_ResetCarry",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClearNonTurnTemporaryDuelvars_ResetCarry\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50162\": \"0000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClearNonTurnTemporaryDuelvars_ResetCarry\", \"mismatches\": {\"bus\": {\"address\": 50162, \"reference\": \"0000000000\", \"native\": \"ffffffffff\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[50162, 8], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ClearNonTurnTemporaryDuelvars_ResetCarry\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50162\": \"0000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
