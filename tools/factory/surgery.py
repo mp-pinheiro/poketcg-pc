@@ -243,6 +243,24 @@ def _typedef_names(stanza: list[str]) -> list[str]:
     return names
 
 
+def _define_value(line: str) -> object:
+    """Comparable value of a ``#define`` line.
+
+    Numeric when parseable, so ``0x0Fu``/``0x0fu``/``15u`` compare equal —
+    C's own redefinition rule is token-based, but two spellings of one value
+    are a formatting difference, not the constant conflict worth blocking on.
+    Falls back to the normalised text for non-numeric bodies (expressions,
+    string literals), which then compare exactly.
+    """
+    body = line.split(None, 2)
+    text = body[2].strip() if len(body) > 2 else ""
+    token = text.split("/*")[0].strip().rstrip("uUlL")
+    try:
+        return int(token, 0)
+    except ValueError:
+        return " ".join(text.split())
+
+
 def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[str]:
     """Merge statics at stanza (blank-line-delimited block) granularity.
 
@@ -276,17 +294,21 @@ def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[s
         key = "\n".join(stanza)
         if key in seen:
             continue
+        kept: list[str] = []
         for line in stanza:
             m = DEFINE_NAME.match(line)
             if m:
                 name = m.group(1)
                 prior = defined.get(name)
-                if prior is not None and prior != line:
+                if prior is not None:
+                    if _define_value(prior) == _define_value(line):
+                        continue  # same value, possibly different spelling
                     raise SurgeryError(
                         f"{basename}: conflicting #define {name}: {prior!r} "
                         f"already merged, new packet emits {line!r} — reuse "
                         f"the existing constant instead of redefining it")
                 defined[name] = line
+            kept.append(line)
         for name in _typedef_names(stanza):
             prior = typedefs.get(name)
             if prior is not None and prior != key:
@@ -295,8 +317,9 @@ def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[s
                     f"definition is already merged — reuse the existing type "
                     f"or rename yours")
             typedefs[name] = key
-        merged.append(stanza)
         seen.add(key)
+        if kept:
+            merged.append(kept)
     out: list[str] = []
     for stanza in merged:
         if out:
