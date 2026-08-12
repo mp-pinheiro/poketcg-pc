@@ -64,6 +64,22 @@ static void adapt_SetDefiniteAIDamage(ProbeState *s)
 }
 /* <<< factory SetDefiniteAIDamage */
 
+/* >>> factory PickRandomPlayAreaCard */
+static void adapt_PickRandomPlayAreaCard(ProbeState *s)
+{
+	PickRandomPlayAreaCardResult r = PickRandomPlayAreaCard();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PickRandomPlayAreaCard */
+
+/* >>> factory GetNextPositionInTempList */
+static void adapt_GetNextPositionInTempList(ProbeState *s)
+{
+	s->hl = GetNextPositionInTempList();
+}
+/* <<< factory GetNextPositionInTempList */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -72,5 +88,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplySubstatus1ToAttackingCard", adapt_ApplySubstatus1ToAttackingCard },
 	{ "SetNoEffectFromStatus", adapt_SetNoEffectFromStatus },
 	{ "SetDefiniteAIDamage", adapt_SetDefiniteAIDamage },
+	{ "PickRandomPlayAreaCard", adapt_PickRandomPlayAreaCard },
+	{ "GetNextPositionInTempList", adapt_GetNextPositionInTempList },
 	{ NULL, NULL },
 };

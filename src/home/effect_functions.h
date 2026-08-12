@@ -25,4 +25,11 @@ void SetNoEffectFromStatus(void);
 /* >>> factory SetDefiniteAIDamage */
 void SetDefiniteAIDamage(void);
 /* <<< factory SetDefiniteAIDamage */
+/* >>> factory PickRandomPlayAreaCard */
+typedef struct { uint8_t a; uint8_t f; } PickRandomPlayAreaCardResult;
+PickRandomPlayAreaCardResult PickRandomPlayAreaCard(void);
+/* <<< factory PickRandomPlayAreaCard */
+/* >>> factory GetNextPositionInTempList */
+uint16_t GetNextPositionInTempList(void);
+/* <<< factory GetNextPositionInTempList */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

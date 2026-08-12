@@ -22,6 +22,9 @@
 #define DUELVARS_DUELIST_TYPE          0xf1u
 #define DUELVARS_ARENA_CARD_SUBSTATUS1 0xe7u
 #define DUELIST_TYPE_PLAYER            0x00u
+
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x02u
+#include "home/random.h"
 /* <<< factory statics */
 
 
@@ -104,3 +107,23 @@ void SetDefiniteAIDamage(void)
 	gb_write8(0xCCBCu, a);
 }
 /* <<< factory SetDefiniteAIDamage */
+
+/* >>> factory PickRandomPlayAreaCard */
+/* effect_functions.asm:316-321 */
+PickRandomPlayAreaCardResult PickRandomPlayAreaCard(void)
+{
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t a = Random(v.a);
+	return (PickRandomPlayAreaCardResult){a, (uint8_t)(a == 0 ? 0x80u : 0u)};
+}
+/* <<< factory PickRandomPlayAreaCard */
+
+/* >>> factory GetNextPositionInTempList */
+/* effect_functions.asm:326-334 */
+uint16_t GetNextPositionInTempList(void)
+{
+	uint8_t a = hCurSelectionItem;
+	hCurSelectionItem = (uint8_t)(a + 1u);
+	return (uint16_t)(hTempList_ADDR + a);
+}
+/* <<< factory GetNextPositionInTempList */

@@ -79,6 +79,24 @@ CASES["SetDefiniteAIDamage"] = [
 ]
 # <<< factory SetDefiniteAIDamage
 
+# >>> factory PickRandomPlayAreaCard
+CONTRACT["PickRandomPlayAreaCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PickRandomPlayAreaCard"] = [
+	{"a": 0},
+	{"a": 1},
+	dict(POISON, a=0x40),
+]
+# <<< factory PickRandomPlayAreaCard
+
+# >>> factory GetNextPositionInTempList
+CONTRACT["GetNextPositionInTempList"] = {"compare": ("hl", "d", "e"), "preserve": ("d", "e")}
+CASES["GetNextPositionInTempList"] = [
+	{"wram": {0xFFB2: b"\x00"}, "read": {0xFFB2: 1}},
+	{"wram": {0xFFB2: b"\x01"}, "read": {0xFFB2: 1}},
+	dict(POISON, wram={0xFFB2: b"\xFF"}, read={0xFFB2: 1}),
+]
+# <<< factory GetNextPositionInTempList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -129,3 +147,19 @@ MUTATIONS["SetNoEffectFromStatus"] = {"source_symbol": "SetNoEffectFromStatus", 
 # >>> factory-mutation SetDefiniteAIDamage
 MUTATIONS["SetDefiniteAIDamage"] = {"source_symbol": "SetDefiniteAIDamage", "before": "gb_write8(0xCCBBu, a);", "after": "gb_write8(0xCCBBu, 0x00u);", "case_ids": ["SetDefiniteAIDamage-1", "SetDefiniteAIDamage-0", "SetDefiniteAIDamage-2"]}
 # <<< factory-mutation SetDefiniteAIDamage
+# >>> factory-mutation PickRandomPlayAreaCard
+MUTATIONS["PickRandomPlayAreaCard"] = {
+	"source_symbol": "PickRandomPlayAreaCard",
+	"before": "return (PickRandomPlayAreaCardResult){a, (uint8_t)(a == 0 ? 0x80u : 0u)};",
+	"after": "return (PickRandomPlayAreaCardResult){a, (uint8_t)(a == 0 ? 0x00u : 0u)};",
+	"case_ids": ["PickRandomPlayAreaCard-0"],
+}
+# <<< factory-mutation PickRandomPlayAreaCard
+# >>> factory-mutation GetNextPositionInTempList
+MUTATIONS["GetNextPositionInTempList"] = {
+	"source_symbol": "GetNextPositionInTempList",
+	"before": "return (uint16_t)(hTempList_ADDR + a);",
+	"after": "return (uint16_t)(hTempList_ADDR + a + 1u);",
+	"case_ids": ["GetNextPositionInTempList-0", "GetNextPositionInTempList-1"],
+}
+# <<< factory-mutation GetNextPositionInTempList
