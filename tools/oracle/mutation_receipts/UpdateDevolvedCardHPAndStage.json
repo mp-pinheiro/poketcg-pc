@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateDevolvedCardHPAndStage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateDevolvedCardHPAndStage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"23\", \"49870\": \"00\", \"50176\": \"0908\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateDevolvedCardHPAndStage\", \"mismatches\": {\"bus\": {\"address\": 49864, \"reference\": \"0123000908c2\", \"native\": \"012d000908c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [50176, 2], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateDevolvedCardHPAndStage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"49864\": \"23\", \"49870\": \"00\", \"50176\": \"0908\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -79,6 +79,11 @@
 #include "home/duel.h"
 
 #define PLAY_AREA_ARENA 0x00u
+
+#define DUELVARS_ARENA_CARD       0xBBu
+#define DUELVARS_ARENA_CARD_HP    0xC8u
+#define DUELVARS_ARENA_CARD_STAGE 0xCEu
+#define POKEMON_POWER             0x04u
 /* <<< factory statics */
 
 
@@ -335,6 +340,7 @@ CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile(ui
 }
 /* <<< factory CreateEnergyCardListFromDiscardPile */
 
+
 /* >>> factory GetAttackName */
 /* effect_functions.asm:877-894 */
 uint16_t GetAttackName(uint8_t d, uint8_t e)
@@ -386,3 +392,48 @@ uint8_t InvisibleWallEffect(uint8_t f)
 	return (uint8_t)((f & 0x80u) | 0x10u);
 }
 /* <<< factory InvisibleWallEffect */
+
+/* >>> factory CheckIfDefendingPokemonHasAnyAttack */
+/* effect_functions.asm:893-916 */
+CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void)
+{
+	SwapTurn();
+	uint8_t index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(index);
+
+	uint8_t f;
+	uint8_t category = gb_read8(wLoadedCard2Atk1Category_ADDR);
+	if (category != POKEMON_POWER) {
+		f = (category == 0u) ? 0x80u : 0x00u;
+	} else {
+		uint8_t lo = gb_read8(wLoadedCard2Atk2Name_ADDR);
+		uint8_t hi = gb_read8((uint16_t)(wLoadedCard2Atk2Name_ADDR + 1u));
+		f = ((uint8_t)(lo | hi) != 0u) ? 0x00u : 0x90u;
+	}
+
+	SwapTurn();
+	return (CheckAttackResult){f};
+}
+/* <<< factory CheckIfDefendingPokemonHasAnyAttack */
+
+/* >>> factory UpdateDevolvedCardHPAndStage */
+/* effect_functions.asm:919-947 */
+void UpdateDevolvedCardHPAndStage(uint8_t a)
+{
+	uint8_t e = hTempPlayAreaLocation_ff9d;
+	uint8_t damage = GetCardDamageAndMaxHP(e).a;
+
+	uint16_t arena_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).hl;
+	gb_write8(arena_addr, a);
+
+	LoadCardDataToBuffer2_FromDeckIndex(a);
+
+	uint16_t hp_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).hl;
+	uint8_t new_max_hp = gb_read8(wLoadedCard2HP_ADDR);
+	uint8_t new_hp = (new_max_hp < damage) ? 0u : (uint8_t)(new_max_hp - damage);
+	gb_write8(hp_addr, new_hp);
+
+	uint16_t stage_addr = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e)).hl;
+	gb_write8(stage_addr, gb_read8(wLoadedCard2Stage_ADDR));
+}
+/* <<< factory UpdateDevolvedCardHPAndStage */

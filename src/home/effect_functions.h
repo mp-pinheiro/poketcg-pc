@@ -76,4 +76,11 @@ QueueStatusConditionResult ConfusionEffect(void);
 /* >>> factory InvisibleWallEffect */
 uint8_t InvisibleWallEffect(uint8_t f);
 /* <<< factory InvisibleWallEffect */
+/* >>> factory CheckIfDefendingPokemonHasAnyAttack */
+typedef struct { uint8_t f; } CheckAttackResult;
+CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void);
+/* <<< factory CheckIfDefendingPokemonHasAnyAttack */
+/* >>> factory UpdateDevolvedCardHPAndStage */
+void UpdateDevolvedCardHPAndStage(uint8_t a);
+/* <<< factory UpdateDevolvedCardHPAndStage */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

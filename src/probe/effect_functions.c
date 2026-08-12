@@ -143,6 +143,7 @@ static void adapt_GetAttackName(ProbeState *s)
 }
 /* <<< factory GetAttackName */
 
+
 /* >>> factory ClefableMinimizeEffect */
 static void adapt_ClefableMinimizeEffect(ProbeState *s)
 {
@@ -181,6 +182,21 @@ static void adapt_InvisibleWallEffect(ProbeState *s)
 }
 /* <<< factory InvisibleWallEffect */
 
+/* >>> factory CheckIfDefendingPokemonHasAnyAttack */
+static void adapt_CheckIfDefendingPokemonHasAnyAttack(ProbeState *s)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	s->f = r.f;
+}
+/* <<< factory CheckIfDefendingPokemonHasAnyAttack */
+
+/* >>> factory UpdateDevolvedCardHPAndStage */
+static void adapt_UpdateDevolvedCardHPAndStage(ProbeState *s)
+{
+	UpdateDevolvedCardHPAndStage(s->a);
+}
+/* <<< factory UpdateDevolvedCardHPAndStage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -198,11 +214,13 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SetDamageToATimes20", adapt_SetDamageToATimes20 },
 	{ "CreateTrainerCardListFromDiscardPile", adapt_CreateTrainerCardListFromDiscardPile },
 	{ "CreateEnergyCardListFromDiscardPile", adapt_CreateEnergyCardListFromDiscardPile },
-	{ "GetAttackName", adapt_GetAttackName },
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ "HandleAIMetronomeEffect", adapt_HandleAIMetronomeEffect },
 	{ "ParalysisEffect", adapt_ParalysisEffect },
 	{ "ConfusionEffect", adapt_ConfusionEffect },
 	{ "InvisibleWallEffect", adapt_InvisibleWallEffect },
+	{ "GetAttackName", adapt_GetAttackName },
+	{ "CheckIfDefendingPokemonHasAnyAttack", adapt_CheckIfDefendingPokemonHasAnyAttack },
+	{ "UpdateDevolvedCardHPAndStage", adapt_UpdateDevolvedCardHPAndStage },
 	{ NULL, NULL },
 };

@@ -194,6 +194,7 @@ CASES["GetAttackName"] = [
 ]
 # <<< factory GetAttackName
 
+
 # >>> factory ClefableMinimizeEffect
 CONTRACT["ClefableMinimizeEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
 CASES["ClefableMinimizeEffect"] = [
@@ -234,6 +235,103 @@ CASES["InvisibleWallEffect"] = [
     {"f": 0x80},
 ]
 # <<< factory InvisibleWallEffect
+
+# >>> factory CheckIfDefendingPokemonHasAnyAttack
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wOpponentDuelVariables = 0xC300
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC480
+DUELVARS_ARENA_CARD = 0xBB
+BULBASAUR = 0x08
+BEEDRILL = 0x11
+SNORLAX = 0xBE
+CLEFAIRY_DOLL = 0xCB
+MYSTERIOUS_FOSSIL = 0xCC
+
+CONTRACT["CheckIfDefendingPokemonHasAnyAttack"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckIfDefendingPokemonHasAnyAttack"] = [
+    # Opponent's arena has Bulbasaur (Leech Seed, category DAMAGE_NORMAL=0): has an attack, a==0 at exit.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+              wOpponentDeck: bytes((BULBASAUR,))},
+     "read": {hWhoseTurn: 1}},
+    # Beedrill (category DAMAGE_X=3, nonzero non-power): has an attack, a!=0 at exit.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+              wOpponentDeck: bytes((BEEDRILL,))},
+     "read": {hWhoseTurn: 1}},
+    # Snorlax (Pokemon Power Atk1 + real Atk2 "Body Slam"): has an attack.
+    {"wram": {hWhoseTurn: b"\xC3", wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+              wPlayerDeck: bytes((SNORLAX,))},
+     "read": {hWhoseTurn: 1}},
+    # Clefairy Doll (Trainer-as-Pokemon: Atk1=POKEMON_POWER, Atk2 zeroed): no attack.
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+              wOpponentDeck: bytes((CLEFAIRY_DOLL,)), wOpponentDuelVariables: b"\x10"},
+     "read": {hWhoseTurn: 1}},
+    dict(POISON,
+         wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+               wOpponentDeck: bytes((MYSTERIOUS_FOSSIL,)), wOpponentDuelVariables: b"\x10"},
+         read={hWhoseTurn: 1}),
+]
+# <<< factory CheckIfDefendingPokemonHasAnyAttack
+
+# >>> factory UpdateDevolvedCardHPAndStage
+hTempPlayAreaLocation_ff9d = 0xFF9D
+DUELVARS_ARENA_CARD_HP = 0xC8
+DUELVARS_ARENA_CARD_STAGE = 0xCE
+IVYSAUR = 0x09
+METAPOD = 0x0D
+CATERPIE = 0x0C
+BUTTERFREE = 0x0E
+
+CONTRACT["UpdateDevolvedCardHPAndStage"] = {"compare": (), "preserve": ()}
+CASES["UpdateDevolvedCardHPAndStage"] = [
+    # Arena, Ivysaur (max HP 60) devolving to Bulbasaur (max HP 40), no HP clamp.
+    {"a": 1, "wram": {hTempPlayAreaLocation_ff9d: b"\x00", hWhoseTurn: b"\xC2",
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD: b"\x00",
+                      wPlayerDeck: bytes((IVYSAUR,)),
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x37",
+                      wPlayerDeck + 1: bytes((BULBASAUR,))},
+     "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_STAGE: 1}},
+    # Bench slot 1, opponent side, Metapod devolving to Caterpie, no HP clamp.
+    {"a": 3, "wram": {hTempPlayAreaLocation_ff9d: b"\x01", hWhoseTurn: b"\xC3",
+                      wOpponentDuelVariables + DUELVARS_ARENA_CARD + 1: bytes((2,)),
+                      wOpponentDeck + 2: bytes((METAPOD,)),
+                      wOpponentDuelVariables + DUELVARS_ARENA_CARD_HP + 1: b"\x41",
+                      wOpponentDeck + 3: bytes((CATERPIE,))},
+     "read": {wOpponentDuelVariables + DUELVARS_ARENA_CARD + 1: 1,
+              wOpponentDuelVariables + DUELVARS_ARENA_CARD_HP + 1: 1,
+              wOpponentDuelVariables + DUELVARS_ARENA_CARD_STAGE + 1: 1}},
+    # Snorlax (max HP 90, HP field 0 -> damage 90) devolving to Bulbasaur (max HP 40): damage exceeds new max HP, clamp to 0.
+    {"a": 6, "wram": {hTempPlayAreaLocation_ff9d: b"\x00", hWhoseTurn: b"\xC2",
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD: bytes((5,)),
+                      wPlayerDeck + 5: bytes((SNORLAX,)),
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x00",
+                      wPlayerDeck + 6: bytes((BULBASAUR,))},
+     "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_STAGE: 1}},
+    # Snorlax (HP field 50 -> damage 40) devolving to Bulbasaur (max HP 40): exact boundary, no-borrow path yields 0.
+    {"a": 6, "wram": {hTempPlayAreaLocation_ff9d: b"\x00", hWhoseTurn: b"\xC2",
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD: bytes((5,)),
+                      wPlayerDeck + 5: bytes((SNORLAX,)),
+                      wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: b"\x32",
+                      wPlayerDeck + 6: bytes((BULBASAUR,))},
+     "read": {wPlayerDuelVariables + DUELVARS_ARENA_CARD: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP: 1,
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_STAGE: 1}},
+    dict(POISON, a=7,
+         wram={hTempPlayAreaLocation_ff9d: b"\x02", hWhoseTurn: b"\xC3",
+               wOpponentDuelVariables + DUELVARS_ARENA_CARD + 2: bytes((4,)),
+               wOpponentDeck + 4: bytes((BUTTERFREE,)),
+               wOpponentDuelVariables + DUELVARS_ARENA_CARD_HP + 2: b"\x07",
+               wOpponentDeck + 7: bytes((METAPOD,))},
+         read={wOpponentDuelVariables + DUELVARS_ARENA_CARD + 2: 1,
+               wOpponentDuelVariables + DUELVARS_ARENA_CARD_HP + 2: 1,
+               wOpponentDuelVariables + DUELVARS_ARENA_CARD_STAGE + 2: 1}),
+]
+# <<< factory UpdateDevolvedCardHPAndStage
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -405,3 +503,19 @@ MUTATIONS["InvisibleWallEffect"] = {
     "case_ids": ["InvisibleWallEffect-0", "InvisibleWallEffect-1", "InvisibleWallEffect-2"],
 }
 # <<< factory-mutation InvisibleWallEffect
+# >>> factory-mutation CheckIfDefendingPokemonHasAnyAttack
+MUTATIONS["CheckIfDefendingPokemonHasAnyAttack"] = {
+	"source_symbol": "CheckIfDefendingPokemonHasAnyAttack",
+	"before": "f = (category == 0u) ? 0x80u : 0x00u;",
+	"after": "f = (category == 0u) ? 0x00u : 0x80u;",
+	"case_ids": ["CheckIfDefendingPokemonHasAnyAttack-0", "CheckIfDefendingPokemonHasAnyAttack-1"],
+}
+# <<< factory-mutation CheckIfDefendingPokemonHasAnyAttack
+# >>> factory-mutation UpdateDevolvedCardHPAndStage
+MUTATIONS["UpdateDevolvedCardHPAndStage"] = {
+	"source_symbol": "UpdateDevolvedCardHPAndStage",
+	"before": "uint8_t new_hp = (new_max_hp < damage) ? 0u : (uint8_t)(new_max_hp - damage);",
+	"after": "uint8_t new_hp = (new_max_hp < damage) ? 0u : (uint8_t)(new_max_hp + damage);",
+	"case_ids": ["UpdateDevolvedCardHPAndStage-0", "UpdateDevolvedCardHPAndStage-1"],
+}
+# <<< factory-mutation UpdateDevolvedCardHPAndStage
