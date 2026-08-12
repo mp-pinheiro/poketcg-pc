@@ -28,6 +28,15 @@ CASES["PlayAreaScreenMenuFunction"] = [
 ]
 # <<< factory PlayAreaScreenMenuFunction
 
+# >>> factory SwitchAttackPage
+CONTRACT["SwitchAttackPage"] = {"compare": (), "preserve": ()}
+CASES["SwitchAttackPage"] = [
+	{"wram": {0xCC04: b"\x00"}, "read": {0xCC04: 1}},
+	{"wram": {0xCC04: b"\x01"}, "read": {0xCC04: 1}},
+	dict(POISON, wram={0xCC04: b"\xff"}, read={0xCC04: 1}),
+]
+# <<< factory SwitchAttackPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -48,3 +57,11 @@ MUTATIONS["PlayAreaScreenMenuFunction"] = {
     "case_ids": ["PlayAreaScreenMenuFunction-0", "PlayAreaScreenMenuFunction-5"],
 }
 # <<< factory-mutation PlayAreaScreenMenuFunction
+# >>> factory-mutation SwitchAttackPage
+MUTATIONS["SwitchAttackPage"] = {
+	"source_symbol": "SwitchAttackPage",
+	"before": "wAttackPageNumber ^ 0x01u",
+	"after": "wAttackPageNumber & 0x01u",
+	"case_ids": ["SwitchAttackPage-0", "SwitchAttackPage-1"],
+}
+# <<< factory-mutation SwitchAttackPage

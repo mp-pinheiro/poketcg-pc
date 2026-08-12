@@ -9,4 +9,7 @@ void SetLineSeparation(uint8_t a);
 /* >>> factory PlayAreaScreenMenuFunction */
 uint8_t PlayAreaScreenMenuFunction(void);
 /* <<< factory PlayAreaScreenMenuFunction */
+/* >>> factory SwitchAttackPage */
+void SwitchAttackPage(void);
+/* <<< factory SwitchAttackPage */
 #endif /* POKETCG_HOME_CORE_H */

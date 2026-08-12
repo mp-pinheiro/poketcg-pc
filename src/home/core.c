@@ -16,6 +16,24 @@
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x12u
 #define DUELVARS_ARENA_CARD_HP                  0x08u
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x1Au
+
+#define ASLEEP           0x02u
+#define CNF_SLP_PRZ       0x0Fu
+#define PARALYZED        0x03u
+#define DUELVARS_ARENA_CARD_STATUS 0x16u
+#define TX_UnableDueToParalysisText 0x0000u
+#define TX_UnableDueToSleepText     0x0001u
+
+#define ASLEEP        0x02u
+#define CNF_SLP_PRZ   0x0fu
+#define PARALYZED     0x03u
+#define DUELVARS_ARENA_CARD_STATUS 0x02u
+
+#define FLAG_Z 0x80u
+#define FLAG_C 0x10u
+
+#define PARALYZED 0x03u
+#define ASLEEP    0x02u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -40,3 +58,12 @@ uint8_t PlayAreaScreenMenuFunction(void)
 	return 0x90u;
 }
 /* <<< factory PlayAreaScreenMenuFunction */
+
+/* >>> factory SwitchAttackPage */
+/* core.asm:1165-1170 */
+void SwitchAttackPage(void)
+{
+	uint8_t v = wAttackPageNumber ^ 0x01u;
+	wAttackPageNumber = v;
+}
+/* <<< factory SwitchAttackPage */

@@ -17,8 +17,17 @@ static void adapt_PlayAreaScreenMenuFunction(ProbeState *s)
 }
 /* <<< factory PlayAreaScreenMenuFunction */
 
+/* >>> factory SwitchAttackPage */
+static void adapt_SwitchAttackPage(ProbeState *s)
+{
+	(void)s;
+	SwitchAttackPage();
+}
+/* <<< factory SwitchAttackPage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
+	{ "SwitchAttackPage", adapt_SwitchAttackPage },
 	{ NULL, NULL },
 };
