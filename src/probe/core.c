@@ -78,6 +78,14 @@ static void adapt_ZeroObjectPositionsAndToggleOAMCopy(ProbeState *s)
 }
 /* <<< factory ZeroObjectPositionsAndToggleOAMCopy */
 
+/* >>> factory LoadPlayerDeck */
+static void adapt_LoadPlayerDeck(ProbeState *s)
+{
+	(void)s;
+	LoadPlayerDeck();
+}
+/* <<< factory LoadPlayerDeck */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -89,5 +97,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetBGP7OrSGB2ToCardPalette", adapt_SetBGP7OrSGB2ToCardPalette },
 	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
 	{ "ZeroObjectPositionsAndToggleOAMCopy", adapt_ZeroObjectPositionsAndToggleOAMCopy },
+	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
 	{ NULL, NULL },
 };

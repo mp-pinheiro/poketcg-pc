@@ -109,6 +109,25 @@ CASES["ZeroObjectPositionsAndToggleOAMCopy"] = [
 ]
 # <<< factory ZeroObjectPositionsAndToggleOAMCopy
 
+# >>> factory LoadPlayerDeck
+CONTRACT["LoadPlayerDeck"] = {"compare": (), "preserve": ()}
+sCurrentlySelectedDeck_ = 0xB700
+sDeck1Cards_ = 0xA218
+wPlayerDeck_ = 0xC400
+CASES["LoadPlayerDeck"] = [
+    {"sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
+     "read": {wPlayerDeck_: 60}},
+    dict(POISON, sram={0: {sCurrentlySelectedDeck_: b"\x01", sDeck1Cards_: bytes(range(60)), sDeck1Cards_ + 60: bytes(range(60))}},
+         read={wPlayerDeck_: 60}),
+    {"sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes([0xFF] * 60)}},
+     "read": {wPlayerDeck_: 60}},
+    {"sram": {0: {sCurrentlySelectedDeck_: b"\x01", sDeck1Cards_: bytes([1] * 60), sDeck1Cards_ + 60: bytes([2] * 60)}},
+     "read": {wPlayerDeck_: 60}},
+    {"ramg": False, "sram": {0: {sCurrentlySelectedDeck_: b"\x00", sDeck1Cards_: bytes(range(60))}},
+     "read": {wPlayerDeck_: 60}},
+]
+# <<< factory LoadPlayerDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -193,3 +212,11 @@ MUTATIONS["ZeroObjectPositionsAndToggleOAMCopy"] = {
 	"case_ids": ["ZeroObjectPositionsAndToggleOAMCopy-0", "ZeroObjectPositionsAndToggleOAMCopy-1"],
 }
 # <<< factory-mutation ZeroObjectPositionsAndToggleOAMCopy
+# >>> factory-mutation LoadPlayerDeck
+MUTATIONS["LoadPlayerDeck"] = {
+    "source_symbol": "LoadPlayerDeck",
+    "before": "hl = (uint16_t)(hl + sDeck1Cards_ADDR);",
+    "after": "hl = (uint16_t)(hl + sDeck1Cards_ADDR + 1u);",
+    "case_ids": ["LoadPlayerDeck-0", "LoadPlayerDeck-2"],
+}
+# <<< factory-mutation LoadPlayerDeck

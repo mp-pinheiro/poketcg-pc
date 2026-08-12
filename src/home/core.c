@@ -6,45 +6,33 @@
 /* >>> factory statics */
 #include "home/duel.h"
 
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x2eu
-#define DUELVARS_ARENA_CARD_HP 0x01u
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x1Au
+#define DUELVARS_ARENA_CARD_HP                  0x08u
 #define MENU_CANCEL 0xFFu
 #define PAD_A     0x01u
 #define PAD_B     0x02u
 #define PAD_START 0x08u
 #define B_PAD_B_BIT 0x02u
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x12u
-#define DUELVARS_ARENA_CARD_HP                  0x08u
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x1Au
 
 #define ASLEEP           0x02u
 #define CNF_SLP_PRZ       0x0Fu
 #define PARALYZED        0x03u
-#define DUELVARS_ARENA_CARD_STATUS 0x16u
+#define DUELVARS_ARENA_CARD_STATUS 0x02u
 #define TX_UnableDueToParalysisText 0x0000u
 #define TX_UnableDueToSleepText     0x0001u
-
-#define ASLEEP        0x02u
-#define CNF_SLP_PRZ   0x0fu
-#define PARALYZED     0x03u
-#define DUELVARS_ARENA_CARD_STATUS 0x02u
 
 #define FLAG_Z 0x80u
 #define FLAG_C 0x10u
 
-#define PARALYZED 0x03u
-#define ASLEEP    0x02u
-
 #include "generated/wram.h"
 #include "home/card_data.h"
 
-#define TILE_SIZE 16u
+#define TILE_SIZE 0x10u
 #define PAL_SIZE 8u
 #define ATTR_BLK_CTRL_INSIDE 1u
 #define ATTR_BLK_CTRL_LINE 2u
 
 #define LOAD_LOADED1_CARD_GFX_B 0x30u
-#define TILE_SIZE 0x10u
 
 #include "home/copy.h"
 #include "home/switch_sram.h"
@@ -78,21 +66,26 @@ static uint32_t duel_save_total_size(void)
 	return total;
 }
 
-#define SAVE_DUEL_DATA_SIZE_MINUS6 0x00FAu
-
 #include "home/bg_map.h"
 
 #define CONSOLE_DMG 0x00u
 #define CONSOLE_SGB 0x01u
 #define ATTR_BLK 0x04u
-#define PAL_SIZE 4u
 
 #include "home/objects.h"
 
-#define CARDPAGE_TRAINER_1 0x0Du
-#define CARDPAGE_TRAINER_2 0x0Eu
 #define CARDPAGE_TRAINER_1 0x0du
 #define CARDPAGE_TRAINER_2 0x0eu
+
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "home/random.h"
+
+#define DECK_SIZE 60u
+#define SAVE_DUEL_DATA_SIZE 0x0400u
+
+#define DECK_SIZE_ 60u
+#define SAVE_DUEL_DATA_SIZE_MINUS6 (0x100u - 6u)
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -250,3 +243,24 @@ void ZeroObjectPositionsAndToggleOAMCopy(void)
 	wVBlankOAMCopyToggle = TRUE;
 }
 /* <<< factory ZeroObjectPositionsAndToggleOAMCopy */
+
+/* >>> factory LoadPlayerDeck */
+/* core.asm:6195-6211 */
+void LoadPlayerDeck(void)
+{
+	EnableSRAM();
+	uint8_t sel = gb_read8(sCurrentlySelectedDeck_ADDR);
+	uint16_t hl = HtimesL((uint16_t)(sel << 8 | (sDeck2Cards_ADDR - sDeck1Cards_ADDR)));
+	hl = (uint16_t)(hl + sDeck1Cards_ADDR);
+	uint16_t de = wPlayerDeck_ADDR;
+	uint8_t c = DECK_SIZE_;
+	do {
+		uint8_t a = gb_read8(hl);
+		hl++;
+		gb_write8(de, a);
+		de++;
+		c--;
+	} while (c != 0);
+	DisableSRAM();
+}
+/* <<< factory LoadPlayerDeck */

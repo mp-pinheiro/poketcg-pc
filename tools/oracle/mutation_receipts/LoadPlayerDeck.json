@@ -1,0 +1,9 @@
+{
+  "fn": "LoadPlayerDeck",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadPlayerDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"41496\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\", \"46848\": \"00\"}}, \"vram\": {}, \"wram\": {\"50176\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadPlayerDeck\", \"mismatches\": {\"bus\": {\"address\": 50176, \"reference\": \"0001020304\", \"native\": \"0102030405\", \"reference_size\": 60, \"native_size\": 60, \"spans\": [[50176, 60]]}}}\n",
+  "restored": "{\"fn\": \"LoadPlayerDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"41496\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\", \"46848\": \"00\"}}, \"vram\": {}, \"wram\": {\"50176\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\"}}, \"status\": \"PASS\"}\n"
+}

@@ -33,4 +33,7 @@ void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c);
 /* >>> factory ZeroObjectPositionsAndToggleOAMCopy */
 void ZeroObjectPositionsAndToggleOAMCopy(void);
 /* <<< factory ZeroObjectPositionsAndToggleOAMCopy */
+/* >>> factory LoadPlayerDeck */
+void LoadPlayerDeck(void);
+/* <<< factory LoadPlayerDeck */
 #endif /* POKETCG_HOME_CORE_H */
