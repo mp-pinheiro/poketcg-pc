@@ -365,6 +365,39 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
     return packets
 
 
+def drop_claimed(packets: list[dict]) -> list[dict]:
+    """Strip routines an existing pending packet already offers.
+
+    Two pending packets offering the same routine means two lanes translate
+    it and the second landing replaces the first's markers — pure waste, and
+    a source of avoidable STOP-THE-LINE churn. Ids are chunk-start-derived,
+    so a superseding packet never collides by id with the legacy packet it
+    overlaps; only routine-level claims catch it.
+
+    A packet's own prior pending version is not a claim against itself: a
+    rebuild replaces that entry in place. Run before ``attach_dependencies``,
+    which recomputes ``bytes``/``cascade`` over whatever survives.
+    """
+    claims: dict[str, str] = {}
+    for path in QUEUE.glob("*.json"):
+        entry = json.loads(path.read_text())
+        if entry.get("state") != "pending":
+            continue
+        for routine in entry["routines"]:
+            claims[routine["name"]] = entry["id"]
+    kept: list[dict] = []
+    for packet in packets:
+        usable = [r for r in packet["routines"]
+                  if claims.get(r["name"]) in (None, packet["id"])]
+        if not usable:
+            continue
+        packet["routines"] = usable
+        for routine in usable:
+            claims[routine["name"]] = packet["id"]
+        kept.append(packet)
+    return kept
+
+
 def attach_dependencies(packets: list[dict]) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
@@ -452,6 +485,8 @@ def main() -> int:
         return cmd_chokepoints(args.limit)
 
     packets = build_packets(args.dir, args.max_routines, args.max_asm_lines, args.limit)
+    if not args.force:
+        packets = drop_claimed(packets)
     packets = attach_dependencies(packets)
     written = []
     for packet in packets:
