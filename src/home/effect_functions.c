@@ -34,6 +34,23 @@
 #define PLAY_AREA_ARENA 0x00u
 #define SNORLAX 0xBEu
 
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x4Fu
+#define DUELVARS_DECK_CARDS 0x10u
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0x50u
+#define DECK_SIZE 60u
+#define TYPE_ENERGY 0x04u
+#define TYPE_ENERGY_DOUBLE_COLORLESS 0x06u
+#define TYPE_TRAINER 0x08u
+#define TX_ThereAreNoTrainerCardsInDiscardPile 0x40BEu
+#define TX_NoCardsLeftInTheDeck 0x40BFu
+
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x59u
+#define DUELVARS_DECK_CARDS 0x5Au
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0x58u
+#define TYPE_ENERGY 0x07u
+#define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
+#define TX_NoCardsLeftInTheDeckText 0x00B1u
+#define TYPE_ENERGY 0x06u
 /* <<< factory statics */
 
 
@@ -226,3 +243,34 @@ void SetDamageToATimes20(uint8_t a)
 	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(hl >> 8));
 }
 /* <<< factory SetDamageToATimes20 */
+
+/* >>> factory CreateTrainerCardListFromDiscardPile */
+/* effect_functions.asm:537-596 */
+CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t b = r.a;
+	uint16_t hl = (uint16_t)((r.hl & 0xFF00u) | (uint8_t)(r.a + DUELVARS_DECK_CARDS));
+	uint16_t de = wDuelTempList_ADDR;
+	b = (uint8_t)(b + 1u);
+
+	while (b != 0u) {
+		uint8_t l = (uint8_t)hl;
+		uint8_t card = gb_read8(hl);
+		(void)LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) == TYPE_TRAINER) {
+			gb_write8(de, card);
+			de++;
+		}
+		l--;
+		hl = (uint16_t)((hl & 0xFF00u) | l);
+		b--;
+	}
+
+	gb_write8(de, 0xFFu);
+	if (gb_read8(wDuelTempList_ADDR) == 0xFFu)
+		return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x90u};
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	return (CreateTrainerCardListFromDiscardPileResult){0, (uint8_t)((first == 0u) ? 0x80u : 0x00u)};
+}
+/* <<< factory CreateTrainerCardListFromDiscardPile */

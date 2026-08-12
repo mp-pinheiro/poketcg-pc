@@ -269,7 +269,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             inventory_lines.setdefault(f["file"], []).append(f["line"])
 
     packets: list[dict] = []
-    id_counts: dict[str, int] = {}
+
     for file, members in groups.items():
         chunks: list[list[dict]] = [[]]
         line_budget = 0
@@ -303,8 +303,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                     "cascade": cascade_of(f["name"]),
                 })
             packet = {
-                "id": (basename if id_counts.get(basename, 0) == 0
-                       else f"{basename}-{id_counts[basename]}"),
+                "id": f"{basename}-L{chunk[0][0]['line']}",
                 "basename": basename,
                 "file": file,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
@@ -320,7 +319,6 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }
             packets.append(packet)
-            id_counts[basename] = id_counts.get(basename, 0) + 1
 
     packets.sort(key=lambda p: (-p["cascade"], p["bytes"]))
     if limit:

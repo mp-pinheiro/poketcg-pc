@@ -50,4 +50,8 @@ void Teleport_SwitchEffect(void);
 /* >>> factory SetDamageToATimes20 */
 void SetDamageToATimes20(uint8_t a);
 /* <<< factory SetDamageToATimes20 */
+/* >>> factory CreateTrainerCardListFromDiscardPile */
+typedef struct { uint16_t hl; uint8_t f; } CreateTrainerCardListFromDiscardPileResult;
+CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(void);
+/* <<< factory CreateTrainerCardListFromDiscardPile */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

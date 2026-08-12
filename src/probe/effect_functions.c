@@ -117,6 +117,15 @@ static void adapt_SetDamageToATimes20(ProbeState *s)
 }
 /* <<< factory SetDamageToATimes20 */
 
+/* >>> factory CreateTrainerCardListFromDiscardPile */
+static void adapt_CreateTrainerCardListFromDiscardPile(ProbeState *s)
+{
+	CreateTrainerCardListFromDiscardPileResult r = CreateTrainerCardListFromDiscardPile();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateTrainerCardListFromDiscardPile */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -132,5 +141,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SetWasUnsuccessful", adapt_SetWasUnsuccessful },
 	{ "Teleport_SwitchEffect", adapt_Teleport_SwitchEffect },
 	{ "SetDamageToATimes20", adapt_SetDamageToATimes20 },
+	{ "CreateTrainerCardListFromDiscardPile", adapt_CreateTrainerCardListFromDiscardPile },
 	{ NULL, NULL },
 };

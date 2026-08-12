@@ -164,6 +164,15 @@ CASES["SetDamageToATimes20"] = [
 ]
 # <<< factory SetDamageToATimes20
 
+# >>> factory CreateTrainerCardListFromDiscardPile
+CONTRACT["CreateTrainerCardListFromDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["CreateTrainerCardListFromDiscardPile"] = [
+	{"wram": {0xC37E: b"\x00"}, "read": {0xC510: 4}},
+	dict(POISON, wram={0xC37E: b"\x00"}),
+	{"wram": {0xC510: b"\x00\x00\x00\x00"}},
+]
+# <<< factory CreateTrainerCardListFromDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -270,3 +279,11 @@ MUTATIONS["SetDamageToATimes20"] = {
     "case_ids": ["SetDamageToATimes20-1", "SetDamageToATimes20-2", "SetDamageToATimes20-3"],
 }
 # <<< factory-mutation SetDamageToATimes20
+# >>> factory-mutation CreateTrainerCardListFromDiscardPile
+MUTATIONS["CreateTrainerCardListFromDiscardPile"] = {
+	"source_symbol": "CreateTrainerCardListFromDiscardPile",
+	"before": "return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x90u};",
+	"after": "return (CreateTrainerCardListFromDiscardPileResult){TX_ThereAreNoTrainerCardsInDiscardPileText, 0x10u};",
+	"case_ids": ["CreateTrainerCardListFromDiscardPile-0", "CreateTrainerCardListFromDiscardPile-1", "CreateTrainerCardListFromDiscardPile-2"],
+}
+# <<< factory-mutation CreateTrainerCardListFromDiscardPile
