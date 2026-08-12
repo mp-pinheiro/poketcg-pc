@@ -47,6 +47,7 @@ class _Run:
         self.feedback: str | None = None
         self.targets: list[str] | None = None
         self.last_failing: list[str] | None = None
+        self.statics_baseline: list[str] | None = None
         self.prompt_tokens = 0
         self.reply_tokens = 0
         self.started = time.time()
@@ -65,8 +66,11 @@ class _Run:
 
 def _apply_and_verify(run: _Run, translation: dict) -> dict:
     """Worker-thread step: surgery + verification inside the pinned lane."""
+    if run.statics_baseline is None:
+        run.statics_baseline = surgery.read_statics(run.lane, run.packet["basename"])
     try:
-        changed = surgery.apply(run.lane, run.packet, translation)
+        changed = surgery.apply(run.lane, run.packet, translation,
+                                statics_baseline=run.statics_baseline)
     except surgery.SurgeryError as exc:
         return {"status": "surgery", "detail": str(exc)}
     cases_changed = any(str(p).endswith(".py") for p in changed) or run.rounds == 0

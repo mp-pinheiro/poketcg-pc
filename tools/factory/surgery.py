@@ -305,25 +305,49 @@ def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[s
     return out
 
 
-def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
-    """Write parsed blocks into the packet's four files under ``root``."""
+def read_statics(root: Path, basename: str) -> list[str]:
+    """Current statics body lines of the basename's .c under ``root``
+    (empty when the file or block does not exist yet)."""
+    path = quad_paths(root, basename)["c"]
+    if not path.exists():
+        return []
+    span = _span(path.read_text(),
+                 "/* >>> factory statics */", "/* <<< factory statics */")
+    if span is None:
+        return []
+    body = path.read_text()[span[0]:span[1]].splitlines()[1:-1]
+    return body
+
+
+def apply(root: Path, packet: dict, translation: dict,
+          statics_baseline: list[str] | None = None) -> list[Path]:
+    """Write parsed blocks into the packet's four files under ``root``.
+
+    ``statics_baseline`` — pre-run foreign statics content. When given, the
+    statics block is rebuilt as baseline + this translation's statics, so a
+    repair round may revise its OWN earlier lines freely while conflicts
+    against other packets' landed content still reject. Without it (the
+    integrate/land path), the current block is the merge base: cross-packet
+    append-only semantics.
+    """
     basename = packet["basename"]
     paths = quad_paths(root, basename)
     ensure_skeletons(root, packet)
     changed: set[Path] = set()
 
     # --- statics into the .c, right after the skeleton includes -------------
-    # Merged, never replaced: repair rounds may emit partial statics and must
-    # not lose earlier defines/includes.
     c_text = paths["c"].read_text()
     statics = translation.get("statics")
     if statics:
         open_s, close_s = "/* >>> factory statics */", "/* <<< factory statics */"
         span = _span(c_text, open_s, close_s)
-        existing_lines: list[str] = []
-        if span:
-            body = c_text[span[0]:span[1]].splitlines()[1:-1]
-            existing_lines = [l for l in body if l.strip() != close_s]
+        if statics_baseline is not None:
+            existing_lines = list(statics_baseline)
+        else:
+            existing_lines = []
+            if span:
+                body = c_text[span[0]:span[1]].splitlines()[1:-1]
+                existing_lines = [l for l in body if l.strip() != close_s]
         merged = _merge_statics(basename, existing_lines,
                                 statics.rstrip().splitlines())
         block = open_s + "\n" + "\n".join(merged) + "\n" + close_s + "\n"
