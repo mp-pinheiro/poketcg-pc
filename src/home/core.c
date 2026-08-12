@@ -109,6 +109,18 @@ static uint32_t duel_save_total_size(void)
 #define DUELVARS_ARENA_CARD   0x00u
 
 #define CARDPAGE_POKEMON_OVERVIEW 0x01u
+
+#include "generated/wram.h"
+#include "mem.h"
+
+#define TRUE_VAL 0x01u
+/* GB address of PrintSortNumberInCardList (engine/duel/core.asm:3438), the
+ * routine immediately following the setter: setter start + 15 bytes. The
+ * setter is the only writer of this pointer, which the card-list printer
+ * dispatches through. */
+#define PRINT_SORT_NUMBER_IN_CARD_LIST 0x5aa2u
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -398,3 +410,12 @@ CardPageResult CardPageSwitch_PokemonEnd(void)
 	return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 1u};
 }
 /* <<< factory CardPageSwitch_PokemonEnd */
+
+/* >>> factory SetCardListInfoBoxText */
+/* core.asm:3129-3134 */
+void SetCardListInfoBoxText(uint16_t hl)
+{
+	wCardListInfoBoxText = (uint8_t)hl;
+	gb_write8((uint16_t)(wCardListInfoBoxText_ADDR + 1u), (uint8_t)(hl >> 8));
+}
+/* <<< factory SetCardListInfoBoxText */

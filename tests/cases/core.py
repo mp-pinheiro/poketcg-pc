@@ -236,6 +236,15 @@ CASES["CardPageSwitch_PokemonEnd"] = [
 ]
 # <<< factory CardPageSwitch_PokemonEnd
 
+# >>> factory SetCardListInfoBoxText
+CONTRACT["SetCardListInfoBoxText"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetCardListInfoBoxText"] = [
+    {"hl": 0x0000, "read": {0xCBDA: 2}},
+    {"hl": 0x1234, "read": {0xCBDA: 2}},
+    dict(POISON, hl=0xBEEF, wram={0xCBDA: b"\x00\x00"}, read={0xCBDA: 2}),
+]
+# <<< factory SetCardListInfoBoxText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -408,3 +417,11 @@ MUTATIONS["CardPageSwitch_PokemonEnd"] = {
     "case_ids": ["CardPageSwitch_PokemonEnd-0", "CardPageSwitch_PokemonEnd-1", "CardPageSwitch_PokemonEnd-2"],
 }
 # <<< factory-mutation CardPageSwitch_PokemonEnd
+# >>> factory-mutation SetCardListInfoBoxText
+MUTATIONS["SetCardListInfoBoxText"] = {
+    "source_symbol": "SetCardListInfoBoxText",
+    "before": "wCardListInfoBoxText = (uint8_t)hl;",
+    "after": "wCardListInfoBoxText = (uint8_t)(hl >> 8);",
+    "case_ids": ["SetCardListInfoBoxText-1", "SetCardListInfoBoxText-2"],
+}
+# <<< factory-mutation SetCardListInfoBoxText

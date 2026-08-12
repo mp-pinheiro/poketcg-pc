@@ -69,4 +69,7 @@ CardPageExistsResult CheckCardPageExists(uint16_t *hl);
 /* >>> factory CardPageSwitch_PokemonEnd */
 CardPageResult CardPageSwitch_PokemonEnd(void);
 /* <<< factory CardPageSwitch_PokemonEnd */
+/* >>> factory SetCardListInfoBoxText */
+void SetCardListInfoBoxText(uint16_t hl);
+/* <<< factory SetCardListInfoBoxText */
 #endif /* POKETCG_HOME_CORE_H */

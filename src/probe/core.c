@@ -167,6 +167,13 @@ static void adapt_CardPageSwitch_PokemonEnd(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_PokemonEnd */
 
+/* >>> factory SetCardListInfoBoxText */
+static void adapt_SetCardListInfoBoxText(ProbeState *s)
+{
+	SetCardListInfoBoxText(s->hl);
+}
+/* <<< factory SetCardListInfoBoxText */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -189,5 +196,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
 	{ "CheckCardPageExists", adapt_CheckCardPageExists },
 	{ "CardPageSwitch_PokemonEnd", adapt_CardPageSwitch_PokemonEnd },
+	{ "SetCardListInfoBoxText", adapt_SetCardListInfoBoxText },
 	{ NULL, NULL },
 };
