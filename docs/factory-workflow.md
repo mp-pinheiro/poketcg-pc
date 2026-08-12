@@ -36,29 +36,47 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
 
 ```python
 # eval-kernel wiring inside the orchestrator session
-import sys; sys.path.insert(0, "tools/factory")
-import subprocess, json
+import sys, subprocess, json
+sys.path.insert(0, "tools/factory")
 from driver import run_wave
 
-ids = json.loads(subprocess.run(
-    ["python3", "tools/factory/packet.py", "build", "--limit", "16", "--json"],
-    capture_output=True, text=True, check=True).stdout)
-run_wave(ids, lambda p: completion(p, model="smol"), lanes_count=8, model="smol")
+def translate_many(prompts):                     # translation MUST be one
+    return parallel([(lambda p=p: completion(p, model="default"))
+                     for p in prompts])          # parallel() batch per round
+
+def build(limit=8, extra=()):
+    argv = ["python3", "tools/factory/packet.py", "build", "--max-routines", "3",
+            "--max-asm-lines", "140", "--limit", str(limit), "--json", *extra]
+    return json.loads(subprocess.run(argv, capture_output=True, text=True,
+                                     check=True).stdout)
+
+pending = build()
+while pending:
+    wave = run_wave(pending, translate_many, lanes_count=8, max_rounds=3,
+                    model="default")
+    subprocess.run(["python3", "tools/factory/integrate.py"], check=False)
+    # deferred packets need a landed tip; re-run them after integrating
+    pending = wave["deferred"] or build()
 ```
 
-Then, serially, in the repo root:
+`run_wave` returns `{"results": [...], "deferred": [ids]}`. **Deferred ids are
+not optional to handle** — a second packet of the same basename is skipped
+until the first lands, and dropping them silently strands work. The loop above
+re-runs them after `integrate.py`.
+
+Serial, in the repo root:
 
 ```sh
 python3 tools/factory/integrate.py            # land greens, gate, push
 python3 tools/factory/issues.py sync          # close fully-landed issues
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
+python3 tools/factory/driver.py status        # queue state incl. deferred
 ```
 
-Repeat `packet build -> run_wave -> integrate` until the frontier is empty;
-landing routines widens the next frontier. `integrate.py` runs the adapter
-lint, the full GBRT inventory gate (~12 s), and the schema audit BEFORE any
-push; a red stops the line. Run `just oracle-release-gate` (adds the full
-PyBoy audit sweep and the data round-trip) at session start and session end.
+`integrate.py` runs the adapter lint, the full GBRT inventory gate (~12 s), and
+the schema audit BEFORE any push; a red stops the line. Run
+`just oracle-release-gate` (adds the full PyBoy audit sweep and the data
+round-trip) at session start and session end.
 
 ## Escalation lane
 

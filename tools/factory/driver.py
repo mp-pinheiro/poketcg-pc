@@ -162,23 +162,30 @@ def _accept(run: _Run, reply: str) -> dict | None:
 
 
 def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 8,
-             max_rounds: int = 4, model: str = "unknown") -> list[dict]:
-    """Round-synchronous wave.
+             max_rounds: int = 4, model: str = "unknown") -> dict:
+    """Round-synchronous wave -> ``{"results": [...], "deferred": [ids]}``.
 
     ``translate_many(prompts: list[str]) -> list[str]`` translates a whole
     round at once so the caller can fan out concurrently (harness
     ``parallel(...)``); serial mapping still works but is the slow path.
     Packets are processed in chunks of ``lanes_count`` so each active packet
     keeps a pinned lane for its repair rounds.
+
+    Deferred packets are returned, never dropped: a second packet of the same
+    basename can only run once the first has LANDED, because the lane it
+    needs is an rsync of a tip containing the first packet's routines. The
+    caller must integrate, then call again with the returned ids.
     """
-    # One packet per basename per wave: same basename = same four files.
     scheduled, deferred, seen = [], [], set()
     for pid in packet_ids:
         basename = load_packet(pid)["basename"]
         (deferred if basename in seen else scheduled).append(pid)
         seen.add(basename)
+    for pid in deferred:
+        packet = load_packet(pid)
+        set_state(packet, "pending", "deferred: same basename, needs a landed tip")
     if deferred:
-        print(f"deferred (same basename): {deferred}")
+        print(f"deferred until integrated (same basename): {deferred}")
     packet_ids = scheduled
     results: list[dict] = []
 
@@ -252,7 +259,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 8,
                     else:
                         finalize(run)
                 active = still
-    return results
+    return {"results": results, "deferred": deferred}
 
 
 def main() -> int:
