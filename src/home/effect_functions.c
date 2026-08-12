@@ -51,6 +51,17 @@
 #define TX_ThereAreNoTrainerCardsInDiscardPileText 0x00C4u
 #define TX_NoCardsLeftInTheDeckText 0x00B1u
 #define TYPE_ENERGY 0x06u
+
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x12u
+#define DUELVARS_DECK_CARDS                       0x13u
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK       0x15u
+#define TYPE_ENERGY 0x80u
+#define TYPE_ENERGY 0x03u
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x00u
+#define DUELVARS_DECK_CARDS 0x0Cu
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0x0Au
+#define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x1Bu
+#define DUELVARS_DECK_CARDS 0x7Eu
 /* <<< factory statics */
 
 
@@ -274,3 +285,47 @@ CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(
 	return (CreateTrainerCardListFromDiscardPileResult){0, (uint8_t)((first == 0u) ? 0x80u : 0x00u)};
 }
 /* <<< factory CreateTrainerCardListFromDiscardPile */
+
+/* >>> factory CreateEnergyCardListFromDiscardPile */
+/* effect_functions.asm:597-654 */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile(uint8_t c)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t count = r.a;
+	uint8_t h = (uint8_t)(r.hl >> 8);
+	uint8_t l = (uint8_t)(DUELVARS_DECK_CARDS + count);
+	uint16_t de = wDuelTempList_ADDR;
+	uint8_t b = (uint8_t)(count + 1u);
+	for (;;) {
+		l--;
+		b--;
+		if (b == 0u)
+			break;
+		uint8_t idx = gb_read8((uint16_t)((uint16_t)h << 8 | l));
+		LoadCardDataToBuffer2_FromDeckIndex(idx);
+		uint8_t type = gb_read8(wLoadedCard2Type_ADDR);
+		if ((type & TYPE_ENERGY) == 0u)
+			continue;
+		if (c != 0u && type == TYPE_ENERGY_DOUBLE_COLORLESS)
+			continue;
+		gb_write8(de++, idx);
+	}
+	gb_write8(de, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	uint16_t hl_out = (uint16_t)((uint16_t)h << 8 | l);
+	uint8_t f = (first == 0xFFu) ? 0x90u : 0x00u;
+	return (CreateEnergyCardListFromDiscardPileResult){hl_out, f};
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile */
+
+/* >>> factory GetAttackName */
+/* effect_functions.asm:877-894 */
+uint16_t GetAttackName(uint8_t d, uint8_t e)
+{
+	LoadCardDataToBuffer1_FromDeckIndex(d);
+	uint16_t addr = (e == 0u) ? wLoadedCard1Atk1Name_ADDR : wLoadedCard1Atk2Name_ADDR;
+	uint8_t lo = gb_read8(addr);
+	uint8_t hi = gb_read8((uint16_t)(addr + 1u));
+	return (uint16_t)(lo | (uint16_t)hi << 8);
+}
+/* <<< factory GetAttackName */

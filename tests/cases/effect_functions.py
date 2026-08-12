@@ -173,6 +173,27 @@ CASES["CreateTrainerCardListFromDiscardPile"] = [
 ]
 # <<< factory CreateTrainerCardListFromDiscardPile
 
+# >>> factory CreateEnergyCardListFromDiscardPile
+CONTRACT["CreateEnergyCardListFromDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["CreateEnergyCardListFromDiscardPile"] = [
+	{"c": 0, "wram": {0xC340: b"\x00"}},
+	{"c": 1, "wram": {0xC340: b"\x00"}},
+	dict(POISON, wram={0xC340: b"\x00"}),
+	dict(POISON, c=1, wram={0xC340: b"\x00"}),
+]
+# <<< factory CreateEnergyCardListFromDiscardPile
+
+# >>> factory GetAttackName
+CONTRACT["GetAttackName"] = {"compare": ("hl",), "preserve": ()}
+CASES["GetAttackName"] = [
+	{"d": 0, "e": 0},
+	{"d": 1, "e": 1},
+	{"d": 5, "e": 0},
+	dict(POISON, d=8, e=0),
+	dict(POISON, d=8, e=1),
+]
+# <<< factory GetAttackName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -287,3 +308,19 @@ MUTATIONS["CreateTrainerCardListFromDiscardPile"] = {
 	"case_ids": ["CreateTrainerCardListFromDiscardPile-0", "CreateTrainerCardListFromDiscardPile-1", "CreateTrainerCardListFromDiscardPile-2"],
 }
 # <<< factory-mutation CreateTrainerCardListFromDiscardPile
+# >>> factory-mutation CreateEnergyCardListFromDiscardPile
+MUTATIONS["CreateEnergyCardListFromDiscardPile"] = {
+	"source_symbol": "CreateEnergyCardListFromDiscardPile",
+	"before": "uint8_t f = (first == 0xFFu) ? 0x90u : 0x00u;",
+	"after": "uint8_t f = (first == 0xFFu) ? 0x80u : 0x00u;",
+	"case_ids": ["CreateEnergyCardListFromDiscardPile-0", "CreateEnergyCardListFromDiscardPile-1"],
+}
+# <<< factory-mutation CreateEnergyCardListFromDiscardPile
+# >>> factory-mutation GetAttackName
+MUTATIONS["GetAttackName"] = {
+	"source_symbol": "GetAttackName",
+	"before": "uint16_t addr = (e == 0u) ? wLoadedCard1Atk1Name_ADDR : wLoadedCard1Atk2Name_ADDR;",
+	"after": "uint16_t addr = (e != 0u) ? wLoadedCard1Atk1Name_ADDR : wLoadedCard1Atk2Name_ADDR;",
+	"case_ids": ["GetAttackName-0", "GetAttackName-1"],
+}
+# <<< factory-mutation GetAttackName

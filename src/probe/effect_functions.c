@@ -126,6 +126,23 @@ static void adapt_CreateTrainerCardListFromDiscardPile(ProbeState *s)
 }
 /* <<< factory CreateTrainerCardListFromDiscardPile */
 
+/* >>> factory CreateEnergyCardListFromDiscardPile */
+static void adapt_CreateEnergyCardListFromDiscardPile(ProbeState *s)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile(s->c);
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile */
+
+/* >>> factory GetAttackName */
+static void adapt_GetAttackName(ProbeState *s)
+{
+	uint16_t hl = GetAttackName(s->d, s->e);
+	s->hl = hl;
+}
+/* <<< factory GetAttackName */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -142,5 +159,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Teleport_SwitchEffect", adapt_Teleport_SwitchEffect },
 	{ "SetDamageToATimes20", adapt_SetDamageToATimes20 },
 	{ "CreateTrainerCardListFromDiscardPile", adapt_CreateTrainerCardListFromDiscardPile },
+	{ "CreateEnergyCardListFromDiscardPile", adapt_CreateEnergyCardListFromDiscardPile },
+	{ "GetAttackName", adapt_GetAttackName },
 	{ NULL, NULL },
 };

@@ -54,4 +54,11 @@ void SetDamageToATimes20(uint8_t a);
 typedef struct { uint16_t hl; uint8_t f; } CreateTrainerCardListFromDiscardPileResult;
 CreateTrainerCardListFromDiscardPileResult CreateTrainerCardListFromDiscardPile(void);
 /* <<< factory CreateTrainerCardListFromDiscardPile */
+/* >>> factory CreateEnergyCardListFromDiscardPile */
+typedef struct { uint16_t hl; uint8_t f; } CreateEnergyCardListFromDiscardPileResult;
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile(uint8_t c);
+/* <<< factory CreateEnergyCardListFromDiscardPile */
+/* >>> factory GetAttackName */
+uint16_t GetAttackName(uint8_t d, uint8_t e);
+/* <<< factory GetAttackName */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
