@@ -100,6 +100,15 @@ CASES["JPWriteByteToBGMap0"] = [
 ]
 # <<< factory JPWriteByteToBGMap0
 
+# >>> factory ZeroObjectPositionsAndToggleOAMCopy
+wVBlankOAMCopyToggle = 0xCAC0
+CONTRACT["ZeroObjectPositionsAndToggleOAMCopy"] = {"compare": (), "preserve": ()}
+CASES["ZeroObjectPositionsAndToggleOAMCopy"] = [
+	{"wram": {wVBlankOAMCopyToggle: b"\x00"}},
+	dict(POISON, wram={wVBlankOAMCopyToggle: b"\xFF"}),
+]
+# <<< factory ZeroObjectPositionsAndToggleOAMCopy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -176,3 +185,11 @@ MUTATIONS["JPWriteByteToBGMap0"] = {
 	"case_ids": ["JPWriteByteToBGMap0-1"],
 }
 # <<< factory-mutation JPWriteByteToBGMap0
+# >>> factory-mutation ZeroObjectPositionsAndToggleOAMCopy
+MUTATIONS["ZeroObjectPositionsAndToggleOAMCopy"] = {
+	"source_symbol": "ZeroObjectPositionsAndToggleOAMCopy",
+	"before": "wVBlankOAMCopyToggle = TRUE;",
+	"after": "wVBlankOAMCopyToggle = 0u;",
+	"case_ids": ["ZeroObjectPositionsAndToggleOAMCopy-0", "ZeroObjectPositionsAndToggleOAMCopy-1"],
+}
+# <<< factory-mutation ZeroObjectPositionsAndToggleOAMCopy

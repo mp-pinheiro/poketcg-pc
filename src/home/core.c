@@ -86,6 +86,13 @@ static uint32_t duel_save_total_size(void)
 #define CONSOLE_SGB 0x01u
 #define ATTR_BLK 0x04u
 #define PAL_SIZE 4u
+
+#include "home/objects.h"
+
+#define CARDPAGE_TRAINER_1 0x0Du
+#define CARDPAGE_TRAINER_2 0x0Eu
+#define CARDPAGE_TRAINER_1 0x0du
+#define CARDPAGE_TRAINER_2 0x0eu
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -234,3 +241,12 @@ void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
 	WriteByteToBGMap0(a, b, c);
 }
 /* <<< factory JPWriteByteToBGMap0 */
+
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy */
+/* core.asm:3874-3878 */
+void ZeroObjectPositionsAndToggleOAMCopy(void)
+{
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE;
+}
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy */

@@ -30,4 +30,7 @@ void SetBGP7OrSGB2ToCardPalette(void);
 /* >>> factory JPWriteByteToBGMap0 */
 void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory JPWriteByteToBGMap0 */
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy */
+void ZeroObjectPositionsAndToggleOAMCopy(void);
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy */
 #endif /* POKETCG_HOME_CORE_H */

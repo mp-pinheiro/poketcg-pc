@@ -70,6 +70,14 @@ static void adapt_JPWriteByteToBGMap0(ProbeState *s)
 }
 /* <<< factory JPWriteByteToBGMap0 */
 
+/* >>> factory ZeroObjectPositionsAndToggleOAMCopy */
+static void adapt_ZeroObjectPositionsAndToggleOAMCopy(ProbeState *s)
+{
+	(void)s;
+	ZeroObjectPositionsAndToggleOAMCopy();
+}
+/* <<< factory ZeroObjectPositionsAndToggleOAMCopy */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -80,5 +88,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadSavedDuelDataFromDE", adapt_LoadSavedDuelDataFromDE },
 	{ "SetBGP7OrSGB2ToCardPalette", adapt_SetBGP7OrSGB2ToCardPalette },
 	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
+	{ "ZeroObjectPositionsAndToggleOAMCopy", adapt_ZeroObjectPositionsAndToggleOAMCopy },
 	{ NULL, NULL },
 };
