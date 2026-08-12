@@ -22,9 +22,19 @@ static void adapt_PlacePokemonDomeOpponentAtDuelTable(ProbeState *s)
 	s->f = result.f;
 }
 
+/* >>> factory Func_f77d */
+static void adapt_Func_f77d(ProbeState *s)
+{
+	PokemonDomeResult result = Func_f77d(s->b, s->c, s->f);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_f77d */
+
 const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Func_f762", adapt_Func_f762},
 	{"Func_f782", adapt_Func_f782},
 	{"PlacePokemonDomeOpponentAtDuelTable", adapt_PlacePokemonDomeOpponentAtDuelTable},
+	{ "Func_f77d", adapt_Func_f77d },
 	{NULL, NULL},
 };

@@ -33,3 +33,12 @@ PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f)
 	gb_write8(W_LOAD_NPC_DIRECTION_ADDR, WEST);
 	return (PokemonDomeResult){WEST, carry_flags(f)};
 }
+
+/* >>> factory Func_f77d */
+/* pokemon_dome.asm:114-116 (falls through into Func_f782) */
+PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f)
+{
+	gb_write8(W_LOAD_NPC_DIRECTION_ADDR, WEST);
+	return Func_f782(b, c, f);
+}
+/* <<< factory Func_f77d */

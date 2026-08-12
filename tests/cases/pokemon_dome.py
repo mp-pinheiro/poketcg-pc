@@ -51,6 +51,22 @@ CASES = {
     ],
 }
 
+# >>> factory Func_f77d
+CONTRACT["Func_f77d"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["Func_f77d"] = [
+    {"read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1}},
+    dict(POISON, b=0xBB, c=0xCC,
+         read={wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1}),
+    {"b": 0xFF, "c": 0xFE, "f": 0xF0,
+     "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1}},
+    {"b": 0x01, "c": 0x00, "f": 0x80,
+     "read": {wLoadNPCXPos: 1, wLoadNPCYPos: 1, wLoadNPCDirection: 1}},
+]
+# <<< factory Func_f77d
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -78,3 +94,11 @@ MUTATIONS = {
 }
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation Func_f77d
+MUTATIONS["Func_f77d"] = {
+    "source_symbol": "Func_f77d",
+    "before": "return Func_f782(b, c, f);",
+    "after": "return Func_f782(c, b, f);",
+    "case_ids": ["Func_f77d-1", "Func_f77d-2", "Func_f77d-3"],
+}
+# <<< factory-mutation Func_f77d
