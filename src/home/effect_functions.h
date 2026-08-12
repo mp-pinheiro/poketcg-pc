@@ -73,4 +73,7 @@ QueueStatusConditionResult ParalysisEffect(void);
 /* >>> factory ConfusionEffect */
 QueueStatusConditionResult ConfusionEffect(void);
 /* <<< factory ConfusionEffect */
+/* >>> factory InvisibleWallEffect */
+uint8_t InvisibleWallEffect(uint8_t f);
+/* <<< factory InvisibleWallEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

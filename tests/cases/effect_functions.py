@@ -226,6 +226,15 @@ CASES["ConfusionEffect"] = [
 ]
 # <<< factory ConfusionEffect
 
+# >>> factory InvisibleWallEffect
+CONTRACT["InvisibleWallEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["InvisibleWallEffect"] = [
+    {},
+    dict(POISON),
+    {"f": 0x80},
+]
+# <<< factory InvisibleWallEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -388,3 +397,11 @@ MUTATIONS["ConfusionEffect"] = {
     "case_ids": ["ConfusionEffect-0", "ConfusionEffect-1"],
 }
 # <<< factory-mutation ConfusionEffect
+# >>> factory-mutation InvisibleWallEffect
+MUTATIONS["InvisibleWallEffect"] = {
+    "source_symbol": "InvisibleWallEffect",
+    "before": "\treturn (uint8_t)((f & 0x80u) | 0x10u);",
+    "after": "\treturn (uint8_t)((f & 0x80u) | 0x20u);",
+    "case_ids": ["InvisibleWallEffect-0", "InvisibleWallEffect-1", "InvisibleWallEffect-2"],
+}
+# <<< factory-mutation InvisibleWallEffect

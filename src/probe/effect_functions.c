@@ -174,6 +174,13 @@ static void adapt_ConfusionEffect(ProbeState *s)
 }
 /* <<< factory ConfusionEffect */
 
+/* >>> factory InvisibleWallEffect */
+static void adapt_InvisibleWallEffect(ProbeState *s)
+{
+	s->f = InvisibleWallEffect(s->f);
+}
+/* <<< factory InvisibleWallEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -196,5 +203,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandleAIMetronomeEffect", adapt_HandleAIMetronomeEffect },
 	{ "ParalysisEffect", adapt_ParalysisEffect },
 	{ "ConfusionEffect", adapt_ConfusionEffect },
+	{ "InvisibleWallEffect", adapt_InvisibleWallEffect },
 	{ NULL, NULL },
 };

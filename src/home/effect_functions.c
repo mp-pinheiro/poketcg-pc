@@ -74,6 +74,11 @@
 #define PSN_DBLPSN 0xf0u
 #define PARALYZED  0x03u
 #define CONFUSED   0x01u
+
+#include "home/damage.h"
+#include "home/duel.h"
+
+#define PLAY_AREA_ARENA 0x00u
 /* <<< factory statics */
 
 
@@ -373,3 +378,11 @@ QueueStatusConditionResult ConfusionEffect(void)
 	return QueueStatusCondition(PSN_DBLPSN, CONFUSED);
 }
 /* <<< factory ConfusionEffect */
+
+/* >>> factory InvisibleWallEffect */
+/* effect_functions.asm:4999-5001. scf: sets carry, clears N/H, keeps Z. */
+uint8_t InvisibleWallEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory InvisibleWallEffect */
