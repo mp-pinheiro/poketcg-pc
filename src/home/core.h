@@ -42,4 +42,11 @@ void PrintPracticeDuelDrMasonInstructions(uint16_t hl);
 /* >>> factory PrintPracticeDuelInstructionsTextBoxLabel */
 void PrintPracticeDuelInstructionsTextBoxLabel(void);
 /* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
+/* >>> factory SwitchCardPage */
+typedef struct { uint8_t a; uint8_t carry; } CardPageResult;
+CardPageResult SwitchCardPage(uint8_t a);
+/* <<< factory SwitchCardPage */
+/* >>> factory CardPageSwitch_00 */
+CardPageResult CardPageSwitch_00(void);
+/* <<< factory CardPageSwitch_00 */
 #endif /* POKETCG_HOME_CORE_H */

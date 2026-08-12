@@ -101,6 +101,22 @@ static void adapt_PrintPracticeDuelInstructionsTextBoxLabel(ProbeState *s)
 }
 /* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
 
+/* >>> factory SwitchCardPage */
+static void adapt_SwitchCardPage(ProbeState *s)
+{
+	CardPageResult r = SwitchCardPage(s->a);
+	s->a = r.a;
+}
+/* <<< factory SwitchCardPage */
+
+/* >>> factory CardPageSwitch_00 */
+static void adapt_CardPageSwitch_00(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_00();
+	s->a = r.a;
+}
+/* <<< factory CardPageSwitch_00 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -115,5 +131,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
 	{ "PrintPracticeDuelDrMasonInstructions", adapt_PrintPracticeDuelDrMasonInstructions },
 	{ "PrintPracticeDuelInstructionsTextBoxLabel", adapt_PrintPracticeDuelInstructionsTextBoxLabel },
+	{ "SwitchCardPage", adapt_SwitchCardPage },
+	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ NULL, NULL },
 };

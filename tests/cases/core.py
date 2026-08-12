@@ -160,6 +160,22 @@ CASES["PrintPracticeDuelInstructionsTextBoxLabel"] = [
 ]
 # <<< factory PrintPracticeDuelInstructionsTextBoxLabel
 
+# >>> factory SwitchCardPage
+CONTRACT["SwitchCardPage"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["SwitchCardPage"] = [
+    {"a": 0},
+    dict(POISON, a=0, f=0),
+]
+# <<< factory SwitchCardPage
+
+# >>> factory CardPageSwitch_00
+CONTRACT["CardPageSwitch_00"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_00"] = [
+    {},
+    dict(POISON, f=0),
+]
+# <<< factory CardPageSwitch_00
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -268,3 +284,19 @@ MUTATIONS["PrintPracticeDuelInstructionsTextBoxLabel"] = {
     "case_ids": ["PrintPracticeDuelInstructionsTextBoxLabel-1"],
 }
 # <<< factory-mutation PrintPracticeDuelInstructionsTextBoxLabel
+# >>> factory-mutation SwitchCardPage
+MUTATIONS["SwitchCardPage"] = {
+    "source_symbol": "SwitchCardPage",
+    "before": "\treturn CardPageSwitch_00();\n}",
+    "after": "\treturn (CardPageResult){0u, 0u};\n}",
+    "case_ids": ["SwitchCardPage-0", "SwitchCardPage-1"],
+}
+# <<< factory-mutation SwitchCardPage
+# >>> factory-mutation CardPageSwitch_00
+MUTATIONS["CardPageSwitch_00"] = {
+    "source_symbol": "CardPageSwitch_00",
+    "before": "return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C, 1u};",
+    "after": "return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C + 1u, 1u};",
+    "case_ids": ["CardPageSwitch_00-0", "CardPageSwitch_00-1"],
+}
+# <<< factory-mutation CardPageSwitch_00

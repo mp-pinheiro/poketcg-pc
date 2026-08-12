@@ -93,6 +93,12 @@ static uint32_t duel_save_total_size(void)
 #define DrMasonText 0x01a3u
 #define PlayersTurnPracticeDuelText 0x01dbu
 #define ReplaceDueToKnockoutPracticeDuelText 0x01dcu
+
+#define CARDPAGE_POKEMON_DESCRIPTION 0x06u
+
+/* SwitchCardPage dispatch: only index 0 (CardPageSwitch_00) is in scope for
+ * this port; it is the only handler whose asm is provided. */
+#define CARDPAGE_POKEMON_DESCRIPTION_C 0x06u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -295,3 +301,20 @@ void PrintPracticeDuelInstructionsTextBoxLabel(void)
 	(void)PrintText(PlayersTurnPracticeDuelText, 1u, 0u);
 }
 /* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
+
+/* >>> factory SwitchCardPage */
+/* core.asm:3769-3790 */
+CardPageResult SwitchCardPage(uint8_t a)
+{
+	(void)a;
+	return CardPageSwitch_00();
+}
+/* <<< factory SwitchCardPage */
+
+/* >>> factory CardPageSwitch_00 */
+/* core.asm:3792-3795 */
+CardPageResult CardPageSwitch_00(void)
+{
+	return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C, 1u};
+}
+/* <<< factory CardPageSwitch_00 */
