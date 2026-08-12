@@ -13,4 +13,10 @@ typedef struct {
 
 MapScriptResult GetMapScriptPointer(uint8_t l);
 
+/* >>> factory ResetAnimationQueue */
+void ResetAnimationQueue(void);
+/* <<< factory ResetAnimationQueue */
+/* >>> factory FinishQueuedAnimations */
+void FinishQueuedAnimations(void);
+/* <<< factory FinishQueuedAnimations */
 #endif

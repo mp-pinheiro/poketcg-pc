@@ -1,0 +1,9 @@
+{
+  "fn": "ResetAnimationQueue",
+  "case": "tests/cases/script.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ResetAnimationQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a23b\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ResetAnimationQueue\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"a23b01\", \"native\": \"a23b02\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51923, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"ResetAnimationQueue\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"a23b\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

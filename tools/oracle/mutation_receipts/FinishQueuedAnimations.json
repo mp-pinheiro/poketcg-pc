@@ -1,0 +1,9 @@
+{
+  "fn": "FinishQueuedAnimations",
+  "case": "tests/cases/script.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FinishQueuedAnimations\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51923\": \"1122\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FinishQueuedAnimations\", \"mismatches\": {\"bus\": {\"address\": 51923, \"reference\": \"01112201\", \"native\": \"01000001\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51904, 1], [51923, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"FinishQueuedAnimations\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"51923\": \"1122\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

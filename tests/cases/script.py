@@ -18,6 +18,36 @@ CASES = {
         dict(POISON, hl=0x0004, wram={wCurMap: b"\x03"}),
     ],
 }
+# >>> factory ResetAnimationQueue
+_HBANK_ROM = 0xFF80
+_WDO_FRAME_FN = 0xCAD3
+CONTRACT["ResetAnimationQueue"] = {"compare": (), "preserve": ()}
+CASES["ResetAnimationQueue"] = [
+	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\x00\x00"},
+	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2}},
+	dict(POISON, wram={_HBANK_ROM: b"\x07", _WDO_FRAME_FN: b"\xff\xff"},
+	     read={_HBANK_ROM: 1, _WDO_FRAME_FN: 2}),
+]
+# <<< factory ResetAnimationQueue
+
+# >>> factory FinishQueuedAnimations
+_HBANK_ROM = 0xFF80
+_WDO_FRAME_FN = 0xCAD3
+_WVBL_TOGGLE = 0xCAC0
+_WANIM_QUEUE = 0xD423
+_WBUF_POS = 0xD4AC
+CONTRACT["FinishQueuedAnimations"] = {"compare": (), "preserve": ()}
+CASES["FinishQueuedAnimations"] = [
+	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\x11\x22"},
+	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}},
+	{"wram": {_HBANK_ROM: b"\x04", _WDO_FRAME_FN: b"\xA2\x3B",
+	          _WANIM_QUEUE: b"\xff" * 7, _WBUF_POS: b"\x00\x00"},
+	 "read": {_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}},
+	dict(POISON, wram={_HBANK_ROM: b"\x07", _WDO_FRAME_FN: b"\x33\x44"},
+	     read={_HBANK_ROM: 1, _WDO_FRAME_FN: 2, _WVBL_TOGGLE: 1}),
+]
+# <<< factory FinishQueuedAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -29,3 +59,19 @@ MUTATIONS = {
         "case_ids": ["GetMapScriptPointer-0", "GetMapScriptPointer-1", "GetMapScriptPointer-2", "GetMapScriptPointer-3", "GetMapScriptPointer-4"],
     },
 }
+# >>> factory-mutation ResetAnimationQueue
+MUTATIONS["ResetAnimationQueue"] = {
+	"source_symbol": "ResetAnimationQueue",
+	"before": "void ResetAnimationQueue(void)\n{\n\tuint8_t bank = gb_read8(hBankROM_ADDR);\n\tBankswitchROM(BANK_ANIMATION_CORE);\n\t_ResetAnimationQueue();\n\tBankswitchROM(bank);\n}",
+	"after": "void ResetAnimationQueue(void)\n{\n\tuint8_t bank = gb_read8(hBankROM_ADDR);\n\tBankswitchROM(BANK_ANIMATION_CORE);\n\t_ResetAnimationQueue();\n\tBankswitchROM((uint8_t)(bank + 1u));\n}",
+	"case_ids": ["ResetAnimationQueue-0", "ResetAnimationQueue-1"],
+}
+# <<< factory-mutation ResetAnimationQueue
+# >>> factory-mutation FinishQueuedAnimations
+MUTATIONS["FinishQueuedAnimations"] = {
+	"source_symbol": "FinishQueuedAnimations",
+	"before": "if (!(r.f & 0x10u)) {",
+	"after": "if ((r.f & 0x10u)) {",
+	"case_ids": ["FinishQueuedAnimations-0", "FinishQueuedAnimations-1"],
+}
+# <<< factory-mutation FinishQueuedAnimations
