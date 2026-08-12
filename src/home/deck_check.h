@@ -12,4 +12,10 @@ typedef struct {
 DrawCheckMenuCursorResult DrawCheckMenuCursor(uint8_t a);
 void PlaySFXConfirmOrCancel(uint8_t a);
 
+/* >>> factory EraseCheckMenuCursor */
+DrawCheckMenuCursorResult EraseCheckMenuCursor(void);
+/* <<< factory EraseCheckMenuCursor */
+/* >>> factory DisplayCheckMenuCursor */
+DrawCheckMenuCursorResult DisplayCheckMenuCursor(void);
+/* <<< factory DisplayCheckMenuCursor */
 #endif

@@ -30,6 +30,28 @@ CASES = {
     ],
 }
 
+# >>> factory EraseCheckMenuCursor
+CONTRACT["EraseCheckMenuCursor"] = {"compare": ("a", "d", "e", "f"), "preserve": ("d",)}
+CASES["EraseCheckMenuCursor"] = [
+    {"read": {0x9800 + 14 * 32 + 1: 1}},
+    dict(POISON, wram={X_POSITION: b"\x01", Y_POSITION: b"\x01"},
+         read={0x9800 + 16 * 32 + 11: 1}),
+    {"wram": {X_POSITION: b"\xFF", Y_POSITION: b"\xFF"},
+     "read": {0x9800 + 12 * 32 + 247: 1}},
+]
+# <<< factory EraseCheckMenuCursor
+
+# >>> factory DisplayCheckMenuCursor
+CONTRACT["DisplayCheckMenuCursor"] = {"compare": ("a", "d", "e", "f"), "preserve": ("d",)}
+CASES["DisplayCheckMenuCursor"] = [
+    {"read": {0x9800 + 14 * 32 + 1: 1}},
+    dict(POISON, wram={X_POSITION: b"\x01", Y_POSITION: b"\x01"},
+         read={0x9800 + 16 * 32 + 11: 1}),
+    {"wram": {X_POSITION: b"\xFF", Y_POSITION: b"\xFF"},
+     "read": {0x9800 + 12 * 32 + 247: 1}},
+]
+# <<< factory DisplayCheckMenuCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -47,3 +69,19 @@ MUTATIONS = {
         "case_ids": ["PlaySFXConfirmOrCancel-1"],
     },
 }
+# >>> factory-mutation EraseCheckMenuCursor
+MUTATIONS["EraseCheckMenuCursor"] = {
+    "source_symbol": "EraseCheckMenuCursor",
+    "before": "DrawCheckMenuCursorResult EraseCheckMenuCursor(void)\n{\n\treturn DrawCheckMenuCursor(SYM_SPACE);\n}",
+    "after": "DrawCheckMenuCursorResult EraseCheckMenuCursor(void)\n{\n\treturn DrawCheckMenuCursor(SYM_CURSOR_R);\n}",
+    "case_ids": ["EraseCheckMenuCursor-0", "EraseCheckMenuCursor-1", "EraseCheckMenuCursor-2"],
+}
+# <<< factory-mutation EraseCheckMenuCursor
+# >>> factory-mutation DisplayCheckMenuCursor
+MUTATIONS["DisplayCheckMenuCursor"] = {
+    "source_symbol": "DisplayCheckMenuCursor",
+    "before": "DrawCheckMenuCursorResult DisplayCheckMenuCursor(void)\n{\n\treturn DrawCheckMenuCursor(SYM_CURSOR_R);\n}",
+    "after": "DrawCheckMenuCursorResult DisplayCheckMenuCursor(void)\n{\n\treturn DrawCheckMenuCursor(SYM_SPACE);\n}",
+    "case_ids": ["DisplayCheckMenuCursor-0", "DisplayCheckMenuCursor-1", "DisplayCheckMenuCursor-2"],
+}
+# <<< factory-mutation DisplayCheckMenuCursor
