@@ -176,6 +176,24 @@ CASES["CardPageSwitch_00"] = [
 ]
 # <<< factory CardPageSwitch_00
 
+# >>> factory LoadLoaded1CardGfx
+CONTRACT["LoadLoaded1CardGfx"] = {"compare": (), "preserve": ()}
+CASES["LoadLoaded1CardGfx"] = [
+    {"d": 0x88, "e": 0x00, "wram": {0xCC25: b"\xA7\x02"}, "vread": {0: {0x8800: 0x300}}},
+    {"d": 0x90, "e": 0x00, "wram": {0xCC25: b"\x00\x18"}, "vread": {0: {0x9000: 0x300}}},
+    dict(POISON, d=0x88, e=0x00, wram={0xCC25: b"\xA7\x02"}, vread={0: {0x8800: 0x300}}),
+]
+# <<< factory LoadLoaded1CardGfx
+
+# >>> factory SetSGB3ToCardPalette
+CONTRACT["SetSGB3ToCardPalette"] = {"compare": (), "preserve": ()}
+CASES["SetSGB3ToCardPalette"] = [
+    {"wram": {0xCE25: b"\x00" * 6, 0xCAE9: b"\xAA" * 6}},
+    {"wram": {0xCE25: b"\x01\x02\x03\x04\x05\x06", 0xCAE9: b"\x00" * 6}},
+    dict(POISON, wram={0xCE25: b"\xFE\xDC\xBA\x98\x76\x54", 0xCAE9: b"\x11" * 6}),
+]
+# <<< factory SetSGB3ToCardPalette
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -300,3 +318,19 @@ MUTATIONS["CardPageSwitch_00"] = {
     "case_ids": ["CardPageSwitch_00-0", "CardPageSwitch_00-1"],
 }
 # <<< factory-mutation CardPageSwitch_00
+# >>> factory-mutation LoadLoaded1CardGfx
+MUTATIONS["LoadLoaded1CardGfx"] = {
+    "source_symbol": "LoadLoaded1CardGfx",
+    "before": "LoadCardGfx(hl, de, 0x30u, TILE_SIZE);",
+    "after": "LoadCardGfx(hl, de, 0x20u, TILE_SIZE);",
+    "case_ids": ["LoadLoaded1CardGfx-0", "LoadLoaded1CardGfx-1", "LoadLoaded1CardGfx-2"],
+}
+# <<< factory-mutation LoadLoaded1CardGfx
+# >>> factory-mutation SetSGB3ToCardPalette
+MUTATIONS["SetSGB3ToCardPalette"] = {
+    "source_symbol": "SetSGB3ToCardPalette",
+    "before": "for (uint8_t i = 0; i < SGB3_COPY_LEN; i++)",
+    "after": "for (uint8_t i = 0; i < 5u; i++)",
+    "case_ids": ["SetSGB3ToCardPalette-0", "SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"],
+}
+# <<< factory-mutation SetSGB3ToCardPalette

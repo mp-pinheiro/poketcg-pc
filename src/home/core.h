@@ -49,4 +49,10 @@ CardPageResult SwitchCardPage(uint8_t a);
 /* >>> factory CardPageSwitch_00 */
 CardPageResult CardPageSwitch_00(void);
 /* <<< factory CardPageSwitch_00 */
+/* >>> factory LoadLoaded1CardGfx */
+void LoadLoaded1CardGfx(uint16_t de);
+/* <<< factory LoadLoaded1CardGfx */
+/* >>> factory SetSGB3ToCardPalette */
+void SetSGB3ToCardPalette(void);
+/* <<< factory SetSGB3ToCardPalette */
 #endif /* POKETCG_HOME_CORE_H */

@@ -99,6 +99,11 @@ static uint32_t duel_save_total_size(void)
 /* SwitchCardPage dispatch: only index 0 (CardPageSwitch_00) is in scope for
  * this port; it is the only handler whose asm is provided. */
 #define CARDPAGE_POKEMON_DESCRIPTION_C 0x06u
+
+#include "home/card_data.h"
+
+#define TILE_SIZE 0x10u
+#define SGB3_COPY_LEN 0x06u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -318,3 +323,25 @@ CardPageResult CardPageSwitch_00(void)
 	return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C, 1u};
 }
 /* <<< factory CardPageSwitch_00 */
+
+/* >>> factory LoadLoaded1CardGfx */
+/* core.asm:3925-3932 */
+void LoadLoaded1CardGfx(uint16_t de)
+{
+	uint16_t hl = (uint16_t)(wLoadedCard1Gfx | (uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8);
+	hl = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | (uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8);
+	LoadCardGfx(hl, de, 0x30u, TILE_SIZE);
+}
+/* <<< factory LoadLoaded1CardGfx */
+
+/* >>> factory SetSGB3ToCardPalette */
+/* core.asm:3965-3969. Tail-jumps into SetBGP7OrSGB2ToCardPalette.copy_pal_loop,
+ * which copies b bytes from [hl] to [de]; inlined here with its own operands. */
+void SetSGB3ToCardPalette(void)
+{
+	uint16_t src = (uint16_t)(wCardPalette_ADDR + 2u);
+	uint16_t dst = (uint16_t)(wTempSGBPacket_ADDR + 9u);
+	for (uint8_t i = 0; i < SGB3_COPY_LEN; i++)
+		gb_write8((uint16_t)(dst + i), gb_read8((uint16_t)(src + i)));
+}
+/* <<< factory SetSGB3ToCardPalette */

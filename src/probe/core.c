@@ -117,6 +117,21 @@ static void adapt_CardPageSwitch_00(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_00 */
 
+/* >>> factory LoadLoaded1CardGfx */
+static void adapt_LoadLoaded1CardGfx(ProbeState *s)
+{
+	LoadLoaded1CardGfx((uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory LoadLoaded1CardGfx */
+
+/* >>> factory SetSGB3ToCardPalette */
+static void adapt_SetSGB3ToCardPalette(ProbeState *s)
+{
+	(void)s;
+	SetSGB3ToCardPalette();
+}
+/* <<< factory SetSGB3ToCardPalette */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -133,5 +148,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPracticeDuelInstructionsTextBoxLabel", adapt_PrintPracticeDuelInstructionsTextBoxLabel },
 	{ "SwitchCardPage", adapt_SwitchCardPage },
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
+	{ "LoadLoaded1CardGfx", adapt_LoadLoaded1CardGfx },
+	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
 	{ NULL, NULL },
 };

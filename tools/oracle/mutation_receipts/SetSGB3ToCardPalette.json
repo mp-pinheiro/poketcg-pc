@@ -1,0 +1,9 @@
+{
+  "fn": "SetSGB3ToCardPalette",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetSGB3ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51945\": \"000000000000\", \"52773\": \"000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetSGB3ToCardPalette\", \"mismatches\": {\"bus\": {\"address\": 51950, \"reference\": \"000000000000000000\", \"native\": \"00000000aa00000000\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[51945, 6], [52773, 6]]}}}\n",
+  "restored": "{\"fn\": \"SetSGB3ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51945\": \"000000000000\", \"52773\": \"000000000000\"}}, \"status\": \"PASS\"}\n"
+}
