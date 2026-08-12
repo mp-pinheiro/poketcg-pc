@@ -45,13 +45,44 @@ def compute_functions() -> list[dict]:
     return report.compute(inventory, routines, gate)["functions"], inventory
 
 
+def _pret_number(text: str, default: int = 0) -> int:
+    text = text.strip()
+    try:
+        if text.startswith("$"):
+            return int(text[1:], 16)
+        if text.startswith("%"):
+            return int(text[1:], 2)
+        return int(text, 0)
+    except ValueError:
+        return default
+
+
 def load_constants() -> dict[str, str]:
-    """NAME -> raw EQU value for every pret constant."""
+    """NAME -> value text for every pret constant (EQU, DEF..EQU, const_def)."""
     table: dict[str, str] = {}
-    pattern = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\s+EQU\s+(.+?)\s*(?:;.*)?$")
+    equ = re.compile(r"^\s*(?:DEF\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+EQU\s+(.+?)\s*$")
+    const_def = re.compile(r"^\s*const_def(?:\s+(\S+))?(?:\s*,\s*(\S+))?")
+    const_line = re.compile(r"^\s*const\s+([A-Za-z_][A-Za-z0-9_]*)")
+    const_skip = re.compile(r"^\s*const_skip(?:\s+(\S+))?")
     for path in sorted((PRET / "src" / "constants").rglob("*.asm")):
-        for line in path.read_text(errors="replace").splitlines():
-            match = pattern.match(line)
+        current, step = 0, 1
+        for raw in path.read_text(errors="replace").splitlines():
+            line = raw.split(";", 1)[0]
+            match = const_def.match(line)
+            if match:
+                current = _pret_number(match.group(1) or "0")
+                step = _pret_number(match.group(2) or "1", 1)
+                continue
+            match = const_skip.match(line)
+            if match:
+                current += step * _pret_number(match.group(1) or "1", 1)
+                continue
+            match = const_line.match(line)
+            if match:
+                table.setdefault(match.group(1), f"${current:02X}")
+                current += step
+                continue
+            match = equ.match(line)
             if match:
                 table.setdefault(match.group(1), match.group(2))
     return table
@@ -79,15 +110,47 @@ def constants_for(asm: str, table: dict[str, str]) -> dict[str, str]:
     return dict(sorted(found.items()))
 
 
+SYMBOL_ADDR = re.compile(r"#define (\w+)_ADDR\s+(0x[0-9A-Fa-f]+)u")
+SYMBOL_TOKEN = re.compile(r"\b([whs][A-Z][A-Za-z0-9_]*)\b")
+
+
+def load_symbols() -> dict[str, str]:
+    """pret RAM symbol -> numeric address, from the generated layout headers."""
+    table: dict[str, str] = {}
+    for name in ("wram.h", "hram.h", "sram.h"):
+        path = ROOT / "include" / "generated" / name
+        if path.exists():
+            for symbol, addr in SYMBOL_ADDR.findall(path.read_text()):
+                table.setdefault(symbol, addr)
+    return table
+
+
+def symbols_for(asm: str, table: dict[str, str]) -> dict[str, str]:
+    found = {}
+    for token in SYMBOL_TOKEN.findall(asm):
+        if token in table:
+            found[token] = table[token]
+    return dict(sorted(found.items()))
+
+
 def c_name(routine: str) -> str:
     return routine.replace(".", "_")
 
 
 _PROTO_CACHE: dict[str, tuple[str, str] | None] = {}
+_SCALARS = {"void", "uint8_t", "uint16_t", "uint32_t", "int8_t", "int16_t",
+            "int32_t", "int", "unsigned", "size_t", "_Bool", "bool", "char"}
+
+
+def _struct_typedef(text: str, type_name: str) -> str | None:
+    match = re.search(
+        rf"typedef\s+struct\s*\{{[^{{}}]*\}}\s*{re.escape(type_name)}\s*;",
+        text, flags=re.DOTALL)
+    return " ".join(match.group(0).split()) if match else None
 
 
 def prototype_for(routine: str) -> tuple[str, str] | None:
-    """(header basename, prototype text) for a ported routine, if found."""
+    """(header basename, prototype + struct typedef) for a ported routine."""
     if routine in _PROTO_CACHE:
         return _PROTO_CACHE[routine]
     needle = re.compile(rf"\b{re.escape(c_name(routine))}\s*\(")
@@ -101,7 +164,13 @@ def prototype_for(routine: str) -> tuple[str, str] | None:
         semi = text.find(";", match.start())
         if semi < 0:
             continue
-        result = (header.name, " ".join(text[line_start:semi + 1].split()))
+        proto = " ".join(text[line_start:semi + 1].split())
+        return_type = proto.split()[0]
+        if return_type not in _SCALARS and not proto.startswith("static"):
+            typedef = _struct_typedef(text, return_type)
+            if typedef:
+                proto = f"{typedef}  {proto}"
+        result = (header.name, proto)
         break
     _PROTO_CACHE[routine] = result
     return result
@@ -160,12 +229,14 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
         groups.setdefault(f["file"], []).append(f)
 
     constants_table = load_constants()
+    symbol_table = load_symbols()
     inventory_lines: dict[str, list[int]] = {}
     for f in functions:
         if f["file"]:
             inventory_lines.setdefault(f["file"], []).append(f["line"])
 
     packets: list[dict] = []
+    id_counts: dict[str, int] = {}
     for file, members in groups.items():
         chunks: list[list[dict]] = [[]]
         line_budget = 0
@@ -184,7 +255,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             line_budget += n_lines
 
         basename = Path(file).stem
-        for n, chunk in enumerate(chunks):
+        for chunk in chunks:
             routines = []
             packet_asm = []
             for f, asm in chunk:
@@ -199,7 +270,8 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                     "unlock": unlock.get(f["name"], 0),
                 })
             packet = {
-                "id": f"{basename}-{n}" if len(chunks) > 1 else basename,
+                "id": (basename if id_counts.get(basename, 0) == 0
+                       else f"{basename}-{id_counts[basename]}"),
                 "basename": basename,
                 "file": file,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
@@ -208,12 +280,14 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "reason": None,
                 "routines": routines,
                 "constants": constants_for("\n".join(packet_asm), constants_table),
+                "symbols": symbols_for("\n".join(packet_asm), symbol_table),
                 "example": pick_example("\n".join(packet_asm)),
                 "existing": existing_context(basename),
                 "bytes": sum(r["size"] for r in routines),
                 "unlock": sum(r["unlock"] for r in routines),
             }
             packets.append(packet)
+            id_counts[basename] = id_counts.get(basename, 0) + 1
 
     packets.sort(key=lambda p: (-p["unlock"], p["bytes"]))
     if limit:

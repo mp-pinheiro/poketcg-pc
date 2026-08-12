@@ -1,0 +1,9 @@
+{
+  "fn": "AddDeckToCollection",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddDeckToCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"050606\"}}, \"vram\": {}, \"wram\": {\"49408\": \"010200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddDeckToCollection\", \"mismatches\": {\"sram\": {\"byte\": 1, \"reference\": \"050606\", \"native\": \"050404\"}}}\n",
+  "restored": "{\"fn\": \"AddDeckToCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"050606\"}}, \"vram\": {}, \"wram\": {\"49408\": \"010200\"}}, \"status\": \"PASS\"}\n"
+}

@@ -13,7 +13,7 @@ reason = "deleted or dissolved by the Phase-1 transform (docs/phase1-transform.m
 files = ["src/home/farcall.asm", "src/home/jumptable.asm", "src/home/call_regs.asm",
          "src/home/interrupt.asm", "src/home/hblank.asm", "src/home/vblank.asm",
          "src/home/double_speed.asm", "src/home/vram.asm"]
-symbols = ["CopyDMAFunction", "WaitForVBlank"]
+symbols = ["CopyDMAFunction", "WaitForVBlank", "EnableSRAM", "DisableSRAM"]
 
 [[exclude]]
 kind = "dead"

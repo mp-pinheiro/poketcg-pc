@@ -108,7 +108,10 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
             l for l in output.splitlines()
             if l.startswith("FAIL") or "fail " in l or "!=" in l
             or "Error" in l)
-        return verdict("diff", failing or output)
+        names = re.findall(r"^FAIL (\S+):", output, flags=re.MULTILINE)
+        result = verdict("diff", failing or output)
+        result["failing"] = names
+        return result
     if mode == "cache":
         live = run([str(PBENV), "tests/test_leaves.py", "--group", basename,
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),

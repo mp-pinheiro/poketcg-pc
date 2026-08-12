@@ -3,17 +3,19 @@
 
 ``run_wave(packet_ids, translate_fn, lanes_count, max_rounds)`` is the seam:
 ``translate_fn(prompt_text) -> reply_text`` is injected by the caller (the
-orchestrator session wires it to its ``completion(...)``; any API client fits).
-The driver owns everything else: lane refresh, surgery, verification, state,
-metrics.  Crash-safe: every transition is on disk; ``reset-stale`` returns
-in-flight packets to ``pending``.
+orchestrator session wires it to its ``completion(...)``; any API client
+fits).  ``translate_fn`` runs ONLY on the calling thread — harness completion
+bridges are not thread-safe — while surgery+verification run on a worker
+pool.  A packet pins its lane until it reaches a terminal state, because
+targeted repair rounds rely on the lane keeping the already-verified
+routines' files.  Crash-safe: every transition is on disk; ``reset-stale``
+returns in-flight packets to ``pending``.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import queue as queue_mod
 import sys
 import time
 import traceback
@@ -24,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (  # noqa: E402
     METRICS, block_routine, estimate_tokens, list_packets, load_packet,
-    record_metric, set_state,
+    record_metric, save_packet, set_state,
 )
 import lanes  # noqa: E402
 import prompt as prompt_mod  # noqa: E402
@@ -34,93 +36,213 @@ import verify as verify_mod  # noqa: E402
 IN_FLIGHT = ("translated", "verifying", "repair")
 
 
-def _process(packet_id: str, lane_index: int, translate_fn, max_rounds: int,
-             model: str) -> dict:
-    packet = load_packet(packet_id)
-    started = time.time()
-    prompt_tokens = 0
-    reply_tokens = 0
-    feedback: str | None = None
-    format_retry_used = False
-    rounds = 0
-    final = "escalated"
-    reason: str | None = None
+class _Run:
+    def __init__(self, packet_id: str):
+        self.packet = load_packet(packet_id)
+        self.id = packet_id
+        self.lane_index: int | None = None
+        self.lane = None
+        self.rounds = 0
+        self.format_retry_used = False
+        self.feedback: str | None = None
+        self.targets: list[str] | None = None
+        self.prompt_tokens = 0
+        self.reply_tokens = 0
+        self.started = time.time()
+        self.final: str | None = None
+        self.reason: str | None = None
 
-    lane = lanes.ensure(lane_index)
-    while True:
-        text = prompt_mod.render(packet, feedback)
-        prompt_tokens += estimate_tokens(text)
-        reply = translate_fn(text)
-        reply_tokens += estimate_tokens(reply)
-        set_state(packet, "translated")
-        try:
-            translation = prompt_mod.parse(reply, packet)
-        except prompt_mod.FormatError as exc:
-            if not format_retry_used:
-                format_retry_used = True
-                feedback = f"format: {exc}"
-                continue
-            final, reason = "rejected-format", str(exc)
-            break
-        try:
-            changed = surgery.apply(lane, packet, translation)
-        except surgery.SurgeryError as exc:
-            final, reason = "escalated", f"surgery: {exc}"
-            break
-        cases_changed = any(p.name.endswith(".py") for p in changed) or rounds == 0
-        set_state(packet, "verifying")
-        result = verify_mod.verify_packet(packet, lane, cases_changed)
-        if result["status"] == "green":
-            verify_mod.collect_bundle(packet, lane)
-            final, reason = "green", None
-            break
-        if result["status"] == "timeout":
-            spinner = result.get("routine") or packet["routines"][0]["name"]
-            block_routine(spinner, "oracle timeout: callee never returns",
-                          "port the blocking callee (see verdict)")
-            final, reason = "parked", f"timeout: {spinner}"
-            break
-        rounds += 1
-        if rounds >= max_rounds:
-            final, reason = "escalated", f"{result['status']} after {max_rounds} rounds"
-            break
-        feedback = f"{result['status']}:\n{result['detail']}"
-        set_state(packet, "repair", feedback[:400])
-
-    set_state(packet, final, reason)
-    metric = {
-        "id": packet_id, "verdict": final, "reason": reason, "rounds": rounds,
-        "wall_s": round(time.time() - started, 1),
-        "prompt_tokens": prompt_tokens, "reply_tokens": reply_tokens,
-        "routines": len(packet["routines"]), "model": model,
-    }
-    record_metric(metric)
-    return metric
+    def metric(self, model: str) -> dict:
+        return {
+            "id": self.id, "verdict": self.final, "reason": self.reason,
+            "rounds": self.rounds, "wall_s": round(time.time() - self.started, 1),
+            "prompt_tokens": self.prompt_tokens, "reply_tokens": self.reply_tokens,
+            "routines": len(self.packet["routines"]), "model": model,
+        }
 
 
-def run_wave(packet_ids: list[str], translate_fn, lanes_count: int = 8,
+
+def _apply_and_verify(run: _Run, translation: dict) -> dict:
+    """Worker-thread step: surgery + verification inside the pinned lane."""
+    try:
+        changed = surgery.apply(run.lane, run.packet, translation)
+    except surgery.SurgeryError as exc:
+        return {"status": "surgery", "detail": str(exc)}
+    cases_changed = any(str(p).endswith(".py") for p in changed) or run.rounds == 0
+    set_state(run.packet, "verifying")
+    return verify_mod.verify_packet(run.packet, run.lane, cases_changed)
+
+
+def _salvage(run: _Run, failing: list[str] | None) -> bool:
+    """Land the routines that pass; spill the failures into a new packet.
+
+    A packet is a file group, and its routines are independent. Discarding
+    six verified routines because two failed is pure waste, so at escalation
+    the failing fragments are cut out of the lane, the reduced packet is
+    re-verified, and the failures spill into ``<id>-rest`` for a later wave
+    or the escalation lane.
+    """
+    names = [r["name"] for r in run.packet["routines"]]
+    if not failing:
+        return False
+    failing = [fn for fn in failing if fn in names]
+    keep = [fn for fn in names if fn not in failing]
+    if not failing or not keep:
+        return False
+    try:
+        surgery.remove(run.lane, run.packet, failing)
+    except Exception:
+        return False
+    reduced = dict(run.packet)
+    reduced["routines"] = [r for r in run.packet["routines"] if r["name"] in keep]
+    result = verify_mod.verify_packet(reduced, run.lane, True)
+    if result["status"] != "green":
+        return False
+    spill = dict(run.packet)
+    spill["id"] = f"{run.packet['id']}-rest"
+    spill["routines"] = [r for r in run.packet["routines"] if r["name"] in failing]
+    spill["state"] = "pending"
+    spill["rounds"] = 0
+    spill["reason"] = f"spilled from {run.packet['id']} after {run.rounds} rounds"
+    save_packet(spill)
+    run.packet["routines"] = reduced["routines"]
+    save_packet(run.packet)
+    verify_mod.collect_bundle(run.packet, run.lane)
+    run.final = "green"
+    run.reason = f"partial: {len(keep)}/{len(names)} landed, {len(failing)} spilled"
+    return True
+
+
+def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
+    """Main-thread step. True = schedule another round."""
+    if result["status"] == "green":
+        verify_mod.collect_bundle(run.packet, run.lane)
+        run.final, run.reason = "green", None
+        return False
+    if result["status"] == "timeout":
+        spinner = result.get("routine") or run.packet["routines"][0]["name"]
+        block_routine(spinner, "oracle timeout: callee never returns",
+                      "port the blocking callee (see verdict)")
+        run.final, run.reason = "parked", f"timeout: {spinner}"
+        return False
+    run.rounds += 1
+    failing_now = result.get("failing") or (
+        [result["routine"]] if result.get("routine") else None)
+    if run.rounds >= max_rounds:
+        if not _salvage(run, failing_now):
+            run.final = "escalated"
+            run.reason = f"{result['status']} after {max_rounds} rounds"
+        return False
+    failing = result.get("failing") or (
+        [result["routine"]] if result.get("routine") else None)
+    run.targets = failing if failing else None
+    run.feedback = f"{result['status']}:\n{result['detail']}"
+    set_state(run.packet, "repair", run.feedback[:400])
+    return True
+
+
+def _render(run: _Run) -> str:
+    text = prompt_mod.render(run.packet, run.feedback, run.targets)
+    run.prompt_tokens += estimate_tokens(text)
+    return text
+
+
+def _accept(run: _Run, reply: str) -> dict | None:
+    run.reply_tokens += estimate_tokens(reply)
+    set_state(run.packet, "translated")
+    try:
+        return prompt_mod.parse(reply, run.packet, run.targets)
+    except prompt_mod.FormatError as exc:
+        if not run.format_retry_used:
+            run.format_retry_used = True
+            run.feedback = f"format: {exc}"
+            return {}  # {} = retranslate this round
+        run.final, run.reason = "rejected-format", str(exc)
+        return None
+
+
+def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 8,
              max_rounds: int = 4, model: str = "unknown") -> list[dict]:
-    lane_pool: queue_mod.Queue[int] = queue_mod.Queue()
-    for index in range(lanes_count):
-        lane_pool.put(index)
+    """Round-synchronous wave.
 
-    def worker(packet_id: str) -> dict:
-        lane_index = lane_pool.get()
-        try:
-            return _process(packet_id, lane_index, translate_fn, max_rounds, model)
-        except Exception:
-            packet = load_packet(packet_id)
-            set_state(packet, "escalated", f"driver crash: {traceback.format_exc(limit=3)}")
-            metric = {"id": packet_id, "verdict": "escalated", "reason": "driver crash",
-                      "rounds": 0, "wall_s": 0, "prompt_tokens": 0, "reply_tokens": 0,
-                      "routines": len(packet.get("routines", [])), "model": model}
-            record_metric(metric)
-            return metric
-        finally:
-            lane_pool.put(lane_index)
+    ``translate_many(prompts: list[str]) -> list[str]`` translates a whole
+    round at once so the caller can fan out concurrently (harness
+    ``parallel(...)``); serial mapping still works but is the slow path.
+    Packets are processed in chunks of ``lanes_count`` so each active packet
+    keeps a pinned lane for its repair rounds.
+    """
+    results: list[dict] = []
 
-    with ThreadPoolExecutor(max_workers=lanes_count) as pool:
-        results = list(pool.map(worker, packet_ids))
+    def finalize(run: _Run) -> None:
+        set_state(run.packet, run.final, run.reason)
+        metric = run.metric(model)
+        record_metric(metric)
+        results.append(metric)
+
+    for start in range(0, len(packet_ids), lanes_count):
+        chunk = packet_ids[start:start + lanes_count]
+        active = []
+        for index, pid in enumerate(chunk):
+            run = _Run(pid)
+            run.lane_index = index
+            run.lane = lanes.ensure(index)
+            active.append(run)
+
+        with ThreadPoolExecutor(max_workers=max(1, len(active))) as pool:
+            while active:
+                translations: dict[str, dict] = {}
+                pending = list(active)
+                for _attempt in (0, 1):  # second pass covers format retries
+                    if not pending:
+                        break
+                    prompts = [_render(run) for run in pending]
+                    try:
+                        replies = translate_many(prompts)
+                    except Exception:
+                        for run in pending:
+                            run.final = "escalated"
+                            run.reason = f"translate: {traceback.format_exc(limit=2)}"
+                        pending = []
+                        break
+                    retry = []
+                    for run, reply in zip(pending, replies):
+                        parsed = _accept(run, reply)
+                        if parsed is None:
+                            continue          # terminal (rejected-format)
+                        if parsed == {}:
+                            retry.append(run)  # one free reformat
+                            continue
+                        translations[run.id] = parsed
+                    pending = retry
+
+                futures = {pool.submit(_apply_and_verify, run, translations[run.id]): run
+                           for run in active if run.id in translations}
+                verdicts: dict[str, dict] = {}
+                for future in futures:
+                    run = futures[future]
+                    try:
+                        verdicts[run.id] = future.result()
+                    except Exception:
+                        verdicts[run.id] = {
+                            "status": "surgery",
+                            "detail": f"verify crash: {traceback.format_exc(limit=2)}"}
+
+                still: list[_Run] = []
+                for run in active:
+                    if run.final:                      # terminal in translate
+                        finalize(run)
+                        continue
+                    result = verdicts.get(run.id)
+                    if result is None:                 # never translated
+                        run.final = run.final or "escalated"
+                        run.reason = run.reason or "no translation produced"
+                        finalize(run)
+                        continue
+                    if _decide(run, result, max_rounds):
+                        still.append(run)
+                    else:
+                        finalize(run)
+                active = still
     return results
 
 

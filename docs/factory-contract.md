@@ -106,6 +106,10 @@ CASES["Foo"] = [
      proving every preservation claim;
   3. every boundary: count 0 (must act as maximum, never no-op), 1, and
      256/257 for 16-bit counters.
+- **Python case files use NUMERIC addresses only.** The C `_ADDR` macros do
+  not exist in Python. The prompt lists every RAM symbol's address; define
+  module-level constants (`wFoo = 0xCCED`) inside your CASES block if it
+  helps readability.
 - **Reserved WRAM $CF00-$CFFF** belongs to the oracle's call frame: never
   seed or write it. Use $C100-$CA00 for scratch buffers, or the routine's
   real pret symbols.
@@ -138,7 +142,10 @@ you are missing a case — add it.
 - Local constants: `#define NAME 0x..u` lines at the top of the ===STATICS
   block, with values from the prompt's constant table.
 - Extra headers (`#include "home/x.h"` for callees) also go at the top of
-  ===STATICS.
+  ===STATICS. NEVER invent include paths: the only valid quoted includes are
+  `home/<basename>.h` for callees named in the prompt, `generated/wram.h`,
+  `generated/hram.h`, `generated/sram.h`, and `mem.h` — there are no
+  constants headers; `#define` constants locally from the prompt's table.
 - Comment each function with its pret source range:
   `/* foo.asm:12-34 */`.
 - Tabs for C indentation, `u` suffix on unsigned literals, no TODOs, no

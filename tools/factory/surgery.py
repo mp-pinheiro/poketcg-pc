@@ -108,6 +108,58 @@ def ensure_skeletons(root: Path, packet: dict) -> None:
 
 ADAPTER_NAME = re.compile(r"\badapt_[A-Za-z0-9_]+\b")
 
+INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
+
+
+def check_includes(root: Path, text: str) -> None:
+    """Reject #include paths that do not resolve in this tree."""
+    for header in INCLUDE_LINE.findall(text):
+        if header in ("mem.h", "probe.h"):
+            continue
+        if (root / "src" / header).exists() or (root / "include" / header).exists():
+            continue
+        raise SurgeryError(
+            f'#include "{header}" does not exist in this tree; the only valid '
+            f'quoted includes are home/<basename>.h (ported callees), '
+            f'generated/wram.h, generated/hram.h, generated/sram.h, mem.h. '
+            f'#define needed constants locally instead')
+
+
+def remove(root: Path, packet: dict, fns: list[str]) -> None:
+    """Delete the marked fragments of ``fns`` from the packet's four files."""
+    paths = quad_paths(root, packet["basename"])
+    c_text = paths["c"].read_text()
+    h_text = paths["h"].read_text()
+    probe_text = paths["probe"].read_text()
+    cases_text = paths["cases"].read_text()
+    for fn in fns:
+        open_c, close_c = f"/* >>> factory {fn} */", f"/* <<< factory {fn} */"
+        for text_name, text in (("c", c_text), ("h", h_text), ("probe", probe_text)):
+            span = _span(text, open_c, close_c)
+            if span:
+                cut = text[:span[0]] + text[span[1]:]
+                if text_name == "c":
+                    c_text = cut
+                elif text_name == "h":
+                    h_text = cut
+                else:
+                    probe_text = cut
+        probe_text = re.sub(
+            rf'^\t{{ "{re.escape(fn)}", adapt_[A-Za-z0-9_]+ }},\n',
+            "", probe_text, flags=re.MULTILINE)
+        for open_py, close_py in ((f"# >>> factory {fn}", f"# <<< factory {fn}"),
+                                  (f"# >>> factory-mutation {fn}",
+                                   f"# <<< factory-mutation {fn}")):
+            span = _span(cases_text, open_py, close_py)
+            if span:
+                cases_text = cases_text[:span[0]] + cases_text[span[1]:]
+    compile(cases_text, str(paths["cases"]), "exec")
+    paths["c"].write_text(c_text)
+    paths["h"].write_text(h_text)
+    paths["probe"].write_text(probe_text)
+    paths["cases"].write_text(cases_text)
+
+
 
 def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
     """Write parsed blocks into the packet's four files under ``root``."""
@@ -117,17 +169,29 @@ def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
     changed: set[Path] = set()
 
     # --- statics into the .c, right after the skeleton includes -------------
+    # Merged, never replaced: repair rounds may emit partial statics and must
+    # not lose earlier defines/includes.
     c_text = paths["c"].read_text()
     statics = translation.get("statics")
     if statics:
-        block = ("/* >>> factory statics */\n" + statics.rstrip() +
-                 "\n/* <<< factory statics */\n")
+        open_s, close_s = "/* >>> factory statics */", "/* <<< factory statics */"
+        span = _span(c_text, open_s, close_s)
+        existing_lines: list[str] = []
+        if span:
+            body = c_text[span[0]:span[1]].splitlines()[1:-1]
+            existing_lines = [l for l in body if l.strip() != close_s]
+        merged = list(existing_lines)
+        for line in statics.rstrip().splitlines():
+            if line.strip() and line not in merged:
+                merged.append(line)
+            elif not line.strip() and (not merged or merged[-1].strip()):
+                merged.append(line)
+        block = open_s + "\n" + "\n".join(merged) + "\n" + close_s + "\n"
         include_end = 0
         for match in re.finditer(r"^#include .*$", c_text, flags=re.MULTILINE):
             include_end = match.end()
         insert_at = c_text.index("\n", include_end) + 1 if include_end else 0
-        c_text = _replace_span(c_text, "/* >>> factory statics */",
-                               "/* <<< factory statics */", block, insert_at)
+        c_text = _replace_span(c_text, open_s, close_s, block, insert_at)
 
     h_text = paths["h"].read_text()
     probe_text = paths["probe"].read_text()
@@ -135,6 +199,8 @@ def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
 
     for routine in packet["routines"]:
         fn = routine["name"]
+        if fn not in translation["routines"]:
+            continue
         blocks = translation["routines"][fn]
         open_c = f"/* >>> factory {fn} */"
         close_c = f"/* <<< factory {fn} */"
@@ -184,6 +250,9 @@ def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
         mut_block = f"{open_mut}\n{blocks['MUTATION'].rstrip()}\n{close_mut}\n"
         cases_text = _replace_span(cases_text, open_mut, close_mut, mut_block,
                                    len(cases_text))
+
+    check_includes(root, c_text)
+    check_includes(root, probe_text)
 
     try:
         compile(cases_text, str(paths["cases"]), "exec")

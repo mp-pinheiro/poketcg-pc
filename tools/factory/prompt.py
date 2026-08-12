@@ -44,7 +44,9 @@ def example_quad(basename: str) -> str:
     return "\n".join(parts)
 
 
-def render(packet: dict, feedback: str | None = None) -> str:
+def render(packet: dict, feedback: str | None = None,
+           targets: list[str] | None = None) -> str:
+    wanted = set(targets) if targets else {r["name"] for r in packet["routines"]}
     doc = CONTRACT_DOC.read_text()
     lines: list[str] = [doc, ""]
     lines.append("# COMPLETED EXAMPLE (a real, verified port; copy its conventions exactly)")
@@ -68,8 +70,21 @@ def render(packet: dict, feedback: str | None = None) -> str:
                      "`#define NAME 0x..u` when the C body needs them):")
         for name, value in packet["constants"].items():
             lines.append(f"- {name} EQU {value}")
+    if packet.get("symbols"):
+        lines.append("")
+        lines.append("RAM symbol addresses (C code uses the bare macro names from the "
+                     "generated headers; Python CASES use these NUMERIC addresses — "
+                     "define module-level constants like `wFoo = 0x1234` at need, "
+                     "never a C `_ADDR` macro name):")
+        for name, addr in packet["symbols"].items():
+            lines.append(f"- {name} = {addr}")
     lines.append("")
-    for routine in packet["routines"]:
+    verified = [r["name"] for r in packet["routines"] if r["name"] not in wanted]
+    if verified:
+        lines.append(f"Already verified in a previous round (do NOT re-emit): "
+                     f"{', '.join(verified)}.")
+        lines.append("")
+    for routine in [r for r in packet["routines"] if r["name"] in wanted]:
         lines.append(f"## Routine `{routine['name']}` "
                      f"(poketcg/{packet['file']}:{routine['line']}, "
                      f"{routine['size']} bytes, {routine['refs']} callsites)")
@@ -109,17 +124,18 @@ def render(packet: dict, feedback: str | None = None) -> str:
         '                      "after": ..., "case_ids": [...]}  # before/after are exact C\n'
         "                      substrings; before MUST occur exactly once in the file\n"
         f"Emit all five routine blocks for every routine: "
-        f"{', '.join(r['name'] for r in packet['routines'])}."
+        f"{', '.join(r['name'] for r in packet['routines'] if r['name'] in wanted)}."
     )
     if feedback:
         lines.append("")
-        lines.append("# PREVIOUS ATTEMPT FAILED — FIX AND RE-EMIT ALL BLOCKS")
+        lines.append("# PREVIOUS ATTEMPT FAILED — FIX AND RE-EMIT THE LISTED ROUTINES' BLOCKS")
         lines.append(feedback)
     return "\n".join(lines)
 
 
-def parse(reply: str, packet: dict) -> dict:
+def parse(reply: str, packet: dict, targets: list[str] | None = None) -> dict:
     """-> {"statics": str|None, "routines": {fn: {kind: text}}}. Raises FormatError."""
+    wanted_names = targets or [r["name"] for r in packet["routines"]]
     text = reply.replace("\r\n", "\n")
     # tolerate a fenced reply
     text = re.sub(r"^```[a-z]*\n|```\s*$", "", text.strip(), flags=re.MULTILINE)
@@ -144,8 +160,8 @@ def parse(reply: str, packet: dict) -> dict:
         if not name:
             raise FormatError(f"block ==={kind} is missing its routine name")
         routines.setdefault(name, {})[kind] = body
-    wanted = [r["name"] for r in packet["routines"]]
-    for fn in wanted:
+    all_names = {r["name"] for r in packet["routines"]}
+    for fn in wanted_names:
         got = routines.get(fn, {})
         missing = [kind for kind in REQUIRED if not got.get(kind)]
         if missing:
@@ -154,9 +170,11 @@ def parse(reply: str, packet: dict) -> dict:
             raise FormatError(f"routine {fn}: CASES block must assign CONTRACT[\"{fn}\"] and CASES[\"{fn}\"]")
         if f'MUTATIONS["{fn}"]' not in got["MUTATION"]:
             raise FormatError(f"routine {fn}: MUTATION block must assign MUTATIONS[\"{fn}\"]")
-    unknown = set(routines) - set(wanted)
+    unknown = set(routines) - all_names
     if unknown:
         raise FormatError(f"blocks for unknown routines: {sorted(unknown)}")
+    # keep only the requested routines: verified ones stay at their lane state
+    routines = {fn: blocks_ for fn, blocks_ in routines.items() if fn in set(wanted_names)}
     return {"statics": statics, "routines": routines}
 
 
