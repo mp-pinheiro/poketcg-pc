@@ -194,6 +194,22 @@ CASES["GetAttackName"] = [
 ]
 # <<< factory GetAttackName
 
+# >>> factory ClefableMinimizeEffect
+CONTRACT["ClefableMinimizeEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["ClefableMinimizeEffect"] = [
+    {"read": {0xC2F1: 1}},
+    dict(POISON, read={0xC2F1: 1}),
+]
+# <<< factory ClefableMinimizeEffect
+
+# >>> factory HandleAIMetronomeEffect
+CONTRACT["HandleAIMetronomeEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["HandleAIMetronomeEffect"] = [
+    {"wram": {0xC100: b"\x00"}},
+    dict(POISON, wram={0xC100: b"\x00"}),
+]
+# <<< factory HandleAIMetronomeEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -324,3 +340,19 @@ MUTATIONS["GetAttackName"] = {
 	"case_ids": ["GetAttackName-0", "GetAttackName-1"],
 }
 # <<< factory-mutation GetAttackName
+# >>> factory-mutation ClefableMinimizeEffect
+MUTATIONS["ClefableMinimizeEffect"] = {
+    "source_symbol": "ClefableMinimizeEffect",
+    "before": "\treturn ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_20);",
+    "after": "\treturn (uint16_t)(0u & ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_20));",
+    "case_ids": ["ClefableMinimizeEffect-0", "ClefableMinimizeEffect-1"],
+}
+# <<< factory-mutation ClefableMinimizeEffect
+# >>> factory-mutation HandleAIMetronomeEffect
+MUTATIONS["HandleAIMetronomeEffect"] = {
+    "source_symbol": "HandleAIMetronomeEffect",
+    "before": "\t(void)0;",
+    "after": "\tgb_write8(0xC100u, 0xFFu);",
+    "case_ids": ["HandleAIMetronomeEffect-0", "HandleAIMetronomeEffect-1"],
+}
+# <<< factory-mutation HandleAIMetronomeEffect

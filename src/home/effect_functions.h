@@ -61,4 +61,10 @@ CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile(ui
 /* >>> factory GetAttackName */
 uint16_t GetAttackName(uint8_t d, uint8_t e);
 /* <<< factory GetAttackName */
+/* >>> factory ClefableMinimizeEffect */
+uint16_t ClefableMinimizeEffect(void);
+/* <<< factory ClefableMinimizeEffect */
+/* >>> factory HandleAIMetronomeEffect */
+void HandleAIMetronomeEffect(void);
+/* <<< factory HandleAIMetronomeEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

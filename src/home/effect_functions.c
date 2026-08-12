@@ -62,6 +62,8 @@
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0x0Au
 #define DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE 0x1Bu
 #define DUELVARS_DECK_CARDS 0x7Eu
+
+#define SUBSTATUS1_REDUCE_BY_20 0x13u
 /* <<< factory statics */
 
 
@@ -329,3 +331,19 @@ uint16_t GetAttackName(uint8_t d, uint8_t e)
 	return (uint16_t)(lo | (uint16_t)hi << 8);
 }
 /* <<< factory GetAttackName */
+
+/* >>> factory ClefableMinimizeEffect */
+/* effect_functions.asm:7973-7976 */
+uint16_t ClefableMinimizeEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_20);
+}
+/* <<< factory ClefableMinimizeEffect */
+
+/* >>> factory HandleAIMetronomeEffect */
+/* effect_functions.asm:8168-8169 */
+void HandleAIMetronomeEffect(void)
+{
+	(void)0;
+}
+/* <<< factory HandleAIMetronomeEffect */

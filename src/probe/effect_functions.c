@@ -143,6 +143,21 @@ static void adapt_GetAttackName(ProbeState *s)
 }
 /* <<< factory GetAttackName */
 
+/* >>> factory ClefableMinimizeEffect */
+static void adapt_ClefableMinimizeEffect(ProbeState *s)
+{
+	s->hl = ClefableMinimizeEffect();
+}
+/* <<< factory ClefableMinimizeEffect */
+
+/* >>> factory HandleAIMetronomeEffect */
+static void adapt_HandleAIMetronomeEffect(ProbeState *s)
+{
+	(void)s;
+	HandleAIMetronomeEffect();
+}
+/* <<< factory HandleAIMetronomeEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -161,5 +176,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateTrainerCardListFromDiscardPile", adapt_CreateTrainerCardListFromDiscardPile },
 	{ "CreateEnergyCardListFromDiscardPile", adapt_CreateEnergyCardListFromDiscardPile },
 	{ "GetAttackName", adapt_GetAttackName },
+	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
+	{ "HandleAIMetronomeEffect", adapt_HandleAIMetronomeEffect },
 	{ NULL, NULL },
 };
