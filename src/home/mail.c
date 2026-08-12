@@ -3,6 +3,13 @@
 #include "mem.h"
 /* >>> factory statics */
 #include "home/bg_map.h"
+
+#include "home/print_text.h"
+#include "home/process_text.h"
+
+#define SYM_CURSOR_R 0x0Fu
+#define SYM_SPACE 0x00u
+#define EMPTY_MAIL_NAME_TEXT 0x035Cu
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -88,3 +95,29 @@ PCPackCoordinates GetPCPackCoordinates(uint8_t pack)
 	return coords;
 }
 /* <<< factory GetPCPackCoordinates */
+
+/* >>> factory ShowMailMenuCursor */
+/* mail.asm:322-324 */
+void ShowMailMenuCursor(void)
+{
+	DrawMailMenuCursor(SYM_CURSOR_R);
+}
+/* <<< factory ShowMailMenuCursor */
+
+/* >>> factory HideMailMenuCursor */
+/* mail.asm:325-327 */
+void HideMailMenuCursor(void)
+{
+	DrawMailMenuCursor(SYM_SPACE);
+}
+/* <<< factory HideMailMenuCursor */
+
+/* >>> factory PrintEmptyPCPackName */
+/* mail.asm:414-427 */
+void PrintEmptyPCPackName(uint8_t pack)
+{
+	PCPackCoordinates coords = GetPCPackCoordinates(pack);
+	InitTextPrinting(coords.b, coords.c);
+	(void)PrintTextNoDelay(EMPTY_MAIL_NAME_TEXT, coords.b, coords.c);
+}
+/* <<< factory PrintEmptyPCPackName */

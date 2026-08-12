@@ -20,4 +20,13 @@ void DrawMailMenuCursor(uint8_t symbol);
 /* >>> factory GetPCPackCoordinates */
 PCPackCoordinates GetPCPackCoordinates(uint8_t pack);
 /* <<< factory GetPCPackCoordinates */
+/* >>> factory ShowMailMenuCursor */
+void ShowMailMenuCursor(void);
+/* <<< factory ShowMailMenuCursor */
+/* >>> factory HideMailMenuCursor */
+void HideMailMenuCursor(void);
+/* <<< factory HideMailMenuCursor */
+/* >>> factory PrintEmptyPCPackName */
+void PrintEmptyPCPackName(uint8_t pack);
+/* <<< factory PrintEmptyPCPackName */
 #endif

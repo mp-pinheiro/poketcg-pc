@@ -40,11 +40,37 @@ static void adapt_GetPCPackCoordinates(ProbeState *s)
 }
 /* <<< factory GetPCPackCoordinates */
 
+/* >>> factory ShowMailMenuCursor */
+static void adapt_ShowMailMenuCursor(ProbeState *s)
+{
+	(void)s;
+	ShowMailMenuCursor();
+}
+/* <<< factory ShowMailMenuCursor */
+
+/* >>> factory HideMailMenuCursor */
+static void adapt_HideMailMenuCursor(ProbeState *s)
+{
+	(void)s;
+	HideMailMenuCursor();
+}
+/* <<< factory HideMailMenuCursor */
+
+/* >>> factory PrintEmptyPCPackName */
+static void adapt_PrintEmptyPCPackName(ProbeState *s)
+{
+	PrintEmptyPCPackName(s->a);
+}
+/* <<< factory PrintEmptyPCPackName */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
 	{ "InitPCPacks", adapt_InitPCPacks },
 	{ "DrawMailMenuCursor", adapt_DrawMailMenuCursor },
 	{ "GetPCPackCoordinates", adapt_GetPCPackCoordinates },
+	{ "ShowMailMenuCursor", adapt_ShowMailMenuCursor },
+	{ "HideMailMenuCursor", adapt_HideMailMenuCursor },
+	{ "PrintEmptyPCPackName", adapt_PrintEmptyPCPackName },
 	{ NULL, NULL },
 };

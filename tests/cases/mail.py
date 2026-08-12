@@ -54,6 +54,36 @@ CASES["GetPCPackCoordinates"] = [
 ]
 # <<< factory GetPCPackCoordinates
 
+# >>> factory ShowMailMenuCursor
+CONTRACT["ShowMailMenuCursor"] = {"compare": (), "preserve": ()}
+CASES["ShowMailMenuCursor"] = [
+	{"wram": {wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
+	{"wram": {wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
+	dict(POISON, wram={wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
+]
+# <<< factory ShowMailMenuCursor
+
+# >>> factory HideMailMenuCursor
+CONTRACT["HideMailMenuCursor"] = {"compare": (), "preserve": ()}
+CASES["HideMailMenuCursor"] = [
+	{"setup": [{"fn": "ShowMailMenuCursor"}], "wram": {wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
+	{"setup": [{"fn": "ShowMailMenuCursor"}], "wram": {wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
+	dict(POISON, setup=[{"fn": "ShowMailMenuCursor"}], wram={wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
+]
+# <<< factory HideMailMenuCursor
+
+# >>> factory PrintEmptyPCPackName
+CONTRACT["PrintEmptyPCPackName"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PrintEmptyPCPackName"] = [
+	{"setup": [{"fn": "WriteByteToBGMap0", "a": 0x0F, "b": 2, "c": 2}],
+	 "a": 0, "wram": {wPCPackSelection: b"\x00"}, "vread": {0: {0x9842: 1}}},
+	{"setup": [{"fn": "WriteByteToBGMap0", "a": 0x0F, "b": 14, "c": 10}],
+	 "a": 14, "wram": {wPCPackSelection: b"\x00"}, "vread": {0: {0x994e: 1}}},
+	dict(POISON, setup=[{"fn": "WriteByteToBGMap0", "a": 0x0F, "b": 8, "c": 6}],
+	     a=7, wram={wPCPackSelection: b"\x03"}, vread={0: {0x98c8: 1}}),
+]
+# <<< factory PrintEmptyPCPackName
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -99,3 +129,27 @@ MUTATIONS["GetPCPackCoordinates"] = {
 	"case_ids": ["GetPCPackCoordinates-0", "GetPCPackCoordinates-1", "GetPCPackCoordinates-2"],
 }
 # <<< factory-mutation GetPCPackCoordinates
+# >>> factory-mutation ShowMailMenuCursor
+MUTATIONS["ShowMailMenuCursor"] = {
+	"source_symbol": "ShowMailMenuCursor",
+	"before": "void ShowMailMenuCursor(void)\n{\n\tDrawMailMenuCursor(SYM_CURSOR_R);\n}",
+	"after": "void ShowMailMenuCursor(void)\n{\n\tDrawMailMenuCursor(SYM_SPACE);\n}",
+	"case_ids": ["ShowMailMenuCursor-0", "ShowMailMenuCursor-1", "ShowMailMenuCursor-2"],
+}
+# <<< factory-mutation ShowMailMenuCursor
+# >>> factory-mutation HideMailMenuCursor
+MUTATIONS["HideMailMenuCursor"] = {
+	"source_symbol": "HideMailMenuCursor",
+	"before": "void HideMailMenuCursor(void)\n{\n\tDrawMailMenuCursor(SYM_SPACE);\n}",
+	"after": "void HideMailMenuCursor(void)\n{\n\tDrawMailMenuCursor(SYM_CURSOR_R);\n}",
+	"case_ids": ["HideMailMenuCursor-0", "HideMailMenuCursor-1", "HideMailMenuCursor-2"],
+}
+# <<< factory-mutation HideMailMenuCursor
+# >>> factory-mutation PrintEmptyPCPackName
+MUTATIONS["PrintEmptyPCPackName"] = {
+	"source_symbol": "PrintEmptyPCPackName",
+	"before": "InitTextPrinting(coords.b, coords.c);",
+	"after": "InitTextPrinting(coords.c, coords.b);",
+	"case_ids": ["PrintEmptyPCPackName-1", "PrintEmptyPCPackName-2"],
+}
+# <<< factory-mutation PrintEmptyPCPackName
