@@ -52,6 +52,32 @@ CASES = {
     ],
 }
 
+# >>> factory UnreferencedFillVRAMWithRandomData
+CONTRACT["UnreferencedFillVRAMWithRandomData"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("d", "e"),
+}
+CASES["UnreferencedFillVRAMWithRandomData"] = [
+    {"wram": {0xCACA: b"\x00\x00\x00"}, "vread": {0: {0x8000: 0x800}},
+     "instruction_budget": 200000, "cycle_budget": 2000000},
+    dict(POISON, wram={0xCACA: b"\x12\x34\x56"}, vread={0: {0x8000: 0x800}},
+         instruction_budget=200000, cycle_budget=2000000),
+    dict(POISON, wram={0xCACA: b"\xff\xff\xff"}, vread={0: {0x8000: 0x800}},
+         instruction_budget=200000, cycle_budget=2000000),
+]
+# <<< factory UnreferencedFillVRAMWithRandomData
+
+# >>> factory _DebugVEffect
+CONTRACT["_DebugVEffect"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
+}
+CASES["_DebugVEffect"] = [
+    {"wram": {0xC100: b"\x5a"}, "read": {0xC100: 1}},
+    dict(POISON, wram={0xC100: b"\xa5"}, read={0xC100: 1}),
+]
+# <<< factory _DebugVEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -75,3 +101,21 @@ MUTATIONS = {
         "case_ids": ["DebugQuit-0", "DebugQuit-1", "DebugQuit-2"],
     },
 }
+# >>> factory-mutation UnreferencedFillVRAMWithRandomData
+MUTATIONS["UnreferencedFillVRAMWithRandomData"] = {
+    "source_symbol": "UnreferencedFillVRAMWithRandomData",
+    "before": "uint32_t n = 0x800u;",
+    "after": "uint32_t n = 0x7ffu;",
+    "case_ids": ["UnreferencedFillVRAMWithRandomData-0",
+                 "UnreferencedFillVRAMWithRandomData-1",
+                 "UnreferencedFillVRAMWithRandomData-2"],
+}
+# <<< factory-mutation UnreferencedFillVRAMWithRandomData
+# >>> factory-mutation _DebugVEffect
+MUTATIONS["_DebugVEffect"] = {
+    "source_symbol": "_DebugVEffect",
+    "before": "void _DebugVEffect(void)\n{\n}",
+    "after": "void _DebugVEffect(void)\n{\n\tgb_write8(0xC100, 0x01);\n}",
+    "case_ids": ["_DebugVEffect-0", "_DebugVEffect-1"],
+}
+# <<< factory-mutation _DebugVEffect

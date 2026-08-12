@@ -4,6 +4,10 @@
 #include "home/lcd.h"
 #include "home/tiles.h"
 #include "home/wait_keys.h"
+/* >>> factory statics */
+#include "home/random.h"
+#include "mem.h"
+/* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
 	uint8_t e, uint16_t hl)
@@ -40,3 +44,31 @@ DebugQuitResult DebugQuit(uint8_t a, uint8_t f)
 	(void)f;
 	return (DebugQuitResult){a, (uint8_t)(a == 0 ? 0x80u : 0)};
 }
+
+/* >>> factory UnreferencedFillVRAMWithRandomData */
+/* engine/gfx/debug.asm:53-62. Unreferenced. Fills v0Tiles0 ($8000-$87FF,
+ * 2048 bytes) with RNG output, advancing wRNG1/wRNG2/wRNGCounter as a side
+ * effect. The tail folds `ld a, b / or c` into the loop test: since the loop
+ * always runs exactly 0x800 times, bc == 0 and a == 0 on exit regardless of
+ * the last RNG byte, which is discarded. */
+UnreferencedFillVRAMWithRandomDataResult UnreferencedFillVRAMWithRandomData(void)
+{
+	DisableLCD();
+	uint16_t hl = 0x8000u;
+	uint32_t n = 0x800u;
+	do {
+		gb_write8(hl, UpdateRNGSources());
+		hl = (uint16_t)(hl + 1u);
+	} while (--n != 0u);
+	return (UnreferencedFillVRAMWithRandomDataResult){0, 0x80u, 0, 0, hl};
+}
+/* <<< factory UnreferencedFillVRAMWithRandomData */
+
+/* >>> factory _DebugVEffect */
+/* engine/gfx/debug.asm:66. Bare ret; unconditional no-op. Pret's comment
+ * notes it once inspected overworld NPC sprites, but the body left in the
+ * ROM is empty. */
+void _DebugVEffect(void)
+{
+}
+/* <<< factory _DebugVEffect */

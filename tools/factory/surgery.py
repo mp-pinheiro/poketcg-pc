@@ -110,6 +110,11 @@ ADAPTER_NAME = re.compile(r"\badapt_[A-Za-z0-9_]+\b")
 
 DEFINE_NAME = re.compile(r"^\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\b")
 
+# Pre-migration probe files vary: `{NULL, NULL},` and `{ NULL, NULL },` both
+# occur across landed basenames. Matching either keeps factory appends working
+# on legacy files without reformatting code this packet does not own.
+SENTINEL_ROW = re.compile(r"^[ \t]*\{\s*NULL\s*,\s*NULL\s*\},[ \t]*$", re.MULTILINE)
+
 INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
 
 
@@ -425,9 +430,10 @@ def apply(root: Path, packet: dict, translation: dict,
         probe_text = re.sub(
             rf'^\t{{ "{re.escape(fn)}", adapt_[A-Za-z0-9_]+ }},\n',
             "", probe_text, flags=re.MULTILINE)
-        sentinel = probe_text.find("\t{ NULL, NULL },")
-        if sentinel < 0:
+        match = SENTINEL_ROW.search(probe_text)
+        if match is None:
             raise SurgeryError(f"{paths['probe']} has no NULL sentinel row")
+        sentinel = match.start()
         probe_text = probe_text[:sentinel] + row + probe_text[sentinel:]
 
         open_py = f"# >>> factory {fn}"
