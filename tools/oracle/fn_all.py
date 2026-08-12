@@ -5,10 +5,12 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import os
 import subprocess
 import json
 import time
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,6 +43,7 @@ def main() -> int:
     parser.add_argument("--symbols", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--runner", type=Path, required=True)
+    parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1)
     parser.add_argument("--report", type=Path, help="write gate record to JSON")
     args = parser.parse_args()
     if not all(path.is_absolute() and path.is_file()
@@ -68,7 +71,8 @@ def main() -> int:
         }
     cases = load_cases()
     failures = 0
-    fn_failures = {}
+    fn_failures: dict[str, int] = {}
+    fn_primaries: dict[str, int] = {}
     primary = 0
     evidence_counts = {
         "scene": 0,
@@ -79,6 +83,8 @@ def main() -> int:
     for fn in ALL:
         fn_failures.setdefault(fn, 0)
     primary_missing = 0
+    jobs: list[tuple[str, int, Path]] = []
+    reported_fns: list[str] = []
     for fn in ALL:
         records = cases.get(fn, [])
         if fn in EXCLUDED:
@@ -100,6 +106,8 @@ def main() -> int:
             primary_missing += 1
             print(f"BOUNDARY no primary case {fn}")
             continue
+        reported_fns.append(fn)
+        fn_primaries[fn] = len(primary_records)
         for index, (path, record) in enumerate(records):
             evidence = record.get("evidence")
             if evidence != "primary":
@@ -110,32 +118,37 @@ def main() -> int:
                     failures += 1
                 continue
             primary += 1
-            command = [
-                sys.executable, str(ROOT / "tools/oracle/gbref/compare_one.py"),
-                "--fn", fn, "--index", str(index), "--case", str(path),
-                "--rom", str(args.rom), "--symbols", str(args.symbols),
-                "--probe", str(args.probe), "--runner", str(args.runner),
-            ]
-            result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True,
-                                    timeout=30, check=False)
-            output = result.stdout.strip().splitlines()
-            print(output[-1] if output else result.stderr.strip())
-            if result.returncode:
+            jobs.append((fn, index, path))
+
+    def run_job(job: tuple[str, int, Path]) -> tuple[str, str, int]:
+        fn, index, path = job
+        command = [
+            sys.executable, str(ROOT / "tools/oracle/gbref/compare_one.py"),
+            "--fn", fn, "--index", str(index), "--case", str(path),
+            "--rom", str(args.rom), "--symbols", str(args.symbols),
+            "--probe", str(args.probe), "--runner", str(args.runner),
+        ]
+        result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True,
+                                timeout=30, check=False)
+        output = result.stdout.strip().splitlines()
+        line = output[-1] if output else result.stderr.strip()
+        return fn, line, result.returncode
+
+    with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
+        for fn, line, returncode in pool.map(run_job, jobs):
+            print(line)
+            if returncode:
                 fn_failures[fn] += 1
                 failures += 1
-        if report_data is not None and fn in fn_failures:
-            total_cases = len(primary_records)
+
+    if report_data is not None:
+        for fn in reported_fns:
             failing = fn_failures[fn]
             report_data["routines"][fn] = {
                 "status": "fail" if failing else "pass",
-                "cases": total_cases,
+                "cases": fn_primaries[fn],
                 "failing": failing,
             }
-            report_data["generated_at"] = int(time.time())
-            args.report.parent.mkdir(parents=True, exist_ok=True)
-            args.report.write_text(
-                json.dumps(report_data, sort_keys=True, separators=(",", ":"))
-            )
     counts = " ".join(
         f"{key}={value}" for key, value in evidence_counts.items()
     )
@@ -153,6 +166,7 @@ def main() -> int:
         }
         report_data["complete"] = True
         report_data["generated_at"] = int(time.time())
+        args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(
             json.dumps(report_data, sort_keys=True, separators=(",", ":"))
         )
