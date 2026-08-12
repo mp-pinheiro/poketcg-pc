@@ -127,6 +127,44 @@ CASES = {
          "read": {0xC50B: 3}},
     ],
 }
+# >>> factory-cases-statics
+wAllSpriteAnimationsDisabled = 0xD5D7
+wVBlankOAMCopyToggle = 0xCAC0
+# <<< factory-cases-statics
+
+# >>> factory ClearSpriteAnimations
+CONTRACT["ClearSpriteAnimations"] = {
+    "compare": ("f", "b", "c", "d", "e", "hl"),
+    "preserve": ("f", "b", "c", "d", "e", "hl"),
+}
+CASES["ClearSpriteAnimations"] = [
+    {"read": {SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+              wVBlankOAMCopyToggle: 1, W_WHICH_SPRITE: 1}},
+    dict(POISON, wram={SPRITE_BUFFER: b"\xff" * 256},
+         read={SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+               wVBlankOAMCopyToggle: 1}),
+    {"wram": {wAllSpriteAnimationsDisabled: b"\x01", SPRITE_BUFFER: b"\xaa" * 256},
+     "read": {SPRITE_BUFFER: 256, wVBlankOAMCopyToggle: 1}},
+]
+# <<< factory ClearSpriteAnimations
+
+# >>> factory HandleAllSpriteAnimations
+CONTRACT["HandleAllSpriteAnimations"] = {
+    "compare": ("f", "b", "c", "d", "e", "hl"),
+    "preserve": ("f", "b", "c", "d", "e", "hl"),
+}
+CASES["HandleAllSpriteAnimations"] = [
+    {"wram": {SPRITE_BUFFER: b"\x00" * 256},
+     "read": {SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+              wVBlankOAMCopyToggle: 1, W_WHICH_SPRITE: 1}},
+    dict(POISON, wram={SPRITE_BUFFER: b"\x00" * 256},
+         read={SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+               wVBlankOAMCopyToggle: 1}),
+    {"wram": {wAllSpriteAnimationsDisabled: b"\x01", SPRITE_BUFFER: b"\x11" * 256},
+     "read": {SPRITE_BUFFER: 256, wVBlankOAMCopyToggle: 1}},
+]
+# <<< factory HandleAllSpriteAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -138,3 +176,19 @@ MUTATIONS = {
         "case_ids": ["DrawSpriteAnimationFrame-0", "DrawSpriteAnimationFrame-1", "DrawSpriteAnimationFrame-2", "DrawSpriteAnimationFrame-3", "DrawSpriteAnimationFrame-4", "DrawSpriteAnimationFrame-5"],
     },
 }
+# >>> factory-mutation ClearSpriteAnimations
+MUTATIONS["ClearSpriteAnimations"] = {
+    "source_symbol": "ClearSpriteAnimations",
+    "before": "_ClearSpriteAnimations();",
+    "after": "(void)0;",
+    "case_ids": ["ClearSpriteAnimations-0", "ClearSpriteAnimations-1"],
+}
+# <<< factory-mutation ClearSpriteAnimations
+# >>> factory-mutation HandleAllSpriteAnimations
+MUTATIONS["HandleAllSpriteAnimations"] = {
+    "source_symbol": "HandleAllSpriteAnimations",
+    "before": "_HandleAllSpriteAnimations();",
+    "after": "(void)0;",
+    "case_ids": ["HandleAllSpriteAnimations-0", "HandleAllSpriteAnimations-1"],
+}
+# <<< factory-mutation HandleAllSpriteAnimations

@@ -11,4 +11,10 @@ void Func_3de7(uint8_t a);
 void DrawSpriteAnimationFrame(uint16_t *hl);
 void GetAnimationFramePointer(uint16_t hl);
 
+/* >>> factory ClearSpriteAnimations */
+void ClearSpriteAnimations(void);
+/* <<< factory ClearSpriteAnimations */
+/* >>> factory HandleAllSpriteAnimations */
+void HandleAllSpriteAnimations(void);
+/* <<< factory HandleAllSpriteAnimations */
 #endif

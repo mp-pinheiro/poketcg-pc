@@ -5,6 +5,10 @@
 #include "home/objects.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/sprite_animations.h"
+#define BANK_SPRITE_ANIMATIONS 0x04u
+/* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
 #define SPRITE_ANIM_LENGTH 16u
@@ -183,3 +187,34 @@ void GetAnimationFramePointer(uint16_t hl)
 
 	BankswitchROM(saved);
 }
+
+/* >>> factory ClearSpriteAnimations */
+/* ClearSpriteAnimations:: poketcg/src/home/load_animation.asm:5-13. Bankswitch
+ * trampoline around the already-ported _ClearSpriteAnimations body. The
+ * trailing `pop af` (ldh/BankswitchROM never touch flags) restores the
+ * caller's entry flags verbatim, so f is preserved; the closing
+ * BankswitchROM leaves a holding the restored bank value -- scratch, not
+ * tracked, matching DrawSpriteAnimationFrame/GetAnimationFramePointer in
+ * this file. */
+void ClearSpriteAnimations(void)
+{
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_SPRITE_ANIMATIONS);
+	_ClearSpriteAnimations();
+	BankswitchROM(saved);
+}
+/* <<< factory ClearSpriteAnimations */
+
+/* >>> factory HandleAllSpriteAnimations */
+/* HandleAllSpriteAnimations:: poketcg/src/home/load_animation.asm:15-23. Same
+ * bankswitch-trampoline shape as ClearSpriteAnimations, wrapping the
+ * already-ported _HandleAllSpriteAnimations slot loop (16 slots, 16-byte
+ * stride, wSpriteAnimBuffer). */
+void HandleAllSpriteAnimations(void)
+{
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_SPRITE_ANIMATIONS);
+	_HandleAllSpriteAnimations();
+	BankswitchROM(saved);
+}
+/* <<< factory HandleAllSpriteAnimations */

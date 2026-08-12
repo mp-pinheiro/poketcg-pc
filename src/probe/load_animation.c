@@ -41,6 +41,22 @@ static void adapt_GetAnimationFramePointer(ProbeState *s)
 	s->a = hBankROM;
 }
 
+/* >>> factory ClearSpriteAnimations */
+static void adapt_ClearSpriteAnimations(ProbeState *s)
+{
+	(void)s;
+	ClearSpriteAnimations();
+}
+/* <<< factory ClearSpriteAnimations */
+
+/* >>> factory HandleAllSpriteAnimations */
+static void adapt_HandleAllSpriteAnimations(ProbeState *s)
+{
+	(void)s;
+	HandleAllSpriteAnimations();
+}
+/* <<< factory HandleAllSpriteAnimations */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -49,5 +65,7 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "Func_3de7", adapt_Func_3de7 },
 	{ "DrawSpriteAnimationFrame", adapt_DrawSpriteAnimationFrame },
 	{ "GetAnimationFramePointer", adapt_GetAnimationFramePointer },
+	{ "ClearSpriteAnimations", adapt_ClearSpriteAnimations },
+	{ "HandleAllSpriteAnimations", adapt_HandleAllSpriteAnimations },
 	{ NULL, NULL },
 };
