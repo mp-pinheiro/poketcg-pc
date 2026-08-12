@@ -31,4 +31,7 @@ NPCSearchResult FindLoadedNPC(void);
 uint8_t GetNextNPCMovementByte(uint16_t bc);
 uint8_t GetDefaultSong(void);
 
+/* >>> factory HandleMapWarp */
+void HandleMapWarp(void);
+/* <<< factory HandleMapWarp */
 #endif

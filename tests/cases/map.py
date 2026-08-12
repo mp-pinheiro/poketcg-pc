@@ -154,6 +154,35 @@ CASES = {
                   wSongOverride: b"\x01"}, "read": {wSongOverride: 1}},
     ],
 }
+# >>> factory HandleMapWarp
+
+wWarpCurMap = 0xD32F
+wWarpPlayerXCoord = 0xD330
+wWarpPlayerYCoord = 0xD331
+wWarpPlayerDirection = 0xD334
+wWarpTempMap = 0xD0BB
+wWarpTempPlayerXCoord = 0xD0BC
+wWarpTempPlayerYCoord = 0xD0BD
+wWarpTempPlayerDirection = 0xD0BE
+WARP_READ = {wWarpTempMap: 1, wWarpTempPlayerXCoord: 1, wWarpTempPlayerYCoord: 1,
+             wWarpTempPlayerDirection: 1}
+
+
+def _warp_memory(m, x, y, d, t=b"\x11\x22\x33\x44"):
+    return {wWarpCurMap: bytes((m,)), wWarpPlayerXCoord: bytes((x,)),
+            wWarpPlayerYCoord: bytes((y,)), wWarpPlayerDirection: bytes((d,)),
+            wWarpTempMap: t}
+
+
+CONTRACT["HandleMapWarp"] = {"compare": (), "preserve": ()}
+CASES["HandleMapWarp"] = [
+    {"wram": _warp_memory(1, 0, 0, 0), "read": WARP_READ},
+    dict(POISON, wram=_warp_memory(1, 0x1A, 0x0A, 2, b"\x00\x00\x00\x00"), read=WARP_READ),
+    {"wram": _warp_memory(1, 0x0E, 0x1C, 1), "read": WARP_READ},
+    {"wram": _warp_memory(2, 0, 0x0A, 4), "read": WARP_READ},
+]
+# <<< factory HandleMapWarp
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -171,3 +200,12 @@ MUTATIONS = {
         "case_ids": ["PlayDefaultSong-1", "PlayDefaultSong-2"],
     },
 }
+# >>> factory-mutation HandleMapWarp
+
+MUTATIONS["HandleMapWarp"] = {
+    "source_symbol": "HandleMapWarp",
+    "before": "(void)_HandleMapWarp();",
+    "after": "",
+    "case_ids": ["HandleMapWarp-1", "HandleMapWarp-2", "HandleMapWarp-3"],
+}
+# <<< factory-mutation HandleMapWarp

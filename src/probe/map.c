@@ -80,6 +80,15 @@ static void adapt_PlayDefaultSong(ProbeState *s)
 }
 
 
+/* >>> factory HandleMapWarp */
+
+static void adapt_HandleMapWarp(ProbeState *s)
+{
+	HandleMapWarp();
+	(void)s;
+}
+/* <<< factory HandleMapWarp */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -93,5 +102,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "GetNextNPCMovementByte", adapt_GetNextNPCMovementByte },
 	{ "GetDefaultSong", adapt_GetDefaultSong },
 	{ "PlayDefaultSong", adapt_PlayDefaultSong },
+	{ "HandleMapWarp", adapt_HandleMapWarp },
 	{ NULL, NULL },
 };

@@ -5,6 +5,10 @@
 #include "home/sound.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/warp.h"
+#define BANK_HANDLE_MAP_WARP 7u
+/* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
 #define LOADED_NPC_MAX            8u
@@ -150,3 +154,21 @@ uint8_t GetDefaultSong(void)
 		return wDefaultSong;
 	return MUSIC_RONALD;
 }
+
+/* >>> factory HandleMapWarp */
+
+/* HandleMapWarp:: poketcg/src/home/map.asm:251-259. Bankswitches to
+ * _HandleMapWarp's bank, runs it, then restores the caller's bank. The
+ * asm's `pop af` after the call discards _HandleMapWarp's a/f entirely,
+ * and its only caller (engine/overworld/overworld.asm:1049) never reads
+ * a/f afterward, so this wrapper has no register outputs -- the WRAM
+ * writes _HandleMapWarp performs are the entire observable contract. */
+void HandleMapWarp(void)
+{
+	uint8_t saved = hBankROM;
+
+	BankswitchROM(BANK_HANDLE_MAP_WARP);
+	(void)_HandleMapWarp();
+	BankswitchROM(saved);
+}
+/* <<< factory HandleMapWarp */
