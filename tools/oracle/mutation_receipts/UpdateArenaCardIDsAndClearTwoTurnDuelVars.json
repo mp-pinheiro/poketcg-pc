@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateArenaCardIDsAndClearTwoTurnDuelVars",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 52, \"f\": 128, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"01\", \"50162\": \"0000000000000000ff\", \"50176\": \"12\", \"50305\": \"34\", \"52419\": \"1234\", \"52429\": \"00\", \"52454\": \"00\", \"52460\": \"0000\", \"52463\": \"000000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"mismatches\": {\"bus\": {\"address\": 52465, \"reference\": \"0000000000c200\", \"native\": \"0000000001c200\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[49851, 1], [50107, 1], [50162, 9], [50176, 1], [50305, 1], [52419, 2], [52429, 1], [52454, 1], [52460, 2], [52463, 3], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateArenaCardIDsAndClearTwoTurnDuelVars\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 52, \"f\": 128, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50107\": \"01\", \"50162\": \"0000000000000000ff\", \"50176\": \"12\", \"50305\": \"34\", \"52419\": \"1234\", \"52429\": \"00\", \"52454\": \"00\", \"52460\": \"0000\", \"52463\": \"000000\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
