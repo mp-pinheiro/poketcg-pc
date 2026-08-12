@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Amy",
+  "case": "tests/cases/water_club.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Amy\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"01\", \"54064\": \"1406\", \"54188\": \"14\", \"54224\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Amy\", \"mismatches\": {\"a\": [1, 0], \"bus\": {\"address\": 54188, \"reference\": \"0114061401\", \"native\": \"0114065500\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53442, 1], [54064, 2], [54188, 1], [54224, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Amy\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"01\", \"54064\": \"1406\", \"54188\": \"14\", \"54224\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

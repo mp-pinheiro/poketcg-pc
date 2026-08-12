@@ -2,7 +2,7 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
-#include "home/copy.h"
+#include "home/sound.h"
 #include "home/switch_rom.h"
 #include "mem.h"
 
@@ -104,6 +104,40 @@ uint8_t GetNextNPCMovementByte(uint16_t bc)
 	value = gb_read8(bc);
 	BankswitchROM(saved);
 	return value;
+}
+
+static uint8_t compare_flags(uint8_t lhs, uint8_t rhs)
+{
+	uint8_t result = (uint8_t)(lhs - rhs);
+	uint8_t flags = 0x40u;
+
+	if (result == 0)
+		flags |= 0x80u;
+	if ((lhs & 0x0Fu) < (rhs & 0x0Fu))
+		flags |= 0x20u;
+	if (lhs < rhs)
+		flags |= 0x10u;
+	return flags;
+}
+
+SongResult PlayDefaultSong(void)
+{
+	uint8_t assert_result = AssertSongFinished();
+	uint8_t song = GetDefaultSong();
+	uint8_t flags;
+
+	if (assert_result == 1u) {
+		flags = compare_flags(song, wSongOverride);
+		if ((flags & 0x80u) != 0)
+			return (SongResult){song, flags};
+	}
+
+	flags = compare_flags(song, 0x1Fu);
+	if ((flags & 0x10u) != 0) {
+		wSongOverride = song;
+		PlaySong(song);
+	}
+	return (SongResult){song, flags};
 }
 
 uint8_t GetDefaultSong(void)

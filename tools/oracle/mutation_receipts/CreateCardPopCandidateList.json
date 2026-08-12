@@ -1,0 +1,9 @@
+{
+  "fn": "CreateCardPopCandidateList",
+  "case": "tests/cases/card_pop.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"case\": 0, \"fn\": \"CreateCardPopCandidateList\", \"registers\": {\"a\": 68, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"hl\": 50176}, \"sram\": {}, \"status\": \"PASS\", \"vram\": {}, \"wram\": {\"50176\": \"080c0d0f1214171a1c1f212326282a2c2d303339414446494d4f515355565c6061696a6d77797b7d808384898b8e929499a3a7a9aeafb1b2b5bcc5cccfd0d2d4dbdde3e400aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateCardPopCandidateList\", \"reference\": {\"a\": 68, \"hl\": 50176, \"wram\": {\"50176\": \"080c0d0f1214171a1c1f212326282a2c2d303339414446494d4f515355565c6061696a6d77797b7d808384898b8e929499a3a7a9aeafb1b2b5bcc5cccfd0d2d4dbdde3e400aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}, \"native\": {\"a\": 0, \"f\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"hl\": 50176, \"rom_bank\": 0, \"ram_bank\": 0, \"ram_enable\": 0, \"wram\": {\"50176\": \"00aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}, \"sram\": {}, \"vram\": {}, \"palette\": {}}}\n",
+  "restored": "{\"case\": 0, \"fn\": \"CreateCardPopCandidateList\", \"registers\": {\"a\": 68, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"hl\": 50176}, \"sram\": {}, \"status\": \"PASS\", \"vram\": {}, \"wram\": {\"50176\": \"080c0d0f1214171a1c1f212326282a2c2d303339414446494d4f515355565c6061696a6d77797b7d808384898b8e929499a3a7a9aeafb1b2b5bcc5cccfd0d2d4dbdde3e400aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}}\n"
+}

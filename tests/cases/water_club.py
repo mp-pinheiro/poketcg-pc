@@ -1,0 +1,57 @@
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wActiveGameEvent = 0xD0C2
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wLoadNPCXPos = 0xD3AC
+wd3d0 = 0xD3D0
+
+
+def memory(event, x, y, npc_x=0x55, d3d0_value=0x66):
+    return {wActiveGameEvent: bytes((event,)),
+            wPlayerXCoord: bytes((x,)),
+            wPlayerYCoord: bytes((y,)),
+            wLoadNPCXPos: bytes((npc_x,)),
+            wd3d0: bytes((d3d0_value,))}
+
+
+CONTRACT = {
+    "Preload_Amy": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+}
+
+CASES = {
+    "Preload_Amy": [
+        {"wram": memory(0, 0, 0),
+         "read": {wActiveGameEvent: 1, wd3d0: 1}},
+        dict(POISON,
+             wram=memory(0xAA, 0xBB, 0xCC),
+             read={wActiveGameEvent: 1, wd3d0: 1}),
+        {"wram": memory(1, 0x13, 6),
+         "read": {wActiveGameEvent: 1, wPlayerXCoord: 1, wd3d0: 1}},
+        dict(POISON,
+             wram=memory(1, 0x14, 5),
+             read={wActiveGameEvent: 1, wPlayerXCoord: 1, wPlayerYCoord: 1,
+                   wd3d0: 1}),
+        {"wram": memory(1, 0x14, 6),
+         "read": {wActiveGameEvent: 1, wPlayerXCoord: 1, wPlayerYCoord: 1,
+                   wLoadNPCXPos: 1, wd3d0: 1}},
+    ],
+}
+
+from tests.cases._schema_migration import legacy_to_schema
+
+MUTATIONS = {
+    "Preload_Amy": {
+        "source_symbol": "Preload_Amy",
+        "before": "if (event != 0)",
+        "after": "if (event == 0)",
+        "case_ids": ["Preload_Amy-0", "Preload_Amy-1", "Preload_Amy-2",
+                      "Preload_Amy-3", "Preload_Amy-4"],
+    },
+}
+
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

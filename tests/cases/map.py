@@ -14,6 +14,9 @@ wTempPointerBank = 0xD4C6
 wRonaldIsInMap = 0xD3B8
 wOverworldMapSelection = 0xD32E
 wDefaultSong = 0xD111
+wSongOverride = 0xD112
+wCurSongID = 0xDD80
+NUM_SONGS = 0x1F
 OWMAP_ISHIHARAS_HOUSE = 0x02
 OWMAP_CHALLENGE_HALL = 0x0B
 OWMAP_POKEMON_DOME = 0x0C
@@ -44,6 +47,8 @@ CONTRACT = {
     "CopyGfxDataFromTempBank": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "c")},
     "FindLoadedNPC": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
     "GetNextNPCMovementByte": {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
+    "PlayDefaultSong": {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                        "preserve": ("b", "c", "d", "e", "hl")},
     "GetDefaultSong": {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")},
 }
 
@@ -136,6 +141,18 @@ CASES = {
         dict(POISON, wram={wRonaldIsInMap: b"\x01", wDefaultSong: b"\x22",
                             wOverworldMapSelection: b"\x01"}),
     ],
+    "PlayDefaultSong": [
+        {"read": {wCurSongID: 1, wSongOverride: 1}},
+        {"wram": {wCurSongID: b"\x80", wDefaultSong: b"\x05",
+                  wSongOverride: b"\xFF"}, "read": {wSongOverride: 1}},
+        dict(POISON, wram={wCurSongID: b"\x80", wDefaultSong: bytes((NUM_SONGS - 1,)),
+                            wSongOverride: b"\x01"},
+             read={wSongOverride: 1}),
+        {"wram": {wCurSongID: b"\x01", wDefaultSong: b"\x05",
+                  wSongOverride: b"\x05"}, "read": {wSongOverride: 1}},
+        {"wram": {wCurSongID: b"\x80", wDefaultSong: bytes((NUM_SONGS,)),
+                  wSongOverride: b"\x01"}, "read": {wSongOverride: 1}},
+    ],
 }
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -146,5 +163,11 @@ MUTATIONS = {
         "before": "return gb_read8(permission_address(b, c));",
         "after": "return (uint8_t)(gb_read8(permission_address(b, c)) ^ 1u);",
         "case_ids": ["GetPermissionOfMapPosition-0", "GetPermissionOfMapPosition-1"],
+    },
+    "PlayDefaultSong": {
+        "source_symbol": "PlayDefaultSong",
+        "before": "wSongOverride = song;",
+        "after": "wSongOverride = (uint8_t)(song ^ 1u);",
+        "case_ids": ["PlayDefaultSong-1", "PlayDefaultSong-2"],
     },
 }

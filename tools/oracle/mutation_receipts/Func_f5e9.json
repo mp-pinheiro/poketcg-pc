@@ -1,0 +1,9 @@
+{
+  "fn": "Func_f5e9",
+  "case": "tests/cases/challenge_hall.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_f5e9\", \"registers\": {\"a\": 0, \"b\": 128, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54936, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_f5e9\", \"mismatches\": {\"b\": [128, 64]}}\n",
+  "restored": "{\"fn\": \"Func_f5e9\", \"registers\": {\"a\": 0, \"b\": 128, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54936, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

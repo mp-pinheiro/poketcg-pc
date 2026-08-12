@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfAnyBasicPokemonInDeck",
+  "case": "tests/cases/special_attacks.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfAnyBasicPokemonInDeck\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 0, \"f\": 144, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"50176\": \"08\", \"52325\": \"01a7020a0800100828000000020000000b080c080000140011480002000159000000000000000000000000000000000000000180000d0801000d020496000e08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfAnyBasicPokemonInDeck\", \"mismatches\": {\"a\": [0, 60], \"e\": [0, 60], \"f\": [144, 0], \"hl\": [49664, 49723], \"bus\": {\"address\": 52325, \"reference\": \"000801a7020a08\", \"native\": \"0008c900000000\", \"reference_size\": 67, \"native_size\": 67, \"spans\": [[49664, 1], [50176, 1], [52325, 64], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckIfAnyBasicPokemonInDeck\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 0, \"f\": 144, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"50176\": \"08\", \"52325\": \"01a7020a0800100828000000020000000b080c080000140011480002000159000000000000000000000000000000000000000180000d0801000d020496000e08\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

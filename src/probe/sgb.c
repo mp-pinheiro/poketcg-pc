@@ -1,0 +1,19 @@
+#include "home/sgb.h"
+#include "probe.h"
+
+static void adapt_Wait(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
+	SGBWaitResult r = Wait(bc);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+
+const ProbeEntry probe_entries_sgb[] = {
+	{ "Wait", adapt_Wait },
+	{ NULL, NULL },
+};
