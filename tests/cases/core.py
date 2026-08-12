@@ -128,6 +128,38 @@ CASES["LoadPlayerDeck"] = [
 ]
 # <<< factory LoadPlayerDeck
 
+# >>> factory PrintPracticeDuelDrMasonInstructions
+CONTRACT["PrintPracticeDuelDrMasonInstructions"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CASES["PrintPracticeDuelDrMasonInstructions"] = [
+    {"hl": 0x01DB, "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, hl=0x01DC, keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory PrintPracticeDuelDrMasonInstructions
+
+# >>> factory PrintPracticeDuelInstructionsTextBoxLabel
+CONTRACT["PrintPracticeDuelInstructionsTextBoxLabel"] = {"compare": (), "preserve": ()}
+CASES["PrintPracticeDuelInstructionsTextBoxLabel"] = [
+    {"wram": {0xCC06: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    {"wram": {0xCC06: b"\x07"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, wram={0xCC06: b"\x06"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory PrintPracticeDuelInstructionsTextBoxLabel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -220,3 +252,19 @@ MUTATIONS["LoadPlayerDeck"] = {
     "case_ids": ["LoadPlayerDeck-0", "LoadPlayerDeck-2"],
 }
 # <<< factory-mutation LoadPlayerDeck
+# >>> factory-mutation PrintPracticeDuelDrMasonInstructions
+MUTATIONS["PrintPracticeDuelDrMasonInstructions"] = {
+    "source_symbol": "PrintPracticeDuelDrMasonInstructions",
+    "before": "PrintScrollableText_WithTextBoxLabel(hl, DrMasonText)",
+    "after": "PrintScrollableText_WithTextBoxLabel(hl, DrMasonText + 1u)",
+    "case_ids": ["PrintPracticeDuelDrMasonInstructions-0", "PrintPracticeDuelDrMasonInstructions-1"],
+}
+# <<< factory-mutation PrintPracticeDuelDrMasonInstructions
+# >>> factory-mutation PrintPracticeDuelInstructionsTextBoxLabel
+MUTATIONS["PrintPracticeDuelInstructionsTextBoxLabel"] = {
+    "source_symbol": "PrintPracticeDuelInstructionsTextBoxLabel",
+    "before": "if (a == 7u)",
+    "after": "if (a == 8u)",
+    "case_ids": ["PrintPracticeDuelInstructionsTextBoxLabel-1"],
+}
+# <<< factory-mutation PrintPracticeDuelInstructionsTextBoxLabel

@@ -86,6 +86,13 @@ static uint32_t duel_save_total_size(void)
 
 #define DECK_SIZE_ 60u
 #define SAVE_DUEL_DATA_SIZE_MINUS6 (0x100u - 6u)
+
+#include "home/print_text.h"
+#include "home/process_text.h"
+
+#define DrMasonText 0x01a3u
+#define PlayersTurnPracticeDuelText 0x01dbu
+#define ReplaceDueToKnockoutPracticeDuelText 0x01dcu
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -264,3 +271,27 @@ void LoadPlayerDeck(void)
 	DisableSRAM();
 }
 /* <<< factory LoadPlayerDeck */
+
+/* >>> factory PrintPracticeDuelDrMasonInstructions */
+/* core.asm:2748-2753 */
+void PrintPracticeDuelDrMasonInstructions(uint16_t hl)
+{
+	(void)PrintScrollableText_WithTextBoxLabel(hl, DrMasonText);
+}
+/* <<< factory PrintPracticeDuelDrMasonInstructions */
+
+/* >>> factory PrintPracticeDuelInstructionsTextBoxLabel */
+/* core.asm:2767-2789 */
+void PrintPracticeDuelInstructionsTextBoxLabel(void)
+{
+	uint8_t a = wDuelTurns;
+
+	if (a == 7u) {
+		(void)InitTextPrinting_ProcessTextFromID(1u, 0u, ReplaceDueToKnockoutPracticeDuelText);
+		return;
+	}
+	LoadTxRam3((uint16_t)((a >> 1) + 1u));
+	InitTextPrinting(1u, 0u);
+	(void)PrintText(PlayersTurnPracticeDuelText, 1u, 0u);
+}
+/* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */

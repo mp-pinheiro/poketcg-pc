@@ -86,6 +86,21 @@ static void adapt_LoadPlayerDeck(ProbeState *s)
 }
 /* <<< factory LoadPlayerDeck */
 
+/* >>> factory PrintPracticeDuelDrMasonInstructions */
+static void adapt_PrintPracticeDuelDrMasonInstructions(ProbeState *s)
+{
+	PrintPracticeDuelDrMasonInstructions(s->hl);
+}
+/* <<< factory PrintPracticeDuelDrMasonInstructions */
+
+/* >>> factory PrintPracticeDuelInstructionsTextBoxLabel */
+static void adapt_PrintPracticeDuelInstructionsTextBoxLabel(ProbeState *s)
+{
+	(void)s;
+	PrintPracticeDuelInstructionsTextBoxLabel();
+}
+/* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -98,5 +113,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
 	{ "ZeroObjectPositionsAndToggleOAMCopy", adapt_ZeroObjectPositionsAndToggleOAMCopy },
 	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
+	{ "PrintPracticeDuelDrMasonInstructions", adapt_PrintPracticeDuelDrMasonInstructions },
+	{ "PrintPracticeDuelInstructionsTextBoxLabel", adapt_PrintPracticeDuelInstructionsTextBoxLabel },
 	{ NULL, NULL },
 };

@@ -36,4 +36,10 @@ void ZeroObjectPositionsAndToggleOAMCopy(void);
 /* >>> factory LoadPlayerDeck */
 void LoadPlayerDeck(void);
 /* <<< factory LoadPlayerDeck */
+/* >>> factory PrintPracticeDuelDrMasonInstructions */
+void PrintPracticeDuelDrMasonInstructions(uint16_t hl);
+/* <<< factory PrintPracticeDuelDrMasonInstructions */
+/* >>> factory PrintPracticeDuelInstructionsTextBoxLabel */
+void PrintPracticeDuelInstructionsTextBoxLabel(void);
+/* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
 #endif /* POKETCG_HOME_CORE_H */
