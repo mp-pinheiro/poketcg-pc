@@ -159,6 +159,15 @@ static void adapt_Func_2055(ProbeState *s)
 }
 /* <<< factory Func_2055 */
 
+/* >>> factory Func_2046 */
+static void adapt_Func_2046(ProbeState *s)
+{
+	uint16_t counter_addr = (uint16_t)(s->d << 8 | s->e);
+
+	Func_2046(counter_addr, s->hl, s->a, s->b, s->c);
+}
+/* <<< factory Func_2046 */
+
 const ProbeEntry probe_entries_tiles[] = {
 	{ "FillRectangle", adapt_FillRectangle },
 	{ "Copy1bppTiles", adapt_Copy1bppTiles },
@@ -181,5 +190,6 @@ const ProbeEntry probe_entries_tiles[] = {
 	{ "Func_2057", adapt_Func_2057 },
 	{ "Func_2051", adapt_Func_2051 },
 	{ "Func_2055", adapt_Func_2055 },
+	{ "Func_2046", adapt_Func_2046 },
 	{ NULL, NULL },
 };

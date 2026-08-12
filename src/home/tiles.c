@@ -325,3 +325,32 @@ uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_
 	return Func_2057(hl, frame_c, frame_lo, frame_hi);
 }
 /* <<< factory Func_2055 */
+
+/* >>> factory Func_2046 */
+/* tiles.asm:182-190. Falls through into the already-landed Func_2055 (bit 4
+ * of the incremented counter clear) or Func_2051 (bit 4 set), which
+ * themselves fall through into Func_2057 -- same explicit-parameter
+ * convention as those three: counter_addr stands in for the not-yet-ported
+ * Func_1f96 local at sp+3 (read-modify-write, incremented every call),
+ * hl8 for the local at sp+8 (Func_2055's hl; Func_2051 wants sp+9, exactly
+ * one byte further into the same not-yet-ported frame, so it is derived as
+ * hl8+1 rather than taken as its own parameter), and frame_c/frame_lo/
+ * frame_hi for sp+2/sp+6/sp+7, forwarded unchanged. Only every 16th call
+ * (low nibble of the pre-increment counter is 0) reaches the write; real
+ * callers discard every register Func_2046 leaves behind, so there is no
+ * C return value. */
+void Func_2046(uint16_t counter_addr, uint16_t hl8, uint8_t frame_c,
+	uint8_t frame_lo, uint8_t frame_hi)
+{
+	uint8_t old = gb_read8(counter_addr);
+	uint8_t new_val = (uint8_t)(old + 1u);
+
+	gb_write8(counter_addr, new_val);
+	if ((old & 0x0Fu) != 0u)
+		return;
+	if ((new_val & 0x10u) != 0u)
+		Func_2051((uint16_t)(hl8 + 1u), frame_c, frame_lo, frame_hi);
+	else
+		Func_2055(hl8, frame_c, frame_lo, frame_hi);
+}
+/* <<< factory Func_2046 */

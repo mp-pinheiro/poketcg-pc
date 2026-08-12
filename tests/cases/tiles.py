@@ -227,6 +227,53 @@ CASES["Func_2055"] = [
 ]
 # <<< factory Func_2055
 
+# >>> factory Func_2046
+CONTRACT["Func_2046"] = {"compare": (), "preserve": ()}
+CASES["Func_2046"] = [
+    {"d": 0xC1, "e": 0x00, "hl": 0xC200,
+     "wram": {0xC201: b"\x42"},
+     "vread": {0: {MAP: 1}}},
+    {"d": 0xC3, "e": 0x00,
+     "wram": {0xC300: b"\x07"},
+     "oracle": False,
+     "why": "counter_addr stands in for Func_1f96's not-yet-ported sp+3 "
+            "local; a live call always sees that frame byte as 0 (the "
+            "harness's own zeroed/return-address frame), so a nonzero "
+            "low nibble -- the early-return path -- can only be driven "
+            "through an asm-derived case.",
+     "expect": {0xC300: b"\x08"}},
+    {"d": 0xC3, "e": 0x01, "hl": 0xC302, "a": 0x05, "b": 0x02, "c": 0x01,
+     "wram": {0xC301: b"\x00", 0xC302: b"\x77"},
+     "oracle": False,
+     "why": "frame_c/frame_lo/frame_hi stand in for sp+2/sp+6/sp+7 of the "
+            "same not-yet-ported frame; a live call always sees them (and "
+            "sp+3/sp+8) as 0, so nonzero row/column arithmetic through the "
+            "Func_2055 branch can only be driven through an asm-derived "
+            "case.",
+     "expect": {0xC301: b"\x01"},
+     "expect_vram": {0: {0x98E1: b"\x77"}}},
+    {"d": 0xC3, "e": 0x03, "hl": 0xC304, "a": 0x03, "b": 0x04, "c": 0x00,
+     "wram": {0xC303: b"\x10", 0xC304: b"\x99", 0xC305: b"\x55"},
+     "oracle": False,
+     "why": "old=0x10 selects the Func_2051 branch (bit 4 of the "
+            "incremented counter set); the real counter frame byte is "
+            "always 0 on an isolated call, so this branch -- and its "
+            "hl8+1 (sp+9) dereference -- can only be driven through an "
+            "asm-derived case.",
+     "expect": {0xC303: b"\x11"},
+     "expect_vram": {0: {0x98E0: b"\x55"}}},
+    dict(POISON,
+         wram={0xDDEE: b"\x11"},
+         oracle=False,
+         why="Poisoned frame_c/frame_lo/frame_hi/hl8 alongside a nonzero "
+             "counter low nibble at counter_addr (=de=0xDDEE): proves the "
+             "early return is taken -- and nothing else is touched -- even "
+             "under maximally hostile register state; the counter frame is "
+             "never live-driveable to a nonzero low nibble.",
+         expect={0xDDEE: b"\x12"}),
+]
+# <<< factory Func_2046
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -262,3 +309,11 @@ MUTATIONS["Func_2055"] = {
     "case_ids": ["Func_2055-0"],
 }
 # <<< factory-mutation Func_2055
+# >>> factory-mutation Func_2046
+MUTATIONS["Func_2046"] = {
+    "source_symbol": "Func_2046",
+    "before": "Func_2055(hl8, frame_c, frame_lo, frame_hi);",
+    "after": "Func_2055((uint16_t)(hl8 + 1u), frame_c, frame_lo, frame_hi);",
+    "case_ids": ["Func_2046-0"],
+}
+# <<< factory-mutation Func_2046
