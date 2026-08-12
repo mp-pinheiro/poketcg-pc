@@ -1,0 +1,9 @@
+{
+  "fn": "Func_2055",
+  "case": "tests/cases/tiles.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_2055\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"00\"}}, \"wram\": {\"49408\": \"0042\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_2055\", \"mismatches\": {\"e\": [0, 66], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"Func_2055\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"00\"}}, \"wram\": {\"49408\": \"0042\"}}, \"status\": \"PASS\"}\n"
+}

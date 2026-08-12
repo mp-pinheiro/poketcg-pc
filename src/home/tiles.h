@@ -33,4 +33,10 @@ void LoadFullWidthFontTiles(void);
 /* >>> factory Func_2057 */
 uint8_t Func_2057(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi);
 /* <<< factory Func_2057 */
+/* >>> factory Func_2051 */
+uint8_t Func_2051(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi);
+/* <<< factory Func_2051 */
+/* >>> factory Func_2055 */
+uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi);
+/* <<< factory Func_2055 */
 #endif /* POKETCG_HOME_TILES_H */

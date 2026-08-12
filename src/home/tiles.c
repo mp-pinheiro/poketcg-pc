@@ -303,3 +303,25 @@ uint8_t Func_2057(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_
 	return value;
 }
 /* <<< factory Func_2057 */
+
+/* >>> factory Func_2051 */
+/* tiles.asm:192-194. `jr` tail call into Func_2057 with hl already set to
+ * sp+9 -- an explicit stand-in for that not-yet-ported Func_1f96 local, same
+ * convention as Func_2057's own frame_c/frame_lo/frame_hi (sp+2/sp+6/sp+7).
+ * Once Func_1f96 is ported it passes its own locals for all four params. */
+uint8_t Func_2051(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)
+{
+	return Func_2057(hl, frame_c, frame_lo, frame_hi);
+}
+/* <<< factory Func_2051 */
+
+/* >>> factory Func_2055 */
+/* tiles.asm:196-198. Falls through into Func_2057 with hl set to sp+8 --
+ * same explicit-parameter convention as Func_2051/Func_2057: hl stands in
+ * for the addressed Func_1f96 local, frame_c/frame_lo/frame_hi for its
+ * sp+2/sp+6/sp+7 bytes, all forwarded unchanged. */
+uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)
+{
+	return Func_2057(hl, frame_c, frame_lo, frame_hi);
+}
+/* <<< factory Func_2055 */

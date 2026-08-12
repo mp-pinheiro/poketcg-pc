@@ -195,6 +195,38 @@ CASES["Func_2057"] = [
     ]
 # <<< factory Func_2057
 
+# >>> factory Func_2051
+CONTRACT["Func_2051"] = {"compare": ("d", "e"), "preserve": ("d",)}
+CASES["Func_2051"] = [
+    {"hl": SRC, "wram": {SRC: b"\x00", SRC + 1: b"\x42"}, "vread": {0: {MAP: 1}}},
+    dict(POISON,
+         hl=SRC, wram={SRC: b"\x99"},
+         oracle=False,
+         why=("Func_2051 overwrites hl via `ld hl, sp+9` before falling through into Func_2057, and Func_2057 itself re-derives frame_c/frame_lo/frame_hi from sp+2/sp+6/sp+7 -- every one of those addresses lands in the harness's own synthesized call frame when this routine is invoked in isolation (both the PyBoy oracle's zeroed $CF00-$CFFF window and GBRT's own return-address frame), so a live call can only exercise the all-zero path. Non-zero frame content -- what Func_1f96, once ported, would supply through its own real local-frame bytes -- is asm-derived rather than oracle-run."),
+         expect_regs={"e": 0x99, "d": 0xDD}),
+    dict(POISON,
+         oracle=False,
+         why=("Func_2051 overwrites hl via `ld hl, sp+9` before falling through into Func_2057, and Func_2057 itself re-derives frame_c/frame_lo/frame_hi from sp+2/sp+6/sp+7 -- every one of those addresses lands in the harness's own synthesized call frame when this routine is invoked in isolation (both the PyBoy oracle's zeroed $CF00-$CFFF window and GBRT's own return-address frame), so a live call can only exercise the all-zero path. Non-zero frame content -- what Func_1f96, once ported, would supply through its own real local-frame bytes -- is asm-derived rather than oracle-run."),
+         expect_regs={"e": 0xFF, "d": 0xDD}),
+]
+# <<< factory Func_2051
+
+# >>> factory Func_2055
+CONTRACT["Func_2055"] = {"compare": ("d", "e"), "preserve": ("d",)}
+CASES["Func_2055"] = [
+    {"hl": SRC, "wram": {SRC: b"\x00", SRC + 1: b"\x42"}, "vread": {0: {MAP: 1}}},
+    dict(POISON,
+         hl=SRC, wram={SRC: b"\x99"},
+         oracle=False,
+         why=("Func_2055 overwrites hl via `ld hl, sp+8` before falling through into Func_2057, and Func_2057 itself re-derives frame_c/frame_lo/frame_hi from sp+2/sp+6/sp+7 -- every one of those addresses lands in the harness's own synthesized call frame when this routine is invoked in isolation (both the PyBoy oracle's zeroed $CF00-$CFFF window and GBRT's own return-address frame), so a live call can only exercise the all-zero path. Non-zero frame content -- what Func_1f96, once ported, would supply through its own real local-frame bytes -- is asm-derived rather than oracle-run."),
+         expect_regs={"e": 0x99, "d": 0xDD}),
+    dict(POISON,
+         oracle=False,
+         why=("Func_2055 overwrites hl via `ld hl, sp+8` before falling through into Func_2057, and Func_2057 itself re-derives frame_c/frame_lo/frame_hi from sp+2/sp+6/sp+7 -- every one of those addresses lands in the harness's own synthesized call frame when this routine is invoked in isolation (both the PyBoy oracle's zeroed $CF00-$CFFF window and GBRT's own return-address frame), so a live call can only exercise the all-zero path. Non-zero frame content -- what Func_1f96, once ported, would supply through its own real local-frame bytes -- is asm-derived rather than oracle-run."),
+         expect_regs={"e": 0xFF, "d": 0xDD}),
+]
+# <<< factory Func_2055
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -214,3 +246,19 @@ MUTATIONS["Func_2057"] = {
         "case_ids": ["Func_2057-1"],
     }
 # <<< factory-mutation Func_2057
+# >>> factory-mutation Func_2051
+MUTATIONS["Func_2051"] = {
+    "source_symbol": "Func_2051",
+    "before": "uint8_t Func_2051(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)\n{\n\treturn Func_2057(hl, frame_c, frame_lo, frame_hi);",
+    "after": "uint8_t Func_2051(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)\n{\n\treturn Func_2057((uint16_t)(hl + 1u), frame_c, frame_lo, frame_hi);",
+    "case_ids": ["Func_2051-0"],
+}
+# <<< factory-mutation Func_2051
+# >>> factory-mutation Func_2055
+MUTATIONS["Func_2055"] = {
+    "source_symbol": "Func_2055",
+    "before": "uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)\n{\n\treturn Func_2057(hl, frame_c, frame_lo, frame_hi);",
+    "after": "uint8_t Func_2055(uint16_t hl, uint8_t frame_c, uint8_t frame_lo, uint8_t frame_hi)\n{\n\treturn Func_2057((uint16_t)(hl + 1u), frame_c, frame_lo, frame_hi);",
+    "case_ids": ["Func_2055-0"],
+}
+# <<< factory-mutation Func_2055
