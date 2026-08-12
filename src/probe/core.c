@@ -188,6 +188,26 @@ static void adapt_LoadCardNameToTxRam2_b(ProbeState *s)
 }
 /* <<< factory LoadCardNameToTxRam2_b */
 
+/* >>> factory GetAnimCoordsAndFlags */
+static void adapt_GetAnimCoordsAndFlags(ProbeState *s)
+{
+	AnimCoordsResult r = GetAnimCoordsAndFlags();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory GetAnimCoordsAndFlags */
+
+/* >>> factory PlayBufferedDuelAnimations */
+static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
+{
+	AnimBufferResult r = PlayBufferedDuelAnimations();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayBufferedDuelAnimations */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -213,5 +233,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetCardListInfoBoxText", adapt_SetCardListInfoBoxText },
 	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
+	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
+	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
 	{ NULL, NULL },
 };

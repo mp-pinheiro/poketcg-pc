@@ -1,0 +1,9 @@
+{
+  "fn": "PlayBufferedDuelAnimations",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayBufferedDuelAnimations\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54444\": \"0505\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayBufferedDuelAnimations\", \"mismatches\": {\"a\": [5, 0], \"f\": [192, 112], \"bus\": {\"address\": 54444, \"reference\": \"0505\", \"native\": \"0d05\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54444, 2]]}}}\n",
+  "restored": "{\"fn\": \"PlayBufferedDuelAnimations\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54444\": \"0505\"}}, \"status\": \"PASS\"}\n"
+}

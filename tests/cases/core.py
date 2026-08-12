@@ -264,6 +264,51 @@ CASES["LoadCardNameToTxRam2_b"] = [
 ]
 # <<< factory LoadCardNameToTxRam2_b
 
+# >>> factory GetAnimCoordsAndFlags
+wAnimFlags = 0xD42B
+wDuelAnimationScreen = 0xD4AE
+wDuelAnimDuelistSide = 0xD4AF
+wDuelAnimLocationParam = 0xD4B0
+CONTRACT["GetAnimCoordsAndFlags"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["GetAnimCoordsAndFlags"] = [
+    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}},
+    dict(POISON, wram={wAnimFlags: b"\x04", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}),
+    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x01", wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x03"}},
+    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x02", wDuelAnimDuelistSide: b"\xc3", wDuelAnimLocationParam: b"\x05"}},
+    {"wram": {wAnimFlags: b"\x0c", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00"}},
+    {"wram": {wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00", wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x00"}},
+]
+# <<< factory GetAnimCoordsAndFlags
+
+# >>> factory PlayBufferedDuelAnimations
+wDuelAnimBufferCurPos = 0xD4AC
+wDuelAnimBufferSize = 0xD4AD
+wDuelAnimBuffer = 0xD42C
+wActiveScreenAnim = 0xD42A
+wAnimationQueue = 0xD423
+wd4c0 = 0xD4C0
+CONTRACT["PlayBufferedDuelAnimations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PlayBufferedDuelAnimations"] = [
+    {"wram": {wDuelAnimBufferCurPos: b"\x05", wDuelAnimBufferSize: b"\x05"}},
+    dict(POISON, wram={wDuelAnimBufferCurPos: b"\x09", wDuelAnimBufferSize: b"\x09"}),
+    {"wram": {
+        wDuelAnimBufferCurPos: b"\x00", wDuelAnimBufferSize: b"\x08",
+        wDuelAnimBuffer: bytes([0x05, 0x01, 0xc2, 0x02, 0x10, 0x00, 0x00, 0x07]),
+        wActiveScreenAnim: b"\x00", wd4c0: b"\x00", wAnimationQueue: b"\x00" * 7,
+    }},
+    {"wram": {
+        wDuelAnimBufferCurPos: b"\x78", wDuelAnimBufferSize: b"\x7f",
+        wDuelAnimBuffer + 120: bytes([0x02, 0x00, 0xc3, 0x01, 0x00, 0x00, 0x00, 0x01]),
+        wActiveScreenAnim: b"\x00", wd4c0: b"\x00", wAnimationQueue: b"\x00" * 7,
+    }},
+    {"wram": {
+        wDuelAnimBufferCurPos: b"\x00", wDuelAnimBufferSize: b"\x08",
+        wDuelAnimBuffer: bytes([0x01, 0x00, 0xc2, 0x00, 0x00, 0x00, 0x00, 0x07]),
+        wActiveScreenAnim: b"\xff", wd4c0: b"\xff", wAnimationQueue: b"\xff" * 7,
+    }},
+]
+# <<< factory PlayBufferedDuelAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -460,3 +505,19 @@ MUTATIONS["LoadCardNameToTxRam2_b"] = {
     "case_ids": ["LoadCardNameToTxRam2_b-0", "LoadCardNameToTxRam2_b-1", "LoadCardNameToTxRam2_b-2"],
 }
 # <<< factory-mutation LoadCardNameToTxRam2_b
+# >>> factory-mutation GetAnimCoordsAndFlags
+MUTATIONS["GetAnimCoordsAndFlags"] = {
+    "source_symbol": "GetAnimCoordsAndFlags",
+    "before": "if (wDuelAnimDuelistSide != PLAYER_TURN)",
+    "after": "if (wDuelAnimDuelistSide == PLAYER_TURN)",
+    "case_ids": ["GetAnimCoordsAndFlags-0", "GetAnimCoordsAndFlags-2", "GetAnimCoordsAndFlags-3", "GetAnimCoordsAndFlags-5"],
+}
+# <<< factory-mutation GetAnimCoordsAndFlags
+# >>> factory-mutation PlayBufferedDuelAnimations
+MUTATIONS["PlayBufferedDuelAnimations"] = {
+    "source_symbol": "PlayBufferedDuelAnimations",
+    "before": "if (cur == size) {",
+    "after": "if (cur != size) {",
+    "case_ids": ["PlayBufferedDuelAnimations-0", "PlayBufferedDuelAnimations-1"],
+}
+# <<< factory-mutation PlayBufferedDuelAnimations

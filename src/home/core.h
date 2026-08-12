@@ -78,4 +78,12 @@ void LoadCardNameToTxRam2(uint8_t a);
 /* >>> factory LoadCardNameToTxRam2_b */
 void LoadCardNameToTxRam2_b(uint8_t a);
 /* <<< factory LoadCardNameToTxRam2_b */
+/* >>> factory GetAnimCoordsAndFlags */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; } AnimCoordsResult;
+AnimCoordsResult GetAnimCoordsAndFlags(void);
+/* <<< factory GetAnimCoordsAndFlags */
+/* >>> factory PlayBufferedDuelAnimations */
+typedef struct { uint8_t a; uint8_t f; } AnimBufferResult;
+AnimBufferResult PlayBufferedDuelAnimations(void);
+/* <<< factory PlayBufferedDuelAnimations */
 #endif /* POKETCG_HOME_CORE_H */

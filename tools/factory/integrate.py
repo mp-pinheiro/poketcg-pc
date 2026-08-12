@@ -94,6 +94,31 @@ def land(packet: dict) -> None:
     print(f"landed {packet['id']} at {head[:12]}")
 
 
+def assert_fast_forward() -> None:
+    """Abort unless local ``main`` is a descendant of ``main@origin``.
+
+    The release bot appends ``chore(release)`` commits to main. A gate run
+    takes ~50 s — long enough for one to land after the last fetch — and
+    pushing a head that is not a descendant moves the bookmark sideways,
+    dropping that release out of main's history (observed: v0.48.0). Re-fetch
+    and check here, immediately before the push, where the window is smallest.
+
+    Aborting rather than auto-rebasing is deliberate: reordering commits
+    around a published, tagged release is a judgment call, not something a
+    batch tool should do unattended.
+    """
+    run(["jj", "git", "fetch"], check_message="fetch before push failed")
+    ahead = run(["jj", "log", "--no-graph", "-r", "main@origin ~ ::main",
+                 "-T", 'commit_id.short() ++ "\\n"']).stdout.split()
+    if ahead:
+        raise SystemExit(
+            f"STOP-THE-LINE push aborted: main@origin has {len(ahead)} commit(s) "
+            f"absent from local main ({', '.join(ahead[:3])}). Origin advanced — "
+            f"almost certainly a release. Rebase local commits onto main@origin, "
+            f"re-run the gate, then integrate again. Landed packets stay "
+            f"committed locally; nothing is lost.")
+
+
 def gate_and_push(push: bool) -> None:
     run([sys.executable, "tools/lint_adapters.py"], check_message="adapter lint failed")
     run(["just", "oracle-fn-all"], check_message="GBRT inventory gate failed")
@@ -107,7 +132,8 @@ def gate_and_push(push: bool) -> None:
             check_message="gate refresh commit failed")
         run(["jj", "bookmark", "set", "main", "-r", "@-"])
     if push:
-        run(["jj", "git", "push"], check_message="push failed")
+        assert_fast_forward()
+        run(["jj", "git", "push", "--bookmark", "main"], check_message="push failed")
         print("pushed main")
 
 

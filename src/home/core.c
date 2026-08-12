@@ -121,6 +121,22 @@ static uint32_t duel_save_total_size(void)
 #define PRINT_SORT_NUMBER_IN_CARD_LIST 0x5aa2u
 
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/duel_animation_core.h"
+#include "home/play_animation.h"
+
+#define ANIM_DATA_BANK 7u
+#define ANIM_COORDS_INDEX_ADDR 0x49e0u
+#define ANIM_COORDS_ADDR 0x4a04u
+#define DUEL_ANIM_STRUCT_SIZE 8u
+#define PLAYER_TURN 0xc2u
+#define SPRITE_ANIM_FLAG_X_INVERTED 0x01u
+#define SPRITE_ANIM_FLAG_Y_INVERTED 0x02u
+#define SPRITE_ANIM_FLAG_CENTERED   0x04u
+#define SPRITE_ANIM_FLAG_3          0x08u
+#define SPRITE_ANIM_FLAG_X_FLIP     0x20u
+#define SPRITE_ANIM_FLAG_Y_FLIP     0x40u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -439,3 +455,61 @@ void LoadCardNameToTxRam2_b(uint8_t a)
 	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
 }
 /* <<< factory LoadCardNameToTxRam2_b */
+
+/* >>> factory GetAnimCoordsAndFlags */
+/* core.asm:183-229 */
+AnimCoordsResult GetAnimCoordsAndFlags(void)
+{
+	uint8_t index = 0u;
+	if (!(wAnimFlags & SPRITE_ANIM_FLAG_CENTERED)) {
+		uint8_t c = (uint8_t)(wDuelAnimationScreen * 12u);
+		if (wDuelAnimDuelistSide != PLAYER_TURN)
+			c = (uint8_t)(c + 6u);
+		c = (uint8_t)(c + wDuelAnimLocationParam);
+		index = rom_ptr(ANIM_DATA_BANK, ANIM_COORDS_INDEX_ADDR)[c];
+	}
+	const uint8_t *entry = rom_ptr(ANIM_DATA_BANK, ANIM_COORDS_ADDR) + (uint16_t)index * 3u;
+	uint8_t x = entry[0];
+	uint8_t y = entry[1];
+	uint8_t flags = (uint8_t)(wAnimFlags & entry[2]);
+	uint8_t f = (uint8_t)((flags == 0u ? 0x80u : 0u) | 0x20u);
+	return (AnimCoordsResult){flags, f, x, y};
+}
+/* <<< factory GetAnimCoordsAndFlags */
+
+/* >>> factory PlayBufferedDuelAnimations */
+/* core.asm:311-353 */
+AnimBufferResult PlayBufferedDuelAnimations(void)
+{
+	uint8_t a, f;
+	for (;;) {
+		uint8_t size = wDuelAnimBufferSize;
+		uint8_t cur = wDuelAnimBufferCurPos;
+		if (cur == size) {
+			a = cur;
+			f = 0xc0u;
+			break;
+		}
+
+		uint16_t src = (uint16_t)(wDuelAnimBuffer_ADDR + cur);
+		wDuelAnimBufferCurPos = (uint8_t)((cur + DUEL_ANIM_STRUCT_SIZE) & 0x7fu);
+
+		wTempAnimation = gb_read8(src);
+		wDuelAnimationScreen = gb_read8((uint16_t)(src + 1u));
+		wDuelAnimDuelistSide = gb_read8((uint16_t)(src + 2u));
+		wDuelAnimLocationParam = gb_read8((uint16_t)(src + 3u));
+		wDuelAnimDamage = gb_read8((uint16_t)(src + 4u));
+		gb_write8((uint16_t)(wDuelAnimDamage_ADDR + 1u), gb_read8((uint16_t)(src + 5u)));
+		wDuelAnimSetScreen = gb_read8((uint16_t)(src + 6u));
+		wDuelAnimReturnBank = gb_read8((uint16_t)(src + 7u));
+
+		PlayLoadedDuelAnimation();
+		AnimationStatusResult r = CheckAnyAnimationPlaying();
+		a = r.a;
+		f = r.f;
+		if (f & 0x10u)
+			break;
+	}
+	return (AnimBufferResult){a, f};
+}
+/* <<< factory PlayBufferedDuelAnimations */
