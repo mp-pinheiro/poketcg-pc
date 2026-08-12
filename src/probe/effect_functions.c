@@ -22,8 +22,37 @@ static void adapt_SetExpectedAIDamage(ProbeState *s)
 /* <<< factory SetExpectedAIDamage */
 
 
+/* >>> factory IsPlayerTurn */
+static void adapt_IsPlayerTurn(ProbeState *s)
+{
+	IsPlayerTurnResult r = IsPlayerTurn();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory IsPlayerTurn */
+
+
+/* >>> factory UpdateExpectedAIDamage_AccountForPoison */
+static void adapt_UpdateExpectedAIDamage_AccountForPoison(ProbeState *s)
+{
+	UpdateExpectedAIDamage_AccountForPoison(s->a, s->d, s->e);
+}
+/* <<< factory UpdateExpectedAIDamage_AccountForPoison */
+
+/* >>> factory ApplySubstatus1ToAttackingCard */
+static void adapt_ApplySubstatus1ToAttackingCard(ProbeState *s)
+{
+	s->hl = ApplySubstatus1ToAttackingCard(s->a);
+}
+/* <<< factory ApplySubstatus1ToAttackingCard */
+
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
+	{ "UpdateExpectedAIDamage_AccountForPoison", adapt_UpdateExpectedAIDamage_AccountForPoison },
+	{ "IsPlayerTurn", adapt_IsPlayerTurn },
+	{ "ApplySubstatus1ToAttackingCard", adapt_ApplySubstatus1ToAttackingCard },
 	{ NULL, NULL },
 };

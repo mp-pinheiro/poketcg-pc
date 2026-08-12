@@ -20,7 +20,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import QUEUE, ROOT, blocked_routines, write_json  # noqa: E402
+from common import (  # noqa: E402
+    QUEUE, ROOT, block_routine, blocked_routines, write_json,
+)
 
 PRET = ROOT / "poketcg"
 MAX_ROUTINES = 8
@@ -295,11 +297,19 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
     return packets
 
 
-def attach_dependencies(packets: list[dict]) -> None:
-    """Fill per-routine callee prototypes from the inventory dep lists."""
+def attach_dependencies(packets: list[dict]) -> list[dict]:
+    """Fill callee prototypes; drop routines whose callees cannot link.
+
+    A callee that is a real code label but has no C prototype is unavailable:
+    either scope-excluded with no C equivalent (``JumpToFunctionInTable``) or
+    simply unported. The frontier counts excluded callees as satisfied, so it
+    offers such routines even though they cannot link. Block them here.
+    """
     inventory = json.loads((ROOT / "site/data/inventory.json").read_text())
     functions = inventory["functions"]
+    kept: list[dict] = []
     for packet in packets:
+        usable = []
         for routine in packet["routines"]:
             info = functions.get(routine["name"], {})
             deps = list(info.get("deps", []))
@@ -307,15 +317,30 @@ def attach_dependencies(packets: list[dict]) -> None:
             routine["fallthrough"] = fallthrough
             if fallthrough and fallthrough not in deps:
                 deps.append(fallthrough)
-            callees = []
+            callees, unavailable = [], []
             for dep in sorted(set(deps)):
                 proto = prototype_for(dep)
+                if proto is None and dep in functions:
+                    unavailable.append(dep)
                 callees.append({
                     "name": dep,
                     "header": proto[0] if proto else None,
                     "c": proto[1] if proto else None,
                 })
             routine["callees"] = callees
+            if unavailable:
+                block_routine(routine["name"],
+                              f"callee has no C symbol: {', '.join(unavailable)}",
+                              "port or transform the named callee")
+                continue
+            usable.append(routine)
+        if not usable:
+            continue
+        packet["routines"] = usable
+        packet["bytes"] = sum(r["size"] for r in usable)
+        packet["unlock"] = sum(r["unlock"] for r in usable)
+        kept.append(packet)
+    return kept
 
 
 def main() -> int:
@@ -332,7 +357,7 @@ def main() -> int:
     args = parser.parse_args()
 
     packets = build_packets(args.dir, args.max_routines, args.max_asm_lines, args.limit)
-    attach_dependencies(packets)
+    packets = attach_dependencies(packets)
     written = []
     for packet in packets:
         path = QUEUE / f"{packet['id']}.json"

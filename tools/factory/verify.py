@@ -35,6 +35,21 @@ def _tail(text: str) -> str:
     return text[-TAIL:] if len(text) > TAIL else text
 
 
+
+
+def compile_cause(output: str) -> str:
+    """Diagnostics only: ninja echoes multi-kB link command lines that would
+    otherwise crowd the real cause out of the trimmed feedback."""
+    keep = [
+        line for line in output.splitlines()
+        if ("error:" in line or "undefined reference" in line
+            or "warning:" in line or line.startswith("src/")
+            or "In function" in line)
+        and " -o " not in line
+    ]
+    return "\n".join(keep) if keep else output
+
+
 def verdict(kind: str, detail: str, routine: str | None = None) -> dict:
     return {"status": kind, "detail": _tail(detail), "routine": routine}
 
@@ -73,7 +88,7 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
 
     built = lanes.build(lane)
     if built.returncode != 0:
-        return verdict("compile", built.stdout + built.stderr)
+        return verdict("compile", compile_cause(built.stdout + built.stderr))
 
     audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine"],
                 lane)

@@ -9,4 +9,14 @@ void UpdateExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e);
 /* >>> factory SetExpectedAIDamage */
 void SetExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory SetExpectedAIDamage */
+/* >>> factory IsPlayerTurn */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } IsPlayerTurnResult;
+IsPlayerTurnResult IsPlayerTurn(void);
+/* <<< factory IsPlayerTurn */
+/* >>> factory UpdateExpectedAIDamage_AccountForPoison */
+void UpdateExpectedAIDamage_AccountForPoison(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory UpdateExpectedAIDamage_AccountForPoison */
+/* >>> factory ApplySubstatus1ToAttackingCard */
+uint16_t ApplySubstatus1ToAttackingCard(uint8_t a);
+/* <<< factory ApplySubstatus1ToAttackingCard */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
