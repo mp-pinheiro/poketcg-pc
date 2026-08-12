@@ -25,9 +25,25 @@ static void adapt_SwitchAttackPage(ProbeState *s)
 }
 /* <<< factory SwitchAttackPage */
 
+/* >>> factory CopyCGBCardPalette */
+static void adapt_CopyCGBCardPalette(ProbeState *s)
+{
+	CopyCGBCardPalette(s->a);
+}
+/* <<< factory CopyCGBCardPalette */
+
+/* >>> factory CreateCardAttrBlkPacket_DataSet */
+static void adapt_CreateCardAttrBlkPacket_DataSet(ProbeState *s)
+{
+	s->hl = CreateCardAttrBlkPacket_DataSet(s->hl, s->a, s->d, s->e);
+}
+/* <<< factory CreateCardAttrBlkPacket_DataSet */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
 	{ "SwitchAttackPage", adapt_SwitchAttackPage },
+	{ "CopyCGBCardPalette", adapt_CopyCGBCardPalette },
+	{ "CreateCardAttrBlkPacket_DataSet", adapt_CreateCardAttrBlkPacket_DataSet },
 	{ NULL, NULL },
 };

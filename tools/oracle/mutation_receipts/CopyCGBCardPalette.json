@@ -1,0 +1,9 @@
+{
+  "fn": "CopyCGBCardPalette",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyCGBCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51952\": \"0001020304050607\", \"52771\": \"0001020304050607\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyCGBCardPalette\", \"mismatches\": {\"bus\": {\"address\": 51953, \"reference\": \"000102030405\", \"native\": \"000001020304\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[51952, 8], [52771, 8]]}}}\n",
+  "restored": "{\"fn\": \"CopyCGBCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51952\": \"0001020304050607\", \"52771\": \"0001020304050607\"}}, \"status\": \"PASS\"}\n"
+}

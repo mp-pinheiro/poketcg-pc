@@ -37,6 +37,24 @@ CASES["SwitchAttackPage"] = [
 ]
 # <<< factory SwitchAttackPage
 
+# >>> factory CopyCGBCardPalette
+CONTRACT["CopyCGBCardPalette"] = {"compare": (), "preserve": ()}
+CASES["CopyCGBCardPalette"] = [
+    {"wram": {0xCE23: bytes(range(8))}, "read": {0xCAF0: 8}},
+    dict(POISON, a=2, wram={0xCE23: bytes(range(0x10, 0x18))},
+         read={0xCAF0 + 16: 8}),
+]
+# <<< factory CopyCGBCardPalette
+
+# >>> factory CreateCardAttrBlkPacket_DataSet
+CONTRACT["CreateCardAttrBlkPacket_DataSet"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
+CASES["CreateCardAttrBlkPacket_DataSet"] = [
+    {"hl": 0xC100, "a": 0, "d": 0, "e": 0, "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
+    dict(POISON, hl=0xC100, wram={0xC100: b"\x00" * 6}, read={0xC100: 6}),
+    {"hl": 0xC100, "a": 0x12, "d": 0x30, "e": 0x40, "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
+]
+# <<< factory CreateCardAttrBlkPacket_DataSet
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +83,19 @@ MUTATIONS["SwitchAttackPage"] = {
 	"case_ids": ["SwitchAttackPage-0", "SwitchAttackPage-1"],
 }
 # <<< factory-mutation SwitchAttackPage
+# >>> factory-mutation CopyCGBCardPalette
+MUTATIONS["CopyCGBCardPalette"] = {
+    "source_symbol": "CopyCGBCardPalette",
+    "before": "wBackgroundPalettesCGB_ADDR + (uint16_t)(a * PAL_SIZE)",
+    "after": "wBackgroundPalettesCGB_ADDR + (uint16_t)(a * PAL_SIZE) + 1u",
+    "case_ids": ["CopyCGBCardPalette-0", "CopyCGBCardPalette-1"],
+}
+# <<< factory-mutation CopyCGBCardPalette
+# >>> factory-mutation CreateCardAttrBlkPacket_DataSet
+MUTATIONS["CreateCardAttrBlkPacket_DataSet"] = {
+    "source_symbol": "CreateCardAttrBlkPacket_DataSet",
+    "before": "gb_write8(hl++, (uint8_t)(d + 7u));",
+    "after": "gb_write8(hl++, (uint8_t)(d + 8u));",
+    "case_ids": ["CreateCardAttrBlkPacket_DataSet-2"],
+}
+# <<< factory-mutation CreateCardAttrBlkPacket_DataSet
