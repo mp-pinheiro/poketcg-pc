@@ -160,6 +160,56 @@ def remove(root: Path, packet: dict, fns: list[str]) -> None:
     paths["cases"].write_text(cases_text)
 
 
+def _block_body(text: str, open_mark: str, close_mark: str, fn: str, kind: str) -> str:
+    span = _span(text, open_mark, close_mark)
+    if span is None:
+        raise SurgeryError(f"{fn}: bundle is missing its {kind} block "
+                           f"({open_mark!r} not found)")
+    lines = text[span[0]:span[1]].splitlines()
+    return "\n".join(lines[1:-1])
+
+
+def extract(root: Path, packet: dict) -> dict:
+    """Inverse of apply(): read this packet's marked fragments back out of a
+    tree. Returns the same shape apply() consumes: {"statics": str|None,
+    "routines": {fn: {"C","H","PROBE","CASES","MUTATION"}}}.
+
+    Statics are extracted whole (the lane's already-merged block, a superset
+    of whatever the destination already has) rather than omitted: apply()'s
+    statics merge is line-deduplicating, so re-applying the full merged text
+    to a fresh destination adds only genuinely new lines and never
+    duplicates — the mechanism that lets two lanes' packets for the same
+    basename compose instead of one clobbering the other's #define/#include.
+    """
+    basename = packet["basename"]
+    paths = quad_paths(root, basename)
+    c_text = paths["c"].read_text()
+    h_text = paths["h"].read_text()
+    probe_text = paths["probe"].read_text()
+    cases_text = paths["cases"].read_text()
+
+    statics_span = _span(c_text, "/* >>> factory statics */", "/* <<< factory statics */")
+    statics = None
+    if statics_span:
+        lines = c_text[statics_span[0]:statics_span[1]].splitlines()
+        statics = "\n".join(lines[1:-1])
+
+    routines: dict[str, dict[str, str]] = {}
+    for routine in packet["routines"]:
+        fn = routine["name"]
+        open_c, close_c = f"/* >>> factory {fn} */", f"/* <<< factory {fn} */"
+        open_py, close_py = f"# >>> factory {fn}", f"# <<< factory {fn}"
+        open_mut = f"# >>> factory-mutation {fn}"
+        close_mut = f"# <<< factory-mutation {fn}"
+        routines[fn] = {
+            "C": _block_body(c_text, open_c, close_c, fn, "C"),
+            "H": _block_body(h_text, open_c, close_c, fn, "H"),
+            "PROBE": _block_body(probe_text, open_c, close_c, fn, "PROBE"),
+            "CASES": _block_body(cases_text, open_py, close_py, fn, "CASES"),
+            "MUTATION": _block_body(cases_text, open_mut, close_mut, fn, "MUTATION"),
+        }
+    return {"statics": statics, "routines": routines}
+
 
 def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
     """Write parsed blocks into the packet's four files under ``root``."""

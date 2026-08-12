@@ -44,7 +44,7 @@ def translate_many(prompts):                     # translation MUST be one
     return parallel([(lambda p=p: completion(p, model="default"))
                      for p in prompts])          # parallel() batch per round
 
-def build(limit=8, extra=()):
+def build(limit=16, extra=()):
     argv = ["python3", "tools/factory/packet.py", "build", "--max-routines", "3",
             "--max-asm-lines", "140", "--limit", str(limit), "--json", *extra]
     return json.loads(subprocess.run(argv, capture_output=True, text=True,
@@ -55,14 +55,14 @@ while pending:
     wave = run_wave(pending, translate_many, lanes_count=10, max_rounds=3,
                     model="default")
     subprocess.run(["python3", "tools/factory/integrate.py"], check=False)
-    # deferred packets need a landed tip; re-run them after integrating
-    pending = wave["deferred"] or build()
+    pending = build()
 ```
 
-`run_wave` returns `{"results": [...], "deferred": [ids]}`. **Deferred ids are
-not optional to handle** — a second packet of the same basename is skipped
-until the first lands, and dropping them silently strands work. The loop above
-re-runs them after `integrate.py`.
+`run_wave` returns `{"results": [...]}`. Bundles are composable
+(`surgery.extract`/`apply`, additive per-routine fragments): two packets of
+the same basename may run in the same wave and both land without one
+overwriting the other, so the loop simply rebuilds the frontier each
+iteration — no deferral bookkeeping needed.
 
 Serial, in the repo root:
 
@@ -70,8 +70,9 @@ Serial, in the repo root:
 python3 tools/factory/integrate.py            # land greens, gate, push
 python3 tools/factory/issues.py sync          # close fully-landed issues
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
-python3 tools/factory/driver.py status        # queue state incl. deferred
+python3 tools/factory/driver.py status        # queue state
 ```
+
 
 `integrate.py` runs the adapter lint, the full GBRT inventory gate (~12 s), and
 the schema audit BEFORE any push; a red stops the line. Run
