@@ -1,0 +1,9 @@
+{
+  "fn": "JPWriteByteToBGMap0",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"JPWriteByteToBGMap0\", \"registers\": {\"a\": 80, \"b\": 5, \"c\": 3, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39013\": \"50\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"JPWriteByteToBGMap0\", \"mismatches\": {\"bus\": {\"address\": 39013, \"reference\": \"50\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[39013, 1]]}}}\n",
+  "restored": "{\"fn\": \"JPWriteByteToBGMap0\", \"registers\": {\"a\": 80, \"b\": 5, \"c\": 3, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39013\": \"50\"}}, \"status\": \"PASS\"}\n"
+}

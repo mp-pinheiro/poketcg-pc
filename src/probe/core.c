@@ -55,6 +55,21 @@ static void adapt_LoadSavedDuelDataFromDE(ProbeState *s)
 }
 /* <<< factory LoadSavedDuelDataFromDE */
 
+/* >>> factory SetBGP7OrSGB2ToCardPalette */
+static void adapt_SetBGP7OrSGB2ToCardPalette(ProbeState *s)
+{
+	(void)s;
+	SetBGP7OrSGB2ToCardPalette();
+}
+/* <<< factory SetBGP7OrSGB2ToCardPalette */
+
+/* >>> factory JPWriteByteToBGMap0 */
+static void adapt_JPWriteByteToBGMap0(ProbeState *s)
+{
+	JPWriteByteToBGMap0(s->a, s->b, s->c);
+}
+/* <<< factory JPWriteByteToBGMap0 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -63,5 +78,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CreateCardAttrBlkPacket_DataSet", adapt_CreateCardAttrBlkPacket_DataSet },
 	{ "SaveDuelDataToDE", adapt_SaveDuelDataToDE },
 	{ "LoadSavedDuelDataFromDE", adapt_LoadSavedDuelDataFromDE },
+	{ "SetBGP7OrSGB2ToCardPalette", adapt_SetBGP7OrSGB2ToCardPalette },
+	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
 	{ NULL, NULL },
 };

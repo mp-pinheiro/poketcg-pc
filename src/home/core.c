@@ -79,6 +79,13 @@ static uint32_t duel_save_total_size(void)
 }
 
 #define SAVE_DUEL_DATA_SIZE_MINUS6 0x00FAu
+
+#include "home/bg_map.h"
+
+#define CONSOLE_DMG 0x00u
+#define CONSOLE_SGB 0x01u
+#define ATTR_BLK 0x04u
+#define PAL_SIZE 4u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -194,3 +201,36 @@ void LoadSavedDuelDataFromDE(uint16_t de)
 	DisableSRAM();
 }
 /* <<< factory LoadSavedDuelDataFromDE */
+
+/* >>> factory SetBGP7OrSGB2ToCardPalette */
+/* core.asm:3934-3963 */
+void SetBGP7OrSGB2ToCardPalette(void)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+
+	if (console == CONSOLE_DMG)
+		return;
+
+	if (console == CONSOLE_SGB) {
+		uint16_t hl = wCardPalette_ADDR;
+		uint16_t de = (uint16_t)(wTempSGBPacket_ADDR + 1u);
+		uint32_t n = PAL_SIZE;
+
+		do {
+			uint8_t value = gb_read8(hl++);
+			gb_write8(de++, value);
+		} while (--n);
+		return;
+	}
+
+	CopyCGBCardPalette(0x07u);
+}
+/* <<< factory SetBGP7OrSGB2ToCardPalette */
+
+/* >>> factory JPWriteByteToBGMap0 */
+/* core.asm:4219-4221 */
+void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
+{
+	WriteByteToBGMap0(a, b, c);
+}
+/* <<< factory JPWriteByteToBGMap0 */

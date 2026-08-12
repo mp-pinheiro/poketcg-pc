@@ -24,4 +24,10 @@ void SaveDuelDataToDE(uint16_t de);
 /* >>> factory LoadSavedDuelDataFromDE */
 void LoadSavedDuelDataFromDE(uint16_t de);
 /* <<< factory LoadSavedDuelDataFromDE */
+/* >>> factory SetBGP7OrSGB2ToCardPalette */
+void SetBGP7OrSGB2ToCardPalette(void);
+/* <<< factory SetBGP7OrSGB2ToCardPalette */
+/* >>> factory JPWriteByteToBGMap0 */
+void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory JPWriteByteToBGMap0 */
 #endif /* POKETCG_HOME_CORE_H */

@@ -82,6 +82,24 @@ CASES["LoadSavedDuelDataFromDE"] = [
 ]
 # <<< factory LoadSavedDuelDataFromDE
 
+# >>> factory SetBGP7OrSGB2ToCardPalette
+CONTRACT["SetBGP7OrSGB2ToCardPalette"] = {"compare": (), "preserve": ()}
+CASES["SetBGP7OrSGB2ToCardPalette"] = [
+	{"wram": {0xCAB4: bytes([0x00])}},
+	{"wram": {0xCAB4: bytes([0x01]), 0xCE23: bytes([0x11, 0x22, 0x33, 0x44])},
+	 "read": {0xCAE1: 4}},
+	dict(POISON, wram={0xCAB4: bytes([0x02])}),
+]
+# <<< factory SetBGP7OrSGB2ToCardPalette
+
+# >>> factory JPWriteByteToBGMap0
+CONTRACT["JPWriteByteToBGMap0"] = {"compare": (), "preserve": ()}
+CASES["JPWriteByteToBGMap0"] = [
+	{"a": 0x41, "b": 0, "c": 0, "read": {0x9800: 1}},
+	dict(POISON, a=0x50, b=5, c=3, read={0x9800 + 3 * 32 + 5: 1}),
+]
+# <<< factory JPWriteByteToBGMap0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -142,3 +160,19 @@ MUTATIONS["LoadSavedDuelDataFromDE"] = {
 	"case_ids": ["LoadSavedDuelDataFromDE-0"],
 }
 # <<< factory-mutation LoadSavedDuelDataFromDE
+# >>> factory-mutation SetBGP7OrSGB2ToCardPalette
+MUTATIONS["SetBGP7OrSGB2ToCardPalette"] = {
+	"source_symbol": "SetBGP7OrSGB2ToCardPalette",
+	"before": "if (console == CONSOLE_SGB) {",
+	"after": "if (console != CONSOLE_SGB) {",
+	"case_ids": ["SetBGP7OrSGB2ToCardPalette-1"],
+}
+# <<< factory-mutation SetBGP7OrSGB2ToCardPalette
+# >>> factory-mutation JPWriteByteToBGMap0
+MUTATIONS["JPWriteByteToBGMap0"] = {
+	"source_symbol": "JPWriteByteToBGMap0",
+	"before": "WriteByteToBGMap0(a, b, c);",
+	"after": "WriteByteToBGMap0(a, c, b);",
+	"case_ids": ["JPWriteByteToBGMap0-1"],
+}
+# <<< factory-mutation JPWriteByteToBGMap0

@@ -1,0 +1,9 @@
+{
+  "fn": "SetBGP7OrSGB2ToCardPalette",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetBGP7OrSGB2ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51937\": \"11223344\", \"52771\": \"11223344\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetBGP7OrSGB2ToCardPalette\", \"mismatches\": {\"bus\": {\"address\": 51937, \"reference\": \"011122334411\", \"native\": \"010000000011\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51892, 1], [51937, 4], [52771, 4]]}}}\n",
+  "restored": "{\"fn\": \"SetBGP7OrSGB2ToCardPalette\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51937\": \"11223344\", \"52771\": \"11223344\"}}, \"status\": \"PASS\"}\n"
+}
