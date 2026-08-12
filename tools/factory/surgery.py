@@ -108,6 +108,8 @@ def ensure_skeletons(root: Path, packet: dict) -> None:
 
 ADAPTER_NAME = re.compile(r"\badapt_[A-Za-z0-9_]+\b")
 
+DEFINE_NAME = re.compile(r"^\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\b")
+
 INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
 
 
@@ -231,8 +233,24 @@ def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
             body = c_text[span[0]:span[1]].splitlines()[1:-1]
             existing_lines = [l for l in body if l.strip() != close_s]
         merged = list(existing_lines)
+        defined: dict[str, str] = {}
+        for line in merged:
+            m = DEFINE_NAME.match(line)
+            if m:
+                defined[m.group(1)] = line
         for line in statics.rstrip().splitlines():
             if line.strip() and line not in merged:
+                m = DEFINE_NAME.match(line)
+                if m:
+                    name = m.group(1)
+                    prior = defined.get(name)
+                    if prior is not None:
+                        raise SurgeryError(
+                            f"{basename}: conflicting #define {name}: "
+                            f"{prior!r} already merged, new packet emits "
+                            f"{line!r} — reuse the existing constant instead "
+                            f"of redefining it")
+                    defined[name] = line
                 merged.append(line)
             elif not line.strip() and (not merged or merged[-1].strip()):
                 merged.append(line)
