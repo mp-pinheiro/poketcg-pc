@@ -213,6 +213,98 @@ def extract(root: Path, packet: dict) -> dict:
     return {"statics": statics, "routines": routines}
 
 
+CONDITIONAL = re.compile(r"\s*#\s*(if|ifdef|ifndef|else|elif|endif)\b")
+TYPEDEF_NAME = re.compile(
+    r"^\}\s*([A-Za-z_]\w*)\s*;"                        # } Name;
+    r"|^typedef\b[^{]*?\(\s*\*\s*([A-Za-z_]\w*)\s*\)"  # typedef ret (*Name)(args);
+    r"|^typedef\s+[^{(]*?\b([A-Za-z_]\w*)\s*;\s*$")    # typedef base Name;
+
+
+def _stanzas(lines: list[str]) -> list[list[str]]:
+    out: list[list[str]] = []
+    cur: list[str] = []
+    for line in lines:
+        if line.strip():
+            cur.append(line)
+        elif cur:
+            out.append(cur)
+            cur = []
+    if cur:
+        out.append(cur)
+    return out
+
+
+def _typedef_names(stanza: list[str]) -> list[str]:
+    names = []
+    for line in stanza:
+        m = TYPEDEF_NAME.match(line)
+        if m:
+            names.append(m.group(1) or m.group(2) or m.group(3))
+    return names
+
+
+def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[str]:
+    """Merge statics at stanza (blank-line-delimited block) granularity.
+
+    Line-level dedup corrupts multi-line constructs: a second packet's
+    ``#endif`` or ``} Name;`` matches an already-present line and is dropped,
+    orphaning the rest of its construct. Stanzas dedup whole or not at all.
+    Rejected outright, with feedback the model can act on:
+    - preprocessor conditionals (their halves interleave across merges),
+    - a #define name re-emitted with a different value,
+    - a typedef name re-emitted with a different body.
+    """
+    for line in new:
+        if CONDITIONAL.match(line):
+            raise SurgeryError(
+                f"{basename}: preprocessor conditionals are not allowed in "
+                f"STATICS ({line.strip()!r}) — emit plain #define lines; the "
+                f"merge dedups identical ones")
+    old_stanzas = _stanzas(existing)
+    seen = {"\n".join(s) for s in old_stanzas}
+    defined: dict[str, str] = {}
+    typedefs: dict[str, str] = {}
+    for stanza in old_stanzas:
+        for line in stanza:
+            m = DEFINE_NAME.match(line)
+            if m:
+                defined[m.group(1)] = line
+        for name in _typedef_names(stanza):
+            typedefs[name] = "\n".join(stanza)
+    merged = list(old_stanzas)
+    for stanza in _stanzas(new):
+        key = "\n".join(stanza)
+        if key in seen:
+            continue
+        for line in stanza:
+            m = DEFINE_NAME.match(line)
+            if m:
+                name = m.group(1)
+                prior = defined.get(name)
+                if prior is not None and prior != line:
+                    raise SurgeryError(
+                        f"{basename}: conflicting #define {name}: {prior!r} "
+                        f"already merged, new packet emits {line!r} — reuse "
+                        f"the existing constant instead of redefining it")
+                defined[name] = line
+        for name in _typedef_names(stanza):
+            prior = typedefs.get(name)
+            if prior is not None and prior != key:
+                raise SurgeryError(
+                    f"{basename}: conflicting typedef {name}: a different "
+                    f"definition is already merged — reuse the existing type "
+                    f"or rename yours")
+            typedefs[name] = key
+        merged.append(stanza)
+        seen.add(key)
+    out: list[str] = []
+    for stanza in merged:
+        if out:
+            out.append("")
+        out.extend(stanza)
+    return out
+
+
 def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
     """Write parsed blocks into the packet's four files under ``root``."""
     basename = packet["basename"]
@@ -232,28 +324,8 @@ def apply(root: Path, packet: dict, translation: dict) -> list[Path]:
         if span:
             body = c_text[span[0]:span[1]].splitlines()[1:-1]
             existing_lines = [l for l in body if l.strip() != close_s]
-        merged = list(existing_lines)
-        defined: dict[str, str] = {}
-        for line in merged:
-            m = DEFINE_NAME.match(line)
-            if m:
-                defined[m.group(1)] = line
-        for line in statics.rstrip().splitlines():
-            if line.strip() and line not in merged:
-                m = DEFINE_NAME.match(line)
-                if m:
-                    name = m.group(1)
-                    prior = defined.get(name)
-                    if prior is not None:
-                        raise SurgeryError(
-                            f"{basename}: conflicting #define {name}: "
-                            f"{prior!r} already merged, new packet emits "
-                            f"{line!r} — reuse the existing constant instead "
-                            f"of redefining it")
-                    defined[name] = line
-                merged.append(line)
-            elif not line.strip() and (not merged or merged[-1].strip()):
-                merged.append(line)
+        merged = _merge_statics(basename, existing_lines,
+                                statics.rstrip().splitlines())
         block = open_s + "\n" + "\n".join(merged) + "\n" + close_s + "\n"
         include_end = 0
         for match in re.finditer(r"^#include .*$", c_text, flags=re.MULTILINE):

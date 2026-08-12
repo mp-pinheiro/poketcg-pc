@@ -70,6 +70,13 @@ def render(packet: dict, feedback: str | None = None,
                      "`#define NAME 0x..u` when the C body needs them):")
         for name, value in packet["constants"].items():
             lines.append(f"- {name} EQU {value}")
+    if packet.get("text_ids"):
+        lines.append("")
+        lines.append("Text IDs (`ldtx hl, X` loads hl with this exact numeric id; "
+                     "copy these #define lines verbatim into STATICS, never invent "
+                     "TX_*/TEXT_* names):")
+        for name, value in packet["text_ids"].items():
+            lines.append(f"- #define {name} {value}")
     if packet.get("symbols"):
         lines.append("")
         lines.append("RAM symbol addresses (C code uses the bare macro names from the "

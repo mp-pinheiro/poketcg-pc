@@ -135,6 +135,43 @@ def symbols_for(asm: str, table: dict[str, str]) -> dict[str, str]:
     return dict(sorted(found.items()))
 
 
+LDTX_TOKEN = re.compile(r"\bldtx\s+\w+,\s*(\w+)")
+TEXTPOINTER = re.compile(r"^\ttextpointer\s+(\w+)(?:\s*;\s*(0x[0-9A-Fa-f]+))?")
+
+
+def load_text_ids() -> dict[str, str]:
+    """pret text label -> numeric id, from TextOffsets:: ordinal position.
+
+    `ldtx hl, FooText` loads hl with the label's 1-based index in
+    src/text/text_offsets.asm (entry 0 is the null dwb). The trailing
+    `; 0xNNNN` comment column, where present, must agree with the computed
+    ordinal — a mismatch means the table drifted and the parse is wrong.
+    """
+    path = PRET / "src" / "text" / "text_offsets.asm"
+    table: dict[str, str] = {}
+    index = 0
+    for line in path.read_text().splitlines():
+        match = TEXTPOINTER.match(line)
+        if not match:
+            continue
+        index += 1
+        name, comment = match.groups()
+        if comment is not None and int(comment, 16) != index:
+            raise RuntimeError(
+                f"text_offsets.asm ordinal drift at {name}: computed "
+                f"{index:#06x}, comment says {comment}")
+        table[name] = f"0x{index:04x}u"
+    return table
+
+
+def text_ids_for(asm: str, table: dict[str, str]) -> dict[str, str]:
+    found = {}
+    for token in LDTX_TOKEN.findall(asm):
+        if token in table:
+            found[token] = table[token]
+    return dict(sorted(found.items()))
+
+
 def c_name(routine: str) -> str:
     return routine.replace(".", "_")
 
@@ -263,6 +300,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
 
     constants_table = load_constants()
     symbol_table = load_symbols()
+    text_table = load_text_ids()
     inventory_lines: dict[str, list[int]] = {}
     for f in functions:
         if f["file"]:
@@ -313,6 +351,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "routines": routines,
                 "constants": constants_for("\n".join(packet_asm), constants_table),
                 "symbols": symbols_for("\n".join(packet_asm), symbol_table),
+                "text_ids": text_ids_for("\n".join(packet_asm), text_table),
                 "example": pick_example("\n".join(packet_asm)),
                 "existing": existing_context(basename),
                 "bytes": sum(r["size"] for r in routines),
