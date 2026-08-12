@@ -1,0 +1,9 @@
+{
+  "fn": "SetDefiniteAIDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"42\", \"52411\": \"4242\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDefiniteAIDamage\", \"mismatches\": {\"bus\": {\"address\": 52411, \"reference\": \"424242\", \"native\": \"420042\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52409, 1], [52411, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetDefiniteAIDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"42\", \"52411\": \"4242\"}}, \"status\": \"PASS\"}\n"
+}

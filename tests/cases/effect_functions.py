@@ -62,6 +62,23 @@ CASES["ApplySubstatus1ToAttackingCard"] = [
 # <<< factory ApplySubstatus1ToAttackingCard
 
 
+# >>> factory SetNoEffectFromStatus
+CONTRACT["SetNoEffectFromStatus"] = {"compare": (), "preserve": ()}
+CASES["SetNoEffectFromStatus"] = [
+    {"read": {0xCCED: 1}},
+    dict(POISON, read={0xCCED: 1}),
+]
+# <<< factory SetNoEffectFromStatus
+
+# >>> factory SetDefiniteAIDamage
+CONTRACT["SetDefiniteAIDamage"] = {"compare": (), "preserve": ()}
+CASES["SetDefiniteAIDamage"] = [
+    {"wram": {0xCCB9: b"\x00"}, "read": {0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xCCB9: b"\x42"}, "read": {0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x99"}, read={0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory SetDefiniteAIDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -106,3 +123,9 @@ MUTATIONS["ApplySubstatus1ToAttackingCard"] = {
     "case_ids": ["ApplySubstatus1ToAttackingCard-0", "ApplySubstatus1ToAttackingCard-1", "ApplySubstatus1ToAttackingCard-2", "ApplySubstatus1ToAttackingCard-3"],
 }
 # <<< factory-mutation ApplySubstatus1ToAttackingCard
+# >>> factory-mutation SetNoEffectFromStatus
+MUTATIONS["SetNoEffectFromStatus"] = {"source_symbol": "SetNoEffectFromStatus", "before": "gb_write8(0xCCEDu, 0x01u);", "after": "gb_write8(0xCCEDu, 0x02u);", "case_ids": ["SetNoEffectFromStatus-0", "SetNoEffectFromStatus-1"]}
+# <<< factory-mutation SetNoEffectFromStatus
+# >>> factory-mutation SetDefiniteAIDamage
+MUTATIONS["SetDefiniteAIDamage"] = {"source_symbol": "SetDefiniteAIDamage", "before": "gb_write8(0xCCBBu, a);", "after": "gb_write8(0xCCBBu, 0x00u);", "case_ids": ["SetDefiniteAIDamage-1", "SetDefiniteAIDamage-0", "SetDefiniteAIDamage-2"]}
+# <<< factory-mutation SetDefiniteAIDamage

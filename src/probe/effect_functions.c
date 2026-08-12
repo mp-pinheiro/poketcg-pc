@@ -48,11 +48,29 @@ static void adapt_ApplySubstatus1ToAttackingCard(ProbeState *s)
 /* <<< factory ApplySubstatus1ToAttackingCard */
 
 
+/* >>> factory SetNoEffectFromStatus */
+static void adapt_SetNoEffectFromStatus(ProbeState *s)
+{
+	(void)s;
+	SetNoEffectFromStatus();
+}
+/* <<< factory SetNoEffectFromStatus */
+
+/* >>> factory SetDefiniteAIDamage */
+static void adapt_SetDefiniteAIDamage(ProbeState *s)
+{
+	(void)s;
+	SetDefiniteAIDamage();
+}
+/* <<< factory SetDefiniteAIDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
 	{ "UpdateExpectedAIDamage_AccountForPoison", adapt_UpdateExpectedAIDamage_AccountForPoison },
 	{ "IsPlayerTurn", adapt_IsPlayerTurn },
 	{ "ApplySubstatus1ToAttackingCard", adapt_ApplySubstatus1ToAttackingCard },
+	{ "SetNoEffectFromStatus", adapt_SetNoEffectFromStatus },
+	{ "SetDefiniteAIDamage", adapt_SetDefiniteAIDamage },
 	{ NULL, NULL },
 };

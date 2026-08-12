@@ -19,4 +19,10 @@ void UpdateExpectedAIDamage_AccountForPoison(uint8_t a, uint8_t d, uint8_t e);
 /* >>> factory ApplySubstatus1ToAttackingCard */
 uint16_t ApplySubstatus1ToAttackingCard(uint8_t a);
 /* <<< factory ApplySubstatus1ToAttackingCard */
+/* >>> factory SetNoEffectFromStatus */
+void SetNoEffectFromStatus(void);
+/* <<< factory SetNoEffectFromStatus */
+/* >>> factory SetDefiniteAIDamage */
+void SetDefiniteAIDamage(void);
+/* <<< factory SetDefiniteAIDamage */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

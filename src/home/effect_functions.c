@@ -88,3 +88,19 @@ uint16_t ApplySubstatus1ToAttackingCard(uint8_t a)
 	return (uint16_t)(r.hl + 1u);
 }
 /* <<< factory ApplySubstatus1ToAttackingCard */
+
+/* >>> factory SetNoEffectFromStatus */
+void SetNoEffectFromStatus(void)
+{
+	gb_write8(0xCCEDu, 0x01u);
+}
+/* <<< factory SetNoEffectFromStatus */
+
+/* >>> factory SetDefiniteAIDamage */
+void SetDefiniteAIDamage(void)
+{
+	uint8_t a = gb_read8(0xCCB9u);
+	gb_write8(0xCCBBu, a);
+	gb_write8(0xCCBCu, a);
+}
+/* <<< factory SetDefiniteAIDamage */
