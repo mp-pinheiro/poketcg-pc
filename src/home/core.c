@@ -106,7 +106,7 @@ static uint32_t duel_save_total_size(void)
 #define SGB3_COPY_LEN 0x06u
 
 #define MAX_PLAY_AREA_POKEMON 0x06u
-#define DUELVARS_ARENA_CARD   0x00u
+#define DUELVARS_ARENA_CARD   0xBBu
 
 #define CARDPAGE_POKEMON_OVERVIEW 0x01u
 
