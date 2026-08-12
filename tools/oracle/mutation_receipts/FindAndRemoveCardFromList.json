@@ -1,0 +1,9 @@
+{
+  "fn": "FindAndRemoveCardFromList",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindAndRemoveCardFromList\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 51456, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51456\": \"010207ffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindAndRemoveCardFromList\", \"mismatches\": {\"bus\": {\"address\": 51456, \"reference\": \"010207ffff\", \"native\": \"020507ffff\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51456, 5]]}}}\n",
+  "restored": "{\"fn\": \"FindAndRemoveCardFromList\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 51456, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51456\": \"010207ffff\"}}, \"status\": \"PASS\"}\n"
+}

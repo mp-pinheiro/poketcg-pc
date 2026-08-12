@@ -10,7 +10,25 @@ static void adapt_RemoveCardFromList(ProbeState *s)
 }
 /* <<< factory RemoveCardFromList */
 
+/* >>> factory FindDuplicateCards */
+static void adapt_FindDuplicateCards(ProbeState *s)
+{
+	FindDupResult r = FindDuplicateCards(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory FindDuplicateCards */
+
+/* >>> factory FindAndRemoveCardFromList */
+static void adapt_FindAndRemoveCardFromList(ProbeState *s)
+{
+	FindAndRemoveCardFromList(s->a, s->hl);
+}
+/* <<< factory FindAndRemoveCardFromList */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "RemoveCardFromList", adapt_RemoveCardFromList },
+	{ "FindDuplicateCards", adapt_FindDuplicateCards },
+	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ NULL, NULL },
 };

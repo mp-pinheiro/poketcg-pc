@@ -15,6 +15,25 @@ CASES["RemoveCardFromList"] = [
 ]
 # <<< factory RemoveCardFromList
 
+# >>> factory FindDuplicateCards
+CONTRACT["FindDuplicateCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["FindDuplicateCards"] = [
+    {"hl": 0xC900, "wram": {0xC900: b"\xff", 0xCE0F: b"\x00\x00"}},
+    {"hl": 0xC900, "wram": {0xC900: b"\x00\x01\xff", 0xCE0F: b"\x00\x00"}},
+    {"hl": 0xC900, "wram": {0xC900: b"\x05\xff", 0xCE0F: b"\x00\x00"}},
+    dict(POISON, hl=0xC900, wram={0xC900: b"\x02\x03\x04\xff", 0xCE0F: b"\xaa\xbb"}),
+]
+# <<< factory FindDuplicateCards
+
+# >>> factory FindAndRemoveCardFromList
+CONTRACT["FindAndRemoveCardFromList"] = {"compare": ("hl",), "preserve": ("hl",)}
+CASES["FindAndRemoveCardFromList"] = [
+    {"a": 0, "hl": 0xC900, "wram": {0xC900: b"\x00\xff"}},
+    {"a": 5, "hl": 0xC900, "wram": {0xC900: b"\x01\x02\x05\x07\xff"}},
+    dict(POISON, a=3, hl=0xC900, wram={0xC900: b"\x01\x03\x05\xff"}),
+]
+# <<< factory FindAndRemoveCardFromList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -27,3 +46,19 @@ MUTATIONS["RemoveCardFromList"] = {
     "case_ids": ["RemoveCardFromList-0", "RemoveCardFromList-1", "RemoveCardFromList-2"],
 }
 # <<< factory-mutation RemoveCardFromList
+# >>> factory-mutation FindDuplicateCards
+MUTATIONS["FindDuplicateCards"] = {
+    "source_symbol": "FindDuplicateCards",
+    "before": "return (FindDupResult){0xFFu, 0x90u};",
+    "after": "return (FindDupResult){0xFFu, 0x10u};",
+    "case_ids": ["FindDuplicateCards-0", "FindDuplicateCards-2"],
+}
+# <<< factory-mutation FindDuplicateCards
+# >>> factory-mutation FindAndRemoveCardFromList
+MUTATIONS["FindAndRemoveCardFromList"] = {
+    "source_symbol": "FindAndRemoveCardFromList",
+    "before": "\tRemoveCardFromList(&p);",
+    "after": "\tp = hl; RemoveCardFromList(&p);",
+    "case_ids": ["FindAndRemoveCardFromList-1", "FindAndRemoveCardFromList-2"],
+}
+# <<< factory-mutation FindAndRemoveCardFromList
