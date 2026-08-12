@@ -1,0 +1,9 @@
+{
+  "fn": "InitIRCommunications",
+  "case": "tests/cases/ir_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitIRCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"40976\": \"00000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {\"50432\": \"00\", \"50576\": \"00000000000000000000000000000000\", \"50666\": \"ff00504b31\", \"52246\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitIRCommunications\", \"mismatches\": {\"bus\": {\"address\": 50591, \"reference\": \"0000000000ff00504b\", \"native\": \"00000000ffff00504b\", \"reference_size\": 25, \"native_size\": 25, \"spans\": [[50432, 1], [50576, 16], [50666, 5], [52246, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitIRCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"40976\": \"00000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {\"50432\": \"00\", \"50576\": \"00000000000000000000000000000000\", \"50666\": \"ff00504b31\", \"52246\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

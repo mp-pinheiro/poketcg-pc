@@ -7,7 +7,16 @@ static void adapt_PlayCardPopSong(ProbeState *s)
 	(void)s;
 }
 
+/* >>> factory InitIRCommunications */
+static void adapt_InitIRCommunications(ProbeState *s)
+{
+	InitIRCommunications(s->a);
+}
+/* <<< factory InitIRCommunications */
+
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
+	{ "InitIRCommunications", adapt_InitIRCommunications },
 	{ NULL, NULL },
 };
