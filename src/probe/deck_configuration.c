@@ -30,9 +30,29 @@ static void adapt_CopyListFromHLToDE(ProbeState *s)
 /* <<< factory CopyListFromHLToDE */
 
 
+/* >>> factory CalculateOnesAndTensDigits */
+static void adapt_CalculateOnesAndTensDigits(ProbeState *s)
+{
+	CalculateOnesAndTensDigits(s->a);
+}
+/* <<< factory CalculateOnesAndTensDigits */
+
+
+
+
+/* >>> factory InitCardSelectionParams */
+static void adapt_InitCardSelectionParams(ProbeState *s)
+{
+	s->a = InitCardSelectionParams(s->a, &s->hl);
+}
+/* <<< factory InitCardSelectionParams */
+
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
 	{ "CopyListFromHLToDE", adapt_CopyListFromHLToDE },
+	{ "InitCardSelectionParams", adapt_InitCardSelectionParams },
+	{ "CalculateOnesAndTensDigits", adapt_CalculateOnesAndTensDigits },
 	{ NULL, NULL },
 };

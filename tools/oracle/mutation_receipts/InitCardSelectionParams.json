@@ -1,0 +1,9 @@
+{
+  "fn": "InitCardSelectionParams",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitCardSelectionParams\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49417, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"010203040506070809\", \"52899\": \"005a01020304050607080900\", \"65459\": \"5a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitCardSelectionParams\", \"mismatches\": {\"hl\": [49417, 49416], \"bus\": {\"address\": 52909, \"reference\": \"0506070809005a\", \"native\": \"0506070800005a\", \"reference_size\": 22, \"native_size\": 22, \"spans\": [[49408, 9], [52899, 12], [65459, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitCardSelectionParams\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49417, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"010203040506070809\", \"52899\": \"005a01020304050607080900\", \"65459\": \"5a\"}}, \"status\": \"PASS\"}\n"
+}

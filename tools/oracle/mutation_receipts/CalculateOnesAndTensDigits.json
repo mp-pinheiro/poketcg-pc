@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateOnesAndTensDigits",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 4,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateOnesAndTensDigits\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52918\": \"2021\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateOnesAndTensDigits\", \"mismatches\": {\"bus\": {\"address\": 52919, \"reference\": \"2021\", \"native\": \"2001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52918, 2]]}}}\n",
+  "restored": "{\"fn\": \"CalculateOnesAndTensDigits\", \"registers\": {\"a\": 10, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52918\": \"2021\"}}, \"status\": \"PASS\"}\n"
+}

@@ -12,4 +12,10 @@ uint16_t AddDeckToCollection(uint16_t hl);
 /* >>> factory CopyListFromHLToDE */
 void CopyListFromHLToDE(uint16_t *hl, uint16_t *de);
 /* <<< factory CopyListFromHLToDE */
+/* >>> factory CalculateOnesAndTensDigits */
+void CalculateOnesAndTensDigits(uint8_t a);
+/* <<< factory CalculateOnesAndTensDigits */
+/* >>> factory InitCardSelectionParams */
+uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl);
+/* <<< factory InitCardSelectionParams */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

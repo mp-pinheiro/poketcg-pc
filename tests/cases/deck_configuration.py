@@ -41,6 +41,35 @@ CASES["CopyListFromHLToDE"] = [
 # <<< factory CopyListFromHLToDE
 
 
+# >>> factory CalculateOnesAndTensDigits
+CONTRACT["CalculateOnesAndTensDigits"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["CalculateOnesAndTensDigits"] = [
+    {"a": 0, "wram": {0xCEB6: b"\xFF\xFF"}},
+    dict(POISON, wram={0xCEB6: b"\xFF\xFF"}),
+    {"a": 1, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 9, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 10, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 19, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 99, "wram": {0xCEB6: b"\xFF\xFF"}},
+    {"a": 255, "wram": {0xCEB6: b"\xFF\xFF"}},
+]
+# <<< factory CalculateOnesAndTensDigits
+
+
+
+
+# >>> factory InitCardSelectionParams
+CONTRACT["InitCardSelectionParams"] = {"compare": ("a", "c", "hl"), "preserve": ("c",)}
+CASES["InitCardSelectionParams"] = [
+    {"a": 0x00, "hl": 0xC100, "wram": {0xC100: b"\x00" * 9}, "read": {0xCEA3: 12, 0xFFB3: 1}},
+    dict(POISON, a=0x5A, hl=0xC100, wram={0xC100: bytes(range(1, 10))},
+         read={0xCEA3: 12, 0xFFB3: 1}),
+    {"a": 0xFF, "hl": 0xC1F8, "wram": {0xC1F8: b"\x11\x22\x33\x44\x55\x66\x77\x88\x99"},
+     "read": {0xCEA3: 12, 0xFFB3: 1}},
+]
+# <<< factory InitCardSelectionParams
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -69,3 +98,14 @@ MUTATIONS["CopyListFromHLToDE"] = {
     "case_ids": ["CopyListFromHLToDE-1"],
 }
 # <<< factory-mutation CopyListFromHLToDE
+# >>> factory-mutation CalculateOnesAndTensDigits
+MUTATIONS["CalculateOnesAndTensDigits"] = {"source_symbol": "CalculateOnesAndTensDigits", "before": "if (tens != 0u)", "after": "if (tens > 1u)", "case_ids": ["CalculateOnesAndTensDigits-4", "CalculateOnesAndTensDigits-5"]}
+# <<< factory-mutation CalculateOnesAndTensDigits
+# >>> factory-mutation InitCardSelectionParams
+MUTATIONS["InitCardSelectionParams"] = {
+    "source_symbol": "InitCardSelectionParams",
+    "before": "for (uint8_t i = 0; i < 9u; i++)",
+    "after": "for (uint8_t i = 0; i < 8u; i++)",
+    "case_ids": ["InitCardSelectionParams-1", "InitCardSelectionParams-2"],
+}
+# <<< factory-mutation InitCardSelectionParams

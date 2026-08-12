@@ -7,6 +7,15 @@
 #define DECK_SIZE 60u
 #define SCARDCOLLECTION_ADDR 0xA100u
 #define MAX_AMOUNT_OF_CARD 99u
+#include "home/card_data.h"
+#include "mem.h"
+
+#define SYM_0 0x20u
+#define FILTER_ENERGY 0x20u
+#define TYPE_ENERGY 0x08u
+#define HFFB3 0xffb3u
+#include "home/deck_configuration.h"
+
 /* <<< factory statics */
 
 
@@ -61,3 +70,41 @@ void CopyListFromHLToDE(uint16_t *hl, uint16_t *de)
 	*de = d;
 }
 /* <<< factory CopyListFromHLToDE */
+
+
+/* >>> factory CalculateOnesAndTensDigits */
+/* deck_configuration.asm:1286-1318 */
+void CalculateOnesAndTensDigits(uint8_t a)
+{
+	uint8_t c = 0xffu;
+
+	for (;;) {
+		c = (uint8_t)(c + 1u);
+		a = (uint8_t)(a - 10u);
+		if (a >= 0xf6u)
+			break;
+	}
+	a = (uint8_t)(a + 10u);
+	gb_write8(wDecimalDigitsSymbols_ADDR, (uint8_t)(a + SYM_0));
+	uint8_t tens = c;
+	if (tens != 0u)
+		tens = (uint8_t)(tens + SYM_0);
+	gb_write8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u), tens);
+}
+/* <<< factory CalculateOnesAndTensDigits */
+
+
+
+
+/* >>> factory InitCardSelectionParams */
+/* deck_configuration.asm:1664-1685 */
+uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl)
+{
+	wCardListCursorPos = a;
+	gb_write8(HFFB3, a);
+	for (uint8_t i = 0; i < 9u; i++)
+		gb_write8((uint16_t)(wCardListCursorXPos_ADDR + i), gb_read8((*hl)++));
+	wCheckMenuCursorBlinkCounter = 0;
+	return 0;
+}
+/* <<< factory InitCardSelectionParams */
