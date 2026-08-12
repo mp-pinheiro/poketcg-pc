@@ -25,7 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (  # noqa: E402
-    METRICS, block_routine, estimate_tokens, list_packets, load_packet,
+    FACTORY, METRICS, block_routine, estimate_tokens, list_packets, load_packet,
     record_metric, save_packet, set_state,
 )
 import lanes  # noqa: E402
@@ -254,12 +254,66 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
     return {"results": results}
 
 
+def escalate(limit: int | None) -> int:
+    escalated = list_packets(("escalated",))
+    if limit:
+        escalated = escalated[:limit]
+    out_dir = FACTORY / "escalations"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    briefs = []
+    for packet in escalated:
+        lane_dir = "/tmp/poketcg-factory/lane-<n>  (any free lane; run lanes.ensure(n) first)"
+        paths = "\n".join((
+            f"- `src/home/{packet['basename']}.c`",
+            f"- `src/home/{packet['basename']}.h`",
+            f"- `src/probe/{packet['basename']}.c`",
+            f"- `tests/cases/{packet['basename']}.py`",
+        ))
+        routines_md = "\n\n".join(
+            f"### `{r['name']}` ({r['size']} bytes)\n```asm\n{r['asm']}\n```"
+            for r in packet["routines"])
+        brief = (
+            f"# Escalation: {packet['id']}\n\n"
+            f"**basename**: `{packet['basename']}`  \n"
+            f"**mode**: {packet['mode']}  \n"
+            f"**terminal reason**: {packet.get('reason')}\n\n"
+            f"## Owned paths\n{paths}\n\n"
+            f"## Routines\n\n{routines_md}\n\n"
+            f"## Lane\n\nWork in {lane_dir}. Provision with "
+            f"`python3 -c \"import sys; sys.path.insert(0,'tools/factory'); "
+            f"import lanes; print(lanes.ensure(<n>))\"`.\n\n"
+            f"## Acceptance\n\nWrite the four files' fragments with the same "
+            f"marker convention as `tools/factory/surgery.py` "
+            f"(`/* >>> factory <Fn> */`...`/* <<< factory <Fn> */` for C/H/PROBE, "
+            f"`# >>> factory <Fn>`...`# <<< factory <Fn>` for CASES, "
+            f"`# >>> factory-mutation <Fn>`...`# <<< factory-mutation <Fn>` for "
+            f"MUTATION), or call `surgery.apply(lane, packet, translation)` "
+            f"directly. Then run exactly:\n\n"
+            f"```sh\n"
+            f"python3 tools/factory/verify.py {packet['id']} --lane <lane-dir> "
+            f"--cases-changed\n"
+            f"```\n\n"
+            f"Verdict must be `green`. On success the bundle is written to "
+            f".factory/bundles/{packet['id']}/ and `integrate.py` lands it "
+            f"normally.\n"
+        )
+        path = out_dir / f"{packet['id']}.md"
+        path.write_text(brief)
+        briefs.append(str(path))
+    for path in briefs:
+        print(path)
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status")
     sub.add_parser("reset-stale")
     sub.add_parser("metrics")
+    escalate_parser = sub.add_parser(
+        "escalate", help="write agentic-task briefs for escalated packets")
+    escalate_parser.add_argument("--limit", type=int)
     args = parser.parse_args()
     if args.command == "status":
         counts: dict[str, int] = {}
@@ -271,6 +325,8 @@ def main() -> int:
         for packet in list_packets(IN_FLIGHT):
             set_state(packet, "pending", "reset-stale")
             print(f"reset {packet['id']}")
+    elif args.command == "escalate":
+        return escalate(args.limit)
     elif args.command == "metrics":
         if not METRICS.exists():
             print("no metrics yet")
