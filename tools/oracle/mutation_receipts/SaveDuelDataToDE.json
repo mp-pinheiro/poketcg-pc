@@ -1,0 +1,9 @@
+{
+  "fn": "SaveDuelDataToDE",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SaveDuelDataToDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 188, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"01432102\"}}, \"vram\": {}, \"wram\": {\"52233\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SaveDuelDataToDE\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"01432102\", \"native\": \"00432102\"}}}\n",
+  "restored": "{\"fn\": \"SaveDuelDataToDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 188, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"01432102\"}}, \"vram\": {}, \"wram\": {\"52233\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

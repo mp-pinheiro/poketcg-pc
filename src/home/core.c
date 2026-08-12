@@ -45,6 +45,40 @@
 
 #define LOAD_LOADED1_CARD_GFX_B 0x30u
 #define TILE_SIZE 0x10u
+
+#include "home/copy.h"
+#include "home/switch_sram.h"
+
+#define SAVE_DUEL_HEADER_SIZE 4u
+#define SAVE_DUEL_CHECKSUM_SEED 0x2345u
+#define RNGVARS_SIZE 10u
+#define TRUE 1u
+
+typedef struct {
+	uint16_t addr;
+	uint16_t size;
+} DuelSaveEntry;
+
+static const DuelSaveEntry kDuelDataToSave[] = {
+	{ wPlayerDuelVariables_ADDR, (uint16_t)(wOpponentDuelVariables_ADDR - wPlayerDuelVariables_ADDR) },
+	{ wOpponentDuelVariables_ADDR, (uint16_t)(wPlayerDeck_ADDR - wOpponentDuelVariables_ADDR) },
+	{ wPlayerDeck_ADDR, (uint16_t)(wDuelTempList_ADDR - wPlayerDeck_ADDR) },
+	{ wDuelStates_ADDR, (uint16_t)(wDuelStatesEnd_ADDR - wDuelStates_ADDR) },
+	{ hWhoseTurn_ADDR, 1u },
+	{ wRNGVars_ADDR, RNGVARS_SIZE },
+	{ wAIDuelVars_ADDR, (uint16_t)(wAIDuelVarsEnd_ADDR - wAIDuelVars_ADDR) },
+	{ 0u, 0u },
+};
+
+static uint32_t duel_save_total_size(void)
+{
+	uint32_t total = 0;
+	for (int i = 0; kDuelDataToSave[i].addr != 0u; i++)
+		total += kDuelDataToSave[i].size;
+	return total;
+}
+
+#define SAVE_DUEL_DATA_SIZE_MINUS6 0x00FAu
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -107,3 +141,56 @@ uint16_t CreateCardAttrBlkPacket_DataSet(uint16_t hl, uint8_t a, uint8_t d, uint
 	return hl;
 }
 /* <<< factory CreateCardAttrBlkPacket_DataSet */
+
+/* >>> factory SaveDuelDataToDE */
+/* core.asm:6001-6046 */
+void SaveDuelDataToDE(uint16_t de)
+{
+	EnableSRAM();
+	uint16_t base = de;
+	uint16_t data_start = (uint16_t)(base + SAVE_DUEL_HEADER_SIZE);
+	uint16_t cursor = data_start;
+	for (int i = 0; kDuelDataToSave[i].addr != 0u; i++) {
+		uint16_t hl = kDuelDataToSave[i].addr;
+		CopyDataHLtoDE(&hl, &cursor, kDuelDataToSave[i].size);
+	}
+	uint16_t hl = data_start;
+	uint8_t e = (uint8_t)(SAVE_DUEL_CHECKSUM_SEED & 0xFFu);
+	uint8_t d = (uint8_t)(SAVE_DUEL_CHECKSUM_SEED >> 8);
+	uint32_t bc = duel_save_total_size() - 6u;
+	while (bc != 0u) {
+		uint8_t val = gb_read8(hl);
+		e = (uint8_t)(e - val);
+		val = gb_read8(hl);
+		hl = (uint16_t)(hl + 1);
+		d = (uint8_t)(d ^ val);
+		bc--;
+	}
+	gb_write8(base, TRUE);
+	gb_write8((uint16_t)(base + 1), e);
+	gb_write8((uint16_t)(base + 2), d);
+	gb_write8((uint16_t)(base + 3), gb_read8(wDuelType_ADDR));
+	DisableSRAM();
+}
+/* <<< factory SaveDuelDataToDE */
+
+/* >>> factory LoadSavedDuelDataFromDE */
+/* core.asm:6078-6119 */
+void LoadSavedDuelDataFromDE(uint16_t de)
+{
+	EnableSRAM();
+	de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE);
+	for (int i = 0; kDuelDataToSave[i].addr != 0u; i++) {
+		uint16_t hl = kDuelDataToSave[i].addr;
+		uint32_t bc = kDuelDataToSave[i].size;
+		while (bc != 0u) {
+			uint8_t val = gb_read8(de);
+			de = (uint16_t)(de + 1);
+			gb_write8(hl, val);
+			hl = (uint16_t)(hl + 1);
+			bc--;
+		}
+	}
+	DisableSRAM();
+}
+/* <<< factory LoadSavedDuelDataFromDE */

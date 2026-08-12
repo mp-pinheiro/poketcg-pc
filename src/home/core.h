@@ -18,4 +18,10 @@ void CopyCGBCardPalette(uint8_t a);
 /* >>> factory CreateCardAttrBlkPacket_DataSet */
 uint16_t CreateCardAttrBlkPacket_DataSet(uint16_t hl, uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory CreateCardAttrBlkPacket_DataSet */
+/* >>> factory SaveDuelDataToDE */
+void SaveDuelDataToDE(uint16_t de);
+/* <<< factory SaveDuelDataToDE */
+/* >>> factory LoadSavedDuelDataFromDE */
+void LoadSavedDuelDataFromDE(uint16_t de);
+/* <<< factory LoadSavedDuelDataFromDE */
 #endif /* POKETCG_HOME_CORE_H */

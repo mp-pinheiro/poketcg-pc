@@ -55,6 +55,33 @@ CASES["CreateCardAttrBlkPacket_DataSet"] = [
 ]
 # <<< factory CreateCardAttrBlkPacket_DataSet
 
+# >>> factory SaveDuelDataToDE
+CONTRACT["SaveDuelDataToDE"] = {"compare": (), "preserve": ()}
+sCurrentDuel = 0xBC00
+sCurrentDuelData = 0xBC04
+wDuelType = 0xCC09
+wPlayerDuelVariables = 0xC200
+CASES["SaveDuelDataToDE"] = [
+	{"d": 0xBC, "e": 0x00, "wram": {wDuelType: b"\x02"}, "sread": {0: {sCurrentDuel: 4}}},
+	dict(POISON, d=0xBC, e=0x00, wram={wDuelType: b"\x03", wPlayerDuelVariables: b"\x11\x22"}),
+	{"d": 0xBC, "e": 0x00, "wram": {wDuelType: b"\x00"}, "sread": {0: {sCurrentDuel: 1}}},
+]
+# <<< factory SaveDuelDataToDE
+
+# >>> factory LoadSavedDuelDataFromDE
+CONTRACT["LoadSavedDuelDataFromDE"] = {"compare": (), "preserve": ()}
+sCurrentDuelData = 0xBC04
+wPlayerDuelVariables = 0xC200
+hWhoseTurn = 0xFF97
+CASES["LoadSavedDuelDataFromDE"] = [
+	{"d": 0xBC, "e": 0x00, "sram": {0: {sCurrentDuelData: bytes(range(0, 4))}},
+	 "read": {wPlayerDuelVariables: 4}},
+	dict(POISON, d=0xBC, e=0x00, sram={0: {sCurrentDuelData: bytes([0xAA, 0xBB])}}),
+	{"d": 0xBC, "e": 0x00, "sram": {0: {sCurrentDuelData: b"\x00" * 4}},
+	 "read": {wPlayerDuelVariables: 4}},
+]
+# <<< factory LoadSavedDuelDataFromDE
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -99,3 +126,19 @@ MUTATIONS["CreateCardAttrBlkPacket_DataSet"] = {
     "case_ids": ["CreateCardAttrBlkPacket_DataSet-2"],
 }
 # <<< factory-mutation CreateCardAttrBlkPacket_DataSet
+# >>> factory-mutation SaveDuelDataToDE
+MUTATIONS["SaveDuelDataToDE"] = {
+	"source_symbol": "SaveDuelDataToDE",
+	"before": "gb_write8(base, TRUE);",
+	"after": "gb_write8(base, 0u);",
+	"case_ids": ["SaveDuelDataToDE-0"],
+}
+# <<< factory-mutation SaveDuelDataToDE
+# >>> factory-mutation LoadSavedDuelDataFromDE
+MUTATIONS["LoadSavedDuelDataFromDE"] = {
+	"source_symbol": "LoadSavedDuelDataFromDE",
+	"before": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE);",
+	"after": "de = (uint16_t)(de + SAVE_DUEL_HEADER_SIZE - 1u);",
+	"case_ids": ["LoadSavedDuelDataFromDE-0"],
+}
+# <<< factory-mutation LoadSavedDuelDataFromDE

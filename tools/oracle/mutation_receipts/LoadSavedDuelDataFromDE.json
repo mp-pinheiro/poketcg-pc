@@ -1,0 +1,9 @@
+{
+  "fn": "LoadSavedDuelDataFromDE",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadSavedDuelDataFromDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 188, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48132\": \"00010203\"}}, \"vram\": {}, \"wram\": {\"49664\": \"00010203\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadSavedDuelDataFromDE\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"00010203\", \"native\": \"00000102\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49664, 4]]}}}\n",
+  "restored": "{\"fn\": \"LoadSavedDuelDataFromDE\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 188, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48132\": \"00010203\"}}, \"vram\": {}, \"wram\": {\"49664\": \"00010203\"}}, \"status\": \"PASS\"}\n"
+}
