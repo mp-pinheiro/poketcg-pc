@@ -99,6 +99,28 @@ CASES["Func_80c64"] = [
 ]
 # <<< factory Func_80c64
 
+# >>> factory DebugVEffect
+CONTRACT["DebugVEffect"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("a", "b", "c", "d", "e", "hl"),
+}
+CASES["DebugVEffect"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory DebugVEffect
+
+# >>> factory DebugCGBTest
+CONTRACT["DebugCGBTest"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("a", "b", "c", "d", "e", "hl"),
+}
+CASES["DebugCGBTest"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory DebugCGBTest
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -148,3 +170,19 @@ MUTATIONS["Func_80c64"] = {
     "case_ids": ["Func_80c64-0", "Func_80c64-1", "Func_80c64-2"],
 }
 # <<< factory-mutation Func_80c64
+# >>> factory-mutation DebugVEffect
+MUTATIONS["DebugVEffect"] = {
+    "source_symbol": "DebugVEffect",
+    "before": "f = (uint8_t)((f & 0x80u) | 0x10u);\n\treturn (DebugVEffectResult){a, f, b, c, d, e, hl};",
+    "after": "f = (uint8_t)((f & 0x80u) | 0x00u);\n\treturn (DebugVEffectResult){a, f, b, c, d, e, hl};",
+    "case_ids": ["DebugVEffect-0", "DebugVEffect-1"],
+}
+# <<< factory-mutation DebugVEffect
+# >>> factory-mutation DebugCGBTest
+MUTATIONS["DebugCGBTest"] = {
+    "source_symbol": "DebugCGBTest",
+    "before": "f = (uint8_t)((f & 0x80u) | 0x10u);\n\treturn (DebugCGBTestResult){a, f, b, c, d, e, hl};",
+    "after": "f = (uint8_t)((f & 0x80u) | 0x00u);\n\treturn (DebugCGBTestResult){a, f, b, c, d, e, hl};",
+    "case_ids": ["DebugCGBTest-0", "DebugCGBTest-1"],
+}
+# <<< factory-mutation DebugCGBTest

@@ -48,4 +48,32 @@ void _DebugVEffect(void);
 /* >>> factory Func_80c64 */
 void Func_80c64(void);
 /* <<< factory Func_80c64 */
+/* >>> factory DebugVEffect */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} DebugVEffectResult;
+
+DebugVEffectResult DebugVEffect(uint8_t a, uint8_t f, uint8_t b,
+	uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory DebugVEffect */
+/* >>> factory DebugCGBTest */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} DebugCGBTestResult;
+
+DebugCGBTestResult DebugCGBTest(uint8_t a, uint8_t f, uint8_t b,
+	uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory DebugCGBTest */
 #endif

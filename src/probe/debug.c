@@ -58,6 +58,36 @@ static void adapt_Func_80c64(ProbeState *s)
 }
 /* <<< factory Func_80c64 */
 
+/* >>> factory DebugVEffect */
+static void adapt_DebugVEffectOuter(ProbeState *s)
+{
+	DebugVEffectResult result = DebugVEffect(s->a, s->f, s->b, s->c,
+		s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory DebugVEffect */
+
+/* >>> factory DebugCGBTest */
+static void adapt_DebugCGBTest(ProbeState *s)
+{
+	DebugCGBTestResult result = DebugCGBTest(s->a, s->f, s->b, s->c,
+		s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory DebugCGBTest */
+
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
@@ -65,5 +95,7 @@ const ProbeEntry probe_entries_debug[] = {
 	{ "UnreferencedFillVRAMWithRandomData", adapt_UnreferencedFillVRAMWithRandomData },
 	{ "_DebugVEffect", adapt_DebugVEffect },
 	{ "Func_80c64", adapt_Func_80c64 },
+	{ "DebugVEffect", adapt_DebugVEffectOuter },
+	{ "DebugCGBTest", adapt_DebugCGBTest },
 	{NULL, NULL},
 };

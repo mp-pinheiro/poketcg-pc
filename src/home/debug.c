@@ -17,6 +17,8 @@
 #define FUNC_80C64_MENU_PARAMS_ADDR 0x4cbbu
 #define FUNC_80C64_WIN_LOSE_PRIZES_TEXT 0x0385u
 #define FUNC_80C64_USE_DUELISTS_DECK_TEXT 0x0386u
+
+#include "home/debug_sprites.h"
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -126,3 +128,33 @@ void Func_80c64(void)
 	wCursorBlinkCounter = 0;
 }
 /* <<< factory Func_80c64 */
+
+/* >>> factory DebugVEffect */
+/* engine/menus/debug.asm:6-9. Calls the no-op VEffect debug hook
+ * (_DebugVEffect, engine/gfx/debug.asm:66, already ported and preserves
+ * every register) via farcall, then unconditionally sets carry: scf
+ * clears N/H, leaves Z untouched, so a,b,c,d,e,hl pass through
+ * unchanged and only f's low nibble changes. */
+DebugVEffectResult DebugVEffect(uint8_t a, uint8_t f, uint8_t b,
+	uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	_DebugVEffect();
+	f = (uint8_t)((f & 0x80u) | 0x10u);
+	return (DebugVEffectResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory DebugVEffect */
+
+/* >>> factory DebugCGBTest */
+/* engine/menus/debug.asm:73-76. Calls the no-op CGB-test debug hook
+ * (Func_1c865, engine/menus/debug_sprites.asm, already ported and
+ * preserves every register) via farcall, then unconditionally sets
+ * carry: scf clears N/H, leaves Z untouched, so a,b,c,d,e,hl pass
+ * through unchanged and only f's low nibble changes. */
+DebugCGBTestResult DebugCGBTest(uint8_t a, uint8_t f, uint8_t b,
+	uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	Func_1c865();
+	f = (uint8_t)((f & 0x80u) | 0x10u);
+	return (DebugCGBTestResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory DebugCGBTest */
