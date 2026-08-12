@@ -27,10 +27,12 @@ ALLOWED_EXCLUSION_KINDS = {
     "dependency-pending",
 }
 
-def load_modules() -> list[tuple[Path, object]]:
+def load_modules(only: str | None = None) -> list[tuple[Path, object]]:
     result = []
     for path in sorted((ROOT / "tests/cases").glob("*.py")):
         if path.name == "__init__.py":
+            continue
+        if only is not None and path.stem != only:
             continue
         spec = importlib.util.spec_from_file_location(f"audit_{path.stem}", path)
         if spec is None or spec.loader is None:
@@ -44,16 +46,20 @@ def load_modules() -> list[tuple[Path, object]]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--stage", choices=("routine", "release"), required=True)
+    parser.add_argument("--only", help="restrict per-module checks to this basename")
     args = parser.parse_args()
     failures = 0
-    modules = load_modules()
+    all_modules = load_modules()
+    modules = all_modules if args.only is None else [
+        (path, module) for path, module in all_modules if path.stem == args.only
+    ]
     for basename, entries in EXCLUSIONS.items():
         if not isinstance(entries, dict):
             print(f"EXCLUSION {basename}: entries must be a mapping")
             failures += 1
             continue
         owned = set()
-        for path, module in modules:
+        for path, module in all_modules:
             if path.stem == basename:
                 owned = set(getattr(module, "SCHEMA2_CASES", {}))
                 break
@@ -87,7 +93,7 @@ def main() -> int:
             if args.stage == "release" and exclusion["kind"] == "dependency-pending":
                 print(f"EXCLUSION dependency-pending blocks release {basename}:{fn}")
                 failures += 1
-    for path, module in load_modules():
+    for path, module in modules:
         if not hasattr(module, "SCHEMA2_CASES") and getattr(module, "CASES", {}):
             print(f"MIGRATION_PENDING {path}: legacy CASES has no SCHEMA2_CASES")
             failures += 1

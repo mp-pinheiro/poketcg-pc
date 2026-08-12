@@ -58,6 +58,6 @@ def build(lane: Path) -> subprocess.CompletedProcess[str]:
         if configured.returncode != 0:
             return configured
     return subprocess.run(
-        ["ninja", "-C", "build"], cwd=lane, capture_output=True, text=True,
+        ["ninja", "-C", "build", "-j2"], cwd=lane, capture_output=True, text=True,
         check=False,
     )

@@ -46,6 +46,7 @@ class _Run:
         self.format_retry_used = False
         self.feedback: str | None = None
         self.targets: list[str] | None = None
+        self.last_failing: list[str] | None = None
         self.prompt_tokens = 0
         self.reply_tokens = 0
         self.started = time.time()
@@ -128,14 +129,16 @@ def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
     run.rounds += 1
     failing_now = result.get("failing") or (
         [result["routine"]] if result.get("routine") else None)
+    if failing_now and run.last_failing == failing_now:
+        if _salvage(run, failing_now):
+            return False
+    run.last_failing = failing_now
     if run.rounds >= max_rounds:
         if not _salvage(run, failing_now):
             run.final = "escalated"
             run.reason = f"{result['status']} after {max_rounds} rounds"
         return False
-    failing = result.get("failing") or (
-        [result["routine"]] if result.get("routine") else None)
-    run.targets = failing if failing else None
+    run.targets = failing_now if failing_now else None
     run.feedback = f"{result['status']}:\n{result['detail']}"
     set_state(run.packet, "repair", run.feedback[:400])
     return True
@@ -161,7 +164,7 @@ def _accept(run: _Run, reply: str) -> dict | None:
         return None
 
 
-def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 8,
+def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
              max_rounds: int = 4, model: str = "unknown") -> dict:
     """Round-synchronous wave -> ``{"results": [...], "deferred": [ids]}``.
 

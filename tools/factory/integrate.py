@@ -18,6 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import BUNDLES, CACHE, PBENV, ROOT, list_packets, set_state  # noqa: E402
+from verify import fn_args  # noqa: E402
 
 
 def run(command: list[str], timeout: int = 1800, cwd: Path = ROOT,
@@ -67,12 +68,11 @@ def land(packet: dict) -> None:
              "-DCMAKE_BUILD_TYPE=Debug", "-DPORT_FILES="],
             check_message="barrier configure failed")
     run(["ninja", "-C", "build-barrier"], check_message="barrier build failed")
-    run([str(PBENV), "tests/test_leaves.py", "--group", packet["basename"],
+    run([str(PBENV), "tests/test_leaves.py",
+         *fn_args([r["name"] for r in packet["routines"]]),
          "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
          "--probe", str(ROOT / "build-barrier" / "poketcg_probe")],
         check_message=f"live diff failed for {packet['basename']}")
-    run([sys.executable, "tools/progress/report.py", "build"],
-        check_message="progress rebuild failed")
     run(["jj", "commit", "-m", f"feat(port): {packet['basename']}"],
         check_message="jj commit failed")
     head = run(["jj", "log", "--no-graph", "-r", "@-", "-T", "commit_id"]).stdout.strip()

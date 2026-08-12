@@ -52,7 +52,7 @@ def build(limit=8, extra=()):
 
 pending = build()
 while pending:
-    wave = run_wave(pending, translate_many, lanes_count=8, max_rounds=3,
+    wave = run_wave(pending, translate_many, lanes_count=10, max_rounds=3,
                     model="default")
     subprocess.run(["python3", "tools/factory/integrate.py"], check=False)
     # deferred packets need a landed tip; re-run them after integrating
@@ -126,7 +126,7 @@ nothing dispatches from them, nothing claims them, no new ones are generated.
 | default, 3 routines/packet | 3 | 2 (67%) | ~8.3k | frontier guard + compile-cause feedback active |
 
 Production configuration: `--max-routines 3`, `model="default"`, `max_rounds=3`,
-`lanes_count=8`. Waves run ~5 min wall regardless of lane count because
+`lanes_count=10`. Waves run ~5 min wall regardless of lane count because
 translation is one `parallel()` batch per round.
 
 Calibration findings worth keeping:

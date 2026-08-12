@@ -210,16 +210,47 @@ def existing_context(basename: str) -> dict | None:
     }
 
 
+def blocker_graph(functions: list[dict]) -> tuple[dict[str, set[str]], dict[str, list[str]]]:
+    graph = {f["name"]: set(f["blockers"]) for f in functions if f["status"] == "todo"}
+    dependents: dict[str, list[str]] = {}
+    for name, blockers in graph.items():
+        for blocker in blockers:
+            dependents.setdefault(blocker, []).append(name)
+    return graph, dependents
+
+
+def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
+            seeds: set[str]) -> int:
+    """Todo routines that become ready, transitively, once `seeds` land."""
+    pending = {n: set(b) for n, b in graph.items() if n not in seeds}
+    wave, gained = list(seeds), 0
+    while wave:
+        nxt = []
+        for done in wave:
+            for name in dependents.get(done, ()):
+                blockers = pending.get(name)
+                if blockers is None:
+                    continue
+                blockers.discard(done)
+                if not blockers:
+                    del pending[name]
+                    nxt.append(name)
+                    gained += 1
+        wave = nxt
+    return gained
+
+
 def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                   limit: int | None) -> list[dict]:
     functions, _inventory = compute_functions()
     blocked = blocked_routines()
     by_name = {f["name"]: f for f in functions}
-    unlock: dict[str, int] = {}
-    for f in functions:
-        if f["status"] == "todo":
-            for blocker in f["blockers"]:
-                unlock[blocker] = unlock.get(blocker, 0) + 1
+    graph, dependents = blocker_graph(functions)
+    cascade_cache: dict[str, int] = {}
+    def cascade_of(name: str) -> int:
+        if name not in cascade_cache:
+            cascade_cache[name] = cascade(graph, dependents, {name})
+        return cascade_cache[name]
 
     ready = [f for f in functions
              if f["status"] == "todo" and f["ready"] and f["name"] not in blocked]
@@ -269,7 +300,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                     "refs": f["refs"],
                     "asm": asm,
                     "callees": [],
-                    "unlock": unlock.get(f["name"], 0),
+                    "cascade": cascade_of(f["name"]),
                 })
             packet = {
                 "id": (basename if id_counts.get(basename, 0) == 0
@@ -286,12 +317,12 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "example": pick_example("\n".join(packet_asm)),
                 "existing": existing_context(basename),
                 "bytes": sum(r["size"] for r in routines),
-                "unlock": sum(r["unlock"] for r in routines),
+                "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }
             packets.append(packet)
             id_counts[basename] = id_counts.get(basename, 0) + 1
 
-    packets.sort(key=lambda p: (-p["unlock"], p["bytes"]))
+    packets.sort(key=lambda p: (-p["cascade"], p["bytes"]))
     if limit:
         packets = packets[:limit]
     return packets
@@ -307,6 +338,7 @@ def attach_dependencies(packets: list[dict]) -> list[dict]:
     """
     inventory = json.loads((ROOT / "site/data/inventory.json").read_text())
     functions = inventory["functions"]
+    graph, dependents = blocker_graph(compute_functions()[0])
     kept: list[dict] = []
     for packet in packets:
         usable = []
@@ -338,9 +370,29 @@ def attach_dependencies(packets: list[dict]) -> list[dict]:
             continue
         packet["routines"] = usable
         packet["bytes"] = sum(r["size"] for r in usable)
-        packet["unlock"] = sum(r["unlock"] for r in usable)
+        packet["cascade"] = cascade(graph, dependents, {r["name"] for r in usable})
         kept.append(packet)
     return kept
+
+
+def cmd_chokepoints(limit: int) -> int:
+    functions, _inventory = compute_functions()
+    graph, dependents = blocker_graph(functions)
+    by_name = {f["name"]: f for f in functions}
+    onehop: dict[str, int] = {}
+    for name, blockers in graph.items():
+        for blocker in blockers:
+            onehop[blocker] = onehop.get(blocker, 0) + 1
+    todo_names = list(graph)
+    scored = sorted(
+        ((cascade(graph, dependents, {n}), n) for n in todo_names),
+        reverse=True)
+    print(f"{'cascade':>7} {'1hop':>5} {'size':>6} {'ready':>6}  name  blockers")
+    for score, name in scored[:limit]:
+        f = by_name[name]
+        print(f"{score:7} {onehop.get(name, 0):5} {f['size']:5}b {str(f['ready']):>6}  "
+              f"{name}  {f['blockers'][:4]}")
+    return 0
 
 
 def main() -> int:
@@ -354,7 +406,13 @@ def main() -> int:
     build.add_argument("--force", action="store_true",
                        help="overwrite queue entries that already exist")
     build.add_argument("--json", action="store_true", help="print packet ids as JSON")
+    chokepoints = sub.add_parser(
+        "chokepoints", help="rank todo routines by transitive cascade")
+    chokepoints.add_argument("--limit", type=int, default=20)
     args = parser.parse_args()
+
+    if args.command == "chokepoints":
+        return cmd_chokepoints(args.limit)
 
     packets = build_packets(args.dir, args.max_routines, args.max_asm_lines, args.limit)
     packets = attach_dependencies(packets)
@@ -373,7 +431,7 @@ def main() -> int:
         for packet in packets:
             if packet["id"] in written:
                 print(f"{packet['id']:32} {packet['mode']:6} routines={len(packet['routines'])} "
-                      f"bytes={packet['bytes']} unlock={packet['unlock']}")
+                      f"bytes={packet['bytes']} cascade={packet['cascade']}")
         print(f"packets: {len(written)} written, {len(packets) - len(written)} skipped")
     return 0
 

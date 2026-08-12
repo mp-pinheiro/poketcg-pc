@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """Mechanical acceptance for one packet inside a lane.
 
-Pipeline: ninja build -> schema audit -> PyBoy group diff (refresh on case
-changes, cached fast path otherwise, live evidence required for acceptance)
--> per-routine mutation RED/PASS -> adapter lint.  Emits a structured verdict;
-on green, copies the quad + mutation receipts into .factory/bundles/<id>/.
+Pipeline: ninja build -> static case-lint (no PyBoy, no registry import) ->
+schema audit -> PyBoy diff, scoped to the packet's own routines (refresh on
+case changes, cached fast path otherwise, live evidence required for
+acceptance) -> per-routine mutation RED/PASS -> adapter lint.  Case-lint runs
+before the schema audit deliberately: ``tests/routines.py`` eagerly imports
+every case module to derive the registry, so a malformed case module (the
+exact class of bug case-lint exists to catch) would otherwise crash the
+audit subprocess with an opaque traceback instead of a targeted verdict.
+Emits a structured verdict; on green, copies the quad + mutation receipts
+into .factory/bundles/<id>/.
 
 The verdict "detail" is raw tool output, trimmed — it is the repair-round
 feedback payload.
@@ -33,6 +39,10 @@ TIMEOUT_MARK = "did not return within"
 def _tail(text: str) -> str:
     text = text.strip()
     return text[-TAIL:] if len(text) > TAIL else text
+
+
+def fn_args(routine_names: list[str]) -> list[str]:
+    return [arg for fn in routine_names for arg in ("--fn", fn)]
 
 
 
@@ -68,7 +78,7 @@ def witness_index(mutation_block: dict) -> int:
     return 0
 
 
-def load_mutations(lane: Path, basename: str) -> dict:
+def load_cases_module(lane: Path, basename: str):
     import importlib.util
     path = lane / "tests" / "cases" / f"{basename}.py"
     spec = importlib.util.spec_from_file_location(f"verify_cases_{basename}", path)
@@ -79,7 +89,66 @@ def load_mutations(lane: Path, basename: str) -> dict:
         spec.loader.exec_module(module)
     finally:
         sys.path[:] = saved
-    return getattr(module, "MUTATIONS", {})
+    return module
+
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+RESERVED = range(0xCF00, 0xD000)
+
+
+def case_lint(lane: Path, basename: str, routine_names: list[str]) -> dict[str, list[str]]:
+    """Mechanical, PyBoy-free checks. Deliberately does not trust the case
+    module to import cleanly: an undefined name in it (e.g. a stray C
+    `_ADDR` macro referenced as a bare Python identifier — those macros do
+    not exist in Python, only inside quoted MUTATIONS text) would otherwise
+    crash the schema audit's subprocess too, since ``tests/routines.py``
+    eagerly imports every case module to derive the registry. Run this
+    before that subprocess."""
+    violations: dict[str, list[str]] = {}
+
+    def fail(fn: str, msg: str) -> None:
+        violations.setdefault(fn, []).append(msg)
+
+    try:
+        module = load_cases_module(lane, basename)
+    except Exception as exc:
+        for fn in routine_names:
+            fail(fn, f"case module fails to import: {exc}")
+        return violations
+    contract = getattr(module, "CONTRACT", {})
+    cases = getattr(module, "CASES", {})
+    mutations = getattr(module, "MUTATIONS", {})
+
+    for fn in routine_names:
+        fn_cases = cases.get(fn, [])
+        if fn not in contract:
+            fail(fn, f"CONTRACT[{fn!r}] is missing")
+            continue
+        if not any(sum(1 for reg, value in POISON.items()
+                       if c.get(reg) == value) >= 4 for c in fn_cases):
+            fail(fn, f"CASES[{fn!r}] has no poisoned-register case "
+                     f"(need >=4 of a=0xAA f=0xF0 b=0xBB c=0xCC d=0xDD e=0xEE hl=0x1234)")
+        for i, c in enumerate(fn_cases):
+            for key in ("wram", "read", "expect"):
+                for addr in c.get(key, {}) or {}:
+                    if int(addr) in RESERVED:
+                        fail(fn, f"CASES[{fn!r}][{i}].{key} writes reserved "
+                                 f"${int(addr):04X} (oracle call frame $CF00-$CFFF)")
+            if c.get("oracle") is False:
+                why = c.get("why")
+                expects = ("expect", "expect_regs", "expect_sram", "expect_vram")
+                if not (isinstance(why, str) and why.strip()):
+                    fail(fn, f"CASES[{fn!r}][{i}] has oracle=False without a non-empty why")
+                if not any(c.get(k) for k in expects):
+                    fail(fn, f"CASES[{fn!r}][{i}] has oracle=False without any of {expects}")
+        block = mutations.get(fn)
+        if block:
+            for case_id in block.get("case_ids") or []:
+                match = re.fullmatch(rf"{re.escape(fn)}-(\d+)", str(case_id))
+                if not match or not (0 <= int(match.group(1)) < len(fn_cases)):
+                    fail(fn, f"MUTATIONS[{fn!r}][case_ids] has invalid id {case_id!r} "
+                             f"for {len(fn_cases)} cases")
+    return violations
 
 
 def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
@@ -90,22 +159,29 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
     if built.returncode != 0:
         return verdict("compile", compile_cause(built.stdout + built.stderr))
 
-    audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine"],
-                lane)
+    lint_violations = case_lint(lane, basename, routine_names)
+    if lint_violations:
+        detail = "\n".join(f"{fn}: {msg}" for fn, msgs in lint_violations.items()
+                           for msg in msgs)
+        result = verdict("cases", detail)
+        result["failing"] = sorted(lint_violations)
+        return result
+
+    audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine",
+                "--only", basename], lane)
     if audit.returncode != 0:
-        # only failures naming this packet's module/routines are ours
         return verdict("schema", audit.stdout + audit.stderr)
 
     CACHE.mkdir(parents=True, exist_ok=True)
     mode = "refresh" if cases_changed else "cache"
-    diff = run([str(PBENV), "tests/test_leaves.py", "--group", basename,
+    diff = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
                 "--oracle-mode", mode, "--cache-dir", str(CACHE),
                 "--probe", str(lane / "build" / "poketcg_probe")],
                lane, timeout=1800)
     output = diff.stdout + diff.stderr
     if "cache miss" in output:
         mode = "refresh"
-        diff = run([str(PBENV), "tests/test_leaves.py", "--group", basename,
+        diff = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
                    lane, timeout=1800)
@@ -128,14 +204,14 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
         result["failing"] = names
         return result
     if mode == "cache":
-        live = run([str(PBENV), "tests/test_leaves.py", "--group", basename,
+        live = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
                    lane, timeout=1800)
         if live.returncode != 0:
             return verdict("diff", live.stdout + live.stderr)
 
-    mutations = load_mutations(lane, basename)
+    mutations = getattr(load_cases_module(lane, basename), "MUTATIONS", {})
     for fn in routine_names:
         if fn not in mutations:
             return verdict("mutation", f"MUTATIONS[{fn!r}] is missing", fn)
