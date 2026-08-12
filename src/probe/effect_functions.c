@@ -103,6 +103,20 @@ static void adapt_SetWasUnsuccessful(ProbeState *s)
 }
 /* <<< factory SetWasUnsuccessful */
 
+/* >>> factory Teleport_SwitchEffect */
+static void adapt_Teleport_SwitchEffect(ProbeState *s)
+{
+	Teleport_SwitchEffect();
+}
+/* <<< factory Teleport_SwitchEffect */
+
+/* >>> factory SetDamageToATimes20 */
+static void adapt_SetDamageToATimes20(ProbeState *s)
+{
+	SetDamageToATimes20(s->a);
+}
+/* <<< factory SetDamageToATimes20 */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -116,5 +130,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "QueueStatusCondition", adapt_QueueStatusCondition },
 	{ "CommentedOut_2c086", adapt_CommentedOut_2c086 },
 	{ "SetWasUnsuccessful", adapt_SetWasUnsuccessful },
+	{ "Teleport_SwitchEffect", adapt_Teleport_SwitchEffect },
+	{ "SetDamageToATimes20", adapt_SetDamageToATimes20 },
 	{ NULL, NULL },
 };

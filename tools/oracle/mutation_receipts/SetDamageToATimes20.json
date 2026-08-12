@@ -1,0 +1,9 @@
+{
+  "fn": "SetDamageToATimes20",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDamageToATimes20\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"1400\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDamageToATimes20\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"1400\", \"native\": \"0c00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52409, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetDamageToATimes20\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"1400\"}}, \"status\": \"PASS\"}\n"
+}

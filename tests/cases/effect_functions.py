@@ -141,6 +141,29 @@ CASES["SetWasUnsuccessful"] = [
 ]
 # <<< factory SetWasUnsuccessful
 
+# >>> factory Teleport_SwitchEffect
+CONTRACT["Teleport_SwitchEffect"] = {"compare": (), "preserve": ()}
+hTemp_ffa0 = 0xFFA0
+wDuelDisplayedScreen = 0xCAC2
+CASES["Teleport_SwitchEffect"] = [
+    {"wram": {hTemp_ffa0: b"\x00", wDuelDisplayedScreen: b"\x05"}},
+    {"wram": {hTemp_ffa0: b"\x01", wDuelDisplayedScreen: b"\xFF"}},
+    dict(POISON, wram={hTemp_ffa0: b"\x02", wDuelDisplayedScreen: b"\x03"}),
+]
+# <<< factory Teleport_SwitchEffect
+
+# >>> factory SetDamageToATimes20
+CONTRACT["SetDamageToATimes20"] = {"compare": (), "preserve": ()}
+wDamage = 0xCCB9
+CASES["SetDamageToATimes20"] = [
+    {"a": 0, "read": {wDamage: 2}},
+    {"a": 1, "read": {wDamage: 2}},
+    {"a": 10, "read": {wDamage: 2}},
+    {"a": 255, "read": {wDamage: 2}},
+    dict(POISON, a=5, read={wDamage: 2}),
+]
+# <<< factory SetDamageToATimes20
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -231,3 +254,19 @@ MUTATIONS["SetWasUnsuccessful"] = {
     "case_ids": ["SetWasUnsuccessful-0", "SetWasUnsuccessful-1"],
 }
 # <<< factory-mutation SetWasUnsuccessful
+# >>> factory-mutation Teleport_SwitchEffect
+MUTATIONS["Teleport_SwitchEffect"] = {
+    "source_symbol": "Teleport_SwitchEffect",
+    "before": "wDuelDisplayedScreen = 0u;",
+    "after": "wDuelDisplayedScreen = 1u;",
+    "case_ids": ["Teleport_SwitchEffect-0", "Teleport_SwitchEffect-1"],
+}
+# <<< factory-mutation Teleport_SwitchEffect
+# >>> factory-mutation SetDamageToATimes20
+MUTATIONS["SetDamageToATimes20"] = {
+    "source_symbol": "SetDamageToATimes20",
+    "before": "hl = (uint16_t)(hl + de);",
+    "after": "hl = (uint16_t)(hl - de);",
+    "case_ids": ["SetDamageToATimes20-1", "SetDamageToATimes20-2", "SetDamageToATimes20-3"],
+}
+# <<< factory-mutation SetDamageToATimes20

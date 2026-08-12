@@ -33,6 +33,7 @@
 #define MYSTERIOUS_FOSSIL 0xCCu
 #define PLAY_AREA_ARENA 0x00u
 #define SNORLAX 0xBEu
+
 /* <<< factory statics */
 
 
@@ -199,3 +200,29 @@ void SetWasUnsuccessful(void)
 	wEffectFailed = EFFECT_FAILED_UNSUCCESSFUL;
 }
 /* <<< factory SetWasUnsuccessful */
+
+/* >>> factory Teleport_SwitchEffect */
+/* effect_functions.asm:1806-1812 */
+void Teleport_SwitchEffect(void)
+{
+	uint8_t e = hTemp_ffa0;
+	SwapArenaWithBenchPokemon(e);
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory Teleport_SwitchEffect */
+
+/* >>> factory SetDamageToATimes20 */
+/* effect_functions.asm:1847-1861 */
+void SetDamageToATimes20(uint8_t a)
+{
+	uint16_t hl = a;
+	uint16_t de = hl;
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + de);
+	hl = (uint16_t)(hl + hl);
+	hl = (uint16_t)(hl + hl);
+	gb_write8(wDamage_ADDR, (uint8_t)(hl & 0xFFu));
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(hl >> 8));
+}
+/* <<< factory SetDamageToATimes20 */

@@ -42,4 +42,12 @@ uint8_t CommentedOut_2c086(uint8_t a);
 /* >>> factory SetWasUnsuccessful */
 void SetWasUnsuccessful(void);
 /* <<< factory SetWasUnsuccessful */
+/* >>> factory Teleport_SwitchEffect */
+/* >>> factory Teleport_SwitchEffect */
+void Teleport_SwitchEffect(void);
+/* <<< factory Teleport_SwitchEffect */
+/* >>> factory SetDamageToATimes20 */
+/* >>> factory SetDamageToATimes20 */
+void SetDamageToATimes20(uint8_t a);
+/* <<< factory SetDamageToATimes20 */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
