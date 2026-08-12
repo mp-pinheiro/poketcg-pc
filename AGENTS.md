@@ -78,8 +78,9 @@ Four files per pret source: `src/home/<f>.c`, `src/home/<f>.h`, `src/probe/<f>.c
 Shared, not owned by any slice: `CMakeLists.txt`, `src/mem.*`, `src/probe.c`,
 `tools/progress/`, `site/`, `src/probe.h`, `src/probe_table.c`, `tests/test_leaves.py`, `tools/`, `justfile`.
 
-`tests/routines.py` is shared but **partitioned** — a slice edits only its own
-`ROUTINES["<basename>"]` tuple, never a neighbouring entry.
+`tests/routines.py` is **derived** — it registers `tuple(CONTRACT.keys())` from
+every `tests/cases/<basename>.py` at import time. Never hand-edit it;
+registration is a side effect of the cases module existing.
 
 ## 7. Definition of done
 
@@ -105,26 +106,20 @@ jj commit -m "type(scope): subject"
 commit; never `git commit` / `git push` — use `jj git push`. Full workflow:
 `docs/jj-workflow.md`.
 
-## 9. Autonomous port start
+## 9. Factory port start
 
-When, and only when, the user's trimmed message is exactly `start` (case-sensitive),
-immediately read and execute `docs/autonomous-port-workflow.md`. `/start`, `Start`,
-`start <issue>`, and prose containing `start` follow normal request handling.
+When, and only when, the user's trimmed message is exactly `start`
+(case-sensitive), immediately read and execute `docs/factory-workflow.md`.
+`/start`, `Start`, `start <issue>`, and prose containing `start` follow normal
+request handling.
 
-Before selecting or claiming an issue, fetch remote metadata with
-`jj --config 'experimental-advance-branches.enabled-branches=[]' git fetch`,
-record the local `main` and `main@origin` commit IDs, and require them to
-match. Verify that the current working copy exposes this trigger and
-`docs/autonomous-port-workflow.md`. If the working copy is clean but either
-the tree is stale or local `main` differs from `main@origin`, create a new
-empty working copy on `main@origin` with `jj new main@origin`, then verify
-again. If it is dirty or still stale, stop before issue selection and report
-the checkout mismatch; never run the workflow from an unpublished or stale
-tree.
-
-The orchestrator, not workers, selects and claims distinct issues. Only the
-orchestrator runs `just oracle-diff-all` or `just oracle-release-gate`; workers
-run only their private routine-level proofs.
+The factory model: deterministic tooling under `tools/factory/` builds
+self-contained packets from the frontier, stateless small-model translators
+fill them in disposable lanes, the oracle plus mutation harness accepts or
+rejects mechanically, and one serial integrator — the orchestrator — owns
+every jj and GitHub write, gating strictly before each push. Lanes never run
+jj, git, gh, or a central gate. Translation prompts are governed by
+`docs/factory-contract.md`.
 
 ## 10. `tests/cases/*.py` are not unit tests
 

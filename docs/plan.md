@@ -24,12 +24,13 @@
 | Phase 5 — duel core (partial) | 6/22 | in progress | — |
 | Oracle stabilization | 561/561 | verified | — |
 
-This table is the resumption point for a compacted or cleared session: each
-slice flips its own row to `landed` (with the jj commit id) when its barrier
-check passes.
-**Current barrier**: `just oracle-release-gate` — 561/561 routines clean in
+This table is the historic record of the wave era. **Active work now runs
+through the factory** — `docs/factory-workflow.md` (operation) and
+`docs/factory-contract.md` (translation rules); packets, lanes, and queue
+state live under `tools/factory/` + `.factory/`.
+**Current barrier**: `just oracle-release-gate` — 624/624 routines clean in
 both the schema-2 GBRT primary lane and the independent source-built PyBoy
-audit; 1,913 primary cases, no missing primaries, and no function failures.
+audit; 2,156 primary cases, no missing primaries, and no function failures.
 The release barrier also validates the schema and mutation inventories and
 runs `just data-verify`.
 
