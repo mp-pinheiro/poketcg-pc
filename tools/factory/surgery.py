@@ -115,6 +115,9 @@ DEFINE_NAME = re.compile(r"^\s*#define\s+([A-Za-z_][A-Za-z0-9_]*)\b")
 # on legacy files without reformatting code this packet does not own.
 SENTINEL_ROW = re.compile(r"^[ \t]*\{\s*NULL\s*,\s*NULL\s*\},[ \t]*$", re.MULTILINE)
 
+CASES_STATICS_OPEN = "# >>> factory-cases-statics"
+CASES_STATICS_CLOSE = "# <<< factory-cases-statics"
+
 INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
 
 
@@ -201,6 +204,16 @@ def extract(root: Path, packet: dict) -> dict:
         lines = c_text[statics_span[0]:statics_span[1]].splitlines()
         statics = "\n".join(lines[1:-1])
 
+    # Module-level helpers/addresses shared by a basename's cases, the Python
+    # analogue of the C statics block. Without this, a helper defined outside
+    # the per-routine markers is silently dropped on transplant and the cases
+    # module dies with NameError at land time.
+    cases_statics = None
+    cs_span = _span(cases_text, CASES_STATICS_OPEN, CASES_STATICS_CLOSE)
+    if cs_span:
+        lines = cases_text[cs_span[0]:cs_span[1]].splitlines()
+        cases_statics = "\n".join(lines[1:-1])
+
     routines: dict[str, dict[str, str]] = {}
     for routine in packet["routines"]:
         fn = routine["name"]
@@ -224,7 +237,7 @@ def extract(root: Path, packet: dict) -> dict:
         if _span(cases_text, open_comp, close_comp):
             routines[fn]["COMPLETION"] = _block_body(
                 cases_text, open_comp, close_comp, fn, "COMPLETION")
-    return {"statics": statics, "routines": routines}
+    return {"statics": statics, "cases_statics": cases_statics, "routines": routines}
 
 
 CONDITIONAL = re.compile(r"\s*#\s*(if|ifdef|ifndef|else|elif|endif)\b")
@@ -397,6 +410,26 @@ def apply(root: Path, packet: dict, translation: dict,
     h_text = paths["h"].read_text()
     probe_text = paths["probe"].read_text()
     cases_text = paths["cases"].read_text()
+
+    cases_statics = translation.get("cases_statics")
+    if cases_statics:
+        cs_span = _span(cases_text, CASES_STATICS_OPEN, CASES_STATICS_CLOSE)
+        existing_cs: list[str] = []
+        if cs_span:
+            body = cases_text[cs_span[0]:cs_span[1]].splitlines()[1:-1]
+            existing_cs = [l for l in body if l.strip() != CASES_STATICS_CLOSE]
+        merged_cs = _merge_statics(basename, existing_cs,
+                                   cases_statics.rstrip().splitlines())
+        cs_block = (CASES_STATICS_OPEN + "\n" + "\n".join(merged_cs) + "\n"
+                    + CASES_STATICS_CLOSE + "\n\n")
+        # ahead of the routine blocks, which anchor on the migration import
+        tail_at = cases_text.find("SCHEMA2_CASES = legacy_to_schema")
+        if tail_at < 0:
+            raise SurgeryError(f"{paths['cases']} lost its legacy_to_schema tail")
+        anchor = cases_text.rfind("from tests.cases._schema_migration", 0, tail_at)
+        cases_text = _replace_span(cases_text, CASES_STATICS_OPEN,
+                                   CASES_STATICS_CLOSE, cs_block,
+                                   anchor if anchor >= 0 else tail_at)
 
     for routine in packet["routines"]:
         fn = routine["name"]

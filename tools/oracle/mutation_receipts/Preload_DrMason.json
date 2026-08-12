@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_DrMason",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_DrMason\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"5566\", \"54239\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_DrMason\", \"mismatches\": {\"a\": [0, 12], \"f\": [16, 144], \"bus\": {\"address\": 54188, \"reference\": \"556600\", \"native\": \"060c00\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54188, 2], [54239, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_DrMason\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"5566\", \"54239\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
