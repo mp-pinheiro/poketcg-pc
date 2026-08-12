@@ -132,6 +132,23 @@ static void adapt_SetSGB3ToCardPalette(ProbeState *s)
 }
 /* <<< factory SetSGB3ToCardPalette */
 
+/* >>> factory LookForCardIDInPlayArea_Bank5 */
+static void adapt_LookForCardIDInPlayArea_Bank5(ProbeState *s)
+{
+	LookResult r = LookForCardIDInPlayArea_Bank5(s->a, s->b);
+	s->a = r.a;
+	s->b = r.b;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInPlayArea_Bank5 */
+
+/* >>> factory ClearMemory_Bank5 */
+static void adapt_ClearMemory_Bank5(ProbeState *s)
+{
+	ClearMemory_Bank5(s->a, s->hl);
+}
+/* <<< factory ClearMemory_Bank5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -150,5 +167,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ "LoadLoaded1CardGfx", adapt_LoadLoaded1CardGfx },
 	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
+	{ "LookForCardIDInPlayArea_Bank5", adapt_LookForCardIDInPlayArea_Bank5 },
+	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
 	{ NULL, NULL },
 };

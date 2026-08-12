@@ -55,4 +55,11 @@ void LoadLoaded1CardGfx(uint16_t de);
 /* >>> factory SetSGB3ToCardPalette */
 void SetSGB3ToCardPalette(void);
 /* <<< factory SetSGB3ToCardPalette */
+/* >>> factory LookForCardIDInPlayArea_Bank5 */
+typedef struct { uint8_t a; uint8_t b; uint8_t f; } LookResult;
+LookResult LookForCardIDInPlayArea_Bank5(uint8_t a, uint8_t b);
+/* <<< factory LookForCardIDInPlayArea_Bank5 */
+/* >>> factory ClearMemory_Bank5 */
+void ClearMemory_Bank5(uint8_t a, uint16_t hl);
+/* <<< factory ClearMemory_Bank5 */
 #endif /* POKETCG_HOME_CORE_H */

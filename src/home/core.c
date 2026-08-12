@@ -104,6 +104,9 @@ static uint32_t duel_save_total_size(void)
 
 #define TILE_SIZE 0x10u
 #define SGB3_COPY_LEN 0x06u
+
+#define MAX_PLAY_AREA_POKEMON 0x06u
+#define DUELVARS_ARENA_CARD   0x00u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -345,3 +348,32 @@ void SetSGB3ToCardPalette(void)
 		gb_write8((uint16_t)(dst + i), gb_read8((uint16_t)(src + i)));
 }
 /* <<< factory SetSGB3ToCardPalette */
+
+/* >>> factory LookForCardIDInPlayArea_Bank5 */
+/* core.asm:753-777 */
+LookResult LookForCardIDInPlayArea_Bank5(uint8_t a, uint8_t b)
+{
+	wTempCardIDToLook = a;
+	for (;;) {
+		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
+		if (r.a == 0xFFu)
+			return (LookResult){0xFFu, b, 0xC0u};
+		uint8_t c = LoadCardDataToBuffer1_FromDeckIndex(r.a);
+		if (wTempCardIDToLook == c)
+			return (LookResult){b, b, 0x90u};
+		b++;
+		if (b == MAX_PLAY_AREA_POKEMON)
+			return (LookResult){MAX_PLAY_AREA_POKEMON, 0xFFu, 0x00u};
+	}
+}
+/* <<< factory LookForCardIDInPlayArea_Bank5 */
+
+/* >>> factory ClearMemory_Bank5 */
+/* core.asm:942-954 */
+void ClearMemory_Bank5(uint8_t a, uint16_t hl)
+{
+	uint32_t n = a ? a : 0x100u;
+	for (uint32_t i = 0; i < n; i++)
+		gb_write8((uint16_t)(hl + (uint16_t)i), 0u);
+}
+/* <<< factory ClearMemory_Bank5 */

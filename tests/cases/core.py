@@ -194,6 +194,28 @@ CASES["SetSGB3ToCardPalette"] = [
 ]
 # <<< factory SetSGB3ToCardPalette
 
+# >>> factory LookForCardIDInPlayArea_Bank5
+CONTRACT["LookForCardIDInPlayArea_Bank5"] = {"compare": ("a", "f", "b", "d", "e"), "preserve": ("d", "e")}
+CASES["LookForCardIDInPlayArea_Bank5"] = [
+    {"a": 0, "b": 0, "read": {0xCDD4: 1}},
+    {"a": 1, "b": 0, "read": {0xCDD4: 1}},
+    {"a": 0x08, "b": 3, "read": {0xCDD4: 1}},
+    {"a": 0x20, "b": 5, "read": {0xCDD4: 1}},
+    {"a": 0xFF, "b": 0, "read": {0xCDD4: 1}},
+    dict(POISON, a=0x08, b=0, read={0xCDD4: 1}),
+]
+# <<< factory LookForCardIDInPlayArea_Bank5
+
+# >>> factory ClearMemory_Bank5
+CONTRACT["ClearMemory_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["ClearMemory_Bank5"] = [
+    {"a": 0, "hl": 0xC300, "wram": {0xC300: b"\xaa" * 0x101}},
+    {"a": 1, "hl": 0xC300, "wram": {0xC300: b"\xaa\xbb"}},
+    {"a": 8, "hl": 0xC400, "wram": {0xC400: b"\x55" * 9}},
+    dict(POISON, a=4, hl=0xC300, wram={0xC300: b"\xaa" * 5}),
+]
+# <<< factory ClearMemory_Bank5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -334,3 +356,19 @@ MUTATIONS["SetSGB3ToCardPalette"] = {
     "case_ids": ["SetSGB3ToCardPalette-0", "SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"],
 }
 # <<< factory-mutation SetSGB3ToCardPalette
+# >>> factory-mutation LookForCardIDInPlayArea_Bank5
+MUTATIONS["LookForCardIDInPlayArea_Bank5"] = {
+    "source_symbol": "LookForCardIDInPlayArea_Bank5",
+    "before": "\twTempCardIDToLook = a;",
+    "after": "\twTempCardIDToLook = (uint8_t)(a + 1u);",
+    "case_ids": ["LookForCardIDInPlayArea_Bank5-0", "LookForCardIDInPlayArea_Bank5-1", "LookForCardIDInPlayArea_Bank5-2", "LookForCardIDInPlayArea_Bank5-3", "LookForCardIDInPlayArea_Bank5-4", "LookForCardIDInPlayArea_Bank5-5"],
+}
+# <<< factory-mutation LookForCardIDInPlayArea_Bank5
+# >>> factory-mutation ClearMemory_Bank5
+MUTATIONS["ClearMemory_Bank5"] = {
+    "source_symbol": "ClearMemory_Bank5",
+    "before": "uint32_t n = a ? a : 0x100u;",
+    "after": "uint32_t n = a ? a : 0x1u;",
+    "case_ids": ["ClearMemory_Bank5-0"],
+}
+# <<< factory-mutation ClearMemory_Bank5
