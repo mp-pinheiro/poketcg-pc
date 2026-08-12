@@ -1,11 +1,11 @@
 """Oracle-diff cases for poketcg/src/home/write_number.asm.
 
 WriteOneByteNumber (90-111) and WriteTwoByteNumber (115-125) drive
-TwoByteNumberToText. WriteBCDDigitInTextFormat (78-86) is a standalone BCD
-digit primitive, portable even though its own callers
-(WriteOneDigitBCDNumber, WriteTwoDigitBCDNumber, WriteFourDigitBCDNumber,
-WriteBCDNumberInTextFormat) remain dead code per docs/port-contract.md:370-372
-(zero external callsites in poketcg/src).
+TwoByteNumberToText. WriteBCDDigitInTextFormat (78-86) and
+WriteBCDNumberInTextFormat (69-74) are BCD digit/number primitives, portable
+even though every caller in this file (WriteOneDigitBCDNumber,
+WriteTwoDigitBCDNumber, WriteFourDigitBCDNumber) remains dead code per
+docs/port-contract.md:370-372 (zero external callsites in poketcg/src).
 """
 
 DEST = 0xC300
@@ -17,6 +17,10 @@ CONTRACT = {
         "preserve": ("b", "c"),
     },
     "WriteBCDDigitInTextFormat": {
+        "compare": ("a", "b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e"),
+    },
+    "WriteBCDNumberInTextFormat": {
         "compare": ("a", "b", "c", "d", "e", "hl"),
         "preserve": ("b", "c", "d", "e"),
     },
@@ -34,6 +38,10 @@ BCD_DST = 0xC110
 
 def bcd_case(a, **kw):
     return dict(POISON, a=a, hl=BCD_DST, wram={BCD_DST: b"\xff"}, read={BCD_DST: 1}, **kw)
+
+
+def bcd2_case(a, **kw):
+    return dict(POISON, a=a, hl=BCD_DST, wram={BCD_DST: b"\xff\xff"}, read={BCD_DST: 2}, **kw)
 
 
 CASES = {
@@ -57,6 +65,15 @@ CASES = {
         bcd_case(0x0A),
         bcd_case(0x0F),
         bcd_case(0xAA),
+    ],
+    "WriteBCDNumberInTextFormat": [
+        {},
+        bcd2_case(0x00),
+        bcd2_case(0x99),
+        bcd2_case(0x9A),
+        bcd2_case(0xA9),
+        bcd2_case(0xAA),
+        bcd2_case(0xFF),
     ],
 }
 SCHEMA2_CASES = {
@@ -83,6 +100,10 @@ SCHEMA2_CASES["WriteBCDDigitInTextFormat"] = legacy_to_schema(
     {"WriteBCDDigitInTextFormat": CASES["WriteBCDDigitInTextFormat"]},
     {"WriteBCDDigitInTextFormat": CONTRACT["WriteBCDDigitInTextFormat"]},
 )["WriteBCDDigitInTextFormat"]
+SCHEMA2_CASES["WriteBCDNumberInTextFormat"] = legacy_to_schema(
+    {"WriteBCDNumberInTextFormat": CASES["WriteBCDNumberInTextFormat"]},
+    {"WriteBCDNumberInTextFormat": CONTRACT["WriteBCDNumberInTextFormat"]},
+)["WriteBCDNumberInTextFormat"]
 MUTATIONS = {
     "TwoByteNumberToText": {
         "source_symbol": "TwoByteNumberToText",
@@ -95,5 +116,11 @@ MUTATIONS = {
         "before": "c = (uint8_t)(c + 0x07u);",
         "after": "c = (uint8_t)(c + 0x08u);",
         "case_ids": ["WriteBCDDigitInTextFormat-3", "WriteBCDDigitInTextFormat-4"],
+    },
+    "WriteBCDNumberInTextFormat": {
+        "source_symbol": "WriteBCDNumberInTextFormat",
+        "before": "uint8_t swapped = (uint8_t)((a << 4) | (a >> 4));",
+        "after": "uint8_t swapped = (uint8_t)((a << 4) | (a >> 3));",
+        "case_ids": ["WriteBCDNumberInTextFormat-3", "WriteBCDNumberInTextFormat-4"],
     },
 }

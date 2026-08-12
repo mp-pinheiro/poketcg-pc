@@ -17,4 +17,7 @@ void ClearSpriteAnimations(void);
 /* >>> factory HandleAllSpriteAnimations */
 void HandleAllSpriteAnimations(void);
 /* <<< factory HandleAllSpriteAnimations */
+/* >>> factory EnableAndClearSpriteAnimations */
+void EnableAndClearSpriteAnimations(void);
+/* <<< factory EnableAndClearSpriteAnimations */
 #endif

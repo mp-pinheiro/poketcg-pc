@@ -57,6 +57,14 @@ static void adapt_HandleAllSpriteAnimations(ProbeState *s)
 }
 /* <<< factory HandleAllSpriteAnimations */
 
+/* >>> factory EnableAndClearSpriteAnimations */
+static void adapt_EnableAndClearSpriteAnimations(ProbeState *s)
+{
+	(void)s;
+	EnableAndClearSpriteAnimations();
+}
+/* <<< factory EnableAndClearSpriteAnimations */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -67,5 +75,6 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetAnimationFramePointer", adapt_GetAnimationFramePointer },
 	{ "ClearSpriteAnimations", adapt_ClearSpriteAnimations },
 	{ "HandleAllSpriteAnimations", adapt_HandleAllSpriteAnimations },
+	{ "EnableAndClearSpriteAnimations", adapt_EnableAndClearSpriteAnimations },
 	{ NULL, NULL },
 };

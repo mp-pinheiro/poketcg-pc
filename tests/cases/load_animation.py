@@ -132,6 +132,7 @@ wAllSpriteAnimationsDisabled = 0xD5D7
 wVBlankOAMCopyToggle = 0xCAC0
 # <<< factory-cases-statics
 
+
 # >>> factory ClearSpriteAnimations
 CONTRACT["ClearSpriteAnimations"] = {
     "compare": ("f", "b", "c", "d", "e", "hl"),
@@ -165,6 +166,23 @@ CASES["HandleAllSpriteAnimations"] = [
 ]
 # <<< factory HandleAllSpriteAnimations
 
+# >>> factory EnableAndClearSpriteAnimations
+CONTRACT["EnableAndClearSpriteAnimations"] = {
+    "compare": ("b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["EnableAndClearSpriteAnimations"] = [
+    {"wram": {wAllSpriteAnimationsDisabled: b"\x01"},
+     "read": {SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+              wVBlankOAMCopyToggle: 1, W_WHICH_SPRITE: 1}},
+    dict(POISON, wram={wAllSpriteAnimationsDisabled: b"\x01", SPRITE_BUFFER: b"\xff" * 256},
+         read={SPRITE_BUFFER: 256, wOAM: 160, wOAMOffset: 1,
+               wVBlankOAMCopyToggle: 1}),
+    {"wram": {wAllSpriteAnimationsDisabled: b"\x00", SPRITE_BUFFER: b"\xaa" * 256},
+     "read": {SPRITE_BUFFER: 256, wVBlankOAMCopyToggle: 1}},
+]
+# <<< factory EnableAndClearSpriteAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -192,3 +210,11 @@ MUTATIONS["HandleAllSpriteAnimations"] = {
     "case_ids": ["HandleAllSpriteAnimations-0", "HandleAllSpriteAnimations-1"],
 }
 # <<< factory-mutation HandleAllSpriteAnimations
+# >>> factory-mutation EnableAndClearSpriteAnimations
+MUTATIONS["EnableAndClearSpriteAnimations"] = {
+    "source_symbol": "EnableAndClearSpriteAnimations",
+    "before": "wAllSpriteAnimationsDisabled = 0u;",
+    "after": "wAllSpriteAnimationsDisabled = 1u;",
+    "case_ids": ["EnableAndClearSpriteAnimations-0", "EnableAndClearSpriteAnimations-1"],
+}
+# <<< factory-mutation EnableAndClearSpriteAnimations

@@ -44,3 +44,12 @@ uint8_t WriteBCDDigitInTextFormat(uint8_t a, uint16_t *hl)
 	*hl = (uint16_t)(*hl + 1u);
 	return c;
 }
+
+/* WriteBCDNumberInTextFormat:: poketcg/src/home/write_number.asm:69-74 */
+uint8_t WriteBCDNumberInTextFormat(uint8_t a, uint16_t *hl)
+{
+	uint8_t swapped = (uint8_t)((a << 4) | (a >> 4));
+
+	WriteBCDDigitInTextFormat(swapped, hl);
+	return WriteBCDDigitInTextFormat(a, hl);
+}

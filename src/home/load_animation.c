@@ -218,3 +218,19 @@ void HandleAllSpriteAnimations(void)
 	BankswitchROM(saved);
 }
 /* <<< factory HandleAllSpriteAnimations */
+
+/* >>> factory EnableAndClearSpriteAnimations */
+/* EnableAndClearSpriteAnimations:: poketcg/src/home/load_animation.asm:1-13.
+ * Enables sprite animations (clears wAllSpriteAnimationsDisabled) then falls
+ * through into ClearSpriteAnimations, already ported earlier in this file.
+ * The leading `xor a` runs before ClearSpriteAnimations's own push af, so
+ * unlike ClearSpriteAnimations called standalone, the caller's entry flags
+ * do not survive this entry point; no caller inspects flags after this call
+ * (checked against every callsite), so f is left untracked here, same as
+ * ClearSpriteAnimations leaves the scratch bank byte in a untracked. */
+void EnableAndClearSpriteAnimations(void)
+{
+	wAllSpriteAnimationsDisabled = 0u;
+	ClearSpriteAnimations();
+}
+/* <<< factory EnableAndClearSpriteAnimations */

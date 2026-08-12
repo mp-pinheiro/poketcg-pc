@@ -1,0 +1,9 @@
+{
+  "fn": "WriteBCDNumberInTextFormat",
+  "case": "tests/cases/write_number.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteBCDNumberInTextFormat\", \"registers\": {\"a\": 65, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49426, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"3941\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteBCDNumberInTextFormat\", \"mismatches\": {\"bus\": {\"address\": 49424, \"reference\": \"3941\", \"native\": \"3341\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49424, 2]]}}}\n",
+  "restored": "{\"fn\": \"WriteBCDNumberInTextFormat\", \"registers\": {\"a\": 65, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 49426, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"3941\"}}, \"status\": \"PASS\"}\n"
+}
