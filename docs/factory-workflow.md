@@ -120,3 +120,9 @@ Calibration findings worth keeping:
   missing RAM symbol addresses, unparsed `const_def`/`DEF..EQU` constants,
   missing struct typedefs for struct-returning callees, invented include
   paths, and ninja's link-command echo crowding out the real compile cause.
+
+**Push cadence note.** The release workflow appends a `chore(release): vX.Y.Z`
+commit to `main` after every push, so the next local commit is a sibling of a
+tip you have not seen. `integrate.py` push failures of the form "Failed to push
+some bookmarks" mean exactly this: `jj git fetch`, `jj rebase -s <your first
+commit> -d main@origin`, `jj bookmark set main -r <new head>`, push again.
