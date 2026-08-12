@@ -81,3 +81,43 @@ void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c)
 	src = wStringBuffer_ADDR;
 	SafeCopyDataHLtoDE(&src, &dst, 4u);
 }
+
+/* WriteOneDigitBCDNumber:: poketcg/src/home/write_number.asm:23-39 */
+void WriteOneDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint16_t src = wStringBuffer_ADDR;
+	uint16_t dst;
+
+	WriteBCDDigitInTextFormat(a, &src);
+	dst = BCCoordToBGMap0Address(b, c);
+	src = wStringBuffer_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 1u);
+}
+
+/* WriteOneByteNumber:: poketcg/src/home/write_number.asm:90-111 */
+void WriteOneByteNumber(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint16_t num = a;
+	uint16_t ptr = wStringBuffer_ADDR;
+	uint16_t src;
+	uint16_t dst;
+
+	get_digit(&num, (uint16_t)-100, &ptr);
+	get_digit(&num, (uint16_t)-10, &ptr);
+	get_digit(&num, (uint16_t)-1, &ptr);
+	dst = BCCoordToBGMap0Address(b, c);
+	src = wStringBuffer_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 3u);
+}
+
+/* WriteTwoByteNumber:: poketcg/src/home/write_number.asm:115-125 */
+void WriteTwoByteNumber(uint16_t hl, uint8_t b, uint8_t c)
+{
+	uint16_t src = wStringBuffer_ADDR;
+	uint16_t dst;
+
+	TwoByteNumberToText(hl, &src);
+	dst = BCCoordToBGMap0Address(b, c);
+	src = wStringBuffer_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 5u);
+}

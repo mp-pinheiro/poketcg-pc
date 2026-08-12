@@ -1,0 +1,9 @@
+{
+  "fn": "WriteOneByteNumber",
+  "case": "tests/cases/write_number.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteOneByteNumber\", \"registers\": {\"a\": 255, \"b\": 7, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39047\": \"32353500\", \"51872\": \"32353511\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteOneByteNumber\", \"mismatches\": {\"bus\": {\"address\": 39050, \"reference\": \"3235350032353511\", \"native\": \"3235351132353511\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[39047, 4], [51872, 4]]}}}\n",
+  "restored": "{\"fn\": \"WriteOneByteNumber\", \"registers\": {\"a\": 255, \"b\": 7, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39047\": \"32353500\", \"51872\": \"32353511\"}}, \"status\": \"PASS\"}\n"
+}

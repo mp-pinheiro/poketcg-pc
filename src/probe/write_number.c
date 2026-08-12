@@ -29,11 +29,29 @@ static void adapt_WriteFourDigitBCDNumber(ProbeState *s)
 	WriteFourDigitBCDNumber(s->hl, s->b, s->c);
 }
 
+static void adapt_WriteOneDigitBCDNumber(ProbeState *s)
+{
+	WriteOneDigitBCDNumber(s->a, s->b, s->c);
+}
+
+static void adapt_WriteOneByteNumber(ProbeState *s)
+{
+	WriteOneByteNumber(s->a, s->b, s->c);
+}
+
+static void adapt_WriteTwoByteNumber(ProbeState *s)
+{
+	WriteTwoByteNumber(s->hl, s->b, s->c);
+}
+
 const ProbeEntry probe_entries_write_number[] = {
 	{ "TwoByteNumberToText", adapt_TwoByteNumberToText },
 	{ "WriteBCDDigitInTextFormat", adapt_WriteBCDDigitInTextFormat },
 	{ "WriteBCDNumberInTextFormat", adapt_WriteBCDNumberInTextFormat },
 	{ "WriteTwoDigitBCDNumber", adapt_WriteTwoDigitBCDNumber },
 	{ "WriteFourDigitBCDNumber", adapt_WriteFourDigitBCDNumber },
+	{ "WriteOneDigitBCDNumber", adapt_WriteOneDigitBCDNumber },
+	{ "WriteOneByteNumber", adapt_WriteOneByteNumber },
+	{ "WriteTwoByteNumber", adapt_WriteTwoByteNumber },
 	{ NULL, NULL },
 };

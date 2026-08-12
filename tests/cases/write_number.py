@@ -37,6 +37,18 @@ CONTRACT = {
         "compare": ("b", "c", "d", "e", "hl"),
         "preserve": ("b", "c", "d", "e", "hl"),
     },
+    "WriteOneDigitBCDNumber": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "WriteOneByteNumber": {
+        "compare": ("b", "c", "hl"),
+        "preserve": ("b", "c", "hl"),
+    },
+    "WriteTwoByteNumber": {
+        "compare": ("b", "c"),
+        "preserve": ("b", "c"),
+    },
 }
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
@@ -71,6 +83,24 @@ def four_digit_case(hl, b, c, **kw):
     dst = BGMAP0 + c * 32 + b
     return dict(POISON, hl=hl, b=b, c=c,
                 wram={WSTR: b"\xff\xff\xff\xff\x11"}, read={WSTR: 5, dst: 5}, **kw)
+
+
+def one_digit_case(a, b, c, **kw):
+    dst = BGMAP0 + c * 32 + b
+    return dict(POISON, a=a, b=b, c=c,
+                wram={WSTR: b"\xff\x11"}, read={WSTR: 2, dst: 2}, **kw)
+
+
+def one_byte_case(a, b, c, **kw):
+    dst = BGMAP0 + c * 32 + b
+    return dict(POISON, a=a, b=b, c=c,
+                wram={WSTR: b"\xff\xff\xff\x11"}, read={WSTR: 4, dst: 4}, **kw)
+
+
+def two_byte_case(hl, b, c, **kw):
+    dst = BGMAP0 + c * 32 + b
+    return dict(POISON, hl=hl, b=b, c=c,
+                wram={WSTR: b"\xff\xff\xff\xff\xff\xff\x11"}, read={WSTR: 7, dst: 6}, **kw)
 
 
 CASES = {
@@ -114,6 +144,21 @@ CASES = {
         four_digit_case(0xAAAA, 7, 4),
         four_digit_case(0x9999, 27, 62),
     ],
+    "WriteOneDigitBCDNumber": [
+        {},
+        one_digit_case(0xAA, 7, 4),
+        one_digit_case(0x99, 27, 62),
+    ],
+    "WriteOneByteNumber": [
+        {},
+        one_byte_case(0xFF, 7, 4),
+        one_byte_case(100, 27, 62),
+    ],
+    "WriteTwoByteNumber": [
+        {},
+        two_byte_case(54321, 7, 4),
+        two_byte_case(65535, 27, 62),
+    ],
 }
 SCHEMA2_CASES = {
     "TwoByteNumberToText": [
@@ -151,6 +196,18 @@ SCHEMA2_CASES["WriteFourDigitBCDNumber"] = legacy_to_schema(
     {"WriteFourDigitBCDNumber": CASES["WriteFourDigitBCDNumber"]},
     {"WriteFourDigitBCDNumber": CONTRACT["WriteFourDigitBCDNumber"]},
 )["WriteFourDigitBCDNumber"]
+SCHEMA2_CASES["WriteOneDigitBCDNumber"] = legacy_to_schema(
+    {"WriteOneDigitBCDNumber": CASES["WriteOneDigitBCDNumber"]},
+    {"WriteOneDigitBCDNumber": CONTRACT["WriteOneDigitBCDNumber"]},
+)["WriteOneDigitBCDNumber"]
+SCHEMA2_CASES["WriteOneByteNumber"] = legacy_to_schema(
+    {"WriteOneByteNumber": CASES["WriteOneByteNumber"]},
+    {"WriteOneByteNumber": CONTRACT["WriteOneByteNumber"]},
+)["WriteOneByteNumber"]
+SCHEMA2_CASES["WriteTwoByteNumber"] = legacy_to_schema(
+    {"WriteTwoByteNumber": CASES["WriteTwoByteNumber"]},
+    {"WriteTwoByteNumber": CONTRACT["WriteTwoByteNumber"]},
+)["WriteTwoByteNumber"]
 MUTATIONS = {
     "TwoByteNumberToText": {
         "source_symbol": "TwoByteNumberToText",
@@ -181,5 +238,23 @@ MUTATIONS = {
         "before": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
         "after": "SafeCopyDataHLtoDE(&src, &dst, 5u);",
         "case_ids": ["WriteFourDigitBCDNumber-1", "WriteFourDigitBCDNumber-2"],
+    },
+    "WriteOneDigitBCDNumber": {
+        "source_symbol": "WriteOneDigitBCDNumber",
+        "before": "SafeCopyDataHLtoDE(&src, &dst, 1u);",
+        "after": "SafeCopyDataHLtoDE(&src, &dst, 2u);",
+        "case_ids": ["WriteOneDigitBCDNumber-1", "WriteOneDigitBCDNumber-2"],
+    },
+    "WriteOneByteNumber": {
+        "source_symbol": "WriteOneByteNumber",
+        "before": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
+        "after": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
+        "case_ids": ["WriteOneByteNumber-1", "WriteOneByteNumber-2"],
+    },
+    "WriteTwoByteNumber": {
+        "source_symbol": "WriteTwoByteNumber",
+        "before": "SafeCopyDataHLtoDE(&src, &dst, 5u);",
+        "after": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
+        "case_ids": ["WriteTwoByteNumber-1", "WriteTwoByteNumber-2"],
     },
 }

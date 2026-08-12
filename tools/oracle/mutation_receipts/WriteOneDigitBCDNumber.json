@@ -1,0 +1,9 @@
+{
+  "fn": "WriteOneDigitBCDNumber",
+  "case": "tests/cases/write_number.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteOneDigitBCDNumber\", \"registers\": {\"a\": 170, \"b\": 7, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39047\": \"4100\", \"51872\": \"4111\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteOneDigitBCDNumber\", \"mismatches\": {\"bus\": {\"address\": 39048, \"reference\": \"41004111\", \"native\": \"41114111\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[39047, 2], [51872, 2]]}}}\n",
+  "restored": "{\"fn\": \"WriteOneDigitBCDNumber\", \"registers\": {\"a\": 170, \"b\": 7, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39047\": \"4100\", \"51872\": \"4111\"}}, \"status\": \"PASS\"}\n"
+}

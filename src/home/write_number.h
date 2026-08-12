@@ -27,4 +27,24 @@ void WriteTwoDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c);
  * BGMap0 address for coordinate (b, c). Preserves b, c, d, e, hl. */
 void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c);
 
+/* poketcg/src/home/write_number.asm:23-39 — write the one-digit BCD number
+ * in the low nibble of `a` as text to wStringBuffer, then copy 1 byte to
+ * the BGMap0 address for coordinate (b, c). Preserves b, c, d, e, hl. */
+void WriteOneDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c);
+
+/* poketcg/src/home/write_number.asm:90-111 — write the one-byte number `a`
+ * as three decimal digits (hundreds/tens/ones, leading zeros kept, no
+ * terminator) to wStringBuffer, then copy those 3 bytes to the BGMap0
+ * address for coordinate (b, c). Preserves b, c, hl only: the asm never
+ * saves entry de, so exit d/e are scratch and not part of the contract. */
+void WriteOneByteNumber(uint8_t a, uint8_t b, uint8_t c);
+
+/* poketcg/src/home/write_number.asm:115-125 — write hl as five decimal
+ * digits (leading zeros kept) via TwoByteNumberToText into wStringBuffer,
+ * then copy those 5 bytes to the BGMap0 address for coordinate (b, c).
+ * Preserves b, c only: the asm never saves entry hl or de (hl is consumed
+ * as the number to convert), so exit hl/d/e are scratch and not part of
+ * the contract. */
+void WriteTwoByteNumber(uint16_t hl, uint8_t b, uint8_t c);
+
 #endif /* POKETCG_HOME_WRITE_NUMBER_H */
