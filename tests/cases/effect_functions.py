@@ -97,6 +97,50 @@ CASES["GetNextPositionInTempList"] = [
 ]
 # <<< factory GetNextPositionInTempList
 
+# >>> factory QueueStatusCondition
+wStatusConditionQueue = 0xCCCE
+wStatusConditionQueueIndex = 0xCCCD
+wTempNonTurnDuelistCardID = 0xCCC4
+wWhoseTurn = 0xCC05
+hWhoseTurn = 0xFF97
+wNoEffectFromWhichStatus = 0xCCF1
+wEffectFailed = 0xCCED
+
+CONTRACT["QueueStatusCondition"] = {"compare": ("f",), "preserve": ()}
+CASES["QueueStatusCondition"] = [
+    {"b": 1, "c": 2, "wram": {hWhoseTurn: b"\x00", wWhoseTurn: b"\x01"},
+     "read": {wStatusConditionQueue: 3, wStatusConditionQueueIndex: 1}},
+    {"b": 1, "c": 2, "wram": {hWhoseTurn: b"\x00", wWhoseTurn: b"\x00", wTempNonTurnDuelistCardID: b"\xcb"},
+     "read": {wNoEffectFromWhichStatus: 1, wEffectFailed: 1}},
+    {"b": 1, "c": 2, "wram": {hWhoseTurn: b"\x00", wWhoseTurn: b"\x00", wTempNonTurnDuelistCardID: b"\xcc"},
+     "read": {wNoEffectFromWhichStatus: 1, wEffectFailed: 1}},
+    dict(POISON, b=1, c=2, wram={hWhoseTurn: b"\x01", wWhoseTurn: b"\x00"},
+         read={wStatusConditionQueue: 3, wStatusConditionQueueIndex: 1}),
+    {"b": 3, "c": 4, "wram": {hWhoseTurn: b"\x02", wWhoseTurn: b"\x02", wStatusConditionQueueIndex: b"\x00"},
+     "read": {wStatusConditionQueue: 3, wStatusConditionQueueIndex: 1}},
+]
+# <<< factory QueueStatusCondition
+
+# >>> factory CommentedOut_2c086
+CONTRACT["CommentedOut_2c086"] = {"compare": ("a",), "preserve": ("a",)}
+CASES["CommentedOut_2c086"] = [
+    {"a": 0},
+    dict(POISON, a=0xAA),
+    {"a": 1},
+    {"a": 255},
+]
+# <<< factory CommentedOut_2c086
+
+# >>> factory SetWasUnsuccessful
+wEffectFailed = 0xCCED
+
+CONTRACT["SetWasUnsuccessful"] = {"compare": (), "preserve": ()}
+CASES["SetWasUnsuccessful"] = [
+    {"wram": {wEffectFailed: b"\x00"}, "read": {wEffectFailed: 1}},
+    dict(POISON, wram={wEffectFailed: b"\xFF"}, read={wEffectFailed: 1}),
+]
+# <<< factory SetWasUnsuccessful
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -163,3 +207,27 @@ MUTATIONS["GetNextPositionInTempList"] = {
 	"case_ids": ["GetNextPositionInTempList-0", "GetNextPositionInTempList-1"],
 }
 # <<< factory-mutation GetNextPositionInTempList
+# >>> factory-mutation QueueStatusCondition
+MUTATIONS["QueueStatusCondition"] = {
+    "source_symbol": "QueueStatusCondition",
+    "before": "return (QueueStatusConditionResult){0x10u};",
+    "after": "return (QueueStatusConditionResult){0x00u};",
+    "case_ids": ["QueueStatusCondition-0", "QueueStatusCondition-3", "QueueStatusCondition-4"],
+}
+# <<< factory-mutation QueueStatusCondition
+# >>> factory-mutation CommentedOut_2c086
+MUTATIONS["CommentedOut_2c086"] = {
+    "source_symbol": "CommentedOut_2c086",
+    "before": "\treturn a;",
+    "after": "\treturn (uint8_t)(a + 1u);",
+    "case_ids": ["CommentedOut_2c086-0", "CommentedOut_2c086-1", "CommentedOut_2c086-2", "CommentedOut_2c086-3"],
+}
+# <<< factory-mutation CommentedOut_2c086
+# >>> factory-mutation SetWasUnsuccessful
+MUTATIONS["SetWasUnsuccessful"] = {
+    "source_symbol": "SetWasUnsuccessful",
+    "before": "wEffectFailed = EFFECT_FAILED_UNSUCCESSFUL;",
+    "after": "wEffectFailed = 0x00u;",
+    "case_ids": ["SetWasUnsuccessful-0", "SetWasUnsuccessful-1"],
+}
+# <<< factory-mutation SetWasUnsuccessful

@@ -1,0 +1,9 @@
+{
+  "fn": "QueueStatusCondition",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"01\", \"52429\": \"03c20102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"QueueStatusCondition\", \"mismatches\": {\"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"QueueStatusCondition\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"01\", \"52429\": \"03c20102\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

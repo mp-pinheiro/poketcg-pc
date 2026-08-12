@@ -80,6 +80,29 @@ static void adapt_GetNextPositionInTempList(ProbeState *s)
 }
 /* <<< factory GetNextPositionInTempList */
 
+/* >>> factory QueueStatusCondition */
+static void adapt_QueueStatusCondition(ProbeState *s)
+{
+	QueueStatusConditionResult r = QueueStatusCondition(s->b, s->c);
+	s->f = r.f;
+}
+/* <<< factory QueueStatusCondition */
+
+/* >>> factory CommentedOut_2c086 */
+static void adapt_CommentedOut_2c086(ProbeState *s)
+{
+	s->a = CommentedOut_2c086(s->a);
+}
+/* <<< factory CommentedOut_2c086 */
+
+/* >>> factory SetWasUnsuccessful */
+static void adapt_SetWasUnsuccessful(ProbeState *s)
+{
+	(void)s;
+	SetWasUnsuccessful();
+}
+/* <<< factory SetWasUnsuccessful */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -90,5 +113,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SetDefiniteAIDamage", adapt_SetDefiniteAIDamage },
 	{ "PickRandomPlayAreaCard", adapt_PickRandomPlayAreaCard },
 	{ "GetNextPositionInTempList", adapt_GetNextPositionInTempList },
+	{ "QueueStatusCondition", adapt_QueueStatusCondition },
+	{ "CommentedOut_2c086", adapt_CommentedOut_2c086 },
+	{ "SetWasUnsuccessful", adapt_SetWasUnsuccessful },
 	{ NULL, NULL },
 };

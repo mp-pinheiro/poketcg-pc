@@ -32,4 +32,14 @@ PickRandomPlayAreaCardResult PickRandomPlayAreaCard(void);
 /* >>> factory GetNextPositionInTempList */
 uint16_t GetNextPositionInTempList(void);
 /* <<< factory GetNextPositionInTempList */
+/* >>> factory QueueStatusCondition */
+typedef struct { uint8_t f; } QueueStatusConditionResult;
+QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c);
+/* <<< factory QueueStatusCondition */
+/* >>> factory CommentedOut_2c086 */
+uint8_t CommentedOut_2c086(uint8_t a);
+/* <<< factory CommentedOut_2c086 */
+/* >>> factory SetWasUnsuccessful */
+void SetWasUnsuccessful(void);
+/* <<< factory SetWasUnsuccessful */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

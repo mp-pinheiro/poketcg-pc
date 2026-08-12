@@ -25,6 +25,14 @@
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x02u
 #include "home/random.h"
+
+#include "home/substatus.h"
+
+#define CLEFAIRY_DOLL 0xCBu
+#define EFFECT_FAILED_UNSUCCESSFUL 0x02u
+#define MYSTERIOUS_FOSSIL 0xCCu
+#define PLAY_AREA_ARENA 0x00u
+#define SNORLAX 0xBEu
 /* <<< factory statics */
 
 
@@ -127,3 +135,67 @@ uint16_t GetNextPositionInTempList(void)
 	return (uint16_t)(hTempList_ADDR + a);
 }
 /* <<< factory GetNextPositionInTempList */
+
+/* >>> factory QueueStatusCondition */
+/* effect_functions.asm:41-73 */
+QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c)
+{
+	uint8_t who = gb_read8(hWhoseTurn_ADDR);
+	uint8_t turn = wWhoseTurn;
+	uint8_t can_induce = 1u;
+
+	if (who == turn) {
+		uint8_t cardid = wTempNonTurnDuelistCardID;
+		if (cardid == CLEFAIRY_DOLL || cardid == MYSTERIOUS_FOSSIL) {
+			can_induce = 0u;
+		} else if (cardid == SNORLAX) {
+			SwapTurn();
+			PkmnPowerIncapableResult r = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_ARENA);
+			SwapTurn();
+			can_induce = (r.f & 0x10u) ? 1u : 0u;
+		} else {
+			can_induce = 1u;
+		}
+	}
+
+	if (!can_induce) {
+		wNoEffectFromWhichStatus = c;
+		SetNoEffectFromStatus();
+		return (QueueStatusConditionResult){0x00u};
+	}
+
+	uint16_t idxaddr = wStatusConditionQueueIndex_ADDR;
+	uint8_t idx = gb_read8(idxaddr);
+	uint16_t qhl = (uint16_t)(wStatusConditionQueue_ADDR + idx);
+
+	SwapTurn();
+	uint8_t whoNew = gb_read8(hWhoseTurn_ADDR);
+	gb_write8(qhl, whoNew);
+	qhl++;
+	SwapTurn();
+
+	gb_write8(qhl, b);
+	qhl++;
+	gb_write8(qhl, c);
+
+	gb_write8(idxaddr, (uint8_t)(idx + 3u));
+
+	return (QueueStatusConditionResult){0x10u};
+}
+/* <<< factory QueueStatusCondition */
+
+/* >>> factory CommentedOut_2c086 */
+/* effect_functions.asm:98-98 */
+uint8_t CommentedOut_2c086(uint8_t a)
+{
+	return a;
+}
+/* <<< factory CommentedOut_2c086 */
+
+/* >>> factory SetWasUnsuccessful */
+/* effect_functions.asm:131-136 */
+void SetWasUnsuccessful(void)
+{
+	wEffectFailed = EFFECT_FAILED_UNSUCCESSFUL;
+}
+/* <<< factory SetWasUnsuccessful */
