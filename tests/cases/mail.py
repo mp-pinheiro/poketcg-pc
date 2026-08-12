@@ -84,6 +84,19 @@ CASES["PrintEmptyPCPackName"] = [
 ]
 # <<< factory PrintEmptyPCPackName
 
+# >>> factory-cases-statics
+wCursorBlinkTimer = 0xD11C
+# <<< factory-cases-statics
+
+# >>> factory UpdateMailMenuCursor
+CONTRACT["UpdateMailMenuCursor"] = {"compare": (), "preserve": ()}
+CASES["UpdateMailMenuCursor"] = [
+	{"wram": {0xD11C: b"\x00", wPCPackSelection: b"\x00"}, "vread": {0: {0x9841: 1}, 1: {0x9841: 1}}},
+	{"setup": [{"fn": "ShowMailMenuCursor"}], "wram": {0xD11C: b"\x10", wPCPackSelection: b"\x0e"}, "vread": {0: {0x994d: 1}, 1: {0x994d: 1}}},
+	dict(POISON, wram={0xD11C: b"\x0f", wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
+]
+# <<< factory UpdateMailMenuCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -153,3 +166,11 @@ MUTATIONS["PrintEmptyPCPackName"] = {
 	"case_ids": ["PrintEmptyPCPackName-1", "PrintEmptyPCPackName-2"],
 }
 # <<< factory-mutation PrintEmptyPCPackName
+# >>> factory-mutation UpdateMailMenuCursor
+MUTATIONS["UpdateMailMenuCursor"] = {
+	"source_symbol": "UpdateMailMenuCursor",
+	"before": "if ((wCursorBlinkTimer & 0x10u) == 0u)",
+	"after": "if ((wCursorBlinkTimer & 0x10u) != 0u)",
+	"case_ids": ["UpdateMailMenuCursor-1", "UpdateMailMenuCursor-0", "UpdateMailMenuCursor-2"],
+}
+# <<< factory-mutation UpdateMailMenuCursor

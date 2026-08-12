@@ -29,4 +29,7 @@ void HideMailMenuCursor(void);
 /* >>> factory PrintEmptyPCPackName */
 void PrintEmptyPCPackName(uint8_t pack);
 /* <<< factory PrintEmptyPCPackName */
+/* >>> factory UpdateMailMenuCursor */
+void UpdateMailMenuCursor(void);
+/* <<< factory UpdateMailMenuCursor */
 #endif

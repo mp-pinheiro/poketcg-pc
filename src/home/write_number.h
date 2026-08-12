@@ -17,4 +17,14 @@ uint8_t WriteBCDDigitInTextFormat(uint8_t a, uint16_t *hl);
  * WriteBCDDigitInTextFormat for the low nibble; returns its last char. */
 uint8_t WriteBCDNumberInTextFormat(uint8_t a, uint16_t *hl);
 
+/* poketcg/src/home/write_number.asm:3-19 — write the two-digit BCD number
+ * `a` as text to wStringBuffer, then copy 2 bytes to the BGMap0 address for
+ * coordinate (b, c). Preserves b, c, d, e, hl. */
+void WriteTwoDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c);
+
+/* poketcg/src/home/write_number.asm:43-64 — write the four-digit BCD number
+ * `hl` (high byte first) as text to wStringBuffer, then copy 4 bytes to the
+ * BGMap0 address for coordinate (b, c). Preserves b, c, d, e, hl. */
+void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c);
+
 #endif /* POKETCG_HOME_WRITE_NUMBER_H */

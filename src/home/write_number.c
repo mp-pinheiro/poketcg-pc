@@ -1,5 +1,8 @@
 #include "home/write_number.h"
 
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/empty_screen.h"
 #include "mem.h"
 
 /* TwoByteNumberToText.get_digit:: poketcg/src/home/write_number.asm:144-158 */
@@ -52,4 +55,29 @@ uint8_t WriteBCDNumberInTextFormat(uint8_t a, uint16_t *hl)
 
 	WriteBCDDigitInTextFormat(swapped, hl);
 	return WriteBCDDigitInTextFormat(a, hl);
+}
+
+/* WriteTwoDigitBCDNumber:: poketcg/src/home/write_number.asm:3-19 */
+void WriteTwoDigitBCDNumber(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint16_t src = wStringBuffer_ADDR;
+	uint16_t dst;
+
+	WriteBCDNumberInTextFormat(a, &src);
+	dst = BCCoordToBGMap0Address(b, c);
+	src = wStringBuffer_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 2u);
+}
+
+/* WriteFourDigitBCDNumber:: poketcg/src/home/write_number.asm:43-64 */
+void WriteFourDigitBCDNumber(uint16_t hl, uint8_t b, uint8_t c)
+{
+	uint16_t src = wStringBuffer_ADDR;
+	uint16_t dst;
+
+	WriteBCDNumberInTextFormat((uint8_t)(hl >> 8), &src);
+	WriteBCDNumberInTextFormat((uint8_t)hl, &src);
+	dst = BCCoordToBGMap0Address(b, c);
+	src = wStringBuffer_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 4u);
 }

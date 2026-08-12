@@ -63,6 +63,14 @@ static void adapt_PrintEmptyPCPackName(ProbeState *s)
 }
 /* <<< factory PrintEmptyPCPackName */
 
+/* >>> factory UpdateMailMenuCursor */
+static void adapt_UpdateMailMenuCursor(ProbeState *s)
+{
+	(void)s;
+	UpdateMailMenuCursor();
+}
+/* <<< factory UpdateMailMenuCursor */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -72,5 +80,6 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "ShowMailMenuCursor", adapt_ShowMailMenuCursor },
 	{ "HideMailMenuCursor", adapt_HideMailMenuCursor },
 	{ "PrintEmptyPCPackName", adapt_PrintEmptyPCPackName },
+	{ "UpdateMailMenuCursor", adapt_UpdateMailMenuCursor },
 	{ NULL, NULL },
 };

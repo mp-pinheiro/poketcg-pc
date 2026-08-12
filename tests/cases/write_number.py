@@ -6,6 +6,11 @@ WriteBCDNumberInTextFormat (69-74) are BCD digit/number primitives, portable
 even though every caller in this file (WriteOneDigitBCDNumber,
 WriteTwoDigitBCDNumber, WriteFourDigitBCDNumber) remains dead code per
 docs/port-contract.md:370-372 (zero external callsites in poketcg/src).
+WriteTwoDigitBCDNumber (3-19) and WriteFourDigitBCDNumber (43-64) are ported
+below for the same reason: they call BCCoordToBGMap0Address and
+SafeCopyDataHLtoDE (already landed in bg_map.c/empty_screen.c) through the
+JPHblankCopyDataHLtoDE alias, so nothing left blocks them even though
+WriteOneDigitBCDNumber does not yet exist in C.
 """
 
 DEST = 0xC300
@@ -23,6 +28,14 @@ CONTRACT = {
     "WriteBCDNumberInTextFormat": {
         "compare": ("a", "b", "c", "d", "e", "hl"),
         "preserve": ("b", "c", "d", "e"),
+    },
+    "WriteTwoDigitBCDNumber": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
+    },
+    "WriteFourDigitBCDNumber": {
+        "compare": ("b", "c", "d", "e", "hl"),
+        "preserve": ("b", "c", "d", "e", "hl"),
     },
 }
 
@@ -42,6 +55,22 @@ def bcd_case(a, **kw):
 
 def bcd2_case(a, **kw):
     return dict(POISON, a=a, hl=BCD_DST, wram={BCD_DST: b"\xff\xff"}, read={BCD_DST: 2}, **kw)
+
+
+WSTR = 0xCAA0
+BGMAP0 = 0x9800
+
+
+def two_digit_case(a, b, c, **kw):
+    dst = BGMAP0 + c * 32 + b
+    return dict(POISON, a=a, b=b, c=c,
+                wram={WSTR: b"\xff\xff\x11"}, read={WSTR: 3, dst: 3}, **kw)
+
+
+def four_digit_case(hl, b, c, **kw):
+    dst = BGMAP0 + c * 32 + b
+    return dict(POISON, hl=hl, b=b, c=c,
+                wram={WSTR: b"\xff\xff\xff\xff\x11"}, read={WSTR: 5, dst: 5}, **kw)
 
 
 CASES = {
@@ -75,6 +104,16 @@ CASES = {
         bcd2_case(0xAA),
         bcd2_case(0xFF),
     ],
+    "WriteTwoDigitBCDNumber": [
+        {},
+        two_digit_case(0xAA, 7, 4),
+        two_digit_case(0x99, 27, 62),
+    ],
+    "WriteFourDigitBCDNumber": [
+        {},
+        four_digit_case(0xAAAA, 7, 4),
+        four_digit_case(0x9999, 27, 62),
+    ],
 }
 SCHEMA2_CASES = {
     "TwoByteNumberToText": [
@@ -104,6 +143,14 @@ SCHEMA2_CASES["WriteBCDNumberInTextFormat"] = legacy_to_schema(
     {"WriteBCDNumberInTextFormat": CASES["WriteBCDNumberInTextFormat"]},
     {"WriteBCDNumberInTextFormat": CONTRACT["WriteBCDNumberInTextFormat"]},
 )["WriteBCDNumberInTextFormat"]
+SCHEMA2_CASES["WriteTwoDigitBCDNumber"] = legacy_to_schema(
+    {"WriteTwoDigitBCDNumber": CASES["WriteTwoDigitBCDNumber"]},
+    {"WriteTwoDigitBCDNumber": CONTRACT["WriteTwoDigitBCDNumber"]},
+)["WriteTwoDigitBCDNumber"]
+SCHEMA2_CASES["WriteFourDigitBCDNumber"] = legacy_to_schema(
+    {"WriteFourDigitBCDNumber": CASES["WriteFourDigitBCDNumber"]},
+    {"WriteFourDigitBCDNumber": CONTRACT["WriteFourDigitBCDNumber"]},
+)["WriteFourDigitBCDNumber"]
 MUTATIONS = {
     "TwoByteNumberToText": {
         "source_symbol": "TwoByteNumberToText",
@@ -122,5 +169,17 @@ MUTATIONS = {
         "before": "uint8_t swapped = (uint8_t)((a << 4) | (a >> 4));",
         "after": "uint8_t swapped = (uint8_t)((a << 4) | (a >> 3));",
         "case_ids": ["WriteBCDNumberInTextFormat-3", "WriteBCDNumberInTextFormat-4"],
+    },
+    "WriteTwoDigitBCDNumber": {
+        "source_symbol": "WriteTwoDigitBCDNumber",
+        "before": "SafeCopyDataHLtoDE(&src, &dst, 2u);",
+        "after": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
+        "case_ids": ["WriteTwoDigitBCDNumber-1", "WriteTwoDigitBCDNumber-2"],
+    },
+    "WriteFourDigitBCDNumber": {
+        "source_symbol": "WriteFourDigitBCDNumber",
+        "before": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
+        "after": "SafeCopyDataHLtoDE(&src, &dst, 5u);",
+        "case_ids": ["WriteFourDigitBCDNumber-1", "WriteFourDigitBCDNumber-2"],
     },
 }

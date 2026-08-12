@@ -19,9 +19,21 @@ static void adapt_WriteBCDNumberInTextFormat(ProbeState *s)
 	s->a = WriteBCDNumberInTextFormat(s->a, &s->hl);
 }
 
+static void adapt_WriteTwoDigitBCDNumber(ProbeState *s)
+{
+	WriteTwoDigitBCDNumber(s->a, s->b, s->c);
+}
+
+static void adapt_WriteFourDigitBCDNumber(ProbeState *s)
+{
+	WriteFourDigitBCDNumber(s->hl, s->b, s->c);
+}
+
 const ProbeEntry probe_entries_write_number[] = {
 	{ "TwoByteNumberToText", adapt_TwoByteNumberToText },
 	{ "WriteBCDDigitInTextFormat", adapt_WriteBCDDigitInTextFormat },
 	{ "WriteBCDNumberInTextFormat", adapt_WriteBCDNumberInTextFormat },
+	{ "WriteTwoDigitBCDNumber", adapt_WriteTwoDigitBCDNumber },
+	{ "WriteFourDigitBCDNumber", adapt_WriteFourDigitBCDNumber },
 	{ NULL, NULL },
 };

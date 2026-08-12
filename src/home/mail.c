@@ -121,3 +121,14 @@ void PrintEmptyPCPackName(uint8_t pack)
 	(void)PrintTextNoDelay(EMPTY_MAIL_NAME_TEXT, coords.b, coords.c);
 }
 /* <<< factory PrintEmptyPCPackName */
+
+/* >>> factory UpdateMailMenuCursor */
+/* mail.asm:317-321 */
+void UpdateMailMenuCursor(void)
+{
+	if ((wCursorBlinkTimer & 0x10u) == 0u)
+		ShowMailMenuCursor();
+	else
+		HideMailMenuCursor();
+}
+/* <<< factory UpdateMailMenuCursor */

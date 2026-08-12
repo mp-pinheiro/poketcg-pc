@@ -267,8 +267,31 @@ def prototype_for(routine: str) -> tuple[str, str] | None:
                 proto = f"{typedef}  {proto}"
         result = (header.name, proto)
         break
+    if result is None:
+        alias = _probe_alias(routine)
+        if alias and alias != routine:
+            result = prototype_for(alias)
     _PROTO_CACHE[routine] = result
     return result
+
+
+PROBE_ROW = re.compile(r'\{\s*"([A-Za-z_]\w*)"\s*,\s*adapt_([A-Za-z_]\w*)\s*\}')
+
+
+def _probe_alias(routine: str) -> str | None:
+    """C routine an alias-registered pret symbol actually resolves to.
+
+    Some pret symbols are trampolines the port maps onto an existing C
+    function instead of duplicating it: the probe row reads
+    ``{ "JPHblankCopyDataHLtoDE", adapt_SafeCopyDataHLtoDE }``. Without this,
+    a caller of such a symbol looks like it has an unported callee and gets
+    blocked, even though the callee is fully available under another name.
+    """
+    for probe in sorted((ROOT / "src" / "probe").glob("*.c")):
+        for name, adapter in PROBE_ROW.findall(probe.read_text()):
+            if name == routine:
+                return adapter
+    return None
 
 
 def pick_example(asm: str) -> str:
