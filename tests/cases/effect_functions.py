@@ -210,6 +210,22 @@ CASES["HandleAIMetronomeEffect"] = [
 ]
 # <<< factory HandleAIMetronomeEffect
 
+# >>> factory ParalysisEffect
+CONTRACT["ParalysisEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ParalysisEffect"] = [
+    {"read": {0xCB00: 0x100, 0xCC00: 0x100}},
+    dict(POISON, read={0xCB00: 0x100, 0xCC00: 0x100}),
+]
+# <<< factory ParalysisEffect
+
+# >>> factory ConfusionEffect
+CONTRACT["ConfusionEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ConfusionEffect"] = [
+    {"read": {0xCB00: 0x100, 0xCC00: 0x100}},
+    dict(POISON, read={0xCB00: 0x100, 0xCC00: 0x100}),
+]
+# <<< factory ConfusionEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -356,3 +372,19 @@ MUTATIONS["HandleAIMetronomeEffect"] = {
     "case_ids": ["HandleAIMetronomeEffect-0", "HandleAIMetronomeEffect-1"],
 }
 # <<< factory-mutation HandleAIMetronomeEffect
+# >>> factory-mutation ParalysisEffect
+MUTATIONS["ParalysisEffect"] = {
+    "source_symbol": "ParalysisEffect",
+    "before": "return QueueStatusCondition(PSN_DBLPSN, PARALYZED);",
+    "after": "return QueueStatusCondition(PSN_DBLPSN, CONFUSED);",
+    "case_ids": ["ParalysisEffect-0", "ParalysisEffect-1"],
+}
+# <<< factory-mutation ParalysisEffect
+# >>> factory-mutation ConfusionEffect
+MUTATIONS["ConfusionEffect"] = {
+    "source_symbol": "ConfusionEffect",
+    "before": "return QueueStatusCondition(PSN_DBLPSN, CONFUSED);",
+    "after": "return QueueStatusCondition(PSN_DBLPSN, PARALYZED);",
+    "case_ids": ["ConfusionEffect-0", "ConfusionEffect-1"],
+}
+# <<< factory-mutation ConfusionEffect

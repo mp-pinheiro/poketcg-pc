@@ -67,4 +67,10 @@ uint16_t ClefableMinimizeEffect(void);
 /* >>> factory HandleAIMetronomeEffect */
 void HandleAIMetronomeEffect(void);
 /* <<< factory HandleAIMetronomeEffect */
+/* >>> factory ParalysisEffect */
+QueueStatusConditionResult ParalysisEffect(void);
+/* <<< factory ParalysisEffect */
+/* >>> factory ConfusionEffect */
+QueueStatusConditionResult ConfusionEffect(void);
+/* <<< factory ConfusionEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

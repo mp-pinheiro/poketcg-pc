@@ -64,6 +64,16 @@
 #define DUELVARS_DECK_CARDS 0x7Eu
 
 #define SUBSTATUS1_REDUCE_BY_20 0x13u
+
+#include "home/effect_functions.h"
+
+#define CONFUSED   0x01u
+#define PARALYZED  0x03u
+#define PSN_DBLPSN 0xf0u
+
+#define PSN_DBLPSN 0xf0u
+#define PARALYZED  0x03u
+#define CONFUSED   0x01u
 /* <<< factory statics */
 
 
@@ -347,3 +357,19 @@ void HandleAIMetronomeEffect(void)
 	(void)0;
 }
 /* <<< factory HandleAIMetronomeEffect */
+
+/* >>> factory ParalysisEffect */
+/* effect_functions.asm:19-21 */
+QueueStatusConditionResult ParalysisEffect(void)
+{
+	return QueueStatusCondition(PSN_DBLPSN, PARALYZED);
+}
+/* <<< factory ParalysisEffect */
+
+/* >>> factory ConfusionEffect */
+/* effect_functions.asm:28-30 */
+QueueStatusConditionResult ConfusionEffect(void)
+{
+	return QueueStatusCondition(PSN_DBLPSN, CONFUSED);
+}
+/* <<< factory ConfusionEffect */

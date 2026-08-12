@@ -158,6 +158,22 @@ static void adapt_HandleAIMetronomeEffect(ProbeState *s)
 }
 /* <<< factory HandleAIMetronomeEffect */
 
+/* >>> factory ParalysisEffect */
+static void adapt_ParalysisEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = ParalysisEffect();
+	s->f = r.f;
+}
+/* <<< factory ParalysisEffect */
+
+/* >>> factory ConfusionEffect */
+static void adapt_ConfusionEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = ConfusionEffect();
+	s->f = r.f;
+}
+/* <<< factory ConfusionEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -178,5 +194,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GetAttackName", adapt_GetAttackName },
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ "HandleAIMetronomeEffect", adapt_HandleAIMetronomeEffect },
+	{ "ParalysisEffect", adapt_ParalysisEffect },
+	{ "ConfusionEffect", adapt_ConfusionEffect },
 	{ NULL, NULL },
 };
