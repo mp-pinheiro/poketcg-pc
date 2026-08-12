@@ -151,6 +151,7 @@ static void adapt_ClefableMinimizeEffect(ProbeState *s)
 }
 /* <<< factory ClefableMinimizeEffect */
 
+
 /* >>> factory HandleAIMetronomeEffect */
 static void adapt_HandleAIMetronomeEffect(ProbeState *s)
 {
@@ -197,6 +198,22 @@ static void adapt_UpdateDevolvedCardHPAndStage(ProbeState *s)
 }
 /* <<< factory UpdateDevolvedCardHPAndStage */
 
+/* >>> factory DodrioRage_DamageBoostEffect */
+static void adapt_DodrioRage_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	DodrioRage_DamageBoostEffect();
+}
+/* <<< factory DodrioRage_DamageBoostEffect */
+
+/* >>> factory DragonairSlam_AIEffect */
+static void adapt_DragonairSlam_AIEffect(ProbeState *s)
+{
+	(void)s;
+	DragonairSlam_AIEffect();
+}
+/* <<< factory DragonairSlam_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -214,7 +231,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SetDamageToATimes20", adapt_SetDamageToATimes20 },
 	{ "CreateTrainerCardListFromDiscardPile", adapt_CreateTrainerCardListFromDiscardPile },
 	{ "CreateEnergyCardListFromDiscardPile", adapt_CreateEnergyCardListFromDiscardPile },
-	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ "HandleAIMetronomeEffect", adapt_HandleAIMetronomeEffect },
 	{ "ParalysisEffect", adapt_ParalysisEffect },
 	{ "ConfusionEffect", adapt_ConfusionEffect },
@@ -222,5 +238,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GetAttackName", adapt_GetAttackName },
 	{ "CheckIfDefendingPokemonHasAnyAttack", adapt_CheckIfDefendingPokemonHasAnyAttack },
 	{ "UpdateDevolvedCardHPAndStage", adapt_UpdateDevolvedCardHPAndStage },
+	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
+	{ "DragonairSlam_AIEffect", adapt_DragonairSlam_AIEffect },
+	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ NULL, NULL },
 };

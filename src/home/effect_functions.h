@@ -83,4 +83,10 @@ CheckAttackResult CheckIfDefendingPokemonHasAnyAttack(void);
 /* >>> factory UpdateDevolvedCardHPAndStage */
 void UpdateDevolvedCardHPAndStage(uint8_t a);
 /* <<< factory UpdateDevolvedCardHPAndStage */
+/* >>> factory DodrioRage_DamageBoostEffect */
+void DodrioRage_DamageBoostEffect(void);
+/* <<< factory DodrioRage_DamageBoostEffect */
+/* >>> factory DragonairSlam_AIEffect */
+void DragonairSlam_AIEffect(void);
+/* <<< factory DragonairSlam_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

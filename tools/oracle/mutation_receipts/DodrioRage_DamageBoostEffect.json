@@ -1,0 +1,9 @@
+{
+  "fn": "DodrioRage_DamageBoostEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DodrioRage_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"50176\": \"01\", \"52409\": \"7100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DodrioRage_DamageBoostEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"0000017100c2\", \"native\": \"0000017200c2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49864, 1], [50176, 1], [52409, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DodrioRage_DamageBoostEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"50176\": \"01\", \"52409\": \"7100\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

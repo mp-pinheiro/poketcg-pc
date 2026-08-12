@@ -353,6 +353,7 @@ uint16_t GetAttackName(uint8_t d, uint8_t e)
 }
 /* <<< factory GetAttackName */
 
+
 /* >>> factory ClefableMinimizeEffect */
 /* effect_functions.asm:7973-7976 */
 uint16_t ClefableMinimizeEffect(void)
@@ -437,3 +438,20 @@ void UpdateDevolvedCardHPAndStage(uint8_t a)
 	gb_write8(stage_addr, gb_read8(wLoadedCard2Stage_ADDR));
 }
 /* <<< factory UpdateDevolvedCardHPAndStage */
+
+/* >>> factory DodrioRage_DamageBoostEffect */
+/* effect_functions.asm:7866-7869 */
+void DodrioRage_DamageBoostEffect(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(r.a);
+}
+/* <<< factory DodrioRage_DamageBoostEffect */
+
+/* >>> factory DragonairSlam_AIEffect */
+/* effect_functions.asm:7890-7893 */
+void DragonairSlam_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory DragonairSlam_AIEffect */

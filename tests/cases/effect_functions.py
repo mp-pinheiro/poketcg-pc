@@ -203,6 +203,7 @@ CASES["ClefableMinimizeEffect"] = [
 ]
 # <<< factory ClefableMinimizeEffect
 
+
 # >>> factory HandleAIMetronomeEffect
 CONTRACT["HandleAIMetronomeEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["HandleAIMetronomeEffect"] = [
@@ -332,6 +333,39 @@ CASES["UpdateDevolvedCardHPAndStage"] = [
                wOpponentDuelVariables + DUELVARS_ARENA_CARD_STAGE + 2: 1}),
 ]
 # <<< factory UpdateDevolvedCardHPAndStage
+
+# >>> factory DodrioRage_DamageBoostEffect
+hWhoseTurn = 0xFF97
+wDamage = 0xCCB9
+wPlayerDeck = 0xC400
+CONTRACT["DodrioRage_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["DodrioRage_DamageBoostEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+              wPlayerDeck: b"\x01", wDamage: b"\x00\x00"},
+     "read": {wDamage: 2}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+                        wPlayerDeck: b"\x01", wDamage: b"\x00\x00"},
+         read={wDamage: 2}),
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xC9",
+              wPlayerDeck: b"\x01", wDamage: b"\x05\x00"},
+     "read": {wDamage: 2}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xFF",
+              wPlayerDeck: b"\x01", wDamage: b"\xFF\x00"},
+     "read": {wDamage: 2}},
+]
+# <<< factory DodrioRage_DamageBoostEffect
+
+# >>> factory DragonairSlam_AIEffect
+CONTRACT["DragonairSlam_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["DragonairSlam_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory DragonairSlam_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -519,3 +553,19 @@ MUTATIONS["UpdateDevolvedCardHPAndStage"] = {
 	"case_ids": ["UpdateDevolvedCardHPAndStage-0", "UpdateDevolvedCardHPAndStage-1"],
 }
 # <<< factory-mutation UpdateDevolvedCardHPAndStage
+# >>> factory-mutation DodrioRage_DamageBoostEffect
+MUTATIONS["DodrioRage_DamageBoostEffect"] = {
+    "source_symbol": "DodrioRage_DamageBoostEffect",
+    "before": "AddToDamage(r.a);",
+    "after": "AddToDamage((uint8_t)(r.a + 1u));",
+    "case_ids": ["DodrioRage_DamageBoostEffect-0", "DodrioRage_DamageBoostEffect-1", "DodrioRage_DamageBoostEffect-2", "DodrioRage_DamageBoostEffect-3"],
+}
+# <<< factory-mutation DodrioRage_DamageBoostEffect
+# >>> factory-mutation DragonairSlam_AIEffect
+MUTATIONS["DragonairSlam_AIEffect"] = {
+    "source_symbol": "DragonairSlam_AIEffect",
+    "before": "SetExpectedAIDamage(30u, 0u, 60u);",
+    "after": "SetExpectedAIDamage(31u, 0u, 60u);",
+    "case_ids": ["DragonairSlam_AIEffect-0", "DragonairSlam_AIEffect-1", "DragonairSlam_AIEffect-2"],
+}
+# <<< factory-mutation DragonairSlam_AIEffect
