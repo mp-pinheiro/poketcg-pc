@@ -1,0 +1,9 @@
+{
+  "fn": "CopyDeckNameAndCards",
+  "case": "tests/cases/starter_deck.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyDeckNameAndCards\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 41984, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"41984\": \"06436861726d616e646572202620467269656e64730035370202020202020202020204040404040404040505050505053030313236363839393b60606769696b7579797a7d7ea7a7a8b1c3c5c5d2d6d8dddddfdfb1b3b5b7\"}}, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyDeckNameAndCards\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"0643686172\", \"native\": \"090b0d0f11\"}}}\n",
+  "restored": "{\"fn\": \"CopyDeckNameAndCards\", \"registers\": {\"a\": 5, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 41984, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"41984\": \"06436861726d616e646572202620467269656e64730035370202020202020202020204040404040404040505050505053030313236363839393b60606769696b7579797a7d7ea7a7a8b1c3c5c5d2d6d8dddddfdfb1b3b5b7\"}}, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
