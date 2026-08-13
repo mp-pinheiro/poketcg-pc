@@ -433,15 +433,19 @@ void LoadLoaded1CardGfx(uint16_t de)
 }
 /* <<< factory LoadLoaded1CardGfx */
 
+
 /* >>> factory SetSGB3ToCardPalette */
-/* core.asm:3965-3969. Tail-jumps into SetBGP7OrSGB2ToCardPalette.copy_pal_loop,
- * which copies b bytes from [hl] to [de]; inlined here with its own operands. */
+/* core.asm:3965-3974 */
 void SetSGB3ToCardPalette(void)
 {
-	uint16_t src = (uint16_t)(wCardPalette_ADDR + 2u);
-	uint16_t dst = (uint16_t)(wTempSGBPacket_ADDR + 9u);
-	for (uint8_t i = 0; i < SGB3_COPY_LEN; i++)
-		gb_write8((uint16_t)(dst + i), gb_read8((uint16_t)(src + i)));
+	uint16_t hl = (uint16_t)(wCardPalette_ADDR + 2u);
+	uint16_t de = (uint16_t)(wTempSGBPacket_ADDR + 9u);
+
+	for (uint8_t i = 0u; i < 6u; i++) {
+		gb_write8(de, gb_read8(hl));
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(de + 1u);
+	}
 }
 /* <<< factory SetSGB3ToCardPalette */
 
@@ -859,3 +863,19 @@ void InitVariablesToBeginDuel(void)
 	wDuelType = a;
 }
 /* <<< factory InitVariablesToBeginDuel */
+
+/* >>> factory CreateCardAttrBlkPacket */
+/* core.asm:4082-4101 */
+uint16_t CreateCardAttrBlkPacket(uint8_t a, uint8_t d, uint8_t e)
+{
+	uint16_t hl = wTempSGBPacket_ADDR;
+	gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 1u));
+	hl++;
+	gb_write8(hl, 1u);
+	hl++;
+	hl = CreateCardAttrBlkPacket_DataSet(hl, a, d, e);
+	for (uint8_t i = 0u; i < 4u; i++)
+		gb_write8(hl++, 0u);
+	return wTempSGBPacket_ADDR;
+}
+/* <<< factory CreateCardAttrBlkPacket */

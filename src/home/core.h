@@ -137,4 +137,7 @@ Func6423Result Func_6423(uint8_t b, uint8_t c);
 /* >>> factory InitVariablesToBeginDuel */
 void InitVariablesToBeginDuel(void);
 /* <<< factory InitVariablesToBeginDuel */
+/* >>> factory CreateCardAttrBlkPacket */
+uint16_t CreateCardAttrBlkPacket(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory CreateCardAttrBlkPacket */
 #endif /* POKETCG_HOME_CORE_H */

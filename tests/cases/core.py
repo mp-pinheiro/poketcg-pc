@@ -46,14 +46,25 @@ CASES["CopyCGBCardPalette"] = [
 ]
 # <<< factory CopyCGBCardPalette
 
+# >>> factory CreateCardAttrBlkPacket
+CONTRACT["CreateCardAttrBlkPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["CreateCardAttrBlkPacket"] = [
+    {"wram": {0xCAE0: b"\xAA" * 32}, "read": {0xCAE0: 32}},
+    dict(POISON, a=0, d=0, e=0, wram={0xCAE0: b"\xAA" * 32}, read={0xCAE0: 32}),
+    {"a": 1, "d": 2, "e": 3, "wram": {0xCAE0: b"\x55" * 32}, "read": {0xCAE0: 32}},
+]
+# <<< factory CreateCardAttrBlkPacket
 # >>> factory CreateCardAttrBlkPacket_DataSet
-CONTRACT["CreateCardAttrBlkPacket_DataSet"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
+CONTRACT["CreateCardAttrBlkPacket_DataSet"] = {"compare": ("hl",), "preserve": ()}
 CASES["CreateCardAttrBlkPacket_DataSet"] = [
-    {"hl": 0xC100, "a": 0, "d": 0, "e": 0, "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
-    dict(POISON, hl=0xC100, wram={0xC100: b"\x00" * 6}, read={0xC100: 6}),
-    {"hl": 0xC100, "a": 0x12, "d": 0x30, "e": 0x40, "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
+	{"hl": 0xC100, "a": 0, "d": 0, "e": 0,
+	 "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
+	dict(POISON, hl=0xC100, wram={0xC100: b"\x00" * 6}, read={0xC100: 6}),
+	{"hl": 0xC100, "a": 0x12, "d": 0x30, "e": 0x40,
+	 "wram": {0xC100: b"\x00" * 6}, "read": {0xC100: 6}},
 ]
 # <<< factory CreateCardAttrBlkPacket_DataSet
+
 
 # >>> factory SaveDuelDataToDE
 CONTRACT["SaveDuelDataToDE"] = {"compare": (), "preserve": ()}
@@ -188,11 +199,12 @@ CASES["LoadLoaded1CardGfx"] = [
 # >>> factory SetSGB3ToCardPalette
 CONTRACT["SetSGB3ToCardPalette"] = {"compare": (), "preserve": ()}
 CASES["SetSGB3ToCardPalette"] = [
-    {"wram": {0xCE25: b"\x00" * 6, 0xCAE9: b"\xAA" * 6}},
-    {"wram": {0xCE25: b"\x01\x02\x03\x04\x05\x06", 0xCAE9: b"\x00" * 6}},
-    dict(POISON, wram={0xCE25: b"\xFE\xDC\xBA\x98\x76\x54", 0xCAE9: b"\x11" * 6}),
+	{"wram": {0xCE25: b"\x00\x00\x00\x00\x00\x00", 0xCAE9: b"\xAA\xAA\xAA\xAA\xAA\xAA"}, "read": {0xCE25: 6}},
+	dict(POISON, wram={0xCE25: b"\x01\x23\x45\x67\x89\xAB", 0xCAE9: b"\xAA\xAA\xAA\xAA\xAA\xAA"}, read={0xCE25: 6}),
+	{"wram": {0xCE25: b"\xFF\x80\x7F\x01\xFE\x02", 0xCAE9: b"\x00\x00\x00\x00\x00\x00"}, "read": {0xCE25: 6}},
 ]
 # <<< factory SetSGB3ToCardPalette
+
 
 # >>> factory LookForCardIDInPlayArea_Bank5
 CONTRACT["LookForCardIDInPlayArea_Bank5"] = {"compare": ("a", "f", "b", "d", "e"), "preserve": ("d", "e")}
@@ -468,14 +480,9 @@ MUTATIONS["CopyCGBCardPalette"] = {
     "case_ids": ["CopyCGBCardPalette-0", "CopyCGBCardPalette-1"],
 }
 # <<< factory-mutation CopyCGBCardPalette
-# >>> factory-mutation CreateCardAttrBlkPacket_DataSet
-MUTATIONS["CreateCardAttrBlkPacket_DataSet"] = {
-    "source_symbol": "CreateCardAttrBlkPacket_DataSet",
-    "before": "gb_write8(hl++, (uint8_t)(d + 7u));",
-    "after": "gb_write8(hl++, (uint8_t)(d + 8u));",
-    "case_ids": ["CreateCardAttrBlkPacket_DataSet-2"],
-}
-# <<< factory-mutation CreateCardAttrBlkPacket_DataSet
+# >>> factory-mutation CreateCardAttrBlkPacket
+MUTATIONS["CreateCardAttrBlkPacket"] = {"source_symbol": "CreateCardAttrBlkPacket", "before": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 1u));", "after": "gb_write8(hl, (uint8_t)((ATTR_BLK << 3) + 2u));", "case_ids": ["CreateCardAttrBlkPacket-0", "CreateCardAttrBlkPacket-1", "CreateCardAttrBlkPacket-2"]}
+# <<< factory-mutation CreateCardAttrBlkPacket
 # >>> factory-mutation SaveDuelDataToDE
 MUTATIONS["SaveDuelDataToDE"] = {
 	"source_symbol": "SaveDuelDataToDE",
@@ -564,13 +571,16 @@ MUTATIONS["LoadLoaded1CardGfx"] = {
     "case_ids": ["LoadLoaded1CardGfx-0", "LoadLoaded1CardGfx-1", "LoadLoaded1CardGfx-2"],
 }
 # <<< factory-mutation LoadLoaded1CardGfx
-# >>> factory-mutation SetSGB3ToCardPalette
-MUTATIONS["SetSGB3ToCardPalette"] = {
-    "source_symbol": "SetSGB3ToCardPalette",
-    "before": "for (uint8_t i = 0; i < SGB3_COPY_LEN; i++)",
-    "after": "for (uint8_t i = 0; i < 5u; i++)",
-    "case_ids": ["SetSGB3ToCardPalette-0", "SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"],
+# >>> factory-mutation CreateCardAttrBlkPacket_DataSet
+MUTATIONS["CreateCardAttrBlkPacket_DataSet"] = {
+	"source_symbol": "CreateCardAttrBlkPacket_DataSet",
+	"before": "gb_write8(hl++, d);",
+	"after": "gb_write8(hl++, (uint8_t)(d + 1u));",
+	"case_ids": ["CreateCardAttrBlkPacket_DataSet-1", "CreateCardAttrBlkPacket_DataSet-2"],
 }
+# <<< factory-mutation CreateCardAttrBlkPacket_DataSet
+# >>> factory-mutation SetSGB3ToCardPalette
+MUTATIONS["SetSGB3ToCardPalette"] = {"source_symbol": "SetSGB3ToCardPalette", "before": "wCardPalette_ADDR + 2u", "after": "wCardPalette_ADDR + 3u", "case_ids": ["SetSGB3ToCardPalette-1", "SetSGB3ToCardPalette-2"]}
 # <<< factory-mutation SetSGB3ToCardPalette
 # >>> factory-mutation LookForCardIDInPlayArea_Bank5
 MUTATIONS["LookForCardIDInPlayArea_Bank5"] = {

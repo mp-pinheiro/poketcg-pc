@@ -127,10 +127,10 @@ static void adapt_LoadLoaded1CardGfx(ProbeState *s)
 /* >>> factory SetSGB3ToCardPalette */
 static void adapt_SetSGB3ToCardPalette(ProbeState *s)
 {
-	(void)s;
 	SetSGB3ToCardPalette();
 }
 /* <<< factory SetSGB3ToCardPalette */
+
 
 /* >>> factory LookForCardIDInPlayArea_Bank5 */
 static void adapt_LookForCardIDInPlayArea_Bank5(ProbeState *s)
@@ -314,6 +314,15 @@ static void adapt_InitVariablesToBeginDuel(ProbeState *s)
 }
 /* <<< factory InitVariablesToBeginDuel */
 
+/* >>> factory CreateCardAttrBlkPacket */
+static void adapt_CreateCardAttrBlkPacket(ProbeState *s)
+{
+	s->hl = CreateCardAttrBlkPacket(s->a, s->d, s->e);
+	s->a = 0u;
+	s->f = 0x80u;
+}
+/* <<< factory CreateCardAttrBlkPacket */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -331,7 +340,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SwitchCardPage", adapt_SwitchCardPage },
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ "LoadLoaded1CardGfx", adapt_LoadLoaded1CardGfx },
-	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
 	{ "LookForCardIDInPlayArea_Bank5", adapt_LookForCardIDInPlayArea_Bank5 },
 	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
 	{ "CheckCardPageExists", adapt_CheckCardPageExists },
@@ -353,5 +361,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintCardPageWeaknessesOrResistances", adapt_PrintCardPageWeaknessesOrResistances },
 	{ "Func_6423", adapt_Func_6423 },
 	{ "InitVariablesToBeginDuel", adapt_InitVariablesToBeginDuel },
+	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
+	{ "CreateCardAttrBlkPacket", adapt_CreateCardAttrBlkPacket },
 	{ NULL, NULL },
 };
