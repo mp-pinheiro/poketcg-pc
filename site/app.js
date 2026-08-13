@@ -72,16 +72,16 @@ function renderChart(points) {
     ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
     : 0;
   const delta = end - start;
-  const min = Math.max(0, Math.floor(start / 5) * 5);
-  const max = Math.max(min + 10, Math.ceil(end / 5) * 5);
+  const min = 0;
+  const max = 25;
   const x0 = 150, x1 = 760, width = x1 - x0;
   const scale = value => x0 + ((value - min) / (max - min)) * width;
   const startX = scale(start);
   const endX = scale(end);
   const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  let svg = `<line x1="${x0}" y1="76" x2="${x1}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
-  svg += `<line x1="${x0}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#4caf50" stroke-width="22" stroke-linecap="round"/>`;
-  svg += `<line x1="${startX.toFixed(1)}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#8bd48b" stroke-width="26" stroke-linecap="round"/>`;
+  let svg = `<line x1="${x0}" y1="76" x2="${startX.toFixed(1)}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
+  svg += `<line x1="${startX.toFixed(1)}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#8bd48b" stroke-width="22" stroke-linecap="round"/>`;
+  svg += `<line x1="${endX.toFixed(1)}" y1="76" x2="${x1}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
   svg += `<circle cx="${startX.toFixed(1)}" cy="76" r="8" fill="#1e1e1e" stroke="#8bd48b" stroke-width="3"/>`;
   svg += `<circle cx="${endX.toFixed(1)}" cy="76" r="8" fill="#4caf50" stroke="#fff" stroke-width="2"/>`;
   svg += `<text x="${startX.toFixed(1)}" y="48" text-anchor="middle" font-size="13" fill="#8bd48b">start ${start.toFixed(2)}%</text>`;
@@ -204,8 +204,8 @@ function applyFilter() {
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json?v=bar-20260813b'),
-    fetch('data/history.jsonl?v=bar-20260813b').catch(() => null),
+    fetch('data/progress.json?v=bar-20260813e'),
+    fetch('data/history.jsonl?v=bar-20260813e').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
