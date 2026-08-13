@@ -1039,6 +1039,25 @@ CASES["NidoranFCallForFamily_AISelectEffect"] = [
 ]
 # <<< factory NidoranFCallForFamily_AISelectEffect
 
+# >>> factory ToxicGasEffect
+CONTRACT["ToxicGasEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                              "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["ToxicGasEffect"] = [
+    {},
+    dict(POISON),
+    {"f": 0x80},
+]
+# <<< factory ToxicGasEffect
+
+# >>> factory Sludge_AIEffect
+CONTRACT["Sludge_AIEffect"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c")}
+CASES["Sludge_AIEffect"] = [
+    dict(POISON, wram={0xCCB9: b"\x00"}, read={0xCCB9: 1, 0xCCBB: 2}),
+    dict(POISON, a=0x01, wram={0xCCB9: b"\x10"}, read={0xCCB9: 1, 0xCCBB: 2}),
+    dict(POISON, b=0x02, wram={0xCCB9: b"\x20"}, read={0xCCB9: 1, 0xCCBB: 2}),
+]
+# <<< factory Sludge_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1657,3 +1676,17 @@ MUTATIONS["NidoranFFurySwipes_AIEffect"] = {"source_symbol": "NidoranFFurySwipes
 # >>> factory-mutation NidoranFCallForFamily_AISelectEffect
 MUTATIONS["NidoranFCallForFamily_AISelectEffect"] = {"source_symbol": "NidoranFCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)", "after": "if ((uint8_t)card_id != NIDORANF || (uint8_t)card_id == NIDORANM)", "case_ids": ["NidoranFCallForFamily_AISelectEffect-0", "NidoranFCallForFamily_AISelectEffect-1"]}
 # <<< factory-mutation NidoranFCallForFamily_AISelectEffect
+# >>> factory-mutation ToxicGasEffect
+MUTATIONS["ToxicGasEffect"] = {
+    "before": "uint8_t ToxicGasEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x10u);\n}",
+    "after": "uint8_t ToxicGasEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x20u);\n}",
+    "case_ids": ["ToxicGasEffect-0", "ToxicGasEffect-1", "ToxicGasEffect-2"],
+}
+# <<< factory-mutation ToxicGasEffect
+# >>> factory-mutation Sludge_AIEffect
+MUTATIONS["Sludge_AIEffect"] = {
+    "before": "void Sludge_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);\n}",
+    "after": "void Sludge_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);\n}",
+    "case_ids": ["Sludge_AIEffect-0", "Sludge_AIEffect-1", "Sludge_AIEffect-2"],
+}
+# <<< factory-mutation Sludge_AIEffect

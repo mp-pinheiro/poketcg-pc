@@ -322,4 +322,10 @@ void NidoranFFurySwipes_AIEffect(void);
 /* >>> factory NidoranFCallForFamily_AISelectEffect */
 void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
 /* <<< factory NidoranFCallForFamily_AISelectEffect */
+/* >>> factory ToxicGasEffect */
+uint8_t ToxicGasEffect(uint8_t f);
+/* <<< factory ToxicGasEffect */
+/* >>> factory Sludge_AIEffect */
+void Sludge_AIEffect(void);
+/* <<< factory Sludge_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

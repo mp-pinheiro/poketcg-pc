@@ -1434,3 +1434,17 @@ void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 	}
 }
 /* <<< factory NidoranFCallForFamily_AISelectEffect */
+
+/* >>> factory ToxicGasEffect */
+uint8_t ToxicGasEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory ToxicGasEffect */
+
+/* >>> factory Sludge_AIEffect */
+void Sludge_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory Sludge_AIEffect */

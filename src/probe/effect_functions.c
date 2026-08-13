@@ -776,6 +776,21 @@ static void adapt_NidoranFCallForFamily_AISelectEffect(ProbeState *s)
 }
 /* <<< factory NidoranFCallForFamily_AISelectEffect */
 
+/* >>> factory ToxicGasEffect */
+static void adapt_ToxicGasEffect(ProbeState *s)
+{
+	s->f = ToxicGasEffect(s->f);
+}
+/* <<< factory ToxicGasEffect */
+
+/* >>> factory Sludge_AIEffect */
+static void adapt_Sludge_AIEffect(ProbeState *s)
+{
+	Sludge_AIEffect();
+	s->hl = wDamage_ADDR;
+}
+/* <<< factory Sludge_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -869,5 +884,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "WeezingSmog_AIEffect", adapt_WeezingSmog_AIEffect },
 	{ "NidoranFFurySwipes_AIEffect", adapt_NidoranFFurySwipes_AIEffect },
 	{ "NidoranFCallForFamily_AISelectEffect", adapt_NidoranFCallForFamily_AISelectEffect },
+	{ "ToxicGasEffect", adapt_ToxicGasEffect },
+	{ "Sludge_AIEffect", adapt_Sludge_AIEffect },
 	{ NULL, NULL },
 };
