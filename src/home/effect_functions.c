@@ -126,6 +126,9 @@ static const uint8_t color_to_text[] = {
 #define NoCardsLeftInTheDeckText 0x00b1u
 
 #define ATK_ANIM_NONE 0x00u
+
+#define PSYCHIC 0x05u
+#define NotEnoughPsychicEnergyText 0x00c2u
 /* <<< factory statics */
 
 
@@ -948,3 +951,22 @@ uint8_t TransparencyEffect(void)
 	return 0x10u;
 }
 /* <<< factory TransparencyEffect */
+
+/* >>> factory Barrier_CheckEnergy */
+/* effect_functions.asm:5395-5408 */
+BarrierCheckEnergyResult Barrier_CheckEnergy(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	uint8_t f = 0x40u;
+
+	if (a == 1u)
+		f |= 0x80u;
+	if ((a & 0x0fu) < 1u)
+		f |= 0x20u;
+	if (a < 1u)
+		f |= 0x10u;
+
+	return (BarrierCheckEnergyResult){a, f, NotEnoughPsychicEnergyText};
+}
+/* <<< factory Barrier_CheckEnergy */

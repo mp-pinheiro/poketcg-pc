@@ -466,6 +466,16 @@ static void adapt_TransparencyEffect(ProbeState *s)
 }
 /* <<< factory TransparencyEffect */
 
+/* >>> factory Barrier_CheckEnergy */
+static void adapt_Barrier_CheckEnergy(ProbeState *s)
+{
+	BarrierCheckEnergyResult r = Barrier_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Barrier_CheckEnergy */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -522,5 +532,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TryGiveDamageCounter_DamageSwap", adapt_TryGiveDamageCounter_DamageSwap },
 	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
 	{ "TransparencyEffect", adapt_TransparencyEffect },
+	{ "Barrier_CheckEnergy", adapt_Barrier_CheckEnergy },
 	{ NULL, NULL },
 };

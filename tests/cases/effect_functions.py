@@ -653,6 +653,14 @@ CONTRACT["TransparencyEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"
 CASES["TransparencyEffect"] = [{}, dict(POISON)]
 # <<< factory TransparencyEffect
 
+# >>> factory Barrier_CheckEnergy
+CONTRACT["Barrier_CheckEnergy"] = {"compare": ("a", "f", "b", "c", "d", "hl"), "preserve": ("b", "c", "d")}
+CASES["Barrier_CheckEnergy"] = [
+    {"wram": {0xCC1B: b"\x00" * 8}, "read": {0xCC1B: 8}},
+    dict(POISON, wram={0xCC1B: b"\xAA" * 8}, read={0xCC1B: 8}),
+]
+# <<< factory Barrier_CheckEnergy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1029,3 +1037,6 @@ MUTATIONS["TryGiveDamageCounter_DamageSwap"] = {"source_symbol": "TryGiveDamageC
 # >>> factory-mutation TransparencyEffect
 MUTATIONS["TransparencyEffect"] = {"source_symbol": "TransparencyEffect", "before": "\treturn 0x10u;", "after": "\treturn 0x00u;", "case_ids": ["TransparencyEffect-0", "TransparencyEffect-1"]}
 # <<< factory-mutation TransparencyEffect
+# >>> factory-mutation Barrier_CheckEnergy
+MUTATIONS["Barrier_CheckEnergy"] = {"source_symbol": "Barrier_CheckEnergy", "before": "#define NotEnoughPsychicEnergyText 0x00c2u", "after": "#define NotEnoughPsychicEnergyText 0x00c3u", "case_ids": ["Barrier_CheckEnergy-0", "Barrier_CheckEnergy-1"]}
+# <<< factory-mutation Barrier_CheckEnergy

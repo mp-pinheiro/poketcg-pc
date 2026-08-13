@@ -197,4 +197,8 @@ TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void);
 /* >>> factory TransparencyEffect */
 uint8_t TransparencyEffect(void);
 /* <<< factory TransparencyEffect */
+/* >>> factory Barrier_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } BarrierCheckEnergyResult;
+BarrierCheckEnergyResult Barrier_CheckEnergy(void);
+/* <<< factory Barrier_CheckEnergy */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
