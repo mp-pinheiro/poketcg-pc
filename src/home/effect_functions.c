@@ -86,6 +86,9 @@ static const uint8_t color_to_text[] = {
 	COLOR_TEXT_FIGHTING,
 	COLOR_TEXT_PSYCHIC,
 };
+
+#define DUELVARS_BENCH1_CARD_HP 0xC9u
+
 /* <<< factory statics */
 
 
@@ -518,6 +521,8 @@ QueueStatusConditionResult DoublePoisonEffect(void)
 }
 /* <<< factory DoublePoisonEffect */
 
+
+
 /* >>> factory LoadCardNameAndInputColor */
 /* effect_functions.asm:1345-1371 */
 void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
@@ -532,3 +537,71 @@ void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
 	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
 }
 /* <<< factory LoadCardNameAndInputColor */
+
+
+/* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+/* effect_functions.asm:1053-1140 */
+AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(void)
+{
+	SwapTurn();
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	HandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	if (list.f & 0x10u) {
+		SwapTurn();
+		return (AIPickEnergyCardToDiscardResult){0xFFu};
+	}
+
+	uint8_t color = 0x07u;
+	uint8_t colorless = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 7u));
+	if (colorless == 0u) {
+		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+		color = wLoadedCard1Type;
+		if (color >= 0x07u ||
+		    gb_read8((uint16_t)(wAttachedEnergies_ADDR + color)) == 0u)
+			color = 0xFFu;
+	}
+
+	uint16_t cursor = wDuelTempList_ADDR;
+	if (color != 0xFFu) {
+		for (;;) {
+			uint8_t entry = gb_read8(cursor++);
+			if (entry == 0xFFu)
+				break;
+			LoadCardDataToBuffer2_FromDeckIndex(entry);
+			if ((wLoadedCard2Type & 0x07u) == color) {
+				SwapTurn();
+				return (AIPickEnergyCardToDiscardResult){entry};
+			}
+		}
+	}
+	TempListResult count = CountCardsInDuelTempList();
+	(void)ShuffleCards(count.a, wDuelTempList_ADDR);
+	SwapTurn();
+	return (AIPickEnergyCardToDiscardResult){gb_read8(wDuelTempList_ADDR)};
+}
+/* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+
+
+/* >>> factory AIFindTargetForBenchAttack */
+/* effect_functions.asm:1141-1176 */
+AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void)
+{
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t target = PLAY_AREA_ARENA;
+	uint8_t best = 0xFFu;
+	uint8_t slot = 1u;
+	while (--count != 0u) {
+		uint8_t hp = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_BENCH1_CARD_HP + slot - 1u)).a;
+		if (best >= hp) {
+			best = hp;
+			target = slot;
+		}
+		slot++;
+	}
+	SwapTurn();
+	return (AIFindTargetForBenchAttackResult){target};
+}
+/* <<< factory AIFindTargetForBenchAttack */

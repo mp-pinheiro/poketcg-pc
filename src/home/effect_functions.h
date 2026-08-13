@@ -111,4 +111,12 @@ QueueStatusConditionResult DoublePoisonEffect(void);
 /* >>> factory LoadCardNameAndInputColor */
 void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory LoadCardNameAndInputColor */
+/* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+typedef struct { uint8_t a; } AIPickEnergyCardToDiscardResult;
+AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(void);
+/* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+/* >>> factory AIFindTargetForBenchAttack */
+typedef struct { uint8_t a; } AIFindTargetForBenchAttackResult;
+AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void);
+/* <<< factory AIFindTargetForBenchAttack */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

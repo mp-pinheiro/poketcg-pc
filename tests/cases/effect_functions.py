@@ -448,6 +448,30 @@ CASES["LoadCardNameAndInputColor"] = [
 ]
 # <<< factory LoadCardNameAndInputColor
 
+
+
+# >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon
+CONTRACT["AIPickEnergyCardToDiscardFromDefendingPokemon"] = {"compare": ("a",), "preserve": ()}
+CASES["AIPickEnergyCardToDiscardFromDefendingPokemon"] = [
+    {"wram": {0xC0EF: b"\x00"}},
+    {"wram": {0xC1EF: b"\x00"}},
+    dict(POISON, wram={0xC0EF: b"\x00"}),
+    dict(POISON, wram={0xC1EF: b"\x00"}),
+]
+# <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon
+
+
+# >>> factory AIFindTargetForBenchAttack
+CONTRACT["AIFindTargetForBenchAttack"] = {"compare": ("a",), "preserve": ()}
+CASES["AIFindTargetForBenchAttack"] = [
+    {"wram": {0xC0EF: b"\x01"}},
+    {"wram": {0xC1EF: b"\x01"}},
+    dict(POISON, wram={0xC0EF: b"\x01"}),
+    dict(POISON, wram={0xC1EF: b"\x01"}),
+]
+# <<< factory AIFindTargetForBenchAttack
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -703,3 +727,19 @@ MUTATIONS["DoublePoisonEffect"] = {
 # >>> factory-mutation LoadCardNameAndInputColor
 MUTATIONS["LoadCardNameAndInputColor"] = {"source_symbol": "LoadCardNameAndInputColor", "before": "\tCOLOR_TEXT_LIGHTNING,", "after": "\tCOLOR_TEXT_WATER,", "case_ids": ["LoadCardNameAndInputColor-2", "LoadCardNameAndInputColor-3"]}
 # <<< factory-mutation LoadCardNameAndInputColor
+# >>> factory-mutation AIPickEnergyCardToDiscardFromDefendingPokemon
+MUTATIONS["AIPickEnergyCardToDiscardFromDefendingPokemon"] = {
+    "source_symbol": "AIPickEnergyCardToDiscardFromDefendingPokemon",
+    "before": "return (AIPickEnergyCardToDiscardResult){0xFFu};",
+    "after": "return (AIPickEnergyCardToDiscardResult){0xFEu};",
+    "case_ids": ["AIPickEnergyCardToDiscardFromDefendingPokemon-0"],
+}
+# <<< factory-mutation AIPickEnergyCardToDiscardFromDefendingPokemon
+# >>> factory-mutation AIFindTargetForBenchAttack
+MUTATIONS["AIFindTargetForBenchAttack"] = {
+    "source_symbol": "AIFindTargetForBenchAttack",
+    "before": "return (AIFindTargetForBenchAttackResult){target};",
+    "after": "return (AIFindTargetForBenchAttackResult){(uint8_t)(target + 1u)};",
+    "case_ids": ["AIFindTargetForBenchAttack-0"],
+}
+# <<< factory-mutation AIFindTargetForBenchAttack

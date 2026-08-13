@@ -270,6 +270,27 @@ static void adapt_LoadCardNameAndInputColor(ProbeState *s)
 }
 /* <<< factory LoadCardNameAndInputColor */
 
+
+
+/* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+static void adapt_AIPickEnergyCardToDiscardFromDefendingPokemon(ProbeState *s)
+{
+	AIPickEnergyCardToDiscardResult r =
+		AIPickEnergyCardToDiscardFromDefendingPokemon();
+	s->a = r.a;
+}
+/* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+
+
+/* >>> factory AIFindTargetForBenchAttack */
+static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
+{
+	AIFindTargetForBenchAttackResult r = AIFindTargetForBenchAttack();
+	s->a = r.a;
+}
+/* <<< factory AIFindTargetForBenchAttack */
+
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -303,6 +324,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
 	{ "PoisonEffect", adapt_PoisonEffect },
 	{ "DoublePoisonEffect", adapt_DoublePoisonEffect },
+	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
+	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
 	{ NULL, NULL },
 };
