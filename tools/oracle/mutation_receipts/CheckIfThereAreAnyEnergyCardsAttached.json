@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfThereAreAnyEnergyCardsAttached",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfThereAreAnyEnergyCardsAttached\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfThereAreAnyEnergyCardsAttached\", \"mismatches\": {\"f\": [0, 144]}}\n",
+  "restored": "{\"fn\": \"CheckIfThereAreAnyEnergyCardsAttached\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10\", \"50176\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

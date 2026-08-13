@@ -129,6 +129,12 @@ static const uint8_t color_to_text[] = {
 
 #define PSYCHIC 0x05u
 #define NotEnoughPsychicEnergyText 0x00c2u
+
+#define SUBSTATUS1_REDUCE_BY_10 0x1eu
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#define CARD_LOCATION_PLAY_AREA_F 4u
 /* <<< factory statics */
 
 
@@ -1042,3 +1048,40 @@ uint8_t RetreatAidEffect(uint8_t f)
 	return (uint8_t)((f & 0x80u) | 0x10u);
 }
 /* <<< factory RetreatAidEffect */
+
+/* >>> factory FriendshipSong_BenchCheck */
+FriendshipSongBenchCheckResult FriendshipSong_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = (uint8_t)(count.a >= 6u ? 0x10u : 0u);
+	if (count.a == 6u)
+		f |= 0x80u;
+	return (FriendshipSongBenchCheckResult){count.a, f, 0x00B2u};
+}
+/* <<< factory FriendshipSong_BenchCheck */
+
+/* >>> factory ExpandEffect */
+void ExpandEffect(void)
+{
+	(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_10);
+}
+/* <<< factory ExpandEffect */
+
+/* >>> factory CheckIfThereAreAnyEnergyCardsAttached */
+CheckIfThereAreAnyEnergyCardsAttachedResult CheckIfThereAreAnyEnergyCardsAttached(void)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		uint8_t location = gb_read8((uint16_t)(locations.hl + index));
+		if (!(location & (1u << CARD_LOCATION_PLAY_AREA_F)))
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		uint8_t type = gb_read8(wLoadedCard2Type_ADDR);
+		if (type == TYPE_TRAINER)
+			continue;
+		if (type >= TYPE_ENERGY)
+			return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x00u};
+	}
+	return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x90u};
+}
+/* <<< factory CheckIfThereAreAnyEnergyCardsAttached */

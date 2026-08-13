@@ -526,6 +526,32 @@ static void adapt_RetreatAidEffect(ProbeState *s)
 }
 /* <<< factory RetreatAidEffect */
 
+/* >>> factory FriendshipSong_BenchCheck */
+static void adapt_FriendshipSong_BenchCheck(ProbeState *s)
+{
+	FriendshipSongBenchCheckResult r = FriendshipSong_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory FriendshipSong_BenchCheck */
+
+/* >>> factory ExpandEffect */
+static void adapt_ExpandEffect(ProbeState *s)
+{
+	(void)s;
+	ExpandEffect();
+}
+/* <<< factory ExpandEffect */
+
+/* >>> factory CheckIfThereAreAnyEnergyCardsAttached */
+static void adapt_CheckIfThereAreAnyEnergyCardsAttached(ProbeState *s)
+{
+	CheckIfThereAreAnyEnergyCardsAttachedResult r = CheckIfThereAreAnyEnergyCardsAttached();
+	s->f = r.f;
+}
+/* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -589,5 +615,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FuryAttack_AIEffect", adapt_FuryAttack_AIEffect },
 	{ "RetreatAidEffect", adapt_RetreatAidEffect },
 	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
+	{ "FriendshipSong_BenchCheck", adapt_FriendshipSong_BenchCheck },
+	{ "ExpandEffect", adapt_ExpandEffect },
+	{ "CheckIfThereAreAnyEnergyCardsAttached", adapt_CheckIfThereAreAnyEnergyCardsAttached },
 	{ NULL, NULL },
 };

@@ -724,6 +724,33 @@ CONTRACT["RetreatAidEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
 CASES["RetreatAidEffect"] = [{}, dict(POISON), {"f": 0x80}]
 # <<< factory RetreatAidEffect
 
+# >>> factory FriendshipSong_BenchCheck
+CONTRACT["FriendshipSong_BenchCheck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["FriendshipSong_BenchCheck"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x00"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x05"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x06"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x07"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EF: b"\x00"}),
+]
+# <<< factory FriendshipSong_BenchCheck
+
+# >>> factory ExpandEffect
+CONTRACT["ExpandEffect"] = {"compare": (), "preserve": ()}
+CASES["ExpandEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2E7: b"\x00"}, "read": {0xC2CB: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2E7: b"\xFF"}, read={0xC2E7: 1}),
+]
+# <<< factory ExpandEffect
+
+# >>> factory CheckIfThereAreAnyEnergyCardsAttached
+CONTRACT["CheckIfThereAreAnyEnergyCardsAttached"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckIfThereAreAnyEnergyCardsAttached"] = [
+    {"wram": {hWhoseTurn: b"\xC2"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC200: b"\x10", 0xC400: b"\x01"}),
+]
+# <<< factory CheckIfThereAreAnyEnergyCardsAttached
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1152,3 +1179,27 @@ MUTATIONS["RetreatAidEffect"] = {
     "case_ids": ["RetreatAidEffect-0", "RetreatAidEffect-1", "RetreatAidEffect-2"],
 }
 # <<< factory-mutation RetreatAidEffect
+# >>> factory-mutation FriendshipSong_BenchCheck
+MUTATIONS["FriendshipSong_BenchCheck"] = {
+    "source_symbol": "FriendshipSong_BenchCheck",
+    "before": "count.a >= 6u",
+    "after": "count.a > 6u",
+    "case_ids": ["FriendshipSong_BenchCheck-2"],
+}
+# <<< factory-mutation FriendshipSong_BenchCheck
+# >>> factory-mutation ExpandEffect
+MUTATIONS["ExpandEffect"] = {
+    "source_symbol": "ExpandEffect",
+    "before": "\t(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_REDUCE_BY_10);",
+    "after": "\t(void)ApplySubstatus1ToAttackingCard((uint8_t)(SUBSTATUS1_REDUCE_BY_10 + 1u));",
+    "case_ids": ["ExpandEffect-0", "ExpandEffect-1"],
+}
+# <<< factory-mutation ExpandEffect
+# >>> factory-mutation CheckIfThereAreAnyEnergyCardsAttached
+MUTATIONS["CheckIfThereAreAnyEnergyCardsAttached"] = {
+    "source_symbol": "CheckIfThereAreAnyEnergyCardsAttached",
+    "before": "return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x00u};",
+    "after": "return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x90u};",
+    "case_ids": ["CheckIfThereAreAnyEnergyCardsAttached-1"],
+}
+# <<< factory-mutation CheckIfThereAreAnyEnergyCardsAttached

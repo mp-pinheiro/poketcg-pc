@@ -220,4 +220,15 @@ void FuryAttack_AIEffect(void);
 /* >>> factory RetreatAidEffect */
 uint8_t RetreatAidEffect(uint8_t f);
 /* <<< factory RetreatAidEffect */
+/* >>> factory FriendshipSong_BenchCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FriendshipSongBenchCheckResult;
+FriendshipSongBenchCheckResult FriendshipSong_BenchCheck(void);
+/* <<< factory FriendshipSong_BenchCheck */
+/* >>> factory ExpandEffect */
+void ExpandEffect(void);
+/* <<< factory ExpandEffect */
+/* >>> factory CheckIfThereAreAnyEnergyCardsAttached */
+typedef struct { uint8_t f; } CheckIfThereAreAnyEnergyCardsAttachedResult;
+CheckIfThereAreAnyEnergyCardsAttachedResult CheckIfThereAreAnyEnergyCardsAttached(void);
+/* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
