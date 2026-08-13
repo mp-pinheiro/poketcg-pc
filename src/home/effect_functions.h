@@ -172,4 +172,8 @@ FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void);
 typedef struct { uint8_t a; uint8_t f; } WildfireAISelectEffectResult;
 WildfireAISelectEffectResult Wildfire_AISelectEffect(void);
 /* <<< factory Wildfire_AISelectEffect */
+/* >>> factory FireBlast_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FireBlastCheckEnergyResult;
+FireBlastCheckEnergyResult FireBlast_CheckEnergy(void);
+/* <<< factory FireBlast_CheckEnergy */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

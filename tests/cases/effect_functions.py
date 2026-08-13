@@ -603,6 +603,15 @@ CASES["Wildfire_AISelectEffect"] = [
 ]
 # <<< factory Wildfire_AISelectEffect
 
+# >>> factory FireBlast_CheckEnergy
+CONTRACT["FireBlast_CheckEnergy"] = {"compare": ("a", "f", "hl", "b", "c", "d"), "preserve": ("b", "c", "d")}
+CASES["FireBlast_CheckEnergy"] = [
+    {},
+    dict(POISON),
+    {"a": 1, "f": 0x10, "b": 1, "c": 0, "d": 0xFF, "e": 0xFF, "hl": 0x0100, "wram": {0xCC1B: b"\x01\x02\x03\x04\x05\x06\x07\x08"}},
+]
+# <<< factory FireBlast_CheckEnergy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -966,3 +975,6 @@ MUTATIONS["FindFirstNonBasicCardInPlayArea"] = {
 # >>> factory-mutation Wildfire_AISelectEffect
 MUTATIONS["Wildfire_AISelectEffect"] = {"source_symbol": "Wildfire_AISelectEffect", "before": "\tuint8_t a = 0x00u;", "after": "\tuint8_t a = 0x01u;", "case_ids": ["Wildfire_AISelectEffect-0", "Wildfire_AISelectEffect-1", "Wildfire_AISelectEffect-2"]}
 # <<< factory-mutation Wildfire_AISelectEffect
+# >>> factory-mutation FireBlast_CheckEnergy
+MUTATIONS["FireBlast_CheckEnergy"] = {"source_symbol": "FireBlast_CheckEnergy", "before": "NotEnoughFireEnergyText};", "after": "0u};", "case_ids": ["FireBlast_CheckEnergy-0", "FireBlast_CheckEnergy-1", "FireBlast_CheckEnergy-2"]}
+# <<< factory-mutation FireBlast_CheckEnergy

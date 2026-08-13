@@ -839,3 +839,22 @@ WildfireAISelectEffectResult Wildfire_AISelectEffect(void)
 	return (WildfireAISelectEffectResult){a, 0x80u};
 }
 /* <<< factory Wildfire_AISelectEffect */
+
+/* >>> factory FireBlast_CheckEnergy */
+/* effect_functions.asm:3691-3704 */
+FireBlastCheckEnergyResult FireBlast_CheckEnergy(void)
+{
+	uint8_t a;
+	uint8_t flags = 0x40u;
+
+	GetPlayAreaCardAttachedEnergies(0u);
+	a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + FIRE));
+	if ((a & 0x0fu) == 0u)
+		flags |= 0x20u;
+	if (a == 1u)
+		flags |= 0x80u;
+	if (a < 1u)
+		flags |= 0x10u;
+	return (FireBlastCheckEnergyResult){a, flags, NotEnoughFireEnergyText};
+}
+/* <<< factory FireBlast_CheckEnergy */

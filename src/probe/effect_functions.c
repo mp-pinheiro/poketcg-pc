@@ -415,6 +415,16 @@ static void adapt_Wildfire_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Wildfire_AISelectEffect */
 
+/* >>> factory FireBlast_CheckEnergy */
+static void adapt_FireBlast_CheckEnergy(ProbeState *s)
+{
+	FireBlastCheckEnergyResult r = FireBlast_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory FireBlast_CheckEnergy */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -465,5 +475,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "Wildfire_AISelectEffect", adapt_Wildfire_AISelectEffect },
+	{ "FireBlast_CheckEnergy", adapt_FireBlast_CheckEnergy },
 	{ NULL, NULL },
 };
