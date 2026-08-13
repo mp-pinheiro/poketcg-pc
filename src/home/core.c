@@ -160,7 +160,7 @@ static uint32_t duel_save_total_size(void)
 #include "home/duel.h"
 #include "home/bg_map.h"
 
-#define NUM_TYPES 0x09u
+#define NUM_TYPES 0x08u
 #define SYM_SPACE 0x00u
 #define SYM_FIRE 0xD0u
 #define SYM_PLUS 0xD8u
