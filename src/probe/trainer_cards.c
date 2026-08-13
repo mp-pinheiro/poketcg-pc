@@ -92,6 +92,7 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "PickPokedexCards", adapt_PickPokedexCards },
 	{ "AIDecide_Maintenance", adapt_AIDecide_Maintenance },
 	{ "AIDecide_Lass", adapt_AIDecide_Lass },
+	{ "AIDecide_Imakuni", adapt_AIDecide_Imakuni },
 	{ "AIDecide_Defender_Phase14", adapt_AIDecide_Defender_Phase14 },
 	{ "AIDecide_Bill", adapt_AIDecide_Bill },
 	{ "AIDecide_PokemonFlute", adapt_AIDecide_PokemonFlute },
