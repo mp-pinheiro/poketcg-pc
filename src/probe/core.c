@@ -441,6 +441,21 @@ static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
 }
 /* <<< factory LookForCardIDInHandList_Bank5 */
 
+/* >>> factory CheckForEvolutionInDeck */
+static void adapt_CheckForEvolutionInDeck(ProbeState *s)
+{ CheckForEvolutionInDeckResult r = CheckForEvolutionInDeck(s->a); s->a = r.a; s->f = r.f; s->b = r.b; s->e = r.e; s->hl = r.hl; }
+/* <<< factory CheckForEvolutionInDeck */
+
+/* >>> factory LookForCardThatIsKnockedOutOnDevolution */
+static void adapt_LookForCardThatIsKnockedOutOnDevolution(ProbeState *s)
+{ LookForCardThatIsKnockedOutOnDevolutionResult r = LookForCardThatIsKnockedOutOnDevolution(); s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl; }
+/* <<< factory LookForCardThatIsKnockedOutOnDevolution */
+
+/* >>> factory CalculateParticularAttachedEnergyNeeded */
+static void adapt_CalculateParticularAttachedEnergyNeeded(ProbeState *s)
+{ CalculateParticularAttachedEnergyNeededResult r = CalculateParticularAttachedEnergyNeeded(s->a, s->b, s->hl); s->a = r.a; s->f = r.f; s->b = r.b; s->hl = r.hl; }
+/* <<< factory CalculateParticularAttachedEnergyNeeded */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -494,5 +509,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CreateEnergyCardListFromHand", adapt_CreateEnergyCardListFromHand },
 	{ "LookForCardIDInHand", adapt_LookForCardIDInHand },
 	{ "LookForCardIDInHandList_Bank5", adapt_LookForCardIDInHandList_Bank5 },
+	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
+	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
+	{ "CalculateParticularAttachedEnergyNeeded", adapt_CalculateParticularAttachedEnergyNeeded },
 	{ NULL, NULL },
 };

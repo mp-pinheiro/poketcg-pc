@@ -212,6 +212,13 @@ static uint8_t is_duelist_type(uint8_t a)
 #define EFFECTCMDTYPE_REQUIRE_SELECTION 0x05u
 #define TYPE_ENERGY 0x08u
 #include "home/duel.h"
+
+#include "home/card_color.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#define DUELVARS_PRIZE_CARDS 0x3Cu
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_DECK 0x00u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -1088,3 +1095,64 @@ CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
 	}
 }
 /* <<< factory LookForCardIDInHandList_Bank5 */
+
+/* >>> factory CheckForEvolutionInDeck */
+CheckForEvolutionInDeckResult CheckForEvolutionInDeck(uint8_t a)
+{
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	DuelistVarResult arena_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	gb_write8(arena_var.hl, a);
+	for (uint8_t e = 0; e < DUELVARS_PRIZE_CARDS; e++) {
+		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + e)).a != CARD_LOCATION_DECK)
+			continue;
+		EvolveResult r = CheckIfCanEvolveInto(e, PLAY_AREA_ARENA);
+		if (!(r.f & 0x10u)) {
+			gb_write8(arena_var.hl, arena);
+			return (CheckForEvolutionInDeckResult){e, (uint8_t)(0x10u | (e == 0 ? 0x80u : 0u)), a, e, arena_var.hl};
+		}
+	}
+	gb_write8(arena_var.hl, arena);
+	return (CheckForEvolutionInDeckResult){arena, (uint8_t)(arena == 0 ? 0x80u : 0u), a, DUELVARS_PRIZE_CARDS, arena_var.hl};
+}
+/* <<< factory CheckForEvolutionInDeck */
+
+/* >>> factory LookForCardThatIsKnockedOutOnDevolution */
+LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevolution(void)
+{
+	uint8_t saved = hTempPlayAreaLocation_ff9d;
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (uint8_t c = PLAY_AREA_ARENA; c < count; c++) {
+		hTempPlayAreaLocation_ff9d = c;
+		CardOneStageBelowResult below = GetCardOneStageBelow(0, c);
+		if (below.f & 0x10u)
+			continue;
+		LoadCardDataToBuffer2_FromDeckIndex(below.d);
+		uint8_t hp = wLoadedCard2HP;
+		uint8_t current = GetCardDamageAndMaxHP(c).a;
+		if (hp >= current) {
+			SwapTurn(); hTempPlayAreaLocation_ff9d = saved;
+			return (LookForCardThatIsKnockedOutOnDevolutionResult){c, 0x10u, count, c, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBAu)};
+		}
+	}
+	SwapTurn(); hTempPlayAreaLocation_ff9d = saved;
+	return (LookForCardThatIsKnockedOutOnDevolutionResult){saved, (uint8_t)(saved == 0u ? 0x80u : 0u), count, count, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBBu)};
+}
+/* <<< factory LookForCardThatIsKnockedOutOnDevolution */
+
+/* >>> factory CalculateParticularAttachedEnergyNeeded */
+CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyNeeded(uint8_t a, uint8_t b, uint16_t hl)
+{
+	uint8_t low = (uint8_t)(a & 0x0Fu);
+	uint8_t next_b = (uint8_t)(b + 1u);
+	if (low == 0u)
+		return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};
+	gb_write8(wTempLoadedAttackEnergyCost_ADDR, low);
+	uint8_t current = gb_read8(hl);
+	uint8_t result = (uint8_t)(low - current);
+	if (low >= current)
+		return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};
+	gb_write8(wTempLoadedAttackEnergyNeededAmount_ADDR, result);
+	return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(0x10u | (next_b == 0u ? 0x80u : 0u)), next_b, (uint16_t)(hl + 1u)};
+}
+/* <<< factory CalculateParticularAttachedEnergyNeeded */

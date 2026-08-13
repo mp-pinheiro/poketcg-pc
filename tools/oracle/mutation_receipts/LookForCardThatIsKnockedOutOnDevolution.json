@@ -1,0 +1,9 @@
+{
+  "fn": "LookForCardThatIsKnockedOutOnDevolution",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50107, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"10\", \"50107\": \"00\", \"50159\": \"01\", \"50176\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"mismatches\": {\"a\": [0, 255]}}\n",
+  "restored": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50107, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"10\", \"50107\": \"00\", \"50159\": \"01\", \"50176\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
