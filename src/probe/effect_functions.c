@@ -700,6 +700,23 @@ static void adapt_Sprout_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Sprout_AISelectEffect */
 
+/* >>> factory Teleport_CheckBench */
+static void adapt_Teleport_CheckBench(ProbeState *s)
+{
+    TeleportCheckBenchResult r = Teleport_CheckBench();
+    s->a = r.a; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory Teleport_CheckBench */
+
+/* >>> factory Teleport_AISelectEffect */
+static void adapt_Teleport_AISelectEffect(ProbeState *s)
+{
+    TeleportAISelectEffectResult r = Teleport_AISelectEffect();
+    s->a = r.a;
+    s->hl = r.hl;
+}
+/* <<< factory Teleport_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -783,5 +800,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BeedrillPoisonSting_AIEffect", adapt_BeedrillPoisonSting_AIEffect },
 	{ "FoulGas_AIEffect", adapt_FoulGas_AIEffect },
 	{ "Sprout_AISelectEffect", adapt_Sprout_AISelectEffect },
+	{ "Teleport_CheckBench", adapt_Teleport_CheckBench },
+	{ "Teleport_AISelectEffect", adapt_Teleport_AISelectEffect },
 	{ NULL, NULL },
 };

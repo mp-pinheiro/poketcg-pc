@@ -941,6 +941,27 @@ CASES["Sprout_AISelectEffect"] = [
 ]
 # <<< factory Sprout_AISelectEffect
 
+# >>> factory Teleport_CheckBench
+CONTRACT["Teleport_CheckBench"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["Teleport_CheckBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x02"}),
+]
+# <<< factory Teleport_CheckBench
+
+# >>> factory Teleport_AISelectEffect
+CONTRACT["Teleport_AISelectEffect"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Teleport_AISelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xCACA: b"\x12\x34\x56"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xCACA: b"\x12\x34\x56"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x06", 0xCACA: b"\xde\xad\xbe"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x04", 0xCACA: b"\x80\x01\xff"}, read={0xFFA0: 1}),
+]
+# <<< factory Teleport_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1509,3 +1530,9 @@ MUTATIONS["Sprout_AISelectEffect"] = {
     "case_ids": ["Sprout_AISelectEffect-0", "Sprout_AISelectEffect-1", "Sprout_AISelectEffect-2"],
 }
 # <<< factory-mutation Sprout_AISelectEffect
+# >>> factory-mutation Teleport_CheckBench
+MUTATIONS["Teleport_CheckBench"] = {"source_symbol": "Teleport_CheckBench", "before": "if (count.a == 2u)", "after": "if (count.a == 3u)", "case_ids": ["Teleport_CheckBench-2"]}
+# <<< factory-mutation Teleport_CheckBench
+# >>> factory-mutation Teleport_AISelectEffect
+MUTATIONS["Teleport_AISelectEffect"] = {"source_symbol": "Teleport_AISelectEffect", "before": "hTemp_ffa0 = a;", "after": "hTemp_ffa0 = (uint8_t)(a + 1u);", "case_ids": ["Teleport_AISelectEffect-1"]}
+# <<< factory-mutation Teleport_AISelectEffect

@@ -290,4 +290,12 @@ void FoulGas_AIEffect(void);
 /* >>> factory Sprout_AISelectEffect */
 void Sprout_AISelectEffect(uint8_t c, uint16_t de);
 /* <<< factory Sprout_AISelectEffect */
+/* >>> factory Teleport_CheckBench */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TeleportCheckBenchResult;
+TeleportCheckBenchResult Teleport_CheckBench(void);
+/* <<< factory Teleport_CheckBench */
+/* >>> factory Teleport_AISelectEffect */
+typedef struct { uint8_t a; uint16_t hl; } TeleportAISelectEffectResult;
+TeleportAISelectEffectResult Teleport_AISelectEffect(void);
+/* <<< factory Teleport_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

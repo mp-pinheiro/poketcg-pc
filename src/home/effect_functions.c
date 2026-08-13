@@ -1329,3 +1329,25 @@ void Sprout_AISelectEffect(uint8_t c, uint16_t de)
 	}
 }
 /* <<< factory Sprout_AISelectEffect */
+
+/* >>> factory Teleport_CheckBench */
+TeleportCheckBenchResult Teleport_CheckBench(void)
+{
+    DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+    uint8_t f = 0x40u;
+    if (count.a == 2u) f |= 0x80u;
+    if ((count.a & 0x0fu) < 2u) f |= 0x20u;
+    if (count.a < 2u) f |= 0x10u;
+    return (TeleportCheckBenchResult){count.a, f, 0x00d2u};
+}
+/* <<< factory Teleport_CheckBench */
+
+/* >>> factory Teleport_AISelectEffect */
+TeleportAISelectEffectResult Teleport_AISelectEffect(void)
+{
+    DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+    uint8_t a = Random(count.a);
+    hTemp_ffa0 = a;
+    return (TeleportAISelectEffectResult){a, count.hl};
+}
+/* <<< factory Teleport_AISelectEffect */
