@@ -298,4 +298,10 @@ TeleportCheckBenchResult Teleport_CheckBench(void);
 typedef struct { uint8_t a; uint16_t hl; } TeleportAISelectEffectResult;
 TeleportAISelectEffectResult Teleport_AISelectEffect(void);
 /* <<< factory Teleport_AISelectEffect */
+/* >>> factory HornHazard_AIEffect */
+void HornHazard_AIEffect(void);
+/* <<< factory HornHazard_AIEffect */
+/* >>> factory NidorinaDoubleKick_AIEffect */
+void NidorinaDoubleKick_AIEffect(void);
+/* <<< factory NidorinaDoubleKick_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

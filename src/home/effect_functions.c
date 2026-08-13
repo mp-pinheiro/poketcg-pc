@@ -1351,3 +1351,19 @@ TeleportAISelectEffectResult Teleport_AISelectEffect(void)
     return (TeleportAISelectEffectResult){a, count.hl};
 }
 /* <<< factory Teleport_AISelectEffect */
+
+/* >>> factory HornHazard_AIEffect */
+/* effect_functions.asm:2050-2053 */
+void HornHazard_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory HornHazard_AIEffect */
+
+/* >>> factory NidorinaDoubleKick_AIEffect */
+/* effect_functions.asm:2073-2076 */
+void NidorinaDoubleKick_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory NidorinaDoubleKick_AIEffect */

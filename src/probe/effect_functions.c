@@ -717,6 +717,22 @@ static void adapt_Teleport_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Teleport_AISelectEffect */
 
+/* >>> factory HornHazard_AIEffect */
+static void adapt_HornHazard_AIEffect(ProbeState *s)
+{
+	(void)s;
+	HornHazard_AIEffect();
+}
+/* <<< factory HornHazard_AIEffect */
+
+/* >>> factory NidorinaDoubleKick_AIEffect */
+static void adapt_NidorinaDoubleKick_AIEffect(ProbeState *s)
+{
+	(void)s;
+	NidorinaDoubleKick_AIEffect();
+}
+/* <<< factory NidorinaDoubleKick_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -802,5 +818,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Sprout_AISelectEffect", adapt_Sprout_AISelectEffect },
 	{ "Teleport_CheckBench", adapt_Teleport_CheckBench },
 	{ "Teleport_AISelectEffect", adapt_Teleport_AISelectEffect },
+	{ "HornHazard_AIEffect", adapt_HornHazard_AIEffect },
+	{ "NidorinaDoubleKick_AIEffect", adapt_NidorinaDoubleKick_AIEffect },
 	{ NULL, NULL },
 };

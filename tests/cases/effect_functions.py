@@ -962,6 +962,30 @@ CASES["Teleport_AISelectEffect"] = [
 ]
 # <<< factory Teleport_AISelectEffect
 
+# >>> factory HornHazard_AIEffect
+CONTRACT["HornHazard_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["HornHazard_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory HornHazard_AIEffect
+
+# >>> factory NidorinaDoubleKick_AIEffect
+CONTRACT["NidorinaDoubleKick_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["NidorinaDoubleKick_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory NidorinaDoubleKick_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1536,3 +1560,19 @@ MUTATIONS["Teleport_CheckBench"] = {"source_symbol": "Teleport_CheckBench", "bef
 # >>> factory-mutation Teleport_AISelectEffect
 MUTATIONS["Teleport_AISelectEffect"] = {"source_symbol": "Teleport_AISelectEffect", "before": "hTemp_ffa0 = a;", "after": "hTemp_ffa0 = (uint8_t)(a + 1u);", "case_ids": ["Teleport_AISelectEffect-1"]}
 # <<< factory-mutation Teleport_AISelectEffect
+# >>> factory-mutation HornHazard_AIEffect
+MUTATIONS["HornHazard_AIEffect"] = {
+    "source_symbol": "HornHazard_AIEffect",
+    "before": "SetExpectedAIDamage(15u, 0u, 30u);",
+    "after": "SetExpectedAIDamage(16u, 0u, 30u);",
+    "case_ids": ["HornHazard_AIEffect-0", "HornHazard_AIEffect-1", "HornHazard_AIEffect-2"],
+}
+# <<< factory-mutation HornHazard_AIEffect
+# >>> factory-mutation NidorinaDoubleKick_AIEffect
+MUTATIONS["NidorinaDoubleKick_AIEffect"] = {
+    "source_symbol": "NidorinaDoubleKick_AIEffect",
+    "before": "void NidorinaDoubleKick_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}",
+    "after": "void NidorinaDoubleKick_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}",
+    "case_ids": ["NidorinaDoubleKick_AIEffect-0", "NidorinaDoubleKick_AIEffect-1", "NidorinaDoubleKick_AIEffect-2"],
+}
+# <<< factory-mutation NidorinaDoubleKick_AIEffect
