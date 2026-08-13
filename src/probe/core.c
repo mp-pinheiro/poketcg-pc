@@ -265,6 +265,20 @@ static void adapt_OppAction_DrawCard(ProbeState *s)
 }
 /* <<< factory OppAction_DrawCard */
 
+/* >>> factory PrintSortNumberInCardList_SetPointer */
+static void adapt_PrintSortNumberInCardList_SetPointer(ProbeState *s)
+{
+	PrintSortNumberInCardList_SetPointer();
+}
+/* <<< factory PrintSortNumberInCardList_SetPointer */
+
+/* >>> factory PrintSortNumberInCardList */
+static void adapt_PrintSortNumberInCardList(ProbeState *s)
+{
+	PrintSortNumberInCardList();
+}
+/* <<< factory PrintSortNumberInCardList */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -298,5 +312,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPlayAreaCardAttachedEnergies", adapt_PrintPlayAreaCardAttachedEnergies },
 	{ "DiscardRetreatCostCards", adapt_DiscardRetreatCostCards },
 	{ "OppAction_DrawCard", adapt_OppAction_DrawCard },
+	{ "PrintSortNumberInCardList_SetPointer", adapt_PrintSortNumberInCardList_SetPointer },
+	{ "PrintSortNumberInCardList", adapt_PrintSortNumberInCardList },
 	{ NULL, NULL },
 };

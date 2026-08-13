@@ -113,4 +113,10 @@ DiscardRetreatCostCardsResult DiscardRetreatCostCards(void);
 typedef struct { uint8_t a; uint8_t f; } OppActionDrawResult;
 OppActionDrawResult OppAction_DrawCard(void);
 /* <<< factory OppAction_DrawCard */
+/* >>> factory PrintSortNumberInCardList_SetPointer */
+void PrintSortNumberInCardList_SetPointer(void);
+/* <<< factory PrintSortNumberInCardList_SetPointer */
+/* >>> factory PrintSortNumberInCardList */
+void PrintSortNumberInCardList(void);
+/* <<< factory PrintSortNumberInCardList */
 #endif /* POKETCG_HOME_CORE_H */

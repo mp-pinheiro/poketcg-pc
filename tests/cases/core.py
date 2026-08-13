@@ -361,6 +361,23 @@ CONTRACT["OppAction_DrawCard"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"
 CASES["OppAction_DrawCard"] = [{}, dict(POISON), {"a": 1, "f": 0x10, "b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC100}]
 # <<< factory OppAction_DrawCard
 
+# >>> factory PrintSortNumberInCardList
+CONTRACT["PrintSortNumberInCardList_SetPointer"] = {"compare": (), "preserve": ()}
+CASES["PrintSortNumberInCardList_SetPointer"] = [
+	{"wram": {0xCBD8: b"\x00\x00", 0xCBDF: b"\x00"}, "read": {0xCBD8: 3}},
+	dict(POISON, wram={0xCBD8: b"\xff\xff", 0xCBDF: b"\x00"}, read={0xCBD8: 3}),
+]
+# <<< factory PrintSortNumberInCardList
+# >>> factory PrintSortNumberInCardList_body
+CONTRACT["PrintSortNumberInCardList"] = {"compare": (), "preserve": ()}
+CASES["PrintSortNumberInCardList"] = [
+	{"wram": {0xC51A: b"\x00\x01\xff"}, "read": {0x9841: 2}},
+	dict(POISON, wram={0xC51A: b"\x01\x00\xff"}, read={0x9841: 2}),
+	{"wram": {0xC51A: b"\xff"}},
+]
+# <<< factory PrintSortNumberInCardList_body
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -596,3 +613,11 @@ MUTATIONS["DiscardRetreatCostCards"] = {"source_symbol": "DiscardRetreatCostCard
 # >>> factory-mutation OppAction_DrawCard
 MUTATIONS["OppAction_DrawCard"] = {"source_symbol": "OppAction_DrawCard", "before": "return (OppActionDrawResult){r.a, r.f};", "after": "return (OppActionDrawResult){r.a, 0u};", "case_ids": ["OppAction_DrawCard-0", "OppAction_DrawCard-1", "OppAction_DrawCard-2"]}
 # <<< factory-mutation OppAction_DrawCard
+# >>> factory-mutation PrintSortNumberInCardList
+MUTATIONS["PrintSortNumberInCardList_SetPointer"] = {
+	"source_symbol": "PrintSortNumberInCardList_SetPointer",
+	"before": "wSortCardListByID = TRUE_VAL;",
+	"after": "wSortCardListByID = 0u;",
+	"case_ids": ["PrintSortNumberInCardList_SetPointer-0", "PrintSortNumberInCardList_SetPointer-1"],
+}
+# <<< factory-mutation PrintSortNumberInCardList

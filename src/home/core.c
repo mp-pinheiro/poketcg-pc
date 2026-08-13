@@ -167,6 +167,27 @@ static uint32_t duel_save_total_size(void)
 
 #include "home/duel.h"
 #include "generated/hram.h"
+
+#include "home/empty_screen.h"
+#include "home/duel.h"
+#include "home/bg_map.h"
+#define SYM_POISONED 0x08u
+#define POISONED 0x80u
+
+#include "home/duel.h"
+#define PLAY_AREA_ARENA 0u
+#define SYM_0 0x20u
+#include "generated/hram.h"
+
+#define CARDPAGE_ENERGY 0x09u
+
+/* >>> factory CardPageSwitch_08 */
+/* core.asm:3838-3842 */
+CardPageResult CardPageSwitch_08(void)
+{
+	return (CardPageResult){CARDPAGE_ENERGY + 1u, 1u};
+}
+/* <<< factory CardPageSwitch_08 */
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -707,3 +728,30 @@ OppActionDrawResult OppAction_DrawCard(void)
 	return (OppActionDrawResult){r.a, r.f};
 }
 /* <<< factory OppAction_DrawCard */
+
+/* >>> factory PrintSortNumberInCardList_SetPointer */
+void PrintSortNumberInCardList_SetPointer(void)
+{
+	gb_write8(wPrintSortNumberInCardListPtr_ADDR, (uint8_t)PRINT_SORT_NUMBER_IN_CARD_LIST);
+	gb_write8((uint16_t)(wPrintSortNumberInCardListPtr_ADDR + 1u),
+	          (uint8_t)(PRINT_SORT_NUMBER_IN_CARD_LIST >> 8));
+	wSortCardListByID = TRUE_VAL;
+}
+/* <<< factory PrintSortNumberInCardList_SetPointer */
+
+/* >>> factory PrintSortNumberInCardList */
+void PrintSortNumberInCardList(void)
+{
+	uint8_t c = 2u;
+	uint16_t hl = (uint16_t)(wDuelTempList_ADDR + 10u);
+	for (;;) {
+		uint8_t value = gb_read8(hl++);
+		if (value == 0xFFu)
+			break;
+		if (value != SYM_SPACE)
+			value = (uint8_t)(value + SYM_0);
+		WriteByteToBGMap0(value, 1u, c);
+		c = (uint8_t)(c + 2u);
+	}
+}
+/* <<< factory PrintSortNumberInCardList */
