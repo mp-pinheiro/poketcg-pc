@@ -148,6 +148,7 @@ def main() -> int:
     assert adopted["actions"][0]["action"] == "adopt"
     assert "Human text." in adopted["actions"][0]["body"]
     assert "**Factory packet:** `packet-foo`" in adopted["actions"][0]["body"]
+    report["work_records"][0]["state"] = "complete"
 
     aggregate = dict(legacy)
     aggregate["number"] = 9
@@ -159,6 +160,25 @@ def main() -> int:
     kinds = [action["action"] for action in split["actions"]]
     assert kinds.count("create-replacement") == 2
     assert kinds.count("supersede") == 1
+    foo_create = next(
+        action for action in split["actions"]
+        if action.get("work_id") == report["work_records"][0]["work_id"]
+    )
+    partial = {
+        "number": 10, "title": foo_create["title"],
+        "body": foo_create["body"], "state": "open",
+        "labels": foo_create["labels"],
+    }
+    resumed = issues.migration_plan(
+        {"schema": 1, "issues": [aggregate, partial]}, report,
+    )
+    foo_actions = [
+        action for action in resumed["actions"]
+        if action.get("work_id") == report["work_records"][0]["work_id"]
+    ]
+    assert len(foo_actions) == 1
+    assert foo_actions[0]["action"] == "update"
+    assert foo_actions[0]["issue_number"] == 10
     excluded_foo = routine("Foo", state="excluded")
     excluded_bar = routine("Bar", state="excluded")
     excluded_foo["excluded"] = True

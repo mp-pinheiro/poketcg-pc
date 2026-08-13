@@ -478,17 +478,19 @@ def migration_plan(snapshot: dict, report: dict | None = None) -> dict:
             replacements = []
             for name in names:
                 record = exact_by_name[name]
-                replacement = action_for(record, None)
-                if replacement is None:
+                existing = marked.get(record["work_id"])
+                replacement = action_for(record, existing)
+                if replacement is None and existing is None:
                     continue
                 replacements.append(record["work_id"])
                 replacement_ids.add(record["work_id"])
-                if record["work_id"] in marked:
+                if replacement is None:
                     continue
-                replacement["action"] = "create-replacement"
-                replacement["legacy_issue_number"] = issue["number"]
+                if existing is None:
+                    replacement["action"] = "create-replacement"
+                    replacement["legacy_issue_number"] = issue["number"]
+                    created.append(record["work_id"])
                 actions.append(replacement)
-                created.append(record["work_id"])
             if replacements:
                 actions.append({
                     "action": "supersede", "issue_number": issue["number"],
