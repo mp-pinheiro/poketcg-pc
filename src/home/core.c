@@ -219,6 +219,8 @@ static uint8_t is_duelist_type(uint8_t a)
 #define DUELVARS_PRIZE_CARDS 0x3Cu
 #define DUELVARS_CARD_LOCATIONS 0x00u
 #define CARD_LOCATION_DECK 0x00u
+
+#define ANIMATIONS_ADDR 0x4e32u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -543,6 +545,7 @@ void LoadCardNameToTxRam2_b(uint8_t a)
 }
 /* <<< factory LoadCardNameToTxRam2_b */
 
+
 /* >>> factory GetAnimCoordsAndFlags */
 /* core.asm:183-229 */
 AnimCoordsResult GetAnimCoordsAndFlags(void)
@@ -563,6 +566,7 @@ AnimCoordsResult GetAnimCoordsAndFlags(void)
 	return (AnimCoordsResult){flags, f, x, y};
 }
 /* <<< factory GetAnimCoordsAndFlags */
+
 
 /* >>> factory PlayBufferedDuelAnimations */
 /* core.asm:311-353 */
@@ -1156,3 +1160,18 @@ CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyN
 	return (CalculateParticularAttachedEnergyNeededResult){result, (uint8_t)(0x10u | (next_b == 0u ? 0x80u : 0u)), next_b, (uint16_t)(hl + 1u)};
 }
 /* <<< factory CalculateParticularAttachedEnergyNeeded */
+
+/* >>> factory GetAnimationData */
+AnimationDataResult GetAnimationData(void)
+{
+	uint8_t animation = wTempAnimation;
+	uint16_t offset = (uint16_t)animation * 6u;
+	uint16_t address = (uint16_t)(ANIMATIONS_ADDR + offset);
+	uint8_t f = 0u;
+	if (((offset & 0x0fffu) + (ANIMATIONS_ADDR & 0x0fffu)) > 0x0fffu)
+		f |= 0x20u;
+	if (address < ANIMATIONS_ADDR)
+		f |= 0x10u;
+	return (AnimationDataResult){animation, f, address};
+}
+/* <<< factory GetAnimationData */

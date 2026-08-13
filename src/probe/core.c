@@ -200,6 +200,7 @@ static void adapt_GetAnimCoordsAndFlags(ProbeState *s)
 }
 /* <<< factory GetAnimCoordsAndFlags */
 
+
 /* >>> factory PlayBufferedDuelAnimations */
 static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
 {
@@ -208,6 +209,7 @@ static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory PlayBufferedDuelAnimations */
+
 
 /* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
 static void adapt_CopyListWithFFTerminatorFromHLToDE_Bank5(ProbeState *s)
@@ -456,6 +458,17 @@ static void adapt_CalculateParticularAttachedEnergyNeeded(ProbeState *s)
 { CalculateParticularAttachedEnergyNeededResult r = CalculateParticularAttachedEnergyNeeded(s->a, s->b, s->hl); s->a = r.a; s->f = r.f; s->b = r.b; s->hl = r.hl; }
 /* <<< factory CalculateParticularAttachedEnergyNeeded */
 
+/* >>> factory GetAnimationData */
+static void adapt_GetAnimationData(ProbeState *s)
+{
+	uint8_t z = (uint8_t)(s->f & 0x80u);
+	AnimationDataResult r = GetAnimationData();
+	s->a = r.a;
+	s->f = (uint8_t)(z | r.f);
+	s->hl = r.hl;
+}
+/* <<< factory GetAnimationData */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -479,8 +492,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetCardListInfoBoxText", adapt_SetCardListInfoBoxText },
 	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
-	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
-	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
 	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
 	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
@@ -512,5 +523,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
 	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
 	{ "CalculateParticularAttachedEnergyNeeded", adapt_CalculateParticularAttachedEnergyNeeded },
+	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
+	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
+	{ "GetAnimationData", adapt_GetAnimationData },
 	{ NULL, NULL },
 };

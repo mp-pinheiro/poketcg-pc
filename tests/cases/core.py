@@ -293,6 +293,7 @@ CASES["GetAnimCoordsAndFlags"] = [
 ]
 # <<< factory GetAnimCoordsAndFlags
 
+
 # >>> factory PlayBufferedDuelAnimations
 wDuelAnimBufferCurPos = 0xD4AC
 wDuelAnimBufferSize = 0xD4AD
@@ -321,6 +322,7 @@ CASES["PlayBufferedDuelAnimations"] = [
     }},
 ]
 # <<< factory PlayBufferedDuelAnimations
+
 
 # >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5
 CONTRACT["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
@@ -597,6 +599,16 @@ CASES["LookForCardThatIsKnockedOutOnDevolution"] = [{"wram": {0xFF97: b"\xC2", 0
 CONTRACT["CalculateParticularAttachedEnergyNeeded"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "e")}
 CASES["CalculateParticularAttachedEnergyNeeded"] = [{"a": 0, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x00"}}, {"a": 3, "b": 1, "hl": 0xC100, "wram": {0xC100: b"\x01"}}, dict(POISON, a=0x12, b=2, hl=0xC100, wram={0xC100: b"\x01"})]
 # <<< factory CalculateParticularAttachedEnergyNeeded
+
+# >>> factory GetAnimationData
+wTempAnimation = 0xD422
+CONTRACT["GetAnimationData"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["GetAnimationData"] = [
+    {"wram": {wTempAnimation: b"\x00"}},
+    dict(POISON, wram={wTempAnimation: b"\x01"}),
+    {"wram": {wTempAnimation: b"\xff"}},
+]
+# <<< factory GetAnimationData
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -942,3 +954,11 @@ MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"] = {"source_symbol": "LookFo
 # >>> factory-mutation CalculateParticularAttachedEnergyNeeded
 MUTATIONS["CalculateParticularAttachedEnergyNeeded"] = {"source_symbol": "CalculateParticularAttachedEnergyNeeded", "before": "return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "after": "return (CalculateParticularAttachedEnergyNeededResult){1u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "case_ids": ["CalculateParticularAttachedEnergyNeeded-0"]}
 # <<< factory-mutation CalculateParticularAttachedEnergyNeeded
+# >>> factory-mutation GetAnimationData
+MUTATIONS["GetAnimationData"] = {
+    "source_symbol": "GetAnimationData",
+    "before": "uint16_t offset = (uint16_t)animation * 6u;",
+    "after": "uint16_t offset = (uint16_t)animation * 5u;",
+    "case_ids": ["GetAnimationData-1", "GetAnimationData-2"],
+}
+# <<< factory-mutation GetAnimationData

@@ -207,4 +207,8 @@ LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevol
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint16_t hl; } CalculateParticularAttachedEnergyNeededResult;
 CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyNeeded(uint8_t a, uint8_t b, uint16_t hl);
 /* <<< factory CalculateParticularAttachedEnergyNeeded */
+/* >>> factory GetAnimationData */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } AnimationDataResult;
+AnimationDataResult GetAnimationData(void);
+/* <<< factory GetAnimationData */
 #endif /* POKETCG_HOME_CORE_H */
