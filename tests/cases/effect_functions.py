@@ -677,6 +677,36 @@ CASES["ResetDevolvedCardStatus"] = [
 ]
 # <<< factory ResetDevolvedCardStatus
 
+# >>> factory EeveeQuickAttack_AIEffect
+CONTRACT["EeveeQuickAttack_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["EeveeQuickAttack_AIEffect"] = [
+    {"wram": {0xCCBB: b"\x00", 0xCCBC: b"\x00", 0xCCB9: b"\x00"}},
+    dict(POISON, wram={0xCCBB: b"\xAA", 0xCCBC: b"\xBB", 0xCCB9: b"\xCC"}),
+]
+# <<< factory EeveeQuickAttack_AIEffect
+
+# >>> factory MirrorMove_AIEffect
+CONTRACT["MirrorMove_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["MirrorMove_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x00\x00", 0xCCBB: b"\xAA", 0xCCBC: b"\xBB"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x2A\x01", 0xCCBB: b"\xAA", 0xCCBC: b"\xBB"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F3: b"\x7F\x00", 0xCCBB: b"\xAA", 0xCCBC: b"\xBB"}),
+    dict(POISON, a=0x11, wram={0xFF97: b"\xC2", 0xC2F3: b"\xFF\xFF", 0xCCBB: b"\xAA", 0xCCBC: b"\xBB"}),
+]
+# <<< factory MirrorMove_AIEffect
+
+# >>> factory MirrorMove_InitialEffect1
+CONTRACT["MirrorMove_InitialEffect1"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["MirrorMove_InitialEffect1"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x00\x00\x00\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x01\x00\x00\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x00\x01\x00\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x00\x00\x01\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x00\x00\x00\x01"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F3: b"\x00\x00\x00\x00"}),
+]
+# <<< factory MirrorMove_InitialEffect1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1065,3 +1095,27 @@ MUTATIONS["ResetDevolvedCardStatus"] = {
                  "ResetDevolvedCardStatus-2", "ResetDevolvedCardStatus-3"],
 }
 # <<< factory-mutation ResetDevolvedCardStatus
+# >>> factory-mutation EeveeQuickAttack_AIEffect
+MUTATIONS["EeveeQuickAttack_AIEffect"] = {
+    "source_symbol": "EeveeQuickAttack_AIEffect",
+    "before": "SetExpectedAIDamage(20u, 10u, 30u);",
+    "after": "SetExpectedAIDamage(21u, 10u, 30u);",
+    "case_ids": ["EeveeQuickAttack_AIEffect-0", "EeveeQuickAttack_AIEffect-1"],
+}
+# <<< factory-mutation EeveeQuickAttack_AIEffect
+# >>> factory-mutation MirrorMove_AIEffect
+MUTATIONS["MirrorMove_AIEffect"] = {
+    "source_symbol": "MirrorMove_AIEffect",
+    "before": "wAIMaxDamage = wAIMinDamage;",
+    "after": "wAIMaxDamage = (uint8_t)(wAIMinDamage + 1u);",
+    "case_ids": ["MirrorMove_AIEffect-0", "MirrorMove_AIEffect-1"],
+}
+# <<< factory-mutation MirrorMove_AIEffect
+# >>> factory-mutation MirrorMove_InitialEffect1
+MUTATIONS["MirrorMove_InitialEffect1"] = {
+    "source_symbol": "MirrorMove_InitialEffect1",
+    "before": "return (MirrorMoveInitialEffect1Result){0x90u, 0x00C6u};",
+    "after": "return (MirrorMoveInitialEffect1Result){0x90u, 0x00C7u};",
+    "case_ids": ["MirrorMove_InitialEffect1-0", "MirrorMove_InitialEffect1-5"],
+}
+# <<< factory-mutation MirrorMove_InitialEffect1

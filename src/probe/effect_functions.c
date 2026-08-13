@@ -485,6 +485,31 @@ static void adapt_ResetDevolvedCardStatus(ProbeState *s)
 }
 /* <<< factory ResetDevolvedCardStatus */
 
+/* >>> factory EeveeQuickAttack_AIEffect */
+static void adapt_EeveeQuickAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	EeveeQuickAttack_AIEffect();
+}
+/* <<< factory EeveeQuickAttack_AIEffect */
+
+/* >>> factory MirrorMove_AIEffect */
+static void adapt_MirrorMove_AIEffect(ProbeState *s)
+{
+	(void)s;
+	MirrorMove_AIEffect();
+}
+/* <<< factory MirrorMove_AIEffect */
+
+/* >>> factory MirrorMove_InitialEffect1 */
+static void adapt_MirrorMove_InitialEffect1(ProbeState *s)
+{
+	MirrorMoveInitialEffect1Result r = MirrorMove_InitialEffect1();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory MirrorMove_InitialEffect1 */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -543,5 +568,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ResetDevolvedCardStatus", adapt_ResetDevolvedCardStatus },
 	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
 	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
+	{ "EeveeQuickAttack_AIEffect", adapt_EeveeQuickAttack_AIEffect },
+	{ "MirrorMove_AIEffect", adapt_MirrorMove_AIEffect },
+	{ "MirrorMove_InitialEffect1", adapt_MirrorMove_InitialEffect1 },
 	{ NULL, NULL },
 };

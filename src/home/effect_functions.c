@@ -990,3 +990,38 @@ uint8_t ResetDevolvedCardStatus(void)
 	return (uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location);
 }
 /* <<< factory ResetDevolvedCardStatus */
+
+/* >>> factory EeveeQuickAttack_AIEffect */
+void EeveeQuickAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(20u, 10u, 30u);
+}
+/* <<< factory EeveeQuickAttack_AIEffect */
+
+/* >>> factory MirrorMove_AIEffect */
+void MirrorMove_AIEffect(void)
+{
+	DuelistVarResult damage = GetTurnDuelistVariable(0xF3u);
+	wAIMinDamage = gb_read8(damage.hl);
+	wAIMaxDamage = wAIMinDamage;
+}
+/* <<< factory MirrorMove_AIEffect */
+
+/* >>> factory MirrorMove_InitialEffect1 */
+MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void)
+{
+	DuelistVarResult damage = GetTurnDuelistVariable(0xF3u);
+	uint16_t hl = damage.hl;
+	uint8_t value = gb_read8(hl++);
+	value |= gb_read8(hl);
+	hl++;
+	value |= gb_read8(hl);
+	hl++;
+	if (value != 0u)
+		return (MirrorMoveInitialEffect1Result){0x00u, hl};
+	value = gb_read8(hl++);
+	if (value != 0u)
+		return (MirrorMoveInitialEffect1Result){0x00u, hl};
+	return (MirrorMoveInitialEffect1Result){0x90u, 0x00C6u};
+}
+/* <<< factory MirrorMove_InitialEffect1 */

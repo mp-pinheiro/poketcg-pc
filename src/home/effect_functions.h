@@ -204,4 +204,14 @@ BarrierCheckEnergyResult Barrier_CheckEnergy(void);
 /* >>> factory ResetDevolvedCardStatus */
 uint8_t ResetDevolvedCardStatus(void);
 /* <<< factory ResetDevolvedCardStatus */
+/* >>> factory EeveeQuickAttack_AIEffect */
+void EeveeQuickAttack_AIEffect(void);
+/* <<< factory EeveeQuickAttack_AIEffect */
+/* >>> factory MirrorMove_AIEffect */
+void MirrorMove_AIEffect(void);
+/* <<< factory MirrorMove_AIEffect */
+/* >>> factory MirrorMove_InitialEffect1 */
+typedef struct { uint8_t f; uint16_t hl; } MirrorMoveInitialEffect1Result;
+MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void);
+/* <<< factory MirrorMove_InitialEffect1 */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
