@@ -341,6 +341,13 @@ static void adapt_CardPageSwitch_PokemonAttack2Page1(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_PokemonAttack2Page1 */
 
+/* >>> factory AIDiscourage */
+static void adapt_AIDiscourage(ProbeState *s)
+{
+	AIDiscourage(s->a);
+}
+/* <<< factory AIDiscourage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -383,5 +390,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CreateCardAttrBlkPacket", adapt_CreateCardAttrBlkPacket },
 	{ "CardPageSwitch_PokemonAttack1Page2", adapt_CardPageSwitch_PokemonAttack1Page2 },
 	{ "CardPageSwitch_PokemonAttack2Page1", adapt_CardPageSwitch_PokemonAttack2Page1 },
+	{ "AIDiscourage", adapt_AIDiscourage },
 	{ NULL, NULL },
 };

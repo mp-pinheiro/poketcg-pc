@@ -203,6 +203,9 @@ static uint8_t is_duelist_type(uint8_t a)
 	return (uint8_t)((a == DUELIST_TYPE_LINK_OPP) ||
 		((a & DUELIST_TYPE_AI_OPP) != 0u));
 }
+
+#include "home/card_color.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -897,3 +900,19 @@ CardPageExistsResult CardPageSwitch_PokemonAttack2Page1(void)
 	return CheckCardPageExists(&hl);
 }
 /* <<< factory CardPageSwitch_PokemonAttack2Page1 */
+
+/* >>> factory AIDiscourage */
+/* core.asm:95-113 */
+void AIDiscourage(uint8_t a)
+{
+	uint8_t score = wAIScore;
+
+	if (score == 0u)
+		return;
+	if (score < a) {
+		wAIScore = 0u;
+		return;
+	}
+	wAIScore = (uint8_t)(score - a);
+}
+/* <<< factory AIDiscourage */

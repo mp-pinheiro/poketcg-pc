@@ -1,0 +1,9 @@
+{
+  "fn": "AIDiscourage",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDiscourage\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52670\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDiscourage\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"00\", \"native\": \"96\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52670, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDiscourage\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52670\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

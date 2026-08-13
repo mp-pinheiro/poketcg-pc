@@ -146,4 +146,7 @@ CardPageExistsResult CardPageSwitch_PokemonAttack1Page2(uint16_t *hl);
 /* >>> factory CardPageSwitch_PokemonAttack2Page1 */
 CardPageExistsResult CardPageSwitch_PokemonAttack2Page1(void);
 /* <<< factory CardPageSwitch_PokemonAttack2Page1 */
+/* >>> factory AIDiscourage */
+void AIDiscourage(uint8_t a);
+/* <<< factory AIDiscourage */
 #endif /* POKETCG_HOME_CORE_H */

@@ -464,6 +464,17 @@ CASES["CardPageSwitch_PokemonAttack2Page1"] = [
 ]
 # <<< factory CardPageSwitch_PokemonAttack2Page1
 
+# >>> factory AIDiscourage
+CONTRACT["AIDiscourage"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AIDiscourage"] = [
+    {"wram": {0xCDBE: b"\x00"}, "read": {0xCDBE: 1}},
+    dict(POISON, wram={0xCDBE: b"\x40"}, read={0xCDBE: 1}),
+    {"a": 1, "wram": {0xCDBE: b"\x01"}, "read": {0xCDBE: 1}},
+    {"a": 2, "wram": {0xCDBE: b"\x01"}, "read": {0xCDBE: 1}},
+    {"a": 1, "wram": {0xCDBE: b"\xFF"}, "read": {0xCDBE: 1}},
+]
+# <<< factory AIDiscourage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -728,3 +739,6 @@ MUTATIONS["CardPageSwitch_PokemonAttack1Page2"] = {"source_symbol": "CardPageSwi
 # >>> factory-mutation CardPageSwitch_PokemonAttack2Page1
 MUTATIONS["CardPageSwitch_PokemonAttack2Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack2Page1", "before": "\tuint16_t hl = wLoadedCard1Atk2Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack2Page1-2", "CardPageSwitch_PokemonAttack2Page1-3", "CardPageSwitch_PokemonAttack2Page1-4"]}
 # <<< factory-mutation CardPageSwitch_PokemonAttack2Page1
+# >>> factory-mutation AIDiscourage
+MUTATIONS["AIDiscourage"] = {"source_symbol": "AIDiscourage", "before": "\tif (score < a) {", "after": "\tif (score > a) {", "case_ids": ["AIDiscourage-1", "AIDiscourage-2", "AIDiscourage-3", "AIDiscourage-4"]}
+# <<< factory-mutation AIDiscourage
