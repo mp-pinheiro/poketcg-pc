@@ -54,7 +54,7 @@ function renderHeader(p) {
 
 function renderChart(points) {
   if (!points || points.length < 2) {
-    CHART.textContent = '';
+    CHART.innerHTML = '';
     return;
   }
   const visible = points.filter((pt, index) => {
@@ -71,7 +71,26 @@ function renderChart(points) {
     : 0;
   const delta = end - start;
   const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  CHART.textContent = `${start.toFixed(2)}% complete \u2192 ${end.toFixed(2)}% complete (${deltaLabel} percentage points)`;
+  const y = value => 210 - value / 25 * 170;
+  let svg = '<svg class="progress-graph" viewBox="0 0 800 260" role="img" aria-label="Code progress from baseline to current">';
+  svg += '<text x="40" y="24" class="graph-title">Recent progress</text>';
+  for (let tick = 0; tick <= 25; tick += 5) {
+    const yPos = y(tick);
+    svg += `<line x1="80" y1="${yPos}" x2="750" y2="${yPos}" class="graph-grid"/>`;
+    svg += `<text x="68" y="${yPos + 4}" text-anchor="end" class="graph-axis">${tick}%</text>`;
+  }
+  const startX = 250;
+  const endX = 580;
+  svg += `<line x1="${startX}" y1="${y(start)}" x2="${endX}" y2="${y(end)}" class="graph-link"/>`;
+  svg += `<circle cx="${startX}" cy="${y(start)}" r="10" class="graph-point"/>`;
+  svg += `<circle cx="${endX}" cy="${y(end)}" r="10" class="graph-point"/>`;
+  svg += `<text x="${startX}" y="${y(start) - 18}" text-anchor="middle" class="graph-value">${start.toFixed(2)}%</text>`;
+  svg += `<text x="${endX}" y="${y(end) - 18}" text-anchor="middle" class="graph-value">${end.toFixed(2)}%</text>`;
+  svg += `<text x="${startX}" y="242" text-anchor="middle" class="graph-label">then</text>`;
+  svg += `<text x="${endX}" y="242" text-anchor="middle" class="graph-label">now</text>`;
+  svg += `<text x="415" y="${(y(start) + y(end)) / 2 - 12}" text-anchor="middle" class="graph-delta">${deltaLabel}pp</text>`;
+  svg += '</svg>';
+  CHART.innerHTML = svg;
 }
 
 function renderCategories(cats) {
@@ -179,8 +198,8 @@ function applyFilter() {
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json?v=bar-20260813e'),
-    fetch('data/history.jsonl?v=bar-20260813e').catch(() => null),
+    fetch('data/progress.json?v=two-point-graph'),
+    fetch('data/history.jsonl?v=two-point-graph').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);

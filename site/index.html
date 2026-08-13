@@ -14,7 +14,7 @@
 </header>
 <section id="chart-section">
   <div class="chart-heading"><h2>Code progress</h2></div>
-  <p id="chart" class="progress-summary"></p>
+  <div id="chart" class="progress-graph-container"></div>
 </section>
 <section id="recent-section"><h2>Recently ported</h2><div id="recent"></div></section>
 <section id="categories-section"><h2>Categories</h2><div id="categories"></div></section>
@@ -26,7 +26,7 @@
   </table>
 </section>
 <section id="frontier-section"><h2>Ready to port</h2><div id="frontier"></div></section>
-<footer><p>This summary compares completion at the baseline with the current total; the difference is the work added.</p></footer>
-<script type="module" src="app-v3.js"></script>
+<footer><p>This graph compares the baseline with the current total directly. The line connects 16.39% then to 21.99% now; it does not encode elapsed time.</p></footer>
+<script type="module" src="app.js?v=two-point-graph"></script>
 </body>
 </html>
