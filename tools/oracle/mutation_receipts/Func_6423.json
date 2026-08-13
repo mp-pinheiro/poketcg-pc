@@ -1,0 +1,9 @@
+{
+  "fn": "Func_6423",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_6423\", \"registers\": {\"a\": 239, \"b\": 195, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 50584, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"0123456789abcdef\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_6423\", \"mismatches\": {\"a\": [239, 0]}}\n",
+  "restored": "{\"fn\": \"Func_6423\", \"registers\": {\"a\": 239, \"b\": 195, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 50584, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"0123456789abcdef\"}}, \"status\": \"PASS\"}\n"
+}

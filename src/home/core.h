@@ -126,4 +126,12 @@ PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_
 /* >>> factory PrintCardPageWeaknessesOrResistances */
 void PrintCardPageWeaknessesOrResistances(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory PrintCardPageWeaknessesOrResistances */
+/* >>> factory Func_6423 */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint16_t hl;
+} Func6423Result;
+Func6423Result Func_6423(uint8_t b, uint8_t c);
+/* <<< factory Func_6423 */
 #endif /* POKETCG_HOME_CORE_H */

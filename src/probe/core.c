@@ -296,6 +296,16 @@ static void adapt_PrintCardPageWeaknessesOrResistances(ProbeState *s)
 }
 /* <<< factory PrintCardPageWeaknessesOrResistances */
 
+/* >>> factory Func_6423 */
+static void adapt_Func_6423(ProbeState *s)
+{
+	Func6423Result r = Func_6423(s->b, s->c);
+	s->a = r.a;
+	s->b = r.b;
+	s->hl = r.hl;
+}
+/* <<< factory Func_6423 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -333,5 +343,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintSortNumberInCardList", adapt_PrintSortNumberInCardList },
 	{ "PrintEnergiesOfColor", adapt_PrintEnergiesOfColor },
 	{ "PrintCardPageWeaknessesOrResistances", adapt_PrintCardPageWeaknessesOrResistances },
+	{ "Func_6423", adapt_Func_6423 },
 	{ NULL, NULL },
 };

@@ -802,3 +802,22 @@ void PrintCardPageWeaknessesOrResistances(uint8_t a, uint8_t b, uint8_t c)
 	}
 }
 /* <<< factory PrintCardPageWeaknessesOrResistances */
+
+/* >>> factory Func_6423 */
+/* core.asm:5607-5620 */
+Func6423Result Func_6423(uint8_t b, uint8_t c)
+{
+	uint16_t pos = wDefaultText_ADDR;
+	uint8_t value = 0u;
+	uint32_t n = 8u;
+
+	do {
+		value = gb_read8(pos);
+		pos = (uint16_t)(pos + 1u);
+		JPWriteByteToBGMap0(value, b, c);
+		b = (uint8_t)(b + 1u);
+	} while (--n);
+
+	return (Func6423Result){value, b, pos};
+}
+/* <<< factory Func_6423 */

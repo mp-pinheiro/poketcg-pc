@@ -400,6 +400,15 @@ CASES["PrintCardPageWeaknessesOrResistances"] = [
 ]
 # <<< factory PrintCardPageWeaknessesOrResistances
 
+# >>> factory Func_6423
+CONTRACT["Func_6423"] = {"compare": ("a", "b", "c", "d", "hl"), "preserve": ("c", "d")}
+CASES["Func_6423"] = [
+    {"wram": {0xC590: b"\x00\x00\x00\x00\x00\x00\x00\x00"}},
+    dict(POISON, wram={0xC590: b"\x01\x23\x45\x67\x89\xAB\xCD\xEF"}),
+    {"b": 1, "c": 2, "wram": {0xC590: b"\x10\x20\x30\x40\x50\x60\x70\x80"}},
+]
+# <<< factory Func_6423
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -654,3 +663,6 @@ MUTATIONS["PrintEnergiesOfColor"] = {
 # >>> factory-mutation PrintCardPageWeaknessesOrResistances
 MUTATIONS["PrintCardPageWeaknessesOrResistances"] = {"source_symbol": "PrintCardPageWeaknessesOrResistances", "before": "if (mask & 0x80u)", "after": "if (mask & 0x40u)", "case_ids": ["PrintCardPageWeaknessesOrResistances-1", "PrintCardPageWeaknessesOrResistances-2", "PrintCardPageWeaknessesOrResistances-4"]}
 # <<< factory-mutation PrintCardPageWeaknessesOrResistances
+# >>> factory-mutation Func_6423
+MUTATIONS["Func_6423"] = {"source_symbol": "Func_6423", "before": "value = gb_read8(pos);", "after": "value = gb_read8((uint16_t)(pos + 1u));", "case_ids": ["Func_6423-1", "Func_6423-2"]}
+# <<< factory-mutation Func_6423
