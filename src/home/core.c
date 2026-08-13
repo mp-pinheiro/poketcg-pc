@@ -6,7 +6,7 @@
 /* >>> factory statics */
 #include "home/duel.h"
 
-#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0x1Au
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 #define DUELVARS_ARENA_CARD_HP                  0x08u
 #define MENU_CANCEL 0xFFu
 #define PAD_A     0x01u
