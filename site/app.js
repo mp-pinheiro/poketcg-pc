@@ -6,6 +6,7 @@ const CATEGORIES = document.getElementById('categories');
 const UNITS = document.getElementById('units');
 const FILTER = document.getElementById('filter');
 const FRONTIER = document.getElementById('frontier');
+const RECENT = document.getElementById('recent');
 
 let progressData = null;
 let PRET_SHORT = '';
@@ -21,6 +22,8 @@ function statusChip(status) {
 function bar(pctVal) {
   return `<div class="bar"><div class="bar-fill" style="width:${pctVal}%"></div></div>`;
 }
+
+function fmtDate(ts) { return new Date(ts * 1000).toISOString().slice(0, 10); }
 
 function renderHeader(p) {
   const m = p.measures;
@@ -43,6 +46,7 @@ function renderHeader(p) {
   if (p.pret_commit) {
     commitHtml += (commitHtml ? ' \u00b7 ' : '') + `pret ${p.pret_commit.slice(0, 7)}`;
   }
+  commitHtml += (commitHtml ? ' \u00b7 ' : '') + `updated ${fmtDate(p.generated_at)}`;
   COMMIT_INFO.innerHTML = commitHtml;
 }
 
@@ -157,6 +161,16 @@ function renderFrontier(ready) {
   }).join('');
 }
 
+function renderRecent(entries) {
+  if (!entries || !entries.length) { RECENT.innerHTML = ''; return; }
+  RECENT.innerHTML = entries.map(e => {
+    const label = e.file
+      ? `<a href="${progressData.pret_blob}${e.file}" target="_blank" rel="noopener">${e.name}</a>`
+      : e.name;
+    return `<div class="fn-row"><span class="size">${fmtDate(e.timestamp)}</span>${label}</div>`;
+  }).join('');
+}
+
 function applyFilter() {
   const q = FILTER.value.toLowerCase();
   for (const row of UNITS.querySelectorAll('tr.unit-row')) {
@@ -173,6 +187,7 @@ async function main() {
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
 
   renderHeader(progressData);
+  renderRecent(progressData.recent);
   renderCategories(progressData.categories);
   renderUnits(progressData.units, progressData.functions);
 
