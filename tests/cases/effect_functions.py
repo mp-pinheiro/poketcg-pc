@@ -630,6 +630,14 @@ CASES["Thrash_AIEffect"] = [
 ]
 # <<< factory Thrash_AIEffect
 
+# >>> factory Prophecy_CheckDeck
+CONTRACT["Prophecy_CheckDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Prophecy_CheckDeck"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory Prophecy_CheckDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1002,3 +1010,6 @@ MUTATIONS["BigEggsplosion_AIEffect"] = {"source_symbol": "BigEggsplosion_AIEffec
 # >>> factory-mutation Thrash_AIEffect
 MUTATIONS["Thrash_AIEffect"] = {"source_symbol": "Thrash_AIEffect", "before": "\tSetExpectedAIDamage(35u, 30u, 40u);", "after": "\tSetExpectedAIDamage(36u, 30u, 40u);", "case_ids": ["Thrash_AIEffect-0", "Thrash_AIEffect-1", "Thrash_AIEffect-2"]}
 # <<< factory-mutation Thrash_AIEffect
+# >>> factory-mutation Prophecy_CheckDeck
+MUTATIONS["Prophecy_CheckDeck"] = {"source_symbol": "Prophecy_CheckDeck", "before": "\tif (turn.a < DECK_SIZE)", "after": "\tif (turn.a >= DECK_SIZE)", "case_ids": ["Prophecy_CheckDeck-0", "Prophecy_CheckDeck-1"]}
+# <<< factory-mutation Prophecy_CheckDeck

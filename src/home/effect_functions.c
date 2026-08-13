@@ -122,6 +122,8 @@ static const uint8_t color_to_text[] = {
 #define CARD_LOCATION_ARENA    0x10u
 
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
+
+#define NoCardsLeftInTheDeckText 0x00b1u
 /* <<< factory statics */
 
 
@@ -884,3 +886,27 @@ void Thrash_AIEffect(void)
 	SetExpectedAIDamage(35u, 30u, 40u);
 }
 /* <<< factory Thrash_AIEffect */
+
+/* >>> factory Prophecy_CheckDeck */
+/* effect_functions.asm:4705-4729 */
+ProphecyCheckDeckResult Prophecy_CheckDeck(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (turn.a < DECK_SIZE)
+		return (ProphecyCheckDeckResult){
+			turn.a,
+			(uint8_t)(turn.a == 0u ? 0x80u : 0x00u),
+			turn.hl
+		};
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (nonturn.a < DECK_SIZE)
+		return (ProphecyCheckDeckResult){
+			nonturn.a,
+			(uint8_t)(nonturn.a == 0u ? 0x80u : 0x00u),
+			nonturn.hl
+		};
+
+	return (ProphecyCheckDeckResult){nonturn.a, 0x10u, NoCardsLeftInTheDeckText};
+}
+/* <<< factory Prophecy_CheckDeck */

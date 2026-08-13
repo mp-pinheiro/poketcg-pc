@@ -439,6 +439,16 @@ static void adapt_Thrash_AIEffect(ProbeState *s)
 }
 /* <<< factory Thrash_AIEffect */
 
+/* >>> factory Prophecy_CheckDeck */
+static void adapt_Prophecy_CheckDeck(ProbeState *s)
+{
+	ProphecyCheckDeckResult r = Prophecy_CheckDeck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Prophecy_CheckDeck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -492,5 +502,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FireBlast_CheckEnergy", adapt_FireBlast_CheckEnergy },
 	{ "BigEggsplosion_AIEffect", adapt_BigEggsplosion_AIEffect },
 	{ "Thrash_AIEffect", adapt_Thrash_AIEffect },
+	{ "Prophecy_CheckDeck", adapt_Prophecy_CheckDeck },
 	{ NULL, NULL },
 };

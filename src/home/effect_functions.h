@@ -182,4 +182,8 @@ void BigEggsplosion_AIEffect(void);
 /* >>> factory Thrash_AIEffect */
 void Thrash_AIEffect(void);
 /* <<< factory Thrash_AIEffect */
+/* >>> factory Prophecy_CheckDeck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } ProphecyCheckDeckResult;
+ProphecyCheckDeckResult Prophecy_CheckDeck(void);
+/* <<< factory Prophecy_CheckDeck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
