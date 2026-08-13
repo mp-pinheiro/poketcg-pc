@@ -295,9 +295,11 @@ static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
 /* >>> factory ApplyExtraWaterEnergyDamageBonus */
 static void adapt_ApplyExtraWaterEnergyDamageBonus(ProbeState *s)
 {
-	ApplyExtraWaterEnergyDamageBonus(s->b, s->c);
+	(void)s;
+	ApplyExtraWaterEnergyDamageBonus();
 }
 /* <<< factory ApplyExtraWaterEnergyDamageBonus */
+
 
 /* >>> factory OmastarSpikeCannon_AIEffect */
 static void adapt_OmastarSpikeCannon_AIEffect(ProbeState *s)
@@ -359,6 +361,23 @@ static void adapt_ArcanineFlamethrower_DiscardEffect(ProbeState *s)
 }
 /* <<< factory ArcanineFlamethrower_DiscardEffect */
 
+/* >>> factory PoisonWhip_AIEffect */
+static void adapt_PoisonWhip_AIEffect(ProbeState *s)
+{
+	(void)s;
+	PoisonWhip_AIEffect();
+}
+/* <<< factory PoisonWhip_AIEffect */
+
+/* >>> factory SolarPower_CheckUse */
+static void adapt_SolarPower_CheckUse(ProbeState *s)
+{
+	SolarPowerCheckUseResult r = SolarPower_CheckUse();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory SolarPower_CheckUse */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -394,7 +413,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
 	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
-	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
 	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
 	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
 	{ "KrabbyCallForFamily_AISelectEffect", adapt_KrabbyCallForFamily_AISelectEffect },
@@ -403,5 +421,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "ArcanineFlamethrower_CheckEnergy", adapt_ArcanineFlamethrower_CheckEnergy },
 	{ "ArcanineFlamethrower_DiscardEffect", adapt_ArcanineFlamethrower_DiscardEffect },
+	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
+	{ "SolarPower_CheckUse", adapt_SolarPower_CheckUse },
+	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
 	{ NULL, NULL },
 };

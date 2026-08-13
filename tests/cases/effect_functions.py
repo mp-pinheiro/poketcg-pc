@@ -476,12 +476,11 @@ CASES["AIFindTargetForBenchAttack"] = [
 # >>> factory ApplyExtraWaterEnergyDamageBonus
 CONTRACT["ApplyExtraWaterEnergyDamageBonus"] = {"compare": (), "preserve": ()}
 CASES["ApplyExtraWaterEnergyDamageBonus"] = [
-    dict(POISON, b=1, c=1,
-         wram={0xCCF0: b"\x00", 0xCCB9: b"\x05",
-               0xFF97: b"\xC2", 0xFF9D: b"\x00"},
-         read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\x0A", 0xCCF0: b"\x00", 0xFF9D: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON), dict(POISON, a=1), dict(POISON, f=0), dict(POISON, hl=0x4567),
 ]
 # <<< factory ApplyExtraWaterEnergyDamageBonus
+
 
 # >>> factory OmastarSpikeCannon_AIEffect
 CONTRACT["OmastarSpikeCannon_AIEffect"] = {"compare": ("a",), "preserve": ()}
@@ -538,6 +537,25 @@ CASES["ArcanineFlamethrower_DiscardEffect"] = [
     dict(POISON, wram={0xFFA0: b"\x01"}),
 ]
 # <<< factory ArcanineFlamethrower_DiscardEffect
+
+# >>> factory PoisonWhip_AIEffect
+CONTRACT["PoisonWhip_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["PoisonWhip_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x14"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON), dict(POISON, a=1), dict(POISON, f=0), dict(POISON, hl=0x4567),
+]
+# <<< factory PoisonWhip_AIEffect
+
+# >>> factory SolarPower_CheckUse
+CONTRACT["SolarPower_CheckUse"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SolarPower_CheckUse"] = [
+    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2C2: b"\x20"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2C2: b"\x20"}),
+    dict(POISON, a=1, wram={0xFF97: b"\xC2", 0xC2C2: b"\x20"}),
+    dict(POISON, f=0, wram={0xFF97: b"\xC2", 0xC2C2: b"\x20"}),
+    dict(POISON, hl=0x4567, wram={0xFF97: b"\xC2", 0xC2C2: b"\x20"}),
+]
+# <<< factory SolarPower_CheckUse
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -813,8 +831,8 @@ MUTATIONS["AIFindTargetForBenchAttack"] = {
 # >>> factory-mutation ApplyExtraWaterEnergyDamageBonus
 MUTATIONS["ApplyExtraWaterEnergyDamageBonus"] = {
     "source_symbol": "ApplyExtraWaterEnergyDamageBonus",
-    "before": "gb_write8(wAIMinDamage_ADDR, damage);",
-    "after": "gb_write8(wAIMinDamage_ADDR, (uint8_t)(damage + 1u));",
+    "before": "wAIMinDamage = wDamage;",
+    "after": "wAIMinDamage = (uint8_t)(wDamage + 1u);",
     "case_ids": ["ApplyExtraWaterEnergyDamageBonus-0"],
 }
 # <<< factory-mutation ApplyExtraWaterEnergyDamageBonus
@@ -859,3 +877,19 @@ MUTATIONS["ArcanineFlamethrower_CheckEnergy"] = {"source_symbol": "ArcanineFlame
 # >>> factory-mutation ArcanineFlamethrower_DiscardEffect
 MUTATIONS["ArcanineFlamethrower_DiscardEffect"] = {"source_symbol": "ArcanineFlamethrower_DiscardEffect", "before": "\tuint8_t card = gb_read8(hTemp_ffa0_ADDR);", "after": "\tuint8_t card = gb_read8((uint16_t)(hTemp_ffa0_ADDR + 1u));", "case_ids": ["ArcanineFlamethrower_DiscardEffect-1"]}
 # <<< factory-mutation ArcanineFlamethrower_DiscardEffect
+# >>> factory-mutation PoisonWhip_AIEffect
+MUTATIONS["PoisonWhip_AIEffect"] = {
+    "source_symbol": "PoisonWhip_AIEffect",
+    "before": "UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);",
+    "after": "UpdateExpectedAIDamage_AccountForPoison(11u, 10u, 10u);",
+    "case_ids": ["PoisonWhip_AIEffect-0"],
+}
+# <<< factory-mutation PoisonWhip_AIEffect
+# >>> factory-mutation SolarPower_CheckUse
+MUTATIONS["SolarPower_CheckUse"] = {
+    "source_symbol": "SolarPower_CheckUse",
+    "before": "return (SolarPowerCheckUseResult){0x10u, 0x00CAu};",
+    "after": "return (SolarPowerCheckUseResult){0x90u, 0x00CAu};",
+    "case_ids": ["SolarPower_CheckUse-0"],
+}
+# <<< factory-mutation SolarPower_CheckUse

@@ -105,6 +105,14 @@ static const uint8_t color_to_text[] = {
 
 #define FIRE 0x00u
 #define NotEnoughFireEnergyText 0x00c1u
+
+#define DUELVARS_ARENA_CARD_FLAGS 0xC2u
+#define USED_PKMN_POWER_THIS_TURN 0x20u
+#define WATER 0x03u
+
+#include "home/damage.h"
+#include "home/duel.h"
+#include "home/math.h"
 /* <<< factory statics */
 
 
@@ -623,29 +631,25 @@ AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void)
 }
 /* <<< factory AIFindTargetForBenchAttack */
 
+
 /* >>> factory ApplyExtraWaterEnergyDamageBonus */
-/* effect_functions.asm:2762-2822. */
-void ApplyExtraWaterEnergyDamageBonus(uint8_t b, uint8_t c)
+void ApplyExtraWaterEnergyDamageBonus(void)
 {
-	uint8_t metronome_cost = gb_read8(wMetronomeEnergyCost_ADDR);
-	if (metronome_cost != 0u) {
-		c = metronome_cost;
-		b = 0u;
-	}
+	uint8_t c = 0u;
+	uint8_t b = 0u;
+	if (wMetronomeEnergyCost) { c = wMetronomeEnergyCost; }
 	GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
-	uint8_t water = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 3u));
-	if (c != 0u &&
-	    gb_read8(wTotalAttachedEnergies_ADDR) == water)
-		b = (uint8_t)(b + c);
-	if (water >= b && water != b) {
-		uint8_t bonus = (uint8_t)(water - b);
-		if (bonus >= 3u)
-			bonus = 2u;
-		AddToDamage(ATimes10(bonus));
+	uint16_t water_addr = (uint16_t)(wAttachedEnergies_ADDR + WATER);
+	uint8_t water = gb_read8(water_addr);
+	if (c && wTotalAttachedEnergies == water)
+		b = (uint8_t)(c + b);
+	uint8_t extra = (uint8_t)(water - b);
+	if (water >= b && extra >= 1u) {
+		if (extra > 2u) extra = 2u;
+		AddToDamage(ATimes10(extra));
 	}
-	uint8_t damage = gb_read8(wDamage_ADDR);
-	gb_write8(wAIMinDamage_ADDR, damage);
-	gb_write8(wAIMaxDamage_ADDR, damage);
+	wAIMinDamage = wDamage;
+	wAIMaxDamage = wDamage;
 }
 /* <<< factory ApplyExtraWaterEnergyDamageBonus */
 
@@ -747,3 +751,31 @@ uint8_t ArcanineFlamethrower_DiscardEffect(void)
 	return card;
 }
 /* <<< factory ArcanineFlamethrower_DiscardEffect */
+
+/* >>> factory PoisonWhip_AIEffect */
+void PoisonWhip_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory PoisonWhip_AIEffect */
+
+/* >>> factory SolarPower_CheckUse */
+SolarPowerCheckUseResult SolarPower_CheckUse(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (SolarPowerCheckUseResult){0x10u, 0x00CAu};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	if (incapable.f & 0x10u)
+		return (SolarPowerCheckUseResult){incapable.f, incapable.hl};
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if (status.a)
+		return (SolarPowerCheckUseResult){0x00u, status.hl};
+	status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	if (status.a)
+		return (SolarPowerCheckUseResult){0x00u, status.hl};
+	return (SolarPowerCheckUseResult){0x90u, 0x00B5u};
+}
+/* <<< factory SolarPower_CheckUse */
