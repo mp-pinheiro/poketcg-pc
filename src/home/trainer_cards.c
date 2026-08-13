@@ -120,16 +120,18 @@ PickPokedexResult PickPokedexCards(void)
 			    (wanted == 2 && type != TYPE_TRAINER))
 			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
 		}
-	return (PickPokedexResult){0xFFu, 0xB0u};
+	return (PickPokedexResult){0xFFu, 0x90u};
 }
 /* <<< factory PickPokedexCards */
 
 /* >>> factory AIDecide_Maintenance */
 AIDecideMaintenanceResult AIDecide_Maintenance(void)
 {
+	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
 	if (wOpponentDeckID == 0x0Du) {
-		if (Random(10u) >= 2u || GetTurnDuelistVariable(0xBEu).a < 3u)
-			return (AIDecideMaintenanceResult){0, 0x00u};
+		if (Random(10u) >= 2u || hand.a < 3u)
+			return (AIDecideMaintenanceResult){hand.a,
+				(uint8_t)(hand.a == 0u ? 0x80u : 0u)};
 		(void)CreateHandCardList(0);
 		TempListResult count = CountCardsInDuelTempList();
 		(void)ShuffleCards(count.a, wDuelTempList_ADDR);
@@ -146,8 +148,9 @@ AIDecideMaintenanceResult AIDecide_Maintenance(void)
 		}
 		return (AIDecideMaintenanceResult){0, 0x10u};
 	}
-	if (GetTurnDuelistVariable(0xBEu).a < 4u)
-		return (AIDecideMaintenanceResult){0, 0x00u};
+	if (hand.a < 4u)
+		return (AIDecideMaintenanceResult){hand.a,
+			(uint8_t)(hand.a == 0u ? 0x80u : 0u)};
 	(void)CreateHandCardList(0);
 	FindAndRemoveCardFromList(wAITrainerCardToPlay, wDuelTempList_ADDR);
 	FindDupResult first = FindDuplicateCards(wDuelTempList_ADDR);
