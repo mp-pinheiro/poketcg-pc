@@ -72,31 +72,26 @@ function renderChart(points) {
     ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
     : 0;
   const delta = end - start;
-  const min = 0;
-  const max = 25;
-  const x0 = 150, x1 = 760, width = x1 - x0;
-  const scale = value => x0 + ((value - min) / (max - min)) * width;
-  const startX = scale(start);
-  const endX = scale(end);
   const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  let svg = `<line x1="${x0}" y1="76" x2="${startX.toFixed(1)}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
-  svg += `<line x1="${startX.toFixed(1)}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#8bd48b" stroke-width="22" stroke-linecap="round"/>`;
-  svg += `<line x1="${endX.toFixed(1)}" y1="76" x2="${x1}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
-  svg += `<circle cx="${startX.toFixed(1)}" cy="76" r="8" fill="#1e1e1e" stroke="#8bd48b" stroke-width="3"/>`;
-  svg += `<circle cx="${endX.toFixed(1)}" cy="76" r="8" fill="#4caf50" stroke="#fff" stroke-width="2"/>`;
-  svg += `<text x="${startX.toFixed(1)}" y="48" text-anchor="middle" font-size="13" fill="#8bd48b">start ${start.toFixed(2)}%</text>`;
-  svg += `<text x="${endX.toFixed(1)}" y="48" text-anchor="middle" font-size="13" fill="#8bd48b">now ${end.toFixed(2)}%</text>`;
-  svg += `<text x="${((startX + endX) / 2).toFixed(1)}" y="116" text-anchor="middle" font-size="13" fill="#8bd48b">${deltaLabel} percentage points</text>`;
-  for (let tick = min; tick <= max; tick += 5) {
-    const x = scale(tick);
-    svg += `<line x1="${x.toFixed(1)}" y1="94" x2="${x.toFixed(1)}" y2="104" stroke="#888" stroke-width="1"/>`;
-    svg += `<text x="${x.toFixed(1)}" y="122" text-anchor="middle" font-size="10" fill="#888">${tick}%</text>`;
-  }
-  svg += `<text x="40" y="166" font-size="12" fill="#888">${focus.length} changed snapshots since the 16% milestone · ${fmtDate(focus[0].timestamp)} to ${fmtDate(focus[focus.length - 1].timestamp)}</text>`;
-  svg += `<text x="40" y="190" font-size="11" fill="#888">The bar compares the 16% milestone with the current total; the highlighted segment is the work added.</text>`;
-  CHART.innerHTML = svg;
+  const startDate = fmtDate(focus[0].timestamp);
+  const endDate = fmtDate(focus[focus.length - 1].timestamp);
+  CHART.innerHTML = `
+    <div class="progress-card">
+      <div class="progress-card-label">${start.toFixed(2)}% then</div>
+      <strong>${start.toFixed(2)}%</strong>
+      <div class="progress-card-track"><span style="width:${start / 25 * 100}%"></span></div>
+      <small>${startDate} · baseline</small>
+    </div>
+    <div class="progress-card-delta">${deltaLabel}<span>percentage points</span></div>
+    <div class="progress-card">
+      <div class="progress-card-label">${end.toFixed(2)}% now</div>
+      <strong>${end.toFixed(2)}%</strong>
+      <div class="progress-card-track"><span style="width:${end / 25 * 100}%"></span></div>
+      <small>${endDate} · current total</small>
+    </div>
+    <div class="progress-card-scale" aria-label="Fixed scale from zero to twenty-five percent"><span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span></div>`;
   CHART_SUMMARY.textContent = `${start.toFixed(2)}% \u2192 ${end.toFixed(2)}% (${deltaLabel}pp)`;
-  CHART_RANGE.textContent = 'Recent progress · 16% milestone to current';
+  CHART_RANGE.textContent = 'Two-point comparison · fixed 0–25% scale';
 }
 
 function renderCategories(cats) {

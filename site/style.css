@@ -23,11 +23,28 @@ header { margin-bottom: 1rem; }
 #commit-info { font-size: 0.85rem; color: var(--muted); }
 #commit-info a { color: var(--blue); }
 
-svg#chart { width: 100%; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
+#chart.progress-cards { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 1rem; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); padding: 1.25rem; }
 .chart-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 1rem; }
 .chart-heading h2 { margin-top: 1.5rem; }
-#chart-range { width: 100%; flex: 0 0 100%; color: var(--muted); font-size: 0.78rem; text-align: left; }
+#chart-range { display: block; width: 100%; flex: 0 0 100%; color: var(--muted); font-size: 0.78rem; text-align: left; margin-top: 0.25rem; }
 #chart-summary { flex: 1 1 auto; color: var(--green); font-size: 1.1rem; letter-spacing: 0.01em; }
+.progress-card { min-width: 0; }
+.progress-card-label { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.25rem; }
+.progress-card strong { display: block; font-size: 2rem; color: var(--green); }
+.progress-card-track { height: 0.75rem; background: var(--border); border-radius: 0.4rem; overflow: hidden; margin: 0.5rem 0; }
+.progress-card-track span { display: block; height: 100%; background: var(--green); border-radius: inherit; }
+.progress-card small { color: var(--muted); font-size: 0.75rem; }
+.progress-card-delta { color: var(--green); font-size: 1.5rem; font-weight: 700; text-align: center; white-space: nowrap; }
+.progress-card-delta span { display: block; color: var(--muted); font-size: 0.7rem; font-weight: 400; }
+.progress-card-scale { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, 1fr); color: var(--muted); font-size: 0.7rem; }
+.progress-card-scale span { text-align: center; }
+.progress-card-scale span:first-child { text-align: left; }
+.progress-card-scale span:last-child { text-align: right; }
+@media (max-width: 600px) {
+  #chart.progress-cards { grid-template-columns: 1fr; }
+  .progress-card-delta { text-align: left; }
+  .progress-card-delta span { display: inline; margin-left: 0.25rem; }
+}
 
 #categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; }
 .category { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; }
