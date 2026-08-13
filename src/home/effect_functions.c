@@ -1385,7 +1385,7 @@ void WeedlePoisonSting_AIEffect(void)
 /* <<< factory WeedlePoisonSting_AIEffect */
 
 /* >>> factory BellsproutCallForFamily_AISelectEffect */
-#define BELLSPROUT 0x1fu
+#define BELLSPROUT 0x23u
 void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 {
 	(void)CreateDeckCardList(c, de);
@@ -1408,3 +1408,29 @@ void WeezingSmog_AIEffect(void)
 	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
 }
 /* <<< factory WeezingSmog_AIEffect */
+
+/* >>> factory NidoranFFurySwipes_AIEffect */
+#define NIDORANF 0x14u
+#define NIDORANM 0x17u
+void NidoranFFurySwipes_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory NidoranFFurySwipes_AIEffect */
+
+/* >>> factory NidoranFCallForFamily_AISelectEffect */
+void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(card);
+		if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)
+			return;
+	}
+}
+/* <<< factory NidoranFCallForFamily_AISelectEffect */

@@ -761,6 +761,21 @@ static void adapt_WeezingSmog_AIEffect(ProbeState *s)
 }
 /* <<< factory WeezingSmog_AIEffect */
 
+/* >>> factory NidoranFFurySwipes_AIEffect */
+static void adapt_NidoranFFurySwipes_AIEffect(ProbeState *s)
+{
+	(void)s;
+	NidoranFFurySwipes_AIEffect();
+}
+/* <<< factory NidoranFFurySwipes_AIEffect */
+
+/* >>> factory NidoranFCallForFamily_AISelectEffect */
+static void adapt_NidoranFCallForFamily_AISelectEffect(ProbeState *s)
+{
+	NidoranFCallForFamily_AISelectEffect(s->c, (uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory NidoranFCallForFamily_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -852,5 +867,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "WeedlePoisonSting_AIEffect", adapt_WeedlePoisonSting_AIEffect },
 	{ "BellsproutCallForFamily_AISelectEffect", adapt_BellsproutCallForFamily_AISelectEffect },
 	{ "WeezingSmog_AIEffect", adapt_WeezingSmog_AIEffect },
+	{ "NidoranFFurySwipes_AIEffect", adapt_NidoranFFurySwipes_AIEffect },
+	{ "NidoranFCallForFamily_AISelectEffect", adapt_NidoranFCallForFamily_AISelectEffect },
 	{ NULL, NULL },
 };

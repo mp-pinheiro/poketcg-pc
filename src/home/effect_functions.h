@@ -316,4 +316,10 @@ void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
 /* >>> factory WeezingSmog_AIEffect */
 void WeezingSmog_AIEffect(void);
 /* <<< factory WeezingSmog_AIEffect */
+/* >>> factory NidoranFFurySwipes_AIEffect */
+void NidoranFFurySwipes_AIEffect(void);
+/* <<< factory NidoranFFurySwipes_AIEffect */
+/* >>> factory NidoranFCallForFamily_AISelectEffect */
+void NidoranFCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
+/* <<< factory NidoranFCallForFamily_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

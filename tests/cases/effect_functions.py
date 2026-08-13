@@ -1022,6 +1022,23 @@ CASES["WeezingSmog_AIEffect"] = [
 ]
 # <<< factory WeezingSmog_AIEffect
 
+# >>> factory NidoranFFurySwipes_AIEffect
+CONTRACT["NidoranFFurySwipes_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["NidoranFFurySwipes_AIEffect"] = [
+    {"read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, a=0xFF, f=0xFF, hl=0x1234, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory NidoranFFurySwipes_AIEffect
+
+# >>> factory NidoranFCallForFamily_AISelectEffect
+CONTRACT["NidoranFCallForFamily_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["NidoranFCallForFamily_AISelectEffect"] = [
+    {"c": 0, "d": 0, "e": 0, "read": {0xFFA0: 1}},
+    dict(POISON, c=1, d=0x12, e=0x34, read={0xFFA0: 1}),
+    {"c": 0xFF, "d": 0xFF, "e": 0xFF, "read": {0xFFA0: 1}},
+]
+# <<< factory NidoranFCallForFamily_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1634,3 +1651,9 @@ MUTATIONS["WeezingSmog_AIEffect"] = {
     "case_ids": ["WeezingSmog_AIEffect-0", "WeezingSmog_AIEffect-1", "WeezingSmog_AIEffect-2"],
 }
 # <<< factory-mutation WeezingSmog_AIEffect
+# >>> factory-mutation NidoranFFurySwipes_AIEffect
+MUTATIONS["NidoranFFurySwipes_AIEffect"] = {"source_symbol": "NidoranFFurySwipes_AIEffect", "before": "SetExpectedAIDamage(15u, 0u, 30u);", "after": "SetExpectedAIDamage(16u, 0u, 30u);", "case_ids": ["NidoranFFurySwipes_AIEffect-0", "NidoranFFurySwipes_AIEffect-1"]}
+# <<< factory-mutation NidoranFFurySwipes_AIEffect
+# >>> factory-mutation NidoranFCallForFamily_AISelectEffect
+MUTATIONS["NidoranFCallForFamily_AISelectEffect"] = {"source_symbol": "NidoranFCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == NIDORANF || (uint8_t)card_id == NIDORANM)", "after": "if ((uint8_t)card_id != NIDORANF || (uint8_t)card_id == NIDORANM)", "case_ids": ["NidoranFCallForFamily_AISelectEffect-0", "NidoranFCallForFamily_AISelectEffect-1"]}
+# <<< factory-mutation NidoranFCallForFamily_AISelectEffect
