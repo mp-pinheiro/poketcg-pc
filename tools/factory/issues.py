@@ -236,16 +236,19 @@ def generated_body(record: dict, packet: dict | None = None) -> str:
 
 def desired_body(record: dict, existing: str = "", packet: dict | None = None) -> str:
     generated = generated_body(record, packet)
+    marker = marker_for(record["work_id"])
     if existing:
         existing_marker = parse_marker(existing)
         if existing_marker and existing_marker != record["work_id"]:
             raise ModelError(f"body marker mismatch for {record['work_id']}")
-        body = existing if existing_marker else (
-            marker_for(record["work_id"]) + "\n\n" + existing.lstrip()
-        )
+        if existing_marker:
+            legacy_generated = marker + "\n\n" + generated + "\n"
+            body = marker if existing.strip() == legacy_generated.strip() else existing
+        else:
+            body = marker + "\n\n" + existing.lstrip()
         body = replace_generated(body, generated)
     else:
-        body = marker_for(record["work_id"]) + "\n\n" + generated + "\n"
+        body = replace_generated(marker, generated)
     if parse_marker(body) != record["work_id"]:
         raise ModelError(f"body marker mismatch for {record['work_id']}")
     return body

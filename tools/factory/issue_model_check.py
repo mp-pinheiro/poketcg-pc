@@ -48,6 +48,14 @@ def main() -> int:
     assert rendered.count(issues.GEN_BEGIN) == 1
     assert "Keep this paragraph." in rendered
 
+    created_body = issues.desired_body(work)
+    assert created_body.count(issues.GEN_BEGIN) == 1
+    assert issues.desired_body(work, created_body) == created_body
+    legacy_generated = (
+        issues.marker_for(work["work_id"]) + "\n\n"
+        + issues.generated_body(work) + "\n"
+    )
+    assert issues.desired_body(work, legacy_generated) == created_body
     unmarked = {
         "schema": 1,
         "fetched_at": 1,
