@@ -1383,3 +1383,28 @@ void WeedlePoisonSting_AIEffect(void)
 	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
 }
 /* <<< factory WeedlePoisonSting_AIEffect */
+
+/* >>> factory BellsproutCallForFamily_AISelectEffect */
+#define BELLSPROUT 0x1fu
+void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		if ((uint8_t)GetCardIDFromDeckIndex(card) == BELLSPROUT)
+			return;
+	}
+}
+/* <<< factory BellsproutCallForFamily_AISelectEffect */
+
+/* >>> factory WeezingSmog_AIEffect */
+void WeezingSmog_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory WeezingSmog_AIEffect */

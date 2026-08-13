@@ -310,4 +310,10 @@ void NidorinoDoubleKick_AIEffect(void);
 /* >>> factory WeedlePoisonSting_AIEffect */
 void WeedlePoisonSting_AIEffect(void);
 /* <<< factory WeedlePoisonSting_AIEffect */
+/* >>> factory BellsproutCallForFamily_AISelectEffect */
+void BellsproutCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
+/* <<< factory BellsproutCallForFamily_AISelectEffect */
+/* >>> factory WeezingSmog_AIEffect */
+void WeezingSmog_AIEffect(void);
+/* <<< factory WeezingSmog_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

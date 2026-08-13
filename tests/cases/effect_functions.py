@@ -1004,6 +1004,24 @@ CASES["WeedlePoisonSting_AIEffect"] = [
 ]
 # <<< factory WeedlePoisonSting_AIEffect
 
+# >>> factory BellsproutCallForFamily_AISelectEffect
+CONTRACT["BellsproutCallForFamily_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["BellsproutCallForFamily_AISelectEffect"] = [
+    {"c": 0, "d": 0, "e": 0, "read": {0xFFA0: 1}},
+    dict(POISON, c=1, d=0x12, e=0x34, read={0xFFA0: 1}),
+    {"c": 0xFF, "d": 0xFF, "e": 0xFF, "read": {0xFFA0: 1}},
+]
+# <<< factory BellsproutCallForFamily_AISelectEffect
+
+# >>> factory WeezingSmog_AIEffect
+CONTRACT["WeezingSmog_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["WeezingSmog_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xCCB9: b"\x05"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xFF"}, read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory WeezingSmog_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1600,3 +1618,19 @@ MUTATIONS["NidorinoDoubleKick_AIEffect"] = {"source_symbol": "NidorinoDoubleKick
 # >>> factory-mutation WeedlePoisonSting_AIEffect
 MUTATIONS["WeedlePoisonSting_AIEffect"] = {"source_symbol": "WeedlePoisonSting_AIEffect", "before": "void WeedlePoisonSting_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);\n}", "after": "void WeedlePoisonSting_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);\n}", "case_ids": ["WeedlePoisonSting_AIEffect-0", "WeedlePoisonSting_AIEffect-1", "WeedlePoisonSting_AIEffect-2", "WeedlePoisonSting_AIEffect-3", "WeedlePoisonSting_AIEffect-4"]}
 # <<< factory-mutation WeedlePoisonSting_AIEffect
+# >>> factory-mutation BellsproutCallForFamily_AISelectEffect
+MUTATIONS["BellsproutCallForFamily_AISelectEffect"] = {
+    "source_symbol": "BellsproutCallForFamily_AISelectEffect",
+    "before": "if ((uint8_t)GetCardIDFromDeckIndex(card) == BELLSPROUT)",
+    "after": "if ((uint8_t)GetCardIDFromDeckIndex(card) != BELLSPROUT)",
+    "case_ids": ["BellsproutCallForFamily_AISelectEffect-0", "BellsproutCallForFamily_AISelectEffect-1", "BellsproutCallForFamily_AISelectEffect-2"],
+}
+# <<< factory-mutation BellsproutCallForFamily_AISelectEffect
+# >>> factory-mutation WeezingSmog_AIEffect
+MUTATIONS["WeezingSmog_AIEffect"] = {
+    "source_symbol": "WeezingSmog_AIEffect",
+    "before": "void WeezingSmog_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);",
+    "after": "void WeezingSmog_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);",
+    "case_ids": ["WeezingSmog_AIEffect-0", "WeezingSmog_AIEffect-1", "WeezingSmog_AIEffect-2"],
+}
+# <<< factory-mutation WeezingSmog_AIEffect
