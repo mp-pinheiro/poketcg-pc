@@ -118,7 +118,7 @@ static uint32_t duel_save_total_size(void)
  * routine immediately following the setter: setter start + 15 bytes. The
  * setter is the only writer of this pointer, which the card-list printer
  * dispatches through. */
-#define PRINT_SORT_NUMBER_IN_CARD_LIST 0x5aa2u
+#define PRINT_SORT_NUMBER_IN_CARD_LIST 0x574Au
 
 #include "generated/wram.h"
 
