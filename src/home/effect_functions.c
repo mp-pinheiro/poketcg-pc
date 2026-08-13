@@ -135,6 +135,8 @@ static const uint8_t color_to_text[] = {
 #include "home/duel.h"
 #include "home/card_data.h"
 #define CARD_LOCATION_PLAY_AREA_F 4u
+
+#define ThereAreNoCardsInTheDiscardPileText 0x00bbu
 /* <<< factory statics */
 
 
@@ -1085,3 +1087,67 @@ CheckIfThereAreAnyEnergyCardsAttachedResult CheckIfThereAreAnyEnergyCardsAttache
 	return (CheckIfThereAreAnyEnergyCardsAttachedResult){0x90u};
 }
 /* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
+
+/* >>> factory PokeBall_DeckCheck */
+/* effect_functions.asm:10462-10473 */
+PokeBall_DeckCheckResult PokeBall_DeckCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t z = (uint8_t)(r.a == DECK_SIZE);
+	uint8_t borrow = (uint8_t)(r.a < DECK_SIZE);
+	uint8_t f = z ? 0x80u : 0x00u;
+	if (!borrow)
+		f = (uint8_t)(f | 0x10u);
+	return (PokeBall_DeckCheckResult){r.a, (uint16_t)NoCardsLeftInTheDeckText, f};
+}
+/* <<< factory PokeBall_DeckCheck */
+
+/* >>> factory Recycle_DiscardPileCheck */
+/* effect_functions.asm:10548-10558 */
+Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t z = (uint8_t)(r.a == 1u);
+	uint8_t h = (uint8_t)((r.a & 0x0fu) < 1u);
+	uint8_t borrow = (uint8_t)(r.a < 1u);
+	uint8_t f = 0x40u;
+	if (z)
+		f = (uint8_t)(f | 0x80u);
+	if (h)
+		f = (uint8_t)(f | 0x20u);
+	if (borrow)
+		f = (uint8_t)(f | 0x10u);
+	return (Recycle_DiscardPileCheckResult){(uint16_t)ThereAreNoCardsInTheDiscardPileText, f};
+}
+/* <<< factory Recycle_DiscardPileCheck */
+
+/* >>> factory CreateBasicPokemonCardListFromDiscardPile */
+CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t count = r.a;
+	uint8_t h = (uint8_t)(r.hl >> 8);
+	uint8_t l = (uint8_t)(DUELVARS_DECK_CARDS + count);
+	uint16_t de = wDuelTempList_ADDR;
+	uint8_t b = (uint8_t)(count + 1u);
+	for (;;) {
+		l--;
+		b--;
+		if (b == 0u)
+			break;
+		uint16_t hl = (uint16_t)((uint16_t)h << 8 | l);
+		uint8_t idx = gb_read8(hl);
+		LoadCardDataToBuffer2_FromDeckIndex(idx);
+		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY &&
+		    gb_read8(wLoadedCard2Stage_ADDR) == 0u)
+			gb_write8(de++, idx);
+		b--;
+	}
+	gb_write8(de, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	uint16_t hl_out = (uint16_t)((uint16_t)h << 8 | l);
+	return (CreateEnergyCardListFromDiscardPileResult){
+		hl_out, (uint8_t)(first == 0xFFu ? 0x90u : 0x00u)
+	};
+}
+/* <<< factory CreateBasicPokemonCardListFromDiscardPile */

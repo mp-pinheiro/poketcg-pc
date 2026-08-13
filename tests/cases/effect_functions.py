@@ -751,6 +751,35 @@ CASES["CheckIfThereAreAnyEnergyCardsAttached"] = [
 ]
 # <<< factory CheckIfThereAreAnyEnergyCardsAttached
 
+# >>> factory PokeBall_DeckCheck
+CONTRACT["PokeBall_DeckCheck"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["PokeBall_DeckCheck"] = [
+    {},
+    dict(POISON),
+    {"a": 1},
+    {"a": 0xFF},
+]
+# <<< factory PokeBall_DeckCheck
+
+# >>> factory Recycle_DiscardPileCheck
+CONTRACT["Recycle_DiscardPileCheck"] = {"compare": ("f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["Recycle_DiscardPileCheck"] = [
+    {},
+    dict(POISON),
+    {"a": 1},
+    {"a": 0xFF},
+]
+# <<< factory Recycle_DiscardPileCheck
+
+# >>> factory CreateBasicPokemonCardListFromDiscardPile
+CONTRACT["CreateBasicPokemonCardListFromDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["CreateBasicPokemonCardListFromDiscardPile"] = [
+    {},
+    dict(POISON),
+    {"wram": {0xC3ED: b"\x01", 0xC27E: b"\x00"}, "read": {0xC510: 4}},
+]
+# <<< factory CreateBasicPokemonCardListFromDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1203,3 +1232,12 @@ MUTATIONS["CheckIfThereAreAnyEnergyCardsAttached"] = {
     "case_ids": ["CheckIfThereAreAnyEnergyCardsAttached-1"],
 }
 # <<< factory-mutation CheckIfThereAreAnyEnergyCardsAttached
+# >>> factory-mutation PokeBall_DeckCheck
+MUTATIONS["PokeBall_DeckCheck"] = {"source_symbol": "PokeBall_DeckCheck", "before": "if (!borrow)", "after": "if (borrow)", "case_ids": ["PokeBall_DeckCheck-0", "PokeBall_DeckCheck-1", "PokeBall_DeckCheck-2", "PokeBall_DeckCheck-3"]}
+# <<< factory-mutation PokeBall_DeckCheck
+# >>> factory-mutation Recycle_DiscardPileCheck
+MUTATIONS["Recycle_DiscardPileCheck"] = {"source_symbol": "Recycle_DiscardPileCheck", "before": "if (borrow)", "after": "if (!borrow)", "case_ids": ["Recycle_DiscardPileCheck-0", "Recycle_DiscardPileCheck-1", "Recycle_DiscardPileCheck-2", "Recycle_DiscardPileCheck-3"]}
+# <<< factory-mutation Recycle_DiscardPileCheck
+# >>> factory-mutation CreateBasicPokemonCardListFromDiscardPile
+MUTATIONS["CreateBasicPokemonCardListFromDiscardPile"] = {"source_symbol": "CreateBasicPokemonCardListFromDiscardPile", "before": "first == 0xFFu ? 0x90u : 0x00u", "after": "first == 0xFFu ? 0x10u : 0x00u", "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2"]}
+# <<< factory-mutation CreateBasicPokemonCardListFromDiscardPile

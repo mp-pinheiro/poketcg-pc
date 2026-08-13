@@ -231,4 +231,15 @@ void ExpandEffect(void);
 typedef struct { uint8_t f; } CheckIfThereAreAnyEnergyCardsAttachedResult;
 CheckIfThereAreAnyEnergyCardsAttachedResult CheckIfThereAreAnyEnergyCardsAttached(void);
 /* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
+/* >>> factory PokeBall_DeckCheck */
+typedef struct { uint8_t a; uint16_t hl; uint8_t f; } PokeBall_DeckCheckResult;
+PokeBall_DeckCheckResult PokeBall_DeckCheck(void);
+/* <<< factory PokeBall_DeckCheck */
+/* >>> factory Recycle_DiscardPileCheck */
+typedef struct { uint16_t hl; uint8_t f; } Recycle_DiscardPileCheckResult;
+Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void);
+/* <<< factory Recycle_DiscardPileCheck */
+/* >>> factory CreateBasicPokemonCardListFromDiscardPile */
+CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void);
+/* <<< factory CreateBasicPokemonCardListFromDiscardPile */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

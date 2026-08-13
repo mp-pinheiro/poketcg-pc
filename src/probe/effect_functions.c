@@ -552,6 +552,34 @@ static void adapt_CheckIfThereAreAnyEnergyCardsAttached(ProbeState *s)
 }
 /* <<< factory CheckIfThereAreAnyEnergyCardsAttached */
 
+/* >>> factory PokeBall_DeckCheck */
+static void adapt_PokeBall_DeckCheck(ProbeState *s)
+{
+	PokeBall_DeckCheckResult r = PokeBall_DeckCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PokeBall_DeckCheck */
+
+/* >>> factory Recycle_DiscardPileCheck */
+static void adapt_Recycle_DiscardPileCheck(ProbeState *s)
+{
+	Recycle_DiscardPileCheckResult r = Recycle_DiscardPileCheck();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory Recycle_DiscardPileCheck */
+
+/* >>> factory CreateBasicPokemonCardListFromDiscardPile */
+static void adapt_CreateBasicPokemonCardListFromDiscardPile(ProbeState *s)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateBasicPokemonCardListFromDiscardPile();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateBasicPokemonCardListFromDiscardPile */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -618,5 +646,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FriendshipSong_BenchCheck", adapt_FriendshipSong_BenchCheck },
 	{ "ExpandEffect", adapt_ExpandEffect },
 	{ "CheckIfThereAreAnyEnergyCardsAttached", adapt_CheckIfThereAreAnyEnergyCardsAttached },
+	{ "PokeBall_DeckCheck", adapt_PokeBall_DeckCheck },
+	{ "Recycle_DiscardPileCheck", adapt_Recycle_DiscardPileCheck },
+	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
 	{ NULL, NULL },
 };
