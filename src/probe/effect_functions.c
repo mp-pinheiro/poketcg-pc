@@ -640,6 +640,14 @@ static void adapt_SpitPoison_AIEffect(ProbeState *s)
 }
 /* <<< factory SpitPoison_AIEffect */
 
+/* >>> factory GloomPoisonPowder_AIEffect */
+static void adapt_GloomPoisonPowder_AIEffect(ProbeState *s)
+{
+	(void)s;
+	GloomPoisonPowder_AIEffect();
+}
+/* <<< factory GloomPoisonPowder_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -715,5 +723,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
 	{ "DevolutionSpray_PlayAreaEvolutionCheck", adapt_DevolutionSpray_PlayAreaEvolutionCheck },
 	{ "SpitPoison_AIEffect", adapt_SpitPoison_AIEffect },
+	{ "GloomPoisonPowder_AIEffect", adapt_GloomPoisonPowder_AIEffect },
 	{ NULL, NULL },
 };

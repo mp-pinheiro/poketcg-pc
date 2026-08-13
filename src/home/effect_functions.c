@@ -1255,3 +1255,10 @@ void SpitPoison_AIEffect(void)
 	SetExpectedAIDamage(5u, 0u, 10u);
 }
 /* <<< factory SpitPoison_AIEffect */
+
+/* >>> factory GloomPoisonPowder_AIEffect */
+void GloomPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
+}
+/* <<< factory GloomPoisonPowder_AIEffect */

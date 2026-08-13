@@ -266,4 +266,7 @@ DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionChe
 /* >>> factory SpitPoison_AIEffect */
 void SpitPoison_AIEffect(void);
 /* <<< factory SpitPoison_AIEffect */
+/* >>> factory GloomPoisonPowder_AIEffect */
+void GloomPoisonPowder_AIEffect(void);
+/* <<< factory GloomPoisonPowder_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

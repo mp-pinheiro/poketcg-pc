@@ -861,6 +861,14 @@ CASES["SpitPoison_AIEffect"] = [
 ]
 # <<< factory SpitPoison_AIEffect
 
+# >>> factory GloomPoisonPowder_AIEffect
+CONTRACT["GloomPoisonPowder_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["GloomPoisonPowder_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x14"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON), dict(POISON, a=1), dict(POISON, f=0), dict(POISON, hl=0x4567),
+]
+# <<< factory GloomPoisonPowder_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1365,3 +1373,11 @@ MUTATIONS["SpitPoison_AIEffect"] = {
     "case_ids": ["SpitPoison_AIEffect-0", "SpitPoison_AIEffect-1", "SpitPoison_AIEffect-2"],
 }
 # <<< factory-mutation SpitPoison_AIEffect
+# >>> factory-mutation GloomPoisonPowder_AIEffect
+MUTATIONS["GloomPoisonPowder_AIEffect"] = {
+    "source_symbol": "GloomPoisonPowder_AIEffect",
+    "before": "void GloomPoisonPowder_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);\n}",
+    "after": "void GloomPoisonPowder_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(11u, 10u, 10u);\n}",
+    "case_ids": ["GloomPoisonPowder_AIEffect-0"],
+}
+# <<< factory-mutation GloomPoisonPowder_AIEffect
