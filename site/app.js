@@ -64,7 +64,9 @@ function renderChart(points) {
     const previous = points[index - 1];
     return pt.code !== previous.code || pt.code_total !== previous.code_total;
   });
-  const focus = visible.slice(-Math.min(90, visible.length));
+  const BASELINE_TIMESTAMP = 1786493065;
+  const baselineIndex = visible.findIndex(pt => pt.timestamp >= BASELINE_TIMESTAMP);
+  const focus = visible.slice(baselineIndex >= 0 ? baselineIndex : Math.max(0, visible.length - 90));
   const start = focus[0].code_total ? focus[0].code * 100 / focus[0].code_total : 0;
   const end = focus[focus.length - 1].code_total
     ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
@@ -90,11 +92,11 @@ function renderChart(points) {
     svg += `<line x1="${x.toFixed(1)}" y1="94" x2="${x.toFixed(1)}" y2="104" stroke="#888" stroke-width="1"/>`;
     svg += `<text x="${x.toFixed(1)}" y="122" text-anchor="middle" font-size="10" fill="#888">${tick}%</text>`;
   }
-  svg += `<text x="40" y="166" font-size="12" fill="#888">${focus.length} changed snapshots · ${fmtDate(focus[0].timestamp)} to ${fmtDate(focus[focus.length - 1].timestamp)}</text>`;
-  svg += `<text x="40" y="190" font-size="11" fill="#888">The bar shows total completion; the highlighted segment is the work added in this period.</text>`;
+  svg += `<text x="40" y="166" font-size="12" fill="#888">${focus.length} changed snapshots since the 16% milestone · ${fmtDate(focus[0].timestamp)} to ${fmtDate(focus[focus.length - 1].timestamp)}</text>`;
+  svg += `<text x="40" y="190" font-size="11" fill="#888">The bar compares the 16% milestone with the current total; the highlighted segment is the work added.</text>`;
   CHART.innerHTML = svg;
   CHART_SUMMARY.textContent = `${start.toFixed(2)}% \u2192 ${end.toFixed(2)}% (${deltaLabel}pp)`;
-  CHART_RANGE.textContent = 'Before / after view · absolute completion';
+  CHART_RANGE.textContent = 'Recent progress · 16% milestone to current';
 }
 
 function renderCategories(cats) {
@@ -202,8 +204,8 @@ function applyFilter() {
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json?v=bar-20260813'),
-    fetch('data/history.jsonl?v=bar-20260813').catch(() => null),
+    fetch('data/progress.json?v=bar-20260813b'),
+    fetch('data/history.jsonl?v=bar-20260813b').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
