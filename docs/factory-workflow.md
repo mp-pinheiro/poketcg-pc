@@ -70,7 +70,7 @@ Serial, in the repo root:
 python3 tools/factory/integrate.py            # land greens, release gate
 python3 tools/factory/issues.py fetch        # cache all port-labeled issues
 python3 tools/factory/issues.py plan --json  # deterministic dry run
-python3 tools/factory/issues.py apply --limit 10 --batches 10
+python3 tools/factory/issues.py apply --limit 10 --batches 50
 python3 tools/factory/issues.py verify --live
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
 python3 tools/factory/driver.py status        # queue state
@@ -80,10 +80,14 @@ python3 tools/factory/driver.py status        # queue state
 canonical routine work ID. It never rewrites an unmarked issue in normal mode.
 Use `issues.py migrate` only for the explicit legacy adoption/backfill pass.
 Apply writes `.factory/issues-apply-state.json` after every bounded GraphQL
-batch. Resume with the same plan and state file; live snapshot drift or a
-different plan hash aborts before mutation. `verify --live` removes the
-checkpoint only after zero drift. The issue-sync workflow uploads interrupted
-plan/checkpoint pairs and accepts `resume_run_id` to restore one explicitly.
+batch. It also records and honors a cooldown of eight seconds per estimated
+content mutation, targeting about 450 mutations/hour against GitHub's published
+general ceiling of 500; lower undisclosed limits may still stop a run.
+Resume with the same plan and state file; live snapshot drift or a different
+plan hash aborts before mutation. `verify --live`
+removes the checkpoint only after zero drift. The issue-sync workflow uploads
+interrupted plan/checkpoint pairs and accepts `resume_run_id` to restore one
+explicitly.
 
 
 `integrate.py` runs the adapter lint, the release gate, and progress checks

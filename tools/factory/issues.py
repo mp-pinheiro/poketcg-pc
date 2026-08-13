@@ -803,15 +803,40 @@ def fetch_reflected_snapshot(actions: list[dict], attempts: int = 6) -> dict:
     )
 
 
+def content_mutation_count(actions: list[dict]) -> int:
+    count = 0
+    for action in actions:
+        if action["action"] == "supersede":
+            count += 2
+        elif (action["action"].startswith("create")
+              and action["desired_state"] == "closed"):
+            count += 2
+        else:
+            count += 1
+    return count
+
+
+def wait_for_content_budget(state: dict | None) -> None:
+    next_apply_at = (state or {}).get("next_apply_at", 0)
+    delay = next_apply_at - time.time()
+    if delay > 0:
+        print(f"issues: waiting {delay:.0f}s for GitHub content budget",
+              file=sys.stderr)
+        time.sleep(delay)
+
+
 def apply_plan(
     plan: dict,
     *,
     limit: int = 25,
     batches: int = 1,
     state_path: Path = APPLY_STATE,
+    content_interval: float = 8.0,
 ) -> dict:
     if batches < 1:
         raise ModelError("apply batches must be positive")
+    if content_interval < 0:
+        raise ModelError("content interval cannot be negative")
     if plan.get("mode") != "migrate":
         snapshot = load_cache(required=False)
         if not snapshot or not snapshot.get("migration_complete"):
@@ -828,11 +853,15 @@ def apply_plan(
         if not batch:
             result.update(remaining=0, complete=True)
             return result
+        wait_for_content_budget(state)
         apply_graphql_batch(batch, current)
         refreshed = fetch_reflected_snapshot(batch)
         state["completed"].extend(action_key(action) for action in batch)
         state["expected_snapshot"] = snapshot_fingerprint(refreshed)
         state["updated_at"] = int(time.time())
+        state["next_apply_at"] = (
+            time.time() + content_mutation_count(batch) * content_interval
+        )
         write_json(state_path, state)
         result["applied"] += len(batch)
         result["remaining"] = len(plan["actions"]) - len(state["completed"])
@@ -884,6 +913,7 @@ def main() -> int:
     apply_parser.add_argument("--limit", type=int, default=25)
     apply_parser.add_argument("--batches", type=int, default=1)
     apply_parser.add_argument("--state", type=Path, default=APPLY_STATE)
+    apply_parser.add_argument("--content-interval", type=float, default=8.0)
     apply_parser.add_argument("--require-complete", action="store_true")
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("--cache", type=Path, default=CACHE)
@@ -898,6 +928,7 @@ def main() -> int:
     migrate_parser.add_argument("--limit", type=int, default=25)
     migrate_parser.add_argument("--batches", type=int, default=1)
     migrate_parser.add_argument("--state", type=Path, default=APPLY_STATE)
+    migrate_parser.add_argument("--content-interval", type=float, default=8.0)
     args = parser.parse_args()
 
     try:
@@ -918,6 +949,7 @@ def main() -> int:
                 limit=args.limit,
                 batches=args.batches,
                 state_path=args.state,
+                content_interval=args.content_interval,
             )
             print(json.dumps(result, sort_keys=True))
             return 0 if result["complete"] or not args.require_complete else 3
@@ -948,6 +980,7 @@ def main() -> int:
                 result = apply_plan(
                     plan, limit=args.limit, batches=args.batches,
                     state_path=args.state,
+                    content_interval=args.content_interval,
                 )
                 if result["complete"]:
                     mark_migration_complete(args.state)

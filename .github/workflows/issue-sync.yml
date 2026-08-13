@@ -33,7 +33,7 @@ jobs:
   reconcile:
     if: github.repository == 'mp-pinheiro/poketcg-pc'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
         with:
@@ -74,7 +74,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.apply == true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 tools/factory/issues.py apply --limit 10 --batches 10 --require-complete
+        run: python3 tools/factory/issues.py apply --limit 10 --batches 50 --require-complete
       - name: Verify completed migration
         if: github.event_name == 'workflow_dispatch' && inputs.apply == true && inputs.migrate == true
         env:

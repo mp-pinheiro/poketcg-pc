@@ -327,6 +327,25 @@ def main() -> int:
         issues.run_graphql = original_graphql
         issues.fetch_snapshot = original_fetch
     assert graphql_calls[1][1]["c0"]["id"] == "issue-node"
+    mutation_mix = [
+        {"action": "supersede", "desired_state": "closed"},
+        {"action": "create", "desired_state": "closed"},
+        {"action": "create-replacement", "desired_state": "closed"},
+        {"action": "create", "desired_state": "open"},
+        {"action": "update", "desired_state": "open"},
+    ]
+    assert issues.content_mutation_count(mutation_mix) == 8
+    original_time = issues.time.time
+    original_sleep = issues.time.sleep
+    waits = []
+    issues.time.time = lambda: 10
+    issues.time.sleep = waits.append
+    try:
+        issues.wait_for_content_budget({"next_apply_at": 12.5})
+    finally:
+        issues.time.time = original_time
+        issues.time.sleep = original_sleep
+    assert waits == [2.5]
 
 
 
