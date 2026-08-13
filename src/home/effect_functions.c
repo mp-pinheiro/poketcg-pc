@@ -70,6 +70,22 @@
 #define PARALYZED  0x03u
 #define PSN_DBLPSN 0xf0u
 #define CNF_SLP_PRZ 0x0fu
+
+#define COLOR_TEXT_FIRE      0x48u
+#define COLOR_TEXT_GRASS     0x47u
+#define COLOR_TEXT_LIGHTNING 0x4au
+#define COLOR_TEXT_WATER     0x49u
+#define COLOR_TEXT_FIGHTING  0x4bu
+#define COLOR_TEXT_PSYCHIC   0x4cu
+
+static const uint8_t color_to_text[] = {
+	COLOR_TEXT_FIRE,
+	COLOR_TEXT_GRASS,
+	COLOR_TEXT_LIGHTNING,
+	COLOR_TEXT_WATER,
+	COLOR_TEXT_FIGHTING,
+	COLOR_TEXT_PSYCHIC,
+};
 /* <<< factory statics */
 
 
@@ -501,3 +517,18 @@ QueueStatusConditionResult DoublePoisonEffect(void)
 	return QueueStatusCondition(CNF_SLP_PRZ, DOUBLE_POISONED);
 }
 /* <<< factory DoublePoisonEffect */
+
+/* >>> factory LoadCardNameAndInputColor */
+/* effect_functions.asm:1345-1371 */
+void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
+{
+	uint8_t color = color_to_text[a];
+	uint8_t name_lo = gb_read8(wLoadedCard1Name_ADDR);
+	uint8_t name_hi = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
+
+	wTxRam2 = name_lo;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), name_hi);
+	wTxRam2_b = color;
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+}
+/* <<< factory LoadCardNameAndInputColor */

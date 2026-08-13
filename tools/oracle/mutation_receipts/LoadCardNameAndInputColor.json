@@ -1,0 +1,9 @@
+{
+  "fn": "LoadCardNameAndInputColor",
+  "case": "tests/cases/effect_functions.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadCardNameAndInputColor\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"9abc\", \"52799\": \"9abc4a00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardNameAndInputColor\", \"mismatches\": {\"bus\": {\"address\": 52801, \"reference\": \"9abc9abc4a00\", \"native\": \"9abc9abc4900\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52263, 2], [52799, 4]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardNameAndInputColor\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"9abc\", \"52799\": \"9abc4a00\"}}, \"status\": \"PASS\"}\n"
+}

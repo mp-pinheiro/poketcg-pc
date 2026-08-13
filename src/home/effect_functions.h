@@ -108,4 +108,7 @@ QueueStatusConditionResult PoisonEffect(void);
 /* >>> factory DoublePoisonEffect */
 QueueStatusConditionResult DoublePoisonEffect(void);
 /* <<< factory DoublePoisonEffect */
+/* >>> factory LoadCardNameAndInputColor */
+void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory LoadCardNameAndInputColor */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

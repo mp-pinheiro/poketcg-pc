@@ -435,6 +435,19 @@ CASES["DoublePoisonEffect"] = [
 ]
 # <<< factory DoublePoisonEffect
 
+# >>> factory LoadCardNameAndInputColor
+CONTRACT["LoadCardNameAndInputColor"] = {"compare": (), "preserve": ()}
+CASES["LoadCardNameAndInputColor"] = [
+	{"a": 0, "wram": {0xCC27: b"\x00\x00"}, "read": {0xCE3F: 4}},
+	{"a": 1, "wram": {0xCC27: b"\x12\x34"}, "read": {0xCE3F: 4}},
+	{"a": 2, "wram": {0xCC27: b"\x9A\xBC"}, "read": {0xCE3F: 4}},
+	{"a": 3, "wram": {0xCC27: b"\x9A\xBC"}, "read": {0xCE3F: 4}},
+	{"a": 4, "wram": {0xCC27: b"\x56\x78"}, "read": {0xCE3F: 4}},
+	{"a": 5, "wram": {0xCC27: b"\xDE\xF0"}, "read": {0xCE3F: 4}},
+	dict(POISON, a=2, wram={0xCC27: b"\x9A\xBC"}, read={0xCE3F: 4}),
+]
+# <<< factory LoadCardNameAndInputColor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -687,3 +700,6 @@ MUTATIONS["DoublePoisonEffect"] = {
     "case_ids": ["DoublePoisonEffect-0", "DoublePoisonEffect-1"],
 }
 # <<< factory-mutation DoublePoisonEffect
+# >>> factory-mutation LoadCardNameAndInputColor
+MUTATIONS["LoadCardNameAndInputColor"] = {"source_symbol": "LoadCardNameAndInputColor", "before": "\tCOLOR_TEXT_LIGHTNING,", "after": "\tCOLOR_TEXT_WATER,", "case_ids": ["LoadCardNameAndInputColor-2", "LoadCardNameAndInputColor-3"]}
+# <<< factory-mutation LoadCardNameAndInputColor

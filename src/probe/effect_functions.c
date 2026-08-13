@@ -263,6 +263,13 @@ static void adapt_DoublePoisonEffect(ProbeState *s)
 }
 /* <<< factory DoublePoisonEffect */
 
+/* >>> factory LoadCardNameAndInputColor */
+static void adapt_LoadCardNameAndInputColor(ProbeState *s)
+{
+	LoadCardNameAndInputColor(s->a, s->d, s->e);
+}
+/* <<< factory LoadCardNameAndInputColor */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -296,5 +303,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
 	{ "PoisonEffect", adapt_PoisonEffect },
 	{ "DoublePoisonEffect", adapt_DoublePoisonEffect },
+	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
 	{ NULL, NULL },
 };
