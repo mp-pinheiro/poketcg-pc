@@ -449,13 +449,15 @@ static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
 
 /* >>> factory CheckForEvolutionInDeck */
 static void adapt_CheckForEvolutionInDeck(ProbeState *s)
-{ CheckForEvolutionInDeckResult r = CheckForEvolutionInDeck(s->a); s->a = r.a; s->f = r.f; s->b = r.b; s->e = r.e; s->hl = r.hl; }
+{ CheckForEvolutionInDeckResult r = CheckForEvolutionInDeck(s->a, s->f); s->a = r.a; s->f = r.f; }
 /* <<< factory CheckForEvolutionInDeck */
+
 
 /* >>> factory LookForCardThatIsKnockedOutOnDevolution */
 static void adapt_LookForCardThatIsKnockedOutOnDevolution(ProbeState *s)
-{ LookForCardThatIsKnockedOutOnDevolutionResult r = LookForCardThatIsKnockedOutOnDevolution(); s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl; }
+{ LookForCardThatIsKnockedOutOnDevolutionResult r=LookForCardThatIsKnockedOutOnDevolution(s->f); s->a=r.a; s->f=r.f; }
 /* <<< factory LookForCardThatIsKnockedOutOnDevolution */
+
 
 /* >>> factory CalculateParticularAttachedEnergyNeeded */
 static void adapt_CalculateParticularAttachedEnergyNeeded(ProbeState *s)
@@ -531,8 +533,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CreateEnergyCardListFromHand", adapt_CreateEnergyCardListFromHand },
 	{ "LookForCardIDInHand", adapt_LookForCardIDInHand },
 	{ "LookForCardIDInHandList_Bank5", adapt_LookForCardIDInHandList_Bank5 },
-	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
-	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
 	{ "CalculateParticularAttachedEnergyNeeded", adapt_CalculateParticularAttachedEnergyNeeded },
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
@@ -540,5 +540,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SwitchCardPage", adapt_SwitchCardPage },
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ "CardPageSwitch_PokemonOverviewOrDescription", adapt_CardPageSwitch_PokemonOverviewOrDescription },
+	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
+	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
 	{ NULL, NULL },
 };

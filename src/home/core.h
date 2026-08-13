@@ -196,12 +196,12 @@ CoreCardListResult LookForCardIDInHand(uint8_t a);
 CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a);
 /* <<< factory LookForCardIDInHandList_Bank5 */
 /* >>> factory CheckForEvolutionInDeck */
-typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t e; uint16_t hl; } CheckForEvolutionInDeckResult;
-CheckForEvolutionInDeckResult CheckForEvolutionInDeck(uint8_t a);
+typedef struct { uint8_t a; uint8_t f; } CheckForEvolutionInDeckResult;
+CheckForEvolutionInDeckResult CheckForEvolutionInDeck(uint8_t a, uint8_t f);
 /* <<< factory CheckForEvolutionInDeck */
 /* >>> factory LookForCardThatIsKnockedOutOnDevolution */
-typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } LookForCardThatIsKnockedOutOnDevolutionResult;
-LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevolution(void);
+typedef struct { uint8_t a; uint8_t f; } LookForCardThatIsKnockedOutOnDevolutionResult;
+LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevolution(uint8_t f);
 /* <<< factory LookForCardThatIsKnockedOutOnDevolution */
 /* >>> factory CalculateParticularAttachedEnergyNeeded */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint16_t hl; } CalculateParticularAttachedEnergyNeededResult;

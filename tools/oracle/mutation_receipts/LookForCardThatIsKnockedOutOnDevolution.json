@@ -3,7 +3,7 @@
   "case": "tests/cases/core.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50107, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"10\", \"50107\": \"00\", \"50159\": \"01\", \"50176\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"mismatches\": {\"a\": [0, 255]}}\n",
-  "restored": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50107, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"10\", \"50107\": \"00\", \"50159\": \"01\", \"50176\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"1010\", \"50107\": \"01\", \"50120\": \"c8\", \"50126\": \"01\", \"50159\": \"02\", \"50304\": \"0809\", \"65431\": \"c2\", \"65437\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"mismatches\": {\"a\": [0, 2], \"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"LookForCardThatIsKnockedOutOnDevolution\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49920\": \"1010\", \"50107\": \"01\", \"50120\": \"c8\", \"50126\": \"01\", \"50159\": \"02\", \"50304\": \"0809\", \"65431\": \"c2\", \"65437\": \"02\"}}, \"status\": \"PASS\"}\n"
 }

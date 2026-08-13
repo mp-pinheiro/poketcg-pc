@@ -224,7 +224,6 @@ static uint8_t is_duelist_type(uint8_t a)
 
 /* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 
-
 /* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
 /* core.asm:3797-3800 */
 CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
@@ -232,7 +231,6 @@ CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
 	return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};
 }
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
-
 
 /* >>> factory SwitchCardPage */
 /* core.asm:3769-3790 */
@@ -249,7 +247,6 @@ CardPageResult SwitchCardPage(uint8_t a)
 }
 /* <<< factory SwitchCardPage */
 
-
 /* >>> factory CardPageSwitch_00 */
 /* core.asm:3792-3795 */
 CardPageResult CardPageSwitch_00(void)
@@ -259,6 +256,8 @@ CardPageResult CardPageSwitch_00(void)
 /* <<< factory CardPageSwitch_00 */
 
 /* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
+
+#include "home/duel_core.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -1122,47 +1121,29 @@ CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
 }
 /* <<< factory LookForCardIDInHandList_Bank5 */
 
+
 /* >>> factory CheckForEvolutionInDeck */
-CheckForEvolutionInDeckResult CheckForEvolutionInDeck(uint8_t a)
+CheckForEvolutionInDeckResult CheckForEvolutionInDeck(uint8_t a, uint8_t f)
 {
-	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
-	DuelistVarResult arena_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
-	gb_write8(arena_var.hl, a);
-	for (uint8_t e = 0; e < DUELVARS_PRIZE_CARDS; e++) {
-		if (GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + e)).a != CARD_LOCATION_DECK)
-			continue;
-		EvolveResult r = CheckIfCanEvolveInto(e, PLAY_AREA_ARENA);
-		if (!(r.f & 0x10u)) {
-			gb_write8(arena_var.hl, arena);
-			return (CheckForEvolutionInDeckResult){e, (uint8_t)(0x10u | (e == 0 ? 0x80u : 0u)), a, e, arena_var.hl};
-		}
-	}
-	gb_write8(arena_var.hl, arena);
-	return (CheckForEvolutionInDeckResult){arena, (uint8_t)(arena == 0 ? 0x80u : 0u), a, DUELVARS_PRIZE_CARDS, arena_var.hl};
+    DuelistVarResult av = GetTurnDuelistVariable(0xBBu); uint8_t arena = av.a;
+    gb_write8(av.hl, a);
+    for (uint8_t e = 0; e < 0x3Cu; e++) {
+        if (GetTurnDuelistVariable(e).a != 0u) continue;
+        EvolveResult r = CheckIfCanEvolveInto(e, 0u);
+        if (!(r.f & 0x10u)) { gb_write8(av.hl, arena); return (CheckForEvolutionInDeckResult){e, (uint8_t)(0x10u | (f & 0x80u))}; }
+    }
+    gb_write8(av.hl, arena); return (CheckForEvolutionInDeckResult){arena, arena == 0u ? 0x80u : 0u};
 }
 /* <<< factory CheckForEvolutionInDeck */
 
+
 /* >>> factory LookForCardThatIsKnockedOutOnDevolution */
-LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevolution(void)
+LookForCardThatIsKnockedOutOnDevolutionResult LookForCardThatIsKnockedOutOnDevolution(uint8_t f)
 {
-	uint8_t saved = hTempPlayAreaLocation_ff9d;
-	SwapTurn();
-	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
-	for (uint8_t c = PLAY_AREA_ARENA; c < count; c++) {
-		hTempPlayAreaLocation_ff9d = c;
-		CardOneStageBelowResult below = GetCardOneStageBelow(0, c);
-		if (below.f & 0x10u)
-			continue;
-		LoadCardDataToBuffer2_FromDeckIndex(below.d);
-		uint8_t hp = wLoadedCard2HP;
-		uint8_t current = GetCardDamageAndMaxHP(c).a;
-		if (hp >= current) {
-			SwapTurn(); hTempPlayAreaLocation_ff9d = saved;
-			return (LookForCardThatIsKnockedOutOnDevolutionResult){c, 0x10u, count, c, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBAu)};
-		}
-	}
-	SwapTurn(); hTempPlayAreaLocation_ff9d = saved;
-	return (LookForCardThatIsKnockedOutOnDevolutionResult){saved, (uint8_t)(saved == 0u ? 0x80u : 0u), count, count, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBBu)};
+    uint8_t saved = hTempPlayAreaLocation_ff9d; SwapTurn();
+    uint8_t count = GetTurnDuelistVariable(0xEFu).a;
+    uint8_t c=0; do { hTempPlayAreaLocation_ff9d=c; CardOneStageBelowResult b=GetCardOneStageBelow(0u,c); if (!(b.f&0x10u)) { LoadCardDataToBuffer2_FromDeckIndex(b.d); uint8_t hp=gb_read8(wLoadedCard2HP_ADDR); gb_write8(wTempAI_ADDR,hp); uint8_t rem=GetCardDamageAndMaxHP(c).a; if (hp <= rem) { SwapTurn(); hTempPlayAreaLocation_ff9d=saved; return (LookForCardThatIsKnockedOutOnDevolutionResult){c,(uint8_t)(0x10u|(f&0x80u))}; } } c=(uint8_t)(c+1u); } while (c != count);
+    SwapTurn(); hTempPlayAreaLocation_ff9d=saved; return (LookForCardThatIsKnockedOutOnDevolutionResult){saved,saved?0u:0x80u};
 }
 /* <<< factory LookForCardThatIsKnockedOutOnDevolution */
 

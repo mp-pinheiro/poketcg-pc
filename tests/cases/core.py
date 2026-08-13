@@ -590,14 +590,16 @@ CASES["LookForCardIDInHandList_Bank5"] = [
 # <<< factory LookForCardIDInHandList_Bank5
 
 # >>> factory CheckForEvolutionInDeck
-CONTRACT["CheckForEvolutionInDeck"] = {"compare": ("a", "f", "b", "e", "hl"), "preserve": ()}
-CASES["CheckForEvolutionInDeck"] = [{"a": 0, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC200: b"\x01" * 60}}, dict(POISON, a=1, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC200: b"\x01" * 60})]
+CONTRACT["CheckForEvolutionInDeck"]={"compare":("a","f"),"preserve":()}
+CASES["CheckForEvolutionInDeck"]=[{"a":7,"f":0,"wram":{0xFF97:b"\xC2",0xC2BB:b"\x03",0xC200:b"\xFF"*60}},dict(POISON,a=2,f=0x80,wram={0xFF97:b"\xC3",0xC3BB:b"\x05",0xC300:b"\xFF"*60})]
 # <<< factory CheckForEvolutionInDeck
 
+
 # >>> factory LookForCardThatIsKnockedOutOnDevolution
-CONTRACT["LookForCardThatIsKnockedOutOnDevolution"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
-CASES["LookForCardThatIsKnockedOutOnDevolution"] = [{"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x01", 0xC3BB: b"\x00", 0xC300: b"\x10", 0xC400: b"\x00"}}, dict(POISON, oracle=False, why="oracle routine does not terminate with poisoned scratch registers", expect_regs={"a": 0}, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC3EF: b"\x01", 0xC3BB: b"\x00", 0xC300: b"\x10", 0xC400: b"\x00"})]
+CONTRACT["LookForCardThatIsKnockedOutOnDevolution"]={"compare":("a","f"),"preserve":()}
+CASES["LookForCardThatIsKnockedOutOnDevolution"]=[dict(POISON,f=0,wram={0xFF97:b"\xC2",0xFF9D:b"\x02",0xC3EF:b"\x02",0xC3BB:b"\x01",0xC3CE:b"\x01",0xC300:b"\x10\x10",0xC480:b"\x08\x09",0xC3C8:b"\xC8"})]
 # <<< factory LookForCardThatIsKnockedOutOnDevolution
+
 
 # >>> factory CalculateParticularAttachedEnergyNeeded
 CONTRACT["CalculateParticularAttachedEnergyNeeded"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "e")}
@@ -958,10 +960,10 @@ MUTATIONS["LookForCardIDInHandList_Bank5"] = {
 }
 # <<< factory-mutation LookForCardIDInHandList_Bank5
 # >>> factory-mutation CheckForEvolutionInDeck
-MUTATIONS["CheckForEvolutionInDeck"] = {"source_symbol": "CheckForEvolutionInDeck", "before": "return (CheckForEvolutionInDeckResult){arena, (uint8_t)(arena == 0 ? 0x80u : 0u), a, DUELVARS_PRIZE_CARDS, arena_var.hl};", "after": "return (CheckForEvolutionInDeckResult){0xFFu, (uint8_t)(arena == 0 ? 0x80u : 0x00u), a, DUELVARS_PRIZE_CARDS, arena_var.hl};"}
+MUTATIONS["CheckForEvolutionInDeck"]={"source_symbol":"CheckForEvolutionInDeck","before":"arena == 0u ? 0x80u : 0u","after":"arena != 0u ? 0x80u : 0u","case_ids":["CheckForEvolutionInDeck-0","CheckForEvolutionInDeck-1"]}
 # <<< factory-mutation CheckForEvolutionInDeck
 # >>> factory-mutation LookForCardThatIsKnockedOutOnDevolution
-MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"] = {"source_symbol": "LookForCardThatIsKnockedOutOnDevolution", "before": "return (LookForCardThatIsKnockedOutOnDevolutionResult){saved, (uint8_t)(saved == 0u ? 0x80u : 0u), count, count, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBBu)};", "after": "return (LookForCardThatIsKnockedOutOnDevolutionResult){0xFFu, (uint8_t)(saved == 0u ? 0x80u : 0u), count, count, (uint16_t)((uint16_t)(hWhoseTurn == 0xC2u ? 0xC3u : 0xC2u) << 8 | 0xBBu)};", "case_ids": ["LookForCardThatIsKnockedOutOnDevolution-0"]}
+MUTATIONS["LookForCardThatIsKnockedOutOnDevolution"]={"source_symbol":"LookForCardThatIsKnockedOutOnDevolution","before":"if (hp <= rem)","after":"if (hp > rem)","case_ids":["LookForCardThatIsKnockedOutOnDevolution-0"]}
 # <<< factory-mutation LookForCardThatIsKnockedOutOnDevolution
 # >>> factory-mutation CalculateParticularAttachedEnergyNeeded
 MUTATIONS["CalculateParticularAttachedEnergyNeeded"] = {"source_symbol": "CalculateParticularAttachedEnergyNeeded", "before": "return (CalculateParticularAttachedEnergyNeededResult){0u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "after": "return (CalculateParticularAttachedEnergyNeededResult){1u, (uint8_t)(next_b == 0u ? 0x80u : 0u), next_b, (uint16_t)(hl + 1u)};", "case_ids": ["CalculateParticularAttachedEnergyNeeded-0"]}
