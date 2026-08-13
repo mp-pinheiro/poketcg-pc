@@ -56,6 +56,7 @@ function renderChart(points) {
   if (!points || points.length < 2) {
     CHART.innerHTML = '';
     CHART_RANGE.textContent = '';
+    CHART_SUMMARY.textContent = '';
     return;
   }
   const visible = points.filter((pt, index) => {
@@ -64,49 +65,36 @@ function renderChart(points) {
     return pt.code !== previous.code || pt.code_total !== previous.code_total;
   });
   const focus = visible.slice(-Math.min(90, visible.length));
-  const startPercent = focus[0].code_total ? focus[0].code * 100 / focus[0].code_total : 0;
-  const endPercent = focus[focus.length - 1].code_total
+  const start = focus[0].code_total ? focus[0].code * 100 / focus[0].code_total : 0;
+  const end = focus[focus.length - 1].code_total
     ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
     : 0;
-  const delta = endPercent - startPercent;
-  const minPercent = Math.min(...focus.map(pt => pt.code_total ? pt.code * 100 / pt.code_total : 0));
-  const maxPercent = Math.max(...focus.map(pt => pt.code_total ? pt.code * 100 / pt.code_total : 0));
-  const tickStep = maxPercent - minPercent <= 20 ? 5 : 10;
-  const yMin = Math.max(0, Math.floor(minPercent / tickStep) * tickStep);
-  const yMax = Math.max(yMin + tickStep, Math.ceil(maxPercent / tickStep) * tickStep);
-  const padX = 40, padY = 14, w = 800 - 2 * padX, h = 200 - 2 * padY;
-  const minTs = focus[0].timestamp;
-  const maxTs = Math.max(focus[focus.length - 1].timestamp, minTs + 1);
-  const duration = maxTs - minTs;
-  const coords = focus.map(pt => {
-    const percent = pt.code_total ? pt.code * 100 / pt.code_total : 0;
-    return { x: padX + ((pt.timestamp - minTs) / duration) * w,
-             y: padY + h - ((percent - yMin) / (yMax - yMin)) * h,
-             pct: percent / 100, commit: pt.commit };
-  });
-  const baseY = padY + h;
-  const first = coords[0];
-  const last = coords[coords.length - 1];
-  const linePath = coords.map((c, i) => `${i ? 'L' : 'M'} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(' ');
-  const areaPath = `${linePath} L ${last.x.toFixed(1)} ${baseY} H ${first.x.toFixed(1)} Z`;
+  const delta = end - start;
+  const min = Math.max(0, Math.floor(start / 5) * 5);
+  const max = Math.max(min + 10, Math.ceil(end / 5) * 5);
+  const x0 = 150, x1 = 760, width = x1 - x0;
+  const scale = value => x0 + ((value - min) / (max - min)) * width;
+  const startX = scale(start);
+  const endX = scale(end);
   const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  let svg = `<path d="${areaPath}" fill="#4caf50" fill-opacity="0.12"/>`;
-  svg += `<path d="${linePath}" fill="none" stroke="#4caf50" stroke-width="2"/>`;
-  for (let tick = yMin; tick <= yMax; tick += tickStep) {
-    const y = padY + h - ((tick - yMin) / (yMax - yMin)) * h;
-    svg += `<line x1="${padX}" y1="${y}" x2="${padX + w}" y2="${y}" stroke="#292929" stroke-width="1"/>`;
-    svg += `<text x="${padX - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="#888">${tick}%</text>`;
+  let svg = `<line x1="${x0}" y1="76" x2="${x1}" y2="76" stroke="#333" stroke-width="22" stroke-linecap="round"/>`;
+  svg += `<line x1="${x0}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#4caf50" stroke-width="22" stroke-linecap="round"/>`;
+  svg += `<line x1="${startX.toFixed(1)}" y1="76" x2="${endX.toFixed(1)}" y2="76" stroke="#8bd48b" stroke-width="26" stroke-linecap="round"/>`;
+  svg += `<circle cx="${startX.toFixed(1)}" cy="76" r="8" fill="#1e1e1e" stroke="#8bd48b" stroke-width="3"/>`;
+  svg += `<circle cx="${endX.toFixed(1)}" cy="76" r="8" fill="#4caf50" stroke="#fff" stroke-width="2"/>`;
+  svg += `<text x="${startX.toFixed(1)}" y="48" text-anchor="middle" font-size="13" fill="#8bd48b">start ${start.toFixed(2)}%</text>`;
+  svg += `<text x="${endX.toFixed(1)}" y="48" text-anchor="middle" font-size="13" fill="#8bd48b">now ${end.toFixed(2)}%</text>`;
+  svg += `<text x="${((startX + endX) / 2).toFixed(1)}" y="116" text-anchor="middle" font-size="13" fill="#8bd48b">${deltaLabel} percentage points</text>`;
+  for (let tick = min; tick <= max; tick += 5) {
+    const x = scale(tick);
+    svg += `<line x1="${x.toFixed(1)}" y1="94" x2="${x.toFixed(1)}" y2="104" stroke="#888" stroke-width="1"/>`;
+    svg += `<text x="${x.toFixed(1)}" y="122" text-anchor="middle" font-size="10" fill="#888">${tick}%</text>`;
   }
-  for (const c of coords) {
-    svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="2" fill="#4caf50"><title>${c.commit} ${(c.pct * 100).toFixed(2)}%</title></circle>`;
-  }
-  svg += `<text x="${(first.x + 6).toFixed(1)}" y="${Math.max(first.y - 7, padY + 10).toFixed(1)}" font-size="11" fill="#8bd48b">${startPercent.toFixed(2)}%</text>`;
-  svg += `<text x="${(last.x - 6).toFixed(1)}" y="${Math.max(last.y - 7, padY + 10).toFixed(1)}" text-anchor="end" font-size="11" fill="#8bd48b">${endPercent.toFixed(2)}% (${deltaLabel}pp)</text>`;
-  svg += `<text x="${padX}" y="${baseY + 12}" font-size="10" fill="#888">${fmtDate(minTs)}</text>`;
-  svg += `<text x="${padX + w}" y="${baseY + 12}" text-anchor="end" font-size="10" fill="#888">${fmtDate(maxTs)}</text>`;
+  svg += `<text x="40" y="166" font-size="12" fill="#888">${focus.length} changed snapshots · ${fmtDate(focus[0].timestamp)} to ${fmtDate(focus[focus.length - 1].timestamp)}</text>`;
+  svg += `<text x="40" y="190" font-size="11" fill="#888">The bar shows total completion; the highlighted segment is the work added in this period.</text>`;
   CHART.innerHTML = svg;
-  CHART_SUMMARY.textContent = `${startPercent.toFixed(2)}% \u2192 ${endPercent.toFixed(2)}% (${deltaLabel}pp)`;
-  CHART_RANGE.textContent = `${focus.length} changed snapshots \u00b7 x = elapsed time`;
+  CHART_SUMMARY.textContent = `${start.toFixed(2)}% \u2192 ${end.toFixed(2)}% (${deltaLabel}pp)`;
+  CHART_RANGE.textContent = 'Before / after view · absolute completion';
 }
 
 function renderCategories(cats) {
@@ -207,12 +195,15 @@ function renderRecent(entries) {
 
 function applyFilter() {
   const q = FILTER.value.toLowerCase();
+  for (const row of UNITS.querySelectorAll('tr.unit-row')) {
+    row.classList.toggle('hidden', q && !row.textContent.toLowerCase().includes(q));
+  }
 }
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json?v=545a43be'),
-    fetch('data/history.jsonl?v=545a43be').catch(() => null),
+    fetch('data/progress.json?v=bar-20260813'),
+    fetch('data/history.jsonl?v=bar-20260813').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
