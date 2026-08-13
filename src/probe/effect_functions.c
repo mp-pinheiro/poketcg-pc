@@ -223,6 +223,7 @@ static void adapt_CheckIfPlayAreaHasAnyDamage(ProbeState *s)
 }
 /* <<< factory CheckIfPlayAreaHasAnyDamage */
 
+
 /* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
 static void adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic(ProbeState *s)
 {
@@ -320,6 +321,26 @@ static void adapt_KrabbyCallForFamily_AISelectEffect(ProbeState *s)
 }
 /* <<< factory KrabbyCallForFamily_AISelectEffect */
 
+/* >>> factory CreateListOfEnergyAttachedToArena */
+static void adapt_CreateListOfEnergyAttachedToArena(ProbeState *s)
+{
+	CreateListOfEnergyAttachedToArenaResult r = CreateListOfEnergyAttachedToArena(s->a);
+	s->a = r.a;
+	s->c = r.c;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateListOfEnergyAttachedToArena */
+
+/* >>> factory HandleNoDamageOrEffect */
+static void adapt_HandleNoDamageOrEffect(ProbeState *s)
+{
+	HandleNoDamageOrEffectResult r = HandleNoDamageOrEffect(s->hl);
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory HandleNoDamageOrEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -347,7 +368,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
 	{ "DragonairSlam_AIEffect", adapt_DragonairSlam_AIEffect },
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
-	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "CreateEnergyCardListFromDiscardPile_OnlyBasic", adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic },
 	{ "KabutoArmorEffect", adapt_KabutoArmorEffect },
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
@@ -360,5 +380,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
 	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
 	{ "KrabbyCallForFamily_AISelectEffect", adapt_KrabbyCallForFamily_AISelectEffect },
+	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
+	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
+	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ NULL, NULL },
 };

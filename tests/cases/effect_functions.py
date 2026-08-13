@@ -381,6 +381,7 @@ CASES["CheckIfPlayAreaHasAnyDamage"] = [
 ]
 # <<< factory CheckIfPlayAreaHasAnyDamage
 
+
 # >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic
 CONTRACT["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = {"compare": ("f", "hl"), "preserve": ()}
 CASES["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = [
@@ -503,6 +504,24 @@ CASES["KrabbyCallForFamily_AISelectEffect"] = [
     {"c": 0xFF, "d": 0xFF, "e": 0xFF, "read": {0xFFA0: 1}},
 ]
 # <<< factory KrabbyCallForFamily_AISelectEffect
+
+# >>> factory CreateListOfEnergyAttachedToArena
+CONTRACT["CreateListOfEnergyAttachedToArena"] = {"compare": ("a", "c", "f", "hl"), "preserve": ()}
+CASES["CreateListOfEnergyAttachedToArena"] = [
+    {"a": 0x08, "wram": {0xFF97: b"\x00"}, "read": {0xC510: 1}},
+    dict(POISON, a=0x10, wram={0xFF97: b"\x00"}, read={0xC510: 1}),
+]
+# <<< factory CreateListOfEnergyAttachedToArena
+
+# >>> factory HandleNoDamageOrEffect
+CONTRACT["HandleNoDamageOrEffect"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["HandleNoDamageOrEffect"] = [
+    {"hl": 0x1234, "wram": {0xCCC7: b"\x00"}},
+    {"hl": 0x0000, "wram": {0xCCC7: b"\x80"}},
+    dict(POISON, hl=0x4567, wram={0xCCC7: b"\x80"}),
+    dict(POISON, hl=0x1234, wram={0xCCC7: b"\x00"}),
+]
+# <<< factory HandleNoDamageOrEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -802,3 +821,19 @@ MUTATIONS["ClairvoyanceEffect"] = {
 # >>> factory-mutation KrabbyCallForFamily_AISelectEffect
 MUTATIONS["KrabbyCallForFamily_AISelectEffect"] = {"source_symbol": "KrabbyCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == KRABBY)", "after": "if ((uint8_t)card_id != KRABBY)", "case_ids": ["KrabbyCallForFamily_AISelectEffect-0", "KrabbyCallForFamily_AISelectEffect-1"]}
 # <<< factory-mutation KrabbyCallForFamily_AISelectEffect
+# >>> factory-mutation CreateListOfEnergyAttachedToArena
+MUTATIONS["CreateListOfEnergyAttachedToArena"] = {
+    "source_symbol": "CreateListOfEnergyAttachedToArena",
+    "before": "gb_write8(dst, 0xFFu);",
+    "after": "gb_write8(dst, 0xFEu);",
+    "case_ids": ["CreateListOfEnergyAttachedToArena-0", "CreateListOfEnergyAttachedToArena-1"],
+}
+# <<< factory-mutation CreateListOfEnergyAttachedToArena
+# >>> factory-mutation HandleNoDamageOrEffect
+MUTATIONS["HandleNoDamageOrEffect"] = {
+    "source_symbol": "HandleNoDamageOrEffect",
+    "before": "return (HandleNoDamageOrEffectResult){(uint8_t)(0x10u | (check.hl == 0u ? 0x80u : 0x00u)), check.hl};",
+    "after": "return (HandleNoDamageOrEffectResult){0x00u, check.hl};",
+    "case_ids": ["HandleNoDamageOrEffect-1", "HandleNoDamageOrEffect-2"],
+}
+# <<< factory-mutation HandleNoDamageOrEffect

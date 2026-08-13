@@ -131,4 +131,12 @@ uint8_t ClairvoyanceEffect(uint8_t f);
 /* >>> factory KrabbyCallForFamily_AISelectEffect */
 void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
 /* <<< factory KrabbyCallForFamily_AISelectEffect */
+/* >>> factory CreateListOfEnergyAttachedToArena */
+typedef struct { uint8_t a; uint8_t c; uint16_t hl; uint8_t f; } CreateListOfEnergyAttachedToArenaResult;
+CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_t a);
+/* <<< factory CreateListOfEnergyAttachedToArena */
+/* >>> factory HandleNoDamageOrEffect */
+typedef struct { uint8_t f; uint16_t hl; } HandleNoDamageOrEffectResult;
+HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl);
+/* <<< factory HandleNoDamageOrEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

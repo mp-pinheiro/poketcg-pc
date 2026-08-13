@@ -469,6 +469,7 @@ void DragonairSlam_AIEffect(void)
 }
 /* <<< factory DragonairSlam_AIEffect */
 
+
 /* >>> factory CheckIfPlayAreaHasAnyDamage */
 /* effect_functions.asm:517-531. Zero-means-max: the count is post-tested
  * (dec+jr nz after the call), so an 8-bit count of 0 runs 256 times. */
@@ -675,3 +676,35 @@ void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 	}
 }
 /* <<< factory KrabbyCallForFamily_AISelectEffect */
+
+/* >>> factory CreateListOfEnergyAttachedToArena */
+CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_t a)
+{
+	uint8_t count = 0;
+	uint16_t locations = GetTurnDuelistVariable(0x00u).hl;
+	uint16_t dst = wDuelTempList_ADDR;
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations + index)) != 0x10u)
+			continue;
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index);
+		if (GetCardType(card_id) != a)
+			continue;
+		gb_write8(dst++, index);
+		count++;
+	}
+	gb_write8(dst, 0xFFu);
+	return (CreateListOfEnergyAttachedToArenaResult){
+		count, count, (uint16_t)(locations + DECK_SIZE), 0xC0u};
+
+}
+/* <<< factory CreateListOfEnergyAttachedToArena */
+
+/* >>> factory HandleNoDamageOrEffect */
+HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl)
+{
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+	if ((check.f & 0x10u) == 0u)
+		return (HandleNoDamageOrEffectResult){check.f, check.hl};
+	return (HandleNoDamageOrEffectResult){(uint8_t)(0x10u | (check.hl == 0u ? 0x80u : 0x00u)), check.hl};
+}
+/* <<< factory HandleNoDamageOrEffect */
