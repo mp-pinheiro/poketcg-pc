@@ -242,4 +242,12 @@ Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void);
 /* >>> factory CreateBasicPokemonCardListFromDiscardPile */
 CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void);
 /* <<< factory CreateBasicPokemonCardListFromDiscardPile */
+/* >>> factory CreatePokemonCardListFromHand */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t d; uint8_t e; } CreatePokemonCardListFromHandResult;
+CreatePokemonCardListFromHandResult CreatePokemonCardListFromHand(void);
+/* <<< factory CreatePokemonCardListFromHand */
+/* >>> factory Pokedex_DeckCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } PokedexDeckCheckResult;
+PokedexDeckCheckResult Pokedex_DeckCheck(void);
+/* <<< factory Pokedex_DeckCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

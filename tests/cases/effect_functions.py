@@ -780,6 +780,22 @@ CASES["CreateBasicPokemonCardListFromDiscardPile"] = [
 ]
 # <<< factory CreateBasicPokemonCardListFromDiscardPile
 
+# >>> factory CreatePokemonCardListFromHand
+CONTRACT["CreatePokemonCardListFromHand"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b",)}
+CASES["CreatePokemonCardListFromHand"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00"}),
+]
+# <<< factory CreatePokemonCardListFromHand
+
+# >>> factory Pokedex_DeckCheck
+CONTRACT["Pokedex_DeckCheck"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["Pokedex_DeckCheck"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory Pokedex_DeckCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1241,3 +1257,9 @@ MUTATIONS["Recycle_DiscardPileCheck"] = {"source_symbol": "Recycle_DiscardPileCh
 # >>> factory-mutation CreateBasicPokemonCardListFromDiscardPile
 MUTATIONS["CreateBasicPokemonCardListFromDiscardPile"] = {"source_symbol": "CreateBasicPokemonCardListFromDiscardPile", "before": "first == 0xFFu ? 0x90u : 0x00u", "after": "first == 0xFFu ? 0x10u : 0x00u", "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2"]}
 # <<< factory-mutation CreateBasicPokemonCardListFromDiscardPile
+# >>> factory-mutation CreatePokemonCardListFromHand
+MUTATIONS["CreatePokemonCardListFromHand"] = {"source_symbol": "CreatePokemonCardListFromHand", "before": "if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY)", "after": "if (gb_read8(wLoadedCard2Type_ADDR) >= TYPE_ENERGY)", "case_ids": ["CreatePokemonCardListFromHand-0", "CreatePokemonCardListFromHand-1"]}
+# <<< factory-mutation CreatePokemonCardListFromHand
+# >>> factory-mutation Pokedex_DeckCheck
+MUTATIONS["Pokedex_DeckCheck"] = {"source_symbol": "Pokedex_DeckCheck", "before": "uint8_t f = (count < DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);", "after": "uint8_t f = (count >= DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);", "case_ids": ["Pokedex_DeckCheck-0", "Pokedex_DeckCheck-1"]}
+# <<< factory-mutation Pokedex_DeckCheck

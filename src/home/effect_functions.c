@@ -137,6 +137,9 @@ static const uint8_t color_to_text[] = {
 #define CARD_LOCATION_PLAY_AREA_F 4u
 
 #define ThereAreNoCardsInTheDiscardPileText 0x00bbu
+
+#define DUELVARS_HAND 0x42u
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
 /* <<< factory statics */
 
 
@@ -1151,3 +1154,38 @@ CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardP
 	};
 }
 /* <<< factory CreateBasicPokemonCardListFromDiscardPile */
+
+/* >>> factory CreatePokemonCardListFromHand */
+CreatePokemonCardListFromHandResult CreatePokemonCardListFromHand(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	uint8_t count = r.a;
+	uint16_t hl = (uint16_t)((r.hl & 0xFF00u) | DUELVARS_HAND);
+	uint16_t de = wDuelTempList_ADDR;
+
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		LoadCardDataToBuffer2_FromDeckIndex(card);
+		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY)
+			gb_write8(de++, card);
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl + 1u));
+		count--;
+		if (count == 0u)
+			break;
+	}
+	gb_write8(de, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	uint8_t result_f = (first == 0xFFu) ? 0x90u : (uint8_t)(first == 0u ? 0x80u : 0x00u);
+	return (CreatePokemonCardListFromHandResult){first, result_f, 0u,
+		(uint8_t)(de >> 8), (uint8_t)de};
+}
+/* <<< factory CreatePokemonCardListFromHand */
+
+/* >>> factory Pokedex_DeckCheck */
+PokedexDeckCheckResult Pokedex_DeckCheck(void)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	uint8_t f = (count < DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);
+	return (PokedexDeckCheckResult){count, f, NoCardsLeftInTheDeckText};
+}
+/* <<< factory Pokedex_DeckCheck */
