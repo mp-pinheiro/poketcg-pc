@@ -327,6 +327,26 @@ def main() -> int:
         issues.run_graphql = original_graphql
         issues.fetch_snapshot = original_fetch
     assert graphql_calls[1][1]["c0"]["id"] == "issue-node"
+    original_graphql = issues.run_graphql
+    original_sleep = issues.time.sleep
+    retry_calls = []
+    retry_waits = []
+
+    def flaky_graphql(query, variables):
+        retry_calls.append((query, variables))
+        if len(retry_calls) < 3:
+            raise issues.ModelError("gh: HTTP 502")
+        return {"ok": True}
+
+    issues.run_graphql = flaky_graphql
+    issues.time.sleep = retry_waits.append
+    try:
+        assert issues.run_graphql_retryable("mutation{}", {}) == {"ok": True}
+    finally:
+        issues.run_graphql = original_graphql
+        issues.time.sleep = original_sleep
+    assert len(retry_calls) == 3
+    assert retry_waits == [1, 2]
     mutation_mix = [
         {"action": "supersede", "desired_state": "closed"},
         {"action": "create", "desired_state": "closed"},

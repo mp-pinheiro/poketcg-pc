@@ -569,6 +569,20 @@ def run_graphql(query: str, variables: dict) -> dict:
         )
         raise ModelError(f"GitHub GraphQL mutation failed: {messages}")
     return payload.get("data") or {}
+def run_graphql_retryable(query: str, variables: dict, attempts: int = 4) -> dict:
+    if attempts < 1:
+        raise ModelError("GraphQL attempts must be positive")
+    for attempt in range(attempts):
+        try:
+            return run_graphql(query, variables)
+        except ModelError as exc:
+            transient = re.search(r"\bHTTP (?:502|503|504)\b", str(exc))
+            if not transient or attempt + 1 == attempts:
+                raise
+            time.sleep(2 ** attempt)
+    raise AssertionError("unreachable")
+
+
 
 
 def action_key(action: dict) -> str:
@@ -731,7 +745,12 @@ def apply_graphql_batch(actions: list[dict], snapshot: dict) -> None:
         "mutation(" + ",".join(declarations) + "){"
         + " ".join(mutations) + "}"
     )
-    data = run_graphql(query, variables)
+    retryable = all(
+        action["action"] in {"update", "adopt", "migrate-id"}
+        for action in actions
+    )
+    request = run_graphql_retryable if retryable else run_graphql
+    data = request(query, variables)
     if close_aliases:
         snapshot = fetch_snapshot()
         by_work, _ = indexed_issues(snapshot)
@@ -756,7 +775,7 @@ def apply_graphql_batch(actions: list[dict], snapshot: dict) -> None:
             "mutation(" + ",".join(close_declarations) + "){"
             + " ".join(close_mutations) + "}"
         )
-        run_graphql(close_query, close_variables)
+        run_graphql_retryable(close_query, close_variables)
 
 
 def action_is_reflected(action: dict, snapshot: dict) -> bool:
