@@ -1,0 +1,9 @@
+{
+  "fn": "CreateEnergyCardListFromHand",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateEnergyCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"01cb\", \"50448\": \"00ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateEnergyCardListFromHand\", \"mismatches\": {\"a\": [0, 1], \"bus\": {\"address\": 50448, \"reference\": \"010201cb00ff00c2\", \"native\": \"010201cb01ff00c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49730, 2], [49902, 1], [50176, 2], [50448, 3], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CreateEnergyCardListFromHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"01cb\", \"50448\": \"00ff00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

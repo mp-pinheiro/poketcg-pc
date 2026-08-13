@@ -185,4 +185,14 @@ CheckIfEnoughParticularAttachedEnergyResult CheckIfEnoughParticularAttachedEnerg
 typedef struct { uint8_t f; } Func14323Result;
 Func14323Result Func_14323(void);
 /* <<< factory Func_14323 */
+/* >>> factory CreateEnergyCardListFromHand */
+typedef struct { uint8_t a; uint8_t f; } CoreCardListResult;
+CoreCardListResult CreateEnergyCardListFromHand(uint8_t a);
+/* <<< factory CreateEnergyCardListFromHand */
+/* >>> factory LookForCardIDInHand */
+CoreCardListResult LookForCardIDInHand(uint8_t a);
+/* <<< factory LookForCardIDInHand */
+/* >>> factory LookForCardIDInHandList_Bank5 */
+CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a);
+/* <<< factory LookForCardIDInHandList_Bank5 */
 #endif /* POKETCG_HOME_CORE_H */

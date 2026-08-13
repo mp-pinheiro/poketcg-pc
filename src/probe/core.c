@@ -414,6 +414,33 @@ static void adapt_Func_14323(ProbeState *s)
 }
 /* <<< factory Func_14323 */
 
+/* >>> factory CreateEnergyCardListFromHand */
+static void adapt_CreateEnergyCardListFromHand(ProbeState *s)
+{
+	CoreCardListResult r = CreateEnergyCardListFromHand(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CreateEnergyCardListFromHand */
+
+/* >>> factory LookForCardIDInHand */
+static void adapt_LookForCardIDInHand(ProbeState *s)
+{
+	CoreCardListResult r = LookForCardIDInHand(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInHand */
+
+/* >>> factory LookForCardIDInHandList_Bank5 */
+static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
+{
+	CoreCardListResult r = LookForCardIDInHandList_Bank5(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInHandList_Bank5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -464,5 +491,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIPlayInitialBasicCards", adapt_AIPlayInitialBasicCards },
 	{ "CheckIfEnoughParticularAttachedEnergy", adapt_CheckIfEnoughParticularAttachedEnergy },
 	{ "Func_14323", adapt_Func_14323 },
+	{ "CreateEnergyCardListFromHand", adapt_CreateEnergyCardListFromHand },
+	{ "LookForCardIDInHand", adapt_LookForCardIDInHand },
+	{ "LookForCardIDInHandList_Bank5", adapt_LookForCardIDInHandList_Bank5 },
 	{ NULL, NULL },
 };

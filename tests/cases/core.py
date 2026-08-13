@@ -547,6 +547,42 @@ CASES["Func_14323"] = [
 ]
 # <<< factory Func_14323
 
+# >>> factory CreateEnergyCardListFromHand
+CONTRACT["CreateEnergyCardListFromHand"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CreateEnergyCardListFromHand"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
+	          0xC400: b"\x01\xCB"}, "read": {0xC510: 3}},
+	{"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 1}},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x02",
+	                   0xC242: b"\x01\x00", 0xC400: b"\x01\x02"},
+	     read={0xC510: 3}),
+]
+# <<< factory CreateEnergyCardListFromHand
+
+# >>> factory LookForCardIDInHand
+CONTRACT["LookForCardIDInHand"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LookForCardIDInHand"] = [
+	{"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02",
+	                     0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}},
+	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01",
+	                     0xC242: b"\x00", 0xC400: b"\xCB"}},
+	dict(POISON, a=0xCB, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01",
+	                            0xC242: b"\x00", 0xC400: b"\xCB"}),
+]
+# <<< factory LookForCardIDInHand
+
+# >>> factory LookForCardIDInHandList_Bank5
+CONTRACT["LookForCardIDInHandList_Bank5"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDInHandList_Bank5"] = [
+	{"a": 0x01, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02",
+	                     0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}},
+	{"a": 0x09, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01",
+	                     0xC242: b"\x00", 0xC400: b"\xCB"}},
+	dict(POISON, a=0xCB, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01",
+	                            0xC242: b"\x00", 0xC400: b"\xCB"}),
+]
+# <<< factory LookForCardIDInHandList_Bank5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -858,3 +894,27 @@ MUTATIONS["Func_14323"] = {
     "case_ids": ["Func_14323-0"],
 }
 # <<< factory-mutation Func_14323
+# >>> factory-mutation CreateEnergyCardListFromHand
+MUTATIONS["CreateEnergyCardListFromHand"] = {
+	"source_symbol": "CreateEnergyCardListFromHand",
+	"before": "if ((GetCardType(card_id) & 0x08u) != 0u)",
+	"after": "if ((GetCardType(card_id) & 0x08u) == 0u)",
+	"case_ids": ["CreateEnergyCardListFromHand-0", "CreateEnergyCardListFromHand-2"],
+}
+# <<< factory-mutation CreateEnergyCardListFromHand
+# >>> factory-mutation LookForCardIDInHand
+MUTATIONS["LookForCardIDInHand"] = {
+	"source_symbol": "LookForCardIDInHand",
+	"before": "return (CoreCardListResult){deck_index, f};",
+	"after": "return (CoreCardListResult){(uint8_t)(deck_index + 1u), f};",
+	"case_ids": ["LookForCardIDInHand-0", "LookForCardIDInHand-2"],
+}
+# <<< factory-mutation LookForCardIDInHand
+# >>> factory-mutation LookForCardIDInHandList_Bank5
+MUTATIONS["LookForCardIDInHandList_Bank5"] = {
+	"source_symbol": "LookForCardIDInHandList_Bank5",
+	"before": "if ((uint8_t)GetCardIDFromDeckIndex(deck_index) == a)",
+	"after": "if ((uint8_t)GetCardIDFromDeckIndex(deck_index) != a)",
+	"case_ids": ["LookForCardIDInHandList_Bank5-0", "LookForCardIDInHandList_Bank5-1", "LookForCardIDInHandList_Bank5-2"],
+}
+# <<< factory-mutation LookForCardIDInHandList_Bank5

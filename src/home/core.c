@@ -208,8 +208,8 @@ static uint8_t is_duelist_type(uint8_t a)
 #include "home/duel.h"
 
 #include "home/effect_commands.h"
-#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x05u
-#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x40u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
+#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x05u
 #define TYPE_ENERGY 0x08u
 #include "home/duel.h"
 /* <<< factory statics */
@@ -1035,3 +1035,56 @@ Func14323Result Func_14323(void)
 	return (Func14323Result){0x80u};
 }
 /* <<< factory Func_14323 */
+
+/* >>> factory CreateEnergyCardListFromHand */
+CoreCardListResult CreateEnergyCardListFromHand(uint8_t a)
+{
+	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
+	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
+	uint16_t dst = wDuelTempList_ADDR;
+	(void)a;
+	for (uint8_t i = 0; i < count; i++) {
+		uint8_t deck_index = gb_read8((uint16_t)(hand + i));
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		if ((GetCardType(card_id) & 0x08u) != 0u)
+			gb_write8(dst++, deck_index);
+	}
+	gb_write8(dst, 0xFFu);
+	uint8_t first = gb_read8(wDuelTempList_ADDR);
+	return (CoreCardListResult){first, first == 0xFFu ? 0x90u : 0x00u};
+}
+/* <<< factory CreateEnergyCardListFromHand */
+
+/* >>> factory LookForCardIDInHand */
+
+CoreCardListResult LookForCardIDInHand(uint8_t a)
+{
+	uint8_t count = GetTurnDuelistVariable(0xeeu).a;
+	uint16_t hand = (uint16_t)(((uint16_t)hWhoseTurn << 8) | 0x42u);
+	uint8_t last_id = 0u;
+	for (uint8_t i = 0; i < count; i++) {
+		uint8_t deck_index = gb_read8((uint16_t)(hand + i));
+		last_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		if (last_id == a) {
+			uint8_t f = deck_index == 0u ? 0x80u : 0x00u;
+			return (CoreCardListResult){deck_index, f};
+		}
+	}
+	return (CoreCardListResult){last_id, 0x90u};
+}
+/* <<< factory LookForCardIDInHand */
+
+/* >>> factory LookForCardIDInHandList_Bank5 */
+CoreCardListResult LookForCardIDInHandList_Bank5(uint8_t a)
+{
+	(void)CreateHandCardList(0u);
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t deck_index = gb_read8(list++);
+		if (deck_index == 0xFFu)
+			return (CoreCardListResult){0xFFu, 0xC0u};
+		if ((uint8_t)GetCardIDFromDeckIndex(deck_index) == a)
+			return (CoreCardListResult){deck_index, 0x90u};
+	}
+}
+/* <<< factory LookForCardIDInHandList_Bank5 */
