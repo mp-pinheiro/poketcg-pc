@@ -54,9 +54,7 @@ function renderHeader(p) {
 
 function renderChart(points) {
   if (!points || points.length < 2) {
-    CHART.innerHTML = '';
-    CHART_RANGE.textContent = '';
-    CHART_SUMMARY.textContent = '';
+    CHART.textContent = '';
     return;
   }
   const visible = points.filter((pt, index) => {
@@ -73,25 +71,7 @@ function renderChart(points) {
     : 0;
   const delta = end - start;
   const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  const startDate = fmtDate(focus[0].timestamp);
-  const endDate = fmtDate(focus[focus.length - 1].timestamp);
-  CHART.innerHTML = `
-    <div class="progress-card">
-      <div class="progress-card-label">${start.toFixed(2)}% then</div>
-      <strong>${start.toFixed(2)}%</strong>
-      <div class="progress-card-track"><span style="width:${start / 25 * 100}%"></span></div>
-      <small>${startDate} · baseline</small>
-    </div>
-    <div class="progress-card-delta">${deltaLabel}<span>percentage points</span></div>
-    <div class="progress-card">
-      <div class="progress-card-label">${end.toFixed(2)}% now</div>
-      <strong>${end.toFixed(2)}%</strong>
-      <div class="progress-card-track"><span style="width:${end / 25 * 100}%"></span></div>
-      <small>${endDate} · current total</small>
-    </div>
-    <div class="progress-card-scale" aria-label="Fixed scale from zero to twenty-five percent"><span>0%</span><span>5%</span><span>10%</span><span>15%</span><span>20%</span><span>25%</span></div>`;
-  CHART_SUMMARY.textContent = `${start.toFixed(2)}% \u2192 ${end.toFixed(2)}% (${deltaLabel}pp)`;
-  CHART_RANGE.textContent = 'Two-point comparison · fixed 0–25% scale';
+  CHART.textContent = `${start.toFixed(2)}% complete \u2192 ${end.toFixed(2)}% complete (${deltaLabel} percentage points)`;
 }
 
 function renderCategories(cats) {
