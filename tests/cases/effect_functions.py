@@ -561,12 +561,13 @@ CASES["SolarPower_CheckUse"] = [
 # <<< factory SolarPower_CheckUse
 
 # >>> factory DevolutionBeam_LoadAnimation
-CONTRACT["DevolutionBeam_LoadAnimation"] = {"compare": (), "preserve": ()}
+CONTRACT["DevolutionBeam_LoadAnimation"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["DevolutionBeam_LoadAnimation"] = [
-    {"wram": {0xCCB8: b"\xFF"}, "read": {0xCCB8: 1}},
-    dict(POISON, wram={0xCCB8: b"\xAA"}, read={0xCCB8: 1}),
+    {"wram": {0xCCB8: b"\x00"}},
+    dict(POISON, wram={0xCCB8: b"\xAA"}),
 ]
 # <<< factory DevolutionBeam_LoadAnimation
+
 
 # >>> factory CheckIfTurnDuelistHasEvolvedCards
 CONTRACT["CheckIfTurnDuelistHasEvolvedCards"] = {"compare": ("f",), "preserve": ()}
@@ -637,6 +638,15 @@ CASES["Prophecy_CheckDeck"] = [
     dict(POISON),
 ]
 # <<< factory Prophecy_CheckDeck
+
+# >>> factory TryGiveDamageCounter_DamageSwap
+CONTRACT["TryGiveDamageCounter_DamageSwap"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["TryGiveDamageCounter_DamageSwap"] = [
+    {"wram": {0xFFA1: b"\x00", 0xFFA2: b"\x00"}, "read": {0xC100: 0x900}},
+    dict(POISON, wram={0xFFA1: b"\x02", 0xFFA2: b"\x01"}, read={0xC100: 0x900}),
+    {"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xFFA1: b"\x03", 0xFFA2: b"\x04"}, "read": {0xC100: 0x900}},
+]
+# <<< factory TryGiveDamageCounter_DamageSwap
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -975,12 +985,7 @@ MUTATIONS["SolarPower_CheckUse"] = {
 }
 # <<< factory-mutation SolarPower_CheckUse
 # >>> factory-mutation DevolutionBeam_LoadAnimation
-MUTATIONS["DevolutionBeam_LoadAnimation"] = {
-    "source_symbol": "DevolutionBeam_LoadAnimation",
-    "before": "gb_write8(0xCCB8u, 0x00u);",
-    "after": "gb_write8(0xCCB8u, 0x01u);",
-    "case_ids": ["DevolutionBeam_LoadAnimation-0"],
-}
+MUTATIONS["DevolutionBeam_LoadAnimation"] = {"source_symbol": "DevolutionBeam_LoadAnimation", "before": "wLoadedAttackAnimation = ATK_ANIM_NONE;", "after": "wLoadedAttackAnimation = 1u;", "case_ids": ["DevolutionBeam_LoadAnimation-0", "DevolutionBeam_LoadAnimation-1"]}
 # <<< factory-mutation DevolutionBeam_LoadAnimation
 # >>> factory-mutation CheckIfTurnDuelistHasEvolvedCards
 MUTATIONS["CheckIfTurnDuelistHasEvolvedCards"] = {
@@ -1013,3 +1018,6 @@ MUTATIONS["Thrash_AIEffect"] = {"source_symbol": "Thrash_AIEffect", "before": "\
 # >>> factory-mutation Prophecy_CheckDeck
 MUTATIONS["Prophecy_CheckDeck"] = {"source_symbol": "Prophecy_CheckDeck", "before": "\tif (turn.a < DECK_SIZE)", "after": "\tif (turn.a >= DECK_SIZE)", "case_ids": ["Prophecy_CheckDeck-0", "Prophecy_CheckDeck-1"]}
 # <<< factory-mutation Prophecy_CheckDeck
+# >>> factory-mutation TryGiveDamageCounter_DamageSwap
+MUTATIONS["TryGiveDamageCounter_DamageSwap"] = {"source_symbol": "TryGiveDamageCounter_DamageSwap", "before": "uint8_t new_hp = (uint8_t)(10u + gb_read8(source_hp));", "after": "uint8_t new_hp = (uint8_t)(20u + gb_read8(source_hp));", "case_ids": ["TryGiveDamageCounter_DamageSwap-0", "TryGiveDamageCounter_DamageSwap-1", "TryGiveDamageCounter_DamageSwap-2"]}
+# <<< factory-mutation TryGiveDamageCounter_DamageSwap

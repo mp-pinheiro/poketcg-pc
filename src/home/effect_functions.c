@@ -124,6 +124,8 @@ static const uint8_t color_to_text[] = {
 #define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
 
 #define NoCardsLeftInTheDeckText 0x00b1u
+
+#define ATK_ANIM_NONE 0x00u
 /* <<< factory statics */
 
 
@@ -793,10 +795,12 @@ SolarPowerCheckUseResult SolarPower_CheckUse(void)
 }
 /* <<< factory SolarPower_CheckUse */
 
+
 /* >>> factory DevolutionBeam_LoadAnimation */
+/* effect_functions.asm:5232-5236 */
 void DevolutionBeam_LoadAnimation(void)
 {
-	gb_write8(0xCCB8u, 0x00u);
+	wLoadedAttackAnimation = ATK_ANIM_NONE;
 }
 /* <<< factory DevolutionBeam_LoadAnimation */
 
@@ -910,3 +914,29 @@ ProphecyCheckDeckResult Prophecy_CheckDeck(void)
 	return (ProphecyCheckDeckResult){nonturn.a, 0x10u, NoCardsLeftInTheDeckText};
 }
 /* <<< factory Prophecy_CheckDeck */
+
+/* >>> factory TryGiveDamageCounter_DamageSwap */
+/* effect_functions.asm:5134-5158 */
+TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void)
+{
+	uint8_t target = (uint8_t)(hPlayAreaEffectTarget + DUELVARS_ARENA_CARD_HP);
+	DuelistVarResult result = GetTurnDuelistVariable(target);
+	uint8_t remaining = (uint8_t)(result.a - 10u);
+
+	if (remaining == 0u)
+		return (TryGiveDamageCounter_DamageSwapResult){0u, 0x10u, result.hl};
+
+	gb_write8(result.hl, remaining);
+
+	uint8_t source = (uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP);
+	uint16_t source_hp = (uint16_t)((result.hl & 0xff00u) | source);
+	uint8_t new_hp = (uint8_t)(10u + gb_read8(source_hp));
+	gb_write8(source_hp, new_hp);
+
+	return (TryGiveDamageCounter_DamageSwapResult){
+		new_hp,
+		(uint8_t)(new_hp == 0u ? 0x80u : 0u),
+		source_hp
+	};
+}
+/* <<< factory TryGiveDamageCounter_DamageSwap */

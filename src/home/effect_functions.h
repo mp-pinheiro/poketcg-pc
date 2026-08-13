@@ -186,4 +186,12 @@ void Thrash_AIEffect(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } ProphecyCheckDeckResult;
 ProphecyCheckDeckResult Prophecy_CheckDeck(void);
 /* <<< factory Prophecy_CheckDeck */
+/* >>> factory TryGiveDamageCounter_DamageSwap */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} TryGiveDamageCounter_DamageSwapResult;
+TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void);
+/* <<< factory TryGiveDamageCounter_DamageSwap */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

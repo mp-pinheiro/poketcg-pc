@@ -384,10 +384,10 @@ static void adapt_SolarPower_CheckUse(ProbeState *s)
 /* >>> factory DevolutionBeam_LoadAnimation */
 static void adapt_DevolutionBeam_LoadAnimation(ProbeState *s)
 {
-	(void)s;
 	DevolutionBeam_LoadAnimation();
 }
 /* <<< factory DevolutionBeam_LoadAnimation */
+
 
 /* >>> factory CheckIfTurnDuelistHasEvolvedCards */
 static void adapt_CheckIfTurnDuelistHasEvolvedCards(ProbeState *s)
@@ -449,6 +449,16 @@ static void adapt_Prophecy_CheckDeck(ProbeState *s)
 }
 /* <<< factory Prophecy_CheckDeck */
 
+/* >>> factory TryGiveDamageCounter_DamageSwap */
+static void adapt_TryGiveDamageCounter_DamageSwap(ProbeState *s)
+{
+	TryGiveDamageCounter_DamageSwapResult r = TryGiveDamageCounter_DamageSwap();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory TryGiveDamageCounter_DamageSwap */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -492,7 +502,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
 	{ "SolarPower_CheckUse", adapt_SolarPower_CheckUse },
 	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
-	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
 	{ "CheckIfTurnDuelistHasEvolvedCards", adapt_CheckIfTurnDuelistHasEvolvedCards },
 	{ "FindFirstNonBasicCardInPlayArea", adapt_FindFirstNonBasicCardInPlayArea },
 	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
@@ -503,5 +512,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BigEggsplosion_AIEffect", adapt_BigEggsplosion_AIEffect },
 	{ "Thrash_AIEffect", adapt_Thrash_AIEffect },
 	{ "Prophecy_CheckDeck", adapt_Prophecy_CheckDeck },
+	{ "TryGiveDamageCounter_DamageSwap", adapt_TryGiveDamageCounter_DamageSwap },
+	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
 	{ NULL, NULL },
 };
