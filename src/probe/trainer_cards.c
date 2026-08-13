@@ -16,6 +16,7 @@ static void adapt_FindDuplicateCards(ProbeState *s)
 	FindDupResult r = FindDuplicateCards(s->hl);
 	s->a = r.a;
 	s->f = r.f;
+	s->hl = r.hl;
 }
 /* <<< factory FindDuplicateCards */
 

@@ -77,9 +77,9 @@ FindDupResult FindDuplicateCards(uint16_t hl)
 	uint8_t lo = wce0f;
 	uint8_t hi = gb_read8((uint16_t)(wce0f_ADDR + 1u));
 	if (lo == 0xFFu && hi == 0xFFu)
-		return (FindDupResult){0xFFu, 0x90u};
+		return (FindDupResult){0xFFu, 0x90u, outer};
 	uint8_t a = (lo != 0xFFu) ? lo : hi;
-	return (FindDupResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+	return (FindDupResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), outer};
 }
 /* <<< factory FindDuplicateCards */
 

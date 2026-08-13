@@ -16,7 +16,7 @@ CASES["RemoveCardFromList"] = [
 # <<< factory RemoveCardFromList
 
 # >>> factory FindDuplicateCards
-CONTRACT["FindDuplicateCards"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["FindDuplicateCards"] = {"compare": ("a", "f", "hl"), "preserve": ()}
 CASES["FindDuplicateCards"] = [
     {"hl": 0xC900, "wram": {0xC900: b"\xff", 0xCE0F: b"\x00\x00"}},
     {"hl": 0xC900, "wram": {0xC900: b"\x00\x01\xff", 0xCE0F: b"\x00\x00"}},
@@ -89,8 +89,8 @@ MUTATIONS["RemoveCardFromList"] = {
 # >>> factory-mutation FindDuplicateCards
 MUTATIONS["FindDuplicateCards"] = {
     "source_symbol": "FindDuplicateCards",
-    "before": "return (FindDupResult){0xFFu, 0x90u};",
-    "after": "return (FindDupResult){0xFFu, 0x10u};",
+    "before": "return (FindDupResult){0xFFu, 0x90u, outer};",
+    "after": "return (FindDupResult){0xFFu, 0x10u, outer};",
     "case_ids": ["FindDuplicateCards-0", "FindDuplicateCards-2"],
 }
 # <<< factory-mutation FindDuplicateCards

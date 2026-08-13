@@ -7,7 +7,7 @@
 void RemoveCardFromList(uint16_t *hl);
 /* <<< factory RemoveCardFromList */
 /* >>> factory FindDuplicateCards */
-typedef struct { uint8_t a, f; } FindDupResult;
+typedef struct { uint8_t a, f; uint16_t hl; } FindDupResult;
 FindDupResult FindDuplicateCards(uint16_t hl);
 /* <<< factory FindDuplicateCards */
 /* >>> factory FindAndRemoveCardFromList */
