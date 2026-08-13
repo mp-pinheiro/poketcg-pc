@@ -670,6 +670,22 @@ static void adapt_SwordsDanceEffect(ProbeState *s)
 }
 /* <<< factory SwordsDanceEffect */
 
+/* >>> factory Twineedle_AIEffect */
+static void adapt_Twineedle_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Twineedle_AIEffect();
+}
+/* <<< factory Twineedle_AIEffect */
+
+/* >>> factory BeedrillPoisonSting_AIEffect */
+static void adapt_BeedrillPoisonSting_AIEffect(ProbeState *s)
+{
+	(void)s;
+	BeedrillPoisonSting_AIEffect();
+}
+/* <<< factory BeedrillPoisonSting_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -749,5 +765,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FoulOdorEffect", adapt_FoulOdorEffect },
 	{ "KakunaPoisonPowder_AIEffect", adapt_KakunaPoisonPowder_AIEffect },
 	{ "SwordsDanceEffect", adapt_SwordsDanceEffect },
+	{ "Twineedle_AIEffect", adapt_Twineedle_AIEffect },
+	{ "BeedrillPoisonSting_AIEffect", adapt_BeedrillPoisonSting_AIEffect },
 	{ NULL, NULL },
 };

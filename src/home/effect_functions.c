@@ -1290,3 +1290,17 @@ uint16_t SwordsDanceEffect(void)
 	return ApplySubstatus1ToAttackingCard(0x19u);
 }
 /* <<< factory SwordsDanceEffect */
+
+/* >>> factory Twineedle_AIEffect */
+void Twineedle_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory Twineedle_AIEffect */
+
+/* >>> factory BeedrillPoisonSting_AIEffect */
+void BeedrillPoisonSting_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory BeedrillPoisonSting_AIEffect */

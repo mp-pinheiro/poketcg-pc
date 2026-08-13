@@ -903,6 +903,26 @@ CASES["SwordsDanceEffect"] = [
 ]
 # <<< factory SwordsDanceEffect
 
+# >>> factory Twineedle_AIEffect
+CONTRACT["Twineedle_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["Twineedle_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory Twineedle_AIEffect
+
+# >>> factory BeedrillPoisonSting_AIEffect
+CONTRACT["BeedrillPoisonSting_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["BeedrillPoisonSting_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x14"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON), dict(POISON, a=1), dict(POISON, f=0), dict(POISON, hl=0x4567),
+]
+# <<< factory BeedrillPoisonSting_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1439,3 +1459,19 @@ MUTATIONS["SwordsDanceEffect"] = {
     "case_ids": ["SwordsDanceEffect-0", "SwordsDanceEffect-1", "SwordsDanceEffect-2"],
 }
 # <<< factory-mutation SwordsDanceEffect
+# >>> factory-mutation Twineedle_AIEffect
+MUTATIONS["Twineedle_AIEffect"] = {
+    "source_symbol": "Twineedle_AIEffect",
+    "before": "void Twineedle_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}",
+    "after": "void Twineedle_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}",
+    "case_ids": ["Twineedle_AIEffect-0", "Twineedle_AIEffect-1", "Twineedle_AIEffect-2"],
+}
+# <<< factory-mutation Twineedle_AIEffect
+# >>> factory-mutation BeedrillPoisonSting_AIEffect
+MUTATIONS["BeedrillPoisonSting_AIEffect"] = {
+    "source_symbol": "BeedrillPoisonSting_AIEffect",
+    "before": "\tUpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);",
+    "after": "\tUpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);",
+    "case_ids": ["BeedrillPoisonSting_AIEffect-0", "BeedrillPoisonSting_AIEffect-1", "BeedrillPoisonSting_AIEffect-2", "BeedrillPoisonSting_AIEffect-3", "BeedrillPoisonSting_AIEffect-4"],
+}
+# <<< factory-mutation BeedrillPoisonSting_AIEffect

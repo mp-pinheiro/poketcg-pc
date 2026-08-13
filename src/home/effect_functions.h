@@ -278,4 +278,10 @@ void KakunaPoisonPowder_AIEffect(void);
 /* >>> factory SwordsDanceEffect */
 uint16_t SwordsDanceEffect(void);
 /* <<< factory SwordsDanceEffect */
+/* >>> factory Twineedle_AIEffect */
+void Twineedle_AIEffect(void);
+/* <<< factory Twineedle_AIEffect */
+/* >>> factory BeedrillPoisonSting_AIEffect */
+void BeedrillPoisonSting_AIEffect(void);
+/* <<< factory BeedrillPoisonSting_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
