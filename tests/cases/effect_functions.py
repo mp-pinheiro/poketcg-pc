@@ -382,6 +382,7 @@ CASES["CheckIfPlayAreaHasAnyDamage"] = [
 # <<< factory CheckIfPlayAreaHasAnyDamage
 
 
+
 # >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic
 CONTRACT["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = {"compare": ("f", "hl"), "preserve": ()}
 CASES["CreateEnergyCardListFromDiscardPile_OnlyBasic"] = [
@@ -512,6 +513,7 @@ CASES["CreateListOfEnergyAttachedToArena"] = [
 ]
 # <<< factory CreateListOfEnergyAttachedToArena
 
+
 # >>> factory HandleNoDamageOrEffect
 CONTRACT["HandleNoDamageOrEffect"] = {"compare": ("f", "hl"), "preserve": ()}
 CASES["HandleNoDamageOrEffect"] = [
@@ -521,6 +523,7 @@ CASES["HandleNoDamageOrEffect"] = [
     dict(POISON, hl=0x1234, wram={0xCCC7: b"\x00"}),
 ]
 # <<< factory HandleNoDamageOrEffect
+
 
 # >>> factory ArcanineFlamethrower_CheckEnergy
 CONTRACT["ArcanineFlamethrower_CheckEnergy"] = {"compare": ("a", "f", "e", "hl", "b", "c", "d"), "preserve": ("b", "c", "d")}

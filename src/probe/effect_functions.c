@@ -224,6 +224,7 @@ static void adapt_CheckIfPlayAreaHasAnyDamage(ProbeState *s)
 /* <<< factory CheckIfPlayAreaHasAnyDamage */
 
 
+
 /* >>> factory CreateEnergyCardListFromDiscardPile_OnlyBasic */
 static void adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic(ProbeState *s)
 {
@@ -334,6 +335,7 @@ static void adapt_CreateListOfEnergyAttachedToArena(ProbeState *s)
 }
 /* <<< factory CreateListOfEnergyAttachedToArena */
 
+
 /* >>> factory HandleNoDamageOrEffect */
 static void adapt_HandleNoDamageOrEffect(ProbeState *s)
 {
@@ -342,6 +344,7 @@ static void adapt_HandleNoDamageOrEffect(ProbeState *s)
 	s->hl = r.hl;
 }
 /* <<< factory HandleNoDamageOrEffect */
+
 
 /* >>> factory ArcanineFlamethrower_CheckEnergy */
 static void adapt_ArcanineFlamethrower_CheckEnergy(ProbeState *s)
@@ -441,9 +444,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
 	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
 	{ "KrabbyCallForFamily_AISelectEffect", adapt_KrabbyCallForFamily_AISelectEffect },
-	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
-	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
-	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "ArcanineFlamethrower_CheckEnergy", adapt_ArcanineFlamethrower_CheckEnergy },
 	{ "ArcanineFlamethrower_DiscardEffect", adapt_ArcanineFlamethrower_DiscardEffect },
 	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
@@ -452,5 +452,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
 	{ "CheckIfTurnDuelistHasEvolvedCards", adapt_CheckIfTurnDuelistHasEvolvedCards },
 	{ "FindFirstNonBasicCardInPlayArea", adapt_FindFirstNonBasicCardInPlayArea },
+	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
+	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
+	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ NULL, NULL },
 };

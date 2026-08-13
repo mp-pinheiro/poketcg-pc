@@ -486,6 +486,7 @@ void DragonairSlam_AIEffect(void)
 /* <<< factory DragonairSlam_AIEffect */
 
 
+
 /* >>> factory CheckIfPlayAreaHasAnyDamage */
 /* effect_functions.asm:517-531. Zero-means-max: the count is post-tested
  * (dec+jr nz after the call), so an 8-bit count of 0 runs 256 times. */
@@ -689,6 +690,7 @@ void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
 }
 /* <<< factory KrabbyCallForFamily_AISelectEffect */
 
+
 /* >>> factory CreateListOfEnergyAttachedToArena */
 CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_t a)
 {
@@ -707,9 +709,9 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 	gb_write8(dst, 0xFFu);
 	return (CreateListOfEnergyAttachedToArenaResult){
 		count, count, (uint16_t)(locations + DECK_SIZE), 0xC0u};
-
 }
 /* <<< factory CreateListOfEnergyAttachedToArena */
+
 
 /* >>> factory HandleNoDamageOrEffect */
 HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl)
