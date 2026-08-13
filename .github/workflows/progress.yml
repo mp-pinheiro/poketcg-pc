@@ -29,3 +29,8 @@ jobs:
           fi
           git commit -m "chore(progress): daily snapshot"
           git push origin HEAD:main
+      - name: Deploy daily snapshot
+        run: npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

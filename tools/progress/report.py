@@ -410,8 +410,22 @@ def subcommand_build():
     gate_data = load_gate()
     report = compute(inv, routines_set, gate_data)
     report["recent"] = recent_ports(inv)
+    previous_report = None
+    if PROGRESS.exists():
+        try:
+            previous_report = json.loads(PROGRESS.read_text())
+        except json.JSONDecodeError:
+            pass
     commit = jj_commit_short()
-    if commit:
+    unchanged = previous_report is not None and all(
+        previous_report.get(key) == report.get(key)
+        for key in ("measures", "categories", "units", "functions", "recent")
+    )
+    if unchanged and previous_report.get("commit"):
+        report["commit"] = previous_report["commit"]
+        report["commit_url"] = previous_report.get("commit_url")
+        report["generated_at"] = previous_report.get("generated_at", report["generated_at"])
+    elif commit:
         report["commit"] = commit[:12]
         report["commit_url"] = f"https://github.com/mp-pinheiro/poketcg-pc/commit/{commit}"
 
@@ -435,7 +449,11 @@ def subcommand_build():
                     points_by_day[point["timestamp"] // 86400] = point
                 except (json.JSONDecodeError, KeyError, TypeError):
                     pass
-    points_by_day[line["timestamp"] // 86400] = line
+    day = line["timestamp"] // 86400
+    existing = points_by_day.get(day)
+    measure_keys = ("code", "code_total", "functions", "functions_total")
+    if existing is None or any(existing.get(key) != line[key] for key in measure_keys):
+        points_by_day[day] = line
     points = sorted(points_by_day.values(), key=lambda p: p.get("timestamp", 0))
     with open(HISTORY, "w") as f:
         for p in points:
