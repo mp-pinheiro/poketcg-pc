@@ -356,6 +356,11 @@ CASES["DiscardRetreatCostCards"] = [
 ]
 # <<< factory DiscardRetreatCostCards
 
+# >>> factory OppAction_DrawCard
+CONTRACT["OppAction_DrawCard"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["OppAction_DrawCard"] = [{}, dict(POISON), {"a": 1, "f": 0x10, "b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC100}]
+# <<< factory OppAction_DrawCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -588,3 +593,6 @@ MUTATIONS["PrintPlayAreaCardAttachedEnergies"] = {
 # >>> factory-mutation DiscardRetreatCostCards
 MUTATIONS["DiscardRetreatCostCards"] = {"source_symbol": "DiscardRetreatCostCards", "before": "hl = (uint16_t)(hl + 1u);", "after": "hl = (uint16_t)(hl + 2u);", "case_ids": ["DiscardRetreatCostCards-0", "DiscardRetreatCostCards-1", "DiscardRetreatCostCards-2"]}
 # <<< factory-mutation DiscardRetreatCostCards
+# >>> factory-mutation OppAction_DrawCard
+MUTATIONS["OppAction_DrawCard"] = {"source_symbol": "OppAction_DrawCard", "before": "return (OppActionDrawResult){r.a, r.f};", "after": "return (OppActionDrawResult){r.a, 0u};", "case_ids": ["OppAction_DrawCard-0", "OppAction_DrawCard-1", "OppAction_DrawCard-2"]}
+# <<< factory-mutation OppAction_DrawCard

@@ -256,6 +256,15 @@ static void adapt_DiscardRetreatCostCards(ProbeState *s)
 }
 /* <<< factory DiscardRetreatCostCards */
 
+/* >>> factory OppAction_DrawCard */
+static void adapt_OppAction_DrawCard(ProbeState *s)
+{
+	OppActionDrawResult r = OppAction_DrawCard();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory OppAction_DrawCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -288,5 +297,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
 	{ "PrintPlayAreaCardAttachedEnergies", adapt_PrintPlayAreaCardAttachedEnergies },
 	{ "DiscardRetreatCostCards", adapt_DiscardRetreatCostCards },
+	{ "OppAction_DrawCard", adapt_OppAction_DrawCard },
 	{ NULL, NULL },
 };

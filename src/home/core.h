@@ -109,4 +109,8 @@ typedef struct {
 
 DiscardRetreatCostCardsResult DiscardRetreatCostCards(void);
 /* <<< factory DiscardRetreatCostCards */
+/* >>> factory OppAction_DrawCard */
+typedef struct { uint8_t a; uint8_t f; } OppActionDrawResult;
+OppActionDrawResult OppAction_DrawCard(void);
+/* <<< factory OppAction_DrawCard */
 #endif /* POKETCG_HOME_CORE_H */

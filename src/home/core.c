@@ -696,3 +696,14 @@ DiscardRetreatCostCardsResult DiscardRetreatCostCards(void)
 	}
 }
 /* <<< factory DiscardRetreatCostCards */
+
+/* >>> factory OppAction_DrawCard */
+/* core.asm:6514-6520 */
+OppActionDrawResult OppAction_DrawCard(void)
+{
+	DrawCardResult r = DrawCardFromDeck();
+	if ((r.f & 0x10u) == 0u)
+		AddCardToHand(r.a);
+	return (OppActionDrawResult){r.a, r.f};
+}
+/* <<< factory OppAction_DrawCard */
