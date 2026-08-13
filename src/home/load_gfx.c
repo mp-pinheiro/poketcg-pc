@@ -332,12 +332,20 @@ void LoadBGPalette(uint8_t a)
 	LoadPaletteDataToBuffer(a);
 	{
 		uint8_t *p = wLoadedPalData_PTR;
-		if (*p)
+		/* The asm advances hl conditionally: `ld a,[hli]` reads the
+		 * DMG-BGP flag, and only when it is set does a second `ld a,[hli]`
+		 * consume the BGP byte. So the CGB palette count sits at +1 when
+		 * the flag is clear and at +2 when it is set. */
+		uint8_t offset = 1u;
+		if (*p) {
 			SetBGP(p[1]);
-		p += 2;
-		if (*p)
-			LoadPaletteDataFromHL((uint16_t)(wLoadedPalData_ADDR + 3u),
-					      wWhichBGPalIndex, *p);
+			offset = 2u;
+		}
+		uint8_t count = p[offset];
+		if (count)
+			LoadPaletteDataFromHL(
+				(uint16_t)(wLoadedPalData_ADDR + offset + 1u),
+				wWhichBGPalIndex, count);
 	}
 }
 

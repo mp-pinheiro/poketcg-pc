@@ -164,7 +164,16 @@ CASES = {
         {"b": 0, "c": 0xff},
     ],
     "Func_803b9": [{}, dict(POISON)],
-    "LoadBGPalette": [{}, dict(POISON)],
+    # a=1 has a zero DMG-BGP flag byte, so the CGB count sits one byte earlier
+    # than for a=0. Reading wBackgroundPalettesCGB is what makes the
+    # conditional pointer advance observable at all; the register-only
+    # contract above cannot see it.
+    "LoadBGPalette": [
+        {}, dict(POISON),
+        {"a": 1, "read": {0xCAF0: 64}},
+        {"a": 0, "read": {0xCAF0: 64}},
+        dict(POISON, a=1, read={0xCAF0: 64}),
+    ],
     "LoadPaletteDataFromHL": [{}, dict(POISON), {"b": 0, "c": 0}, {"b": 0, "c": 1}, {"b": 15, "c": 8}, {"b": 16, "c": 1}, {"b": 23, "c": 1}, {"b": 24, "c": 1}, {"b": 0, "c": 9}],
     "LoadOBPalette": [{}, dict(POISON)],
     "LoadPaletteDataToBuffer": [{}, dict(POISON), {"a": 0}, {"a": 0xff}],
