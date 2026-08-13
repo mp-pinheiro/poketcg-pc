@@ -139,4 +139,16 @@ CreateListOfEnergyAttachedToArenaResult CreateListOfEnergyAttachedToArena(uint8_
 typedef struct { uint8_t f; uint16_t hl; } HandleNoDamageOrEffectResult;
 HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl);
 /* <<< factory HandleNoDamageOrEffect */
+/* >>> factory ArcanineFlamethrower_CheckEnergy */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t e;
+	uint16_t hl;
+} ArcanineFlamethrowerCheckEnergyResult;
+ArcanineFlamethrowerCheckEnergyResult ArcanineFlamethrower_CheckEnergy(void);
+/* <<< factory ArcanineFlamethrower_CheckEnergy */
+/* >>> factory ArcanineFlamethrower_DiscardEffect */
+uint8_t ArcanineFlamethrower_DiscardEffect(void);
+/* <<< factory ArcanineFlamethrower_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

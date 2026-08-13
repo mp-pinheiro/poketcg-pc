@@ -97,6 +97,14 @@ static const uint8_t color_to_text[] = {
 
 #define KRABBY 0x4fu
 #define SUBSTATUS3_HEADACHE_F 1u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#define FIRE 0x00u
+#define NotEnoughFireEnergyText 0x00c1u
 /* <<< factory statics */
 
 
@@ -708,3 +716,34 @@ HandleNoDamageOrEffectResult HandleNoDamageOrEffect(uint16_t hl)
 	return (HandleNoDamageOrEffectResult){(uint8_t)(0x10u | (check.hl == 0u ? 0x80u : 0x00u)), check.hl};
 }
 /* <<< factory HandleNoDamageOrEffect */
+
+/* >>> factory ArcanineFlamethrower_CheckEnergy */
+/* effect_functions.asm:3533-3546 */
+ArcanineFlamethrowerCheckEnergyResult ArcanineFlamethrower_CheckEnergy(void)
+{
+	uint8_t energy;
+	uint8_t f;
+	uint16_t hl = NotEnoughFireEnergyText;
+
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	energy = gb_read8((uint16_t)(wAttachedEnergies_ADDR + FIRE));
+	f = 0x40u;
+	if (energy == 1u)
+		f |= 0x80u;
+	if ((energy & 0x0fu) == 0u)
+		f |= 0x20u;
+	if (energy == 0u)
+		f |= 0x10u;
+	return (ArcanineFlamethrowerCheckEnergyResult){energy, f, 0u, hl};
+}
+/* <<< factory ArcanineFlamethrower_CheckEnergy */
+
+/* >>> factory ArcanineFlamethrower_DiscardEffect */
+/* effect_functions.asm:3549-3554 */
+uint8_t ArcanineFlamethrower_DiscardEffect(void)
+{
+	uint8_t card = gb_read8(hTemp_ffa0_ADDR);
+	PutCardInDiscardPile(card);
+	return card;
+}
+/* <<< factory ArcanineFlamethrower_DiscardEffect */

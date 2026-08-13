@@ -341,6 +341,24 @@ static void adapt_HandleNoDamageOrEffect(ProbeState *s)
 }
 /* <<< factory HandleNoDamageOrEffect */
 
+/* >>> factory ArcanineFlamethrower_CheckEnergy */
+static void adapt_ArcanineFlamethrower_CheckEnergy(ProbeState *s)
+{
+	ArcanineFlamethrowerCheckEnergyResult r = ArcanineFlamethrower_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ArcanineFlamethrower_CheckEnergy */
+
+/* >>> factory ArcanineFlamethrower_DiscardEffect */
+static void adapt_ArcanineFlamethrower_DiscardEffect(ProbeState *s)
+{
+	s->a = ArcanineFlamethrower_DiscardEffect();
+}
+/* <<< factory ArcanineFlamethrower_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -383,5 +401,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
 	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
+	{ "ArcanineFlamethrower_CheckEnergy", adapt_ArcanineFlamethrower_CheckEnergy },
+	{ "ArcanineFlamethrower_DiscardEffect", adapt_ArcanineFlamethrower_DiscardEffect },
 	{ NULL, NULL },
 };

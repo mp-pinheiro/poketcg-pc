@@ -523,6 +523,22 @@ CASES["HandleNoDamageOrEffect"] = [
 ]
 # <<< factory HandleNoDamageOrEffect
 
+# >>> factory ArcanineFlamethrower_CheckEnergy
+CONTRACT["ArcanineFlamethrower_CheckEnergy"] = {"compare": ("a", "f", "e", "hl", "b", "c", "d"), "preserve": ("b", "c", "d")}
+CASES["ArcanineFlamethrower_CheckEnergy"] = [
+    {"wram": {0xCC1B: b"\x00" * 8}, "read": {0xCC1B: 8}},
+    dict(POISON, wram={0xCC1B: b"\xAA" * 8}, read={0xCC1B: 8}),
+]
+# <<< factory ArcanineFlamethrower_CheckEnergy
+
+# >>> factory ArcanineFlamethrower_DiscardEffect
+CONTRACT["ArcanineFlamethrower_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["ArcanineFlamethrower_DiscardEffect"] = [
+    {"wram": {0xFFA0: b"\x00"}},
+    dict(POISON, wram={0xFFA0: b"\x01"}),
+]
+# <<< factory ArcanineFlamethrower_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -837,3 +853,9 @@ MUTATIONS["HandleNoDamageOrEffect"] = {
     "case_ids": ["HandleNoDamageOrEffect-1", "HandleNoDamageOrEffect-2"],
 }
 # <<< factory-mutation HandleNoDamageOrEffect
+# >>> factory-mutation ArcanineFlamethrower_CheckEnergy
+MUTATIONS["ArcanineFlamethrower_CheckEnergy"] = {"source_symbol": "ArcanineFlamethrower_CheckEnergy", "before": "\tuint16_t hl = NotEnoughFireEnergyText;", "after": "\tuint16_t hl = (uint16_t)(NotEnoughFireEnergyText + 1u);", "case_ids": ["ArcanineFlamethrower_CheckEnergy-0", "ArcanineFlamethrower_CheckEnergy-1"]}
+# <<< factory-mutation ArcanineFlamethrower_CheckEnergy
+# >>> factory-mutation ArcanineFlamethrower_DiscardEffect
+MUTATIONS["ArcanineFlamethrower_DiscardEffect"] = {"source_symbol": "ArcanineFlamethrower_DiscardEffect", "before": "\tuint8_t card = gb_read8(hTemp_ffa0_ADDR);", "after": "\tuint8_t card = gb_read8((uint16_t)(hTemp_ffa0_ADDR + 1u));", "case_ids": ["ArcanineFlamethrower_DiscardEffect-1"]}
+# <<< factory-mutation ArcanineFlamethrower_DiscardEffect
