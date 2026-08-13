@@ -207,15 +207,12 @@ function renderRecent(entries) {
 
 function applyFilter() {
   const q = FILTER.value.toLowerCase();
-  for (const row of UNITS.querySelectorAll('tr.unit-row')) {
-    row.classList.toggle('hidden', q && !row.textContent.toLowerCase().includes(q));
-  }
 }
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json'),
-    fetch('data/history.jsonl').catch(() => null),
+    fetch('data/progress.json?v=545a43be'),
+    fetch('data/history.jsonl?v=545a43be').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
