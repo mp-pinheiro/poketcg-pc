@@ -1,0 +1,9 @@
+{
+  "fn": "OmastarSpikeCannon_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OmastarSpikeCannon_AIEffect\", \"registers\": {\"a\": 60, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52411\": \"003c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OmastarSpikeCannon_AIEffect\", \"mismatches\": {\"a\": [60, 61], \"bus\": {\"address\": 52412, \"reference\": \"003c\", \"native\": \"003d\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52411, 2]]}}}\n",
+  "restored": "{\"fn\": \"OmastarSpikeCannon_AIEffect\", \"registers\": {\"a\": 60, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52411\": \"003c\"}}, \"status\": \"PASS\"}\n"
+}

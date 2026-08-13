@@ -89,6 +89,7 @@ static const uint8_t color_to_text[] = {
 
 #define DUELVARS_BENCH1_CARD_HP 0xC9u
 
+#include "home/math.h"
 /* <<< factory statics */
 
 
@@ -605,3 +606,45 @@ AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void)
 	return (AIFindTargetForBenchAttackResult){target};
 }
 /* <<< factory AIFindTargetForBenchAttack */
+
+/* >>> factory ApplyExtraWaterEnergyDamageBonus */
+/* effect_functions.asm:2762-2822. */
+void ApplyExtraWaterEnergyDamageBonus(uint8_t b, uint8_t c)
+{
+	uint8_t metronome_cost = gb_read8(wMetronomeEnergyCost_ADDR);
+	if (metronome_cost != 0u) {
+		c = metronome_cost;
+		b = 0u;
+	}
+	GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
+	uint8_t water = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 3u));
+	if (c != 0u &&
+	    gb_read8(wTotalAttachedEnergies_ADDR) == water)
+		b = (uint8_t)(b + c);
+	if (water >= b && water != b) {
+		uint8_t bonus = (uint8_t)(water - b);
+		if (bonus >= 3u)
+			bonus = 2u;
+		AddToDamage(ATimes10(bonus));
+	}
+	uint8_t damage = gb_read8(wDamage_ADDR);
+	gb_write8(wAIMinDamage_ADDR, damage);
+	gb_write8(wAIMaxDamage_ADDR, damage);
+}
+/* <<< factory ApplyExtraWaterEnergyDamageBonus */
+
+/* >>> factory OmastarSpikeCannon_AIEffect */
+/* effect_functions.asm:8045-8052. */
+void OmastarSpikeCannon_AIEffect(void)
+{
+	SetExpectedAIDamage((uint8_t)30u, 0u, 60u);
+}
+/* <<< factory OmastarSpikeCannon_AIEffect */
+
+/* >>> factory ClairvoyanceEffect */
+/* effect_functions.asm:8058-8059. scf: sets carry, clears N/H, keeps Z. */
+uint8_t ClairvoyanceEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | (uint8_t)0x10u);
+}
+/* <<< factory ClairvoyanceEffect */

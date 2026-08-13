@@ -472,6 +472,29 @@ CASES["AIFindTargetForBenchAttack"] = [
 # <<< factory AIFindTargetForBenchAttack
 
 
+# >>> factory ApplyExtraWaterEnergyDamageBonus
+CONTRACT["ApplyExtraWaterEnergyDamageBonus"] = {"compare": (), "preserve": ()}
+CASES["ApplyExtraWaterEnergyDamageBonus"] = [
+    dict(POISON, b=1, c=1,
+         wram={0xCCF0: b"\x00", 0xCCB9: b"\x05",
+               0xFF97: b"\xC2", 0xFF9D: b"\x00"},
+         read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory ApplyExtraWaterEnergyDamageBonus
+
+# >>> factory OmastarSpikeCannon_AIEffect
+CONTRACT["OmastarSpikeCannon_AIEffect"] = {"compare": ("a",), "preserve": ()}
+CASES["OmastarSpikeCannon_AIEffect"] = [
+    dict(POISON, read={0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory OmastarSpikeCannon_AIEffect
+
+# >>> factory ClairvoyanceEffect
+CONTRACT["ClairvoyanceEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                                   "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["ClairvoyanceEffect"] = [dict(POISON)]
+# <<< factory ClairvoyanceEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -743,3 +766,27 @@ MUTATIONS["AIFindTargetForBenchAttack"] = {
     "case_ids": ["AIFindTargetForBenchAttack-0"],
 }
 # <<< factory-mutation AIFindTargetForBenchAttack
+# >>> factory-mutation ApplyExtraWaterEnergyDamageBonus
+MUTATIONS["ApplyExtraWaterEnergyDamageBonus"] = {
+    "source_symbol": "ApplyExtraWaterEnergyDamageBonus",
+    "before": "gb_write8(wAIMinDamage_ADDR, damage);",
+    "after": "gb_write8(wAIMinDamage_ADDR, (uint8_t)(damage + 1u));",
+    "case_ids": ["ApplyExtraWaterEnergyDamageBonus-0"],
+}
+# <<< factory-mutation ApplyExtraWaterEnergyDamageBonus
+# >>> factory-mutation OmastarSpikeCannon_AIEffect
+MUTATIONS["OmastarSpikeCannon_AIEffect"] = {
+    "source_symbol": "OmastarSpikeCannon_AIEffect",
+    "before": "\tSetExpectedAIDamage((uint8_t)30u, 0u, 60u);",
+    "after": "\tSetExpectedAIDamage((uint8_t)30u, 0u, 61u);",
+    "case_ids": ["OmastarSpikeCannon_AIEffect-0"],
+}
+# <<< factory-mutation OmastarSpikeCannon_AIEffect
+# >>> factory-mutation ClairvoyanceEffect
+MUTATIONS["ClairvoyanceEffect"] = {
+    "source_symbol": "ClairvoyanceEffect",
+    "before": "return (uint8_t)((f & 0x80u) | (uint8_t)0x10u);",
+    "after": "return (uint8_t)((f & 0x80u) | (uint8_t)0x00u);",
+    "case_ids": ["ClairvoyanceEffect-0"],
+}
+# <<< factory-mutation ClairvoyanceEffect

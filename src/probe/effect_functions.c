@@ -291,6 +291,28 @@ static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
 /* <<< factory AIFindTargetForBenchAttack */
 
 
+/* >>> factory ApplyExtraWaterEnergyDamageBonus */
+static void adapt_ApplyExtraWaterEnergyDamageBonus(ProbeState *s)
+{
+	ApplyExtraWaterEnergyDamageBonus(s->b, s->c);
+}
+/* <<< factory ApplyExtraWaterEnergyDamageBonus */
+
+/* >>> factory OmastarSpikeCannon_AIEffect */
+static void adapt_OmastarSpikeCannon_AIEffect(ProbeState *s)
+{
+	OmastarSpikeCannon_AIEffect();
+	s->a = gb_read8(wAIMaxDamage_ADDR);
+}
+/* <<< factory OmastarSpikeCannon_AIEffect */
+
+/* >>> factory ClairvoyanceEffect */
+static void adapt_ClairvoyanceEffect(ProbeState *s)
+{
+	s->f = ClairvoyanceEffect(s->f);
+}
+/* <<< factory ClairvoyanceEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -327,5 +349,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
 	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
+	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
+	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
+	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
 	{ NULL, NULL },
 };

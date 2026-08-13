@@ -119,4 +119,13 @@ AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(vo
 typedef struct { uint8_t a; } AIFindTargetForBenchAttackResult;
 AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void);
 /* <<< factory AIFindTargetForBenchAttack */
+/* >>> factory ApplyExtraWaterEnergyDamageBonus */
+void ApplyExtraWaterEnergyDamageBonus(uint8_t b, uint8_t c);
+/* <<< factory ApplyExtraWaterEnergyDamageBonus */
+/* >>> factory OmastarSpikeCannon_AIEffect */
+void OmastarSpikeCannon_AIEffect(void);
+/* <<< factory OmastarSpikeCannon_AIEffect */
+/* >>> factory ClairvoyanceEffect */
+uint8_t ClairvoyanceEffect(uint8_t f);
+/* <<< factory ClairvoyanceEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
