@@ -194,4 +194,7 @@ typedef struct {
 } TryGiveDamageCounter_DamageSwapResult;
 TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void);
 /* <<< factory TryGiveDamageCounter_DamageSwap */
+/* >>> factory TransparencyEffect */
+uint8_t TransparencyEffect(void);
+/* <<< factory TransparencyEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

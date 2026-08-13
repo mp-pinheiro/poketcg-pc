@@ -648,6 +648,11 @@ CASES["TryGiveDamageCounter_DamageSwap"] = [
 ]
 # <<< factory TryGiveDamageCounter_DamageSwap
 
+# >>> factory TransparencyEffect
+CONTRACT["TransparencyEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["TransparencyEffect"] = [{}, dict(POISON)]
+# <<< factory TransparencyEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1021,3 +1026,6 @@ MUTATIONS["Prophecy_CheckDeck"] = {"source_symbol": "Prophecy_CheckDeck", "befor
 # >>> factory-mutation TryGiveDamageCounter_DamageSwap
 MUTATIONS["TryGiveDamageCounter_DamageSwap"] = {"source_symbol": "TryGiveDamageCounter_DamageSwap", "before": "uint8_t new_hp = (uint8_t)(10u + gb_read8(source_hp));", "after": "uint8_t new_hp = (uint8_t)(20u + gb_read8(source_hp));", "case_ids": ["TryGiveDamageCounter_DamageSwap-0", "TryGiveDamageCounter_DamageSwap-1", "TryGiveDamageCounter_DamageSwap-2"]}
 # <<< factory-mutation TryGiveDamageCounter_DamageSwap
+# >>> factory-mutation TransparencyEffect
+MUTATIONS["TransparencyEffect"] = {"source_symbol": "TransparencyEffect", "before": "\treturn 0x10u;", "after": "\treturn 0x00u;", "case_ids": ["TransparencyEffect-0", "TransparencyEffect-1"]}
+# <<< factory-mutation TransparencyEffect

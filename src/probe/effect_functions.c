@@ -459,6 +459,13 @@ static void adapt_TryGiveDamageCounter_DamageSwap(ProbeState *s)
 }
 /* <<< factory TryGiveDamageCounter_DamageSwap */
 
+/* >>> factory TransparencyEffect */
+static void adapt_TransparencyEffect(ProbeState *s)
+{
+	s->f = (uint8_t)((s->f & 0x80u) | TransparencyEffect());
+}
+/* <<< factory TransparencyEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -514,5 +521,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Prophecy_CheckDeck", adapt_Prophecy_CheckDeck },
 	{ "TryGiveDamageCounter_DamageSwap", adapt_TryGiveDamageCounter_DamageSwap },
 	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
+	{ "TransparencyEffect", adapt_TransparencyEffect },
 	{ NULL, NULL },
 };

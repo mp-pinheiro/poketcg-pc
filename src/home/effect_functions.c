@@ -940,3 +940,11 @@ TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void)
 	};
 }
 /* <<< factory TryGiveDamageCounter_DamageSwap */
+
+/* >>> factory TransparencyEffect */
+/* effect_functions.asm:4699-4700 */
+uint8_t TransparencyEffect(void)
+{
+	return 0x10u;
+}
+/* <<< factory TransparencyEffect */
