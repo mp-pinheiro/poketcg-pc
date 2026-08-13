@@ -211,4 +211,7 @@ CalculateParticularAttachedEnergyNeededResult CalculateParticularAttachedEnergyN
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } AnimationDataResult;
 AnimationDataResult GetAnimationData(void);
 /* <<< factory GetAnimationData */
+/* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
+CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void);
+/* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
 #endif /* POKETCG_HOME_CORE_H */

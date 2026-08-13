@@ -180,6 +180,8 @@ CASES["SwitchCardPage"] = [
 ]
 # <<< factory SwitchCardPage
 
+
+
 # >>> factory CardPageSwitch_00
 CONTRACT["CardPageSwitch_00"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
 CASES["CardPageSwitch_00"] = [
@@ -187,6 +189,8 @@ CASES["CardPageSwitch_00"] = [
     dict(POISON, f=0),
 ]
 # <<< factory CardPageSwitch_00
+
+
 
 # >>> factory LoadLoaded1CardGfx
 CONTRACT["LoadLoaded1CardGfx"] = {"compare": (), "preserve": ()}
@@ -610,6 +614,15 @@ CASES["GetAnimationData"] = [
 ]
 # <<< factory GetAnimationData
 
+# >>> factory CardPageSwitch_PokemonOverviewOrDescription
+CONTRACT["CardPageSwitch_PokemonOverviewOrDescription"] = {"compare": ("a", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_PokemonOverviewOrDescription"] = [
+    {},
+    dict(POISON, f=0),
+]
+# <<< factory CardPageSwitch_PokemonOverviewOrDescription
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -715,9 +728,8 @@ MUTATIONS["PrintPracticeDuelInstructionsTextBoxLabel"] = {
 # <<< factory-mutation PrintPracticeDuelInstructionsTextBoxLabel
 # >>> factory-mutation SwitchCardPage
 MUTATIONS["SwitchCardPage"] = {
-    "source_symbol": "SwitchCardPage",
-    "before": "\treturn CardPageSwitch_00();\n}",
-    "after": "\treturn (CardPageResult){0u, 0u};\n}",
+    "before": "\t\treturn CardPageSwitch_00();",
+    "after": "\t\treturn (CardPageResult){0u, 0u};",
     "case_ids": ["SwitchCardPage-0", "SwitchCardPage-1"],
 }
 # <<< factory-mutation SwitchCardPage
@@ -962,3 +974,11 @@ MUTATIONS["GetAnimationData"] = {
     "case_ids": ["GetAnimationData-1", "GetAnimationData-2"],
 }
 # <<< factory-mutation GetAnimationData
+# >>> factory-mutation CardPageSwitch_PokemonOverviewOrDescription
+MUTATIONS["CardPageSwitch_PokemonOverviewOrDescription"] = {
+    "source_symbol": "CardPageSwitch_PokemonOverviewOrDescription",
+    "before": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};",
+    "after": "return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW + 1u, 0u};",
+    "case_ids": ["CardPageSwitch_PokemonOverviewOrDescription-0", "CardPageSwitch_PokemonOverviewOrDescription-1"],
+}
+# <<< factory-mutation CardPageSwitch_PokemonOverviewOrDescription

@@ -221,6 +221,44 @@ static uint8_t is_duelist_type(uint8_t a)
 #define CARD_LOCATION_DECK 0x00u
 
 #define ANIMATIONS_ADDR 0x4e32u
+
+/* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
+
+
+/* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
+/* core.asm:3797-3800 */
+CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void)
+{
+	return (CardPageResult){CARDPAGE_POKEMON_OVERVIEW, 0u};
+}
+/* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
+
+
+/* >>> factory SwitchCardPage */
+/* core.asm:3769-3790 */
+CardPageResult SwitchCardPage(uint8_t a)
+{
+	switch (a) {
+	case 0u:
+		return CardPageSwitch_00();
+	case CARDPAGE_POKEMON_OVERVIEW:
+		return CardPageSwitch_PokemonOverviewOrDescription();
+	default:
+		return (CardPageResult){a, 0u};
+	}
+}
+/* <<< factory SwitchCardPage */
+
+
+/* >>> factory CardPageSwitch_00 */
+/* core.asm:3792-3795 */
+CardPageResult CardPageSwitch_00(void)
+{
+	return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C, 1u};
+}
+/* <<< factory CardPageSwitch_00 */
+
+/* SwitchCardPage dispatches the page-zero and overview handlers ported here. */
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -425,22 +463,6 @@ void PrintPracticeDuelInstructionsTextBoxLabel(void)
 }
 /* <<< factory PrintPracticeDuelInstructionsTextBoxLabel */
 
-/* >>> factory SwitchCardPage */
-/* core.asm:3769-3790 */
-CardPageResult SwitchCardPage(uint8_t a)
-{
-	(void)a;
-	return CardPageSwitch_00();
-}
-/* <<< factory SwitchCardPage */
-
-/* >>> factory CardPageSwitch_00 */
-/* core.asm:3792-3795 */
-CardPageResult CardPageSwitch_00(void)
-{
-	return (CardPageResult){CARDPAGE_POKEMON_DESCRIPTION_C, 1u};
-}
-/* <<< factory CardPageSwitch_00 */
 
 /* >>> factory LoadLoaded1CardGfx */
 /* core.asm:3925-3932 */

@@ -110,6 +110,8 @@ static void adapt_SwitchCardPage(ProbeState *s)
 }
 /* <<< factory SwitchCardPage */
 
+
+
 /* >>> factory CardPageSwitch_00 */
 static void adapt_CardPageSwitch_00(ProbeState *s)
 {
@@ -117,6 +119,8 @@ static void adapt_CardPageSwitch_00(ProbeState *s)
 	s->a = r.a;
 }
 /* <<< factory CardPageSwitch_00 */
+
+
 
 /* >>> factory LoadLoaded1CardGfx */
 static void adapt_LoadLoaded1CardGfx(ProbeState *s)
@@ -469,6 +473,15 @@ static void adapt_GetAnimationData(ProbeState *s)
 }
 /* <<< factory GetAnimationData */
 
+/* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
+static void adapt_CardPageSwitch_PokemonOverviewOrDescription(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_PokemonOverviewOrDescription();
+	s->a = r.a;
+}
+/* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
+
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -482,8 +495,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
 	{ "PrintPracticeDuelDrMasonInstructions", adapt_PrintPracticeDuelDrMasonInstructions },
 	{ "PrintPracticeDuelInstructionsTextBoxLabel", adapt_PrintPracticeDuelInstructionsTextBoxLabel },
-	{ "SwitchCardPage", adapt_SwitchCardPage },
-	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
 	{ "LoadLoaded1CardGfx", adapt_LoadLoaded1CardGfx },
 	{ "LookForCardIDInPlayArea_Bank5", adapt_LookForCardIDInPlayArea_Bank5 },
 	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
@@ -526,5 +537,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
 	{ "GetAnimationData", adapt_GetAnimationData },
+	{ "SwitchCardPage", adapt_SwitchCardPage },
+	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
+	{ "CardPageSwitch_PokemonOverviewOrDescription", adapt_CardPageSwitch_PokemonOverviewOrDescription },
 	{ NULL, NULL },
 };
