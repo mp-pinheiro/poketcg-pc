@@ -733,11 +733,16 @@ def apply_graphql_batch(actions: list[dict], snapshot: dict) -> None:
     )
     data = run_graphql(query, variables)
     if close_aliases:
+        snapshot = fetch_snapshot()
+        by_work, _ = indexed_issues(snapshot)
         close_declarations = []
         close_mutations = []
         close_variables = {}
         for index, alias in enumerate(close_aliases):
+            action = actions[int(alias[1:])]
             issue = (data.get(alias) or {}).get("issue") or {}
+            if not issue.get("id"):
+                issue = by_work.get(action["work_id"]) or {}
             if not issue.get("id"):
                 raise ModelError(f"create mutation {alias} returned no issue ID")
             variable = f"c{index}"

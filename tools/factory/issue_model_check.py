@@ -261,6 +261,7 @@ def main() -> int:
     graphql_calls = []
     original_metadata = issues.github_node_metadata
     original_graphql = issues.run_graphql
+    original_fetch = issues.fetch_snapshot
     issues.github_node_metadata = lambda labels: ("repo-node", {"port": "label-node"})
     issues.run_graphql = lambda query, variables: (
         graphql_calls.append((query, variables))
@@ -270,6 +271,7 @@ def main() -> int:
             else {"c0": {"issue": {"id": "issue-node", "number": 10}}}
         )
     )
+    issues.fetch_snapshot = lambda: {"schema": 1, "issues": []}
     try:
         issues.apply_graphql_batch(
             [{
@@ -285,11 +287,46 @@ def main() -> int:
     finally:
         issues.github_node_metadata = original_metadata
         issues.run_graphql = original_graphql
+        issues.fetch_snapshot = original_fetch
     assert len(graphql_calls) == 2
     assert "createIssue" in graphql_calls[0][0]
     assert graphql_calls[0][1]["v0"]["repositoryId"] == "repo-node"
     assert graphql_calls[0][1]["v0"]["labelIds"] == ["label-node"]
     assert graphql_calls[1][1]["c0"]["state"] == "CLOSED"
+    graphql_calls.clear()
+    created_work_id = "port:v1:src/home/demo.asm:Created"
+    created_body = issues.marker_for(created_work_id) + "\n\nbody"
+    reflected_create = {
+        "id": "issue-node", "number": 10, "title": "Created",
+        "body": created_body, "state": "open", "labels": ["port"], "url": "",
+    }
+    issues.github_node_metadata = lambda labels: ("repo-node", {"port": "label-node"})
+    issues.run_graphql = lambda query, variables: (
+        graphql_calls.append((query, variables))
+        or (
+            {"a0": {"issue": None}}
+            if "createIssue" in query
+            else {"c0": {"issue": {"id": "issue-node", "number": 10}}}
+        )
+    )
+    issues.fetch_snapshot = lambda: {
+        "schema": 1, "issues": [reflected_create],
+    }
+    try:
+        issues.apply_graphql_batch(
+            [{
+                "action": "create",
+                "work_id": created_work_id,
+                "title": "Created", "body": created_body, "labels": ["port"],
+                "desired_state": "closed",
+            }],
+            {"schema": 1, "issues": []},
+        )
+    finally:
+        issues.github_node_metadata = original_metadata
+        issues.run_graphql = original_graphql
+        issues.fetch_snapshot = original_fetch
+    assert graphql_calls[1][1]["c0"]["id"] == "issue-node"
 
 
 
