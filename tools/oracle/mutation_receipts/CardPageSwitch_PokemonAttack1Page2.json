@@ -1,0 +1,9 @@
+{
+  "fn": "CardPageSwitch_PokemonAttack1Page2",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardPageSwitch_PokemonAttack1Page2\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 52281, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52278\": \"000001\", \"52295\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardPageSwitch_PokemonAttack1Page2\", \"mismatches\": {\"hl\": [52281, 52280]}}\n",
+  "restored": "{\"fn\": \"CardPageSwitch_PokemonAttack1Page2\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 52281, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52278\": \"000001\", \"52295\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -444,6 +444,26 @@ CASES["InitVariablesToBeginDuel"] = [
 ]
 # <<< factory InitVariablesToBeginDuel
 
+# >>> factory CardPageSwitch_PokemonAttack1Page2
+CONTRACT["CardPageSwitch_PokemonAttack1Page2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_PokemonAttack1Page2"] = [
+    {},
+    dict(POISON, wram={0xCC36: b"\x00\x00\x01", 0xCC47: b"\x00"}),
+    {"wram": {0xCC36: b"\x00\x00\x00", 0xCC47: b"\x01"}},
+]
+# <<< factory CardPageSwitch_PokemonAttack1Page2
+
+# >>> factory CardPageSwitch_PokemonAttack2Page1
+CONTRACT["CardPageSwitch_PokemonAttack2Page1"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_PokemonAttack2Page1"] = [
+	{"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x00\x00\x00\x00"}},
+	{"wram": {0xCC36: b"\x11\x22\x33\x44", 0xCC47: b"\x00\x00\x00\x00"}},
+	{"wram": {0xCC36: b"\x00\x00\x00\x00", 0xCC47: b"\x11\x22\x33\x44"}},
+	dict(POISON, wram={0xCC36: b"\xAA\xBB\xCC\xDD", 0xCC47: b"\x00\x00\x00\x00"}),
+	{"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xCC36: b"\x55\x66\x77\x88", 0xCC47: b"\x99\xAA\xBB\xCC"}},
+]
+# <<< factory CardPageSwitch_PokemonAttack2Page1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -702,3 +722,9 @@ MUTATIONS["Func_6423"] = {"source_symbol": "Func_6423", "before": "value = gb_re
 # >>> factory-mutation InitVariablesToBeginDuel
 MUTATIONS["InitVariablesToBeginDuel"] = {"source_symbol": "InitVariablesToBeginDuel", "before": "\t\t((a & DUELIST_TYPE_AI_OPP) != 0u));", "after": "\t\t((a & 0x40u) != 0u));", "case_ids": ["InitVariablesToBeginDuel-1", "InitVariablesToBeginDuel-3", "InitVariablesToBeginDuel-5"]}
 # <<< factory-mutation InitVariablesToBeginDuel
+# >>> factory-mutation CardPageSwitch_PokemonAttack1Page2
+MUTATIONS["CardPageSwitch_PokemonAttack1Page2"] = {"source_symbol": "CardPageSwitch_PokemonAttack1Page2", "before": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u);", "after": "*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 1u);", "case_ids": ["CardPageSwitch_PokemonAttack1Page2-1", "CardPageSwitch_PokemonAttack1Page2-2"]}
+# <<< factory-mutation CardPageSwitch_PokemonAttack1Page2
+# >>> factory-mutation CardPageSwitch_PokemonAttack2Page1
+MUTATIONS["CardPageSwitch_PokemonAttack2Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack2Page1", "before": "\tuint16_t hl = wLoadedCard1Atk2Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack2Page1-2", "CardPageSwitch_PokemonAttack2Page1-3", "CardPageSwitch_PokemonAttack2Page1-4"]}
+# <<< factory-mutation CardPageSwitch_PokemonAttack2Page1

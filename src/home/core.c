@@ -879,3 +879,21 @@ uint16_t CreateCardAttrBlkPacket(uint8_t a, uint8_t d, uint8_t e)
 	return wTempSGBPacket_ADDR;
 }
 /* <<< factory CreateCardAttrBlkPacket */
+
+/* >>> factory CardPageSwitch_PokemonAttack1Page2 */
+/* core.asm:3811-3815 */
+CardPageExistsResult CardPageSwitch_PokemonAttack1Page2(uint16_t *hl)
+{
+	*hl = (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u);
+	return CheckCardPageExists(hl);
+}
+/* <<< factory CardPageSwitch_PokemonAttack1Page2 */
+
+/* >>> factory CardPageSwitch_PokemonAttack2Page1 */
+/* core.asm:3817-3821 */
+CardPageExistsResult CardPageSwitch_PokemonAttack2Page1(void)
+{
+	uint16_t hl = wLoadedCard1Atk2Name_ADDR;
+	return CheckCardPageExists(&hl);
+}
+/* <<< factory CardPageSwitch_PokemonAttack2Page1 */

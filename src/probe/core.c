@@ -323,6 +323,24 @@ static void adapt_CreateCardAttrBlkPacket(ProbeState *s)
 }
 /* <<< factory CreateCardAttrBlkPacket */
 
+/* >>> factory CardPageSwitch_PokemonAttack1Page2 */
+static void adapt_CardPageSwitch_PokemonAttack1Page2(ProbeState *s)
+{
+	CardPageExistsResult r = CardPageSwitch_PokemonAttack1Page2(&s->hl);
+	s->a = r.a;
+	s->f = r.zero ? 0x80u : 0x00u;
+}
+/* <<< factory CardPageSwitch_PokemonAttack1Page2 */
+
+/* >>> factory CardPageSwitch_PokemonAttack2Page1 */
+static void adapt_CardPageSwitch_PokemonAttack2Page1(ProbeState *s)
+{
+	CardPageExistsResult r = CardPageSwitch_PokemonAttack2Page1();
+	s->a = r.a;
+	s->f = r.zero ? 0x80u : 0x00u;
+}
+/* <<< factory CardPageSwitch_PokemonAttack2Page1 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -363,5 +381,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "InitVariablesToBeginDuel", adapt_InitVariablesToBeginDuel },
 	{ "SetSGB3ToCardPalette", adapt_SetSGB3ToCardPalette },
 	{ "CreateCardAttrBlkPacket", adapt_CreateCardAttrBlkPacket },
+	{ "CardPageSwitch_PokemonAttack1Page2", adapt_CardPageSwitch_PokemonAttack1Page2 },
+	{ "CardPageSwitch_PokemonAttack2Page1", adapt_CardPageSwitch_PokemonAttack2Page1 },
 	{ NULL, NULL },
 };

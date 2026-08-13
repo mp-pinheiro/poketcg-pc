@@ -140,4 +140,10 @@ void InitVariablesToBeginDuel(void);
 /* >>> factory CreateCardAttrBlkPacket */
 uint16_t CreateCardAttrBlkPacket(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory CreateCardAttrBlkPacket */
+/* >>> factory CardPageSwitch_PokemonAttack1Page2 */
+CardPageExistsResult CardPageSwitch_PokemonAttack1Page2(uint16_t *hl);
+/* <<< factory CardPageSwitch_PokemonAttack1Page2 */
+/* >>> factory CardPageSwitch_PokemonAttack2Page1 */
+CardPageExistsResult CardPageSwitch_PokemonAttack2Page1(void);
+/* <<< factory CardPageSwitch_PokemonAttack2Page1 */
 #endif /* POKETCG_HOME_CORE_H */
