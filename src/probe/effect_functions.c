@@ -648,6 +648,13 @@ static void adapt_GloomPoisonPowder_AIEffect(ProbeState *s)
 }
 /* <<< factory GloomPoisonPowder_AIEffect */
 
+/* >>> factory FoulOdorEffect */
+static void adapt_FoulOdorEffect(ProbeState *s)
+{
+	s->f = FoulOdorEffect().f;
+}
+/* <<< factory FoulOdorEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -724,5 +731,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionSpray_PlayAreaEvolutionCheck", adapt_DevolutionSpray_PlayAreaEvolutionCheck },
 	{ "SpitPoison_AIEffect", adapt_SpitPoison_AIEffect },
 	{ "GloomPoisonPowder_AIEffect", adapt_GloomPoisonPowder_AIEffect },
+	{ "FoulOdorEffect", adapt_FoulOdorEffect },
 	{ NULL, NULL },
 };

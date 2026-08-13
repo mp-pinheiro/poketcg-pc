@@ -269,4 +269,7 @@ void SpitPoison_AIEffect(void);
 /* >>> factory GloomPoisonPowder_AIEffect */
 void GloomPoisonPowder_AIEffect(void);
 /* <<< factory GloomPoisonPowder_AIEffect */
+/* >>> factory FoulOdorEffect */
+QueueStatusConditionResult FoulOdorEffect(void);
+/* <<< factory FoulOdorEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

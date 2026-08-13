@@ -1262,3 +1262,15 @@ void GloomPoisonPowder_AIEffect(void)
 	UpdateExpectedAIDamage_AccountForPoison(10u, 10u, 10u);
 }
 /* <<< factory GloomPoisonPowder_AIEffect */
+
+/* >>> factory FoulOdorEffect */
+QueueStatusConditionResult FoulOdorEffect(void)
+{
+	QueueStatusConditionResult r;
+	(void)ConfusionEffect();
+	SwapTurn();
+	r = ConfusionEffect();
+	SwapTurn();
+	return r;
+}
+/* <<< factory FoulOdorEffect */

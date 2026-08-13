@@ -869,6 +869,21 @@ CASES["GloomPoisonPowder_AIEffect"] = [
 ]
 # <<< factory GloomPoisonPowder_AIEffect
 
+# >>> factory FoulOdorEffect
+CONTRACT["FoulOdorEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["FoulOdorEffect"] = [
+    {"wram": {hWhoseTurn: b"\x00", wWhoseTurn: b"\x01"},
+     "read": {hWhoseTurn: 1, wWhoseTurn: 1, wStatusConditionQueue: 6,
+              wStatusConditionQueueIndex: 1}},
+    {"wram": {hWhoseTurn: b"\x01", wWhoseTurn: b"\x00"},
+     "read": {hWhoseTurn: 1, wWhoseTurn: 1, wStatusConditionQueue: 6,
+              wStatusConditionQueueIndex: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\x00", wWhoseTurn: b"\x01"},
+         read={hWhoseTurn: 1, wWhoseTurn: 1, wStatusConditionQueue: 6,
+               wStatusConditionQueueIndex: 1}),
+]
+# <<< factory FoulOdorEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1381,3 +1396,11 @@ MUTATIONS["GloomPoisonPowder_AIEffect"] = {
     "case_ids": ["GloomPoisonPowder_AIEffect-0"],
 }
 # <<< factory-mutation GloomPoisonPowder_AIEffect
+# >>> factory-mutation FoulOdorEffect
+MUTATIONS["FoulOdorEffect"] = {
+    "source_symbol": "FoulOdorEffect",
+    "before": "\tSwapTurn();\n\treturn r;",
+    "after": "\treturn r;",
+    "case_ids": ["FoulOdorEffect-0", "FoulOdorEffect-1", "FoulOdorEffect-2"],
+}
+# <<< factory-mutation FoulOdorEffect
