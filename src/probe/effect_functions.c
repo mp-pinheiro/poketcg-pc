@@ -313,6 +313,13 @@ static void adapt_ClairvoyanceEffect(ProbeState *s)
 }
 /* <<< factory ClairvoyanceEffect */
 
+/* >>> factory KrabbyCallForFamily_AISelectEffect */
+static void adapt_KrabbyCallForFamily_AISelectEffect(ProbeState *s)
+{
+	KrabbyCallForFamily_AISelectEffect(s->c, (uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory KrabbyCallForFamily_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -352,5 +359,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
 	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
 	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
+	{ "KrabbyCallForFamily_AISelectEffect", adapt_KrabbyCallForFamily_AISelectEffect },
 	{ NULL, NULL },
 };

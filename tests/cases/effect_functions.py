@@ -495,6 +495,15 @@ CONTRACT["ClairvoyanceEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"
 CASES["ClairvoyanceEffect"] = [dict(POISON)]
 # <<< factory ClairvoyanceEffect
 
+# >>> factory KrabbyCallForFamily_AISelectEffect
+CONTRACT["KrabbyCallForFamily_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["KrabbyCallForFamily_AISelectEffect"] = [
+    {"c": 0, "d": 0, "e": 0, "read": {0xFFA0: 1}},
+    dict(POISON, c=1, d=0x12, e=0x34, read={0xFFA0: 1}),
+    {"c": 0xFF, "d": 0xFF, "e": 0xFF, "read": {0xFFA0: 1}},
+]
+# <<< factory KrabbyCallForFamily_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -790,3 +799,6 @@ MUTATIONS["ClairvoyanceEffect"] = {
     "case_ids": ["ClairvoyanceEffect-0"],
 }
 # <<< factory-mutation ClairvoyanceEffect
+# >>> factory-mutation KrabbyCallForFamily_AISelectEffect
+MUTATIONS["KrabbyCallForFamily_AISelectEffect"] = {"source_symbol": "KrabbyCallForFamily_AISelectEffect", "before": "if ((uint8_t)card_id == KRABBY)", "after": "if ((uint8_t)card_id != KRABBY)", "case_ids": ["KrabbyCallForFamily_AISelectEffect-0", "KrabbyCallForFamily_AISelectEffect-1"]}
+# <<< factory-mutation KrabbyCallForFamily_AISelectEffect

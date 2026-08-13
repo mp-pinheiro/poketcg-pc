@@ -90,6 +90,13 @@ static const uint8_t color_to_text[] = {
 #define DUELVARS_BENCH1_CARD_HP 0xC9u
 
 #include "home/math.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+
+#define KRABBY 0x4fu
+#define SUBSTATUS3_HEADACHE_F 1u
 /* <<< factory statics */
 
 
@@ -648,3 +655,23 @@ uint8_t ClairvoyanceEffect(uint8_t f)
 	return (uint8_t)((f & 0x80u) | (uint8_t)0x10u);
 }
 /* <<< factory ClairvoyanceEffect */
+
+/* >>> factory KrabbyCallForFamily_AISelectEffect */
+/* effect_functions.asm:2946-2966 */
+void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		uint16_t card_id = GetCardIDFromDeckIndex(card);
+		if ((uint8_t)card_id == KRABBY)
+			return;
+	}
+}
+/* <<< factory KrabbyCallForFamily_AISelectEffect */

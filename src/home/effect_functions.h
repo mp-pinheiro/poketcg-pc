@@ -128,4 +128,7 @@ void OmastarSpikeCannon_AIEffect(void);
 /* >>> factory ClairvoyanceEffect */
 uint8_t ClairvoyanceEffect(uint8_t f);
 /* <<< factory ClairvoyanceEffect */
+/* >>> factory KrabbyCallForFamily_AISelectEffect */
+void KrabbyCallForFamily_AISelectEffect(uint8_t c, uint16_t de);
+/* <<< factory KrabbyCallForFamily_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
