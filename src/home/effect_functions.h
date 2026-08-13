@@ -263,4 +263,7 @@ MaintenanceHandCheckResult Maintenance_HandCheck(void);
 typedef struct { uint16_t hl; uint8_t f; } DevolutionSprayPlayAreaEvolutionCheckResult;
 DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionCheck(void);
 /* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
+/* >>> factory SpitPoison_AIEffect */
+void SpitPoison_AIEffect(void);
+/* <<< factory SpitPoison_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

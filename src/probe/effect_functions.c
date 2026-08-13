@@ -632,6 +632,14 @@ static void adapt_DevolutionSpray_PlayAreaEvolutionCheck(ProbeState *s)
 }
 /* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
 
+/* >>> factory SpitPoison_AIEffect */
+static void adapt_SpitPoison_AIEffect(ProbeState *s)
+{
+	(void)s;
+	SpitPoison_AIEffect();
+}
+/* <<< factory SpitPoison_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -706,5 +714,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Maintenance_HandCheck", adapt_Maintenance_HandCheck },
 	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
 	{ "DevolutionSpray_PlayAreaEvolutionCheck", adapt_DevolutionSpray_PlayAreaEvolutionCheck },
+	{ "SpitPoison_AIEffect", adapt_SpitPoison_AIEffect },
 	{ NULL, NULL },
 };

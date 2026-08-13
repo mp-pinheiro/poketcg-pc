@@ -849,6 +849,18 @@ CASES["DevolutionSpray_PlayAreaEvolutionCheck"] = [
 ]
 # <<< factory DevolutionSpray_PlayAreaEvolutionCheck
 
+# >>> factory SpitPoison_AIEffect
+CONTRACT["SpitPoison_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["SpitPoison_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory SpitPoison_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1345,3 +1357,11 @@ MUTATIONS["DevolutionSpray_PlayAreaEvolutionCheck"] = {
     "case_ids": ["DevolutionSpray_PlayAreaEvolutionCheck-0", "DevolutionSpray_PlayAreaEvolutionCheck-1", "DevolutionSpray_PlayAreaEvolutionCheck-2"],
 }
 # <<< factory-mutation DevolutionSpray_PlayAreaEvolutionCheck
+# >>> factory-mutation SpitPoison_AIEffect
+MUTATIONS["SpitPoison_AIEffect"] = {
+    "source_symbol": "SpitPoison_AIEffect",
+    "before": "SetExpectedAIDamage(5u, 0u, 10u);",
+    "after": "SetExpectedAIDamage(6u, 0u, 10u);",
+    "case_ids": ["SpitPoison_AIEffect-0", "SpitPoison_AIEffect-1", "SpitPoison_AIEffect-2"],
+}
+# <<< factory-mutation SpitPoison_AIEffect

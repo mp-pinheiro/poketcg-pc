@@ -1247,3 +1247,11 @@ DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionChe
 	};
 }
 /* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
+
+/* >>> factory SpitPoison_AIEffect */
+/* effect_functions.asm:1435-1438 */
+void SpitPoison_AIEffect(void)
+{
+	SetExpectedAIDamage(5u, 0u, 10u);
+}
+/* <<< factory SpitPoison_AIEffect */
