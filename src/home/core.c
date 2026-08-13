@@ -190,6 +190,8 @@ CardPageResult CardPageSwitch_08(void)
 /* <<< factory CardPageSwitch_08 */
 
 #include "home/core.h"
+
+#define FIRE 0x00u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -779,3 +781,24 @@ PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_
 	return (PrintEnergiesResult){value, b, e};
 }
 /* <<< factory PrintEnergiesOfColor */
+
+/* >>> factory PrintCardPageWeaknessesOrResistances */
+/* core.asm:4432-4455 */
+void PrintCardPageWeaknessesOrResistances(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint8_t mask = a;
+	uint8_t type = FIRE;
+
+	for (;;) {
+		type = (uint8_t)(type + 1u);
+		if (type >= 8u)
+			break;
+
+		if (mask & 0x80u) {
+			JPWriteByteToBGMap0(type, b, c);
+			b = (uint8_t)(b + 1u);
+		}
+		mask = (uint8_t)(mask << 1);
+	}
+}
+/* <<< factory PrintCardPageWeaknessesOrResistances */

@@ -28,4 +28,11 @@ AIDecideResult AIDecide_Lass(void);
 /* >>> factory AIDecide_Imakuni */
 AIDecideResult AIDecide_Imakuni(void);
 /* <<< factory AIDecide_Imakuni */
+/* >>> factory AIDecide_PokemonFlute */
+typedef struct { uint8_t a, f; } AIDecidePokemonFluteResult;
+AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c);
+/* <<< factory AIDecide_PokemonFlute */
+/* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
+AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void);
+/* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -123,4 +123,7 @@ void PrintSortNumberInCardList(void);
 typedef struct { uint8_t a; uint8_t b; uint8_t e; } PrintEnergiesResult;
 PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_t e);
 /* <<< factory PrintEnergiesOfColor */
+/* >>> factory PrintCardPageWeaknessesOrResistances */
+void PrintCardPageWeaknessesOrResistances(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory PrintCardPageWeaknessesOrResistances */
 #endif /* POKETCG_HOME_CORE_H */

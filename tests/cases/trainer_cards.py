@@ -73,6 +73,21 @@ CASES["AIDecide_Imakuni"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x00"}},
 ]
 # <<< factory AIDecide_Imakuni
+# >>> factory AIDecide_PokemonFlute
+CONTRACT["AIDecide_PokemonFlute"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonFlute"] = [
+    {"c": 0, "wram": {0xCC0E: b"\x01", 0xC510: b"\xff", 0xC3EF: b"\x00"}},
+    {"c": 0, "wram": {0xCC0E: b"\x01", 0xC510: b"\x00\xff", 0xC3EF: b"\x00",
+                      0xCE06: b"\xff", 0xCE08: b"\xff"}},
+]
+# <<< factory AIDecide_PokemonFlute
+# >>> factory AIDecide_ClefairyDollOrMysteriousFossil
+CONTRACT["AIDecide_ClefairyDollOrMysteriousFossil"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_ClefairyDollOrMysteriousFossil"] = [
+    {"wram": {0xC3EF: b"\x06"}},
+    {"wram": {0xC3EF: b"\x03", 0xC2BB: b"\x00"}},
+]
+# <<< factory AIDecide_ClefairyDollOrMysteriousFossil
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

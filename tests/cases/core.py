@@ -389,6 +389,17 @@ CASES["PrintEnergiesOfColor"] = [
 ]
 # <<< factory PrintEnergiesOfColor
 
+# >>> factory PrintCardPageWeaknessesOrResistances
+CONTRACT["PrintCardPageWeaknessesOrResistances"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["PrintCardPageWeaknessesOrResistances"] = [
+    {"read": {0x9800: 0x400}},
+    dict(POISON, a=0x80, b=0, c=0, read={0x9800: 0x400}),
+    dict(POISON, a=0xAA, b=1, c=1, read={0x9800: 0x400}),
+    {"a": 0x40, "b": 2, "c": 3, "read": {0x9800: 0x400}},
+    {"a": 0xC0, "b": 0x1F, "c": 2, "read": {0x9800: 0x400}},
+]
+# <<< factory PrintCardPageWeaknessesOrResistances
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -640,3 +651,6 @@ MUTATIONS["PrintEnergiesOfColor"] = {
     "case_ids": ["PrintEnergiesOfColor-2", "PrintEnergiesOfColor-3", "PrintEnergiesOfColor-4"],
 }
 # <<< factory-mutation PrintEnergiesOfColor
+# >>> factory-mutation PrintCardPageWeaknessesOrResistances
+MUTATIONS["PrintCardPageWeaknessesOrResistances"] = {"source_symbol": "PrintCardPageWeaknessesOrResistances", "before": "if (mask & 0x80u)", "after": "if (mask & 0x40u)", "case_ids": ["PrintCardPageWeaknessesOrResistances-1", "PrintCardPageWeaknessesOrResistances-2", "PrintCardPageWeaknessesOrResistances-4"]}
+# <<< factory-mutation PrintCardPageWeaknessesOrResistances

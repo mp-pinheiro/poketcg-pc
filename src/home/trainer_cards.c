@@ -197,3 +197,49 @@ AIDecideResult AIDecide_Imakuni(void)
 	return (AIDecideResult){0x10u};
 }
 /* <<< factory AIDecide_Imakuni */
+/* >>> factory AIDecide_PokemonFlute */
+AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c)
+{
+	SwapTurn();
+	CardListResult discard = CreateDiscardPileCardList(c);
+	SwapTurn();
+	if (discard.f & 0x10u)
+		return (AIDecidePokemonFluteResult){discard.a, (uint8_t)(discard.a == 0u ? 0x80u : 0u)};
+	uint8_t count = GetNonTurnDuelistVariable(0xEFu).a;
+	if (count >= 6u)
+		return (AIDecidePokemonFluteResult){count, (uint8_t)(count == 0u ? 0x80u : 0u)};
+	wce06 = 0xFFu;
+	wce08 = 0xFFu;
+	for (uint16_t p = wDuelTempList_ADDR;; p++) {
+		uint8_t index = gb_read8(p);
+		if (index == 0xFFu)
+			break;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u ||
+		    wLoadedCard1HP >= wce06)
+			continue;
+		wce06 = wLoadedCard1HP;
+		wce08 = index;
+	}
+	if (wOpponentDeckID == 0x34u) {
+		if (Random(10u) >= 2u)
+			return (AIDecidePokemonFluteResult){0, 0};
+		return (AIDecidePokemonFluteResult){wce08, wce08 == 0xFFu ? 0u : 0x10u};
+	}
+	if (wce06 >= 50u)
+		return (AIDecidePokemonFluteResult){wce06, 0};
+	return (AIDecidePokemonFluteResult){wce08, 0x10u};
+}
+/* <<< factory AIDecide_PokemonFlute */
+/* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
+AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
+{
+	uint8_t count = GetTurnDuelistVariable(0xEFu).a;
+	if (count >= 6u)
+		return (AIDecidePokemonFluteResult){count, 0};
+	uint8_t arena = GetTurnDuelistVariable(0xBBu).a;
+	if ((uint8_t)GetCardIDFromDeckIndex(arena) == 0xB0u)
+		return (AIDecidePokemonFluteResult){arena, 0x10u};
+	return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};
+}
+/* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */

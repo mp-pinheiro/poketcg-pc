@@ -289,6 +289,13 @@ static void adapt_PrintEnergiesOfColor(ProbeState *s)
 }
 /* <<< factory PrintEnergiesOfColor */
 
+/* >>> factory PrintCardPageWeaknessesOrResistances */
+static void adapt_PrintCardPageWeaknessesOrResistances(ProbeState *s)
+{
+	PrintCardPageWeaknessesOrResistances(s->a, s->b, s->c);
+}
+/* <<< factory PrintCardPageWeaknessesOrResistances */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -325,5 +332,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintSortNumberInCardList_SetPointer", adapt_PrintSortNumberInCardList_SetPointer },
 	{ "PrintSortNumberInCardList", adapt_PrintSortNumberInCardList },
 	{ "PrintEnergiesOfColor", adapt_PrintEnergiesOfColor },
+	{ "PrintCardPageWeaknessesOrResistances", adapt_PrintCardPageWeaknessesOrResistances },
 	{ NULL, NULL },
 };
