@@ -1058,6 +1058,15 @@ CASES["Sludge_AIEffect"] = [
 ]
 # <<< factory Sludge_AIEffect
 
+# >>> factory KadabraRecover_DiscardEffect
+CONTRACT["KadabraRecover_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["KadabraRecover_DiscardEffect"] = [
+	{"wram": {0xFFA0: b"\x00"}},
+	dict(POISON, wram={0xFFA0: b"\x05"}),
+	{"a": 1, "f": 0x10, "b": 2, "c": 3, "d": 4, "e": 5, "hl": 0x1234, "wram": {0xFFA0: b"\xFF"}},
+]
+# <<< factory KadabraRecover_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1690,3 +1699,6 @@ MUTATIONS["Sludge_AIEffect"] = {
     "case_ids": ["Sludge_AIEffect-0", "Sludge_AIEffect-1", "Sludge_AIEffect-2"],
 }
 # <<< factory-mutation Sludge_AIEffect
+# >>> factory-mutation KadabraRecover_DiscardEffect
+MUTATIONS["KadabraRecover_DiscardEffect"] = {"source_symbol": "KadabraRecover_DiscardEffect", "before": "\tuint8_t a = hTemp_ffa0;", "after": "\tuint8_t a = 0u;", "case_ids": ["KadabraRecover_DiscardEffect-1", "KadabraRecover_DiscardEffect-2"]}
+# <<< factory-mutation KadabraRecover_DiscardEffect

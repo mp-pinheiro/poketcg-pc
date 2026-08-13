@@ -328,4 +328,7 @@ uint8_t ToxicGasEffect(uint8_t f);
 /* >>> factory Sludge_AIEffect */
 void Sludge_AIEffect(void);
 /* <<< factory Sludge_AIEffect */
+/* >>> factory KadabraRecover_DiscardEffect */
+uint8_t KadabraRecover_DiscardEffect(void);
+/* <<< factory KadabraRecover_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

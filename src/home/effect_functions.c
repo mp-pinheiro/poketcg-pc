@@ -1448,3 +1448,13 @@ void Sludge_AIEffect(void)
 	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
 }
 /* <<< factory Sludge_AIEffect */
+
+/* >>> factory KadabraRecover_DiscardEffect */
+/* effect_functions.asm:5774-5779 */
+uint8_t KadabraRecover_DiscardEffect(void)
+{
+	uint8_t a = hTemp_ffa0;
+	PutCardInDiscardPile(a);
+	return a;
+}
+/* <<< factory KadabraRecover_DiscardEffect */

@@ -791,6 +791,13 @@ static void adapt_Sludge_AIEffect(ProbeState *s)
 }
 /* <<< factory Sludge_AIEffect */
 
+/* >>> factory KadabraRecover_DiscardEffect */
+static void adapt_KadabraRecover_DiscardEffect(ProbeState *s)
+{
+	s->a = KadabraRecover_DiscardEffect();
+}
+/* <<< factory KadabraRecover_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -886,5 +893,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidoranFCallForFamily_AISelectEffect", adapt_NidoranFCallForFamily_AISelectEffect },
 	{ "ToxicGasEffect", adapt_ToxicGasEffect },
 	{ "Sludge_AIEffect", adapt_Sludge_AIEffect },
+	{ "KadabraRecover_DiscardEffect", adapt_KadabraRecover_DiscardEffect },
 	{ NULL, NULL },
 };
