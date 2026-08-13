@@ -97,4 +97,7 @@ EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a);
 /* >>> factory PlaceCardImageOAM */
 uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de);
 /* <<< factory PlaceCardImageOAM */
+/* >>> factory PrintPlayAreaCardAttachedEnergies */
+void PrintPlayAreaCardAttachedEnergies(uint8_t b, uint8_t c, uint8_t e);
+/* <<< factory PrintPlayAreaCardAttachedEnergies */
 #endif /* POKETCG_HOME_CORE_H */

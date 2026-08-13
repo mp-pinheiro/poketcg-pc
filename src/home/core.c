@@ -155,6 +155,15 @@ static uint32_t duel_save_total_size(void)
 
 #include "home/objects.h"
 #include "home/lcd.h"
+
+#include "home/empty_screen.h"
+#include "home/duel.h"
+#include "home/bg_map.h"
+
+#define NUM_TYPES 0x09u
+#define SYM_SPACE 0x00u
+#define SYM_FIRE 0xD0u
+#define SYM_PLUS 0xD8u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -624,3 +633,47 @@ uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de)
 	return TRUE;
 }
 /* <<< factory PlaceCardImageOAM */
+
+/* >>> factory PrintPlayAreaCardAttachedEnergies */
+/* core.asm:5566-5626 */
+void PrintPlayAreaCardAttachedEnergies(uint8_t b, uint8_t c, uint8_t e)
+{
+	uint16_t hl;
+	uint16_t de;
+	uint8_t i;
+	uint8_t color;
+	uint8_t amount;
+	uint8_t count = (uint8_t)(NUM_TYPES - 1u);
+
+	GetPlayAreaCardAttachedEnergies(e);
+
+	for (i = 0u; i < 8u; i++)
+		gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_SPACE);
+
+	hl = wDefaultText_ADDR;
+	de = wAttachedEnergies_ADDR;
+	color = SYM_FIRE;
+
+	do {
+		amount = (uint8_t)(gb_read8(de) + 1u);
+		de = (uint16_t)(de + 1u);
+		do {
+			amount = (uint8_t)(amount - 1u);
+			if (amount == 0u)
+				break;
+			gb_write8(hl, color);
+			hl = (uint16_t)(hl + 1u);
+		} while (1);
+
+		color = (uint8_t)(color + 1u);
+		count = (uint8_t)(count - 1u);
+	} while (count != 0u);
+
+	if (gb_read8(wTotalAttachedEnergies_ADDR) >= 9u)
+		gb_write8((uint16_t)(wDefaultText_ADDR + 7u), SYM_PLUS);
+
+	de = BCCoordToBGMap0Address(b, c);
+	hl = wDefaultText_ADDR;
+	SafeCopyDataHLtoDE(&hl, &de, 8u);
+}
+/* <<< factory PrintPlayAreaCardAttachedEnergies */

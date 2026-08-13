@@ -239,6 +239,13 @@ static void adapt_PlaceCardImageOAM(ProbeState *s)
 }
 /* <<< factory PlaceCardImageOAM */
 
+/* >>> factory PrintPlayAreaCardAttachedEnergies */
+static void adapt_PrintPlayAreaCardAttachedEnergies(ProbeState *s)
+{
+	PrintPlayAreaCardAttachedEnergies(s->b, s->c, s->e);
+}
+/* <<< factory PrintPlayAreaCardAttachedEnergies */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -269,5 +276,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
 	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
 	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
+	{ "PrintPlayAreaCardAttachedEnergies", adapt_PrintPlayAreaCardAttachedEnergies },
 	{ NULL, NULL },
 };

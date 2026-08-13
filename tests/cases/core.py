@@ -336,6 +336,16 @@ CASES["PlaceCardImageOAM"] = [
 ]
 # <<< factory PlaceCardImageOAM
 
+# >>> factory PrintPlayAreaCardAttachedEnergies
+CONTRACT["PrintPlayAreaCardAttachedEnergies"] = {"compare": (), "preserve": ()}
+CASES["PrintPlayAreaCardAttachedEnergies"] = [
+    {"read": {0xC590: 8}, "vread": {0: {0x9800: 8}}},
+    dict(POISON, read={0xC590: 8}, vread={0: {0x9800: 8}}),
+    {"b": 2, "c": 3, "e": 1,
+     "read": {0xC590: 8}, "vread": {0: {0x9862: 8}}},
+]
+# <<< factory PrintPlayAreaCardAttachedEnergies
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -557,3 +567,11 @@ MUTATIONS["CheckEnergyFlagsNeededInList"] = {"source_symbol": "CheckEnergyFlagsN
 # >>> factory-mutation PlaceCardImageOAM
 MUTATIONS["PlaceCardImageOAM"] = {"source_symbol": "PlaceCardImageOAM", "before": "\tgb_write8(0xcac0u, TRUE);", "after": "\tgb_write8(0xcac0u, 0u);", "case_ids": ["PlaceCardImageOAM-0", "PlaceCardImageOAM-1"]}
 # <<< factory-mutation PlaceCardImageOAM
+# >>> factory-mutation PrintPlayAreaCardAttachedEnergies
+MUTATIONS["PrintPlayAreaCardAttachedEnergies"] = {
+    "source_symbol": "PrintPlayAreaCardAttachedEnergies",
+    "before": "gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_SPACE);",
+    "after": "gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_FIRE);",
+    "case_ids": ["PrintPlayAreaCardAttachedEnergies-0", "PrintPlayAreaCardAttachedEnergies-1", "PrintPlayAreaCardAttachedEnergies-2"],
+}
+# <<< factory-mutation PrintPlayAreaCardAttachedEnergies
