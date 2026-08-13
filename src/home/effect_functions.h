@@ -201,4 +201,7 @@ uint8_t TransparencyEffect(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } BarrierCheckEnergyResult;
 BarrierCheckEnergyResult Barrier_CheckEnergy(void);
 /* <<< factory Barrier_CheckEnergy */
+/* >>> factory ResetDevolvedCardStatus */
+uint8_t ResetDevolvedCardStatus(void);
+/* <<< factory ResetDevolvedCardStatus */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

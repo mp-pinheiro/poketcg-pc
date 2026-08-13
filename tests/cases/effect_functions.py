@@ -463,6 +463,7 @@ CASES["AIPickEnergyCardToDiscardFromDefendingPokemon"] = [
 # <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon
 
 
+
 # >>> factory AIFindTargetForBenchAttack
 CONTRACT["AIFindTargetForBenchAttack"] = {"compare": ("a",), "preserve": ()}
 CASES["AIFindTargetForBenchAttack"] = [
@@ -472,6 +473,7 @@ CASES["AIFindTargetForBenchAttack"] = [
     dict(POISON, wram={0xC1EF: b"\x01"}),
 ]
 # <<< factory AIFindTargetForBenchAttack
+
 
 
 # >>> factory ApplyExtraWaterEnergyDamageBonus
@@ -660,6 +662,20 @@ CASES["Barrier_CheckEnergy"] = [
     dict(POISON, wram={0xCC1B: b"\xAA" * 8}, read={0xCC1B: 8}),
 ]
 # <<< factory Barrier_CheckEnergy
+
+# >>> factory ResetDevolvedCardStatus
+CONTRACT["ResetDevolvedCardStatus"] = {"compare": ("a",), "preserve": ()}
+CASES["ResetDevolvedCardStatus"] = [
+    {"wram": {0xFF9D: b"\x00", 0xFF9E: b"\xC0", 0xC0F0: b"\x01", 0xC0D4: b"\x02", 0xC0C2: b"\x04"},
+     "read": {0xC0F0: 8, 0xC0D4: 1, 0xC0C2: 1}},
+    {"wram": {0xFF9D: b"\x01", 0xFF9E: b"\xC0", 0xC0D5: b"\x02", 0xC0C3: b"\x04"},
+     "read": {0xC0D5: 1, 0xC0C3: 1}},
+    dict(POISON, wram={0xFF9D: b"\x00", 0xFF9E: b"\xC0", 0xC0F0: b"\x01", 0xC0D4: b"\x02", 0xC0C2: b"\x04"},
+         read={0xC0F0: 8, 0xC0D4: 1, 0xC0C2: 1}),
+    dict(POISON, wram={0xFF9D: b"\x01", 0xFF9E: b"\xC0", 0xC0D5: b"\x02", 0xC0C3: b"\x04"},
+         read={0xC0D5: 1, 0xC0C3: 1}),
+]
+# <<< factory ResetDevolvedCardStatus
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1040,3 +1056,12 @@ MUTATIONS["TransparencyEffect"] = {"source_symbol": "TransparencyEffect", "befor
 # >>> factory-mutation Barrier_CheckEnergy
 MUTATIONS["Barrier_CheckEnergy"] = {"source_symbol": "Barrier_CheckEnergy", "before": "#define NotEnoughPsychicEnergyText 0x00c2u", "after": "#define NotEnoughPsychicEnergyText 0x00c3u", "case_ids": ["Barrier_CheckEnergy-0", "Barrier_CheckEnergy-1"]}
 # <<< factory-mutation Barrier_CheckEnergy
+# >>> factory-mutation ResetDevolvedCardStatus
+MUTATIONS["ResetDevolvedCardStatus"] = {
+    "source_symbol": "ResetDevolvedCardStatus",
+    "before": "return (uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location);",
+    "after": "return (uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location + 1u);",
+    "case_ids": ["ResetDevolvedCardStatus-0", "ResetDevolvedCardStatus-1",
+                 "ResetDevolvedCardStatus-2", "ResetDevolvedCardStatus-3"],
+}
+# <<< factory-mutation ResetDevolvedCardStatus

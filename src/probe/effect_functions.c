@@ -284,6 +284,7 @@ static void adapt_AIPickEnergyCardToDiscardFromDefendingPokemon(ProbeState *s)
 /* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
 
 
+
 /* >>> factory AIFindTargetForBenchAttack */
 static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
 {
@@ -291,6 +292,7 @@ static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
 	s->a = r.a;
 }
 /* <<< factory AIFindTargetForBenchAttack */
+
 
 
 /* >>> factory ApplyExtraWaterEnergyDamageBonus */
@@ -476,6 +478,13 @@ static void adapt_Barrier_CheckEnergy(ProbeState *s)
 }
 /* <<< factory Barrier_CheckEnergy */
 
+/* >>> factory ResetDevolvedCardStatus */
+static void adapt_ResetDevolvedCardStatus(ProbeState *s)
+{
+	s->a = ResetDevolvedCardStatus();
+}
+/* <<< factory ResetDevolvedCardStatus */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -508,8 +517,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
 	{ "PoisonEffect", adapt_PoisonEffect },
 	{ "DoublePoisonEffect", adapt_DoublePoisonEffect },
-	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
-	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
 	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
 	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
@@ -533,5 +540,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
 	{ "TransparencyEffect", adapt_TransparencyEffect },
 	{ "Barrier_CheckEnergy", adapt_Barrier_CheckEnergy },
+	{ "ResetDevolvedCardStatus", adapt_ResetDevolvedCardStatus },
+	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
+	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ NULL, NULL },
 };

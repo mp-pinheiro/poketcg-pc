@@ -581,6 +581,7 @@ void LoadCardNameAndInputColor(uint8_t a, uint8_t d, uint8_t e)
 /* <<< factory LoadCardNameAndInputColor */
 
 
+
 /* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
 /* effect_functions.asm:1053-1140 */
 AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(void)
@@ -623,6 +624,7 @@ AIPickEnergyCardToDiscardResult AIPickEnergyCardToDiscardFromDefendingPokemon(vo
 	return (AIPickEnergyCardToDiscardResult){gb_read8(wDuelTempList_ADDR)};
 }
 /* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+
 
 
 /* >>> factory AIFindTargetForBenchAttack */
@@ -970,3 +972,21 @@ BarrierCheckEnergyResult Barrier_CheckEnergy(void)
 	return (BarrierCheckEnergyResult){a, f, NotEnoughPsychicEnergyText};
 }
 /* <<< factory Barrier_CheckEnergy */
+
+/* >>> factory ResetDevolvedCardStatus */
+/* effect_functions.asm:1026-1050 */
+uint8_t ResetDevolvedCardStatus(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	if (location == PLAY_AREA_ARENA)
+		ClearAllStatusConditions();
+
+	DuelistVarResult changed = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_CHANGED_TYPE + location));
+	gb_write8(changed.hl, 0u);
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location));
+	gb_write8(flags.hl, 0u);
+	return (uint8_t)(DUELVARS_ARENA_CARD_FLAGS + location);
+}
+/* <<< factory ResetDevolvedCardStatus */
