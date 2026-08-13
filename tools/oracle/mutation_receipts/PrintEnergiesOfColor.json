@@ -1,0 +1,9 @@
+{
+  "fn": "PrintEnergiesOfColor",
+  "case": "tests/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintEnergiesOfColor\", \"registers\": {\"a\": 33, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 33, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"38912\": \"21\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintEnergiesOfColor\", \"mismatches\": {\"a\": [33, 1], \"b\": [1, 0], \"bus\": {\"address\": 38912, \"reference\": \"21\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[38912, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrintEnergiesOfColor\", \"registers\": {\"a\": 33, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 33, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"38912\": \"21\"}}, \"status\": \"PASS\"}\n"
+}

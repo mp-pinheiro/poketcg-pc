@@ -112,14 +112,16 @@ PickPokedexResult PickPokedexCards(void)
 	}
 	gb_write8((uint16_t)(wce08_ADDR + 5u), 0xFFu);
 	uint8_t out = 0;
-	for (uint8_t wanted = 0; wanted < 3; wanted++)
+	for (uint8_t wanted = 0; wanted < 3; wanted++) {
 		for (uint8_t i = 0; i < 5; i++) {
 			uint8_t type = types[i];
 			if ((wanted == 0 && !(type & TYPE_ENERGY)) ||
 			    (wanted == 1 && type >= TYPE_ENERGY) ||
 			    (wanted == 2 && type != TYPE_TRAINER))
+				continue;
 			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
 		}
+	}
 	return (PickPokedexResult){0xFFu, 0x90u};
 }
 /* <<< factory PickPokedexCards */

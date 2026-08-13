@@ -119,4 +119,8 @@ void PrintSortNumberInCardList_SetPointer(void);
 /* >>> factory PrintSortNumberInCardList */
 void PrintSortNumberInCardList(void);
 /* <<< factory PrintSortNumberInCardList */
+/* >>> factory PrintEnergiesOfColor */
+typedef struct { uint8_t a; uint8_t b; uint8_t e; } PrintEnergiesResult;
+PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_t e);
+/* <<< factory PrintEnergiesOfColor */
 #endif /* POKETCG_HOME_CORE_H */

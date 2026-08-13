@@ -378,6 +378,17 @@ CASES["PrintSortNumberInCardList"] = [
 # <<< factory PrintSortNumberInCardList_body
 
 
+# >>> factory PrintEnergiesOfColor
+CONTRACT["PrintEnergiesOfColor"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("c", "d", "hl")}
+CASES["PrintEnergiesOfColor"] = [
+    {},
+    dict(POISON, a=0, read={}),
+    {"a": 1, "b": 0, "c": 0, "e": 0x20, "read": {0x9800: 1}},
+    {"a": 2, "b": 0, "c": 0, "e": 0x30, "read": {0x9800: 2}},
+    dict(POISON, a=0x0F, b=0, c=0, e=0x40, read={0x9800: 15}),
+]
+# <<< factory PrintEnergiesOfColor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -621,3 +632,11 @@ MUTATIONS["PrintSortNumberInCardList_SetPointer"] = {
 	"case_ids": ["PrintSortNumberInCardList_SetPointer-0", "PrintSortNumberInCardList_SetPointer-1"],
 }
 # <<< factory-mutation PrintSortNumberInCardList
+# >>> factory-mutation PrintEnergiesOfColor
+MUTATIONS["PrintEnergiesOfColor"] = {
+    "source_symbol": "PrintEnergiesOfColor",
+    "before": "count = (uint8_t)(a & 0x0Fu);",
+    "after": "count = (uint8_t)(a & 0x0Eu);",
+    "case_ids": ["PrintEnergiesOfColor-2", "PrintEnergiesOfColor-3", "PrintEnergiesOfColor-4"],
+}
+# <<< factory-mutation PrintEnergiesOfColor

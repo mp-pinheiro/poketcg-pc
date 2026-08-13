@@ -188,6 +188,8 @@ CardPageResult CardPageSwitch_08(void)
 	return (CardPageResult){CARDPAGE_ENERGY + 1u, 1u};
 }
 /* <<< factory CardPageSwitch_08 */
+
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -755,3 +757,25 @@ void PrintSortNumberInCardList(void)
 	}
 }
 /* <<< factory PrintSortNumberInCardList */
+
+/* >>> factory PrintEnergiesOfColor */
+/* core.asm:4416-4431 */
+PrintEnergiesResult PrintEnergiesOfColor(uint8_t a, uint8_t b, uint8_t c, uint8_t e)
+{
+	uint8_t count;
+	uint8_t value;
+
+	e = (uint8_t)(e + 1u);
+	count = (uint8_t)(a & 0x0Fu);
+	if (count == 0u)
+		return (PrintEnergiesResult){a, b, e};
+
+	value = e;
+	do {
+		JPWriteByteToBGMap0(value, b, c);
+		b = (uint8_t)(b + 1u);
+	} while (--count);
+
+	return (PrintEnergiesResult){value, b, e};
+}
+/* <<< factory PrintEnergiesOfColor */

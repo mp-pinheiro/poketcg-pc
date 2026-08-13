@@ -279,6 +279,16 @@ static void adapt_PrintSortNumberInCardList(ProbeState *s)
 }
 /* <<< factory PrintSortNumberInCardList */
 
+/* >>> factory PrintEnergiesOfColor */
+static void adapt_PrintEnergiesOfColor(ProbeState *s)
+{
+	PrintEnergiesResult r = PrintEnergiesOfColor(s->a, s->b, s->c, s->e);
+	s->a = r.a;
+	s->b = r.b;
+	s->e = r.e;
+}
+/* <<< factory PrintEnergiesOfColor */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -314,5 +324,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_DrawCard", adapt_OppAction_DrawCard },
 	{ "PrintSortNumberInCardList_SetPointer", adapt_PrintSortNumberInCardList_SetPointer },
 	{ "PrintSortNumberInCardList", adapt_PrintSortNumberInCardList },
+	{ "PrintEnergiesOfColor", adapt_PrintEnergiesOfColor },
 	{ NULL, NULL },
 };
