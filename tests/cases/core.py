@@ -475,6 +475,29 @@ CASES["AIDiscourage"] = [
 ]
 # <<< factory AIDiscourage
 
+# >>> factory ConvertHPToDamageCounters_Bank5
+CONTRACT["ConvertHPToDamageCounters_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ConvertHPToDamageCounters_Bank5"] = [
+	{},
+	{"a": 1},
+	{"a": 10},
+	{"a": 255},
+	dict(POISON, a=20),
+]
+# <<< factory ConvertHPToDamageCounters_Bank5
+
+# >>> factory CalculateBDividedByA_Bank5
+CONTRACT["CalculateBDividedByA_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CalculateBDividedByA_Bank5"] = [
+	{"a": 0, "b": 0, "oracle": False, "why": "Divisor zero enters the assembly loop forever.", "expect_regs": {"a": 0, "b": 0}},
+	{"a": 1, "b": 1},
+	{"a": 1, "b": 255},
+	{"a": 2, "b": 5},
+	{"a": 255, "b": 255},
+	dict(POISON, a=3, b=10),
+]
+# <<< factory CalculateBDividedByA_Bank5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -742,3 +765,9 @@ MUTATIONS["CardPageSwitch_PokemonAttack2Page1"] = {"source_symbol": "CardPageSwi
 # >>> factory-mutation AIDiscourage
 MUTATIONS["AIDiscourage"] = {"source_symbol": "AIDiscourage", "before": "\tif (score < a) {", "after": "\tif (score > a) {", "case_ids": ["AIDiscourage-1", "AIDiscourage-2", "AIDiscourage-3", "AIDiscourage-4"]}
 # <<< factory-mutation AIDiscourage
+# >>> factory-mutation ConvertHPToDamageCounters_Bank5
+MUTATIONS["ConvertHPToDamageCounters_Bank5"] = {"source_symbol": "ConvertHPToDamageCounters_Bank5", "before": "\t\tif (value < 10u)", "after": "\t\tif (value <= 10u)", "case_ids": ["ConvertHPToDamageCounters_Bank5-2", "ConvertHPToDamageCounters_Bank5-4"]}
+# <<< factory-mutation ConvertHPToDamageCounters_Bank5
+# >>> factory-mutation CalculateBDividedByA_Bank5
+MUTATIONS["CalculateBDividedByA_Bank5"] = {"source_symbol": "CalculateBDividedByA_Bank5", "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);", "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);", "case_ids": ["CalculateBDividedByA_Bank5-1", "CalculateBDividedByA_Bank5-2", "CalculateBDividedByA_Bank5-3", "CalculateBDividedByA_Bank5-4", "CalculateBDividedByA_Bank5-5"]}
+# <<< factory-mutation CalculateBDividedByA_Bank5

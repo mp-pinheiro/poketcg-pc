@@ -149,4 +149,16 @@ CardPageExistsResult CardPageSwitch_PokemonAttack2Page1(void);
 /* >>> factory AIDiscourage */
 void AIDiscourage(uint8_t a);
 /* <<< factory AIDiscourage */
+/* >>> factory ConvertHPToDamageCounters_Bank5 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} ConvertHPToDamageCountersResult;
+
+ConvertHPToDamageCountersResult ConvertHPToDamageCounters_Bank5(uint8_t a);
+/* <<< factory ConvertHPToDamageCounters_Bank5 */
+/* >>> factory CalculateBDividedByA_Bank5 */
+typedef struct { uint8_t a; uint8_t f; } CalculateBDividedByAResult;
+CalculateBDividedByAResult CalculateBDividedByA_Bank5(uint8_t a, uint8_t b);
+/* <<< factory CalculateBDividedByA_Bank5 */
 #endif /* POKETCG_HOME_CORE_H */

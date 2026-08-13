@@ -916,3 +916,46 @@ void AIDiscourage(uint8_t a)
 	wAIScore = (uint8_t)(score - a);
 }
 /* <<< factory AIDiscourage */
+
+/* >>> factory ConvertHPToDamageCounters_Bank5 */
+/* core.asm:963-975 */
+ConvertHPToDamageCountersResult ConvertHPToDamageCounters_Bank5(uint8_t a)
+{
+	uint8_t value = a;
+	uint8_t count = 0u;
+
+	for (;;) {
+		uint8_t next = (uint8_t)(value - 10u);
+		if (value < 10u)
+			break;
+		value = next;
+		count++;
+	}
+
+	return (ConvertHPToDamageCountersResult){count, 0x70u};
+}
+/* <<< factory ConvertHPToDamageCounters_Bank5 */
+
+/* >>> factory CalculateBDividedByA_Bank5 */
+/* core.asm:981-995 */
+CalculateBDividedByAResult CalculateBDividedByA_Bank5(uint8_t a, uint8_t b)
+{
+	uint8_t divisor = a;
+	uint8_t remainder = b;
+	uint8_t quotient = 0u;
+
+	for (;;) {
+		uint8_t result = (uint8_t)(remainder - divisor);
+		if (remainder < divisor) {
+			uint8_t flags = 0x50u;
+			if ((remainder & 0x0Fu) < (divisor & 0x0Fu))
+				flags = (uint8_t)(flags | 0x20u);
+			if (result == 0u)
+				flags = (uint8_t)(flags | 0x80u);
+			return (CalculateBDividedByAResult){quotient, flags};
+		}
+		remainder = result;
+		quotient = (uint8_t)(quotient + 1u);
+	}
+}
+/* <<< factory CalculateBDividedByA_Bank5 */

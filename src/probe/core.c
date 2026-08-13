@@ -348,6 +348,24 @@ static void adapt_AIDiscourage(ProbeState *s)
 }
 /* <<< factory AIDiscourage */
 
+/* >>> factory ConvertHPToDamageCounters_Bank5 */
+static void adapt_ConvertHPToDamageCounters_Bank5(ProbeState *s)
+{
+	ConvertHPToDamageCountersResult r = ConvertHPToDamageCounters_Bank5(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ConvertHPToDamageCounters_Bank5 */
+
+/* >>> factory CalculateBDividedByA_Bank5 */
+static void adapt_CalculateBDividedByA_Bank5(ProbeState *s)
+{
+	CalculateBDividedByAResult r = CalculateBDividedByA_Bank5(s->a, s->b);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CalculateBDividedByA_Bank5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -391,5 +409,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_PokemonAttack1Page2", adapt_CardPageSwitch_PokemonAttack1Page2 },
 	{ "CardPageSwitch_PokemonAttack2Page1", adapt_CardPageSwitch_PokemonAttack2Page1 },
 	{ "AIDiscourage", adapt_AIDiscourage },
+	{ "ConvertHPToDamageCounters_Bank5", adapt_ConvertHPToDamageCounters_Bank5 },
+	{ "CalculateBDividedByA_Bank5", adapt_CalculateBDividedByA_Bank5 },
 	{ NULL, NULL },
 };
