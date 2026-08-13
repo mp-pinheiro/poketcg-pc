@@ -83,6 +83,11 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
                         for pre in case["setup"]]
     if case.get("keys"):
         req["keys"] = int(case["keys"])
+    if case.get("rom_bank") is not None:
+        # PyBoy enters a routine at its own symbol bank (pyboy_oracle.py);
+        # the probe otherwise retains the reset default. A routine that reads
+        # its own bank's tables without bankswitching needs the two to agree.
+        req["rom_bank"] = int(case["rom_bank"])
     try:
         out = subprocess.run(
             [str(probe)],

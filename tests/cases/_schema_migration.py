@@ -170,6 +170,9 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 "hardware": "cgb",
                 "mapper": {
                     **_MAPPER,
+                    "rom_bank": _integer(legacy["rom_bank"], "rom_bank", maximum=0xFF)
+                                if legacy.get("rom_bank") is not None
+                                else _MAPPER["rom_bank"],
                     "ram_bank": ram_bank,
                     "vram_bank": vram_bank,
                     "ram_enable": ram_enable,
