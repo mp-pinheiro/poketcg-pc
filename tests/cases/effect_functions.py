@@ -355,6 +355,7 @@ CASES["DodrioRage_DamageBoostEffect"] = [
 ]
 # <<< factory DodrioRage_DamageBoostEffect
 
+
 # >>> factory DragonairSlam_AIEffect
 CONTRACT["DragonairSlam_AIEffect"] = {"compare": (), "preserve": ()}
 CASES["DragonairSlam_AIEffect"] = [
@@ -707,6 +708,22 @@ CASES["MirrorMove_InitialEffect1"] = [
 ]
 # <<< factory MirrorMove_InitialEffect1
 
+# >>> factory FuryAttack_AIEffect
+CONTRACT["FuryAttack_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["FuryAttack_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory FuryAttack_AIEffect
+
+# >>> factory RetreatAidEffect
+CONTRACT["RetreatAidEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                                "preserve": ("a", "b", "c", "d", "e", "hl")}
+CASES["RetreatAidEffect"] = [{}, dict(POISON), {"f": 0x80}]
+# <<< factory RetreatAidEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -896,8 +913,8 @@ MUTATIONS["UpdateDevolvedCardHPAndStage"] = {
 # >>> factory-mutation DodrioRage_DamageBoostEffect
 MUTATIONS["DodrioRage_DamageBoostEffect"] = {
     "source_symbol": "DodrioRage_DamageBoostEffect",
-    "before": "AddToDamage(r.a);",
-    "after": "AddToDamage((uint8_t)(r.a + 1u));",
+    "before": "void DodrioRage_DamageBoostEffect(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage(r.a);\n}",
+    "after": "void DodrioRage_DamageBoostEffect(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage((uint8_t)(r.a + 1u));\n}",
     "case_ids": ["DodrioRage_DamageBoostEffect-0", "DodrioRage_DamageBoostEffect-1", "DodrioRage_DamageBoostEffect-2", "DodrioRage_DamageBoostEffect-3"],
 }
 # <<< factory-mutation DodrioRage_DamageBoostEffect
@@ -1119,3 +1136,19 @@ MUTATIONS["MirrorMove_InitialEffect1"] = {
     "case_ids": ["MirrorMove_InitialEffect1-0", "MirrorMove_InitialEffect1-5"],
 }
 # <<< factory-mutation MirrorMove_InitialEffect1
+# >>> factory-mutation FuryAttack_AIEffect
+MUTATIONS["FuryAttack_AIEffect"] = {
+    "source_symbol": "FuryAttack_AIEffect",
+    "before": "SetExpectedAIDamage(10u, 0u, 20u);",
+    "after": "SetExpectedAIDamage(11u, 0u, 20u);",
+    "case_ids": ["FuryAttack_AIEffect-0", "FuryAttack_AIEffect-1"],
+}
+# <<< factory-mutation FuryAttack_AIEffect
+# >>> factory-mutation RetreatAidEffect
+MUTATIONS["RetreatAidEffect"] = {
+    "source_symbol": "RetreatAidEffect",
+    "before": "uint8_t RetreatAidEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x10u);\n}",
+    "after": "uint8_t RetreatAidEffect(uint8_t f)\n{\n\treturn (uint8_t)((f & 0x80u) | 0x20u);\n}",
+    "case_ids": ["RetreatAidEffect-0", "RetreatAidEffect-1", "RetreatAidEffect-2"],
+}
+# <<< factory-mutation RetreatAidEffect

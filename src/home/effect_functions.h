@@ -214,4 +214,10 @@ void MirrorMove_AIEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } MirrorMoveInitialEffect1Result;
 MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void);
 /* <<< factory MirrorMove_InitialEffect1 */
+/* >>> factory FuryAttack_AIEffect */
+void FuryAttack_AIEffect(void);
+/* <<< factory FuryAttack_AIEffect */
+/* >>> factory RetreatAidEffect */
+uint8_t RetreatAidEffect(uint8_t f);
+/* <<< factory RetreatAidEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

@@ -206,6 +206,7 @@ static void adapt_DodrioRage_DamageBoostEffect(ProbeState *s)
 }
 /* <<< factory DodrioRage_DamageBoostEffect */
 
+
 /* >>> factory DragonairSlam_AIEffect */
 static void adapt_DragonairSlam_AIEffect(ProbeState *s)
 {
@@ -510,6 +511,21 @@ static void adapt_MirrorMove_InitialEffect1(ProbeState *s)
 }
 /* <<< factory MirrorMove_InitialEffect1 */
 
+/* >>> factory FuryAttack_AIEffect */
+static void adapt_FuryAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	FuryAttack_AIEffect();
+}
+/* <<< factory FuryAttack_AIEffect */
+
+/* >>> factory RetreatAidEffect */
+static void adapt_RetreatAidEffect(ProbeState *s)
+{
+	s->f = RetreatAidEffect(s->f);
+}
+/* <<< factory RetreatAidEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -534,7 +550,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GetAttackName", adapt_GetAttackName },
 	{ "CheckIfDefendingPokemonHasAnyAttack", adapt_CheckIfDefendingPokemonHasAnyAttack },
 	{ "UpdateDevolvedCardHPAndStage", adapt_UpdateDevolvedCardHPAndStage },
-	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
 	{ "DragonairSlam_AIEffect", adapt_DragonairSlam_AIEffect },
 	{ "ClefableMinimizeEffect", adapt_ClefableMinimizeEffect },
 	{ "CreateEnergyCardListFromDiscardPile_OnlyBasic", adapt_CreateEnergyCardListFromDiscardPile_OnlyBasic },
@@ -571,5 +586,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EeveeQuickAttack_AIEffect", adapt_EeveeQuickAttack_AIEffect },
 	{ "MirrorMove_AIEffect", adapt_MirrorMove_AIEffect },
 	{ "MirrorMove_InitialEffect1", adapt_MirrorMove_InitialEffect1 },
+	{ "FuryAttack_AIEffect", adapt_FuryAttack_AIEffect },
+	{ "RetreatAidEffect", adapt_RetreatAidEffect },
+	{ "DodrioRage_DamageBoostEffect", adapt_DodrioRage_DamageBoostEffect },
 	{ NULL, NULL },
 };

@@ -484,6 +484,7 @@ void UpdateDevolvedCardHPAndStage(uint8_t a)
 }
 /* <<< factory UpdateDevolvedCardHPAndStage */
 
+
 /* >>> factory DodrioRage_DamageBoostEffect */
 /* effect_functions.asm:7866-7869 */
 void DodrioRage_DamageBoostEffect(void)
@@ -1025,3 +1026,19 @@ MirrorMoveInitialEffect1Result MirrorMove_InitialEffect1(void)
 	return (MirrorMoveInitialEffect1Result){0x90u, 0x00C6u};
 }
 /* <<< factory MirrorMove_InitialEffect1 */
+
+/* >>> factory FuryAttack_AIEffect */
+/* effect_functions.asm:...? */
+void FuryAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory FuryAttack_AIEffect */
+
+/* >>> factory RetreatAidEffect */
+/* effect_functions.asm:...? */
+uint8_t RetreatAidEffect(uint8_t f)
+{
+	return (uint8_t)((f & 0x80u) | 0x10u);
+}
+/* <<< factory RetreatAidEffect */
