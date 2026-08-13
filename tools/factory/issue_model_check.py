@@ -141,9 +141,13 @@ def main() -> int:
         "state": "open",
         "labels": ["port", "tier-1"],
     }
+    report["work_records"][0]["packet"] = {
+        "id": "packet-foo", "state": "pending",
+    }
     adopted = issues.migration_plan({"schema": 1, "issues": [legacy]}, report)
     assert adopted["actions"][0]["action"] == "adopt"
     assert "Human text." in adopted["actions"][0]["body"]
+    assert "**Factory packet:** `packet-foo`" in adopted["actions"][0]["body"]
 
     aggregate = dict(legacy)
     aggregate["number"] = 9

@@ -208,9 +208,10 @@ def generated_body(record: dict, packet: dict | None = None) -> str:
     if op:
         blockers.append(f"{op['reason']} (unblock: {op['unblock']})")
     state = record["state"]
-    current = state if not blockers else f"{state} by " + "; ".join(
-        f"`{item}`" for item in blockers
-    )
+    current = state
+    if blockers:
+        qualifier = "by" if state == "blocked" else "with recorded blockers"
+        current += f" {qualifier} " + "; ".join(f"`{item}`" for item in blockers)
     packet_name = (packet or {}).get("id") or "unclaimed"
     source = record["source"]
     name = record["name"]
@@ -231,6 +232,8 @@ def generated_body(record: dict, packet: dict | None = None) -> str:
         "### Verification",
         f"`just oracle-diff {name}`",
     ))
+
+
 def desired_body(record: dict, existing: str = "", packet: dict | None = None) -> str:
     generated = generated_body(record, packet)
     if existing:
@@ -456,7 +459,7 @@ def migration_plan(snapshot: dict, report: dict | None = None) -> dict:
             and exact[0]["name"] == names[0]
         ):
             record = exact[0]
-            body = desired_body(record, issue["body"])
+            body = desired_body(record, issue["body"], record.get("packet"))
             actions.append({
                 "action": "adopt", "work_id": record["work_id"],
                 "issue_number": issue["number"], "old_state": issue["state"],
