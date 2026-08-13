@@ -779,3 +779,42 @@ SolarPowerCheckUseResult SolarPower_CheckUse(void)
 	return (SolarPowerCheckUseResult){0x90u, 0x00B5u};
 }
 /* <<< factory SolarPower_CheckUse */
+
+/* >>> factory DevolutionBeam_LoadAnimation */
+void DevolutionBeam_LoadAnimation(void)
+{
+	gb_write8(0xCCB8u, 0x00u);
+}
+/* <<< factory DevolutionBeam_LoadAnimation */
+
+/* >>> factory CheckIfTurnDuelistHasEvolvedCards */
+CheckAttackResult CheckIfTurnDuelistHasEvolvedCards(void)
+{
+	DuelistVarResult cards = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint16_t stage = (uint16_t)((cards.hl & 0xFF00u) | DUELVARS_ARENA_CARD_STAGE);
+	for (;;) {
+		uint8_t card = gb_read8(cards.hl++);
+		if (card == 0xFFu)
+			return (CheckAttackResult){0x90u};
+		uint8_t stage_value = gb_read8(stage++);
+		if (stage_value != 0u)
+			return (CheckAttackResult){0x00u};
+	}
+}
+/* <<< factory CheckIfTurnDuelistHasEvolvedCards */
+
+/* >>> factory FindFirstNonBasicCardInPlayArea */
+FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint32_t n = count.a ? count.a : 0x100u;
+	uint16_t stage = (uint16_t)((count.hl & 0xFF00u) | DUELVARS_ARENA_CARD_STAGE);
+	uint8_t slot = PLAY_AREA_ARENA;
+	for (uint32_t i = 0; i < n; i++) {
+		if (gb_read8(stage++) != 0u)
+			return (FindFirstNonBasicCardInPlayAreaResult){slot, 0x10u};
+		slot++;
+	}
+	return (FindFirstNonBasicCardInPlayAreaResult){0x00u, 0x80u};
+}
+/* <<< factory FindFirstNonBasicCardInPlayArea */

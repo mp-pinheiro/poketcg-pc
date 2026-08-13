@@ -158,4 +158,14 @@ void PoisonWhip_AIEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } SolarPowerCheckUseResult;
 SolarPowerCheckUseResult SolarPower_CheckUse(void);
 /* <<< factory SolarPower_CheckUse */
+/* >>> factory DevolutionBeam_LoadAnimation */
+void DevolutionBeam_LoadAnimation(void);
+/* <<< factory DevolutionBeam_LoadAnimation */
+/* >>> factory CheckIfTurnDuelistHasEvolvedCards */
+CheckAttackResult CheckIfTurnDuelistHasEvolvedCards(void);
+/* <<< factory CheckIfTurnDuelistHasEvolvedCards */
+/* >>> factory FindFirstNonBasicCardInPlayArea */
+typedef struct { uint8_t a; uint8_t f; } FindFirstNonBasicCardInPlayAreaResult;
+FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void);
+/* <<< factory FindFirstNonBasicCardInPlayArea */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

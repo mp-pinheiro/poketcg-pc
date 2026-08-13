@@ -378,6 +378,31 @@ static void adapt_SolarPower_CheckUse(ProbeState *s)
 }
 /* <<< factory SolarPower_CheckUse */
 
+/* >>> factory DevolutionBeam_LoadAnimation */
+static void adapt_DevolutionBeam_LoadAnimation(ProbeState *s)
+{
+	(void)s;
+	DevolutionBeam_LoadAnimation();
+}
+/* <<< factory DevolutionBeam_LoadAnimation */
+
+/* >>> factory CheckIfTurnDuelistHasEvolvedCards */
+static void adapt_CheckIfTurnDuelistHasEvolvedCards(ProbeState *s)
+{
+	CheckAttackResult r = CheckIfTurnDuelistHasEvolvedCards();
+	s->f = r.f;
+}
+/* <<< factory CheckIfTurnDuelistHasEvolvedCards */
+
+/* >>> factory FindFirstNonBasicCardInPlayArea */
+static void adapt_FindFirstNonBasicCardInPlayArea(ProbeState *s)
+{
+	FindFirstNonBasicCardInPlayAreaResult r = FindFirstNonBasicCardInPlayArea();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory FindFirstNonBasicCardInPlayArea */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -424,5 +449,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
 	{ "SolarPower_CheckUse", adapt_SolarPower_CheckUse },
 	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
+	{ "DevolutionBeam_LoadAnimation", adapt_DevolutionBeam_LoadAnimation },
+	{ "CheckIfTurnDuelistHasEvolvedCards", adapt_CheckIfTurnDuelistHasEvolvedCards },
+	{ "FindFirstNonBasicCardInPlayArea", adapt_FindFirstNonBasicCardInPlayArea },
 	{ NULL, NULL },
 };

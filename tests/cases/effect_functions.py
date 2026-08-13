@@ -557,6 +557,40 @@ CASES["SolarPower_CheckUse"] = [
 ]
 # <<< factory SolarPower_CheckUse
 
+# >>> factory DevolutionBeam_LoadAnimation
+CONTRACT["DevolutionBeam_LoadAnimation"] = {"compare": (), "preserve": ()}
+CASES["DevolutionBeam_LoadAnimation"] = [
+    {"wram": {0xCCB8: b"\xFF"}, "read": {0xCCB8: 1}},
+    dict(POISON, wram={0xCCB8: b"\xAA"}, read={0xCCB8: 1}),
+]
+# <<< factory DevolutionBeam_LoadAnimation
+
+# >>> factory CheckIfTurnDuelistHasEvolvedCards
+CONTRACT["CheckIfTurnDuelistHasEvolvedCards"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckIfTurnDuelistHasEvolvedCards"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01\x02\xFF",
+              0xC2CE: b"\x00\x00\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01\x02\xFF",
+              0xC2CE: b"\x00\x01\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x01\xFF",
+                       0xC2CE: b"\x00\x00"}, read={0xFF97: 1}),
+]
+# <<< factory CheckIfTurnDuelistHasEvolvedCards
+
+# >>> factory FindFirstNonBasicCardInPlayArea
+CONTRACT["FindFirstNonBasicCardInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["FindFirstNonBasicCardInPlayArea"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
+              0xC2CE: b"\x00\x00\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
+              0xC2CE: b"\x00\x01\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
+              0xC2CE: b"\x00\x00\x01"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01",
+                       0xC2CE: b"\x01"}),
+]
+# <<< factory FindFirstNonBasicCardInPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -893,3 +927,27 @@ MUTATIONS["SolarPower_CheckUse"] = {
     "case_ids": ["SolarPower_CheckUse-0"],
 }
 # <<< factory-mutation SolarPower_CheckUse
+# >>> factory-mutation DevolutionBeam_LoadAnimation
+MUTATIONS["DevolutionBeam_LoadAnimation"] = {
+    "source_symbol": "DevolutionBeam_LoadAnimation",
+    "before": "gb_write8(0xCCB8u, 0x00u);",
+    "after": "gb_write8(0xCCB8u, 0x01u);",
+    "case_ids": ["DevolutionBeam_LoadAnimation-0"],
+}
+# <<< factory-mutation DevolutionBeam_LoadAnimation
+# >>> factory-mutation CheckIfTurnDuelistHasEvolvedCards
+MUTATIONS["CheckIfTurnDuelistHasEvolvedCards"] = {
+    "source_symbol": "CheckIfTurnDuelistHasEvolvedCards",
+    "before": "return (CheckAttackResult){0x90u};",
+    "after": "return (CheckAttackResult){0x80u};",
+    "case_ids": ["CheckIfTurnDuelistHasEvolvedCards-0"],
+}
+# <<< factory-mutation CheckIfTurnDuelistHasEvolvedCards
+# >>> factory-mutation FindFirstNonBasicCardInPlayArea
+MUTATIONS["FindFirstNonBasicCardInPlayArea"] = {
+    "source_symbol": "FindFirstNonBasicCardInPlayArea",
+    "before": "return (FindFirstNonBasicCardInPlayAreaResult){0x00u, 0x80u};",
+    "after": "return (FindFirstNonBasicCardInPlayAreaResult){0x00u, 0x00u};",
+    "case_ids": ["FindFirstNonBasicCardInPlayArea-0"],
+}
+# <<< factory-mutation FindFirstNonBasicCardInPlayArea
