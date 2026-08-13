@@ -61,6 +61,8 @@ svg#chart { width: 100%; border: 1px solid var(--border); border-radius: 4px; ba
 
 #frontier .fn-row { padding: 0.25rem 0; font-size: 0.9rem; }
 #frontier .fn-row .size { color: var(--muted); margin-right: 0.5rem; }
+#recent .fn-row { padding: 0.25rem 0; font-size: 0.9rem; }
+#recent .fn-row .size { color: var(--muted); margin-right: 0.5rem; }
 .hidden { display: none; }
 
 footer { margin-top: 2rem; font-size: 0.8rem; color: var(--muted); text-align: center; }
