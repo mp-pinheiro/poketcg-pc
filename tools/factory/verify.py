@@ -246,6 +246,23 @@ def collect_bundle(packet: dict, lane: Path) -> Path:
         dest = bundle / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, dest)
+    metadata = {
+        "id": packet["id"],
+        "basename": packet["basename"],
+        "file": packet["file"],
+        "routines": [
+            {
+                "name": routine["name"],
+                "work_id": routine.get("work_id")
+                or f"port:v1:{packet['file']}:{routine['name']}",
+                "issue_number": routine.get("issue_number"),
+            }
+            for routine in packet["routines"]
+        ],
+    }
+    (bundle / "packet.json").write_text(
+        json.dumps(metadata, sort_keys=True, indent=2) + "\n"
+    )
     return bundle
 
 

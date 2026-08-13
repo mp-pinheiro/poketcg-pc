@@ -13,6 +13,8 @@ adapter lint, full GBRT inventory gate, schema audit, progress rebuild, then
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import shutil
 import subprocess
 import sys
@@ -52,6 +54,21 @@ def land(packet: dict) -> None:
     bundle = BUNDLES / packet["id"]
     if not bundle.is_dir():
         raise SystemExit(f"bundle missing for {packet['id']}")
+    metadata = bundle / "packet.json"
+    if not metadata.exists():
+        raise SystemExit(f"bundle missing packet identity: {metadata}")
+    identity = json.loads(metadata.read_text())
+    expected_identity = [
+        {
+            "name": routine["name"],
+            "work_id": routine.get("work_id")
+            or f"port:v1:{packet['file']}:{routine['name']}",
+            "issue_number": routine.get("issue_number"),
+        }
+        for routine in packet["routines"]
+    ]
+    if identity.get("routines") != expected_identity:
+        raise SystemExit(f"STOP-THE-LINE {packet['id']} identity mismatch")
     basename = packet["basename"]
     cases_rel = Path("tests") / "cases" / f"{basename}.py"
 
@@ -119,16 +136,41 @@ def assert_fast_forward() -> None:
             f"committed locally; nothing is lost.")
 
 
-def gate_and_push(push: bool) -> None:
-    run([sys.executable, "tools/lint_adapters.py"], check_message="adapter lint failed")
+def reconcile_issues(enabled: bool = False) -> None:
+    """Refresh issue state only with an explicit write opt-in."""
+    if not enabled and os.environ.get("POKETCG_ISSUE_SYNC") != "1":
+        return
+    run([sys.executable, "tools/factory/issues.py", "fetch"],
+        check_message="issue fetch failed")
+    snapshot = json.loads((ROOT / ".factory" / "issues-cache.json").read_text())
+    if not snapshot.get("migration_complete"):
+        raise SystemExit(
+            "issue migration is incomplete; run the explicit bounded "
+            "issues.py migrate --apply workflow first"
+        )
+    run([sys.executable, "tools/factory/issues.py", "plan", "--json"],
+        check_message="issue plan failed")
+    plan_path = ROOT / ".factory" / "issues-plan.json"
+    plan = json.loads(plan_path.read_text())
+    if plan.get("actions"):
+        run([
+            sys.executable, "tools/factory/issues.py", "apply",
+            "--limit", "25", "--batches", "4", "--require-complete",
+        ], check_message="issue apply failed")
+    run([sys.executable, "tools/factory/issues.py", "verify", "--live"],
+        check_message="issue zero-drift verification failed")
+
+
+def gate_and_push(push: bool, sync_issues: bool = False) -> None:
+    run([sys.executable, "tools/lint_adapters.py"],
+        check_message="adapter lint failed")
     run([sys.executable, "tools/audit_constants.py"],
         check_message="constant audit failed: a locally #define'd value "
                       "disagrees with pret and is live-used")
-    run(["just", "oracle-fn-all"], check_message="GBRT inventory gate failed")
-    run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine"],
-        check_message="schema audit failed")
+    run(["just", "oracle-release-gate"], check_message="release gate failed")
     run([sys.executable, "tools/progress/report.py", "build"],
         check_message="progress rebuild failed")
+    reconcile_issues(sync_issues)
     status = run(["jj", "st"]).stdout
     if "gate.json" in status or "progress.json" in status or "history.jsonl" in status:
         run(["jj", "commit", "-m", "chore(progress): refresh gate report"],
@@ -145,6 +187,8 @@ def main() -> int:
     parser.add_argument("--batch", type=int, default=10,
                         help="gate+push after this many landings")
     parser.add_argument("--no-push", action="store_true")
+    parser.add_argument("--sync-issues", action="store_true",
+                        help="apply the reviewed managed-issue plan")
     args = parser.parse_args()
     greens = sorted(list_packets(("green",)), key=lambda p: p.get("updated_at", 0))
     if not greens:
@@ -155,8 +199,8 @@ def main() -> int:
         land(packet)
         landed += 1
         if landed % args.batch == 0:
-            gate_and_push(not args.no_push)
-    gate_and_push(not args.no_push)
+            gate_and_push(not args.no_push, args.sync_issues)
+    gate_and_push(not args.no_push, args.sync_issues)
     print(f"integrated {landed} packets")
     return 0
 

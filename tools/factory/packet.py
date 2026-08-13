@@ -12,6 +12,7 @@ and the append-mode context of the target files.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import re
@@ -21,7 +22,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (  # noqa: E402
-    QUEUE, ROOT, block_routine, blocked_routines, write_json,
+    QUEUE, ROOT, block_routine, blocked_routines, issue_records,
+    issues_are_migrated, write_json,
 )
 
 PRET = ROOT / "poketcg"
@@ -44,7 +46,17 @@ def compute_functions() -> list[dict]:
     inventory = report.load_inventory()
     routines, _ = report.load_routines()
     gate = report.load_gate()
-    return report.compute(inventory, routines, gate)["functions"], inventory
+    computed = report.compute(inventory, routines, gate)
+    by_name = {record["name"]: record for record in computed["work_records"]}
+    functions = []
+    for function in computed["functions"]:
+        enriched = dict(function)
+        work = by_name.get(function["name"])
+        if work:
+            enriched["work_id"] = work["work_id"]
+            enriched["tier"] = work["tier"]
+        functions.append(enriched)
+    return functions, inventory
 
 
 def _pret_number(text: str, default: int = 0) -> int:
@@ -368,8 +380,23 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             cascade_cache[name] = cascade(graph, dependents, {name})
         return cascade_cache[name]
 
-    ready = [f for f in functions
-             if f["status"] == "todo" and f["ready"] and f["name"] not in blocked]
+    managed_issues = issue_records()
+    if issues_are_migrated():
+        missing = [
+            f["name"] for f in functions
+            if f["status"] == "todo" and f["ready"]
+            and f["name"] not in blocked
+            and f.get("work_id") not in managed_issues
+        ]
+        if missing:
+            raise RuntimeError(
+                "managed issue missing for dispatchable routines: "
+                + ", ".join(sorted(missing))
+            )
+    ready = [
+        f for f in functions
+        if f["status"] == "todo" and f["ready"] and f["name"] not in blocked
+    ]
     if dir_filter:
         ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
 
@@ -406,12 +433,17 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
 
         basename = Path(file).stem
         for chunk in chunks:
+            work_ids = sorted(f["work_id"] for f, _asm in chunk)
+            digest = hashlib.sha256("\0".join(work_ids).encode()).hexdigest()[:10]
             routines = []
             packet_asm = []
             for f, asm in chunk:
                 packet_asm.append(asm)
+                issue = managed_issues.get(f["work_id"])
                 routines.append({
                     "name": f["name"],
+                    "work_id": f["work_id"],
+                    "issue_number": issue["issue_number"] if issue else None,
                     "size": f["size"],
                     "line": f["line"],
                     "refs": f["refs"],
@@ -420,7 +452,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                     "cascade": cascade_of(f["name"]),
                 })
             packet = {
-                "id": f"{basename}-L{chunk[0][0]['line']}",
+                "id": f"{basename}--{digest}",
                 "basename": basename,
                 "file": file,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
@@ -445,34 +477,39 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
 
 
 def drop_claimed(packets: list[dict]) -> list[dict]:
-    """Strip routines an existing pending packet already offers.
-
-    Two pending packets offering the same routine means two lanes translate
-    it and the second landing replaces the first's markers — pure waste, and
-    a source of avoidable STOP-THE-LINE churn. Ids are chunk-start-derived,
-    so a superseding packet never collides by id with the legacy packet it
-    overlaps; only routine-level claims catch it.
-
-    A packet's own prior pending version is not a claim against itself: a
-    rebuild replaces that entry in place. Run before ``attach_dependencies``,
-    which recomputes ``bytes``/``cascade`` over whatever survives.
-    """
+    """Reject duplicate non-terminal work claims instead of silently merging."""
+    active_states = {"pending", "translated", "verifying", "repair", "green"}
     claims: dict[str, str] = {}
+    kept: list[dict] = []
+    migrated = issues_are_migrated()
     for path in QUEUE.glob("*.json"):
         entry = json.loads(path.read_text())
-        if entry.get("state") != "pending":
+        if entry.get("state") not in active_states:
             continue
-        for routine in entry["routines"]:
-            claims[routine["name"]] = entry["id"]
-    kept: list[dict] = []
+        for routine in entry.get("routines", []):
+            work_id = routine.get("work_id")
+            if not work_id:
+                if migrated:
+                    raise RuntimeError(
+                        f"active legacy packet lacks work ID: {entry['id']}"
+                    )
+                continue
+            owner = claims.get(work_id)
+            if owner and owner != entry["id"]:
+                raise RuntimeError(
+                    f"work ID {work_id} claimed by active packets {owner} and "
+                    f"{entry['id']}"
+                )
+            claims[work_id] = entry["id"]
     for packet in packets:
-        usable = [r for r in packet["routines"]
-                  if claims.get(r["name"]) in (None, packet["id"])]
-        if not usable:
-            continue
-        packet["routines"] = usable
-        for routine in usable:
-            claims[routine["name"]] = packet["id"]
+        for routine in packet["routines"]:
+            work_id = routine["work_id"]
+            owner = claims.get(work_id)
+            if owner and owner != packet["id"]:
+                raise RuntimeError(
+                    f"work ID {work_id} already claimed by non-terminal packet {owner}"
+                )
+        claims.update({r["work_id"]: packet["id"] for r in packet["routines"]})
         kept.append(packet)
     return kept
 

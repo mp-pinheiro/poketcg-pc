@@ -92,9 +92,14 @@ def render(packet: dict, feedback: str | None = None,
                      f"{', '.join(verified)}.")
         lines.append("")
     for routine in [r for r in packet["routines"] if r["name"] in wanted]:
+        issue = (
+            f", managed issue #{routine['issue_number']}"
+            if routine.get("issue_number") is not None else
+            ", managed issue not yet reconciled"
+        )
         lines.append(f"## Routine `{routine['name']}` "
                      f"(poketcg/{packet['file']}:{routine['line']}, "
-                     f"{routine['size']} bytes, {routine['refs']} callsites)")
+                     f"{routine['size']} bytes, {routine['refs']} callsites{issue})")
         if routine.get("fallthrough"):
             lines.append(f"FALLTHROUGH: the body falls through into "
                          f"`{routine['fallthrough']}` — the C body must end by "

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import tempfile
 import threading
 import time
@@ -27,6 +28,7 @@ BUNDLES = FACTORY / "bundles"
 CACHE = FACTORY / "oracle-cache"
 METRICS = FACTORY / "metrics.jsonl"
 BLOCKED = FACTORY / "blocked.toml"
+ISSUES_CACHE = FACTORY / "issues-cache.json"
 LANE_BASE = Path("/tmp/poketcg-factory")
 PBENV = Path("/tmp/pbenv/bin/python")
 RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
@@ -55,6 +57,42 @@ def write_json(path: Path, data: dict) -> None:
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text())
+
+def issue_records(*, required: bool = False) -> dict[str, dict]:
+    """Return cached marker records keyed by canonical work ID."""
+    if not ISSUES_CACHE.exists():
+        if required:
+            raise RuntimeError(
+                f"managed issue cache missing: {ISSUES_CACHE}; run issues.py fetch"
+            )
+        return {}
+    data = json.loads(ISSUES_CACHE.read_text())
+    records: dict[str, dict] = {}
+    for issue in data.get("issues", []):
+        body = issue.get("body") or ""
+        marker = re.search(
+            r"<!--\s*poketcg-port-work:v1\s*(\{.*?\})\s*-->",
+            body, re.DOTALL,
+        )
+        if not marker:
+            continue
+        payload = json.loads(marker.group(1))
+        work_id = payload.get("work_id")
+        if not isinstance(work_id, str) or work_id in records:
+            raise RuntimeError(f"duplicate or malformed cached work ID: {work_id}")
+        records[work_id] = {
+            "issue_number": int(issue["number"]),
+            "title": issue.get("title", ""),
+            "state": str(issue.get("state", "open")).lower(),
+        }
+    return records
+
+
+def issues_are_migrated() -> bool:
+    if not ISSUES_CACHE.exists():
+        return False
+    data = json.loads(ISSUES_CACHE.read_text())
+    return bool(data.get("migration_complete"))
 
 
 def packet_path(packet_id: str) -> Path:

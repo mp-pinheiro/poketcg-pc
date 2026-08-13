@@ -42,3 +42,5 @@ jobs:
         run: just verify-hooks
       - name: Check progress report is current
         run: python3 tools/progress/report.py check
+      - name: Check managed issue model offline
+        run: python3 tools/factory/issue_model_check.py

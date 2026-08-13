@@ -67,17 +67,33 @@ iteration — no deferral bookkeeping needed.
 Serial, in the repo root:
 
 ```sh
-python3 tools/factory/integrate.py            # land greens, gate, push
-python3 tools/factory/issues.py sync          # close fully-landed issues
+python3 tools/factory/integrate.py            # land greens, release gate
+python3 tools/factory/issues.py fetch        # cache all port-labeled issues
+python3 tools/factory/issues.py plan --json  # deterministic dry run
+python3 tools/factory/issues.py apply --limit 25 --batches 4
+python3 tools/factory/issues.py verify --live
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
 python3 tools/factory/driver.py status        # queue state
 ```
 
+`issues.py` owns one bounded generated block and one lifecycle label per
+canonical routine work ID. It never rewrites an unmarked issue in normal mode.
+Use `issues.py migrate` only for the explicit legacy adoption/backfill pass.
+Apply writes `.factory/issues-apply-state.json` after every bounded GraphQL
+batch. Resume with the same plan and state file; live snapshot drift or a
+different plan hash aborts before mutation. `verify --live` removes the
+checkpoint only after zero drift. The issue-sync workflow uploads interrupted
+plan/checkpoint pairs and accepts `resume_run_id` to restore one explicitly.
 
-`integrate.py` runs the adapter lint, the full GBRT inventory gate (~12 s), and
-the schema audit BEFORE any push; a red stops the line. Run
-`just oracle-release-gate` (adds the full PyBoy audit sweep and the data
-round-trip) at session start and session end.
+
+`integrate.py` runs the adapter lint, the release gate, and progress checks
+before any optional push. Set `POKETCG_ISSUE_SYNC=1` for the orchestrator to
+run fetch/plan/apply/verify after the trusted gate; translator lanes never get
+GitHub credentials.
+
+The release gate is the only authority allowed to close a routine issue.
+Registered-but-ungated routines remain `port-awaiting-gate`, and a regression
+reopens the issue as `port-failing`.
 
 ## Escalation lane
 
@@ -105,15 +121,23 @@ round-trip) at session start and session end.
 ## Retired paths
 
 `docs/autonomous-port-workflow.md` (issue claims, per-issue bookmarks, PRs,
-CI watching, merge tokens) is deleted. `just launch-port` and
-`.github/copilot-instructions.md` are deprecated dead paths, kept untouched.
-GitHub issues are a reporting mirror closed in batch by `issues.py sync`;
-nothing dispatches from them, nothing claims them, no new ones are generated.
+CI watching, merge tokens) is deleted. `just launch-port` remains only as a
+compatibility hint for packet dispatch.
+
+GitHub issues are a state mirror keyed by `port:v1:<source>:<symbol>`.
+`issues.py plan` never adopts an unmarked issue; `issues.py migrate` performs
+exact source+symbol adoption and splits aggregate history only after every
+replacement exists and is linked. Human body text and comments outside the
+generated block remain untouched.
 
 ## Invariants
 
 - Lanes never run jj, git, gh, or any central gate.
-- The integrator gates strictly before pushing; a red gate stops the line.
+- The integrator runs one release gate per batch before issue reconciliation or
+  pushing; a red gate leaves affected issues open.
+- Every managed routine has exactly one issue, tier, and lifecycle state.
+- Packet batching may contain several atomic issue IDs, but one work ID cannot
+  be claimed by two non-terminal packets.
 - `tests/routines.py` is derived from case modules — never hand-edited.
 - Every landed routine carries live-oracle PASS and a mutation receipt.
 - `jj bookmark list` shows exactly one bookmark: `main`.

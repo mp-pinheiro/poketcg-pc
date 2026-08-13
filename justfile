@@ -284,28 +284,30 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
-# Generate GitHub issues for ready-to-port routines, tiered by effort.
-generate-port-issues TIER="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    args=()
-    if [ -n "{{TIER}}" ]; then
-        args+=(--tier "{{TIER}}")
-    fi
-    python3 tools/progress/gen_port_issues.py "${args[@]}"
+# Managed issue reconciliation. Fetch is read-only; apply is guarded by the
+# recorded plan and live issue fingerprints.
+issues-fetch:
+    python3 tools/factory/issues.py fetch
 
-# Assign the highest-priority open port issue to Copilot.
+issues-plan:
+    python3 tools/factory/issues.py plan --json
+
+issues-apply:
+    python3 tools/factory/issues.py apply
+
+issues-verify:
+    python3 tools/factory/issues.py verify --live
+
+issues-migrate:
+    python3 tools/factory/issues.py migrate
+
+# One-release compatibility name; tiers and file groups are retired.
+generate-port-issues:
+    python3 tools/factory/issues.py plan
+
+# Dispatch comes from factory packets, never mutable issue titles.
 launch-port:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    issue=$(gh issue list --label port --state open --limit 200 --json number,title,labels --jq 'sort_by(.labels | map(.name | select(startswith("tier-")) | ltrimstr("tier-") | tonumber) | .[0]) | .[0].number' 2>/dev/null || true)
-    if [ -z "$issue" ]; then
-        echo "no open port issues; run: python3 tools/progress/gen_port_issues.py --tier 1"
-        exit 1
-    fi
-    echo "Assigning issue #$issue to Copilot..."
-    gh issue edit "$issue" --add-assignee Copilot
-    echo "Copilot will start working on issue #$issue shortly."
+    @echo "dispatch with: python3 tools/factory/packet.py build --json"
 
 
 # Print the next version git-cliff derives from unreleased Conventional Commits.

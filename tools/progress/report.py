@@ -24,6 +24,148 @@ REGISTRY = ROOT / "tests" / "routines.py"
 GATE = ROOT / "site" / "data" / "gate.json"
 PROGRESS = ROOT / "site" / "data" / "progress.json"
 HISTORY = ROOT / "site" / "data" / "history.jsonl"
+BLOCKED = ROOT / ".factory" / "blocked.toml"
+
+TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
+LIFECYCLE_STATES = (
+    "ready", "blocked", "active", "awaiting-gate", "failing", "complete",
+    "excluded",
+)
+
+
+def tier_for(size: int) -> int:
+    for tier, lower, upper in TIER_BOUNDS:
+        if upper is None or size < upper:
+            return tier
+    return 4
+
+
+def canonical_work_id(source: str, name: str) -> str:
+    if not source or not name:
+        raise ValueError("a routine needs a source path and symbol")
+    return f"port:v1:{source}:{name}"
+
+
+def current_revision() -> str | None:
+    for rev in ("@-", "main"):
+        try:
+            result = subprocess.run(
+                ["jj", "log", "--no-graph", "-r", rev, "-T", "commit_id"],
+                cwd=ROOT, capture_output=True, text=True, timeout=5,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    return None
+
+
+def gate_is_trusted(
+    gate_data: dict | None,
+    *,
+    revision: str | None = None,
+) -> bool:
+    """Return true only for a complete, structurally valid gate."""
+    if not gate_data or gate_data.get("schema") != 1:
+        return False
+    if not gate_data.get("complete"):
+        return False
+    inventory = gate_data.get("inventory") or {}
+    count = inventory.get("routines")
+    if (
+        not isinstance(count, int)
+        or count <= 0
+        or inventory.get("failures", 0)
+        or inventory.get("primary_missing", 0)
+    ):
+        return False
+    routines = gate_data.get("routines")
+    if (
+        not isinstance(routines, dict)
+        or not routines
+        or len(routines) != count
+        or any(
+            not isinstance(entry, dict)
+            or entry.get("status") not in {"pass", "fail"}
+            for entry in routines.values()
+        )
+    ):
+        return False
+    recorded = gate_data.get("commit")
+    if not recorded:
+        return False
+    tested = revision if revision is not None else current_revision()
+    return bool(tested and recorded == tested)
+
+
+def load_operational_blockers() -> dict[str, dict]:
+    if not BLOCKED.exists():
+        return {}
+    with BLOCKED.open("rb") as stream:
+        data = tomllib.load(stream)
+    blockers: dict[str, dict] = {}
+    for entry in data.get("blocked", []):
+        name = entry.get("name")
+        if not name:
+            fail("blocked.toml entry has no name")
+        if name in blockers:
+            fail(f"duplicate operational blocker: {name}")
+        blockers[name] = {
+            "reason": str(entry.get("reason", "operational blocker")),
+            "unblock": str(entry.get("unblock", "clear the blocker")),
+        }
+    return blockers
+
+
+def project_work_records(
+    functions: list[dict],
+    gate_data: dict | None,
+    *,
+    revision: str | None = None,
+    active_packets: dict[str, dict] | None = None,
+) -> list[dict]:
+    """Project report rows into stable, issue-sized desired work records."""
+    trusted = gate_is_trusted(gate_data, revision=revision)
+    gate_routines = (gate_data or {}).get("routines") or {}
+    operational = load_operational_blockers()
+    active_packets = active_packets or {}
+    records = []
+    for function in functions:
+        source = function.get("file")
+        name = function["name"]
+        work_id = canonical_work_id(source, name) if source else None
+        work = {
+            "work_id": work_id,
+            "name": name,
+            "source": source,
+            "line": function.get("line"),
+            "size": function.get("size", 0),
+            "refs": function.get("refs", 0),
+            "tier": tier_for(function.get("size", 0)),
+            "excluded": function["status"] == "excluded",
+            "blockers": list(function.get("blockers") or []),
+            "operational_blocker": operational.get(name),
+            "packet": active_packets.get(work_id),
+            "gate_trusted": trusted,
+        }
+        if work["excluded"]:
+            work["state"] = "excluded"
+        elif trusted and gate_routines.get(name, {}).get("status") == "pass":
+            work["state"] = "complete"
+        elif trusted and gate_routines.get(name, {}).get("status") == "fail":
+            work["state"] = "failing"
+        elif function["status"] in ("ported", "verified", "failing"):
+            work["state"] = "awaiting-gate"
+        elif work["packet"] and work["packet"].get("state") in {
+            "pending", "translated", "verifying", "repair", "green",
+        }:
+            work["state"] = "active"
+        elif work["operational_blocker"] or work["blockers"]:
+            work["state"] = "blocked"
+        else:
+            work["state"] = "ready"
+        records.append(work)
+    return records
 
 
 def fail(msg: str) -> None:
@@ -76,6 +218,24 @@ def load_scope() -> list[dict]:
     with open(SCOPE, "rb") as f:
         data = tomllib.load(f)
     return data.get("exclude", [])
+
+def load_id_migrations() -> dict[str, str]:
+    if not SCOPE.exists():
+        return {}
+    with SCOPE.open("rb") as stream:
+        data = tomllib.load(stream)
+    migrations: dict[str, str] = {}
+    for entry in data.get("id_migration", []):
+        old = entry.get("old_work_id")
+        new = entry.get("new_work_id")
+        if (
+            not isinstance(old, str) or not old.startswith("port:v1:")
+            or not isinstance(new, str) or not new.startswith("port:v1:")
+            or old in migrations
+        ):
+            fail("invalid or duplicate explicit work-ID migration")
+        migrations[old] = new
+    return migrations
 
 
 def resolve_scope(
@@ -372,7 +532,13 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
             "present": True,
             "complete": gate_data.get("complete", False),
             "commit": gate_data.get("commit"),
+            "trusted": gate_is_trusted(gate_data),
         }
+    work_records = project_work_records(functions_out, gate_data)
+    work_ids = [record["work_id"] for record in work_records
+                if not record["excluded"]]
+    if None in work_ids or len(work_ids) != len(set(work_ids)):
+        fail("work-record projection produced a missing or duplicate work ID")
 
     return {
         "schema": 1,
@@ -381,6 +547,7 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
         "commit_url": None,
         "pret_commit": inventory["pret_commit"],
         "pret_blob": f"https://github.com/pret/poketcg/blob/{inventory['pret_commit'][:7]}/",
+        "id_migrations": load_id_migrations(),
         "gate": gate_summary,
         "measures": {
             "code": total_code,
@@ -401,6 +568,7 @@ def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict
         "categories": categories_list,
         "units": units_list,
         "functions": functions_out,
+        "work_records": work_records,
     }
 
 
@@ -419,7 +587,10 @@ def subcommand_build():
     commit = jj_commit_short()
     unchanged = previous_report is not None and all(
         previous_report.get(key) == report.get(key)
-        for key in ("measures", "categories", "units", "functions", "recent")
+        for key in (
+            "measures", "categories", "units", "functions", "work_records",
+            "id_migrations", "recent",
+        )
     )
     if unchanged and previous_report.get("commit"):
         report["commit"] = previous_report["commit"]
@@ -475,7 +646,10 @@ def subcommand_check():
     if committed is None:
         fail("site/data/progress.json missing; run just progress first")
     diffs = []
-    for key in ("measures", "categories", "units", "functions"):
+    for key in (
+        "measures", "categories", "units", "functions", "work_records",
+        "id_migrations",
+    ):
         a = json.dumps(current.get(key), sort_keys=True)
         b = json.dumps(committed.get(key), sort_keys=True)
         if a != b:

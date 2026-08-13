@@ -55,11 +55,21 @@ class _Run:
         self.reason: str | None = None
 
     def metric(self, model: str) -> dict:
+        work_ids = sorted(
+            r.get("work_id") or f"port:v1:{self.packet['file']}:{r['name']}"
+            for r in self.packet["routines"]
+        )
         return {
             "id": self.id, "verdict": self.final, "reason": self.reason,
             "rounds": self.rounds, "wall_s": round(time.time() - self.started, 1),
             "prompt_tokens": self.prompt_tokens, "reply_tokens": self.reply_tokens,
-            "routines": len(self.packet["routines"]), "model": model,
+            "routines": len(self.packet["routines"]),
+            "work_ids": work_ids,
+            "issue_numbers": sorted(
+                r["issue_number"] for r in self.packet["routines"]
+                if r.get("issue_number") is not None
+            ),
+            "model": model,
         }
 
 
