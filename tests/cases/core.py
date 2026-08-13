@@ -318,6 +318,16 @@ CASES["CopyListWithFFTerminatorFromHLToDE_Bank5"] = [
 ]
 # <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5
 
+# >>> factory CheckEnergyFlagsNeededInList
+CONTRACT["CheckEnergyFlagsNeededInList"] = {"compare": ("a", "f", "b", "c"), "preserve": ("b", "c")}
+CASES["CheckEnergyFlagsNeededInList"] = [
+    {"a": 0, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
+    dict(POISON, a=0, wram={0xC510: b"\xFF"}, read={0xC510: 1}),
+    {"a": 1, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
+    {"a": 0xFF, "wram": {0xC510: b"\xFF"}, "read": {0xC510: 1}},
+]
+# <<< factory CheckEnergyFlagsNeededInList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -533,3 +543,6 @@ MUTATIONS["PlayBufferedDuelAnimations"] = {
 # >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
 MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank5", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank5-0", "CopyListWithFFTerminatorFromHLToDE_Bank5-1", "CopyListWithFFTerminatorFromHLToDE_Bank5-2"]}
 # <<< factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
+# >>> factory-mutation CheckEnergyFlagsNeededInList
+MUTATIONS["CheckEnergyFlagsNeededInList"] = {"source_symbol": "CheckEnergyFlagsNeededInList", "before": "return (EnergyFlagsResult){0xffu, 0u};", "after": "return (EnergyFlagsResult){0u, 0u};", "case_ids": ["CheckEnergyFlagsNeededInList-0", "CheckEnergyFlagsNeededInList-1", "CheckEnergyFlagsNeededInList-2", "CheckEnergyFlagsNeededInList-3"]}
+# <<< factory-mutation CheckEnergyFlagsNeededInList

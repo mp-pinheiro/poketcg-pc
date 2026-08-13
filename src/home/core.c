@@ -137,6 +137,21 @@ static uint32_t duel_save_total_size(void)
 #define SPRITE_ANIM_FLAG_3          0x08u
 #define SPRITE_ANIM_FLAG_X_FLIP     0x20u
 #define SPRITE_ANIM_FLAG_Y_FLIP     0x40u
+
+#define COLORLESS_F 0x80u
+#define DOUBLE_COLORLESS_ENERGY 0x07u
+#define FIGHTING_ENERGY 0x05u
+#define FIGHTING_F 0x20u
+#define FIRE_ENERGY 0x02u
+#define FIRE_F 0x04u
+#define GRASS_ENERGY 0x01u
+#define GRASS_F 0x02u
+#define LIGHTNING_ENERGY 0x04u
+#define LIGHTNING_F 0x08u
+#define PSYCHIC_ENERGY 0x06u
+#define PSYCHIC_F 0x40u
+#define WATER_ENERGY 0x03u
+#define WATER_F 0x10u
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -534,3 +549,42 @@ CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *
 	}
 }
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+
+/* >>> factory CheckEnergyFlagsNeededInList */
+/* core.asm:1581-1658 */
+EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a)
+{
+	uint8_t required = a;
+	uint16_t hl = wDuelTempList_ADDR;
+
+	for (;;) {
+		uint8_t deck_index = gb_read8(hl++);
+		if (deck_index == 0xffu)
+			return (EnergyFlagsResult){0xffu, 0u};
+
+		uint8_t energy = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		uint8_t flags;
+
+		if (energy == FIRE_ENERGY)
+			flags = FIRE_F;
+		else if (energy == GRASS_ENERGY)
+			flags = GRASS_F;
+		else if (energy == LIGHTNING_ENERGY)
+			flags = LIGHTNING_F;
+		else if (energy == WATER_ENERGY)
+			flags = WATER_F;
+		else if (energy == FIGHTING_ENERGY)
+			flags = FIGHTING_F;
+		else if (energy == PSYCHIC_ENERGY)
+			flags = PSYCHIC_F;
+		else if (energy == DOUBLE_COLORLESS_ENERGY)
+			flags = COLORLESS_F;
+		else
+			continue;
+
+		uint8_t intersection = (uint8_t)(flags & required);
+		if (intersection != 0u)
+			return (EnergyFlagsResult){intersection, 1u};
+	}
+}
+/* <<< factory CheckEnergyFlagsNeededInList */

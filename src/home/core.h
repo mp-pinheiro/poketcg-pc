@@ -90,4 +90,8 @@ AnimBufferResult PlayBufferedDuelAnimations(void);
 typedef struct { uint8_t a; uint8_t f; } CopyListResult;
 CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *de);
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+/* >>> factory CheckEnergyFlagsNeededInList */
+typedef struct { uint8_t a; uint8_t carry; } EnergyFlagsResult;
+EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a);
+/* <<< factory CheckEnergyFlagsNeededInList */
 #endif /* POKETCG_HOME_CORE_H */

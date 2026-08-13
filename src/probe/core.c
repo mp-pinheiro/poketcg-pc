@@ -220,6 +220,15 @@ static void adapt_CopyListWithFFTerminatorFromHLToDE_Bank5(ProbeState *s)
 }
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
 
+/* >>> factory CheckEnergyFlagsNeededInList */
+static void adapt_CheckEnergyFlagsNeededInList(ProbeState *s)
+{
+	EnergyFlagsResult r = CheckEnergyFlagsNeededInList(s->a);
+	s->a = r.a;
+	s->f = r.carry ? 0x10u : 0u;
+}
+/* <<< factory CheckEnergyFlagsNeededInList */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -248,5 +257,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
+	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
 	{ NULL, NULL },
 };
