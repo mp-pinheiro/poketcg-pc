@@ -2,6 +2,8 @@ const HEADLINE = document.getElementById('headline');
 const SUBHEAD = document.getElementById('subhead');
 const COMMIT_INFO = document.getElementById('commit-info');
 const CHART = document.getElementById('chart');
+const CHART_RANGE = document.getElementById('chart-range');
+const CHART_SUMMARY = document.getElementById('chart-summary');
 const CATEGORIES = document.getElementById('categories');
 const UNITS = document.getElementById('units');
 const FILTER = document.getElementById('filter');
@@ -51,28 +53,60 @@ function renderHeader(p) {
 }
 
 function renderChart(points) {
-  if (!points || points.length < 2) { CHART.innerHTML = ''; return; }
-  const minTs = points[0].timestamp;
-  const maxTs = points[points.length - 1].timestamp;
-  const dur = Math.max(maxTs - minTs, 1);
-  const padX = 40, padY = 14, w = 800 - 2 * padX, h = 200 - 2 * padY;
-  let maxPct = 0;
-  const coords = points.map(pt => {
-    const yPct = pt.code_total ? pt.code / pt.code_total : 0;
-    if (yPct > maxPct) maxPct = yPct;
-    return { x: padX + ((pt.timestamp - minTs) / dur) * w,
-             y: padY + h - (yPct / Math.max(maxPct, 0.01)) * h,
-             pct: yPct, commit: pt.commit };
+  if (!points || points.length < 2) {
+    CHART.innerHTML = '';
+    CHART_RANGE.textContent = '';
+    return;
+  }
+  const visible = points.filter((pt, index) => {
+    if (index === 0 || index === points.length - 1) return true;
+    const previous = points[index - 1];
+    return pt.code !== previous.code || pt.code_total !== previous.code_total;
   });
-  const poly = coords.map(c => `${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(' ');
-  let svg = `<polyline points="${poly}" fill="none" stroke="#4caf50" stroke-width="2"/>`;
-  svg += `<line x1="${padX}" y1="${padY + h}" x2="${padX + w}" y2="${padY + h}" stroke="#333" stroke-width="1"/>`;
-  svg += `<text x="${padX - 6}" y="${padY + h + 3}" text-anchor="end" font-size="10" fill="#888">0%</text>`;
-  svg += `<text x="${padX - 6}" y="${padY + 4}" text-anchor="end" font-size="10" fill="#888">${(maxPct * 100).toFixed(0)}%</text>`;
+  const focus = visible.slice(-Math.min(90, visible.length));
+  const startPercent = focus[0].code_total ? focus[0].code * 100 / focus[0].code_total : 0;
+  const endPercent = focus[focus.length - 1].code_total
+    ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
+    : 0;
+  const delta = endPercent - startPercent;
+  const minPercent = Math.min(...focus.map(pt => pt.code_total ? pt.code * 100 / pt.code_total : 0));
+  const maxPercent = Math.max(...focus.map(pt => pt.code_total ? pt.code * 100 / pt.code_total : 0));
+  const tickStep = maxPercent - minPercent <= 20 ? 5 : 10;
+  const yMin = Math.max(0, Math.floor(minPercent / tickStep) * tickStep);
+  const yMax = Math.max(yMin + tickStep, Math.ceil(maxPercent / tickStep) * tickStep);
+  const padX = 40, padY = 14, w = 800 - 2 * padX, h = 200 - 2 * padY;
+  const minTs = focus[0].timestamp;
+  const maxTs = Math.max(focus[focus.length - 1].timestamp, minTs + 1);
+  const duration = maxTs - minTs;
+  const coords = focus.map(pt => {
+    const percent = pt.code_total ? pt.code * 100 / pt.code_total : 0;
+    return { x: padX + ((pt.timestamp - minTs) / duration) * w,
+             y: padY + h - ((percent - yMin) / (yMax - yMin)) * h,
+             pct: percent / 100, commit: pt.commit };
+  });
+  const baseY = padY + h;
+  const first = coords[0];
+  const last = coords[coords.length - 1];
+  const linePath = coords.map((c, i) => `${i ? 'L' : 'M'} ${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(' ');
+  const areaPath = `${linePath} L ${last.x.toFixed(1)} ${baseY} H ${first.x.toFixed(1)} Z`;
+  const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
+  let svg = `<path d="${areaPath}" fill="#4caf50" fill-opacity="0.12"/>`;
+  svg += `<path d="${linePath}" fill="none" stroke="#4caf50" stroke-width="2"/>`;
+  for (let tick = yMin; tick <= yMax; tick += tickStep) {
+    const y = padY + h - ((tick - yMin) / (yMax - yMin)) * h;
+    svg += `<line x1="${padX}" y1="${y}" x2="${padX + w}" y2="${y}" stroke="#292929" stroke-width="1"/>`;
+    svg += `<text x="${padX - 6}" y="${y + 3}" text-anchor="end" font-size="10" fill="#888">${tick}%</text>`;
+  }
   for (const c of coords) {
     svg += `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="2" fill="#4caf50"><title>${c.commit} ${(c.pct * 100).toFixed(2)}%</title></circle>`;
   }
+  svg += `<text x="${(first.x + 6).toFixed(1)}" y="${Math.max(first.y - 7, padY + 10).toFixed(1)}" font-size="11" fill="#8bd48b">${startPercent.toFixed(2)}%</text>`;
+  svg += `<text x="${(last.x - 6).toFixed(1)}" y="${Math.max(last.y - 7, padY + 10).toFixed(1)}" text-anchor="end" font-size="11" fill="#8bd48b">${endPercent.toFixed(2)}% (${deltaLabel}pp)</text>`;
+  svg += `<text x="${padX}" y="${baseY + 12}" font-size="10" fill="#888">${fmtDate(minTs)}</text>`;
+  svg += `<text x="${padX + w}" y="${baseY + 12}" text-anchor="end" font-size="10" fill="#888">${fmtDate(maxTs)}</text>`;
   CHART.innerHTML = svg;
+  CHART_SUMMARY.textContent = `${startPercent.toFixed(2)}% \u2192 ${endPercent.toFixed(2)}% (${deltaLabel}pp)`;
+  CHART_RANGE.textContent = `${focus.length} changed snapshots \u00b7 x = elapsed time`;
 }
 
 function renderCategories(cats) {

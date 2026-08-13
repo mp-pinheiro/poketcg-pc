@@ -13,7 +13,8 @@
   <div id="commit-info"></div>
 </header>
 <section id="chart-section">
-  <svg id="chart" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet"></svg>
+  <div class="chart-heading"><h2>Code progress</h2><strong id="chart-summary"></strong><span id="chart-range"></span></div>
+  <svg id="chart" viewBox="0 0 800 220" preserveAspectRatio="xMidYMid meet"></svg>
 </section>
 <section id="recent-section"><h2>Recently ported</h2><div id="recent"></div></section>
 <section id="categories-section"><h2>Categories</h2><div id="categories"></div></section>
@@ -25,7 +26,7 @@
   </table>
 </section>
 <section id="frontier-section"><h2>Ready to port</h2><div id="frontier"></div></section>
-<footer><p>History computed against today's inventory and scope; series stays self-consistent across scope changes.</p></footer>
+<footer><p>The line shows absolute completion over elapsed time. The headline above gives the exact change; flat sections are periods where recorded code totals barely changed, while steep sections are large port batches.</p></footer>
 <script type="module" src="app.js"></script>
 </body>
 </html>

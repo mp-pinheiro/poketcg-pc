@@ -24,6 +24,10 @@ header { margin-bottom: 1rem; }
 #commit-info a { color: var(--blue); }
 
 svg#chart { width: 100%; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
+.chart-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 1rem; }
+.chart-heading h2 { margin-top: 1.5rem; }
+#chart-range { width: 100%; flex: 0 0 100%; color: var(--muted); font-size: 0.78rem; text-align: left; }
+#chart-summary { flex: 1 1 auto; color: var(--green); font-size: 1.1rem; letter-spacing: 0.01em; }
 
 #categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; }
 .category { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; }
