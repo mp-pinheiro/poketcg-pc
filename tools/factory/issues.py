@@ -736,6 +736,50 @@ def apply_graphql_batch(actions: list[dict], snapshot: dict) -> None:
         run_graphql(close_query, close_variables)
 
 
+def action_is_reflected(action: dict, snapshot: dict) -> bool:
+    by_number = {
+        int(issue["number"]): normalize_issue(issue)
+        for issue in snapshot["issues"]
+    }
+    by_work, _ = indexed_issues(snapshot)
+    issue = (
+        by_work.get(action.get("work_id"))
+        if action.get("work_id")
+        else by_number.get(int(action["issue_number"]))
+    )
+    if issue is None:
+        return False
+    target_state = "closed" if action["desired_state"] == "closed" else "open"
+    current_state = "closed" if issue["state"] == "closed" else "open"
+    if action["action"] == "supersede":
+        return current_state == target_state and issue["labels"] == action["labels"]
+    return (
+        issue["title"] == action["title"]
+        and issue["body"] == action["body"]
+        and issue["labels"] == action["labels"]
+        and current_state == target_state
+    )
+
+
+def fetch_reflected_snapshot(actions: list[dict], attempts: int = 6) -> dict:
+    if attempts < 1:
+        raise ModelError("reflection attempts must be positive")
+    for attempt in range(attempts):
+        snapshot = fetch_snapshot()
+        if all(action_is_reflected(action, snapshot) for action in actions):
+            return snapshot
+        if attempt + 1 < attempts:
+            time.sleep(2)
+    missing = [
+        action.get("work_id") or f"issue #{action['issue_number']}"
+        for action in actions if not action_is_reflected(action, snapshot)
+    ]
+    raise ModelError(
+        "GitHub did not reflect applied actions before checkpoint: "
+        + ", ".join(missing)
+    )
+
+
 def apply_plan(
     plan: dict,
     *,
@@ -762,7 +806,7 @@ def apply_plan(
             result.update(remaining=0, complete=True)
             return result
         apply_graphql_batch(batch, current)
-        refreshed = fetch_snapshot()
+        refreshed = fetch_reflected_snapshot(batch)
         state["completed"].extend(action_key(action) for action in batch)
         state["expected_snapshot"] = snapshot_fingerprint(refreshed)
         state["updated_at"] = int(time.time())

@@ -229,6 +229,34 @@ def main() -> int:
         pass
     else:
         raise AssertionError("stale apply checkpoint was accepted")
+    reflected_action = issues.action_for(routine("Reflected"), None)
+    reflected_issue = {
+        "id": "reflected-node", "number": 11,
+        "title": reflected_action["title"], "body": reflected_action["body"],
+        "state": "open", "labels": reflected_action["labels"], "url": "",
+    }
+    stale_snapshot = {"schema": 1, "issues": []}
+    reflected_snapshot = {"schema": 1, "issues": [reflected_issue]}
+    assert not issues.action_is_reflected(reflected_action, stale_snapshot)
+    assert issues.action_is_reflected(reflected_action, reflected_snapshot)
+    snapshots = iter((stale_snapshot, reflected_snapshot))
+    original_fetch = issues.fetch_snapshot
+    original_sleep = issues.time.sleep
+    issues.fetch_snapshot = lambda: next(snapshots)
+    issues.time.sleep = lambda _: None
+    try:
+        assert issues.fetch_reflected_snapshot(
+            [reflected_action], attempts=2,
+        ) == reflected_snapshot
+        try:
+            issues.fetch_reflected_snapshot([reflected_action], attempts=0)
+        except issues.ModelError:
+            pass
+        else:
+            raise AssertionError("zero reflection attempts were accepted")
+    finally:
+        issues.fetch_snapshot = original_fetch
+        issues.time.sleep = original_sleep
     graphql_calls = []
     original_metadata = issues.github_node_metadata
     original_graphql = issues.run_graphql
