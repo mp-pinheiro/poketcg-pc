@@ -772,13 +772,14 @@ CASES["Recycle_DiscardPileCheck"] = [
 # <<< factory Recycle_DiscardPileCheck
 
 # >>> factory CreateBasicPokemonCardListFromDiscardPile
-CONTRACT["CreateBasicPokemonCardListFromDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CONTRACT["CreateBasicPokemonCardListFromDiscardPile"] = {"compare": ("f",), "preserve": ()}
 CASES["CreateBasicPokemonCardListFromDiscardPile"] = [
-    {},
-    dict(POISON),
-    {"wram": {0xC3ED: b"\x01", 0xC27E: b"\x00"}, "read": {0xC510: 4}},
+    {"wram": {0xC37E: b"\x00"}, "read": {0xC510: 1}},
+    dict(POISON, wram={0xC37E: b"\x00"}),
+    {"wram": {0xC37E: b"\x01", 0xC510: b"\x00"}},
 ]
 # <<< factory CreateBasicPokemonCardListFromDiscardPile
+
 
 # >>> factory CreatePokemonCardListFromHand
 CONTRACT["CreatePokemonCardListFromHand"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b",)}
@@ -838,6 +839,15 @@ CASES["Maintenance_HandCheck"] = [
          read={0xC2EE: 1}),
 ]
 # <<< factory Maintenance_HandCheck
+
+# >>> factory DevolutionSpray_PlayAreaEvolutionCheck
+CONTRACT["DevolutionSpray_PlayAreaEvolutionCheck"] = {"compare": ("hl", "f"), "preserve": ()}
+CASES["DevolutionSpray_PlayAreaEvolutionCheck"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2BB: b"\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xC2BB: b"\x00\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2BB: b"\x00"}),
+]
+# <<< factory DevolutionSpray_PlayAreaEvolutionCheck
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1298,7 +1308,12 @@ MUTATIONS["PokeBall_DeckCheck"] = {"source_symbol": "PokeBall_DeckCheck", "befor
 MUTATIONS["Recycle_DiscardPileCheck"] = {"source_symbol": "Recycle_DiscardPileCheck", "before": "if (borrow)", "after": "if (!borrow)", "case_ids": ["Recycle_DiscardPileCheck-0", "Recycle_DiscardPileCheck-1", "Recycle_DiscardPileCheck-2", "Recycle_DiscardPileCheck-3"]}
 # <<< factory-mutation Recycle_DiscardPileCheck
 # >>> factory-mutation CreateBasicPokemonCardListFromDiscardPile
-MUTATIONS["CreateBasicPokemonCardListFromDiscardPile"] = {"source_symbol": "CreateBasicPokemonCardListFromDiscardPile", "before": "first == 0xFFu ? 0x90u : 0x00u", "after": "first == 0xFFu ? 0x10u : 0x00u", "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2"]}
+MUTATIONS["CreateBasicPokemonCardListFromDiscardPile"] = {
+    "source_symbol": "CreateBasicPokemonCardListFromDiscardPile",
+    "before": "return (CreateBasicPokemonCardListFromDiscardPileResult){0x90u};",
+    "after": "return (CreateBasicPokemonCardListFromDiscardPileResult){0x80u};",
+    "case_ids": ["CreateBasicPokemonCardListFromDiscardPile-0", "CreateBasicPokemonCardListFromDiscardPile-1", "CreateBasicPokemonCardListFromDiscardPile-2"],
+}
 # <<< factory-mutation CreateBasicPokemonCardListFromDiscardPile
 # >>> factory-mutation CreatePokemonCardListFromHand
 MUTATIONS["CreatePokemonCardListFromHand"] = {"source_symbol": "CreatePokemonCardListFromHand", "before": "if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY)", "after": "if (gb_read8(wLoadedCard2Type_ADDR) >= TYPE_ENERGY)", "case_ids": ["CreatePokemonCardListFromHand-0", "CreatePokemonCardListFromHand-1"]}
@@ -1322,3 +1337,11 @@ MUTATIONS["Maintenance_HandCheck"] = {
     "case_ids": ["Maintenance_HandCheck-0", "Maintenance_HandCheck-1", "Maintenance_HandCheck-2"],
 }
 # <<< factory-mutation Maintenance_HandCheck
+# >>> factory-mutation DevolutionSpray_PlayAreaEvolutionCheck
+MUTATIONS["DevolutionSpray_PlayAreaEvolutionCheck"] = {
+    "source_symbol": "DevolutionSpray_PlayAreaEvolutionCheck",
+    "before": "gb_read8(wLoadedCard2Stage_ADDR) != 0u",
+    "after": "gb_read8(wLoadedCard2Stage_ADDR) == 0u",
+    "case_ids": ["DevolutionSpray_PlayAreaEvolutionCheck-0", "DevolutionSpray_PlayAreaEvolutionCheck-1", "DevolutionSpray_PlayAreaEvolutionCheck-2"],
+}
+# <<< factory-mutation DevolutionSpray_PlayAreaEvolutionCheck

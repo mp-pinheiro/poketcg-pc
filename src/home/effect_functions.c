@@ -140,6 +140,8 @@ static const uint8_t color_to_text[] = {
 
 #define DUELVARS_HAND 0x42u
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xeeu
+
+#define ThereAreNoStage1PokemonText 0x00BCu
 /* <<< factory statics */
 
 
@@ -1124,34 +1126,28 @@ Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void)
 }
 /* <<< factory Recycle_DiscardPileCheck */
 
+
 /* >>> factory CreateBasicPokemonCardListFromDiscardPile */
-CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void)
+CreateBasicPokemonCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void)
 {
-	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
-	uint8_t count = r.a;
-	uint8_t h = (uint8_t)(r.hl >> 8);
-	uint8_t l = (uint8_t)(DUELVARS_DECK_CARDS + count);
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE);
+	uint8_t b = (uint8_t)(count.a + 1u);
+	uint16_t hl = (uint16_t)((count.hl & 0xFF00u) |
+		(uint8_t)(count.a + DUELVARS_DECK_CARDS));
 	uint16_t de = wDuelTempList_ADDR;
-	uint8_t b = (uint8_t)(count + 1u);
-	for (;;) {
-		l--;
-		b--;
-		if (b == 0u)
-			break;
-		uint16_t hl = (uint16_t)((uint16_t)h << 8 | l);
-		uint8_t idx = gb_read8(hl);
-		LoadCardDataToBuffer2_FromDeckIndex(idx);
+	while (b != 0u) {
+		uint8_t card = gb_read8(hl);
+		LoadCardDataToBuffer2_FromDeckIndex(card);
 		if (gb_read8(wLoadedCard2Type_ADDR) < TYPE_ENERGY &&
-		    gb_read8(wLoadedCard2Stage_ADDR) == 0u)
-			gb_write8(de++, idx);
+			gb_read8(wLoadedCard2Stage_ADDR) == 0u)
+			gb_write8(de++, card);
+		hl = (uint16_t)((hl & 0xFF00u) | (uint8_t)((uint8_t)hl - 1u));
 		b--;
 	}
 	gb_write8(de, 0xFFu);
-	uint8_t first = gb_read8(wDuelTempList_ADDR);
-	uint16_t hl_out = (uint16_t)((uint16_t)h << 8 | l);
-	return (CreateEnergyCardListFromDiscardPileResult){
-		hl_out, (uint8_t)(first == 0xFFu ? 0x90u : 0x00u)
-	};
+	if (gb_read8(wDuelTempList_ADDR) == 0xFFu)
+		return (CreateBasicPokemonCardListFromDiscardPileResult){0x90u};
+	return (CreateBasicPokemonCardListFromDiscardPileResult){0x00u};
 }
 /* <<< factory CreateBasicPokemonCardListFromDiscardPile */
 
@@ -1234,3 +1230,20 @@ MaintenanceHandCheckResult Maintenance_HandCheck(void)
 	return (MaintenanceHandCheckResult){hand.a, f, 0x00b6u};
 }
 /* <<< factory Maintenance_HandCheck */
+
+/* >>> factory DevolutionSpray_PlayAreaEvolutionCheck */
+DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint16_t hl = (uint16_t)((count.hl & 0xFF00u) | DUELVARS_ARENA_CARD);
+	uint16_t n = count.a ? count.a : 0x100u;
+	do {
+		LoadCardDataToBuffer2_FromDeckIndex(gb_read8(hl++));
+		if (gb_read8(wLoadedCard2Stage_ADDR) != 0u)
+			return (DevolutionSprayPlayAreaEvolutionCheckResult){0x0000u, 0x00u};
+	} while (--n != 0u);
+	return (DevolutionSprayPlayAreaEvolutionCheckResult){
+		ThereAreNoStage1PokemonText, 0x90u
+	};
+}
+/* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */

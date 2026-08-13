@@ -240,7 +240,8 @@ typedef struct { uint16_t hl; uint8_t f; } Recycle_DiscardPileCheckResult;
 Recycle_DiscardPileCheckResult Recycle_DiscardPileCheck(void);
 /* <<< factory Recycle_DiscardPileCheck */
 /* >>> factory CreateBasicPokemonCardListFromDiscardPile */
-CreateEnergyCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void);
+typedef struct { uint8_t f; } CreateBasicPokemonCardListFromDiscardPileResult;
+CreateBasicPokemonCardListFromDiscardPileResult CreateBasicPokemonCardListFromDiscardPile(void);
 /* <<< factory CreateBasicPokemonCardListFromDiscardPile */
 /* >>> factory CreatePokemonCardListFromHand */
 typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t d; uint8_t e; } CreatePokemonCardListFromHandResult;
@@ -258,4 +259,8 @@ PokedexOrderDeckCardsEffectResult Pokedex_OrderDeckCardsEffect(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MaintenanceHandCheckResult;
 MaintenanceHandCheckResult Maintenance_HandCheck(void);
 /* <<< factory Maintenance_HandCheck */
+/* >>> factory DevolutionSpray_PlayAreaEvolutionCheck */
+typedef struct { uint16_t hl; uint8_t f; } DevolutionSprayPlayAreaEvolutionCheckResult;
+DevolutionSprayPlayAreaEvolutionCheckResult DevolutionSpray_PlayAreaEvolutionCheck(void);
+/* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

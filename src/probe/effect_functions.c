@@ -574,11 +574,11 @@ static void adapt_Recycle_DiscardPileCheck(ProbeState *s)
 /* >>> factory CreateBasicPokemonCardListFromDiscardPile */
 static void adapt_CreateBasicPokemonCardListFromDiscardPile(ProbeState *s)
 {
-	CreateEnergyCardListFromDiscardPileResult r = CreateBasicPokemonCardListFromDiscardPile();
-	s->hl = r.hl;
+	CreateBasicPokemonCardListFromDiscardPileResult r = CreateBasicPokemonCardListFromDiscardPile();
 	s->f = r.f;
 }
 /* <<< factory CreateBasicPokemonCardListFromDiscardPile */
+
 
 /* >>> factory CreatePokemonCardListFromHand */
 static void adapt_CreatePokemonCardListFromHand(ProbeState *s)
@@ -622,6 +622,15 @@ static void adapt_Maintenance_HandCheck(ProbeState *s)
 	s->hl = r.hl;
 }
 /* <<< factory Maintenance_HandCheck */
+
+/* >>> factory DevolutionSpray_PlayAreaEvolutionCheck */
+static void adapt_DevolutionSpray_PlayAreaEvolutionCheck(ProbeState *s)
+{
+	DevolutionSprayPlayAreaEvolutionCheckResult r = DevolutionSpray_PlayAreaEvolutionCheck();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory DevolutionSpray_PlayAreaEvolutionCheck */
 
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
@@ -691,10 +700,11 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CheckIfThereAreAnyEnergyCardsAttached", adapt_CheckIfThereAreAnyEnergyCardsAttached },
 	{ "PokeBall_DeckCheck", adapt_PokeBall_DeckCheck },
 	{ "Recycle_DiscardPileCheck", adapt_Recycle_DiscardPileCheck },
-	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
 	{ "CreatePokemonCardListFromHand", adapt_CreatePokemonCardListFromHand },
 	{ "Pokedex_DeckCheck", adapt_Pokedex_DeckCheck },
 	{ "Pokedex_OrderDeckCardsEffect", adapt_Pokedex_OrderDeckCardsEffect },
 	{ "Maintenance_HandCheck", adapt_Maintenance_HandCheck },
+	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
+	{ "DevolutionSpray_PlayAreaEvolutionCheck", adapt_DevolutionSpray_PlayAreaEvolutionCheck },
 	{ NULL, NULL },
 };
