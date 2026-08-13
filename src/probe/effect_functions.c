@@ -425,6 +425,20 @@ static void adapt_FireBlast_CheckEnergy(ProbeState *s)
 }
 /* <<< factory FireBlast_CheckEnergy */
 
+/* >>> factory BigEggsplosion_AIEffect */
+static void adapt_BigEggsplosion_AIEffect(ProbeState *s)
+{
+	BigEggsplosion_AIEffect();
+}
+/* <<< factory BigEggsplosion_AIEffect */
+
+/* >>> factory Thrash_AIEffect */
+static void adapt_Thrash_AIEffect(ProbeState *s)
+{
+	Thrash_AIEffect();
+}
+/* <<< factory Thrash_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -476,5 +490,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
 	{ "Wildfire_AISelectEffect", adapt_Wildfire_AISelectEffect },
 	{ "FireBlast_CheckEnergy", adapt_FireBlast_CheckEnergy },
+	{ "BigEggsplosion_AIEffect", adapt_BigEggsplosion_AIEffect },
+	{ "Thrash_AIEffect", adapt_Thrash_AIEffect },
 	{ NULL, NULL },
 };

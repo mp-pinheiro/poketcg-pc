@@ -1,0 +1,9 @@
+{
+  "fn": "BigEggsplosion_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BigEggsplosion_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"00\", \"52411\": \"0000\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BigEggsplosion_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52411, \"reference\": \"00000000\", \"native\": \"00010000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52409, 1], [52411, 2], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"BigEggsplosion_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"00\", \"52411\": \"0000\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

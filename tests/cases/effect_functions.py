@@ -612,6 +612,24 @@ CASES["FireBlast_CheckEnergy"] = [
 ]
 # <<< factory FireBlast_CheckEnergy
 
+# >>> factory BigEggsplosion_AIEffect
+CONTRACT["BigEggsplosion_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["BigEggsplosion_AIEffect"] = [
+    {"hTempPlayAreaLocation_ff9d": 0, "wram": {0xFF9D: b"\x00", 0xCCBB: b"\xAA", 0xCCBC: b"\xAA", 0xCCB9: b"\xAA"}},
+    dict(POISON, wram={0xFF9D: b"\x01", 0xCCBB: b"\xAA", 0xCCBC: b"\xAA", 0xCCB9: b"\xAA"}),
+    {"wram": {0xFF9D: b"\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF", 0xCCB9: b"\xFF"}},
+]
+# <<< factory BigEggsplosion_AIEffect
+
+# >>> factory Thrash_AIEffect
+CONTRACT["Thrash_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["Thrash_AIEffect"] = [
+    {"wram": {0xCCBB: b"\x00", 0xCCBC: b"\x00", 0xCCB9: b"\x00"}},
+    dict(POISON, wram={0xCCBB: b"\xAA", 0xCCBC: b"\xAA", 0xCCB9: b"\xAA"}),
+    {"wram": {0xCCBB: b"\xFF", 0xCCBC: b"\xFF", 0xCCB9: b"\xFF"}},
+]
+# <<< factory Thrash_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -978,3 +996,9 @@ MUTATIONS["Wildfire_AISelectEffect"] = {"source_symbol": "Wildfire_AISelectEffec
 # >>> factory-mutation FireBlast_CheckEnergy
 MUTATIONS["FireBlast_CheckEnergy"] = {"source_symbol": "FireBlast_CheckEnergy", "before": "NotEnoughFireEnergyText};", "after": "0u};", "case_ids": ["FireBlast_CheckEnergy-0", "FireBlast_CheckEnergy-1", "FireBlast_CheckEnergy-2"]}
 # <<< factory-mutation FireBlast_CheckEnergy
+# >>> factory-mutation BigEggsplosion_AIEffect
+MUTATIONS["BigEggsplosion_AIEffect"] = {"source_symbol": "BigEggsplosion_AIEffect", "before": "\twAIMinDamage = 0u;", "after": "\twAIMinDamage = 1u;", "case_ids": ["BigEggsplosion_AIEffect-0", "BigEggsplosion_AIEffect-1", "BigEggsplosion_AIEffect-2"]}
+# <<< factory-mutation BigEggsplosion_AIEffect
+# >>> factory-mutation Thrash_AIEffect
+MUTATIONS["Thrash_AIEffect"] = {"source_symbol": "Thrash_AIEffect", "before": "\tSetExpectedAIDamage(35u, 30u, 40u);", "after": "\tSetExpectedAIDamage(36u, 30u, 40u);", "case_ids": ["Thrash_AIEffect-0", "Thrash_AIEffect-1", "Thrash_AIEffect-2"]}
+# <<< factory-mutation Thrash_AIEffect

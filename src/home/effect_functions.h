@@ -176,4 +176,10 @@ WildfireAISelectEffectResult Wildfire_AISelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FireBlastCheckEnergyResult;
 FireBlastCheckEnergyResult FireBlast_CheckEnergy(void);
 /* <<< factory FireBlast_CheckEnergy */
+/* >>> factory BigEggsplosion_AIEffect */
+void BigEggsplosion_AIEffect(void);
+/* <<< factory BigEggsplosion_AIEffect */
+/* >>> factory Thrash_AIEffect */
+void Thrash_AIEffect(void);
+/* <<< factory Thrash_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

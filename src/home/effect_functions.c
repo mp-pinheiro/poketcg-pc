@@ -858,3 +858,29 @@ FireBlastCheckEnergyResult FireBlast_CheckEnergy(void)
 	return (FireBlastCheckEnergyResult){a, flags, NotEnoughFireEnergyText};
 }
 /* <<< factory FireBlast_CheckEnergy */
+
+/* >>> factory BigEggsplosion_AIEffect */
+/* effect_functions.asm:1814-1844 */
+void BigEggsplosion_AIEffect(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	GetPlayAreaCardAttachedEnergies(location);
+	SetDamageToATimes20(wTotalAttachedEnergies);
+
+	uint16_t damage = (uint16_t)((uint16_t)wTotalAttachedEnergies * 20u);
+	if ((uint8_t)(damage >> 8) == 0xFFu)
+		damage = (uint16_t)((damage & 0xFF00u) | 0x00FFu);
+
+	wAIMaxDamage = (uint8_t)damage;
+	wDamage = (uint8_t)(wAIMaxDamage >> 1);
+	wAIMinDamage = 0u;
+}
+/* <<< factory BigEggsplosion_AIEffect */
+
+/* >>> factory Thrash_AIEffect */
+/* effect_functions.asm:1863-1870 */
+void Thrash_AIEffect(void)
+{
+	SetExpectedAIDamage(35u, 30u, 40u);
+}
+/* <<< factory Thrash_AIEffect */
