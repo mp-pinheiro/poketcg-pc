@@ -386,6 +386,34 @@ static void adapt_SetNoLineSeparation(ProbeState *s)
 }
 /* <<< factory SetNoLineSeparation */
 
+/* >>> factory AIPlayInitialBasicCards */
+static void adapt_AIPlayInitialBasicCards(ProbeState *s)
+{
+	AIPlayInitialBasicCardsResult r = AIPlayInitialBasicCards();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIPlayInitialBasicCards */
+
+/* >>> factory CheckIfEnoughParticularAttachedEnergy */
+static void adapt_CheckIfEnoughParticularAttachedEnergy(ProbeState *s)
+{
+	CheckIfEnoughParticularAttachedEnergyResult r =
+		CheckIfEnoughParticularAttachedEnergy(s->a, s->hl, s->b);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfEnoughParticularAttachedEnergy */
+
+/* >>> factory Func_14323 */
+static void adapt_Func_14323(ProbeState *s)
+{
+	s->f = Func_14323().f;
+}
+/* <<< factory Func_14323 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -433,5 +461,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
 	{ "PrintCardPageRarityIcon", adapt_PrintCardPageRarityIcon },
 	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
+	{ "AIPlayInitialBasicCards", adapt_AIPlayInitialBasicCards },
+	{ "CheckIfEnoughParticularAttachedEnergy", adapt_CheckIfEnoughParticularAttachedEnergy },
+	{ "Func_14323", adapt_Func_14323 },
 	{ NULL, NULL },
 };

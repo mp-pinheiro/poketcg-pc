@@ -519,6 +519,34 @@ CASES["SetNoLineSeparation"] = [
 ]
 # <<< factory SetNoLineSeparation
 
+# >>> factory AIPlayInitialBasicCards
+CONTRACT["AIPlayInitialBasicCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIPlayInitialBasicCards"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory AIPlayInitialBasicCards
+
+# >>> factory CheckIfEnoughParticularAttachedEnergy
+CONTRACT["CheckIfEnoughParticularAttachedEnergy"] = {
+    "compare": ("a", "f", "b", "hl"),
+    "preserve": (),
+}
+CASES["CheckIfEnoughParticularAttachedEnergy"] = [
+    {"a": 0, "hl": 0xC100, "b": 0, "wram": {0xC100: b"\x00"}},
+    {"a": 2, "hl": 0xC100, "b": 3, "wram": {0xC100: b"\x01"}},
+    dict(POISON, a=2, hl=0xC100, b=3, wram={0xC100: b"\x01"}),
+]
+# <<< factory CheckIfEnoughParticularAttachedEnergy
+
+# >>> factory Func_14323
+CONTRACT["Func_14323"] = {"compare": ("f",), "preserve": ()}
+CASES["Func_14323"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory Func_14323
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -808,3 +836,25 @@ MUTATIONS["SetNoLineSeparation"] = {
 	"case_ids": ["SetNoLineSeparation-0", "SetNoLineSeparation-1"],
 }
 # <<< factory-mutation SetNoLineSeparation
+# >>> factory-mutation AIPlayInitialBasicCards
+MUTATIONS["AIPlayInitialBasicCards"] = {
+    "before": "return (AIPlayInitialBasicCardsResult){0xFFu, 0xC0u};",
+    "after": "return (AIPlayInitialBasicCardsResult){0x00u, 0xC0u};",
+    "case_ids": ["AIPlayInitialBasicCards-0"],
+}
+# <<< factory-mutation AIPlayInitialBasicCards
+# >>> factory-mutation CheckIfEnoughParticularAttachedEnergy
+MUTATIONS["CheckIfEnoughParticularAttachedEnergy"] = {
+    "before": "return (CheckIfEnoughParticularAttachedEnergyResult){b, 0x80u, (uint8_t)(b + 1u), (uint16_t)(hl + 1u)};",
+    "after": "return (CheckIfEnoughParticularAttachedEnergyResult){b, 0x00u, (uint8_t)(b + 1u), (uint16_t)(hl + 1u)};",
+    "case_ids": ["CheckIfEnoughParticularAttachedEnergy-0"],
+}
+# <<< factory-mutation CheckIfEnoughParticularAttachedEnergy
+# >>> factory-mutation Func_14323
+MUTATIONS["Func_14323"] = {
+    "source_symbol": "Func_14323",
+    "before": "return (Func14323Result){0x80u};",
+    "after": "return (Func14323Result){0x00u};",
+    "case_ids": ["Func_14323-0"],
+}
+# <<< factory-mutation Func_14323

@@ -206,6 +206,12 @@ static uint8_t is_duelist_type(uint8_t a)
 
 #include "home/card_color.h"
 #include "home/duel.h"
+
+#include "home/effect_commands.h"
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x05u
+#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x40u
+#define TYPE_ENERGY 0x08u
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -979,3 +985,53 @@ uint8_t SetNoLineSeparation(void)
 	return 1u;
 }
 /* <<< factory SetNoLineSeparation */
+
+/* >>> factory AIPlayInitialBasicCards */
+AIPlayInitialBasicCardsResult AIPlayInitialBasicCards(void)
+{
+	(void)CreateHandCardList(0);
+	uint16_t scan = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t index = gb_read8(scan++);
+		hTempCardIndex_ff98 = index;
+		if (index == 0xFFu)
+			return (AIPlayInitialBasicCardsResult){0xFFu, 0xC0u};
+		(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u)
+			continue;
+		(void)PutHandPokemonCardInPlayArea(index, 0x80u);
+	}
+}
+/* <<< factory AIPlayInitialBasicCards */
+
+/* >>> factory CheckIfEnoughParticularAttachedEnergy */
+CheckIfEnoughParticularAttachedEnergyResult CheckIfEnoughParticularAttachedEnergy(
+	uint8_t a, uint16_t hl, uint8_t b)
+{
+	uint8_t cost = (uint8_t)(a & 0x0Fu);
+	if (cost == 0u)
+		return (CheckIfEnoughParticularAttachedEnergyResult){b, 0x80u, (uint8_t)(b + 1u), (uint16_t)(hl + 1u)};
+	wTempLoadedAttackEnergyCost = cost;
+	uint8_t attached = gb_read8(hl);
+	if (cost <= attached)
+		return (CheckIfEnoughParticularAttachedEnergyResult){
+			b, 0u, (uint8_t)(b + 1u), (uint16_t)(hl + 1u)};
+	wTempLoadedAttackEnergyNeededAmount = (uint8_t)(cost - attached);
+	wTempLoadedAttackEnergyNeededType = b;
+	return (CheckIfEnoughParticularAttachedEnergyResult){
+		b, 0x10u, (uint8_t)(b + 1u), (uint16_t)(hl + 1u)};
+}
+/* <<< factory CheckIfEnoughParticularAttachedEnergy */
+
+/* >>> factory Func_14323 */
+Func14323Result Func_14323(void)
+{
+	uint16_t commands = (uint16_t)(gb_read8(wLoadedAttackEffectCommands_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
+	EffectCmdLookup r = CheckMatchingCommand(EFFECTCMDTYPE_INITIAL_EFFECT_2, commands);
+	if (r.carry != 0u)
+		r = CheckMatchingCommand(EFFECTCMDTYPE_REQUIRE_SELECTION, r.hl);
+	(void)r;
+	return (Func14323Result){0x80u};
+}
+/* <<< factory Func_14323 */

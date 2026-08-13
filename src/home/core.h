@@ -168,4 +168,21 @@ ProcessTextHeaderResult PrintCardPageRarityIcon(uint8_t a, uint8_t d, uint8_t e,
 /* >>> factory SetNoLineSeparation */
 uint8_t SetNoLineSeparation(void);
 /* <<< factory SetNoLineSeparation */
+/* >>> factory AIPlayInitialBasicCards */
+typedef struct { uint8_t a; uint8_t f; } AIPlayInitialBasicCardsResult;
+AIPlayInitialBasicCardsResult AIPlayInitialBasicCards(void);
+/* <<< factory AIPlayInitialBasicCards */
+/* >>> factory CheckIfEnoughParticularAttachedEnergy */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint16_t hl;
+} CheckIfEnoughParticularAttachedEnergyResult;
+CheckIfEnoughParticularAttachedEnergyResult CheckIfEnoughParticularAttachedEnergy(uint8_t a, uint16_t hl, uint8_t b);
+/* <<< factory CheckIfEnoughParticularAttachedEnergy */
+/* >>> factory Func_14323 */
+typedef struct { uint8_t f; } Func14323Result;
+Func14323Result Func_14323(void);
+/* <<< factory Func_14323 */
 #endif /* POKETCG_HOME_CORE_H */
