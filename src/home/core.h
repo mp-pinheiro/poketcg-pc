@@ -214,4 +214,15 @@ AnimationDataResult GetAnimationData(void);
 /* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
 CardPageResult CardPageSwitch_PokemonOverviewOrDescription(void);
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
+/* >>> factory CheckCardEvolutionInHandOrDeck */
+typedef struct { uint8_t a; uint8_t f; } CheckCardEvolutionInHandOrDeckResult;
+CheckCardEvolutionInHandOrDeckResult CheckCardEvolutionInHandOrDeck(uint8_t a);
+/* <<< factory CheckCardEvolutionInHandOrDeck */
+/* >>> factory CheckIfOpponentHasBossDeckID */
+typedef struct { uint8_t a; uint8_t carry; } CheckIfOpponentHasBossDeckIDResult;
+CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a);
+/* <<< factory CheckIfOpponentHasBossDeckID */
+/* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
+uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a);
+/* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
 #endif /* POKETCG_HOME_CORE_H */

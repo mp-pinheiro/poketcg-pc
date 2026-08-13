@@ -625,6 +625,39 @@ CASES["CardPageSwitch_PokemonOverviewOrDescription"] = [
 # <<< factory CardPageSwitch_PokemonOverviewOrDescription
 
 
+# >>> factory CheckCardEvolutionInHandOrDeck
+CONTRACT["CheckCardEvolutionInHandOrDeck"] = {"compare": ("a", "f"), "preserve": ()}
+hWhoseTurn = 0xFF97
+CASES["CheckCardEvolutionInHandOrDeck"] = [
+    {"a": 7, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x09", 0xC200: b"\xFF" * 60}},
+    dict(POISON, a=0x2A, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x2A", 0xC200: b"\xFF" * 60}),
+]
+# <<< factory CheckCardEvolutionInHandOrDeck
+
+# >>> factory CheckIfOpponentHasBossDeckID
+CONTRACT["CheckIfOpponentHasBossDeckID"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+wOpponentDeckID = 0xCC0E
+CASES["CheckIfOpponentHasBossDeckID"] = [
+    {"a": 0x00, "f": 0x00, "wram": {wOpponentDeckID: b"\x0B"}},
+    {"a": 0x12, "f": 0x80, "wram": {wOpponentDeckID: b"\x0C"}},
+    dict(POISON, wram={wOpponentDeckID: b"\x1B"}),
+    {"a": 0x34, "f": 0x80, "wram": {wOpponentDeckID: b"\x1C"}},
+]
+# <<< factory CheckIfOpponentHasBossDeckID
+
+# >>> factory RaiseAIScoreToAllMatchingIDsInBench
+CONTRACT["RaiseAIScoreToAllMatchingIDsInBench"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC500
+wPlayAreaEnergyAIScore = 0xCDE4
+CASES["RaiseAIScoreToAllMatchingIDsInBench"] = [
+    {"a": 0x2A, "wram": {hWhoseTurn: b"\x01", 0xC2BC: b"\x01\x02\xFF", wPlayerDeck + 1: b"\x2A", wPlayerDeck + 2: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\x03\x04"}, "expect": {wPlayAreaEnergyAIScore + 1: b"\x08\x04"}, "read": {wPlayAreaEnergyAIScore + 1: 2}},
+    {"a": 0x2A, "wram": {hWhoseTurn: b"\x01", 0xC2BC: b"\x01\x02\x03\xFF", wPlayerDeck + 1: b"\x2A", wPlayerDeck + 2: b"\x2A", wPlayerDeck + 3: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\x00\x00\x00"}, "read": {wPlayAreaEnergyAIScore + 1: 3}},
+    dict(POISON, a=0x2A, wram={hWhoseTurn: b"\x00", 0xC3BC: b"\x01\xFF", wOpponentDeck + 1: b"\x2B", wPlayAreaEnergyAIScore + 1: b"\xFA"}, read={wPlayAreaEnergyAIScore + 1: 1}),
+]
+# <<< factory RaiseAIScoreToAllMatchingIDsInBench
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -984,3 +1017,12 @@ MUTATIONS["CardPageSwitch_PokemonOverviewOrDescription"] = {
     "case_ids": ["CardPageSwitch_PokemonOverviewOrDescription-0", "CardPageSwitch_PokemonOverviewOrDescription-1"],
 }
 # <<< factory-mutation CardPageSwitch_PokemonOverviewOrDescription
+# >>> factory-mutation CheckCardEvolutionInHandOrDeck
+MUTATIONS["CheckCardEvolutionInHandOrDeck"] = {"source_symbol": "CheckCardEvolutionInHandOrDeck", "before": "return (CheckCardEvolutionInHandOrDeckResult){original, (uint8_t)(original == 0u ? 0x80u : 0u)};", "after": "return (CheckCardEvolutionInHandOrDeckResult){0u, 0u};", "case_ids": ["CheckCardEvolutionInHandOrDeck-0", "CheckCardEvolutionInHandOrDeck-1"]}
+# <<< factory-mutation CheckCardEvolutionInHandOrDeck
+# >>> factory-mutation CheckIfOpponentHasBossDeckID
+MUTATIONS["CheckIfOpponentHasBossDeckID"] = {"source_symbol": "CheckIfOpponentHasBossDeckID", "before": "return (CheckIfOpponentHasBossDeckIDResult){a, carry};", "after": "return (CheckIfOpponentHasBossDeckIDResult){0u, carry};", "case_ids": ["CheckIfOpponentHasBossDeckID-1", "CheckIfOpponentHasBossDeckID-2", "CheckIfOpponentHasBossDeckID-3"]}
+# <<< factory-mutation CheckIfOpponentHasBossDeckID
+# >>> factory-mutation RaiseAIScoreToAllMatchingIDsInBench
+MUTATIONS["RaiseAIScoreToAllMatchingIDsInBench"] = {"source_symbol": "RaiseAIScoreToAllMatchingIDsInBench", "before": "bench.hl = (uint16_t)(bench.hl + 1u);", "after": "bench.hl = (uint16_t)(bench.hl + 2u);", "case_ids": ["RaiseAIScoreToAllMatchingIDsInBench-0", "RaiseAIScoreToAllMatchingIDsInBench-1", "RaiseAIScoreToAllMatchingIDsInBench-2"]}
+# <<< factory-mutation RaiseAIScoreToAllMatchingIDsInBench

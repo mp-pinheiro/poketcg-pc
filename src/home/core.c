@@ -1178,3 +1178,51 @@ AnimationDataResult GetAnimationData(void)
 	return (AnimationDataResult){animation, f, address};
 }
 /* <<< factory GetAnimationData */
+
+/* >>> factory CheckCardEvolutionInHandOrDeck */
+CheckCardEvolutionInHandOrDeckResult CheckCardEvolutionInHandOrDeck(uint8_t a)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(0xBBu);
+	uint8_t original = arena.a;
+	gb_write8(arena.hl, a);
+	for (uint8_t e = 0; e < 60u; e++) {
+		uint8_t location = GetTurnDuelistVariable(e).a;
+		if (location != 0x00u && location != 0x01u)
+			continue;
+		EvolveResult check = CheckIfCanEvolveInto(e, 0u);
+		if ((check.f & 0x10u) == 0u) {
+			gb_write8(arena.hl, original);
+			return (CheckCardEvolutionInHandOrDeckResult){e, 0x10u};
+		}
+	}
+	gb_write8(arena.hl, original);
+	return (CheckCardEvolutionInHandOrDeckResult){original, (uint8_t)(original == 0u ? 0x80u : 0u)};
+}
+/* <<< factory CheckCardEvolutionInHandOrDeck */
+
+/* >>> factory CheckIfOpponentHasBossDeckID */
+CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a)
+{
+	uint8_t carry = (wOpponentDeckID >= 0x0Cu && wOpponentDeckID < 0x1Cu) ? 1u : 0u;
+	return (CheckIfOpponentHasBossDeckIDResult){a, carry};
+}
+/* <<< factory CheckIfOpponentHasBossDeckID */
+
+/* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
+uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a)
+{
+	DuelistVarResult bench = GetTurnDuelistVariable(0xBCu);
+	uint8_t e = 0u;
+	for (;;) {
+		e = (uint8_t)(e + 1u);
+		uint8_t deck_index = gb_read8(bench.hl);
+		bench.hl = (uint16_t)(bench.hl + 1u);
+		if (deck_index == 0xFFu)
+			return bench.hl;
+		if ((uint8_t)GetCardIDFromDeckIndex(deck_index) != a)
+			continue;
+		uint16_t score = (uint16_t)(0xCDE4u + e);
+		gb_write8(score, (uint8_t)(gb_read8(score) + 5u));
+	}
+}
+/* <<< factory RaiseAIScoreToAllMatchingIDsInBench */

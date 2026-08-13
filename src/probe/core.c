@@ -484,6 +484,31 @@ static void adapt_CardPageSwitch_PokemonOverviewOrDescription(ProbeState *s)
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
 
 
+/* >>> factory CheckCardEvolutionInHandOrDeck */
+static void adapt_CheckCardEvolutionInHandOrDeck(ProbeState *s)
+{
+	CheckCardEvolutionInHandOrDeckResult r = CheckCardEvolutionInHandOrDeck(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckCardEvolutionInHandOrDeck */
+
+/* >>> factory CheckIfOpponentHasBossDeckID */
+static void adapt_CheckIfOpponentHasBossDeckID(ProbeState *s)
+{
+	CheckIfOpponentHasBossDeckIDResult r = CheckIfOpponentHasBossDeckID(s->a);
+	s->a = r.a;
+	s->f = r.carry ? (uint8_t)((s->f & 0x80u) | 0x10u) : (s->a == 0u ? 0x80u : 0u);
+}
+/* <<< factory CheckIfOpponentHasBossDeckID */
+
+/* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
+static void adapt_RaiseAIScoreToAllMatchingIDsInBench(ProbeState *s)
+{
+	s->hl = RaiseAIScoreToAllMatchingIDsInBench(s->a);
+}
+/* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -542,5 +567,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_PokemonOverviewOrDescription", adapt_CardPageSwitch_PokemonOverviewOrDescription },
 	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
 	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
+	{ "CheckCardEvolutionInHandOrDeck", adapt_CheckCardEvolutionInHandOrDeck },
+	{ "CheckIfOpponentHasBossDeckID", adapt_CheckIfOpponentHasBossDeckID },
+	{ "RaiseAIScoreToAllMatchingIDsInBench", adapt_RaiseAIScoreToAllMatchingIDsInBench },
 	{ NULL, NULL },
 };
