@@ -34,6 +34,46 @@ CASES["FindAndRemoveCardFromList"] = [
 ]
 # <<< factory FindAndRemoveCardFromList
 
+# >>> factory PickPokedexCards
+CONTRACT["PickPokedexCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PickPokedexCards"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00",
+              0xC27E: b"\x01\x02\x03\x04\x05"},
+     "read": {0xCDA6: 1, 0xCE1A: 5, 0xCE08: 6, 0xCE0F: 5}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x00",
+                       0xC27E: b"\x01\x02\x03\x04\x05"},
+         read={0xCDA6: 1, 0xCE1A: 5, 0xCE08: 6, 0xCE0F: 5}),
+]
+# <<< factory PickPokedexCards
+
+# >>> factory AIDecide_Maintenance
+CONTRACT["AIDecide_Maintenance"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Maintenance"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BE: b"\x03", 0xCC0E: b"\x01",
+              0xCE16: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BE: b"\x03", 0xCC0E: b"\x01",
+                       0xCE16: b"\x00"}),
+]
+# <<< factory AIDecide_Maintenance
+
+# >>> factory AIDecide_Lass
+CONTRACT["AIDecide_Lass"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_Lass"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x06"}},
+    {"wram": {0xFF97: b"\xC2", 0xC3EE: b"\x07",
+              0xC249: b"\x00\x00\x00\x00\x00\x00\x00",
+              0xC210: b"\x10"}},
+]
+# <<< factory AIDecide_Lass
+
+# >>> factory AIDecide_Imakuni
+CONTRACT["AIDecide_Imakuni"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_Imakuni"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x01"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F0: b"\x00"}},
+]
+# <<< factory AIDecide_Imakuni
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 

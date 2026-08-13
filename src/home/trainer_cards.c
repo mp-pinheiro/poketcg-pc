@@ -8,7 +8,8 @@
 #include "home/card_data.h"
 #include "home/duel.h"
 #include "mem.h"
-
+#include "home/random.h"
+#define TYPE_TRAINER 0x10u
 #define TYPE_ENERGY 0x08u
 
 #include "home/card_data.h"
@@ -24,7 +25,8 @@
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
 #include "mem.h"
-/* <<< factory statics */
+#define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+#define DUELVARS_ARENA_CARD_STATUS 0xF0u
 
 /* >>> factory RemoveCardFromList */
 /* trainer_cards.asm:2760-2776. Shifts the $ff-terminated list down by one byte,
@@ -94,3 +96,99 @@ void FindAndRemoveCardFromList(uint8_t a, uint16_t hl)
 	RemoveCardFromList(&p);
 }
 /* <<< factory FindAndRemoveCardFromList */
+/* >>> factory PickPokedexCards */
+PickPokedexResult PickPokedexCards(void)
+{
+	DuelistVarResult remaining = GetTurnDuelistVariable(0xBAu);
+	uint16_t deck = (uint16_t)((remaining.hl & 0xFF00u) |
+				   (uint8_t)(remaining.a + 0x7Eu));
+	uint8_t types[5], indices[5];
+	wAIPokedexCounter = 0;
+	for (uint8_t i = 0; i < 5; i++) {
+		indices[i] = gb_read8((uint16_t)(deck + i));
+		types[i] = GetCardType((uint8_t)GetCardIDFromDeckIndex(indices[i]));
+		gb_write8((uint16_t)(wce08_ADDR + i), types[i]);
+		gb_write8((uint16_t)(wce0f_ADDR + i), indices[i]);
+	}
+	gb_write8((uint16_t)(wce08_ADDR + 5u), 0xFFu);
+	uint8_t out = 0;
+	for (uint8_t wanted = 0; wanted < 3; wanted++)
+		for (uint8_t i = 0; i < 5; i++) {
+			uint8_t type = types[i];
+			if ((wanted == 0 && !(type & TYPE_ENERGY)) ||
+			    (wanted == 1 && type >= TYPE_ENERGY) ||
+			    (wanted == 2 && type != TYPE_TRAINER))
+			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
+		}
+	return (PickPokedexResult){0xFFu, 0xB0u};
+}
+/* <<< factory PickPokedexCards */
+
+/* >>> factory AIDecide_Maintenance */
+AIDecideMaintenanceResult AIDecide_Maintenance(void)
+{
+	if (wOpponentDeckID == 0x0Du) {
+		if (Random(10u) >= 2u || GetTurnDuelistVariable(0xBEu).a < 3u)
+			return (AIDecideMaintenanceResult){0, 0x00u};
+		(void)CreateHandCardList(0);
+		TempListResult count = CountCardsInDuelTempList();
+		(void)ShuffleCards(count.a, wDuelTempList_ADDR);
+		uint16_t p = wDuelTempList_ADDR;
+		uint8_t target = wAITrainerCardToPlay, found = 0, out = 0;
+		while (found < 2u) {
+			uint8_t card = gb_read8(p++);
+			if (card == 0xFFu)
+				return (AIDecideMaintenanceResult){0, 0x00u};
+			if (card == target)
+				continue;
+			gb_write8((uint16_t)(wce1a_ADDR + out++), card);
+			found++;
+		}
+		return (AIDecideMaintenanceResult){0, 0x10u};
+	}
+	if (GetTurnDuelistVariable(0xBEu).a < 4u)
+		return (AIDecideMaintenanceResult){0, 0x00u};
+	(void)CreateHandCardList(0);
+	FindAndRemoveCardFromList(wAITrainerCardToPlay, wDuelTempList_ADDR);
+	FindDupResult first = FindDuplicateCards(wDuelTempList_ADDR);
+	if (first.a == 0xFFu)
+		return (AIDecideMaintenanceResult){first.a, 0x00u};
+	wce1a = first.a;
+	FindAndRemoveCardFromList(first.a, wDuelTempList_ADDR);
+	FindDupResult second = FindDuplicateCards(wDuelTempList_ADDR);
+	if (second.a == 0xFFu)
+		return (AIDecideMaintenanceResult){second.a, 0x00u};
+	wce1b = second.a;
+	return (AIDecideMaintenanceResult){second.a, 0x10u};
+}
+/* <<< factory AIDecide_Maintenance */
+/* >>> factory AIDecide_Lass */
+AIDecideResult AIDecide_Lass(void)
+{
+	uint8_t hand_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	if (hand_count < 7u)
+		return (AIDecideResult){hand_count == 0u ? 0x80u : 0x00u};
+	(void)CreateHandCardList(hand_count);
+	uint16_t list = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t deck_index = gb_read8(list++);
+		if (deck_index == 0xFFu)
+			return (AIDecideResult){0x90u};
+		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		if (card_id == 0xC7u)
+			continue;
+		if (gb_read8(wLoadedCard1Type_ADDR) == 0x08u)
+			return (AIDecideResult){0x00u};
+	}
+}
+/* <<< factory AIDecide_Lass */
+
+/* >>> factory AIDecide_Imakuni */
+AIDecideResult AIDecide_Imakuni(void)
+{
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	if ((status & 0x0Fu) == 0x01u)
+		return (AIDecideResult){0x00u};
+	return (AIDecideResult){0x10u};
+}
+/* <<< factory AIDecide_Imakuni */

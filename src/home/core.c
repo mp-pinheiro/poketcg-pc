@@ -12,6 +12,8 @@
 #define PAD_A     0x01u
 #define PAD_B     0x02u
 #define PAD_START 0x08u
+#define MENU_CANCEL 0xFFu
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 #define B_PAD_B_BIT 0x02u
 
 #define ASLEEP           0x02u
