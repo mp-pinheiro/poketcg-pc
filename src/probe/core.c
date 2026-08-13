@@ -246,6 +246,16 @@ static void adapt_PrintPlayAreaCardAttachedEnergies(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardAttachedEnergies */
 
+/* >>> factory DiscardRetreatCostCards */
+static void adapt_DiscardRetreatCostCards(ProbeState *s)
+{
+	DiscardRetreatCostCardsResult r = DiscardRetreatCostCards();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory DiscardRetreatCostCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -277,5 +287,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
 	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
 	{ "PrintPlayAreaCardAttachedEnergies", adapt_PrintPlayAreaCardAttachedEnergies },
+	{ "DiscardRetreatCostCards", adapt_DiscardRetreatCostCards },
 	{ NULL, NULL },
 };

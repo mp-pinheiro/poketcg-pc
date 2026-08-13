@@ -346,6 +346,16 @@ CASES["PrintPlayAreaCardAttachedEnergies"] = [
 ]
 # <<< factory PrintPlayAreaCardAttachedEnergies
 
+# >>> factory DiscardRetreatCostCards
+CONTRACT["DiscardRetreatCostCards"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["DiscardRetreatCostCards"] = [
+    {"wram": {0xFFA2: b"\xFF"}},
+    dict(POISON, wram={0xFFA2: b"\x00\xFF"}),
+    {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5,
+     "wram": {0xFFA2: b"\x01\x02\x03\xFF"}},
+]
+# <<< factory DiscardRetreatCostCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -575,3 +585,6 @@ MUTATIONS["PrintPlayAreaCardAttachedEnergies"] = {
     "case_ids": ["PrintPlayAreaCardAttachedEnergies-0", "PrintPlayAreaCardAttachedEnergies-1", "PrintPlayAreaCardAttachedEnergies-2"],
 }
 # <<< factory-mutation PrintPlayAreaCardAttachedEnergies
+# >>> factory-mutation DiscardRetreatCostCards
+MUTATIONS["DiscardRetreatCostCards"] = {"source_symbol": "DiscardRetreatCostCards", "before": "hl = (uint16_t)(hl + 1u);", "after": "hl = (uint16_t)(hl + 2u);", "case_ids": ["DiscardRetreatCostCards-0", "DiscardRetreatCostCards-1", "DiscardRetreatCostCards-2"]}
+# <<< factory-mutation DiscardRetreatCostCards

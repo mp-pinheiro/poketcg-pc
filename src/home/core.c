@@ -164,6 +164,9 @@ static uint32_t duel_save_total_size(void)
 #define SYM_SPACE 0x00u
 #define SYM_FIRE 0xD0u
 #define SYM_PLUS 0xD8u
+
+#include "home/duel.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -677,3 +680,19 @@ void PrintPlayAreaCardAttachedEnergies(uint8_t b, uint8_t c, uint8_t e)
 	SafeCopyDataHLtoDE(&hl, &de, 8u);
 }
 /* <<< factory PrintPlayAreaCardAttachedEnergies */
+
+/* >>> factory DiscardRetreatCostCards */
+/* core.asm:5776-5787 */
+DiscardRetreatCostCardsResult DiscardRetreatCostCards(void)
+{
+	uint16_t hl = hTempRetreatCostCards_ADDR;
+
+	for (;;) {
+		uint8_t card = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (card == 0xFFu)
+			return (DiscardRetreatCostCardsResult){0xFFu, 0xC0u, hl};
+		PutCardInDiscardPile(card);
+	}
+}
+/* <<< factory DiscardRetreatCostCards */

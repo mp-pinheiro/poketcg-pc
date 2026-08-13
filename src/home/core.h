@@ -100,4 +100,13 @@ uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de);
 /* >>> factory PrintPlayAreaCardAttachedEnergies */
 void PrintPlayAreaCardAttachedEnergies(uint8_t b, uint8_t c, uint8_t e);
 /* <<< factory PrintPlayAreaCardAttachedEnergies */
+/* >>> factory DiscardRetreatCostCards */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} DiscardRetreatCostCardsResult;
+
+DiscardRetreatCostCardsResult DiscardRetreatCostCards(void);
+/* <<< factory DiscardRetreatCostCards */
 #endif /* POKETCG_HOME_CORE_H */
