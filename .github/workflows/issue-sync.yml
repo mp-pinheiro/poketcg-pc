@@ -74,9 +74,17 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.apply == true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 tools/factory/issues.py apply --limit 25 --batches 4 --require-complete
-          python3 tools/factory/issues.py verify --live
+        run: python3 tools/factory/issues.py apply --limit 25 --batches 4 --require-complete
+      - name: Verify completed migration
+        if: github.event_name == 'workflow_dispatch' && inputs.apply == true && inputs.migrate == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/factory/issues.py verify --live --complete-migration
+      - name: Verify completed reconciliation
+        if: github.event_name == 'workflow_dispatch' && inputs.apply == true && inputs.migrate != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 tools/factory/issues.py verify --live
       - name: Upload interrupted apply checkpoint
         if: failure() && github.event_name == 'workflow_dispatch' && inputs.apply == true
         uses: actions/upload-artifact@v4

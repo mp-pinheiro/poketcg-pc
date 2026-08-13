@@ -813,7 +813,9 @@ def main() -> int:
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("--cache", type=Path, default=CACHE)
     verify_parser.add_argument("--state", type=Path, default=APPLY_STATE)
+    verify_parser.add_argument("--plan", type=Path, default=PLAN_PATH)
     verify_parser.add_argument("--live", action="store_true")
+    verify_parser.add_argument("--complete-migration", action="store_true")
     migrate_parser = sub.add_parser("migrate")
     migrate_parser.add_argument("--json", action="store_true")
     migrate_parser.add_argument("--cache", type=Path, default=CACHE)
@@ -850,7 +852,17 @@ def main() -> int:
             if plan["actions"]:
                 print_plan(plan, False)
                 return 1
-            args.state.unlink(missing_ok=True)
+            recorded = (
+                json.loads(args.plan.read_text()) if args.plan.exists() else {}
+            )
+            if args.complete_migration and recorded.get("mode") != "migrate":
+                raise ModelError(
+                    "migration completion requires a recorded migration plan"
+                )
+            if recorded.get("mode") == "migrate":
+                mark_migration_complete(args.state)
+            else:
+                args.state.unlink(missing_ok=True)
             print("issues: zero drift")
             return 0
         if args.command == "migrate":
