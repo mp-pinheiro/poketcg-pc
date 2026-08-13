@@ -63,6 +63,13 @@ static void adapt_SetDefiniteAIDamage(ProbeState *s)
 	SetDefiniteAIDamage();
 }
 /* <<< factory SetDefiniteAIDamage */
+/* >>> factory SetDefiniteDamage */
+static void adapt_SetDefiniteDamage(ProbeState *s)
+{
+	SetDefiniteDamage(s->a);
+}
+/* <<< factory SetDefiniteDamage */
+
 
 /* >>> factory PickRandomPlayAreaCard */
 static void adapt_PickRandomPlayAreaCard(ProbeState *s)
@@ -87,6 +94,14 @@ static void adapt_QueueStatusCondition(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory QueueStatusCondition */
+/* >>> factory SleepEffect */
+static void adapt_SleepEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = SleepEffect();
+	s->f = r.f;
+}
+/* <<< factory SleepEffect */
+
 
 /* >>> factory CommentedOut_2c086 */
 static void adapt_CommentedOut_2c086(ProbeState *s)
@@ -275,6 +290,7 @@ static void adapt_LoadCardNameAndInputColor(ProbeState *s)
 
 
 
+
 /* >>> factory AIPickEnergyCardToDiscardFromDefendingPokemon */
 static void adapt_AIPickEnergyCardToDiscardFromDefendingPokemon(ProbeState *s)
 {
@@ -283,6 +299,7 @@ static void adapt_AIPickEnergyCardToDiscardFromDefendingPokemon(ProbeState *s)
 	s->a = r.a;
 }
 /* <<< factory AIPickEnergyCardToDiscardFromDefendingPokemon */
+
 
 
 
@@ -296,13 +313,15 @@ static void adapt_AIFindTargetForBenchAttack(ProbeState *s)
 
 
 
+
 /* >>> factory ApplyExtraWaterEnergyDamageBonus */
 static void adapt_ApplyExtraWaterEnergyDamageBonus(ProbeState *s)
 {
-	(void)s;
-	ApplyExtraWaterEnergyDamageBonus();
+	ApplyExtraWaterEnergyDamageBonus(s->b, s->c);
 }
 /* <<< factory ApplyExtraWaterEnergyDamageBonus */
+
+
 
 
 /* >>> factory OmastarSpikeCannon_AIEffect */
@@ -313,12 +332,16 @@ static void adapt_OmastarSpikeCannon_AIEffect(ProbeState *s)
 }
 /* <<< factory OmastarSpikeCannon_AIEffect */
 
+
+
 /* >>> factory ClairvoyanceEffect */
 static void adapt_ClairvoyanceEffect(ProbeState *s)
 {
 	s->f = ClairvoyanceEffect(s->f);
 }
 /* <<< factory ClairvoyanceEffect */
+
+
 
 /* >>> factory KrabbyCallForFamily_AISelectEffect */
 static void adapt_KrabbyCallForFamily_AISelectEffect(ProbeState *s)
@@ -375,6 +398,7 @@ static void adapt_PoisonWhip_AIEffect(ProbeState *s)
 }
 /* <<< factory PoisonWhip_AIEffect */
 
+
 /* >>> factory SolarPower_CheckUse */
 static void adapt_SolarPower_CheckUse(ProbeState *s)
 {
@@ -383,6 +407,7 @@ static void adapt_SolarPower_CheckUse(ProbeState *s)
 	s->hl = r.hl;
 }
 /* <<< factory SolarPower_CheckUse */
+
 
 /* >>> factory DevolutionBeam_LoadAnimation */
 static void adapt_DevolutionBeam_LoadAnimation(ProbeState *s)
@@ -400,6 +425,7 @@ static void adapt_CheckIfTurnDuelistHasEvolvedCards(ProbeState *s)
 }
 /* <<< factory CheckIfTurnDuelistHasEvolvedCards */
 
+
 /* >>> factory FindFirstNonBasicCardInPlayArea */
 static void adapt_FindFirstNonBasicCardInPlayArea(ProbeState *s)
 {
@@ -408,6 +434,7 @@ static void adapt_FindFirstNonBasicCardInPlayArea(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory FindFirstNonBasicCardInPlayArea */
+
 
 /* >>> factory Wildfire_AISelectEffect */
 static void adapt_Wildfire_AISelectEffect(ProbeState *s)
@@ -663,12 +690,14 @@ static void adapt_KakunaPoisonPowder_AIEffect(ProbeState *s)
 }
 /* <<< factory KakunaPoisonPowder_AIEffect */
 
+
 /* >>> factory SwordsDanceEffect */
 static void adapt_SwordsDanceEffect(ProbeState *s)
 {
 	s->hl = SwordsDanceEffect();
 }
 /* <<< factory SwordsDanceEffect */
+
 
 /* >>> factory Twineedle_AIEffect */
 static void adapt_Twineedle_AIEffect(ProbeState *s)
@@ -678,6 +707,7 @@ static void adapt_Twineedle_AIEffect(ProbeState *s)
 }
 /* <<< factory Twineedle_AIEffect */
 
+
 /* >>> factory BeedrillPoisonSting_AIEffect */
 static void adapt_BeedrillPoisonSting_AIEffect(ProbeState *s)
 {
@@ -686,12 +716,14 @@ static void adapt_BeedrillPoisonSting_AIEffect(ProbeState *s)
 }
 /* <<< factory BeedrillPoisonSting_AIEffect */
 
+
 /* >>> factory FoulGas_AIEffect */
 static void adapt_FoulGas_AIEffect(ProbeState *s)
 {
 	FoulGas_AIEffect();
 }
 /* <<< factory FoulGas_AIEffect */
+
 
 /* >>> factory Sprout_AISelectEffect */
 static void adapt_Sprout_AISelectEffect(ProbeState *s)
@@ -700,6 +732,7 @@ static void adapt_Sprout_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Sprout_AISelectEffect */
 
+
 /* >>> factory Teleport_CheckBench */
 static void adapt_Teleport_CheckBench(ProbeState *s)
 {
@@ -707,6 +740,7 @@ static void adapt_Teleport_CheckBench(ProbeState *s)
     s->a = r.a; s->f = r.f; s->hl = r.hl;
 }
 /* <<< factory Teleport_CheckBench */
+
 
 /* >>> factory Teleport_AISelectEffect */
 static void adapt_Teleport_AISelectEffect(ProbeState *s)
@@ -717,6 +751,7 @@ static void adapt_Teleport_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Teleport_AISelectEffect */
 
+
 /* >>> factory HornHazard_AIEffect */
 static void adapt_HornHazard_AIEffect(ProbeState *s)
 {
@@ -725,6 +760,7 @@ static void adapt_HornHazard_AIEffect(ProbeState *s)
 }
 /* <<< factory HornHazard_AIEffect */
 
+
 /* >>> factory NidorinaDoubleKick_AIEffect */
 static void adapt_NidorinaDoubleKick_AIEffect(ProbeState *s)
 {
@@ -732,6 +768,7 @@ static void adapt_NidorinaDoubleKick_AIEffect(ProbeState *s)
 	NidorinaDoubleKick_AIEffect();
 }
 /* <<< factory NidorinaDoubleKick_AIEffect */
+
 
 /* >>> factory NidorinoDoubleKick_AIEffect */
 static void adapt_NidorinoDoubleKick_AIEffect(ProbeState *s)
@@ -769,6 +806,7 @@ static void adapt_NidoranFFurySwipes_AIEffect(ProbeState *s)
 }
 /* <<< factory NidoranFFurySwipes_AIEffect */
 
+
 /* >>> factory NidoranFCallForFamily_AISelectEffect */
 static void adapt_NidoranFCallForFamily_AISelectEffect(ProbeState *s)
 {
@@ -776,12 +814,14 @@ static void adapt_NidoranFCallForFamily_AISelectEffect(ProbeState *s)
 }
 /* <<< factory NidoranFCallForFamily_AISelectEffect */
 
+
 /* >>> factory ToxicGasEffect */
 static void adapt_ToxicGasEffect(ProbeState *s)
 {
 	s->f = ToxicGasEffect(s->f);
 }
 /* <<< factory ToxicGasEffect */
+
 
 /* >>> factory Sludge_AIEffect */
 static void adapt_Sludge_AIEffect(ProbeState *s)
@@ -791,6 +831,7 @@ static void adapt_Sludge_AIEffect(ProbeState *s)
 }
 /* <<< factory Sludge_AIEffect */
 
+
 /* >>> factory KadabraRecover_DiscardEffect */
 static void adapt_KadabraRecover_DiscardEffect(ProbeState *s)
 {
@@ -798,7 +839,982 @@ static void adapt_KadabraRecover_DiscardEffect(ProbeState *s)
 }
 /* <<< factory KadabraRecover_DiscardEffect */
 
+/* >>> factory PrimeapeFurySwipes_AIEffect */
+static void adapt_PrimeapeFurySwipes_AIEffect(ProbeState *s)
+{
+	PrimeapeFurySwipesAIResult r = PrimeapeFurySwipes_AIEffect();
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory PrimeapeFurySwipes_AIEffect */
+
+/* >>> factory StretchKick_CheckBench */
+static void adapt_StretchKick_CheckBench(ProbeState *s)
+{
+	StretchKickCheckBenchResult r = StretchKick_CheckBench();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory StretchKick_CheckBench */
+/* >>> factory Cowardice_CheckUseAndBench */
+static void adapt_Cowardice_CheckUseAndBench(ProbeState *s)
+{
+	CowardiceCheckUseAndBenchResult r = Cowardice_CheckUseAndBench();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Cowardice_CheckUseAndBench */
+
+
+
+/* >>> factory Cowardice_ReturnToHandEffect */
+static void adapt_Cowardice_ReturnToHandEffect(ProbeState *s)
+{
+	Cowardice_ReturnToHandEffect();
+	s->a = gb_read8(wDuelDisplayedScreen_ADDR);
+}
+/* <<< factory Cowardice_ReturnToHandEffect */
+
+
+
+
+/* >>> factory LightScreenEffect */
+static void adapt_LightScreenEffect(ProbeState *s)
+{
+	s->hl = LightScreenEffect();
+}
+/* <<< factory LightScreenEffect */
+
+
+/* >>> factory StarmieRecover_CheckEnergyHP */
+static void adapt_StarmieRecover_CheckEnergyHP(ProbeState *s)
+{
+	uint8_t b = s->b;
+	uint8_t c = s->c;
+	uint8_t d = s->d;
+	StarmieRecoverCheckEnergyHPResult r = StarmieRecover_CheckEnergyHP();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = b;
+	s->c = r.checked_damage ? r.c : c;
+	s->d = d;
+	s->e = 0u;
+	s->hl = r.hl;
+}
+/* <<< factory StarmieRecover_CheckEnergyHP */
+
+
+/* >>> factory StarmieRecover_DiscardEffect */
+static void adapt_StarmieRecover_DiscardEffect(ProbeState *s)
+{
+	s->a = StarmieRecover_DiscardEffect();
+}
+/* <<< factory StarmieRecover_DiscardEffect */
+
+
+/* >>> factory CheckIfCardHasGrassEnergyAttached */
+static void adapt_CheckIfCardHasGrassEnergyAttached(ProbeState *s)
+{
+	CheckIfCardHasGrassEnergyAttachedResult r = CheckIfCardHasGrassEnergyAttached(s->a);
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfCardHasGrassEnergyAttached */
+
+/* >>> factory GrimerMinimizeEffect */
+static void adapt_GrimerMinimizeEffect(ProbeState *s)
+{
+	s->a = 0x13u;
+	s->hl = GrimerMinimizeEffect();
+}
+/* <<< factory GrimerMinimizeEffect */
+
+/* >>> factory Quickfreeze_InitialEffect */
+static void adapt_Quickfreeze_InitialEffect(ProbeState *s)
+{
+	s->f = Quickfreeze_InitialEffect(s->f);
+}
+/* <<< factory Quickfreeze_InitialEffect */
+
+
+/* >>> factory FocusEnergyEffect */
+static void adapt_FocusEnergyEffect(ProbeState *s)
+{
+	FocusEnergyEffect();
+}
+/* <<< factory FocusEnergyEffect */
+
+
+/* >>> factory MagnetonSonicboom_UnaffectedByColorEffect */
+static void adapt_MagnetonSonicboom_UnaffectedByColorEffect(ProbeState *s)
+{
+	MagnetonSonicboom_UnaffectedByColorEffect();
+}
+/* <<< factory MagnetonSonicboom_UnaffectedByColorEffect */
+
+/* >>> factory MagnetonSonicboom_NullEffect */
+static void adapt_MagnetonSonicboom_NullEffect(ProbeState *s)
+{
+	MagnetonSonicboom_NullEffect();
+}
+/* <<< factory MagnetonSonicboom_NullEffect */
+
+/* >>> factory ElectrodeSonicboom_UnaffectedByColorEffect */
+static void adapt_ElectrodeSonicboom_UnaffectedByColorEffect(ProbeState *s)
+{
+	s->hl = ElectrodeSonicboom_UnaffectedByColorEffect();
+}
+/* <<< factory ElectrodeSonicboom_UnaffectedByColorEffect */
+
+/* >>> factory EnergySpike_AISelectEffect */
+static void adapt_EnergySpike_AISelectEffect(ProbeState *s)
+{
+	EnergySpike_AISelectEffect();
+	s->a = 0xffu;
+}
+/* <<< factory EnergySpike_AISelectEffect */
+
+/* >>> factory CometPunch_AIEffect */
+static void adapt_CometPunch_AIEffect(ProbeState *s)
+{
+	CometPunch_AIEffect();
+}
+/* <<< factory CometPunch_AIEffect */
+
+/* >>> factory Conversion1_WeaknessCheck */
+static void adapt_Conversion1_WeaknessCheck(ProbeState *s)
+{
+	Conversion1WeaknessCheckResult result = Conversion1_WeaknessCheck();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Conversion1_WeaknessCheck */
+
+/* >>> factory Conversion2_ResistanceCheck */
+static void adapt_Conversion2_ResistanceCheck(ProbeState *s)
+{
+	Conversion2ResistanceCheckResult result = Conversion2_ResistanceCheck();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Conversion2_ResistanceCheck */
+
+/* >>> factory ElectrodeSonicboom_NullEffect */
+static void adapt_ElectrodeSonicboom_NullEffect(ProbeState *s)
+{
+	ElectrodeSonicboom_NullEffect();
+}
+/* <<< factory ElectrodeSonicboom_NullEffect */
+
+/* >>> factory FirstAid_DamageCheck */
+static void adapt_FirstAid_DamageCheck(ProbeState *s)
+{
+	FirstAidDamageCheckResult r = FirstAid_DamageCheck();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory FirstAid_DamageCheck */
+
+/* >>> factory DoTheWaveEffect */
+static void adapt_DoTheWaveEffect(ProbeState *s)
+{
+	DoTheWaveEffect();
+}
+/* <<< factory DoTheWaveEffect */
+
+/* >>> factory FullHeal_StatusCheck */
+static void adapt_FullHeal_StatusCheck(ProbeState *s)
+{
+	FullHealStatusCheckResult r = FullHeal_StatusCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory FullHeal_StatusCheck */
+
+/* >>> factory PoisonFang_AIEffect */
+static void adapt_PoisonFang_AIEffect(ProbeState *s)
+{
+	(void)s;
+	PoisonFang_AIEffect();
+}
+/* <<< factory PoisonFang_AIEffect */
+
+/* >>> factory WeepinbellPoisonPowder_AIEffect */
+static void adapt_WeepinbellPoisonPowder_AIEffect(ProbeState *s)
+{
+	(void)s;
+	WeepinbellPoisonPowder_AIEffect();
+}
+/* <<< factory WeepinbellPoisonPowder_AIEffect */
+
+/* >>> factory Toxic_AIEffect */
+static void adapt_Toxic_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Toxic_AIEffect();
+}
+/* <<< factory Toxic_AIEffect */
+
+/* >>> factory BoyfriendsEffect */
+static void adapt_BoyfriendsEffect(ProbeState *s)
+{
+	(void)s;
+	BoyfriendsEffect();
+}
+/* <<< factory BoyfriendsEffect */
+
+/* >>> factory IvysaurPoisonPowder_AIEffect */
+static void adapt_IvysaurPoisonPowder_AIEffect(ProbeState *s)
+{
+	(void)s;
+	IvysaurPoisonPowder_AIEffect();
+}
+/* <<< factory IvysaurPoisonPowder_AIEffect */
+
+/* >>> factory EnergyTrans_CheckPlayArea */
+static void adapt_EnergyTrans_CheckPlayArea(ProbeState *s)
+{
+	EnergyTransCheckPlayAreaResult r = EnergyTrans_CheckPlayArea();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+/* <<< factory EnergyTrans_CheckPlayArea */
+
+/* >>> factory Firegiver_InitialEffect */
+static void adapt_Firegiver_InitialEffect(ProbeState *s)
+{
+	s->f = Firegiver_InitialEffect(s->f);
+}
+/* <<< factory Firegiver_InitialEffect */
+
+
+/* >>> factory MoltresLv37DiveBomb_AIEffect */
+static void adapt_MoltresLv37DiveBomb_AIEffect(ProbeState *s)
+{
+	MoltresLv37DiveBomb_AIEffect();
+}
+/* <<< factory MoltresLv37DiveBomb_AIEffect */
+
+
+/* >>> factory GetEnergyAttachedMultiplierDamage */
+static void adapt_GetEnergyAttachedMultiplierDamage(ProbeState *s)
+{
+	uint16_t r = GetEnergyAttachedMultiplierDamage();
+	s->d = (uint8_t)(r >> 8);
+	s->e = (uint8_t)r;
+}
+/* <<< factory GetEnergyAttachedMultiplierDamage */
+
+/* >>> factory Fly_AIEffect */
+static void adapt_Fly_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Fly_AIEffect();
+}
+/* <<< factory Fly_AIEffect */
+/* >>> factory Gigashock_AISelectEffect */
+static void adapt_Gigashock_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	Gigashock_AISelectEffect();
+}
+/* <<< factory Gigashock_AISelectEffect */
+
+/* >>> factory Wildfire_DiscardDeckEffect */
+static void adapt_Wildfire_DiscardDeckEffect(ProbeState *s)
+{
+	(void)s;
+	Wildfire_DiscardDeckEffect();
+}
+/* <<< factory Wildfire_DiscardDeckEffect */
+
+/* >>> factory MoltresLv35DiveBomb_AIEffect */
+static void adapt_MoltresLv35DiveBomb_AIEffect(ProbeState *s)
+{
+	(void)s;
+	MoltresLv35DiveBomb_AIEffect();
+}
+/* <<< factory MoltresLv35DiveBomb_AIEffect */
+
+/* >>> factory ClefairyDoll_BenchCheck */
+static void adapt_ClefairyDoll_BenchCheck(ProbeState *s)
+{
+	ClefairyDollBenchCheckResult r = ClefairyDoll_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ClefairyDoll_BenchCheck */
+
+/* >>> factory ClefairyDoll_PlaceInPlayAreaEffect */
+static void adapt_ClefairyDoll_PlaceInPlayAreaEffect(ProbeState *s)
+{
+	ClefairyDoll_PlaceInPlayAreaEffect();
+}
+/* <<< factory ClefairyDoll_PlaceInPlayAreaEffect */
+
+/* >>> factory EnergyBurnCheck_Unreferenced */
+static void adapt_EnergyBurnCheck_Unreferenced(ProbeState *s)
+{
+    EnergyBurnCheckResult r = EnergyBurnCheck_Unreferenced();
+    s->a = r.a;
+    s->f = r.f;
+}
+/* <<< factory EnergyBurnCheck_Unreferenced */
+
+/* >>> factory FlareonRage_DamageBoostEffect */
+static void adapt_FlareonRage_DamageBoostEffect(ProbeState *s)
+{
+    (void)s;
+    FlareonRage_DamageBoostEffect();
+}
+/* <<< factory FlareonRage_DamageBoostEffect */
+
+/* >>> factory Shift_OncePerTurnCheck */
+static void adapt_Shift_OncePerTurnCheck(ProbeState *s)
+{
+	ShiftOncePerTurnCheckResult r = Shift_OncePerTurnCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Shift_OncePerTurnCheck */
+
+/* >>> factory VenomPowder_AIEffect */
+static void adapt_VenomPowder_AIEffect(ProbeState *s)
+{
+	(void)s;
+	VenomPowder_AIEffect();
+}
+/* <<< factory VenomPowder_AIEffect */
+
+/* >>> factory TangelaPoisonPowder_AIEffect */
+static void adapt_TangelaPoisonPowder_AIEffect(ProbeState *s)
+{
+	(void)s;
+	TangelaPoisonPowder_AIEffect();
+}
+/* <<< factory TangelaPoisonPowder_AIEffect */
+
+/* >>> factory PetalDance_AIEffect */
+static void adapt_PetalDance_AIEffect(ProbeState *s)
+{
+	(void)s;
+	PetalDance_AIEffect();
+}
+/* <<< factory PetalDance_AIEffect */
+
+/* >>> factory RainDanceEffect */
+static void adapt_RainDanceEffect(ProbeState *s)
+{
+	s->f = RainDanceEffect(s->f);
+}
+/* <<< factory RainDanceEffect */
+
+/* >>> factory PsyduckFurySwipes_AIEffect */
+static void adapt_PsyduckFurySwipes_AIEffect(ProbeState *s)
+{
+	(void)s;
+	PsyduckFurySwipes_AIEffect();
+}
+/* <<< factory PsyduckFurySwipes_AIEffect */
+
+/* >>> factory VaporeonQuickAttack_AIEffect */
+static void adapt_VaporeonQuickAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	VaporeonQuickAttack_AIEffect();
+}
+/* <<< factory VaporeonQuickAttack_AIEffect */
+
+/* >>> factory JellyfishSting_AIEffect */
+static void adapt_JellyfishSting_AIEffect(ProbeState *s)
+{
+	(void)s;
+	JellyfishSting_AIEffect();
+}
+/* <<< factory JellyfishSting_AIEffect */
+
+/* >>> factory PoliwhirlAmnesia_CheckAttacks */
+static void adapt_PoliwhirlAmnesia_CheckAttacks(ProbeState *s)
+{
+	PoliwhirlAmnesiaCheckAttacksResult r = PoliwhirlAmnesia_CheckAttacks();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PoliwhirlAmnesia_CheckAttacks */
+
+/* >>> factory HeadacheEffect */
+static void adapt_HeadacheEffect(ProbeState *s)
+{
+	(void)s;
+	HeadacheEffect();
+}
+/* <<< factory HeadacheEffect */
+
+/* >>> factory ArcanineQuickAttack_AIEffect */
+static void adapt_ArcanineQuickAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	ArcanineQuickAttack_AIEffect();
+}
+/* <<< factory ArcanineQuickAttack_AIEffect */
+
+/* >>> factory FlamesOfRage_CheckEnergy */
+static void adapt_FlamesOfRage_CheckEnergy(ProbeState *s)
+{
+	FlamesOfRageCheckEnergyResult r = FlamesOfRage_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory FlamesOfRage_CheckEnergy */
+
+/* >>> factory MagmarFlamethrower_DiscardEffect */
+static void adapt_MagmarFlamethrower_DiscardEffect(ProbeState *s)
+{
+	s->a = MagmarFlamethrower_DiscardEffect();
+}
+/* <<< factory MagmarFlamethrower_DiscardEffect */
+
+/* >>> factory MagmarSmog_AIEffect */
+static void adapt_MagmarSmog_AIEffect(ProbeState *s)
+{
+	(void)s;
+	MagmarSmog_AIEffect();
+}
+/* <<< factory MagmarSmog_AIEffect */
+
+/* >>> factory Wildfire_CheckEnergy */
+static void adapt_Wildfire_CheckEnergy(ProbeState *s)
+{
+	WildfireCheckEnergyResult r = Wildfire_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory Wildfire_CheckEnergy */
+
+/* >>> factory MrMimeMeditate_DamageBoostEffect */
+static void adapt_MrMimeMeditate_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	MrMimeMeditate_DamageBoostEffect();
+}
+/* <<< factory MrMimeMeditate_DamageBoostEffect */
+
+/* >>> factory DancingEmbers_AIEffect */
+static void adapt_DancingEmbers_AIEffect(ProbeState *s)
+{
+	(void)s;
+	DancingEmbers_AIEffect();
+}
+/* <<< factory DancingEmbers_AIEffect */
+
+/* >>> factory FlareonFlamethrower_DiscardEffect */
+static void adapt_FlareonFlamethrower_DiscardEffect(ProbeState *s)
+{
+	s->a = FlareonFlamethrower_DiscardEffect();
+}
+/* <<< factory FlareonFlamethrower_DiscardEffect */
+
+/* >>> factory MagmarFlamethrower_CheckEnergy */
+static void adapt_MagmarFlamethrower_CheckEnergy(ProbeState *s)
+{
+	MagmarFlamethrowerCheckEnergyResult r = MagmarFlamethrower_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory MagmarFlamethrower_CheckEnergy */
+
+/* >>> factory FlamesOfRage_DiscardEffect */
+static void adapt_FlamesOfRage_DiscardEffect(ProbeState *s)
+{
+	(void)s;
+	FlamesOfRage_DiscardEffect();
+}
+/* <<< factory FlamesOfRage_DiscardEffect */
+
+/* >>> factory FlamesOfRage_DamageBoostEffect */
+static void adapt_FlamesOfRage_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	FlamesOfRage_DamageBoostEffect();
+}
+/* <<< factory FlamesOfRage_DamageBoostEffect */
+
+/* >>> factory CharmeleonFlamethrower_CheckEnergy */
+static void adapt_CharmeleonFlamethrower_CheckEnergy(ProbeState *s)
+{
+	CharmeleonFlamethrowerCheckEnergyResult r = CharmeleonFlamethrower_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CharmeleonFlamethrower_CheckEnergy */
+
+/* >>> factory CharmeleonFlamethrower_DiscardEffect */
+static void adapt_CharmeleonFlamethrower_DiscardEffect(ProbeState *s)
+{
+	s->a = CharmeleonFlamethrower_DiscardEffect();
+}
+/* <<< factory CharmeleonFlamethrower_DiscardEffect */
+
+/* >>> factory EnergyBurnEffect */
+static void adapt_EnergyBurnEffect(ProbeState *s)
+{
+	EnergyBurnEffectResult r = EnergyBurnEffect(s->f);
+	s->f = r.f;
+}
+/* <<< factory EnergyBurnEffect */
+
+/* >>> factory FireSpin_CheckEnergy */
+static void adapt_FireSpin_CheckEnergy(ProbeState *s)
+{
+	FireSpinCheckEnergyResult r = FireSpin_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory FireSpin_CheckEnergy */
+
+/* >>> factory FlareonQuickAttack_AIEffect */
+static void adapt_FlareonQuickAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	FlareonQuickAttack_AIEffect();
+}
+/* <<< factory FlareonQuickAttack_AIEffect */
+
+/* >>> factory FlareonFlamethrower_CheckEnergy */
+static void adapt_FlareonFlamethrower_CheckEnergy(ProbeState *s)
+{
+	FlareonFlamethrowerCheckEnergyResult r = FlareonFlamethrower_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory FlareonFlamethrower_CheckEnergy */
+
+/* >>> factory Prophecy_AISelectEffect */
+static void adapt_Prophecy_AISelectEffect(ProbeState *s)
+{
+	ProphecyAISelectEffectResult r = Prophecy_AISelectEffect();
+	s->a = r.a;
+}
+/* <<< factory Prophecy_AISelectEffect */
+
+/* >>> factory Prophecy_ReorderDeckEffect */
+static void adapt_Prophecy_ReorderDeckEffect(ProbeState *s)
+{
+	ProphecyReorderDeckEffectResult r = Prophecy_ReorderDeckEffect();
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Prophecy_ReorderDeckEffect */
+
+/* >>> factory SuperEnergyRetrieval_HandEnergyCheck */
+static void adapt_SuperEnergyRetrieval_HandEnergyCheck(ProbeState *s)
+{
+	SuperEnergyRetrievalHandEnergyCheckResult r =
+		SuperEnergyRetrieval_HandEnergyCheck();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory SuperEnergyRetrieval_HandEnergyCheck */
+
+/* >>> factory GetNextPositionInTempList_TrainerEffects */
+static void adapt_GetNextPositionInTempList_TrainerEffects(ProbeState *s)
+{
+	s->hl = GetNextPositionInTempList_TrainerEffects();
+}
+/* <<< factory GetNextPositionInTempList_TrainerEffects */
+
+/* >>> factory NinetalesLure_AISelectEffect */
+static void adapt_NinetalesLure_AISelectEffect(ProbeState *s)
+{
+	s->a = NinetalesLure_AISelectEffect();
+}
+/* <<< factory NinetalesLure_AISelectEffect */
+
+/* >>> factory Ember_CheckEnergy */
+static void adapt_Ember_CheckEnergy(ProbeState *s)
+{
+	EmberCheckEnergyResult r = Ember_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Ember_CheckEnergy */
+
+/* >>> factory DestinyBond_CheckEnergy */
+static void adapt_DestinyBond_CheckEnergy(ProbeState *s)
+{
+	IsPlayerTurnResult r = DestinyBond_CheckEnergy();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory DestinyBond_CheckEnergy */
+
+/* >>> factory ComputerSearch_HandDeckCheck */
+static void adapt_ComputerSearch_HandDeckCheck(ProbeState *s)
+{
+	ComputerSearchHandDeckCheckResult r = ComputerSearch_HandDeckCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ComputerSearch_HandDeckCheck */
+
+/* >>> factory MrFuji_BenchCheck */
+static void adapt_MrFuji_BenchCheck(ProbeState *s)
+{
+	MrFujiBenchCheckResult r = MrFuji_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory MrFuji_BenchCheck */
+
+/* >>> factory DreamEaterEffect */
+static void adapt_DreamEaterEffect(ProbeState *s)
+{
+	DreamEaterResult r = DreamEaterEffect();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory DreamEaterEffect */
+/* >>> factory JynxMeditate_DamageBoostEffect */
+static void adapt_JynxMeditate_DamageBoostEffect(ProbeState *s)
+{
+	JynxMeditate_DamageBoostEffect();
+}
+/* <<< factory JynxMeditate_DamageBoostEffect */
+/* >>> factory KadabraRecover_CheckEnergyHP */
+static void adapt_KadabraRecover_CheckEnergyHP(ProbeState *s)
+{
+	uint8_t b = s->b, d = s->d;
+	KadabraRecoverCheckEnergyHPResult r = KadabraRecover_CheckEnergyHP();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.checked_damage ? r.c : s->c;
+	s->d = d;
+	s->e = 0u;
+	s->hl = r.hl;
+	(void)b;
+}
+/* <<< factory KadabraRecover_CheckEnergyHP */
+/* >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect */
+static void adapt_MewtwoAltEnergyAbsorption_AddToHandEffect(ProbeState *s)
+{
+	MewtwoAltEnergyAbsorption_AddToHandEffect();
+}
+/* <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect */
+/* >>> factory MewtwoEnergyAbsorption_AddToHandEffect */
+static void adapt_MewtwoEnergyAbsorption_AddToHandEffect(ProbeState *s)
+{
+	MewtwoEnergyAbsorption_AddToHandEffect();
+}
+/* <<< factory MewtwoEnergyAbsorption_AddToHandEffect */
+/* >>> factory NeutralizingShieldEffect */
+static void adapt_NeutralizingShieldEffect(ProbeState *s)
+{
+	s->f = (uint8_t)((s->f & 0x80u) | NeutralizingShieldEffect());
+}
+/* <<< factory NeutralizingShieldEffect */
+/* >>> factory PealOfThunder_InitialEffect */
+static void adapt_PealOfThunder_InitialEffect(ProbeState *s)
+{
+	s->f = (uint8_t)((s->f & 0x80u) | PealOfThunder_InitialEffect());
+}
+/* <<< factory PealOfThunder_InitialEffect */
+/* >>> factory PrehistoricPowerEffect */
+static void adapt_PrehistoricPowerEffect(ProbeState *s)
+{
+	s->f = (uint8_t)((s->f & 0x80u) | PrehistoricPowerEffect());
+}
+/* <<< factory PrehistoricPowerEffect */
+/* >>> factory Scavenge_DiscardEffect */
+static void adapt_Scavenge_DiscardEffect(ProbeState *s)
+{
+	s->a = Scavenge_DiscardEffect();
+}
+/* <<< factory Scavenge_DiscardEffect */
+
+/* >>> factory StepIn_BenchCheck */
+static void adapt_StepIn_BenchCheck(ProbeState *s) { SolarPowerCheckUseResult r = StepIn_BenchCheck(); s->f = r.f; s->hl = r.hl; }
+/* <<< factory StepIn_BenchCheck */
+/* >>> factory Peek_OncePerTurnCheck */
+static void adapt_Peek_OncePerTurnCheck(ProbeState *s)
+{
+	SolarPowerCheckUseResult r = Peek_OncePerTurnCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Peek_OncePerTurnCheck */
+/* >>> factory Wail_BenchCheck */
+static void adapt_Wail_BenchCheck(ProbeState *s)
+{
+	MrFujiBenchCheckResult r = Wail_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Wail_BenchCheck */
+/* >>> factory StepIn_SwitchEffect */
+static void adapt_StepIn_SwitchEffect(ProbeState *s) { StepIn_SwitchEffect(); }
+/* <<< factory StepIn_SwitchEffect */
+/* >>> factory ThickSkinnedEffect */
+static void adapt_ThickSkinnedEffect(ProbeState *s) { s->f = ThickSkinnedEffect(s->f); }
+/* <<< factory ThickSkinnedEffect */
+/* >>> factory HealingWind_InitialEffect */
+static void adapt_HealingWind_InitialEffect(ProbeState *s) { s->f = HealingWind_InitialEffect(s->f); }
+/* <<< factory HealingWind_InitialEffect */
+/* >>> factory PickRandomBasicCardFromDeck */
+static void adapt_PickRandomBasicCardFromDeck(ProbeState *s) { s->a = PickRandomBasicCardFromDeck(); s->f = s->a == 0xFFu ? 0x90u : (s->a == 0u ? 0x80u : 0u); }
+/* <<< factory PickRandomBasicCardFromDeck */
+
+/* >>> factory GustOfWind_BenchCheck */
+static void adapt_GustOfWind_BenchCheck(ProbeState *s)
+{
+	IsPlayerTurnResult r = GustOfWind_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory GustOfWind_BenchCheck */
+
+/* >>> factory DrawSymbolOnPlayAreaCursor */
+static void adapt_DrawSymbolOnPlayAreaCursor(ProbeState *s)
+{
+	DrawSymbolOnPlayAreaCursor(s->a, s->b);
+}
+/* <<< factory DrawSymbolOnPlayAreaCursor */
+/* >>> factory Func_2c6d9 */
+static void adapt_Func_2c6d9(ProbeState *s)
+{
+	WaitResult r = Func_2c6d9();
+	s->f = r.f;
+}
+/* <<< factory Func_2c6d9 */
+
+
+/* >>> factory MarowakCallForFamily_AISelectEffect */
+static void adapt_MarowakCallForFamily_AISelectEffect(ProbeState *s)
+{
+	MarowakCallForFamily_AISelectEffect();
+}
+/* <<< factory MarowakCallForFamily_AISelectEffect */
+
+/* >>> factory CreateListOfFireEnergyAttachedToArena */
+static void adapt_CreateListOfFireEnergyAttachedToArena(ProbeState *s)
+{
+	CreateListOfEnergyAttachedToArenaResult r = CreateListOfFireEnergyAttachedToArena();
+	s->a = r.a;
+	s->c = r.c;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateListOfFireEnergyAttachedToArena */
+/* >>> factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+static void adapt_CreateEnergyCardListFromDiscardPile_AllEnergy(ProbeState *s)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile_AllEnergy();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+/* >>> factory CheckIfDeckIsEmpty */
+static void adapt_CheckIfDeckIsEmpty(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult r = CheckIfDeckIsEmpty();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory CheckIfDeckIsEmpty */
+/* >>> factory VictreebelLure_AssertPokemonInBench */
+static void adapt_VictreebelLure_AssertPokemonInBench(ProbeState *s)
+{
+	VictreebelLureAssertPokemonInBenchResult r = VictreebelLure_AssertPokemonInBench();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory VictreebelLure_AssertPokemonInBench */
+/* >>> factory NinetalesLure_CheckBench */
+static void adapt_NinetalesLure_CheckBench(ProbeState *s)
+{
+	NinetalesLureCheckBenchResult r = NinetalesLure_CheckBench();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory NinetalesLure_CheckBench */
+/* >>> factory ThunderboltEffect */
+static void adapt_ThunderboltEffect(ProbeState *s)
+{
+	ThunderboltEffect();
+}
+/* <<< factory ThunderboltEffect */
+/* >>> factory TrainerCardAsPokemon_BenchCheck */
+static void adapt_TrainerCardAsPokemon_BenchCheck(ProbeState *s)
+{
+	TrainerCardAsPokemonBenchCheckResult r = TrainerCardAsPokemon_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory TrainerCardAsPokemon_BenchCheck */
+/* >>> factory TrainerCardAsPokemon_DiscardEffect */
+static void adapt_TrainerCardAsPokemon_DiscardEffect(ProbeState *s)
+{
+	TrainerCardAsPokemon_DiscardEffect();
+}
+/* <<< factory TrainerCardAsPokemon_DiscardEffect */
+/* >>> factory MysteriousFossil_BenchCheck */
+static void adapt_MysteriousFossil_BenchCheck(ProbeState *s)
+{
+	MysteriousFossilBenchCheckResult r = MysteriousFossil_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory MysteriousFossil_BenchCheck */
+/* >>> factory MysteriousFossil_PlaceInPlayAreaEffect */
+static void adapt_MysteriousFossil_PlaceInPlayAreaEffect(ProbeState *s)
+{
+	MysteriousFossil_PlaceInPlayAreaEffect();
+}
+/* <<< factory MysteriousFossil_PlaceInPlayAreaEffect */
+/* >>> factory ScoopUp_BenchCheck */
+static void adapt_ScoopUp_BenchCheck(ProbeState *s)
+{
+	ScoopUpBenchCheckResult r = ScoopUp_BenchCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ScoopUp_BenchCheck */
+/* >>> factory Toxic_DoublePoisonEffect */
+static void adapt_Toxic_DoublePoisonEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = Toxic_DoublePoisonEffect();
+	s->f = r.f;
+}
+/* <<< factory Toxic_DoublePoisonEffect */
+
+/* >>> factory TryGiveDamageCounter_StrangeBehavior */
+static void adapt_TryGiveDamageCounter_StrangeBehavior(ProbeState *s)
+{
+	TryGiveDamageCounter_StrangeBehaviorResult r =
+		TryGiveDamageCounter_StrangeBehavior();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory TryGiveDamageCounter_StrangeBehavior */
+/* >>> factory SpacingOut_CheckDamage */
+static void adapt_SpacingOut_CheckDamage(ProbeState *s)
+{
+	SpacingOutCheckDamageResult r = SpacingOut_CheckDamage();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SpacingOut_CheckDamage */
+/* >>> factory SpacingOut_HealEffect */
+static void adapt_SpacingOut_HealEffect(ProbeState *s)
+{
+	SpacingOutHealEffectResult r = SpacingOut_HealEffect();
+	s->a = r.a;
+	s->f = r.f;
+	if (r.update_hl)
+		s->hl = r.hl;
+}
+/* <<< factory SpacingOut_HealEffect */
+
+/* >>> factory LeekSlap_OncePerDuelCheck */
+static void adapt_LeekSlap_OncePerDuelCheck(ProbeState *s) { s->f = (uint8_t)(LeekSlap_OncePerDuelCheck() | (s->f & 0x00u)); }
+/* <<< factory LeekSlap_OncePerDuelCheck */
+/* >>> factory LeekSlap_SetUsedThisDuelFlag */
+static void adapt_LeekSlap_SetUsedThisDuelFlag(ProbeState *s) { LeekSlap_SetUsedThisDuelFlag(); }
+/* <<< factory LeekSlap_SetUsedThisDuelFlag */
+/* >>> factory PlusPowerEffect */
+static void adapt_PlusPowerEffect(ProbeState *s) { PlusPowerEffect(); }
+/* <<< factory PlusPowerEffect */
+/* >>> factory StrikesBackEffect */
+static void adapt_StrikesBackEffect(ProbeState *s) { s->f = (uint8_t)((s->f & 0x80u) | StrikesBackEffect()); }
+/* <<< factory StrikesBackEffect */
+/* >>> factory Switch_BenchCheck */
+static void adapt_Switch_BenchCheck(ProbeState *s) { MrFujiBenchCheckResult r = Switch_BenchCheck(); s->a = r.a; s->f = r.f; s->hl = r.hl; }
+/* <<< factory Switch_BenchCheck */
+/* >>> factory Switch_SwitchEffect */
+static void adapt_Switch_SwitchEffect(ProbeState *s) { Switch_SwitchEffect(); }
+/* <<< factory Switch_SwitchEffect */
+
+/* >>> factory CopyPlayAreaHPToBackup_Unreferenced */
+static void adapt_CopyPlayAreaHPToBackup_Unreferenced(ProbeState *s) { (void)s; CopyPlayAreaHPToBackup_Unreferenced(); }
+/* <<< factory CopyPlayAreaHPToBackup_Unreferenced */
+/* >>> factory CopyPlayAreaHPFromBackup_Unreferenced */
+static void adapt_CopyPlayAreaHPFromBackup_Unreferenced(ProbeState *s) { (void)s; CopyPlayAreaHPFromBackup_Unreferenced(); }
+/* <<< factory CopyPlayAreaHPFromBackup_Unreferenced */
+/* >>> factory Gale_LoadAnimation */
+static void adapt_Gale_LoadAnimation(ProbeState *s) { (void)s; Gale_LoadAnimation(); }
+/* <<< factory Gale_LoadAnimation */
+/* >>> factory EnergySearch_DeckCheck */
+static void adapt_EnergySearch_DeckCheck(ProbeState *s) { s->f = EnergySearch_DeckCheck(); }
+/* <<< factory EnergySearch_DeckCheck */
+/* >>> factory CheckIfCardIsBasicEnergy */
+static void adapt_CheckIfCardIsBasicEnergy(ProbeState *s) { s->f = CheckIfCardIsBasicEnergy(s->a); }
+/* <<< factory CheckIfCardIsBasicEnergy */
+/* >>> factory CreatePlayableStage2PokemonCardListFromHand */
+static void adapt_CreatePlayableStage2PokemonCardListFromHand(ProbeState *s) { s->f = (uint8_t)((s->f & 0x80u) | CreatePlayableStage2PokemonCardListFromHand()); }
+/* <<< factory CreatePlayableStage2PokemonCardListFromHand */
+/* >>> factory Barrier_DiscardEffect */
+static void adapt_Barrier_DiscardEffect(ProbeState *s) { Barrier_DiscardEffect(); }
+/* <<< factory Barrier_DiscardEffect */
+/* >>> factory DestinyBond_DiscardEffect */
+static void adapt_DestinyBond_DiscardEffect(ProbeState *s) { DestinyBond_DiscardEffect(); }
+/* <<< factory DestinyBond_DiscardEffect */
+static void adapt_Ember_DiscardEffect(ProbeState *s) { Ember_DiscardEffect(); }
+/* <<< factory Ember_DiscardEffect */
+/* >>> factory FireBlast_DiscardEffect */
+static void adapt_FireBlast_DiscardEffect(ProbeState *s) { FireBlast_DiscardEffect(); }
+/* <<< factory FireBlast_DiscardEffect */
+/* >>> factory FireSpin_AISelectEffect */
+static void adapt_FireSpin_AISelectEffect(ProbeState *s) { FireSpin_AISelectEffect(); }
+/* <<< factory FireSpin_AISelectEffect */
+/* >>> factory FireSpin_DiscardEffect */
+static void adapt_FireSpin_DiscardEffect(ProbeState *s) { FireSpin_DiscardEffect(); }
+/* <<< factory FireSpin_DiscardEffect */
 const ProbeEntry probe_entries_effect_functions[] = {
+	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
+	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
+	{ "PlusPowerEffect", adapt_PlusPowerEffect },
+	{ "StrikesBackEffect", adapt_StrikesBackEffect },
+	{ "Switch_BenchCheck", adapt_Switch_BenchCheck },
+	{ "Switch_SwitchEffect", adapt_Switch_SwitchEffect },
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
 	{ "UpdateExpectedAIDamage_AccountForPoison", adapt_UpdateExpectedAIDamage_AccountForPoison },
@@ -806,9 +1822,11 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplySubstatus1ToAttackingCard", adapt_ApplySubstatus1ToAttackingCard },
 	{ "SetNoEffectFromStatus", adapt_SetNoEffectFromStatus },
 	{ "SetDefiniteAIDamage", adapt_SetDefiniteAIDamage },
+	{ "SetDefiniteDamage", adapt_SetDefiniteDamage },
 	{ "PickRandomPlayAreaCard", adapt_PickRandomPlayAreaCard },
 	{ "GetNextPositionInTempList", adapt_GetNextPositionInTempList },
 	{ "QueueStatusCondition", adapt_QueueStatusCondition },
+	{ "SleepEffect", adapt_SleepEffect },
 	{ "CommentedOut_2c086", adapt_CommentedOut_2c086 },
 	{ "SetWasUnsuccessful", adapt_SetWasUnsuccessful },
 	{ "Teleport_SwitchEffect", adapt_Teleport_SwitchEffect },
@@ -819,6 +1837,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ParalysisEffect", adapt_ParalysisEffect },
 	{ "ConfusionEffect", adapt_ConfusionEffect },
 	{ "InvisibleWallEffect", adapt_InvisibleWallEffect },
+	{ "Func_2c6d9", adapt_Func_2c6d9 },
+
 	{ "GetAttackName", adapt_GetAttackName },
 	{ "CheckIfDefendingPokemonHasAnyAttack", adapt_CheckIfDefendingPokemonHasAnyAttack },
 	{ "UpdateDevolvedCardHPAndStage", adapt_UpdateDevolvedCardHPAndStage },
@@ -829,17 +1849,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CuboneRage_DamageBoostEffect", adapt_CuboneRage_DamageBoostEffect },
 	{ "PoisonEffect", adapt_PoisonEffect },
 	{ "DoublePoisonEffect", adapt_DoublePoisonEffect },
-	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
-	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
-	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
 	{ "KrabbyCallForFamily_AISelectEffect", adapt_KrabbyCallForFamily_AISelectEffect },
 	{ "ArcanineFlamethrower_CheckEnergy", adapt_ArcanineFlamethrower_CheckEnergy },
 	{ "ArcanineFlamethrower_DiscardEffect", adapt_ArcanineFlamethrower_DiscardEffect },
-	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
-	{ "SolarPower_CheckUse", adapt_SolarPower_CheckUse },
-	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
-	{ "CheckIfTurnDuelistHasEvolvedCards", adapt_CheckIfTurnDuelistHasEvolvedCards },
-	{ "FindFirstNonBasicCardInPlayArea", adapt_FindFirstNonBasicCardInPlayArea },
 	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
 	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
@@ -853,8 +1865,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TransparencyEffect", adapt_TransparencyEffect },
 	{ "Barrier_CheckEnergy", adapt_Barrier_CheckEnergy },
 	{ "ResetDevolvedCardStatus", adapt_ResetDevolvedCardStatus },
-	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
-	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
 	{ "EeveeQuickAttack_AIEffect", adapt_EeveeQuickAttack_AIEffect },
 	{ "MirrorMove_AIEffect", adapt_MirrorMove_AIEffect },
 	{ "MirrorMove_InitialEffect1", adapt_MirrorMove_InitialEffect1 },
@@ -875,24 +1885,155 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpitPoison_AIEffect", adapt_SpitPoison_AIEffect },
 	{ "GloomPoisonPowder_AIEffect", adapt_GloomPoisonPowder_AIEffect },
 	{ "FoulOdorEffect", adapt_FoulOdorEffect },
-	{ "KakunaPoisonPowder_AIEffect", adapt_KakunaPoisonPowder_AIEffect },
-	{ "SwordsDanceEffect", adapt_SwordsDanceEffect },
-	{ "Twineedle_AIEffect", adapt_Twineedle_AIEffect },
-	{ "BeedrillPoisonSting_AIEffect", adapt_BeedrillPoisonSting_AIEffect },
-	{ "FoulGas_AIEffect", adapt_FoulGas_AIEffect },
-	{ "Sprout_AISelectEffect", adapt_Sprout_AISelectEffect },
-	{ "Teleport_CheckBench", adapt_Teleport_CheckBench },
-	{ "Teleport_AISelectEffect", adapt_Teleport_AISelectEffect },
-	{ "HornHazard_AIEffect", adapt_HornHazard_AIEffect },
-	{ "NidorinaDoubleKick_AIEffect", adapt_NidorinaDoubleKick_AIEffect },
 	{ "NidorinoDoubleKick_AIEffect", adapt_NidorinoDoubleKick_AIEffect },
 	{ "WeedlePoisonSting_AIEffect", adapt_WeedlePoisonSting_AIEffect },
 	{ "BellsproutCallForFamily_AISelectEffect", adapt_BellsproutCallForFamily_AISelectEffect },
 	{ "WeezingSmog_AIEffect", adapt_WeezingSmog_AIEffect },
-	{ "NidoranFFurySwipes_AIEffect", adapt_NidoranFFurySwipes_AIEffect },
-	{ "NidoranFCallForFamily_AISelectEffect", adapt_NidoranFCallForFamily_AISelectEffect },
+	{ "KadabraRecover_DiscardEffect", adapt_KadabraRecover_DiscardEffect },
+	{ "PrimeapeFurySwipes_AIEffect", adapt_PrimeapeFurySwipes_AIEffect },
+	{ "StretchKick_CheckBench", adapt_StretchKick_CheckBench },
+	{ "LightScreenEffect", adapt_LightScreenEffect },
+	{ "CheckIfCardHasGrassEnergyAttached", adapt_CheckIfCardHasGrassEnergyAttached },
+	{ "GrimerMinimizeEffect", adapt_GrimerMinimizeEffect },
+	{ "MagnetonSonicboom_UnaffectedByColorEffect", adapt_MagnetonSonicboom_UnaffectedByColorEffect },
+	{ "MagnetonSonicboom_NullEffect", adapt_MagnetonSonicboom_NullEffect },
+	{ "ElectrodeSonicboom_UnaffectedByColorEffect", adapt_ElectrodeSonicboom_UnaffectedByColorEffect },
+	{ "EnergySpike_AISelectEffect", adapt_EnergySpike_AISelectEffect },
+	{ "CometPunch_AIEffect", adapt_CometPunch_AIEffect },
+	{ "Conversion1_WeaknessCheck", adapt_Conversion1_WeaknessCheck },
+	{ "Conversion2_ResistanceCheck", adapt_Conversion2_ResistanceCheck },
+	{ "ElectrodeSonicboom_NullEffect", adapt_ElectrodeSonicboom_NullEffect },
+	{ "FirstAid_DamageCheck", adapt_FirstAid_DamageCheck },
+	{ "DoTheWaveEffect", adapt_DoTheWaveEffect },
+	{ "FullHeal_StatusCheck", adapt_FullHeal_StatusCheck },
+	{ "AIPickEnergyCardToDiscardFromDefendingPokemon", adapt_AIPickEnergyCardToDiscardFromDefendingPokemon },
+	{ "AIFindTargetForBenchAttack", adapt_AIFindTargetForBenchAttack },
+	{ "LoadCardNameAndInputColor", adapt_LoadCardNameAndInputColor },
+	{ "Quickfreeze_InitialEffect", adapt_Quickfreeze_InitialEffect },
+	{ "FocusEnergyEffect", adapt_FocusEnergyEffect },
+	{ "Teleport_CheckBench", adapt_Teleport_CheckBench },
+	{ "Teleport_AISelectEffect", adapt_Teleport_AISelectEffect },
 	{ "ToxicGasEffect", adapt_ToxicGasEffect },
 	{ "Sludge_AIEffect", adapt_Sludge_AIEffect },
-	{ "KadabraRecover_DiscardEffect", adapt_KadabraRecover_DiscardEffect },
+	{ "PoisonWhip_AIEffect", adapt_PoisonWhip_AIEffect },
+	{ "SolarPower_CheckUse", adapt_SolarPower_CheckUse },
+	{ "Cowardice_CheckUseAndBench", adapt_Cowardice_CheckUseAndBench },
+	{ "Cowardice_ReturnToHandEffect", adapt_Cowardice_ReturnToHandEffect },
+	{ "PoisonFang_AIEffect", adapt_PoisonFang_AIEffect },
+	{ "WeepinbellPoisonPowder_AIEffect", adapt_WeepinbellPoisonPowder_AIEffect },
+	{ "Twineedle_AIEffect", adapt_Twineedle_AIEffect },
+	{ "BeedrillPoisonSting_AIEffect", adapt_BeedrillPoisonSting_AIEffect },
+	{ "FoulGas_AIEffect", adapt_FoulGas_AIEffect },
+	{ "Sprout_AISelectEffect", adapt_Sprout_AISelectEffect },
+	{ "NidoranFFurySwipes_AIEffect", adapt_NidoranFFurySwipes_AIEffect },
+	{ "NidoranFCallForFamily_AISelectEffect", adapt_NidoranFCallForFamily_AISelectEffect },
+	{ "HornHazard_AIEffect", adapt_HornHazard_AIEffect },
+	{ "NidorinaDoubleKick_AIEffect", adapt_NidorinaDoubleKick_AIEffect },
+	{ "ApplyExtraWaterEnergyDamageBonus", adapt_ApplyExtraWaterEnergyDamageBonus },
+	{ "KakunaPoisonPowder_AIEffect", adapt_KakunaPoisonPowder_AIEffect },
+	{ "SwordsDanceEffect", adapt_SwordsDanceEffect },
+	{ "Toxic_AIEffect", adapt_Toxic_AIEffect },
+	{ "BoyfriendsEffect", adapt_BoyfriendsEffect },
+	{ "IvysaurPoisonPowder_AIEffect", adapt_IvysaurPoisonPowder_AIEffect },
+	{ "EnergyTrans_CheckPlayArea", adapt_EnergyTrans_CheckPlayArea },
+	{ "Fly_AIEffect", adapt_Fly_AIEffect },
+	{ "Gigashock_AISelectEffect", adapt_Gigashock_AISelectEffect },
+	{ "Wildfire_DiscardDeckEffect", adapt_Wildfire_DiscardDeckEffect },
+	{ "MoltresLv35DiveBomb_AIEffect", adapt_MoltresLv35DiveBomb_AIEffect },
+	{ "ClefairyDoll_BenchCheck", adapt_ClefairyDoll_BenchCheck },
+	{ "ClefairyDoll_PlaceInPlayAreaEffect", adapt_ClefairyDoll_PlaceInPlayAreaEffect },
+	{ "EnergyBurnCheck_Unreferenced", adapt_EnergyBurnCheck_Unreferenced },
+	{ "FlareonRage_DamageBoostEffect", adapt_FlareonRage_DamageBoostEffect },
+	{ "Shift_OncePerTurnCheck", adapt_Shift_OncePerTurnCheck },
+	{ "VenomPowder_AIEffect", adapt_VenomPowder_AIEffect },
+	{ "TangelaPoisonPowder_AIEffect", adapt_TangelaPoisonPowder_AIEffect },
+	{ "PetalDance_AIEffect", adapt_PetalDance_AIEffect },
+	{ "ClairvoyanceEffect", adapt_ClairvoyanceEffect },
+	{ "RainDanceEffect", adapt_RainDanceEffect },
+	{ "PsyduckFurySwipes_AIEffect", adapt_PsyduckFurySwipes_AIEffect },
+	{ "VaporeonQuickAttack_AIEffect", adapt_VaporeonQuickAttack_AIEffect },
+	{ "JellyfishSting_AIEffect", adapt_JellyfishSting_AIEffect },
+	{ "PoliwhirlAmnesia_CheckAttacks", adapt_PoliwhirlAmnesia_CheckAttacks },
+	{ "OmastarSpikeCannon_AIEffect", adapt_OmastarSpikeCannon_AIEffect },
+	{ "HeadacheEffect", adapt_HeadacheEffect },
+	{ "ArcanineQuickAttack_AIEffect", adapt_ArcanineQuickAttack_AIEffect },
+	{ "FlamesOfRage_CheckEnergy", adapt_FlamesOfRage_CheckEnergy },
+	{ "MoltresLv37DiveBomb_AIEffect", adapt_MoltresLv37DiveBomb_AIEffect },
+	{ "GetEnergyAttachedMultiplierDamage", adapt_GetEnergyAttachedMultiplierDamage },
+	{ "MagmarFlamethrower_DiscardEffect", adapt_MagmarFlamethrower_DiscardEffect },
+	{ "MagmarSmog_AIEffect", adapt_MagmarSmog_AIEffect },
+	{ "CheckIfTurnDuelistHasEvolvedCards", adapt_CheckIfTurnDuelistHasEvolvedCards },
+	{ "FindFirstNonBasicCardInPlayArea", adapt_FindFirstNonBasicCardInPlayArea },
+	{ "Wildfire_CheckEnergy", adapt_Wildfire_CheckEnergy },
+	{ "MrMimeMeditate_DamageBoostEffect", adapt_MrMimeMeditate_DamageBoostEffect },
+	{ "DancingEmbers_AIEffect", adapt_DancingEmbers_AIEffect },
+	{ "Firegiver_InitialEffect", adapt_Firegiver_InitialEffect },
+	{ "FlareonFlamethrower_DiscardEffect", adapt_FlareonFlamethrower_DiscardEffect },
+	{ "MagmarFlamethrower_CheckEnergy", adapt_MagmarFlamethrower_CheckEnergy },
+	{ "FlamesOfRage_DiscardEffect", adapt_FlamesOfRage_DiscardEffect },
+	{ "FlamesOfRage_DamageBoostEffect", adapt_FlamesOfRage_DamageBoostEffect },
+	{ "CharmeleonFlamethrower_CheckEnergy", adapt_CharmeleonFlamethrower_CheckEnergy },
+	{ "CharmeleonFlamethrower_DiscardEffect", adapt_CharmeleonFlamethrower_DiscardEffect },
+	{ "EnergyBurnEffect", adapt_EnergyBurnEffect },
+	{ "FireSpin_CheckEnergy", adapt_FireSpin_CheckEnergy },
+	{ "FlareonQuickAttack_AIEffect", adapt_FlareonQuickAttack_AIEffect },
+	{ "FlareonFlamethrower_CheckEnergy", adapt_FlareonFlamethrower_CheckEnergy },
+	{ "StarmieRecover_CheckEnergyHP", adapt_StarmieRecover_CheckEnergyHP },
+	{ "StarmieRecover_DiscardEffect", adapt_StarmieRecover_DiscardEffect },
+	{ "Prophecy_AISelectEffect", adapt_Prophecy_AISelectEffect },
+	{ "Prophecy_ReorderDeckEffect", adapt_Prophecy_ReorderDeckEffect },
+	{ "SuperEnergyRetrieval_HandEnergyCheck", adapt_SuperEnergyRetrieval_HandEnergyCheck },
+	{ "GetNextPositionInTempList_TrainerEffects", adapt_GetNextPositionInTempList_TrainerEffects },
+	{ "NinetalesLure_AISelectEffect", adapt_NinetalesLure_AISelectEffect },
+	{ "Ember_CheckEnergy", adapt_Ember_CheckEnergy },
+	{ "DestinyBond_CheckEnergy", adapt_DestinyBond_CheckEnergy },
+	{ "ComputerSearch_HandDeckCheck", adapt_ComputerSearch_HandDeckCheck },
+	{ "MrFuji_BenchCheck", adapt_MrFuji_BenchCheck },
+	{ "Peek_OncePerTurnCheck", adapt_Peek_OncePerTurnCheck },
+	{ "StepIn_BenchCheck", adapt_StepIn_BenchCheck },
+	{ "Wail_BenchCheck", adapt_Wail_BenchCheck },
+	{ "StepIn_SwitchEffect", adapt_StepIn_SwitchEffect },
+	{ "ThickSkinnedEffect", adapt_ThickSkinnedEffect },
+	{ "HealingWind_InitialEffect", adapt_HealingWind_InitialEffect },
+	{ "PickRandomBasicCardFromDeck", adapt_PickRandomBasicCardFromDeck },
+	{ "DreamEaterEffect", adapt_DreamEaterEffect },
+	{ "JynxMeditate_DamageBoostEffect", adapt_JynxMeditate_DamageBoostEffect },
+	{ "KadabraRecover_CheckEnergyHP", adapt_KadabraRecover_CheckEnergyHP },
+	{ "MewtwoAltEnergyAbsorption_AddToHandEffect", adapt_MewtwoAltEnergyAbsorption_AddToHandEffect },
+	{ "MewtwoEnergyAbsorption_AddToHandEffect", adapt_MewtwoEnergyAbsorption_AddToHandEffect },
+	{ "NeutralizingShieldEffect", adapt_NeutralizingShieldEffect },
+	{ "PealOfThunder_InitialEffect", adapt_PealOfThunder_InitialEffect },
+	{ "PrehistoricPowerEffect", adapt_PrehistoricPowerEffect },
+	{ "Scavenge_DiscardEffect", adapt_Scavenge_DiscardEffect },
+	{ "GustOfWind_BenchCheck", adapt_GustOfWind_BenchCheck },
+	{ "DrawSymbolOnPlayAreaCursor", adapt_DrawSymbolOnPlayAreaCursor },
+	{ "MarowakCallForFamily_AISelectEffect", adapt_MarowakCallForFamily_AISelectEffect },
+	{ "CreateListOfFireEnergyAttachedToArena", adapt_CreateListOfFireEnergyAttachedToArena },
+	{ "CreateEnergyCardListFromDiscardPile_AllEnergy", adapt_CreateEnergyCardListFromDiscardPile_AllEnergy },
+	{ "CheckIfDeckIsEmpty", adapt_CheckIfDeckIsEmpty },
+	{ "VictreebelLure_AssertPokemonInBench", adapt_VictreebelLure_AssertPokemonInBench },
+	{ "NinetalesLure_CheckBench", adapt_NinetalesLure_CheckBench },
+	{ "ThunderboltEffect", adapt_ThunderboltEffect },
+	{ "TrainerCardAsPokemon_BenchCheck", adapt_TrainerCardAsPokemon_BenchCheck },
+	{ "TrainerCardAsPokemon_DiscardEffect", adapt_TrainerCardAsPokemon_DiscardEffect },
+	{ "MysteriousFossil_BenchCheck", adapt_MysteriousFossil_BenchCheck },
+	{ "MysteriousFossil_PlaceInPlayAreaEffect", adapt_MysteriousFossil_PlaceInPlayAreaEffect },
+	{ "ScoopUp_BenchCheck", adapt_ScoopUp_BenchCheck },
+	{ "Toxic_DoublePoisonEffect", adapt_Toxic_DoublePoisonEffect },
+	{ "TryGiveDamageCounter_StrangeBehavior", adapt_TryGiveDamageCounter_StrangeBehavior },
+	{ "SpacingOut_CheckDamage", adapt_SpacingOut_CheckDamage },
+	{ "SpacingOut_HealEffect", adapt_SpacingOut_HealEffect },
+	{ "CopyPlayAreaHPToBackup_Unreferenced", adapt_CopyPlayAreaHPToBackup_Unreferenced },
+	{ "CopyPlayAreaHPFromBackup_Unreferenced", adapt_CopyPlayAreaHPFromBackup_Unreferenced },
+	{ "Gale_LoadAnimation", adapt_Gale_LoadAnimation },
+	{ "EnergySearch_DeckCheck", adapt_EnergySearch_DeckCheck },
+	{ "CheckIfCardIsBasicEnergy", adapt_CheckIfCardIsBasicEnergy },
+	{ "CreatePlayableStage2PokemonCardListFromHand", adapt_CreatePlayableStage2PokemonCardListFromHand },
+	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
+	{ "DestinyBond_DiscardEffect", adapt_DestinyBond_DiscardEffect },
+	{ "Ember_DiscardEffect", adapt_Ember_DiscardEffect },
+	{ "FireBlast_DiscardEffect", adapt_FireBlast_DiscardEffect },
+	{ "FireSpin_AISelectEffect", adapt_FireSpin_AISelectEffect },
+	{ "FireSpin_DiscardEffect", adapt_FireSpin_DiscardEffect },
 	{ NULL, NULL },
 };

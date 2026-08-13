@@ -3,6 +3,19 @@
 #include "generated/wram.h"
 #include "probe.h"
 
+/* >>> factory DrawHPBar */
+static void adapt_DrawHPBar(ProbeState *s)
+{
+	DrawHPBar(s->d, s->e);
+}
+/* <<< factory DrawHPBar */
+static void adapt_ValidateSavedDuelDataFromHL(ProbeState *s)
+{
+	ValidateSavedDuelDataResult r = ValidateSavedDuelDataFromHL(s->hl);
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ValidateSavedDuelDataFromHL */
 /* >>> factory SetLineSeparation */
 static void adapt_SetLineSeparation(ProbeState *s)
 {
@@ -86,6 +99,26 @@ static void adapt_LoadPlayerDeck(ProbeState *s)
 	LoadPlayerDeck();
 }
 /* <<< factory LoadPlayerDeck */
+/* >>> factory CheckSkipDelayAllowed */
+static void adapt_CheckSkipDelayAllowed(ProbeState *s)
+{
+	CheckSkipDelayAllowedResult r = CheckSkipDelayAllowed(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CheckSkipDelayAllowed */
+
+/* >>> factory AIMakeDecision */
+static void adapt_AIMakeDecision(ProbeState *s)
+{
+	AIMakeDecisionResult r = AIMakeDecision(s->a);
+	s->f = r.f;
+}
+/* <<< factory AIMakeDecision */
 
 /* >>> factory PrintPracticeDuelDrMasonInstructions */
 static void adapt_PrintPracticeDuelDrMasonInstructions(ProbeState *s)
@@ -163,6 +196,7 @@ static void adapt_CheckCardPageExists(ProbeState *s)
 }
 /* <<< factory CheckCardPageExists */
 
+
 /* >>> factory CardPageSwitch_PokemonEnd */
 static void adapt_CardPageSwitch_PokemonEnd(ProbeState *s)
 {
@@ -172,12 +206,21 @@ static void adapt_CardPageSwitch_PokemonEnd(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_PokemonEnd */
 
+
 /* >>> factory SetCardListInfoBoxText */
 static void adapt_SetCardListInfoBoxText(ProbeState *s)
 {
 	SetCardListInfoBoxText(s->hl);
 }
 /* <<< factory SetCardListInfoBoxText */
+
+/* >>> factory PrintCardListHeaderAndInfoBoxTexts */
+static void adapt_PrintCardListHeaderAndInfoBoxTexts(ProbeState *s)
+{
+	(void)s;
+	PrintCardListHeaderAndInfoBoxTexts();
+}
+/* <<< factory PrintCardListHeaderAndInfoBoxTexts */
 
 /* >>> factory LoadCardNameToTxRam2 */
 static void adapt_LoadCardNameToTxRam2(ProbeState *s)
@@ -186,12 +229,15 @@ static void adapt_LoadCardNameToTxRam2(ProbeState *s)
 }
 /* <<< factory LoadCardNameToTxRam2 */
 
+
+
 /* >>> factory LoadCardNameToTxRam2_b */
 static void adapt_LoadCardNameToTxRam2_b(ProbeState *s)
 {
 	LoadCardNameToTxRam2_b(s->a);
 }
 /* <<< factory LoadCardNameToTxRam2_b */
+
 
 /* >>> factory GetAnimCoordsAndFlags */
 static void adapt_GetAnimCoordsAndFlags(ProbeState *s)
@@ -213,6 +259,19 @@ static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory PlayBufferedDuelAnimations */
+/* >>> factory ReturnWrongAction */
+static void adapt_ReturnWrongAction(ProbeState *s)
+{
+	s->f = ReturnWrongAction(s->f);
+}
+/* <<< factory ReturnWrongAction */
+
+/* >>> factory HandleFailedToContinueDuel */
+static void adapt_HandleFailedToContinueDuel(ProbeState *s)
+{
+	s->f = HandleFailedToContinueDuel(s->hl);
+}
+/* <<< factory HandleFailedToContinueDuel */
 
 
 /* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
@@ -235,6 +294,23 @@ static void adapt_CheckEnergyFlagsNeededInList(ProbeState *s)
 	s->f = r.carry ? 0x10u : 0u;
 }
 /* <<< factory CheckEnergyFlagsNeededInList */
+/* >>> factory CardPageSwitch_EnergyEnd */
+static void adapt_CardPageSwitch_EnergyEnd(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_EnergyEnd();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+}
+/* <<< factory CardPageSwitch_EnergyEnd */
+
+/* >>> factory CardPageSwitch_0c */
+static void adapt_CardPageSwitch_0c(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_0c();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+}
+/* <<< factory CardPageSwitch_0c */
 
 /* >>> factory PlaceCardImageOAM */
 static void adapt_PlaceCardImageOAM(ProbeState *s)
@@ -262,6 +338,7 @@ static void adapt_DiscardRetreatCostCards(ProbeState *s)
 	s->hl = r.hl;
 }
 /* <<< factory DiscardRetreatCostCards */
+
 
 /* >>> factory OppAction_DrawCard */
 static void adapt_OppAction_DrawCard(ProbeState *s)
@@ -385,12 +462,16 @@ static void adapt_PrintCardPageRarityIcon(ProbeState *s)
 }
 /* <<< factory PrintCardPageRarityIcon */
 
+
+
 /* >>> factory SetNoLineSeparation */
 static void adapt_SetNoLineSeparation(ProbeState *s)
 {
 	s->a = SetNoLineSeparation();
 }
 /* <<< factory SetNoLineSeparation */
+
+
 
 /* >>> factory AIPlayInitialBasicCards */
 static void adapt_AIPlayInitialBasicCards(ProbeState *s)
@@ -438,6 +519,7 @@ static void adapt_LookForCardIDInHand(ProbeState *s)
 }
 /* <<< factory LookForCardIDInHand */
 
+
 /* >>> factory LookForCardIDInHandList_Bank5 */
 static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
 {
@@ -446,6 +528,7 @@ static void adapt_LookForCardIDInHandList_Bank5(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory LookForCardIDInHandList_Bank5 */
+
 
 /* >>> factory CheckForEvolutionInDeck */
 static void adapt_CheckForEvolutionInDeck(ProbeState *s)
@@ -475,6 +558,7 @@ static void adapt_GetAnimationData(ProbeState *s)
 }
 /* <<< factory GetAnimationData */
 
+
 /* >>> factory CardPageSwitch_PokemonOverviewOrDescription */
 static void adapt_CardPageSwitch_PokemonOverviewOrDescription(ProbeState *s)
 {
@@ -482,6 +566,7 @@ static void adapt_CardPageSwitch_PokemonOverviewOrDescription(ProbeState *s)
 	s->a = r.a;
 }
 /* <<< factory CardPageSwitch_PokemonOverviewOrDescription */
+
 
 
 /* >>> factory CheckCardEvolutionInHandOrDeck */
@@ -502,6 +587,7 @@ static void adapt_CheckIfOpponentHasBossDeckID(ProbeState *s)
 }
 /* <<< factory CheckIfOpponentHasBossDeckID */
 
+
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
 static void adapt_RaiseAIScoreToAllMatchingIDsInBench(ProbeState *s)
 {
@@ -509,10 +595,406 @@ static void adapt_RaiseAIScoreToAllMatchingIDsInBench(ProbeState *s)
 }
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
 
+
+/* >>> factory GetDamageNumberChars */
+static void adapt_GetDamageNumberChars(ProbeState *s)
+{
+	(void)s;
+	GetDamageNumberChars();
+}
+/* <<< factory GetDamageNumberChars */
+
+/* >>> factory CardPageSwitch_PokemonAttack2Page2 */
+static void adapt_CardPageSwitch_PokemonAttack2Page2(ProbeState *s)
+{
+	CardPageExistsResult r = CardPageSwitch_PokemonAttack2Page2();
+	s->a = r.a;
+	s->f = r.zero ? 0x80u : 0x00u;
+}
+/* <<< factory CardPageSwitch_PokemonAttack2Page2 */
+
+/* >>> factory CardPageSwitch_08 */
+static void adapt_CardPageSwitch_08(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_08();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+}
+/* <<< factory CardPageSwitch_08 */
+
+/* >>> factory LoadPlayAreaCardGfx */
+static void adapt_LoadPlayAreaCardGfx(ProbeState *s)
+{
+	LoadPlayAreaCardGfx(s->a, (uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory LoadPlayAreaCardGfx */
+
+/* >>> factory SetBGP6OrSGB3ToCardPalette */
+static void adapt_SetBGP6OrSGB3ToCardPalette(ProbeState *s)
+{
+	(void)s;
+	SetBGP6OrSGB3ToCardPalette();
+}
+/* <<< factory SetBGP6OrSGB3ToCardPalette */
+
+/* >>> factory SetOneLineSeparation */
+static void adapt_SetOneLineSeparation(ProbeState *s)
+{
+	s->a = SetOneLineSeparation();
+}
+/* <<< factory SetOneLineSeparation */
+
+
+/* >>> factory _HasAlivePokemonInPlayArea */
+static void adapt__HasAlivePokemonInPlayArea(ProbeState *s)
+{
+	HasAlivePokemonInPlayAreaResult r = _HasAlivePokemonInPlayArea(s->a);
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | r.f);
+}
+/* <<< factory _HasAlivePokemonInPlayArea */
+
+/* >>> factory PrintPlayAreaCardLocation */
+static void adapt_PrintPlayAreaCardLocation(ProbeState *s)
+{
+	(void)s;
+	PrintPlayAreaCardLocation();
+}
+/* <<< factory PrintPlayAreaCardLocation */
+
+/* >>> factory CheckPrintPoisoned */
+static void adapt_CheckPrintPoisoned(ProbeState *s)
+{
+	s->a = CheckPrintPoisoned(s->a, s->b, s->c);
+}
+/* <<< factory CheckPrintPoisoned */
+
+/* >>> factory ResetDoFrameFunction_Bank1 */
+static void adapt_ResetDoFrameFunction_Bank1(ProbeState *s)
+{
+	ResetDoFrameFunction_Bank1();
+	s->a = 0u;
+	s->f = 0x80u;
+	s->hl = (uint16_t)(wDoFrameFunction_ADDR + 1u);
+}
+/* <<< factory ResetDoFrameFunction_Bank1 */
+
+/* >>> factory OppAction_NoAction */
+static void adapt_OppAction_NoAction(ProbeState *s)
+{
+	(void)s;
+	OppAction_NoAction();
+}
+/* <<< factory OppAction_NoAction */
+
+/* >>> factory ReturnRetreatCostCardsToArena */
+static void adapt_ReturnRetreatCostCardsToArena(ProbeState *s)
+{
+	ReturnRetreatCostCardsToArenaResult r =
+		ReturnRetreatCostCardsToArena(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ReturnRetreatCostCardsToArena */
+
+
+/* >>> factory FindHighestBenchScore */
+static void adapt_FindHighestBenchScore(ProbeState *s)
+{
+	FindHighestBenchScoreResult r = FindHighestBenchScore();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory FindHighestBenchScore */
+
+/* >>> factory AIEncourage */
+static void adapt_AIEncourage(ProbeState *s)
+{
+	AIEncourageResult r = AIEncourage(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIEncourage */
+/* >>> factory Func_6ba2 */
+static void adapt_Func_6ba2(ProbeState *s)
+{
+	Func_6ba2(s->hl);
+}
+/* <<< factory Func_6ba2 */
+
+
+/* >>> factory IsLoadedCard1BasicPokemon */
+static void adapt_IsLoadedCard1BasicPokemon(ProbeState *s)
+{
+	IsLoadedCard1BasicPokemonResult r = IsLoadedCard1BasicPokemon();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory IsLoadedCard1BasicPokemon */
+
+/* >>> factory PracticeDuel_PlayGoldeen */
+static void adapt_PracticeDuel_PlayGoldeen(ProbeState *s)
+{
+	s->f = PracticeDuel_PlayGoldeen().f;
+}
+/* <<< factory PracticeDuel_PlayGoldeen */
+
+/* >>> factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
+static void adapt_TwoByteNumberToTxSymbol_PadSpace_Bank1(ProbeState *s)
+{
+	TwoByteNumberToTxSymbolPadResult r =
+		TwoByteNumberToTxSymbol_PadSpace_Bank1(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
+
+/* >>> factory DrawWideTextBox_WaitForInput_Bank1 */
+static void adapt_DrawWideTextBox_WaitForInput_Bank1(ProbeState *s)
+{
+	WaitResult r = DrawWideTextBox_WaitForInput_Bank1(s->hl);
+	s->f = r.f;
+}
+/* <<< factory DrawWideTextBox_WaitForInput_Bank1 */
+
+/* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
+static void adapt_CardPageSwitch_EnergyOrTrainerPage1(ProbeState *s)
+{
+	CardPageEnergyResult r = CardPageSwitch_EnergyOrTrainerPage1();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
+/* >>> factory CardPageSwitch_TrainerEnd */
+static void adapt_CardPageSwitch_TrainerEnd(ProbeState *s)
+{
+	CardPageResult r = CardPageSwitch_TrainerEnd();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+}
+/* <<< factory CardPageSwitch_TrainerEnd */
+/* >>> factory CheckIfEnoughEnergiesOfType */
+static void adapt_CheckIfEnoughEnergiesOfType(ProbeState *s)
+{
+	CheckIfEnoughEnergiesResult r = CheckIfEnoughEnergiesOfType(s->a, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfEnoughEnergiesOfType */
+/* >>> factory CheckIfActiveCardParalyzedOrAsleep */
+static void adapt_CheckIfActiveCardParalyzedOrAsleep(ProbeState *s)
+{
+	CheckIfActiveStatusResult r = CheckIfActiveCardParalyzedOrAsleep();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfActiveCardParalyzedOrAsleep */
+/* >>> factory GetAttacksEnergyCostBits */
+static void adapt_GetAttacksEnergyCostBits(ProbeState *s)
+{
+	s->a = GetAttacksEnergyCostBits(s->a).a;
+}
+/* <<< factory GetAttacksEnergyCostBits */
+/* >>> factory CheckForEvolutionInList */
+static void adapt_CheckForEvolutionInList(ProbeState *s)
+{
+	CheckForEvolutionInListResult r = CheckForEvolutionInList(s->a, s->f);
+	s->a = r.a;
+	s->b = r.b;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CheckForEvolutionInList */
+/* >>> factory CountNumberOfEnergyCardsAttached */
+static void adapt_CountNumberOfEnergyCardsAttached(ProbeState *s)
+{
+	CountNumberOfEnergyCardsAttachedResult r =
+		CountNumberOfEnergyCardsAttached(s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CountNumberOfEnergyCardsAttached */
+/* >>> factory LookForCardIDInLocation_Bank5 */
+static void adapt_LookForCardIDInLocation_Bank5(ProbeState *s)
+{
+	LookForCardIDInLocationResult r =
+		LookForCardIDInLocation_Bank5(s->a, s->e);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory LookForCardIDInLocation_Bank5 */
+/* >>> factory LoadDefendingPokemonColorWRAndPrizeCards */
+static void adapt_LoadDefendingPokemonColorWRAndPrizeCards(ProbeState *s)
+{
+	(void)s;
+	LoadDefendingPokemonColorWRAndPrizeCards();
+}
+/* <<< factory LoadDefendingPokemonColorWRAndPrizeCards */
+/* >>> factory CheckIfEnergyIsUseful */
+static void adapt_CheckIfEnergyIsUseful(ProbeState *s)
+{
+	s->f = CheckIfEnergyIsUseful(s->a).f;
+}
+/* <<< factory CheckIfEnergyIsUseful */
+/* >>> factory PickRandomBenchPokemon */
+static void adapt_PickRandomBenchPokemon(ProbeState *s)
+{
+	s->a = PickRandomBenchPokemon();
+}
+/* <<< factory PickRandomBenchPokemon */
+/* >>> factory PracticeDuel_VerifyPlayerTurnActions */
+static void adapt_PracticeDuel_VerifyPlayerTurnActions(ProbeState *s)
+{
+	s->f = PracticeDuel_VerifyPlayerTurnActions().f;
+}
+/* <<< factory PracticeDuel_VerifyPlayerTurnActions */
+/* >>> factory PrintCardNameFromCardIDInTextBox */
+static void adapt_PrintCardNameFromCardIDInTextBox(ProbeState *s)
+{
+	PrintCardNameFromCardIDInTextBox(s->hl);
+}
+/* <<< factory PrintCardNameFromCardIDInTextBox */
+/* >>> factory RemoveCardIDInList */
+static void adapt_RemoveCardIDInList(ProbeState *s)
+{
+	RemoveCardIDResult r = RemoveCardIDInList(&s->hl, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory RemoveCardIDInList */
+/* >>> factory SortTempHandByIDList */
+static void adapt_SortTempHandByIDList(ProbeState *s)
+{
+	SortTempHandResult r = SortTempHandByIDList();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SortTempHandByIDList */
+/* >>> factory ApplyCardCGBAttributes */
+static void adapt_ApplyCardCGBAttributes(ProbeState *s)
+{
+	ApplyCardCGBAttributes((uint16_t)((uint16_t)s->d << 8 | s->e));
+}
+/* <<< factory ApplyCardCGBAttributes */
+/* >>> factory ApplyStatusConditionToArenaPokemon */
+static void adapt_ApplyStatusConditionToArenaPokemon(ProbeState *s)
+{
+	ApplyStatusConditionResult r =
+		ApplyStatusConditionToArenaPokemon(s->d, s->hl);
+	s->a = r.a;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ApplyStatusConditionToArenaPokemon */
+/* >>> factory CheckIfEnoughEnergiesToRetreat */
+static void adapt_CheckIfEnoughEnergiesToRetreat(ProbeState *s)
+{
+	EnoughRetreatEnergiesResult r = CheckIfEnoughEnergiesToRetreat();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfEnoughEnergiesToRetreat */
+/* >>> factory DecideLinkDuelVariables */
+static void adapt_DecideLinkDuelVariables(ProbeState *s)
+{
+	s->f = DecideLinkDuelVariables();
+}
+/* <<< factory DecideLinkDuelVariables */
+/* >>> factory DisplayAttackPage */
+static void adapt_DisplayAttackPage(ProbeState *s)
+{
+	DisplayAttackPage();
+}
+/* <<< factory DisplayAttackPage */
+/* >>> factory DisplayCardPage */
+static void adapt_DisplayCardPage(ProbeState *s)
+{
+	DisplayCardPage();
+}
+/* <<< factory DisplayCardPage */
+/* >>> factory DoPracticeDuelAction */
+static void adapt_DoPracticeDuelAction(ProbeState *s)
+{
+	s->f = DoPracticeDuelAction(s->a);
+}
+/* <<< factory DoPracticeDuelAction */
+/* >>> factory DrawDuelHorizontalSeparator */
+static void adapt_DrawDuelHorizontalSeparator(ProbeState *s)
+{
+	DrawDuelHorizontalSeparator();
+}
+/* <<< factory DrawDuelHorizontalSeparator */
+/* >>> factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
+static void adapt_MoveAllTurnHolderKnockedOutPokemonToDiscardPile(ProbeState *s)
+{
+	MoveAllTurnHolderKnockedOutPokemonToDiscardPile();
+}
+/* <<< factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
+/* >>> factory PrintSortNumberInCardList_CallFromPointer */
+static void adapt_PrintSortNumberInCardList_CallFromPointer(ProbeState *s)
+{
+	PrintSortNumberInCardList_CallFromPointer();
+}
+/* <<< factory PrintSortNumberInCardList_CallFromPointer */
 const ProbeEntry probe_entries_core[] = {
+	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
+	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
+	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
+	{ "DecideLinkDuelVariables", adapt_DecideLinkDuelVariables },
+	{ "DisplayAttackPage", adapt_DisplayAttackPage },
+	{ "DisplayCardPage", adapt_DisplayCardPage },
+	{ "DoPracticeDuelAction", adapt_DoPracticeDuelAction },
+	{ "DrawDuelHorizontalSeparator", adapt_DrawDuelHorizontalSeparator },
+	{ "MoveAllTurnHolderKnockedOutPokemonToDiscardPile", adapt_MoveAllTurnHolderKnockedOutPokemonToDiscardPile },
+	{ "PrintSortNumberInCardList_CallFromPointer", adapt_PrintSortNumberInCardList_CallFromPointer },
+	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
+	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
+	{ "CheckIfEnoughEnergiesOfType", adapt_CheckIfEnoughEnergiesOfType },
+	{ "CheckIfActiveCardParalyzedOrAsleep", adapt_CheckIfActiveCardParalyzedOrAsleep },
+	{ "GetAttacksEnergyCostBits", adapt_GetAttacksEnergyCostBits },
+	{ "CheckForEvolutionInList", adapt_CheckForEvolutionInList },
+	{ "CountNumberOfEnergyCardsAttached", adapt_CountNumberOfEnergyCardsAttached },
+	{ "LookForCardIDInLocation_Bank5", adapt_LookForCardIDInLocation_Bank5 },
+	{ "LoadDefendingPokemonColorWRAndPrizeCards", adapt_LoadDefendingPokemonColorWRAndPrizeCards },
+	{ "CheckIfEnergyIsUseful", adapt_CheckIfEnergyIsUseful },
+	{ "PickRandomBenchPokemon", adapt_PickRandomBenchPokemon },
+	{ "PracticeDuel_VerifyPlayerTurnActions", adapt_PracticeDuel_VerifyPlayerTurnActions },
+	{ "PrintCardNameFromCardIDInTextBox", adapt_PrintCardNameFromCardIDInTextBox },
+	{ "RemoveCardIDInList", adapt_RemoveCardIDInList },
+	{ "SortTempHandByIDList", adapt_SortTempHandByIDList },
+	{ "HandleFailedToContinueDuel", adapt_HandleFailedToContinueDuel },
+	{ "Func_6ba2", adapt_Func_6ba2 },
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
 	{ "SwitchAttackPage", adapt_SwitchAttackPage },
+	{ "PrintCardListHeaderAndInfoBoxTexts", adapt_PrintCardListHeaderAndInfoBoxTexts },
+	{ "DrawHPBar", adapt_DrawHPBar },
+	{ "ValidateSavedDuelDataFromHL", adapt_ValidateSavedDuelDataFromHL },
 	{ "CopyCGBCardPalette", adapt_CopyCGBCardPalette },
 	{ "CreateCardAttrBlkPacket_DataSet", adapt_CreateCardAttrBlkPacket_DataSet },
 	{ "SaveDuelDataToDE", adapt_SaveDuelDataToDE },
@@ -520,21 +1002,21 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetBGP7OrSGB2ToCardPalette", adapt_SetBGP7OrSGB2ToCardPalette },
 	{ "ZeroObjectPositionsAndToggleOAMCopy", adapt_ZeroObjectPositionsAndToggleOAMCopy },
 	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
+	{ "CheckSkipDelayAllowed", adapt_CheckSkipDelayAllowed },
+	{ "AIMakeDecision", adapt_AIMakeDecision },
 	{ "PrintPracticeDuelDrMasonInstructions", adapt_PrintPracticeDuelDrMasonInstructions },
 	{ "PrintPracticeDuelInstructionsTextBoxLabel", adapt_PrintPracticeDuelInstructionsTextBoxLabel },
 	{ "LoadLoaded1CardGfx", adapt_LoadLoaded1CardGfx },
 	{ "LookForCardIDInPlayArea_Bank5", adapt_LookForCardIDInPlayArea_Bank5 },
 	{ "ClearMemory_Bank5", adapt_ClearMemory_Bank5 },
-	{ "CheckCardPageExists", adapt_CheckCardPageExists },
-	{ "CardPageSwitch_PokemonEnd", adapt_CardPageSwitch_PokemonEnd },
 	{ "SetCardListInfoBoxText", adapt_SetCardListInfoBoxText },
-	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
-	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
+	{ "ReturnWrongAction", adapt_ReturnWrongAction },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
 	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
+	{ "CardPageSwitch_EnergyEnd", adapt_CardPageSwitch_EnergyEnd },
+	{ "CardPageSwitch_0c", adapt_CardPageSwitch_0c },
 	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
 	{ "PrintPlayAreaCardAttachedEnergies", adapt_PrintPlayAreaCardAttachedEnergies },
-	{ "DiscardRetreatCostCards", adapt_DiscardRetreatCostCards },
 	{ "OppAction_DrawCard", adapt_OppAction_DrawCard },
 	{ "PrintSortNumberInCardList_SetPointer", adapt_PrintSortNumberInCardList_SetPointer },
 	{ "PrintSortNumberInCardList", adapt_PrintSortNumberInCardList },
@@ -550,25 +1032,48 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ConvertHPToDamageCounters_Bank5", adapt_ConvertHPToDamageCounters_Bank5 },
 	{ "CalculateBDividedByA_Bank5", adapt_CalculateBDividedByA_Bank5 },
 	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
-	{ "PrintCardPageRarityIcon", adapt_PrintCardPageRarityIcon },
-	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
 	{ "AIPlayInitialBasicCards", adapt_AIPlayInitialBasicCards },
 	{ "CheckIfEnoughParticularAttachedEnergy", adapt_CheckIfEnoughParticularAttachedEnergy },
 	{ "Func_14323", adapt_Func_14323 },
 	{ "CreateEnergyCardListFromHand", adapt_CreateEnergyCardListFromHand },
-	{ "LookForCardIDInHand", adapt_LookForCardIDInHand },
-	{ "LookForCardIDInHandList_Bank5", adapt_LookForCardIDInHandList_Bank5 },
 	{ "CalculateParticularAttachedEnergyNeeded", adapt_CalculateParticularAttachedEnergyNeeded },
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
-	{ "GetAnimationData", adapt_GetAnimationData },
 	{ "SwitchCardPage", adapt_SwitchCardPage },
 	{ "CardPageSwitch_00", adapt_CardPageSwitch_00 },
-	{ "CardPageSwitch_PokemonOverviewOrDescription", adapt_CardPageSwitch_PokemonOverviewOrDescription },
 	{ "CheckForEvolutionInDeck", adapt_CheckForEvolutionInDeck },
 	{ "LookForCardThatIsKnockedOutOnDevolution", adapt_LookForCardThatIsKnockedOutOnDevolution },
 	{ "CheckCardEvolutionInHandOrDeck", adapt_CheckCardEvolutionInHandOrDeck },
 	{ "CheckIfOpponentHasBossDeckID", adapt_CheckIfOpponentHasBossDeckID },
 	{ "RaiseAIScoreToAllMatchingIDsInBench", adapt_RaiseAIScoreToAllMatchingIDsInBench },
+	{ "GetAnimationData", adapt_GetAnimationData },
+	{ "GetDamageNumberChars", adapt_GetDamageNumberChars },
+	{ "CardPageSwitch_PokemonOverviewOrDescription", adapt_CardPageSwitch_PokemonOverviewOrDescription },
+	{ "CheckCardPageExists", adapt_CheckCardPageExists },
+	{ "CardPageSwitch_PokemonEnd", adapt_CardPageSwitch_PokemonEnd },
+	{ "CardPageSwitch_PokemonAttack2Page2", adapt_CardPageSwitch_PokemonAttack2Page2 },
+	{ "CardPageSwitch_08", adapt_CardPageSwitch_08 },
+	{ "LoadPlayAreaCardGfx", adapt_LoadPlayAreaCardGfx },
+	{ "SetBGP6OrSGB3ToCardPalette", adapt_SetBGP6OrSGB3ToCardPalette },
+	{ "PrintCardPageRarityIcon", adapt_PrintCardPageRarityIcon },
+	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
+	{ "SetOneLineSeparation", adapt_SetOneLineSeparation },
+	{ "_HasAlivePokemonInPlayArea", adapt__HasAlivePokemonInPlayArea },
+	{ "PrintPlayAreaCardLocation", adapt_PrintPlayAreaCardLocation },
+	{ "CheckPrintPoisoned", adapt_CheckPrintPoisoned },
+	{ "ResetDoFrameFunction_Bank1", adapt_ResetDoFrameFunction_Bank1 },
+	{ "OppAction_NoAction", adapt_OppAction_NoAction },
+	{ "LookForCardIDInHand", adapt_LookForCardIDInHand },
+	{ "LookForCardIDInHandList_Bank5", adapt_LookForCardIDInHandList_Bank5 },
+	{ "FindHighestBenchScore", adapt_FindHighestBenchScore },
+	{ "AIEncourage", adapt_AIEncourage },
+	{ "IsLoadedCard1BasicPokemon", adapt_IsLoadedCard1BasicPokemon },
+	{ "PracticeDuel_PlayGoldeen", adapt_PracticeDuel_PlayGoldeen },
+	{ "DiscardRetreatCostCards", adapt_DiscardRetreatCostCards },
+	{ "ReturnRetreatCostCardsToArena", adapt_ReturnRetreatCostCardsToArena },
+	{ "TwoByteNumberToTxSymbol_PadSpace_Bank1", adapt_TwoByteNumberToTxSymbol_PadSpace_Bank1 },
+	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
+	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
+	{ "DrawWideTextBox_WaitForInput_Bank1", adapt_DrawWideTextBox_WaitForInput_Bank1 },
 	{ NULL, NULL },
 };

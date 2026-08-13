@@ -25,6 +25,9 @@ AIDecideMaintenanceResult AIDecide_Maintenance(void);
 typedef struct { uint8_t f; } AIDecideResult;
 AIDecideResult AIDecide_Lass(void);
 /* <<< factory AIDecide_Lass */
+/* >>> factory AIDecide_Recycle */
+AIDecideResult AIDecide_Recycle(void);
+/* <<< factory AIDecide_Recycle */
 /* >>> factory AIDecide_Imakuni */
 AIDecideResult AIDecide_Imakuni(void);
 /* <<< factory AIDecide_Imakuni */
@@ -41,4 +44,17 @@ AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c);
 /* >>> factory AIDecide_ClefairyDollOrMysteriousFossil */
 AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void);
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
+/* >>> factory AIDecide_Gambler */
+AIDecideResult AIDecide_Gambler(void);
+/* <<< factory AIDecide_Gambler */
+/* >>> factory AIDecide_Revive */
+typedef struct { uint8_t a, f; } AIDecideReviveResult;
+AIDecideReviveResult AIDecide_Revive(void);
+/* <<< factory AIDecide_Revive */
+/* >>> factory AIDecide_ImposterProfessorOak */
+AIDecideResult AIDecide_ImposterProfessorOak(void);
+/* <<< factory AIDecide_ImposterProfessorOak */
+/* >>> factory PickPokedexCards_Unreferenced */
+PickPokedexResult PickPokedexCards_Unreferenced(void);
+/* <<< factory PickPokedexCards_Unreferenced */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

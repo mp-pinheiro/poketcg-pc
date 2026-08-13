@@ -1,7 +1,8 @@
+
 #ifndef POKETCG_HOME_EFFECT_FUNCTIONS_H
 #define POKETCG_HOME_EFFECT_FUNCTIONS_H
 
-#include <stdint.h>
+#include "home/print_text.h"
 
 /* >>> factory UpdateExpectedAIDamage */
 void UpdateExpectedAIDamage(uint8_t a, uint8_t d, uint8_t e);
@@ -29,6 +30,9 @@ void SetDefiniteAIDamage(void);
 typedef struct { uint8_t a; uint8_t f; } PickRandomPlayAreaCardResult;
 PickRandomPlayAreaCardResult PickRandomPlayAreaCard(void);
 /* <<< factory PickRandomPlayAreaCard */
+/* >>> factory SetDefiniteDamage */
+void SetDefiniteDamage(uint8_t a);
+/* <<< factory SetDefiniteDamage */
 /* >>> factory GetNextPositionInTempList */
 uint16_t GetNextPositionInTempList(void);
 /* <<< factory GetNextPositionInTempList */
@@ -36,6 +40,9 @@ uint16_t GetNextPositionInTempList(void);
 typedef struct { uint8_t f; } QueueStatusConditionResult;
 QueueStatusConditionResult QueueStatusCondition(uint8_t b, uint8_t c);
 /* <<< factory QueueStatusCondition */
+/* >>> factory SleepEffect */
+QueueStatusConditionResult SleepEffect(void);
+/* <<< factory SleepEffect */
 /* >>> factory CommentedOut_2c086 */
 uint8_t CommentedOut_2c086(uint8_t a);
 /* <<< factory CommentedOut_2c086 */
@@ -120,7 +127,7 @@ typedef struct { uint8_t a; } AIFindTargetForBenchAttackResult;
 AIFindTargetForBenchAttackResult AIFindTargetForBenchAttack(void);
 /* <<< factory AIFindTargetForBenchAttack */
 /* >>> factory ApplyExtraWaterEnergyDamageBonus */
-void ApplyExtraWaterEnergyDamageBonus(void);
+void ApplyExtraWaterEnergyDamageBonus(uint8_t b, uint8_t c);
 /* <<< factory ApplyExtraWaterEnergyDamageBonus */
 /* >>> factory OmastarSpikeCannon_AIEffect */
 void OmastarSpikeCannon_AIEffect(void);
@@ -331,4 +338,443 @@ void Sludge_AIEffect(void);
 /* >>> factory KadabraRecover_DiscardEffect */
 uint8_t KadabraRecover_DiscardEffect(void);
 /* <<< factory KadabraRecover_DiscardEffect */
+/* >>> factory PrimeapeFurySwipes_AIEffect */
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } PrimeapeFurySwipesAIResult;
+PrimeapeFurySwipesAIResult PrimeapeFurySwipes_AIEffect(void);
+/* <<< factory PrimeapeFurySwipes_AIEffect */
+/* >>> factory StretchKick_CheckBench */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } StretchKickCheckBenchResult;
+StretchKickCheckBenchResult StretchKick_CheckBench(void);
+/* <<< factory StretchKick_CheckBench */
+/* >>> factory LightScreenEffect */
+uint16_t LightScreenEffect(void);
+/* <<< factory LightScreenEffect */
+/* >>> factory StarmieRecover_CheckEnergyHP */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t checked_damage; uint16_t hl; } StarmieRecoverCheckEnergyHPResult;
+StarmieRecoverCheckEnergyHPResult StarmieRecover_CheckEnergyHP(void);
+/* <<< factory StarmieRecover_CheckEnergyHP */
+/* >>> factory StarmieRecover_DiscardEffect */
+uint8_t StarmieRecover_DiscardEffect(void);
+/* <<< factory StarmieRecover_DiscardEffect */
+/* >>> factory Cowardice_CheckUseAndBench */
+typedef struct { uint8_t f; uint16_t hl; } CowardiceCheckUseAndBenchResult;
+CowardiceCheckUseAndBenchResult Cowardice_CheckUseAndBench(void);
+/* <<< factory Cowardice_CheckUseAndBench */
+/* >>> factory Cowardice_ReturnToHandEffect */
+void Cowardice_ReturnToHandEffect(void);
+/* <<< factory Cowardice_ReturnToHandEffect */
+
+/* >>> factory CheckIfCardHasGrassEnergyAttached */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } CheckIfCardHasGrassEnergyAttachedResult;
+CheckIfCardHasGrassEnergyAttachedResult CheckIfCardHasGrassEnergyAttached(uint8_t a);
+/* <<< factory CheckIfCardHasGrassEnergyAttached */
+/* >>> factory GrimerMinimizeEffect */
+uint16_t GrimerMinimizeEffect(void);
+/* <<< factory GrimerMinimizeEffect */
+/* >>> factory Quickfreeze_InitialEffect */
+uint8_t Quickfreeze_InitialEffect(uint8_t f);
+/* <<< factory Quickfreeze_InitialEffect */
+/* >>> factory FocusEnergyEffect */
+void FocusEnergyEffect(void);
+/* <<< factory FocusEnergyEffect */
+/* >>> factory MagnetonSonicboom_UnaffectedByColorEffect */
+void MagnetonSonicboom_UnaffectedByColorEffect(void);
+/* <<< factory MagnetonSonicboom_UnaffectedByColorEffect */
+/* >>> factory MagnetonSonicboom_NullEffect */
+void MagnetonSonicboom_NullEffect(void);
+/* <<< factory MagnetonSonicboom_NullEffect */
+/* >>> factory ElectrodeSonicboom_UnaffectedByColorEffect */
+uint16_t ElectrodeSonicboom_UnaffectedByColorEffect(void);
+/* <<< factory ElectrodeSonicboom_UnaffectedByColorEffect */
+/* >>> factory EnergySpike_AISelectEffect */
+void EnergySpike_AISelectEffect(void);
+/* <<< factory EnergySpike_AISelectEffect */
+/* >>> factory CometPunch_AIEffect */
+void CometPunch_AIEffect(void);
+/* <<< factory CometPunch_AIEffect */
+/* >>> factory Conversion1_WeaknessCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } Conversion1WeaknessCheckResult;
+Conversion1WeaknessCheckResult Conversion1_WeaknessCheck(void);
+/* <<< factory Conversion1_WeaknessCheck */
+/* >>> factory Conversion2_ResistanceCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } Conversion2ResistanceCheckResult;
+Conversion2ResistanceCheckResult Conversion2_ResistanceCheck(void);
+/* <<< factory Conversion2_ResistanceCheck */
+/* >>> factory ElectrodeSonicboom_NullEffect */
+void ElectrodeSonicboom_NullEffect(void);
+/* <<< factory ElectrodeSonicboom_NullEffect */
+/* >>> factory FirstAid_DamageCheck */
+typedef struct { uint16_t hl; uint8_t f; } FirstAidDamageCheckResult;
+FirstAidDamageCheckResult FirstAid_DamageCheck(void);
+/* <<< factory FirstAid_DamageCheck */
+/* >>> factory DoTheWaveEffect */
+void DoTheWaveEffect(void);
+/* <<< factory DoTheWaveEffect */
+/* >>> factory FullHeal_StatusCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FullHealStatusCheckResult;
+FullHealStatusCheckResult FullHeal_StatusCheck(void);
+/* <<< factory FullHeal_StatusCheck */
+/* >>> factory PoisonFang_AIEffect */
+void PoisonFang_AIEffect(void);
+/* <<< factory PoisonFang_AIEffect */
+/* >>> factory WeepinbellPoisonPowder_AIEffect */
+void WeepinbellPoisonPowder_AIEffect(void);
+/* <<< factory WeepinbellPoisonPowder_AIEffect */
+/* >>> factory Toxic_AIEffect */
+void Toxic_AIEffect(void);
+/* <<< factory Toxic_AIEffect */
+/* >>> factory BoyfriendsEffect */
+void BoyfriendsEffect(void);
+/* <<< factory BoyfriendsEffect */
+/* >>> factory IvysaurPoisonPowder_AIEffect */
+void IvysaurPoisonPowder_AIEffect(void);
+/* <<< factory IvysaurPoisonPowder_AIEffect */
+/* >>> factory EnergyTrans_CheckPlayArea */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; uint16_t de; } EnergyTransCheckPlayAreaResult;
+EnergyTransCheckPlayAreaResult EnergyTrans_CheckPlayArea(void);
+/* <<< factory EnergyTrans_CheckPlayArea */
+/* >>> factory Firegiver_InitialEffect */
+uint8_t Firegiver_InitialEffect(uint8_t f);
+/* <<< factory Firegiver_InitialEffect */
+/* >>> factory MoltresLv37DiveBomb_AIEffect */
+void MoltresLv37DiveBomb_AIEffect(void);
+/* <<< factory MoltresLv37DiveBomb_AIEffect */
+/* >>> factory GetEnergyAttachedMultiplierDamage */
+uint16_t GetEnergyAttachedMultiplierDamage(void);
+/* <<< factory GetEnergyAttachedMultiplierDamage */
+/* >>> factory Fly_AIEffect */
+void Fly_AIEffect(void);
+/* <<< factory Fly_AIEffect */
+/* >>> factory Gigashock_AISelectEffect */
+void Gigashock_AISelectEffect(void);
+/* <<< factory Gigashock_AISelectEffect */
+/* >>> factory Wildfire_DiscardDeckEffect */
+void Wildfire_DiscardDeckEffect(void);
+/* <<< factory Wildfire_DiscardDeckEffect */
+/* >>> factory MoltresLv35DiveBomb_AIEffect */
+void MoltresLv35DiveBomb_AIEffect(void);
+/* <<< factory MoltresLv35DiveBomb_AIEffect */
+/* >>> factory ClefairyDoll_BenchCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } ClefairyDollBenchCheckResult;
+ClefairyDollBenchCheckResult ClefairyDoll_BenchCheck(void);
+/* <<< factory ClefairyDoll_BenchCheck */
+/* >>> factory ClefairyDoll_PlaceInPlayAreaEffect */
+void ClefairyDoll_PlaceInPlayAreaEffect(void);
+/* <<< factory ClefairyDoll_PlaceInPlayAreaEffect */
+/* >>> factory EnergyBurnCheck_Unreferenced */
+typedef struct { uint8_t a; uint8_t f; } EnergyBurnCheckResult;
+EnergyBurnCheckResult EnergyBurnCheck_Unreferenced(void);
+/* <<< factory EnergyBurnCheck_Unreferenced */
+/* >>> factory FlareonRage_DamageBoostEffect */
+void FlareonRage_DamageBoostEffect(void);
+/* <<< factory FlareonRage_DamageBoostEffect */
+/* >>> factory Shift_OncePerTurnCheck */
+typedef struct { uint8_t f; uint16_t hl; } ShiftOncePerTurnCheckResult;
+ShiftOncePerTurnCheckResult Shift_OncePerTurnCheck(void);
+/* <<< factory Shift_OncePerTurnCheck */
+/* >>> factory VenomPowder_AIEffect */
+void VenomPowder_AIEffect(void);
+/* <<< factory VenomPowder_AIEffect */
+/* >>> factory TangelaPoisonPowder_AIEffect */
+void TangelaPoisonPowder_AIEffect(void);
+/* <<< factory TangelaPoisonPowder_AIEffect */
+/* >>> factory PetalDance_AIEffect */
+void PetalDance_AIEffect(void);
+/* <<< factory PetalDance_AIEffect */
+/* >>> factory RainDanceEffect */
+uint8_t RainDanceEffect(uint8_t f);
+/* <<< factory RainDanceEffect */
+/* >>> factory PsyduckFurySwipes_AIEffect */
+void PsyduckFurySwipes_AIEffect(void);
+/* <<< factory PsyduckFurySwipes_AIEffect */
+/* >>> factory VaporeonQuickAttack_AIEffect */
+void VaporeonQuickAttack_AIEffect(void);
+/* <<< factory VaporeonQuickAttack_AIEffect */
+/* >>> factory JellyfishSting_AIEffect */
+void JellyfishSting_AIEffect(void);
+/* <<< factory JellyfishSting_AIEffect */
+/* >>> factory PoliwhirlAmnesia_CheckAttacks */
+typedef struct { uint8_t f; uint16_t hl; } PoliwhirlAmnesiaCheckAttacksResult;
+PoliwhirlAmnesiaCheckAttacksResult PoliwhirlAmnesia_CheckAttacks(void);
+/* <<< factory PoliwhirlAmnesia_CheckAttacks */
+/* >>> factory HeadacheEffect */
+void HeadacheEffect(void);
+/* <<< factory HeadacheEffect */
+/* >>> factory ArcanineQuickAttack_AIEffect */
+void ArcanineQuickAttack_AIEffect(void);
+/* <<< factory ArcanineQuickAttack_AIEffect */
+/* >>> factory FlamesOfRage_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } FlamesOfRageCheckEnergyResult;
+FlamesOfRageCheckEnergyResult FlamesOfRage_CheckEnergy(void);
+/* <<< factory FlamesOfRage_CheckEnergy */
+/* >>> factory MagmarFlamethrower_DiscardEffect */
+uint8_t MagmarFlamethrower_DiscardEffect(void);
+/* <<< factory MagmarFlamethrower_DiscardEffect */
+/* >>> factory MagmarSmog_AIEffect */
+void MagmarSmog_AIEffect(void);
+/* <<< factory MagmarSmog_AIEffect */
+/* >>> factory Wildfire_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } WildfireCheckEnergyResult;
+WildfireCheckEnergyResult Wildfire_CheckEnergy(void);
+/* <<< factory Wildfire_CheckEnergy */
+/* >>> factory MrMimeMeditate_DamageBoostEffect */
+void MrMimeMeditate_DamageBoostEffect(void);
+/* <<< factory MrMimeMeditate_DamageBoostEffect */
+/* >>> factory DancingEmbers_AIEffect */
+void DancingEmbers_AIEffect(void);
+/* <<< factory DancingEmbers_AIEffect */
+/* >>> factory FlareonFlamethrower_DiscardEffect */
+uint8_t FlareonFlamethrower_DiscardEffect(void);
+/* <<< factory FlareonFlamethrower_DiscardEffect */
+/* >>> factory MagmarFlamethrower_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MagmarFlamethrowerCheckEnergyResult;
+MagmarFlamethrowerCheckEnergyResult MagmarFlamethrower_CheckEnergy(void);
+/* <<< factory MagmarFlamethrower_CheckEnergy */
+/* >>> factory FlamesOfRage_DiscardEffect */
+void FlamesOfRage_DiscardEffect(void);
+/* <<< factory FlamesOfRage_DiscardEffect */
+/* >>> factory FlamesOfRage_DamageBoostEffect */
+void FlamesOfRage_DamageBoostEffect(void);
+/* <<< factory FlamesOfRage_DamageBoostEffect */
+/* >>> factory CharmeleonFlamethrower_CheckEnergy */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t e;
+	uint16_t hl;
+} CharmeleonFlamethrowerCheckEnergyResult;
+CharmeleonFlamethrowerCheckEnergyResult CharmeleonFlamethrower_CheckEnergy(void);
+/* <<< factory CharmeleonFlamethrower_CheckEnergy */
+/* >>> factory CharmeleonFlamethrower_DiscardEffect */
+uint8_t CharmeleonFlamethrower_DiscardEffect(void);
+/* <<< factory CharmeleonFlamethrower_DiscardEffect */
+/* >>> factory EnergyBurnEffect */
+typedef struct { uint8_t f; } EnergyBurnEffectResult;
+EnergyBurnEffectResult EnergyBurnEffect(uint8_t f);
+/* <<< factory EnergyBurnEffect */
+/* >>> factory FireSpin_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FireSpinCheckEnergyResult;
+FireSpinCheckEnergyResult FireSpin_CheckEnergy(void);
+/* <<< factory FireSpin_CheckEnergy */
+/* >>> factory FlareonQuickAttack_AIEffect */
+void FlareonQuickAttack_AIEffect(void);
+/* <<< factory FlareonQuickAttack_AIEffect */
+/* >>> factory FlareonFlamethrower_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } FlareonFlamethrowerCheckEnergyResult;
+FlareonFlamethrowerCheckEnergyResult FlareonFlamethrower_CheckEnergy(void);
+/* <<< factory FlareonFlamethrower_CheckEnergy */
+/* >>> factory Prophecy_AISelectEffect */
+typedef struct { uint8_t a; } ProphecyAISelectEffectResult;
+ProphecyAISelectEffectResult Prophecy_AISelectEffect(void);
+/* <<< factory Prophecy_AISelectEffect */
+/* >>> factory Prophecy_ReorderDeckEffect */
+typedef struct { uint8_t a; uint8_t c; uint8_t f; uint16_t hl; } ProphecyReorderDeckEffectResult;
+ProphecyReorderDeckEffectResult Prophecy_ReorderDeckEffect(void);
+/* <<< factory Prophecy_ReorderDeckEffect */
+/* >>> factory SuperEnergyRetrieval_HandEnergyCheck */
+typedef struct { uint16_t hl; uint8_t f; } SuperEnergyRetrievalHandEnergyCheckResult;
+SuperEnergyRetrievalHandEnergyCheckResult SuperEnergyRetrieval_HandEnergyCheck(void);
+/* <<< factory SuperEnergyRetrieval_HandEnergyCheck */
+/* >>> factory GetNextPositionInTempList_TrainerEffects */
+uint16_t GetNextPositionInTempList_TrainerEffects(void);
+/* <<< factory GetNextPositionInTempList_TrainerEffects */
+/* >>> factory NinetalesLure_AISelectEffect */
+uint8_t NinetalesLure_AISelectEffect(void);
+/* <<< factory NinetalesLure_AISelectEffect */
+/* >>> factory Ember_CheckEnergy */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } EmberCheckEnergyResult;
+EmberCheckEnergyResult Ember_CheckEnergy(void);
+/* <<< factory Ember_CheckEnergy */
+/* >>> factory DestinyBond_CheckEnergy */
+IsPlayerTurnResult DestinyBond_CheckEnergy(void);
+/* <<< factory DestinyBond_CheckEnergy */
+/* >>> factory ComputerSearch_HandDeckCheck */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} ComputerSearchHandDeckCheckResult;
+ComputerSearchHandDeckCheckResult ComputerSearch_HandDeckCheck(void);
+/* <<< factory ComputerSearch_HandDeckCheck */
+/* >>> factory MrFuji_BenchCheck */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} MrFujiBenchCheckResult;
+MrFujiBenchCheckResult MrFuji_BenchCheck(void);
+/* <<< factory MrFuji_BenchCheck */
+/* >>> factory DreamEaterEffect */
+typedef struct { uint16_t hl; uint8_t f; } DreamEaterResult;
+DreamEaterResult DreamEaterEffect(void);
+/* <<< factory DreamEaterEffect */
+/* >>> factory JynxMeditate_DamageBoostEffect */
+void JynxMeditate_DamageBoostEffect(void);
+/* <<< factory JynxMeditate_DamageBoostEffect */
+/* >>> factory KadabraRecover_CheckEnergyHP */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t checked_damage; uint16_t hl; } KadabraRecoverCheckEnergyHPResult;
+KadabraRecoverCheckEnergyHPResult KadabraRecover_CheckEnergyHP(void);
+/* <<< factory KadabraRecover_CheckEnergyHP */
+/* >>> factory MewtwoAltEnergyAbsorption_AddToHandEffect */
+void MewtwoAltEnergyAbsorption_AddToHandEffect(void);
+/* <<< factory MewtwoAltEnergyAbsorption_AddToHandEffect */
+/* >>> factory MewtwoEnergyAbsorption_AddToHandEffect */
+void MewtwoEnergyAbsorption_AddToHandEffect(void);
+/* <<< factory MewtwoEnergyAbsorption_AddToHandEffect */
+/* >>> factory NeutralizingShieldEffect */
+uint8_t NeutralizingShieldEffect(void);
+/* <<< factory NeutralizingShieldEffect */
+/* >>> factory PealOfThunder_InitialEffect */
+uint8_t PealOfThunder_InitialEffect(void);
+/* <<< factory PealOfThunder_InitialEffect */
+/* >>> factory PrehistoricPowerEffect */
+uint8_t PrehistoricPowerEffect(void);
+/* <<< factory PrehistoricPowerEffect */
+/* >>> factory Scavenge_DiscardEffect */
+uint8_t Scavenge_DiscardEffect(void);
+/* <<< factory Scavenge_DiscardEffect */
+/* >>> factory Peek_OncePerTurnCheck */
+/* >>> factory StepIn_BenchCheck */
+SolarPowerCheckUseResult StepIn_BenchCheck(void);
+/* <<< factory StepIn_BenchCheck */
+SolarPowerCheckUseResult Peek_OncePerTurnCheck(void);
+/* <<< factory Peek_OncePerTurnCheck */
+/* >>> factory Wail_BenchCheck */
+MrFujiBenchCheckResult Wail_BenchCheck(void);
+/* <<< factory Wail_BenchCheck */
+/* >>> factory StepIn_SwitchEffect */
+void StepIn_SwitchEffect(void);
+/* <<< factory StepIn_SwitchEffect */
+/* >>> factory ThickSkinnedEffect */
+uint8_t ThickSkinnedEffect(uint8_t f);
+/* <<< factory ThickSkinnedEffect */
+/* >>> factory HealingWind_InitialEffect */
+uint8_t HealingWind_InitialEffect(uint8_t f);
+/* <<< factory HealingWind_InitialEffect */
+/* >>> factory PickRandomBasicCardFromDeck */
+uint8_t PickRandomBasicCardFromDeck(void);
+/* <<< factory PickRandomBasicCardFromDeck */
+/* >>> factory GustOfWind_BenchCheck */
+IsPlayerTurnResult GustOfWind_BenchCheck(void);
+/* <<< factory GustOfWind_BenchCheck */
+/* >>> factory DrawSymbolOnPlayAreaCursor */
+void DrawSymbolOnPlayAreaCursor(uint8_t a, uint8_t b);
+/* <<< factory DrawSymbolOnPlayAreaCursor */
+/* >>> factory Func_2c6d9 */
+WaitResult Func_2c6d9(void);
+/* <<< factory Func_2c6d9 */
+
+/* >>> factory MarowakCallForFamily_AISelectEffect */
+void MarowakCallForFamily_AISelectEffect(void);
+/* <<< factory MarowakCallForFamily_AISelectEffect */
+/* >>> factory CreateListOfFireEnergyAttachedToArena */
+CreateListOfEnergyAttachedToArenaResult CreateListOfFireEnergyAttachedToArena(void);
+/* <<< factory CreateListOfFireEnergyAttachedToArena */
+/* >>> factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+CreateEnergyCardListFromDiscardPileResult CreateEnergyCardListFromDiscardPile_AllEnergy(void);
+/* <<< factory CreateEnergyCardListFromDiscardPile_AllEnergy */
+/* >>> factory CheckIfDeckIsEmpty */
+typedef struct { uint8_t a; uint16_t hl; uint8_t f; } CheckIfDeckIsEmptyResult;
+CheckIfDeckIsEmptyResult CheckIfDeckIsEmpty(void);
+/* <<< factory CheckIfDeckIsEmpty */
+/* >>> factory VictreebelLure_AssertPokemonInBench */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } VictreebelLureAssertPokemonInBenchResult;
+VictreebelLureAssertPokemonInBenchResult VictreebelLure_AssertPokemonInBench(void);
+/* <<< factory VictreebelLure_AssertPokemonInBench */
+/* >>> factory NinetalesLure_CheckBench */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } NinetalesLureCheckBenchResult;
+NinetalesLureCheckBenchResult NinetalesLure_CheckBench(void);
+/* <<< factory NinetalesLure_CheckBench */
+/* >>> factory ThunderboltEffect */
+void ThunderboltEffect(void);
+/* <<< factory ThunderboltEffect */
+/* >>> factory TrainerCardAsPokemon_BenchCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TrainerCardAsPokemonBenchCheckResult;
+TrainerCardAsPokemonBenchCheckResult TrainerCardAsPokemon_BenchCheck(void);
+/* <<< factory TrainerCardAsPokemon_BenchCheck */
+/* >>> factory TrainerCardAsPokemon_DiscardEffect */
+void TrainerCardAsPokemon_DiscardEffect(void);
+/* <<< factory TrainerCardAsPokemon_DiscardEffect */
+/* >>> factory MysteriousFossil_BenchCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MysteriousFossilBenchCheckResult;
+MysteriousFossilBenchCheckResult MysteriousFossil_BenchCheck(void);
+/* <<< factory MysteriousFossil_BenchCheck */
+/* >>> factory MysteriousFossil_PlaceInPlayAreaEffect */
+void MysteriousFossil_PlaceInPlayAreaEffect(void);
+/* <<< factory MysteriousFossil_PlaceInPlayAreaEffect */
+/* >>> factory ScoopUp_BenchCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } ScoopUpBenchCheckResult;
+ScoopUpBenchCheckResult ScoopUp_BenchCheck(void);
+/* <<< factory ScoopUp_BenchCheck */
+/* >>> factory Toxic_DoublePoisonEffect */
+QueueStatusConditionResult Toxic_DoublePoisonEffect(void);
+/* >>> factory LeekSlap_OncePerDuelCheck */
+uint8_t LeekSlap_OncePerDuelCheck(void);
+/* <<< factory LeekSlap_OncePerDuelCheck */
+/* >>> factory LeekSlap_SetUsedThisDuelFlag */
+void LeekSlap_SetUsedThisDuelFlag(void);
+/* <<< factory LeekSlap_SetUsedThisDuelFlag */
+/* >>> factory PlusPowerEffect */
+void PlusPowerEffect(void);
+/* <<< factory PlusPowerEffect */
+/* >>> factory StrikesBackEffect */
+uint8_t StrikesBackEffect(void);
+/* <<< factory StrikesBackEffect */
+/* >>> factory Switch_BenchCheck */
+MrFujiBenchCheckResult Switch_BenchCheck(void);
+/* <<< factory Switch_BenchCheck */
+/* >>> factory Switch_SwitchEffect */
+void Switch_SwitchEffect(void);
+/* <<< factory Switch_SwitchEffect */
+/* >>> factory TryGiveDamageCounter_StrangeBehavior */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} TryGiveDamageCounter_StrangeBehaviorResult;
+TryGiveDamageCounter_StrangeBehaviorResult TryGiveDamageCounter_StrangeBehavior(void);
+/* <<< factory TryGiveDamageCounter_StrangeBehavior */
+/* >>> factory SpacingOut_CheckDamage */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint8_t e; uint16_t hl; } SpacingOutCheckDamageResult;
+SpacingOutCheckDamageResult SpacingOut_CheckDamage(void);
+/* <<< factory SpacingOut_CheckDamage */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; uint8_t update_hl; } SpacingOutHealEffectResult;
+SpacingOutHealEffectResult SpacingOut_HealEffect(void);
+/* <<< factory SpacingOut_HealEffect */
+/* >>> factory CopyPlayAreaHPToBackup_Unreferenced */
+void CopyPlayAreaHPToBackup_Unreferenced(void);
+/* <<< factory CopyPlayAreaHPToBackup_Unreferenced */
+/* >>> factory CopyPlayAreaHPFromBackup_Unreferenced */
+void CopyPlayAreaHPFromBackup_Unreferenced(void);
+/* <<< factory CopyPlayAreaHPFromBackup_Unreferenced */
+/* >>> factory Gale_LoadAnimation */
+void Gale_LoadAnimation(void);
+/* <<< factory Gale_LoadAnimation */
+/* >>> factory EnergySearch_DeckCheck */
+uint8_t EnergySearch_DeckCheck(void);
+/* <<< factory EnergySearch_DeckCheck */
+/* >>> factory CheckIfCardIsBasicEnergy */
+uint8_t CheckIfCardIsBasicEnergy(uint8_t a);
+/* <<< factory CheckIfCardIsBasicEnergy */
+/* >>> factory CreatePlayableStage2PokemonCardListFromHand */
+uint8_t CreatePlayableStage2PokemonCardListFromHand(void);
+/* <<< factory CreatePlayableStage2PokemonCardListFromHand */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
+/* >>> factory Barrier_DiscardEffect */
+void Barrier_DiscardEffect(void);
+/* <<< factory Barrier_DiscardEffect */
+/* >>> factory DestinyBond_DiscardEffect */
+void DestinyBond_DiscardEffect(void);
+/* <<< factory DestinyBond_DiscardEffect */
+/* >>> factory Ember_DiscardEffect */
+void Ember_DiscardEffect(void);
+/* <<< factory Ember_DiscardEffect */
+/* >>> factory FireBlast_DiscardEffect */
+void FireBlast_DiscardEffect(void);
+/* <<< factory FireBlast_DiscardEffect */
+/* >>> factory FireSpin_AISelectEffect */
+void FireSpin_AISelectEffect(void);
+/* <<< factory FireSpin_AISelectEffect */
+/* >>> factory FireSpin_DiscardEffect */
+void FireSpin_DiscardEffect(void);
+/* <<< factory FireSpin_DiscardEffect */

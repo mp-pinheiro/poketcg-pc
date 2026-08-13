@@ -36,6 +36,7 @@
 #include "mem.h"
 /* <<< factory statics */
 
+
 /* >>> factory RemoveCardFromList */
 /* trainer_cards.asm:2760-2776. Shifts the $ff-terminated list down by one byte,
  * removing the entry just before hl. Leaves hl decremented; de preserved. */
@@ -134,6 +135,39 @@ PickPokedexResult PickPokedexCards(void)
 	return (PickPokedexResult){0xFFu, 0x90u};
 }
 /* <<< factory PickPokedexCards */
+/* >>> factory AIDecide_Recycle */
+AIDecideResult AIDecide_Recycle(void)
+{
+	CardListResult discard = CreateDiscardPileCardList(0);
+	if (discard.f & 0x10u)
+		return (AIDecideResult){0x80u};
+	uint8_t priority[5] = {0xFFu, 0xFFu, 0xFFu, 0xFFu, 0xFFu};
+	uint16_t list = wDuelTempList_ADDR;
+	uint8_t ghost = wOpponentDeckID == 0x0Du;
+	for (;;) {
+		uint8_t deck_index = gb_read8(list++);
+		if (deck_index == 0xFFu)
+			break;
+		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		if (!ghost) {
+			if (card_id == 0x07u) priority[0] = deck_index;
+			else if (card_id == 0xB8u) priority[1] = deck_index;
+			else if (card_id == 0xBAu) priority[2] = deck_index;
+			else if (card_id == 0xADu) priority[3] = deck_index;
+		} else {
+			if (card_id == 0x95u) priority[0] = deck_index;
+			else if (card_id == 0x94u) priority[1] = deck_index;
+			else if (card_id == 0x1Au) priority[2] = deck_index;
+			else if (card_id == 0xBBu) priority[3] = deck_index;
+			else if (card_id == 0xB2u) priority[4] = deck_index;
+		}
+	}
+	for (uint8_t i = 0; i < 5u; i++)
+		if (priority[i] != 0xFFu)
+			return (AIDecideResult){0x10u};
+	return (AIDecideResult){0x00u};
+}
+/* <<< factory AIDecide_Recycle */
 
 /* >>> factory AIDecide_Maintenance */
 AIDecideMaintenanceResult AIDecide_Maintenance(void)
@@ -252,12 +286,13 @@ AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
 	return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
+
 /* >>> factory AIDecide_Defender_Phase14 */
 AIDecideResult AIDecide_Defender_Phase14(void)
 {
-	uint8_t flag = CheckLoadedAttackFlag(0x00u).f;
+	uint8_t flag = CheckLoadedAttackFlag(0x06u).f;
 	if (!(flag & 0x10u))
-		flag = CheckLoadedAttackFlag(0x01u).f;
+		flag = CheckLoadedAttackFlag(0x04u).f;
 	if (!(flag & 0x10u))
 		return (AIDecideResult){0x80u};
 	uint8_t arena = GetTurnDuelistVariable(0xBBu).a;
@@ -279,6 +314,7 @@ AIDecideResult AIDecide_Defender_Phase14(void)
 	return (AIDecideResult){(uint8_t)(((damage != 0u) && (hp > damage)) ? 0x10u : 0)};
 }
 /* <<< factory AIDecide_Defender_Phase14 */
+
 /* >>> factory AIDecide_Bill */
 AIDecideResult AIDecide_Bill(void)
 {
@@ -293,3 +329,87 @@ AIDecideResult AIDecide_Bill(void)
 	return (AIDecideResult){f};
 }
 /* <<< factory AIDecide_Bill */
+
+/* >>> factory AIDecide_Gambler */
+AIDecideResult AIDecide_Gambler(void)
+{
+	if (wOpponentDeckID == 0x34u) {
+		if (Random(10u) < 2u)
+			return (AIDecideResult){0x10u};
+		return (AIDecideResult){0x80u};
+	}
+	if (!(wAIBarrierFlagCounter & 0x80u))
+		return (AIDecideResult){0x80u};
+	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	return (AIDecideResult){(uint8_t)(remaining >= 56u ? 0x90u : 0x80u)};
+}
+/* <<< factory AIDecide_Gambler */
+
+/* >>> factory AIDecide_Revive */
+AIDecideReviveResult AIDecide_Revive(void)
+{
+	CardListResult discard = CreateDiscardPileCardList(0);
+	if (discard.f & 0x10u)
+		return (AIDecideReviveResult){discard.a, 0x80u};
+	if (GetTurnDuelistVariable(0xEFu).a >= 4u) {
+		uint8_t count = GetTurnDuelistVariable(0xEFu).a;
+		return (AIDecideReviveResult){count, 0};
+	}
+	for (uint16_t p = wDuelTempList_ADDR;; p++) {
+		uint8_t index = gb_read8(p);
+		if (index == 0xFFu)
+			return (AIDecideReviveResult){0xFFu, 0};
+		uint8_t card = LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card == 0x88u || card == 0x87u)
+			return (AIDecideReviveResult){index, 0x90u};
+		if (card == 0xBAu)
+			return (AIDecideReviveResult){0, 0x10u};
+	}
+}
+/* <<< factory AIDecide_Revive */
+
+/* >>> factory AIDecide_ImposterProfessorOak */
+AIDecideResult AIDecide_ImposterProfessorOak(void)
+{
+	uint8_t remaining = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	uint8_t hand = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	if (remaining < (60u - 14u)) {
+		if (hand < 9u)
+			return (AIDecideResult){(uint8_t)(hand == 0u ? 0x80u : 0x00u)};
+		return (AIDecideResult){(uint8_t)(hand == 9u ? 0x90u : 0x10u)};
+	}
+	if (hand < 6u)
+		return (AIDecideResult){0x10u};
+	return (AIDecideResult){0x00u};
+}
+/* <<< factory AIDecide_ImposterProfessorOak */
+
+/* >>> factory PickPokedexCards_Unreferenced */
+PickPokedexResult PickPokedexCards_Unreferenced(void)
+{
+	DuelistVarResult remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint16_t deck = (uint16_t)((remaining.hl & 0xFF00u) |
+				   (uint8_t)(remaining.a + 0x7Eu));
+	uint8_t types[5], indices[5];
+	wAIPokedexCounter = 0;
+	for (uint8_t i = 0; i < 5u; i++) {
+		indices[i] = gb_read8((uint16_t)(deck + i));
+		types[i] = GetCardType((uint8_t)GetCardIDFromDeckIndex(indices[i]));
+		gb_write8((uint16_t)(wce08_ADDR + i), types[i]);
+		gb_write8((uint16_t)(wce0f_ADDR + i), indices[i]);
+	}
+	gb_write8((uint16_t)(wce08_ADDR + 5u), 0xFFu);
+	uint8_t out = 0;
+	for (uint8_t wanted = 0; wanted < 3u; wanted++) {
+		for (uint8_t i = 0; i < 5u; i++) {
+			uint8_t type = types[i];
+			if ((wanted == 0u && type >= TYPE_ENERGY) ||
+			    (wanted == 1u && type != TYPE_TRAINER) ||
+			    (wanted == 2u && !(type & TYPE_ENERGY)))
+				continue;
+			gb_write8((uint16_t)(wce1a_ADDR + out++), indices[i]);
+		}
+	}
+	return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u)};
+}
+/* <<< factory PickPokedexCards_Unreferenced */

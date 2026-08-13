@@ -10,6 +10,7 @@ static void adapt_RemoveCardFromList(ProbeState *s)
 }
 /* <<< factory RemoveCardFromList */
 
+
 /* >>> factory FindDuplicateCards */
 static void adapt_FindDuplicateCards(ProbeState *s)
 {
@@ -35,6 +36,12 @@ static void adapt_PickPokedexCards(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory PickPokedexCards */
+/* >>> factory AIDecide_Recycle */
+static void adapt_AIDecide_Recycle(ProbeState *s)
+{
+	s->f = AIDecide_Recycle().f;
+}
+/* <<< factory AIDecide_Recycle */
 /* >>> factory AIDecide_Maintenance */
 static void adapt_AIDecide_Maintenance(ProbeState *s)
 {
@@ -79,6 +86,7 @@ static void adapt_AIDecide_Defender_Phase14(ProbeState *s)
 	s->f = AIDecide_Defender_Phase14().f;
 }
 /* <<< factory AIDecide_Defender_Phase14 */
+
 /* >>> factory AIDecide_Bill */
 static void adapt_AIDecide_Bill(ProbeState *s)
 {
@@ -86,17 +94,55 @@ static void adapt_AIDecide_Bill(ProbeState *s)
 }
 /* <<< factory AIDecide_Bill */
 
+
+/* >>> factory AIDecide_Gambler */
+static void adapt_AIDecide_Gambler(ProbeState *s)
+{
+	s->f = AIDecide_Gambler().f;
+}
+/* <<< factory AIDecide_Gambler */
+
+/* >>> factory AIDecide_Revive */
+static void adapt_AIDecide_Revive(ProbeState *s)
+{
+	AIDecideReviveResult result = AIDecide_Revive();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AIDecide_Revive */
+
+/* >>> factory AIDecide_ImposterProfessorOak */
+static void adapt_AIDecide_ImposterProfessorOak(ProbeState *s)
+{
+	s->f = AIDecide_ImposterProfessorOak().f;
+}
+/* <<< factory AIDecide_ImposterProfessorOak */
+
+/* >>> factory PickPokedexCards_Unreferenced */
+static void adapt_PickPokedexCards_Unreferenced(ProbeState *s)
+{
+	PickPokedexResult r = PickPokedexCards_Unreferenced();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PickPokedexCards_Unreferenced */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
-	{ "RemoveCardFromList", adapt_RemoveCardFromList },
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
+	{ "AIDecide_Recycle", adapt_AIDecide_Recycle },
 	{ "AIDecide_Maintenance", adapt_AIDecide_Maintenance },
 	{ "AIDecide_Lass", adapt_AIDecide_Lass },
 	{ "AIDecide_Imakuni", adapt_AIDecide_Imakuni },
-	{ "AIDecide_Defender_Phase14", adapt_AIDecide_Defender_Phase14 },
-	{ "AIDecide_Bill", adapt_AIDecide_Bill },
 	{ "AIDecide_PokemonFlute", adapt_AIDecide_PokemonFlute },
 	{ "AIDecide_ClefairyDollOrMysteriousFossil", adapt_AIDecide_ClefairyDollOrMysteriousFossil },
 	{ "FindDuplicateCards", adapt_FindDuplicateCards },
+	{ "AIDecide_Gambler", adapt_AIDecide_Gambler },
+	{ "AIDecide_Revive", adapt_AIDecide_Revive },
+	{ "AIDecide_Defender_Phase14", adapt_AIDecide_Defender_Phase14 },
+	{ "AIDecide_Bill", adapt_AIDecide_Bill },
+	{ "RemoveCardFromList", adapt_RemoveCardFromList },
+	{ "AIDecide_ImposterProfessorOak", adapt_AIDecide_ImposterProfessorOak },
+	{ "PickPokedexCards_Unreferenced", adapt_PickPokedexCards_Unreferenced },
 	{ NULL, NULL },
 };

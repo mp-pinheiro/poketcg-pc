@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+/* >>> factory DrawHPBar */
+void DrawHPBar(uint8_t d, uint8_t e);
+/* <<< factory DrawHPBar */
+/* >>> factory ValidateSavedDuelDataFromHL */
+typedef struct { uint8_t f; uint16_t hl; } ValidateSavedDuelDataResult;
+ValidateSavedDuelDataResult ValidateSavedDuelDataFromHL(uint16_t hl);
+/* <<< factory ValidateSavedDuelDataFromHL */
 /* >>> factory SetLineSeparation */
 void SetLineSeparation(uint8_t a);
 /* <<< factory SetLineSeparation */
@@ -36,6 +43,28 @@ void ZeroObjectPositionsAndToggleOAMCopy(void);
 /* >>> factory LoadPlayerDeck */
 void LoadPlayerDeck(void);
 /* <<< factory LoadPlayerDeck */
+/* >>> factory CheckSkipDelayAllowed */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} CheckSkipDelayAllowedResult;
+CheckSkipDelayAllowedResult CheckSkipDelayAllowed(uint8_t f, uint8_t b, uint8_t c,
+	uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory CheckSkipDelayAllowed */
+/* >>> factory AIMakeDecision */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+} AIMakeDecisionResult;
+AIMakeDecisionResult AIMakeDecision(uint8_t a);
+/* <<< factory AIMakeDecision */
 /* >>> factory PrintPracticeDuelDrMasonInstructions */
 void PrintPracticeDuelDrMasonInstructions(uint16_t hl);
 /* <<< factory PrintPracticeDuelDrMasonInstructions */
@@ -72,6 +101,16 @@ CardPageResult CardPageSwitch_PokemonEnd(void);
 /* >>> factory SetCardListInfoBoxText */
 void SetCardListInfoBoxText(uint16_t hl);
 /* <<< factory SetCardListInfoBoxText */
+/* >>> factory ReturnWrongAction */
+uint8_t ReturnWrongAction(uint8_t f);
+/* <<< factory ReturnWrongAction */
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+typedef struct { uint8_t a; uint8_t f; } CopyListResult;
+CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *de);
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+/* >>> factory PrintCardListHeaderAndInfoBoxTexts */
+void PrintCardListHeaderAndInfoBoxTexts(void);
+/* <<< factory PrintCardListHeaderAndInfoBoxTexts */
 /* >>> factory LoadCardNameToTxRam2 */
 void LoadCardNameToTxRam2(uint8_t a);
 /* <<< factory LoadCardNameToTxRam2 */
@@ -86,14 +125,16 @@ AnimCoordsResult GetAnimCoordsAndFlags(void);
 typedef struct { uint8_t a; uint8_t f; } AnimBufferResult;
 AnimBufferResult PlayBufferedDuelAnimations(void);
 /* <<< factory PlayBufferedDuelAnimations */
-/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
-typedef struct { uint8_t a; uint8_t f; } CopyListResult;
-CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *de);
-/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
 /* >>> factory CheckEnergyFlagsNeededInList */
 typedef struct { uint8_t a; uint8_t carry; } EnergyFlagsResult;
 EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a);
 /* <<< factory CheckEnergyFlagsNeededInList */
+/* >>> factory CardPageSwitch_EnergyEnd */
+CardPageResult CardPageSwitch_EnergyEnd(void);
+/* <<< factory CardPageSwitch_EnergyEnd */
+/* >>> factory CardPageSwitch_0c */
+CardPageResult CardPageSwitch_0c(void);
+/* <<< factory CardPageSwitch_0c */
 /* >>> factory PlaceCardImageOAM */
 uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de);
 /* <<< factory PlaceCardImageOAM */
@@ -225,4 +266,205 @@ CheckIfOpponentHasBossDeckIDResult CheckIfOpponentHasBossDeckID(uint8_t a);
 /* >>> factory RaiseAIScoreToAllMatchingIDsInBench */
 uint16_t RaiseAIScoreToAllMatchingIDsInBench(uint8_t a);
 /* <<< factory RaiseAIScoreToAllMatchingIDsInBench */
-#endif /* POKETCG_HOME_CORE_H */
+/* >>> factory GetDamageNumberChars */
+void GetDamageNumberChars(void);
+/* <<< factory GetDamageNumberChars */
+/* >>> factory CardPageSwitch_PokemonAttack2Page2 */
+CardPageExistsResult CardPageSwitch_PokemonAttack2Page2(void);
+/* >>> factory CardPageSwitch_08 */
+CardPageResult CardPageSwitch_08(void);
+/* <<< factory CardPageSwitch_08 */
+/* >>> factory LoadPlayAreaCardGfx */
+void LoadPlayAreaCardGfx(uint8_t a, uint16_t de);
+/* <<< factory LoadPlayAreaCardGfx */
+/* >>> factory SetBGP6OrSGB3ToCardPalette */
+void SetBGP6OrSGB3ToCardPalette(void);
+/* <<< factory SetBGP6OrSGB3ToCardPalette */
+/* >>> factory SetOneLineSeparation */
+uint8_t SetOneLineSeparation(void);
+/* <<< factory SetOneLineSeparation */
+/* >>> factory _HasAlivePokemonInPlayArea */
+typedef struct { uint8_t a; uint8_t f; } HasAlivePokemonInPlayAreaResult;
+HasAlivePokemonInPlayAreaResult _HasAlivePokemonInPlayArea(uint8_t a);
+/* <<< factory _HasAlivePokemonInPlayArea */
+/* >>> factory PrintPlayAreaCardLocation */
+void PrintPlayAreaCardLocation(void);
+/* <<< factory PrintPlayAreaCardLocation */
+/* >>> factory CheckPrintPoisoned */
+uint8_t CheckPrintPoisoned(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory CheckPrintPoisoned */
+/* >>> factory ResetDoFrameFunction_Bank1 */
+void ResetDoFrameFunction_Bank1(void);
+/* <<< factory ResetDoFrameFunction_Bank1 */
+/* >>> factory OppAction_NoAction */
+void OppAction_NoAction(void);
+/* <<< factory OppAction_NoAction */
+/* >>> factory ReturnRetreatCostCardsToArena */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} ReturnRetreatCostCardsToArenaResult;
+ReturnRetreatCostCardsToArenaResult ReturnRetreatCostCardsToArena(
+	uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ReturnRetreatCostCardsToArena */
+/* >>> factory FindHighestBenchScore */
+typedef struct { uint8_t a; uint8_t f; } FindHighestBenchScoreResult;
+FindHighestBenchScoreResult FindHighestBenchScore(void);
+/* <<< factory FindHighestBenchScore */
+/* >>> factory AIEncourage */
+typedef struct { uint8_t a; uint8_t f; } AIEncourageResult;
+AIEncourageResult AIEncourage(uint8_t a);
+/* <<< factory AIEncourage */
+/* >>> factory IsLoadedCard1BasicPokemon */
+typedef struct { uint8_t a; uint8_t f; } IsLoadedCard1BasicPokemonResult;
+IsLoadedCard1BasicPokemonResult IsLoadedCard1BasicPokemon(void);
+/* <<< factory IsLoadedCard1BasicPokemon */
+/* >>> factory PracticeDuel_PlayGoldeen */
+typedef struct { uint8_t f; } PracticeDuelPlayGoldeenResult;
+PracticeDuelPlayGoldeenResult PracticeDuel_PlayGoldeen(void);
+/* <<< factory PracticeDuel_PlayGoldeen */
+/* >>> factory Func_6ba2 */
+void Func_6ba2(uint16_t hl);
+/* <<< factory Func_6ba2 */
+/* >>> factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} TwoByteNumberToTxSymbolPadResult;
+TwoByteNumberToTxSymbolPadResult TwoByteNumberToTxSymbol_PadSpace_Bank1(
+	uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
+/* >>> factory DrawWideTextBox_WaitForInput_Bank1 */
+WaitResult DrawWideTextBox_WaitForInput_Bank1(uint16_t hl);
+/* <<< factory DrawWideTextBox_WaitForInput_Bank1 */
+/* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
+typedef struct { uint8_t a; uint8_t f; } CardPageEnergyResult;
+CardPageEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void);
+/* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
+/* >>> factory CardPageSwitch_TrainerEnd */
+CardPageResult CardPageSwitch_TrainerEnd(void);
+/* <<< factory CardPageSwitch_TrainerEnd */
+/* >>> factory CheckIfEnoughEnergiesOfType */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CheckIfEnoughEnergiesResult;
+CheckIfEnoughEnergiesResult CheckIfEnoughEnergiesOfType(uint8_t a, uint16_t hl);
+/* <<< factory CheckIfEnoughEnergiesOfType */
+/* >>> factory CheckIfActiveCardParalyzedOrAsleep */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CheckIfActiveStatusResult;
+CheckIfActiveStatusResult CheckIfActiveCardParalyzedOrAsleep(void);
+/* <<< factory CheckIfActiveCardParalyzedOrAsleep */
+/* >>> factory GetAttacksEnergyCostBits */
+typedef struct { uint8_t a; } EnergyCostBitsResult;
+EnergyCostBitsResult GetAttacksEnergyCostBits(uint8_t a);
+/* <<< factory GetAttacksEnergyCostBits */
+/* >>> factory CheckForEvolutionInList */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} CheckForEvolutionInListResult;
+CheckForEvolutionInListResult CheckForEvolutionInList(uint8_t a, uint8_t f);
+/* <<< factory CheckForEvolutionInList */
+/* >>> factory CountNumberOfEnergyCardsAttached */
+typedef struct { uint8_t a; uint8_t f; } CountNumberOfEnergyCardsAttachedResult;
+CountNumberOfEnergyCardsAttachedResult CountNumberOfEnergyCardsAttached(uint8_t e);
+/* <<< factory CountNumberOfEnergyCardsAttached */
+/* >>> factory LookForCardIDInLocation_Bank5 */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} LookForCardIDInLocationResult;
+LookForCardIDInLocationResult LookForCardIDInLocation_Bank5(uint8_t location,
+	uint8_t card_id);
+/* <<< factory LookForCardIDInLocation_Bank5 */
+/* >>> factory LoadDefendingPokemonColorWRAndPrizeCards */
+void LoadDefendingPokemonColorWRAndPrizeCards(void);
+/* <<< factory LoadDefendingPokemonColorWRAndPrizeCards */
+/* >>> factory CheckIfEnergyIsUseful */
+typedef struct { uint8_t f; } CheckIfEnergyIsUsefulResult;
+CheckIfEnergyIsUsefulResult CheckIfEnergyIsUseful(uint8_t a);
+/* <<< factory CheckIfEnergyIsUseful */
+/* >>> factory PickRandomBenchPokemon */
+uint8_t PickRandomBenchPokemon(void);
+/* <<< factory PickRandomBenchPokemon */
+/* >>> factory PracticeDuel_VerifyPlayerTurnActions */
+typedef struct { uint8_t f; } PracticeDuelTurnActionsResult;
+PracticeDuelTurnActionsResult PracticeDuel_VerifyPlayerTurnActions(void);
+/* <<< factory PracticeDuel_VerifyPlayerTurnActions */
+/* >>> factory PrintCardNameFromCardIDInTextBox */
+void PrintCardNameFromCardIDInTextBox(uint16_t hl);
+/* <<< factory PrintCardNameFromCardIDInTextBox */
+/* >>> factory RemoveCardIDInList */
+typedef struct { uint8_t a; uint8_t f; } RemoveCardIDResult;
+RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, uint8_t e);
+/* <<< factory RemoveCardIDInList */
+/* >>> factory SortTempHandByIDList */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} SortTempHandResult;
+SortTempHandResult SortTempHandByIDList(void);
+/* <<< factory SortTempHandByIDList */
+/* >>> factory HandleFailedToContinueDuel */
+uint8_t HandleFailedToContinueDuel(uint16_t hl);
+/* <<< factory HandleFailedToContinueDuel */
+/* >>> factory ApplyCardCGBAttributes */
+void ApplyCardCGBAttributes(uint16_t de);
+/* <<< factory ApplyCardCGBAttributes */
+/* >>> factory ApplyStatusConditionToArenaPokemon */
+typedef struct {
+	uint8_t a;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} ApplyStatusConditionResult;
+ApplyStatusConditionResult ApplyStatusConditionToArenaPokemon(uint8_t d, uint16_t hl);
+/* <<< factory ApplyStatusConditionToArenaPokemon */
+/* >>> factory CheckIfEnoughEnergiesToRetreat */
+typedef struct { uint8_t a; uint8_t f; } EnoughRetreatEnergiesResult;
+EnoughRetreatEnergiesResult CheckIfEnoughEnergiesToRetreat(void);
+/* <<< factory CheckIfEnoughEnergiesToRetreat */
+/* >>> factory DecideLinkDuelVariables */
+uint8_t DecideLinkDuelVariables(void);
+/* <<< factory DecideLinkDuelVariables */
+/* >>> factory DisplayAttackPage */
+void DisplayAttackPage(void);
+/* <<< factory DisplayAttackPage */
+/* >>> factory DisplayCardPage */
+void DisplayCardPage(void);
+/* <<< factory DisplayCardPage */
+/* >>> factory DoPracticeDuelAction */
+uint8_t DoPracticeDuelAction(uint8_t a);
+/* <<< factory DoPracticeDuelAction */
+/* >>> factory DrawDuelHorizontalSeparator */
+void DrawDuelHorizontalSeparator(void);
+/* <<< factory DrawDuelHorizontalSeparator */
+/* >>> factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
+void MoveAllTurnHolderKnockedOutPokemonToDiscardPile(void);
+/* <<< factory MoveAllTurnHolderKnockedOutPokemonToDiscardPile */
+/* >>> factory PrintSortNumberInCardList_CallFromPointer */
+void PrintSortNumberInCardList_CallFromPointer(void);
+/* <<< factory PrintSortNumberInCardList_CallFromPointer */
+#endif
