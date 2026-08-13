@@ -27,6 +27,7 @@
 #include "mem.h"
 #define DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 
 /* >>> factory RemoveCardFromList */
 /* trainer_cards.asm:2760-2776. Shifts the $ff-terminated list down by one byte,
@@ -243,3 +244,44 @@ AIDecidePokemonFluteResult AIDecide_ClefairyDollOrMysteriousFossil(void)
 	return (AIDecidePokemonFluteResult){count, count < 4u ? 0x10u : 0};
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
+/* >>> factory AIDecide_Defender_Phase14 */
+AIDecideResult AIDecide_Defender_Phase14(void)
+{
+	uint8_t flag = CheckLoadedAttackFlag(0x00u).f;
+	if (!(flag & 0x10u))
+		flag = CheckLoadedAttackFlag(0x01u).f;
+	if (!(flag & 0x10u))
+		return (AIDecideResult){0x80u};
+	uint8_t arena = GetTurnDuelistVariable(0xBBu).a;
+	(void)LoadCardDataToBuffer2_FromDeckIndex(arena);
+	uint8_t damage = wSelectedAttack == 0u ? wLoadedCard2Atk1EffectParam :
+		wLoadedCard2Atk2EffectParam;
+	uint8_t color = TranslateColorToWR(GetArenaCardColor());
+	if (GetArenaCardWeakness() & color)
+		damage = (uint8_t)(damage << 1);
+	if (GetArenaCardResistance() & color) {
+		if (damage < 30u)
+			return (AIDecideResult){0};
+		damage = (uint8_t)(damage - 30u);
+	}
+	if (damage == 0u)
+		return (AIDecideResult){0};
+	damage = (uint8_t)(damage - 20u);
+	uint8_t hp = GetTurnDuelistVariable(0x08u).a;
+	return (AIDecideResult){(uint8_t)(((damage != 0u) && (hp > damage)) ? 0x10u : 0)};
+}
+/* <<< factory AIDecide_Defender_Phase14 */
+/* >>> factory AIDecide_Bill */
+AIDecideResult AIDecide_Bill(void)
+{
+	uint8_t remaining = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK).a;
+	uint8_t f = 0x40u;
+	if ((remaining & 0x0Fu) < 3u)
+		f |= 0x20u;
+	if (remaining < 51u)
+		f |= 0x10u;
+	if (remaining == 51u)
+		f |= 0x80u;
+	return (AIDecideResult){f};
+}
+/* <<< factory AIDecide_Bill */

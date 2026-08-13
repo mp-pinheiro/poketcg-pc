@@ -72,6 +72,18 @@ static void adapt_AIDecide_ClefairyDollOrMysteriousFossil(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory AIDecide_ClefairyDollOrMysteriousFossil */
+/* >>> factory AIDecide_Defender_Phase14 */
+static void adapt_AIDecide_Defender_Phase14(ProbeState *s)
+{
+	s->f = AIDecide_Defender_Phase14().f;
+}
+/* <<< factory AIDecide_Defender_Phase14 */
+/* >>> factory AIDecide_Bill */
+static void adapt_AIDecide_Bill(ProbeState *s)
+{
+	s->f = AIDecide_Bill().f;
+}
+/* <<< factory AIDecide_Bill */
 
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "RemoveCardFromList", adapt_RemoveCardFromList },
@@ -80,6 +92,8 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "PickPokedexCards", adapt_PickPokedexCards },
 	{ "AIDecide_Maintenance", adapt_AIDecide_Maintenance },
 	{ "AIDecide_Lass", adapt_AIDecide_Lass },
+	{ "AIDecide_Defender_Phase14", adapt_AIDecide_Defender_Phase14 },
+	{ "AIDecide_Bill", adapt_AIDecide_Bill },
 	{ "AIDecide_PokemonFlute", adapt_AIDecide_PokemonFlute },
 	{ "AIDecide_ClefairyDollOrMysteriousFossil", adapt_AIDecide_ClefairyDollOrMysteriousFossil },
 	{ NULL, NULL },

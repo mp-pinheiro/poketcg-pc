@@ -28,6 +28,12 @@ AIDecideResult AIDecide_Lass(void);
 /* >>> factory AIDecide_Imakuni */
 AIDecideResult AIDecide_Imakuni(void);
 /* <<< factory AIDecide_Imakuni */
+/* >>> factory AIDecide_Defender_Phase14 */
+AIDecideResult AIDecide_Defender_Phase14(void);
+/* <<< factory AIDecide_Defender_Phase14 */
+/* >>> factory AIDecide_Bill */
+AIDecideResult AIDecide_Bill(void);
+/* <<< factory AIDecide_Bill */
 /* >>> factory AIDecide_PokemonFlute */
 typedef struct { uint8_t a, f; } AIDecidePokemonFluteResult;
 AIDecidePokemonFluteResult AIDecide_PokemonFlute(uint8_t c);

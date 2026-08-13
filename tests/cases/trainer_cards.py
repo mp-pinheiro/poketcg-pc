@@ -88,6 +88,14 @@ CASES["AIDecide_ClefairyDollOrMysteriousFossil"] = [
     {"wram": {0xC3EF: b"\x03", 0xC2BB: b"\x00"}},
 ]
 # <<< factory AIDecide_ClefairyDollOrMysteriousFossil
+# >>> factory AIDecide_Defender_Phase14
+CONTRACT["AIDecide_Defender_Phase14"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_Defender_Phase14"] = [dict(POISON, wram={0xC2C8: b"\x32"})]
+# <<< factory AIDecide_Defender_Phase14
+# >>> factory AIDecide_Bill
+CONTRACT["AIDecide_Bill"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_Bill"] = [{"wram": {0xC3BA: b"\x33"}}]
+# <<< factory AIDecide_Bill
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -117,3 +125,12 @@ MUTATIONS["FindAndRemoveCardFromList"] = {
     "case_ids": ["FindAndRemoveCardFromList-1", "FindAndRemoveCardFromList-2"],
 }
 # <<< factory-mutation FindAndRemoveCardFromList
+
+# >>> factory-mutation AIDecide_Bill
+MUTATIONS["AIDecide_Bill"] = {
+    "source_symbol": "AIDecide_Bill",
+    "before": "\treturn (AIDecideResult){f};",
+    "after": "\treturn (AIDecideResult){0};",
+    "case_ids": ["AIDecide_Bill-0"],
+}
+# <<< factory-mutation AIDecide_Bill
