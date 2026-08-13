@@ -1274,3 +1274,19 @@ QueueStatusConditionResult FoulOdorEffect(void)
 	return r;
 }
 /* <<< factory FoulOdorEffect */
+
+/* >>> factory KakunaPoisonPowder_AIEffect */
+void KakunaPoisonPowder_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory KakunaPoisonPowder_AIEffect */
+
+/* >>> factory SwordsDanceEffect */
+uint16_t SwordsDanceEffect(void)
+{
+	if (gb_read8(0xCCC3u) != 0x2Eu)
+		return 0u;
+	return ApplySubstatus1ToAttackingCard(0x19u);
+}
+/* <<< factory SwordsDanceEffect */

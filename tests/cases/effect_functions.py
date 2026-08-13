@@ -884,6 +884,25 @@ CASES["FoulOdorEffect"] = [
 ]
 # <<< factory FoulOdorEffect
 
+# >>> factory KakunaPoisonPowder_AIEffect
+CONTRACT["KakunaPoisonPowder_AIEffect"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c")}
+CASES["KakunaPoisonPowder_AIEffect"] = [
+    dict(POISON, wram={0xCCB9: b"\x00"}, read={0xCCB9: 1, 0xCCBB: 2}),
+    dict(POISON, a=0x01, wram={0xCCB9: b"\x10"}, read={0xCCB9: 1, 0xCCBB: 2}),
+    dict(POISON, b=0x02, wram={0xCCB9: b"\x20"}, read={0xCCB9: 1, 0xCCBB: 2}),
+    dict(POISON, c=0x03, wram={0xCCB9: b"\x30"}, read={0xCCB9: 1, 0xCCBB: 2}),
+]
+# <<< factory KakunaPoisonPowder_AIEffect
+
+# >>> factory SwordsDanceEffect
+CONTRACT["SwordsDanceEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["SwordsDanceEffect"] = [
+    {"wram": {0xCCC3: b"\x00"}, "read": {0xCCC3: 1}},
+    {"wram": {0xCCC3: b"\x2E"}, "read": {0xCCC3: 1}},
+    dict(POISON, wram={0xCCC3: b"\x2E"}, read={0xCCC3: 1}),
+]
+# <<< factory SwordsDanceEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1404,3 +1423,19 @@ MUTATIONS["FoulOdorEffect"] = {
     "case_ids": ["FoulOdorEffect-0", "FoulOdorEffect-1", "FoulOdorEffect-2"],
 }
 # <<< factory-mutation FoulOdorEffect
+# >>> factory-mutation KakunaPoisonPowder_AIEffect
+MUTATIONS["KakunaPoisonPowder_AIEffect"] = {
+    "source_symbol": "KakunaPoisonPowder_AIEffect",
+    "before": "UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);",
+    "after": "UpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);",
+    "case_ids": ["KakunaPoisonPowder_AIEffect-0", "KakunaPoisonPowder_AIEffect-1"],
+}
+# <<< factory-mutation KakunaPoisonPowder_AIEffect
+# >>> factory-mutation SwordsDanceEffect
+MUTATIONS["SwordsDanceEffect"] = {
+    "source_symbol": "SwordsDanceEffect",
+    "before": "if (gb_read8(0xCCC3u) != 0x2Eu)",
+    "after": "if (gb_read8(0xCCC3u) == 0x2Eu)",
+    "case_ids": ["SwordsDanceEffect-0", "SwordsDanceEffect-1", "SwordsDanceEffect-2"],
+}
+# <<< factory-mutation SwordsDanceEffect

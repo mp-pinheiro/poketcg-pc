@@ -272,4 +272,10 @@ void GloomPoisonPowder_AIEffect(void);
 /* >>> factory FoulOdorEffect */
 QueueStatusConditionResult FoulOdorEffect(void);
 /* <<< factory FoulOdorEffect */
+/* >>> factory KakunaPoisonPowder_AIEffect */
+void KakunaPoisonPowder_AIEffect(void);
+/* <<< factory KakunaPoisonPowder_AIEffect */
+/* >>> factory SwordsDanceEffect */
+uint16_t SwordsDanceEffect(void);
+/* <<< factory SwordsDanceEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

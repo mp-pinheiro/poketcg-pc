@@ -655,6 +655,21 @@ static void adapt_FoulOdorEffect(ProbeState *s)
 }
 /* <<< factory FoulOdorEffect */
 
+/* >>> factory KakunaPoisonPowder_AIEffect */
+static void adapt_KakunaPoisonPowder_AIEffect(ProbeState *s)
+{
+	KakunaPoisonPowder_AIEffect();
+	s->hl = wDamage_ADDR;
+}
+/* <<< factory KakunaPoisonPowder_AIEffect */
+
+/* >>> factory SwordsDanceEffect */
+static void adapt_SwordsDanceEffect(ProbeState *s)
+{
+	s->hl = SwordsDanceEffect();
+}
+/* <<< factory SwordsDanceEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -732,5 +747,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpitPoison_AIEffect", adapt_SpitPoison_AIEffect },
 	{ "GloomPoisonPowder_AIEffect", adapt_GloomPoisonPowder_AIEffect },
 	{ "FoulOdorEffect", adapt_FoulOdorEffect },
+	{ "KakunaPoisonPowder_AIEffect", adapt_KakunaPoisonPowder_AIEffect },
+	{ "SwordsDanceEffect", adapt_SwordsDanceEffect },
 	{ NULL, NULL },
 };
