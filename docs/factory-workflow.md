@@ -70,7 +70,7 @@ Serial, in the repo root:
 python3 tools/factory/integrate.py            # land greens, release gate
 python3 tools/factory/issues.py fetch        # cache all port-labeled issues
 python3 tools/factory/issues.py plan --json  # deterministic dry run
-python3 tools/factory/issues.py apply --limit 25 --batches 4
+python3 tools/factory/issues.py apply --limit 10 --batches 10
 python3 tools/factory/issues.py verify --live
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
 python3 tools/factory/driver.py status        # queue state
