@@ -1189,3 +1189,48 @@ PokedexDeckCheckResult Pokedex_DeckCheck(void)
 	return (PokedexDeckCheckResult){count, f, NoCardsLeftInTheDeckText};
 }
 /* <<< factory Pokedex_DeckCheck */
+
+/* >>> factory Pokedex_OrderDeckCardsEffect */
+
+PokedexOrderDeckCardsEffectResult Pokedex_OrderDeckCardsEffect(void)
+{
+	uint16_t hl = hTempList_ADDR;
+	uint8_t c = 0u;
+	uint8_t a = 0u;
+
+	for (;;) {
+		a = gb_read8(hl++);
+		if (a == 0xffu)
+			break;
+		SearchCardInDeckAndAddToHand(a);
+		c = (uint8_t)(c + 1u);
+	}
+
+	hl = (uint16_t)(hl - 2u);
+	do {
+		a = gb_read8(hl--);
+		ReturnCardToDeck(a);
+		c = (uint8_t)(c - 1u);
+	} while (c != 0u);
+
+	return (PokedexOrderDeckCardsEffectResult){a, c, 0xc0u, hl};
+}
+/* <<< factory Pokedex_OrderDeckCardsEffect */
+
+/* >>> factory Maintenance_HandCheck */
+MaintenanceHandCheckResult Maintenance_HandCheck(void)
+{
+	DuelistVarResult hand = GetTurnDuelistVariable(0xeeu);
+	uint8_t result = (uint8_t)(hand.a - 3u);
+	uint8_t f = 0x40u;
+
+	if (result == 0u)
+		f |= 0x80u;
+	if ((hand.a & 0x0fu) < 3u)
+		f |= 0x20u;
+	if (hand.a < 3u)
+		f |= 0x10u;
+
+	return (MaintenanceHandCheckResult){hand.a, f, 0x00b6u};
+}
+/* <<< factory Maintenance_HandCheck */

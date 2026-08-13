@@ -250,4 +250,12 @@ CreatePokemonCardListFromHandResult CreatePokemonCardListFromHand(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } PokedexDeckCheckResult;
 PokedexDeckCheckResult Pokedex_DeckCheck(void);
 /* <<< factory Pokedex_DeckCheck */
+/* >>> factory Pokedex_OrderDeckCardsEffect */
+typedef struct { uint8_t a; uint8_t c; uint8_t f; uint16_t hl; } PokedexOrderDeckCardsEffectResult;
+PokedexOrderDeckCardsEffectResult Pokedex_OrderDeckCardsEffect(void);
+/* <<< factory Pokedex_OrderDeckCardsEffect */
+/* >>> factory Maintenance_HandCheck */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MaintenanceHandCheckResult;
+MaintenanceHandCheckResult Maintenance_HandCheck(void);
+/* <<< factory Maintenance_HandCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

@@ -602,6 +602,27 @@ static void adapt_Pokedex_DeckCheck(ProbeState *s)
 }
 /* <<< factory Pokedex_DeckCheck */
 
+/* >>> factory Pokedex_OrderDeckCardsEffect */
+static void adapt_Pokedex_OrderDeckCardsEffect(ProbeState *s)
+{
+	PokedexOrderDeckCardsEffectResult r = Pokedex_OrderDeckCardsEffect();
+	s->a = r.a;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Pokedex_OrderDeckCardsEffect */
+
+/* >>> factory Maintenance_HandCheck */
+static void adapt_Maintenance_HandCheck(ProbeState *s)
+{
+	MaintenanceHandCheckResult r = Maintenance_HandCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Maintenance_HandCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -673,5 +694,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateBasicPokemonCardListFromDiscardPile", adapt_CreateBasicPokemonCardListFromDiscardPile },
 	{ "CreatePokemonCardListFromHand", adapt_CreatePokemonCardListFromHand },
 	{ "Pokedex_DeckCheck", adapt_Pokedex_DeckCheck },
+	{ "Pokedex_OrderDeckCardsEffect", adapt_Pokedex_OrderDeckCardsEffect },
+	{ "Maintenance_HandCheck", adapt_Maintenance_HandCheck },
 	{ NULL, NULL },
 };

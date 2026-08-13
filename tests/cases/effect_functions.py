@@ -796,6 +796,49 @@ CASES["Pokedex_DeckCheck"] = [
 ]
 # <<< factory Pokedex_DeckCheck
 
+# >>> factory Pokedex_OrderDeckCardsEffect
+CONTRACT["Pokedex_OrderDeckCardsEffect"] = {
+    "compare": ("a", "f", "c", "hl", "b", "d", "e"),
+    "preserve": ("b", "d", "e"),
+}
+CASES["Pokedex_OrderDeckCardsEffect"] = [
+    {"c": 0x77, "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00",
+                         0xC27E: b"\x01\x02\x03", 0xFFA0: b"\x02\xFF"},
+     "read": {0xC2BA: 1, 0xC202: 1, 0xC27E: 3, 0xFFA0: 2}},
+    {"a": 0x05, "b": 0xBB, "d": 0xDD, "e": 0xEE, "c": 0x66,
+     "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00",
+              0xC27E: b"\x01\x02\x03\x04", 0xFFA0: b"\x02\x03\xFF"},
+     "read": {0xC2BA: 1, 0xC202: 1, 0xC203: 1, 0xC27E: 4, 0xFFA0: 3}},
+    {"a": 0xFF, "b": 0x11, "d": 0x22, "e": 0x33, "c": 0x44,
+     "wram": {0xFF97: b"\xC3", 0xC3BA: b"\x01",
+              0xC37E: b"\x05\x06\x07", 0xFFA0: b"\x05\x06\x07\xFF"},
+     "read": {0xC3BA: 1, 0xC305: 1, 0xC306: 1, 0xC307: 1, 0xC37E: 3,
+              0xFFA0: 4}},
+    dict(POISON, c=0x99, wram={0xFF97: b"\xC2", 0xC2BA: b"\x00",
+                               0xC27E: b"\x08\x09", 0xFFA0: b"\x08\xFF"},
+         read={0xC2BA: 1, 0xC208: 1, 0xC27E: 2, 0xFFA0: 2}),
+]
+# <<< factory Pokedex_OrderDeckCardsEffect
+
+# >>> factory Maintenance_HandCheck
+CONTRACT["Maintenance_HandCheck"] = {
+    "compare": ("a", "f", "hl", "b", "c", "d", "e"),
+    "preserve": ("b", "c", "d", "e"),
+}
+CASES["Maintenance_HandCheck"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"},
+     "read": {0xC2EE: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x02"},
+     "read": {0xC2EE: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x03"},
+     "read": {0xC2EE: 1}},
+    {"wram": {0xFF97: b"\xC3", 0xC3EE: b"\x09"},
+     "read": {0xC3EE: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\xFF"},
+         read={0xC2EE: 1}),
+]
+# <<< factory Maintenance_HandCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1263,3 +1306,19 @@ MUTATIONS["CreatePokemonCardListFromHand"] = {"source_symbol": "CreatePokemonCar
 # >>> factory-mutation Pokedex_DeckCheck
 MUTATIONS["Pokedex_DeckCheck"] = {"source_symbol": "Pokedex_DeckCheck", "before": "uint8_t f = (count < DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);", "after": "uint8_t f = (count >= DECK_SIZE) ? 0x00u : (uint8_t)(count == DECK_SIZE ? 0x90u : 0x10u);", "case_ids": ["Pokedex_DeckCheck-0", "Pokedex_DeckCheck-1"]}
 # <<< factory-mutation Pokedex_DeckCheck
+# >>> factory-mutation Pokedex_OrderDeckCardsEffect
+MUTATIONS["Pokedex_OrderDeckCardsEffect"] = {
+    "source_symbol": "Pokedex_OrderDeckCardsEffect",
+    "before": "c = (uint8_t)(c + 1u);",
+    "after": "c = (uint8_t)(c + 2u);",
+    "case_ids": ["Pokedex_OrderDeckCardsEffect-0", "Pokedex_OrderDeckCardsEffect-1"],
+}
+# <<< factory-mutation Pokedex_OrderDeckCardsEffect
+# >>> factory-mutation Maintenance_HandCheck
+MUTATIONS["Maintenance_HandCheck"] = {
+    "source_symbol": "Maintenance_HandCheck",
+    "before": "if (result == 0u)",
+    "after": "if (result != 0u)",
+    "case_ids": ["Maintenance_HandCheck-0", "Maintenance_HandCheck-1", "Maintenance_HandCheck-2"],
+}
+# <<< factory-mutation Maintenance_HandCheck
