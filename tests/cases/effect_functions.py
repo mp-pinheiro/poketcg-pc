@@ -923,6 +923,24 @@ CASES["BeedrillPoisonSting_AIEffect"] = [
 ]
 # <<< factory BeedrillPoisonSting_AIEffect
 
+# >>> factory FoulGas_AIEffect
+CONTRACT["FoulGas_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["FoulGas_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xCCB9: b"\x05"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xFF"}, read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory FoulGas_AIEffect
+
+# >>> factory Sprout_AISelectEffect
+CONTRACT["Sprout_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Sprout_AISelectEffect"] = [
+    {"c": 0, "d": 0, "e": 0, "read": {0xFFA0: 1}},
+    dict(POISON, c=1, d=0x12, e=0x34, read={0xFFA0: 1}),
+    {"c": 0xFF, "d": 0xFF, "e": 0xFF, "read": {0xFFA0: 1}},
+]
+# <<< factory Sprout_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1475,3 +1493,19 @@ MUTATIONS["BeedrillPoisonSting_AIEffect"] = {
     "case_ids": ["BeedrillPoisonSting_AIEffect-0", "BeedrillPoisonSting_AIEffect-1", "BeedrillPoisonSting_AIEffect-2", "BeedrillPoisonSting_AIEffect-3", "BeedrillPoisonSting_AIEffect-4"],
 }
 # <<< factory-mutation BeedrillPoisonSting_AIEffect
+# >>> factory-mutation FoulGas_AIEffect
+MUTATIONS["FoulGas_AIEffect"] = {
+    "source_symbol": "FoulGas_AIEffect",
+    "before": "UpdateExpectedAIDamage(5u, 0u, 10u);",
+    "after": "UpdateExpectedAIDamage(6u, 0u, 10u);",
+    "case_ids": ["FoulGas_AIEffect-0", "FoulGas_AIEffect-1", "FoulGas_AIEffect-2"],
+}
+# <<< factory-mutation FoulGas_AIEffect
+# >>> factory-mutation Sprout_AISelectEffect
+MUTATIONS["Sprout_AISelectEffect"] = {
+    "source_symbol": "Sprout_AISelectEffect",
+    "before": "if ((uint8_t)GetCardIDFromDeckIndex(card) == ODDISH)",
+    "after": "if ((uint8_t)GetCardIDFromDeckIndex(card) != ODDISH)",
+    "case_ids": ["Sprout_AISelectEffect-0", "Sprout_AISelectEffect-1", "Sprout_AISelectEffect-2"],
+}
+# <<< factory-mutation Sprout_AISelectEffect

@@ -1304,3 +1304,28 @@ void BeedrillPoisonSting_AIEffect(void)
 	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
 }
 /* <<< factory BeedrillPoisonSting_AIEffect */
+
+/* >>> factory FoulGas_AIEffect */
+void FoulGas_AIEffect(void)
+{
+	UpdateExpectedAIDamage(5u, 0u, 10u);
+}
+/* <<< factory FoulGas_AIEffect */
+
+/* >>> factory Sprout_AISelectEffect */
+#define ODDISH 0x1cu
+void Sprout_AISelectEffect(uint8_t c, uint16_t de)
+{
+	(void)CreateDeckCardList(c, de);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		hTemp_ffa0 = card;
+		if (card == 0xffu)
+			return;
+		if ((uint8_t)GetCardIDFromDeckIndex(card) == ODDISH)
+			return;
+	}
+}
+/* <<< factory Sprout_AISelectEffect */

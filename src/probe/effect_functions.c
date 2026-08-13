@@ -686,6 +686,20 @@ static void adapt_BeedrillPoisonSting_AIEffect(ProbeState *s)
 }
 /* <<< factory BeedrillPoisonSting_AIEffect */
 
+/* >>> factory FoulGas_AIEffect */
+static void adapt_FoulGas_AIEffect(ProbeState *s)
+{
+	FoulGas_AIEffect();
+}
+/* <<< factory FoulGas_AIEffect */
+
+/* >>> factory Sprout_AISelectEffect */
+static void adapt_Sprout_AISelectEffect(ProbeState *s)
+{
+	Sprout_AISelectEffect(s->c, (uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory Sprout_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -767,5 +781,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SwordsDanceEffect", adapt_SwordsDanceEffect },
 	{ "Twineedle_AIEffect", adapt_Twineedle_AIEffect },
 	{ "BeedrillPoisonSting_AIEffect", adapt_BeedrillPoisonSting_AIEffect },
+	{ "FoulGas_AIEffect", adapt_FoulGas_AIEffect },
+	{ "Sprout_AISelectEffect", adapt_Sprout_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -284,4 +284,10 @@ void Twineedle_AIEffect(void);
 /* >>> factory BeedrillPoisonSting_AIEffect */
 void BeedrillPoisonSting_AIEffect(void);
 /* <<< factory BeedrillPoisonSting_AIEffect */
+/* >>> factory FoulGas_AIEffect */
+void FoulGas_AIEffect(void);
+/* <<< factory FoulGas_AIEffect */
+/* >>> factory Sprout_AISelectEffect */
+void Sprout_AISelectEffect(uint8_t c, uint16_t de);
+/* <<< factory Sprout_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
