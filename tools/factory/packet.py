@@ -477,16 +477,43 @@ def drop_claimed(packets: list[dict]) -> list[dict]:
     return kept
 
 
+def dissolved_symbols() -> set[str]:
+    """pret symbols the port will never contain, per tools/progress/scope.toml.
+
+    Phase-1 dissolves whole files (``vram.asm``, ``double_speed.asm``,
+    ``jumptable.asm``, ``call_regs.asm``, ...). A caller of one of those does
+    not need a C symbol for it — the call simply disappears in the port, or
+    becomes a direct call / function-pointer table. Treating them as
+    "unported callee" wrongly blocks perfectly portable routines.
+    """
+    import tomllib
+    path = ROOT / "tools" / "progress" / "scope.toml"
+    if not path.exists():
+        return set()
+    spec = tomllib.load(open(path, "rb"))
+    files = set()
+    names: set[str] = set()
+    for entry in spec.get("exclude", []):
+        files.update(entry.get("files", []))
+        names.update(entry.get("symbols", []))
+    inventory = json.loads((ROOT / "site/data/inventory.json").read_text())
+    for name, info in inventory["functions"].items():
+        if info.get("file") in files:
+            names.add(name)
+    return names
+
+
 def attach_dependencies(packets: list[dict]) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
-    A callee that is a real code label but has no C prototype is unavailable:
-    either scope-excluded with no C equivalent (``JumpToFunctionInTable``) or
-    simply unported. The frontier counts excluded callees as satisfied, so it
-    offers such routines even though they cannot link. Block them here.
+    A callee with no C prototype blocks its callers — unless it is dissolved
+    by the Phase-1 transform, in which case the port omits the call and the
+    caller is perfectly portable. Only genuinely unported, in-scope callees
+    block.
     """
     inventory = json.loads((ROOT / "site/data/inventory.json").read_text())
     functions = inventory["functions"]
+    dissolved = dissolved_symbols()
     graph, dependents = blocker_graph(compute_functions()[0])
     kept: list[dict] = []
     for packet in packets:
@@ -501,7 +528,7 @@ def attach_dependencies(packets: list[dict]) -> list[dict]:
             callees, unavailable = [], []
             for dep in sorted(set(deps)):
                 proto = prototype_for(dep)
-                if proto is None and dep in functions:
+                if proto is None and dep in functions and dep not in dissolved:
                     unavailable.append(dep)
                 callees.append({
                     "name": dep,
