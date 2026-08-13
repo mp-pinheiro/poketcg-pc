@@ -8,6 +8,7 @@ prove the planner contract without GitHub credentials.
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -295,6 +296,27 @@ def main() -> int:
 
     first = {"schema": 1, "fetched_at": 1, "issues": []}
     second = {"schema": 1, "fetched_at": 2, "issues": []}
+    fetch_issue = {
+        "id": "stable-node", "number": 12, "title": "Stable",
+        "body": created_body, "state": "OPEN",
+        "labels": [{"name": "port"}], "url": "",
+    }
+    duplicate_listing = json.dumps([fetch_issue, fetch_issue])
+    original_run_gh = issues.run_gh
+    original_cache = issues.CACHE
+    original_sleep = issues.time.sleep
+    issues.run_gh = lambda *args: duplicate_listing
+    issues.CACHE = Path("/tmp/poketcg-issue-model-cache.json")
+    issues.time.sleep = lambda _: None
+    try:
+        stable = issues.fetch_snapshot(attempts=2)
+        assert len(stable["issues"]) == 1
+        assert stable["issues"][0]["number"] == 12
+    finally:
+        issues.run_gh = original_run_gh
+        issues.CACHE = original_cache
+        issues.time.sleep = original_sleep
+        Path("/tmp/poketcg-issue-model-cache.json").unlink(missing_ok=True)
     assert issues.snapshot_fingerprint(first) == issues.snapshot_fingerprint(second)
     print("issue model: PASS")
     return 0

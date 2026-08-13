@@ -121,27 +121,45 @@ def issue_fingerprint(issue: dict) -> str:
     })
 
 
-def fetch_snapshot() -> dict:
-    raw = run_gh(
-        "issue", "list", "--label", "port", "--state", "all",
-        "--limit", "10000",
-        "--json", "id,number,title,body,state,labels,url",
-    )
-    issues = [normalize_issue(item) for item in json.loads(raw or "[]")]
-    snapshot = {
-        "schema": 1,
-        "fetched_at": int(time.time()),
-        "issues": sorted(issues, key=lambda item: item["number"]),
-    }
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
-    previous = load_cache(required=False)
-    if (
-        (previous and previous.get("migration_complete"))
-        or migration_coverage_complete(snapshot)
-    ):
-        snapshot["migration_complete"] = True
-    CACHE.write_text(json.dumps(snapshot, sort_keys=True, separators=(",", ":")))
-    return snapshot
+def fetch_snapshot(attempts: int = 4) -> dict:
+    if attempts < 2:
+        raise ModelError("snapshot attempts must be at least two")
+    previous = None
+    for attempt in range(attempts):
+        raw = run_gh(
+            "issue", "list", "--label", "port", "--state", "all",
+            "--limit", "10000",
+            "--json", "id,number,title,body,state,labels,url",
+        )
+        by_number = {}
+        conflicted = False
+        for item in json.loads(raw or "[]"):
+            issue = normalize_issue(item)
+            prior = by_number.get(issue["number"])
+            if prior is not None and issue_fingerprint(prior) != issue_fingerprint(issue):
+                conflicted = True
+                break
+            by_number[issue["number"]] = issue
+        snapshot = {
+            "schema": 1,
+            "fetched_at": int(time.time()),
+            "issues": [by_number[number] for number in sorted(by_number)],
+        }
+        fingerprint = None if conflicted else snapshot_fingerprint(snapshot)
+        if fingerprint is not None and fingerprint == previous:
+            cached = load_cache(required=False)
+            if (
+                (cached and cached.get("migration_complete"))
+                or migration_coverage_complete(snapshot)
+            ):
+                snapshot["migration_complete"] = True
+            CACHE.parent.mkdir(parents=True, exist_ok=True)
+            CACHE.write_text(json.dumps(snapshot, sort_keys=True, separators=(",", ":")))
+            return snapshot
+        previous = fingerprint
+        if attempt + 1 < attempts:
+            time.sleep(1)
+    raise ModelError("GitHub issue listing did not stabilize")
 
 
 def load_cache(*, required: bool = True, path: Path = CACHE) -> dict | None:
