@@ -1,0 +1,9 @@
+{
+  "fn": "InitVariablesToBeginDuel",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitVariablesToBeginDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40969\": \"a5\"}}, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50161\": \"55\", \"52230\": \"0000\", \"52233\": \"80\", \"52239\": \"ffffff\", \"52455\": \"00\", \"52466\": \"a5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitVariablesToBeginDuel\", \"mismatches\": {\"bus\": {\"address\": 52233, \"reference\": \"8055000080ffffff00\", \"native\": \"8055000055ffffff00\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49905, 1], [50161, 1], [52230, 2], [52233, 1], [52239, 3], [52455, 1], [52466, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitVariablesToBeginDuel\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40969\": \"a5\"}}, \"vram\": {}, \"wram\": {\"49905\": \"80\", \"50161\": \"55\", \"52230\": \"0000\", \"52233\": \"80\", \"52239\": \"ffffff\", \"52455\": \"00\", \"52466\": \"a5\"}}, \"status\": \"PASS\"}\n"
+}

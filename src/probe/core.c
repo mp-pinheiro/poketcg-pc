@@ -306,6 +306,14 @@ static void adapt_Func_6423(ProbeState *s)
 }
 /* <<< factory Func_6423 */
 
+/* >>> factory InitVariablesToBeginDuel */
+static void adapt_InitVariablesToBeginDuel(ProbeState *s)
+{
+	(void)s;
+	InitVariablesToBeginDuel();
+}
+/* <<< factory InitVariablesToBeginDuel */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -344,5 +352,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintEnergiesOfColor", adapt_PrintEnergiesOfColor },
 	{ "PrintCardPageWeaknessesOrResistances", adapt_PrintCardPageWeaknessesOrResistances },
 	{ "Func_6423", adapt_Func_6423 },
+	{ "InitVariablesToBeginDuel", adapt_InitVariablesToBeginDuel },
 	{ NULL, NULL },
 };

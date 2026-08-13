@@ -192,6 +192,17 @@ CardPageResult CardPageSwitch_08(void)
 #include "home/core.h"
 
 #define FIRE 0x00u
+
+#include "home/switch_sram.h"
+
+#define DUELIST_TYPE_AI_OPP 0x80u
+#define DUELIST_TYPE_LINK_OPP 0x01u
+
+static uint8_t is_duelist_type(uint8_t a)
+{
+	return (uint8_t)((a == DUELIST_TYPE_LINK_OPP) ||
+		((a & DUELIST_TYPE_AI_OPP) != 0u));
+}
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -821,3 +832,30 @@ Func6423Result Func_6423(uint8_t b, uint8_t c)
 	return (Func6423Result){value, b, pos};
 }
 /* <<< factory Func_6423 */
+
+/* >>> factory InitVariablesToBeginDuel */
+/* core.asm:7651-7710 */
+void InitVariablesToBeginDuel(void)
+{
+	uint8_t a = 0u;
+
+	wDuelFinished = 0u;
+	wDuelTurns = 0u;
+	wUnused_cce7 = 0u;
+	wUnused_cc0f = 0xffu;
+	wPlayerAttackingCardIndex = 0xffu;
+	wPlayerAttackingAttackIndex = 0xffu;
+
+	EnableSRAM();
+	wSkipDelayAllowed = sSkipDelayAllowed;
+	DisableSRAM();
+
+	a = wPlayerDuelistType;
+	if (is_duelist_type(a) == 0u) {
+		a = wOpponentDuelistType;
+		if (is_duelist_type(a) == 0u)
+			a = 0u;
+	}
+	wDuelType = a;
+}
+/* <<< factory InitVariablesToBeginDuel */

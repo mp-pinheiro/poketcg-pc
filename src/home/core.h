@@ -134,4 +134,7 @@ typedef struct {
 } Func6423Result;
 Func6423Result Func_6423(uint8_t b, uint8_t c);
 /* <<< factory Func_6423 */
+/* >>> factory InitVariablesToBeginDuel */
+void InitVariablesToBeginDuel(void);
+/* <<< factory InitVariablesToBeginDuel */
 #endif /* POKETCG_HOME_CORE_H */

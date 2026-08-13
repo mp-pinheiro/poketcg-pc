@@ -409,6 +409,29 @@ CASES["Func_6423"] = [
 ]
 # <<< factory Func_6423
 
+# >>> factory InitVariablesToBeginDuel
+CONTRACT["InitVariablesToBeginDuel"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["InitVariablesToBeginDuel"] = [
+    {"sram": {0: {0xA009: b"\x12"}},
+     "sread": {0: {0xA009: 1}}},
+    dict(POISON,
+         wram={0xCC07: b"\xAA", 0xCC06: b"\xAA", 0xCCE7: b"\xAA",
+               0xCC0F: b"\x55", 0xCC11: b"\x44", 0xCC10: b"\x44",
+               0xCCF2: b"\x99", 0xC2F1: b"\x80", 0xC3F1: b"\x55",
+               0xCC09: b"\x77"},
+         sram={0: {0xA009: b"\xA5"}},
+         sread={0: {0xA009: 1}}),
+    {"wram": {0xC2F1: b"\x01"}, "sram": {0: {0xA009: b"\x01"}}},
+    {"wram": {0xC2F1: b"\x80"}, "sram": {0: {0xA009: b"\x02"}}},
+    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x01"},
+     "sram": {0: {0xA009: b"\x03"}}},
+    {"wram": {0xC2F1: b"\x00", 0xC3F1: b"\x80"},
+     "sram": {0: {0xA009: b"\x04"}}},
+    {"wram": {0xC2F1: b"\x02", 0xC3F1: b"\x03"},
+     "sram": {0: {0xA009: b"\x05"}}},
+]
+# <<< factory InitVariablesToBeginDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -666,3 +689,6 @@ MUTATIONS["PrintCardPageWeaknessesOrResistances"] = {"source_symbol": "PrintCard
 # >>> factory-mutation Func_6423
 MUTATIONS["Func_6423"] = {"source_symbol": "Func_6423", "before": "value = gb_read8(pos);", "after": "value = gb_read8((uint16_t)(pos + 1u));", "case_ids": ["Func_6423-1", "Func_6423-2"]}
 # <<< factory-mutation Func_6423
+# >>> factory-mutation InitVariablesToBeginDuel
+MUTATIONS["InitVariablesToBeginDuel"] = {"source_symbol": "InitVariablesToBeginDuel", "before": "\t\t((a & DUELIST_TYPE_AI_OPP) != 0u));", "after": "\t\t((a & 0x40u) != 0u));", "case_ids": ["InitVariablesToBeginDuel-1", "InitVariablesToBeginDuel-3", "InitVariablesToBeginDuel-5"]}
+# <<< factory-mutation InitVariablesToBeginDuel
