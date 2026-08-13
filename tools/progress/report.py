@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import tomllib
+import importlib.util
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -43,18 +44,22 @@ def _resolve_ast_name(node: ast.AST) -> str | None:
     return None
 
 
-def load_routines() -> tuple[set[str], dict[str, str]]:
-    import importlib.util
-
+def _load_registry() -> dict[str, tuple[str, ...]] | None:
     spec = importlib.util.spec_from_file_location("routines_registry", REGISTRY)
     if spec is None or spec.loader is None:
-        fail(f"cannot load {REGISTRY}")
+        return None
     module = importlib.util.module_from_spec(spec)
     try:
         spec.loader.exec_module(module)
-    except Exception as exc:  # noqa: BLE001 - surface registry defects verbatim
-        fail(f"tests/routines.py failed to import: {exc}")
-    raw: dict[str, tuple[str, ...]] = module.ROUTINES
+    except Exception:
+        return None
+    return module.ROUTINES
+
+
+def load_routines() -> tuple[set[str], dict[str, str]]:
+    raw = _load_registry()
+    if raw is None:
+        fail(f"cannot load {REGISTRY}")
     ported_parents: set[str] = set()
     name_to_parent: dict[str, str] = {}
     for entries in raw.values():
@@ -191,6 +196,58 @@ def get_routines_at(rev: str) -> set[str] | None:
         return {parent(name) for entries in raw.values() for name in entries}
     except Exception:
         return None
+
+
+def recent_ports(inventory: dict, limit: int = 8) -> list[dict]:
+    """Newest port files by creation date.
+
+    Returns [{"name": str, "file": str | None, "timestamp": int}, ...]
+    sorted by timestamp desc. ``file`` is the pret asm path when the stem
+    maps 1:1 to a pret file, else None (ambiguous stems like core/debug/save).
+    Degrades to [] when git is unavailable.
+    """
+    routines = _load_registry()
+    if routines is None:
+        return []
+
+    funcs = inventory["functions"]
+    stem_file: dict[str, str | None] = {}
+    for stem, names in routines.items():
+        files = {funcs[n]["file"] for n in names if n in funcs}
+        stem_file[stem] = next(iter(files)) if len(files) == 1 else None
+
+    try:
+        result = subprocess.run(
+            ["git", "log", "--name-only", "--diff-filter=A",
+             "--format=COMMIT|%ct", "--", "src/home"],
+            capture_output=True, text=True, timeout=10,
+        )
+        if result.returncode != 0:
+            return []
+        created: dict[str, int] = {}
+        cur = None
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith("COMMIT|"):
+                cur = int(line.split("|", 1)[1])
+            elif cur is not None and line.startswith("src/home/") and line.endswith(".c"):
+                created.setdefault(line, cur)
+    except Exception:
+        return []
+
+    entries = []
+    for stem in routines:
+        cfile = f"src/home/{stem}.c"
+        if cfile in created:
+            entries.append({
+                "name": stem_file[stem] or stem,
+                "file": stem_file[stem],
+                "timestamp": created[cfile],
+            })
+    entries.sort(key=lambda e: e["timestamp"], reverse=True)
+    return entries[:limit]
 
 
 def compute(inventory: dict, routines: set[str], gate_data: dict | None) -> dict:
@@ -348,6 +405,7 @@ def subcommand_build():
     routines_set, _ = load_routines()
     gate_data = load_gate()
     report = compute(inv, routines_set, gate_data)
+    report["recent"] = recent_ports(inv)
     commit = jj_commit_short()
     if commit:
         report["commit"] = commit[:12]
