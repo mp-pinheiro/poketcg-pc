@@ -29,6 +29,13 @@
 #define DUELVARS_ARENA_CARD_STATUS 0xF0u
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "home/trainer_cards.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* <<< factory statics */
+
 /* >>> factory RemoveCardFromList */
 /* trainer_cards.asm:2760-2776. Shifts the $ff-terminated list down by one byte,
  * removing the entry just before hl. Leaves hl decremented; de preserved. */
@@ -46,6 +53,7 @@ void RemoveCardFromList(uint16_t *hl)
 	*hl = (uint16_t)(*hl - 1u);
 }
 /* <<< factory RemoveCardFromList */
+
 
 /* >>> factory FindDuplicateCards */
 /* trainer_cards.asm:2788-2859 */

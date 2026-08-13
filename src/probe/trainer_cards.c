@@ -20,6 +20,7 @@ static void adapt_FindDuplicateCards(ProbeState *s)
 }
 /* <<< factory FindDuplicateCards */
 
+
 /* >>> factory FindAndRemoveCardFromList */
 static void adapt_FindAndRemoveCardFromList(ProbeState *s)
 {
@@ -87,7 +88,6 @@ static void adapt_AIDecide_Bill(ProbeState *s)
 
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "RemoveCardFromList", adapt_RemoveCardFromList },
-	{ "FindDuplicateCards", adapt_FindDuplicateCards },
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
 	{ "AIDecide_Maintenance", adapt_AIDecide_Maintenance },
@@ -97,5 +97,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_Bill", adapt_AIDecide_Bill },
 	{ "AIDecide_PokemonFlute", adapt_AIDecide_PokemonFlute },
 	{ "AIDecide_ClefairyDollOrMysteriousFossil", adapt_AIDecide_ClefairyDollOrMysteriousFossil },
+	{ "FindDuplicateCards", adapt_FindDuplicateCards },
 	{ NULL, NULL },
 };

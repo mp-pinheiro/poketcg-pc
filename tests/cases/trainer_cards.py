@@ -25,6 +25,7 @@ CASES["FindDuplicateCards"] = [
 ]
 # <<< factory FindDuplicateCards
 
+
 # >>> factory FindAndRemoveCardFromList
 CONTRACT["FindAndRemoveCardFromList"] = {"compare": ("hl",), "preserve": ("hl",)}
 CASES["FindAndRemoveCardFromList"] = [
