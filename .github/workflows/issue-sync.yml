@@ -58,18 +58,18 @@ jobs:
         if: (github.event_name != 'workflow_dispatch' || inputs.resume_run_id == '') && (github.event_name != 'workflow_dispatch' || inputs.migrate != true)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 tools/factory/issues.py plan --json > issue-plan.json
+        run: python3 tools/factory/issues.py plan --json
       - name: Compute deterministic migration plan
         if: github.event_name == 'workflow_dispatch' && inputs.resume_run_id == '' && inputs.migrate == true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 tools/factory/issues.py plan --migrate --json > issue-plan.json
+        run: python3 tools/factory/issues.py plan --migrate --json
       - name: Upload dry-run plan
         if: github.event_name != 'workflow_dispatch' || inputs.resume_run_id == ''
         uses: actions/upload-artifact@v4
         with:
           name: issue-plan-${{ github.run_id }}
-          path: issue-plan.json
+          path: .factory/issues-plan.json
       - name: Apply reviewed plan
         if: github.event_name == 'workflow_dispatch' && inputs.apply == true
         env:
