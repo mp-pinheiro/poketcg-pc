@@ -86,4 +86,8 @@ AnimCoordsResult GetAnimCoordsAndFlags(void);
 typedef struct { uint8_t a; uint8_t f; } AnimBufferResult;
 AnimBufferResult PlayBufferedDuelAnimations(void);
 /* <<< factory PlayBufferedDuelAnimations */
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+typedef struct { uint8_t a; uint8_t f; } CopyListResult;
+CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *de);
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
 #endif /* POKETCG_HOME_CORE_H */

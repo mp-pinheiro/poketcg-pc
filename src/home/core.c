@@ -513,3 +513,24 @@ AnimBufferResult PlayBufferedDuelAnimations(void)
 	return (AnimBufferResult){a, f};
 }
 /* <<< factory PlayBufferedDuelAnimations */
+
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+/* core.asm:1329-1336 */
+CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *de)
+{
+	uint16_t src = *hl;
+	uint16_t dst = *de;
+
+	for (;;) {
+		uint8_t a = gb_read8(src);
+		src = (uint16_t)(src + 1u);
+		gb_write8(dst, a);
+		if (a == 0xFFu) {
+			*hl = src;
+			*de = dst;
+			return (CopyListResult){a, 0xC0u};
+		}
+		dst = (uint16_t)(dst + 1u);
+	}
+}
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */

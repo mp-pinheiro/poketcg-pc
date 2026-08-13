@@ -309,6 +309,15 @@ CASES["PlayBufferedDuelAnimations"] = [
 ]
 # <<< factory PlayBufferedDuelAnimations
 
+# >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5
+CONTRACT["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["CopyListWithFFTerminatorFromHLToDE_Bank5"] = [
+    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\xFF"}, "read": {0xC100: 1, 0xC200: 1}},
+    dict(POISON, hl=0xC100, d=0xC2, e=0x00, wram={0xC100: b"\x01\x02\xFF"}, read={0xC100: 3, 0xC200: 3}),
+    {"hl": 0xC1FF, "d": 0xC2, "e": 0xFF, "wram": {0xC1FF: b"\x01\xFF"}, "read": {0xC1FF: 2, 0xC2FF: 2}},
+]
+# <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -521,3 +530,6 @@ MUTATIONS["PlayBufferedDuelAnimations"] = {
     "case_ids": ["PlayBufferedDuelAnimations-0", "PlayBufferedDuelAnimations-1"],
 }
 # <<< factory-mutation PlayBufferedDuelAnimations
+# >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5
+MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank5", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank5-0", "CopyListWithFFTerminatorFromHLToDE_Bank5-1", "CopyListWithFFTerminatorFromHLToDE_Bank5-2"]}
+# <<< factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank5

@@ -208,6 +208,18 @@ static void adapt_PlayBufferedDuelAnimations(ProbeState *s)
 }
 /* <<< factory PlayBufferedDuelAnimations */
 
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+static void adapt_CopyListWithFFTerminatorFromHLToDE_Bank5(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	CopyListResult r = CopyListWithFFTerminatorFromHLToDE_Bank5(&s->hl, &de);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -235,5 +247,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ "GetAnimCoordsAndFlags", adapt_GetAnimCoordsAndFlags },
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
+	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
 	{ NULL, NULL },
 };
