@@ -94,4 +94,7 @@ CopyListResult CopyListWithFFTerminatorFromHLToDE_Bank5(uint16_t *hl, uint16_t *
 typedef struct { uint8_t a; uint8_t carry; } EnergyFlagsResult;
 EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a);
 /* <<< factory CheckEnergyFlagsNeededInList */
+/* >>> factory PlaceCardImageOAM */
+uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de);
+/* <<< factory PlaceCardImageOAM */
 #endif /* POKETCG_HOME_CORE_H */

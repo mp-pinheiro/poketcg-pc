@@ -229,6 +229,16 @@ static void adapt_CheckEnergyFlagsNeededInList(ProbeState *s)
 }
 /* <<< factory CheckEnergyFlagsNeededInList */
 
+/* >>> factory PlaceCardImageOAM */
+static void adapt_PlaceCardImageOAM(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	s->a = PlaceCardImageOAM(&s->hl, &de);
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+/* <<< factory PlaceCardImageOAM */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -258,5 +268,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayBufferedDuelAnimations", adapt_PlayBufferedDuelAnimations },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank5", adapt_CopyListWithFFTerminatorFromHLToDE_Bank5 },
 	{ "CheckEnergyFlagsNeededInList", adapt_CheckEnergyFlagsNeededInList },
+	{ "PlaceCardImageOAM", adapt_PlaceCardImageOAM },
 	{ NULL, NULL },
 };

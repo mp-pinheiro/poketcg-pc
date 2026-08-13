@@ -152,6 +152,9 @@ static uint32_t duel_save_total_size(void)
 #define PSYCHIC_F 0x40u
 #define WATER_ENERGY 0x03u
 #define WATER_F 0x10u
+
+#include "home/objects.h"
+#include "home/lcd.h"
 /* <<< factory statics */
 
 /* >>> factory SetLineSeparation */
@@ -588,3 +591,36 @@ EnergyFlagsResult CheckEnergyFlagsNeededInList(uint8_t a)
 	}
 }
 /* <<< factory CheckEnergyFlagsNeededInList */
+
+/* >>> factory PlaceCardImageOAM */
+/* core.asm:3884-3924 */
+uint8_t PlaceCardImageOAM(uint16_t *hl, uint16_t *de)
+{
+	uint8_t l = 0xa0u;
+	uint8_t x = (uint8_t)(*de >> 8);
+	uint8_t y = (uint8_t)*de;
+	uint8_t columns = 8u;
+
+	Set_OBJ_8x16();
+
+	do {
+		uint8_t rows = 3u;
+		uint8_t row_y = y;
+
+		do {
+			SetOneObjectAttributes(row_y, x, l, 1u);
+			l = (uint8_t)(l + 2u);
+			row_y = (uint8_t)(row_y + 16u);
+			rows--;
+		} while (rows != 0u);
+
+		x = (uint8_t)(x + 8u);
+		columns--;
+	} while (columns != 0u);
+
+	*hl = (uint16_t)((*hl & 0xff00u) | l);
+	*de = (uint16_t)((uint16_t)x << 8 | y);
+	gb_write8(0xcac0u, TRUE);
+	return TRUE;
+}
+/* <<< factory PlaceCardImageOAM */

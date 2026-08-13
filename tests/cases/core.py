@@ -328,6 +328,14 @@ CASES["CheckEnergyFlagsNeededInList"] = [
 ]
 # <<< factory CheckEnergyFlagsNeededInList
 
+# >>> factory PlaceCardImageOAM
+CONTRACT["PlaceCardImageOAM"] = {"compare": ("a", "d", "e", "hl"), "preserve": ("e",)}
+CASES["PlaceCardImageOAM"] = [
+    {"wram": {0xCAC0: b"\x00"}, "read": {0xCAC0: 1}},
+    dict(POISON, hl=0x1234, d=0x20, e=0x30, wram={0xCAC0: b"\x00"}, read={0xCAC0: 1}),
+]
+# <<< factory PlaceCardImageOAM
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -546,3 +554,6 @@ MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank5"] = {"source_symbol": "CopyL
 # >>> factory-mutation CheckEnergyFlagsNeededInList
 MUTATIONS["CheckEnergyFlagsNeededInList"] = {"source_symbol": "CheckEnergyFlagsNeededInList", "before": "return (EnergyFlagsResult){0xffu, 0u};", "after": "return (EnergyFlagsResult){0u, 0u};", "case_ids": ["CheckEnergyFlagsNeededInList-0", "CheckEnergyFlagsNeededInList-1", "CheckEnergyFlagsNeededInList-2", "CheckEnergyFlagsNeededInList-3"]}
 # <<< factory-mutation CheckEnergyFlagsNeededInList
+# >>> factory-mutation PlaceCardImageOAM
+MUTATIONS["PlaceCardImageOAM"] = {"source_symbol": "PlaceCardImageOAM", "before": "\tgb_write8(0xcac0u, TRUE);", "after": "\tgb_write8(0xcac0u, 0u);", "case_ids": ["PlaceCardImageOAM-0", "PlaceCardImageOAM-1"]}
+# <<< factory-mutation PlaceCardImageOAM

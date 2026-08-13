@@ -1,0 +1,9 @@
+{
+  "fn": "PlaceCardImageOAM",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlaceCardImageOAM\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 64, \"e\": 0, \"f\": 0, \"hl\": 208, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlaceCardImageOAM\", \"mismatches\": {\"bus\": {\"address\": 51904, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[51904, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlaceCardImageOAM\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 64, \"e\": 0, \"f\": 0, \"hl\": 208, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
