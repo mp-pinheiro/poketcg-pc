@@ -49,8 +49,8 @@ jobs:
           fi
           message="$(git log -1 --format=%s)"
           case "$message" in
-            chore\(release\):*)
-              echo "release commit $source is already generated; no release"
+            chore\(release\):*|chore\(progress\):\ daily\ snapshot)
+              echo "generated commit $source does not cut a release"
               echo "cut=false" >> "$GITHUB_OUTPUT"
               exit 0
               ;;

@@ -13,7 +13,11 @@
   <div id="commit-info"></div>
 </header>
 <section id="chart-section">
-  <div class="chart-heading"><h2>Code progress</h2></div>
+  <div class="chart-heading">
+    <h2>Code progress</h2>
+    <strong id="chart-summary"></strong>
+    <span id="chart-range"></span>
+  </div>
   <div id="chart" class="progress-graph-container"></div>
 </section>
 <section id="recent-section"><h2>Recently ported</h2><div id="recent"></div></section>
@@ -26,7 +30,7 @@
   </table>
 </section>
 <section id="frontier-section"><h2>Ready to port</h2><div id="frontier"></div></section>
-<footer><p>This graph compares the baseline with the current total directly. The line connects 16.39% then to 21.99% now; it does not encode elapsed time.</p></footer>
-<script type="module" src="app.js?v=two-point-graph"></script>
+<footer><p>One point per UTC calendar day. Days without a completed port carry the previous completion value forward. A scheduled snapshot runs daily at 00:05 UTC.</p></footer>
+<script type="module" src="app.js?v=daily-progress"></script>
 </body>
 </html>

@@ -55,42 +55,84 @@ function renderHeader(p) {
 function renderChart(points) {
   if (!points || points.length < 2) {
     CHART.innerHTML = '';
+    CHART_RANGE.textContent = '';
+    CHART_SUMMARY.textContent = '';
     return;
   }
-  const visible = points.filter((pt, index) => {
-    if (index === 0 || index === points.length - 1) return true;
-    const previous = points[index - 1];
-    return pt.code !== previous.code || pt.code_total !== previous.code_total;
-  });
-  const BASELINE_TIMESTAMP = 1786493065;
-  const baselineIndex = visible.findIndex(pt => pt.timestamp >= BASELINE_TIMESTAMP);
-  const focus = visible.slice(baselineIndex >= 0 ? baselineIndex : Math.max(0, visible.length - 90));
-  const start = focus[0].code_total ? focus[0].code * 100 / focus[0].code_total : 0;
-  const end = focus[focus.length - 1].code_total
-    ? focus[focus.length - 1].code * 100 / focus[focus.length - 1].code_total
-    : 0;
-  const delta = end - start;
-  const deltaLabel = delta >= 0 ? `+${delta.toFixed(2)}` : delta.toFixed(2);
-  const y = value => 210 - value / 25 * 170;
-  let svg = '<svg class="progress-graph" viewBox="0 0 800 260" role="img" aria-label="Code progress from baseline to current">';
-  svg += '<text x="40" y="24" class="graph-title">Recent progress</text>';
-  for (let tick = 0; tick <= 25; tick += 5) {
-    const yPos = y(tick);
-    svg += `<line x1="80" y1="${yPos}" x2="750" y2="${yPos}" class="graph-grid"/>`;
-    svg += `<text x="68" y="${yPos + 4}" text-anchor="end" class="graph-axis">${tick}%</text>`;
+
+  const sorted = [...points].sort((a, b) => a.timestamp - b.timestamp);
+  const utcDay = timestamp => new Date(timestamp * 1000).toISOString().slice(0, 10);
+  const endDay = new Date();
+  endDay.setUTCHours(0, 0, 0, 0);
+  const firstDay = new Date(`${utcDay(sorted[0].timestamp)}T00:00:00Z`);
+  const startDay = new Date(Math.max(firstDay.getTime(), endDay.getTime() - 29 * 86400000));
+  const daily = [];
+  let sourceIndex = 0;
+  let current = sorted[0];
+  const startTimestamp = startDay.getTime() / 1000;
+  while (sourceIndex < sorted.length && sorted[sourceIndex].timestamp < startTimestamp) {
+    current = sorted[sourceIndex];
+    sourceIndex += 1;
   }
-  const startX = 250;
-  const endX = 580;
-  svg += `<line x1="${startX}" y1="${y(start)}" x2="${endX}" y2="${y(end)}" class="graph-link"/>`;
-  svg += `<circle cx="${startX}" cy="${y(start)}" r="10" class="graph-point"/>`;
-  svg += `<circle cx="${endX}" cy="${y(end)}" r="10" class="graph-point"/>`;
-  svg += `<text x="${startX}" y="${y(start) - 18}" text-anchor="middle" class="graph-value">${start.toFixed(2)}%</text>`;
-  svg += `<text x="${endX}" y="${y(end) - 18}" text-anchor="middle" class="graph-value">${end.toFixed(2)}%</text>`;
-  svg += `<text x="${startX}" y="242" text-anchor="middle" class="graph-label">then</text>`;
-  svg += `<text x="${endX}" y="242" text-anchor="middle" class="graph-label">now</text>`;
-  svg += `<text x="415" y="${(y(start) + y(end)) / 2 - 12}" text-anchor="middle" class="graph-delta">${deltaLabel}pp</text>`;
+
+  for (let day = new Date(startDay); day <= endDay; day.setUTCDate(day.getUTCDate() + 1)) {
+    const nextDay = day.getTime() / 1000 + 86400;
+    while (sourceIndex < sorted.length && sorted[sourceIndex].timestamp < nextDay) {
+      current = sorted[sourceIndex];
+      sourceIndex += 1;
+    }
+    daily.push({
+      date: new Date(day),
+      value: current.code_total ? current.code * 100 / current.code_total : 0,
+    });
+  }
+
+  const width = 800;
+  const height = 310;
+  const left = 74;
+  const right = 24;
+  const top = 42;
+  const bottom = 64;
+  const plotWidth = width - left - right;
+  const plotHeight = height - top - bottom;
+  const x = index => left + (daily.length === 1 ? 0 : index / (daily.length - 1) * plotWidth);
+  const y = value => top + (100 - value) / 100 * plotHeight;
+  const dateLabel = date => date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+  const tickIndexes = [...new Set([0, Math.floor((daily.length - 1) / 2), daily.length - 1])];
+  const path = daily.map((point, index) =>
+    `${index === 0 ? 'M' : 'L'} ${x(index).toFixed(1)} ${y(point.value).toFixed(1)}`
+  ).join(' ');
+  const start = daily[0];
+  const end = daily[daily.length - 1];
+  const delta = end.value - start.value;
+  const deltaLabel = `${delta >= 0 ? '+' : ''}${delta.toFixed(2)}pp`;
+
+  let svg = `<svg class="progress-graph" viewBox="0 0 ${width} ${height}" role="img" aria-label="Code completion by calendar date">`;
+  svg += '<text x="24" y="24" class="graph-title">Code completion over time</text>';
+  for (let tick = 0; tick <= 100; tick += 25) {
+    const yPos = y(tick);
+    svg += `<line x1="${left}" y1="${yPos}" x2="${width - right}" y2="${yPos}" class="graph-grid"/>`;
+    svg += `<text x="${left - 10}" y="${yPos + 4}" text-anchor="end" class="graph-axis">${tick}%</text>`;
+  }
+  svg += `<path d="${path}" class="graph-link" fill="none"/>`;
+  daily.forEach((point, index) => {
+    svg += `<circle cx="${x(index)}" cy="${y(point.value)}" r="4" class="graph-point"/>`;
+  });
+  tickIndexes.forEach(index => {
+    const anchor = index === 0 ? 'start' : index === daily.length - 1 ? 'end' : 'middle';
+    svg += `<text x="${x(index)}" y="${height - 32}" text-anchor="${anchor}" class="graph-label">${dateLabel(daily[index].date)}</text>`;
+  });
+  svg += `<text x="${left + plotWidth / 2}" y="${height - 8}" text-anchor="middle" class="graph-axis-title">Progress snapshot date (UTC)</text>`;
+  svg += `<text x="${x(daily.length - 1) - 8}" y="${y(end.value) - 12}" text-anchor="end" class="graph-value">${end.value.toFixed(2)}%</text>`;
   svg += '</svg>';
+
   CHART.innerHTML = svg;
+  CHART_SUMMARY.textContent = `${start.value.toFixed(2)}% → ${end.value.toFixed(2)}% (${deltaLabel})`;
+  CHART_RANGE.textContent = `${dateLabel(start.date)} – ${dateLabel(end.date)} · daily calendar view`;
 }
 
 function renderCategories(cats) {
@@ -198,8 +240,8 @@ function applyFilter() {
 
 async function main() {
   const [progResp, histResp] = await Promise.all([
-    fetch('data/progress.json?v=two-point-graph'),
-    fetch('data/history.jsonl?v=two-point-graph').catch(() => null),
+    fetch('data/progress.json?v=daily-progress'),
+    fetch('data/history.jsonl?v=daily-progress').catch(() => null),
   ]);
   progressData = await progResp.json();
   PRET_SHORT = progressData.pret_commit.slice(0, 7);

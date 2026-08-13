@@ -133,15 +133,19 @@ def load_gate() -> dict | None:
 
 
 def jj_commit_short() -> str | None:
-    try:
-        result = subprocess.run(
-            ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
-            capture_output=True, text=True, timeout=5,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-    except Exception:
-        pass
+    commands = (
+        ["jj", "log", "-r", "@-", "--no-graph", "-T", "commit_id"],
+        ["git", "rev-parse", "HEAD"],
+    )
+    for command in commands:
+        try:
+            result = subprocess.run(
+                command, capture_output=True, text=True, timeout=5,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                return result.stdout.strip()
+        except Exception:
+            pass
     return None
 
 
@@ -422,25 +426,17 @@ def subcommand_build():
         "functions": report["measures"]["functions"],
         "functions_total": report["measures"]["functions/total"],
     }
-    points = []
+    points_by_day = {}
     if HISTORY.exists():
         with open(HISTORY) as f:
             for entry_line in f:
                 try:
-                    points.append(json.loads(entry_line))
-                except json.JSONDecodeError:
+                    point = json.loads(entry_line)
+                    points_by_day[point["timestamp"] // 86400] = point
+                except (json.JSONDecodeError, KeyError, TypeError):
                     pass
-    if commit:
-        short = commit[:12]
-        found = False
-        for i, p in enumerate(points):
-            if p.get("commit") == short:
-                points[i] = line
-                found = True
-                break
-        if not found:
-            points.append(line)
-    points.sort(key=lambda p: p.get("timestamp", 0))
+    points_by_day[line["timestamp"] // 86400] = line
+    points = sorted(points_by_day.values(), key=lambda p: p.get("timestamp", 0))
     with open(HISTORY, "w") as f:
         for p in points:
             f.write(json.dumps(p, sort_keys=True, separators=(",", ":")) + "\n")

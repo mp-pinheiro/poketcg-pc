@@ -23,15 +23,18 @@ header { margin-bottom: 1rem; }
 #commit-info { font-size: 0.85rem; color: var(--muted); }
 #commit-info a { color: var(--blue); }
 
+.chart-heading { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 0.25rem 1rem; margin-bottom: 0.5rem; }
+.chart-heading h2 { margin: 0; }
+#chart-summary { justify-self: end; color: var(--green); }
+#chart-range { grid-column: 1 / -1; color: var(--muted); font-size: 0.85rem; }
 #chart.progress-graph-container { border: 1px solid var(--border); border-radius: 4px; background: var(--surface); overflow: hidden; }
 .progress-graph { display: block; width: 100%; height: auto; }
 .graph-title { fill: var(--text); font-size: 16px; font-weight: 600; }
 .graph-grid { stroke: var(--border); stroke-width: 1; }
-.graph-axis, .graph-label { fill: var(--muted); font-size: 12px; }
-.graph-link { stroke: var(--green); stroke-width: 5; stroke-linecap: round; }
-.graph-point { fill: var(--green); stroke: var(--surface); stroke-width: 4; }
-.graph-value { fill: var(--green); font-size: 18px; font-weight: 700; }
-.graph-delta { fill: var(--green); font-size: 14px; font-weight: 700; }
+.graph-axis, .graph-label, .graph-axis-title { fill: var(--muted); font-size: 12px; }
+.graph-link { stroke: var(--green); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.graph-point { fill: var(--green); stroke: var(--surface); stroke-width: 2; }
+.graph-value { fill: var(--green); font-size: 16px; font-weight: 700; }
 #categories { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.5rem; }
 .category { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; }
 .category .name { font-weight: 600; margin-bottom: 0.25rem; }
