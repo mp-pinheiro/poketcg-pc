@@ -1367,3 +1367,19 @@ void NidorinaDoubleKick_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory NidorinaDoubleKick_AIEffect */
+
+/* >>> factory NidorinoDoubleKick_AIEffect */
+/* effect_functions.asm:...? */
+void NidorinoDoubleKick_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory NidorinoDoubleKick_AIEffect */
+
+/* >>> factory WeedlePoisonSting_AIEffect */
+/* effect_functions.asm:...? */
+void WeedlePoisonSting_AIEffect(void)
+{
+	UpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);
+}
+/* <<< factory WeedlePoisonSting_AIEffect */

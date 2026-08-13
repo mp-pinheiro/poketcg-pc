@@ -733,6 +733,20 @@ static void adapt_NidorinaDoubleKick_AIEffect(ProbeState *s)
 }
 /* <<< factory NidorinaDoubleKick_AIEffect */
 
+/* >>> factory NidorinoDoubleKick_AIEffect */
+static void adapt_NidorinoDoubleKick_AIEffect(ProbeState *s)
+{
+	NidorinoDoubleKick_AIEffect();
+}
+/* <<< factory NidorinoDoubleKick_AIEffect */
+
+/* >>> factory WeedlePoisonSting_AIEffect */
+static void adapt_WeedlePoisonSting_AIEffect(ProbeState *s)
+{
+	WeedlePoisonSting_AIEffect();
+}
+/* <<< factory WeedlePoisonSting_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -820,5 +834,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Teleport_AISelectEffect", adapt_Teleport_AISelectEffect },
 	{ "HornHazard_AIEffect", adapt_HornHazard_AIEffect },
 	{ "NidorinaDoubleKick_AIEffect", adapt_NidorinaDoubleKick_AIEffect },
+	{ "NidorinoDoubleKick_AIEffect", adapt_NidorinoDoubleKick_AIEffect },
+	{ "WeedlePoisonSting_AIEffect", adapt_WeedlePoisonSting_AIEffect },
 	{ NULL, NULL },
 };

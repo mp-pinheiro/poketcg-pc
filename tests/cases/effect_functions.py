@@ -986,6 +986,24 @@ CASES["NidorinaDoubleKick_AIEffect"] = [
 ]
 # <<< factory NidorinaDoubleKick_AIEffect
 
+# >>> factory NidorinoDoubleKick_AIEffect
+CONTRACT["NidorinoDoubleKick_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["NidorinoDoubleKick_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory NidorinoDoubleKick_AIEffect
+
+# >>> factory WeedlePoisonSting_AIEffect
+CONTRACT["WeedlePoisonSting_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["WeedlePoisonSting_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x14"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON), dict(POISON, a=1), dict(POISON, f=0), dict(POISON, hl=0x4567),
+]
+# <<< factory WeedlePoisonSting_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1576,3 +1594,9 @@ MUTATIONS["NidorinaDoubleKick_AIEffect"] = {
     "case_ids": ["NidorinaDoubleKick_AIEffect-0", "NidorinaDoubleKick_AIEffect-1", "NidorinaDoubleKick_AIEffect-2"],
 }
 # <<< factory-mutation NidorinaDoubleKick_AIEffect
+# >>> factory-mutation NidorinoDoubleKick_AIEffect
+MUTATIONS["NidorinoDoubleKick_AIEffect"] = {"source_symbol": "NidorinoDoubleKick_AIEffect", "before": "void NidorinoDoubleKick_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void NidorinoDoubleKick_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["NidorinoDoubleKick_AIEffect-0", "NidorinoDoubleKick_AIEffect-1", "NidorinoDoubleKick_AIEffect-2"]}
+# <<< factory-mutation NidorinoDoubleKick_AIEffect
+# >>> factory-mutation WeedlePoisonSting_AIEffect
+MUTATIONS["WeedlePoisonSting_AIEffect"] = {"source_symbol": "WeedlePoisonSting_AIEffect", "before": "void WeedlePoisonSting_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(5u, 0u, 10u);\n}", "after": "void WeedlePoisonSting_AIEffect(void)\n{\n\tUpdateExpectedAIDamage_AccountForPoison(6u, 0u, 10u);\n}", "case_ids": ["WeedlePoisonSting_AIEffect-0", "WeedlePoisonSting_AIEffect-1", "WeedlePoisonSting_AIEffect-2", "WeedlePoisonSting_AIEffect-3", "WeedlePoisonSting_AIEffect-4"]}
+# <<< factory-mutation WeedlePoisonSting_AIEffect

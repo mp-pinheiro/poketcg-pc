@@ -1,0 +1,9 @@
+{
+  "fn": "WeedlePoisonSting_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WeedlePoisonSting_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"19\", \"52411\": \"141e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WeedlePoisonSting_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"19141e\", \"native\": \"1a141e\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52409, 1], [52411, 2]]}}}\n",
+  "restored": "{\"fn\": \"WeedlePoisonSting_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"19\", \"52411\": \"141e\"}}, \"status\": \"PASS\"}\n"
+}

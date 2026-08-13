@@ -304,4 +304,10 @@ void HornHazard_AIEffect(void);
 /* >>> factory NidorinaDoubleKick_AIEffect */
 void NidorinaDoubleKick_AIEffect(void);
 /* <<< factory NidorinaDoubleKick_AIEffect */
+/* >>> factory NidorinoDoubleKick_AIEffect */
+void NidorinoDoubleKick_AIEffect(void);
+/* <<< factory NidorinoDoubleKick_AIEffect */
+/* >>> factory WeedlePoisonSting_AIEffect */
+void WeedlePoisonSting_AIEffect(void);
+/* <<< factory WeedlePoisonSting_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
