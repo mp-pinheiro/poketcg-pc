@@ -347,6 +347,7 @@ void SetBGP7OrSGB2ToCardPalette(void)
 }
 /* <<< factory SetBGP7OrSGB2ToCardPalette */
 
+
 /* >>> factory JPWriteByteToBGMap0 */
 /* core.asm:4219-4221 */
 void JPWriteByteToBGMap0(uint8_t a, uint8_t b, uint8_t c)
@@ -959,3 +960,22 @@ CalculateBDividedByAResult CalculateBDividedByA_Bank5(uint8_t a, uint8_t b)
 	}
 }
 /* <<< factory CalculateBDividedByA_Bank5 */
+
+/* >>> factory PrintCardPageRarityIcon */
+/* core.asm:4617-4626 */
+ProcessTextHeaderResult PrintCardPageRarityIcon(uint8_t a, uint8_t d, uint8_t e, uint16_t hl)
+{
+	a = (uint8_t)((a + 1u) << 1);
+	hl = (uint16_t)(hl + a);
+	return InitTextPrinting_ProcessTextFromPointerToID(d, e, hl);
+}
+/* <<< factory PrintCardPageRarityIcon */
+
+/* >>> factory SetNoLineSeparation */
+/* core.asm:4768-4769 */
+uint8_t SetNoLineSeparation(void)
+{
+	SetLineSeparation(1u);
+	return 1u;
+}
+/* <<< factory SetNoLineSeparation */

@@ -161,4 +161,11 @@ ConvertHPToDamageCountersResult ConvertHPToDamageCounters_Bank5(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } CalculateBDividedByAResult;
 CalculateBDividedByAResult CalculateBDividedByA_Bank5(uint8_t a, uint8_t b);
 /* <<< factory CalculateBDividedByA_Bank5 */
+/* >>> factory PrintCardPageRarityIcon */
+#include "home/print_text.h"
+ProcessTextHeaderResult PrintCardPageRarityIcon(uint8_t a, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory PrintCardPageRarityIcon */
+/* >>> factory SetNoLineSeparation */
+uint8_t SetNoLineSeparation(void);
+/* <<< factory SetNoLineSeparation */
 #endif /* POKETCG_HOME_CORE_H */

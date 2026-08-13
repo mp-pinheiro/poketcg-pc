@@ -70,6 +70,7 @@ static void adapt_JPWriteByteToBGMap0(ProbeState *s)
 }
 /* <<< factory JPWriteByteToBGMap0 */
 
+
 /* >>> factory ZeroObjectPositionsAndToggleOAMCopy */
 static void adapt_ZeroObjectPositionsAndToggleOAMCopy(ProbeState *s)
 {
@@ -366,6 +367,25 @@ static void adapt_CalculateBDividedByA_Bank5(ProbeState *s)
 }
 /* <<< factory CalculateBDividedByA_Bank5 */
 
+/* >>> factory PrintCardPageRarityIcon */
+static void adapt_PrintCardPageRarityIcon(ProbeState *s)
+{
+	ProcessTextHeaderResult r = PrintCardPageRarityIcon(s->a, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PrintCardPageRarityIcon */
+
+/* >>> factory SetNoLineSeparation */
+static void adapt_SetNoLineSeparation(ProbeState *s)
+{
+	s->a = SetNoLineSeparation();
+}
+/* <<< factory SetNoLineSeparation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "SetLineSeparation", adapt_SetLineSeparation },
 	{ "PlayAreaScreenMenuFunction", adapt_PlayAreaScreenMenuFunction },
@@ -375,7 +395,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SaveDuelDataToDE", adapt_SaveDuelDataToDE },
 	{ "LoadSavedDuelDataFromDE", adapt_LoadSavedDuelDataFromDE },
 	{ "SetBGP7OrSGB2ToCardPalette", adapt_SetBGP7OrSGB2ToCardPalette },
-	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
 	{ "ZeroObjectPositionsAndToggleOAMCopy", adapt_ZeroObjectPositionsAndToggleOAMCopy },
 	{ "LoadPlayerDeck", adapt_LoadPlayerDeck },
 	{ "PrintPracticeDuelDrMasonInstructions", adapt_PrintPracticeDuelDrMasonInstructions },
@@ -411,5 +430,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIDiscourage", adapt_AIDiscourage },
 	{ "ConvertHPToDamageCounters_Bank5", adapt_ConvertHPToDamageCounters_Bank5 },
 	{ "CalculateBDividedByA_Bank5", adapt_CalculateBDividedByA_Bank5 },
+	{ "JPWriteByteToBGMap0", adapt_JPWriteByteToBGMap0 },
+	{ "PrintCardPageRarityIcon", adapt_PrintCardPageRarityIcon },
+	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
 	{ NULL, NULL },
 };

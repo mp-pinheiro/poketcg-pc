@@ -111,6 +111,7 @@ CASES["JPWriteByteToBGMap0"] = [
 ]
 # <<< factory JPWriteByteToBGMap0
 
+
 # >>> factory ZeroObjectPositionsAndToggleOAMCopy
 wVBlankOAMCopyToggle = 0xCAC0
 CONTRACT["ZeroObjectPositionsAndToggleOAMCopy"] = {"compare": (), "preserve": ()}
@@ -498,6 +499,26 @@ CASES["CalculateBDividedByA_Bank5"] = [
 ]
 # <<< factory CalculateBDividedByA_Bank5
 
+# >>> factory PrintCardPageRarityIcon
+CONTRACT["PrintCardPageRarityIcon"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintCardPageRarityIcon"] = [
+	{"a": 0, "d": 0, "e": 0, "hl": 0xC100,
+	 "wram": {0xC100: b"\x00\x00\x00\x00"}, "read": {0xC100: 4}},
+	dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
+	dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
+	dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
+	dict(POISON, hl=0xC100, wram={0xC156: b"\x00\x00\x00\x00"}, read={0xC156: 4}),
+]
+# <<< factory PrintCardPageRarityIcon
+
+# >>> factory SetNoLineSeparation
+CONTRACT["SetNoLineSeparation"] = {"compare": ("a",), "preserve": ()}
+CASES["SetNoLineSeparation"] = [
+	{"wram": {0xCD08: b"\x00"}, "read": {0xCD08: 1}},
+	dict(POISON, wram={0xCD08: b"\xff"}, read={0xCD08: 1}),
+]
+# <<< factory SetNoLineSeparation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -771,3 +792,19 @@ MUTATIONS["ConvertHPToDamageCounters_Bank5"] = {"source_symbol": "ConvertHPToDam
 # >>> factory-mutation CalculateBDividedByA_Bank5
 MUTATIONS["CalculateBDividedByA_Bank5"] = {"source_symbol": "CalculateBDividedByA_Bank5", "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);", "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);", "case_ids": ["CalculateBDividedByA_Bank5-1", "CalculateBDividedByA_Bank5-2", "CalculateBDividedByA_Bank5-3", "CalculateBDividedByA_Bank5-4", "CalculateBDividedByA_Bank5-5"]}
 # <<< factory-mutation CalculateBDividedByA_Bank5
+# >>> factory-mutation PrintCardPageRarityIcon
+MUTATIONS["PrintCardPageRarityIcon"] = {
+	"source_symbol": "PrintCardPageRarityIcon",
+	"before": "a = (uint8_t)((a + 1u) << 1);",
+	"after": "a = (uint8_t)((a + 2u) << 1);",
+	"case_ids": ["PrintCardPageRarityIcon-0", "PrintCardPageRarityIcon-1"],
+}
+# <<< factory-mutation PrintCardPageRarityIcon
+# >>> factory-mutation SetNoLineSeparation
+MUTATIONS["SetNoLineSeparation"] = {
+	"source_symbol": "SetNoLineSeparation",
+	"before": "SetLineSeparation(1u);",
+	"after": "SetLineSeparation(2u);",
+	"case_ids": ["SetNoLineSeparation-0", "SetNoLineSeparation-1"],
+}
+# <<< factory-mutation SetNoLineSeparation
