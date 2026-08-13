@@ -168,4 +168,8 @@ CheckAttackResult CheckIfTurnDuelistHasEvolvedCards(void);
 typedef struct { uint8_t a; uint8_t f; } FindFirstNonBasicCardInPlayAreaResult;
 FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void);
 /* <<< factory FindFirstNonBasicCardInPlayArea */
+/* >>> factory Wildfire_AISelectEffect */
+typedef struct { uint8_t a; uint8_t f; } WildfireAISelectEffectResult;
+WildfireAISelectEffectResult Wildfire_AISelectEffect(void);
+/* <<< factory Wildfire_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */

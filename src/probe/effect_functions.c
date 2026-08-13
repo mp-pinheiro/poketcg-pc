@@ -406,6 +406,15 @@ static void adapt_FindFirstNonBasicCardInPlayArea(ProbeState *s)
 }
 /* <<< factory FindFirstNonBasicCardInPlayArea */
 
+/* >>> factory Wildfire_AISelectEffect */
+static void adapt_Wildfire_AISelectEffect(ProbeState *s)
+{
+	WildfireAISelectEffectResult r = Wildfire_AISelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Wildfire_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "UpdateExpectedAIDamage", adapt_UpdateExpectedAIDamage },
 	{ "SetExpectedAIDamage", adapt_SetExpectedAIDamage },
@@ -455,5 +464,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CreateListOfEnergyAttachedToArena", adapt_CreateListOfEnergyAttachedToArena },
 	{ "HandleNoDamageOrEffect", adapt_HandleNoDamageOrEffect },
 	{ "CheckIfPlayAreaHasAnyDamage", adapt_CheckIfPlayAreaHasAnyDamage },
+	{ "Wildfire_AISelectEffect", adapt_Wildfire_AISelectEffect },
 	{ NULL, NULL },
 };

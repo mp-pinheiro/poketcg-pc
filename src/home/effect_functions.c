@@ -113,6 +113,15 @@ static const uint8_t color_to_text[] = {
 #include "home/damage.h"
 #include "home/duel.h"
 #include "home/math.h"
+
+#define ASLEEP    0x02u
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#define DUELVARS_CARD_LOCATIONS 0x00u
+#define CARD_LOCATION_ARENA    0x10u
+
+#define DUELVARS_ARENA_CARD_CHANGED_TYPE 0xD4u
 /* <<< factory statics */
 
 
@@ -820,3 +829,13 @@ FindFirstNonBasicCardInPlayAreaResult FindFirstNonBasicCardInPlayArea(void)
 	return (FindFirstNonBasicCardInPlayAreaResult){0x00u, 0x80u};
 }
 /* <<< factory FindFirstNonBasicCardInPlayArea */
+
+/* >>> factory Wildfire_AISelectEffect */
+/* effect_functions.asm:3780-3783 */
+WildfireAISelectEffectResult Wildfire_AISelectEffect(void)
+{
+	uint8_t a = 0x00u;
+	hTempList = a;
+	return (WildfireAISelectEffectResult){a, 0x80u};
+}
+/* <<< factory Wildfire_AISelectEffect */

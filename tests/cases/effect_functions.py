@@ -594,6 +594,15 @@ CASES["FindFirstNonBasicCardInPlayArea"] = [
 ]
 # <<< factory FindFirstNonBasicCardInPlayArea
 
+# >>> factory Wildfire_AISelectEffect
+CONTRACT["Wildfire_AISelectEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Wildfire_AISelectEffect"] = [
+    {"wram": {0xFFA0: b"\xFF"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFFA0: b"\xAA"}, read={0xFFA0: 1}),
+    {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "hl": 6, "wram": {0xFFA0: b"\x55"}, "read": {0xFFA0: 1}},
+]
+# <<< factory Wildfire_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -954,3 +963,6 @@ MUTATIONS["FindFirstNonBasicCardInPlayArea"] = {
     "case_ids": ["FindFirstNonBasicCardInPlayArea-0"],
 }
 # <<< factory-mutation FindFirstNonBasicCardInPlayArea
+# >>> factory-mutation Wildfire_AISelectEffect
+MUTATIONS["Wildfire_AISelectEffect"] = {"source_symbol": "Wildfire_AISelectEffect", "before": "\tuint8_t a = 0x00u;", "after": "\tuint8_t a = 0x01u;", "case_ids": ["Wildfire_AISelectEffect-0", "Wildfire_AISelectEffect-1", "Wildfire_AISelectEffect-2"]}
+# <<< factory-mutation Wildfire_AISelectEffect
