@@ -98,7 +98,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 RESERVED = range(0xCF00, 0xD000)
 
 
-def case_lint(lane: Path, basename: str, routine_names: list[str]) -> dict[str, list[str]]:
+def case_lint(lane: Path, basename: str, routine_names: list[str],
+              module=None) -> dict[str, list[str]]:
     """Mechanical, PyBoy-free checks. Deliberately does not trust the case
     module to import cleanly: an undefined name in it (e.g. a stray C
     `_ADDR` macro referenced as a bare Python identifier — those macros do
@@ -111,12 +112,13 @@ def case_lint(lane: Path, basename: str, routine_names: list[str]) -> dict[str, 
     def fail(fn: str, msg: str) -> None:
         violations.setdefault(fn, []).append(msg)
 
-    try:
-        module = load_cases_module(lane, basename)
-    except Exception as exc:
-        for fn in routine_names:
-            fail(fn, f"case module fails to import: {exc}")
-        return violations
+    if module is None:
+        try:
+            module = load_cases_module(lane, basename)
+        except Exception as exc:
+            for fn in routine_names:
+                fail(fn, f"case module fails to import: {exc}")
+            return violations
     contract = getattr(module, "CONTRACT", {})
     cases = getattr(module, "CASES", {})
     mutations = getattr(module, "MUTATIONS", {})

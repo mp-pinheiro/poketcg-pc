@@ -47,16 +47,14 @@ def _positive_int(value: str) -> int:
 
 
 def select_pending_packets(limit: int | None) -> list[dict]:
-    if limit is None:
-        return []
-    packets = common.list_packets(("pending",))
-    return sorted(
-        packets,
+    packets = sorted(
+        common.list_packets(("pending",)),
         key=lambda packet: (
             packet.get("updated_at") if isinstance(packet.get("updated_at"), int) else 0,
             packet["id"],
         ),
-    )[:limit]
+    )
+    return packets if limit is None else packets[:limit]
 
 
 def plan_work_id_migration(

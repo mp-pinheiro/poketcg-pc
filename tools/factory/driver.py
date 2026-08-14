@@ -23,15 +23,25 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (  # noqa: E402
-    FACTORY, METRICS, PhaseTimeout, WaveDeadlineExpired, block_routine,
-    estimate_tokens, list_packets, load_packet, record_metric, save_packet,
-    set_state, wave_lock,
-)
 import lanes  # noqa: E402
 import prompt as prompt_mod  # noqa: E402
 import surgery  # noqa: E402
 import verify as verify_mod  # noqa: E402
+from common import (  # noqa: E402
+    FACTORY,
+    METRICS,
+    ROOT,
+    WaveDeadlineExpired,
+    block_routine,
+    estimate_tokens,
+    list_packets,
+    load_packet,
+    record_metric,
+    run_bounded,
+    save_packet,
+    set_state,
+    wave_lock,
+)
 
 IN_FLIGHT = ("translating", "translated", "verifying", "repair")
 ACTIVE_CLAIM_STATES = ("pending", *IN_FLIGHT, "green")
@@ -86,23 +96,39 @@ def _clear_attempt(run: _Run) -> None:
 
 
 
-def _apply_and_verify(run: _Run, translation: dict) -> dict:
-    """Worker-thread step: surgery + verification inside the pinned lane."""
-    if run.statics_baseline is None:
-        run.statics_baseline = surgery.read_statics(run.lane, run.packet["basename"])
-    try:
-        changed = surgery.apply(run.lane, run.packet, translation,
-                                statics_baseline=run.statics_baseline)
-    except surgery.SurgeryError as exc:
-        return {"status": "surgery", "detail": str(exc)}
-    cases_changed = any(str(p).endswith(".py") for p in changed) or run.rounds == 0
-    _attempt(run, "verifying", run.deadline, run.rounds)
-    try:
-        return verify_mod.verify_packet(
-            run.packet, run.lane, cases_changed, deadline=run.deadline,
-        )
-    except PhaseTimeout as exc:
-        return {"status": "infra-timeout", "detail": str(exc)}
+def _apply_and_verify(packet: dict, lane: Path, translation: dict,
+                      statics_baseline: list[str] | None, rounds: int,
+                      deadline: float) -> dict:
+    """Run surgery and verification behind a killable process boundary."""
+    payload = json.dumps({
+        "packet": packet,
+        "lane": str(lane),
+        "translation": translation,
+        "statics_baseline": statics_baseline,
+        "rounds": rounds,
+        "deadline": deadline,
+    })
+    completed = run_bounded(
+        [sys.executable, str(Path(__file__).with_name("verify_worker.py"))],
+        cwd=ROOT,
+        cap=max(0.001, deadline - time.monotonic()),
+        deadline=deadline,
+        check=True,
+        input_text=payload,
+    )
+    response = json.loads(completed.stdout)
+    if not isinstance(response, dict):
+        raise TypeError("verification worker returned a non-object")
+    if response.get("deadline"):
+        raise WaveDeadlineExpired(str(response["deadline"]))
+    result = response.get("result")
+    baseline = response.get("statics_baseline")
+    if not isinstance(result, dict) or not isinstance(result.get("status"), str):
+        raise TypeError("verification worker returned an invalid verdict")
+    if not isinstance(baseline, list):
+        raise TypeError("verification worker returned an invalid statics baseline")
+    result["_statics_baseline"] = baseline
+    return result
 
 def _salvage(run: _Run, failing: list[str] | None) -> bool:
     """Land the routines that pass; spill the failures into a new packet.
@@ -131,6 +157,8 @@ def _salvage(run: _Run, failing: list[str] | None) -> bool:
     except WaveDeadlineExpired:
         raise
     except Exception:
+        return False
+    if result.get("status") != "green":
         return False
     spill = dict(run.packet)
     spill["id"] = f"{run.packet['id']}-rest"
@@ -348,16 +376,33 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                                 set_state(run.packet, "pending", stop_reason)
                         break
                     futures = {}
-                    for run in active:
-                        if run.id not in translations or run.final:
-                            continue
-                        futures[pool.submit(_apply_and_verify, run, translations[run.id])] = run
+                    try:
+                        for run in active:
+                            if run.id not in translations or run.final:
+                                continue
+                            _attempt(run, "verifying", deadline, run.rounds)
+                            future = pool.submit(
+                                _apply_and_verify,
+                                run.packet,
+                                run.lane,
+                                translations[run.id],
+                                run.statics_baseline,
+                                run.rounds,
+                                deadline,
+                            )
+                            futures[future] = run
+                    except Exception as exc:
+                        stop_reason = f"verify setup: {str(exc).strip()[-400:]}"
+                        deferred = [run.id for run in active if not run.final]
+                        break
                     verdicts: dict[str, dict] = {}
                     try:
                         for future in as_completed(futures):
                             run = futures[future]
                             try:
-                                verdicts[run.id] = future.result()
+                                verdict = future.result()
+                                run.statics_baseline = verdict.pop("_statics_baseline")
+                                verdicts[run.id] = verdict
                             except WaveDeadlineExpired:
                                 raise
                             except Exception:

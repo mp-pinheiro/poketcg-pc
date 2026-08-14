@@ -14,8 +14,8 @@ with terminal side exits escalated / parked / rejected-format.
 
 from __future__ import annotations
 
-import json
 import fcntl
+import json
 import os
 import re
 import signal
@@ -45,6 +45,7 @@ ORACLE_PYTHON = [
 ]
 RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
 WAVE_LOCK = FACTORY / "wave.lock"
+PROCESS_TERM_GRACE_S = 0.5
 
 _metrics_lock = threading.Lock()
 
@@ -75,9 +76,50 @@ def _bounded_output(stream: tempfile._TemporaryFileWrapper, output_limit: int) -
     return ("[... output truncated ...]\n" + text) if size > output_limit else text
 
 
+def _process_groups(root_pid: int) -> set[int]:
+    groups = {root_pid}
+    pending = [root_pid]
+    seen: set[int] = set()
+    while pending:
+        pid = pending.pop()
+        if pid in seen:
+            continue
+        seen.add(pid)
+        try:
+            groups.add(os.getpgid(pid))
+        except ProcessLookupError:
+            continue
+        try:
+            children = Path(f"/proc/{pid}/task/{pid}/children").read_text()
+        except OSError:
+            continue
+        pending.extend(int(child) for child in children.split())
+    return groups
+
+
+def _signal_groups(groups: set[int], sig: signal.Signals) -> None:
+    for group in groups:
+        try:
+            os.killpg(group, sig)
+        except ProcessLookupError:
+            pass
+
+
+def _stop_process_tree(process: subprocess.Popen) -> None:
+    groups = _process_groups(process.pid)
+    _signal_groups(groups, signal.SIGTERM)
+    try:
+        process.wait(timeout=PROCESS_TERM_GRACE_S)
+    except subprocess.TimeoutExpired:
+        pass
+    _signal_groups(groups, signal.SIGKILL)
+    process.wait()
+
+
 def run_bounded(command: list[str], *, cwd: Path, cap: float,
                 deadline: float | None = None, check: bool = False,
-                output_limit: int = 1_048_576) -> subprocess.CompletedProcess[str]:
+                output_limit: int = 1_048_576,
+                input_text: str | None = None) -> subprocess.CompletedProcess[str]:
     if cap <= 0:
         raise ValueError("cap must be positive")
     if output_limit <= 0:
@@ -87,23 +129,28 @@ def run_bounded(command: list[str], *, cwd: Path, cap: float,
     effective = cap if deadline is None else min(cap, deadline - time.monotonic())
     if effective <= 0:
         raise WaveDeadlineExpired("wave deadline expired before command")
-    with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
+    with (
+        tempfile.TemporaryFile() as stdin,
+        tempfile.TemporaryFile() as stdout,
+        tempfile.TemporaryFile() as stderr,
+    ):
+        if input_text is not None:
+            stdin.write(input_text.encode())
+            stdin.seek(0)
         process = subprocess.Popen(
-            command, cwd=cwd, stdout=stdout, stderr=stderr,
+            command, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr,
             start_new_session=True,
         )
         try:
             process.wait(timeout=effective)
         except subprocess.TimeoutExpired:
-            os.killpg(process.pid, signal.SIGTERM)
-            try:
-                process.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGKILL)
-                process.wait()
+            _stop_process_tree(process)
             if deadline is not None and time.monotonic() >= deadline:
                 raise WaveDeadlineExpired("wave deadline expired during command")
             raise PhaseTimeout(command, cap)
+        except BaseException:
+            _stop_process_tree(process)
+            raise
         result = subprocess.CompletedProcess(
             command, process.returncode,
             _bounded_output(stdout, output_limit),
