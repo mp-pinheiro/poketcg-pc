@@ -215,6 +215,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #define ConditionsForEvolvingToStage2NotFulfilledText 0x00b9u
 #define ThereAreNoCardsInHandThatYouCanChangeText 0x00bau
+
+#define MAX_PLAY_AREA_POKEMON 0x06u
+#define NoSpaceOnTheBenchText 0x00b2u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3352,3 +3355,44 @@ PokemonTraderHandDeckCheckResult PokemonTrader_HandDeckCheck(void)
 	};
 }
 /* <<< factory PokemonTrader_HandDeckCheck */
+
+/* >>> factory VictreebelLure_GetBenchPokemonWithLowestHP */
+/* effect_functions.asm:1520-1523 */
+void VictreebelLure_GetBenchPokemonWithLowestHP(void)
+{
+	AIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = target.a;
+}
+/* <<< factory VictreebelLure_GetBenchPokemonWithLowestHP */
+
+/* >>> factory Sprout_CheckDeckAndPlayArea */
+/* effect_functions.asm:1674-1682 */
+CheckIfDeckIsEmptyResult Sprout_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t sprout_flags = vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u;
+	if (vars.a == MAX_PLAY_AREA_POKEMON)
+		sprout_flags |= 0x80u;
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, sprout_flags};
+}
+/* <<< factory Sprout_CheckDeckAndPlayArea */
+
+/* >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+/* effect_functions.asm:1939-1947 */
+CheckIfDeckIsEmptyResult NidoranFCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t family_flags = vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u;
+	if (vars.a == MAX_PLAY_AREA_POKEMON)
+		family_flags |= 0x80u;
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, family_flags};
+}
+/* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */

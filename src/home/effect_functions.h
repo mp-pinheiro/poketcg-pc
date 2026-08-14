@@ -815,6 +815,15 @@ typedef struct {
 } PokemonTraderHandDeckCheckResult;
 PokemonTraderHandDeckCheckResult PokemonTrader_HandDeckCheck(void);
 /* <<< factory PokemonTrader_HandDeckCheck */
+/* >>> factory VictreebelLure_GetBenchPokemonWithLowestHP */
+void VictreebelLure_GetBenchPokemonWithLowestHP(void);
+/* <<< factory VictreebelLure_GetBenchPokemonWithLowestHP */
+/* >>> factory Sprout_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult Sprout_CheckDeckAndPlayArea(void);
+/* <<< factory Sprout_CheckDeckAndPlayArea */
+/* >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult NidoranFCallForFamily_CheckDeckAndPlayArea(void);
+/* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

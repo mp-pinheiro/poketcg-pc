@@ -1926,6 +1926,33 @@ static void adapt_PokemonTrader_HandDeckCheck(ProbeState *s)
 }
 /* <<< factory PokemonTrader_HandDeckCheck */
 
+/* >>> factory VictreebelLure_GetBenchPokemonWithLowestHP */
+static void adapt_VictreebelLure_GetBenchPokemonWithLowestHP(ProbeState *s)
+{
+	VictreebelLure_GetBenchPokemonWithLowestHP();
+}
+/* <<< factory VictreebelLure_GetBenchPokemonWithLowestHP */
+
+/* >>> factory Sprout_CheckDeckAndPlayArea */
+static void adapt_Sprout_CheckDeckAndPlayArea(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult r = Sprout_CheckDeckAndPlayArea();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory Sprout_CheckDeckAndPlayArea */
+
+/* >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+static void adapt_NidoranFCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult r = NidoranFCallForFamily_CheckDeckAndPlayArea();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2167,5 +2194,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonCenter_DamageCheck", adapt_PokemonCenter_DamageCheck },
 	{ "PokemonBreeder_HandPlayAreaCheck", adapt_PokemonBreeder_HandPlayAreaCheck },
 	{ "PokemonTrader_HandDeckCheck", adapt_PokemonTrader_HandDeckCheck },
+	{ "VictreebelLure_GetBenchPokemonWithLowestHP", adapt_VictreebelLure_GetBenchPokemonWithLowestHP },
+	{ "Sprout_CheckDeckAndPlayArea", adapt_Sprout_CheckDeckAndPlayArea },
+	{ "NidoranFCallForFamily_CheckDeckAndPlayArea", adapt_NidoranFCallForFamily_CheckDeckAndPlayArea },
 	{ NULL, NULL },
 };

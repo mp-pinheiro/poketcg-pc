@@ -2105,6 +2105,24 @@ CONTRACT["PokemonTrader_HandDeckCheck"] = {"compare": ("a", "f", "c", "d", "e", 
 CASES["PokemonTrader_HandDeckCheck"] = [{}, {"wram": {0xC2EE: b"\x01"}}, dict(POISON, wram={0xC200: b"\x01\x01", 0xC2EE: b"\x02\x00\x01"})]
 # <<< factory PokemonTrader_HandDeckCheck
 
+# >>> factory VictreebelLure_GetBenchPokemonWithLowestHP
+CONTRACT["VictreebelLure_GetBenchPokemonWithLowestHP"] = {"compare": (), "preserve": ()}
+CASES["VictreebelLure_GetBenchPokemonWithLowestHP"] = [
+    {"read": {0xFFA0: 1}},
+    dict(POISON, read={0xFFA0: 1}),
+]
+# <<< factory VictreebelLure_GetBenchPokemonWithLowestHP
+
+# >>> factory Sprout_CheckDeckAndPlayArea
+CONTRACT["Sprout_CheckDeckAndPlayArea"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Sprout_CheckDeckAndPlayArea"] = [{}, dict(POISON)]
+# <<< factory Sprout_CheckDeckAndPlayArea
+
+# >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea
+CONTRACT["NidoranFCallForFamily_CheckDeckAndPlayArea"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["NidoranFCallForFamily_CheckDeckAndPlayArea"] = [{}, dict(POISON)]
+# <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3593,3 +3611,12 @@ MUTATIONS["PokemonBreeder_HandPlayAreaCheck"] = {"source_symbol": "PokemonBreede
 # >>> factory-mutation PokemonTrader_HandDeckCheck
 MUTATIONS["PokemonTrader_HandDeckCheck"] = {"source_symbol": "PokemonTrader_HandDeckCheck", "before": "\tuint16_t message = ThereAreNoCardsInHandThatYouCanChangeText;", "after": "\tuint16_t message = ConditionsForEvolvingToStage2NotFulfilledText;", "case_ids": ["PokemonTrader_HandDeckCheck-0", "PokemonTrader_HandDeckCheck-1", "PokemonTrader_HandDeckCheck-2"]}
 # <<< factory-mutation PokemonTrader_HandDeckCheck
+# >>> factory-mutation VictreebelLure_GetBenchPokemonWithLowestHP
+MUTATIONS["VictreebelLure_GetBenchPokemonWithLowestHP"] = {"source_symbol": "VictreebelLure_GetBenchPokemonWithLowestHP", "before": "\tAIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = target.a;", "after": "\tAIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = (uint8_t)(target.a ^ 0x01u);", "case_ids": ["VictreebelLure_GetBenchPokemonWithLowestHP-0", "VictreebelLure_GetBenchPokemonWithLowestHP-1"]}
+# <<< factory-mutation VictreebelLure_GetBenchPokemonWithLowestHP
+# >>> factory-mutation Sprout_CheckDeckAndPlayArea
+MUTATIONS["Sprout_CheckDeckAndPlayArea"] = {"source_symbol": "Sprout_CheckDeckAndPlayArea", "before": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, sprout_flags};", "after": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText + 1u, sprout_flags};", "case_ids": ["Sprout_CheckDeckAndPlayArea-0", "Sprout_CheckDeckAndPlayArea-1"]}
+# <<< factory-mutation Sprout_CheckDeckAndPlayArea
+# >>> factory-mutation NidoranFCallForFamily_CheckDeckAndPlayArea
+MUTATIONS["NidoranFCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "NidoranFCallForFamily_CheckDeckAndPlayArea", "before": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, family_flags};", "after": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText + 1u, family_flags};", "case_ids": ["NidoranFCallForFamily_CheckDeckAndPlayArea-0", "NidoranFCallForFamily_CheckDeckAndPlayArea-1"]}
+# <<< factory-mutation NidoranFCallForFamily_CheckDeckAndPlayArea
