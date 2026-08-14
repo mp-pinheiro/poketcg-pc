@@ -2188,8 +2188,16 @@ CASES["MewtwoEnergyAbsorption_AISelectEffect"] = [
 # <<< factory MewtwoEnergyAbsorption_AISelectEffect
 
 # >>> factory JynxMeditate_AIEffect
+wDamage = 0xCCB9
+wAIMinDamage = 0xCCBB
+wAIMaxDamage = 0xCCBC
 CONTRACT["JynxMeditate_AIEffect"] = {"compare": (), "preserve": ()}
-CASES["JynxMeditate_AIEffect"] = [{"read": {0xC100: 0x0E00}}, dict(POISON, wram={0xC100: b"\xAA" * 0x0E00}, read={0xC100: 0x0E00})]
+CASES["JynxMeditate_AIEffect"] = [
+	{"wram": {wDamage: b"\x00\x00"},
+	 "read": {wDamage: 2, wAIMinDamage: 1, wAIMaxDamage: 1}},
+	dict(POISON, wram={wDamage: b"\x00\x0f"},
+	     read={wDamage: 2, wAIMinDamage: 1, wAIMaxDamage: 1}),
+]
 # <<< factory JynxMeditate_AIEffect
 
 # >>> factory MysteryAttack_RandomEffect
