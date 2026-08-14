@@ -864,6 +864,12 @@ MewtwoEnergyAbsorptionCheckDiscardPileResult MewtwoEnergyAbsorption_CheckDiscard
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t de; uint16_t hl; } MewtwoEnergyAbsorptionAISelectEffectResult;
 MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void);
 /* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
+/* >>> factory JynxMeditate_AIEffect */
+void JynxMeditate_AIEffect(void);
+/* <<< factory JynxMeditate_AIEffect */
+/* >>> factory MysteryAttack_RandomEffect */
+void MysteryAttack_RandomEffect(void);
+/* <<< factory MysteryAttack_RandomEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

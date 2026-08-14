@@ -2187,6 +2187,16 @@ CASES["MewtwoEnergyAbsorption_AISelectEffect"] = [
 ]
 # <<< factory MewtwoEnergyAbsorption_AISelectEffect
 
+# >>> factory JynxMeditate_AIEffect
+CONTRACT["JynxMeditate_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["JynxMeditate_AIEffect"] = [{"read": {0xC100: 0x0E00}}, dict(POISON, wram={0xC100: b"\xAA" * 0x0E00}, read={0xC100: 0x0E00})]
+# <<< factory JynxMeditate_AIEffect
+
+# >>> factory MysteryAttack_RandomEffect
+CONTRACT["MysteryAttack_RandomEffect"] = {"compare": (), "preserve": ()}
+CASES["MysteryAttack_RandomEffect"] = [{"read": {0xFFA0: 1, 0xCCB8: 1}}, dict(POISON, wram={0xCCB8: b"\xaa"}, read={0xFFA0: 1, 0xCCB8: 1})]
+# <<< factory MysteryAttack_RandomEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3717,3 +3727,9 @@ MUTATIONS["MewtwoEnergyAbsorption_CheckDiscardPile"] = {"source_symbol": "Mewtwo
 # >>> factory-mutation MewtwoEnergyAbsorption_AISelectEffect
 MUTATIONS["MewtwoEnergyAbsorption_AISelectEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_AISelectEffect", "before": "MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = wDuelTempList_ADDR;", "after": "MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MewtwoEnergyAbsorption_AISelectEffect-0", "MewtwoEnergyAbsorption_AISelectEffect-1"]}
 # <<< factory-mutation MewtwoEnergyAbsorption_AISelectEffect
+# >>> factory-mutation JynxMeditate_AIEffect
+MUTATIONS["JynxMeditate_AIEffect"] = {"source_symbol": "JynxMeditate_AIEffect", "before": "void JynxMeditate_AIEffect(void)\n{\n\tJynxMeditate_DamageBoostEffect();\n\tSetDefiniteAIDamage();\n}", "after": "void JynxMeditate_AIEffect(void)\n{\n\tJynxMeditate_DamageBoostEffect();\n\tJynxMeditate_DamageBoostEffect();\n}", "case_ids": ["JynxMeditate_AIEffect-1"]}
+# <<< factory-mutation JynxMeditate_AIEffect
+# >>> factory-mutation MysteryAttack_RandomEffect
+MUTATIONS["MysteryAttack_RandomEffect"] = {"source_symbol": "MysteryAttack_RandomEffect", "before": "\thTemp_ffa0 = effect;", "after": "\thTemp_ffa0 = (uint8_t)(effect + 1u);", "case_ids": ["MysteryAttack_RandomEffect-0", "MysteryAttack_RandomEffect-1"]}
+# <<< factory-mutation MysteryAttack_RandomEffect

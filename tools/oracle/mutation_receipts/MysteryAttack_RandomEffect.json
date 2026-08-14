@@ -1,0 +1,9 @@
+{
+  "fn": "MysteryAttack_RandomEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MysteryAttack_RandomEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MysteryAttack_RandomEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"0000\", \"native\": \"0001\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52408, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"MysteryAttack_RandomEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52408\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

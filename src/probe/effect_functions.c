@@ -2063,6 +2063,20 @@ static void adapt_MewtwoEnergyAbsorption_AISelectEffect(ProbeState *s)
 }
 /* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
 
+/* >>> factory JynxMeditate_AIEffect */
+static void adapt_JynxMeditate_AIEffect(ProbeState *s)
+{
+	JynxMeditate_AIEffect();
+}
+/* <<< factory JynxMeditate_AIEffect */
+
+/* >>> factory MysteryAttack_RandomEffect */
+static void adapt_MysteryAttack_RandomEffect(ProbeState *s)
+{
+	MysteryAttack_RandomEffect();
+}
+/* <<< factory MysteryAttack_RandomEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2318,5 +2332,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MewtwoAltEnergyAbsorption_AISelectEffect", adapt_MewtwoAltEnergyAbsorption_AISelectEffect },
 	{ "MewtwoEnergyAbsorption_CheckDiscardPile", adapt_MewtwoEnergyAbsorption_CheckDiscardPile },
 	{ "MewtwoEnergyAbsorption_AISelectEffect", adapt_MewtwoEnergyAbsorption_AISelectEffect },
+	{ "JynxMeditate_AIEffect", adapt_JynxMeditate_AIEffect },
+	{ "MysteryAttack_RandomEffect", adapt_MysteryAttack_RandomEffect },
 	{ NULL, NULL },
 };

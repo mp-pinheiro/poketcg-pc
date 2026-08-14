@@ -225,6 +225,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define ThereAreNoTrainerCardsInDiscardPileText 0x00c4u
 
 #define ThereAreNoEnergyCardsInDiscardPileText 0x00afu
+
+#include "home/random.h"
+
+#define ATK_ANIM_GLOW_EFFECT 0x5bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3560,3 +3564,49 @@ MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect
 	};
 }
 /* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
+
+/* >>> factory JynxMeditate_AIEffect */
+/* effect_functions.asm:5802-5804 */
+void JynxMeditate_AIEffect(void)
+{
+	JynxMeditate_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory JynxMeditate_AIEffect */
+
+/* >>> factory MysteryAttack_RandomEffect */
+/* effect_functions.asm:5820-5858 */
+void MysteryAttack_RandomEffect(void)
+{
+	SetDefiniteDamage(10u);
+
+	uint8_t effect = (uint8_t)(UpdateRNGSources() & 0x07u);
+	hTemp_ffa0 = effect;
+
+	switch (effect) {
+	case 0u:
+		(void)ParalysisEffect();
+		break;
+	case 1u:
+		(void)PoisonEffect();
+		break;
+	case 2u:
+		(void)SleepEffect();
+		break;
+	case 3u:
+		(void)ConfusionEffect();
+		break;
+	case 4u:
+	case 5u:
+		break;
+	case 6u:
+		SetDefiniteDamage(20u);
+		break;
+	case 7u:
+		wLoadedAttackAnimation = ATK_ANIM_GLOW_EFFECT;
+		SetDefiniteDamage(0u);
+		SetNoEffectFromStatus();
+		break;
+	}
+}
+/* <<< factory MysteryAttack_RandomEffect */
