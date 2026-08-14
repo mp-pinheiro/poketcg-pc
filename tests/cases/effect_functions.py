@@ -2163,6 +2163,30 @@ CONTRACT["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = {"compare": ("f", "hl")
 CASES["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = [{}, dict(POISON)]
 # <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile
 
+# >>> factory MewtwoAltEnergyAbsorption_AISelectEffect
+CONTRACT["MewtwoAltEnergyAbsorption_AISelectEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["MewtwoAltEnergyAbsorption_AISelectEffect"] = [
+    {"read": {0xC510: 1, 0xFFA0: 3}},
+    dict(POISON, read={0xC510: 1, 0xFFA0: 3}),
+]
+# <<< factory MewtwoAltEnergyAbsorption_AISelectEffect
+
+# >>> factory MewtwoEnergyAbsorption_CheckDiscardPile
+CONTRACT["MewtwoEnergyAbsorption_CheckDiscardPile"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["MewtwoEnergyAbsorption_CheckDiscardPile"] = [
+    {"read": {0xC510: 1}},
+    dict(POISON, read={0xC510: 1}),
+]
+# <<< factory MewtwoEnergyAbsorption_CheckDiscardPile
+
+# >>> factory MewtwoEnergyAbsorption_AISelectEffect
+CONTRACT["MewtwoEnergyAbsorption_AISelectEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["MewtwoEnergyAbsorption_AISelectEffect"] = [
+    {"read": {0xC510: 1, 0xFFA0: 3}},
+    dict(POISON, read={0xC510: 1, 0xFFA0: 3}),
+]
+# <<< factory MewtwoEnergyAbsorption_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3684,3 +3708,12 @@ MUTATIONS["DevolutionBeam_AISelectEffect"] = {"source_symbol": "DevolutionBeam_A
 # >>> factory-mutation MewtwoAltEnergyAbsorption_CheckDiscardPile
 MUTATIONS["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = {"source_symbol": "MewtwoAltEnergyAbsorption_CheckDiscardPile", "before": "\treturn (CreateEnergyCardListFromDiscardPileResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};", "after": "\treturn (CreateEnergyCardListFromDiscardPileResult){ThereAreNoStage1PokemonText, r.f};", "case_ids": ["MewtwoAltEnergyAbsorption_CheckDiscardPile-0", "MewtwoAltEnergyAbsorption_CheckDiscardPile-1"]}
 # <<< factory-mutation MewtwoAltEnergyAbsorption_CheckDiscardPile
+# >>> factory-mutation MewtwoAltEnergyAbsorption_AISelectEffect
+MUTATIONS["MewtwoAltEnergyAbsorption_AISelectEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_AISelectEffect", "before": "MewtwoAltEnergyAbsorptionAISelectEffectResult MewtwoAltEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = wDuelTempList_ADDR;", "after": "MewtwoAltEnergyAbsorptionAISelectEffectResult MewtwoAltEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MewtwoAltEnergyAbsorption_AISelectEffect-0", "MewtwoAltEnergyAbsorption_AISelectEffect-1"]}
+# <<< factory-mutation MewtwoAltEnergyAbsorption_AISelectEffect
+# >>> factory-mutation MewtwoEnergyAbsorption_CheckDiscardPile
+MUTATIONS["MewtwoEnergyAbsorption_CheckDiscardPile"] = {"source_symbol": "MewtwoEnergyAbsorption_CheckDiscardPile", "before": "\t\tThereAreNoEnergyCardsInDiscardPileText, r.f, 0u, 0u, wDuelTempList_ADDR", "after": "\t\t(uint16_t)(ThereAreNoEnergyCardsInDiscardPileText + 1u), r.f, 0u, 0u, wDuelTempList_ADDR", "case_ids": ["MewtwoEnergyAbsorption_CheckDiscardPile-0", "MewtwoEnergyAbsorption_CheckDiscardPile-1"]}
+# <<< factory-mutation MewtwoEnergyAbsorption_CheckDiscardPile
+# >>> factory-mutation MewtwoEnergyAbsorption_AISelectEffect
+MUTATIONS["MewtwoEnergyAbsorption_AISelectEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_AISelectEffect", "before": "MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = wDuelTempList_ADDR;", "after": "MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void)\n{\n\t(void)CreateEnergyCardListFromDiscardPile_AllEnergy();\n\tuint16_t hl = (uint16_t)(wDuelTempList_ADDR + 1u);", "case_ids": ["MewtwoEnergyAbsorption_AISelectEffect-0", "MewtwoEnergyAbsorption_AISelectEffect-1"]}
+# <<< factory-mutation MewtwoEnergyAbsorption_AISelectEffect

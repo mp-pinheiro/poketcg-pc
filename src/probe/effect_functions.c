@@ -2022,6 +2022,47 @@ static void adapt_MewtwoAltEnergyAbsorption_CheckDiscardPile(ProbeState *s)
 }
 /* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
 
+/* >>> factory MewtwoAltEnergyAbsorption_AISelectEffect */
+static void adapt_MewtwoAltEnergyAbsorption_AISelectEffect(ProbeState *s)
+{
+	MewtwoAltEnergyAbsorptionAISelectEffectResult r = MewtwoAltEnergyAbsorption_AISelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory MewtwoAltEnergyAbsorption_AISelectEffect */
+
+/* >>> factory MewtwoEnergyAbsorption_CheckDiscardPile */
+static void adapt_MewtwoEnergyAbsorption_CheckDiscardPile(ProbeState *s)
+{
+	MewtwoEnergyAbsorptionCheckDiscardPileResult r = MewtwoEnergyAbsorption_CheckDiscardPile();
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory MewtwoEnergyAbsorption_CheckDiscardPile */
+
+/* >>> factory MewtwoEnergyAbsorption_AISelectEffect */
+static void adapt_MewtwoEnergyAbsorption_AISelectEffect(ProbeState *s)
+{
+	MewtwoEnergyAbsorptionAISelectEffectResult r = MewtwoEnergyAbsorption_AISelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2274,5 +2315,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionBeam_CheckPlayArea", adapt_DevolutionBeam_CheckPlayArea },
 	{ "DevolutionBeam_AISelectEffect", adapt_DevolutionBeam_AISelectEffect },
 	{ "MewtwoAltEnergyAbsorption_CheckDiscardPile", adapt_MewtwoAltEnergyAbsorption_CheckDiscardPile },
+	{ "MewtwoAltEnergyAbsorption_AISelectEffect", adapt_MewtwoAltEnergyAbsorption_AISelectEffect },
+	{ "MewtwoEnergyAbsorption_CheckDiscardPile", adapt_MewtwoEnergyAbsorption_CheckDiscardPile },
+	{ "MewtwoEnergyAbsorption_AISelectEffect", adapt_MewtwoEnergyAbsorption_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -852,6 +852,18 @@ void DevolutionBeam_AISelectEffect(void);
 /* >>> factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
 CreateEnergyCardListFromDiscardPileResult MewtwoAltEnergyAbsorption_CheckDiscardPile(void);
 /* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+/* >>> factory MewtwoAltEnergyAbsorption_AISelectEffect */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t de; uint16_t hl; } MewtwoAltEnergyAbsorptionAISelectEffectResult;
+MewtwoAltEnergyAbsorptionAISelectEffectResult MewtwoAltEnergyAbsorption_AISelectEffect(void);
+/* <<< factory MewtwoAltEnergyAbsorption_AISelectEffect */
+/* >>> factory MewtwoEnergyAbsorption_CheckDiscardPile */
+typedef struct { uint16_t hl; uint8_t f; uint8_t b; uint8_t c; uint16_t de; } MewtwoEnergyAbsorptionCheckDiscardPileResult;
+MewtwoEnergyAbsorptionCheckDiscardPileResult MewtwoEnergyAbsorption_CheckDiscardPile(void);
+/* <<< factory MewtwoEnergyAbsorption_CheckDiscardPile */
+/* >>> factory MewtwoEnergyAbsorption_AISelectEffect */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t de; uint16_t hl; } MewtwoEnergyAbsorptionAISelectEffectResult;
+MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void);
+/* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

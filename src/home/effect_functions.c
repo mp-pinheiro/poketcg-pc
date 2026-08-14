@@ -3499,3 +3499,64 @@ CreateEnergyCardListFromDiscardPileResult MewtwoAltEnergyAbsorption_CheckDiscard
 	return (CreateEnergyCardListFromDiscardPileResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};
 }
 /* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+
+/* >>> factory MewtwoAltEnergyAbsorption_AISelectEffect */
+/* effect_functions.asm:5442-5459 */
+MewtwoAltEnergyAbsorptionAISelectEffectResult MewtwoAltEnergyAbsorption_AISelectEffect(void)
+{
+	(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+	uint16_t hl = wDuelTempList_ADDR;
+	uint16_t de = hTempList_ADDR;
+	uint8_t c = 2u;
+
+	for (;;) {
+		uint8_t a = gb_read8(hl++);
+		if (a == 0xffu)
+			break;
+		gb_write8(de++, a);
+		c--;
+		if (c == 0u)
+			break;
+	}
+	gb_write8(de, (uint8_t)0xffu);
+	return (MewtwoAltEnergyAbsorptionAISelectEffectResult){
+		0xffu, 0xc0u, 0u, c, de, hl
+	};
+}
+/* <<< factory MewtwoAltEnergyAbsorption_AISelectEffect */
+
+/* >>> factory MewtwoEnergyAbsorption_CheckDiscardPile */
+/* effect_functions.asm:5474-5477 */
+MewtwoEnergyAbsorptionCheckDiscardPileResult MewtwoEnergyAbsorption_CheckDiscardPile(void)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile_AllEnergy();
+	return (MewtwoEnergyAbsorptionCheckDiscardPileResult){
+		ThereAreNoEnergyCardsInDiscardPileText, r.f, 0u, 0u, wDuelTempList_ADDR
+	};
+}
+/* <<< factory MewtwoEnergyAbsorption_CheckDiscardPile */
+
+/* >>> factory MewtwoEnergyAbsorption_AISelectEffect */
+/* effect_functions.asm:5484-5501 */
+MewtwoEnergyAbsorptionAISelectEffectResult MewtwoEnergyAbsorption_AISelectEffect(void)
+{
+	(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+	uint16_t hl = wDuelTempList_ADDR;
+	uint16_t de = hTempList_ADDR;
+	uint8_t c = 2u;
+
+	for (;;) {
+		uint8_t a = gb_read8(hl++);
+		if (a == 0xffu)
+			break;
+		gb_write8(de++, a);
+		c--;
+		if (c == 0u)
+			break;
+	}
+	gb_write8(de, 0xffu);
+	return (MewtwoEnergyAbsorptionAISelectEffectResult){
+		0xffu, 0xc0u, 0u, c, de, hl
+	};
+}
+/* <<< factory MewtwoEnergyAbsorption_AISelectEffect */
