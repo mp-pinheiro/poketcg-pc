@@ -288,7 +288,8 @@ def _define_value(line: str) -> object:
         return " ".join(text.split())
 
 
-def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[str]:
+def _merge_statics(basename: str, existing: list[str], new: list[str],
+                  referenced: set[str] | None = None) -> list[str]:
     """Merge statics at stanza (blank-line-delimited block) granularity.
 
     Line-level dedup corrupts multi-line constructs: a second packet's
@@ -298,7 +299,13 @@ def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[s
     - preprocessor conditionals (their halves interleave across merges),
     - a #define name re-emitted with a different value,
     - a typedef name re-emitted with a different body.
-    """
+
+    ``referenced`` is the set of identifiers the packet's routines touch. A
+    #define whose value disagrees with an existing one but that no routine
+    references is a speculative zombie: drop it and keep the canonical value
+    already in the tree. A conflicting define a routine *does* use stays a
+    hard error — that is a real disagreement the model must resolve.
+"""
     for line in new:
         if CONDITIONAL.match(line):
             raise SurgeryError(
@@ -330,6 +337,8 @@ def _merge_statics(basename: str, existing: list[str], new: list[str]) -> list[s
                 if prior is not None:
                     if _define_value(prior) == _define_value(line):
                         continue  # same value, possibly different spelling
+                    if referenced is not None and name not in referenced:
+                        continue  # zombie: unused by this packet, keep canonical
                     raise SurgeryError(
                         f"{basename}: conflicting #define {name}: {prior!r} "
                         f"already merged, new packet emits {line!r} — reuse "
@@ -384,6 +393,12 @@ def apply(root: Path, packet: dict, translation: dict,
     paths = quad_paths(root, basename)
     ensure_skeletons(root, packet)
     changed: set[Path] = set()
+    # identifiers the packet's routines actually touch; a STATICS #define no
+    # routine references is a speculative zombie the merge may drop on conflict.
+    referenced: set[str] = set()
+    for blocks in translation.get("routines", {}).values():
+        for key in ("C", "H", "PROBE", "CASES", "MUTATION", "COMPLETION"):
+            referenced.update(re.findall(r"\b[A-Za-z_]\w*\b", blocks.get(key) or ""))
 
     # --- statics into the .c, right after the skeleton includes -------------
     c_text = paths["c"].read_text()
@@ -399,7 +414,7 @@ def apply(root: Path, packet: dict, translation: dict,
                 body = c_text[span[0]:span[1]].splitlines()[1:-1]
                 existing_lines = [l for l in body if l.strip() != close_s]
         merged = _merge_statics(basename, existing_lines,
-                                statics.rstrip().splitlines())
+                                statics.rstrip().splitlines(), referenced)
         block = open_s + "\n" + "\n".join(merged) + "\n" + close_s + "\n"
         include_end = 0
         for match in re.finditer(r"^#include .*$", c_text, flags=re.MULTILINE):

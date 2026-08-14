@@ -284,6 +284,7 @@ CardPageResult CardPageSwitch_00(void)
 #include "home/copy.h"
 #include "home/switch_sram.h"
 
+#include "home/bg_map.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -693,6 +694,7 @@ void PrintCardListHeaderAndInfoBoxTexts(void)
 
 
 
+
 /* >>> factory LoadCardNameToTxRam2 */
 /* core.asm:6796 */
 void LoadCardNameToTxRam2(uint8_t a)
@@ -702,6 +704,7 @@ void LoadCardNameToTxRam2(uint8_t a)
 	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
 }
 /* <<< factory LoadCardNameToTxRam2 */
+
 
 
 /* >>> factory LoadCardNameToTxRam2_b */
@@ -1685,6 +1688,7 @@ TwoByteNumberToTxSymbolPadResult TwoByteNumberToTxSymbol_PadSpace_Bank1(
 		(uint8_t)(wStringBuffer_ADDR + 5u), out_hl};
 }
 /* <<< factory TwoByteNumberToTxSymbol_PadSpace_Bank1 */
+
 
 /* >>> factory DrawWideTextBox_WaitForInput_Bank1 */
 WaitResult DrawWideTextBox_WaitForInput_Bank1(uint16_t hl)

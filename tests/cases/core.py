@@ -330,6 +330,7 @@ CASES["LoadCardNameToTxRam2"] = [
 
 
 
+
 # >>> factory LoadCardNameToTxRam2_b
 CONTRACT["LoadCardNameToTxRam2_b"] = {"compare": (), "preserve": ()}
 CASES["LoadCardNameToTxRam2_b"] = [
@@ -338,6 +339,7 @@ CASES["LoadCardNameToTxRam2_b"] = [
     {"a": 0x3B, "wram": {0xCE3F: b"\x11\x22\xA5\x5A"}, "read": {0xCC27: 2}},
 ]
 # <<< factory LoadCardNameToTxRam2_b
+
 
 
 # >>> factory GetAnimCoordsAndFlags
@@ -989,6 +991,7 @@ CASES["DrawWideTextBox_WaitForInput_Bank1"] = [
          vread={0: {0x9980: 1, 0x9A32: 1}}),
 ]
 # <<< factory DrawWideTextBox_WaitForInput_Bank1
+
 
 # >>> factory CardPageSwitch_EnergyOrTrainerPage1
 CONTRACT["CardPageSwitch_EnergyOrTrainerPage1"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}

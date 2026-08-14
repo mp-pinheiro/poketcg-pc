@@ -231,12 +231,14 @@ static void adapt_LoadCardNameToTxRam2(ProbeState *s)
 
 
 
+
 /* >>> factory LoadCardNameToTxRam2_b */
 static void adapt_LoadCardNameToTxRam2_b(ProbeState *s)
 {
 	LoadCardNameToTxRam2_b(s->a);
 }
 /* <<< factory LoadCardNameToTxRam2_b */
+
 
 
 /* >>> factory GetAnimCoordsAndFlags */
@@ -766,6 +768,7 @@ static void adapt_DrawWideTextBox_WaitForInput_Bank1(ProbeState *s)
 	s->f = r.f;
 }
 /* <<< factory DrawWideTextBox_WaitForInput_Bank1 */
+
 
 /* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
 static void adapt_CardPageSwitch_EnergyOrTrainerPage1(ProbeState *s)

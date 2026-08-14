@@ -1,0 +1,9 @@
+{
+  "fn": "DrawWideTextBox_WaitForInput_Bank1",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawWideTextBox_WaitForInput_Bank1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39296\": \"18\", \"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawWideTextBox_WaitForInput_Bank1\", \"mismatches\": {\"f\": [128, 16], \"bus\": {\"address\": 52495, \"reference\": \"0001001d\", \"native\": \"00000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50576, 1], [52495, 2], [52502, 1]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawWideTextBox_WaitForInput_Bank1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39296\": \"18\", \"39474\": \"1d\"}}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\"}}, \"status\": \"PASS\"}\n"
+}
