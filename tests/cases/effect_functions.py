@@ -2148,6 +2148,21 @@ CONTRACT["SlowpokeAmnesia_CheckAttacks"] = {"compare": ("f", "hl"), "preserve": 
 CASES["SlowpokeAmnesia_CheckAttacks"] = [{}, dict(POISON)]
 # <<< factory SlowpokeAmnesia_CheckAttacks
 
+# >>> factory DevolutionBeam_CheckPlayArea
+CONTRACT["DevolutionBeam_CheckPlayArea"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["DevolutionBeam_CheckPlayArea"] = [{}, dict(POISON)]
+# <<< factory DevolutionBeam_CheckPlayArea
+
+# >>> factory DevolutionBeam_AISelectEffect
+CONTRACT["DevolutionBeam_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["DevolutionBeam_AISelectEffect"] = [{"read": {0xFFA0: 2}}, dict(POISON, wram={0xFFA0: b"\xaa\xbb"}, read={0xFFA0: 2})]
+# <<< factory DevolutionBeam_AISelectEffect
+
+# >>> factory MewtwoAltEnergyAbsorption_CheckDiscardPile
+CONTRACT["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = [{}, dict(POISON)]
+# <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3660,3 +3675,12 @@ MUTATIONS["Scavenge_AISelectEffect"] = {"source_symbol": "Scavenge_AISelectEffec
 # >>> factory-mutation SlowpokeAmnesia_CheckAttacks
 MUTATIONS["SlowpokeAmnesia_CheckAttacks"] = {"source_symbol": "SlowpokeAmnesia_CheckAttacks", "before": "\treturn (SlowpokeAmnesiaCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (SlowpokeAmnesiaCheckAttacksResult){r.f, NotEnoughPsychicEnergyText};", "case_ids": ["SlowpokeAmnesia_CheckAttacks-0", "SlowpokeAmnesia_CheckAttacks-1"]}
 # <<< factory-mutation SlowpokeAmnesia_CheckAttacks
+# >>> factory-mutation DevolutionBeam_CheckPlayArea
+MUTATIONS["DevolutionBeam_CheckPlayArea"] = {"source_symbol": "DevolutionBeam_CheckPlayArea", "before": "if ((r.f & 0x10u) == 0u)", "after": "if ((r.f & 0x10u) != 0u)", "case_ids": ["DevolutionBeam_CheckPlayArea-0", "DevolutionBeam_CheckPlayArea-1"]}
+# <<< factory-mutation DevolutionBeam_CheckPlayArea
+# >>> factory-mutation DevolutionBeam_AISelectEffect
+MUTATIONS["DevolutionBeam_AISelectEffect"] = {"source_symbol": "DevolutionBeam_AISelectEffect", "before": "\thTempPlayAreaLocation_ffa1 = r.a;", "after": "\thTempPlayAreaLocation_ffa1 = (uint8_t)(r.a + 1u);", "case_ids": ["DevolutionBeam_AISelectEffect-0", "DevolutionBeam_AISelectEffect-1"]}
+# <<< factory-mutation DevolutionBeam_AISelectEffect
+# >>> factory-mutation MewtwoAltEnergyAbsorption_CheckDiscardPile
+MUTATIONS["MewtwoAltEnergyAbsorption_CheckDiscardPile"] = {"source_symbol": "MewtwoAltEnergyAbsorption_CheckDiscardPile", "before": "\treturn (CreateEnergyCardListFromDiscardPileResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};", "after": "\treturn (CreateEnergyCardListFromDiscardPileResult){ThereAreNoStage1PokemonText, r.f};", "case_ids": ["MewtwoAltEnergyAbsorption_CheckDiscardPile-0", "MewtwoAltEnergyAbsorption_CheckDiscardPile-1"]}
+# <<< factory-mutation MewtwoAltEnergyAbsorption_CheckDiscardPile

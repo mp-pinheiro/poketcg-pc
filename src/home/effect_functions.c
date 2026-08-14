@@ -223,6 +223,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define LAST_TURN_EFFECT_DISCARD_ENERGY 0x01u
 
 #define ThereAreNoTrainerCardsInDiscardPileText 0x00c4u
+
+#define ThereAreNoEnergyCardsInDiscardPileText 0x00afu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3452,3 +3454,48 @@ SlowpokeAmnesiaCheckAttacksResult SlowpokeAmnesia_CheckAttacks(void)
 	return (SlowpokeAmnesiaCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
 }
 /* <<< factory SlowpokeAmnesia_CheckAttacks */
+
+/* >>> factory DevolutionBeam_CheckPlayArea */
+/* effect_functions.asm:5163-5169 */
+DevolutionBeamCheckPlayAreaResult DevolutionBeam_CheckPlayArea(void)
+{
+	CheckAttackResult r = CheckIfTurnDuelistHasEvolvedCards();
+	if ((r.f & 0x10u) == 0u)
+		return (DevolutionBeamCheckPlayAreaResult){r.f, 0x01u, 0x02u, 0x00efu};
+
+	SwapTurn();
+	r = CheckIfTurnDuelistHasEvolvedCards();
+	SwapTurn();
+	return (DevolutionBeamCheckPlayAreaResult){
+		r.f,
+		0x01u,
+		0x02u,
+		ThereAreNoStage1PokemonText
+	};
+}
+/* <<< factory DevolutionBeam_CheckPlayArea */
+
+/* >>> factory DevolutionBeam_AISelectEffect */
+/* effect_functions.asm:5218-5230 */
+void DevolutionBeam_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0x01u;
+	SwapTurn();
+	FindFirstNonBasicCardInPlayAreaResult r = FindFirstNonBasicCardInPlayArea();
+	SwapTurn();
+	if (!(r.f & 0x10u)) {
+		hTemp_ffa0 = 0x00u;
+		r = FindFirstNonBasicCardInPlayArea();
+	}
+	hTempPlayAreaLocation_ffa1 = r.a;
+}
+/* <<< factory DevolutionBeam_AISelectEffect */
+
+/* >>> factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+/* effect_functions.asm:5432-5435 */
+CreateEnergyCardListFromDiscardPileResult MewtwoAltEnergyAbsorption_CheckDiscardPile(void)
+{
+	CreateEnergyCardListFromDiscardPileResult r = CreateEnergyCardListFromDiscardPile_AllEnergy();
+	return (CreateEnergyCardListFromDiscardPileResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};
+}
+/* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */

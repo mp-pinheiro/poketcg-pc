@@ -1995,6 +1995,33 @@ static void adapt_SlowpokeAmnesia_CheckAttacks(ProbeState *s)
 }
 /* <<< factory SlowpokeAmnesia_CheckAttacks */
 
+/* >>> factory DevolutionBeam_CheckPlayArea */
+static void adapt_DevolutionBeam_CheckPlayArea(ProbeState *s)
+{
+	DevolutionBeamCheckPlayAreaResult r = DevolutionBeam_CheckPlayArea();
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory DevolutionBeam_CheckPlayArea */
+
+/* >>> factory DevolutionBeam_AISelectEffect */
+static void adapt_DevolutionBeam_AISelectEffect(ProbeState *s)
+{
+	DevolutionBeam_AISelectEffect();
+}
+/* <<< factory DevolutionBeam_AISelectEffect */
+
+/* >>> factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+static void adapt_MewtwoAltEnergyAbsorption_CheckDiscardPile(ProbeState *s)
+{
+	CreateEnergyCardListFromDiscardPileResult r = MewtwoAltEnergyAbsorption_CheckDiscardPile();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2244,5 +2271,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Scavenge_CheckDiscardPile", adapt_Scavenge_CheckDiscardPile },
 	{ "Scavenge_AISelectEffect", adapt_Scavenge_AISelectEffect },
 	{ "SlowpokeAmnesia_CheckAttacks", adapt_SlowpokeAmnesia_CheckAttacks },
+	{ "DevolutionBeam_CheckPlayArea", adapt_DevolutionBeam_CheckPlayArea },
+	{ "DevolutionBeam_AISelectEffect", adapt_DevolutionBeam_AISelectEffect },
+	{ "MewtwoAltEnergyAbsorption_CheckDiscardPile", adapt_MewtwoAltEnergyAbsorption_CheckDiscardPile },
 	{ NULL, NULL },
 };

@@ -842,6 +842,16 @@ void Scavenge_AISelectEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } SlowpokeAmnesiaCheckAttacksResult;
 SlowpokeAmnesiaCheckAttacksResult SlowpokeAmnesia_CheckAttacks(void);
 /* <<< factory SlowpokeAmnesia_CheckAttacks */
+/* >>> factory DevolutionBeam_CheckPlayArea */
+typedef struct { uint8_t f; uint8_t d; uint8_t e; uint16_t hl; } DevolutionBeamCheckPlayAreaResult;
+DevolutionBeamCheckPlayAreaResult DevolutionBeam_CheckPlayArea(void);
+/* <<< factory DevolutionBeam_CheckPlayArea */
+/* >>> factory DevolutionBeam_AISelectEffect */
+void DevolutionBeam_AISelectEffect(void);
+/* <<< factory DevolutionBeam_AISelectEffect */
+/* >>> factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
+CreateEnergyCardListFromDiscardPileResult MewtwoAltEnergyAbsorption_CheckDiscardPile(void);
+/* <<< factory MewtwoAltEnergyAbsorption_CheckDiscardPile */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);
