@@ -338,7 +338,7 @@ def _merge_statics(basename: str, existing: list[str], new: list[str],
                     if _define_value(prior) == _define_value(line):
                         continue  # same value, possibly different spelling
                     if referenced is not None and name not in referenced:
-                        continue  # zombie: unused by this packet, keep canonical
+                        continue
                     raise SurgeryError(
                         f"{basename}: conflicting #define {name}: {prior!r} "
                         f"already merged, new packet emits {line!r} — reuse "
@@ -393,8 +393,6 @@ def apply(root: Path, packet: dict, translation: dict,
     paths = quad_paths(root, basename)
     ensure_skeletons(root, packet)
     changed: set[Path] = set()
-    # identifiers the packet's routines actually touch; a STATICS #define no
-    # routine references is a speculative zombie the merge may drop on conflict.
     referenced: set[str] = set()
     for blocks in translation.get("routines", {}).values():
         for key in ("C", "H", "PROBE", "CASES", "MUTATION", "COMPLETION"):

@@ -1,0 +1,9 @@
+{
+  "fn": "PracticeDuel_VerifyPlayerTurnActions",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PracticeDuel_VerifyPlayerTurnActions\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52230\": \"00\", \"52418\": \"53\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PracticeDuel_VerifyPlayerTurnActions\", \"mismatches\": {\"f\": [192, 16]}}\n",
+  "restored": "{\"fn\": \"PracticeDuel_VerifyPlayerTurnActions\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52230\": \"00\", \"52418\": \"53\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

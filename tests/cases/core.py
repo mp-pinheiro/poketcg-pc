@@ -1112,9 +1112,10 @@ CASES["PickRandomBenchPokemon"] = [
 # >>> factory PracticeDuel_VerifyPlayerTurnActions
 CONTRACT["PracticeDuel_VerifyPlayerTurnActions"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuel_VerifyPlayerTurnActions"] = [
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xCC06: b"\x00", 0xCCC2: b"\x53"}),
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCC06: b"\x00", 0xCCC2: b"\x53"}),
 ]
 # <<< factory PracticeDuel_VerifyPlayerTurnActions
+
 # >>> factory PrintCardNameFromCardIDInTextBox
 wTempNonTurnDuelistCardID = 0xCCC4
 CONTRACT["PrintCardNameFromCardIDInTextBox"] = {"compare": (), "preserve": ()}
@@ -1211,6 +1212,14 @@ CASES["PrintSortNumberInCardList_CallFromPointer"] = [
     dict(POISON, wram={0xC51A: b"\x03\x04\xFF"}),
 ]
 # <<< factory PrintSortNumberInCardList_CallFromPointer
+# >>> factory PracticeDuel_VerifyInitialPlay
+CONTRACT["PracticeDuel_VerifyInitialPlay"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuel_VerifyInitialPlay"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x02"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x02"}),
+]
+# <<< factory PracticeDuel_VerifyInitialPlay
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -1952,12 +1961,7 @@ MUTATIONS["MoveAllTurnHolderKnockedOutPokemonToDiscardPile"] = {
 }
 # <<< factory-mutation MoveAllTurnHolderKnockedOutPokemonToDiscardPile
 # >>> factory-mutation PracticeDuel_VerifyPlayerTurnActions
-MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {
-    "source_symbol": "PracticeDuel_VerifyPlayerTurnActions",
-    "before": "ok = card == 0x53u;",
-    "after": "ok = card == 0x54u;",
-    "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"],
-}
+MUTATIONS["PracticeDuel_VerifyPlayerTurnActions"] = {"source_symbol": "PracticeDuel_VerifyPlayerTurnActions", "before": "card == 0x53u", "after": "card == 0x54u", "case_ids": ["PracticeDuel_VerifyPlayerTurnActions-0"]}
 # <<< factory-mutation PracticeDuel_VerifyPlayerTurnActions
 # >>> factory-mutation PrintCardNameFromCardIDInTextBox
 MUTATIONS["PrintCardNameFromCardIDInTextBox"] = {
@@ -1984,4 +1988,6 @@ MUTATIONS["PrintSortNumberInCardList_CallFromPointer"] = {
 }
 # Keep schema-2 inventory after appended routine cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
-# <<< factory-mutation PrintSortNumberInCardList_CallFromPointer
+# <<< factory-mutation PrintSortNumberInCardList_CallFromPointer# >>> factory-mutation PracticeDuel_VerifyInitialPlay
+MUTATIONS["PracticeDuel_VerifyInitialPlay"] = {"source_symbol": "PracticeDuel_VerifyInitialPlay", "before": "count == 2u", "after": "count == 3u", "case_ids": ["PracticeDuel_VerifyInitialPlay-0"]}
+# <<< factory-mutation PracticeDuel_VerifyInitialPlay

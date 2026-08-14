@@ -467,4 +467,8 @@ void MoveAllTurnHolderKnockedOutPokemonToDiscardPile(void);
 /* >>> factory PrintSortNumberInCardList_CallFromPointer */
 void PrintSortNumberInCardList_CallFromPointer(void);
 /* <<< factory PrintSortNumberInCardList_CallFromPointer */
+/* >>> factory PracticeDuel_VerifyInitialPlay */
+typedef struct { uint8_t f; } PracticeDuelInitialPlayResult;
+PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void);
+/* <<< factory PracticeDuel_VerifyInitialPlay */
 #endif

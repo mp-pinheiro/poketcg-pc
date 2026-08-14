@@ -1887,37 +1887,39 @@ uint8_t PickRandomBenchPokemon(void)
 }
 /* <<< factory PickRandomBenchPokemon */
 
+
 /* >>> factory PracticeDuel_VerifyPlayerTurnActions */
+/* core.asm:2701-2712 */
 PracticeDuelTurnActionsResult PracticeDuel_VerifyPlayerTurnActions(void)
 {
 	uint8_t turn = (uint8_t)(wDuelTurns >> 1);
 	uint8_t card = gb_read8(wTempCardID_ccc2_ADDR);
 	uint8_t attack = gb_read8(wSelectedAttack_ADDR);
+	EnergiesResult energy;
 	uint8_t ok;
 	switch (turn) {
 	case 0: ok = card == 0x53u; break;
 	case 1:
-		(void)GetPlayAreaCardAttachedEnergies(0);
+		energy = GetPlayAreaCardAttachedEnergies(0);
 		ok = card == 0x54u && attack == 1u &&
 		     gb_read8((uint16_t)(wAttachedEnergies_ADDR + 5u));
 		break;
 	case 2:
-		(void)GetPlayAreaCardAttachedEnergies(1);
+		energy = GetPlayAreaCardAttachedEnergies(1);
 		ok = card == 0x54u && gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u));
 		break;
 	case 3:
-		(void)GetPlayAreaCardAttachedEnergies(2);
+		energy = GetPlayAreaCardAttachedEnergies(2);
 		ok = wPlayerNumberOfPokemonInPlayArea == 3u &&
 		     gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) &&
 		     card == 0x54u && attack == 1u;
 		break;
 	case 4:
-		(void)GetPlayAreaCardAttachedEnergies(0);
-		ok = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) == 2u &&
-		     card == 0x55u;
+		energy = GetPlayAreaCardAttachedEnergies(0);
+		ok = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) == 2u && card == 0x55u;
 		break;
 	case 5:
-		(void)GetPlayAreaCardAttachedEnergies(0);
+		energy = GetPlayAreaCardAttachedEnergies(0);
 		ok = gb_read8((uint16_t)(wAttachedEnergies_ADDR + 2u)) == 3u &&
 		     wPlayerArenaCardHP == 40u && card == 0x55u;
 		break;
@@ -2169,3 +2171,11 @@ void PrintSortNumberInCardList_CallFromPointer(void)
 	PrintSortNumberInCardList();
 }
 /* <<< factory PrintSortNumberInCardList_CallFromPointer */
+/* >>> factory PracticeDuel_VerifyInitialPlay */
+/* core.asm:2664-2678 */
+PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	return (PracticeDuelInitialPlayResult){count == 2u ? 0xC0u : 0x10u};
+}
+/* <<< factory PracticeDuel_VerifyInitialPlay */
