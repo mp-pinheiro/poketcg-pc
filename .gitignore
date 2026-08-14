@@ -5,6 +5,7 @@
 .idea/
 .vscode/
 .mcp.json
+/.env
 
 # build artifacts (C + CMake + SDL2)
 /build/
