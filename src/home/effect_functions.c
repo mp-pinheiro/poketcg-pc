@@ -209,6 +209,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define NoEnergyAttachedToOpponentsActiveText 0x00aeu
 
 #define NoPokemonWithDamageCountersText 0x00acu
+
+#include "home/duel.h"
+#include "home/substatus.h"
+
+#define ConditionsForEvolvingToStage2NotFulfilledText 0x00b9u
+#define ThereAreNoCardsInHandThatYouCanChangeText 0x00bau
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3300,3 +3306,49 @@ uint16_t PsywaveEffect(void)
 	return hl;
 }
 /* <<< factory PsywaveEffect */
+
+/* >>> factory PokemonCenter_DamageCheck */
+/* effect_functions.asm:9624-9627 */
+PokemonCenterDamageCheckResult PokemonCenter_DamageCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult r = CheckIfPlayAreaHasAnyDamage();
+	return (PokemonCenterDamageCheckResult){r.f, NoPokemonWithDamageCountersText};
+}
+/* <<< factory PokemonCenter_DamageCheck */
+
+/* >>> factory PokemonBreeder_HandPlayAreaCheck */
+/* effect_functions.asm:9735-9743 */
+PokemonBreederHandPlayAreaCheckResult PokemonBreeder_HandPlayAreaCheck(uint16_t hl)
+{
+	uint8_t f = CreatePlayableStage2PokemonCardListFromHand();
+	if (f & 0x10u)
+		return (PokemonBreederHandPlayAreaCheckResult){
+			(uint8_t)((f & 0x80u) | 0x10u),
+			ConditionsForEvolvingToStage2NotFulfilledText
+		};
+	PrehistoricPowerResult r = IsPrehistoricPowerActive(hl);
+	return (PokemonBreederHandPlayAreaCheckResult){r.f, r.hl};
+}
+/* <<< factory PokemonBreeder_HandPlayAreaCheck */
+
+/* >>> factory PokemonTrader_HandDeckCheck */
+/* effect_functions.asm:10016-10024 */
+PokemonTraderHandDeckCheckResult PokemonTrader_HandDeckCheck(void)
+{
+	DuelistVarResult var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	uint16_t message = ThereAreNoCardsInHandThatYouCanChangeText;
+	if (var.a < 2u) {
+		uint8_t f = 0x40u;
+		if (var.a == 0u)
+			f |= 0x20u;
+		f |= 0x10u;
+		return (PokemonTraderHandDeckCheckResult){
+			var.a, f, 0u, 0u, 0u, message, 0u
+		};
+	}
+	CreatePokemonCardListFromHandResult list = CreatePokemonCardListFromHand();
+	return (PokemonTraderHandDeckCheckResult){
+		list.a, list.f, list.c, list.d, list.e, message, 1u
+	};
+}
+/* <<< factory PokemonTrader_HandDeckCheck */

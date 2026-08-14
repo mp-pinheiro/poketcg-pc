@@ -795,6 +795,26 @@ void MrMimeMeditate_AIEffect(void);
 /* >>> factory PsywaveEffect */
 uint16_t PsywaveEffect(void);
 /* <<< factory PsywaveEffect */
+/* >>> factory PokemonCenter_DamageCheck */
+typedef struct { uint8_t f; uint16_t hl; } PokemonCenterDamageCheckResult;
+PokemonCenterDamageCheckResult PokemonCenter_DamageCheck(void);
+/* <<< factory PokemonCenter_DamageCheck */
+/* >>> factory PokemonBreeder_HandPlayAreaCheck */
+typedef struct { uint8_t f; uint16_t hl; } PokemonBreederHandPlayAreaCheckResult;
+PokemonBreederHandPlayAreaCheckResult PokemonBreeder_HandPlayAreaCheck(uint16_t hl);
+/* <<< factory PokemonBreeder_HandPlayAreaCheck */
+/* >>> factory PokemonTrader_HandDeckCheck */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+	uint8_t update_cde;
+} PokemonTraderHandDeckCheckResult;
+PokemonTraderHandDeckCheckResult PokemonTrader_HandDeckCheck(void);
+/* <<< factory PokemonTrader_HandDeckCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

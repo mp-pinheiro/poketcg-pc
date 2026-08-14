@@ -2090,6 +2090,21 @@ CASES["PsywaveEffect"] = [
 ]
 # <<< factory PsywaveEffect
 
+# >>> factory PokemonCenter_DamageCheck
+CONTRACT["PokemonCenter_DamageCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["PokemonCenter_DamageCheck"] = [{}, dict(POISON)]
+# <<< factory PokemonCenter_DamageCheck
+
+# >>> factory PokemonBreeder_HandPlayAreaCheck
+CONTRACT["PokemonBreeder_HandPlayAreaCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["PokemonBreeder_HandPlayAreaCheck"] = [{}, dict(POISON, hl=0x1234)]
+# <<< factory PokemonBreeder_HandPlayAreaCheck
+
+# >>> factory PokemonTrader_HandDeckCheck
+CONTRACT["PokemonTrader_HandDeckCheck"] = {"compare": ("a", "f", "c", "d", "e", "hl"), "preserve": ()}
+CASES["PokemonTrader_HandDeckCheck"] = [{}, {"wram": {0xC2EE: b"\x01"}}, dict(POISON, wram={0xC200: b"\x01\x01", 0xC2EE: b"\x02\x00\x01"})]
+# <<< factory PokemonTrader_HandDeckCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3569,3 +3584,12 @@ MUTATIONS["PsywaveEffect"] = {
 	"case_ids": ["PsywaveEffect-0", "PsywaveEffect-1", "PsywaveEffect-2"],
 }
 # <<< factory-mutation PsywaveEffect
+# >>> factory-mutation PokemonCenter_DamageCheck
+MUTATIONS["PokemonCenter_DamageCheck"] = {"source_symbol": "PokemonCenter_DamageCheck", "before": "\treturn (PokemonCenterDamageCheckResult){r.f, NoPokemonWithDamageCountersText};", "after": "\treturn (PokemonCenterDamageCheckResult){r.f, ConditionsForEvolvingToStage2NotFulfilledText};", "case_ids": ["PokemonCenter_DamageCheck-0", "PokemonCenter_DamageCheck-1"]}
+# <<< factory-mutation PokemonCenter_DamageCheck
+# >>> factory-mutation PokemonBreeder_HandPlayAreaCheck
+MUTATIONS["PokemonBreeder_HandPlayAreaCheck"] = {"source_symbol": "PokemonBreeder_HandPlayAreaCheck", "before": "\tif (f & 0x10u)", "after": "\tif (f & 0x20u)", "case_ids": ["PokemonBreeder_HandPlayAreaCheck-0", "PokemonBreeder_HandPlayAreaCheck-1"]}
+# <<< factory-mutation PokemonBreeder_HandPlayAreaCheck
+# >>> factory-mutation PokemonTrader_HandDeckCheck
+MUTATIONS["PokemonTrader_HandDeckCheck"] = {"source_symbol": "PokemonTrader_HandDeckCheck", "before": "\tuint16_t message = ThereAreNoCardsInHandThatYouCanChangeText;", "after": "\tuint16_t message = ConditionsForEvolvingToStage2NotFulfilledText;", "case_ids": ["PokemonTrader_HandDeckCheck-0", "PokemonTrader_HandDeckCheck-1", "PokemonTrader_HandDeckCheck-2"]}
+# <<< factory-mutation PokemonTrader_HandDeckCheck

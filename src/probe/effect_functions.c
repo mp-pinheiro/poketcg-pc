@@ -1893,6 +1893,39 @@ static void adapt_PsywaveEffect(ProbeState *s)
 }
 /* <<< factory PsywaveEffect */
 
+/* >>> factory PokemonCenter_DamageCheck */
+static void adapt_PokemonCenter_DamageCheck(ProbeState *s)
+{
+	PokemonCenterDamageCheckResult r = PokemonCenter_DamageCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PokemonCenter_DamageCheck */
+
+/* >>> factory PokemonBreeder_HandPlayAreaCheck */
+static void adapt_PokemonBreeder_HandPlayAreaCheck(ProbeState *s)
+{
+	PokemonBreederHandPlayAreaCheckResult r = PokemonBreeder_HandPlayAreaCheck(s->hl);
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PokemonBreeder_HandPlayAreaCheck */
+
+/* >>> factory PokemonTrader_HandDeckCheck */
+static void adapt_PokemonTrader_HandDeckCheck(ProbeState *s)
+{
+	PokemonTraderHandDeckCheckResult r = PokemonTrader_HandDeckCheck();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+	if (r.update_cde) {
+		s->c = r.c;
+		s->d = r.d;
+		s->e = r.e;
+	}
+}
+/* <<< factory PokemonTrader_HandDeckCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2131,5 +2164,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRetrieval_HandEnergyCheck", adapt_EnergyRetrieval_HandEnergyCheck },
 	{ "MrMimeMeditate_AIEffect", adapt_MrMimeMeditate_AIEffect },
 	{ "PsywaveEffect", adapt_PsywaveEffect },
+	{ "PokemonCenter_DamageCheck", adapt_PokemonCenter_DamageCheck },
+	{ "PokemonBreeder_HandPlayAreaCheck", adapt_PokemonBreeder_HandPlayAreaCheck },
+	{ "PokemonTrader_HandDeckCheck", adapt_PokemonTrader_HandDeckCheck },
 	{ NULL, NULL },
 };
