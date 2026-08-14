@@ -1,0 +1,9 @@
+{
+  "fn": "StoreRegistersInIRDataBuffer",
+  "case": "tests/cases/ir_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StoreRegistersInIRDataBuffer\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 52876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52869\": \"f0aa3412eeddccbb\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StoreRegistersInIRDataBuffer\", \"mismatches\": {\"bus\": {\"address\": 52869, \"reference\": \"f0aa3412ee\", \"native\": \"aaaa3412ee\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[52869, 8]]}}}\n",
+  "restored": "{\"fn\": \"StoreRegistersInIRDataBuffer\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 52876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52869\": \"f0aa3412eeddccbb\"}}, \"status\": \"PASS\"}\n"
+}

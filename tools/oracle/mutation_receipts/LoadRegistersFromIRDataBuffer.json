@@ -1,0 +1,9 @@
+{
+  "fn": "LoadRegistersFromIRDataBuffer",
+  "case": "tests/cases/ir_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadRegistersFromIRDataBuffer\", \"registers\": {\"a\": 17, \"b\": 119, \"c\": 102, \"d\": 85, \"e\": 68, \"f\": 240, \"hl\": 13090, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52869\": \"f011223344556677\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadRegistersFromIRDataBuffer\", \"mismatches\": {\"f\": [240, 224]}}\n",
+  "restored": "{\"fn\": \"LoadRegistersFromIRDataBuffer\", \"registers\": {\"a\": 17, \"b\": 119, \"c\": 102, \"d\": 85, \"e\": 68, \"f\": 240, \"hl\": 13090, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52869\": \"f011223344556677\"}}, \"status\": \"PASS\"}\n"
+}
