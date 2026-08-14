@@ -21,7 +21,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import BUNDLES, CACHE, PBENV, ROOT, list_packets, set_state  # noqa: E402
+from common import (BUNDLES, CACHE, PBENV, ROOT, list_packets, packet_identity,
+                    set_state)  # noqa: E402
 from verify import fn_args  # noqa: E402
 import surgery  # noqa: E402
 
@@ -57,16 +58,8 @@ def land(packet: dict) -> None:
     if not metadata.exists():
         raise SystemExit(f"bundle missing packet identity: {metadata}")
     identity = json.loads(metadata.read_text())
-    expected_identity = [
-        {
-            "name": routine["name"],
-            "work_id": routine.get("work_id")
-            or f"port:v1:{packet['file']}:{routine['name']}",
-            "issue_number": routine.get("issue_number"),
-        }
-        for routine in packet["routines"]
-    ]
-    if identity.get("routines") != expected_identity:
+    expected_identity = packet_identity(packet)
+    if identity != expected_identity:
         raise SystemExit(f"STOP-THE-LINE {packet['id']} identity mismatch")
     basename = packet["basename"]
     cases_rel = Path("tests") / "cases" / f"{basename}.py"

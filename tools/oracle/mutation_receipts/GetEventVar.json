@@ -1,0 +1,9 @@
+{
+  "fn": "GetEventVar",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEventVar\", \"registers\": {\"a\": 64, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 54289, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"40\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEventVar\", \"mismatches\": {\"a\": [64, 32], \"bus\": {\"address\": 54225, \"reference\": \"40\", \"native\": \"20\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54225, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetEventVar\", \"registers\": {\"a\": 64, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 54289, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"40\"}}, \"status\": \"PASS\"}\n"
+}

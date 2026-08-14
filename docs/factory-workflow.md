@@ -34,17 +34,41 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=max_r
    `https://forgejo.yfrit.com`, repository `mpp/poketcg-pc`, and token file
    `~/.config/yfrit-forgejo/api/poketcg-issues.token`.
    `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE` override the endpoint
-   and credential for both audit and dispatch. `POKETCG_FORGEJO_OWNER` and
-   `POKETCG_FORGEJO_REPO` affect the issue client only; packet consumption still
-   requires cache repository `mpp/poketcg-pc`. The token file accepts a raw
-   token, `token ...`, `bearer ...`, or an `Authorization:`-prefixed value.
-   `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` add Cloudflare Access
-   headers and must be set together; they do not replace the Forgejo token.
+   and PAT compatibility fallback for the Python REST client.
+   `POKETCG_FORGEJO_OWNER` and `POKETCG_FORGEJO_REPO` affect the issue client
+   only; packet consumption still requires cache repository `mpp/poketcg-pc`.
+   The repository-root ignored `/.env` is the preferred Python REST
+   configuration. `tools/factory/issues.py` is the only reader, and it loads
+   only `POKETCG_FORGEJO_TOKEN`, `CF_ACCESS_CLIENT_ID`, and
+   `CF_ACCESS_CLIENT_SECRET`. Do not add example values to this file.
+   The token file remains a PAT compatibility fallback and accepts a raw token,
+   `token ...`, `bearer ...`, or an `Authorization:`-prefixed value.
+   The Cloudflare pair authenticates the HTTP request at the Zero Trust Access
+   edge; it does not replace the Forgejo PAT.
    These credentials cover the issue REST client only. Git and jj authenticate
    to Forgejo through the host-scoped `git-credential-oauth` configuration in
    `docs/jj-workflow.md`.
 4. Resume state: `python3 tools/factory/driver.py reset-stale` returns
    crashed in-flight packets to `pending`; `driver.py status` shows the queue.
+
+Before resuming a queue created before persisted work identity, run the guarded
+migration command from the repository root:
+
+```sh
+python3 tools/factory/packet.py migrate-work-ids
+python3 tools/factory/packet.py migrate-work-ids --apply
+```
+
+The first command is read-only. It validates every queue packet, including
+terminal history, against the schema-2 Forgejo cache, rejects unresolved or
+duplicate active claims, and checks every bundle directory. `--apply` is the
+only write switch: it backfills each routine's canonical `work_id` and
+authoritative `issue_number`, creates missing `packet.json` bundle identities,
+and writes a timestamped `.factory/backups/` manifest. Queue and metadata
+writes are atomic; a write or readback failure restores the in-memory originals
+and removes only metadata that was absent before migration. A zero-change apply
+creates neither writes nor a backup. Re-run the dry run and require zero changes
+before dispatching work.
 
 ## The loop
 
@@ -181,6 +205,8 @@ claim deduplication use that immutable work ID rather than mutable issue titles.
   rejects marked IDs outside the current projection.
 - Packet batching may contain several issue numbers, but one work ID cannot be
   claimed by two non-terminal packets.
+- Every queue routine persists its canonical `work_id` and authoritative
+  `issue_number`; bundle `packet.json` repeats the exact packet identity.
 - Packet construction consumes only open `port-ready` issues; integration never
   mutates their Forgejo lifecycle.
 - `tests/routines.py` is derived from case modules and is never hand-edited.

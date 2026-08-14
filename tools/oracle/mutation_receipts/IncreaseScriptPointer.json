@@ -1,0 +1,9 @@
+{
+  "fn": "IncreaseScriptPointer",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IncreaseScriptPointer\", \"registers\": {\"a\": 193, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54291\": \"01c1\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IncreaseScriptPointer\", \"mismatches\": {\"bus\": {\"address\": 54291, \"reference\": \"01c1\", \"native\": \"02c1\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"IncreaseScriptPointer\", \"registers\": {\"a\": 193, \"b\": 187, \"c\": 1, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54291\": \"01c1\"}}, \"status\": \"PASS\"}\n"
+}

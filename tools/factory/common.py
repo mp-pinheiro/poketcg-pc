@@ -122,6 +122,37 @@ def issue_records(*, required: bool = False) -> dict[str, dict]:
         }
     return records
 
+def packet_identity(packet: dict) -> dict:
+    """Return the persisted identity shared by queue and bundle consumers."""
+    required_packet = ("id", "basename", "file", "routines")
+    missing_packet = [key for key in required_packet if key not in packet]
+    if missing_packet:
+        raise ValueError(
+            f"packet identity missing fields: {', '.join(missing_packet)}"
+        )
+    routines = []
+    for index, routine in enumerate(packet["routines"]):
+        missing = [
+            key for key in ("name", "work_id", "issue_number")
+            if key not in routine
+        ]
+        if missing:
+            raise ValueError(
+                f"packet identity routine {index} missing fields: "
+                + ", ".join(missing)
+            )
+        routines.append({
+            "name": routine["name"],
+            "work_id": routine["work_id"],
+            "issue_number": routine["issue_number"],
+        })
+    return {
+        "id": packet["id"],
+        "basename": packet["basename"],
+        "file": packet["file"],
+        "routines": routines,
+    }
+
 
 def packet_path(packet_id: str) -> Path:
     return QUEUE / f"{packet_id}.json"

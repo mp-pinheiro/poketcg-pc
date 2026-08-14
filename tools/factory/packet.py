@@ -12,22 +12,272 @@ and the append-mode context of the target files.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib.util
 import json
+import os
 import re
+import shutil
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import common  # noqa: E402
 from common import (  # noqa: E402
-    QUEUE, ROOT, block_routine, blocked_routines, issue_records, write_json,
+    BUNDLES, FACTORY, QUEUE, ROOT, block_routine, blocked_routines,
+    issue_records, read_json, write_json,
 )
 
 PRET = ROOT / "poketcg"
 MAX_ROUTINES = 8
 MAX_ASM_LINES = 300
+BACKUPS = FACTORY / "backups"
+ACTIVE_CLAIM_STATES = {"pending", "translated", "verifying", "repair", "green"}
+
+
+def plan_work_id_migration(
+    packets: list[dict],
+    managed_issues: dict[str, dict],
+) -> tuple[list[dict], dict[str, int]]:
+    """Validate and backfill queue identity without mutating the inputs."""
+    migrated = []
+    changed_packets = 0
+    changed_routines = 0
+    for packet in packets:
+        packet_id = packet.get("id")
+        if not isinstance(packet_id, str) or not packet_id:
+            raise ValueError("queue packet has no non-empty id")
+        source = packet.get("file")
+        if not isinstance(source, str) or not source:
+            raise ValueError(f"packet {packet_id} has no non-empty file")
+        routines = packet.get("routines")
+        if not isinstance(routines, list):
+            raise ValueError(f"packet {packet_id} has no routine list")
+        updated = copy.deepcopy(packet)
+        packet_changed = False
+        for index, routine in enumerate(updated["routines"]):
+            name = routine.get("name")
+            if not isinstance(name, str) or not name:
+                raise ValueError(
+                    f"packet {packet_id} routine {index} has no non-empty name"
+                )
+            work_id = f"port:v1:{source}:{name}"
+            issue = managed_issues.get(work_id)
+            if issue is None:
+                raise ValueError(
+                    f"packet {packet_id} routine {name} has unresolved work ID "
+                    f"{work_id}"
+                )
+            if "issue_number" not in issue:
+                raise ValueError(f"issue record {work_id} has no issue number")
+            routine_changed = False
+            for field, expected in (
+                ("work_id", work_id),
+                ("issue_number", issue["issue_number"]),
+            ):
+                if field in routine:
+                    if routine[field] != expected:
+                        raise ValueError(
+                            f"packet {packet_id} routine {name} has mismatched "
+                            f"{field}: {routine[field]!r} != {expected!r}"
+                        )
+                else:
+                    routine[field] = expected
+                    routine_changed = True
+            if routine_changed:
+                packet_changed = True
+                changed_routines += 1
+        if packet_changed:
+            changed_packets += 1
+        migrated.append(updated)
+
+    active_claims: dict[str, str] = {}
+    for packet in migrated:
+        if packet.get("state") not in ACTIVE_CLAIM_STATES:
+            continue
+        for routine in packet["routines"]:
+            work_id = routine["work_id"]
+            owner = active_claims.get(work_id)
+            if owner is not None and owner != packet["id"]:
+                raise ValueError(
+                    f"work ID {work_id} claimed by active packets {owner} and "
+                    f"{packet['id']}"
+                )
+            active_claims[work_id] = packet["id"]
+    return migrated, {
+        "packets": len(migrated),
+        "routines": sum(len(packet["routines"]) for packet in migrated),
+        "changed_packets": changed_packets,
+        "changed_routines": changed_routines,
+    }
+
+
+def _plan_bundle_metadata(packets: list[dict]) -> dict:
+    by_id = {packet["id"]: packet for packet in packets}
+    entries = []
+    missing = []
+    existing = []
+    if not BUNDLES.is_dir():
+        return {
+            "bundles": 0,
+            "changed_bundle_metadata": 0,
+            "entries": entries,
+            "missing": missing,
+            "existing": existing,
+        }
+    for bundle in sorted(path for path in BUNDLES.iterdir() if path.is_dir()):
+        packet = by_id.get(bundle.name)
+        if packet is None:
+            raise ValueError(f"orphan bundle directory: {bundle}")
+        expected = common.packet_identity(packet)
+        metadata = bundle / "packet.json"
+        if metadata.exists():
+            raw = metadata.read_bytes()
+            existing_identity = json.loads(raw)
+            if existing_identity != expected:
+                raise ValueError(f"bundle identity mismatch: {metadata}")
+            existing.append((metadata, raw))
+        else:
+            missing.append((metadata, expected))
+        entries.append((metadata, expected))
+    return {
+        "bundles": len(entries),
+        "changed_bundle_metadata": len(missing),
+        "entries": entries,
+        "missing": missing,
+        "existing": existing,
+    }
+
+
+def _migration_preflight() -> dict:
+    packets = []
+    queue_entries = []
+    if QUEUE.is_dir():
+        for path in sorted(QUEUE.glob("*.json")):
+            raw = path.read_bytes()
+            packet = json.loads(raw)
+            if path.stem != packet.get("id"):
+                raise ValueError(f"queue filename does not match packet id: {path}")
+            queue_entries.append((path, raw, packet))
+    managed_issues = issue_records(required=True)
+    packets = [packet for _path, _raw, packet in queue_entries]
+    migrated, counts = plan_work_id_migration(packets, managed_issues)
+    planned_queue = []
+    for (path, raw, original), updated in zip(queue_entries, migrated):
+        planned_queue.append((path, raw, original, updated))
+    bundle_plan = _plan_bundle_metadata(migrated)
+    counts.update({
+        "bundles": bundle_plan["bundles"],
+        "changed_bundle_metadata": bundle_plan["changed_bundle_metadata"],
+    })
+    return {
+        "counts": counts,
+        "queue": planned_queue,
+        "bundles": bundle_plan,
+    }
+
+
+def _restore_bytes(path: Path, raw: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp = tempfile.mkstemp(prefix=f".{path.stem}.", suffix=".restore",
+                                dir=path.parent)
+    try:
+        with os.fdopen(fd, "wb") as stream:
+            stream.write(raw)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp, path)
+    finally:
+        if os.path.exists(temp):
+            os.unlink(temp)
+
+
+def _create_migration_backup(preflight: dict) -> Path:
+    BACKUPS.mkdir(parents=True, exist_ok=True)
+    stamp = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
+    backup = BACKUPS / f"work-id-migration-{stamp}-{time.time_ns() % 1000000:06d}"
+    backup.mkdir()
+    queue_files = []
+    for path, _raw, original, updated in preflight["queue"]:
+        if original == updated:
+            continue
+        destination = backup / "queue" / path.name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, destination)
+        queue_files.append(str(destination.relative_to(backup)))
+    bundle_files = []
+    for path, raw in preflight["bundles"]["existing"]:
+        destination = backup / "bundles" / path.parent.name / path.name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(raw)
+        bundle_files.append(str(destination.relative_to(backup)))
+    absent = [
+        str(path.relative_to(BUNDLES))
+        for path, _expected in preflight["bundles"]["missing"]
+    ]
+    write_json(backup / "manifest.json", {
+        "queue": queue_files,
+        "bundle_metadata": bundle_files,
+        "absent_bundle_metadata": absent,
+    })
+    return backup
+
+
+def _restore_migration(preflight: dict) -> None:
+    for path, raw, original, updated in preflight["queue"]:
+        if original != updated:
+            _restore_bytes(path, raw)
+    for path, raw in preflight["bundles"]["existing"]:
+        _restore_bytes(path, raw)
+    for path, _expected in preflight["bundles"]["missing"]:
+        if path.exists():
+            path.unlink()
+
+
+def apply_work_id_migration(preflight: dict) -> dict:
+    """Apply a completed preflight with a backup and atomic rollback."""
+    counts = dict(preflight["counts"])
+    if not counts["changed_packets"] and not counts["changed_bundle_metadata"]:
+        counts["backup"] = None
+        return counts
+    backup = _create_migration_backup(preflight)
+    try:
+        for path, _raw, original, updated in preflight["queue"]:
+            if original != updated:
+                write_json(path, updated)
+        for path, expected in preflight["bundles"]["missing"]:
+            write_json(path, expected)
+        for path, _raw, original, updated in preflight["queue"]:
+            if original != updated and read_json(path) != updated:
+                raise RuntimeError(f"queue readback mismatch: {path}")
+        for path, expected in preflight["bundles"]["missing"]:
+            if read_json(path) != expected:
+                raise RuntimeError(f"bundle metadata readback mismatch: {path}")
+    except Exception as exc:
+        try:
+            _restore_migration(preflight)
+        except Exception as restore_exc:
+            raise RuntimeError(
+                f"migration failed; backup at {backup}; rollback failed: "
+                f"{restore_exc}"
+            ) from exc
+        raise RuntimeError(
+            f"migration failed and was restored; backup at {backup}: {exc}"
+        ) from exc
+    counts["backup"] = str(backup)
+    return counts
+
+
+def run_work_id_migration(*, apply: bool = False) -> dict:
+    preflight = _migration_preflight()
+    if apply:
+        return apply_work_id_migration(preflight)
+    return dict(preflight["counts"], backup=None)
+
 
 
 def _load_module(name: str, path: Path):
@@ -479,19 +729,19 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
 
 def drop_claimed(packets: list[dict]) -> list[dict]:
     """Reject duplicate non-terminal work claims instead of silently merging."""
-    active_states = {"pending", "translated", "verifying", "repair", "green"}
     claims: dict[str, str] = {}
     kept: list[dict] = []
     for path in QUEUE.glob("*.json"):
         entry = json.loads(path.read_text())
-        if entry.get("state") not in active_states:
+        if entry.get("state") not in ACTIVE_CLAIM_STATES:
             continue
         for routine in entry.get("routines", []):
-            work_id = routine.get("work_id")
-            if not work_id:
+            if "work_id" not in routine or not routine["work_id"]:
                 raise RuntimeError(
-                    f"active legacy packet lacks work ID: {entry['id']}"
+                    f"active packet {entry['id']} routine {routine.get('name')!r} "
+                    "lacks work ID"
                 )
+            work_id = routine["work_id"]
             owner = claims.get(work_id)
             if owner and owner != entry["id"]:
                 raise RuntimeError(
@@ -620,7 +870,33 @@ def main() -> int:
     chokepoints = sub.add_parser(
         "chokepoints", help="rank todo routines by transitive cascade")
     chokepoints.add_argument("--limit", type=int, default=20)
+    migrate = sub.add_parser(
+        "migrate-work-ids",
+        help="backfill queue and bundle work identity from the issue cache",
+    )
+    migrate.add_argument(
+        "--apply", action="store_true",
+        help="write the validated migration and create a backup",
+    )
     args = parser.parse_args()
+
+    if args.command == "migrate-work-ids":
+        try:
+            counts = run_work_id_migration(apply=args.apply)
+        except (OSError, RuntimeError, ValueError) as exc:
+            print(f"migration aborted: {exc}", file=sys.stderr)
+            return 1
+        print(
+            "packets={packets} routines={routines} "
+            "changed_packets={changed_packets} changed_routines={changed_routines} "
+            "bundles={bundles} "
+            "changed_bundle_metadata={changed_bundle_metadata}".format(**counts)
+        )
+        if counts["backup"] is None:
+            print("no files written; no backup created")
+        else:
+            print(f"migration applied; backup: {counts['backup']}")
+        return 0
 
     if args.command == "chokepoints":
         return cmd_chokepoints(args.limit)

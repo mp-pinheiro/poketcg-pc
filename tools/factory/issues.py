@@ -35,6 +35,12 @@ FORGEJO_TOKEN_FILE = Path(os.environ.get(
     "POKETCG_FORGEJO_TOKEN_FILE",
     "~/.config/yfrit-forgejo/api/poketcg-issues.token",
 )).expanduser()
+DOTENV = ROOT / ".env"
+DOTENV_KEYS = {
+    "POKETCG_FORGEJO_TOKEN",
+    "CF_ACCESS_CLIENT_ID",
+    "CF_ACCESS_CLIENT_SECRET",
+}
 PAGE_SIZE = 50
 TRANSIENT_STATUS = {429, 502, 503, 504}
 MARKER = re.compile(
@@ -107,18 +113,75 @@ def issue_fingerprint(issue: dict) -> str:
     })
 
 
-def forgejo_authorization(token_file: Path = FORGEJO_TOKEN_FILE) -> str:
-    try:
-        token = token_file.read_text().strip()
-    except OSError as exc:
-        raise ModelError(f"cannot read Forgejo token file {token_file}: {exc}") from exc
+def dotenv_credentials(path: Path = DOTENV) -> dict[str, str]:
+    if not path.is_file():
+        return {}
+    credentials: dict[str, str] = {}
+    for raw_line in path.read_text().splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].lstrip()
+        name, separator, value = line.partition("=")
+        if not separator or name not in DOTENV_KEYS:
+            continue
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        credentials[name] = value
+    return credentials
+
+
+def forgejo_authorization(
+    token_file: Path = FORGEJO_TOKEN_FILE,
+    dotenv: dict[str, str] | None = None,
+) -> str:
+    dotenv = dotenv if dotenv is not None else dotenv_credentials()
+    token = os.environ.get("POKETCG_FORGEJO_TOKEN") or dotenv.get(
+        "POKETCG_FORGEJO_TOKEN"
+    )
+    if token is None:
+        try:
+            token = token_file.read_text().strip()
+        except OSError as exc:
+            raise ModelError(
+                f"cannot read Forgejo token file {token_file}: {exc}"
+            ) from exc
     if token.lower().startswith("authorization:"):
         token = token.split(":", 1)[1].strip()
     if not token:
-        raise ModelError(f"Forgejo token file is empty: {token_file}")
+        raise ModelError("Forgejo token is empty")
     if not token.lower().startswith(("token ", "bearer ")):
         token = f"token {token}"
     return token
+
+
+def cloudflare_access_headers(
+    dotenv: dict[str, str] | None = None,
+) -> dict[str, str]:
+    dotenv = dotenv if dotenv is not None else dotenv_credentials()
+    client_id = os.environ.get("CF_ACCESS_CLIENT_ID") or dotenv.get(
+        "CF_ACCESS_CLIENT_ID"
+    )
+    client_secret = os.environ.get("CF_ACCESS_CLIENT_SECRET") or dotenv.get(
+        "CF_ACCESS_CLIENT_SECRET"
+    )
+    if bool(client_id) != bool(client_secret):
+        raise ModelError(
+            "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET must be set together"
+        )
+    if not client_id:
+        if FORGEJO_URL == "https://forgejo.yfrit.com":
+            raise ModelError(
+                "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET are required "
+                "for forgejo.yfrit.com"
+            )
+        return {}
+    return {
+        "CF-Access-Client-Id": client_id,
+        "CF-Access-Client-Secret": client_secret,
+    }
 
 
 def fetch_page(page: int) -> list[dict]:
@@ -133,19 +196,12 @@ def fetch_page(page: int) -> list[dict]:
         "page": page,
     })
     url = f"{FORGEJO_URL}/api/v1/repos/{owner}/{repo}/issues?{query}"
+    dotenv = dotenv_credentials()
     headers = {
         "Accept": "application/json",
-        "Authorization": forgejo_authorization(),
+        "Authorization": forgejo_authorization(dotenv=dotenv),
+        **cloudflare_access_headers(dotenv),
     }
-    client_id = os.environ.get("CF_ACCESS_CLIENT_ID")
-    client_secret = os.environ.get("CF_ACCESS_CLIENT_SECRET")
-    if bool(client_id) != bool(client_secret):
-        raise ModelError(
-            "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET must be set together"
-        )
-    if client_id:
-        headers["CF-Access-Client-Id"] = client_id
-        headers["CF-Access-Client-Secret"] = client_secret
     request = urllib.request.Request(url, headers=headers)
     for attempt in range(4):
         try:
@@ -360,9 +416,12 @@ def load_report() -> dict:
             continue
         for routine in packet.get("routines", []):
             name = routine["name"]
-            work_id = routine.get("work_id")
-            if not work_id:
-                work_id = f"port:v1:{packet['file']}:{name}"
+            work_id = routine["work_id"]
+            if not isinstance(work_id, str) or not work_id:
+                raise ModelError(
+                    f"active packet {packet['id']} routine {name!r} "
+                    "missing work ID"
+                )
             if work_id in active:
                 raise ModelError(
                     f"work ID {work_id} claimed by multiple active packets: "

@@ -6,9 +6,10 @@ prove the Forgejo cache and planner contracts without credentials.
 """
 
 from __future__ import annotations
-
 import importlib.util
 import json
+import os
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -41,6 +42,86 @@ def routine(name: str, *, state: str = "ready") -> dict:
 
 def main() -> int:
     issues = load("issue_model", ROOT / "tools/factory/issues.py")
+    original_url = issues.FORGEJO_URL
+    original_env = {
+        key: os.environ.get(key)
+        for key in issues.DOTENV_KEYS
+    }
+    try:
+        with tempfile.TemporaryDirectory() as directory:
+            dotenv_path = Path(directory) / ".env"
+            dotenv_path.write_text(
+                "# ignored\n"
+                "POKETCG_FORGEJO_TOKEN='file-pat'\n"
+                "export CF_ACCESS_CLIENT_ID=\"file-id\"\n"
+                "CF_ACCESS_CLIENT_SECRET=file-secret=with-equals\n"
+                "UNRELATED=ignored\n"
+            )
+            for key in issues.DOTENV_KEYS:
+                os.environ.pop(key, None)
+            values = issues.dotenv_credentials(dotenv_path)
+            assert values == {
+                "POKETCG_FORGEJO_TOKEN": "file-pat",
+                "CF_ACCESS_CLIENT_ID": "file-id",
+                "CF_ACCESS_CLIENT_SECRET": "file-secret=with-equals",
+            }
+            assert issues.forgejo_authorization(dotenv=values) == "token file-pat"
+            assert issues.cloudflare_access_headers(values) == {
+                "CF-Access-Client-Id": "file-id",
+                "CF-Access-Client-Secret": "file-secret=with-equals",
+            }
+            os.environ["POKETCG_FORGEJO_TOKEN"] = "process-pat"
+            os.environ["CF_ACCESS_CLIENT_ID"] = "process-id"
+            os.environ["CF_ACCESS_CLIENT_SECRET"] = "process-secret"
+            assert issues.forgejo_authorization(dotenv=values) == "token process-pat"
+            assert issues.cloudflare_access_headers(values) == {
+                "CF-Access-Client-Id": "process-id",
+                "CF-Access-Client-Secret": "process-secret",
+            }
+            os.environ.pop("CF_ACCESS_CLIENT_SECRET")
+            try:
+                issues.cloudflare_access_headers({
+                    "CF_ACCESS_CLIENT_ID": "file-id",
+                })
+            except issues.ModelError as exc:
+                assert str(exc) == (
+                    "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET "
+                    "must be set together"
+                )
+            else:
+                raise AssertionError("partial Cloudflare credentials accepted")
+            os.environ.pop("CF_ACCESS_CLIENT_ID")
+            try:
+                issues.cloudflare_access_headers({
+                    "CF_ACCESS_CLIENT_SECRET": "file-secret",
+                })
+            except issues.ModelError as exc:
+                assert str(exc) == (
+                    "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET "
+                    "must be set together"
+                )
+            else:
+                raise AssertionError("partial Cloudflare credentials accepted")
+            for key in issues.DOTENV_KEYS:
+                os.environ.pop(key, None)
+            issues.FORGEJO_URL = "https://forgejo.yfrit.com"
+            try:
+                issues.cloudflare_access_headers({})
+            except issues.ModelError as exc:
+                assert str(exc) == (
+                    "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET are "
+                    "required for forgejo.yfrit.com"
+                )
+            else:
+                raise AssertionError("production endpoint allowed missing Access credentials")
+    finally:
+        issues.FORGEJO_URL = original_url
+        for key, value in original_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
     report = {"work_records": [routine("Foo"), routine("Bar")]}
     work = report["work_records"][0]
     human = "# Human history\n\nKeep this paragraph.\n"
@@ -216,6 +297,216 @@ def main() -> int:
         "issues": [exact_foo, exact_bar],
     }
     assert issues.desired_plan(exact_snapshot, report)["actions"] == []
+
+    packet = load("factory_packet", ROOT / "tools/factory/packet.py")
+
+    def migration_packet(packet_id, state, names, identities=None):
+        identities = identities or {}
+        return {
+            "id": packet_id,
+            "basename": "demo",
+            "file": "src/home/demo.asm",
+            "state": state,
+            "routines": [
+                dict({"name": name, "size": 1}, **identities.get(name, {}))
+                for name in names
+            ],
+        }
+
+    def must_fail(call, label):
+        try:
+            call()
+        except (RuntimeError, ValueError):
+            return
+        raise AssertionError(f"{label} was accepted")
+
+    foo_id = "port:v1:src/home/demo.asm:Foo"
+    bar_id = "port:v1:src/home/demo.asm:Bar"
+    managed = {
+        foo_id: {"issue_number": 101},
+        bar_id: {"issue_number": 102},
+    }
+    pending = migration_packet("pending", "pending", ["Foo"])
+    terminal = migration_packet("terminal", "landed", ["Foo"])
+    matching = migration_packet(
+        "matching", "green", ["Bar"],
+        {"Bar": {"work_id": bar_id, "issue_number": 102}},
+    )
+    original_pending = json.loads(json.dumps(pending))
+    migrated, migration_counts = packet.plan_work_id_migration(
+        [pending, terminal, matching], managed,
+    )
+    assert pending == original_pending
+    assert migration_counts == {
+        "packets": 3,
+        "routines": 3,
+        "changed_packets": 2,
+        "changed_routines": 2,
+    }
+    assert migrated[0]["routines"][0]["work_id"] == foo_id
+    assert migrated[0]["routines"][0]["issue_number"] == 101
+    assert migrated[1]["routines"][0]["work_id"] == foo_id
+    assert migrated[2] == matching
+    second, second_counts = packet.plan_work_id_migration(migrated, managed)
+    assert second == migrated
+    assert second_counts["changed_packets"] == 0
+    assert second_counts["changed_routines"] == 0
+    must_fail(
+        lambda: packet.plan_work_id_migration(
+            [migration_packet(
+                "mismatch", "pending", ["Foo"],
+                {"Foo": {"work_id": "port:v1:wrong", "issue_number": 101}},
+            )],
+            managed,
+        ),
+        "mismatched work ID",
+    )
+    must_fail(
+        lambda: packet.plan_work_id_migration(
+            [migration_packet(
+                "mismatch-number", "pending", ["Foo"],
+                {"Foo": {"work_id": foo_id, "issue_number": 999}},
+            )],
+            managed,
+        ),
+        "mismatched issue number",
+    )
+    must_fail(
+        lambda: packet.plan_work_id_migration(
+            [migration_packet("unresolved", "pending", ["Missing"])],
+            managed,
+        ),
+        "unresolved work ID",
+    )
+    must_fail(
+        lambda: packet.plan_work_id_migration(
+            [
+                migration_packet("active-a", "pending", ["Foo"]),
+                migration_packet("active-b", "green", ["Foo"]),
+            ],
+            managed,
+        ),
+        "duplicate active claim",
+    )
+
+    def run_application_case(failure=None):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            queue = root / "queue"
+            bundles = root / "bundles"
+            backups = root / "backups"
+            cache = root / "issues-cache.json"
+            queue.mkdir()
+            bundles.mkdir()
+            p1 = migration_packet("p1", "pending", ["Foo"])
+            p2 = migration_packet(
+                "p2", "landed", ["Bar"],
+                {"Bar": {"work_id": bar_id, "issue_number": 102}},
+            )
+            p1_raw = json.dumps(p1, indent=4).encode() + b"\n"
+            p2_raw = json.dumps(p2, indent=1, sort_keys=True).encode() + b"\n"
+            (queue / "p1.json").write_bytes(p1_raw)
+            (queue / "p2.json").write_bytes(p2_raw)
+            existing_identity = packet.common.packet_identity(p2)
+            existing_raw = (
+                json.dumps(existing_identity, indent=3).encode() + b"\n"
+            )
+            (bundles / "p1").mkdir()
+            (bundles / "p2").mkdir()
+            existing_metadata = bundles / "p2" / "packet.json"
+            existing_metadata.write_bytes(existing_raw)
+            (bundles / "p2" / "kept.bin").write_bytes(b"keep")
+            cache_issues = []
+            for number, work_id in ((101, foo_id), (102, bar_id)):
+                marker = (
+                    "<!-- poketcg-port-work:v1\n"
+                    + json.dumps({"work_id": work_id})
+                    + "\n-->"
+                )
+                cache_issues.append({
+                    "number": number,
+                    "body": marker,
+                    "state": "open",
+                    "labels": [],
+                })
+            packet.common.write_json(cache, {
+                "schema": 2,
+                "backend": "forgejo",
+                "repository": "mpp/poketcg-pc",
+                "issues": cache_issues,
+            })
+            old = (
+                packet.QUEUE, packet.BUNDLES, packet.BACKUPS,
+                packet.common.ISSUES_CACHE, packet.write_json,
+                packet.read_json,
+            )
+            missing_metadata = bundles / "p1" / "packet.json"
+            try:
+                packet.QUEUE = queue
+                packet.BUNDLES = bundles
+                packet.BACKUPS = backups
+                packet.common.ISSUES_CACHE = cache
+                original_writer = packet.write_json
+                original_reader = packet.read_json
+                if failure in {"queue", "metadata"}:
+                    def failing_writer(path, data):
+                        if failure == "queue" and path == queue / "p1.json":
+                            raise OSError("injected queue write failure")
+                        if failure == "metadata" and path == missing_metadata:
+                            raise OSError("injected metadata write failure")
+                        return original_writer(path, data)
+                    packet.write_json = failing_writer
+                if failure == "readback":
+                    def failing_reader(path):
+                        if path == queue / "p1.json":
+                            raise OSError("injected readback failure")
+                        return original_reader(path)
+                    packet.read_json = failing_reader
+                before_metadata = existing_metadata.read_bytes()
+                if failure is None:
+                    result = packet.run_work_id_migration(apply=True)
+                    assert result["changed_packets"] == 1
+                    assert result["changed_routines"] == 1
+                    assert result["changed_bundle_metadata"] == 1
+                    assert json.loads((queue / "p1.json").read_bytes())[
+                        "routines"
+                    ][0]["issue_number"] == 101
+                    assert json.loads(missing_metadata.read_bytes()) == (
+                        packet.common.packet_identity(
+                            json.loads((queue / "p1.json").read_bytes())
+                        )
+                    )
+                    assert existing_metadata.read_bytes() == before_metadata
+                    assert (bundles / "p2" / "kept.bin").read_bytes() == b"keep"
+                    manifest = json.loads(
+                        (Path(result["backup"]) / "manifest.json").read_bytes()
+                    )
+                    assert manifest["queue"] == ["queue/p1.json"]
+                    assert manifest["bundle_metadata"] == [
+                        "bundles/p2/packet.json"
+                    ]
+                    assert manifest["absent_bundle_metadata"] == ["p1/packet.json"]
+                else:
+                    before_queue = (queue / "p1.json").read_bytes()
+                    try:
+                        packet.run_work_id_migration(apply=True)
+                    except RuntimeError as exc:
+                        assert "backup at" in str(exc)
+                    else:
+                        raise AssertionError(f"{failure} failure was accepted")
+                    assert (queue / "p1.json").read_bytes() == before_queue
+                    assert not missing_metadata.exists()
+                    assert existing_metadata.read_bytes() == before_metadata
+            finally:
+                (
+                    packet.QUEUE, packet.BUNDLES, packet.BACKUPS,
+                    packet.common.ISSUES_CACHE, packet.write_json,
+                    packet.read_json,
+                ) = old
+
+    run_application_case()
+    for injected_failure in ("queue", "metadata", "readback"):
+        run_application_case(injected_failure)
 
     cache_path = Path("/tmp/poketcg-forgejo-issue-cache.json")
     original_cache = issues.CACHE
