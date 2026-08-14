@@ -43,6 +43,7 @@ def routine(name: str, *, state: str = "ready") -> dict:
 def main() -> int:
     issues = load("issue_model", ROOT / "tools/factory/issues.py")
     original_url = issues.FORGEJO_URL
+    original_cf_token_file = issues.CF_TOKEN_FILE
     original_env = {
         key: os.environ.get(key)
         for key in issues.DOTENV_KEYS
@@ -105,17 +106,48 @@ def main() -> int:
             for key in issues.DOTENV_KEYS:
                 os.environ.pop(key, None)
             issues.FORGEJO_URL = "https://forgejo.yfrit.com"
+            missing_path = Path(directory) / "missing-cf.json"
+            issues.CF_TOKEN_FILE = missing_path
             try:
-                issues.cloudflare_access_headers({})
-            except issues.ModelError as exc:
-                assert str(exc) == (
-                    "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET are "
-                    "required for forgejo.yfrit.com"
+                issues.cloudflare_access_headers(
+                    {}, cf_token_file=issues.CF_TOKEN_FILE
                 )
+            except issues.ModelError as exc:
+                assert str(exc).startswith(
+                    "Cloudflare Access service token unavailable:"
+                )
+                assert str(exc).endswith(str(missing_path))
             else:
                 raise AssertionError("production endpoint allowed missing Access credentials")
+
+            fresh_path = Path(directory) / "fresh-cf.json"
+            fresh_path.write_text(json.dumps({
+                "client_id": "fresh-id",
+                "client_secret": "fresh-secret",
+                "expires_at": "2099-01-01T00:00:00Z",
+            }))
+            assert issues.cloudflare_access_headers({}, cf_token_file=fresh_path) == {
+                "CF-Access-Client-Id": "fresh-id",
+                "CF-Access-Client-Secret": "fresh-secret",
+            }
+
+            expired_path = Path(directory) / "expired-cf.json"
+            expired_path.write_text(json.dumps({
+                "client_id": "expired-id",
+                "client_secret": "expired-secret",
+                "expires_at": "2000-01-01T00:00:00Z",
+            }))
+            try:
+                issues.cloudflare_access_headers({}, cf_token_file=expired_path)
+            except issues.ModelError as exc:
+                assert str(exc).startswith(
+                    "Cloudflare Access service token expired at"
+                )
+            else:
+                raise AssertionError("expired Cloudflare Access token accepted")
     finally:
         issues.FORGEJO_URL = original_url
+        issues.CF_TOKEN_FILE = original_cf_token_file
         for key, value in original_env.items():
             if value is None:
                 os.environ.pop(key, None)

@@ -18,6 +18,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -35,6 +36,11 @@ FORGEJO_TOKEN_FILE = Path(os.environ.get(
     "POKETCG_FORGEJO_TOKEN_FILE",
     "~/.config/yfrit-forgejo/api/poketcg-issues.token",
 )).expanduser()
+CF_TOKEN_FILE = Path(os.environ.get(
+    "POKETCG_CF_ACCESS_TOKEN_FILE",
+    "~/.config/yfrit-forgejo/git/cloudflare-access-service-token.json",
+)).expanduser()
+USER_AGENT = "poketcg-factory/1.0 (+https://forgejo.yfrit.com/mpp/poketcg-pc)"
 DOTENV = ROOT / ".env"
 DOTENV_KEYS = {
     "POKETCG_FORGEJO_TOKEN",
@@ -159,6 +165,8 @@ def forgejo_authorization(
 
 def cloudflare_access_headers(
     dotenv: dict[str, str] | None = None,
+    *,
+    cf_token_file: Path = CF_TOKEN_FILE,
 ) -> dict[str, str]:
     dotenv = dotenv if dotenv is not None else dotenv_credentials()
     client_id = os.environ.get("CF_ACCESS_CLIENT_ID") or dotenv.get(
@@ -171,17 +179,36 @@ def cloudflare_access_headers(
         raise ModelError(
             "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET must be set together"
         )
-    if not client_id:
-        if FORGEJO_URL == "https://forgejo.yfrit.com":
+    if client_id:
+        return {
+            "CF-Access-Client-Id": client_id,
+            "CF-Access-Client-Secret": client_secret,
+        }
+    try:
+        payload = json.loads(cf_token_file.read_text())
+        file_id = payload["client_id"]
+        file_secret = payload["client_secret"]
+        expires_at = payload["expires_at"]
+    except (OSError, ValueError, KeyError, TypeError):
+        file_id = file_secret = expires_at = None
+    if file_id and file_secret:
+        expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+        if expiry < datetime.now(timezone.utc):
             raise ModelError(
-                "CF_ACCESS_CLIENT_ID and CF_ACCESS_CLIENT_SECRET are required "
-                "for forgejo.yfrit.com"
+                f"Cloudflare Access service token expired at {expires_at}: "
+                f"refresh {cf_token_file}"
             )
-        return {}
-    return {
-        "CF-Access-Client-Id": client_id,
-        "CF-Access-Client-Secret": client_secret,
-    }
+        return {
+            "CF-Access-Client-Id": file_id,
+            "CF-Access-Client-Secret": file_secret,
+        }
+    if FORGEJO_URL == "https://forgejo.yfrit.com":
+        raise ModelError(
+            "Cloudflare Access service token unavailable: set CF_ACCESS_CLIENT_ID "
+            "and CF_ACCESS_CLIENT_SECRET, or provide "
+            f"{cf_token_file}"
+        )
+    return {}
 
 
 def fetch_page(page: int) -> list[dict]:
@@ -200,13 +227,21 @@ def fetch_page(page: int) -> list[dict]:
     headers = {
         "Accept": "application/json",
         "Authorization": forgejo_authorization(dotenv=dotenv),
+        "User-Agent": USER_AGENT,
         **cloudflare_access_headers(dotenv),
     }
     request = urllib.request.Request(url, headers=headers)
     for attempt in range(4):
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
-                payload = json.loads(response.read())
+                content_type = response.headers.get("Content-Type", "")
+                body = response.read()
+            if content_type.startswith("text/html"):
+                raise ModelError(
+                    f"Cloudflare Access intercepted {url}: the service token is not "
+                    "authorized for the Forgejo REST API (see docs/jj-workflow.md)"
+                )
+            payload = json.loads(body)
             if not isinstance(payload, list):
                 raise ModelError(f"Forgejo issue page {page} is not a list")
             return payload

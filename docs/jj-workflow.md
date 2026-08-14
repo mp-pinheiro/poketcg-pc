@@ -68,14 +68,11 @@ therefore differ; fetch the remote whose state you are inspecting.
 Git smart HTTP passes through two independent authentication layers:
 
 1. Cloudflare Access accepts a service token on the scoped Git routes.
-2. Forgejo accepts the short-lived token produced by `git-credential-oauth`.
+2. Forgejo accepts a Personal Access Token (PAT) via a repo-local credential helper.
 
-Install the credential helper:
-
-```sh
-sudo apt-get install git-credential-oauth # Debian/Ubuntu
-# brew install git-credential-oauth       # macOS
-```
+OAuth (`git-credential-oauth`) used to cover layer 2, but its cached token expired
+every hour and reopened a browser — which blocks the factory's automated
+`jj git fetch`/`jj git push`. The PAT helper below has no expiry-driven prompt.
 
 Configure the Cloudflare edge credential for this host. Obtain the two values
 from the Forgejo infrastructure operator; neither value belongs in this
@@ -88,31 +85,39 @@ git config --global --add http.https://forgejo.yfrit.com/.extraHeader \
   "CF-Access-Client-Secret: <client-secret>"
 ```
 
-The second command uses `--add` because `extraHeader` is multi-valued. Then
-configure Forgejo OAuth:
+The second command uses `--add` because `extraHeader` is multi-valued.
+
+The PAT lives in `~/.config/yfrit-forgejo/api/poketcg-issues.token` (mode
+`0600`) — the same file `tools/factory/issues.py` reads for the REST client, so
+rotation touches one file: overwrite it with a fresh Forgejo PAT (Settings →
+Applications, scopes `write:repository` + `read:issue`). Point git at the
+repo's credential helper, `tools/git-credential-forgejo`, which reads that file
+(it also honours `POKETCG_FORGEJO_TOKEN`/`POKETCG_FORGEJO_TOKEN_FILE` env
+overrides and exits non-zero instead of prompting when no token resolves):
 
 ```sh
 git config --global credential.https://forgejo.yfrit.com.helper ""
 git config --global --add credential.https://forgejo.yfrit.com.helper \
-  "cache --timeout 3600"
-git config --global --add credential.https://forgejo.yfrit.com.helper oauth
-git config --global credential.https://forgejo.yfrit.com.oauthClientId \
-  a4792ccc-144e-407e-86c9-5e7d8d9c3269
-git config --global credential.https://forgejo.yfrit.com.oauthAuthURL \
-  /login/oauth/authorize
-git config --global credential.https://forgejo.yfrit.com.oauthTokenURL \
-  /login/oauth/access_token
+  /home/matheus/git/poketcg/tools/git-credential-forgejo
+git config --global credential.https://forgejo.yfrit.com.username mpp
 ```
 
-The empty helper entry clears inherited helpers for this host, preventing a
-global plaintext credential store from receiving the OAuth token. The cache
-keeps the one-hour Forgejo token in memory. The first fetch or push opens a
-browser for authorization; later operations reuse the cached token until it
-expires. Forgejo remote URLs contain no username, because the OAuth helper
-requires `https://forgejo.yfrit.com/<owner>/<repo>.git`.
+The empty helper entry clears inherited helpers for this host (e.g. a global
+`credential.helper=store`), preventing the PAT from landing in
+`~/.git-credentials`. Username-as-PAT does not authenticate against this
+Forgejo instance; the working shape is `username=mpp` + PAT as password, which
+is what the helper emits. Forgejo remote URLs contain no username — the helper
+supplies it.
 
-The token file used by `just issues-fetch` is separate read-only REST
-authentication; Git and jj do not read it.
+Verify both layers non-interactively:
+
+```sh
+just forgejo-auth-check
+```
+
+It reports `[ok]`/`[warn]`/`[fail]` per check (credential helper, edge headers,
+token resolution, git push auth, REST auth, Cloudflare Access service-token
+expiry) and exits non-zero on any hard failure.
 
 ## The change cycle
 

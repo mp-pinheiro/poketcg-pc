@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -26,11 +27,13 @@ from common import (BUNDLES, CACHE, PBENV, ROOT, list_packets, packet_identity,
 from verify import fn_args  # noqa: E402
 import surgery  # noqa: E402
 
+GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
+
 
 def run(command: list[str], timeout: int = 1800, cwd: Path = ROOT,
         check_message: str | None = None) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(command, cwd=cwd, text=True, capture_output=True,
-                            timeout=timeout, check=False)
+                            timeout=timeout, check=False, env=GIT_ENV)
     if check_message and result.returncode != 0:
         raise SystemExit(
             f"STOP-THE-LINE {check_message}: {' '.join(command)}\n"

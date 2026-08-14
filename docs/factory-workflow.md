@@ -24,30 +24,35 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=max_r
 
 ## Preflight
 
-1. `jj git fetch --remote origin`; require `main` == `main@origin` and a clean
-   working copy (`jj new main` if the working copy is stale/empty-on-old-base).
+1. `just forgejo-auth-check`; then `jj git fetch --remote origin`; require
+   `main` == `main@origin` and a clean working copy (`jj new main` if the
+   working copy is stale/empty-on-old-base).
 2. Prerequisites: `poketcg/poketcg.gbc` + `.sym` (`just bootstrap`),
    `/tmp/pbenv` (`just oracle-venv`), `tools/oracle/gbref/build/gbref_runner`
    (`just oracle-build-gbref`), warm `build-barrier` (`just build-barrier`).
 3. Issue inventory: `just issues-fetch` must produce a schema-2 Forgejo cache
    before packet construction. The defaults are
    `https://forgejo.yfrit.com`, repository `mpp/poketcg-pc`, and token file
-   `~/.config/yfrit-forgejo/api/poketcg-issues.token`.
-   `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE` override the endpoint
-   and PAT compatibility fallback for the Python REST client.
+   `~/.config/yfrit-forgejo/api/poketcg-issues.token` — the documented
+   credential home, shared with the git credential helper
+   (`tools/git-credential-forgejo`).
+   `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE` override the
+   endpoint and token file for the Python REST client.
    `POKETCG_FORGEJO_OWNER` and `POKETCG_FORGEJO_REPO` affect the issue client
    only; packet consumption still requires cache repository `mpp/poketcg-pc`.
-   The repository-root ignored `/.env` is the preferred Python REST
-   configuration. `tools/factory/issues.py` is the only reader, and it loads
-   only `POKETCG_FORGEJO_TOKEN`, `CF_ACCESS_CLIENT_ID`, and
+   The repository-root ignored `/.env` is an optional override for the
+   Python REST client only; it is never read by git or jj.
+   `tools/factory/issues.py` is the only reader, and it loads only
+   `POKETCG_FORGEJO_TOKEN`, `CF_ACCESS_CLIENT_ID`, and
    `CF_ACCESS_CLIENT_SECRET`. Do not add example values to this file.
-   The token file remains a PAT compatibility fallback and accepts a raw token,
-   `token ...`, `bearer ...`, or an `Authorization:`-prefixed value.
-   The Cloudflare pair authenticates the HTTP request at the Zero Trust Access
-   edge; it does not replace the Forgejo PAT.
-   These credentials cover the issue REST client only. Git and jj authenticate
-   to Forgejo through the host-scoped `git-credential-oauth` configuration in
-   `docs/jj-workflow.md`.
+   The Cloudflare Access pair authenticates the HTTP request at the Zero
+   Trust Access edge; it does not replace the Forgejo PAT. When not set via
+   env or `.env`, it falls back to
+   `~/.config/yfrit-forgejo/git/cloudflare-access-service-token.json`
+   (`client_id`/`client_secret`/`expires_at`).
+   These credentials cover the issue REST client only. Git and jj
+   authenticate to Forgejo through the repo-local PAT credential helper
+   documented in `docs/jj-workflow.md`.
 4. Resume state: `python3 tools/factory/driver.py reset-stale` returns
    crashed in-flight packets to `pending`; `driver.py status` shows the queue.
 

@@ -297,6 +297,11 @@ issues-verify:
     python3 tools/factory/issues.py verify --live
 
 
+# Prove Forgejo git + REST credentials work with no browser prompt. Needs
+# local credentials, so it is not a CI check.
+forgejo-auth-check:
+    python3 tools/factory/auth_check.py
+
 # One-release compatibility name; tiers and file groups are retired.
 generate-port-issues:
     python3 tools/factory/issues.py plan
