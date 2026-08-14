@@ -21,14 +21,18 @@ def main() -> int:
             for fn in args.fn
         }
         witnesses = {fn: None for fn in args.fn}
+        counts = {fn: 0 for fn in args.fn}
     else:
         violations = case_lint(args.lane, args.basename, args.fn, module)
         mutations = getattr(module, "MUTATIONS", {})
+        schema_cases = getattr(module, "SCHEMA2_CASES", {})
         witnesses = {
             fn: witness_index(mutations[fn]) if fn in mutations else None
             for fn in args.fn
         }
-    print(json.dumps({"violations": violations, "witnesses": witnesses}, sort_keys=True))
+        counts = {fn: len(schema_cases.get(fn) or ()) for fn in args.fn}
+    print(json.dumps({"violations": violations, "witnesses": witnesses,
+                      "case_counts": counts}, sort_keys=True))
     return 0
 
 

@@ -2,9 +2,11 @@
 """Mechanical acceptance for one packet inside a lane.
 
 Pipeline: ninja build -> static case-lint (no PyBoy, no registry import) ->
-schema audit -> PyBoy diff, scoped to the packet's own routines (refresh on
-case changes, cached fast path otherwise, live evidence required for
-acceptance) -> per-routine mutation RED/PASS -> adapter lint.  Case-lint runs
+schema audit -> GBRT primary comparison over every case (the central gate's
+own comparator, so a packet cannot land something `oracle-fn-all` rejects) ->
+PyBoy diff, scoped to the packet's own routines (refresh on case changes,
+cached fast path otherwise, live evidence required for acceptance) ->
+per-routine mutation RED/PASS -> adapter lint.  Case-lint runs
 before the schema audit deliberately: ``tests/routines.py`` eagerly imports
 every case module to derive the registry, so a malformed case module (the
 exact class of bug case-lint exists to catch) would otherwise crash the
@@ -155,6 +157,46 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
     return violations
 
 
+def comparison_status(output: str) -> str | None:
+    for line in reversed(output.splitlines()):
+        try:
+            payload = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict) and isinstance(payload.get("status"), str):
+            return payload["status"]
+    return None
+
+
+def primary_compare(lane: Path, basename: str, routine_names: list[str],
+                    case_counts: dict, deadline: float | None) -> dict | None:
+    """Every case, not just the mutation witness: ``oracle-fn-all`` runs them
+    all centrally, and a packet that skips one lands a red gate."""
+    for fn in routine_names:
+        count = case_counts.get(fn)
+        if not isinstance(count, int) or count <= 0:
+            return verdict("cases", f"SCHEMA2_CASES[{fn!r}] has no cases", fn)
+        for index in range(count):
+            compared = run(
+                [sys.executable, "tools/oracle/gbref/compare_one.py",
+                 "--fn", fn, "--index", str(index),
+                 "--case", f"tests/cases/{basename}.py",
+                 "--rom", str(ROOT / "poketcg/poketcg.gbc"),
+                 "--symbols", str(ROOT / "poketcg/poketcg.sym"),
+                 "--probe", str(lane / "build" / "poketcg_probe"),
+                 "--runner", str(RUNNER)],
+                lane, timeout=300, deadline=deadline)
+            if compared.returncode == 0:
+                continue
+            output = compared.stdout + compared.stderr
+            if comparison_status(output) is None and not output.startswith("SCHEMA"):
+                return verdict("infra-error", f"{fn}-{index}: {output}")
+            result = verdict("primary", f"case {fn}-{index}\n{output}", fn)
+            result["failing"] = [fn]
+            return result
+    return None
+
+
 def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                   deadline: float | None = None) -> dict:
     basename = packet["basename"]
@@ -189,6 +231,11 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                 "--only", basename], lane, deadline=deadline)
     if audit.returncode != 0:
         return verdict("schema", audit.stdout + audit.stderr)
+
+    primary = primary_compare(lane, basename, routine_names,
+                              inspection.get("case_counts") or {}, deadline)
+    if primary is not None:
+        return primary
 
     CACHE.mkdir(parents=True, exist_ok=True)
     mode = "refresh" if cases_changed else "cache"
