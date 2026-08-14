@@ -275,6 +275,10 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 }
 
 #include "home/random.h"
+/* >>> factory statics */
+#define DUELVARS_PRIZES 0xecu
+#define PRIZES_6 0x06u
+/* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
  * deck bytes with [de + Random(c)], where de starts at hl. Exit a is the byte
@@ -1342,3 +1346,30 @@ uint8_t PrintKnockedOutIfHLZero(uint16_t hl)
 	(void)PrintKnockedOut();
 	return 0x90u;
 }
+
+/* >>> factory GetFirstSetPrizeCard */
+/* duel.asm:2134-2188 */
+uint8_t GetFirstSetPrizeCard(uint8_t a)
+{
+	uint8_t c = a;
+	uint8_t prizes = gb_read8((uint16_t)((uint16_t)hWhoseTurn << 8 | DUELVARS_PRIZES));
+	uint8_t remaining = PRIZES_6;
+
+	for (;;) {
+		uint8_t mask = 1u;
+		uint8_t shifts = c;
+		while (shifts != 0u) {
+			mask = (uint8_t)(mask << 1);
+			shifts--;
+		}
+		if ((mask & prizes) != 0u)
+			return c;
+		remaining--;
+		if (remaining == 0u)
+			return 0u;
+		c++;
+		if (c == PRIZES_6)
+			c = 0u;
+	}
+}
+/* <<< factory GetFirstSetPrizeCard */

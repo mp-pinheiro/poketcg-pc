@@ -536,4 +536,7 @@ DuelRoutineResult ClearNonTurnTemporaryDuelvars_ResetCarry(
 uint8_t PrintKnockedOutIfHLZero(uint16_t hl);
 
 
+/* >>> factory GetFirstSetPrizeCard */
+uint8_t GetFirstSetPrizeCard(uint8_t a);
+/* <<< factory GetFirstSetPrizeCard */
 #endif

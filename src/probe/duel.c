@@ -599,6 +599,13 @@ static void adapt_PrintKnockedOutIfHLZero(ProbeState *s)
 	s->f = PrintKnockedOutIfHLZero(s->hl);
 }
 
+/* >>> factory GetFirstSetPrizeCard */
+static void adapt_GetFirstSetPrizeCard(ProbeState *s)
+{
+	s->a = GetFirstSetPrizeCard(s->a);
+}
+/* <<< factory GetFirstSetPrizeCard */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -672,5 +679,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ClearNonTurnTemporaryDuelvars_ResetCarry", adapt_ClearNonTurnTemporaryDuelvars_ResetCarry },
 	{ "PrintKnockedOutIfHLZero", adapt_PrintKnockedOutIfHLZero },
 	{ "PrintPlayAreaCardKnockedOutIfNoHP", adapt_PrintPlayAreaCardKnockedOutIfNoHP },
+	{ "GetFirstSetPrizeCard", adapt_GetFirstSetPrizeCard },
 	{ NULL, NULL },
 };

@@ -870,6 +870,19 @@ CASES.update({
     ],
 })
 
+# >>> factory GetFirstSetPrizeCard
+CONTRACT["GetFirstSetPrizeCard"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["GetFirstSetPrizeCard"] = [
+    {},
+    {"a": 1, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x02"}},
+    {"a": 3, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x00"}},
+    {"a": 5, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x01"}},
+    {"a": 6, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\x40"}},
+    {"a": 8, "wram": {0xFF97: b"\xC1", 0xC1EC: b"\xFF"}},
+    dict(POISON, a=4, wram={0xFF97: b"\xC1", 0xC1EC: b"\x01"}),
+]
+# <<< factory GetFirstSetPrizeCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -903,3 +916,6 @@ MUTATIONS = {
                      "PrintKnockedOutIfHLZero-3"],
     },
 }
+# >>> factory-mutation GetFirstSetPrizeCard
+MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}
+# <<< factory-mutation GetFirstSetPrizeCard
