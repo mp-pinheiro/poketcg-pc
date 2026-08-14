@@ -331,6 +331,15 @@ CASES["DuelTransmissionError"] = [
 ]
 # <<< factory DuelTransmissionError
 
+# >>> factory SerialRecv8Bytes
+CONTRACT["SerialRecv8Bytes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["SerialRecv8Bytes"] = [
+	{"wram": {wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x01\x02\x03\x04\x05\x06\x07\x08"}, "read": {0xCBED: 8}},
+	dict(POISON, wram={wSerialRecvCounter: b"\x08", wcba3: b"\x08", wSerialRecvBuf: b"\x11\x22\x33\x44\x55\x66\x77\x88", 0xCBED: b"\xff" * 8}, read={0xCBED: 8}),
+	{"wram": {wSerialRecvCounter: b"\x0a", wcba3: b"\x0a", wSerialRecvBuf: b"\xf0\x81\x00\x7f\xff\x30\x0a\xc0"}, "read": {0xCBED: 8}},
+]
+# <<< factory SerialRecv8Bytes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -361,3 +370,11 @@ MUTATIONS["DuelTransmissionError"] = {
 for record in SCHEMA2_CASES["DuelTransmissionError"]:
     record["completion"] = {"mode": "pre-ret", "pc": DUEL_TRANSMISSION_ERROR_RET_PC}
 # <<< factory-completion DuelTransmissionError
+# >>> factory-mutation SerialRecv8Bytes
+MUTATIONS["SerialRecv8Bytes"] = {
+	"source_symbol": "SerialRecv8Bytes",
+	"before": "SerialRecvBytes(wTempSerialBuf_ADDR, 0x0008u)",
+	"after": "SerialRecvBytes(wTempSerialBuf_ADDR, 0x0007u)",
+	"case_ids": ["SerialRecv8Bytes-0", "SerialRecv8Bytes-1", "SerialRecv8Bytes-2"],
+}
+# <<< factory-mutation SerialRecv8Bytes

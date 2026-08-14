@@ -123,6 +123,20 @@ static void adapt_DuelTransmissionError(ProbeState *s)
 }
 /* <<< factory DuelTransmissionError */
 
+/* >>> factory SerialRecv8Bytes */
+static void adapt_SerialRecv8Bytes(ProbeState *s)
+{
+	SerialRecv8BytesResult r = SerialRecv8Bytes();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SerialRecv8Bytes */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -139,5 +153,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SerialSendBytes", adapt_SerialSendBytes },
 	{ "SerialRecvBytes", adapt_SerialRecvBytes },
 	{ "DuelTransmissionError", adapt_DuelTransmissionError },
+	{ "SerialRecv8Bytes", adapt_SerialRecv8Bytes },
 	{ NULL, NULL },
 };

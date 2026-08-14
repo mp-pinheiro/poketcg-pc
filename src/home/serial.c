@@ -10,6 +10,11 @@
 
 #define MUSIC_STOP 0x00u
 #define TransmissionErrorText 0x0055u
+
+#include "home/serial.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -325,3 +330,26 @@ void DuelTransmissionError(void)
 	ResetSerial();
 }
 /* <<< factory DuelTransmissionError */
+
+/* >>> factory SerialRecv8Bytes */
+/* serial.asm:656-689. SerialRecvBytes fills wTempSerialBuf (carry jp's away
+ * to DuelTransmissionError); the two push de / pop pairs then map buffer
+ * words onto registers. pop af reads f's low nibble as zero on hardware,
+ * hence the mask. */
+SerialRecv8BytesResult SerialRecv8Bytes(void)
+{
+	SerialRecvBytesResult r = SerialRecvBytes(wTempSerialBuf_ADDR, 0x0008u);
+	if (r.f & 0x10u)
+		DuelTransmissionError();
+	uint16_t p = wTempSerialBuf_ADDR;
+	return (SerialRecv8BytesResult){
+		gb_read8(p + 1u),
+		gb_read8(p) & 0xF0u,
+		gb_read8(p + 7u),
+		gb_read8(p + 6u),
+		gb_read8(p + 5u),
+		gb_read8(p + 4u),
+		(uint16_t)(gb_read8(p + 3u) << 8 | gb_read8(p + 2u)),
+	};
+}
+/* <<< factory SerialRecv8Bytes */

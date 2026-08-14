@@ -1,0 +1,9 @@
+{
+  "fn": "SerialRecv8Bytes",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SerialRecv8Bytes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52130\": \"0010\", \"52133\": \"0102030405060708\", \"52205\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SerialRecv8Bytes\", \"mismatches\": {\"bus\": {\"address\": 52130, \"reference\": \"0010010203\", \"native\": \"010f010203\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[52130, 2], [52133, 8], [52205, 8]]}}}\n",
+  "restored": "{\"fn\": \"SerialRecv8Bytes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52130\": \"0010\", \"52133\": \"0102030405060708\", \"52205\": \"0000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

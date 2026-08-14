@@ -128,4 +128,18 @@ SerialRecvBytesResult SerialRecvBytes(uint16_t hl, uint16_t bc);
 /* >>> factory DuelTransmissionError */
 void DuelTransmissionError(void);
 /* <<< factory DuelTransmissionError */
+/* >>> factory SerialRecv8Bytes */
+/* SerialRecv8Bytes:: serial.asm:656-689. Receives 8 bytes into wTempSerialBuf
+ * via SerialRecvBytes; on carry, jp's into DuelTransmissionError (control
+ * leaves this routine). The bytes are loaded back out with two push de / pop
+ * pairs: pop af yields a=buf[1], f=buf[0] (pop af reads f's low nibble as
+ * zero on hardware), pop hl yields hl=buf[3]<<8|buf[2]; the third word stays
+ * in de (d=buf[5], e=buf[4]) and the last in bc (c=buf[6], b=buf[7]). No
+ * entry register is read and none are preserved. */
+typedef struct {
+	uint8_t a, f, b, c, d, e;
+	uint16_t hl;
+} SerialRecv8BytesResult;
+SerialRecv8BytesResult SerialRecv8Bytes(void);
+/* <<< factory SerialRecv8Bytes */
 #endif
