@@ -74,9 +74,10 @@ GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 	uint16_t table_addr = (uint16_t)(EVENT_VAR_MASKS + bc);
 	const uint8_t *entry = rom_ptr(EVENT_VAR_MASKS_BANK, table_addr);
 	uint8_t flags = (bc & 0xFF00u) == 0 ? 0x80u : 0u;
-	if (((EVENT_VAR_MASKS & 0x0FFFu) + (bc & 0x0FFFu)) > 0x0FFFu)
+	uint8_t offset = entry[0];
+	if (((wEventVars_ADDR & 0x0FFFu) + (offset & 0x0FFFu)) > 0x0FFFu)
 		flags |= 0x20u;
-	if ((uint32_t)EVENT_VAR_MASKS + bc > 0xFFFFu)
+	if ((uint32_t)wEventVars_ADDR + offset > 0xFFFFu)
 		flags |= 0x10u;
 
 	gb_write8(wLoadedEventBits_ADDR, entry[1]);
