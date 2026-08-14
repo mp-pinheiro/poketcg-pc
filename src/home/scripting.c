@@ -130,3 +130,14 @@ GetScriptArgsAfterPointerResult GetScriptArgs5AfterPointer(void)
 	return GetScriptArgsAfterPointer(5u);
 }
 /* <<< factory GetScriptArgs5AfterPointer */
+
+/* >>> factory SetScriptControlByteFail */
+/* scripting.asm:646-649. xor a yields a=$00 with Z set and N/H/C clear
+ * (f=$80 exactly, independent of the entry flags); the store to
+ * wScriptControlByte does not affect flags. */
+SetScriptControlByteFailResult SetScriptControlByteFail(void)
+{
+	wScriptControlByte = 0x00u;
+	return (SetScriptControlByteFailResult){0x00u, 0x80u};
+}
+/* <<< factory SetScriptControlByteFail */

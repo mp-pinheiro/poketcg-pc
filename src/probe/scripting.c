@@ -96,6 +96,15 @@ static void adapt_GetScriptArgs5AfterPointer(ProbeState *s)
 }
 /* <<< factory GetScriptArgs5AfterPointer */
 
+/* >>> factory SetScriptControlByteFail */
+static void adapt_SetScriptControlByteFail(ProbeState *s)
+{
+	SetScriptControlByteFailResult r = SetScriptControlByteFail();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory SetScriptControlByteFail */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -106,5 +115,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointerBy4", adapt_IncreaseScriptPointerBy4 },
 	{ "IncreaseScriptPointerBy3", adapt_IncreaseScriptPointerBy3 },
 	{ "GetScriptArgs5AfterPointer", adapt_GetScriptArgs5AfterPointer },
+	{ "SetScriptControlByteFail", adapt_SetScriptControlByteFail },
 	{ NULL, NULL },
 };

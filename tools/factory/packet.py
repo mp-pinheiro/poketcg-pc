@@ -651,8 +651,6 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
     held = set()
     for path in QUEUE.glob("*.json"):
         entry = json.loads(path.read_text())
-        if entry.get("state") in (None, "pending"):
-            continue
         held.update(r["work_id"] for r in entry.get("routines", [])
                     if r.get("work_id"))
     ready = [f for f in ready if f["work_id"] not in held]
@@ -922,6 +920,13 @@ def main() -> int:
                 continue
         write_json(path, packet)
         written.append(packet["id"])
+    written_ids = set(written)
+    for path in QUEUE.glob("*.json"):
+        if path.stem in written_ids:
+            continue
+        entry = json.loads(path.read_text())
+        if entry.get("state") == "pending":
+            written.append(path.stem)
     if args.json:
         print(json.dumps(written))
     else:

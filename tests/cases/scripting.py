@@ -11,6 +11,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -133,6 +134,16 @@ CASES["GetScriptArgs5AfterPointer"] = [
 ]
 # <<< factory GetScriptArgs5AfterPointer
 
+# >>> factory SetScriptControlByteFail
+CONTRACT["SetScriptControlByteFail"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetScriptControlByteFail"] = [
+	{},
+	{"a": 0x5A, "wram": {0xD415: b"\x80"}},
+	{"f": 0x50, "wram": {0xD415: b"\xff"}},
+	dict(POISON, wram={0xD415: b"\xff"}),
+]
+# <<< factory SetScriptControlByteFail
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -198,3 +209,11 @@ MUTATIONS["GetScriptArgs5AfterPointer"] = {
 	"case_ids": ["GetScriptArgs5AfterPointer-1", "GetScriptArgs5AfterPointer-2", "GetScriptArgs5AfterPointer-3"],
 }
 # <<< factory-mutation GetScriptArgs5AfterPointer
+# >>> factory-mutation SetScriptControlByteFail
+MUTATIONS["SetScriptControlByteFail"] = {
+	"source_symbol": "SetScriptControlByteFail",
+	"before": "\treturn (SetScriptControlByteFailResult){0x00u, 0x80u};",
+	"after": "\treturn (SetScriptControlByteFailResult){0x00u, 0x90u};",
+	"case_ids": ["SetScriptControlByteFail-0", "SetScriptControlByteFail-1", "SetScriptControlByteFail-2", "SetScriptControlByteFail-3"],
+}
+# <<< factory-mutation SetScriptControlByteFail

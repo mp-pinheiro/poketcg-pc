@@ -56,4 +56,12 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy3(void);
 /* >>> factory GetScriptArgs5AfterPointer */
 GetScriptArgsAfterPointerResult GetScriptArgs5AfterPointer(void);
 /* <<< factory GetScriptArgs5AfterPointer */
+/* >>> factory SetScriptControlByteFail */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} SetScriptControlByteFailResult;
+
+SetScriptControlByteFailResult SetScriptControlByteFail(void);
+/* <<< factory SetScriptControlByteFail */
 #endif
