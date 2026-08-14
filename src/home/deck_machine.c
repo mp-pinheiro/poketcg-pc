@@ -10,6 +10,11 @@
 
 #define DECK_NAME_SIZE 0x18u
 #define NUM_DECK_MACHINE_SLOTS 0x05u
+
+#include "home/switch_sram.h"
+
+#define CARD_NOT_OWNED 0x80u
+#define DECK_SIZE 0x3Cu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -29,3 +34,50 @@ uint8_t CheckIfSelectedDeckMachineEntryIsEmpty(void)
 	return value ? 0u : 0x90u;
 }
 /* <<< factory CheckIfSelectedDeckMachineEntryIsEmpty */
+
+/* >>> factory SafelySwitchToSRAM1 */
+/* deck_machine.asm:1261-1271. */
+void SafelySwitchToSRAM1(void)
+{
+	if (hBankSRAM != 1u) {
+		wTempBankSRAM = hBankSRAM;
+		BankswitchSRAM(1u);
+	}
+}
+/* <<< factory SafelySwitchToSRAM1 */
+
+/* >>> factory SafelySwitchToTempSRAMBank */
+/* deck_machine.asm:1273-1285. */
+void SafelySwitchToTempSRAMBank(void)
+{
+	if (hBankSRAM != wTempBankSRAM)
+		BankswitchSRAM(wTempBankSRAM);
+}
+/* <<< factory SafelySwitchToTempSRAMBank */
+
+/* >>> factory CheckIfHasEnoughCardsToBuildDeck */
+/* deck_machine.asm:1290-1323. */
+DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl)
+{
+	EnableSRAM();
+	uint16_t deck = *hl;
+	uint16_t collection = wTempCardCollection_ADDR;
+
+	for (uint8_t i = 0; i < DECK_SIZE; i++) {
+		uint8_t card = gb_read8(deck);
+		deck = (uint16_t)(deck + 1u);
+		uint16_t slot = (uint16_t)(collection + card);
+		uint8_t count = gb_read8(slot);
+		if (count == 0u || count == CARD_NOT_OWNED) {
+			*hl = deck;
+			DisableSRAM();
+			return (DeckBuildCheckResult){ .a = count, .f = 0x90u };
+		}
+		gb_write8(slot, (uint8_t)(count - 1u));
+	}
+
+	*hl = deck;
+	DisableSRAM();
+	return (DeckBuildCheckResult){ .a = DECK_SIZE, .f = 0x00u };
+}
+/* <<< factory CheckIfHasEnoughCardsToBuildDeck */

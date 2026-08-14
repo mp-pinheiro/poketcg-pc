@@ -1,0 +1,9 @@
+{
+  "fn": "SafelySwitchToTempSRAMBank",
+  "case": "tests/cases/deck_machine.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SafelySwitchToTempSRAMBank\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53412\": \"01\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SafelySwitchToTempSRAMBank\", \"mismatches\": {\"bus\": {\"address\": 65409, \"reference\": \"0101\", \"native\": \"0102\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53412, 1], [65409, 1]]}}}\n",
+  "restored": "{\"fn\": \"SafelySwitchToTempSRAMBank\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53412\": \"01\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

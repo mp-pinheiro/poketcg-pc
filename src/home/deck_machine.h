@@ -6,4 +6,18 @@
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
 uint8_t CheckIfSelectedDeckMachineEntryIsEmpty(void);
 /* <<< factory CheckIfSelectedDeckMachineEntryIsEmpty */
+/* >>> factory SafelySwitchToSRAM1 */
+void SafelySwitchToSRAM1(void);
+/* <<< factory SafelySwitchToSRAM1 */
+/* >>> factory SafelySwitchToTempSRAMBank */
+void SafelySwitchToTempSRAMBank(void);
+/* <<< factory SafelySwitchToTempSRAMBank */
+/* >>> factory CheckIfHasEnoughCardsToBuildDeck */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} DeckBuildCheckResult;
+
+DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl);
+/* <<< factory CheckIfHasEnoughCardsToBuildDeck */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */
