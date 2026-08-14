@@ -45,10 +45,43 @@ static void adapt_GetEventVar(ProbeState *s)
 /* <<< factory GetEventVar */
 
 
+/* >>> factory IncreaseScriptPointerBy1 */
+static void adapt_IncreaseScriptPointerBy1(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy1();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy1 */
+
+/* >>> factory IncreaseScriptPointerBy2 */
+static void adapt_IncreaseScriptPointerBy2(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy2();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy2 */
+
+/* >>> factory IncreaseScriptPointerBy4 */
+static void adapt_IncreaseScriptPointerBy4(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy4 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
 	{ "GetScriptArgsAfterPointer", adapt_GetScriptArgsAfterPointer },
 	{ "GetEventVar", adapt_GetEventVar },
+	{ "IncreaseScriptPointerBy1", adapt_IncreaseScriptPointerBy1 },
+	{ "IncreaseScriptPointerBy2", adapt_IncreaseScriptPointerBy2 },
+	{ "IncreaseScriptPointerBy4", adapt_IncreaseScriptPointerBy4 },
 	{ NULL, NULL },
 };

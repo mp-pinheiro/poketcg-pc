@@ -40,4 +40,13 @@ typedef struct {
 GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory GetEventVar */
 
+/* >>> factory IncreaseScriptPointerBy1 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy1(void);
+/* <<< factory IncreaseScriptPointerBy1 */
+/* >>> factory IncreaseScriptPointerBy2 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy2(void);
+/* <<< factory IncreaseScriptPointerBy2 */
+/* >>> factory IncreaseScriptPointerBy4 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy4(void);
+/* <<< factory IncreaseScriptPointerBy4 */
 #endif

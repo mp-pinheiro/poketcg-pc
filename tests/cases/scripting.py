@@ -9,6 +9,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -79,6 +80,30 @@ CASES["GetEventVar"] = [
 # <<< factory GetEventVar
 
 
+# >>> factory IncreaseScriptPointerBy1
+CONTRACT["IncreaseScriptPointerBy1"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["IncreaseScriptPointerBy1"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory IncreaseScriptPointerBy1
+
+# >>> factory IncreaseScriptPointerBy2
+CONTRACT["IncreaseScriptPointerBy2"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["IncreaseScriptPointerBy2"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory IncreaseScriptPointerBy2
+
+# >>> factory IncreaseScriptPointerBy4
+CONTRACT["IncreaseScriptPointerBy4"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["IncreaseScriptPointerBy4"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory IncreaseScriptPointerBy4
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -119,3 +144,12 @@ MUTATIONS["GetEventVar"] = {
     "case_ids": ["GetEventVar-1", "GetEventVar-3", "GetEventVar-4"],
 }
 # <<< factory-mutation GetEventVar
+# >>> factory-mutation IncreaseScriptPointerBy1
+MUTATIONS["IncreaseScriptPointerBy1"] = {"source_symbol": "IncreaseScriptPointerBy1", "before": "return IncreaseScriptPointer(1u);", "after": "return IncreaseScriptPointer(2u);", "case_ids": ["IncreaseScriptPointerBy1-0", "IncreaseScriptPointerBy1-1"]}
+# <<< factory-mutation IncreaseScriptPointerBy1
+# >>> factory-mutation IncreaseScriptPointerBy2
+MUTATIONS["IncreaseScriptPointerBy2"] = {"source_symbol": "IncreaseScriptPointerBy2", "before": "return IncreaseScriptPointer(2u);", "after": "return IncreaseScriptPointer(1u);", "case_ids": ["IncreaseScriptPointerBy2-0", "IncreaseScriptPointerBy2-1"]}
+# <<< factory-mutation IncreaseScriptPointerBy2
+# >>> factory-mutation IncreaseScriptPointerBy4
+MUTATIONS["IncreaseScriptPointerBy4"] = {"source_symbol": "IncreaseScriptPointerBy4", "before": "return IncreaseScriptPointer(4u);", "after": "return IncreaseScriptPointer(1u);", "case_ids": ["IncreaseScriptPointerBy4-0", "IncreaseScriptPointerBy4-1"]}
+# <<< factory-mutation IncreaseScriptPointerBy4

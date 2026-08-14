@@ -16,6 +16,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 		flags |= 0x10u;
 	return flags;
 }
+
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -85,3 +87,27 @@ GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 	                           (uint16_t)(wEventVars_ADDR + entry[0])};
 }
 /* <<< factory GetEventVar */
+
+/* >>> factory IncreaseScriptPointerBy1 */
+/* scripting.asm:568-570 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy1(void)
+{
+	return IncreaseScriptPointer(1u);
+}
+/* <<< factory IncreaseScriptPointerBy1 */
+
+/* >>> factory IncreaseScriptPointerBy2 */
+/* scripting.asm:572-574 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy2(void)
+{
+	return IncreaseScriptPointer(2u);
+}
+/* <<< factory IncreaseScriptPointerBy2 */
+
+/* >>> factory IncreaseScriptPointerBy4 */
+/* scripting.asm:576-578 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy4(void)
+{
+	return IncreaseScriptPointer(4u);
+}
+/* <<< factory IncreaseScriptPointerBy4 */

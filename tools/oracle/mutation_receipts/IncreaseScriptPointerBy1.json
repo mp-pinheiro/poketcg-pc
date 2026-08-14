@@ -1,0 +1,9 @@
+{
+  "fn": "IncreaseScriptPointerBy1",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IncreaseScriptPointerBy1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IncreaseScriptPointerBy1\", \"mismatches\": {\"c\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"IncreaseScriptPointerBy1\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
