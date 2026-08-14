@@ -53,16 +53,30 @@ def fn_args(routine_names: list[str]) -> list[str]:
 
 
 def compile_cause(output: str) -> str:
-    """Diagnostics only: ninja echoes multi-kB link command lines that would
-    otherwise crowd the real cause out of the trimmed feedback."""
-    keep = [
-        line for line in output.splitlines()
-        if ("error:" in line or "undefined reference" in line
-            or "warning:" in line or line.startswith("src/")
-            or "In function" in line)
-        and " -o " not in line
+    """Errors only when there are any: a lane build emits hundreds of
+    ``-Wunused-parameter`` warnings and multi-kB link commands, which used to
+    push the actual cause out of the trimmed repair feedback."""
+    lines = output.splitlines()
+    faults = [
+        index for index, line in enumerate(lines)
+        if "error:" in line or "undefined reference" in line
     ]
-    return "\n".join(keep) if keep else output
+    if faults:
+        keep: list[str] = []
+        for index in faults[:20]:
+            if index and "In function" in lines[index - 1]:
+                keep.append(lines[index - 1])
+            keep.append(lines[index])
+            keep.extend(
+                line for line in lines[index + 1:index + 3]
+                if line[:1].isspace() and "|" in line
+            )
+        return "\n".join(keep)
+    return "\n".join(
+        line for line in lines
+        if ("warning:" in line or line.startswith("src/") or "In function" in line)
+        and " -o " not in line
+    ) or output
 
 
 def verdict(kind: str, detail: str, routine: str | None = None) -> dict:
@@ -208,6 +222,11 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         if isinstance(exc, WaveDeadlineExpired):
             raise
         return verdict("infra-timeout", str(exc))
+    if built.returncode != 0:
+        return verdict("compile", compile_cause(built.stdout + built.stderr))
+    probe = lane / "build" / "poketcg_probe"
+    if not probe.exists():
+        return verdict("compile", f"{probe} was not produced by a successful build")
     try:
         inspected = run_bounded(
             [sys.executable, str(ROOT / "tools/factory" / "case_inspect.py"),
