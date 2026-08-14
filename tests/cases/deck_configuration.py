@@ -70,6 +70,16 @@ CASES["InitCardSelectionParams"] = [
 # <<< factory InitCardSelectionParams
 
 
+# >>> factory ClearMemory_Bank2
+CONTRACT["ClearMemory_Bank2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["ClearMemory_Bank2"] = [
+    {"hl": 0xC100, "wram": {0xC100: b"\xAA" * 0x100}},
+    dict(POISON, a=1, hl=0xC200, wram={0xC200: b"\xAA"}),
+    {"a": 1, "hl": 0xC300, "wram": {0xC300: b"\xAA"}},
+    {"a": 0xFF, "hl": 0xC400, "wram": {0xC400: b"\xAA" * 0xFF}},
+]
+# <<< factory ClearMemory_Bank2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -109,3 +119,6 @@ MUTATIONS["InitCardSelectionParams"] = {
     "case_ids": ["InitCardSelectionParams-1", "InitCardSelectionParams-2"],
 }
 # <<< factory-mutation InitCardSelectionParams
+# >>> factory-mutation ClearMemory_Bank2
+MUTATIONS["ClearMemory_Bank2"] = {"source_symbol": "ClearMemory_Bank2", "before": "uint32_t n = count ? count : 0x100u;", "after": "uint32_t n = count ? count : 0xFFu;", "case_ids": ["ClearMemory_Bank2-0", "ClearMemory_Bank2-1"]}
+# <<< factory-mutation ClearMemory_Bank2

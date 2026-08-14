@@ -59,9 +59,8 @@ verify-hooks:
 oracle-venv:
     #!/usr/bin/env bash
     set -euo pipefail
-    export UV_PROJECT_ENVIRONMENT=/tmp/pbenv
     uv python install 3.12.3
-    uv sync --project tools/oracle --python 3.12.3 --managed-python --frozen --reinstall-package pyboy
+    uv sync --project tools/oracle --python 3.12.3 --frozen --reinstall-package pyboy
 
 
 
@@ -69,7 +68,7 @@ oracle-venv-release: oracle-venv
     #!/usr/bin/env bash
     set -euo pipefail
     tarball=/tmp/pyboy-prebuilt.tar.zst
-    sitepkg=/tmp/pbenv/lib/python3.12/site-packages
+    sitepkg=tools/oracle/.venv/lib/python3.12/site-packages
     echo "packing pyboy → $tarball ..."
     tar -caf "$tarball" -C "$sitepkg" pyboy
     echo "uploading to GitHub release oracle-venv ..."
@@ -84,7 +83,7 @@ oracle-venv-release: oracle-venv
     echo "done"
 # Validate the installed PyBoy execution path before replacing it.
 oracle-health-pyboy:
-    PYTHONPATH=tools/oracle /tmp/pbenv/bin/python tools/oracle/pyboy_health.py
+    uv run --project tools/oracle --frozen --python 3.12.3 python tools/oracle/pyboy_health.py
 
 oracle-health-gbref: oracle-build-gbref build-barrier
     python3 tools/oracle/gbref_health.py
@@ -129,31 +128,31 @@ oracle-warm FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
 
 oracle-warm-group GROUP: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode refresh --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
 
 oracle-diff-fast FN: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
 
 oracle-diff-fast-group GROUP: build-incremental
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode cache --cache-dir {{build_dir}}/oracle-cache --probe {{build_dir}}/poketcg_probe
 
 oracle-diff-group GROUP: build
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --group {{GROUP}} --oracle-mode live --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --group {{GROUP}} --oracle-mode live --probe {{build_dir}}/poketcg_probe
 
 
 
@@ -176,7 +175,7 @@ gate-report: oracle-fn-all
 # Independent PyBoy audit lane; a health failure quarantines this lane.
 oracle-audit-all: oracle-health-pyboy
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe
 
 # Aggregate function gate adds the independent PyBoy audit.
 oracle-gate: oracle-fn-gate oracle-audit-all
@@ -196,14 +195,14 @@ oracle-diff FN: build
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --fn {{FN}} --probe {{build_dir}}/poketcg_probe
 
 # Diff every routine in tests/routines.py. Non-zero if any fails or has no cases.
 oracle-diff-all: build lint-adapters
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
+    uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
 
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:

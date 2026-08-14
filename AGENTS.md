@@ -29,7 +29,7 @@ Forgejo credentials come from the in-repo helper `tools/git-credential-forgejo`
 (`just forgejo-auth-check` proves them); no browser or OAuth helper is involved.
 
 `just bootstrap` creates the pinned `poketcg/` disassembly checkout.
-`just oracle-venv` creates `/tmp/pbenv` and installs PyBoy.
+`uv sync --project tools/oracle --frozen` installs the pinned PyBoy project.
 
 The optional replay oracle uses GB Recompiled 0.1.0. Install its Linux x64
 prebuilt archive so the generator is executable at
@@ -50,8 +50,7 @@ The commands that matter, from the `justfile`:
 
 | command | what |
 |---|---|
-| `just bootstrap` | clone + build the disassembly (one-time) |
-| `just oracle-venv` | PyBoy into `/tmp/pbenv` (one-time) |
+| `uv sync --project tools/oracle --frozen` | install the pinned PyBoy oracle environment |
 | `just build` | configure + build the C side |
 | `just oracle-diff <Fn>` | diff one routine against the PyBoy oracle — the per-routine check |
 | `just oracle-release-gate` | **the gate.** Central barrier; the only producer of `site/data/gate.json` |

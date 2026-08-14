@@ -30,11 +30,11 @@ From the repository root:
 
 ```sh
 just bootstrap
-just oracle-venv
+uv sync --project tools/oracle --frozen
 just build
 ```
 
-`just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `just oracle-venv` creates `/tmp/pbenv` and installs PyBoy there.
+`just bootstrap` clones the pinned `pret/poketcg` disassembly and verifies its ROM checksum. `uv sync --project tools/oracle --frozen` installs the pinned PyBoy project.
 
 ## Verification
 

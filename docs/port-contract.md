@@ -8,7 +8,7 @@ already follow this; every later phase should too.
 
 ```sh
 just bootstrap                 # one-time: builds poketcg.gbc + poketcg.sym
-just oracle-venv               # PyBoy into /tmp/pbenv (one-time)
+uv sync --project tools/oracle --frozen
 export POKETCG_BUILD=build-<slice>
 export POKETCG_PORTS=<file>    # semicolon-list of pret basenames
 just build                     # configure this private tree once

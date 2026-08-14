@@ -15,7 +15,6 @@
 #define TYPE_ENERGY 0x08u
 #define HFFB3 0xffb3u
 #include "home/deck_configuration.h"
-
 /* <<< factory statics */
 
 
@@ -108,3 +107,18 @@ uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl)
 	return 0;
 }
 /* <<< factory InitCardSelectionParams */
+
+/* >>> factory ClearMemory_Bank2 */
+/* deck_configuration.asm:1185-1197 */
+void ClearMemory_Bank2(uint8_t a, uint16_t hl)
+{
+	uint8_t count = a;
+	uint16_t address = hl;
+	uint32_t n = count ? count : 0x100u;
+
+	while (n-- != 0u) {
+		gb_write8(address, 0u);
+		address = (uint16_t)(address + 1u);
+	}
+}
+/* <<< factory ClearMemory_Bank2 */

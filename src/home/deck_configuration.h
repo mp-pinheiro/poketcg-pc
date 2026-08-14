@@ -18,4 +18,7 @@ void CalculateOnesAndTensDigits(uint8_t a);
 /* >>> factory InitCardSelectionParams */
 uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl);
 /* <<< factory InitCardSelectionParams */
+/* >>> factory ClearMemory_Bank2 */
+void ClearMemory_Bank2(uint8_t a, uint16_t hl);
+/* <<< factory ClearMemory_Bank2 */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

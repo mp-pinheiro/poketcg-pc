@@ -48,11 +48,19 @@ static void adapt_InitCardSelectionParams(ProbeState *s)
 /* <<< factory InitCardSelectionParams */
 
 
+/* >>> factory ClearMemory_Bank2 */
+static void adapt_ClearMemory_Bank2(ProbeState *s)
+{
+	ClearMemory_Bank2(s->a, s->hl);
+}
+/* <<< factory ClearMemory_Bank2 */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
 	{ "CopyListFromHLToDE", adapt_CopyListFromHLToDE },
 	{ "InitCardSelectionParams", adapt_InitCardSelectionParams },
 	{ "CalculateOnesAndTensDigits", adapt_CalculateOnesAndTensDigits },
+	{ "ClearMemory_Bank2", adapt_ClearMemory_Bank2 },
 	{ NULL, NULL },
 };
