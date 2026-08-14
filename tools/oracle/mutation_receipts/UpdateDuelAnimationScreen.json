@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateDuelAnimationScreen",
+  "case": "tests/cases/commands.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateDuelAnimationScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"54446\": \"00\", \"54451\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateDuelAnimationScreen\", \"mismatches\": {\"f\": [192, 112]}}\n",
+  "restored": "{\"fn\": \"UpdateDuelAnimationScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"54446\": \"00\", \"54451\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
