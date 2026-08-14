@@ -20,7 +20,8 @@ In this order:
 ## 3. Dependencies
 
 Linux setup requires `build-essential`, CMake 3.20+, Ninja, Python 3, Git,
-SDL2 development headers/libraries, `just`, `jj`, `uv`, and `git-cliff`.
+`git-credential-oauth`, SDL2 development headers/libraries, `just`, `jj`, `uv`,
+and `git-cliff`.
 
 `just bootstrap` creates the pinned `poketcg/` disassembly checkout.
 `just oracle-venv` creates `/tmp/pbenv` and installs PyBoy.
@@ -55,6 +56,9 @@ The commands that matter, from the `justfile`:
 | `just progress` | recompute progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
 | `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
+| `just issues-fetch` | refresh the stable, read-only Forgejo issue cache |
+| `just issues-plan` | write the read-only desired-state issue audit |
+| `just issues-verify` | refetch Forgejo and verify routine marker coverage |
 
 
 ## 5. Concurrency protocol
@@ -103,7 +107,8 @@ jj commit -m "type(scope): subject"
 
 ≤50-char subject, no body, no emoji, no bullet lists
 (`.claude/hooks/enforce-conventional-commits.sh`). `main` auto-advances on every
-commit; never `git commit` / `git push` — use `jj git push`. Full workflow:
+commit; never `git commit` / `git push` — use
+`jj git push --remote origin --bookmark main`. Full workflow:
 `docs/jj-workflow.md`.
 
 ## 9. Factory port start
@@ -114,12 +119,12 @@ When, and only when, the user's trimmed message is exactly `start`
 request handling.
 
 The factory model: deterministic tooling under `tools/factory/` builds
-self-contained packets from the frontier, stateless small-model translators
-fill them in disposable lanes, the oracle plus mutation harness accepts or
-rejects mechanically, and one serial integrator — the orchestrator — owns
-every jj and GitHub write, gating strictly before each push. Lanes never run
-jj, git, gh, or a central gate. Translation prompts are governed by
-`docs/factory-contract.md`.
+self-contained packets from open `port-ready` Forgejo issues, stateless
+small-model translators fill them in disposable lanes, the oracle plus mutation
+harness accepts or rejects mechanically, and one serial integrator — the
+orchestrator — owns every repo and Forgejo-origin write, gating strictly before
+each push. Lanes never run jj, git, or a central gate and receive no remote
+credentials. Translation prompts are governed by `docs/factory-contract.md`.
 
 ## 10. `tests/cases/*.py` are not unit tests
 

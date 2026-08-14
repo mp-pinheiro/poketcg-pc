@@ -13,9 +13,10 @@
 - **Phase 7 — Link, IR, printer** (#8): open.
 - **Phase 8 — Widescreen and features** (#9): open.
 
-- **Current gate: 561 routines**, `just oracle-release-gate` exit 0 (schema-2
-  GBRT primary inventory, independent source-built PyBoy audit, mutation
-  declarations, and data round-trip). Plan: `docs/plan.md`.
+- **Latest recorded gate: 1,037 routines / 3,428 primary cases**,
+  `just oracle-release-gate` exit 0 (schema-2 GBRT primary inventory,
+  independent source-built PyBoy audit, mutation declarations, constant audit,
+  and data round-trip). Plan: `docs/plan.md`.
 
 A native PC/Linux port of Pokémon Trading Card Game (Game Boy Color), hand-ported
 from the [`pret/poketcg`](https://github.com/pret/poketcg) disassembly into C11

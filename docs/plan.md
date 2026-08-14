@@ -28,11 +28,11 @@ This table is the historic record of the wave era. **Active work now runs
 through the factory** — `docs/factory-workflow.md` (operation) and
 `docs/factory-contract.md` (translation rules); packets, lanes, and queue
 state live under `tools/factory/` + `.factory/`.
-**Current barrier**: `just oracle-release-gate` — 624/624 routines clean in
-both the schema-2 GBRT primary lane and the independent source-built PyBoy
-audit; 2,156 primary cases, no missing primaries, and no function failures.
-The release barrier also validates the schema and mutation inventories and
-runs `just data-verify`.
+**Latest recorded barrier**: `just oracle-release-gate` — 1,037/1,037 routines
+clean in the schema-2 GBRT primary lane across 3,428 cases, with no missing
+primaries or function failures. The release barrier also runs the independent
+source-built PyBoy audit, validates the schema and mutation inventories, checks
+live-used constants against pret, and runs `just data-verify`.
 
 ## Working agreement — applies to every slice
 

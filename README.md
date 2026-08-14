@@ -7,13 +7,16 @@ A hand-port of the Pokémon Trading Card Game for Game Boy Color to C11 + SDL2. 
 On Linux, install:
 
 ```sh
-sudo apt install build-essential cmake ninja-build python3 python3-venv git libsdl2-dev
+sudo apt install \
+  build-essential cmake ninja-build python3 python3-venv \
+  git git-credential-oauth libsdl2-dev
 ```
 
 The project also uses:
 
 - `just` for repository commands.
 - `jj` for version control writes.
+- `git-credential-oauth` for browser-based Forgejo HTTPS authentication.
 - `uv` for the PyBoy virtual environment.
 - `git-cliff` for the generated `CHANGELOG.md` and release recipe.
 - Python packages installed by `just oracle-venv`.
@@ -49,6 +52,25 @@ The release gate requires the ROM produced by `just bootstrap`; it runs the
 GBRT primary inventory, the independent PyBoy audit, schema and mutation
 audits, and the data round-trip. Concurrent work should use a private
 `POKETCG_BUILD` directory and a semicolon-separated `POKETCG_PORTS` list.
+
+## Factory dispatch
+
+Routine packet eligibility comes from the Forgejo issue snapshot:
+
+```sh
+just issues-fetch
+just issues-plan
+just issues-verify
+python3 tools/factory/packet.py build --max-routines 3 --max-asm-lines 140 --json
+```
+
+`issues-fetch` replaces `.factory/issues-cache.json` only after the paginated
+Forgejo listing stabilizes and covers every non-excluded canonical routine.
+`issues-plan` writes a read-only desired-state audit; `issues-verify` refreshes
+the listing and checks marker coverage. Packet construction then selects only
+ready routines whose managed issue is open and labeled `port-ready`. These
+commands do not mutate Forgejo issues. See `docs/factory-workflow.md` for the
+orchestrator loop and `docs/factory-contract.md` for translator constraints.
 
 ## GB Recompiled replay oracle
 

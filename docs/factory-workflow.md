@@ -7,7 +7,7 @@ comes from the oracle plus mutation testing; one serial integrator owns every
 repo and jj write.
 
 ```
-frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
+frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=max_rounds]
         -> green bundles -> serial integrate (gate BEFORE push) -> repeat
 ```
 
@@ -18,24 +18,31 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
 - **Lanes:** disposable directory copies under `/tmp/poketcg-factory/lane-N`
   (no `.jj`, no `.git`). Refreshed from the repo tip per packet; builds stay
   incremental. Nothing a lane does can corrupt the repo.
-- **Translator:** a stateless `prompt -> tagged blocks` function. Default:
-  the session's `completion(prompt, model="smol")`. Swapping models or
-  backends is a one-line change at the call site.
+- **Translator:** a stateless `prompt -> tagged blocks` function supplied by
+  the orchestrator. The production loop below uses
+  `completion(prompt, model="default")`.
 
 ## Preflight
 
-1. `jj git fetch`; require `main` == `main@origin` and a clean working copy
-   (`jj new main` if the working copy is stale/empty-on-old-base).
+1. `jj git fetch --remote origin`; require `main` == `main@origin` and a clean
+   working copy (`jj new main` if the working copy is stale/empty-on-old-base).
 2. Prerequisites: `poketcg/poketcg.gbc` + `.sym` (`just bootstrap`),
    `/tmp/pbenv` (`just oracle-venv`), `tools/oracle/gbref/build/gbref_runner`
    (`just oracle-build-gbref`), warm `build-barrier` (`just build-barrier`).
-3. Issue inventory: `python3 tools/factory/issues.py fetch` must produce a
-   schema-2 Forgejo cache before packet construction.
-   The default endpoint is `https://forgejo.yfrit.com` and the default token
-   file is `~/.config/yfrit-forgejo/api/poketcg-issues.token`; override them
-   with `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE`. The token needs
-   only `read:issue`. Direct requests through Cloudflare Access also accept
-   `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`.
+3. Issue inventory: `just issues-fetch` must produce a schema-2 Forgejo cache
+   before packet construction. The defaults are
+   `https://forgejo.yfrit.com`, repository `mpp/poketcg-pc`, and token file
+   `~/.config/yfrit-forgejo/api/poketcg-issues.token`.
+   `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE` override the endpoint
+   and credential for both audit and dispatch. `POKETCG_FORGEJO_OWNER` and
+   `POKETCG_FORGEJO_REPO` affect the issue client only; packet consumption still
+   requires cache repository `mpp/poketcg-pc`. The token file accepts a raw
+   token, `token ...`, `bearer ...`, or an `Authorization:`-prefixed value.
+   `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET` add Cloudflare Access
+   headers and must be set together; they do not replace the Forgejo token.
+   These credentials cover the issue REST client only. Git and jj authenticate
+   to Forgejo through the host-scoped `git-credential-oauth` configuration in
+   `docs/jj-workflow.md`.
 4. Resume state: `python3 tools/factory/driver.py reset-stale` returns
    crashed in-flight packets to `pending`; `driver.py status` shows the queue.
 
@@ -74,46 +81,74 @@ iteration — no deferral bookkeeping needed.
 Serial, in the repo root:
 
 ```sh
-python3 tools/factory/integrate.py            # land greens, release gate
-python3 tools/factory/issues.py fetch         # read every Forgejo issue page
-python3 tools/factory/issues.py plan --json  # deterministic drift audit
-python3 tools/factory/issues.py verify --live # refetch and verify full coverage
-python3 tools/factory/driver.py metrics       # token/wall/round telemetry
-python3 tools/factory/driver.py status        # queue state
+python3 tools/factory/integrate.py             # land greens, gate, push origin
+just issues-fetch                             # replace the stable Forgejo cache
+just issues-plan                              # write the desired-state audit
+just issues-verify                            # refetch and verify marker coverage
+python3 tools/factory/driver.py metrics        # token/wall/round telemetry
+python3 tools/factory/driver.py status         # queue state
 ```
 
-Forgejo is the operational issue authority. `issues.py fetch` reads every
-repository issue through the paginated Forgejo API, normalizes issue number,
-title, body, state, labels, and URL, validates unique routine markers and full
-canonical coverage, then atomically replaces `.factory/issues-cache.json`.
-Packet construction refuses a missing, stale-backend, or malformed cache and
-dispatches only open issues carrying `port-ready`.
+Forgejo is the operational issue authority. `issues-fetch` requests open and
+closed issues in 50-item pages until the final short page, requires two
+consecutive listings with the same semantic fingerprint, validates unique
+routine markers and full non-excluded canonical coverage, then atomically
+replaces `.factory/issues-cache.json`. Unmarked issues remain outside the
+managed routine set. Packet construction refuses a missing, wrong-backend, or
+malformed cache and dispatches only ready routines whose managed issue is open
+and labeled `port-ready`.
 
-`issues.py plan` is a read-only semantic comparison against the progress model;
-it may report differences that operators intentionally manage in Forgejo.
-`issues.py verify --live` refetches Forgejo and requires complete, unique
-canonical coverage. There is no issue apply or migration command and integration
-never mutates issue state. Human and agent lifecycle decisions happen in
-Forgejo; the release gate remains the authority for whether a routine is
-actually verified.
+`issues-plan` compares the cache with the progress work-record projection,
+writes `.factory/issues-plan.json`, and reports create, update, and explicit
+work-ID migration actions without applying them. `issues-verify` refetches
+Forgejo and checks complete, unique marker coverage; it does not require zero
+desired-state drift. No repository command mutates issue titles, bodies, labels,
+or state, and integration does not refresh issue lifecycle state.
 
-Repository pushes go to the Forgejo `origin`. Forgejo's push mirror replicates
-Git refs to GitHub; GitHub issues and Actions are not part of factory dispatch.
-Translator lanes receive neither Forgejo nor GitHub credentials.
+Forgejo labels and open/closed state are the operational dispatch inputs.
+`report.py` and a trusted release gate derive the desired semantic lifecycle
+(`complete`, `failing`, `awaiting-gate`, `active`, `blocked`, or `ready`).
+Packet construction intersects both sources: a routine must be locally ready
+and have an open Forgejo issue labeled `port-ready`.
+
+Remote reconciliation is manual:
+
+1. Run `just issues-fetch`, then `just issues-plan`.
+2. Inspect `.factory/issues-plan.json`.
+3. Apply its title, body, label, state, or explicit work-ID changes in Forgejo.
+4. Fetch and plan again; reconciliation is complete when the plan has zero
+   actions.
+
+`just issues-verify` is not the final step of this procedure: it checks marker
+coverage, not desired-state drift.
+
+Factory pushes target the Forgejo `origin`; translator lanes receive no remote
+credentials. `github-mirror` is a checkout-local GitHub remote name, not proof
+of a Forgejo server-side mirror, and the live Forgejo API currently reports no
+configured push mirror. GitHub therefore does not automatically receive factory
+pushes from Forgejo.
+
+GitHub still has direct ref writers: `.github/workflows/release.yml` pushes its
+generated release commit and tag, while `.github/workflows/progress.yml` pushes
+its daily progress commit. The GitHub CI workflow validates the progress report
+and managed issue model offline, without fetching Forgejo or dispatching
+packets.
 
 ## Escalation lane
 
-- `escalated` packets (4 failed repair rounds, surgery refusal, or format
-  rejection) go to agentic `task` subagents — default model, one packet per
-  agent, confined to the packet's four files inside a lane, no VCS, the full
-  verdict history in the brief. Their green bundles enter the same
-  `integrate.py` queue; nothing ships weaker than the mechanical bar.
-- `parked` packets hit a real dependency wall (oracle timeout: a callee never
-  returns — e.g. the script VM). They are recorded in `.factory/blocked.toml`
-  with an unblock condition and stop being offered by `packet.py`. Clear the
-  entry when the blocker lands.
+- `escalated` packets reach the configured repair limit or fail translation.
+  `python3 tools/factory/driver.py escalate` writes agentic task briefs only for
+  packets in that state. A separately verified escalation writes a bundle but
+  leaves the packet terminal; `integrate.py` selects only `green`, so the
+  escalation cannot integrate without an explicit state transition.
+- `rejected-format` packets fail both the initial parse and one free reformat
+  attempt. They are terminal and are not selected by `driver.py escalate`.
+- `parked` packets time out behind a dependency and add that routine to
+  `.factory/blocked.toml`. Removing the blocker entry alone does not reoffer the
+  packet: `reset-stale` ignores `parked`, and packet construction skips its
+  existing terminal queue entry. There is no dedicated parked-reset command.
 - Harness gaps (a missing case key, an oracle limitation) are orchestrator
-  work on shared files — never delegated, never worked around in a packet.
+  work on shared files — never delegated or worked around in a packet.
 
 ## Milestones that unlock frontier mass
 
@@ -126,25 +161,30 @@ Translator lanes receive neither Forgejo nor GitHub credentials.
 
 ## Retired paths
 
-`docs/autonomous-port-workflow.md` (issue claims, per-issue bookmarks, PRs,
-CI watching, merge tokens) is deleted. `just launch-port` remains only as a
-compatibility hint for packet dispatch.
+The former issue-claim workflow (per-issue bookmarks, PRs, CI watching, and
+merge tokens) is deleted. `just launch-port` prints the packet dispatch command,
+while `just generate-port-issues` is a compatibility name for the read-only
+desired-state plan. The old title/group generator and remote migration writer
+no longer exist.
 
-Forgejo issues are keyed by `port:v1:<source>:<symbol>` and are the operational
-source for dispatch. GitHub receives mirrored Git refs only. The completed
-legacy backfill is not replayed by repository tooling.
+Forgejo issues are keyed by `port:v1:<source>:<symbol>`. Packet identity and
+claim deduplication use that immutable work ID rather than mutable issue titles.
 
 ## Invariants
 
 - Lanes never run jj, git, or any central gate and receive no remote credentials.
-- The integrator runs one release gate per batch before pushing to Forgejo; a
-  red gate stops the push.
-- Every managed routine has exactly one issue, tier, and lifecycle state.
-- Packet batching may contain several atomic issue IDs, but one work ID cannot
-  be claimed by two non-terminal packets.
-- `tests/routines.py` is derived from case modules — never hand-edited.
+- The integrator runs the release gate before each batch push; a red gate stops
+  the push.
+- A fetched managed issue has exactly one valid `port:v1` marker, and duplicate
+  work IDs are rejected.
+- Coverage requires an issue for every non-excluded canonical work record and
+  rejects marked IDs outside the current projection.
+- Packet batching may contain several issue numbers, but one work ID cannot be
+  claimed by two non-terminal packets.
+- Packet construction consumes only open `port-ready` issues; integration never
+  mutates their Forgejo lifecycle.
+- `tests/routines.py` is derived from case modules and is never hand-edited.
 - Every landed routine carries live-oracle PASS and a mutation receipt.
-- `jj bookmark list` shows exactly one bookmark: `main`.
 
 ## Pilot calibration (measured 2026-08-12)
 
@@ -168,8 +208,8 @@ Calibration findings worth keeping:
   missing struct typedefs for struct-returning callees, invented include
   paths, and ninja's link-command echo crowding out the real compile cause.
 
-**Push cadence note.** The release workflow appends a `chore(release): vX.Y.Z`
-commit to `main` after every push, so the next local commit is a sibling of a
-tip you have not seen. `integrate.py` push failures of the form "Failed to push
-some bookmarks" mean exactly this: `jj git fetch`, `jj rebase -s <your first
-commit> -d main@origin`, `jj bookmark set main -r <new head>`, push again.
+Before every batch push, `integrate.py` fetches and aborts when `main@origin`
+contains commits absent from local `main`; it does not rebase automatically.
+That guard reads the Forgejo `origin`, not `github-mirror`, so commits created
+directly by the GitHub release or progress workflows are outside this
+fast-forward check.
