@@ -192,6 +192,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 		f |= 0x10u;
 	return f;
 }
+
+#include "home/effect_functions.h"
+#define NoAttackMayBeChoosenText 0x00c5u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3144,3 +3147,19 @@ void FireSpin_DiscardEffect(void)
 	PutCardInDiscardPile(gb_read8((uint16_t)(hTempList_ADDR + 1u)));
 }
 /* <<< factory FireSpin_DiscardEffect */
+/* >>> factory PidgeottoMirrorMove_InitialEffect1 */
+/* effect_functions.asm:8047-8049 */
+MirrorMoveInitialEffect1Result PidgeottoMirrorMove_InitialEffect1(void)
+{
+	return MirrorMove_InitialEffect1();
+}
+/* <<< factory PidgeottoMirrorMove_InitialEffect1 */
+
+/* >>> factory ClefairyMetronome_CheckAttacks */
+/* effect_functions.asm:8071-8077 */
+ClefairyMetronomeCheckAttacksResult ClefairyMetronome_CheckAttacks(void)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	return (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
+}
+/* <<< factory ClefairyMetronome_CheckAttacks */

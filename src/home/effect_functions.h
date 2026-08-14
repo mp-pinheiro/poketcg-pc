@@ -759,6 +759,13 @@ uint8_t CheckIfCardIsBasicEnergy(uint8_t a);
 /* >>> factory CreatePlayableStage2PokemonCardListFromHand */
 uint8_t CreatePlayableStage2PokemonCardListFromHand(void);
 /* <<< factory CreatePlayableStage2PokemonCardListFromHand */
+/* >>> factory PidgeottoMirrorMove_InitialEffect1 */
+MirrorMoveInitialEffect1Result PidgeottoMirrorMove_InitialEffect1(void);
+/* <<< factory PidgeottoMirrorMove_InitialEffect1 */
+/* >>> factory ClefairyMetronome_CheckAttacks */
+typedef struct { uint8_t f; uint16_t hl; } ClefairyMetronomeCheckAttacksResult;
+ClefairyMetronomeCheckAttacksResult ClefairyMetronome_CheckAttacks(void);
+/* <<< factory ClefairyMetronome_CheckAttacks */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

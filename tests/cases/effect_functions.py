@@ -1986,6 +1986,22 @@ CONTRACT["FireSpin_DiscardEffect"] = {"compare": (), "preserve": ()}
 CASES["FireSpin_DiscardEffect"] = [{}, dict(POISON)]
 # <<< factory FireSpin_DiscardEffect
 
+# >>> factory PidgeottoMirrorMove_InitialEffect1
+CONTRACT["PidgeottoMirrorMove_InitialEffect1"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["PidgeottoMirrorMove_InitialEffect1"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory PidgeottoMirrorMove_InitialEffect1
+
+# >>> factory ClefairyMetronome_CheckAttacks
+CONTRACT["ClefairyMetronome_CheckAttacks"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["ClefairyMetronome_CheckAttacks"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory ClefairyMetronome_CheckAttacks
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3397,4 +3413,9 @@ MUTATIONS["FireSpin_AISelectEffect"] = {"source_symbol": "FireSpin_AISelectEffec
 MUTATIONS["FireSpin_DiscardEffect"] = {"source_symbol": "FireSpin_DiscardEffect", "before": "hTempList_ADDR", "after": "(uint16_t)(hTempList_ADDR + 1u)", "case_ids": ["FireSpin_DiscardEffect-0", "FireSpin_DiscardEffect-1"]}
 # <<< factory-mutation FireSpin_DiscardEffect
 # Keep schema-2 inventory after appended routine cases.
-SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)# >>> factory-mutation PidgeottoMirrorMove_InitialEffect1
+MUTATIONS["PidgeottoMirrorMove_InitialEffect1"] = {"source_symbol": "PidgeottoMirrorMove_InitialEffect1", "before": "\treturn MirrorMove_InitialEffect1();", "after": "\treturn (MirrorMoveInitialEffect1Result){0};", "case_ids": ["PidgeottoMirrorMove_InitialEffect1-0", "PidgeottoMirrorMove_InitialEffect1-1"]}
+# <<< factory-mutation PidgeottoMirrorMove_InitialEffect1
+# >>> factory-mutation ClefairyMetronome_CheckAttacks
+MUTATIONS["ClefairyMetronome_CheckAttacks"] = {"source_symbol": "ClefairyMetronome_CheckAttacks", "before": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, 0};", "case_ids": ["ClefairyMetronome_CheckAttacks-0", "ClefairyMetronome_CheckAttacks-1"]}
+# <<< factory-mutation ClefairyMetronome_CheckAttacks

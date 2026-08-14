@@ -1808,6 +1808,24 @@ static void adapt_FireSpin_AISelectEffect(ProbeState *s) { FireSpin_AISelectEffe
 /* >>> factory FireSpin_DiscardEffect */
 static void adapt_FireSpin_DiscardEffect(ProbeState *s) { FireSpin_DiscardEffect(); }
 /* <<< factory FireSpin_DiscardEffect */
+/* >>> factory PidgeottoMirrorMove_InitialEffect1 */
+static void adapt_PidgeottoMirrorMove_InitialEffect1(ProbeState *s)
+{
+	MirrorMoveInitialEffect1Result r = PidgeottoMirrorMove_InitialEffect1();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PidgeottoMirrorMove_InitialEffect1 */
+
+/* >>> factory ClefairyMetronome_CheckAttacks */
+static void adapt_ClefairyMetronome_CheckAttacks(ProbeState *s)
+{
+	ClefairyMetronomeCheckAttacksResult r = ClefairyMetronome_CheckAttacks();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ClefairyMetronome_CheckAttacks */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2035,5 +2053,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FireBlast_DiscardEffect", adapt_FireBlast_DiscardEffect },
 	{ "FireSpin_AISelectEffect", adapt_FireSpin_AISelectEffect },
 	{ "FireSpin_DiscardEffect", adapt_FireSpin_DiscardEffect },
+	{ "PidgeottoMirrorMove_InitialEffect1", adapt_PidgeottoMirrorMove_InitialEffect1 },
+	{ "ClefairyMetronome_CheckAttacks", adapt_ClefairyMetronome_CheckAttacks },
 	{ NULL, NULL },
 };
