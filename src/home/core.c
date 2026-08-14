@@ -1841,6 +1841,7 @@ LookForCardIDInLocationResult LookForCardIDInLocation_Bank5(
 }
 /* <<< factory LookForCardIDInLocation_Bank5 */
 
+
 /* >>> factory LoadDefendingPokemonColorWRAndPrizeCards */
 void LoadDefendingPokemonColorWRAndPrizeCards(void)
 {
@@ -1854,30 +1855,29 @@ void LoadDefendingPokemonColorWRAndPrizeCards(void)
 }
 /* <<< factory LoadDefendingPokemonColorWRAndPrizeCards */
 
+
 /* >>> factory CheckIfEnergyIsUseful */
 CheckIfEnergyIsUsefulResult CheckIfEnergyIsUseful(uint8_t a)
 {
 	uint8_t energy = (uint8_t)GetCardIDFromDeckIndex(a);
-	if (energy == DOUBLE_COLORLESS_ENERGY ||
-	    wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)
+	if (energy == DOUBLE_COLORLESS_ENERGY || wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)
 		return (CheckIfEnergyIsUsefulResult){0x90u};
 	uint8_t required = 0u;
 	if (wTempCardID == EXEGGCUTE || wTempCardID == EXEGGUTOR ||
 	    wTempCardID == PSYDUCK || wTempCardID == GOLDUCK)
 		required = PSYCHIC_ENERGY;
 	else if (wTempCardID == SURFING_PIKACHU_LV13 ||
-		 wTempCardID == SURFING_PIKACHU_ALT_LV13)
+	         wTempCardID == SURFING_PIKACHU_ALT_LV13)
 		required = WATER_ENERGY;
 	if (required != 0u && energy == required)
 		return (CheckIfEnergyIsUsefulResult){0x90u};
 	if (wTempCardID == EEVEE &&
-	    (energy == WATER_ENERGY || energy == FIRE_ENERGY ||
-	     energy == LIGHTNING_ENERGY))
+	    (energy == WATER_ENERGY || energy == FIRE_ENERGY || energy == LIGHTNING_ENERGY))
 		return (CheckIfEnergyIsUsefulResult){0x90u};
-	return (CheckIfEnergyIsUsefulResult){
-		(uint8_t)(GetCardType(energy) == wTempCardType ? 0x90u : 0u)};
+	return (CheckIfEnergyIsUsefulResult){GetCardType(energy) == wTempCardType ? 0x90u : 0u};
 }
 /* <<< factory CheckIfEnergyIsUseful */
+
 
 /* >>> factory PickRandomBenchPokemon */
 uint8_t PickRandomBenchPokemon(void)

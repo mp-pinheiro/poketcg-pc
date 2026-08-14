@@ -852,18 +852,22 @@ static void adapt_LoadDefendingPokemonColorWRAndPrizeCards(ProbeState *s)
 	LoadDefendingPokemonColorWRAndPrizeCards();
 }
 /* <<< factory LoadDefendingPokemonColorWRAndPrizeCards */
+
 /* >>> factory CheckIfEnergyIsUseful */
 static void adapt_CheckIfEnergyIsUseful(ProbeState *s)
 {
-	s->f = CheckIfEnergyIsUseful(s->a).f;
+	CheckIfEnergyIsUsefulResult r = CheckIfEnergyIsUseful(s->a);
+	s->f = r.f;
 }
 /* <<< factory CheckIfEnergyIsUseful */
+
 /* >>> factory PickRandomBenchPokemon */
 static void adapt_PickRandomBenchPokemon(ProbeState *s)
 {
 	s->a = PickRandomBenchPokemon();
 }
 /* <<< factory PickRandomBenchPokemon */
+
 /* >>> factory PracticeDuel_VerifyPlayerTurnActions */
 static void adapt_PracticeDuel_VerifyPlayerTurnActions(ProbeState *s)
 {
@@ -983,9 +987,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckForEvolutionInList", adapt_CheckForEvolutionInList },
 	{ "CountNumberOfEnergyCardsAttached", adapt_CountNumberOfEnergyCardsAttached },
 	{ "LookForCardIDInLocation_Bank5", adapt_LookForCardIDInLocation_Bank5 },
-	{ "LoadDefendingPokemonColorWRAndPrizeCards", adapt_LoadDefendingPokemonColorWRAndPrizeCards },
-	{ "CheckIfEnergyIsUseful", adapt_CheckIfEnergyIsUseful },
-	{ "PickRandomBenchPokemon", adapt_PickRandomBenchPokemon },
 	{ "PracticeDuel_VerifyPlayerTurnActions", adapt_PracticeDuel_VerifyPlayerTurnActions },
 	{ "PrintCardNameFromCardIDInTextBox", adapt_PrintCardNameFromCardIDInTextBox },
 	{ "RemoveCardIDInList", adapt_RemoveCardIDInList },
@@ -1078,5 +1079,8 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ "DrawWideTextBox_WaitForInput_Bank1", adapt_DrawWideTextBox_WaitForInput_Bank1 },
+	{ "LoadDefendingPokemonColorWRAndPrizeCards", adapt_LoadDefendingPokemonColorWRAndPrizeCards },
+	{ "CheckIfEnergyIsUseful", adapt_CheckIfEnergyIsUseful },
+	{ "PickRandomBenchPokemon", adapt_PickRandomBenchPokemon },
 	{ NULL, NULL },
 };

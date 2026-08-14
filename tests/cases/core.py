@@ -1060,6 +1060,7 @@ CASES["LookForCardIDInLocation_Bank5"] = [
 # <<< factory LookForCardIDInLocation_Bank5
 # >>> factory LoadDefendingPokemonColorWRAndPrizeCards
 CONTRACT["LoadDefendingPokemonColorWRAndPrizeCards"] = {"compare": (), "preserve": ()}
+hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wOpponentDeck = 0xC480
 wPlayerPrizes = 0xC2EC
@@ -1070,29 +1071,44 @@ wAIPlayerResistance = 0xCDD1
 wAIPlayerPrizeCount = 0xCDD2
 wAIOpponentPrizeCount = 0xCDD3
 CASES["LoadDefendingPokemonColorWRAndPrizeCards"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x44", wPlayerPrizes: b"\x15", wOpponentPrizes: b"\x03"}, "read": {wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1, wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x45", wPlayerPrizes: b"\x3F", wOpponentPrizes: b"\x00"}, read={wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1, wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}),
+    {"wram": {hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x44",
+              wPlayerPrizes: b"\x15", wOpponentPrizes: b"\x03"},
+     "read": {wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1,
+              wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC3BB: b"\x00", wOpponentDeck: b"\x45",
+                       wPlayerPrizes: b"\x3F", wOpponentPrizes: b"\x00"},
+         read={wAIPlayerColor: 1, wAIPlayerWeakness: 1, wAIPlayerResistance: 1,
+               wAIPlayerPrizeCount: 1, wAIOpponentPrizeCount: 1, hWhoseTurn: 1}),
 ]
 # <<< factory LoadDefendingPokemonColorWRAndPrizeCards
+
 # >>> factory CheckIfEnergyIsUseful
 CONTRACT["CheckIfEnergyIsUseful"] = {"compare": ("f",), "preserve": ()}
 wTempCardID = 0xCDB9
 wTempCardType = 0xCDBA
 CASES["CheckIfEnergyIsUseful"] = [
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x07", wTempCardID: b"\x00", wTempCardType: b"\x08"}},
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x03", wTempCardID: b"\x28", wTempCardType: b"\x08"}},
-    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x02", wTempCardID: b"\xBC", wTempCardType: b"\x08"}},
-    dict(POISON, a=0, wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01", wTempCardID: b"\x00", wTempCardType: b"\x01"}),
+    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x07",
+                      wTempCardID: b"\x00", wTempCardType: b"\x08"}},
+    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x03",
+                      wTempCardID: b"\x28", wTempCardType: b"\x08"}},
+    {"a": 0, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x02",
+                      wTempCardID: b"\xBC", wTempCardType: b"\x08"}},
+    dict(POISON, a=0, wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01",
+                            wTempCardID: b"\x00", wTempCardType: b"\x01"}),
 ]
 # <<< factory CheckIfEnergyIsUseful
+
 # >>> factory PickRandomBenchPokemon
 CONTRACT["PickRandomBenchPokemon"] = {"compare": ("a",), "preserve": ()}
 wPlayerPokemonCount = 0xC2EF
 CASES["PickRandomBenchPokemon"] = [
-    {"wram": {hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x02", 0xCACA: b"\x12", 0xCACB: b"\x34", 0xCACC: b"\x56"}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x06", 0xCACA: b"\xA5", 0xCACB: b"\x5A", 0xCACC: b"\x01"}),
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x02",
+              0xCACA: b"\x12", 0xCACB: b"\x34", 0xCACC: b"\x56"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerPokemonCount: b"\x06",
+                       0xCACA: b"\xA5", 0xCACB: b"\x5A", 0xCACC: b"\x01"}),
 ]
 # <<< factory PickRandomBenchPokemon
+
 # >>> factory PracticeDuel_VerifyPlayerTurnActions
 CONTRACT["PracticeDuel_VerifyPlayerTurnActions"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuel_VerifyPlayerTurnActions"] = [
@@ -1770,9 +1786,9 @@ MUTATIONS["CheckForEvolutionInList"] = {
 # >>> factory-mutation CheckIfEnergyIsUseful
 MUTATIONS["CheckIfEnergyIsUseful"] = {
     "source_symbol": "CheckIfEnergyIsUseful",
-    "before": "required != 0u && energy == required",
-    "after": "required != 0u && energy != required",
-    "case_ids": ["CheckIfEnergyIsUseful-0", "CheckIfEnergyIsUseful-1"],
+    "before": "if (energy == DOUBLE_COLORLESS_ENERGY || wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)",
+    "after": "if (energy == DOUBLE_COLORLESS_ENERGY && wTempCardType == TYPE_ENERGY_DOUBLE_COLORLESS)",
+    "case_ids": ["CheckIfEnergyIsUseful-0"],
 }
 # <<< factory-mutation CheckIfEnergyIsUseful
 # >>> factory-mutation CountNumberOfEnergyCardsAttached
@@ -1794,8 +1810,8 @@ MUTATIONS["GetAttacksEnergyCostBits"] = {
 # >>> factory-mutation LoadDefendingPokemonColorWRAndPrizeCards
 MUTATIONS["LoadDefendingPokemonColorWRAndPrizeCards"] = {
     "source_symbol": "LoadDefendingPokemonColorWRAndPrizeCards",
-    "before": "wAIPlayerWeakness = GetArenaCardWeakness();",
-    "after": "wAIPlayerWeakness = GetArenaCardResistance();",
+    "before": "wAIPlayerPrizeCount = CountPrizes();",
+    "after": "wAIPlayerPrizeCount = 0u;",
     "case_ids": ["LoadDefendingPokemonColorWRAndPrizeCards-0", "LoadDefendingPokemonColorWRAndPrizeCards-1"],
 }
 # <<< factory-mutation LoadDefendingPokemonColorWRAndPrizeCards
@@ -1810,8 +1826,8 @@ MUTATIONS["LookForCardIDInLocation_Bank5"] = {
 # >>> factory-mutation PickRandomBenchPokemon
 MUTATIONS["PickRandomBenchPokemon"] = {
     "source_symbol": "PickRandomBenchPokemon",
-    "before": "count - 1u",
-    "after": "count",
+    "before": "Random((uint8_t)(count - 1u)) + 1u",
+    "after": "Random((uint8_t)(count - 1u)) + 2u",
     "case_ids": ["PickRandomBenchPokemon-0", "PickRandomBenchPokemon-1"],
 }
 # <<< factory-mutation PickRandomBenchPokemon

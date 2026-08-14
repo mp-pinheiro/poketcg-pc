@@ -1,0 +1,9 @@
+{
+  "fn": "LoadDefendingPokemonColorWRAndPrizeCards",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadDefendingPokemonColorWRAndPrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49900\": \"15\", \"50107\": \"00\", \"50156\": \"03\", \"50304\": \"44\", \"52687\": \"1020000203\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadDefendingPokemonColorWRAndPrizeCards\", \"mismatches\": {\"bus\": {\"address\": 52690, \"reference\": \"441020000203c2\", \"native\": \"441020000003c2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49900, 1], [50107, 1], [50156, 1], [50304, 1], [52687, 5], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadDefendingPokemonColorWRAndPrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49900\": \"15\", \"50107\": \"00\", \"50156\": \"03\", \"50304\": \"44\", \"52687\": \"1020000203\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

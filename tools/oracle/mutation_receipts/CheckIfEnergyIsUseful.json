@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfEnergyIsUseful",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfEnergyIsUseful\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"07\", \"52665\": \"0008\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfEnergyIsUseful\", \"mismatches\": {\"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfEnergyIsUseful\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"07\", \"52665\": \"0008\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
