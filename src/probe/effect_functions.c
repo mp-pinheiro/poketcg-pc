@@ -1970,6 +1970,31 @@ static void adapt_ClefableMetronome_CheckAttacks(ProbeState *s)
 }
 /* <<< factory ClefableMetronome_CheckAttacks */
 
+/* >>> factory Scavenge_CheckDiscardPile */
+static void adapt_Scavenge_CheckDiscardPile(ProbeState *s)
+{
+	ScavengeCheckDiscardPileResult r = Scavenge_CheckDiscardPile();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory Scavenge_CheckDiscardPile */
+
+/* >>> factory Scavenge_AISelectEffect */
+static void adapt_Scavenge_AISelectEffect(ProbeState *s)
+{
+	Scavenge_AISelectEffect();
+}
+/* <<< factory Scavenge_AISelectEffect */
+
+/* >>> factory SlowpokeAmnesia_CheckAttacks */
+static void adapt_SlowpokeAmnesia_CheckAttacks(ProbeState *s)
+{
+	SlowpokeAmnesiaCheckAttacksResult r = SlowpokeAmnesia_CheckAttacks();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory SlowpokeAmnesia_CheckAttacks */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2216,5 +2241,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidoranFCallForFamily_CheckDeckAndPlayArea", adapt_NidoranFCallForFamily_CheckDeckAndPlayArea },
 	{ "DragonairHyperBeam_AISelectEffect", adapt_DragonairHyperBeam_AISelectEffect },
 	{ "ClefableMetronome_CheckAttacks", adapt_ClefableMetronome_CheckAttacks },
+	{ "Scavenge_CheckDiscardPile", adapt_Scavenge_CheckDiscardPile },
+	{ "Scavenge_AISelectEffect", adapt_Scavenge_AISelectEffect },
+	{ "SlowpokeAmnesia_CheckAttacks", adapt_SlowpokeAmnesia_CheckAttacks },
 	{ NULL, NULL },
 };

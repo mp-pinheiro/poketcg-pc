@@ -221,6 +221,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #define DUELVARS_ARENA_CARD_LAST_TURN_EFFECT 0xf8u
 #define LAST_TURN_EFFECT_DISCARD_ENERGY 0x01u
+
+#define ThereAreNoTrainerCardsInDiscardPileText 0x00c4u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3417,3 +3419,36 @@ ClefableMetronomeCheckAttacksResult ClefableMetronome_CheckAttacks(void)
 	return (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
 }
 /* <<< factory ClefableMetronome_CheckAttacks */
+
+/* >>> factory Scavenge_CheckDiscardPile */
+/* effect_functions.asm:5659-5667 */
+ScavengeCheckDiscardPileResult Scavenge_CheckDiscardPile(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t psychic = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	if (psychic < 1u)
+		return (ScavengeCheckDiscardPileResult){NotEnoughPsychicEnergyText, 0x70u};
+	CreateTrainerCardListFromDiscardPileResult r = CreateTrainerCardListFromDiscardPile();
+	return (ScavengeCheckDiscardPileResult){ThereAreNoTrainerCardsInDiscardPileText, r.f};
+}
+/* <<< factory Scavenge_CheckDiscardPile */
+
+/* >>> factory Scavenge_AISelectEffect */
+/* effect_functions.asm:5682-5693 */
+void Scavenge_AISelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	hTemp_ffa0 = wDuelTempList;
+	(void)CreateTrainerCardListFromDiscardPile();
+	hTempPlayAreaLocation_ffa1 = wDuelTempList;
+}
+/* <<< factory Scavenge_AISelectEffect */
+
+/* >>> factory SlowpokeAmnesia_CheckAttacks */
+/* effect_functions.asm:5724-5727 */
+SlowpokeAmnesiaCheckAttacksResult SlowpokeAmnesia_CheckAttacks(void)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	return (SlowpokeAmnesiaCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
+}
+/* <<< factory SlowpokeAmnesia_CheckAttacks */

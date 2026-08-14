@@ -831,6 +831,17 @@ void DragonairHyperBeam_AISelectEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } ClefableMetronomeCheckAttacksResult;
 ClefableMetronomeCheckAttacksResult ClefableMetronome_CheckAttacks(void);
 /* <<< factory ClefableMetronome_CheckAttacks */
+/* >>> factory Scavenge_CheckDiscardPile */
+typedef struct { uint16_t hl; uint8_t f; } ScavengeCheckDiscardPileResult;
+ScavengeCheckDiscardPileResult Scavenge_CheckDiscardPile(void);
+/* <<< factory Scavenge_CheckDiscardPile */
+/* >>> factory Scavenge_AISelectEffect */
+void Scavenge_AISelectEffect(void);
+/* <<< factory Scavenge_AISelectEffect */
+/* >>> factory SlowpokeAmnesia_CheckAttacks */
+typedef struct { uint8_t f; uint16_t hl; } SlowpokeAmnesiaCheckAttacksResult;
+SlowpokeAmnesiaCheckAttacksResult SlowpokeAmnesia_CheckAttacks(void);
+/* <<< factory SlowpokeAmnesia_CheckAttacks */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

@@ -2133,6 +2133,21 @@ CONTRACT["ClefableMetronome_CheckAttacks"] = {"compare": ("f", "b", "c", "d", "e
 CASES["ClefableMetronome_CheckAttacks"] = [{}, dict(POISON)]
 # <<< factory ClefableMetronome_CheckAttacks
 
+# >>> factory Scavenge_CheckDiscardPile
+CONTRACT["Scavenge_CheckDiscardPile"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["Scavenge_CheckDiscardPile"] = [{"read": {0xCC1B: 8}}, dict(POISON, wram={0xCC1B: b"\xaa" * 8}, read={0xCC1B: 8})]
+# <<< factory Scavenge_CheckDiscardPile
+
+# >>> factory Scavenge_AISelectEffect
+CONTRACT["Scavenge_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Scavenge_AISelectEffect"] = [{"read": {0xFFA0: 2}}, dict(POISON, wram={0xFFA0: b"\xaa\xbb"}, read={0xFFA0: 2})]
+# <<< factory Scavenge_AISelectEffect
+
+# >>> factory SlowpokeAmnesia_CheckAttacks
+CONTRACT["SlowpokeAmnesia_CheckAttacks"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SlowpokeAmnesia_CheckAttacks"] = [{}, dict(POISON)]
+# <<< factory SlowpokeAmnesia_CheckAttacks
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3636,3 +3651,12 @@ MUTATIONS["DragonairHyperBeam_AISelectEffect"] = {"source_symbol": "DragonairHyp
 # >>> factory-mutation ClefableMetronome_CheckAttacks
 MUTATIONS["ClefableMetronome_CheckAttacks"] = {"source_symbol": "ClefableMetronome_CheckAttacks", "before": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, (uint16_t)(NoAttackMayBeChoosenText + 1u)};", "case_ids": ["ClefableMetronome_CheckAttacks-0", "ClefableMetronome_CheckAttacks-1"]}
 # <<< factory-mutation ClefableMetronome_CheckAttacks
+# >>> factory-mutation Scavenge_CheckDiscardPile
+MUTATIONS["Scavenge_CheckDiscardPile"] = {"source_symbol": "Scavenge_CheckDiscardPile", "before": "\t\treturn (ScavengeCheckDiscardPileResult){NotEnoughPsychicEnergyText, 0x70u};", "after": "\t\treturn (ScavengeCheckDiscardPileResult){ThereAreNoTrainerCardsInDiscardPileText, 0x70u};", "case_ids": ["Scavenge_CheckDiscardPile-0", "Scavenge_CheckDiscardPile-1"]}
+# <<< factory-mutation Scavenge_CheckDiscardPile
+# >>> factory-mutation Scavenge_AISelectEffect
+MUTATIONS["Scavenge_AISelectEffect"] = {"source_symbol": "Scavenge_AISelectEffect", "before": "\thTemp_ffa0 = wDuelTempList;", "after": "\thTempPlayAreaLocation_ffa1 = wDuelTempList;", "case_ids": ["Scavenge_AISelectEffect-1"]}
+# <<< factory-mutation Scavenge_AISelectEffect
+# >>> factory-mutation SlowpokeAmnesia_CheckAttacks
+MUTATIONS["SlowpokeAmnesia_CheckAttacks"] = {"source_symbol": "SlowpokeAmnesia_CheckAttacks", "before": "\treturn (SlowpokeAmnesiaCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (SlowpokeAmnesiaCheckAttacksResult){r.f, NotEnoughPsychicEnergyText};", "case_ids": ["SlowpokeAmnesia_CheckAttacks-0", "SlowpokeAmnesia_CheckAttacks-1"]}
+# <<< factory-mutation SlowpokeAmnesia_CheckAttacks
