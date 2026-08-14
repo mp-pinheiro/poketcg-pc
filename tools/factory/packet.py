@@ -22,8 +22,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import (  # noqa: E402
-    QUEUE, ROOT, block_routine, blocked_routines, issue_records,
-    issues_are_migrated, write_json,
+    QUEUE, ROOT, block_routine, blocked_routines, issue_records, write_json,
 )
 
 PRET = ROOT / "poketcg"
@@ -380,22 +379,24 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             cascade_cache[name] = cascade(graph, dependents, {name})
         return cascade_cache[name]
 
-    managed_issues = issue_records()
-    if issues_are_migrated():
-        missing = [
-            f["name"] for f in functions
-            if f["status"] == "todo" and f["ready"]
-            and f["name"] not in blocked
-            and f.get("work_id") not in managed_issues
-        ]
-        if missing:
-            raise RuntimeError(
-                "managed issue missing for dispatchable routines: "
-                + ", ".join(sorted(missing))
-            )
+    managed_issues = issue_records(required=True)
+    missing = [
+        f["name"] for f in functions
+        if f["status"] == "todo"
+        and f.get("work_id") not in managed_issues
+    ]
+    if missing:
+        raise RuntimeError(
+            "Forgejo issue missing for todo routines: "
+            + ", ".join(sorted(missing))
+        )
     ready = [
         f for f in functions
-        if f["status"] == "todo" and f["ready"] and f["name"] not in blocked
+        if f["status"] == "todo"
+        and f["ready"]
+        and f["name"] not in blocked
+        and managed_issues[f["work_id"]]["state"] == "open"
+        and "port-ready" in managed_issues[f["work_id"]]["labels"]
     ]
     if dir_filter:
         ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
@@ -481,7 +482,6 @@ def drop_claimed(packets: list[dict]) -> list[dict]:
     active_states = {"pending", "translated", "verifying", "repair", "green"}
     claims: dict[str, str] = {}
     kept: list[dict] = []
-    migrated = issues_are_migrated()
     for path in QUEUE.glob("*.json"):
         entry = json.loads(path.read_text())
         if entry.get("state") not in active_states:
@@ -489,11 +489,9 @@ def drop_claimed(packets: list[dict]) -> list[dict]:
         for routine in entry.get("routines", []):
             work_id = routine.get("work_id")
             if not work_id:
-                if migrated:
-                    raise RuntimeError(
-                        f"active legacy packet lacks work ID: {entry['id']}"
-                    )
-                continue
+                raise RuntimeError(
+                    f"active legacy packet lacks work ID: {entry['id']}"
+                )
             owner = claims.get(work_id)
             if owner and owner != entry["id"]:
                 raise RuntimeError(

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serial integrator: the only process that writes the repo, jj, or GitHub.
+"""Serial integrator: the only process that writes the repo or its Forgejo origin.
 
 Lands green bundles FIFO: transplant each bundle's marked fragments onto the
 repo tree (``surgery.extract`` + ``surgery.apply`` — additive, so concurrent
@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -136,32 +135,8 @@ def assert_fast_forward() -> None:
             f"committed locally; nothing is lost.")
 
 
-def reconcile_issues(enabled: bool = False) -> None:
-    """Refresh issue state only with an explicit write opt-in."""
-    if not enabled and os.environ.get("POKETCG_ISSUE_SYNC") != "1":
-        return
-    run([sys.executable, "tools/factory/issues.py", "fetch"],
-        check_message="issue fetch failed")
-    snapshot = json.loads((ROOT / ".factory" / "issues-cache.json").read_text())
-    if not snapshot.get("migration_complete"):
-        raise SystemExit(
-            "issue migration is incomplete; run the explicit bounded "
-            "issues.py migrate --apply workflow first"
-        )
-    run([sys.executable, "tools/factory/issues.py", "plan", "--json"],
-        check_message="issue plan failed")
-    plan_path = ROOT / ".factory" / "issues-plan.json"
-    plan = json.loads(plan_path.read_text())
-    if plan.get("actions"):
-        run([
-            sys.executable, "tools/factory/issues.py", "apply",
-            "--limit", "25", "--batches", "4", "--require-complete",
-        ], check_message="issue apply failed")
-    run([sys.executable, "tools/factory/issues.py", "verify", "--live"],
-        check_message="issue zero-drift verification failed")
 
-
-def gate_and_push(push: bool, sync_issues: bool = False) -> None:
+def gate_and_push(push: bool) -> None:
     run([sys.executable, "tools/lint_adapters.py"],
         check_message="adapter lint failed")
     run([sys.executable, "tools/audit_constants.py"],
@@ -170,7 +145,6 @@ def gate_and_push(push: bool, sync_issues: bool = False) -> None:
     run(["just", "oracle-release-gate"], check_message="release gate failed")
     run([sys.executable, "tools/progress/report.py", "build"],
         check_message="progress rebuild failed")
-    reconcile_issues(sync_issues)
     status = run(["jj", "st"]).stdout
     if "gate.json" in status or "progress.json" in status or "history.jsonl" in status:
         run(["jj", "commit", "-m", "chore(progress): refresh gate report"],
@@ -187,8 +161,6 @@ def main() -> int:
     parser.add_argument("--batch", type=int, default=10,
                         help="gate+push after this many landings")
     parser.add_argument("--no-push", action="store_true")
-    parser.add_argument("--sync-issues", action="store_true",
-                        help="apply the reviewed managed-issue plan")
     args = parser.parse_args()
     greens = sorted(list_packets(("green",)), key=lambda p: p.get("updated_at", 0))
     if not greens:
@@ -199,8 +171,8 @@ def main() -> int:
         land(packet)
         landed += 1
         if landed % args.batch == 0:
-            gate_and_push(not args.no_push, args.sync_issues)
-    gate_and_push(not args.no_push, args.sync_issues)
+            gate_and_push(not args.no_push)
+    gate_and_push(not args.no_push)
     print(f"integrated {landed} packets")
     return 0
 

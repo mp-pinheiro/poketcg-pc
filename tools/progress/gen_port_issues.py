@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-"""Compatibility entry point for the managed routine issue reconciler.
+"""Compatibility entry point for the read-only Forgejo issue audit.
 
-The old title/group generator is intentionally gone.  Use
-``tools/factory/issues.py plan`` for normal reconciliation or the explicit
-``migrate`` command for legacy adoption.
+The old title/group generator and migration writer are intentionally gone.
 """
 
 from __future__ import annotations
@@ -19,7 +17,6 @@ ISSUES = ROOT / "tools" / "factory" / "issues.py"
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--migrate", action="store_true")
     parser.add_argument("--dry-run", action="store_true",
                         help="retain compatibility; plan is always read-only")
     parser.add_argument("--json", action="store_true")
@@ -30,8 +27,7 @@ def main() -> int:
         parser.error(
             "--tier/--dir are retired; issue identity is one routine per work ID"
         )
-    command = "migrate" if args.migrate else "plan"
-    argv = [sys.executable, str(ISSUES), command]
+    argv = [sys.executable, str(ISSUES), "plan"]
     if args.json or args.dry_run:
         argv.append("--json")
     result = subprocess.run(argv, cwd=ROOT)

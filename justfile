@@ -284,22 +284,18 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
-# Managed issue reconciliation. Fetch is read-only; apply is guarded by the
-# recorded plan and live issue fingerprints.
+# Forgejo is authoritative. Fetch and verify are read-only; no issue mutation
+# path exists in the repository tooling.
 issues-fetch:
     python3 tools/factory/issues.py fetch
 
 issues-plan:
     python3 tools/factory/issues.py plan --json
 
-issues-apply:
-    python3 tools/factory/issues.py apply
 
 issues-verify:
     python3 tools/factory/issues.py verify --live
 
-issues-migrate:
-    python3 tools/factory/issues.py migrate
 
 # One-release compatibility name; tiers and file groups are retired.
 generate-port-issues:

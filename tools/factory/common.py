@@ -6,6 +6,7 @@ Contracts (all relative to the repo root):
 - Cache:    .factory/oracle-cache/           shared PyBoy reference cache
 - Metrics:  .factory/metrics.jsonl           one JSON object per finished packet
 - Blocked:  .factory/blocked.toml            routines the frontier must not re-offer
+- Issues:  .factory/issues-cache.json         authoritative Forgejo snapshot
 
 Packet states: pending -> translated -> verifying -> repair -> green -> landed,
 with terminal side exits escalated / parked / rejected-format.
@@ -29,6 +30,9 @@ CACHE = FACTORY / "oracle-cache"
 METRICS = FACTORY / "metrics.jsonl"
 BLOCKED = FACTORY / "blocked.toml"
 ISSUES_CACHE = FACTORY / "issues-cache.json"
+ISSUES_SCHEMA = 2
+ISSUES_BACKEND = "forgejo"
+ISSUES_REPOSITORY = "mpp/poketcg-pc"
 LANE_BASE = Path("/tmp/poketcg-factory")
 PBENV = Path("/tmp/pbenv/bin/python")
 RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
@@ -59,40 +63,64 @@ def read_json(path: Path) -> dict:
     return json.loads(path.read_text())
 
 def issue_records(*, required: bool = False) -> dict[str, dict]:
-    """Return cached marker records keyed by canonical work ID."""
+    """Return authoritative Forgejo records keyed by canonical work ID."""
     if not ISSUES_CACHE.exists():
         if required:
             raise RuntimeError(
-                f"managed issue cache missing: {ISSUES_CACHE}; run issues.py fetch"
+                f"Forgejo issue cache missing: {ISSUES_CACHE}; "
+                "run issues.py fetch"
             )
         return {}
     data = json.loads(ISSUES_CACHE.read_text())
+    if (
+        data.get("schema") != ISSUES_SCHEMA
+        or data.get("backend") != ISSUES_BACKEND
+        or data.get("repository") != ISSUES_REPOSITORY
+        or not isinstance(data.get("issues"), list)
+    ):
+        raise RuntimeError(
+            f"invalid Forgejo issue cache: {ISSUES_CACHE}; run issues.py fetch"
+        )
     records: dict[str, dict] = {}
-    for issue in data.get("issues", []):
+    for issue in data["issues"]:
         body = issue.get("body") or ""
-        marker = re.search(
+        matches = list(re.finditer(
             r"<!--\s*poketcg-port-work:v1\s*(\{.*?\})\s*-->",
             body, re.DOTALL,
-        )
-        if not marker:
+        ))
+        if "poketcg-port-work:v1" in body and len(matches) != 1:
+            raise RuntimeError(
+                f"issue #{issue.get('number')} has malformed work markers"
+            )
+        if not matches:
             continue
-        payload = json.loads(marker.group(1))
-        work_id = payload.get("work_id")
-        if not isinstance(work_id, str) or work_id in records:
+        payload = json.loads(matches[0].group(1))
+        work_id = payload.get("work_id") if isinstance(payload, dict) else None
+        if (
+            not isinstance(work_id, str)
+            or not work_id.startswith("port:v1:")
+            or set(payload) != {"work_id"}
+            or work_id in records
+        ):
             raise RuntimeError(f"duplicate or malformed cached work ID: {work_id}")
+        state = str(issue.get("state", "")).lower()
+        if state not in {"open", "closed"}:
+            raise RuntimeError(
+                f"issue #{issue.get('number')} has invalid state: {state}"
+            )
+        labels = issue.get("labels") or []
+        if not all(isinstance(label, str) for label in labels):
+            raise RuntimeError(
+                f"issue #{issue.get('number')} has non-normalized labels"
+            )
         records[work_id] = {
             "issue_number": int(issue["number"]),
             "title": issue.get("title", ""),
-            "state": str(issue.get("state", "open")).lower(),
+            "state": state,
+            "labels": sorted(labels),
+            "url": issue.get("url") or "",
         }
     return records
-
-
-def issues_are_migrated() -> bool:
-    if not ISSUES_CACHE.exists():
-        return False
-    data = json.loads(ISSUES_CACHE.read_text())
-    return bool(data.get("migration_complete"))
 
 
 def packet_path(packet_id: str) -> Path:

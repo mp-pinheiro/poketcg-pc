@@ -2,9 +2,9 @@
 
 The execution contract for an orchestrator session triggered by the exact
 message `start`. It replaces the retired per-issue claim/PR/merge protocol:
-workers are stateless translators with zero VCS or GitHub access; all trust
+workers are stateless translators with zero VCS or Forgejo access; all trust
 comes from the oracle plus mutation testing; one serial integrator owns every
-repo, jj, and GitHub write.
+repo and jj write.
 
 ```
 frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
@@ -14,7 +14,7 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
 ## Roles
 
 - **Orchestrator (this session):** runs the loop below, wires the translator,
-  handles escalations. The only jj/GitHub writer, via `integrate.py`/`issues.py`.
+  handles escalations, refreshes the read-only Forgejo issue cache, and integrates.
 - **Lanes:** disposable directory copies under `/tmp/poketcg-factory/lane-N`
   (no `.jj`, no `.git`). Refreshed from the repo tip per packet; builds stay
   incremental. Nothing a lane does can corrupt the repo.
@@ -29,7 +29,14 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=4]
 2. Prerequisites: `poketcg/poketcg.gbc` + `.sym` (`just bootstrap`),
    `/tmp/pbenv` (`just oracle-venv`), `tools/oracle/gbref/build/gbref_runner`
    (`just oracle-build-gbref`), warm `build-barrier` (`just build-barrier`).
-3. Resume state: `python3 tools/factory/driver.py reset-stale` returns
+3. Issue inventory: `python3 tools/factory/issues.py fetch` must produce a
+   schema-2 Forgejo cache before packet construction.
+   The default endpoint is `https://forgejo.yfrit.com` and the default token
+   file is `~/.config/yfrit-forgejo/api/poketcg-issues.token`; override them
+   with `POKETCG_FORGEJO_URL` and `POKETCG_FORGEJO_TOKEN_FILE`. The token needs
+   only `read:issue`. Direct requests through Cloudflare Access also accept
+   `CF_ACCESS_CLIENT_ID` and `CF_ACCESS_CLIENT_SECRET`.
+4. Resume state: `python3 tools/factory/driver.py reset-stale` returns
    crashed in-flight packets to `pending`; `driver.py status` shows the queue.
 
 ## The loop
@@ -68,36 +75,31 @@ Serial, in the repo root:
 
 ```sh
 python3 tools/factory/integrate.py            # land greens, release gate
-python3 tools/factory/issues.py fetch        # cache all port-labeled issues
-python3 tools/factory/issues.py plan --json  # deterministic dry run
-python3 tools/factory/issues.py apply --limit 10 --batches 50
-python3 tools/factory/issues.py verify --live
+python3 tools/factory/issues.py fetch         # read every Forgejo issue page
+python3 tools/factory/issues.py plan --json  # deterministic drift audit
+python3 tools/factory/issues.py verify --live # refetch and verify full coverage
 python3 tools/factory/driver.py metrics       # token/wall/round telemetry
 python3 tools/factory/driver.py status        # queue state
 ```
 
-`issues.py` owns one bounded generated block and one lifecycle label per
-canonical routine work ID. It never rewrites an unmarked issue in normal mode.
-Use `issues.py migrate` only for the explicit legacy adoption/backfill pass.
-Apply writes `.factory/issues-apply-state.json` after every bounded GraphQL
-batch. It also records and honors a cooldown of eight seconds per estimated
-content mutation, targeting about 450 mutations/hour against GitHub's published
-general ceiling of 500; lower undisclosed limits may still stop a run.
-Resume with the same plan and state file; live snapshot drift or a different
-plan hash aborts before mutation. `verify --live`
-removes the checkpoint only after zero drift. The issue-sync workflow uploads
-interrupted plan/checkpoint pairs and accepts `resume_run_id` to restore one
-explicitly.
+Forgejo is the operational issue authority. `issues.py fetch` reads every
+repository issue through the paginated Forgejo API, normalizes issue number,
+title, body, state, labels, and URL, validates unique routine markers and full
+canonical coverage, then atomically replaces `.factory/issues-cache.json`.
+Packet construction refuses a missing, stale-backend, or malformed cache and
+dispatches only open issues carrying `port-ready`.
 
+`issues.py plan` is a read-only semantic comparison against the progress model;
+it may report differences that operators intentionally manage in Forgejo.
+`issues.py verify --live` refetches Forgejo and requires complete, unique
+canonical coverage. There is no issue apply or migration command and integration
+never mutates issue state. Human and agent lifecycle decisions happen in
+Forgejo; the release gate remains the authority for whether a routine is
+actually verified.
 
-`integrate.py` runs the adapter lint, the release gate, and progress checks
-before any optional push. Set `POKETCG_ISSUE_SYNC=1` for the orchestrator to
-run fetch/plan/apply/verify after the trusted gate; translator lanes never get
-GitHub credentials.
-
-The release gate is the only authority allowed to close a routine issue.
-Registered-but-ungated routines remain `port-awaiting-gate`, and a regression
-reopens the issue as `port-failing`.
+Repository pushes go to the Forgejo `origin`. Forgejo's push mirror replicates
+Git refs to GitHub; GitHub issues and Actions are not part of factory dispatch.
+Translator lanes receive neither Forgejo nor GitHub credentials.
 
 ## Escalation lane
 
@@ -128,17 +130,15 @@ reopens the issue as `port-failing`.
 CI watching, merge tokens) is deleted. `just launch-port` remains only as a
 compatibility hint for packet dispatch.
 
-GitHub issues are a state mirror keyed by `port:v1:<source>:<symbol>`.
-`issues.py plan` never adopts an unmarked issue; `issues.py migrate` performs
-exact source+symbol adoption and splits aggregate history only after every
-replacement exists and is linked. Human body text and comments outside the
-generated block remain untouched.
+Forgejo issues are keyed by `port:v1:<source>:<symbol>` and are the operational
+source for dispatch. GitHub receives mirrored Git refs only. The completed
+legacy backfill is not replayed by repository tooling.
 
 ## Invariants
 
-- Lanes never run jj, git, gh, or any central gate.
-- The integrator runs one release gate per batch before issue reconciliation or
-  pushing; a red gate leaves affected issues open.
+- Lanes never run jj, git, or any central gate and receive no remote credentials.
+- The integrator runs one release gate per batch before pushing to Forgejo; a
+  red gate stops the push.
 - Every managed routine has exactly one issue, tier, and lifecycle state.
 - Packet batching may contain several atomic issue IDs, but one work ID cannot
   be claimed by two non-terminal packets.

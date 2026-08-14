@@ -2,7 +2,7 @@
 """Offline invariants for the managed issue model.
 
 This is deliberately fixture-driven and network-free so pull-request CI can
-prove the planner contract without GitHub credentials.
+prove the Forgejo cache and planner contracts without credentials.
 """
 
 from __future__ import annotations
@@ -78,10 +78,10 @@ def main() -> int:
         number=8,
         body=issues.marker_for(report["work_records"][1]["work_id"]),
     )
-    assert not issues.migration_coverage_complete(
+    assert not issues.forgejo_coverage_complete(
         {"schema": 1, "issues": [managed_foo]}, report,
     )
-    assert issues.migration_coverage_complete(
+    assert issues.forgejo_coverage_complete(
         {"schema": 1, "issues": [managed_foo, managed_bar]}, report,
     )
 
@@ -138,262 +138,147 @@ def main() -> int:
     else:
         raise AssertionError("duplicate marker was accepted")
 
-    legacy = {
-        "number": 8,
-        "title": "old single routine",
-        "body": (
-            "**Pret source:** `poketcg/src/home/demo.asm`\n\n"
-            "| routine | size | line | refs |\n"
-            "|---------|------|------|------|\n"
-            "| Foo | 9b | 12 | 1 |\n\nHuman text.\n"
-        ),
+    normalized = issues.normalize_issue({
+        "id": 12,
+        "number": 12,
+        "title": "Forgejo",
+        "body": created_body,
+        "state": "OPEN",
+        "labels": [{"name": "port"}, {"name": "port-ready"}],
+        "html_url": "https://forgejo.example/mpp/poketcg-pc/issues/12",
+    })
+    assert normalized == {
+        "id": 12,
+        "number": 12,
+        "title": "Forgejo",
+        "body": created_body,
         "state": "open",
-        "labels": ["port", "tier-1"],
+        "labels": ["port", "port-ready"],
+        "url": "https://forgejo.example/mpp/poketcg-pc/issues/12",
     }
-    report["work_records"][0]["packet"] = {
-        "id": "packet-foo", "state": "pending",
-    }
-    adopted = issues.migration_plan({"schema": 1, "issues": [legacy]}, report)
-    assert adopted["actions"][0]["action"] == "adopt"
-    assert "Human text." in adopted["actions"][0]["body"]
-    assert "**Factory packet:** `packet-foo`" in adopted["actions"][0]["body"]
-    report["work_records"][0]["state"] = "complete"
 
-    aggregate = dict(legacy)
-    aggregate["number"] = 9
-    aggregate["body"] = aggregate["body"].replace(
-        "| Foo | 9b | 12 | 1 |\n",
-        "| Foo | 9b | 12 | 1 |\n| Bar | 9b | 12 | 1 |\n",
-    )
-    split = issues.migration_plan({"schema": 1, "issues": [aggregate]}, report)
-    kinds = [action["action"] for action in split["actions"]]
-    assert kinds.count("create-replacement") == 2
-    assert kinds.count("supersede") == 1
-    foo_create = next(
-        action for action in split["actions"]
-        if action.get("work_id") == report["work_records"][0]["work_id"]
-    )
-    partial = {
-        "number": 10, "title": foo_create["title"],
-        "body": foo_create["body"], "state": "open",
-        "labels": foo_create["labels"],
-    }
-    resumed = issues.migration_plan(
-        {"schema": 1, "issues": [aggregate, partial]}, report,
-    )
-    foo_actions = [
-        action for action in resumed["actions"]
-        if action.get("work_id") == report["work_records"][0]["work_id"]
-    ]
-    assert len(foo_actions) == 1
-    assert foo_actions[0]["action"] == "update"
-    assert foo_actions[0]["issue_number"] == 10
-    excluded_foo = routine("Foo", state="excluded")
-    excluded_bar = routine("Bar", state="excluded")
-    excluded_foo["excluded"] = True
-    excluded_bar["excluded"] = True
-    excluded = issues.migration_plan(
-        {"schema": 1, "issues": [aggregate]},
-        {"work_records": [excluded_foo, excluded_bar]},
-    )
-    assert excluded["actions"] == []
-    assert excluded["classified"][0]["classification"] == "legacy-all-excluded"
-    resume_plan = {
-        "source_snapshot": "snapshot-0",
-        "actions": [
-            {"action": "create", "work_id": "one"},
-            {"action": "create", "work_id": "two"},
-            {"action": "supersede", "issue_number": 9},
+    original_page_size = issues.PAGE_SIZE
+    original_fetch_page = issues.fetch_page
+    issues.PAGE_SIZE = 2
+    page_calls = []
+    pages = {
+        1: [
+            dict(normalized, number=1, id=1),
+            dict(normalized, number=2, id=2),
         ],
+        2: [dict(normalized, number=3, id=3)],
     }
-    batch, checkpoint = issues.select_apply_batch(
-        resume_plan, None, "snapshot-0", 1,
-    )
-    assert [action["work_id"] for action in batch] == ["one"]
-    checkpoint["completed"].append(issues.action_key(batch[0]))
-    checkpoint["expected_snapshot"] = "snapshot-1"
-    resumed, checkpoint = issues.select_apply_batch(
-        resume_plan, checkpoint, "snapshot-1", 1,
-    )
-    assert [action["work_id"] for action in resumed] == ["two"]
-    checkpoint["completed"].append(issues.action_key(resumed[0]))
-    checkpoint["expected_snapshot"] = "snapshot-2"
-    final, _ = issues.select_apply_batch(
-        resume_plan, checkpoint, "snapshot-2", 1,
-    )
-    assert final[0]["action"] == "supersede"
+    issues.fetch_page = lambda page: page_calls.append(page) or pages[page]
     try:
-        issues.select_apply_batch(
-            resume_plan, checkpoint, "unexpected-snapshot", 1,
-        )
-    except issues.ModelError:
-        pass
-    else:
-        raise AssertionError("stale apply checkpoint was accepted")
-    reflected_action = issues.action_for(routine("Reflected"), None)
-    reflected_issue = {
-        "id": "reflected-node", "number": 11,
-        "title": reflected_action["title"], "body": reflected_action["body"],
-        "state": "open", "labels": reflected_action["labels"], "url": "",
+        fetched = issues.fetch_all_issues()
+    finally:
+        issues.PAGE_SIZE = original_page_size
+        issues.fetch_page = original_fetch_page
+    assert page_calls == [1, 2]
+    assert [issue["number"] for issue in fetched] == [1, 2, 3]
+
+    issues.PAGE_SIZE = 1
+    conflict_pages = {
+        1: [dict(normalized, number=1, title="first")],
+        2: [dict(normalized, number=1, title="changed")],
+        3: [],
     }
-    stale_snapshot = {"schema": 1, "issues": []}
-    reflected_snapshot = {"schema": 1, "issues": [reflected_issue]}
-    assert not issues.action_is_reflected(reflected_action, stale_snapshot)
-    assert issues.action_is_reflected(reflected_action, reflected_snapshot)
-    snapshots = iter((stale_snapshot, reflected_snapshot))
-    original_fetch = issues.fetch_snapshot
-    original_sleep = issues.time.sleep
-    issues.fetch_snapshot = lambda: next(snapshots)
-    issues.time.sleep = lambda _: None
+    issues.fetch_page = lambda page: conflict_pages[page]
     try:
-        assert issues.fetch_reflected_snapshot(
-            [reflected_action], attempts=2,
-        ) == reflected_snapshot
         try:
-            issues.fetch_reflected_snapshot([reflected_action], attempts=0)
+            issues.fetch_all_issues()
         except issues.ModelError:
             pass
         else:
-            raise AssertionError("zero reflection attempts were accepted")
+            raise AssertionError("conflicting Forgejo pages were accepted")
     finally:
-        issues.fetch_snapshot = original_fetch
-        issues.time.sleep = original_sleep
-    graphql_calls = []
-    original_metadata = issues.github_node_metadata
-    original_graphql = issues.run_graphql
-    original_fetch = issues.fetch_snapshot
-    issues.github_node_metadata = lambda labels: ("repo-node", {"port": "label-node"})
-    issues.run_graphql = lambda query, variables: (
-        graphql_calls.append((query, variables))
-        or (
-            {"a0": {"issue": {"id": "issue-node", "number": 10}}}
-            if "createIssue" in query
-            else {"c0": {"issue": {"id": "issue-node", "number": 10}}}
-        )
+        issues.PAGE_SIZE = original_page_size
+        issues.fetch_page = original_fetch_page
+
+    exact_foo = dict(
+        normalized,
+        number=7,
+        body=issues.desired_body(report["work_records"][0]),
+        title=issues.desired_title(report["work_records"][0]),
+        labels=issues.desired_labels(report["work_records"][0]),
     )
-    issues.fetch_snapshot = lambda: {"schema": 1, "issues": []}
-    try:
-        issues.apply_graphql_batch(
-            [{
-                "action": "create",
-                "work_id": "port:v1:src/home/demo.asm:Created",
-                "title": "Created",
-                "body": "body",
-                "labels": ["port"],
-                "desired_state": "closed",
-            }],
-            {"schema": 1, "issues": []},
-        )
-    finally:
-        issues.github_node_metadata = original_metadata
-        issues.run_graphql = original_graphql
-        issues.fetch_snapshot = original_fetch
-    assert len(graphql_calls) == 2
-    assert "createIssue" in graphql_calls[0][0]
-    assert graphql_calls[0][1]["v0"]["repositoryId"] == "repo-node"
-    assert graphql_calls[0][1]["v0"]["labelIds"] == ["label-node"]
-    assert graphql_calls[1][1]["c0"]["state"] == "CLOSED"
-    graphql_calls.clear()
-    created_work_id = "port:v1:src/home/demo.asm:Created"
-    created_body = issues.marker_for(created_work_id) + "\n\nbody"
-    reflected_create = {
-        "id": "issue-node", "number": 10, "title": "Created",
-        "body": created_body, "state": "open", "labels": ["port"], "url": "",
-    }
-    issues.github_node_metadata = lambda labels: ("repo-node", {"port": "label-node"})
-    issues.run_graphql = lambda query, variables: (
-        graphql_calls.append((query, variables))
-        or (
-            {"a0": {"issue": None}}
-            if "createIssue" in query
-            else {"c0": {"issue": {"id": "issue-node", "number": 10}}}
-        )
+    exact_bar = dict(
+        normalized,
+        number=8,
+        body=issues.desired_body(report["work_records"][1]),
+        title=issues.desired_title(report["work_records"][1]),
+        labels=issues.desired_labels(report["work_records"][1]),
     )
-    issues.fetch_snapshot = lambda: {
-        "schema": 1, "issues": [reflected_create],
+    exact_snapshot = {
+        "schema": 2,
+        "backend": "forgejo",
+        "repository": "mpp/poketcg-pc",
+        "issues": [exact_foo, exact_bar],
     }
-    try:
-        issues.apply_graphql_batch(
-            [{
-                "action": "create",
-                "work_id": created_work_id,
-                "title": "Created", "body": created_body, "labels": ["port"],
-                "desired_state": "closed",
-            }],
-            {"schema": 1, "issues": []},
-        )
-    finally:
-        issues.github_node_metadata = original_metadata
-        issues.run_graphql = original_graphql
-        issues.fetch_snapshot = original_fetch
-    assert graphql_calls[1][1]["c0"]["id"] == "issue-node"
-    original_graphql = issues.run_graphql
-    original_sleep = issues.time.sleep
-    retry_calls = []
-    retry_waits = []
+    assert issues.desired_plan(exact_snapshot, report)["actions"] == []
 
-    def flaky_graphql(query, variables):
-        retry_calls.append((query, variables))
-        if len(retry_calls) < 3:
-            raise issues.ModelError("gh: HTTP 502")
-        return {"ok": True}
-
-    issues.run_graphql = flaky_graphql
-    issues.time.sleep = retry_waits.append
-    try:
-        assert issues.run_graphql_retryable("mutation{}", {}) == {"ok": True}
-    finally:
-        issues.run_graphql = original_graphql
-        issues.time.sleep = original_sleep
-    assert len(retry_calls) == 3
-    assert retry_waits == [1, 2]
-    mutation_mix = [
-        {"action": "supersede", "desired_state": "closed"},
-        {"action": "create", "desired_state": "closed"},
-        {"action": "create-replacement", "desired_state": "closed"},
-        {"action": "create", "desired_state": "open"},
-        {"action": "update", "desired_state": "open"},
-    ]
-    assert issues.content_mutation_count(mutation_mix) == 8
-    original_time = issues.time.time
-    original_sleep = issues.time.sleep
-    waits = []
-    issues.time.time = lambda: 10
-    issues.time.sleep = waits.append
-    try:
-        issues.wait_for_content_budget({"next_apply_at": 12.5})
-    finally:
-        issues.time.time = original_time
-        issues.time.sleep = original_sleep
-    assert waits == [2.5]
-
-
-
-
-    first = {"schema": 1, "fetched_at": 1, "issues": []}
-    second = {"schema": 1, "fetched_at": 2, "issues": []}
-    fetch_issue = {
-        "id": "stable-node", "number": 12, "title": "Stable",
-        "body": created_body, "state": "OPEN",
-        "labels": [{"name": "port"}], "url": "",
-    }
-    duplicate_listing = json.dumps([fetch_issue, fetch_issue])
-    original_run_gh = issues.run_gh
+    cache_path = Path("/tmp/poketcg-forgejo-issue-cache.json")
     original_cache = issues.CACHE
+    original_fetch_all = issues.fetch_all_issues
+    original_coverage = issues.forgejo_coverage_complete
     original_sleep = issues.time.sleep
-    issues.run_gh = lambda *args: duplicate_listing
-    issues.CACHE = Path("/tmp/poketcg-issue-model-cache.json")
+    fetches = []
+    issues.CACHE = cache_path
+    issues.fetch_all_issues = lambda: fetches.append(True) or [exact_foo, exact_bar]
+    issues.forgejo_coverage_complete = lambda snapshot: True
     issues.time.sleep = lambda _: None
     try:
         stable = issues.fetch_snapshot(attempts=2)
-        assert len(stable["issues"]) == 1
-        assert stable["issues"][0]["number"] == 12
+        assert len(fetches) == 2
+        assert stable["schema"] == 2
+        assert stable["backend"] == "forgejo"
+        assert "migration_complete" not in stable
+        assert json.loads(cache_path.read_text())["issues"] == [exact_foo, exact_bar]
+
+        cache_path.write_text('{"sentinel":true}')
+        issues.forgejo_coverage_complete = lambda snapshot: False
+        try:
+            issues.fetch_snapshot(attempts=2)
+        except issues.ModelError:
+            pass
+        else:
+            raise AssertionError("incomplete Forgejo coverage was cached")
+        assert json.loads(cache_path.read_text()) == {"sentinel": True}
     finally:
-        issues.run_gh = original_run_gh
         issues.CACHE = original_cache
+        issues.fetch_all_issues = original_fetch_all
+        issues.forgejo_coverage_complete = original_coverage
         issues.time.sleep = original_sleep
-        Path("/tmp/poketcg-issue-model-cache.json").unlink(missing_ok=True)
-    assert issues.snapshot_fingerprint(first) == issues.snapshot_fingerprint(second)
+        cache_path.unlink(missing_ok=True)
+
+    for retired in (
+        "run_gh",
+        "run_graphql",
+        "apply_graphql_batch",
+        "apply_plan",
+        "mark_migration_complete",
+    ):
+        assert not hasattr(issues, retired)
+    common = load("factory_common_contract", ROOT / "tools/factory/common.py")
+    common_cache = Path("/tmp/poketcg-common-issue-cache.json")
+    original_common_cache = common.ISSUES_CACHE
+    common.ISSUES_CACHE = common_cache
+    try:
+        common.write_json(common_cache, exact_snapshot)
+        cached = common.issue_records(required=True)
+        assert cached[work["work_id"]]["labels"] == ["port", "port-ready", "tier-1"]
+        assert cached[work["work_id"]]["url"].endswith("/issues/12")
+        stale = dict(exact_snapshot, schema=1)
+        common.write_json(common_cache, stale)
+        try:
+            common.issue_records(required=True)
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError("retired issue cache schema was accepted")
+    finally:
+        common.ISSUES_CACHE = original_common_cache
+        common_cache.unlink(missing_ok=True)
     print("issue model: PASS")
     return 0
 
