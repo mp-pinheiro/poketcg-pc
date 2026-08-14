@@ -1,0 +1,9 @@
+{
+  "fn": "Barrier_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Barrier_AISelectEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Barrier_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"ffff\", \"native\": \"ffaa\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50448, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Barrier_AISelectEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

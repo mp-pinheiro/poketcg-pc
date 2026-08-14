@@ -2002,6 +2002,24 @@ CASES["ClefairyMetronome_CheckAttacks"] = [
 ]
 # <<< factory ClefairyMetronome_CheckAttacks
 
+# >>> factory Psychic_DamageBoostEffect
+CONTRACT["Psychic_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["Psychic_DamageBoostEffect"] = [
+	{"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2}},
+	dict(POISON, wram={0xCCB9: b"\x34\x12"}, read={0xCCB9: 2}),
+	{"wram": {0xCCB9: b"\xFF\xFF"}, "read": {0xCCB9: 2}},
+]
+# <<< factory Psychic_DamageBoostEffect
+
+# >>> factory Barrier_AISelectEffect
+CONTRACT["Barrier_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Barrier_AISelectEffect"] = [
+	{"wram": {0xC510: b"\x00", 0xFFA0: b"\x00"}, "read": {0xFFA0: 1}},
+	dict(POISON, wram={0xC510: b"\xFF", 0xFFA0: b"\xAA"}, read={0xFFA0: 1}),
+	{"wram": {0xC510: b"\x01", 0xFFA0: b"\x7E"}, "read": {0xFFA0: 1}},
+]
+# <<< factory Barrier_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3419,3 +3437,9 @@ MUTATIONS["PidgeottoMirrorMove_InitialEffect1"] = {"source_symbol": "PidgeottoMi
 # >>> factory-mutation ClefairyMetronome_CheckAttacks
 MUTATIONS["ClefairyMetronome_CheckAttacks"] = {"source_symbol": "ClefairyMetronome_CheckAttacks", "before": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (ClefairyMetronomeCheckAttacksResult){r.f, 0};", "case_ids": ["ClefairyMetronome_CheckAttacks-0", "ClefairyMetronome_CheckAttacks-1"]}
 # <<< factory-mutation ClefairyMetronome_CheckAttacks
+# >>> factory-mutation Psychic_DamageBoostEffect
+MUTATIONS["Psychic_DamageBoostEffect"] = {"source_symbol": "Psychic_DamageBoostEffect", "before": "\tgb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(sum >> 8));", "after": "\tgb_write8(wDamage_ADDR, (uint8_t)(sum >> 8));", "case_ids": ["Psychic_DamageBoostEffect-1", "Psychic_DamageBoostEffect-2"]}
+# <<< factory-mutation Psychic_DamageBoostEffect
+# >>> factory-mutation Barrier_AISelectEffect
+MUTATIONS["Barrier_AISelectEffect"] = {"source_symbol": "Barrier_AISelectEffect", "before": "\tuint8_t value = gb_read8(wDuelTempList_ADDR);", "after": "\tuint8_t value = gb_read8(hTemp_ffa0_ADDR);", "case_ids": ["Barrier_AISelectEffect-1", "Barrier_AISelectEffect-2"]}
+# <<< factory-mutation Barrier_AISelectEffect

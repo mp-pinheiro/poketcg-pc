@@ -1826,6 +1826,20 @@ static void adapt_ClefairyMetronome_CheckAttacks(ProbeState *s)
 }
 /* <<< factory ClefairyMetronome_CheckAttacks */
 
+/* >>> factory Psychic_DamageBoostEffect */
+static void adapt_Psychic_DamageBoostEffect(ProbeState *s)
+{
+	Psychic_DamageBoostEffect();
+}
+/* <<< factory Psychic_DamageBoostEffect */
+
+/* >>> factory Barrier_AISelectEffect */
+static void adapt_Barrier_AISelectEffect(ProbeState *s)
+{
+	Barrier_AISelectEffect();
+}
+/* <<< factory Barrier_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2055,5 +2069,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FireSpin_DiscardEffect", adapt_FireSpin_DiscardEffect },
 	{ "PidgeottoMirrorMove_InitialEffect1", adapt_PidgeottoMirrorMove_InitialEffect1 },
 	{ "ClefairyMetronome_CheckAttacks", adapt_ClefairyMetronome_CheckAttacks },
+	{ "Psychic_DamageBoostEffect", adapt_Psychic_DamageBoostEffect },
+	{ "Barrier_AISelectEffect", adapt_Barrier_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -195,6 +195,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #define NoAttackMayBeChoosenText 0x00c5u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+
+#define TYPE_ENERGY_PSYCHIC 0x0du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3163,3 +3170,27 @@ ClefairyMetronomeCheckAttacksResult ClefairyMetronome_CheckAttacks(void)
 	return (ClefairyMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
 }
 /* <<< factory ClefairyMetronome_CheckAttacks */
+
+/* >>> factory Psychic_DamageBoostEffect */
+/* effect_functions.asm:5383-5395 */
+void Psychic_DamageBoostEffect(void)
+{
+	uint16_t damage = (uint16_t)(gb_read8(wDamage_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wDamage_ADDR + 1u)) << 8));
+	uint16_t bonus = GetEnergyAttachedMultiplierDamage();
+	uint16_t sum = (uint16_t)(damage + bonus);
+
+	gb_write8(wDamage_ADDR, (uint8_t)sum);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(sum >> 8));
+}
+/* <<< factory Psychic_DamageBoostEffect */
+
+/* >>> factory Barrier_AISelectEffect */
+/* effect_functions.asm:5414-5424 */
+void Barrier_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t value = gb_read8(wDuelTempList_ADDR);
+	gb_write8(hTemp_ffa0_ADDR, value);
+}
+/* <<< factory Barrier_AISelectEffect */

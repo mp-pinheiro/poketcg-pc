@@ -766,6 +766,12 @@ MirrorMoveInitialEffect1Result PidgeottoMirrorMove_InitialEffect1(void);
 typedef struct { uint8_t f; uint16_t hl; } ClefairyMetronomeCheckAttacksResult;
 ClefairyMetronomeCheckAttacksResult ClefairyMetronome_CheckAttacks(void);
 /* <<< factory ClefairyMetronome_CheckAttacks */
+/* >>> factory Psychic_DamageBoostEffect */
+void Psychic_DamageBoostEffect(void);
+/* <<< factory Psychic_DamageBoostEffect */
+/* >>> factory Barrier_AISelectEffect */
+void Barrier_AISelectEffect(void);
+/* <<< factory Barrier_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);
