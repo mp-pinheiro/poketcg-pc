@@ -64,6 +64,7 @@ GetScriptArgsAfterPointerResult GetScriptArgsAfterPointer(uint8_t a)
 }
 /* <<< factory GetScriptArgsAfterPointer */
 
+
 /* >>> factory GetEventVar */
 /* scripting.asm:366-382 */
 GetEventVarResult GetEventVar(uint8_t a, uint8_t f, uint8_t b, uint8_t c)

@@ -8,6 +8,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 # <<< factory-cases-statics
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -76,6 +77,7 @@ CASES["GetEventVar"] = [
     {"a": 0xFF, "read": {wLoadedEventBits: 1}},
 ]
 # <<< factory GetEventVar
+
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)

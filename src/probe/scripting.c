@@ -44,10 +44,11 @@ static void adapt_GetEventVar(ProbeState *s)
 }
 /* <<< factory GetEventVar */
 
+
 const ProbeEntry probe_entries_scripting[] = {
-	{ "GetEventVar", adapt_GetEventVar },
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
 	{ "GetScriptArgsAfterPointer", adapt_GetScriptArgsAfterPointer },
+	{ "GetEventVar", adapt_GetEventVar },
 	{ NULL, NULL },
 };
