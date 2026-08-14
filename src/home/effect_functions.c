@@ -205,6 +205,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "generated/hram.h"
 #include "home/duel.h"
+
+#define NoEnergyAttachedToOpponentsActiveText 0x00aeu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3236,3 +3238,37 @@ uint16_t Whirlpool_DiscardEffect(uint16_t hl)
 	return noeff.hl;
 }
 /* <<< factory Whirlpool_DiscardEffect */
+
+/* >>> factory EnergyRemoval_EnergyCheck */
+/* effect_functions.asm:9010-9022 */
+EnergyRemovalEnergyCheckResult EnergyRemoval_EnergyCheck(void)
+{
+	SwapTurn();
+	CheckIfThereAreAnyEnergyCardsAttachedResult r = CheckIfThereAreAnyEnergyCardsAttached();
+	SwapTurn();
+	return (EnergyRemovalEnergyCheckResult){r.f, NoEnergyAttachedToOpponentsActiveText};
+}
+/* <<< factory EnergyRemoval_EnergyCheck */
+
+/* >>> factory EnergyRemoval_AISelection */
+/* effect_functions.asm:9025-9028 */
+uint8_t EnergyRemoval_AISelection(void)
+{
+	return AIPickEnergyCardToDiscardFromDefendingPokemon().a;
+}
+/* <<< factory EnergyRemoval_AISelection */
+
+/* >>> factory EnergyRetrieval_HandEnergyCheck */
+/* effect_functions.asm:9046-9063. cp 2 with a hand count below 2 always leaves
+ * N|H|C set and Z clear (the count is 0 or 1, so the half-borrow is guaranteed),
+ * which is the exact flag byte the caller sees on the early ret c path; the
+ * fall-through path inherits the list-builder's exit flags untouched by ldtx. */
+EnergyRetrievalHandEnergyCheckResult EnergyRetrieval_HandEnergyCheck(void)
+{
+	uint8_t n = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND).a;
+	if (n < 2u)
+		return (EnergyRetrievalHandEnergyCheckResult){NotEnoughCardsInHandText, 0x70u};
+	uint8_t f = CreateEnergyCardListFromDiscardPile_OnlyBasic().f;
+	return (EnergyRetrievalHandEnergyCheckResult){ThereAreNoBasicEnergyCardsInDiscardPileText, f};
+}
+/* <<< factory EnergyRetrieval_HandEnergyCheck */

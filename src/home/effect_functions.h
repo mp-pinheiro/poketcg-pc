@@ -778,6 +778,17 @@ uint8_t Whirlpool_AISelectEffect(void);
 /* >>> factory Whirlpool_DiscardEffect */
 uint16_t Whirlpool_DiscardEffect(uint16_t hl);
 /* <<< factory Whirlpool_DiscardEffect */
+/* >>> factory EnergyRemoval_EnergyCheck */
+typedef struct { uint8_t f; uint16_t hl; } EnergyRemovalEnergyCheckResult;
+EnergyRemovalEnergyCheckResult EnergyRemoval_EnergyCheck(void);
+/* <<< factory EnergyRemoval_EnergyCheck */
+/* >>> factory EnergyRemoval_AISelection */
+uint8_t EnergyRemoval_AISelection(void);
+/* <<< factory EnergyRemoval_AISelection */
+/* >>> factory EnergyRetrieval_HandEnergyCheck */
+typedef struct { uint16_t hl; uint8_t f; } EnergyRetrievalHandEnergyCheckResult;
+EnergyRetrievalHandEnergyCheckResult EnergyRetrieval_HandEnergyCheck(void);
+/* <<< factory EnergyRetrieval_HandEnergyCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

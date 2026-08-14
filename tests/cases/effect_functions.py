@@ -2046,6 +2046,30 @@ CASES["Whirlpool_DiscardEffect"] = [
 ]
 # <<< factory Whirlpool_DiscardEffect
 
+# >>> factory EnergyRemoval_EnergyCheck
+CONTRACT["EnergyRemoval_EnergyCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["EnergyRemoval_EnergyCheck"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory EnergyRemoval_EnergyCheck
+
+# >>> factory EnergyRemoval_AISelection
+CONTRACT["EnergyRemoval_AISelection"] = {"compare": ("a",), "preserve": ()}
+CASES["EnergyRemoval_AISelection"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory EnergyRemoval_AISelection
+
+# >>> factory EnergyRetrieval_HandEnergyCheck
+CONTRACT["EnergyRetrieval_HandEnergyCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["EnergyRetrieval_HandEnergyCheck"] = [
+	{},  # zeroed duel vars: hand count 0 < 2, early ret c with NotEnoughCardsInHandText
+	dict(POISON),
+]
+# <<< factory EnergyRetrieval_HandEnergyCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3485,3 +3509,27 @@ MUTATIONS["Whirlpool_DiscardEffect"] = {
 	"case_ids": ["Whirlpool_DiscardEffect-0", "Whirlpool_DiscardEffect-1", "Whirlpool_DiscardEffect-4", "Whirlpool_DiscardEffect-5"],
 }
 # <<< factory-mutation Whirlpool_DiscardEffect
+# >>> factory-mutation EnergyRemoval_EnergyCheck
+MUTATIONS["EnergyRemoval_EnergyCheck"] = {
+	"source_symbol": "EnergyRemoval_EnergyCheck",
+	"before": "{r.f, NoEnergyAttachedToOpponentsActiveText}",
+	"after": "{r.f, 0x00b6u}",
+	"case_ids": ["EnergyRemoval_EnergyCheck-0", "EnergyRemoval_EnergyCheck-1"],
+}
+# <<< factory-mutation EnergyRemoval_EnergyCheck
+# >>> factory-mutation EnergyRemoval_AISelection
+MUTATIONS["EnergyRemoval_AISelection"] = {
+	"source_symbol": "EnergyRemoval_AISelection",
+	"before": "return AIPickEnergyCardToDiscardFromDefendingPokemon().a;",
+	"after": "return AIPickEnergyCardToDiscardFromDefendingPokemon().a + 1u;",
+	"case_ids": ["EnergyRemoval_AISelection-0", "EnergyRemoval_AISelection-1"],
+}
+# <<< factory-mutation EnergyRemoval_AISelection
+# >>> factory-mutation EnergyRetrieval_HandEnergyCheck
+MUTATIONS["EnergyRetrieval_HandEnergyCheck"] = {
+	"source_symbol": "EnergyRetrieval_HandEnergyCheck",
+	"before": "return (EnergyRetrievalHandEnergyCheckResult){NotEnoughCardsInHandText, 0x70u};",
+	"after": "return (EnergyRetrievalHandEnergyCheckResult){NotEnoughCardsInHandText, 0x50u};",
+	"case_ids": ["EnergyRetrieval_HandEnergyCheck-0", "EnergyRetrieval_HandEnergyCheck-1"],
+}
+# <<< factory-mutation EnergyRetrieval_HandEnergyCheck

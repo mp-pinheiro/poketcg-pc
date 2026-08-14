@@ -1854,6 +1854,31 @@ static void adapt_Whirlpool_DiscardEffect(ProbeState *s)
 }
 /* <<< factory Whirlpool_DiscardEffect */
 
+/* >>> factory EnergyRemoval_EnergyCheck */
+static void adapt_EnergyRemoval_EnergyCheck(ProbeState *s)
+{
+	EnergyRemovalEnergyCheckResult r = EnergyRemoval_EnergyCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory EnergyRemoval_EnergyCheck */
+
+/* >>> factory EnergyRemoval_AISelection */
+static void adapt_EnergyRemoval_AISelection(ProbeState *s)
+{
+	s->a = EnergyRemoval_AISelection();
+}
+/* <<< factory EnergyRemoval_AISelection */
+
+/* >>> factory EnergyRetrieval_HandEnergyCheck */
+static void adapt_EnergyRetrieval_HandEnergyCheck(ProbeState *s)
+{
+	EnergyRetrievalHandEnergyCheckResult r = EnergyRetrieval_HandEnergyCheck();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory EnergyRetrieval_HandEnergyCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2087,5 +2112,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Barrier_AISelectEffect", adapt_Barrier_AISelectEffect },
 	{ "Whirlpool_AISelectEffect", adapt_Whirlpool_AISelectEffect },
 	{ "Whirlpool_DiscardEffect", adapt_Whirlpool_DiscardEffect },
+	{ "EnergyRemoval_EnergyCheck", adapt_EnergyRemoval_EnergyCheck },
+	{ "EnergyRemoval_AISelection", adapt_EnergyRemoval_AISelection },
+	{ "EnergyRetrieval_HandEnergyCheck", adapt_EnergyRetrieval_HandEnergyCheck },
 	{ NULL, NULL },
 };
