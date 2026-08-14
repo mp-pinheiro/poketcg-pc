@@ -64,4 +64,13 @@ typedef struct {
 
 SetScriptControlByteFailResult SetScriptControlByteFail(void);
 /* <<< factory SetScriptControlByteFail */
+/* >>> factory IncreaseScriptPointerBy5 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy5(void);
+/* <<< factory IncreaseScriptPointerBy5 */
+/* >>> factory IncreaseScriptPointerBy6 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy6(void);
+/* <<< factory IncreaseScriptPointerBy6 */
+/* >>> factory IncreaseScriptPointerBy7 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy7(void);
+/* <<< factory IncreaseScriptPointerBy7 */
 #endif

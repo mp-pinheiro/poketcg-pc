@@ -105,6 +105,36 @@ static void adapt_SetScriptControlByteFail(ProbeState *s)
 }
 /* <<< factory SetScriptControlByteFail */
 
+/* >>> factory IncreaseScriptPointerBy5 */
+static void adapt_IncreaseScriptPointerBy5(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy5 */
+
+/* >>> factory IncreaseScriptPointerBy6 */
+static void adapt_IncreaseScriptPointerBy6(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy6();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy6 */
+
+/* >>> factory IncreaseScriptPointerBy7 */
+static void adapt_IncreaseScriptPointerBy7(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy7();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory IncreaseScriptPointerBy7 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -116,5 +146,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointerBy3", adapt_IncreaseScriptPointerBy3 },
 	{ "GetScriptArgs5AfterPointer", adapt_GetScriptArgs5AfterPointer },
 	{ "SetScriptControlByteFail", adapt_SetScriptControlByteFail },
+	{ "IncreaseScriptPointerBy5", adapt_IncreaseScriptPointerBy5 },
+	{ "IncreaseScriptPointerBy6", adapt_IncreaseScriptPointerBy6 },
+	{ "IncreaseScriptPointerBy7", adapt_IncreaseScriptPointerBy7 },
 	{ NULL, NULL },
 };

@@ -141,3 +141,30 @@ SetScriptControlByteFailResult SetScriptControlByteFail(void)
 	return (SetScriptControlByteFailResult){0x00u, 0x80u};
 }
 /* <<< factory SetScriptControlByteFail */
+
+/* >>> factory IncreaseScriptPointerBy5 */
+/* scripting.asm:580-582. Tail-jumps into IncreaseScriptPointer with a = 5, so the
+ * caller observes IncreaseScriptPointer's exit registers (a, f, c) directly. */
+IncreaseScriptPointerResult IncreaseScriptPointerBy5(void)
+{
+	return IncreaseScriptPointer(5u);
+}
+/* <<< factory IncreaseScriptPointerBy5 */
+
+/* >>> factory IncreaseScriptPointerBy6 */
+/* scripting.asm:584-586. Tail-jumps into IncreaseScriptPointer with a = 6, so the
+ * caller observes IncreaseScriptPointer's exit registers (a, f, c) directly. */
+IncreaseScriptPointerResult IncreaseScriptPointerBy6(void)
+{
+	return IncreaseScriptPointer(6u);
+}
+/* <<< factory IncreaseScriptPointerBy6 */
+
+/* >>> factory IncreaseScriptPointerBy7 */
+/* scripting.asm:588-590. Tail-jumps into IncreaseScriptPointer with a = 7, so the
+ * caller observes IncreaseScriptPointer's exit registers (a, f, c) directly. */
+IncreaseScriptPointerResult IncreaseScriptPointerBy7(void)
+{
+	return IncreaseScriptPointer(7u);
+}
+/* <<< factory IncreaseScriptPointerBy7 */

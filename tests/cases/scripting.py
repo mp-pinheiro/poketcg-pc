@@ -12,6 +12,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -144,6 +145,33 @@ CASES["SetScriptControlByteFail"] = [
 ]
 # <<< factory SetScriptControlByteFail
 
+# >>> factory IncreaseScriptPointerBy5
+CONTRACT["IncreaseScriptPointerBy5"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["IncreaseScriptPointerBy5"] = [
+	{},
+	dict(POISON),
+	dict(POISON, wram={0xC100: b"\x11\x22\x33\x44"}),
+]
+# <<< factory IncreaseScriptPointerBy5
+
+# >>> factory IncreaseScriptPointerBy6
+CONTRACT["IncreaseScriptPointerBy6"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["IncreaseScriptPointerBy6"] = [
+	{},
+	dict(POISON),
+	dict(POISON, wram={0xC100: b"\x11\x22\x33\x44"}),
+]
+# <<< factory IncreaseScriptPointerBy6
+
+# >>> factory IncreaseScriptPointerBy7
+CONTRACT["IncreaseScriptPointerBy7"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["IncreaseScriptPointerBy7"] = [
+	{},
+	dict(POISON),
+	dict(POISON, wram={0xC100: b"\x11\x22\x33\x44"}),
+]
+# <<< factory IncreaseScriptPointerBy7
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -217,3 +245,27 @@ MUTATIONS["SetScriptControlByteFail"] = {
 	"case_ids": ["SetScriptControlByteFail-0", "SetScriptControlByteFail-1", "SetScriptControlByteFail-2", "SetScriptControlByteFail-3"],
 }
 # <<< factory-mutation SetScriptControlByteFail
+# >>> factory-mutation IncreaseScriptPointerBy5
+MUTATIONS["IncreaseScriptPointerBy5"] = {
+	"source_symbol": "IncreaseScriptPointerBy5",
+	"before": "\treturn IncreaseScriptPointer(5u);",
+	"after": "\treturn IncreaseScriptPointer(6u);",
+	"case_ids": ["IncreaseScriptPointerBy5-0", "IncreaseScriptPointerBy5-1", "IncreaseScriptPointerBy5-2"],
+}
+# <<< factory-mutation IncreaseScriptPointerBy5
+# >>> factory-mutation IncreaseScriptPointerBy6
+MUTATIONS["IncreaseScriptPointerBy6"] = {
+	"source_symbol": "IncreaseScriptPointerBy6",
+	"before": "\treturn IncreaseScriptPointer(6u);",
+	"after": "\treturn IncreaseScriptPointer(5u);",
+	"case_ids": ["IncreaseScriptPointerBy6-0", "IncreaseScriptPointerBy6-1", "IncreaseScriptPointerBy6-2"],
+}
+# <<< factory-mutation IncreaseScriptPointerBy6
+# >>> factory-mutation IncreaseScriptPointerBy7
+MUTATIONS["IncreaseScriptPointerBy7"] = {
+	"source_symbol": "IncreaseScriptPointerBy7",
+	"before": "\treturn IncreaseScriptPointer(7u);",
+	"after": "\treturn IncreaseScriptPointer(6u);",
+	"case_ids": ["IncreaseScriptPointerBy7-0", "IncreaseScriptPointerBy7-1", "IncreaseScriptPointerBy7-2"],
+}
+# <<< factory-mutation IncreaseScriptPointerBy7
