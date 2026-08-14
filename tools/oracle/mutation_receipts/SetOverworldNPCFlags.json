@@ -1,0 +1,9 @@
+{
+  "fn": "SetOverworldNPCFlags",
+  "case": "tests/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetOverworldNPCFlags\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetOverworldNPCFlags\", \"mismatches\": {\"a\": [255, 0], \"f\": [0, 128], \"bus\": {\"address\": 53441, \"reference\": \"ff\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[53441, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetOverworldNPCFlags\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

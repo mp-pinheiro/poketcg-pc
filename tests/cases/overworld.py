@@ -45,6 +45,15 @@ CASES["Func_c6f7"] = [
 ]
 # <<< factory Func_c6f7
 
+# >>> factory SetOverworldNPCFlags
+CONTRACT["SetOverworldNPCFlags"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetOverworldNPCFlags"] = [
+    {"wram": {0xD0C1: b"\x00"}},
+    dict(POISON, a=0x0F, wram={0xD0C1: b"\xF0"}),
+    {"a": 0x00, "wram": {0xD0C1: b"\x80"}},
+]
+# <<< factory SetOverworldNPCFlags
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -73,3 +82,6 @@ MUTATIONS["Func_c6f7"] = {
 	"case_ids": ["Func_c6f7-1", "Func_c6f7-2", "Func_c6f7-3"],
 }
 # <<< factory-mutation Func_c6f7
+# >>> factory-mutation SetOverworldNPCFlags
+MUTATIONS["SetOverworldNPCFlags"] = {"source_symbol": "SetOverworldNPCFlags", "before": "uint8_t value = (uint8_t)(a | wOverworldNPCFlags);", "after": "uint8_t value = (uint8_t)(a & wOverworldNPCFlags);", "case_ids": ["SetOverworldNPCFlags-1", "SetOverworldNPCFlags-2"]}
+# <<< factory-mutation SetOverworldNPCFlags

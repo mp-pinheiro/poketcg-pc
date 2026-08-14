@@ -10,6 +10,9 @@
 #define SPRITE_ANIM_COUNTER          0x0eu
 #define SPRITE_ANIM_FLAGS            0x0fu
 #define SPRITE_ANIM_FLAG_CENTERED_F  0x02u
+
+#include "home/copy.h"
+#include "home/print_text.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -50,3 +53,17 @@ uint8_t Func_c6f7(uint16_t *hl)
 	return 0xffu;
 }
 /* <<< factory Func_c6f7 */
+
+/* >>> factory SetOverworldNPCFlags */
+/* overworld.asm:355-361 */
+OverworldNPCFlagsResult SetOverworldNPCFlags(uint8_t a)
+{
+	uint8_t value = (uint8_t)(a | wOverworldNPCFlags);
+
+	wOverworldNPCFlags = value;
+	return (OverworldNPCFlagsResult){
+		.a = value,
+		.f = value == 0u ? 0x80u : 0x00u,
+	};
+}
+/* <<< factory SetOverworldNPCFlags */
