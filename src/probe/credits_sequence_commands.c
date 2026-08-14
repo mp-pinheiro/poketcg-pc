@@ -58,6 +58,23 @@ static void adapt_AdvanceCreditsSequenceCmdPtrBy4(ProbeState *s)
 }
 /* <<< factory AdvanceCreditsSequenceCmdPtrBy4 */
 
+/* >>> factory CreditsSequenceCmd_Wait */
+static void adapt_CreditsSequenceCmd_Wait(ProbeState *s)
+{
+	CreditsSequenceCmd_Wait(s->c);
+}
+/* <<< factory CreditsSequenceCmd_Wait */
+
+
+/* >>> factory CreditsSequenceCmd_DisableLCD */
+static void adapt_CreditsSequenceCmd_DisableLCD(ProbeState *s)
+{
+	(void)s;
+	CreditsSequenceCmd_DisableLCD();
+}
+/* <<< factory CreditsSequenceCmd_DisableLCD */
+
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -67,5 +84,7 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "AdvanceCreditsSequenceCmdPtrBy5", adapt_AdvanceCreditsSequenceCmdPtrBy5 },
 	{ "AdvanceCreditsSequenceCmdPtrBy6", adapt_AdvanceCreditsSequenceCmdPtrBy6 },
 	{ "AdvanceCreditsSequenceCmdPtrBy4", adapt_AdvanceCreditsSequenceCmdPtrBy4 },
+	{ "CreditsSequenceCmd_Wait", adapt_CreditsSequenceCmd_Wait },
+	{ "CreditsSequenceCmd_DisableLCD", adapt_CreditsSequenceCmd_DisableLCD },
 	{ NULL, NULL },
 };

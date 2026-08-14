@@ -17,19 +17,21 @@ feedback payload.
 """
 
 from __future__ import annotations
-
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import traceback
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import (BUNDLES, CACHE, PBENV, ROOT, RUNNER, load_packet,
-                    packet_identity)  # noqa: E402
+from common import (BUNDLES, CACHE, ORACLE_PYTHON, ROOT, RUNNER, PhaseTimeout,
+                    WaveDeadlineExpired, load_packet, packet_identity,
+                    run_bounded)  # noqa: E402
 import lanes  # noqa: E402
 import surgery  # noqa: E402
 
@@ -65,10 +67,9 @@ def verdict(kind: str, detail: str, routine: str | None = None) -> dict:
     return {"status": kind, "detail": _tail(detail), "routine": routine}
 
 
-def run(command: list[str], cwd: Path, timeout: int = 600) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(command, cwd=cwd, text=True, capture_output=True,
-                          timeout=timeout, check=False)
-
+def run(command: list[str], cwd: Path, timeout: float = 600,
+        deadline: float | None = None) -> subprocess.CompletedProcess[str]:
+    return run_bounded(command, cwd=cwd, cap=timeout, deadline=deadline, check=False)
 
 def witness_index(mutation_block: dict) -> int:
     ids = mutation_block.get("case_ids") or []
@@ -152,40 +153,54 @@ def case_lint(lane: Path, basename: str, routine_names: list[str]) -> dict[str, 
     return violations
 
 
-def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
+def verify_packet(packet: dict, lane: Path, cases_changed: bool,
+                  deadline: float | None = None) -> dict:
     basename = packet["basename"]
     routine_names = [r["name"] for r in packet["routines"]]
 
-    built = lanes.build(lane)
-    if built.returncode != 0:
-        return verdict("compile", compile_cause(built.stdout + built.stderr))
-
-    lint_violations = case_lint(lane, basename, routine_names)
-    if lint_violations:
-        detail = "\n".join(f"{fn}: {msg}" for fn, msgs in lint_violations.items()
-                           for msg in msgs)
-        result = verdict("cases", detail)
-        result["failing"] = sorted(lint_violations)
+    try:
+        built = lanes.build(lane, deadline)
+    except (PhaseTimeout, WaveDeadlineExpired) as exc:
+        if isinstance(exc, WaveDeadlineExpired):
+            raise
+        return verdict("infra-timeout", str(exc))
+    try:
+        inspected = run_bounded(
+            [sys.executable, str(ROOT / "tools/factory" / "case_inspect.py"),
+             "--lane", str(lane), "--basename", basename,
+             *[arg for fn in routine_names for arg in ("--fn", fn)]],
+            cwd=lane, cap=60, deadline=deadline, check=True,
+        )
+        inspection = json.loads(inspected.stdout)
+    except WaveDeadlineExpired:
+        raise
+    except PhaseTimeout as exc:
+        return verdict("infra-timeout", str(exc))
+    except Exception as exc:
+        return verdict("infra-error", traceback.format_exc(limit=2))
+    if inspection.get("violations"):
+        result = verdict("cases", json.dumps(inspection["violations"], sort_keys=True))
+        result["failing"] = sorted(inspection["violations"])
         return result
 
     audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine",
-                "--only", basename], lane)
+                "--only", basename], lane, deadline=deadline)
     if audit.returncode != 0:
         return verdict("schema", audit.stdout + audit.stderr)
 
     CACHE.mkdir(parents=True, exist_ok=True)
     mode = "refresh" if cases_changed else "cache"
-    diff = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
+    diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                 "--oracle-mode", mode, "--cache-dir", str(CACHE),
                 "--probe", str(lane / "build" / "poketcg_probe")],
-               lane, timeout=1800)
+               lane, timeout=1800, deadline=deadline)
     output = diff.stdout + diff.stderr
     if "cache miss" in output:
         mode = "refresh"
-        diff = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
+        diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
-                   lane, timeout=1800)
+                   lane, timeout=1800, deadline=deadline)
         output = diff.stdout + diff.stderr
     if TIMEOUT_MARK in output:
         spinner = None
@@ -198,33 +213,34 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool) -> dict:
     if diff.returncode != 0:
         failing = "\n".join(
             l for l in output.splitlines()
-            if l.startswith("FAIL") or "fail " in l or "!=" in l
-            or "Error" in l)
+            if l.startswith("FAIL") or "fail " in l or "!=" in l or "Error" in l
+        )
         names = re.findall(r"^FAIL (\S+):", output, flags=re.MULTILINE)
         result = verdict("diff", failing or output)
         result["failing"] = names
         return result
     if mode == "cache":
-        live = run([str(PBENV), "tests/test_leaves.py", *fn_args(routine_names),
+        live = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
-                   lane, timeout=1800)
+                   lane, timeout=1800, deadline=deadline)
         if live.returncode != 0:
             return verdict("diff", live.stdout + live.stderr)
 
-    mutations = getattr(load_cases_module(lane, basename), "MUTATIONS", {})
+    witnesses = inspection.get("witnesses", {})
     for fn in routine_names:
-        if fn not in mutations:
+        index = witnesses.get(fn)
+        if index is None:
             return verdict("mutation", f"MUTATIONS[{fn!r}] is missing", fn)
-        index = witness_index(mutations[fn])
         red = run([sys.executable, "tools/run_mutation.py", fn,
                    f"tests/cases/{basename}.py", "--index", str(index),
                    "--build", "build", "--runner", str(RUNNER)],
-                  lane, timeout=300)
+                  lane, timeout=300, deadline=deadline)
         if red.returncode != 0:
             return verdict("mutation", red.stdout + red.stderr, fn)
 
-    lint = run([sys.executable, "tools/lint_adapters.py"], lane)
+    lint = run([sys.executable, "tools/lint_adapters.py"], lane,
+               timeout=600, deadline=deadline)
     if lint.returncode != 0:
         return verdict("lint", lint.stdout + lint.stderr)
 

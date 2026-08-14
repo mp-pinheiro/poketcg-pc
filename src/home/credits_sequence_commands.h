@@ -22,4 +22,10 @@ void AdvanceCreditsSequenceCmdPtrBy6(void);
 /* >>> factory AdvanceCreditsSequenceCmdPtrBy4 */
 void AdvanceCreditsSequenceCmdPtrBy4(void);
 /* <<< factory AdvanceCreditsSequenceCmdPtrBy4 */
+/* >>> factory CreditsSequenceCmd_Wait */
+void CreditsSequenceCmd_Wait(uint8_t c);
+/* <<< factory CreditsSequenceCmd_Wait */
+/* >>> factory CreditsSequenceCmd_DisableLCD */
+void CreditsSequenceCmd_DisableLCD(void);
+/* <<< factory CreditsSequenceCmd_DisableLCD */
 #endif

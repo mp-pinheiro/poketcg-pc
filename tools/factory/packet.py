@@ -36,7 +36,27 @@ PRET = ROOT / "poketcg"
 MAX_ROUTINES = 8
 MAX_ASM_LINES = 300
 BACKUPS = FACTORY / "backups"
-ACTIVE_CLAIM_STATES = {"pending", "translated", "verifying", "repair", "green"}
+ACTIVE_CLAIM_STATES = {"pending", "translating", "translated", "verifying", "repair", "green"}
+
+
+def _positive_int(value: str) -> int:
+    number = int(value)
+    if number <= 0:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return number
+
+
+def select_pending_packets(limit: int | None) -> list[dict]:
+    if limit is None:
+        return []
+    packets = common.list_packets(("pending",))
+    return sorted(
+        packets,
+        key=lambda packet: (
+            packet.get("updated_at") if isinstance(packet.get("updated_at"), int) else 0,
+            packet["id"],
+        ),
+    )[:limit]
 
 
 def plan_work_id_migration(
@@ -670,6 +690,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             inventory_lines.setdefault(f["file"], []).append(f["line"])
 
     packets: list[dict] = []
+    built_at = int(time.time())
 
     for file, members in groups.items():
         chunks: list[list[dict]] = [[]]
@@ -715,8 +736,9 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
                 "state": "pending",
                 "rounds": 0,
+                "format_retry_used": False,
+                "updated_at": built_at,
                 "reason": None,
-                "routines": routines,
                 "constants": constants_for("\n".join(packet_asm), constants_table),
                 "symbols": symbols_for("\n".join(packet_asm), symbol_table),
                 "text_ids": text_ids_for("\n".join(packet_asm), text_table),
@@ -861,7 +883,6 @@ def cmd_chokepoints(limit: int) -> int:
               f"{name}  {f['blockers'][:4]}")
     return 0
 
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
@@ -869,7 +890,7 @@ def main() -> int:
     build.add_argument("--dir", help="pret path prefix filter, e.g. src/audio")
     build.add_argument("--max-routines", type=int, default=MAX_ROUTINES)
     build.add_argument("--max-asm-lines", type=int, default=MAX_ASM_LINES)
-    build.add_argument("--limit", type=int, help="emit at most N packets")
+    build.add_argument("--limit", type=_positive_int, help="emit at most N packets")
     build.add_argument("--force", action="store_true",
                        help="overwrite queue entries that already exist")
     build.add_argument("--json", action="store_true", help="print packet ids as JSON")
@@ -907,12 +928,24 @@ def main() -> int:
     if args.command == "chokepoints":
         return cmd_chokepoints(args.limit)
 
-    packets = build_packets(args.dir, args.max_routines, args.max_asm_lines, args.limit)
-    if not args.force:
-        packets = drop_claimed(packets)
-    packets = attach_dependencies(packets)
+    selected_pending = select_pending_packets(args.limit)
+    capacity = None if args.limit is None else args.limit - len(selected_pending)
+    fresh = []
+    if capacity is None or capacity > 0:
+        fresh = build_packets(
+            args.dir, args.max_routines, args.max_asm_lines, capacity,
+        )
+        if not args.force:
+            fresh = drop_claimed(fresh)
+        fresh = attach_dependencies(fresh)
+    built_at = int(time.time())
     written = []
-    for packet in packets:
+    for packet in fresh:
+        packet.update({
+            "updated_at": built_at,
+            "rounds": 0,
+            "format_retry_used": False,
+        })
         path = QUEUE / f"{packet['id']}.json"
         if path.exists() and not args.force:
             existing = json.loads(path.read_text())
@@ -920,21 +953,16 @@ def main() -> int:
                 continue
         write_json(path, packet)
         written.append(packet["id"])
-    written_ids = set(written)
-    for path in QUEUE.glob("*.json"):
-        if path.stem in written_ids:
-            continue
-        entry = json.loads(path.read_text())
-        if entry.get("state") == "pending":
-            written.append(path.stem)
+    selected_ids = [packet["id"] for packet in selected_pending]
+    result_ids = selected_ids + written
     if args.json:
-        print(json.dumps(written))
+        print(json.dumps(result_ids))
     else:
-        for packet in packets:
+        for packet in fresh:
             if packet["id"] in written:
                 print(f"{packet['id']:32} {packet['mode']:6} routines={len(packet['routines'])} "
                       f"bytes={packet['bytes']} cascade={packet['cascade']}")
-        print(f"packets: {len(written)} written, {len(packets) - len(written)} skipped")
+        print(f"packets: {len(result_ids)} written, {len(fresh) - len(written)} skipped")
     return 0
 
 

@@ -447,7 +447,7 @@ def load_report() -> dict:
     report = module.compute(inventory, routines, gate)
     active = {}
     queue = ROOT / ".factory" / "queue"
-    active_states = {"pending", "translated", "verifying", "repair", "green"}
+    active_states = {"pending", "translating", "translated", "verifying", "repair", "green"}
     for path in (sorted(queue.glob("*.json")) if queue.is_dir() else ()):
         packet = json.loads(path.read_text())
         if packet.get("state") not in active_states:

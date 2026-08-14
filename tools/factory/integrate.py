@@ -22,8 +22,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import (BUNDLES, CACHE, PBENV, ROOT, list_packets, packet_identity,
-                    set_state)  # noqa: E402
+from common import (BUNDLES, CACHE, ORACLE_PYTHON, ROOT, list_packets,
+                    packet_identity, set_state)  # noqa: E402
 from verify import fn_args  # noqa: E402
 import surgery  # noqa: E402
 
@@ -90,7 +90,7 @@ def land(packet: dict) -> None:
              "-DCMAKE_BUILD_TYPE=Debug", "-DPORT_FILES="],
             check_message="barrier configure failed")
     run(["ninja", "-C", "build-barrier"], check_message="barrier build failed")
-    run([str(PBENV), "tests/test_leaves.py",
+    run([*ORACLE_PYTHON, "tests/test_leaves.py",
          *fn_args([r["name"] for r in packet["routines"]]),
          "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
          "--probe", str(ROOT / "build-barrier" / "poketcg_probe")],

@@ -101,6 +101,37 @@ CASES["AdvanceCreditsSequenceCmdPtrBy4"] = [
 ]
 # <<< factory AdvanceCreditsSequenceCmdPtrBy4
 
+# >>> factory CreditsSequenceCmd_Wait
+# wSequenceDelay = 0xD633 (given). SEQ_AREA is a diff-only watch window around the
+# sequence-variable block: AdvanceCreditsSequenceCmdPtrBy3's pointer advance lands
+# in WRAM near wSequenceDelay, so the window catches advance-corrupting mutations.
+wSequenceDelay = 0xD633
+SEQ_AREA = 0xD600
+SEQ_AREA_LEN = 0x80
+CONTRACT["CreditsSequenceCmd_Wait"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_Wait"] = [
+	{"c": 0, "wram": {wSequenceDelay: b"\xff"}, "read": {SEQ_AREA: SEQ_AREA_LEN}},
+	{"c": 1, "wram": {wSequenceDelay: b"\x00"}, "read": {SEQ_AREA: SEQ_AREA_LEN}},
+	{"c": 0x80, "wram": {wSequenceDelay: b"\x01"}},
+	dict(POISON, c=0x2A, wram={wSequenceDelay: b"\x7e"}, read={SEQ_AREA: SEQ_AREA_LEN}),
+]
+# <<< factory CreditsSequenceCmd_Wait
+
+
+# >>> factory CreditsSequenceCmd_DisableLCD
+# No register inputs are consumed and no register outputs survive the tail jump,
+# so the cases watch the sequence-variable window the callee advances.
+wSequenceDelay = 0xD633
+SEQ_AREA = 0xD600
+SEQ_AREA_LEN = 0x80
+CONTRACT["CreditsSequenceCmd_DisableLCD"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_DisableLCD"] = [
+	{"read": {SEQ_AREA: SEQ_AREA_LEN}},
+	dict(POISON, read={SEQ_AREA: SEQ_AREA_LEN}),
+]
+# <<< factory CreditsSequenceCmd_DisableLCD
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -166,3 +197,19 @@ MUTATIONS["AdvanceCreditsSequenceCmdPtrBy4"] = {
                  "AdvanceCreditsSequenceCmdPtrBy4-3", "AdvanceCreditsSequenceCmdPtrBy4-4"],
 }
 # <<< factory-mutation AdvanceCreditsSequenceCmdPtrBy4
+# >>> factory-mutation CreditsSequenceCmd_Wait
+MUTATIONS["CreditsSequenceCmd_Wait"] = {
+	"source_symbol": "CreditsSequenceCmd_Wait",
+	"before": "\twSequenceDelay = c;",
+	"after": "\twSequenceDelay = 0x00u;",
+	"case_ids": ["CreditsSequenceCmd_Wait-1", "CreditsSequenceCmd_Wait-2", "CreditsSequenceCmd_Wait-3"],
+}
+# <<< factory-mutation CreditsSequenceCmd_Wait
+# >>> factory-mutation CreditsSequenceCmd_DisableLCD
+MUTATIONS["CreditsSequenceCmd_DisableLCD"] = {
+	"source_symbol": "CreditsSequenceCmd_DisableLCD",
+	"before": "\tDisableLCD();\n\tAdvanceCreditsSequenceCmdPtrBy2();",
+	"after": "\tDisableLCD();\n\tAdvanceCreditsSequenceCmdPtrBy3();",
+	"case_ids": ["CreditsSequenceCmd_DisableLCD-0", "CreditsSequenceCmd_DisableLCD-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_DisableLCD

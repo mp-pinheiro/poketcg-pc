@@ -12,45 +12,47 @@ routines' files.  Crash-safe: every transition is on disk; ``reset-stale``
 returns in-flight packets to ``pending``.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
+import os
 import sys
 import time
 import traceback
-from concurrent.futures import ThreadPoolExecutor
+import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-
 from common import (  # noqa: E402
-    FACTORY, METRICS, block_routine, estimate_tokens, list_packets, load_packet,
-    record_metric, save_packet, set_state,
+    FACTORY, METRICS, PhaseTimeout, WaveDeadlineExpired, block_routine,
+    estimate_tokens, list_packets, load_packet, record_metric, save_packet,
+    set_state, wave_lock,
 )
 import lanes  # noqa: E402
 import prompt as prompt_mod  # noqa: E402
 import surgery  # noqa: E402
 import verify as verify_mod  # noqa: E402
 
-IN_FLIGHT = ("translated", "verifying", "repair")
+IN_FLIGHT = ("translating", "translated", "verifying", "repair")
+ACTIVE_CLAIM_STATES = ("pending", *IN_FLIGHT, "green")
 
 
 class _Run:
-    def __init__(self, packet_id: str):
+    def __init__(self, packet_id: str, wave_id: str, started: float):
         self.packet = load_packet(packet_id)
         self.id = packet_id
+        self.wave_id = wave_id
         self.lane_index: int | None = None
         self.lane = None
-        self.rounds = 0
-        self.format_retry_used = False
+        self.rounds = int(self.packet.get("rounds", 0))
+        self.format_retry_used = bool(self.packet.get("format_retry_used", False))
         self.feedback: str | None = None
         self.targets: list[str] | None = None
         self.last_failing: list[str] | None = None
         self.statics_baseline: list[str] | None = None
         self.prompt_tokens = 0
         self.reply_tokens = 0
-        self.started = time.time()
+        self.started = started
         self.final: str | None = None
         self.reason: str | None = None
 
@@ -58,15 +60,29 @@ class _Run:
         work_ids = sorted(r["work_id"] for r in self.packet["routines"])
         return {
             "id": self.id, "verdict": self.final, "reason": self.reason,
-            "rounds": self.rounds, "wall_s": round(time.time() - self.started, 1),
+            "rounds": self.rounds, "wall_s": round(time.monotonic() - self.started, 1),
             "prompt_tokens": self.prompt_tokens, "reply_tokens": self.reply_tokens,
-            "routines": len(self.packet["routines"]),
+            "routines": len(self.packet["routines"]), "wave_id": self.wave_id,
             "work_ids": work_ids,
-            "issue_numbers": sorted(
-                r["issue_number"] for r in self.packet["routines"]
-            ),
+            "issue_numbers": sorted(r["issue_number"] for r in self.packet["routines"]),
             "model": model,
         }
+
+
+def _attempt(run: _Run, phase: str, deadline: float, round_number: int) -> None:
+    run.packet["attempt"] = {
+        "wave_id": run.wave_id, "phase": phase, "round": round_number,
+        "started_at": int(time.time()), "deadline_at": int(time.time() + max(0, deadline - time.monotonic())),
+    }
+    set_state(run.packet, phase)
+    save_packet(run.packet)
+
+
+def _clear_attempt(run: _Run) -> None:
+    run.packet.pop("attempt", None)
+    save_packet(run.packet)
+
+
 
 
 
@@ -80,9 +96,13 @@ def _apply_and_verify(run: _Run, translation: dict) -> dict:
     except surgery.SurgeryError as exc:
         return {"status": "surgery", "detail": str(exc)}
     cases_changed = any(str(p).endswith(".py") for p in changed) or run.rounds == 0
-    set_state(run.packet, "verifying")
-    return verify_mod.verify_packet(run.packet, run.lane, cases_changed)
-
+    _attempt(run, "verifying", run.deadline, run.rounds)
+    try:
+        return verify_mod.verify_packet(
+            run.packet, run.lane, cases_changed, deadline=run.deadline,
+        )
+    except PhaseTimeout as exc:
+        return {"status": "infra-timeout", "detail": str(exc)}
 
 def _salvage(run: _Run, failing: list[str] | None) -> bool:
     """Land the routines that pass; spill the failures into a new packet.
@@ -106,19 +126,30 @@ def _salvage(run: _Run, failing: list[str] | None) -> bool:
         return False
     reduced = dict(run.packet)
     reduced["routines"] = [r for r in run.packet["routines"] if r["name"] in keep]
-    result = verify_mod.verify_packet(reduced, run.lane, True)
-    if result["status"] != "green":
+    try:
+        result = verify_mod.verify_packet(reduced, run.lane, True, deadline=run.deadline)
+    except WaveDeadlineExpired:
+        raise
+    except Exception:
         return False
     spill = dict(run.packet)
     spill["id"] = f"{run.packet['id']}-rest"
     spill["routines"] = [r for r in run.packet["routines"] if r["name"] in failing]
     spill["state"] = "pending"
     spill["rounds"] = 0
+    spill["format_retry_used"] = False
+    spill.pop("attempt", None)
+    spill["updated_at"] = int(time.time())
     spill["reason"] = f"spilled from {run.packet['id']} after {run.rounds} rounds"
     save_packet(spill)
     run.packet["routines"] = reduced["routines"]
     save_packet(run.packet)
-    verify_mod.collect_bundle(run.packet, run.lane)
+    try:
+        verify_mod.collect_bundle(run.packet, run.lane)
+    except Exception as exc:
+        run.final = "escalated"
+        run.reason = f"infra-error: bundle collection failed: {str(exc)[-300:]}"
+        return False
     run.final = "green"
     run.reason = f"partial: {len(keep)}/{len(names)} landed, {len(failing)} spilled"
     return True
@@ -136,12 +167,16 @@ def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
                       "port the blocking callee (see verdict)")
         run.final, run.reason = "parked", f"timeout: {spinner}"
         return False
+    if result["status"] in {"infra-timeout", "infra-error"}:
+        run.final = "escalated"
+        prefix = result["status"]
+        run.reason = f"{prefix}: {result['detail'][-400:]}"
+        return False
     run.rounds += 1
+    run.packet["rounds"] = run.rounds
+    save_packet(run.packet)
     failing_now = result.get("failing") or (
         [result["routine"]] if result.get("routine") else None)
-    if failing_now and run.last_failing == failing_now:
-        if _salvage(run, failing_now):
-            return False
     run.last_failing = failing_now
     if run.rounds >= max_rounds:
         if not _salvage(run, failing_now):
@@ -150,6 +185,7 @@ def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
         return False
     run.targets = failing_now if failing_now else None
     run.feedback = f"{result['status']}:\n{result['detail']}"
+    _attempt(run, "repair", run.deadline, run.rounds)
     set_state(run.packet, "repair", run.feedback[:400])
     return True
 
@@ -168,100 +204,211 @@ def _accept(run: _Run, reply: str) -> dict | None:
     except prompt_mod.FormatError as exc:
         if not run.format_retry_used:
             run.format_retry_used = True
+            run.packet["format_retry_used"] = True
+            save_packet(run.packet)
             run.feedback = f"format: {exc}"
-            return {}  # {} = retranslate this round
+            return {}
         run.final, run.reason = "rejected-format", str(exc)
         return None
 
 
 def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
-             max_rounds: int = 4, model: str = "unknown") -> dict:
-    """Round-synchronous wave -> ``{"results": [...]}``.
+             max_rounds: int = 4, model: str = "unknown", max_wall_s: float = 1800,
+             on_event=None) -> dict:
+    if lanes_count <= 0 or max_rounds <= 0 or max_wall_s <= 0:
+        raise ValueError("lanes_count, max_rounds, and max_wall_s must be positive")
+    if any(not isinstance(pid, str) or not pid for pid in packet_ids):
+        raise ValueError("wave packet IDs must be non-empty strings")
+    if len(set(packet_ids)) != len(packet_ids):
+        raise ValueError("wave packet IDs must be unique")
+    if len(packet_ids) > lanes_count:
+        raise ValueError(
+            f"wave has {len(packet_ids)} packets but only {lanes_count} lanes; "
+            "select a bounded cohort"
+        )
+    wave_id = uuid.uuid4().hex
+    started = time.monotonic()
+    deadline = started + max_wall_s
+    events: list[str] = []
+    event_errors: list[str] = []
+    callbacks_enabled = True
 
-    ``translate_many(prompts: list[str]) -> list[str]`` translates a whole
-    round at once so the caller can fan out concurrently (harness
-    ``parallel(...)``); serial mapping still works but is the slow path.
-    Packets are processed in chunks of ``lanes_count`` so each active packet
-    keeps a pinned lane for its repair rounds.
+    def emit(event: str, **payload) -> None:
+        nonlocal callbacks_enabled
+        if not callbacks_enabled:
+            return
+        data = {"event": event, "elapsed_s": round(time.monotonic() - started, 3), **payload}
+        try:
+            if on_event is not None:
+                on_event(data)
+        except Exception:
+            callbacks_enabled = False
+            event_errors.append(traceback.format_exc(limit=2).strip()[-4000:])
 
-    Two packets of the same basename may run in the same wave: bundles are
-    composable (``surgery.extract``/``apply``, additive per-routine
-    fragments), so ``integrate.py`` lands both without one overwriting the
-    other's routines.
-    """
-    results: list[dict] = []
+    metadata = {
+        "wave_id": wave_id, "pid": os.getpid(), "started_at": int(time.time()),
+        "deadline_at": int(time.time() + max_wall_s), "packet_ids": packet_ids,
+    }
+    with wave_lock(metadata):
+        packets = [load_packet(pid) for pid in packet_ids]
+        if any(packet.get("state") != "pending" for packet in packets):
+            bad = [packet["id"] for packet in packets if packet.get("state") != "pending"]
+            raise ValueError(f"wave packets must be pending: {', '.join(bad)}")
+        runs = [_Run(pid, wave_id, started) for pid in packet_ids]
+        for run in runs:
+            run.deadline = deadline
+        emit("wave-start", wave_id=wave_id, packet_ids=packet_ids, max_wall_s=max_wall_s)
+        results: list[dict] = []
+        deferred: list[str] = []
+        stop_reason = None
 
-    def finalize(run: _Run) -> None:
-        set_state(run.packet, run.final, run.reason)
-        metric = run.metric(model)
-        record_metric(metric)
-        results.append(metric)
+        def finalize(run: _Run) -> None:
+            _clear_attempt(run)
+            set_state(run.packet, run.final, run.reason)
+            metric = run.metric(model)
+            record_metric(metric)
+            results.append(metric)
+            emit("packet-final", wave_id=wave_id, packet_id=run.id,
+                 verdict=run.final, reason=run.reason, rounds=run.rounds,
+                 wall_s=metric["wall_s"])
 
-    for start in range(0, len(packet_ids), lanes_count):
-        chunk = packet_ids[start:start + lanes_count]
-        active = []
-        for index, pid in enumerate(chunk):
-            run = _Run(pid)
+        for index, run in enumerate(runs):
             run.lane_index = index
-            run.lane = lanes.ensure(index)
-            active.append(run)
-
-        with ThreadPoolExecutor(max_workers=max(1, len(active))) as pool:
-            while active:
-                translations: dict[str, dict] = {}
-                pending = list(active)
-                for _attempt in (0, 1):  # second pass covers format retries
-                    if not pending:
+            try:
+                run.lane = lanes.ensure(index, deadline=deadline)
+            except Exception as exc:
+                stop_reason = f"lane: {str(exc).strip()[-400:]}"
+                break
+        for run in runs:
+            if run.rounds >= max_rounds:
+                run.final = "escalated"
+                run.reason = f"resumed at {run.rounds} rounds; max is {max_rounds}"
+        for run in runs:
+            if run.final:
+                finalize(run)
+        if stop_reason is None:
+            active = [run for run in runs if not run.final]
+        if stop_reason is None and active:
+            with ThreadPoolExecutor(max_workers=max(1, len(active))) as pool:
+                while active:
+                    if time.monotonic() >= deadline:
+                        stop_reason = "wave deadline expired"
                         break
-                    prompts = [_render(run) for run in pending]
+                    emit("round-start", wave_id=wave_id,
+                         rounds={run.id: run.rounds + 1 for run in active})
+                    translations: dict[str, dict] = {}
+                    pending = list(active)
                     try:
-                        replies = translate_many(prompts)
-                    except Exception:
                         for run in pending:
-                            run.final = "escalated"
-                            run.reason = f"translate: {traceback.format_exc(limit=2)}"
-                        pending = []
+                            _attempt(run, "translating", deadline, run.rounds + 1)
+                        prompts = [_render(run) for run in pending]
+                        replies = translate_many(prompts)
+                        if time.monotonic() >= deadline:
+                            raise WaveDeadlineExpired("wave deadline expired after translation")
+                        if not isinstance(replies, (list, tuple)) or len(replies) != len(prompts):
+                            raise RuntimeError("translator returned wrong reply collection")
+                        retry: list[_Run] = []
+                        for run, reply in zip(pending, replies):
+                            if not isinstance(reply, str):
+                                raise RuntimeError("translator returned a non-string reply")
+                            parsed = _accept(run, reply)
+                            if parsed is None:
+                                continue
+                            if parsed == {}:
+                                retry.append(run)
+                            else:
+                                translations[run.id] = parsed
+                        if retry:
+                            prompts = [_render(run) for run in retry]
+                            replies = translate_many(prompts)
+                            if time.monotonic() >= deadline:
+                                raise WaveDeadlineExpired("wave deadline expired after translation")
+                            if not isinstance(replies, (list, tuple)) or len(replies) != len(prompts):
+                                raise RuntimeError("translator returned wrong reply collection")
+                            for run, reply in zip(retry, replies):
+                                if not isinstance(reply, str):
+                                    raise RuntimeError("translator returned a non-string reply")
+                                parsed = _accept(run, reply)
+                                if parsed is not None and parsed != {}:
+                                    translations[run.id] = parsed
+                    except WaveDeadlineExpired as exc:
+                        stop_reason = str(exc)
+                        deferred = [run.id for run in active if not run.final]
+                        for run in active:
+                            if not run.final:
+                                _clear_attempt(run)
+                                set_state(run.packet, "pending", stop_reason)
                         break
-                    retry = []
-                    for run, reply in zip(pending, replies):
-                        parsed = _accept(run, reply)
-                        if parsed is None:
-                            continue          # terminal (rejected-format)
-                        if parsed == {}:
-                            retry.append(run)  # one free reformat
+                    except Exception as exc:
+                        stop_reason = f"translate: {str(exc).strip()[-400:]}"
+                        deferred = [run.id for run in active if not run.final]
+                        for run in active:
+                            if not run.final:
+                                _clear_attempt(run)
+                                set_state(run.packet, "pending", stop_reason)
+                        break
+                    futures = {}
+                    for run in active:
+                        if run.id not in translations or run.final:
                             continue
-                        translations[run.id] = parsed
-                    pending = retry
-
-                futures = {pool.submit(_apply_and_verify, run, translations[run.id]): run
-                           for run in active if run.id in translations}
-                verdicts: dict[str, dict] = {}
-                for future in futures:
-                    run = futures[future]
+                        futures[pool.submit(_apply_and_verify, run, translations[run.id])] = run
+                    verdicts: dict[str, dict] = {}
                     try:
-                        verdicts[run.id] = future.result()
-                    except Exception:
-                        verdicts[run.id] = {
-                            "status": "surgery",
-                            "detail": f"verify crash: {traceback.format_exc(limit=2)}"}
-
-                still: list[_Run] = []
-                for run in active:
-                    if run.final:                      # terminal in translate
-                        finalize(run)
-                        continue
-                    result = verdicts.get(run.id)
-                    if result is None:                 # never translated
-                        run.final = run.final or "escalated"
-                        run.reason = run.reason or "no translation produced"
-                        finalize(run)
-                        continue
-                    if _decide(run, result, max_rounds):
-                        still.append(run)
-                    else:
-                        finalize(run)
-                active = still
-    return {"results": results}
+                        for future in as_completed(futures):
+                            run = futures[future]
+                            try:
+                                verdicts[run.id] = future.result()
+                            except WaveDeadlineExpired:
+                                raise
+                            except Exception:
+                                verdicts[run.id] = {
+                                    "status": "infra-error",
+                                    "detail": traceback.format_exc(limit=4),
+                                }
+                            emit("verify-finished", wave_id=wave_id, packet_id=run.id,
+                                 round=run.rounds, status=verdicts[run.id]["status"])
+                    except WaveDeadlineExpired as exc:
+                        stop_reason = str(exc)
+                        deferred = [run.id for run in active if not run.final]
+                        break
+                    if stop_reason is not None:
+                        break
+                    still: list[_Run] = []
+                    for run in active:
+                        if run.final:
+                            finalize(run)
+                            continue
+                        result = verdicts.get(run.id)
+                        if result is None:
+                            deferred.append(run.id)
+                            _clear_attempt(run)
+                            set_state(run.packet, "pending", "translator stopped")
+                            continue
+                        if _decide(run, result, max_rounds):
+                            still.append(run)
+                        else:
+                            finalize(run)
+                    active = still
+        if stop_reason is not None:
+            for run in runs:
+                if not run.final and run.id not in deferred:
+                    deferred.append(run.id)
+                if not run.final:
+                    _clear_attempt(run)
+                    set_state(run.packet, "pending", stop_reason)
+            emit("wave-deferred", wave_id=wave_id, packet_ids=deferred, reason=stop_reason)
+        status = "complete" if stop_reason is None else (
+            "deadline" if "deadline" in stop_reason else "stopped"
+        )
+        emit("wave-finish", wave_id=wave_id, status=status,
+             result_count=len(results), deferred_count=len(deferred),
+             stop_reason=stop_reason, wall_s=round(time.monotonic() - started, 3))
+        return {
+            "status": status, "results": results, "deferred": deferred,
+            "stop_reason": stop_reason,
+            "wall_s": round(time.monotonic() - started, 3),
+            "event_errors": event_errors,
+        }
 
 
 def escalate(limit: int | None) -> int:
@@ -301,10 +448,6 @@ def escalate(limit: int | None) -> int:
             f"directly. Then run exactly:\n\n"
             f"```sh\n"
             f"python3 tools/factory/verify.py {packet['id']} --lane <lane-dir> "
-            f"--cases-changed\n"
-            f"```\n\n"
-            f"Verdict must be `green`. On success the bundle is written to "
-            f".factory/bundles/{packet['id']}/ and `integrate.py` lands it "
             f"normally.\n"
         )
         path = out_dir / f"{packet['id']}.md"
@@ -332,9 +475,18 @@ def main() -> int:
         for state, count in sorted(counts.items()):
             print(f"{state:16} {count}")
     elif args.command == "reset-stale":
-        for packet in list_packets(IN_FLIGHT):
-            set_state(packet, "pending", "reset-stale")
-            print(f"reset {packet['id']}")
+        metadata = {
+            "wave_id": f"reset-stale-{os.getpid()}",
+            "pid": os.getpid(),
+            "started_at": int(time.time()),
+            "deadline_at": None,
+            "packet_ids": [],
+        }
+        with wave_lock(metadata):
+            for packet in list_packets(IN_FLIGHT):
+                packet.pop("attempt", None)
+                set_state(packet, "pending", "reset-stale")
+                print(f"reset {packet['id']}")
     elif args.command == "escalate":
         return escalate(args.limit)
     elif args.command == "metrics":

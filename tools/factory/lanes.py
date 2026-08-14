@@ -12,7 +12,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from common import LANE_BASE, ROOT
+from common import LANE_BASE, ROOT, run_bounded
 
 RSYNC_EXCLUDES = (
     ".jj", ".git", ".factory", ".github", ".claude", ".entire", ".pi", ".omp",
@@ -25,7 +25,7 @@ def lane_dir(index: int) -> Path:
     return LANE_BASE / f"lane-{index}"
 
 
-def ensure(index: int) -> Path:
+def ensure(index: int, deadline: float | None = None) -> Path:
     """Create or refresh lane <index> from the current repo tree."""
     lane = lane_dir(index)
     lane.mkdir(parents=True, exist_ok=True)
@@ -33,7 +33,7 @@ def ensure(index: int) -> Path:
     for pattern in RSYNC_EXCLUDES:
         command += ["--exclude", pattern]
     command += [f"{ROOT}/", f"{lane}/"]
-    subprocess.run(command, check=True, capture_output=True, text=True)
+    run_bounded(command, cwd=ROOT, cap=120, deadline=deadline, check=True)
     link = lane / "poketcg"
     if not link.is_symlink():
         if link.exists():
@@ -43,21 +43,21 @@ def ensure(index: int) -> Path:
     return lane
 
 
-def configure(lane: Path) -> subprocess.CompletedProcess[str]:
+def configure(lane: Path, deadline: float | None = None) -> subprocess.CompletedProcess[str]:
     """Configure the lane build once; later builds are plain ninja."""
-    return subprocess.run(
+    return run_bounded(
         ["cmake", "-G", "Ninja", "-B", "build", "-DCMAKE_BUILD_TYPE=Debug",
          "-DPORT_FILES="],
-        cwd=lane, capture_output=True, text=True, check=False,
+        cwd=lane, cap=120, deadline=deadline, check=False,
     )
 
 
-def build(lane: Path) -> subprocess.CompletedProcess[str]:
+def build(lane: Path, deadline: float | None = None) -> subprocess.CompletedProcess[str]:
     if not (lane / "build" / "build.ninja").exists():
-        configured = configure(lane)
+        configured = configure(lane, deadline)
         if configured.returncode != 0:
             return configured
-    return subprocess.run(
-        ["ninja", "-C", "build", "-j2"], cwd=lane, capture_output=True, text=True,
-        check=False,
+    return run_bounded(
+        ["ninja", "-C", "build", "-j2"], cwd=lane, cap=600,
+        deadline=deadline, check=False,
     )
