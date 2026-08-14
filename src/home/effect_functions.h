@@ -772,6 +772,12 @@ void Psychic_DamageBoostEffect(void);
 /* >>> factory Barrier_AISelectEffect */
 void Barrier_AISelectEffect(void);
 /* <<< factory Barrier_AISelectEffect */
+/* >>> factory Whirlpool_AISelectEffect */
+uint8_t Whirlpool_AISelectEffect(void);
+/* <<< factory Whirlpool_AISelectEffect */
+/* >>> factory Whirlpool_DiscardEffect */
+uint16_t Whirlpool_DiscardEffect(uint16_t hl);
+/* <<< factory Whirlpool_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

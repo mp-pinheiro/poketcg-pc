@@ -2020,6 +2020,32 @@ CASES["Barrier_AISelectEffect"] = [
 ]
 # <<< factory Barrier_AISelectEffect
 
+# >>> factory Whirlpool_AISelectEffect
+CONTRACT["Whirlpool_AISelectEffect"] = {"compare": ("a",), "preserve": ()}
+CASES["Whirlpool_AISelectEffect"] = [
+	{"wram": {0xFFA0: b"\x00"}},
+	{"wram": {0xFFA0: b"\x5a"}},
+	dict(POISON, wram={0xFFA0: b"\xff"}),
+]
+# <<< factory Whirlpool_AISelectEffect
+
+# >>> factory Whirlpool_DiscardEffect
+CONTRACT["Whirlpool_DiscardEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Whirlpool_DiscardEffect"] = [
+	# all-zero entry: hTemp_ffa0 = 0 -> full path, PutCardInDiscardPile(0) writes
+	{"wram": {0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x00"}},
+	{"hl": 0xC100, "wram": {0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x37"}},
+	# boundary: selected card == $ff -> return at cp $ff, no discard happens
+	{"hl": 0xC100, "wram": {0xC000: b"\x00" * 0xF00, 0xFFA0: b"\xff"}},
+	# boundary: one below $ff
+	{"hl": 0xC100, "wram": {0xC000: b"\x00" * 0xF00, 0xFFA0: b"\xfe"}},
+	{"hl": 0xC200, "wram": {0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x01"}},
+	dict(POISON, hl=0xC100, wram={0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x05"}),
+	# nonzero byte at [hl] to exercise HandleNoDamageOrEffect's other flag outcome
+	{"hl": 0xC300, "wram": {0xC000: b"\x00" * 0xF00, 0xC300: b"\xff", 0xFFA0: b"\x2a"}},
+]
+# <<< factory Whirlpool_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3443,3 +3469,19 @@ MUTATIONS["Psychic_DamageBoostEffect"] = {"source_symbol": "Psychic_DamageBoostE
 # >>> factory-mutation Barrier_AISelectEffect
 MUTATIONS["Barrier_AISelectEffect"] = {"source_symbol": "Barrier_AISelectEffect", "before": "\tuint8_t value = gb_read8(wDuelTempList_ADDR);", "after": "\tuint8_t value = gb_read8(hTemp_ffa0_ADDR);", "case_ids": ["Barrier_AISelectEffect-1", "Barrier_AISelectEffect-2"]}
 # <<< factory-mutation Barrier_AISelectEffect
+# >>> factory-mutation Whirlpool_AISelectEffect
+MUTATIONS["Whirlpool_AISelectEffect"] = {
+	"source_symbol": "Whirlpool_AISelectEffect",
+	"before": "uint8_t a = AIPickEnergyCardToDiscardFromDefendingPokemon().a;\n\thTemp_ffa0 = a;",
+	"after": "uint8_t a = AIPickEnergyCardToDiscardFromDefendingPokemon().a;\n\thTemp_ffa0 = (uint8_t)~a;",
+	"case_ids": ["Whirlpool_AISelectEffect-0", "Whirlpool_AISelectEffect-1", "Whirlpool_AISelectEffect-2"],
+}
+# <<< factory-mutation Whirlpool_AISelectEffect
+# >>> factory-mutation Whirlpool_DiscardEffect
+MUTATIONS["Whirlpool_DiscardEffect"] = {
+	"source_symbol": "Whirlpool_DiscardEffect",
+	"before": "\tPutCardInDiscardPile(whirlpool_card);",
+	"after": "\tPutCardInDiscardPile(whirlpool_card + 1u);",
+	"case_ids": ["Whirlpool_DiscardEffect-0", "Whirlpool_DiscardEffect-1", "Whirlpool_DiscardEffect-4", "Whirlpool_DiscardEffect-5"],
+}
+# <<< factory-mutation Whirlpool_DiscardEffect

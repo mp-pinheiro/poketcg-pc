@@ -202,6 +202,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 
 #define TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3194,3 +3197,42 @@ void Barrier_AISelectEffect(void)
 	gb_write8(hTemp_ffa0_ADDR, value);
 }
 /* <<< factory Barrier_AISelectEffect */
+
+/* >>> factory Whirlpool_AISelectEffect */
+/* effect_functions.asm:3308-3312. AI side of Whirlpool: picks an Energy card
+ * attached to the defending Pokemon and stashes its index in hTemp_ffa0 for
+ * Whirlpool_DiscardEffect ($ff = none selected). The picked index is also
+ * left in a at ret, mirroring the asm tail. */
+uint8_t Whirlpool_AISelectEffect(void)
+{
+	uint8_t a = AIPickEnergyCardToDiscardFromDefendingPokemon().a;
+	hTemp_ffa0 = a;
+	return a;
+}
+/* <<< factory Whirlpool_AISelectEffect */
+
+/* >>> factory Whirlpool_DiscardEffect */
+/* effect_functions.asm:3313-3331. Whirlpool's "discard 1 Energy from the Defending
+ * Pokemon" follow-up. Bails out early (leaving hl as HandleNoDamageOrEffect left it)
+ * if the attack had no effect (carry from HandleNoDamageOrEffect) or no energy card
+ * was selected (hTemp_ffa0 == $ff); otherwise SwapTurn makes the defending side the
+ * turn side, the selected card is put in that side's discard pile via
+ * PutCardInDiscardPile, and the turn is swapped back. The
+ * DUELVARS_ARENA_CARD_LAST_TURN_EFFECT := LAST_TURN_EFFECT_DISCARD_ENERGY update is
+ * commented out in the original, so it is absent here as well. SwapTurn and
+ * PutCardInDiscardPile preserve every register, so hl at ret still holds
+ * HandleNoDamageOrEffect's exit value on every path. */
+uint16_t Whirlpool_DiscardEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult noeff = HandleNoDamageOrEffect(hl);
+	if (noeff.f & 0x10u)
+		return noeff.hl;
+	uint8_t whirlpool_card = hTemp_ffa0;
+	if (whirlpool_card == 0xFFu)
+		return noeff.hl;
+	SwapTurn();
+	PutCardInDiscardPile(whirlpool_card);
+	SwapTurn();
+	return noeff.hl;
+}
+/* <<< factory Whirlpool_DiscardEffect */

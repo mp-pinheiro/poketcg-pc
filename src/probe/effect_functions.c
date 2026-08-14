@@ -1840,6 +1840,20 @@ static void adapt_Barrier_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Barrier_AISelectEffect */
 
+/* >>> factory Whirlpool_AISelectEffect */
+static void adapt_Whirlpool_AISelectEffect(ProbeState *s)
+{
+	s->a = Whirlpool_AISelectEffect();
+}
+/* <<< factory Whirlpool_AISelectEffect */
+
+/* >>> factory Whirlpool_DiscardEffect */
+static void adapt_Whirlpool_DiscardEffect(ProbeState *s)
+{
+	s->hl = Whirlpool_DiscardEffect(s->hl);
+}
+/* <<< factory Whirlpool_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2071,5 +2085,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ClefairyMetronome_CheckAttacks", adapt_ClefairyMetronome_CheckAttacks },
 	{ "Psychic_DamageBoostEffect", adapt_Psychic_DamageBoostEffect },
 	{ "Barrier_AISelectEffect", adapt_Barrier_AISelectEffect },
+	{ "Whirlpool_AISelectEffect", adapt_Whirlpool_AISelectEffect },
+	{ "Whirlpool_DiscardEffect", adapt_Whirlpool_DiscardEffect },
 	{ NULL, NULL },
 };
