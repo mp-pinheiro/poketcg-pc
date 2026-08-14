@@ -14,14 +14,19 @@ In this order:
 1. `docs/port-contract.md` — the contract, in full. Memory model, the three C
    rules, adapter rules, case-key reference, mutation testing, exclusion
    taxonomy. Normative.
-2. `docs/vision.md` — architecture and phase order. Descriptive.
-3. `docs/plan.md` — what is being worked on right now, and by which slice.
+2. `docs/factory-contract.md` — the exact `CONTRACT`/`CASES`/`MUTATIONS` block
+   format a translator must emit. Normative for case modules.
+3. `docs/vision.md` — architecture and phase order. Descriptive, optional.
+
+Orchestrating a port run instead of writing C? `docs/factory-workflow.md` is the
+only runbook you need.
 
 ## 3. Dependencies
 
 Linux setup requires `build-essential`, CMake 3.20+, Ninja, Python 3, Git,
-`git-credential-oauth`, SDL2 development headers/libraries, `just`, `jj`, `uv`,
-and `git-cliff`.
+SDL2 development headers/libraries, `just`, `jj`, `uv`, and `git-cliff`.
+Forgejo credentials come from the in-repo helper `tools/git-credential-forgejo`
+(`just forgejo-auth-check` proves them); no browser or OAuth helper is involved.
 
 `just bootstrap` creates the pinned `poketcg/` disassembly checkout.
 `just oracle-venv` creates `/tmp/pbenv` and installs PyBoy.
@@ -48,18 +53,18 @@ The commands that matter, from the `justfile`:
 | `just bootstrap` | clone + build the disassembly (one-time) |
 | `just oracle-venv` | PyBoy into `/tmp/pbenv` (one-time) |
 | `just build` | configure + build the C side |
-| `just oracle-diff <Fn>` | diff one routine's C port against the PyBoy oracle |
-| `just oracle-diff-all` | the gate — every registered routine, also runs `lint-adapters` |
-| `just data-verify` | data/asset extraction round-trip |
-| `just oracleb-regenerate` | generate and build the GB Recompiled replay executable |
-| `just oracleb-replay` | replay-determinism half of the gb-recompiled oracle |
-| `just progress` | recompute progress report from registry + gate |
+| `just oracle-diff <Fn>` | diff one routine against the PyBoy oracle — the per-routine check |
+| `just oracle-release-gate` | **the gate.** Central barrier; the only producer of `site/data/gate.json` |
+| `just oracle-diff-all` | older PyBoy-only full sweep. Orchestrator only; writes no gate record |
+| `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
+| `just forgejo-auth-check` | prove git + REST credentials work non-interactively |
+| `just issues-fetch` | refresh the read-only Forgejo issue cache |
+| `just issues-plan` | write the desired-state issue audit (no writes to Forgejo) |
+| `just issues-sync` | dry-run the Forgejo reconciliation |
+| `just issues-sync-apply` | apply it — the only command that mutates Forgejo issues |
+| `just data-verify` | data/asset extraction round-trip |
 | `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
-| `just issues-fetch` | refresh the stable, read-only Forgejo issue cache |
-| `just issues-plan` | write the read-only desired-state issue audit |
-| `just issues-verify` | refetch Forgejo and verify routine marker coverage |
-
 
 ## 5. Concurrency protocol
 

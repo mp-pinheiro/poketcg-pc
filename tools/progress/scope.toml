@@ -1,5 +1,5 @@
 # Code the port will never contain. Removed from the denominator, listed on the site.
-# Sources: docs/plan.md:120-129 (exclusion table), docs/port-contract.md:266-281 (taxonomy).
+# Reasons follow the exclusion taxonomy in docs/port-contract.md.
 
 [[exclude]]
 kind = "sgb"
@@ -17,5 +17,5 @@ symbols = ["CopyDMAFunction", "WaitForVBlank", "EnableSRAM", "DisableSRAM"]
 
 [[exclude]]
 kind = "dead"
-reason = "zero callsites in poketcg/src (docs/plan.md:124)"
+reason = "zero callsites in poketcg/src"
 symbols = ["HLTimes10", "ADividedBy10", "GetNextElementOfList", "SetListToNextPosition"]

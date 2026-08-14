@@ -1,22 +1,22 @@
 # docs/
 
-Reading order for porting work: `vision.md` → `port-contract.md` → `plan.md`.
-Factory orchestration then uses `factory-workflow.md`; translator lanes use
-`factory-contract.md`. Repository writes follow `jj-workflow.md`.
+Six documents, each with one job. Nothing here is a task list — work is selected
+deterministically by the factory from open `port-ready` Forgejo issues.
 
-- `vision.md` — architecture and phase order. Descriptive: the plan of record
-  for what the port becomes, updated at each phase boundary. Not normative.
-- `port-contract.md` — the porting contract. Memory model, the three C rules,
-  adapter rules, required case coverage, mutation testing, exclusion
-  taxonomy. **Normative** — read in full before writing any C.
-- `plan.md` — the live execution plan for the wave currently in flight: slice
-  breakdown, ownership, barrier checks, per-slice status table.
-- `phase1-transform.md` — the per-routine delete/dissolve/port verdicts for
-  the hardware-removal transform (Phase 1 / #2).
-- `jj-workflow.md` — the jj + git VCS workflow this repo enforces.
-- `factory-workflow.md` — Forgejo-backed packet selection, disposable lanes,
-  serial integration, and the commands used by an orchestrator session.
-- `factory-contract.md` — the C, probe, case, and output contract given to a
-  stateless translator lane.
+| doc | role |
+|---|---|
+| `port-contract.md` | **Normative.** The porting contract: memory model, the three C rules, adapter rules, required case coverage, mutation testing, exclusion taxonomy. Read in full before writing any C. |
+| `factory-contract.md` | **Normative.** The exact `CONTRACT` / `CASES` / `MUTATIONS` blocks a translator lane must emit. |
+| `factory-workflow.md` | The orchestrator runbook: preflight, the loop, reconciliation, escalation, invariants. The `start` trigger reads this and nothing else. |
+| `jj-workflow.md` | VCS workflow and Forgejo authentication (Cloudflare Access + PAT helper). |
+| `vision.md` | Descriptive: architecture, phase order, prior-art rationale. Not normative. |
+| `phase1-transform.md` | Per-routine delete/dissolve/port verdicts for the hardware-removal transform. |
 
-`docs/port-contract.md` is normative; `docs/vision.md` is descriptive.
+Machine-readable state lives outside `docs/` and always wins over prose:
+`site/data/gate.json` (last central gate), `site/data/progress.json` (work
+records), `tools/progress/scope.toml` (exclusions), `.factory/` (queue, issue
+cache, plan).
+
+The wave-era slice plan (`plan.md`) is deleted. Its per-slice history is in jj
+history and `site/data/history.jsonl`; its conventions live in
+`port-contract.md`; its exclusion table is `tools/progress/scope.toml`.

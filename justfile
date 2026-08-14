@@ -110,14 +110,6 @@ build-barrier:
     cmake -G Ninja -B build-barrier -DCMAKE_BUILD_TYPE=Debug -DPORT_FILES=""
     ninja -C build-barrier
 
-# Legacy full inventory remains PyBoy-backed until the GBRT driver lands.
-oracle-fn-all-legacy: build-barrier lint-adapters
-    #!/usr/bin/env bash
-    set -euo pipefail
-    export POKETCG_ROM=poketcg/poketcg.gbc
-    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe build-barrier/poketcg_probe
-
-
 # Rebuild an already configured private tree without re-running CMake.
 build-incremental:
     #!/usr/bin/env bash
@@ -170,9 +162,6 @@ oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Diff one routine's C port against PyBoy running the real ROM.
 
-# Run every schema-2 primary case.
-oracle-fn-migrated: oracle-build-gbref build-barrier lint-adapters
-    python3 tools/oracle/fn_all.py --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
     mkdir -p site/data
@@ -215,8 +204,7 @@ oracle-diff-all: build lint-adapters
     #!/usr/bin/env bash
     set -euo pipefail
     export POKETCG_ROM=poketcg/poketcg.gbc
-    mkdir -p site/data
-    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe --report site/data/gate.json
+    /tmp/pbenv/bin/python tests/test_leaves.py --all --probe {{build_dir}}/poketcg_probe
 
 # Reject probe adapters that reimplement the routine they marshal (issue #19).
 lint-adapters:
@@ -284,17 +272,21 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
-# Forgejo is authoritative. Fetch and verify are read-only; no issue mutation
-# path exists in the repository tooling.
+# Forgejo is authoritative. Fetch and verify are read-only.
 issues-fetch:
     python3 tools/factory/issues.py fetch
 
 issues-plan:
     python3 tools/factory/issues.py plan --json
 
-
 issues-verify:
     python3 tools/factory/issues.py verify --live
+
+issues-sync:
+    python3 tools/factory/issues.py sync
+
+issues-sync-apply:
+    python3 tools/factory/issues.py sync --apply
 
 
 # Prove Forgejo git + REST credentials work with no browser prompt. Needs
@@ -302,9 +294,6 @@ issues-verify:
 forgejo-auth-check:
     python3 tools/factory/auth_check.py
 
-# One-release compatibility name; tiers and file groups are retired.
-generate-port-issues:
-    python3 tools/factory/issues.py plan
 
 # Dispatch comes from factory packets, never mutable issue titles.
 launch-port:

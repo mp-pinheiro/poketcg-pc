@@ -1,9 +1,17 @@
 # Exact `start` session rule
 
-When, and only when, the user's trimmed message is exactly `start`, treat it as the autonomous port workflow trigger. This is not a normal porting request.
+When, and only when, the user's trimmed message is exactly `start`, treat it as
+the port-factory trigger. This is not a normal porting request.
 
-Before selecting, reading, or claiming an issue, immediately read and execute `docs/autonomous-port-workflow.md`. Do not create a routine-port todo list, dispatch a scout to choose an issue, implement a routine, or stop after issue selection. The run must continue through issue claims, isolated worker dispatch, worker validation/publication, terminal `READY_FOR_MERGE` or `BLOCKED` replies, serialized central gates, and merge/issue verification as specified by the runbook.
+Immediately read `docs/factory-workflow.md` and execute the loop it defines. Do
+not create a routine-port todo list, dispatch a scout to choose work, or
+hand-port a routine: work selection is deterministic — `tools/factory/packet.py
+build` consumes open `port-ready` Forgejo issues and emits packets. Keep running
+the loop until the frontier is empty or a STOP-THE-LINE gate fires.
 
-The orchestrator selects and claims distinct issues. Workers never select or claim issues. Only the orchestrator runs `just oracle-diff-all` and `just oracle-release-gate`.
+The orchestrator session owns every repository, jj, and Forgejo write, and is
+the only session that runs a central gate (`just oracle-release-gate`).
+Translator lanes are stateless, disposable, and receive no credentials.
 
-Messages such as `/start`, `Start`, `start <issue>`, or prose containing `start` are ordinary requests and do not activate this rule.
+Messages such as `/start`, `Start`, `start <issue>`, or prose containing `start`
+are ordinary requests and do not activate this rule.

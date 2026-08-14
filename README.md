@@ -9,14 +9,15 @@ On Linux, install:
 ```sh
 sudo apt install \
   build-essential cmake ninja-build python3 python3-venv \
-  git git-credential-oauth libsdl2-dev
+  git libsdl2-dev
 ```
 
 The project also uses:
 
 - `just` for repository commands.
 - `jj` for version control writes.
-- `git-credential-oauth` for browser-based Forgejo HTTPS authentication.
+- `tools/git-credential-forgejo` (in-repo) for non-interactive Forgejo HTTPS
+  authentication; verify with `just forgejo-auth-check`.
 - `uv` for the PyBoy virtual environment.
 - `git-cliff` for the generated `CHANGELOG.md` and release recipe.
 - Python packages installed by `just oracle-venv`.
@@ -120,4 +121,4 @@ GB Recompiled does not include ROMs. Use only ROM images you are legally allowed
 
 ## Repository guidance
 
-Read `AGENTS.md` before making changes. The normative porting contract is `docs/port-contract.md`; architecture and current work are documented in `docs/vision.md` and `docs/plan.md`.
+Read `AGENTS.md` before making changes. The normative porting contract is `docs/port-contract.md`; a port run is orchestrated from `docs/factory-workflow.md`; architecture is in `docs/vision.md`.

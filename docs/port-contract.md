@@ -145,7 +145,8 @@ under that exact string.
 ## Cases — `tests/cases/<file>.py`
 
 ```python
-CONTRACT = {"Foo": ("a", "b", "c", "d", "e", "hl")}   # fields the diff compares
+CONTRACT = {"Foo": {"compare": ("a", "b", "c", "d", "e", "hl"),
+                    "preserve": ("d", "e")}}
 CASES = {"Foo": [ {...}, {...} ]}
 ```
 
