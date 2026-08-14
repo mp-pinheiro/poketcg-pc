@@ -60,6 +60,34 @@ def current_revision() -> str | None:
     return None
 
 
+GATE_INPUT_PREFIXES = (
+    "src/", "tests/", "include/", "tools/oracle/", "CMakeLists.txt", "poketcg/",
+)
+
+
+def gate_inputs_changed(recorded: str, tested: str) -> bool:
+    """True when a file the gate actually measures differs between two revisions.
+
+    The gate records its own parent commit, so the commit that publishes a gate
+    report is always one ahead of it. Comparing hashes would make every gate
+    stale on publication; only changes under a measured path invalidate it.
+    """
+    try:
+        result = subprocess.run(
+            ["jj", "diff", "--from", recorded, "--to", tested, "--summary"],
+            cwd=ROOT, capture_output=True, text=True, timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return True
+    if result.returncode != 0:
+        return True
+    for line in result.stdout.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2 and parts[1].startswith(GATE_INPUT_PREFIXES):
+            return True
+    return False
+
+
 def gate_is_trusted(
     gate_data: dict | None,
     *,
@@ -95,7 +123,9 @@ def gate_is_trusted(
     if not recorded:
         return False
     tested = revision if revision is not None else current_revision()
-    return bool(tested and recorded == tested)
+    if not tested:
+        return False
+    return recorded == tested or not gate_inputs_changed(recorded, tested)
 
 
 def load_operational_blockers() -> dict[str, dict]:

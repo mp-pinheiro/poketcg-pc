@@ -8,11 +8,13 @@ read-only pagination and desired-state audits; it never mutates remote issues.
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import hashlib
 import importlib.util
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 import urllib.error
@@ -25,6 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import ROOT, write_json  # noqa: E402
 
 REPORT_PATH = ROOT / "tools" / "progress" / "report.py"
+PROGRESS_JSON = ROOT / "site" / "data" / "progress.json"
 CACHE = ROOT / ".factory" / "issues-cache.json"
 PLAN_PATH = ROOT / ".factory" / "issues-plan.json"
 FORGEJO_URL = os.environ.get(
@@ -621,6 +624,130 @@ def print_plan(plan: dict, as_json: bool) -> None:
             f"#{number}" for number in plan["ignored_unmarked"]))
 
 
+def load_committed_report(path: Path) -> dict:
+    if not path.exists():
+        raise ModelError(
+            f"{path} missing; run `just progress` first, "
+            f"or pass --live-report to recompute in memory"
+        )
+    return json.loads(path.read_text())
+
+
+def assert_gate_fresh() -> None:
+    """Refuse to reconcile when a gate input changed after the gate ran."""
+    gate_path = ROOT / "site" / "data" / "gate.json"
+    if not gate_path.exists():
+        raise ModelError(f"{gate_path} missing; run `just oracle-release-gate`")
+    recorded = json.loads(gate_path.read_text()).get("commit")
+    if not recorded:
+        raise ModelError(f"{gate_path} records no commit; re-run the gate")
+    spec = importlib.util.spec_from_file_location("port_gate_trust", REPORT_PATH)
+    if spec is None or spec.loader is None:
+        raise ModelError("cannot load progress report")
+    report = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(report)
+    head = report.current_revision()
+    if not head:
+        raise ModelError("cannot resolve the current revision")
+    if recorded != head and report.gate_inputs_changed(recorded, head):
+        raise ModelError(
+            f"gate at {recorded[:12]} predates a change to a measured path; "
+            f"run `just oracle-release-gate && just progress` before reconciling"
+        )
+
+
+def api_request(path: str, payload: dict | None = None,
+                *, method: str = "GET") -> object:
+    dotenv = dotenv_credentials()
+    headers = {
+        "Accept": "application/json",
+        "Authorization": forgejo_authorization(dotenv=dotenv),
+        "User-Agent": USER_AGENT,
+        **cloudflare_access_headers(dotenv),
+    }
+    data = None
+    if payload is not None:
+        data = json.dumps(payload).encode()
+        headers["Content-Type"] = "application/json"
+    owner = urllib.parse.quote(FORGEJO_OWNER, safe="")
+    repo = urllib.parse.quote(FORGEJO_REPO, safe="")
+    url = f"{FORGEJO_URL}/api/v1/repos/{owner}/{repo}{path}"
+    request = urllib.request.Request(url, data=data, headers=headers, method=method)
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                content_type = response.headers.get("Content-Type", "")
+                body = response.read()
+            if content_type.startswith("text/html"):
+                raise ModelError(
+                    f"Cloudflare Access intercepted {url}: the service token is "
+                    "not authorized for the Forgejo REST API "
+                    "(see docs/jj-workflow.md)"
+                )
+            return json.loads(body) if body else None
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode(errors="replace")[:200]
+            if exc.code in TRANSIENT_STATUS and attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            raise ModelError(
+                f"{method} {path} returned HTTP {exc.code}: {detail}"
+            ) from exc
+        except urllib.error.URLError as exc:
+            if attempt < 3:
+                time.sleep(2 ** attempt)
+                continue
+            raise ModelError(f"{method} {path} failed: {exc}") from exc
+    raise AssertionError("unreachable")
+
+
+def label_ids() -> dict[str, int]:
+    return {entry["name"]: entry["id"] for entry in api_request("/labels")}
+
+
+def apply_action(action: dict, ids: dict[str, int]) -> None:
+    number = action["issue_number"]
+    if number is None:
+        raise ModelError(
+            f"cannot apply a create action for {action['work_id']}: "
+            f"managed issues are created in Forgejo, not by this tool"
+        )
+    api_request(f"/issues/{number}", {
+        "title": action["title"],
+        "body": action["body"],
+        "state": action["desired_state"],
+    }, method="PATCH")
+    api_request(f"/issues/{number}/labels",
+                {"labels": [ids[name] for name in action["labels"]]},
+                method="PUT")
+
+
+def apply_plan(plan: dict, *, workers: int = 8) -> tuple[int, list[tuple]]:
+    actions = plan["actions"]
+    ids = label_ids()
+    missing = {name for a in actions for name in a["labels"]} - set(ids)
+    if missing:
+        raise ModelError(f"Forgejo repository lacks labels: {sorted(missing)}")
+
+    def work(action: dict) -> tuple[dict, str | None]:
+        try:
+            apply_action(action, ids)
+            return action, None
+        except ModelError as exc:
+            return action, str(exc)
+
+    applied = 0
+    failures: list[tuple] = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+        for action, error in pool.map(work, actions):
+            if error is None:
+                applied += 1
+            else:
+                failures.append((action["issue_number"], error))
+    return applied, failures
+
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
@@ -628,10 +755,16 @@ def main() -> int:
     plan_parser = sub.add_parser("plan")
     plan_parser.add_argument("--json", action="store_true")
     plan_parser.add_argument("--cache", type=Path, default=CACHE)
-    plan_parser.add_argument("--report", type=Path)
+    plan_parser.add_argument("--report", type=Path, default=PROGRESS_JSON)
+    plan_parser.add_argument("--live-report", action="store_true")
     verify_parser = sub.add_parser("verify")
     verify_parser.add_argument("--cache", type=Path, default=CACHE)
     verify_parser.add_argument("--live", action="store_true")
+    sync_parser = sub.add_parser("sync")
+    sync_parser.add_argument("--apply", action="store_true")
+    sync_parser.add_argument("--cache", type=Path, default=CACHE)
+    sync_parser.add_argument("--report", type=Path, default=PROGRESS_JSON)
+    sync_parser.add_argument("--workers", type=int, default=8)
     args = parser.parse_args()
 
     try:
@@ -643,7 +776,7 @@ def main() -> int:
             return 0
         if args.command == "plan":
             snapshot = load_cache(path=args.cache)
-            report = json.loads(args.report.read_text()) if args.report else None
+            report = None if args.live_report else load_committed_report(args.report)
             plan = desired_plan(snapshot, report)
             save_plan(plan)
             print_plan(plan, args.json)
@@ -658,6 +791,34 @@ def main() -> int:
             print(
                 f"issues: {len(managed)} managed routines, full Forgejo coverage"
             )
+            return 0
+        if args.command == "sync":
+            assert_gate_fresh()
+            plan = desired_plan(load_cache(path=args.cache),
+                                load_committed_report(args.report))
+            save_plan(plan)
+            if not plan["actions"]:
+                print("issues: already reconciled, 0 actions")
+                return 0
+            if not args.apply:
+                print_plan(plan, False)
+                print(f"\ndry run: {len(plan['actions'])} action(s); "
+                      f"pass --apply to write them to Forgejo")
+                return 0
+            applied, failures = apply_plan(plan, workers=args.workers)
+            print(f"applied {applied}/{len(plan['actions'])} action(s)")
+            for number, error in failures[:20]:
+                print(f"  FAILED #{number}: {error}")
+            if failures:
+                raise ModelError(f"{len(failures)} action(s) failed")
+            residual = desired_plan(fetch_snapshot(),
+                                    load_committed_report(args.report))
+            if residual["actions"]:
+                raise ModelError(
+                    f"reconciliation incomplete: "
+                    f"{len(residual['actions'])} action(s) still pending"
+                )
+            print("issues: reconciled, plan is empty")
             return 0
     except (ModelError, OSError, json.JSONDecodeError) as exc:
         fail(str(exc))

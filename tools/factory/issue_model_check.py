@@ -578,10 +578,18 @@ def main() -> int:
         "run_gh",
         "run_graphql",
         "apply_graphql_batch",
-        "apply_plan",
         "mark_migration_complete",
     ):
         assert not hasattr(issues, retired)
+
+    assert hasattr(issues, "apply_plan")
+    try:
+        issues.apply_action({"issue_number": None, "work_id": "port:v1:demo:Foo",
+                             "title": "t", "body": "b", "labels": []}, {})
+    except issues.ModelError as exc:
+        assert "create action" in str(exc)
+    else:
+        raise AssertionError("apply_action accepted a create action")
     common = load("factory_common_contract", ROOT / "tools/factory/common.py")
     common_cache = Path("/tmp/poketcg-common-issue-cache.json")
     original_common_cache = common.ISSUES_CACHE
