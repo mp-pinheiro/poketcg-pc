@@ -1,0 +1,84 @@
+#include "home/npc_core.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* >>> factory statics */
+#include "home/load_animation.h"
+#include "home/map.h"
+#include "home/random.h"
+#include "home/sprite_animations.h"
+#include "mem.h"
+
+/* engine/overworld/npc_core.asm constants */
+#define NPC_RONALD1              0x02u
+#define NPC_RONALD2              0x71u
+#define NPC_RONALD3              0x72u
+#define LOADED_NPC_SPRITE        0x01u
+#define LOADED_NPC_DIRECTION     0x04u
+#define LOADED_NPC_FLAGS         0x05u
+#define LOADED_NPC_ANIM          0x06u
+#define NPC_FLAG_DIRECTIONLESS_F 0x04u
+#define SPRITE_ANIM_COUNTER      0x0eu
+
+/* flag byte bits: Z=0x80, N=0x40, H=0x20, C=0x10 */
+#define F_Z                      0x80u
+#define F_C                      0x10u
+/* <<< factory statics */
+
+/* >>> factory CheckIfNPCIsRonald */
+/* npc_core.asm:123-138. Compares the id in a against the three Ronald ids and
+ * exits through `scf` on a match or `or a` otherwise, so the whole flag byte
+ * is an output: Z|C ($90) for a Ronald, Z ($80) when a == 0, else $00. */
+uint8_t CheckIfNPCIsRonald(uint8_t a)
+{
+	if (a == NPC_RONALD1 || a == NPC_RONALD2 || a == NPC_RONALD3)
+		return (uint8_t)(F_Z | F_C); /* cp sets Z, scf clears N/H and sets C */
+	return (uint8_t)(a == 0 ? F_Z : 0x00u); /* or a: Z=(a==0), N/H/C clear */
+}
+/* <<< factory CheckIfNPCIsRonald */
+
+/* >>> factory UpdateNPCAnimation */
+/* npc_core.asm:229-261. Temporarily aims wWhichSprite at the temp NPC's sprite
+ * and starts its animation, offset by the facing direction unless the NPC is
+ * flagged directionless. a (echo of wWhichSprite), f, bc, hl and wWhichSprite
+ * itself are all restored before ret; only the sprite animation state written
+ * by StartNewSpriteAnimation survives. */
+uint8_t UpdateNPCAnimation(void)
+{
+	uint8_t saved_which = wWhichSprite;
+	uint16_t npc = GetLoadedNPCID(wLoadedNPCTempIndex).hl;
+	if (gb_read8(npc) != 0) {
+		wWhichSprite = gb_read8((uint16_t)(npc + LOADED_NPC_SPRITE));
+		uint8_t anim = gb_read8((uint16_t)(npc + LOADED_NPC_ANIM));
+		if ((gb_read8((uint16_t)(npc + LOADED_NPC_FLAGS)) & (1u << NPC_FLAG_DIRECTIONLESS_F)) == 0)
+			anim = (uint8_t)(anim + gb_read8((uint16_t)(npc + LOADED_NPC_DIRECTION)));
+		StartNewSpriteAnimation(anim);
+	}
+	wWhichSprite = saved_which;
+	return saved_which;
+}
+/* <<< factory UpdateNPCAnimation */
+
+/* >>> factory ApplyRandomCountToNPCAnim */
+/* npc_core.asm:262-309. Subtracts a random 0..counter-1 amount from the temp
+ * NPC's sprite animation counter (skipped when the counter is 0 or $ff) so
+ * same-animation NPCs start out of phase. a (echo of wWhichSprite), f, bc, hl
+ * and wWhichSprite itself are all restored before ret. */
+uint8_t ApplyRandomCountToNPCAnim(void)
+{
+	uint8_t saved_sprite = wWhichSprite;
+	uint16_t npc = GetLoadedNPCID(wLoadedNPCTempIndex).hl;
+	if (gb_read8(npc) != 0) {
+		wWhichSprite = gb_read8((uint16_t)(npc + LOADED_NPC_SPRITE));
+		uint16_t counter = GetSpriteAnimBufferProperty(SPRITE_ANIM_COUNTER);
+		uint8_t count = gb_read8(counter);
+		if (count != 0u && count != 0xFFu) {
+			uint8_t r = Random((uint8_t)(count - 1u));
+			gb_write8(counter, (uint8_t)(count - r));
+		}
+	}
+	wWhichSprite = saved_sprite;
+	return saved_sprite;
+}
+/* <<< factory ApplyRandomCountToNPCAnim */
