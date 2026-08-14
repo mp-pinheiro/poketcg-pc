@@ -13,6 +13,12 @@
  * computes the address; callers dereference it through the bus under the bank
  * they switched, so no rom_ptr here. */
 #define DECKNAMING_KEYBOARD_DATA 0x7019u
+
+#include "home/sound.h"
+
+#define MENU_CANCEL 0xFFu
+#define SFX_CONFIRM 0x02u
+#define SFX_CANCEL  0x03u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -37,3 +43,28 @@ uint16_t DeckNamingScreen_GetCharInfoFromPos(uint16_t hl)
 	return addr;
 }
 /* <<< factory DeckNamingScreen_GetCharInfoFromPos */
+
+/* >>> factory ClearMemory_Bank6 */
+/* input_name.asm:32-44. Fills `a` bytes at hl with zero. The loop is
+ * post-tested via `dec b`/`jr nz`, so a == 0 wraps to 256 writes. The asm
+ * push/pops af, bc and hl, so no register is produced: the adapter leaves
+ * the probe state untouched. */
+void ClearMemory_Bank6(uint8_t a, uint16_t hl)
+{
+	uint32_t n = a ? a : 0x100u;
+	for (uint32_t i = 0; i < n; i++)
+		gb_write8(hl++, 0u);
+}
+/* <<< factory ClearMemory_Bank6 */
+
+/* >>> factory DrawTextboxForKeyboard */
+/* input_name.asm:243-252. Forwards the caller's a and hl (text pointer) to
+ * DrawRegularTextBox with the keyboard area's geometry: x=0 (d), y=3 (e),
+ * w=20 (b), h=15 (c). The wrapper itself clobbers bc/de and whatever the
+ * callee leaves in af, so only the callee's advanced hl is a load-bearing
+ * output and is written back through the pointer. */
+void DrawTextboxForKeyboard(uint16_t *hl, uint8_t a)
+{
+	DrawRegularTextBox(hl, a, 20u, 15u, 0u, 3u);
+}
+/* <<< factory DrawTextboxForKeyboard */
