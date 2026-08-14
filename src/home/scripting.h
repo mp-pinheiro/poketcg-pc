@@ -49,4 +49,11 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy2(void);
 /* >>> factory IncreaseScriptPointerBy4 */
 IncreaseScriptPointerResult IncreaseScriptPointerBy4(void);
 /* <<< factory IncreaseScriptPointerBy4 */
+/* >>> factory IncreaseScriptPointerBy3 */
+/* >>> factory IncreaseScriptPointerBy3 */
+IncreaseScriptPointerResult IncreaseScriptPointerBy3(void);
+/* <<< factory IncreaseScriptPointerBy3 */
+/* >>> factory GetScriptArgs5AfterPointer */
+GetScriptArgsAfterPointerResult GetScriptArgs5AfterPointer(void);
+/* <<< factory GetScriptArgs5AfterPointer */
 #endif

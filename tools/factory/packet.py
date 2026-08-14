@@ -648,6 +648,14 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
         and managed_issues[f["work_id"]]["state"] == "open"
         and "port-ready" in managed_issues[f["work_id"]]["labels"]
     ]
+    held = set()
+    for path in QUEUE.glob("*.json"):
+        entry = json.loads(path.read_text())
+        if entry.get("state") in (None, "pending"):
+            continue
+        held.update(r["work_id"] for r in entry.get("routines", [])
+                    if r.get("work_id"))
+    ready = [f for f in ready if f["work_id"] not in held]
     if dir_filter:
         ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
 

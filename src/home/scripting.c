@@ -111,3 +111,22 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy4(void)
 	return IncreaseScriptPointer(4u);
 }
 /* <<< factory IncreaseScriptPointerBy4 */
+
+/* >>> factory IncreaseScriptPointerBy3 */
+/* scripting.asm:592-593. ld a,3 then fallthrough into IncreaseScriptPointer. */
+IncreaseScriptPointerResult IncreaseScriptPointerBy3(void)
+{
+	return IncreaseScriptPointer(3u);
+}
+/* <<< factory IncreaseScriptPointerBy3 */
+
+/* >>> factory GetScriptArgs5AfterPointer */
+/* scripting.asm:611-613. Tail-jump wrapper: `ld a, 5` then `jr` into
+ * GetScriptArgsAfterPointer, so it fixes the arg offset to 5 and shares the
+ * callee's entire exit contract (a, f, b, c; d, e, hl preserved). Modeled
+ * as a plain call to the already-ported callee. */
+GetScriptArgsAfterPointerResult GetScriptArgs5AfterPointer(void)
+{
+	return GetScriptArgsAfterPointer(5u);
+}
+/* <<< factory GetScriptArgs5AfterPointer */
