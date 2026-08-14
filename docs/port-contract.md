@@ -291,6 +291,22 @@ Examples already hit in this repo: `StopMusic` → `PlaySong`,
 `LoadSymbolsFont` → `CopyFontsOrDuelGraphicsTiles`,
 `SetCursorParametersForTextBox_Default` → `WaitForButtonAorB`.
 
+## Indirect dispatch is invisible to the sweep
+
+Reason 4 above has no static callee edge, so the call-graph sweep cannot see it:
+`jp hl`, `call CallHL`, and `JumpToFunctionInTable` resolve at runtime. Those
+routines are reported `ready=true` with `blockers=[]` in `site/data/progress.json`
+while being unportable — the frontier would offer them as packets.
+
+`.factory/blocked.toml` is the enforcement point. An entry there sets
+`operational_blocker`, which makes the work record `state=blocked` and keeps
+packet construction away. `AIDoAction` (indexes `DeckAIPointerTable`),
+`RunOverworldScript` (`OverworldScriptTable`), `TryExecuteEffectCommandFunction`
+(`CallHL` into `[wEffectFunctionsBank]`), and `_ExecuteGameEvent`
+(`GameEventPointerTable`) are blocked this way. A `ready=true` routine that is
+also `state=blocked` is correct, not a bug — do not remove the entry to make the
+frontier look larger.
+
 ## The four recurring traps
 
 - **`ld a,[hl]` is a bus read**, resolved under the *caller's* bank via

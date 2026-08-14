@@ -160,8 +160,6 @@ oracle-diff-group GROUP: build
 # Run one schema-2 case through the GBRT primary and native probe.
 oracle-fn FN CASE INDEX="0": oracle-build-gbref build-barrier
     python3 tools/oracle/gbref/compare_one.py --fn {{FN}} --index {{INDEX}} --case {{CASE}} --rom "$(realpath poketcg/poketcg.gbc)" --symbols "$(realpath poketcg/poketcg.sym)" --probe "$(realpath build-barrier/poketcg_probe)" --runner "$(realpath tools/oracle/gbref/build/gbref_runner)"
-# Diff one routine's C port against PyBoy running the real ROM.
-
 # Fixed GBRT primary inventory barrier.
 oracle-fn-all: oracle-build-gbref build-barrier lint-adapters
     mkdir -p site/data
@@ -193,6 +191,7 @@ oracle-release-gate: oracle-gate data-verify
     python3 tools/audit_mutations.py --stage release
     python3 tools/audit_constants.py
 
+# Diff one routine's C port against PyBoy running the real ROM.
 oracle-diff FN: build
     #!/usr/bin/env bash
     set -euo pipefail
