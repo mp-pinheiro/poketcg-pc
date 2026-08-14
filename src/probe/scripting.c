@@ -135,6 +135,35 @@ static void adapt_IncreaseScriptPointerBy7(ProbeState *s)
 }
 /* <<< factory IncreaseScriptPointerBy7 */
 
+/* >>> factory GetScriptArgs2AfterPointer */
+static void adapt_GetScriptArgs2AfterPointer(ProbeState *s)
+{
+	GetScriptArgsAfterPointerResult r = GetScriptArgs2AfterPointer();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory GetScriptArgs2AfterPointer */
+
+/* >>> factory GetScriptArgs3AfterPointer */
+static void adapt_GetScriptArgs3AfterPointer(ProbeState *s)
+{
+	GetScriptArgsAfterPointerResult r = GetScriptArgs3AfterPointer();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory GetScriptArgs3AfterPointer */
+
+/* >>> factory SetScriptControlBytePass */
+static void adapt_SetScriptControlBytePass(ProbeState *s)
+{
+	s->a = SetScriptControlBytePass();
+}
+/* <<< factory SetScriptControlBytePass */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -149,5 +178,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointerBy5", adapt_IncreaseScriptPointerBy5 },
 	{ "IncreaseScriptPointerBy6", adapt_IncreaseScriptPointerBy6 },
 	{ "IncreaseScriptPointerBy7", adapt_IncreaseScriptPointerBy7 },
+	{ "GetScriptArgs2AfterPointer", adapt_GetScriptArgs2AfterPointer },
+	{ "GetScriptArgs3AfterPointer", adapt_GetScriptArgs3AfterPointer },
+	{ "SetScriptControlBytePass", adapt_SetScriptControlBytePass },
 	{ NULL, NULL },
 };

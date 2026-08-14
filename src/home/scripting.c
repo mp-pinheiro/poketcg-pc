@@ -168,3 +168,28 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy7(void)
 	return IncreaseScriptPointer(7u);
 }
 /* <<< factory IncreaseScriptPointerBy7 */
+
+/* >>> factory GetScriptArgs2AfterPointer */
+/* scripting.asm:619-621 */
+GetScriptArgsAfterPointerResult GetScriptArgs2AfterPointer(void)
+{
+	return GetScriptArgsAfterPointer(2u);
+}
+/* <<< factory GetScriptArgs2AfterPointer */
+
+/* >>> factory GetScriptArgs3AfterPointer */
+/* scripting.asm:623-624 */
+GetScriptArgsAfterPointerResult GetScriptArgs3AfterPointer(void)
+{
+	return GetScriptArgsAfterPointer(3u);
+}
+/* <<< factory GetScriptArgs3AfterPointer */
+
+/* >>> factory SetScriptControlBytePass */
+/* scripting.asm:641-645 */
+uint8_t SetScriptControlBytePass(void)
+{
+	wScriptControlByte = 0xffu;
+	return 0xffu;
+}
+/* <<< factory SetScriptControlBytePass */

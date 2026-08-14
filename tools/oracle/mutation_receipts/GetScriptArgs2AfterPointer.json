@@ -1,0 +1,9 @@
+{
+  "fn": "GetScriptArgs2AfterPointer",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetScriptArgs2AfterPointer\", \"registers\": {\"a\": 115, \"b\": 67, \"c\": 50, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"102132435465\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetScriptArgs2AfterPointer\", \"mismatches\": {\"a\": [115, 87], \"b\": [67, 84], \"c\": [50, 67]}}\n",
+  "restored": "{\"fn\": \"GetScriptArgs2AfterPointer\", \"registers\": {\"a\": 115, \"b\": 67, \"c\": 50, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"102132435465\"}}, \"status\": \"PASS\"}\n"
+}

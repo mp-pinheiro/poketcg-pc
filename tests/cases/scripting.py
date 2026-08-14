@@ -13,6 +13,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -172,6 +173,25 @@ CASES["IncreaseScriptPointerBy7"] = [
 ]
 # <<< factory IncreaseScriptPointerBy7
 
+# >>> factory GetScriptArgs2AfterPointer
+CONTRACT["GetScriptArgs2AfterPointer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["GetScriptArgs2AfterPointer"] = [
+    {},
+    dict(POISON, setup=[{"fn": "SetScriptPointer", "b": 0xC1, "c": 0x00}], wram={0xC100: b"\x10\x21\x32\x43\x54\x65"}),
+    {"setup": [{"fn": "SetScriptPointer", "b": 0xC1, "c": 0xFE}], "wram": {0xC1FE: b"\x76\x87\x98\xa9\xba\xcb"}},
+]
+# <<< factory GetScriptArgs2AfterPointer
+
+# >>> factory GetScriptArgs3AfterPointer
+CONTRACT["GetScriptArgs3AfterPointer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["GetScriptArgs3AfterPointer"] = [{}, dict(POISON), {"setup": [{"fn": "SetScriptPointer", "b": 0xC1, "c": 0x00}], "wram": {0xC100: b"\x10\x21\x32\x43\x54\x65\x76\x87"}, "read": {0xC100: 8}}, {"setup": [{"fn": "SetScriptPointer", "b": 0xC1, "c": 0xFC}], "wram": {0xC1FC: b"\x91\xa2\xb3\xc4\xd5\xe6\xf7\x08"}, "read": {0xC1FC: 8}}]
+# <<< factory GetScriptArgs3AfterPointer
+
+# >>> factory SetScriptControlBytePass
+CONTRACT["SetScriptControlBytePass"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["SetScriptControlBytePass"] = [{"wram": {0xD415: b"\x00"}}, dict(POISON, wram={0xD415: b"\x00"})]
+# <<< factory SetScriptControlBytePass
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -269,3 +289,12 @@ MUTATIONS["IncreaseScriptPointerBy7"] = {
 	"case_ids": ["IncreaseScriptPointerBy7-0", "IncreaseScriptPointerBy7-1", "IncreaseScriptPointerBy7-2"],
 }
 # <<< factory-mutation IncreaseScriptPointerBy7
+# >>> factory-mutation GetScriptArgs2AfterPointer
+MUTATIONS["GetScriptArgs2AfterPointer"] = {"source_symbol": "GetScriptArgs2AfterPointer", "before": "\treturn GetScriptArgsAfterPointer(2u);", "after": "\treturn GetScriptArgsAfterPointer(3u);", "case_ids": ["GetScriptArgs2AfterPointer-1", "GetScriptArgs2AfterPointer-2"]}
+# <<< factory-mutation GetScriptArgs2AfterPointer
+# >>> factory-mutation GetScriptArgs3AfterPointer
+MUTATIONS["GetScriptArgs3AfterPointer"] = {"source_symbol": "GetScriptArgs3AfterPointer", "before": "\treturn GetScriptArgsAfterPointer(3u);", "after": "\treturn GetScriptArgsAfterPointer(4u);", "case_ids": ["GetScriptArgs3AfterPointer-2", "GetScriptArgs3AfterPointer-3"]}
+# <<< factory-mutation GetScriptArgs3AfterPointer
+# >>> factory-mutation SetScriptControlBytePass
+MUTATIONS["SetScriptControlBytePass"] = {"source_symbol": "SetScriptControlBytePass", "before": "\twScriptControlByte = 0xffu;", "after": "\twScriptControlByte = 0xfeu;", "case_ids": ["SetScriptControlBytePass-0", "SetScriptControlBytePass-1"]}
+# <<< factory-mutation SetScriptControlBytePass

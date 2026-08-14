@@ -73,4 +73,13 @@ IncreaseScriptPointerResult IncreaseScriptPointerBy6(void);
 /* >>> factory IncreaseScriptPointerBy7 */
 IncreaseScriptPointerResult IncreaseScriptPointerBy7(void);
 /* <<< factory IncreaseScriptPointerBy7 */
+/* >>> factory GetScriptArgs2AfterPointer */
+GetScriptArgsAfterPointerResult GetScriptArgs2AfterPointer(void);
+/* <<< factory GetScriptArgs2AfterPointer */
+/* >>> factory GetScriptArgs3AfterPointer */
+GetScriptArgsAfterPointerResult GetScriptArgs3AfterPointer(void);
+/* <<< factory GetScriptArgs3AfterPointer */
+/* >>> factory SetScriptControlBytePass */
+uint8_t SetScriptControlBytePass(void);
+/* <<< factory SetScriptControlBytePass */
 #endif

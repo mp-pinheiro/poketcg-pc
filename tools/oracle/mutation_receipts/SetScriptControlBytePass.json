@@ -1,0 +1,9 @@
+{
+  "fn": "SetScriptControlBytePass",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetScriptControlBytePass\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54293\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetScriptControlBytePass\", \"mismatches\": {\"bus\": {\"address\": 54293, \"reference\": \"ff\", \"native\": \"fe\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[54293, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetScriptControlBytePass\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54293\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}
