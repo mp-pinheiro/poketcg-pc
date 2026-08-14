@@ -824,6 +824,13 @@ CheckIfDeckIsEmptyResult Sprout_CheckDeckAndPlayArea(void);
 /* >>> factory NidoranFCallForFamily_CheckDeckAndPlayArea */
 CheckIfDeckIsEmptyResult NidoranFCallForFamily_CheckDeckAndPlayArea(void);
 /* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+/* >>> factory DragonairHyperBeam_AISelectEffect */
+void DragonairHyperBeam_AISelectEffect(void);
+/* <<< factory DragonairHyperBeam_AISelectEffect */
+/* >>> factory ClefableMetronome_CheckAttacks */
+typedef struct { uint8_t f; uint16_t hl; } ClefableMetronomeCheckAttacksResult;
+ClefableMetronomeCheckAttacksResult ClefableMetronome_CheckAttacks(void);
+/* <<< factory ClefableMetronome_CheckAttacks */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

@@ -1953,6 +1953,23 @@ static void adapt_NidoranFCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
 }
 /* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
 
+/* >>> factory DragonairHyperBeam_AISelectEffect */
+static void adapt_DragonairHyperBeam_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	DragonairHyperBeam_AISelectEffect();
+}
+/* <<< factory DragonairHyperBeam_AISelectEffect */
+
+/* >>> factory ClefableMetronome_CheckAttacks */
+static void adapt_ClefableMetronome_CheckAttacks(ProbeState *s)
+{
+	ClefableMetronomeCheckAttacksResult r = ClefableMetronome_CheckAttacks();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ClefableMetronome_CheckAttacks */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2197,5 +2214,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "VictreebelLure_GetBenchPokemonWithLowestHP", adapt_VictreebelLure_GetBenchPokemonWithLowestHP },
 	{ "Sprout_CheckDeckAndPlayArea", adapt_Sprout_CheckDeckAndPlayArea },
 	{ "NidoranFCallForFamily_CheckDeckAndPlayArea", adapt_NidoranFCallForFamily_CheckDeckAndPlayArea },
+	{ "DragonairHyperBeam_AISelectEffect", adapt_DragonairHyperBeam_AISelectEffect },
+	{ "ClefableMetronome_CheckAttacks", adapt_ClefableMetronome_CheckAttacks },
 	{ NULL, NULL },
 };

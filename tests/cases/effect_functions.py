@@ -2123,6 +2123,16 @@ CONTRACT["NidoranFCallForFamily_CheckDeckAndPlayArea"] = {"compare": ("a", "f", 
 CASES["NidoranFCallForFamily_CheckDeckAndPlayArea"] = [{}, dict(POISON)]
 # <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea
 
+# >>> factory DragonairHyperBeam_AISelectEffect
+CONTRACT["DragonairHyperBeam_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["DragonairHyperBeam_AISelectEffect"] = [{"read": {0xFFA0: 1}}, dict(POISON, read={0xFFA0: 1})]
+# <<< factory DragonairHyperBeam_AISelectEffect
+
+# >>> factory ClefableMetronome_CheckAttacks
+CONTRACT["ClefableMetronome_CheckAttacks"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["ClefableMetronome_CheckAttacks"] = [{}, dict(POISON)]
+# <<< factory ClefableMetronome_CheckAttacks
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3620,3 +3630,9 @@ MUTATIONS["Sprout_CheckDeckAndPlayArea"] = {"source_symbol": "Sprout_CheckDeckAn
 # >>> factory-mutation NidoranFCallForFamily_CheckDeckAndPlayArea
 MUTATIONS["NidoranFCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "NidoranFCallForFamily_CheckDeckAndPlayArea", "before": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, family_flags};", "after": "\treturn (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText + 1u, family_flags};", "case_ids": ["NidoranFCallForFamily_CheckDeckAndPlayArea-0", "NidoranFCallForFamily_CheckDeckAndPlayArea-1"]}
 # <<< factory-mutation NidoranFCallForFamily_CheckDeckAndPlayArea
+# >>> factory-mutation DragonairHyperBeam_AISelectEffect
+MUTATIONS["DragonairHyperBeam_AISelectEffect"] = {"source_symbol": "DragonairHyperBeam_AISelectEffect", "before": "void DragonairHyperBeam_AISelectEffect(void)\n{\n\tAIPickEnergyCardToDiscardResult r = AIPickEnergyCardToDiscardFromDefendingPokemon();\n\thTemp_ffa0 = r.a;", "after": "void DragonairHyperBeam_AISelectEffect(void)\n{\n\tAIPickEnergyCardToDiscardResult r = AIPickEnergyCardToDiscardFromDefendingPokemon();\n\thTemp_ffa0 = (uint8_t)(r.a + 1u);", "case_ids": ["DragonairHyperBeam_AISelectEffect-0", "DragonairHyperBeam_AISelectEffect-1"]}
+# <<< factory-mutation DragonairHyperBeam_AISelectEffect
+# >>> factory-mutation ClefableMetronome_CheckAttacks
+MUTATIONS["ClefableMetronome_CheckAttacks"] = {"source_symbol": "ClefableMetronome_CheckAttacks", "before": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};", "after": "\treturn (ClefableMetronomeCheckAttacksResult){r.f, (uint16_t)(NoAttackMayBeChoosenText + 1u)};", "case_ids": ["ClefableMetronome_CheckAttacks-0", "ClefableMetronome_CheckAttacks-1"]}
+# <<< factory-mutation ClefableMetronome_CheckAttacks

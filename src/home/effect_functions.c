@@ -218,6 +218,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #define MAX_PLAY_AREA_POKEMON 0x06u
 #define NoSpaceOnTheBenchText 0x00b2u
+
+#define DUELVARS_ARENA_CARD_LAST_TURN_EFFECT 0xf8u
+#define LAST_TURN_EFFECT_DISCARD_ENERGY 0x01u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3396,3 +3399,21 @@ CheckIfDeckIsEmptyResult NidoranFCallForFamily_CheckDeckAndPlayArea(void)
 	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, family_flags};
 }
 /* <<< factory NidoranFCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory DragonairHyperBeam_AISelectEffect */
+/* effect_functions.asm:7911-7914 */
+void DragonairHyperBeam_AISelectEffect(void)
+{
+	AIPickEnergyCardToDiscardResult r = AIPickEnergyCardToDiscardFromDefendingPokemon();
+	hTemp_ffa0 = r.a;
+}
+/* <<< factory DragonairHyperBeam_AISelectEffect */
+
+/* >>> factory ClefableMetronome_CheckAttacks */
+/* effect_functions.asm:7959-7963 */
+ClefableMetronomeCheckAttacksResult ClefableMetronome_CheckAttacks(void)
+{
+	CheckAttackResult r = CheckIfDefendingPokemonHasAnyAttack();
+	return (ClefableMetronomeCheckAttacksResult){r.f, NoAttackMayBeChoosenText};
+}
+/* <<< factory ClefableMetronome_CheckAttacks */
