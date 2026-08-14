@@ -27,6 +27,7 @@ just oracle-build-gbref                        # tools/oracle/gbref/build/gbref_
 just build-barrier                             # warm central build
 just issues-fetch                              # schema-2 Forgejo cache
 python3 tools/factory/driver.py reset-stale     # crashed in-flight -> pending
+python3 tools/factory/driver.py reset-infra     # harness-failed escalations -> pending
 python3 tools/factory/integrate.py                 # checked recovery integration
 python3 tools/factory/driver.py status          # queue state
 ```

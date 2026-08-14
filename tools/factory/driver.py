@@ -508,6 +508,8 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status")
     sub.add_parser("reset-stale")
+    sub.add_parser("reset-infra",
+                   help="return harness-failed escalations to pending")
     sub.add_parser("metrics")
     escalate_parser = sub.add_parser(
         "escalate", help="write agentic-task briefs for escalated packets")
@@ -531,6 +533,22 @@ def main() -> int:
             for packet in list_packets(IN_FLIGHT):
                 packet.pop("attempt", None)
                 set_state(packet, "pending", "reset-stale")
+                print(f"reset {packet['id']}")
+    elif args.command == "reset-infra":
+        metadata = {
+            "wave_id": f"reset-infra-{os.getpid()}",
+            "pid": os.getpid(),
+            "started_at": int(time.time()),
+            "deadline_at": None,
+            "packet_ids": [],
+        }
+        with wave_lock(metadata):
+            for packet in list_packets(("escalated",)):
+                reason = packet.get("reason") or ""
+                if not reason.startswith(("infra-error:", "infra-timeout:")):
+                    continue
+                packet.pop("attempt", None)
+                set_state(packet, "pending", "reset-infra")
                 print(f"reset {packet['id']}")
     elif args.command == "escalate":
         return escalate(args.limit)
