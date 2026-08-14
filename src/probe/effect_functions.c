@@ -2077,6 +2077,16 @@ static void adapt_MysteryAttack_RandomEffect(ProbeState *s)
 }
 /* <<< factory MysteryAttack_RandomEffect */
 
+/* >>> factory MarowakCallForFamily_CheckDeckAndPlayArea */
+static void adapt_MarowakCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult r = MarowakCallForFamily_CheckDeckAndPlayArea();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2334,5 +2344,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MewtwoEnergyAbsorption_AISelectEffect", adapt_MewtwoEnergyAbsorption_AISelectEffect },
 	{ "JynxMeditate_AIEffect", adapt_JynxMeditate_AIEffect },
 	{ "MysteryAttack_RandomEffect", adapt_MysteryAttack_RandomEffect },
+	{ "MarowakCallForFamily_CheckDeckAndPlayArea", adapt_MarowakCallForFamily_CheckDeckAndPlayArea },
 	{ NULL, NULL },
 };

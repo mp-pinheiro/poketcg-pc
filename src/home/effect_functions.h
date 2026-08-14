@@ -870,6 +870,9 @@ void JynxMeditate_AIEffect(void);
 /* >>> factory MysteryAttack_RandomEffect */
 void MysteryAttack_RandomEffect(void);
 /* <<< factory MysteryAttack_RandomEffect */
+/* >>> factory MarowakCallForFamily_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult MarowakCallForFamily_CheckDeckAndPlayArea(void);
+/* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

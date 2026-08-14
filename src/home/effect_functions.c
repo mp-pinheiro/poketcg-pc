@@ -3610,3 +3610,23 @@ void MysteryAttack_RandomEffect(void)
 	}
 }
 /* <<< factory MysteryAttack_RandomEffect */
+
+/* >>> factory MarowakCallForFamily_CheckDeckAndPlayArea */
+/* effect_functions.asm:5995-6003 */
+CheckIfDeckIsEmptyResult MarowakCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	/* cp MAX_PLAY_AREA_POKEMON followed by ccf: N and H are cleared by ccf,
+	 * Z survives from the compare, carry is the inverted borrow. */
+	uint8_t f = (uint8_t)((v.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0x00u)
+		| (v.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u));
+	CheckIfDeckIsEmptyResult r;
+	r.a = v.a;
+	r.hl = NoSpaceOnTheBenchText;
+	r.f = f;
+	return r;
+}
+/* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */

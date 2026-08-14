@@ -2205,6 +2205,14 @@ CONTRACT["MysteryAttack_RandomEffect"] = {"compare": (), "preserve": ()}
 CASES["MysteryAttack_RandomEffect"] = [{"read": {0xFFA0: 1, 0xCCB8: 1}}, dict(POISON, wram={0xCCB8: b"\xaa"}, read={0xFFA0: 1, 0xCCB8: 1})]
 # <<< factory MysteryAttack_RandomEffect
 
+# >>> factory MarowakCallForFamily_CheckDeckAndPlayArea
+CONTRACT["MarowakCallForFamily_CheckDeckAndPlayArea"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["MarowakCallForFamily_CheckDeckAndPlayArea"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory MarowakCallForFamily_CheckDeckAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3741,3 +3749,11 @@ MUTATIONS["JynxMeditate_AIEffect"] = {"source_symbol": "JynxMeditate_AIEffect", 
 # >>> factory-mutation MysteryAttack_RandomEffect
 MUTATIONS["MysteryAttack_RandomEffect"] = {"source_symbol": "MysteryAttack_RandomEffect", "before": "\thTemp_ffa0 = effect;", "after": "\thTemp_ffa0 = (uint8_t)(effect + 1u);", "case_ids": ["MysteryAttack_RandomEffect-0", "MysteryAttack_RandomEffect-1"]}
 # <<< factory-mutation MysteryAttack_RandomEffect
+# >>> factory-mutation MarowakCallForFamily_CheckDeckAndPlayArea
+MUTATIONS["MarowakCallForFamily_CheckDeckAndPlayArea"] = {
+    "source_symbol": "MarowakCallForFamily_CheckDeckAndPlayArea",
+    "before": "\t\t| (v.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u));",
+    "after": "\t\t| (v.a >= MAX_PLAY_AREA_POKEMON ? 0x00u : 0x10u));",
+    "case_ids": ["MarowakCallForFamily_CheckDeckAndPlayArea-0", "MarowakCallForFamily_CheckDeckAndPlayArea-1"],
+}
+# <<< factory-mutation MarowakCallForFamily_CheckDeckAndPlayArea
