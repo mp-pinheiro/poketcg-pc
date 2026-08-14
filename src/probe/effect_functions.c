@@ -1879,6 +1879,20 @@ static void adapt_EnergyRetrieval_HandEnergyCheck(ProbeState *s)
 }
 /* <<< factory EnergyRetrieval_HandEnergyCheck */
 
+/* >>> factory MrMimeMeditate_AIEffect */
+static void adapt_MrMimeMeditate_AIEffect(ProbeState *s)
+{
+	MrMimeMeditate_AIEffect();
+}
+/* <<< factory MrMimeMeditate_AIEffect */
+
+/* >>> factory PsywaveEffect */
+static void adapt_PsywaveEffect(ProbeState *s)
+{
+	s->hl = PsywaveEffect();
+}
+/* <<< factory PsywaveEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2115,5 +2129,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRemoval_EnergyCheck", adapt_EnergyRemoval_EnergyCheck },
 	{ "EnergyRemoval_AISelection", adapt_EnergyRemoval_AISelection },
 	{ "EnergyRetrieval_HandEnergyCheck", adapt_EnergyRetrieval_HandEnergyCheck },
+	{ "MrMimeMeditate_AIEffect", adapt_MrMimeMeditate_AIEffect },
+	{ "PsywaveEffect", adapt_PsywaveEffect },
 	{ NULL, NULL },
 };

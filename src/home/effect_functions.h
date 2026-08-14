@@ -789,6 +789,12 @@ uint8_t EnergyRemoval_AISelection(void);
 typedef struct { uint16_t hl; uint8_t f; } EnergyRetrievalHandEnergyCheckResult;
 EnergyRetrievalHandEnergyCheckResult EnergyRetrieval_HandEnergyCheck(void);
 /* <<< factory EnergyRetrieval_HandEnergyCheck */
+/* >>> factory MrMimeMeditate_AIEffect */
+void MrMimeMeditate_AIEffect(void);
+/* <<< factory MrMimeMeditate_AIEffect */
+/* >>> factory PsywaveEffect */
+uint16_t PsywaveEffect(void);
+/* <<< factory PsywaveEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

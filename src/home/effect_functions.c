@@ -207,6 +207,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 
 #define NoEnergyAttachedToOpponentsActiveText 0x00aeu
+
+#define NoPokemonWithDamageCountersText 0x00acu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3272,3 +3274,29 @@ EnergyRetrievalHandEnergyCheckResult EnergyRetrieval_HandEnergyCheck(void)
 	return (EnergyRetrievalHandEnergyCheckResult){ThereAreNoBasicEnergyCardsInDiscardPileText, f};
 }
 /* <<< factory EnergyRetrieval_HandEnergyCheck */
+
+/* >>> factory MrMimeMeditate_AIEffect */
+/* effect_functions.asm:5003-5008. Applies the Meditate damage boost, then
+ * tail-jumps into SetDefiniteAIDamage (a plain call here: the jp only saves
+ * a stack frame, which the C ABI handles itself). */
+void MrMimeMeditate_AIEffect(void)
+{
+	MrMimeMeditate_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory MrMimeMeditate_AIEffect */
+
+/* >>> factory PsywaveEffect */
+/* effect_functions.asm:5154-5163. Stores the energy-multiplier damage (the de
+ * pair returned by GetEnergyAttachedMultiplierDamage) little-endian into
+ * wDamage; hl ends advanced one past the low byte, exactly as the asm leaves
+ * it. */
+uint16_t PsywaveEffect(void)
+{
+	uint16_t de = GetEnergyAttachedMultiplierDamage();
+	uint16_t hl = wDamage_ADDR;
+	gb_write8(hl++, (uint8_t)de);
+	gb_write8(hl, (uint8_t)(de >> 8));
+	return hl;
+}
+/* <<< factory PsywaveEffect */

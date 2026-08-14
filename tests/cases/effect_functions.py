@@ -2070,6 +2070,26 @@ CASES["EnergyRetrieval_HandEnergyCheck"] = [
 ]
 # <<< factory EnergyRetrieval_HandEnergyCheck
 
+# >>> factory MrMimeMeditate_AIEffect
+wDamage = 0xCCB9
+CONTRACT["MrMimeMeditate_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["MrMimeMeditate_AIEffect"] = [
+	{},
+	{"wram": {wDamage: b"\xff\xff"}},
+	dict(POISON, wram={wDamage: b"\x00\x0f"}),
+]
+# <<< factory MrMimeMeditate_AIEffect
+
+# >>> factory PsywaveEffect
+wDamage = 0xCCB9
+CONTRACT["PsywaveEffect"] = {"compare": ("hl",), "preserve": ()}
+CASES["PsywaveEffect"] = [
+	{},
+	{"wram": {wDamage: b"\xaa\x55"}},
+	dict(POISON, wram={wDamage: b"\xff\xff"}),
+]
+# <<< factory PsywaveEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3533,3 +3553,19 @@ MUTATIONS["EnergyRetrieval_HandEnergyCheck"] = {
 	"case_ids": ["EnergyRetrieval_HandEnergyCheck-0", "EnergyRetrieval_HandEnergyCheck-1"],
 }
 # <<< factory-mutation EnergyRetrieval_HandEnergyCheck
+# >>> factory-mutation MrMimeMeditate_AIEffect
+MUTATIONS["MrMimeMeditate_AIEffect"] = {
+	"source_symbol": "MrMimeMeditate_AIEffect",
+	"before": "\tMrMimeMeditate_DamageBoostEffect();\n\tSetDefiniteAIDamage();",
+	"after": "\tSetDefiniteAIDamage();\n\tSetDefiniteAIDamage();",
+	"case_ids": ["MrMimeMeditate_AIEffect-1", "MrMimeMeditate_AIEffect-2"],
+}
+# <<< factory-mutation MrMimeMeditate_AIEffect
+# >>> factory-mutation PsywaveEffect
+MUTATIONS["PsywaveEffect"] = {
+	"source_symbol": "PsywaveEffect",
+	"before": "\tuint16_t de = GetEnergyAttachedMultiplierDamage();\n\tuint16_t hl = wDamage_ADDR;",
+	"after": "\tuint16_t de = GetEnergyAttachedMultiplierDamage();\n\tuint16_t hl = (uint16_t)(wDamage_ADDR + 2u);",
+	"case_ids": ["PsywaveEffect-0", "PsywaveEffect-1", "PsywaveEffect-2"],
+}
+# <<< factory-mutation PsywaveEffect
