@@ -47,11 +47,15 @@ def canonical_work_id(source: str, name: str) -> str:
 
 
 def current_revision() -> str | None:
-    for rev in ("@-", "main"):
+    """Revision under test. CI has git and no jj; colocated jj keeps HEAD on @-."""
+    for command in (
+        ["git", "rev-parse", "HEAD"],
+        ["jj", "log", "--no-graph", "-r", "@-", "-T", "commit_id"],
+        ["jj", "log", "--no-graph", "-r", "main", "-T", "commit_id"],
+    ):
         try:
             result = subprocess.run(
-                ["jj", "log", "--no-graph", "-r", rev, "-T", "commit_id"],
-                cwd=ROOT, capture_output=True, text=True, timeout=5,
+                command, cwd=ROOT, capture_output=True, text=True, timeout=5,
             )
         except (OSError, subprocess.TimeoutExpired):
             continue
@@ -72,20 +76,25 @@ def gate_inputs_changed(recorded: str, tested: str) -> bool:
     report is always one ahead of it. Comparing hashes would make every gate
     stale on publication; only changes under a measured path invalidate it.
     """
-    try:
-        result = subprocess.run(
-            ["jj", "diff", "--from", recorded, "--to", tested, "--summary"],
-            cwd=ROOT, capture_output=True, text=True, timeout=30,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return True
-    if result.returncode != 0:
-        return True
-    for line in result.stdout.splitlines():
-        parts = line.split(maxsplit=1)
-        if len(parts) == 2 and parts[1].startswith(GATE_INPUT_PREFIXES):
-            return True
-    return False
+    plans = (
+        (["git", "diff", "--name-only", f"{recorded}..{tested}"], 1),
+        (["jj", "diff", "--from", recorded, "--to", tested, "--summary"], 2),
+    )
+    for command, fields in plans:
+        try:
+            result = subprocess.run(
+                command, cwd=ROOT, capture_output=True, text=True, timeout=30,
+            )
+        except (OSError, subprocess.TimeoutExpired):
+            continue
+        if result.returncode != 0:
+            continue
+        for line in result.stdout.splitlines():
+            parts = line.split(maxsplit=fields - 1)
+            if len(parts) == fields and parts[-1].startswith(GATE_INPUT_PREFIXES):
+                return True
+        return False
+    return True
 
 
 def gate_is_trusted(
