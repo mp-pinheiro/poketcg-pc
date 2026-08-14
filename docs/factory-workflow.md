@@ -49,10 +49,11 @@ frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=max_r
    Trust Access edge; it does not replace the Forgejo PAT. When not set via
    env or `.env`, it falls back to
    `~/.config/yfrit-forgejo/git/cloudflare-access-service-token.json`
-   (`client_id`/`client_secret`/`expires_at`).
-   These credentials cover the issue REST client only. Git and jj
-   authenticate to Forgejo through the repo-local PAT credential helper
-   documented in `docs/jj-workflow.md`.
+   (`client_id`/`client_secret`/`expires_at`). Reaching `/api/v1` also
+   requires the `Yfrit Forgejo API` Access application to grant that service
+   token; see the application table in `docs/jj-workflow.md`.
+   Git and jj authenticate to Forgejo through the repo-local PAT credential
+   helper documented in `docs/jj-workflow.md`.
 4. Resume state: `python3 tools/factory/driver.py reset-stale` returns
    crashed in-flight packets to `pending`; `driver.py status` shows the queue.
 

@@ -65,10 +65,13 @@ therefore differ; fetch the remote whose state you are inspecting.
 
 ## One-time Forgejo HTTPS authentication
 
-Git smart HTTP passes through two independent authentication layers:
+Git smart HTTP and the Forgejo REST API pass through two independent
+authentication layers:
 
-1. Cloudflare Access accepts a service token on the scoped Git routes.
-2. Forgejo accepts a Personal Access Token (PAT) via a repo-local credential helper.
+1. Cloudflare Access accepts the `yfrit-forgejo-git` service token on the
+   scoped Git routes and on `/api/v1`.
+2. Forgejo accepts a Personal Access Token (PAT): via a repo-local credential
+   helper for git and jj, and directly for the Python REST client.
 
 OAuth (`git-credential-oauth`) used to cover layer 2, but its cached token expired
 every hour and reopened a browser — which blocks the factory's automated
@@ -86,6 +89,21 @@ git config --global --add http.https://forgejo.yfrit.com/.extraHeader \
 ```
 
 The second command uses `--add` because `extraHeader` is multi-valued.
+
+Cloudflare Access gates `forgejo.yfrit.com` with these `self_hosted`
+applications:
+
+| application | path | policy |
+|---|---|---|
+| `Yfrit Forgejo git bare` | `/*/*/info/refs` | `non_identity` service token |
+| `Yfrit Forgejo git dotgit` | `/*/*.git/info/refs` | `non_identity` service token |
+| `Yfrit Forgejo API` | `/api/v1` | `non_identity` service token + `allow` `email_domain` |
+| `Yfrit Forgejo OAuth token` | `/login/oauth/access_token` | `bypass` |
+| `Yfrit Forgejo` | catch-all | `allow` `email_domain` |
+
+A more specific path wins outright and inherits nothing from the catch-all, so
+`Yfrit Forgejo API` carries the human `email_domain` policy too — browser
+access to `/api/v1` is exactly what it was before that app existed.
 
 The PAT lives in `~/.config/yfrit-forgejo/api/poketcg-issues.token` (mode
 `0600`) — the same file `tools/factory/issues.py` reads for the REST client, so
@@ -112,12 +130,14 @@ supplies it.
 Verify both layers non-interactively:
 
 ```sh
-just forgejo-auth-check
+just forgejo-auth-check                  # git layer must be green
+python3 tools/factory/auth_check.py --require-rest   # also require REST
 ```
 
 It reports `[ok]`/`[warn]`/`[fail]` per check (credential helper, edge headers,
 token resolution, git push auth, REST auth, Cloudflare Access service-token
-expiry) and exits non-zero on any hard failure.
+expiry) and exits non-zero on any hard failure. `--require-rest` promotes a
+REST `[warn]` to a failure.
 
 ## The change cycle
 

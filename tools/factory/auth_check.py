@@ -162,8 +162,9 @@ def check_rest(dotenv: dict[str, str], token: str | None) -> tuple[str, str]:
     if content_type.startswith("text/html") and b"Cloudflare Access" in body:
         return "warn", (
             "rest: blocked by Cloudflare Access: the service token is not in "
-            'a policy covering /api/v1/* (add a path-scoped app with a '
-            'non_identity service-token policy, like "Metabase MCP service auth")'
+            "a policy covering /api/v1/* (add a self_hosted app for "
+            "forgejo.yfrit.com/api/v1/* with a non_identity service-token "
+            "policy and service_auth_401_redirect)"
         )
     if content_type.startswith("application/json"):
         payload = json.loads(body)
