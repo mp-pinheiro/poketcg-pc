@@ -229,6 +229,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/random.h"
 
 #define ATK_ANIM_GLOW_EFFECT 0x5bu
+
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3658,3 +3660,28 @@ void FlamesOfRage_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory FlamesOfRage_AIEffect */
+
+/* >>> factory ArcanineFlamethrower_AISelectEffect */
+/* effect_functions.asm:3545-3548 */
+void ArcanineFlamethrower_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory ArcanineFlamethrower_AISelectEffect */
+
+/* >>> factory FlamesOfRage_AISelectEffect */
+/* effect_functions.asm:3605-3613 */
+void FlamesOfRage_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+	gb_write8((uint16_t)(hTempList_ADDR + 1u), gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)));
+}
+/* <<< factory FlamesOfRage_AISelectEffect */
+
+/* >>> factory FireBlast_AISelectEffect */
+/* effect_functions.asm:3703-3706 */
+void FireBlast_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory FireBlast_AISelectEffect */

@@ -882,6 +882,15 @@ void AIPickFireEnergyCardToDiscard(void);
 /* >>> factory FlamesOfRage_AIEffect */
 void FlamesOfRage_AIEffect(void);
 /* <<< factory FlamesOfRage_AIEffect */
+/* >>> factory ArcanineFlamethrower_AISelectEffect */
+void ArcanineFlamethrower_AISelectEffect(void);
+/* <<< factory ArcanineFlamethrower_AISelectEffect */
+/* >>> factory FlamesOfRage_AISelectEffect */
+void FlamesOfRage_AISelectEffect(void);
+/* <<< factory FlamesOfRage_AISelectEffect */
+/* >>> factory FireBlast_AISelectEffect */
+void FireBlast_AISelectEffect(void);
+/* <<< factory FireBlast_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

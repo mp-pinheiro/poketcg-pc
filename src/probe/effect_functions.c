@@ -2110,6 +2110,27 @@ static void adapt_FlamesOfRage_AIEffect(ProbeState *s)
 }
 /* <<< factory FlamesOfRage_AIEffect */
 
+/* >>> factory ArcanineFlamethrower_AISelectEffect */
+static void adapt_ArcanineFlamethrower_AISelectEffect(ProbeState *s)
+{
+	ArcanineFlamethrower_AISelectEffect();
+}
+/* <<< factory ArcanineFlamethrower_AISelectEffect */
+
+/* >>> factory FlamesOfRage_AISelectEffect */
+static void adapt_FlamesOfRage_AISelectEffect(ProbeState *s)
+{
+	FlamesOfRage_AISelectEffect();
+}
+/* <<< factory FlamesOfRage_AISelectEffect */
+
+/* >>> factory FireBlast_AISelectEffect */
+static void adapt_FireBlast_AISelectEffect(ProbeState *s)
+{
+	FireBlast_AISelectEffect();
+}
+/* <<< factory FireBlast_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2371,5 +2392,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "IceBreath_ZeroDamage", adapt_IceBreath_ZeroDamage },
 	{ "AIPickFireEnergyCardToDiscard", adapt_AIPickFireEnergyCardToDiscard },
 	{ "FlamesOfRage_AIEffect", adapt_FlamesOfRage_AIEffect },
+	{ "ArcanineFlamethrower_AISelectEffect", adapt_ArcanineFlamethrower_AISelectEffect },
+	{ "FlamesOfRage_AISelectEffect", adapt_FlamesOfRage_AISelectEffect },
+	{ "FireBlast_AISelectEffect", adapt_FireBlast_AISelectEffect },
 	{ NULL, NULL },
 };

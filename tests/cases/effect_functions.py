@@ -2241,6 +2241,36 @@ CASES["FlamesOfRage_AIEffect"] = [
 ]
 # <<< factory FlamesOfRage_AIEffect
 
+# >>> factory ArcanineFlamethrower_AISelectEffect
+wDuelTempList = 0xC510
+hTempList = 0xFFA0
+
+CONTRACT["ArcanineFlamethrower_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["ArcanineFlamethrower_AISelectEffect"] = [
+	{"wram": {wDuelTempList: bytes(0x40), hTempList: bytes(0x10)}},
+	{"wram": {wDuelTempList: b"\x00\x64\xff\xff" + bytes(0x3c), hTempList: bytes(0x10)}},
+	dict(POISON, wram={wDuelTempList: b"\x00\x64\xff\xff" + bytes(0x3c), hTempList: bytes(0x10)}),
+]
+# <<< factory ArcanineFlamethrower_AISelectEffect
+
+# >>> factory FlamesOfRage_AISelectEffect
+CONTRACT["FlamesOfRage_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["FlamesOfRage_AISelectEffect"] = [
+	{"wram": {wDuelTempList: bytes(0x40), hTempList: bytes(0x10)}},
+	{"wram": {wDuelTempList: b"\x00\x99\xff\xff" + bytes(0x3c), hTempList: b"\x00\x55" + bytes(0x0e)}},
+	dict(POISON, wram={wDuelTempList: b"\x00\x64\xff\xff" + bytes(0x3c), hTempList: b"\x00\x77" + bytes(0x0e)}),
+]
+# <<< factory FlamesOfRage_AISelectEffect
+
+# >>> factory FireBlast_AISelectEffect
+CONTRACT["FireBlast_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["FireBlast_AISelectEffect"] = [
+	{"wram": {wDuelTempList: bytes(0x40), hTempList: bytes(0x10)}},
+	{"wram": {wDuelTempList: b"\x00\x64\xff\xff" + bytes(0x3c), hTempList: bytes(0x10)}},
+	dict(POISON, wram={wDuelTempList: b"\x00\x64\xff\xff" + bytes(0x3c), hTempList: bytes(0x10)}),
+]
+# <<< factory FireBlast_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3809,3 +3839,27 @@ MUTATIONS["FlamesOfRage_AIEffect"] = {
     "case_ids": ["FlamesOfRage_AIEffect-2"],
 }
 # <<< factory-mutation FlamesOfRage_AIEffect
+# >>> factory-mutation ArcanineFlamethrower_AISelectEffect
+MUTATIONS["ArcanineFlamethrower_AISelectEffect"] = {
+	"source_symbol": "ArcanineFlamethrower_AISelectEffect",
+	"before": "void ArcanineFlamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}",
+	"after": "void ArcanineFlamethrower_AISelectEffect(void)\n{\n}",
+	"case_ids": ["ArcanineFlamethrower_AISelectEffect-1", "ArcanineFlamethrower_AISelectEffect-2"],
+}
+# <<< factory-mutation ArcanineFlamethrower_AISelectEffect
+# >>> factory-mutation FlamesOfRage_AISelectEffect
+MUTATIONS["FlamesOfRage_AISelectEffect"] = {
+	"source_symbol": "FlamesOfRage_AISelectEffect",
+	"before": "void FlamesOfRage_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n\tgb_write8((uint16_t)(hTempList_ADDR + 1u), gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)));\n}",
+	"after": "void FlamesOfRage_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n\tgb_write8((uint16_t)(hTempList_ADDR + 0u), gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)));\n}",
+	"case_ids": ["FlamesOfRage_AISelectEffect-1", "FlamesOfRage_AISelectEffect-2"],
+}
+# <<< factory-mutation FlamesOfRage_AISelectEffect
+# >>> factory-mutation FireBlast_AISelectEffect
+MUTATIONS["FireBlast_AISelectEffect"] = {
+	"source_symbol": "FireBlast_AISelectEffect",
+	"before": "void FireBlast_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}",
+	"after": "void FireBlast_AISelectEffect(void)\n{\n}",
+	"case_ids": ["FireBlast_AISelectEffect-1", "FireBlast_AISelectEffect-2"],
+}
+# <<< factory-mutation FireBlast_AISelectEffect

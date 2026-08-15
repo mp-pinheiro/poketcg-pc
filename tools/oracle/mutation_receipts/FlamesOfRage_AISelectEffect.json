@@ -1,0 +1,9 @@
+{
+  "fn": "FlamesOfRage_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FlamesOfRage_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff99ffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"65440\": \"ff990000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FlamesOfRage_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"00000000ff99000000\", \"native\": \"000000009955000000\", \"reference_size\": 80, \"native_size\": 80, \"spans\": [[50448, 64], [65440, 16]]}}}\n",
+  "restored": "{\"fn\": \"FlamesOfRage_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff99ffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"65440\": \"ff990000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}
