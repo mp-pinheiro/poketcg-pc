@@ -316,6 +316,39 @@ CardPageResult CardPageSwitch_00(void)
 #define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x1du
 #define KALEIDOSCOPE_DECK_ID            0x1eu
 #define RESHUFFLE_DECK_ID               0x1fu
+
+#include "home/duel.h"
+#include "mem.h"
+
+typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } PlayInOrderResult;
+
+/* core.asm:1201-1228 (.PlayPokemonCardInOrder). de enters pointing at the two-byte AI
+ * priority-list pointer field; the field's first two bytes ARE the list pointer
+ * (ld c,[de] / inc de / ld d,[de] / ld e,c recombine de = field[1]<<8|field[0]).
+ * Walks the $00-terminated card-ID list, handing each ID to RemoveCardIDInList against
+ * the hand list at *hl; the callee advances *hl and that advance persists across IDs
+ * (and, in the caller, across the arena/bench calls -- the asm never restores hl).
+ * On the first ID found in hand, plays it via PutHandPokemonCardInPlayArea and returns
+ * its a with `or a` flags (Z iff a==0, C clear); on the terminator returns a=0 with
+ * Z|C (or a set Z, then scf). de returns advanced past the byte last consumed. */
+static PlayInOrderResult play_pokemon_card_in_order(uint16_t *hl, uint16_t de)
+{
+	uint8_t c = gb_read8(de);
+	de++;
+	uint8_t d = gb_read8(de);
+	de = (uint16_t)((uint16_t)d << 8 | c);
+	for (;;) {
+		uint8_t a = gb_read8(de);
+		de++;
+		if (a == 0x00u)
+			return (PlayInOrderResult){a, 0x90u, de, *hl};
+		RemoveCardIDResult removed = RemoveCardIDInList(hl, a);
+		if ((removed.f & 0x10u) == 0x00u)
+			continue;
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(removed.a, removed.f);
+		return (PlayInOrderResult){placed.a, (uint8_t)((placed.a == 0x00u) ? 0x80u : 0x00u), de, *hl};
+	}
+}
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2357,3 +2390,38 @@ AIChooseRandomlyNotToDoActionResult AIChooseRandomlyNotToDoAction(void)
 	return (AIChooseRandomlyNotToDoActionResult){r, cpflags};
 }
 /* <<< factory AIChooseRandomlyNotToDoAction */
+
+/* >>> factory TrySetUpBossStartingPlayArea */
+/* core.asm:1165-1200 (helper .PlayPokemonCardInOrder at 1201-1228, see above). The
+ * `ld a,d / or a / jr z .set_carry` null check tests the high byte of the constant
+ * field address and is therefore never taken (a = 0xcd at the CreateHandCardList
+ * call, faithfully passed through). After picking the arena card, loops the bench
+ * priority list until a card is missing (carry) or the play area reaches 3 cards.
+ * .done recomputes flags with `or a` (Z iff a==0, C clear); the arena path returns
+ * the helper's Z|C flags directly via `ret c`. b is never written by this routine or
+ * its ported callees; c/d/e/hl are clobbered residue and are not part of the exit
+ * contract. */
+TrySetUpBossStartingPlayAreaResult TrySetUpBossStartingPlayArea(void)
+{
+	uint16_t de = wAICardListArenaPriority_ADDR;
+	uint8_t a = (uint8_t)(de >> 8);
+	if (a == 0x00u)
+		return (TrySetUpBossStartingPlayAreaResult){a, 0x90u};
+	(void)CreateHandCardList(a);
+	uint16_t hl = wDuelTempList_ADDR;
+	de = wAICardListArenaPriority_ADDR;
+	PlayInOrderResult r = play_pokemon_card_in_order(&hl, de);
+	if ((r.f & 0x10u) != 0x00u)
+		return (TrySetUpBossStartingPlayAreaResult){r.a, r.f};
+	for (;;) {
+		de = wAICardListBenchPriority_ADDR;
+		r = play_pokemon_card_in_order(&hl, de);
+		if ((r.f & 0x10u) != 0x00u)
+			break;
+		if (r.a < 0x03u)
+			continue;
+		break;
+	}
+	return (TrySetUpBossStartingPlayAreaResult){r.a, (uint8_t)((r.a == 0x00u) ? 0x80u : 0x00u)};
+}
+/* <<< factory TrySetUpBossStartingPlayArea */

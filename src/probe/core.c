@@ -1008,6 +1008,15 @@ static void adapt_AIChooseRandomlyNotToDoAction(ProbeState *s)
 }
 /* <<< factory AIChooseRandomlyNotToDoAction */
 
+/* >>> factory TrySetUpBossStartingPlayArea */
+static void adapt_TrySetUpBossStartingPlayArea(ProbeState *s)
+{
+	TrySetUpBossStartingPlayAreaResult r = TrySetUpBossStartingPlayArea();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory TrySetUpBossStartingPlayArea */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1127,5 +1136,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "Func_1585b", adapt_Func_1585b },
 	{ "CheckIfNotABossDeckID", adapt_CheckIfNotABossDeckID },
 	{ "AIChooseRandomlyNotToDoAction", adapt_AIChooseRandomlyNotToDoAction },
+	{ "TrySetUpBossStartingPlayArea", adapt_TrySetUpBossStartingPlayArea },
 	{ NULL, NULL },
 };

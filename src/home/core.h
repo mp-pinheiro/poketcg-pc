@@ -481,4 +481,8 @@ CheckIfNotABossDeckIDResult CheckIfNotABossDeckID(void);
 typedef struct { uint8_t a; uint8_t f; } AIChooseRandomlyNotToDoActionResult;
 AIChooseRandomlyNotToDoActionResult AIChooseRandomlyNotToDoAction(void);
 /* <<< factory AIChooseRandomlyNotToDoAction */
+/* >>> factory TrySetUpBossStartingPlayArea */
+typedef struct { uint8_t a; uint8_t f; } TrySetUpBossStartingPlayAreaResult;
+TrySetUpBossStartingPlayAreaResult TrySetUpBossStartingPlayArea(void);
+/* <<< factory TrySetUpBossStartingPlayArea */
 #endif

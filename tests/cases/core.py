@@ -1297,6 +1297,17 @@ CASES["AIChooseRandomlyNotToDoAction"] = [
 ]
 # <<< factory AIChooseRandomlyNotToDoAction
 
+# >>> factory TrySetUpBossStartingPlayArea
+CONTRACT["TrySetUpBossStartingPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TrySetUpBossStartingPlayArea"] = [
+	{"wram": {0xCDAA: b"\x00\x00"}},
+	dict(POISON, wram={0xCDAA: b"\x00\xc1", 0xC100: b"\x00"}),
+	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x05\x00", 0xCDAC: b"\x00\xc2", 0xC200: b"\x09\x00"}},
+	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x07\x08\x03\x00"}},
+	{"wram": {0xCDAA: b"\x00\xc1", 0xC100: b"\x00", 0xCDF1: b"\x2b"}},
+]
+# <<< factory TrySetUpBossStartingPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2100,3 +2111,11 @@ MUTATIONS["AIChooseRandomlyNotToDoAction"] = {
 	"case_ids": ["AIChooseRandomlyNotToDoAction-0", "AIChooseRandomlyNotToDoAction-1", "AIChooseRandomlyNotToDoAction-2", "AIChooseRandomlyNotToDoAction-3"],
 }
 # <<< factory-mutation AIChooseRandomlyNotToDoAction
+# >>> factory-mutation TrySetUpBossStartingPlayArea
+MUTATIONS["TrySetUpBossStartingPlayArea"] = {
+	"source_symbol": "TrySetUpBossStartingPlayArea",
+	"before": "return (TrySetUpBossStartingPlayAreaResult){r.a, r.f};",
+	"after": "return (TrySetUpBossStartingPlayAreaResult){r.a, 0x00u};",
+	"case_ids": ["TrySetUpBossStartingPlayArea-0", "TrySetUpBossStartingPlayArea-1", "TrySetUpBossStartingPlayArea-2", "TrySetUpBossStartingPlayArea-3", "TrySetUpBossStartingPlayArea-4"],
+}
+# <<< factory-mutation TrySetUpBossStartingPlayArea
