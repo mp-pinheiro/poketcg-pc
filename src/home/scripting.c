@@ -23,6 +23,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 
 #include "home/card_collection.h"
+
+#include "home/play_song.h"
 /* <<< factory statics */
 
 
@@ -240,3 +242,23 @@ IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_TakeCard */
+
+/* >>> factory ScriptCommand_PauseSong */
+/* scripting.asm:1868-1870 */
+IncreaseScriptPointerResult ScriptCommand_PauseSong(void)
+{
+	PauseSong();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy1();
+	return r;
+}
+/* <<< factory ScriptCommand_PauseSong */
+
+/* >>> factory ScriptCommand_ResumeSong */
+/* scripting.asm:1872-1874 */
+IncreaseScriptPointerResult ScriptCommand_ResumeSong(void)
+{
+	ResumeSong();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy1();
+	return r;
+}
+/* <<< factory ScriptCommand_ResumeSong */

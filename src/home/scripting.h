@@ -98,4 +98,10 @@ IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c);
 /* >>> factory ScriptCommand_TakeCard */
 IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c);
 /* <<< factory ScriptCommand_TakeCard */
+/* >>> factory ScriptCommand_PauseSong */
+IncreaseScriptPointerResult ScriptCommand_PauseSong(void);
+/* <<< factory ScriptCommand_PauseSong */
+/* >>> factory ScriptCommand_ResumeSong */
+IncreaseScriptPointerResult ScriptCommand_ResumeSong(void);
+/* <<< factory ScriptCommand_ResumeSong */
 #endif

@@ -16,6 +16,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -232,6 +233,22 @@ CASES["ScriptCommand_TakeCard"] = [
 ]
 # <<< factory ScriptCommand_TakeCard
 
+# >>> factory ScriptCommand_PauseSong
+CONTRACT["ScriptCommand_PauseSong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PauseSong"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory ScriptCommand_PauseSong
+
+# >>> factory ScriptCommand_ResumeSong
+CONTRACT["ScriptCommand_ResumeSong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ResumeSong"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory ScriptCommand_ResumeSong
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -366,3 +383,19 @@ MUTATIONS["ScriptCommand_TakeCard"] = {
     "case_ids": ["ScriptCommand_TakeCard-0", "ScriptCommand_TakeCard-1", "ScriptCommand_TakeCard-2", "ScriptCommand_TakeCard-3", "ScriptCommand_TakeCard-4", "ScriptCommand_TakeCard-5"],
 }
 # <<< factory-mutation ScriptCommand_TakeCard
+# >>> factory-mutation ScriptCommand_PauseSong
+MUTATIONS["ScriptCommand_PauseSong"] = {
+    "source_symbol": "ScriptCommand_PauseSong",
+    "before": "\tPauseSong();\n\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy1();\n\treturn r;",
+    "after": "\tPauseSong();\n\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy1();\n\tr.c = (uint8_t)(r.c + 1u);\n\treturn r;",
+    "case_ids": ["ScriptCommand_PauseSong-0", "ScriptCommand_PauseSong-1"],
+}
+# <<< factory-mutation ScriptCommand_PauseSong
+# >>> factory-mutation ScriptCommand_ResumeSong
+MUTATIONS["ScriptCommand_ResumeSong"] = {
+    "source_symbol": "ScriptCommand_ResumeSong",
+    "before": "\tResumeSong();\n\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy1();\n\treturn r;",
+    "after": "\tResumeSong();\n\tIncreaseScriptPointerResult r = IncreaseScriptPointerBy1();\n\tr.c = (uint8_t)(r.c + 1u);\n\treturn r;",
+    "case_ids": ["ScriptCommand_ResumeSong-0", "ScriptCommand_ResumeSong-1"],
+}
+# <<< factory-mutation ScriptCommand_ResumeSong

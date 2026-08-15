@@ -195,6 +195,26 @@ static void adapt_ScriptCommand_TakeCard(ProbeState *s)
 }
 /* <<< factory ScriptCommand_TakeCard */
 
+/* >>> factory ScriptCommand_PauseSong */
+static void adapt_ScriptCommand_PauseSong(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_PauseSong();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_PauseSong */
+
+/* >>> factory ScriptCommand_ResumeSong */
+static void adapt_ScriptCommand_ResumeSong(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_ResumeSong();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_ResumeSong */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -215,5 +235,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfCardInCollection", adapt_ScriptCommand_JumpIfCardInCollection },
 	{ "ScriptCommand_GiveCard", adapt_ScriptCommand_GiveCard },
 	{ "ScriptCommand_TakeCard", adapt_ScriptCommand_TakeCard },
+	{ "ScriptCommand_PauseSong", adapt_ScriptCommand_PauseSong },
+	{ "ScriptCommand_ResumeSong", adapt_ScriptCommand_ResumeSong },
 	{ NULL, NULL },
 };
