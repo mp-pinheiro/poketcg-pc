@@ -1772,11 +1772,12 @@ CardPageEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void)
 }
 /* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
 
+
 /* >>> factory CardPageSwitch_TrainerEnd */
-/* core.asm:3838-3841 */
+/* core.asm:3869-3872 */
 CardPageResult CardPageSwitch_TrainerEnd(void)
 {
-	return (CardPageResult){CARDPAGE_TRAINER_1, 1u};
+	return (CardPageResult){CARDPAGE_TRAINER_1, TRUE};
 }
 /* <<< factory CardPageSwitch_TrainerEnd */
 

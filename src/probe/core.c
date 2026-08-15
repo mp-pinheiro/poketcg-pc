@@ -782,11 +782,13 @@ static void adapt_CardPageSwitch_EnergyOrTrainerPage1(ProbeState *s)
 /* >>> factory CardPageSwitch_TrainerEnd */
 static void adapt_CardPageSwitch_TrainerEnd(ProbeState *s)
 {
+	uint8_t z = (uint8_t)(s->f & 0x80u);
 	CardPageResult r = CardPageSwitch_TrainerEnd();
 	s->a = r.a;
-	s->f = (uint8_t)((s->f & 0x80u) | (r.carry ? 0x10u : 0u));
+	s->f = (uint8_t)(z | 0x10u);
 }
 /* <<< factory CardPageSwitch_TrainerEnd */
+
 /* >>> factory CheckIfEnoughEnergiesOfType */
 static void adapt_CheckIfEnoughEnergiesOfType(ProbeState *s)
 {
@@ -1028,7 +1030,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "MoveAllTurnHolderKnockedOutPokemonToDiscardPile", adapt_MoveAllTurnHolderKnockedOutPokemonToDiscardPile },
 	{ "PrintSortNumberInCardList_CallFromPointer", adapt_PrintSortNumberInCardList_CallFromPointer },
 	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
-	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
 	{ "CheckIfEnoughEnergiesOfType", adapt_CheckIfEnoughEnergiesOfType },
 	{ "CheckIfActiveCardParalyzedOrAsleep", adapt_CheckIfActiveCardParalyzedOrAsleep },
 	{ "GetAttacksEnergyCostBits", adapt_GetAttacksEnergyCostBits },
@@ -1137,5 +1138,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfNotABossDeckID", adapt_CheckIfNotABossDeckID },
 	{ "AIChooseRandomlyNotToDoAction", adapt_AIChooseRandomlyNotToDoAction },
 	{ "TrySetUpBossStartingPlayArea", adapt_TrySetUpBossStartingPlayArea },
+	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
 	{ NULL, NULL },
 };
