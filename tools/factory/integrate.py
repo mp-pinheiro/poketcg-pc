@@ -95,7 +95,13 @@ def land(packet: dict) -> None:
          "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
          "--probe", str(ROOT / "build-barrier" / "poketcg_probe")],
         check_message=f"live diff failed for {packet['basename']}")
-    run(["jj", "commit", "-m", f"feat(port): {packet['basename']}"],
+    paths = [
+        f"src/home/{basename}.c", f"src/home/{basename}.h",
+        f"src/probe/{basename}.c", str(cases_rel),
+        *(f"tools/oracle/mutation_receipts/{r['name']}.json"
+          for r in packet["routines"]),
+    ]
+    run(["jj", "commit", *paths, "-m", f"feat(port): {basename}"],
         check_message="jj commit failed")
     head = run(["jj", "log", "--no-graph", "-r", "@-", "-T", "commit_id"]).stdout.strip()
     main_at = run(["jj", "log", "--no-graph", "-r", "main", "-T", "commit_id"]).stdout.strip()
@@ -143,7 +149,9 @@ def gate_and_push(push: bool) -> None:
         check_message="progress rebuild failed")
     status = run(["jj", "st"]).stdout
     if "gate.json" in status or "progress.json" in status or "history.jsonl" in status:
-        run(["jj", "commit", "-m", "chore(progress): refresh gate report"],
+        run(["jj", "commit", "site/data/gate.json", "site/data/progress.json",
+             "site/data/history.jsonl", ".factory/blocked.toml",
+             "-m", "chore(progress): refresh gate report"],
             check_message="gate refresh commit failed")
         run(["jj", "bookmark", "set", "main", "-r", "@-"])
     if push:
