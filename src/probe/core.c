@@ -235,9 +235,10 @@ static void adapt_LoadCardNameToTxRam2(ProbeState *s)
 /* >>> factory LoadCardNameToTxRam2_b */
 static void adapt_LoadCardNameToTxRam2_b(ProbeState *s)
 {
-	LoadCardNameToTxRam2_b(s->a);
+	s->a = LoadCardNameToTxRam2_b(s->a);
 }
 /* <<< factory LoadCardNameToTxRam2_b */
+
 
 
 
@@ -1093,7 +1094,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ReturnRetreatCostCardsToArena", adapt_ReturnRetreatCostCardsToArena },
 	{ "TwoByteNumberToTxSymbol_PadSpace_Bank1", adapt_TwoByteNumberToTxSymbol_PadSpace_Bank1 },
 	{ "LoadCardNameToTxRam2", adapt_LoadCardNameToTxRam2 },
-	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ "DrawWideTextBox_WaitForInput_Bank1", adapt_DrawWideTextBox_WaitForInput_Bank1 },
 	{ "LoadDefendingPokemonColorWRAndPrizeCards", adapt_LoadDefendingPokemonColorWRAndPrizeCards },
 	{ "CheckIfEnergyIsUseful", adapt_CheckIfEnergyIsUseful },
@@ -1101,5 +1101,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_VerifyInitialPlay", adapt_PracticeDuel_VerifyInitialPlay },
 	{ "PracticeDuel_VerifyPlayerTurnActions", adapt_PracticeDuel_VerifyPlayerTurnActions },
 	{ "CheckIfNoSurplusEnergyForAttack", adapt_CheckIfNoSurplusEnergyForAttack },
+	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ NULL, NULL },
 };

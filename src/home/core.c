@@ -295,6 +295,8 @@ CardPageResult CardPageSwitch_00(void)
 
 #define PLAY_AREA_BENCH_1   0x01u
 #define POKEMON_POWER       0x04u
+
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -717,13 +719,16 @@ void LoadCardNameToTxRam2(uint8_t a)
 
 
 
+
 /* >>> factory LoadCardNameToTxRam2_b */
-/* core.asm:6806-6813 */
-void LoadCardNameToTxRam2_b(uint8_t a)
+/* core.asm:6806-6821 */
+uint8_t LoadCardNameToTxRam2_b(uint8_t a)
 {
 	LoadCardDataToBuffer1_FromDeckIndex(a);
 	wTxRam2_b = wLoadedCard1Name;
-	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+	uint8_t hi = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), hi);
+	return hi;
 }
 /* <<< factory LoadCardNameToTxRam2_b */
 

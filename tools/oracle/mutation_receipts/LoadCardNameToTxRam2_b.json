@@ -1,9 +1,9 @@
 {
   "fn": "LoadCardNameToTxRam2_b",
   "case": "tests/cases/core.py",
-  "index": 0,
+  "index": 1,
   "status": "RED",
-  "baseline": "{\"fn\": \"LoadCardNameToTxRam2_b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"0000\", \"52799\": \"11220000\"}}, \"status\": \"PASS\"}\n",
-  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardNameToTxRam2_b\", \"mismatches\": {\"bus\": {\"address\": 52799, \"reference\": \"000011220000\", \"native\": \"00000022a500\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52263, 2], [52799, 4]]}}}\n",
-  "restored": "{\"fn\": \"LoadCardNameToTxRam2_b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"0000\", \"52799\": \"11220000\"}}, \"status\": \"PASS\"}\n"
+  "baseline": "{\"fn\": \"LoadCardNameToTxRam2_b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"0000\", \"52801\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardNameToTxRam2_b\", \"mismatches\": {\"bus\": {\"address\": 52802, \"reference\": \"00000000\", \"native\": \"000000aa\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52263, 2], [52801, 2]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardNameToTxRam2_b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52263\": \"0000\", \"52801\": \"0000\"}}, \"status\": \"PASS\"}\n"
 }

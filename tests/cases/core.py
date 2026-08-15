@@ -332,13 +332,15 @@ CASES["LoadCardNameToTxRam2"] = [
 
 
 # >>> factory LoadCardNameToTxRam2_b
-CONTRACT["LoadCardNameToTxRam2_b"] = {"compare": (), "preserve": ()}
+CONTRACT["LoadCardNameToTxRam2_b"] = {"compare": ("a",), "preserve": ()}
 CASES["LoadCardNameToTxRam2_b"] = [
-    {"wram": {0xCE3F: b"\x11\x22\xA5\x5A"}, "read": {0xCC27: 2}},
-    dict(POISON, a=5, wram={0xCE3F: b"\x11\x22\xA5\x5A"}, read={0xCC27: 2}),
-    {"a": 0x3B, "wram": {0xCE3F: b"\x11\x22\xA5\x5A"}, "read": {0xCC27: 2}},
+    {"a": 0, "wram": {0xCE41: b"\x00\x00"}},
+    {"a": 0, "wram": {0xCE41: b"\xAA\xAA"}, "read": {0xCC27: 2}},
+    {"a": 1, "wram": {0xCE41: b"\xAA\xAA"}, "read": {0xCC27: 2}},
+    dict(POISON, a=0x3B, wram={0xCE41: b"\xAA\xAA"}, read={0xCC27: 2}),
 ]
 # <<< factory LoadCardNameToTxRam2_b
+
 
 
 
@@ -1426,9 +1428,9 @@ MUTATIONS["LoadCardNameToTxRam2"] = {
 # >>> factory-mutation LoadCardNameToTxRam2_b
 MUTATIONS["LoadCardNameToTxRam2_b"] = {
     "source_symbol": "LoadCardNameToTxRam2_b",
-    "before": "\twTxRam2_b = wLoadedCard1Name;",
-    "after": "\twTxRam2 = wLoadedCard1Name;",
-    "case_ids": ["LoadCardNameToTxRam2_b-0", "LoadCardNameToTxRam2_b-1", "LoadCardNameToTxRam2_b-2"],
+    "before": "\tgb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), hi);",
+    "after": "\tgb_write8((uint16_t)(wTxRam2_b_ADDR + 2u), hi);",
+    "case_ids": ["LoadCardNameToTxRam2_b-1", "LoadCardNameToTxRam2_b-2", "LoadCardNameToTxRam2_b-3"],
 }
 # <<< factory-mutation LoadCardNameToTxRam2_b
 # >>> factory-mutation GetAnimCoordsAndFlags

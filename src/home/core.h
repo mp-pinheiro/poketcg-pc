@@ -115,7 +115,7 @@ void PrintCardListHeaderAndInfoBoxTexts(void);
 void LoadCardNameToTxRam2(uint8_t a);
 /* <<< factory LoadCardNameToTxRam2 */
 /* >>> factory LoadCardNameToTxRam2_b */
-void LoadCardNameToTxRam2_b(uint8_t a);
+uint8_t LoadCardNameToTxRam2_b(uint8_t a);
 /* <<< factory LoadCardNameToTxRam2_b */
 /* >>> factory GetAnimCoordsAndFlags */
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; } AnimCoordsResult;
