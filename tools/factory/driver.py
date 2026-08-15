@@ -563,13 +563,18 @@ def main() -> int:
             "packet_ids": [],
         }
         with wave_lock(metadata):
-            for packet in list_packets(("escalated",)):
+            prefixes = tuple(args.reason_prefix
+                             or ("infra-error:", "infra-timeout:"))
+            for packet in list_packets(("escalated", "pending")):
                 reason = packet.get("reason") or ""
-                prefixes = tuple(args.reason_prefix
-                                 or ("infra-error:", "infra-timeout:"))
-                if not reason.startswith(prefixes):
+                if packet["state"] == "pending":
+                    if reason != "reset-infra" or not packet.get("rounds"):
+                        continue
+                elif not reason.startswith(prefixes):
                     continue
                 packet.pop("attempt", None)
+                packet["rounds"] = 0
+                packet["format_retry_used"] = False
                 set_state(packet, "pending", "reset-infra")
                 print(f"reset {packet['id']}")
     elif args.command == "escalate":
