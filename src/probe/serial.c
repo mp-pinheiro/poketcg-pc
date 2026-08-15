@@ -137,6 +137,27 @@ static void adapt_SerialRecv8Bytes(ProbeState *s)
 }
 /* <<< factory SerialRecv8Bytes */
 
+/* >>> factory ExchangeRNG */
+static void adapt_ExchangeRNG(ProbeState *s)
+{
+	ExchangeRNGResult r = ExchangeRNG(s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+/* <<< factory ExchangeRNG */
+
+/* >>> factory SerialSend8Bytes */
+static void adapt_SerialSend8Bytes(ProbeState *s)
+{
+	SerialSend8Bytes(s->a, s->f, s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
+}
+/* <<< factory SerialSend8Bytes */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -154,5 +175,7 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SerialRecvBytes", adapt_SerialRecvBytes },
 	{ "DuelTransmissionError", adapt_DuelTransmissionError },
 	{ "SerialRecv8Bytes", adapt_SerialRecv8Bytes },
+	{ "ExchangeRNG", adapt_ExchangeRNG },
+	{ "SerialSend8Bytes", adapt_SerialSend8Bytes },
 	{ NULL, NULL },
 };

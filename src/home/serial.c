@@ -15,6 +15,20 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#include "home/switch_rom.h"
+
+#define DUELTYPE_LINK          0x01u
+#define DUELVARS_DUELIST_TYPE  0xf1u
+#define DUELIST_TYPE_PLAYER    0x00u
+#define DUELIST_TYPE_LINK_OPP  0x01u
+#define RNGVARS_SIZE           0x03u
+#define BANK_LINK_OPP_TURN     0x01u
+#define F_Z                    0x80u
+#define F_N                    0x40u
+#define F_H                    0x20u
+#define F_C                    0x10u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -353,3 +367,57 @@ SerialRecv8BytesResult SerialRecv8Bytes(void)
 	};
 }
 /* <<< factory SerialRecv8Bytes */
+
+/* >>> factory ExchangeRNG */
+/* serial.asm:543-566 */
+ExchangeRNGResult ExchangeRNG(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	uint8_t a = wDuelType;
+	uint8_t f = F_N;
+	if (a == DUELTYPE_LINK)
+		f |= F_Z;
+	if (a < DUELTYPE_LINK)
+		f |= F_C;
+	if ((a & 0x0Fu) < (DUELTYPE_LINK & 0x0Fu))
+		f |= F_H;
+	if (!(f & F_Z))
+		return (ExchangeRNGResult){a, b, c, f, hl, de};
+
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	uint16_t src, dst;
+	if (v.a == DUELIST_TYPE_PLAYER) {
+		src = wRNGVars_ADDR;
+		dst = wOppRNGVars_ADDR;
+	} else {
+		src = wOppRNGVars_ADDR;
+		dst = wRNGVars_ADDR;
+	}
+	SerialExchangeResult s = SerialExchangeBytes(RNGVARS_SIZE, src, dst);
+	if (s.f & F_C)
+		DuelTransmissionError();
+	return (ExchangeRNGResult){s.a, s.b, s.c, s.f, s.hl, s.de};
+}
+/* <<< factory ExchangeRNG */
+
+/* >>> factory SerialSend8Bytes */
+/* serial.asm:605-651. Every register round-trips through push/pop, so nothing
+ * is produced. The buffer layout is f, a, l, h, e, d, c, b. */
+void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (r.a != DUELIST_TYPE_LINK_OPP)
+		return;
+	uint16_t p = wTempSerialBuf_ADDR;
+	gb_write8((uint16_t)(p + 0u), f);
+	gb_write8((uint16_t)(p + 1u), a);
+	gb_write8((uint16_t)(p + 2u), (uint8_t)hl);
+	gb_write8((uint16_t)(p + 3u), (uint8_t)(hl >> 8));
+	gb_write8((uint16_t)(p + 4u), (uint8_t)de);
+	gb_write8((uint16_t)(p + 5u), (uint8_t)(de >> 8));
+	gb_write8((uint16_t)(p + 6u), c);
+	gb_write8((uint16_t)(p + 7u), b);
+	SerialSendBytesResult s = SerialSendBytes(wTempSerialBuf_ADDR, 8u);
+	if (s.f & F_C)
+		DuelTransmissionError();
+}
+/* <<< factory SerialSend8Bytes */

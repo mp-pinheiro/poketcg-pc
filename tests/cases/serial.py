@@ -340,6 +340,26 @@ CASES["SerialRecv8Bytes"] = [
 ]
 # <<< factory SerialRecv8Bytes
 
+# >>> factory ExchangeRNG
+CONTRACT["ExchangeRNG"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ExchangeRNG"] = [
+    {"wram": {0xCC09: b"\x00"}},
+    {"wram": {0xCC09: b"\x02"}},
+    {"wram": {0xCC09: b"\x11"}},
+    dict(POISON, wram={0xCC09: b"\xff"}),
+]
+# <<< factory ExchangeRNG
+
+# >>> factory SerialSend8Bytes
+CONTRACT["SerialSend8Bytes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["SerialSend8Bytes"] = [
+    {"wram": {0xCBED: b"\x00" * 8}, "read": {0xCBED: 8}},
+    dict(POISON, wram={0xCBED: b"\x5a" * 8}, read={0xCBED: 8}),
+    {"a": 0x12, "f": 0x30, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": 0xBCDE,
+     "wram": {0xCBED: b"\xff" * 8}, "read": {0xCBED: 8}},
+]
+# <<< factory SerialSend8Bytes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -378,3 +398,19 @@ MUTATIONS["SerialRecv8Bytes"] = {
 	"case_ids": ["SerialRecv8Bytes-0", "SerialRecv8Bytes-1", "SerialRecv8Bytes-2"],
 }
 # <<< factory-mutation SerialRecv8Bytes
+# >>> factory-mutation ExchangeRNG
+MUTATIONS["ExchangeRNG"] = {
+    "source_symbol": "ExchangeRNG",
+    "before": "\tif (a < DUELTYPE_LINK)\n\t\tf |= F_C;",
+    "after": "\tif (a < DUELTYPE_LINK)\n\t\tf |= F_H;",
+    "case_ids": ["ExchangeRNG-0"],
+}
+# <<< factory-mutation ExchangeRNG
+# >>> factory-mutation SerialSend8Bytes
+MUTATIONS["SerialSend8Bytes"] = {
+    "source_symbol": "SerialSend8Bytes",
+    "before": "\tif (r.a != DUELIST_TYPE_LINK_OPP)\n\t\treturn;",
+    "after": "\tif (r.a == DUELIST_TYPE_LINK_OPP)\n\t\treturn;",
+    "case_ids": ["SerialSend8Bytes-1", "SerialSend8Bytes-2"],
+}
+# <<< factory-mutation SerialSend8Bytes

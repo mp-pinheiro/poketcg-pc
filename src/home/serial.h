@@ -142,4 +142,20 @@ typedef struct {
 } SerialRecv8BytesResult;
 SerialRecv8BytesResult SerialRecv8Bytes(void);
 /* <<< factory SerialRecv8Bytes */
+/* >>> factory ExchangeRNG */
+/* ExchangeRNG:: serial.asm:543-566. Non-link duels return immediately with
+ * a = wDuelType and the `cp DUELTYPE_LINK` flags, everything else preserved;
+ * the link path returns SerialExchangeBytes' registers verbatim. */
+typedef struct {
+	uint8_t a, b, c, f;
+	uint16_t hl, de;
+} ExchangeRNGResult;
+ExchangeRNGResult ExchangeRNG(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory ExchangeRNG */
+/* >>> factory SerialSend8Bytes */
+/* SerialSend8Bytes:: serial.asm:605-651. a/f/b/c/d/e/hl all round-trip
+ * through push/pop, so the routine produces nothing; the link path stages
+ * them into wTempSerialBuf as f, a, l, h, e, d, c, b. */
+void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory SerialSend8Bytes */
 #endif
