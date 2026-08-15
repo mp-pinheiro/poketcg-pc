@@ -14,6 +14,7 @@ returns in-flight packets to ``pending``.
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import sys
@@ -37,6 +38,7 @@ from common import (  # noqa: E402
     estimate_tokens,
     list_packets,
     load_packet,
+    packet_path,
     record_metric,
     run_bounded,
     save_packet,
@@ -46,6 +48,50 @@ from common import (  # noqa: E402
 
 IN_FLIGHT = ("translating", "translated", "verifying", "repair")
 ACTIVE_CLAIM_STATES = ("pending", *IN_FLIGHT, "green")
+
+
+def _foreign_claims(packet: dict) -> set[str]:
+    """Work IDs this packet shares with another non-terminal packet.
+
+    An escalated packet releases its claims, so build() may have re-offered its
+    routines into a fresh packet. Resetting it back to pending would then break
+    the one-claim invariant; the caller must skip and leave it escalated.
+    """
+    mine = {r["work_id"] for r in packet.get("routines", []) if r.get("work_id")}
+    held: set[str] = set()
+    for other in list_packets(ACTIVE_CLAIM_STATES):
+        if other["id"] == packet["id"]:
+            continue
+        for routine in other.get("routines", []):
+            if routine.get("work_id") in mine:
+                held.add(routine["work_id"])
+    return held
+
+
+def _todo_status() -> dict[tuple[str, str], bool]:
+    """(source, name) -> still todo, from the live progress report.
+
+    An escalated packet can outlive its work: while it sat escalated its
+    routines may have landed on main. Resetting it to pending would re-port
+    committed code, so callers drop routines the report no longer marks todo.
+    """
+    spec = importlib.util.spec_from_file_location(
+        "port_progress_report", ROOT / "tools" / "progress" / "report.py")
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load progress report")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    report = module.compute(
+        module.load_inventory(), module.load_routines()[0], module.load_gate())
+    return {
+        (f["file"], f["name"]): f["status"] == "todo"
+        for f in report["functions"]
+    }
+
+
+def _work_key(work_id: str) -> tuple[str, str]:
+    _scheme, _version, source, name = work_id.split(":")
+    return source, name
 
 
 
@@ -551,6 +597,10 @@ def main() -> int:
         }
         with wave_lock(metadata):
             for packet in list_packets(IN_FLIGHT):
+                held = _foreign_claims(packet)
+                if held:
+                    print(f"skip {packet['id']}: held elsewhere {sorted(held)}")
+                    continue
                 packet.pop("attempt", None)
                 set_state(packet, "pending", "reset-stale")
                 print(f"reset {packet['id']}")
@@ -565,12 +615,31 @@ def main() -> int:
         with wave_lock(metadata):
             prefixes = tuple(args.reason_prefix
                              or ("infra-error:", "infra-timeout:"))
+            todo = _todo_status()
             for packet in list_packets(("escalated", "pending")):
                 reason = packet.get("reason") or ""
                 if packet["state"] == "pending":
                     if reason != "reset-infra" or not packet.get("rounds"):
                         continue
                 elif not reason.startswith(prefixes):
+                    continue
+                stale = [r for r in packet["routines"]
+                         if not todo.get(_work_key(r["work_id"]))]
+                if stale:
+                    packet["routines"] = [r for r in packet["routines"]
+                                          if not todo.get(_work_key(r["work_id"]))]
+                    if not packet["routines"]:
+                        packet_path(packet["id"]).unlink()
+                        print(f"dropped {packet['id']}: "
+                              f"{len(stale)} routine(s) no longer todo")
+                        continue
+                    packet["bytes"] = sum(r.get("size", 0)
+                                          for r in packet["routines"])
+                    print(f"trimmed {packet['id']}: "
+                          f"{len(stale)} routine(s) no longer todo")
+                held = _foreign_claims(packet)
+                if held:
+                    print(f"skip {packet['id']}: held elsewhere {sorted(held)}")
                     continue
                 packet.pop("attempt", None)
                 packet["rounds"] = 0
