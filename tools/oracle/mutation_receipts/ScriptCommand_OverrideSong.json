@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_OverrideSong",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_OverrideSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53521\": \"110f\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_OverrideSong\", \"mismatches\": {\"bus\": {\"address\": 53521, \"reference\": \"110f\", \"native\": \"0f22\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53521, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_OverrideSong\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"53521\": \"110f\"}}, \"status\": \"PASS\"}\n"
+}

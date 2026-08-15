@@ -104,4 +104,13 @@ IncreaseScriptPointerResult ScriptCommand_PauseSong(void);
 /* >>> factory ScriptCommand_ResumeSong */
 IncreaseScriptPointerResult ScriptCommand_ResumeSong(void);
 /* <<< factory ScriptCommand_ResumeSong */
+/* >>> factory ScriptCommand_nop */
+IncreaseScriptPointerResult ScriptCommand_nop(void);
+/* <<< factory ScriptCommand_nop */
+/* >>> factory ScriptCommand_OverrideSong */
+IncreaseScriptPointerResult ScriptCommand_OverrideSong(uint8_t c);
+/* <<< factory ScriptCommand_OverrideSong */
+/* >>> factory ScriptCommand_SetDefaultSong */
+IncreaseScriptPointerResult ScriptCommand_SetDefaultSong(uint8_t c);
+/* <<< factory ScriptCommand_SetDefaultSong */
 #endif

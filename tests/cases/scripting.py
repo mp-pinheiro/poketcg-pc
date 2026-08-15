@@ -17,6 +17,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -249,6 +250,37 @@ CASES["ScriptCommand_ResumeSong"] = [
 ]
 # <<< factory ScriptCommand_ResumeSong
 
+# >>> factory ScriptCommand_nop
+# wram keys 0xD111/0xD112 are wDefaultSong/wSongOverride, verified untouched
+CONTRACT["ScriptCommand_nop"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_nop"] = [
+	{"wram": {0xD111: b"\x00", 0xD112: b"\x00"}},
+	dict(POISON, wram={0xD111: b"\x11", 0xD112: b"\x22"}),
+]
+# <<< factory ScriptCommand_nop
+
+# >>> factory ScriptCommand_OverrideSong
+# wram keys: 0xD111 = wDefaultSong, 0xD112 = wSongOverride
+CONTRACT["ScriptCommand_OverrideSong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_OverrideSong"] = [
+	{"c": 0, "wram": {0xD111: b"\x00", 0xD112: b"\x00"}},
+	{"c": 0x0F, "wram": {0xD111: b"\x11", 0xD112: b"\x22"}},
+	{"c": 0xFF, "wram": {0xD111: b"\x00", 0xD112: b"\x00"}},
+	dict(POISON, c=0x0C, wram={0xD111: b"\x00", 0xD112: b"\x00"}),
+]
+# <<< factory ScriptCommand_OverrideSong
+
+# >>> factory ScriptCommand_SetDefaultSong
+# wram keys: 0xD111 = wDefaultSong, 0xD112 = wSongOverride
+CONTRACT["ScriptCommand_SetDefaultSong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_SetDefaultSong"] = [
+	{"c": 0, "wram": {0xD111: b"\x00", 0xD112: b"\x00"}},
+	{"c": 0x33, "wram": {0xD111: b"\x11", 0xD112: b"\x22"}},
+	{"c": 0xFF, "wram": {0xD111: b"\x00", 0xD112: b"\x00"}},
+	dict(POISON, c=0x07, wram={0xD111: b"\x00", 0xD112: b"\x00"}),
+]
+# <<< factory ScriptCommand_SetDefaultSong
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -399,3 +431,27 @@ MUTATIONS["ScriptCommand_ResumeSong"] = {
     "case_ids": ["ScriptCommand_ResumeSong-0", "ScriptCommand_ResumeSong-1"],
 }
 # <<< factory-mutation ScriptCommand_ResumeSong
+# >>> factory-mutation ScriptCommand_nop
+MUTATIONS["ScriptCommand_nop"] = {
+	"source_symbol": "ScriptCommand_nop",
+	"before": "\treturn IncreaseScriptPointerBy1();",
+	"after": "\treturn IncreaseScriptPointerBy2();",
+	"case_ids": ["ScriptCommand_nop-0", "ScriptCommand_nop-1"],
+}
+# <<< factory-mutation ScriptCommand_nop
+# >>> factory-mutation ScriptCommand_OverrideSong
+MUTATIONS["ScriptCommand_OverrideSong"] = {
+	"source_symbol": "ScriptCommand_OverrideSong",
+	"before": "\twSongOverride = c;",
+	"after": "\twDefaultSong = c;",
+	"case_ids": ["ScriptCommand_OverrideSong-1", "ScriptCommand_OverrideSong-2", "ScriptCommand_OverrideSong-3"],
+}
+# <<< factory-mutation ScriptCommand_OverrideSong
+# >>> factory-mutation ScriptCommand_SetDefaultSong
+MUTATIONS["ScriptCommand_SetDefaultSong"] = {
+	"source_symbol": "ScriptCommand_SetDefaultSong",
+	"before": "\twDefaultSong = c;",
+	"after": "\twSongOverride = c;",
+	"case_ids": ["ScriptCommand_SetDefaultSong-1", "ScriptCommand_SetDefaultSong-2", "ScriptCommand_SetDefaultSong-3"],
+}
+# <<< factory-mutation ScriptCommand_SetDefaultSong

@@ -25,6 +25,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/card_collection.h"
 
 #include "home/play_song.h"
+
+#include "home/scripting.h"
+#include "home/sound.h"
 /* <<< factory statics */
 
 
@@ -262,3 +265,32 @@ IncreaseScriptPointerResult ScriptCommand_ResumeSong(void)
 	return r;
 }
 /* <<< factory ScriptCommand_ResumeSong */
+
+/* >>> factory ScriptCommand_nop */
+/* scripting.asm:1819-1820. Pure tail jump: the command behaves exactly like
+ * IncreaseScriptPointerBy1 on the caller's registers. */
+IncreaseScriptPointerResult ScriptCommand_nop(void)
+{
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_nop */
+
+/* >>> factory ScriptCommand_OverrideSong */
+/* scripting.asm:1843-1847. The override byte is stored before PlaySong runs
+ * (PlaySong takes the song id in a and may consult the override itself). */
+IncreaseScriptPointerResult ScriptCommand_OverrideSong(uint8_t c)
+{
+	wSongOverride = c;
+	PlaySong(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_OverrideSong */
+
+/* >>> factory ScriptCommand_SetDefaultSong */
+/* scripting.asm:1849-1852 */
+IncreaseScriptPointerResult ScriptCommand_SetDefaultSong(uint8_t c)
+{
+	wDefaultSong = c;
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_SetDefaultSong */
