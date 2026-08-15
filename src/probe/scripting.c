@@ -295,6 +295,27 @@ static void adapt_ScriptCommand_PlayDefaultSong(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PlayDefaultSong */
 
+/* >>> factory ScriptCommand_SetSpriteAttributes */
+static void adapt_ScriptCommand_SetSpriteAttributes(ProbeState *s)
+{
+	SetSpriteAttributesResult r = ScriptCommand_SetSpriteAttributes(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+	s->e = r.e;
+}
+/* <<< factory ScriptCommand_SetSpriteAttributes */
+
+/* >>> factory ScriptCommand_DoFrames */
+static void adapt_ScriptCommand_DoFrames(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_DoFrames(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_DoFrames */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -325,5 +346,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PlaySong", adapt_ScriptCommand_PlaySong },
 	{ "ScriptCommand_PlaySFX", adapt_ScriptCommand_PlaySFX },
 	{ "ScriptCommand_PlayDefaultSong", adapt_ScriptCommand_PlayDefaultSong },
+	{ "ScriptCommand_SetSpriteAttributes", adapt_ScriptCommand_SetSpriteAttributes },
+	{ "ScriptCommand_DoFrames", adapt_ScriptCommand_DoFrames },
 	{ NULL, NULL },
 };

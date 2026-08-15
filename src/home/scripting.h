@@ -128,4 +128,19 @@ IncreaseScriptPointerResult ScriptCommand_PlaySFX(uint8_t c);
 /* >>> factory ScriptCommand_PlayDefaultSong */
 IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void);
 /* <<< factory ScriptCommand_PlayDefaultSong */
+/* >>> factory ScriptCommand_SetSpriteAttributes */
+/* >>> factory ScriptCommand_SetSpriteAttributes */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t c;
+	uint8_t e;
+} SetSpriteAttributesResult;
+
+SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_SetSpriteAttributes */
+/* >>> factory ScriptCommand_DoFrames */
+/* >>> factory ScriptCommand_DoFrames */
+IncreaseScriptPointerResult ScriptCommand_DoFrames(uint8_t c);
+/* <<< factory ScriptCommand_DoFrames */
 #endif

@@ -20,6 +20,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -332,6 +333,26 @@ CASES["ScriptCommand_PlayDefaultSong"] = [
 ]
 # <<< factory ScriptCommand_PlayDefaultSong
 
+# >>> factory ScriptCommand_SetSpriteAttributes
+CONTRACT["ScriptCommand_SetSpriteAttributes"] = {"compare": ("a", "f", "b", "c", "e"), "preserve": ("b",)}
+CASES["ScriptCommand_SetSpriteAttributes"] = [
+	{"wram": {0xD3B6: b"\x00", 0xD3AA: b"\x00", 0xCAB4: b"\x00"}},  # all zero, wConsole below CONSOLE_CGB
+	{"b": 0x11, "c": 0x22, "wram": {0xCAB4: b"\x02", 0xD3B6: b"\x01", 0xD3AA: b"\x00"}},  # wConsole == CONSOLE_CGB: e = b
+	{"b": 0x33, "c": 0x44, "wram": {0xCAB4: b"\x03", 0xD3B6: b"\x02", 0xD3AA: b"\xff"}},  # just above CONSOLE_CGB: e = c
+	dict(POISON, b=0x10, c=0x20, wram={0xCAB4: b"\x02", 0xD3B6: b"\x01", 0xD3AA: b"\xaa"}),
+]
+# <<< factory ScriptCommand_SetSpriteAttributes
+
+# >>> factory ScriptCommand_DoFrames
+CONTRACT["ScriptCommand_DoFrames"] = {"compare": ("a", "f", "b", "c"), "preserve": ("b",)}
+CASES["ScriptCommand_DoFrames"] = [
+	{"c": 0},  # count 0 acts as 256 frames, never a no-op
+	{"c": 1},
+	{"c": 2},
+	dict(POISON, c=3),
+]
+# <<< factory ScriptCommand_DoFrames
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -546,3 +567,19 @@ MUTATIONS["ScriptCommand_PlayDefaultSong"] = {
     "case_ids": ["ScriptCommand_PlayDefaultSong-0", "ScriptCommand_PlayDefaultSong-1"],
 }
 # <<< factory-mutation ScriptCommand_PlayDefaultSong
+# >>> factory-mutation ScriptCommand_SetSpriteAttributes
+MUTATIONS["ScriptCommand_SetSpriteAttributes"] = {
+	"source_symbol": "ScriptCommand_SetSpriteAttributes",
+	"before": "if (wConsole == CONSOLE_CGB)",
+	"after": "if (wConsole != CONSOLE_CGB)",
+	"case_ids": ["ScriptCommand_SetSpriteAttributes-1", "ScriptCommand_SetSpriteAttributes-2", "ScriptCommand_SetSpriteAttributes-3"],
+}
+# <<< factory-mutation ScriptCommand_SetSpriteAttributes
+# >>> factory-mutation ScriptCommand_DoFrames
+MUTATIONS["ScriptCommand_DoFrames"] = {
+	"source_symbol": "ScriptCommand_DoFrames",
+	"before": "\t\tDoFrameIfLCDEnabled();\n\treturn IncreaseScriptPointerBy2();",
+	"after": "\t\tDoFrameIfLCDEnabled();\n\treturn IncreaseScriptPointerBy3();",
+	"case_ids": ["ScriptCommand_DoFrames-0", "ScriptCommand_DoFrames-1", "ScriptCommand_DoFrames-2", "ScriptCommand_DoFrames-3"],
+}
+# <<< factory-mutation ScriptCommand_DoFrames

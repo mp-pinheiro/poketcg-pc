@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_SetSpriteAttributes",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_SetSpriteAttributes\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 4, \"d\": 0, \"e\": 17, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"54186\": \"01\", \"54198\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_SetSpriteAttributes\", \"mismatches\": {\"e\": [17, 34]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_SetSpriteAttributes\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 4, \"d\": 0, \"e\": 17, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"02\", \"54186\": \"01\", \"54198\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

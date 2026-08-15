@@ -37,6 +37,18 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/map.h"
 #include "home/play_song.h"
 #include "home/sound.h"
+
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/lcd_enable_frame.h"
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "mem.h"
+
+#define CONSOLE_CGB                  0x02u
+#define EVENT_MAN1_REQUESTED_CARD_ID 0x2bu
+#define LOADED_NPC_FLAGS             0x05u
+#define NPC_FLAG_DIRECTIONLESS_F     0x04u
 /* <<< factory statics */
 
 
@@ -361,3 +373,40 @@ IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PlayDefaultSong */
+
+/* >>> factory ScriptCommand_SetSpriteAttributes */
+/* scripting.asm:1276-1306. Records the current NPC in wLoadedNPCTempIndex,
+ * reads 3 script bytes, clears the directionless bit in that NPC's flags
+ * item and ORs the third script byte into it, then restarts the NPC
+ * animation with b on CGB or c on DMG. Entry bc is only consumed after the
+ * push/pop pair restores it. */
+SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c)
+{
+	wLoadedNPCTempIndex = wScriptNPC;
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	PermissionResult item = GetItemInLoadedNPCIndex(wScriptNPC, LOADED_NPC_FLAGS);
+	uint8_t flags = (uint8_t)(gb_read8(item.hl) & (uint8_t)~(1u << NPC_FLAG_DIRECTIONLESS_F));
+	gb_write8(item.hl, flags); /* res NPC_FLAG_DIRECTIONLESS_F, [hl] */
+	flags = (uint8_t)(gb_read8(item.hl) | args.c); /* ld a, [hl]; or c */
+	gb_write8(item.hl, flags); /* ld [hl], a */
+	uint8_t e = c; /* ld e, c */
+	if (wConsole == CONSOLE_CGB) /* cp CONSOLE_CGB; jr nz, .not_cgb */
+		e = b; /* ld e, b */
+	(void)SetNPCAnimation(e); /* ld a, e; farcall SetNPCAnimation */
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (SetSpriteAttributesResult){r.a, r.f, r.c, e};
+}
+/* <<< factory ScriptCommand_SetSpriteAttributes */
+
+/* >>> factory ScriptCommand_DoFrames */
+/* scripting.asm:1308-1318. Runs DoFrameIfLCDEnabled c times -- the loop is
+ * post-test, so a count of 0 wraps to 256 frames -- then advances the
+ * script pointer by 2. The push/pop pair keeps b intact across the frames. */
+IncreaseScriptPointerResult ScriptCommand_DoFrames(uint8_t c)
+{
+	uint32_t n = c ? c : 0x100u;
+	for (uint32_t i = 0; i < n; i++)
+		DoFrameIfLCDEnabled();
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_DoFrames */
