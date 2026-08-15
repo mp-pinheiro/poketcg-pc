@@ -29,6 +29,8 @@
 #define F_N                    0x40u
 #define F_H                    0x20u
 #define F_C                    0x10u
+
+#include "home/switch_rom.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -421,3 +423,21 @@ void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, u
 		DuelTransmissionError();
 }
 /* <<< factory SerialSend8Bytes */
+
+/* >>> factory LinkOpponentTurnFrameFunction */
+/* serial.asm:504-521. On the fallthrough path the asm reloads sp from
+ * wLinkOpponentTurnReturnAddress and `scf`-returns into that frame -- not
+ * expressible in C, so it is modelled as the bank switch plus carry set.
+ * The `ret nc` path (wSerialFlags==0 and Func_0e32 reporting no queued
+ * byte) is an ordinary return with Func_0e32's a/f. */
+LinkOppTurnResult LinkOpponentTurnFrameFunction(void)
+{
+	if (wSerialFlags == 0u) {
+		SerialRecvReadyResult r = Func_0e32();
+		if (!(r.f & 0x10u))
+			return (LinkOppTurnResult){r.a, r.f};
+	}
+	BankswitchROM(BANK_LINK_OPP_TURN);
+	return (LinkOppTurnResult){BANK_LINK_OPP_TURN, 0x10u};
+}
+/* <<< factory LinkOpponentTurnFrameFunction */

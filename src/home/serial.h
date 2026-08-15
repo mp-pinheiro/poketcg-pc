@@ -158,4 +158,12 @@ ExchangeRNGResult ExchangeRNG(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
  * them into wTempSerialBuf as f, a, l, h, e, d, c, b. */
 void SerialSend8Bytes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory SerialSend8Bytes */
+/* >>> factory LinkOpponentTurnFrameFunction */
+/* LinkOpponentTurnFrameFunction:: serial.asm:504-521. Returns a/f; b/c/d/e/hl
+ * are untouched on the returning path. */
+typedef struct {
+	uint8_t a, f;
+} LinkOppTurnResult;
+LinkOppTurnResult LinkOpponentTurnFrameFunction(void);
+/* <<< factory LinkOpponentTurnFrameFunction */
 #endif

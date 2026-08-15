@@ -360,6 +360,15 @@ CASES["SerialSend8Bytes"] = [
 ]
 # <<< factory SerialSend8Bytes
 
+# >>> factory LinkOpponentTurnFrameFunction
+CONTRACT["LinkOpponentTurnFrameFunction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LinkOpponentTurnFrameFunction"] = [
+    {"wram": {0xCB75: b"\x00"}},
+    dict(POISON, wram={0xCB75: b"\x00"}),
+    {"a": 0x5A, "hl": 0x4321, "wram": {0xCB75: b"\x00"}},
+]
+# <<< factory LinkOpponentTurnFrameFunction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -414,3 +423,11 @@ MUTATIONS["SerialSend8Bytes"] = {
     "case_ids": ["SerialSend8Bytes-1", "SerialSend8Bytes-2"],
 }
 # <<< factory-mutation SerialSend8Bytes
+# >>> factory-mutation LinkOpponentTurnFrameFunction
+MUTATIONS["LinkOpponentTurnFrameFunction"] = {
+    "source_symbol": "LinkOpponentTurnFrameFunction",
+    "before": "\tif (wSerialFlags == 0u) {",
+    "after": "\tif (wSerialFlags != 0u) {",
+    "case_ids": ["LinkOpponentTurnFrameFunction-0", "LinkOpponentTurnFrameFunction-1", "LinkOpponentTurnFrameFunction-2"],
+}
+# <<< factory-mutation LinkOpponentTurnFrameFunction

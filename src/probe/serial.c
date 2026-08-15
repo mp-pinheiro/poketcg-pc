@@ -158,6 +158,15 @@ static void adapt_SerialSend8Bytes(ProbeState *s)
 }
 /* <<< factory SerialSend8Bytes */
 
+/* >>> factory LinkOpponentTurnFrameFunction */
+static void adapt_LinkOpponentTurnFrameFunction(ProbeState *s)
+{
+	LinkOppTurnResult r = LinkOpponentTurnFrameFunction();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LinkOpponentTurnFrameFunction */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -177,5 +186,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SerialRecv8Bytes", adapt_SerialRecv8Bytes },
 	{ "ExchangeRNG", adapt_ExchangeRNG },
 	{ "SerialSend8Bytes", adapt_SerialSend8Bytes },
+	{ "LinkOpponentTurnFrameFunction", adapt_LinkOpponentTurnFrameFunction },
 	{ NULL, NULL },
 };
