@@ -2087,6 +2087,21 @@ static void adapt_MarowakCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
 }
 /* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
 
+/* >>> factory IceBreath_ZeroDamage */
+static void adapt_IceBreath_ZeroDamage(ProbeState *s)
+{
+	s->a = IceBreath_ZeroDamage();
+}
+/* <<< factory IceBreath_ZeroDamage */
+
+/* >>> factory AIPickFireEnergyCardToDiscard */
+static void adapt_AIPickFireEnergyCardToDiscard(ProbeState *s)
+{
+	(void)s;
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory AIPickFireEnergyCardToDiscard */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2345,5 +2360,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JynxMeditate_AIEffect", adapt_JynxMeditate_AIEffect },
 	{ "MysteryAttack_RandomEffect", adapt_MysteryAttack_RandomEffect },
 	{ "MarowakCallForFamily_CheckDeckAndPlayArea", adapt_MarowakCallForFamily_CheckDeckAndPlayArea },
+	{ "IceBreath_ZeroDamage", adapt_IceBreath_ZeroDamage },
+	{ "AIPickFireEnergyCardToDiscard", adapt_AIPickFireEnergyCardToDiscard },
 	{ NULL, NULL },
 };

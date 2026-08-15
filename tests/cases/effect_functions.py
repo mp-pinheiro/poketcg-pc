@@ -2213,6 +2213,24 @@ CASES["MarowakCallForFamily_CheckDeckAndPlayArea"] = [
 ]
 # <<< factory MarowakCallForFamily_CheckDeckAndPlayArea
 
+# >>> factory IceBreath_ZeroDamage
+CONTRACT["IceBreath_ZeroDamage"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["IceBreath_ZeroDamage"] = [
+    {},
+    dict(POISON),
+    {"a": 0x7F, "b": 1, "c": 2, "d": 3, "e": 4, "hl": 0x0100},
+]
+# <<< factory IceBreath_ZeroDamage
+
+# >>> factory AIPickFireEnergyCardToDiscard
+CONTRACT["AIPickFireEnergyCardToDiscard"] = {"compare": (), "preserve": ()}
+CASES["AIPickFireEnergyCardToDiscard"] = [
+    {"wram": {0xC510: b"\x00\x00\x00\x00"}, "read": {0xC510: 8, 0xFFA0: 1}},
+    dict(POISON, wram={0xC510: b"\xAA\xBB\xCC\xDD"}, read={0xC510: 8, 0xFFA0: 1}),
+    {"wram": {0xC510: b"\x01\xFF\x00\x00"}, "read": {0xC510: 8, 0xFFA0: 1}},
+]
+# <<< factory AIPickFireEnergyCardToDiscard
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3757,3 +3775,19 @@ MUTATIONS["MarowakCallForFamily_CheckDeckAndPlayArea"] = {
     "case_ids": ["MarowakCallForFamily_CheckDeckAndPlayArea-0", "MarowakCallForFamily_CheckDeckAndPlayArea-1"],
 }
 # <<< factory-mutation MarowakCallForFamily_CheckDeckAndPlayArea
+# >>> factory-mutation IceBreath_ZeroDamage
+MUTATIONS["IceBreath_ZeroDamage"] = {
+    "source_symbol": "IceBreath_ZeroDamage",
+    "before": "\tuint8_t ice_breath_damage = 0u;",
+    "after": "\tuint8_t ice_breath_damage = 0x10u;",
+    "case_ids": ["IceBreath_ZeroDamage-0", "IceBreath_ZeroDamage-1", "IceBreath_ZeroDamage-2"],
+}
+# <<< factory-mutation IceBreath_ZeroDamage
+# >>> factory-mutation AIPickFireEnergyCardToDiscard
+MUTATIONS["AIPickFireEnergyCardToDiscard"] = {
+    "source_symbol": "AIPickFireEnergyCardToDiscard",
+    "before": "\thTemp_ffa0 = gb_read8(wDuelTempList_ADDR);",
+    "after": "\thTemp_ffa0 = gb_read8((uint16_t)(wDuelTempList_ADDR + 1u));",
+    "case_ids": ["AIPickFireEnergyCardToDiscard-0", "AIPickFireEnergyCardToDiscard-1", "AIPickFireEnergyCardToDiscard-2"],
+}
+# <<< factory-mutation AIPickFireEnergyCardToDiscard

@@ -3630,3 +3630,22 @@ CheckIfDeckIsEmptyResult MarowakCallForFamily_CheckDeckAndPlayArea(void)
 	return r;
 }
 /* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory IceBreath_ZeroDamage */
+/* effect_functions.asm:3495-3499 */
+uint8_t IceBreath_ZeroDamage(void)
+{
+	uint8_t ice_breath_damage = 0u;
+	SetDefiniteDamage(ice_breath_damage);
+	return ice_breath_damage;
+}
+/* <<< factory IceBreath_ZeroDamage */
+
+/* >>> factory AIPickFireEnergyCardToDiscard */
+/* effect_functions.asm:3526-3531 */
+void AIPickFireEnergyCardToDiscard(void)
+{
+	CreateListOfFireEnergyAttachedToArena();
+	hTemp_ffa0 = gb_read8(wDuelTempList_ADDR);
+}
+/* <<< factory AIPickFireEnergyCardToDiscard */

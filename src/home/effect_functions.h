@@ -873,6 +873,12 @@ void MysteryAttack_RandomEffect(void);
 /* >>> factory MarowakCallForFamily_CheckDeckAndPlayArea */
 CheckIfDeckIsEmptyResult MarowakCallForFamily_CheckDeckAndPlayArea(void);
 /* <<< factory MarowakCallForFamily_CheckDeckAndPlayArea */
+/* >>> factory IceBreath_ZeroDamage */
+uint8_t IceBreath_ZeroDamage(void);
+/* <<< factory IceBreath_ZeroDamage */
+/* >>> factory AIPickFireEnergyCardToDiscard */
+void AIPickFireEnergyCardToDiscard(void);
+/* <<< factory AIPickFireEnergyCardToDiscard */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);
