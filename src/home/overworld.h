@@ -19,4 +19,10 @@ typedef struct {
 } OverworldNPCFlagsResult;
 OverworldNPCFlagsResult SetOverworldNPCFlags(uint8_t a);
 /* <<< factory SetOverworldNPCFlags */
+/* >>> factory Func_c158 */
+uint8_t Func_c158(void);
+/* <<< factory Func_c158 */
+/* >>> factory Func_c184 */
+void Func_c184(void);
+/* <<< factory Func_c184 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

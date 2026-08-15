@@ -54,6 +54,29 @@ CASES["SetOverworldNPCFlags"] = [
 ]
 # <<< factory SetOverworldNPCFlags
 
+# >>> factory Func_c158
+CONTRACT["Func_c158"] = {"compare": ("a",), "preserve": ()}
+CASES["Func_c158"] = [
+	{},  # all-zero: wActiveGameEvent=0 -> cp/r nz early return
+	{"wram": {0xD0C2: b"\x01", 0xD3AB: b"\x00", 0xD0C4: b"\x42", 0xD0C5: b"\x0c", 0xD3AA: b"\x01"},
+	 "read": {0xD0C2: 1, 0xD0C4: 1}},  # duel event: wTempNPC <- wNPCDuelist before FindLoadedNPC
+	{"wram": {0xD0C2: b"\x02", 0xD3AB: b"\x77"}, "read": {0xD0C2: 1}},  # not duel -> early return, wTempNPC untouched
+	dict(POISON, wram={0xD0C2: b"\x01", 0xD3AB: b"\x33", 0xD0C4: b"\x21", 0xD0C5: b"\x06"},
+	     read={0xD0C2: 1, 0xD0C4: 1}),
+]
+# <<< factory Func_c158
+
+# >>> factory Func_c184
+CONTRACT["Func_c184"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c184"] = [
+	{},  # all-zero: wCurMap=0 -> OWMODE_MAP written to both mode bytes
+	{"wram": {0xD0BF: b"\x5a", 0xD0C0: b"\xa5"}, "read": {0xD32F: 1}},  # wCurMap=0 overwrites both with 00
+	{"wram": {0xD32F: b"\x01", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, "read": {0xD32F: 1}},  # first nonzero map id
+	{"wram": {0xD32F: b"\xff", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, "read": {0xD32F: 1}},
+	dict(POISON, wram={0xD32F: b"\x02", 0xD0BF: b"\x00", 0xD0C0: b"\x00"}, read={0xD32F: 1}),
+]
+# <<< factory Func_c184
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -85,3 +108,19 @@ MUTATIONS["Func_c6f7"] = {
 # >>> factory-mutation SetOverworldNPCFlags
 MUTATIONS["SetOverworldNPCFlags"] = {"source_symbol": "SetOverworldNPCFlags", "before": "uint8_t value = (uint8_t)(a | wOverworldNPCFlags);", "after": "uint8_t value = (uint8_t)(a & wOverworldNPCFlags);", "case_ids": ["SetOverworldNPCFlags-1", "SetOverworldNPCFlags-2"]}
 # <<< factory-mutation SetOverworldNPCFlags
+# >>> factory-mutation Func_c158
+MUTATIONS["Func_c158"] = {
+	"source_symbol": "Func_c158",
+	"before": "if (event != GAME_EVENT_DUEL)",
+	"after": "if (event == GAME_EVENT_DUEL)",
+	"case_ids": ["Func_c158-1", "Func_c158-2", "Func_c158-3"],
+}
+# <<< factory-mutation Func_c158
+# >>> factory-mutation Func_c184
+MUTATIONS["Func_c184"] = {
+	"source_symbol": "Func_c184",
+	"before": "if (wCurMap == OVERWORLD_MAP)",
+	"after": "if (wCurMap != OVERWORLD_MAP)",
+	"case_ids": ["Func_c184-1", "Func_c184-2", "Func_c184-3", "Func_c184-4"],
+}
+# <<< factory-mutation Func_c184

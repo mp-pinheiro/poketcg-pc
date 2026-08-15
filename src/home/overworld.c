@@ -13,6 +13,26 @@
 
 #include "home/copy.h"
 #include "home/print_text.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "home/play_animation.h"
+#include "mem.h"
+
+/* The engine/overworld bank is labeled in pret's bank-linear space: names like
+ * Func_c158 address the bank-3 slot $c000-$ffff, i.e. runtime address
+ * (name - $8000). SetOverworldDoFrameFunction occupies $c199 (7 bytes:
+ * ld hl,nn / call nn / ret), and OverworldDoFrameFunction is the next label,
+ * so the pointer handed to SetDoFrameFunction is runtime $41a0. */
+#define OVERWORLD_DO_FRAME_FUNCTION 0x41a0u
+
+#define GAME_EVENT_DUEL      0x01u
+#define LOADED_NPC_DIRECTION 0x04u
+#define OVERWORLD_MAP        0x00u
+#define OWMODE_MAP           0x00u
+#define OWMODE_MOVE          0x01u
+#define FLAG_CARRY           0x10u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -67,3 +87,32 @@ OverworldNPCFlagsResult SetOverworldNPCFlags(uint8_t a)
 	};
 }
 /* <<< factory SetOverworldNPCFlags */
+
+/* >>> factory Func_c158 */
+/* overworld.asm:174-197 */
+uint8_t Func_c158(void)
+{
+	uint8_t event = wActiveGameEvent;
+	if (event != GAME_EVENT_DUEL)
+		return event;
+	wTempNPC = wNPCDuelist;
+	NPCSearchResult npc = FindLoadedNPC();
+	if (npc.f & FLAG_CARRY)
+		return npc.a;
+	PermissionResult slot = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);
+	gb_write8(slot.hl, wNPCDuelistDirection);
+	return UpdateNPCAnimation();
+}
+/* <<< factory Func_c158 */
+
+/* >>> factory Func_c184 */
+/* overworld.asm:198-211 */
+void Func_c184(void)
+{
+	uint8_t mode = OWMODE_MOVE;
+	if (wCurMap == OVERWORLD_MAP)
+		mode = OWMODE_MAP;
+	wOverworldMode = mode;
+	wOverworldModeBackup = mode;
+}
+/* <<< factory Func_c184 */

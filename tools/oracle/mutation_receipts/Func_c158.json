@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c158",
+  "case": "tests/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c158\", \"registers\": {\"a\": 66, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"01\", \"53444\": \"420c\", \"54186\": \"0042\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c158\", \"mismatches\": {\"a\": [66, 1], \"bus\": {\"address\": 54186, \"reference\": \"01420c0042\", \"native\": \"01420c0100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53442, 1], [53444, 2], [54186, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c158\", \"registers\": {\"a\": 66, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"01\", \"53444\": \"420c\", \"54186\": \"0042\"}}, \"status\": \"PASS\"}\n"
+}
