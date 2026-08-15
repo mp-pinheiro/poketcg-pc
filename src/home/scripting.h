@@ -95,4 +95,7 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uin
 /* >>> factory ScriptCommand_GiveCard */
 IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c);
 /* <<< factory ScriptCommand_GiveCard */
+/* >>> factory ScriptCommand_TakeCard */
+IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c);
+/* <<< factory ScriptCommand_TakeCard */
 #endif

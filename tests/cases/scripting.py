@@ -15,6 +15,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -219,6 +220,18 @@ CASES["ScriptCommand_GiveCard"] = [
 ]
 # <<< factory ScriptCommand_GiveCard
 
+# >>> factory ScriptCommand_TakeCard
+CONTRACT["ScriptCommand_TakeCard"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_TakeCard"] = [
+    {"c": 0},
+    {"c": 1},
+    {"c": 2},
+    {"c": 0x40},
+    {"c": 0xFF},
+    dict(POISON, c=8),
+]
+# <<< factory ScriptCommand_TakeCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -345,3 +358,11 @@ MUTATIONS["ScriptCommand_GiveCard"] = {
     "case_ids": ["ScriptCommand_GiveCard-2", "ScriptCommand_GiveCard-4"],
 }
 # <<< factory-mutation ScriptCommand_GiveCard
+# >>> factory-mutation ScriptCommand_TakeCard
+MUTATIONS["ScriptCommand_TakeCard"] = {
+    "source_symbol": "ScriptCommand_TakeCard",
+    "before": "\tRemoveCardFromCollection(c);\n\treturn IncreaseScriptPointerBy2();",
+    "after": "\tRemoveCardFromCollection(c);\n\treturn IncreaseScriptPointerBy3();",
+    "case_ids": ["ScriptCommand_TakeCard-0", "ScriptCommand_TakeCard-1", "ScriptCommand_TakeCard-2", "ScriptCommand_TakeCard-3", "ScriptCommand_TakeCard-4", "ScriptCommand_TakeCard-5"],
+}
+# <<< factory-mutation ScriptCommand_TakeCard

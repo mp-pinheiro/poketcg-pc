@@ -185,6 +185,16 @@ static void adapt_ScriptCommand_GiveCard(ProbeState *s)
 }
 /* <<< factory ScriptCommand_GiveCard */
 
+/* >>> factory ScriptCommand_TakeCard */
+static void adapt_ScriptCommand_TakeCard(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_TakeCard(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_TakeCard */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -204,5 +214,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetScriptControlBytePass", adapt_SetScriptControlBytePass },
 	{ "ScriptCommand_JumpIfCardInCollection", adapt_ScriptCommand_JumpIfCardInCollection },
 	{ "ScriptCommand_GiveCard", adapt_ScriptCommand_GiveCard },
+	{ "ScriptCommand_TakeCard", adapt_ScriptCommand_TakeCard },
 	{ NULL, NULL },
 };

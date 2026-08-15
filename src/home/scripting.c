@@ -21,6 +21,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/card_collection.h"
 #include "home/scripting.h"
+
+#include "home/card_collection.h"
 /* <<< factory statics */
 
 
@@ -229,3 +231,12 @@ IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_GiveCard */
+
+/* >>> factory ScriptCommand_TakeCard */
+/* scripting.asm:1066-1069 */
+IncreaseScriptPointerResult ScriptCommand_TakeCard(uint8_t c)
+{
+	RemoveCardFromCollection(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_TakeCard */
