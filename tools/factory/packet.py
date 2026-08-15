@@ -639,7 +639,6 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                   limit: int | None) -> list[dict]:
     functions, _inventory = compute_functions()
     blocked = blocked_routines()
-    by_name = {f["name"]: f for f in functions}
     graph, dependents = blocker_graph(functions)
     cascade_cache: dict[str, int] = {}
     def cascade_of(name: str) -> int:

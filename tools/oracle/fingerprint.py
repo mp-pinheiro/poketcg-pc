@@ -9,7 +9,6 @@ import importlib.metadata
 import json
 import platform
 import re
-import sys
 import sysconfig
 from pathlib import Path
 

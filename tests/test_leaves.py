@@ -16,6 +16,9 @@ import tempfile
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from pyboy_oracle import Oracle
+
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
@@ -362,7 +365,7 @@ def main() -> int:
         warm_hint = "just oracle-warm {fn}"
     oracle = None
     if args.oracle_mode in ("live", "refresh"):
-        from pyboy_oracle import Oracle, OracleError
+        from pyboy_oracle import Oracle
         oracle = Oracle(args.rom)
     failures = 0
     report_data = None
