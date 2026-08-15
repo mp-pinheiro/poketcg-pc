@@ -18,11 +18,12 @@
 /* <<< factory statics */
 
 
+
 /* >>> factory AnimationCommand_AnimEnd2 */
-/* commands.asm:78-79 */
-void AnimationCommand_AnimEnd2(void)
+/* commands.asm:78 */
+uint8_t AnimationCommand_AnimEnd2(uint8_t a)
 {
-	return;
+	return a;
 }
 /* <<< factory AnimationCommand_AnimEnd2 */
 
@@ -92,3 +93,11 @@ void DuelAnim153(void)
 {
 }
 /* <<< factory DuelAnim153 */
+
+/* >>> factory AnimationCommand_AnimEnd */
+/* commands.asm:47 */
+uint8_t AnimationCommand_AnimEnd(uint8_t a)
+{
+	return a;
+}
+/* <<< factory AnimationCommand_AnimEnd */

@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 /* >>> factory AnimationCommand_AnimEnd2 */
-void AnimationCommand_AnimEnd2(void);
+uint8_t AnimationCommand_AnimEnd2(uint8_t a);
 /* <<< factory AnimationCommand_AnimEnd2 */
 
 /* >>> factory UpdateDuelAnimationScreen */
@@ -20,4 +20,7 @@ UpdateDuelAnimationScreenResult UpdateDuelAnimationScreen(uint16_t hl);
 /* >>> factory DuelAnim153 */
 void DuelAnim153(void);
 /* <<< factory DuelAnim153 */
+/* >>> factory AnimationCommand_AnimEnd */
+uint8_t AnimationCommand_AnimEnd(uint8_t a);
+/* <<< factory AnimationCommand_AnimEnd */
 #endif

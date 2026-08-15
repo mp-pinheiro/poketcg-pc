@@ -12,16 +12,14 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 CONTRACT = {}
 CASES = {}
 
-# >>> factory AnimationCommand_AnimEnd2
-CONTRACT["AnimationCommand_AnimEnd2"] = {
-    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
-    "preserve": ("a", "f", "b", "c", "d", "e", "hl"),
-}
-CASES["AnimationCommand_AnimEnd2"] = [
-    {"read": {wDuelAnimationScreen: 1}},
-    dict(POISON, read={wDuelAnimationScreen: 1}),
+# >>> factory AnimationCommand_AnimEnd
+CONTRACT["AnimationCommand_AnimEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["AnimationCommand_AnimEnd"] = [
+    {},
+    dict(POISON),
 ]
-# <<< factory AnimationCommand_AnimEnd2
+# <<< factory AnimationCommand_AnimEnd
+
 
 
 # >>> factory UpdateDuelAnimationScreen
@@ -67,19 +65,27 @@ CASES["DuelAnim153"] = [
 ]
 # <<< factory DuelAnim153
 
+# >>> factory AnimationCommand_AnimEnd2
+CONTRACT["AnimationCommand_AnimEnd2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["AnimationCommand_AnimEnd2"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory AnimationCommand_AnimEnd2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {}
 
-# >>> factory-mutation AnimationCommand_AnimEnd2
-MUTATIONS["AnimationCommand_AnimEnd2"] = {
-    "source_symbol": "AnimationCommand_AnimEnd2",
-    "before": "void AnimationCommand_AnimEnd2(void)\n{\n\treturn;",
-    "after": "void AnimationCommand_AnimEnd2(void)\n{\n\tgb_write8(wDuelAnimationScreen_ADDR, 0xFFu);\n\treturn;",
-    "case_ids": ["AnimationCommand_AnimEnd2-1"],
+# >>> factory-mutation AnimationCommand_AnimEnd
+MUTATIONS["AnimationCommand_AnimEnd"] = {
+    "source_symbol": "AnimationCommand_AnimEnd",
+    "before": "uint8_t AnimationCommand_AnimEnd(uint8_t a)\n{\n\treturn a;\n}",
+    "after": "uint8_t AnimationCommand_AnimEnd(uint8_t a)\n{\n\treturn (uint8_t)(a + 1u);\n}",
+    "case_ids": ["AnimationCommand_AnimEnd-0", "AnimationCommand_AnimEnd-1"],
 }
-# <<< factory-mutation AnimationCommand_AnimEnd2
+# <<< factory-mutation AnimationCommand_AnimEnd
 
 # >>> factory-mutation UpdateDuelAnimationScreen
 MUTATIONS["UpdateDuelAnimationScreen"] = {
@@ -97,3 +103,11 @@ MUTATIONS["DuelAnim153"] = {
     "case_ids": ["DuelAnim153-0", "DuelAnim153-1"],
 }
 # <<< factory-mutation DuelAnim153
+# >>> factory-mutation AnimationCommand_AnimEnd2
+MUTATIONS["AnimationCommand_AnimEnd2"] = {
+    "source_symbol": "AnimationCommand_AnimEnd2",
+    "before": "uint8_t AnimationCommand_AnimEnd2(uint8_t a)\n{\n\treturn a;\n}",
+    "after": "uint8_t AnimationCommand_AnimEnd2(uint8_t a)\n{\n\treturn (uint8_t)(a + 1u);\n}",
+    "case_ids": ["AnimationCommand_AnimEnd2-0", "AnimationCommand_AnimEnd2-1"],
+}
+# <<< factory-mutation AnimationCommand_AnimEnd2

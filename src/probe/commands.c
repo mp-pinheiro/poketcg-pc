@@ -4,10 +4,10 @@
 /* >>> factory AnimationCommand_AnimEnd2 */
 static void adapt_AnimationCommand_AnimEnd2(ProbeState *s)
 {
-	AnimationCommand_AnimEnd2();
-	(void)s;
+	s->a = AnimationCommand_AnimEnd2(s->a);
 }
 /* <<< factory AnimationCommand_AnimEnd2 */
+
 
 
 /* >>> factory UpdateDuelAnimationScreen */
@@ -29,9 +29,17 @@ static void adapt_DuelAnim153(ProbeState *s)
 }
 /* <<< factory DuelAnim153 */
 
+/* >>> factory AnimationCommand_AnimEnd */
+static void adapt_AnimationCommand_AnimEnd(ProbeState *s)
+{
+	s->a = AnimationCommand_AnimEnd(s->a);
+}
+/* <<< factory AnimationCommand_AnimEnd */
+
 const ProbeEntry probe_entries_commands[] = {
-	{ "AnimationCommand_AnimEnd2", adapt_AnimationCommand_AnimEnd2 },
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
+	{ "AnimationCommand_AnimEnd", adapt_AnimationCommand_AnimEnd },
+	{ "AnimationCommand_AnimEnd2", adapt_AnimationCommand_AnimEnd2 },
 	{ NULL, NULL },
 };
