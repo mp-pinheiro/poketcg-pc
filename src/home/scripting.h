@@ -82,4 +82,17 @@ GetScriptArgsAfterPointerResult GetScriptArgs3AfterPointer(void);
 /* >>> factory SetScriptControlBytePass */
 uint8_t SetScriptControlBytePass(void);
 /* <<< factory SetScriptControlBytePass */
+/* >>> factory ScriptCommand_JumpIfCardInCollection */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} JumpIfCardInCollectionResult;
+
+JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_JumpIfCardInCollection */
+/* >>> factory ScriptCommand_GiveCard */
+IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c);
+/* <<< factory ScriptCommand_GiveCard */
 #endif

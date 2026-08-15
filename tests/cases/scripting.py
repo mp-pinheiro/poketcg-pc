@@ -14,6 +14,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -192,6 +193,32 @@ CONTRACT["SetScriptControlBytePass"] = {"compare": ("a", "f", "b", "c", "d", "e"
 CASES["SetScriptControlBytePass"] = [{"wram": {0xD415: b"\x00"}}, dict(POISON, wram={0xD415: b"\x00"})]
 # <<< factory SetScriptControlBytePass
 
+# >>> factory ScriptCommand_JumpIfCardInCollection
+CONTRACT["ScriptCommand_JumpIfCardInCollection"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfCardInCollection"] = [
+    {},
+    {"c": 1},
+    {"c": 4},
+    {"c": 0xE4},
+    {"c": 0xFF},
+    dict(POISON, b=0xBB, c=0x04),
+    dict(POISON, b=0xBB, c=0x00),
+    dict(POISON, b=0xBB, c=0xFF),
+]
+# <<< factory ScriptCommand_JumpIfCardInCollection
+
+# >>> factory ScriptCommand_GiveCard
+CONTRACT["ScriptCommand_GiveCard"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_GiveCard"] = [
+    {"c": 0, "wram": {0xD697: b"\x00"}, "sread": {0: {0xA000: 0x400}}},
+    {"c": 2, "wram": {0xD697: b"\x08"}, "sread": {0: {0xA000: 0x400}}},
+    {"c": 0, "wram": {0xD697: b"\x08"}, "sread": {0: {0xA000: 0x400}}},
+    {"c": 1, "wram": {0xD697: b"\xE4"}, "sread": {0: {0xA000: 0x400}}},
+    dict(POISON, c=0, wram={0xD697: b"\x40"}, sread={0: {0xA000: 0x400}}),
+    dict(POISON, c=0x80, wram={0xD697: b"\x01"}, sread={0: {0xA000: 0x400}}),
+]
+# <<< factory ScriptCommand_GiveCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -298,3 +325,23 @@ MUTATIONS["GetScriptArgs3AfterPointer"] = {"source_symbol": "GetScriptArgs3After
 # >>> factory-mutation SetScriptControlBytePass
 MUTATIONS["SetScriptControlBytePass"] = {"source_symbol": "SetScriptControlBytePass", "before": "\twScriptControlByte = 0xffu;", "after": "\twScriptControlByte = 0xfeu;", "case_ids": ["SetScriptControlBytePass-0", "SetScriptControlBytePass-1"]}
 # <<< factory-mutation SetScriptControlBytePass
+# >>> factory-mutation ScriptCommand_JumpIfCardInCollection
+MUTATIONS["ScriptCommand_JumpIfCardInCollection"] = {
+    "source_symbol": "ScriptCommand_JumpIfCardInCollection",
+    "before": "\tif (cnt.a == 0) {",
+    "after": "\tif (cnt.a != 0) {",
+    "case_ids": [
+        "ScriptCommand_JumpIfCardInCollection-5",
+        "ScriptCommand_JumpIfCardInCollection-6",
+        "ScriptCommand_JumpIfCardInCollection-7",
+    ],
+}
+# <<< factory-mutation ScriptCommand_JumpIfCardInCollection
+# >>> factory-mutation ScriptCommand_GiveCard
+MUTATIONS["ScriptCommand_GiveCard"] = {
+    "source_symbol": "ScriptCommand_GiveCard",
+    "before": "\t\ta = wCardReceived;",
+    "after": "\t\ta = (uint8_t)(c + 1u);",
+    "case_ids": ["ScriptCommand_GiveCard-2", "ScriptCommand_GiveCard-4"],
+}
+# <<< factory-mutation ScriptCommand_GiveCard

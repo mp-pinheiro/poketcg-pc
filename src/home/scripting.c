@@ -18,6 +18,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 }
 
 #include "home/scripting.h"
+
+#include "home/card_collection.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -193,3 +196,36 @@ uint8_t SetScriptControlBytePass(void)
 	return 0xffu;
 }
 /* <<< factory SetScriptControlBytePass */
+
+/* >>> factory ScriptCommand_JumpIfCardInCollection */
+/* scripting.asm:1019-1036 */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfCardInCollection(uint8_t b, uint8_t c)
+{
+	CardCountResult cnt = GetCardCountInCollection(c);
+	if (cnt.a == 0) {
+		SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+	}
+	SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+	}
+	(void)SetScriptPointer((uint16_t)(args.b << 8 | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+}
+/* <<< factory ScriptCommand_JumpIfCardInCollection */
+
+/* >>> factory ScriptCommand_GiveCard */
+/* scripting.asm:1056-1063 */
+IncreaseScriptPointerResult ScriptCommand_GiveCard(uint8_t c)
+{
+	uint8_t a = c;
+	if (a == 0)
+		a = wCardReceived;
+	AddCardToCollection(a);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_GiveCard */

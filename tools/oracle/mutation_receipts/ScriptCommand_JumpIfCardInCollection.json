@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfCardInCollection",
+  "case": "tests/cases/scripting.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfCardInCollection\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfCardInCollection\", \"mismatches\": {\"b\": [187, 0]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfCardInCollection\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 4, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

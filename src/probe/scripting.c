@@ -164,6 +164,27 @@ static void adapt_SetScriptControlBytePass(ProbeState *s)
 }
 /* <<< factory SetScriptControlBytePass */
 
+/* >>> factory ScriptCommand_JumpIfCardInCollection */
+static void adapt_ScriptCommand_JumpIfCardInCollection(ProbeState *s)
+{
+	JumpIfCardInCollectionResult r = ScriptCommand_JumpIfCardInCollection(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfCardInCollection */
+
+/* >>> factory ScriptCommand_GiveCard */
+static void adapt_ScriptCommand_GiveCard(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_GiveCard(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_GiveCard */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -181,5 +202,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "GetScriptArgs2AfterPointer", adapt_GetScriptArgs2AfterPointer },
 	{ "GetScriptArgs3AfterPointer", adapt_GetScriptArgs3AfterPointer },
 	{ "SetScriptControlBytePass", adapt_SetScriptControlBytePass },
+	{ "ScriptCommand_JumpIfCardInCollection", adapt_ScriptCommand_JumpIfCardInCollection },
+	{ "ScriptCommand_GiveCard", adapt_ScriptCommand_GiveCard },
 	{ NULL, NULL },
 };
