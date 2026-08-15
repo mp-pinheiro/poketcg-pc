@@ -47,6 +47,16 @@ CASES = {
          "read": {0xDD8C: 1}},
     ],
 }
+# >>> factory Func_fc105
+CONTRACT["Func_fc105"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("a", "b", "c", "d", "e")}
+CASES["Func_fc105"] = [
+    {"wram": {0xDE4B: b"\x00\x00"}, "read": {0xDE4B: 2}},
+    {"c": 1, "d": 0x12, "e": 0x34, "wram": {0xDE4D: b"\x00\x00"}, "read": {0xDE4D: 2}},
+    {"c": 0x20, "d": 0xFF, "e": 0xFF, "wram": {0xDE8B: b"\x00\x00"}, "read": {0xDE8B: 2}},
+    dict(POISON, b=0, c=0x10, wram={0xDE6B: b"\x00\x00"}, read={0xDE6B: 2}),
+]
+# <<< factory Func_fc105
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -58,3 +68,11 @@ MUTATIONS = {
         "case_ids": ["SFX_PlaySFX-0", "SFX_PlaySFX-1", "SFX_PlaySFX-2", "SFX_PlaySFX-3"],
     },
 }
+# >>> factory-mutation Func_fc105
+MUTATIONS["Func_fc105"] = {
+    "source_symbol": "Func_fc105",
+    "before": "\tgb_write8(hl, (uint8_t)de);",
+    "after": "\tgb_write8(hl, (uint8_t)(de >> 8));",
+    "case_ids": ["Func_fc105-1", "Func_fc105-3"],
+}
+# <<< factory-mutation Func_fc105

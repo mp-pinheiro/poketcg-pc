@@ -3,6 +3,14 @@
 #include <stdbool.h>
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+/* rAUD1ENV is NR12 ($ff12); AUD1ENV_UP is the envelope-direction bit of NRx2.
+ * wdd8c has no generated symbol in this port's header set, so its address is
+ * defined locally. */
+#define RAUD1ENV     0xff12u
+#define AUD1ENV_UP   0x08u
+#define WDD8C        0xdd8cu
+/* <<< factory statics */
 
 #define SFX_BANK 0x3Fu
 
@@ -394,3 +402,15 @@ void SFX_Update(void)
 			break;
 	}
 }
+
+/* >>> factory Func_fc105 */
+/* sfx.asm:188-196 */
+uint16_t Func_fc105(uint16_t bc, uint16_t de)
+{
+	uint16_t hl = (uint16_t)(wSFXCommandPointers_ADDR + bc + bc);
+	gb_write8(hl, (uint8_t)de);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, (uint8_t)(de >> 8));
+	return hl;
+}
+/* <<< factory Func_fc105 */
