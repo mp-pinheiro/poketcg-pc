@@ -2231,6 +2231,16 @@ CASES["AIPickFireEnergyCardToDiscard"] = [
 ]
 # <<< factory AIPickFireEnergyCardToDiscard
 
+# >>> factory FlamesOfRage_AIEffect
+CONTRACT["FlamesOfRage_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["FlamesOfRage_AIEffect"] = [
+    {"read": {0xCB00: 0x100, 0xCC00: 0x100, 0xCD00: 0x100, 0xCE00: 0x100}},
+    dict(POISON, read={0xCB00: 0x100, 0xCC00: 0x100, 0xCD00: 0x100, 0xCE00: 0x100}),
+    {"wram": {0xCC00: b"\xAA" * 0x100},
+     "read": {0xCB00: 0x100, 0xCC00: 0x100, 0xCD00: 0x100, 0xCE00: 0x100}},
+]
+# <<< factory FlamesOfRage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3791,3 +3801,11 @@ MUTATIONS["AIPickFireEnergyCardToDiscard"] = {
     "case_ids": ["AIPickFireEnergyCardToDiscard-0", "AIPickFireEnergyCardToDiscard-1", "AIPickFireEnergyCardToDiscard-2"],
 }
 # <<< factory-mutation AIPickFireEnergyCardToDiscard
+# >>> factory-mutation FlamesOfRage_AIEffect
+MUTATIONS["FlamesOfRage_AIEffect"] = {
+    "source_symbol": "FlamesOfRage_AIEffect",
+    "before": "\tFlamesOfRage_DamageBoostEffect();\n\tSetDefiniteAIDamage();",
+    "after": "\tFlamesOfRage_DamageBoostEffect();\n\t(void)0;",
+    "case_ids": ["FlamesOfRage_AIEffect-2"],
+}
+# <<< factory-mutation FlamesOfRage_AIEffect

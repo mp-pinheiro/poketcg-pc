@@ -2102,6 +2102,14 @@ static void adapt_AIPickFireEnergyCardToDiscard(ProbeState *s)
 }
 /* <<< factory AIPickFireEnergyCardToDiscard */
 
+/* >>> factory FlamesOfRage_AIEffect */
+static void adapt_FlamesOfRage_AIEffect(ProbeState *s)
+{
+	(void)s;
+	FlamesOfRage_AIEffect();
+}
+/* <<< factory FlamesOfRage_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2362,5 +2370,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MarowakCallForFamily_CheckDeckAndPlayArea", adapt_MarowakCallForFamily_CheckDeckAndPlayArea },
 	{ "IceBreath_ZeroDamage", adapt_IceBreath_ZeroDamage },
 	{ "AIPickFireEnergyCardToDiscard", adapt_AIPickFireEnergyCardToDiscard },
+	{ "FlamesOfRage_AIEffect", adapt_FlamesOfRage_AIEffect },
 	{ NULL, NULL },
 };

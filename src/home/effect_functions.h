@@ -879,6 +879,9 @@ uint8_t IceBreath_ZeroDamage(void);
 /* >>> factory AIPickFireEnergyCardToDiscard */
 void AIPickFireEnergyCardToDiscard(void);
 /* <<< factory AIPickFireEnergyCardToDiscard */
+/* >>> factory FlamesOfRage_AIEffect */
+void FlamesOfRage_AIEffect(void);
+/* <<< factory FlamesOfRage_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

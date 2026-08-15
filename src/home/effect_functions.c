@@ -3649,3 +3649,12 @@ void AIPickFireEnergyCardToDiscard(void)
 	hTemp_ffa0 = gb_read8(wDuelTempList_ADDR);
 }
 /* <<< factory AIPickFireEnergyCardToDiscard */
+
+/* >>> factory FlamesOfRage_AIEffect */
+/* effect_functions.asm:3618-3620 */
+void FlamesOfRage_AIEffect(void)
+{
+	FlamesOfRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory FlamesOfRage_AIEffect */
