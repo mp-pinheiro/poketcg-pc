@@ -119,4 +119,13 @@ IncreaseScriptPointerResult ScriptCommand_RecordMasterWin(uint8_t c);
 /* >>> factory ScriptCommand_ChallengeMachine */
 IncreaseScriptPointerResult ScriptCommand_ChallengeMachine(void);
 /* <<< factory ScriptCommand_ChallengeMachine */
+/* >>> factory ScriptCommand_PlaySong */
+IncreaseScriptPointerResult ScriptCommand_PlaySong(uint8_t c);
+/* <<< factory ScriptCommand_PlaySong */
+/* >>> factory ScriptCommand_PlaySFX */
+IncreaseScriptPointerResult ScriptCommand_PlaySFX(uint8_t c);
+/* <<< factory ScriptCommand_PlaySFX */
+/* >>> factory ScriptCommand_PlayDefaultSong */
+IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void);
+/* <<< factory ScriptCommand_PlayDefaultSong */
 #endif

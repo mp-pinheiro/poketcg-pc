@@ -33,6 +33,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 
 #define GAME_EVENT_CHALLENGE_MACHINE 0x06u
+
+#include "home/map.h"
+#include "home/play_song.h"
+#include "home/sound.h"
 /* <<< factory statics */
 
 
@@ -324,3 +328,36 @@ IncreaseScriptPointerResult ScriptCommand_ChallengeMachine(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ChallengeMachine */
+
+/* >>> factory ScriptCommand_PlaySong */
+/* scripting.asm:1854-1857. c is the song id passed to ScriptPlaySong; the
+ * tail jp means the composite's exit registers are exactly
+ * IncreaseScriptPointerBy2's ({a, f, c}). */
+IncreaseScriptPointerResult ScriptCommand_PlaySong(uint8_t c)
+{
+	ScriptPlaySong(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_PlaySong */
+
+/* >>> factory ScriptCommand_PlaySFX */
+/* scripting.asm:1859-1862. c is the SFX id passed to PlaySFX; the tail jp
+ * makes the composite's exit registers exactly IncreaseScriptPointerBy2's
+ * ({a, f, c}). */
+IncreaseScriptPointerResult ScriptCommand_PlaySFX(uint8_t c)
+{
+	PlaySFX(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_PlaySFX */
+
+/* >>> factory ScriptCommand_PlayDefaultSong */
+/* scripting.asm:1864-1866. PlayDefaultSong consumes no registers and its
+ * {a, f} exit is fully overwritten by the IncreaseScriptPointerBy1 tail, so
+ * the composite's exits are exactly IncreaseScriptPointerBy1's ({a, f, c}). */
+IncreaseScriptPointerResult ScriptCommand_PlayDefaultSong(void)
+{
+	PlayDefaultSong();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PlayDefaultSong */

@@ -19,6 +19,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -303,6 +304,34 @@ CASES["ScriptCommand_ChallengeMachine"] = [
 ]
 # <<< factory ScriptCommand_ChallengeMachine
 
+# >>> factory ScriptCommand_PlaySong
+CONTRACT["ScriptCommand_PlaySong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PlaySong"] = [
+    {},
+    {"c": 0x01},
+    {"c": 0x64},
+    dict(POISON, c=0x05),
+]
+# <<< factory ScriptCommand_PlaySong
+
+# >>> factory ScriptCommand_PlaySFX
+CONTRACT["ScriptCommand_PlaySFX"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PlaySFX"] = [
+    {},
+    {"c": 0x01},
+    {"c": 0x10},
+    dict(POISON, c=0x02),
+]
+# <<< factory ScriptCommand_PlaySFX
+
+# >>> factory ScriptCommand_PlayDefaultSong
+CONTRACT["ScriptCommand_PlayDefaultSong"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PlayDefaultSong"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory ScriptCommand_PlayDefaultSong
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -493,3 +522,27 @@ MUTATIONS["ScriptCommand_ChallengeMachine"] = {
 	"case_ids": ["ScriptCommand_ChallengeMachine-1", "ScriptCommand_ChallengeMachine-2", "ScriptCommand_ChallengeMachine-3"],
 }
 # <<< factory-mutation ScriptCommand_ChallengeMachine
+# >>> factory-mutation ScriptCommand_PlaySong
+MUTATIONS["ScriptCommand_PlaySong"] = {
+    "source_symbol": "ScriptCommand_PlaySong",
+    "before": "\tScriptPlaySong(c);\n\treturn IncreaseScriptPointerBy2();",
+    "after": "\tScriptPlaySong(c);\n\treturn IncreaseScriptPointerBy1();",
+    "case_ids": ["ScriptCommand_PlaySong-0", "ScriptCommand_PlaySong-1", "ScriptCommand_PlaySong-2", "ScriptCommand_PlaySong-3"],
+}
+# <<< factory-mutation ScriptCommand_PlaySong
+# >>> factory-mutation ScriptCommand_PlaySFX
+MUTATIONS["ScriptCommand_PlaySFX"] = {
+    "source_symbol": "ScriptCommand_PlaySFX",
+    "before": "\tPlaySFX(c);\n\treturn IncreaseScriptPointerBy2();",
+    "after": "\tPlaySFX(c);\n\treturn IncreaseScriptPointerBy1();",
+    "case_ids": ["ScriptCommand_PlaySFX-0", "ScriptCommand_PlaySFX-1", "ScriptCommand_PlaySFX-2", "ScriptCommand_PlaySFX-3"],
+}
+# <<< factory-mutation ScriptCommand_PlaySFX
+# >>> factory-mutation ScriptCommand_PlayDefaultSong
+MUTATIONS["ScriptCommand_PlayDefaultSong"] = {
+    "source_symbol": "ScriptCommand_PlayDefaultSong",
+    "before": "\tPlayDefaultSong();\n\treturn IncreaseScriptPointerBy1();",
+    "after": "\tPlayDefaultSong();\n\treturn IncreaseScriptPointerBy2();",
+    "case_ids": ["ScriptCommand_PlayDefaultSong-0", "ScriptCommand_PlayDefaultSong-1"],
+}
+# <<< factory-mutation ScriptCommand_PlayDefaultSong

@@ -265,6 +265,36 @@ static void adapt_ScriptCommand_ChallengeMachine(ProbeState *s)
 }
 /* <<< factory ScriptCommand_ChallengeMachine */
 
+/* >>> factory ScriptCommand_PlaySong */
+static void adapt_ScriptCommand_PlaySong(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_PlaySong(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_PlaySong */
+
+/* >>> factory ScriptCommand_PlaySFX */
+static void adapt_ScriptCommand_PlaySFX(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_PlaySFX(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_PlaySFX */
+
+/* >>> factory ScriptCommand_PlayDefaultSong */
+static void adapt_ScriptCommand_PlayDefaultSong(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_PlayDefaultSong();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_PlayDefaultSong */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -292,5 +322,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetDefaultSong", adapt_ScriptCommand_SetDefaultSong },
 	{ "ScriptCommand_RecordMasterWin", adapt_ScriptCommand_RecordMasterWin },
 	{ "ScriptCommand_ChallengeMachine", adapt_ScriptCommand_ChallengeMachine },
+	{ "ScriptCommand_PlaySong", adapt_ScriptCommand_PlaySong },
+	{ "ScriptCommand_PlaySFX", adapt_ScriptCommand_PlaySFX },
+	{ "ScriptCommand_PlayDefaultSong", adapt_ScriptCommand_PlayDefaultSong },
 	{ NULL, NULL },
 };
