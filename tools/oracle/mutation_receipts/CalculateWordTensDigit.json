@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateWordTensDigit",
+  "case": "tests/cases/common.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateWordTensDigit\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateWordTensDigit\", \"mismatches\": {\"hl\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"CalculateWordTensDigit\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
