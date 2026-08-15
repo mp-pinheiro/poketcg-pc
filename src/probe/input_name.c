@@ -24,9 +24,21 @@ static void adapt_DrawTextboxForKeyboard(ProbeState *s)
 }
 /* <<< factory DrawTextboxForKeyboard */
 
+/* >>> factory TransformCharacter */
+static void adapt_TransformCharacter(ProbeState *s)
+{
+	TransformCharacterResult r = TransformCharacter(s->hl, s->d, s->e);
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory TransformCharacter */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
 	{ "DrawTextboxForKeyboard", adapt_DrawTextboxForKeyboard },
+	{ "TransformCharacter", adapt_TransformCharacter },
 	{ NULL, NULL },
 };

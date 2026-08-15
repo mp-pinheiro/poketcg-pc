@@ -13,4 +13,8 @@ void ClearMemory_Bank6(uint8_t a, uint16_t hl);
 /* >>> factory DrawTextboxForKeyboard */
 void DrawTextboxForKeyboard(uint16_t *hl, uint8_t a);
 /* <<< factory DrawTextboxForKeyboard */
+/* >>> factory TransformCharacter */
+typedef struct { uint16_t hl; uint8_t d, e, f; } TransformCharacterResult;
+TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e);
+/* <<< factory TransformCharacter */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

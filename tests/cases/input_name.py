@@ -42,6 +42,26 @@ CASES["DrawTextboxForKeyboard"] = [
 ]
 # <<< factory DrawTextboxForKeyboard
 
+# >>> factory TransformCharacter
+CONTRACT["TransformCharacter"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["TransformCharacter"] = [
+	# wNamingScreenBuffer ($CFE7) and wNamingScreenBufferLength ($CFFF) fall inside the
+	# reserved oracle call frame ($CF00-$CFFF) and must not be seeded: the ROM and the C
+	# port read the same frame bytes through the bus, so these cases diff faithfully
+	# whichever path the frame's length byte selects. Only the hl table (scratch WRAM)
+	# is case-controlled; the walk is terminator-driven, so there are no counted-loop
+	# boundaries to cover (the len-1 offset wraparound is covered by the C's 8-bit
+	# cast, exercised whenever the frame length is 1).
+	{"hl": 0xC100},  # all-zero: zero table -> immediate terminator
+	{"hl": 0xC100, "wram": {0xC100: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}},  # match on first entry
+	{"hl": 0xC100, "wram": {0xC100: bytes([0x99, 0x88, 0x77, 0x66, 0x05, 0x07, 0xAA, 0xBB, 0x00, 0x00, 0x00, 0x00])}},  # skip one entry, match on second
+	{"hl": 0xC100, "wram": {0xC100: bytes([0x05, 0x11, 0x00, 0x00, 0x00])}},  # index matches, set does not -> skip, then terminator
+	{"hl": 0xC104, "wram": {0xC100: bytes([0xFF, 0xEE, 0xDD, 0xCC, 0x00, 0x00])}},  # walk starts mid-table, terminator first
+	{"hl": 0xC100, "wram": {0xC100: bytes([0x41, 0x00, 0x12, 0x34, 0x00])}},  # matched set byte 0 -> success with Z set
+	dict(POISON, hl=0xC100, wram={0xC100: bytes([0x41, 0x0E, 0x12, 0x34, 0x00])}),
+]
+# <<< factory TransformCharacter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -70,3 +90,11 @@ MUTATIONS["DrawTextboxForKeyboard"] = {
     "case_ids": ["DrawTextboxForKeyboard-0", "DrawTextboxForKeyboard-1", "DrawTextboxForKeyboard-2", "DrawTextboxForKeyboard-3"],
 }
 # <<< factory-mutation DrawTextboxForKeyboard
+# >>> factory-mutation TransformCharacter
+MUTATIONS["TransformCharacter"] = {
+	"source_symbol": "TransformCharacter",
+	"before": "\tuint8_t len = wNamingScreenBufferLength;\n\tif (len == 0u)",
+	"after": "\tuint8_t len = wNamingScreenBufferLength;\n\tif (len != 0u)",
+	"case_ids": ["TransformCharacter-0", "TransformCharacter-1", "TransformCharacter-2", "TransformCharacter-3", "TransformCharacter-4", "TransformCharacter-5", "TransformCharacter-6"],
+}
+# <<< factory-mutation TransformCharacter

@@ -19,6 +19,11 @@
 #define MENU_CANCEL 0xFFu
 #define SFX_CONFIRM 0x02u
 #define SFX_CANCEL  0x03u
+
+#include "mem.h"
+
+/* engine/input_name.asm */
+#define TX_KATAKANA 0x0fu
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -68,3 +73,41 @@ void DrawTextboxForKeyboard(uint16_t *hl, uint8_t a)
 	DrawRegularTextBox(hl, a, 20u, 15u, 0u, 3u);
 }
 /* <<< factory DrawTextboxForKeyboard */
+
+/* >>> factory TransformCharacter */
+/* input_name.asm:751-800. Transforms the last character of wNamingScreenBuffer
+ * through the 4-byte-entry table at hl. Characters are stored in the buffer
+ * big-endian (set byte first) but carried in de byte-swapped: e = set byte,
+ * d = index byte. A TX_KATAKANA set byte is decremented to hiragana before the
+ * lookup. Table entries are [match_index, match_set, result_set, result_index];
+ * a zero match_index terminates the walk. Failure (zero length or no matching
+ * entry) exits with carry+Z set (f = $90) and de holding the buffer-derived pair
+ * (the caller's de when the length is zero); success exits with f = the `or a`
+ * Z bit of the matched set byte. hl is left advanced: past the terminator on
+ * failure, on the matched entry's last byte on success. bc is preserved. */
+TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e)
+{
+	uint8_t len = wNamingScreenBufferLength;
+	if (len == 0u)
+		return (TransformCharacterResult){hl, d, e, 0x90u};
+	uint16_t last = (uint16_t)(wNamingScreenBuffer_ADDR + (uint8_t)(len - 2u));
+	e = gb_read8(last);
+	d = gb_read8((uint16_t)(last + 1u));
+	if (e == TX_KATAKANA)
+		e = (uint8_t)(e - 1u);
+	for (;;) {
+		uint8_t t0 = gb_read8(hl++);
+		if (t0 == 0u)
+			return (TransformCharacterResult){hl, d, e, 0x90u};
+		uint8_t t1 = gb_read8(hl);
+		if (t0 == d && t1 == e) {
+			hl = (uint16_t)(hl + 1u);
+			e = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			d = gb_read8(hl);
+			return (TransformCharacterResult){hl, d, e, (uint8_t)((t1 == 0u) ? 0x80u : 0x00u)};
+		}
+		hl = (uint16_t)(hl + 3u);
+	}
+}
+/* <<< factory TransformCharacter */
