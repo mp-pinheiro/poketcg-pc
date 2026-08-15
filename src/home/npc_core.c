@@ -29,6 +29,15 @@
 #include "home/npc_core.h"
 
 #define LOADED_NPC_DIRECTION_BACKUP 0x07u
+
+#include "home/map.h"
+
+/* engine/overworld/npc_core.asm constants */
+#define DIRECTION_MASK           0x7fu /* $ff ^ NO_MOVE ($80) */
+#define LOADED_NPC_MOVEMENT_STEP 0x08u
+#define NPC_FLAG_MOVING_F        0x05u
+#define MOVEMENT_CMD_SPECIAL     0xf0u
+#define MOVEMENT_CMD_STOP        0xffu
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -107,3 +116,50 @@ uint8_t SetNPCDirection(uint8_t a)
 	return UpdateNPCAnimation();
 }
 /* <<< factory SetNPCDirection */
+
+/* >>> factory StartNPCMovement */
+/* npc_core.asm:618-698 */
+uint8_t StartNPCMovement(uint16_t *bc)
+{
+	uint16_t ptr = *bc;
+
+	/* set NPC as moving */
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_FLAGS);
+	gb_write8(r.hl, (uint8_t)(gb_read8(r.hl) | (1u << NPC_FLAG_MOVING_F)));
+
+	/* reset its movement step; the asm's `ld [hli], a` then leaves hl on LOADED_NPC_MOVEMENT_PTR */
+	r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_MOVEMENT_STEP);
+	gb_write8(r.hl, 0x00u);
+	uint16_t field = (uint16_t)(r.hl + 1u);
+
+	for (;;) {
+		gb_write8(field, (uint8_t)ptr);
+		gb_write8((uint16_t)(field + 1u), (uint8_t)(ptr >> 8));
+		uint8_t cmd = GetNextNPCMovementByte(ptr);
+		if (cmd >= MOVEMENT_CMD_SPECIAL) {
+			if (cmd == MOVEMENT_CMD_STOP) {
+				/* .stop_movement: clear the moving flag */
+				PermissionResult s = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_FLAGS);
+				gb_write8(s.hl, (uint8_t)(gb_read8(s.hl) & (uint8_t)~(1u << NPC_FLAG_MOVING_F)));
+				*bc = ptr;
+				return s.a;
+			}
+			/* jump to a movement command: bc += 1 + sign-extended argument */
+			uint16_t argaddr = (uint16_t)(ptr + 1u);
+			uint8_t arg = GetNextNPCMovementByte(argaddr);
+			uint16_t offset = arg;
+			if (arg & 0x80u)
+				offset |= 0xff00u;
+			ptr = (uint16_t)(argaddr + offset);
+		} else {
+			SetNPCDirection((uint8_t)(cmd & DIRECTION_MASK));
+			/* if it was not a rotation, exit... otherwise jump to the next movement instruction */
+			if (!(cmd & 0x80u)) {
+				*bc = ptr;
+				return cmd;
+			}
+			ptr = (uint16_t)(ptr + 1u);
+		}
+	}
+}
+/* <<< factory StartNPCMovement */

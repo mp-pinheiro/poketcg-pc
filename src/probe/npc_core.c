@@ -38,11 +38,22 @@ static void adapt_SetNPCDirection(ProbeState *s)
 }
 /* <<< factory SetNPCDirection */
 
+/* >>> factory StartNPCMovement */
+static void adapt_StartNPCMovement(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)(s->b << 8 | s->c);
+	s->a = StartNPCMovement(&bc);
+	s->b = (uint8_t)(bc >> 8);
+	s->c = (uint8_t)bc;
+}
+/* <<< factory StartNPCMovement */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
 	{ "ApplyRandomCountToNPCAnim", adapt_ApplyRandomCountToNPCAnim },
 	{ "SetNPCAnimation", adapt_SetNPCAnimation },
 	{ "SetNPCDirection", adapt_SetNPCDirection },
+	{ "StartNPCMovement", adapt_StartNPCMovement },
 	{ NULL, NULL },
 };

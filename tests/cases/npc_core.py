@@ -70,6 +70,32 @@ CASES["SetNPCDirection"] = [
 ]
 # <<< factory SetNPCDirection
 
+# >>> factory StartNPCMovement
+# wLoadedNPCTempIndex = 0xD3AA; movement scripts live in scratch WRAM ($C100-$CA00),
+# where GetNextNPCMovementByte's bus read at $Cxxx hits WRAM regardless of bank.
+SCRATCH = 0xC100
+wLoadedNPCTempIndex = 0xD3AA
+# compare excludes f (loop/callee residue on the stop path, not a produced contract)
+# and d/e (never read here; callee clobber not modeled). bc is an advanced pointer
+# (the routine's own `inc bc` after callees proves they preserve it), so b/c are outputs.
+CONTRACT["StartNPCMovement"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("hl",)}
+CASES["StartNPCMovement"] = [
+	{"b": 0, "c": 0},  # all-zero: bc = $0000 walks ROM bank 0 from the rst vectors
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\x02"}, "read": {SCRATCH: 1}},  # plain direction, immediate exit
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\x81\x00"}, "read": {SCRATCH: 2}},  # rotation (bit 7 set), then exit
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xf5\x02\x00\x00\x03"}, "read": {SCRATCH: 5}},  # jump +2 forward
+	{"b": 0xC1, "c": 0x01, "wram": {SCRATCH: b"\x00\xf5\xfe"}, "read": {SCRATCH: 3}},  # jump -2 backward
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xff", wLoadedNPCTempIndex: b"\x02"}, "read": {SCRATCH: 1}},  # $ff stop, NPC index 2
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xef\x7f"}, "read": {SCRATCH: 2}},  # boundary: $ef rotation, $7f max direction
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xf0\x01\x02"}, "read": {SCRATCH: 3}},  # boundary: $f0 minimal jump command
+	{"b": 0xC1, "c": 0x00, "wram": {SCRATCH: b"\xf1\x7f" + b"\x00" * 0x7E + b"\x01"}, "read": {SCRATCH: 0x81}},  # jump +$7f max positive
+	{"b": 0xC1, "c": 0x82, "wram": {0xC103: b"\x06", 0xC182: b"\xf3\x80"}, "read": {0xC103: 1, 0xC182: 2}},  # jump -$80, 16-bit wraparound
+	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\x01"}, read={SCRATCH: 1}),  # proves hl preserved, bc unchanged
+	dict(POISON, b=0xC1, c=0x02, wram={0xC102: b"\x81\x05"}, read={0xC102: 2}),  # preservation through rotation path
+	dict(POISON, b=0xC1, c=0x00, wram={SCRATCH: b"\xff"}, read={SCRATCH: 1}),  # preservation through stop path
+]
+# <<< factory StartNPCMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -99,3 +125,11 @@ MUTATIONS["SetNPCDirection"] = {
     "case_ids": ["SetNPCDirection-1", "SetNPCDirection-2", "SetNPCDirection-3"],
 }
 # <<< factory-mutation SetNPCDirection
+# >>> factory-mutation StartNPCMovement
+MUTATIONS["StartNPCMovement"] = {
+	"source_symbol": "StartNPCMovement",
+	"before": "if (cmd >= MOVEMENT_CMD_SPECIAL)",
+	"after": "if (cmd > MOVEMENT_CMD_SPECIAL)",
+	"case_ids": ["StartNPCMovement-7"],
+}
+# <<< factory-mutation StartNPCMovement

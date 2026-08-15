@@ -1,0 +1,9 @@
+{
+  "fn": "StartNPCMovement",
+  "case": "tests/cases/npc_core.py",
+  "index": 7,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StartNPCMovement\", \"registers\": {\"a\": 2, \"b\": 193, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"f00102\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StartNPCMovement\", \"mismatches\": {\"a\": [2, 1], \"c\": [2, 1]}}\n",
+  "restored": "{\"fn\": \"StartNPCMovement\", \"registers\": {\"a\": 2, \"b\": 193, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"f00102\"}}, \"status\": \"PASS\"}\n"
+}
