@@ -17,4 +17,7 @@ typedef struct {
 UpdateDuelAnimationScreenResult UpdateDuelAnimationScreen(uint16_t hl);
 /* <<< factory UpdateDuelAnimationScreen */
 
+/* >>> factory DuelAnim153 */
+void DuelAnim153(void);
+/* <<< factory DuelAnim153 */
 #endif

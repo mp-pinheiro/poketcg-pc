@@ -21,8 +21,17 @@ static void adapt_UpdateDuelAnimationScreen(ProbeState *s)
 /* <<< factory UpdateDuelAnimationScreen */
 
 
+/* >>> factory DuelAnim153 */
+static void adapt_DuelAnim153(ProbeState *s)
+{
+	(void)s;
+	DuelAnim153();
+}
+/* <<< factory DuelAnim153 */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "AnimationCommand_AnimEnd2", adapt_AnimationCommand_AnimEnd2 },
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
+	{ "DuelAnim153", adapt_DuelAnim153 },
 	{ NULL, NULL },
 };

@@ -13,6 +13,8 @@
 #define DUEL_ANIM_SCREEN_OPP_PLAY_AREA 0x02u
 #define UNKNOWN_SCREEN_4 0x04u
 #define UNKNOWN_SCREEN_5 0x05u
+
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -81,3 +83,12 @@ UpdateDuelAnimationScreenResult UpdateDuelAnimationScreen(uint16_t hl)
 										(uint16_t)(((uint16_t)screen_turn << 8) | screen_location)};
 }
 /* <<< factory UpdateDuelAnimationScreen */
+
+/* >>> factory DuelAnim153 */
+/* commands.asm:349. Zero-length label: DuelAnim153 is an alias that falls
+ * straight through into the following routine, so as an entry point on its own
+ * it executes no instructions and touches no state. */
+void DuelAnim153(void)
+{
+}
+/* <<< factory DuelAnim153 */

@@ -58,6 +58,15 @@ CASES["UpdateDuelAnimationScreen"] = [
 # <<< factory UpdateDuelAnimationScreen
 
 
+# >>> factory DuelAnim153
+CONTRACT["DuelAnim153"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DuelAnim153"] = [
+    {"wram": {0xC100: b"\x00\x00"}},
+    dict(POISON, wram={0xC100: b"\x5A\xA5"}),
+    {"a": 1, "hl": 0xC100, "wram": {0xC100: b"\xFF\xFF"}},
+]
+# <<< factory DuelAnim153
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -80,3 +89,11 @@ MUTATIONS["UpdateDuelAnimationScreen"] = {
     "case_ids": ["UpdateDuelAnimationScreen-1", "UpdateDuelAnimationScreen-4"],
 }
 # <<< factory-mutation UpdateDuelAnimationScreen
+# >>> factory-mutation DuelAnim153
+MUTATIONS["DuelAnim153"] = {
+    "source_symbol": "DuelAnim153",
+    "before": "void DuelAnim153(void)\n{\n}",
+    "after": "void DuelAnim153(void)\n{\n\tgb_write8(0xC100u, 0xFFu);\n}",
+    "case_ids": ["DuelAnim153-0", "DuelAnim153-1"],
+}
+# <<< factory-mutation DuelAnim153
