@@ -20,4 +20,7 @@ typedef struct {
 
 DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl);
 /* <<< factory CheckIfHasEnoughCardsToBuildDeck */
+/* >>> factory GetSavedDeckPointers */
+void GetSavedDeckPointers(uint16_t *hl, uint16_t *de);
+/* <<< factory GetSavedDeckPointers */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

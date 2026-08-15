@@ -53,6 +53,15 @@ CASES["CheckIfHasEnoughCardsToBuildDeck"] = [
 ]
 # <<< factory CheckIfHasEnoughCardsToBuildDeck
 
+# >>> factory GetSavedDeckPointers
+wMachineDeckPtrs = 0xD00D
+CONTRACT["GetSavedDeckPointers"] = {"compare": ("hl", "d", "e"), "preserve": ()}
+CASES["GetSavedDeckPointers"] = [
+	{"wram": {wMachineDeckPtrs: b"\xaa" * 0x78}},  # 0x78 = 2 bytes * NUM_DECK_SAVE_MACHINE_SLOTS
+	dict(POISON, wram={wMachineDeckPtrs: b"\x55" * 0x78}),
+]
+# <<< factory GetSavedDeckPointers
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -69,3 +78,11 @@ MUTATIONS["SafelySwitchToTempSRAMBank"] = {"source_symbol": "SafelySwitchToTempS
 # >>> factory-mutation CheckIfHasEnoughCardsToBuildDeck
 MUTATIONS["CheckIfHasEnoughCardsToBuildDeck"] = {"source_symbol": "CheckIfHasEnoughCardsToBuildDeck", "before": "if (count == 0u || count == CARD_NOT_OWNED)", "after": "if (count == 0u && count == CARD_NOT_OWNED)", "case_ids": ["CheckIfHasEnoughCardsToBuildDeck-0", "CheckIfHasEnoughCardsToBuildDeck-2", "CheckIfHasEnoughCardsToBuildDeck-3"]}
 # <<< factory-mutation CheckIfHasEnoughCardsToBuildDeck
+# >>> factory-mutation GetSavedDeckPointers
+MUTATIONS["GetSavedDeckPointers"] = {
+	"source_symbol": "GetSavedDeckPointers",
+	"before": "gb_write8(d++, (uint8_t)h);\n\t\tgb_write8(d++, (uint8_t)(h >> 8));",
+	"after": "gb_write8(d++, (uint8_t)(h >> 8));\n\t\tgb_write8(d++, (uint8_t)h);",
+	"case_ids": ["GetSavedDeckPointers-0", "GetSavedDeckPointers-1"],
+}
+# <<< factory-mutation GetSavedDeckPointers

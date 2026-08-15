@@ -15,6 +15,12 @@
 
 #define CARD_NOT_OWNED 0x80u
 #define DECK_SIZE 0x3Cu
+
+#include "home/deck_configuration.h"
+#include "generated/sram.h"
+
+#define DECK_STRUCT_SIZE            0x54u
+#define NUM_DECK_SAVE_MACHINE_SLOTS 0x3cu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -81,3 +87,23 @@ DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl)
 	return (DeckBuildCheckResult){ .a = DECK_SIZE, .f = 0x00u };
 }
 /* <<< factory CheckIfHasEnoughCardsToBuildDeck */
+
+/* >>> factory GetSavedDeckPointers */
+/* deck_machine.asm:827-860. Clears the wMachineDeckPtrs array (2 bytes per
+ * slot), then fills it with little-endian pointers to each consecutive
+ * DECK_STRUCT_SIZE-byte saved-deck struct in sSavedDecks. Exits with hl/de
+ * advanced past the table/structs processed. */
+void GetSavedDeckPointers(uint16_t *hl, uint16_t *de)
+{
+	ClearMemory_Bank2((uint8_t)(NUM_DECK_SAVE_MACHINE_SLOTS * 2u), wMachineDeckPtrs_ADDR);
+	uint16_t d = wMachineDeckPtrs_ADDR;
+	uint16_t h = sSavedDecks_ADDR;
+	for (uint8_t i = 0; i < NUM_DECK_SAVE_MACHINE_SLOTS; i++) {
+		gb_write8(d++, (uint8_t)h);
+		gb_write8(d++, (uint8_t)(h >> 8));
+		h = (uint16_t)(h + DECK_STRUCT_SIZE);
+	}
+	*hl = h;
+	*de = d;
+}
+/* <<< factory GetSavedDeckPointers */

@@ -35,10 +35,21 @@ static void adapt_CheckIfHasEnoughCardsToBuildDeck(ProbeState *s)
 }
 /* <<< factory CheckIfHasEnoughCardsToBuildDeck */
 
+/* >>> factory GetSavedDeckPointers */
+static void adapt_GetSavedDeckPointers(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(s->d << 8 | s->e);
+	GetSavedDeckPointers(&s->hl, &de);
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+/* <<< factory GetSavedDeckPointers */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
 	{ "SafelySwitchToTempSRAMBank", adapt_SafelySwitchToTempSRAMBank },
 	{ "CheckIfHasEnoughCardsToBuildDeck", adapt_CheckIfHasEnoughCardsToBuildDeck },
+	{ "GetSavedDeckPointers", adapt_GetSavedDeckPointers },
 	{ NULL, NULL },
 };
