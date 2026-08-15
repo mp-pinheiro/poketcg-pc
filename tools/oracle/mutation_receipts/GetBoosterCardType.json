@@ -1,0 +1,9 @@
+{
+  "fn": "GetBoosterCardType",
+  "case": "tests/cases/booster_packs.py",
+  "index": 6,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetBoosterCardType\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetBoosterCardType\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"GetBoosterCardType\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

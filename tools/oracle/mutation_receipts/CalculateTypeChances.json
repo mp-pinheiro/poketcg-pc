@@ -1,0 +1,9 @@
+{
+  "fn": "CalculateTypeChances",
+  "case": "tests/cases/booster_packs.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CalculateTypeChances\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54474\": \"12\", \"54897\": \"010101010101010101020202020202020202\", \"54921\": \"020202020202020202\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CalculateTypeChances\", \"mismatches\": {\"a\": [18, 0], \"bus\": {\"address\": 54474, \"reference\": \"1201010101\", \"native\": \"0001010101\", \"reference_size\": 28, \"native_size\": 28, \"spans\": [[54474, 1], [54897, 18], [54921, 9]]}}}\n",
+  "restored": "{\"fn\": \"CalculateTypeChances\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54474\": \"12\", \"54897\": \"010101010101010101020202020202020202\", \"54921\": \"020202020202020202\"}}, \"status\": \"PASS\"}\n"
+}
