@@ -43,6 +43,53 @@ CASES = {
     ],
 }
 
+# >>> factory ChallengeMachine_PickOpponentSequence
+CONTRACT["ChallengeMachine_PickOpponentSequence"] = {"compare": (), "preserve": ()}
+CASES["ChallengeMachine_PickOpponentSequence"] = [
+    # All-zero entry: nothing pre-seeded, RNG state at its reset value. The five
+    # opponent bytes, the opponent number, the record-increased flag, the five
+    # duel-result bytes and the two consecutive-win bytes are all diffed as one
+    # block ($BA47..$BA68).
+    {"sram": {0: {0xBA47: b"\x00" * 0x22}},
+     "sread": {0: {0xBA47: 0x22}}},
+    # Poisoned entry registers: the routine takes no arguments and must ignore
+    # every one of them; the SRAM image must be identical to the case above's
+    # shape (same RNG start, so the same picks).
+    dict(POISON,
+         sram={0: {0xBA47: b"\x00" * 0x22}},
+         sread={0: {0xBA47: 0x22}}),
+    # Pre-existing duel results all nonzero: every one of the five bytes at
+    # sChallengeMachineDuelResults must be cleared. A clear loop that ran four
+    # times (or six) shows up here and nowhere else.
+    {"sram": {0: {0xBA47: b"\x00" * 0x09,
+                  0xBA50: b"\x11\x22\x33\x44\x55",
+                  0xBA55: b"\x77",
+                  0xBA68: b"\x99"}},
+     "sread": {0: {0xBA47: 0x22}}},
+    # Backup consecutive wins nonzero and distinct in both bytes, with the live
+    # sPresentConsecutiveWins pre-loaded with different values: both bytes must be
+    # copied from the backup, low byte then high byte, and the backup left alone.
+    {"sram": {0: {0xBA47: b"\xDE\xAD",
+                  0xBA49: b"\x34\x12",
+                  0xBA4B: b"\xFF\xFF\xFF\xFF\xFF",
+                  0xBA50: b"\x01\x01\x01\x01\x01",
+                  0xBA55: b"\x05",
+                  0xBA68: b"\x01"}},
+     "sread": {0: {0xBA47: 0x22}}},
+    # Warm RNG: a prelude call to UpdateRNGSources moves the RNG state off its
+    # reset value, so the picked opponent sequence differs from the cases above.
+    {"setup": [{"fn": "UpdateRNGSources"}],
+     "sram": {0: {0xBA47: b"\x00" * 0x22}},
+     "sread": {0: {0xBA47: 0x22}}},
+    # ramg False after seeding: only the routine's own EnableSRAM makes any of
+    # the writes land, and only it makes the backup bytes readable.
+    {"ramg": False,
+     "sram": {0: {0xBA47: b"\x00\x00\x21\x43",
+                  0xBA4B: b"\x00" * 0x1E}},
+     "sread": {0: {0xBA47: 0x22}}},
+]
+# <<< factory ChallengeMachine_PickOpponentSequence
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -61,3 +108,11 @@ MUTATIONS = {
 }
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation ChallengeMachine_PickOpponentSequence
+MUTATIONS["ChallengeMachine_PickOpponentSequence"] = {
+    "source_symbol": "ChallengeMachine_PickOpponentSequence",
+    "before": "\tfor (uint8_t i = 0; i < NUM_CHALLENGE_MACHINE_OPPONENTS; i++)",
+    "after": "\tfor (uint8_t i = 0; i < NUM_CHALLENGE_MACHINE_OPPONENTS - 1u; i++)",
+    "case_ids": ["ChallengeMachine_PickOpponentSequence-2", "ChallengeMachine_PickOpponentSequence-3"],
+}
+# <<< factory-mutation ChallengeMachine_PickOpponentSequence

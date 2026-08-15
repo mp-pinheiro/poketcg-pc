@@ -17,4 +17,7 @@ typedef struct {
 } ChallengeMachinePrintResult;
 
 ChallengeMachinePrintResult ChallengeMachine_PrintText(uint16_t hl, uint8_t b, uint8_t c);
+/* >>> factory ChallengeMachine_PickOpponentSequence */
+void ChallengeMachine_PickOpponentSequence(void);
+/* <<< factory ChallengeMachine_PickOpponentSequence */
 #endif

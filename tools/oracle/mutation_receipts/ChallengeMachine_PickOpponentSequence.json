@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_PickOpponentSequence",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_PickOpponentSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47687\": \"00000000000102192100000000000000000000000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PickOpponentSequence\", \"mismatches\": {\"sram\": {\"byte\": 13, \"reference\": \"000000000000000000\", \"native\": \"000000005500000000\"}}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_PickOpponentSequence\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47687\": \"00000000000102192100000000000000000000000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
