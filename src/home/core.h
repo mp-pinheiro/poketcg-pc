@@ -469,4 +469,12 @@ PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void);
 typedef struct { uint8_t a; uint8_t f; } CheckIfNoSurplusEnergyResult;
 CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void);
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
+/* >>> factory Func_1585b */
+typedef struct { uint8_t a; uint8_t f; } Func1585bResult;
+Func1585bResult Func_1585b(uint16_t hl);
+/* <<< factory Func_1585b */
+/* >>> factory CheckIfNotABossDeckID */
+typedef struct { uint8_t a; uint8_t carry; } CheckIfNotABossDeckIDResult;
+CheckIfNotABossDeckIDResult CheckIfNotABossDeckID(void);
+/* <<< factory CheckIfNotABossDeckID */
 #endif

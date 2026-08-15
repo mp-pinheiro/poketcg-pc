@@ -297,6 +297,11 @@ CardPageResult CardPageSwitch_00(void)
 #define POKEMON_POWER       0x04u
 
 #include "home/menus.h"
+
+#include "home/core.h"
+#include "home/switch_sram.h"
+#include "generated/sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2244,3 +2249,61 @@ CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void)
 	return (CheckIfNoSurplusEnergyResult){0u, 0x90u};
 }
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
+
+/* >>> factory Func_1585b */
+/* core.asm:1238-1280. hl = $00-terminated list of 3-byte entries
+ * (type, card ID, energy count). Entries whose first byte is not 1 are
+ * skipped whole. For type-1 entries the card ID is looked up in the play
+ * area starting at PLAY_AREA_BENCH_1; if found and the number of energy
+ * cards attached is >= the entry's third byte, return that play area
+ * position with carry set (Z from the `cp`, N/H cleared by `scf`).
+ * Falling off the end of the list returns a = 0 with `or a` flags. */
+Func1585bResult Func_1585b(uint16_t hl)
+{
+	for (;;) {
+		uint8_t a = gb_read8(hl);
+		hl = (uint16_t)(hl + 1);
+		if (a == 0)
+			return (Func1585bResult){ .a = 0, .f = 0x80u };
+		if (a != 1) {
+			hl = (uint16_t)(hl + 2);
+			continue;
+		}
+		uint8_t id = gb_read8(hl);
+		hl = (uint16_t)(hl + 1);
+		LookResult lr = LookForCardIDInPlayArea_Bank5(id, PLAY_AREA_BENCH_1);
+		if (!(lr.f & 0x10u)) {
+			hl = (uint16_t)(hl + 1);
+			continue;
+		}
+		uint8_t e = lr.a;
+		uint8_t count = CountNumberOfEnergyCardsAttached(e).a;
+		uint8_t needed = gb_read8(hl);
+		if (count >= needed)
+			return (Func1585bResult){ .a = e,
+				.f = (uint8_t)((count == needed ? 0x80u : 0x00u) | 0x10u) };
+		hl = (uint16_t)(hl + 1);
+	}
+}
+/* <<< factory Func_1585b */
+
+/* >>> factory CheckIfNotABossDeckID */
+/* core.asm:2444-2464. Reads sReceivedLegendaryCards under its own
+ * EnableSRAM/DisableSRAM pair; a nonzero value short-circuits to the
+ * no-carry exit. Otherwise CheckIfOpponentHasBossDeckID decides: it
+ * returning carry means "boss deck" and falls into the no-carry exit,
+ * carry clear takes `scf`. Only a and carry are contractual -- the Z bit
+ * on the scf path comes from inside the callee and is not modelled. */
+CheckIfNotABossDeckIDResult CheckIfNotABossDeckID(void)
+{
+	EnableSRAM();
+	uint8_t a = gb_read8(sReceivedLegendaryCards_ADDR);
+	DisableSRAM();
+	if (a != 0)
+		return (CheckIfNotABossDeckIDResult){ .a = a, .carry = 0 };
+	CheckIfOpponentHasBossDeckIDResult r = CheckIfOpponentHasBossDeckID(a);
+	if (r.carry)
+		return (CheckIfNotABossDeckIDResult){ .a = r.a, .carry = 0 };
+	return (CheckIfNotABossDeckIDResult){ .a = r.a, .carry = 1 };
+}
+/* <<< factory CheckIfNotABossDeckID */

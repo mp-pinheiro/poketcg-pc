@@ -1236,6 +1236,54 @@ CASES["CheckIfNoSurplusEnergyForAttack"] = [
 ]
 # <<< factory CheckIfNoSurplusEnergyForAttack
 
+# >>> factory Func_1585b
+CONTRACT["Func_1585b"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_1585b"] = [
+    # Immediate terminator: a = 0, `or a` sets Z only.
+    {"hl": 0xC100, "wram": {0xC100: b"\x00"}},
+    # Poisoned entry registers: only hl is consumed. One skipped (type 2)
+    # entry, then the terminator.
+    dict(POISON, hl=0xC100, wram={0xC100: b"\x02\x11\x22\x00\x00\x00"}),
+    # Type-1 entry for an implausible card ID: lookup fails, single inc hl,
+    # then the terminator on the next iteration.
+    {"hl": 0xC100, "wram": {0xC100: b"\x01\xFE\x00\x00\x00\x00"}},
+    # Type-1 entry with card ID 0 and a zero requirement.
+    {"hl": 0xC100, "wram": {0xC100: b"\x01\x00\x00\x00\x00\x00"}},
+    # Type-1 entry with the maximum requirement byte.
+    {"hl": 0xC100, "wram": {0xC100: b"\x01\x00\xFF\x00\x00\x00"}},
+    # Several mixed entries before the terminator, proving the 3-byte stride
+    # of the skip path stays in phase with the type-1 path.
+    {"hl": 0xC100,
+     "wram": {0xC100: b"\x02\x01\x03\x01\x05\x02\xFF\x07\x09\x00\x00\x00"}},
+    # High first byte (not 1): still a plain 3-byte skip.
+    {"hl": 0xC100, "wram": {0xC100: b"\xFF\xFF\xFF\x00"}},
+]
+# <<< factory Func_1585b
+
+# >>> factory CheckIfNotABossDeckID
+CONTRACT["CheckIfNotABossDeckID"] = {"compare": ("a",), "preserve": ()}
+sReceivedLegendaryCards = 0xA00A
+CASES["CheckIfNotABossDeckID"] = [
+    # All-zero: the flag byte is 0, so the deck-ID check runs.
+    {"sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
+     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    # Poisoned entry registers: the routine takes no arguments. Flag byte
+    # nonzero, so a is the flag value itself and the check is skipped.
+    dict(POISON, sram={0: {sReceivedLegendaryCards: b"\x07\x00"}},
+         sread={0: {sReceivedLegendaryCards: 2}}),
+    # Flag byte 0 but the following byte nonzero: pins the read address.
+    {"sram": {0: {sReceivedLegendaryCards: b"\x00\x05"}},
+     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    # Maximum flag value.
+    {"sram": {0: {sReceivedLegendaryCards: b"\xFF\x00"}},
+     "sread": {0: {sReceivedLegendaryCards: 2}}},
+    # ramg False after seeding: only the routine's own EnableSRAM makes the
+    # zero byte observable, otherwise it reads open bus $FF.
+    {"ramg": False, "sram": {0: {sReceivedLegendaryCards: b"\x00\x00"}},
+     "sread": {0: {sReceivedLegendaryCards: 2}}},
+]
+# <<< factory CheckIfNotABossDeckID
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2015,3 +2063,19 @@ MUTATIONS["CheckIfNoSurplusEnergyForAttack"] = {
     "case_ids": ["CheckIfNoSurplusEnergyForAttack-0", "CheckIfNoSurplusEnergyForAttack-3"],
 }
 # <<< factory-mutation CheckIfNoSurplusEnergyForAttack
+# >>> factory-mutation Func_1585b
+MUTATIONS["Func_1585b"] = {
+    "source_symbol": "Func_1585b",
+    "before": "return (Func1585bResult){ .a = 0, .f = 0x80u };",
+    "after": "return (Func1585bResult){ .a = 0, .f = 0x00u };",
+    "case_ids": ["Func_1585b-0", "Func_1585b-1", "Func_1585b-2", "Func_1585b-3", "Func_1585b-4", "Func_1585b-5", "Func_1585b-6"],
+}
+# <<< factory-mutation Func_1585b
+# >>> factory-mutation CheckIfNotABossDeckID
+MUTATIONS["CheckIfNotABossDeckID"] = {
+    "source_symbol": "CheckIfNotABossDeckID",
+    "before": "uint8_t a = gb_read8(sReceivedLegendaryCards_ADDR);",
+    "after": "uint8_t a = gb_read8((uint16_t)(sReceivedLegendaryCards_ADDR + 1u));",
+    "case_ids": ["CheckIfNotABossDeckID-1", "CheckIfNotABossDeckID-2", "CheckIfNotABossDeckID-3"],
+}
+# <<< factory-mutation CheckIfNotABossDeckID

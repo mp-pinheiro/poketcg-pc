@@ -982,6 +982,23 @@ static void adapt_CheckIfNoSurplusEnergyForAttack(ProbeState *s)
 }
 /* <<< factory CheckIfNoSurplusEnergyForAttack */
 
+/* >>> factory Func_1585b */
+static void adapt_Func_1585b(ProbeState *s)
+{
+	Func1585bResult r = Func_1585b(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_1585b */
+
+/* >>> factory CheckIfNotABossDeckID */
+static void adapt_CheckIfNotABossDeckID(ProbeState *s)
+{
+	CheckIfNotABossDeckIDResult r = CheckIfNotABossDeckID();
+	s->a = r.a;
+}
+/* <<< factory CheckIfNotABossDeckID */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1098,5 +1115,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfNoSurplusEnergyForAttack", adapt_CheckIfNoSurplusEnergyForAttack },
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
 	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
+	{ "Func_1585b", adapt_Func_1585b },
+	{ "CheckIfNotABossDeckID", adapt_CheckIfNotABossDeckID },
 	{ NULL, NULL },
 };

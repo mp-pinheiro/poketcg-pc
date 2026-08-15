@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfNotABossDeckID",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfNotABossDeckID\", \"registers\": {\"a\": 7, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {\"0\": {\"40970\": \"0700\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfNotABossDeckID\", \"mismatches\": {\"a\": [7, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfNotABossDeckID\", \"registers\": {\"a\": 7, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {\"0\": {\"40970\": \"0700\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
