@@ -49,6 +49,22 @@ CASES["CalculateTypeChances"] = [
 ]
 # <<< factory CalculateTypeChances
 
+# >>> factory UpdateBoosterCardTypesChanceByte
+CONTRACT["UpdateBoosterCardTypesChanceByte"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["UpdateBoosterCardTypesChanceByte"] = [
+    {"wram": {0xD66B: b"\x00", 0xD66D: b"\x00", 0xD689: b"\x00\x00\x00\x00\x00\x00\x00\x00"},
+     "read": {0xD689: 8}},
+    {"wram": {0xD66B: b"\x01", 0xD66D: b"\x02", 0xD689: b"\x09\x05\x07\x05\x00\x00\x00\x00"},
+     "read": {0xD689: 8}},
+    {"wram": {0xD66B: b"\x03", 0xD66D: b"\x05", 0xD689: b"\x09\x05\x07\x05\x00\x00\x00\x00"},
+     "read": {0xD689: 8}},
+    {"wram": {0xD66B: b"\x02", 0xD66D: b"\x40", 0xD689: b"\x01\x02\x01\x04\x00\x00\x00\x00"},
+     "read": {0xD689: 8}},
+    dict(POISON, wram={0xD66B: b"\x04", 0xD66D: b"\x03", 0xD689: b"\x09\x05\x07\x05\x03\x00\x00\x00"},
+         read={0xD689: 8}),
+]
+# <<< factory UpdateBoosterCardTypesChanceByte
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -77,3 +93,11 @@ MUTATIONS["CalculateTypeChances"] = {
     "case_ids": ["CalculateTypeChances-1", "CalculateTypeChances-2"],
 }
 # <<< factory-mutation CalculateTypeChances
+# >>> factory-mutation UpdateBoosterCardTypesChanceByte
+MUTATIONS["UpdateBoosterCardTypesChanceByte"] = {
+    "source_symbol": "UpdateBoosterCardTypesChanceByte",
+    "before": "if (res == 0u || v < c) {",
+    "after": "if (v < c) {",
+    "case_ids": ["UpdateBoosterCardTypesChanceByte-0", "UpdateBoosterCardTypesChanceByte-2", "UpdateBoosterCardTypesChanceByte-4"],
+}
+# <<< factory-mutation UpdateBoosterCardTypesChanceByte

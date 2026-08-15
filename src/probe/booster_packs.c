@@ -26,9 +26,17 @@ static void adapt_CalculateTypeChances(ProbeState *s)
 }
 /* <<< factory CalculateTypeChances */
 
+/* >>> factory UpdateBoosterCardTypesChanceByte */
+static void adapt_UpdateBoosterCardTypesChanceByte(ProbeState *s)
+{
+	s->a = UpdateBoosterCardTypesChanceByte();
+}
+/* <<< factory UpdateBoosterCardTypesChanceByte */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
 	{ "CalculateTypeChances", adapt_CalculateTypeChances },
+	{ "UpdateBoosterCardTypesChanceByte", adapt_UpdateBoosterCardTypesChanceByte },
 	{ NULL, NULL },
 };

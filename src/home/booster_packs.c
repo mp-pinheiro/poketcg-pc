@@ -80,3 +80,20 @@ uint8_t CalculateTypeChances(void)
 	return wTempBoosterChances;
 }
 /* <<< factory CalculateTypeChances */
+
+/* >>> factory UpdateBoosterCardTypesChanceByte */
+/* booster_packs.asm:293-311 */
+uint8_t UpdateBoosterCardTypesChanceByte(void)
+{
+	uint16_t hl = (uint16_t)(wBoosterData_TypeChances_ADDR + wBoosterJustDrawnCardType);
+	uint8_t c = wBoosterAveragedTypeChances;
+	uint8_t v = gb_read8(hl);
+	uint8_t res = (uint8_t)(v - c);
+	gb_write8(hl, res);
+	if (res == 0u || v < c) {
+		res = 1u;
+		gb_write8(hl, res);
+	}
+	return res;
+}
+/* <<< factory UpdateBoosterCardTypesChanceByte */
