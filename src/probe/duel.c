@@ -606,6 +606,24 @@ static void adapt_GetFirstSetPrizeCard(ProbeState *s)
 }
 /* <<< factory GetFirstSetPrizeCard */
 
+/* >>> factory DrawCheckMenuCursor_YourOrOppPlayArea */
+static void adapt_DrawCheckMenuCursor_YourOrOppPlayArea(ProbeState *s)
+{
+	TempListResult r = DrawCheckMenuCursor_YourOrOppPlayArea(s->a);
+
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DrawCheckMenuCursor_YourOrOppPlayArea */
+
+/* >>> factory ZeroObjectPositionsWithCopyToggleOn */
+static void adapt_ZeroObjectPositionsWithCopyToggleOn(ProbeState *s)
+{
+	(void)s;
+	ZeroObjectPositionsWithCopyToggleOn();
+}
+/* <<< factory ZeroObjectPositionsWithCopyToggleOn */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -680,5 +698,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "PrintKnockedOutIfHLZero", adapt_PrintKnockedOutIfHLZero },
 	{ "PrintPlayAreaCardKnockedOutIfNoHP", adapt_PrintPlayAreaCardKnockedOutIfNoHP },
 	{ "GetFirstSetPrizeCard", adapt_GetFirstSetPrizeCard },
+	{ "DrawCheckMenuCursor_YourOrOppPlayArea", adapt_DrawCheckMenuCursor_YourOrOppPlayArea },
+	{ "ZeroObjectPositionsWithCopyToggleOn", adapt_ZeroObjectPositionsWithCopyToggleOn },
 	{ NULL, NULL },
 };

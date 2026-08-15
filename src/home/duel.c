@@ -278,6 +278,17 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 /* >>> factory statics */
 #define DUELVARS_PRIZES 0xecu
 #define PRIZES_6 0x06u
+
+#include "home/bg_map.h"
+#include "home/objects.h"
+#include "home/random.h"
+#include "home/tiles.h"
+#define CONSOLE_CGB_8BF2 0x02u
+#define TRUE_8BF2 0x01u
+#define DUELVARS_PRIZES_8BF2 0xECu
+#define PRIZE_TILE_8BF2 0xACu
+#define PRIZE_TILE_CGB_ATTR_8BF2 0x02u
+#define VBK_REG_8BF2 0xFF4Fu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1373,3 +1384,31 @@ uint8_t GetFirstSetPrizeCard(uint8_t a)
 	}
 }
 /* <<< factory GetFirstSetPrizeCard */
+
+/* >>> factory DrawCheckMenuCursor_YourOrOppPlayArea */
+/* duel.asm:1347-1367 */
+TempListResult DrawCheckMenuCursor_YourOrOppPlayArea(uint8_t a)
+{
+	uint8_t tile = a;
+	uint16_t hl = (uint16_t)(((uint16_t)wCheckMenuCursorXPosition << 8) | 10u);
+	uint8_t b, c;
+	TempListResult r;
+
+	hl = HtimesL(hl);
+	b = (uint8_t)((uint8_t)hl + 1u);
+	c = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) + 14u);
+	WriteByteToBGMap0(tile, b, c);
+	r.a = tile;
+	r.f = (uint8_t)(tile ? 0x00u : 0x80u);
+	return r;
+}
+/* <<< factory DrawCheckMenuCursor_YourOrOppPlayArea */
+
+/* >>> factory ZeroObjectPositionsWithCopyToggleOn */
+/* duel.asm:1893-1897 */
+void ZeroObjectPositionsWithCopyToggleOn(void)
+{
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE_8BF2;
+}
+/* <<< factory ZeroObjectPositionsWithCopyToggleOn */

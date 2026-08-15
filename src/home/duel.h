@@ -539,4 +539,10 @@ uint8_t PrintKnockedOutIfHLZero(uint16_t hl);
 /* >>> factory GetFirstSetPrizeCard */
 uint8_t GetFirstSetPrizeCard(uint8_t a);
 /* <<< factory GetFirstSetPrizeCard */
+/* >>> factory DrawCheckMenuCursor_YourOrOppPlayArea */
+TempListResult DrawCheckMenuCursor_YourOrOppPlayArea(uint8_t a);
+/* <<< factory DrawCheckMenuCursor_YourOrOppPlayArea */
+/* >>> factory ZeroObjectPositionsWithCopyToggleOn */
+void ZeroObjectPositionsWithCopyToggleOn(void);
+/* <<< factory ZeroObjectPositionsWithCopyToggleOn */
 #endif

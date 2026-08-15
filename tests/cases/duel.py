@@ -883,6 +883,28 @@ CASES["GetFirstSetPrizeCard"] = [
 ]
 # <<< factory GetFirstSetPrizeCard
 
+# >>> factory DrawCheckMenuCursor_YourOrOppPlayArea
+CONTRACT["DrawCheckMenuCursor_YourOrOppPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DrawCheckMenuCursor_YourOrOppPlayArea"] = [
+    {"a": 0, "wram": {0xCEAF: b"\x00", 0xCEB0: b"\x00"},
+     "vread": {0: {0x9800: 0x400}}},
+    {"a": 0x5A, "wram": {0xCEAF: b"\x01", 0xCEB0: b"\x02"},
+     "vread": {0: {0x9800: 0x400}}},
+    {"a": 0xAC, "wram": {0xCEAF: b"\x02", 0xCEB0: b"\x03"},
+     "vread": {0: {0x9800: 0x400}}},
+    dict(POISON, a=0x33, wram={0xCEAF: b"\x01", 0xCEB0: b"\x01"},
+         vread={0: {0x9800: 0x400}}),
+]
+# <<< factory DrawCheckMenuCursor_YourOrOppPlayArea
+
+# >>> factory ZeroObjectPositionsWithCopyToggleOn
+CONTRACT["ZeroObjectPositionsWithCopyToggleOn"] = {"compare": (), "preserve": ()}
+CASES["ZeroObjectPositionsWithCopyToggleOn"] = [
+    {"wram": {0xCAC0: b"\x00"}, "read": {0xC000: 0xA0}},
+    dict(POISON, wram={0xCAC0: b"\xFF"}, read={0xC000: 0xA0}),
+]
+# <<< factory ZeroObjectPositionsWithCopyToggleOn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -919,3 +941,21 @@ MUTATIONS = {
 # >>> factory-mutation GetFirstSetPrizeCard
 MUTATIONS["GetFirstSetPrizeCard"] = {"source_symbol": "GetFirstSetPrizeCard", "before": "\t\tif ((mask & prizes) != 0u)", "after": "\t\tif ((mask & prizes) == 0u)", "case_ids": ["GetFirstSetPrizeCard-1", "GetFirstSetPrizeCard-2", "GetFirstSetPrizeCard-6"]}
 # <<< factory-mutation GetFirstSetPrizeCard
+# >>> factory-mutation DrawCheckMenuCursor_YourOrOppPlayArea
+MUTATIONS["DrawCheckMenuCursor_YourOrOppPlayArea"] = {
+    "source_symbol": "DrawCheckMenuCursor_YourOrOppPlayArea",
+    "before": "c = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) + 14u);",
+    "after": "c = (uint8_t)((uint8_t)(wCheckMenuCursorYPosition << 1) + 13u);",
+    "case_ids": ["DrawCheckMenuCursor_YourOrOppPlayArea-1",
+                 "DrawCheckMenuCursor_YourOrOppPlayArea-2"],
+}
+# <<< factory-mutation DrawCheckMenuCursor_YourOrOppPlayArea
+# >>> factory-mutation ZeroObjectPositionsWithCopyToggleOn
+MUTATIONS["ZeroObjectPositionsWithCopyToggleOn"] = {
+    "source_symbol": "ZeroObjectPositionsWithCopyToggleOn",
+    "before": "wVBlankOAMCopyToggle = TRUE_8BF2;",
+    "after": "wVBlankOAMCopyToggle = 0u;",
+    "case_ids": ["ZeroObjectPositionsWithCopyToggleOn-0",
+                 "ZeroObjectPositionsWithCopyToggleOn-1"],
+}
+# <<< factory-mutation ZeroObjectPositionsWithCopyToggleOn
