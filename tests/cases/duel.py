@@ -1008,6 +1008,38 @@ CASES["EraseCheckMenuCursor_YourOrOppPlayArea"] = [
 ]
 # <<< factory EraseCheckMenuCursor_YourOrOppPlayArea
 
+# >>> factory LoadCursorTile
+CONTRACT["LoadCursorTile"] = {"compare": (), "preserve": ()}
+CASES["LoadCursorTile"] = [
+    {"keys": 1, "vread": {0: {0x8000: 16}}},
+    {"keys": 2, "vread": {0: {0x8000: 16}}},
+    dict(POISON, keys=1, vread={0: {0x8000: 16}}),
+]
+# <<< factory LoadCursorTile
+
+# >>> factory Func_8bf2
+CONTRACT["Func_8bf2"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c",)}
+CASES["Func_8bf2"] = [
+    {"vread": {0: {0x9800: 1}}},
+    {"hl": 0xC100, "c": 0x33,
+     "wram": {0xC100: b"\x06\x05\x06\x06", 0xC2EC: b"\x01",
+              0xCE50: b"\xC2", 0xCC08: b"\x02", 0xCAB4: b"\x01"},
+     "vread": {0: {0x98A6: 1, 0x98C6: 1}}},
+    {"hl": 0xC100, "c": 0x33,
+     "wram": {0xC100: b"\x06\x05", 0xC2EC: b"\xFF",
+              0xCE50: b"\xC2", 0xCC08: b"\x01", 0xCAB4: b"\x01"},
+     "vread": {0: {0x98A6: 1}}},
+    {"hl": 0xC100, "c": 0x33,
+     "wram": {0xC100: b"\x07\x05", 0xC2EC: b"\x00",
+              0xCE50: b"\xC2", 0xCC08: b"\x01", 0xCAB4: b"\x02"},
+     "vread": {0: {0x98A7: 1}, 1: {0x98A7: 1}}},
+    dict(POISON, hl=0xC100,
+         wram={0xC100: b"\x06\x05", 0xC2EC: b"\x0F",
+               0xCE50: b"\xC2", 0xCC08: b"\x00", 0xCAB4: b"\x01"},
+         vread={0: {0x98A6: 1}}),
+]
+# <<< factory Func_8bf2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1088,3 +1120,19 @@ MUTATIONS["EraseCheckMenuCursor_YourOrOppPlayArea"] = {
                  "EraseCheckMenuCursor_YourOrOppPlayArea-1"],
 }
 # <<< factory-mutation EraseCheckMenuCursor_YourOrOppPlayArea
+# >>> factory-mutation LoadCursorTile
+MUTATIONS["LoadCursorTile"] = {
+    "source_symbol": "LoadCursorTile",
+    "before": "0xE0u, 0xC0u, 0x98u, 0xB0u,",
+    "after": "0xE1u, 0xC0u, 0x98u, 0xB0u,",
+    "case_ids": ["LoadCursorTile-0", "LoadCursorTile-1", "LoadCursorTile-2"],
+}
+# <<< factory-mutation LoadCursorTile
+# >>> factory-mutation Func_8bf2
+MUTATIONS["Func_8bf2"] = {
+    "source_symbol": "Func_8bf2",
+    "before": "FillRectangle(PRIZE_TILE, 1u, 1u, de, 0x0000u);",
+    "after": "FillRectangle((uint8_t)(PRIZE_TILE + 1u), 1u, 1u, de, 0x0000u);",
+    "case_ids": ["Func_8bf2-1", "Func_8bf2-2", "Func_8bf2-3"],
+}
+# <<< factory-mutation Func_8bf2

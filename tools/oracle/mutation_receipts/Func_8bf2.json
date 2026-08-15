@@ -1,0 +1,9 @@
+{
+  "fn": "Func_8bf2",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_8bf2\", \"registers\": {\"a\": 0, \"b\": 3, \"c\": 51, \"d\": 6, \"e\": 6, \"f\": 128, \"hl\": 49412, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39078\": \"00\", \"39110\": \"ac\"}}, \"wram\": {\"49408\": \"06050606\", \"49900\": \"01\", \"51892\": \"01\", \"52232\": \"02\", \"52816\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_8bf2\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"Func_8bf2\", \"registers\": {\"a\": 0, \"b\": 3, \"c\": 51, \"d\": 6, \"e\": 6, \"f\": 128, \"hl\": 49412, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39078\": \"00\", \"39110\": \"ac\"}}, \"wram\": {\"49408\": \"06050606\", \"49900\": \"01\", \"51892\": \"01\", \"52232\": \"02\", \"52816\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

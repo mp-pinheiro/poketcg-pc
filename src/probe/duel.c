@@ -649,6 +649,28 @@ static void adapt_EraseCheckMenuCursor_YourOrOppPlayArea(ProbeState *s)
 }
 /* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
 
+/* >>> factory LoadCursorTile */
+static void adapt_LoadCursorTile(ProbeState *s)
+{
+	(void)s;
+	LoadCursorTile();
+}
+/* <<< factory LoadCursorTile */
+
+/* >>> factory Func_8bf2 */
+static void adapt_Func_8bf2(ProbeState *s)
+{
+	PrizeTileResult r = Func_8bf2(s->f, s->d, s->e, s->hl);
+
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory Func_8bf2 */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -728,5 +750,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "YourOrOppPlayAreaScreen_HandleInput", adapt_YourOrOppPlayAreaScreen_HandleInput },
 	{ "DrawPlayArea_BenchCards", adapt_DrawPlayArea_BenchCards },
 	{ "EraseCheckMenuCursor_YourOrOppPlayArea", adapt_EraseCheckMenuCursor_YourOrOppPlayArea },
+	{ "LoadCursorTile", adapt_LoadCursorTile },
+	{ "Func_8bf2", adapt_Func_8bf2 },
 	{ NULL, NULL },
 };

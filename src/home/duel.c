@@ -345,6 +345,20 @@ static void yoopa_draw_cursor(void)
 #define BPA_SYM_SPACE 0x00u
 #define BPA_SYM_CURSOR_R 0x01u
 #define BPA_RVBK 0xFF4Fu
+
+#include "home/tiles.h"
+#include "home/bg_map.h"
+
+#define V0_TILES0 0x8000u
+#define CONSOLE_CGB 0x02u
+#define R_VBK 0xFF4Fu
+#define PRIZE_TILE 0xACu
+#define PRIZE_TILE_CGB_ATTR 0x02u
+
+static const uint8_t kCursorTileData[16] = {
+	0xE0u, 0xC0u, 0x98u, 0xB0u, 0x84u, 0x8Cu, 0x83u, 0x82u,
+	0x86u, 0x8Fu, 0x9Du, 0xBEu, 0xF4u, 0xF8u, 0x50u, 0x60u
+};
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1661,3 +1675,64 @@ TempListResult EraseCheckMenuCursor_YourOrOppPlayArea(void)
 	return DrawCheckMenuCursor_YourOrOppPlayArea(BPA_SYM_SPACE);
 }
 /* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
+
+/* >>> factory LoadCursorTile */
+/* duel.asm:1687-1700. Copies the 16-byte cursor tile into v0Tiles0 and falls
+ * through into YourOrOppPlayAreaScreen_HandleInput. The .tile_data label is a
+ * ROM literal in this routine's own bank, so it is materialized as a C table
+ * and written byte-for-byte to the same destination. */
+void LoadCursorTile(void)
+{
+	uint16_t dst = V0_TILES0;
+	uint8_t i;
+
+	for (i = 0u; i < 16u; i++)
+		gb_write8((uint16_t)(dst + i), kCursorTileData[i]);
+	YourOrOppPlayAreaScreen_HandleInput();
+}
+/* <<< factory LoadCursorTile */
+
+/* >>> factory Func_8bf2 */
+/* duel.asm:2073-2118. Walks the turn-check duelist's DUELVARS_PRIZES bitmask
+ * one bit per initial prize, drawing tile $AC (both branches load the same
+ * tile) at the coordinate pair read from the entry hl table. On CGB the same
+ * rectangle is redrawn in VRAM bank 1 with attribute $02. Entry a/b are dead;
+ * exit a/f are the shifted bitmask and the last `srl a` flags (or the entry
+ * flags when the loop body never runs), b is the terminating counter, d/e the
+ * last coordinate pair read, hl the advanced table pointer, c preserved. */
+PrizeTileResult Func_8bf2(uint8_t f, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t page = wCheckMenuPlayAreaWhichDuelist;
+	uint8_t saved_a = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_PRIZES));
+	uint8_t saved_f = f;
+	uint8_t b = 0u;
+
+	for (;;) {
+		uint8_t carry;
+		uint16_t de;
+
+		b = (uint8_t)(b + 1u);
+		if ((uint8_t)(wDuelInitialPrizes + 1u) == b)
+			break;
+
+		carry = (uint8_t)(saved_a & 1u);
+		saved_a = (uint8_t)(saved_a >> 1);
+		saved_f = (uint8_t)((saved_a ? 0u : 0x80u) | (carry ? 0x10u : 0u));
+
+		e = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		d = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(((uint16_t)d << 8) | e);
+
+		FillRectangle(PRIZE_TILE, 1u, 1u, de, 0x0000u);
+		if (wConsole == CONSOLE_CGB) {
+			gb_write8(R_VBK, 1u);
+			FillRectangle(PRIZE_TILE_CGB_ATTR, 1u, 1u, de, 0x0000u);
+			gb_write8(R_VBK, 0u);
+		}
+	}
+
+	return (PrizeTileResult){saved_a, saved_f, b, d, e, hl};
+}
+/* <<< factory Func_8bf2 */
