@@ -151,20 +151,37 @@ class _Run:
         self.translate_s = 0.0
         self.verify_s = 0.0
         self.salvage_s = 0.0
+        self.busy: list[tuple[float, float]] = []
+
+    def busy_s(self) -> float:
+        """Wall time this packet had *some* work in flight.
+
+        Phases overlap by design — a lane rsync runs while the scheduler is
+        blocked in translate_many — so summing the per-phase totals
+        double-counts and can exceed the packet's own wall time. Idle time has
+        to come from the union of the busy intervals instead.
+        """
+        merged_end = 0.0
+        total = 0.0
+        for start, end in sorted(self.busy):
+            if end <= merged_end:
+                continue
+            total += end - max(start, merged_end)
+            merged_end = end
+        return total
 
     def metric(self, model: str) -> dict:
         work_ids = sorted(r["work_id"] for r in self.packet["routines"])
         wall_s = round(time.monotonic() - self.started, 1)
-        translate_s = round(self.translate_s, 1)
-        verify_s = round(self.verify_s, 1)
-        salvage_s = round(self.salvage_s, 1)
-        lane_s = round(self.lane_s, 1)
-        idle_s = round(wall_s - translate_s - verify_s - salvage_s - lane_s, 1)
+        idle_s = round(max(0.0, (time.monotonic() - self.started) - self.busy_s()), 1)
         return {
             "id": self.id, "verdict": self.final, "reason": self.reason,
             "rounds": self.rounds, "wall_s": wall_s,
-            "translate_s": translate_s, "verify_s": verify_s,
-            "salvage_s": salvage_s, "lane_s": lane_s, "idle_s": idle_s,
+            "translate_s": round(self.translate_s, 1),
+            "verify_s": round(self.verify_s, 1),
+            "salvage_s": round(self.salvage_s, 1),
+            "lane_s": round(self.lane_s, 1),
+            "idle_s": idle_s,
             "prompt_tokens": self.prompt_tokens, "reply_tokens": self.reply_tokens,
             "routines": len(self.packet["routines"]), "wave_id": self.wave_id,
             "work_ids": work_ids,
@@ -526,9 +543,11 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                     stop_reason = f"translate: {str(exc).strip()[-400:]}"
                     requeue()
                     return
-                wall = round(time.monotonic() - started_at, 2)
+                finished_at = time.monotonic()
+                wall = round(finished_at - started_at, 2)
                 for run in batch:
                     run.translate_s += wall
+                    run.busy.append((started_at, finished_at))
                 if not isinstance(replies, (list, tuple)) or len(replies) != len(batch):
                     stop_reason = "translate: translator returned wrong reply collection"
                     requeue()
@@ -593,6 +612,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                         run, job = payload_
                         run.job = None
                         run.lane_s += job.wall
+                        run.busy.append((job.start, job.end))
                         try:
                             lane = future.result()
                         except Exception as exc:
@@ -607,6 +627,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                         run.job = None
                         slots_used -= 1
                         run.verify_s += job.wall
+                        run.busy.append((job.start, job.end))
                         try:
                             verdict = future.result()
                         except WaveDeadlineExpired as exc:
@@ -639,6 +660,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                         run.job = None
                         slots_used -= 1
                         run.salvage_s += job.wall
+                        run.busy.append((job.start, job.end))
                         try:
                             salvage_verdict = future.result()
                         except WaveDeadlineExpired as exc:

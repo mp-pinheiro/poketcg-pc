@@ -212,7 +212,10 @@ records written by the verify subprocess) and the per-packet `translate_s`,
 `verify_s`, `salvage_s`, `lane_s`, and `idle_s` fields in `.factory/metrics.jsonl`;
 `driver.py metrics` prints the split and `driver.py progress` reports a live
 wave. Job durations are measured inside each job, not at harvest, because the
-scheduler can block in `translate_many` long after a job finished.
+scheduler can block in `translate_many` long after a job finished. The phase
+totals legitimately overlap — a lane rsync runs while the scheduler is blocked
+translating — so `idle_s` is wall time minus the *union* of a packet's busy
+intervals, never the wall-minus-sum that overlap drives negative.
 
 Translate all ten prompts in one `parallel()` wave: measured 107-123 s per round
 at width 10 against ~170 s as two batches of five, with no rate limiting, which
