@@ -442,3 +442,15 @@ SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c)
 	return (SetNPCDuelParamsResult){args.c, f, args.b, args.c};
 }
 /* <<< factory SetNPCDuelParams */
+
+/* >>> factory ScriptCommand_BattleCenter */
+/* scripting.asm:763-768. Stores the Battle Center game event, sets bit 6 of
+ * wOverworldTransition, then tail-jumps into IncreaseScriptPointerBy1 -- the
+ * callee's a/f/c exit state becomes this routine's exit state. */
+IncreaseScriptPointerResult ScriptCommand_BattleCenter(void)
+{
+	wGameEvent = GAME_EVENT_BATTLE_CENTER;
+	wOverworldTransition |= 0x40u;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_BattleCenter */

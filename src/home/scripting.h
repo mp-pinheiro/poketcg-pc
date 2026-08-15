@@ -158,4 +158,8 @@ typedef struct {
 
 SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c);
 /* <<< factory SetNPCDuelParams */
+/* >>> factory ScriptCommand_BattleCenter */
+/* >>> factory ScriptCommand_BattleCenter */
+IncreaseScriptPointerResult ScriptCommand_BattleCenter(void);
+/* <<< factory ScriptCommand_BattleCenter */
 #endif

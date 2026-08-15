@@ -22,6 +22,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -384,6 +385,19 @@ CASES["SetNPCDuelParams"] = [
 ]
 # <<< factory SetNPCDuelParams
 
+# >>> factory ScriptCommand_BattleCenter
+wOverworldTransition = 0xD0B4
+wGameEvent = 0xD0B5
+CONTRACT["ScriptCommand_BattleCenter"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_BattleCenter"] = [
+	{"wram": {wOverworldTransition: b"\x00\x00"}},
+	{"wram": {wOverworldTransition: b"\xff\xff"}},
+	{"wram": {wOverworldTransition: b"\xbf\x77"}},
+	{"wram": {wOverworldTransition: b"\x40\x02"}},
+	dict(POISON, wram={wOverworldTransition: b"\x35\x99"}),
+]
+# <<< factory ScriptCommand_BattleCenter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -630,3 +644,11 @@ MUTATIONS["SetNPCDuelParams"] = {
 	"case_ids": ["SetNPCDuelParams-2", "SetNPCDuelParams-4", "SetNPCDuelParams-5"],
 }
 # <<< factory-mutation SetNPCDuelParams
+# >>> factory-mutation ScriptCommand_BattleCenter
+MUTATIONS["ScriptCommand_BattleCenter"] = {
+	"source_symbol": "ScriptCommand_BattleCenter",
+	"before": "wGameEvent = GAME_EVENT_BATTLE_CENTER;",
+	"after": "wGameEvent = 0x03u;",
+	"case_ids": ["ScriptCommand_BattleCenter-0", "ScriptCommand_BattleCenter-1", "ScriptCommand_BattleCenter-2", "ScriptCommand_BattleCenter-3", "ScriptCommand_BattleCenter-4"],
+}
+# <<< factory-mutation ScriptCommand_BattleCenter

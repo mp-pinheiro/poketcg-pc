@@ -337,6 +337,16 @@ static void adapt_SetNPCDuelParams(ProbeState *s)
 }
 /* <<< factory SetNPCDuelParams */
 
+/* >>> factory ScriptCommand_BattleCenter */
+static void adapt_ScriptCommand_BattleCenter(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_BattleCenter();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_BattleCenter */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -371,5 +381,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_DoFrames", adapt_ScriptCommand_DoFrames },
 	{ "ScriptCommand_EndScript", adapt_ScriptCommand_EndScript },
 	{ "SetNPCDuelParams", adapt_SetNPCDuelParams },
+	{ "ScriptCommand_BattleCenter", adapt_ScriptCommand_BattleCenter },
 	{ NULL, NULL },
 };
