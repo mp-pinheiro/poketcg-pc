@@ -1,0 +1,9 @@
+{
+  "fn": "CardPageSwitch_TrainerPage2",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardPageSwitch_TrainerPage2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 52273, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52272\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardPageSwitch_TrainerPage2\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"CardPageSwitch_TrainerPage2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 52273, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52272\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

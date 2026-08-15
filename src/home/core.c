@@ -2426,3 +2426,13 @@ TrySetUpBossStartingPlayAreaResult TrySetUpBossStartingPlayArea(void)
 	return (TrySetUpBossStartingPlayAreaResult){r.a, (uint8_t)((r.a == 0x00u) ? 0x80u : 0x00u)};
 }
 /* <<< factory TrySetUpBossStartingPlayArea */
+
+/* >>> factory CardPageSwitch_TrainerPage2 */
+/* core.asm:3852-3856 */
+TrainerPageResult CardPageSwitch_TrainerPage2(void)
+{
+	uint16_t hl = (uint16_t)(wLoadedCard1NonPokemonDescription_ADDR + 2u);
+	CardPageExistsResult r = CheckCardPageExists(&hl);
+	return (TrainerPageResult){hl, r.a, r.zero};
+}
+/* <<< factory CardPageSwitch_TrainerPage2 */

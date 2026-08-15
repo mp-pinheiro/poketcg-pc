@@ -485,4 +485,8 @@ AIChooseRandomlyNotToDoActionResult AIChooseRandomlyNotToDoAction(void);
 typedef struct { uint8_t a; uint8_t f; } TrySetUpBossStartingPlayAreaResult;
 TrySetUpBossStartingPlayAreaResult TrySetUpBossStartingPlayArea(void);
 /* <<< factory TrySetUpBossStartingPlayArea */
+/* >>> factory CardPageSwitch_TrainerPage2 */
+typedef struct { uint16_t hl; uint8_t a; uint8_t zero; } TrainerPageResult;
+TrainerPageResult CardPageSwitch_TrainerPage2(void);
+/* <<< factory CardPageSwitch_TrainerPage2 */
 #endif

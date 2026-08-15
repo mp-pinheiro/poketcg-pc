@@ -1309,6 +1309,15 @@ CASES["TrySetUpBossStartingPlayArea"] = [
 ]
 # <<< factory TrySetUpBossStartingPlayArea
 
+# >>> factory CardPageSwitch_TrainerPage2
+CONTRACT["CardPageSwitch_TrainerPage2"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_TrainerPage2"] = [
+    {"wram": {0xCC30: b"\x00"}, "read": {0xCC30: 1}},
+    dict(POISON, wram={0xCC30: b"\x00"}, read={0xCC30: 1}),
+    {"wram": {0xCC30: b"\x09"}, "read": {0xCC30: 1}},
+]
+# <<< factory CardPageSwitch_TrainerPage2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2115,3 +2124,6 @@ MUTATIONS["TrySetUpBossStartingPlayArea"] = {
 	"case_ids": ["TrySetUpBossStartingPlayArea-0", "TrySetUpBossStartingPlayArea-1", "TrySetUpBossStartingPlayArea-2", "TrySetUpBossStartingPlayArea-3", "TrySetUpBossStartingPlayArea-4"],
 }
 # <<< factory-mutation TrySetUpBossStartingPlayArea
+# >>> factory-mutation CardPageSwitch_TrainerPage2
+MUTATIONS["CardPageSwitch_TrainerPage2"] = {"source_symbol": "CardPageSwitch_TrainerPage2", "before": "return (TrainerPageResult){hl, r.a, r.zero};", "after": "return (TrainerPageResult){hl, r.a, (uint8_t)!r.zero};", "case_ids": ["CardPageSwitch_TrainerPage2-0", "CardPageSwitch_TrainerPage2-1", "CardPageSwitch_TrainerPage2-2"]}
+# <<< factory-mutation CardPageSwitch_TrainerPage2

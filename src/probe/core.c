@@ -1019,6 +1019,16 @@ static void adapt_TrySetUpBossStartingPlayArea(ProbeState *s)
 }
 /* <<< factory TrySetUpBossStartingPlayArea */
 
+/* >>> factory CardPageSwitch_TrainerPage2 */
+static void adapt_CardPageSwitch_TrainerPage2(ProbeState *s)
+{
+	TrainerPageResult r = CardPageSwitch_TrainerPage2();
+	s->hl = r.hl;
+	s->a = r.a;
+	s->f = r.zero ? 0x80u : 0x00u;
+}
+/* <<< factory CardPageSwitch_TrainerPage2 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1139,5 +1149,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIChooseRandomlyNotToDoAction", adapt_AIChooseRandomlyNotToDoAction },
 	{ "TrySetUpBossStartingPlayArea", adapt_TrySetUpBossStartingPlayArea },
 	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
+	{ "CardPageSwitch_TrainerPage2", adapt_CardPageSwitch_TrainerPage2 },
 	{ NULL, NULL },
 };
