@@ -349,6 +349,11 @@ static PlayInOrderResult play_pokemon_card_in_order(uint16_t *hl, uint16_t de)
 		return (PlayInOrderResult){placed.a, (uint8_t)((placed.a == 0x00u) ? 0x80u : 0x00u), de, *hl};
 	}
 }
+
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} CardPageEnergyResult;
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -1764,11 +1769,12 @@ WaitResult DrawWideTextBox_WaitForInput_Bank1(uint16_t hl)
 }
 /* <<< factory DrawWideTextBox_WaitForInput_Bank1 */
 
+
 /* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
 /* core.asm:3845-3848 */
-CardPageEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void)
+CardPageSwitchEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void)
 {
-	return (CardPageEnergyResult){1u, 0x00u};
+	return (CardPageSwitchEnergyResult){1u, 0u};
 }
 /* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
 

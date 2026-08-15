@@ -348,8 +348,11 @@ TwoByteNumberToTxSymbolPadResult TwoByteNumberToTxSymbol_PadSpace_Bank1(
 WaitResult DrawWideTextBox_WaitForInput_Bank1(uint16_t hl);
 /* <<< factory DrawWideTextBox_WaitForInput_Bank1 */
 /* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
-typedef struct { uint8_t a; uint8_t f; } CardPageEnergyResult;
-CardPageEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void);
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} CardPageSwitchEnergyResult;
+CardPageSwitchEnergyResult CardPageSwitch_EnergyOrTrainerPage1(void);
 /* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
 /* >>> factory CardPageSwitch_TrainerEnd */
 CardPageResult CardPageSwitch_TrainerEnd(void);

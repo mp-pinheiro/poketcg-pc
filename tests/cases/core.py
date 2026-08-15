@@ -997,8 +997,12 @@ CASES["DrawWideTextBox_WaitForInput_Bank1"] = [
 
 # >>> factory CardPageSwitch_EnergyOrTrainerPage1
 CONTRACT["CardPageSwitch_EnergyOrTrainerPage1"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
-CASES["CardPageSwitch_EnergyOrTrainerPage1"] = [{}, dict(POISON)]
+CASES["CardPageSwitch_EnergyOrTrainerPage1"] = [
+    {},
+    dict(POISON),
+]
 # <<< factory CardPageSwitch_EnergyOrTrainerPage1
+
 # >>> factory CardPageSwitch_TrainerEnd
 CONTRACT["CardPageSwitch_TrainerEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
 CASES["CardPageSwitch_TrainerEnd"] = [{"a": 0, "f": 0}, dict(POISON), {"a": 0xFF, "f": 0x80}]
@@ -1971,12 +1975,7 @@ MUTATIONS["ApplyStatusConditionToArenaPokemon"] = {
 }
 # <<< factory-mutation ApplyStatusConditionToArenaPokemon
 # >>> factory-mutation CardPageSwitch_EnergyOrTrainerPage1
-MUTATIONS["CardPageSwitch_EnergyOrTrainerPage1"] = {
-    "source_symbol": "CardPageSwitch_EnergyOrTrainerPage1",
-    "before": "return (CardPageEnergyResult){1u, 0x00u};",
-    "after": "return (CardPageEnergyResult){0u, 0x00u};",
-    "case_ids": ["CardPageSwitch_EnergyOrTrainerPage1-0", "CardPageSwitch_EnergyOrTrainerPage1-1"],
-}
+MUTATIONS["CardPageSwitch_EnergyOrTrainerPage1"] = {"source_symbol": "CardPageSwitch_EnergyOrTrainerPage1", "before": "return (CardPageSwitchEnergyResult){1u, 0u};", "after": "return (CardPageSwitchEnergyResult){2u, 0u};", "case_ids": ["CardPageSwitch_EnergyOrTrainerPage1-0", "CardPageSwitch_EnergyOrTrainerPage1-1"]}
 # <<< factory-mutation CardPageSwitch_EnergyOrTrainerPage1
 # >>> factory-mutation CardPageSwitch_TrainerEnd
 MUTATIONS["CardPageSwitch_TrainerEnd"] = {"source_symbol": "CardPageSwitch_TrainerEnd", "before": "return (CardPageResult){CARDPAGE_TRAINER_1, TRUE};", "after": "return (CardPageResult){0x0eu, TRUE};", "case_ids": ["CardPageSwitch_TrainerEnd-0", "CardPageSwitch_TrainerEnd-1", "CardPageSwitch_TrainerEnd-2"]}

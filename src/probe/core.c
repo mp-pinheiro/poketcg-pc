@@ -774,11 +774,12 @@ static void adapt_DrawWideTextBox_WaitForInput_Bank1(ProbeState *s)
 /* >>> factory CardPageSwitch_EnergyOrTrainerPage1 */
 static void adapt_CardPageSwitch_EnergyOrTrainerPage1(ProbeState *s)
 {
-	CardPageEnergyResult r = CardPageSwitch_EnergyOrTrainerPage1();
+	CardPageSwitchEnergyResult r = CardPageSwitch_EnergyOrTrainerPage1();
 	s->a = r.a;
 	s->f = r.f;
 }
 /* <<< factory CardPageSwitch_EnergyOrTrainerPage1 */
+
 /* >>> factory CardPageSwitch_TrainerEnd */
 static void adapt_CardPageSwitch_TrainerEnd(ProbeState *s)
 {
@@ -1039,7 +1040,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDuelHorizontalSeparator", adapt_DrawDuelHorizontalSeparator },
 	{ "MoveAllTurnHolderKnockedOutPokemonToDiscardPile", adapt_MoveAllTurnHolderKnockedOutPokemonToDiscardPile },
 	{ "PrintSortNumberInCardList_CallFromPointer", adapt_PrintSortNumberInCardList_CallFromPointer },
-	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
 	{ "CheckIfEnoughEnergiesOfType", adapt_CheckIfEnoughEnergiesOfType },
 	{ "CheckIfActiveCardParalyzedOrAsleep", adapt_CheckIfActiveCardParalyzedOrAsleep },
 	{ "GetAttacksEnergyCostBits", adapt_GetAttacksEnergyCostBits },
@@ -1150,5 +1150,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "TrySetUpBossStartingPlayArea", adapt_TrySetUpBossStartingPlayArea },
 	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
 	{ "CardPageSwitch_TrainerPage2", adapt_CardPageSwitch_TrainerPage2 },
+	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
 	{ NULL, NULL },
 };
