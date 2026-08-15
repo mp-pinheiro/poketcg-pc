@@ -477,4 +477,8 @@ Func1585bResult Func_1585b(uint16_t hl);
 typedef struct { uint8_t a; uint8_t carry; } CheckIfNotABossDeckIDResult;
 CheckIfNotABossDeckIDResult CheckIfNotABossDeckID(void);
 /* <<< factory CheckIfNotABossDeckID */
+/* >>> factory AIChooseRandomlyNotToDoAction */
+typedef struct { uint8_t a; uint8_t f; } AIChooseRandomlyNotToDoActionResult;
+AIChooseRandomlyNotToDoActionResult AIChooseRandomlyNotToDoAction(void);
+/* <<< factory AIChooseRandomlyNotToDoAction */
 #endif

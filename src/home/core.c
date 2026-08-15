@@ -302,6 +302,20 @@ CardPageResult CardPageSwitch_00(void)
 #include "home/switch_sram.h"
 #include "generated/sram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/random.h"
+
+/* Opponent deck IDs (deck_constants.asm). These six non-boss decks are the ones
+ * whose AI skips a pending Trainer-card action half the time instead of a
+ * quarter of the time. */
+#define MUSCLES_FOR_BRAINS_DECK_ID      0x1au
+#define BLISTERING_POKEMON_DECK_ID      0x1bu
+#define WATERFRONT_POKEMON_DECK_ID      0x1cu
+#define BOOM_BOOM_SELFDESTRUCT_DECK_ID  0x1du
+#define KALEIDOSCOPE_DECK_ID            0x1eu
+#define RESHUFFLE_DECK_ID               0x1fu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2307,3 +2321,39 @@ CheckIfNotABossDeckIDResult CheckIfNotABossDeckID(void)
 	return (CheckIfNotABossDeckIDResult){ .a = r.a, .carry = 1 };
 }
 /* <<< factory CheckIfNotABossDeckID */
+
+/* >>> factory AIChooseRandomlyNotToDoAction */
+/* core.asm:2466-2522. Boss decks always use Trainer cards: CheckIfNotABossDeckID
+ * returning carry clear exits immediately (never skip the action); its `or a`
+ * exit on a nonzero deck ID leaves f = 0, modeled as such on that path.
+ * Otherwise the opponent deck ID is compared against the six 50% decks; the
+ * exit carry is the result of `cp 1` or `cp 2` on Random(4)'s output, so the
+ * full Z/N/H/C byte is reconstructed. hl/de are pushed/popped around the whole
+ * body and Random preserves bc, so b/c/d/e/hl all survive. */
+AIChooseRandomlyNotToDoActionResult AIChooseRandomlyNotToDoAction(void)
+{
+	CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
+	if (!boss.carry)
+		return (AIChooseRandomlyNotToDoActionResult){boss.a, 0x00u};
+
+	uint8_t deck = wOpponentDeckID;
+	uint8_t n = 0x01u; /* carry 25 percent */
+	if (deck == MUSCLES_FOR_BRAINS_DECK_ID ||
+	    deck == BLISTERING_POKEMON_DECK_ID ||
+	    deck == WATERFRONT_POKEMON_DECK_ID ||
+	    deck == BOOM_BOOM_SELFDESTRUCT_DECK_ID ||
+	    deck == KALEIDOSCOPE_DECK_ID ||
+	    deck == RESHUFFLE_DECK_ID)
+		n = 0x02u; /* carry 50 percent */
+
+	uint8_t r = Random(0x04u);
+	uint8_t cpflags = 0x40u; /* cp leaves N set, low nibble clear */
+	if (r == n)
+		cpflags |= 0x80u;
+	if ((r & 0x0fu) < (n & 0x0fu))
+		cpflags |= 0x20u;
+	if (r < n)
+		cpflags |= 0x10u;
+	return (AIChooseRandomlyNotToDoActionResult){r, cpflags};
+}
+/* <<< factory AIChooseRandomlyNotToDoAction */

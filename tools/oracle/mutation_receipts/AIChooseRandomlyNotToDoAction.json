@@ -1,0 +1,9 @@
+{
+  "fn": "AIChooseRandomlyNotToDoAction",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIChooseRandomlyNotToDoAction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIChooseRandomlyNotToDoAction\", \"mismatches\": {\"f\": [112, 48]}}\n",
+  "restored": "{\"fn\": \"AIChooseRandomlyNotToDoAction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52238\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

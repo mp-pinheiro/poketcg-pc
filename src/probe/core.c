@@ -999,6 +999,15 @@ static void adapt_CheckIfNotABossDeckID(ProbeState *s)
 }
 /* <<< factory CheckIfNotABossDeckID */
 
+/* >>> factory AIChooseRandomlyNotToDoAction */
+static void adapt_AIChooseRandomlyNotToDoAction(ProbeState *s)
+{
+	AIChooseRandomlyNotToDoActionResult r = AIChooseRandomlyNotToDoAction();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIChooseRandomlyNotToDoAction */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1117,5 +1126,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
 	{ "Func_1585b", adapt_Func_1585b },
 	{ "CheckIfNotABossDeckID", adapt_CheckIfNotABossDeckID },
+	{ "AIChooseRandomlyNotToDoAction", adapt_AIChooseRandomlyNotToDoAction },
 	{ NULL, NULL },
 };

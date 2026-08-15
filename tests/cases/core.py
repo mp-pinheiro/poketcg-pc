@@ -1284,6 +1284,19 @@ CASES["CheckIfNotABossDeckID"] = [
 ]
 # <<< factory CheckIfNotABossDeckID
 
+# >>> factory AIChooseRandomlyNotToDoAction
+wOpponentDeckID = 0xCC0E
+CONTRACT["AIChooseRandomlyNotToDoAction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AIChooseRandomlyNotToDoAction"] = [
+	# deck id 0: below every boss range and not one of the six 50% decks -> 25% path
+	{"wram": {wOpponentDeckID: b"\x00"}},
+	# above every deck id: not-boss via the high side, still the 25% path
+	{"wram": {wOpponentDeckID: b"\x7f"}},
+	{"wram": {wOpponentDeckID: b"\xff"}},
+	dict(POISON, wram={wOpponentDeckID: b"\x00"}),
+]
+# <<< factory AIChooseRandomlyNotToDoAction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2079,3 +2092,11 @@ MUTATIONS["CheckIfNotABossDeckID"] = {
     "case_ids": ["CheckIfNotABossDeckID-1", "CheckIfNotABossDeckID-2", "CheckIfNotABossDeckID-3"],
 }
 # <<< factory-mutation CheckIfNotABossDeckID
+# >>> factory-mutation AIChooseRandomlyNotToDoAction
+MUTATIONS["AIChooseRandomlyNotToDoAction"] = {
+	"source_symbol": "AIChooseRandomlyNotToDoAction",
+	"before": "uint8_t cpflags = 0x40u;",
+	"after": "uint8_t cpflags = 0x00u;",
+	"case_ids": ["AIChooseRandomlyNotToDoAction-0", "AIChooseRandomlyNotToDoAction-1", "AIChooseRandomlyNotToDoAction-2", "AIChooseRandomlyNotToDoAction-3"],
+}
+# <<< factory-mutation AIChooseRandomlyNotToDoAction
