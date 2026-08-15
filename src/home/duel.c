@@ -289,6 +289,46 @@ HandListResult CreateArenaOrBenchEnergyCardList(uint8_t a)
 #define PRIZE_TILE_8BF2 0xACu
 #define PRIZE_TILE_CGB_ATTR_8BF2 0x02u
 #define VBK_REG_8BF2 0xFF4Fu
+
+#include "home/random.h"
+#include "home/sound.h"
+#include "home/deck_check.h"
+#include "home/objects.h"
+
+#define YOPA_PAD_A       0x01u
+#define YOPA_PAD_B       0x02u
+#define YOPA_PAD_RIGHT   0x10u
+#define YOPA_PAD_LEFT    0x20u
+#define YOPA_PAD_UP      0x40u
+#define YOPA_PAD_DOWN    0x80u
+#define YOPA_SFX_CURSOR  0x01u
+#define YOPA_MENU_CANCEL 0xFFu
+#define YOPA_MENU_CONFIRM 0x01u
+#define YOPA_PRIZES_3    0x03u
+#define YOPA_PRIZES_5    0x05u
+#define YOPA_BLINK_MASK  0x0Fu
+#define YOPA_BLINK_BIT   0x10u
+#define YOPA_ITEM_LEN    0x07u
+
+/* duel.asm:1701-1943 helper: [wTransitionTablePtr] as a 16-bit address. */
+static uint16_t yoopa_table_ptr(void)
+{
+	return (uint16_t)(gb_read8(wTransitionTablePtr_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wTransitionTablePtr_ADDR + 1u)) << 8);
+}
+
+/* duel.asm:1701-1943 .draw_cursor */
+static void yoopa_draw_cursor(void)
+{
+	ZeroObjectPositions();
+	uint16_t de = yoopa_table_ptr();
+	uint16_t hl = HtimesL((uint16_t)((uint16_t)YOPA_ITEM_LEN << 8 | wYourOrOppPlayAreaCurPosition));
+	hl = (uint16_t)(hl + de);
+	uint8_t d = gb_read8(hl);
+	uint8_t e = gb_read8((uint16_t)(hl + 1u));
+	uint8_t b = gb_read8((uint16_t)(hl + 2u));
+	SetOneObjectAttributes(e, d, 0x00u, b);
+}
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1412,3 +1452,125 @@ void ZeroObjectPositionsWithCopyToggleOn(void)
 	wVBlankOAMCopyToggle = TRUE_8BF2;
 }
 /* <<< factory ZeroObjectPositionsWithCopyToggleOn */
+
+/* >>> factory YourOrOppPlayAreaScreen_HandleInput */
+/* duel.asm:1701-1943 */
+void YourOrOppPlayAreaScreen_HandleInput(void)
+{
+	uint8_t next = 0u;
+
+	for (;;) {
+		next = 0u;
+		wMenuInputSFX = 0u;
+		uint8_t pos = wYourOrOppPlayAreaCurPosition;
+		wPrizeCardCursorTemporaryPosition = pos;
+		uint16_t hl = HtimesL((uint16_t)((uint16_t)YOPA_ITEM_LEN << 8 | pos));
+		hl = (uint16_t)(hl + yoopa_table_ptr());
+
+		uint8_t dpad = hDPadHeld;
+		uint8_t moved = 0u;
+		uint8_t nv = 0u;
+		if (dpad != 0u) {
+			uint16_t tbl = (uint16_t)(hl + 3u);
+			if (dpad & YOPA_PAD_UP) {
+				nv = gb_read8(tbl);
+				moved = 1u;
+			} else {
+				tbl = (uint16_t)(tbl + 1u);
+				if (dpad & YOPA_PAD_DOWN) {
+					nv = gb_read8(tbl);
+					moved = 1u;
+				} else {
+					tbl = (uint16_t)(tbl + 1u);
+					if (dpad & YOPA_PAD_RIGHT) {
+						nv = gb_read8(tbl);
+						moved = 1u;
+					} else {
+						tbl = (uint16_t)(tbl + 1u);
+						if (dpad & YOPA_PAD_LEFT) {
+							nv = gb_read8(tbl);
+							moved = 1u;
+						}
+					}
+				}
+			}
+		}
+
+		if (!moved)
+			break;
+
+		wYourOrOppPlayAreaCurPosition = nv;
+		if (nv >= 0x08u) {
+			next = 1u;
+			break;
+		}
+
+		uint8_t a = nv;
+		uint8_t restart = 0u;
+		for (;;) {
+			uint8_t b = 1u;
+			while (a != 0u) {
+				b = (uint8_t)(b << 1);
+				a--;
+			}
+			if ((uint8_t)(wDuelInitialPrizesUpperBitsSet & b) != 0u) {
+				next = 1u;
+				break;
+			}
+			if (wPrizeCardCursorTemporaryPosition != 0x06u) {
+				restart = 1u;
+				break;
+			}
+			uint8_t dp = hDPadHeld;
+			if (!(dp & YOPA_PAD_RIGHT) && !(dp & YOPA_PAD_LEFT)) {
+				restart = 1u;
+				break;
+			}
+			if (wDuelInitialPrizes >= YOPA_PRIZES_5) {
+				next = 1u;
+				break;
+			}
+			if (wYourOrOppPlayAreaCurPosition == 5u)
+				wYourOrOppPlayAreaCurPosition = 3u;
+			else
+				wYourOrOppPlayAreaCurPosition = 2u;
+			if (wDuelInitialPrizes < YOPA_PRIZES_3)
+				wYourOrOppPlayAreaCurPosition = (uint8_t)(wYourOrOppPlayAreaCurPosition - 2u);
+			a = wYourOrOppPlayAreaCurPosition;
+			wPrizeCardCursorTemporaryPosition = a;
+		}
+		if (restart)
+			continue;
+		break;
+	}
+
+	if (next) {
+		wMenuInputSFX = YOPA_SFX_CURSOR;
+		wCheckMenuCursorBlinkCounter = 0u;
+	}
+
+	uint8_t keys = (uint8_t)(hKeysPressed & (YOPA_PAD_A | YOPA_PAD_B));
+	if (keys != 0u) {
+		if (keys & YOPA_PAD_A) {
+			yoopa_draw_cursor();
+			PlaySFXConfirmOrCancel(YOPA_MENU_CONFIRM);
+		} else {
+			PlaySFXConfirmOrCancel(YOPA_MENU_CANCEL);
+		}
+		return;
+	}
+
+	if (wMenuInputSFX != 0u)
+		PlaySFX(wMenuInputSFX);
+
+	uint8_t cnt = wCheckMenuCursorBlinkCounter;
+	wCheckMenuCursorBlinkCounter = (uint8_t)(cnt + 1u);
+	if ((uint8_t)(cnt & YOPA_BLINK_MASK) != 0u)
+		return;
+	if (wCheckMenuCursorBlinkCounter & YOPA_BLINK_BIT) {
+		ZeroObjectPositionsWithCopyToggleOn();
+		return;
+	}
+	yoopa_draw_cursor();
+}
+/* <<< factory YourOrOppPlayAreaScreen_HandleInput */

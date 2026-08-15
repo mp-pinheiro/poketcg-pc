@@ -624,6 +624,14 @@ static void adapt_ZeroObjectPositionsWithCopyToggleOn(ProbeState *s)
 }
 /* <<< factory ZeroObjectPositionsWithCopyToggleOn */
 
+/* >>> factory YourOrOppPlayAreaScreen_HandleInput */
+static void adapt_YourOrOppPlayAreaScreen_HandleInput(ProbeState *s)
+{
+	(void)s;
+	YourOrOppPlayAreaScreen_HandleInput();
+}
+/* <<< factory YourOrOppPlayAreaScreen_HandleInput */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -700,5 +708,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "GetFirstSetPrizeCard", adapt_GetFirstSetPrizeCard },
 	{ "DrawCheckMenuCursor_YourOrOppPlayArea", adapt_DrawCheckMenuCursor_YourOrOppPlayArea },
 	{ "ZeroObjectPositionsWithCopyToggleOn", adapt_ZeroObjectPositionsWithCopyToggleOn },
+	{ "YourOrOppPlayAreaScreen_HandleInput", adapt_YourOrOppPlayAreaScreen_HandleInput },
 	{ NULL, NULL },
 };

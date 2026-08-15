@@ -545,4 +545,7 @@ TempListResult DrawCheckMenuCursor_YourOrOppPlayArea(uint8_t a);
 /* >>> factory ZeroObjectPositionsWithCopyToggleOn */
 void ZeroObjectPositionsWithCopyToggleOn(void);
 /* <<< factory ZeroObjectPositionsWithCopyToggleOn */
+/* >>> factory YourOrOppPlayAreaScreen_HandleInput */
+void YourOrOppPlayAreaScreen_HandleInput(void);
+/* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 #endif
