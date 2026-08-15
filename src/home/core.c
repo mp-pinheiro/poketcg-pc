@@ -285,6 +285,16 @@ CardPageResult CardPageSwitch_00(void)
 #include "home/switch_sram.h"
 
 #include "home/bg_map.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/card_color.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#define PLAY_AREA_BENCH_1   0x01u
+#define POKEMON_POWER       0x04u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2179,3 +2189,55 @@ PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void)
 	return (PracticeDuelInitialPlayResult){count == 2u ? 0xC0u : 0x10u};
 }
 /* <<< factory PracticeDuel_VerifyInitialPlay */
+
+/* >>> factory CheckIfNoSurplusEnergyForAttack */
+/* ai/core.asm:2158-2250 */
+CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void)
+{
+	uint8_t d = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD)).a;
+	uint8_t e = wSelectedAttack;
+	CopyAttackDataAndDamage_FromDeckIndex(d, e);
+
+	uint8_t n0 = gb_read8(wLoadedAttackName_ADDR);
+	uint8_t n1 = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
+	if ((uint8_t)(n0 | n1) == 0u)
+		return (CheckIfNoSurplusEnergyResult){0u, 0x90u};
+	if (wLoadedAttackCategory == POKEMON_POWER)
+		return (CheckIfNoSurplusEnergyResult){POKEMON_POWER, 0x90u};
+
+	GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
+	HandleEnergyBurn();
+	wTempLoadedAttackEnergyCost = 0u;
+	wTempLoadedAttackEnergyNeededAmount = 0u;
+	wTempLoadedAttackEnergyNeededType = 0u;
+
+	uint16_t hl = wAttachedEnergies_ADDR;
+	uint16_t de = wLoadedAttackEnergyCost_ADDR;
+	uint8_t b = 0u;
+	for (uint8_t c = (NUM_TYPES / 2u) - 1u; c != 0u; c--) {
+		uint8_t v = gb_read8(de);
+		CalculateParticularAttachedEnergyNeededResult r =
+			CalculateParticularAttachedEnergyNeeded((uint8_t)((v << 4) | (v >> 4)), b, hl);
+		b = r.b;
+		hl = r.hl;
+		v = gb_read8(de);
+		r = CalculateParticularAttachedEnergyNeeded(v, b, hl);
+		b = r.b;
+		hl = r.hl;
+		de++;
+	}
+
+	b = (uint8_t)((gb_read8(de) >> 4) & 0x0Fu);
+	uint8_t a1 = (uint8_t)(wTotalAttachedEnergies - wTempLoadedAttackEnergyCost);
+	uint8_t a2 = (uint8_t)(a1 - b);
+	uint8_t f = (uint8_t)(0x40u
+		| (a2 == 0u ? 0x80u : 0u)
+		| (((a1 & 0x0Fu) < (b & 0x0Fu)) ? 0x20u : 0u)
+		| ((a1 < b) ? 0x10u : 0u));
+	if (a1 < b)
+		return (CheckIfNoSurplusEnergyResult){a2, f};
+	if (a2 != 0u)
+		return (CheckIfNoSurplusEnergyResult){a2, f};
+	return (CheckIfNoSurplusEnergyResult){0u, 0x90u};
+}
+/* <<< factory CheckIfNoSurplusEnergyForAttack */

@@ -471,4 +471,8 @@ void PrintSortNumberInCardList_CallFromPointer(void);
 typedef struct { uint8_t f; } PracticeDuelInitialPlayResult;
 PracticeDuelInitialPlayResult PracticeDuel_VerifyInitialPlay(void);
 /* <<< factory PracticeDuel_VerifyInitialPlay */
+/* >>> factory CheckIfNoSurplusEnergyForAttack */
+typedef struct { uint8_t a; uint8_t f; } CheckIfNoSurplusEnergyResult;
+CheckIfNoSurplusEnergyResult CheckIfNoSurplusEnergyForAttack(void);
+/* <<< factory CheckIfNoSurplusEnergyForAttack */
 #endif

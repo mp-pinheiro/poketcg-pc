@@ -1220,6 +1220,16 @@ CASES["PracticeDuel_VerifyInitialPlay"] = [
 ]
 # <<< factory PracticeDuel_VerifyInitialPlay
 
+# >>> factory CheckIfNoSurplusEnergyForAttack
+CONTRACT["CheckIfNoSurplusEnergyForAttack"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfNoSurplusEnergyForAttack"] = [
+    {"read": {0xCC1B: 9, 0xCDB5: 3}},
+    {"wram": {0xCCC6: b"\x01"}, "read": {0xCC1B: 9, 0xCDB5: 3}},
+    {"wram": {0xFF9D: b"\x01", 0xCCC6: b"\x01"}, "read": {0xCC1B: 9, 0xCDB5: 3}},
+    dict(POISON, wram={0xCCC6: b"\x00"}, read={0xCC1B: 9, 0xCDB5: 3}),
+]
+# <<< factory CheckIfNoSurplusEnergyForAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -1991,3 +2001,11 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # <<< factory-mutation PrintSortNumberInCardList_CallFromPointer# >>> factory-mutation PracticeDuel_VerifyInitialPlay
 MUTATIONS["PracticeDuel_VerifyInitialPlay"] = {"source_symbol": "PracticeDuel_VerifyInitialPlay", "before": "count == 2u", "after": "count == 3u", "case_ids": ["PracticeDuel_VerifyInitialPlay-0"]}
 # <<< factory-mutation PracticeDuel_VerifyInitialPlay
+# >>> factory-mutation CheckIfNoSurplusEnergyForAttack
+MUTATIONS["CheckIfNoSurplusEnergyForAttack"] = {
+    "source_symbol": "CheckIfNoSurplusEnergyForAttack",
+    "before": "\tif (a1 < b)\n\t\treturn (CheckIfNoSurplusEnergyResult){a2, f};",
+    "after": "\tif (a1 <= b)\n\t\treturn (CheckIfNoSurplusEnergyResult){a2, f};",
+    "case_ids": ["CheckIfNoSurplusEnergyForAttack-0", "CheckIfNoSurplusEnergyForAttack-3"],
+}
+# <<< factory-mutation CheckIfNoSurplusEnergyForAttack

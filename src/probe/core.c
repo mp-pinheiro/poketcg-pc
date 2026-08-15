@@ -976,6 +976,15 @@ static void adapt_PracticeDuel_VerifyInitialPlay(ProbeState *s)
 }
 /* <<< factory PracticeDuel_VerifyInitialPlay */
 
+/* >>> factory CheckIfNoSurplusEnergyForAttack */
+static void adapt_CheckIfNoSurplusEnergyForAttack(ProbeState *s)
+{
+	CheckIfNoSurplusEnergyResult r = CheckIfNoSurplusEnergyForAttack();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfNoSurplusEnergyForAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
@@ -1091,5 +1100,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PickRandomBenchPokemon", adapt_PickRandomBenchPokemon },
 	{ "PracticeDuel_VerifyInitialPlay", adapt_PracticeDuel_VerifyInitialPlay },
 	{ "PracticeDuel_VerifyPlayerTurnActions", adapt_PracticeDuel_VerifyPlayerTurnActions },
+	{ "CheckIfNoSurplusEnergyForAttack", adapt_CheckIfNoSurplusEnergyForAttack },
 	{ NULL, NULL },
 };
