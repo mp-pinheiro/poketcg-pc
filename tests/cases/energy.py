@@ -15,6 +15,21 @@ CASES["RetrievePlayAreaAIScoreFromBackup1"] = [
 ]
 # <<< factory RetrievePlayAreaAIScoreFromBackup1
 
+# >>> factory FindPlayAreaCardWithHighestAIScore
+CONTRACT["FindPlayAreaCardWithHighestAIScore"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["FindPlayAreaCardWithHighestAIScore"] = [
+    # the whole 256-byte window scanned by the count-0 (== 256 iterations) loop is
+    # seeded; wAIEnergyAttachLogicFlags (0xCDD8) lives at offset 25 inside it.
+    {"wram": {0xCDBF: b"\x00" * 256}, "read": {0xFF9D: 1}},
+    {"wram": {0xCDBF: b"\x85" + b"\x00" * 255}, "read": {0xFF9D: 1}},
+    {"wram": {0xCDBF: b"\x84" + b"\x00" * 255}, "read": {0xFF9D: 1}},
+    {"wram": {0xCDBF: b"\x00\x00\x00\x90" + b"\x00" * 252}, "read": {0xFF9D: 1}},
+    {"wram": {0xCDBF: b"\x00\x40\x90" + b"\x00" * 22 + b"\x80" + b"\x00" * 230}, "read": {0xFF9D: 1}},
+    dict(POISON, wram={0xCDBF: b"\x00\x91\x00\x00\x91" + b"\x00" * 20 + b"\x80" + b"\x00" * 230}, read={0xFF9D: 1}),
+    dict(POISON, wram={0xCDBF: b"\x90\x00\x90" + b"\x00" * 253}, read={0xFF9D: 1}),
+]
+# <<< factory FindPlayAreaCardWithHighestAIScore
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -27,3 +42,11 @@ MUTATIONS["RetrievePlayAreaAIScoreFromBackup1"] = {
     "case_ids": ["RetrievePlayAreaAIScoreFromBackup1-1", "RetrievePlayAreaAIScoreFromBackup1-2"],
 }
 # <<< factory-mutation RetrievePlayAreaAIScoreFromBackup1
+# >>> factory-mutation FindPlayAreaCardWithHighestAIScore
+MUTATIONS["FindPlayAreaCardWithHighestAIScore"] = {
+    "source_symbol": "FindPlayAreaCardWithHighestAIScore",
+    "before": "\tif (e < 0x85u) {",
+    "after": "\tif (e < 0x86u) {",
+    "case_ids": ["FindPlayAreaCardWithHighestAIScore-1"],
+}
+# <<< factory-mutation FindPlayAreaCardWithHighestAIScore
