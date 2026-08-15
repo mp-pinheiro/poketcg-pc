@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIShift",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIShift\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52742\": \"ab\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIShift\", \"mismatches\": {\"f\": [0, 128]}}\n",
+  "restored": "{\"fn\": \"HandleAIShift\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52742\": \"ab\"}}, \"status\": \"PASS\"}\n"
+}
