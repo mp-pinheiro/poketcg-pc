@@ -13,6 +13,7 @@ returns in-flight packets to ``pending``.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -47,6 +48,13 @@ IN_FLIGHT = ("translating", "translated", "verifying", "repair")
 ACTIVE_CLAIM_STATES = ("pending", *IN_FLIGHT, "green")
 
 
+
+def detail_digest(result: dict) -> str:
+    """Identify a repeated failure across rounds: same status, same output."""
+    payload = f"{result.get('status')}\n{result.get('detail') or ''}"
+    return hashlib.sha1(payload.encode(), usedforsecurity=False).hexdigest()[:10]
+
+
 class _Run:
     def __init__(self, packet_id: str, wave_id: str, started: float):
         self.packet = load_packet(packet_id)
@@ -61,6 +69,7 @@ class _Run:
         self.last_failing: list[str] | None = None
         self.statics_baseline: list[str] | None = None
         self.prompt_tokens = 0
+        self.last_digest: str | None = None
         self.reply_tokens = 0
         self.started = started
         self.final: str | None = None
@@ -206,10 +215,17 @@ def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
     failing_now = result.get("failing") or (
         [result["routine"]] if result.get("routine") else None)
     run.last_failing = failing_now
-    if run.rounds >= max_rounds:
+    digest = detail_digest(result)
+    repeated = digest == run.last_digest
+    run.last_digest = digest
+    if run.rounds >= max_rounds or repeated:
         if not _salvage(run, failing_now):
             run.final = "escalated"
-            run.reason = f"{result['status']} after {max_rounds} rounds"
+            run.reason = (
+                f"{result['status']} repeated verbatim at round {run.rounds}"
+                if repeated else
+                f"{result['status']} after {max_rounds} rounds"
+            )
         return False
     run.targets = failing_now if failing_now else None
     run.feedback = f"{result['status']}:\n{result['detail']}"
@@ -411,7 +427,8 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                                     "detail": traceback.format_exc(limit=4),
                                 }
                             emit("verify-finished", wave_id=wave_id, packet_id=run.id,
-                                 round=run.rounds, status=verdicts[run.id]["status"])
+                                 round=run.rounds, status=verdicts[run.id]["status"],
+                                 digest=detail_digest(verdicts[run.id]))
                     except WaveDeadlineExpired as exc:
                         stop_reason = str(exc)
                         deferred = [run.id for run in active if not run.final]

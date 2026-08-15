@@ -57,9 +57,9 @@ def one(prompt):
 
 def translate_many(prompts):
     replies = []
-    for start in range(0, len(prompts), 5):
+    for start in range(0, len(prompts), 10):
         replies.extend(parallel([
-            (lambda p=p: one(p)) for p in prompts[start:start + 5]
+            (lambda p=p: one(p)) for p in prompts[start:start + 10]
         ]))
     return replies
 
@@ -123,7 +123,7 @@ re-fetching and re-planning; a non-empty residual plan is an error.
 
 | state | meaning | action |
 |---|---|---|
-| `escalated` | hit the repair limit or failed translation | `driver.py escalate` writes task briefs; integration ignores it until an explicit state change |
+| `escalated` | hit the repair limit, repeated one verdict verbatim, or failed translation | `driver.py escalate` writes task briefs; integration ignores it until an explicit state change |
 | `rejected-format` | failed the initial parse and one free reformat | terminal; not re-offered |
 | `parked` | timed out behind a dependency | adds the routine to `.factory/blocked.toml`; no reset command exists |
 
@@ -157,6 +157,13 @@ Production config: `build(limit=10)`, `model="default"`, `max_rounds=3`,
 factory subprocess work shares the 1800-second deadline. The synchronous
 harness callback remains cooperative and may exceed that bound until its
 provider request returns.
+
+Translate all ten prompts in one `parallel()` wave: measured 107-123 s per round
+at width 10 against ~170 s as two batches of five, with no rate limiting, which
+took a 3-round wave from 604 s to 377 s. A packet that returns a byte-identical
+verdict two rounds running is not reading its feedback, so `_decide` salvages or
+escalates it there instead of buying two more translations: measured 4 of 10
+packets in one wave, and no packet that ever repeated verbatim went on to green.
 
 Packet size dominates: a packet is green only when every routine in it is green,
 so success decays as p^n. Measured 8 routines/packet → 0 green; 3/packet → 67%
