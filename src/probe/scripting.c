@@ -245,6 +245,26 @@ static void adapt_ScriptCommand_SetDefaultSong(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SetDefaultSong */
 
+/* >>> factory ScriptCommand_RecordMasterWin */
+static void adapt_ScriptCommand_RecordMasterWin(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_RecordMasterWin(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_RecordMasterWin */
+
+/* >>> factory ScriptCommand_ChallengeMachine */
+static void adapt_ScriptCommand_ChallengeMachine(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_ChallengeMachine();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_ChallengeMachine */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -270,5 +290,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_nop", adapt_ScriptCommand_nop },
 	{ "ScriptCommand_OverrideSong", adapt_ScriptCommand_OverrideSong },
 	{ "ScriptCommand_SetDefaultSong", adapt_ScriptCommand_SetDefaultSong },
+	{ "ScriptCommand_RecordMasterWin", adapt_ScriptCommand_RecordMasterWin },
+	{ "ScriptCommand_ChallengeMachine", adapt_ScriptCommand_ChallengeMachine },
 	{ NULL, NULL },
 };

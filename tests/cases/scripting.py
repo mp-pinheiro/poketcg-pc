@@ -18,6 +18,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -281,6 +282,27 @@ CASES["ScriptCommand_SetDefaultSong"] = [
 ]
 # <<< factory ScriptCommand_SetDefaultSong
 
+# >>> factory ScriptCommand_RecordMasterWin
+CONTRACT["ScriptCommand_RecordMasterWin"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_RecordMasterWin"] = [
+	{"c": 0},
+	{"c": 1},
+	{"c": 8},
+	{"c": 0x1F},
+	dict(POISON, c=0x05),
+]
+# <<< factory ScriptCommand_RecordMasterWin
+
+# >>> factory ScriptCommand_ChallengeMachine
+CONTRACT["ScriptCommand_ChallengeMachine"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ChallengeMachine"] = [
+	{"wram": {0xD0B5: b"\x00", 0xD0B4: b"\x00"}},  # wGameEvent, wOverworldTransition
+	{"wram": {0xD0B5: b"\xFF", 0xD0B4: b"\x35"}},  # set 6 must leave the other bits alone
+	{"wram": {0xD0B5: b"\x69", 0xD0B4: b"\xBF"}},  # bit 6 already set stays set; wGameEvent overwritten
+	dict(POISON, wram={0xD0B5: b"\x00", 0xD0B4: b"\x35"}),
+]
+# <<< factory ScriptCommand_ChallengeMachine
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -455,3 +477,19 @@ MUTATIONS["ScriptCommand_SetDefaultSong"] = {
 	"case_ids": ["ScriptCommand_SetDefaultSong-1", "ScriptCommand_SetDefaultSong-2", "ScriptCommand_SetDefaultSong-3"],
 }
 # <<< factory-mutation ScriptCommand_SetDefaultSong
+# >>> factory-mutation ScriptCommand_RecordMasterWin
+MUTATIONS["ScriptCommand_RecordMasterWin"] = {
+	"source_symbol": "ScriptCommand_RecordMasterWin",
+	"before": "\tAddMasterBeatenToList(c, &f);\n\treturn IncreaseScriptPointerBy2();",
+	"after": "\tAddMasterBeatenToList(c, &f);\n\treturn IncreaseScriptPointerBy1();",
+	"case_ids": ["ScriptCommand_RecordMasterWin-0", "ScriptCommand_RecordMasterWin-1", "ScriptCommand_RecordMasterWin-2", "ScriptCommand_RecordMasterWin-3", "ScriptCommand_RecordMasterWin-4"],
+}
+# <<< factory-mutation ScriptCommand_RecordMasterWin
+# >>> factory-mutation ScriptCommand_ChallengeMachine
+MUTATIONS["ScriptCommand_ChallengeMachine"] = {
+	"source_symbol": "ScriptCommand_ChallengeMachine",
+	"before": "\twOverworldTransition |= 0x40u;",
+	"after": "\twOverworldTransition = 0x40u;",
+	"case_ids": ["ScriptCommand_ChallengeMachine-1", "ScriptCommand_ChallengeMachine-2", "ScriptCommand_ChallengeMachine-3"],
+}
+# <<< factory-mutation ScriptCommand_ChallengeMachine

@@ -28,6 +28,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "home/sound.h"
+
+#include "home/masters_beaten_list.h"
+#include "home/scripting.h"
+
+#define GAME_EVENT_CHALLENGE_MACHINE 0x06u
 /* <<< factory statics */
 
 
@@ -294,3 +299,28 @@ IncreaseScriptPointerResult ScriptCommand_SetDefaultSong(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_SetDefaultSong */
+
+/* >>> factory ScriptCommand_RecordMasterWin */
+/* scripting.asm:1880-1883. Marks the master whose id is in c as beaten, then
+ * tail-jumps to IncreaseScriptPointerBy2. The farcall's a/f results are dead
+ * (the tail jump recomputes both); only its memory effect matters. */
+IncreaseScriptPointerResult ScriptCommand_RecordMasterWin(uint8_t c)
+{
+	uint8_t f;
+	AddMasterBeatenToList(c, &f);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_RecordMasterWin */
+
+/* >>> factory ScriptCommand_ChallengeMachine */
+/* scripting.asm:1885-1890. Triggers the challenge-machine event: stores
+ * GAME_EVENT_CHALLENGE_MACHINE in wGameEvent and sets bit 6 of
+ * wOverworldTransition (`set` preserves the other bits), then tail-jumps to
+ * IncreaseScriptPointerBy1, whose exit state (a, f, c) is the contract. */
+IncreaseScriptPointerResult ScriptCommand_ChallengeMachine(void)
+{
+	wGameEvent = GAME_EVENT_CHALLENGE_MACHINE;
+	wOverworldTransition |= 0x40u;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_ChallengeMachine */

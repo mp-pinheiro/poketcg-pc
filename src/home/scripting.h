@@ -113,4 +113,10 @@ IncreaseScriptPointerResult ScriptCommand_OverrideSong(uint8_t c);
 /* >>> factory ScriptCommand_SetDefaultSong */
 IncreaseScriptPointerResult ScriptCommand_SetDefaultSong(uint8_t c);
 /* <<< factory ScriptCommand_SetDefaultSong */
+/* >>> factory ScriptCommand_RecordMasterWin */
+IncreaseScriptPointerResult ScriptCommand_RecordMasterWin(uint8_t c);
+/* <<< factory ScriptCommand_RecordMasterWin */
+/* >>> factory ScriptCommand_ChallengeMachine */
+IncreaseScriptPointerResult ScriptCommand_ChallengeMachine(void);
+/* <<< factory ScriptCommand_ChallengeMachine */
 #endif

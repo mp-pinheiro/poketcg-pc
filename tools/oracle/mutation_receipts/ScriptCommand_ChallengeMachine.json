@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_ChallengeMachine",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"7506\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_ChallengeMachine\", \"mismatches\": {\"bus\": {\"address\": 53428, \"reference\": \"7506\", \"native\": \"4006\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53428, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_ChallengeMachine\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"7506\"}}, \"status\": \"PASS\"}\n"
+}
