@@ -63,7 +63,7 @@ def translate_many(prompts):
         ]))
     return replies
 
-def build(limit=10, extra=()):
+def build(limit=20, extra=()):
     argv = ["python3", "tools/factory/packet.py", "build", "--max-routines", "3",
             "--max-asm-lines", "140", "--limit", str(limit), "--json", *extra]
     return json.loads(subprocess.run(argv, capture_output=True, text=True,
@@ -73,8 +73,8 @@ subprocess.run(["python3", "tools/factory/integrate.py"], check=True)
 pending = build()
 while pending:
     wave = run_wave(
-        pending, translate_many, lanes_count=10, max_rounds=3,
-        model="default", max_wall_s=1800,
+        pending, translate_many, lanes_count=10, verify_width=6, max_rounds=3,
+        model="default", max_wall_s=3600,
         on_event=lambda event: print(json.dumps(event), flush=True),
     )
     print(json.dumps(wave), flush=True)
@@ -83,6 +83,14 @@ while pending:
         break
     pending = build()
 ```
+
+A wave's cohort may exceed `lanes_count`: the first `lanes_count` packets are
+admitted immediately, the rest stay `pending` on disk and are pulled into a lane
+as soon as one frees up (`refill` events). `max_wall_s` is 3600 because a
+refilled wave of 20 packets across 10 lanes runs roughly twice as long as the
+old fixed cohort of 10 — it is a safety bound, not the expected duration.
+`integrate.py` touches jj, git, and the gate; it must never run while a wave
+holds `.factory/wave.lock` — only between waves, as above.
 
 Bundles are composable (`surgery.extract`/`apply`, additive per-routine
 fragments), so two packets of the same basename can run in one wave and both
@@ -96,6 +104,13 @@ already landed. `run_mutation` covers only the witness case.
 `integrate.py` lands green bundles FIFO, then runs adapter lint, the constant
 audit, `just oracle-release-gate`, and a progress rebuild before pushing. A red
 gate stops the push.
+
+Translation and verification run inside one continuous scheduler, not
+alternating phases: a packet whose lane is free and whose translation parsed
+is submitted for verification immediately, while the next translate batch is
+forming from whichever other packets are ready. `python3 tools/factory/driver.py
+progress` inspects a live wave (per-packet state, round, phase, time-in-phase)
+without taking `.factory/wave.lock`.
 
 ## 3. Reconcile Forgejo
 
@@ -132,7 +147,10 @@ on shared files. Never delegate them into a packet or work around them there.
 
 ## 5. Invariants
 
-- Lanes never run jj, git, or a central gate, and hold no credentials.
+- Lanes never run jj, git, or a central gate, and hold no credentials. Only the
+  scheduler thread inside `run_wave` reads or mutates packet state; pool jobs
+  (lane provisioning, verification, salvage) are pure functions of their
+  arguments and return values only.
 - `site/data/gate.json` has exactly one producer: `just oracle-fn-all`, via the
   release-gate chain. `just oracle-diff-all` deliberately writes no gate record —
   it may run against a slice-private build.
@@ -152,11 +170,49 @@ on shared files. Never delegate them into a packet or work around them there.
 
 ## 6. Calibration
 
-Production config: `build(limit=10)`, `model="default"`, `max_rounds=3`,
-`lanes_count=10`, and `max_wall_s=1800`. One wave owns at most ten packets;
-factory subprocess work shares the 1800-second deadline. The synchronous
-harness callback remains cooperative and may exceed that bound until its
-provider request returns.
+Production config: `build(limit=20)`, `model="default"`, `max_rounds=3`,
+`lanes_count=10`, `verify_width=6`, and `max_wall_s=3600`. A wave admits ten
+packets immediately and refills from the rest as lanes free up; factory
+subprocess work shares the wall-clock deadline. The synchronous harness
+callback remains cooperative and may exceed that bound until its provider
+request returns.
+
+Translate and verify run in one continuous scheduler, not alternating phases: a
+packet whose translation parsed is submitted for verification as soon as a lane
+and a verify slot are free, and finished packets' lanes are refilled from the
+queued remainder instead of idling until the wave ends.
+
+**The provider is the only bottleneck that matters.** Wave `a4745708` (14
+packets, completed) measured `translate 60% verify 2% salvage 0% lane 0%
+idle 38%` of packet-time, with `/proc/loadavg` between 0.18 and 2.17 (median
+0.46) on 8 CPUs. Verification is seconds; translation is minutes. Two
+consequences:
+
+- `verify_width` is not a throughput lever at these ratios. It defaults to
+  `cpu_count() - 2` only to stop ten concurrent verifies oversubscribing 8
+  cores (lane builds run `ninja -j2`; `compare_one.py`, `test_leaves.py`,
+  `gbref_runner`, and PyBoy are each single-threaded). Raising it buys nothing
+  while verify is 2% of the work.
+- **Translate batch width is the lever.** Continuous dispatch initially issued a
+  batch the instant any one packet was ready, fragmenting wave `a4745708` into
+  widths `10,1,6,4,6,3,3,1,3,1,3` (mean 3.7) where even a width-1 call cost
+  24-48 s — about 1183 s of that 1196 s wave was translation. `_decide`'s cheap
+  verdicts are therefore drained before a batch is issued
+  (`TRANSLATE_COALESCE_S`, 45 s cap so one slow verify cannot stall the batch),
+  which restored widths `10,10` (mean 10.0) on the next wave.
+
+`translate_many` runs only on the scheduler thread, blocking it; verify and
+salvage jobs keep running in the pool throughout. A worker-thread probe
+confirmed the harness completion bridge is not thread-safe outside its calling
+thread (`RuntimeError: Missing session/run/name`), so translation cannot move
+onto the pool without a session-context bridge that does not exist yet.
+
+Phase timings come from `.factory/events.jsonl` (per-packet `verify-phase`
+records written by the verify subprocess) and the per-packet `translate_s`,
+`verify_s`, `salvage_s`, `lane_s`, and `idle_s` fields in `.factory/metrics.jsonl`;
+`driver.py metrics` prints the split and `driver.py progress` reports a live
+wave. Job durations are measured inside each job, not at harvest, because the
+scheduler can block in `translate_many` long after a job finished.
 
 Translate all ten prompts in one `parallel()` wave: measured 107-123 s per round
 at width 10 against ~170 s as two batches of five, with no rate limiting, which

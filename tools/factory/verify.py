@@ -16,12 +16,16 @@ into .factory/bundles/<id>/.
 
 The verdict "detail" is raw tool output, trimmed — it is the repair-round
 feedback payload.
+
+``progress``, when given, is called with a phase name immediately before
+each phase starts: "build", "case-inspect", "audit", "primary",
+"diff-cache", "diff-refresh", "live", "mutation", "lint". A caller uses it to
+emit per-phase timing without changing the verdict.
 """
 
 from __future__ import annotations
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -35,7 +39,6 @@ from common import (BUNDLES, CACHE, ORACLE_PYTHON, ROOT, RUNNER, PhaseTimeout,
                     WaveDeadlineExpired, load_packet, packet_identity,
                     run_bounded)  # noqa: E402
 import lanes  # noqa: E402
-import surgery  # noqa: E402
 
 TAIL = 4000
 TIMEOUT_MARK = "did not return within"
@@ -212,10 +215,12 @@ def primary_compare(lane: Path, basename: str, routine_names: list[str],
 
 
 def verify_packet(packet: dict, lane: Path, cases_changed: bool,
-                  deadline: float | None = None) -> dict:
+                  deadline: float | None = None, *, progress=None) -> dict:
     basename = packet["basename"]
     routine_names = [r["name"] for r in packet["routines"]]
 
+    if progress:
+        progress("build")
     try:
         built = lanes.build(lane, deadline)
     except (PhaseTimeout, WaveDeadlineExpired) as exc:
@@ -227,6 +232,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     probe = lane / "build" / "poketcg_probe"
     if not probe.exists():
         return verdict("compile", f"{probe} was not produced by a successful build")
+    if progress:
+        progress("case-inspect")
     try:
         inspected = run_bounded(
             [sys.executable, str(ROOT / "tools/factory" / "case_inspect.py"),
@@ -239,18 +246,22 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         raise
     except PhaseTimeout as exc:
         return verdict("infra-timeout", str(exc))
-    except Exception as exc:
+    except Exception:
         return verdict("infra-error", traceback.format_exc(limit=2))
     if inspection.get("violations"):
         result = verdict("cases", json.dumps(inspection["violations"], sort_keys=True))
         result["failing"] = sorted(inspection["violations"])
         return result
 
+    if progress:
+        progress("audit")
     audit = run([sys.executable, "tools/audit_oracle_cases.py", "--stage", "routine",
                 "--only", basename], lane, deadline=deadline)
     if audit.returncode != 0:
         return verdict("schema", audit.stdout + audit.stderr)
 
+    if progress:
+        progress("primary")
     primary = primary_compare(lane, basename, routine_names,
                               inspection.get("case_counts") or {}, deadline)
     if primary is not None:
@@ -258,6 +269,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
 
     CACHE.mkdir(parents=True, exist_ok=True)
     mode = "refresh" if cases_changed else "cache"
+    if progress:
+        progress("diff-cache" if mode == "cache" else "diff-refresh")
     diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                 "--oracle-mode", mode, "--cache-dir", str(CACHE),
                 "--probe", str(lane / "build" / "poketcg_probe")],
@@ -265,6 +278,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     output = diff.stdout + diff.stderr
     if "cache miss" in output:
         mode = "refresh"
+        if progress:
+            progress("diff-refresh")
         diff = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
@@ -288,6 +303,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         result["failing"] = names
         return result
     if mode == "cache":
+        if progress:
+            progress("live")
         live = run([*ORACLE_PYTHON, "tests/test_leaves.py", *fn_args(routine_names),
                     "--oracle-mode", "refresh", "--cache-dir", str(CACHE),
                     "--probe", str(lane / "build" / "poketcg_probe")],
@@ -295,6 +312,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         if live.returncode != 0:
             return verdict("diff", live.stdout + live.stderr)
 
+    if progress:
+        progress("mutation")
     witnesses = inspection.get("witnesses", {})
     for fn in routine_names:
         index = witnesses.get(fn)
@@ -307,6 +326,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         if red.returncode != 0:
             return verdict("mutation", red.stdout + red.stderr, fn)
 
+    if progress:
+        progress("lint")
     lint = run([sys.executable, "tools/lint_adapters.py"], lane,
                timeout=600, deadline=deadline)
     if lint.returncode != 0:

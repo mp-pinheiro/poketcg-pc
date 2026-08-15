@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 """Wave runner: fan packets across lanes, repair-loop against the oracle.
 
-``run_wave(packet_ids, translate_fn, lanes_count, max_rounds)`` is the seam:
-``translate_fn(prompt_text) -> reply_text`` is injected by the caller (the
-orchestrator session wires it to its ``completion(...)``; any API client
-fits).  ``translate_fn`` runs ONLY on the calling thread — harness completion
-bridges are not thread-safe — while surgery+verification run on a worker
-pool.  A packet pins its lane until it reaches a terminal state, because
-targeted repair rounds rely on the lane keeping the already-verified
-routines' files.  Crash-safe: every transition is on disk; ``reset-stale``
-returns in-flight packets to ``pending``.
+``run_wave(packet_ids, translate_many, lanes_count, verify_width, max_rounds)``
+is the seam: ``translate_many(prompts) -> replies`` is injected by the caller
+(the orchestrator session wires it to its ``completion(...)``; any API client
+fits). ``translate_many`` runs ONLY on the scheduler thread — a worker-thread
+probe (2026-08-15) confirmed the harness completion bridge raises
+``RuntimeError: Missing session/run/name`` outside the calling thread — while
+lane provisioning, surgery+verification, and salvage run on a worker pool.
+Translation and verification are not phase-barriered: a packet whose
+translation parsed is submitted for verification as soon as a lane and a
+verify slot are free, while the next translate batch keeps forming from
+whichever other packets are ready. Only the scheduler thread (inside
+``run_wave``) reads or mutates ``_Run``/packet state; pool jobs are pure
+functions of their arguments and return values only. A packet pins its lane
+until it reaches a terminal state, because targeted repair rounds rely on the
+lane keeping the already-verified routines' files. A wave's packet cohort may
+exceed ``lanes_count``: extra packets stay queued and are admitted into a lane
+as soon as one frees up. Crash-safe: every transition is on disk;
+``reset-stale`` returns in-flight packets to ``pending``.
 """
 
 import argparse
+import fcntl
 import hashlib
 import importlib.util
 import json
@@ -21,7 +31,8 @@ import sys
 import time
 import traceback
 import uuid
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import deque
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -30,15 +41,18 @@ import prompt as prompt_mod  # noqa: E402
 import surgery  # noqa: E402
 import verify as verify_mod  # noqa: E402
 from common import (  # noqa: E402
+    EVENTS,
     FACTORY,
     METRICS,
     ROOT,
+    WAVE_LOCK,
     WaveDeadlineExpired,
     block_routine,
     estimate_tokens,
     list_packets,
     load_packet,
     packet_path,
+    record_event,
     record_metric,
     run_bounded,
     save_packet,
@@ -48,6 +62,14 @@ from common import (  # noqa: E402
 
 IN_FLIGHT = ("translating", "translated", "verifying", "repair")
 ACTIVE_CLAIM_STATES = ("pending", *IN_FLIGHT, "green")
+
+# Seconds to keep a ready translate batch waiting while verify/salvage jobs are
+# still outstanding. Measured on wave a4745708 (14 packets): translation was 60%
+# of packet-time and verification 2%, so a batch issued the instant one packet
+# is ready fragments into width-1 calls that still cost 24-48s each. Waiting for
+# the cheap verdicts re-widens the batch, and width 10 measured 107-123s against
+# ~170s as two batches of five. The cap bounds the wait when one verify is slow.
+TRANSLATE_COALESCE_S = 45.0
 
 
 def _foreign_claims(packet: dict) -> set[str]:
@@ -108,6 +130,7 @@ class _Run:
         self.wave_id = wave_id
         self.lane_index: int | None = None
         self.lane = None
+        self.deadline: float = 0.0
         self.rounds = int(self.packet.get("rounds", 0))
         self.format_retry_used = bool(self.packet.get("format_retry_used", False))
         self.feedback: str | None = None
@@ -120,12 +143,28 @@ class _Run:
         self.started = started
         self.final: str | None = None
         self.reason: str | None = None
+        self.pending_reason: str | None = None
+        self.job: str | None = None
+        self.needs_translate = False
+        self.translation: dict | None = None
+        self.lane_s = 0.0
+        self.translate_s = 0.0
+        self.verify_s = 0.0
+        self.salvage_s = 0.0
 
     def metric(self, model: str) -> dict:
         work_ids = sorted(r["work_id"] for r in self.packet["routines"])
+        wall_s = round(time.monotonic() - self.started, 1)
+        translate_s = round(self.translate_s, 1)
+        verify_s = round(self.verify_s, 1)
+        salvage_s = round(self.salvage_s, 1)
+        lane_s = round(self.lane_s, 1)
+        idle_s = round(wall_s - translate_s - verify_s - salvage_s - lane_s, 1)
         return {
             "id": self.id, "verdict": self.final, "reason": self.reason,
-            "rounds": self.rounds, "wall_s": round(time.monotonic() - self.started, 1),
+            "rounds": self.rounds, "wall_s": wall_s,
+            "translate_s": translate_s, "verify_s": verify_s,
+            "salvage_s": salvage_s, "lane_s": lane_s, "idle_s": idle_s,
             "prompt_tokens": self.prompt_tokens, "reply_tokens": self.reply_tokens,
             "routines": len(self.packet["routines"]), "wave_id": self.wave_id,
             "work_ids": work_ids,
@@ -148,12 +187,38 @@ def _clear_attempt(run: _Run) -> None:
     save_packet(run.packet)
 
 
+class _Timed:
+    """Wrap a pool job so it records its own start and end.
 
+    The scheduler blocks on ``translate_many`` (the harness completion bridge
+    is bound to its calling thread), so a job can finish long before its
+    future is harvested. Timing at harvest would bill that waiting to the
+    job's phase instead of to the packet's idle time.
+    """
+
+    __slots__ = ("fn", "args", "start", "end")
+
+    def __init__(self, fn, *args):
+        self.fn = fn
+        self.args = args
+        self.start = 0.0
+        self.end = 0.0
+
+    def __call__(self):
+        self.start = time.monotonic()
+        try:
+            return self.fn(*self.args)
+        finally:
+            self.end = time.monotonic()
+
+    @property
+    def wall(self) -> float:
+        return max(0.0, self.end - self.start)
 
 
 def _apply_and_verify(packet: dict, lane: Path, translation: dict,
                       statics_baseline: list[str] | None, rounds: int,
-                      deadline: float) -> dict:
+                      deadline: float, wave_id: str, packet_id: str) -> dict:
     """Run surgery and verification behind a killable process boundary."""
     payload = json.dumps({
         "packet": packet,
@@ -162,6 +227,8 @@ def _apply_and_verify(packet: dict, lane: Path, translation: dict,
         "statics_baseline": statics_baseline,
         "rounds": rounds,
         "deadline": deadline,
+        "wave_id": wave_id,
+        "packet_id": packet_id,
     })
     completed = run_bounded(
         [sys.executable, str(Path(__file__).with_name("verify_worker.py"))],
@@ -185,36 +252,45 @@ def _apply_and_verify(packet: dict, lane: Path, translation: dict,
     result["_statics_baseline"] = baseline
     return result
 
-def _salvage(run: _Run, failing: list[str] | None) -> bool:
-    """Land the routines that pass; spill the failures into a new packet.
 
-    A packet is a file group, and its routines are independent. Discarding
-    six verified routines because two failed is pure waste, so at escalation
-    the failing fragments are cut out of the lane, the reduced packet is
-    re-verified, and the failures spill into ``<id>-rest`` for a later wave
-    or the escalation lane.
+def _salvage_verify(lane: Path, packet: dict, failing: list[str] | None,
+                    deadline: float) -> dict | None:
+    """Pool job: land the routines that pass, reduced to just the survivors.
+
+    Pure with respect to shared state: writes only inside the lane. Returns
+    the reduced packet's verdict, or None when salvage is not possible
+    (nothing to keep, nothing to drop, or the reduced verify itself failed to
+    run). WaveDeadlineExpired propagates so the scheduler can defer.
     """
-    names = [r["name"] for r in run.packet["routines"]]
-    if not failing:
-        return False
-    failing = [fn for fn in failing if fn in names]
+    names = [r["name"] for r in packet["routines"]]
+    failing = [fn for fn in (failing or []) if fn in names]
     keep = [fn for fn in names if fn not in failing]
     if not failing or not keep:
-        return False
+        return None
     try:
-        surgery.remove(run.lane, run.packet, failing)
+        surgery.remove(lane, packet, failing)
     except Exception:
-        return False
-    reduced = dict(run.packet)
-    reduced["routines"] = [r for r in run.packet["routines"] if r["name"] in keep]
+        return None
+    reduced = dict(packet)
+    reduced["routines"] = [r for r in packet["routines"] if r["name"] in keep]
     try:
-        result = verify_mod.verify_packet(reduced, run.lane, True, deadline=run.deadline)
+        return verify_mod.verify_packet(reduced, lane, True, deadline=deadline)
     except WaveDeadlineExpired:
         raise
     except Exception:
-        return False
-    if result.get("status") != "green":
-        return False
+        return None
+
+
+def _salvage_finish(run: "_Run", verdict: dict | None, failing: list[str]) -> None:
+    """Scheduler-thread step: write the spill packet and finalize run from a
+    completed _salvage_verify result."""
+    if not verdict or verdict.get("status") != "green":
+        run.final = "escalated"
+        run.reason = run.pending_reason
+        return
+    names = [r["name"] for r in run.packet["routines"]]
+    failing = [fn for fn in failing if fn in names]
+    keep = [fn for fn in names if fn not in failing]
     spill = dict(run.packet)
     spill["id"] = f"{run.packet['id']}-rest"
     spill["routines"] = [r for r in run.packet["routines"] if r["name"] in failing]
@@ -225,36 +301,35 @@ def _salvage(run: _Run, failing: list[str] | None) -> bool:
     spill["updated_at"] = int(time.time())
     spill["reason"] = f"spilled from {run.packet['id']} after {run.rounds} rounds"
     save_packet(spill)
-    run.packet["routines"] = reduced["routines"]
+    run.packet["routines"] = [r for r in run.packet["routines"] if r["name"] in keep]
     save_packet(run.packet)
     try:
         verify_mod.collect_bundle(run.packet, run.lane)
     except Exception as exc:
         run.final = "escalated"
         run.reason = f"infra-error: bundle collection failed: {str(exc)[-300:]}"
-        return False
+        return
     run.final = "green"
     run.reason = f"partial: {len(keep)}/{len(names)} landed, {len(failing)} spilled"
-    return True
 
 
-def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
-    """Main-thread step. True = schedule another round."""
+def _decide(run: "_Run", result: dict, max_rounds: int) -> str:
+    """Scheduler-thread step. Returns 'repair', 'salvage', or 'final'."""
     if result["status"] == "green":
         verify_mod.collect_bundle(run.packet, run.lane)
         run.final, run.reason = "green", None
-        return False
+        return "final"
     if result["status"] == "timeout":
         spinner = result.get("routine") or run.packet["routines"][0]["name"]
         block_routine(spinner, "oracle timeout: callee never returns",
                       "port the blocking callee (see verdict)")
         run.final, run.reason = "parked", f"timeout: {spinner}"
-        return False
+        return "final"
     if result["status"] in {"infra-timeout", "infra-error"}:
         run.final = "escalated"
         prefix = result["status"]
         run.reason = f"{prefix}: {result['detail'][-400:]}"
-        return False
+        return "final"
     run.rounds += 1
     run.packet["rounds"] = run.rounds
     save_packet(run.packet)
@@ -265,28 +340,34 @@ def _decide(run: _Run, result: dict, max_rounds: int) -> bool:
     repeated = digest == run.last_digest
     run.last_digest = digest
     if run.rounds >= max_rounds or repeated:
-        if not _salvage(run, failing_now):
-            run.final = "escalated"
-            run.reason = (
-                f"{result['status']} repeated verbatim at round {run.rounds}"
-                if repeated else
-                f"{result['status']} after {max_rounds} rounds"
-            )
-        return False
+        reason = (
+            f"{result['status']} repeated verbatim at round {run.rounds}"
+            if repeated else
+            f"{result['status']} after {max_rounds} rounds"
+        )
+        names = [r["name"] for r in run.packet["routines"]]
+        failing = [fn for fn in (failing_now or []) if fn in names]
+        keep = [fn for fn in names if fn not in failing]
+        if failing and keep:
+            run.pending_reason = reason
+            return "salvage"
+        run.final = "escalated"
+        run.reason = reason
+        return "final"
     run.targets = failing_now if failing_now else None
     run.feedback = f"{result['status']}:\n{result['detail']}"
     _attempt(run, "repair", run.deadline, run.rounds)
     set_state(run.packet, "repair", run.feedback[:400])
-    return True
+    return "repair"
 
 
-def _render(run: _Run) -> str:
+def _render(run: "_Run") -> str:
     text = prompt_mod.render(run.packet, run.feedback, run.targets)
     run.prompt_tokens += estimate_tokens(text)
     return text
 
 
-def _accept(run: _Run, reply: str) -> dict | None:
+def _accept(run: "_Run", reply: str) -> dict | None:
     run.reply_tokens += estimate_tokens(reply)
     set_state(run.packet, "translated")
     try:
@@ -304,30 +385,30 @@ def _accept(run: _Run, reply: str) -> dict | None:
 
 def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
              max_rounds: int = 4, model: str = "unknown", max_wall_s: float = 1800,
-             on_event=None) -> dict:
+             on_event=None, verify_width: int | None = None) -> dict:
     if lanes_count <= 0 or max_rounds <= 0 or max_wall_s <= 0:
         raise ValueError("lanes_count, max_rounds, and max_wall_s must be positive")
+    if verify_width is None:
+        verify_width = max(2, min(lanes_count, (os.cpu_count() or 4) - 2))
+    if verify_width <= 0:
+        raise ValueError("verify_width must be positive")
     if any(not isinstance(pid, str) or not pid for pid in packet_ids):
         raise ValueError("wave packet IDs must be non-empty strings")
     if len(set(packet_ids)) != len(packet_ids):
         raise ValueError("wave packet IDs must be unique")
-    if len(packet_ids) > lanes_count:
-        raise ValueError(
-            f"wave has {len(packet_ids)} packets but only {lanes_count} lanes; "
-            "select a bounded cohort"
-        )
     wave_id = uuid.uuid4().hex
     started = time.monotonic()
     deadline = started + max_wall_s
-    events: list[str] = []
     event_errors: list[str] = []
     callbacks_enabled = True
 
     def emit(event: str, **payload) -> None:
         nonlocal callbacks_enabled
+        data = {"event": event, "wave_id": wave_id,
+                "elapsed_s": round(time.monotonic() - started, 3), **payload}
+        record_event(data)
         if not callbacks_enabled:
             return
-        data = {"event": event, "elapsed_s": round(time.monotonic() - started, 3), **payload}
         try:
             if on_event is not None:
                 on_event(data)
@@ -344,13 +425,17 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
         if any(packet.get("state") != "pending" for packet in packets):
             bad = [packet["id"] for packet in packets if packet.get("state") != "pending"]
             raise ValueError(f"wave packets must be pending: {', '.join(bad)}")
-        runs = [_Run(pid, wave_id, started) for pid in packet_ids]
-        for run in runs:
-            run.deadline = deadline
-        emit("wave-start", wave_id=wave_id, packet_ids=packet_ids, max_wall_s=max_wall_s)
+        emit("wave-start", packet_ids=packet_ids, max_wall_s=max_wall_s)
+
         results: list[dict] = []
         deferred: list[str] = []
-        stop_reason = None
+        stop_reason: str | None = None
+        active: list[_Run] = []
+        waiting: "deque[str]" = deque(packet_ids[lanes_count:])
+        jobs: dict = {}
+        harvested: list = []
+        slots_used = 0
+        translate_coalesce_since: float | None = None
 
         def finalize(run: _Run) -> None:
             _clear_attempt(run)
@@ -358,157 +443,230 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
             metric = run.metric(model)
             record_metric(metric)
             results.append(metric)
-            emit("packet-final", wave_id=wave_id, packet_id=run.id,
+            emit("packet-final", packet_id=run.id,
                  verdict=run.final, reason=run.reason, rounds=run.rounds,
                  wall_s=metric["wall_s"])
 
-        for index, run in enumerate(runs):
-            run.lane_index = index
-            try:
-                run.lane = lanes.ensure(index, deadline=deadline)
-            except Exception as exc:
-                stop_reason = f"lane: {str(exc).strip()[-400:]}"
-                break
-        for run in runs:
+        def refill() -> None:
+            if stop_reason is not None or not waiting:
+                return
+            used = {r.lane_index for r in active}
+            freed = next((i for i in range(lanes_count) if i not in used), None)
+            if freed is None:
+                return
+            packet_id = waiting.popleft()
+            emit("refill", packet_id=packet_id, lane=freed)
+            admit(packet_id, freed)
+
+        def finalize_and_refill(run: _Run) -> None:
+            finalize(run)
+            if run in active:
+                active.remove(run)
+            refill()
+
+        def admit(packet_id: str, lane_index: int) -> None:
+            run = _Run(packet_id, wave_id, time.monotonic())
+            run.deadline = deadline
+            run.lane_index = lane_index
+            active.append(run)
             if run.rounds >= max_rounds:
                 run.final = "escalated"
                 run.reason = f"resumed at {run.rounds} rounds; max is {max_rounds}"
-        for run in runs:
-            if run.final:
-                finalize(run)
-        if stop_reason is None:
-            active = [run for run in runs if not run.final]
-        if stop_reason is None and active:
-            with ThreadPoolExecutor(max_workers=max(1, len(active))) as pool:
-                while active:
-                    if time.monotonic() >= deadline:
-                        stop_reason = "wave deadline expired"
-                        break
-                    emit("round-start", wave_id=wave_id,
-                         rounds={run.id: run.rounds + 1 for run in active})
-                    translations: dict[str, dict] = {}
-                    pending = list(active)
-                    try:
-                        for run in pending:
-                            _attempt(run, "translating", deadline, run.rounds + 1)
-                        prompts = [_render(run) for run in pending]
-                        replies = translate_many(prompts)
-                        if time.monotonic() >= deadline:
-                            raise WaveDeadlineExpired("wave deadline expired after translation")
-                        if not isinstance(replies, (list, tuple)) or len(replies) != len(prompts):
-                            raise RuntimeError("translator returned wrong reply collection")
-                        retry: list[_Run] = []
-                        for run, reply in zip(pending, replies):
-                            if not isinstance(reply, str):
-                                raise RuntimeError("translator returned a non-string reply")
-                            parsed = _accept(run, reply)
-                            if parsed is None:
+                finalize_and_refill(run)
+                return
+            run.needs_translate = True
+            run.job = "lane"
+            job = _Timed(lanes.ensure, run.lane_index, deadline)
+            jobs[pool.submit(job)] = ("lane", (run, job))
+
+        with ThreadPoolExecutor(max_workers=lanes_count + verify_width + 2) as pool:
+            for index, packet_id in enumerate(packet_ids[:lanes_count]):
+                admit(packet_id, index)
+
+            def submit_verifies() -> None:
+                nonlocal slots_used
+                for run in active:
+                    if (run.job is None and run.lane is not None
+                            and run.translation is not None and not run.final
+                            and slots_used < verify_width):
+                        run.job = "verify"
+                        _attempt(run, "verifying", deadline, run.rounds)
+                        job = _Timed(
+                            _apply_and_verify, run.packet, run.lane, run.translation,
+                            run.statics_baseline, run.rounds, deadline, wave_id, run.id,
+                        )
+                        jobs[pool.submit(job)] = ("verify", (run, job))
+                        slots_used += 1
+                        emit("verify-start", packet_id=run.id, round=run.rounds)
+
+            def translate_inline(batch: list) -> None:
+                """Blocking, on the scheduler thread: the harness completion
+                bridge is bound to its calling thread. Verify and salvage jobs
+                keep running in the pool for the whole call."""
+                nonlocal stop_reason
+                for run in batch:
+                    run.needs_translate = False
+                    _attempt(run, "translating", deadline, run.rounds + 1)
+                prompts = [_render(run) for run in batch]
+                emit("translate-start", packet_ids=[run.id for run in batch])
+                started_at = time.monotonic()
+
+                def requeue() -> None:
+                    for run in batch:
+                        if not run.final:
+                            run.needs_translate = True
+
+                try:
+                    replies = translate_many(prompts)
+                except WaveDeadlineExpired as exc:
+                    stop_reason = str(exc)
+                    requeue()
+                    return
+                except Exception as exc:
+                    stop_reason = f"translate: {str(exc).strip()[-400:]}"
+                    requeue()
+                    return
+                wall = round(time.monotonic() - started_at, 2)
+                for run in batch:
+                    run.translate_s += wall
+                if not isinstance(replies, (list, tuple)) or len(replies) != len(batch):
+                    stop_reason = "translate: translator returned wrong reply collection"
+                    requeue()
+                    return
+                emit("translate-finished", count=len(batch), wall_s=wall)
+                for run, reply in zip(batch, replies):
+                    if not isinstance(reply, str):
+                        stop_reason = "translate: translator returned a non-string reply"
+                        run.needs_translate = True
+                        continue
+                    parsed = _accept(run, reply)
+                    if parsed is None:
+                        finalize_and_refill(run)
+                    elif parsed == {}:
+                        run.needs_translate = True
+                    else:
+                        run.translation = parsed
+
+            def harvest(timeout: float) -> None:
+                harvested.clear()
+                if not jobs:
+                    return
+                done, _ = wait(list(jobs), timeout=timeout, return_when=FIRST_COMPLETED)
+                harvested.extend(done)
+
+            def outstanding_fast() -> int:
+                return sum(1 for kind, _ in jobs.values()
+                           if kind in ("verify", "salvage"))
+
+            while active or jobs:
+                if time.monotonic() >= deadline:
+                    stop_reason = "wave deadline expired"
+                    break
+
+                harvest(0)
+                if not harvested:
+                    if stop_reason is None:
+                        submit_verifies()
+                        batch = [run for run in active
+                                 if run.needs_translate and run.translation is None
+                                 and not run.final]
+                        if batch:
+                            if outstanding_fast() == 0:
+                                translate_coalesce_since = None
+                                translate_inline(batch)
                                 continue
-                            if parsed == {}:
-                                retry.append(run)
-                            else:
-                                translations[run.id] = parsed
-                        if retry:
-                            prompts = [_render(run) for run in retry]
-                            replies = translate_many(prompts)
-                            if time.monotonic() >= deadline:
-                                raise WaveDeadlineExpired("wave deadline expired after translation")
-                            if not isinstance(replies, (list, tuple)) or len(replies) != len(prompts):
-                                raise RuntimeError("translator returned wrong reply collection")
-                            for run, reply in zip(retry, replies):
-                                if not isinstance(reply, str):
-                                    raise RuntimeError("translator returned a non-string reply")
-                                parsed = _accept(run, reply)
-                                if parsed is not None and parsed != {}:
-                                    translations[run.id] = parsed
-                    except WaveDeadlineExpired as exc:
-                        stop_reason = str(exc)
-                        deferred = [run.id for run in active if not run.final]
-                        for run in active:
-                            if not run.final:
-                                _clear_attempt(run)
-                                set_state(run.packet, "pending", stop_reason)
-                        break
-                    except Exception as exc:
-                        stop_reason = f"translate: {str(exc).strip()[-400:]}"
-                        deferred = [run.id for run in active if not run.final]
-                        for run in active:
-                            if not run.final:
-                                _clear_attempt(run)
-                                set_state(run.packet, "pending", stop_reason)
-                        break
-                    futures = {}
-                    try:
-                        for run in active:
-                            if run.id not in translations or run.final:
+                            if translate_coalesce_since is None:
+                                translate_coalesce_since = time.monotonic()
+                            elif (time.monotonic() - translate_coalesce_since
+                                  >= TRANSLATE_COALESCE_S):
+                                translate_coalesce_since = None
+                                translate_inline(batch)
                                 continue
-                            _attempt(run, "verifying", deadline, run.rounds)
-                            future = pool.submit(
-                                _apply_and_verify,
-                                run.packet,
-                                run.lane,
-                                translations[run.id],
-                                run.statics_baseline,
-                                run.rounds,
-                                deadline,
-                            )
-                            futures[future] = run
-                    except Exception as exc:
-                        stop_reason = f"verify setup: {str(exc).strip()[-400:]}"
-                        deferred = [run.id for run in active if not run.final]
+                    if not jobs:
                         break
-                    verdicts: dict[str, dict] = {}
-                    try:
-                        for future in as_completed(futures):
-                            run = futures[future]
-                            try:
-                                verdict = future.result()
-                                run.statics_baseline = verdict.pop("_statics_baseline")
-                                verdicts[run.id] = verdict
-                            except WaveDeadlineExpired:
-                                raise
-                            except Exception:
-                                verdicts[run.id] = {
-                                    "status": "infra-error",
-                                    "detail": traceback.format_exc(limit=4),
-                                }
-                            emit("verify-finished", wave_id=wave_id, packet_id=run.id,
-                                 round=run.rounds, status=verdicts[run.id]["status"],
-                                 digest=detail_digest(verdicts[run.id]))
-                    except WaveDeadlineExpired as exc:
-                        stop_reason = str(exc)
-                        deferred = [run.id for run in active if not run.final]
-                        break
-                    if stop_reason is not None:
-                        break
-                    still: list[_Run] = []
-                    for run in active:
-                        if run.final:
-                            finalize(run)
+                    harvest(5)
+
+                for future in list(harvested):
+                    kind, payload_ = jobs.pop(future)
+
+                    if kind == "lane":
+                        run, job = payload_
+                        run.job = None
+                        run.lane_s += job.wall
+                        try:
+                            lane = future.result()
+                        except Exception as exc:
+                            stop_reason = f"lane: {str(exc).strip()[-400:]}"
                             continue
-                        result = verdicts.get(run.id)
-                        if result is None:
-                            deferred.append(run.id)
-                            _clear_attempt(run)
-                            set_state(run.packet, "pending", "translator stopped")
+                        run.lane = lane
+                        emit("lane-ready", packet_id=run.id, lane=run.lane_index,
+                             wall_s=round(job.wall, 2))
+
+                    elif kind == "verify":
+                        run, job = payload_
+                        run.job = None
+                        slots_used -= 1
+                        run.verify_s += job.wall
+                        try:
+                            verdict = future.result()
+                        except WaveDeadlineExpired as exc:
+                            stop_reason = str(exc)
                             continue
-                        if _decide(run, result, max_rounds):
-                            still.append(run)
+                        except Exception as exc:
+                            verdict = {"status": "infra-error",
+                                       "detail": "".join(traceback.format_exception(exc))}
                         else:
-                            finalize(run)
-                    active = still
+                            run.statics_baseline = verdict.pop("_statics_baseline")
+                        emit("verify-finished", packet_id=run.id, round=run.rounds,
+                             status=verdict["status"], digest=detail_digest(verdict),
+                             wall_s=round(job.wall, 2))
+                        action = _decide(run, verdict, max_rounds)
+                        if action == "repair":
+                            run.translation = None
+                            run.needs_translate = True
+                        elif action == "salvage":
+                            run.job = "salvage"
+                            salvage_job = _Timed(_salvage_verify, run.lane, run.packet,
+                                                 run.last_failing, deadline)
+                            jobs[pool.submit(salvage_job)] = ("salvage", (run, salvage_job))
+                            slots_used += 1
+                            emit("salvage-start", packet_id=run.id)
+                        else:
+                            finalize_and_refill(run)
+
+                    elif kind == "salvage":
+                        run, job = payload_
+                        run.job = None
+                        slots_used -= 1
+                        run.salvage_s += job.wall
+                        try:
+                            salvage_verdict = future.result()
+                        except WaveDeadlineExpired as exc:
+                            stop_reason = str(exc)
+                            continue
+                        except Exception:
+                            salvage_verdict = None
+                        emit("salvage-finished", packet_id=run.id,
+                             status=(salvage_verdict or {}).get("status"),
+                             wall_s=round(job.wall, 2))
+                        _salvage_finish(run, salvage_verdict, run.last_failing or [])
+                        finalize_and_refill(run)
+
         if stop_reason is not None:
-            for run in runs:
+            for run in active:
                 if not run.final and run.id not in deferred:
                     deferred.append(run.id)
                 if not run.final:
                     _clear_attempt(run)
                     set_state(run.packet, "pending", stop_reason)
-            emit("wave-deferred", wave_id=wave_id, packet_ids=deferred, reason=stop_reason)
+            for packet_id in waiting:
+                if packet_id not in deferred:
+                    deferred.append(packet_id)
+            emit("wave-deferred", packet_ids=deferred, reason=stop_reason)
         status = "complete" if stop_reason is None else (
             "deadline" if "deadline" in stop_reason else "stopped"
         )
-        emit("wave-finish", wave_id=wave_id, status=status,
+        emit("wave-finish", status=status,
              result_count=len(results), deferred_count=len(deferred),
              stop_reason=stop_reason, wall_s=round(time.monotonic() - started, 3))
         return {
@@ -566,6 +724,72 @@ def escalate(limit: int | None) -> int:
     return 0
 
 
+def _live_wave() -> dict | None:
+    """The wave's metadata if a wave holds the lock, else None.
+
+    Liveness comes from the flock, never from the file's contents: the lock
+    file keeps the last wave's metadata after release, and its pid is usually
+    a still-live orchestrator kernel, so trusting either would report a
+    finished wave as running.
+    """
+    if not WAVE_LOCK.exists():
+        return None
+    try:
+        descriptor = WAVE_LOCK.open("a+")
+    except OSError:
+        return None
+    try:
+        try:
+            fcntl.flock(descriptor.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            descriptor.seek(0)
+            try:
+                metadata = json.loads(descriptor.read() or "{}")
+            except json.JSONDecodeError:
+                return None
+            return metadata if isinstance(metadata, dict) and metadata else None
+        fcntl.flock(descriptor.fileno(), fcntl.LOCK_UN)
+        return None
+    finally:
+        descriptor.close()
+
+
+def _progress_command() -> None:
+    meta = _live_wave()
+    if meta is None:
+        print("no live wave")
+        stale = sorted(p["id"] for p in list_packets(IN_FLIGHT))
+        if stale:
+            print(f"stale in-flight: {stale}  (run reset-stale)")
+    else:
+        now = int(time.time())
+        elapsed = now - int(meta.get("started_at", now))
+        remaining = int(meta.get("deadline_at", now)) - now
+        print(f"wave {str(meta.get('wave_id', '?'))[:8]} pid {meta.get('pid')} "
+              f"elapsed {elapsed}s deadline in {remaining}s")
+        verify_phases: dict[str, str] = {}
+        if EVENTS.exists():
+            for line in EVENTS.read_text().splitlines()[-2000:]:
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if event.get("event") == "verify-phase" and event.get("packet_id"):
+                    verify_phases[event["packet_id"]] = event.get("phase", "?")
+        for packet in sorted(list_packets(IN_FLIGHT), key=lambda p: p["id"]):
+            attempt = packet.get("attempt") or {}
+            secs = now - int(attempt.get("started_at", now))
+            phase = attempt.get("phase", packet["state"])
+            inner = verify_phases.get(packet["id"], "")
+            suffix = f" [{inner}]" if packet["state"] == "verifying" and inner else ""
+            print(f"  {packet['id']:32} {packet['state']:12} "
+                  f"round {attempt.get('round', '?')} {phase}{suffix} {secs}s")
+    histogram: dict[str, int] = {}
+    for packet in list_packets():
+        histogram[packet["state"]] = histogram.get(packet["state"], 0) + 1
+    print(" ".join(f"{state}={count}" for state, count in sorted(histogram.items())))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
@@ -577,6 +801,7 @@ def main() -> int:
         "--reason-prefix", action="append", default=None,
         help="escalation reason prefix to requeue; repeatable")
     sub.add_parser("metrics")
+    sub.add_parser("progress", help="inspect a live wave without taking its lock")
     escalate_parser = sub.add_parser(
         "escalate", help="write agentic-task briefs for escalated packets")
     escalate_parser.add_argument("--limit", type=int)
@@ -648,6 +873,8 @@ def main() -> int:
                 print(f"reset {packet['id']}")
     elif args.command == "escalate":
         return escalate(args.limit)
+    elif args.command == "progress":
+        _progress_command()
     elif args.command == "metrics":
         if not METRICS.exists():
             print("no metrics yet")
@@ -668,6 +895,19 @@ def main() -> int:
             if rounds:
                 print(f"repair rounds on greens: avg {sum(rounds) / len(rounds):.2f} "
                       f"max {max(rounds)}")
+        phased = [r for r in rows if "translate_s" in r]
+        if phased:
+            total_wall = sum(r["wall_s"] for r in phased) or 1
+            parts = {
+                "translate": sum(r.get("translate_s", 0) for r in phased),
+                "verify": sum(r.get("verify_s", 0) for r in phased),
+                "salvage": sum(r.get("salvage_s", 0) for r in phased),
+                "lane": sum(r.get("lane_s", 0) for r in phased),
+                "idle": sum(r.get("idle_s", 0) for r in phased),
+            }
+            split = " ".join(
+                f"{name} {value / total_wall * 100:.0f}%" for name, value in parts.items())
+            print(f"phase split over {len(phased)} packets: {split}")
     return 0
 
 

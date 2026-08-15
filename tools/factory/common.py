@@ -5,6 +5,7 @@ Contracts (all relative to the repo root):
 - Bundles:  .factory/bundles/<id>/           green artifacts at repo-relative paths
 - Cache:    .factory/oracle-cache/           shared PyBoy reference cache
 - Metrics:  .factory/metrics.jsonl           one JSON object per finished packet
+- Events:   .factory/events.jsonl            one JSON object per wave phase transition
 - Blocked:  .factory/blocked.toml            routines the frontier must not re-offer
 - Issues:  .factory/issues-cache.json         authoritative Forgejo snapshot
 
@@ -32,6 +33,7 @@ QUEUE = FACTORY / "queue"
 BUNDLES = FACTORY / "bundles"
 CACHE = FACTORY / "oracle-cache"
 METRICS = FACTORY / "metrics.jsonl"
+EVENTS = FACTORY / "events.jsonl"
 BLOCKED = FACTORY / "blocked.toml"
 ISSUES_CACHE = FACTORY / "issues-cache.json"
 ISSUES_SCHEMA = 2
@@ -47,7 +49,7 @@ RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
 WAVE_LOCK = FACTORY / "wave.lock"
 PROCESS_TERM_GRACE_S = 0.5
 
-_metrics_lock = threading.Lock()
+_append_lock = threading.Lock()
 
 STATES = (
     "pending", "translating", "translated", "verifying", "repair", "green", "landed",
@@ -325,13 +327,28 @@ def list_packets(states: tuple[str, ...] | None = None) -> list[dict]:
     return packets
 
 
-def record_metric(entry: dict) -> None:
+def _append_jsonl(path: Path, entry: dict) -> None:
     entry = dict(entry)
     entry.setdefault("ts", int(time.time()))
-    with _metrics_lock:
+    line = json.dumps(entry, sort_keys=True) + "\n"
+    with _append_lock:
         FACTORY.mkdir(exist_ok=True)
-        with METRICS.open("a") as stream:
-            stream.write(json.dumps(entry, sort_keys=True) + "\n")
+        with path.open("a") as stream:
+            stream.write(line)
+
+
+def record_metric(entry: dict) -> None:
+    _append_jsonl(METRICS, entry)
+
+
+def record_event(entry: dict) -> None:
+    """Also called from verify_worker.py, a separate process: string values
+    are truncated to 300 chars so each line stays under Linux's O_APPEND
+    atomic-write guarantee for concurrent writers."""
+    _append_jsonl(EVENTS, {
+        key: (value[:300] if isinstance(value, str) else value)
+        for key, value in entry.items()
+    })
 
 
 def blocked_routines() -> set[str]:
