@@ -90,6 +90,111 @@ CASES["ChallengeMachine_PickOpponentSequence"] = [
 ]
 # <<< factory ChallengeMachine_PickOpponentSequence
 
+# >>> factory ChallengeMachine_GetCurrentOpponent
+CONTRACT["ChallengeMachine_GetCurrentOpponent"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["ChallengeMachine_GetCurrentOpponent"] = [
+    # All-zero: index 0 selects the first opponent byte.
+    {"sram": {0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x00"}},
+     "read": {0xD692: 1}},
+    # Poisoned entry registers: the routine takes no arguments, b/c must survive
+    # and d/e/hl are recomputed from SRAM regardless of what came in.
+    dict(POISON,
+         sram={0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x03"}},
+         read={0xD692: 1}),
+    # Last in-table index (opponent slot 9).
+    {"sram": {0: {0xBA4B: bytes(range(0x90, 0x9A)), 0xBA55: b"\x09"}},
+     "read": {0xD692: 1}},
+    # Index 10 aliases sChallengeMachineOpponentNumber itself: the byte read back
+    # is the index, proving no bounds check exists.
+    {"sram": {0: {0xBA4B: b"\x00" * 10, 0xBA55: b"\x0A"}},
+     "read": {0xD692: 1}},
+    # Large index: hl = base + 0xFF with no wrap inside the page.
+    {"sram": {0: {0xBA4B: b"\x11" * 10, 0xBA55: b"\xFF", 0xBB4A: b"\x77"}},
+     "read": {0xD692: 1}},
+    # ramg False after seeding: the routine's own EnableSRAM is load-bearing,
+    # otherwise index and opponent both read as open-bus $FF.
+    {"ramg": False,
+     "sram": {0: {0xBA4B: bytes(range(1, 11)), 0xBA55: b"\x02"}},
+     "read": {0xD692: 1}},
+]
+# <<< factory ChallengeMachine_GetCurrentOpponent
+
+# >>> factory ChallengeMachine_IncrementHLMax999
+CONTRACT["ChallengeMachine_IncrementHLMax999"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["ChallengeMachine_IncrementHLMax999"] = [
+    # All-zero registers: hl = 0 points at ROM, so the writes are dropped and the
+    # only observable output is the advanced hl.
+    {},
+    # Counter at 0 in SRAM: 0 -> 1, hl advances.
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\x00\x00"}}, "sread": {0: {0xBA47: 2}}},
+    # Poisoned entry: b/c/d/e must survive; 998 -> 999.
+    dict(POISON, hl=0xBA47, sram={0: {0xBA47: b"\xE6\x03"}}, sread={0: {0xBA47: 2}}),
+    # Exactly 999: capped, no write at all, hl left on the low byte.
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x03"}}, "sread": {0: {0xBA47: 2}}},
+    # High byte 3 but low byte not $E7: increments (1000 -> 1001), proving the
+    # cap tests both bytes.
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE8\x03"}}, "sread": {0: {0xBA47: 2}}},
+    # Low byte $E7 but high byte not 3: increments ($02E7 -> $02E8).
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x02"}}, "sread": {0: {0xBA47: 2}}},
+    # Carry out of the low byte: $03FF -> $0400.
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xFF\x03"}}, "sread": {0: {0xBA47: 2}}},
+    # Full 16-bit wrap: $FFFF -> $0000.
+    {"hl": 0xBA47, "sram": {0: {0xBA47: b"\xFF\xFF"}}, "sread": {0: {0xBA47: 2}}},
+    # WRAM target: no SRAM involved, plain increment of $00FF -> $0100.
+    {"hl": 0xC100, "wram": {0xC100: b"\xFF\x00"}},
+    # ramg False after seeding: without the routine's own EnableSRAM the read
+    # would be open bus and the write would be dropped.
+    {"ramg": False, "hl": 0xBA47, "sram": {0: {0xBA47: b"\xE7\x03"}}, "sread": {0: {0xBA47: 2}}},
+]
+# <<< factory ChallengeMachine_IncrementHLMax999
+
+# >>> factory ChallengeMachine_CheckForNewRecord
+CONTRACT["ChallengeMachine_CheckForNewRecord"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ChallengeMachine_CheckForNewRecord"] = [
+    # All-zero: present == max == 0, equal on both bytes -> no record.
+    {"sram": {0: {0xBA47: b"\x00\x00", 0xBA56: b"\x00\x00", 0xBA58: b"\x00" * 16,
+                  0xBA68: b"\x00", 0xA010: b"\x00" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # Poisoned entry with a genuine new record (present 5 > max 3, equal high
+    # bytes): bc/de/hl are all overwritten by the copy setup.
+    dict(POISON,
+         sram={0: {0xBA47: b"\x05\x00", 0xBA56: b"\x03\x00",
+                   0xBA58: b"\xFF" * 16, 0xBA68: b"\x00",
+                   0xA010: bytes(range(0x41, 0x51))}},
+         sread={0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}),
+    # Present low byte less than max, high bytes equal: no record, hl ends on
+    # sMaximumConsecutiveWins after the `dec hl`.
+    {"sram": {0: {0xBA47: b"\x02\x00", 0xBA56: b"\x09\x00",
+                  0xBA58: b"\xAA" * 16, 0xBA68: b"\x00", 0xA010: b"\xBB" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # High bytes differ with present greater: record taken without ever reading
+    # the low bytes for the comparison, and hl stays at sMaximumConsecutiveWins+1
+    # on the compare path. Present low byte is smaller than max's on purpose.
+    {"sram": {0: {0xBA47: b"\x00\x02", 0xBA56: b"\xFF\x01",
+                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: b"\x5A" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # High bytes differ with present smaller: no record, hl left at +1.
+    {"sram": {0: {0xBA47: b"\xFF\x01", 0xBA56: b"\x00\x02",
+                  0xBA58: b"\x33" * 16, 0xBA68: b"\x00", 0xA010: b"\x44" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # Exact equality on both bytes at a nonzero value: the `jr z` guard means
+    # equal is NOT a new record.
+    {"sram": {0: {0xBA47: b"\xE7\x03", 0xBA56: b"\xE7\x03",
+                  0xBA58: b"\x77" * 16, 0xBA68: b"\x00", 0xA010: b"\x88" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # Off-by-one above equality: present is max+1, the smallest new record.
+    {"sram": {0: {0xBA47: b"\xE8\x03", 0xBA56: b"\xE7\x03",
+                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: bytes(range(16))}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+    # ramg False after seeding: without the routine's own EnableSRAM neither the
+    # comparison nor any of the three writes would behave.
+    {"ramg": False,
+     "sram": {0: {0xBA47: b"\x05\x00", 0xBA56: b"\x03\x00",
+                  0xBA58: b"\x00" * 16, 0xBA68: b"\x00", 0xA010: b"\x63" * 16}},
+     "sread": {0: {0xBA56: 2, 0xBA58: 16, 0xBA68: 1}}},
+]
+# <<< factory ChallengeMachine_CheckForNewRecord
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -116,3 +221,27 @@ MUTATIONS["ChallengeMachine_PickOpponentSequence"] = {
     "case_ids": ["ChallengeMachine_PickOpponentSequence-2", "ChallengeMachine_PickOpponentSequence-3"],
 }
 # <<< factory-mutation ChallengeMachine_PickOpponentSequence
+# >>> factory-mutation ChallengeMachine_GetCurrentOpponent
+MUTATIONS["ChallengeMachine_GetCurrentOpponent"] = {
+    "source_symbol": "ChallengeMachine_GetCurrentOpponent",
+    "before": "\tuint16_t hl = (uint16_t)(sChallengeMachineOpponents_ADDR + e);",
+    "after": "\tuint16_t hl = (uint16_t)(sChallengeMachineOpponents_ADDR + e + 1u);",
+    "case_ids": ["ChallengeMachine_GetCurrentOpponent-0", "ChallengeMachine_GetCurrentOpponent-1", "ChallengeMachine_GetCurrentOpponent-2"],
+}
+# <<< factory-mutation ChallengeMachine_GetCurrentOpponent
+# >>> factory-mutation ChallengeMachine_IncrementHLMax999
+MUTATIONS["ChallengeMachine_IncrementHLMax999"] = {
+    "source_symbol": "ChallengeMachine_IncrementHLMax999",
+    "before": "\tif (high == WIN_CAP_HIGH && gb_read8(hl) == WIN_CAP_LOW) {",
+    "after": "\tif (high == WIN_CAP_HIGH || gb_read8(hl) == WIN_CAP_LOW) {",
+    "case_ids": ["ChallengeMachine_IncrementHLMax999-4", "ChallengeMachine_IncrementHLMax999-5", "ChallengeMachine_IncrementHLMax999-6"],
+}
+# <<< factory-mutation ChallengeMachine_IncrementHLMax999
+# >>> factory-mutation ChallengeMachine_CheckForNewRecord
+MUTATIONS["ChallengeMachine_CheckForNewRecord"] = {
+    "source_symbol": "ChallengeMachine_CheckForNewRecord",
+    "before": "\t\tnew_record = present_low > max_low;",
+    "after": "\t\tnew_record = present_low >= max_low;",
+    "case_ids": ["ChallengeMachine_CheckForNewRecord-0", "ChallengeMachine_CheckForNewRecord-5"],
+}
+# <<< factory-mutation ChallengeMachine_CheckForNewRecord

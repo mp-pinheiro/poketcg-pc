@@ -20,4 +20,27 @@ ChallengeMachinePrintResult ChallengeMachine_PrintText(uint16_t hl, uint8_t b, u
 /* >>> factory ChallengeMachine_PickOpponentSequence */
 void ChallengeMachine_PickOpponentSequence(void);
 /* <<< factory ChallengeMachine_PickOpponentSequence */
+/* >>> factory ChallengeMachine_GetCurrentOpponent */
+typedef struct {
+	uint16_t hl;
+	uint8_t d;
+	uint8_t e;
+} ChallengeMachineOpponentResult;
+
+ChallengeMachineOpponentResult ChallengeMachine_GetCurrentOpponent(void);
+/* <<< factory ChallengeMachine_GetCurrentOpponent */
+/* >>> factory ChallengeMachine_IncrementHLMax999 */
+uint16_t ChallengeMachine_IncrementHLMax999(uint16_t hl);
+/* <<< factory ChallengeMachine_IncrementHLMax999 */
+/* >>> factory ChallengeMachine_CheckForNewRecord */
+typedef struct {
+	uint16_t hl;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+} ChallengeMachineRecordResult;
+
+ChallengeMachineRecordResult ChallengeMachine_CheckForNewRecord(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
+/* <<< factory ChallengeMachine_CheckForNewRecord */
 #endif

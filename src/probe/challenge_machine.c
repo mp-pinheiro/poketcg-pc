@@ -24,9 +24,41 @@ static void adapt_ChallengeMachine_PickOpponentSequence(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_PickOpponentSequence */
 
+/* >>> factory ChallengeMachine_GetCurrentOpponent */
+static void adapt_ChallengeMachine_GetCurrentOpponent(ProbeState *s)
+{
+	ChallengeMachineOpponentResult r = ChallengeMachine_GetCurrentOpponent();
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory ChallengeMachine_GetCurrentOpponent */
+
+/* >>> factory ChallengeMachine_IncrementHLMax999 */
+static void adapt_ChallengeMachine_IncrementHLMax999(ProbeState *s)
+{
+	s->hl = ChallengeMachine_IncrementHLMax999(s->hl);
+}
+/* <<< factory ChallengeMachine_IncrementHLMax999 */
+
+/* >>> factory ChallengeMachine_CheckForNewRecord */
+static void adapt_ChallengeMachine_CheckForNewRecord(ProbeState *s)
+{
+	ChallengeMachineRecordResult r = ChallengeMachine_CheckForNewRecord(s->b, s->c, s->d, s->e);
+	s->hl = r.hl;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory ChallengeMachine_CheckForNewRecord */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
 	{ "ChallengeMachine_PickOpponentSequence", adapt_ChallengeMachine_PickOpponentSequence },
+	{ "ChallengeMachine_GetCurrentOpponent", adapt_ChallengeMachine_GetCurrentOpponent },
+	{ "ChallengeMachine_IncrementHLMax999", adapt_ChallengeMachine_IncrementHLMax999 },
+	{ "ChallengeMachine_CheckForNewRecord", adapt_ChallengeMachine_CheckForNewRecord },
 	{ NULL, NULL },
 };

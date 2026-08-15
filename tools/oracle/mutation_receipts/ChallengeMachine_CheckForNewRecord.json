@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_CheckForNewRecord",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_CheckForNewRecord\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 47702, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40976\": \"00000000000000000000000000000000\", \"47687\": \"0000\", \"47702\": \"00000000000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_CheckForNewRecord\", \"mismatches\": {\"c\": [0, 16], \"d\": [0, 186], \"e\": [0, 88], \"hl\": [47702, 40976], \"sram\": {\"byte\": 36, \"reference\": \"0000000000\", \"native\": \"0000000001\"}}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_CheckForNewRecord\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 47702, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40976\": \"00000000000000000000000000000000\", \"47687\": \"0000\", \"47702\": \"00000000000000000000000000000000000000\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

@@ -27,6 +27,18 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 	8u, (uint8_t)(GRAND_MASTERS_START + 6u),
 	255u, (uint8_t)(GRAND_MASTERS_START + 7u),
 };
+
+#include "home/copy.h"
+#include "home/switch_sram.h"
+#include "mem.h"
+
+#define NAME_BUFFER_LENGTH 0x10u
+#define TRUE_VALUE 0x01u
+#define WIN_CAP_HIGH 0x03u
+#define WIN_CAP_LOW 0xE7u
+
+/* wChallengeMachineOpponent is not exposed by generated/wram.h in this build. */
+#define wChallengeMachineOpponent_ADDR 0xD692u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -114,3 +126,81 @@ void ChallengeMachine_PickOpponentSequence(void)
 	DisableSRAM();
 }
 /* <<< factory ChallengeMachine_PickOpponentSequence */
+
+/* >>> factory ChallengeMachine_GetCurrentOpponent */
+/* challenge_machine.asm:152-162 */
+ChallengeMachineOpponentResult ChallengeMachine_GetCurrentOpponent(void)
+{
+	EnableSRAM();
+	uint8_t e = gb_read8(sChallengeMachineOpponentNumber_ADDR);
+	uint16_t hl = (uint16_t)(sChallengeMachineOpponents_ADDR + e);
+	uint8_t a = gb_read8(hl);
+	gb_write8(wChallengeMachineOpponent_ADDR, a);
+	DisableSRAM();
+	return (ChallengeMachineOpponentResult){ .hl = hl, .d = 0, .e = e };
+}
+/* <<< factory ChallengeMachine_GetCurrentOpponent */
+
+/* >>> factory ChallengeMachine_IncrementHLMax999 */
+/* challenge_machine.asm:239-256. hl points at a little-endian 16-bit counter.
+ * The value is incremented unless it is already 999; hl exits advanced to the
+ * high byte on the increment path and left on the low byte on the skip path. */
+uint16_t ChallengeMachine_IncrementHLMax999(uint16_t hl)
+{
+	EnableSRAM();
+	uint8_t high = gb_read8((uint16_t)(hl + 1));
+	if (high == WIN_CAP_HIGH && gb_read8(hl) == WIN_CAP_LOW) {
+		DisableSRAM();
+		return hl;
+	}
+	uint8_t low = gb_read8(hl);
+	uint8_t sum = (uint8_t)(low + 1u);
+	gb_write8(hl, sum);
+	hl = (uint16_t)(hl + 1);
+	uint8_t carry = (uint8_t)(sum < low ? 1u : 0u);
+	gb_write8(hl, (uint8_t)(gb_read8(hl) + carry));
+	DisableSRAM();
+	return hl;
+}
+/* <<< factory ChallengeMachine_IncrementHLMax999 */
+
+/* >>> factory ChallengeMachine_CheckForNewRecord */
+/* challenge_machine.asm:260-286. No register inputs are consumed; on the
+ * no-record path hl exits at sMaximumConsecutiveWins+1 when the high bytes
+ * differ and at sMaximumConsecutiveWins when they match, and bc/de pass
+ * through. On the new-record path the copy setup leaves hl=sPlayerName,
+ * de=sChallengeMachineRecordHolderName and bc=NAME_BUFFER_LENGTH, all of which
+ * CopyDataHLtoDE_SaveRegisters restores. */
+ChallengeMachineRecordResult ChallengeMachine_CheckForNewRecord(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	EnableSRAM();
+	uint8_t max_high = gb_read8((uint16_t)(sMaximumConsecutiveWins_ADDR + 1));
+	uint8_t present_high = gb_read8((uint16_t)(sPresentConsecutiveWins_ADDR + 1));
+	uint16_t hl = (uint16_t)(sMaximumConsecutiveWins_ADDR + 1);
+	int new_record;
+	if (present_high != max_high) {
+		new_record = present_high > max_high;
+	} else {
+		hl = sMaximumConsecutiveWins_ADDR;
+		uint8_t max_low = gb_read8(hl);
+		uint8_t present_low = gb_read8(sPresentConsecutiveWins_ADDR);
+		new_record = present_low > max_low;
+	}
+	if (new_record) {
+		uint8_t low = gb_read8(sPresentConsecutiveWins_ADDR);
+		gb_write8(sMaximumConsecutiveWins_ADDR, low);
+		gb_write8((uint16_t)(sMaximumConsecutiveWins_ADDR + 1),
+			gb_read8((uint16_t)(sPresentConsecutiveWins_ADDR + 1)));
+		hl = sPlayerName_ADDR;
+		uint16_t de = sChallengeMachineRecordHolderName_ADDR;
+		CopyDataHLtoDE_SaveRegisters(hl, de, NAME_BUFFER_LENGTH);
+		gb_write8(sConsecutiveWinRecordIncreased_ADDR, TRUE_VALUE);
+		b = (uint8_t)(NAME_BUFFER_LENGTH >> 8);
+		c = (uint8_t)NAME_BUFFER_LENGTH;
+		d = (uint8_t)(de >> 8);
+		e = (uint8_t)de;
+	}
+	DisableSRAM();
+	return (ChallengeMachineRecordResult){ .hl = hl, .b = b, .c = c, .d = d, .e = e };
+}
+/* <<< factory ChallengeMachine_CheckForNewRecord */
