@@ -24,9 +24,25 @@ static void adapt_ApplyRandomCountToNPCAnim(ProbeState *s)
 }
 /* <<< factory ApplyRandomCountToNPCAnim */
 
+/* >>> factory SetNPCAnimation */
+static void adapt_SetNPCAnimation(ProbeState *s)
+{
+	s->a = SetNPCAnimation(s->a);
+}
+/* <<< factory SetNPCAnimation */
+
+/* >>> factory SetNPCDirection */
+static void adapt_SetNPCDirection(ProbeState *s)
+{
+	s->a = SetNPCDirection(s->a);
+}
+/* <<< factory SetNPCDirection */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
 	{ "ApplyRandomCountToNPCAnim", adapt_ApplyRandomCountToNPCAnim },
+	{ "SetNPCAnimation", adapt_SetNPCAnimation },
+	{ "SetNPCDirection", adapt_SetNPCDirection },
 	{ NULL, NULL },
 };

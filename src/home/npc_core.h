@@ -12,4 +12,10 @@ uint8_t UpdateNPCAnimation(void); /* returns the asm's exit a (echo of entry wWh
 /* >>> factory ApplyRandomCountToNPCAnim */
 uint8_t ApplyRandomCountToNPCAnim(void); /* returns the asm's exit a (echo of entry wWhichSprite); f/bc/hl preserved, d/e clobbered by callees */
 /* <<< factory ApplyRandomCountToNPCAnim */
+/* >>> factory SetNPCAnimation */
+uint8_t SetNPCAnimation(uint8_t a); /* a = new animation; bc/hl preserved, returns exit a */
+/* <<< factory SetNPCAnimation */
+/* >>> factory SetNPCDirection */
+uint8_t SetNPCDirection(uint8_t a); /* a = new direction; hl preserved, returns exit a */
+/* <<< factory SetNPCDirection */
 #endif /* POKETCG_HOME_NPC_CORE_H */

@@ -24,6 +24,11 @@
 /* flag byte bits: Z=0x80, N=0x40, H=0x20, C=0x10 */
 #define F_Z                      0x80u
 #define F_C                      0x10u
+
+#include "home/map.h"
+#include "home/npc_core.h"
+
+#define LOADED_NPC_DIRECTION_BACKUP 0x07u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -82,3 +87,23 @@ uint8_t ApplyRandomCountToNPCAnim(void)
 	return saved_sprite;
 }
 /* <<< factory ApplyRandomCountToNPCAnim */
+
+/* >>> factory SetNPCAnimation */
+/* npc_core.asm:215-227 */
+uint8_t SetNPCAnimation(uint8_t a)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_ANIM);
+	gb_write8(r.hl, a);
+	return UpdateNPCAnimation();
+}
+/* <<< factory SetNPCAnimation */
+
+/* >>> factory SetNPCDirection */
+/* npc_core.asm:312-323 */
+uint8_t SetNPCDirection(uint8_t a)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);
+	gb_write8(r.hl, a);
+	return UpdateNPCAnimation();
+}
+/* <<< factory SetNPCDirection */

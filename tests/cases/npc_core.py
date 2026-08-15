@@ -50,6 +50,26 @@ CASES["ApplyRandomCountToNPCAnim"] = [
 ]
 # <<< factory ApplyRandomCountToNPCAnim
 
+# >>> factory SetNPCAnimation
+CONTRACT["SetNPCAnimation"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
+CASES["SetNPCAnimation"] = [
+    {"a": 0, "wram": {0xD3AA: b"\x00"}, "read": {0xD300: 0x100}},
+    {"a": 1, "wram": {0xD3AA: b"\x01"}, "read": {0xD300: 0x100}},
+    {"a": 0xFF, "wram": {0xD3AA: b"\x02"}, "read": {0xD300: 0x100}},
+    dict(POISON, a=0x33, wram={0xD3AA: b"\x01"}, read={0xD300: 0x100}),
+]
+# <<< factory SetNPCAnimation
+
+# >>> factory SetNPCDirection
+CONTRACT["SetNPCDirection"] = {"compare": ("a", "hl"), "preserve": ("hl",)}
+CASES["SetNPCDirection"] = [
+    {"a": 0, "wram": {0xD3AA: b"\x00"}, "read": {0xD300: 0x100}},
+    {"a": 1, "wram": {0xD3AA: b"\x01"}, "read": {0xD300: 0x100}},
+    {"a": 0xFF, "wram": {0xD3AA: b"\x02"}, "read": {0xD300: 0x100}},
+    dict(POISON, a=0x02, wram={0xD3AA: b"\x01"}, read={0xD300: 0x100}),
+]
+# <<< factory SetNPCDirection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -63,3 +83,19 @@ MUTATIONS["UpdateNPCAnimation"] = {"source_symbol": "UpdateNPCAnimation", "befor
 # >>> factory-mutation ApplyRandomCountToNPCAnim
 MUTATIONS["ApplyRandomCountToNPCAnim"] = {"source_symbol": "ApplyRandomCountToNPCAnim", "before": "gb_write8(counter, (uint8_t)(count - r));", "after": "gb_write8((uint16_t)(counter + 1u), (uint8_t)(count - r));", "case_ids": ["ApplyRandomCountToNPCAnim-3", "ApplyRandomCountToNPCAnim-4", "ApplyRandomCountToNPCAnim-5"]}
 # <<< factory-mutation ApplyRandomCountToNPCAnim
+# >>> factory-mutation SetNPCAnimation
+MUTATIONS["SetNPCAnimation"] = {
+    "source_symbol": "SetNPCAnimation",
+    "before": "GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_ANIM);",
+    "after": "GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);",
+    "case_ids": ["SetNPCAnimation-1", "SetNPCAnimation-2", "SetNPCAnimation-3"],
+}
+# <<< factory-mutation SetNPCAnimation
+# >>> factory-mutation SetNPCDirection
+MUTATIONS["SetNPCDirection"] = {
+    "source_symbol": "SetNPCDirection",
+    "before": "GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);\n\tgb_write8(r.hl, a);",
+    "after": "GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION_BACKUP);\n\tgb_write8(r.hl, a);",
+    "case_ids": ["SetNPCDirection-1", "SetNPCDirection-2", "SetNPCDirection-3"],
+}
+# <<< factory-mutation SetNPCDirection
