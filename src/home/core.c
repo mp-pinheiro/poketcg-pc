@@ -2031,23 +2031,21 @@ void ApplyCardCGBAttributes(uint16_t de)
 }
 /* <<< factory ApplyCardCGBAttributes */
 
+
 /* >>> factory ApplyStatusConditionToArenaPokemon */
-ApplyStatusConditionResult ApplyStatusConditionToArenaPokemon(uint8_t d, uint16_t hl)
+/* core.asm:7237-7253 */
+uint8_t ApplyStatusConditionToArenaPokemon(uint16_t *hl, uint8_t d, uint8_t *e)
 {
-	uint16_t status = (uint16_t)(((uint16_t)d << 8) | DUELVARS_ARENA_CARD_STATUS);
-	uint8_t mask = gb_read8(hl);
-	uint8_t value = (uint8_t)(gb_read8(status) & mask);
-	value = (uint8_t)(value | gb_read8((uint16_t)(hl + 1u)));
-	gb_write8(status, value);
-	uint8_t last_mask = gb_read8(hl);
-	uint16_t last = (uint16_t)(((uint16_t)d << 8) |
-		DUELVARS_ARENA_CARD_LAST_TURN_STATUS);
-	value = (uint8_t)(gb_read8(last) & last_mask);
-	value = (uint8_t)(value | gb_read8((uint16_t)(hl + 1u)));
-	gb_write8(last, value);
-	return (ApplyStatusConditionResult){value,
-		DUELVARS_ARENA_CARD_LAST_TURN_STATUS,
-		(uint8_t)(value == 0u ? FLAG_Z : 0u), (uint16_t)(hl + 2u)};
+	uint16_t p = *hl;
+	uint16_t de = (uint16_t)(d << 8 | DUELVARS_ARENA_CARD_STATUS);
+	uint8_t a = (uint8_t)((gb_read8(de) & gb_read8(p)) | gb_read8((uint16_t)(p + 1u)));
+	gb_write8(de, a);
+	de = (uint16_t)(d << 8 | DUELVARS_ARENA_CARD_LAST_TURN_STATUS);
+	a = (uint8_t)((gb_read8(de) & gb_read8(p)) | gb_read8((uint16_t)(p + 1u)));
+	gb_write8(de, a);
+	*hl = (uint16_t)(p + 2u);
+	*e = DUELVARS_ARENA_CARD_LAST_TURN_STATUS;
+	return a;
 }
 /* <<< factory ApplyStatusConditionToArenaPokemon */
 

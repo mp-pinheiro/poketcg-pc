@@ -434,13 +434,7 @@ uint8_t HandleFailedToContinueDuel(uint16_t hl);
 void ApplyCardCGBAttributes(uint16_t de);
 /* <<< factory ApplyCardCGBAttributes */
 /* >>> factory ApplyStatusConditionToArenaPokemon */
-typedef struct {
-	uint8_t a;
-	uint8_t e;
-	uint8_t f;
-	uint16_t hl;
-} ApplyStatusConditionResult;
-ApplyStatusConditionResult ApplyStatusConditionToArenaPokemon(uint8_t d, uint16_t hl);
+uint8_t ApplyStatusConditionToArenaPokemon(uint16_t *hl, uint8_t d, uint8_t *e);
 /* <<< factory ApplyStatusConditionToArenaPokemon */
 /* >>> factory CheckIfEnoughEnergiesToRetreat */
 typedef struct { uint8_t a; uint8_t f; } EnoughRetreatEnergiesResult;

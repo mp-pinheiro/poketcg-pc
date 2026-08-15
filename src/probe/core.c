@@ -912,14 +912,10 @@ static void adapt_ApplyCardCGBAttributes(ProbeState *s)
 /* >>> factory ApplyStatusConditionToArenaPokemon */
 static void adapt_ApplyStatusConditionToArenaPokemon(ProbeState *s)
 {
-	ApplyStatusConditionResult r =
-		ApplyStatusConditionToArenaPokemon(s->d, s->hl);
-	s->a = r.a;
-	s->e = r.e;
-	s->f = r.f;
-	s->hl = r.hl;
+	s->a = ApplyStatusConditionToArenaPokemon(&s->hl, s->d, &s->e);
 }
 /* <<< factory ApplyStatusConditionToArenaPokemon */
+
 /* >>> factory CheckIfEnoughEnergiesToRetreat */
 static void adapt_CheckIfEnoughEnergiesToRetreat(ProbeState *s)
 {
@@ -988,7 +984,6 @@ static void adapt_CheckIfNoSurplusEnergyForAttack(ProbeState *s)
 
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
-	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
 	{ "DecideLinkDuelVariables", adapt_DecideLinkDuelVariables },
 	{ "DisplayAttackPage", adapt_DisplayAttackPage },
@@ -1102,5 +1097,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_VerifyPlayerTurnActions", adapt_PracticeDuel_VerifyPlayerTurnActions },
 	{ "CheckIfNoSurplusEnergyForAttack", adapt_CheckIfNoSurplusEnergyForAttack },
 	{ "LoadCardNameToTxRam2_b", adapt_LoadCardNameToTxRam2_b },
+	{ "ApplyStatusConditionToArenaPokemon", adapt_ApplyStatusConditionToArenaPokemon },
 	{ NULL, NULL },
 };

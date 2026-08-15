@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyStatusConditionToArenaPokemon",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyStatusConditionToArenaPokemon\", \"registers\": {\"a\": 63, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 245, \"f\": 0, \"hl\": 49410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0f30\", \"49904\": \"3fffffffff3fffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyStatusConditionToArenaPokemon\", \"mismatches\": {\"hl\": [49410, 49409]}}\n",
+  "restored": "{\"fn\": \"ApplyStatusConditionToArenaPokemon\", \"registers\": {\"a\": 63, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 245, \"f\": 0, \"hl\": 49410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0f30\", \"49904\": \"3fffffffff3fffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1152,12 +1152,16 @@ CASES["ApplyCardCGBAttributes"] = [
 ]
 # <<< factory ApplyCardCGBAttributes
 # >>> factory ApplyStatusConditionToArenaPokemon
-CONTRACT["ApplyStatusConditionToArenaPokemon"] = {"compare": ("a", "e", "f", "hl", "b", "c", "d"), "preserve": ("b", "c", "d")}
+CONTRACT["ApplyStatusConditionToArenaPokemon"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d")}
 CASES["ApplyStatusConditionToArenaPokemon"] = [
-    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\x0F\xF0", 0xC2F0: b"\xAA", 0xC2F5: b"\x55"}, "read": {0xC2F0: 1, 0xC2F5: 1}},
-    dict(POISON, d=0xC3, hl=0xC100, wram={0xC100: b"\x33\xCC", 0xC3F0: b"\xF0", 0xC3F5: b"\x0F"}, read={0xC3F0: 1, 0xC3F5: 1}),
+    {},
+    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\x0F\x30", 0xC2F0: b"\xFF" * 16}, "read": {0xC2F0: 16}},
+    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\x00\x00", 0xC2F0: b"\xAA" * 16}, "read": {0xC2F0: 16}},
+    {"d": 0xC2, "hl": 0xC100, "wram": {0xC100: b"\xFF\x00", 0xC2F0: b"\x5A" * 16}, "read": {0xC2F0: 16}},
+    dict(POISON, d=0xC2, hl=0xC100, wram={0xC100: b"\x3C\xC3", 0xC2F0: b"\x0F" * 16}, read={0xC2F0: 16}),
 ]
 # <<< factory ApplyStatusConditionToArenaPokemon
+
 # >>> factory CheckIfEnoughEnergiesToRetreat
 CONTRACT["CheckIfEnoughEnergiesToRetreat"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["CheckIfEnoughEnergiesToRetreat"] = [
@@ -1879,9 +1883,9 @@ MUTATIONS["ApplyCardCGBAttributes"] = {
 # >>> factory-mutation ApplyStatusConditionToArenaPokemon
 MUTATIONS["ApplyStatusConditionToArenaPokemon"] = {
     "source_symbol": "ApplyStatusConditionToArenaPokemon",
-    "before": "value = (uint8_t)(value | gb_read8((uint16_t)(hl + 1u)));\n\tgb_write8(status, value);",
-    "after": "value = (uint8_t)(value & gb_read8((uint16_t)(hl + 1u)));\n\tgb_write8(status, value);",
-    "case_ids": ["ApplyStatusConditionToArenaPokemon-0", "ApplyStatusConditionToArenaPokemon-1"],
+    "before": "\t*hl = (uint16_t)(p + 2u);",
+    "after": "\t*hl = (uint16_t)(p + 1u);",
+    "case_ids": ["ApplyStatusConditionToArenaPokemon-1", "ApplyStatusConditionToArenaPokemon-4"],
 }
 # <<< factory-mutation ApplyStatusConditionToArenaPokemon
 # >>> factory-mutation CardPageSwitch_EnergyOrTrainerPage1
