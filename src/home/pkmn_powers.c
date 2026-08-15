@@ -45,6 +45,19 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 		}
 	}
 }
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
+
+#define AI_PEEK_TARGET_DECK                   0xffu
+#define AI_PEEK_TARGET_HAND                   0x80u
+#define AI_PEEK_TARGET_PRIZE                  0x40u
+#define DECK_SIZE                             0x3cu
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK  0xbau
+#define DUELVARS_PRIZES                       0xecu
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -98,3 +111,66 @@ AIShiftResult HandleAIShift(uint8_t c)
 	return (AIShiftResult){OPPACTION_DUEL_MAIN_SCENE, r.f};
 }
 /* <<< factory HandleAIShift */
+
+/* >>> factory HandleAIPeek */
+/* pkmn_powers.asm:699-818. Decides whether the AI uses Peek: 47 of 50 Random(50)
+ * rolls decline immediately (ret nc keeps a = the roll and f = the cp 3 flags).
+ * Otherwise Random(3) picks the target: the Player's Deck (bail unless the Player
+ * has >= 2 cards left, i.e. cards-not-in-deck < DECK_SIZE - 1), one of the AI's
+ * own remaining prizes (bit-scan of wAIPeekedPrizes, lowest set bit; the flag is
+ * cleared there and the prize index d is added to AI_PEEK_TARGET_PRIZE), or a
+ * shuffled entry of the Player's hand list (turn is swapped around
+ * CreateHandCardList; a is still the Random(3) result 1 at that call). The
+ * target byte lands in hAIPkmnPowerEffectParam between two AIMakeDecision
+ * oppactions; the tail always exits with a = OPPACTION_DUEL_MAIN_SCENE and
+ * f = the final AIMakeDecision's flags (bank1call = plain call). */
+AIPeekResult HandleAIPeek(uint8_t c)
+{
+	hTemp_ffa0 = c;
+
+	uint8_t roll = Random(50u);
+	if (roll >= 3u)
+		return (AIPeekResult){roll, (uint8_t)(0x40u | (roll == 3u ? 0x80u : 0x00u) | (((roll & 0x0fu) < 3u) ? 0x20u : 0x00u))};
+
+	uint8_t choice = Random(3u);
+	uint8_t param;
+	if (choice == 0u) {
+		/* AI prizes */
+		DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+		uint8_t avail = (uint8_t)(prizes.a & wAIPeekedPrizes);
+		wAIPeekedPrizes = avail;
+		if (avail == 0u)
+			return (AIPeekResult){0x00u, 0x80u};
+		uint8_t bit = 0x01u;
+		uint8_t d = 0u;
+		while ((avail & bit) == 0u) {
+			bit = (uint8_t)(bit << 1u);
+			d++;
+		}
+		wAIPeekedPrizes = (uint8_t)(avail - bit);
+		param = (uint8_t)(AI_PEEK_TARGET_PRIZE + d);
+	} else if (choice < 2u) {
+		/* Player hand */
+		SwapTurn();
+		uint8_t hand = CreateHandCardList(choice).a;
+		SwapTurn();
+		if (hand == 0u)
+			return (AIPeekResult){0x00u, 0x80u};
+		ShuffleCards(CountCardsInDuelTempList().a, wDuelTempList_ADDR);
+		param = (uint8_t)(wDuelTempList | AI_PEEK_TARGET_HAND);
+	} else {
+		/* Player deck */
+		DuelistVarResult notindeck = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		if (notindeck.a >= DECK_SIZE - 1u)
+			return (AIPeekResult){notindeck.a, (uint8_t)(0x40u | (notindeck.a == DECK_SIZE - 1u ? 0x80u : 0x00u) | (((notindeck.a & 0x0fu) < 0x0bu) ? 0x20u : 0x00u))};
+		param = AI_PEEK_TARGET_DECK;
+	}
+
+	hTempCardIndex_ff9f = wce08;
+	AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+	hAIPkmnPowerEffectParam = param;
+	AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+	AIMakeDecisionResult done = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+	return (AIPeekResult){OPPACTION_DUEL_MAIN_SCENE, done.f};
+}
+/* <<< factory HandleAIPeek */

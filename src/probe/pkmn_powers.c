@@ -12,7 +12,17 @@ static void adapt_HandleAIShift(ProbeState *s)
 }
 /* <<< factory HandleAIShift */
 
+/* >>> factory HandleAIPeek */
+static void adapt_HandleAIPeek(ProbeState *s)
+{
+	AIPeekResult r = HandleAIPeek(s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAIPeek */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
+	{ "HandleAIPeek", adapt_HandleAIPeek },
 	{ NULL, NULL },
 };

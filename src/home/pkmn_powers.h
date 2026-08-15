@@ -7,4 +7,8 @@
 typedef struct { uint8_t a; uint8_t f; } AIShiftResult;
 AIShiftResult HandleAIShift(uint8_t c);
 /* <<< factory HandleAIShift */
+/* >>> factory HandleAIPeek */
+typedef struct { uint8_t a; uint8_t f; } AIPeekResult;
+AIPeekResult HandleAIPeek(uint8_t c);
+/* <<< factory HandleAIPeek */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */

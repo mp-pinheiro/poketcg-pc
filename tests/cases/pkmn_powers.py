@@ -25,6 +25,24 @@ CASES["HandleAIShift"] = [
 ]
 # <<< factory HandleAIShift
 
+# >>> factory HandleAIPeek
+hTemp_ffa0 = 0xFFA0
+hTempCardIndex_ff9f = 0xFF9F
+hAIPkmnPowerEffectParam = 0xFFA1
+wAIPeekedPrizes = 0xCDA5
+wDuelTempList = 0xC510
+wce08 = 0xCE08
+CONTRACT["HandleAIPeek"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIPeek"] = [
+	{"c": 0},
+	{"c": 1, "wram": {wAIPeekedPrizes: b"\x24", wce08: b"\x37", hTemp_ffa0: b"\x00", hAIPkmnPowerEffectParam: b"\x00"}},
+	{"c": 5, "wram": {wAIPeekedPrizes: b"\x3f", wDuelTempList: b"\x02\x10\x1f\xff", wce08: b"\x01", hAIPkmnPowerEffectParam: b"\xee"}},
+	{"c": 2, "wram": {wAIPeekedPrizes: b"\x01", wce08: b"\x0c"}},
+	{"c": 3, "wram": {wAIPeekedPrizes: b"\x20", wDuelTempList: b"\xff"}},
+	dict(POISON, c=0x05, wram={wAIPeekedPrizes: b"\x2a", wce08: b"\x81", hTemp_ffa0: b"\x77", hTempCardIndex_ff9f: b"\x66", hAIPkmnPowerEffectParam: b"\x55", wDuelTempList: b"\x04\x0c\x11\x2a\xff"}),
+]
+# <<< factory HandleAIPeek
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -37,3 +55,11 @@ MUTATIONS["HandleAIShift"] = {
 	"case_ids": ["HandleAIShift-0", "HandleAIShift-1", "HandleAIShift-2", "HandleAIShift-3"],
 }
 # <<< factory-mutation HandleAIShift
+# >>> factory-mutation HandleAIPeek
+MUTATIONS["HandleAIPeek"] = {
+	"source_symbol": "HandleAIPeek",
+	"before": "\thTemp_ffa0 = c;",
+	"after": "\thTemp_ffa0 = 0u;",
+	"case_ids": ["HandleAIPeek-1", "HandleAIPeek-2", "HandleAIPeek-3", "HandleAIPeek-4", "HandleAIPeek-5"],
+}
+# <<< factory-mutation HandleAIPeek

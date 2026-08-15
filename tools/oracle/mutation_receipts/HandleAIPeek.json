@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIPeek",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIPeek\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52645\": \"00\", \"52744\": \"37\", \"65440\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIPeek\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"00370100\", \"native\": \"00370000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52645, 1], [52744, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"HandleAIPeek\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"52645\": \"00\", \"52744\": \"37\", \"65440\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}
