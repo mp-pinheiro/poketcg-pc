@@ -632,6 +632,23 @@ static void adapt_YourOrOppPlayAreaScreen_HandleInput(ProbeState *s)
 }
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
 
+/* >>> factory DrawPlayArea_BenchCards */
+static void adapt_DrawPlayArea_BenchCards(ProbeState *s)
+{
+	DrawPlayArea_BenchCards(s->c, s->d, s->e);
+}
+/* <<< factory DrawPlayArea_BenchCards */
+
+/* >>> factory EraseCheckMenuCursor_YourOrOppPlayArea */
+static void adapt_EraseCheckMenuCursor_YourOrOppPlayArea(ProbeState *s)
+{
+	TempListResult r = EraseCheckMenuCursor_YourOrOppPlayArea();
+
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -709,5 +726,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawCheckMenuCursor_YourOrOppPlayArea", adapt_DrawCheckMenuCursor_YourOrOppPlayArea },
 	{ "ZeroObjectPositionsWithCopyToggleOn", adapt_ZeroObjectPositionsWithCopyToggleOn },
 	{ "YourOrOppPlayAreaScreen_HandleInput", adapt_YourOrOppPlayAreaScreen_HandleInput },
+	{ "DrawPlayArea_BenchCards", adapt_DrawPlayArea_BenchCards },
+	{ "EraseCheckMenuCursor_YourOrOppPlayArea", adapt_EraseCheckMenuCursor_YourOrOppPlayArea },
 	{ NULL, NULL },
 };

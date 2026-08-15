@@ -969,6 +969,45 @@ CASES["YourOrOppPlayAreaScreen_HandleInput"] = [
 ]
 # <<< factory YourOrOppPlayAreaScreen_HandleInput
 
+# >>> factory DrawPlayArea_BenchCards
+CONTRACT["DrawPlayArea_BenchCards"] = {"compare": (), "preserve": ()}
+CASES["DrawPlayArea_BenchCards"] = [
+    {"vread": {0: {0x9800: 0x400}}},
+    {"c": 4, "d": 2, "e": 2,
+     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x03",
+              0xC2CF: b"\x00\x01\x02\x00"},
+     "vread": {0: {0x9800: 0x400}}},
+    dict(POISON, c=4, d=2, e=2,
+         wram={0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x04",
+               0xC2CF: b"\x02\x01\x00\x01"},
+         vread={0: {0x9800: 0x400}}),
+    {"c": 4, "d": 2, "e": 2,
+     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC3", 0xC2EF: b"\x03",
+              0xC2CF: b"\x00\x01\x02\x00"},
+     "vread": {0: {0x9800: 0x400}}},
+    {"c": 1, "d": 0, "e": 0,
+     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x00"},
+     "vread": {0: {0x9800: 0x400}}},
+    {"c": 4, "d": 2, "e": 2,
+     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x01"},
+     "vread": {0: {0x9800: 0x400}}},
+    {"c": 4, "d": 2, "e": 2,
+     "wram": {0xCE50: b"\xC2", 0xCE51: b"\xC2", 0xC2EF: b"\x04",
+              0xC2CF: b"\x00\x01\x02\x03", 0xCAB4: b"\x02"},
+     "vread": {0: {0x9800: 0x400}, 1: {0x9800: 0x400}}},
+]
+# <<< factory DrawPlayArea_BenchCards
+
+# >>> factory EraseCheckMenuCursor_YourOrOppPlayArea
+CONTRACT["EraseCheckMenuCursor_YourOrOppPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EraseCheckMenuCursor_YourOrOppPlayArea"] = [
+    {"vread": {0: {0x9800: 0x400}}},
+    dict(POISON, vread={0: {0x9800: 0x400}}),
+    {"wram": {0xCE50: b"\xC2", 0xCE51: b"\xC3"},
+     "vread": {0: {0x9800: 0x400}}},
+]
+# <<< factory EraseCheckMenuCursor_YourOrOppPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1031,3 +1070,21 @@ MUTATIONS["YourOrOppPlayAreaScreen_HandleInput"] = {
     "case_ids": ["YourOrOppPlayAreaScreen_HandleInput-1", "YourOrOppPlayAreaScreen_HandleInput-2", "YourOrOppPlayAreaScreen_HandleInput-3", "YourOrOppPlayAreaScreen_HandleInput-5"],
 }
 # <<< factory-mutation YourOrOppPlayAreaScreen_HandleInput
+# >>> factory-mutation DrawPlayArea_BenchCards
+MUTATIONS["DrawPlayArea_BenchCards"] = {
+    "source_symbol": "DrawPlayArea_BenchCards",
+    "before": "tile = (uint8_t)((uint8_t)(stage << 2) + BPA_TILE_STAGE_BASE);",
+    "after": "tile = (uint8_t)((uint8_t)(stage << 1) + BPA_TILE_STAGE_BASE);",
+    "case_ids": ["DrawPlayArea_BenchCards-1", "DrawPlayArea_BenchCards-2",
+                 "DrawPlayArea_BenchCards-3", "DrawPlayArea_BenchCards-6"],
+}
+# <<< factory-mutation DrawPlayArea_BenchCards
+# >>> factory-mutation EraseCheckMenuCursor_YourOrOppPlayArea
+MUTATIONS["EraseCheckMenuCursor_YourOrOppPlayArea"] = {
+    "source_symbol": "EraseCheckMenuCursor_YourOrOppPlayArea",
+    "before": "return DrawCheckMenuCursor_YourOrOppPlayArea(BPA_SYM_SPACE);",
+    "after": "return DrawCheckMenuCursor_YourOrOppPlayArea(BPA_SYM_CURSOR_R);",
+    "case_ids": ["EraseCheckMenuCursor_YourOrOppPlayArea-0",
+                 "EraseCheckMenuCursor_YourOrOppPlayArea-1"],
+}
+# <<< factory-mutation EraseCheckMenuCursor_YourOrOppPlayArea

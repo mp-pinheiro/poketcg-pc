@@ -548,4 +548,10 @@ void ZeroObjectPositionsWithCopyToggleOn(void);
 /* >>> factory YourOrOppPlayAreaScreen_HandleInput */
 void YourOrOppPlayAreaScreen_HandleInput(void);
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
+/* >>> factory DrawPlayArea_BenchCards */
+void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e);
+/* <<< factory DrawPlayArea_BenchCards */
+/* >>> factory EraseCheckMenuCursor_YourOrOppPlayArea */
+TempListResult EraseCheckMenuCursor_YourOrOppPlayArea(void);
+/* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
 #endif

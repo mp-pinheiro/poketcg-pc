@@ -329,6 +329,22 @@ static void yoopa_draw_cursor(void)
 	uint8_t b = gb_read8((uint16_t)(hl + 2u));
 	SetOneObjectAttributes(e, d, 0x00u, b);
 }
+
+#include "home/tiles.h"
+
+#define BPA_DUELVARS_NUM_POKEMON 0xEFu
+#define BPA_DUELVARS_BENCH1_STAGE 0xCFu
+#define BPA_MAX_PLAY_AREA_POKEMON 0x06u
+#define BPA_CONSOLE_CGB 0x02u
+#define BPA_TILE_STAGE_BASE 0xE4u
+#define BPA_TILE_TWO_STAGE 0xECu
+#define BPA_TILE_TWO_STAGE_ALT 0xF0u
+#define BPA_TILE_EMPTY_SLOT 0xF4u
+#define BPA_RECT_STEPS_TILES 0x0102u
+#define BPA_RECT_STEPS_FLAT 0x0000u
+#define BPA_SYM_SPACE 0x00u
+#define BPA_SYM_CURSOR_R 0x01u
+#define BPA_RVBK 0xFF4Fu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1574,3 +1590,74 @@ void YourOrOppPlayAreaScreen_HandleInput(void)
 	yoopa_draw_cursor();
 }
 /* <<< factory YourOrOppPlayAreaScreen_HandleInput */
+
+/* >>> factory DrawPlayArea_BenchCards */
+/* duel.asm:877-1029 */
+void DrawPlayArea_BenchCards(uint8_t c, uint8_t d, uint8_t e)
+{
+	uint8_t page = wCheckMenuPlayAreaWhichDuelist;
+	uint16_t src;
+	uint8_t count, n, b;
+
+	if (page != wCheckMenuPlayAreaWhichLayout) {
+		d = (uint8_t)(d + (uint8_t)(c * 4u));
+		c = (uint8_t)(0u - c);
+		page = wCheckMenuPlayAreaWhichDuelist;
+	}
+
+	count = gb_read8((uint16_t)(((uint16_t)page << 8) | BPA_DUELVARS_NUM_POKEMON));
+	src = (uint16_t)(((uint16_t)page << 8) | BPA_DUELVARS_BENCH1_STAGE);
+
+	for (;;) {
+		uint8_t stage, tile;
+
+		count = (uint8_t)(count - 1u);
+		if (count == 0u)
+			break;
+		stage = gb_read8(src);
+		src = (uint16_t)(src + 1u);
+		tile = (uint8_t)((uint8_t)(stage << 2) + BPA_TILE_STAGE_BASE);
+		FillRectangle(tile, 2u, 2u, (uint16_t)((uint16_t)d << 8 | e),
+			BPA_RECT_STEPS_TILES);
+		if (wConsole == BPA_CONSOLE_CGB) {
+			uint8_t color = (tile == BPA_TILE_TWO_STAGE
+				|| tile == BPA_TILE_TWO_STAGE_ALT) ? 0x01u : 0x02u;
+
+			gb_write8(BPA_RVBK, 1u);
+			FillRectangle(color, 2u, 2u,
+				(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
+			gb_write8(BPA_RVBK, 0u);
+		}
+		d = (uint8_t)(d + c);
+	}
+
+	count = gb_read8((uint16_t)(((uint16_t)page << 8) | BPA_DUELVARS_NUM_POKEMON));
+	n = (uint8_t)(BPA_MAX_PLAY_AREA_POKEMON - count);
+	if (n == 0u)
+		return;
+
+	b = (uint8_t)(n + 1u);
+	for (;;) {
+		b = (uint8_t)(b - 1u);
+		if (b == 0u)
+			break;
+		FillRectangle(BPA_TILE_EMPTY_SLOT, 2u, 2u,
+			(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_TILES);
+		if (wConsole == BPA_CONSOLE_CGB) {
+			gb_write8(BPA_RVBK, 1u);
+			FillRectangle(0x02u, 2u, 2u,
+				(uint16_t)((uint16_t)d << 8 | e), BPA_RECT_STEPS_FLAT);
+			gb_write8(BPA_RVBK, 0u);
+		}
+		d = (uint8_t)(d + c);
+	}
+}
+/* <<< factory DrawPlayArea_BenchCards */
+
+/* >>> factory EraseCheckMenuCursor_YourOrOppPlayArea */
+/* duel.asm:1340-1341 */
+TempListResult EraseCheckMenuCursor_YourOrOppPlayArea(void)
+{
+	return DrawCheckMenuCursor_YourOrOppPlayArea(BPA_SYM_SPACE);
+}
+/* <<< factory EraseCheckMenuCursor_YourOrOppPlayArea */
