@@ -13,12 +13,10 @@ CONTRACT = {}
 CASES = {}
 
 # >>> factory AnimationCommand_AnimEnd
-CONTRACT["AnimationCommand_AnimEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
-CASES["AnimationCommand_AnimEnd"] = [
-    {},
-    dict(POISON),
-]
+CONTRACT["AnimationCommand_AnimEnd"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["AnimationCommand_AnimEnd"] = [{"wram": {0xC100: b"\x00"}}, dict(POISON, wram={0xC100: b"\xAA"})]
 # <<< factory AnimationCommand_AnimEnd
+
 
 
 
@@ -79,12 +77,7 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
 
 # >>> factory-mutation AnimationCommand_AnimEnd
-MUTATIONS["AnimationCommand_AnimEnd"] = {
-    "source_symbol": "AnimationCommand_AnimEnd",
-    "before": "uint8_t AnimationCommand_AnimEnd(uint8_t a)\n{\n\treturn a;\n}",
-    "after": "uint8_t AnimationCommand_AnimEnd(uint8_t a)\n{\n\treturn (uint8_t)(a + 1u);\n}",
-    "case_ids": ["AnimationCommand_AnimEnd-0", "AnimationCommand_AnimEnd-1"],
-}
+MUTATIONS["AnimationCommand_AnimEnd"] = {"source_symbol": "AnimationCommand_AnimEnd", "before": "\treturn;", "after": "\tgb_write8(0xC100u, 0x01u);", "case_ids": ["AnimationCommand_AnimEnd-0", "AnimationCommand_AnimEnd-1"]}
 # <<< factory-mutation AnimationCommand_AnimEnd
 
 # >>> factory-mutation UpdateDuelAnimationScreen

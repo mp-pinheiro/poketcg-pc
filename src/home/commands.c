@@ -94,10 +94,11 @@ void DuelAnim153(void)
 }
 /* <<< factory DuelAnim153 */
 
+
 /* >>> factory AnimationCommand_AnimEnd */
-/* commands.asm:47 */
-uint8_t AnimationCommand_AnimEnd(uint8_t a)
+/* commands.asm:47-48 */
+void AnimationCommand_AnimEnd(void)
 {
-	return a;
+	return;
 }
 /* <<< factory AnimationCommand_AnimEnd */

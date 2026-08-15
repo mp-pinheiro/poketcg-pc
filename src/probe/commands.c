@@ -32,14 +32,15 @@ static void adapt_DuelAnim153(ProbeState *s)
 /* >>> factory AnimationCommand_AnimEnd */
 static void adapt_AnimationCommand_AnimEnd(ProbeState *s)
 {
-	s->a = AnimationCommand_AnimEnd(s->a);
+	AnimationCommand_AnimEnd();
 }
 /* <<< factory AnimationCommand_AnimEnd */
+
 
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
-	{ "AnimationCommand_AnimEnd", adapt_AnimationCommand_AnimEnd },
 	{ "AnimationCommand_AnimEnd2", adapt_AnimationCommand_AnimEnd2 },
+	{ "AnimationCommand_AnimEnd", adapt_AnimationCommand_AnimEnd },
 	{ NULL, NULL },
 };

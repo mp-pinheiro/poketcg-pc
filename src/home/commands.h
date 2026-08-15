@@ -21,6 +21,6 @@ UpdateDuelAnimationScreenResult UpdateDuelAnimationScreen(uint16_t hl);
 void DuelAnim153(void);
 /* <<< factory DuelAnim153 */
 /* >>> factory AnimationCommand_AnimEnd */
-uint8_t AnimationCommand_AnimEnd(uint8_t a);
+void AnimationCommand_AnimEnd(void);
 /* <<< factory AnimationCommand_AnimEnd */
 #endif
