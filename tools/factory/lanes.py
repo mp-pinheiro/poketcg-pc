@@ -9,7 +9,9 @@ rebuilds stay incremental.
 
 from __future__ import annotations
 
+import os
 import subprocess
+import time
 from pathlib import Path
 
 from common import LANE_BASE, ROOT, run_bounded
@@ -26,14 +28,27 @@ def lane_dir(index: int) -> Path:
 
 
 def ensure(index: int, deadline: float | None = None) -> Path:
-    """Create or refresh lane <index> from the current repo tree."""
+    """Create or refresh lane <index> from the current repo tree.
+
+    The lane keeps its build dir, so restoring a file rsync had previously
+    overwritten leaves ninja's object from that earlier packet newer than the
+    restored source: the lane relinks a routine that no longer exists and every
+    later packet in it fails to build. rsync cannot fix this - once content
+    matches the repo again it transfers nothing - so every file surgery is
+    allowed to write is stamped after the sync.
+    """
     lane = lane_dir(index)
     lane.mkdir(parents=True, exist_ok=True)
-    command = ["rsync", "-a", "--delete"]
+    command = ["rsync", "-a", "--checksum", "--no-times", "--delete"]
     for pattern in RSYNC_EXCLUDES:
         command += ["--exclude", pattern]
     command += [f"{ROOT}/", f"{lane}/"]
-    run_bounded(command, cwd=ROOT, cap=120, deadline=deadline, check=True)
+    run_bounded(command, cwd=ROOT, cap=300, deadline=deadline, check=True)
+    stamp = time.time()
+    for folder in ("src/home", "src/probe", "tests/cases"):
+        for path in (lane / folder).glob("*"):
+            if path.is_file():
+                os.utime(path, (stamp, stamp))
     link = lane / "poketcg"
     if not link.is_symlink():
         if link.exists():
