@@ -46,6 +46,28 @@ CASES["CalculateWordTensDigit"] = [
 ]
 # <<< factory CalculateWordTensDigit
 
+# >>> factory PickTwoAttachedEnergyCards
+CONTRACT["PickTwoAttachedEnergyCards"] = {"compare": ("a",), "preserve": ()}
+CASES["PickTwoAttachedEnergyCards"] = [
+    {"a": 0, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
+    {"a": 1, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
+    {"a": 5, "read": {0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}},
+    dict(POISON, a=0, read={0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}),
+    dict(POISON, a=2, read={0xCDF1: 2, 0xCDB9: 2, 0xC510: 8}),
+]
+# <<< factory PickTwoAttachedEnergyCards
+
+# >>> factory ClearMemory_Bank8
+CONTRACT["ClearMemory_Bank8"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["ClearMemory_Bank8"] = [
+    {"a": 0, "hl": 0xC100, "wram": {0xC100: b"\xaa" * 256}, "read": {0xC100: 260}},
+    {"a": 1, "hl": 0xC200, "wram": {0xC200: b"\xaa\xaa\xaa"}, "read": {0xC200: 4}},
+    {"a": 5, "hl": 0xC300, "wram": {0xC300: b"\xaa" * 8}, "read": {0xC300: 8}},
+    dict(POISON, a=0, hl=0xC400, wram={0xC400: b"\xaa" * 256}, read={0xC400: 260}),
+    dict(POISON, a=3, hl=0xC600, wram={0xC600: b"\xaa" * 8}, read={0xC600: 8}),
+]
+# <<< factory ClearMemory_Bank8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -74,3 +96,19 @@ MUTATIONS["CalculateWordTensDigit"] = {
     "case_ids": ["CalculateWordTensDigit-3", "CalculateWordTensDigit-4", "CalculateWordTensDigit-8"],
 }
 # <<< factory-mutation CalculateWordTensDigit
+# >>> factory-mutation PickTwoAttachedEnergyCards
+MUTATIONS["PickTwoAttachedEnergyCards"] = {
+    "source_symbol": "PickTwoAttachedEnergyCards",
+    "before": "\t\treturn (PickTwoResult){0xffu, 0u, 0u};",
+    "after": "\t\treturn (PickTwoResult){0xfeu, 0u, 0u};",
+    "case_ids": ["PickTwoAttachedEnergyCards-0", "PickTwoAttachedEnergyCards-1", "PickTwoAttachedEnergyCards-2", "PickTwoAttachedEnergyCards-3", "PickTwoAttachedEnergyCards-4"],
+}
+# <<< factory-mutation PickTwoAttachedEnergyCards
+# >>> factory-mutation ClearMemory_Bank8
+MUTATIONS["ClearMemory_Bank8"] = {
+    "source_symbol": "ClearMemory_Bank8",
+    "before": "\tuint32_t n = a ? (uint32_t)a : 0x100u;",
+    "after": "\tuint32_t n = (uint32_t)a;",
+    "case_ids": ["ClearMemory_Bank8-0", "ClearMemory_Bank8-3"],
+}
+# <<< factory-mutation ClearMemory_Bank8

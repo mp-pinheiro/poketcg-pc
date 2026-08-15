@@ -13,4 +13,11 @@ uint8_t ConvertHPToDamageCounters_Bank8(uint8_t a);
 /* >>> factory CalculateWordTensDigit */
 uint16_t CalculateWordTensDigit(uint16_t hl);
 /* <<< factory CalculateWordTensDigit */
+/* >>> factory PickTwoAttachedEnergyCards */
+typedef struct { uint8_t a; uint8_t b; uint8_t b_valid; } PickTwoResult;
+PickTwoResult PickTwoAttachedEnergyCards(uint8_t a);
+/* <<< factory PickTwoAttachedEnergyCards */
+/* >>> factory ClearMemory_Bank8 */
+void ClearMemory_Bank8(uint8_t a, uint16_t hl);
+/* <<< factory ClearMemory_Bank8 */
 #endif /* POKETCG_HOME_COMMON_H */

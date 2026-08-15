@@ -9,6 +9,15 @@
 #define CARD_LIST_TERMINATOR 0xFFu
 #define F_Z 0x80u
 #define F_C 0x10u
+
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#define DOUBLE_COLORLESS_ENERGY 0x07u
+#define DUELVARS_ARENA_CARD     0xbbu
+#define TYPE_ENERGY             0x08u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -43,3 +52,86 @@ uint16_t CalculateWordTensDigit(uint16_t hl)
 	return (uint16_t)(hl / 10u);
 }
 /* <<< factory CalculateWordTensDigit */
+
+/* >>> factory PickTwoAttachedEnergyCards */
+/* common.asm:285-411 */
+PickTwoResult PickTwoAttachedEnergyCards(uint8_t a)
+{
+	hTempPlayAreaLocation_ff9d = a;
+	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t loc = hTempPlayAreaLocation_ff9d;
+	if (CountNumberOfEnergyCardsAttached(loc).a < 2u)
+		return (PickTwoResult){0xffu, 0u, 0u};
+
+	loc = hTempPlayAreaLocation_ff9d;
+	uint8_t deckindex = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
+	uint16_t id = GetCardIDFromDeckIndex(deckindex);
+	wTempCardID = (uint8_t)id;
+	LoadCardDataToBuffer1_FromCardID((uint8_t)id);
+	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+	wTempAI = 0xffu;
+	wCurCardCanAttack = 0xffu;
+
+	uint16_t hl = wDuelTempList_ADDR;
+	uint8_t v;
+	for (;;) {
+		v = gb_read8(hl);
+		if (v == 0xffu)
+			break;
+		if ((uint8_t)GetCardIDFromDeckIndex(v) == DOUBLE_COLORLESS_ENERGY) {
+			if (wTempAI != 0xffu) {
+				wCurCardCanAttack = gb_read8(hl);
+				goto done;
+			}
+			wTempAI = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			continue;
+		}
+		hl = (uint16_t)(hl + 1u);
+	}
+
+	hl = wDuelTempList_ADDR;
+	for (;;) {
+		v = gb_read8(hl);
+		if (v == 0xffu)
+			break;
+		if (CheckIfEnergyIsUseful(v).f & 0x10u) {
+			if (wTempAI != 0xffu) {
+				wCurCardCanAttack = gb_read8(hl);
+				goto done;
+			}
+			wTempAI = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			continue;
+		}
+		hl = (uint16_t)(hl + 1u);
+	}
+
+	hl = wDuelTempList_ADDR;
+	if (wTempAI == 0xffu) {
+		wTempAI = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		wCurCardCanAttack = gb_read8(hl);
+	} else {
+		uint8_t b = wTempAI;
+		do {
+			v = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+		} while (v == b);
+		wCurCardCanAttack = v;
+	}
+
+done:
+	return (PickTwoResult){wTempAI, wCurCardCanAttack, 1u};
+}
+/* <<< factory PickTwoAttachedEnergyCards */
+
+/* >>> factory ClearMemory_Bank8 */
+/* common.asm:414-426 */
+void ClearMemory_Bank8(uint8_t a, uint16_t hl)
+{
+	uint32_t n = a ? (uint32_t)a : 0x100u;
+	for (uint32_t i = 0; i < n; i++)
+		gb_write8((uint16_t)(hl + i), 0u);
+}
+/* <<< factory ClearMemory_Bank8 */

@@ -1,0 +1,9 @@
+{
+  "fn": "PickTwoAttachedEnergyCards",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PickTwoAttachedEnergyCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00000000000000\", \"52665\": \"0000\", \"52721\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PickTwoAttachedEnergyCards\", \"mismatches\": {\"a\": [255, 254]}}\n",
+  "restored": "{\"fn\": \"PickTwoAttachedEnergyCards\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00000000000000\", \"52665\": \"0000\", \"52721\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

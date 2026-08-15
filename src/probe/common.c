@@ -27,9 +27,28 @@ static void adapt_CalculateWordTensDigit(ProbeState *s)
 }
 /* <<< factory CalculateWordTensDigit */
 
+/* >>> factory PickTwoAttachedEnergyCards */
+static void adapt_PickTwoAttachedEnergyCards(ProbeState *s)
+{
+	PickTwoResult r = PickTwoAttachedEnergyCards(s->a);
+	s->a = r.a;
+	if (r.b_valid)
+		s->b = r.b;
+}
+/* <<< factory PickTwoAttachedEnergyCards */
+
+/* >>> factory ClearMemory_Bank8 */
+static void adapt_ClearMemory_Bank8(ProbeState *s)
+{
+	ClearMemory_Bank8(s->a, s->hl);
+}
+/* <<< factory ClearMemory_Bank8 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
 	{ "CalculateWordTensDigit", adapt_CalculateWordTensDigit },
+	{ "PickTwoAttachedEnergyCards", adapt_PickTwoAttachedEnergyCards },
+	{ "ClearMemory_Bank8", adapt_ClearMemory_Bank8 },
 	{ NULL, NULL },
 };
