@@ -347,6 +347,27 @@ static void adapt_ScriptCommand_BattleCenter(ProbeState *s)
 }
 /* <<< factory ScriptCommand_BattleCenter */
 
+/* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+static void adapt_ScriptCommand_LoadCurrentMapNameIntoTxRamSlot(ProbeState *s)
+{
+	ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult r = ScriptCommand_LoadCurrentMapNameIntoTxRamSlot(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+
+/* >>> factory ScriptCommand_EnterMap */
+static void adapt_ScriptCommand_EnterMap(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_EnterMap();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_EnterMap */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -382,5 +403,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_EndScript", adapt_ScriptCommand_EndScript },
 	{ "SetNPCDuelParams", adapt_SetNPCDuelParams },
 	{ "ScriptCommand_BattleCenter", adapt_ScriptCommand_BattleCenter },
+	{ "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot", adapt_ScriptCommand_LoadCurrentMapNameIntoTxRamSlot },
+	{ "ScriptCommand_EnterMap", adapt_ScriptCommand_EnterMap },
 	{ NULL, NULL },
 };

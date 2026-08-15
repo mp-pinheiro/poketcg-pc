@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_EnterMap",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_EnterMap\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 6, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"10\", \"54291\": \"4506\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_EnterMap\", \"mismatches\": {\"bus\": {\"address\": 53428, \"reference\": \"104506\", \"native\": \"204506\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53428, 1], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_EnterMap\", \"registers\": {\"a\": 6, \"b\": 0, \"c\": 6, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"10\", \"54291\": \"4506\"}}, \"status\": \"PASS\"}\n"
+}

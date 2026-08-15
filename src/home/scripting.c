@@ -52,6 +52,17 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #define TRUE                     0x01u
 #define GAME_EVENT_BATTLE_CENTER 0x02u
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+/* scripting.asm:1400. MapNames is a table of 12 tx (2-byte) name pointers
+ * sitting right after ScriptCommand_LoadCurrentMapNameIntoTxRamSlot in the
+ * overworld script bank. The routine does not switch banks itself, so the
+ * table is reached through ordinary bus reads at this $4000-$7fff window
+ * offset. */
+#define MAP_NAMES 0x7080u
 /* <<< factory statics */
 
 
@@ -454,3 +465,47 @@ IncreaseScriptPointerResult ScriptCommand_BattleCenter(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_BattleCenter */
+
+/* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+/* scripting.asm:1370-1398. sla c doubles the slot index into a byte offset
+ * (bc = c*2 & $ff, b cleared); wTxRam2+bc receives the 2-byte tx pointer for
+ * the map selected by wOverworldMapSelection (rlca doubles the selection
+ * into the table index, base MapNames-2). Then tail-jumps
+ * IncreaseScriptPointerBy2, so a/f/c at ret come from that callee while b
+ * holds the 0 produced by the body (d/e/hl hold body residue the callee
+ * preserves but no caller consumes). */
+ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult ScriptCommand_LoadCurrentMapNameIntoTxRamSlot(uint8_t c)
+{
+	uint16_t dest = (uint16_t)(wTxRam2_ADDR + (uint8_t)(c << 1));
+	uint8_t sel = wOverworldMapSelection;
+	uint8_t idx = (uint8_t)((sel << 1) | (sel >> 7));
+	uint16_t src = (uint16_t)(MAP_NAMES - 2u + idx);
+	uint8_t lo = gb_read8(src);
+	uint8_t hi = gb_read8((uint16_t)(src + 1u));
+	gb_write8(dest, lo);
+	gb_write8((uint16_t)(dest + 1u), hi);
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy2();
+	return (ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult){r.a, r.f, 0x00u, r.c};
+}
+/* <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+
+/* >>> factory ScriptCommand_EnterMap */
+/* scripting.asm:1761-1774. Builds hl from wScriptPointer, skips the command
+ * byte and the first argument byte (read but discarded), then stores the next
+ * four bytes into wTempMap / wTempPlayerXCoord / wTempPlayerYCoord /
+ * wTempPlayerDirection, sets bit 4 of wOverworldTransition, and tail-jumps
+ * IncreaseScriptPointerBy6. All argument fetches are bus reads: the script
+ * data lives wherever the caller banked it; 16-bit hl arithmetic wraps. */
+IncreaseScriptPointerResult ScriptCommand_EnterMap(void)
+{
+	uint16_t hl = (uint16_t)(gb_read8(wScriptPointer_ADDR) | (uint16_t)gb_read8(wScriptPointer_ADDR + 1u) << 8);
+	hl++;
+	gb_read8(hl++);
+	gb_write8(wTempMap_ADDR, gb_read8(hl++));
+	gb_write8(wTempPlayerXCoord_ADDR, gb_read8(hl++));
+	gb_write8(wTempPlayerYCoord_ADDR, gb_read8(hl++));
+	gb_write8(wTempPlayerDirection_ADDR, gb_read8(hl++));
+	wOverworldTransition |= 0x10u;
+	return IncreaseScriptPointerBy6();
+}
+/* <<< factory ScriptCommand_EnterMap */

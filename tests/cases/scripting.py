@@ -23,6 +23,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -398,6 +399,30 @@ CASES["ScriptCommand_BattleCenter"] = [
 ]
 # <<< factory ScriptCommand_BattleCenter
 
+# >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
+CONTRACT["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = {"compare": ("a", "f", "b", "c"), "preserve": ()}
+CASES["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = [
+	{"c": 0, "wram": {0xD413: b"\x00\x00"}},
+	{"c": 0, "wram": {0xD32E: b"\x00", 0xD413: b"\xff\xff"}},
+	{"c": 1, "wram": {0xD32E: b"\x01", 0xD413: b"\x10\x06"}},
+	{"c": 2, "wram": {0xD32E: b"\x0b"}},
+	{"c": 0x40, "wram": {0xD32E: b"\x80"}},
+	{"c": 0x7f, "wram": {0xD32E: b"\xff"}},
+	dict(POISON, c=3, wram={0xD32E: b"\x05", 0xD413: b"\x00\xd0"}),
+]
+# <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
+
+# >>> factory ScriptCommand_EnterMap
+CONTRACT["ScriptCommand_EnterMap"] = {"compare": ("a", "f", "c", "b", "d", "e"), "preserve": ("b", "d", "e")}
+CASES["ScriptCommand_EnterMap"] = [
+	{},
+	{"wram": {0xD413: b"\x3f\x06", 0xD0B4: b"\x00"}},
+	{"wram": {0xD413: b"\xfd\xff", 0xD0B4: b"\xef"}},
+	{"wram": {0xD413: b"\xff\xff", 0xD0B4: b"\xff", 0xD0BB: b"\x00", 0xD0BC: b"\x00", 0xD0BD: b"\x00", 0xD0BE: b"\x00"}},
+	dict(POISON, wram={0xD413: b"\x00\xd0", 0xD0B4: b"\x0f", 0xD0BB: b"\x11", 0xD0BC: b"\x22", 0xD0BD: b"\x33", 0xD0BE: b"\x44"}),
+]
+# <<< factory ScriptCommand_EnterMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -652,3 +677,9 @@ MUTATIONS["ScriptCommand_BattleCenter"] = {
 	"case_ids": ["ScriptCommand_BattleCenter-0", "ScriptCommand_BattleCenter-1", "ScriptCommand_BattleCenter-2", "ScriptCommand_BattleCenter-3", "ScriptCommand_BattleCenter-4"],
 }
 # <<< factory-mutation ScriptCommand_BattleCenter
+# >>> factory-mutation ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
+MUTATIONS["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = {"source_symbol": "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot", "before": "\treturn (ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult){r.a, r.f, 0x00u, r.c};", "after": "\treturn (ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult){r.a, r.f, 0x01u, r.c};", "case_ids": ["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-0", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-1", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-2", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-3", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-4", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-5", "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot-6"]}
+# <<< factory-mutation ScriptCommand_LoadCurrentMapNameIntoTxRamSlot
+# >>> factory-mutation ScriptCommand_EnterMap
+MUTATIONS["ScriptCommand_EnterMap"] = {"source_symbol": "ScriptCommand_EnterMap", "before": "\twOverworldTransition |= 0x10u;", "after": "\twOverworldTransition |= 0x20u;", "case_ids": ["ScriptCommand_EnterMap-1", "ScriptCommand_EnterMap-2", "ScriptCommand_EnterMap-3", "ScriptCommand_EnterMap-4"]}
+# <<< factory-mutation ScriptCommand_EnterMap

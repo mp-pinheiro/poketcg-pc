@@ -162,4 +162,19 @@ SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c);
 /* >>> factory ScriptCommand_BattleCenter */
 IncreaseScriptPointerResult ScriptCommand_BattleCenter(void);
 /* <<< factory ScriptCommand_BattleCenter */
+/* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+/* >>> factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult;
+
+ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult ScriptCommand_LoadCurrentMapNameIntoTxRamSlot(uint8_t c);
+/* <<< factory ScriptCommand_LoadCurrentMapNameIntoTxRamSlot */
+/* >>> factory ScriptCommand_EnterMap */
+/* >>> factory ScriptCommand_EnterMap */
+IncreaseScriptPointerResult ScriptCommand_EnterMap(void);
+/* <<< factory ScriptCommand_EnterMap */
 #endif
