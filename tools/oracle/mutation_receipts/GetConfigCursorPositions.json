@@ -1,0 +1,9 @@
+{
+  "fn": "GetConfigCursorPositions",
+  "case": "tests/cases/config.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetConfigCursorPositions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"0000\", \"40969\": \"00\"}}, \"vram\": {}, \"wram\": {\"53528\": \"0400\", \"54305\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetConfigCursorPositions\", \"mismatches\": {\"bus\": {\"address\": 53528, \"reference\": \"040000\", \"native\": \"030000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53528, 2], [54305, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetConfigCursorPositions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"0000\", \"40969\": \"00\"}}, \"vram\": {}, \"wram\": {\"53528\": \"0400\", \"54305\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

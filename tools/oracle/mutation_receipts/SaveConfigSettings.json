@@ -1,0 +1,9 @@
+{
+  "fn": "SaveConfigSettings",
+  "case": "tests/cases/config.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SaveConfigSettings\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"0201\", \"40969\": \"01\"}}, \"vram\": {}, \"wram\": {\"52807\": \"02\", \"53528\": \"0202\", \"54305\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SaveConfigSettings\", \"mismatches\": {\"bus\": {\"address\": 54305, \"reference\": \"02020201\", \"native\": \"02020200\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52807, 1], [53528, 2], [54305, 1]]}, \"sram\": {\"byte\": 1, \"reference\": \"020101\", \"native\": \"020000\"}}}\n",
+  "restored": "{\"fn\": \"SaveConfigSettings\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"40966\": \"0201\", \"40969\": \"01\"}}, \"vram\": {}, \"wram\": {\"52807\": \"02\", \"53528\": \"0202\", \"54305\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
