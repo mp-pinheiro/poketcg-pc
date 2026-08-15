@@ -21,6 +21,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -353,6 +354,36 @@ CASES["ScriptCommand_DoFrames"] = [
 ]
 # <<< factory ScriptCommand_DoFrames
 
+# >>> factory ScriptCommand_EndScript
+wBreakScriptLoop = 0xD412
+wDuelTheme = 0xCC1A
+wGameEvent = 0xD0B5
+wNPCDuelDeckID = 0xCC19
+wNPCDuelPrizes = 0xCC18
+wOverworldTransition = 0xD0B4
+wScriptControlByte = 0xD415
+CONTRACT["ScriptCommand_EndScript"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_EndScript"] = [
+	{},
+	dict(POISON),
+	{"wram": {wBreakScriptLoop: b"\x00", wScriptControlByte: b"\x00"}},
+	{"wram": {wBreakScriptLoop: b"\x5a", wScriptControlByte: b"\xff"}},
+	dict(POISON, wram={wBreakScriptLoop: b"\x00", wScriptControlByte: b"\x00"}),
+]
+# <<< factory ScriptCommand_EndScript
+
+# >>> factory SetNPCDuelParams
+CONTRACT["SetNPCDuelParams"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["SetNPCDuelParams"] = [
+	{},
+	{"b": 0x00, "c": 0x00, "wram": {wNPCDuelPrizes: b"\x00", wNPCDuelDeckID: b"\x00", wDuelTheme: b"\x00", wScriptControlByte: b"\x00"}},
+	{"b": 0x15, "c": 0x06, "wram": {wNPCDuelPrizes: b"\xaa", wNPCDuelDeckID: b"\xbb", wDuelTheme: b"\xcc"}},
+	{"b": 0xFF, "c": 0xFF, "wram": {wNPCDuelPrizes: b"\x00", wNPCDuelDeckID: b"\x00", wDuelTheme: b"\x00"}},
+	{"b": 0x01, "c": 0x00, "wram": {wNPCDuelPrizes: b"\x00", wNPCDuelDeckID: b"\x00", wDuelTheme: b"\x00"}},
+	dict(POISON, b=0x34, c=0x12, wram={wNPCDuelPrizes: b"\x11", wNPCDuelDeckID: b"\x22", wDuelTheme: b"\x33"}),
+]
+# <<< factory SetNPCDuelParams
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -583,3 +614,19 @@ MUTATIONS["ScriptCommand_DoFrames"] = {
 	"case_ids": ["ScriptCommand_DoFrames-0", "ScriptCommand_DoFrames-1", "ScriptCommand_DoFrames-2", "ScriptCommand_DoFrames-3"],
 }
 # <<< factory-mutation ScriptCommand_DoFrames
+# >>> factory-mutation ScriptCommand_EndScript
+MUTATIONS["ScriptCommand_EndScript"] = {
+	"source_symbol": "ScriptCommand_EndScript",
+	"before": "\twBreakScriptLoop = TRUE;",
+	"after": "\twBreakScriptLoop = 0x00u;",
+	"case_ids": ["ScriptCommand_EndScript-2", "ScriptCommand_EndScript-3", "ScriptCommand_EndScript-4"],
+}
+# <<< factory-mutation ScriptCommand_EndScript
+# >>> factory-mutation SetNPCDuelParams
+MUTATIONS["SetNPCDuelParams"] = {
+	"source_symbol": "SetNPCDuelParams",
+	"before": "\twNPCDuelDeckID = b;",
+	"after": "\twNPCDuelDeckID = c;",
+	"case_ids": ["SetNPCDuelParams-2", "SetNPCDuelParams-4", "SetNPCDuelParams-5"],
+}
+# <<< factory-mutation SetNPCDuelParams

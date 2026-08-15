@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_EndScript",
+  "case": "tests/cases/scripting.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_EndScript\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54290\": \"01\", \"54293\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_EndScript\", \"mismatches\": {\"bus\": {\"address\": 54290, \"reference\": \"0100\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54290, 1], [54293, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_EndScript\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54290\": \"01\", \"54293\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

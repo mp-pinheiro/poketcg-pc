@@ -143,4 +143,19 @@ SetSpriteAttributesResult ScriptCommand_SetSpriteAttributes(uint8_t b, uint8_t c
 /* >>> factory ScriptCommand_DoFrames */
 IncreaseScriptPointerResult ScriptCommand_DoFrames(uint8_t c);
 /* <<< factory ScriptCommand_DoFrames */
+/* >>> factory ScriptCommand_EndScript */
+/* >>> factory ScriptCommand_EndScript */
+IncreaseScriptPointerResult ScriptCommand_EndScript(void);
+/* <<< factory ScriptCommand_EndScript */
+/* >>> factory SetNPCDuelParams */
+/* >>> factory SetNPCDuelParams */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} SetNPCDuelParamsResult;
+
+SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c);
+/* <<< factory SetNPCDuelParams */
 #endif

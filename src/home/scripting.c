@@ -49,6 +49,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_MAN1_REQUESTED_CARD_ID 0x2bu
 #define LOADED_NPC_FLAGS             0x05u
 #define NPC_FLAG_DIRECTIONLESS_F     0x04u
+
+#define TRUE                     0x01u
+#define GAME_EVENT_BATTLE_CENTER 0x02u
 /* <<< factory statics */
 
 
@@ -410,3 +413,32 @@ IncreaseScriptPointerResult ScriptCommand_DoFrames(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_DoFrames */
+
+/* >>> factory ScriptCommand_EndScript */
+/* scripting.asm:652-655. Stores TRUE to wBreakScriptLoop, then tail-jumps into
+ * IncreaseScriptPointerBy1, so the exit a/f/c are that helper's outputs and
+ * b/d/e/hl pass through untouched. */
+IncreaseScriptPointerResult ScriptCommand_EndScript(void)
+{
+	wBreakScriptLoop = TRUE;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_EndScript */
+
+/* >>> factory SetNPCDuelParams */
+/* scripting.asm:753-761. Stores the prize count and deck id, then reads the
+ * duel theme from the script args. The trailing `ld a, c` refreshes Z/N/H from
+ * the final c while the carry bit survives from GetScriptArgs3AfterPointer's
+ * exit flags; b/c/d/e/hl at ret are that helper's exit state (d/e/hl kept). */
+SetNPCDuelParamsResult SetNPCDuelParams(uint8_t b, uint8_t c)
+{
+	wNPCDuelPrizes = c;
+	wNPCDuelDeckID = b;
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	wDuelTheme = args.c;
+	uint8_t f = args.f & 0x10u; /* ld a, c : carry unchanged */
+	if (args.c == 0)
+		f |= 0x80u; /* Z set when the theme byte is zero */
+	return (SetNPCDuelParamsResult){args.c, f, args.b, args.c};
+}
+/* <<< factory SetNPCDuelParams */

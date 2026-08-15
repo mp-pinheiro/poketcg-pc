@@ -316,6 +316,27 @@ static void adapt_ScriptCommand_DoFrames(ProbeState *s)
 }
 /* <<< factory ScriptCommand_DoFrames */
 
+/* >>> factory ScriptCommand_EndScript */
+static void adapt_ScriptCommand_EndScript(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_EndScript();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_EndScript */
+
+/* >>> factory SetNPCDuelParams */
+static void adapt_SetNPCDuelParams(ProbeState *s)
+{
+	SetNPCDuelParamsResult r = SetNPCDuelParams(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory SetNPCDuelParams */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -348,5 +369,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PlayDefaultSong", adapt_ScriptCommand_PlayDefaultSong },
 	{ "ScriptCommand_SetSpriteAttributes", adapt_ScriptCommand_SetSpriteAttributes },
 	{ "ScriptCommand_DoFrames", adapt_ScriptCommand_DoFrames },
+	{ "ScriptCommand_EndScript", adapt_ScriptCommand_EndScript },
+	{ "SetNPCDuelParams", adapt_SetNPCDuelParams },
 	{ NULL, NULL },
 };
