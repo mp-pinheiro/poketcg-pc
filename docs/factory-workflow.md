@@ -77,9 +77,10 @@ old fixed cohort of 10 — it is a safety bound, not the expected duration.
 holds `.factory/wave.lock` — only between waves, as above.
 
 Bundles are composable (`surgery.extract`/`apply`, additive per-routine
-fragments), so two packets of the same basename can run in one wave and both
-land. A returned `deadline` or `stopped` wave is a clean partial return; the
-outer loop stops instead of retrying an outage.
+fragments). The basename is the lane concurrency unit: packets sharing a
+basename are deferred to a later wave, after the first bundle is integrated.
+A returned `deadline` or `stopped` wave is a clean partial return; the
+supervisor journals it and either retries it or selects a typed recovery path.
 
 A lane runs the central comparator (`compare_one.py`) over every case in the
 packet before the PyBoy lane, so `oracle-fn-all` cannot reject what a packet

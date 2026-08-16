@@ -27,6 +27,7 @@ import common  # noqa: E402
 
 ROOT = common.ROOT
 JOURNAL = common.FACTORY / "supervisor.json"
+FORGEJO_SYNC = common.FACTORY / "forgejo-sync.json"
 LOCK_PATH = common.FACTORY / "supervisor.lock"
 JOURNAL_SCHEMA = 1
 HISTORICAL = common.HISTORICAL_STATES
@@ -254,6 +255,30 @@ def _provider_failure(result: dict) -> bool:
         return True
     return result.get("retryable") is True and "provider" in detail
 
+def _defer_forgejo_sync(error: Exception | str) -> None:
+    common.write_json(FORGEJO_SYNC, {
+        "schema": 1,
+        "error": str(error),
+        "not_before": int(time.time()) + 60,
+        "updated_at": int(time.time()),
+    })
+
+
+def _sync_forgejo() -> dict:
+    try:
+        subprocess.run(["just", "issues-sync-apply"], cwd=ROOT, check=True)
+        subprocess.run(["just", "issues-verify"], cwd=ROOT, check=True)
+    except Exception as exc:
+        _defer_forgejo_sync(exc)
+        return {
+            "status": "failed",
+            "failure_class": "provider",
+            "detail": str(exc),
+            "retryable": True,
+        }
+    FORGEJO_SYNC.unlink(missing_ok=True)
+    return {"status": "complete", "success": True}
+
 def _write_journal(data: dict) -> None:
     common.write_json(JOURNAL, data)
 
@@ -368,6 +393,8 @@ def next_action(*, current: dict | None = None) -> dict:
                 "not_before": journal["not_before"],
                 "packet_ids": journal.get("packet_ids", []),
                 "snapshot": snap}
+    if FORGEJO_SYNC.exists():
+        return {"kind": "forgejo-sync", "packet_ids": [], "snapshot": snap}
     if not snap["completion"]["gate"]["current"]:
         kind = "gate-refresh"
     elif journal and journal.get("candidate_commit"):
@@ -435,10 +462,16 @@ def _deterministic_action(action: dict, **_limits: Any) -> dict:
         ]
         result = integrate.integrate(packets, push=True,
                                      group=kind == "integration-resume")
-        subprocess.run(["just", "issues-sync-apply"], cwd=ROOT, check=True)
-        subprocess.run(["just", "issues-verify"], cwd=ROOT, check=True)
+        sync = _sync_forgejo()
+        if sync.get("status") != "complete":
+            sync["kind"] = kind
+            return sync
         return {"status": "complete", "success": True, "kind": kind,
                 "integration": result}
+    if kind == "forgejo-sync":
+        result = _sync_forgejo()
+        result["kind"] = kind
+        return result
     if kind == "revalidate-blockers":
         return {"status": "blocked", "success": False, "kind": kind,
                 "reason": "revalidation requires an SCC or cleared dependency"}
@@ -618,7 +651,8 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                         "action": action,
                     }
             if action["kind"] in {"gate-refresh", "integrate-green",
-                                  "integration-resume", "revalidate-blockers"}:
+                                  "integration-resume", "revalidate-blockers",
+                                  "forgejo-sync"}:
                 callback = _deterministic_action
             else:
                 callback = recover_many if action["kind"] in {

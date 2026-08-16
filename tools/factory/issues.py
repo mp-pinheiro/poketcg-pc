@@ -802,8 +802,8 @@ def main() -> int:
             return 0
         if args.command == "sync":
             assert_gate_fresh()
-            plan = desired_plan(load_cache(path=args.cache),
-                                load_committed_report(args.report))
+            snapshot = load_cache(path=args.cache)
+            plan = desired_plan(snapshot, load_committed_report(args.report))
             save_plan(plan)
             if not plan["actions"]:
                 print("issues: already reconciled, 0 actions")
@@ -815,6 +815,19 @@ def main() -> int:
                 return 0
             applied, failures = apply_plan(plan, workers=args.workers)
             print(f"applied {applied}/{len(plan['actions'])} action(s)")
+            failed_numbers = {number for number, _ in failures}
+            for action in plan["actions"]:
+                number = action["issue_number"]
+                if number is None or number in failed_numbers:
+                    continue
+                for issue in snapshot["issues"]:
+                    if int(issue["number"]) == number:
+                        issue["title"] = action["title"]
+                        issue["body"] = action["body"]
+                        issue["state"] = action["desired_state"]
+                        issue["labels"] = action["labels"]
+                        break
+            write_json(args.cache, snapshot)
             for number, error in failures[:20]:
                 print(f"  FAILED #{number}: {error}")
             if failures:
