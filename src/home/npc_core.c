@@ -163,3 +163,16 @@ uint8_t StartNPCMovement(uint16_t *bc)
 	}
 }
 /* <<< factory StartNPCMovement */
+
+/* >>> factory Func_1c5e9 */
+/* npc_core.asm:296-317 */
+uint8_t Func_1c5e9(void)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,
+		LOADED_NPC_DIRECTION_BACKUP);
+	uint8_t direction = gb_read8(r.hl);
+	uint16_t hl = (uint16_t)(r.hl + (uint16_t)(LOADED_NPC_DIRECTION - LOADED_NPC_DIRECTION_BACKUP));
+	gb_write8(hl, direction);
+	return UpdateNPCAnimation();
+}
+/* <<< factory Func_1c5e9 */

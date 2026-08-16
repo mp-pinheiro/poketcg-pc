@@ -96,6 +96,15 @@ CASES["StartNPCMovement"] = [
 ]
 # <<< factory StartNPCMovement
 
+# >>> factory Func_1c5e9
+CONTRACT["Func_1c5e9"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
+CASES["Func_1c5e9"] = [
+    {"read": {0xD300: 0x200}},
+    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}},
+    dict(POISON, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, read={0xD300: 0x200}),
+]
+# <<< factory Func_1c5e9
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -133,3 +142,6 @@ MUTATIONS["StartNPCMovement"] = {
 	"case_ids": ["StartNPCMovement-7"],
 }
 # <<< factory-mutation StartNPCMovement
+# >>> factory-mutation Func_1c5e9
+MUTATIONS["Func_1c5e9"] = {"source_symbol": "Func_1c5e9", "before": "uint16_t hl = (uint16_t)(r.hl + (uint16_t)(LOADED_NPC_DIRECTION - LOADED_NPC_DIRECTION_BACKUP));", "after": "uint16_t hl = (uint16_t)(r.hl + 0u);", "case_ids": ["Func_1c5e9-1", "Func_1c5e9-2"]}
+# <<< factory-mutation Func_1c5e9

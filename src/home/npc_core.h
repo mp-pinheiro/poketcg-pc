@@ -21,4 +21,7 @@ uint8_t SetNPCDirection(uint8_t a); /* a = new direction; hl preserved, returns 
 /* >>> factory StartNPCMovement */
 uint8_t StartNPCMovement(uint16_t *bc); /* npc_core.asm:618; bc = movement script pointer in/out (asm leaves it at its exit position); returns exit a (stop path: GetItemInLoadedNPCIndex's a) */
 /* <<< factory StartNPCMovement */
+/* >>> factory Func_1c5e9 */
+uint8_t Func_1c5e9(void);
+/* <<< factory Func_1c5e9 */
 #endif /* POKETCG_HOME_NPC_CORE_H */

@@ -48,6 +48,13 @@ static void adapt_StartNPCMovement(ProbeState *s)
 }
 /* <<< factory StartNPCMovement */
 
+/* >>> factory Func_1c5e9 */
+static void adapt_Func_1c5e9(ProbeState *s)
+{
+	s->a = Func_1c5e9();
+}
+/* <<< factory Func_1c5e9 */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -55,5 +62,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "SetNPCAnimation", adapt_SetNPCAnimation },
 	{ "SetNPCDirection", adapt_SetNPCDirection },
 	{ "StartNPCMovement", adapt_StartNPCMovement },
+	{ "Func_1c5e9", adapt_Func_1c5e9 },
 	{ NULL, NULL },
 };
