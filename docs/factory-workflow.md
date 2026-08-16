@@ -1,22 +1,33 @@
 # Factory workflow
 
-The runbook for an orchestrator session. The exact message `start` triggers this
-file and nothing else.
+The exact message `start` runs this adapter. Work selection is exclusively
+`tools/factory/supervisor.py next`; never rebuild a frontier with
+`packet.py build`.
 
+## Authority
+
+`.factory/state.sqlite3` is the scheduler authority. It contains canonical work
+rows, immutable attempts, leased actions, append-only failure evidence,
+publication phases, blockers, and the Forgejo projection backlog. Queue JSON,
+the old supervisor journal, and Forgejo labels are migration evidence or
+projections; they do not suppress eligible work.
+
+Create the authority once:
+
+```sh
+python3 tools/factory/driver.py migrate-recovery-state --dry-run --json
+python3 tools/factory/driver.py migrate-recovery-state --dry-run --json
+python3 tools/factory/driver.py migrate-recovery-state --json
 ```
-frontier -> packets -> [N lanes: translate -> surgery -> verify -> repair<=3]
-        -> green bundles -> serial integrate (gate BEFORE push) -> reconcile -> repeat
-```
 
-Roles: **orchestrator** (this session) owns every repo, jj, and Forgejo write, and
-is the only session that runs a central gate. **Lanes** are disposable directory
-copies under `/tmp/poketcg-factory/lane-N` with no `.jj`, no `.git`, and no
-credentials. **Translator** is a stateless `prompt -> tagged blocks` function;
-production uses `completion(prompt, model="default")`.
+Both dry runs must report `ok: true`, identical source and partition digests,
+zero residual or repeated work IDs, zero active invalid identities, an empty
+foreign-key check, and `["ok"]` integrity. The apply command refuses to
+overwrite an existing database and publishes the audited image atomically.
 
-## 1. Preflight
+## Preflight
 
-Run in order. Every step is a hard gate — do not proceed past a failure.
+Run these checks before the first action in a session:
 
 ```sh
 just forgejo-auth-check
@@ -26,215 +37,165 @@ uv sync --project tools/oracle --frozen
 just oracle-build-gbref
 just build-barrier
 just issues-fetch
-just oracle-release-gate
-just progress
-python3 tools/factory/driver.py migrate-recovery-state --dry-run --json
-python3 tools/factory/driver.py status
+python3 tools/factory/supervisor.py status --json
 ```
 
-The migration dry-run must partition every managed work ID exactly once and
-report zero duplicate claims. Apply it once, then rerun the dry-run; the second
-run must report zero legacy packets and zero conversions. A failed barrier stops
-the run and preserves the timestamped backup.
+Stop on unavailable authorization, remote divergence, unknown dirty files, or
+database identity/integrity errors. Do not stop because work is blocked,
+deferred, or not immediately productive.
 
-## 2. The loop
+## Bounded action loop
 
-The exact `start` adapter supplies only the model completion seam. The
-supervisor owns translation waves, recovery waves, verification, queue
-transitions, candidate integration, gates, pushes, and Forgejo reconciliation:
-
-```python
-from supervisor import start
-
-result = start(completion, lanes_count=10, verify_width=6)
-```
-
-`completion(prompt, model=...)` is called only on the orchestrator thread.
-Recovery lanes remain credential-free and disposable. The returned result is
-the supervisor action object; the adapter keeps invoking journaled actions until
-the completion predicate or a typed stop-the-line condition is reached.
-
-The supervisor invokes the existing lane/verifier machinery and only delegates
-model text generation through `completion`. Its journal makes each action
-replayable after a crash.
-
-`429` and `5xx` provider failures persist a retry delay and keep the supervisor
-alive. Authentication, authorization, remote divergence, unknown dirty files,
-and corrupt or ambiguous identity are typed stop-the-line failures.
-
-`packet.py build` returning `[]`, zero green bundles, blocked work, or no
-progress is never successful termination. Literal `PORT COMPLETE` is emitted
-only by the supervisor completion predicate after a current green gate and
-both verified measures reach their totals.
-
-
-A wave's cohort may exceed `lanes_count`: the first `lanes_count` packets are
-admitted immediately, the rest stay `pending` on disk and are pulled into a lane
-as soon as one frees up (`refill` events). `max_wall_s` is 3600 because a
-refilled wave of 20 packets across 10 lanes runs roughly twice as long as the
-old fixed cohort of 10 — it is a safety bound, not the expected duration.
-`integrate.py` touches jj, git, and the gate; it must never run while a wave
-holds `.factory/wave.lock` — only between waves, as above.
-
-Bundles are composable (`surgery.extract`/`apply`, additive per-routine
-fragments). The basename is the lane concurrency unit: packets sharing a
-basename are deferred to a later wave, after the first bundle is integrated.
-A returned `deadline` or `stopped` wave is a clean partial return; the
-supervisor journals it and either retries it or selects a typed recovery path.
-
-A lane runs the central comparator (`compare_one.py`) over every case in the
-packet before the PyBoy lane, so `oracle-fn-all` cannot reject what a packet
-already landed. `run_mutation` covers only the witness case.
-
-`integrate.py` lands green bundles FIFO, then runs adapter lint, the constant
-audit, `just oracle-release-gate`, and a progress rebuild before pushing. A red
-gate stops the push.
-
-Translation and verification run inside one continuous scheduler, not
-alternating phases: a packet whose lane is free and whose translation parsed
-is submitted for verification immediately, while the next translate batch is
-forming from whichever other packets are ready. `python3 tools/factory/driver.py
-progress` inspects a live wave (per-packet state, round, phase, time-in-phase)
-without taking `.factory/wave.lock`.
-
-## 3. Reconcile Forgejo
-
-Forgejo issue labels and open/closed state are projections of factory truth.
-The supervisor's live progress and claim index remain the dispatch authority;
-reconciliation updates the dashboard and managed issue markers after each
-successful integration.
+Start one persistent supervisor process and retain its stdin/stdout for the
+whole exact-`start` session:
 
 ```sh
-just issues-fetch          # refresh the cache
-just issues-sync           # dry run: what would change
-just issues-sync-apply     # apply it
-just issues-verify         # marker coverage
+python3 tools/factory/supervisor.py session \
+  --lease-owner orchestrator --lease-seconds 7200 --lanes 10
 ```
 
-`issues-sync` refuses to run when a gate input (`src/`, `tests/`, `include/`,
-`tools/oracle/`, `CMakeLists.txt`, `poketcg/`) changed after the last gate — a
-stale gate would let it close an issue whose routine is no longer passing. Fix by
-re-running `just oracle-release-gate && just progress`.
+The process acquires `.factory/supervisor.lock` before printing its `ready`
+record and holds it until a `{"command":"close"}` request or process exit. Send
+one JSON line `{"command":"next"}` for each iteration. `next` first resumes a
+live action owned by this orchestrator, then recovers an expired action, then
+plans one new action. A returned empty frontier, `blocked`, or `stalled` result
+is diagnostic state, not completion. Continue through the appropriate recovery
+action. Stop successfully only when the response value is:
 
-`--apply` is the only switch that writes to Forgejo. It self-verifies by
-re-fetching and re-planning; a non-empty residual plan is an error.
+```json
+{"status":"complete","message":"PORT COMPLETE"}
+```
 
-## 4. Recovery and blockers
+That value comes from one predicate: the gate is current and green,
+`verified_code == verified_code/total`, and
+`verified_functions == verified_functions/total`.
 
-Failures are structured outcomes, not terminal queue states. `retry-ready`
-returns to the recovery ladder with a new attempt generation; `blocked` carries
-structured dependency or harness evidence and is revalidated every supervisor
-iteration. `landed` and `superseded` are the only historical states.
+Programmatic orchestrators call
+`supervisor.supervise(translate_many, recover_many, analyze_failure,
+lanes_count=10, verify_width=6)`. Those three callbacks are the only model
+seams; the supervisor owns action leases, lanes, verification, bundle
+publication, integration, projection, and the completion decision.
 
-The recovery ladder is ordinary retry, a fresh one-routine retry, a slow-model
-retry, then disposable agentic recovery. Repeated agentic fingerprints invoke
-`analyze_failure` and independent repair assignments. Provider failures use
-persisted backoff; code, schema, bundle, dependency, and gate failures remain
-actionable supervisor work.
 
-Recovery lanes receive the exact quartet, failure history, owned paths, and
-verifier command. They have no credentials or VCS metadata. Bundle acceptance
-requires all marker blocks, importable cases, mutation receipts, identity, and
-SHA-256 hashes before a packet can become `green`.
+### Worker wave
 
-Dependency blockers are structured records in `.factory/blocked.toml`. Cleared
-dependencies move packets to `retry-ready`. A dependency cycle is dispatched as
-one SCC recovery group and integrates atomically; partial SCC integration is
-forbidden. External blockers remain explicit stop-the-line records.
+For `fresh-wave`, `retry-wave`, `worker-wave`, and `dependency-scc` actions:
 
-## 5. Invariants
+1. Call `workers.translation_assignments(action, lane_indices=...)`.
+   `supervise(...)` invokes `translate_many([assignment])` concurrently for all
+   assignments. Each callback calls
+   `completion(prompt, model=assignment["model"])`; model calls run outside
+   SQLite transactions. As each reply arrives, verification starts immediately
+   in the bounded verifier pool. Every assignment already names its disposable
+   lane and packet, and every verifier subprocess has a hard process-tree
+   deadline.
+2. For tier-4 attempts, call `workers.recovery_analysis_requests(action)`
+   through the independent `analyze_failure` callback and parse each response
+   with `workers.parse_recovery_analysis(...)`. Then call
+   `workers.agent_assignments(...)`, passing those analyses, for attempts at
+   recovery tier 3 or 4. Dispatch every returned assignment in one `task`
+   batch. Agents edit only the listed lane and owned paths, run no VCS command,
+   and receive no repository, Forgejo, or git credentials. Verify each returned
+   lane with `workers.verify_agent_lane(...)`.
+3. Tier 4 produces two independent lane assignments carrying the analysis.
+   Pass their results in completion order to `workers.first_green(...)`; the
+   first verified result wins, otherwise both failure records form one
+   diagnostic fingerprint and the work remains retry-ready.
+4. For tier-2 diagnostics, call
+   `workers.failure_review_requests(action, results)` through the independent
+   `analyze_failure` callback. Parse each response with
+   `workers.parse_failure_review(...)`, then call
+   `workers.merge_failure_reviews(...)`. The review classifies routine-local
+   versus shared-harness failures before the next immutable recovery child is
+   scheduled.
+5. Build one result for every attempt. On model `429` or `5xx`, use
+   `{"outcome":"provider-failure","retry_after":N}`. Do not convert provider
+   failure into code failure.
+6. Send one session request with `command: "accept"` and the action result as
+   `payload`. Include `action_id`, `lease_owner`, `lease_token`, and
+   `result: {"attempts": {...}, "work": {}}`. Acceptance first validates and
+   atomically publishes staged bundles, then commits the result transaction.
 
-- Lanes never run jj, git, or a central gate, and hold no credentials. Only the
-  supervisor mutates packet state; callbacks return structured outcomes.
-- `site/data/gate.json` has exactly one producer: `just oracle-fn-all`, via the
-  release-gate chain. `just oracle-diff-all` deliberately writes no gate record.
-- The integrator gates before every push; a red gate keeps packets non-landed.
-- `integrate.py` aborts when `main@origin` diverges and never rebases
-  automatically.
-- A managed issue carries exactly one valid `port:v1:<source>:<symbol>` marker.
-  Packet identity and claim dedup use that work ID, never mutable titles.
-- One work ID cannot be claimed by two nonhistorical packets.
-- Packet construction uses live progress and claims; Forgejo labels are only a
-  projection.
-- `tests/routines.py` is derived from `tests/cases/*.py` `CONTRACT` keys at
-  import time. Never hand-edit it. `SCHEMA2_CASES` is generated by surgery.
-- Every landed routine carries a live-oracle PASS and a mutation receipt.
-- `.factory/blocked.toml` records structured blockers and is rebuilt with the
-  trusted progress projection.
+`workers.salvage_children(...)` never changes an attempt's membership. A partial
+green result creates immutable child attempts whose work IDs exactly partition
+the parent; the parent becomes `superseded`.
 
-## 6. Calibration
+### Blocker review
 
-Production config: `build(limit=20)`, `model="default"`, `max_rounds=3`,
-`lanes_count=10`, `verify_width=6`, and `max_wall_s=3600`. A wave admits ten
-packets immediately and refills from the rest as lanes free up; factory
-subprocess work shares the wall-clock deadline. The synchronous harness
-callback remains cooperative and may exceed that bound until its provider
-request returns.
+For `blocker-review`, call `workers.blocker_requests(action)` through an
+independent slow reasoning completion. Parse each response with
+`workers.parse_blocker_result(...)`, then submit
+`result: {"attempts": {}, "work": {work_id: outcome}}` through the session
+`accept` command.
 
-Translate and verify run in one continuous scheduler, not alternating phases: a
-packet whose translation parsed is submitted for verification as soon as a lane
-and a verify slot are free, and finished packets' lanes are refilled from the
-queued remainder instead of idling until the wave ends.
+A dependency cycle is not reviewed one routine at a time. The planner creates
+one `dependency-scc` attempt; its members share one lane, one verification
+result, and one integration action.
 
-**The provider is the only bottleneck that matters.** Wave `a4745708` (14
-packets, completed) measured `translate 60% verify 2% salvage 0% lane 0%
-idle 38%` of packet-time, with `/proc/loadavg` between 0.18 and 2.17 (median
-0.46) on 8 CPUs. Verification is seconds; translation is minutes. Two
-consequences:
+### Publication
 
-- `verify_width` is not a throughput lever at these ratios. It defaults to
-  `cpu_count() - 2` only to stop ten concurrent verifies oversubscribing 8
-  cores (lane builds run `ninja -j2`; `compare_one.py`, `test_leaves.py`,
-  `gbref_runner`, and PyBoy are each single-threaded). Raising it buys nothing
-  while verify is 2% of the work.
-- **Translate batch width is the lever.** Continuous dispatch initially issued a
-  batch the instant any one packet was ready, fragmenting wave `a4745708` into
-  widths `10,1,6,4,6,3,3,1,3,1,3` (mean 3.7) where even a width-1 call cost
-  24-48 s — about 1183 s of that 1196 s wave was translation. `_decide`'s cheap
-  verdicts are therefore drained before a batch is issued
-  (`TRANSLATE_COALESCE_S`, 45 s cap so one slow verify cannot stall the batch),
-  which restored widths `10,10` (mean 10.0) on the next wave.
+For `gate-refresh` or `integration`, send one session request with
+`command: "integrate"`, the three lease fields in `payload`, and `push: true`.
+The action replays the phases `prepared -> applied -> source-committed ->
+gate-passed -> progress-committed -> pushed -> finalized`. The central
+orchestrator alone applies bundles, runs the candidate proof, runs adapter lint,
+the constant audit, `just oracle-release-gate`, rebuilds progress, commits, and
+pushes. A failed gate cannot mark work landed. Candidate state, hashes, and the
+exact published revision stay attached to the same action ID.
 
-`translate_many` runs only on the scheduler thread, blocking it; verify and
-salvage jobs keep running in the pool throughout. A worker-thread probe
-confirmed the harness completion bridge is not thread-safe outside its calling
-thread (`RuntimeError: Missing session/run/name`), so translation cannot move
-onto the pool without a session-context bridge that does not exist yet.
+If a crash leaves a prepared candidate dirty, replay permits only paths owned by
+the action. It backs those derived files up under `.factory/recovery/<action>`
+before restoring the recorded baseline. Any other dirty path is a
+stop-the-line condition.
 
-Phase timings come from `.factory/events.jsonl` (per-packet `verify-phase`
-records written by the verify subprocess) and the per-packet `translate_s`,
-`verify_s`, `salvage_s`, `lane_s`, and `idle_s` fields in `.factory/metrics.jsonl`;
-`driver.py metrics` prints the split and `driver.py progress` reports a live
-wave. Job durations are measured inside each job, not at harvest, because the
-scheduler can block in `translate_many` long after a job finished. The phase
-totals legitimately overlap — a lane rsync runs while the scheduler is blocked
-translating — so `idle_s` is wall time minus the *union* of a packet's busy
-intervals, never the wall-minus-sum that overlap drives negative.
+### Forgejo projection
 
-Translate all ten prompts in one `parallel()` wave: measured 107-123 s per round
-at width 10 against ~170 s as two batches of five, with no rate limiting, which
-took a 3-round wave from 604 s to 377 s. A packet that returns a byte-identical
-verdict two rounds running is not reading its feedback, so `_decide` salvages or
-escalates it there instead of buying two more translations: measured 4 of 10
-packets in one wave, and no packet that ever repeated verbatim went on to green.
+Publication finalization enqueues a Forgejo projection row; it does not make
+issue labels part of scheduler eligibility. For `projection-reconcile`, send a
+session request with `command: "reconcile"` and the three lease fields in
+`payload`.
 
-Packet size dominates: a packet is green only when every routine in it is green,
-so success decays as p^n. Measured 8 routines/packet → 0 green; 3/packet → 67%
-green on `model="default"`. Escalating packets still land their passing routines
-and spill failures into `<id>-rest`.
+This runs `issues-sync-apply` and `issues-verify`, then clears the backlog and
+finishes the action transaction. Transient projection failure leaves canonical
+work state intact and the action resumable.
 
-Early wave failures were packet-content gaps, not model weakness: missing RAM
-symbol addresses, unparsed `const_def`/`DEF..EQU` constants, missing struct
-typedefs for struct-returning callees, invented include paths, and ninja's
-link-command echo crowding out the real compile cause.
+## Recovery ladder
 
-## Notes
+Each diagnostic records its class, detail, model, and SHA-256 fingerprint.
+Recovery advances on new evidence or a repeated fingerprint:
 
-One-time, for a queue predating persisted work identity:
-`python3 tools/factory/packet.py migrate-work-ids` (read-only), then
-`--apply`. Require a zero-change dry run before dispatching.
+1. ordinary retry;
+2. one-routine fresh retry;
+3. slow-model retry;
+4. one disposable editing agent;
+5. independent analysis followed by two editing agents, first verified result
+   wins. Repeated code failure stays at this tier with its full history; it does
+   not become a terminal queue state.
 
-Factory pushes target Forgejo `origin`. `github-mirror` is a checkout-local
-remote, not a server-side mirror, so GitHub does not receive factory pushes.
-`.github/workflows/release.yml` and `progress.yml` push to GitHub directly, which
-is why `integrate.py`'s fast-forward check can see origin advance.
+Fresh work and recovery use separate capacity. While both exist, roughly 80% of
+lanes remain available to fresh attempts and 20% to recovery; every fifth
+single-lane tick serves recovery. A generation-4 backlog cannot monopolize all
+lanes.
+
+`provider-failure`, `infrastructure-failure`, `blocked`, and `external-stop` are
+different outcomes. Provider backoff does not advance a code recovery tier.
+Dependency blockers name canonical `blocked_on` work IDs. Harness failures
+remain actionable work instead of being hidden in packet terminal states.
+
+## Invariants
+
+- One canonical work ID has at most one current attempt.
+- Attempt identity and membership are immutable; salvage creates children.
+- An action has one lease owner, token, deadline, input digest, and result.
+- Model and agent execution occurs outside database transactions.
+- Lanes contain no `.git`, `.jj`, credential helper, config, secret file, or
+  repository-auth environment variable.
+- Bundle acceptance requires exact identity, marker coverage, importable cases,
+  mutation receipts, and a stable payload hash.
+- Only the orchestrator writes the repo, jj state, canonical bundles, the state
+  database, or Forgejo.
+- Integration gates before push and records the exact remote revision before
+  work becomes landed.
+- Forgejo is a projection. Stale labels cannot suppress dispatch.
+- `PORT COMPLETE` is never inferred from no packets, no green bundles, blocked
+  work, or a successful action.

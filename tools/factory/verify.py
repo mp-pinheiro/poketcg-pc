@@ -24,6 +24,7 @@ emit per-phase timing without changing the verdict.
 """
 
 from __future__ import annotations
+
 import argparse
 import hashlib
 import json
@@ -36,10 +37,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import (BUNDLES, CACHE, ORACLE_PYTHON, ROOT, RUNNER, PhaseTimeout,
-                    WaveDeadlineExpired, load_packet, packet_identity,
-                    run_bounded)  # noqa: E402
-import lanes  # noqa: E402
+import lanes
+from common import (
+    BUNDLES,
+    CACHE,
+    ORACLE_PYTHON,
+    ROOT,
+    RUNNER,
+    PhaseTimeout,
+    WaveDeadlineExpired,
+    load_packet,
+    packet_identity,
+    run_bounded,
+)
 
 TAIL = 4000
 TIMEOUT_MARK = "did not return within"
@@ -157,7 +167,10 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
     if module is None:
         try:
             module = load_cases_module(lane, basename)
-        except Exception as exc:
+        except (
+            AttributeError, ImportError, NameError, OSError, RuntimeError,
+            SyntaxError, TypeError, ValueError,
+        ) as exc:
             for fn in routine_names:
                 fail(fn, f"case module fails to import: {exc}")
             return violations
@@ -269,7 +282,10 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         raise
     except PhaseTimeout as exc:
         return verdict("infra-timeout", str(exc))
-    except Exception:
+    except (
+        json.JSONDecodeError, OSError, RuntimeError,
+        subprocess.SubprocessError, TypeError, ValueError,
+    ):
         return verdict("infra-error", traceback.format_exc(limit=2))
     if inspection.get("violations"):
         result = verdict("cases", json.dumps(inspection["violations"], sort_keys=True))
@@ -356,7 +372,10 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         raise
     except PhaseTimeout as exc:
         return verdict("infra-timeout", str(exc))
-    except Exception:
+    except (
+        AttributeError, ImportError, NameError, OSError, RuntimeError,
+        subprocess.SubprocessError, SyntaxError, TypeError, ValueError,
+    ):
         return verdict("infra-error", traceback.format_exc(limit=2))
 
 
@@ -411,7 +430,6 @@ def collect_bundle(packet: dict, lane: Path) -> Path:
     bundle = BUNDLES / packet.get("attempt_id", packet["id"])
     if bundle.exists():
         shutil.rmtree(bundle)
-    basename = packet["basename"]
     rels = list(hashes)
     for rel in rels:
         source = lane / rel

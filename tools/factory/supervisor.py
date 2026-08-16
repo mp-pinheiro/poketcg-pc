@@ -1,44 +1,58 @@
 #!/usr/bin/env python3
-"""Crash-resumable supervisor for the autonomous port factory.
-
-The supervisor is deliberately a planner: translation and recovery are supplied
-by callbacks, while queue ownership, journal identity, and completion remain
-local and deterministic.
-"""
+"""Bounded, crash-resumable control plane for the autonomous port factory."""
 from __future__ import annotations
 
 import argparse
+import contextlib
+import copy
 import fcntl
-import hashlib
+import importlib.util
+import io
 import json
 import os
+import sqlite3
 import subprocess
 import sys
 import time
-import uuid
+from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Callable, Iterator
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import importlib.util
-import common  # noqa: E402
+import common
+import integrate
+import scheduler
+import state
+import workers
 
 ROOT = common.ROOT
-JOURNAL = common.FACTORY / "supervisor.json"
-FORGEJO_SYNC = common.FACTORY / "forgejo-sync.json"
 LOCK_PATH = common.FACTORY / "supervisor.lock"
-JOURNAL_SCHEMA = 1
-HISTORICAL = common.HISTORICAL_STATES
+
+
+@contextmanager
+def supervisor_lock() -> Iterator[None]:
+    common.FACTORY.mkdir(parents=True, exist_ok=True)
+    with LOCK_PATH.open("a+") as descriptor:
+        fcntl.flock(descriptor.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(descriptor.fileno(), fcntl.LOCK_UN)
 
 
 def _revision() -> str | None:
-    for command in (("git", "rev-parse", "HEAD"),
-                    ("jj", "log", "--no-graph", "-r", "main", "-T", "commit_id")):
+    for command in (
+        ("jj", "log", "--no-graph", "-r", "main", "-T", "commit_id"),
+        ("git", "rev-parse", "HEAD"),
+    ):
         try:
-            result = subprocess.run(command, cwd=ROOT, text=True,
-                                    capture_output=True, timeout=5)
+            result = subprocess.run(
+                command, cwd=ROOT, text=True, capture_output=True,
+                timeout=5, check=False,
+            )
         except (OSError, subprocess.TimeoutExpired):
             continue
         if result.returncode == 0 and result.stdout.strip():
@@ -46,38 +60,46 @@ def _revision() -> str | None:
     return None
 
 
-def _load_report() -> dict:
-    path = ROOT / "site" / "data" / "progress.json"
-    try:
-        spec = importlib.util.spec_from_file_location(
-            "factory_progress_report", ROOT / "tools" / "progress" / "report.py")
-        if spec is None or spec.loader is None:
-            raise RuntimeError("cannot load progress report module")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+def _load_report() -> dict[str, Any]:
+    path = ROOT / "tools" / "progress" / "report.py"
+    spec = importlib.util.spec_from_file_location("factory_live_progress", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load progress report module")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    with contextlib.redirect_stdout(io.StringIO()):
         inventory = module.load_inventory()
         routines, _ = module.load_routines()
-        return module.compute(inventory, routines, module.load_gate())
-    except (OSError, ValueError, RuntimeError, KeyError, TypeError, json.JSONDecodeError):
-        if not path.exists():
-            raise
-        return json.loads(path.read_text())
+        gate = module.load_gate()
+        report = module.compute(inventory, routines, gate)
+    report["gate"] = gate
+    return report
 
 
-def gate_record_status(gate: dict | None, *, revision: str | None = None) -> dict:
+def gate_record_status(
+    gate: dict[str, Any] | None,
+    *,
+    revision: str | None = None,
+) -> dict[str, Any]:
     """Classify gate freshness separately from its routine verdicts."""
     if not isinstance(gate, dict) or gate.get("schema") != 1:
         return {"current": False, "green": False, "reason": "missing-or-malformed-gate"}
     inventory = gate.get("inventory")
     routines = gate.get("routines")
-    if (not gate.get("complete") or not isinstance(inventory, dict)
-            or not isinstance(routines, dict) or not routines):
+    if (
+        not gate.get("complete")
+        or not isinstance(inventory, dict)
+        or not isinstance(routines, dict)
+        or not routines
+    ):
         return {"current": False, "green": False, "reason": "incomplete-gate"}
     count = inventory.get("routines")
     if not isinstance(count, int) or count <= 0 or len(routines) != count:
         return {"current": False, "green": False, "reason": "invalid-gate-inventory"}
-    if any(not isinstance(row, dict) or row.get("status") not in {"pass", "fail"}
-           for row in routines.values()):
+    if any(
+        not isinstance(row, dict) or row.get("status") not in {"pass", "fail"}
+        for row in routines.values()
+    ):
         return {"current": False, "green": False, "reason": "invalid-gate-routines"}
     recorded = gate.get("commit")
     tested = revision or _revision()
@@ -86,716 +108,599 @@ def gate_record_status(gate: dict | None, *, revision: str | None = None) -> dic
     current = recorded == tested
     if not current:
         path = ROOT / "tools" / "progress" / "report.py"
-        spec = importlib.util.spec_from_file_location(
-            "progress_report_for_supervisor", path)
+        spec = importlib.util.spec_from_file_location("factory_gate_freshness", path)
         if spec is None or spec.loader is None:
             return {"current": False, "green": False, "reason": "stale-gate"}
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
-        changed = module.gate_inputs_changed(recorded, tested)
-        current = not changed
-    green = current and not inventory.get("failures", 0) and not inventory.get("primary_missing", 0)
-    return {"current": current, "green": green,
-            "reason": "green" if green else ("gate-failures" if current else "stale-gate")}
+        current = not module.gate_inputs_changed(recorded, tested)
+    green = (
+        current
+        and not inventory.get("failures", 0)
+        and not inventory.get("primary_missing", 0)
+    )
+    return {
+        "current": current,
+        "green": green,
+        "reason": "green" if green else "gate-failures" if current else "stale-gate",
+    }
 
 
-def completion_status(report: dict, *, revision: str | None = None) -> dict:
+def completion_status(
+    report: dict[str, Any],
+    *,
+    revision: str | None = None,
+) -> dict[str, Any]:
     measures = report.get("measures") if isinstance(report, dict) else None
     gate = report.get("gate") if isinstance(report, dict) else None
-    status = gate_record_status(gate if isinstance(gate, dict) else None,
-                                revision=revision)
-    required = ("verified_code", "verified_code/total",
-                "verified_functions", "verified_functions/total")
-    valid = isinstance(measures, dict) and all(isinstance(measures.get(k), int) for k in required)
-    exact = valid and measures["verified_code"] == measures["verified_code/total"] \
+    gate_status = gate_record_status(
+        gate if isinstance(gate, dict) else None, revision=revision,
+    )
+    required = (
+        "verified_code", "verified_code/total",
+        "verified_functions", "verified_functions/total",
+    )
+    valid = isinstance(measures, dict) and all(
+        isinstance(measures.get(key), int) for key in required
+    )
+    exact = bool(
+        valid
+        and measures["verified_code"] == measures["verified_code/total"]
         and measures["verified_functions"] == measures["verified_functions/total"]
-    complete = bool(status["current"] and status["green"] and exact)
-    return {"complete": complete, "gate": status, "exact_totals": bool(exact),
-            "measures": measures or {},
-            "reason": "complete" if complete else status["reason"] if not status["current"] else
-            "verified-totals-incomplete" if not exact else "gate-not-green"}
+    )
+    complete = bool(gate_status["current"] and gate_status["green"] and exact)
+    reason = (
+        "complete" if complete
+        else gate_status["reason"] if not gate_status["current"]
+        else "verified-totals-incomplete" if not exact
+        else "gate-not-green"
+    )
+    return {
+        "complete": complete,
+        "gate": gate_status,
+        "exact_totals": exact,
+        "measures": measures or {},
+        "reason": reason,
+    }
 
 
-def _frontier(report: dict, packets: list[dict]) -> list[dict]:
-    rows = {r.get("work_id"): r for r in report.get("work_records", []) if r.get("work_id")}
-    claims = common.claim_index(packets)
-    result = []
-    for work_id, row in rows.items():
-        if row.get("state") in {"complete", "excluded"}:
-            continue
-        result.append({"work_id": work_id, "state": row.get("state"),
-                       "claim": claims.get(work_id, {}).get("attempt_id")})
-    return sorted(result, key=lambda row: row["work_id"])
+def _open_state():
+    if not common.STATE_DB.is_file():
+        raise RuntimeError(
+            "transactional state is absent; run driver.py migrate-recovery-state --apply"
+        )
+    return state.open_state()
 
 
-def _digest(value: Any) -> str:
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-def _queue_digest(packets: list[dict] | None = None) -> str:
-    packets = common.list_packets() if packets is None else packets
-    rows = [
-        {
-            "id": packet.get("id"),
-            "state": packet.get("state"),
-            "generation": packet.get("attempt_generation"),
-            "rounds": packet.get("rounds"),
-            "failure_count": len(packet.get("failure_history", [])),
-        }
-        for packet in packets
-        if packet.get("state") not in HISTORICAL
-    ]
-    return _digest(sorted(rows, key=lambda row: row["id"] or ""))
-
-
-
-def _migrate_legacy_states() -> int:
-    changed = 0
-    for path in sorted(common.QUEUE.glob("*.json")):
-        try:
-            packet = json.loads(path.read_text())
-        except (OSError, json.JSONDecodeError):
-            continue
-        state = packet.get("state")
-        if state not in {"escalated", "rejected-format", "parked"}:
-            continue
-        packet["state"] = "blocked" if state == "parked" else "retry-ready"
-        packet["reason"] = (
-            f"legacy {state}: {packet.get('reason') or 'requeued by supervisor'}")
-        common.write_json(path, packet)
-        changed += 1
-    return changed
-def _revalidate_green_packets() -> int:
-    revision = _revision()
-    if revision is None:
-        return 0
-    changed = 0
-    for packet in common.list_packets(("green",)):
-        attempt_id = packet.get("attempt_id", packet.get("id"))
-        bundle = common.BUNDLES / str(attempt_id)
-        metadata = bundle / "packet.json"
-        valid = packet.get("base_commit") == revision and metadata.is_file()
-        if valid:
-            try:
-                expected = common.packet_identity(packet)
-                recorded = json.loads(metadata.read_text())
-                valid = all(recorded.get(key) == value
-                            for key, value in expected.items())
-            except (OSError, json.JSONDecodeError, ValueError):
-                valid = False
-        if not valid:
-            common.set_state(packet, "retry-ready", "stale-green-bundle")
-            changed += 1
-    return changed
-
-
-
-def snapshot() -> dict:
+def snapshot() -> dict[str, Any]:
     report = _load_report()
-    packets = common.list_packets()
-    frontier = _frontier(report, packets)
-    categories = {"fresh-ready": 0, "retry-ready": 0, "recovering": 0,
-                  "dependency-blocked": 0, "harness-repair": 0,
-                  "provider-wait": 0, "integrating": 0}
-    for packet in packets:
-        state = packet.get("state")
-        count = len(packet.get("routines", []))
-        if state in {"retry-ready", "pending"}:
-            categories["retry-ready"] += count
-        elif state == "recovering":
-            categories["recovering"] += count
-        elif state == "blocked":
-            categories["dependency-blocked"] += count
-        elif state == "integrating":
-            categories["integrating"] += count
-        elif state in {"repair", "verifying", "translated", "translating"}:
-            categories["harness-repair"] += count
-    categories["fresh-ready"] = sum(
-        1 for row in frontier if row.get("state") == "ready" and not row.get("claim"))
-    revision = _revision()
-    raw_gate = None
-    gate_path = ROOT / "site" / "data" / "gate.json"
-    if gate_path.exists():
-        try:
-            raw_gate = json.loads(gate_path.read_text())
-        except json.JSONDecodeError:
-            raw_gate = None
-    completion_report = dict(report)
-    if raw_gate is not None:
-        completion_report["gate"] = raw_gate
-    return {"schema": JOURNAL_SCHEMA, "revision": revision,
-            "base_commit": revision, "frontier": frontier,
-            "frontier_digest": _digest(frontier),
-            "queue_digest": _queue_digest(packets),
-            "categories": categories,
-            "completion": completion_status(completion_report, revision=revision),
-            "packet_ids": sorted(p.get("attempt_id", p.get("id", "")) for p in packets
-                                 if p.get("state") not in HISTORICAL),
-            "generated_at": int(time.time())}
-def _read_journal() -> dict | None:
-    if not JOURNAL.exists():
-        return None
-    data = common.read_json(JOURNAL)
-    if data.get("schema") != JOURNAL_SCHEMA:
-        raise RuntimeError("STOP-THE-LINE corrupt supervisor journal schema")
-    return data
-
-def liveness_tuple(snap: dict) -> tuple:
-    measures = snap.get("completion", {}).get("measures", {})
-    return (measures.get("verified_code"), measures.get("verified_functions"),
-            snap.get("frontier_digest"), snap.get("queue_digest"),
-            snap.get("base_commit"), snap.get("revision"))
-
-
-def _provider_failure(result: dict) -> bool:
-    if result.get("failure_class") in {"provider", "provider-wait"}:
-        return True
-    detail = " ".join(
-        str(result.get(key, "")) for key in ("detail", "stop_reason")
-    ).lower()
-    if "429" in detail or "rate limit" in detail or "5xx" in detail:
-        return True
-    return result.get("retryable") is True and "provider" in detail
-
-def _defer_forgejo_sync(error: Exception | str) -> None:
-    common.write_json(FORGEJO_SYNC, {
-        "schema": 1,
-        "error": str(error),
-        "not_before": int(time.time()) + 60,
-        "updated_at": int(time.time()),
-    })
-
-
-def _sync_forgejo() -> dict:
-    try:
-        subprocess.run(["just", "issues-sync-apply"], cwd=ROOT, check=True)
-        subprocess.run(["just", "issues-verify"], cwd=ROOT, check=True)
-    except Exception as exc:
-        _defer_forgejo_sync(exc)
+    completion = completion_status(report, revision=_revision())
+    if not common.STATE_DB.is_file():
         return {
-            "status": "failed",
-            "failure_class": "provider",
-            "detail": str(exc),
-            "retryable": True,
+            "schema": 2,
+            "state": "migration-required",
+            "completion": completion,
+            "categories": {},
         }
-    FORGEJO_SYNC.unlink(missing_ok=True)
-    return {"status": "complete", "success": True}
-
-def _write_journal(data: dict) -> None:
-    common.write_json(JOURNAL, data)
-
-
-@contextmanager
-def supervisor_lock() -> Iterator[None]:
-    common.FACTORY.mkdir(parents=True, exist_ok=True)
-    stream = LOCK_PATH.open("a+")
+    connection = _open_state()
     try:
-        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
-        yield
+        durable = scheduler.snapshot(connection)
+        active = connection.execute(
+            """SELECT action_id, kind, phase, status, lease_owner, lease_deadline
+               FROM action WHERE status IN ('planned','leased','running','recovering','expired')
+               ORDER BY created_at, action_id"""
+        ).fetchall()
     finally:
-        fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
-        stream.close()
-
-def _retry_generation(packet: dict) -> int:
-    generation = packet.get("attempt_generation")
-    generation = 0 if generation is None else generation
-    if packet.get("state") == "pending" and not packet.get("rounds"):
-        return generation
-    return generation + 1
-
-
-def _action_packet_ids(kind: str, snap: dict) -> list[str]:
-    states = {
-        "integrate-green": {"green"},
-        "integration-resume": {"integrating", "green"},
-        "harness-repair": {"repair", "verifying", "translated", "translating"},
-        "retry-wave": {"retry-ready", "pending"},
-        "agent-recovery": {"retry-ready", "pending"},
-        "revalidate-blockers": {"blocked"},
-    }.get(kind)
-    if states is None:
-        return list(snap["packet_ids"]) if kind != "fresh-wave" else []
-    candidates = [
-        packet for packet in common.list_packets()
-        if packet.get("state") in states
-    ]
-    if kind in {"retry-wave", "agent-recovery"} and candidates:
-        generation = min(_retry_generation(packet) for packet in candidates)
-        candidates = [
-            packet for packet in candidates
-            if _retry_generation(packet) == generation
-        ]
-    return sorted(
-        packet.get("id", "") for packet in candidates
-    )
-
-def _scc_action(*, persist: bool = False) -> dict | None:
-    import packet
-    groups = packet.scc_projection(packet.compute_functions()[0])
-    for group in groups:
-        if group["blocked_on"]:
-            continue
-        members = set(group["work_ids"])
-        owned = [
-            packet_data for packet_data in common.list_packets()
-            if packet_data.get("state") not in HISTORICAL
-            and any(routine.get("name") in members
-                    for routine in packet_data.get("routines", []))
-        ]
-        owned_ids = sorted(
-            packet_data.get("attempt_id", packet_data.get("id", ""))
-            for packet_data in owned
-        )
-        owned_names = {
-            routine.get("name")
-            for packet_data in owned
-            for routine in packet_data.get("routines", [])
-        }
-        if owned_names and owned_names != members:
-            return {
-                "group_id": group["group_id"],
-                "packet_ids": owned_ids,
-                "membership_error": True,
+        connection.close()
+    categories = durable["eligibility"]
+    return {
+        "schema": 2,
+        "state": "complete" if completion["complete"] else "incomplete",
+        "completion": completion,
+        "categories": categories,
+        "durable": durable,
+        "active_actions": [
+            {
+                "action_id": row[0], "kind": row[1], "phase": row[2],
+                "status": row[3], "lease_owner": row[4], "lease_deadline": row[5],
             }
-        if persist:
-            recovery_dir = common.FACTORY / "recovery-groups"
-            common.write_json(
-                recovery_dir / f"{group['group_id']}.json",
-                {**group, "packet_ids": owned_ids, "generation": 0,
-                 "base_commit": _revision()},
-            )
-        return {
-            "group_id": group["group_id"],
-            "packet_ids": owned_ids,
-            "work_ids": sorted(members),
-            "needs_build": not owned_names,
-        }
-    return None
+            for row in active
+        ],
+    }
 
 
-def next_action(*, current: dict | None = None) -> dict:
-    snap = current or snapshot()
-    journal = _read_journal()
-    if journal and journal.get("phase") not in {"done", "failed", "idle"}:
-        if (journal.get("frontier_digest") != snap["frontier_digest"]
-                or journal.get("base_commit") != snap["base_commit"]):
-            return {"kind": "stop-the-line", "reason": "journal-identity-mismatch",
-                    "action_id": journal.get("action_id"), "snapshot": snap}
-        kind = journal.get("kind")
-        if not kind:
-            return {"kind": "stop-the-line", "reason": "journal-missing-kind",
-                    "action_id": journal.get("action_id"), "snapshot": snap}
-        return {"kind": kind, "action_id": journal.get("action_id"),
-                "packet_ids": journal.get("packet_ids", []),
-                "model": journal.get("model", "default"), "resume": True,
-                "snapshot": snap}
-    if (journal and journal.get("phase") == "idle"
-            and journal.get("not_before", 0) > time.time()):
-        return {"kind": "provider-wait",
-                "not_before": journal["not_before"],
-                "packet_ids": journal.get("packet_ids", []),
-                "snapshot": snap}
-    if FORGEJO_SYNC.exists():
-        return {"kind": "forgejo-sync", "packet_ids": [], "snapshot": snap}
-    if not snap["completion"]["gate"]["current"]:
-        kind = "gate-refresh"
-    elif journal and journal.get("candidate_commit"):
-        kind = "integration-resume"
-    elif snap["categories"]["integrating"]:
-        kind = "integration-resume"
-    elif any(p.get("state") == "green" for p in common.list_packets()):
-        kind = "integrate-green"
-    elif snap["categories"]["harness-repair"]:
-        kind = "harness-repair"
-    elif snap["categories"]["retry-ready"]:
-        kind = "retry-wave"
-    elif any(
-            p.get("kind") == "dependency-group"
-            and p.get("state") not in HISTORICAL
-            for p in common.list_packets()):
-        scc = _scc_action()
-        kind = "scc-recovery" if scc else "revalidate-blockers"
-    elif snap["categories"]["fresh-ready"]:
-        kind = "fresh-wave"
-    elif snap["categories"]["dependency-blocked"]:
-        scc = _scc_action()
-        kind = "scc-recovery" if scc else "revalidate-blockers"
-    elif snap["completion"]["complete"]:
-        kind = "complete"
-    else:
-        return {"kind": "stop-the-line", "reason": "invariant:no-frontier",
-                "residual": snap["frontier"], "snapshot": snap}
-    if kind == "scc-recovery":
-        if scc.get("membership_error"):
-            return {"kind": "stop-the-line",
-                    "reason": "scc-membership-drift",
-                    "group": scc,
-                    "snapshot": snap}
-        packet_ids = scc["packet_ids"]
-    else:
-        packet_ids = _action_packet_ids(kind, snap)
-    action = {"kind": kind, "snapshot": snap, "packet_ids": packet_ids}
-    if kind == "scc-recovery":
-        action["group"] = scc
-    if kind == "retry-wave":
-        generations = [
-            _retry_generation(common.load_packet(packet_id))
-            for packet_id in packet_ids
-        ]
-        next_generation = min(generations or [0])
-        if next_generation >= 3:
-            action["kind"] = "agent-recovery"
-            action["model"] = "slow"
-        else:
-            action["model"] = "slow" if next_generation >= 2 else "default"
-    return action
-
-def _deterministic_action(action: dict, **_limits: Any) -> dict:
-    kind = action["kind"]
-    if kind == "gate-refresh":
-        subprocess.run(["just", "oracle-release-gate"], cwd=ROOT, check=True)
-        subprocess.run(["just", "progress"], cwd=ROOT, check=True)
-        return {"status": "complete", "success": True, "kind": kind}
-    if kind in {"integrate-green", "integration-resume"}:
-        import integrate
-        packets = [
-            common.load_packet(packet_id)
-            for packet_id in action.get("packet_ids", [])
-        ]
-        result = integrate.integrate(packets, push=True,
-                                     group=kind == "integration-resume")
-        sync = _sync_forgejo()
-        if sync.get("status") != "complete":
-            sync["kind"] = kind
-            return sync
-        return {"status": "complete", "success": True, "kind": kind,
-                "integration": result}
-    if kind == "forgejo-sync":
-        result = _sync_forgejo()
-        result["kind"] = kind
-        return result
-    if kind == "revalidate-blockers":
-        return {"status": "blocked", "success": False, "kind": kind,
-                "reason": "revalidation requires an SCC or cleared dependency"}
-    raise RuntimeError(f"unsupported deterministic action {kind}")
-
-
-def start(completion: Callable, *, lanes_count: int = 10,
-          verify_width: int = 6, max_actions: int | None = None) -> dict:
-    """Run the complete supervisor loop using the harness completion seam."""
-    from driver import run_wave
-
-    def wave(action: dict, *, model: str, **limits: Any) -> dict:
-        def translate_many(prompts: list[str]) -> list[str]:
-            return [completion(prompt, model=model) for prompt in prompts]
-        return run_wave(
-            action["packet_ids"], translate_many,
-            lanes_count=limits["lanes_count"],
-            verify_width=limits["verify_width"],
-            model=model,
-            max_rounds=3,
-            max_wall_s=3600,
-        )
-
-    def translate_many(action: dict, **limits: Any) -> dict:
-        return wave(action, model=action.get("model", "default"), **limits)
-
-    def recover_many(action: dict, **limits: Any) -> dict:
-        return wave(action, model="slow", **limits)
-
-    def analyze_failure(action: dict, result: dict) -> str:
-        prompt = (
-            "Analyze this factory failure and return concrete repair guidance.\n"
-            f"Action: {json.dumps(action, sort_keys=True)}\n"
-            f"Result: {json.dumps(result, sort_keys=True)}"
-        )
-        return completion(prompt, model="slow")
-
-    return supervise(
-        translate_many, recover_many, analyze_failure,
-        lanes_count=lanes_count, verify_width=verify_width,
-        max_actions=max_actions,
+def _resume_owned_action(
+    connection,
+    *,
+    lease_owner: str,
+    lease_seconds: int,
+    now: int,
+) -> dict[str, Any] | None:
+    row = connection.execute(
+        """SELECT action_id, lease_token FROM action
+           WHERE status IN ('leased','running') AND lease_owner = ?
+             AND lease_deadline > ? ORDER BY created_at, action_id LIMIT 1""",
+        (lease_owner, now),
+    ).fetchone()
+    if row is None:
+        return None
+    action_id, lease_token = row
+    deadline = state.heartbeat_action(
+        connection, action_id, lease_owner=lease_owner,
+        lease_token=lease_token, lease_seconds=lease_seconds, now=now,
     )
+    return {
+        "status": "leased",
+        "reused": True,
+        "lease": {
+            "action_id": action_id,
+            "lease_owner": lease_owner,
+            "lease_token": lease_token,
+            "lease_deadline": deadline,
+        },
+        "action": scheduler.action_descriptor(connection, action_id),
+    }
 
 
-def _prepare_fresh_packets() -> list[str]:
-    import packet
-    candidates = packet.build_packets(None, 3, 140, 20)
-    candidates = packet.drop_claimed(candidates)
-    candidates = packet.attach_dependencies(candidates)
-    ids = []
-    for packet_data in candidates:
-        attempt_id = packet_data["attempt_id"]
-        common.write_json(common.QUEUE / f"{attempt_id}.json", packet_data)
-        ids.append(attempt_id)
-    common.claim_index()
-    return ids
+def next_action(
+    *,
+    lease_owner: str = "orchestrator",
+    lease_seconds: int = 7200,
+    lanes_count: int = 10,
+) -> dict[str, Any]:
+    completion = completion_status(_load_report(), revision=_revision())
+    if completion["complete"]:
+        return {"status": "complete", "message": "PORT COMPLETE", "completion": completion}
+    connection = _open_state()
+    try:
+        resumed = _resume_owned_action(
+            connection, lease_owner=lease_owner,
+            lease_seconds=lease_seconds, now=int(time.time()),
+        )
+        if resumed is not None:
+            return resumed
+        return scheduler.acquire_tick(
+            connection, lease_owner=lease_owner, lease_seconds=lease_seconds,
+            lanes_count=lanes_count,
+        )
+    finally:
+        connection.close()
 
 
-def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
-    for packet_id in packet_ids:
-        packet_data = common.load_packet(packet_id)
-        state = packet_data.get("state")
-        if state not in {
-                "retry-ready", "repair", "verifying", "translated",
-                "translating", "blocked", "pending"}:
-            raise RuntimeError(
-                f"retry packet {packet_id} is {state}, "
-                "not retry-ready, repair, in-flight, or pending"
-            )
-        generation = packet_data.get("attempt_generation")
-        if generation is None:
-            generation = 0
-        elif state != "pending" or packet_data.get("rounds", 0):
-            generation += 1
-        packet_data["attempt_generation"] = generation
-        packet_data["rounds"] = 0
-        packet_data["format_retry_used"] = False
-        packet_data.pop("attempt", None)
-        common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
-    return packet_ids
+def accept_action(payload: dict[str, Any]) -> dict[str, Any]:
+    connection = _open_state()
+    try:
+        action = scheduler.action_descriptor(connection, payload["action_id"])
+        attempts = {
+            attempt["attempt_id"]: attempt for attempt in action["attempts"]
+        }
+        attempt_results = payload.get("result", {}).get("attempts") or {}
+        for attempt_id, result in attempt_results.items():
+            attempt = attempts.get(attempt_id)
+            if attempt is None:
+                raise ValueError(f"result contains unknown attempt {attempt_id}")
+            workers.publish_result(attempt, result)
+        return scheduler.accept_tick(
+            connection, payload["action_id"],
+            lease_owner=payload["lease_owner"],
+            lease_token=payload["lease_token"], result=payload["result"],
+        )
+    finally:
+        connection.close()
 
 
-def _prepare_scc_packets(action: dict) -> list[str]:
-    if not action.get("group", {}).get("needs_build"):
-        packet_ids = action.get("packet_ids", [])
-        _prepare_retry_packets(packet_ids)
-        return packet_ids
-    import packet
-    group = action["group"]
-    packets = packet.build_scc_packets(set(group["work_ids"]))
-    existing = common.list_packets()
-    common.claim_index(existing + packets)
-    for packet_data in packets:
-        common.write_json(
-            common.QUEUE / f"{packet_data['attempt_id']}.json", packet_data)
-    ids = sorted(packet_data["attempt_id"] for packet_data in packets)
-    action["packet_ids"] = ids
-    action["group"]["needs_build"] = False
-    return ids
+def integrate_action(payload: dict[str, Any], *, push: bool = True) -> dict[str, Any]:
+    connection = _open_state()
+    try:
+        return integrate.integrate_leased_action(
+            connection, payload["action_id"],
+            lease_owner=payload["lease_owner"],
+            lease_token=payload["lease_token"], push=push,
+        )
+    finally:
+        connection.close()
 
 
-def _restore_retryable_packets(packet_ids: list[str]) -> None:
-    for packet_id in packet_ids:
-        packet = common.load_packet(packet_id)
-        if packet.get("state") in {
-                "pending", "translating", "verifying", "repair",
-                "recovering"}:
-            common.set_state(packet, "retry-ready", "supervisor-retry")
+def reconcile_action(payload: dict[str, Any]) -> dict[str, Any]:
+    connection = _open_state()
+    try:
+        integrate.run(
+            ["just", "issues-sync-apply"],
+            check_message="Forgejo reconciliation failed",
+        )
+        integrate.run(
+            ["just", "issues-verify"],
+            check_message="Forgejo projection verification failed",
+        )
+        return state.finish_projection_action(
+            connection, payload["action_id"],
+            lease_owner=payload["lease_owner"],
+            lease_token=payload["lease_token"], now=int(time.time()),
+        )
+    finally:
+        connection.close()
 
-def supervise(translate_many: Callable | None, recover_many: Callable | None,
-              analyze_failure: Callable | None, *, lanes_count: int = 10,
-              verify_width: int = 6, max_actions: int | None = None) -> dict:
-    if not any((translate_many, recover_many, analyze_failure)):
-        raise TypeError("supervise requires runtime callback seams")
-    run_id = str(uuid.uuid4())
-    with supervisor_lock():
-        _migrate_legacy_states()
-        _revalidate_green_packets()
-        actions = 0
-        while max_actions is None or actions < max_actions:
-            snap = snapshot()
-            action = next_action(current=snap)
-            if action["kind"] in {"complete", "stop-the-line"}:
-                return action
-            if action["kind"] == "provider-wait":
-                delay = max(0, action["not_before"] - time.time())
-                if delay:
-                    time.sleep(min(delay, 30))
+
+
+def _callback_values(
+    callback: Callable[[list[dict[str, Any]]], Any],
+    requests: list[dict[str, Any]],
+) -> dict[str, Any]:
+    if not requests:
+        return {}
+    returned = callback(copy.deepcopy(requests))
+    if isinstance(returned, dict):
+        values = returned
+    elif isinstance(returned, list) and len(returned) == len(requests):
+        values = {
+            request.get(
+                "request_id",
+                request.get("attempt_id", request.get("work_id")),
+            ): value
+            for request, value in zip(requests, returned, strict=True)
+        }
+    else:
+        raise TypeError("callback must return a keyed mapping or one value per request")
+    expected = {
+        request.get(
+            "request_id",
+            request.get("attempt_id", request.get("work_id")),
+        )
+        for request in requests
+    }
+    if set(values) != expected:
+        raise ValueError(
+            f"callback membership mismatch: expected={sorted(expected)} "
+            f"actual={sorted(values)}"
+        )
+    return values
+
+def _callback_values_parallel(
+    callback: Callable[[list[dict[str, Any]]], Any],
+    requests: list[dict[str, Any]],
+    *,
+    width: int,
+) -> dict[str, Any]:
+    def invoke(request: dict[str, Any]) -> tuple[str, Any]:
+        values = _callback_values(callback, [request])
+        return next(iter(values.items()))
+
+    values = {}
+    with ThreadPoolExecutor(max_workers=max(1, min(width, len(requests)))) as pool:
+        for request_id, value in pool.map(invoke, requests):
+            values[request_id] = value
+    return values
+
+
+
+
+def _worker_result(
+    action: dict[str, Any],
+    translate_many: Callable[[list[dict[str, Any]]], Any],
+    recover_many: Callable[[list[dict[str, Any]]], Any],
+    analyze_failure: Callable[[list[dict[str, Any]]], Any],
+    *,
+    lanes_count: int,
+    verify_width: int,
+) -> dict[str, Any]:
+    attempts = {
+        attempt["attempt_id"]: attempt for attempt in action.get("attempts", [])
+    }
+    lane_indices = list(range(lanes_count))
+    translation = workers.translation_assignments(
+        action, lane_indices=lane_indices,
+    )
+    def invoke_translation(assignment: dict[str, Any]) -> Any:
+        return next(iter(_callback_values(translate_many, [assignment]).values()))
+
+    def verify_translation(
+        assignment: dict[str, Any],
+        reply: str,
+    ) -> tuple[str, dict[str, Any]]:
+        attempt_id = assignment["attempt_id"]
+        return attempt_id, workers.verify_reply(
+            assignment["attempt"], reply,
+            lane_index=assignment["lane_index"],
+            deadline_seconds=assignment["deadline_seconds"],
+            packet=assignment["packet"],
+            lane=Path(assignment["lane"]),
+        )
+
+    results: dict[str, dict[str, Any]] = {}
+    with (
+        ThreadPoolExecutor(max_workers=max(1, len(translation))) as translators,
+        ThreadPoolExecutor(max_workers=max(1, verify_width)) as verifiers,
+    ):
+        translation_futures = {
+            translators.submit(invoke_translation, assignment): assignment
+            for assignment in translation
+        }
+        verification_futures = {}
+        for future in as_completed(translation_futures):
+            assignment = translation_futures[future]
+            reply = future.result()
+            if (
+                isinstance(reply, dict)
+                and reply.get("outcome") in {
+                    "provider-failure", "infrastructure-failure",
+                }
+            ):
+                results[assignment["attempt_id"]] = reply
                 continue
-            journal = {
-                "schema": JOURNAL_SCHEMA,
-                "run_id": run_id,
-                "action_id": str(uuid.uuid4()),
-                "kind": action["kind"],
-                "model": action.get("model", "default"),
-                "phase": "planned",
-                "frontier_digest": snap["frontier_digest"],
-                "base_commit": snap["base_commit"],
-                "candidate_commit": None,
-                "packet_ids": action.get("packet_ids", []),
-                "attempt_generation": None,
-                "not_before": 0,
-                "started_at": int(time.time()),
-                "result": None,
-            }
-            _write_journal(journal)
-            if action["kind"] in {"retry-wave", "agent-recovery", "harness-repair"}:
-                action["packet_ids"] = _prepare_retry_packets(
-                    action["packet_ids"])
-                journal["packet_ids"] = action["packet_ids"]
-                _write_journal(journal)
-            if action["kind"] == "fresh-wave":
-                action["packet_ids"] = _prepare_fresh_packets()
-                journal["packet_ids"] = action["packet_ids"]
-                _write_journal(journal)
-                if not action["packet_ids"]:
-                    journal["phase"] = "failed"
-                    journal["result"] = {"reason": "fresh-frontier-build-empty"}
-                    _write_journal(journal)
-                    return {
-                        "kind": "stop-the-line",
-                        "reason": "fresh-frontier-build-empty",
-                        "snapshot": snapshot(),
-                    }
-            if action["kind"] == "scc-recovery":
-                _prepare_scc_packets(action)
-                journal["packet_ids"] = action["packet_ids"]
-                _write_journal(journal)
-                group = _scc_action(persist=True)
-                if not group or group["packet_ids"] != action["packet_ids"]:
-                    journal["phase"] = "failed"
-                    journal["result"] = {"reason": "scc-membership-drift"}
-                    _write_journal(journal)
-                    return {
-                        "kind": "stop-the-line",
-                        "reason": "scc-membership-drift",
-                        "action": action,
-                    }
-            if action["kind"] in {"gate-refresh", "integrate-green",
-                                  "integration-resume", "revalidate-blockers",
-                                  "forgejo-sync"}:
-                callback = _deterministic_action
-            else:
-                callback = recover_many if action["kind"] in {
-                    "harness-repair", "scc-recovery", "agent-recovery"
-                } else translate_many
-            if callback is None:
-                journal["phase"] = "failed"
-                journal["result"] = {"reason": "callback-unavailable"}
-                _write_journal(journal)
-                return {
-                    "kind": "stop-the-line",
-                    "reason": "callback-unavailable",
-                    "action": action,
-                }
-            journal["phase"] = "running"
-            _write_journal(journal)
-            try:
-                result = callback(
-                    action, lanes_count=lanes_count, verify_width=verify_width)
-            except SystemExit as exc:
-                result = {
-                    "status": "failed",
-                    "failure_class": "stop-the-line",
-                    "detail": str(exc),
-                    "retryable": False,
-                }
-            except Exception as exc:
-                result = {
-                    "status": "failed",
-                    "failure_class": "infrastructure",
-                    "detail": f"{type(exc).__name__}: {exc}",
-                    "retryable": True,
-                }
-            if not isinstance(result, dict):
-                result = {
-                    "status": "failed",
-                    "failure_class": "infrastructure",
-                    "detail": "callback returned non-dict result",
-                    "retryable": True,
-                }
-            successful = (
-                result.get("success") is True
-                or result.get("status") in {"green", "complete"}
+            if not isinstance(reply, str):
+                raise TypeError(
+                    f"translation reply for {assignment['attempt_id']} must be text"
+                )
+            verification = verifiers.submit(
+                verify_translation, assignment, reply,
             )
-            if not successful and _provider_failure(result):
-                result = dict(result)
-                result["failure_class"] = "provider"
-                result["retryable"] = True
-            if (not successful and analyze_failure is not None
-                    and not _provider_failure(result)
-                    and result.get("failure_class") != "stop-the-line"):
-                try:
-                    analysis = analyze_failure(action, result)
-                except Exception as exc:
-                    analysis = {
-                        "status": "analysis-failed",
-                        "detail": f"{type(exc).__name__}: {exc}",
+            verification_futures[verification] = assignment["attempt_id"]
+        for future in as_completed(verification_futures):
+            attempt_id, result = future.result()
+            results[attempt_id] = result
+
+    used_lanes = len(translation)
+    analysis_requests = workers.recovery_analysis_requests(action)
+    analysis_replies = _callback_values_parallel(
+        analyze_failure, analysis_requests, width=verify_width,
+    )
+    analyses = {
+        attempt_id: workers.parse_recovery_analysis(reply)
+        for attempt_id, reply in analysis_replies.items()
+    }
+    agent_assignments = workers.agent_assignments(
+        action,
+        lane_indices=lane_indices[used_lanes:],
+        analyses=analyses,
+    )
+    if agent_assignments:
+        def invoke_agent(assignment: dict[str, Any]) -> Any:
+            return next(iter(_callback_values(recover_many, [assignment]).values()))
+
+        def verify_agent(
+            assignment: dict[str, Any],
+        ) -> tuple[str, dict[str, Any]]:
+            return assignment["attempt_id"], workers.verify_agent_lane(assignment)
+
+        variant_results: dict[str, list[dict[str, Any]]] = {}
+        with (
+            ThreadPoolExecutor(
+                max_workers=max(1, len(agent_assignments)),
+            ) as agents,
+            ThreadPoolExecutor(max_workers=max(1, verify_width)) as verifiers,
+        ):
+            agent_futures = {
+                agents.submit(invoke_agent, assignment): assignment
+                for assignment in agent_assignments
+            }
+            verification_futures = {}
+            for future in as_completed(agent_futures):
+                assignment = agent_futures[future]
+                returned = future.result()
+                if (
+                    isinstance(returned, dict)
+                    and returned.get("outcome") in {
+                        "provider-failure", "infrastructure-failure",
                     }
-                if isinstance(result, dict):
-                    result = dict(result)
-                    result["analysis"] = analysis
-            if not successful and _provider_failure(result):
-                generations = [
-                    common.load_packet(packet_id).get("attempt_generation", 0)
-                    for packet_id in action.get("packet_ids", [])
-                ]
-                generation = max(generations or [0])
-                delay = min(3600, 2 ** min(generation, 10))
-                journal["attempt_generation"] = generation
-                journal["not_before"] = int(time.time()) + delay
-                journal["phase"] = "idle"
-                journal["result"] = result
-                _write_journal(journal)
-            if (not successful and result.get("retryable")):
-                _restore_retryable_packets(action.get("packet_ids", []))
-            after = snapshot()
-            if (not successful
-                    and not _provider_failure(result)
-                    and liveness_tuple(snap) == liveness_tuple(after)
-                    and result.get("status") == "failed"):
-                journal["phase"] = "failed"
-                journal["result"] = result
-                _write_journal(journal)
-                return {
-                    "kind": "stop-the-line",
-                    "reason": "action-failed-without-progress",
-                    "action": action,
-                    "result": result,
+                ):
+                    variant_results.setdefault(
+                        assignment["attempt_id"], [],
+                    ).append(returned)
+                    continue
+                verification = verifiers.submit(verify_agent, assignment)
+                verification_futures[verification] = assignment["attempt_id"]
+            for future in as_completed(verification_futures):
+                attempt_id, result = future.result()
+                variant_results.setdefault(attempt_id, []).append(result)
+        for attempt_id, competing in variant_results.items():
+            results[attempt_id] = workers.first_green(competing)
+
+    reviews = workers.failure_review_requests(action, results)
+    review_replies = _callback_values_parallel(
+        analyze_failure, reviews, width=verify_width,
+    )
+    parsed_reviews = {
+        attempt_id: workers.parse_failure_review(reply, attempt_id)
+        for attempt_id, reply in review_replies.items()
+    }
+    if parsed_reviews:
+        results = workers.merge_failure_reviews(action, results, parsed_reviews)
+    if set(results) != set(attempts):
+        raise ValueError(
+            f"worker result mismatch: expected={sorted(attempts)} "
+            f"actual={sorted(results)}"
+        )
+    return {"attempts": results, "work": {}}
+
+
+def supervise(
+    translate_many: Callable[[list[dict[str, Any]]], Any],
+    recover_many: Callable[[list[dict[str, Any]]], Any],
+    analyze_failure: Callable[[list[dict[str, Any]]], Any],
+    *,
+    lanes_count: int = 10,
+    verify_width: int = 6,
+) -> dict[str, Any]:
+    """Run journaled actions until the authoritative completion predicate holds."""
+    lease_owner = f"supervise-{os.getpid()}"
+    with supervisor_lock():
+        while True:
+            planned = next_action(
+                lease_owner=lease_owner,
+                lease_seconds=7200,
+                lanes_count=lanes_count,
+            )
+            if planned["status"] == "complete":
+                return planned
+            if planned["status"] != "leased":
+                raise RuntimeError(json.dumps(planned, sort_keys=True))
+            action = planned["action"]
+            payload = {
+                "action_id": action["action_id"],
+                "lease_owner": planned["lease"]["lease_owner"],
+                "lease_token": planned["lease"]["lease_token"],
+            }
+            kind = action["kind"]
+            if kind in {
+                "worker-wave", "fresh-wave", "retry-wave", "dependency-scc",
+            }:
+                payload["result"] = _worker_result(
+                    action, translate_many, recover_many, analyze_failure,
+                    lanes_count=lanes_count, verify_width=verify_width,
+                )
+                accept_action(payload)
+            elif kind == "blocker-review":
+                requests = workers.blocker_requests(action)
+                replies = _callback_values(analyze_failure, requests)
+                payload["result"] = {
+                    "attempts": {},
+                    "work": {
+                        work_id: workers.parse_blocker_result(reply, work_id)
+                        for work_id, reply in replies.items()
+                    },
                 }
-            if action["kind"] == "revalidate-blockers" and (
-                    liveness_tuple(snap) == liveness_tuple(after)):
-                journal["phase"] = "failed"
-                journal["result"] = {
-                    "reason": "dependency-revalidation-unresolved",
-                    "residual": after["frontier"],
-                }
-                _write_journal(journal)
-                return {
-                    "kind": "stop-the-line",
-                    "reason": "dependency-revalidation-unresolved",
-                    "snapshot": after,
-                }
-            journal["phase"] = "idle"
-            journal["result"] = result
-            journal["liveness"] = liveness_tuple(after)
-            _write_journal(journal)
-            if successful and liveness_tuple(snap) == liveness_tuple(after):
-                journal["phase"] = "failed"
-                journal["result"] = {
-                    "reason": "no-progress",
-                    "action": action["kind"],
-                    "packet_ids": action.get("packet_ids", []),
-                }
-                _write_journal(journal)
-                return {
-                    "kind": "stop-the-line",
-                    "reason": "no-progress",
-                    "action": action,
-                    "snapshot": after,
-                }
-            actions += 1
+                accept_action(payload)
+            elif kind in {"integration", "gate-refresh"}:
+                integrate_action(payload, push=True)
+            elif kind == "projection-reconcile":
+                reconcile_action(payload)
+            else:
+                raise RuntimeError(f"unsupported supervisor action: {kind}")
+
+
+
+def preview_next(*, lanes_count: int = 10) -> dict[str, Any]:
+    """Plan against an in-memory authority copy without leasing or mutation."""
+    completion = completion_status(_load_report(), revision=_revision())
+    if completion["complete"]:
         return {
-            "kind": "stop-the-line",
-            "reason": "action-limit",
-            "actions": actions,
+            "status": "complete",
+            "message": "PORT COMPLETE",
+            "completion": completion,
         }
+    source = _open_state()
+    copy = sqlite3.connect(":memory:", isolation_level=None)
+    copy.row_factory = sqlite3.Row
+    try:
+        source.backup(copy)
+        planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
+        return {
+            **planned,
+            "dry_run": True,
+            "completion": completion,
+        }
+    finally:
+        copy.close()
+        source.close()
+
+
+def session_loop(
+    *,
+    lease_owner: str,
+    lease_seconds: int,
+    lanes_count: int,
+) -> int:
+    """Hold the supervisor lock while serving one bounded action at a time."""
+    with supervisor_lock():
+        print(json.dumps({
+            "status": "ready",
+            "lease_owner": lease_owner,
+            "lease_seconds": lease_seconds,
+            "lanes": lanes_count,
+        }, sort_keys=True), flush=True)
+        for line in sys.stdin:
+            try:
+                request = json.loads(line)
+                if not isinstance(request, dict):
+                    raise TypeError("session request must be an object")
+                command = request.get("command")
+                if command == "close":
+                    print(json.dumps({"status": "closed"}), flush=True)
+                    return 0
+                if command == "status":
+                    value = snapshot()
+                elif command == "next":
+                    value = next_action(
+                        lease_owner=lease_owner,
+                        lease_seconds=lease_seconds,
+                        lanes_count=lanes_count,
+                    )
+                elif command == "accept":
+                    value = accept_action(request["payload"])
+                elif command == "integrate":
+                    value = integrate_action(
+                        request["payload"],
+                        push=bool(request.get("push", True)),
+                    )
+                elif command == "reconcile":
+                    value = reconcile_action(request["payload"])
+                else:
+                    raise ValueError(f"unknown session command: {command!r}")
+                response = {"status": "ok", "value": value}
+            except (
+                KeyError, OSError, RuntimeError, TypeError, ValueError,
+                sqlite3.Error, subprocess.SubprocessError,
+            ) as exc:
+                response = {
+                    "status": "error",
+                    "error_type": type(exc).__name__,
+                    "detail": str(exc),
+                }
+            print(json.dumps(response, sort_keys=True), flush=True)
+    return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
-    status = sub.add_parser("status")
-    status.add_argument("--json", action="store_true")
-    nxt = sub.add_parser("next")
-    nxt.add_argument("--dry-run", action="store_true")
-    nxt.add_argument("--json", action="store_true")
+    status_parser = sub.add_parser("status")
+    status_parser.add_argument("--json", action="store_true")
+    next_parser = sub.add_parser("next")
+    next_parser.add_argument("--json", action="store_true")
+    next_parser.add_argument("--dry-run", action="store_true")
+    next_parser.add_argument("--lease-owner", default="orchestrator")
+    next_parser.add_argument("--lease-seconds", type=int, default=7200)
+    next_parser.add_argument("--lanes", type=int, default=10)
+    sub.add_parser("reconcile")
+    sub.add_parser("accept")
+    integrate_parser = sub.add_parser("integrate")
+    integrate_parser.add_argument("--no-push", action="store_true")
+    session_parser = sub.add_parser("session")
+    session_parser.add_argument("--lease-owner", default="orchestrator")
+    session_parser.add_argument("--lease-seconds", type=int, default=7200)
+    session_parser.add_argument("--lanes", type=int, default=10)
     args = parser.parse_args()
+    if args.command == "session":
+        return session_loop(
+            lease_owner=args.lease_owner,
+            lease_seconds=args.lease_seconds,
+            lanes_count=args.lanes,
+        )
     with supervisor_lock():
-        value = snapshot() if args.command == "status" else next_action()
-    if args.json or args.command == "next":
-        print(json.dumps(value, sort_keys=True))
-    else:
-        print(json.dumps(value, indent=2, sort_keys=True))
+        if args.command == "status":
+            value = snapshot()
+        elif args.command == "next":
+            value = (
+                preview_next(lanes_count=args.lanes)
+                if args.dry_run
+                else next_action(
+                    lease_owner=args.lease_owner,
+                    lease_seconds=args.lease_seconds,
+                    lanes_count=args.lanes,
+                )
+            )
+        else:
+            payload = json.load(sys.stdin)
+            if args.command == "accept":
+                value = accept_action(payload)
+            elif args.command == "integrate":
+                value = integrate_action(payload, push=not args.no_push)
+            else:
+                value = reconcile_action(payload)
+    json_output = bool(getattr(args, "json", False))
+    print(json.dumps(
+        value, sort_keys=json_output, indent=None if json_output else 2,
+    ))
     return 0
 
 

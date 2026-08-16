@@ -33,11 +33,13 @@ ROOT = Path(__file__).resolve().parents[2]
 FACTORY = ROOT / ".factory"
 QUEUE = FACTORY / "queue"
 BUNDLES = FACTORY / "bundles"
+BACKUPS = FACTORY / "backups"
 CACHE = FACTORY / "oracle-cache"
 METRICS = FACTORY / "metrics.jsonl"
 EVENTS = FACTORY / "events.jsonl"
 BLOCKED = FACTORY / "blocked.toml"
 ISSUES_CACHE = FACTORY / "issues-cache.json"
+STATE_DB = FACTORY / "state.sqlite3"
 ISSUES_SCHEMA = 2
 ISSUES_BACKEND = "forgejo"
 ISSUES_REPOSITORY = "mpp/poketcg-pc"
@@ -319,9 +321,32 @@ def legacy_attempt_id(packet_id: str, raw: bytes | str) -> str:
     return str(uuid.uuid5(uuid.NAMESPACE_URL, f"poketcg:legacy:{packet_id}:{digest}"))
 
 
+def payload_tree_digest(
+    root: Path,
+    *,
+    ignored: frozenset[str] = frozenset({"packet.json", ".factory-artifact.json"}),
+) -> str:
+    """Hash immutable artifact payload files independently from metadata."""
+    digest = hashlib.sha256()
+    for path in sorted(item for item in root.rglob("*") if item.is_file()):
+        relative = path.relative_to(root).as_posix()
+        if relative in ignored:
+            continue
+        data = path.read_bytes()
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(data).hexdigest().encode())
+        digest.update(b"\0")
+        digest.update(str(len(data)).encode())
+        digest.update(b"\n")
+    return digest.hexdigest()
+
+
+
+
 def _ensure_packet_schema(packet: dict) -> dict:
     if not isinstance(packet, dict):
-        raise ValueError("packet must be an object")
+        raise TypeError("packet must be an object")
     routines = packet.get("routines")
     if not isinstance(routines, list) or not routines:
         raise ValueError("packet requires a non-empty routines list")
@@ -348,7 +373,7 @@ def _ensure_packet_schema(packet: dict) -> dict:
         raise ValueError(f"unknown packet state {state!r}")
     packet.setdefault("failure_history", [])
     if not isinstance(packet["failure_history"], list):
-        raise ValueError("failure_history must be a list")
+        raise TypeError("failure_history must be a list")
     return packet
 
 
@@ -372,7 +397,7 @@ def claim_index(packets: list[dict] | None = None) -> dict[str, dict]:
             validate_packet(packet)
         routines = packet.get("routines")
         if not isinstance(routines, list):
-            raise ValueError(f"packet {owner_id} has no routines")
+            raise TypeError(f"packet {owner_id} has no routines")
         for routine in routines:
             work_id = routine.get("work_id")
             if not isinstance(work_id, str) or not work_id:

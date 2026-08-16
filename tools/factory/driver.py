@@ -27,9 +27,7 @@ import hashlib
 import importlib.util
 import json
 import os
-import shutil
 import sys
-import tempfile
 import time
 import traceback
 import uuid
@@ -38,29 +36,25 @@ from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import lanes  # noqa: E402
-import prompt as prompt_mod  # noqa: E402
-import surgery  # noqa: E402
-import verify as verify_mod  # noqa: E402
-from common import (  # noqa: E402
-    ACTIVE_CLAIM_STATES,
+import common
+import lanes
+import prompt as prompt_mod
+import surgery
+import verify as verify_mod
+from common import (
     EVENTS,
     FACTORY,
-    HISTORICAL_STATES,
     METRICS,
     ROOT,
     SCHEMA,
     WAVE_LOCK,
     WaveDeadlineExpired,
     block_routine,
-    claim_index,
     cohort_id,
     estimate_tokens,
     legacy_attempt_id,
     list_packets,
     load_packet,
-    new_attempt_id,
-    packet_path,
     record_event,
     record_metric,
     run_bounded,
@@ -227,7 +221,7 @@ class _Timed:
     job's phase instead of to the packet's idle time.
     """
 
-    __slots__ = ("fn", "args", "start", "end")
+    __slots__ = ("args", "end", "fn", "start")
 
     def __init__(self, fn, *args):
         self.fn = fn
@@ -467,7 +461,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
         deferred: list[str] = []
         stop_reason: str | None = None
         active: list[_Run] = []
-        waiting: "deque[str]" = deque(packet_ids[lanes_count:])
+        waiting: deque[str] = deque(packet_ids[lanes_count:])
         jobs: dict = {}
         harvested: list = []
         slots_used = 0
@@ -624,7 +618,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                         break
                     harvest(5)
 
-                for future in list(harvested):
+                for future in harvested:
                     kind, payload_ = jobs.pop(future)
 
                     if kind == "lane":
@@ -775,7 +769,7 @@ def _migration_plan() -> dict:
             raise ValueError(f"legacy packet {path} has no id")
         routines = original.get("routines")
         if not isinstance(routines, list):
-            raise ValueError(f"legacy packet {packet_id} has no routines")
+            raise TypeError(f"legacy packet {packet_id} has no routines")
         attempt_id = legacy_attempt_id(packet_id, raw)
         converted = copy.deepcopy(original)
         converted.update({
@@ -893,55 +887,22 @@ def _migration_plan() -> dict:
 
 
 def migrate_recovery_state(*, apply: bool, as_json: bool) -> int:
-    plan = _migration_plan()
-    counts = plan["counts"]
-    changed = any(
-        entry["legacy"]
-        or entry["path"].stem != entry["packet"].get("attempt_id")
-        or entry["original"] != entry["packet"]
-        for entry in plan["entries"]
+    import state as state_store
+
+    result = state_store.audit_legacy(
+        destination=common.STATE_DB if apply else None,
     )
-    backup = None
-    if apply and changed:
-        backup = _migration_backup(
-            [(entry["path"], entry["raw"]) for entry in plan["entries"]]
-        )
-        queue = FACTORY / "queue"
-        try:
-            for entry in plan["entries"]:
-                destination = queue / f"{entry['packet']['attempt_id']}.json"
-                write_json(destination, entry["packet"])
-            for entry in plan["entries"]:
-                destination = queue / f"{entry['packet']['attempt_id']}.json"
-                if entry["path"] != destination:
-                    entry["path"].unlink()
-            claims = claim_index()
-            expected = {
-                routine["work_id"]
-                for entry in plan["entries"]
-                if entry["packet"].get("state") not in {"landed", "superseded"}
-                for routine in entry["packet"].get("routines", [])
-            }
-            if set(claims) != expected:
-                missing = sorted(expected - set(claims))
-                extra = sorted(set(claims) - expected)
-                raise RuntimeError(
-                    "migration claim partition mismatch: "
-                    f"missing={missing[:5]} extra={extra[:5]}"
-                )
-        except Exception as exc:
-            raise RuntimeError(f"migration failed; backup at {backup}: {exc}") from exc
-    result = dict(counts)
-    result["backup"] = str(backup) if backup else None
     result["dry_run"] = not apply
-    result["duplicate_work_ids"] = plan["duplicate_work_ids"]
     if as_json:
         print(json.dumps(result, sort_keys=True))
     else:
         print("migrate-recovery-state " + ("applied" if apply else "dry-run"))
-        for key, value in sorted(result.items()):
-            print(f"{key}: {value}")
-    return 0
+        for key in (
+            "ok", "schema_version", "source_revision", "source_digest",
+            "partition_counts", "rows", "state_path_exists",
+        ):
+            print(f"{key}: {result[key]}")
+    return 0 if result["ok"] else 2
 
 
 
@@ -1068,6 +1029,11 @@ def main() -> int:
     )
     migration_parser.add_argument("--dry-run", action="store_true")
     migration_parser.add_argument("--json", action="store_true")
+    audit_parser = sub.add_parser(
+        "audit-state-migration",
+        help="audit legacy state against the transactional schema without writing",
+    )
+    audit_parser.add_argument("--json", action="store_true")
     sub.add_parser("reset-stale", help="disabled; use migrate-recovery-state")
     infra_parser = sub.add_parser(
         "reset-infra", help="disabled; use migrate-recovery-state")
@@ -1081,6 +1047,12 @@ def main() -> int:
     if args.command == "migrate-recovery-state":
         return migrate_recovery_state(
             apply=not args.dry_run, as_json=args.json)
+    if args.command == "audit-state-migration":
+        import state as state_store
+        result = state_store.audit_legacy()
+        print(json.dumps(result, sort_keys=True) if args.json
+              else json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["ok"] else 2
     if args.command == "status":
         from supervisor import snapshot
         snap = snapshot()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Journaled two-phase integration of verified factory bundles."""
+"""Journaled publication of verified factory actions."""
 from __future__ import annotations
-import argparse
+
 import hashlib
 import json
 import os
@@ -12,13 +12,12 @@ import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import BUNDLES, CACHE, FACTORY, ORACLE_PYTHON, ROOT, list_packets, packet_identity, set_state
-from verify import fn_args
+import state
 import surgery
+from common import BUNDLES, CACHE, FACTORY, ORACLE_PYTHON, ROOT, packet_identity
+from verify import fn_args
 
 GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
-JOURNAL = FACTORY / "integration.json"
-PHASES = ("prepared", "applied", "source-committed", "gate-failed", "gate-passed", "progress-committed", "pushed", "finalized")
 
 
 def run(command: list[str], timeout: int = 1800, cwd: Path = ROOT, check_message: str | None = None) -> subprocess.CompletedProcess[str]:
@@ -43,23 +42,6 @@ def _digest(value: object) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def _read_journal() -> dict | None:
-    if not JOURNAL.exists():
-        return None
-    try:
-        journal = json.loads(JOURNAL.read_text())
-    except (OSError, json.JSONDecodeError) as exc:
-        raise SystemExit(f"STOP-THE-LINE corrupt integration journal: {exc}")
-    if journal.get("schema") != 1 or journal.get("phase") not in PHASES:
-        raise SystemExit("STOP-THE-LINE invalid integration journal")
-    return journal
-
-
-def _write_journal(journal: dict) -> None:
-    FACTORY.mkdir(parents=True, exist_ok=True)
-    temporary = JOURNAL.with_suffix(".tmp")
-    temporary.write_text(json.dumps(journal, indent=2, sort_keys=True) + "\n")
-    os.replace(temporary, JOURNAL)
 
 
 def _commit(revision: str) -> str:
@@ -149,127 +131,223 @@ def _gate() -> None:
     run([sys.executable, "tools/progress/report.py", "build"], check_message="progress rebuild failed")
 
 
-def integrate(packets: list[dict], *, push: bool = True,
-              group: bool = False) -> dict:
-    """Run or replay one explicit packet or dependency-group transaction."""
-    ids = [p.get("attempt_id", p.get("id")) for p in packets]
-    existing = _read_journal()
-    if existing:
-        if existing.get("packet_ids") != ids:
-            raise SystemExit("STOP-THE-LINE unresolved integration journal identity mismatch")
-        journal = existing
-        if journal["phase"] == "finalized":
-            return journal
-        baseline = journal["base_commit"]
-    else:
+def _action_packets(
+    connection, action_id: str, *, allow_empty: bool = False,
+) -> list[dict]:
+    packets = []
+    for attempt_id, attempt_state in connection.execute(
+        """SELECT a.attempt_id, a.state
+           FROM action_attempt aa
+           JOIN attempt a ON a.attempt_id = aa.attempt_id
+           WHERE aa.action_id = ? ORDER BY a.attempt_id""",
+        (action_id,),
+    ):
+        if attempt_state not in {"green", "integrating"}:
+            raise SystemExit(
+                f"STOP-THE-LINE integration attempt {attempt_id} is {attempt_state}"
+            )
+        manifest = BUNDLES / attempt_id / "packet.json"
+        if not manifest.is_file():
+            raise SystemExit(f"STOP-THE-LINE bundle missing for {attempt_id}")
+        packet = json.loads(manifest.read_text())
+        packet["state"] = "green"
+        packets.append(packet)
+    if not packets and not allow_empty:
+        raise SystemExit("STOP-THE-LINE integration action has no attempts")
+    return packets
+
+
+def _bundle_paths(packets: list[dict]) -> list[str]:
+    paths = set()
+    for packet in packets:
+        bundle = BUNDLES / packet["attempt_id"]
+        paths.update(
+            path.relative_to(bundle).as_posix()
+            for path in bundle.rglob("*")
+            if path.is_file() and path.name != "packet.json"
+        )
+    return sorted(paths)
+
+
+def _dirty_paths() -> set[str]:
+    result = run(["jj", "diff", "--summary"], check_message="cannot inspect candidate")
+    paths = set()
+    for line in result.stdout.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) == 2:
+            paths.add(parts[1])
+    return paths
+
+
+def _recover_prepared_candidate(action_id: str, baseline: str, allowed: list[str]) -> None:
+    dirty = _dirty_paths()
+    if not dirty:
+        return
+    unexpected = dirty - set(allowed)
+    if unexpected:
+        raise SystemExit(
+            "STOP-THE-LINE prepared candidate contains unknown dirty paths: "
+            + ", ".join(sorted(unexpected))
+        )
+    backup = FACTORY / "recovery" / action_id
+    backup.mkdir(parents=True, exist_ok=True)
+    manifest = {}
+    for relative in sorted(dirty):
+        source = ROOT / relative
+        if source.is_file():
+            destination = backup / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+            manifest[relative] = hashlib.sha256(source.read_bytes()).hexdigest()
+    (backup / "manifest.json").write_text(
+        json.dumps({"baseline": baseline, "files": manifest}, sort_keys=True, indent=2)
+        + "\n"
+    )
+    run(
+        ["jj", "restore", "--from", "main", *sorted(dirty)],
+        check_message="cannot restore interrupted prepared candidate",
+    )
+    if _dirty_paths():
+        raise SystemExit("STOP-THE-LINE prepared candidate restore did not clean tree")
+
+
+def _hash_file(path: Path) -> str:
+    if not path.is_file():
+        raise SystemExit(f"STOP-THE-LINE expected generated file missing: {path}")
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def integrate_leased_action(
+    connection,
+    action_id: str,
+    *,
+    lease_owner: str,
+    lease_token: str,
+    push: bool = True,
+) -> dict:
+    """Replay one leased integration action through its durable publication phases."""
+    kind_row = connection.execute(
+        "SELECT kind FROM action WHERE action_id = ?", (action_id,),
+    ).fetchone()
+    if kind_row is None:
+        raise KeyError(action_id)
+    gate_refresh = kind_row[0] == "gate-refresh"
+    packets = _action_packets(connection, action_id, allow_empty=gate_refresh)
+    try:
+        journal = state.integration_status(connection, action_id)
+    except KeyError:
         _clean_tree()
         _origin_is_ancestor()
-        baseline, digest = _validate_batch(
-            packets, allow_duplicate_basename=group)
-        journal = {
-            "schema": 1,
-            "transaction_id": _digest(ids + [time.time_ns()]),
-            "phase": "prepared",
-            "packet_ids": ids,
-            "base_commit": baseline,
-            "candidate_commit": None,
-            "batch_digest": digest,
-            "started_at": int(time.time()),
-            "push": push,
-            "group": group,
-            "error": None,
-        }
-        _write_journal(journal)
-    if journal["phase"] == "gate-failed":
-        raise SystemExit("STOP-THE-LINE candidate gate previously failed; repair candidate")
-    if journal.get("batch_digest") != _digest(ids):
-        raise SystemExit("STOP-THE-LINE integration journal batch hash mismatch")
-    if journal["phase"] in {"source-committed", "gate-passed",
-                            "progress-committed", "pushed"}:
-        if _commit("@") != journal.get("candidate_commit"):
-            raise SystemExit("STOP-THE-LINE candidate commit hash mismatch")
-    try:
-        if journal["phase"] == "prepared":
-            if _commit("main") != baseline:
-                raise SystemExit("STOP-THE-LINE baseline changed during replay")
+        baseline = _commit("main")
+        if packets:
+            baseline, _digest_value = _validate_batch(packets)
+        journal = state.prepare_integration(
+            connection, action_id, lease_owner=lease_owner,
+            lease_token=lease_token, baseline_revision=baseline,
+            now=int(time.time()),
+        )
+    baseline = journal["baseline_revision"]
+    if journal["phase"] == "finalized":
+        return journal
+    if _commit("main") != baseline:
+        raise SystemExit("STOP-THE-LINE integration baseline moved during replay")
+    allowed_paths = _bundle_paths(packets)
+    while journal["phase"] != "finalized":
+        state.heartbeat_action(
+            connection, action_id, lease_owner=lease_owner,
+            lease_token=lease_token, lease_seconds=7200, now=int(time.time()),
+        )
+        phase = journal["phase"]
+        if phase == "prepared":
+            _recover_prepared_candidate(action_id, baseline, allowed_paths)
             for packet in packets:
                 _apply_packet(packet)
-            _candidate_checks(packets)
-            journal["phase"] = "applied"
-            _write_journal(journal)
-        if journal["phase"] == "applied":
-            run(["jj", "commit", "-m", "feat(port): integrate factory batch"], check_message="candidate source commit failed")
-            journal["candidate_commit"] = _commit("@")
-            journal["phase"] = "source-committed"
-            _write_journal(journal)
-        if journal["phase"] == "source-committed":
-            try:
-                _gate()
-            except SystemExit as exc:
-                journal["phase"] = "gate-failed"
-                journal["error"] = str(exc)
-                _write_journal(journal)
-                for packet in packets:
-                    set_state(packet, "repair", str(exc))
-                raise
-            journal["phase"] = "gate-passed"
-            _write_journal(journal)
-        if journal["phase"] == "gate-passed":
-            status = run(["jj", "st"]).stdout
-            if any(name in status for name in ("gate.json", "progress.json", "history.jsonl")):
-                run(["jj", "commit", "site/data/gate.json", "site/data/progress.json", "site/data/history.jsonl", ".factory/blocked.toml", "-m", "chore(progress): refresh gate report"], check_message="progress commit failed")
-            journal["candidate_commit"] = _commit("@")
-            journal["phase"] = "progress-committed"
-            _write_journal(journal)
-        if journal["phase"] == "progress-committed":
+            if packets:
+                _candidate_checks(packets)
+            candidate_tree = run(
+                ["jj", "log", "--no-graph", "-r", "@", "-T", "tree_id"],
+                check_message="cannot read candidate tree",
+            ).stdout.strip()
+            journal = state.advance_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token, expected_phase="prepared",
+                values={"candidate_tree": candidate_tree}, now=int(time.time()),
+            )
+            continue
+        if phase == "applied":
+            if _dirty_paths():
+                run(
+                    ["jj", "commit", "-m", "feat(port): integrate factory batch"],
+                    check_message="candidate source commit failed",
+                )
+            candidate_commit = _commit("@")
+            journal = state.advance_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token, expected_phase="applied",
+                values={"candidate_commit": candidate_commit}, now=int(time.time()),
+            )
+            continue
+        if phase == "source-committed":
+            _gate()
+            journal = state.advance_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token, expected_phase="source-committed",
+                values={"gate_hash": _hash_file(ROOT / "site/data/gate.json")},
+                now=int(time.time()),
+            )
+            continue
+        if phase == "gate-passed":
+            status = run(["jj", "st"], check_message="cannot inspect progress output").stdout
+            generated = [
+                "site/data/gate.json", "site/data/progress.json",
+                "site/data/history.jsonl", ".factory/blocked.toml",
+            ]
+            if any(path in status for path in generated):
+                run(
+                    ["jj", "commit", *generated,
+                     "-m", "chore(progress): refresh gate report"],
+                    check_message="progress commit failed",
+                )
+            candidate_commit = _commit("@")
+            journal = state.advance_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token, expected_phase="gate-passed",
+                values={
+                    "candidate_commit": candidate_commit,
+                    "progress_hash": _hash_file(ROOT / "site/data/progress.json"),
+                },
+                now=int(time.time()),
+            )
+            continue
+        if phase == "progress-committed":
             if push:
                 _origin_is_ancestor()
-                run(["jj", "bookmark", "set", "main", "-r", "@"], check_message="main bookmark advance failed")
-                run(["jj", "git", "push", "--bookmark", "main"], check_message="push failed")
-            else:
-                run(["jj", "bookmark", "set", "main", "-r", "@"], check_message="main bookmark advance failed")
-            journal["phase"] = "pushed"
-            _write_journal(journal)
-        if journal["phase"] == "pushed":
-            for packet in packets:
-                set_state(packet, "landed")
-            journal["phase"] = "finalized"
-            _write_journal(journal)
-        return journal
-    except Exception:
-        raise
+            run(
+                ["jj", "bookmark", "set", "main", "-r", "@"],
+                check_message="main bookmark advance failed",
+            )
+            if push:
+                run(
+                    ["jj", "git", "push", "--bookmark", "main"],
+                    check_message="push failed",
+                )
+            remote = _commit("main@origin") if push else _commit("main")
+            journal = state.advance_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token, expected_phase="progress-committed",
+                values={"remote_revision": remote}, now=int(time.time()),
+            )
+            continue
+        if phase == "pushed":
+            result = state.finalize_integration(
+                connection, action_id, lease_owner=lease_owner,
+                lease_token=lease_token,
+                remote_revision=journal["remote_revision"], now=int(time.time()),
+            )
+            return {**journal, "phase": "finalized", "result": result}
+        raise SystemExit(f"STOP-THE-LINE unknown integration phase {phase!r}")
+    return journal
 
 
-def land(packet: dict) -> None:
-    integrate([packet], push=False)
 
 
-def gate_and_push(push: bool) -> None:
-    _gate()
-    if push:
-        _origin_is_ancestor()
-        run(["jj", "git", "push", "--bookmark", "main"], check_message="push failed")
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--batch", type=int, default=10)
-    parser.add_argument("--no-push", action="store_true")
-    parser.add_argument("--packet", action="append", dest="packet_ids")
-    parser.add_argument("--group", action="append", dest="group_ids")
-    args = parser.parse_args()
-    selected = set(args.packet_ids or []) | set(args.group_ids or [])
-    greens = sorted(list_packets(("green",)), key=lambda p: p.get("updated_at", 0))
-    if selected:
-        greens = [p for p in greens if p.get("id") in selected or p.get("attempt_id") in selected]
-    if not greens:
-        print("nothing green to land")
-        return 0
-    result = integrate(greens[:args.batch], push=not args.no_push,
-                       group=bool(args.group_ids))
-    print(f"integration {result['phase']} {len(result['packet_ids'])} packets")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

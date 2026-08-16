@@ -8,11 +8,13 @@ rebuilds stay incremental.
 """
 
 from __future__ import annotations
+
 import json
 import os
 import shutil
 import subprocess
 import time
+from pathlib import Path
 
 from common import LANE_BASE, ROOT, run_bounded
 
@@ -25,6 +27,7 @@ RSYNC_EXCLUDES = (
     "__pycache__", "tools/git-credential-forgejo",
     "tools/oracle/.venv", "tools/oracle/gbref/build",
 )
+
 
 _AUTH_ENV_PARTS = (
     "AUTH", "CREDENTIAL", "FORGEJO", "CLOUDFLARE", "CF_ACCESS", "TOKEN",

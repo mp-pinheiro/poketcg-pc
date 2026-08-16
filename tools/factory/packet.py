@@ -23,15 +23,21 @@ import subprocess
 import sys
 import tempfile
 import time
-import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import common  # noqa: E402
-from common import (  # noqa: E402
-    BUNDLES, FACTORY, QUEUE, ROOT, block_routine, blocked_routines,
-    issue_records, read_json, write_json,
+import common
+from common import (
+    BACKUPS,
+    BUNDLES,
+    QUEUE,
+    ROOT,
+    block_routine,
+    blocked_routines,
+    issue_records,
+    read_json,
+    write_json,
 )
 
 PRET = ROOT / "poketcg"
@@ -75,7 +81,7 @@ def plan_work_id_migration(
             raise ValueError(f"packet {packet_id} has no non-empty file")
         routines = packet.get("routines")
         if not isinstance(routines, list):
-            raise ValueError(f"packet {packet_id} has no routine list")
+            raise TypeError(f"packet {packet_id} has no routine list")
         updated = copy.deepcopy(packet)
         packet_changed = False
         for index, routine in enumerate(updated["routines"]):
@@ -276,10 +282,10 @@ def apply_work_id_migration(preflight: dict) -> dict:
         for path, expected in preflight["bundles"]["missing"]:
             if read_json(path) != expected:
                 raise RuntimeError(f"bundle metadata readback mismatch: {path}")
-    except Exception as exc:
+    except (OSError, RuntimeError, TypeError, ValueError) as exc:
         try:
             _restore_migration(preflight)
-        except Exception as restore_exc:
+        except (OSError, RuntimeError, TypeError, ValueError) as restore_exc:
             raise RuntimeError(
                 f"migration failed; backup at {backup}; rollback failed: "
                 f"{restore_exc}"
@@ -360,8 +366,8 @@ def _eval_const(text: str, numeric: dict[str, int]) -> int | None:
     if not _NUMERIC_EXPR.match(expr):
         return None
     try:
-        return int(eval(expr, {"__builtins__": {}}, {}))  # noqa: S307 - arithmetic only
-    except Exception:
+        return int(eval(expr, {"__builtins__": {}}, {}))
+    except (NameError, OverflowError, SyntaxError, TypeError, ValueError, ZeroDivisionError):
         return None
 
 
@@ -710,7 +716,7 @@ def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
 
 def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                   limit: int | None,
-                  include_names: set[str] | None = None) -> list[dict]:
+                  include_work_ids: set[str] | None = None) -> list[dict]:
     functions, _inventory = compute_functions()
     blocked = blocked_routines()
     graph, dependents = blocker_graph(functions)
@@ -720,26 +726,30 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             cascade_cache[name] = cascade(graph, dependents, {name})
         return cascade_cache[name]
 
-    managed_issues = issue_records(required=True)
+    managed_issues = issue_records(required=include_work_ids is None)
     missing = [
         f["name"] for f in functions
         if f["status"] == "todo"
         and f.get("work_id") not in managed_issues
     ]
-    if missing:
+    if missing and include_work_ids is None:
         raise RuntimeError(
             "Forgejo issue missing for todo routines: "
             + ", ".join(sorted(missing))
         )
     ready = [
         f for f in functions
-        if f["status"] == "todo"
-        and (f["ready"] if include_names is None else f["name"] in include_names)
-        and (f["name"] not in blocked or include_names is not None)
-        and f["work_id"] in managed_issues
+        if (
+            f["status"] == "todo"
+            or include_work_ids is not None and f["work_id"] in include_work_ids
+        )
+        and (f["ready"] if include_work_ids is None else f["work_id"] in include_work_ids)
+        and (f["name"] not in blocked or include_work_ids is not None)
+        and (f["work_id"] in managed_issues or include_work_ids is not None)
     ]
-    held = common.claim_index()
-    ready = [f for f in ready if f["work_id"] not in held]
+    if include_work_ids is None:
+        held = common.claim_index()
+        ready = [f for f in ready if f["work_id"] not in held]
     if dir_filter:
         ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
 
@@ -778,7 +788,6 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
         basename = Path(file).stem
         for chunk in chunks:
             work_ids = sorted(f["work_id"] for f, _asm in chunk)
-            digest = hashlib.sha256("\0".join(work_ids).encode()).hexdigest()[:10]
             routines = []
             packet_asm = []
             for f, asm in chunk:
@@ -838,20 +847,48 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             }
             packets.append(packet)
     return packets
-def build_scc_packets(work_names: set[str] | list[str]) -> list[dict]:
-    names = set(work_names)
-    if not names:
-        raise ValueError("SCC recovery requires work IDs")
+def build_packets_for_work_ids(
+    work_ids: set[str] | list[str],
+    *,
+    kind: str = "translation",
+) -> list[dict]:
+    requested = set(work_ids)
+    if not requested:
+        raise ValueError("packet materialization requires work IDs")
     packets = build_packets(
-        None, max_routines=len(names), max_asm_lines=100000,
-        limit=None, include_names=names,
+        None, max_routines=len(requested), max_asm_lines=100000,
+        limit=None, include_work_ids=requested,
     )
-    packets = attach_dependencies(packets, internal_names=names)
-    if {routine["name"] for packet in packets for routine in packet["routines"]} != names:
-        raise RuntimeError("SCC recovery packet membership is incomplete")
+    actual = {
+        routine["work_id"] for packet in packets for routine in packet["routines"]
+    }
+    if actual != requested:
+        raise RuntimeError(
+            f"packet materialization membership mismatch: "
+            f"missing={sorted(requested - actual)} extra={sorted(actual - requested)}"
+        )
+    internal_names = {
+        routine["name"] for packet in packets for routine in packet["routines"]
+    }
+    packets = attach_dependencies(
+        packets,
+        record_blockers=False,
+        internal_names=internal_names if kind == "dependency-group" else None,
+    )
+    after = {
+        routine["work_id"] for packet in packets for routine in packet["routines"]
+    }
+    if after != requested:
+        raise RuntimeError(
+            f"dependency attachment removed work: {sorted(requested - after)}"
+        )
     for packet in packets:
-        packet["kind"] = "dependency-group"
+        packet["kind"] = kind
     return packets
+
+
+def build_scc_packets(work_ids: set[str] | list[str]) -> list[dict]:
+    return build_packets_for_work_ids(work_ids, kind="dependency-group")
 
 
 
@@ -888,7 +925,8 @@ def dissolved_symbols() -> set[str]:
     path = ROOT / "tools" / "progress" / "scope.toml"
     if not path.exists():
         return set()
-    spec = tomllib.load(open(path, "rb"))
+    with path.open("rb") as stream:
+        spec = tomllib.load(stream)
     files = set()
     names: set[str] = set()
     for entry in spec.get("exclude", []):
@@ -901,7 +939,10 @@ def dissolved_symbols() -> set[str]:
     return names
 
 def attach_dependencies(
-    packets: list[dict], internal_names: set[str] | None = None,
+    packets: list[dict],
+    internal_names: set[str] | None = None,
+    *,
+    record_blockers: bool = True,
 ) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
@@ -938,9 +979,12 @@ def attach_dependencies(
                 })
             routine["callees"] = callees
             if unavailable:
-                block_routine(routine["name"],
-                              f"callee has no C symbol: {', '.join(unavailable)}",
-                              "port or transform the named callee")
+                if record_blockers:
+                    block_routine(
+                        routine["name"],
+                        f"callee has no C symbol: {', '.join(unavailable)}",
+                        "port or transform the named callee",
+                    )
                 continue
             usable.append(routine)
         if not usable:
@@ -967,7 +1011,7 @@ def cmd_chokepoints(limit: int) -> int:
     print(f"{'cascade':>7} {'1hop':>5} {'size':>6} {'ready':>6}  name  blockers")
     for score, name in scored[:limit]:
         f = by_name[name]
-        print(f"{score:7} {onehop.get(name, 0):5} {f['size']:5}b {str(f['ready']):>6}  "
+        print(f"{score:7} {onehop.get(name, 0):5} {f['size']:5}b {f['ready']!s:>6}  "
               f"{name}  {f['blockers'][:4]}")
     return 0
 
