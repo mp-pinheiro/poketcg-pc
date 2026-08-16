@@ -28,6 +28,21 @@ RSYNC_EXCLUDES = (
     "tools/oracle/.venv", "tools/oracle/gbref/build",
 )
 
+PURGED_LANE_PATHS = (
+    ".git", ".jj", "tools/git-credential-forgejo", ".env", ".gitconfig",
+    ".git-credentials", ".ssh", ".netrc", ".credentials", "credentials",
+    "secrets", ".recovery-home",
+)
+
+
+def _purge_forbidden_lane_paths(lane: Path) -> None:
+    for relative in PURGED_LANE_PATHS:
+        path = lane / relative
+        if path.is_symlink() or path.is_file():
+            path.unlink()
+        elif path.is_dir():
+            shutil.rmtree(path)
+
 
 _AUTH_ENV_PARTS = (
     "AUTH", "CREDENTIAL", "FORGEJO", "CLOUDFLARE", "CF_ACCESS", "TOKEN",
@@ -139,6 +154,7 @@ def ensure(index: int, deadline: float | None = None,
     """
     lane = lane_dir(index)
     lane.mkdir(parents=True, exist_ok=True)
+    _purge_forbidden_lane_paths(lane)
     command = ["rsync", "-a", "--checksum", "--no-times", "--delete"]
     for pattern in RSYNC_EXCLUDES:
         command += ["--exclude", pattern]

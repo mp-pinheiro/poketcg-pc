@@ -9,7 +9,6 @@ import fcntl
 import importlib.util
 import io
 import json
-import os
 import sqlite3
 import subprocess
 import sys
@@ -215,6 +214,36 @@ def snapshot() -> dict[str, Any]:
     }
 
 
+def _adopt_orphaned_supervisor_action(
+    connection: sqlite3.Connection,
+    *,
+    lease_owner: str,
+    now: int,
+) -> None:
+    if lease_owner != "supervise":
+        return
+    rows = connection.execute(
+        """SELECT action_id, lease_owner FROM action
+           WHERE status IN ('leased', 'running')
+             AND lease_owner LIKE 'supervise-%'
+             AND lease_deadline > ?
+           ORDER BY created_at, action_id""",
+        (now,),
+    ).fetchall()
+    for action_id, previous_owner in rows:
+        _, _, pid_text = previous_owner.partition("-")
+        if not pid_text.isdigit() or Path(f"/proc/{pid_text}").exists():
+            continue
+        with state.immediate(connection):
+            connection.execute(
+                """UPDATE action SET lease_owner = ?, updated_at = ?
+                   WHERE action_id = ? AND lease_owner = ?
+                     AND status IN ('leased', 'running')""",
+                (lease_owner, now, action_id, previous_owner),
+            )
+        return
+
+
 def _resume_owned_action(
     connection,
     *,
@@ -259,6 +288,9 @@ def next_action(
         return {"status": "complete", "message": "PORT COMPLETE", "completion": completion}
     connection = _open_state()
     try:
+        _adopt_orphaned_supervisor_action(
+            connection, lease_owner=lease_owner, now=int(time.time()),
+        )
         resumed = _resume_owned_action(
             connection, lease_owner=lease_owner,
             lease_seconds=lease_seconds, now=int(time.time()),
@@ -534,7 +566,7 @@ def supervise(
     verify_width: int = 6,
 ) -> dict[str, Any]:
     """Run journaled actions until the authoritative completion predicate holds."""
-    lease_owner = f"supervise-{os.getpid()}"
+    lease_owner = "supervise"
     with supervisor_lock():
         while True:
             planned = next_action(
