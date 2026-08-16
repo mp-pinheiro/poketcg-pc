@@ -605,8 +605,8 @@ typedef struct {
 MrFujiBenchCheckResult MrFuji_BenchCheck(void);
 /* <<< factory MrFuji_BenchCheck */
 /* >>> factory DreamEaterEffect */
-typedef struct { uint16_t hl; uint8_t f; } DreamEaterResult;
-DreamEaterResult DreamEaterEffect(void);
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } DreamEaterEffectResult;
+DreamEaterEffectResult DreamEaterEffect(void);
 /* <<< factory DreamEaterEffect */
 /* >>> factory JynxMeditate_DamageBoostEffect */
 void JynxMeditate_DamageBoostEffect(void);

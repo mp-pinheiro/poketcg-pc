@@ -3476,9 +3476,13 @@ MUTATIONS["HealingWind_InitialEffect"] = {"source_symbol": "HealingWind_InitialE
 # <<< factory-mutation HealingWind_InitialEffect
 
 # >>> factory DreamEaterEffect
-CONTRACT["DreamEaterEffect"] = {"compare": ("f", "hl"), "preserve": ()}
-CASES["DreamEaterEffect"] = [{"wram": {0xFF97: b"\xC2", 0xC1F0: b"\x02"}}, {"wram": {0xFF97: b"\xC2", 0xC1F0: b"\x01"}}, dict(POISON, wram={0xFF97: b"\xC2", 0xC1F0: b"\x00"})]
+CONTRACT["DreamEaterEffect"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["DreamEaterEffect"] = [
+    {},
+    dict(POISON),
+]
 # <<< factory DreamEaterEffect
+
 # >>> factory JynxMeditate_DamageBoostEffect
 CONTRACT["JynxMeditate_DamageBoostEffect"] = {"compare": (), "preserve": ()}
 CASES["JynxMeditate_DamageBoostEffect"] = [{}, dict(POISON)]
@@ -3513,7 +3517,7 @@ CASES["Scavenge_DiscardEffect"] = [{"wram": {0xFFA0: b"\x00"}}, dict(POISON, wra
 # <<< factory Scavenge_DiscardEffect
 
 # >>> factory-mutation DreamEaterEffect
-MUTATIONS["DreamEaterEffect"] = {"source_symbol": "DreamEaterEffect", "before": "(status.a & CNF_SLP_PRZ) == ASLEEP", "after": "(status.a & CNF_SLP_PRZ) != ASLEEP", "case_ids": ["DreamEaterEffect-0", "DreamEaterEffect-1", "DreamEaterEffect-2"]}
+MUTATIONS["DreamEaterEffect"] = {"source_symbol": "DreamEaterEffect", "before": "if (masked == ASLEEP)", "after": "if (masked != ASLEEP)", "case_ids": ["DreamEaterEffect-0", "DreamEaterEffect-1"]}
 # <<< factory-mutation DreamEaterEffect
 # >>> factory-mutation JynxMeditate_DamageBoostEffect
 MUTATIONS["JynxMeditate_DamageBoostEffect"] = {"source_symbol": "JynxMeditate_DamageBoostEffect", "before": "AddToDamage(damage.a);", "after": "AddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["JynxMeditate_DamageBoostEffect-0", "JynxMeditate_DamageBoostEffect-1"]}

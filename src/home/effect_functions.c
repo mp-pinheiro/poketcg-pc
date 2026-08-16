@@ -2674,14 +2674,18 @@ uint8_t PickRandomBasicCardFromDeck(void)
 	}
 }
 /* <<< factory PickRandomBasicCardFromDeck */
+
 /* >>> factory DreamEaterEffect */
-/* effect_functions.asm:4688-4700 */
-DreamEaterResult DreamEaterEffect(void)
+/* effect_functions.asm:4688-4702 */
+DreamEaterEffectResult DreamEaterEffect(void)
 {
-	DuelistVarResult status = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
-	if ((status.a & CNF_SLP_PRZ) == ASLEEP)
-		return (DreamEaterResult){status.hl, 0xc0u};
-	return (DreamEaterResult){OpponentIsNotAsleepText, 0x10u};
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	uint8_t masked = (uint8_t)(r.a & CNF_SLP_PRZ);
+
+	if (masked == ASLEEP)
+		return (DreamEaterEffectResult){masked, 0xc0u, r.hl};
+
+	return (DreamEaterEffectResult){masked, 0x10u, OpponentIsNotAsleepText};
 }
 /* <<< factory DreamEaterEffect */
 

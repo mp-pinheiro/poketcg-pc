@@ -1497,11 +1497,13 @@ static void adapt_MrFuji_BenchCheck(ProbeState *s)
 /* >>> factory DreamEaterEffect */
 static void adapt_DreamEaterEffect(ProbeState *s)
 {
-	DreamEaterResult r = DreamEaterEffect();
-	s->hl = r.hl;
+	DreamEaterEffectResult r = DreamEaterEffect();
+	s->a = r.a;
 	s->f = r.f;
+	s->hl = r.hl;
 }
 /* <<< factory DreamEaterEffect */
+
 /* >>> factory JynxMeditate_DamageBoostEffect */
 static void adapt_JynxMeditate_DamageBoostEffect(ProbeState *s)
 {
@@ -2342,7 +2344,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ThickSkinnedEffect", adapt_ThickSkinnedEffect },
 	{ "HealingWind_InitialEffect", adapt_HealingWind_InitialEffect },
 	{ "PickRandomBasicCardFromDeck", adapt_PickRandomBasicCardFromDeck },
-	{ "DreamEaterEffect", adapt_DreamEaterEffect },
 	{ "JynxMeditate_DamageBoostEffect", adapt_JynxMeditate_DamageBoostEffect },
 	{ "KadabraRecover_CheckEnergyHP", adapt_KadabraRecover_CheckEnergyHP },
 	{ "MewtwoAltEnergyAbsorption_AddToHandEffect", adapt_MewtwoAltEnergyAbsorption_AddToHandEffect },
@@ -2421,5 +2422,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyConversion_CheckEnergy", adapt_EnergyConversion_CheckEnergy },
 	{ "EnergyConversion_AISelectEffect", adapt_EnergyConversion_AISelectEffect },
 	{ "HypnoDarkMind_AISelectEffect", adapt_HypnoDarkMind_AISelectEffect },
+	{ "DreamEaterEffect", adapt_DreamEaterEffect },
 	{ NULL, NULL },
 };
