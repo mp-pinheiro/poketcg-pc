@@ -6,12 +6,17 @@ wCurOWFrameDataOffset = 0xD320
 wCurOWFrameDuration = 0xD321
 wNumLoadedFramesetSubgroups = 0xD322
 
+
 CONTRACT = {
     "ClearNumLoadedFramesetSubgroups": {"compare": (), "preserve": ()},
     "ClearOWFramesetSubgroups": {"compare": (), "preserve": ()},
     "GetOWFramesetSubgroupData": {"compare": (), "preserve": ()},
     "LoadOWFramesetSubgroup": {"compare": ("a",), "preserve": ()},
     "StoreOWFramesetSubgroup": {"compare": (), "preserve": ()},
+# >>> factory LoadOWFrameTiles
+    "LoadOWFrameTiles": {"compare": (), "preserve": ()},
+# <<< factory LoadOWFrameTiles
+
 }
 
 CASES = {
@@ -47,6 +52,14 @@ CASES = {
         {"c": 3, "wram": {wCurOWFrameDataOffset: b"\xDE", wCurOWFrameDuration: b"\xF0",
                             wOWFramesetSubgroups_ADDR: b"\x00" * 8}},
     ],
+# >>> factory LoadOWFrameTiles
+    "LoadOWFrameTiles": [
+        dict(POISON, wram={wCurOWFrameDuration: b"\x02"}),
+        dict(POISON, wram={wCurOWFrameDuration: b"\x03"}),
+        dict(POISON, wram={wCurOWFrameDuration: b"\x04"}),
+        dict(POISON, wram={wCurOWFrameDuration: b"\x05"}),
+    ],
+# <<< factory LoadOWFrameTiles
 }
 
 from tests.cases._schema_migration import legacy_to_schema
@@ -84,3 +97,11 @@ MUTATIONS = {
         "case_ids": ["StoreOWFramesetSubgroup-1", "StoreOWFramesetSubgroup-2", "StoreOWFramesetSubgroup-3"],
     },
 }
+# >>> factory-mutation LoadOWFrameTiles
+MUTATIONS["LoadOWFrameTiles"] = {
+    "source_symbol": "LoadOWFrameTiles",
+    "before": "wCurOWFrameDuration = (uint8_t)(duration - 1u);",
+    "after": "wCurOWFrameDuration = (uint8_t)(duration - 2u);",
+    "case_ids": ["LoadOWFrameTiles-0", "LoadOWFrameTiles-1", "LoadOWFrameTiles-2", "LoadOWFrameTiles-3"],
+}
+# <<< factory-mutation LoadOWFrameTiles

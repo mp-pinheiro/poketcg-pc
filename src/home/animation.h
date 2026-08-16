@@ -9,4 +9,8 @@ void GetOWFramesetSubgroupData(uint16_t hl, uint8_t c);
 uint8_t LoadOWFramesetSubgroup(uint8_t c);
 void StoreOWFramesetSubgroup(uint8_t c);
 
+
+/* >>> factory LoadOWFrameTiles */
+void LoadOWFrameTiles(void);
+/* <<< factory LoadOWFrameTiles */
 #endif

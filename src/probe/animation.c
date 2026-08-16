@@ -28,11 +28,21 @@ static void adapt_StoreOWFramesetSubgroup(ProbeState *s)
 	StoreOWFramesetSubgroup(s->c);
 }
 
+/* >>> factory LoadOWFrameTiles */
+static void adapt_LoadOWFrameTiles(ProbeState *s)
+{
+	(void)s;
+	LoadOWFrameTiles();
+}
+/* <<< factory LoadOWFrameTiles */
+
+
 const ProbeEntry probe_entries_animation[] = {
 	{ "ClearNumLoadedFramesetSubgroups", adapt_ClearNumLoadedFramesetSubgroups },
 	{ "ClearOWFramesetSubgroups", adapt_ClearOWFramesetSubgroups },
 	{ "GetOWFramesetSubgroupData", adapt_GetOWFramesetSubgroupData },
 	{ "LoadOWFramesetSubgroup", adapt_LoadOWFramesetSubgroup },
 	{ "StoreOWFramesetSubgroup", adapt_StoreOWFramesetSubgroup },
+	{ "LoadOWFrameTiles", adapt_LoadOWFrameTiles },
 	{ NULL, NULL },
 };
