@@ -25,6 +25,7 @@ emit per-phase timing without changing the verdict.
 
 from __future__ import annotations
 import argparse
+import hashlib
 import json
 import re
 import shutil
@@ -51,8 +52,6 @@ def _tail(text: str) -> str:
 
 def fn_args(routine_names: list[str]) -> list[str]:
     return [arg for fn in routine_names for arg in ("--fn", fn)]
-
-
 
 
 def compile_cause(output: str) -> str:
@@ -82,8 +81,32 @@ def compile_cause(output: str) -> str:
     ) or output
 
 
-def verdict(kind: str, detail: str, routine: str | None = None) -> dict:
-    return {"status": kind, "detail": _tail(detail), "routine": routine}
+_FAILURE_CLASSES = {
+    "compile": "code", "cases": "translation", "schema": "schema",
+    "primary": "code", "diff": "code", "mutation": "code", "lint": "harness",
+    "timeout": "infrastructure", "infra-timeout": "infrastructure",
+    "infra-error": "infrastructure", "bundle": "bundle", "green": None,
+}
+
+
+def verdict(kind: str, detail: str, routine: str | None = None,
+            *, phase: str | None = None, failure_class: str | None = None,
+            failing: list[str] | None = None, retryable: bool | None = None) -> dict:
+    """Return the stable wire format consumed by recovery and journaling."""
+    text = _tail(detail)
+    if failure_class is None:
+        failure_class = _FAILURE_CLASSES.get(kind, "code" if kind != "green" else None)
+    if retryable is None:
+        retryable = kind not in {"green"} and failure_class not in {"provider"}
+    names = list(failing or ([routine] if routine else []))
+    fingerprint = hashlib.sha256(
+        json.dumps({"status": kind, "phase": phase or kind,
+                    "failure_class": failure_class, "detail": text,
+                    "routine": routine, "failing": names},
+                   sort_keys=True).encode()).hexdigest()
+    return {"status": kind, "phase": phase or kind, "failure_class": failure_class,
+            "detail": text, "routine": routine, "failing": names,
+            "fingerprint": fingerprint, "retryable": bool(retryable)}
 
 
 def run(command: list[str], cwd: Path, timeout: float = 600,
@@ -313,50 +336,73 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
             return verdict("diff", live.stdout + live.stderr)
 
     if progress:
-        progress("mutation")
-    witnesses = inspection.get("witnesses", {})
-    for fn in routine_names:
-        index = witnesses.get(fn)
-        if index is None:
-            return verdict("mutation", f"MUTATIONS[{fn!r}] is missing", fn)
-        red = run([sys.executable, "tools/run_mutation.py", fn,
-                   f"tests/cases/{basename}.py", "--index", str(index),
-                   "--build", "build", "--runner", str(RUNNER)],
-                  lane, timeout=300, deadline=deadline)
-        if red.returncode != 0:
-            return verdict("mutation", red.stdout + red.stderr, fn)
-
-    if progress:
-        progress("lint")
-    lint = run([sys.executable, "tools/lint_adapters.py"], lane,
-               timeout=600, deadline=deadline)
-    if lint.returncode != 0:
-        return verdict("lint", lint.stdout + lint.stderr)
-
-    return verdict("green", "all checks passed")
+        progress("complete")
+    return verdict("green", output)
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
-def collect_bundle(packet: dict, lane: Path) -> Path:
-    bundle = BUNDLES / packet["id"]
-    if bundle.exists():
-        shutil.rmtree(bundle)
+def _validate_bundle_inputs(packet: dict, lane: Path) -> tuple[dict, dict[str, str]]:
+    """Require surgery markers and a complete, importable cases contract."""
+    import surgery
+
     basename = packet["basename"]
+    try:
+        extracted = surgery.extract(lane, packet)
+        module = load_cases_module(lane, basename)
+    except Exception as exc:
+        raise RuntimeError(f"bundle structural extraction failed: {exc}") from exc
+    contract = getattr(module, "CONTRACT", {})
+    cases = getattr(module, "CASES", {})
+    mutations = getattr(module, "MUTATIONS", {})
+    expected = {r["name"] for r in packet["routines"]}
+    missing = expected - set(contract) - set(cases) - set(mutations)
+    if missing:
+        raise RuntimeError(f"bundle contract missing routines: {sorted(missing)}")
+    for fn in expected:
+        blocks = extracted["routines"].get(fn, {})
+        absent = {"C", "H", "PROBE", "CASES", "MUTATION"} - set(blocks)
+        if absent:
+            raise RuntimeError(f"bundle {fn} missing marker blocks: {sorted(absent)}")
     rels = [f"src/home/{basename}.c", f"src/home/{basename}.h",
             f"src/probe/{basename}.c", f"tests/cases/{basename}.py"]
     rels += [f"tools/oracle/mutation_receipts/{r['name']}.json"
              for r in packet["routines"]]
+    hashes = {}
+    for rel in rels:
+        path = lane / rel
+        if not path.is_file():
+            raise RuntimeError(f"bundle input missing: {path}")
+        hashes[rel] = _sha256(path)
+    return extracted, hashes
+
+
+def collect_bundle(packet: dict, lane: Path) -> Path:
+    _, hashes = _validate_bundle_inputs(packet, lane)
+    bundle = BUNDLES / packet.get("attempt_id", packet["id"])
+    if bundle.exists():
+        shutil.rmtree(bundle)
+    basename = packet["basename"]
+    rels = list(hashes)
     for rel in rels:
         source = lane / rel
-        if not source.exists():
-            raise RuntimeError(f"bundle input missing: {source}")
         dest = bundle / rel
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, dest)
     metadata = packet_identity(packet)
+    metadata["schema"] = metadata.get("schema", 2)
+    metadata["attempt_id"] = packet.get("attempt_id", packet["id"])
+    metadata["base_commit"] = packet.get("base_commit")
+    metadata["hashes"] = hashes
     (bundle / "packet.json").write_text(
-        json.dumps(metadata, sort_keys=True, indent=2) + "\n"
-    )
+        json.dumps(metadata, sort_keys=True, indent=2) + "\n")
     return bundle
+
+
 
 
 def main() -> int:

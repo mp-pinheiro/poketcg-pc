@@ -17,17 +17,19 @@ functions of their arguments and return values only. A packet pins its lane
 until it reaches a terminal state, because targeted repair rounds rely on the
 lane keeping the already-verified routines' files. A wave's packet cohort may
 exceed ``lanes_count``: extra packets stay queued and are admitted into a lane
-as soon as one frees up. Crash-safe: every transition is on disk;
-``reset-stale`` returns in-flight packets to ``pending``.
+on disk; recovery is owned by ``migrate-recovery-state``.
 """
 
 import argparse
+import copy
 import fcntl
 import hashlib
 import importlib.util
 import json
 import os
+import shutil
 import sys
+import tempfile
 import time
 import traceback
 import uuid
@@ -41,16 +43,23 @@ import prompt as prompt_mod  # noqa: E402
 import surgery  # noqa: E402
 import verify as verify_mod  # noqa: E402
 from common import (  # noqa: E402
+    ACTIVE_CLAIM_STATES,
     EVENTS,
     FACTORY,
+    HISTORICAL_STATES,
     METRICS,
     ROOT,
+    SCHEMA,
     WAVE_LOCK,
     WaveDeadlineExpired,
     block_routine,
+    claim_index,
+    cohort_id,
     estimate_tokens,
+    legacy_attempt_id,
     list_packets,
     load_packet,
+    new_attempt_id,
     packet_path,
     record_event,
     record_metric,
@@ -58,6 +67,7 @@ from common import (  # noqa: E402
     save_packet,
     set_state,
     wave_lock,
+    write_json,
 )
 
 IN_FLIGHT = ("translating", "translated", "verifying", "repair")
@@ -90,6 +100,18 @@ def _foreign_claims(packet: dict) -> set[str]:
     return held
 
 
+def _progress_report() -> dict:
+    """Return the live authoritative progress report."""
+    spec = importlib.util.spec_from_file_location(
+        "port_progress_report", ROOT / "tools" / "progress" / "report.py")
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load progress report")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.compute(
+        module.load_inventory(), module.load_routines()[0], module.load_gate())
+
+
 def _todo_status() -> dict[tuple[str, str], bool]:
     """(source, name) -> still todo, from the live progress report.
 
@@ -97,17 +119,9 @@ def _todo_status() -> dict[tuple[str, str], bool]:
     routines may have landed on main. Resetting it to pending would re-port
     committed code, so callers drop routines the report no longer marks todo.
     """
-    spec = importlib.util.spec_from_file_location(
-        "port_progress_report", ROOT / "tools" / "progress" / "report.py")
-    if spec is None or spec.loader is None:
-        raise RuntimeError("cannot load progress report")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    report = module.compute(
-        module.load_inventory(), module.load_routines()[0], module.load_gate())
     return {
         (f["file"], f["name"]): f["status"] == "todo"
-        for f in report["functions"]
+        for f in _progress_report()["functions"]
     }
 
 
@@ -323,8 +337,8 @@ def _salvage_finish(run: "_Run", verdict: dict | None, failing: list[str]) -> No
     try:
         verify_mod.collect_bundle(run.packet, run.lane)
     except Exception as exc:
-        run.final = "escalated"
-        run.reason = f"infra-error: bundle collection failed: {str(exc)[-300:]}"
+        run.final = "retry-ready"
+        run.reason = f"bundle failure: {str(exc)[-300:]}"
         return
     run.final = "green"
     run.reason = f"partial: {len(keep)}/{len(names)} landed, {len(failing)} spilled"
@@ -340,10 +354,10 @@ def _decide(run: "_Run", result: dict, max_rounds: int) -> str:
         spinner = result.get("routine") or run.packet["routines"][0]["name"]
         block_routine(spinner, "oracle timeout: callee never returns",
                       "port the blocking callee (see verdict)")
-        run.final, run.reason = "parked", f"timeout: {spinner}"
+        run.final, run.reason = "blocked", f"timeout: {spinner}"
         return "final"
     if result["status"] in {"infra-timeout", "infra-error"}:
-        run.final = "escalated"
+        run.final = "retry-ready"
         prefix = result["status"]
         run.reason = f"{prefix}: {result['detail'][-400:]}"
         return "final"
@@ -368,7 +382,7 @@ def _decide(run: "_Run", result: dict, max_rounds: int) -> str:
         if failing and keep:
             run.pending_reason = reason
             return "salvage"
-        run.final = "escalated"
+        run.final = "retry-ready"
         run.reason = reason
         return "final"
     run.targets = failing_now if failing_now else None
@@ -688,6 +702,7 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
         status = "complete" if stop_reason is None else (
             "deadline" if "deadline" in stop_reason else "stopped"
         )
+
         emit("wave-finish", status=status,
              result_count=len(results), deferred_count=len(deferred),
              stop_reason=stop_reason, wall_s=round(time.monotonic() - started, 3))
@@ -697,16 +712,242 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
             "wall_s": round(time.monotonic() - started, 3),
             "event_errors": event_errors,
         }
+def _migration_progress() -> tuple[dict[str, bool], dict]:
+    report = _progress_report()
+    todo = {
+        f"{row.get('file')}:{row.get('name')}": row.get("status") == "todo"
+        for row in report.get("functions", [])
+        if row.get("file") and row.get("name")
+    }
+    return todo, report
+
+
+def _migration_backup(raw_packets: list[tuple[Path, bytes]]) -> Path:
+    backups = FACTORY / "backups"
+    backups.mkdir(parents=True, exist_ok=True)
+    stamp = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
+    backup = backups / f"recovery-state-{stamp}-{time.time_ns() % 1000000:06d}"
+    backup.mkdir()
+    manifest = []
+    for path, raw in raw_packets:
+        destination = backup / "queue" / path.name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(raw)
+        manifest.append(str(destination.relative_to(backup)))
+    write_json(backup / "manifest.json", {
+        "kind": "migrate-recovery-state",
+        "created_at": int(time.time()),
+        "queue": manifest,
+    })
+    return backup
+
+
+def _migration_plan() -> dict:
+    """Build a deterministic schema-2 recovery migration without side effects."""
+    todo, report = _migration_progress()
+    entries = []
+    queue = FACTORY / "queue"
+    if queue.is_dir():
+        for path in sorted(queue.glob("*.json")):
+            raw = path.read_bytes()
+            entries.append((path, raw, json.loads(raw)))
+
+    planned = []
+    legacy_count = 0
+    already_schema2 = 0
+    for path, raw, original in entries:
+        if original.get("schema") == SCHEMA and original.get("attempt_id"):
+            already_schema2 += 1
+            planned.append({
+                "path": path, "raw": raw, "original": original,
+                "packet": copy.deepcopy(original), "legacy": False,
+                "sort_key": (0, path.stat().st_mtime_ns, path.name),
+            })
+            continue
+        legacy_count += 1
+        packet_id = original.get("id") or path.stem
+        if not isinstance(packet_id, str) or not packet_id:
+            raise ValueError(f"legacy packet {path} has no id")
+        routines = original.get("routines")
+        if not isinstance(routines, list):
+            raise ValueError(f"legacy packet {packet_id} has no routines")
+        attempt_id = legacy_attempt_id(packet_id, raw)
+        converted = copy.deepcopy(original)
+        converted.update({
+            "schema": SCHEMA,
+            "id": attempt_id,
+            "attempt_id": attempt_id,
+            "kind": converted.get("kind") or "translation",
+            "base_commit": converted.get("base_commit") or "unknown",
+            "failure_history": list(converted.get("failure_history") or []),
+            "retired_routines": list(converted.get("retired_routines") or []),
+        })
+        converted_routines = []
+        for routine in routines:
+            source = converted.get("file") or routine.get("file")
+            name = routine.get("name")
+            if not source or not name:
+                raise ValueError(f"legacy packet {packet_id} has malformed routine")
+            work_id = routine.get("work_id") or f"port:v1:{source}:{name}"
+            item = copy.deepcopy(routine)
+            item["work_id"] = work_id
+            if todo.get(f"{source}:{name}", False):
+                converted_routines.append(item)
+            else:
+                converted["retired_routines"].append(item)
+        converted["routines"] = converted_routines
+        converted["cohort_id"] = cohort_id(
+            [r["work_id"] for r in converted_routines]
+            or [r["work_id"] for r in routines]
+        )
+        state = original.get("state")
+        if state in {"escalated", "rejected-format"}:
+            converted["state"] = "retry-ready"
+        elif state == "parked":
+            converted["state"] = "blocked"
+        elif state not in {
+            "pending", "translating", "translated", "verifying", "repair",
+            "retry-ready", "recovering", "green", "integrating", "blocked",
+            "landed", "superseded",
+        }:
+            converted["state"] = "pending"
+        planned.append({
+            "path": path, "raw": raw, "original": original,
+            "packet": converted, "legacy": True,
+            "sort_key": (1, path.stat().st_mtime_ns, packet_id),
+        })
+
+    owners = {}
+    duplicate_work = set()
+    duplicate_pairs = 0
+    for entry in planned:
+        packet = entry["packet"]
+        for routine in list(packet.get("routines", [])):
+            work_id = routine["work_id"]
+            previous = owners.get(work_id)
+            if previous is None:
+                owners[work_id] = entry
+                continue
+            duplicate_work.add(work_id)
+            duplicate_pairs += 1
+            winner = min((previous, entry), key=lambda item: item["sort_key"])
+            loser = entry if winner is previous else previous
+            owners[work_id] = winner
+            loser["packet"].setdefault("superseded_work_ids", []).append(work_id)
+            loser["packet"].setdefault("retired_routines", []).append(
+                copy.deepcopy(routine)
+            )
+            loser["packet"]["routines"] = [
+                item for item in loser["packet"].get("routines", [])
+                if item.get("work_id") != work_id
+            ]
+
+    superseded = []
+    for entry in planned:
+        packet = entry["packet"]
+        if not packet.get("routines"):
+            packet["state"] = "superseded"
+            superseded.append(packet["attempt_id"])
+        packet["cohort_id"] = cohort_id(
+            [r["work_id"] for r in packet.get("routines", [])]
+            or [r["work_id"] for r in packet.get("retired_routines", [])]
+            or [f"port:v1:retired:{packet['attempt_id']}"]
+        )
+
+    partition = {
+        "managed_routines": len(todo),
+        "todo_residual": sum(
+            1 for work_id, owner in owners.items()
+            if any(r.get("work_id") == work_id
+                   for r in owner["packet"].get("routines", []))
+        ),
+        "retired_routines": sum(
+            len(entry["packet"].get("retired_routines", [])) for entry in planned
+        ),
+        "superseded_packets": len(superseded),
+    }
+    counts = {
+        "packets": len(planned),
+        "legacy_packets": legacy_count,
+        "schema2_packets": already_schema2,
+        "converted_packets": legacy_count,
+        "retry_ready": sum(
+            entry["packet"].get("state") == "retry-ready" for entry in planned
+        ),
+        "blocked": sum(
+            entry["packet"].get("state") == "blocked" for entry in planned
+        ),
+        "duplicate_work_ids": len(duplicate_work),
+        "duplicate_owner_pairs": duplicate_pairs,
+        "partition": partition,
+    }
+    return {
+        "entries": planned, "counts": counts, "report": report,
+        "duplicate_work_ids": sorted(duplicate_work),
+    }
+
+
+def migrate_recovery_state(*, apply: bool, as_json: bool) -> int:
+    plan = _migration_plan()
+    counts = plan["counts"]
+    changed = any(
+        entry["legacy"]
+        or entry["path"].stem != entry["packet"].get("attempt_id")
+        or entry["original"] != entry["packet"]
+        for entry in plan["entries"]
+    )
+    backup = None
+    if apply and changed:
+        backup = _migration_backup(
+            [(entry["path"], entry["raw"]) for entry in plan["entries"]]
+        )
+        queue = FACTORY / "queue"
+        try:
+            for entry in plan["entries"]:
+                destination = queue / f"{entry['packet']['attempt_id']}.json"
+                write_json(destination, entry["packet"])
+            for entry in plan["entries"]:
+                destination = queue / f"{entry['packet']['attempt_id']}.json"
+                if entry["path"] != destination:
+                    entry["path"].unlink()
+            claims = claim_index()
+            expected = {
+                routine["work_id"]
+                for entry in plan["entries"]
+                if entry["packet"].get("state") not in {"landed", "superseded"}
+                for routine in entry["packet"].get("routines", [])
+            }
+            if set(claims) != expected:
+                missing = sorted(expected - set(claims))
+                extra = sorted(set(claims) - expected)
+                raise RuntimeError(
+                    "migration claim partition mismatch: "
+                    f"missing={missing[:5]} extra={extra[:5]}"
+                )
+        except Exception as exc:
+            raise RuntimeError(f"migration failed; backup at {backup}: {exc}") from exc
+    result = dict(counts)
+    result["backup"] = str(backup) if backup else None
+    result["dry_run"] = not apply
+    result["duplicate_work_ids"] = plan["duplicate_work_ids"]
+    if as_json:
+        print(json.dumps(result, sort_keys=True))
+    else:
+        print("migrate-recovery-state " + ("applied" if apply else "dry-run"))
+        for key, value in sorted(result.items()):
+            print(f"{key}: {value}")
+    return 0
+
 
 
 def escalate(limit: int | None) -> int:
-    escalated = list_packets(("escalated",))
+    terminal = list_packets(("escalated", "parked", "rejected-format"))
     if limit:
-        escalated = escalated[:limit]
+        terminal = terminal[:limit]
     out_dir = FACTORY / "escalations"
     out_dir.mkdir(parents=True, exist_ok=True)
     briefs = []
-    for packet in escalated:
+    for packet in terminal:
         lane_dir = "/tmp/poketcg-factory/lane-<n>  (any free lane; run lanes.ensure(n) first)"
         paths = "\n".join((
             f"- `src/home/{packet['basename']}.c`",
@@ -735,8 +976,8 @@ def escalate(limit: int | None) -> int:
             f"MUTATION), or call `surgery.apply(lane, packet, translation)` "
             f"directly. Then run exactly:\n\n"
             f"```sh\n"
-            f"python3 tools/factory/verify.py {packet['id']} --lane <lane-dir> "
-            f"normally.\n"
+            f"python3 tools/factory/verify.py {packet['id']} --lane <lane-dir>\n"
+            f"```\n"
         )
         path = out_dir / f"{packet['id']}.md"
         path.write_text(brief)
@@ -782,7 +1023,7 @@ def _progress_command() -> None:
         print("no live wave")
         stale = sorted(p["id"] for p in list_packets(IN_FLIGHT))
         if stale:
-            print(f"stale in-flight: {stale}  (run reset-stale)")
+            print(f"stale in-flight: {stale}  (run migrate-recovery-state)")
     else:
         now = int(time.time())
         elapsed = now - int(meta.get("started_at", now))
@@ -816,83 +1057,58 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status")
-    sub.add_parser("reset-stale")
+    migration_parser = sub.add_parser(
+        "migrate-recovery-state",
+        help="migrate legacy recovery packets into schema-2 state",
+    )
+    migration_parser.add_argument("--dry-run", action="store_true")
+    migration_parser.add_argument("--json", action="store_true")
+    sub.add_parser("reset-stale", help="disabled; use migrate-recovery-state")
     infra_parser = sub.add_parser(
-        "reset-infra", help="return harness-failed escalations to pending")
-    infra_parser.add_argument(
-        "--reason-prefix", action="append", default=None,
-        help="escalation reason prefix to requeue; repeatable")
+        "reset-infra", help="disabled; use migrate-recovery-state")
+    infra_parser.add_argument("--reason-prefix", action="append", default=None)
     sub.add_parser("metrics")
     sub.add_parser("progress", help="inspect a live wave without taking its lock")
     escalate_parser = sub.add_parser(
         "escalate", help="write agentic-task briefs for escalated packets")
     escalate_parser.add_argument("--limit", type=int)
     args = parser.parse_args()
+    if args.command == "migrate-recovery-state":
+        return migrate_recovery_state(
+            apply=not args.dry_run, as_json=args.json)
     if args.command == "status":
-        counts: dict[str, int] = {}
-        for packet in list_packets():
-            counts[packet["state"]] = counts.get(packet["state"], 0) + 1
-        for state, count in sorted(counts.items()):
-            print(f"{state:16} {count}")
-    elif args.command == "reset-stale":
-        metadata = {
-            "wave_id": f"reset-stale-{os.getpid()}",
-            "pid": os.getpid(),
-            "started_at": int(time.time()),
-            "deadline_at": None,
-            "packet_ids": [],
-        }
-        with wave_lock(metadata):
-            for packet in list_packets(IN_FLIGHT):
-                held = _foreign_claims(packet)
-                if held:
-                    print(f"skip {packet['id']}: held elsewhere {sorted(held)}")
-                    continue
-                packet.pop("attempt", None)
-                set_state(packet, "pending", "reset-stale")
-                print(f"reset {packet['id']}")
-    elif args.command == "reset-infra":
-        metadata = {
-            "wave_id": f"reset-infra-{os.getpid()}",
-            "pid": os.getpid(),
-            "started_at": int(time.time()),
-            "deadline_at": None,
-            "packet_ids": [],
-        }
-        with wave_lock(metadata):
-            prefixes = tuple(args.reason_prefix
-                             or ("infra-error:", "infra-timeout:"))
-            todo = _todo_status()
-            for packet in list_packets(("escalated", "pending")):
-                reason = packet.get("reason") or ""
-                if packet["state"] == "pending":
-                    if reason != "reset-infra" or not packet.get("rounds"):
-                        continue
-                elif not reason.startswith(prefixes):
-                    continue
-                stale = [r for r in packet["routines"]
-                         if not todo.get(_work_key(r["work_id"]))]
-                if stale:
-                    packet["routines"] = [r for r in packet["routines"]
-                                          if not todo.get(_work_key(r["work_id"]))]
-                    if not packet["routines"]:
-                        packet_path(packet["id"]).unlink()
-                        print(f"dropped {packet['id']}: "
-                              f"{len(stale)} routine(s) no longer todo")
-                        continue
-                    packet["bytes"] = sum(r.get("size", 0)
-                                          for r in packet["routines"])
-                    print(f"trimmed {packet['id']}: "
-                          f"{len(stale)} routine(s) no longer todo")
-                held = _foreign_claims(packet)
-                if held:
-                    print(f"skip {packet['id']}: held elsewhere {sorted(held)}")
-                    continue
-                packet.pop("attempt", None)
-                packet["rounds"] = 0
-                packet["format_retry_used"] = False
-                set_state(packet, "pending", "reset-infra")
-                print(f"reset {packet['id']}")
+        from supervisor import snapshot
+        snap = snapshot()
+        for category, count in snap["categories"].items():
+            print(f"{category:20} {count}")
+        measures = snap["completion"]["measures"]
+        verified_code = measures["verified_code"]
+        total_code = measures["verified_code/total"]
+        verified_functions = measures["verified_functions"]
+        total_functions = measures["verified_functions/total"]
+        code_pct = verified_code * 100 / total_code if total_code else 100.0
+        function_pct = (
+            verified_functions * 100 / total_functions
+            if total_functions else 100.0
+        )
+        print(f"verified code bytes: {verified_code}/{total_code} ({code_pct:.1f}%)")
+        print(
+            f"verified routines: {verified_functions}/{total_functions} "
+            f"({function_pct:.1f}%)"
+        )
+        if snap["completion"]["complete"]:
+            print("PORT COMPLETE")
+        elif not any(snap["categories"].values()):
+            print("STOP-THE-LINE invariant:no-frontier")
+        else:
+            print("PORT INCOMPLETE")
+    elif args.command in {"reset-stale", "reset-infra"}:
+        print(
+            f"{args.command} is disabled; run migrate-recovery-state "
+            "to perform deterministic recovery migration",
+            file=sys.stderr,
+        )
+        return 2
     elif args.command == "escalate":
         return escalate(args.limit)
     elif args.command == "progress":

@@ -19,9 +19,11 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
+import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -35,8 +37,7 @@ from common import (  # noqa: E402
 PRET = ROOT / "poketcg"
 MAX_ROUTINES = 8
 MAX_ASM_LINES = 300
-BACKUPS = FACTORY / "backups"
-ACTIVE_CLAIM_STATES = {"pending", "translating", "translated", "verifying", "repair", "green"}
+ACTIVE_CLAIM_STATES = common.ACTIVE_CLAIM_STATES
 
 
 def _positive_int(value: str) -> int:
@@ -662,14 +663,9 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
         if f["status"] == "todo"
         and f["ready"]
         and f["name"] not in blocked
-        and managed_issues[f["work_id"]]["state"] == "open"
-        and "port-ready" in managed_issues[f["work_id"]]["labels"]
+        and f["work_id"] in managed_issues
     ]
-    held = set()
-    for path in QUEUE.glob("*.json"):
-        entry = json.loads(path.read_text())
-        held.update(r["work_id"] for r in entry.get("routines", [])
-                    if r.get("work_id"))
+    held = common.claim_index()
     ready = [f for f in ready if f["work_id"] not in held]
     if dir_filter:
         ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
@@ -726,13 +722,35 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                     "callees": [],
                     "cascade": cascade_of(f["name"]),
                 })
+            attempt_id = common.new_attempt_id()
+            cohort = common.cohort_id(work_ids)
+            try:
+                base_commit = subprocess.check_output(
+                    ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
+                ).strip()
+            except (OSError, subprocess.CalledProcessError):
+                base_commit = "unknown"
+            inventory_fingerprint = hashlib.sha256(
+                json.dumps(_inventory, sort_keys=True, default=str).encode()
+            ).hexdigest()
             packet = {
-                "id": f"{basename}--{digest}",
+                "schema": common.SCHEMA,
+                "attempt_id": attempt_id,
+                "cohort_id": cohort,
+                "kind": "translation",
+                "parent_attempt_id": None,
+                "id": attempt_id,
                 "basename": basename,
                 "file": file,
                 "routines": routines,
+                "base_commit": base_commit,
+                "inventory_fingerprint": inventory_fingerprint,
+                "report_fingerprint": inventory_fingerprint,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
                 "state": "pending",
+                "attempt_generation": 0,
+                "not_before": 0,
+                "failure_history": [],
                 "rounds": 0,
                 "format_retry_used": False,
                 "updated_at": built_at,
@@ -745,47 +763,28 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "bytes": sum(r["size"] for r in routines),
                 "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }
-            packets.append(packet)
-
-    packets.sort(key=lambda p: (-p["cascade"], p["bytes"]))
-    if limit:
-        packets = packets[:limit]
     return packets
 
 
 def drop_claimed(packets: list[dict]) -> list[dict]:
-    """Reject duplicate non-terminal work claims instead of silently merging."""
-    claims: dict[str, str] = {}
-    kept: list[dict] = []
-    for path in QUEUE.glob("*.json"):
-        entry = json.loads(path.read_text())
-        if entry.get("state") not in ACTIVE_CLAIM_STATES:
-            continue
-        for routine in entry.get("routines", []):
-            if "work_id" not in routine or not routine["work_id"]:
-                raise RuntimeError(
-                    f"active packet {entry['id']} routine {routine.get('name')!r} "
-                    "lacks work ID"
-                )
-            work_id = routine["work_id"]
-            owner = claims.get(work_id)
-            if owner and owner != entry["id"]:
-                raise RuntimeError(
-                    f"work ID {work_id} claimed by active packets {owner} and "
-                    f"{entry['id']}"
-                )
-            claims[work_id] = entry["id"]
+    """Reject duplicate active work claims, including generated packets."""
+    claims = common.claim_index()
     for packet in packets:
+        common.validate_packet(packet)
         for routine in packet["routines"]:
             work_id = routine["work_id"]
             owner = claims.get(work_id)
-            if owner and owner != packet["id"]:
+            if owner is not None and owner["attempt_id"] != packet["attempt_id"]:
                 raise RuntimeError(
-                    f"work ID {work_id} already claimed by non-terminal packet {owner}"
+                    f"work ID {work_id} already claimed by non-historical packet "
+                    f"{owner['attempt_id']}"
                 )
-        claims.update({r["work_id"]: packet["id"] for r in packet["routines"]})
-        kept.append(packet)
-    return kept
+            claims[work_id] = {
+                "attempt_id": packet["attempt_id"],
+                "packet_id": packet["id"],
+                "state": packet["state"],
+            }
+    return packets
 
 
 def dissolved_symbols() -> set[str]:

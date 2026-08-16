@@ -18,9 +18,71 @@ from common import LANE_BASE, ROOT, run_bounded
 
 RSYNC_EXCLUDES = (
     ".jj", ".git", ".factory", ".github", ".claude", ".entire", ".pi", ".omp",
-    "build", "build-*", "poketcg", "site", "docs", "__pycache__",
+    ".env", ".env.*", ".config", ".gitconfig", ".git-credentials", ".ssh",
+    ".netrc",
+    ".credentials", "credentials", "secrets",
+    ".recovery-home", "build", "build-*", "poketcg", "site", "docs",
+    "__pycache__", "tools/git-credential-forgejo",
     "tools/oracle/.venv", "tools/oracle/gbref/build",
 )
+
+_AUTH_ENV_PARTS = (
+    "AUTH", "CREDENTIAL", "FORGEJO", "CLOUDFLARE", "CF_ACCESS", "TOKEN",
+    "PASSWORD", "SECRET", "API_KEY", "ACCESS_KEY", "GIT_CONFIG",
+    "SSH_AUTH",
+)
+
+
+def _is_auth_environment_key(key: str) -> bool:
+    upper = key.upper()
+    return any(part in upper for part in _AUTH_ENV_PARTS)
+
+
+def recovery_environment(lane: Path) -> dict[str, str]:
+    """Return an environment safe to pass to a credential-free recovery agent."""
+    home = lane / ".recovery-home"
+    home.mkdir(parents=True, exist_ok=True)
+    if any(home.iterdir()):
+        raise RuntimeError(f"recovery HOME is not empty: {home}")
+    environment = {
+        key: value for key, value in os.environ.items()
+        if not _is_auth_environment_key(key)
+    }
+    environment["HOME"] = str(home)
+    assert_recovery_environment(lane, environment)
+    return environment
+
+
+def assert_recovery_environment(
+    lane: Path, environment: dict[str, str],
+) -> None:
+    """Reject a lane or environment that could expose repository credentials."""
+    forbidden_paths = (
+        lane / ".git",
+        lane / ".jj",
+        lane / "tools" / "git-credential-forgejo",
+        lane / ".env",
+        lane / ".gitconfig",
+        lane / ".git-credentials",
+        lane / ".ssh",
+        lane / ".netrc",
+        lane / ".credentials",
+        lane / "credentials",
+        lane / "secrets",
+    )
+    present = [str(path) for path in forbidden_paths if path.exists()]
+    if present:
+        raise RuntimeError("recovery lane contains forbidden paths: "
+                           + ", ".join(present))
+    leaked = sorted(key for key in environment if _is_auth_environment_key(key))
+    if leaked:
+        raise RuntimeError("recovery environment contains auth variables: "
+                           + ", ".join(leaked))
+    home = Path(environment.get("HOME", ""))
+    if home != lane / ".recovery-home" or not home.is_dir():
+        raise RuntimeError("recovery environment HOME is not lane-local")
+    if any(home.iterdir()):
+        raise RuntimeError(f"recovery HOME is not empty: {home}")
 
 
 def lane_dir(index: int) -> Path:

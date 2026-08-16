@@ -19,70 +19,63 @@ production uses `completion(prompt, model="default")`.
 Run in order. Every step is a hard gate — do not proceed past a failure.
 
 ```sh
-just forgejo-auth-check                        # credentials, non-interactive
-jj git fetch --remote origin                   # then require main == main@origin
-just bootstrap                                 # poketcg/poketcg.gbc + .sym
-uv sync --project tools/oracle --frozen        # pinned PyBoy oracle environment
-just oracle-build-gbref                        # tools/oracle/gbref/build/gbref_runner
-just build-barrier                             # warm central build
-just issues-fetch                              # schema-2 Forgejo cache
-python3 tools/factory/driver.py reset-stale     # crashed in-flight -> pending
-python3 tools/factory/driver.py reset-infra     # harness-failed escalations -> pending
-python3 tools/factory/integrate.py                 # checked recovery integration
-python3 tools/factory/driver.py status          # queue state
+just forgejo-auth-check
+jj git fetch --remote origin
+just bootstrap
+uv sync --project tools/oracle --frozen
+just oracle-build-gbref
+just build-barrier
+just issues-fetch
+just oracle-release-gate
+just progress
+python3 tools/factory/driver.py migrate-recovery-state --dry-run --json
+python3 tools/factory/driver.py status
 ```
 
-A stale working copy is the one case needing judgement: `jj new main` if `@` is
-empty on an old base.
-
-`packet.py build` refuses to run without a fresh issue cache, so `issues-fetch`
-is enforced by code, not by memory.
+The migration dry-run must partition every managed work ID exactly once and
+report zero duplicate claims. Apply it once, then rerun the dry-run; the second
+run must report zero legacy packets and zero conversions. A failed barrier stops
+the run and preserves the timestamped backup.
 
 ## 2. The loop
+
+The exact `start` adapter constructs three credential-free callback seams:
+
 ```python
-import re, sys, subprocess, json, time
-sys.path.insert(0, "tools/factory")
-from driver import run_wave
+from supervisor import supervise
 
-def one(prompt):
-    for attempt in range(3):
-        try:
-            return completion(prompt, model="default")
-        except Exception as exc:
-            message = str(exc)
-            if attempt == 2 or not ("429" in message or "rate_limit" in message):
-                raise
-            delay = re.search(r"retry-after-ms=(\d+)", message)
-            time.sleep(min(float(delay.group(1)) / 1000 if delay else 5.0, 15) + attempt * 2)
+def translate_many(assignments, **limits):
+    return run_translation_lanes(assignments, **limits)
 
-def translate_many(prompts):
-    replies = []
-    for start in range(0, len(prompts), 10):
-        replies.extend(parallel([
-            (lambda p=p: one(p)) for p in prompts[start:start + 10]
-        ]))
-    return replies
+def recover_many(assignments, **limits):
+    return run_recovery_lanes(assignments, **limits)
 
-def build(limit=20, extra=()):
-    argv = ["python3", "tools/factory/packet.py", "build", "--max-routines", "3",
-            "--max-asm-lines", "140", "--limit", str(limit), "--json", *extra]
-    return json.loads(subprocess.run(argv, capture_output=True, text=True,
-                                     check=True).stdout)
+def analyze_failure(action, result):
+    return independent_failure_review(action, result)
 
-subprocess.run(["python3", "tools/factory/integrate.py"], check=True)
-pending = build()
-while pending:
-    wave = run_wave(
-        pending, translate_many, lanes_count=10, verify_width=6, max_rounds=3,
-        model="default", max_wall_s=3600,
-        on_event=lambda event: print(json.dumps(event), flush=True),
-    )
-    print(json.dumps(wave), flush=True)
-    subprocess.run(["python3", "tools/factory/integrate.py"], check=True)
-    if wave["status"] != "complete":
-        break
-    pending = build()
+result = supervise(
+    translate_many,
+    recover_many,
+    analyze_failure,
+    lanes_count=10,
+    verify_width=6,
+)
 ```
+
+`supervise()` owns queue transitions, recovery, integration candidates, gates,
+pushes, and Forgejo reconciliation. Callbacks receive immutable assignments and
+return structured outcomes; they never mutate queue state, jj, Forgejo, or the
+central gate. The supervisor journal makes each action replayable after a crash.
+
+`429` and `5xx` provider failures persist a retry delay and keep the supervisor
+alive. Authentication, authorization, remote divergence, unknown dirty files,
+and corrupt or ambiguous identity are typed stop-the-line failures.
+
+`packet.py build` returning `[]`, zero green bundles, blocked work, or no
+progress is never successful termination. Literal `PORT COMPLETE` is emitted
+only by the supervisor completion predicate after a current green gate and
+both verified measures reach their totals.
+
 
 A wave's cohort may exceed `lanes_count`: the first `lanes_count` packets are
 admitted immediately, the rest stay `pending` on disk and are pulled into a lane
@@ -134,39 +127,48 @@ re-running `just oracle-release-gate && just progress`.
 `--apply` is the only switch that writes to Forgejo. It self-verifies by
 re-fetching and re-planning; a non-empty residual plan is an error.
 
-## 4. Escalation
+## 4. Recovery and blockers
 
-| state | meaning | action |
-|---|---|---|
-| `escalated` | hit the repair limit, repeated one verdict verbatim, or failed translation | `driver.py escalate` writes task briefs; integration ignores it until an explicit state change |
-| `rejected-format` | failed the initial parse and one free reformat | terminal; not re-offered |
-| `parked` | timed out behind a dependency | adds the routine to `.factory/blocked.toml`; no reset command exists |
+Failures are structured outcomes, not terminal queue states. `retry-ready`
+returns to the recovery ladder with a new attempt generation; `blocked` carries
+structured dependency or harness evidence and is revalidated every supervisor
+iteration. `landed` and `superseded` are the only historical states.
 
-Harness gaps — a missing case key, an oracle limitation — are orchestrator work
-on shared files. Never delegate them into a packet or work around them there.
+The recovery ladder is ordinary retry, a fresh one-routine retry, a slow-model
+retry, then disposable agentic recovery. Repeated agentic fingerprints invoke
+`analyze_failure` and independent repair assignments. Provider failures use
+persisted backoff; code, schema, bundle, dependency, and gate failures remain
+actionable supervisor work.
+
+Recovery lanes receive the exact quartet, failure history, owned paths, and
+verifier command. They have no credentials or VCS metadata. Bundle acceptance
+requires all marker blocks, importable cases, mutation receipts, identity, and
+SHA-256 hashes before a packet can become `green`.
+
+Dependency blockers are structured records in `.factory/blocked.toml`. Cleared
+dependencies move packets to `retry-ready`. A dependency cycle is dispatched as
+one SCC recovery group and integrates atomically; partial SCC integration is
+forbidden. External blockers remain explicit stop-the-line records.
 
 ## 5. Invariants
 
 - Lanes never run jj, git, or a central gate, and hold no credentials. Only the
-  scheduler thread inside `run_wave` reads or mutates packet state; pool jobs
-  (lane provisioning, verification, salvage) are pure functions of their
-  arguments and return values only.
+  supervisor mutates packet state; callbacks return structured outcomes.
 - `site/data/gate.json` has exactly one producer: `just oracle-fn-all`, via the
-  release-gate chain. `just oracle-diff-all` deliberately writes no gate record —
-  it may run against a slice-private build.
-- The integrator gates before every push; a red gate stops the push.
-- `integrate.py` aborts when `main@origin` holds commits absent from local `main`
-  (usually a release bot) and never rebases automatically.
+  release-gate chain. `just oracle-diff-all` deliberately writes no gate record.
+- The integrator gates before every push; a red gate keeps packets non-landed.
+- `integrate.py` aborts when `main@origin` diverges and never rebases
+  automatically.
 - A managed issue carries exactly one valid `port:v1:<source>:<symbol>` marker.
   Packet identity and claim dedup use that work ID, never mutable titles.
-- One work ID cannot be claimed by two non-terminal packets.
-- Packet construction consumes only open `port-ready` issues.
-- `tests/routines.py` is derived from `tests/cases/*.py` `CONTRACT` keys at import
-  time. Never hand-edit it. `SCHEMA2_CASES` is likewise generated by `surgery.py`.
+- One work ID cannot be claimed by two nonhistorical packets.
+- Packet construction uses live progress and claims; Forgejo labels are only a
+  projection.
+- `tests/routines.py` is derived from `tests/cases/*.py` `CONTRACT` keys at
+  import time. Never hand-edit it. `SCHEMA2_CASES` is generated by surgery.
 - Every landed routine carries a live-oracle PASS and a mutation receipt.
-- `.factory/blocked.toml` is the one tracked factory file: `site/data/progress.json`
-  embeds its entries, so a park must reach git together with a progress rebuild
-  or CI's `report.py check` goes red.
+- `.factory/blocked.toml` records structured blockers and is rebuilt with the
+  trusted progress projection.
 
 ## 6. Calibration
 

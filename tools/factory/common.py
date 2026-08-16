@@ -16,6 +16,7 @@ with terminal side exits escalated / parked / rejected-format.
 from __future__ import annotations
 
 import fcntl
+import hashlib
 import json
 import os
 import re
@@ -24,6 +25,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -48,13 +50,30 @@ ORACLE_PYTHON = [
 RUNNER = ROOT / "tools/oracle/gbref/build/gbref_runner"
 WAVE_LOCK = FACTORY / "wave.lock"
 PROCESS_TERM_GRACE_S = 0.5
-
 _append_lock = threading.Lock()
 
+SCHEMA = 2
 STATES = (
-    "pending", "translating", "translated", "verifying", "repair", "green", "landed",
-    "escalated", "parked", "rejected-format",
+    "pending", "translating", "translated", "verifying", "repair",
+    "retry-ready", "recovering", "green", "integrating", "blocked",
+    "landed", "superseded",
 )
+HISTORICAL_STATES = frozenset({"landed", "superseded"})
+ACTIVE_CLAIM_STATES = frozenset(set(STATES) - HISTORICAL_STATES)
+STATE_TRANSITIONS = {
+    "pending": ACTIVE_CLAIM_STATES - {"pending", "landed", "superseded"},
+    "translating": {"pending", "translated", "repair", "retry-ready", "recovering", "blocked"},
+    "translated": {"pending", "verifying", "repair", "retry-ready", "recovering", "blocked"},
+    "verifying": {"pending", "green", "repair", "retry-ready", "recovering", "blocked"},
+    "repair": {"pending", "translating", "verifying", "retry-ready", "recovering", "blocked"},
+    "retry-ready": {"pending", "translating", "recovering", "blocked", "superseded"},
+    "recovering": {"pending", "translated", "verifying", "repair", "retry-ready", "green", "blocked"},
+    "green": {"pending", "integrating", "repair", "retry-ready", "superseded"},
+    "integrating": {"pending", "landed", "repair", "retry-ready", "recovering"},
+    "blocked": {"pending", "retry-ready", "recovering", "superseded"},
+    "landed": set(),
+    "superseded": set(),
+}
 
 
 
@@ -255,6 +274,7 @@ def issue_records(*, required: bool = False) -> dict[str, dict]:
                 f"issue #{issue.get('number')} has non-normalized labels"
             )
         records[work_id] = {
+            "work_id": work_id,
             "issue_number": int(issue["number"]),
             "title": issue.get("title", ""),
             "state": state,
@@ -263,53 +283,162 @@ def issue_records(*, required: bool = False) -> dict[str, dict]:
         }
     return records
 
-def packet_identity(packet: dict) -> dict:
-    """Return the persisted identity shared by queue and bundle consumers."""
-    required_packet = ("id", "basename", "file", "routines")
-    missing_packet = [key for key in required_packet if key not in packet]
-    if missing_packet:
-        raise ValueError(
-            f"packet identity missing fields: {', '.join(missing_packet)}"
-        )
-    routines = []
-    for index, routine in enumerate(packet["routines"]):
-        missing = [
-            key for key in ("name", "work_id", "issue_number")
-            if key not in routine
-        ]
-        if missing:
-            raise ValueError(
-                f"packet identity routine {index} missing fields: "
-                + ", ".join(missing)
-            )
-        routines.append({
-            "name": routine["name"],
-            "work_id": routine["work_id"],
-            "issue_number": routine["issue_number"],
-        })
-    return {
-        "id": packet["id"],
-        "basename": packet["basename"],
-        "file": packet["file"],
-        "routines": routines,
-    }
-
 
 def packet_path(packet_id: str) -> Path:
     return QUEUE / f"{packet_id}.json"
 
 
-def load_packet(packet_id: str) -> dict:
-    return read_json(packet_path(packet_id))
+def load_packet(packet_id: str | Path) -> dict:
+    path = packet_id if isinstance(packet_id, Path) else packet_path(packet_id)
+    if not path.is_absolute():
+        path = packet_path(str(path))
+    packet = read_json(path)
+    if packet.get("schema") == SCHEMA:
+        validate_packet(packet)
+        if path.stem != packet["attempt_id"]:
+            raise ValueError(
+                f"packet filename {path.name} does not match attempt_id "
+                f"{packet['attempt_id']}"
+            )
+    return packet
+
+def cohort_id(work_ids: list[str] | tuple[str, ...] | set[str]) -> str:
+    canonical = sorted(set(work_ids))
+    if not canonical or any(not isinstance(work_id, str) or not work_id for work_id in canonical):
+        raise ValueError("cohort requires non-empty canonical work IDs")
+    return hashlib.sha256("\0".join(canonical).encode()).hexdigest()
+
+
+def new_attempt_id() -> str:
+    return str(uuid.uuid4())
+
+
+def legacy_attempt_id(packet_id: str, raw: bytes | str) -> str:
+    payload = raw if isinstance(raw, bytes) else raw.encode()
+    digest = hashlib.sha256(payload).hexdigest()
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, f"poketcg:legacy:{packet_id}:{digest}"))
+
+
+def _ensure_packet_schema(packet: dict) -> dict:
+    if not isinstance(packet, dict):
+        raise ValueError("packet must be an object")
+    routines = packet.get("routines")
+    if not isinstance(routines, list) or not routines:
+        raise ValueError("packet requires a non-empty routines list")
+    work_ids = [routine.get("work_id") for routine in routines]
+    if any(not isinstance(work_id, str) or not work_id for work_id in work_ids):
+        raise ValueError("packet routines require canonical work IDs")
+    attempt = packet.get("attempt_id") or packet.get("id")
+    if not isinstance(attempt, str) or not attempt:
+        raise ValueError("packet requires attempt_id")
+    packet.setdefault("schema", SCHEMA)
+    if packet["schema"] != SCHEMA:
+        raise ValueError(f"unsupported packet schema {packet['schema']!r}")
+    packet.setdefault("id", attempt)
+    if packet["id"] != attempt or packet.get("attempt_id") != attempt:
+        raise ValueError("packet id and attempt_id must match")
+    expected_cohort = cohort_id(work_ids)
+    if packet.get("cohort_id") != expected_cohort:
+        raise ValueError("packet cohort_id does not match its routines")
+    for key in ("basename", "file", "base_commit"):
+        if not isinstance(packet.get(key), str) or not packet[key]:
+            raise ValueError(f"packet requires non-empty {key}")
+    state = packet.get("state")
+    if state not in STATES:
+        raise ValueError(f"unknown packet state {state!r}")
+    packet.setdefault("failure_history", [])
+    if not isinstance(packet["failure_history"], list):
+        raise ValueError("failure_history must be a list")
+    return packet
+
+
+def validate_packet(packet: dict) -> dict:
+    """Validate schema-2 packet identity and return the same packet."""
+    return _ensure_packet_schema(packet)
+
+
+def claim_index(packets: list[dict] | None = None) -> dict[str, dict]:
+    """Return canonical work ownership for every active packet."""
+    packets = list_packets() if packets is None else packets
+    claims: dict[str, dict] = {}
+    for packet in packets:
+        if packet.get("state") in HISTORICAL_STATES:
+            continue
+        schema = packet.get("schema")
+        owner_id = packet.get("attempt_id") or packet.get("id")
+        if not isinstance(owner_id, str) or not owner_id:
+            raise ValueError("packet requires id")
+        if schema == SCHEMA:
+            validate_packet(packet)
+        routines = packet.get("routines")
+        if not isinstance(routines, list):
+            raise ValueError(f"packet {owner_id} has no routines")
+        for routine in routines:
+            work_id = routine.get("work_id")
+            if not isinstance(work_id, str) or not work_id:
+                raise ValueError(f"packet {owner_id} routine lacks work ID")
+            owner = claims.get(work_id)
+            if owner is not None and owner["attempt_id"] != owner_id:
+                raise RuntimeError(
+                    f"work ID {work_id} claimed by packets "
+                    f"{owner['attempt_id']} and {owner_id}"
+                )
+            claims[work_id] = {
+                "attempt_id": owner_id,
+                "packet_id": packet.get("id", owner_id),
+                "state": packet.get("state"),
+            }
+    return claims
+
+
+def packet_identity(packet: dict) -> dict:
+    """Return persisted identity shared by queue and bundle consumers."""
+    if packet.get("schema") != SCHEMA:
+        return {
+            "id": packet["id"],
+            "basename": packet["basename"],
+            "file": packet["file"],
+            "routines": [
+                {
+                    "name": routine["name"],
+                    "work_id": routine["work_id"],
+                    "issue_number": routine["issue_number"],
+                }
+                for routine in packet.get("routines", [])
+            ],
+        }
+    validate_packet(packet)
+    return {
+        "schema": SCHEMA,
+        "attempt_id": packet["attempt_id"],
+        "cohort_id": packet["cohort_id"],
+        "id": packet["id"],
+        "basename": packet["basename"],
+        "file": packet["file"],
+        "base_commit": packet["base_commit"],
+        "routines": [
+            {
+                "name": routine["name"],
+                "work_id": routine["work_id"],
+                "issue_number": routine["issue_number"],
+            }
+            for routine in packet["routines"]
+        ],
+    }
 
 
 def save_packet(packet: dict) -> None:
-    write_json(packet_path(packet["id"]), packet)
+    validate_packet(packet)
+    write_json(packet_path(packet["attempt_id"]), packet)
 
 
 def set_state(packet: dict, state: str, reason: str | None = None) -> None:
+    validate_packet(packet)
     if state not in STATES:
         raise ValueError(f"unknown packet state {state}")
+    previous = packet["state"]
+    if state != previous and state not in STATE_TRANSITIONS[previous]:
+        raise ValueError(f"illegal packet transition {previous} -> {state}")
     packet["state"] = state
     packet["reason"] = reason
     packet["updated_at"] = int(time.time())
