@@ -1,0 +1,9 @@
+{
+  "fn": "GetSelectedSavedDeckPtr",
+  "case": "tests/cases/deck_machine.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetSelectedSavedDeckPtr\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 154, \"e\": 188, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53261\": \"7856bc9a\", \"53384\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetSelectedSavedDeckPtr\", \"mismatches\": {\"d\": [154, 188], \"e\": [188, 86]}}\n",
+  "restored": "{\"fn\": \"GetSelectedSavedDeckPtr\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 154, \"e\": 188, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53261\": \"7856bc9a\", \"53384\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

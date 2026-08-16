@@ -107,3 +107,44 @@ void GetSavedDeckPointers(uint16_t *hl, uint16_t *de)
 	*de = d;
 }
 /* <<< factory GetSavedDeckPointers */
+
+/* >>> factory GetSavedDeckCount */
+/* deck_machine.asm:1070-1101. */
+void GetSavedDeckCount(void)
+{
+	EnableSRAM();
+	uint8_t count = 0;
+	for (uint8_t i = 0; i < NUM_DECK_SAVE_MACHINE_SLOTS; i++) {
+		uint16_t hl = (uint16_t)(sSavedDecks_ADDR + i * DECK_STRUCT_SIZE);
+		if (gb_read8(hl) != 0)
+			count++;
+	}
+	wNumSavedDecks = count;
+	DisableSRAM();
+}
+/* <<< factory GetSavedDeckCount */
+
+/* >>> factory GetSelectedSavedDeckPtr */
+/* deck_machine.asm:1205-1224. */
+uint16_t GetSelectedSavedDeckPtr(void)
+{
+	uint8_t index = gb_read8(wSelectedDeckMachineEntry_ADDR);
+	uint16_t offset = (uint16_t)((uint8_t)(index << 1));
+	uint16_t hl = (uint16_t)(wMachineDeckPtrs_ADDR + offset);
+	uint8_t low = gb_read8(hl);
+	uint8_t high = gb_read8((uint16_t)(hl + 1u));
+	return (uint16_t)(low | ((uint16_t)high << 8));
+}
+/* <<< factory GetSelectedSavedDeckPtr */
+
+/* >>> factory SafelySwitchToSRAM0 */
+/* deck_machine.asm:1247-1261. */
+void SafelySwitchToSRAM0(void)
+{
+	uint8_t bank = hBankSRAM;
+	if (bank != 0u) {
+		wTempBankSRAM = bank;
+		BankswitchSRAM(0u);
+	}
+}
+/* <<< factory SafelySwitchToSRAM0 */

@@ -62,6 +62,50 @@ CASES["GetSavedDeckPointers"] = [
 ]
 # <<< factory GetSavedDeckPointers
 
+# >>> factory GetSavedDeckCount
+CONTRACT["GetSavedDeckCount"] = {"compare": (), "preserve": ()}
+CASES["GetSavedDeckCount"] = [
+    {"sram": {0: {0xA350: bytes(0x54 * 0x3C)}}, "read": {0xD085: 1}},
+    dict(POISON,
+         sram={0: {0xA350: bytes(1 if i in (0, 0x54, 0xA8) else 0
+                              for i in range(0x54 * 0x3C))}},
+         read={0xD085: 1}),
+    {"sram": {0: {0xA350: bytes(1 if i == 0 else 0
+                              for i in range(0x54 * 0x3C))}},
+     "read": {0xD085: 1}},
+    {"sram": {0: {0xA350: bytes(1 if i == 0x54 else 0
+                              for i in range(0x54 * 0x3C))}},
+     "read": {0xD085: 1}},
+    {"sram": {0: {0xA350: b"\x01" * (0x54 * 0x3C)}},
+     "read": {0xD085: 1}},
+]
+# <<< factory GetSavedDeckCount
+
+# >>> factory GetSelectedSavedDeckPtr
+CONTRACT["GetSelectedSavedDeckPtr"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "hl")}
+CASES["GetSelectedSavedDeckPtr"] = [
+    {"wram": {0xD088: b"\x00", 0xD00D: b"\x34\x12"}},
+    dict(POISON,
+         wram={0xD088: b"\x01", 0xD00D: b"\x78\x56\xBC\x9A"}),
+    {"wram": {0xD088: b"\x00", 0xD00D: b"\x00\x00"}},
+    {"wram": {0xD088: b"\x01", 0xD00D: b"\x00\x00\x78\x56"}},
+    {"wram": {0xD088: b"\xFF",
+              0xD00D: bytes(0x1FE) + b"\xEF\xBE\x00\x00"}},
+]
+# <<< factory GetSelectedSavedDeckPtr
+
+# >>> factory SafelySwitchToSRAM0
+CONTRACT["SafelySwitchToSRAM0"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["SafelySwitchToSRAM0"] = [
+    {"wram": {0xFF81: b"\x00", 0xD0A4: b"\x00"}, "read": {0xFF81: 1, 0xD0A4: 1}},
+    dict(POISON,
+         wram={0xFF81: b"\x02", 0xD0A4: b"\xEE"},
+         read={0xFF81: 1, 0xD0A4: 1}),
+    {"wram": {0xFF81: b"\x01", 0xD0A4: b"\x00"}, "read": {0xFF81: 1, 0xD0A4: 1}},
+    {"wram": {0xFF81: b"\x03", 0xD0A4: b"\xFF"}, "read": {0xFF81: 1, 0xD0A4: 1}},
+]
+# <<< factory SafelySwitchToSRAM0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -86,3 +130,12 @@ MUTATIONS["GetSavedDeckPointers"] = {
 	"case_ids": ["GetSavedDeckPointers-0", "GetSavedDeckPointers-1"],
 }
 # <<< factory-mutation GetSavedDeckPointers
+# >>> factory-mutation GetSavedDeckCount
+MUTATIONS["GetSavedDeckCount"] = {"source_symbol": "GetSavedDeckCount", "before": "i * DECK_STRUCT_SIZE", "after": "i * (DECK_STRUCT_SIZE - 1u)", "case_ids": ["GetSavedDeckCount-1", "GetSavedDeckCount-3", "GetSavedDeckCount-4"]}
+# <<< factory-mutation GetSavedDeckCount
+# >>> factory-mutation GetSelectedSavedDeckPtr
+MUTATIONS["GetSelectedSavedDeckPtr"] = {"source_symbol": "GetSelectedSavedDeckPtr", "before": "(uint8_t)(index << 1)", "after": "index", "case_ids": ["GetSelectedSavedDeckPtr-1", "GetSelectedSavedDeckPtr-3", "GetSelectedSavedDeckPtr-4"]}
+# <<< factory-mutation GetSelectedSavedDeckPtr
+# >>> factory-mutation SafelySwitchToSRAM0
+MUTATIONS["SafelySwitchToSRAM0"] = {"source_symbol": "SafelySwitchToSRAM0", "before": "if (bank != 0u)", "after": "if (bank == 0u)", "case_ids": ["SafelySwitchToSRAM0-1", "SafelySwitchToSRAM0-2", "SafelySwitchToSRAM0-3"]}
+# <<< factory-mutation SafelySwitchToSRAM0

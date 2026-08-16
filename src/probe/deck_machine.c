@@ -45,11 +45,39 @@ static void adapt_GetSavedDeckPointers(ProbeState *s)
 }
 /* <<< factory GetSavedDeckPointers */
 
+/* >>> factory GetSavedDeckCount */
+static void adapt_GetSavedDeckCount(ProbeState *s)
+{
+	(void)s;
+	GetSavedDeckCount();
+}
+/* <<< factory GetSavedDeckCount */
+
+/* >>> factory GetSelectedSavedDeckPtr */
+static void adapt_GetSelectedSavedDeckPtr(ProbeState *s)
+{
+	uint16_t de = GetSelectedSavedDeckPtr();
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+/* <<< factory GetSelectedSavedDeckPtr */
+
+/* >>> factory SafelySwitchToSRAM0 */
+static void adapt_SafelySwitchToSRAM0(ProbeState *s)
+{
+	(void)s;
+	SafelySwitchToSRAM0();
+}
+/* <<< factory SafelySwitchToSRAM0 */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
 	{ "SafelySwitchToTempSRAMBank", adapt_SafelySwitchToTempSRAMBank },
 	{ "CheckIfHasEnoughCardsToBuildDeck", adapt_CheckIfHasEnoughCardsToBuildDeck },
 	{ "GetSavedDeckPointers", adapt_GetSavedDeckPointers },
+	{ "GetSavedDeckCount", adapt_GetSavedDeckCount },
+	{ "GetSelectedSavedDeckPtr", adapt_GetSelectedSavedDeckPtr },
+	{ "SafelySwitchToSRAM0", adapt_SafelySwitchToSRAM0 },
 	{ NULL, NULL },
 };

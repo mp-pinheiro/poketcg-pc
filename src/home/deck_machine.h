@@ -23,4 +23,13 @@ DeckBuildCheckResult CheckIfHasEnoughCardsToBuildDeck(uint16_t *hl);
 /* >>> factory GetSavedDeckPointers */
 void GetSavedDeckPointers(uint16_t *hl, uint16_t *de);
 /* <<< factory GetSavedDeckPointers */
+/* >>> factory GetSavedDeckCount */
+void GetSavedDeckCount(void);
+/* <<< factory GetSavedDeckCount */
+/* >>> factory GetSelectedSavedDeckPtr */
+uint16_t GetSelectedSavedDeckPtr(void);
+/* <<< factory GetSelectedSavedDeckPtr */
+/* >>> factory SafelySwitchToSRAM0 */
+void SafelySwitchToSRAM0(void);
+/* <<< factory SafelySwitchToSRAM0 */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */
