@@ -62,6 +62,18 @@ CASES["TransformCharacter"] = [
 ]
 # <<< factory TransformCharacter
 
+# >>> factory PlayerNamingScreen_GetCharInfoFromPos
+CONTRACT["PlayerNamingScreen_GetCharInfoFromPos"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["PlayerNamingScreen_GetCharInfoFromPos"] = [
+    {"wram": {0xCEA9: b"\x00"}},
+    {"hl": 0x0100, "wram": {0xCEA9: b"\x01"}},
+    {"hl": 0x0101, "wram": {0xCEA9: b"\x06"}},
+    dict(POISON, hl=0x0203, wram={0xCEA9: b"\x05"}),
+    {"hl": 0xFF00, "wram": {0xCEA9: b"\x06"}},
+    {"hl": 0xFFFF, "wram": {0xCEA9: b"\x06"}},
+]
+# <<< factory PlayerNamingScreen_GetCharInfoFromPos
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -98,3 +110,6 @@ MUTATIONS["TransformCharacter"] = {
 	"case_ids": ["TransformCharacter-0", "TransformCharacter-1", "TransformCharacter-2", "TransformCharacter-3", "TransformCharacter-4", "TransformCharacter-5", "TransformCharacter-6"],
 }
 # <<< factory-mutation TransformCharacter
+# >>> factory-mutation PlayerNamingScreen_GetCharInfoFromPos
+MUTATIONS["PlayerNamingScreen_GetCharInfoFromPos"] = {"source_symbol": "PlayerNamingScreen_GetCharInfoFromPos", "before": "\tuint8_t index = (uint8_t)(product + (uint8_t)hl);", "after": "\tuint8_t index = (uint8_t)(product + (uint8_t)hl + 1u);", "case_ids": ["PlayerNamingScreen_GetCharInfoFromPos-0", "PlayerNamingScreen_GetCharInfoFromPos-1", "PlayerNamingScreen_GetCharInfoFromPos-2", "PlayerNamingScreen_GetCharInfoFromPos-3", "PlayerNamingScreen_GetCharInfoFromPos-4", "PlayerNamingScreen_GetCharInfoFromPos-5"]}
+# <<< factory-mutation PlayerNamingScreen_GetCharInfoFromPos

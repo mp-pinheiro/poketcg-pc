@@ -1,0 +1,9 @@
+{
+  "fn": "PlayerNamingScreen_GetCharInfoFromPos",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayerNamingScreen_GetCharInfoFromPos\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 27567, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52905\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayerNamingScreen_GetCharInfoFromPos\", \"mismatches\": {\"hl\": [27567, 27573]}}\n",
+  "restored": "{\"fn\": \"PlayerNamingScreen_GetCharInfoFromPos\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 27567, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52905\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

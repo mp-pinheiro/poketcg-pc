@@ -24,6 +24,10 @@
 
 /* engine/input_name.asm */
 #define TX_KATAKANA 0x0fu
+
+#include "home/random.h"
+
+#define PLAYER_NAMING_SCREEN_KEYBOARD_DATA 0x6bafu
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -111,3 +115,16 @@ TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e)
 	}
 }
 /* <<< factory TransformCharacter */
+
+/* >>> factory PlayerNamingScreen_GetCharInfoFromPos */
+/* input_name.asm:808-835 */
+uint16_t PlayerNamingScreen_GetCharInfoFromPos(uint16_t hl)
+{
+	uint8_t height = wNamingScreenKeyboardHeight;
+	uint16_t product = HtimesL((uint16_t)((hl & 0xff00u) | height));
+	uint8_t index = (uint8_t)(product + (uint8_t)hl);
+
+	return (uint16_t)(PLAYER_NAMING_SCREEN_KEYBOARD_DATA +
+		(uint16_t)index * 6u);
+}
+/* <<< factory PlayerNamingScreen_GetCharInfoFromPos */

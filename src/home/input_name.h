@@ -17,4 +17,7 @@ void DrawTextboxForKeyboard(uint16_t *hl, uint8_t a);
 typedef struct { uint16_t hl; uint8_t d, e, f; } TransformCharacterResult;
 TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory TransformCharacter */
+/* >>> factory PlayerNamingScreen_GetCharInfoFromPos */
+uint16_t PlayerNamingScreen_GetCharInfoFromPos(uint16_t hl);
+/* <<< factory PlayerNamingScreen_GetCharInfoFromPos */
 #endif /* POKETCG_HOME_INPUT_NAME_H */
