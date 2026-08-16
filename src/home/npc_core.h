@@ -24,4 +24,7 @@ uint8_t StartNPCMovement(uint16_t *bc); /* npc_core.asm:618; bc = movement scrip
 /* >>> factory Func_1c5e9 */
 uint8_t Func_1c5e9(void);
 /* <<< factory Func_1c5e9 */
+/* >>> factory UpdateNPCPosition */
+uint8_t UpdateNPCPosition(void);
+/* <<< factory UpdateNPCPosition */
 #endif /* POKETCG_HOME_NPC_CORE_H */

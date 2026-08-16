@@ -38,6 +38,16 @@
 #define NPC_FLAG_MOVING_F        0x05u
 #define MOVEMENT_CMD_SPECIAL     0xf0u
 #define MOVEMENT_CMD_STOP        0xffu
+
+static const uint8_t player_movement_offset_table_tiles[] = {
+	0x00u, 0xffu,
+	0x01u, 0x00u,
+	0x00u, 0x01u,
+	0xffu, 0x00u,
+};
+
+#define LOADED_NPC_COORD_X 0x02u
+#define LOADED_NPC_COORD_Y 0x03u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -176,3 +186,27 @@ uint8_t Func_1c5e9(void)
 	return UpdateNPCAnimation();
 }
 /* <<< factory Func_1c5e9 */
+
+/* >>> factory UpdateNPCPosition */
+/* npc_core.asm:719-751 */
+uint8_t UpdateNPCPosition(void)
+{
+	PermissionResult item = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,
+		LOADED_NPC_DIRECTION);
+	uint16_t hl = item.hl;
+	uint8_t direction = gb_read8(hl);
+	hl = (uint16_t)(hl - 1u);
+
+	uint8_t offset_index = (uint8_t)(direction << 1);
+	uint8_t y_offset = player_movement_offset_table_tiles[(uint8_t)(offset_index + 1u)];
+	uint8_t x_offset = player_movement_offset_table_tiles[offset_index];
+
+	uint8_t y = (uint8_t)(gb_read8(hl) + y_offset);
+	gb_write8(hl, y);
+	hl = (uint16_t)(hl - 1u);
+
+	uint8_t x = (uint8_t)(gb_read8(hl) + x_offset);
+	gb_write8(hl, x);
+	return x;
+}
+/* <<< factory UpdateNPCPosition */
