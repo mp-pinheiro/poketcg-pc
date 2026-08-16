@@ -302,6 +302,11 @@ def next_action(
         )
         if recovered is not None:
             return recovered
+        if scheduler.has_publication_work(connection):
+            return scheduler.acquire_tick(
+                connection, lease_owner=lease_owner,
+                lease_seconds=lease_seconds, lanes_count=lanes_count,
+            )
         state.align_source_revision(connection, _required_revision())
         return scheduler.acquire_tick(
             connection, lease_owner=lease_owner, lease_seconds=lease_seconds,
@@ -507,35 +512,49 @@ def _worker_result(
             return assignment["attempt_id"], workers.verify_agent_lane(assignment)
 
         variant_results: dict[str, list[dict[str, Any]]] = {}
-        with (
-            ThreadPoolExecutor(
-                max_workers=max(1, len(agent_assignments)),
-            ) as agents,
-            ThreadPoolExecutor(max_workers=max(1, verify_width)) as verifiers,
-        ):
-            agent_futures = {
-                agents.submit(invoke_agent, assignment): assignment
-                for assignment in agent_assignments
-            }
-            verification_futures = {}
-            for future in as_completed(agent_futures):
-                assignment = agent_futures[future]
-                returned = future.result()
-                if (
-                    isinstance(returned, dict)
-                    and returned.get("outcome") in {
-                        "provider-failure", "infrastructure-failure",
-                    }
-                ):
-                    variant_results.setdefault(
-                        assignment["attempt_id"], [],
-                    ).append(returned)
-                    continue
-                verification = verifiers.submit(verify_agent, assignment)
-                verification_futures[verification] = assignment["attempt_id"]
-            for future in as_completed(verification_futures):
-                attempt_id, result = future.result()
-                variant_results.setdefault(attempt_id, []).append(result)
+        central_before = workers.central_owned_snapshot(agent_assignments)
+        try:
+            with (
+                ThreadPoolExecutor(
+                    max_workers=max(1, len(agent_assignments)),
+                ) as agents,
+                ThreadPoolExecutor(max_workers=max(1, verify_width)) as verifiers,
+            ):
+                agent_futures = {
+                    agents.submit(invoke_agent, assignment): assignment
+                    for assignment in agent_assignments
+                }
+                verification_futures = {}
+                for future in as_completed(agent_futures):
+                    assignment = agent_futures[future]
+                    returned = future.result()
+                    if (
+                        isinstance(returned, dict)
+                        and returned.get("outcome") in {
+                            "provider-failure", "infrastructure-failure",
+                        }
+                    ):
+                        variant_results.setdefault(
+                            assignment["attempt_id"], [],
+                        ).append(returned)
+                        continue
+                    verification = verifiers.submit(verify_agent, assignment)
+                    verification_futures[verification] = assignment["attempt_id"]
+                for future in as_completed(verification_futures):
+                    attempt_id, result = future.result()
+                    variant_results.setdefault(attempt_id, []).append(result)
+        except Exception as dispatch_error:
+            try:
+                workers.assert_central_owned_unchanged(
+                    agent_assignments, central_before,
+                )
+            except Exception as isolation_error:
+                raise ExceptionGroup(
+                    "recovery dispatch and isolation both failed",
+                    [dispatch_error, isolation_error],
+                ) from None
+            raise
+        workers.assert_central_owned_unchanged(agent_assignments, central_before)
         for attempt_id, competing in variant_results.items():
             results[attempt_id] = workers.first_green(competing)
 
@@ -629,8 +648,11 @@ def preview_next(*, lanes_count: int = 10) -> dict[str, Any]:
         source.backup(copy)
         planned = scheduler.plan_recovery_tick(copy)
         if planned is None:
-            state.align_source_revision(copy, _required_revision())
-            planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
+            if scheduler.has_publication_work(copy):
+                planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
+            else:
+                state.align_source_revision(copy, _required_revision())
+                planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
         return {
             **planned,
             "dry_run": True,

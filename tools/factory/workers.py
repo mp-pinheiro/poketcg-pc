@@ -26,6 +26,40 @@ def _digest(value: Any) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode()).hexdigest()
 
+def central_owned_snapshot(
+    assignments: list[dict[str, Any]],
+) -> dict[str, str | None]:
+    relative_paths = {
+        relative
+        for assignment in assignments
+        for relative in assignment["attempt"]["owned_paths"]
+    }
+    snapshot: dict[str, str | None] = {}
+    for relative in sorted(relative_paths):
+        if Path(relative).is_absolute():
+            raise ValueError(f"attempt owned path must be relative: {relative}")
+        path = common.ROOT / relative
+        snapshot[relative] = (
+            hashlib.sha256(path.read_bytes()).hexdigest()
+            if path.is_file() else None
+        )
+    return snapshot
+
+
+def assert_central_owned_unchanged(
+    assignments: list[dict[str, Any]],
+    expected: dict[str, str | None],
+) -> None:
+    actual = central_owned_snapshot(assignments)
+    if actual != expected:
+        changed = sorted(
+            path for path in expected | actual
+            if expected.get(path) != actual.get(path)
+        )
+        raise RuntimeError(
+            "recovery agent modified orchestrator paths: " + ", ".join(changed)
+        )
+
 
 def materialize_packet(attempt: dict[str, Any]) -> dict[str, Any]:
     expected = {row["work_id"] for row in attempt["work"]}
@@ -188,7 +222,9 @@ def _agent_prompt(
         "attempt_id": attempt["attempt_id"],
         "variant": variant,
         "lane": str(lane),
-        "owned_paths": attempt["owned_paths"],
+        "owned_paths": [
+            str(lane / relative) for relative in attempt["owned_paths"]
+        ],
         "work_ids": sorted(row["work_id"] for row in attempt["work"]),
         "routines": [row["name"] for row in packet["routines"]],
         "failure_history": failures,
@@ -207,7 +243,9 @@ def _agent_prompt(
         "You are a disposable recovery editor in an isolated, credential-free lane.\n"
         f"Read {assignment_path.name} first; its packet contains the assembly for every routine.\n"
         f"Assignment: {json.dumps(assignment, sort_keys=True)}\n"
-        "Edit only owned_paths. Do not use git, jj, network, credentials, or files outside the lane. "
+        "Edit only the absolute owned_paths; the process cwd is not the lane. "
+        "Never resolve an owned path relative to cwd. Do not use git, jj, network, "
+        "credentials, or files outside the lane. "
         "Implement every assigned routine completely; preserve factory markers and the existing "
         "case contract. Do not run the verifier or project-wide tests; the orchestrator verifies "
         "your lane after you return. Return a concise list of changed paths and any unresolved "
@@ -267,7 +305,10 @@ def agent_assignments(
                     effective_attempt, lane, variant, packet,
                     analyses.get(attempt["attempt_id"]),
                 ),
-                "owned_paths": effective_attempt["owned_paths"],
+                "owned_paths": [
+                    str(lane / relative)
+                    for relative in effective_attempt["owned_paths"]
+                ],
                 "environment_verified": True,
             })
     return assignments

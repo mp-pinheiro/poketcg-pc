@@ -1016,6 +1016,20 @@ def plan_recovery_tick(
     return {"status": "planned", "action": action, "reused": True}
 
 
+def has_publication_work(
+    connection: sqlite3.Connection,
+    *,
+    now: int | None = None,
+) -> bool:
+    now = int(time.time()) if now is None else now
+    return bool(connection.execute(
+        """SELECT 1 FROM work
+           WHERE eligibility = 'green-integrating' AND not_before <= ?
+           LIMIT 1""",
+        (now,),
+    ).fetchone())
+
+
 def acquire_recovery_tick(
     connection: sqlite3.Connection,
     *,
