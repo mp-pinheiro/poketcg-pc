@@ -25,14 +25,19 @@ class SurgeryError(ValueError):
 
 
 def _span(text: str, open_mark: str, close_mark: str) -> tuple[int, int] | None:
-    start = text.find(open_mark)
-    if start < 0:
+    open_match = re.search(rf"(?m)^{re.escape(open_mark)}[ \t]*$", text)
+    if open_match is None:
         return None
-    end = text.find(close_mark, start)
-    if end < 0:
+    close_match = re.search(
+        rf"(?m)^{re.escape(close_mark)}[ \t]*$",
+        text[open_match.end():],
+    )
+    if close_match is None:
         raise SurgeryError(f"unterminated marker {open_mark!r}")
-    end = text.index("\n", end + len(close_mark)) + 1 if "\n" in text[end:] else len(text)
-    return start, end
+    end = open_match.end() + close_match.end()
+    if end < len(text) and text[end] == "\n":
+        end += 1
+    return open_match.start(), end
 
 
 def _replace_span(text: str, open_mark: str, close_mark: str, replacement: str,
