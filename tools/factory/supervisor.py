@@ -162,6 +162,27 @@ def _migrate_legacy_states() -> int:
         common.write_json(path, packet)
         changed += 1
     return changed
+def _revalidate_green_packets() -> int:
+    revision = _revision()
+    changed = 0
+    for packet in common.list_packets(("green",)):
+        attempt_id = packet.get("attempt_id", packet.get("id"))
+        bundle = common.BUNDLES / str(attempt_id)
+        metadata = bundle / "packet.json"
+        valid = packet.get("base_commit") == revision and metadata.is_file()
+        if valid:
+            try:
+                expected = common.packet_identity(packet)
+                recorded = json.loads(metadata.read_text())
+                valid = all(recorded.get(key) == value
+                            for key, value in expected.items())
+            except (OSError, json.JSONDecodeError, ValueError):
+                valid = False
+        if not valid:
+            common.set_state(packet, "retry-ready", "stale-green-bundle")
+            changed += 1
+    return changed
+
 
 
 def snapshot() -> dict:
@@ -444,6 +465,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
     run_id = str(uuid.uuid4())
     with supervisor_lock():
         _migrate_legacy_states()
+        _revalidate_green_packets()
         actions = 0
         while max_actions is None or actions < max_actions:
             snap = snapshot()
