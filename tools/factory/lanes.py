@@ -8,11 +8,11 @@ rebuilds stay incremental.
 """
 
 from __future__ import annotations
-
+import json
 import os
+import shutil
 import subprocess
 import time
-from pathlib import Path
 
 from common import LANE_BASE, ROOT, run_bounded
 
@@ -89,7 +89,42 @@ def lane_dir(index: int) -> Path:
     return LANE_BASE / f"lane-{index}"
 
 
-def ensure(index: int, deadline: float | None = None) -> Path:
+def _restore_packet_receipts(lane: Path, packet: dict | None) -> None:
+    if packet is None:
+        return
+    expected = {
+        routine["work_id"]: routine["name"]
+        for routine in packet.get("routines", [])
+    }
+    if not expected:
+        return
+    destination = lane / "tools" / "oracle" / "mutation_receipts"
+    for metadata_path in sorted(
+            (ROOT / ".factory" / "bundles").glob("*/packet.json")):
+        try:
+            metadata = json.loads(metadata_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        if (metadata.get("basename") != packet.get("basename")
+                or metadata.get("file") != packet.get("file")):
+            continue
+        routines = {
+            routine.get("work_id"): routine.get("name")
+            for routine in metadata.get("routines", [])
+        }
+        matches = expected.keys() & routines.keys()
+        for work_id in matches:
+            source = (metadata_path.parent / "tools" / "oracle"
+                      / "mutation_receipts" / f"{expected[work_id]}.json")
+            if source.is_file():
+                destination.mkdir(parents=True, exist_ok=True)
+                target = destination / source.name
+                if not target.exists():
+                    shutil.copy2(source, target)
+
+
+def ensure(index: int, deadline: float | None = None,
+           packet: dict | None = None) -> Path:
     """Create or refresh lane <index> from the current repo tree.
 
     The lane keeps its build dir, so restoring a file rsync had previously
@@ -106,6 +141,7 @@ def ensure(index: int, deadline: float | None = None) -> Path:
         command += ["--exclude", pattern]
     command += [f"{ROOT}/", f"{lane}/"]
     run_bounded(command, cwd=ROOT, cap=300, deadline=deadline, check=True)
+    _restore_packet_receipts(lane, packet)
     stamp = time.time()
     for folder in ("src/home", "src/probe", "tests/cases"):
         for path in (lane / folder).glob("*"):

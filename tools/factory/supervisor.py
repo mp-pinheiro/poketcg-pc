@@ -8,6 +8,7 @@ local and deterministic.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -130,6 +131,24 @@ def _digest(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def _migrate_legacy_states() -> int:
+    changed = 0
+    for path in sorted(common.QUEUE.glob("*.json")):
+        try:
+            packet = json.loads(path.read_text())
+        except (OSError, json.JSONDecodeError):
+            continue
+        state = packet.get("state")
+        if state not in {"escalated", "rejected-format", "parked"}:
+            continue
+        packet["state"] = "blocked" if state == "parked" else "retry-ready"
+        packet["reason"] = (
+            f"legacy {state}: {packet.get('reason') or 'requeued by supervisor'}")
+        common.write_json(path, packet)
+        changed += 1
+    return changed
+
+
 def snapshot() -> dict:
     report = _load_report()
     packets = common.list_packets()
@@ -140,7 +159,7 @@ def snapshot() -> dict:
     for packet in packets:
         state = packet.get("state")
         count = len(packet.get("routines", []))
-        if state == "retry-ready":
+        if state in {"retry-ready", "pending"}:
             categories["retry-ready"] += count
         elif state == "recovering":
             categories["recovering"] += count
@@ -194,7 +213,6 @@ def supervisor_lock() -> Iterator[None]:
     common.FACTORY.mkdir(parents=True, exist_ok=True)
     stream = LOCK_PATH.open("a+")
     try:
-        import fcntl
         fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
         yield
     finally:
@@ -203,24 +221,62 @@ def supervisor_lock() -> Iterator[None]:
 
 
 def _action_packet_ids(kind: str, snap: dict) -> list[str]:
-    if kind == "integrate-green":
-        states = {"green"}
-    elif kind == "integration-resume":
-        states = {"integrating", "green"}
-    else:
-        return list(snap["packet_ids"])
+    states = {
+        "integrate-green": {"green"},
+        "integration-resume": {"integrating", "green"},
+        "harness-repair": {"repair", "verifying", "translated", "translating"},
+        "retry-wave": {"retry-ready", "pending"},
+        "revalidate-blockers": {"blocked"},
+    }.get(kind)
+    if states is None:
+        return list(snap["packet_ids"]) if kind != "fresh-wave" else []
     return sorted(
-        packet.get("attempt_id", packet.get("id", ""))
+        packet.get("id", "")
         for packet in common.list_packets()
         if packet.get("state") in states
     )
+
+def _scc_action(*, persist: bool = False) -> dict | None:
+    import packet
+    groups = packet.scc_projection(packet.compute_functions()[0])
+    for group in groups:
+        if group["blocked_on"]:
+            continue
+        members = set(group["work_ids"])
+        owned = [
+            packet_data for packet_data in common.list_packets()
+            if packet_data.get("state") not in HISTORICAL
+            and any(routine.get("name") in members
+                    for routine in packet_data.get("routines", []))
+        ]
+        owned_ids = sorted(
+            packet_data.get("attempt_id", packet_data.get("id", ""))
+            for packet_data in owned
+        )
+        owned_names = {
+            routine.get("name")
+            for packet_data in owned
+            for routine in packet_data.get("routines", [])
+        }
+        if owned_names != members:
+            continue
+        if persist:
+            recovery_dir = common.FACTORY / "recovery-groups"
+            common.write_json(
+                recovery_dir / f"{group['group_id']}.json",
+                {**group, "packet_ids": owned_ids, "generation": 0,
+                 "base_commit": _revision()},
+            )
+        return {"group_id": group["group_id"], "packet_ids": owned_ids}
+    return None
 
 
 def next_action(*, current: dict | None = None) -> dict:
     snap = current or snapshot()
     journal = _read_journal()
     if journal and journal.get("phase") not in {"done", "failed", "idle"}:
-        if journal.get("frontier_digest") != snap["frontier_digest"] or journal.get("base_commit") != snap["base_commit"]:
+        if (journal.get("frontier_digest") != snap["frontier_digest"]
+                or journal.get("base_commit") != snap["base_commit"]):
             return {"kind": "stop-the-line", "reason": "journal-identity-mismatch",
                     "action_id": journal.get("action_id"), "snapshot": snap}
         kind = journal.get("kind", "resume")
@@ -235,19 +291,25 @@ def next_action(*, current: dict | None = None) -> dict:
         kind = "integration-resume"
     elif any(p.get("state") == "green" for p in common.list_packets()):
         kind = "integrate-green"
+    elif snap["categories"]["harness-repair"]:
+        kind = "harness-repair"
     elif snap["categories"]["retry-ready"]:
         kind = "retry-wave"
     elif snap["categories"]["fresh-ready"]:
         kind = "fresh-wave"
     elif snap["categories"]["dependency-blocked"]:
-        kind = "revalidate-blockers"
+        scc = _scc_action()
+        kind = "scc-recovery" if scc else "revalidate-blockers"
     elif snap["completion"]["complete"]:
         kind = "complete"
     else:
         return {"kind": "stop-the-line", "reason": "invariant:no-frontier",
                 "residual": snap["frontier"], "snapshot": snap}
-    return {"kind": kind, "snapshot": snap,
-            "packet_ids": _action_packet_ids(kind, snap)}
+    if kind == "scc-recovery":
+        packet_ids = scc["packet_ids"]
+    else:
+        packet_ids = _action_packet_ids(kind, snap)
+    return {"kind": kind, "snapshot": snap, "packet_ids": packet_ids}
 
 def _deterministic_action(action: dict, **_limits: Any) -> dict:
     kind = action["kind"]
@@ -311,6 +373,35 @@ def start(completion: Callable, *, lanes_count: int = 10,
     )
 
 
+def _prepare_fresh_packets() -> list[str]:
+    import packet
+    candidates = packet.build_packets(None, 3, 140, 20)
+    candidates = packet.drop_claimed(candidates)
+    candidates = packet.attach_dependencies(candidates)
+    ids = []
+    for packet_data in candidates:
+        attempt_id = packet_data["attempt_id"]
+        common.write_json(common.QUEUE / f"{attempt_id}.json", packet_data)
+        ids.append(attempt_id)
+    common.claim_index()
+    return ids
+
+
+def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
+    for packet_id in packet_ids:
+        packet_data = common.load_packet(packet_id)
+        if packet_data.get("state") in {
+                "retry-ready", "repair", "verifying", "translated",
+                "translating"}:
+            common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
+        elif packet_data.get("state") != "pending":
+            raise RuntimeError(
+                f"retry packet {packet_id} is {packet_data.get('state')}, "
+                "not retry-ready, repair, in-flight, or pending"
+            )
+    return packet_ids
+
+
 def supervise(translate_many: Callable | None, recover_many: Callable | None,
               analyze_failure: Callable | None, *, lanes_count: int = 10,
               verify_width: int = 6, max_actions: int | None = None) -> dict:
@@ -318,37 +409,86 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
         raise TypeError("supervise requires runtime callback seams")
     run_id = str(uuid.uuid4())
     with supervisor_lock():
+        _migrate_legacy_states()
         actions = 0
         while max_actions is None or actions < max_actions:
             snap = snapshot()
             action = next_action(current=snap)
             if action["kind"] in {"complete", "stop-the-line"}:
                 return action
-            journal = {"schema": JOURNAL_SCHEMA, "run_id": run_id,
-                       "action_id": str(uuid.uuid4()), "kind": action["kind"],
-                       "phase": "planned", "frontier_digest": snap["frontier_digest"],
-                       "base_commit": snap["base_commit"], "candidate_commit": None,
-                       "packet_ids": action.get("packet_ids", []),
-                       "attempt_generation": None, "not_before": 0,
-                       "started_at": int(time.time()), "result": None}
+            journal = {
+                "schema": JOURNAL_SCHEMA,
+                "run_id": run_id,
+                "action_id": str(uuid.uuid4()),
+                "kind": action["kind"],
+                "phase": "planned",
+                "frontier_digest": snap["frontier_digest"],
+                "base_commit": snap["base_commit"],
+                "candidate_commit": None,
+                "packet_ids": action.get("packet_ids", []),
+                "attempt_generation": None,
+                "not_before": 0,
+                "started_at": int(time.time()),
+                "result": None,
+            }
             _write_journal(journal)
+            if action["kind"] in {"retry-wave", "harness-repair"}:
+                action["packet_ids"] = _prepare_retry_packets(
+                    action["packet_ids"])
+                journal["packet_ids"] = action["packet_ids"]
+                _write_journal(journal)
+            if action["kind"] == "fresh-wave":
+                action["packet_ids"] = _prepare_fresh_packets()
+                journal["packet_ids"] = action["packet_ids"]
+                _write_journal(journal)
+                if not action["packet_ids"]:
+                    journal["phase"] = "failed"
+                    journal["result"] = {"reason": "fresh-frontier-build-empty"}
+                    _write_journal(journal)
+                    return {
+                        "kind": "stop-the-line",
+                        "reason": "fresh-frontier-build-empty",
+                        "snapshot": snapshot(),
+                    }
+            if action["kind"] == "scc-recovery":
+                group = _scc_action(persist=True)
+                if not group or group["packet_ids"] != action["packet_ids"]:
+                    journal["phase"] = "failed"
+                    journal["result"] = {"reason": "scc-membership-drift"}
+                    _write_journal(journal)
+                    return {
+                        "kind": "stop-the-line",
+                        "reason": "scc-membership-drift",
+                        "action": action,
+                    }
             if action["kind"] in {"gate-refresh", "integrate-green",
                                   "integration-resume", "revalidate-blockers"}:
                 callback = _deterministic_action
             else:
                 callback = recover_many if action["kind"] in {
-                    "retry-wave", "revalidate-blockers"
+                    "harness-repair", "retry-wave", "scc-recovery"
                 } else translate_many
             if callback is None:
                 journal["phase"] = "failed"
                 journal["result"] = {"reason": "callback-unavailable"}
                 _write_journal(journal)
-                return {"kind": "stop-the-line", "reason": "callback-unavailable", "action": action}
+                return {
+                    "kind": "stop-the-line",
+                    "reason": "callback-unavailable",
+                    "action": action,
+                }
             journal["phase"] = "running"
             _write_journal(journal)
             try:
                 result = callback(
                     action, lanes_count=lanes_count, verify_width=verify_width)
+            except SystemExit as exc:
+                result = {
+                    "status": "failed",
+                    "failure_class": "stop-the-line",
+                    "detail": str(exc),
+                    "retryable": False,
+                }
             except Exception as exc:
                 result = {
                     "status": "failed",
@@ -357,14 +497,18 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                     "retryable": True,
                 }
             successful = isinstance(result, dict) and (
-                result.get("success") is True or result.get("status") in {"green", "complete"})
-            if not successful and analyze_failure is not None:
+                result.get("success") is True
+                or result.get("status") in {"green", "complete"}
+            )
+            if (not successful and analyze_failure is not None
+                    and result.get("failure_class") != "stop-the-line"):
                 analysis = analyze_failure(action, result)
                 if isinstance(result, dict):
                     result = dict(result)
                     result["analysis"] = analysis
             after = snapshot()
-            if (not successful and liveness_tuple(snap) == liveness_tuple(after)
+            if (not successful
+                    and liveness_tuple(snap) == liveness_tuple(after)
                     and result.get("status") == "failed"):
                 journal["phase"] = "failed"
                 journal["result"] = result
@@ -393,14 +537,24 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
             journal["liveness"] = liveness_tuple(after)
             if successful and liveness_tuple(snap) == liveness_tuple(after):
                 journal["phase"] = "failed"
-                journal["result"] = {"reason": "no-progress",
-                                     "action": action["kind"],
-                                     "packet_ids": action.get("packet_ids", [])}
+                journal["result"] = {
+                    "reason": "no-progress",
+                    "action": action["kind"],
+                    "packet_ids": action.get("packet_ids", []),
+                }
                 _write_journal(journal)
-                return {"kind": "stop-the-line", "reason": "no-progress",
-                        "action": action, "snapshot": after}
+                return {
+                    "kind": "stop-the-line",
+                    "reason": "no-progress",
+                    "action": action,
+                    "snapshot": after,
+                }
             actions += 1
-        return {"kind": "stop-the-line", "reason": "action-limit", "actions": actions}
+        return {
+            "kind": "stop-the-line",
+            "reason": "action-limit",
+            "actions": actions,
+        }
 
 
 def main() -> int:

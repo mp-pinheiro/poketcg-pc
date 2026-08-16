@@ -316,7 +316,7 @@ def _salvage_finish(run: "_Run", verdict: dict | None, failing: list[str]) -> No
     """Scheduler-thread step: write the spill packet and finalize run from a
     completed _salvage_verify result."""
     if not verdict or verdict.get("status") != "green":
-        run.final = "escalated"
+        run.final = "retry-ready"
         run.reason = run.pending_reason
         return
     names = [r["name"] for r in run.packet["routines"]]
@@ -357,9 +357,14 @@ def _decide(run: "_Run", result: dict, max_rounds: int) -> str:
         run.final, run.reason = "blocked", f"timeout: {spinner}"
         return "final"
     if result["status"] in {"infra-timeout", "infra-error"}:
-        run.final = "retry-ready"
-        prefix = result["status"]
-        run.reason = f"{prefix}: {result['detail'][-400:]}"
+        detail = result["detail"][-400:]
+        if "bundle input missing:" in detail:
+            run.final = "repair"
+            run.reason = f"missing bundle fixture: {detail}"
+        else:
+            run.final = "retry-ready"
+            prefix = result["status"]
+            run.reason = f"{prefix}: {detail}"
         return "final"
     run.rounds += 1
     run.packet["rounds"] = run.rounds
@@ -501,13 +506,13 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
             run.lane_index = lane_index
             active.append(run)
             if run.rounds >= max_rounds:
-                run.final = "escalated"
+                run.final = "retry-ready"
                 run.reason = f"resumed at {run.rounds} rounds; max is {max_rounds}"
                 finalize_and_refill(run)
                 return
             run.needs_translate = True
             run.job = "lane"
-            job = _Timed(lanes.ensure, run.lane_index, deadline)
+            job = _Timed(lanes.ensure, run.lane_index, deadline, run.packet)
             jobs[pool.submit(job)] = ("lane", (run, job))
 
         with ThreadPoolExecutor(max_workers=lanes_count + verify_width + 2) as pool:

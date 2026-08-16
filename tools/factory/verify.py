@@ -334,6 +334,31 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                    lane, timeout=1800, deadline=deadline)
         if live.returncode != 0:
             return verdict("diff", live.stdout + live.stderr)
+    if progress:
+        progress("mutation")
+    try:
+        module = load_cases_module(lane, basename)
+        mutations = getattr(module, "MUTATIONS", {})
+        for fn in routine_names:
+            mutation = mutations.get(fn)
+            if not mutation:
+                return verdict("mutation", f"mutation missing for {fn}")
+            index = witness_index(mutation)
+            mutation_run = run(
+                [sys.executable, "tools/run_mutation.py", fn,
+                 f"tests/cases/{basename}.py", "--index", str(index),
+                 "--build", str(lane / "build"), "--runner", str(RUNNER)],
+                lane, timeout=1800, deadline=deadline)
+            if mutation_run.returncode != 0:
+                return verdict("mutation",
+                               mutation_run.stdout + mutation_run.stderr)
+    except WaveDeadlineExpired:
+        raise
+    except PhaseTimeout as exc:
+        return verdict("infra-timeout", str(exc))
+    except Exception:
+        return verdict("infra-error", traceback.format_exc(limit=2))
+
 
     if progress:
         progress("complete")
