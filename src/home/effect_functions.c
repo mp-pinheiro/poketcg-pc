@@ -3160,8 +3160,15 @@ uint8_t CreatePlayableStage2PokemonCardListFromHand(void)
 	return gb_read8(wDuelTempList_ADDR) == 0xffu ? 0x90u : 0x00u;
 }
 /* <<< factory CreatePlayableStage2PokemonCardListFromHand */
+
 /* >>> factory Barrier_DiscardEffect */
-void Barrier_DiscardEffect(void) { PutCardInDiscardPile(hTemp_ffa0); }
+/* effect_functions.asm:5422-5427 */
+uint8_t Barrier_DiscardEffect(void)
+{
+	uint8_t value = hTemp_ffa0;
+	PutCardInDiscardPile(value);
+	return value;
+}
 /* <<< factory Barrier_DiscardEffect */
 /* >>> factory DestinyBond_DiscardEffect */
 void DestinyBond_DiscardEffect(void) { PutCardInDiscardPile(gb_read8(hTempList_ADDR)); }

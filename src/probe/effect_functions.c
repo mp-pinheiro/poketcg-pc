@@ -1794,8 +1794,12 @@ static void adapt_CheckIfCardIsBasicEnergy(ProbeState *s) { s->f = CheckIfCardIs
 static void adapt_CreatePlayableStage2PokemonCardListFromHand(ProbeState *s) { s->f = (uint8_t)((s->f & 0x80u) | CreatePlayableStage2PokemonCardListFromHand()); }
 /* <<< factory CreatePlayableStage2PokemonCardListFromHand */
 /* >>> factory Barrier_DiscardEffect */
-static void adapt_Barrier_DiscardEffect(ProbeState *s) { Barrier_DiscardEffect(); }
+static void adapt_Barrier_DiscardEffect(ProbeState *s)
+{
+	s->a = Barrier_DiscardEffect();
+}
 /* <<< factory Barrier_DiscardEffect */
+
 /* >>> factory DestinyBond_DiscardEffect */
 static void adapt_DestinyBond_DiscardEffect(ProbeState *s) { DestinyBond_DiscardEffect(); }
 /* <<< factory DestinyBond_DiscardEffect */
@@ -2376,7 +2380,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergySearch_DeckCheck", adapt_EnergySearch_DeckCheck },
 	{ "CheckIfCardIsBasicEnergy", adapt_CheckIfCardIsBasicEnergy },
 	{ "CreatePlayableStage2PokemonCardListFromHand", adapt_CreatePlayableStage2PokemonCardListFromHand },
-	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
 	{ "DestinyBond_DiscardEffect", adapt_DestinyBond_DiscardEffect },
 	{ "Ember_DiscardEffect", adapt_Ember_DiscardEffect },
 	{ "FireBlast_DiscardEffect", adapt_FireBlast_DiscardEffect },
@@ -2423,5 +2426,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyConversion_AISelectEffect", adapt_EnergyConversion_AISelectEffect },
 	{ "HypnoDarkMind_AISelectEffect", adapt_HypnoDarkMind_AISelectEffect },
 	{ "DreamEaterEffect", adapt_DreamEaterEffect },
+	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
 	{ NULL, NULL },
 };

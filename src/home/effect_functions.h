@@ -903,7 +903,7 @@ void HypnoDarkMind_AISelectEffect(void);
 /* <<< factory HypnoDarkMind_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
-void Barrier_DiscardEffect(void);
+uint8_t Barrier_DiscardEffect(void);
 /* <<< factory Barrier_DiscardEffect */
 /* >>> factory DestinyBond_DiscardEffect */
 void DestinyBond_DiscardEffect(void);

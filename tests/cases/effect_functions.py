@@ -1956,15 +1956,15 @@ CASES["MysteriousFossil_PlaceInPlayAreaEffect"] = [{}, dict(POISON)]
 # <<< factory MysteriousFossil_PlaceInPlayAreaEffect
 
 # >>> factory Barrier_DiscardEffect
-CONTRACT["Barrier_DiscardEffect"] = {"compare": (), "preserve": ()}
+CONTRACT["Barrier_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
 CASES["Barrier_DiscardEffect"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2ED: b"\x00", hTemp_ffa0: b"\x00"},
-     "read": {0xC200: 1, 0xC2ED: 1, 0xC27E: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC3", 0xC3ED: b"\x02",
-                       hTemp_ffa0: b"\x05"},
-         read={0xC305: 1, 0xC3ED: 1, 0xC380: 1}),
+    {"wram": {0xFFA0: b"\x00"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFFA0: b"\xAA"}, read={0xFFA0: 1}),
+    {"wram": {0xFFA0: b"\x01"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFFA0: b"\xFF"}, "read": {0xFFA0: 1}},
 ]
 # <<< factory Barrier_DiscardEffect
+
 # >>> factory DestinyBond_DiscardEffect
 CONTRACT["DestinyBond_DiscardEffect"] = {"compare": (), "preserve": ()}
 CASES["DestinyBond_DiscardEffect"] = [{}, dict(POISON)]
@@ -3694,7 +3694,7 @@ MUTATIONS["PickRandomBasicCardFromDeck"] = {"source_symbol": "PickRandomBasicCar
 MUTATIONS["StepIn_SwitchEffect"] = {"source_symbol": "StepIn_SwitchEffect", "before": "SwapArenaWithBenchPokemon(hTemp_ffa0)", "after": "SwapArenaWithBenchPokemon((uint8_t)(hTemp_ffa0 + 1u))", "case_ids": ["StepIn_SwitchEffect-0"]}
 # <<< factory-mutation StepIn_SwitchEffect
 # >>> factory-mutation Barrier_DiscardEffect
-MUTATIONS["Barrier_DiscardEffect"] = {"source_symbol": "Barrier_DiscardEffect", "before": "void Barrier_DiscardEffect(void) { PutCardInDiscardPile(hTemp_ffa0); }", "after": "void Barrier_DiscardEffect(void) { PutCardInDiscardPile(0u); }", "case_ids": ["Barrier_DiscardEffect-0", "Barrier_DiscardEffect-1"]}
+MUTATIONS["Barrier_DiscardEffect"] = {"source_symbol": "Barrier_DiscardEffect", "before": "\treturn value;", "after": "\treturn 0u;", "case_ids": ["Barrier_DiscardEffect-1", "Barrier_DiscardEffect-2", "Barrier_DiscardEffect-3"]}
 # <<< factory-mutation Barrier_DiscardEffect
 # >>> factory-mutation DestinyBond_DiscardEffect
 MUTATIONS["DestinyBond_DiscardEffect"] = {"source_symbol": "DestinyBond_DiscardEffect", "before": "gb_read8(hTempList_ADDR)", "after": "gb_read8((uint16_t)(hTempList_ADDR + 1u))", "case_ids": ["DestinyBond_DiscardEffect-0", "DestinyBond_DiscardEffect-1"]}
