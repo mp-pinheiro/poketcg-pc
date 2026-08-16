@@ -503,7 +503,7 @@ def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
         state = packet_data.get("state")
         if state not in {
                 "retry-ready", "repair", "verifying", "translated",
-                "translating", "pending"}:
+                "translating", "blocked", "pending"}:
             raise RuntimeError(
                 f"retry packet {packet_id} is {state}, "
                 "not retry-ready, repair, in-flight, or pending"
@@ -523,7 +523,9 @@ def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
 
 def _prepare_scc_packets(action: dict) -> list[str]:
     if not action.get("group", {}).get("needs_build"):
-        return action.get("packet_ids", [])
+        packet_ids = action.get("packet_ids", [])
+        _prepare_retry_packets(packet_ids)
+        return packet_ids
     import packet
     group = action["group"]
     packets = packet.build_scc_packets(set(group["work_ids"]))
