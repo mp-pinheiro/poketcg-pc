@@ -265,6 +265,11 @@ def next_action(
         )
         if resumed is not None:
             return resumed
+        recovered = scheduler.acquire_recovery_tick(
+            connection, lease_owner=lease_owner, lease_seconds=lease_seconds,
+        )
+        if recovered is not None:
+            return recovered
         state.align_source_revision(connection, _required_revision())
         return scheduler.acquire_tick(
             connection, lease_owner=lease_owner, lease_seconds=lease_seconds,
@@ -590,8 +595,10 @@ def preview_next(*, lanes_count: int = 10) -> dict[str, Any]:
     copy.row_factory = sqlite3.Row
     try:
         source.backup(copy)
-        state.align_source_revision(copy, _required_revision())
-        planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
+        planned = scheduler.plan_recovery_tick(copy)
+        if planned is None:
+            state.align_source_revision(copy, _required_revision())
+            planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
         return {
             **planned,
             "dry_run": True,

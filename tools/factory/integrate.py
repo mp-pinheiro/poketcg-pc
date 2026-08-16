@@ -47,6 +47,24 @@ def _digest(value: object) -> str:
 def _commit(revision: str) -> str:
     return run(["jj", "log", "--no-graph", "-r", revision, "-T", "commit_id"], check_message=f"cannot read {revision}").stdout.strip()
 
+def _base_compatible(packet: dict, main: str) -> bool:
+    base = packet.get("base_commit")
+    if not base or base == main:
+        return True
+    ancestor = run(["git", "merge-base", "--is-ancestor", base, main])
+    if ancestor.returncode != 0:
+        return False
+    source = Path(packet["file"])
+    basename = packet["basename"]
+    owned_paths = sorted({
+        str(source.with_suffix(".c")),
+        str(source.with_suffix(".h")),
+        f"src/probe/{basename}.c",
+        f"tests/cases/{basename}.py",
+    })
+    unchanged = run(["git", "diff", "--quiet", base, main, "--", *owned_paths])
+    return unchanged.returncode == 0
+
 
 def _clean_tree() -> None:
     status = run(["jj", "st"])
@@ -79,7 +97,7 @@ def _validate_batch(packets: list[dict], *, allow_duplicate_basename: bool = Fal
     for packet in packets:
         if packet.get("state") != "green":
             raise SystemExit(f"packet {packet.get('id')} is not green")
-        if packet.get("base_commit") and packet["base_commit"] != main:
+        if not _base_compatible(packet, main):
             raise SystemExit(f"STOP-THE-LINE {packet['id']} base commit mismatch")
         bundle = BUNDLES / packet.get("attempt_id", packet["id"])
         metadata = bundle / "packet.json"

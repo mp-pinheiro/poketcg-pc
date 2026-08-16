@@ -284,7 +284,11 @@ def align_source_revision(
             return False
         active_actions = connection.execute(
             """SELECT action_id, kind, status FROM action
-               WHERE status IN ('planned', 'leased', 'running')
+               WHERE status IN ('leased', 'running')
+                  OR (
+                      recoverable = 1
+                      AND status IN ('planned', 'recovering', 'expired')
+                  )
                ORDER BY action_id"""
         ).fetchall()
         green = connection.execute(

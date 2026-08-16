@@ -1006,6 +1006,49 @@ def plan_tick(
         }
 
 
+def plan_recovery_tick(
+    connection: sqlite3.Connection,
+    *,
+    now: int | None = None,
+) -> dict[str, Any] | None:
+    """Return retained journal work without planning from authority metadata."""
+    now = int(time.time()) if now is None else now
+    with state.immediate(connection):
+        state.recover_expired_in_transaction(connection, now)
+        action = _existing_action(connection, now)
+    if action is None:
+        return None
+    return {"status": "planned", "action": action, "reused": True}
+
+
+def acquire_recovery_tick(
+    connection: sqlite3.Connection,
+    *,
+    lease_owner: str,
+    lease_seconds: int,
+    now: int | None = None,
+) -> dict[str, Any] | None:
+    """Lease retained journal work without planning against stale metadata."""
+    now = int(time.time()) if now is None else now
+    planned = plan_recovery_tick(connection, now=now)
+    if planned is None:
+        return None
+    action_id = planned["action"]["action_id"]
+    try:
+        lease = state.claim_action(
+            connection, action_id, lease_owner=lease_owner,
+            lease_seconds=lease_seconds, now=now,
+        )
+    except state.LeaseConflict as exc:
+        return {"status": "busy", "reason": str(exc), "action_id": action_id}
+    return {
+        **planned,
+        "status": "leased",
+        "lease": lease,
+        "action": _action_descriptor(connection, action_id),
+    }
+
+
 def acquire_tick(
     connection: sqlite3.Connection,
     *,
