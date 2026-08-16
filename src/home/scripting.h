@@ -177,4 +177,7 @@ ScriptCommand_LoadCurrentMapNameIntoTxRamSlotResult ScriptCommand_LoadCurrentMap
 /* >>> factory ScriptCommand_EnterMap */
 IncreaseScriptPointerResult ScriptCommand_EnterMap(void);
 /* <<< factory ScriptCommand_EnterMap */
+/* >>> factory GetScriptArgs1AfterPointer */
+GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void);
+/* <<< factory GetScriptArgs1AfterPointer */
 #endif

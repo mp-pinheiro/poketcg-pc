@@ -509,3 +509,12 @@ IncreaseScriptPointerResult ScriptCommand_EnterMap(void)
 	return IncreaseScriptPointerBy6();
 }
 /* <<< factory ScriptCommand_EnterMap */
+
+/* >>> factory GetScriptArgs1AfterPointer */
+/* scripting.asm:615-618 */
+GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void)
+{
+	GetScriptArgsAfterPointerResult r = GetScriptArgsAfterPointer(1u);
+	return r;
+}
+/* <<< factory GetScriptArgs1AfterPointer */

@@ -24,6 +24,7 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 
 
+
 CONTRACT = {}
 CASES = {}
 
@@ -423,6 +424,11 @@ CASES["ScriptCommand_EnterMap"] = [
 ]
 # <<< factory ScriptCommand_EnterMap
 
+# >>> factory GetScriptArgs1AfterPointer
+CONTRACT["GetScriptArgs1AfterPointer"] = {"compare": ("a", "f", "b", "c"), "preserve": ()}
+CASES["GetScriptArgs1AfterPointer"] = [{}, dict(POISON), {"a": 0xFF, "f": 0x40, "b": 0x12, "c": 0x34}]
+# <<< factory GetScriptArgs1AfterPointer
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -683,3 +689,6 @@ MUTATIONS["ScriptCommand_LoadCurrentMapNameIntoTxRamSlot"] = {"source_symbol": "
 # >>> factory-mutation ScriptCommand_EnterMap
 MUTATIONS["ScriptCommand_EnterMap"] = {"source_symbol": "ScriptCommand_EnterMap", "before": "\twOverworldTransition |= 0x10u;", "after": "\twOverworldTransition |= 0x20u;", "case_ids": ["ScriptCommand_EnterMap-1", "ScriptCommand_EnterMap-2", "ScriptCommand_EnterMap-3", "ScriptCommand_EnterMap-4"]}
 # <<< factory-mutation ScriptCommand_EnterMap
+# >>> factory-mutation GetScriptArgs1AfterPointer
+MUTATIONS["GetScriptArgs1AfterPointer"] = {"source_symbol": "GetScriptArgs1AfterPointer", "before": "GetScriptArgsAfterPointerResult r = GetScriptArgsAfterPointer(1u);\n\treturn r;", "after": "GetScriptArgsAfterPointerResult r = GetScriptArgsAfterPointer(1u);\n\tr.a = (uint8_t)(r.a ^ 1u);\n\treturn r;", "case_ids": ["GetScriptArgs1AfterPointer-0", "GetScriptArgs1AfterPointer-1", "GetScriptArgs1AfterPointer-2"]}
+# <<< factory-mutation GetScriptArgs1AfterPointer
