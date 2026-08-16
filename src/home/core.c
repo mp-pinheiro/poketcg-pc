@@ -361,6 +361,15 @@ typedef struct {
 
 #define DUELTYPE_LINK 0x01u
 #define LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0000u
+
+static const uint8_t kPlayAreaLocationTileNumbers[24] = {
+	0xe0u, 0xe1u, 0xe2u, 0x00u,
+	0xe3u, 0xe4u, 0xe5u, 0x00u,
+	0xe3u, 0xe4u, 0xe6u, 0x00u,
+	0xe3u, 0xe4u, 0xe7u, 0x00u,
+	0xe3u, 0xe4u, 0xe8u, 0x00u,
+	0xe3u, 0xe4u, 0xe9u, 0x00u,
+};
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -1573,23 +1582,20 @@ HasAlivePokemonInPlayAreaResult _HasAlivePokemonInPlayArea(uint8_t a)
 }
 /* <<< factory _HasAlivePokemonInPlayArea */
 
+
 /* >>> factory PrintPlayAreaCardLocation */
-/* core.asm:4730-4773 */
+/* core.asm:5285-5328 */
 void PrintPlayAreaCardLocation(void)
 {
-	static const uint8_t tiles[] = {
-		0xe0u, 0xe1u, 0xe2u,
-		0xe3u, 0xe4u, 0xe5u,
-		0xe3u, 0xe4u, 0xe6u,
-		0xe3u, 0xe4u, 0xe7u,
-		0xe3u, 0xe4u, 0xe8u,
-		0xe3u, 0xe4u, 0xe9u,
-	};
-	uint8_t offset = (uint8_t)(wCurPlayAreaSlot * 3u);
-	uint8_t tile_offset = hWhoseTurn == PLAYER_TURN ? 0u : 0x0au;
+	uint8_t index = (uint8_t)(wCurPlayAreaSlot << 2);
+	uint8_t offset = (hWhoseTurn == PLAYER_TURN) ? 0u : 0x0au;
 	uint8_t y = wCurPlayAreaY;
-	for (uint8_t i = 0; i < 3u; i++)
-		WriteByteToBGMap0((uint8_t)(tiles[offset + i] + tile_offset), 1u, (uint8_t)(y + i));
+	uint8_t i;
+
+	for (i = 0u; i < 3u; ++i) {
+		uint8_t tile = kPlayAreaLocationTileNumbers[index + i];
+		WriteByteToBGMap0((uint8_t)(tile + offset), 1u, (uint8_t)(y + i));
+	}
 }
 /* <<< factory PrintPlayAreaCardLocation */
 

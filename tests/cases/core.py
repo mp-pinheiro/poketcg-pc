@@ -833,13 +833,16 @@ CASES["_HasAlivePokemonInPlayArea"] = [
 # >>> factory PrintPlayAreaCardLocation
 CONTRACT["PrintPlayAreaCardLocation"] = {"compare": (), "preserve": ()}
 CASES["PrintPlayAreaCardLocation"] = [
-    {"wram": {0xCBC9: b"\x00", 0xCBCA: b"\x05", 0xFF97: b"\xC2"},
-     "read": {0x98A1: 3}},
-    {"wram": {0xCBC9: b"\x02", 0xCBCA: b"\x08", 0xFF97: b"\xC3"},
-     "read": {0x9901: 3}},
-    dict(POISON, wram={0xCBC9: b"\x05", 0xCBCA: b"\x00", 0xFF97: b"\xC2"}),
+    {"wram": {0xCBC9: b"\x00", 0xCBCA: b"\x00", 0xFF97: b"\x00"},
+     "read": {0x9801: 1, 0x9802: 1, 0x9803: 1}},
+    dict(POISON,
+         wram={0xCBC9: b"\x01", 0xCBCA: b"\x05", 0xFF97: b"\xC2"},
+         read={0x98A1: 1, 0x98A2: 1, 0x98A3: 1}),
+    {"wram": {0xCBC9: b"\x05", 0xCBCA: b"\x1F", 0xFF97: b"\x00"},
+     "read": {0x9BE1: 1, 0x9BE2: 1, 0x9BE3: 1}},
 ]
 # <<< factory PrintPlayAreaCardLocation
+
 
 # >>> factory CheckPrintPoisoned
 CONTRACT["CheckPrintPoisoned"] = {"compare": ("a",), "preserve": ()}
@@ -1757,9 +1760,9 @@ MUTATIONS["_HasAlivePokemonInPlayArea"] = {
 # >>> factory-mutation PrintPlayAreaCardLocation
 MUTATIONS["PrintPlayAreaCardLocation"] = {
     "source_symbol": "PrintPlayAreaCardLocation",
-    "before": "uint8_t tile_offset = hWhoseTurn == PLAYER_TURN ? 0u : 0x0au;",
-    "after": "uint8_t tile_offset = hWhoseTurn == PLAYER_TURN ? 0x0au : 0u;",
-    "case_ids": ["PrintPlayAreaCardLocation-0", "PrintPlayAreaCardLocation-1"],
+    "before": "uint8_t tile = kPlayAreaLocationTileNumbers[index + i];",
+    "after": "uint8_t tile = kPlayAreaLocationTileNumbers[index + i + 1u];",
+    "case_ids": ["PrintPlayAreaCardLocation-0", "PrintPlayAreaCardLocation-1", "PrintPlayAreaCardLocation-2"],
 }
 # <<< factory-mutation PrintPlayAreaCardLocation
 # >>> factory-mutation CheckPrintPoisoned

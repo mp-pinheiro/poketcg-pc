@@ -665,6 +665,7 @@ static void adapt_PrintPlayAreaCardLocation(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardLocation */
 
+
 /* >>> factory CheckPrintPoisoned */
 static void adapt_CheckPrintPoisoned(ProbeState *s)
 {
@@ -1135,7 +1136,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetNoLineSeparation", adapt_SetNoLineSeparation },
 	{ "SetOneLineSeparation", adapt_SetOneLineSeparation },
 	{ "_HasAlivePokemonInPlayArea", adapt__HasAlivePokemonInPlayArea },
-	{ "PrintPlayAreaCardLocation", adapt_PrintPlayAreaCardLocation },
 	{ "CheckPrintPoisoned", adapt_CheckPrintPoisoned },
 	{ "ResetDoFrameFunction_Bank1", adapt_ResetDoFrameFunction_Bank1 },
 	{ "OppAction_NoAction", adapt_OppAction_NoAction },
@@ -1167,5 +1167,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
 	{ "LoadAndValidateDuelSaveData", adapt_LoadAndValidateDuelSaveData },
 	{ "ValidateSavedNonLinkDuelData", adapt_ValidateSavedNonLinkDuelData },
+	{ "PrintPlayAreaCardLocation", adapt_PrintPlayAreaCardLocation },
 	{ NULL, NULL },
 };
