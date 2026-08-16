@@ -2271,6 +2271,32 @@ CASES["FireBlast_AISelectEffect"] = [
 ]
 # <<< factory FireBlast_AISelectEffect
 
+# >>> factory EnergyConversion_CheckEnergy
+CONTRACT["EnergyConversion_CheckEnergy"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["EnergyConversion_CheckEnergy"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory EnergyConversion_CheckEnergy
+
+# >>> factory EnergyConversion_AISelectEffect
+CONTRACT["EnergyConversion_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["EnergyConversion_AISelectEffect"] = [
+    {"wram": {0xC510: b"\xFF"}, "read": {0xFFA0: 3}},
+    dict(POISON, wram={0xC510: b"\x01\x02\xFF"}, read={0xFFA0: 3}),
+    {"wram": {0xC510: b"\x10\x20\x30"}, "read": {0xFFA0: 3}},
+]
+# <<< factory EnergyConversion_AISelectEffect
+
+# >>> factory HypnoDarkMind_AISelectEffect
+CONTRACT["HypnoDarkMind_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["HypnoDarkMind_AISelectEffect"] = [
+    {"read": {0xFFA0: 1}},
+    dict(POISON, read={0xFFA0: 1}),
+    {"wram": {0xFFA0: b"\x12"}, "read": {0xFFA0: 1}},
+]
+# <<< factory HypnoDarkMind_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3863,3 +3889,12 @@ MUTATIONS["FireBlast_AISelectEffect"] = {
 	"case_ids": ["FireBlast_AISelectEffect-1", "FireBlast_AISelectEffect-2"],
 }
 # <<< factory-mutation FireBlast_AISelectEffect
+# >>> factory-mutation EnergyConversion_CheckEnergy
+MUTATIONS["EnergyConversion_CheckEnergy"] = {"source_symbol": "EnergyConversion_CheckEnergy", "before": "\treturn (EnergyConversionCheckEnergyResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};", "after": "\treturn (EnergyConversionCheckEnergyResult){ThereAreNoEnergyCardsInDiscardPileText, 0u};", "case_ids": ["EnergyConversion_CheckEnergy-0", "EnergyConversion_CheckEnergy-1"]}
+# <<< factory-mutation EnergyConversion_CheckEnergy
+# >>> factory-mutation EnergyConversion_AISelectEffect
+MUTATIONS["EnergyConversion_AISelectEffect"] = {"source_symbol": "EnergyConversion_AISelectEffect", "before": "if (value == 0xffu)", "after": "if (value == 0xfeu)", "case_ids": ["EnergyConversion_AISelectEffect-0", "EnergyConversion_AISelectEffect-1"]}
+# <<< factory-mutation EnergyConversion_AISelectEffect
+# >>> factory-mutation HypnoDarkMind_AISelectEffect
+MUTATIONS["HypnoDarkMind_AISelectEffect"] = {"source_symbol": "HypnoDarkMind_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, 0xffu);", "after": "gb_write8(hTemp_ffa0_ADDR, 0u);", "case_ids": ["HypnoDarkMind_AISelectEffect-0", "HypnoDarkMind_AISelectEffect-1", "HypnoDarkMind_AISelectEffect-2"]}
+# <<< factory-mutation HypnoDarkMind_AISelectEffect

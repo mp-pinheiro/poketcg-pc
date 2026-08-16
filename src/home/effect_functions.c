@@ -3685,3 +3685,56 @@ void FireBlast_AISelectEffect(void)
 	AIPickFireEnergyCardToDiscard();
 }
 /* <<< factory FireBlast_AISelectEffect */
+
+/* >>> factory EnergyConversion_CheckEnergy */
+/* effect_functions.asm:4632-4638 */
+EnergyConversionCheckEnergyResult EnergyConversion_CheckEnergy(void)
+{
+	CreateEnergyCardListFromDiscardPileResult r =
+		CreateEnergyCardListFromDiscardPile_AllEnergy();
+	return (EnergyConversionCheckEnergyResult){ThereAreNoEnergyCardsInDiscardPileText, r.f};
+}
+/* <<< factory EnergyConversion_CheckEnergy */
+
+/* >>> factory EnergyConversion_AISelectEffect */
+/* effect_functions.asm:4642-4666 */
+void EnergyConversion_AISelectEffect(void)
+{
+	uint16_t src = wDuelTempList_ADDR;
+	uint16_t dst = hTempList_ADDR;
+	uint8_t count = 2u;
+
+	(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+	for (;;) {
+		uint8_t value = gb_read8(src);
+		src = (uint16_t)(src + 1u);
+		if (value == 0xffu) {
+			gb_write8(dst, 0xffu);
+			return;
+		}
+		gb_write8(dst, value);
+		dst = (uint16_t)(dst + 1u);
+		count = (uint8_t)(count - 1u);
+		if (count == 0u)
+			break;
+	}
+	gb_write8(dst, 0xffu);
+}
+/* <<< factory EnergyConversion_AISelectEffect */
+
+/* >>> factory HypnoDarkMind_AISelectEffect */
+/* effect_functions.asm:4976-4993 */
+void HypnoDarkMind_AISelectEffect(void)
+{
+	gb_write8(hTemp_ffa0_ADDR, 0xffu);
+
+	DuelistVarResult r =
+		GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count = r.a;
+	if (count < 2u)
+		return;
+
+	AIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();
+	gb_write8(hTemp_ffa0_ADDR, target.a);
+}
+/* <<< factory HypnoDarkMind_AISelectEffect */

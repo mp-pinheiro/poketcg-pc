@@ -891,6 +891,16 @@ void FlamesOfRage_AISelectEffect(void);
 /* >>> factory FireBlast_AISelectEffect */
 void FireBlast_AISelectEffect(void);
 /* <<< factory FireBlast_AISelectEffect */
+/* >>> factory EnergyConversion_CheckEnergy */
+typedef struct { uint16_t hl; uint8_t f; } EnergyConversionCheckEnergyResult;
+EnergyConversionCheckEnergyResult EnergyConversion_CheckEnergy(void);
+/* <<< factory EnergyConversion_CheckEnergy */
+/* >>> factory EnergyConversion_AISelectEffect */
+void EnergyConversion_AISelectEffect(void);
+/* <<< factory EnergyConversion_AISelectEffect */
+/* >>> factory HypnoDarkMind_AISelectEffect */
+void HypnoDarkMind_AISelectEffect(void);
+/* <<< factory HypnoDarkMind_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 void Barrier_DiscardEffect(void);

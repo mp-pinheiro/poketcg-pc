@@ -2131,6 +2131,29 @@ static void adapt_FireBlast_AISelectEffect(ProbeState *s)
 }
 /* <<< factory FireBlast_AISelectEffect */
 
+/* >>> factory EnergyConversion_CheckEnergy */
+static void adapt_EnergyConversion_CheckEnergy(ProbeState *s)
+{
+	EnergyConversionCheckEnergyResult r = EnergyConversion_CheckEnergy();
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory EnergyConversion_CheckEnergy */
+
+/* >>> factory EnergyConversion_AISelectEffect */
+static void adapt_EnergyConversion_AISelectEffect(ProbeState *s)
+{
+	EnergyConversion_AISelectEffect();
+}
+/* <<< factory EnergyConversion_AISelectEffect */
+
+/* >>> factory HypnoDarkMind_AISelectEffect */
+static void adapt_HypnoDarkMind_AISelectEffect(ProbeState *s)
+{
+	HypnoDarkMind_AISelectEffect();
+}
+/* <<< factory HypnoDarkMind_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2395,5 +2418,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ArcanineFlamethrower_AISelectEffect", adapt_ArcanineFlamethrower_AISelectEffect },
 	{ "FlamesOfRage_AISelectEffect", adapt_FlamesOfRage_AISelectEffect },
 	{ "FireBlast_AISelectEffect", adapt_FireBlast_AISelectEffect },
+	{ "EnergyConversion_CheckEnergy", adapt_EnergyConversion_CheckEnergy },
+	{ "EnergyConversion_AISelectEffect", adapt_EnergyConversion_AISelectEffect },
+	{ "HypnoDarkMind_AISelectEffect", adapt_HypnoDarkMind_AISelectEffect },
 	{ NULL, NULL },
 };
