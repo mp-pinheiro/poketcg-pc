@@ -439,6 +439,22 @@ def set_state(packet: dict, state: str, reason: str | None = None) -> None:
     previous = packet["state"]
     if state != previous and state not in STATE_TRANSITIONS[previous]:
         raise ValueError(f"illegal packet transition {previous} -> {state}")
+    if reason and not reason.startswith("supervisor-"):
+        history = packet.setdefault("failure_history", [])
+        history.append({
+            "phase": state,
+            "status": state,
+            "failure_class": (
+                "dependency" if state == "blocked" else
+                "harness" if state in {"repair", "recovering"} else
+                "translation" if state == "retry-ready" else
+                "infrastructure"
+            ),
+            "fingerprint": hashlib.sha256(reason.encode()).hexdigest()[:16],
+            "detail": reason[:1000],
+            "model": packet.get("model"),
+            "timestamp": int(time.time()),
+        })
     packet["state"] = state
     packet["reason"] = reason
     packet["updated_at"] = int(time.time())

@@ -711,6 +711,15 @@ def apply_action(action: dict, ids: dict[str, int]) -> None:
             f"cannot apply a create action for {action['work_id']}: "
             f"managed issues are created in Forgejo, not by this tool"
         )
+    expected = action.get("source_hash")
+    if expected:
+        current = normalize_issue(api_request(f"/issues/{number}"))
+        actual = issue_fingerprint(current)
+        if actual != expected:
+            raise ModelError(
+                f"source drift for issue #{number}: expected {expected}, "
+                f"found {actual}"
+            )
     api_request(f"/issues/{number}", {
         "title": action["title"],
         "body": action["body"],

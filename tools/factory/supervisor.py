@@ -247,11 +247,12 @@ def liveness_tuple(snap: dict) -> tuple:
 def _provider_failure(result: dict) -> bool:
     if result.get("failure_class") in {"provider", "provider-wait"}:
         return True
-    detail = str(result.get("detail", "")).lower()
-    return result.get("retryable") is True and (
-        "429" in detail or "rate limit" in detail or "5xx" in detail
-        or "provider" in detail
-    )
+    detail = " ".join(
+        str(result.get(key, "")) for key in ("detail", "stop_reason")
+    ).lower()
+    if "429" in detail or "rate limit" in detail or "5xx" in detail:
+        return True
+    return result.get("retryable") is True and "provider" in detail
 
 def _write_journal(data: dict) -> None:
     common.write_json(JOURNAL, data)
@@ -268,6 +269,13 @@ def supervisor_lock() -> Iterator[None]:
         fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
         stream.close()
 
+def _retry_generation(packet: dict) -> int:
+    generation = packet.get("attempt_generation")
+    generation = 0 if generation is None else generation
+    if packet.get("state") == "pending" and not packet.get("rounds"):
+        return generation
+    return generation + 1
+
 
 def _action_packet_ids(kind: str, snap: dict) -> list[str]:
     states = {
@@ -275,14 +283,23 @@ def _action_packet_ids(kind: str, snap: dict) -> list[str]:
         "integration-resume": {"integrating", "green"},
         "harness-repair": {"repair", "verifying", "translated", "translating"},
         "retry-wave": {"retry-ready", "pending"},
+        "agent-recovery": {"retry-ready", "pending"},
         "revalidate-blockers": {"blocked"},
     }.get(kind)
     if states is None:
         return list(snap["packet_ids"]) if kind != "fresh-wave" else []
-    return sorted(
-        packet.get("id", "")
-        for packet in common.list_packets()
+    candidates = [
+        packet for packet in common.list_packets()
         if packet.get("state") in states
+    ]
+    if kind in {"retry-wave", "agent-recovery"} and candidates:
+        generation = min(_retry_generation(packet) for packet in candidates)
+        candidates = [
+            packet for packet in candidates
+            if _retry_generation(packet) == generation
+        ]
+    return sorted(
+        packet.get("id", "") for packet in candidates
     )
 
 def _scc_action(*, persist: bool = False) -> dict | None:
@@ -307,8 +324,12 @@ def _scc_action(*, persist: bool = False) -> dict | None:
             for packet_data in owned
             for routine in packet_data.get("routines", [])
         }
-        if owned_names != members:
-            continue
+        if owned_names and owned_names != members:
+            return {
+                "group_id": group["group_id"],
+                "packet_ids": owned_ids,
+                "membership_error": True,
+            }
         if persist:
             recovery_dir = common.FACTORY / "recovery-groups"
             common.write_json(
@@ -316,7 +337,12 @@ def _scc_action(*, persist: bool = False) -> dict | None:
                 {**group, "packet_ids": owned_ids, "generation": 0,
                  "base_commit": _revision()},
             )
-        return {"group_id": group["group_id"], "packet_ids": owned_ids}
+        return {
+            "group_id": group["group_id"],
+            "packet_ids": owned_ids,
+            "work_ids": sorted(members),
+            "needs_build": not owned_names,
+        }
     return None
 
 
@@ -342,6 +368,7 @@ def next_action(*, current: dict | None = None) -> dict:
                 "not_before": journal["not_before"],
                 "packet_ids": journal.get("packet_ids", []),
                 "snapshot": snap}
+    if not snap["completion"]["gate"]["current"]:
         kind = "gate-refresh"
     elif journal and journal.get("candidate_commit"):
         kind = "integration-resume"
@@ -349,6 +376,12 @@ def next_action(*, current: dict | None = None) -> dict:
         kind = "integration-resume"
     elif any(p.get("state") == "green" for p in common.list_packets()):
         kind = "integrate-green"
+    elif any(
+            p.get("kind") == "dependency-group"
+            and p.get("state") not in HISTORICAL
+            for p in common.list_packets()):
+        scc = _scc_action()
+        kind = "scc-recovery" if scc else "revalidate-blockers"
     elif snap["categories"]["harness-repair"]:
         kind = "harness-repair"
     elif snap["categories"]["retry-ready"]:
@@ -364,18 +397,28 @@ def next_action(*, current: dict | None = None) -> dict:
         return {"kind": "stop-the-line", "reason": "invariant:no-frontier",
                 "residual": snap["frontier"], "snapshot": snap}
     if kind == "scc-recovery":
+        if scc.get("membership_error"):
+            return {"kind": "stop-the-line",
+                    "reason": "scc-membership-drift",
+                    "group": scc,
+                    "snapshot": snap}
         packet_ids = scc["packet_ids"]
     else:
         packet_ids = _action_packet_ids(kind, snap)
     action = {"kind": kind, "snapshot": snap, "packet_ids": packet_ids}
+    if kind == "scc-recovery":
+        action["group"] = scc
     if kind == "retry-wave":
         generations = [
-            common.load_packet(packet_id).get("attempt_generation")
+            _retry_generation(common.load_packet(packet_id))
             for packet_id in packet_ids
         ]
-        next_generation = max((generation or -1) + 1
-                              for generation in generations)
-        action["model"] = "slow" if next_generation >= 2 else "default"
+        next_generation = min(generations or [0])
+        if next_generation >= 3:
+            action["kind"] = "agent-recovery"
+            action["model"] = "slow"
+        else:
+            action["model"] = "slow" if next_generation >= 2 else "default"
     return action
 
 def _deterministic_action(action: dict, **_limits: Any) -> dict:
@@ -476,6 +519,25 @@ def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
         packet_data.pop("attempt", None)
         common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
     return packet_ids
+
+
+def _prepare_scc_packets(action: dict) -> list[str]:
+    if not action.get("group", {}).get("needs_build"):
+        return action.get("packet_ids", [])
+    import packet
+    group = action["group"]
+    packets = packet.build_scc_packets(set(group["work_ids"]))
+    existing = common.list_packets()
+    common.claim_index(existing + packets)
+    for packet_data in packets:
+        common.write_json(
+            common.QUEUE / f"{packet_data['attempt_id']}.json", packet_data)
+    ids = sorted(packet_data["attempt_id"] for packet_data in packets)
+    action["packet_ids"] = ids
+    action["group"]["needs_build"] = False
+    return ids
+
+
 def _restore_retryable_packets(packet_ids: list[str]) -> None:
     for packet_id in packet_ids:
         packet = common.load_packet(packet_id)
@@ -483,7 +545,6 @@ def _restore_retryable_packets(packet_ids: list[str]) -> None:
                 "pending", "translating", "verifying", "repair",
                 "recovering"}:
             common.set_state(packet, "retry-ready", "supervisor-retry")
-
 
 def supervise(translate_many: Callable | None, recover_many: Callable | None,
               analyze_failure: Callable | None, *, lanes_count: int = 10,
@@ -522,7 +583,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 "result": None,
             }
             _write_journal(journal)
-            if action["kind"] in {"retry-wave", "harness-repair"}:
+            if action["kind"] in {"retry-wave", "agent-recovery", "harness-repair"}:
                 action["packet_ids"] = _prepare_retry_packets(
                     action["packet_ids"])
                 journal["packet_ids"] = action["packet_ids"]
@@ -541,6 +602,9 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                         "snapshot": snapshot(),
                     }
             if action["kind"] == "scc-recovery":
+                _prepare_scc_packets(action)
+                journal["packet_ids"] = action["packet_ids"]
+                _write_journal(journal)
                 group = _scc_action(persist=True)
                 if not group or group["packet_ids"] != action["packet_ids"]:
                     journal["phase"] = "failed"
@@ -556,7 +620,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 callback = _deterministic_action
             else:
                 callback = recover_many if action["kind"] in {
-                    "harness-repair", "scc-recovery"
+                    "harness-repair", "scc-recovery", "agent-recovery"
                 } else translate_many
             if callback is None:
                 journal["phase"] = "failed"
@@ -597,7 +661,12 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 result.get("success") is True
                 or result.get("status") in {"green", "complete"}
             )
+            if not successful and _provider_failure(result):
+                result = dict(result)
+                result["failure_class"] = "provider"
+                result["retryable"] = True
             if (not successful and analyze_failure is not None
+                    and not _provider_failure(result)
                     and result.get("failure_class") != "stop-the-line"):
                 try:
                     analysis = analyze_failure(action, result)

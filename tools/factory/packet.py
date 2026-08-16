@@ -709,7 +709,8 @@ def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
 
 
 def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
-                  limit: int | None) -> list[dict]:
+                  limit: int | None,
+                  include_names: set[str] | None = None) -> list[dict]:
     functions, _inventory = compute_functions()
     blocked = blocked_routines()
     graph, dependents = blocker_graph(functions)
@@ -733,8 +734,8 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
     ready = [
         f for f in functions
         if f["status"] == "todo"
-        and f["ready"]
-        and f["name"] not in blocked
+        and (f["ready"] if include_names is None else f["name"] in include_names)
+        and (f["name"] not in blocked or include_names is not None)
         and f["work_id"] in managed_issues
     ]
     held = common.claim_index()
@@ -835,7 +836,23 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
                 "bytes": sum(r["size"] for r in routines),
                 "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }
+            packets.append(packet)
     return packets
+def build_scc_packets(work_names: set[str] | list[str]) -> list[dict]:
+    names = set(work_names)
+    if not names:
+        raise ValueError("SCC recovery requires work IDs")
+    packets = build_packets(
+        None, max_routines=len(names), max_asm_lines=100000,
+        limit=None, include_names=names,
+    )
+    packets = attach_dependencies(packets, internal_names=names)
+    if {routine["name"] for packet in packets for routine in packet["routines"]} != names:
+        raise RuntimeError("SCC recovery packet membership is incomplete")
+    for packet in packets:
+        packet["kind"] = "dependency-group"
+    return packets
+
 
 
 def drop_claimed(packets: list[dict]) -> list[dict]:
@@ -863,10 +880,9 @@ def dissolved_symbols() -> set[str]:
     """pret symbols the port will never contain, per tools/progress/scope.toml.
 
     Phase-1 dissolves whole files (``vram.asm``, ``double_speed.asm``,
-    ``jumptable.asm``, ``call_regs.asm``, ...). A caller of one of those does
-    not need a C symbol for it — the call simply disappears in the port, or
-    becomes a direct call / function-pointer table. Treating them as
-    "unported callee" wrongly blocks perfectly portable routines.
+    ``jumptable.asm``, ``call_regs.asm``, ...). A caller of one of those
+    does not need a C symbol for it — the call simply disappears in the
+    port, or becomes a direct call / function-pointer table.
     """
     import tomllib
     path = ROOT / "tools" / "progress" / "scope.toml"
@@ -884,8 +900,9 @@ def dissolved_symbols() -> set[str]:
             names.add(name)
     return names
 
-
-def attach_dependencies(packets: list[dict]) -> list[dict]:
+def attach_dependencies(
+    packets: list[dict], internal_names: set[str] | None = None,
+) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
     A callee with no C prototype blocks its callers — unless it is dissolved
@@ -910,7 +927,9 @@ def attach_dependencies(packets: list[dict]) -> list[dict]:
             callees, unavailable = [], []
             for dep in sorted(set(deps)):
                 proto = prototype_for(dep)
-                if proto is None and dep in functions and dep not in dissolved:
+                if (proto is None and dep in functions
+                        and dep not in dissolved
+                        and dep not in (internal_names or set())):
                     unavailable.append(dep)
                 callees.append({
                     "name": dep,

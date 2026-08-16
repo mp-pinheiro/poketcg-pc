@@ -303,3 +303,13 @@ unblock = "port the blocking callee (see verdict)"
 name = "Shift_ChangeColorEffect"
 reason = "oracle timeout: callee never returns"
 unblock = "port the blocking callee (see verdict)"
+
+[[blocked]]
+name = "PrintDeckNameFromInput"
+reason = "callee has no C symbol: DrawDeckNamingScreenBG"
+unblock = "port or transform the named callee"
+
+[[blocked]]
+name = "DrawDeckNamingScreenBG"
+reason = "callee has no C symbol: PrintDeckNameFromInput"
+unblock = "port or transform the named callee"

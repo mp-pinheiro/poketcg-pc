@@ -415,7 +415,7 @@ def _accept(run: "_Run", reply: str) -> dict | None:
             save_packet(run.packet)
             run.feedback = f"format: {exc}"
             return {}
-        run.final, run.reason = "rejected-format", str(exc)
+        run.final, run.reason = "retry-ready", f"format: {exc}"
         return None
 
 
