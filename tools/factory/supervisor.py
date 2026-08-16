@@ -164,6 +164,8 @@ def _migrate_legacy_states() -> int:
     return changed
 def _revalidate_green_packets() -> int:
     revision = _revision()
+    if revision is None:
+        return 0
     changed = 0
     for packet in common.list_packets(("green",)):
         attempt_id = packet.get("attempt_id", packet.get("id"))
