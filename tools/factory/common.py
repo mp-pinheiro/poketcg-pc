@@ -63,7 +63,7 @@ ACTIVE_CLAIM_STATES = frozenset(set(STATES) - HISTORICAL_STATES)
 STATE_TRANSITIONS = {
     "pending": ACTIVE_CLAIM_STATES - {"pending", "landed", "superseded"},
     "translating": {"pending", "translated", "repair", "retry-ready", "recovering", "blocked"},
-    "translated": {"pending", "verifying", "repair", "retry-ready", "recovering", "blocked"},
+    "translated": {"pending", "translating", "verifying", "repair", "retry-ready", "recovering", "blocked"},
     "verifying": {"pending", "green", "repair", "retry-ready", "recovering", "blocked"},
     "repair": {"pending", "translating", "verifying", "retry-ready", "recovering", "blocked"},
     "retry-ready": {"pending", "translating", "recovering", "blocked", "superseded"},
