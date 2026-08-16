@@ -14,7 +14,15 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import state
 import surgery
-from common import BUNDLES, CACHE, FACTORY, ORACLE_PYTHON, ROOT, packet_identity
+from common import (
+    BUNDLES,
+    CACHE,
+    FACTORY,
+    ORACLE_PYTHON,
+    ROOT,
+    packet_identity,
+    port_owned_paths,
+)
 from verify import fn_args
 
 GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
@@ -54,14 +62,7 @@ def _base_compatible(packet: dict, main: str) -> bool:
     ancestor = run(["git", "merge-base", "--is-ancestor", base, main])
     if ancestor.returncode != 0:
         return False
-    source = Path(packet["file"])
-    basename = packet["basename"]
-    owned_paths = sorted({
-        str(source.with_suffix(".c")),
-        str(source.with_suffix(".h")),
-        f"src/probe/{basename}.c",
-        f"tests/cases/{basename}.py",
-    })
+    owned_paths = port_owned_paths(packet["basename"])
     unchanged = run(["git", "diff", "--quiet", base, main, "--", *owned_paths])
     return unchanged.returncode == 0
 

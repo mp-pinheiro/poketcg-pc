@@ -54,6 +54,17 @@ WAVE_LOCK = FACTORY / "wave.lock"
 PROCESS_TERM_GRACE_S = 0.5
 _append_lock = threading.Lock()
 
+def port_owned_paths(basename: str) -> list[str]:
+    """Return the four generated paths owned by one port basename."""
+    if not basename or Path(basename).name != basename:
+        raise ValueError(f"invalid port basename: {basename!r}")
+    return [
+        f"src/home/{basename}.c",
+        f"src/home/{basename}.h",
+        f"src/probe/{basename}.c",
+        f"tests/cases/{basename}.py",
+    ]
+
 SCHEMA = 2
 STATES = (
     "pending", "translating", "translated", "verifying", "repair",

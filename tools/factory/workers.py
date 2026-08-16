@@ -205,6 +205,7 @@ def _agent_prompt(
     ))
     return (
         "You are a disposable recovery editor in an isolated, credential-free lane.\n"
+        f"Read {assignment_path.name} first; its packet contains the assembly for every routine.\n"
         f"Assignment: {json.dumps(assignment, sort_keys=True)}\n"
         "Edit only owned_paths. Do not use git, jj, network, credentials, or files outside the lane. "
         "Implement every assigned routine completely; preserve factory markers and the existing "
@@ -246,6 +247,8 @@ def agent_assignments(
     deadline = time.monotonic() + deadline_seconds
     for attempt in attempts:
         packet = materialize_packet(attempt)
+        effective_attempt = copy.deepcopy(attempt)
+        effective_attempt["owned_paths"] = common.port_owned_paths(packet["basename"])
         variants = 2 if int(attempt.get("recovery_tier", 0)) >= 4 else 1
         for variant in range(1, variants + 1):
             lane_index = next(lane_iter)
@@ -255,14 +258,16 @@ def agent_assignments(
             assignments.append({
                 "attempt_id": attempt["attempt_id"],
                 "request_id": f"{attempt['attempt_id']}:{variant}",
+                "attempt": effective_attempt,
+                "packet": packet,
                 "variant": variant,
                 "lane_index": lane_index,
                 "lane": str(lane),
                 "prompt": _agent_prompt(
-                    attempt, lane, variant, packet,
+                    effective_attempt, lane, variant, packet,
                     analyses.get(attempt["attempt_id"]),
                 ),
-                "owned_paths": attempt["owned_paths"],
+                "owned_paths": effective_attempt["owned_paths"],
                 "environment_verified": True,
             })
     return assignments

@@ -975,14 +975,7 @@ def _owned_paths(packet: dict) -> list[str]:
     basename = packet.get("basename")
     if not isinstance(source, str) or not isinstance(basename, str):
         return []
-    c_source = str(Path(source).with_suffix(".c"))
-    h_source = str(Path(source).with_suffix(".h"))
-    return sorted({
-        c_source,
-        h_source,
-        f"src/probe/{basename}.c",
-        f"tests/cases/{basename}.py",
-    })
+    return common.port_owned_paths(basename)
 
 def _packet_work_ids(packet: dict) -> list[str]:
     work_ids = []

@@ -50,13 +50,8 @@ def _basename(source: str | None, snapshot: dict | None = None) -> str:
     return Path(source).stem if source else "unknown"
 
 
-def _owned_paths(source: str, basename: str) -> list[str]:
-    return sorted({
-        str(Path(source).with_suffix(".c")),
-        str(Path(source).with_suffix(".h")),
-        f"src/probe/{basename}.c",
-        f"tests/cases/{basename}.py",
-    })
+def _owned_paths(basename: str) -> list[str]:
+    return common.port_owned_paths(basename)
 
 
 def _work_rows_for_attempt(
@@ -481,7 +476,7 @@ def _insert_fresh_attempt(
     }
     snapshot_json = json.dumps(snapshot, sort_keys=True, separators=(",", ":"))
     packet_hash = hashlib.sha256(snapshot_json.encode()).hexdigest()
-    owned_paths = _owned_paths(source, basename)
+    owned_paths = _owned_paths(basename)
     connection.execute(
         """INSERT INTO attempt(
             attempt_id, cohort_id, kind, generation, base_revision, inventory_hash,
@@ -562,7 +557,7 @@ def _insert_retry_attempt(
         (
             attempt_id, cohort_id, parent_attempt_id, parent[0] + 1,
             revision, inventory_hash, snapshot_json,
-            json.dumps(_owned_paths(source, basename), sort_keys=True),
+            json.dumps(_owned_paths(basename), sort_keys=True),
             packet_hash, now, now,
         ),
     )
