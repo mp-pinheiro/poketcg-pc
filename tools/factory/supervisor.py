@@ -317,6 +317,10 @@ def next_action(*, current: dict | None = None) -> dict:
                 or journal.get("base_commit") != snap["base_commit"]):
             return {"kind": "stop-the-line", "reason": "journal-identity-mismatch",
                     "action_id": journal.get("action_id"), "snapshot": snap}
+        kind = journal.get("kind")
+        if not kind:
+            return {"kind": "stop-the-line", "reason": "journal-missing-kind",
+                    "action_id": journal.get("action_id"), "snapshot": snap}
         return {"kind": kind, "action_id": journal.get("action_id"),
                 "packet_ids": journal.get("packet_ids", []),
                 "model": journal.get("model", "default"), "resume": True,
@@ -456,6 +460,14 @@ def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
         packet_data.pop("attempt", None)
         common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
     return packet_ids
+def _restore_retryable_packets(packet_ids: list[str]) -> None:
+    for packet_id in packet_ids:
+        packet = common.load_packet(packet_id)
+        if packet.get("state") in {
+                "pending", "translating", "verifying", "repair",
+                "recovering"}:
+            common.set_state(packet, "retry-ready", "supervisor-retry")
+
 
 def supervise(translate_many: Callable | None, recover_many: Callable | None,
               analyze_failure: Callable | None, *, lanes_count: int = 10,
@@ -553,16 +565,32 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                     "detail": f"{type(exc).__name__}: {exc}",
                     "retryable": True,
                 }
-            successful = isinstance(result, dict) and (
+            if not isinstance(result, dict):
+                result = {
+                    "status": "failed",
+                    "failure_class": "infrastructure",
+                    "detail": "callback returned non-dict result",
+                    "retryable": True,
+                }
+            successful = (
                 result.get("success") is True
                 or result.get("status") in {"green", "complete"}
             )
             if (not successful and analyze_failure is not None
                     and result.get("failure_class") != "stop-the-line"):
-                analysis = analyze_failure(action, result)
+                try:
+                    analysis = analyze_failure(action, result)
+                except Exception as exc:
+                    analysis = {
+                        "status": "analysis-failed",
+                        "detail": f"{type(exc).__name__}: {exc}",
+                    }
                 if isinstance(result, dict):
                     result = dict(result)
                     result["analysis"] = analysis
+            if (not successful and isinstance(result, dict)
+                    and result.get("retryable")):
+                _restore_retryable_packets(action.get("packet_ids", []))
             after = snapshot()
             if (not successful
                     and liveness_tuple(snap) == liveness_tuple(after)
@@ -592,6 +620,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
             journal["phase"] = "idle"
             journal["result"] = result
             journal["liveness"] = liveness_tuple(after)
+            _write_journal(journal)
             if successful and liveness_tuple(snap) == liveness_tuple(after):
                 journal["phase"] = "failed"
                 journal["result"] = {
