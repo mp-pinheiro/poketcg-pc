@@ -1343,6 +1343,15 @@ CASES["ValidateSavedNonLinkDuelData"] = [
 ]
 # <<< factory ValidateSavedNonLinkDuelData
 
+# >>> factory SetupPlayAreaScreen
+CONTRACT["SetupPlayAreaScreen"] = {"compare": (), "preserve": ()}
+CASES["SetupPlayAreaScreen"] = [
+    {"wram": {0xCAC2: b"\x00", 0xCBD2: b"\x00"}},
+    dict(POISON, wram={0xCAC2: b"\x02", 0xCBD2: b"\xAA"}),
+    {"wram": {0xCAC2: b"\x01", 0xCBD2: b"\xAA"}},
+]
+# <<< factory SetupPlayAreaScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2153,3 +2162,6 @@ MUTATIONS["LoadAndValidateDuelSaveData"] = {"source_symbol": "LoadAndValidateDue
 # >>> factory-mutation ValidateSavedNonLinkDuelData
 MUTATIONS["ValidateSavedNonLinkDuelData"] = {"source_symbol": "ValidateSavedNonLinkDuelData", "before": "if (duel_type != DUELTYPE_LINK)", "after": "if (duel_type == DUELTYPE_LINK)", "case_ids": ["ValidateSavedNonLinkDuelData-0", "ValidateSavedNonLinkDuelData-1", "ValidateSavedNonLinkDuelData-2"]}
 # <<< factory-mutation ValidateSavedNonLinkDuelData
+# >>> factory-mutation SetupPlayAreaScreen
+MUTATIONS["SetupPlayAreaScreen"] = {"source_symbol": "SetupPlayAreaScreen", "before": "if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)", "after": "if (wDuelDisplayedScreen != PLAY_AREA_CARD_LIST)", "case_ids": ["SetupPlayAreaScreen-1", "SetupPlayAreaScreen-2"]}
+# <<< factory-mutation SetupPlayAreaScreen

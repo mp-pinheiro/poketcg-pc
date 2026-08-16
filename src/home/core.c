@@ -370,6 +370,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 	0xe3u, 0xe4u, 0xe8u, 0x00u,
 	0xe3u, 0xe4u, 0xe9u, 0x00u,
 };
+
+#include "home/empty_screen.h"
+#include "home/tiles.h"
+
+#define PLAY_AREA_CARD_LIST 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2489,3 +2494,17 @@ uint8_t ValidateSavedNonLinkDuelData(void)
 	return 0x10u;
 }
 /* <<< factory ValidateSavedNonLinkDuelData */
+
+/* >>> factory SetupPlayAreaScreen */
+/* core.asm:5174-5196 */
+void SetupPlayAreaScreen(void)
+{
+	wExcludeArenaPokemon = 0u;
+	if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)
+		return;
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelCheckPokemonScreenTiles();
+}
+/* <<< factory SetupPlayAreaScreen */

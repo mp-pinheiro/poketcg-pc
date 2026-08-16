@@ -1,0 +1,9 @@
+{
+  "fn": "SetupPlayAreaScreen",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetupPlayAreaScreen\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51906\": \"02\", \"52178\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetupPlayAreaScreen\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"0200\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51906, 1], [52178, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetupPlayAreaScreen\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51906\": \"02\", \"52178\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

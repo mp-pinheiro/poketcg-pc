@@ -1045,6 +1045,13 @@ static void adapt_ValidateSavedNonLinkDuelData(ProbeState *s)
 }
 /* <<< factory ValidateSavedNonLinkDuelData */
 
+/* >>> factory SetupPlayAreaScreen */
+static void adapt_SetupPlayAreaScreen(ProbeState *s)
+{
+	SetupPlayAreaScreen();
+}
+/* <<< factory SetupPlayAreaScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1168,5 +1175,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadAndValidateDuelSaveData", adapt_LoadAndValidateDuelSaveData },
 	{ "ValidateSavedNonLinkDuelData", adapt_ValidateSavedNonLinkDuelData },
 	{ "PrintPlayAreaCardLocation", adapt_PrintPlayAreaCardLocation },
+	{ "SetupPlayAreaScreen", adapt_SetupPlayAreaScreen },
 	{ NULL, NULL },
 };

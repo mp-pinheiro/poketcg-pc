@@ -498,4 +498,7 @@ uint8_t LoadAndValidateDuelSaveData(void);
 /* >>> factory ValidateSavedNonLinkDuelData */
 uint8_t ValidateSavedNonLinkDuelData(void);
 /* <<< factory ValidateSavedNonLinkDuelData */
+/* >>> factory SetupPlayAreaScreen */
+void SetupPlayAreaScreen(void);
+/* <<< factory SetupPlayAreaScreen */
 #endif
