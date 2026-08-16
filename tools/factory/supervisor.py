@@ -129,6 +129,21 @@ def _frontier(report: dict, packets: list[dict]) -> list[dict]:
 
 def _digest(value: Any) -> str:
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+def _queue_digest(packets: list[dict] | None = None) -> str:
+    packets = common.list_packets() if packets is None else packets
+    rows = [
+        {
+            "id": packet.get("id"),
+            "state": packet.get("state"),
+            "generation": packet.get("attempt_generation"),
+            "rounds": packet.get("rounds"),
+            "failure_count": len(packet.get("failure_history", [])),
+        }
+        for packet in packets
+        if packet.get("state") not in HISTORICAL
+    ]
+    return _digest(sorted(rows, key=lambda row: row["id"] or ""))
+
 
 
 def _migrate_legacy_states() -> int:
@@ -184,7 +199,9 @@ def snapshot() -> dict:
         completion_report["gate"] = raw_gate
     return {"schema": JOURNAL_SCHEMA, "revision": revision,
             "base_commit": revision, "frontier": frontier,
-            "frontier_digest": _digest(frontier), "categories": categories,
+            "frontier_digest": _digest(frontier),
+            "queue_digest": _queue_digest(packets),
+            "categories": categories,
             "completion": completion_status(completion_report, revision=revision),
             "packet_ids": sorted(p.get("attempt_id", p.get("id", "")) for p in packets
                                  if p.get("state") not in HISTORICAL),
@@ -200,8 +217,8 @@ def _read_journal() -> dict | None:
 def liveness_tuple(snap: dict) -> tuple:
     measures = snap.get("completion", {}).get("measures", {})
     return (measures.get("verified_code"), measures.get("verified_functions"),
-            snap.get("frontier_digest"), snap.get("base_commit"),
-            snap.get("revision"))
+            snap.get("frontier_digest"), snap.get("queue_digest"),
+            snap.get("base_commit"), snap.get("revision"))
 
 
 def _write_journal(data: dict) -> None:
@@ -279,9 +296,9 @@ def next_action(*, current: dict | None = None) -> dict:
                 or journal.get("base_commit") != snap["base_commit"]):
             return {"kind": "stop-the-line", "reason": "journal-identity-mismatch",
                     "action_id": journal.get("action_id"), "snapshot": snap}
-        kind = journal.get("kind", "resume")
         return {"kind": kind, "action_id": journal.get("action_id"),
-                "packet_ids": journal.get("packet_ids", []), "resume": True,
+                "packet_ids": journal.get("packet_ids", []),
+                "model": journal.get("model", "default"), "resume": True,
                 "snapshot": snap}
     if not snap["completion"]["gate"]["current"]:
         kind = "gate-refresh"
@@ -309,7 +326,16 @@ def next_action(*, current: dict | None = None) -> dict:
         packet_ids = scc["packet_ids"]
     else:
         packet_ids = _action_packet_ids(kind, snap)
-    return {"kind": kind, "snapshot": snap, "packet_ids": packet_ids}
+    action = {"kind": kind, "snapshot": snap, "packet_ids": packet_ids}
+    if kind == "retry-wave":
+        generations = [
+            common.load_packet(packet_id).get("attempt_generation")
+            for packet_id in packet_ids
+        ]
+        next_generation = max((generation or -1) + 1
+                              for generation in generations)
+        action["model"] = "slow" if next_generation >= 2 else "default"
+    return action
 
 def _deterministic_action(action: dict, **_limits: Any) -> dict:
     kind = action["kind"]
@@ -353,7 +379,7 @@ def start(completion: Callable, *, lanes_count: int = 10,
         )
 
     def translate_many(action: dict, **limits: Any) -> dict:
-        return wave(action, model="default", **limits)
+        return wave(action, model=action.get("model", "default"), **limits)
 
     def recover_many(action: dict, **limits: Any) -> dict:
         return wave(action, model="slow", **limits)
@@ -390,17 +416,25 @@ def _prepare_fresh_packets() -> list[str]:
 def _prepare_retry_packets(packet_ids: list[str]) -> list[str]:
     for packet_id in packet_ids:
         packet_data = common.load_packet(packet_id)
-        if packet_data.get("state") in {
+        state = packet_data.get("state")
+        if state not in {
                 "retry-ready", "repair", "verifying", "translated",
-                "translating"}:
-            common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
-        elif packet_data.get("state") != "pending":
+                "translating", "pending"}:
             raise RuntimeError(
-                f"retry packet {packet_id} is {packet_data.get('state')}, "
+                f"retry packet {packet_id} is {state}, "
                 "not retry-ready, repair, in-flight, or pending"
             )
+        generation = packet_data.get("attempt_generation")
+        if generation is None:
+            generation = 0
+        elif state != "pending" or packet_data.get("rounds", 0):
+            generation += 1
+        packet_data["attempt_generation"] = generation
+        packet_data["rounds"] = 0
+        packet_data["format_retry_used"] = False
+        packet_data.pop("attempt", None)
+        common.set_state(packet_data, "pending", "supervisor-wave-enqueue")
     return packet_ids
-
 
 def supervise(translate_many: Callable | None, recover_many: Callable | None,
               analyze_failure: Callable | None, *, lanes_count: int = 10,
@@ -421,6 +455,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 "run_id": run_id,
                 "action_id": str(uuid.uuid4()),
                 "kind": action["kind"],
+                "model": action.get("model", "default"),
                 "phase": "planned",
                 "frontier_digest": snap["frontier_digest"],
                 "base_commit": snap["base_commit"],
@@ -466,7 +501,7 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 callback = _deterministic_action
             else:
                 callback = recover_many if action["kind"] in {
-                    "harness-repair", "retry-wave", "scc-recovery"
+                    "harness-repair", "scc-recovery"
                 } else translate_many
             if callback is None:
                 journal["phase"] = "failed"

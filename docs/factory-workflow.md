@@ -98,10 +98,10 @@ without taking `.factory/wave.lock`.
 
 ## 3. Reconcile Forgejo
 
-Forgejo issue labels and open/closed state are the dispatch inputs for the next
-cycle, so this is part of the loop, not an afterthought. Skipping it silently
-starves packet construction: routines already ported keep their `port-active`
-label and are never re-offered, while the dashboard under-reports progress.
+Forgejo issue labels and open/closed state are projections of factory truth.
+The supervisor's live progress and claim index remain the dispatch authority;
+reconciliation updates the dashboard and managed issue markers after each
+successful integration.
 
 ```sh
 just issues-fetch          # refresh the cache
