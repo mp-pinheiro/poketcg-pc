@@ -6,6 +6,9 @@
 /* >>> factory statics */
 #include "mem.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -24,3 +27,29 @@ DecrementDurResult DecrementScreenAnimDuration(uint8_t f)
 	return (DecrementDurResult){(uint16_t)wScreenAnimDuration_ADDR, nf};
 }
 /* <<< factory DecrementScreenAnimDuration */
+
+/* >>> factory UpdateShakeOffset */
+/* screen_effects.asm:144-168 */
+UpdateShakeOffsetResult UpdateShakeOffset(void)
+{
+	uint16_t ptr = (uint16_t)(gb_read8(wScreenShakeOffsetsPtr_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wScreenShakeOffsetsPtr_ADDR + 1u)) << 8));
+	uint8_t duration = wScreenAnimDuration;
+	uint8_t timer = gb_read8(ptr);
+
+	if (duration >= timer) {
+		uint8_t flags = 0x40u;
+		if (duration == timer)
+			flags |= 0x80u;
+		if ((duration & 0x0fu) < (timer & 0x0fu))
+			flags |= 0x20u;
+		return (UpdateShakeOffsetResult){duration, flags, ptr};
+	}
+
+	uint16_t offset = (uint16_t)(ptr + 1u);
+	uint16_t next = (uint16_t)(ptr + 2u);
+	gb_write8(wScreenShakeOffsetsPtr_ADDR, (uint8_t)next);
+	gb_write8((uint16_t)(wScreenShakeOffsetsPtr_ADDR + 1u), (uint8_t)(next >> 8));
+	return (UpdateShakeOffsetResult){(uint8_t)(next >> 8), 0x10u, offset};
+}
+/* <<< factory UpdateShakeOffset */

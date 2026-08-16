@@ -12,7 +12,18 @@ static void adapt_DecrementScreenAnimDuration(ProbeState *s)
 }
 /* <<< factory DecrementScreenAnimDuration */
 
+/* >>> factory UpdateShakeOffset */
+static void adapt_UpdateShakeOffset(ProbeState *s)
+{
+	UpdateShakeOffsetResult r = UpdateShakeOffset();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory UpdateShakeOffset */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
+	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
 	{ NULL, NULL },
 };

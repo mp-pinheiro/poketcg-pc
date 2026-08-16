@@ -24,6 +24,17 @@ CASES["DecrementScreenAnimDuration"] = [
 ]
 # <<< factory DecrementScreenAnimDuration
 
+# >>> factory UpdateShakeOffset
+CONTRACT["UpdateShakeOffset"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["UpdateShakeOffset"] = [
+	{},
+	{"wram": {0xD4BB: b"\x00", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
+	{"wram": {0xD4BB: b"\x15", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
+	{"wram": {0xD4BB: b"\x20", 0xD4BC: b"\x00\xC1", 0xC100: b"\x15\x02"}, "read": {0xD4BC: 2, 0xC100: 1}},
+	dict(POISON, wram={0xD4BB: b"\x01", 0xD4BC: b"\x00\xC1", 0xC100: b"\x01\xFF"}, read={0xD4BC: 2, 0xC100: 1}),
+]
+# <<< factory UpdateShakeOffset
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -36,3 +47,6 @@ MUTATIONS["DecrementScreenAnimDuration"] = {
 	"case_ids": ["DecrementScreenAnimDuration-0", "DecrementScreenAnimDuration-1", "DecrementScreenAnimDuration-2", "DecrementScreenAnimDuration-3", "DecrementScreenAnimDuration-4", "DecrementScreenAnimDuration-5"],
 }
 # <<< factory-mutation DecrementScreenAnimDuration
+# >>> factory-mutation UpdateShakeOffset
+MUTATIONS["UpdateShakeOffset"] = {"source_symbol": "UpdateShakeOffset", "before": "\tif (duration >= timer)", "after": "\tif (duration > timer)", "case_ids": ["UpdateShakeOffset-2", "UpdateShakeOffset-4"]}
+# <<< factory-mutation UpdateShakeOffset
