@@ -1,0 +1,9 @@
+{
+  "fn": "ResetCheckMenuCursorPositionAndBlink",
+  "case": "tests/cases/deck_selection.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ResetCheckMenuCursorPositionAndBlink\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52899\": \"00\", \"52911\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ResetCheckMenuCursorPositionAndBlink\", \"mismatches\": {\"bus\": {\"address\": 52912, \"reference\": \"000000\", \"native\": \"000033\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52899, 1], [52911, 2]]}}}\n",
+  "restored": "{\"fn\": \"ResetCheckMenuCursorPositionAndBlink\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52899\": \"00\", \"52911\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}
