@@ -615,6 +615,78 @@ def blocker_graph(functions: list[dict]) -> tuple[dict[str, set[str]], dict[str,
     return graph, dependents
 
 
+def tarjan_scc(graph: dict[str, set[str]]) -> list[list[str]]:
+    index = 0
+    stack: list[str] = []
+    on_stack: set[str] = set()
+    indexes: dict[str, int] = {}
+    lowlinks: dict[str, int] = {}
+    components: list[list[str]] = []
+
+    def visit(node: str) -> None:
+        nonlocal index
+        indexes[node] = index
+        lowlinks[node] = index
+        index += 1
+        stack.append(node)
+        on_stack.add(node)
+        for dependency in graph.get(node, set()):
+            if dependency not in graph:
+                continue
+            if dependency not in indexes:
+                visit(dependency)
+                lowlinks[node] = min(lowlinks[node], lowlinks[dependency])
+            elif dependency in on_stack:
+                lowlinks[node] = min(lowlinks[node], indexes[dependency])
+        if lowlinks[node] == indexes[node]:
+            component = []
+            while True:
+                member = stack.pop()
+                on_stack.remove(member)
+                component.append(member)
+                if member == node:
+                    break
+            components.append(sorted(component))
+
+    for node in sorted(graph):
+        if node not in indexes:
+            visit(node)
+    return sorted(components)
+
+
+def scc_projection(functions: list[dict]) -> list[dict]:
+    graph, _ = blocker_graph(functions)
+    by_name = {function["name"]: function for function in functions}
+    groups = []
+    for members in tarjan_scc(graph):
+        member_set = set(members)
+        cyclic = len(members) > 1 or any(
+            member in graph.get(member, set()) for member in members
+        )
+        if not cyclic:
+            continue
+        external = sorted(
+            dependency
+            for member in members
+            for dependency in graph.get(member, set())
+            if dependency not in member_set
+        )
+        basenames = sorted({
+            Path(by_name[name]["file"]).stem
+            for name in members
+            if name in by_name
+        })
+        identity = hashlib.sha256("\0".join(members).encode()).hexdigest()
+        groups.append({
+            "group_id": identity,
+            "work_ids": members,
+            "basenames": basenames,
+            "blocked_on": external,
+            "size": len(members),
+        })
+    return sorted(groups, key=lambda group: group["group_id"])
+
+
 def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
             seeds: set[str]) -> int:
     """Todo routines that become ready, transitively, once `seeds` land."""
@@ -880,6 +952,20 @@ def cmd_chokepoints(limit: int) -> int:
               f"{name}  {f['blockers'][:4]}")
     return 0
 
+
+def cmd_scc(as_json: bool) -> int:
+    groups = scc_projection(compute_functions()[0])
+    if as_json:
+        print(json.dumps(groups, sort_keys=True))
+    else:
+        for group in groups:
+            print(
+                f"{group['group_id']} size={group['size']} "
+                f"basenames={','.join(group['basenames'])} "
+                f"blocked_on={','.join(group['blocked_on'])}"
+            )
+    return 0
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
@@ -902,6 +988,8 @@ def main() -> int:
         "--apply", action="store_true",
         help="write the validated migration and create a backup",
     )
+    scc = sub.add_parser("scc", help="project cyclic dependency groups")
+    scc.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
     if args.command == "migrate-work-ids":
@@ -924,6 +1012,8 @@ def main() -> int:
 
     if args.command == "chokepoints":
         return cmd_chokepoints(args.limit)
+    if args.command == "scc":
+        return cmd_scc(args.json)
 
     selected_pending = select_pending_packets(args.limit)
     capacity = None if args.limit is None else args.limit - len(selected_pending)
