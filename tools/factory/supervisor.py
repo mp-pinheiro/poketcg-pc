@@ -244,6 +244,15 @@ def liveness_tuple(snap: dict) -> tuple:
             snap.get("base_commit"), snap.get("revision"))
 
 
+def _provider_failure(result: dict) -> bool:
+    if result.get("failure_class") in {"provider", "provider-wait"}:
+        return True
+    detail = str(result.get("detail", "")).lower()
+    return result.get("retryable") is True and (
+        "429" in detail or "rate limit" in detail or "5xx" in detail
+        or "provider" in detail
+    )
+
 def _write_journal(data: dict) -> None:
     common.write_json(JOURNAL, data)
 
@@ -327,7 +336,12 @@ def next_action(*, current: dict | None = None) -> dict:
                 "packet_ids": journal.get("packet_ids", []),
                 "model": journal.get("model", "default"), "resume": True,
                 "snapshot": snap}
-    if not snap["completion"]["gate"]["current"]:
+    if (journal and journal.get("phase") == "idle"
+            and journal.get("not_before", 0) > time.time()):
+        return {"kind": "provider-wait",
+                "not_before": journal["not_before"],
+                "packet_ids": journal.get("packet_ids", []),
+                "snapshot": snap}
         kind = "gate-refresh"
     elif journal and journal.get("candidate_commit"):
         kind = "integration-resume"
@@ -486,6 +500,11 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
             action = next_action(current=snap)
             if action["kind"] in {"complete", "stop-the-line"}:
                 return action
+            if action["kind"] == "provider-wait":
+                delay = max(0, action["not_before"] - time.time())
+                if delay:
+                    time.sleep(min(delay, 30))
+                continue
             journal = {
                 "schema": JOURNAL_SCHEMA,
                 "run_id": run_id,
@@ -590,11 +609,23 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 if isinstance(result, dict):
                     result = dict(result)
                     result["analysis"] = analysis
-            if (not successful and isinstance(result, dict)
-                    and result.get("retryable")):
+            if not successful and _provider_failure(result):
+                generations = [
+                    common.load_packet(packet_id).get("attempt_generation", 0)
+                    for packet_id in action.get("packet_ids", [])
+                ]
+                generation = max(generations or [0])
+                delay = min(3600, 2 ** min(generation, 10))
+                journal["attempt_generation"] = generation
+                journal["not_before"] = int(time.time()) + delay
+                journal["phase"] = "idle"
+                journal["result"] = result
+                _write_journal(journal)
+            if (not successful and result.get("retryable")):
                 _restore_retryable_packets(action.get("packet_ids", []))
             after = snapshot()
             if (not successful
+                    and not _provider_failure(result)
                     and liveness_tuple(snap) == liveness_tuple(after)
                     and result.get("status") == "failed"):
                 journal["phase"] = "failed"
