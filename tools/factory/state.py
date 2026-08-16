@@ -251,6 +251,9 @@ class LeaseConflict(RuntimeError):
 class LeaseLost(RuntimeError):
     pass
 
+class SourceRevisionConflict(RuntimeError):
+    pass
+
 
 @contextlib.contextmanager
 def immediate(connection: sqlite3.Connection):
@@ -264,6 +267,43 @@ def immediate(connection: sqlite3.Connection):
         raise
     else:
         connection.execute("COMMIT")
+
+def align_source_revision(
+    connection: sqlite3.Connection,
+    revision: str,
+) -> bool:
+    """Advance idle authority metadata to a new non-port repository revision."""
+    if not revision:
+        raise ValueError("source revision must be nonempty")
+    with immediate(connection):
+        row = connection.execute(
+            "SELECT value FROM metadata WHERE key = 'source_revision'"
+        ).fetchone()
+        previous = row[0] if row else ""
+        if previous == revision:
+            return False
+        active_actions = connection.execute(
+            """SELECT action_id, kind, status FROM action
+               WHERE status IN ('planned', 'leased', 'running')
+               ORDER BY action_id"""
+        ).fetchall()
+        green = connection.execute(
+            """SELECT work_id, current_attempt_id FROM work
+               WHERE eligibility = 'green-integrating'
+               ORDER BY work_id"""
+        ).fetchall()
+        if active_actions or green:
+            raise SourceRevisionConflict(
+                "source revision changed with retained work: "
+                f"previous={previous} current={revision} "
+                f"actions={active_actions} green={green}"
+            )
+        connection.execute(
+            """INSERT INTO metadata(key, value) VALUES('source_revision', ?)
+               ON CONFLICT(key) DO UPDATE SET value = excluded.value""",
+            (revision,),
+        )
+    return True
 
 
 def recover_expired_in_transaction(

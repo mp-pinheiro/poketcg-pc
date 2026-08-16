@@ -59,6 +59,12 @@ def _revision() -> str | None:
             return result.stdout.strip()
     return None
 
+def _required_revision() -> str:
+    revision = _revision()
+    if revision is None:
+        raise RuntimeError("cannot resolve current repository revision")
+    return revision
+
 
 def _load_report() -> dict[str, Any]:
     path = ROOT / "tools" / "progress" / "report.py"
@@ -259,6 +265,7 @@ def next_action(
         )
         if resumed is not None:
             return resumed
+        state.align_source_revision(connection, _required_revision())
         return scheduler.acquire_tick(
             connection, lease_owner=lease_owner, lease_seconds=lease_seconds,
             lanes_count=lanes_count,
@@ -583,6 +590,7 @@ def preview_next(*, lanes_count: int = 10) -> dict[str, Any]:
     copy.row_factory = sqlite3.Row
     try:
         source.backup(copy)
+        state.align_source_revision(copy, _required_revision())
         planned = scheduler.plan_tick(copy, lanes_count=lanes_count)
         return {
             **planned,
