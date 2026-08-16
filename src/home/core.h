@@ -492,4 +492,10 @@ TrySetUpBossStartingPlayAreaResult TrySetUpBossStartingPlayArea(void);
 typedef struct { uint16_t hl; uint8_t a; uint8_t zero; } TrainerPageResult;
 TrainerPageResult CardPageSwitch_TrainerPage2(void);
 /* <<< factory CardPageSwitch_TrainerPage2 */
+/* >>> factory LoadAndValidateDuelSaveData */
+uint8_t LoadAndValidateDuelSaveData(void);
+/* <<< factory LoadAndValidateDuelSaveData */
+/* >>> factory ValidateSavedNonLinkDuelData */
+uint8_t ValidateSavedNonLinkDuelData(void);
+/* <<< factory ValidateSavedNonLinkDuelData */
 #endif

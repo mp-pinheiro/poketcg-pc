@@ -354,6 +354,13 @@ typedef struct {
 	uint8_t a;
 	uint8_t f;
 } CardPageEnergyResult;
+
+#include "home/save.h"
+#include "home/script.h"
+#include "home/switch_sram.h"
+
+#define DUELTYPE_LINK 0x01u
+#define LINK_OPPONENT_TURN_FRAME_FUNCTION 0x0000u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2442,3 +2449,37 @@ TrainerPageResult CardPageSwitch_TrainerPage2(void)
 	return (TrainerPageResult){hl, r.a, r.zero};
 }
 /* <<< factory CardPageSwitch_TrainerPage2 */
+
+/* >>> factory LoadAndValidateDuelSaveData */
+/* core.asm:6063-6084. */
+uint8_t LoadAndValidateDuelSaveData(void)
+{
+	ValidateSavedDuelDataResult duel = ValidateSavedDuelDataFromHL(sCurrentDuel_ADDR);
+	if (duel.f & 0x10u)
+		return duel.f;
+
+	LoadSavedDuelDataFromDE(sCurrentDuel_ADDR);
+
+	uint8_t general_f = ValidateGeneralSaveData().f;
+	if (!(general_f & 0x10u))
+		return general_f;
+
+	LoadGeneralSaveData();
+	return 0x00u;
+}
+/* <<< factory LoadAndValidateDuelSaveData */
+
+/* >>> factory ValidateSavedNonLinkDuelData */
+/* core.asm:6130-6147. */
+uint8_t ValidateSavedNonLinkDuelData(void)
+{
+	EnableSRAM();
+	uint8_t duel_type = gb_read8(sCurrentDuelType_ADDR);
+	DisableSRAM();
+
+	if (duel_type != DUELTYPE_LINK)
+		return ValidateSavedDuelDataFromHL(sCurrentDuel_ADDR).f;
+
+	return 0x10u;
+}
+/* <<< factory ValidateSavedNonLinkDuelData */

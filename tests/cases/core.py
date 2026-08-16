@@ -1322,6 +1322,24 @@ CASES["CardPageSwitch_TrainerPage2"] = [
 ]
 # <<< factory CardPageSwitch_TrainerPage2
 
+# >>> factory LoadAndValidateDuelSaveData
+CONTRACT["LoadAndValidateDuelSaveData"] = {"compare": ("f",), "preserve": ()}
+CASES["LoadAndValidateDuelSaveData"] = [
+	{"sram": {0: {0xBC00: b"\x00" * 0x100}}},
+	dict(POISON, sram={0: {0xBC00: b"\x00" * 0x100}}),
+	{"sram": {0: {0xBC00: b"\x01" + b"\x00" * 0xFF}}},
+]
+# <<< factory LoadAndValidateDuelSaveData
+
+# >>> factory ValidateSavedNonLinkDuelData
+CONTRACT["ValidateSavedNonLinkDuelData"] = {"compare": ("f",), "preserve": ()}
+CASES["ValidateSavedNonLinkDuelData"] = [
+	{"sram": {0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}},
+	dict(POISON, sram={0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}}),
+	{"sram": {0: {0xBC03: b"\x01", 0xBC00: b"\x00" * 0x100}}},
+]
+# <<< factory ValidateSavedNonLinkDuelData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2126,3 +2144,9 @@ MUTATIONS["TrySetUpBossStartingPlayArea"] = {
 # >>> factory-mutation CardPageSwitch_TrainerPage2
 MUTATIONS["CardPageSwitch_TrainerPage2"] = {"source_symbol": "CardPageSwitch_TrainerPage2", "before": "return (TrainerPageResult){hl, r.a, r.zero};", "after": "return (TrainerPageResult){hl, r.a, (uint8_t)!r.zero};", "case_ids": ["CardPageSwitch_TrainerPage2-0", "CardPageSwitch_TrainerPage2-1", "CardPageSwitch_TrainerPage2-2"]}
 # <<< factory-mutation CardPageSwitch_TrainerPage2
+# >>> factory-mutation LoadAndValidateDuelSaveData
+MUTATIONS["LoadAndValidateDuelSaveData"] = {"source_symbol": "LoadAndValidateDuelSaveData", "before": "if (duel.f & 0x10u)", "after": "if (!(duel.f & 0x10u))", "case_ids": ["LoadAndValidateDuelSaveData-0", "LoadAndValidateDuelSaveData-1", "LoadAndValidateDuelSaveData-2"]}
+# <<< factory-mutation LoadAndValidateDuelSaveData
+# >>> factory-mutation ValidateSavedNonLinkDuelData
+MUTATIONS["ValidateSavedNonLinkDuelData"] = {"source_symbol": "ValidateSavedNonLinkDuelData", "before": "if (duel_type != DUELTYPE_LINK)", "after": "if (duel_type == DUELTYPE_LINK)", "case_ids": ["ValidateSavedNonLinkDuelData-0", "ValidateSavedNonLinkDuelData-1", "ValidateSavedNonLinkDuelData-2"]}
+# <<< factory-mutation ValidateSavedNonLinkDuelData

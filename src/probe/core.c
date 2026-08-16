@@ -1030,6 +1030,20 @@ static void adapt_CardPageSwitch_TrainerPage2(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_TrainerPage2 */
 
+/* >>> factory LoadAndValidateDuelSaveData */
+static void adapt_LoadAndValidateDuelSaveData(ProbeState *s)
+{
+	s->f = LoadAndValidateDuelSaveData();
+}
+/* <<< factory LoadAndValidateDuelSaveData */
+
+/* >>> factory ValidateSavedNonLinkDuelData */
+static void adapt_ValidateSavedNonLinkDuelData(ProbeState *s)
+{
+	s->f = ValidateSavedNonLinkDuelData();
+}
+/* <<< factory ValidateSavedNonLinkDuelData */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1151,5 +1165,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_TrainerEnd", adapt_CardPageSwitch_TrainerEnd },
 	{ "CardPageSwitch_TrainerPage2", adapt_CardPageSwitch_TrainerPage2 },
 	{ "CardPageSwitch_EnergyOrTrainerPage1", adapt_CardPageSwitch_EnergyOrTrainerPage1 },
+	{ "LoadAndValidateDuelSaveData", adapt_LoadAndValidateDuelSaveData },
+	{ "ValidateSavedNonLinkDuelData", adapt_ValidateSavedNonLinkDuelData },
 	{ NULL, NULL },
 };
