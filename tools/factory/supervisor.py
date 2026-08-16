@@ -403,16 +403,16 @@ def next_action(*, current: dict | None = None) -> dict:
         kind = "integration-resume"
     elif any(p.get("state") == "green" for p in common.list_packets()):
         kind = "integrate-green"
+    elif snap["categories"]["harness-repair"]:
+        kind = "harness-repair"
+    elif snap["categories"]["retry-ready"]:
+        kind = "retry-wave"
     elif any(
             p.get("kind") == "dependency-group"
             and p.get("state") not in HISTORICAL
             for p in common.list_packets()):
         scc = _scc_action()
         kind = "scc-recovery" if scc else "revalidate-blockers"
-    elif snap["categories"]["harness-repair"]:
-        kind = "harness-repair"
-    elif snap["categories"]["retry-ready"]:
-        kind = "retry-wave"
     elif snap["categories"]["fresh-ready"]:
         kind = "fresh-wave"
     elif snap["categories"]["dependency-blocked"]:
