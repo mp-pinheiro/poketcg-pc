@@ -80,6 +80,18 @@ CASES["ClearMemory_Bank2"] = [
 ]
 # <<< factory ClearMemory_Bank2
 
+# >>> factory CheckIfHasOtherValidDecks
+CONTRACT["CheckIfHasOtherValidDecks"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckIfHasOtherValidDecks"] = [
+    {"wram": {0xCEB2: b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={0xCEB2: b"\x01\x01\x00\x00"}),
+    {"wram": {0xCEB2: b"\x01\x00\x00\x00"}},
+    {"wram": {0xCEB2: b"\x00\x01\x00\x00"}},
+    {"wram": {0xCEB2: b"\x01\x00\x01\x00"}},
+    {"wram": {0xCEB2: b"\x00\x00\x01\x01"}},
+]
+# <<< factory CheckIfHasOtherValidDecks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -122,3 +134,11 @@ MUTATIONS["InitCardSelectionParams"] = {
 # >>> factory-mutation ClearMemory_Bank2
 MUTATIONS["ClearMemory_Bank2"] = {"source_symbol": "ClearMemory_Bank2", "before": "uint32_t n = count ? count : 0x100u;", "after": "uint32_t n = count ? count : 0xFFu;", "case_ids": ["ClearMemory_Bank2-0", "ClearMemory_Bank2-1"]}
 # <<< factory-mutation ClearMemory_Bank2
+# >>> factory-mutation CheckIfHasOtherValidDecks
+MUTATIONS["CheckIfHasOtherValidDecks"] = {
+    "source_symbol": "CheckIfHasOtherValidDecks",
+    "before": "if (gb_read8(hl) == 0)",
+    "after": "if (gb_read8(hl) != 0)",
+    "case_ids": ["CheckIfHasOtherValidDecks-0", "CheckIfHasOtherValidDecks-1", "CheckIfHasOtherValidDecks-2", "CheckIfHasOtherValidDecks-3"],
+}
+# <<< factory-mutation CheckIfHasOtherValidDecks

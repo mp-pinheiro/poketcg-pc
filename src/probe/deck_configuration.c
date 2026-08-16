@@ -55,6 +55,13 @@ static void adapt_ClearMemory_Bank2(ProbeState *s)
 }
 /* <<< factory ClearMemory_Bank2 */
 
+/* >>> factory CheckIfHasOtherValidDecks */
+static void adapt_CheckIfHasOtherValidDecks(ProbeState *s)
+{
+	s->f = CheckIfHasOtherValidDecks();
+}
+/* <<< factory CheckIfHasOtherValidDecks */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -62,5 +69,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "InitCardSelectionParams", adapt_InitCardSelectionParams },
 	{ "CalculateOnesAndTensDigits", adapt_CalculateOnesAndTensDigits },
 	{ "ClearMemory_Bank2", adapt_ClearMemory_Bank2 },
+	{ "CheckIfHasOtherValidDecks", adapt_CheckIfHasOtherValidDecks },
 	{ NULL, NULL },
 };

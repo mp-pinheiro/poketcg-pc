@@ -21,4 +21,7 @@ uint8_t InitCardSelectionParams(uint8_t a, uint16_t *hl);
 /* >>> factory ClearMemory_Bank2 */
 void ClearMemory_Bank2(uint8_t a, uint16_t hl);
 /* <<< factory ClearMemory_Bank2 */
+/* >>> factory CheckIfHasOtherValidDecks */
+uint8_t CheckIfHasOtherValidDecks(void);
+/* <<< factory CheckIfHasOtherValidDecks */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

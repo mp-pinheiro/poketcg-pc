@@ -15,6 +15,11 @@
 #define TYPE_ENERGY 0x08u
 #define HFFB3 0xffb3u
 #include "home/deck_configuration.h"
+
+#include "home/deck_selection.h"
+#include "home/switch_sram.h"
+
+#define NUM_DECKS 0x04u
 /* <<< factory statics */
 
 
@@ -122,3 +127,33 @@ void ClearMemory_Bank2(uint8_t a, uint16_t hl)
 	}
 }
 /* <<< factory ClearMemory_Bank2 */
+
+/* >>> factory CheckIfHasOtherValidDecks */
+/* deck_configuration.asm:803-841 */
+uint8_t CheckIfHasOtherValidDecks(void)
+{
+	uint16_t hl = wDecksValid_ADDR;
+	uint8_t valid = 0;
+	uint8_t b = 0;
+
+	for (;;) {
+		b++;
+		if (b > NUM_DECKS)
+			break;
+		if (gb_read8(hl) == 0) {
+			hl++;
+			continue;
+		}
+		hl++;
+		valid++;
+		if (valid >= 2)
+			return 0x00u;
+	}
+
+	hl = GetPointerToDeckCards();
+	EnableSRAM();
+	uint8_t a = gb_read8(hl);
+	DisableSRAM();
+	return a != 0 ? 0x10u : 0x80u;
+}
+/* <<< factory CheckIfHasOtherValidDecks */
