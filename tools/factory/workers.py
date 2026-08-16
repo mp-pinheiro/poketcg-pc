@@ -160,13 +160,19 @@ def parse_recovery_analysis(reply: str) -> dict[str, Any]:
         value = json.loads(reply[start:end + 1])
     except json.JSONDecodeError as exc:
         raise ValueError(f"invalid recovery analysis JSON: {exc}") from exc
-    if (
-        not isinstance(value, dict)
-        or not isinstance(value.get("root_cause"), str)
-        or not isinstance(value.get("repair"), str)
-        or not isinstance(value.get("constraints"), (str, list))
-    ):
-        raise TypeError("recovery analysis requires root_cause, repair, and constraints")
+    if not isinstance(value, dict):
+        raise TypeError("recovery analysis must be a JSON object")
+    for field in ("root_cause", "repair"):
+        content = value.get(field)
+        if isinstance(content, (dict, list)) and content:
+            value[field] = json.dumps(content, sort_keys=True)
+        elif not isinstance(content, str) or not content.strip():
+            raise TypeError(f"recovery analysis requires nonempty {field}")
+    constraints = value.get("constraints")
+    if isinstance(constraints, dict) and constraints:
+        value["constraints"] = json.dumps(constraints, sort_keys=True)
+    elif not isinstance(constraints, (str, list)):
+        raise TypeError("recovery analysis requires constraints")
     return value
 
 
