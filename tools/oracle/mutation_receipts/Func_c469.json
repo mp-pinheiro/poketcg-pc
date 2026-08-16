@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c469",
+  "case": "tests/cases/overworld.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c469\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53811\": \"150baa55\", \"53813\": \"aa55\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c469\", \"mismatches\": {\"bus\": {\"address\": 53811, \"reference\": \"150baa55\", \"native\": \"140baa55\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53811, 4]]}}}\n",
+  "restored": "{\"fn\": \"Func_c469\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53811\": \"150baa55\", \"53813\": \"aa55\"}}, \"status\": \"PASS\"}\n"
+}

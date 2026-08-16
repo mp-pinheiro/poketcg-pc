@@ -162,3 +162,48 @@ void BackupPlayerPosition(void)
 	wTempPlayerDirection = wPlayerDirection;
 }
 /* <<< factory BackupPlayerPosition */
+
+
+
+/* >>> factory Func_c469 */
+/* overworld.asm:651-677 */
+void Func_c469(void)
+{
+	uint8_t scx = (uint8_t)(wSCXBuffer + 4u);
+	scx &= 0xf8u;
+	scx = (uint8_t)((scx >> 1) | (scx << 7));
+	scx = (uint8_t)((scx >> 1) | (scx << 7));
+	scx = (uint8_t)((scx >> 1) | (scx << 7));
+	wd233 = scx;
+
+	uint8_t scy = (uint8_t)(wSCYBuffer + 4u);
+	scy &= 0xf8u;
+	scy = (uint8_t)((scy >> 1) | (scy << 7));
+	scy = (uint8_t)((scy >> 1) | (scy << 7));
+	scy = (uint8_t)((scy >> 1) | (scy << 7));
+	wd234 = scy;
+}
+/* <<< factory Func_c469 */
+
+
+
+/* >>> factory SetScreenScrollWram */
+/* overworld.asm:668-680 */
+uint8_t SetScreenScrollWram(void)
+{
+	wSCX = wSCXBuffer;
+	wSCY = wSCYBuffer;
+	return wSCYBuffer;
+}
+/* <<< factory SetScreenScrollWram */
+
+
+
+/* >>> factory SetScreenScroll */
+/* overworld.asm:675-680 */
+void SetScreenScroll(void)
+{
+	hSCX = wSCX;
+	hSCY = wSCY;
+}
+/* <<< factory SetScreenScroll */

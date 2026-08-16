@@ -147,6 +147,38 @@ CASES["BackupPlayerPosition"] = [
 ]
 # <<< factory BackupPlayerPosition
 
+# >>> factory Func_c469
+CONTRACT["Func_c469"] = {"compare": (), "preserve": ()}
+CASES["Func_c469"] = [
+    {"wram": {0xD235: b"\x00", 0xD236: b"\x00"}, "read": {0xD233: 1, 0xD234: 1}},
+    {"wram": {0xD235: b"\x01", 0xD236: b"\x01"}, "read": {0xD233: 1, 0xD234: 1}},
+    dict(POISON, wram={0xD235: b"\xAA", 0xD236: b"\x55"}, read={0xD233: 1, 0xD234: 1}),
+]
+# <<< factory Func_c469
+
+
+
+# >>> factory SetScreenScroll
+CONTRACT["SetScreenScroll"] = {"compare": (), "preserve": ()}
+CASES["SetScreenScroll"] = [
+    {"wram": {0xD0B6: b"\x00", 0xD0B7: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1}},
+    {"wram": {0xD0B6: b"\x01", 0xD0B7: b"\x02"}, "read": {0xFF92: 1, 0xFF93: 1}},
+    dict(POISON, wram={0xD0B6: b"\xAA", 0xD0B7: b"\x55"}, read={0xFF92: 1, 0xFF93: 1}),
+]
+# <<< factory SetScreenScroll
+
+
+
+
+# >>> factory SetScreenScrollWram
+CONTRACT["SetScreenScrollWram"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["SetScreenScrollWram"] = [
+	{"wram": {0xD235: b"\x12", 0xD236: b"\x34", 0xD0B6: b"\xAA", 0xD0B7: b"\xBB"}},
+	dict(POISON, wram={0xD235: b"\x56", 0xD236: b"\x78", 0xD0B6: b"\xCC", 0xD0B7: b"\xDD"}),
+]
+# <<< factory SetScreenScrollWram
+
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -208,3 +240,12 @@ MUTATIONS["Func_c1f8"] = {
 # >>> factory-mutation BackupPlayerPosition
 MUTATIONS["BackupPlayerPosition"] = {"source_symbol": "BackupPlayerPosition", "before": "\twTempMap = wCurMap;", "after": "\twTempMap = wPlayerXCoord;", "case_ids": ["BackupPlayerPosition-1", "BackupPlayerPosition-2"]}
 # <<< factory-mutation BackupPlayerPosition
+# >>> factory-mutation Func_c469
+MUTATIONS["Func_c469"] = {"source_symbol": "Func_c469", "before": "\tscx &= 0xf8u;", "after": "\tscx &= 0xf0u;", "case_ids": ["Func_c469-2"]}
+# <<< factory-mutation Func_c469
+# >>> factory-mutation SetScreenScroll
+MUTATIONS["SetScreenScroll"] = {"source_symbol": "SetScreenScroll", "before": "\thSCX = wSCX;", "after": "\thSCX = wSCY;", "case_ids": ["SetScreenScroll-1", "SetScreenScroll-2"]}
+# <<< factory-mutation SetScreenScroll
+# >>> factory-mutation SetScreenScrollWram
+MUTATIONS["SetScreenScrollWram"] = {"source_symbol": "SetScreenScrollWram", "before": "\twSCY = wSCYBuffer;", "after": "\twSCY = wSCXBuffer;", "case_ids": ["SetScreenScrollWram-0", "SetScreenScrollWram-1"]}
+# <<< factory-mutation SetScreenScrollWram

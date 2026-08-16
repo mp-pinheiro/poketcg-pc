@@ -34,4 +34,13 @@ void Func_c1f8(void);
 /* >>> factory BackupPlayerPosition */
 void BackupPlayerPosition(void);
 /* <<< factory BackupPlayerPosition */
+/* >>> factory Func_c469 */
+void Func_c469(void);
+/* <<< factory Func_c469 */
+/* >>> factory SetScreenScrollWram */
+uint8_t SetScreenScrollWram(void);
+/* <<< factory SetScreenScrollWram */
+/* >>> factory SetScreenScroll */
+void SetScreenScroll(void);
+/* <<< factory SetScreenScroll */
 #endif /* POKETCG_HOME_OVERWORLD_H */
