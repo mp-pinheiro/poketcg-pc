@@ -1,0 +1,9 @@
+{
+  "fn": "WhiteOutDMGPals",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WhiteOutDMGPals\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"65351\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WhiteOutDMGPals\", \"mismatches\": {\"bus\": {\"address\": 65353, \"reference\": \"000000\", \"native\": \"000001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[65351, 3]]}}}\n",
+  "restored": "{\"fn\": \"WhiteOutDMGPals\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"65351\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1,0 +1,9 @@
+{
+  "fn": "BackupPlayerPosition",
+  "case": "tests/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BackupPlayerPosition\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53435\": \"12345678\", \"54063\": \"123456\", \"54068\": \"78\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BackupPlayerPosition\", \"mismatches\": {\"bus\": {\"address\": 53435, \"reference\": \"1234567812\", \"native\": \"3434567812\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[53435, 4], [54063, 3], [54068, 1]]}}}\n",
+  "restored": "{\"fn\": \"BackupPlayerPosition\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53435\": \"12345678\", \"54063\": \"123456\", \"54068\": \"78\"}}, \"status\": \"PASS\"}\n"
+}

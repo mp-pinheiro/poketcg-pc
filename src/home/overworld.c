@@ -33,6 +33,11 @@
 #define OWMODE_MAP           0x00u
 #define OWMODE_MOVE          0x01u
 #define FLAG_CARRY           0x10u
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/mail.h"
+#include "home/switch_sram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -116,3 +121,44 @@ void Func_c184(void)
 	wOverworldModeBackup = mode;
 }
 /* <<< factory Func_c184 */
+
+/* >>> factory WhiteOutDMGPals */
+/* overworld.asm:221-233 */
+void WhiteOutDMGPals(void)
+{
+	SetBGP(0u);
+	SetOBP0(0u);
+	SetOBP1(0u);
+}
+/* <<< factory WhiteOutDMGPals */
+
+/* >>> factory Func_c1f8 */
+/* overworld.asm:260-307. */
+void Func_c1f8(void)
+{
+	wSelectedPauseMenuItem = 0u;
+	wSelectedPCMenuItem = 0u;
+	wSelectedGiftCenterMenuItem = 0u;
+	wConfigCursorYPos = 0u;
+	wActiveGameEvent = 0u;
+	wDefaultSong = 0u;
+	wSongOverride = 0u;
+	wRonaldIsInMap = 0u;
+	EnableSRAM();
+	wAnimationsDisabled = gb_read8(sAnimationsDisabled_ADDR);
+	wTextSpeed = gb_read8(sTextSpeed_ADDR);
+	DisableSRAM();
+	InitPCPacks();
+}
+/* <<< factory Func_c1f8 */
+
+/* >>> factory BackupPlayerPosition */
+/* overworld.asm:279-291 */
+void BackupPlayerPosition(void)
+{
+	wTempMap = wCurMap;
+	wTempPlayerXCoord = wPlayerXCoord;
+	wTempPlayerYCoord = wPlayerYCoord;
+	wTempPlayerDirection = wPlayerDirection;
+}
+/* <<< factory BackupPlayerPosition */

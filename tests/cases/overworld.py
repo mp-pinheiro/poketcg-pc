@@ -77,6 +77,76 @@ CASES["Func_c184"] = [
 ]
 # <<< factory Func_c184
 
+# >>> factory WhiteOutDMGPals
+CONTRACT["WhiteOutDMGPals"] = {"compare": (), "preserve": ()}
+CASES["WhiteOutDMGPals"] = [
+    {"read": {0xFF47: 1, 0xFF48: 1, 0xFF49: 1}},
+    dict(POISON, read={0xFF47: 1, 0xFF48: 1, 0xFF49: 1}),
+    {"a": 1, "f": 0xF0, "b": 2, "c": 3, "d": 4, "e": 5, "hl": 0x1234,
+     "read": {0xFF47: 1, 0xFF48: 1, 0xFF49: 1}},
+]
+# <<< factory WhiteOutDMGPals
+
+# >>> factory Func_c1f8
+CONTRACT["Func_c1f8"] = {"compare": (), "preserve": ()}
+CASES["Func_c1f8"] = [
+    {"wram": {
+        0xD0B8: b"\x00",
+        0xD0B9: b"\x00",
+        0xD0BA: b"\x00",
+        0xD11B: b"\x00",
+        0xD0C2: b"\x00",
+        0xD111: b"\x00",
+        0xD112: b"\x00",
+        0xD3B8: b"\x00",
+        0xD421: b"\x00",
+        0xCE47: b"\x00",
+    },
+     "sram": {0: {0xA007: b"\x00", 0xA006: b"\x00"}}},
+    dict(POISON,
+         wram={
+             0xD0B8: b"\x11",
+             0xD0B9: b"\x22",
+             0xD0BA: b"\x33",
+             0xD11B: b"\x44",
+             0xD0C2: b"\x55",
+             0xD111: b"\x66",
+             0xD112: b"\x77",
+             0xD3B8: b"\x88",
+             0xD421: b"\x99",
+             0xCE47: b"\xAA",
+         },
+         sram={0: {0xA007: b"\x01", 0xA006: b"\x02"}}),
+    {"ramg": False,
+     "wram": {
+         0xD0B8: b"\xFF",
+         0xD0B9: b"\xFE",
+         0xD0BA: b"\xFD",
+         0xD11B: b"\xFC",
+         0xD0C2: b"\xFB",
+         0xD111: b"\xFA",
+         0xD112: b"\xF9",
+         0xD3B8: b"\xF8",
+         0xD421: b"\xF7",
+         0xCE47: b"\xF6",
+     },
+     "sram": {0: {0xA007: b"\xA5", 0xA006: b"\x5A"}}},
+]
+# <<< factory Func_c1f8
+
+# >>> factory BackupPlayerPosition
+CONTRACT["BackupPlayerPosition"] = {"compare": ("f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["BackupPlayerPosition"] = [
+    {"wram": {0xD32F: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00", 0xD334: b"\x00",
+              0xD0BB: b"\x00", 0xD0BC: b"\x00", 0xD0BD: b"\x00", 0xD0BE: b"\x00"}},
+    dict(POISON,
+         wram={0xD32F: b"\x12", 0xD330: b"\x34", 0xD331: b"\x56", 0xD334: b"\x78",
+               0xD0BB: b"\xA1", 0xD0BC: b"\xA2", 0xD0BD: b"\xA3", 0xD0BE: b"\xA4"}),
+    {"wram": {0xD32F: b"\xFF", 0xD330: b"\x80", 0xD331: b"\x01", 0xD334: b"\xFE",
+              0xD0BB: b"\x00", 0xD0BC: b"\x00", 0xD0BD: b"\x00", 0xD0BE: b"\x00"}},
+]
+# <<< factory BackupPlayerPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -124,3 +194,17 @@ MUTATIONS["Func_c184"] = {
 	"case_ids": ["Func_c184-1", "Func_c184-2", "Func_c184-3", "Func_c184-4"],
 }
 # <<< factory-mutation Func_c184
+# >>> factory-mutation WhiteOutDMGPals
+MUTATIONS["WhiteOutDMGPals"] = {"source_symbol": "WhiteOutDMGPals", "before": "\tSetOBP1(0u);", "after": "\tSetOBP1(1u);", "case_ids": ["WhiteOutDMGPals-0", "WhiteOutDMGPals-1", "WhiteOutDMGPals-2"]}
+# <<< factory-mutation WhiteOutDMGPals
+# >>> factory-mutation Func_c1f8
+MUTATIONS["Func_c1f8"] = {
+    "source_symbol": "Func_c1f8",
+    "before": "\twRonaldIsInMap = 0u;",
+    "after": "\twRonaldIsInMap = 1u;",
+    "case_ids": ["Func_c1f8-0", "Func_c1f8-1", "Func_c1f8-2"],
+}
+# <<< factory-mutation Func_c1f8
+# >>> factory-mutation BackupPlayerPosition
+MUTATIONS["BackupPlayerPosition"] = {"source_symbol": "BackupPlayerPosition", "before": "\twTempMap = wCurMap;", "after": "\twTempMap = wPlayerXCoord;", "case_ids": ["BackupPlayerPosition-1", "BackupPlayerPosition-2"]}
+# <<< factory-mutation BackupPlayerPosition

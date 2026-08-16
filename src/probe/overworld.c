@@ -47,6 +47,30 @@ static void adapt_Func_c184(ProbeState *s)
 }
 /* <<< factory Func_c184 */
 
+/* >>> factory WhiteOutDMGPals */
+static void adapt_WhiteOutDMGPals(ProbeState *s)
+{
+	(void)s;
+	WhiteOutDMGPals();
+}
+/* <<< factory WhiteOutDMGPals */
+
+/* >>> factory Func_c1f8 */
+static void adapt_Func_c1f8(ProbeState *s)
+{
+	(void)s;
+	Func_c1f8();
+}
+/* <<< factory Func_c1f8 */
+
+/* >>> factory BackupPlayerPosition */
+static void adapt_BackupPlayerPosition(ProbeState *s)
+{
+	(void)s;
+	BackupPlayerPosition();
+}
+/* <<< factory BackupPlayerPosition */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -54,5 +78,8 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "SetOverworldNPCFlags", adapt_SetOverworldNPCFlags },
 	{ "Func_c158", adapt_Func_c158 },
 	{ "Func_c184", adapt_Func_c184 },
+	{ "WhiteOutDMGPals", adapt_WhiteOutDMGPals },
+	{ "Func_c1f8", adapt_Func_c1f8 },
+	{ "BackupPlayerPosition", adapt_BackupPlayerPosition },
 	{ NULL, NULL },
 };

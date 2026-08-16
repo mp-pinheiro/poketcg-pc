@@ -25,4 +25,13 @@ uint8_t Func_c158(void);
 /* >>> factory Func_c184 */
 void Func_c184(void);
 /* <<< factory Func_c184 */
+/* >>> factory WhiteOutDMGPals */
+void WhiteOutDMGPals(void);
+/* <<< factory WhiteOutDMGPals */
+/* >>> factory Func_c1f8 */
+void Func_c1f8(void);
+/* <<< factory Func_c1f8 */
+/* >>> factory BackupPlayerPosition */
+void BackupPlayerPosition(void);
+/* <<< factory BackupPlayerPosition */
 #endif /* POKETCG_HOME_OVERWORLD_H */
