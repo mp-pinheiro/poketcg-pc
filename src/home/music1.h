@@ -85,4 +85,10 @@ void Music1_LoadBackup(void);
 uint16_t Music1_GetChannelStackPointer(uint8_t ch);
 void Music1_SetChannelStackPointer(uint8_t ch, uint16_t sp);
 
+/* >>> factory _PauseSong */
+void _PauseSong(void);
+/* <<< factory _PauseSong */
+/* >>> factory _ResumeSong */
+void _ResumeSong(void);
+/* <<< factory _ResumeSong */
 #endif /* POKETCG_MUSIC1_H */

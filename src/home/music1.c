@@ -4,6 +4,10 @@
 #include "mem.h"
 #include "home/switch_rom.h"
 #include "home/sfx.h"
+/* >>> factory statics */
+#include "home/music1.h"
+#include "mem.h"
+/* <<< factory statics */
 
 #define MUSIC1_BANK 0x3Du
 
@@ -1252,3 +1256,19 @@ void Music1_LoadBackup(void)
 	hl = wMusicCh1StackBackup_ADDR; de = wMusicCh1Stack_ADDR;
 	Music1_CopyData(&hl, &de, 48);
 }
+
+/* >>> factory _PauseSong */
+/* music1.asm:28-30 */
+void _PauseSong(void)
+{
+	Music1_PauseSong();
+}
+/* <<< factory _PauseSong */
+
+/* >>> factory _ResumeSong */
+/* music1.asm:31-33 */
+void _ResumeSong(void)
+{
+	Music1_ResumeSong();
+}
+/* <<< factory _ResumeSong */

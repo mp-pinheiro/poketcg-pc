@@ -230,6 +230,22 @@ static void adapt_Music1_BackupSong(ProbeState *s)
 static void adapt_Music1_LoadBackup(ProbeState *s)
 { (void)s; Music1_LoadBackup(); }
 
+/* >>> factory _PauseSong */
+static void adapt__PauseSong(ProbeState *s)
+{
+	(void)s;
+	_PauseSong();
+}
+/* <<< factory _PauseSong */
+
+/* >>> factory _ResumeSong */
+static void adapt__ResumeSong(ProbeState *s)
+{
+	(void)s;
+	_ResumeSong();
+}
+/* <<< factory _ResumeSong */
+
 const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_EmptyFunc",         adapt_Music1_EmptyFunc },
 	{ "Music1_f404e",             adapt_Music1_f404e },
@@ -294,5 +310,7 @@ const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_LoadBackup",        adapt_Music1_LoadBackup },
 	{ "Music1_GetChannelStackPointer", adapt_Music1_GetChannelStackPointer },
 	{ "Music1_SetChannelStackPointer", adapt_Music1_SetChannelStackPointer },
+	{ "_PauseSong", adapt__PauseSong },
+	{ "_ResumeSong", adapt__ResumeSong },
 	{ NULL, NULL },
 };
