@@ -39,33 +39,24 @@ the run and preserves the timestamped backup.
 
 ## 2. The loop
 
-The exact `start` adapter constructs three credential-free callback seams:
+The exact `start` adapter supplies only the model completion seam. The
+supervisor owns translation waves, recovery waves, verification, queue
+transitions, candidate integration, gates, pushes, and Forgejo reconciliation:
 
 ```python
-from supervisor import supervise
+from supervisor import start
 
-def translate_many(assignments, **limits):
-    return run_translation_lanes(assignments, **limits)
-
-def recover_many(assignments, **limits):
-    return run_recovery_lanes(assignments, **limits)
-
-def analyze_failure(action, result):
-    return independent_failure_review(action, result)
-
-result = supervise(
-    translate_many,
-    recover_many,
-    analyze_failure,
-    lanes_count=10,
-    verify_width=6,
-)
+result = start(completion, lanes_count=10, verify_width=6)
 ```
 
-`supervise()` owns queue transitions, recovery, integration candidates, gates,
-pushes, and Forgejo reconciliation. Callbacks receive immutable assignments and
-return structured outcomes; they never mutate queue state, jj, Forgejo, or the
-central gate. The supervisor journal makes each action replayable after a crash.
+`completion(prompt, model=...)` is called only on the orchestrator thread.
+Recovery lanes remain credential-free and disposable. The returned result is
+the supervisor action object; the adapter keeps invoking journaled actions until
+the completion predicate or a typed stop-the-line condition is reached.
+
+The supervisor invokes the existing lane/verifier machinery and only delegates
+model text generation through `completion`. Its journal makes each action
+replayable after a crash.
 
 `429` and `5xx` provider failures persist a retry delay and keep the supervisor
 alive. Authentication, authorization, remote divergence, unknown dirty files,

@@ -202,6 +202,20 @@ def supervisor_lock() -> Iterator[None]:
         stream.close()
 
 
+def _action_packet_ids(kind: str, snap: dict) -> list[str]:
+    if kind == "integrate-green":
+        states = {"green"}
+    elif kind == "integration-resume":
+        states = {"integrating", "green"}
+    else:
+        return list(snap["packet_ids"])
+    return sorted(
+        packet.get("attempt_id", packet.get("id", ""))
+        for packet in common.list_packets()
+        if packet.get("state") in states
+    )
+
+
 def next_action(*, current: dict | None = None) -> dict:
     snap = current or snapshot()
     journal = _read_journal()
@@ -209,12 +223,15 @@ def next_action(*, current: dict | None = None) -> dict:
         if journal.get("frontier_digest") != snap["frontier_digest"] or journal.get("base_commit") != snap["base_commit"]:
             return {"kind": "stop-the-line", "reason": "journal-identity-mismatch",
                     "action_id": journal.get("action_id"), "snapshot": snap}
-        return {"kind": journal.get("kind", "resume"), "action_id": journal.get("action_id"),
+        kind = journal.get("kind", "resume")
+        return {"kind": kind, "action_id": journal.get("action_id"),
                 "packet_ids": journal.get("packet_ids", []), "resume": True,
                 "snapshot": snap}
     if not snap["completion"]["gate"]["current"]:
         kind = "gate-refresh"
     elif journal and journal.get("candidate_commit"):
+        kind = "integration-resume"
+    elif snap["categories"]["integrating"]:
         kind = "integration-resume"
     elif any(p.get("state") == "green" for p in common.list_packets()):
         kind = "integrate-green"
@@ -224,15 +241,74 @@ def next_action(*, current: dict | None = None) -> dict:
         kind = "fresh-wave"
     elif snap["categories"]["dependency-blocked"]:
         kind = "revalidate-blockers"
-    elif snap["categories"]["integrating"]:
-        kind = "integration-resume"
     elif snap["completion"]["complete"]:
         kind = "complete"
     else:
         return {"kind": "stop-the-line", "reason": "invariant:no-frontier",
                 "residual": snap["frontier"], "snapshot": snap}
     return {"kind": kind, "snapshot": snap,
-            "packet_ids": snap["packet_ids"]}
+            "packet_ids": _action_packet_ids(kind, snap)}
+
+def _deterministic_action(action: dict, **_limits: Any) -> dict:
+    kind = action["kind"]
+    if kind == "gate-refresh":
+        subprocess.run(["just", "oracle-release-gate"], cwd=ROOT, check=True)
+        subprocess.run(["just", "progress"], cwd=ROOT, check=True)
+        return {"status": "complete", "success": True, "kind": kind}
+    if kind in {"integrate-green", "integration-resume"}:
+        import integrate
+        packets = [
+            common.load_packet(packet_id)
+            for packet_id in action.get("packet_ids", [])
+        ]
+        result = integrate.integrate(packets, push=True,
+                                     group=kind == "integration-resume")
+        subprocess.run(["just", "issues-sync-apply"], cwd=ROOT, check=True)
+        subprocess.run(["just", "issues-verify"], cwd=ROOT, check=True)
+        return {"status": "complete", "success": True, "kind": kind,
+                "integration": result}
+    if kind == "revalidate-blockers":
+        return {"status": "blocked", "success": False, "kind": kind,
+                "reason": "revalidation requires an SCC or cleared dependency"}
+    raise RuntimeError(f"unsupported deterministic action {kind}")
+
+
+def start(completion: Callable, *, lanes_count: int = 10,
+          verify_width: int = 6, max_actions: int | None = None) -> dict:
+    """Run the complete supervisor loop using the harness completion seam."""
+    from driver import run_wave
+
+    def wave(action: dict, *, model: str, **limits: Any) -> dict:
+        def translate_many(prompts: list[str]) -> list[str]:
+            return [completion(prompt, model=model) for prompt in prompts]
+        return run_wave(
+            action["packet_ids"], translate_many,
+            lanes_count=limits["lanes_count"],
+            verify_width=limits["verify_width"],
+            model=model,
+            max_rounds=3,
+            max_wall_s=3600,
+        )
+
+    def translate_many(action: dict, **limits: Any) -> dict:
+        return wave(action, model="default", **limits)
+
+    def recover_many(action: dict, **limits: Any) -> dict:
+        return wave(action, model="slow", **limits)
+
+    def analyze_failure(action: dict, result: dict) -> str:
+        prompt = (
+            "Analyze this factory failure and return concrete repair guidance.\n"
+            f"Action: {json.dumps(action, sort_keys=True)}\n"
+            f"Result: {json.dumps(result, sort_keys=True)}"
+        )
+        return completion(prompt, model="slow")
+
+    return supervise(
+        translate_many, recover_many, analyze_failure,
+        lanes_count=lanes_count, verify_width=verify_width,
+        max_actions=max_actions,
+    )
 
 
 def supervise(translate_many: Callable | None, recover_many: Callable | None,
@@ -256,7 +332,13 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                        "attempt_generation": None, "not_before": 0,
                        "started_at": int(time.time()), "result": None}
             _write_journal(journal)
-            callback = recover_many if action["kind"] in {"retry-wave", "revalidate-blockers"} else translate_many
+            if action["kind"] in {"gate-refresh", "integrate-green",
+                                  "integration-resume", "revalidate-blockers"}:
+                callback = _deterministic_action
+            else:
+                callback = recover_many if action["kind"] in {
+                    "retry-wave", "revalidate-blockers"
+                } else translate_many
             if callback is None:
                 journal["phase"] = "failed"
                 journal["result"] = {"reason": "callback-unavailable"}
@@ -264,7 +346,16 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                 return {"kind": "stop-the-line", "reason": "callback-unavailable", "action": action}
             journal["phase"] = "running"
             _write_journal(journal)
-            result = callback(action, lanes_count=lanes_count, verify_width=verify_width)
+            try:
+                result = callback(
+                    action, lanes_count=lanes_count, verify_width=verify_width)
+            except Exception as exc:
+                result = {
+                    "status": "failed",
+                    "failure_class": "infrastructure",
+                    "detail": f"{type(exc).__name__}: {exc}",
+                    "retryable": True,
+                }
             successful = isinstance(result, dict) and (
                 result.get("success") is True or result.get("status") in {"green", "complete"})
             if not successful and analyze_failure is not None:
@@ -273,6 +364,30 @@ def supervise(translate_many: Callable | None, recover_many: Callable | None,
                     result = dict(result)
                     result["analysis"] = analysis
             after = snapshot()
+            if (not successful and liveness_tuple(snap) == liveness_tuple(after)
+                    and result.get("status") == "failed"):
+                journal["phase"] = "failed"
+                journal["result"] = result
+                _write_journal(journal)
+                return {
+                    "kind": "stop-the-line",
+                    "reason": "action-failed-without-progress",
+                    "action": action,
+                    "result": result,
+                }
+            if action["kind"] == "revalidate-blockers" and (
+                    liveness_tuple(snap) == liveness_tuple(after)):
+                journal["phase"] = "failed"
+                journal["result"] = {
+                    "reason": "dependency-revalidation-unresolved",
+                    "residual": after["frontier"],
+                }
+                _write_journal(journal)
+                return {
+                    "kind": "stop-the-line",
+                    "reason": "dependency-revalidation-unresolved",
+                    "snapshot": after,
+                }
             journal["phase"] = "idle"
             journal["result"] = result
             journal["liveness"] = liveness_tuple(after)
