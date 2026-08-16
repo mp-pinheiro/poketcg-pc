@@ -38,6 +38,8 @@
 #include "generated/wram.h"
 #include "home/mail.h"
 #include "home/switch_sram.h"
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -207,3 +209,25 @@ void SetScreenScroll(void)
 	hSCY = wSCY;
 }
 /* <<< factory SetScreenScroll */
+
+/* >>> factory Func_c70d */
+/* overworld.asm:1069-1085 */
+FuncC70dResult Func_c70d(void)
+{
+	uint8_t current = wCurMap;
+	uint8_t temporary = wTempMap;
+	uint8_t flags = 0x40u;
+
+	if (current == temporary)
+		flags |= 0x80u;
+	if ((current & 0x0Fu) < (temporary & 0x0Fu))
+		flags |= 0x20u;
+	if (current < temporary)
+		flags |= 0x10u;
+
+	if (current != temporary)
+		wOverworldTransition |= 0x10u;
+
+	return (FuncC70dResult){current, flags};
+}
+/* <<< factory Func_c70d */

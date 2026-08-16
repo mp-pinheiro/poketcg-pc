@@ -43,4 +43,12 @@ uint8_t SetScreenScrollWram(void);
 /* >>> factory SetScreenScroll */
 void SetScreenScroll(void);
 /* <<< factory SetScreenScroll */
+/* >>> factory Func_c70d */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} FuncC70dResult;
+
+FuncC70dResult Func_c70d(void);
+/* <<< factory Func_c70d */
 #endif /* POKETCG_HOME_OVERWORLD_H */

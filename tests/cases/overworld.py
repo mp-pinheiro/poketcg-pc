@@ -179,6 +179,15 @@ CASES["SetScreenScrollWram"] = [
 # <<< factory SetScreenScrollWram
 
 
+# >>> factory Func_c70d
+CONTRACT["Func_c70d"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c70d"] = [
+    {"wram": {0xD32F: b"\x00", 0xD0BB: b"\x00", 0xD0B4: b"\x00"}, "read": {0xD32F: 1, 0xD0BB: 1}},
+    {"wram": {0xD32F: b"\x01", 0xD0BB: b"\x00", 0xD0B4: b"\x00"}, "read": {0xD32F: 1, 0xD0BB: 1}},
+    dict(POISON, wram={0xD32F: b"\x00", 0xD0BB: b"\x01", 0xD0B4: b"\x00"}, read={0xD32F: 1, 0xD0BB: 1}),
+]
+# <<< factory Func_c70d
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -249,3 +258,6 @@ MUTATIONS["SetScreenScroll"] = {"source_symbol": "SetScreenScroll", "before": "\
 # >>> factory-mutation SetScreenScrollWram
 MUTATIONS["SetScreenScrollWram"] = {"source_symbol": "SetScreenScrollWram", "before": "\twSCY = wSCYBuffer;", "after": "\twSCY = wSCXBuffer;", "case_ids": ["SetScreenScrollWram-0", "SetScreenScrollWram-1"]}
 # <<< factory-mutation SetScreenScrollWram
+# >>> factory-mutation Func_c70d
+MUTATIONS["Func_c70d"] = {"source_symbol": "Func_c70d", "before": "\tif (current != temporary)", "after": "\tif (current == temporary)", "case_ids": ["Func_c70d-0", "Func_c70d-1", "Func_c70d-2"]}
+# <<< factory-mutation Func_c70d
