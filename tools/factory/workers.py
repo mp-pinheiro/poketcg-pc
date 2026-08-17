@@ -550,15 +550,22 @@ def verify_agent_lane(
     attempt = assignment["attempt"]
     packet = assignment.get("packet") or materialize_packet(attempt)
     lane = Path(assignment["lane"])
-    lanes.assert_recovery_environment(lane, lanes.recovery_environment(lane))
-    deadline = time.monotonic() + deadline_seconds
-    verdict = verify.verify_packet(
-        packet, lane, True, deadline=deadline,
-    )
-    if verdict.get("status") != "green":
-        salvage = salvage_children(packet, lane, verdict, deadline=deadline)
-        return salvage or _diagnostic(packet, verdict)
-    artifact = stage_bundle(packet, lane)
+    try:
+        lanes.assert_recovery_environment(lane, lanes.recovery_environment(lane))
+        deadline = time.monotonic() + deadline_seconds
+        verdict = verify.verify_packet(
+            packet, lane, True, deadline=deadline,
+        )
+        if verdict.get("status") != "green":
+            salvage = salvage_children(packet, lane, verdict, deadline=deadline)
+            return salvage or _diagnostic(packet, verdict)
+        artifact = stage_bundle(packet, lane)
+    except (OSError, RuntimeError, ValueError) as exc:
+        return _diagnostic(packet, {
+            "status": "bundle",
+            "failure_class": "bundle",
+            "detail": f"{type(exc).__name__}: {exc}",
+        })
     return {"outcome": "productive", **artifact}
 
 
