@@ -560,6 +560,36 @@ def integration_status(
     )
     return {"action_id": action_id, **dict(zip(keys, row, strict=True))}
 
+def rebase_prepared_integration(
+    connection: sqlite3.Connection,
+    action_id: str,
+    *,
+    lease_owner: str,
+    lease_token: str,
+    expected_baseline: str,
+    baseline_revision: str,
+    now: int,
+) -> dict[str, Any]:
+    """Move an untouched prepared journal to a compatible main revision."""
+    with immediate(connection):
+        require_lease(
+            connection, action_id, lease_owner=lease_owner,
+            lease_token=lease_token, now=now,
+        )
+        cursor = connection.execute(
+            """UPDATE integration
+               SET baseline_revision = ?, updated_at = ?
+               WHERE action_id = ? AND phase = 'prepared'
+                 AND baseline_revision = ?
+                 AND candidate_tree IS NULL AND candidate_commit IS NULL""",
+            (baseline_revision, now, action_id, expected_baseline),
+        )
+        if cursor.rowcount != 1:
+            raise ValueError(
+                f"integration {action_id} cannot rebase from {expected_baseline}"
+            )
+    return integration_status(connection, action_id)
+
 
 def advance_integration(
     connection: sqlite3.Connection,

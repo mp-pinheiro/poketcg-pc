@@ -283,8 +283,26 @@ def integrate_leased_action(
     baseline = journal["baseline_revision"]
     if journal["phase"] == "finalized":
         return journal
-    if _commit("main") != baseline:
-        raise SystemExit("STOP-THE-LINE integration baseline moved during replay")
+    current_main = _commit("main")
+    if current_main != baseline:
+        if journal["phase"] != "prepared" or _dirty_paths():
+            raise SystemExit("STOP-THE-LINE integration baseline moved during replay")
+        _origin_is_ancestor()
+        current_main = _commit("main")
+        if packets:
+            current_main, _digest_value = _validate_batch(packets)
+        elif current_main != _commit("main@origin"):
+            raise SystemExit("STOP-THE-LINE local main diverges from main@origin")
+        journal = state.rebase_prepared_integration(
+            connection,
+            action_id,
+            lease_owner=lease_owner,
+            lease_token=lease_token,
+            expected_baseline=baseline,
+            baseline_revision=current_main,
+            now=int(time.time()),
+        )
+        baseline = current_main
     allowed_paths = _bundle_paths(packets)
     while journal["phase"] != "finalized":
         state.heartbeat_action(
