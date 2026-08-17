@@ -824,7 +824,7 @@ def plan_tick(
     now: int | None = None,
     max_routines: int = 3,
     max_bytes: int = 140,
-    integration_batch: int = 3,
+    integration_batch: int = 12,
 ) -> dict[str, Any]:
     if lanes_count <= 0 or max_routines <= 0 or max_bytes <= 0 or integration_batch <= 0:
         raise ValueError("scheduler limits must be positive")
@@ -1134,6 +1134,23 @@ def _advance_diagnostic(
     else:
         diagnostics += int(novel)
         repeats = 0 if novel else repeats + 1
+        if repeats >= 2:
+            connection.execute(
+                """UPDATE attempt SET state = 'superseded', owner_action_id = NULL
+                   WHERE attempt_id = (
+                       SELECT current_attempt_id FROM work WHERE work_id = ?)""",
+                (work_id,),
+            )
+            connection.execute(
+                """UPDATE work SET current_attempt_id = NULL,
+                          eligibility = 'fresh-ready', recovery_tier = 0,
+                          diagnostic_count = 0, repeated_fingerprint_count = 0,
+                          last_failure_fingerprint = NULL, not_before = 0,
+                          stop_kind = NULL
+                   WHERE work_id = ?""",
+                (work_id,),
+            )
+            return novel, True
     if advance:
         tier = min(tier + 1, 4)
         diagnostics = 0

@@ -10,6 +10,7 @@ import os
 import shutil
 import sys
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -117,7 +118,7 @@ def translation_requests(action: dict[str, Any]) -> list[dict[str, Any]]:
     requests = []
     for attempt in action.get("attempts", []):
         tier = int(attempt.get("recovery_tier", 0))
-        if tier >= 3:
+        if tier >= 4:
             continue
         packet = materialize_packet(attempt)
         requests.append({
@@ -262,7 +263,7 @@ def agent_assignments(
 ) -> list[dict[str, Any]]:
     attempts = [
         attempt for attempt in action.get("attempts", [])
-        if int(attempt.get("recovery_tier", 0)) >= 3
+        if int(attempt.get("recovery_tier", 0)) >= 4
     ]
     required = sum(
         2 if int(attempt.get("recovery_tier", 0)) >= 4 else 1
@@ -520,26 +521,65 @@ def verify_reply(
     deadline_seconds: int = 900,
     packet: dict[str, Any] | None = None,
     lane: Path | None = None,
+    translate: Callable[[str], str] | None = None,
+    max_rounds: int = 3,
 ) -> dict[str, Any]:
     packet = packet or materialize_packet(attempt)
     deadline = time.monotonic() + deadline_seconds
     lane = lane or lanes.ensure(lane_index, deadline=deadline, packet=packet)
-    try:
-        translation = prompt_mod.parse(reply, packet)
-    except prompt_mod.FormatError as exc:
-        return _diagnostic(packet, {
-            "status": "format", "failure_class": "schema", "detail": str(exc),
+    wave_id = f"action-{attempt['attempt_id']}"
+    started = time.monotonic()
+    rounds = 0
+    last_digest: str | None = None
+    statics_baseline: list[str] | None = None
+    current = reply
+    while True:
+        common.record_event({
+            "event": "verify-start", "wave_id": wave_id,
+            "elapsed_s": round(time.monotonic() - started, 3),
+            "packet_id": attempt["attempt_id"], "round": rounds,
         })
-    verdict = driver._apply_and_verify(
-        packet, lane, translation, None, 0, deadline,
-        f"action-{attempt['attempt_id']}", attempt["attempt_id"],
-    )
-    verdict.pop("_statics_baseline", None)
-    if verdict.get("status") != "green":
-        salvage = salvage_children(packet, lane, verdict, deadline=deadline)
-        return salvage or _diagnostic(packet, verdict)
-    artifact = stage_bundle(packet, lane)
-    return {"outcome": "productive", **artifact}
+        round_started = time.monotonic()
+        try:
+            translation = prompt_mod.parse(current, packet)
+        except prompt_mod.FormatError as exc:
+            verdict = {
+                "status": "format", "failure_class": "schema", "detail": str(exc),
+            }
+        else:
+            verdict = driver._apply_and_verify(
+                packet, lane, translation, statics_baseline, rounds, deadline,
+                wave_id, attempt["attempt_id"],
+            )
+            statics_baseline = verdict.pop("_statics_baseline", None)
+        digest = driver.detail_digest(verdict)
+        common.record_event({
+            "event": "verify-finished", "wave_id": wave_id,
+            "elapsed_s": round(time.monotonic() - started, 3),
+            "packet_id": attempt["attempt_id"], "round": rounds,
+            "status": verdict.get("status"), "digest": digest,
+            "wall_s": round(time.monotonic() - round_started, 2),
+        })
+        if verdict.get("status") == "green":
+            artifact = stage_bundle(packet, lane)
+            return {"outcome": "productive", **artifact}
+        repeated = digest == last_digest
+        if (
+            translate is None
+            or rounds >= max_rounds
+            or repeated
+            or time.monotonic() >= deadline
+        ):
+            break
+        last_digest = digest
+        rounds += 1
+        failing = verdict.get("failing") or (
+            [verdict["routine"]] if verdict.get("routine") else None
+        )
+        feedback = f"{verdict.get('status')}:\n{verdict.get('detail') or ''}"
+        current = translate(prompt_mod.render(packet, feedback, failing))
+    salvage = salvage_children(packet, lane, verdict, deadline=deadline)
+    return salvage or _diagnostic(packet, verdict)
 
 
 def verify_agent_lane(

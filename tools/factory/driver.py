@@ -160,6 +160,7 @@ class _Run:
         self.verify_s = 0.0
         self.salvage_s = 0.0
         self.busy: list[tuple[float, float]] = []
+        self.not_before: float = 0.0
 
     def busy_s(self) -> float:
         """Wall time this packet had *some* work in flight.
@@ -498,12 +499,8 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
             run = _Run(packet_id, wave_id, time.monotonic())
             run.deadline = deadline
             run.lane_index = lane_index
+            run.rounds = 0
             active.append(run)
-            if run.rounds >= max_rounds:
-                run.final = "retry-ready"
-                run.reason = f"resumed at {run.rounds} rounds; max is {max_rounds}"
-                finalize_and_refill(run)
-                return
             run.needs_translate = True
             run.job = "lane"
             job = _Timed(lanes.ensure, run.lane_index, deadline, run.packet)
@@ -553,7 +550,11 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                     requeue()
                     return
                 except Exception as exc:
-                    stop_reason = f"translate: {str(exc).strip()[-400:]}"
+                    emit("translate-retry", packet_ids=[run.id for run in batch],
+                         detail=str(exc).strip()[-400:])
+                    for run in batch:
+                        if not run.final:
+                            run.not_before = time.monotonic() + 60
                     requeue()
                     return
                 finished_at = time.monotonic()
@@ -601,7 +602,8 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                         submit_verifies()
                         batch = [run for run in active
                                  if run.needs_translate and run.translation is None
-                                 and not run.final]
+                                 and not run.final
+                                 and run.not_before <= time.monotonic()]
                         if batch:
                             if outstanding_fast() == 0:
                                 translate_coalesce_since = None
@@ -615,7 +617,14 @@ def run_wave(packet_ids: list[str], translate_many, lanes_count: int = 10,
                                 translate_inline(batch)
                                 continue
                     if not jobs:
-                        break
+                        cooling = [
+                            run.not_before for run in active
+                            if not run.final and run.not_before > time.monotonic()
+                        ]
+                        if not cooling:
+                            break
+                        time.sleep(min(5.0, max(0.0, min(cooling) - time.monotonic())))
+                        continue
                     harvest(5)
 
                 for future in harvested:
@@ -905,6 +914,94 @@ def migrate_recovery_state(*, apply: bool, as_json: bool) -> int:
     return 0 if result["ok"] else 2
 
 
+def requalify_frontier(*, apply: bool, as_json: bool) -> int:
+    """Reset ready work quarantined at recovery tier >=3 by fabricated legacy
+    migration evidence back to fresh-ready, tier 0. A row qualifies only when
+    every failure attached to its current attempt has a ``legacy-%`` phase,
+    i.e. it has never actually been retried by a real translation, analysis,
+    or agent round. Runs the selection and the writes in the same transaction
+    for both modes; ``apply=False`` rolls the transaction back so a dry run
+    previews exactly what apply would do."""
+    import state as state_store
+
+    class _DryRun(Exception):
+        pass
+
+    connection = state_store.open_state()
+    now = int(time.time())
+    result = {}
+    try:
+        with state_store.immediate(connection):
+            rows = connection.execute(
+                """SELECT w.work_id, w.current_attempt_id
+                     FROM work w JOIN attempt a
+                       ON a.attempt_id = w.current_attempt_id
+                    WHERE w.eligibility = 'retry-ready'
+                      AND w.recovery_tier >= 3
+                      AND NOT EXISTS (
+                          SELECT 1 FROM failure f
+                           WHERE f.attempt_id = a.attempt_id
+                             AND f.phase NOT LIKE 'legacy-%')"""
+            ).fetchall()
+            requalified: list[str] = []
+            superseded_attempts: set[str] = set()
+            skipped_leased: list[str] = []
+            for work_id, attempt_id in rows:
+                owner_row = connection.execute(
+                    "SELECT owner_action_id FROM attempt WHERE attempt_id = ?",
+                    (attempt_id,),
+                ).fetchone()
+                owner_action_id = owner_row[0] if owner_row else None
+                if owner_action_id is not None:
+                    status_row = connection.execute(
+                        "SELECT status FROM action WHERE action_id = ?",
+                        (owner_action_id,),
+                    ).fetchone()
+                    if status_row and status_row[0] in ("leased", "running"):
+                        skipped_leased.append(work_id)
+                        continue
+                connection.execute(
+                    """UPDATE work SET eligibility = 'fresh-ready',
+                              current_attempt_id = NULL, recovery_tier = 0,
+                              diagnostic_count = 0, repeated_fingerprint_count = 0,
+                              last_failure_fingerprint = NULL, not_before = 0,
+                              stop_kind = NULL
+                       WHERE work_id = ?""",
+                    (work_id,),
+                )
+                requalified.append(work_id)
+                superseded_attempts.add(attempt_id)
+            for attempt_id in sorted(superseded_attempts):
+                connection.execute(
+                    """UPDATE attempt SET state = 'superseded',
+                              owner_action_id = NULL, updated_at = ?
+                       WHERE attempt_id = ?""",
+                    (now, attempt_id),
+                )
+            result = {
+                "ok": True,
+                "dry_run": not apply,
+                "requalified": len(requalified),
+                "attempts_superseded": len(superseded_attempts),
+                "skipped_leased": sorted(skipped_leased),
+            }
+            if not apply:
+                raise _DryRun()
+    except _DryRun:
+        pass
+    finally:
+        connection.close()
+    if as_json:
+        print(json.dumps(result, sort_keys=True))
+    else:
+        print("requalify-frontier " + ("applied" if apply else "dry-run"))
+        for key in (
+            "ok", "requalified", "attempts_superseded", "skipped_leased",
+        ):
+            print(f"{key}: {result[key]}")
+    return 0 if result.get("ok") else 2
+
+
 
 def escalate(limit: int | None) -> int:
     terminal = list_packets(("escalated", "parked", "rejected-format"))
@@ -1029,6 +1126,12 @@ def main() -> int:
     )
     migration_parser.add_argument("--dry-run", action="store_true")
     migration_parser.add_argument("--json", action="store_true")
+    requalify_parser = sub.add_parser(
+        "requalify-frontier",
+        help="reset tier>=3 work with only fabricated legacy evidence to fresh-ready",
+    )
+    requalify_parser.add_argument("--dry-run", action="store_true")
+    requalify_parser.add_argument("--json", action="store_true")
     audit_parser = sub.add_parser(
         "audit-state-migration",
         help="audit legacy state against the transactional schema without writing",
@@ -1046,6 +1149,9 @@ def main() -> int:
     args = parser.parse_args()
     if args.command == "migrate-recovery-state":
         return migrate_recovery_state(
+            apply=not args.dry_run, as_json=args.json)
+    if args.command == "requalify-frontier":
+        return requalify_frontier(
             apply=not args.dry_run, as_json=args.json)
     if args.command == "audit-state-migration":
         import state as state_store

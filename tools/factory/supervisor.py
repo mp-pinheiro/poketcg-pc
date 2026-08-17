@@ -281,7 +281,7 @@ def next_action(
     *,
     lease_owner: str = "orchestrator",
     lease_seconds: int = 7200,
-    lanes_count: int = 10,
+    lanes_count: int = 16,
 ) -> dict[str, Any]:
     completion = completion_status(_load_report(), revision=_revision())
     if completion["complete"]:
@@ -442,49 +442,51 @@ def _worker_result(
     def invoke_translation(assignment: dict[str, Any]) -> Any:
         return next(iter(_callback_values(translate_many, [assignment]).values()))
 
-    def verify_translation(
-        assignment: dict[str, Any],
-        reply: str,
-    ) -> tuple[str, dict[str, Any]]:
+    def run_assignment(assignment: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         attempt_id = assignment["attempt_id"]
-        return attempt_id, workers.verify_reply(
-            assignment["attempt"], reply,
-            lane_index=assignment["lane_index"],
-            deadline_seconds=assignment["deadline_seconds"],
-            packet=assignment["packet"],
-            lane=Path(assignment["lane"]),
-        )
+        reply = invoke_translation(assignment)
+        if (
+            isinstance(reply, dict)
+            and reply.get("outcome") in {
+                "provider-failure", "infrastructure-failure",
+            }
+        ):
+            return attempt_id, reply
+        if not isinstance(reply, str):
+            raise TypeError(
+                f"translation reply for {attempt_id} must be text"
+            )
+
+        def repair(prompt: str) -> str:
+            repaired = next(iter(_callback_values(
+                translate_many, [{**assignment, "prompt": prompt}],
+            ).values()))
+            if not isinstance(repaired, str):
+                raise TypeError(f"repair reply for {attempt_id} must be text")
+            return repaired
+
+        try:
+            verdict = workers.verify_reply(
+                assignment["attempt"], reply,
+                lane_index=assignment["lane_index"],
+                deadline_seconds=assignment["deadline_seconds"],
+                packet=assignment["packet"],
+                lane=Path(assignment["lane"]),
+                translate=repair,
+            )
+        except common.WaveDeadlineExpired as exc:
+            return attempt_id, {
+                "outcome": "infrastructure-failure", "detail": str(exc),
+            }
+        return attempt_id, verdict
 
     results: dict[str, dict[str, Any]] = {}
-    with (
-        ThreadPoolExecutor(max_workers=max(1, len(translation))) as translators,
-        ThreadPoolExecutor(max_workers=max(1, verify_width)) as verifiers,
-    ):
-        translation_futures = {
-            translators.submit(invoke_translation, assignment): assignment
+    with ThreadPoolExecutor(max_workers=max(1, len(translation))) as pool:
+        assignment_futures = {
+            pool.submit(run_assignment, assignment): assignment
             for assignment in translation
         }
-        verification_futures = {}
-        for future in as_completed(translation_futures):
-            assignment = translation_futures[future]
-            reply = future.result()
-            if (
-                isinstance(reply, dict)
-                and reply.get("outcome") in {
-                    "provider-failure", "infrastructure-failure",
-                }
-            ):
-                results[assignment["attempt_id"]] = reply
-                continue
-            if not isinstance(reply, str):
-                raise TypeError(
-                    f"translation reply for {assignment['attempt_id']} must be text"
-                )
-            verification = verifiers.submit(
-                verify_translation, assignment, reply,
-            )
-            verification_futures[verification] = assignment["attempt_id"]
-        for future in as_completed(verification_futures):
+        for future in as_completed(assignment_futures):
             attempt_id, result = future.result()
             results[attempt_id] = result
 
@@ -581,8 +583,8 @@ def supervise(
     recover_many: Callable[[list[dict[str, Any]]], Any],
     analyze_failure: Callable[[list[dict[str, Any]]], Any],
     *,
-    lanes_count: int = 10,
-    verify_width: int = 6,
+    lanes_count: int = 16,
+    verify_width: int = 8,
 ) -> dict[str, Any]:
     """Run journaled actions until the authoritative completion predicate holds."""
     lease_owner = "supervise"
@@ -729,7 +731,7 @@ def main() -> int:
     next_parser.add_argument("--dry-run", action="store_true")
     next_parser.add_argument("--lease-owner", default="orchestrator")
     next_parser.add_argument("--lease-seconds", type=int, default=7200)
-    next_parser.add_argument("--lanes", type=int, default=10)
+    next_parser.add_argument("--lanes", type=int, default=16)
     sub.add_parser("reconcile")
     sub.add_parser("accept")
     integrate_parser = sub.add_parser("integrate")
@@ -737,7 +739,7 @@ def main() -> int:
     session_parser = sub.add_parser("session")
     session_parser.add_argument("--lease-owner", default="orchestrator")
     session_parser.add_argument("--lease-seconds", type=int, default=7200)
-    session_parser.add_argument("--lanes", type=int, default=10)
+    session_parser.add_argument("--lanes", type=int, default=16)
     args = parser.parse_args()
     if args.command == "session":
         return session_loop(
@@ -745,27 +747,28 @@ def main() -> int:
             lease_seconds=args.lease_seconds,
             lanes_count=args.lanes,
         )
-    with supervisor_lock():
-        if args.command == "status":
-            value = snapshot()
-        elif args.command == "next":
-            value = (
-                preview_next(lanes_count=args.lanes)
-                if args.dry_run
-                else next_action(
-                    lease_owner=args.lease_owner,
-                    lease_seconds=args.lease_seconds,
-                    lanes_count=args.lanes,
+    if args.command == "status":
+        value = snapshot()
+    else:
+        with supervisor_lock():
+            if args.command == "next":
+                value = (
+                    preview_next(lanes_count=args.lanes)
+                    if args.dry_run
+                    else next_action(
+                        lease_owner=args.lease_owner,
+                        lease_seconds=args.lease_seconds,
+                        lanes_count=args.lanes,
+                    )
                 )
-            )
-        else:
-            payload = json.load(sys.stdin)
-            if args.command == "accept":
-                value = accept_action(payload)
-            elif args.command == "integrate":
-                value = integrate_action(payload, push=not args.no_push)
             else:
-                value = reconcile_action(payload)
+                payload = json.load(sys.stdin)
+                if args.command == "accept":
+                    value = accept_action(payload)
+                elif args.command == "integrate":
+                    value = integrate_action(payload, push=not args.no_push)
+                else:
+                    value = reconcile_action(payload)
     json_output = bool(getattr(args, "json", False))
     print(json.dumps(
         value, sort_keys=json_output, indent=None if json_output else 2,

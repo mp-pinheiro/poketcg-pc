@@ -705,6 +705,49 @@ def finalize_integration(
                WHERE work_id = ?""",
             [(work_id,) for work_id in work_ids],
         )
+        if work_ids:
+            placeholders = ",".join("?" for _ in work_ids)
+            candidates = [
+                row[0] for row in connection.execute(
+                    f"""SELECT DISTINCT work_id FROM blocker
+                        WHERE active = 1 AND blocked_on_work_id IN ({placeholders})""",
+                    work_ids,
+                )
+            ]
+            connection.execute(
+                f"""UPDATE blocker SET active = 0
+                    WHERE active = 1 AND blocked_on_work_id IN ({placeholders})""",
+                work_ids,
+            )
+            unblocked_work_ids = []
+            if candidates:
+                candidate_placeholders = ",".join("?" for _ in candidates)
+                unblocked_work_ids = [
+                    row[0] for row in connection.execute(
+                        f"""SELECT w.work_id FROM work w
+                            WHERE w.canonical_state = 'blocked'
+                              AND w.current_attempt_id IS NULL
+                              AND w.work_id IN ({candidate_placeholders})
+                              AND NOT EXISTS (
+                                  SELECT 1 FROM blocker b2
+                                   WHERE b2.work_id = w.work_id AND b2.active = 1)
+                            ORDER BY w.work_id""",
+                        candidates,
+                    )
+                ]
+                if unblocked_work_ids:
+                    unblocked_placeholders = ",".join(
+                        "?" for _ in unblocked_work_ids
+                    )
+                    connection.execute(
+                        f"""UPDATE work SET canonical_state = 'ready',
+                                   eligibility = 'fresh-ready', not_before = 0,
+                                   stop_kind = NULL
+                            WHERE work_id IN ({unblocked_placeholders})""",
+                        unblocked_work_ids,
+                    )
+        else:
+            unblocked_work_ids = []
         connection.execute(
             """UPDATE integration SET phase = 'finalized', remote_revision = ?,
                                       updated_at = ?
@@ -738,6 +781,7 @@ def finalize_integration(
             "published_revision": remote_revision,
             "attempt_ids": sorted(attempt_ids),
             "work_ids": sorted(work_ids),
+            "unblocked_work_ids": sorted(unblocked_work_ids),
         }
         finish_action_in_transaction(
             connection, action_id, lease_owner=lease_owner,

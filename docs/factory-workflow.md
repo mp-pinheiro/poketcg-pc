@@ -51,7 +51,7 @@ whole exact-`start` session:
 
 ```sh
 python3 tools/factory/supervisor.py session \
-  --lease-owner orchestrator --lease-seconds 7200 --lanes 10
+  --lease-owner orchestrator --lease-seconds 7200 --lanes 16
 ```
 
 The process acquires `.factory/supervisor.lock` before printing its `ready`
@@ -72,7 +72,7 @@ That value comes from one predicate: the gate is current and green,
 
 Programmatic orchestrators call
 `supervisor.supervise(translate_many, recover_many, analyze_failure,
-lanes_count=10, verify_width=6)`. Those three callbacks are the only model
+lanes_count=16, verify_width=8)`. Those three callbacks are the only model
 seams; the supervisor owns action leases, lanes, verification, bundle
 publication, integration, projection, and the completion decision.
 
@@ -81,19 +81,20 @@ publication, integration, projection, and the completion decision.
 
 For `fresh-wave`, `retry-wave`, `worker-wave`, and `dependency-scc` actions:
 
-1. Call `workers.translation_assignments(action, lane_indices=...)`.
-   `supervise(...)` invokes `translate_many([assignment])` concurrently for all
-   assignments. Each callback calls
-   `completion(prompt, model=assignment["model"])`; model calls run outside
-   SQLite transactions. As each reply arrives, verification starts immediately
-   in the bounded verifier pool. Every assignment already names its disposable
-   lane and packet, and every verifier subprocess has a hard process-tree
-   deadline.
+1. Call `workers.translation_assignments(action, lane_indices=...)` for
+   attempts at recovery tier 0-3. `supervise(...)` runs one worker per
+   assignment; each calls `translate_many([assignment])` — which calls
+   `completion(prompt, model=assignment["model"])` outside SQLite
+   transactions — then `workers.verify_reply(...)`. A non-green verdict
+   re-renders the packet with the verifier's failure detail and calls
+   `translate_many` again on the same worker, up to 3 rounds, before the
+   assignment escalates. Every assignment already names its disposable lane
+   and packet, and every verify subprocess has a hard process-tree deadline.
 2. For tier-4 attempts, call `workers.recovery_analysis_requests(action)`
    through the independent `analyze_failure` callback and parse each response
    with `workers.parse_recovery_analysis(...)`. Then call
    `workers.agent_assignments(...)`, passing those analyses, for attempts at
-   recovery tier 3 or 4. Dispatch every returned assignment in one `task`
+   recovery tier 4. Dispatch every returned assignment in one `task`
    batch. Agents edit only the listed lane and owned paths, run no VCS command,
    and receive no repository, Forgejo, or git credentials. Verify each returned
    lane with `workers.verify_agent_lane(...)`.
@@ -162,15 +163,16 @@ work state intact and the action resumable.
 ## Recovery ladder
 
 Each diagnostic records its class, detail, model, and SHA-256 fingerprint.
-Recovery advances on new evidence or a repeated fingerprint:
+Recovery advances on new evidence or a repeated fingerprint, through
+`recovery_tier` 0-4:
 
-1. ordinary retry;
-2. one-routine fresh retry;
-3. slow-model retry;
-4. one disposable editing agent;
-5. independent analysis followed by two editing agents, first verified result
-   wins. Repeated code failure stays at this tier with its full history; it does
-   not become a terminal queue state.
+1. tier 0 — ordinary retry, default model;
+2. tier 1 — one-routine fresh retry, default model;
+3. tiers 2-3 — slow-model retry, the same in-lane repair loop as tiers 0-1
+   (up to 3 rounds before escalating);
+4. tier 4 — independent analysis followed by two editing agents, first
+   verified result wins. Repeated code failure stays at this tier with its
+   full history; it does not become a terminal queue state.
 
 Fresh work and recovery use separate capacity. While both exist, roughly 80% of
 lanes remain available to fresh attempts and 20% to recovery; every fifth
