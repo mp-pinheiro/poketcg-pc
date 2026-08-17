@@ -55,6 +55,7 @@ def _digest(value: object) -> str:
 def _commit(revision: str) -> str:
     return run(["jj", "log", "--no-graph", "-r", revision, "-T", "commit_id"], check_message=f"cannot read {revision}").stdout.strip()
 
+
 def _base_compatible(packet: dict, main: str) -> bool:
     base = packet.get("base_commit")
     if not base or base == main:
@@ -250,6 +251,15 @@ def _hash_paths(paths: list[str]) -> str:
         digest.update(b"\n")
     return digest.hexdigest()
 
+def _committed_candidate(revision: str) -> str:
+    diff = run(
+        ["jj", "diff", "--from", f"{revision}-", "--to", revision, "--summary"],
+        check_message="cannot validate candidate commit",
+    )
+    if diff.stdout.strip():
+        return revision
+    return _commit(f"{revision}-")
+
 
 def integrate_leased_action(
     connection,
@@ -285,24 +295,40 @@ def integrate_leased_action(
         return journal
     current_main = _commit("main")
     if current_main != baseline:
-        if journal["phase"] != "prepared" or _dirty_paths():
-            raise SystemExit("STOP-THE-LINE integration baseline moved during replay")
-        _origin_is_ancestor()
-        current_main = _commit("main")
-        if packets:
-            current_main, _digest_value = _validate_batch(packets)
-        elif current_main != _commit("main@origin"):
-            raise SystemExit("STOP-THE-LINE local main diverges from main@origin")
-        journal = state.rebase_prepared_integration(
-            connection,
-            action_id,
-            lease_owner=lease_owner,
-            lease_token=lease_token,
-            expected_baseline=baseline,
-            baseline_revision=current_main,
-            now=int(time.time()),
-        )
-        baseline = current_main
+        if journal["phase"] == "prepared" and not _dirty_paths():
+            _origin_is_ancestor()
+            current_main = _commit("main")
+            if packets:
+                current_main, _digest_value = _validate_batch(packets)
+            elif current_main != _commit("main@origin"):
+                raise SystemExit(
+                    "STOP-THE-LINE local main diverges from main@origin"
+                )
+            journal = state.rebase_prepared_integration(
+                connection,
+                action_id,
+                lease_owner=lease_owner,
+                lease_token=lease_token,
+                expected_baseline=baseline,
+                baseline_revision=current_main,
+                now=int(time.time()),
+            )
+            baseline = current_main
+        elif journal["phase"] in {"progress-committed", "pushed"}:
+            recorded = journal["candidate_commit"]
+            resolved = _committed_candidate(recorded)
+            candidates = {recorded, resolved}
+            if (
+                current_main not in candidates
+                and _committed_candidate(current_main) != resolved
+            ):
+                raise SystemExit(
+                    "STOP-THE-LINE integration baseline moved during replay"
+                )
+        else:
+            raise SystemExit(
+                "STOP-THE-LINE integration baseline moved during replay"
+            )
     allowed_paths = _bundle_paths(packets)
     while journal["phase"] != "finalized":
         state.heartbeat_action(
@@ -324,12 +350,13 @@ def integrate_leased_action(
             )
             continue
         if phase == "applied":
-            if _dirty_paths():
+            dirty = bool(_dirty_paths())
+            if dirty:
                 run(
                     ["jj", "commit", "-m", "feat(port): integrate factory batch"],
                     check_message="candidate source commit failed",
                 )
-            candidate_commit = _commit("@")
+            candidate_commit = _commit("@-" if dirty else "@")
             journal = state.advance_integration(
                 connection, action_id, lease_owner=lease_owner,
                 lease_token=lease_token, expected_phase="applied",
@@ -351,13 +378,17 @@ def integrate_leased_action(
                 "site/data/gate.json", "site/data/progress.json",
                 "site/data/history.jsonl", ".factory/blocked.toml",
             ]
-            if any(path in status for path in generated):
+            progress_committed = any(path in status for path in generated)
+            if progress_committed:
                 run(
                     ["jj", "commit", *generated,
                      "-m", "chore(progress): refresh gate report"],
                     check_message="progress commit failed",
                 )
-            candidate_commit = _commit("@")
+            candidate_commit = (
+                _commit("@-") if progress_committed
+                else journal["candidate_commit"]
+            )
             journal = state.advance_integration(
                 connection, action_id, lease_owner=lease_owner,
                 lease_token=lease_token, expected_phase="gate-passed",
@@ -369,12 +400,27 @@ def integrate_leased_action(
             )
             continue
         if phase == "progress-committed":
+            candidate_commit = _committed_candidate(journal["candidate_commit"])
+            if candidate_commit != journal["candidate_commit"]:
+                journal = state.retarget_progress_integration(
+                    connection,
+                    action_id,
+                    lease_owner=lease_owner,
+                    lease_token=lease_token,
+                    expected_commit=journal["candidate_commit"],
+                    candidate_commit=candidate_commit,
+                    now=int(time.time()),
+                )
             if push:
                 _origin_is_ancestor()
-            run(
-                ["jj", "bookmark", "set", "main", "-r", "@"],
-                check_message="main bookmark advance failed",
-            )
+            bookmark = ["jj", "bookmark", "set", "main", "-r", candidate_commit]
+            current_main = _commit("main")
+            if (
+                current_main != candidate_commit
+                and _committed_candidate(current_main) == candidate_commit
+            ):
+                bookmark.append("--allow-backwards")
+            run(bookmark, check_message="main bookmark advance failed")
             if push:
                 run(
                     ["jj", "git", "push", "--bookmark", "main"],

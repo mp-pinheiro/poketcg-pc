@@ -590,6 +590,35 @@ def rebase_prepared_integration(
             )
     return integration_status(connection, action_id)
 
+def retarget_progress_integration(
+    connection: sqlite3.Connection,
+    action_id: str,
+    *,
+    lease_owner: str,
+    lease_token: str,
+    expected_commit: str,
+    candidate_commit: str,
+    now: int,
+) -> dict[str, Any]:
+    """Correct a progress journal that captured jj's empty working-copy child."""
+    with immediate(connection):
+        require_lease(
+            connection, action_id, lease_owner=lease_owner,
+            lease_token=lease_token, now=now,
+        )
+        cursor = connection.execute(
+            """UPDATE integration
+               SET candidate_commit = ?, updated_at = ?
+               WHERE action_id = ? AND phase = 'progress-committed'
+                 AND candidate_commit = ?""",
+            (candidate_commit, now, action_id, expected_commit),
+        )
+        if cursor.rowcount != 1:
+            raise ValueError(
+                f"integration {action_id} cannot retarget {expected_commit}"
+            )
+    return integration_status(connection, action_id)
+
 
 def advance_integration(
     connection: sqlite3.Connection,
