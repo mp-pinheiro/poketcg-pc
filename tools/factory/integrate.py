@@ -68,8 +68,8 @@ def _base_compatible(packet: dict, main: str) -> bool:
 
 
 def _clean_tree() -> None:
-    status = run(["jj", "st"])
-    if status.returncode != 0 or status.stdout.strip():
+    status = run(["jj", "diff", "--quiet"])
+    if status.returncode != 0:
         raise SystemExit("STOP-THE-LINE orchestrator working copy is not clean")
 
 
