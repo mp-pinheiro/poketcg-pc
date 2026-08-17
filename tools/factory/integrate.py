@@ -235,6 +235,21 @@ def _hash_file(path: Path) -> str:
         raise SystemExit(f"STOP-THE-LINE expected generated file missing: {path}")
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
+def _hash_paths(paths: list[str]) -> str:
+    digest = hashlib.sha256()
+    for relative in sorted(paths):
+        path = ROOT / relative
+        if not path.is_file():
+            raise SystemExit(
+                f"STOP-THE-LINE candidate path missing during journal: {relative}"
+            )
+        data = path.read_bytes()
+        digest.update(relative.encode())
+        digest.update(b"\0")
+        digest.update(hashlib.sha256(data).digest())
+        digest.update(b"\n")
+    return digest.hexdigest()
+
 
 def integrate_leased_action(
     connection,
@@ -283,10 +298,7 @@ def integrate_leased_action(
                 _apply_packet(packet)
             if packets:
                 _candidate_checks(packets)
-            candidate_tree = run(
-                ["jj", "log", "--no-graph", "-r", "@", "-T", "tree_id"],
-                check_message="cannot read candidate tree",
-            ).stdout.strip()
+            candidate_tree = _hash_paths(allowed_paths)
             journal = state.advance_integration(
                 connection, action_id, lease_owner=lease_owner,
                 lease_token=lease_token, expected_phase="prepared",
