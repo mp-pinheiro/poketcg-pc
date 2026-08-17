@@ -102,3 +102,27 @@ void AnimationCommand_AnimEnd(void)
 	return;
 }
 /* <<< factory AnimationCommand_AnimEnd */
+
+/* >>> factory DuelAnim154 */
+/* commands.asm:350-350 */
+void DuelAnim154(void)
+{
+	return; /* DuelAnim154 */
+}
+/* <<< factory DuelAnim154 */
+
+/* >>> factory DuelAnim155 */
+/* commands.asm:351-351 */
+void DuelAnim155(void)
+{
+	return; /* DuelAnim155 */
+}
+/* <<< factory DuelAnim155 */
+
+/* >>> factory DuelAnim156 */
+/* commands.asm:352-352 */
+void DuelAnim156(void)
+{
+	return; /* DuelAnim156 */
+}
+/* <<< factory DuelAnim156 */

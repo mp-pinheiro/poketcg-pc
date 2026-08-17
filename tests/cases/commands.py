@@ -71,6 +71,21 @@ CASES["AnimationCommand_AnimEnd2"] = [
 ]
 # <<< factory AnimationCommand_AnimEnd2
 
+# >>> factory DuelAnim154
+CONTRACT["DuelAnim154"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DuelAnim154"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+# <<< factory DuelAnim154
+
+# >>> factory DuelAnim155
+CONTRACT["DuelAnim155"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DuelAnim155"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+# <<< factory DuelAnim155
+
+# >>> factory DuelAnim156
+CONTRACT["DuelAnim156"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DuelAnim156"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+# <<< factory DuelAnim156
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -104,3 +119,12 @@ MUTATIONS["AnimationCommand_AnimEnd2"] = {
     "case_ids": ["AnimationCommand_AnimEnd2-0", "AnimationCommand_AnimEnd2-1"],
 }
 # <<< factory-mutation AnimationCommand_AnimEnd2
+# >>> factory-mutation DuelAnim154
+MUTATIONS["DuelAnim154"] = {"source_symbol": "DuelAnim154", "before": "\treturn; /* DuelAnim154 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim154 */", "case_ids": ["DuelAnim154-2"]}
+# <<< factory-mutation DuelAnim154
+# >>> factory-mutation DuelAnim155
+MUTATIONS["DuelAnim155"] = {"source_symbol": "DuelAnim155", "before": "\treturn; /* DuelAnim155 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim155 */", "case_ids": ["DuelAnim155-2"]}
+# <<< factory-mutation DuelAnim155
+# >>> factory-mutation DuelAnim156
+MUTATIONS["DuelAnim156"] = {"source_symbol": "DuelAnim156", "before": "\treturn; /* DuelAnim156 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim156 */", "case_ids": ["DuelAnim156-2"]}
+# <<< factory-mutation DuelAnim156

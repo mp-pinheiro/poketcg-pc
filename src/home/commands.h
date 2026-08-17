@@ -23,4 +23,13 @@ void DuelAnim153(void);
 /* >>> factory AnimationCommand_AnimEnd */
 void AnimationCommand_AnimEnd(void);
 /* <<< factory AnimationCommand_AnimEnd */
+/* >>> factory DuelAnim154 */
+void DuelAnim154(void);
+/* <<< factory DuelAnim154 */
+/* >>> factory DuelAnim155 */
+void DuelAnim155(void);
+/* <<< factory DuelAnim155 */
+/* >>> factory DuelAnim156 */
+void DuelAnim156(void);
+/* <<< factory DuelAnim156 */
 #endif
