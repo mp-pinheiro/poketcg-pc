@@ -1,0 +1,417 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import hashlib
+import json
+import threading
+from datetime import UTC, datetime, timedelta
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from urllib.parse import urlparse
+
+import cache
+import common
+import forecast
+import forgejo
+import integrate
+import ledger
+import scheduler
+import workers
+
+
+def comment(identifier: int, event: ledger.FactoryEvent, second: int) -> dict:
+    return {
+        "id": identifier,
+        "body": event.comment_body(),
+        "created_at": (datetime(2026, 8, 18, tzinfo=UTC) + timedelta(seconds=second)).isoformat(),
+        "updated_at": (datetime(2026, 8, 18, tzinfo=UTC) + timedelta(seconds=second)).isoformat(),
+        "author": "mpp",
+    }
+
+
+def make_event(
+    kind: str,
+    work_id: str | None,
+    parent: tuple[int | None, str | None],
+    intent: str,
+    payload: dict,
+) -> ledger.FactoryEvent:
+    return ledger.FactoryEvent.create(
+        kind=kind,
+        run_id="run-1",
+        work_id=work_id,
+        attempt_id="attempt-1" if work_id else None,
+        parent_comment_id=parent[0],
+        parent_event_sha256=parent[1],
+        base_revision="a" * 40,
+        intent_sha256=intent,
+        emitted_at="2026-08-18T00:00:00+00:00",
+        payload=payload,
+    )
+
+
+def work_issue() -> dict:
+    return {
+        "number": 101,
+        "body": "<!-- poketcg-port-work:v2 {\"work_id\":\"port:v1:src/home/demo.asm:Demo\"} -->\n\n<!-- poketcg-port-generated:begin -->\nDemo\n<!-- poketcg-port-generated:end -->\n",
+        "state": "open",
+        "labels": ["port/ready"],
+    }
+
+
+def check_ledger() -> None:
+    issue = work_issue()
+    intent = ledger.intent_sha256(issue, [], [])
+    root = make_event(
+        "migrated",
+        "port:v1:src/home/demo.asm:Demo",
+        (None, None),
+        intent,
+        {
+            "state": "ready",
+            "source_revision": "a" * 40,
+            "publication_revision": "",
+            "gate_sha256": "",
+            "legacy_history_sha256": "b" * 64,
+            "landed_at": None,
+            "exclusion_reason": None,
+        },
+    )
+    claim_a = make_event(
+        "claim",
+        root.work_id,
+        (10, root.event_sha256),
+        intent,
+        {
+            "lease_seconds": 600,
+            "packet_sha256": "c" * 64,
+            "model_route": "smol",
+            "owned_paths_sha256": "d" * 64,
+        },
+    )
+    claim_b = make_event(
+        "claim",
+        root.work_id,
+        (10, root.event_sha256),
+        intent,
+        {
+            "lease_seconds": 600,
+            "packet_sha256": "e" * 64,
+            "model_route": "smol",
+            "owned_paths_sha256": "f" * 64,
+        },
+    )
+    view = ledger.reduce_work(
+        issue,
+        [comment(10, root, 0), comment(11, claim_a, 1), comment(12, claim_b, 1)],
+        [],
+        now=datetime(2026, 8, 18, 0, 2, tzinfo=UTC),
+        authorized_authors={"mpp"},
+    )
+    assert view.state == "running"
+    assert view.claim_comment_id == 11
+    assert any("losing concurrent branch" in item for item in view.ignored)
+    result = make_event(
+        "attempt-result",
+        root.work_id,
+        (11, claim_a.event_sha256),
+        intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "productive",
+            "verdict": {"status": "green"},
+            "artifact_sha256": "1" * 64,
+            "next_wake_at": None,
+        },
+    )
+    view = ledger.reduce_work(
+        issue,
+        [comment(10, root, 0), comment(11, claim_a, 1), comment(13, result, 2)],
+        [],
+        now=datetime(2026, 8, 18, 0, 2, tzinfo=UTC),
+        authorized_authors={"mpp"},
+        artifact_exists=lambda value: value == "1" * 64,
+    )
+    assert view.state == "integrating"
+    assert view.productive_result_comment_id == 13
+    landed = make_event(
+        "landed",
+        root.work_id,
+        (13, result.event_sha256),
+        intent,
+        {
+            "batch_id": "batch-1",
+            "attempt_result_comment_id": 13,
+            "source_revision": "a" * 40,
+            "publication_revision": "b" * 40,
+            "gate_sha256": "2" * 64,
+            "progress_sha256": "3" * 64,
+        },
+    )
+    view = ledger.reduce_work(
+        issue,
+        [comment(10, root, 0), comment(11, claim_a, 1), comment(13, result, 2), comment(14, landed, 3)],
+        [],
+        now=datetime(2026, 8, 18, 0, 4, tzinfo=UTC),
+        authorized_authors={"mpp"},
+        artifact_exists=lambda value: value == "1" * 64,
+    )
+    assert view.state == "done"
+
+
+def check_control() -> None:
+    issue = {
+        "number": 1,
+        "body": "<!-- poketcg-factory-control:v1 {\"repository\":\"mpp/poketcg-pc\"} -->",
+    }
+    event = make_event(
+        "run-claim",
+        None,
+        (None, None),
+        "0" * 64,
+        {"runner_instance": "scenario", "lease_seconds": 600},
+    )
+    view = ledger.reduce_control(
+        issue,
+        [comment(1, event, 0)],
+        now=datetime(2026, 8, 18, 0, 1, tzinfo=UTC),
+    )
+    assert view.active
+    assert view.claim_comment_id == 1
+
+
+def check_planner() -> None:
+    ready = scheduler.FactoryWork(
+        issue_number=101,
+        work_id="port:v1:src/home/demo.asm:Demo",
+        source="src/home/demo.asm",
+        basenames=("demo",),
+        owned_paths=("src/home/demo.c",),
+        size=20,
+        tier=1,
+        priority="normal",
+        state="ready",
+        ready_at=datetime(2026, 8, 18, tzinfo=UTC),
+    )
+    blocked = scheduler.FactoryWork(
+        issue_number=102,
+        work_id="port:v1:src/home/next.asm:Next",
+        source="src/home/next.asm",
+        basenames=("next",),
+        owned_paths=("src/home/next.c",),
+        size=20,
+        tier=1,
+        priority="high",
+        state="blocked",
+        dependencies=(101,),
+    )
+    snapshot = scheduler.FactorySnapshot(
+        sha256=hashlib.sha256(b"scenario").hexdigest(),
+        works=(ready, blocked),
+    )
+    planned = scheduler.plan(
+        snapshot,
+        scheduler.Capacity(job_slots=4),
+        datetime(2026, 8, 18, tzinfo=UTC),
+    )
+    assert [assignment.issue_number for assignment in planned.assignments] == [101]
+    assert planned.assignments[0].model_route == "smol"
+
+
+def check_forgejo_client() -> None:
+    state = {
+        "issues": [{
+            "id": 101,
+            "number": 101,
+            "title": "Demo",
+            "body": work_issue()["body"],
+            "state": "open",
+            "labels": [{"id": 1, "name": "port/ready"}],
+            "created_at": "2026-08-18T00:00:00Z",
+            "updated_at": "2026-08-18T00:00:00Z",
+            "user": {"login": "mpp"},
+        }],
+        "comments": [],
+    }
+
+    class Handler(BaseHTTPRequestHandler):
+        def _send(self, status: int, payload: object) -> None:
+            raw = json.dumps(payload).encode()
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+
+        def do_GET(self) -> None:
+            path = urlparse(self.path).path
+            if path.endswith("/issues"):
+                self._send(200, state["issues"])
+                return
+            if path.endswith("/issues/101/comments"):
+                self._send(200, state["comments"])
+                return
+            if path.endswith("/issues/101/dependencies"):
+                self._send(200, [])
+                return
+            if path.endswith("/labels"):
+                self._send(200, [{"id": 1, "name": "port/ready"}])
+                return
+            if path.endswith("/issues/101"):
+                self._send(200, state["issues"][0])
+                return
+            self._send(404, {})
+
+        def do_POST(self) -> None:
+            path = urlparse(self.path).path
+            raw = self.rfile.read(int(self.headers.get("Content-Length", "0")))
+            payload = json.loads(raw or b"{}")
+            if path.endswith("/issues/101/comments"):
+                identifier = len(state["comments"]) + 1
+                value = {
+                    "id": identifier,
+                    "body": payload["body"],
+                    "created_at": f"2026-08-18T00:00:0{identifier}Z",
+                    "updated_at": f"2026-08-18T00:00:0{identifier}Z",
+                    "user": {"login": "mpp"},
+                }
+                state["comments"].append(value)
+                self._send(201, value)
+                return
+            self._send(404, {})
+
+        def log_message(self, _format: str, *_args: object) -> None:
+            return
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    original_credentials = forgejo._credentials
+    forgejo._credentials = lambda _url: {"Accept": "application/json"}
+    try:
+        client = forgejo.ForgejoClient(
+            base_url=f"http://127.0.0.1:{server.server_port}",
+            sleep=lambda _seconds: None,
+        )
+        snapshot = client.stable_snapshot()
+        assert snapshot["sha256"]
+        event = make_event(
+            "migrated",
+            "port:v1:src/home/demo.asm:Demo",
+            (None, None),
+            "0" * 64,
+            {
+                "state": "ready",
+                "source_revision": "a" * 40,
+                "publication_revision": "",
+                "gate_sha256": "",
+                "legacy_history_sha256": "b" * 64,
+                "landed_at": None,
+                "exclusion_reason": None,
+            },
+        )
+        first = client.append_event(101, event.comment_body(), event.event_id)
+        second = client.append_event(101, event.comment_body(), event.event_id)
+        assert first["id"] == second["id"] == 1
+    finally:
+        forgejo._credentials = original_credentials
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
+def check_derived_cache() -> None:
+    issue = {
+        **work_issue(),
+        "id": 101,
+        "title": "Demo",
+        "created_at": "2026-08-18T00:00:00Z",
+        "updated_at": "2026-08-18T00:00:00Z",
+        "author": "mpp",
+        "url": "",
+    }
+
+    class Client:
+        def stable_snapshot(self) -> dict:
+            return {"sha256": "a" * 64, "issues": [issue]}
+
+        def comments_since(self, number: int, since: str | None) -> list[dict]:
+            assert number == 101
+            return []
+
+        def dependencies(self, number: int) -> list[dict]:
+            assert number == 101
+            return []
+
+    with TemporaryDirectory() as directory:
+        path = Path(directory) / "cache.sqlite3"
+        first = cache.refresh(Client(), path=path)
+        second = cache.refresh(Client(), path=path)
+        loaded = cache.load(path)
+        assert first["changed"] == 1
+        assert second["changed"] == 0
+        assert loaded["snapshot_sha256"] == "a" * 64
+def check_artifact_store() -> None:
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        source = root / "source"
+        source.mkdir()
+        (source / "src" / "home").mkdir(parents=True)
+        (source / "src" / "probe").mkdir(parents=True)
+        (source / "tests" / "cases").mkdir(parents=True)
+        (source / "tools" / "oracle" / "mutation_receipts").mkdir(parents=True)
+        (source / "src" / "home" / "demo.c").write_text("int demo(void) { return 0; }\n")
+        (source / "src" / "home" / "demo.h").write_text("int demo(void);\n")
+        (source / "src" / "probe" / "demo.c").write_text("int probe(void) { return 0; }\n")
+        (source / "tests" / "cases" / "demo.py").write_text("CONTRACT = {}\n")
+        (source / "tools" / "oracle" / "mutation_receipts" / "Demo.json").write_text("{}\n")
+        (source / "packet.json").write_text(
+            json.dumps({"basename": "demo", "routines": [{"name": "Demo"}]}) + "\n"
+        )
+        digest = common.payload_tree_digest(source)
+        (source / ".factory-artifact.json").write_text(
+            json.dumps({"bundle_sha256": digest}) + "\n"
+        )
+        previous = workers.V2_ARTIFACTS
+        workers.V2_ARTIFACTS = root / "artifacts"
+        try:
+            stored = workers.store_artifact(
+                {"artifact_dir": str(source), "bundle_sha256": digest}
+            )
+            assert workers.artifact_exists(stored["artifact_sha256"])
+            clone = root / "clone"
+            clone.mkdir()
+            assert integrate.apply_v2_artifacts(clone, [stored["artifact_sha256"]]) == ("Demo",)
+            assert (clone / "src" / "home" / "demo.c").is_file()
+            grouped = workers.store_group_artifact([stored])
+            assert workers.artifact_exists(grouped["artifact_sha256"])
+        finally:
+            workers.V2_ARTIFACTS = previous
+
+
+def check_forecast() -> None:
+    nodes = [
+        forecast.Node("a", 1, 10, ("a",), (), "ready"),
+        forecast.Node("b", 1, 10, ("b",), ("a",), "ready"),
+    ]
+    samples = [forecast.Sample(1, 10, 60.0, 1, 30.0) for _ in range(20)]
+    result = forecast.monte_carlo(nodes, samples, lanes=2, trials=200, seed="scenario")
+    assert result["p50_seconds"] == 150.0
+    dated = forecast.forecast_dates(result, started_at=datetime(2026, 8, 18, tzinfo=UTC))
+    assert dated["p85_at"].startswith("2026-08-18T00:02:30")
+
+
+def main() -> int:
+    check_ledger()
+    check_control()
+    check_planner()
+    check_forgejo_client()
+    check_derived_cache()
+    check_artifact_store()
+    check_forecast()
+    print("factory scenario check: PASS")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

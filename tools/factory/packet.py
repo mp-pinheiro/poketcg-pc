@@ -714,11 +714,16 @@ def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
     return gained
 
 
-def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
-                  limit: int | None,
-                  include_work_ids: set[str] | None = None) -> list[dict]:
+def build_packets(
+    dir_filter: str | None,
+    max_routines: int,
+    max_asm_lines: int,
+    limit: int | None,
+    include_work_ids: set[str] | None = None,
+    issue_numbers: dict[str, int] | None = None,
+) -> list[dict]:
     functions, _inventory = compute_functions()
-    blocked = blocked_routines()
+    blocked = set() if include_work_ids is not None else blocked_routines()
     graph, dependents = blocker_graph(functions)
     cascade_cache: dict[str, int] = {}
     def cascade_of(name: str) -> int:
@@ -726,7 +731,11 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
             cascade_cache[name] = cascade(graph, dependents, {name})
         return cascade_cache[name]
 
-    managed_issues = issue_records(required=include_work_ids is None)
+    managed_issues = (
+        {work_id: {"issue_number": number} for work_id, number in issue_numbers.items()}
+        if issue_numbers is not None
+        else issue_records(required=False)
+    ) if include_work_ids is not None else issue_records(required=True)
     missing = [
         f["name"] for f in functions
         if f["status"] == "todo"
@@ -745,7 +754,7 @@ def build_packets(dir_filter: str | None, max_routines: int, max_asm_lines: int,
         )
         and (f["ready"] if include_work_ids is None else f["work_id"] in include_work_ids)
         and (f["name"] not in blocked or include_work_ids is not None)
-        and (f["work_id"] in managed_issues or include_work_ids is not None)
+        and (f["work_id"] in managed_issues)
     ]
     if include_work_ids is None:
         held = common.claim_index()
@@ -851,13 +860,18 @@ def build_packets_for_work_ids(
     work_ids: set[str] | list[str],
     *,
     kind: str = "translation",
+    issue_numbers: dict[str, int] | None = None,
 ) -> list[dict]:
     requested = set(work_ids)
     if not requested:
         raise ValueError("packet materialization requires work IDs")
     packets = build_packets(
-        None, max_routines=len(requested), max_asm_lines=100000,
-        limit=None, include_work_ids=requested,
+        None,
+        max_routines=len(requested),
+        max_asm_lines=100000,
+        limit=None,
+        include_work_ids=requested,
+        issue_numbers=issue_numbers,
     )
     actual = {
         routine["work_id"] for packet in packets for routine in packet["routines"]
@@ -887,11 +901,17 @@ def build_packets_for_work_ids(
     return packets
 
 
-def build_scc_packets(work_ids: set[str] | list[str]) -> list[dict]:
-    return build_packets_for_work_ids(work_ids, kind="dependency-group")
 
-
-
+def build_scc_packets(
+    work_ids: set[str] | list[str],
+    *,
+    issue_numbers: dict[str, int] | None = None,
+) -> list[dict]:
+    return build_packets_for_work_ids(
+        work_ids,
+        kind="dependency-group",
+        issue_numbers=issue_numbers,
+    )
 def drop_claimed(packets: list[dict]) -> list[dict]:
     """Reject duplicate active work claims, including generated packets."""
     claims = common.claim_index()

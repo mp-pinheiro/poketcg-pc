@@ -1,0 +1,9 @@
+async:
+  enabled: true
+task:
+  maxConcurrency: 16
+  maxRuntimeMs: 3600000
+  maxRecursionDepth: 1
+advisor:
+  enabled: true
+  syncBacklog: "3"

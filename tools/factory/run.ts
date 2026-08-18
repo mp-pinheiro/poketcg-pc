@@ -1,0 +1,164 @@
+import { createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
+import path from "node:path";
+
+const root = path.resolve(import.meta.dir, "../..");
+const stateDir = path.join(root, ".factory", "v2", "sessions");
+const extension = path.join(root, ".omp", "extensions", "factory.ts");
+
+type FactoryResponse = {
+	schema: number;
+	op: string;
+	status: "ok" | "waiting" | "conflict" | "stop" | "complete";
+	run_id: string | null;
+	snapshot_sha256: string | null;
+	data: Record<string, unknown> | null;
+	error: { class: string; detail: string; retry_at: string | null } | null;
+};
+
+async function control(op: string, request: Record<string, unknown>): Promise<FactoryResponse> {
+	const process = Bun.spawn(
+		["python3", "tools/factory/control.py", op, "--request", JSON.stringify(request)],
+		{ cwd: root, stdout: "pipe", stderr: "pipe" },
+	);
+	const [code, stdout, stderr] = await Promise.all([
+		process.exited,
+		new Response(process.stdout).text(),
+		new Response(process.stderr).text(),
+	]);
+	try {
+		return JSON.parse(stdout.trim()) as FactoryResponse;
+	} catch {
+		return {
+			schema: 1,
+			op,
+			status: "stop",
+			run_id: null,
+			snapshot_sha256: null,
+			data: null,
+			error: {
+				class: "ControlProtocol",
+				detail: stderr || stdout || `control exited ${code}`,
+				retry_at: null,
+			},
+		};
+	}
+}
+function sleep(milliseconds: number): Promise<void> {
+	const { promise, resolve } = Promise.withResolvers<void>();
+	setTimeout(resolve, milliseconds);
+	return promise;
+}
+
+function nextWait(frontier: FactoryResponse): number {
+	const value = frontier.data?.waiting_until;
+	if (typeof value !== "string") return 60_000;
+	const timestamp = Date.parse(value);
+	if (!Number.isFinite(timestamp)) return 60_000;
+	return Math.max(1_000, Math.min(60_000, timestamp - Date.now()));
+}
+
+async function main(): Promise<void> {
+	const runId = crypto.randomUUID().replaceAll("-", "");
+	const acquired = await control("run-claim", {
+		run_id: runId,
+		runner_instance: `${process.pid}`,
+		lease_seconds: 600,
+	});
+	if (acquired.status === "conflict") {
+		process.stdout.write(`${JSON.stringify(acquired)}\n`);
+		return;
+	}
+	if (acquired.status !== "ok" || !acquired.data) {
+		throw new Error(acquired.error?.detail || "could not acquire factory run lease");
+	}
+	const runClaimCommentId = acquired.data.run_claim_comment_id;
+	if (typeof runClaimCommentId !== "number") {
+		throw new Error("run claim response has no claim comment ID");
+	}
+	const manager = await SessionManager.continueRecent(root, stateDir);
+	const { session } = await createAgentSession({
+		cwd: root,
+		sessionManager: manager,
+		modelPattern: "@default",
+		toolNames: ["factory", "read", "grep", "glob", "eval", "task", "hub"],
+		restrictToolNames: true,
+		allowRestrictedCustomTools: true,
+		additionalExtensionPaths: [extension],
+	});
+	let released = false;
+	const release = async (reason: string): Promise<void> => {
+		if (released) return;
+		released = true;
+		await control("run-release", {
+			run_id: runId,
+			run_claim_comment_id: runClaimCommentId,
+			reason,
+		});
+	};
+	const stop = async (signal: string): Promise<void> => {
+		await release(signal);
+		await session.dispose();
+		process.exit(0);
+	};
+	process.once("SIGINT", () => void stop("sigint"));
+	process.once("SIGTERM", () => void stop("sigterm"));
+	try {
+		for (;;) {
+			const heartbeat = await control("run-heartbeat", {
+				run_id: runId,
+				run_claim_comment_id: runClaimCommentId,
+				lease_seconds: 600,
+				phase: "planning",
+			});
+			if (heartbeat.status !== "ok") throw new Error(heartbeat.error?.detail || "run lease heartbeat failed");
+			const reconciled = await control("reconcile", {
+				adopt: true,
+				run_id: runId,
+				run_claim_comment_id: runClaimCommentId,
+			});
+			if (reconciled.status === "stop") throw new Error(reconciled.error?.detail || "artifact reconciliation stopped");
+			const frontier = await control("frontier", {
+				full: false,
+				job_slots: 16,
+				verifier_slots: 8,
+			});
+			if (frontier.status === "complete") {
+				const completion = await control("complete", {
+					run_id: runId,
+					run_claim_comment_id: runClaimCommentId,
+				});
+				if (completion.status === "complete") {
+					released = true;
+					process.stdout.write(`${JSON.stringify(completion)}\n`);
+					break;
+				}
+				if (completion.status === "stop") throw new Error(completion.error?.detail || "factory completion stopped");
+				await sleep(nextWait(completion));
+				continue;
+			}
+			if (frontier.status === "stop") throw new Error(frontier.error?.detail || "factory frontier stopped");
+			if (frontier.status === "waiting") {
+				await sleep(nextWait(frontier));
+				continue;
+			}
+			await session.prompt([
+				"Execute exactly one factory tick.",
+				"Use only the factory tool for factory state or mutation.",
+				"Dispatch only assignments returned by the frontier, record each finished attempt immediately, and do not infer completion from an empty list.",
+				JSON.stringify(frontier),
+			].join("\n"));
+		}
+	} catch (error) {
+		await release("runner-error");
+		throw error;
+	} finally {
+		await session.dispose();
+	}
+}
+if (import.meta.main) {
+	if (Bun.argv.includes("--check-import")) {
+		process.stdout.write("OMP SDK import: PASS\n");
+	} else {
+		await main();
+	}
+}

@@ -15,7 +15,6 @@ from pathlib import Path
 from typing import Any
 
 import common
-import driver
 import lanes
 import packet as packet_builder
 import prompt as prompt_mod
@@ -26,6 +25,53 @@ import verify
 def _digest(value: Any) -> str:
     payload = json.dumps(value, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(payload.encode()).hexdigest()
+
+def detail_digest(result: dict[str, Any]) -> str:
+    payload = f"{result.get('status')}\n{result.get('detail') or ''}"
+    return hashlib.sha1(payload.encode(), usedforsecurity=False).hexdigest()[:10]
+
+
+def _apply_and_verify(
+    packet: dict[str, Any],
+    lane: Path,
+    translation: dict[str, Any],
+    statics_baseline: list[str] | None,
+    rounds: int,
+    deadline: float,
+    wave_id: str,
+    packet_id: str,
+) -> dict[str, Any]:
+    payload = json.dumps({
+        "packet": packet,
+        "lane": str(lane),
+        "translation": translation,
+        "statics_baseline": statics_baseline,
+        "rounds": rounds,
+        "deadline": deadline,
+        "wave_id": wave_id,
+        "packet_id": packet_id,
+    })
+    completed = common.run_bounded(
+        [sys.executable, str(Path(__file__).with_name("verify_worker.py"))],
+        cwd=common.ROOT,
+        cap=max(0.001, deadline - time.monotonic()),
+        deadline=deadline,
+        check=True,
+        input_text=payload,
+    )
+    response = json.loads(completed.stdout)
+    if not isinstance(response, dict):
+        raise TypeError("verification worker returned a non-object")
+    if response.get("deadline"):
+        raise common.WaveDeadlineExpired(str(response["deadline"]))
+    result = response.get("result")
+    baseline = response.get("statics_baseline")
+    if not isinstance(result, dict) or not isinstance(result.get("status"), str):
+        raise TypeError("verification worker returned an invalid verdict")
+    if not isinstance(baseline, list):
+        raise TypeError("verification worker returned an invalid statics baseline")
+    result["_statics_baseline"] = baseline
+    return result
 
 def central_owned_snapshot(
     assignments: list[dict[str, Any]],
@@ -319,7 +365,8 @@ def agent_assignments(
 
 def stage_bundle(packet: dict[str, Any], lane: Path) -> dict[str, Any]:
     _extracted, hashes = verify._validate_bundle_inputs(packet, lane)
-    output = lane / ".factory-output" / packet["attempt_id"]
+    artifact_key = str(packet.get("artifact_key") or packet["attempt_id"])
+    output = lane / ".factory-output" / artifact_key
     if output.exists():
         existing = common.payload_tree_digest(output)
         manifest = output / ".factory-artifact.json"
@@ -547,12 +594,12 @@ def verify_reply(
                 "status": "format", "failure_class": "schema", "detail": str(exc),
             }
         else:
-            verdict = driver._apply_and_verify(
+            verdict = _apply_and_verify(
                 packet, lane, translation, statics_baseline, rounds, deadline,
                 wave_id, attempt["attempt_id"],
             )
             statics_baseline = verdict.pop("_statics_baseline", None)
-        digest = driver.detail_digest(verdict)
+        digest = detail_digest(verdict)
         common.record_event({
             "event": "verify-finished", "wave_id": wave_id,
             "elapsed_s": round(time.monotonic() - started, 3),
@@ -801,6 +848,363 @@ def first_green(results: list[dict[str, Any]]) -> dict[str, Any]:
         "fingerprint": _digest(evidence),
     }
 
+
+V2_ARTIFACTS = common.FACTORY / "artifacts"
+
+
+def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    expected = {"attempt_id", "statics", "c", "header", "probe", "cases", "mutation"}
+    if set(reply) != expected:
+        raise ValueError(f"translation reply fields differ: {sorted(set(reply) ^ expected)}")
+    attempt_id = packet.get("attempt_id") or packet.get("id")
+    if reply["attempt_id"] != attempt_id:
+        raise ValueError("translation reply attempt_id does not match packet")
+    routines = packet.get("routines") or []
+    if len(routines) != 1:
+        raise ValueError("structured translation replies require exactly one routine")
+    if not all(isinstance(reply[name], str) for name in expected - {"attempt_id"}):
+        raise TypeError("translation reply code fields must be strings")
+    name = routines[0]["name"]
+    return {
+        "statics": reply["statics"] or None,
+        "routines": {
+            name: {
+                "C": reply["c"],
+                "H": reply["header"],
+                "PROBE": reply["probe"],
+                "CASES": reply["cases"],
+                "MUTATION": reply["mutation"],
+            },
+        },
+    }
+
+
+def artifact_exists(bundle_sha256: str) -> bool:
+    if not isinstance(bundle_sha256, str) or len(bundle_sha256) != 64:
+        return False
+    root = V2_ARTIFACTS / bundle_sha256
+    manifest = root / ".factory-artifact.json"
+    if not root.is_dir() or not manifest.is_file():
+        return False
+    try:
+        metadata = json.loads(manifest.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    if metadata.get("kind") == "group":
+        members = metadata.get("members")
+        return (
+            isinstance(members, list)
+            and members == sorted(set(members))
+            and all(isinstance(member, str) and artifact_exists(member) for member in members)
+            and _digest({"kind": "group", "members": members}) == bundle_sha256
+        )
+    return (
+        metadata.get("bundle_sha256") == bundle_sha256
+        and common.payload_tree_digest(root) == bundle_sha256
+    )
+
+
+def store_artifact(staged: dict[str, Any]) -> dict[str, Any]:
+    source = Path(str(staged.get("artifact_dir") or ""))
+    bundle_sha256 = staged.get("bundle_sha256")
+    if not source.is_dir() or not isinstance(bundle_sha256, str) or len(bundle_sha256) != 64:
+        raise ValueError("staged artifact requires a source directory and bundle SHA-256")
+    if common.payload_tree_digest(source) != bundle_sha256:
+        raise RuntimeError("staged artifact payload hash mismatch")
+    V2_ARTIFACTS.mkdir(parents=True, exist_ok=True)
+    destination = V2_ARTIFACTS / bundle_sha256
+    if destination.exists():
+        if artifact_exists(bundle_sha256):
+            return {"artifact_sha256": bundle_sha256, "artifact_dir": str(destination)}
+        raise RuntimeError(f"artifact identity conflict: {destination}")
+    temporary = V2_ARTIFACTS / f".stage-{bundle_sha256}-{os.getpid()}"
+    if temporary.exists():
+        raise RuntimeError(f"artifact staging path exists: {temporary}")
+    try:
+        shutil.copytree(source, temporary)
+        if common.payload_tree_digest(temporary) != bundle_sha256:
+            raise RuntimeError("copied artifact payload hash mismatch")
+        os.replace(temporary, destination)
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+    return {"artifact_sha256": bundle_sha256, "artifact_dir": str(destination)}
+
+
+def verify_attempt(
+    packet: dict[str, Any],
+    reply: dict[str, Any],
+    *,
+    lane_index: int,
+    deadline_seconds: int,
+) -> dict[str, Any]:
+    attempt_id = packet.get("attempt_id") or packet.get("id")
+    if not isinstance(attempt_id, str) or not attempt_id:
+        raise ValueError("packet requires attempt_id")
+    deadline = time.monotonic() + deadline_seconds
+    work_ids = sorted(str(routine["work_id"]) for routine in packet["routines"])
+    try:
+        translation = translation_from_reply(packet, reply)
+        lane = validate_attempt_lane(
+            [packet],
+            lane_index=lane_index,
+            attempt_id=attempt_id,
+        )
+        payload = json.dumps({
+            "packet": packet,
+            "lane": str(lane),
+            "translation": translation,
+            "statics_baseline": None,
+            "rounds": 0,
+            "deadline": deadline,
+            "wave_id": f"v2-{attempt_id}",
+            "packet_id": attempt_id,
+        })
+        completed = common.run_bounded(
+            [sys.executable, str(Path(__file__).with_name("verify_worker.py"))],
+            cwd=common.ROOT,
+            cap=max(0.001, deadline - time.monotonic()),
+            deadline=deadline,
+            check=False,
+            input_text=payload,
+        )
+        if completed.returncode != 0:
+            raw = {
+                "status": "infra-error",
+                "phase": "verify-worker",
+                "detail": completed.stdout + completed.stderr,
+            }
+        else:
+            response = json.loads(completed.stdout)
+            if not isinstance(response, dict) or not isinstance(response.get("result"), dict):
+                raw = {
+                    "status": "infra-error",
+                    "phase": "verify-worker",
+                    "detail": completed.stdout,
+                }
+            else:
+                raw = response["result"]
+    except (OSError, RuntimeError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        raw = {
+            "status": "infra-error",
+            "phase": "verify-attempt",
+            "detail": f"{type(exc).__name__}: {exc}",
+        }
+    normalized = verify.verdict_v1(raw, work_ids)
+    if normalized["status"] != "green":
+        return {
+            "outcome": "diagnostic",
+            "verdict": normalized,
+            "detail": str(raw.get("detail") or ""),
+        }
+    lane = lanes.lane_dir(lane_index)
+    staged = stage_bundle(packet, lane)
+    artifact = store_artifact(staged)
+    return {
+        "outcome": "productive",
+        "verdict": normalized,
+        **artifact,
+    }
+
+
+def verify_lane_attempt(
+    packet: dict[str, Any],
+    *,
+    lane_index: int,
+    deadline_seconds: int,
+) -> dict[str, Any]:
+    deadline = time.monotonic() + deadline_seconds
+    work_ids = sorted(str(routine["work_id"]) for routine in packet["routines"])
+    lane = lanes.lane_dir(lane_index)
+    try:
+        raw = verify.verify_packet(packet, lane, True, deadline=deadline)
+    except (OSError, RuntimeError, TypeError, ValueError) as exc:
+        raw = {
+            "status": "infra-error",
+            "phase": "verify-lane",
+            "detail": f"{type(exc).__name__}: {exc}",
+        }
+    normalized = verify.verdict_v1(raw, work_ids)
+    if normalized["status"] != "green":
+        return {
+            "outcome": "diagnostic",
+            "verdict": normalized,
+            "detail": str(raw.get("detail") or ""),
+        }
+    staged = stage_bundle(packet, lane)
+    artifact = store_artifact(staged)
+    return {
+        "outcome": "productive",
+        "verdict": normalized,
+        **artifact,
+    }
+
+
+def store_group_artifact(artifacts: list[dict[str, Any]]) -> dict[str, Any]:
+    members = sorted({
+        str(artifact["artifact_sha256"])
+        for artifact in artifacts
+        if isinstance(artifact.get("artifact_sha256"), str)
+    })
+    if not members or len(members) != len(artifacts) or not all(artifact_exists(member) for member in members):
+        raise ValueError("group artifact members are missing or invalid")
+    group_sha256 = _digest({"kind": "group", "members": members})
+    destination = V2_ARTIFACTS / group_sha256
+    if destination.exists():
+        if artifact_exists(group_sha256):
+            return {"artifact_sha256": group_sha256, "artifact_dir": str(destination)}
+        raise RuntimeError(f"group artifact identity conflict: {destination}")
+    temporary = V2_ARTIFACTS / f".group-{group_sha256}-{os.getpid()}"
+    try:
+        temporary.mkdir(parents=True)
+        (temporary / "members").mkdir()
+        for member in members:
+            shutil.copytree(V2_ARTIFACTS / member, temporary / "members" / member)
+        (temporary / ".factory-artifact.json").write_text(
+            json.dumps({"kind": "group", "members": members, "bundle_sha256": group_sha256}, sort_keys=True) + "\n"
+        )
+        os.replace(temporary, destination)
+    finally:
+        if temporary.exists():
+            shutil.rmtree(temporary)
+    return {"artifact_sha256": group_sha256, "artifact_dir": str(destination)}
+
+
+def verify_lane_packets(
+    packets: list[dict[str, Any]],
+    *,
+    lane_index: int,
+    deadline_seconds: int,
+) -> dict[str, Any]:
+    outcomes = [
+        verify_lane_attempt(
+            packet,
+            lane_index=lane_index,
+            deadline_seconds=deadline_seconds,
+        )
+        for packet in packets
+    ]
+    failures = [outcome for outcome in outcomes if outcome.get("outcome") != "productive"]
+    if failures:
+        return {
+            "outcome": "diagnostic",
+            "verdict": failures[0]["verdict"],
+            "detail": json.dumps(failures, sort_keys=True),
+        }
+    artifact = store_group_artifact(outcomes)
+    return {
+        "outcome": "productive",
+        "verdict": {
+            "status": "green",
+            "phase": "group",
+            "failure_class": None,
+            "scope": "routine",
+            "retry_action": "accept",
+            "work_ids": sorted(
+                routine["work_id"] for packet in packets for routine in packet["routines"]
+            ),
+            "summary": "green",
+            "evidence": {},
+            "fingerprint": _digest({"packets": [packet["attempt_id"] for packet in packets]}),
+        },
+        **artifact,
+    }
+
+
+V2_STATE = common.FACTORY / "v2"
+
+
+def packet_sha256(packets: list[dict[str, Any]]) -> str:
+    return _digest({"packets": packets})
+
+
+def prepare_attempt_lane(
+    packets: list[dict[str, Any]],
+    *,
+    lane_index: int,
+    attempt_id: str,
+    owned_paths: list[str],
+) -> Path:
+    if not packets:
+        raise ValueError("attempt lane requires packets")
+    lane = lanes.ensure(lane_index, packet=packets[0])
+    manifest = {
+        "schema": 1,
+        "attempt_id": attempt_id,
+        "packet_sha256": packet_sha256(packets),
+        "owned_paths": sorted(owned_paths),
+        "packets": [
+            {
+                "basename": packet["basename"],
+                "work_ids": sorted(routine["work_id"] for routine in packet["routines"]),
+            }
+            for packet in packets
+        ],
+    }
+    path = lane / ".factory-v2-attempt.json"
+    temporary = lane / f".factory-v2-attempt-{os.getpid()}.tmp"
+    temporary.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n")
+    os.replace(temporary, path)
+    return lane
+
+
+def validate_attempt_lane(
+    packets: list[dict[str, Any]],
+    *,
+    lane_index: int,
+    attempt_id: str,
+) -> Path:
+    lane = lanes.lane_dir(lane_index)
+    path = lane / ".factory-v2-attempt.json"
+    try:
+        manifest = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError("attempt lane manifest is missing or corrupt") from exc
+    if (
+        manifest.get("attempt_id") != attempt_id
+        or manifest.get("packet_sha256") != packet_sha256(packets)
+    ):
+        raise RuntimeError("attempt lane manifest does not match packet identity")
+    return lane
+
+
+def quarantine_lane(*, lane_index: int, attempt_id: str) -> Path:
+    lane = lanes.lane_dir(lane_index)
+    destination = V2_STATE / "quarantine" / attempt_id
+    if not lane.exists():
+        raise RuntimeError("cannot quarantine a missing lane")
+    if destination.exists():
+        raise RuntimeError(f"quarantine destination exists: {destination}")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        os.replace(lane, destination)
+    except OSError:
+        shutil.copytree(lane, destination)
+        shutil.rmtree(lane)
+    return destination
+
+
+def artifact_records() -> list[dict[str, Any]]:
+    if not V2_ARTIFACTS.is_dir():
+        return []
+    records: list[dict[str, Any]] = []
+    for root in sorted(path for path in V2_ARTIFACTS.iterdir() if path.is_dir() and not path.name.startswith(".")):
+        if not artifact_exists(root.name):
+            continue
+        packet = root / "packet.json"
+        manifest = root / ".factory-artifact.json"
+        try:
+            metadata = json.loads(manifest.read_text())
+            identity = json.loads(packet.read_text()) if packet.is_file() else None
+        except (OSError, json.JSONDecodeError):
+            continue
+        records.append({
+            "artifact_sha256": root.name,
+            "identity": identity,
+            "metadata": metadata,
+            "path": str(root),
+        })
+    return records
 
 def main() -> int:
     parser = argparse.ArgumentParser()

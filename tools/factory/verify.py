@@ -118,6 +118,55 @@ def verdict(kind: str, detail: str, routine: str | None = None,
             "detail": text, "routine": routine, "failing": names,
             "fingerprint": fingerprint, "retryable": bool(retryable)}
 
+def verdict_v1(result: dict, work_ids: list[str]) -> dict:
+    status = str(result.get("status") or "infra-error")
+    phase = str(result.get("phase") or status)
+    failure_class = result.get("failure_class")
+    if not isinstance(failure_class, str):
+        failure_class = _FAILURE_CLASSES.get(status, "infrastructure")
+    scope = "routine"
+    if failure_class in {"harness", "bundle", "infrastructure"}:
+        scope = "infrastructure" if failure_class == "infrastructure" else "shared-harness"
+    if status == "green":
+        retry_action = "accept"
+    elif failure_class == "provider":
+        retry_action = "backoff"
+    elif failure_class in {"schema", "translation"}:
+        retry_action = "repair"
+    elif failure_class == "infrastructure":
+        retry_action = "retry"
+    else:
+        retry_action = "diagnose"
+    detail = str(result.get("detail") or result.get("output") or "")
+    summary = detail.splitlines()[0][:400] if detail else status
+    evidence = {
+        "status": status,
+        "phase": phase,
+        "detail_sha256": hashlib.sha256(detail.encode()).hexdigest(),
+        "tail_sha256": hashlib.sha256(_tail(detail).encode()).hexdigest(),
+    }
+    stable_signature = {
+        "status": status,
+        "phase": phase,
+        "failure_class": failure_class,
+        "scope": scope,
+        "work_ids": sorted(work_ids),
+        "failing": sorted(str(value) for value in result.get("failing") or []),
+    }
+    return {
+        "status": status,
+        "phase": phase,
+        "failure_class": failure_class,
+        "scope": scope,
+        "retry_action": retry_action,
+        "work_ids": sorted(work_ids),
+        "summary": summary,
+        "evidence": evidence,
+        "fingerprint": hashlib.sha256(
+            json.dumps(stable_signature, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest(),
+    }
+
 
 def run(command: list[str], cwd: Path, timeout: float = 600,
         deadline: float | None = None) -> subprocess.CompletedProcess[str]:

@@ -1,0 +1,1 @@
+Watch the factory control flow for unreconciled completed jobs, expired claims, repeated verifier fingerprints, direct authority writes, ready work without landed progress, premature completion, and Forgejo/gate revision disagreement. Report evidence and the smallest safe recovery action. Never mutate files, Forgejo, Git, or Jujutsu state.

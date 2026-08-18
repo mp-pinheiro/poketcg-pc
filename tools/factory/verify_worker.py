@@ -42,7 +42,9 @@ def main() -> int:
             lane, packet, translation, statics_baseline=statics_baseline,
         )
     except surgery.SurgeryError as exc:
-        result = {"status": "surgery", "detail": str(exc)}
+        result = verify_mod.verdict(
+            "schema", str(exc), phase="surgery", failure_class="schema",
+        )
     else:
         cases_changed = any(str(path).endswith(".py") for path in changed) or rounds == 0
         try:
