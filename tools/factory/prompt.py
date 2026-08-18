@@ -16,14 +16,13 @@ Every routine in the packet needs all five routine blocks.
 
 from __future__ import annotations
 
-import argparse
 import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from common import ROOT, estimate_tokens, load_packet  # noqa: E402
+from common import ROOT
 
 CONTRACT_DOC = ROOT / "docs" / "factory-contract.md"
 BLOCK = re.compile(r"^===(STATICS|C|H|PROBE|CASES|MUTATION)(?:\s+(\S+))?\s*$")
@@ -187,21 +186,3 @@ def parse(reply: str, packet: dict, targets: list[str] | None = None) -> dict:
     # keep only the requested routines: verified ones stay at their lane state
     routines = {fn: blocks_ for fn, blocks_ in routines.items() if fn in set(wanted_names)}
     return {"statics": statics, "routines": routines}
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("packet")
-    parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args()
-    packet = load_packet(args.packet)
-    text = render(packet)
-    if args.dry_run:
-        print(f"prompt tokens (est.): {estimate_tokens(text)}")
-    else:
-        print(text)
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

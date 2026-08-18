@@ -25,11 +25,9 @@ emit per-phase timing without changing the verdict.
 
 from __future__ import annotations
 
-import argparse
 import hashlib
 import json
 import re
-import shutil
 import subprocess
 import sys
 import traceback
@@ -39,15 +37,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import lanes
 from common import (
-    BUNDLES,
     CACHE,
     ORACLE_PYTHON,
     ROOT,
     RUNNER,
     PhaseTimeout,
     WaveDeadlineExpired,
-    load_packet,
-    packet_identity,
     run_bounded,
 )
 
@@ -472,45 +467,3 @@ def _validate_bundle_inputs(packet: dict, lane: Path) -> tuple[dict, dict[str, s
             raise RuntimeError(f"bundle input missing: {path}")
         hashes[rel] = _sha256(path)
     return extracted, hashes
-
-
-def collect_bundle(packet: dict, lane: Path) -> Path:
-    _, hashes = _validate_bundle_inputs(packet, lane)
-    bundle = BUNDLES / packet.get("attempt_id", packet["id"])
-    if bundle.exists():
-        shutil.rmtree(bundle)
-    rels = list(hashes)
-    for rel in rels:
-        source = lane / rel
-        dest = bundle / rel
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, dest)
-    metadata = packet_identity(packet)
-    metadata["schema"] = metadata.get("schema", 2)
-    metadata["attempt_id"] = packet.get("attempt_id", packet["id"])
-    metadata["base_commit"] = packet.get("base_commit")
-    metadata["hashes"] = hashes
-    (bundle / "packet.json").write_text(
-        json.dumps(metadata, sort_keys=True, indent=2) + "\n")
-    return bundle
-
-
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("packet")
-    parser.add_argument("--lane", type=Path, required=True)
-    parser.add_argument("--cases-changed", action="store_true")
-    args = parser.parse_args()
-    packet = load_packet(args.packet)
-    result = verify_packet(packet, args.lane, args.cases_changed)
-    if result["status"] == "green":
-        bundle = collect_bundle(packet, args.lane)
-        result["bundle"] = str(bundle)
-    print(json.dumps(result, indent=1))
-    return 0 if result["status"] == "green" else 1
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())

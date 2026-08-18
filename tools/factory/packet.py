@@ -2,307 +2,30 @@
 """Build self-contained translation packets from the port frontier.
 
 Consumes the same inventory/scope/registry model as tools/progress/report.py
-(imported, not re-implemented), groups ready routines by pret source file,
-splits oversized groups, and emits one JSON packet per group under
-.factory/queue/.  A packet carries everything a stateless translator needs:
-exact ASM slices, C prototypes of every ported callee, resolved constants,
-and the append-mode context of the target files.
+(imported, not re-implemented), groups the requested work IDs by pret source
+file, and returns one packet per group. A packet carries everything a
+stateless translator needs: exact ASM slices, C prototypes of every ported
+callee, resolved constants, and the append-mode context of the target files.
+Packets are values; the caller owns their identity and persistence.
 """
 
 from __future__ import annotations
 
-import argparse
-import copy
 import hashlib
 import importlib.util
 import json
-import os
 import re
-import shutil
 import subprocess
 import sys
-import tempfile
 import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
-from common import (
-    BACKUPS,
-    BUNDLES,
-    QUEUE,
-    ROOT,
-    block_routine,
-    blocked_routines,
-    issue_records,
-    read_json,
-    write_json,
-)
+from common import ROOT
 
 PRET = ROOT / "poketcg"
-MAX_ROUTINES = 8
-MAX_ASM_LINES = 300
-ACTIVE_CLAIM_STATES = common.ACTIVE_CLAIM_STATES
-
-
-def _positive_int(value: str) -> int:
-    number = int(value)
-    if number <= 0:
-        raise argparse.ArgumentTypeError("must be a positive integer")
-    return number
-
-
-def select_pending_packets(limit: int | None) -> list[dict]:
-    packets = sorted(
-        common.list_packets(("pending",)),
-        key=lambda packet: (
-            packet.get("updated_at") if isinstance(packet.get("updated_at"), int) else 0,
-            packet["id"],
-        ),
-    )
-    return packets if limit is None else packets[:limit]
-
-
-def plan_work_id_migration(
-    packets: list[dict],
-    managed_issues: dict[str, dict],
-) -> tuple[list[dict], dict[str, int]]:
-    """Validate and backfill queue identity without mutating the inputs."""
-    migrated = []
-    changed_packets = 0
-    changed_routines = 0
-    for packet in packets:
-        packet_id = packet.get("id")
-        if not isinstance(packet_id, str) or not packet_id:
-            raise ValueError("queue packet has no non-empty id")
-        source = packet.get("file")
-        if not isinstance(source, str) or not source:
-            raise ValueError(f"packet {packet_id} has no non-empty file")
-        routines = packet.get("routines")
-        if not isinstance(routines, list):
-            raise TypeError(f"packet {packet_id} has no routine list")
-        updated = copy.deepcopy(packet)
-        packet_changed = False
-        for index, routine in enumerate(updated["routines"]):
-            name = routine.get("name")
-            if not isinstance(name, str) or not name:
-                raise ValueError(
-                    f"packet {packet_id} routine {index} has no non-empty name"
-                )
-            work_id = f"port:v1:{source}:{name}"
-            issue = managed_issues.get(work_id)
-            if issue is None:
-                raise ValueError(
-                    f"packet {packet_id} routine {name} has unresolved work ID "
-                    f"{work_id}"
-                )
-            if "issue_number" not in issue:
-                raise ValueError(f"issue record {work_id} has no issue number")
-            routine_changed = False
-            for field, expected in (
-                ("work_id", work_id),
-                ("issue_number", issue["issue_number"]),
-            ):
-                if field in routine:
-                    if routine[field] != expected:
-                        raise ValueError(
-                            f"packet {packet_id} routine {name} has mismatched "
-                            f"{field}: {routine[field]!r} != {expected!r}"
-                        )
-                else:
-                    routine[field] = expected
-                    routine_changed = True
-            if routine_changed:
-                packet_changed = True
-                changed_routines += 1
-        if packet_changed:
-            changed_packets += 1
-        migrated.append(updated)
-
-    active_claims: dict[str, str] = {}
-    for packet in migrated:
-        if packet.get("state") not in ACTIVE_CLAIM_STATES:
-            continue
-        for routine in packet["routines"]:
-            work_id = routine["work_id"]
-            owner = active_claims.get(work_id)
-            if owner is not None and owner != packet["id"]:
-                raise ValueError(
-                    f"work ID {work_id} claimed by active packets {owner} and "
-                    f"{packet['id']}"
-                )
-            active_claims[work_id] = packet["id"]
-    return migrated, {
-        "packets": len(migrated),
-        "routines": sum(len(packet["routines"]) for packet in migrated),
-        "changed_packets": changed_packets,
-        "changed_routines": changed_routines,
-    }
-
-
-def _plan_bundle_metadata(packets: list[dict]) -> dict:
-    by_id = {packet["id"]: packet for packet in packets}
-    entries = []
-    missing = []
-    existing = []
-    if not BUNDLES.is_dir():
-        return {
-            "bundles": 0,
-            "changed_bundle_metadata": 0,
-            "entries": entries,
-            "missing": missing,
-            "existing": existing,
-        }
-    for bundle in sorted(path for path in BUNDLES.iterdir() if path.is_dir()):
-        packet = by_id.get(bundle.name)
-        if packet is None:
-            raise ValueError(f"orphan bundle directory: {bundle}")
-        expected = common.packet_identity(packet)
-        metadata = bundle / "packet.json"
-        if metadata.exists():
-            raw = metadata.read_bytes()
-            existing_identity = json.loads(raw)
-            if existing_identity != expected:
-                raise ValueError(f"bundle identity mismatch: {metadata}")
-            existing.append((metadata, raw))
-        else:
-            missing.append((metadata, expected))
-        entries.append((metadata, expected))
-    return {
-        "bundles": len(entries),
-        "changed_bundle_metadata": len(missing),
-        "entries": entries,
-        "missing": missing,
-        "existing": existing,
-    }
-
-
-def _migration_preflight() -> dict:
-    packets = []
-    queue_entries = []
-    if QUEUE.is_dir():
-        for path in sorted(QUEUE.glob("*.json")):
-            raw = path.read_bytes()
-            packet = json.loads(raw)
-            if path.stem != packet.get("id"):
-                raise ValueError(f"queue filename does not match packet id: {path}")
-            queue_entries.append((path, raw, packet))
-    managed_issues = issue_records(required=True)
-    packets = [packet for _path, _raw, packet in queue_entries]
-    migrated, counts = plan_work_id_migration(packets, managed_issues)
-    planned_queue = []
-    for (path, raw, original), updated in zip(queue_entries, migrated):
-        planned_queue.append((path, raw, original, updated))
-    bundle_plan = _plan_bundle_metadata(migrated)
-    counts.update({
-        "bundles": bundle_plan["bundles"],
-        "changed_bundle_metadata": bundle_plan["changed_bundle_metadata"],
-    })
-    return {
-        "counts": counts,
-        "queue": planned_queue,
-        "bundles": bundle_plan,
-    }
-
-
-def _restore_bytes(path: Path, raw: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temp = tempfile.mkstemp(prefix=f".{path.stem}.", suffix=".restore",
-                                dir=path.parent)
-    try:
-        with os.fdopen(fd, "wb") as stream:
-            stream.write(raw)
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temp, path)
-    finally:
-        if os.path.exists(temp):
-            os.unlink(temp)
-
-
-def _create_migration_backup(preflight: dict) -> Path:
-    BACKUPS.mkdir(parents=True, exist_ok=True)
-    stamp = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
-    backup = BACKUPS / f"work-id-migration-{stamp}-{time.time_ns() % 1000000:06d}"
-    backup.mkdir()
-    queue_files = []
-    for path, _raw, original, updated in preflight["queue"]:
-        if original == updated:
-            continue
-        destination = backup / "queue" / path.name
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(path, destination)
-        queue_files.append(str(destination.relative_to(backup)))
-    bundle_files = []
-    for path, raw in preflight["bundles"]["existing"]:
-        destination = backup / "bundles" / path.parent.name / path.name
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_bytes(raw)
-        bundle_files.append(str(destination.relative_to(backup)))
-    absent = [
-        str(path.relative_to(BUNDLES))
-        for path, _expected in preflight["bundles"]["missing"]
-    ]
-    write_json(backup / "manifest.json", {
-        "queue": queue_files,
-        "bundle_metadata": bundle_files,
-        "absent_bundle_metadata": absent,
-    })
-    return backup
-
-
-def _restore_migration(preflight: dict) -> None:
-    for path, raw, original, updated in preflight["queue"]:
-        if original != updated:
-            _restore_bytes(path, raw)
-    for path, raw in preflight["bundles"]["existing"]:
-        _restore_bytes(path, raw)
-    for path, _expected in preflight["bundles"]["missing"]:
-        if path.exists():
-            path.unlink()
-
-
-def apply_work_id_migration(preflight: dict) -> dict:
-    """Apply a completed preflight with a backup and atomic rollback."""
-    counts = dict(preflight["counts"])
-    if not counts["changed_packets"] and not counts["changed_bundle_metadata"]:
-        counts["backup"] = None
-        return counts
-    backup = _create_migration_backup(preflight)
-    try:
-        for path, _raw, original, updated in preflight["queue"]:
-            if original != updated:
-                write_json(path, updated)
-        for path, expected in preflight["bundles"]["missing"]:
-            write_json(path, expected)
-        for path, _raw, original, updated in preflight["queue"]:
-            if original != updated and read_json(path) != updated:
-                raise RuntimeError(f"queue readback mismatch: {path}")
-        for path, expected in preflight["bundles"]["missing"]:
-            if read_json(path) != expected:
-                raise RuntimeError(f"bundle metadata readback mismatch: {path}")
-    except (OSError, RuntimeError, TypeError, ValueError) as exc:
-        try:
-            _restore_migration(preflight)
-        except (OSError, RuntimeError, TypeError, ValueError) as restore_exc:
-            raise RuntimeError(
-                f"migration failed; backup at {backup}; rollback failed: "
-                f"{restore_exc}"
-            ) from exc
-        raise RuntimeError(
-            f"migration failed and was restored; backup at {backup}: {exc}"
-        ) from exc
-    counts["backup"] = str(backup)
-    return counts
-
-
-def run_work_id_migration(*, apply: bool = False) -> dict:
-    preflight = _migration_preflight()
-    if apply:
-        return apply_work_id_migration(preflight)
-    return dict(preflight["counts"], backup=None)
-
 
 
 def _load_module(name: str, path: Path):
@@ -314,9 +37,19 @@ def _load_module(name: str, path: Path):
     return module
 
 
+_REPORT = None
+
+
+def report_module():
+    global _REPORT
+    if _REPORT is None:
+        _REPORT = _load_module("factory_report", ROOT / "tools/progress/report.py")
+    return _REPORT
+
+
 def compute_functions() -> list[dict]:
     """Run report.py's compute() in-process; no files are written."""
-    report = _load_module("factory_report", ROOT / "tools/progress/report.py")
+    report = report_module()
     inventory = report.load_inventory()
     routines, _ = report.load_routines()
     gate = report.load_gate()
@@ -715,15 +448,13 @@ def cascade(graph: dict[str, set[str]], dependents: dict[str, list[str]],
 
 
 def build_packets(
-    dir_filter: str | None,
+    work_ids: set[str],
+    *,
     max_routines: int,
     max_asm_lines: int,
-    limit: int | None,
-    include_work_ids: set[str] | None = None,
-    issue_numbers: dict[str, int] | None = None,
+    issue_numbers: dict[str, int],
 ) -> list[dict]:
     functions, _inventory = compute_functions()
-    blocked = set() if include_work_ids is not None else blocked_routines()
     graph, dependents = blocker_graph(functions)
     cascade_cache: dict[str, int] = {}
     def cascade_of(name: str) -> int:
@@ -731,36 +462,13 @@ def build_packets(
             cascade_cache[name] = cascade(graph, dependents, {name})
         return cascade_cache[name]
 
-    managed_issues = (
-        {work_id: {"issue_number": number} for work_id, number in issue_numbers.items()}
-        if issue_numbers is not None
-        else issue_records(required=False)
-    ) if include_work_ids is not None else issue_records(required=True)
-    missing = [
-        f["name"] for f in functions
-        if f["status"] == "todo"
-        and f.get("work_id") not in managed_issues
-    ]
-    if missing and include_work_ids is None:
-        raise RuntimeError(
-            "Forgejo issue missing for todo routines: "
-            + ", ".join(sorted(missing))
-        )
+    managed_issues = {
+        work_id: {"issue_number": number} for work_id, number in issue_numbers.items()
+    }
     ready = [
         f for f in functions
-        if (
-            f["status"] == "todo"
-            or include_work_ids is not None and f["work_id"] in include_work_ids
-        )
-        and (f["ready"] if include_work_ids is None else f["work_id"] in include_work_ids)
-        and (f["name"] not in blocked or include_work_ids is not None)
-        and (f["work_id"] in managed_issues)
+        if f["work_id"] in work_ids and f["work_id"] in managed_issues
     ]
-    if include_work_ids is None:
-        held = common.claim_index()
-        ready = [f for f in ready if f["work_id"] not in held]
-    if dir_filter:
-        ready = [f for f in ready if (f["file"] or "").startswith(dir_filter)]
 
     groups: dict[str, list[dict]] = {}
     for f in sorted(ready, key=lambda f: f["line"]):
@@ -856,21 +564,21 @@ def build_packets(
             }
             packets.append(packet)
     return packets
+
+
 def build_packets_for_work_ids(
     work_ids: set[str] | list[str],
     *,
     kind: str = "translation",
-    issue_numbers: dict[str, int] | None = None,
+    issue_numbers: dict[str, int],
 ) -> list[dict]:
     requested = set(work_ids)
     if not requested:
         raise ValueError("packet materialization requires work IDs")
     packets = build_packets(
-        None,
+        requested,
         max_routines=len(requested),
         max_asm_lines=100000,
-        limit=None,
-        include_work_ids=requested,
         issue_numbers=issue_numbers,
     )
     actual = {
@@ -886,7 +594,6 @@ def build_packets_for_work_ids(
     }
     packets = attach_dependencies(
         packets,
-        record_blockers=False,
         internal_names=internal_names if kind == "dependency-group" else None,
     )
     after = {
@@ -901,36 +608,16 @@ def build_packets_for_work_ids(
     return packets
 
 
-
 def build_scc_packets(
     work_ids: set[str] | list[str],
     *,
-    issue_numbers: dict[str, int] | None = None,
+    issue_numbers: dict[str, int],
 ) -> list[dict]:
     return build_packets_for_work_ids(
         work_ids,
         kind="dependency-group",
         issue_numbers=issue_numbers,
     )
-def drop_claimed(packets: list[dict]) -> list[dict]:
-    """Reject duplicate active work claims, including generated packets."""
-    claims = common.claim_index()
-    for packet in packets:
-        common.validate_packet(packet)
-        for routine in packet["routines"]:
-            work_id = routine["work_id"]
-            owner = claims.get(work_id)
-            if owner is not None and owner["attempt_id"] != packet["attempt_id"]:
-                raise RuntimeError(
-                    f"work ID {work_id} already claimed by non-historical packet "
-                    f"{owner['attempt_id']}"
-                )
-            claims[work_id] = {
-                "attempt_id": packet["attempt_id"],
-                "packet_id": packet["id"],
-                "state": packet["state"],
-            }
-    return packets
 
 
 def dissolved_symbols() -> set[str]:
@@ -961,8 +648,6 @@ def dissolved_symbols() -> set[str]:
 def attach_dependencies(
     packets: list[dict],
     internal_names: set[str] | None = None,
-    *,
-    record_blockers: bool = True,
 ) -> list[dict]:
     """Fill callee prototypes; drop routines whose callees cannot link.
 
@@ -999,12 +684,6 @@ def attach_dependencies(
                 })
             routine["callees"] = callees
             if unavailable:
-                if record_blockers:
-                    block_routine(
-                        routine["name"],
-                        f"callee has no C symbol: {', '.join(unavailable)}",
-                        "port or transform the named callee",
-                    )
                 continue
             usable.append(routine)
         if not usable:
@@ -1014,127 +693,3 @@ def attach_dependencies(
         packet["cascade"] = cascade(graph, dependents, {r["name"] for r in usable})
         kept.append(packet)
     return kept
-
-
-def cmd_chokepoints(limit: int) -> int:
-    functions, _inventory = compute_functions()
-    graph, dependents = blocker_graph(functions)
-    by_name = {f["name"]: f for f in functions}
-    onehop: dict[str, int] = {}
-    for name, blockers in graph.items():
-        for blocker in blockers:
-            onehop[blocker] = onehop.get(blocker, 0) + 1
-    todo_names = list(graph)
-    scored = sorted(
-        ((cascade(graph, dependents, {n}), n) for n in todo_names),
-        reverse=True)
-    print(f"{'cascade':>7} {'1hop':>5} {'size':>6} {'ready':>6}  name  blockers")
-    for score, name in scored[:limit]:
-        f = by_name[name]
-        print(f"{score:7} {onehop.get(name, 0):5} {f['size']:5}b {f['ready']!s:>6}  "
-              f"{name}  {f['blockers'][:4]}")
-    return 0
-
-
-def cmd_scc(as_json: bool) -> int:
-    groups = scc_projection(compute_functions()[0])
-    if as_json:
-        print(json.dumps(groups, sort_keys=True))
-    else:
-        for group in groups:
-            print(
-                f"{group['group_id']} size={group['size']} "
-                f"basenames={','.join(group['basenames'])} "
-                f"blocked_on={','.join(group['blocked_on'])}"
-            )
-    return 0
-
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    sub = parser.add_subparsers(dest="command", required=True)
-    build = sub.add_parser("build", help="emit packets from the current frontier")
-    build.add_argument("--dir", help="pret path prefix filter, e.g. src/audio")
-    build.add_argument("--max-routines", type=int, default=MAX_ROUTINES)
-    build.add_argument("--max-asm-lines", type=int, default=MAX_ASM_LINES)
-    build.add_argument("--limit", type=_positive_int, help="emit at most N packets")
-    build.add_argument("--force", action="store_true",
-                       help="overwrite queue entries that already exist")
-    build.add_argument("--json", action="store_true", help="print packet ids as JSON")
-    chokepoints = sub.add_parser(
-        "chokepoints", help="rank todo routines by transitive cascade")
-    chokepoints.add_argument("--limit", type=int, default=20)
-    migrate = sub.add_parser(
-        "migrate-work-ids",
-        help="backfill queue and bundle work identity from the issue cache",
-    )
-    migrate.add_argument(
-        "--apply", action="store_true",
-        help="write the validated migration and create a backup",
-    )
-    scc = sub.add_parser("scc", help="project cyclic dependency groups")
-    scc.add_argument("--json", action="store_true")
-    args = parser.parse_args()
-
-    if args.command == "migrate-work-ids":
-        try:
-            counts = run_work_id_migration(apply=args.apply)
-        except (OSError, RuntimeError, ValueError) as exc:
-            print(f"migration aborted: {exc}", file=sys.stderr)
-            return 1
-        print(
-            "packets={packets} routines={routines} "
-            "changed_packets={changed_packets} changed_routines={changed_routines} "
-            "bundles={bundles} "
-            "changed_bundle_metadata={changed_bundle_metadata}".format(**counts)
-        )
-        if counts["backup"] is None:
-            print("no files written; no backup created")
-        else:
-            print(f"migration applied; backup: {counts['backup']}")
-        return 0
-
-    if args.command == "chokepoints":
-        return cmd_chokepoints(args.limit)
-    if args.command == "scc":
-        return cmd_scc(args.json)
-
-    selected_pending = select_pending_packets(args.limit)
-    capacity = None if args.limit is None else args.limit - len(selected_pending)
-    fresh = []
-    if capacity is None or capacity > 0:
-        fresh = build_packets(
-            args.dir, args.max_routines, args.max_asm_lines, capacity,
-        )
-        if not args.force:
-            fresh = drop_claimed(fresh)
-        fresh = attach_dependencies(fresh)
-    built_at = int(time.time())
-    written = []
-    for packet in fresh:
-        packet.update({
-            "updated_at": built_at,
-            "rounds": 0,
-            "format_retry_used": False,
-        })
-        path = QUEUE / f"{packet['id']}.json"
-        if path.exists() and not args.force:
-            existing = json.loads(path.read_text())
-            if existing.get("state") not in (None, "pending"):
-                continue
-        write_json(path, packet)
-        written.append(packet["id"])
-    selected_ids = [packet["id"] for packet in selected_pending]
-    result_ids = selected_ids + written
-    if args.json:
-        print(json.dumps(result_ids))
-    else:
-        for packet in fresh:
-            if packet["id"] in written:
-                print(f"{packet['id']:32} {packet['mode']:6} routines={len(packet['routines'])} "
-                      f"bytes={packet['bytes']} cascade={packet['cascade']}")
-        print(f"packets: {len(result_ids)} written, {len(fresh) - len(written)} skipped")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
