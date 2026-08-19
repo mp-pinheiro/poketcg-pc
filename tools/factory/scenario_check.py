@@ -16,6 +16,7 @@ import forecast
 import forgejo
 import integrate
 import ledger
+import migration
 import scheduler
 import workers
 
@@ -607,6 +608,43 @@ def check_forecast() -> None:
     assert dated["p85_at"].startswith("2026-08-18T00:02:30")
 
 
+def check_migration_identity() -> None:
+    issue = {
+        **work_issue(),
+        "created_at": "2026-08-18T00:00:00Z",
+        "updated_at": "2026-08-18T00:00:00Z",
+    }
+    action = {
+        "kind": "adopt-routine",
+        "work_id": "port:v1:src/home/demo.asm:Demo",
+        "issue_number": 101,
+        "body": issue["body"],
+        "state": "ready",
+        "labels": ["port/ready", "tier/1"],
+    }
+    gate = {"commit": "c" * 40, "complete": True}
+    plan = {
+        "created_at": "2026-08-18T00:00:00+00:00",
+        "gate_commit": gate["commit"],
+    }
+
+    class Stub:
+        def dependencies(self, _number: int) -> list[dict]:
+            return []
+
+    first = migration._migration_event(issue, action, plan=plan, gate=gate, client=Stub())
+    moved = migration._migration_event(
+        issue, action, plan={**plan, "revision": "d" * 40}, gate=gate, client=Stub(),
+    )
+    assert first.event_id == moved.event_id
+    assert first.payload["source_revision"] == gate["commit"]
+    rebuilt = migration._migration_event(
+        issue, action, plan={**plan, "gate_commit": "e" * 40}, gate=gate, client=Stub(),
+    )
+    assert rebuilt.event_id != first.event_id
+
+
+
 def main() -> int:
     check_ledger()
     check_control()
@@ -617,6 +655,7 @@ def main() -> int:
     check_derived_cache()
     check_artifact_store()
     check_forecast()
+    check_migration_identity()
     print("factory scenario check: PASS")
     return 0
 

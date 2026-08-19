@@ -1517,8 +1517,8 @@ def migrate_factory(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
             saved = json.loads(migration.PLAN_PATH.read_text())
         except (OSError, json.JSONDecodeError) as exc:
             raise ControlError("saved migration plan is corrupt") from exc
-        if saved.get("revision") != revision or saved.get("gate_commit") != gate.get("commit"):
-            raise ControlError("saved migration plan no longer matches revision or gate")
+        if saved.get("gate_commit") != gate.get("commit"):
+            raise ControlError("saved migration plan no longer matches the current gate")
         plan = saved
     else:
         migration.atomic_json(migration.PLAN_PATH, plan)
@@ -1529,7 +1529,7 @@ def migrate_factory(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
     if not isinstance(workers, int) or not 1 <= workers <= 16:
         raise ControlError("migrate workers must be 1..16")
     result = migration.apply_plan(
-        client, plan, revision=revision, gate=gate, limit=limit, workers=workers,
+        client, plan, gate=gate, limit=limit, workers=workers,
     )
     return response(
         "migrate",

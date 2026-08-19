@@ -417,7 +417,6 @@ def _migration_event(
     action: dict[str, Any],
     *,
     plan: dict[str, Any],
-    revision: str,
     gate: dict[str, Any],
     client: forgejo.ForgejoClient,
 ) -> ledger.FactoryEvent:
@@ -425,6 +424,7 @@ def _migration_event(
     dependencies = client.dependencies(int(issue["number"]))
     intent = ledger.intent_sha256(issue, dependencies, [])
     state = str(action.get("state") or "ready")
+    measured = str(plan["gate_commit"])
     return ledger.FactoryEvent.create(
         kind="migrated",
         run_id="migration",
@@ -432,13 +432,13 @@ def _migration_event(
         attempt_id=None,
         parent_comment_id=None,
         parent_event_sha256=None,
-        base_revision=revision,
+        base_revision=measured,
         intent_sha256=intent,
         emitted_at=str(plan["created_at"]),
         payload={
             "state": state,
-            "source_revision": revision,
-            "publication_revision": revision if state == "done" else "",
+            "source_revision": measured,
+            "publication_revision": measured if state == "done" else "",
             "gate_sha256": forgejo.sha256(gate),
             "legacy_history_sha256": forgejo.sha256(action),
             "landed_at": plan["created_at"] if state == "done" else None,
@@ -459,13 +459,12 @@ def apply_plan(
     client: forgejo.ForgejoClient,
     plan: dict[str, Any],
     *,
-    revision: str,
     gate: dict[str, Any],
     limit: int | None = None,
     workers: int = 8,
 ) -> dict[str, Any]:
-    if plan.get("revision") != revision or plan.get("gate_commit") != gate.get("commit"):
-        raise MigrationError("migration plan no longer matches revision or gate")
+    if plan.get("gate_commit") != gate.get("commit"):
+        raise MigrationError("migration plan no longer matches the current gate")
     if plan.get("unmarked_port_like"):
         raise MigrationError("migration has unmarked port-like issues")
     client.ensure_labels(LABELS)
@@ -528,7 +527,6 @@ def apply_plan(
             issue,
             action,
             plan=plan,
-            revision=revision,
             gate=gate,
             client=client,
         )
