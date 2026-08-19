@@ -75,7 +75,7 @@ async function main(): Promise<void> {
 	if (typeof runClaimCommentId !== "number") {
 		throw new Error("run claim response has no claim comment ID");
 	}
-	const manager = await SessionManager.continueRecent(root, stateDir);
+	const manager = await SessionManager.create(root, stateDir);
 	const { session, extensionsResult } = await createAgentSession({
 		cwd: root,
 		sessionManager: manager,
@@ -157,9 +157,13 @@ async function main(): Promise<void> {
 				continue;
 			}
 			await session.prompt([
-				"Execute exactly one factory tick.",
-				"Use only the factory tool for factory state or mutation.",
-				"Dispatch only assignments returned by the frontier, record each finished attempt immediately, and do not infer completion from an empty list.",
+				"Execute exactly one factory tick with the `factory` tool.",
+				`Its ops: claim {run_id:"${runId}", run_claim_comment_id:${runClaimCommentId}, work_id, model_route},`,
+				"then record {run_id, run_claim_comment_id, work_id, packet_sha256, claim_comment_id} for every finished attempt,",
+				"and integrate {run_id, run_claim_comment_id, issue_numbers} when the frontier returns integration.",
+				"claim returns the lane root, the owned paths and the exact prompt: dispatch it to a port-worker subagent",
+				"(factory-helper when kind is repair) and record the attempt as soon as that subagent returns.",
+				"Dispatch only the assignments below, never infer completion from an empty list, and never write files yourself.",
 				JSON.stringify(frontier),
 			].join("\n"));
 		}
