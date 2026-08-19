@@ -861,9 +861,76 @@ def reconcile_artifacts(
             break
     return {"adopted": adopted, "missing": missing}
 
+
+def reconcile_policy(
+    client: forgejo.ForgejoClient,
+    state: ReducedSnapshot,
+    *,
+    run_id: str,
+) -> dict[str, list[str]]:
+    """Make the ledger agree with `.factory/blocked.toml`, in both directions."""
+    inventory = _inventory_by_work()
+    blocked: list[str] = []
+    cleared: list[str] = []
+    for work_id, view in sorted(state.views_by_work.items()):
+        if view.terminal or view.state in {"running", "integrating"}:
+            continue
+        record = inventory.get(work_id) or {}
+        veto = record.get("operational_blocker")
+        policy_blocked = view.state == "blocked" and not view.blockers and not view.escalated
+        parent = view.canonical_event
+        if parent is None:
+            continue
+        if veto and view.state != "blocked":
+            event = ledger.FactoryEvent.create(
+                kind="block",
+                run_id=run_id,
+                work_id=work_id,
+                attempt_id=None,
+                parent_comment_id=parent.comment_id,
+                parent_event_sha256=parent.event.event_sha256,
+                base_revision=parent.event.base_revision,
+                intent_sha256=view.intent_sha256 or "",
+                emitted_at=datetime.now(UTC).isoformat(),
+                payload={
+                    "reason": "operational-blocker",
+                    "unblock": str(veto.get("unblock") or "clear the operational blocker"),
+                    "dependency_issue_numbers": [],
+                },
+            )
+            issue = state.issues_by_work[work_id]
+            client.append_event(int(issue["number"]), event.comment_body(), event.event_id)
+            labels = _projected_labels(issue, "blocked")
+            if "attention/human" not in labels:
+                labels = sorted([*labels, "attention/human"])
+            client.set_projection(int(issue["number"]), labels=labels, state="open")
+            blocked.append(work_id)
+        elif policy_blocked and not veto:
+            event = ledger.FactoryEvent.create(
+                kind="unblock",
+                run_id=run_id,
+                work_id=work_id,
+                attempt_id=None,
+                parent_comment_id=parent.comment_id,
+                parent_event_sha256=parent.event.event_sha256,
+                base_revision=parent.event.base_revision,
+                intent_sha256=view.intent_sha256 or "",
+                emitted_at=datetime.now(UTC).isoformat(),
+                payload={
+                    "block_comment_id": parent.comment_id,
+                    "reason": "operational blocker cleared",
+                },
+            )
+            issue = state.issues_by_work[work_id]
+            client.append_event(int(issue["number"]), event.comment_body(), event.event_id)
+            cleared.append(work_id)
+    return {"blocked": blocked, "cleared": cleared}
+
+
 def reconcile(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
     state = reduced_snapshot(client, full=bool(request.get("full", False)))
     artifacts = {"adopted": [], "missing": []}
+    policy: dict[str, list[str]] = {"blocked": [], "cleared": []}
     if bool(request.get("adopt", False)):
         run_id = request.get("run_id")
         run_claim_comment_id = request.get("run_claim_comment_id")
@@ -875,12 +942,13 @@ def reconcile(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[st
             run_id=run_id,
             run_claim_comment_id=run_claim_comment_id,
         )
+        policy = reconcile_policy(client, state, run_id=run_id)
     return response(
         "reconcile",
         "ok",
         run_id=state.control.run_id if state.control else None,
         snapshot_sha256=state.factory_snapshot.sha256,
-        data={**status(client, full=False), "artifacts": artifacts},
+        data={**status(client, full=False), "artifacts": artifacts, "policy": policy},
     )
 
 

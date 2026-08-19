@@ -253,6 +253,80 @@ def check_dirty_guard() -> None:
     assert control.owned_dirty_paths("M tools/factory/ledger.py") == []
 
 
+def check_policy_veto_routing() -> None:
+    def work(number: int, *, state: str, dependencies: tuple[int, ...] = ()) -> scheduler.FactoryWork:
+        return scheduler.FactoryWork(
+            issue_number=number,
+            work_id=f"port:v1:src/home/demo{number}.asm:Demo{number}",
+            source=f"src/home/demo{number}.asm",
+            basenames=(f"demo{number}",),
+            owned_paths=(f"src/home/demo{number}.c",),
+            size=20,
+            tier=1,
+            priority="normal",
+            state=state,
+            dependencies=dependencies,
+            ready_at=datetime(2026, 8, 18, tzinfo=UTC),
+        )
+
+    vetoed = work(201, state="blocked")
+    waiting_on_callee = work(202, state="blocked", dependencies=(203,))
+    callee = work(203, state="ready")
+    planned = scheduler.plan(
+        scheduler.FactorySnapshot(sha256="f" * 64, works=(vetoed, waiting_on_callee)),
+        scheduler.Capacity(job_slots=4),
+        datetime(2026, 8, 18, 1, tzinfo=UTC),
+    )
+    assert planned.assignments == ()
+    assert planned.blocker_review == (201,)
+    assert planned.dependency_analysis == ()
+    dependency_only = scheduler.plan(
+        scheduler.FactorySnapshot(sha256="e" * 64, works=(waiting_on_callee, callee)),
+        scheduler.Capacity(job_slots=4),
+        datetime(2026, 8, 18, 1, tzinfo=UTC),
+    )
+    assert [item.issue_number for item in dependency_only.assignments] == [203]
+    assert migration.state_for({"status": "todo", "tier": 1, "operational_blocker": {"reason": "veto"}}) == "blocked"
+    assert migration.state_for({"status": "todo", "tier": 1}) == "ready"
+    assert "attention/human" in migration.labels_for(
+        {"tier": 1, "operational_blocker": {"reason": "veto"}}, "blocked",
+    )
+    assert "attention/human" not in migration.labels_for({"tier": 1}, "ready")
+
+
+def check_cohort_state() -> None:
+    def function(name: str, *, blockers: tuple[str, ...] = (), veto: bool = False) -> dict:
+        value = {
+            "name": name,
+            "file": "src/home/cycle.asm",
+            "status": "todo",
+            "ready": False,
+            "size": 20,
+            "line": 1,
+            "refs": 1,
+            "tier": 1,
+            "work_id": f"port:v1:src/home/cycle.asm:{name}",
+            "blockers": list(blockers),
+        }
+        if veto:
+            value["operational_blocker"] = {"reason": "veto", "unblock": "clear it"}
+        return value
+
+    cycle = [function("A", blockers=("B",)), function("B", blockers=("A",))]
+    actions = migration._cohort_actions(cycle)
+    assert len(actions) == 1
+    assert actions[0]["state"] == "ready"
+    assert "attention/human" not in actions[0]["labels"]
+    with_external = [function("A", blockers=("B", "Outside")), function("B", blockers=("A",)), function("Outside")]
+    external_actions = migration._cohort_actions(with_external)
+    assert [action["state"] for action in external_actions] == ["blocked"]
+    vetoed = [function("A", blockers=("B",), veto=True), function("B", blockers=("A",))]
+    vetoed_actions = migration._cohort_actions(vetoed)
+    assert vetoed_actions[0]["state"] == "blocked"
+    assert "attention/human" in vetoed_actions[0]["labels"]
+
+
+
 def check_recovery_ladder() -> None:
     issue = work_issue()
     intent = ledger.intent_sha256(issue, [], [])
@@ -744,6 +818,8 @@ def main() -> int:
     check_first_claim_election()
     check_lease_covers_deadline()
     check_dirty_guard()
+    check_policy_veto_routing()
+    check_cohort_state()
     check_recovery_ladder()
     check_forgejo_client()
     check_incremental_listing()

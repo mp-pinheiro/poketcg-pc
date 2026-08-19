@@ -62,6 +62,7 @@ def compute_functions() -> list[dict]:
         if work:
             enriched["work_id"] = work["work_id"]
             enriched["tier"] = work["tier"]
+            enriched["operational_blocker"] = work["operational_blocker"]
         functions.append(enriched)
     return functions, inventory
 

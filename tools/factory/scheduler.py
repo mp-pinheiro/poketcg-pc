@@ -270,12 +270,15 @@ def plan(
         return FactoryPlan(snapshot_sha256=snapshot.sha256, waiting_until=min(waits), waiting_reason="backoff")
     review = [
         work.issue_number for work in snapshot.works
-        if work.state == "paused" or work.escalated
+        if work.state == "paused"
+        or work.escalated
+        or (work.state == "blocked" and not work.dependencies)
     ]
     blocked = [
         work.issue_number for work in snapshot.works
         if work.state not in {"done", "excluded"}
         and not work.escalated
+        and work.dependencies
         and (work.state == "blocked" or not _dependency_ready(work, by_issue))
     ]
     if review:

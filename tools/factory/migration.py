@@ -95,7 +95,10 @@ def generated_body(work_id: str, function: dict[str, Any], state: str) -> str:
 
 
 def labels_for(function: dict[str, Any], state: str) -> list[str]:
-    return [f"port/{state}", f"tier/{int(function['tier'])}", "priority/normal"]
+    labels = [f"port/{state}", f"tier/{int(function['tier'])}", "priority/normal"]
+    if function.get("operational_blocker"):
+        labels.append("attention/human")
+    return labels
 
 
 def state_for(function: dict[str, Any]) -> str:
@@ -106,7 +109,7 @@ def state_for(function: dict[str, Any]) -> str:
         return "excluded"
     if status == "ported":
         return "integrating"
-    if function.get("blockers"):
+    if function.get("operational_blocker") or function.get("blockers"):
         return "blocked"
     return "ready"
 
@@ -129,9 +132,21 @@ def _cohort_actions(functions: list[dict[str, Any]]) -> list[dict[str, Any]]:
     by_name = {function["name"]: function for function in functions}
     actions: list[dict[str, Any]] = []
     for group in packet.scc_projection(functions):
-        members = sorted(by_name[name]["work_id"] for name in group["work_ids"])
+        names = set(group["work_ids"])
+        members = sorted(by_name[name]["work_id"] for name in names)
         digest = common.cohort_id(set(members))
         work_id = f"cohort:v1:{digest}"
+        external = sorted({
+            blocker
+            for name in names
+            for blocker in by_name[name].get("blockers") or []
+            if blocker not in names
+        })
+        vetoed = any(by_name[name].get("operational_blocker") for name in names)
+        state = "blocked" if external or vetoed else "ready"
+        labels = [f"port/{state}", "tier/4", "priority/normal"]
+        if vetoed:
+            labels.append("attention/human")
         actions.append({
             "kind": "create-cohort",
             "work_id": work_id,
@@ -141,8 +156,8 @@ def _cohort_actions(functions: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 f'<!-- poketcg-port-cohort:v1 {{"work_id":{json.dumps(work_id)},'
                 f'"members":{json.dumps(members, separators=(",", ":"))}}} -->\n'
             ),
-            "labels": ["port/blocked", "tier/4", "priority/normal"],
-            "state": "blocked",
+            "labels": labels,
+            "state": state,
         })
     return sorted(actions, key=lambda action: action["work_id"])
 
