@@ -249,7 +249,7 @@ class ForgejoClient:
                 if exc.code in TRANSIENT_CODES:
                     raise ForgejoUnavailable(f"{method} {path} remains unavailable") from exc
                 raise ForgejoError(f"{method} {path} returned HTTP {exc.code}") from exc
-            except urllib.error.URLError as exc:
+            except (urllib.error.URLError, TimeoutError) as exc:
                 if attempt + 1 < retries:
                     self._sleep(2 ** attempt)
                     continue

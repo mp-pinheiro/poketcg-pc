@@ -110,12 +110,20 @@ async function main(): Promise<void> {
 				lease_seconds: 600,
 				phase: "planning",
 			});
+			if (heartbeat.status === "waiting") {
+				await sleep(nextWait(heartbeat));
+				continue;
+			}
 			if (heartbeat.status !== "ok") throw new Error(heartbeat.error?.detail || "run lease heartbeat failed");
 			const reconciled = await control("reconcile", {
 				adopt: true,
 				run_id: runId,
 				run_claim_comment_id: runClaimCommentId,
 			});
+			if (reconciled.status === "waiting") {
+				await sleep(nextWait(reconciled));
+				continue;
+			}
 			if (reconciled.status === "stop") throw new Error(reconciled.error?.detail || "artifact reconciliation stopped");
 			const frontier = await control("frontier", {
 				full: false,
