@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import json
 import re
+import threading
+from collections.abc import Callable, Iterable
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -268,6 +271,23 @@ def _projection_labels(issue: dict[str, Any], action: dict[str, Any]) -> list[st
     return sorted(labels)
 
 
+def _desired_projection(issue: dict[str, Any], action: dict[str, Any]) -> tuple[list[str], str, str | None]:
+    return (
+        _projection_labels(issue, action),
+        "closed" if action["state"] in {"done", "excluded"} else "open",
+        str(action["body"]) if action["kind"] in {"adopt-routine", "create-routine"} else None,
+    )
+
+
+def _already_projected(issue: dict[str, Any], action: dict[str, Any]) -> bool:
+    labels, state, body = _desired_projection(issue, action)
+    return (
+        issue["labels"] == sorted(set(labels))
+        and issue["state"] == state
+        and (body is None or issue["body"] == body)
+    )
+
+
 def _issue_for_action(
     client: forgejo.ForgejoClient,
     action: dict[str, Any],
@@ -278,38 +298,29 @@ def _issue_for_action(
     kind = action["kind"]
     work_id = action.get("work_id")
     if isinstance(work_id, str) and work_id in existing:
-        issue = client.issue(int(existing[work_id]["number"]))
-        if kind != "verify-routine":
-            client.set_projection(
-                int(issue["number"]),
-                labels=_projection_labels(issue, action),
-                state="closed" if action["state"] in {"done", "excluded"} else "open",
-                body=str(action["body"]) if kind == "adopt-routine" else None,
-            )
-        return client.issue(int(issue["number"]))
+        known = existing[work_id]
+        if kind == "verify-routine" or _already_projected(known, action):
+            return known
+        labels, state, body = _desired_projection(known, action)
+        return client.set_projection(int(known["number"]), labels=labels, state=state, body=body)
     if kind == "verify-routine":
         return client.issue(int(action["issue_number"]))
     if kind == "adopt-routine":
         issue = client.issue(int(action["issue_number"]))
-        client.set_projection(
-            int(issue["number"]),
-            labels=_projection_labels(issue, action),
-            state="closed" if action["state"] in {"done", "excluded"} else "open",
-            body=str(action["body"]),
-        )
-        return client.issue(int(issue["number"]))
+        if _already_projected(issue, action):
+            return issue
+        labels, state, body = _desired_projection(issue, action)
+        return client.set_projection(int(issue["number"]), labels=labels, state=state, body=body)
     if kind == "create-routine":
         issue = client.create_issue(
             title=str(action["title"]),
             body=str(action["body"]),
             labels=list(action["labels"]),
         )
-        client.set_projection(
-            int(issue["number"]),
-            labels=_projection_labels(issue, action),
-            state="closed" if action["state"] in {"done", "excluded"} else "open",
-        )
-        return client.issue(int(issue["number"]))
+        labels, state, _body = _desired_projection(issue, action)
+        if issue["labels"] == sorted(set(labels)) and issue["state"] == state:
+            return issue
+        return client.set_projection(int(issue["number"]), labels=labels, state=state)
     if kind == "create-cohort":
         return client.create_issue(
             title=str(action["title"]),
@@ -327,7 +338,26 @@ def _issue_for_action(
     raise MigrationError(f"unknown migration action {kind}")
 
 
-def _dependency_edges(plan: dict[str, Any], numbers: dict[str, int]) -> list[tuple[int, int]]:
+def _edge(
+    numbers: dict[str, int],
+    dependent: str,
+    dependency: str,
+    *,
+    require_complete: bool,
+) -> tuple[int, int] | None:
+    if dependent in numbers and dependency in numbers:
+        return numbers[dependent], numbers[dependency]
+    if require_complete:
+        raise MigrationError(f"dependency edge {dependent} -> {dependency} has no issue number")
+    return None
+
+
+def _dependency_edges(
+    plan: dict[str, Any],
+    numbers: dict[str, int],
+    *,
+    require_complete: bool = True,
+) -> list[tuple[int, int]]:
     functions, _inventory = packet.compute_functions()
     by_name = {function["name"]: function for function in functions}
     cohorts = {
@@ -348,7 +378,9 @@ def _dependency_edges(plan: dict[str, Any], numbers: dict[str, int]) -> list[tup
         if action is None or action.get("state") in {"done", "excluded"}:
             continue
         if work_id in cohorts:
-            edges.add((numbers[work_id], numbers[cohorts[work_id]]))
+            edge = _edge(numbers, work_id, cohorts[work_id], require_complete=require_complete)
+            if edge is not None:
+                edges.add(edge)
             continue
         for blocker in function.get("blockers") or []:
             dependency = by_name.get(blocker)
@@ -356,7 +388,9 @@ def _dependency_edges(plan: dict[str, Any], numbers: dict[str, int]) -> list[tup
                 raise MigrationError(f"{work_id} has unknown blocker {blocker}")
             dependency_work_id = cohorts.get(dependency["work_id"], dependency["work_id"])
             if dependency_work_id != work_id:
-                edges.add((numbers[work_id], numbers[dependency_work_id]))
+                edge = _edge(numbers, work_id, dependency_work_id, require_complete=require_complete)
+                if edge is not None:
+                    edges.add(edge)
     for action in plan["actions"]:
         if action["kind"] != "create-cohort":
             continue
@@ -369,7 +403,12 @@ def _dependency_edges(plan: dict[str, Any], numbers: dict[str, int]) -> list[tup
                     raise MigrationError(f"{member} has unknown blocker {blocker}")
                 dependency_work_id = cohorts.get(dependency["work_id"], dependency["work_id"])
                 if dependency_work_id not in members and dependency_work_id != action["work_id"]:
-                    edges.add((numbers[action["work_id"]], numbers[dependency_work_id]))
+                    edge = _edge(
+                        numbers, action["work_id"], dependency_work_id,
+                        require_complete=require_complete,
+                    )
+                    if edge is not None:
+                        edges.add(edge)
     return sorted(edges)
 
 
@@ -407,12 +446,23 @@ def _migration_event(
         },
     )
 
+
+def _fan_out(items: Iterable[Any], worker: Callable[[Any], Any], *, workers: int) -> list[Any]:
+    values = list(items)
+    if workers <= 1 or len(values) <= 1:
+        return [worker(value) for value in values]
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        return list(pool.map(worker, values))
+
+
 def apply_plan(
     client: forgejo.ForgejoClient,
     plan: dict[str, Any],
     *,
     revision: str,
     gate: dict[str, Any],
+    limit: int | None = None,
+    workers: int = 8,
 ) -> dict[str, Any]:
     if plan.get("revision") != revision or plan.get("gate_commit") != gate.get("commit"):
         raise MigrationError("migration plan no longer matches revision or gate")
@@ -432,34 +482,48 @@ def apply_plan(
         work_id: int(issue["number"])
         for work_id, issue in existing.items()
     }
-    completed = 0
-    for action in plan["actions"]:
+    actions = plan["actions"] if limit is None else plan["actions"][:limit]
+    scoped = plan if limit is None else {**plan, "actions": actions}
+    lock = threading.Lock()
+    applied: dict[str, dict[str, Any]] = {}
+    progress = 0
+
+    def project(action: dict[str, Any]) -> None:
+        nonlocal control_issue, progress
+        with lock:
+            snapshot_existing = dict(existing)
+            snapshot_control = control_issue
         issue = _issue_for_action(
             client,
             action,
-            existing=existing,
-            control_issue=control_issue,
+            existing=snapshot_existing,
+            control_issue=snapshot_control,
         )
         work_id = action.get("work_id")
-        if isinstance(work_id, str):
-            numbers[work_id] = int(issue["number"])
-            existing[work_id] = issue
-        elif action["kind"] == "create-control":
-            control_issue = issue
-        completed += 1
-        if completed % 50 == 0:
-            atomic_json(CHECKPOINT_PATH, {
-                "plan_sha256": plan["plan_sha256"],
-                "completed": completed,
-                "numbers": numbers,
-            })
-    for dependent, dependency in _dependency_edges(plan, numbers):
-        client.add_dependency(dependent, dependency)
-    for action in plan["actions"]:
+        with lock:
+            if isinstance(work_id, str):
+                numbers[work_id] = int(issue["number"])
+                existing[work_id] = issue
+                applied[work_id] = issue
+            elif action["kind"] == "create-control":
+                control_issue = issue
+            progress += 1
+            if progress % 50 == 0:
+                atomic_json(CHECKPOINT_PATH, {
+                    "plan_sha256": plan["plan_sha256"],
+                    "completed": progress,
+                    "numbers": numbers,
+                })
+
+    _fan_out(actions, project, workers=workers)
+    edges = _dependency_edges(scoped, numbers, require_complete=limit is None)
+    _fan_out(edges, lambda edge: client.add_dependency(edge[0], edge[1]), workers=workers)
+
+    def publish(action: dict[str, Any]) -> None:
         work_id = action.get("work_id")
         if not isinstance(work_id, str) or action["kind"] == "verify-routine":
-            continue
-        issue = client.issue(numbers[work_id])
+            return
+        issue = applied.get(work_id) or client.issue(numbers[work_id])
         event = _migration_event(
             issue,
             action,
@@ -469,14 +533,17 @@ def apply_plan(
             client=client,
         )
         client.append_event(int(issue["number"]), event.comment_body(), event.event_id)
+
+    _fan_out(actions, publish, workers=workers)
     atomic_json(CHECKPOINT_PATH, {
         "plan_sha256": plan["plan_sha256"],
-        "completed": completed,
+        "completed": progress,
         "numbers": numbers,
     })
     return {
-        "applied": completed,
-        "dependencies": len(_dependency_edges(plan, numbers)),
+        "applied": progress,
+        "remaining": len(plan["actions"]) - progress,
+        "dependencies": len(edges),
         "numbers": numbers,
         "plan_sha256": plan["plan_sha256"],
     }

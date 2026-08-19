@@ -1522,7 +1522,15 @@ def migrate_factory(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
         plan = saved
     else:
         migration.atomic_json(migration.PLAN_PATH, plan)
-    result = migration.apply_plan(client, plan, revision=revision, gate=gate)
+    limit = request.get("limit")
+    if limit is not None and (not isinstance(limit, int) or limit <= 0):
+        raise ControlError("migrate limit must be a positive integer")
+    workers = request.get("workers", 8)
+    if not isinstance(workers, int) or not 1 <= workers <= 16:
+        raise ControlError("migrate workers must be 1..16")
+    result = migration.apply_plan(
+        client, plan, revision=revision, gate=gate, limit=limit, workers=workers,
+    )
     return response(
         "migrate",
         "ok",

@@ -287,6 +287,9 @@ factory-forecast:
 factory-migrate:
     python3 tools/factory/control.py migrate --request '{}'
 
+factory-migrate-canary LIMIT="25":
+    python3 tools/factory/control.py migrate --request '{"apply": true, "limit": {{LIMIT}}}'
+
 factory-migrate-apply:
     python3 tools/factory/control.py migrate --request '{"apply": true}'
 
