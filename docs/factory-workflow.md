@@ -64,47 +64,56 @@ alive - exit, do not steal.
 
 ## The loop
 
-`tools/factory/run.ts` is the loop. Each tick, in order:
+`tools/factory/run.ts` is the loop, and it owns every control call. A timer
+heartbeats the run lease every five minutes, so a tick may run for as long as
+its workers need. Each tick, in order:
 
-1. `run-heartbeat` - extend the lease. A failed heartbeat aborts the tick.
-2. `reconcile` with `adopt: true` - re-attach `.factory/artifacts/` bundles to
-   their `attempt-result` events, and report bundles whose event is missing.
-3. `frontier` - `scheduler.plan(...)` over the reduced ledger and the declared
+1. `reconcile` with `adopt: true` - re-attach `.factory/artifacts/` bundles to
+   their `attempt-result` events, report bundles whose event is missing, and
+   make the ledger agree with `.factory/blocked.toml` in both directions.
+2. `frontier` - `scheduler.plan(...)` over the reduced ledger and the declared
    capacity (`job_slots`, `verifier_slots`, `active_jobs`,
    `provider_throttled`, `verifier_queue_p95`, `healthy_completions`). Exactly
    one of `assignments`, `integration`, `blocker_review`,
    `dependency_analysis`, `waiting_until`, or `complete` is populated, so a
    tick has exactly one job.
-4. The orchestrator session executes exactly one tick against that frontier
-   using only the `factory` tool.
+3. `integration` non-empty - land that batch and start the next tick.
+4. Otherwise, for each assignment: `claim`, dispatch, `record`.
 
-The session is persistent (`SessionManager.continueRecent`) and restricted to
-`factory`, `read`, `grep`, `glob`, `eval`, `task`, `hub`. It cannot run `bash`,
-write files, or touch VCS: the control plane owns every write.
+The orchestrator session holds only `task` and `hub`. It cannot call the
+control plane, read the repository, write files, or touch VCS - its entire job
+is to run one subagent per assignment and hand back its result. Removing the
+control tool from the session removed two whole failure classes seen in
+testing: invented work IDs and invented control ops.
 
 ### Per assignment
 
 ```text
-claim   -> dispatch a port-worker subagent in the issued lane
-record  -> verify the lane, publish the artifact, append attempt-result
+claim   -> runner provisions the lane and issues the prompt
+dispatch -> session runs one port-worker (or factory-helper) subagent
+record  -> runner verifies the lane, publishes the artifact, appends the event
 ```
 
 `claim` materialises the packets, provisions the disposable lane, stores the
 prompt artifact, and appends the `claim` event. It returns `attempt_id`,
 `claim_comment_id`, `packet_sha256`, `lane_index`, `lane_capability`,
-`owned_paths`, the deadlines, and the exact `prompt`. `conflict` means another
-claim won: drop it, do not retry in place.
+`owned_paths`, the deadlines, and the exact `prompt`. The claim lease always
+outlives the hard deadline it authorises, so a slow attempt cannot be claimed
+twice. `conflict` means another claim won: drop it, do not retry in place.
 
-Dispatch that prompt to a `port-worker` subagent (model `@task`/`@smol`) whose
-only job is to write the four owned files inside `FACTORY_LANE_ROOT`. Lanes
-carry no `.git`, no `.jj`, no credentials, and no repository config.
+A worker writes only absolute paths under `FACTORY_LANE_ROOT`. Lanes carry no
+`.git`, no `.jj`, no credentials, and no repository config, and `preflight` and
+`claim` both refuse to run while the central checkout has uncommitted port
+files - a worker that escapes its lane stops the factory instead of corrupting
+the tree.
 
 `record` re-validates the lane manifest against `packet_sha256`, runs the
 oracle verification, and - only on green - stages and stores the immutable
-artifact, then appends the `attempt-result` event. A `diagnostic` outcome
-carries the normalized verdict; the work becomes recoverable at the next tick
-with a higher recovery tier. Record every finished attempt immediately: an
-unrecorded attempt is invisible work and its lease will expire.
+artifact, then appends the `attempt-result` event. A worker's own claim of
+success is never trusted: in testing a worker reported four changed files while
+the lane held none, and `record` rejected it. A `diagnostic` outcome carries the
+normalized verdict and raises the work's recovery tier; a per-assignment failure
+never aborts the run, only a lost lease does.
 
 ### Integration
 
@@ -162,18 +171,22 @@ members landing together.
 
 ## Reconciliation
 
-`factory-migrate` (dry run) and `factory-migrate-apply` reconcile Forgejo with
-the current inventory: create missing work issues, create cohort issues for
-cycles, mark excluded routines, and attach dependency edges. It is idempotent
-and refuses to run when the gate record and `main` disagree.
+`factory-migrate` (dry run), `factory-migrate-canary N`, and
+`factory-migrate-apply` reconcile Forgejo with the current inventory: create
+missing work issues, create cohort issues for cycles, mark excluded routines,
+and attach dependency edges. Actions run eight at a time, skip issues that
+already match, and are keyed to the gate they measure, so a re-run costs
+nothing and a tooling commit does not invalidate a saved plan. The canary
+applies a bounded slice first.
 
 ## Forecast
 
 `just factory-forecast` runs a Monte Carlo over the remaining work using
-measured per-work throughput, dependency depth, and lane concurrency. It
-reports p50/p85/p95 dates with a confidence label, and `site/data/factory-forecast.json`
-feeds the dashboard. A forecast without measured throughput is reported as
-`low` confidence, never as a date.
+dependency depth, lane concurrency, and the service times the ledger actually
+recorded - every `claim`/`attempt-result` pair is one sample. It reports
+p50/p85/p95 dates with a confidence label; below thirty samples the confidence
+is `low` and the date is an extrapolation from a handful of attempts, not a
+commitment. `site/data/factory-forecast.json` feeds the dashboard.
 
 ## Invariants
 
@@ -183,8 +196,13 @@ feeds the dashboard. A forecast without measured throughput is reported as
 - Artifacts are content-addressed and verified before they are trusted;
   `reconcile` re-attaches them and reports orphans.
 - Lanes are disposable and credential-free; only the control plane writes the
-  repository, jj state, or Forgejo.
+  repository, jj state, or Forgejo, and `.factory/blocked.toml` vetoes reach the
+  ledger as `block` events instead of being ignored.
 - Integration gates before push and records the exact pushed revision.
 - Forgejo labels are a projection; a stale label never suppresses dispatch.
 - `PORT COMPLETE` comes only from `complete`, which requires an empty frontier,
   no unfinished work, no blocked work, and a green gate at the pushed revision.
+- Every REST call is bounded: 30s per attempt, 120s per logical request, and a
+  collection stops paging when the server stops yielding new rows.
+- Every control call the runner makes is killed if it exceeds its cap and
+  retried as `waiting`, so no external stall can freeze the loop.
