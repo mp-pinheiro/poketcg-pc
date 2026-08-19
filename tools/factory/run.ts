@@ -34,24 +34,29 @@ async function control(op: string, request: Record<string, unknown>): Promise<Fa
 		new Response(child.stdout).text(),
 		new Response(child.stderr).text(),
 	]).finally(() => clearTimeout(timer));
-	try {
-		return JSON.parse(stdout.trim()) as FactoryResponse;
-	} catch {
-		const stalled = code === null || code > 128;
-		return {
-			schema: 1,
-			op,
-			status: stalled ? "waiting" : "stop",
-			run_id: null,
-			snapshot_sha256: null,
-			data: stalled ? { waiting_until: new Date(Date.now() + 60_000).toISOString(), waiting_reason: "control-stalled" } : null,
-			error: {
-				class: stalled ? "ControlStalled" : "ControlProtocol",
-				detail: stderr || stdout || `control exited ${code}`,
-				retry_at: null,
-			},
-		};
+	const lines = stdout.split("\n").map(line => line.trim()).filter(Boolean);
+	for (const line of lines.reverse()) {
+		if (!line.startsWith("{")) continue;
+		try {
+			return JSON.parse(line) as FactoryResponse;
+		} catch {
+			break;
+		}
 	}
+	const stalled = code === null || code > 128;
+	return {
+		schema: 1,
+		op,
+		status: stalled ? "waiting" : "stop",
+		run_id: null,
+		snapshot_sha256: null,
+		data: stalled ? { waiting_until: new Date(Date.now() + 60_000).toISOString(), waiting_reason: "control-stalled" } : null,
+		error: {
+			class: stalled ? "ControlStalled" : "ControlProtocol",
+			detail: stderr || stdout || `control exited ${code}`,
+			retry_at: null,
+		},
+	};
 }
 function sleep(milliseconds: number): Promise<void> {
 	const { promise, resolve } = Promise.withResolvers<void>();
