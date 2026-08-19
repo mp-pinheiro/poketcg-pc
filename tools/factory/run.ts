@@ -203,16 +203,56 @@ async function main(): Promise<void> {
 				await sleep(nextWait(frontier));
 				continue;
 			}
-			await session.prompt([
-				"Execute exactly one factory tick with the `factory` tool.",
-				`Its ops: claim {run_id:"${runId}", run_claim_comment_id:${runClaimCommentId}, work_id, model_route},`,
-				"then record {run_id, run_claim_comment_id, work_id, packet_sha256, claim_comment_id} for every finished attempt,",
-				"and integrate {run_id, run_claim_comment_id, issue_numbers} when the frontier returns integration.",
-				"claim returns the lane root, the owned paths and the exact prompt: dispatch it to a port-worker subagent",
-				"(factory-helper when kind is repair) and record the attempt as soon as that subagent returns.",
-				"Dispatch only the assignments below, never infer completion from an empty list, and never write files yourself.",
-				JSON.stringify(frontier),
-			].join("\n"));
+			const assignments = Array.isArray(frontier.data?.assignments) ? frontier.data.assignments : [];
+			const integration = Array.isArray(frontier.data?.integration) ? frontier.data.integration : [];
+			if (integration.length > 0) {
+				const landed = await control("integrate", {
+					run_id: runId,
+					run_claim_comment_id: runClaimCommentId,
+					issue_numbers: integration,
+				});
+				if (landed.status === "stop") throw new Error(landed.error?.detail || "integration stopped");
+				continue;
+			}
+			for (const assignment of assignments) {
+				if (!assignment || typeof assignment !== "object") continue;
+				const workId = Reflect.get(assignment, "work_id");
+				const route = Reflect.get(assignment, "model_route");
+				const kind = Reflect.get(assignment, "kind");
+				if (typeof workId !== "string" || typeof route !== "string" || typeof kind !== "string") continue;
+				const claimed = await control("claim", {
+					run_id: runId,
+					run_claim_comment_id: runClaimCommentId,
+					work_id: workId,
+					model_route: route,
+				});
+				if (claimed.status !== "ok" || !claimed.data) continue;
+				const lane = Reflect.get(claimed.data, "prompt");
+				const packetSha256 = Reflect.get(claimed.data, "packet_sha256");
+				const claimCommentId = Reflect.get(claimed.data, "claim_comment_id");
+				const ownedPaths = Reflect.get(claimed.data, "owned_paths");
+				const hardDeadline = Reflect.get(claimed.data, "hard_deadline_seconds");
+				if (typeof lane !== "string" || typeof packetSha256 !== "string" || typeof claimCommentId !== "number") continue;
+				const agent = kind === "repair" ? "factory-helper" : "port-worker";
+				await session.prompt([
+					`Dispatch exactly one ${agent} subagent and return its structured result.`,
+					"Do not read, write, or verify any repository file yourself; the harness verifies the lane.",
+					`Owned paths (absolute, inside the lane): ${JSON.stringify(ownedPaths)}`,
+					`Wall-clock budget: ${typeof hardDeadline === "number" ? hardDeadline : 1440} seconds.`,
+					"Give the subagent this issued prompt verbatim as its task:",
+					lane,
+				].join("\n"));
+				const recorded = await control("record", {
+					run_id: runId,
+					run_claim_comment_id: runClaimCommentId,
+					work_id: workId,
+					packet_sha256: packetSha256,
+					claim_comment_id: claimCommentId,
+					deadline_seconds: typeof hardDeadline === "number" ? hardDeadline : 1440,
+				});
+				process.stdout.write(`${JSON.stringify({ work_id: workId, record: recorded.status, outcome: recorded.data?.outcome ?? null })}\n`);
+				if (recorded.status === "stop") throw new Error(recorded.error?.detail || `record failed for ${workId}`);
+			}
 		}
 	} catch (error) {
 		await release("runner-error");
