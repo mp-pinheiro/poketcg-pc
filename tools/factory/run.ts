@@ -1,9 +1,19 @@
 import { createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
+import { z } from "zod";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dir, "../..");
 const stateDir = path.join(root, ".factory", "v2", "sessions");
-const extension = path.join(root, ".omp", "extensions", "factory.ts");
+const FACTORY_OPS = [
+	"preflight",
+	"status",
+	"reconcile",
+	"frontier",
+	"claim",
+	"record",
+	"integrate",
+	"forecast",
+] as const;
 
 type FactoryResponse = {
 	schema: number;
@@ -91,22 +101,37 @@ async function main(): Promise<void> {
 		throw new Error("run claim response has no claim comment ID");
 	}
 	const manager = await SessionManager.create(root, stateDir);
-	const { session, extensionsResult } = await createAgentSession({
+	const factoryTool = {
+		name: "factory",
+		label: "Factory",
+		description: "Execute one typed autonomous port-factory control operation.",
+		parameters: z.object({
+			op: z.enum(FACTORY_OPS),
+			request: z.record(z.string(), z.unknown()).default(() => ({})),
+		}),
+		approval: "write" as const,
+		loadMode: "essential" as const,
+		async execute(_toolCallId: string, params: { op: string; request: Record<string, unknown> }) {
+			const payload = await control(params.op, {
+				...params.request,
+				run_id: runId,
+				run_claim_comment_id: runClaimCommentId,
+			});
+			return {
+				content: [{ type: "text" as const, text: JSON.stringify(payload) }],
+				details: payload,
+			};
+		},
+	};
+	const { session } = await createAgentSession({
 		cwd: root,
 		sessionManager: manager,
 		modelPattern: "@default",
-		toolNames: ["factory", "read", "grep", "glob", "eval", "task", "hub"],
+		toolNames: ["factory", "read", "grep", "glob", "task", "hub"],
 		restrictToolNames: true,
 		allowRestrictedCustomTools: true,
-		additionalExtensionPaths: [extension],
+		customTools: [factoryTool],
 	});
-	if (extensionsResult.errors.length > 0) {
-		const detail = extensionsResult.errors.map(entry => `${entry.path}: ${entry.error}`).join("; ");
-		throw new Error(`factory extension failed to load: ${detail}`);
-	}
-	if (extensionsResult.extensions.length === 0) {
-		throw new Error(`factory extension did not register: ${extension}`);
-	}
 	let released = false;
 	const release = async (reason: string): Promise<void> => {
 		if (released) return;
