@@ -26,6 +26,8 @@ TOKEN_PATH = Path(os.environ.get(
 USER_AGENT = "poketcg-factory-v2/1.0"
 PAGE_SIZE = 50
 TRANSIENT_CODES = frozenset({429, 502, 503, 504})
+REQUEST_TIMEOUT_SECONDS = 30.0
+REQUEST_DEADLINE_SECONDS = 120.0
 LISTING_PATH = ROOT / ".factory" / "v2" / "listing.json"
 LISTING_OVERLAP = timedelta(minutes=5)
 
@@ -241,9 +243,13 @@ class ForgejoClient:
             data = canonical_json(payload).encode()
             headers["Content-Type"] = "application/json"
         request = urllib.request.Request(url, data=data, headers=headers, method=method)
+        deadline = time.monotonic() + REQUEST_DEADLINE_SECONDS
         for attempt in range(retries):
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise ForgejoUnavailable(f"{method} {path} exceeded its {REQUEST_DEADLINE_SECONDS:.0f}s deadline")
             try:
-                with self._open(request, timeout=60) as response:
+                with self._open(request, timeout=min(REQUEST_TIMEOUT_SECONDS, remaining)) as response:
                     raw = response.read()
                     content_type = response.headers.get("Content-Type", "")
                     if content_type.startswith("text/html"):
@@ -269,8 +275,8 @@ class ForgejoClient:
                     raise ForgejoUnavailable(f"{method} {path} remains unavailable") from exc
                 raise ForgejoError(f"{method} {path} returned HTTP {exc.code}") from exc
             except (urllib.error.URLError, TimeoutError) as exc:
-                if attempt + 1 < retries:
-                    self._sleep(2 ** attempt)
+                if attempt + 1 < retries and time.monotonic() < deadline:
+                    self._sleep(min(2 ** attempt, max(0.0, deadline - time.monotonic())))
                     continue
                 raise ForgejoUnavailable(f"{method} {path} is unreachable") from exc
         raise AssertionError("unreachable")

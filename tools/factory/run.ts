@@ -15,28 +15,38 @@ type FactoryResponse = {
 	error: { class: string; detail: string; retry_at: string | null } | null;
 };
 
+const CONTROL_TIMEOUT_MS: Record<string, number> = {
+	record: 2_400_000,
+	integrate: 5_400_000,
+	migrate: 5_400_000,
+};
+const DEFAULT_CONTROL_TIMEOUT_MS = 600_000;
+
 async function control(op: string, request: Record<string, unknown>): Promise<FactoryResponse> {
-	const process = Bun.spawn(
+	const child = Bun.spawn(
 		["python3", "tools/factory/control.py", op, "--request", JSON.stringify(request)],
 		{ cwd: root, stdout: "pipe", stderr: "pipe" },
 	);
+	const limit = CONTROL_TIMEOUT_MS[op] ?? DEFAULT_CONTROL_TIMEOUT_MS;
+	const timer = setTimeout(() => child.kill("SIGKILL"), limit);
 	const [code, stdout, stderr] = await Promise.all([
-		process.exited,
-		new Response(process.stdout).text(),
-		new Response(process.stderr).text(),
-	]);
+		child.exited,
+		new Response(child.stdout).text(),
+		new Response(child.stderr).text(),
+	]).finally(() => clearTimeout(timer));
 	try {
 		return JSON.parse(stdout.trim()) as FactoryResponse;
 	} catch {
+		const stalled = code === null || code > 128;
 		return {
 			schema: 1,
 			op,
-			status: "stop",
+			status: stalled ? "waiting" : "stop",
 			run_id: null,
 			snapshot_sha256: null,
-			data: null,
+			data: stalled ? { waiting_until: new Date(Date.now() + 60_000).toISOString(), waiting_reason: "control-stalled" } : null,
 			error: {
-				class: "ControlProtocol",
+				class: stalled ? "ControlStalled" : "ControlProtocol",
 				detail: stderr || stdout || `control exited ${code}`,
 				retry_at: null,
 			},
