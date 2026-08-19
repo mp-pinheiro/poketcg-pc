@@ -106,7 +106,7 @@ async function main(): Promise<void> {
 			cwd: root,
 			sessionManager: manager,
 			modelPattern: "@default",
-			toolNames: ["task", "read", "hub"],
+			toolNames: ["task", "hub"],
 			restrictToolNames: true,
 		}));
 	} catch (error) {
@@ -200,10 +200,11 @@ async function main(): Promise<void> {
 				if (typeof lane !== "string" || typeof packetSha256 !== "string" || typeof claimCommentId !== "number") continue;
 				const agent = kind === "repair" ? "factory-helper" : "port-worker";
 				await session.prompt([
-					`Dispatch exactly one ${agent} subagent and return its structured result.`,
-					"Do not read, write, or verify any repository file yourself; the harness verifies the lane.",
+					`Dispatch exactly one ${agent} subagent with the task tool, then block on it with hub op "wait".`,
+					"Those two calls are the whole turn: never poll a job, never re-dispatch, never verify the lane yourself.",
 					`Owned paths (absolute, inside the lane): ${JSON.stringify(ownedPaths)}`,
 					`Wall-clock budget: ${typeof hardDeadline === "number" ? hardDeadline : 1440} seconds.`,
+					"Report the subagent's structured result as your final message.",
 					"Give the subagent this issued prompt verbatim as its task:",
 					lane,
 				].join("\n"));
