@@ -1,4 +1,4 @@
-import { createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
+import { type AgentSession, createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
 import { z } from "zod";
 import path from "node:path";
 
@@ -100,7 +100,16 @@ async function main(): Promise<void> {
 	if (typeof runClaimCommentId !== "number") {
 		throw new Error("run claim response has no claim comment ID");
 	}
-	const manager = await SessionManager.create(root, stateDir);
+	let released = false;
+	const release = async (reason: string): Promise<void> => {
+		if (released) return;
+		released = true;
+		await control("run-release", {
+			run_id: runId,
+			run_claim_comment_id: runClaimCommentId,
+			reason,
+		});
+	};
 	const factoryTool = {
 		name: "factory",
 		label: "Factory",
@@ -123,25 +132,23 @@ async function main(): Promise<void> {
 			};
 		},
 	};
-	const { session } = await createAgentSession({
-		cwd: root,
-		sessionManager: manager,
-		modelPattern: "@default",
-		toolNames: ["factory", "read", "grep", "glob", "task", "hub"],
-		restrictToolNames: true,
-		allowRestrictedCustomTools: true,
-		customTools: [factoryTool],
-	});
-	let released = false;
-	const release = async (reason: string): Promise<void> => {
-		if (released) return;
-		released = true;
-		await control("run-release", {
-			run_id: runId,
-			run_claim_comment_id: runClaimCommentId,
-			reason,
-		});
-	};
+	let session: AgentSession;
+	try {
+		const manager = await SessionManager.create(root, stateDir);
+		({ session } = await createAgentSession({
+			cwd: root,
+			sessionManager: manager,
+			modelPattern: "@default",
+			toolNames: ["factory", "read", "grep", "glob", "task", "hub"],
+			restrictToolNames: true,
+			allowRestrictedCustomTools: true,
+			customTools: [factoryTool],
+		}));
+	} catch (error) {
+		await release("session-error");
+		throw error;
+	}
+
 	const stop = async (signal: string): Promise<void> => {
 		await release(signal);
 		await session.dispose();
