@@ -3,6 +3,8 @@ import path from "node:path";
 
 const root = path.resolve(import.meta.dir, "../..");
 const stateDir = path.join(root, ".factory", "v2", "sessions");
+const RUN_LEASE_SECONDS = 1800;
+const HEARTBEAT_INTERVAL_MS = 300_000;
 
 type FactoryResponse = {
 	schema: number;
@@ -76,7 +78,7 @@ async function main(): Promise<void> {
 	const acquired = await control("run-claim", {
 		run_id: runId,
 		runner_instance: `${process.pid}`,
-		lease_seconds: 600,
+		lease_seconds: RUN_LEASE_SECONDS,
 	});
 	if (acquired.status === "conflict") {
 		process.stdout.write(`${JSON.stringify(acquired)}\n`);
@@ -99,6 +101,16 @@ async function main(): Promise<void> {
 			reason,
 		});
 	};
+	const beat = setInterval(() => {
+		void control("run-heartbeat", {
+			run_id: runId,
+			run_claim_comment_id: runClaimCommentId,
+			lease_seconds: RUN_LEASE_SECONDS,
+			phase: "running",
+		});
+	}, HEARTBEAT_INTERVAL_MS);
+	process.once("exit", () => clearInterval(beat));
+
 	let session: AgentSession;
 	try {
 		const manager = await SessionManager.create(root, stateDir);
@@ -216,8 +228,10 @@ async function main(): Promise<void> {
 					claim_comment_id: claimCommentId,
 					deadline_seconds: typeof hardDeadline === "number" ? hardDeadline : 1440,
 				});
-				process.stdout.write(`${JSON.stringify({ work_id: workId, record: recorded.status, outcome: recorded.data?.outcome ?? null })}\n`);
-				if (recorded.status === "stop") throw new Error(recorded.error?.detail || `record failed for ${workId}`);
+				process.stdout.write(`${JSON.stringify({ work_id: workId, record: recorded.status, outcome: recorded.data?.outcome ?? null, error: recorded.error?.detail ?? null })}\n`);
+				if (recorded.status === "stop" && recorded.error?.class === "lease") {
+					throw new Error(recorded.error.detail);
+				}
 			}
 		}
 	} catch (error) {
