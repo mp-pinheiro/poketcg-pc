@@ -25,6 +25,7 @@ TOKEN_PATH = Path(os.environ.get(
 )).expanduser()
 USER_AGENT = "poketcg-factory-v2/1.0"
 PAGE_SIZE = 50
+MAX_PAGES = 400
 TRANSIENT_CODES = frozenset({429, 502, 503, 504})
 REQUEST_TIMEOUT_SECONDS = 30.0
 REQUEST_DEADLINE_SECONDS = 120.0
@@ -297,10 +298,16 @@ class ForgejoClient:
         *,
         query: dict[str, object] | None = None,
     ) -> tuple[list[dict[str, Any]], int | None]:
+        """Page until the server stops yielding new rows.
+
+        Some Forgejo collections (issue comments) ignore `page` entirely and
+        replay the same rows, so a length-only stop condition never fires.
+        """
         page = 1
         rows: list[dict[str, Any]] = []
+        seen: set[int] = set()
         total: int | None = None
-        while True:
+        while page <= MAX_PAGES:
             values = dict(query or {})
             values.update({"page": page, "limit": PAGE_SIZE})
             response = self._request("GET", path, query=values)
@@ -309,10 +316,23 @@ class ForgejoClient:
                 raise ForgejoError(f"{path} page {page} is not a list")
             if total is None:
                 total = _total_count(response)
-            rows.extend(row for row in payload if isinstance(row, dict))
-            if len(payload) < PAGE_SIZE:
+            fresh = 0
+            for row in payload:
+                if not isinstance(row, dict):
+                    continue
+                identifier = row.get("id")
+                if isinstance(identifier, int):
+                    if identifier in seen:
+                        continue
+                    seen.add(identifier)
+                rows.append(row)
+                fresh += 1
+            if fresh == 0 or len(payload) < PAGE_SIZE:
+                return rows, total
+            if total is not None and len(rows) >= total:
                 return rows, total
             page += 1
+        raise ForgejoError(f"{path} exceeded {MAX_PAGES} pages without completing")
 
     def _total_issues(self) -> int | None:
         response = self._request("GET", "/issues", query={
@@ -411,15 +431,31 @@ class ForgejoClient:
         return normalize_issue(self.request_json("GET", f"/issues/{number}"))
 
     def comments(self, number: int, *, since: str | None = None) -> list[dict[str, Any]]:
-        query: dict[str, object] = {}
-        if since:
-            query["since"] = since
-        rows, _total = self._pages(f"/issues/{number}/comments", query=query)
-        comments = [normalize_comment(raw) for raw in rows]
-        by_id = {comment["id"]: comment for comment in comments}
-        if len(by_id) != len(comments):
-            raise ForgejoError(f"issue #{number} has duplicate comment IDs")
-        return sorted(comments, key=lambda comment: comment["id"])
+        """Walk a comment thread forward by timestamp.
+
+        The comments endpoint ignores `page` and caps each response, so `since`
+        is the only cursor that reaches events beyond the first page.
+        """
+        collected: dict[int, dict[str, Any]] = {}
+        cursor = since
+        for _ in range(MAX_PAGES):
+            query: dict[str, object] = {"limit": PAGE_SIZE}
+            if cursor:
+                query["since"] = cursor
+            payload = self.request_json("GET", f"/issues/{number}/comments", query=query)
+            if not isinstance(payload, list):
+                raise ForgejoError(f"issue #{number} comments response is not a list")
+            page = [normalize_comment(raw) for raw in payload if isinstance(raw, dict)]
+            fresh = [comment for comment in page if comment["id"] not in collected]
+            for comment in fresh:
+                collected[comment["id"]] = comment
+            if not fresh or len(page) < PAGE_SIZE:
+                break
+            newest = max((str(comment.get("created_at") or "") for comment in page), default="")
+            if not newest or newest == cursor:
+                break
+            cursor = newest
+        return sorted(collected.values(), key=lambda comment: comment["id"])
 
     def comments_since(self, number: int, since: str | None = None) -> list[dict[str, Any]]:
         return self.comments(number, since=since)

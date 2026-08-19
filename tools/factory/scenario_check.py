@@ -711,6 +711,54 @@ def check_ledger_samples() -> None:
     assert forecast.samples_from_chain([], tier=1, size=10) == []
 
 
+def check_pagination_terminates() -> None:
+    """Forgejo comment listings ignore `page`: the pager must still finish."""
+    comments = [
+        {
+            "id": index,
+            "body": f"comment {index}",
+            "created_at": "2026-08-18T00:00:00Z",
+            "updated_at": "2026-08-18T00:00:00Z",
+            "user": {"login": "mpp"},
+        }
+        for index in range(1, 121)
+    ]
+    served = {"pages": 0}
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self) -> None:
+            served["pages"] += 1
+            raw = json.dumps(comments[:50]).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+
+        def log_message(self, _format: str, *_args: object) -> None:
+            return
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    original_credentials = forgejo._credentials
+    forgejo._credentials = lambda _url: {"Accept": "application/json"}
+    try:
+        client = forgejo.ForgejoClient(
+            base_url=f"http://127.0.0.1:{server.server_port}",
+            sleep=lambda _seconds: None,
+            listing_path=None,
+        )
+        rows = client.comments(3103)
+        assert [row["id"] for row in rows] == list(range(1, 51))
+        assert served["pages"] == 2
+    finally:
+        forgejo._credentials = original_credentials
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
+
 def check_derived_cache() -> None:
     issue = {
         **work_issue(),
@@ -841,6 +889,7 @@ def main() -> int:
     check_recovery_ladder()
     check_forgejo_client()
     check_incremental_listing()
+    check_pagination_terminates()
     check_derived_cache()
     check_artifact_store()
     check_forecast()
