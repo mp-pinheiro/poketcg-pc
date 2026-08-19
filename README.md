@@ -56,22 +56,22 @@ audits, and the data round-trip. Concurrent work should use a private
 
 ## Factory dispatch
 
-Routine packet eligibility comes from the Forgejo issue snapshot:
+Forgejo issues are the factory's only authority; `.factory/` holds caches:
 
 ```sh
-just issues-fetch
-just issues-plan
-just issues-verify
-python3 tools/factory/packet.py build --max-routines 3 --max-asm-lines 140 --json
+just factory-preflight
+just factory-status
+just factory-frontier
+just launch-port
 ```
 
-`issues-fetch` replaces `.factory/issues-cache.json` only after the paginated
-Forgejo listing stabilizes and covers every non-excluded canonical routine.
-`issues-plan` writes a read-only desired-state audit; `issues-verify` refreshes
-the listing and checks marker coverage. Packet construction then selects only
-ready routines whose managed issue is open and labeled `port-ready`. These
-commands do not mutate Forgejo issues. See `docs/factory-workflow.md` for the
-orchestrator loop and `docs/factory-contract.md` for translator constraints.
+`factory-preflight` proves REST auth, a gate record built at the current `main`
+revision, and a stable issue snapshot. `factory-status` prints per-work state
+counts and the live run lease. `factory-frontier` prints what the scheduler
+would dispatch next without writing anything. `launch-port` runs the autonomous
+loop: one run lease, one persistent orchestrator session, disposable lanes,
+gated integration. See `docs/factory-workflow.md` for the loop and
+`docs/factory-contract.md` for translator constraints.
 
 ## GB Recompiled replay oracle
 

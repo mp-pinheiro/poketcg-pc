@@ -106,7 +106,7 @@ A more specific path wins outright and inherits nothing from the catch-all, so
 access to `/api/v1` is exactly what it was before that app existed.
 
 The PAT lives in `~/.config/yfrit-forgejo/api/poketcg-issues.token` (mode
-`0600`) — the same file `tools/factory/issues.py` reads for the REST client, so
+`0600`) — the same file `tools/factory/forgejo.py` reads for the REST client, so
 rotation touches one file: overwrite it with a fresh Forgejo PAT (Settings →
 Applications, scopes `write:repository` + `read:issue`). Point git at the
 repo's credential helper, `tools/git-credential-forgejo`, which reads that file

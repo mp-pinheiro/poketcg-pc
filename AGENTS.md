@@ -58,10 +58,13 @@ The commands that matter, from the `justfile`:
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
 | `just forgejo-auth-check` | prove git + REST credentials work non-interactively |
-| `just issues-fetch` | refresh the read-only Forgejo issue cache |
-| `just issues-plan` | write the desired-state issue audit (no writes to Forgejo) |
-| `just issues-sync` | dry-run the Forgejo reconciliation |
-| `just issues-sync-apply` | apply it — the only command that mutates Forgejo issues |
+| `just factory-preflight` | prove auth, gate freshness, and snapshot stability |
+| `just factory-status` | per-work state counts and the live factory run lease |
+| `just factory-frontier` | print the next dispatch decision without writing |
+| `just factory-migrate` | dry-run the Forgejo reconciliation |
+| `just factory-migrate-apply` | apply it — the only command that mutates Forgejo issues |
+| `just factory-scenarios` | offline behaviour proofs for the control plane |
+| `just launch-port` | run the autonomous port factory loop |
 | `just data-verify` | data/asset extraction round-trip |
 | `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
 

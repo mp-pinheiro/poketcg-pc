@@ -270,21 +270,30 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
-# Forgejo is authoritative. Fetch and verify are read-only.
-issues-fetch:
-    python3 tools/factory/issues.py fetch
+# Forgejo is the source of truth. Preflight and status are read-only.
+factory-preflight:
+    python3 tools/factory/control.py preflight --request '{}'
 
-issues-plan:
-    python3 tools/factory/issues.py plan --json
+factory-status:
+    python3 tools/factory/control.py status --request '{}'
 
-issues-verify:
-    python3 tools/factory/issues.py verify --live
+factory-frontier:
+    python3 tools/factory/control.py frontier --request '{"full": false}'
 
-issues-sync:
-    python3 tools/factory/issues.py sync
+factory-forecast:
+    python3 tools/factory/control.py forecast --request '{}'
 
-issues-sync-apply:
-    python3 tools/factory/issues.py sync --apply
+# Reconcile Forgejo issues with the current inventory. Dry run by default.
+factory-migrate:
+    python3 tools/factory/control.py migrate --request '{}'
+
+factory-migrate-apply:
+    python3 tools/factory/control.py migrate --request '{"apply": true}'
+
+# Offline behaviour proofs for the control plane: ledger, cache, scheduler,
+# artifacts, integration, forecast. No credentials, no network.
+factory-scenarios:
+    python3 tools/factory/scenario_check.py
 
 
 # Prove Forgejo git + REST credentials work with no browser prompt. Needs
@@ -293,9 +302,9 @@ forgejo-auth-check:
     python3 tools/factory/auth_check.py
 
 
-# Dispatch comes from factory packets, never mutable issue titles.
+# Autonomous port factory: one persistent OMP session driving claimed work.
 launch-port:
-    @echo "dispatch with: python3 tools/factory/packet.py build --json"
+    tools/factory/run.sh
 
 
 # Print the next version git-cliff derives from unreleased Conventional Commits.
