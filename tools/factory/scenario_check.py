@@ -160,6 +160,134 @@ def check_ledger() -> None:
     assert view.state == "done"
 
 
+def check_recovery_ladder() -> None:
+    issue = work_issue()
+    intent = ledger.intent_sha256(issue, [], [])
+    root = make_event(
+        "migrated",
+        "port:v1:src/home/demo.asm:Demo",
+        (None, None),
+        intent,
+        {
+            "state": "ready",
+            "source_revision": "a" * 40,
+            "publication_revision": "",
+            "gate_sha256": "b" * 64,
+            "legacy_history_sha256": None,
+            "landed_at": None,
+            "exclusion_reason": None,
+        },
+    )
+    comments = [comment(10, root, 0)]
+    parent = (10, root.event_sha256)
+    for index in range(3):
+        diagnostic = make_event(
+            "attempt-result",
+            root.work_id,
+            parent,
+            intent,
+            {
+                "claim_comment_id": 10,
+                "outcome": "diagnostic",
+                "verdict": {"status": "red", "fingerprint": "stuck"},
+                "artifact_sha256": None,
+                "next_wake_at": None,
+            },
+        )
+        comments.append(comment(20 + index, diagnostic, 2 + index))
+        parent = (20 + index, diagnostic.event_sha256)
+    view = ledger.reduce_work(
+        issue,
+        comments,
+        [],
+        now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+        authorized_authors={"mpp"},
+    )
+    assert view.state == "recovery"
+    assert view.diagnostic_count == 3
+    assert view.repeat_fingerprints == 2
+    assert scheduler.recovery_tier(1, 0) == 1
+    assert scheduler.recovery_tier(2, 0) == 2
+    assert scheduler.recovery_tier(1, 2) == 3
+    assert scheduler.recovery_tier(view.diagnostic_count, view.repeat_fingerprints) == 3
+
+    def stuck_work(tier: int, *, escalated: bool = False) -> scheduler.FactoryWork:
+        return scheduler.FactoryWork(
+            issue_number=101,
+            work_id=root.work_id or "",
+            source="src/home/demo.asm",
+            basenames=("demo",),
+            owned_paths=("src/home/demo.c",),
+            size=20,
+            tier=1,
+            priority="normal",
+            state="recovery",
+            ready_at=datetime(2026, 8, 18, tzinfo=UTC),
+            recovery_tier=tier,
+            escalated=escalated,
+        )
+
+    routes = {}
+    for tier in (1, 2, 3):
+        planned = scheduler.plan(
+            scheduler.FactorySnapshot(sha256="c" * 64, works=(stuck_work(tier),)),
+            scheduler.Capacity(job_slots=4),
+            datetime(2026, 8, 18, 1, tzinfo=UTC),
+        )
+        assignment = planned.assignments[0]
+        routes[tier] = (assignment.model_route, assignment.kind)
+    assert routes[1] == ("smol", "completion")
+    assert routes[2] == ("task", "task")
+    assert routes[3] == ("task", "repair")
+    exhausted = scheduler.plan(
+        scheduler.FactorySnapshot(
+            sha256="d" * 64,
+            works=(stuck_work(scheduler.ESCALATION_DIAGNOSTICS, escalated=True),),
+        ),
+        scheduler.Capacity(job_slots=4),
+        datetime(2026, 8, 18, 1, tzinfo=UTC),
+    )
+    assert exhausted.assignments == ()
+    assert exhausted.blocker_review == (101,)
+    block = make_event(
+        "block",
+        root.work_id,
+        parent,
+        intent,
+        {
+            "reason": "recovery-exhausted",
+            "unblock": "4 diagnostics, verdict fingerprint stuck; fix the cause, then post /factory unblock",
+            "dependency_issue_numbers": [],
+        },
+    )
+    blocked_view = ledger.reduce_work(
+        issue,
+        [*comments, comment(30, block, 6)],
+        [],
+        now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+        authorized_authors={"mpp"},
+    )
+    assert blocked_view.state == "blocked"
+    assert blocked_view.escalated
+    unblock = make_event(
+        "unblock",
+        root.work_id,
+        (30, block.event_sha256),
+        intent,
+        {"block_comment_id": 30, "reason": "human cleared the blocker"},
+    )
+    resumed = ledger.reduce_work(
+        issue,
+        [*comments, comment(30, block, 6), comment(31, unblock, 7)],
+        [],
+        now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+        authorized_authors={"mpp"},
+    )
+    assert resumed.state == "recovery"
+    assert not resumed.escalated
+    assert resumed.diagnostic_count == 0
+
+
 def check_control() -> None:
     issue = {
         "number": 1,
@@ -405,6 +533,7 @@ def main() -> int:
     check_ledger()
     check_control()
     check_planner()
+    check_recovery_ladder()
     check_forgejo_client()
     check_derived_cache()
     check_artifact_store()

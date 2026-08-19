@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 import threading
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -183,6 +183,9 @@ def _factory_work(
         retry_at=view.retry_at,
         p50_seconds=420.0 if tier == 1 and not work_id.startswith("cohort:") else 900.0,
         cohort=work_id.startswith("cohort:"),
+        recovery_tier=scheduler.recovery_tier(view.diagnostic_count, view.repeat_fingerprints),
+        infra_failures=view.infra_failures,
+        escalated=view.escalated,
     )
 
 
@@ -360,20 +363,9 @@ def _load_prompt(packet_sha256: str) -> dict[str, Any]:
     return value
 
 
-def gate_matches_revision(gate: dict[str, Any], revision: str, cwd: Path = ROOT) -> bool:
-    recorded = gate.get("commit")
-    if recorded == revision:
-        return True
-    if not isinstance(recorded, str) or len(recorded) != 40:
-        return False
-    parent = subprocess.run(
-        ["git", "rev-parse", f"{revision}^"],
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    return parent.returncode == 0 and parent.stdout.strip() == recorded
+def gate_matches_revision(gate: dict[str, Any], revision: str) -> bool:
+    return bool(packet_builder.report_module().gate_is_trusted(gate, revision=revision))
+
 
 def preflight(client: forgejo.ForgejoClient) -> dict[str, Any]:
     snapshot = client.stable_snapshot()
@@ -600,12 +592,27 @@ def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, 
             "outcome": outcome,
             "verdict": verdict,
             "artifact_sha256": artifact_sha256,
-
-
             "next_wake_at": request.get("next_wake_at"),
         },
     )
     comment = client.append_event(state.issues_by_work[work_id]["number"], event.comment_body(), event.event_id)
+    escalation: dict[str, Any] | None = None
+    if outcome == "diagnostic":
+        pressure = scheduler.recovery_tier(
+            view.diagnostic_count + 1,
+            view.repeat_fingerprints + (1 if verdict.get("fingerprint") == view.last_fingerprint else 0),
+        )
+        if pressure >= scheduler.ESCALATION_DIAGNOSTICS:
+            escalation = _escalate_work(
+                client,
+                state=state,
+                view=view,
+                run_id=control.run_id or "",
+                diagnostic_count=view.diagnostic_count + 1,
+                fingerprint=verdict.get("fingerprint"),
+                parent_comment_id=int(comment["id"]),
+                parent_event_sha256=event.event_sha256,
+            )
     return response(
         "record",
         "ok",
@@ -616,8 +623,55 @@ def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, 
             "outcome": outcome,
             "artifact_sha256": artifact_sha256,
             "verdict": verdict,
+            "escalation": escalation,
         },
     )
+
+
+def _escalate_work(
+    client: forgejo.ForgejoClient,
+    *,
+    state: ReducedSnapshot,
+    view: ledger.WorkView,
+    run_id: str,
+    diagnostic_count: int,
+    fingerprint: Any,
+    parent_comment_id: int,
+    parent_event_sha256: str,
+) -> dict[str, Any]:
+    issue = state.issues_by_work[view.work_id]
+    event = ledger.FactoryEvent.create(
+        kind="block",
+        run_id=run_id,
+        work_id=view.work_id,
+        attempt_id=None,
+        parent_comment_id=parent_comment_id,
+        parent_event_sha256=parent_event_sha256,
+        base_revision=view.base_revision or current_revision(),
+        intent_sha256=view.intent_sha256 or "",
+        emitted_at=datetime.now(UTC).isoformat(),
+        payload={
+            "reason": "recovery-exhausted",
+            "unblock": (
+                f"{diagnostic_count} diagnostics"
+                + (f", verdict fingerprint {fingerprint}" if isinstance(fingerprint, str) else "")
+                + "; fix the cause, then post /factory unblock"
+            ),
+            "dependency_issue_numbers": [],
+        },
+    )
+    comment = client.append_event(int(issue["number"]), event.comment_body(), event.event_id)
+    labels = _projected_labels(issue, "blocked")
+    if "attention/human" not in labels:
+        labels = sorted([*labels, "attention/human"])
+    client.set_projection(int(issue["number"]), labels=labels, state="open")
+    return {
+        "issue_number": int(issue["number"]),
+        "event_comment_id": int(comment["id"]),
+        "reason": "recovery-exhausted",
+        "diagnostic_count": diagnostic_count,
+    }
+
 
 def _artifact_attempt_ids(record: dict[str, Any]) -> set[str]:
     identity = record.get("identity")
@@ -1518,6 +1572,14 @@ def main() -> int:
         if not isinstance(request, dict):
             raise ControlError("request must be a JSON object")
         value = dispatch(args.operation, request, forgejo.ForgejoClient())
+    except (forgejo.ForgejoUnavailable, forgejo.ForgejoConflict) as exc:
+        retry_at = (datetime.now(UTC) + timedelta(seconds=60)).isoformat()
+        value = response(
+            args.operation,
+            "waiting",
+            data={"waiting_until": retry_at, "waiting_reason": "forgejo-unavailable"},
+            error=(type(exc).__name__, str(exc), retry_at),
+        )
     except (ControlError, forgejo.ForgejoError, ledger.LedgerError, ValueError, OSError, json.JSONDecodeError) as exc:
         value = response(args.operation, "stop", error=(type(exc).__name__, str(exc), None))
     print(json.dumps(value, sort_keys=True))

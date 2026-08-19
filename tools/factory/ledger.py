@@ -142,6 +142,11 @@ class WorkView:
     blockers: list[int] = field(default_factory=list)
     quarantined: bool = False
     quarantine_reason: str | None = None
+    diagnostic_count: int = 0
+    infra_failures: int = 0
+    repeat_fingerprints: int = 0
+    last_fingerprint: str | None = None
+    escalated: bool = False
 
     @property
     def canonical_event(self) -> EventComment | None:
@@ -166,6 +171,10 @@ class WorkView:
             "blockers": self.blockers,
             "quarantined": self.quarantined,
             "quarantine_reason": self.quarantine_reason,
+            "diagnostic_count": self.diagnostic_count,
+            "infra_failures": self.infra_failures,
+            "repeat_fingerprints": self.repeat_fingerprints,
+            "escalated": self.escalated,
             "canonical_event_id": self.canonical_event.event.event_id if self.canonical_event else None,
             "canonical_comment_id": self.canonical_event.comment_id if self.canonical_event else None,
             "ignored": self.ignored,
@@ -524,6 +533,14 @@ def _active_claim(chain: list[EventComment], now: datetime) -> tuple[int | None,
     return claim_id, expiry
 
 
+def _verdict_fingerprint(payload: dict[str, Any]) -> str | None:
+    verdict = payload.get("verdict")
+    if not isinstance(verdict, dict):
+        return None
+    fingerprint = verdict.get("fingerprint")
+    return fingerprint if isinstance(fingerprint, str) and fingerprint else None
+
+
 def reduce_work(
     issue: dict[str, Any],
     comments: Iterable[dict[str, Any]],
@@ -570,6 +587,9 @@ def reduce_work(
                 view.state = "integrating"
                 view.productive_result_comment_id = item.comment_id
                 view.artifact_sha256 = str(event.payload["artifact_sha256"])
+                view.diagnostic_count = 0
+                view.repeat_fingerprints = 0
+                view.last_fingerprint = None
                 if artifact_exists is not None and not artifact_exists(view.artifact_sha256):
                     view.state = "recovery"
                     view.quarantined = True
@@ -579,6 +599,16 @@ def reduce_work(
                 view.retry_at = parse_time(event.payload.get("next_wake_at"))
             elif outcome in {"diagnostic", "infrastructure-failure", "stopped"}:
                 view.state = "recovery"
+                if outcome == "diagnostic":
+                    view.diagnostic_count += 1
+                    fingerprint = _verdict_fingerprint(event.payload)
+                    if fingerprint is not None and fingerprint == view.last_fingerprint:
+                        view.repeat_fingerprints += 1
+                    else:
+                        view.repeat_fingerprints = 0
+                    view.last_fingerprint = fingerprint
+                else:
+                    view.infra_failures += 1
             elif outcome == "blocked":
                 view.state = "blocked"
         elif event.kind == "artifact-missing":
@@ -586,8 +616,13 @@ def reduce_work(
             view.artifact_sha256 = None
         elif event.kind == "block":
             view.state = "blocked"
+            view.escalated = event.payload.get("reason") == "recovery-exhausted"
         elif event.kind == "unblock":
             view.state = "recovery" if view.productive_result_comment_id is None else "integrating"
+            view.escalated = False
+            view.diagnostic_count = 0
+            view.repeat_fingerprints = 0
+            view.last_fingerprint = None
         elif event.kind == "diagnosis":
             view.diagnosis = dict(event.payload)
         elif event.kind == "integration-start":
