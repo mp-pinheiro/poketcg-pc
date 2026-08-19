@@ -84,6 +84,35 @@ def atomic_json(path: Path, value: object) -> None:
             temporary.unlink()
 
 
+OWNED_PATH_PREFIXES = (
+    "src/home/", "src/probe/", "tests/cases/", "tools/oracle/mutation_receipts/",
+)
+
+
+def owned_dirty_paths(summary: str) -> list[str]:
+    paths: set[str] = set()
+    for line in summary.splitlines():
+        parts = line.split(maxsplit=1)
+        if len(parts) != 2:
+            continue
+        path = parts[1].strip().strip('"')
+        if path.startswith(OWNED_PATH_PREFIXES):
+            paths.add(path)
+    return sorted(paths)
+
+
+def dirty_port_paths(cwd: Path = ROOT) -> list[str]:
+    for command in (
+        ["jj", "diff", "--summary"],
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+    ):
+        result = subprocess.run(command, cwd=cwd, text=True, capture_output=True, check=False)
+        if result.returncode == 0:
+            return owned_dirty_paths(result.stdout)
+    return []
+
+
+
 def current_revision(cwd: Path = ROOT) -> str:
     result = subprocess.run(
         ["jj", "log", "--no-graph", "-r", "main", "-T", "commit_id"],
@@ -376,6 +405,9 @@ def preflight(client: forgejo.ForgejoClient) -> dict[str, Any]:
     gate = gate_record()
     if not gate_matches_revision(gate, revision):
         raise ControlError("gate does not prove the current main revision")
+    dirty = dirty_port_paths()
+    if dirty:
+        raise ControlError(f"central checkout has uncommitted port files: {dirty[:8]}")
     return {
         "repository": client.repository,
         "issue_snapshot_sha256": snapshot["sha256"],
@@ -420,6 +452,27 @@ def frontier(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str
     )
 
 
+SOFT_DEADLINE_SECONDS = {"smol": 420, "task": 900}
+HARD_DEADLINE_SECONDS = {"smol": 1440, "task": 3600}
+VERIFY_ALLOWANCE_SECONDS = 600
+
+
+def _soft_deadline(route: str) -> int:
+    return SOFT_DEADLINE_SECONDS.get(route, SOFT_DEADLINE_SECONDS["task"])
+
+
+def _hard_deadline(route: str) -> int:
+    return HARD_DEADLINE_SECONDS.get(route, HARD_DEADLINE_SECONDS["task"])
+
+
+def _lease_seconds(request: dict[str, Any]) -> int:
+    """A lease must outlive the deadline it authorizes, or the work is claimed twice."""
+    floor = _hard_deadline(str(request.get("model_route", "smol"))) + VERIFY_ALLOWANCE_SECONDS
+    requested = request.get("lease_seconds")
+    seconds = int(requested) if isinstance(requested, int) else floor
+    return min(max(seconds, floor), 7200)
+
+
 def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
     state = reduced_snapshot(client)
     control = _require_run(state, request)
@@ -432,6 +485,9 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         raise ControlError(f"{work_id} is not claimable: {view.state}")
     if view.canonical_event is None:
         raise ControlError(f"{work_id} has no migrated event")
+    dirty = dirty_port_paths()
+    if dirty:
+        raise ControlError(f"central checkout has uncommitted port files: {dirty[:8]}")
     revision = current_revision()
     seed = forgejo.sha256({
         "work_id": work_id,
@@ -491,7 +547,7 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         intent_sha256=view.intent_sha256 or "",
         emitted_at=datetime.now(UTC).isoformat(),
         payload={
-            "lease_seconds": int(request.get("lease_seconds", 720)),
+            "lease_seconds": _lease_seconds(request),
             "packet_sha256": packet_sha256,
             "model_route": request.get("model_route", "smol"),
             "owned_paths_sha256": forgejo.sha256(list(work.owned_paths)),
@@ -526,8 +582,8 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
             "lane_index": lane_index,
             "lane_capability": lane_capability,
             "owned_paths": list(work.owned_paths),
-            "soft_deadline_seconds": 420 if event.payload["model_route"] == "smol" else 900,
-            "hard_deadline_seconds": 1440 if event.payload["model_route"] == "smol" else 3600,
+            "soft_deadline_seconds": _soft_deadline(str(event.payload["model_route"])),
+            "hard_deadline_seconds": _hard_deadline(str(event.payload["model_route"])),
             "prompt": prompt_text,
         },
     )

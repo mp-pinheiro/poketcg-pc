@@ -12,6 +12,7 @@ from urllib.parse import parse_qs, urlparse
 
 import cache
 import common
+import control
 import forecast
 import forgejo
 import integrate
@@ -159,6 +160,97 @@ def check_ledger() -> None:
         artifact_exists=lambda value: value == "1" * 64,
     )
     assert view.state == "done"
+
+
+def check_first_claim_election() -> None:
+    issue = work_issue()
+    intent = ledger.intent_sha256(issue, [], [])
+    root = make_event(
+        "migrated",
+        "port:v1:src/home/demo.asm:Demo",
+        (None, None),
+        intent,
+        {
+            "state": "ready",
+            "source_revision": "a" * 40,
+            "publication_revision": "",
+            "gate_sha256": "b" * 64,
+            "legacy_history_sha256": None,
+            "landed_at": None,
+            "exclusion_reason": None,
+        },
+    )
+    claim = make_event(
+        "claim",
+        root.work_id,
+        (10, root.event_sha256),
+        intent,
+        {
+            "lease_seconds": 900,
+            "packet_sha256": "c" * 64,
+            "model_route": "smol",
+            "owned_paths_sha256": "d" * 64,
+        },
+    )
+    comments = [comment(10, root, 0), comment(11, claim, 1)]
+    winner = ledger.elect_lease(
+        comments,
+        work_id=root.work_id,
+        now=datetime(2026, 8, 18, 0, 2, tzinfo=UTC),
+    )
+    assert winner is not None
+    assert winner.comment_id == 11
+    result = make_event(
+        "attempt-result",
+        root.work_id,
+        (11, claim.event_sha256),
+        intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "diagnostic",
+            "verdict": {"status": "red", "fingerprint": "x"},
+            "artifact_sha256": None,
+            "next_wake_at": None,
+        },
+    )
+    released = ledger.elect_lease(
+        [*comments, comment(12, result, 2)],
+        work_id=root.work_id,
+        now=datetime(2026, 8, 18, 0, 3, tzinfo=UTC),
+    )
+    assert released is None
+
+
+def check_lease_covers_deadline() -> None:
+    for route in ("smol", "task"):
+        lease = control._lease_seconds({"model_route": route})
+        assert lease > control._hard_deadline(route)
+        assert lease > control._soft_deadline(route)
+        clipped = control._lease_seconds({"model_route": route, "lease_seconds": 60})
+        assert clipped == lease
+        extended = control._lease_seconds({"model_route": route, "lease_seconds": 7000})
+        assert extended == 7000
+    assert control._lease_seconds({"model_route": "task", "lease_seconds": 99999}) == 7200
+
+
+def check_dirty_guard() -> None:
+    summary = (
+        "M src/home/sgb.c\n"
+        "M tools/factory/control.py\n"
+        "A src/probe/sgb.c\n"
+        "D tests/cases/sgb.py\n"
+        "M site/data/progress.json\n"
+        "A tools/oracle/mutation_receipts/SendSGB.json\n"
+        "?? untracked-noise\n"
+    )
+    assert control.owned_dirty_paths(summary) == [
+        "src/home/sgb.c",
+        "src/probe/sgb.c",
+        "tests/cases/sgb.py",
+        "tools/oracle/mutation_receipts/SendSGB.json",
+    ]
+    assert control.owned_dirty_paths("") == []
+    assert control.owned_dirty_paths("M tools/factory/ledger.py") == []
 
 
 def check_recovery_ladder() -> None:
@@ -649,6 +741,9 @@ def main() -> int:
     check_ledger()
     check_control()
     check_planner()
+    check_first_claim_election()
+    check_lease_covers_deadline()
+    check_dirty_guard()
     check_recovery_ladder()
     check_forgejo_client()
     check_incremental_listing()

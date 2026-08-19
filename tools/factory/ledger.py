@@ -704,7 +704,7 @@ def elect_lease(
     now: datetime,
     control: bool = False,
 ) -> EventComment | None:
-    allowed = {"run-claim", "run-heartbeat", "run-release", "port-complete", "integration-start", "integration-phase"} if control else {"claim", "heartbeat", "attempt-result", "landed"}
+    allowed = set(CONTROL_EVENT_KINDS) if control else set(WORK_EVENT_KINDS)
     chain, _ignored = _canonical_chain(comments, work_id=work_id, allowed_kinds=allowed)
     claim_id, _expires = _active_claim(chain, now)
     if claim_id is None:

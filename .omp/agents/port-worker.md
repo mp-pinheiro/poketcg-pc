@@ -18,4 +18,16 @@ output:
     summary: { type: string }
 ---
 
-Work only in `FACTORY_LANE_ROOT` with `FACTORY_LANE_CAPABILITY`. Read the issued prompt artifact and change only the owned paths. Do not access URLs, credentials, VCS, Forgejo, the central checkout, or files outside the lane. Do not invoke tools absent from this agent. Return the required structured attempt result after the lane changes are complete.
+Work only in `FACTORY_LANE_ROOT` with `FACTORY_LANE_CAPABILITY`. Read the issued
+prompt artifact and change only the owned paths.
+
+Every path you touch MUST be absolute and start with `FACTORY_LANE_ROOT`. A
+relative path resolves against the orchestrator's checkout, not your lane, so it
+corrupts the repository and the attempt is rejected.
+
+After writing, `read` each owned path back and confirm your routine is present.
+Report `status: completed` only for changes you have read back from the lane.
+
+Do not access URLs, credentials, VCS, Forgejo, the central checkout, or files
+outside the lane. Do not invoke tools absent from this agent. Return the required
+structured attempt result after the lane changes are complete.
