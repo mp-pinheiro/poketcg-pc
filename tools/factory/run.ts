@@ -1,19 +1,8 @@
 import { type AgentSession, createAgentSession, SessionManager } from "@oh-my-pi/pi-coding-agent";
-import { z } from "zod";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dir, "../..");
 const stateDir = path.join(root, ".factory", "v2", "sessions");
-const FACTORY_OPS = [
-	"preflight",
-	"status",
-	"reconcile",
-	"frontier",
-	"claim",
-	"record",
-	"integrate",
-	"forecast",
-] as const;
 
 type FactoryResponse = {
 	schema: number;
@@ -110,28 +99,6 @@ async function main(): Promise<void> {
 			reason,
 		});
 	};
-	const factoryTool = {
-		name: "factory",
-		label: "Factory",
-		description: "Execute one typed autonomous port-factory control operation.",
-		parameters: z.object({
-			op: z.enum(FACTORY_OPS),
-			request: z.record(z.string(), z.unknown()).default(() => ({})),
-		}),
-		approval: "write" as const,
-		loadMode: "essential" as const,
-		async execute(_toolCallId: string, params: { op: string; request: Record<string, unknown> }) {
-			const payload = await control(params.op, {
-				...params.request,
-				run_id: runId,
-				run_claim_comment_id: runClaimCommentId,
-			});
-			return {
-				content: [{ type: "text" as const, text: JSON.stringify(payload) }],
-				details: payload,
-			};
-		},
-	};
 	let session: AgentSession;
 	try {
 		const manager = await SessionManager.create(root, stateDir);
@@ -139,10 +106,8 @@ async function main(): Promise<void> {
 			cwd: root,
 			sessionManager: manager,
 			modelPattern: "@default",
-			toolNames: ["factory", "read", "grep", "glob", "task", "hub"],
+			toolNames: ["task", "read", "hub"],
 			restrictToolNames: true,
-			allowRestrictedCustomTools: true,
-			customTools: [factoryTool],
 		}));
 	} catch (error) {
 		await release("session-error");
