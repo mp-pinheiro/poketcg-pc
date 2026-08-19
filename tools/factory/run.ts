@@ -76,7 +76,7 @@ async function main(): Promise<void> {
 		throw new Error("run claim response has no claim comment ID");
 	}
 	const manager = await SessionManager.continueRecent(root, stateDir);
-	const { session } = await createAgentSession({
+	const { session, extensionsResult } = await createAgentSession({
 		cwd: root,
 		sessionManager: manager,
 		modelPattern: "@default",
@@ -85,6 +85,13 @@ async function main(): Promise<void> {
 		allowRestrictedCustomTools: true,
 		additionalExtensionPaths: [extension],
 	});
+	if (extensionsResult.errors.length > 0) {
+		const detail = extensionsResult.errors.map(entry => `${entry.path}: ${entry.error}`).join("; ");
+		throw new Error(`factory extension failed to load: ${detail}`);
+	}
+	if (extensionsResult.extensions.length === 0) {
+		throw new Error(`factory extension did not register: ${extension}`);
+	}
 	let released = false;
 	const release = async (reason: string): Promise<void> => {
 		if (released) return;

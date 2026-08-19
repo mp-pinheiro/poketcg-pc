@@ -96,7 +96,7 @@ export default function factoryExtension(pi: ExtensionAPI) {
 		description: "Execute one typed autonomous port-factory control operation.",
 		parameters: z.object({
 			op: z.enum(["preflight", "status", "reconcile", "frontier", "run-claim", "run-heartbeat", "run-release", "claim", "record", "integrate", "forecast", "migrate", "complete"]),
-			request: z.record(z.string(), z.unknown()).default({}),
+			request: z.record(z.string(), z.unknown()).default(() => ({})),
 		}),
 		async execute(_toolCallId, params, _onUpdate, ctx, signal) {
 			const result = await ctx.exec(
