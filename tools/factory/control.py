@@ -1570,13 +1570,17 @@ def forecast_status(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
             or any(number not in number_to_work for number in work.dependencies)
         )
     ]
-    events: list[dict[str, Any]] = []
-    for comments in state.raw["comments"].values():
-        for comment in comments:
-            parsed = ledger.parse_event_comment(comment)
-            if parsed is not None:
-                events.append(parsed.event.as_dict())
-    samples = forecast.samples_from_telemetry(events)
+    samples: list[forecast.Sample] = []
+    for work in state.factory_snapshot.works:
+        view = state.views_by_work[work.work_id]
+        samples.extend(forecast.samples_from_chain(
+            [
+                {"kind": item.event.kind, "emitted_at": item.event.emitted_at}
+                for item in view.chain
+            ],
+            tier=work.tier,
+            size=work.size,
+        ))
     confidence = "high" if len(samples) >= 30 else "low"
     if not samples:
         samples = forecast.provisional_history(

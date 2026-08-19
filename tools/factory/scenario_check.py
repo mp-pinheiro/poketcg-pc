@@ -693,6 +693,24 @@ def check_incremental_listing() -> None:
         thread.join()
 
 
+def check_ledger_samples() -> None:
+    chain = [
+        {"kind": "migrated", "emitted_at": "2026-08-18T00:00:00+00:00"},
+        {"kind": "claim", "emitted_at": "2026-08-18T00:00:00+00:00"},
+        {"kind": "attempt-result", "emitted_at": "2026-08-18T00:05:00+00:00"},
+        {"kind": "claim", "emitted_at": "2026-08-18T01:00:00+00:00"},
+        {"kind": "heartbeat", "emitted_at": "2026-08-18T01:01:00+00:00"},
+        {"kind": "attempt-result", "emitted_at": "2026-08-18T01:03:00+00:00"},
+        {"kind": "claim", "emitted_at": "2026-08-18T02:00:00+00:00"},
+        {"kind": "attempt-result", "emitted_at": "2026-08-19T02:00:00+00:00"},
+        {"kind": "landed", "emitted_at": "2026-08-19T03:00:00+00:00"},
+    ]
+    samples = forecast.samples_from_chain(chain, tier=2, size=140)
+    assert [sample.seconds for sample in samples] == [300.0, 180.0]
+    assert {sample.tier for sample in samples} == {2}
+    assert forecast.samples_from_chain([], tier=1, size=10) == []
+
+
 def check_derived_cache() -> None:
     issue = {
         **work_issue(),
@@ -826,6 +844,7 @@ def main() -> int:
     check_derived_cache()
     check_artifact_store()
     check_forecast()
+    check_ledger_samples()
     check_migration_identity()
     print("factory scenario check: PASS")
     return 0
