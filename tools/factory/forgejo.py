@@ -11,7 +11,7 @@ import urllib.parse
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +26,8 @@ TOKEN_PATH = Path(os.environ.get(
 USER_AGENT = "poketcg-factory-v2/1.0"
 PAGE_SIZE = 50
 TRANSIENT_CODES = frozenset({429, 502, 503, 504})
+LISTING_PATH = ROOT / ".factory" / "v2" / "listing.json"
+LISTING_OVERLAP = timedelta(minutes=5)
 
 
 class ForgejoError(RuntimeError):
@@ -54,6 +56,13 @@ def parse_time(value: str | None) -> datetime | None:
         return datetime.fromisoformat(value).astimezone(UTC)
     except ValueError:
         return None
+
+
+def _total_count(response: Response) -> int | None:
+    raw = response.headers.get("x-total-count")
+    if raw is None or not raw.isdigit():
+        return None
+    return int(raw)
 
 
 def _header_values(url: str) -> list[str]:
@@ -92,7 +101,13 @@ def _authorization() -> str:
     return token
 
 
+_CREDENTIALS: dict[str, dict[str, str]] = {}
+
+
 def _credentials(url: str) -> dict[str, str]:
+    cached = _CREDENTIALS.get(url)
+    if cached is not None:
+        return dict(cached)
     headers = {
         "Accept": "application/json",
         "Authorization": _authorization(),
@@ -119,6 +134,7 @@ def _credentials(url: str) -> dict[str, str]:
     } - set(headers)
     if missing:
         raise ForgejoError("Forgejo Cloudflare headers are unavailable")
+    _CREDENTIALS[url] = dict(headers)
     return headers
 
 
@@ -188,12 +204,15 @@ class ForgejoClient:
         repo: str = DEFAULT_REPO,
         request: Callable[[urllib.request.Request, float], Any] | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        listing_path: Path | None = LISTING_PATH,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.owner = owner
         self.repo = repo
         self._open = request or urllib.request.urlopen
         self._sleep = sleep
+        self.listing_path = listing_path
+        self._labels: dict[str, int] | None = None
 
     @property
     def repository(self) -> str:
@@ -266,26 +285,101 @@ class ForgejoClient:
     ) -> object:
         return self._request(method, path, payload=payload, query=query).payload
 
-    def _pages(self, path: str, *, query: dict[str, object] | None = None) -> list[dict[str, Any]]:
+    def _pages(
+        self,
+        path: str,
+        *,
+        query: dict[str, object] | None = None,
+    ) -> tuple[list[dict[str, Any]], int | None]:
         page = 1
         rows: list[dict[str, Any]] = []
+        total: int | None = None
         while True:
             values = dict(query or {})
             values.update({"page": page, "limit": PAGE_SIZE})
-            payload = self.request_json("GET", path, query=values)
+            response = self._request("GET", path, query=values)
+            payload = response.payload
             if not isinstance(payload, list):
                 raise ForgejoError(f"{path} page {page} is not a list")
+            if total is None:
+                total = _total_count(response)
             rows.extend(row for row in payload if isinstance(row, dict))
             if len(payload) < PAGE_SIZE:
-                return rows
+                return rows, total
             page += 1
 
+    def _total_issues(self) -> int | None:
+        response = self._request("GET", "/issues", query={
+            "state": "all", "type": "issues", "limit": 1, "page": 1,
+        })
+        return _total_count(response)
+
+    def _full_issue_listing(self) -> tuple[list[dict[str, Any]], int | None]:
+        raw, total = self._pages("/issues", query={"state": "all", "type": "issues"})
+        return [normalize_issue(row) for row in raw], total
+
+    def _incremental_issue_listing(
+        self,
+        cached: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], int | None] | None:
+        watermark = max(
+            (parse_time(issue.get("updated_at")) for issue in cached),
+            default=None,
+        )
+        total = self._total_issues()
+        if watermark is None or total is None:
+            return None
+        raw, _filtered = self._pages("/issues", query={
+            "state": "all",
+            "type": "issues",
+            "since": (watermark - LISTING_OVERLAP).isoformat(),
+        })
+        merged = {issue["number"]: issue for issue in cached}
+        for row in raw:
+            issue = normalize_issue(row)
+            merged[issue["number"]] = issue
+        if len(merged) != total:
+            return None
+        return list(merged.values()), total
+
     def issues(self) -> list[dict[str, Any]]:
-        issues = [normalize_issue(raw) for raw in self._pages("/issues", query={"state": "all", "type": "issues"})]
+        cached = self._load_listing()
+        result = self._incremental_issue_listing(cached) if cached else None
+        if result is None:
+            result = self._full_issue_listing()
+        issues, total = result
         numbers = [issue["number"] for issue in issues]
         if len(numbers) != len(set(numbers)):
             raise ForgejoError("Forgejo issue listing has duplicate numbers")
-        return sorted(issues, key=lambda issue: issue["number"])
+        if total is not None and len(numbers) != total:
+            raise ForgejoError(f"Forgejo listed {len(numbers)} issues but reports {total}")
+        listing = sorted(issues, key=lambda issue: issue["number"])
+        self._store_listing(listing)
+        return listing
+
+    def _load_listing(self) -> list[dict[str, Any]] | None:
+        if self.listing_path is None:
+            return None
+        try:
+            value = json.loads(self.listing_path.read_text())
+        except (OSError, json.JSONDecodeError):
+            return None
+        issues = value.get("issues")
+        if value.get("repository") != self.repository or not isinstance(issues, list) or not issues:
+            return None
+        return [normalize_issue(issue) for issue in issues]
+
+    def _store_listing(self, issues: list[dict[str, Any]]) -> None:
+        if self.listing_path is None:
+            return
+        self.listing_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = self.listing_path.with_suffix(f".{os.getpid()}.tmp")
+        temporary.write_text(canonical_json({
+            "schema": 1,
+            "repository": self.repository,
+            "issues": issues,
+        }))
+        os.replace(temporary, self.listing_path)
 
     def stable_snapshot(self, *, attempts: int = 4) -> dict[str, Any]:
         if attempts < 2:
@@ -314,7 +408,8 @@ class ForgejoClient:
         query: dict[str, object] = {}
         if since:
             query["since"] = since
-        comments = [normalize_comment(raw) for raw in self._pages(f"/issues/{number}/comments", query=query)]
+        rows, _total = self._pages(f"/issues/{number}/comments", query=query)
+        comments = [normalize_comment(raw) for raw in rows]
         by_id = {comment["id"]: comment for comment in comments}
         if len(by_id) != len(comments):
             raise ForgejoError(f"issue #{number} has duplicate comment IDs")
@@ -324,9 +419,12 @@ class ForgejoClient:
         return self.comments(number, since=since)
 
     def dependencies(self, number: int) -> list[dict[str, Any]]:
-        return [normalize_issue(raw) for raw in self._pages(f"/issues/{number}/dependencies")]
+        rows, _total = self._pages(f"/issues/{number}/dependencies")
+        return [normalize_issue(raw) for raw in rows]
 
     def labels(self) -> dict[str, int]:
+        if self._labels is not None:
+            return dict(self._labels)
         payload = self.request_json("GET", "/labels")
         if not isinstance(payload, list):
             raise ForgejoError("Forgejo labels response is not a list")
@@ -337,6 +435,7 @@ class ForgejoClient:
             name, identifier = row.get("name"), row.get("id")
             if isinstance(name, str) and isinstance(identifier, int):
                 labels[name] = identifier
+        self._labels = dict(labels)
         return labels
 
     def create_label(
@@ -362,6 +461,7 @@ class ForgejoClient:
         return int(result["id"])
 
     def ensure_labels(self, labels: dict[str, tuple[str, str, bool]]) -> dict[str, int]:
+        self._labels = None
         current = self.labels()
         for name, (color, description, exclusive) in labels.items():
             if name not in current:
@@ -371,6 +471,7 @@ class ForgejoClient:
                     description=description,
                     exclusive=exclusive,
                 )
+        self._labels = dict(current)
         return current
 
     def create_issue(self, *, title: str, body: str, labels: list[str]) -> dict[str, Any]:
@@ -385,7 +486,9 @@ class ForgejoClient:
         for comment in self.comments(number):
             if event_id in comment["body"]:
                 return comment
-        self.append_comment(number, body)
+        created = self.append_comment(number, body)
+        if event_id in created["body"]:
+            return created
         for comment in self.comments(number):
             if event_id in comment["body"]:
                 return comment
@@ -404,18 +507,30 @@ class ForgejoClient:
         current = self.issue(number)
         if expected_fingerprint and issue_fingerprint(current) != expected_fingerprint:
             raise ForgejoConflict(f"issue #{number} changed before projection")
-        patch: dict[str, Any] = {"state": state}
-        if title is not None:
+        patch: dict[str, Any] = {}
+        if state != current["state"]:
+            patch["state"] = state
+        if title is not None and title != current["title"]:
             patch["title"] = title
-        if body is not None:
+        if body is not None and body != current["body"]:
             patch["body"] = body
-        self.request_json("PATCH", f"/issues/{number}", payload=patch)
+        if patch:
+            current = normalize_issue(self.request_json("PATCH", f"/issues/{number}", payload=patch))
+        desired = sorted(set(labels))
+        if desired == current["labels"]:
+            return current
         ids = self.labels()
-        missing = sorted(set(labels) - set(ids))
+        missing = sorted(set(desired) - set(ids))
         if missing:
             raise ForgejoError(f"Forgejo labels are missing: {missing}")
-        self.request_json("PUT", f"/issues/{number}/labels", payload={"labels": [ids[label] for label in sorted(set(labels))]})
-        return self.issue(number)
+        payload = self.request_json(
+            "PUT", f"/issues/{number}/labels", payload={"labels": [ids[label] for label in desired]},
+        )
+        names = sorted({
+            row["name"] for row in payload
+            if isinstance(row, dict) and isinstance(row.get("name"), str)
+        }) if isinstance(payload, list) else desired
+        return {**current, "labels": names}
 
     def add_dependency(self, number: int, dependency: int) -> None:
         if dependency in {row["number"] for row in self.dependencies(number)}:

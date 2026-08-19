@@ -8,7 +8,7 @@ from datetime import UTC, datetime, timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import cache
 import common
@@ -421,6 +421,7 @@ def check_forgejo_client() -> None:
         client = forgejo.ForgejoClient(
             base_url=f"http://127.0.0.1:{server.server_port}",
             sleep=lambda _seconds: None,
+            listing_path=None,
         )
         snapshot = client.stable_snapshot()
         assert snapshot["sha256"]
@@ -447,6 +448,83 @@ def check_forgejo_client() -> None:
         server.shutdown()
         server.server_close()
         thread.join()
+
+
+def check_incremental_listing() -> None:
+    issues = {
+        number: {
+            "id": number,
+            "number": number,
+            "title": f"Issue {number}",
+            "body": "original",
+            "state": "open",
+            "labels": [],
+            "created_at": "2026-08-18T00:00:00Z",
+            "updated_at": f"2026-08-18T00:0{number - 100}:00Z",
+            "user": {"login": "mpp"},
+        }
+        for number in (101, 102, 103)
+    }
+    requests: list[dict[str, list[str]]] = []
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self) -> None:
+            parsed = urlparse(self.path)
+            query = parse_qs(parsed.query)
+            requests.append(query)
+            rows = sorted(issues.values(), key=lambda issue: issue["number"])
+            since = query.get("since", [None])[0]
+            if since:
+                rows = [row for row in rows if row["updated_at"] >= since]
+            limit = int(query.get("limit", ["50"])[0])
+            page = int(query.get("page", ["1"])[0])
+            window = rows[(page - 1) * limit:page * limit]
+            raw = json.dumps(window).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(raw)))
+            self.send_header("X-Total-Count", str(len(rows)))
+            self.end_headers()
+            self.wfile.write(raw)
+
+        def log_message(self, _format: str, *_args: object) -> None:
+            return
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    original_credentials = forgejo._credentials
+    forgejo._credentials = lambda _url: {"Accept": "application/json"}
+    try:
+        with TemporaryDirectory() as directory:
+            client = forgejo.ForgejoClient(
+                base_url=f"http://127.0.0.1:{server.server_port}",
+                sleep=lambda _seconds: None,
+                listing_path=Path(directory) / "listing.json",
+            )
+            cold = client.issues()
+            assert [issue["number"] for issue in cold] == [101, 102, 103]
+            assert all("since" not in query for query in requests)
+            issues[102]["body"] = "changed"
+            issues[102]["updated_at"] = "2026-08-18T01:00:00Z"
+            requests.clear()
+            warm = client.issues()
+            assert {issue["number"]: issue["body"] for issue in warm} == {
+                101: "original", 102: "changed", 103: "original",
+            }
+            assert len(requests) == 2
+            assert requests[1]["since"]
+            del issues[103]
+            requests.clear()
+            shrunk = client.issues()
+            assert [issue["number"] for issue in shrunk] == [101, 102]
+            assert any("since" not in query for query in requests)
+    finally:
+        forgejo._credentials = original_credentials
+        server.shutdown()
+        server.server_close()
+        thread.join()
+
 
 def check_derived_cache() -> None:
     issue = {
@@ -535,6 +613,7 @@ def main() -> int:
     check_planner()
     check_recovery_ladder()
     check_forgejo_client()
+    check_incremental_listing()
     check_derived_cache()
     check_artifact_store()
     check_forecast()
