@@ -10,8 +10,10 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import sqlite3
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -44,7 +46,12 @@ def tool_version(root: Path = common.ROOT) -> dict[str, Any]:
         value = json.loads(completed.stdout)
     except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
         raise AnalyzerUnavailable("GB Recompiled --version-json failed") from exc
-    if not isinstance(value, dict) or value.get("version") != ABI or value.get("abi") != ABI:
+    if (
+        not isinstance(value, dict)
+        or value.get("version") != ABI
+        or value.get("schema") != "gbrecomp.version"
+        or (value.get("abis") or {}).get("semantic") != 1
+    ):
         raise AnalyzerUnavailable("GB Recompiled version/ABI is not pinned to 0.1.0")
     return value
 
@@ -83,6 +90,52 @@ def cache_records(records: list[dict[str, Any]], *, inputs: dict[str, Any] | Non
             db.execute("INSERT OR REPLACE INTO semantic_index(key, record) VALUES (?, ?)", (key, json.dumps(record, sort_keys=True)))
         db.commit()
     return identity
+def _invoke_gbrecomp(packet: dict[str, Any], *, root: Path) -> dict[str, Any]:
+    tool = tool_path(root)
+    inputs = packet.get("analyzer_inputs")
+    if not isinstance(inputs, dict):
+        raise AnalyzerUnavailable("packet lacks analyzer inputs")
+    rom = Path(str(inputs.get("rom") or root / "poketcg" / "poketcg.gbc"))
+    symbols = Path(str(inputs.get("symbols") or root / "poketcg" / "poketcg.sym"))
+    annotations = inputs.get("annotations")
+    if isinstance(annotations, str) and Path(annotations).is_file():
+        annotation_path = Path(annotations)
+        temporary = False
+    else:
+        fd, name = tempfile.mkstemp(
+            prefix="gbrecomp-", suffix=".annotations", dir=root / ".factory"
+        )
+        os.close(fd)
+        annotation_path = Path(name)
+        annotation_path.write_text(annotations if isinstance(annotations, str) else "")
+        temporary = True
+    output = Path(tempfile.mkdtemp(prefix="gbrecomp-", dir=root / ".factory"))
+    try:
+        completed = subprocess.run(
+            [
+                str(tool), str(rom), "-o", str(output),
+                "--symbols", str(symbols), "--symbol-policy", "names-only",
+                "--annotations", str(annotation_path), "--reachable-only",
+                "--no-scan", "--jobs", "1",
+            ],
+            cwd=root, capture_output=True, text=True, check=False,
+        )
+        if completed.returncode != 0:
+            raise AnalyzerUnavailable("GB Recompiled analysis failed")
+        metadata = list(output.glob("*_metadata.json"))
+        if len(metadata) != 1:
+            raise AnalyzerUnavailable("GB Recompiled emitted an unexpected metadata count")
+        try:
+            value = json.loads(metadata[0].read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            raise AnalyzerUnavailable("GB Recompiled metadata is invalid") from exc
+        if not isinstance(value, dict):
+            raise AnalyzerUnavailable("GB Recompiled metadata must be an object")
+        return value
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        if temporary:
+            annotation_path.unlink(missing_ok=True)
 
 
 def analyze_routine(routine: dict[str, Any], asm: str, *, analysis: dict[str, Any] | None = None, root: Path = common.ROOT) -> dict[str, Any]:
