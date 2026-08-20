@@ -40,12 +40,33 @@ def _span(text: str, open_mark: str, close_mark: str) -> tuple[int, int] | None:
     return open_match.start(), end
 
 
+def _cut(text: str, span: tuple[int, int]) -> str:
+    """Delete a marker span and the separator blank line it leaves behind.
+
+    apply() writes one blank line before each block, so cutting the span
+    alone leaves that blank line stacked on the previous block's: every
+    remove/apply cycle would grow the file by one line and a repair round
+    would never be a fixed point.
+    """
+    before, after = text[:span[0]], text[span[1]:]
+    if before.endswith("\n\n") and (not after or after.startswith("\n")):
+        before = before[:-1]
+    return before + after
+
+
 def _replace_span(text: str, open_mark: str, close_mark: str, replacement: str,
-                  insert_at: int) -> str:
+                  insert_at: int, *, lead: str = "", trail: str = "") -> str:
+    """Replace a marker block in place, or insert it padded at ``insert_at``.
+
+    ``lead``/``trail`` separate a newly inserted block from its neighbours.
+    They must not reach the in-place branch: the separators are already in the
+    file there, so re-applying a routine would add one blank line per verify
+    round and every repair would produce a different artifact hash.
+    """
     span = _span(text, open_mark, close_mark)
     if span:
         return text[:span[0]] + replacement + text[span[1]:]
-    return text[:insert_at] + replacement + text[insert_at:]
+    return text[:insert_at] + lead + replacement + trail + text[insert_at:]
 
 
 def _guard_name(basename: str) -> str:
@@ -152,7 +173,7 @@ def remove(root: Path, packet: dict, fns: list[str]) -> None:
         for text_name, text in (("c", c_text), ("h", h_text), ("probe", probe_text)):
             span = _span(text, open_c, close_c)
             if span:
-                cut = text[:span[0]] + text[span[1]:]
+                cut = _cut(text, span)
                 if text_name == "c":
                     c_text = cut
                 elif text_name == "h":
@@ -167,7 +188,7 @@ def remove(root: Path, packet: dict, fns: list[str]) -> None:
                                    f"# <<< factory-mutation {fn}")):
             span = _span(cases_text, open_py, close_py)
             if span:
-                cases_text = cases_text[:span[0]] + cases_text[span[1]:]
+                cases_text = _cut(cases_text, span)
     compile(cases_text, str(paths["cases"]), "exec")
     paths["c"].write_text(c_text)
     paths["h"].write_text(h_text)
@@ -439,7 +460,7 @@ def apply(root: Path, packet: dict, translation: dict,
         merged_cs = _merge_statics(basename, existing_cs,
                                    cases_statics.rstrip().splitlines())
         cs_block = (CASES_STATICS_OPEN + "\n" + "\n".join(merged_cs) + "\n"
-                    + CASES_STATICS_CLOSE + "\n\n")
+                    + CASES_STATICS_CLOSE + "\n")
         # ahead of the routine blocks, which anchor on the migration import
         tail_at = cases_text.find("SCHEMA2_CASES = legacy_to_schema")
         if tail_at < 0:
@@ -447,7 +468,8 @@ def apply(root: Path, packet: dict, translation: dict,
         anchor = cases_text.rfind("from tests.cases._schema_migration", 0, tail_at)
         cases_text = _replace_span(cases_text, CASES_STATICS_OPEN,
                                    CASES_STATICS_CLOSE, cs_block,
-                                   anchor if anchor >= 0 else tail_at)
+                                   anchor if anchor >= 0 else tail_at,
+                                   trail="\n")
 
     for routine in packet["routines"]:
         fn = routine["name"]
@@ -457,8 +479,9 @@ def apply(root: Path, packet: dict, translation: dict,
         open_c = f"/* >>> factory {fn} */"
         close_c = f"/* <<< factory {fn} */"
 
-        c_block = f"\n{open_c}\n{blocks['C'].rstrip()}\n{close_c}\n"
-        c_text = _replace_span(c_text, open_c, close_c, c_block, len(c_text))
+        c_block = f"{open_c}\n{blocks['C'].rstrip()}\n{close_c}\n"
+        c_text = _replace_span(c_text, open_c, close_c, c_block, len(c_text),
+                               lead="\n")
 
         h_block = f"{open_c}\n{blocks['H'].rstrip()}\n{close_c}\n"
         endif_at = h_text.rfind("#endif")
@@ -474,8 +497,9 @@ def apply(root: Path, packet: dict, translation: dict,
         table_at = probe_text.find("const ProbeEntry probe_entries_")
         if table_at < 0:
             raise SurgeryError(f"{paths['probe']} has no probe_entries table")
-        probe_block = f"{open_c}\n{adapter}\n{close_c}\n\n"
-        probe_text = _replace_span(probe_text, open_c, close_c, probe_block, table_at)
+        probe_block = f"{open_c}\n{adapter}\n{close_c}\n"
+        probe_text = _replace_span(probe_text, open_c, close_c, probe_block,
+                                   table_at, trail="\n")
         # regenerate this routine's table row before the sentinel
         row = f'\t{{ "{fn}", {adapter_name} }},\n'
         probe_text = re.sub(
@@ -489,14 +513,15 @@ def apply(root: Path, packet: dict, translation: dict,
 
         open_py = f"# >>> factory {fn}"
         close_py = f"# <<< factory {fn}"
-        cases_block = f"{open_py}\n{blocks['CASES'].rstrip()}\n{close_py}\n\n"
+        cases_block = f"{open_py}\n{blocks['CASES'].rstrip()}\n{close_py}\n"
         tail_at = cases_text.find("SCHEMA2_CASES = legacy_to_schema")
         if tail_at < 0:
             raise SurgeryError(f"{paths['cases']} lost its legacy_to_schema tail")
         # the import line sits directly above the assignment; insert above it
         import_at = cases_text.rfind("from tests.cases._schema_migration", 0, tail_at)
         insert_at = import_at if import_at >= 0 else tail_at
-        cases_text = _replace_span(cases_text, open_py, close_py, cases_block, insert_at)
+        cases_text = _replace_span(cases_text, open_py, close_py, cases_block,
+                                   insert_at, trail="\n")
 
         open_mut = f"# >>> factory-mutation {fn}"
         close_mut = f"# <<< factory-mutation {fn}"

@@ -247,6 +247,10 @@ def _file_sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+GATE_COMMAND = ("just", "oracle-release-gate")
+PROGRESS_COMMAND = (sys.executable, "tools/progress/report.py", "build")
+
+
 def integrate_v2(
     artifact_sha256s: list[str],
     *,
@@ -255,7 +259,17 @@ def integrate_v2(
     forecast_payload: dict | None = None,
     factory_state_payload: dict | None = None,
     batch_id: str | None = None,
+    gate_command: tuple[str, ...] = GATE_COMMAND,
+    progress_command: tuple[str, ...] = PROGRESS_COMMAND,
+    candidate_proof: Callable[[Path, tuple[str, ...]], None] = _candidate_proof,
 ) -> IntegrationResult:
+    """Land artifacts through the proof saga.
+
+    The three command seams exist so an offline harness can exercise the saga's
+    VCS mechanics in a clone that has neither the pret ROM nor an oracle venv
+    (both are untracked). Production callers keep the defaults; a caller that
+    overrides them proves nothing about oracle acceptance.
+    """
     artifact_sha256s = sorted(set(artifact_sha256s))
     batch_id = batch_id or hashlib.sha256(json.dumps({
         "artifacts": artifact_sha256s,
@@ -411,7 +425,7 @@ def integrate_v2(
         prior_tree("applied")
     if phase_order.index(resume) <= phase_order.index("applied"):
         input_tree = prior_tree("applied")
-        _candidate_proof(clone, routines)
+        candidate_proof(clone, routines)
         _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], clone, 120)
         source_revision = _revision(clone, "@-")
         applied_revision = str(phases["applied"].get("output_revision") or remote)
@@ -423,7 +437,7 @@ def integrate_v2(
         prior_tree("source-committed")
     if phase_order.index(resume) <= phase_order.index("source-committed"):
         input_tree = prior_tree("source-committed")
-        _run(["just", "oracle-release-gate"], clone, 3600)
+        _run(list(gate_command), clone, 3600)
         gate_path = clone / "site" / "data" / "gate.json"
         gate_sha256 = _file_sha256(gate_path)
         if json.loads(gate_path.read_text()).get("commit") != source_revision:
@@ -437,7 +451,7 @@ def integrate_v2(
         prior_tree("gate-passed")
     if phase_order.index(resume) <= phase_order.index("gate-passed"):
         input_tree = prior_tree("gate-passed")
-        _run([sys.executable, "tools/progress/report.py", "build"], clone, 300)
+        _run(list(progress_command), clone, 300)
         _run(["jj", "commit", "-m", "chore(progress): refresh port status"], clone, 120)
         publication_revision = _revision(clone, "@-")
         progress_sha256 = _file_sha256(clone / "site" / "data" / "progress.json")

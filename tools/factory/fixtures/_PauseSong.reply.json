@@ -1,0 +1,17 @@
+{
+  "schema": 2,
+  "attempt_id": "recorded",
+  "statics": null,
+  "cases_statics": null,
+  "routines": [
+    {
+      "name": "_PauseSong",
+      "c": "/* music1.asm:28-30 */\nvoid _PauseSong(void)\n{\n\tMusic1_PauseSong();\n}",
+      "header": "void _PauseSong(void);",
+      "probe": "static void adapt__PauseSong(ProbeState *s)\n{\n\t(void)s;\n\t_PauseSong();\n}",
+      "cases": "CONTRACT[\"_PauseSong\"] = {\"compare\": (), \"preserve\": ()}\nCASES[\"_PauseSong\"] = [{}, dict(POISON, wram={0xC100: b\"\\x00\"})]",
+      "mutation": "MUTATIONS[\"_PauseSong\"] = {\"source_symbol\": \"_PauseSong\", \"before\": \"Music1_PauseSong();\", \"after\": \"Music1_PauseSong(), gb_write8(0xC100u, 0x01u);\", \"case_ids\": [\"_PauseSong-1\"]}",
+      "completion": null
+    }
+  ]
+}

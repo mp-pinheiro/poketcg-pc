@@ -335,76 +335,7 @@ def check_attempt(
         return {"outcome": "diagnostic", "verdict": normalized, "detail": str(raw.get("detail") or "")}
     artifact = store_artifact(stage_bundle(packet, lanes.lane_dir(lane_index)))
     return {"outcome": "productive", "verdict": normalized, **artifact}
-def verify_attempt(
-    packet: dict[str, Any],
-    reply: dict[str, Any],
-    *,
-    lane_index: int,
-    deadline_seconds: int,
-) -> dict[str, Any]:
-    attempt_id = packet.get("attempt_id") or packet.get("id")
-    if not isinstance(attempt_id, str) or not attempt_id:
-        raise ValueError("packet requires attempt_id")
-    work_ids = sorted(str(routine["work_id"]) for routine in packet["routines"])
-    try:
-        lane = validate_attempt_lane([packet], lane_index=lane_index, attempt_id=attempt_id)
-        raw = _verify_worker(packet, lane, translation_from_reply(packet, reply), time.monotonic() + deadline_seconds)
-    except (OSError, RuntimeError, TypeError, ValueError, json.JSONDecodeError, common.PhaseTimeout, common.WaveDeadlineExpired) as exc:
-        raw = {"status": "infra-error", "phase": "verify-attempt", "detail": f"{type(exc).__name__}: {exc}"}
-    normalized = verify.verdict_v1(raw, work_ids)
-    if normalized["status"] != "green":
-        return {"outcome": "diagnostic", "verdict": normalized, "detail": str(raw.get("detail") or "")}
-    artifact = store_artifact(stage_bundle(packet, lanes.lane_dir(lane_index)))
-    return {"outcome": "productive", "verdict": normalized, **artifact}
 
-
-def verify_lane_attempt(
-    packet: dict[str, Any],
-    *,
-    lane_index: int,
-    deadline_seconds: int,
-) -> dict[str, Any]:
-    work_ids = sorted(str(routine["work_id"]) for routine in packet["routines"])
-    try:
-        raw = verify.verify_packet(packet, lanes.lane_dir(lane_index), True, deadline=time.monotonic() + deadline_seconds)
-    except (OSError, RuntimeError, TypeError, ValueError, common.PhaseTimeout, common.WaveDeadlineExpired) as exc:
-        raw = {"status": "infra-error", "phase": "verify-lane", "detail": f"{type(exc).__name__}: {exc}"}
-    normalized = verify.verdict_v1(raw, work_ids)
-    if normalized["status"] != "green":
-        return {"outcome": "diagnostic", "verdict": normalized, "detail": str(raw.get("detail") or "")}
-    artifact = store_artifact(stage_bundle(packet, lanes.lane_dir(lane_index)))
-    return {"outcome": "productive", "verdict": normalized, **artifact}
-
-
-def verify_lane_packets(
-    packets: list[dict[str, Any]],
-    *,
-    lane_index: int,
-    deadline_seconds: int,
-) -> dict[str, Any]:
-    outcomes = [
-        verify_lane_attempt(packet, lane_index=lane_index, deadline_seconds=deadline_seconds)
-        for packet in packets
-    ]
-    failures = [outcome for outcome in outcomes if outcome.get("outcome") != "productive"]
-    if failures:
-        return {"outcome": "diagnostic", "verdict": failures[0]["verdict"], "detail": json.dumps(failures, sort_keys=True)}
-    artifact = store_group_artifact(outcomes)
-    return {
-        "outcome": "productive",
-        "verdict": {
-            "status": "green",
-            "phase": "group",
-            "failure_class": None,
-            "scope": "routine",
-            "retry_action": "accept",
-            "work_ids": sorted(routine["work_id"] for packet in packets for routine in packet["routines"]),
-            "summary": "green",
-            "evidence": {},
-            "fingerprint": _digest({"packets": [packet["attempt_id"] for packet in packets]}),
-        },
-        **artifact,
-    }
 
 
 def artifact_records() -> list[dict[str, Any]]:

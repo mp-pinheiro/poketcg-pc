@@ -299,6 +299,22 @@ factory-scenarios:
     python3 tools/factory/scenario_check.py
 
 
+# Rehearse the real pipeline on a landed routine: packet, prompt, reply
+# validation, surgery. Offline, no compiler, no model, no Forgejo.
+factory-smoke:
+    python3 tools/factory/smoke.py
+
+# The same rehearsal plus lane build, oracle verify, artifact bundle, and the
+# integration saga against a throwaway git remote.
+factory-smoke-full:
+    python3 tools/factory/smoke.py --full
+
+
+# One routine, k candidates, the real verifier. No Forgejo, no ledger.
+factory-try FN:
+    python3 tools/factory/try_one.py --fn {{FN}}
+
+
 # Prove Forgejo git + REST credentials work with no browser prompt. Needs
 # local credentials, so it is not a CI check.
 forgejo-auth-check:

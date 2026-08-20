@@ -15,6 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import ROOT
+from verify import POISON, RESERVED
 
 
 def _fragment_example(basename: str) -> str:
@@ -87,13 +88,46 @@ def render(packet: dict, feedback: str | None = None,
     lines.extend((
         "C: exactly one routine definition; no #include, #if, #define, guards, or file wrapper.",
         "header: only typedefs/declarations inserted before the existing guard #endif; "
-        "no guard or include lines.",
+        "no guard or include lines. A multi-register result struct is typedef'd HERE and "
+        "only here — repeating the typedef in the C fragment is a redefinition error.",
         "probe: exactly one static void adapt_<name>(ProbeState *s) definition; "
         "no ProbeEntry, probe table, sentinel, or module wrapper.",
         "cases: only CONTRACT[\"<name>\"] and CASES[\"<name>\"] assignments.",
         "mutation: only MUTATIONS[\"<name>\"] assignment.",
-        "statics and cases_statics: shared fragment bodies only; do not repeat module tables.",
-        "Do not emit file guards, includes, complete modules, prose, markdown, or tagged blocks.",
+        "statics: the ONLY place an #include or #define may appear. A <label>_ADDR macro "
+        "or a g_wram/g_sram accessor needs its generated header here. The only quoted "
+        f"includes that resolve are home/<basename>.h (basename `{packet['basename']}` and "
+        "any ported callee's header), generated/wram.h, generated/hram.h, "
+        "generated/sram.h, and mem.h; anything else fails the tree check. A constant the "
+        "asm uses and this packet does not list must be #define'd here from its numeric "
+        "value, never assumed to exist.",
+        "cases_statics: module-level Python helpers and addresses shared by this "
+        "basename's cases; do not repeat CONTRACT/CASES/MUTATIONS/SCHEMA2_CASES tables.",
+        "Do not emit file guards, complete modules, prose, markdown, or tagged blocks.",
+        "",
+    ))
+    poison = " ".join(f"{name}=0x{value:02X}" if value <= 0xFF else f"{name}=0x{value:04X}"
+                      for name, value in POISON.items())
+    lines.append("# CASE RULES — ENFORCED MECHANICALLY BEFORE ANY ORACLE RUN")
+    lines.extend((
+        f"At least one case in CASES[\"<name>\"] must poison four or more registers with "
+        f"these exact values: {poison}.",
+        f"No case may seed, read, or expect an address in "
+        f"${RESERVED.start:04X}-${RESERVED.stop - 1:04X}: that range is the oracle's own "
+        f"call frame.",
+        "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
+        "`read` and `expect` use the same shape.",
+        "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
+        "below the number of cases you declared, and \"before\" must appear verbatim in "
+        "your C fragment.",
+        "A case with oracle=False needs a non-empty why plus one of expect, expect_regs, "
+        "expect_sram, expect_vram.",
+        "The cases fragment must be valid Python on its own line-by-line: no positional "
+        "argument after a keyword argument, no bare C macro names (they do not exist in "
+        "Python — use the numeric addresses listed below).",
+        "EVERY case you declare is run against the real ROM. A case whose behaviour your "
+        "C does not reproduce exactly is a failure; declare the cases the asm actually "
+        "supports, including the poisoned one.",
         "",
     ))
     lines.append("# YOUR TASK")
@@ -168,10 +202,13 @@ def render(packet: dict, feedback: str | None = None,
     lines.append(
         "Return JSON with exactly these fields: schema=2, attempt_id, statics, "
         "cases_statics, routines. Each routine object has exactly name, c, header, "
-        "probe, cases, mutation, completion. Preserve packet routine order and "
-        "attempt_id. Use null for absent statics/cases_statics/completion. No prose, "
-        "markdown, tagged blocks, extra fields, or duplicate routines."
+        "probe, cases, mutation, completion. Use null for absent "
+        "statics/cases_statics/completion. No prose, markdown, tagged blocks, extra "
+        "fields, or duplicate routines."
     )
+    lines.append(f'attempt_id must be exactly "{packet["attempt_id"]}".')
+    lines.append("routines must be exactly, in this order: "
+                 + ", ".join(r["name"] for r in packet["routines"]) + ".")
     if feedback:
         lines.append("")
         lines.append("# PREVIOUS ATTEMPT FAILED — FIX AND RE-EMIT THE LISTED ROUTINES' BLOCKS")
