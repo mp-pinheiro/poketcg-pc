@@ -163,6 +163,30 @@ def verdict_v1(result: dict, work_ids: list[str]) -> dict:
     }
 
 
+def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, float] | None = None) -> dict:
+    base = verdict_v1(result, work_ids)
+    raw_witness = result.get("witness")
+    witness = raw_witness if isinstance(raw_witness, dict) else {}
+    if isinstance(result.get("case_id"), str):
+        witness = {"case_id": result["case_id"], **witness}
+    for key in ("expected", "native", "registers", "bus"):
+        if key in result and key not in witness:
+            witness[key] = result[key]
+    return {
+        "schema": 2,
+        "status": "green" if base["status"] == "green" else "red",
+        "phase": base["phase"],
+        "failure_class": base["failure_class"],
+        "scope": base["scope"],
+        "retry_action": base["retry_action"],
+        "work_ids": base["work_ids"],
+        "summary": base["summary"],
+        "witness": witness,
+        "phase_seconds": phase_seconds or {},
+        "fingerprint": base["fingerprint"],
+    }
+
+
 def run(command: list[str], cwd: Path, timeout: float = 600,
         deadline: float | None = None) -> subprocess.CompletedProcess[str]:
     return run_bounded(command, cwd=cwd, cap=timeout, deadline=deadline, check=False)

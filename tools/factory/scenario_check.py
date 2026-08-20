@@ -162,6 +162,296 @@ def check_ledger() -> None:
     assert view.state == "done"
 
 
+
+def check_invalidation_and_v2() -> None:
+    issue = work_issue()
+    work_id = "port:v1:src/home/demo.asm:Demo"
+    intent = ledger.intent_sha256(issue, [], [])
+    root = make_event(
+        "migrated", work_id, (None, None), intent,
+        {
+            "state": "ready",
+            "source_revision": "a" * 40,
+            "publication_revision": "",
+            "gate_sha256": "b" * 64,
+            "legacy_history_sha256": None,
+            "landed_at": None,
+            "exclusion_reason": None,
+        },
+    )
+    claim = make_event(
+        "claim", work_id, (10, root.event_sha256), intent,
+        {
+            "lease_seconds": 900,
+            "packet_sha256": "c" * 64,
+            "model_route": "smol",
+            "owned_paths_sha256": "d" * 64,
+        },
+    )
+    first = make_event(
+        "attempt-result", work_id, (11, claim.event_sha256), intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "diagnostic",
+            "verdict": {"status": "red", "fingerprint": "one"},
+            "artifact_sha256": None,
+            "next_wake_at": None,
+        },
+    )
+    second = make_event(
+        "attempt-result", work_id, (13, first.event_sha256), intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "diagnostic",
+            "verdict": {"status": "red", "fingerprint": "two"},
+            "artifact_sha256": None,
+            "next_wake_at": None,
+        },
+    )
+    invalidation = make_event(
+        "attempt-invalidated", work_id, (14, second.event_sha256), intent,
+        {
+            "attempt_result_comment_ids": [13, 14],
+            "reason": "orchestrator-recorded-before-worker-completion",
+            "evidence_sha256": "e" * 64,
+        },
+    )
+    comments = [
+        comment(10, root, 0),
+        comment(11, claim, 1),
+        comment(13, first, 2),
+        comment(14, second, 3),
+        comment(15, invalidation, 4),
+    ]
+    view = ledger.reduce_work(
+        issue,
+        comments,
+        [],
+        now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+        authorized_authors={"mpp"},
+    )
+    assert view.invalidated_result_comment_ids == [13, 14]
+    assert view.diagnostic_count == 0
+    assert view.state == "ready"
+    assert ledger.elect_lease(
+        comments, work_id=work_id, now=datetime(2026, 8, 18, 1, tzinfo=UTC)
+    ) is None
+    productive = make_event(
+        "attempt-result", work_id, (11, claim.event_sha256), intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "productive",
+            "verdict": {"status": "green"},
+            "artifact_sha256": "f" * 64,
+            "next_wake_at": None,
+        },
+    )
+    bad_invalidation = make_event(
+        "attempt-invalidated", work_id, (16, productive.event_sha256), intent,
+        {
+            "attempt_result_comment_ids": [17],
+            "reason": "orchestrator-recorded-before-worker-completion",
+            "evidence_sha256": "e" * 64,
+        },
+    )
+    try:
+        ledger.reduce_work(
+            issue,
+            [comment(10, root, 0), comment(11, claim, 1), comment(16, productive, 2), comment(17, bad_invalidation, 3)],
+            [],
+            now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+            authorized_authors={"mpp"},
+        )
+    except ledger.LedgerError:
+        pass
+    else:
+        raise AssertionError("productive invalidation was accepted")
+    foreign = make_event(
+        "attempt-invalidated", work_id, (16, productive.event_sha256), intent,
+        {
+            "attempt_result_comment_ids": [999],
+            "reason": "orchestrator-recorded-before-worker-completion",
+            "evidence_sha256": "e" * 64,
+        },
+    )
+    try:
+        ledger.reduce_work(
+            issue,
+            [comment(10, root, 0), comment(11, claim, 1), comment(16, productive, 2), comment(17, foreign, 3)],
+            [],
+            now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+            authorized_authors={"mpp"},
+        )
+    except ledger.LedgerError:
+        pass
+    else:
+        raise AssertionError("foreign invalidation was accepted")
+    diagnostic = make_event(
+        "attempt-result", work_id, (11, claim.event_sha256), intent,
+        {
+            "claim_comment_id": 11,
+            "outcome": "diagnostic",
+            "verdict": {"status": "red"},
+            "artifact_sha256": None,
+            "next_wake_at": None,
+        },
+    )
+    landed = make_event(
+        "landed", work_id, (18, diagnostic.event_sha256), intent,
+        {
+            "batch_id": "batch-landed",
+            "attempt_result_comment_id": 18,
+            "source_revision": "a" * 40,
+            "publication_revision": "b" * 40,
+            "gate_sha256": "c" * 64,
+            "progress_sha256": "d" * 64,
+        },
+    )
+    landed_invalidation = make_event(
+        "attempt-invalidated", work_id, (19, landed.event_sha256), intent,
+        {
+            "attempt_result_comment_ids": [18],
+            "reason": "orchestrator-recorded-before-worker-completion",
+            "evidence_sha256": "e" * 64,
+        },
+    )
+    try:
+        ledger.reduce_work(
+            issue,
+            [comment(10, root, 0), comment(11, claim, 1), comment(18, diagnostic, 2), comment(19, landed, 3), comment(20, landed_invalidation, 4)],
+            [],
+            now=datetime(2026, 8, 18, 1, tzinfo=UTC),
+            authorized_authors={"mpp"},
+        )
+    except ledger.LedgerError:
+        pass
+    else:
+        raise AssertionError("landed invalidation was accepted")
+    packet = {
+        "attempt_id": "attempt-v2",
+        "routines": [{"name": "Demo", "work_id": work_id}],
+    }
+    reply = {
+        "schema": 2,
+        "attempt_id": "attempt-v2",
+        "statics": None,
+        "cases_statics": None,
+        "routines": [{
+            "name": "Demo",
+            "c": "uint16_t Demo(void) { return 0; }",
+            "header": "uint16_t Demo(void);",
+            "probe": "static void adapt_Demo(ProbeState *s) {}",
+            "cases": "CASES[\"Demo\"] = [];",
+            "mutation": "MUTATIONS[\"Demo\"] = {};",
+            "completion": None,
+        }],
+    }
+    converted = workers.translation_from_reply(packet, reply)
+    assert converted["routines"]["Demo"]["C"].startswith("uint16_t")
+    for invalid in (
+        {**reply, "extra": True},
+        {**reply, "attempt_id": "late"},
+        {**reply, "routines": [dict(reply["routines"][0], name="Other")]},
+    ):
+        try:
+            workers.translation_from_reply(packet, invalid)
+        except (TypeError, ValueError):
+            pass
+        else:
+            raise AssertionError("invalid TranslationReplyV2 was accepted")
+    with TemporaryDirectory() as directory:
+        lane = Path(directory)
+        (lane / ".factory-v2-attempt.json").write_text(json.dumps({
+            "attempt_id": "attempt-v2",
+            "packet_sha256": workers.packet_sha256([packet]),
+        }))
+        previous_lane_dir = workers.lanes.lane_dir
+        previous_verify = workers._verify_worker
+        previous_stage = workers.stage_bundle
+        previous_store = workers.store_artifact
+        workers.lanes.lane_dir = lambda _index: lane
+        try:
+            before = (lane / ".factory-v2-attempt.json").read_bytes()
+            try:
+                workers.check_attempt(packet, {**reply, "attempt_id": "late"}, lane_index=1, deadline_seconds=1)
+            except ValueError:
+                pass
+            else:
+                raise AssertionError("late reply reached verification")
+            assert (lane / ".factory-v2-attempt.json").read_bytes() == before
+            workers._verify_worker = lambda *_args, **_kwargs: {"status": "compile", "phase": "build", "detail": "red"}
+            red = workers.check_attempt(packet, reply, lane_index=1, deadline_seconds=1)
+            assert red["outcome"] == "diagnostic"
+            assert "artifact_sha256" not in red
+            workers._verify_worker = lambda *_args, **_kwargs: {"status": "green", "phase": "done", "detail": ""}
+            workers.stage_bundle = lambda *_args, **_kwargs: {"artifact_dir": str(lane), "bundle_sha256": "a" * 64}
+            workers.store_artifact = lambda staged: {"artifact_sha256": staged["bundle_sha256"], "artifact_dir": staged["artifact_dir"]}
+            green = workers.check_attempt(packet, reply, lane_index=1, deadline_seconds=1)
+            assert green["outcome"] == "productive"
+            assert green["artifact_sha256"] == "a" * 64
+        finally:
+            workers.lanes.lane_dir = previous_lane_dir
+            workers._verify_worker = previous_verify
+            workers.stage_bundle = previous_stage
+            workers.store_artifact = previous_store
+
+def check_integration_saga_resume() -> None:
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        previous_factory = integrate.FACTORY
+        previous_clone = integrate.ensure_v2_clone
+        previous_run = integrate._run
+        previous_revision = integrate._revision
+        integrate.FACTORY = root
+        clone = root / "clone"
+        clone.mkdir()
+        integrate.ensure_v2_clone = lambda: clone
+        integrate._run = lambda *_args, **_kwargs: type("Result", (), {"stdout": ""})()
+        integrate._revision = lambda *_args, **_kwargs: "b" * 40
+        try:
+            batch_id = "a" * 64
+            path = root / "v2" / "integrations" / f"{batch_id}.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({
+                "schema": 2,
+                "batch_id": batch_id,
+                "artifact_sha256s": ["c" * 64],
+                "expected_remote_revision": "b" * 40,
+                "phase": "pushed",
+                "phases": {},
+                "result": {
+                    "source_revision": "d" * 40,
+                    "publication_revision": "e" * 40,
+                    "remote_revision": "b" * 40,
+                    "gate_sha256": "f" * 64,
+                    "progress_sha256": "1" * 64,
+                    "routine_names": ["Demo"],
+                },
+            }))
+            result = integrate.integrate_v2(
+                ["c" * 64],
+                expected_remote_revision="b" * 40,
+                batch_id=batch_id,
+                phase=lambda *_args: (_ for _ in ()).throw(AssertionError("resumed saga emitted a new phase")),
+            )
+            assert result.publication_revision == "e" * 40
+            integrate._revision = lambda *_args, **_kwargs: "9" * 40
+            try:
+                integrate.integrate_v2(
+                    ["c" * 64],
+                    expected_remote_revision="b" * 40,
+                    batch_id=batch_id,
+                    phase=lambda *_args: None,
+                )
+            except integrate.IntegrationError:
+                pass
+            else:
+                raise AssertionError("remote-divergent saga was accepted")
+        finally:
+            integrate.FACTORY = previous_factory
+            integrate.ensure_v2_clone = previous_clone
+            integrate._run = previous_run
+            integrate._revision = previous_revision
 def check_first_claim_election() -> None:
     issue = work_issue()
     intent = ledger.intent_sha256(issue, [], [])
@@ -879,6 +1169,8 @@ def check_migration_identity() -> None:
 
 def main() -> int:
     check_ledger()
+    check_invalidation_and_v2()
+    check_integration_saga_resume()
     check_control()
     check_planner()
     check_first_claim_election()

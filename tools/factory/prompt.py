@@ -24,14 +24,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import ROOT
 
-CONTRACT_DOC = ROOT / "docs" / "factory-contract.md"
-BLOCK = re.compile(r"^===(STATICS|C|H|PROBE|CASES|MUTATION)(?:\s+(\S+))?\s*$")
-REQUIRED = ("C", "H", "PROBE", "CASES", "MUTATION")
-
-
-class FormatError(ValueError):
-    pass
-
 
 def example_quad(basename: str) -> str:
     parts = []
@@ -45,9 +37,11 @@ def example_quad(basename: str) -> str:
 def render(packet: dict, feedback: str | None = None,
            targets: list[str] | None = None) -> str:
     wanted = set(targets) if targets else {r["name"] for r in packet["routines"]}
-    doc = CONTRACT_DOC.read_text()
-    lines: list[str] = [doc, ""]
-    lines.append("# COMPLETED EXAMPLE (a real, verified port; copy its conventions exactly)")
+    lines: list[str] = [
+        "You are a credential-free port generator. The packet below is complete context.",
+        "Return one TranslationReplyV2 JSON object and nothing else.",
+        "",
+    ]
     lines.append(example_quad(packet["example"]))
     lines.append("")
     lines.append("# YOUR TASK")
@@ -120,21 +114,11 @@ def render(packet: dict, feedback: str | None = None,
         lines.append("")
     lines.append("# OUTPUT FORMAT — MANDATORY")
     lines.append(
-        "Reply with tagged blocks ONLY, no prose, no markdown fences. Grammar:\n"
-        "===STATICS            (optional, once) file-scope statics/defines; extra\n"
-        "                      #include lines first\n"
-        "===C <RoutineName>    the C function for that routine\n"
-        "===H <RoutineName>    its prototype line(s) for the header\n"
-        "===PROBE <RoutineName> its adapter: static void adapt_<Name>(ProbeState *s)\n"
-        "===CASES <RoutineName> exactly two statements:\n"
-        '                      CONTRACT["<RoutineName>"] = {"compare": (...), "preserve": (...)}\n'
-        '                      CASES["<RoutineName>"] = [ ...cases... ]\n'
-        "===MUTATION <RoutineName> exactly one statement:\n"
-        '                      MUTATIONS["<RoutineName>"] = {"source_symbol": ..., "before": ...,\n'
-        '                      "after": ..., "case_ids": [...]}  # before/after are exact C\n'
-        "                      substrings; before MUST occur exactly once in the file\n"
-        f"Emit all five routine blocks for every routine: "
-        f"{', '.join(r['name'] for r in packet['routines'] if r['name'] in wanted)}."
+        "Return JSON with exactly these fields: schema=2, attempt_id, statics, "
+        "cases_statics, routines. Each routine object has exactly name, c, header, "
+        "probe, cases, mutation, completion. Preserve packet routine order and "
+        "attempt_id. Use null for absent statics/cases_statics/completion. No prose, "
+        "markdown, tagged blocks, extra fields, or duplicate routines."
     )
     if feedback:
         lines.append("")
@@ -143,46 +127,3 @@ def render(packet: dict, feedback: str | None = None,
     return "\n".join(lines)
 
 
-def parse(reply: str, packet: dict, targets: list[str] | None = None) -> dict:
-    """-> {"statics": str|None, "routines": {fn: {kind: text}}}. Raises FormatError."""
-    wanted_names = targets or [r["name"] for r in packet["routines"]]
-    text = reply.replace("\r\n", "\n")
-    # tolerate a fenced reply
-    text = re.sub(r"^```[a-z]*\n|```\s*$", "", text.strip(), flags=re.MULTILINE)
-    blocks: list[tuple[str, str | None, list[str]]] = []
-    current: tuple[str, str | None, list[str]] | None = None
-    for line in text.split("\n"):
-        match = BLOCK.match(line.strip())
-        if match:
-            current = (match.group(1), match.group(2), [])
-            blocks.append(current)
-        elif current is not None:
-            current[2].append(line)
-    if not blocks:
-        raise FormatError("no ===BLOCK headers found in reply")
-    statics: str | None = None
-    routines: dict[str, dict[str, str]] = {}
-    for kind, name, body_lines in blocks:
-        body = "\n".join(body_lines).strip()
-        if kind == "STATICS":
-            statics = body if statics is None else statics + "\n" + body
-            continue
-        if not name:
-            raise FormatError(f"block ==={kind} is missing its routine name")
-        routines.setdefault(name, {})[kind] = body
-    all_names = {r["name"] for r in packet["routines"]}
-    for fn in wanted_names:
-        got = routines.get(fn, {})
-        missing = [kind for kind in REQUIRED if not got.get(kind)]
-        if missing:
-            raise FormatError(f"routine {fn}: missing or empty blocks {missing}")
-        if f'CONTRACT["{fn}"]' not in got["CASES"] or f'CASES["{fn}"]' not in got["CASES"]:
-            raise FormatError(f"routine {fn}: CASES block must assign CONTRACT[\"{fn}\"] and CASES[\"{fn}\"]")
-        if f'MUTATIONS["{fn}"]' not in got["MUTATION"]:
-            raise FormatError(f"routine {fn}: MUTATION block must assign MUTATIONS[\"{fn}\"]")
-    unknown = set(routines) - all_names
-    if unknown:
-        raise FormatError(f"blocks for unknown routines: {sorted(unknown)}")
-    # keep only the requested routines: verified ones stay at their lane state
-    routines = {fn: blocks_ for fn, blocks_ in routines.items() if fn in set(wanted_names)}
-    return {"statics": statics, "routines": routines}

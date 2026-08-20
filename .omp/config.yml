@@ -5,5 +5,4 @@ task:
   maxRuntimeMs: 3600000
   maxRecursionDepth: 1
 advisor:
-  enabled: true
-  syncBacklog: "3"
+  enabled: false

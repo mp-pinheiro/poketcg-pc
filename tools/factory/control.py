@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import json
 import os
 import secrets
@@ -32,6 +33,10 @@ PROMPTS = V2_ROOT / "prompts"
 
 
 class ControlError(RuntimeError):
+    pass
+
+
+class LeaseLost(ControlError):
     pass
 
 
@@ -215,9 +220,12 @@ def _factory_work(
         recovery_tier=scheduler.recovery_tier(view.diagnostic_count, view.repeat_fingerprints),
         infra_failures=view.infra_failures,
         escalated=view.escalated,
+        feature_class=(
+            next(iter({str(record.get("feature_class") or "direct") for record in records}))
+            if len({str(record.get("feature_class") or "direct") for record in records}) == 1
+            else "unsupported"
+        ),
     )
-
-
 def reduced_snapshot(
     client: forgejo.ForgejoClient,
     *,
@@ -312,11 +320,11 @@ def _require_run(state: ReducedSnapshot, request: dict[str, Any]) -> ledger.Cont
     run_id = request.get("run_id")
     claim_comment_id = request.get("run_claim_comment_id")
     if state.control is None or state.control_issue is None:
-        raise ControlError("factory control issue is missing")
+        raise LeaseLost("factory control issue is missing")
     if not state.control.active:
-        raise ControlError("factory run lease is not active")
+        raise LeaseLost("factory run lease is not active")
     if run_id != state.control.run_id or claim_comment_id != state.control.claim_comment_id:
-        raise ControlError("request does not hold the factory run lease")
+        raise LeaseLost("request does not hold the factory run lease")
     return state.control
 
 
@@ -356,20 +364,18 @@ def _store_prompt(
     packets: list[dict[str, Any]],
     prompt_text: str,
     lane_index: int,
-    lane_root: str,
-    lane_capability: str,
+    model_route: str,
 ) -> Path:
     path = PROMPTS / f"{packet_sha256}.json"
     value = {
-        "schema": 1,
+        "schema": 2,
         "attempt_id": attempt_id,
         "work_id": work.work_id,
         "issue_number": work.issue_number,
         "packets": packets,
         "prompt": prompt_text,
         "lane_index": lane_index,
-        "lane_root": lane_root,
-        "lane_capability": lane_capability,
+        "model_route": model_route,
         "owned_paths": list(work.owned_paths),
     }
     if path.exists():
@@ -511,7 +517,6 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         issue_numbers,
     )
     packet_sha256 = forgejo.sha256({"packets": packets, "intent": view.intent_sha256})
-    prompt_text = "\n\n".join(prompt.render(packet) for packet in packets)
     lane_index = int(seed[:8], 16) % 100000
     lane = workers.prepare_attempt_lane(
         packets,
@@ -519,13 +524,7 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         attempt_id=attempt_id,
         owned_paths=list(work.owned_paths),
     )
-    lane_capability = secrets.token_hex(32)
-    prompt_text = "\n".join((
-        f"FACTORY_LANE_ROOT={lane}",
-        f"FACTORY_LANE_CAPABILITY={lane_capability}",
-        "",
-        prompt_text,
-    ))
+    prompt_text = prompt.render(packets[0]) if len(packets) == 1 else "\n\n".join(prompt.render(packet) for packet in packets)
     _store_prompt(
         packet_sha256=packet_sha256,
         attempt_id=attempt_id,
@@ -533,9 +532,13 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         packets=packets,
         prompt_text=prompt_text,
         lane_index=lane_index,
-        lane_root=str(lane),
-        lane_capability=lane_capability,
+        model_route=str(request.get("model_route", "smol")),
     )
+    model_route = str(request.get("model_route", "smol"))
+    agent_name = request.get("agent_name")
+    model_id = request.get("model_id")
+    if model_route in {"smol", "task"} and (not isinstance(agent_name, str) or not isinstance(model_id, str)):
+        raise ControlError("generator claims require agent_name and model_id")
     event = ledger.FactoryEvent.create(
         kind="claim",
         run_id=control.run_id or "",
@@ -549,7 +552,9 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
         payload={
             "lease_seconds": _lease_seconds(request),
             "packet_sha256": packet_sha256,
-            "model_route": request.get("model_route", "smol"),
+            "model_route": model_route,
+            "agent_name": agent_name,
+            "model_id": model_id,
             "owned_paths_sha256": forgejo.sha256(list(work.owned_paths)),
         },
     )
@@ -577,10 +582,11 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
             "work_id": work_id,
             "attempt_id": attempt_id,
             "claim_comment_id": comment["id"],
-            "packet_sha256": packet_sha256,
             "model_route": event.payload["model_route"],
+            "agent_name": event.payload["agent_name"],
+            "model_id": event.payload["model_id"],
+            "packet_sha256": packet_sha256,
             "lane_index": lane_index,
-            "lane_capability": lane_capability,
             "owned_paths": list(work.owned_paths),
             "soft_deadline_seconds": _soft_deadline(str(event.payload["model_route"])),
             "hard_deadline_seconds": _hard_deadline(str(event.payload["model_route"])),
@@ -589,47 +595,143 @@ def claim(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
     )
 
 
-def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
+def invalidate_attempts(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
     state = reduced_snapshot(client)
     control = _require_run(state, request)
-    work_id = request.get("work_id")
-    packet_sha256 = request.get("packet_sha256")
-    claim_comment_id = request.get("claim_comment_id")
-    if not isinstance(work_id, str) or not isinstance(packet_sha256, str) or not isinstance(claim_comment_id, int):
-        raise ControlError("record needs work_id, packet_sha256, and claim_comment_id")
+    values = request.get("attempt_result_comment_ids")
+    if not isinstance(values, list) or not values or values != sorted(set(values)) or not all(isinstance(value, int) and value > 0 for value in values):
+        raise ControlError("invalidate-attempts needs sorted unique attempt-result comment IDs")
+    reason = request.get("reason")
+    evidence = request.get("evidence_sha256")
+    if not isinstance(reason, str) or not reason:
+        raise ControlError("invalidate-attempts needs a reason")
+    if not isinstance(evidence, str) or not re.fullmatch(r"[0-9a-f]{64}", evidence):
+        raise ControlError("invalidate-attempts needs a SHA-256 evidence hash")
+    grouped: dict[str, list[int]] = {}
+    targets: dict[int, tuple[str, ledger.EventComment]] = {}
+    for work_id, view in state.views_by_work.items():
+        for item in view.chain:
+            if item.comment_id in values:
+                targets[item.comment_id] = (work_id, item)
+    if set(targets) != set(values):
+        missing = sorted(set(values) - set(targets))
+        raise ControlError(f"invalidate-attempts target is not a canonical work event: {missing}")
+    for target_id in values:
+        work_id, item = targets[target_id]
+        if item.event.kind != "attempt-result":
+            raise ControlError(f"invalidate-attempts target #{target_id} is not an attempt-result")
+        if item.event.payload["outcome"] != "diagnostic" or item.event.payload["artifact_sha256"] is not None:
+            raise ControlError(f"invalidate-attempts target #{target_id} is not a diagnostic without artifact")
+        view = state.views_by_work[work_id]
+        if target_id in view.invalidated_result_comment_ids:
+            raise ControlError(f"invalidate-attempts target #{target_id} is already invalidated")
+        if any(
+            descendant.event.kind == "landed"
+            and descendant.event.payload["attempt_result_comment_id"] == target_id
+            for descendant in view.chain
+        ):
+            raise ControlError(f"invalidate-attempts target #{target_id} already has a landed descendant")
+        grouped.setdefault(work_id, []).append(target_id)
+    appended: list[int] = []
+    for work_id, target_ids in sorted(grouped.items()):
+        view = state.views_by_work[work_id]
+        parent = view.canonical_event
+        if parent is None:
+            raise ControlError(f"invalidate-attempts work {work_id} has no canonical parent")
+        event = ledger.FactoryEvent.create(
+            kind="attempt-invalidated",
+            run_id=control.run_id or "",
+            work_id=work_id,
+            attempt_id=None,
+            parent_comment_id=parent.comment_id,
+            parent_event_sha256=parent.event.event_sha256,
+            base_revision=parent.event.base_revision,
+            intent_sha256=view.intent_sha256 or "",
+            emitted_at=datetime.now(UTC).isoformat(),
+            payload={
+                "attempt_result_comment_ids": target_ids,
+                "reason": reason,
+                "evidence_sha256": evidence,
+            },
+        )
+        comment = client.append_event(
+            int(state.issues_by_work[work_id]["number"]),
+            event.comment_body(),
+            event.event_id,
+        )
+        appended.append(int(comment["id"]))
+    return response(
+        "invalidate-attempts",
+        "ok",
+        run_id=control.run_id,
+        snapshot_sha256=state.factory_snapshot.sha256,
+        data={"event_comment_ids": appended, "attempt_result_comment_ids": values},
+    )
+def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
+    expected_fields = {"run_id", "run_claim_comment_id", "work_id", "check_id"}
+    if set(request) != expected_fields:
+        raise ControlError(f"record fields differ: {sorted(set(request) ^ expected_fields)}")
+    state = reduced_snapshot(client)
+    control = _require_run(state, request)
+    work_id = request["work_id"]
+    check_id = request["check_id"]
+    if not isinstance(work_id, str) or not isinstance(check_id, str) or not re.fullmatch(r"[0-9a-f]{64}", check_id):
+        raise ControlError("record needs work_id and a SHA-256 check_id")
+    receipt_path = V2_ROOT / "checks" / f"{check_id}.json"
+    try:
+        receipt = json.loads(receipt_path.read_text())
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ControlError("record check receipt is missing or corrupt") from exc
+    if not isinstance(receipt, dict) or receipt.get("check_id") != check_id or receipt.get("work_id") != work_id:
+        raise ControlError("record check receipt identity mismatch")
+    if receipt.get("run_id") != control.run_id or receipt.get("run_claim_comment_id") != control.claim_comment_id:
+        raise LeaseLost("record receipt was issued under a different run lease")
+    attempt_id = receipt.get("attempt_id")
+    packet_sha256 = receipt.get("packet_sha256")
+    claim_comment_id = receipt.get("claim_comment_id")
+    verdict = receipt.get("verdict")
+    outcome = receipt.get("outcome")
+    if not isinstance(attempt_id, str) or not isinstance(packet_sha256, str) or not isinstance(claim_comment_id, int):
+        raise ControlError("record check receipt has invalid identity")
+    if outcome not in {"productive", "diagnostic"} or not isinstance(verdict, dict):
+        raise ControlError("record check receipt has invalid verdict")
+    prompt_artifact = _load_prompt(packet_sha256)
+    packets = prompt_artifact.get("packets")
+    lane_index = prompt_artifact.get("lane_index")
+    if not isinstance(packets, list) or len(packets) != 1 or not isinstance(lane_index, int):
+        raise ControlError("record check prompt is invalid")
+    lane = workers.validate_attempt_lane(packets, lane_index=lane_index, attempt_id=attempt_id)
+    lane_sha256 = common.payload_tree_digest(lane)
+    if receipt.get("lane_sha256") != lane_sha256:
+        raise ControlError("record check lane changed after verification")
+    expected_check_id = forgejo.sha256({
+        "attempt_id": attempt_id,
+        "packet_sha256": packet_sha256,
+        "candidate_sha256": receipt.get("candidate_sha256"),
+        "verifier": "tools/factory/verify.py",
+        "lane_sha256": lane_sha256,
+        "round": receipt.get("round"),
+        "verdict": verdict,
+    })
+    if expected_check_id != check_id:
+        raise ControlError("record check receipt hash mismatch")
+    artifact_sha256 = receipt.get("artifact_sha256") if outcome == "productive" else None
+    if outcome == "productive" and (not isinstance(artifact_sha256, str) or not workers.artifact_exists(artifact_sha256)):
+        raise ControlError("record productive receipt has no artifact")
+    state = reduced_snapshot(client)
+    control = _require_run(state, request)
     view = state.views_by_work.get(work_id)
     if view is None or view.claim_comment_id != claim_comment_id:
-        raise ControlError("record does not own the current work claim")
-    prompt_artifact = _load_prompt(packet_sha256)
-    if prompt_artifact.get("work_id") != work_id:
-        raise ControlError("record prompt artifact work ID mismatch")
-    packets = prompt_artifact.get("packets")
-    if not isinstance(packets, list) or not packets:
-        raise ControlError("record prompt artifact has no packets")
-    deadline = int(request.get("deadline_seconds", 900))
-    lane_index = int(prompt_artifact["lane_index"])
-    workers.validate_attempt_lane(
-        packets,
-        lane_index=lane_index,
-        attempt_id=str(prompt_artifact["attempt_id"]),
-    )
-    if isinstance(request.get("reply"), dict):
-        if len(packets) != 1:
-            raise ControlError("structured reply cannot verify a multi-packet cohort")
-        result = workers.verify_attempt(
-            packets[0], request["reply"], lane_index=lane_index, deadline_seconds=deadline,
-        )
-    else:
-        result = workers.verify_lane_packets(
-            packets, lane_index=lane_index, deadline_seconds=deadline,
-        )
-    outcome = str(result.get("outcome") or "diagnostic")
-    verdict = result.get("verdict")
-    if not isinstance(verdict, dict):
-        raise ControlError("verifier returned no normalized verdict")
-    artifact_sha256 = result.get("artifact_sha256") if outcome == "productive" else None
-    if artifact_sha256 is not None and not workers.artifact_exists(artifact_sha256):
-        raise ControlError("verifier returned a missing artifact")
+        raise LeaseLost("record does not own the current work claim")
+    for item in view.chain:
+        if item.event.kind == "attempt-result" and item.event.attempt_id == attempt_id:
+            return response(
+                "record",
+                "ok",
+                run_id=control.run_id,
+                snapshot_sha256=state.factory_snapshot.sha256,
+                data={"event_comment_id": item.comment_id, "outcome": item.event.payload["outcome"], "artifact_sha256": item.event.payload["artifact_sha256"], "verdict": item.event.payload["verdict"], "check_id": check_id},
+            )
     parent = view.canonical_event
     if parent is None:
         raise ControlError("record work has no canonical parent event")
@@ -637,7 +739,7 @@ def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, 
         kind="attempt-result",
         run_id=control.run_id or "",
         work_id=work_id,
-        attempt_id=str(prompt_artifact["attempt_id"]),
+        attempt_id=attempt_id,
         parent_comment_id=parent.comment_id,
         parent_event_sha256=parent.event.event_sha256,
         base_revision=parent.event.base_revision,
@@ -648,7 +750,7 @@ def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, 
             "outcome": outcome,
             "verdict": verdict,
             "artifact_sha256": artifact_sha256,
-            "next_wake_at": request.get("next_wake_at"),
+            "next_wake_at": None,
         },
     )
     comment = client.append_event(state.issues_by_work[work_id]["number"], event.comment_body(), event.event_id)
@@ -679,7 +781,147 @@ def record(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, 
             "outcome": outcome,
             "artifact_sha256": artifact_sha256,
             "verdict": verdict,
+            "check_id": check_id,
             "escalation": escalation,
+        },
+    )
+
+
+def check(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
+    expected_fields = {
+        "run_id", "run_claim_comment_id", "work_id", "packet_sha256",
+        "claim_comment_id", "round", "reply",
+    }
+    if set(request) != expected_fields:
+        raise ControlError(f"check fields differ: {sorted(set(request) ^ expected_fields)}")
+    state = reduced_snapshot(client)
+    control = _require_run(state, request)
+    work_id = request["work_id"]
+    packet_sha256 = request["packet_sha256"]
+    claim_comment_id = request["claim_comment_id"]
+    round_number = request["round"]
+    reply = request["reply"]
+    if not isinstance(work_id, str) or not isinstance(packet_sha256, str) or not isinstance(claim_comment_id, int):
+        raise ControlError("check has invalid work or packet identity")
+    if not isinstance(round_number, int) or round_number < 0:
+        raise ControlError("check round must be a non-negative integer")
+    if not isinstance(reply, dict):
+        raise ControlError("check reply must be an object")
+    view = state.views_by_work.get(work_id)
+    if view is None or view.claim_comment_id != claim_comment_id:
+        raise LeaseLost("check does not own the current work claim")
+    prompt_artifact = _load_prompt(packet_sha256)
+    if prompt_artifact.get("work_id") != work_id:
+        raise ControlError("check prompt artifact work ID mismatch")
+    route = str(prompt_artifact.get("model_route", "task"))
+    max_round = 2 if route == "smol" else 3
+    if round_number > max_round:
+        raise ControlError(f"check round budget exhausted for {route}")
+    packets = prompt_artifact.get("packets")
+    if not isinstance(packets, list) or len(packets) != 1:
+        raise ControlError("check requires one packet")
+    expected_packet_sha256 = forgejo.sha256({"packets": packets, "intent": view.intent_sha256})
+    if expected_packet_sha256 != packet_sha256:
+        raise ControlError("check packet identity mismatch")
+    attempt_id = prompt_artifact.get("attempt_id")
+    if not isinstance(attempt_id, str):
+        raise ControlError("check prompt has no attempt ID")
+    lane_index = prompt_artifact.get("lane_index")
+    if not isinstance(lane_index, int):
+        raise ControlError("check prompt has no lane index")
+    heartbeat_stop = threading.Event()
+    heartbeat_errors: list[BaseException] = []
+
+    def keepalive() -> None:
+        while not heartbeat_stop.wait(120):
+            try:
+                run_result = run_heartbeat(client, {
+                    "run_id": control.run_id,
+                    "run_claim_comment_id": control.claim_comment_id,
+                    "lease_seconds": 7200,
+                    "phase": "checking",
+                })
+                work_result = claim_heartbeat(client, {
+                    "run_id": control.run_id,
+                    "run_claim_comment_id": control.claim_comment_id,
+                    "work_id": work_id,
+                    "claim_comment_id": claim_comment_id,
+                    "lease_seconds": 7200,
+                    "phase": "checking",
+                })
+                if run_result.get("status") != "ok" or work_result.get("status") != "ok":
+                    raise LeaseLost("check heartbeat failed")
+            except BaseException as exc:
+                heartbeat_errors.append(exc)
+                return
+
+    heartbeat_thread = threading.Thread(target=keepalive, daemon=True)
+    heartbeat_thread.start()
+    try:
+        result = workers.check_attempt(
+            packets[0],
+            reply,
+            lane_index=lane_index,
+            deadline_seconds=_hard_deadline(str(prompt_artifact.get("model_route", "task"))),
+        )
+    finally:
+        heartbeat_stop.set()
+        heartbeat_thread.join(timeout=5)
+    if heartbeat_errors:
+        raise LeaseLost(f"check heartbeat failed: {heartbeat_errors[0]}")
+    verdict = result.get("verdict")
+    if not isinstance(verdict, dict):
+        raise ControlError("check produced no normalized verdict")
+    artifact_sha256 = result.get("artifact_sha256") if result.get("outcome") == "productive" else None
+    lane = workers.validate_attempt_lane(packets, lane_index=lane_index, attempt_id=attempt_id)
+    candidate_sha256 = forgejo.sha256(reply)
+    lane_sha256 = common.payload_tree_digest(lane)
+    check_id = forgejo.sha256({
+        "attempt_id": attempt_id,
+        "packet_sha256": packet_sha256,
+        "candidate_sha256": candidate_sha256,
+        "verifier": "tools/factory/verify.py",
+        "lane_sha256": lane_sha256,
+        "round": round_number,
+        "verdict": verdict,
+    })
+    receipt = {
+        "schema": 2,
+        "check_id": check_id,
+        "run_id": control.run_id,
+        "run_claim_comment_id": control.claim_comment_id,
+        "attempt_id": attempt_id,
+        "work_id": work_id,
+        "packet_sha256": packet_sha256,
+        "claim_comment_id": claim_comment_id,
+        "round": round_number,
+        "candidate_sha256": candidate_sha256,
+        "lane_sha256": lane_sha256,
+        "verdict": verdict,
+        "outcome": result.get("outcome"),
+        "artifact_sha256": artifact_sha256,
+    }
+    CHECKS = V2_ROOT / "checks"
+    receipt_path = CHECKS / f"{check_id}.json"
+    if receipt_path.exists():
+        try:
+            existing = json.loads(receipt_path.read_text())
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ControlError("check receipt is corrupt") from exc
+        if existing != receipt:
+            raise ControlError("check receipt identity conflict")
+    else:
+        atomic_json(receipt_path, receipt)
+    return response(
+        "check",
+        "ok",
+        run_id=control.run_id,
+        snapshot_sha256=state.factory_snapshot.sha256,
+        data={
+            "check_id": check_id,
+            "outcome": result.get("outcome"),
+            "artifact_sha256": artifact_sha256,
+            "verdict": verdict,
         },
     )
 
@@ -948,7 +1190,12 @@ def reconcile(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[st
         "ok",
         run_id=state.control.run_id if state.control else None,
         snapshot_sha256=state.factory_snapshot.sha256,
-        data={**status(client, full=False), "artifacts": artifacts, "policy": policy},
+        data={
+            **status(client, full=False),
+            "artifacts": artifacts,
+            "policy": policy,
+            "integration_sagas": integrate.saga_records(),
+        },
     )
 
 
@@ -1041,6 +1288,45 @@ def run_heartbeat(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dic
     comment = client.append_event(int(state.control_issue["number"]), event.comment_body(), event.event_id)
     return response(
         "run-heartbeat",
+        "ok",
+        run_id=control.run_id,
+        snapshot_sha256=state.factory_snapshot.sha256,
+        data={"event_comment_id": comment["id"]},
+    )
+
+
+def claim_heartbeat(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
+    state = reduced_snapshot(client)
+    control = _require_run(state, request)
+    work_id = request.get("work_id")
+    claim_comment_id = request.get("claim_comment_id")
+    if not isinstance(work_id, str) or not isinstance(claim_comment_id, int):
+        raise ControlError("claim-heartbeat needs work_id and claim_comment_id")
+    view = state.views_by_work.get(work_id)
+    if view is None or view.claim_comment_id != claim_comment_id:
+        raise LeaseLost("work claim is no longer active")
+    parent = view.canonical_event
+    if parent is None:
+        raise ControlError("work chain is missing")
+    event = ledger.FactoryEvent.create(
+        kind="heartbeat",
+        run_id=control.run_id or "",
+        work_id=work_id,
+        attempt_id=parent.event.attempt_id,
+        parent_comment_id=parent.comment_id,
+        parent_event_sha256=parent.event.event_sha256,
+        base_revision=parent.event.base_revision,
+        intent_sha256=view.intent_sha256 or "",
+        emitted_at=datetime.now(UTC).isoformat(),
+        payload={
+            "claim_comment_id": claim_comment_id,
+            "lease_seconds": int(request.get("lease_seconds", 7200)),
+            "phase": str(request.get("phase", "checking")),
+        },
+    )
+    comment = client.append_event(int(state.issues_by_work[work_id]["number"]), event.comment_body(), event.event_id)
+    return response(
+        "claim-heartbeat",
         "ok",
         run_id=control.run_id,
         snapshot_sha256=state.factory_snapshot.sha256,
@@ -1297,6 +1583,7 @@ def integrate_batch(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
         artifacts.append(view.artifact_sha256)
         result_comment_ids.append(view.productive_result_comment_id)
     expected_remote = current_revision()
+    batch_id = forgejo.sha256({"artifacts": sorted(artifacts), "remote": expected_remote})
     _append_control_event(
         client,
         state,
@@ -1304,7 +1591,7 @@ def integrate_batch(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
         run_id=control.run_id or "",
         claim_comment_id=control.claim_comment_id or 0,
         payload={
-            "batch_id": forgejo.sha256({"artifacts": sorted(artifacts), "remote": expected_remote}),
+            "batch_id": batch_id,
             "attempt_result_comment_ids": sorted(result_comment_ids),
             "artifact_sha256s": sorted(set(artifacts)),
             "expected_remote_revision": expected_remote,
@@ -1325,7 +1612,7 @@ def integrate_batch(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
                 run_id=control.run_id or "",
                 claim_comment_id=control.claim_comment_id or 0,
                 payload={
-                    "batch_id": forgejo.sha256({"artifacts": sorted(artifacts), "remote": expected_remote}),
+                    "batch_id": batch_id,
                     "phase": name,
                     "input_sha256": forgejo.sha256(data),
                     "output_sha256": forgejo.sha256(data),
@@ -1383,6 +1670,7 @@ def integrate_batch(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
         result = integrate.integrate_v2(
             sorted(set(artifacts)),
             expected_remote_revision=expected_remote,
+            batch_id=batch_id,
             phase=append_phase,
             forecast_payload=forecast_payload,
             factory_state_payload=factory_state_payload,
@@ -1428,6 +1716,7 @@ def integrate_batch(client: forgejo.ForgejoClient, request: dict[str, Any]) -> d
                 source_attempt_id=parent.event.attempt_id,
             ))
     append_phase("projections-stable", {"projection_comment_ids": projections, **result.as_dict()})
+    integrate.mark_saga_phase(batch_id, "projections-stable", {"projection_comment_ids": projections, **result.as_dict()})
     return response(
         "integrate",
         "ok",
@@ -1536,88 +1825,35 @@ def complete_factory(client: forgejo.ForgejoClient, request: dict[str, Any]) -> 
 
 def forecast_status(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, Any]:
     state = reduced_snapshot(client, full=bool(request.get("full", False)))
-    completed_override = {
-        value for value in request.get("completed_work_ids", [])
-        if isinstance(value, str)
+    valid_attempts = 0
+    productive_attempts = 0
+    landed = 0
+    for view in state.views_by_work.values():
+        invalidated = set(view.invalidated_result_comment_ids)
+        for item in view.chain:
+            if item.event.kind == "attempt-result" and item.comment_id not in invalidated:
+                valid_attempts += 1
+                productive_attempts += int(item.event.payload["outcome"] == "productive")
+            elif item.event.kind == "landed":
+                landed += 1
+    data = {
+        "schema": 2,
+        "status": "unavailable",
+        "reason": "no-validated-productive-route",
+        "unconditional_eta": None,
+        "p50_at": None,
+        "p85_at": None,
+        "p95_at": None,
+        "valid_attempts": valid_attempts,
+        "productive_attempts": productive_attempts,
+        "landed": landed,
     }
-    number_to_work = {
-        work.issue_number: work.work_id
-        for work in state.factory_snapshot.works
-    }
-    nodes = [
-        forecast.Node(
-            work_id=work.work_id,
-            tier=work.tier,
-            size=work.size,
-            basenames=work.basenames,
-            dependencies=tuple(
-                number_to_work[number]
-                for number in work.dependencies
-                if number in number_to_work
-            ),
-            state="done" if work.work_id in completed_override else work.state,
-            priority=work.priority,
-        )
-        for work in state.factory_snapshot.works
-    ]
-    external = [
-        work.work_id
-        for work in state.factory_snapshot.works
-        if work.work_id not in completed_override
-        and (
-            work.state == "paused"
-            or state.views_by_work[work.work_id].quarantined
-            or any(number not in number_to_work for number in work.dependencies)
-        )
-    ]
-    samples: list[forecast.Sample] = []
-    for work in state.factory_snapshot.works:
-        view = state.views_by_work[work.work_id]
-        samples.extend(forecast.samples_from_chain(
-            [
-                {"kind": item.event.kind, "emitted_at": item.event.emitted_at}
-                for item in view.chain
-            ],
-            tier=work.tier,
-            size=work.size,
-        ))
-    confidence = "high" if len(samples) >= 30 else "low"
-    if not samples:
-        samples = forecast.provisional_history(
-            ROOT / "site" / "data" / "history.jsonl",
-            now=datetime.now(UTC),
-        )
-    if external:
-        return response(
-            "forecast",
-            "ok",
-            run_id=state.control.run_id if state.control else None,
-            snapshot_sha256=state.factory_snapshot.sha256,
-            data={
-                "unconditional_eta": None,
-                "conditional_on": external,
-                "samples": len(samples),
-                "confidence": "low",
-            },
-        )
-    result = forecast.forecast_dates(
-        forecast.monte_carlo(
-            nodes,
-            samples,
-            lanes=int(request.get("lanes", 16)),
-            trials=int(request.get("trials", 20000)),
-            seed=state.factory_snapshot.sha256,
-        ),
-        started_at=datetime.now(UTC),
-    )
-    result["confidence"] = confidence
-    result["unconditional_eta"] = result["p85_at"]
     return response(
         "forecast",
         "ok",
         run_id=state.control.run_id if state.control else None,
         snapshot_sha256=state.factory_snapshot.sha256,
-        data=result,
+        data=data,
     )
 
 
@@ -1685,8 +1921,14 @@ def dispatch(operation: str, request: dict[str, Any], client: forgejo.ForgejoCli
         return run_release(client, request)
     if operation == "claim":
         return claim(client, request)
+    if operation == "claim-heartbeat":
+        return claim_heartbeat(client, request)
+    if operation == "invalidate-attempts":
+        return invalidate_attempts(client, request)
     if operation == "record":
         return record(client, request)
+    if operation == "check":
+        return check(client, request)
     if operation == "integrate":
         return integrate_batch(client, request)
     if operation == "forecast":
@@ -1700,7 +1942,7 @@ def dispatch(operation: str, request: dict[str, Any], client: forgejo.ForgejoCli
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("operation", choices=("preflight", "status", "reconcile", "frontier", "run-claim", "run-heartbeat", "run-release", "claim", "record", "integrate", "forecast", "migrate", "complete"))
+    parser.add_argument("operation", choices=("preflight", "status", "reconcile", "frontier", "run-claim", "run-heartbeat", "run-release", "claim", "claim-heartbeat", "invalidate-attempts", "record", "check", "integrate", "forecast", "migrate", "complete"))
     parser.add_argument("--request", default="{}")
     args = parser.parse_args()
     try:

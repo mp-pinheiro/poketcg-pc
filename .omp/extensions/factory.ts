@@ -1,93 +1,45 @@
-import { lstat, realpath } from "node:fs/promises";
-import path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
-
-type LaneCapability = {
-	root: string;
-	token: string;
-};
 
 type FactoryState = {
 	runId?: string;
-	snapshotSha256?: string;
-	claimIds?: number[];
-	landedRevision?: string;
-};
-const workerAgents: Record<string, true> = {
-	"port-worker": true,
-	"factory-helper": true,
-};
-const blockedWorkerTools: Record<string, true> = {
-	"bash": true,
-	"eval": true,
-	"lsp": true,
-	"browser": true,
-	"web_search": true,
-	"task": true,
-	"factory": true,
+	active: boolean;
 };
 
-function sessionAgent(ctx: ExtensionContext): string | undefined {
+function activeRun(ctx: ExtensionContext): boolean {
+	let active = false;
 	for (const entry of ctx.sessionManager.getBranch()) {
-		if (entry.type !== "session_init") continue;
-		const value = entry as { agent?: unknown };
-		if (typeof value.agent === "string") return value.agent;
+		if (entry.type !== "poketcg.factory.session.v1") continue;
+		const value = entry as FactoryState;
+		active = value.active === true;
 	}
-	return undefined;
+	return active;
 }
 
-function laneCapability(ctx: ExtensionContext): LaneCapability | undefined {
-	for (const entry of ctx.sessionManager.getBranch()) {
-		if (entry.type !== "session_init") continue;
-		const value = entry as { task?: unknown };
-		if (typeof value.task !== "string") continue;
-		const root = /FACTORY_LANE_ROOT=([^\s]+)/.exec(value.task)?.[1];
-		const token = /FACTORY_LANE_CAPABILITY=([0-9a-f]{64})/.exec(value.task)?.[1];
-		if (root && token) return { root, token };
+async function runControl(
+	cwd: string,
+	op: string,
+	request: Record<string, unknown>,
+	signal: AbortSignal | undefined,
+): Promise<{ code: number; stdout: string; stderr: string }> {
+	const child = Bun.spawn(
+		["python3", "tools/factory/control.py", op, "--request", JSON.stringify(request)],
+		{ cwd, stdin: "ignore", stdout: "pipe", stderr: "pipe" },
+	);
+	const timeout = setTimeout(() => child.kill("SIGKILL"), 3_700_000);
+	const abort = () => child.kill("SIGTERM");
+	signal?.addEventListener("abort", abort, { once: true });
+	try {
+		const [code, stdout, stderr] = await Promise.all([
+			child.exited,
+			new Response(child.stdout).text(),
+			new Response(child.stderr).text(),
+		]);
+		return { code, stdout, stderr };
+	} finally {
+		clearTimeout(timeout);
+		signal?.removeEventListener("abort", abort);
 	}
-	return undefined;
 }
-
-async function resolvedTarget(input: string): Promise<string | undefined> {
-	const absolute = path.resolve(input);
-	let current = absolute;
-	for (;;) {
-		try {
-			return await realpath(current);
-		} catch {
-			const parent = path.dirname(current);
-			if (parent === current) return undefined;
-			current = parent;
-		}
-	}
-}
-
-async function insideLane(target: string, lane: LaneCapability): Promise<boolean> {
-	const root = await realpath(lane.root).catch(() => undefined);
-	const resolved = await resolvedTarget(target);
-	if (!root || !resolved) return false;
-	if (resolved !== root && !resolved.startsWith(`${root}${path.sep}`)) return false;
-	let current = path.resolve(target);
-	while (current !== path.dirname(current)) {
-		const info = await lstat(current).catch(() => undefined);
-		if (info?.isSymbolicLink()) return false;
-		current = path.dirname(current);
-	}
-	return true;
-}
-
-function editTargets(input: Record<string, unknown>): string[] {
-	const patch = typeof input.patch === "string" ? input.patch : "";
-	return [...patch.matchAll(/^\[([^#\]\n]+)#[0-9A-F]{4}\]/gm)].map(match => match[1]);
-}
-
-function readTargets(toolName: string, input: Record<string, unknown>): string[] {
-	if (toolName === "edit") return editTargets(input);
-	const value = input.path;
-	if (typeof value !== "string") return [];
-	return value.split(";").filter(Boolean);
-}
-
 export default function factoryExtension(pi: ExtensionAPI) {
 	const z = pi.zod;
 	pi.registerTool({
@@ -95,14 +47,19 @@ export default function factoryExtension(pi: ExtensionAPI) {
 		label: "Factory",
 		description: "Execute one typed autonomous port-factory control operation.",
 		parameters: z.object({
-			op: z.enum(["preflight", "status", "reconcile", "frontier", "run-claim", "run-heartbeat", "run-release", "claim", "record", "integrate", "forecast", "migrate", "complete"]),
+			op: z.enum([
+				"preflight", "status", "reconcile", "frontier", "run-claim", "run-heartbeat",
+				"run-release", "claim", "claim-heartbeat", "invalidate-attempts", "check",
+				"record", "integrate", "forecast", "migrate", "complete",
+			]),
 			request: z.record(z.string(), z.unknown()).default(() => ({})),
 		}),
-		async execute(_toolCallId, params, _onUpdate, ctx, signal) {
-			const result = await ctx.exec(
-				"python3",
-				["tools/factory/control.py", params.op, "--request", JSON.stringify(params.request)],
-				{ cwd: ctx.cwd, signal, timeout: 3_700_000 },
+		async execute(_toolCallId, params, signal, _onUpdate, ctx) {
+			const result = await runControl(
+				ctx.cwd,
+				params.op,
+				params.request,
+				signal,
 			);
 			let payload: Record<string, unknown>;
 			try {
@@ -119,6 +76,7 @@ export default function factoryExtension(pi: ExtensionAPI) {
 				const roles = ["@default", "@smol", "@slow", "@task"].map(role => ({
 					role,
 					model: pi.models.resolve(role)?.id ?? null,
+					agent_name: role === "@smol" ? "port-generator-smol" : role === "@task" ? "port-generator-task" : null,
 				}));
 				const unresolved = roles.filter(role => role.model === null);
 				if (unresolved.length > 0) {
@@ -136,13 +94,19 @@ export default function factoryExtension(pi: ExtensionAPI) {
 						},
 					};
 				} else {
-					payload.data = { ...(payload.data ?? {}), roles };
+					payload.data = { ...((payload.data as Record<string, unknown> | null) ?? {}), roles };
 				}
 			}
 			if (payload.status !== "stop") {
+				const active = params.op === "run-claim"
+					? payload.status === "ok"
+					: (params.op === "run-release" && payload.status === "ok")
+						|| (params.op === "complete" && payload.status === "complete")
+						? false
+						: activeRun(ctx);
 				pi.appendEntry<FactoryState>("poketcg.factory.session.v1", {
+					active,
 					runId: typeof payload.run_id === "string" ? payload.run_id : undefined,
-					snapshotSha256: typeof payload.snapshot_sha256 === "string" ? payload.snapshot_sha256 : undefined,
 				});
 			}
 			return {
@@ -152,23 +116,8 @@ export default function factoryExtension(pi: ExtensionAPI) {
 		},
 	});
 	pi.on("tool_call", async (event, ctx) => {
-		const agent = sessionAgent(ctx);
-		if (!agent || !workerAgents[agent]) return;
-		if (blockedWorkerTools[event.toolName]) {
-			return { block: true, reason: "factory worker capability denies this tool" };
-		}
-		if (!["read", "grep", "glob", "edit", "write"].includes(event.toolName)) return;
-		const lane = laneCapability(ctx);
-		if (!lane) return { block: true, reason: "factory worker has no lane capability" };
-		const targets = readTargets(event.toolName, event.input);
-		if (!targets.length) return { block: true, reason: "factory worker tool call has no lane target" };
-		for (const target of targets) {
-			if (target.includes("://") || target.startsWith("local://") || target.startsWith("artifact://")) {
-				return { block: true, reason: "factory worker capability denies URL targets" };
-			}
-			if (!(await insideLane(target, lane))) {
-				return { block: true, reason: "factory worker target escapes its lane" };
-			}
-		}
+		if (!activeRun(ctx)) return;
+		if (["factory", "task", "hub"].includes(event.toolName)) return;
+		return { block: true, reason: "active factory run permits only factory, task, and hub" };
 	});
 }

@@ -26,7 +26,7 @@ ISSUE_ID_RE = re.compile(r"^issue:v1:[1-9][0-9]*$")
 
 EVENT_KINDS = frozenset({
     "migrated", "run-claim", "run-heartbeat", "run-release", "claim",
-    "heartbeat", "attempt-result", "artifact-missing", "diagnosis", "block",
+    "heartbeat", "attempt-result", "attempt-invalidated", "artifact-missing", "diagnosis", "block",
     "unblock", "integration-start", "integration-phase", "landed",
     "projection-repaired", "capacity-change", "telemetry", "forecast",
     "port-complete", "stale-base",
@@ -147,6 +147,7 @@ class WorkView:
     repeat_fingerprints: int = 0
     last_fingerprint: str | None = None
     escalated: bool = False
+    invalidated_result_comment_ids: list[int] = field(default_factory=list)
 
     @property
     def canonical_event(self) -> EventComment | None:
@@ -175,6 +176,7 @@ class WorkView:
             "infra_failures": self.infra_failures,
             "repeat_fingerprints": self.repeat_fingerprints,
             "escalated": self.escalated,
+            "invalidated_result_comment_ids": self.invalidated_result_comment_ids,
             "canonical_event_id": self.canonical_event.event.event_id if self.canonical_event else None,
             "canonical_comment_id": self.canonical_event.comment_id if self.canonical_event else None,
             "ignored": self.ignored,
@@ -293,6 +295,7 @@ def _validate_payload(kind: str, payload: dict[str, Any]) -> None:
         "claim": {"lease_seconds", "packet_sha256", "model_route", "owned_paths_sha256"},
         "heartbeat": {"claim_comment_id", "lease_seconds", "phase"},
         "attempt-result": {"claim_comment_id", "outcome", "verdict", "artifact_sha256", "next_wake_at"},
+        "attempt-invalidated": {"attempt_result_comment_ids", "reason", "evidence_sha256"},
         "artifact-missing": {"attempt_result_comment_id", "artifact_sha256", "reason"},
         "diagnosis": {"failure_scope", "failure_class", "affected_work_ids", "repair", "constraints", "confidence", "next_action"},
         "block": {"reason", "unblock", "dependency_issue_numbers"},
@@ -310,11 +313,21 @@ def _validate_payload(kind: str, payload: dict[str, Any]) -> None:
     allowed = required.get(kind)
     if allowed is None:
         raise LedgerError(f"unknown event kind {kind!r}")
-    _require_exact_keys(payload, allowed, f"{kind} payload")
+    if kind == "claim" and set(payload) == allowed | {"agent_name", "model_id"}:
+        pass
+    else:
+        _require_exact_keys(payload, allowed, f"{kind} payload")
     if kind in {"run-claim", "claim"}:
         seconds = payload.get("lease_seconds")
         if not isinstance(seconds, int) or not 1 <= seconds <= 7200:
             raise LedgerError(f"{kind} lease_seconds must be 1..7200")
+    if kind == "claim" and "agent_name" in payload:
+        if payload["agent_name"] is not None and not isinstance(payload["agent_name"], str):
+            raise LedgerError("claim agent_name must be string or null")
+        if payload["model_id"] is not None and not isinstance(payload["model_id"], str):
+            raise LedgerError("claim model_id must be string or null")
+        if payload["agent_name"] is None or payload["model_id"] is None:
+            raise LedgerError("V2 generator claims require agent_name and model_id")
     if kind in {"run-heartbeat", "heartbeat", "run-release"}:
         _require_id(payload.get("claim_comment_id"), f"{kind}.claim_comment_id")
     if kind == "attempt-result":
@@ -326,6 +339,23 @@ def _validate_payload(kind: str, payload: dict[str, Any]) -> None:
         artifact = payload.get("artifact_sha256")
         if payload.get("outcome") == "productive" and (not isinstance(artifact, str) or len(artifact) != 64):
             raise LedgerError("productive attempt-result needs artifact_sha256")
+        if payload["verdict"].get("schema") == 2:
+            expected_verdict = {"schema", "status", "phase", "failure_class", "scope", "retry_action", "work_ids", "summary", "witness", "phase_seconds", "fingerprint"}
+            _require_exact_keys(payload["verdict"], expected_verdict, "VerdictV2")
+            if payload["verdict"].get("status") not in {"green", "red"}:
+                raise LedgerError("VerdictV2 status must be green or red")
+            if not isinstance(payload["verdict"].get("work_ids"), list) or not isinstance(payload["verdict"].get("witness"), dict) or not isinstance(payload["verdict"].get("phase_seconds"), dict):
+                raise LedgerError("VerdictV2 has invalid evidence fields")
+            if not isinstance(payload["verdict"].get("fingerprint"), str) or not re.fullmatch(r"[0-9a-f]{64}", payload["verdict"]["fingerprint"]):
+                raise LedgerError("VerdictV2 fingerprint must be a SHA-256")
+    if kind == "attempt-invalidated":
+        values = payload.get("attempt_result_comment_ids")
+        if not isinstance(values, list) or not values or values != sorted(set(values)) or not all(isinstance(value, int) and value > 0 for value in values):
+            raise LedgerError("attempt-invalidated IDs must be a non-empty sorted unique list")
+        _require_string(payload, "reason")
+        evidence = payload.get("evidence_sha256")
+        if not isinstance(evidence, str) or not re.fullmatch(r"[0-9a-f]{64}", evidence):
+            raise LedgerError("attempt-invalidated evidence_sha256 must be a SHA-256")
     if kind == "diagnosis":
         if payload.get("failure_scope") not in {"routine", "shared-harness", "dependency", "infrastructure"}:
             raise LedgerError("diagnosis has invalid failure scope")
@@ -563,7 +593,29 @@ def reduce_work(
     dependencies = list(dependencies)
     current_intent = intent_sha256(issue, dependencies, commands)
     chain, ignored = _canonical_chain(comments, work_id=work_id, allowed_kinds=set(WORK_EVENT_KINDS))
-    view = WorkView(issue_number=int(issue["number"]), work_id=work_id, chain=chain, ignored=ignored, commands=commands, blockers=sorted(int(row["number"]) for row in dependencies))
+    result_by_comment = {
+        item.comment_id: item
+        for item in chain
+        if item.event.kind == "attempt-result"
+    }
+    invalidated: set[int] = set()
+    for item in chain:
+        if item.event.kind != "attempt-invalidated":
+            continue
+        for target_id in item.event.payload["attempt_result_comment_ids"]:
+            target = result_by_comment.get(target_id)
+            if target is None:
+                raise LedgerError(f"attempt-invalidated targets non-canonical result #{target_id}")
+            if target.event.payload["outcome"] != "diagnostic" or target.event.payload["artifact_sha256"] is not None:
+                raise LedgerError(f"attempt-invalidated target #{target_id} is not a diagnostic without artifact")
+            if any(
+                descendant.event.kind == "landed"
+                and descendant.event.payload["attempt_result_comment_id"] == target_id
+                for descendant in chain
+            ):
+                raise LedgerError(f"attempt-invalidated target #{target_id} already landed")
+            invalidated.add(target_id)
+    view = WorkView(issue_number=int(issue["number"]), work_id=work_id, chain=chain, ignored=ignored, commands=commands, blockers=sorted(int(row["number"]) for row in dependencies), invalidated_result_comment_ids=sorted(invalidated))
     latest_pause = max((command.comment_id for command in commands if command.command == "pause"), default=0)
     latest_resume = max((command.comment_id for command in commands if command.command == "resume"), default=0)
     pause_active = latest_pause > latest_resume
@@ -581,7 +633,7 @@ def reduce_work(
                 view.state = "blocked"
             elif state in {"recovery", "failing"}:
                 view.state = "recovery"
-        elif event.kind == "attempt-result":
+        elif event.kind == "attempt-result" and item.comment_id not in invalidated:
             outcome = event.payload["outcome"]
             if outcome == "productive":
                 view.state = "integrating"

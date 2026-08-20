@@ -23,6 +23,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
+import analyzer
 from common import ROOT
 
 PRET = ROOT / "poketcg"
@@ -505,12 +506,13 @@ def build_packets(
 
         basename = Path(file).stem
         for chunk in chunks:
-            work_ids = sorted(f["work_id"] for f, _asm in chunk)
             routines = []
             packet_asm = []
+            semantic_records = []
             for f, asm in chunk:
                 packet_asm.append(asm)
                 issue = managed_issues.get(f["work_id"])
+                semantic = analyzer.analyze_routine(f, asm)
                 routines.append({
                     "name": f["name"],
                     "work_id": f["work_id"],
@@ -521,7 +523,11 @@ def build_packets(
                     "asm": asm,
                     "callees": [],
                     "cascade": cascade_of(f["name"]),
+                    "feature_class": semantic["feature_class"],
+                    "semantic_seed": semantic["semantic_seed"],
+                    "analyzer_version": semantic["analyzer_version"],
                 })
+                semantic_records.append(semantic)
             attempt_id = common.new_attempt_id()
             cohort = common.cohort_id(work_ids)
             try:
@@ -530,6 +536,7 @@ def build_packets(
                 ).strip()
             except (OSError, subprocess.CalledProcessError):
                 base_commit = "unknown"
+            analyzer_cache_sha256 = analyzer.cache_records(semantic_records)
             inventory_fingerprint = hashlib.sha256(
                 json.dumps(_inventory, sort_keys=True, default=str).encode()
             ).hexdigest()
@@ -545,6 +552,9 @@ def build_packets(
                 "routines": routines,
                 "base_commit": base_commit,
                 "inventory_fingerprint": inventory_fingerprint,
+                "analyzer_version": analyzer.VERSION,
+                "analyzer_cache_sha256": analyzer_cache_sha256,
+                "feature_classes": sorted(set(r["feature_class"] for r in routines)),
                 "report_fingerprint": inventory_fingerprint,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
                 "state": "pending",
@@ -563,6 +573,10 @@ def build_packets(
                 "bytes": sum(r["size"] for r in routines),
                 "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }
+            packet["packet_bytes"] = len(json.dumps(packet, sort_keys=True, separators=(",", ":")).encode())
+            if packet["packet_bytes"] > 48 * 1024:
+                packet["route_override"] = "task"
+                packet["route_reason"] = "packet-over-48KiB"
             packets.append(packet)
     return packets
 

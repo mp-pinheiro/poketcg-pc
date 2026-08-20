@@ -1,208 +1,76 @@
-# Factory workflow
+# Autonomous Port Factory
 
-The exact message `start` runs this adapter, and `just launch-port`
-(`tools/factory/run.sh`) runs the same loop headless. Work selection is
-exclusively `control.py frontier`; never hand-pick a routine and never
-materialise a packet outside a claim.
+Forgejo issues and append-only factory comments are the source of truth. The
+exact user message `start` launches a normal top-level OMP session through
+`tools/factory/run.sh`; the script executes `omp --print start`. There is no
+nested SDK session manager or factory watchdog.
 
-## Authority
+## Control protocol
 
-Forgejo is the only durable authority. Every state transition is an
-append-only comment on the work's own issue, written through
-`tools/factory/ledger.py` and read back by `control.py` before any decision:
+The top-level session must run `factory preflight` before `run-claim`. Preflight
+must resolve concrete model IDs for `@smol` and `@task`, verify the current gate,
+and reject a dirty central checkout. After `run-claim` succeeds, the extension
+allows only `factory`, `task`, and `hub` until `run-release` or `complete`.
 
-| fact | where it lives |
-|---|---|
-| what work exists | one open issue per work ID, `poketcg-port-work:v1` marker |
-| what is claimed | `claim` event comment + its lease expiry |
-| what an attempt produced | `attempt-result` event comment (`productive` / `diagnostic`) |
-| what landed | `landed` event comment naming the pushed revision |
-| who owns the factory run | `run-claim` / `run-heartbeat` / `run-release` on the control issue |
-| the port frontier | derived from `site/data/inventory.json` + `site/data/gate.json` |
+Each loop iteration:
 
-There is no local queue, no `.factory/state.sqlite3`, and no supervisor
-journal. Local disk holds only reproducible caches: `.factory/issues-cache.json`
-(ETag-validated snapshot), `.factory/artifacts/<sha256>/` (immutable verified
-bundles), `.factory/v2/prompts/<packet_sha256>.json` (the exact prompt an
-attempt was issued), and lanes under `/tmp/poketcg-factory/`. Deleting any of
-them costs a refetch, never a decision.
+1. Call `factory reconcile` with the winning run lease.
+2. Call `factory frontier`; claim only the returned work IDs.
+3. Pass `agent_name` and the resolved `model_id` to `factory claim`.
+4. Dispatch one exact generator task with the issued packet and attempt ID.
+5. Join that exact task job with `hub wait`; never accept unrelated async
+   delivery. Heartbeat both run and work leases while a synchronous check runs.
+6. Validate the returned `TranslationReplyV2` and call `factory check`. The
+   control process applies the candidate in its disposable lane, runs the full
+   verifier, and writes an immutable check receipt. A malformed reply stops
+   before lane mutation.
+7. Send a normalized `VerdictV2` and candidate hash to the same generator for a
+   bounded repair round. `@smol` gets two rounds; `@task` gets three. A red
+   final receipt is recorded once; a green receipt is recorded immediately.
+8. Call `factory record` with only the receipt `check_id`. It re-hashes the
+   receipt and lane and appends exactly one attempt result.
+9. Integrate a green artifact immediately for the canary and first three pilot
+   greens. Later integration uses at most four artifacts or fifteen minutes of
+   age, whichever comes first.
 
-Every control response is one JSON object on stdout:
+A timeout, unrelated job result, attempt mismatch, lease loss, missing receipt,
+corrupt receipt, or unverifiable integration phase is fatal. Only a work-claim
+election conflict may be dropped. Never consult worker prose or worker-edited
+central files.
+
+## TranslationReplyV2
+
+Generators return one JSON object with no additional fields:
 
 ```json
-{"schema":1,"op":"frontier","status":"ok|waiting|conflict|stop|complete",
- "run_id":"…","snapshot_sha256":"…","data":{…},
- "error":{"class":"…","detail":"…","retry_at":null}}
+{
+  "schema": 2,
+  "attempt_id": "<issued attempt>",
+  "statics": null,
+  "cases_statics": null,
+  "routines": [
+    {
+      "name": "<packet routine>",
+      "c": "...",
+      "header": "...",
+      "probe": "...",
+      "cases": "...",
+      "mutation": "...",
+      "completion": null
+    }
+  ]
+}
 ```
 
-`status` is the whole protocol: `ok` proceed, `waiting` sleep until
-`data.waiting_until`, `conflict` another runner owns it, `stop` a human must
-look, `complete` the port is finished and proven.
+Routine names must exactly match packet order. The control-owned surgery layer is
+the only writer of the four source files. Generator agents have no tools and no
+access to files, URLs, credentials, Forgejo, VCS, or nested agents.
 
-## Preflight
+## Failure and completion
 
-```sh
-just build-barrier
-just factory-preflight
-just factory-status
-```
-
-`preflight` proves REST auth, that `site/data/gate.json` was produced at the
-current `main` revision, and that the issue snapshot is stable. `status`
-prints the reduced ledger: per-work state counts and the live run lease.
-
-Stop on unavailable authorization, a gate record from a different revision,
-remote divergence, or an existing live run lease you do not own.
-
-## The run lease
-
-One runner at a time. `run-claim` writes a lease comment on the control issue
-and wins only if `ledger.elect_lease` picks it; `run-heartbeat` extends it
-every tick; `run-release` ends it. A crashed runner's lease simply expires, and
-the next `run-claim` wins. `conflict` from `run-claim` means another runner is
-alive - exit, do not steal.
-
-## The loop
-
-`tools/factory/run.ts` is the loop, and it owns every control call. A timer
-heartbeats the run lease every five minutes, so a tick may run for as long as
-its workers need. Each tick, in order:
-
-1. `reconcile` with `adopt: true` - re-attach `.factory/artifacts/` bundles to
-   their `attempt-result` events, report bundles whose event is missing, and
-   make the ledger agree with `.factory/blocked.toml` in both directions.
-2. `frontier` - `scheduler.plan(...)` over the reduced ledger and the declared
-   capacity (`job_slots`, `verifier_slots`, `active_jobs`,
-   `provider_throttled`, `verifier_queue_p95`, `healthy_completions`). Exactly
-   one of `assignments`, `integration`, `blocker_review`,
-   `dependency_analysis`, `waiting_until`, or `complete` is populated, so a
-   tick has exactly one job.
-3. `integration` non-empty - land that batch and start the next tick.
-4. Otherwise, for each assignment: `claim`, dispatch, `record`.
-
-The orchestrator session holds only `task` and `hub`. It cannot call the
-control plane, read the repository, write files, or touch VCS - its entire job
-is to run one subagent per assignment and hand back its result. Removing the
-control tool from the session removed two whole failure classes seen in
-testing: invented work IDs and invented control ops.
-
-### Per assignment
-
-```text
-claim   -> runner provisions the lane and issues the prompt
-dispatch -> session runs one port-worker (or factory-helper) subagent
-record  -> runner verifies the lane, publishes the artifact, appends the event
-```
-
-`claim` materialises the packets, provisions the disposable lane, stores the
-prompt artifact, and appends the `claim` event. It returns `attempt_id`,
-`claim_comment_id`, `packet_sha256`, `lane_index`, `lane_capability`,
-`owned_paths`, the deadlines, and the exact `prompt`. The claim lease always
-outlives the hard deadline it authorises, so a slow attempt cannot be claimed
-twice. `conflict` means another claim won: drop it, do not retry in place.
-
-A worker writes only absolute paths under `FACTORY_LANE_ROOT`. Lanes carry no
-`.git`, no `.jj`, no credentials, and no repository config, and `preflight` and
-`claim` both refuse to run while the central checkout has uncommitted port
-files - a worker that escapes its lane stops the factory instead of corrupting
-the tree.
-
-`record` re-validates the lane manifest against `packet_sha256`, runs the
-oracle verification, and - only on green - stages and stores the immutable
-artifact, then appends the `attempt-result` event. A worker's own claim of
-success is never trusted: in testing a worker reported four changed files while
-the lane held none, and `record` rejected it. A `diagnostic` outcome carries the
-normalized verdict and raises the work's recovery tier; a per-assignment failure
-never aborts the run, only a lost lease does.
-
-### Integration
-
-When `frontier` returns `integration`, call `integrate` with those issue
-numbers. Integration is the only writer of the repository:
-
-1. append `integration-start` on the control issue with the batch identity and
-   expected remote revision,
-2. apply the artifacts into `.factory/integration-repo/`, run the candidate
-   proof (`just`-driven build + gate), commit, and push to `main`,
-3. refresh `site/data/progress.json` and the factory projections,
-4. append `landed` on every member issue with the published revision, then
-   close it.
-
-A heartbeat thread holds the run lease for the whole push. A remote revision
-that moved under the batch aborts before the push, never after.
-
-## Recovery ladder
-
-Every tier comes from the work's own event history - `diagnostic_count` and
-`repeat_fingerprints` in `ledger.reduce_work`, folded by
-`scheduler.recovery_tier(...)`. No tier is chosen by prose, and a productive
-result or an `unblock` resets both counters.
-
-| tier | trigger | route / kind |
-|---|---|---|
-| 0 | fresh work | `smol` / `completion` |
-| 1 | one diagnostic | `smol` / `completion`, verdict as feedback |
-| 2 | two diagnostics, or one repeated fingerprint | `task` / `task` |
-| 3 | three diagnostics, or two repeated fingerprints | `task` / `repair` (`factory-helper` in the lane) |
-| 4 | four diagnostics | escalated: `block` event, no further claims |
-
-A tier-4 `record` appends a `block` event with reason `recovery-exhausted` and
-projects `port/blocked` + `attention/human`. The scheduler then refuses to
-claim it and lists it in `blocker_review`; an authorized `/factory unblock`
-comment clears the escalation and its counters.
-
-Complexity also routes: a cohort or a `tier >= 2` routine starts on the `task`
-route, because a one-shot completion cannot carry it.
-
-An expired lease is not a failure: the work returns to `ready` at the next
-frontier with its diagnostic history intact.
-
-When at least three works are in recovery with two or more infrastructure
-failures each, `frontier` reports `infrastructure_incident: true` and waits
-instead of dispatching - a broken harness must not burn the queue.
-
-## Blocked and dependencies
-
-`dependency_analysis` means the work's callees are unported - a dependency fact
-from the inventory, not a judgement. Forgejo issue dependencies mirror it so
-the human view matches the scheduler. Cohorts (`cohort:v1:<digest>`) exist for
-genuine dependency cycles: one issue, one claim, one artifact group, all
-members landing together.
-
-## Reconciliation
-
-`factory-migrate` (dry run), `factory-migrate-canary N`, and
-`factory-migrate-apply` reconcile Forgejo with the current inventory: create
-missing work issues, create cohort issues for cycles, mark excluded routines,
-and attach dependency edges. Actions run eight at a time, skip issues that
-already match, and are keyed to the gate they measure, so a re-run costs
-nothing and a tooling commit does not invalidate a saved plan. The canary
-applies a bounded slice first.
-
-## Forecast
-
-`just factory-forecast` runs a Monte Carlo over the remaining work using
-dependency depth, lane concurrency, and the service times the ledger actually
-recorded - every `claim`/`attempt-result` pair is one sample. It reports
-p50/p85/p95 dates with a confidence label; below thirty samples the confidence
-is `low` and the date is an extrapolation from a handful of attempts, not a
-commitment. `site/data/factory-forecast.json` feeds the dashboard.
-
-## Invariants
-
-- One runner: the control-issue lease is elected, heartbeated, and released.
-- One claim per work: `ledger.elect_lease` decides, the writer verifies it won.
-- Attempts are immutable: an `attempt-result` event is never rewritten.
-- Artifacts are content-addressed and verified before they are trusted;
-  `reconcile` re-attaches them and reports orphans.
-- Lanes are disposable and credential-free; only the control plane writes the
-  repository, jj state, or Forgejo, and `.factory/blocked.toml` vetoes reach the
-  ledger as `block` events instead of being ignored.
-- Integration gates before push and records the exact pushed revision.
-- Forgejo labels are a projection; a stale label never suppresses dispatch.
-- `PORT COMPLETE` comes only from `complete`, which requires an empty frontier,
-  no unfinished work, no blocked work, and a green gate at the pushed revision.
-- Every REST call is bounded: 30s per attempt, 120s per logical request, and a
-  collection stops paging when the server stops yielding new rows.
-- Every control call the runner makes is killed if it exceeds its cap and
-  retried as `waiting`, so no external stall can freeze the loop.
+`status:"stop"` is fatal. `waiting` retries the same idempotent operation after
+its `retry_at`. The run lease is released only after the completion predicate
+proves remote `main`, publication revision, gate record, generated projections,
+and Forgejo state converge. Completion is `PORT COMPLETE`; an ETA remains
+unavailable until a validated productive route and the publication thresholds
+are met.

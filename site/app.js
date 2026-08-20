@@ -58,6 +58,11 @@ function renderForecast(value) {
     FORECAST.innerHTML = '<div class="forecast-muted">Forecast unavailable until factory telemetry is published.</div>';
     return;
   }
+  if (value.status === 'unavailable' || value.schema === 2) {
+    const reason = value.reason || 'no-validated-productive-route';
+    FORECAST.innerHTML = `<div class="forecast-card"><strong>ETA unavailable</strong><span>${reason}</span><span>${value.valid_attempts || 0} valid attempts · ${value.productive_attempts || 0} productive · ${value.landed || 0} landed</span></div>`;
+    return;
+  }
   if (value.unconditional_eta === null) {
     const blockers = (value.conditional_on || []).slice(0, 5).join(', ');
     FORECAST.innerHTML = `<div class="forecast-card"><strong>Conditional forecast only</strong><span>Resolve: ${blockers || 'external blocker'}</span></div>`;

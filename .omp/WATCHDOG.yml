@@ -1,7 +1,0 @@
-advisors:
-  - name: FactoryWatchdog
-    enabled: true
-    model: "@smol:high"
-    tools: [read, grep, glob]
-    instructions: |
-      Inspect only factory control evidence. Flag state divergence, liveness loss, unsafe authority writes, and false completion with exact paths or event IDs.

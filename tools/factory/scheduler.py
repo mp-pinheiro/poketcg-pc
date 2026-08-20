@@ -27,6 +27,7 @@ class FactoryWork:
     recovery_tier: int = 0
     infra_failures: int = 0
     escalated: bool = False
+    feature_class: str = "direct"
 
 
 @dataclass(frozen=True)

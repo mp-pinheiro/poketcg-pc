@@ -12,6 +12,7 @@ from typing import Any
 
 import common
 import lanes
+import surgery
 import verify
 
 V2_ARTIFACTS = common.FACTORY / "artifacts"
@@ -29,29 +30,50 @@ def packet_sha256(packets: list[dict[str, Any]]) -> str:
 
 
 def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
-    expected = {"attempt_id", "statics", "c", "header", "probe", "cases", "mutation"}
+    expected = {"schema", "attempt_id", "statics", "cases_statics", "routines"}
     if set(reply) != expected:
-        raise ValueError(f"translation reply fields differ: {sorted(set(reply) ^ expected)}")
+        raise ValueError(f"TranslationReplyV2 fields differ: {sorted(set(reply) ^ expected)}")
+    if reply["schema"] != 2:
+        raise ValueError("TranslationReplyV2 schema must be 2")
     attempt_id = packet.get("attempt_id") or packet.get("id")
-    if reply["attempt_id"] != attempt_id:
-        raise ValueError("translation reply attempt_id does not match packet")
-    routines = packet.get("routines") or []
-    if len(routines) != 1:
-        raise ValueError("structured translation replies require exactly one routine")
-    if not all(isinstance(reply[name], str) for name in expected - {"attempt_id"}):
-        raise TypeError("translation reply code fields must be strings")
-    name = routines[0]["name"]
+    if not isinstance(attempt_id, str) or reply["attempt_id"] != attempt_id:
+        raise ValueError("TranslationReplyV2 attempt_id does not match packet")
+    for key in ("statics", "cases_statics"):
+        if reply[key] is not None and not isinstance(reply[key], str):
+            raise TypeError(f"TranslationReplyV2 {key} must be string or null")
+    raw_routines = reply["routines"]
+    if not isinstance(raw_routines, list):
+        raise TypeError("TranslationReplyV2 routines must be an array")
+    packet_routines = packet.get("routines") or []
+    expected_names = [routine.get("name") for routine in packet_routines]
+    names = [routine.get("name") for routine in raw_routines if isinstance(routine, dict)]
+    if len(names) != len(raw_routines) or names != expected_names or len(names) != len(set(names)):
+        raise ValueError("TranslationReplyV2 routine names differ from packet order")
+    routine_fields = {"name", "c", "header", "probe", "cases", "mutation", "completion"}
+    converted: dict[str, dict[str, str]] = {}
+    for routine in raw_routines:
+        if set(routine) != routine_fields:
+            raise ValueError("TranslationReplyV2 routine fields differ")
+        if not isinstance(routine["name"], str) or any(
+            not isinstance(routine[key], str) for key in ("c", "header", "probe", "cases", "mutation")
+        ):
+            raise TypeError("TranslationReplyV2 routine code fields must be strings")
+        if routine["completion"] is not None and not isinstance(routine["completion"], str):
+            raise TypeError("TranslationReplyV2 completion must be string or null")
+        blocks = {
+            "C": routine["c"],
+            "H": routine["header"],
+            "PROBE": routine["probe"],
+            "CASES": routine["cases"],
+            "MUTATION": routine["mutation"],
+        }
+        if routine["completion"] is not None:
+            blocks["COMPLETION"] = routine["completion"]
+        converted[routine["name"]] = blocks
     return {
-        "statics": reply["statics"] or None,
-        "routines": {
-            name: {
-                "C": reply["c"],
-                "H": reply["header"],
-                "PROBE": reply["probe"],
-                "CASES": reply["cases"],
-                "MUTATION": reply["mutation"],
-            },
-        },
+        "statics": reply["statics"],
+        "cases_statics": reply["cases_statics"],
+        "routines": converted,
     }
 
 
@@ -248,6 +270,35 @@ def _verify_worker(packet: dict[str, Any], lane: Path, translation: dict[str, An
     return response["result"]
 
 
+
+
+def check_attempt(
+    packet: dict[str, Any],
+    reply: dict[str, Any],
+    *,
+    lane_index: int,
+    deadline_seconds: int,
+) -> dict[str, Any]:
+    attempt_id = packet.get("attempt_id") or packet.get("id")
+    if not isinstance(attempt_id, str) or not attempt_id:
+        raise ValueError("packet requires attempt_id")
+    work_ids = sorted(str(routine["work_id"]) for routine in packet["routines"])
+    translation = translation_from_reply(packet, reply)
+    started = time.monotonic()
+    try:
+        lane = validate_attempt_lane([packet], lane_index=lane_index, attempt_id=attempt_id)
+        raw = _verify_worker(packet, lane, translation, time.monotonic() + deadline_seconds)
+    except (OSError, RuntimeError, TypeError, ValueError, json.JSONDecodeError, common.PhaseTimeout, common.WaveDeadlineExpired) as exc:
+        raw = {"status": "infra-error", "phase": "check", "detail": f"{type(exc).__name__}: {exc}"}
+    normalized = verify.verdict_v2(
+        raw,
+        work_ids,
+        phase_seconds={"check": round(time.monotonic() - started, 6)},
+    )
+    if normalized["status"] != "green":
+        return {"outcome": "diagnostic", "verdict": normalized, "detail": str(raw.get("detail") or "")}
+    artifact = store_artifact(stage_bundle(packet, lanes.lane_dir(lane_index)))
+    return {"outcome": "productive", "verdict": normalized, **artifact}
 def verify_attempt(
     packet: dict[str, Any],
     reply: dict[str, Any],
