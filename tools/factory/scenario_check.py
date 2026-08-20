@@ -352,6 +352,7 @@ def check_invalidation_and_v2() -> None:
         {**reply, "extra": True},
         {**reply, "attempt_id": "late"},
         {**reply, "routines": [dict(reply["routines"][0], name="Other")]},
+        {**reply, "routines": [dict(reply["routines"][0], c="#include \"bad.h\"\\nint Demo(void) { return 0; }")]},
     ):
         try:
             workers.translation_from_reply(packet, invalid)

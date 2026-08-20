@@ -75,7 +75,7 @@ export default function factoryExtension(pi: ExtensionAPI) {
 			if (params.op === "preflight" && payload.status === "ok") {
 				const roles = ["@default", "@smol", "@slow", "@task"].map(role => ({
 					role,
-					model: pi.models.resolve(role)?.id ?? null,
+					model: ctx.models.resolve(role)?.id ?? null,
 					agent_name: role === "@smol" ? "port-generator-smol" : role === "@task" ? "port-generator-task" : null,
 				}));
 				const unresolved = roles.filter(role => role.model === null);

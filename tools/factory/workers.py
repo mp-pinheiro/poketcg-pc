@@ -69,6 +69,14 @@ def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dic
         }
         if routine["completion"] is not None:
             blocks["COMPLETION"] = routine["completion"]
+        if any(token in blocks["C"] for token in ("#include", "#ifndef", "#endif")):
+            raise ValueError(f"{routine['name']}: C block must not contain file directives")
+        if any(token in blocks["H"] for token in ("#ifndef", "#define", "#endif", "#include")):
+            raise ValueError(f"{routine['name']}: header block must not contain file guards")
+        if any(token in blocks["PROBE"] for token in ("#include", "const ProbeEntry", "probe_entries_")):
+            raise ValueError(f"{routine['name']}: probe block must contain only adapter code")
+        if f'MUTATIONS["{routine["name"]}"]' not in blocks["MUTATION"]:
+            raise ValueError(f"{routine['name']}: mutation block is not an assignment")
         converted[routine["name"]] = blocks
     return {
         "statics": reply["statics"],

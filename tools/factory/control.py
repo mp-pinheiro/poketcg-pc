@@ -829,6 +829,13 @@ def check(client: forgejo.ForgejoClient, request: dict[str, Any]) -> dict[str, A
     lane_index = prompt_artifact.get("lane_index")
     if not isinstance(lane_index, int):
         raise ControlError("check prompt has no lane index")
+    if round_number > 0:
+        workers.prepare_attempt_lane(
+            packets,
+            lane_index=lane_index,
+            attempt_id=attempt_id,
+            owned_paths=list(prompt_artifact.get("owned_paths") or []),
+        )
     heartbeat_stop = threading.Event()
     heartbeat_errors: list[BaseException] = []
 

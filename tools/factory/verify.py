@@ -172,6 +172,14 @@ def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, fl
     for key in ("expected", "native", "registers", "bus"):
         if key in result and key not in witness:
             witness[key] = result[key]
+    fingerprint = hashlib.sha256(json.dumps({
+        "phase": base["phase"],
+        "failure_class": base["failure_class"],
+        "scope": base["scope"],
+        "work_ids": base["work_ids"],
+        "summary": base["summary"],
+        "witness": witness,
+    }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return {
         "schema": 2,
         "status": "green" if base["status"] == "green" else "red",
@@ -183,7 +191,7 @@ def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, fl
         "summary": base["summary"],
         "witness": witness,
         "phase_seconds": phase_seconds or {},
-        "fingerprint": base["fingerprint"],
+        "fingerprint": fingerprint,
     }
 
 
