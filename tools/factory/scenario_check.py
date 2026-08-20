@@ -447,6 +447,22 @@ def check_integration_saga_resume() -> None:
                 pass
             else:
                 raise AssertionError("remote-divergent saga was accepted")
+            saved = json.loads(path.read_text())
+            saved["phase"] = "source-committed"
+            saved["phases"] = {"source-committed": {"output_tree_sha256": "0" * 64}}
+            path.write_text(json.dumps(saved))
+            integrate._revision = lambda *_args, **_kwargs: "b" * 40
+            try:
+                integrate.integrate_v2(
+                    ["c" * 64],
+                    expected_remote_revision="b" * 40,
+                    batch_id=batch_id,
+                    phase=lambda *_args: None,
+                )
+            except integrate.IntegrationError:
+                pass
+            else:
+                raise AssertionError("unverifiable incomplete saga was resumed")
         finally:
             integrate.FACTORY = previous_factory
             integrate.ensure_v2_clone = previous_clone
