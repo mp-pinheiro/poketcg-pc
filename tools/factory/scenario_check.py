@@ -341,7 +341,7 @@ def check_invalidation_and_v2() -> None:
             "c": "uint16_t Demo(void) { return 0; }",
             "header": "uint16_t Demo(void);",
             "probe": "static void adapt_Demo(ProbeState *s) {}",
-            "cases": "CASES[\"Demo\"] = [];",
+            "cases": "CONTRACT[\"Demo\"] = {}; CASES[\"Demo\"] = [];",
             "mutation": "MUTATIONS[\"Demo\"] = {};",
             "completion": None,
         }],
@@ -406,6 +406,14 @@ def check_integration_saga_resume() -> None:
         integrate.FACTORY = root
         clone = root / "clone"
         clone.mkdir()
+        data_root = clone / "site" / "data"
+        data_root.mkdir(parents=True)
+        gate_path = data_root / "gate.json"
+        gate_path.write_text(json.dumps({"commit": "d" * 40}) + "\n")
+        progress_path = data_root / "progress.json"
+        progress_path.write_text("{}\n")
+        gate_sha256 = hashlib.sha256(gate_path.read_bytes()).hexdigest()
+        progress_sha256 = hashlib.sha256(progress_path.read_bytes()).hexdigest()
         integrate.ensure_v2_clone = lambda: clone
         integrate._run = lambda *_args, **_kwargs: type("Result", (), {"stdout": ""})()
         integrate._revision = lambda *_args, **_kwargs: "b" * 40
@@ -424,8 +432,8 @@ def check_integration_saga_resume() -> None:
                     "source_revision": "d" * 40,
                     "publication_revision": "e" * 40,
                     "remote_revision": "b" * 40,
-                    "gate_sha256": "f" * 64,
-                    "progress_sha256": "1" * 64,
+                    "gate_sha256": gate_sha256,
+                    "progress_sha256": progress_sha256,
                     "routine_names": ["Demo"],
                 },
             }))

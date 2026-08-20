@@ -313,7 +313,28 @@ def _validate_payload(kind: str, payload: dict[str, Any]) -> None:
     allowed = required.get(kind)
     if allowed is None:
         raise LedgerError(f"unknown event kind {kind!r}")
-    if kind == "claim" and set(payload) == allowed | {"agent_name", "model_id"}:
+    if kind == "attempt-result" and payload.get("schema") == 2:
+        _require_exact_keys(
+            payload,
+            allowed | {
+                "schema", "join_id", "check_id", "candidate_sha256",
+                "feature_class", "agent_name", "model_id",
+                "delivery_duration_ms", "phase_seconds", "usage",
+            },
+            "attempt-result V2 payload",
+        )
+    elif kind == "integration-phase" and payload.get("schema") == 2:
+        _require_exact_keys(
+            payload,
+            {
+                "schema", "batch_id", "phase", "event_id", "emitted_at",
+                "input_tree_sha256", "output_tree_sha256", "input_revision",
+                "output_revision", "bookmark_revision", "remote_revision",
+                "generated_file_sha256", "operation_result",
+            },
+            "integration-phase V2 payload",
+        )
+    elif kind == "claim" and set(payload) == allowed | {"agent_name", "model_id"}:
         pass
     else:
         _require_exact_keys(payload, allowed, f"{kind} payload")

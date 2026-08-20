@@ -162,23 +162,81 @@ def verdict_v1(result: dict, work_ids: list[str]) -> dict:
         ).hexdigest(),
     }
 
+_DIAGNOSTIC_LIMIT = 8
+_DIAGNOSTIC_CHARS = 320
+
+
+def _normalize_diagnostic(value: object) -> str:
+    """Make tool diagnostics stable and safe for ledger fingerprints."""
+    text = str(value or "").replace("\x00", "")
+    text = re.sub(r"\b(?:lane|checkout|worktree|build)/[^\s:'\"]+", "<path>", text)
+    text = re.sub(r"(?<!\w)(?:[A-Za-z]:)?/[^\s'\"]+", "<path>", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[:_DIAGNOSTIC_CHARS]
+
+
+def _bounded_diagnostics(detail: object) -> list[str]:
+    lines = [_normalize_diagnostic(line) for line in str(detail or "").splitlines()]
+    return [line for line in lines if line][: _DIAGNOSTIC_LIMIT]
+
+
+def _comparator_witness(output: str, *, routine: str | None = None,
+                        index: int | None = None) -> dict:
+    """Extract the comparator's final JSON object without retaining its log."""
+    payload = None
+    for line in reversed(output.splitlines()):
+        try:
+            candidate = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(candidate, dict):
+            payload = candidate
+            break
+    case_id = None
+    mismatches: object = {}
+    if payload:
+        case_id = payload.get("case_id") or payload.get("case")
+        mismatches = payload.get("mismatches", payload.get("mismatch", {}))
+    if not isinstance(case_id, str) and routine is not None and index is not None:
+        case_id = f"{routine}-{index}"
+    if not isinstance(mismatches, (dict, list, str)):
+        mismatches = str(mismatches)
+    if isinstance(mismatches, dict):
+        mismatches = {
+            str(key): _normalize_diagnostic(value)
+            for key, value in list(mismatches.items())[:_DIAGNOSTIC_LIMIT]
+        }
+    elif isinstance(mismatches, list):
+        mismatches = [_normalize_diagnostic(item) for item in mismatches[:_DIAGNOSTIC_LIMIT]]
+    else:
+        mismatches = _normalize_diagnostic(mismatches)
+    witness = {"mismatches": mismatches}
+    if case_id:
+        witness["case_id"] = case_id
+    return witness
+
 
 def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, float] | None = None) -> dict:
     base = verdict_v1(result, work_ids)
     raw_witness = result.get("witness")
-    witness = raw_witness if isinstance(raw_witness, dict) else {}
-    if isinstance(result.get("case_id"), str):
-        witness = {"case_id": result["case_id"], **witness}
-    for key in ("expected", "native", "registers", "bus"):
+    witness = dict(raw_witness) if isinstance(raw_witness, dict) else {}
+    case_id = result.get("case_id")
+    if isinstance(case_id, str):
+        witness["case_id"] = case_id
+    for key in ("expected", "native", "registers", "bus", "mismatches"):
         if key in result and key not in witness:
             witness[key] = result[key]
+    witness = _bounded_witness(witness)
+    diagnostics = _bounded_diagnostics(result.get("detail") or result.get("output"))
+    fingerprint_witness = {
+        key: witness[key] for key in ("case_id", "mismatches") if key in witness
+    }
     fingerprint = hashlib.sha256(json.dumps({
         "phase": base["phase"],
         "failure_class": base["failure_class"],
-        "scope": base["scope"],
-        "work_ids": base["work_ids"],
-        "summary": base["summary"],
-        "witness": witness,
+        "case_id": fingerprint_witness.get("case_id"),
+        "mismatches": fingerprint_witness.get("mismatches", {}),
+        "diagnostics": diagnostics,
     }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return {
         "schema": 2,
@@ -188,11 +246,34 @@ def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, fl
         "scope": base["scope"],
         "retry_action": base["retry_action"],
         "work_ids": base["work_ids"],
-        "summary": base["summary"],
+        "summary": _normalize_diagnostic(base["summary"]),
+        "diagnostics": diagnostics,
         "witness": witness,
         "phase_seconds": phase_seconds or {},
         "fingerprint": fingerprint,
     }
+
+
+def _bounded_witness(witness: dict) -> dict:
+    bounded: dict = {}
+    if isinstance(witness.get("case_id"), str):
+        bounded["case_id"] = witness["case_id"][:160]
+    mismatches = witness.get("mismatches")
+    if isinstance(mismatches, dict):
+        bounded["mismatches"] = {
+            str(k)[:120]: _normalize_diagnostic(v)
+            for k, v in list(mismatches.items())[:_DIAGNOSTIC_LIMIT]
+        }
+    elif isinstance(mismatches, list):
+        bounded["mismatches"] = [
+            _normalize_diagnostic(item) for item in mismatches[:_DIAGNOSTIC_LIMIT]
+        ]
+    elif mismatches is not None:
+        bounded["mismatches"] = _normalize_diagnostic(mismatches)
+    for key in ("expected", "native", "registers", "bus"):
+        if key in witness:
+            bounded[key] = _normalize_diagnostic(witness[key])
+    return bounded
 
 
 def run(command: list[str], cwd: Path, timeout: float = 600,
@@ -319,8 +400,10 @@ def primary_compare(lane: Path, basename: str, routine_names: list[str],
                 continue
             output = compared.stdout + compared.stderr
             if comparison_status(output) is None and not output.startswith("SCHEMA"):
-                return verdict("infra-error", f"{fn}-{index}: {output}")
+                return verdict("infra-error", _normalize_diagnostic(output), fn)
             result = verdict("primary", f"case {fn}-{index}\n{output}", fn)
+            result["case_id"] = f"{fn}-{index}"
+            result["witness"] = _comparator_witness(output, routine=fn, index=index)
             result["failing"] = [fn]
             return result
     return None
@@ -415,6 +498,7 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
         )
         names = re.findall(r"^FAIL (\S+):", output, flags=re.MULTILINE)
         result = verdict("diff", failing or output)
+        result["witness"] = _comparator_witness(output)
         result["failing"] = names
         return result
     if mode == "cache":
@@ -425,7 +509,10 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                     "--probe", str(lane / "build" / "poketcg_probe")],
                    lane, timeout=1800, deadline=deadline)
         if live.returncode != 0:
-            return verdict("diff", live.stdout + live.stderr)
+            live_witness = _comparator_witness(live.stdout + live.stderr)
+            result = verdict("diff", live.stdout + live.stderr)
+            result["witness"] = live_witness
+            return result
     if progress:
         progress("mutation")
     try:
@@ -442,8 +529,8 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
                  "--build", str(lane / "build"), "--runner", str(RUNNER)],
                 lane, timeout=1800, deadline=deadline)
             if mutation_run.returncode != 0:
-                return verdict("mutation",
-                               mutation_run.stdout + mutation_run.stderr)
+                return verdict("mutation", mutation_run.stdout + mutation_run.stderr,
+                               routine=fn)
     except WaveDeadlineExpired:
         raise
     except PhaseTimeout as exc:
@@ -454,6 +541,14 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
     ):
         return verdict("infra-error", traceback.format_exc(limit=2))
 
+    if progress:
+        progress("lint")
+    lint = run(
+        ["python3", "tools/lint_adapters.py"],
+        lane, timeout=300, deadline=deadline,
+    )
+    if lint.returncode != 0:
+        return verdict("lint", lint.stdout + lint.stderr, phase="lint")
 
     if progress:
         progress("complete")

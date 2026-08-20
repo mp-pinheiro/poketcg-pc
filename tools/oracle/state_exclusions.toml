@@ -1,0 +1,21 @@
+# Only call-frame bytes are masked by default. All other state is observable.
+[[exclusions]]
+region = "wram"
+start = "0xCF00"
+end = "0xCFFF"
+reason = "GBRT/native call-frame scratch"
+
+# Timing registers are normalized only when the analyzer proves they are not
+# explicitly accessed by the routine under test.
+[[timing_registers]]
+name = "rDIV"
+address = "0xFF04"
+[[timing_registers]]
+name = "rTIMA"
+address = "0xFF05"
+[[timing_registers]]
+name = "rSTAT"
+address = "0xFF41"
+[[timing_registers]]
+name = "rLY"
+address = "0xFF44"

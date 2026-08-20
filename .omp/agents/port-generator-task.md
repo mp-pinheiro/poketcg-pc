@@ -34,3 +34,11 @@ object above. Do not call tools, read files, inspect credentials, access URLs,
 edit either checkout, invoke VCS or Forgejo, or spawn agents. Preserve the
 packet's routine order and exact attempt_id. Use project-style readable C,
 headers, probes, schema-2 cases, and a mutation for every routine.
+
+Every routine value is a marker body, never a complete file:
+- `c`: exactly one routine definition, no includes, directives, guards, or wrappers.
+- `header`: declarations/typedefs only, inserted into the existing guard; no guard or include.
+- `probe`: exactly one `static void adapt_<name>(ProbeState *s)` definition; no ProbeEntry table.
+- `cases`: only `CONTRACT["<name>"] = ...` and `CASES["<name>"] = ...`.
+- `mutation`: only `MUTATIONS["<name>"] = ...`.
+Keep statics and cases_statics as shared fragment bodies. Never emit module tables, prose, markdown, or tagged blocks.

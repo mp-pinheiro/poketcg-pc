@@ -194,6 +194,7 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 ),
                 "completion": {"mode": "return"},
                 "evidence": evidence,
+                "snapshot": bool(legacy.get("snapshot", False)),
             }
             reason = legacy.get("reason", legacy.get("why"))
             if reason is not None:
@@ -203,6 +204,9 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 legacy.get("vread", {}),
                 legacy.get("pread", {}),
             )
+            if record["snapshot"]:
+                for region in ("wram", "hram", "sram", "vram", "oam", "palette"):
+                    state.setdefault(region, [])
             if state:
                 record["state"] = state
             records.append(record)

@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
-"""Render translation prompts from packets and parse tagged-block replies.
+"""Render translation prompts from packets and parse marker-body replies.
 
-Reply grammar (parsed, never trusted):
-
-    ===STATICS                     optional, once: file-scope helpers/defines,
-                                   extra #include lines first
-    ===C <Fn>                      one C function definition
-    ===H <Fn>                      prototype line(s)
-    ===PROBE <Fn>                  one adapter function (adapt_<Fn'>)
-    ===CASES <Fn>                  CONTRACT["<Fn>"] = {...} and CASES["<Fn>"] = [...]
-    ===MUTATION <Fn>               MUTATIONS["<Fn>"] = {...}
-
-Every routine in the packet needs all five routine blocks.
+Generator output is deliberately fragment-sized: each block is inserted into
+an existing quartet file by the verifier.  The prompt must never imply that a
+complete C, header, probe, or cases file should be returned.
 """
 
 from __future__ import annotations
@@ -25,14 +17,59 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import ROOT
 
 
-def example_quad(basename: str) -> str:
-    parts = []
-    for rel in (f"src/home/{basename}.c", f"src/home/{basename}.h",
-                f"src/probe/{basename}.c", f"tests/cases/{basename}.py"):
-        path = ROOT / rel
-        parts.append(f"--- {rel} ---\n{path.read_text()}")
-    return "\n".join(parts)
+def _fragment_example(basename: str) -> str:
+    """Return a small, sanitized marker-body example from an existing quartet."""
+    home = (ROOT / "src/home" / f"{basename}.c").read_text()
+    header = (ROOT / "src/home" / f"{basename}.h").read_text()
+    probe = (ROOT / "src/probe" / f"{basename}.c").read_text()
+    cases = (ROOT / "tests/cases" / f"{basename}.py").read_text()
 
+    def without_directives(text: str) -> str:
+        return "\n".join(line for line in text.splitlines()
+                         if not line.lstrip().startswith("#")).strip()
+
+    def first_function(text: str) -> str:
+        match = re.search(r"(?m)^[A-Za-z_][^;\n]*\([^;\n]*\)\s*\{", text)
+        if not match:
+            return without_directives(text)
+        depth = 0
+        for index in range(match.end() - 1, len(text)):
+            if text[index] == "{":
+                depth += 1
+            elif text[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    return without_directives(text[match.start():index + 1])
+        return without_directives(text[match.start():])
+
+    adapter = re.search(
+        r"(?ms)^[A-Za-z_][^;\n]*\badapt_[A-Za-z0-9_]+\s*\([^;\n]*\)\s*\{.*?^}",
+        probe,
+    )
+    case_lines = [
+        line.strip() for line in cases.splitlines()
+        if re.match(r"^(?:CONTRACT|CASES)\s*\[", line.strip())
+    ]
+    mutation_lines = [
+        line.strip() for line in cases.splitlines()
+        if re.match(r"^MUTATIONS\s*\[", line.strip())
+    ]
+    return "\n".join((
+        "FRAGMENT EXAMPLE (marker bodies only; never copy a complete file):",
+        f"C body:\n{first_function(home)}",
+        "Header declarations:\n" + without_directives(header),
+        "Probe adapter body:\n" + (adapter.group(0).strip() if adapter else
+                                    "static void adapt_Name(ProbeState *s) {}"),
+        "Cases assignments:\n" + ("\n".join(case_lines) or
+                                   'CONTRACT["Name"] = {};\\nCASES["Name"] = [];'),
+        "Mutation assignment:\n" + ("\n".join(mutation_lines) or
+                                     'MUTATIONS["Name"] = {};'),
+    ))
+
+
+def example_quad(basename: str) -> str:
+    """Compatibility name retained for callers; returns fragments, not files."""
+    return _fragment_example(basename)
 
 def render(packet: dict, feedback: str | None = None,
            targets: list[str] | None = None) -> str:
@@ -40,22 +77,37 @@ def render(packet: dict, feedback: str | None = None,
     lines: list[str] = [
         "You are a credential-free port generator. The packet below is complete context.",
         "Return one TranslationReplyV2 JSON object and nothing else.",
+        "Every value below is a marker BODY inserted into an existing file. "
+        "Never return a complete file.",
         "",
     ]
     lines.append(example_quad(packet["example"]))
     lines.append("")
+    lines.append("# FRAGMENT RULES — MANDATORY")
+    lines.extend((
+        "C: exactly one routine definition; no #include, #if, #define, guards, or file wrapper.",
+        "header: only typedefs/declarations inserted before the existing guard #endif; "
+        "no guard or include lines.",
+        "probe: exactly one static void adapt_<name>(ProbeState *s) definition; "
+        "no ProbeEntry, probe table, sentinel, or module wrapper.",
+        "cases: only CONTRACT[\"<name>\"] and CASES[\"<name>\"] assignments.",
+        "mutation: only MUTATIONS[\"<name>\"] assignment.",
+        "statics and cases_statics: shared fragment bodies only; do not repeat module tables.",
+        "Do not emit file guards, includes, complete modules, prose, markdown, or tagged blocks.",
+        "",
+    ))
     lines.append("# YOUR TASK")
     lines.append(f"Port the following routines from poketcg/{packet['file']} "
                  f"into basename `{packet['basename']}`.")
     if packet.get("existing"):
         existing = packet["existing"]
         lines.append("")
-        lines.append(f"The target files already exist (append mode). Existing "
-                     f"src/home/{packet['basename']}.h:")
-        lines.append("```c\n" + existing["header"].strip() + "\n```")
-        lines.append(f"Already-ported routines in this file: "
-                     f"{', '.join(existing['contract_keys']) or 'none'}. "
-                     f"Do NOT re-emit them.")
+        lines.append(
+            "Append mode: the existing quartet files and guard remain in place. "
+            "Emit only new marker bodies; already-ported routines are not requested."
+        )
+        lines.append(f"Already-ported routines: "
+                     f"{', '.join(existing['contract_keys']) or 'none'}.")
     if packet["constants"]:
         lines.append("")
         lines.append("Constant values from the pret tree (define locally with "

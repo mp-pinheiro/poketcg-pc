@@ -20,9 +20,9 @@ EVIDENCE = frozenset({
 COMPLETIONS = frozenset({"return", "pre-ret", "event"})
 
 _CASE_KEYS = frozenset({
-    "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "setup",
-    "input_events", "instruction_budget", "cycle_budget", "completion", "evidence",
-    "reason",
+    "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "snapshot",
+    "setup", "input_events", "instruction_budget", "cycle_budget", "completion",
+    "evidence", "reason",
 })
 _MAPPER_KEYS = frozenset({
     "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode",
@@ -132,11 +132,11 @@ def _validate_bus(value: Any) -> None:
 
 def _validate_state(value: Any) -> None:
     state = _mapping(value, "case.state")
-    _check_unknown(state, frozenset({"wram", "sram", "vram", "palette"}), "case.state")
+    _check_unknown(state, frozenset({"wram", "hram", "sram", "vram", "oam", "palette"}), "case.state")
     for region, entries in state.items():
         if not isinstance(entries, list):
             _fail(f"case.state.{region}", "must be an array")
-        width = 2 if region in {"wram", "palette"} else 3
+        width = 3 if region in {"sram", "vram"} else 2
         for index, entry in enumerate(entries):
             if not isinstance(entry, list) or len(entry) != width:
                 _fail(f"case.state.{region}[{index}]", f"must contain {width} integers")
@@ -144,14 +144,14 @@ def _validate_state(value: Any) -> None:
             if region in {"sram", "vram"}:
                 _integer(entry[0], f"case.state.{region}[{index}].bank", maximum=255)
                 offset = 1
-            maximum = 0x7F if region == "palette" else 0xFFFF
+            maximum = 0x7F if region == "palette" else (0x9F if region == "oam" else (0x7F if region == "hram" else 0xFFFF))
             address = _integer(
                 entry[offset],
                 f"case.state.{region}[{index}].address",
                 maximum=maximum,
             )
             size = _integer(entry[offset + 1], f"case.state.{region}[{index}].size", minimum=1)
-            limit = 0x80 if region == "palette" else 0x10000
+            limit = 0xA0 if region == "oam" else (0x80 if region in {"palette", "hram"} else 0x10000)
             if address + size > limit:
                 _fail(f"case.state.{region}[{index}]", "span exceeds address space")
 
@@ -191,9 +191,11 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _fail("case.id", "must be a non-empty string")
     if case_id is not None and declared_id != case_id:
         _fail("case.id", f"does not match registry id {case_id!r}")
+    if case.get("snapshot", False) is not True:
+        if "snapshot" in case and not isinstance(case["snapshot"], bool):
+            _fail("case.snapshot", "must be a boolean")
     if case.get("hardware") not in {"dmg", "cgb"}:
         _fail("case.hardware", "must be dmg or cgb")
-
     mapper = _mapping(case.get("mapper"), "case.mapper")
     _check_unknown(mapper, _MAPPER_KEYS, "case.mapper")
     for required in ("rom_bank", "ram_bank", "vram_bank"):
@@ -215,6 +217,12 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
     _validate_seeds(case.get("seeds", {}))
     if "state" in case:
         _validate_state(case["state"])
+        if case.get("snapshot") is True:
+            state = case["state"]
+            if set(state) != set(_SEED_REGIONS):
+                _fail("case.state", "snapshot cases must declare all observable regions")
+            if not all(isinstance(entries, list) for entries in state.values()):
+                _fail("case.state", "snapshot regions must be arrays")
     _validate_setup(case.get("setup", []))
     _validate_input_events(case.get("input_events", []))
     _integer(case.get("instruction_budget"), "case.instruction_budget", minimum=1)

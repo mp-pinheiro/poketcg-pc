@@ -1,0 +1,28 @@
+# Reviewed semantic corrections for GB Recompiled 0.1.0 output.
+# Entries are consumed only after the analyzer has produced the corresponding
+# machine body and diagnostics; they never classify source text.
+[PlayAttackAnimationCommands_NextCommand]
+feature_class = "finite-dispatch"
+
+[LoadScene_LoadCompressedSGBPacket]
+feature_class = "hardware-transform"
+transform = "sgb"
+exclude_unreachable = true
+
+[GetPCPackNameTextID]
+feature_class = "direct"
+embedded_table_ends_at = "ret"
+
+[DuelAnim153]
+same_address_body = "DuelAnim153-DuelAnim157"
+[DuelAnim154]
+same_address_body = "DuelAnim153-DuelAnim157"
+[DuelAnim155]
+same_address_body = "DuelAnim153-DuelAnim157"
+[DuelAnim156]
+same_address_body = "DuelAnim153-DuelAnim157"
+[DuelAnim157]
+same_address_body = "DuelAnim153-DuelAnim157"
+
+[SwitchCardPage]
+required_finite_targets = 16

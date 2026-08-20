@@ -330,3 +330,19 @@ def calibration(
         "multiplier": multiplier,
         "confidence": "high" if coverage >= 0.75 else "low",
     }
+def forecast_status(
+    *,
+    valid_attempts: int,
+    landed: int,
+    route_observations: dict[str, int] | None = None,
+    remaining_feature_classes: Iterable[str] = (),
+) -> str:
+    """Return the publishable schema-2 status without fabricating an ETA."""
+    observations = route_observations or {}
+    if valid_attempts < 30 or landed < 5 or any(count < 5 for count in observations.values()):
+        return "unavailable"
+    if any(remaining_feature_classes):
+        return "provisional"
+    if landed < 30:
+        return "provisional"
+    return "calibrated"

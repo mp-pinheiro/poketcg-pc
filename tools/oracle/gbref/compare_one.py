@@ -109,14 +109,14 @@ def main() -> int:
             "preserve": preserve_fields,
             "state": case.get(
                 "state",
-                {"wram": [], "sram": [], "vram": [], "palette": []},
+                {name: [] for name in ("wram", "hram", "sram", "vram", "oam", "palette")},
             ),
             "sram": case.get("sram", {}),
             "vram": case.get("vram", {}),
         })
         case["state"] = {
             name: list(case["state"].get(name, []))
-            for name in ("wram", "sram", "vram", "palette")
+            for name in ("wram", "hram", "sram", "vram", "oam", "palette")
         }
         mapper = dict(case["mapper"])
         native_vram_bank = int(mapper.pop("vram_bank"))
@@ -161,7 +161,8 @@ def main() -> int:
         case["completion"] = mode
     else:
         case = json.loads(args.case.read_text())
-    case.setdefault("state", {"wram": [], "sram": [], "vram": []})
+    case.setdefault("state", {name: [] for name in ("wram", "hram", "sram", "vram", "oam", "palette")})
+    case.setdefault("snapshot", False)
     case.setdefault("sram", {})
     case.setdefault("vram", {})
     case.setdefault("setup", [])
@@ -179,7 +180,7 @@ def main() -> int:
     required = {
         "id", "hardware", "fn", "entry", "completion", "instruction_budget",
         "cycle_budget", "mapper", "registers", "compare", "preserve", "state",
-        "bus", "sram", "vram", "setup", "input_events", "evidence",
+        "snapshot", "bus", "sram", "vram", "setup", "input_events", "evidence",
     }
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
@@ -215,14 +216,19 @@ def main() -> int:
         for name in ("event_addr", "event_value", "event_mask")
     ):
         raise SystemExit("SCHEMA event predicate is out of range")
-    if not isinstance(case["id"], str) or not case["id"]:
-        raise SystemExit("SCHEMA id must be non-empty")
+    if not isinstance(case.get("snapshot", False), bool):
+        raise SystemExit("SCHEMA snapshot must be boolean")
     if not all(isinstance(case[name], dict) for name in ("bus", "sram", "vram")):
         raise SystemExit("SCHEMA state sections must be objects")
-    state_regions = ("wram", "sram", "vram", "palette")
-    if not isinstance(case["state"], dict) or set(case["state"]) != set(state_regions):
-        raise SystemExit("SCHEMA state must declare wram, sram, vram, and palette spans")
-    if not all(isinstance(case["state"][name], list) for name in state_regions):
+    if not isinstance(case["state"], dict):
+        raise SystemExit("SCHEMA state must be an object")
+    state_regions = ("wram", "hram", "sram", "vram", "oam", "palette")
+    if case["snapshot"]:
+        if set(case["state"]) != set(state_regions):
+            raise SystemExit("SCHEMA snapshot state must declare all observable regions")
+        if not all(isinstance(case["state"][name], list) for name in state_regions):
+            raise SystemExit("SCHEMA snapshot state spans must be arrays")
+    elif not all(isinstance(entries, list) for entries in case["state"].values()):
         raise SystemExit("SCHEMA state spans must be arrays")
     if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
         raise SystemExit("SCHEMA setup and input_events must be arrays")
@@ -264,15 +270,17 @@ def main() -> int:
         span_number(int(address, 0) if isinstance(address, str) else address,
                     "bus address", 0, 0xffff)
         span_number(size, "bus size", 1, 0x10000)
-    for name in ("wram", "sram", "vram", "palette"):
-        width = 2 if name in {"wram", "palette"} else 3
+    for name in state_regions:
+        width = 3 if name in {"sram", "vram"} else 2
+        limit = 0xA0 if name == "oam" else (0x80 if name in {"hram", "palette"} else 0x10000)
         for span in case["state"][name]:
             if not isinstance(span, (list, tuple)) or len(span) != width:
                 raise SystemExit(f"SCHEMA state.{name} spans are invalid")
             for value in span:
                 _number(value, f"state.{name}")
-    if any(seeds.get(region) for region in ("hram", "oam", "palette")):
-        raise SystemExit("SCHEMA canonical HRAM/OAM/palette seeds require runner state support")
+            offset = 1 if name in {"sram", "vram"} else 0
+            if span[offset] + span[offset + 1] > limit:
+                raise SystemExit(f"SCHEMA state.{name} span exceeds region")
     if args.fn not in args.symbols.read_text():
         raise SystemExit("ARTIFACT function is absent from symbols")
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
@@ -332,6 +340,12 @@ def main() -> int:
         for addr, encoded in spans.items()
     )
     vram_spans = _merge_banked_spans(vram_candidates)
+    hram_spans = _merge_spans(
+        (int(addr), int(size)) for addr, size in case["state"]["hram"]
+    )
+    oam_spans = _merge_spans(
+        (int(addr), int(size)) for addr, size in case["state"]["oam"]
+    )
     palette_spans = _merge_spans(
         (int(addr), int(size)) for addr, size in case["state"]["palette"]
     )
@@ -485,6 +499,24 @@ def main() -> int:
     )
     if expected_palette != actual_palette:
         mismatches["palette"] = "reference/native state differs"
+    if case["snapshot"]:
+        def compare_linear_region(field: str, spans: tuple[tuple[int, int], ...]) -> None:
+            expected = bytes.fromhex(reference.get(field, ""))
+            grouped = native.get(field, {})
+            actual = "".join(
+                grouped.get(str(address), "")
+                for address, _size in spans
+            )
+            wanted = "".join(
+                expected[address:address + size].hex()
+                for address, size in spans
+            )
+            if wanted != actual:
+                mismatches[field] = "reference/native snapshot differs"
+
+        compare_linear_region("wram", tuple(wram_spans))
+        compare_linear_region("hram", tuple(hram_spans))
+        compare_linear_region("oam", tuple(oam_spans))
     reference_sram = bytes.fromhex(reference["sram"])
     expected_sram = "".join(
         reference_sram[bank * 0x2000 + address - 0xA000:

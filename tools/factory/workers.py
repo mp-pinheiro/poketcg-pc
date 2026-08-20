@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import json
 import os
 import shutil
@@ -29,10 +30,16 @@ def packet_sha256(packets: list[dict[str, Any]]) -> str:
     return _digest({"packets": packets})
 
 
-def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+def _reject_directives(body: str, label: str) -> None:
+    if re.search(r"(?m)^\s*#", body):
+        raise ValueError(f"{label} must not contain preprocessor directives")
+
+
+def validate_translation_v2(packet: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    """Validate a reply as insertion-ready marker bodies."""
     expected = {"schema", "attempt_id", "statics", "cases_statics", "routines"}
-    if set(reply) != expected:
-        raise ValueError(f"TranslationReplyV2 fields differ: {sorted(set(reply) ^ expected)}")
+    if not isinstance(reply, dict) or set(reply) != expected:
+        raise ValueError("TranslationReplyV2 top-level fields differ")
     if reply["schema"] != 2:
         raise ValueError("TranslationReplyV2 schema must be 2")
     attempt_id = packet.get("attempt_id") or packet.get("id")
@@ -44,45 +51,63 @@ def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dic
     raw_routines = reply["routines"]
     if not isinstance(raw_routines, list):
         raise TypeError("TranslationReplyV2 routines must be an array")
-    packet_routines = packet.get("routines") or []
-    expected_names = [routine.get("name") for routine in packet_routines]
-    names = [routine.get("name") for routine in raw_routines if isinstance(routine, dict)]
-    if len(names) != len(raw_routines) or names != expected_names or len(names) != len(set(names)):
+    expected_names = [r.get("name") for r in packet.get("routines") or []]
+    if any(not isinstance(name, str) or not name for name in expected_names):
+        raise ValueError("packet routine names are invalid")
+    names = [r.get("name") if isinstance(r, dict) else None for r in raw_routines]
+    if names != expected_names or len(names) != len(set(names)):
         raise ValueError("TranslationReplyV2 routine names differ from packet order")
+
     routine_fields = {"name", "c", "header", "probe", "cases", "mutation", "completion"}
-    converted: dict[str, dict[str, str]] = {}
+    converted: dict[str, dict[str, str | None]] = {}
     for routine in raw_routines:
-        if set(routine) != routine_fields:
+        if not isinstance(routine, dict) or set(routine) != routine_fields:
             raise ValueError("TranslationReplyV2 routine fields differ")
-        if not isinstance(routine["name"], str) or any(
-            not isinstance(routine[key], str) for key in ("c", "header", "probe", "cases", "mutation")
-        ):
-            raise TypeError("TranslationReplyV2 routine code fields must be strings")
+        name = routine["name"]
+        if not isinstance(name, str):
+            raise TypeError("routine name must be a string")
+        values = {key: routine[key] for key in ("c", "header", "probe", "cases", "mutation")}
+        if any(not isinstance(value, str) or not value.strip() for value in values.values()):
+            raise ValueError(f"{name}: all marker bodies must be nonempty strings")
         if routine["completion"] is not None and not isinstance(routine["completion"], str):
             raise TypeError("TranslationReplyV2 completion must be string or null")
-        blocks = {
-            "C": routine["c"],
-            "H": routine["header"],
-            "PROBE": routine["probe"],
-            "CASES": routine["cases"],
-            "MUTATION": routine["mutation"],
+        c, header, probe, cases, mutation = (values[key] for key in values)
+        for label, body in (("C", c), ("header", header), ("probe", probe)):
+            _reject_directives(body, f"{name}: {label} fragment")
+        if re.search(r"(?m)^\s*#\s*(?:ifn?def|define|endif|include)\b", header):
+            raise ValueError(f"{name}: header guard/include is forbidden")
+        if re.search(r"\b(?:ProbeEntry|probe_entries_|PROBE_TABLE|PROBE_SENTINEL)\b", probe):
+            raise ValueError(f"{name}: probe table is forbidden")
+        if re.search(r"(?m)^\s*(?:static\s+)?(?:const\s+)?(?:struct\s+)?"
+                     r"(?:Contract|Case|Schema2Case)\b", cases):
+            raise ValueError(f"{name}: cases module declaration is forbidden")
+        if re.search(r"\bSCHEMA2_CASES\b", cases):
+            raise ValueError(f"{name}: SCHEMA2_CASES module table is forbidden")
+        for module in ("CONTRACT", "CASES"):
+            if re.search(rf"\b{module}\s*=", cases):
+                raise ValueError(f"{name}: whole {module} declaration is forbidden")
+        assignment_keys = re.findall(r"\b(?:CONTRACT|CASES)\s*\[\s*[\"']([^\"']+)[\"']\s*\]\s*=", cases)
+        if set(assignment_keys) != {name} or len(assignment_keys) != 2:
+            raise ValueError(f"{name}: cases must assign exactly CONTRACT and CASES")
+        mutation_keys = re.findall(r"\bMUTATIONS\s*\[\s*[\"']([^\"']+)[\"']\s*\]\s*=", mutation)
+        if mutation_keys != [name]:
+            raise ValueError(f"{name}: mutation assignment does not match routine")
+        if len(re.findall(rf"\b{re.escape(name)}\s*\([^;{{}}]*\)\s*\{{", c)) != 1:
+            raise ValueError(f"{name}: C symbol must have exactly one definition")
+        if len(re.findall(rf"\b{re.escape(name)}\s*\([^;{{}}]*\)\s*;", header)) != 1:
+            raise ValueError(f"{name}: header declaration must occur exactly once")
+        if len(re.findall(rf"\badapt_{re.escape(name)}\s*\([^;{{}}]*\)\s*\{{", probe)) != 1:
+            raise ValueError(f"{name}: adapter definition must occur exactly once")
+        converted[name] = {
+            "C": c, "H": header, "PROBE": probe, "CASES": cases,
+            "MUTATION": mutation, "COMPLETION": routine["completion"],
         }
-        if routine["completion"] is not None:
-            blocks["COMPLETION"] = routine["completion"]
-        if any(token in blocks["C"] for token in ("#include", "#ifndef", "#endif")):
-            raise ValueError(f"{routine['name']}: C block must not contain file directives")
-        if any(token in blocks["H"] for token in ("#ifndef", "#define", "#endif", "#include")):
-            raise ValueError(f"{routine['name']}: header block must not contain file guards")
-        if any(token in blocks["PROBE"] for token in ("#include", "const ProbeEntry", "probe_entries_")):
-            raise ValueError(f"{routine['name']}: probe block must contain only adapter code")
-        if f'MUTATIONS["{routine["name"]}"]' not in blocks["MUTATION"]:
-            raise ValueError(f"{routine['name']}: mutation block is not an assignment")
-        converted[routine["name"]] = blocks
-    return {
-        "statics": reply["statics"],
-        "cases_statics": reply["cases_statics"],
-        "routines": converted,
-    }
+    return {"statics": reply["statics"], "cases_statics": reply["cases_statics"],
+            "routines": converted}
+
+
+def translation_from_reply(packet: dict[str, Any], reply: dict[str, Any]) -> dict[str, Any]:
+    return validate_translation_v2(packet, reply)
 
 
 def stage_bundle(packet: dict[str, Any], lane: Path) -> dict[str, Any]:
@@ -199,6 +224,12 @@ def prepare_attempt_lane(
 ) -> Path:
     if not packets:
         raise ValueError("attempt lane requires packets")
+    lane = lanes.lane_dir(lane_index)
+    if lane.exists() or lane.is_symlink():
+        if lane.is_symlink() or lane.is_file():
+            lane.unlink()
+        else:
+            shutil.rmtree(lane)
     lane = lanes.ensure(lane_index, packet=packets[0])
     manifest = {
         "schema": 1,
@@ -217,11 +248,8 @@ def prepare_attempt_lane(
     temporary.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n")
     os.replace(temporary, lane / ".factory-v2-attempt.json")
     return lane
-
-
 def validate_attempt_lane(
     packets: list[dict[str, Any]],
-    *,
     lane_index: int,
     attempt_id: str,
 ) -> Path:
