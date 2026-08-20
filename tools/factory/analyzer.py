@@ -111,15 +111,19 @@ def _invoke_gbrecomp(packet: dict[str, Any], *, root: Path) -> dict[str, Any]:
         temporary = True
     output = Path(tempfile.mkdtemp(prefix="gbrecomp-", dir=root / ".factory"))
     try:
-        completed = subprocess.run(
-            [
-                str(tool), str(rom), "-o", str(output),
-                "--symbols", str(symbols), "--symbol-policy", "names-only",
-                "--annotations", str(annotation_path), "--reachable-only",
-                "--no-scan", "--jobs", "1",
-            ],
-            cwd=root, capture_output=True, text=True, check=False,
-        )
+        try:
+            completed = subprocess.run(
+                [
+                    str(tool), str(rom), "-o", str(output),
+                    "--runtime-dir", str(inputs.get("runtime_dir") or tool.parent / "runtime"),
+                    "--symbols", str(symbols), "--symbol-policy", "names-only",
+                    "--annotations", str(annotation_path), "--reachable-only",
+                    "--no-scan", "--jobs", "1",
+                ],
+                cwd=root, capture_output=True, text=True, check=False, timeout=600,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise AnalyzerUnavailable("GB Recompiled analysis timed out") from exc
         if completed.returncode != 0:
             raise AnalyzerUnavailable("GB Recompiled analysis failed")
         metadata = list(output.glob("*_metadata.json"))
