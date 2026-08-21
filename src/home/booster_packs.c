@@ -39,6 +39,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 	BOOSTER_CARD_TYPE_TRAINER,
 	BOOSTER_CARD_TYPE_TRAINER,
 };
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -97,3 +99,16 @@ uint8_t UpdateBoosterCardTypesChanceByte(void)
 	return res;
 }
 /* <<< factory UpdateBoosterCardTypesChanceByte */
+
+/* >>> factory AppendCurrentCardToHL */
+void AppendCurrentCardToHL(uint16_t *hl)
+{
+	uint16_t cursor = *hl;
+	while (gb_read8(cursor++) != 0u) {
+	}
+	cursor--;
+	gb_write8(cursor++, wBoosterCurrentCard);
+	gb_write8(cursor, 0u);
+	*hl = cursor;
+}
+/* <<< factory AppendCurrentCardToHL */

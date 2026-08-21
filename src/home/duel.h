@@ -574,4 +574,7 @@ void GetDuelInitialPrizesUpperBitsSet(void);
 /* >>> factory DrawYourOrOppPlayArea_DrawArrows */
 void DrawYourOrOppPlayArea_DrawArrows(uint8_t a, uint8_t b);
 /* <<< factory DrawYourOrOppPlayArea_DrawArrows */
+/* >>> factory DrawYourOrOppPlayArea_EraseArrows */
+void DrawYourOrOppPlayArea_EraseArrows(void);
+/* <<< factory DrawYourOrOppPlayArea_EraseArrows */
 #endif

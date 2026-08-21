@@ -2182,6 +2182,13 @@ static void adapt_KinglerFlail_HPCheck(ProbeState *s)
 }
 /* <<< factory KinglerFlail_HPCheck */
 
+/* >>> factory MagikarpFlail_HPCheck */
+static void adapt_MagikarpFlail_HPCheck(ProbeState *s)
+{
+	MagikarpFlail_HPCheck();
+}
+/* <<< factory MagikarpFlail_HPCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2452,5 +2459,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AIPickAttackForAmnesia", adapt_AIPickAttackForAmnesia },
 	{ "MirrorMove_AISelection", adapt_MirrorMove_AISelection },
 	{ "KinglerFlail_HPCheck", adapt_KinglerFlail_HPCheck },
+	{ "MagikarpFlail_HPCheck", adapt_MagikarpFlail_HPCheck },
 	{ NULL, NULL },
 };

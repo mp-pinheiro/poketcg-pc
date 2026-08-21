@@ -2344,6 +2344,18 @@ CASES["KinglerFlail_HPCheck"] = [
 ]
 # <<< factory KinglerFlail_HPCheck
 
+# >>> factory MagikarpFlail_HPCheck
+CONTRACT["MagikarpFlail_HPCheck"] = {"compare": (), "preserve": ()}
+CASES["MagikarpFlail_HPCheck"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", wPlayerDeck: b"\x01", wDamage: b"\x99", wAIMinDamage: b"\x88"},
+     "read": {wDamage: 1, wAIMinDamage: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", wPlayerDeck: b"\x01", wDamage: b"\x77", wAIMinDamage: b"\x66"},
+     "read": {wDamage: 1, wAIMinDamage: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x71", wPlayerDeck: b"\x01", wDamage: b"\x55", wAIMinDamage: b"\x44"},
+         read={wDamage: 1, wAIMinDamage: 1}),
+]
+# <<< factory MagikarpFlail_HPCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3968,3 +3980,11 @@ MUTATIONS["KinglerFlail_HPCheck"] = {
     "case_ids": ["KinglerFlail_HPCheck-0", "KinglerFlail_HPCheck-1", "KinglerFlail_HPCheck-2"],
 }
 # <<< factory-mutation KinglerFlail_HPCheck
+# >>> factory-mutation MagikarpFlail_HPCheck
+MUTATIONS["MagikarpFlail_HPCheck"] = {
+    "source_symbol": "MagikarpFlail_HPCheck",
+    "before": "void MagikarpFlail_HPCheck(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tSetDefiniteDamage(r.a);\n}",
+    "after": "void MagikarpFlail_HPCheck(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tSetDefiniteDamage((uint8_t)(r.a + 1u));\n}",
+    "case_ids": ["MagikarpFlail_HPCheck-0", "MagikarpFlail_HPCheck-1", "MagikarpFlail_HPCheck-2"],
+}
+# <<< factory-mutation MagikarpFlail_HPCheck

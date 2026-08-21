@@ -363,6 +363,10 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 
 #include "home/bg_map.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1794,3 +1798,11 @@ void DrawYourOrOppPlayArea_DrawArrows(uint8_t a, uint8_t b)
 	}
 }
 /* <<< factory DrawYourOrOppPlayArea_DrawArrows */
+
+/* >>> factory DrawYourOrOppPlayArea_EraseArrows */
+void DrawYourOrOppPlayArea_EraseArrows(void)
+{
+	uint8_t a = wYourOrOppPlayAreaLastCursorPosition;
+	DrawYourOrOppPlayArea_DrawArrows(a, SYM_SPACE);
+}
+/* <<< factory DrawYourOrOppPlayArea_EraseArrows */

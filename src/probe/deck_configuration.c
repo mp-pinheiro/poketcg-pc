@@ -71,6 +71,13 @@ static void adapt_FillDEWithA(ProbeState *s)
 }
 /* <<< factory FillDEWithA */
 
+/* >>> factory DrawHandCardsTileAtDE */
+static void adapt_DrawHandCardsTileAtDE(ProbeState *s)
+{
+	DrawHandCardsTileAtDE((uint16_t)((uint16_t)s->d << 8 | s->e));
+}
+/* <<< factory DrawHandCardsTileAtDE */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -80,5 +87,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "ClearMemory_Bank2", adapt_ClearMemory_Bank2 },
 	{ "CheckIfHasOtherValidDecks", adapt_CheckIfHasOtherValidDecks },
 	{ "FillDEWithA", adapt_FillDEWithA },
+	{ "DrawHandCardsTileAtDE", adapt_DrawHandCardsTileAtDE },
 	{ NULL, NULL },
 };

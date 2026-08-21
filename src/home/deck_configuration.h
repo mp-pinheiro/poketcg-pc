@@ -27,4 +27,7 @@ uint8_t CheckIfHasOtherValidDecks(void);
 /* >>> factory FillDEWithA */
 void FillDEWithA(uint8_t a, uint8_t b, uint16_t de);
 /* <<< factory FillDEWithA */
+/* >>> factory DrawHandCardsTileAtDE */
+void DrawHandCardsTileAtDE(uint16_t de);
+/* <<< factory DrawHandCardsTileAtDE */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

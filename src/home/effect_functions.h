@@ -910,6 +910,9 @@ void MirrorMove_AISelection(void);
 /* >>> factory KinglerFlail_HPCheck */
 void KinglerFlail_HPCheck(void);
 /* <<< factory KinglerFlail_HPCheck */
+/* >>> factory MagikarpFlail_HPCheck */
+void MagikarpFlail_HPCheck(void);
+/* <<< factory MagikarpFlail_HPCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

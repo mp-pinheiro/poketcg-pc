@@ -3823,3 +3823,11 @@ void KinglerFlail_HPCheck(void)
 	SetDefiniteDamage(r.a);
 }
 /* <<< factory KinglerFlail_HPCheck */
+
+/* >>> factory MagikarpFlail_HPCheck */
+void MagikarpFlail_HPCheck(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	SetDefiniteDamage(r.a);
+}
+/* <<< factory MagikarpFlail_HPCheck */

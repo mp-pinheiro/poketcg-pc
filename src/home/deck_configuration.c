@@ -20,6 +20,8 @@
 #include "home/switch_sram.h"
 
 #define NUM_DECKS 0x04u
+
+#include "home/tiles.h"
 /* <<< factory statics */
 
 
@@ -168,3 +170,10 @@ void FillDEWithA(uint8_t a, uint8_t b, uint16_t de)
 	} while (--count);
 }
 /* <<< factory FillDEWithA */
+
+/* >>> factory DrawHandCardsTileAtDE */
+void DrawHandCardsTileAtDE(uint16_t de)
+{
+	FillRectangle(0x38u, 2u, 2u, de, 0x0102u);
+}
+/* <<< factory DrawHandCardsTileAtDE */

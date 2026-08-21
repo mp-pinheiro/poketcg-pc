@@ -102,6 +102,15 @@ CASES["FillDEWithA"] = [
 ]
 # <<< factory FillDEWithA
 
+# >>> factory DrawHandCardsTileAtDE
+CONTRACT["DrawHandCardsTileAtDE"] = {"compare": ("d", "e"), "preserve": ("d", "e")}
+CASES["DrawHandCardsTileAtDE"] = [
+    {"d": 0x00, "e": 0x00, "vread": {0: {0x9800: 0x40}}},
+    {"d": 0x01, "e": 0x02, "vread": {0: {0x9841: 2, 0x9861: 2}}},
+    dict(POISON, d=0x02, e=0x03, vread={0: {0x9862: 2, 0x9882: 2}}),
+]
+# <<< factory DrawHandCardsTileAtDE
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -155,3 +164,6 @@ MUTATIONS["CheckIfHasOtherValidDecks"] = {
 # >>> factory-mutation FillDEWithA
 MUTATIONS["FillDEWithA"] = {"source_symbol": "FillDEWithA", "before": "do {\n\t\tgb_write8(address++, a);\n\t} while (--count);", "after": "do {\n\t\tgb_write8(address++, a);\n\t} while (--count > 1u);", "case_ids": ["FillDEWithA-1", "FillDEWithA-3"]}
 # <<< factory-mutation FillDEWithA
+# >>> factory-mutation DrawHandCardsTileAtDE
+MUTATIONS["DrawHandCardsTileAtDE"] = {"source_symbol": "DrawHandCardsTileAtDE", "before": "FillRectangle(0x38u, 2u, 2u, de, 0x0102u);", "after": "FillRectangle(0x39u, 2u, 2u, de, 0x0102u);", "case_ids": ["DrawHandCardsTileAtDE-0", "DrawHandCardsTileAtDE-1", "DrawHandCardsTileAtDE-2"]}
+# <<< factory-mutation DrawHandCardsTileAtDE

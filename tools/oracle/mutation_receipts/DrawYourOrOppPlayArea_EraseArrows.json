@@ -1,0 +1,9 @@
+{
+  "fn": "DrawYourOrOppPlayArea_EraseArrows",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawYourOrOppPlayArea_EraseArrows\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39077\": \"00\", \"39232\": \"00\", \"39236\": \"00\", \"39240\": \"00\", \"39244\": \"00\", \"39248\": \"00\"}}, \"wram\": {\"52831\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawYourOrOppPlayArea_EraseArrows\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawYourOrOppPlayArea_EraseArrows\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39077\": \"00\", \"39232\": \"00\", \"39236\": \"00\", \"39240\": \"00\", \"39244\": \"00\", \"39248\": \"00\"}}, \"wram\": {\"52831\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1068,6 +1068,24 @@ CASES["DrawYourOrOppPlayArea_DrawArrows"] = [
 ]
 # <<< factory DrawYourOrOppPlayArea_DrawArrows
 
+# >>> factory-cases-statics
+wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
+# <<< factory-cases-statics
+
+# >>> factory DrawYourOrOppPlayArea_EraseArrows
+CONTRACT["DrawYourOrOppPlayArea_EraseArrows"] = {"compare": (), "preserve": ()}
+CASES["DrawYourOrOppPlayArea_EraseArrows"] = [
+    {"wram": {0xCE5F: b"\x00"},
+     "vread": {0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
+                    0x994C: 1, 0x9950: 1}}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD,
+     "e": 0xEE, "hl": 0x1234,
+     "wram": {0xCE5F: b"\x00"},
+     "vread": {0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
+                    0x994C: 1, 0x9950: 1}}},
+]
+# <<< factory DrawYourOrOppPlayArea_EraseArrows
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1176,3 +1194,12 @@ MUTATIONS["DrawYourOrOppPlayArea_DrawArrows"] = {
                  "DrawYourOrOppPlayArea_DrawArrows-6"],
 }
 # <<< factory-mutation DrawYourOrOppPlayArea_DrawArrows
+# >>> factory-mutation DrawYourOrOppPlayArea_EraseArrows
+MUTATIONS["DrawYourOrOppPlayArea_EraseArrows"] = {
+    "source_symbol": "DrawYourOrOppPlayArea_EraseArrows",
+    "before": "\tDrawYourOrOppPlayArea_DrawArrows(a, SYM_SPACE);",
+    "after": "\tDrawYourOrOppPlayArea_DrawArrows(a, 0x01u);",
+    "case_ids": ["DrawYourOrOppPlayArea_EraseArrows-0",
+                 "DrawYourOrOppPlayArea_EraseArrows-1"],
+}
+# <<< factory-mutation DrawYourOrOppPlayArea_EraseArrows

@@ -33,10 +33,20 @@ static void adapt_UpdateBoosterCardTypesChanceByte(ProbeState *s)
 }
 /* <<< factory UpdateBoosterCardTypesChanceByte */
 
+/* >>> factory AppendCurrentCardToHL */
+static void adapt_AppendCurrentCardToHL(ProbeState *s)
+{
+	AppendCurrentCardToHL(&s->hl);
+	s->a = 0u;
+	s->f = 0x80u;
+}
+/* <<< factory AppendCurrentCardToHL */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
 	{ "CalculateTypeChances", adapt_CalculateTypeChances },
 	{ "UpdateBoosterCardTypesChanceByte", adapt_UpdateBoosterCardTypesChanceByte },
+	{ "AppendCurrentCardToHL", adapt_AppendCurrentCardToHL },
 	{ NULL, NULL },
 };

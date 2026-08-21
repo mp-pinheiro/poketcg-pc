@@ -16,4 +16,7 @@ uint8_t CalculateTypeChances(void);
 /* >>> factory UpdateBoosterCardTypesChanceByte */
 uint8_t UpdateBoosterCardTypesChanceByte(void);
 /* <<< factory UpdateBoosterCardTypesChanceByte */
+/* >>> factory AppendCurrentCardToHL */
+void AppendCurrentCardToHL(uint16_t *hl);
+/* <<< factory AppendCurrentCardToHL */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

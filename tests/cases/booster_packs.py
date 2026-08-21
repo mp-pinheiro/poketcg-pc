@@ -65,6 +65,16 @@ CASES["UpdateBoosterCardTypesChanceByte"] = [
 ]
 # <<< factory UpdateBoosterCardTypesChanceByte
 
+# >>> factory AppendCurrentCardToHL
+CONTRACT["AppendCurrentCardToHL"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e"), "wram_out": True}
+CASES["AppendCurrentCardToHL"] = [
+    {"hl": 0xC500, "wram": {0xC500: b"\x00", 0xD66A: b"\x12"}, "read": {0xC500: 2}},
+    {"hl": 0xC510, "wram": {0xC510: b"\x01\x02\x00", 0xD66A: b"\x34"}, "read": {0xC510: 4}},
+    {"hl": 0xC520, "wram": {0xC520: b"\xAA\xBB\xCC\x00", 0xD66A: b"\x7E"}, "read": {0xC520: 5}},
+    dict(POISON, hl=0xC530, wram={0xC530: b"\x00", 0xD66A: b"\xFF"}, read={0xC530: 2}),
+]
+# <<< factory AppendCurrentCardToHL
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -101,3 +111,11 @@ MUTATIONS["UpdateBoosterCardTypesChanceByte"] = {
     "case_ids": ["UpdateBoosterCardTypesChanceByte-0", "UpdateBoosterCardTypesChanceByte-2", "UpdateBoosterCardTypesChanceByte-4"],
 }
 # <<< factory-mutation UpdateBoosterCardTypesChanceByte
+# >>> factory-mutation AppendCurrentCardToHL
+MUTATIONS["AppendCurrentCardToHL"] = {
+    "source_symbol": "AppendCurrentCardToHL",
+    "before": "while (gb_read8(cursor++) != 0u)",
+    "after": "while (gb_read8(cursor++) == 0u)",
+    "case_ids": ["AppendCurrentCardToHL-0", "AppendCurrentCardToHL-1", "AppendCurrentCardToHL-2", "AppendCurrentCardToHL-3"],
+}
+# <<< factory-mutation AppendCurrentCardToHL
