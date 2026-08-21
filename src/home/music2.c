@@ -1273,3 +1273,10 @@ uint8_t _AssertSFXFinished_2(void)
 	return Music2_AssertSFXFinished();
 }
 /* <<< factory _AssertSFXFinished_2 */
+
+/* >>> factory _AssertSongFinished_2 */
+uint8_t _AssertSongFinished_2(void)
+{
+	return Music2_AssertSongFinished();
+}
+/* <<< factory _AssertSongFinished_2 */

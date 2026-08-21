@@ -928,6 +928,9 @@ void SpearowMirrorMove_AISelection(void);
 void AIPickFireEnergyCardToDiscard(void);
 void CharmeleonFlamethrower_AISelectEffect(void);
 /* <<< factory CharmeleonFlamethrower_AISelectEffect */
+/* >>> factory ClefableMetronome_AISelectEffect */
+void ClefableMetronome_AISelectEffect(void);
+/* <<< factory ClefableMetronome_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

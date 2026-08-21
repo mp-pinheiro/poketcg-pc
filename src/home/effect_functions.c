@@ -3876,3 +3876,10 @@ void CharmeleonFlamethrower_AISelectEffect(void)
 	AIPickFireEnergyCardToDiscard();
 }
 /* <<< factory CharmeleonFlamethrower_AISelectEffect */
+
+/* >>> factory ClefableMetronome_AISelectEffect */
+void ClefableMetronome_AISelectEffect(void)
+{
+	HandleAIMetronomeEffect();
+}
+/* <<< factory ClefableMetronome_AISelectEffect */

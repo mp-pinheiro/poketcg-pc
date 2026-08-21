@@ -2412,6 +2412,14 @@ CASES["CharmeleonFlamethrower_AISelectEffect"] = [
 ]
 # <<< factory CharmeleonFlamethrower_AISelectEffect
 
+# >>> factory ClefableMetronome_AISelectEffect
+CONTRACT["ClefableMetronome_AISelectEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["ClefableMetronome_AISelectEffect"] = [
+    {"wram": {0xC100: b"\x00"}},
+    dict(POISON, wram={0xC100: b"\x00"}),
+]
+# <<< factory ClefableMetronome_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4071,3 +4079,6 @@ MUTATIONS["CharmeleonFlamethrower_AISelectEffect"] = {
     "case_ids": ["CharmeleonFlamethrower_AISelectEffect-1", "CharmeleonFlamethrower_AISelectEffect-2"],
 }
 # <<< factory-mutation CharmeleonFlamethrower_AISelectEffect
+# >>> factory-mutation ClefableMetronome_AISelectEffect
+MUTATIONS["ClefableMetronome_AISelectEffect"] = {"source_symbol": "ClefableMetronome_AISelectEffect", "before": "HandleAIMetronomeEffect();", "after": "gb_write8(0xC100u, 0xFFu);", "case_ids": ["ClefableMetronome_AISelectEffect-0", "ClefableMetronome_AISelectEffect-1"]}
+# <<< factory-mutation ClefableMetronome_AISelectEffect

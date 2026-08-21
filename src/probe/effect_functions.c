@@ -2220,6 +2220,14 @@ static void adapt_CharmeleonFlamethrower_AISelectEffect(ProbeState *s)
 }
 /* <<< factory CharmeleonFlamethrower_AISelectEffect */
 
+/* >>> factory ClefableMetronome_AISelectEffect */
+static void adapt_ClefableMetronome_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	ClefableMetronome_AISelectEffect();
+}
+/* <<< factory ClefableMetronome_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2495,5 +2503,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KarateChop_DamageSubtractionEffect", adapt_KarateChop_DamageSubtractionEffect },
 	{ "SpearowMirrorMove_AISelection", adapt_SpearowMirrorMove_AISelection },
 	{ "CharmeleonFlamethrower_AISelectEffect", adapt_CharmeleonFlamethrower_AISelectEffect },
+	{ "ClefableMetronome_AISelectEffect", adapt_ClefableMetronome_AISelectEffect },
 	{ NULL, NULL },
 };
