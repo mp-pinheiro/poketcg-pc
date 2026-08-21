@@ -174,6 +174,17 @@ static void adapt_AttemptPlayerMovement(ProbeState *s)
 }
 /* <<< factory AttemptPlayerMovement */
 
+/* >>> factory FindPlayerMovementFromDirection */
+static void adapt_FindPlayerMovementFromDirection(ProbeState *s)
+{
+	FindPlayerMovementWithOffsetResult result = FindPlayerMovementFromDirection();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory FindPlayerMovementFromDirection */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -196,5 +207,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "FindPlayerMovementWithOffset", adapt_FindPlayerMovementWithOffset },
 	{ "BackupObjectPalettes", adapt_BackupObjectPalettes },
 	{ "AttemptPlayerMovement", adapt_AttemptPlayerMovement },
+	{ "FindPlayerMovementFromDirection", adapt_FindPlayerMovementFromDirection },
 	{ NULL, NULL },
 };

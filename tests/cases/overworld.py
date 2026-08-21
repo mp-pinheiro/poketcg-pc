@@ -226,6 +226,9 @@ wPlayerXCoord = 0xD330
 wPlayerYCoord = 0xD331
 wd338 = 0xD338
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wPlayerDirection = 0xD334
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -296,6 +299,17 @@ CASES["AttemptPlayerMovement"] = [
     dict(POISON, b=0x00, c=0x1F, wram={wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}, expect={wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}),
 ]
 # <<< factory AttemptPlayerMovement
+
+# >>> factory FindPlayerMovementFromDirection
+CONTRACT["FindPlayerMovementFromDirection"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["FindPlayerMovementFromDirection"] = [
+    {"wram": {wPlayerDirection: b"\x00", 0xD330: b"\x10", 0xD331: b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x01", 0xD330: b"\x10", 0xD331: b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x02", 0xD330: b"\x10", 0xD331: b"\x20"}},
+    {"wram": {wPlayerDirection: b"\x03", 0xD330: b"\x10", 0xD331: b"\x20"}},
+    dict(POISON, wram={wPlayerDirection: b"\x01", 0xD330: b"\xF0", 0xD331: b"\x01"}),
+]
+# <<< factory FindPlayerMovementFromDirection
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -414,3 +428,6 @@ MUTATIONS["BackupObjectPalettes"] = {
 # >>> factory-mutation AttemptPlayerMovement
 MUTATIONS["AttemptPlayerMovement"] = {"source_symbol": "AttemptPlayerMovement", "before": "if (b >= 0x1fu || c >= 0x1fu)", "after": "if (b > 0x1fu || c > 0x1fu)", "case_ids": ["AttemptPlayerMovement-0", "AttemptPlayerMovement-1"]}
 # <<< factory-mutation AttemptPlayerMovement
+# >>> factory-mutation FindPlayerMovementFromDirection
+MUTATIONS["FindPlayerMovementFromDirection"] = {"source_symbol": "FindPlayerMovementFromDirection", "before": "return FindPlayerMovementWithOffset(wPlayerDirection);", "after": "return FindPlayerMovementWithOffset((uint8_t)(wPlayerDirection + 1u));", "case_ids": ["FindPlayerMovementFromDirection-0", "FindPlayerMovementFromDirection-1", "FindPlayerMovementFromDirection-2", "FindPlayerMovementFromDirection-3", "FindPlayerMovementFromDirection-4"]}
+# <<< factory-mutation FindPlayerMovementFromDirection

@@ -56,6 +56,9 @@
 #include "home/load_animation.h"
 #include "home/map.h"
 #include "mem.h"
+
+#include "home/overworld.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -402,3 +405,10 @@ void AttemptPlayerMovement(uint8_t b, uint8_t c)
 	gb_write8(hl, 0x04u);
 }
 /* <<< factory AttemptPlayerMovement */
+
+/* >>> factory FindPlayerMovementFromDirection */
+FindPlayerMovementWithOffsetResult FindPlayerMovementFromDirection(void)
+{
+	return FindPlayerMovementWithOffset(wPlayerDirection);
+}
+/* <<< factory FindPlayerMovementFromDirection */
