@@ -342,4 +342,17 @@ typedef struct {
 
 ScriptCommand_JumpIfPlayerCoordsMatchResult ScriptCommand_JumpIfPlayerCoordsMatch(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_JumpIfPlayerCoordsMatch */
+/* >>> factory ScriptCommand_JumpIfActiveNPCCoordsMatch */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} ScriptCommand_JumpIfActiveNPCCoordsMatchResult;
+
+ScriptCommand_JumpIfActiveNPCCoordsMatchResult ScriptCommand_JumpIfActiveNPCCoordsMatch(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch */
 #endif

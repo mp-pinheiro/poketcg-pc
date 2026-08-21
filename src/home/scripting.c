@@ -99,6 +99,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/npc_core.h"
 /* <<< factory statics */
 
 
@@ -961,3 +964,26 @@ ScriptCommand_JumpIfPlayerCoordsMatchResult ScriptCommand_JumpIfPlayerCoordsMatc
 	return (ScriptCommand_JumpIfPlayerCoordsMatchResult){args.a, args.f, args.b, args.c, new_hl};
 }
 /* <<< factory ScriptCommand_JumpIfPlayerCoordsMatch */
+
+/* >>> factory ScriptCommand_JumpIfActiveNPCCoordsMatch */
+/* before */
+ScriptCommand_JumpIfActiveNPCCoordsMatchResult ScriptCommand_JumpIfActiveNPCCoordsMatch(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t d = c;
+	uint8_t e = b;
+	wLoadedNPCTempIndex = wScriptNPC;
+	NPCPositionResult position = GetNPCPosition();
+	if (e != position.c || d != position.b) {
+		ScriptCommand_JumpIfEventEqualResult result = ScriptCommand_JumpIfEventEqual(b, c, hl);
+		return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){result.a, result.f, position.b, result.c, d, e, result.hl};
+	}
+	(void)SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0u, pointer.c, d, e, hl};
+	}
+	uint16_t new_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){args.a, args.f, 0u, args.c, d, e, new_hl};
+}
+/* <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch */

@@ -49,6 +49,12 @@ wPlayerXCoord = 0xD330
 wPlayerYCoord = 0xD331
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wEventVars = 0xD3D2
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -743,6 +749,22 @@ CASES["ScriptCommand_JumpIfPlayerCoordsMatch"] = [
 ]
 # <<< factory ScriptCommand_JumpIfPlayerCoordsMatch
 
+# >>> factory ScriptCommand_JumpIfActiveNPCCoordsMatch
+CONTRACT["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = [
+    {"b": 0x34, "c": 0x11, "hl": 0x4567,
+     "wram": {wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xFF", 0xD34C: b"\x12\x34", wEventVars + 0x11: b"\x00", wScriptPointer: b"\x00\xC5"},
+     "read": {wScriptPointer: 2}},
+    {"b": 0x35, "c": 0x12, "hl": 0x6789,
+     "wram": {wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\xFF", 0xD34C: b"\x12\x34", wEventVars + 0x12: b"\x00", wScriptPointer: b"\x00\xC5"},
+     "read": {wScriptPointer: 2}},
+    {"b": 0x34, "c": 0x12, "hl": 0x89AB,
+     "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFF", 0xD358: b"\x12\x34", wEventVars + 0x12: b"\x34", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00\x00"},
+     "read": {wScriptPointer: 2, wLoadedNPCTempIndex: 1}},
+    dict(POISON, b=0x34, c=0x12, wram={wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\xFF", 0xD358: b"\x12\x34", wEventVars + 0x12: b"\x34", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00\x00"}, read={wScriptPointer: 2, wLoadedNPCTempIndex: 1}),
+]
+# <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1173,3 +1195,6 @@ MUTATIONS["ScriptCommand_IncrementEventValue"] = {"source_symbol": "ScriptComman
 # >>> factory-mutation ScriptCommand_JumpIfPlayerCoordsMatch
 MUTATIONS["ScriptCommand_JumpIfPlayerCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfPlayerCoordsMatch", "before": "if (wPlayerXCoord != c) {", "after": "if (wPlayerXCoord == c) {", "case_ids": ["ScriptCommand_JumpIfPlayerCoordsMatch-0", "ScriptCommand_JumpIfPlayerCoordsMatch-1", "ScriptCommand_JumpIfPlayerCoordsMatch-2", "ScriptCommand_JumpIfPlayerCoordsMatch-3"]}
 # <<< factory-mutation ScriptCommand_JumpIfPlayerCoordsMatch
+# >>> factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
+MUTATIONS["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfActiveNPCCoordsMatch", "before": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0u, pointer.c, d, e, hl};", "after": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0xFFu, pointer.c, d, e, hl};", "case_ids": ["ScriptCommand_JumpIfActiveNPCCoordsMatch-2"]}
+# <<< factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
