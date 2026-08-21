@@ -566,4 +566,8 @@ void PrintPokemonEvolvedIntoPokemon(void);
 /* >>> factory SetupDuel */
 void SetupDuel(void);
 /* <<< factory SetupDuel */
+/* >>> factory PracticeDuelVerify_Turn6 */
+typedef struct { uint8_t f; } PracticeDuelVerifyTurn6Result;
+PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void);
+/* <<< factory PracticeDuelVerify_Turn6 */
 #endif

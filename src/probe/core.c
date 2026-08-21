@@ -1195,6 +1195,14 @@ static void adapt_SetupDuel(ProbeState *s)
 }
 /* <<< factory SetupDuel */
 
+/* >>> factory PracticeDuelVerify_Turn6 */
+static void adapt_PracticeDuelVerify_Turn6(ProbeState *s)
+{
+	PracticeDuelVerifyTurn6Result r = PracticeDuelVerify_Turn6();
+	s->f = r.f;
+}
+/* <<< factory PracticeDuelVerify_Turn6 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1336,5 +1344,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintAttachedEnergyToPokemon", adapt_PrintAttachedEnergyToPokemon },
 	{ "PrintPokemonEvolvedIntoPokemon", adapt_PrintPokemonEvolvedIntoPokemon },
 	{ "SetupDuel", adapt_SetupDuel },
+	{ "PracticeDuelVerify_Turn6", adapt_PracticeDuelVerify_Turn6 },
 	{ NULL, NULL },
 };

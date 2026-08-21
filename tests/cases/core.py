@@ -1374,6 +1374,10 @@ wPlayerDeck = 0xC400
 
 hTempCardIndex_ff98 = 0xFF98
 wPreEvolutionPokemonCard = 0xCCEE
+
+hWhoseTurn = 0xFF97
+wPlayerCardLocations = 0xC200
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1563,6 +1567,15 @@ CASES["SetupDuel"] = [
 	dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xCAB6: b"\xFF"}),
 ]
 # <<< factory SetupDuel
+
+# >>> factory PracticeDuelVerify_Turn6
+CONTRACT["PracticeDuelVerify_Turn6"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuelVerify_Turn6"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03" + b"\x00" * 58, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}),
+]
+# <<< factory PracticeDuelVerify_Turn6
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2468,3 +2481,6 @@ MUTATIONS["SetupDuel"] = {
     "case_ids": ["SetupDuel-0", "SetupDuel-1"],
 }
 # <<< factory-mutation SetupDuel
+# >>> factory-mutation PracticeDuelVerify_Turn6
+MUTATIONS["PracticeDuelVerify_Turn6"] = {"source_symbol": "PracticeDuelVerify_Turn6", "before": "if (wAttachedEnergies_PTR[WATER] != 3u)", "after": "if (wAttachedEnergies_PTR[WATER] == 3u)", "case_ids": ["PracticeDuelVerify_Turn6-0", "PracticeDuelVerify_Turn6-1", "PracticeDuelVerify_Turn6-2"]}
+# <<< factory-mutation PracticeDuelVerify_Turn6

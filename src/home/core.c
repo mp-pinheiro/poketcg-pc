@@ -434,6 +434,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/tiles.h"
 #include "home/duel_core.h"
 #include "home/process_text.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#define STARYU 0x55u
+#define WATER 0x03u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2811,3 +2816,17 @@ void SetupDuel(void)
 	EnableLCD();
 }
 /* <<< factory SetupDuel */
+
+/* >>> factory PracticeDuelVerify_Turn6 */
+PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void)
+{
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	if (wAttachedEnergies_PTR[WATER] != 3u)
+		return (PracticeDuelVerifyTurn6Result){0x10u};
+	if (*wPlayerArenaCardHP_PTR != 40u)
+		return (PracticeDuelVerifyTurn6Result){0x10u};
+	if (*wTempCardID_ccc2_PTR != STARYU)
+		return (PracticeDuelVerifyTurn6Result){0x10u};
+	return (PracticeDuelVerifyTurn6Result){0xC0u};
+}
+/* <<< factory PracticeDuelVerify_Turn6 */
