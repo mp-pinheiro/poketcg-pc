@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1d705",
+  "case": "tests/cases/credits.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1d705\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54855\": \"91019101\", \"54871\": \"00\", \"65345\": \"c0\", \"65349\": \"00\", \"65535\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1d705\", \"mismatches\": {\"bus\": {\"address\": 54855, \"reference\": \"9101910100\", \"native\": \"9001910100\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[54855, 4], [54871, 1], [65345, 1], [65349, 1], [65535, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_1d705\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54855\": \"91019101\", \"54871\": \"00\", \"65345\": \"c0\", \"65349\": \"00\", \"65535\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -33,6 +33,24 @@ CASES["Func_1d7ee"] = [
 ]
 # <<< factory Func_1d7ee
 
+# >>> factory-cases-statics
+wd647 = 0xD647
+wd648 = 0xD648
+wd649 = 0xD649
+wd64a = 0xD64A
+wd657 = 0xD657
+wLCDCFunctionTrampoline = 0xCACD
+# <<< factory-cases-statics
+
+# >>> factory Func_1d705
+CONTRACT["Func_1d705"] = {"compare": (), "preserve": ()};
+CASES["Func_1d705"] = [
+    {"read": {wd647: 1, wd648: 1, wd649: 1, wd64a: 1, wd657: 1, 0xFF41: 1, 0xFF45: 1, 0xFFFF: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "read": {wd647: 1, wd648: 1, wd649: 1, wd64a: 1, wd657: 1, 0xFF41: 1, 0xFF45: 1, 0xFFFF: 1}},
+]
+# <<< factory Func_1d705
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -46,3 +64,11 @@ MUTATIONS["Func_1d765"] = {"source_symbol": "Func_1d765", "before": "if (gb_read
 # >>> factory-mutation Func_1d7ee
 MUTATIONS["Func_1d7ee"] = {"source_symbol": "Func_1d7ee", "before": "FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);", "after": "FillRectangle(0x01u, 20u, 18u, 0x0020u, 0x0000u);", "case_ids": ["Func_1d7ee-0", "Func_1d7ee-1"]}
 # <<< factory-mutation Func_1d7ee
+# >>> factory-mutation Func_1d705
+MUTATIONS["Func_1d705"] = {
+    "source_symbol": "Func_1d705",
+    "before": "wd647 = 0x91u;",
+    "after": "wd647 = 0x90u;",
+    "case_ids": ["Func_1d705-0", "Func_1d705-1"],
+}
+# <<< factory-mutation Func_1d705

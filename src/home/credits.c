@@ -13,6 +13,19 @@
 #define B_LCDC_OBJS 0x01u
 
 #include "home/tiles.h"
+
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/credits.h"
+#include "home/init_menu.h"
+#include "home/color.h"
+#include "home/play_animation.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define R_LYC 0xFF45u
+#define FUNC_3E31 0x3E31u
+#define FUNC_3E44 0x3E44u
 /* <<< factory statics */
 
 /* >>> factory Func_1d758 */
@@ -101,3 +114,29 @@ void Func_1d7ee(void)
 	FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);
 }
 /* <<< factory Func_1d7ee */
+
+/* >>> factory Func_1d705 */
+void Func_1d705(void)
+{
+	DisableLCD();
+	LoadConsolePaletteData();
+	EnableAndClearSpriteAnimations();
+	(void)InitMenuScreen();
+	Func_1d7ee();
+	(void)SetDoFrameFunction(FUNC_3E31);
+
+	wd647 = 0x91u;
+	wd649 = 0x91u;
+	wd648 = 0x01u;
+	wd64a = 0x01u;
+	Func_1d765();
+	SetWindowOn();
+
+	wd657 = 0x00u;
+	gb_write8(wLCDCFunctionTrampoline_ADDR + 1u, (uint8_t)FUNC_3E44);
+	gb_write8(wLCDCFunctionTrampoline_ADDR + 2u, (uint8_t)(FUNC_3E44 >> 8));
+	gb_write8(R_STAT, (uint8_t)(gb_read8(R_STAT) | STAT_LYC_MASK));
+	gb_write8(R_LYC, 0x00u);
+	gb_write8(R_IE, (uint8_t)(gb_read8(R_IE) | IE_STAT_MASK));
+}
+/* <<< factory Func_1d705 */

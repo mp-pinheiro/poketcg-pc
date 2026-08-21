@@ -24,9 +24,18 @@ static void adapt_Func_1d7ee(ProbeState *s)
 }
 /* <<< factory Func_1d7ee */
 
+/* >>> factory Func_1d705 */
+static void adapt_Func_1d705(ProbeState *s)
+{
+	Func_1d705();
+	(void)s;
+}
+/* <<< factory Func_1d705 */
+
 const ProbeEntry probe_entries_credits[] = {
 	{ "Func_1d758", adapt_Func_1d758 },
 	{ "Func_1d765", adapt_Func_1d765 },
 	{ "Func_1d7ee", adapt_Func_1d7ee },
+	{ "Func_1d705", adapt_Func_1d705 },
 	{ NULL, NULL },
 };
