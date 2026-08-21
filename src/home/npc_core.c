@@ -78,6 +78,10 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #include "home/npc_core.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/npc_core.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -398,3 +402,19 @@ SetAllNPCTilePermissionsResult SetAllNPCTilePermissions(void)
 	return (SetAllNPCTilePermissionsResult){a, 0xC0u};
 }
 /* <<< factory SetAllNPCTilePermissions */
+
+/* >>> factory Func_1c557 */
+uint8_t Func_1c557(uint8_t a)
+{
+	uint8_t old_index = wLoadedNPCTempIndex;
+	uint8_t old_npc = wTempNPC;
+	wTempNPC = a;
+	NPCSearchResult found = FindLoadedNPC();
+	uint8_t result = 0;
+	if ((found.f & 0x10u) == 0u)
+		result = Func_1c53f();
+	wTempNPC = old_npc;
+	wLoadedNPCTempIndex = old_index;
+	return result;
+}
+/* <<< factory Func_1c557 */

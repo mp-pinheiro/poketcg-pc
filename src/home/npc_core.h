@@ -73,4 +73,7 @@ typedef struct {
 
 SetAllNPCTilePermissionsResult SetAllNPCTilePermissions(void);
 /* <<< factory SetAllNPCTilePermissions */
+/* >>> factory Func_1c557 */
+uint8_t Func_1c557(uint8_t a);
+/* <<< factory Func_1c557 */
 #endif /* POKETCG_HOME_NPC_CORE_H */

@@ -87,6 +87,18 @@ CASES["CopyListWithFFTerminatorFromHLToDE_Bank8"] = [
 ]
 # <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8
 
+# >>> factory LookForCardIDInPlayArea_Bank8
+CONTRACT["LookForCardIDInPlayArea_Bank8"] = {"compare": ("a", "f", "b", "d", "e"), "preserve": ("d", "e")}
+CASES["LookForCardIDInPlayArea_Bank8"] = [
+    {"a": 0, "b": 0},
+    {"a": 1, "b": 0},
+    {"a": 0x08, "b": 3},
+    {"a": 0x20, "b": 5},
+    {"a": 0xFF, "b": 0},
+    dict(POISON, a=0x08, b=0),
+]
+# <<< factory LookForCardIDInPlayArea_Bank8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -137,3 +149,11 @@ MUTATIONS["PickAttachedEnergyCardToRemove"] = {"source_symbol": "PickAttachedEne
 # >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank8
 MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank8"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank8", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank8-0", "CopyListWithFFTerminatorFromHLToDE_Bank8-1", "CopyListWithFFTerminatorFromHLToDE_Bank8-2"]}
 # <<< factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank8
+# >>> factory-mutation LookForCardIDInPlayArea_Bank8
+MUTATIONS["LookForCardIDInPlayArea_Bank8"] = {
+    "source_symbol": "LookForCardIDInPlayArea_Bank8",
+    "before": "\twTempCardIDToLook = a;",
+    "after": "\twTempCardIDToLook = (uint8_t)(a + 1u);",
+    "case_ids": ["LookForCardIDInPlayArea_Bank8-0", "LookForCardIDInPlayArea_Bank8-1", "LookForCardIDInPlayArea_Bank8-2", "LookForCardIDInPlayArea_Bank8-3", "LookForCardIDInPlayArea_Bank8-4", "LookForCardIDInPlayArea_Bank8-5"],
+}
+# <<< factory-mutation LookForCardIDInPlayArea_Bank8

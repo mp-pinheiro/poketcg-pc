@@ -63,6 +63,16 @@ static void adapt_CopyListWithFFTerminatorFromHLToDE_Bank8(ProbeState *s)
 }
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
 
+/* >>> factory LookForCardIDInPlayArea_Bank8 */
+static void adapt_LookForCardIDInPlayArea_Bank8(ProbeState *s)
+{
+	LookForCardIDInPlayAreaResult r = LookForCardIDInPlayArea_Bank8(s->a, s->b);
+	s->a = r.a;
+	s->b = r.b;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInPlayArea_Bank8 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -71,5 +81,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "ClearMemory_Bank8", adapt_ClearMemory_Bank8 },
 	{ "PickAttachedEnergyCardToRemove", adapt_PickAttachedEnergyCardToRemove },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank8", adapt_CopyListWithFFTerminatorFromHLToDE_Bank8 },
+	{ "LookForCardIDInPlayArea_Bank8", adapt_LookForCardIDInPlayArea_Bank8 },
 	{ NULL, NULL },
 };

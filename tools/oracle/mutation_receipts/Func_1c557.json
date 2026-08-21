@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1c557",
+  "case": "tests/cases/npc_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1c557\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f600744\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1c557\", \"mismatches\": {\"a\": [0, 5], \"bus\": {\"address\": 54097, \"reference\": \"0405060708090a0b0c\", \"native\": \"0405060705090a0b0c\", \"reference_size\": 98, \"native_size\": 98, \"spans\": [[54090, 98]]}}}\n",
+  "restored": "{\"fn\": \"Func_1c557\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f600744\"}}, \"status\": \"PASS\"}\n"
+}

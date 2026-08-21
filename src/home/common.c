@@ -27,6 +27,10 @@
 #include "generated/wram.h"
 
 #include "mem.h"
+
+#include "home/duel.h"
+#include "generated/wram.h"
+#define MAX_PLAY_AREA_POKEMON 0x06u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -204,3 +208,21 @@ CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint1
 	}
 }
 /* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
+
+/* >>> factory LookForCardIDInPlayArea_Bank8 */
+LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b)
+{
+	wTempCardIDToLook = a;
+	for (;;) {
+		DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
+		if (r.a == 0xffu)
+			return (LookForCardIDInPlayAreaResult){0xffu, b, 0xc0u};
+		uint8_t c = LoadCardDataToBuffer1_FromDeckIndex(r.a);
+		if (wTempCardIDToLook == c)
+			return (LookForCardIDInPlayAreaResult){b, b, 0x90u};
+		b++;
+		if (b == MAX_PLAY_AREA_POKEMON)
+			return (LookForCardIDInPlayAreaResult){MAX_PLAY_AREA_POKEMON, 0xffu, 0x00u};
+	}
+}
+/* <<< factory LookForCardIDInPlayArea_Bank8 */

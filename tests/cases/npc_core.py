@@ -166,6 +166,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wIsAnNPCMoving = 0xD3B7
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wLoadedNPCTempIndex = 0xD3AA
+wTempNPC = 0xD3AB
+wLoadedNPCs = 0xD34A
+NPC_TABLE = bytes(range(1, 97))
+NPC_READ = {wLoadedNPCs: 96}
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -233,6 +240,16 @@ CASES["SetAllNPCTilePermissions"] = [
 	dict(POISON, wram={0xD34A: b"\x00" * 96, 0xD3AA: b"\x77"}, expect_regs={"a": 0x00, "f": 0xC0}),
 ]
 # <<< factory SetAllNPCTilePermissions
+
+# >>> factory Func_1c557
+CONTRACT["Func_1c557"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_1c557"] = [
+    {"a": 0xF0, "wram": {wLoadedNPCTempIndex: b"\x07", wTempNPC: b"\x44", wLoadedNPCs: NPC_TABLE}, "read": NPC_READ},
+    {"a": 0x12, "wram": {wLoadedNPCTempIndex: b"\x07", wTempNPC: b"\x44", wLoadedNPCs: bytes(range(1, 13)) + b"\x12\x22\x23\x24\x37\x26\x27\x28\x29\x2A\x2B\x2C" + bytes(range(25, 97))}, "read": NPC_READ, "expect": {wLoadedNPCs + 19: b"\x37", wLoadedNPCTempIndex: b"\x07", wTempNPC: b"\x44"}},
+    {"a": 0x60, "wram": {wLoadedNPCTempIndex: b"\x00", wTempNPC: b"\x01", wLoadedNPCs: bytes(range(1, 97))}, "read": NPC_READ},
+    dict(POISON, wram={wLoadedNPCTempIndex: b"\x03", wTempNPC: b"\x55", wLoadedNPCs: NPC_TABLE}, read=NPC_READ),
+]
+# <<< factory Func_1c557
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -325,3 +342,6 @@ MUTATIONS["ClearNPCs"] = {"source_symbol": "ClearNPCs", "before": "wLoadedNPCs_P
 # >>> factory-mutation SetAllNPCTilePermissions
 MUTATIONS["SetAllNPCTilePermissions"] = {"source_symbol": "SetAllNPCTilePermissions", "before": "\t\tif (wLoadedNPCs_PTR[(uint16_t)i * LOADED_NPC_LENGTH] != 0u) {", "after": "\t\tif (wLoadedNPCs_PTR[(uint16_t)i * LOADED_NPC_LENGTH] == 0u) {", "case_ids": ["SetAllNPCTilePermissions-0", "SetAllNPCTilePermissions-1", "SetAllNPCTilePermissions-2"]}
 # <<< factory-mutation SetAllNPCTilePermissions
+# >>> factory-mutation Func_1c557
+MUTATIONS["Func_1c557"] = {"source_symbol": "Func_1c557", "before": "\tif ((found.f & 0x10u) == 0u)", "after": "\tif ((found.f & 0x10u) != 0u)", "case_ids": ["Func_1c557-0", "Func_1c557-1", "Func_1c557-2", "Func_1c557-3"]}
+# <<< factory-mutation Func_1c557
