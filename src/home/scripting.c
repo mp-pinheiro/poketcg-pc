@@ -68,6 +68,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "generated/wram.h"
 #define EVENT_VAR_BYTES 0x40u
+
+#include "home/mail.h"
 /* <<< factory statics */
 
 
@@ -608,3 +610,11 @@ IncreaseScriptPointerResult ScriptCommand_SetEventValue(uint8_t f, uint8_t b, ui
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_SetEventValue */
+
+/* >>> factory ScriptCommand_TryGivePCPack */
+IncreaseScriptPointerResult ScriptCommand_TryGivePCPack(uint8_t c)
+{
+	TryGivePCPack(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_TryGivePCPack */

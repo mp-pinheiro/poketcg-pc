@@ -20,6 +20,9 @@ wLoadedEventBits = 0xD3D1
 wEventVars = 0xD3D2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wPCPacks = 0xD11E
+wScriptPointer = 0xD413
 # <<< factory-cases-statics
 
 
@@ -545,6 +548,17 @@ CASES["ScriptCommand_SetEventValue"] = [
 ]
 # <<< factory ScriptCommand_SetEventValue
 
+# >>> factory ScriptCommand_TryGivePCPack
+CONTRACT["ScriptCommand_TryGivePCPack"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_TryGivePCPack"] = [
+    {"c": 0, "wram": {wPCPacks: bytes(15), wScriptPointer: b"\x00\x00"}, "read": {wPCPacks: 15, wScriptPointer: 2}},
+    {"c": 1, "wram": {wPCPacks: bytes(15), wScriptPointer: b"\xfe\x00"}, "read": {wPCPacks: 15, wScriptPointer: 2}},
+    {"c": 14, "wram": {wPCPacks: bytes(14) + b"\x01", wScriptPointer: b"\xff\x12"}, "read": {wPCPacks: 15, wScriptPointer: 2}},
+    {"c": 0x7F, "wram": {wPCPacks: bytes([1] * 15), wScriptPointer: b"\x00\x80"}, "read": {wPCPacks: 15, wScriptPointer: 2}},
+    dict(POISON, wram={wPCPacks: bytes(15), wScriptPointer: b"\x00\x00"}, read={wPCPacks: 15, wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_TryGivePCPack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -875,3 +889,6 @@ MUTATIONS["ScriptCommand_SetEventValue"] = {
     "case_ids": ["ScriptCommand_SetEventValue-0", "ScriptCommand_SetEventValue-1", "ScriptCommand_SetEventValue-2", "ScriptCommand_SetEventValue-3", "ScriptCommand_SetEventValue-4"],
 }
 # <<< factory-mutation ScriptCommand_SetEventValue
+# >>> factory-mutation ScriptCommand_TryGivePCPack
+MUTATIONS["ScriptCommand_TryGivePCPack"] = {"source_symbol": "ScriptCommand_TryGivePCPack", "before": "\tTryGivePCPack(c);", "after": "\tTryGivePCPack((uint8_t)(c + 1u));", "case_ids": ["ScriptCommand_TryGivePCPack-0", "ScriptCommand_TryGivePCPack-1", "ScriptCommand_TryGivePCPack-2", "ScriptCommand_TryGivePCPack-4"]}
+# <<< factory-mutation ScriptCommand_TryGivePCPack

@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_TryGivePCPack",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_TryGivePCPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53534\": \"000000000000000000000000000000\", \"54291\": \"0200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_TryGivePCPack\", \"mismatches\": {\"bus\": {\"address\": 53534, \"reference\": \"0000000000\", \"native\": \"8100000000\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[53534, 15], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_TryGivePCPack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53534\": \"000000000000000000000000000000\", \"54291\": \"0200\"}}, \"status\": \"PASS\"}\n"
+}

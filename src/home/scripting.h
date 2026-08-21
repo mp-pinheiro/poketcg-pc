@@ -216,4 +216,7 @@ IncreaseScriptPointerResult ScriptCommand_ZeroOutEventValue(uint8_t f, uint8_t b
 /* >>> factory ScriptCommand_SetEventValue */
 IncreaseScriptPointerResult ScriptCommand_SetEventValue(uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_SetEventValue */
+/* >>> factory ScriptCommand_TryGivePCPack */
+IncreaseScriptPointerResult ScriptCommand_TryGivePCPack(uint8_t c);
+/* <<< factory ScriptCommand_TryGivePCPack */
 #endif

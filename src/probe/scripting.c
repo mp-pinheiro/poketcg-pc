@@ -464,6 +464,16 @@ static void adapt_ScriptCommand_SetEventValue(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SetEventValue */
 
+/* >>> factory ScriptCommand_TryGivePCPack */
+static void adapt_ScriptCommand_TryGivePCPack(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_TryGivePCPack(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_TryGivePCPack */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -511,5 +521,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_MaxOutEventValue", adapt_ScriptCommand_MaxOutEventValue },
 	{ "ScriptCommand_ZeroOutEventValue", adapt_ScriptCommand_ZeroOutEventValue },
 	{ "ScriptCommand_SetEventValue", adapt_ScriptCommand_SetEventValue },
+	{ "ScriptCommand_TryGivePCPack", adapt_ScriptCommand_TryGivePCPack },
 	{ NULL, NULL },
 };
