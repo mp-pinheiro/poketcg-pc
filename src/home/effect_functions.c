@@ -245,6 +245,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #define LAST_TURN_EFFECT_AMNESIA 0x02u
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3812,3 +3815,11 @@ void MirrorMove_AISelection(void)
 	}
 }
 /* <<< factory MirrorMove_AISelection */
+
+/* >>> factory KinglerFlail_HPCheck */
+void KinglerFlail_HPCheck(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	SetDefiniteDamage(r.a);
+}
+/* <<< factory KinglerFlail_HPCheck */

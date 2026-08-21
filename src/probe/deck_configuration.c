@@ -62,6 +62,15 @@ static void adapt_CheckIfHasOtherValidDecks(ProbeState *s)
 }
 /* <<< factory CheckIfHasOtherValidDecks */
 
+/* >>> factory FillDEWithA */
+static void adapt_FillDEWithA(ProbeState *s)
+{
+	FillDEWithA(s->a, s->b, (uint16_t)(s->d << 8 | s->e));
+	s->b = 0;
+	s->f = (uint8_t)(0xC0u | (s->f & 0x10u));
+}
+/* <<< factory FillDEWithA */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -70,5 +79,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CalculateOnesAndTensDigits", adapt_CalculateOnesAndTensDigits },
 	{ "ClearMemory_Bank2", adapt_ClearMemory_Bank2 },
 	{ "CheckIfHasOtherValidDecks", adapt_CheckIfHasOtherValidDecks },
+	{ "FillDEWithA", adapt_FillDEWithA },
 	{ NULL, NULL },
 };

@@ -2175,6 +2175,13 @@ static void adapt_MirrorMove_AISelection(ProbeState *s)
 }
 /* <<< factory MirrorMove_AISelection */
 
+/* >>> factory KinglerFlail_HPCheck */
+static void adapt_KinglerFlail_HPCheck(ProbeState *s)
+{
+	KinglerFlail_HPCheck();
+}
+/* <<< factory KinglerFlail_HPCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2444,5 +2451,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
 	{ "AIPickAttackForAmnesia", adapt_AIPickAttackForAmnesia },
 	{ "MirrorMove_AISelection", adapt_MirrorMove_AISelection },
+	{ "KinglerFlail_HPCheck", adapt_KinglerFlail_HPCheck },
 	{ NULL, NULL },
 };

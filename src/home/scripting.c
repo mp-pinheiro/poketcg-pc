@@ -555,3 +555,10 @@ SetEventValueResult MaxOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 	return SetEventValue(a, f, b, 0xffu);
 }
 /* <<< factory MaxOutEventValue */
+
+/* >>> factory ZeroOutEventValue */
+SetEventValueResult ZeroOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
+{
+	return SetEventValue(a, f, b, 0u);
+}
+/* <<< factory ZeroOutEventValue */

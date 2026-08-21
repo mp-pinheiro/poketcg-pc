@@ -92,6 +92,16 @@ CASES["CheckIfHasOtherValidDecks"] = [
 ]
 # <<< factory CheckIfHasOtherValidDecks
 
+# >>> factory FillDEWithA
+CONTRACT["FillDEWithA"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "c", "d", "e", "hl")}
+CASES["FillDEWithA"] = [
+    {"a": 0x00, "b": 0x01, "d": 0xC1, "e": 0x00, "hl": 0xC200, "wram": {0xC100: b"\xFF"}, "read": {0xC100: 1}},
+    {"a": 0x7E, "b": 0x00, "d": 0xC2, "e": 0x00, "hl": 0xC300, "wram": {0xC200: b"\xFF" * 0x100}, "read": {0xC200: 0x100}},
+    {"a": 0xA5, "b": 0x05, "d": 0xC3, "e": 0x00, "hl": 0xC400, "wram": {0xC300: b"\x00" * 5}, "read": {0xC300: 5}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, wram={0xDDEE: b"\x00" * 0xBB}, read={0xDDEE: 0xBB}),
+]
+# <<< factory FillDEWithA
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -142,3 +152,6 @@ MUTATIONS["CheckIfHasOtherValidDecks"] = {
     "case_ids": ["CheckIfHasOtherValidDecks-0", "CheckIfHasOtherValidDecks-1", "CheckIfHasOtherValidDecks-2", "CheckIfHasOtherValidDecks-3"],
 }
 # <<< factory-mutation CheckIfHasOtherValidDecks
+# >>> factory-mutation FillDEWithA
+MUTATIONS["FillDEWithA"] = {"source_symbol": "FillDEWithA", "before": "do {\n\t\tgb_write8(address++, a);\n\t} while (--count);", "after": "do {\n\t\tgb_write8(address++, a);\n\t} while (--count > 1u);", "case_ids": ["FillDEWithA-1", "FillDEWithA-3"]}
+# <<< factory-mutation FillDEWithA

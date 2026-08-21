@@ -157,3 +157,14 @@ uint8_t CheckIfHasOtherValidDecks(void)
 	return a != 0 ? 0x10u : 0x80u;
 }
 /* <<< factory CheckIfHasOtherValidDecks */
+
+/* >>> factory FillDEWithA */
+void FillDEWithA(uint8_t a, uint8_t b, uint16_t de)
+{
+	uint16_t count = b ? b : 0x100u;
+	uint16_t address = de;
+	do {
+		gb_write8(address++, a);
+	} while (--count);
+}
+/* <<< factory FillDEWithA */

@@ -2332,6 +2332,18 @@ CASES["MirrorMove_AISelection"] = [
 ]
 # <<< factory MirrorMove_AISelection
 
+# >>> factory KinglerFlail_HPCheck
+CONTRACT["KinglerFlail_HPCheck"] = {"compare": (), "preserve": ()}
+CASES["KinglerFlail_HPCheck"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", wPlayerDeck: b"\x01", wDamage: b"\x99", wAIMinDamage: b"\x88"},
+     "read": {wDamage: 1, wAIMinDamage: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", wPlayerDeck: b"\x01", wDamage: b"\x77", wAIMinDamage: b"\x66"},
+     "read": {wDamage: 1, wAIMinDamage: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x71", wPlayerDeck: b"\x01", wDamage: b"\x55", wAIMinDamage: b"\x44"},
+         read={wDamage: 1, wAIMinDamage: 1}),
+]
+# <<< factory KinglerFlail_HPCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3948,3 +3960,11 @@ MUTATIONS["MirrorMove_AISelection"] = {
     "case_ids": ["MirrorMove_AISelection-0", "MirrorMove_AISelection-1"],
 }
 # <<< factory-mutation MirrorMove_AISelection
+# >>> factory-mutation KinglerFlail_HPCheck
+MUTATIONS["KinglerFlail_HPCheck"] = {
+    "source_symbol": "KinglerFlail_HPCheck",
+    "before": "\tSetDefiniteDamage(r.a);",
+    "after": "\tSetDefiniteDamage((uint8_t)(r.a + 1u));",
+    "case_ids": ["KinglerFlail_HPCheck-0", "KinglerFlail_HPCheck-1", "KinglerFlail_HPCheck-2"],
+}
+# <<< factory-mutation KinglerFlail_HPCheck

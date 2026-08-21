@@ -24,4 +24,7 @@ void ClearMemory_Bank2(uint8_t a, uint16_t hl);
 /* >>> factory CheckIfHasOtherValidDecks */
 uint8_t CheckIfHasOtherValidDecks(void);
 /* <<< factory CheckIfHasOtherValidDecks */
+/* >>> factory FillDEWithA */
+void FillDEWithA(uint8_t a, uint8_t b, uint16_t de);
+/* <<< factory FillDEWithA */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
