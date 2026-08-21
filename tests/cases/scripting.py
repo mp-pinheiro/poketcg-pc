@@ -457,6 +457,17 @@ CASES["SetEventValue"] = [
 ]
 # <<< factory SetEventValue
 
+# >>> factory MaxOutEventValue
+CONTRACT["MaxOutEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["MaxOutEventValue"] = [
+    {"a": 0, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    dict(POISON, a=1, read={wLoadedEventBits: 1, wEventVars: 64}),
+    {"a": 0x7F, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    {"a": 0x80, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    {"a": 0xFF, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+]
+# <<< factory MaxOutEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -731,3 +742,11 @@ MUTATIONS["SetEventValue"] = {
     "case_ids": ["SetEventValue-0", "SetEventValue-1", "SetEventValue-2", "SetEventValue-3", "SetEventValue-4"],
 }
 # <<< factory-mutation SetEventValue
+# >>> factory-mutation MaxOutEventValue
+MUTATIONS["MaxOutEventValue"] = {
+    "source_symbol": "MaxOutEventValue",
+    "before": "\treturn SetEventValue(a, f, b, 0xffu);",
+    "after": "\treturn SetEventValue(a, f, b, 0xfeu);",
+    "case_ids": ["MaxOutEventValue-0", "MaxOutEventValue-1", "MaxOutEventValue-2", "MaxOutEventValue-3", "MaxOutEventValue-4"],
+}
+# <<< factory-mutation MaxOutEventValue

@@ -206,6 +206,14 @@ CASES["DrawOpponentPortrait"] = [
 ]
 # <<< factory DrawOpponentPortrait
 
+# >>> factory DrawPlayerPortrait
+CONTRACT["DrawPlayerPortrait"] = {"compare": (), "preserve": ()}
+CASES["DrawPlayerPortrait"] = [
+	{"wram": {hBankROM: b"\x01", wCurPortrait: b"\xff", wCurTilemap: b"\x00"}, "read": {hBankROM: 1, wCurPortrait: 1, wCurTilemap: 1}},
+	dict(POISON, wram={hBankROM: b"\x07", wCurPortrait: b"\x00", wCurTilemap: b"\xff"}, read={hBankROM: 1, wCurPortrait: 1, wCurTilemap: 1}),
+]
+# <<< factory DrawPlayerPortrait
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -252,3 +260,11 @@ MUTATIONS["DrawOpponentPortrait"] = {
     "case_ids": ["DrawOpponentPortrait-0", "DrawOpponentPortrait-1"],
 }
 # <<< factory-mutation DrawOpponentPortrait
+# >>> factory-mutation DrawPlayerPortrait
+MUTATIONS["DrawPlayerPortrait"] = {
+	"source_symbol": "DrawPlayerPortrait",
+	"before": "wCurPortrait = PLAYER_PIC;",
+	"after": "wCurPortrait = (uint8_t)(PLAYER_PIC + 1u);",
+	"case_ids": ["DrawPlayerPortrait-0", "DrawPlayerPortrait-1"],
+}
+# <<< factory-mutation DrawPlayerPortrait

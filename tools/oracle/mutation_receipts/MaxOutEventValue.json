@@ -1,0 +1,9 @@
+{
+  "fn": "MaxOutEventValue",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MaxOutEventValue\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MaxOutEventValue\", \"mismatches\": {\"a\": [128, 0], \"f\": [0, 128], \"bus\": {\"address\": 54289, \"reference\": \"0000000080\", \"native\": \"0000000000\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[54225, 65]]}}}\n",
+  "restored": "{\"fn\": \"MaxOutEventValue\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"8000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\"}}, \"status\": \"PASS\"}\n"
+}

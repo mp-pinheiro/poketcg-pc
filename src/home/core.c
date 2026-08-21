@@ -379,6 +379,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/sram.h"
 #include "home/core.h"
 #include "home/unused_save_validation.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2579,3 +2582,12 @@ void SaveDuelData(void)
 	SaveDuelDataToDE(sCurrentDuel_ADDR);
 }
 /* <<< factory SaveDuelData */
+
+/* >>> factory SetCardListHeaderText */
+void SetCardListHeaderText(uint16_t de, uint16_t hl)
+{
+	wCardListHeaderText = (uint8_t)de;
+	wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);
+	SetCardListInfoBoxText(hl);
+}
+/* <<< factory SetCardListHeaderText */

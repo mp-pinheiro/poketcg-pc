@@ -187,4 +187,7 @@ void SetNextScript(uint16_t bc);
 typedef struct { uint8_t a; uint8_t f; } SetEventValueResult;
 SetEventValueResult SetEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory SetEventValue */
+/* >>> factory MaxOutEventValue */
+SetEventValueResult MaxOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c);
+/* <<< factory MaxOutEventValue */
 #endif

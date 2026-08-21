@@ -1,0 +1,9 @@
+{
+  "fn": "TransmitIRBit",
+  "case": "tests/cases/ir_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TransmitIRBit\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 65366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TransmitIRBit\", \"mismatches\": {\"f\": [192, 208]}}\n",
+  "restored": "{\"fn\": \"TransmitIRBit\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 65366, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

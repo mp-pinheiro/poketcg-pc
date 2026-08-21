@@ -3,6 +3,14 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/ir_core.h"
+#include "mem.h"
+#define RP_ADDR 0xFF56u
+#define RP_ENABLE 0xC0u
+#define RP_WRITE_HIGH 0x01u
+#define RP_WRITE_LOW 0x00u
+/* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
 /* ir_core.asm:483-506 */
@@ -52,3 +60,19 @@ ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet(void)
 	return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFFu, 0x10u};
 }
 /* <<< factory ReturnZFlagUnsetAndCarryFlagSet */
+
+/* >>> factory TransmitIRBit */
+TransmitIRBitResult TransmitIRBit(uint8_t a, uint8_t f, uint16_t hl)
+{
+	(void)a;
+	uint8_t flags = (uint8_t)(f & 0x10u);
+	if ((f & 0x10u) != 0u) {
+		flags = 0xD0u;
+	} else {
+		gb_write8(hl, (uint8_t)(RP_WRITE_HIGH | RP_ENABLE));
+		gb_write8(hl, (uint8_t)(RP_WRITE_LOW | RP_ENABLE));
+		flags = 0xC0u;
+	}
+	return (TransmitIRBitResult){0x00u, flags};
+}
+/* <<< factory TransmitIRBit */

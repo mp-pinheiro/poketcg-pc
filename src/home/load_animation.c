@@ -17,6 +17,10 @@
 
 #include "generated/wram.h"
 #define TILEMAP_OPPONENT 0x63u
+
+#include "generated/wram.h"
+#define PLAYER_PIC 0x01u
+#define TILEMAP_PLAYER 0x62u
 /* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
@@ -262,3 +266,11 @@ void DrawOpponentPortrait(uint8_t a)
 	DrawPortrait(TILEMAP_OPPONENT);
 }
 /* <<< factory DrawOpponentPortrait */
+
+/* >>> factory DrawPlayerPortrait */
+void DrawPlayerPortrait(void)
+{
+	wCurPortrait = PLAYER_PIC;
+	DrawPortrait(TILEMAP_PLAYER);
+}
+/* <<< factory DrawPlayerPortrait */

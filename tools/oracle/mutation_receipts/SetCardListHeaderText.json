@@ -1,0 +1,9 @@
+{
+  "fn": "SetCardListHeaderText",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetCardListHeaderText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 52, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52188\": \"3412\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetCardListHeaderText\", \"mismatches\": {\"bus\": {\"address\": 52189, \"reference\": \"3412\", \"native\": \"3434\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52188, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetCardListHeaderText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 52, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52188\": \"3412\"}}, \"status\": \"PASS\"}\n"
+}

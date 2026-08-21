@@ -18,4 +18,11 @@ typedef struct {
 
 ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet(void);
 /* <<< factory ReturnZFlagUnsetAndCarryFlagSet */
+/* >>> factory TransmitIRBit */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} TransmitIRBitResult;
+TransmitIRBitResult TransmitIRBit(uint8_t a, uint8_t f, uint16_t hl);
+/* <<< factory TransmitIRBit */
 #endif /* POKETCG_HOME_IR_CORE_H */

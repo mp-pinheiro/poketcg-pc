@@ -31,6 +31,16 @@ CASES["ReturnZFlagUnsetAndCarryFlagSet"] = [
 ]
 # <<< factory ReturnZFlagUnsetAndCarryFlagSet
 
+# >>> factory TransmitIRBit
+CONTRACT["TransmitIRBit"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["TransmitIRBit"] = [
+	{"f": 0x00, "hl": 0xFF56, "expect": {0xFF56: b"\xC0"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	{"f": 0x10, "hl": 0xFF56, "expect": {0xFF56: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xD0}},
+	dict(POISON, f=0x00, hl=0xFF56, expect={0xFF56: b"\xC0"}, expect_regs={"a": 0x00, "f": 0xC0}),
+	dict(POISON, f=0x10, hl=0xFF56, expect={0xFF56: b"\x00"}, expect_regs={"a": 0x00, "f": 0xD0}),
+]
+# <<< factory TransmitIRBit
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -44,3 +54,6 @@ MUTATIONS["LoadRegistersFromIRDataBuffer"] = {"source_symbol": "LoadRegistersFro
 # >>> factory-mutation ReturnZFlagUnsetAndCarryFlagSet
 MUTATIONS["ReturnZFlagUnsetAndCarryFlagSet"] = {"source_symbol": "ReturnZFlagUnsetAndCarryFlagSet", "before": "return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFFu, 0x10u};", "after": "return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFEu, 0x10u};", "case_ids": ["ReturnZFlagUnsetAndCarryFlagSet-0", "ReturnZFlagUnsetAndCarryFlagSet-1"]}
 # <<< factory-mutation ReturnZFlagUnsetAndCarryFlagSet
+# >>> factory-mutation TransmitIRBit
+MUTATIONS["TransmitIRBit"] = {"source_symbol": "TransmitIRBit", "before": "if ((f & 0x10u) != 0u)", "after": "if ((f & 0x10u) == 0u)", "case_ids": ["TransmitIRBit-0", "TransmitIRBit-1", "TransmitIRBit-2", "TransmitIRBit-3"]}
+# <<< factory-mutation TransmitIRBit

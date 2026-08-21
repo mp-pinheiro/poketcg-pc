@@ -1074,6 +1074,13 @@ static void adapt_SaveDuelData(ProbeState *s)
 }
 /* <<< factory SaveDuelData */
 
+/* >>> factory SetCardListHeaderText */
+static void adapt_SetCardListHeaderText(ProbeState *s)
+{
+	SetCardListHeaderText((uint16_t)((uint16_t)s->d << 8 | s->e), s->hl);
+}
+/* <<< factory SetCardListHeaderText */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1200,5 +1207,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetupPlayAreaScreen", adapt_SetupPlayAreaScreen },
 	{ "CheckIfEnoughEnergiesForGivenAttack", adapt_CheckIfEnoughEnergiesForGivenAttack },
 	{ "SaveDuelData", adapt_SaveDuelData },
+	{ "SetCardListHeaderText", adapt_SetCardListHeaderText },
 	{ NULL, NULL },
 };

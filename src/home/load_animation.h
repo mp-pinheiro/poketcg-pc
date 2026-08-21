@@ -26,4 +26,7 @@ void DrawPortrait(uint8_t a);
 /* >>> factory DrawOpponentPortrait */
 void DrawOpponentPortrait(uint8_t a);
 /* <<< factory DrawOpponentPortrait */
+/* >>> factory DrawPlayerPortrait */
+void DrawPlayerPortrait(void);
+/* <<< factory DrawPlayerPortrait */
 #endif

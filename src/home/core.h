@@ -517,4 +517,7 @@ CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(ui
 /* >>> factory SaveDuelData */
 void SaveDuelData(void);
 /* <<< factory SaveDuelData */
+/* >>> factory SetCardListHeaderText */
+void SetCardListHeaderText(uint16_t de, uint16_t hl);
+/* <<< factory SetCardListHeaderText */
 #endif

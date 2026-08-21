@@ -1382,6 +1382,15 @@ CASES["SaveDuelData"] = [
 ]
 # <<< factory SaveDuelData
 
+# >>> factory SetCardListHeaderText
+CONTRACT["SetCardListHeaderText"] = {"compare": (), "preserve": ()}
+CASES["SetCardListHeaderText"] = [
+	{"d": 0x12, "e": 0x34, "hl": 0x0000, "wram": {0xCBDC: b"\x00\x00"}, "expect": {0xCBDC: b"\x34\x12"}},
+	{"d": 0xAB, "e": 0xCD, "hl": 0x0000, "wram": {0xCBDC: b"\xFF\xFF"}, "expect": {0xCBDC: b"\xCD\xAB"}},
+	dict(POISON, d=0xDD, e=0xEE, hl=0x1234, wram={0xCBDC: b"\x00\x00"}, expect={0xCBDC: b"\xEE\xDD"}),
+]
+# <<< factory SetCardListHeaderText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2201,3 +2210,6 @@ MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEno
 # >>> factory-mutation SaveDuelData
 MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDuelDataToDE(sCurrentDuel_ADDR);", "after": "SaveDuelDataToDE((uint16_t)(sCurrentDuel_ADDR + 1u));", "case_ids": ["SaveDuelData-1"]}
 # <<< factory-mutation SaveDuelData
+# >>> factory-mutation SetCardListHeaderText
+MUTATIONS["SetCardListHeaderText"] = {"source_symbol": "SetCardListHeaderText", "before": "wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);", "after": "wCardListHeaderText_PTR[1] = (uint8_t)de;", "case_ids": ["SetCardListHeaderText-0", "SetCardListHeaderText-1", "SetCardListHeaderText-2"]}
+# <<< factory-mutation SetCardListHeaderText
