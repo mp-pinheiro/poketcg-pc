@@ -461,6 +461,17 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "mem.h"
+
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xbau
+#define CardsText 0x007eu
+#define NoneText 0x007cu
+#define PrizesLeftActivePokemonCardsInDeckText 0x007bu
+#define YesText 0x007du
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2928,3 +2939,45 @@ void PrintPlayerNumberOfHandAndDeckCards(void)
 	WriteTwoDigitNumberInTxSymbol_PadSpace(deck, 10, 10, hand, deck, wNumCardsBeingDrawn_ADDR);
 }
 /* <<< factory PrintPlayerNumberOfHandAndDeckCards */
+
+/* >>> factory PrintDuelResultStats */
+void PrintDuelResultStats(void)
+{
+	for (uint8_t turn = 0u; turn < 2u; ++turn) {
+		uint8_t d = turn == 0u ? 8u : 1u;
+		uint8_t e = d;
+		(void)SetNoLineSeparation();
+		ProcessTextHeaderResult heading = InitTextPrinting_ProcessTextFromID(
+			d, e, PrizesLeftActivePokemonCardsInDeckText);
+		d = heading.d;
+		e = heading.e;
+		(void)SetOneLineSeparation();
+		uint8_t c = e;
+		uint8_t b = (uint8_t)(d + 7u);
+		d = (uint8_t)(b + 2u);
+		uint8_t prizes = CountPrizes();
+		WriteTwoDigitNumberInTxSymbol_PadSpace(
+			prizes, b, c, d, e, heading.hl);
+		e = (uint8_t)(e + 1u);
+		c = (uint8_t)(c + 1u);
+		DuelistVarResult pokemon = GetTurnDuelistVariable(
+			DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		uint16_t pokemon_text = pokemon.a != 0u ? YesText : NoneText;
+		d = (uint8_t)(d - 1u);
+		ProcessTextHeaderResult pokemon_result = InitTextPrinting_ProcessTextFromID(
+			d, e, pokemon_text);
+		d = pokemon_result.d;
+		e = pokemon_result.e;
+		e = (uint8_t)(e + 1u);
+		d = (uint8_t)(d + 1u);
+		c = (uint8_t)(c + 1u);
+		DuelistVarResult cards_var = GetTurnDuelistVariable(
+			DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		uint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl));
+		WriteTwoDigitNumberInTxSymbol_PadSpace(
+			cards, b, c, d, e, cards_var.hl);
+		(void)InitTextPrinting_ProcessTextFromID(d, e, CardsText);
+		SwapTurn();
+	}
+}
+/* <<< factory PrintDuelResultStats */

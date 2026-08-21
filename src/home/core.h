@@ -588,4 +588,7 @@ void PrintOpponentNumberOfHandAndDeckCards(void);
 /* >>> factory PrintPlayerNumberOfHandAndDeckCards */
 void PrintPlayerNumberOfHandAndDeckCards(void);
 /* <<< factory PrintPlayerNumberOfHandAndDeckCards */
+/* >>> factory PrintDuelResultStats */
+void PrintDuelResultStats(void);
+/* <<< factory PrintDuelResultStats */
 #endif

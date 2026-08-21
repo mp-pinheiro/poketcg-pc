@@ -1409,6 +1409,12 @@ wOpponentNumberOfCardsNotInDeck = 0xC3BA
 wNumCardsBeingDrawn = 0xCBE9
 wPlayerNumberOfCardsInHand = 0xC2EE
 wPlayerNumberOfCardsNotInDeck = 0xC2BA
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+TEXT_READ = {0xCD05: 2, 0xCD0A: 1, 0xCAA0: 5}
+VRAM_FIRST = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
+VRAM_SECOND = VRAM_FIRST
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1663,6 +1669,15 @@ CASES["PrintPlayerNumberOfHandAndDeckCards"] = [
     dict(POISON, wram={wPlayerNumberOfCardsInHand: b"\x00", wNumCardsBeingDrawn: b"\x00", wPlayerNumberOfCardsNotInDeck: b"\x00"}, vram={0: {0x9950: b"\xEE\xEE", 0x994A: b"\xEE\xEE"}}, expect_vram={0: {0x9950: b"\x00\x20", 0x994A: b"\x26\x20"}}),
 ]
 # <<< factory PrintPlayerNumberOfHandAndDeckCards
+
+# >>> factory PrintDuelResultStats
+CONTRACT["PrintDuelResultStats"] = {"compare": (), "preserve": ()}
+CASES["PrintDuelResultStats"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x15", 0xC2EF: b"\x01", 0xC2BA: b"\x1E", 0xC3EC: b"\x3F", 0xC3EF: b"\x00", 0xC3BA: b"\x3C"}, "setup": SETUP_TEXT, "read": TEXT_READ},
+    {"wram": {0xFF97: b"\xC2", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2BA: b"\x3C", 0xC3EC: b"\x01", 0xC3EF: b"\x02", 0xC3BA: b"\x00"}, "setup": SETUP_TEXT, "read": TEXT_READ},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EC: b"\x01", 0xC2EF: b"\x02", 0xC2BA: b"\x1E", 0xC3EC: b"\x08", 0xC3EF: b"\x01", 0xC3BA: b"\x01"}, setup=SETUP_TEXT, read=TEXT_READ),
+]
+# <<< factory PrintDuelResultStats
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2591,3 +2606,6 @@ MUTATIONS["PrintOpponentNumberOfHandAndDeckCards"] = {"source_symbol": "PrintOpp
 # >>> factory-mutation PrintPlayerNumberOfHandAndDeckCards
 MUTATIONS["PrintPlayerNumberOfHandAndDeckCards"] = {"source_symbol": "PrintPlayerNumberOfHandAndDeckCards", "before": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck - wNumCardsBeingDrawn);", "after": "uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck + wNumCardsBeingDrawn);", "case_ids": ["PrintPlayerNumberOfHandAndDeckCards-0", "PrintPlayerNumberOfHandAndDeckCards-1", "PrintPlayerNumberOfHandAndDeckCards-2"]}
 # <<< factory-mutation PrintPlayerNumberOfHandAndDeckCards
+# >>> factory-mutation PrintDuelResultStats
+MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "before": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl));", "after": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl) + 1u);", "case_ids": ["PrintDuelResultStats-0", "PrintDuelResultStats-1", "PrintDuelResultStats-2"]}
+# <<< factory-mutation PrintDuelResultStats
