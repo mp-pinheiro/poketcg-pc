@@ -1100,6 +1100,13 @@ static void adapt_GoToPreviousCardPage(ProbeState *s)
 }
 /* <<< factory GoToPreviousCardPage */
 
+/* >>> factory DrawWholeScreenTextBox */
+static void adapt_DrawWholeScreenTextBox(ProbeState *s)
+{
+	DrawWholeScreenTextBox(s->hl);
+}
+/* <<< factory DrawWholeScreenTextBox */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1229,5 +1236,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetCardListHeaderText", adapt_SetCardListHeaderText },
 	{ "AIAttachEnergyInHandToCardInPlayArea", adapt_AIAttachEnergyInHandToCardInPlayArea },
 	{ "GoToPreviousCardPage", adapt_GoToPreviousCardPage },
+	{ "DrawWholeScreenTextBox", adapt_DrawWholeScreenTextBox },
 	{ NULL, NULL },
 };

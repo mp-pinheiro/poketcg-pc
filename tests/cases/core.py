@@ -1408,6 +1408,20 @@ CASES["GoToPreviousCardPage"] = [
 ]
 # <<< factory GoToPreviousCardPage
 
+# >>> factory DrawWholeScreenTextBox
+CONTRACT["DrawWholeScreenTextBox"] = {"compare": (), "preserve": ()};
+CASES["DrawWholeScreenTextBox"] = [
+    {"hl": 0x01DB, "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, hl=0x01DB, keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory DrawWholeScreenTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2246,3 +2260,11 @@ MUTATIONS["GoToPreviousCardPage"] = {
     "case_ids": ["GoToPreviousCardPage-0", "GoToPreviousCardPage-1"],
 }
 # <<< factory-mutation GoToPreviousCardPage
+# >>> factory-mutation DrawWholeScreenTextBox
+MUTATIONS["DrawWholeScreenTextBox"] = {
+    "source_symbol": "DrawWholeScreenTextBox",
+    "before": "DrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);",
+    "after": "DrawRegularTextBox(&box, 0u, 20u, 17u, 0u, 0u);",
+    "case_ids": ["DrawWholeScreenTextBox-0", "DrawWholeScreenTextBox-1"],
+}
+# <<< factory-mutation DrawWholeScreenTextBox

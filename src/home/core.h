@@ -528,4 +528,7 @@ AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(
 typedef struct { uint8_t a; uint8_t f; uint8_t b; } CardPageNavigationResult;
 CardPageNavigationResult GoToPreviousCardPage(void);
 /* <<< factory GoToPreviousCardPage */
+/* >>> factory DrawWholeScreenTextBox */
+void DrawWholeScreenTextBox(uint16_t hl);
+/* <<< factory DrawWholeScreenTextBox */
 #endif

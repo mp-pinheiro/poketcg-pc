@@ -386,6 +386,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "generated/hram.h"
 #define OPPACTION_PLAY_ENERGY 0x03u
+
+#include "home/text_box.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2636,3 +2643,18 @@ CardPageNavigationResult GoToPreviousCardPage(void)
 	}
 }
 /* <<< factory GoToPreviousCardPage */
+
+/* >>> factory DrawWholeScreenTextBox */
+void DrawWholeScreenTextBox(uint16_t hl)
+{
+	uint16_t box = hl;
+	EmptyScreen();
+	DrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);
+	InitTextPrintingInTextbox(19u, 1u, 1u);
+	(void)SetNoLineSeparation();
+	(void)ProcessTextFromID(hl);
+	EnableLCD();
+	(void)SetOneLineSeparation();
+	(void)WaitForWideTextBoxInput();
+}
+/* <<< factory DrawWholeScreenTextBox */
