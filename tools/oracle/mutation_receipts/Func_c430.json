@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c430",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c430\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53813\": \"20180403\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c430\", \"mismatches\": {\"bus\": {\"address\": 53813, \"reference\": \"20180403\", \"native\": \"00180403\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53813, 4]]}}}\n",
+  "restored": "{\"fn\": \"Func_c430\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53813\": \"20180403\"}}, \"status\": \"PASS\"}\n"
+}

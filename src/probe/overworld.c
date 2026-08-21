@@ -107,6 +107,14 @@ static void adapt_Func_c70d(ProbeState *s)
 }
 /* <<< factory Func_c70d */
 
+/* >>> factory Func_c430 */
+static void adapt_Func_c430(ProbeState *s)
+{
+	(void)s;
+	Func_c430();
+}
+/* <<< factory Func_c430 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -121,5 +129,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "SetScreenScrollWram", adapt_SetScreenScrollWram },
 	{ "SetScreenScroll", adapt_SetScreenScroll },
 	{ "Func_c70d", adapt_Func_c70d },
+	{ "Func_c430", adapt_Func_c430 },
 	{ NULL, NULL },
 };

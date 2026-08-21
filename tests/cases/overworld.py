@@ -188,6 +188,20 @@ CASES["Func_c70d"] = [
 ]
 # <<< factory Func_c70d
 
+# >>> factory Func_c430
+CONTRACT["Func_c430"] = {"compare": (), "preserve": ()}
+CASES["Func_c430"] = [
+    {"wram": {0xD235: b"\x50", 0xD236: b"\x40", 0xD237: b"\x04", 0xD238: b"\x03"},
+     "read": {0xD235: 1, 0xD236: 1}},
+    {"wram": {0xD235: b"\x20", 0xD236: b"\x20", 0xD237: b"\x08", 0xD238: b"\x08"},
+     "read": {0xD235: 1, 0xD236: 1}},
+    {"wram": {0xD235: b"\xB1", 0xD236: b"\xB9", 0xD237: b"\x01", 0xD238: b"\x01"},
+     "read": {0xD235: 1, 0xD236: 1}},
+    dict(POISON, wram={0xD235: b"\x80", 0xD236: b"\x90", 0xD237: b"\x10", 0xD238: b"\x02"},
+         read={0xD235: 1, 0xD236: 1}),
+]
+# <<< factory Func_c430
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -261,3 +275,11 @@ MUTATIONS["SetScreenScrollWram"] = {"source_symbol": "SetScreenScrollWram", "bef
 # >>> factory-mutation Func_c70d
 MUTATIONS["Func_c70d"] = {"source_symbol": "Func_c70d", "before": "\tif (current != temporary)", "after": "\tif (current == temporary)", "case_ids": ["Func_c70d-0", "Func_c70d-1", "Func_c70d-2"]}
 # <<< factory-mutation Func_c70d
+# >>> factory-mutation Func_c430
+MUTATIONS["Func_c430"] = {
+    "source_symbol": "Func_c430",
+    "before": "if (scx >= 0xB1u)",
+    "after": "if (scx < 0xB1u)",
+    "case_ids": ["Func_c430-0", "Func_c430-1", "Func_c430-2", "Func_c430-3"],
+}
+# <<< factory-mutation Func_c430

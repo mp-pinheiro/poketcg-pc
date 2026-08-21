@@ -51,4 +51,7 @@ typedef struct {
 
 FuncC70dResult Func_c70d(void);
 /* <<< factory Func_c70d */
+/* >>> factory Func_c430 */
+void Func_c430(void);
+/* <<< factory Func_c430 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

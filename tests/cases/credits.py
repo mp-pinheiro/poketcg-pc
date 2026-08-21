@@ -25,6 +25,14 @@ CASES["Func_1d765"] = [
 ]
 # <<< factory Func_1d765
 
+# >>> factory Func_1d7ee
+CONTRACT["Func_1d7ee"] = {"compare": (), "preserve": ()};
+CASES["Func_1d7ee"] = [
+    {"vread": {0: {0x9C00: 0x260}}},
+    dict(POISON, vread={0: {0x9C00: 0x260}}),
+]
+# <<< factory Func_1d7ee
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -35,3 +43,6 @@ MUTATIONS["Func_1d758"] = {"source_symbol": "Func_1d758", "before": "\tgb_write8
 # >>> factory-mutation Func_1d765
 MUTATIONS["Func_1d765"] = {"source_symbol": "Func_1d765", "before": "if (gb_read8(wd648_ADDR) == 0x00u)", "after": "if (gb_read8(wd648_ADDR) == 0x01u)", "case_ids": ["Func_1d765-0", "Func_1d765-1", "Func_1d765-2", "Func_1d765-3", "Func_1d765-4"]}
 # <<< factory-mutation Func_1d765
+# >>> factory-mutation Func_1d7ee
+MUTATIONS["Func_1d7ee"] = {"source_symbol": "Func_1d7ee", "before": "FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);", "after": "FillRectangle(0x01u, 20u, 18u, 0x0020u, 0x0000u);", "case_ids": ["Func_1d7ee-0", "Func_1d7ee-1"]}
+# <<< factory-mutation Func_1d7ee

@@ -11,6 +11,8 @@
 
 #define WX_OFS 0x07u
 #define B_LCDC_OBJS 0x01u
+
+#include "home/tiles.h"
 /* <<< factory statics */
 
 /* >>> factory Func_1d758 */
@@ -92,3 +94,10 @@ uint8_t Func_1d765(void)
 	return 0x01u;
 }
 /* <<< factory Func_1d765 */
+
+/* >>> factory Func_1d7ee */
+void Func_1d7ee(void)
+{
+	FillRectangle(0x00u, 20u, 18u, 0x0020u, 0x0000u);
+}
+/* <<< factory Func_1d7ee */

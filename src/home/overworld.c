@@ -231,3 +231,24 @@ FuncC70dResult Func_c70d(void)
 	return (FuncC70dResult){current, flags};
 }
 /* <<< factory Func_c70d */
+
+/* >>> factory Func_c430 */
+void Func_c430(void)
+{
+	uint8_t x = (uint8_t)(wd237 << 3);
+	uint8_t scx = wSCXBuffer;
+	if (scx >= 0xB1u)
+		scx = 0;
+	else if (scx >= x)
+		scx = x;
+	wSCXBuffer = scx;
+
+	uint8_t y = (uint8_t)(wd238 << 3);
+	uint8_t scy = wSCYBuffer;
+	if (scy >= 0xB9u)
+		scy = 0;
+	else if (scy >= y)
+		scy = y;
+	wSCYBuffer = scy;
+}
+/* <<< factory Func_c430 */
