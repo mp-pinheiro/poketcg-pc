@@ -94,4 +94,7 @@ void _ResumeSong(void);
 /* >>> factory Music1_f400c */
 void Music1_f400c(uint8_t a);
 /* <<< factory Music1_f400c */
+/* >>> factory Music1_f4018 */
+void Music1_f4018(uint8_t a);
+/* <<< factory Music1_f4018 */
 #endif /* POKETCG_MUSIC1_H */

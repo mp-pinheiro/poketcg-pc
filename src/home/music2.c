@@ -1259,3 +1259,10 @@ void Music2_f400c_2(uint8_t a)
 	Music2_f404e(a);
 }
 /* <<< factory Music2_f400c_2 */
+
+/* >>> factory Music2_f4018_2 */
+void Music2_f4018_2(uint8_t a)
+{
+	Music2_f406f(a);
+}
+/* <<< factory Music2_f4018_2 */

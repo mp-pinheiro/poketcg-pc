@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_f4018",
+  "case": "tests/cases/music1.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_f4018\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56817\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_f4018\", \"mismatches\": {\"bus\": {\"address\": 56817, \"reference\": \"00\", \"native\": \"11\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[56817, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music1_f4018\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56817\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

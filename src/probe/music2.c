@@ -237,6 +237,13 @@ static void adapt_Music2_f400c_2(ProbeState *s)
 }
 /* <<< factory Music2_f400c_2 */
 
+/* >>> factory Music2_f4018_2 */
+static void adapt_Music2_f4018_2(ProbeState *s)
+{
+	Music2_f4018_2(s->a);
+}
+/* <<< factory Music2_f4018_2 */
+
 const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_EmptyFunc",         adapt_Music2_EmptyFunc },
 	{ "Music2_f404e",             adapt_Music2_f404e },
@@ -302,5 +309,6 @@ const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_GetChannelStackPointer", adapt_Music2_GetChannelStackPointer },
 	{ "Music2_SetChannelStackPointer", adapt_Music2_SetChannelStackPointer },
 	{ "Music2_f400c_2", adapt_Music2_f400c_2 },
+	{ "Music2_f4018_2", adapt_Music2_f4018_2 },
 	{ NULL, NULL },
 };

@@ -1279,3 +1279,10 @@ void Music1_f400c(uint8_t a)
 	Music1_f404e(a);
 }
 /* <<< factory Music1_f400c */
+
+/* >>> factory Music1_f4018 */
+void Music1_f4018(uint8_t a)
+{
+	Music1_f406f(a);
+}
+/* <<< factory Music1_f4018 */

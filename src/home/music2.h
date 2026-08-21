@@ -88,4 +88,7 @@ void Music2_SetChannelStackPointer(uint8_t ch, uint16_t sp);
 /* >>> factory Music2_f400c_2 */
 void Music2_f400c_2(uint8_t a);
 /* <<< factory Music2_f400c_2 */
+/* >>> factory Music2_f4018_2 */
+void Music2_f4018_2(uint8_t a);
+/* <<< factory Music2_f4018_2 */
 #endif /* POKETCG_MUSIC2_H */

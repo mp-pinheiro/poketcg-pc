@@ -567,6 +567,14 @@ CASES["Music2_f400c_2"] = [
 ]
 # <<< factory Music2_f400c_2
 
+# >>> factory Music2_f4018_2
+CONTRACT["Music2_f4018_2"] = {"compare": (), "preserve": ()};
+CASES["Music2_f4018_2"] = [
+    {"a": 0x42, "read": {0xDDF1: 1}},
+    dict(POISON, read={0xDDF1: 1}),
+]
+# <<< factory Music2_f4018_2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -581,3 +589,6 @@ MUTATIONS = {
 # >>> factory-mutation Music2_f400c_2
 MUTATIONS["Music2_f400c_2"] = {"source_symbol": "Music2_f400c_2", "before": "Music2_f404e(a);", "after": "Music2_f404e(a), gb_write8(0xC103u, 0x01u);", "case_ids": ["Music2_f400c_2-1"]}
 # <<< factory-mutation Music2_f400c_2
+# >>> factory-mutation Music2_f4018_2
+MUTATIONS["Music2_f4018_2"] = {"source_symbol": "Music2_f4018_2", "before": "Music2_f406f(a);", "after": "Music2_f406f((uint8_t)(a ^ 1u));", "case_ids": ["Music2_f4018_2-1"]}
+# <<< factory-mutation Music2_f4018_2
