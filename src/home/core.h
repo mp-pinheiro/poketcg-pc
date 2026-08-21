@@ -531,4 +531,7 @@ CardPageNavigationResult GoToPreviousCardPage(void);
 /* >>> factory DrawWholeScreenTextBox */
 void DrawWholeScreenTextBox(uint16_t hl);
 /* <<< factory DrawWholeScreenTextBox */
+/* >>> factory HasAlivePokemonInPlayArea */
+HasAlivePokemonInPlayAreaResult HasAlivePokemonInPlayArea(void);
+/* <<< factory HasAlivePokemonInPlayArea */
 #endif

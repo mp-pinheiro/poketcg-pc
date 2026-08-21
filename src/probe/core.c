@@ -1107,6 +1107,15 @@ static void adapt_DrawWholeScreenTextBox(ProbeState *s)
 }
 /* <<< factory DrawWholeScreenTextBox */
 
+/* >>> factory HasAlivePokemonInPlayArea */
+static void adapt_HasAlivePokemonInPlayArea(ProbeState *s)
+{
+	HasAlivePokemonInPlayAreaResult r = HasAlivePokemonInPlayArea();
+	s->a = r.a;
+	s->f = (uint8_t)((s->f & 0x80u) | r.f);
+}
+/* <<< factory HasAlivePokemonInPlayArea */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1237,5 +1246,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIAttachEnergyInHandToCardInPlayArea", adapt_AIAttachEnergyInHandToCardInPlayArea },
 	{ "GoToPreviousCardPage", adapt_GoToPreviousCardPage },
 	{ "DrawWholeScreenTextBox", adapt_DrawWholeScreenTextBox },
+	{ "HasAlivePokemonInPlayArea", adapt_HasAlivePokemonInPlayArea },
 	{ NULL, NULL },
 };

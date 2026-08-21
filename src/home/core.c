@@ -2658,3 +2658,10 @@ void DrawWholeScreenTextBox(uint16_t hl)
 	(void)WaitForWideTextBoxInput();
 }
 /* <<< factory DrawWholeScreenTextBox */
+
+/* >>> factory HasAlivePokemonInPlayArea */
+HasAlivePokemonInPlayAreaResult HasAlivePokemonInPlayArea(void)
+{
+	return _HasAlivePokemonInPlayArea(0u);
+}
+/* <<< factory HasAlivePokemonInPlayArea */

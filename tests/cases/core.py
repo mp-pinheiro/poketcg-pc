@@ -1422,6 +1422,18 @@ CASES["DrawWholeScreenTextBox"] = [
 ]
 # <<< factory DrawWholeScreenTextBox
 
+# >>> factory HasAlivePokemonInPlayArea
+CONTRACT["HasAlivePokemonInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HasAlivePokemonInPlayArea"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2C8: b"\x10"},
+     "read": {0xCBD2: 1, 0xCBD3: 1, 0xCBD4: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03",
+              0xC2C8: b"\x00\x10\x00"}, "read": {0xCBD2: 1}},
+    dict(POISON, wram={0xFF97: b"\xC3", 0xC3EF: b"\x02",
+                       0xC3C8: b"\x00\x00"}),
+]
+# <<< factory HasAlivePokemonInPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2268,3 +2280,11 @@ MUTATIONS["DrawWholeScreenTextBox"] = {
     "case_ids": ["DrawWholeScreenTextBox-0", "DrawWholeScreenTextBox-1"],
 }
 # <<< factory-mutation DrawWholeScreenTextBox
+# >>> factory-mutation HasAlivePokemonInPlayArea
+MUTATIONS["HasAlivePokemonInPlayArea"] = {
+    "source_symbol": "HasAlivePokemonInPlayArea",
+    "before": "return _HasAlivePokemonInPlayArea(0u);",
+    "after": "return _HasAlivePokemonInPlayArea(1u);",
+    "case_ids": ["HasAlivePokemonInPlayArea-0", "HasAlivePokemonInPlayArea-1"],
+}
+# <<< factory-mutation HasAlivePokemonInPlayArea
