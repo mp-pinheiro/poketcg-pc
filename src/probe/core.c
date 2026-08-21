@@ -1139,6 +1139,15 @@ static void adapt_PrintPracticeDuelLetsPlayTheGame(ProbeState *s)
 }
 /* <<< factory PrintPracticeDuelLetsPlayTheGame */
 
+/* >>> factory AIAttachEnergyInHandToCardInBench */
+static void adapt_AIAttachEnergyInHandToCardInBench(ProbeState *s)
+{
+	AIAttachEnergyInHandToCardInBenchResult r = AIAttachEnergyInHandToCardInBench(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIAttachEnergyInHandToCardInBench */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1273,5 +1282,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardPageSwitch_PokemonAttack1Page1", adapt_CardPageSwitch_PokemonAttack1Page1 },
 	{ "CheckPrintDoublePoisoned", adapt_CheckPrintDoublePoisoned },
 	{ "PrintPracticeDuelLetsPlayTheGame", adapt_PrintPracticeDuelLetsPlayTheGame },
+	{ "AIAttachEnergyInHandToCardInBench", adapt_AIAttachEnergyInHandToCardInBench },
 	{ NULL, NULL },
 };

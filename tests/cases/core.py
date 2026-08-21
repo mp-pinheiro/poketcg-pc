@@ -1471,6 +1471,13 @@ CASES["PrintPracticeDuelLetsPlayTheGame"] = [
 ]
 # <<< factory PrintPracticeDuelLetsPlayTheGame
 
+# >>> factory AIAttachEnergyInHandToCardInBench
+CONTRACT["AIAttachEnergyInHandToCardInBench"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIAttachEnergyInHandToCardInBench"] = [
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
+]
+# <<< factory AIAttachEnergyInHandToCardInBench
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2339,3 +2346,11 @@ MUTATIONS["PrintPracticeDuelLetsPlayTheGame"] = {
     "case_ids": ["PrintPracticeDuelLetsPlayTheGame-0", "PrintPracticeDuelLetsPlayTheGame-1"],
 }
 # <<< factory-mutation PrintPracticeDuelLetsPlayTheGame
+# >>> factory-mutation AIAttachEnergyInHandToCardInBench
+MUTATIONS["AIAttachEnergyInHandToCardInBench"] = {
+	"source_symbol": "AIAttachEnergyInHandToCardInBench",
+	"before": "return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};",
+	"after": "return (AIAttachEnergyInHandToCardInBenchResult){(uint8_t)(hand.a ^ 1u), hand.f};",
+	"case_ids": ["AIAttachEnergyInHandToCardInBench-0"],
+}
+# <<< factory-mutation AIAttachEnergyInHandToCardInBench

@@ -2698,3 +2698,14 @@ void PrintPracticeDuelLetsPlayTheGame(void)
 	(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText);
 }
 /* <<< factory PrintPracticeDuelLetsPlayTheGame */
+
+/* >>> factory AIAttachEnergyInHandToCardInBench */
+AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_t d, uint8_t e)
+{
+	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
+	if ((hand.f & 0x10u) == 0u)
+		return (AIAttachEnergyInHandToCardInBenchResult){hand.a, hand.f};
+	AIAttachEnergyInHandToCardInPlayAreaResult result = AIAttachEnergyInHandToCardInPlayArea(d, e);
+	return (AIAttachEnergyInHandToCardInBenchResult){result.a, result.f};
+}
+/* <<< factory AIAttachEnergyInHandToCardInBench */
