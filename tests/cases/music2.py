@@ -575,6 +575,15 @@ CASES["Music2_f4018_2"] = [
 ]
 # <<< factory Music2_f4018_2
 
+# >>> factory _AssertSFXFinished_2
+CONTRACT["_AssertSFXFinished_2"] = {"compare": ("a",), "preserve": ()};
+CASES["_AssertSFXFinished_2"] = [
+    {"wram": {0xDD82: b"\x80", 0xDD80: b"\x00"}},
+    {"wram": {0xDD82: b"\x00", 0xDD80: b"\x80"}},
+    dict(POISON, wram={0xDD82: b"\x55", 0xDD80: b"\xFF"}),
+]
+# <<< factory _AssertSFXFinished_2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -592,3 +601,6 @@ MUTATIONS["Music2_f400c_2"] = {"source_symbol": "Music2_f400c_2", "before": "Mus
 # >>> factory-mutation Music2_f4018_2
 MUTATIONS["Music2_f4018_2"] = {"source_symbol": "Music2_f4018_2", "before": "Music2_f406f(a);", "after": "Music2_f406f((uint8_t)(a ^ 1u));", "case_ids": ["Music2_f4018_2-1"]}
 # <<< factory-mutation Music2_f4018_2
+# >>> factory-mutation _AssertSFXFinished_2
+MUTATIONS["_AssertSFXFinished_2"] = {"source_symbol": "_AssertSFXFinished_2", "before": "return Music2_AssertSFXFinished();", "after": "return Music2_AssertSongFinished();", "case_ids": ["_AssertSFXFinished_2-0", "_AssertSFXFinished_2-1", "_AssertSFXFinished_2-2"]}
+# <<< factory-mutation _AssertSFXFinished_2

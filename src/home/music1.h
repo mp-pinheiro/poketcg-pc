@@ -97,4 +97,8 @@ void Music1_f400c(uint8_t a);
 /* >>> factory Music1_f4018 */
 void Music1_f4018(uint8_t a);
 /* <<< factory Music1_f4018 */
+/* >>> factory _AssertSFXFinished */
+uint8_t _AssertSFXFinished(void);
+uint8_t Music1_AssertSFXFinished(void);
+/* <<< factory _AssertSFXFinished */
 #endif /* POKETCG_MUSIC1_H */

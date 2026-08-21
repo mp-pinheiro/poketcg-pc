@@ -1286,3 +1286,10 @@ void Music1_f4018(uint8_t a)
 	Music1_f406f(a);
 }
 /* <<< factory Music1_f4018 */
+
+/* >>> factory _AssertSFXFinished */
+uint8_t _AssertSFXFinished(void)
+{
+	return Music1_AssertSFXFinished();
+}
+/* <<< factory _AssertSFXFinished */

@@ -3869,3 +3869,10 @@ void SpearowMirrorMove_AISelection(void)
 	MirrorMove_AISelection();
 }
 /* <<< factory SpearowMirrorMove_AISelection */
+
+/* >>> factory CharmeleonFlamethrower_AISelectEffect */
+void CharmeleonFlamethrower_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory CharmeleonFlamethrower_AISelectEffect */

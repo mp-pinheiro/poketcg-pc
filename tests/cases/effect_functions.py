@@ -2403,6 +2403,15 @@ CASES["SpearowMirrorMove_AISelection"] = [
 ]
 # <<< factory SpearowMirrorMove_AISelection
 
+# >>> factory CharmeleonFlamethrower_AISelectEffect
+CONTRACT["CharmeleonFlamethrower_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["CharmeleonFlamethrower_AISelectEffect"] = [
+    {"wram": {0xC510: bytes(0x40), 0xFFA0: bytes(0x10)}},
+    {"wram": {0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}},
+    dict(POISON, wram={0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}),
+]
+# <<< factory CharmeleonFlamethrower_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4054,3 +4063,11 @@ MUTATIONS["KarateChop_DamageSubtractionEffect"] = {
 # >>> factory-mutation SpearowMirrorMove_AISelection
 MUTATIONS["SpearowMirrorMove_AISelection"] = {"source_symbol": "SpearowMirrorMove_AISelection", "before": "MirrorMove_AISelection();", "after": "(void)0;", "case_ids": ["SpearowMirrorMove_AISelection-0", "SpearowMirrorMove_AISelection-1"]}
 # <<< factory-mutation SpearowMirrorMove_AISelection
+# >>> factory-mutation CharmeleonFlamethrower_AISelectEffect
+MUTATIONS["CharmeleonFlamethrower_AISelectEffect"] = {
+    "source_symbol": "CharmeleonFlamethrower_AISelectEffect",
+    "before": "void CharmeleonFlamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}",
+    "after": "void CharmeleonFlamethrower_AISelectEffect(void)\n{\n}",
+    "case_ids": ["CharmeleonFlamethrower_AISelectEffect-1", "CharmeleonFlamethrower_AISelectEffect-2"],
+}
+# <<< factory-mutation CharmeleonFlamethrower_AISelectEffect

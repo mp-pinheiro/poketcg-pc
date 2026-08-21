@@ -2212,6 +2212,14 @@ static void adapt_SpearowMirrorMove_AISelection(ProbeState *s)
 }
 /* <<< factory SpearowMirrorMove_AISelection */
 
+/* >>> factory CharmeleonFlamethrower_AISelectEffect */
+static void adapt_CharmeleonFlamethrower_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	CharmeleonFlamethrower_AISelectEffect();
+}
+/* <<< factory CharmeleonFlamethrower_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2486,5 +2494,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperFang_HalfHPEffect", adapt_SuperFang_HalfHPEffect },
 	{ "KarateChop_DamageSubtractionEffect", adapt_KarateChop_DamageSubtractionEffect },
 	{ "SpearowMirrorMove_AISelection", adapt_SpearowMirrorMove_AISelection },
+	{ "CharmeleonFlamethrower_AISelectEffect", adapt_CharmeleonFlamethrower_AISelectEffect },
 	{ NULL, NULL },
 };
