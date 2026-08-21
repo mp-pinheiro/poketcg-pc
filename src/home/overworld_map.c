@@ -33,3 +33,24 @@ void OverworldMap_ContinuePlayerWalkingAnimation(void)
 	wOverworldMapPlayerMovementCounter--;
 }
 /* <<< factory OverworldMap_ContinuePlayerWalkingAnimation */
+
+/* >>> factory OverworldMap_NegateBC */
+OverworldMapNegateBCResult OverworldMap_NegateBC(uint8_t b, uint8_t c)
+{
+	uint16_t low_sum = (uint16_t)(c ^ 0xffu) + 1u;
+	uint8_t out_c = (uint8_t)low_sum;
+	uint8_t carry = (uint8_t)(low_sum > 0xffu);
+	uint16_t high_sum = (uint16_t)(b ^ 0xffu) + carry;
+	uint8_t out_b = (uint8_t)high_sum;
+	uint8_t half_carry = (uint8_t)((((uint16_t)(b ^ 0xffu) & 0x0fu) + carry) > 0x0fu);
+	OverworldMapNegateBCResult result = {
+		.a = out_b,
+		.f = (uint8_t)((out_b == 0u ? 0x80u : 0u) |
+			(half_carry ? 0x20u : 0u) |
+			(high_sum > 0xffu ? 0x10u : 0u)),
+		.b = out_b,
+		.c = out_c,
+	};
+	return result;
+}
+/* <<< factory OverworldMap_NegateBC */
