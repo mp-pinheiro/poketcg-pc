@@ -885,3 +885,24 @@ ScriptCommand_JumpIfEventLessThanResult ScriptCommand_JumpIfEventLessThan(uint8_
 	return (ScriptCommand_JumpIfEventLessThanResult){args.a, args.f, args.b, args.c, next_hl};
 }
 /* <<< factory ScriptCommand_JumpIfEventLessThan */
+
+/* >>> factory ScriptCommand_JumpIfEventNotEqual */
+ScriptCommand_JumpIfEventNotEqualResult ScriptCommand_JumpIfEventNotEqual(uint8_t b, uint8_t c, uint16_t hl)
+{
+	GetEventValueBCResult event = GetEventValueBC(b, c);
+	/* before */
+	if (event.a == event.c) {
+		(void)SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfEventNotEqualResult){r.a, r.f, event.c, r.c, hl};
+	}
+	(void)SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfEventNotEqualResult){r.a, r.f, args.b, r.c, hl};
+	}
+	uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfEventNotEqualResult){args.a, args.f, args.b, args.c, next_hl};
+}
+/* <<< factory ScriptCommand_JumpIfEventNotEqual */
