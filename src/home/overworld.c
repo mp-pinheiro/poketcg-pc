@@ -44,6 +44,9 @@
 #include "generated/wram.h"
 #include "home/map.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/overworld.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -318,3 +321,29 @@ GetDirectionFromDPadResult GetDirectionFromDPad(uint8_t a)
 	return result;
 }
 /* <<< factory GetDirectionFromDPad */
+
+/* >>> factory Func_c694 */
+void Func_c694(uint8_t a, uint8_t c)
+{
+	static const int8_t movement_offsets[8] = {0, -1, 1, 0, 0, 1, -1, 0};
+	uint8_t offset = (uint8_t)(a << 1);
+	for (;;) {
+		uint8_t dx = (uint8_t)movement_offsets[offset];
+		uint8_t dy = (uint8_t)movement_offsets[(uint8_t)(offset + 1u)];
+		if (dx != 0u)
+			Func_c6cc(dx);
+		if (dy != 0u)
+			Func_c6d4(dy);
+		wd338--;
+		if (wd338 == 0u)
+			break;
+		c--;
+		if (c == 0u)
+			break;
+	}
+	if (wd338 == 0u)
+		wPlayerCurrentlyMoving |= 0x02u;
+	Func_c41c();
+	Func_c469();
+}
+/* <<< factory Func_c694 */

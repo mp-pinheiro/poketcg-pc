@@ -73,4 +73,7 @@ typedef struct {
 
 GetDirectionFromDPadResult GetDirectionFromDPad(uint8_t a);
 /* <<< factory GetDirectionFromDPad */
+/* >>> factory Func_c694 */
+void Func_c694(uint8_t a, uint8_t c);
+/* <<< factory Func_c694 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

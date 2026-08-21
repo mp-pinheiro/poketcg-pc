@@ -141,6 +141,13 @@ static void adapt_GetDirectionFromDPad(ProbeState *s)
 }
 /* <<< factory GetDirectionFromDPad */
 
+/* >>> factory Func_c694 */
+static void adapt_Func_c694(ProbeState *s)
+{
+	Func_c694(s->a, s->c);
+}
+/* <<< factory Func_c694 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -159,5 +166,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c41c", adapt_Func_c41c },
 	{ "Func_c3ca", adapt_Func_c3ca },
 	{ "GetDirectionFromDPad", adapt_GetDirectionFromDPad },
+	{ "Func_c694", adapt_Func_c694 },
 	{ NULL, NULL },
 };

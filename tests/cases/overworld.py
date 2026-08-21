@@ -242,6 +242,16 @@ CASES["GetDirectionFromDPad"] = [
 ]
 # <<< factory GetDirectionFromDPad
 
+# >>> factory Func_c694
+CONTRACT["Func_c694"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c694"] = [
+    {"a": 0x00, "c": 0x01, "wram": {0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
+    {"a": 0x01, "c": 0x03, "wram": {0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x00", 0xD338: b"\x03", 0xD237: b"\x02", 0xD238: b"\x03"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
+    {"a": 0x03, "c": 0x02, "wram": {0xD332: b"\x80", 0xD333: b"\x80", 0xD335: b"\x04", 0xD338: b"\x01", 0xD237: b"\x10", 0xD238: b"\x10"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
+    dict(POISON, a=0x02, c=0x01, wram={0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
+]
+# <<< factory Func_c694
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -342,3 +352,6 @@ MUTATIONS["Func_c3ca"] = {
 # >>> factory-mutation GetDirectionFromDPad
 MUTATIONS["GetDirectionFromDPad"] = {"source_symbol": "GetDirectionFromDPad", "before": "\t} else if (a & 0x80u) {", "after": "\t} else if (a & 0x40u) {", "case_ids": ["GetDirectionFromDPad-3", "GetDirectionFromDPad-4"]}
 # <<< factory-mutation GetDirectionFromDPad
+# >>> factory-mutation Func_c694
+MUTATIONS["Func_c694"] = {"source_symbol": "Func_c694", "before": "wd338--;", "after": "wd338 = (uint8_t)(wd338 - 2u);", "case_ids": ["Func_c694-0", "Func_c694-1", "Func_c694-2", "Func_c694-3"]}
+# <<< factory-mutation Func_c694
