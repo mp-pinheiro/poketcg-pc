@@ -2568,6 +2568,16 @@ CASES["DestinyBond_AISelectEffect"] = [
 ]
 # <<< factory DestinyBond_AISelectEffect
 
+# >>> factory Rampage_AIEffect
+CONTRACT["Rampage_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["Rampage_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", 0xC400: b"\x01", 0xCCB9: b"\x10\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xFF", 0xC400: b"\x01", 0xCCB9: b"\xFF\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory Rampage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4295,3 +4305,11 @@ MUTATIONS["StoneBarrage_AIEffect"] = {"source_symbol": "StoneBarrage_AIEffect", 
 # >>> factory-mutation DestinyBond_AISelectEffect
 MUTATIONS["DestinyBond_AISelectEffect"] = {"source_symbol": "DestinyBond_AISelectEffect", "before": "\thTempList = wDuelTempList;", "after": "\thTempList = (uint8_t)(wDuelTempList + 1u);", "case_ids": ["DestinyBond_AISelectEffect-0", "DestinyBond_AISelectEffect-1"]}
 # <<< factory-mutation DestinyBond_AISelectEffect
+# >>> factory-mutation Rampage_AIEffect
+MUTATIONS["Rampage_AIEffect"] = {
+    "source_symbol": "Rampage_AIEffect",
+    "before": "void Rampage_AIEffect(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage(r.a);\n\tSetDefiniteAIDamage();\n}",
+    "after": "void Rampage_AIEffect(void)\n{\n\tCardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage((uint8_t)(r.a + 1u));\n\tSetDefiniteAIDamage();\n}",
+    "case_ids": ["Rampage_AIEffect-0", "Rampage_AIEffect-1", "Rampage_AIEffect-2", "Rampage_AIEffect-3"]
+}
+# <<< factory-mutation Rampage_AIEffect

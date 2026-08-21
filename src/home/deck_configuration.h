@@ -48,4 +48,7 @@ uint8_t GetSelectedVisibleCardID(void);
 /* >>> factory CheckIfDeckHasCards */
 uint8_t CheckIfDeckHasCards(uint16_t hl);
 /* <<< factory CheckIfDeckHasCards */
+/* >>> factory FillBGMapLineWithA */
+void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory FillBGMapLineWithA */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

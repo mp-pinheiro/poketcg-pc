@@ -1,0 +1,9 @@
+{
+  "fn": "FillBGMapLineWithA",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FillBGMapLineWithA\", \"registers\": {\"a\": 34, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"2222222222222222222222222222222222222222\"}, \"1\": {\"38977\": \"0404040404040404040404040404040404040404\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FillBGMapLineWithA\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"FillBGMapLineWithA\", \"registers\": {\"a\": 34, \"b\": 1, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"2222222222222222222222222222222222222222\"}, \"1\": {\"38977\": \"0404040404040404040404040404040404040404\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

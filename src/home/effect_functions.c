@@ -274,6 +274,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/damage.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4015,3 +4019,12 @@ void DestinyBond_AISelectEffect(void)
 	hTempList = wDuelTempList;
 }
 /* <<< factory DestinyBond_AISelectEffect */
+
+/* >>> factory Rampage_AIEffect */
+void Rampage_AIEffect(void)
+{
+	CardDamageResult r = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(r.a);
+	SetDefiniteAIDamage();
+}
+/* <<< factory Rampage_AIEffect */

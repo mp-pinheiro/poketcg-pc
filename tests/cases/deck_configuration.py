@@ -184,6 +184,15 @@ CASES["CheckIfDeckHasCards"] = [
 ]
 # <<< factory CheckIfDeckHasCards
 
+# >>> factory FillBGMapLineWithA
+CONTRACT["FillBGMapLineWithA"] = {"compare": (), "preserve": ()}
+CASES["FillBGMapLineWithA"] = [
+    {"a": 0x11, "b": 0x00, "c": 0x00, "wram": {0xCAB4: b"\x00"}, "vread": {0: {0x9800: 20}}},
+    {"a": 0x22, "b": 0x01, "c": 0x02, "wram": {0xCAB4: b"\x02"}, "vread": {0: {0x9841: 20}, 1: {0x9841: 20}}},
+    dict(POISON, a=0xAA, f=0xF0, b=0x03, c=0x04, d=0xDD, e=0xEE, hl=0x1234, wram={0xCAB4: b"\x02"}, vread={0: {0x9883: 20}, 1: {0x9883: 20}}),
+]
+# <<< factory FillBGMapLineWithA
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -263,3 +272,6 @@ MUTATIONS["GetSelectedVisibleCardID"] = {"source_symbol": "GetSelectedVisibleCar
 # >>> factory-mutation CheckIfDeckHasCards
 MUTATIONS["CheckIfDeckHasCards"] = {"source_symbol": "CheckIfDeckHasCards", "before": "return value == 0u ? 0x90u : 0x00u;", "after": "return value != 0u ? 0x90u : 0x00u;", "case_ids": ["CheckIfDeckHasCards-0", "CheckIfDeckHasCards-1", "CheckIfDeckHasCards-2", "CheckIfDeckHasCards-3"]}
 # <<< factory-mutation CheckIfDeckHasCards
+# >>> factory-mutation FillBGMapLineWithA
+MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "before": "	FillDEWithA(0x04u, 20u, de);", "after": "	FillDEWithA(0x05u, 20u, de);", "case_ids": ["FillBGMapLineWithA-1", "FillBGMapLineWithA-2"]}
+# <<< factory-mutation FillBGMapLineWithA

@@ -136,6 +136,13 @@ static void adapt_CheckIfDeckHasCards(ProbeState *s)
 }
 /* <<< factory CheckIfDeckHasCards */
 
+/* >>> factory FillBGMapLineWithA */
+static void adapt_FillBGMapLineWithA(ProbeState *s)
+{
+	FillBGMapLineWithA(s->a, s->b, s->c);
+}
+/* <<< factory FillBGMapLineWithA */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -152,5 +159,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CreateCardCollectionListWithDeckCards", adapt_CreateCardCollectionListWithDeckCards },
 	{ "GetSelectedVisibleCardID", adapt_GetSelectedVisibleCardID },
 	{ "CheckIfDeckHasCards", adapt_CheckIfDeckHasCards },
+	{ "FillBGMapLineWithA", adapt_FillBGMapLineWithA },
 	{ NULL, NULL },
 };

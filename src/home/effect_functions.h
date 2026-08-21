@@ -983,6 +983,9 @@ void StoneBarrage_AIEffect(void);
 /* >>> factory DestinyBond_AISelectEffect */
 void DestinyBond_AISelectEffect(void);
 /* <<< factory DestinyBond_AISelectEffect */
+/* >>> factory Rampage_AIEffect */
+void Rampage_AIEffect(void);
+/* <<< factory Rampage_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

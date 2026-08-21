@@ -2345,6 +2345,14 @@ static void adapt_DestinyBond_AISelectEffect(ProbeState *s)
 }
 /* <<< factory DestinyBond_AISelectEffect */
 
+/* >>> factory Rampage_AIEffect */
+static void adapt_Rampage_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Rampage_AIEffect();
+}
+/* <<< factory Rampage_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2636,5 +2644,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "RapidashStomp_AIEffect", adapt_RapidashStomp_AIEffect },
 	{ "StoneBarrage_AIEffect", adapt_StoneBarrage_AIEffect },
 	{ "DestinyBond_AISelectEffect", adapt_DestinyBond_AISelectEffect },
+	{ "Rampage_AIEffect", adapt_Rampage_AIEffect },
 	{ NULL, NULL },
 };

@@ -43,6 +43,12 @@
 #include "home/switch_sram.h"
 #include "mem.h"
 #define DECK_NAME_SIZE 0x18u
+
+#include "home/empty_screen.h"
+#include "home/deck_configuration.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -300,3 +306,18 @@ uint8_t CheckIfDeckHasCards(uint16_t hl)
 	return value == 0u ? 0x90u : 0x00u;
 }
 /* <<< factory CheckIfDeckHasCards */
+
+/* >>> factory FillBGMapLineWithA */
+void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint16_t de = BCCoordToBGMap0Address(b, c);
+	FillDEWithA(a, 20u, de);
+	if (gb_read8(wConsole_ADDR) != 0x02u)
+		return;
+	hBankVRAM = 1u;
+	gb_write8(0xFF4Fu, 1u);
+	FillDEWithA(0x04u, 20u, de);
+	hBankVRAM = 0u;
+	gb_write8(0xFF4Fu, 0u);
+}
+/* <<< factory FillBGMapLineWithA */
