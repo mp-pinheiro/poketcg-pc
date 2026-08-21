@@ -617,6 +617,7 @@ def subcommand_build():
     inv = load_inventory()
     routines_set, _ = load_routines()
     gate_data = load_gate()
+    commit = jj_commit_short()
     report = compute(inv, routines_set, gate_data)
     report["recent"] = recent_ports(inv)
     if FORECAST.is_file():
