@@ -202,3 +202,10 @@ GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void)
 	return GenerateTwoTypesEnergyBooster(0x63CDu);
 }
 /* <<< factory GenerateEnergyBoosterGrassPsychic */
+
+/* >>> factory GenerateEnergyBoosterLightningFire */
+GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void)
+{
+	return GenerateTwoTypesEnergyBooster(0x63C9u);
+}
+/* <<< factory GenerateEnergyBoosterLightningFire */

@@ -154,6 +154,14 @@ CASES["GenerateEnergyBoosterGrassPsychic"] = [
 ]
 # <<< factory GenerateEnergyBoosterGrassPsychic
 
+# >>> factory GenerateEnergyBoosterLightningFire
+CONTRACT["GenerateEnergyBoosterLightningFire"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True};
+CASES["GenerateEnergyBoosterLightningFire"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory GenerateEnergyBoosterLightningFire
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -224,3 +232,6 @@ MUTATIONS["GenerateRandomEnergy"] = {"source_symbol": "GenerateRandomEnergy", "b
 # >>> factory-mutation GenerateEnergyBoosterGrassPsychic
 MUTATIONS["GenerateEnergyBoosterGrassPsychic"] = {"source_symbol": "GenerateEnergyBoosterGrassPsychic", "before": "\treturn GenerateTwoTypesEnergyBooster(0x63CDu);", "after": "\treturn GenerateTwoTypesEnergyBooster(0x63CBu);", "case_ids": ["GenerateEnergyBoosterGrassPsychic-0", "GenerateEnergyBoosterGrassPsychic-1"]}
 # <<< factory-mutation GenerateEnergyBoosterGrassPsychic
+# >>> factory-mutation GenerateEnergyBoosterLightningFire
+MUTATIONS["GenerateEnergyBoosterLightningFire"] = {"source_symbol": "GenerateEnergyBoosterLightningFire", "before": "\treturn GenerateTwoTypesEnergyBooster(0x63C9u);", "after": "\treturn GenerateTwoTypesEnergyBooster(0x63CBu);", "case_ids": ["GenerateEnergyBoosterLightningFire-0", "GenerateEnergyBoosterLightningFire-1"]}
+# <<< factory-mutation GenerateEnergyBoosterLightningFire

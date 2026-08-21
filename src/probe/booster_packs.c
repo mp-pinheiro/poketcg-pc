@@ -116,6 +116,18 @@ static void adapt_GenerateEnergyBoosterGrassPsychic(ProbeState *s)
 }
 /* <<< factory GenerateEnergyBoosterGrassPsychic */
 
+/* >>> factory GenerateEnergyBoosterLightningFire */
+static void adapt_GenerateEnergyBoosterLightningFire(ProbeState *s)
+{
+	GenerateTwoTypesEnergyBoosterResult result = GenerateEnergyBoosterLightningFire();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory GenerateEnergyBoosterLightningFire */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -129,5 +141,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateTwoTypesEnergyBooster", adapt_GenerateTwoTypesEnergyBooster },
 	{ "GenerateRandomEnergy", adapt_GenerateRandomEnergy },
 	{ "GenerateEnergyBoosterGrassPsychic", adapt_GenerateEnergyBoosterGrassPsychic },
+	{ "GenerateEnergyBoosterLightningFire", adapt_GenerateEnergyBoosterLightningFire },
 	{ NULL, NULL },
 };

@@ -43,4 +43,7 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void);
 /* >>> factory GenerateEnergyBoosterGrassPsychic */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void);
 /* <<< factory GenerateEnergyBoosterGrassPsychic */
+/* >>> factory GenerateEnergyBoosterLightningFire */
+GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void);
+/* <<< factory GenerateEnergyBoosterLightningFire */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */
