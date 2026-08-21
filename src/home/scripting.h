@@ -325,4 +325,7 @@ typedef struct {
 
 ScriptCommand_JumpIfEventNotEqualResult ScriptCommand_JumpIfEventNotEqual(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_JumpIfEventNotEqual */
+/* >>> factory ScriptCommand_JumpIfEventNonzero */
+ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_JumpIfEventNonzero */
 #endif
