@@ -1210,6 +1210,15 @@ static void adapt_PracticeDuelVerify_Turn4(ProbeState *s)
 }
 /* <<< factory PracticeDuelVerify_Turn4 */
 
+/* >>> factory ShuffleDeckAndDrawSevenCards */
+static void adapt_ShuffleDeckAndDrawSevenCards(ProbeState *s)
+{
+	ShuffleDeckAndDrawSevenCardsResult r = ShuffleDeckAndDrawSevenCards();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ShuffleDeckAndDrawSevenCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1353,5 +1362,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SetupDuel", adapt_SetupDuel },
 	{ "PracticeDuelVerify_Turn6", adapt_PracticeDuelVerify_Turn6 },
 	{ "PracticeDuelVerify_Turn4", adapt_PracticeDuelVerify_Turn4 },
+	{ "ShuffleDeckAndDrawSevenCards", adapt_ShuffleDeckAndDrawSevenCards },
 	{ NULL, NULL },
 };

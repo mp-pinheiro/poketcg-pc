@@ -1382,6 +1382,9 @@ wPlayerDeck = 0xC400
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wPlayerDuelVariables = 0xC200
+
+hWhoseTurn = 0xFF97
+wDuelType = 0xCC09
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1591,6 +1594,14 @@ CASES["PracticeDuelVerify_Turn4"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x02"}),
 ]
 # <<< factory PracticeDuelVerify_Turn4
+
+# >>> factory ShuffleDeckAndDrawSevenCards
+CONTRACT["ShuffleDeckAndDrawSevenCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ShuffleDeckAndDrawSevenCards"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCC09: b"\x80"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCC09: b"\x80"}),
+]
+# <<< factory ShuffleDeckAndDrawSevenCards
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2502,3 +2513,6 @@ MUTATIONS["PracticeDuelVerify_Turn6"] = {"source_symbol": "PracticeDuelVerify_Tu
 # >>> factory-mutation PracticeDuelVerify_Turn4
 MUTATIONS["PracticeDuelVerify_Turn4"] = {"source_symbol": "PracticeDuelVerify_Turn4", "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)", "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)", "case_ids": ["PracticeDuelVerify_Turn4-0", "PracticeDuelVerify_Turn4-1", "PracticeDuelVerify_Turn4-2", "PracticeDuelVerify_Turn4-3", "PracticeDuelVerify_Turn4-4"]}
 # <<< factory-mutation PracticeDuelVerify_Turn4
+# >>> factory-mutation ShuffleDeckAndDrawSevenCards
+MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {"source_symbol": "ShuffleDeckAndDrawSevenCards", "before": "if (basic.a != 0u)", "after": "if (basic.a == 0u)", "case_ids": ["ShuffleDeckAndDrawSevenCards-0", "ShuffleDeckAndDrawSevenCards-1"]}
+# <<< factory-mutation ShuffleDeckAndDrawSevenCards

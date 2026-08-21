@@ -445,6 +445,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/duel.h"
 #define PLAY_AREA_BENCH_2 0x02u
 #define SEAKING 0x54u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_core_state.h"
+
+#define DUELTYPE_PRACTICE 0x80u
+#define DUELVARS_HAND 0x42u
+#define DUELVARS_DECK_CARDS 0x7Eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2852,3 +2860,30 @@ PracticeDuelVerifyTurn4Result PracticeDuelVerify_Turn4(void)
 	return (PracticeDuelVerifyTurn4Result){0xC0u};
 }
 /* <<< factory PracticeDuelVerify_Turn4 */
+
+/* >>> factory ShuffleDeckAndDrawSevenCards */
+ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void)
+{
+	(void)InitializeDuelVariables();
+	if (wDuelType != DUELTYPE_PRACTICE) {
+		(void)ShuffleDeck(0u, 0u);
+		(void)ShuffleDeck(0u, 0u);
+	}
+	for (uint8_t i = 0; i < 7u; i++) {
+		DrawCardResult draw = DrawCardFromDeck();
+		AddCardToHand(draw.a);
+	}
+	DuelistVarResult hand = GetTurnDuelistVariable(DUELVARS_HAND);
+	uint16_t cursor = hand.hl;
+	uint8_t any = 0u;
+	for (uint8_t i = 0; i < 7u; i++) {
+		uint8_t card = gb_read8(cursor++);
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
+		IsLoadedCard1BasicPokemonResult basic = IsLoadedCard1BasicPokemon();
+		if (basic.a != 0u)
+			any = 1u;
+	}
+	return any != 0u ? (ShuffleDeckAndDrawSevenCardsResult){1u, 0x00u}
+	                : (ShuffleDeckAndDrawSevenCardsResult){0u, 0x90u};
+}
+/* <<< factory ShuffleDeckAndDrawSevenCards */

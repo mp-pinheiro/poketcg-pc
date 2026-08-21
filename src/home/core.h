@@ -574,4 +574,8 @@ PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void);
 typedef struct { uint8_t f; } PracticeDuelVerifyTurn4Result;
 PracticeDuelVerifyTurn4Result PracticeDuelVerify_Turn4(void);
 /* <<< factory PracticeDuelVerify_Turn4 */
+/* >>> factory ShuffleDeckAndDrawSevenCards */
+typedef struct { uint8_t a; uint8_t f; } ShuffleDeckAndDrawSevenCardsResult;
+ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void);
+/* <<< factory ShuffleDeckAndDrawSevenCards */
 #endif
