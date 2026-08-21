@@ -37,6 +37,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 sCardCollection = 0xA100
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -652,6 +655,16 @@ CASES["GetEventValueBC"] = [
 ]
 # <<< factory GetEventValueBC
 
+# >>> factory ScriptCommand_JumpIfEventEqual
+CONTRACT["ScriptCommand_JumpIfEventEqual"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEventEqual"] = [
+    {"b": 0x42, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC503: b"\x34\x12"}, "read": {wScriptPointer: 2}},
+    dict(POISON, b=0x80, c=0x00, wram={0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEventEqual
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1043,3 +1056,11 @@ MUTATIONS["GetEventValueBC"] = {
     "case_ids": ["GetEventValueBC-0", "GetEventValueBC-1", "GetEventValueBC-2", "GetEventValueBC-3"],
 }
 # <<< factory-mutation GetEventValueBC
+# >>> factory-mutation ScriptCommand_JumpIfEventEqual
+MUTATIONS["ScriptCommand_JumpIfEventEqual"] = {
+    "source_symbol": "ScriptCommand_JumpIfEventEqual",
+    "before": "\tif (event.a != event.c) {",
+    "after": "\tif (event.a == event.c) {",
+    "case_ids": ["ScriptCommand_JumpIfEventEqual-0", "ScriptCommand_JumpIfEventEqual-1", "ScriptCommand_JumpIfEventEqual-2", "ScriptCommand_JumpIfEventEqual-3"],
+}
+# <<< factory-mutation ScriptCommand_JumpIfEventEqual

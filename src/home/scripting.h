@@ -270,4 +270,15 @@ typedef struct {
 
 GetEventValueBCResult GetEventValueBC(uint8_t b, uint8_t c);
 /* <<< factory GetEventValueBC */
+/* >>> factory ScriptCommand_JumpIfEventEqual */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} ScriptCommand_JumpIfEventEqualResult;
+
+ScriptCommand_JumpIfEventEqualResult ScriptCommand_JumpIfEventEqual(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_JumpIfEventEqual */
 #endif

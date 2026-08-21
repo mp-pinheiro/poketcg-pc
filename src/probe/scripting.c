@@ -551,6 +551,18 @@ static void adapt_GetEventValueBC(ProbeState *s)
 }
 /* <<< factory GetEventValueBC */
 
+/* >>> factory ScriptCommand_JumpIfEventEqual */
+static void adapt_ScriptCommand_JumpIfEventEqual(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventEqualResult r = ScriptCommand_JumpIfEventEqual(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventEqual */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -606,5 +618,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpBasedOnFightingClubPupilStatus", adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus },
 	{ "GetEventValue", adapt_GetEventValue },
 	{ "GetEventValueBC", adapt_GetEventValueBC },
+	{ "ScriptCommand_JumpIfEventEqual", adapt_ScriptCommand_JumpIfEventEqual },
 	{ NULL, NULL },
 };

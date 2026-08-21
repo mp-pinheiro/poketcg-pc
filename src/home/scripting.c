@@ -96,6 +96,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/scripting.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -798,3 +801,24 @@ GetEventValueBCResult GetEventValueBC(uint8_t b, uint8_t c)
 	return (GetEventValueBCResult){value, f, b};
 }
 /* <<< factory GetEventValueBC */
+
+/* >>> factory ScriptCommand_JumpIfEventEqual */
+ScriptCommand_JumpIfEventEqualResult ScriptCommand_JumpIfEventEqual(uint8_t b, uint8_t c, uint16_t hl)
+{
+	GetEventValueBCResult event = GetEventValueBC(b, c);
+	/* before */
+	if (event.a != event.c) {
+		(void)SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfEventEqualResult){r.a, r.f, event.c, r.c, hl};
+	}
+	(void)SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfEventEqualResult){r.a, r.f, args.b, r.c, hl};
+	}
+	uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfEventEqualResult){args.a, args.f, args.b, args.c, next_hl};
+}
+/* <<< factory ScriptCommand_JumpIfEventEqual */
