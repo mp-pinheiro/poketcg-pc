@@ -36,10 +36,19 @@ static void adapt_OverworldMap_UpdateCursorAnimation(ProbeState *s)
 }
 /* <<< factory OverworldMap_UpdateCursorAnimation */
 
+/* >>> factory OverworldMap_LoadSelectedMap */
+static void adapt_OverworldMap_LoadSelectedMap(ProbeState *s)
+{
+	(void)s;
+	OverworldMap_LoadSelectedMap();
+}
+/* <<< factory OverworldMap_LoadSelectedMap */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
 	{ "OverworldMap_InitVolcanoSprite", adapt_OverworldMap_InitVolcanoSprite },
 	{ "OverworldMap_UpdateCursorAnimation", adapt_OverworldMap_UpdateCursorAnimation },
+	{ "OverworldMap_LoadSelectedMap", adapt_OverworldMap_LoadSelectedMap },
 	{ NULL, NULL },
 };

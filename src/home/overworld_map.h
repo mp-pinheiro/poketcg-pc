@@ -21,4 +21,7 @@ void OverworldMap_InitVolcanoSprite(uint8_t f);
 /* >>> factory OverworldMap_UpdateCursorAnimation */
 void OverworldMap_UpdateCursorAnimation(void);
 /* <<< factory OverworldMap_UpdateCursorAnimation */
+/* >>> factory OverworldMap_LoadSelectedMap */
+void OverworldMap_LoadSelectedMap(void);
+/* <<< factory OverworldMap_LoadSelectedMap */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

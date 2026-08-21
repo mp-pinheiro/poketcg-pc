@@ -39,6 +39,10 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 
 /* wChallengeMachineOpponent is not exposed by generated/wram.h in this build. */
 #define wChallengeMachineOpponent_ADDR 0xD692u
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/switch_sram.h"
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -204,3 +208,21 @@ ChallengeMachineRecordResult ChallengeMachine_CheckForNewRecord(uint8_t b, uint8
 	return (ChallengeMachineRecordResult){ .hl = hl, .b = b, .c = c, .d = d, .e = e };
 }
 /* <<< factory ChallengeMachine_CheckForNewRecord */
+
+/* >>> factory ChallengeMachine_RecordDuelResult */
+void ChallengeMachine_RecordDuelResult(void)
+{
+	EnableSRAM();
+	uint8_t opponent = gb_read8(sChallengeMachineOpponentNumber_ADDR);
+	uint16_t result_address = (uint16_t)(sChallengeMachineDuelResults_ADDR + opponent);
+	uint8_t result = gb_read8(wDuelResult_ADDR);
+	if (result == 0u) {
+		gb_write8(result_address, 1u);
+		DisableSRAM();
+		(void)ChallengeMachine_IncrementHLMax999(sPresentConsecutiveWins_ADDR);
+		return;
+	}
+	gb_write8(result_address, 2u);
+	DisableSRAM();
+}
+/* <<< factory ChallengeMachine_RecordDuelResult */

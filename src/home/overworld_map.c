@@ -19,6 +19,27 @@
 
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
+
+#include "home/overworld_map.h"
+#include "generated/wram.h"
+
+#define NORTH 0x00u
+
+static const uint8_t overworld_map_warps[13][4] = {
+	{0x00u, 0x00u, 0x00u, 0x00u},
+	{0x01u, 0x0eu, 0x1au, 0x00u},
+	{0x03u, 0x08u, 0x14u, 0x00u},
+	{0x04u, 0x08u, 0x0eu, 0x00u},
+	{0x07u, 0x08u, 0x0eu, 0x00u},
+	{0x0au, 0x08u, 0x0eu, 0x00u},
+	{0x0du, 0x08u, 0x0eu, 0x00u},
+	{0x10u, 0x08u, 0x0eu, 0x00u},
+	{0x13u, 0x08u, 0x0eu, 0x00u},
+	{0x16u, 0x08u, 0x0eu, 0x00u},
+	{0x19u, 0x08u, 0x0eu, 0x00u},
+	{0x1cu, 0x08u, 0x0eu, 0x00u},
+	{0x1fu, 0x0eu, 0x0eu, 0x00u},
+};
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -89,3 +110,16 @@ void OverworldMap_UpdateCursorAnimation(void)
 	StartNewSpriteAnimation(animation);
 }
 /* <<< factory OverworldMap_UpdateCursorAnimation */
+
+/* >>> factory OverworldMap_LoadSelectedMap */
+void OverworldMap_LoadSelectedMap(void)
+{
+	uint8_t selection = wOverworldMapSelection;
+	const uint8_t *warp = overworld_map_warps[selection];
+	wTempMap = warp[0];
+	wTempPlayerXCoord = warp[1];
+	wTempPlayerYCoord = warp[2];
+	wTempPlayerDirection = NORTH;
+	wOverworldTransition |= 0x10u;
+}
+/* <<< factory OverworldMap_LoadSelectedMap */

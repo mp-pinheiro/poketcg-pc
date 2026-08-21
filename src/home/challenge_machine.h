@@ -43,4 +43,7 @@ typedef struct {
 
 ChallengeMachineRecordResult ChallengeMachine_CheckForNewRecord(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory ChallengeMachine_CheckForNewRecord */
+/* >>> factory ChallengeMachine_RecordDuelResult */
+void ChallengeMachine_RecordDuelResult(void);
+/* <<< factory ChallengeMachine_RecordDuelResult */
 #endif

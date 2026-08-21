@@ -195,6 +195,24 @@ CASES["ChallengeMachine_CheckForNewRecord"] = [
 ]
 # <<< factory ChallengeMachine_CheckForNewRecord
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+sChallengeMachineDuelResults = 0xBA50
+sChallengeMachineOpponentNumber = 0xBA55
+sPresentConsecutiveWins = 0xBA47
+wDuelResult = 0xD0C3
+# <<< factory-cases-statics
+
+# >>> factory ChallengeMachine_RecordDuelResult
+CONTRACT["ChallengeMachine_RecordDuelResult"] = {"compare": (), "preserve": ()}
+CASES["ChallengeMachine_RecordDuelResult"] = [
+    {"sram": {0: {sChallengeMachineDuelResults: b"\x00\x00\x00\x00\x00", sChallengeMachineOpponentNumber: b"\x00", sPresentConsecutiveWins: b"\x00\x00"}}, "wram": {wDuelResult: b"\x00"}, "sread": {0: {sChallengeMachineDuelResults: 5, sPresentConsecutiveWins: 2}}},
+    {"sram": {0: {sChallengeMachineDuelResults: b"\x00\x00\x00\x00\x00", sChallengeMachineOpponentNumber: b"\x03", sPresentConsecutiveWins: b"\x07\x00"}}, "wram": {wDuelResult: b"\x01"}, "sread": {0: {sChallengeMachineDuelResults: 5, sPresentConsecutiveWins: 2}}},
+    dict(POISON, sram={0: {sChallengeMachineDuelResults: b"\x11\x22\x33\x44\x55", sChallengeMachineOpponentNumber: b"\x02", sPresentConsecutiveWins: b"\xE6\x03"}}, wram={wDuelResult: b"\x00"}, sread={0: {sChallengeMachineDuelResults: 5, sPresentConsecutiveWins: 2}}),
+    {"ramg": False, "sram": {0: {sChallengeMachineDuelResults: b"\x00\x00\x00\x00\x00", sChallengeMachineOpponentNumber: b"\x01", sPresentConsecutiveWins: b"\x00\x00"}}, "wram": {wDuelResult: b"\x01"}, "sread": {0: {sChallengeMachineDuelResults: 5, sPresentConsecutiveWins: 2}}},
+]
+# <<< factory ChallengeMachine_RecordDuelResult
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -245,3 +263,6 @@ MUTATIONS["ChallengeMachine_CheckForNewRecord"] = {
     "case_ids": ["ChallengeMachine_CheckForNewRecord-0", "ChallengeMachine_CheckForNewRecord-5"],
 }
 # <<< factory-mutation ChallengeMachine_CheckForNewRecord
+# >>> factory-mutation ChallengeMachine_RecordDuelResult
+MUTATIONS["ChallengeMachine_RecordDuelResult"] = {"source_symbol": "ChallengeMachine_RecordDuelResult", "before": "\tif (result == 0u) {", "after": "\tif (result != 0u) {", "case_ids": ["ChallengeMachine_RecordDuelResult-0", "ChallengeMachine_RecordDuelResult-1", "ChallengeMachine_RecordDuelResult-2", "ChallengeMachine_RecordDuelResult-3"]}
+# <<< factory-mutation ChallengeMachine_RecordDuelResult

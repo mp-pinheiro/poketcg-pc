@@ -34,6 +34,13 @@ wConsole = 0xCAB4
 wOverworldMapCursorAnimation = 0xD33C
 wOverworldMapCursorSprite = 0xD33B
 wWhichSprite = 0xD4CF
+
+wOverworldMapSelection = 0xD32E
+wOverworldTransition = 0xD0B4
+wTempMap = 0xD0BB
+wTempPlayerXCoord = 0xD0BC
+wTempPlayerYCoord = 0xD0BD
+wTempPlayerDirection = 0xD0BE
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -53,6 +60,16 @@ CASES["OverworldMap_UpdateCursorAnimation"] = [
 ]
 # <<< factory OverworldMap_UpdateCursorAnimation
 
+# >>> factory OverworldMap_LoadSelectedMap
+CONTRACT["OverworldMap_LoadSelectedMap"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_LoadSelectedMap"] = [
+    {"wram": {wOverworldMapSelection: b"\x00", wOverworldTransition: b"\xa0", wTempMap: b"\xff", wTempPlayerXCoord: b"\xff", wTempPlayerYCoord: b"\xff", wTempPlayerDirection: b"\xff"}, "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1, wTempPlayerDirection: 1, wOverworldTransition: 1}},
+    {"wram": {wOverworldMapSelection: b"\x01", wOverworldTransition: b"\x01", wTempMap: b"\x00", wTempPlayerXCoord: b"\x00", wTempPlayerYCoord: b"\x00", wTempPlayerDirection: b"\xff"}, "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1, wTempPlayerDirection: 1, wOverworldTransition: 1}},
+    {"wram": {wOverworldMapSelection: b"\x0c", wOverworldTransition: b"\x00", wTempMap: b"\x55", wTempPlayerXCoord: b"\x55", wTempPlayerYCoord: b"\x55", wTempPlayerDirection: b"\x55"}, "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1, wTempPlayerDirection: 1, wOverworldTransition: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wOverworldMapSelection: b"\x02", wOverworldTransition: b"\x01", wTempMap: b"\x00", wTempPlayerXCoord: b"\x00", wTempPlayerYCoord: b"\x00", wTempPlayerDirection: b"\xff"}, "read": {wTempMap: 1, wTempPlayerXCoord: 1, wTempPlayerYCoord: 1, wTempPlayerDirection: 1, wOverworldTransition: 1}},
+]
+# <<< factory OverworldMap_LoadSelectedMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -69,3 +86,6 @@ MUTATIONS["OverworldMap_InitVolcanoSprite"] = {"source_symbol": "OverworldMap_In
 # >>> factory-mutation OverworldMap_UpdateCursorAnimation
 MUTATIONS["OverworldMap_UpdateCursorAnimation"] = {"source_symbol": "OverworldMap_UpdateCursorAnimation", "before": "\twWhichSprite = wOverworldMapCursorSprite;", "after": "\twWhichSprite = (uint8_t)(wOverworldMapCursorSprite + 1u);", "case_ids": ["OverworldMap_UpdateCursorAnimation-0", "OverworldMap_UpdateCursorAnimation-1", "OverworldMap_UpdateCursorAnimation-2"]};
 # <<< factory-mutation OverworldMap_UpdateCursorAnimation
+# >>> factory-mutation OverworldMap_LoadSelectedMap
+MUTATIONS["OverworldMap_LoadSelectedMap"] = {"source_symbol": "OverworldMap_LoadSelectedMap", "before": "	uint8_t selection = wOverworldMapSelection;", "after": "	uint8_t selection = (uint8_t)(wOverworldMapSelection + 1u);", "case_ids": ["OverworldMap_LoadSelectedMap-0", "OverworldMap_LoadSelectedMap-1", "OverworldMap_LoadSelectedMap-2", "OverworldMap_LoadSelectedMap-3"]}
+# <<< factory-mutation OverworldMap_LoadSelectedMap
