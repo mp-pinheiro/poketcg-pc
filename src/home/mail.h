@@ -32,4 +32,7 @@ void PrintEmptyPCPackName(uint8_t pack);
 /* >>> factory UpdateMailMenuCursor */
 void UpdateMailMenuCursor(void);
 /* <<< factory UpdateMailMenuCursor */
+/* >>> factory PCMailHandleDPadInput */
+void PCMailHandleDPadInput(void);
+/* <<< factory PCMailHandleDPadInput */
 #endif

@@ -86,6 +86,9 @@ CASES["PrintEmptyPCPackName"] = [
 
 # >>> factory-cases-statics
 wCursorBlinkTimer = 0xD11C
+
+hDPadHeld = 0xFF8F
+wPCLastDirectionPressed = 0xD12D
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -96,6 +99,15 @@ CASES["UpdateMailMenuCursor"] = [
 	dict(POISON, wram={0xD11C: b"\x0f", wPCPackSelection: b"\x07"}, vread={0: {0x98c7: 1}, 1: {0x98c7: 1}}),
 ]
 # <<< factory UpdateMailMenuCursor
+
+# >>> factory PCMailHandleDPadInput
+CONTRACT["PCMailHandleDPadInput"] = {"compare": (), "preserve": ()}
+CASES["PCMailHandleDPadInput"] = [
+    {"hDPadHeld": 0, "wram": {hDPadHeld: b"\x00", wPCPackSelection: b"\x00", wCursorBlinkTimer: b"\xAA"}, "read": {wPCPackSelection: 1, wCursorBlinkTimer: 1}},
+    {"hDPadHeld": 0x10, "wram": {hDPadHeld: b"\x10", wPCPackSelection: b"\x00", wPCPacks: bytes([1] * 15), wCursorBlinkTimer: b"\xAA"}, "read": {wPCLastDirectionPressed: 1, wPCPackSelection: 1, wCursorBlinkTimer: 1}, "vread": {0: {0x9841: 1, 0x9847: 1}, 1: {0x9841: 1, 0x9847: 1}}},
+    dict(POISON, hDPadHeld=0x40, wram={hDPadHeld: b"\x40", wPCPackSelection: b"\x0E", wPCPacks: bytes([1] * 15), wCursorBlinkTimer: b"\xAA"}, read={wPCLastDirectionPressed: 0, wPCPackSelection: 11, wCursorBlinkTimer: 1}, vread={0: {0x994D: 1, 0x9901: 1}, 1: {0x994D: 1, 0x9901: 1}}),
+]
+# <<< factory PCMailHandleDPadInput
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -174,3 +186,6 @@ MUTATIONS["UpdateMailMenuCursor"] = {
 	"case_ids": ["UpdateMailMenuCursor-1", "UpdateMailMenuCursor-0", "UpdateMailMenuCursor-2"],
 }
 # <<< factory-mutation UpdateMailMenuCursor
+# >>> factory-mutation PCMailHandleDPadInput
+MUTATIONS["PCMailHandleDPadInput"] = {"source_symbol": "PCMailHandleDPadInput", "before": "if ((gb_read8(hDPadHeld_ADDR) & PAD_CTRL_PAD) == 0u)", "after": "if ((gb_read8(hDPadHeld_ADDR) & 0x00u) == 0u)", "case_ids": ["PCMailHandleDPadInput-1", "PCMailHandleDPadInput-2"]}
+# <<< factory-mutation PCMailHandleDPadInput

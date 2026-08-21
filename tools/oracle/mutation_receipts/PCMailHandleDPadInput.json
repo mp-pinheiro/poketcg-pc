@@ -1,0 +1,9 @@
+{
+  "fn": "PCMailHandleDPadInput",
+  "case": "tests/cases/mail.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PCMailHandleDPadInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"00\", \"38983\": \"0f\"}, \"1\": {\"38977\": \"00\", \"38983\": \"00\"}}, \"wram\": {\"53532\": \"000101010101010101010101010101010101\", \"65423\": \"10\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PCMailHandleDPadInput\", \"mismatches\": {\"bus\": {\"address\": 53532, \"reference\": \"0001010101\", \"native\": \"aa00010101\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[53532, 18], [65423, 1]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PCMailHandleDPadInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"00\", \"38983\": \"0f\"}, \"1\": {\"38977\": \"00\", \"38983\": \"00\"}}, \"wram\": {\"53532\": \"000101010101010101010101010101010101\", \"65423\": \"10\"}}, \"status\": \"PASS\"}\n"
+}

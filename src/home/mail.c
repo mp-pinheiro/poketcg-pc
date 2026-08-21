@@ -10,6 +10,15 @@
 #define SYM_CURSOR_R 0x0Fu
 #define SYM_SPACE 0x00u
 #define EMPTY_MAIL_NAME_TEXT 0x035Cu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/overworld.h"
+#include "home/sound.h"
+
+#define NUM_MAILS 0x0Fu
+#define PAD_CTRL_PAD 0xF0u
+#define SFX_CURSOR 0x01u
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -132,3 +141,44 @@ void UpdateMailMenuCursor(void)
 		HideMailMenuCursor();
 }
 /* <<< factory UpdateMailMenuCursor */
+
+/* >>> factory PCMailHandleDPadInput */
+void PCMailHandleDPadInput(void)
+{
+	static const uint8_t transition[15][4] = {
+		{0x0c, 0x01, 0x03, 0x02},
+		{0x0d, 0x02, 0x04, 0x00},
+		{0x0e, 0x00, 0x05, 0x01},
+		{0x00, 0x04, 0x06, 0x05},
+		{0x01, 0x05, 0x07, 0x03},
+		{0x02, 0x03, 0x08, 0x04},
+		{0x03, 0x07, 0x09, 0x08},
+		{0x04, 0x08, 0x0a, 0x06},
+		{0x05, 0x06, 0x0b, 0x07},
+		{0x06, 0x0a, 0x0c, 0x0b},
+		{0x07, 0x0b, 0x0d, 0x09},
+		{0x08, 0x09, 0x0e, 0x0a},
+		{0x09, 0x0d, 0x00, 0x0e},
+		{0x0a, 0x0e, 0x01, 0x0c},
+		{0x0b, 0x0c, 0x02, 0x0d},
+	};
+	if ((gb_read8(hDPadHeld_ADDR) & PAD_CTRL_PAD) == 0u)
+		return;
+	GetDirectionFromDPadResult direction = GetDirectionFromDPad(gb_read8(hDPadHeld_ADDR));
+	gb_write8(wPCLastDirectionPressed_ADDR, direction.a);
+	uint8_t previous = gb_read8(wPCPackSelection_ADDR);
+	HideMailMenuCursor();
+	for (;;) {
+		uint8_t selection = gb_read8(wPCPackSelection_ADDR);
+		uint8_t next = transition[selection][direction.a];
+		gb_write8(wPCPackSelection_ADDR, next);
+		if (gb_read8((uint16_t)(wPCPacks_ADDR + next)) != 0u)
+			break;
+	}
+	uint8_t selection = gb_read8(wPCPackSelection_ADDR);
+	if (selection != previous)
+		PlaySFX(SFX_CURSOR);
+	ShowMailMenuCursor();
+	gb_write8(wCursorBlinkTimer_ADDR, 0u);
+}
+/* <<< factory PCMailHandleDPadInput */
