@@ -2322,6 +2322,13 @@ static void adapt_JolteonDoubleKick_AIEffect(ProbeState *s)
 }
 /* <<< factory JolteonDoubleKick_AIEffect */
 
+/* >>> factory RapidashStomp_AIEffect */
+static void adapt_RapidashStomp_AIEffect(ProbeState *s)
+{
+	RapidashStomp_AIEffect();
+}
+/* <<< factory RapidashStomp_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2610,5 +2617,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Potion_DamageCheck", adapt_Potion_DamageCheck },
 	{ "CloysterSpikeCannon_AIEffect", adapt_CloysterSpikeCannon_AIEffect },
 	{ "JolteonDoubleKick_AIEffect", adapt_JolteonDoubleKick_AIEffect },
+	{ "RapidashStomp_AIEffect", adapt_RapidashStomp_AIEffect },
 	{ NULL, NULL },
 };

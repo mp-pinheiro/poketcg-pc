@@ -2532,6 +2532,18 @@ CASES["JolteonDoubleKick_AIEffect"] = [
 ]
 # <<< factory JolteonDoubleKick_AIEffect
 
+# >>> factory RapidashStomp_AIEffect
+CONTRACT["RapidashStomp_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["RapidashStomp_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory RapidashStomp_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4245,3 +4257,11 @@ MUTATIONS["CloysterSpikeCannon_AIEffect"] = {"source_symbol": "CloysterSpikeCann
 # >>> factory-mutation JolteonDoubleKick_AIEffect
 MUTATIONS["JolteonDoubleKick_AIEffect"] = {"source_symbol": "JolteonDoubleKick_AIEffect", "before": "\tSetExpectedAIDamage(20u, 0u, 40u);", "after": "\tSetExpectedAIDamage(21u, 0u, 40u);", "case_ids": ["JolteonDoubleKick_AIEffect-0", "JolteonDoubleKick_AIEffect-1", "JolteonDoubleKick_AIEffect-2"]}
 # <<< factory-mutation JolteonDoubleKick_AIEffect
+# >>> factory-mutation RapidashStomp_AIEffect
+MUTATIONS["RapidashStomp_AIEffect"] = {
+    "source_symbol": "RapidashStomp_AIEffect",
+    "before": "\tSetExpectedAIDamage(25u, 20u, 30u);",
+    "after": "\tSetExpectedAIDamage(26u, 20u, 30u);",
+    "case_ids": ["RapidashStomp_AIEffect-0", "RapidashStomp_AIEffect-1", "RapidashStomp_AIEffect-2"],
+}
+# <<< factory-mutation RapidashStomp_AIEffect

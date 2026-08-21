@@ -1,0 +1,9 @@
+{
+  "fn": "RapidashStomp_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RapidashStomp_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"1900141e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RapidashStomp_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"1900141e\", \"native\": \"1a00141e\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52409, 4]]}}}\n",
+  "restored": "{\"fn\": \"RapidashStomp_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"1900141e\"}}, \"status\": \"PASS\"}\n"
+}

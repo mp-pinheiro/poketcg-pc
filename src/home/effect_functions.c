@@ -3988,3 +3988,10 @@ void JolteonDoubleKick_AIEffect(void)
 	SetExpectedAIDamage(20u, 0u, 40u);
 }
 /* <<< factory JolteonDoubleKick_AIEffect */
+
+/* >>> factory RapidashStomp_AIEffect */
+void RapidashStomp_AIEffect(void)
+{
+	SetExpectedAIDamage(25u, 20u, 30u);
+}
+/* <<< factory RapidashStomp_AIEffect */
