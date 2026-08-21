@@ -529,3 +529,22 @@ void SetNextScript(uint16_t bc)
 	wOverworldMode = 0x03u;
 }
 /* <<< factory SetNextScript */
+
+/* >>> factory SetEventValue */
+SetEventValueResult SetEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
+{
+	GetEventVarResult event = GetEventVar(a, f, b, c);
+	uint16_t addr = event.hl;
+	uint8_t mask = gb_read8(wLoadedEventBits_ADDR);
+	uint8_t value = c;
+	while ((mask & 1u) == 0) {
+		mask = (uint8_t)(mask >> 1);
+		value = (uint8_t)(value << 1);
+	}
+	uint8_t loaded = gb_read8(wLoadedEventBits_ADDR);
+	uint8_t selected = (uint8_t)(loaded & value);
+	uint8_t result = (uint8_t)((gb_read8(addr) & (uint8_t)~loaded) | selected);
+	gb_write8(addr, result);
+	return (SetEventValueResult){result, result == 0 ? 0x80u : 0u};
+}
+/* <<< factory SetEventValue */

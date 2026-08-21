@@ -183,4 +183,8 @@ GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void);
 /* >>> factory SetNextScript */
 void SetNextScript(uint16_t bc);
 /* <<< factory SetNextScript */
+/* >>> factory SetEventValue */
+typedef struct { uint8_t a; uint8_t f; } SetEventValueResult;
+SetEventValueResult SetEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c);
+/* <<< factory SetEventValue */
 #endif

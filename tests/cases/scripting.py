@@ -443,6 +443,20 @@ CASES["SetNextScript"] = [
 ]
 # <<< factory SetNextScript
 
+# >>> factory SetEventValue
+CONTRACT["SetEventValue"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["SetEventValue"] = [
+    {"a": 0, "c": 0, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    dict(POISON, a=1, c=0x5A, read={wLoadedEventBits: 1, wEventVars: 64}),
+    {"a": 0x7F, "c": 0xFF, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    {"a": 0x80, "c": 0x01, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+    {"a": 0xFF, "c": 0xA5, "read": {wLoadedEventBits: 1, wEventVars: 64}},
+]
+# <<< factory SetEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -709,3 +723,11 @@ MUTATIONS["GetScriptArgs1AfterPointer"] = {"source_symbol": "GetScriptArgs1After
 # >>> factory-mutation SetNextScript
 MUTATIONS["SetNextScript"] = {"source_symbol": "SetNextScript", "before": "wNextScript_PTR[1] = (uint8_t)(bc >> 8);", "after": "wNextScript_PTR[1] = (uint8_t)(bc >> 8) + 1u;", "case_ids": ["SetNextScript-0", "SetNextScript-1", "SetNextScript-2"]}
 # <<< factory-mutation SetNextScript
+# >>> factory-mutation SetEventValue
+MUTATIONS["SetEventValue"] = {
+    "source_symbol": "SetEventValue",
+    "before": "\tuint8_t value = c;",
+    "after": "\tuint8_t value = (uint8_t)(c ^ 1u);",
+    "case_ids": ["SetEventValue-0", "SetEventValue-1", "SetEventValue-2", "SetEventValue-3", "SetEventValue-4"],
+}
+# <<< factory-mutation SetEventValue

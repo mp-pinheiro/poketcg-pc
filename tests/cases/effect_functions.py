@@ -2297,6 +2297,24 @@ CASES["HypnoDarkMind_AISelectEffect"] = [
 ]
 # <<< factory HypnoDarkMind_AISelectEffect
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wOpponentDuelVariables = 0xC300
+wOpponentDeck = 0xC480
+DUELVARS_ARENA_CARD = 0xBB
+SNORLAX = 0xBE
+BULBASAUR = 0x08
+# <<< factory-cases-statics
+
+# >>> factory AIPickAttackForAmnesia
+CONTRACT["AIPickAttackForAmnesia"] = {"compare": ("a",), "preserve": ()}
+CASES["AIPickAttackForAmnesia"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((BULBASAUR,))}, "read": {hWhoseTurn: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((SNORLAX,))}, "read": {hWhoseTurn: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((SNORLAX,))}, read={hWhoseTurn: 1}),
+]
+# <<< factory AIPickAttackForAmnesia
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3902,3 +3920,6 @@ MUTATIONS["EnergyConversion_AISelectEffect"] = {"source_symbol": "EnergyConversi
 # >>> factory-mutation HypnoDarkMind_AISelectEffect
 MUTATIONS["HypnoDarkMind_AISelectEffect"] = {"source_symbol": "HypnoDarkMind_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, 0xffu);", "after": "gb_write8(hTemp_ffa0_ADDR, 0u);", "case_ids": ["HypnoDarkMind_AISelectEffect-0", "HypnoDarkMind_AISelectEffect-1", "HypnoDarkMind_AISelectEffect-2"]}
 # <<< factory-mutation HypnoDarkMind_AISelectEffect
+# >>> factory-mutation AIPickAttackForAmnesia
+MUTATIONS["AIPickAttackForAmnesia"] = {"source_symbol": "AIPickAttackForAmnesia", "before": "\t\tif (check.f & 0x10u) {", "after": "\t\tif (!(check.f & 0x10u)) {", "case_ids": ["AIPickAttackForAmnesia-0", "AIPickAttackForAmnesia-1"]}
+# <<< factory-mutation AIPickAttackForAmnesia

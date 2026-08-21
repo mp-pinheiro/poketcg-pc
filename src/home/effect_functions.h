@@ -901,6 +901,9 @@ void EnergyConversion_AISelectEffect(void);
 /* >>> factory HypnoDarkMind_AISelectEffect */
 void HypnoDarkMind_AISelectEffect(void);
 /* <<< factory HypnoDarkMind_AISelectEffect */
+/* >>> factory AIPickAttackForAmnesia */
+uint8_t AIPickAttackForAmnesia(void);
+/* <<< factory AIPickAttackForAmnesia */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

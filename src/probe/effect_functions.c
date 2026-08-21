@@ -2160,6 +2160,13 @@ static void adapt_HypnoDarkMind_AISelectEffect(ProbeState *s)
 }
 /* <<< factory HypnoDarkMind_AISelectEffect */
 
+/* >>> factory AIPickAttackForAmnesia */
+static void adapt_AIPickAttackForAmnesia(ProbeState *s)
+{
+	s->a = AIPickAttackForAmnesia();
+}
+/* <<< factory AIPickAttackForAmnesia */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2427,5 +2434,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HypnoDarkMind_AISelectEffect", adapt_HypnoDarkMind_AISelectEffect },
 	{ "DreamEaterEffect", adapt_DreamEaterEffect },
 	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
+	{ "AIPickAttackForAmnesia", adapt_AIPickAttackForAmnesia },
 	{ NULL, NULL },
 };

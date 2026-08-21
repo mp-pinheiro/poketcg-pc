@@ -231,6 +231,15 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define ATK_ANIM_GLOW_EFFECT 0x5bu
 
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/card_color.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define SECOND_ATTACK 0x01u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3749,3 +3758,32 @@ void HypnoDarkMind_AISelectEffect(void)
 	gb_write8(hTemp_ffa0_ADDR, target.a);
 }
 /* <<< factory HypnoDarkMind_AISelectEffect */
+
+/* >>> factory AIPickAttackForAmnesia */
+uint8_t AIPickAttackForAmnesia(void)
+{
+	uint8_t attack = FIRST_ATTACK_OR_PKMN_POWER;
+	SwapTurn();
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	HandleEnergyBurn();
+	uint8_t arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	LoadCardDataToBuffer2_FromDeckIndex(arena);
+	if ((uint16_t)wLoadedCard2Atk1Name_ADDR == 0u)
+		goto chosen;
+	{
+		CheckIfEnoughEnergiesForGivenAttackResult check =
+			CheckIfEnoughEnergiesForGivenAttack(arena, SECOND_ATTACK);
+		if (check.f & 0x10u) {
+			attack = SECOND_ATTACK;
+			goto chosen;
+		}
+	}
+	if (wLoadedCard2Atk1Category != POKEMON_POWER)
+		attack = FIRST_ATTACK_OR_PKMN_POWER;
+	else
+		attack = SECOND_ATTACK;
+chosen:
+	SwapTurn();
+	return attack;
+}
+/* <<< factory AIPickAttackForAmnesia */
