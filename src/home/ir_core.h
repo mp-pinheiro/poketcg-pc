@@ -25,4 +25,7 @@ typedef struct {
 } TransmitIRBitResult;
 TransmitIRBitResult TransmitIRBit(uint8_t a, uint8_t f, uint16_t hl);
 /* <<< factory TransmitIRBit */
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet2 */
+ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet2(void);
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet2 */
 #endif /* POKETCG_HOME_IR_CORE_H */

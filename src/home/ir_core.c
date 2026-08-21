@@ -76,3 +76,11 @@ TransmitIRBitResult TransmitIRBit(uint8_t a, uint8_t f, uint16_t hl)
 	return (TransmitIRBitResult){0x00u, flags};
 }
 /* <<< factory TransmitIRBit */
+
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet2 */
+ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet2(void)
+{
+	ReturnZFlagUnsetAndCarryFlagSetResult result = ReturnZFlagUnsetAndCarryFlagSet();
+	return result;
+}
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet2 */

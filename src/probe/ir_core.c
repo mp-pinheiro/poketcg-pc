@@ -42,10 +42,20 @@ static void adapt_TransmitIRBit(ProbeState *s)
 }
 /* <<< factory TransmitIRBit */
 
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet2 */
+static void adapt_ReturnZFlagUnsetAndCarryFlagSet2(ProbeState *s)
+{
+	ReturnZFlagUnsetAndCarryFlagSetResult result = ReturnZFlagUnsetAndCarryFlagSet2();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet2 */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
 	{ "ReturnZFlagUnsetAndCarryFlagSet", adapt_ReturnZFlagUnsetAndCarryFlagSet },
 	{ "TransmitIRBit", adapt_TransmitIRBit },
+	{ "ReturnZFlagUnsetAndCarryFlagSet2", adapt_ReturnZFlagUnsetAndCarryFlagSet2 },
 	{ NULL, NULL },
 };
