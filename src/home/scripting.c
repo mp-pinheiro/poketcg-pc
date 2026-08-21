@@ -600,3 +600,11 @@ IncreaseScriptPointerResult ScriptCommand_ZeroOutEventValue(uint8_t f, uint8_t b
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_ZeroOutEventValue */
+
+/* >>> factory ScriptCommand_SetEventValue */
+IncreaseScriptPointerResult ScriptCommand_SetEventValue(uint8_t f, uint8_t b, uint8_t c)
+{
+	(void)SetEventValue(c, f, b, c);
+	return IncreaseScriptPointerBy3();
+}
+/* <<< factory ScriptCommand_SetEventValue */

@@ -534,6 +534,17 @@ CASES["ScriptCommand_ZeroOutEventValue"] = [
 ]
 # <<< factory ScriptCommand_ZeroOutEventValue
 
+# >>> factory ScriptCommand_SetEventValue
+CONTRACT["ScriptCommand_SetEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_SetEventValue"] = [
+    {"c": 0, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    dict(POISON, c=1, wram={wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, read={wScriptPointer: 2, wEventVars: 0x40}),
+    {"c": 0x7F, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0x80, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0xFF, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+]
+# <<< factory ScriptCommand_SetEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -856,3 +867,11 @@ MUTATIONS["ScriptCommand_ZeroOutEventValue"] = {
     "case_ids": ["ScriptCommand_ZeroOutEventValue-0", "ScriptCommand_ZeroOutEventValue-1", "ScriptCommand_ZeroOutEventValue-2", "ScriptCommand_ZeroOutEventValue-3", "ScriptCommand_ZeroOutEventValue-4"],
 }
 # <<< factory-mutation ScriptCommand_ZeroOutEventValue
+# >>> factory-mutation ScriptCommand_SetEventValue
+MUTATIONS["ScriptCommand_SetEventValue"] = {
+    "source_symbol": "ScriptCommand_SetEventValue",
+    "before": "\t(void)SetEventValue(c, f, b, c);",
+    "after": "\t(void)SetEventValue((uint8_t)(c + 1u), f, b, c);",
+    "case_ids": ["ScriptCommand_SetEventValue-0", "ScriptCommand_SetEventValue-1", "ScriptCommand_SetEventValue-2", "ScriptCommand_SetEventValue-3", "ScriptCommand_SetEventValue-4"],
+}
+# <<< factory-mutation ScriptCommand_SetEventValue
