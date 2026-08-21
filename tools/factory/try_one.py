@@ -51,7 +51,7 @@ def resolve(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
 
 
 def dispatch_line(fn: str, run_dir: Path, index: int) -> str:
-    return (f"task(agent=\"port-worker\", task=\"Read {run_dir / 'prompt.txt'} and write the "
+    return (f"task(agent=\"port-candidate\", task=\"Read {run_dir / 'prompt.txt'} and write the "
             f"TranslationReplyV2 JSON object it asks for to "
             f"{run_dir / f'candidate-{index}.json'}. Emit no prose.\")")
 
@@ -132,6 +132,78 @@ def _reuse(path: Path, fresh: dict[str, Any]) -> dict[str, Any]:
     return common.validate_packet(previous) if same else fresh
 
 
+def _prepare(fn: str) -> tuple[dict[str, Any], dict[str, Any], Path]:
+    """Resolve one routine, render its prompt, persist its packet."""
+    run_dir = TRY_ROOT / fn
+    run_dir.mkdir(parents=True, exist_ok=True)
+    routine, built = resolve(fn)
+    stored_packet = run_dir / "packet.json"
+    built = _reuse(stored_packet, built)
+    (run_dir / "prompt.txt").write_text(prompt_mod.render(built))
+    stored_packet.write_text(json.dumps(built, sort_keys=True, indent=2))
+    return routine, built, run_dir
+
+
+def subcommand_next(count: int, retry_red: bool) -> int:
+    """Prepare prompts for the next ready routines, most unblocking first."""
+    report = packet_mod.report_module()
+    records = report.compute(report.load_inventory(), report.load_routines()[0],
+                             report.load_gate())["work_records"]
+    ready = [r for r in records if r["state"] == "ready" and not r["operational_blocker"]]
+    attempted = {
+        routine.get("name")
+        for record in workers.artifact_records()
+        for routine in (record.get("identity") or {}).get("routines") or []
+        if isinstance(routine, dict)
+    }
+    pool = []
+    for row in ready:
+        if row["name"] in attempted:
+            continue
+        result_path = TRY_ROOT / row["name"] / "result.json"
+        if result_path.is_file():
+            if not retry_red:
+                continue
+            try:
+                recorded = json.loads(result_path.read_text())
+            except (OSError, json.JSONDecodeError):
+                recorded = {}
+            if any(entry.get("outcome") == "productive"
+                   for entry in recorded.get("results") or []):
+                continue
+        pool.append(row)
+
+    functions, _inventory = packet_mod.compute_functions()
+    graph, dependents = packet_mod.blocker_graph(functions)
+    scored = sorted(
+        ((packet_mod.cascade(graph, dependents, {row["name"]}), row) for row in pool),
+        key=lambda item: (-item[0], item[1]["size"], item[1]["name"]),
+    )
+    seen: set[str] = set()
+    selected: list[tuple[dict[str, Any], int, str]] = []
+    for cascade, row in scored:
+        stem = Path(row["source"]).stem
+        if stem in seen:
+            continue
+        seen.add(stem)
+        selected.append((row, cascade, stem))
+        if len(selected) == count:
+            break
+
+    for index, (row, cascade, stem) in enumerate(selected):
+        lane = 700 + 10 * index
+        fn = row["name"]
+        try:
+            _prepare(fn)
+        except (LookupError, OSError, RuntimeError, ValueError) as exc:
+            print(f"NEXT {fn} red detail={exc}")
+            continue
+        print(f"NEXT {fn} lane={lane} size={row['size']}B basename={stem} cascade={cascade}")
+        print(f"python3 tools/factory/try_one.py --fn {fn} --candidates 3 --lane {lane}")
+    print(f"NEXT selected={len(selected)} pool={len(ready)}")
+    return 0 if selected else 3
+
+
 def summarize() -> int:
     """Print the stop/go gate result over every recorded run."""
     records = []
@@ -172,24 +244,26 @@ def main(argv: list[str] | None = None) -> int:
                         help="verify this recorded reply instead of polling for candidates")
     parser.add_argument("--wait", type=float, default=0.0,
                         help="seconds to wait for each candidate-<i>.json")
+    parser.add_argument("--next", type=int, nargs="?", const=4, default=None,
+                        help="prepare prompts for the next N ready routines")
+    parser.add_argument("--retry-red", action="store_true",
+                        help="with --next, re-include routines whose recorded runs are all red")
     arguments = parser.parse_args(argv)
 
     fn = arguments.fn
+    if arguments.next is not None and fn:
+        parser.error("--next and --fn are mutually exclusive")
     if arguments.summary:
         return summarize()
-    if not arguments.fn:
-        parser.error("--fn is required unless --summary is given")
-    run_dir = TRY_ROOT / fn
-    run_dir.mkdir(parents=True, exist_ok=True)
+    if arguments.next is not None:
+        return subcommand_next(arguments.next, arguments.retry_red)
+    if not fn:
+        parser.error("--fn is required unless --summary or --next is given")
     try:
-        routine, built = resolve(fn)
+        routine, built, run_dir = _prepare(fn)
     except (LookupError, OSError, RuntimeError, ValueError) as exc:
         print(f"TRY {fn} red phases=['resolve'] detail={exc}")
         return 2
-    stored_packet = run_dir / "packet.json"
-    built = _reuse(stored_packet, built)
-    (run_dir / "prompt.txt").write_text(prompt_mod.render(built))
-    stored_packet.write_text(json.dumps(built, sort_keys=True, indent=2))
 
     replies: list[tuple[int, dict[str, Any] | None, str]] = []
     if arguments.reply is not None:
