@@ -140,6 +140,15 @@ static void adapt_GenerateEnergyBoosterWaterFighting(ProbeState *s)
 }
 /* <<< factory GenerateEnergyBoosterWaterFighting */
 
+/* >>> factory GenerateRandomEnergyBooster */
+static void adapt_GenerateRandomEnergyBooster(ProbeState *s)
+{
+	GenerateRandomEnergyBooster();
+	s->a = 0u;
+	s->f = 0x80u;
+}
+/* <<< factory GenerateRandomEnergyBooster */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -155,5 +164,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateEnergyBoosterGrassPsychic", adapt_GenerateEnergyBoosterGrassPsychic },
 	{ "GenerateEnergyBoosterLightningFire", adapt_GenerateEnergyBoosterLightningFire },
 	{ "GenerateEnergyBoosterWaterFighting", adapt_GenerateEnergyBoosterWaterFighting },
+	{ "GenerateRandomEnergyBooster", adapt_GenerateRandomEnergyBooster },
 	{ NULL, NULL },
 };

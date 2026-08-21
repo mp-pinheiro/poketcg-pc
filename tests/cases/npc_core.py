@@ -160,6 +160,9 @@ CASES["SetNPCsTilePermission"] = [
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wLoadedNPCTempIndex = 0xD3AA
+
+wLoadedNPCTempIndex = 0xD3AA
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -180,6 +183,15 @@ CASES["Func_1c53f"] = [
     dict(POISON, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x02"}, read={0xD300: 0x200}),
 ]
 # <<< factory Func_1c53f
+
+# >>> factory GetNPCDirection
+CONTRACT["GetNPCDirection"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["GetNPCDirection"] = [
+    {"wram": {0xD3AA: b"\x00", 0xD34E: b"\x2A"}, "read": {0xD34E: 1}},
+    {"wram": {0xD3AA: b"\x07", 0xD3A2: b"\x91"}, "read": {0xD3A2: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD3AA: b"\x08", 0xD34E: b"\x7E"}, "read": {0xD34E: 1}},
+]
+# <<< factory GetNPCDirection
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -247,3 +259,11 @@ MUTATIONS["SetNPCPosition"] = {
 # >>> factory-mutation Func_1c53f
 MUTATIONS["Func_1c53f"] = {"source_symbol": "Func_1c53f", "before": "uint16_t backup = (uint16_t)(r.hl + (LOADED_NPC_DIRECTION_BACKUP - LOADED_NPC_DIRECTION));", "after": "uint16_t backup = (uint16_t)(r.hl + 4u);", "case_ids": ["Func_1c53f-0", "Func_1c53f-1", "Func_1c53f-2"]}
 # <<< factory-mutation Func_1c53f
+# >>> factory-mutation GetNPCDirection
+MUTATIONS["GetNPCDirection"] = {
+    "source_symbol": "GetNPCDirection",
+    "before": "	return gb_read8(r.hl);",
+    "after": "	return (uint8_t)(gb_read8(r.hl) + 1u);",
+    "case_ids": ["GetNPCDirection-0", "GetNPCDirection-1", "GetNPCDirection-2"],
+}
+# <<< factory-mutation GetNPCDirection

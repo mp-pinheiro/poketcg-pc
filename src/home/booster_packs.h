@@ -49,4 +49,7 @@ GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void);
 /* >>> factory GenerateEnergyBoosterWaterFighting */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void);
 /* <<< factory GenerateEnergyBoosterWaterFighting */
+/* >>> factory GenerateRandomEnergyBooster */
+void GenerateRandomEnergyBooster(void);
+/* <<< factory GenerateRandomEnergyBooster */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

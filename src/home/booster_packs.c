@@ -60,6 +60,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #define NUM_COLORED_TYPES 0x06u
 
 #include "home/booster_packs.h"
+
+#include "home/booster_packs.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -218,3 +220,15 @@ GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void)
 	return GenerateTwoTypesEnergyBooster(0x63CBu);
 }
 /* <<< factory GenerateEnergyBoosterWaterFighting */
+
+/* >>> factory GenerateRandomEnergyBooster */
+void GenerateRandomEnergyBooster(void)
+{
+	uint8_t count = NUM_CARDS_IN_BOOSTER;
+	while (count != 0u) {
+		(void)GenerateRandomEnergy();
+		--count;
+	}
+	ZeroBoosterRarityData();
+}
+/* <<< factory GenerateRandomEnergyBooster */

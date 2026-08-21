@@ -1,0 +1,9 @@
+{
+  "fn": "GetNPCDirection",
+  "case": "tests/cases/npc_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNPCDirection\", \"registers\": {\"a\": 42, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54094\": \"2a\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNPCDirection\", \"mismatches\": {\"a\": [42, 43]}}\n",
+  "restored": "{\"fn\": \"GetNPCDirection\", \"registers\": {\"a\": 42, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54094\": \"2a\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -330,3 +330,11 @@ uint8_t Func_1c53f(void)
 	return value;
 }
 /* <<< factory Func_1c53f */
+
+/* >>> factory GetNPCDirection */
+uint8_t GetNPCDirection(void)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);
+	return gb_read8(r.hl);
+}
+/* <<< factory GetNPCDirection */
