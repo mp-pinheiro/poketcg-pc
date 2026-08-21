@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_InitVolcanoSprite",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_InitVolcanoSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54480\": \"0100801000342a135a1a5a2a305a0d00\", \"54808\": \"01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_InitVolcanoSprite\", \"mismatches\": {\"bus\": {\"address\": 54482, \"reference\": \"010100801000342a\", \"native\": \"010100008010342a\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[51892, 1], [54480, 16], [54808, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_InitVolcanoSprite\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"54480\": \"0100801000342a135a1a5a2a305a0d00\", \"54808\": \"01\", \"65408\": \"04\"}}, \"status\": \"PASS\"}\n"
+}

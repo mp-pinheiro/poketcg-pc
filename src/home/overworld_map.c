@@ -7,6 +7,15 @@
 #include "home/load_animation.h"
 
 #define SPRITE_ANIM_COORD_X 0x02u
+
+#include "generated/wram.h"
+#include "home/sprite_animations.h"
+#include "home/load_animation.h"
+
+#define CONSOLE_CGB 0x02u
+#define SPRITE_ANIM_CGB_VOLCANO_SMOKE 0x37u
+#define SPRITE_ANIM_SGB_VOLCANO_SMOKE 0x34u
+#define SPRITE_OW_MAP_OAM 0x25u
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -54,3 +63,17 @@ OverworldMapNegateBCResult OverworldMap_NegateBC(uint8_t b, uint8_t c)
 	return result;
 }
 /* <<< factory OverworldMap_NegateBC */
+
+/* >>> factory OverworldMap_InitVolcanoSprite */
+void OverworldMap_InitVolcanoSprite(uint8_t f)
+{
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_MAP_OAM, f);
+	uint16_t coords = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	gb_write8(coords, 0x80u);
+	gb_write8((uint16_t)(coords + 1u), 0x10u);
+	uint8_t animation = SPRITE_ANIM_SGB_VOLCANO_SMOKE;
+	if (wConsole == CONSOLE_CGB)
+		animation = SPRITE_ANIM_CGB_VOLCANO_SMOKE;
+	StartNewSpriteAnimation(animation);
+}
+/* <<< factory OverworldMap_InitVolcanoSprite */

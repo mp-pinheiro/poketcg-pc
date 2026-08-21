@@ -1360,6 +1360,8 @@ wAttachedEnergiesAccum = 0xCBCE
 wTotalAttachedEnergies = 0xCC23
 wLoadedCard1Atk1EnergyCost = 0xCC30
 wLoadedCard1Atk2EnergyCost = 0xCC43
+
+wCardPageNumber = 0xCBC7
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1397,6 +1399,14 @@ CASES["AIAttachEnergyInHandToCardInPlayArea"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
 ]
 # <<< factory AIAttachEnergyInHandToCardInPlayArea
+
+# >>> factory GoToPreviousCardPage
+CONTRACT["GoToPreviousCardPage"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GoToPreviousCardPage"] = [
+    {"wram": {wCardPageNumber: b"\x02"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, wram={wCardPageNumber: b"\x02"}, read={wCardPageNumber: 1}),
+]
+# <<< factory GoToPreviousCardPage
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2228,3 +2238,11 @@ MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {
     "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"],
 }
 # <<< factory-mutation AIAttachEnergyInHandToCardInPlayArea
+# >>> factory-mutation GoToPreviousCardPage
+MUTATIONS["GoToPreviousCardPage"] = {
+    "source_symbol": "GoToPreviousCardPage",
+    "before": "uint8_t page = (uint8_t)(wCardPageNumber - 1u);",
+    "after": "uint8_t page = (uint8_t)(wCardPageNumber - 2u);",
+    "case_ids": ["GoToPreviousCardPage-0", "GoToPreviousCardPage-1"],
+}
+# <<< factory-mutation GoToPreviousCardPage

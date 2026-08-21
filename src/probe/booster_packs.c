@@ -95,6 +95,15 @@ static void adapt_GenerateTwoTypesEnergyBooster(ProbeState *s)
 }
 /* <<< factory GenerateTwoTypesEnergyBooster */
 
+/* >>> factory GenerateRandomEnergy */
+static void adapt_GenerateRandomEnergy(ProbeState *s)
+{
+	AddBoosterEnergyToDrawnEnergiesResult result = GenerateRandomEnergy();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory GenerateRandomEnergy */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -106,5 +115,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "AddBoosterEnergyToDrawnEnergies", adapt_AddBoosterEnergyToDrawnEnergies },
 	{ "ZeroBoosterRarityData", adapt_ZeroBoosterRarityData },
 	{ "GenerateTwoTypesEnergyBooster", adapt_GenerateTwoTypesEnergyBooster },
+	{ "GenerateRandomEnergy", adapt_GenerateRandomEnergy },
 	{ NULL, NULL },
 };

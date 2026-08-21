@@ -2610,3 +2610,29 @@ AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(
 	return (AIAttachEnergyInHandToCardInPlayAreaResult){OPPACTION_PLAY_ENERGY, decision.f};
 }
 /* <<< factory AIAttachEnergyInHandToCardInPlayArea */
+
+/* >>> factory GoToPreviousCardPage */
+CardPageNavigationResult GoToPreviousCardPage(void)
+{
+	uint8_t page = (uint8_t)(wCardPageNumber - 1u);
+	wCardPageNumber = page;
+	for (;;) {
+		CardPageResult r = SwitchCardPage(page);
+		if (r.carry) {
+			page = r.a;
+			wCardPageNumber = page;
+			for (;;) {
+				r = SwitchCardPage(page);
+				if (r.a != 0u)
+					return (CardPageNavigationResult){r.a, 0x10u, 0u};
+				page = (uint8_t)(page - 1u);
+				wCardPageNumber = page;
+			}
+		}
+		if (r.a != 0u)
+			return (CardPageNavigationResult){r.a, 0u, 0u};
+		page = (uint8_t)(page - 1u);
+		wCardPageNumber = page;
+	}
+}
+/* <<< factory GoToPreviousCardPage */

@@ -1,0 +1,9 @@
+{
+  "fn": "GoToPreviousCardPage",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GoToPreviousCardPage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52167\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GoToPreviousCardPage\", \"mismatches\": {\"a\": [1, 6], \"f\": [0, 16], \"bus\": {\"address\": 52167, \"reference\": \"01\", \"native\": \"06\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52167, 1]]}}}\n",
+  "restored": "{\"fn\": \"GoToPreviousCardPage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52167\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

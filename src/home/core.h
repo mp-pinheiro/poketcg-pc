@@ -524,4 +524,8 @@ void SetCardListHeaderText(uint16_t de, uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; } AIAttachEnergyInHandToCardInPlayAreaResult;
 AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(uint8_t d, uint8_t e);
 /* <<< factory AIAttachEnergyInHandToCardInPlayArea */
+/* >>> factory GoToPreviousCardPage */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; } CardPageNavigationResult;
+CardPageNavigationResult GoToPreviousCardPage(void);
+/* <<< factory GoToPreviousCardPage */
 #endif

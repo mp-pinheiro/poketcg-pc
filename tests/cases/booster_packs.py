@@ -82,6 +82,10 @@ wTempCardCollection = 0xC000
 wBoosterCurrentCard = 0xD66A
 wBoosterTempEnergiesDrawn = 0xC40B
 wTempCardCollection = 0xC000
+
+wRNG1 = 0xCACA
+wBoosterTempEnergiesDrawn = 0xC40B
+wTempCardCollection = 0xC000
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -131,6 +135,16 @@ CASES["GenerateTwoTypesEnergyBooster"] = [
     dict(POISON, hl=0xC530, wram={0xC530: b"\x80\xFF", wBoosterTempEnergiesDrawn: b"\x00", wTempCardCollection + 0x80: b"\x00", wTempCardCollection + 0xFF: b"\x00", 0xD66E: b"\xAA", 0xD66F: b"\xBB", 0xD670: b"\xCC"}, expect={wBoosterTempEnergiesDrawn: b"\x80\x80\x80\x80\x80\xFF\xFF\xFF\xFF\xFF\x00", wBoosterCurrentCard: b"\xFF", wTempCardCollection + 0x80: b"\x05", wTempCardCollection + 0xFF: b"\x05", 0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0xDD, "e": 0xEE, "hl": 0xC532}),
 ]
 # <<< factory GenerateTwoTypesEnergyBooster
+
+# >>> factory GenerateRandomEnergy
+CONTRACT["GenerateRandomEnergy"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["GenerateRandomEnergy"] = [
+    {"wram": {wRNG1: b"\x00\x00\x00", wBoosterTempEnergiesDrawn: b"\x00", wTempCardCollection: b"\x00" * 0x100}},
+    {"wram": {wRNG1: b"\x12\x34\x56", wBoosterTempEnergiesDrawn: b"\x01\x02\x00", wTempCardCollection: b"\x00" * 0x100}},
+    {"wram": {wRNG1: b"\xde\xad\xbe", wBoosterTempEnergiesDrawn: b"\xaa\xbb\x00", wTempCardCollection: b"\x00" * 0x100}},
+    dict(POISON, wram={wRNG1: b"\x01\x00\x80", wBoosterTempEnergiesDrawn: b"\x00", wTempCardCollection: b"\x00" * 0x100}),
+]
+# <<< factory GenerateRandomEnergy
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -196,3 +210,6 @@ MUTATIONS["ZeroBoosterRarityData"] = {"source_symbol": "ZeroBoosterRarityData", 
 # >>> factory-mutation GenerateTwoTypesEnergyBooster
 MUTATIONS["GenerateTwoTypesEnergyBooster"] = {"source_symbol": "GenerateTwoTypesEnergyBooster", "before": "(void)AddBoosterEnergyToDrawnEnergies(card);", "after": "(void)AddBoosterEnergyToDrawnEnergies((uint8_t)(card + 1u));", "case_ids": ["GenerateTwoTypesEnergyBooster-0", "GenerateTwoTypesEnergyBooster-1", "GenerateTwoTypesEnergyBooster-2"]}
 # <<< factory-mutation GenerateTwoTypesEnergyBooster
+# >>> factory-mutation GenerateRandomEnergy
+MUTATIONS["GenerateRandomEnergy"] = {"source_symbol": "GenerateRandomEnergy", "before": "return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 1u));", "after": "return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 2u));", "case_ids": ["GenerateRandomEnergy-0", "GenerateRandomEnergy-1", "GenerateRandomEnergy-2", "GenerateRandomEnergy-3"]}
+# <<< factory-mutation GenerateRandomEnergy

@@ -21,8 +21,16 @@ static void adapt_OverworldMap_NegateBC(ProbeState *s)
 }
 /* <<< factory OverworldMap_NegateBC */
 
+/* >>> factory OverworldMap_InitVolcanoSprite */
+static void adapt_OverworldMap_InitVolcanoSprite(ProbeState *s)
+{
+	OverworldMap_InitVolcanoSprite(s->f);
+}
+/* <<< factory OverworldMap_InitVolcanoSprite */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
+	{ "OverworldMap_InitVolcanoSprite", adapt_OverworldMap_InitVolcanoSprite },
 	{ NULL, NULL },
 };

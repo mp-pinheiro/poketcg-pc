@@ -369,6 +369,43 @@ CASES["LinkOpponentTurnFrameFunction"] = [
 ]
 # <<< factory LinkOpponentTurnFrameFunction
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+hOppActionTableIndex = 0xFF9E
+wDuelType = 0xCC09
+wSerialFlags = 0xCB75
+wSerialSendBufToggle = 0xCB7E
+wSerialSendBufIndex = 0xCB7F
+wcb80 = 0xCB80
+wSerialSendBuf = 0xCB81
+# <<< factory-cases-statics
+
+# >>> factory SetOppAction_SerialSendDuelData
+CONTRACT["SetOppAction_SerialSendDuelData"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "hl"),
+}
+CASES["SetOppAction_SerialSendDuelData"] = [
+    {"a": 0x37, "wram": {hWhoseTurn: b"\xC2", 0xC3F1: b"\x00"},
+     "read": {hOppActionTableIndex: 1}},
+    dict(POISON, a=0x37, wram={hWhoseTurn: b"\xC2", 0xC3F1: b"\x00",
+                               hOppActionTableIndex: b"\xFF"},
+         read={hOppActionTableIndex: 1}),
+    {"a": 0x42, "wram": {hWhoseTurn: b"\xC2", 0xC3F1: b"\x01", wDuelType: b"\x00",
+                         wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+                         wSerialFlags: b"\x00",
+                         hOppActionTableIndex: b"\x00" * 10},
+     "read": {hOppActionTableIndex: 10, wSerialSendBuf: 10,
+              wSerialSendBufIndex: 1, wcb80: 1, wSerialSendBufToggle: 1}},
+    dict(POISON, a=0x77,
+         wram={hWhoseTurn: b"\xC2", 0xC3F1: b"\x01", wDuelType: b"\x00",
+               wcb80: b"\x00", wSerialSendBufIndex: b"\x00",
+               wSerialFlags: b"\x00", hOppActionTableIndex: b"\x00" * 10},
+         read={hOppActionTableIndex: 10, wSerialSendBuf: 10,
+               wSerialSendBufIndex: 1, wcb80: 1, wSerialSendBufToggle: 1}),
+]
+# <<< factory SetOppAction_SerialSendDuelData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -431,3 +468,11 @@ MUTATIONS["LinkOpponentTurnFrameFunction"] = {
     "case_ids": ["LinkOpponentTurnFrameFunction-0", "LinkOpponentTurnFrameFunction-1", "LinkOpponentTurnFrameFunction-2"],
 }
 # <<< factory-mutation LinkOpponentTurnFrameFunction
+# >>> factory-mutation SetOppAction_SerialSendDuelData
+MUTATIONS["SetOppAction_SerialSendDuelData"] = {
+    "source_symbol": "SetOppAction_SerialSendDuelData",
+    "before": "SerialSendBytes(hOppActionTableIndex_ADDR, 10u);",
+    "after": "SerialSendBytes(hOppActionTableIndex_ADDR, 9u);",
+    "case_ids": ["SetOppAction_SerialSendDuelData-2", "SetOppAction_SerialSendDuelData-3"],
+}
+# <<< factory-mutation SetOppAction_SerialSendDuelData

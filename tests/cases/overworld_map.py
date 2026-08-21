@@ -25,6 +25,21 @@ CASES["OverworldMap_NegateBC"] = [
 ]
 # <<< factory OverworldMap_NegateBC
 
+# >>> factory-cases-statics
+H_BANK = 0xFF80
+CACHE_SIZE = 0xD618
+SPRITE_BUFFER = 0xD4D0
+wConsole = 0xCAB4
+# <<< factory-cases-statics
+
+# >>> factory OverworldMap_InitVolcanoSprite
+CONTRACT["OverworldMap_InitVolcanoSprite"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_InitVolcanoSprite"] = [
+    {"f": 0x00, "wram": {H_BANK: b"\x04", CACHE_SIZE: b"\x00", wConsole: b"\x01", SPRITE_BUFFER: b"\x00" * 16}, "read": {CACHE_SIZE: 1, SPRITE_BUFFER: 16, wConsole: 1}},
+    dict(POISON, wram={H_BANK: b"\x04", CACHE_SIZE: b"\x00", wConsole: b"\x02", SPRITE_BUFFER: b"\x00" * 16}, read={CACHE_SIZE: 1, SPRITE_BUFFER: 16, wConsole: 1}),
+]
+# <<< factory OverworldMap_InitVolcanoSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -35,3 +50,6 @@ MUTATIONS["OverworldMap_ContinuePlayerWalkingAnimation"] = {"source_symbol": "Ov
 # >>> factory-mutation OverworldMap_NegateBC
 MUTATIONS["OverworldMap_NegateBC"] = {"source_symbol": "OverworldMap_NegateBC", "before": "\tuint16_t low_sum = (uint16_t)(c ^ 0xffu) + 1u;", "after": "\tuint16_t low_sum = (uint16_t)(c ^ 0xffu) + 2u;", "case_ids": ["OverworldMap_NegateBC-0", "OverworldMap_NegateBC-1", "OverworldMap_NegateBC-2", "OverworldMap_NegateBC-3"]}
 # <<< factory-mutation OverworldMap_NegateBC
+# >>> factory-mutation OverworldMap_InitVolcanoSprite
+MUTATIONS["OverworldMap_InitVolcanoSprite"] = {"source_symbol": "OverworldMap_InitVolcanoSprite", "before": "uint16_t coords = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);", "after": "uint16_t coords = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_COORD_X + 1u));", "case_ids": ["OverworldMap_InitVolcanoSprite-0", "OverworldMap_InitVolcanoSprite-1"]}
+# <<< factory-mutation OverworldMap_InitVolcanoSprite

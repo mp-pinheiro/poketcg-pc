@@ -166,4 +166,11 @@ typedef struct {
 } LinkOppTurnResult;
 LinkOppTurnResult LinkOpponentTurnFrameFunction(void);
 /* <<< factory LinkOpponentTurnFrameFunction */
+/* >>> factory SetOppAction_SerialSendDuelData */
+typedef struct {
+	uint8_t a, f;
+	uint16_t de;
+} SetOppActionSerialSendResult;
+SetOppActionSerialSendResult SetOppAction_SerialSendDuelData(uint8_t a, uint16_t de);
+/* <<< factory SetOppAction_SerialSendDuelData */
 #endif

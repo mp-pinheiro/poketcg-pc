@@ -53,6 +53,11 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "mem.h"
 
 #define NUM_CARDS_IN_BOOSTER 0x0Au
+
+#include "home/booster_packs.h"
+#include "home/random.h"
+
+#define NUM_COLORED_TYPES 0x06u
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -181,3 +186,12 @@ GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
 	return (GenerateTwoTypesEnergyBoosterResult){0u, 0x80u, 0u, 0u, hl};
 }
 /* <<< factory GenerateTwoTypesEnergyBooster */
+
+/* >>> factory GenerateRandomEnergy */
+/* booster_packs.asm:342-350 */
+AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
+{
+	uint8_t random = Random(NUM_COLORED_TYPES);
+	return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 1u));
+}
+/* <<< factory GenerateRandomEnergy */

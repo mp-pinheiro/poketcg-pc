@@ -167,6 +167,18 @@ static void adapt_LinkOpponentTurnFrameFunction(ProbeState *s)
 }
 /* <<< factory LinkOpponentTurnFrameFunction */
 
+/* >>> factory SetOppAction_SerialSendDuelData */
+static void adapt_SetOppAction_SerialSendDuelData(ProbeState *s)
+{
+	SetOppActionSerialSendResult r =
+		SetOppAction_SerialSendDuelData(s->a, (uint16_t)(s->d << 8 | s->e));
+	s->a = r.a;
+	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+/* <<< factory SetOppAction_SerialSendDuelData */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -187,5 +199,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "ExchangeRNG", adapt_ExchangeRNG },
 	{ "SerialSend8Bytes", adapt_SerialSend8Bytes },
 	{ "LinkOpponentTurnFrameFunction", adapt_LinkOpponentTurnFrameFunction },
+	{ "SetOppAction_SerialSendDuelData", adapt_SetOppAction_SerialSendDuelData },
 	{ NULL, NULL },
 };

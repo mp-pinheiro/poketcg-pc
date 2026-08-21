@@ -37,4 +37,7 @@ void ZeroBoosterRarityData(void);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } GenerateTwoTypesEnergyBoosterResult;
 GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl);
 /* <<< factory GenerateTwoTypesEnergyBooster */
+/* >>> factory GenerateRandomEnergy */
+AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void);
+/* <<< factory GenerateRandomEnergy */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

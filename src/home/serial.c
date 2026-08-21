@@ -31,6 +31,11 @@
 #define F_C                    0x10u
 
 #include "home/switch_rom.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/serial.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -441,3 +446,22 @@ LinkOppTurnResult LinkOpponentTurnFrameFunction(void)
 	return (LinkOppTurnResult){BANK_LINK_OPP_TURN, 0x10u};
 }
 /* <<< factory LinkOpponentTurnFrameFunction */
+
+/* >>> factory SetOppAction_SerialSendDuelData */
+SetOppActionSerialSendResult SetOppAction_SerialSendDuelData(uint8_t a, uint16_t de)
+{
+	gb_write8(hOppActionTableIndex_ADDR, a);
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (r.a != DUELIST_TYPE_LINK_OPP) {
+		uint8_t f = 0x40u;
+		if (r.a < DUELIST_TYPE_LINK_OPP)
+			f |= 0x10u;
+		if ((r.a & 0x0Fu) < (DUELIST_TYPE_LINK_OPP & 0x0Fu))
+			f |= 0x20u;
+		return (SetOppActionSerialSendResult){r.a, f, de};
+	}
+	SerialSendBytes(hOppActionTableIndex_ADDR, 10u);
+	ExchangeRNGResult x = ExchangeRNG(0, 0, de, 0);
+	return (SetOppActionSerialSendResult){x.a, x.f, x.de};
+}
+/* <<< factory SetOppAction_SerialSendDuelData */
