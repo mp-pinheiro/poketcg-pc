@@ -1148,6 +1148,14 @@ static void adapt_AIAttachEnergyInHandToCardInBench(ProbeState *s)
 }
 /* <<< factory AIAttachEnergyInHandToCardInBench */
 
+/* >>> factory DrawPracticeDuelInstructionsTextBox */
+static void adapt_DrawPracticeDuelInstructionsTextBox(ProbeState *s)
+{
+	(void)s;
+	DrawPracticeDuelInstructionsTextBox();
+}
+/* <<< factory DrawPracticeDuelInstructionsTextBox */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1283,5 +1291,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckPrintDoublePoisoned", adapt_CheckPrintDoublePoisoned },
 	{ "PrintPracticeDuelLetsPlayTheGame", adapt_PrintPracticeDuelLetsPlayTheGame },
 	{ "AIAttachEnergyInHandToCardInBench", adapt_AIAttachEnergyInHandToCardInBench },
+	{ "DrawPracticeDuelInstructionsTextBox", adapt_DrawPracticeDuelInstructionsTextBox },
 	{ NULL, NULL },
 };

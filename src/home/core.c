@@ -399,6 +399,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #define LetsPlayTheGamePracticeDuelText 0x01d8u
+
+#include "home/text_box.h"
+#include "home/empty_screen.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2709,3 +2712,13 @@ AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_
 	return (AIAttachEnergyInHandToCardInBenchResult){result.a, result.f};
 }
 /* <<< factory AIAttachEnergyInHandToCardInBench */
+
+/* >>> factory DrawPracticeDuelInstructionsTextBox */
+void DrawPracticeDuelInstructionsTextBox(void)
+{
+	uint16_t box = 0u;
+	EmptyScreen();
+	DrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);
+	PrintPracticeDuelInstructionsTextBoxLabel();
+}
+/* <<< factory DrawPracticeDuelInstructionsTextBox */

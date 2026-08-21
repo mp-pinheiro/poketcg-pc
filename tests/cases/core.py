@@ -1478,6 +1478,20 @@ CASES["AIAttachEnergyInHandToCardInBench"] = [
 ]
 # <<< factory AIAttachEnergyInHandToCardInBench
 
+# >>> factory DrawPracticeDuelInstructionsTextBox
+CONTRACT["DrawPracticeDuelInstructionsTextBox"] = {"compare": (), "preserve": ()};
+CASES["DrawPracticeDuelInstructionsTextBox"] = [
+    {"wram": {0xCC06: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, wram={0xCC06: b"\x06"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory DrawPracticeDuelInstructionsTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2354,3 +2368,11 @@ MUTATIONS["AIAttachEnergyInHandToCardInBench"] = {
 	"case_ids": ["AIAttachEnergyInHandToCardInBench-0"],
 }
 # <<< factory-mutation AIAttachEnergyInHandToCardInBench
+# >>> factory-mutation DrawPracticeDuelInstructionsTextBox
+MUTATIONS["DrawPracticeDuelInstructionsTextBox"] = {
+    "source_symbol": "DrawPracticeDuelInstructionsTextBox",
+    "before": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);",
+    "after": "\tDrawRegularTextBox(&box, 0u, 20u, 11u, 0u, 0u);",
+    "case_ids": ["DrawPracticeDuelInstructionsTextBox-0", "DrawPracticeDuelInstructionsTextBox-1"],
+}
+# <<< factory-mutation DrawPracticeDuelInstructionsTextBox

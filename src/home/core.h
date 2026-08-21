@@ -547,4 +547,7 @@ void PrintPracticeDuelLetsPlayTheGame(void);
 typedef struct { uint8_t a; uint8_t f; } AIAttachEnergyInHandToCardInBenchResult;
 AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_t d, uint8_t e);
 /* <<< factory AIAttachEnergyInHandToCardInBench */
+/* >>> factory DrawPracticeDuelInstructionsTextBox */
+void DrawPracticeDuelInstructionsTextBox(void);
+/* <<< factory DrawPracticeDuelInstructionsTextBox */
 #endif
