@@ -2520,6 +2520,18 @@ CASES["CloysterSpikeCannon_AIEffect"] = [
 ]
 # <<< factory CloysterSpikeCannon_AIEffect
 
+# >>> factory JolteonDoubleKick_AIEffect
+CONTRACT["JolteonDoubleKick_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["JolteonDoubleKick_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory JolteonDoubleKick_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4230,3 +4242,6 @@ MUTATIONS["Potion_DamageCheck"] = {"source_symbol": "Potion_DamageCheck", "befor
 # >>> factory-mutation CloysterSpikeCannon_AIEffect
 MUTATIONS["CloysterSpikeCannon_AIEffect"] = {"source_symbol": "CloysterSpikeCannon_AIEffect", "before": "void CloysterSpikeCannon_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void CloysterSpikeCannon_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["CloysterSpikeCannon_AIEffect-0", "CloysterSpikeCannon_AIEffect-1", "CloysterSpikeCannon_AIEffect-2"]}
 # <<< factory-mutation CloysterSpikeCannon_AIEffect
+# >>> factory-mutation JolteonDoubleKick_AIEffect
+MUTATIONS["JolteonDoubleKick_AIEffect"] = {"source_symbol": "JolteonDoubleKick_AIEffect", "before": "\tSetExpectedAIDamage(20u, 0u, 40u);", "after": "\tSetExpectedAIDamage(21u, 0u, 40u);", "case_ids": ["JolteonDoubleKick_AIEffect-0", "JolteonDoubleKick_AIEffect-1", "JolteonDoubleKick_AIEffect-2"]}
+# <<< factory-mutation JolteonDoubleKick_AIEffect

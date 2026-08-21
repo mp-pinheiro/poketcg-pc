@@ -3981,3 +3981,10 @@ void CloysterSpikeCannon_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory CloysterSpikeCannon_AIEffect */
+
+/* >>> factory JolteonDoubleKick_AIEffect */
+void JolteonDoubleKick_AIEffect(void)
+{
+	SetExpectedAIDamage(20u, 0u, 40u);
+}
+/* <<< factory JolteonDoubleKick_AIEffect */

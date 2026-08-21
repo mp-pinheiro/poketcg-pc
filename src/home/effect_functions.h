@@ -971,6 +971,9 @@ PotionDamageCheckResult Potion_DamageCheck(void);
 /* >>> factory CloysterSpikeCannon_AIEffect */
 void CloysterSpikeCannon_AIEffect(void);
 /* <<< factory CloysterSpikeCannon_AIEffect */
+/* >>> factory JolteonDoubleKick_AIEffect */
+void JolteonDoubleKick_AIEffect(void);
+/* <<< factory JolteonDoubleKick_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
