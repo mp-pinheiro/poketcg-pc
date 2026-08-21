@@ -2508,3 +2508,62 @@ void SetupPlayAreaScreen(void)
 	(void)LoadDuelCheckPokemonScreenTiles();
 }
 /* <<< factory SetupPlayAreaScreen */
+
+/* >>> factory CheckIfEnoughEnergiesForGivenAttack */
+CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(uint8_t d, uint8_t e)
+{
+	CheckIfEnoughEnergiesForGivenAttackResult r = {0, 0, d, e, d, e, 0};
+	(void)LoadCardDataToBuffer1_FromDeckIndex(d);
+	uint16_t cost = (e == 0u) ? wLoadedCard1Atk1EnergyCost_ADDR : wLoadedCard1Atk2EnergyCost_ADDR;
+	uint16_t hl = (uint16_t)(cost + (0x10u - 0x0cu));
+	uint8_t name = (uint8_t)(gb_read8(hl) | gb_read8((uint16_t)(hl + 1u)));
+	r.a = name;
+	r.hl = (uint16_t)(hl + 1u);
+	if (name == 0u) {
+		r.f = 0x80u;
+		return r;
+	}
+	hl = (uint16_t)(cost + (0x17u - 0x0cu));
+	uint8_t category = gb_read8(hl);
+	r.a = category;
+	r.hl = hl;
+	if (category == 0x04u) {
+		r.f = 0xc0u;
+		return r;
+	}
+	gb_write8(wAttachedEnergiesAccum_ADDR, 0u);
+	hl = wAttachedEnergies_ADDR;
+	uint8_t count = 3u;
+	while (count != 0u) {
+		CheckIfEnoughEnergiesResult check = CheckIfEnoughEnergiesOfType(
+			(uint8_t)(gb_read8(cost) >> 4), hl);
+		r.a = check.a;
+		r.f = check.f;
+		r.hl = check.hl;
+		hl = check.hl;
+		if ((check.f & 0x10u) != 0u)
+			return r;
+		check = CheckIfEnoughEnergiesOfType(gb_read8(cost), hl);
+		r.a = check.a;
+		r.f = check.f;
+		r.hl = check.hl;
+		hl = check.hl;
+		if ((check.f & 0x10u) != 0u)
+			return r;
+		cost = (uint16_t)(cost + 1u);
+		count--;
+	}
+	uint8_t required_colorless = (uint8_t)((gb_read8(cost) >> 4) & 0x0fu);
+	r.b = required_colorless;
+	uint8_t accumulated = gb_read8(wAttachedEnergiesAccum_ADDR);
+	r.c = accumulated;
+	uint8_t remaining = (uint8_t)(gb_read8(wTotalAttachedEnergies_ADDR) - accumulated);
+	r.a = remaining;
+	if (remaining < required_colorless) {
+		r.f = 0x10u;
+		return r;
+	}
+	r.f = (remaining == 0u) ? 0x80u : 0x00u;
+	return r;
+}
+/* <<< factory CheckIfEnoughEnergiesForGivenAttack */

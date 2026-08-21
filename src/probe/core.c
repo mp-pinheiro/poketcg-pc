@@ -1052,6 +1052,20 @@ static void adapt_SetupPlayAreaScreen(ProbeState *s)
 }
 /* <<< factory SetupPlayAreaScreen */
 
+/* >>> factory CheckIfEnoughEnergiesForGivenAttack */
+static void adapt_CheckIfEnoughEnergiesForGivenAttack(ProbeState *s)
+{
+	CheckIfEnoughEnergiesForGivenAttackResult r = CheckIfEnoughEnergiesForGivenAttack(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfEnoughEnergiesForGivenAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1176,5 +1190,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ValidateSavedNonLinkDuelData", adapt_ValidateSavedNonLinkDuelData },
 	{ "PrintPlayAreaCardLocation", adapt_PrintPlayAreaCardLocation },
 	{ "SetupPlayAreaScreen", adapt_SetupPlayAreaScreen },
+	{ "CheckIfEnoughEnergiesForGivenAttack", adapt_CheckIfEnoughEnergiesForGivenAttack },
 	{ NULL, NULL },
 };

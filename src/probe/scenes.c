@@ -10,7 +10,16 @@ static void adapt_SetBoosterLogoOAM(ProbeState *s)
 }
 /* <<< factory SetBoosterLogoOAM */
 
+/* >>> factory _DrawPortrait */
+static void adapt__DrawPortrait(ProbeState *s)
+{
+	(void)s;
+	_DrawPortrait();
+}
+/* <<< factory _DrawPortrait */
+
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
+	{ "_DrawPortrait", adapt__DrawPortrait },
 	{ NULL, NULL },
 };

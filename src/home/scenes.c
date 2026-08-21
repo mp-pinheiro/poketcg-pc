@@ -45,6 +45,10 @@ static const uint8_t booster_logo_oam[] = {
 	0x18u, 0x30u, 0x1Eu, 0x00u,
 	0x18u, 0x38u, 0x1Fu, 0x00u
 };
+
+#include "generated/wram.h"
+#include "home/load_gfx.h"
+#define TILEMAP_PLAYER 0x62u
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -76,3 +80,43 @@ void SetBoosterLogoOAM(void)
 	wVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);
 }
 /* <<< factory SetBoosterLogoOAM */
+
+/* >>> factory _DrawPortrait */
+void _DrawPortrait(void)
+{
+	uint8_t saved_wd291 = wd291;
+	uint8_t d = 0xD0u;
+	uint8_t e = 0x07u;
+	if (wCurTilemap != TILEMAP_PLAYER) {
+		d = 0xA0u;
+		e = 0x06u;
+	}
+	wd291 = e;
+	LoadTilemap_ToVRAM(d, e);
+
+	uint8_t portrait = wCurPortrait;
+	uint8_t tileset;
+	uint8_t palette;
+	if (portrait <= 1u) {
+		tileset = 0x29u;
+		palette = 0x77u;
+	} else if (portrait == 41u) {
+		tileset = 0x29u;
+		palette = 0x78u;
+	} else if (portrait == 2u) {
+		tileset = 0x2Au;
+		palette = 0x79u;
+	} else {
+		tileset = (uint8_t)(0x2Du + portrait);
+		palette = (uint8_t)(0x77u + portrait);
+	}
+	wCurTileset = tileset;
+	wVRAMTileOffset = d;
+	wWhichVRAMBank = 0u;
+	LoadTilesetGfx();
+	wWhichOBP = 0u;
+	wWhichBGPalIndex = wd291;
+	LoadBGPalette(palette);
+	wd291 = saved_wd291;
+}
+/* <<< factory _DrawPortrait */

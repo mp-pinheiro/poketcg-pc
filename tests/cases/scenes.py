@@ -36,6 +36,14 @@ CASES["SetBoosterLogoOAM"] = [
 ]
 # <<< factory SetBoosterLogoOAM
 
+# >>> factory _DrawPortrait
+CONTRACT["_DrawPortrait"] = {"compare": (), "preserve": ()}
+CASES["_DrawPortrait"] = [
+	{"wram": {0xD131: b"\x62", 0xD291: b"\x19", 0xD61E: b"\x00"}, "read": {0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}},
+	dict(POISON, wram={0xD131: b"\x00", 0xD291: b"\x2A", 0xD61E: b"\x02"}, read={0xD131: 1, 0xD239: 1, 0xD4CA: 1, 0xD4CB: 1, 0xD291: 1, 0xD61E: 1}),
+]
+# <<< factory _DrawPortrait
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -43,3 +51,6 @@ MUTATIONS = {}
 # >>> factory-mutation SetBoosterLogoOAM
 MUTATIONS["SetBoosterLogoOAM"] = {"source_symbol": "SetBoosterLogoOAM", "before": "wWhichVRAMBank = 0u;", "after": "wWhichVRAMBank = 1u;", "case_ids": ["SetBoosterLogoOAM-1", "SetBoosterLogoOAM-2"]}
 # <<< factory-mutation SetBoosterLogoOAM
+# >>> factory-mutation _DrawPortrait
+MUTATIONS["_DrawPortrait"] = {"source_symbol": "_DrawPortrait", "before": "wCurTileset = tileset;", "after": "wCurTileset = (uint8_t)(tileset + 1u);", "case_ids": ["_DrawPortrait-0", "_DrawPortrait-1"]}
+# <<< factory-mutation _DrawPortrait

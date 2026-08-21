@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfEnoughEnergiesForGivenAttack",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfEnoughEnergiesForGivenAttack\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 52257, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"10\", \"52251\": \"00000000\", \"52259\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfEnoughEnergiesForGivenAttack\", \"mismatches\": {\"a\": [0, 128], \"f\": [16, 192], \"b\": [2, 0], \"hl\": [52257, 52283]}}\n",
+  "restored": "{\"fn\": \"CheckIfEnoughEnergiesForGivenAttack\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 52257, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"10\", \"52251\": \"00000000\", \"52259\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

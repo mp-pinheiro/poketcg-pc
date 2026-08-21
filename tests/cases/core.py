@@ -1352,6 +1352,25 @@ CASES["SetupPlayAreaScreen"] = [
 ]
 # <<< factory SetupPlayAreaScreen
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wAttachedEnergies = 0xCC1B
+wAttachedEnergiesAccum = 0xCBCE
+wTotalAttachedEnergies = 0xCC23
+wLoadedCard1Atk1EnergyCost = 0xCC30
+wLoadedCard1Atk2EnergyCost = 0xCC43
+# <<< factory-cases-statics
+
+# >>> factory CheckIfEnoughEnergiesForGivenAttack
+CONTRACT["CheckIfEnoughEnergiesForGivenAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["CheckIfEnoughEnergiesForGivenAttack"] = [
+	{"d": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x10", wAttachedEnergies: b"\x00\x00\x00\x00", wTotalAttachedEnergies: b"\x00"}},
+	{"d": 0x01, "e": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDeck + 1: b"\x20", wAttachedEnergies: b"\x11\x11\x11\x00", wTotalAttachedEnergies: b"\x03"}},
+	dict(POISON, d=0x05, e=0x01, wram={hWhoseTurn: b"\xC2", wPlayerDeck + 5: b"\x20", wAttachedEnergies: b"\x22\x22\x22\x00", wTotalAttachedEnergies: b"\x06"}),
+]
+# <<< factory CheckIfEnoughEnergiesForGivenAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2165,3 +2184,6 @@ MUTATIONS["ValidateSavedNonLinkDuelData"] = {"source_symbol": "ValidateSavedNonL
 # >>> factory-mutation SetupPlayAreaScreen
 MUTATIONS["SetupPlayAreaScreen"] = {"source_symbol": "SetupPlayAreaScreen", "before": "if (wDuelDisplayedScreen == PLAY_AREA_CARD_LIST)", "after": "if (wDuelDisplayedScreen != PLAY_AREA_CARD_LIST)", "case_ids": ["SetupPlayAreaScreen-1", "SetupPlayAreaScreen-2"]}
 # <<< factory-mutation SetupPlayAreaScreen
+# >>> factory-mutation CheckIfEnoughEnergiesForGivenAttack
+MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEnoughEnergiesForGivenAttack", "before": "if (category == 0x04u) {", "after": "if (category != 0x04u) {", "case_ids": ["CheckIfEnoughEnergiesForGivenAttack-0", "CheckIfEnoughEnergiesForGivenAttack-1"]}
+# <<< factory-mutation CheckIfEnoughEnergiesForGivenAttack
