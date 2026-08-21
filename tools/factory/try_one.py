@@ -190,6 +190,7 @@ def subcommand_next(count: int, retry_red: bool) -> int:
         if len(selected) == count:
             break
 
+    prepared = 0
     for index, (row, cascade, stem) in enumerate(selected):
         lane = 700 + 10 * index
         fn = row["name"]
@@ -198,10 +199,11 @@ def subcommand_next(count: int, retry_red: bool) -> int:
         except (LookupError, OSError, RuntimeError, ValueError) as exc:
             print(f"NEXT {fn} red detail={exc}")
             continue
+        prepared += 1
         print(f"NEXT {fn} lane={lane} size={row['size']}B basename={stem} cascade={cascade}")
         print(f"python3 tools/factory/try_one.py --fn {fn} --candidates 3 --lane {lane}")
-    print(f"NEXT selected={len(selected)} pool={len(ready)}")
-    return 0 if selected else 3
+    print(f"NEXT selected={prepared} pool={len(ready)}")
+    return 0 if prepared else 3
 
 
 def summarize() -> int:
