@@ -55,6 +55,17 @@ wScriptNPC = 0xD3B6
 wEventVars = 0xD3D2
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wTempNPC = 0xD3AB
+wLoadedNPCs = 0xD34A
+wPlayerDirection = 0xD334
+wOverworldNPCFlags = 0xD0C1
+wNextScript = 0xD0C6
+wOverworldMode = 0xD0BF
+NPC_TABLE = b"\x00" * 96
 # <<< factory-cases-statics
 
 
@@ -765,6 +776,15 @@ CASES["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = [
 ]
 # <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch
 
+# >>> factory SetNextNPCAndScript
+CONTRACT["SetNextNPCAndScript"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["SetNextNPCAndScript"] = [
+    {"b": 0x12, "c": 0x34, "hl": 0x4567, "wram": {wTempNPC: b"\x00", wLoadedNPCs: NPC_TABLE, wLoadedNPCTempIndex: b"\xEE", wScriptNPC: b"\xAA", wPlayerDirection: b"\x01", wOverworldNPCFlags: b"\x00", wNextScript: b"\xFF\xFF", wOverworldMode: b"\x00"}, "expect": {wScriptNPC: b"\x00", wNextScript: b"\x34\x12", wOverworldMode: b"\x03"}},
+    {"b": 0xAB, "c": 0xCD, "hl": 0x0000, "wram": {wTempNPC: b"\x02", wLoadedNPCs: b"\x01\x00\x02" + b"\x00" * 93, wLoadedNPCTempIndex: b"\xEE", wScriptNPC: b"\x55", wPlayerDirection: b"\x03", wOverworldNPCFlags: b"\x80", wNextScript: b"\x00\x00", wOverworldMode: b"\xFF"}, "expect": {wScriptNPC: b"\x01", wNextScript: b"\xCD\xAB", wOverworldMode: b"\x03"}},
+    dict(POISON, b=0xDE, c=0xAD, hl=0x1234, wram={wTempNPC: b"\x00", wLoadedNPCs: NPC_TABLE, wLoadedNPCTempIndex: b"\xAA", wScriptNPC: b"\x00", wPlayerDirection: b"\x02", wOverworldNPCFlags: b"\x04", wNextScript: b"\x00\x00", wOverworldMode: b"\x00"}, expect={wScriptNPC: b"\x00", wNextScript: b"\xAD\xDE", wOverworldMode: b"\x03"}),
+]
+# <<< factory SetNextNPCAndScript
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1198,3 +1218,6 @@ MUTATIONS["ScriptCommand_JumpIfPlayerCoordsMatch"] = {"source_symbol": "ScriptCo
 # >>> factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
 MUTATIONS["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfActiveNPCCoordsMatch", "before": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0u, pointer.c, d, e, hl};", "after": "\t\treturn (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){pointer.a, pointer.f, 0xFFu, pointer.c, d, e, hl};", "case_ids": ["ScriptCommand_JumpIfActiveNPCCoordsMatch-2"]}
 # <<< factory-mutation ScriptCommand_JumpIfActiveNPCCoordsMatch
+# >>> factory-mutation SetNextNPCAndScript
+MUTATIONS["SetNextNPCAndScript"] = {"source_symbol": "SetNextNPCAndScript", "before": "wScriptNPC = wLoadedNPCTempIndex;", "after": "wScriptNPC = (uint8_t)(wLoadedNPCTempIndex + 1u);", "case_ids": ["SetNextNPCAndScript-0", "SetNextNPCAndScript-1", "SetNextNPCAndScript-2"]}
+# <<< factory-mutation SetNextNPCAndScript

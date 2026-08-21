@@ -659,6 +659,18 @@ static void adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch */
 
+/* >>> factory SetNextNPCAndScript */
+static void adapt_SetNextNPCAndScript(ProbeState *s)
+{
+	SetNextNPCAndScriptResult result = SetNextNPCAndScript((uint16_t)(((uint16_t)s->b << 8) | s->c), s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory SetNextNPCAndScript */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -723,5 +735,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_IncrementEventValue", adapt_ScriptCommand_IncrementEventValue },
 	{ "ScriptCommand_JumpIfPlayerCoordsMatch", adapt_ScriptCommand_JumpIfPlayerCoordsMatch },
 	{ "ScriptCommand_JumpIfActiveNPCCoordsMatch", adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch },
+	{ "SetNextNPCAndScript", adapt_SetNextNPCAndScript },
 	{ NULL, NULL },
 };

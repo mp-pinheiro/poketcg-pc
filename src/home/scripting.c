@@ -102,6 +102,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "generated/wram.h"
 #include "home/npc_core.h"
+
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "home/scripting.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -987,3 +992,14 @@ ScriptCommand_JumpIfActiveNPCCoordsMatchResult ScriptCommand_JumpIfActiveNPCCoor
 	return (ScriptCommand_JumpIfActiveNPCCoordsMatchResult){args.a, args.f, 0u, args.c, d, e, new_hl};
 }
 /* <<< factory ScriptCommand_JumpIfActiveNPCCoordsMatch */
+
+/* >>> factory SetNextNPCAndScript */
+SetNextNPCAndScriptResult SetNextNPCAndScript(uint16_t bc, uint16_t hl)
+{
+	(void)FindLoadedNPC();
+	wScriptNPC = wLoadedNPCTempIndex;
+	SetNewScriptNPCResult npc = SetNewScriptNPC(hl);
+	SetNextScript(bc);
+	return (SetNextNPCAndScriptResult){npc.a, npc.f, (uint8_t)(bc >> 8), (uint8_t)bc, npc.hl};
+}
+/* <<< factory SetNextNPCAndScript */
