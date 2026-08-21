@@ -172,6 +172,15 @@ CASES["SetNPCPosition"] = [
 ]
 # <<< factory SetNPCPosition
 
+# >>> factory Func_1c53f
+CONTRACT["Func_1c53f"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")};
+CASES["Func_1c53f"] = [
+    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}},
+    {"wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, "read": {0xD300: 0x200}},
+    dict(POISON, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x02"}, read={0xD300: 0x200}),
+]
+# <<< factory Func_1c53f
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -235,3 +244,6 @@ MUTATIONS["SetNPCPosition"] = {
     "case_ids": ["SetNPCPosition-0", "SetNPCPosition-1", "SetNPCPosition-2", "SetNPCPosition-3"],
 }
 # <<< factory-mutation SetNPCPosition
+# >>> factory-mutation Func_1c53f
+MUTATIONS["Func_1c53f"] = {"source_symbol": "Func_1c53f", "before": "uint16_t backup = (uint16_t)(r.hl + (LOADED_NPC_DIRECTION_BACKUP - LOADED_NPC_DIRECTION));", "after": "uint16_t backup = (uint16_t)(r.hl + 4u);", "case_ids": ["Func_1c53f-0", "Func_1c53f-1", "Func_1c53f-2"]}
+# <<< factory-mutation Func_1c53f

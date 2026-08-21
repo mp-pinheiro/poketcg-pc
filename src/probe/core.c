@@ -1081,6 +1081,15 @@ static void adapt_SetCardListHeaderText(ProbeState *s)
 }
 /* <<< factory SetCardListHeaderText */
 
+/* >>> factory AIAttachEnergyInHandToCardInPlayArea */
+static void adapt_AIAttachEnergyInHandToCardInPlayArea(ProbeState *s)
+{
+	AIAttachEnergyInHandToCardInPlayAreaResult r = AIAttachEnergyInHandToCardInPlayArea(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIAttachEnergyInHandToCardInPlayArea */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1208,5 +1217,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfEnoughEnergiesForGivenAttack", adapt_CheckIfEnoughEnergiesForGivenAttack },
 	{ "SaveDuelData", adapt_SaveDuelData },
 	{ "SetCardListHeaderText", adapt_SetCardListHeaderText },
+	{ "AIAttachEnergyInHandToCardInPlayArea", adapt_AIAttachEnergyInHandToCardInPlayArea },
 	{ NULL, NULL },
 };

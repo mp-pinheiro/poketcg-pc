@@ -2311,6 +2311,10 @@ wOpponentDeck = 0xC480
 DUELVARS_ARENA_CARD = 0xBB
 BULBASAUR = 0x08
 SNORLAX = 0xBE
+
+hWhoseTurn = 0xFF97
+wDamage = 0xCCB9
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2370,6 +2374,24 @@ CASES["SuperFang_HalfHPEffect"] = [
      "read": {0xFF97: 1, 0xC3C8: 1, 0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
 ]
 # <<< factory SuperFang_HalfHPEffect
+
+# >>> factory KarateChop_DamageSubtractionEffect
+CONTRACT["KarateChop_DamageSubtractionEffect"] = {"compare": (), "preserve": ()}
+CASES["KarateChop_DamageSubtractionEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+              wPlayerDeck: b"\x01", wDamage: b"\xFF\x00"},
+     "read": {wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05",
+              wPlayerDeck: b"\x01", wDamage: b"\xFF\x00"},
+     "read": {wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xD0",
+              wPlayerDeck: b"\x01", wDamage: b"\xFF\x00"},
+     "read": {wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+                       wPlayerDeck: b"\x01", wDamage: b"\xFF\x00"},
+         read={wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory KarateChop_DamageSubtractionEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4011,3 +4033,11 @@ MUTATIONS["SuperFang_HalfHPEffect"] = {
     "case_ids": ["SuperFang_HalfHPEffect-0", "SuperFang_HalfHPEffect-1", "SuperFang_HalfHPEffect-2", "SuperFang_HalfHPEffect-3"],
 }
 # <<< factory-mutation SuperFang_HalfHPEffect
+# >>> factory-mutation KarateChop_DamageSubtractionEffect
+MUTATIONS["KarateChop_DamageSubtractionEffect"] = {
+    "source_symbol": "KarateChop_DamageSubtractionEffect",
+    "before": "uint16_t remaining = (uint16_t)(damage_value - (uint16_t)damage.a);",
+    "after": "uint16_t remaining = (uint16_t)(damage_value - (uint16_t)(damage.a + 1u));",
+    "case_ids": ["KarateChop_DamageSubtractionEffect-0", "KarateChop_DamageSubtractionEffect-1", "KarateChop_DamageSubtractionEffect-2", "KarateChop_DamageSubtractionEffect-3"],
+}
+# <<< factory-mutation KarateChop_DamageSubtractionEffect

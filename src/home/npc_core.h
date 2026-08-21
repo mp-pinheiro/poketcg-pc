@@ -44,4 +44,7 @@ uint8_t SetNPCsTilePermission(void);
 /* >>> factory SetNPCPosition */
 uint8_t SetNPCPosition(uint8_t b, uint8_t c);
 /* <<< factory SetNPCPosition */
+/* >>> factory Func_1c53f */
+uint8_t Func_1c53f(void);
+/* <<< factory Func_1c53f */
 #endif /* POKETCG_HOME_NPC_CORE_H */

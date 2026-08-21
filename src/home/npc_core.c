@@ -317,3 +317,16 @@ uint8_t SetNPCPosition(uint8_t b, uint8_t c)
 	return SetNPCsTilePermission();
 }
 /* <<< factory SetNPCPosition */
+
+/* >>> factory Func_1c53f */
+uint8_t Func_1c53f(void)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,
+		LOADED_NPC_DIRECTION);
+	uint8_t value = gb_read8(r.hl);
+	uint16_t backup = (uint16_t)(r.hl + (LOADED_NPC_DIRECTION_BACKUP - LOADED_NPC_DIRECTION));
+	gb_write8(backup, value);
+	(void)Func_1c5e9();
+	return value;
+}
+/* <<< factory Func_1c53f */

@@ -30,4 +30,7 @@ AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void);
 typedef struct { uint8_t a; uint8_t f; } AddBoosterEnergyToDrawnEnergiesResult;
 AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(uint8_t a);
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
+/* >>> factory ZeroBoosterRarityData */
+void ZeroBoosterRarityData(void);
+/* <<< factory ZeroBoosterRarityData */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

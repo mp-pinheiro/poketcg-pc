@@ -114,6 +114,15 @@ CASES["AddBoosterEnergyToDrawnEnergies"] = [
 ]
 # <<< factory AddBoosterEnergyToDrawnEnergies
 
+# >>> factory ZeroBoosterRarityData
+CONTRACT["ZeroBoosterRarityData"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["ZeroBoosterRarityData"] = [
+    {"wram": {0xD66E: b"\x01", 0xD66F: b"\x02", 0xD670: b"\x03"}, "expect": {0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}},
+    {"wram": {0xD66E: b"\xFF", 0xD66F: b"\x80", 0xD670: b"\x7F"}, "expect": {0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}},
+    dict(POISON, wram={0xD66E: b"\xAA", 0xD66F: b"\xBB", 0xD670: b"\xCC"}, expect={0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}),
+]
+# <<< factory ZeroBoosterRarityData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -172,3 +181,6 @@ MUTATIONS["AddBoosterCardToDrawnEnergies"] = {
 # >>> factory-mutation AddBoosterEnergyToDrawnEnergies
 MUTATIONS["AddBoosterEnergyToDrawnEnergies"] = {"source_symbol": "AddBoosterEnergyToDrawnEnergies", "before": "wBoosterCurrentCard = a;", "after": "wBoosterCurrentCard = (uint8_t)(a + 1u);", "case_ids": ["AddBoosterEnergyToDrawnEnergies-0", "AddBoosterEnergyToDrawnEnergies-1", "AddBoosterEnergyToDrawnEnergies-2", "AddBoosterEnergyToDrawnEnergies-3"]}
 # <<< factory-mutation AddBoosterEnergyToDrawnEnergies
+# >>> factory-mutation ZeroBoosterRarityData
+MUTATIONS["ZeroBoosterRarityData"] = {"source_symbol": "ZeroBoosterRarityData", "before": "\twBoosterData_RareAmount = 0u;", "after": "\twBoosterData_RareAmount = 1u;", "case_ids": ["ZeroBoosterRarityData-0", "ZeroBoosterRarityData-1", "ZeroBoosterRarityData-2"]}
+# <<< factory-mutation ZeroBoosterRarityData

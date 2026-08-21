@@ -1391,6 +1391,13 @@ CASES["SetCardListHeaderText"] = [
 ]
 # <<< factory SetCardListHeaderText
 
+# >>> factory AIAttachEnergyInHandToCardInPlayArea
+CONTRACT["AIAttachEnergyInHandToCardInPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIAttachEnergyInHandToCardInPlayArea"] = [
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00\x01", 0xC400: b"\xCB\x01"}, expect_regs={"a": 0xFF, "f": 0xC0}),
+]
+# <<< factory AIAttachEnergyInHandToCardInPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2213,3 +2220,11 @@ MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDue
 # >>> factory-mutation SetCardListHeaderText
 MUTATIONS["SetCardListHeaderText"] = {"source_symbol": "SetCardListHeaderText", "before": "wCardListHeaderText_PTR[1] = (uint8_t)(de >> 8);", "after": "wCardListHeaderText_PTR[1] = (uint8_t)de;", "case_ids": ["SetCardListHeaderText-0", "SetCardListHeaderText-1", "SetCardListHeaderText-2"]}
 # <<< factory-mutation SetCardListHeaderText
+# >>> factory-mutation AIAttachEnergyInHandToCardInPlayArea
+MUTATIONS["AIAttachEnergyInHandToCardInPlayArea"] = {
+    "source_symbol": "AIAttachEnergyInHandToCardInPlayArea",
+    "before": "if ((hand.f & 0x10u) == 0u)",
+    "after": "if ((hand.f & 0x10u) != 0u)",
+    "case_ids": ["AIAttachEnergyInHandToCardInPlayArea-0"],
+}
+# <<< factory-mutation AIAttachEnergyInHandToCardInPlayArea

@@ -382,6 +382,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "generated/wram.h"
 #include "home/core.h"
+
+#include "home/core.h"
+#include "generated/hram.h"
+#define OPPACTION_PLAY_ENERGY 0x03u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2591,3 +2595,18 @@ void SetCardListHeaderText(uint16_t de, uint16_t hl)
 	SetCardListInfoBoxText(hl);
 }
 /* <<< factory SetCardListHeaderText */
+
+/* >>> factory AIAttachEnergyInHandToCardInPlayArea */
+AIAttachEnergyInHandToCardInPlayAreaResult AIAttachEnergyInHandToCardInPlayArea(uint8_t d, uint8_t e)
+{
+	CoreCardListResult hand = LookForCardIDInHandList_Bank5(e);
+	if ((hand.f & 0x10u) == 0u)
+		return (AIAttachEnergyInHandToCardInPlayAreaResult){hand.a, hand.f};
+	uint8_t energy = hand.a;
+	LookResult location = LookForCardIDInPlayArea_Bank5(e, PLAY_AREA_ARENA);
+	hTempPlayAreaLocation_ffa1 = location.a;
+	hTemp_ffa0 = energy;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_ENERGY);
+	return (AIAttachEnergyInHandToCardInPlayAreaResult){OPPACTION_PLAY_ENERGY, decision.f};
+}
+/* <<< factory AIAttachEnergyInHandToCardInPlayArea */

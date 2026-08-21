@@ -2196,6 +2196,14 @@ static void adapt_SuperFang_HalfHPEffect(ProbeState *s)
 }
 /* <<< factory SuperFang_HalfHPEffect */
 
+/* >>> factory KarateChop_DamageSubtractionEffect */
+static void adapt_KarateChop_DamageSubtractionEffect(ProbeState *s)
+{
+	(void)s;
+	KarateChop_DamageSubtractionEffect();
+}
+/* <<< factory KarateChop_DamageSubtractionEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2468,5 +2476,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KinglerFlail_HPCheck", adapt_KinglerFlail_HPCheck },
 	{ "MagikarpFlail_HPCheck", adapt_MagikarpFlail_HPCheck },
 	{ "SuperFang_HalfHPEffect", adapt_SuperFang_HalfHPEffect },
+	{ "KarateChop_DamageSubtractionEffect", adapt_KarateChop_DamageSubtractionEffect },
 	{ NULL, NULL },
 };

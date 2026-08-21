@@ -916,6 +916,9 @@ void MagikarpFlail_HPCheck(void);
 /* >>> factory SuperFang_HalfHPEffect */
 void SuperFang_HalfHPEffect(void);
 /* <<< factory SuperFang_HalfHPEffect */
+/* >>> factory KarateChop_DamageSubtractionEffect */
+void KarateChop_DamageSubtractionEffect(void);
+/* <<< factory KarateChop_DamageSubtractionEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

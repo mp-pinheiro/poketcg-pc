@@ -1,0 +1,9 @@
+{
+  "fn": "AIAttachEnergyInHandToCardInPlayArea",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIAttachEnergyInHandToCardInPlayArea\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"01\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIAttachEnergyInHandToCardInPlayArea\", \"mismatches\": {\"a\": [255, 3], \"f\": [192, 0]}}\n",
+  "restored": "{\"fn\": \"AIAttachEnergyInHandToCardInPlayArea\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 192, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"0001\", \"49902\": \"01\", \"50176\": \"cb01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

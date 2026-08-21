@@ -153,3 +153,12 @@ AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(uint8_t a)
 	return (AddBoosterEnergyToDrawnEnergiesResult){result.a, result.f};
 }
 /* <<< factory AddBoosterEnergyToDrawnEnergies */
+
+/* >>> factory ZeroBoosterRarityData */
+void ZeroBoosterRarityData(void)
+{
+	wBoosterData_CommonAmount = 0u;
+	wBoosterData_UncommonAmount = 0u;
+	wBoosterData_RareAmount = 0u;
+}
+/* <<< factory ZeroBoosterRarityData */

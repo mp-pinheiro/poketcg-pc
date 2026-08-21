@@ -251,6 +251,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3845,3 +3848,17 @@ void SuperFang_HalfHPEffect(void)
 	SetDefiniteDamage(damage);
 }
 /* <<< factory SuperFang_HalfHPEffect */
+
+/* >>> factory KarateChop_DamageSubtractionEffect */
+void KarateChop_DamageSubtractionEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	uint16_t damage_value = (uint16_t)(gb_read8(wDamage_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wDamage_ADDR + 1u)) << 8));
+	uint16_t remaining = (uint16_t)(damage_value - (uint16_t)damage.a);
+	gb_write8(wDamage_ADDR, (uint8_t)remaining);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), (uint8_t)(remaining >> 8));
+	if (damage_value < damage.a)
+		SetDefiniteDamage(0u);
+}
+/* <<< factory KarateChop_DamageSubtractionEffect */
