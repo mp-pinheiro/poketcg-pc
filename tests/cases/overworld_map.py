@@ -47,6 +47,11 @@ wOverworldMapPlayerMovementCounter = 0xD341
 wOverworldMapPlayerPathHorizontalMovement = 0xD343
 wOverworldMapPlayerPathVerticalMovement = 0xD345
 wPlayerDirection = 0xD334
+
+wOverworldMapSelection = 0xD32E
+EVENT_VARS = 0xD3D2
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -86,6 +91,17 @@ CASES["OverworldMap_InitPlayerEastWestMovement"] = [
 ]
 # <<< factory OverworldMap_InitPlayerEastWestMovement
 
+# >>> factory OverworldMap_GetOWMapID
+CONTRACT["OverworldMap_GetOWMapID"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["OverworldMap_GetOWMapID"] = [
+    {"wram": {wOverworldMapSelection: b"\x00"}},
+    {"wram": {wOverworldMapSelection: b"\x01"}},
+    {"wram": {wOverworldMapSelection: b"\x02", EVENT_VARS: b"\x00" * 64}},
+    {"wram": {wOverworldMapSelection: b"\x02", EVENT_VARS: b"\xff" * 64}},
+    dict(POISON, wram={wOverworldMapSelection: b"\x02", EVENT_VARS: b"\x00" * 64}),
+]
+# <<< factory OverworldMap_GetOWMapID
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -108,3 +124,6 @@ MUTATIONS["OverworldMap_LoadSelectedMap"] = {"source_symbol": "OverworldMap_Load
 # >>> factory-mutation OverworldMap_InitPlayerEastWestMovement
 MUTATIONS["OverworldMap_InitPlayerEastWestMovement"] = {"source_symbol": "OverworldMap_InitPlayerEastWestMovement", "before": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)c << 8), (uint16_t)b);", "after": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)c << 8), (uint16_t)(b + 1u));", "case_ids": ["OverworldMap_InitPlayerEastWestMovement-0", "OverworldMap_InitPlayerEastWestMovement-1", "OverworldMap_InitPlayerEastWestMovement-2", "OverworldMap_InitPlayerEastWestMovement-3"]}
 # <<< factory-mutation OverworldMap_InitPlayerEastWestMovement
+# >>> factory-mutation OverworldMap_GetOWMapID
+MUTATIONS["OverworldMap_GetOWMapID"] = {"source_symbol": "OverworldMap_GetOWMapID", "before": "\tif (selection != OWMAP_ISHIHARAS_HOUSE)", "after": "\tif (selection == OWMAP_ISHIHARAS_HOUSE)", "case_ids": ["OverworldMap_GetOWMapID-0", "OverworldMap_GetOWMapID-1", "OverworldMap_GetOWMapID-2", "OverworldMap_GetOWMapID-3", "OverworldMap_GetOWMapID-4"]}
+# <<< factory-mutation OverworldMap_GetOWMapID

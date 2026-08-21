@@ -47,6 +47,13 @@ static const uint8_t overworld_map_warps[13][4] = {
 
 #define EAST 0x01u
 #define WEST 0x03u
+
+#include "generated/wram.h"
+#include "home/scripting.h"
+
+#define EVENT_ISHIHARAS_HOUSE_MENTIONED 0x1eu
+#define OWMAP_ISHIHARAS_HOUSE 0x02u
+#define OWMAP_MYSTERY_HOUSE 0x0du
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -155,3 +162,15 @@ void OverworldMap_InitPlayerEastWestMovement(uint8_t b, uint8_t c)
 	wPlayerDirection = (horizontal_sign & 0x80u) != 0u ? WEST : EAST;
 }
 /* <<< factory OverworldMap_InitPlayerEastWestMovement */
+
+/* >>> factory OverworldMap_GetOWMapID */
+uint8_t OverworldMap_GetOWMapID(void)
+{
+	uint8_t selection = wOverworldMapSelection;
+	if (selection != OWMAP_ISHIHARAS_HOUSE)
+		return selection;
+	if (GetEventValue(EVENT_ISHIHARAS_HOUSE_MENTIONED) != 0u)
+		return selection;
+	return OWMAP_MYSTERY_HOUSE;
+}
+/* <<< factory OverworldMap_GetOWMapID */
