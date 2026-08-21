@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_IncrementEventValue",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_IncrementEventValue\", \"registers\": {\"a\": 197, \"b\": 17, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54226\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\", \"54291\": \"02c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_IncrementEventValue\", \"mismatches\": {\"bus\": {\"address\": 54289, \"reference\": \"000000008002c5\", \"native\": \"000000000002c5\", \"reference_size\": 66, \"native_size\": 66, \"spans\": [[54226, 64], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_IncrementEventValue\", \"registers\": {\"a\": 197, \"b\": 17, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54226\": \"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080\", \"54291\": \"02c5\"}}, \"status\": \"PASS\"}\n"
+}

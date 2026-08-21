@@ -328,4 +328,7 @@ ScriptCommand_JumpIfEventNotEqualResult ScriptCommand_JumpIfEventNotEqual(uint8_
 /* >>> factory ScriptCommand_JumpIfEventNonzero */
 ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
+/* >>> factory ScriptCommand_IncrementEventValue */
+IncreaseScriptPointerResult ScriptCommand_IncrementEventValue(uint8_t f, uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_IncrementEventValue */
 #endif

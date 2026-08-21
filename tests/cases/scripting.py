@@ -40,6 +40,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wScriptPointer = 0xD413
+wEventVars = 0xD3D2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -715,6 +719,15 @@ CASES["ScriptCommand_JumpIfEventNonzero"] = [
 ]
 # <<< factory ScriptCommand_JumpIfEventNonzero
 
+# >>> factory ScriptCommand_IncrementEventValue
+CONTRACT["ScriptCommand_IncrementEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_IncrementEventValue"] = [
+    {"f": 0x00, "b": 0x11, "c": 0x00, "wram": {wScriptPointer: b"\x00\xC5", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2}},
+    {"f": 0x20, "b": 0x22, "c": 0x01, "wram": {wScriptPointer: b"\xFE\xC4", wEventVars: b"\x55" * 0x40}, "read": {wScriptPointer: 2}},
+    dict(POISON, f=0xF0, c=0xCC, wram={wScriptPointer: b"\x00\xC5", wEventVars: b"\xAA" * 0x40}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_IncrementEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1139,3 +1152,6 @@ MUTATIONS["ScriptCommand_JumpIfEventNotEqual"] = {"source_symbol": "ScriptComman
 # >>> factory-mutation ScriptCommand_JumpIfEventNonzero
 MUTATIONS["ScriptCommand_JumpIfEventNonzero"] = {"source_symbol": "ScriptCommand_JumpIfEventNonzero", "before": "if (event != 0u) {", "after": "if (event == 0u) {", "case_ids": ["ScriptCommand_JumpIfEventNonzero-0", "ScriptCommand_JumpIfEventNonzero-1", "ScriptCommand_JumpIfEventNonzero-2", "ScriptCommand_JumpIfEventNonzero-3"]}
 # <<< factory-mutation ScriptCommand_JumpIfEventNonzero
+# >>> factory-mutation ScriptCommand_IncrementEventValue
+MUTATIONS["ScriptCommand_IncrementEventValue"] = {"source_symbol": "ScriptCommand_IncrementEventValue", "before": "\t(void)SetEventValue(c, f, b, value);", "after": "\t(void)SetEventValue(c, f, b, (uint8_t)(value + 1u));", "case_ids": ["ScriptCommand_IncrementEventValue-0", "ScriptCommand_IncrementEventValue-1", "ScriptCommand_IncrementEventValue-2"]}
+# <<< factory-mutation ScriptCommand_IncrementEventValue

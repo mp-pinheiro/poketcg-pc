@@ -927,3 +927,12 @@ ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, 
 	return (ScriptCommand_JumpIfEventZeroResult){r.a, r.f, b, r.c, hl};
 }
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
+
+/* >>> factory ScriptCommand_IncrementEventValue */
+IncreaseScriptPointerResult ScriptCommand_IncrementEventValue(uint8_t f, uint8_t b, uint8_t c)
+{
+	uint8_t value = (uint8_t)(GetEventValue(c) + 1u);
+	(void)SetEventValue(c, f, b, value);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_IncrementEventValue */
