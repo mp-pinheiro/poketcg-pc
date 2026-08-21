@@ -35,4 +35,12 @@ void DuelAnim156(void);
 /* >>> factory GetDamageText */
 uint16_t GetDamageText(uint16_t hl);
 /* <<< factory GetDamageText */
+/* >>> factory PlayAttackAnimationCommands_NextCommand */
+typedef struct {
+	uint8_t d;
+	uint8_t e;
+} PlayAttackAnimationCommands_NextCommandResult;
+
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory PlayAttackAnimationCommands_NextCommand */
 #endif

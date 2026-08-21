@@ -1385,6 +1385,22 @@ wPlayerDuelVariables = 0xC200
 
 hWhoseTurn = 0xFF97
 wDuelType = 0xCC09
+
+wStringBuffer = 0xCAA0
+BGMAP0 = 0x9800
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+def write_case(a, b, c, d=0, e=0, hl=0, poison=False, expected=b"\x00\x00"):
+    dst = BGMAP0 + c * 32 + b
+    values = dict(POISON) if poison else {"a": a, "b": b, "c": c, "d": d, "e": e, "hl": hl}
+    values["wram"] = {wStringBuffer: b"\xff" * 6}
+    if dst < 0xA000:
+        values["vram"] = {0: {dst: b"\xee" * 3}}
+        values["expect_vram"] = {0: {dst: expected + b"\xee"}}
+    else:
+        values["sram"] = {0: {dst: b"\xee" * 3}}
+        values["expect_sram"] = {0: {dst: expected + b"\xee"}}
+    return values
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1602,6 +1618,15 @@ CASES["ShuffleDeckAndDrawSevenCards"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xCC09: b"\x80"}),
 ]
 # <<< factory ShuffleDeckAndDrawSevenCards
+
+# >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace
+CONTRACT["WriteTwoDigitNumberInTxSymbol_PadSpace"] = {"compare": (), "preserve": ()}
+CASES["WriteTwoDigitNumberInTxSymbol_PadSpace"] = [
+    write_case(0x00, 0x07, 0x04, d=0x12, e=0x34, hl=0x5678, expected=b"\x00\x20"),
+    write_case(0x63, 0x1B, 0x3E, d=0x56, e=0x78, hl=0x0000, expected=b"\x29\x29"),
+    write_case(0xAA, 0xBB, 0xCC, d=0xDD, e=0xEE, hl=0x1234, poison=True, expected=b"\x27\x20"),
+]
+# <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2516,3 +2541,11 @@ MUTATIONS["PracticeDuelVerify_Turn4"] = {"source_symbol": "PracticeDuelVerify_Tu
 # >>> factory-mutation ShuffleDeckAndDrawSevenCards
 MUTATIONS["ShuffleDeckAndDrawSevenCards"] = {"source_symbol": "ShuffleDeckAndDrawSevenCards", "before": "if (basic.a != 0u)", "after": "if (basic.a == 0u)", "case_ids": ["ShuffleDeckAndDrawSevenCards-0", "ShuffleDeckAndDrawSevenCards-1"]}
 # <<< factory-mutation ShuffleDeckAndDrawSevenCards
+# >>> factory-mutation WriteTwoDigitNumberInTxSymbol_PadSpace
+MUTATIONS["WriteTwoDigitNumberInTxSymbol_PadSpace"] = {
+    "source_symbol": "WriteTwoDigitNumberInTxSymbol_PadSpace",
+    "before": "SafeCopyDataHLtoDE(&src, &dst, 2u);",
+    "after": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
+    "case_ids": ["WriteTwoDigitNumberInTxSymbol_PadSpace-0", "WriteTwoDigitNumberInTxSymbol_PadSpace-1", "WriteTwoDigitNumberInTxSymbol_PadSpace-2"],
+}
+# <<< factory-mutation WriteTwoDigitNumberInTxSymbol_PadSpace

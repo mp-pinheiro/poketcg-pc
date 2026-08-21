@@ -28,6 +28,8 @@
 #define ResistanceNoDamageText 0x0039u
 #define WeaknessMoreDamage2Text 0x0038u
 #define WeaknessMoreDamageText 0x0037u
+
+#include "home/printer.h"
 /* <<< factory statics */
 
 
@@ -165,3 +167,30 @@ uint16_t GetDamageText(uint16_t hl)
 	return ResistanceLessDamageText;
 }
 /* <<< factory GetDamageText */
+
+/* >>> factory PlayAttackAnimationCommands_NextCommand */
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e)
+{
+	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+	de++;
+	switch (a) {
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
+	case 7: {
+		SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
+		return (PlayAttackAnimationCommands_NextCommandResult){r.d, r.e};
+	}
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	default:
+		return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)de};
+	}
+}
+/* <<< factory PlayAttackAnimationCommands_NextCommand */

@@ -65,6 +65,15 @@ static void adapt_GetDamageText(ProbeState *s)
 }
 /* <<< factory GetDamageText */
 
+/* >>> factory PlayAttackAnimationCommands_NextCommand */
+static void adapt_PlayAttackAnimationCommands_NextCommand(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands_NextCommand(s->a, s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory PlayAttackAnimationCommands_NextCommand */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -74,5 +83,6 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "DuelAnim155", adapt_DuelAnim155 },
 	{ "DuelAnim156", adapt_DuelAnim156 },
 	{ "GetDamageText", adapt_GetDamageText },
+	{ "PlayAttackAnimationCommands_NextCommand", adapt_PlayAttackAnimationCommands_NextCommand },
 	{ NULL, NULL },
 };

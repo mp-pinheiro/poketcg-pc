@@ -1,0 +1,9 @@
+{
+  "fn": "PlayAttackAnimationCommands_NextCommand",
+  "case": "tests/cases/commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayAttackAnimationCommands_NextCommand\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 239, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayAttackAnimationCommands_NextCommand\", \"mismatches\": {\"e\": [239, 240]}}\n",
+  "restored": "{\"fn\": \"PlayAttackAnimationCommands_NextCommand\", \"registers\": {\"a\": 8, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 239, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

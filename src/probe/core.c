@@ -1219,6 +1219,13 @@ static void adapt_ShuffleDeckAndDrawSevenCards(ProbeState *s)
 }
 /* <<< factory ShuffleDeckAndDrawSevenCards */
 
+/* >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace */
+static void adapt_WriteTwoDigitNumberInTxSymbol_PadSpace(ProbeState *s)
+{
+	WriteTwoDigitNumberInTxSymbol_PadSpace(s->a, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1363,5 +1370,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn6", adapt_PracticeDuelVerify_Turn6 },
 	{ "PracticeDuelVerify_Turn4", adapt_PracticeDuelVerify_Turn4 },
 	{ "ShuffleDeckAndDrawSevenCards", adapt_ShuffleDeckAndDrawSevenCards },
+	{ "WriteTwoDigitNumberInTxSymbol_PadSpace", adapt_WriteTwoDigitNumberInTxSymbol_PadSpace },
 	{ NULL, NULL },
 };

@@ -91,6 +91,8 @@ wDamageAnimEffectiveness = 0xCE81
 wNoDamageOrEffect = 0xCCC7
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory GetDamageText
@@ -106,6 +108,17 @@ CASES["GetDamageText"] = [
     dict(POISON, wram={wDamageAnimEffectiveness: b"\x06"}, expect_regs={"hl": 0x0038}),
 ]
 # <<< factory GetDamageText
+
+# >>> factory PlayAttackAnimationCommands_NextCommand
+CONTRACT["PlayAttackAnimationCommands_NextCommand"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")}
+CASES["PlayAttackAnimationCommands_NextCommand"] = [
+    dict(POISON, a=8),
+    dict(POISON, a=9),
+    dict(POISON, a=10),
+    dict(POISON, a=11),
+    dict(POISON, a=12),
+]
+# <<< factory PlayAttackAnimationCommands_NextCommand
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -157,3 +170,6 @@ MUTATIONS["GetDamageText"] = {
     "case_ids": ["GetDamageText-0", "GetDamageText-4", "GetDamageText-5", "GetDamageText-6"],
 }
 # <<< factory-mutation GetDamageText
+# >>> factory-mutation PlayAttackAnimationCommands_NextCommand
+MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAttackAnimationCommands_NextCommand", "before": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)de};", "after": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)(de + 1u)};", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0", "PlayAttackAnimationCommands_NextCommand-1", "PlayAttackAnimationCommands_NextCommand-2", "PlayAttackAnimationCommands_NextCommand-3", "PlayAttackAnimationCommands_NextCommand-4"]}
+# <<< factory-mutation PlayAttackAnimationCommands_NextCommand

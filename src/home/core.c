@@ -453,6 +453,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define DUELTYPE_PRACTICE 0x80u
 #define DUELVARS_HAND 0x42u
 #define DUELVARS_DECK_CARDS 0x7Eu
+
+#include "home/empty_screen.h"
+#include "home/bg_map.h"
+#include "home/core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2887,3 +2892,16 @@ ShuffleDeckAndDrawSevenCardsResult ShuffleDeckAndDrawSevenCards(void)
 	                : (ShuffleDeckAndDrawSevenCardsResult){0u, 0x90u};
 }
 /* <<< factory ShuffleDeckAndDrawSevenCards */
+
+/* >>> factory WriteTwoDigitNumberInTxSymbol_PadSpace */
+void WriteTwoDigitNumberInTxSymbol_PadSpace(
+	uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t number = (uint16_t)a;
+	(void)TwoByteNumberToTxSymbol_PadSpace_Bank1(b, c, d, e, number);
+	uint16_t dst = BCCoordToBGMap0Address(b, c);
+	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 3u);
+	SafeCopyDataHLtoDE(&src, &dst, 2u);
+	(void)hl;
+}
+/* <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace */

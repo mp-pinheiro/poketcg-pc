@@ -1,0 +1,9 @@
+{
+  "fn": "WriteTwoDigitNumberInTxSymbol_PadSpace",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteTwoDigitNumberInTxSymbol_PadSpace\", \"registers\": {\"a\": 0, \"b\": 7, \"c\": 4, \"d\": 18, \"e\": 52, \"f\": 0, \"hl\": 22136, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39047\": \"0020ee\"}}, \"wram\": {\"51872\": \"000000002000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteTwoDigitNumberInTxSymbol_PadSpace\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"WriteTwoDigitNumberInTxSymbol_PadSpace\", \"registers\": {\"a\": 0, \"b\": 7, \"c\": 4, \"d\": 18, \"e\": 52, \"f\": 0, \"hl\": 22136, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39047\": \"0020ee\"}}, \"wram\": {\"51872\": \"000000002000\"}}, \"status\": \"PASS\"}\n"
+}
