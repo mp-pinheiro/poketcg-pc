@@ -130,6 +130,9 @@ CASES = {
 # >>> factory-cases-statics
 wAllSpriteAnimationsDisabled = 0xD5D7
 wVBlankOAMCopyToggle = 0xCAC0
+
+hBankROM = 0xFF80
+wCurTilemap = 0xD131
 # <<< factory-cases-statics
 
 
@@ -183,6 +186,14 @@ CASES["EnableAndClearSpriteAnimations"] = [
 ]
 # <<< factory EnableAndClearSpriteAnimations
 
+# >>> factory DrawPortrait
+CONTRACT["DrawPortrait"] = {"compare": (), "preserve": ()}
+CASES["DrawPortrait"] = [
+    {"a": 0x00, "wram": {hBankROM: b"\x01", wCurTilemap: b"\xff"}, "read": {hBankROM: 1, wCurTilemap: 1}},
+    dict(POISON, a=0x62, wram={hBankROM: b"\x07", wCurTilemap: b"\x00"}, read={hBankROM: 1, wCurTilemap: 1}),
+]
+# <<< factory DrawPortrait
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -218,3 +229,6 @@ MUTATIONS["EnableAndClearSpriteAnimations"] = {
     "case_ids": ["EnableAndClearSpriteAnimations-0", "EnableAndClearSpriteAnimations-1"],
 }
 # <<< factory-mutation EnableAndClearSpriteAnimations
+# >>> factory-mutation DrawPortrait
+MUTATIONS["DrawPortrait"] = {"source_symbol": "DrawPortrait", "before": "wCurTilemap = a;", "after": "wCurTilemap = (uint8_t)(a ^ 1u);", "case_ids": ["DrawPortrait-0", "DrawPortrait-1"]}
+# <<< factory-mutation DrawPortrait

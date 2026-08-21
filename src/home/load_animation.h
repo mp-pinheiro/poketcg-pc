@@ -20,4 +20,7 @@ void HandleAllSpriteAnimations(void);
 /* >>> factory EnableAndClearSpriteAnimations */
 void EnableAndClearSpriteAnimations(void);
 /* <<< factory EnableAndClearSpriteAnimations */
+/* >>> factory DrawPortrait */
+void DrawPortrait(uint8_t a);
+/* <<< factory DrawPortrait */
 #endif

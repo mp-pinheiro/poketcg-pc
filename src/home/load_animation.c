@@ -8,6 +8,12 @@
 /* >>> factory statics */
 #include "home/sprite_animations.h"
 #define BANK_SPRITE_ANIMATIONS 0x04u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/scenes.h"
+#include "home/switch_rom.h"
+#define BANK_DRAW_PORTRAIT 0x04u
 /* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
@@ -234,3 +240,14 @@ void EnableAndClearSpriteAnimations(void)
 	ClearSpriteAnimations();
 }
 /* <<< factory EnableAndClearSpriteAnimations */
+
+/* >>> factory DrawPortrait */
+void DrawPortrait(uint8_t a)
+{
+	wCurTilemap = a;
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_DRAW_PORTRAIT);
+	_DrawPortrait();
+	BankswitchROM(saved);
+}
+/* <<< factory DrawPortrait */

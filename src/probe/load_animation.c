@@ -65,6 +65,13 @@ static void adapt_EnableAndClearSpriteAnimations(ProbeState *s)
 }
 /* <<< factory EnableAndClearSpriteAnimations */
 
+/* >>> factory DrawPortrait */
+static void adapt_DrawPortrait(ProbeState *s)
+{
+	DrawPortrait(s->a);
+}
+/* <<< factory DrawPortrait */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -76,5 +83,6 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "ClearSpriteAnimations", adapt_ClearSpriteAnimations },
 	{ "HandleAllSpriteAnimations", adapt_HandleAllSpriteAnimations },
 	{ "EnableAndClearSpriteAnimations", adapt_EnableAndClearSpriteAnimations },
+	{ "DrawPortrait", adapt_DrawPortrait },
 	{ NULL, NULL },
 };
