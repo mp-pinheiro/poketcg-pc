@@ -67,6 +67,9 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #include "generated/wram.h"
 #include "home/map.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -351,3 +354,12 @@ NPCPositionResult GetNPCPosition(void)
 	return (NPCPositionResult){x, x, y};
 }
 /* <<< factory GetNPCPosition */
+
+/* >>> factory UpdateIsAnNPCMovingFlag */
+UpdateIsAnNPCMovingFlagResult UpdateIsAnNPCMovingFlag(uint16_t hl)
+{
+	uint8_t a = (uint8_t)(wIsAnNPCMoving | gb_read8((uint16_t)(hl + LOADED_NPC_FLAGS)));
+	wIsAnNPCMoving = a;
+	return (UpdateIsAnNPCMovingFlagResult){a, (a == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory UpdateIsAnNPCMovingFlag */

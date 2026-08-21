@@ -961,6 +961,9 @@ void PoliwhirlAmnesia_AISelectEffect(void);
 /* >>> factory StretchKick_AISelectEffect */
 void StretchKick_AISelectEffect(void);
 /* <<< factory StretchKick_AISelectEffect */
+/* >>> factory VaporeonWaterGunEffect */
+void VaporeonWaterGunEffect(void);
+/* <<< factory VaporeonWaterGunEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

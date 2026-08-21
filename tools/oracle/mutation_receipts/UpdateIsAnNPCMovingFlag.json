@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateIsAnNPCMovingFlag",
+  "case": "tests/cases/npc_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateIsAnNPCMovingFlag\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50437\": \"02\", \"54199\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateIsAnNPCMovingFlag\", \"mismatches\": {\"a\": [3, 1], \"bus\": {\"address\": 54199, \"reference\": \"0203\", \"native\": \"0201\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50437, 1], [54199, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateIsAnNPCMovingFlag\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50437\": \"02\", \"54199\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

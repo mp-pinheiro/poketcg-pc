@@ -3957,3 +3957,10 @@ void StretchKick_AISelectEffect(void)
 	hTemp_ffa0 = result.a;
 }
 /* <<< factory StretchKick_AISelectEffect */
+
+/* >>> factory VaporeonWaterGunEffect */
+void VaporeonWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
+}
+/* <<< factory VaporeonWaterGunEffect */

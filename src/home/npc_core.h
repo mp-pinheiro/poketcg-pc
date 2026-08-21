@@ -54,4 +54,12 @@ uint8_t GetNPCDirection(void);
 typedef struct { uint8_t a; uint8_t b; uint8_t c; } NPCPositionResult;
 NPCPositionResult GetNPCPosition(void);
 /* <<< factory GetNPCPosition */
+/* >>> factory UpdateIsAnNPCMovingFlag */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} UpdateIsAnNPCMovingFlagResult;
+
+UpdateIsAnNPCMovingFlagResult UpdateIsAnNPCMovingFlag(uint16_t hl);
+/* <<< factory UpdateIsAnNPCMovingFlag */
 #endif /* POKETCG_HOME_NPC_CORE_H */

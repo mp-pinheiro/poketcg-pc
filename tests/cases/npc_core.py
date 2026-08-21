@@ -163,6 +163,9 @@ wLoadedNPCTempIndex = 0xD3AA
 
 wLoadedNPCTempIndex = 0xD3AA
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wIsAnNPCMoving = 0xD3B7
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -202,6 +205,16 @@ CASES["GetNPCPosition"] = [
     dict(POISON, wram={0xD3AA: b"\x07", 0xD3A2: b"\xDE\xF0"}, read={0xD3A2: 2}),
 ]
 # <<< factory GetNPCPosition
+
+# >>> factory UpdateIsAnNPCMovingFlag
+CONTRACT["UpdateIsAnNPCMovingFlag"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["UpdateIsAnNPCMovingFlag"] = [
+    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x00", 0xC505: b"\x00"}, "expect": {wIsAnNPCMoving: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80}},
+    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x01", 0xC505: b"\x02"}, "expect": {wIsAnNPCMoving: b"\x03"}, "expect_regs": {"a": 0x03, "f": 0x00}},
+    {"hl": 0xC500, "wram": {wIsAnNPCMoving: b"\x80", 0xC505: b"\x01"}, "expect": {wIsAnNPCMoving: b"\x81"}, "expect_regs": {"a": 0x81, "f": 0x00}},
+    dict(POISON, hl=0xC500, wram={wIsAnNPCMoving: b"\x20", 0xC505: b"\x04"}, expect={wIsAnNPCMoving: b"\x24"}, expect_regs={"a": 0x24, "f": 0x00}),
+]
+# <<< factory UpdateIsAnNPCMovingFlag
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -285,3 +298,6 @@ MUTATIONS["GetNPCPosition"] = {
     "case_ids": ["GetNPCPosition-0", "GetNPCPosition-1", "GetNPCPosition-2", "GetNPCPosition-3"],
 }
 # <<< factory-mutation GetNPCPosition
+# >>> factory-mutation UpdateIsAnNPCMovingFlag
+MUTATIONS["UpdateIsAnNPCMovingFlag"] = {"source_symbol": "UpdateIsAnNPCMovingFlag", "before": "uint8_t a = (uint8_t)(wIsAnNPCMoving | gb_read8((uint16_t)(hl + LOADED_NPC_FLAGS)));", "after": "uint8_t a = wIsAnNPCMoving;", "case_ids": ["UpdateIsAnNPCMovingFlag-1", "UpdateIsAnNPCMovingFlag-2", "UpdateIsAnNPCMovingFlag-3"]}
+# <<< factory-mutation UpdateIsAnNPCMovingFlag

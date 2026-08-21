@@ -2490,6 +2490,14 @@ CASES["StretchKick_AISelectEffect"] = [
 ]
 # <<< factory StretchKick_AISelectEffect
 
+# >>> factory VaporeonWaterGunEffect
+CONTRACT["VaporeonWaterGunEffect"] = {"compare": (), "preserve": ()};
+CASES["VaporeonWaterGunEffect"] = [
+    {"wram": {0xCCB9: b"\x0A", 0xCCF0: b"\x00", 0xFF9D: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory VaporeonWaterGunEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4186,3 +4194,11 @@ MUTATIONS["PoliwhirlAmnesia_AISelectEffect"] = {"source_symbol": "PoliwhirlAmnes
 # >>> factory-mutation StretchKick_AISelectEffect
 MUTATIONS["StretchKick_AISelectEffect"] = {"source_symbol": "StretchKick_AISelectEffect", "before": "\tAIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = result.a;", "after": "\tAIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = (uint8_t)(result.a + 1u);", "case_ids": ["StretchKick_AISelectEffect-0", "StretchKick_AISelectEffect-1"]}
 # <<< factory-mutation StretchKick_AISelectEffect
+# >>> factory-mutation VaporeonWaterGunEffect
+MUTATIONS["VaporeonWaterGunEffect"] = {
+    "source_symbol": "VaporeonWaterGunEffect",
+    "before": "\tApplyExtraWaterEnergyDamageBonus(2u, 1u);",
+    "after": "\tApplyExtraWaterEnergyDamageBonus(2u, 1u);\n\twAIMinDamage = (uint8_t)(wAIMinDamage + 1u);",
+    "case_ids": ["VaporeonWaterGunEffect-0", "VaporeonWaterGunEffect-1"],
+}
+# <<< factory-mutation VaporeonWaterGunEffect

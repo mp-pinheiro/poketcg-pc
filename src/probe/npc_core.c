@@ -125,6 +125,15 @@ static void adapt_GetNPCPosition(ProbeState *s)
 }
 /* <<< factory GetNPCPosition */
 
+/* >>> factory UpdateIsAnNPCMovingFlag */
+static void adapt_UpdateIsAnNPCMovingFlag(ProbeState *s)
+{
+	UpdateIsAnNPCMovingFlagResult result = UpdateIsAnNPCMovingFlag(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory UpdateIsAnNPCMovingFlag */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -142,5 +151,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "Func_1c53f", adapt_Func_1c53f },
 	{ "GetNPCDirection", adapt_GetNPCDirection },
 	{ "GetNPCPosition", adapt_GetNPCPosition },
+	{ "UpdateIsAnNPCMovingFlag", adapt_UpdateIsAnNPCMovingFlag },
 	{ NULL, NULL },
 };

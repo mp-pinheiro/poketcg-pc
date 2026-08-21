@@ -2289,6 +2289,14 @@ static void adapt_StretchKick_AISelectEffect(ProbeState *s)
 }
 /* <<< factory StretchKick_AISelectEffect */
 
+/* >>> factory VaporeonWaterGunEffect */
+static void adapt_VaporeonWaterGunEffect(ProbeState *s)
+{
+	(void)s;
+	VaporeonWaterGunEffect();
+}
+/* <<< factory VaporeonWaterGunEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2573,5 +2581,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "OnixHardenEffect", adapt_OnixHardenEffect },
 	{ "PoliwhirlAmnesia_AISelectEffect", adapt_PoliwhirlAmnesia_AISelectEffect },
 	{ "StretchKick_AISelectEffect", adapt_StretchKick_AISelectEffect },
+	{ "VaporeonWaterGunEffect", adapt_VaporeonWaterGunEffect },
 	{ NULL, NULL },
 };
