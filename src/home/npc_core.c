@@ -48,6 +48,9 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #define LOADED_NPC_COORD_X 0x02u
 #define LOADED_NPC_COORD_Y 0x03u
+
+#define NPC_FLAG_MOVING (1u << NPC_FLAG_MOVING_F)
+#define SPRITE_ANIM_COORD_X 0x02u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -210,3 +213,51 @@ uint8_t UpdateNPCPosition(void)
 	return x;
 }
 /* <<< factory UpdateNPCPosition */
+
+/* >>> factory UpdateNPCSpritePosition */
+UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl)
+{
+	uint16_t npc = hl;
+	uint8_t flags = gb_read8((uint16_t)(npc + LOADED_NPC_FLAGS));
+	uint8_t direction = 0u;
+	uint8_t step = 0u;
+	if ((flags & NPC_FLAG_MOVING) != 0u) {
+		direction = gb_read8((uint16_t)(npc + LOADED_NPC_DIRECTION));
+		step = gb_read8((uint16_t)(npc + LOADED_NPC_MOVEMENT_STEP));
+	}
+	uint8_t b;
+	uint8_t c;
+	if (direction == 0u) {
+		c = gb_read8(hSCY_ADDR);
+		b = gb_read8(hSCX_ADDR);
+	} else if (direction == 1u) {
+		b = (uint8_t)(gb_read8(hSCX_ADDR) - step);
+		c = gb_read8(hSCY_ADDR);
+	} else if (direction == 2u) {
+		c = (uint8_t)(gb_read8(hSCY_ADDR) - step);
+		b = gb_read8(hSCX_ADDR);
+	} else {
+		step = (uint8_t)(0u - step);
+		b = (uint8_t)(gb_read8(hSCX_ADDR) - step);
+		c = gb_read8(hSCY_ADDR);
+	}
+	uint16_t sprite = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	uint8_t x = (uint8_t)(gb_read8((uint16_t)(npc + LOADED_NPC_COORD_X)) * 8u + 0x08u);
+	x = (uint8_t)(x - b);
+	gb_write8(sprite, x);
+	uint8_t y_base = gb_read8((uint16_t)(npc + LOADED_NPC_COORD_X + 1u));
+	uint8_t y = (uint8_t)(y_base * 8u + 0x10u);
+	uint8_t y_result = (uint8_t)(y - c);
+	gb_write8((uint16_t)(sprite + 1u), y_result);
+	UpdateNPCSpritePositionResult result;
+	result.a = y_result;
+	result.f = 0x40u;
+	if (y_result == 0u)
+		result.f |= 0x80u;
+	if ((y & 0x0fu) < (c & 0x0fu))
+		result.f |= 0x20u;
+	if (y < c)
+		result.f |= 0x10u;
+	return result;
+}
+/* <<< factory UpdateNPCSpritePosition */

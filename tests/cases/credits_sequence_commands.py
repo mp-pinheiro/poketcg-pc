@@ -132,6 +132,22 @@ CASES["CreditsSequenceCmd_DisableLCD"] = [
 # <<< factory CreditsSequenceCmd_DisableLCD
 
 
+# >>> factory-cases-statics
+wd647 = 0xD647
+wd648 = 0xD648
+wd649 = 0xD649
+wd64a = 0xD64A
+wSequenceDelay = 0xD633
+# <<< factory-cases-statics
+
+# >>> factory CreditsSequenceCmd_TransformOverlay
+CONTRACT["CreditsSequenceCmd_TransformOverlay"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_TransformOverlay"] = [
+    {"b": 2, "c": 2, "d": 2, "e": 2, "wram": {wd647: b"\x00", wd648: b"\x00", wd649: b"\x00", wd64a: b"\x00"}, "read": {wd647: 4, wSequenceDelay: 1}},
+    dict(POISON, wram={wd647: b"\x10", wd648: b"\x10", wd649: b"\x10", wd64a: b"\x10"}, read={wd647: 4, wSequenceDelay: 1}),
+]
+# <<< factory CreditsSequenceCmd_TransformOverlay
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -213,3 +229,6 @@ MUTATIONS["CreditsSequenceCmd_DisableLCD"] = {
 	"case_ids": ["CreditsSequenceCmd_DisableLCD-0", "CreditsSequenceCmd_DisableLCD-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_DisableLCD
+# >>> factory-mutation CreditsSequenceCmd_TransformOverlay
+MUTATIONS["CreditsSequenceCmd_TransformOverlay"] = {"source_symbol": "CreditsSequenceCmd_TransformOverlay", "before": "wSequenceDelay = 1;", "after": "wSequenceDelay = 2;", "case_ids": ["CreditsSequenceCmd_TransformOverlay-0"]}
+# <<< factory-mutation CreditsSequenceCmd_TransformOverlay

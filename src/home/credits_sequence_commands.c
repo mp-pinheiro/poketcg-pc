@@ -6,6 +6,10 @@
 #include "home/credits_sequence_commands.h"
 #include "home/color.h"
 #include "home/lcd.h"
+
+#include "generated/wram.h"
+#include "home/credits.h"
+#include "home/credits_sequence_commands.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -100,3 +104,40 @@ void CreditsSequenceCmd_DisableLCD(void)
 	AdvanceCreditsSequenceCmdPtrBy2();
 }
 /* <<< factory CreditsSequenceCmd_DisableLCD */
+
+/* >>> factory CreditsSequenceCmd_TransformOverlay */
+void CreditsSequenceCmd_TransformOverlay(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	uint8_t changed = 0;
+	uint8_t value = wd647;
+	if (value != 0xFFu && value != c) {
+		changed = 1;
+		value = (uint8_t)(value + (value < c ? 2u : (uint8_t)-2));
+	}
+	wd647 = value;
+	value = wd648;
+	if (value != 0xFFu && value != b) {
+		changed = 1;
+		value = (uint8_t)(value + (value < b ? 2u : (uint8_t)-2));
+	}
+	wd648 = value;
+	value = wd649;
+	if (value != 0xFFu && value != e) {
+		changed = 1;
+		value = (uint8_t)(value + (value < e ? 2u : (uint8_t)-2));
+	}
+	wd649 = value;
+	value = wd64a;
+	if (value != 0xFFu && value != d) {
+		changed = 1;
+		value = (uint8_t)(value + (value < d ? 2u : (uint8_t)-2));
+	}
+	wd64a = value;
+	if (changed != 0) {
+		wSequenceDelay = 1;
+		return;
+	}
+	(void)Func_1d765();
+	AdvanceCreditsSequenceCmdPtrBy6();
+}
+/* <<< factory CreditsSequenceCmd_TransformOverlay */

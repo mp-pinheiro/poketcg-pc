@@ -44,11 +44,19 @@ static void adapt_ClearMemory_Bank8(ProbeState *s)
 }
 /* <<< factory ClearMemory_Bank8 */
 
+/* >>> factory PickAttachedEnergyCardToRemove */
+static void adapt_PickAttachedEnergyCardToRemove(ProbeState *s)
+{
+	s->a = PickAttachedEnergyCardToRemove(s->a);
+}
+/* <<< factory PickAttachedEnergyCardToRemove */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
 	{ "CalculateWordTensDigit", adapt_CalculateWordTensDigit },
 	{ "PickTwoAttachedEnergyCards", adapt_PickTwoAttachedEnergyCards },
 	{ "ClearMemory_Bank8", adapt_ClearMemory_Bank8 },
+	{ "PickAttachedEnergyCardToRemove", adapt_PickAttachedEnergyCardToRemove },
 	{ NULL, NULL },
 };

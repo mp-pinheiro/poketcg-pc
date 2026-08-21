@@ -20,4 +20,7 @@ PickTwoResult PickTwoAttachedEnergyCards(uint8_t a);
 /* >>> factory ClearMemory_Bank8 */
 void ClearMemory_Bank8(uint8_t a, uint16_t hl);
 /* <<< factory ClearMemory_Bank8 */
+/* >>> factory PickAttachedEnergyCardToRemove */
+uint8_t PickAttachedEnergyCardToRemove(uint8_t a);
+/* <<< factory PickAttachedEnergyCardToRemove */
 #endif /* POKETCG_HOME_COMMON_H */

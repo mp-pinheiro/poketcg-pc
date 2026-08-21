@@ -18,6 +18,13 @@
 #define DOUBLE_COLORLESS_ENERGY 0x07u
 #define DUELVARS_ARENA_CARD     0xbbu
 #define TYPE_ENERGY             0x08u
+
+#include "home/card_data.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -135,3 +142,43 @@ void ClearMemory_Bank8(uint8_t a, uint16_t hl)
 		gb_write8((uint16_t)(hl + i), 0u);
 }
 /* <<< factory ClearMemory_Bank8 */
+
+/* >>> factory PickAttachedEnergyCardToRemove */
+uint8_t PickAttachedEnergyCardToRemove(uint8_t a)
+{
+	hTempPlayAreaLocation_ff9d = a;
+	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t loc = hTempPlayAreaLocation_ff9d;
+	(void)GetPlayAreaCardAttachedEnergies(loc);
+	if (wTotalAttachedEnergies == 0u)
+		return 0xffu;
+
+	uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc)).a;
+	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+	wTempCardID = card_id;
+	LoadCardDataToBuffer1_FromCardID(card_id);
+	wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t deck = gb_read8(hl);
+		if (deck == 0xffu)
+			break;
+		if ((uint8_t)GetCardIDFromDeckIndex(deck) == DOUBLE_COLORLESS_ENERGY)
+			return deck;
+		hl = (uint16_t)(hl + 1u);
+	}
+
+	hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t deck = gb_read8(hl);
+		if (deck == 0xffu)
+			break;
+		if (CheckIfEnergyIsUseful(deck).f & 0x10u)
+			return deck;
+		hl = (uint16_t)(hl + 1u);
+	}
+
+	return gb_read8(wDuelTempList_ADDR);
+}
+/* <<< factory PickAttachedEnergyCardToRemove */

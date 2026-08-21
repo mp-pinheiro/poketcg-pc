@@ -16,8 +16,17 @@ static void adapt_CalculateNameHash(ProbeState *s)
 	s->e = (uint8_t)de;
 }
 
+/* >>> factory LookUpNameInCardPopNameList */
+static void adapt_LookUpNameInCardPopNameList(ProbeState *s)
+{
+	(void)s;
+	LookUpNameInCardPopNameList();
+}
+/* <<< factory LookUpNameInCardPopNameList */
+
 const ProbeEntry probe_entries_card_pop[] = {
 	{ "CreateCardPopCandidateList", adapt_CreateCardPopCandidateList },
 	{ "CalculateNameHash", adapt_CalculateNameHash },
+	{ "LookUpNameInCardPopNameList", adapt_LookUpNameInCardPopNameList },
 	{ NULL, NULL },
 };

@@ -68,6 +68,16 @@ CASES["ClearMemory_Bank8"] = [
 ]
 # <<< factory ClearMemory_Bank8
 
+# >>> factory PickAttachedEnergyCardToRemove
+CONTRACT["PickAttachedEnergyCardToRemove"] = {"compare": ("a",), "preserve": ()}
+CASES["PickAttachedEnergyCardToRemove"] = [
+    {"a": 0, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
+    {"a": 1, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
+    {"a": 5, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC200: 60, 0xC510: 32}},
+]
+# <<< factory PickAttachedEnergyCardToRemove
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -112,3 +122,6 @@ MUTATIONS["ClearMemory_Bank8"] = {
     "case_ids": ["ClearMemory_Bank8-0", "ClearMemory_Bank8-3"],
 }
 # <<< factory-mutation ClearMemory_Bank8
+# >>> factory-mutation PickAttachedEnergyCardToRemove
+MUTATIONS["PickAttachedEnergyCardToRemove"] = {"source_symbol": "PickAttachedEnergyCardToRemove", "before": "\t\treturn 0xffu;", "after": "\t\treturn 0xfeu;", "case_ids": ["PickAttachedEnergyCardToRemove-0", "PickAttachedEnergyCardToRemove-1", "PickAttachedEnergyCardToRemove-2", "PickAttachedEnergyCardToRemove-3"]}
+# <<< factory-mutation PickAttachedEnergyCardToRemove

@@ -1,0 +1,9 @@
+{
+  "fn": "LookUpNameInCardPopNameList",
+  "case": "tests/cases/card_pop.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookUpNameInCardPopNameList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"414c49434500000000000000000000\", \"50432\": \"414c49434500000000000000000000\", \"50675\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookUpNameInCardPopNameList\", \"mismatches\": {\"bus\": {\"address\": 50675, \"reference\": \"00000000ff\", \"native\": \"0000000000\", \"reference_size\": 31, \"native_size\": 31, \"spans\": [[49152, 15], [50432, 15], [50675, 1]]}}}\n",
+  "restored": "{\"fn\": \"LookUpNameInCardPopNameList\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"414c49434500000000000000000000\", \"50432\": \"414c49434500000000000000000000\", \"50675\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

@@ -23,6 +23,15 @@ CASES = {
     ],
 }
 
+# >>> factory LookUpNameInCardPopNameList
+CONTRACT["LookUpNameInCardPopNameList"] = {"compare": (), "preserve": ()}
+CASES["LookUpNameInCardPopNameList"] = [
+    {"wram": {0xC000: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xC5F3: 1}},
+    {"ramg": False, "wram": {0xC000: b"BOB\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC200: b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"ALICE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "sram": {0: {0xA010: b"CAROL\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}}, "read": {0xC5F3: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC000: b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00", 0xC500: b"DAVE\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "read": {0xC5F3: 1}}
+]
+# <<< factory LookUpNameInCardPopNameList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -40,3 +49,6 @@ MUTATIONS = {
         "case_ids": ["CalculateNameHash-1", "CalculateNameHash-2", "CalculateNameHash-3"],
     },
 }
+# >>> factory-mutation LookUpNameInCardPopNameList
+MUTATIONS["LookUpNameInCardPopNameList"] = {"source_symbol": "LookUpNameInCardPopNameList", "before": "\t\t\tresult = 0xff;", "after": "\t\t\tresult = 0x00;", "case_ids": ["LookUpNameInCardPopNameList-0", "LookUpNameInCardPopNameList-2"]}
+# <<< factory-mutation LookUpNameInCardPopNameList

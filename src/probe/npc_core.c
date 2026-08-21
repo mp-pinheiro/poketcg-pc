@@ -62,6 +62,15 @@ static void adapt_UpdateNPCPosition(ProbeState *s)
 }
 /* <<< factory UpdateNPCPosition */
 
+/* >>> factory UpdateNPCSpritePosition */
+static void adapt_UpdateNPCSpritePosition(ProbeState *s)
+{
+	UpdateNPCSpritePositionResult result = UpdateNPCSpritePosition(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory UpdateNPCSpritePosition */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -71,5 +80,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "StartNPCMovement", adapt_StartNPCMovement },
 	{ "Func_1c5e9", adapt_Func_1c5e9 },
 	{ "UpdateNPCPosition", adapt_UpdateNPCPosition },
+	{ "UpdateNPCSpritePosition", adapt_UpdateNPCSpritePosition },
 	{ NULL, NULL },
 };

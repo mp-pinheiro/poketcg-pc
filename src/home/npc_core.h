@@ -27,4 +27,8 @@ uint8_t Func_1c5e9(void);
 /* >>> factory UpdateNPCPosition */
 uint8_t UpdateNPCPosition(void);
 /* <<< factory UpdateNPCPosition */
+/* >>> factory UpdateNPCSpritePosition */
+typedef struct { uint8_t a; uint8_t f; } UpdateNPCSpritePositionResult;
+UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl);
+/* <<< factory UpdateNPCSpritePosition */
 #endif /* POKETCG_HOME_NPC_CORE_H */

@@ -116,6 +116,14 @@ CASES["UpdateNPCPosition"] = [
 ]
 # <<< factory UpdateNPCPosition
 
+# >>> factory UpdateNPCSpritePosition
+CONTRACT["UpdateNPCSpritePosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["UpdateNPCSpritePosition"] = [
+	{"hl": 0xD3AB, "wram": {0xD3AD: b"\x01\x02", 0xD3B0: b"\x00", 0xD4CF: b"\x00"}, "hram": {0xFF92: b"\x20", 0xFF93: b"\x30"}, "read": {0xD3B0: 1, 0xFF92: 1, 0xFF93: 1, 0xD4CF: 1, 0xD3AD: 1, 0xD3AE: 1}},
+	dict(POISON, hl=0xD3AB, wram={0xD3AD: b"\x10\x20", 0xD3AF: b"\x01", 0xD3B0: b"\x20", 0xD3B3: b"\x08", 0xD4CF: b"\x00"}, hram={0xFF92: b"\x20", 0xFF93: b"\x30"}, read={0xD3B0: 1, 0xD3AF: 1, 0xD3B3: 1, 0xFF92: 1, 0xFF93: 1, 0xD4CF: 1, 0xD3AD: 1, 0xD3AE: 1}),
+]
+# <<< factory UpdateNPCSpritePosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -159,3 +167,6 @@ MUTATIONS["Func_1c5e9"] = {"source_symbol": "Func_1c5e9", "before": "uint16_t hl
 # >>> factory-mutation UpdateNPCPosition
 MUTATIONS["UpdateNPCPosition"] = {"source_symbol": "UpdateNPCPosition", "before": "uint8_t x = (uint8_t)(gb_read8(hl) + x_offset);", "after": "uint8_t x = (uint8_t)(gb_read8(hl) + y_offset);", "case_ids": ["UpdateNPCPosition-1", "UpdateNPCPosition-2", "UpdateNPCPosition-3", "UpdateNPCPosition-4"]}
 # <<< factory-mutation UpdateNPCPosition
+# >>> factory-mutation UpdateNPCSpritePosition
+MUTATIONS["UpdateNPCSpritePosition"] = {"source_symbol": "UpdateNPCSpritePosition", "before": "uint8_t y = (uint8_t)(y_base * 8u + 0x10u);", "after": "uint8_t y = (uint8_t)(y_base * 8u + 0x08u);", "case_ids": ["UpdateNPCSpritePosition-0", "UpdateNPCSpritePosition-1"]}
+# <<< factory-mutation UpdateNPCSpritePosition
