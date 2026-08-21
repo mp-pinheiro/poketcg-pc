@@ -639,6 +639,19 @@ CASES["GetEventValue"] = [
 ]
 # <<< factory GetEventValue
 
+# >>> factory GetEventValueBC
+CONTRACT["GetEventValueBC"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("d", "e", "hl"),
+}
+CASES["GetEventValueBC"] = [
+    {"b": 0x42, "c": 0, "wram": {0xD411: b"\x80"}},
+    {"b": 0x17, "c": 8, "wram": {0xD3D2: b"\x80"}},
+    {"b": 0xA5, "c": 16, "wram": {0xD3D2: b"\x01"}},
+    dict(POISON),
+]
+# <<< factory GetEventValueBC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1022,3 +1035,11 @@ MUTATIONS["GetEventValue"] = {
     "case_ids": ["GetEventValue-0", "GetEventValue-1", "GetEventValue-2", "GetEventValue-3"],
 }
 # <<< factory-mutation GetEventValue
+# >>> factory-mutation GetEventValueBC
+MUTATIONS["GetEventValueBC"] = {
+    "source_symbol": "GetEventValueBC",
+    "before": "uint8_t value = GetEventValue(c);",
+    "after": "uint8_t value = GetEventValue(b);",
+    "case_ids": ["GetEventValueBC-0", "GetEventValueBC-1", "GetEventValueBC-2", "GetEventValueBC-3"],
+}
+# <<< factory-mutation GetEventValueBC

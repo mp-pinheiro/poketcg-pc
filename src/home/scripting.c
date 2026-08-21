@@ -789,3 +789,12 @@ uint8_t GetEventValue(uint8_t a)
 	return (uint8_t)(mask & value);
 }
 /* <<< factory GetEventValue */
+
+/* >>> factory GetEventValueBC */
+GetEventValueBCResult GetEventValueBC(uint8_t b, uint8_t c)
+{
+	uint8_t value = GetEventValue(c);
+	uint8_t f = value == 0u ? 0x80u : 0u;
+	return (GetEventValueBCResult){value, f, b};
+}
+/* <<< factory GetEventValueBC */

@@ -1,0 +1,9 @@
+{
+  "fn": "GetEventValueBC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEventValueBC\", \"registers\": {\"a\": 1, \"b\": 66, \"c\": 66, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54289\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEventValueBC\", \"mismatches\": {\"a\": [1, 0], \"f\": [0, 128]}}\n",
+  "restored": "{\"fn\": \"GetEventValueBC\", \"registers\": {\"a\": 1, \"b\": 66, \"c\": 66, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54289\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

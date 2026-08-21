@@ -261,4 +261,13 @@ ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOn
 /* >>> factory GetEventValue */
 uint8_t GetEventValue(uint8_t a);
 /* <<< factory GetEventValue */
+/* >>> factory GetEventValueBC */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t c;
+} GetEventValueBCResult;
+
+GetEventValueBCResult GetEventValueBC(uint8_t b, uint8_t c);
+/* <<< factory GetEventValueBC */
 #endif

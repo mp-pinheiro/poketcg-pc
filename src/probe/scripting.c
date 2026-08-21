@@ -540,6 +540,17 @@ static void adapt_GetEventValue(ProbeState *s)
 }
 /* <<< factory GetEventValue */
 
+/* >>> factory GetEventValueBC */
+static void adapt_GetEventValueBC(ProbeState *s)
+{
+	GetEventValueBCResult result = GetEventValueBC(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.c;
+	s->c = result.c;
+}
+/* <<< factory GetEventValueBC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -594,5 +605,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfAnyEnergyCardsInCollection", adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection },
 	{ "ScriptCommand_JumpBasedOnFightingClubPupilStatus", adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus },
 	{ "GetEventValue", adapt_GetEventValue },
+	{ "GetEventValueBC", adapt_GetEventValueBC },
 	{ NULL, NULL },
 };
