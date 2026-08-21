@@ -235,4 +235,14 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uin
 /* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(void);
 /* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
+/* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult;
+
+ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void);
+/* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 #endif

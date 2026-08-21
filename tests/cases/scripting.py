@@ -602,6 +602,16 @@ CASES["ScriptCommand_RemoveAllEnergyCardsFromCollection"] = [
 ]
 # <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection
 
+# >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection
+CONTRACT["ScriptCommand_JumpIfAnyEnergyCardsInCollection"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfAnyEnergyCardsInCollection"] = [
+    {"wram": {0xD413: b"\x00\xC5\x00\x00"}, "sram": {0: {0xA100: b"\x00" * 256}}, "read": {0xD413: 2}},
+    {"wram": {0xD413: b"\x00\xC5\xC5\x34\x12"}, "sram": {0: {0xA100: bytes([0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00] + [0x00] * 248)}}, "read": {0xD413: 2}},
+    {"wram": {0xD413: b"\x00\xC5\xC5\x34\x12"}, "sram": {0: {0xA100: bytes([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01] + [0x00] * 248)}}, "read": {0xD413: 2}},
+    dict(POISON, wram={0xD413: b"\x00\xC5\x00\x00"}, sram={0: {0xA100: b"\x00" * 256}}, read={0xD413: 2}),
+]
+# <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -959,3 +969,11 @@ MUTATIONS["ScriptCommand_RemoveAllEnergyCardsFromCollection"] = {
     "case_ids": ["ScriptCommand_RemoveAllEnergyCardsFromCollection-1", "ScriptCommand_RemoveAllEnergyCardsFromCollection-2", "ScriptCommand_RemoveAllEnergyCardsFromCollection-3"],
 }
 # <<< factory-mutation ScriptCommand_RemoveAllEnergyCardsFromCollection
+# >>> factory-mutation ScriptCommand_JumpIfAnyEnergyCardsInCollection
+MUTATIONS["ScriptCommand_JumpIfAnyEnergyCardsInCollection"] = {
+    "source_symbol": "ScriptCommand_JumpIfAnyEnergyCardsInCollection",
+    "before": "\tif (total == 0u) {",
+    "after": "\tif (total != 0u) {",
+    "case_ids": ["ScriptCommand_JumpIfAnyEnergyCardsInCollection-0", "ScriptCommand_JumpIfAnyEnergyCardsInCollection-1", "ScriptCommand_JumpIfAnyEnergyCardsInCollection-2", "ScriptCommand_JumpIfAnyEnergyCardsInCollection-3"],
+}
+# <<< factory-mutation ScriptCommand_JumpIfAnyEnergyCardsInCollection

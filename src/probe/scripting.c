@@ -506,6 +506,17 @@ static void adapt_ScriptCommand_RemoveAllEnergyCardsFromCollection(ProbeState *s
 }
 /* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 
+/* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+static void adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection(ProbeState *s)
+{
+	ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult r = ScriptCommand_JumpIfAnyEnergyCardsInCollection();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -557,5 +568,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetActiveNPCCoords", adapt_ScriptCommand_SetActiveNPCCoords },
 	{ "ScriptCommand_JumpIfEnoughCardsOwned", adapt_ScriptCommand_JumpIfEnoughCardsOwned },
 	{ "ScriptCommand_RemoveAllEnergyCardsFromCollection", adapt_ScriptCommand_RemoveAllEnergyCardsFromCollection },
+	{ "ScriptCommand_JumpIfAnyEnergyCardsInCollection", adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection },
 	{ NULL, NULL },
 };

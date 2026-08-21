@@ -82,6 +82,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/card_collection.h"
 #define DOUBLE_COLORLESS_ENERGY 0x07u
 #define GRASS_ENERGY 0x01u
+
+#include "home/card_collection.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -683,3 +686,27 @@ IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(voi
 	}
 }
 /* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
+
+/* >>> factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void)
+{
+	uint8_t total = 0u;
+	for (uint8_t card = GRASS_ENERGY; card <= DOUBLE_COLORLESS_ENERGY; ++card) {
+		CardCountResult count = GetCardCountInCollection(card);
+		total = (uint8_t)(total + count.a);
+	}
+	if (total == 0u) {
+		SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){r.a, r.f, total, r.c};
+	}
+	SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy3();
+		return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){r.a, r.f, args.b, r.c};
+	}
+	(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){args.a, args.f, args.b, args.c};
+}
+/* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
