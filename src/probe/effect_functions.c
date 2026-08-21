@@ -2372,6 +2372,15 @@ static void adapt_KrabbyCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
 }
 /* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */
 
+/* >>> factory Revive_BenchCheck */
+static void adapt_Revive_BenchCheck(ProbeState *s)
+{
+	ReviveBenchCheckResult r = Revive_BenchCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Revive_BenchCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2666,5 +2675,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Rampage_AIEffect", adapt_Rampage_AIEffect },
 	{ "SuperPotion_DamageEnergyCheck", adapt_SuperPotion_DamageEnergyCheck },
 	{ "KrabbyCallForFamily_CheckDeckAndPlayArea", adapt_KrabbyCallForFamily_CheckDeckAndPlayArea },
+	{ "Revive_BenchCheck", adapt_Revive_BenchCheck },
 	{ NULL, NULL },
 };

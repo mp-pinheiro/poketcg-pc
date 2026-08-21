@@ -2597,6 +2597,16 @@ CASES["KrabbyCallForFamily_CheckDeckAndPlayArea"] = [
 ]
 # <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea
 
+# >>> factory Revive_BenchCheck
+CONTRACT["Revive_BenchCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["Revive_BenchCheck"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x00", 0xC27E: b"\x00", 0xC37E: b"\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x05", 0xC27E: b"\x00", 0xC37E: b"\x00"}},
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x06", 0xC27E: b"\x00", 0xC37E: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x05", 0xC27E: b"\x00", 0xC37E: b"\x00"}),
+]
+# <<< factory Revive_BenchCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4338,3 +4348,6 @@ MUTATIONS["SuperPotion_DamageEnergyCheck"] = {"source_symbol": "SuperPotion_Dama
 # >>> factory-mutation KrabbyCallForFamily_CheckDeckAndPlayArea
 MUTATIONS["KrabbyCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "KrabbyCallForFamily_CheckDeckAndPlayArea", "before": "KrabbyCallForFamily_CheckDeckAndPlayArea(void)\n{\n\tCheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();\n\tif (deck.f & 0x10u)", "after": "KrabbyCallForFamily_CheckDeckAndPlayArea(void)\n{\n\tCheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();\n\tif (!(deck.f & 0x10u))", "case_ids": ["KrabbyCallForFamily_CheckDeckAndPlayArea-0", "KrabbyCallForFamily_CheckDeckAndPlayArea-1"]}
 # <<< factory-mutation KrabbyCallForFamily_CheckDeckAndPlayArea
+# >>> factory-mutation Revive_BenchCheck
+MUTATIONS["Revive_BenchCheck"] = {"source_symbol": "Revive_BenchCheck", "before": "\tif (count.a >= MAX_PLAY_AREA_POKEMON) {", "after": "\tif (count.a > MAX_PLAY_AREA_POKEMON) {", "case_ids": ["Revive_BenchCheck-2"]}
+# <<< factory-mutation Revive_BenchCheck

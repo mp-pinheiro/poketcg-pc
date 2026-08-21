@@ -281,6 +281,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #define ThereIsNoEnergyCardAttachedText 0x00cdu
 #include "home/effect_functions.h"
+
+#define ThereAreNoPokemonInDiscardPileText 0x00b8u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4055,3 +4057,16 @@ CheckIfDeckIsEmptyResult KrabbyCallForFamily_CheckDeckAndPlayArea(void)
 	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, f};
 }
 /* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory Revive_BenchCheck */
+ReviveBenchCheckResult Revive_BenchCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= MAX_PLAY_AREA_POKEMON) {
+		uint8_t f = (uint8_t)((count.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0u) | 0x10u);
+		return (ReviveBenchCheckResult){f, NoSpaceOnTheBenchText};
+	}
+	CreateBasicPokemonCardListFromDiscardPileResult list = CreateBasicPokemonCardListFromDiscardPile();
+	return (ReviveBenchCheckResult){list.f, ThereAreNoPokemonInDiscardPileText};
+}
+/* <<< factory Revive_BenchCheck */
