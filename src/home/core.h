@@ -554,4 +554,7 @@ void DrawPracticeDuelInstructionsTextBox(void);
 typedef struct { uint8_t f; } PracticeDuelVerifyTurn7Or8Result;
 PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void);
 /* <<< factory PracticeDuelVerify_Turn7Or8 */
+/* >>> factory SetDiscardPileScreenTexts */
+void SetDiscardPileScreenTexts(void);
+/* <<< factory SetDiscardPileScreenTexts */
 #endif

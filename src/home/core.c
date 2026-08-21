@@ -407,6 +407,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "mem.h"
 #define SECOND_ATTACK 0x01u
 #define STARMIE 0x56u
+
+#include "generated/hram.h"
+#define ChooseTheCardYouWishToExamineText 0x0056u
+#define OpponentsDiscardPileText 0x0218u
+#define YourDiscardPileText 0x0217u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2740,3 +2745,13 @@ PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void)
 	return (PracticeDuelVerifyTurn7Or8Result){0xC0u};
 }
 /* <<< factory PracticeDuelVerify_Turn7Or8 */
+
+/* >>> factory SetDiscardPileScreenTexts */
+void SetDiscardPileScreenTexts(void)
+{
+	uint16_t de = YourDiscardPileText;
+	if (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN)
+		de = OpponentsDiscardPileText;
+	SetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);
+}
+/* <<< factory SetDiscardPileScreenTexts */

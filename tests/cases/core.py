@@ -1362,6 +1362,10 @@ wLoadedCard1Atk1EnergyCost = 0xCC30
 wLoadedCard1Atk2EnergyCost = 0xCC43
 
 wCardPageNumber = 0xCBC7
+
+hWhoseTurn = 0xFF97
+wCardListHeaderText = 0xCBDC
+wCardListInfoBoxText = 0xCBDA
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1500,6 +1504,15 @@ CASES["PracticeDuelVerify_Turn7Or8"] = [
     dict(POISON, wram={0xCCC2: b"\x56", 0xCCC6: b"\x01"}),
 ]
 # <<< factory PracticeDuelVerify_Turn7Or8
+
+# >>> factory SetDiscardPileScreenTexts
+CONTRACT["SetDiscardPileScreenTexts"] = {"compare": (), "preserve": ()}
+CASES["SetDiscardPileScreenTexts"] = [
+    {"hram": {hWhoseTurn: b"\xC2"}, "wram": {wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"}, "expect": {wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"}},
+    {"hram": {hWhoseTurn: b"\x00"}, "wram": {wCardListHeaderText: b"\xFF\xFF", wCardListInfoBoxText: b"\xFF\xFF"}, "expect": {wCardListHeaderText: b"\x18\x02", wCardListInfoBoxText: b"\x56\x00"}},
+    dict(POISON, hram={hWhoseTurn: b"\xC2"}, wram={wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"}, expect={wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"}),
+]
+# <<< factory SetDiscardPileScreenTexts
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2388,3 +2401,6 @@ MUTATIONS["DrawPracticeDuelInstructionsTextBox"] = {
 # >>> factory-mutation PracticeDuelVerify_Turn7Or8
 MUTATIONS["PracticeDuelVerify_Turn7Or8"] = {"source_symbol": "PracticeDuelVerify_Turn7Or8", "before": "card != STARMIE", "after": "card != 0x57u", "case_ids": ["PracticeDuelVerify_Turn7Or8-0", "PracticeDuelVerify_Turn7Or8-1", "PracticeDuelVerify_Turn7Or8-2"]}
 # <<< factory-mutation PracticeDuelVerify_Turn7Or8
+# >>> factory-mutation SetDiscardPileScreenTexts
+MUTATIONS["SetDiscardPileScreenTexts"] = {"source_symbol": "SetDiscardPileScreenTexts", "before": "\tSetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);", "after": "\tSetCardListHeaderText(de, YourDiscardPileText);", "case_ids": ["SetDiscardPileScreenTexts-0", "SetDiscardPileScreenTexts-1", "SetDiscardPileScreenTexts-2"]}
+# <<< factory-mutation SetDiscardPileScreenTexts
