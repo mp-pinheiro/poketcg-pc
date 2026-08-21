@@ -219,4 +219,14 @@ IncreaseScriptPointerResult ScriptCommand_SetEventValue(uint8_t f, uint8_t b, ui
 /* >>> factory ScriptCommand_TryGivePCPack */
 IncreaseScriptPointerResult ScriptCommand_TryGivePCPack(uint8_t c);
 /* <<< factory ScriptCommand_TryGivePCPack */
+/* >>> factory ScriptCommand_SetActiveNPCCoords */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} IncreaseScriptPointerResultWithB;
+
+IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_SetActiveNPCCoords */
 #endif

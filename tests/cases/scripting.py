@@ -23,6 +23,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 wPCPacks = 0xD11E
 wScriptPointer = 0xD413
+
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -559,6 +565,16 @@ CASES["ScriptCommand_TryGivePCPack"] = [
 ]
 # <<< factory ScriptCommand_TryGivePCPack
 
+# >>> factory ScriptCommand_SetActiveNPCCoords
+CONTRACT["ScriptCommand_SetActiveNPCCoords"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ScriptCommand_SetActiveNPCCoords"] = [
+    {"b": 0x06, "c": 0x04, "wram": {wScriptNPC: b"\x00", wLoadedNPCTempIndex: b"\x00", wScriptPointer: b"\x00\xC5", 0xD34C: b"\x00\x00", 0xD133: b"\xFF", 0xD165: b"\x00"}, "expect": {0xD34C: b"\x06\x04", 0xD133: b"\xBF", 0xD165: b"\x40", wScriptPointer: b"\x03\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x10, "c": 0x0E, "wram": {wScriptNPC: b"\x01", wLoadedNPCTempIndex: b"\x00", wScriptPointer: b"\x00\xC5", 0xD356: b"\x04\x06", 0xD165: b"\xFF", 0xD1BA: b"\x7F"}, "expect": {0xD356: b"\x0E\x10", 0xD165: b"\xBF", 0xD1BA: b"\x40", wScriptPointer: b"\x03\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x04, "c": 0x02, "wram": {wScriptNPC: b"\x07", wLoadedNPCTempIndex: b"\x00", wScriptPointer: b"\x00\xC5", 0xD39C: b"\x0E\x10", 0xD1BA: b"\xFF", 0xD154: b"\x00"}, "expect": {0xD39C: b"\x02\x04", 0xD1BA: b"\xBF", 0xD154: b"\x40", wScriptPointer: b"\x03\xC5"}, "read": {wScriptPointer: 2}},
+    dict(POISON, b=0x14, c=0x12, wram={wScriptNPC: b"\xAA", wLoadedNPCTempIndex: b"\x00", wScriptPointer: b"\x00\xC5", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF", 0xD1DC: b"\x00"}, expect={0xD34C: b"\x12\x14", 0xD183: b"\xBF", 0xD1DC: b"\x40", wScriptPointer: b"\x03\xC5"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_SetActiveNPCCoords
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -892,3 +908,11 @@ MUTATIONS["ScriptCommand_SetEventValue"] = {
 # >>> factory-mutation ScriptCommand_TryGivePCPack
 MUTATIONS["ScriptCommand_TryGivePCPack"] = {"source_symbol": "ScriptCommand_TryGivePCPack", "before": "\tTryGivePCPack(c);", "after": "\tTryGivePCPack((uint8_t)(c + 1u));", "case_ids": ["ScriptCommand_TryGivePCPack-0", "ScriptCommand_TryGivePCPack-1", "ScriptCommand_TryGivePCPack-2", "ScriptCommand_TryGivePCPack-4"]}
 # <<< factory-mutation ScriptCommand_TryGivePCPack
+# >>> factory-mutation ScriptCommand_SetActiveNPCCoords
+MUTATIONS["ScriptCommand_SetActiveNPCCoords"] = {
+    "source_symbol": "ScriptCommand_SetActiveNPCCoords",
+    "before": "\t(void)SetNPCPosition(c, b);",
+    "after": "\t(void)SetNPCPosition(b, c);",
+    "case_ids": ["ScriptCommand_SetActiveNPCCoords-0", "ScriptCommand_SetActiveNPCCoords-1", "ScriptCommand_SetActiveNPCCoords-2", "ScriptCommand_SetActiveNPCCoords-3"],
+}
+# <<< factory-mutation ScriptCommand_SetActiveNPCCoords

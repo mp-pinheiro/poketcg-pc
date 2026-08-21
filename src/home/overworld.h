@@ -111,4 +111,7 @@ void AttemptPlayerMovementFromDirection(void);
 /* >>> factory Func_c687 */
 void Func_c687(void);
 /* <<< factory Func_c687 */
+/* >>> factory Func_c36a */
+void Func_c36a(void);
+/* <<< factory Func_c36a */
 #endif /* POKETCG_HOME_OVERWORLD_H */

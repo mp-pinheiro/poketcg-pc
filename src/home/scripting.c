@@ -70,6 +70,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_VAR_BYTES 0x40u
 
 #include "home/mail.h"
+
+#include "home/scripting.h"
+#include "home/npc_core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -618,3 +622,13 @@ IncreaseScriptPointerResult ScriptCommand_TryGivePCPack(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_TryGivePCPack */
+
+/* >>> factory ScriptCommand_SetActiveNPCCoords */
+IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uint8_t c)
+{
+	wLoadedNPCTempIndex = wScriptNPC;
+	(void)SetNPCPosition(c, b);
+	IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy3();
+	return (IncreaseScriptPointerResultWithB){pointer.a, pointer.f, c, pointer.c};
+}
+/* <<< factory ScriptCommand_SetActiveNPCCoords */

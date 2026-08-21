@@ -242,6 +242,9 @@ wPermissionMap = 0xD133
 wd339 = 0xD339
 wd33a = 0xD33A
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wOWMapEvents = 0xD323
+wCurMap = 0xD32F
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -358,6 +361,15 @@ CASES["Func_c687"] = [
     dict(POISON, wram={wd339: b"\x02", wd33a: b"\x01", 0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
 ]
 # <<< factory Func_c687
+
+# >>> factory Func_c36a
+CONTRACT["Func_c36a"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c36a"] = [
+	{"wram": {wOWMapEvents: b"\x12\x34", wCurMap: b"\x00"}, "read": {wOWMapEvents: 2}},
+	{"wram": {wOWMapEvents: b"\x12\x34", wCurMap: b"\x01"}, "read": {wOWMapEvents: 2}},
+	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wOWMapEvents: b"\x12\x34", wCurMap: b"\x1F"}, "read": {wOWMapEvents: 2}},
+]
+# <<< factory Func_c36a
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -496,3 +508,6 @@ MUTATIONS["AttemptPlayerMovementFromDirection"] = {"source_symbol": "AttemptPlay
 # >>> factory-mutation Func_c687
 MUTATIONS["Func_c687"] = {"source_symbol": "Func_c687", "before": "\tFunc_c694(a, c);", "after": "\tFunc_c694((uint8_t)(a + 1u), c);", "case_ids": ["Func_c687-0", "Func_c687-1", "Func_c687-2", "Func_c687-3"]}
 # <<< factory-mutation Func_c687
+# >>> factory-mutation Func_c36a
+MUTATIONS["Func_c36a"] = {"source_symbol": "Func_c36a", "before": "\twOWMapEvents = 0u;", "after": "\twOWMapEvents = 1u;", "case_ids": ["Func_c36a-0", "Func_c36a-1", "Func_c36a-2"]}
+# <<< factory-mutation Func_c36a

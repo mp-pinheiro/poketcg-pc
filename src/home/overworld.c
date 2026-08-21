@@ -64,6 +64,11 @@
 
 #include "home/give_booster_pack.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "mem.h"
+
+#define POKEMON_DOME_ENTRANCE 0x1fu
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -449,3 +454,12 @@ void Func_c687(void)
 	Func_c694(a, c);
 }
 /* <<< factory Func_c687 */
+
+/* >>> factory Func_c36a */
+void Func_c36a(void)
+{
+	wOWMapEvents = 0u;
+	if (wCurMap == POKEMON_DOME_ENTRANCE)
+		gb_write8(0xD324u, 0u);
+}
+/* <<< factory Func_c36a */

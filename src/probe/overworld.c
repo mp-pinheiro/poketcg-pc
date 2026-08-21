@@ -219,6 +219,14 @@ static void adapt_Func_c687(ProbeState *s)
 }
 /* <<< factory Func_c687 */
 
+/* >>> factory Func_c36a */
+static void adapt_Func_c36a(ProbeState *s)
+{
+	(void)s;
+	Func_c36a();
+}
+/* <<< factory Func_c36a */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -246,5 +254,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PauseMenu_Exit", adapt_PauseMenu_Exit },
 	{ "AttemptPlayerMovementFromDirection", adapt_AttemptPlayerMovementFromDirection },
 	{ "Func_c687", adapt_Func_c687 },
+	{ "Func_c36a", adapt_Func_c36a },
 	{ NULL, NULL },
 };

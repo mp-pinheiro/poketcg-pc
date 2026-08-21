@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_SetActiveNPCCoords",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_SetActiveNPCCoords\", \"registers\": {\"a\": 197, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"53605\": \"40\", \"54092\": \"0406\", \"54186\": \"00\", \"54198\": \"00\", \"54291\": \"03c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_SetActiveNPCCoords\", \"mismatches\": {\"bus\": {\"address\": 53605, \"reference\": \"bf4004060000\", \"native\": \"bf0006040000\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[53555, 1], [53605, 1], [54092, 2], [54186, 1], [54198, 1], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_SetActiveNPCCoords\", \"registers\": {\"a\": 197, \"b\": 4, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"53605\": \"40\", \"54092\": \"0406\", \"54186\": \"00\", \"54198\": \"00\", \"54291\": \"03c5\"}}, \"status\": \"PASS\"}\n"
+}
