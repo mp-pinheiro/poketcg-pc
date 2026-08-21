@@ -1,0 +1,9 @@
+{
+  "fn": "CountNumberOfCardsOfType",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountNumberOfCardsOfType\", \"registers\": {\"a\": 0, \"b\": 170, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountNumberOfCardsOfType\", \"mismatches\": {\"a\": [0, 1], \"c\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CountNumberOfCardsOfType\", \"registers\": {\"a\": 0, \"b\": 170, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

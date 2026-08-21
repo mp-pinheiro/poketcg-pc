@@ -88,4 +88,7 @@ FindPlayerMovementWithOffsetResult FindPlayerMovementWithOffset(uint8_t a);
 /* >>> factory BackupObjectPalettes */
 void BackupObjectPalettes(void);
 /* <<< factory BackupObjectPalettes */
+/* >>> factory AttemptPlayerMovement */
+void AttemptPlayerMovement(uint8_t b, uint8_t c);
+/* <<< factory AttemptPlayerMovement */
 #endif /* POKETCG_HOME_OVERWORLD_H */

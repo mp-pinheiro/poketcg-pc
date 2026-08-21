@@ -51,6 +51,11 @@
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/load_animation.h"
+#include "home/map.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -378,3 +383,22 @@ void BackupObjectPalettes(void)
 	CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGB_ADDR, wObjectPalettesCGBBackup_ADDR, 64u);
 }
 /* <<< factory BackupObjectPalettes */
+
+/* >>> factory AttemptPlayerMovement */
+void AttemptPlayerMovement(uint8_t b, uint8_t c)
+{
+	if (b >= 0x1fu || c >= 0x1fu)
+		return;
+	uint8_t permission = GetPermissionOfMapPosition(b, c);
+	if ((permission & (0x40u | 0x80u)) != 0u)
+		return;
+	wPlayerXCoord = b;
+	wPlayerYCoord = c;
+	wPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving | 1u);
+	wd338 = 0x10u;
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);
+	gb_write8(hl, (uint8_t)(gb_read8(hl) | (1u << SPRITE_ANIM_FLAG_CENTERED_F)));
+	hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_COUNTER);
+	gb_write8(hl, 0x04u);
+}
+/* <<< factory AttemptPlayerMovement */

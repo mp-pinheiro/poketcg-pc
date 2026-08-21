@@ -220,6 +220,12 @@ wOBP1 = 0xCABE
 wOBP1Backup = 0xD10D
 wObjectPalettesCGB = 0xCB30
 wObjectPalettesCGBBackup = 0xD0CC
+
+wPlayerCurrentlyMoving = 0xD335
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wd338 = 0xD338
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -282,6 +288,14 @@ CASES["BackupObjectPalettes"] = [
 	{"wram": {wOBP0: b"\x00", wOBP1: b"\xFF", wObjectPalettesCGB: b"\x00" * 64}, "read": {wOBP0Backup: 1, wOBP1Backup: 1, wObjectPalettesCGBBackup: 64}},
 ]
 # <<< factory BackupObjectPalettes
+
+# >>> factory AttemptPlayerMovement
+CONTRACT["AttemptPlayerMovement"] = {"compare": (), "preserve": ()}
+CASES["AttemptPlayerMovement"] = [
+    {"b": 0x1F, "c": 0x00, "wram": {wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x00", wd338: b"\x56"}, "expect": {wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x00", wd338: b"\x56"}},
+    dict(POISON, b=0x00, c=0x1F, wram={wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}, expect={wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x34", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}),
+]
+# <<< factory AttemptPlayerMovement
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -397,3 +411,6 @@ MUTATIONS["BackupObjectPalettes"] = {
 	"case_ids": ["BackupObjectPalettes-0", "BackupObjectPalettes-1", "BackupObjectPalettes-2"],
 }
 # <<< factory-mutation BackupObjectPalettes
+# >>> factory-mutation AttemptPlayerMovement
+MUTATIONS["AttemptPlayerMovement"] = {"source_symbol": "AttemptPlayerMovement", "before": "if (b >= 0x1fu || c >= 0x1fu)", "after": "if (b > 0x1fu || c > 0x1fu)", "case_ids": ["AttemptPlayerMovement-0", "AttemptPlayerMovement-1"]}
+# <<< factory-mutation AttemptPlayerMovement

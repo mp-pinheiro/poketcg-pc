@@ -78,6 +78,16 @@ static void adapt_DrawHandCardsTileAtDE(ProbeState *s)
 }
 /* <<< factory DrawHandCardsTileAtDE */
 
+/* >>> factory CountNumberOfCardsOfType */
+static void adapt_CountNumberOfCardsOfType(ProbeState *s)
+{
+	uint8_t input_type = s->a;
+	s->a = CountNumberOfCardsOfType(input_type);
+	s->b = input_type;
+	s->c = s->a;
+}
+/* <<< factory CountNumberOfCardsOfType */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -88,5 +98,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CheckIfHasOtherValidDecks", adapt_CheckIfHasOtherValidDecks },
 	{ "FillDEWithA", adapt_FillDEWithA },
 	{ "DrawHandCardsTileAtDE", adapt_DrawHandCardsTileAtDE },
+	{ "CountNumberOfCardsOfType", adapt_CountNumberOfCardsOfType },
 	{ NULL, NULL },
 };

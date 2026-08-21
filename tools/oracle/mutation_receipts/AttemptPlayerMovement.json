@@ -1,0 +1,9 @@
+{
+  "fn": "AttemptPlayerMovement",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AttemptPlayerMovement\", \"registers\": {\"a\": 0, \"b\": 31, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1234\", \"54069\": \"00\", \"54072\": \"56\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AttemptPlayerMovement\", \"mismatches\": {\"bus\": {\"address\": 54064, \"reference\": \"12340056\", \"native\": \"1f000110\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54064, 2], [54069, 1], [54072, 1]]}}}\n",
+  "restored": "{\"fn\": \"AttemptPlayerMovement\", \"registers\": {\"a\": 0, \"b\": 31, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1234\", \"54069\": \"00\", \"54072\": \"56\"}}, \"status\": \"PASS\"}\n"
+}

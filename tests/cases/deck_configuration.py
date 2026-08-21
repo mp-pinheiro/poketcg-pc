@@ -111,6 +111,15 @@ CASES["DrawHandCardsTileAtDE"] = [
 ]
 # <<< factory DrawHandCardsTileAtDE
 
+# >>> factory CountNumberOfCardsOfType
+CONTRACT["CountNumberOfCardsOfType"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["CountNumberOfCardsOfType"] = [
+    {},
+    {"a": 0x08},
+    dict(POISON),
+]
+# <<< factory CountNumberOfCardsOfType
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -167,3 +176,11 @@ MUTATIONS["FillDEWithA"] = {"source_symbol": "FillDEWithA", "before": "do {\n\t\
 # >>> factory-mutation DrawHandCardsTileAtDE
 MUTATIONS["DrawHandCardsTileAtDE"] = {"source_symbol": "DrawHandCardsTileAtDE", "before": "FillRectangle(0x38u, 2u, 2u, de, 0x0102u);", "after": "FillRectangle(0x39u, 2u, 2u, de, 0x0102u);", "case_ids": ["DrawHandCardsTileAtDE-0", "DrawHandCardsTileAtDE-1", "DrawHandCardsTileAtDE-2"]}
 # <<< factory-mutation DrawHandCardsTileAtDE
+# >>> factory-mutation CountNumberOfCardsOfType
+MUTATIONS["CountNumberOfCardsOfType"] = {
+    "source_symbol": "CountNumberOfCardsOfType",
+    "before": "uint8_t count = 0;",
+    "after": "uint8_t count = 1;",
+    "case_ids": ["CountNumberOfCardsOfType-2"],
+}
+# <<< factory-mutation CountNumberOfCardsOfType

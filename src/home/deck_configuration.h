@@ -30,4 +30,7 @@ void FillDEWithA(uint8_t a, uint8_t b, uint16_t de);
 /* >>> factory DrawHandCardsTileAtDE */
 void DrawHandCardsTileAtDE(uint16_t de);
 /* <<< factory DrawHandCardsTileAtDE */
+/* >>> factory CountNumberOfCardsOfType */
+uint8_t CountNumberOfCardsOfType(uint8_t a);
+/* <<< factory CountNumberOfCardsOfType */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -177,3 +177,27 @@ void DrawHandCardsTileAtDE(uint16_t de)
 	FillRectangle(0x38u, 2u, 2u, de, 0x0102u);
 }
 /* <<< factory DrawHandCardsTileAtDE */
+
+/* >>> factory CountNumberOfCardsOfType */
+uint8_t CountNumberOfCardsOfType(uint8_t a)
+{
+	uint8_t input_type = a;
+	uint8_t count = 0;
+	uint16_t index = 0;
+	for (;;) {
+		uint8_t card = gb_read8((uint16_t)(wCurDeckCards_ADDR + index));
+		index = (uint16_t)(index + 1u);
+		if (card == 0u)
+			break;
+		uint8_t card_type = GetCardType(card);
+		if ((input_type & FILTER_ENERGY) == FILTER_ENERGY) {
+			if ((card_type & TYPE_ENERGY) != TYPE_ENERGY)
+				continue;
+		} else if (card_type != input_type) {
+			continue;
+		}
+		count = (uint8_t)(count + 1u);
+	}
+	return count;
+}
+/* <<< factory CountNumberOfCardsOfType */

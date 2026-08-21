@@ -167,6 +167,13 @@ static void adapt_BackupObjectPalettes(ProbeState *s)
 }
 /* <<< factory BackupObjectPalettes */
 
+/* >>> factory AttemptPlayerMovement */
+static void adapt_AttemptPlayerMovement(ProbeState *s)
+{
+	AttemptPlayerMovement(s->b, s->c);
+}
+/* <<< factory AttemptPlayerMovement */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -188,5 +195,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c694", adapt_Func_c694 },
 	{ "FindPlayerMovementWithOffset", adapt_FindPlayerMovementWithOffset },
 	{ "BackupObjectPalettes", adapt_BackupObjectPalettes },
+	{ "AttemptPlayerMovement", adapt_AttemptPlayerMovement },
 	{ NULL, NULL },
 };
