@@ -107,6 +107,14 @@ CASES["Func_1a025"] = [
 ]
 # <<< factory Func_1a025
 
+# >>> factory ResetPrinterCommunicationSettings
+CONTRACT["ResetPrinterCommunicationSettings"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c"), "wram_out": True}
+CASES["ResetPrinterCommunicationSettings"] = [
+    {"wram": {0xCE8F: b"\x01"}, "read": {0xCE8F: 1, 0xCD04: 1, 0xCD06: 1, 0xCD07: 1, 0xCD0A: 1, 0xCD0B: 1, 0xC600: 256, 0xFF81: 1, 0xFFA8: 1, 0xFFA9: 1, 0xFFAF: 1, 0xFFB0: 1}},
+    dict(POISON, wram={0xCE8F: b"\x02"}, read={0xCE8F: 1, 0xCD04: 1, 0xCD06: 1, 0xCD07: 1, 0xCD0A: 1, 0xCD0B: 1, 0xC600: 256, 0xFF81: 1, 0xFFA8: 1, 0xFFA9: 1, 0xFFAF: 1, 0xFFB0: 1}),
+]
+# <<< factory ResetPrinterCommunicationSettings
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -136,3 +144,6 @@ MUTATIONS["Func_1a14b"] = {"source_symbol": "Func_1a14b", "before": "wce9d = 0x0
 # >>> factory-mutation Func_1a025
 MUTATIONS["Func_1a025"] = {"source_symbol": "Func_1a025", "before": "\twTilePatternSelector = 0xA4u;", "after": "\twTilePatternSelector = 0xA5u;", "case_ids": ["Func_1a025-0", "Func_1a025-1"]}
 # <<< factory-mutation Func_1a025
+# >>> factory-mutation ResetPrinterCommunicationSettings
+MUTATIONS["ResetPrinterCommunicationSettings"] = {"source_symbol": "ResetPrinterCommunicationSettings", "before": "\tuint16_t result_hl = SetupText(0x30u, 0xBFu);", "after": "\tuint16_t result_hl = SetupText(0x31u, 0xBFu);", "case_ids": ["ResetPrinterCommunicationSettings-0", "ResetPrinterCommunicationSettings-1"]}
+# <<< factory-mutation ResetPrinterCommunicationSettings
