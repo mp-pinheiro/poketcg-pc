@@ -180,4 +180,7 @@ IncreaseScriptPointerResult ScriptCommand_EnterMap(void);
 /* >>> factory GetScriptArgs1AfterPointer */
 GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void);
 /* <<< factory GetScriptArgs1AfterPointer */
+/* >>> factory SetNextScript */
+void SetNextScript(uint16_t bc);
+/* <<< factory SetNextScript */
 #endif

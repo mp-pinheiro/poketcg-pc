@@ -261,3 +261,12 @@ UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl)
 	return result;
 }
 /* <<< factory UpdateNPCSpritePosition */
+
+/* >>> factory CheckIsAnNPCMoving */
+CheckIsAnNPCMovingResult CheckIsAnNPCMoving(void)
+{
+	uint8_t a = (uint8_t)(wIsAnNPCMoving & NPC_FLAG_MOVING);
+	uint8_t f = (uint8_t)(0x20u | (a == 0u ? 0x80u : 0u));
+	return (CheckIsAnNPCMovingResult){a, f};
+}
+/* <<< factory CheckIsAnNPCMoving */

@@ -63,6 +63,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
  * table is reached through ordinary bus reads at this $4000-$7fff window
  * offset. */
 #define MAP_NAMES 0x7080u
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -518,3 +520,12 @@ GetScriptArgsAfterPointerResult GetScriptArgs1AfterPointer(void)
 	return r;
 }
 /* <<< factory GetScriptArgs1AfterPointer */
+
+/* >>> factory SetNextScript */
+void SetNextScript(uint16_t bc)
+{
+	wNextScript = (uint8_t)bc;
+	wNextScript_PTR[1] = (uint8_t)(bc >> 8);
+	wOverworldMode = 0x03u;
+}
+/* <<< factory SetNextScript */

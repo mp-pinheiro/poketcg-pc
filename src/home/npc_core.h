@@ -31,4 +31,8 @@ uint8_t UpdateNPCPosition(void);
 typedef struct { uint8_t a; uint8_t f; } UpdateNPCSpritePositionResult;
 UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl);
 /* <<< factory UpdateNPCSpritePosition */
+/* >>> factory CheckIsAnNPCMoving */
+typedef struct { uint8_t a; uint8_t f; } CheckIsAnNPCMovingResult;
+CheckIsAnNPCMovingResult CheckIsAnNPCMoving(void);
+/* <<< factory CheckIsAnNPCMoving */
 #endif /* POKETCG_HOME_NPC_CORE_H */

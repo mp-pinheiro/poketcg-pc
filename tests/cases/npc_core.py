@@ -124,6 +124,17 @@ CASES["UpdateNPCSpritePosition"] = [
 ]
 # <<< factory UpdateNPCSpritePosition
 
+# >>> factory CheckIsAnNPCMoving
+CONTRACT["CheckIsAnNPCMoving"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CheckIsAnNPCMoving"] = [
+	{"wram": {0xD3B7: b"\x00"}},
+	{"wram": {0xD3B7: b"\x01"}},
+	{"wram": {0xD3B7: b"\x20"}},
+	{"wram": {0xD3B7: b"\x21"}},
+	dict(POISON, wram={0xD3B7: b"\x20"}),
+]
+# <<< factory CheckIsAnNPCMoving
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -170,3 +181,6 @@ MUTATIONS["UpdateNPCPosition"] = {"source_symbol": "UpdateNPCPosition", "before"
 # >>> factory-mutation UpdateNPCSpritePosition
 MUTATIONS["UpdateNPCSpritePosition"] = {"source_symbol": "UpdateNPCSpritePosition", "before": "uint8_t y = (uint8_t)(y_base * 8u + 0x10u);", "after": "uint8_t y = (uint8_t)(y_base * 8u + 0x08u);", "case_ids": ["UpdateNPCSpritePosition-0", "UpdateNPCSpritePosition-1"]}
 # <<< factory-mutation UpdateNPCSpritePosition
+# >>> factory-mutation CheckIsAnNPCMoving
+MUTATIONS["CheckIsAnNPCMoving"] = {"source_symbol": "CheckIsAnNPCMoving", "before": "uint8_t a = (uint8_t)(wIsAnNPCMoving & NPC_FLAG_MOVING);", "after": "uint8_t a = wIsAnNPCMoving;", "case_ids": ["CheckIsAnNPCMoving-1", "CheckIsAnNPCMoving-2", "CheckIsAnNPCMoving-3", "CheckIsAnNPCMoving-4"]}
+# <<< factory-mutation CheckIsAnNPCMoving

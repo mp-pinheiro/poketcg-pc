@@ -379,6 +379,13 @@ static void adapt_GetScriptArgs1AfterPointer(ProbeState *s)
 }
 /* <<< factory GetScriptArgs1AfterPointer */
 
+/* >>> factory SetNextScript */
+static void adapt_SetNextScript(ProbeState *s)
+{
+	SetNextScript((uint16_t)(((uint16_t)s->b << 8) | s->c));
+}
+/* <<< factory SetNextScript */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -417,5 +424,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_LoadCurrentMapNameIntoTxRamSlot", adapt_ScriptCommand_LoadCurrentMapNameIntoTxRamSlot },
 	{ "ScriptCommand_EnterMap", adapt_ScriptCommand_EnterMap },
 	{ "GetScriptArgs1AfterPointer", adapt_GetScriptArgs1AfterPointer },
+	{ "SetNextScript", adapt_SetNextScript },
 	{ NULL, NULL },
 };

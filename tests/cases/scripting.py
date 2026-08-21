@@ -5,6 +5,11 @@ wEventVars = 0xD3D2
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wNextScript = 0xD0C6
+wOverworldMode = 0xD0BF
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -429,6 +434,15 @@ CONTRACT["GetScriptArgs1AfterPointer"] = {"compare": ("a", "f", "b", "c"), "pres
 CASES["GetScriptArgs1AfterPointer"] = [{}, dict(POISON), {"a": 0xFF, "f": 0x40, "b": 0x12, "c": 0x34}]
 # <<< factory GetScriptArgs1AfterPointer
 
+# >>> factory SetNextScript
+CONTRACT["SetNextScript"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetNextScript"] = [
+	{"b": 0x00, "c": 0x00, "wram": {wNextScript: b"\x00\x00", wOverworldMode: b"\x00"}, "expect": {wNextScript: b"\x00\x00", wOverworldMode: b"\x03"}},
+	{"b": 0x12, "c": 0x34, "wram": {wNextScript: b"\xFF\xFF", wOverworldMode: b"\xFF"}, "expect": {wNextScript: b"\x34\x12", wOverworldMode: b"\x03"}},
+	dict(POISON, wram={wNextScript: b"\x00\x00", wOverworldMode: b"\x00"}, expect={wNextScript: b"\xCC\xBB", wOverworldMode: b"\x03"}),
+]
+# <<< factory SetNextScript
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -692,3 +706,6 @@ MUTATIONS["ScriptCommand_EnterMap"] = {"source_symbol": "ScriptCommand_EnterMap"
 # >>> factory-mutation GetScriptArgs1AfterPointer
 MUTATIONS["GetScriptArgs1AfterPointer"] = {"source_symbol": "GetScriptArgs1AfterPointer", "before": "GetScriptArgsAfterPointerResult r = GetScriptArgsAfterPointer(1u);\n\treturn r;", "after": "GetScriptArgsAfterPointerResult r = GetScriptArgsAfterPointer(1u);\n\tr.a = (uint8_t)(r.a ^ 1u);\n\treturn r;", "case_ids": ["GetScriptArgs1AfterPointer-0", "GetScriptArgs1AfterPointer-1", "GetScriptArgs1AfterPointer-2"]}
 # <<< factory-mutation GetScriptArgs1AfterPointer
+# >>> factory-mutation SetNextScript
+MUTATIONS["SetNextScript"] = {"source_symbol": "SetNextScript", "before": "wNextScript_PTR[1] = (uint8_t)(bc >> 8);", "after": "wNextScript_PTR[1] = (uint8_t)(bc >> 8) + 1u;", "case_ids": ["SetNextScript-0", "SetNextScript-1", "SetNextScript-2"]}
+# <<< factory-mutation SetNextScript

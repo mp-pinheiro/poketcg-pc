@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIsAnNPCMoving",
+  "case": "tests/cases/npc_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIsAnNPCMoving\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54199\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIsAnNPCMoving\", \"mismatches\": {\"a\": [0, 1], \"f\": [160, 32]}}\n",
+  "restored": "{\"fn\": \"CheckIsAnNPCMoving\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54199\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
