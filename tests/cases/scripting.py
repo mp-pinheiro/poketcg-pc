@@ -33,6 +33,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+sCardCollection = 0xA100
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -588,6 +592,16 @@ CASES["ScriptCommand_JumpIfEnoughCardsOwned"] = [
 ]
 # <<< factory ScriptCommand_JumpIfEnoughCardsOwned
 
+# >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection
+CONTRACT["ScriptCommand_RemoveAllEnergyCardsFromCollection"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_RemoveAllEnergyCardsFromCollection"] = [
+    {"wram": {wScriptPointer: b"\x00\xC5"}, "sram": {0: {sCardCollection: b"\x00" * 256}}, "sread": {0: {sCardCollection + 1: 0, sCardCollection + 7: 0}}, "read": {wScriptPointer: 2}},
+    {"wram": {wScriptPointer: b"\x10\xC5"}, "sram": {0: {sCardCollection: bytes([0, 1, 2, 3, 4, 5, 6, 7] + [0] * 248)}}, "sread": {0: {sCardCollection + 1: 0, sCardCollection + 2: 0, sCardCollection + 3: 0, sCardCollection + 4: 0, sCardCollection + 5: 0, sCardCollection + 6: 0, sCardCollection + 7: 0}}, "read": {wScriptPointer: 2}},
+    {"wram": {wScriptPointer: b"\xFE\xC5"}, "sram": {0: {sCardCollection: bytes([0, 0x7F, 0x01, 0x40, 0x02, 0x7E, 0x03, 0x7D] + [0x55] * 248)}}, "sread": {0: {sCardCollection + 1: 0, sCardCollection + 2: 0, sCardCollection + 3: 0, sCardCollection + 4: 0, sCardCollection + 5: 0, sCardCollection + 6: 0, sCardCollection + 7: 0, sCardCollection + 8: 0x55}}, "read": {wScriptPointer: 2}},
+    dict(POISON, wram={wScriptPointer: b"\xFF\xC5"}, sram={0: {sCardCollection: bytes([0xAA, 0x01, 0x00, 0x02, 0x80, 0x03, 0x00, 0x04] + [0x11] * 248)}}, sread={0: {sCardCollection + 1: 0, sCardCollection + 2: 0, sCardCollection + 3: 0, sCardCollection + 4: 0, sCardCollection + 5: 0, sCardCollection + 6: 0, sCardCollection + 7: 0, sCardCollection + 8: 0x11}}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -937,3 +951,11 @@ MUTATIONS["ScriptCommand_JumpIfEnoughCardsOwned"] = {
     "case_ids": ["ScriptCommand_JumpIfEnoughCardsOwned-1", "ScriptCommand_JumpIfEnoughCardsOwned-2"],
 }
 # <<< factory-mutation ScriptCommand_JumpIfEnoughCardsOwned
+# >>> factory-mutation ScriptCommand_RemoveAllEnergyCardsFromCollection
+MUTATIONS["ScriptCommand_RemoveAllEnergyCardsFromCollection"] = {
+    "source_symbol": "ScriptCommand_RemoveAllEnergyCardsFromCollection",
+    "before": "\tuint8_t card = 1u;",
+    "after": "\tuint8_t card = 2u;",
+    "case_ids": ["ScriptCommand_RemoveAllEnergyCardsFromCollection-1", "ScriptCommand_RemoveAllEnergyCardsFromCollection-2", "ScriptCommand_RemoveAllEnergyCardsFromCollection-3"],
+}
+# <<< factory-mutation ScriptCommand_RemoveAllEnergyCardsFromCollection

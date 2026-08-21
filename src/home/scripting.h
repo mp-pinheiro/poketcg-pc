@@ -232,4 +232,7 @@ IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uin
 /* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
+/* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
+IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(void);
+/* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
 #endif

@@ -77,6 +77,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "home/card_collection.h"
+
+#include "home/scripting.h"
+#include "home/card_collection.h"
+#define DOUBLE_COLORLESS_ENERGY 0x07u
+#define GRASS_ENERGY 0x01u
 /* <<< factory statics */
 
 
@@ -657,3 +662,24 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uin
 	return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
 }
 /* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
+
+/* >>> factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
+IncreaseScriptPointerResult ScriptCommand_RemoveAllEnergyCardsFromCollection(void)
+{
+	uint8_t card = 1u;
+	for (;;) {
+		CardCountResult count = GetCardCountInCollection(card);
+		if ((count.f & 0x10u) == 0u) {
+			uint8_t remaining = count.a;
+			while (remaining != 0u) {
+				RemoveCardFromCollection(card);
+				--remaining;
+			}
+		}
+		card = (uint8_t)(card + 1u);
+		if (card < (uint8_t)(DOUBLE_COLORLESS_ENERGY + 1u))
+			continue;
+		return IncreaseScriptPointerBy1();
+	}
+}
+/* <<< factory ScriptCommand_RemoveAllEnergyCardsFromCollection */
