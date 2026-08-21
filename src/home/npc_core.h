@@ -79,4 +79,14 @@ uint8_t Func_1c557(uint8_t a);
 /* >>> factory LoadNPC */
 uint8_t LoadNPC(void);
 /* <<< factory LoadNPC */
+/* >>> factory SetNewScriptNPC */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} SetNewScriptNPCResult;
+SetNewScriptNPCResult SetNewScriptNPC(uint16_t hl);
+/* <<< factory SetNewScriptNPC */
 #endif /* POKETCG_HOME_NPC_CORE_H */

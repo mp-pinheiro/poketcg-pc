@@ -166,6 +166,18 @@ static void adapt_LoadNPC(ProbeState *s)
 }
 /* <<< factory LoadNPC */
 
+/* >>> factory SetNewScriptNPC */
+static void adapt_SetNewScriptNPC(ProbeState *s)
+{
+	SetNewScriptNPCResult result = SetNewScriptNPC(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory SetNewScriptNPC */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -188,5 +200,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "SetAllNPCTilePermissions", adapt_SetAllNPCTilePermissions },
 	{ "Func_1c557", adapt_Func_1c557 },
 	{ "LoadNPC", adapt_LoadNPC },
+	{ "SetNewScriptNPC", adapt_SetNewScriptNPC },
 	{ NULL, NULL },
 };

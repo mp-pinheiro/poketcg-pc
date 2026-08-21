@@ -90,6 +90,14 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "mem.h"
 
 #define TRUE 0x01u
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/npc_data.h"
+#include "home/npc_core.h"
+#include "home/overworld.h"
+#include "mem.h"
+#define RESTORE_FACING_DIRECTION 0x01u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -481,3 +489,17 @@ uint8_t LoadNPC(void)
 	return npc_id;
 }
 /* <<< factory LoadNPC */
+
+/* >>> factory SetNewScriptNPC */
+SetNewScriptNPCResult SetNewScriptNPC(uint16_t hl)
+{
+	uint16_t saved_hl = hl;
+	PermissionResult direction = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_DIRECTION);
+	gb_write8(direction.hl, (uint8_t)(wPlayerDirection ^ 0x02u));
+	(void)UpdateNPCAnimation();
+	(void)SetOverworldNPCFlags(0x01u << RESTORE_FACING_DIRECTION);
+	PermissionResult npc = GetLoadedNPCID(wLoadedNPCTempIndex);
+	GetNPCNameAndScriptResult result = GetNPCNameAndScript(gb_read8(npc.hl));
+	return (SetNewScriptNPCResult){result.a, result.f, result.b, result.c, saved_hl};
+}
+/* <<< factory SetNewScriptNPC */

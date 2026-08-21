@@ -179,6 +179,14 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wLoadedNPCs = 0xD34A
 wLoadedNPCTempIndex = 0xD3AA
 wRonaldIsInMap = 0xD3B8
+
+wLoadedNPCTempIndex = 0xD3AA
+wPlayerDirection = 0xD334
+wCurrentNPCNameTx = 0xD0C8
+wOverworldNPCFlags = 0xD0C1
+NPC_BASE = 0xD34A
+NPC_DATA = b"\x00" * 96
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -264,6 +272,15 @@ CASES["LoadNPC"] = [
     dict(POISON, wram={wLoadedNPCs: b"\x01" * 0x60, wLoadedNPCTempIndex: b"\xAA"}, expect={wLoadedNPCTempIndex: b"\x00"}, expect_regs={"a": 0x01, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
 ]
 # <<< factory LoadNPC
+
+# >>> factory SetNewScriptNPC
+CONTRACT["SetNewScriptNPC"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ("hl",), "wram_out": True}
+CASES["SetNewScriptNPC"] = [
+    {"hl": 0x4567, "wram": {wLoadedNPCTempIndex: b"\x00", wPlayerDirection: b"\x01", wOverworldNPCFlags: b"\x00", NPC_BASE: NPC_DATA}, "expect": {NPC_BASE + 4: b"\x03", wOverworldNPCFlags: b"\x02"}, "read": {wCurrentNPCNameTx: 2}},
+    {"hl": 0x0000, "wram": {wLoadedNPCTempIndex: b"\x01", wPlayerDirection: b"\x03", wOverworldNPCFlags: b"\x80", NPC_BASE: NPC_DATA}, "expect": {NPC_BASE + 12 + 4: b"\x01", wOverworldNPCFlags: b"\x82"}, "read": {wCurrentNPCNameTx: 2}},
+    dict(POISON, wram={wLoadedNPCTempIndex: b"\x00", wPlayerDirection: b"\x02", wOverworldNPCFlags: b"\x04", NPC_BASE: NPC_DATA}, expect={NPC_BASE + 4: b"\x00", wOverworldNPCFlags: b"\x06"}, read={wCurrentNPCNameTx: 2}),
+]
+# <<< factory SetNewScriptNPC
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -362,3 +379,6 @@ MUTATIONS["Func_1c557"] = {"source_symbol": "Func_1c557", "before": "\tif ((foun
 # >>> factory-mutation LoadNPC
 MUTATIONS["LoadNPC"] = {"source_symbol": "LoadNPC", "before": "remaining != 0u", "after": "remaining == 0u", "case_ids": ["LoadNPC-0", "LoadNPC-1"]}
 # <<< factory-mutation LoadNPC
+# >>> factory-mutation SetNewScriptNPC
+MUTATIONS["SetNewScriptNPC"] = {"source_symbol": "SetNewScriptNPC", "before": "gb_write8(direction.hl, (uint8_t)(wPlayerDirection ^ 0x02u));", "after": "gb_write8(direction.hl, wPlayerDirection);", "case_ids": ["SetNewScriptNPC-0", "SetNewScriptNPC-1", "SetNewScriptNPC-2"]}
+# <<< factory-mutation SetNewScriptNPC
