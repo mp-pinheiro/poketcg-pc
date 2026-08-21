@@ -44,11 +44,19 @@ static void adapt_OverworldMap_LoadSelectedMap(ProbeState *s)
 }
 /* <<< factory OverworldMap_LoadSelectedMap */
 
+/* >>> factory OverworldMap_InitPlayerEastWestMovement */
+static void adapt_OverworldMap_InitPlayerEastWestMovement(ProbeState *s)
+{
+	OverworldMap_InitPlayerEastWestMovement(s->b, s->c);
+}
+/* <<< factory OverworldMap_InitPlayerEastWestMovement */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
 	{ "OverworldMap_InitVolcanoSprite", adapt_OverworldMap_InitVolcanoSprite },
 	{ "OverworldMap_UpdateCursorAnimation", adapt_OverworldMap_UpdateCursorAnimation },
 	{ "OverworldMap_LoadSelectedMap", adapt_OverworldMap_LoadSelectedMap },
+	{ "OverworldMap_InitPlayerEastWestMovement", adapt_OverworldMap_InitPlayerEastWestMovement },
 	{ NULL, NULL },
 };

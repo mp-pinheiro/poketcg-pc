@@ -41,6 +41,12 @@ wTempMap = 0xD0BB
 wTempPlayerXCoord = 0xD0BC
 wTempPlayerYCoord = 0xD0BD
 wTempPlayerDirection = 0xD0BE
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wOverworldMapPlayerMovementCounter = 0xD341
+wOverworldMapPlayerPathHorizontalMovement = 0xD343
+wOverworldMapPlayerPathVerticalMovement = 0xD345
+wPlayerDirection = 0xD334
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -70,6 +76,16 @@ CASES["OverworldMap_LoadSelectedMap"] = [
 ]
 # <<< factory OverworldMap_LoadSelectedMap
 
+# >>> factory OverworldMap_InitPlayerEastWestMovement
+CONTRACT["OverworldMap_InitPlayerEastWestMovement"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_InitPlayerEastWestMovement"] = [
+    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x01"}},
+    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x80", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\xff", 0xD345: b"\x00\x01", 0xD334: b"\x03"}},
+    {"b": 0x04, "c": 0x01, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x80"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\xc0\xff", 0xD334: b"\x01"}},
+    dict(POISON, wram={0xD343: b"\x12\x80", 0xD345: b"\x34\x80"}, expect={0xD341: b"\xbb", 0xD343: b"\x00\xff", 0xD345: b"\xe9\xfe", 0xD334: b"\x03"}),
+]
+# <<< factory OverworldMap_InitPlayerEastWestMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -89,3 +105,6 @@ MUTATIONS["OverworldMap_UpdateCursorAnimation"] = {"source_symbol": "OverworldMa
 # >>> factory-mutation OverworldMap_LoadSelectedMap
 MUTATIONS["OverworldMap_LoadSelectedMap"] = {"source_symbol": "OverworldMap_LoadSelectedMap", "before": "	uint8_t selection = wOverworldMapSelection;", "after": "	uint8_t selection = (uint8_t)(wOverworldMapSelection + 1u);", "case_ids": ["OverworldMap_LoadSelectedMap-0", "OverworldMap_LoadSelectedMap-1", "OverworldMap_LoadSelectedMap-2", "OverworldMap_LoadSelectedMap-3"]}
 # <<< factory-mutation OverworldMap_LoadSelectedMap
+# >>> factory-mutation OverworldMap_InitPlayerEastWestMovement
+MUTATIONS["OverworldMap_InitPlayerEastWestMovement"] = {"source_symbol": "OverworldMap_InitPlayerEastWestMovement", "before": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)c << 8), (uint16_t)b);", "after": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)c << 8), (uint16_t)(b + 1u));", "case_ids": ["OverworldMap_InitPlayerEastWestMovement-0", "OverworldMap_InitPlayerEastWestMovement-1", "OverworldMap_InitPlayerEastWestMovement-2", "OverworldMap_InitPlayerEastWestMovement-3"]}
+# <<< factory-mutation OverworldMap_InitPlayerEastWestMovement

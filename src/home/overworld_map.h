@@ -24,4 +24,7 @@ void OverworldMap_UpdateCursorAnimation(void);
 /* >>> factory OverworldMap_LoadSelectedMap */
 void OverworldMap_LoadSelectedMap(void);
 /* <<< factory OverworldMap_LoadSelectedMap */
+/* >>> factory OverworldMap_InitPlayerEastWestMovement */
+void OverworldMap_InitPlayerEastWestMovement(uint8_t b, uint8_t c);
+/* <<< factory OverworldMap_InitPlayerEastWestMovement */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */
