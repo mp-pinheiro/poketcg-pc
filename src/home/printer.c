@@ -4,6 +4,9 @@
 #include "mem.h"
 /* >>> factory statics */
 #include "generated/wram.h"
+
+#include "home/process_text.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -129,3 +132,12 @@ Func_1a14bResult Func_1a14b(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t 
 	};
 }
 /* <<< factory Func_1a14b */
+
+/* >>> factory Func_1a025 */
+void Func_1a025(void)
+{
+	SetupText(0x40u, 0xBFu);
+	wTilePatternSelector = 0xA4u;
+	wTilePatternSelectorCorrection = 0x00u;
+}
+/* <<< factory Func_1a025 */

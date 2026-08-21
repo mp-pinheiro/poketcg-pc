@@ -2482,6 +2482,14 @@ CASES["PoliwhirlAmnesia_AISelectEffect"] = [
 ]
 # <<< factory PoliwhirlAmnesia_AISelectEffect
 
+# >>> factory StretchKick_AISelectEffect
+CONTRACT["StretchKick_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["StretchKick_AISelectEffect"] = [
+    {"read": {hTemp_ffa0: 1}},
+    dict(POISON, read={hTemp_ffa0: 1}),
+]
+# <<< factory StretchKick_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4175,3 +4183,6 @@ MUTATIONS["OnixHardenEffect"] = {"source_symbol": "OnixHardenEffect", "before": 
 # >>> factory-mutation PoliwhirlAmnesia_AISelectEffect
 MUTATIONS["PoliwhirlAmnesia_AISelectEffect"] = {"source_symbol": "PoliwhirlAmnesia_AISelectEffect", "before": "\thTemp_ffa0 = result;", "after": "\thTemp_ffa0 = (uint8_t)(result + 1u);", "case_ids": ["PoliwhirlAmnesia_AISelectEffect-0", "PoliwhirlAmnesia_AISelectEffect-1"]}
 # <<< factory-mutation PoliwhirlAmnesia_AISelectEffect
+# >>> factory-mutation StretchKick_AISelectEffect
+MUTATIONS["StretchKick_AISelectEffect"] = {"source_symbol": "StretchKick_AISelectEffect", "before": "\tAIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = result.a;", "after": "\tAIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();\n\thTemp_ffa0 = (uint8_t)(result.a + 1u);", "case_ids": ["StretchKick_AISelectEffect-0", "StretchKick_AISelectEffect-1"]}
+# <<< factory-mutation StretchKick_AISelectEffect

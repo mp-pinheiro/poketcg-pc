@@ -99,6 +99,14 @@ CASES["Func_1a14b"] = [
 ]
 # <<< factory Func_1a14b
 
+# >>> factory Func_1a025
+CONTRACT["Func_1a025"] = {"compare": (), "preserve": (), "wram_out": True};
+CASES["Func_1a025"] = [
+    {"read": {0xCD06: 1, 0xCD07: 1}},
+    dict(POISON, read={0xCD06: 1, 0xCD07: 1}),
+]
+# <<< factory Func_1a025
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -125,3 +133,6 @@ MUTATIONS = {
 # >>> factory-mutation Func_1a14b
 MUTATIONS["Func_1a14b"] = {"source_symbol": "Func_1a14b", "before": "wce9d = 0x01u;", "after": "wce9d = 0x02u;", "case_ids": ["Func_1a14b-0", "Func_1a14b-1", "Func_1a14b-2"]}
 # <<< factory-mutation Func_1a14b
+# >>> factory-mutation Func_1a025
+MUTATIONS["Func_1a025"] = {"source_symbol": "Func_1a025", "before": "\twTilePatternSelector = 0xA4u;", "after": "\twTilePatternSelector = 0xA5u;", "case_ids": ["Func_1a025-0", "Func_1a025-1"]}
+# <<< factory-mutation Func_1a025

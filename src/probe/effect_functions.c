@@ -2281,6 +2281,14 @@ static void adapt_PoliwhirlAmnesia_AISelectEffect(ProbeState *s)
 }
 /* <<< factory PoliwhirlAmnesia_AISelectEffect */
 
+/* >>> factory StretchKick_AISelectEffect */
+static void adapt_StretchKick_AISelectEffect(ProbeState *s)
+{
+	StretchKick_AISelectEffect();
+	(void)s;
+}
+/* <<< factory StretchKick_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2564,5 +2572,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GolduckHyperBeam_AISelectEffect", adapt_GolduckHyperBeam_AISelectEffect },
 	{ "OnixHardenEffect", adapt_OnixHardenEffect },
 	{ "PoliwhirlAmnesia_AISelectEffect", adapt_PoliwhirlAmnesia_AISelectEffect },
+	{ "StretchKick_AISelectEffect", adapt_StretchKick_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -265,6 +265,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "generated/hram.h"
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3946,3 +3949,11 @@ void PoliwhirlAmnesia_AISelectEffect(void)
 	hTemp_ffa0 = result;
 }
 /* <<< factory PoliwhirlAmnesia_AISelectEffect */
+
+/* >>> factory StretchKick_AISelectEffect */
+void StretchKick_AISelectEffect(void)
+{
+	AIFindTargetForBenchAttackResult result = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = result.a;
+}
+/* <<< factory StretchKick_AISelectEffect */

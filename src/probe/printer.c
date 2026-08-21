@@ -35,10 +35,19 @@ static void adapt_Func_1a14b(ProbeState *s)
 }
 /* <<< factory Func_1a14b */
 
+/* >>> factory Func_1a025 */
+static void adapt_Func_1a025(ProbeState *s)
+{
+	Func_1a025();
+	(void)s;
+}
+/* <<< factory Func_1a025 */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
 	{ "ExecutePrinterPacketSequence", adapt_ExecutePrinterPacketSequence },
 	{ "Func_1a14b", adapt_Func_1a14b },
+	{ "Func_1a025", adapt_Func_1a025 },
 	{ NULL, NULL },
 };

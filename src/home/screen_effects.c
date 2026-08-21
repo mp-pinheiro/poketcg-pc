@@ -17,6 +17,8 @@
 
 #define rSCX 0xFF43u
 #define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR 0x4CBCu
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -76,3 +78,11 @@ void DefaultScreenAnimationUpdate(void)
 	          (uint8_t)(DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR >> 8));
 }
 /* <<< factory DefaultScreenAnimationUpdate */
+
+/* >>> factory DoScreenAnimationUpdate */
+void DoScreenAnimationUpdate(void)
+{
+	wScreenAnimDuration = 1u;
+	DefaultScreenAnimationUpdate();
+}
+/* <<< factory DoScreenAnimationUpdate */

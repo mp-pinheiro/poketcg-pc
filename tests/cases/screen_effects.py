@@ -43,6 +43,10 @@ rSCX = 0xFF43
 hSCY = 0xFF93
 rSTAT = 0xFF41
 rIE = 0xFFFF
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wScreenAnimDuration = 0xD4BB
+wScreenAnimUpdatePtr = 0xD4B9
 # <<< factory-cases-statics
 
 # >>> factory DefaultScreenAnimationUpdate
@@ -52,6 +56,14 @@ CASES["DefaultScreenAnimationUpdate"] = [
     dict(POISON, wram={0xD42A: b"\x12", 0xD4B9: b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, expect={0xD42A: b"\xFF", 0xD4B9: b"\xBC\x4C", 0xFF92: b"\x00", 0xFF93: b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}),
 ]
 # <<< factory DefaultScreenAnimationUpdate
+
+# >>> factory DoScreenAnimationUpdate
+CONTRACT["DoScreenAnimationUpdate"] = {"compare": (), "preserve": ()}
+CASES["DoScreenAnimationUpdate"] = [
+    {"wram": {wScreenAnimUpdatePtr: b"\xBC\x4C", wScreenAnimDuration: b"\x00"}, "read": {wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}},
+    dict(POISON, wram={wScreenAnimUpdatePtr: b"\xBC\x4C", wScreenAnimDuration: b"\xFF"}, read={wScreenAnimDuration: 1, wScreenAnimUpdatePtr: 2}),
+]
+# <<< factory DoScreenAnimationUpdate
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -76,3 +88,6 @@ MUTATIONS["DefaultScreenAnimationUpdate"] = {
     "case_ids": ["DefaultScreenAnimationUpdate-0", "DefaultScreenAnimationUpdate-1"],
 }
 # <<< factory-mutation DefaultScreenAnimationUpdate
+# >>> factory-mutation DoScreenAnimationUpdate
+MUTATIONS["DoScreenAnimationUpdate"] = {"source_symbol": "DoScreenAnimationUpdate", "before": "	wScreenAnimDuration = 1u;", "after": "	wScreenAnimDuration = 2u;", "case_ids": ["DoScreenAnimationUpdate-0", "DoScreenAnimationUpdate-1"]}
+# <<< factory-mutation DoScreenAnimationUpdate

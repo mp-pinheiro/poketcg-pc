@@ -19,4 +19,7 @@ UpdateShakeOffsetResult UpdateShakeOffset(void);
 /* >>> factory DefaultScreenAnimationUpdate */
 void DefaultScreenAnimationUpdate(void);
 /* <<< factory DefaultScreenAnimationUpdate */
+/* >>> factory DoScreenAnimationUpdate */
+void DoScreenAnimationUpdate(void);
+/* <<< factory DoScreenAnimationUpdate */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

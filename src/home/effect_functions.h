@@ -958,6 +958,9 @@ uint16_t OnixHardenEffect(void);
 /* >>> factory PoliwhirlAmnesia_AISelectEffect */
 void PoliwhirlAmnesia_AISelectEffect(void);
 /* <<< factory PoliwhirlAmnesia_AISelectEffect */
+/* >>> factory StretchKick_AISelectEffect */
+void StretchKick_AISelectEffect(void);
+/* <<< factory StretchKick_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
