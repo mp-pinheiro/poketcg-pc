@@ -585,4 +585,7 @@ void WriteTwoDigitNumberInTxSymbol_PadSpace(
 /* >>> factory PrintOpponentNumberOfHandAndDeckCards */
 void PrintOpponentNumberOfHandAndDeckCards(void);
 /* <<< factory PrintOpponentNumberOfHandAndDeckCards */
+/* >>> factory PrintPlayerNumberOfHandAndDeckCards */
+void PrintPlayerNumberOfHandAndDeckCards(void);
+/* <<< factory PrintPlayerNumberOfHandAndDeckCards */
 #endif

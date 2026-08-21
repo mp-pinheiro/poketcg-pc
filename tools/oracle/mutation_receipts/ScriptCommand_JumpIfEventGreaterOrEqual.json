@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfEventGreaterOrEqual",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfEventGreaterOrEqual\", \"registers\": {\"a\": 0, \"b\": 66, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"00c5\", \"54289\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfEventGreaterOrEqual\", \"mismatches\": {\"b\": [66, 0]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfEventGreaterOrEqual\", \"registers\": {\"a\": 0, \"b\": 66, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"00c5\", \"54289\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

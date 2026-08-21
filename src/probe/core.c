@@ -1234,6 +1234,14 @@ static void adapt_PrintOpponentNumberOfHandAndDeckCards(ProbeState *s)
 }
 /* <<< factory PrintOpponentNumberOfHandAndDeckCards */
 
+/* >>> factory PrintPlayerNumberOfHandAndDeckCards */
+static void adapt_PrintPlayerNumberOfHandAndDeckCards(ProbeState *s)
+{
+	(void)s;
+	PrintPlayerNumberOfHandAndDeckCards();
+}
+/* <<< factory PrintPlayerNumberOfHandAndDeckCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1380,5 +1388,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ShuffleDeckAndDrawSevenCards", adapt_ShuffleDeckAndDrawSevenCards },
 	{ "WriteTwoDigitNumberInTxSymbol_PadSpace", adapt_WriteTwoDigitNumberInTxSymbol_PadSpace },
 	{ "PrintOpponentNumberOfHandAndDeckCards", adapt_PrintOpponentNumberOfHandAndDeckCards },
+	{ "PrintPlayerNumberOfHandAndDeckCards", adapt_PrintPlayerNumberOfHandAndDeckCards },
 	{ NULL, NULL },
 };

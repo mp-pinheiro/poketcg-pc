@@ -2918,3 +2918,13 @@ void PrintOpponentNumberOfHandAndDeckCards(void)
 	WriteTwoDigitNumberInTxSymbol_PadSpace(deck, 11, 3, hand, deck, 0);
 }
 /* <<< factory PrintOpponentNumberOfHandAndDeckCards */
+
+/* >>> factory PrintPlayerNumberOfHandAndDeckCards */
+void PrintPlayerNumberOfHandAndDeckCards(void)
+{
+	uint8_t hand = (uint8_t)(wPlayerNumberOfCardsInHand + wNumCardsBeingDrawn);
+	uint8_t deck = (uint8_t)(DECK_SIZE - wPlayerNumberOfCardsNotInDeck - wNumCardsBeingDrawn);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(hand, 16, 10, hand, deck, wNumCardsBeingDrawn_ADDR);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(deck, 10, 10, hand, deck, wNumCardsBeingDrawn_ADDR);
+}
+/* <<< factory PrintPlayerNumberOfHandAndDeckCards */

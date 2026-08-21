@@ -675,6 +675,16 @@ CASES["ScriptCommand_JumpIfEventZero"] = [
 ]
 # <<< factory ScriptCommand_JumpIfEventZero
 
+# >>> factory ScriptCommand_JumpIfEventGreaterOrEqual
+CONTRACT["ScriptCommand_JumpIfEventGreaterOrEqual"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEventGreaterOrEqual"] = [
+    {"b": 0x42, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5"}, "read": {0xC500: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x00\x00"}, "read": {0xC500: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x34\x12"}, "read": {0xC500: 2}},
+    dict(POISON, b=0x80, c=0x00, wram={0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x00\x00"}, read={0xC500: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEventGreaterOrEqual
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1077,3 +1087,11 @@ MUTATIONS["ScriptCommand_JumpIfEventEqual"] = {
 # >>> factory-mutation ScriptCommand_JumpIfEventZero
 MUTATIONS["ScriptCommand_JumpIfEventZero"] = {"source_symbol": "ScriptCommand_JumpIfEventZero", "before": "if (event == 0u) {", "after": "if (event != 0u) {", "case_ids": ["ScriptCommand_JumpIfEventZero-0", "ScriptCommand_JumpIfEventZero-1", "ScriptCommand_JumpIfEventZero-2", "ScriptCommand_JumpIfEventZero-3"]}
 # <<< factory-mutation ScriptCommand_JumpIfEventZero
+# >>> factory-mutation ScriptCommand_JumpIfEventGreaterOrEqual
+MUTATIONS["ScriptCommand_JumpIfEventGreaterOrEqual"] = {
+    "source_symbol": "ScriptCommand_JumpIfEventGreaterOrEqual",
+    "before": "if (event.a < event.c) {",
+    "after": "if (event.a >= event.c) {",
+    "case_ids": ["ScriptCommand_JumpIfEventGreaterOrEqual-0", "ScriptCommand_JumpIfEventGreaterOrEqual-1", "ScriptCommand_JumpIfEventGreaterOrEqual-2", "ScriptCommand_JumpIfEventGreaterOrEqual-3"],
+}
+# <<< factory-mutation ScriptCommand_JumpIfEventGreaterOrEqual
