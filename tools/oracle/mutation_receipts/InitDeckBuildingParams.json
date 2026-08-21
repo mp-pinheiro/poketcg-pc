@@ -1,0 +1,9 @@
+{
+  "fn": "InitDeckBuildingParams",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitDeckBuildingParams\", \"registers\": {\"a\": 86, \"b\": 0, \"c\": 0, \"d\": 207, \"e\": 216, \"f\": 192, \"hl\": 49415, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"50040134127856\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitDeckBuildingParams\", \"mismatches\": {\"a\": [86, 120], \"b\": [0, 1], \"hl\": [49415, 49414]}}\n",
+  "restored": "{\"fn\": \"InitDeckBuildingParams\", \"registers\": {\"a\": 86, \"b\": 0, \"c\": 0, \"d\": 207, \"e\": 216, \"f\": 192, \"hl\": 49415, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"50040134127856\"}}, \"status\": \"PASS\"}\n"
+}

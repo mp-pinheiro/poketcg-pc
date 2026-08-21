@@ -27,6 +27,8 @@ CASES["ResetCheckMenuCursorPositionAndBlink"] = [
 # >>> factory-cases-statics
 wCurDeck = 0xCEB1
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -36,6 +38,16 @@ CASES["GetPointerToDeckName"] = [
     dict(POISON, wram={wCurDeck: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "hl": 0xA254}),
 ]
 # <<< factory GetPointerToDeckName
+
+# >>> factory InitDeckBuildingParams
+CONTRACT["InitDeckBuildingParams"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c",)}
+CASES["InitDeckBuildingParams"] = [
+    {"hl": 0xC100, "wram": {0xC100: b"\x50\x04\x01\x34\x12\x78\x56"}, "read": {0xC100: 7}},
+    dict(POISON, hl=0xC100, wram={0xC100: b"\x01\x23\x45\x67\x89\xAB\xCD"}, read={0xC100: 7}),
+    {"a": 0xFF, "f": 0x01, "c": 0x7E, "d": 0x11, "e": 0x22, "hl": 0xC1F8,
+     "wram": {0xC1F8: b"\xFF\x00\x80\x7F\xAA\x55\x33"}, "read": {0xC1F8: 7}},
+]
+# <<< factory InitDeckBuildingParams
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -50,3 +62,6 @@ MUTATIONS["ResetCheckMenuCursorPositionAndBlink"] = {"source_symbol": "ResetChec
 # >>> factory-mutation GetPointerToDeckName
 MUTATIONS["GetPointerToDeckName"] = {"source_symbol": "GetPointerToDeckName", "before": "\treturn (uint16_t)(sDeck1Name_ADDR + offset);", "after": "\treturn (uint16_t)(sDeck1Name_ADDR + offset + 1u);", "case_ids": ["GetPointerToDeckName-0", "GetPointerToDeckName-1"]}
 # <<< factory-mutation GetPointerToDeckName
+# >>> factory-mutation InitDeckBuildingParams
+MUTATIONS["InitDeckBuildingParams"] = {"source_symbol": "InitDeckBuildingParams", "before": "for (uint8_t i = 0; i < 7u; i++)", "after": "for (uint8_t i = 0; i < 6u; i++)", "case_ids": ["InitDeckBuildingParams-0", "InitDeckBuildingParams-1", "InitDeckBuildingParams-2"]}
+# <<< factory-mutation InitDeckBuildingParams

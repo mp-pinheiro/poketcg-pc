@@ -42,4 +42,7 @@ void IncrementDeckCardsInTempCollection(uint16_t de);
 /* >>> factory CreateCardCollectionListWithDeckCards */
 void CreateCardCollectionListWithDeckCards(uint8_t a);
 /* <<< factory CreateCardCollectionListWithDeckCards */
+/* >>> factory GetSelectedVisibleCardID */
+uint8_t GetSelectedVisibleCardID(void);
+/* <<< factory GetSelectedVisibleCardID */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

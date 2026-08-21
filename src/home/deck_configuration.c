@@ -37,6 +37,8 @@
 #define DECK_2_F 0x01u
 #define DECK_3_F 0x02u
 #define DECK_4_F 0x03u
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -275,3 +277,11 @@ void CreateCardCollectionListWithDeckCards(uint8_t a)
 	}
 }
 /* <<< factory CreateCardCollectionListWithDeckCards */
+
+/* >>> factory GetSelectedVisibleCardID */
+uint8_t GetSelectedVisibleCardID(void)
+{
+	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
+	return gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));
+}
+/* <<< factory GetSelectedVisibleCardID */

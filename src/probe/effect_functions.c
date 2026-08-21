@@ -2266,6 +2266,13 @@ static void adapt_GolduckHyperBeam_AISelectEffect(ProbeState *s)
 }
 /* <<< factory GolduckHyperBeam_AISelectEffect */
 
+/* >>> factory OnixHardenEffect */
+static void adapt_OnixHardenEffect(ProbeState *s)
+{
+	s->hl = OnixHardenEffect();
+}
+/* <<< factory OnixHardenEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2547,5 +2554,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DestinyBond_DestinyBondEffect", adapt_DestinyBond_DestinyBondEffect },
 	{ "FlareonRage_AIEffect", adapt_FlareonRage_AIEffect },
 	{ "GolduckHyperBeam_AISelectEffect", adapt_GolduckHyperBeam_AISelectEffect },
+	{ "OnixHardenEffect", adapt_OnixHardenEffect },
 	{ NULL, NULL },
 };

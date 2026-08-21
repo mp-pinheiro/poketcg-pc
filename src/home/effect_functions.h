@@ -952,6 +952,9 @@ void FlareonRage_AIEffect(void);
 /* >>> factory GolduckHyperBeam_AISelectEffect */
 void GolduckHyperBeam_AISelectEffect(void);
 /* <<< factory GolduckHyperBeam_AISelectEffect */
+/* >>> factory OnixHardenEffect */
+uint16_t OnixHardenEffect(void);
+/* <<< factory OnixHardenEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

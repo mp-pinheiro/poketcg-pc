@@ -115,6 +115,20 @@ static void adapt_CreateCardCollectionListWithDeckCards(ProbeState *s)
 }
 /* <<< factory CreateCardCollectionListWithDeckCards */
 
+/* >>> factory GetSelectedVisibleCardID */
+static void adapt_GetSelectedVisibleCardID(ProbeState *s)
+{
+	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
+	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + cursor);
+	uint8_t z = (uint8_t)(s->f & 0x80u);
+	s->e = GetSelectedVisibleCardID();
+	s->a = cursor;
+	s->d = 0;
+	s->hl = hl;
+	s->f = z;
+}
+/* <<< factory GetSelectedVisibleCardID */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -129,5 +143,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CopyNBytesFromHLToDE", adapt_CopyNBytesFromHLToDE },
 	{ "IncrementDeckCardsInTempCollection", adapt_IncrementDeckCardsInTempCollection },
 	{ "CreateCardCollectionListWithDeckCards", adapt_CreateCardCollectionListWithDeckCards },
+	{ "GetSelectedVisibleCardID", adapt_GetSelectedVisibleCardID },
 	{ NULL, NULL },
 };

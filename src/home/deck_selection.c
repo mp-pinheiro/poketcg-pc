@@ -11,6 +11,8 @@
 #define DECK_CARD_STRIDE 0x54u
 
 #define DECK_STRUCT_SIZE 0x54u
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -42,3 +44,17 @@ uint16_t GetPointerToDeckName(void)
 	return (uint16_t)(sDeck1Name_ADDR + offset);
 }
 /* <<< factory GetPointerToDeckName */
+
+/* >>> factory InitDeckBuildingParams */
+InitDeckBuildingParamsResult InitDeckBuildingParams(uint16_t *hl, uint8_t f)
+{
+	uint8_t a = 0u;
+	uint8_t b = 7u;
+	for (uint8_t i = 0; i < 7u; i++) {
+		a = gb_read8((*hl)++);
+		wMaxNumCardsAllowed_PTR[i] = a;
+		b--;
+	}
+	return (InitDeckBuildingParamsResult){a, (uint8_t)((f & 0x10u) | 0xC0u), b, 0xCFD8u, *hl};
+}
+/* <<< factory InitDeckBuildingParams */

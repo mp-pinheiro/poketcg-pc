@@ -139,6 +139,11 @@ sDeck2Cards = 0xA26C
 sDeck3Cards = 0xA2C0
 sDeck4Cards = 0xA314
 wTempCardCollection = 0xC000
+
+wCardListCursorPos = 0xCEA4
+wVisibleListCardIDs = 0xCEC4
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -159,6 +164,15 @@ CASES["CreateCardCollectionListWithDeckCards"] = [
     dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, sram={0: {sDeck2Cards: b"\x01\x00", sDeck4Cards: b"\x01\x00"}}, read={wTempCardCollection + 1: 2}),
 ]
 # <<< factory CreateCardCollectionListWithDeckCards
+
+# >>> factory GetSelectedVisibleCardID
+CONTRACT["GetSelectedVisibleCardID"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["GetSelectedVisibleCardID"] = [
+    {"wram": {wCardListCursorPos: b"\x00", wVisibleListCardIDs: b"\x2A"}, "expect_regs": {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x2A, "hl": 0xCEC4}},
+    {"wram": {wCardListCursorPos: b"\x01", wVisibleListCardIDs: b"\x00\x7F"}, "expect_regs": {"a": 0x01, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x7F, "hl": 0xCEC5}},
+    dict(POISON, wram={wCardListCursorPos: b"\x02", wVisibleListCardIDs: b"\x00\x00\xEE"}, expect_regs={"a": 0x02, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0x00, "e": 0xEE, "hl": 0xCEC6}),
+]
+# <<< factory GetSelectedVisibleCardID
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -233,3 +247,6 @@ MUTATIONS["IncrementDeckCardsInTempCollection"] = {"source_symbol": "IncrementDe
 # >>> factory-mutation CreateCardCollectionListWithDeckCards
 MUTATIONS["CreateCardCollectionListWithDeckCards"] = {"source_symbol": "CreateCardCollectionListWithDeckCards", "before": "IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);", "after": "IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);", "case_ids": ["CreateCardCollectionListWithDeckCards-1"]}
 # <<< factory-mutation CreateCardCollectionListWithDeckCards
+# >>> factory-mutation GetSelectedVisibleCardID
+MUTATIONS["GetSelectedVisibleCardID"] = {"source_symbol": "GetSelectedVisibleCardID", "before": "\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));", "after": "\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor + 1u));", "case_ids": ["GetSelectedVisibleCardID-0", "GetSelectedVisibleCardID-1", "GetSelectedVisibleCardID-2"]}
+# <<< factory-mutation GetSelectedVisibleCardID

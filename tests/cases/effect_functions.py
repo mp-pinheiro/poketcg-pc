@@ -2466,6 +2466,14 @@ CASES["GolduckHyperBeam_AISelectEffect"] = [
 ]
 # <<< factory GolduckHyperBeam_AISelectEffect
 
+# >>> factory OnixHardenEffect
+CONTRACT["OnixHardenEffect"] = {"compare": ("hl",), "preserve": ()}
+CASES["OnixHardenEffect"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory OnixHardenEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4153,3 +4161,6 @@ MUTATIONS["FlareonRage_AIEffect"] = {"source_symbol": "FlareonRage_AIEffect", "b
 # >>> factory-mutation GolduckHyperBeam_AISelectEffect
 MUTATIONS["GolduckHyperBeam_AISelectEffect"] = {"source_symbol": "GolduckHyperBeam_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, result.a);", "after": "gb_write8(hTemp_ffa0_ADDR, (uint8_t)(result.a + 1u));", "case_ids": ["GolduckHyperBeam_AISelectEffect-0", "GolduckHyperBeam_AISelectEffect-1"]}
 # <<< factory-mutation GolduckHyperBeam_AISelectEffect
+# >>> factory-mutation OnixHardenEffect
+MUTATIONS["OnixHardenEffect"] = {"source_symbol": "OnixHardenEffect", "before": "	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);", "after": "	return (uint16_t)(ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40) + 1u);", "case_ids": ["OnixHardenEffect-0", "OnixHardenEffect-1"]}
+# <<< factory-mutation OnixHardenEffect

@@ -260,6 +260,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3926,3 +3928,10 @@ void GolduckHyperBeam_AISelectEffect(void)
 	gb_write8(hTemp_ffa0_ADDR, result.a);
 }
 /* <<< factory GolduckHyperBeam_AISelectEffect */
+
+/* >>> factory OnixHardenEffect */
+uint16_t OnixHardenEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);
+}
+/* <<< factory OnixHardenEffect */
