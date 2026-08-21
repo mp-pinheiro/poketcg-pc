@@ -997,6 +997,9 @@ CheckIfDeckIsEmptyResult KrabbyCallForFamily_CheckDeckAndPlayArea(void);
 typedef struct { uint8_t f; uint16_t hl; } ReviveBenchCheckResult;
 ReviveBenchCheckResult Revive_BenchCheck(void);
 /* <<< factory Revive_BenchCheck */
+/* >>> factory DragonairHyperBeam_DiscardEffect */
+uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl);
+/* <<< factory DragonairHyperBeam_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -31,4 +31,8 @@ CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint1
 typedef struct { uint8_t a; uint8_t b; uint8_t f; } LookForCardIDInPlayAreaResult;
 LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b);
 /* <<< factory LookForCardIDInPlayArea_Bank8 */
+/* >>> factory CheckIfHasCardIDInHand */
+typedef struct { uint8_t a; uint8_t f; } CheckIfHasCardIDInHandResult;
+CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a);
+/* <<< factory CheckIfHasCardIDInHand */
 #endif /* POKETCG_HOME_COMMON_H */

@@ -99,6 +99,21 @@ CASES["LookForCardIDInPlayArea_Bank8"] = [
 ]
 # <<< factory LookForCardIDInPlayArea_Bank8
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+# <<< factory-cases-statics
+
+# >>> factory CheckIfHasCardIDInHand
+CONTRACT["CheckIfHasCardIDInHand"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfHasCardIDInHand"] = [
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01"}, "read": {0xC510: 32}},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00", 0xC243: b"\x01", 0xC200: b"\x00", 0xC201: b"\x00", wPlayerDeck: b"\x01\x01"}, "read": {0xC510: 32}},
+    dict(POISON, a=0x01, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00", 0xC243: b"\x01", 0xC200: b"\x00", 0xC201: b"\x00", wPlayerDeck: b"\x01\x01"}, read={0xC510: 32}),
+]
+# <<< factory CheckIfHasCardIDInHand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -157,3 +172,11 @@ MUTATIONS["LookForCardIDInPlayArea_Bank8"] = {
     "case_ids": ["LookForCardIDInPlayArea_Bank8-0", "LookForCardIDInPlayArea_Bank8-1", "LookForCardIDInPlayArea_Bank8-2", "LookForCardIDInPlayArea_Bank8-3", "LookForCardIDInPlayArea_Bank8-4", "LookForCardIDInPlayArea_Bank8-5"],
 }
 # <<< factory-mutation LookForCardIDInPlayArea_Bank8
+# >>> factory-mutation CheckIfHasCardIDInHand
+MUTATIONS["CheckIfHasCardIDInHand"] = {
+    "source_symbol": "CheckIfHasCardIDInHand",
+    "before": "\t\tif (count != 0u)",
+    "after": "\t\tif (count == 0u)",
+    "case_ids": ["CheckIfHasCardIDInHand-2", "CheckIfHasCardIDInHand-3"],
+}
+# <<< factory-mutation CheckIfHasCardIDInHand

@@ -2381,6 +2381,13 @@ static void adapt_Revive_BenchCheck(ProbeState *s)
 }
 /* <<< factory Revive_BenchCheck */
 
+/* >>> factory DragonairHyperBeam_DiscardEffect */
+static void adapt_DragonairHyperBeam_DiscardEffect(ProbeState *s)
+{
+	s->hl = DragonairHyperBeam_DiscardEffect(s->hl);
+}
+/* <<< factory DragonairHyperBeam_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2676,5 +2683,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperPotion_DamageEnergyCheck", adapt_SuperPotion_DamageEnergyCheck },
 	{ "KrabbyCallForFamily_CheckDeckAndPlayArea", adapt_KrabbyCallForFamily_CheckDeckAndPlayArea },
 	{ "Revive_BenchCheck", adapt_Revive_BenchCheck },
+	{ "DragonairHyperBeam_DiscardEffect", adapt_DragonairHyperBeam_DiscardEffect },
 	{ NULL, NULL },
 };

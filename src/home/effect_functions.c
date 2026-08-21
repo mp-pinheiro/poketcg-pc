@@ -283,6 +283,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 
 #define ThereAreNoPokemonInDiscardPileText 0x00b8u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4070,3 +4074,21 @@ ReviveBenchCheckResult Revive_BenchCheck(void)
 	return (ReviveBenchCheckResult){list.f, ThereAreNoPokemonInDiscardPileText};
 }
 /* <<< factory Revive_BenchCheck */
+
+/* >>> factory DragonairHyperBeam_DiscardEffect */
+uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(hl);
+	if (no_effect.f & 0x10u)
+		return no_effect.hl;
+	uint8_t card = hTemp_ffa0;
+	if (card == 0xffu)
+		return no_effect.hl;
+	SwapTurn();
+	PutCardInDiscardPile(card);
+	DuelistVarResult result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	gb_write8(result.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);
+	SwapTurn();
+	return result.hl;
+}
+/* <<< factory DragonairHyperBeam_DiscardEffect */

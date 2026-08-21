@@ -2607,6 +2607,16 @@ CASES["Revive_BenchCheck"] = [
 ]
 # <<< factory Revive_BenchCheck
 
+# >>> factory DragonairHyperBeam_DiscardEffect
+CONTRACT["DragonairHyperBeam_DiscardEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["DragonairHyperBeam_DiscardEffect"] = [
+    {"hl": 0xC100, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x00"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    {"hl": 0xC100, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\xFF"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    {"hl": 0xC300, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xC300: b"\xFF", 0xFFA0: b"\x2A"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    dict(POISON, hl=0xC100, wram={0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x05"}, read={0xC000: 0xF00, 0xC3F8: 1}),
+]
+# <<< factory DragonairHyperBeam_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4351,3 +4361,6 @@ MUTATIONS["KrabbyCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "Krabb
 # >>> factory-mutation Revive_BenchCheck
 MUTATIONS["Revive_BenchCheck"] = {"source_symbol": "Revive_BenchCheck", "before": "\tif (count.a >= MAX_PLAY_AREA_POKEMON) {", "after": "\tif (count.a > MAX_PLAY_AREA_POKEMON) {", "case_ids": ["Revive_BenchCheck-2"]}
 # <<< factory-mutation Revive_BenchCheck
+# >>> factory-mutation DragonairHyperBeam_DiscardEffect
+MUTATIONS["DragonairHyperBeam_DiscardEffect"] = {"source_symbol": "DragonairHyperBeam_DiscardEffect", "before": "\tgb_write8(result.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);", "after": "\tgb_write8(result.hl, 0x02u);", "case_ids": ["DragonairHyperBeam_DiscardEffect-0", "DragonairHyperBeam_DiscardEffect-3"]}
+# <<< factory-mutation DragonairHyperBeam_DiscardEffect

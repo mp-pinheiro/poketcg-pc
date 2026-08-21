@@ -73,6 +73,15 @@ static void adapt_LookForCardIDInPlayArea_Bank8(ProbeState *s)
 }
 /* <<< factory LookForCardIDInPlayArea_Bank8 */
 
+/* >>> factory CheckIfHasCardIDInHand */
+static void adapt_CheckIfHasCardIDInHand(ProbeState *s)
+{
+	CheckIfHasCardIDInHandResult r = CheckIfHasCardIDInHand(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfHasCardIDInHand */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -82,5 +91,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "PickAttachedEnergyCardToRemove", adapt_PickAttachedEnergyCardToRemove },
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank8", adapt_CopyListWithFFTerminatorFromHLToDE_Bank8 },
 	{ "LookForCardIDInPlayArea_Bank8", adapt_LookForCardIDInPlayArea_Bank8 },
+	{ "CheckIfHasCardIDInHand", adapt_CheckIfHasCardIDInHand },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfHasCardIDInHand",
+  "case": "tests/cases/common.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfHasCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0000\", \"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"0101\", \"50448\": \"0100ff0000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfHasCardIDInHand\", \"mismatches\": {\"a\": [0, 1]}}\n",
+  "restored": "{\"fn\": \"CheckIfHasCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0000\", \"49730\": \"0001\", \"49902\": \"02\", \"50176\": \"0101\", \"50448\": \"0100ff0000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -31,6 +31,11 @@
 #include "home/duel.h"
 #include "generated/wram.h"
 #define MAX_PLAY_AREA_POKEMON 0x06u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -226,3 +231,25 @@ LookForCardIDInPlayAreaResult LookForCardIDInPlayArea_Bank8(uint8_t a, uint8_t b
 	}
 }
 /* <<< factory LookForCardIDInPlayArea_Bank8 */
+
+/* >>> factory CheckIfHasCardIDInHand */
+CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a)
+{
+	wTempCardIDToLook = a;
+	(void)CreateHandCardList(0u);
+	uint8_t *scan = wDuelTempList_PTR;
+	uint8_t count = 0u;
+	for (;;) {
+		uint8_t index = *scan++;
+		if (index == 0xFFu)
+			return (CheckIfHasCardIDInHandResult){0xFFu, 0xC0u};
+		hTempCardIndex_ff98 = index;
+		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id != wTempCardIDToLook)
+			continue;
+		if (count != 0u)
+			return (CheckIfHasCardIDInHandResult){hTempCardIndex_ff98, 0x10u};
+		count++;
+	}
+}
+/* <<< factory CheckIfHasCardIDInHand */
