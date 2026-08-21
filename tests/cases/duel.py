@@ -1070,6 +1070,10 @@ CASES["DrawYourOrOppPlayArea_DrawArrows"] = [
 
 # >>> factory-cases-statics
 wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
+
+wCheckMenuCursorXPosition = 0xCEAF
+wCheckMenuCursorYPosition = 0xCEB0
+wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1085,6 +1089,15 @@ CASES["DrawYourOrOppPlayArea_EraseArrows"] = [
                     0x994C: 1, 0x9950: 1}}},
 ]
 # <<< factory DrawYourOrOppPlayArea_EraseArrows
+
+# >>> factory DrawYourOrOppPlayArea_RefreshArrows
+CONTRACT["DrawYourOrOppPlayArea_RefreshArrows"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DrawYourOrOppPlayArea_RefreshArrows"] = [
+    {"a": 0x00, "wram": {wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, "read": {wYourOrOppPlayAreaLastCursorPosition: 1}},
+    {"a": 0x12, "wram": {wCheckMenuCursorXPosition: b"\x01", wCheckMenuCursorYPosition: b"\x02", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, "read": {wYourOrOppPlayAreaLastCursorPosition: 1}},
+    dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, read={wYourOrOppPlayAreaLastCursorPosition: 1}),
+]
+# <<< factory DrawYourOrOppPlayArea_RefreshArrows
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1203,3 +1216,11 @@ MUTATIONS["DrawYourOrOppPlayArea_EraseArrows"] = {
                  "DrawYourOrOppPlayArea_EraseArrows-1"],
 }
 # <<< factory-mutation DrawYourOrOppPlayArea_EraseArrows
+# >>> factory-mutation DrawYourOrOppPlayArea_RefreshArrows
+MUTATIONS["DrawYourOrOppPlayArea_RefreshArrows"] = {
+    "source_symbol": "DrawYourOrOppPlayArea_RefreshArrows",
+    "before": "\tif (position != gb_read8(wYourOrOppPlayAreaLastCursorPosition_ADDR)) {",
+    "after": "\tif (position == gb_read8(wYourOrOppPlayAreaLastCursorPosition_ADDR)) {",
+    "case_ids": ["DrawYourOrOppPlayArea_RefreshArrows-1", "DrawYourOrOppPlayArea_RefreshArrows-2"],
+}
+# <<< factory-mutation DrawYourOrOppPlayArea_RefreshArrows

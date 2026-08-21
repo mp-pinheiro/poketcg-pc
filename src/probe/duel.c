@@ -693,6 +693,13 @@ static void adapt_DrawYourOrOppPlayArea_EraseArrows(ProbeState *s)
 }
 /* <<< factory DrawYourOrOppPlayArea_EraseArrows */
 
+/* >>> factory DrawYourOrOppPlayArea_RefreshArrows */
+static void adapt_DrawYourOrOppPlayArea_RefreshArrows(ProbeState *s)
+{
+	DrawYourOrOppPlayArea_RefreshArrows(s->a);
+}
+/* <<< factory DrawYourOrOppPlayArea_RefreshArrows */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -777,5 +784,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "GetDuelInitialPrizesUpperBitsSet", adapt_GetDuelInitialPrizesUpperBitsSet },
 	{ "DrawYourOrOppPlayArea_DrawArrows", adapt_DrawYourOrOppPlayArea_DrawArrows },
 	{ "DrawYourOrOppPlayArea_EraseArrows", adapt_DrawYourOrOppPlayArea_EraseArrows },
+	{ "DrawYourOrOppPlayArea_RefreshArrows", adapt_DrawYourOrOppPlayArea_RefreshArrows },
 	{ NULL, NULL },
 };

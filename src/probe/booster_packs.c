@@ -171,6 +171,13 @@ static void adapt_LoadRarityAmountsToWram(ProbeState *s)
 }
 /* <<< factory LoadRarityAmountsToWram */
 
+/* >>> factory DetermineBoosterCardType */
+static void adapt_DetermineBoosterCardType(ProbeState *s)
+{
+	s->a = DetermineBoosterCardType(s->a);
+}
+/* <<< factory DetermineBoosterCardType */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -189,5 +196,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateRandomEnergyBooster", adapt_GenerateRandomEnergyBooster },
 	{ "PutEnergiesAndNonEnergiesTogether", adapt_PutEnergiesAndNonEnergiesTogether },
 	{ "LoadRarityAmountsToWram", adapt_LoadRarityAmountsToWram },
+	{ "DetermineBoosterCardType", adapt_DetermineBoosterCardType },
 	{ NULL, NULL },
 };

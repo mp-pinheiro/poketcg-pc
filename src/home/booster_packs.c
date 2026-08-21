@@ -62,6 +62,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 
 #include "home/booster_packs.h"
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -260,3 +262,28 @@ void LoadRarityAmountsToWram(void)
 	gb_write8(wBoosterData_RareAmount_ADDR, rare);
 }
 /* <<< factory LoadRarityAmountsToWram */
+
+/* >>> factory DetermineBoosterCardType */
+uint8_t DetermineBoosterCardType(uint8_t a)
+{
+	wTempBoosterChances = a;
+	uint8_t c = 0;
+	uint8_t *table = wBoosterTempTypeChancesTable_PTR;
+	for (;;) {
+		uint8_t chance = *table;
+		if (chance != 0u) {
+			uint8_t remaining = wTempBoosterChances;
+			uint8_t next = (uint8_t)(remaining - chance);
+			wTempBoosterChances = next;
+			if (remaining < chance)
+				break;
+		}
+		++table;
+		++c;
+		if (c >= NUM_BOOSTER_CARD_TYPES)
+			break;
+	}
+	wBoosterJustDrawnCardType = c;
+	return c;
+}
+/* <<< factory DetermineBoosterCardType */

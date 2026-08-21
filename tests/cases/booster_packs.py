@@ -95,6 +95,12 @@ wBoosterData_CommonAmount = 0xD66E
 wBoosterData_RareAmount = 0xD670
 wBoosterData_Set = 0xD686
 wBoosterData_UncommonAmount = 0xD66F
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wBoosterJustDrawnCardType = 0xD66B
+wBoosterTempTypeChancesTable = 0xD67A
+wTempBoosterChances = 0xD4CA
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -210,6 +216,16 @@ CASES["LoadRarityAmountsToWram"] = [
 ]
 # <<< factory LoadRarityAmountsToWram
 
+# >>> factory DetermineBoosterCardType
+CONTRACT["DetermineBoosterCardType"] = {"compare": ("a",), "preserve": ()}
+CASES["DetermineBoosterCardType"] = [
+	{"a": 0x00, "wram": {wBoosterTempTypeChancesTable: b"\x00" * 9, wBoosterJustDrawnCardType: b"\xFF", wTempBoosterChances: b"\xFF"}, "read": {wBoosterJustDrawnCardType: 1, wTempBoosterChances: 1}},
+	{"a": 0x00, "wram": {wBoosterTempTypeChancesTable: b"\x01\x00\x00\x00\x00\x00\x00\x00\x00", wBoosterJustDrawnCardType: b"\xFF"}, "read": {wBoosterJustDrawnCardType: 1, wTempBoosterChances: 1}},
+	{"a": 0x02, "wram": {wBoosterTempTypeChancesTable: b"\x00\x02\x03\x00\x00\x00\x00\x00\x00", wBoosterJustDrawnCardType: b"\xFF"}, "read": {wBoosterJustDrawnCardType: 1, wTempBoosterChances: 1}},
+	dict(POISON, a=0xAA, wram={wBoosterTempTypeChancesTable: b"\x20\x10\x08\x04\x02\x01\x00\x00\x00", wBoosterJustDrawnCardType: b"\xFF"}, read={wBoosterJustDrawnCardType: 1, wTempBoosterChances: 1}),
+]
+# <<< factory DetermineBoosterCardType
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -295,3 +311,6 @@ MUTATIONS["PutEnergiesAndNonEnergiesTogether"] = {"source_symbol": "PutEnergiesA
 # >>> factory-mutation LoadRarityAmountsToWram
 MUTATIONS["LoadRarityAmountsToWram"] = {"source_symbol": "LoadRarityAmountsToWram", "before": "\tuint8_t common = (set < 2u) ? 5u : 6u;", "after": "\tuint8_t common = (set < 2u) ? 6u : 5u;", "case_ids": ["LoadRarityAmountsToWram-0", "LoadRarityAmountsToWram-1", "LoadRarityAmountsToWram-2", "LoadRarityAmountsToWram-3", "LoadRarityAmountsToWram-4"]}
 # <<< factory-mutation LoadRarityAmountsToWram
+# >>> factory-mutation DetermineBoosterCardType
+MUTATIONS["DetermineBoosterCardType"] = {"source_symbol": "DetermineBoosterCardType", "before": "\t\tuint8_t chance = *table;", "after": "\t\tuint8_t chance = (uint8_t)(*table + 1u);", "case_ids": ["DetermineBoosterCardType-1", "DetermineBoosterCardType-2", "DetermineBoosterCardType-3"]}
+# <<< factory-mutation DetermineBoosterCardType

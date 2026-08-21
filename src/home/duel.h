@@ -577,4 +577,7 @@ void DrawYourOrOppPlayArea_DrawArrows(uint8_t a, uint8_t b);
 /* >>> factory DrawYourOrOppPlayArea_EraseArrows */
 void DrawYourOrOppPlayArea_EraseArrows(void);
 /* <<< factory DrawYourOrOppPlayArea_EraseArrows */
+/* >>> factory DrawYourOrOppPlayArea_RefreshArrows */
+void DrawYourOrOppPlayArea_RefreshArrows(uint8_t a);
+/* <<< factory DrawYourOrOppPlayArea_RefreshArrows */
 #endif

@@ -67,4 +67,7 @@ PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_
 /* >>> factory LoadRarityAmountsToWram */
 void LoadRarityAmountsToWram(void);
 /* <<< factory LoadRarityAmountsToWram */
+/* >>> factory DetermineBoosterCardType */
+uint8_t DetermineBoosterCardType(uint8_t a);
+/* <<< factory DetermineBoosterCardType */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

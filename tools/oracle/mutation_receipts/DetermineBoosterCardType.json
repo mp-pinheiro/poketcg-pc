@@ -1,0 +1,9 @@
+{
+  "fn": "DetermineBoosterCardType",
+  "case": "tests/cases/booster_packs.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DetermineBoosterCardType\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54474\": \"ff\", \"54891\": \"00\", \"54906\": \"010000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DetermineBoosterCardType\", \"mismatches\": {\"bus\": {\"address\": 54474, \"reference\": \"ff00010000\", \"native\": \"fe00010000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[54474, 1], [54891, 1], [54906, 9]]}}}\n",
+  "restored": "{\"fn\": \"DetermineBoosterCardType\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54474\": \"ff\", \"54891\": \"00\", \"54906\": \"010000000000000000\"}}, \"status\": \"PASS\"}\n"
+}
