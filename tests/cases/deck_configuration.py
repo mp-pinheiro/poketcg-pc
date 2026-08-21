@@ -120,6 +120,16 @@ CASES["CountNumberOfCardsOfType"] = [
 ]
 # <<< factory CountNumberOfCardsOfType
 
+# >>> factory CopyNBytesFromHLToDE
+CONTRACT["CopyNBytesFromHLToDE"] = {"compare": ("d", "e", "hl"), "preserve": ()}
+CASES["CopyNBytesFromHLToDE"] = [
+    {"b": 1, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: b"\x42"}, "read": {0xC500: 1}},
+    {"b": 3, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: b"\x01\x02\x03"}, "read": {0xC500: 3}},
+    {"b": 0, "hl": 0xC100, "d": 0xC5, "e": 0x00, "wram": {0xC100: bytes(range(256))}, "read": {0xC500: 256}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, hl=0xC100, wram={0xC100: bytes(range(187))}, read={0xDDEE: 187}),
+]
+# <<< factory CopyNBytesFromHLToDE
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -184,3 +194,6 @@ MUTATIONS["CountNumberOfCardsOfType"] = {
     "case_ids": ["CountNumberOfCardsOfType-2"],
 }
 # <<< factory-mutation CountNumberOfCardsOfType
+# >>> factory-mutation CopyNBytesFromHLToDE
+MUTATIONS["CopyNBytesFromHLToDE"] = {"source_symbol": "CopyNBytesFromHLToDE", "before": "\t\tgb_write8(dst++, gb_read8(src++));", "after": "\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));", "case_ids": ["CopyNBytesFromHLToDE-0", "CopyNBytesFromHLToDE-1", "CopyNBytesFromHLToDE-2", "CopyNBytesFromHLToDE-3"]}
+# <<< factory-mutation CopyNBytesFromHLToDE

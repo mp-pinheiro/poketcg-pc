@@ -201,3 +201,17 @@ uint8_t CountNumberOfCardsOfType(uint8_t a)
 	return count;
 }
 /* <<< factory CountNumberOfCardsOfType */
+
+/* >>> factory CopyNBytesFromHLToDE */
+void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b)
+{
+	uint16_t src = *hl;
+	uint16_t dst = *de;
+	uint32_t n = b ? b : 0x100u;
+	do {
+		gb_write8(dst++, gb_read8(src++));
+	} while (--n);
+	*hl = src;
+	*de = dst;
+}
+/* <<< factory CopyNBytesFromHLToDE */

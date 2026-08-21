@@ -88,6 +88,18 @@ static void adapt_CountNumberOfCardsOfType(ProbeState *s)
 }
 /* <<< factory CountNumberOfCardsOfType */
 
+/* >>> factory CopyNBytesFromHLToDE */
+static void adapt_CopyNBytesFromHLToDE(ProbeState *s)
+{
+	uint16_t hl = s->hl;
+	uint16_t de = (uint16_t)(((uint16_t)s->d << 8) | s->e);
+	CopyNBytesFromHLToDE(&hl, &de, s->b);
+	s->hl = hl;
+	s->d = (uint8_t)(de >> 8);
+	s->e = (uint8_t)de;
+}
+/* <<< factory CopyNBytesFromHLToDE */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -99,5 +111,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "FillDEWithA", adapt_FillDEWithA },
 	{ "DrawHandCardsTileAtDE", adapt_DrawHandCardsTileAtDE },
 	{ "CountNumberOfCardsOfType", adapt_CountNumberOfCardsOfType },
+	{ "CopyNBytesFromHLToDE", adapt_CopyNBytesFromHLToDE },
 	{ NULL, NULL },
 };

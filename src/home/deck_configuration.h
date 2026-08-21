@@ -33,4 +33,7 @@ void DrawHandCardsTileAtDE(uint16_t de);
 /* >>> factory CountNumberOfCardsOfType */
 uint8_t CountNumberOfCardsOfType(uint8_t a);
 /* <<< factory CountNumberOfCardsOfType */
+/* >>> factory CopyNBytesFromHLToDE */
+void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b);
+/* <<< factory CopyNBytesFromHLToDE */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

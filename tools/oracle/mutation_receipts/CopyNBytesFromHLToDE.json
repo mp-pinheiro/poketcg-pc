@@ -1,0 +1,9 @@
+{
+  "fn": "CopyNBytesFromHLToDE",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyNBytesFromHLToDE\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 197, \"e\": 1, \"f\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"42\", \"50432\": \"42\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyNBytesFromHLToDE\", \"mismatches\": {\"bus\": {\"address\": 50432, \"reference\": \"4242\", \"native\": \"4243\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [50432, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyNBytesFromHLToDE\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 197, \"e\": 1, \"f\": 0, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"42\", \"50432\": \"42\"}}, \"status\": \"PASS\"}\n"
+}
