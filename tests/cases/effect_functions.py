@@ -2498,6 +2498,14 @@ CASES["VaporeonWaterGunEffect"] = [
 ]
 # <<< factory VaporeonWaterGunEffect
 
+# >>> factory Potion_DamageCheck
+CONTRACT["Potion_DamageCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["Potion_DamageCheck"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory Potion_DamageCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4202,3 +4210,6 @@ MUTATIONS["VaporeonWaterGunEffect"] = {
     "case_ids": ["VaporeonWaterGunEffect-0", "VaporeonWaterGunEffect-1"],
 }
 # <<< factory-mutation VaporeonWaterGunEffect
+# >>> factory-mutation Potion_DamageCheck
+MUTATIONS["Potion_DamageCheck"] = {"source_symbol": "Potion_DamageCheck", "before": "\treturn (PotionDamageCheckResult){r.f, NoPokemonWithDamageCountersText};", "after": "\treturn (PotionDamageCheckResult){r.f, (uint16_t)(NoPokemonWithDamageCountersText + 1u)};", "case_ids": ["Potion_DamageCheck-0", "Potion_DamageCheck-1"]}
+# <<< factory-mutation Potion_DamageCheck

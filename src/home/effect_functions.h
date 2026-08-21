@@ -964,6 +964,10 @@ void StretchKick_AISelectEffect(void);
 /* >>> factory VaporeonWaterGunEffect */
 void VaporeonWaterGunEffect(void);
 /* <<< factory VaporeonWaterGunEffect */
+/* >>> factory Potion_DamageCheck */
+typedef struct { uint8_t f; uint16_t hl; } PotionDamageCheckResult;
+PotionDamageCheckResult Potion_DamageCheck(void);
+/* <<< factory Potion_DamageCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

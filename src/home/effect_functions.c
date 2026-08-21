@@ -268,6 +268,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "generated/hram.h"
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3964,3 +3966,11 @@ void VaporeonWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
 }
 /* <<< factory VaporeonWaterGunEffect */
+
+/* >>> factory Potion_DamageCheck */
+PotionDamageCheckResult Potion_DamageCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult r = CheckIfPlayAreaHasAnyDamage();
+	return (PotionDamageCheckResult){r.f, NoPokemonWithDamageCountersText};
+}
+/* <<< factory Potion_DamageCheck */

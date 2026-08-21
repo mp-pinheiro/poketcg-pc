@@ -2297,6 +2297,15 @@ static void adapt_VaporeonWaterGunEffect(ProbeState *s)
 }
 /* <<< factory VaporeonWaterGunEffect */
 
+/* >>> factory Potion_DamageCheck */
+static void adapt_Potion_DamageCheck(ProbeState *s)
+{
+	PotionDamageCheckResult r = Potion_DamageCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Potion_DamageCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2582,5 +2591,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PoliwhirlAmnesia_AISelectEffect", adapt_PoliwhirlAmnesia_AISelectEffect },
 	{ "StretchKick_AISelectEffect", adapt_StretchKick_AISelectEffect },
 	{ "VaporeonWaterGunEffect", adapt_VaporeonWaterGunEffect },
+	{ "Potion_DamageCheck", adapt_Potion_DamageCheck },
 	{ NULL, NULL },
 };
