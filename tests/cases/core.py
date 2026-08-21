@@ -1456,6 +1456,21 @@ CASES["CheckPrintDoublePoisoned"] = [
 ]
 # <<< factory CheckPrintDoublePoisoned
 
+# >>> factory PrintPracticeDuelLetsPlayTheGame
+CONTRACT["PrintPracticeDuelLetsPlayTheGame"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CASES["PrintPracticeDuelLetsPlayTheGame"] = [
+    {"keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+]
+# <<< factory PrintPracticeDuelLetsPlayTheGame
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2316,3 +2331,11 @@ MUTATIONS["CardPageSwitch_PokemonAttack1Page1"] = {"source_symbol": "CardPageSwi
 # >>> factory-mutation CheckPrintDoublePoisoned
 MUTATIONS["CheckPrintDoublePoisoned"] = {"source_symbol": "CheckPrintDoublePoisoned", "before": "printed_status = POISONED;", "after": "printed_status = 0u;", "case_ids": ["CheckPrintDoublePoisoned-1", "CheckPrintDoublePoisoned-3"]}
 # <<< factory-mutation CheckPrintDoublePoisoned
+# >>> factory-mutation PrintPracticeDuelLetsPlayTheGame
+MUTATIONS["PrintPracticeDuelLetsPlayTheGame"] = {
+    "source_symbol": "PrintPracticeDuelLetsPlayTheGame",
+    "before": "\t(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText);",
+    "after": "\t(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText + 1u);",
+    "case_ids": ["PrintPracticeDuelLetsPlayTheGame-0", "PrintPracticeDuelLetsPlayTheGame-1"],
+}
+# <<< factory-mutation PrintPracticeDuelLetsPlayTheGame

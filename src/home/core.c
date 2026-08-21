@@ -396,6 +396,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #define DOUBLE_POISONED 0xC0u
+
+#include "home/core.h"
+#define LetsPlayTheGamePracticeDuelText 0x01d8u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2688,3 +2691,10 @@ uint8_t CheckPrintDoublePoisoned(uint8_t a, uint8_t b, uint8_t c)
 	return status;
 }
 /* <<< factory CheckPrintDoublePoisoned */
+
+/* >>> factory PrintPracticeDuelLetsPlayTheGame */
+void PrintPracticeDuelLetsPlayTheGame(void)
+{
+	(void)PrintPracticeDuelDrMasonInstructions(LetsPlayTheGamePracticeDuelText);
+}
+/* <<< factory PrintPracticeDuelLetsPlayTheGame */

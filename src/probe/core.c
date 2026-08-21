@@ -1132,6 +1132,13 @@ static void adapt_CheckPrintDoublePoisoned(ProbeState *s)
 }
 /* <<< factory CheckPrintDoublePoisoned */
 
+/* >>> factory PrintPracticeDuelLetsPlayTheGame */
+static void adapt_PrintPracticeDuelLetsPlayTheGame(ProbeState *s)
+{
+	PrintPracticeDuelLetsPlayTheGame();
+}
+/* <<< factory PrintPracticeDuelLetsPlayTheGame */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1265,5 +1272,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HasAlivePokemonInPlayArea", adapt_HasAlivePokemonInPlayArea },
 	{ "CardPageSwitch_PokemonAttack1Page1", adapt_CardPageSwitch_PokemonAttack1Page1 },
 	{ "CheckPrintDoublePoisoned", adapt_CheckPrintDoublePoisoned },
+	{ "PrintPracticeDuelLetsPlayTheGame", adapt_PrintPracticeDuelLetsPlayTheGame },
 	{ NULL, NULL },
 };
