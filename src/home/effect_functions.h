@@ -980,6 +980,9 @@ void RapidashStomp_AIEffect(void);
 /* >>> factory StoneBarrage_AIEffect */
 void StoneBarrage_AIEffect(void);
 /* <<< factory StoneBarrage_AIEffect */
+/* >>> factory DestinyBond_AISelectEffect */
+void DestinyBond_AISelectEffect(void);
+/* <<< factory DestinyBond_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

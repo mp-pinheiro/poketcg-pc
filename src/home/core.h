@@ -563,4 +563,7 @@ void PrintAttachedEnergyToPokemon(void);
 /* >>> factory PrintPokemonEvolvedIntoPokemon */
 void PrintPokemonEvolvedIntoPokemon(void);
 /* <<< factory PrintPokemonEvolvedIntoPokemon */
+/* >>> factory SetupDuel */
+void SetupDuel(void);
+/* <<< factory SetupDuel */
 #endif

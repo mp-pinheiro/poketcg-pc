@@ -427,6 +427,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #define SFX_POKEMON_EVOLUTION 0x5eu
 #define PokemonEvolvedIntoPokemonText 0x0060u
+
+#include "generated/wram.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/tiles.h"
+#include "home/duel_core.h"
+#include "home/process_text.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2791,3 +2798,16 @@ void PrintPokemonEvolvedIntoPokemon(void)
 	(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);
 }
 /* <<< factory PrintPokemonEvolvedIntoPokemon */
+
+/* >>> factory SetupDuel */
+void SetupDuel(void)
+{
+	wTileMapFill = SYM_SPACE;
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	SetDefaultConsolePalettes();
+	(void)SetupText(0x38u, 0x9Fu);
+	EnableLCD();
+}
+/* <<< factory SetupDuel */

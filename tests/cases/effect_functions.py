@@ -2320,6 +2320,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 hTemp_ffa0 = 0xFFA0
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDuelTempList = 0xC510
+hTempList = 0xFFA0
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2555,6 +2559,14 @@ CASES["StoneBarrage_AIEffect"] = [
      "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
 ]
 # <<< factory StoneBarrage_AIEffect
+
+# >>> factory DestinyBond_AISelectEffect
+CONTRACT["DestinyBond_AISelectEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DestinyBond_AISelectEffect"] = [
+    {"read": {wDuelTempList: 1, hTempList: 1}},
+    dict(POISON, read={wDuelTempList: 1, hTempList: 1}),
+]
+# <<< factory DestinyBond_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4280,3 +4292,6 @@ MUTATIONS["RapidashStomp_AIEffect"] = {
 # >>> factory-mutation StoneBarrage_AIEffect
 MUTATIONS["StoneBarrage_AIEffect"] = {"source_symbol": "StoneBarrage_AIEffect", "before": "\tSetExpectedAIDamage(10u, 0u, 100u);", "after": "\tSetExpectedAIDamage(11u, 0u, 100u);", "case_ids": ["StoneBarrage_AIEffect-0", "StoneBarrage_AIEffect-1", "StoneBarrage_AIEffect-2"]}
 # <<< factory-mutation StoneBarrage_AIEffect
+# >>> factory-mutation DestinyBond_AISelectEffect
+MUTATIONS["DestinyBond_AISelectEffect"] = {"source_symbol": "DestinyBond_AISelectEffect", "before": "\thTempList = wDuelTempList;", "after": "\thTempList = (uint8_t)(wDuelTempList + 1u);", "case_ids": ["DestinyBond_AISelectEffect-0", "DestinyBond_AISelectEffect-1"]}
+# <<< factory-mutation DestinyBond_AISelectEffect

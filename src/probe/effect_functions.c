@@ -2337,6 +2337,14 @@ static void adapt_StoneBarrage_AIEffect(ProbeState *s)
 }
 /* <<< factory StoneBarrage_AIEffect */
 
+/* >>> factory DestinyBond_AISelectEffect */
+static void adapt_DestinyBond_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	DestinyBond_AISelectEffect();
+}
+/* <<< factory DestinyBond_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2627,5 +2635,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JolteonDoubleKick_AIEffect", adapt_JolteonDoubleKick_AIEffect },
 	{ "RapidashStomp_AIEffect", adapt_RapidashStomp_AIEffect },
 	{ "StoneBarrage_AIEffect", adapt_StoneBarrage_AIEffect },
+	{ "DestinyBond_AISelectEffect", adapt_DestinyBond_AISelectEffect },
 	{ NULL, NULL },
 };

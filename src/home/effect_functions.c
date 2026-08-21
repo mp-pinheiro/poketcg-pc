@@ -270,6 +270,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4002,3 +4006,12 @@ void StoneBarrage_AIEffect(void)
 	SetExpectedAIDamage(10u, 0u, 100u);
 }
 /* <<< factory StoneBarrage_AIEffect */
+
+/* >>> factory DestinyBond_AISelectEffect */
+void DestinyBond_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArenaResult result = CreateListOfEnergyAttachedToArena(0x0Du);
+	(void)result;
+	hTempList = wDuelTempList;
+}
+/* <<< factory DestinyBond_AISelectEffect */

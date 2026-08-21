@@ -1556,6 +1556,14 @@ CASES["PrintPokemonEvolvedIntoPokemon"] = [
 ]
 # <<< factory PrintPokemonEvolvedIntoPokemon
 
+# >>> factory SetupDuel
+CONTRACT["SetupDuel"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["SetupDuel"] = [
+	{"wram": {0xCAB6: b"\xFF"}},
+	dict(a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={0xCAB6: b"\xFF"}),
+]
+# <<< factory SetupDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2452,3 +2460,11 @@ MUTATIONS["PrintAttachedEnergyToPokemon"] = {"source_symbol": "PrintAttachedEner
 # >>> factory-mutation PrintPokemonEvolvedIntoPokemon
 MUTATIONS["PrintPokemonEvolvedIntoPokemon"] = {"source_symbol": "PrintPokemonEvolvedIntoPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0061u);", "case_ids": ["PrintPokemonEvolvedIntoPokemon-0", "PrintPokemonEvolvedIntoPokemon-1"]}
 # <<< factory-mutation PrintPokemonEvolvedIntoPokemon
+# >>> factory-mutation SetupDuel
+MUTATIONS["SetupDuel"] = {
+    "source_symbol": "SetupDuel",
+    "before": "\twTileMapFill = SYM_SPACE;",
+    "after": "\twTileMapFill = 0x01u;",
+    "case_ids": ["SetupDuel-0", "SetupDuel-1"],
+}
+# <<< factory-mutation SetupDuel
