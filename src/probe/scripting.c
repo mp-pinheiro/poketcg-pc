@@ -633,6 +633,18 @@ static void adapt_ScriptCommand_IncrementEventValue(ProbeState *s)
 }
 /* <<< factory ScriptCommand_IncrementEventValue */
 
+/* >>> factory ScriptCommand_JumpIfPlayerCoordsMatch */
+static void adapt_ScriptCommand_JumpIfPlayerCoordsMatch(ProbeState *s)
+{
+	ScriptCommand_JumpIfPlayerCoordsMatchResult result = ScriptCommand_JumpIfPlayerCoordsMatch(s->b, s->c, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory ScriptCommand_JumpIfPlayerCoordsMatch */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -695,5 +707,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfEventNotEqual", adapt_ScriptCommand_JumpIfEventNotEqual },
 	{ "ScriptCommand_JumpIfEventNonzero", adapt_ScriptCommand_JumpIfEventNonzero },
 	{ "ScriptCommand_IncrementEventValue", adapt_ScriptCommand_IncrementEventValue },
+	{ "ScriptCommand_JumpIfPlayerCoordsMatch", adapt_ScriptCommand_JumpIfPlayerCoordsMatch },
 	{ NULL, NULL },
 };

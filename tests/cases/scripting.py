@@ -44,6 +44,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wScriptPointer = 0xD413
 wEventVars = 0xD3D2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -728,6 +733,16 @@ CASES["ScriptCommand_IncrementEventValue"] = [
 ]
 # <<< factory ScriptCommand_IncrementEventValue
 
+# >>> factory ScriptCommand_JumpIfPlayerCoordsMatch
+CONTRACT["ScriptCommand_JumpIfPlayerCoordsMatch"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfPlayerCoordsMatch"] = [
+    {"b": 0x20, "c": 0x11, "hl": 0x4567, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20", wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x20, "c": 0x10, "hl": 0x6789, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x21", wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x20, "c": 0x10, "hl": 0x89AB, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20", wScriptPointer: b"\x00\xC5", 0xC503: b"\x34\x12"}, "read": {wScriptPointer: 2}},
+    dict(POISON, wram={wPlayerXCoord: b"\xCC", wPlayerYCoord: b"\xBB", wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_JumpIfPlayerCoordsMatch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1155,3 +1170,6 @@ MUTATIONS["ScriptCommand_JumpIfEventNonzero"] = {"source_symbol": "ScriptCommand
 # >>> factory-mutation ScriptCommand_IncrementEventValue
 MUTATIONS["ScriptCommand_IncrementEventValue"] = {"source_symbol": "ScriptCommand_IncrementEventValue", "before": "\t(void)SetEventValue(c, f, b, value);", "after": "\t(void)SetEventValue(c, f, b, (uint8_t)(value + 1u));", "case_ids": ["ScriptCommand_IncrementEventValue-0", "ScriptCommand_IncrementEventValue-1", "ScriptCommand_IncrementEventValue-2"]}
 # <<< factory-mutation ScriptCommand_IncrementEventValue
+# >>> factory-mutation ScriptCommand_JumpIfPlayerCoordsMatch
+MUTATIONS["ScriptCommand_JumpIfPlayerCoordsMatch"] = {"source_symbol": "ScriptCommand_JumpIfPlayerCoordsMatch", "before": "if (wPlayerXCoord != c) {", "after": "if (wPlayerXCoord == c) {", "case_ids": ["ScriptCommand_JumpIfPlayerCoordsMatch-0", "ScriptCommand_JumpIfPlayerCoordsMatch-1", "ScriptCommand_JumpIfPlayerCoordsMatch-2", "ScriptCommand_JumpIfPlayerCoordsMatch-3"]}
+# <<< factory-mutation ScriptCommand_JumpIfPlayerCoordsMatch

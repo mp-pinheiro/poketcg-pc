@@ -936,3 +936,28 @@ IncreaseScriptPointerResult ScriptCommand_IncrementEventValue(uint8_t f, uint8_t
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_IncrementEventValue */
+
+/* >>> factory ScriptCommand_JumpIfPlayerCoordsMatch */
+ScriptCommand_JumpIfPlayerCoordsMatchResult ScriptCommand_JumpIfPlayerCoordsMatch(uint8_t b, uint8_t c, uint16_t hl)
+{
+	/* before */
+	if (wPlayerXCoord != c) {
+		(void)SetScriptControlByteFail();
+		IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfPlayerCoordsMatchResult){pointer.a, pointer.f, b, pointer.c, hl};
+	}
+	if (wPlayerYCoord != b) {
+		(void)SetScriptControlByteFail();
+		IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfPlayerCoordsMatchResult){pointer.a, pointer.f, b, pointer.c, hl};
+	}
+	(void)SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	if ((args.f & 0x80u) != 0u) {
+		IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy5();
+		return (ScriptCommand_JumpIfPlayerCoordsMatchResult){pointer.a, pointer.f, args.b, pointer.c, hl};
+	}
+	uint16_t new_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfPlayerCoordsMatchResult){args.a, args.f, args.b, args.c, new_hl};
+}
+/* <<< factory ScriptCommand_JumpIfPlayerCoordsMatch */

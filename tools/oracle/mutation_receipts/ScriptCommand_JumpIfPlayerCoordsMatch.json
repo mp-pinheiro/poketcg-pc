@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfPlayerCoordsMatch",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfPlayerCoordsMatch\", \"registers\": {\"a\": 197, \"b\": 32, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1020\", \"54291\": \"05c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfPlayerCoordsMatch\", \"mismatches\": {\"b\": [32, 0]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfPlayerCoordsMatch\", \"registers\": {\"a\": 197, \"b\": 32, \"c\": 5, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 17767, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1020\", \"54291\": \"05c5\"}}, \"status\": \"PASS\"}\n"
+}

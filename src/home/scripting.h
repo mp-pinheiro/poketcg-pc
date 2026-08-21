@@ -331,4 +331,15 @@ ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, 
 /* >>> factory ScriptCommand_IncrementEventValue */
 IncreaseScriptPointerResult ScriptCommand_IncrementEventValue(uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_IncrementEventValue */
+/* >>> factory ScriptCommand_JumpIfPlayerCoordsMatch */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} ScriptCommand_JumpIfPlayerCoordsMatchResult;
+
+ScriptCommand_JumpIfPlayerCoordsMatchResult ScriptCommand_JumpIfPlayerCoordsMatch(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_JumpIfPlayerCoordsMatch */
 #endif
