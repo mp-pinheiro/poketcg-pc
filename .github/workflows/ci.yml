@@ -42,5 +42,3 @@ jobs:
         run: just verify-hooks
       - name: Check progress report is current
         run: python3 tools/progress/report.py check
-      - name: Check factory control plane offline
-        run: python3 tools/factory/scenario_check.py

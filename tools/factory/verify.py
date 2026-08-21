@@ -113,54 +113,6 @@ def verdict(kind: str, detail: str, routine: str | None = None,
             "detail": text, "routine": routine, "failing": names,
             "fingerprint": fingerprint, "retryable": bool(retryable)}
 
-def verdict_v1(result: dict, work_ids: list[str]) -> dict:
-    status = str(result.get("status") or "infra-error")
-    phase = str(result.get("phase") or status)
-    failure_class = result.get("failure_class")
-    if not isinstance(failure_class, str):
-        failure_class = _FAILURE_CLASSES.get(status, "infrastructure")
-    scope = "routine"
-    if failure_class in {"harness", "bundle", "infrastructure"}:
-        scope = "infrastructure" if failure_class == "infrastructure" else "shared-harness"
-    if status == "green":
-        retry_action = "accept"
-    elif failure_class == "provider":
-        retry_action = "backoff"
-    elif failure_class in {"schema", "translation"}:
-        retry_action = "repair"
-    elif failure_class == "infrastructure":
-        retry_action = "retry"
-    else:
-        retry_action = "diagnose"
-    detail = str(result.get("detail") or result.get("output") or "")
-    summary = detail.splitlines()[0][:400] if detail else status
-    evidence = {
-        "status": status,
-        "phase": phase,
-        "detail_sha256": hashlib.sha256(detail.encode()).hexdigest(),
-        "tail_sha256": hashlib.sha256(_tail(detail).encode()).hexdigest(),
-    }
-    stable_signature = {
-        "status": status,
-        "phase": phase,
-        "failure_class": failure_class,
-        "scope": scope,
-        "work_ids": sorted(work_ids),
-        "failing": sorted(str(value) for value in result.get("failing") or []),
-    }
-    return {
-        "status": status,
-        "phase": phase,
-        "failure_class": failure_class,
-        "scope": scope,
-        "retry_action": retry_action,
-        "work_ids": sorted(work_ids),
-        "summary": summary,
-        "evidence": evidence,
-        "fingerprint": hashlib.sha256(
-            json.dumps(stable_signature, sort_keys=True, separators=(",", ":")).encode()
-        ).hexdigest(),
-    }
 
 _DIAGNOSTIC_LIMIT = 8
 _DIAGNOSTIC_CHARS = 320
@@ -214,66 +166,6 @@ def _comparator_witness(output: str, *, routine: str | None = None,
     if case_id:
         witness["case_id"] = case_id
     return witness
-
-
-def verdict_v2(result: dict, work_ids: list[str], *, phase_seconds: dict[str, float] | None = None) -> dict:
-    base = verdict_v1(result, work_ids)
-    raw_witness = result.get("witness")
-    witness = dict(raw_witness) if isinstance(raw_witness, dict) else {}
-    case_id = result.get("case_id")
-    if isinstance(case_id, str):
-        witness["case_id"] = case_id
-    for key in ("expected", "native", "registers", "bus", "mismatches"):
-        if key in result and key not in witness:
-            witness[key] = result[key]
-    witness = _bounded_witness(witness)
-    diagnostics = _bounded_diagnostics(result.get("detail") or result.get("output"))
-    fingerprint_witness = {
-        key: witness[key] for key in ("case_id", "mismatches") if key in witness
-    }
-    fingerprint = hashlib.sha256(json.dumps({
-        "phase": base["phase"],
-        "failure_class": base["failure_class"],
-        "case_id": fingerprint_witness.get("case_id"),
-        "mismatches": fingerprint_witness.get("mismatches", {}),
-        "diagnostics": diagnostics,
-    }, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-    return {
-        "schema": 2,
-        "status": "green" if base["status"] == "green" else "red",
-        "phase": base["phase"],
-        "failure_class": base["failure_class"],
-        "scope": base["scope"],
-        "retry_action": base["retry_action"],
-        "work_ids": base["work_ids"],
-        "summary": _normalize_diagnostic(base["summary"]),
-        "diagnostics": diagnostics,
-        "witness": witness,
-        "phase_seconds": phase_seconds or {},
-        "fingerprint": fingerprint,
-    }
-
-
-def _bounded_witness(witness: dict) -> dict:
-    bounded: dict = {}
-    if isinstance(witness.get("case_id"), str):
-        bounded["case_id"] = witness["case_id"][:160]
-    mismatches = witness.get("mismatches")
-    if isinstance(mismatches, dict):
-        bounded["mismatches"] = {
-            str(k)[:120]: _normalize_diagnostic(v)
-            for k, v in list(mismatches.items())[:_DIAGNOSTIC_LIMIT]
-        }
-    elif isinstance(mismatches, list):
-        bounded["mismatches"] = [
-            _normalize_diagnostic(item) for item in mismatches[:_DIAGNOSTIC_LIMIT]
-        ]
-    elif mismatches is not None:
-        bounded["mismatches"] = _normalize_diagnostic(mismatches)
-    for key in ("expected", "native", "registers", "bus"):
-        if key in witness:
-            bounded[key] = _normalize_diagnostic(witness[key])
-    return bounded
 
 
 def run(command: list[str], cwd: Path, timeout: float = 600,

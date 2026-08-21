@@ -27,7 +27,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 FACTORY = ROOT / ".factory"
 CACHE = FACTORY / "oracle-cache"
-EVENTS = FACTORY / "events.jsonl"
 LANE_BASE = Path("/tmp/poketcg-factory")
 ORACLE_PROJECT = ROOT / "tools" / "oracle"
 ORACLE_PYTHON = [
@@ -243,24 +242,3 @@ def packet_identity(packet: dict) -> dict:
             for routine in packet["routines"]
         ],
     }
-
-
-def _append_jsonl(path: Path, entry: dict) -> None:
-    entry = dict(entry)
-    entry.setdefault("ts", int(time.time()))
-    line = json.dumps(entry, sort_keys=True) + "\n"
-    with _append_lock:
-        FACTORY.mkdir(exist_ok=True)
-        with path.open("a") as stream:
-            stream.write(line)
-
-
-def record_event(entry: dict) -> None:
-    """Also called from verify_worker.py, a separate process: string values
-    are truncated to 300 chars so each line stays under Linux's O_APPEND
-    atomic-write guarantee for concurrent writers."""
-    _append_jsonl(EVENTS, {
-        key: (value[:300] if isinstance(value, str) else value)
-        for key, value in entry.items()
-    })
-

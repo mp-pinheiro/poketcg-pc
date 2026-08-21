@@ -3,7 +3,7 @@
 
 Every stage calls the production module it is named after, so a contract drift
 between prompt, reply validation, surgery, verification, artifact staging, and
-the integration saga fails here instead of consuming a live attempt. The
+the landing driver fails here instead of consuming a live attempt. The
 contract tier is offline and compiler-free; the full tier adds the lane build,
 the oracle, and a throwaway git remote.
 
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -27,7 +28,6 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
-import integrate
 import lanes
 import packet as packet_mod
 import prompt as prompt_mod
@@ -322,9 +322,7 @@ def _git(command: list[str], cwd: Path) -> str:
     return result.stdout.strip()
 
 
-def stage_integrate(state: dict[str, Any]) -> str:
-    saved_factory = integrate.FACTORY
-    saved_clone = integrate.ensure_v2_clone
+def stage_land(state: dict[str, Any]) -> str:
     with tempfile.TemporaryDirectory(prefix="factory-smoke-remote-",
                                      ignore_cleanup_errors=True) as directory:
         root = Path(directory)
@@ -334,39 +332,40 @@ def stage_integrate(state: dict[str, Any]) -> str:
         before = int(_git(["git", "rev-list", "--count", "main"], remote))
         _git(["jj", "git", "clone", "--colocate", str(remote), str(clone)], root)
         _git(["jj", "config", "set", "--repo",
-              "experimental-advance-branches.enabled-branches", "[]"], clone)
+              "experimental-advance-branches.enabled-branches", '["main"]'], clone)
         gate, progress = _stub_scripts(root)
-        phases: list[str] = []
-        integrate.FACTORY = root / "factory"
-        integrate.ensure_v2_clone = lambda: clone
-        try:
-            expected = integrate._revision(clone, "main@origin")
-            result = integrate.integrate_v2(
-                [state["artifact_sha256"]],
-                expected_remote_revision=expected,
-                phase=lambda name, _proof: phases.append(name),
-                gate_command=(sys.executable, str(gate)),
-                progress_command=(sys.executable, str(progress)),
-                candidate_proof=lambda _clone, _routines: None,
-            )
-        finally:
-            integrate.FACTORY = saved_factory
-            integrate.ensure_v2_clone = saved_clone
-        _require(phases[-1] == "pushed", "saga did not reach pushed", phases)
+        completed = subprocess.run(
+            [sys.executable, str(common.ROOT / "tools" / "factory" / "land.py"),
+             "--root", str(clone),
+             "--artifact", state["artifact_sha256"],
+             "--gate-command", sys.executable, "--gate-command", str(gate),
+             "--progress-command", sys.executable, "--progress-command", str(progress)],
+            cwd=clone, capture_output=True, text=True, check=False,
+            env={**os.environ, "FACTORY_ARTIFACTS": str(workers.V2_ARTIFACTS)},
+        )
+        output = completed.stdout + completed.stderr
+        _require(completed.returncode == 0, "land.py failed", output[-3000:])
+        _require("LAND done landed=1 quarantined=0" in completed.stdout,
+                 "land.py did not report one landing", output[-3000:])
+        landing_log = clone / ".factory" / "landings.jsonl"
+        _require(landing_log.is_file(), "landing log was not written under the clone root")
+        landings = landing_log.read_text().splitlines()
+        _require(len(landings) == 1, "expected exactly one landing record", landings)
+        record = json.loads(landings[-1])
         after = int(_git(["git", "rev-list", "--count", "main"], remote))
         _require(after == before + 2, f"remote gained {after - before} commits, expected 2",
                  _git(["git", "log", "--oneline", "-4", "main"], remote))
         remote_head = _git(["git", "rev-parse", "main"], remote)
-        _require(remote_head == result.publication_revision,
+        _require(remote_head == record["publication_revision"],
                  "remote bookmark is not the publication revision",
-                 {"remote": remote_head, "publication": result.publication_revision})
-        _require(result.routine_names == (FN,), "saga landed the wrong routines",
-                 result.routine_names)
+                 {"remote": remote_head, "publication": record["publication_revision"]})
+        _require(record["routines"] == [FN], "landing recorded the wrong routines",
+                 record["routines"])
         gate_json = json.loads((clone / "site" / "data" / "gate.json").read_text())
-        _require(gate_json["commit"] == result.source_revision,
+        _require(gate_json["commit"] == record["source_revision"],
                  "gate record does not name the source revision", gate_json)
-        return (f"{len(phases)} phases, source {result.source_revision[:12]}, "
-                f"publication {result.publication_revision[:12]}")
+        return (f"source {record['source_revision'][:12]}, "
+                f"publication {record['publication_revision'][:12]}")
 
 
 CONTRACT_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
@@ -380,14 +379,14 @@ FULL_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
     ("build", stage_build),
     ("verify", stage_verify),
     ("artifact", stage_artifact),
-    ("integrate (stub gate, progress, candidate-proof)", stage_integrate),
+    ("land (stub gate, progress)", stage_land),
 )
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--full", action="store_true",
-                        help="also run build, verify, artifact and integrate")
+                        help="also run build, verify, artifact and land")
     parser.add_argument("--reply", type=Path,
                         help="replace the recorded reply, to prove the harness fails")
     arguments = parser.parse_args(argv)

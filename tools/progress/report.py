@@ -24,8 +24,6 @@ REGISTRY = ROOT / "tests" / "routines.py"
 GATE = ROOT / "site" / "data" / "gate.json"
 PROGRESS = ROOT / "site" / "data" / "progress.json"
 HISTORY = ROOT / "site" / "data" / "history.jsonl"
-FORECAST = ROOT / "site" / "data" / "factory-forecast.json"
-FACTORY_STATE = ROOT / "site" / "data" / "factory-state.json"
 BLOCKED = ROOT / ".factory" / "blocked.toml"
 
 TIER_BOUNDS = ((1, 0, 100), (2, 100, 300), (3, 300, 800), (4, 800, None))
@@ -620,16 +618,6 @@ def subcommand_build():
     commit = jj_commit_short()
     report = compute(inv, routines_set, gate_data)
     report["recent"] = recent_ports(inv)
-    if FORECAST.is_file():
-        try:
-            report["forecast"] = json.loads(FORECAST.read_text())
-        except json.JSONDecodeError:
-            fail("factory forecast is invalid")
-    if FACTORY_STATE.is_file():
-        try:
-            report["factory"] = json.loads(FACTORY_STATE.read_text())
-        except json.JSONDecodeError:
-            fail("factory state projection is invalid")
     previous_report = None
     if PROGRESS.exists():
         try:
@@ -640,7 +628,7 @@ def subcommand_build():
         previous_report.get(key) == report.get(key)
         for key in (
             "measures", "categories", "units", "functions", "work_records",
-            "id_migrations", "recent", "forecast", "factory",
+            "id_migrations", "recent",
         )
     )
     if unchanged and previous_report.get("commit"):

@@ -270,34 +270,6 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
-# Forgejo is the source of truth. Preflight and status are read-only.
-factory-preflight:
-    python3 tools/factory/control.py preflight --request '{}'
-
-factory-status:
-    python3 tools/factory/control.py status --request '{}'
-
-factory-frontier:
-    python3 tools/factory/control.py frontier --request '{"full": false}'
-
-factory-forecast:
-    python3 tools/factory/control.py forecast --request '{}'
-
-# Reconcile Forgejo issues with the current inventory. Dry run by default.
-factory-migrate:
-    python3 tools/factory/control.py migrate --request '{}'
-
-factory-migrate-canary LIMIT="25":
-    python3 tools/factory/control.py migrate --request '{"apply": true, "limit": {{LIMIT}}}'
-
-factory-migrate-apply:
-    python3 tools/factory/control.py migrate --request '{"apply": true}'
-
-# Offline behaviour proofs for the control plane: ledger, cache, scheduler,
-# artifacts, integration, forecast. No credentials, no network.
-factory-scenarios:
-    python3 tools/factory/scenario_check.py
-
 
 # Rehearse the real pipeline on a landed routine: packet, prompt, reply
 # validation, surgery. Offline, no compiler, no model, no Forgejo.
@@ -305,7 +277,7 @@ factory-smoke:
     python3 tools/factory/smoke.py
 
 # The same rehearsal plus lane build, oracle verify, artifact bundle, and the
-# integration saga against a throwaway git remote.
+# landing driver against a throwaway git remote.
 factory-smoke-full:
     python3 tools/factory/smoke.py --full
 
@@ -315,10 +287,21 @@ factory-try FN:
     python3 tools/factory/try_one.py --fn {{FN}}
 
 
-# Prove Forgejo git + REST credentials work with no browser prompt. Needs
-# local credentials, so it is not a CI check.
+# Next N ready routines (blocked.toml respected), prompts prepared.
+factory-next N="4":
+    python3 tools/factory/try_one.py --next {{N}}
+
+# Land every verified artifact: gate, commit, push, record.
+factory-land:
+    python3 tools/factory/land.py --all
+
+# Forecast from recorded landings only.
+factory-eta:
+    python3 tools/factory/land.py --eta
+
+# Prove the push credential without a browser prompt.
 forgejo-auth-check:
-    python3 tools/factory/auth_check.py
+    git ls-remote origin main
 
 
 # Autonomous port factory: one persistent OMP session driving claimed work.
