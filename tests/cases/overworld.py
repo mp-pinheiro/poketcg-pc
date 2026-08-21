@@ -384,6 +384,14 @@ CASES["Func_c915"] = [
 ]
 # <<< factory Func_c915
 
+# >>> factory StartScriptedMovement
+CONTRACT["StartScriptedMovement"] = {"compare": (), "preserve": ()};
+CASES["StartScriptedMovement"] = [
+    {"b": 0x22, "c": 0x33, "wram": {wPlayerSpriteIndex: b"\x00", wWhichSprite: b"\x00", wd339: b"\x00", wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56", wSpriteAnimBuffer + 0x0E: b"\x00", wSpriteAnimBuffer + 0x0F: b"\x01", wPermissionMap + 0x88: b"\x00"}, "expect": {wWhichSprite: b"\x00", wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x81", wd338: b"\x10", wSpriteAnimBuffer + 0x0E: b"\x04", wSpriteAnimBuffer + 0x0F: b"\x03"}},
+    dict(POISON, wram={wPlayerSpriteIndex: b"\x00", wWhichSprite: b"\x00", wd339: b"\x00", wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56", wSpriteAnimBuffer + 0x0E: b"\x00", wSpriteAnimBuffer + 0x0F: b"\x01", wPermissionMap + 0x88: b"\x00"}, expect={wWhichSprite: b"\x00", wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x81", wd338: b"\x10", wSpriteAnimBuffer + 0x0E: b"\x04", wSpriteAnimBuffer + 0x0F: b"\x03"}),
+]
+# <<< factory StartScriptedMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -527,3 +535,6 @@ MUTATIONS["Func_c36a"] = {"source_symbol": "Func_c36a", "before": "\twOWMapEvent
 # >>> factory-mutation Func_c915
 MUTATIONS["Func_c915"] = {"source_symbol": "Func_c915", "before": "FuncC3caResult result = Func_c3ca(b, c, d, e);", "after": "FuncC3caResult result = Func_c3ca(b, c, e, d);", "case_ids": ["Func_c915-0", "Func_c915-1", "Func_c915-2", "Func_c915-3"]}
 # <<< factory-mutation Func_c915
+# >>> factory-mutation StartScriptedMovement
+MUTATIONS["StartScriptedMovement"] = {"source_symbol": "StartScriptedMovement", "before": "	AttemptPlayerMovement(result.b, result.c);", "after": "	AttemptPlayerMovement(result.b, (uint8_t)(result.c + 1u));", "case_ids": ["StartScriptedMovement-0", "StartScriptedMovement-1"]};
+# <<< factory-mutation StartScriptedMovement

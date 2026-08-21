@@ -236,6 +236,14 @@ static void adapt_Func_c915(ProbeState *s)
 }
 /* <<< factory Func_c915 */
 
+/* >>> factory StartScriptedMovement */
+static void adapt_StartScriptedMovement(ProbeState *s)
+{
+	StartScriptedMovement();
+	(void)s;
+}
+/* <<< factory StartScriptedMovement */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -265,5 +273,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c687", adapt_Func_c687 },
 	{ "Func_c36a", adapt_Func_c36a },
 	{ "Func_c915", adapt_Func_c915 },
+	{ "StartScriptedMovement", adapt_StartScriptedMovement },
 	{ NULL, NULL },
 };

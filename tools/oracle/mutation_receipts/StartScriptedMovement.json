@@ -1,0 +1,9 @@
+{
+  "fn": "StartScriptedMovement",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StartScriptedMovement\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53691\": \"00\", \"54064\": \"100e\", \"54069\": \"8100\", \"54072\": \"1000\", \"54479\": \"00\", \"54494\": \"0405\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StartScriptedMovement\", \"mismatches\": {\"bus\": {\"address\": 54065, \"reference\": \"00100e81001000\", \"native\": \"00100f81001000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[53691, 1], [54064, 2], [54069, 2], [54072, 2], [54479, 1], [54494, 2]]}}}\n",
+  "restored": "{\"fn\": \"StartScriptedMovement\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53691\": \"00\", \"54064\": \"100e\", \"54069\": \"8100\", \"54072\": \"1000\", \"54479\": \"00\", \"54494\": \"0405\"}}, \"status\": \"PASS\"}\n"
+}

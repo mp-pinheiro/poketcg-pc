@@ -479,3 +479,12 @@ FuncC3caResult Func_c915(void)
 	return result;
 }
 /* <<< factory Func_c915 */
+
+/* >>> factory StartScriptedMovement */
+void StartScriptedMovement(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	FindPlayerMovementWithOffsetResult result = FindPlayerMovementWithOffset(wd339);
+	AttemptPlayerMovement(result.b, result.c);
+}
+/* <<< factory StartScriptedMovement */

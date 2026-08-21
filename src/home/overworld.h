@@ -117,4 +117,7 @@ void Func_c36a(void);
 /* >>> factory Func_c915 */
 FuncC3caResult Func_c915(void);
 /* <<< factory Func_c915 */
+/* >>> factory StartScriptedMovement */
+void StartScriptedMovement(void);
+/* <<< factory StartScriptedMovement */
 #endif /* POKETCG_HOME_OVERWORLD_H */
