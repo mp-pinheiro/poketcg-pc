@@ -231,6 +231,17 @@ CASES["Func_c3ca"] = [
 ]
 # <<< factory Func_c3ca
 
+# >>> factory GetDirectionFromDPad
+CONTRACT["GetDirectionFromDPad"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["GetDirectionFromDPad"] = [
+	{"a": 0x00},
+	{"a": 0x10},
+	{"a": 0x20},
+	{"a": 0x40},
+	dict(POISON, a=0x80),
+]
+# <<< factory GetDirectionFromDPad
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -328,3 +339,6 @@ MUTATIONS["Func_c3ca"] = {
 	"case_ids": ["Func_c3ca-0", "Func_c3ca-1", "Func_c3ca-2", "Func_c3ca-3"],
 }
 # <<< factory-mutation Func_c3ca
+# >>> factory-mutation GetDirectionFromDPad
+MUTATIONS["GetDirectionFromDPad"] = {"source_symbol": "GetDirectionFromDPad", "before": "\t} else if (a & 0x80u) {", "after": "\t} else if (a & 0x40u) {", "case_ids": ["GetDirectionFromDPad-3", "GetDirectionFromDPad-4"]}
+# <<< factory-mutation GetDirectionFromDPad

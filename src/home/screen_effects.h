@@ -16,4 +16,7 @@ typedef struct {
 
 UpdateShakeOffsetResult UpdateShakeOffset(void);
 /* <<< factory UpdateShakeOffset */
+/* >>> factory DefaultScreenAnimationUpdate */
+void DefaultScreenAnimationUpdate(void);
+/* <<< factory DefaultScreenAnimationUpdate */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

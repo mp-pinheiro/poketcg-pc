@@ -294,3 +294,27 @@ FuncC3caResult Func_c3ca(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	return (FuncC3caResult){a, f};
 }
 /* <<< factory Func_c3ca */
+
+/* >>> factory GetDirectionFromDPad */
+GetDirectionFromDPadResult GetDirectionFromDPad(uint8_t a)
+{
+	GetDirectionFromDPadResult result;
+	if (a == 0u) {
+		result.a = 0x02u;
+		result.f = 0x80u;
+	} else if (a & 0x80u) {
+		result.a = 0x02u;
+		result.f = 0x10u;
+	} else if (a & 0x40u) {
+		result.a = 0x00u;
+		result.f = 0x10u;
+	} else if (a & 0x20u) {
+		result.a = 0x03u;
+		result.f = 0x10u;
+	} else {
+		result.a = 0x01u;
+		result.f = 0x10u;
+	}
+	return result;
+}
+/* <<< factory GetDirectionFromDPad */

@@ -9,6 +9,14 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/scroll.h"
+#include "mem.h"
+
+#define rSCX 0xFF43u
+#define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR 0x4CBCu
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -53,3 +61,18 @@ UpdateShakeOffsetResult UpdateShakeOffset(void)
 	return (UpdateShakeOffsetResult){(uint8_t)(next >> 8), 0x10u, offset};
 }
 /* <<< factory UpdateShakeOffset */
+
+/* >>> factory DefaultScreenAnimationUpdate */
+void DefaultScreenAnimationUpdate(void)
+{
+	gb_write8(wActiveScreenAnim_ADDR, 0xffu);
+	DisableInt_LYCoincidence();
+	gb_write8(hSCX_ADDR, 0u);
+	gb_write8(rSCX, 0u);
+	gb_write8(hSCY_ADDR, 0u);
+	gb_write8(wScreenAnimUpdatePtr_ADDR,
+	          (uint8_t)DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR);
+	gb_write8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u),
+	          (uint8_t)(DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR >> 8));
+}
+/* <<< factory DefaultScreenAnimationUpdate */

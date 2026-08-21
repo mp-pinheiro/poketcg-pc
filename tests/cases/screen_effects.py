@@ -35,6 +35,24 @@ CASES["UpdateShakeOffset"] = [
 ]
 # <<< factory UpdateShakeOffset
 
+# >>> factory-cases-statics
+wActiveScreenAnim = 0xD42A
+wScreenAnimUpdatePtr = 0xD4B9
+hSCX = 0xFF92
+rSCX = 0xFF43
+hSCY = 0xFF93
+rSTAT = 0xFF41
+rIE = 0xFFFF
+# <<< factory-cases-statics
+
+# >>> factory DefaultScreenAnimationUpdate
+CONTRACT["DefaultScreenAnimationUpdate"] = {"compare": (), "preserve": ()}
+CASES["DefaultScreenAnimationUpdate"] = [
+    {"wram": {0xD42A: b"\x00", 0xD4B9: b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "expect": {0xD42A: b"\xFF", 0xD4B9: b"\xBC\x4C", 0xFF92: b"\x00", 0xFF93: b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}},
+    dict(POISON, wram={0xD42A: b"\x12", 0xD4B9: b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, expect={0xD42A: b"\xFF", 0xD4B9: b"\xBC\x4C", 0xFF92: b"\x00", 0xFF93: b"\x00", 0xFF41: b"\xBF", 0xFF43: b"\x00", 0xFFFF: b"\xFD"}),
+]
+# <<< factory DefaultScreenAnimationUpdate
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -50,3 +68,11 @@ MUTATIONS["DecrementScreenAnimDuration"] = {
 # >>> factory-mutation UpdateShakeOffset
 MUTATIONS["UpdateShakeOffset"] = {"source_symbol": "UpdateShakeOffset", "before": "\tif (duration >= timer)", "after": "\tif (duration > timer)", "case_ids": ["UpdateShakeOffset-2", "UpdateShakeOffset-4"]}
 # <<< factory-mutation UpdateShakeOffset
+# >>> factory-mutation DefaultScreenAnimationUpdate
+MUTATIONS["DefaultScreenAnimationUpdate"] = {
+    "source_symbol": "DefaultScreenAnimationUpdate",
+    "before": "gb_write8(wActiveScreenAnim_ADDR, 0xffu);",
+    "after": "gb_write8(wActiveScreenAnim_ADDR, 0xfeu);",
+    "case_ids": ["DefaultScreenAnimationUpdate-0", "DefaultScreenAnimationUpdate-1"],
+}
+# <<< factory-mutation DefaultScreenAnimationUpdate
