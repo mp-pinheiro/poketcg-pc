@@ -1,0 +1,9 @@
+{
+  "fn": "BankpushROM",
+  "case": "tests/cases/switch_rom.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BankpushROM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 16384, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BankpushROM\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"BankpushROM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 16384, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"65408\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
