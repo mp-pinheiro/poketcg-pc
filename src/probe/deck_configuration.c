@@ -143,6 +143,14 @@ static void adapt_FillBGMapLineWithA(ProbeState *s)
 }
 /* <<< factory FillBGMapLineWithA */
 
+/* >>> factory OpenDeckConfigurationMenu */
+static void adapt_OpenDeckConfigurationMenu(ProbeState *s)
+{
+	OpenDeckConfigurationMenu();
+	(void)s;
+}
+/* <<< factory OpenDeckConfigurationMenu */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -160,5 +168,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "GetSelectedVisibleCardID", adapt_GetSelectedVisibleCardID },
 	{ "CheckIfDeckHasCards", adapt_CheckIfDeckHasCards },
 	{ "FillBGMapLineWithA", adapt_FillBGMapLineWithA },
+	{ "OpenDeckConfigurationMenu", adapt_OpenDeckConfigurationMenu },
 	{ NULL, NULL },
 };

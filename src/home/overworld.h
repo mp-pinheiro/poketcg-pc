@@ -129,4 +129,7 @@ void Func_c3ff(void);
 /* >>> factory Func_c49c */
 void Func_c49c(void);
 /* <<< factory Func_c49c */
+/* >>> factory Func_c58b */
+void Func_c58b(void);
+/* <<< factory Func_c58b */
 #endif /* POKETCG_HOME_OVERWORLD_H */

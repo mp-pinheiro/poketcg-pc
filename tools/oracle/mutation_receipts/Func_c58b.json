@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c58b",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c58b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"00\", \"54064\": \"0000\", \"54479\": \"00\", \"54495\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c58b\", \"mismatches\": {\"bus\": {\"address\": 54495, \"reference\": \"0000000000\", \"native\": \"0000000001\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53555, 1], [54064, 2], [54479, 1], [54495, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_c58b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"00\", \"54064\": \"0000\", \"54479\": \"00\", \"54495\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

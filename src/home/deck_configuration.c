@@ -49,6 +49,9 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -321,3 +324,16 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(0xFF4Fu, 0u);
 }
 /* <<< factory FillBGMapLineWithA */
+
+/* >>> factory OpenDeckConfigurationMenu */
+void OpenDeckConfigurationMenu(void)
+{
+	gb_write8(wYourOrOppPlayAreaCurPosition_ADDR, 0u);
+	uint16_t de = wDeckConfigurationMenuTransitionTable_ADDR;
+	uint16_t hl = wMenuInputTablePointer_ADDR;
+	gb_write8(hl++, gb_read8(de++));
+	gb_write8(hl, gb_read8(de));
+	gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);
+	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+}
+/* <<< factory OpenDeckConfigurationMenu */

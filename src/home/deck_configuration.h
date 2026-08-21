@@ -51,4 +51,7 @@ uint8_t CheckIfDeckHasCards(uint16_t hl);
 /* >>> factory FillBGMapLineWithA */
 void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory FillBGMapLineWithA */
+/* >>> factory OpenDeckConfigurationMenu */
+void OpenDeckConfigurationMenu(void);
+/* <<< factory OpenDeckConfigurationMenu */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

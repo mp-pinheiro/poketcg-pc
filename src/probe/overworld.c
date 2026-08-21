@@ -268,6 +268,14 @@ static void adapt_Func_c49c(ProbeState *s)
 }
 /* <<< factory Func_c49c */
 
+/* >>> factory Func_c58b */
+static void adapt_Func_c58b(ProbeState *s)
+{
+	(void)s;
+	Func_c58b();
+}
+/* <<< factory Func_c58b */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -301,5 +309,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "RestoreObjectPalettes", adapt_RestoreObjectPalettes },
 	{ "Func_c3ff", adapt_Func_c3ff },
 	{ "Func_c49c", adapt_Func_c49c },
+	{ "Func_c58b", adapt_Func_c58b },
 	{ NULL, NULL },
 };

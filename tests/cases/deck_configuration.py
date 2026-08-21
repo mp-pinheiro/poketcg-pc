@@ -193,6 +193,15 @@ CASES["FillBGMapLineWithA"] = [
 ]
 # <<< factory FillBGMapLineWithA
 
+# >>> factory OpenDeckConfigurationMenu
+CONTRACT["OpenDeckConfigurationMenu"] = {"compare": (), "preserve": ()};
+CASES["OpenDeckConfigurationMenu"] = [
+    {"wram": {0xCE52: b"\xFF", 0xCEA3: b"\xFF"}, "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}},
+    {"wram": {0xCE52: b"\x01", 0xCEA3: b"\x7F"}, "read": {0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}},
+    dict(POISON, wram={0xCE52: b"\xA5", 0xCEA3: b"\x12"}, read={0xCE52: 1, 0xCE53: 2, 0xCE55: 1, 0xCEA3: 1}),
+]
+# <<< factory OpenDeckConfigurationMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -275,3 +284,6 @@ MUTATIONS["CheckIfDeckHasCards"] = {"source_symbol": "CheckIfDeckHasCards", "bef
 # >>> factory-mutation FillBGMapLineWithA
 MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "before": "	FillDEWithA(0x04u, 20u, de);", "after": "	FillDEWithA(0x05u, 20u, de);", "case_ids": ["FillBGMapLineWithA-1", "FillBGMapLineWithA-2"]}
 # <<< factory-mutation FillBGMapLineWithA
+# >>> factory-mutation OpenDeckConfigurationMenu
+MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);", "after": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xfeu);", "case_ids": ["OpenDeckConfigurationMenu-0"]};
+# <<< factory-mutation OpenDeckConfigurationMenu

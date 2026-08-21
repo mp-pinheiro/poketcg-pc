@@ -81,6 +81,12 @@
 #include "home/overworld.h"
 #define SCREEN_WIDTH 0x14u
 #define SCREEN_HEIGHT 0x12u
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/load_animation.h"
+
+#define SPRITE_ANIM_FLAG_UNSKIPPABLE 0x80u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -529,3 +535,17 @@ void Func_c49c(void)
 	wPlayerYCoordPixels = (uint8_t)((wPlayerYCoord << 3) | (wPlayerYCoord >> 5));
 }
 /* <<< factory Func_c49c */
+
+/* >>> factory Func_c58b */
+void Func_c58b(void)
+{
+	uint8_t permission = GetPermissionOfMapPosition(wPlayerXCoord, wPlayerYCoord);
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);
+	uint8_t flags = gb_read8(hl);
+	if ((permission & 0x10u) != 0u)
+		flags = (uint8_t)(flags | SPRITE_ANIM_FLAG_UNSKIPPABLE);
+	else
+		flags = (uint8_t)(flags & (uint8_t)~SPRITE_ANIM_FLAG_UNSKIPPABLE);
+	gb_write8(hl, flags);
+}
+/* <<< factory Func_c58b */

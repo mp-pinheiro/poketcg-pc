@@ -427,6 +427,15 @@ CASES["Func_c49c"] = [
 ]
 # <<< factory Func_c49c
 
+# >>> factory Func_c58b
+CONTRACT["Func_c58b"] = {"compare": (), "preserve": ()}
+CASES["Func_c58b"] = [
+	{"wram": {wPlayerXCoord: b"\x00", wPlayerYCoord: b"\x00", wWhichSprite: b"\x00", wPermissionMap: b"\x00", wSpriteAnimBuffer + 0x0F: b"\x00"}, "read": {wPermissionMap: 1, wSpriteAnimBuffer + 0x0F: 1}},
+	{"wram": {wPlayerXCoord: b"\x00", wPlayerYCoord: b"\x00", wWhichSprite: b"\x00", wPermissionMap: b"\x10", wSpriteAnimBuffer + 0x0F: b"\x20"}, "read": {wPermissionMap: 1, wSpriteAnimBuffer + 0x0F: 1}},
+	dict(POISON, wram={wPlayerXCoord: b"\x02", wPlayerYCoord: b"\x02", wWhichSprite: b"\x01", wPermissionMap + 0x11: b"\x10", wSpriteAnimBuffer + 0x1F: b"\xff"}, read={wPermissionMap + 0x11: 1, wSpriteAnimBuffer + 0x1F: 1}),
+]
+# <<< factory Func_c58b
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -592,3 +601,6 @@ MUTATIONS["Func_c49c"] = {
 	"case_ids": ["Func_c49c-0", "Func_c49c-1", "Func_c49c-2", "Func_c49c-3", "Func_c49c-4"],
 }
 # <<< factory-mutation Func_c49c
+# >>> factory-mutation Func_c58b
+MUTATIONS["Func_c58b"] = {"source_symbol": "Func_c58b", "before": "\tgb_write8(hl, flags);", "after": "\tgb_write8(hl, (uint8_t)(flags ^ 0x01u));", "case_ids": ["Func_c58b-0", "Func_c58b-1", "Func_c58b-2"]}
+# <<< factory-mutation Func_c58b
