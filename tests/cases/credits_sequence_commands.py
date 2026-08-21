@@ -160,6 +160,9 @@ PALETTE_SEED = {
     TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
     TEMP_BG_PALS: bytes(reversed(range(64))), TEMP_OBJ_PALS: bytes(reversed(range(64, 128))),
 }
+
+wLineSeparation = 0xCD08
+wSequenceCmdPtr = 0xD631
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -187,6 +190,18 @@ CASES["CreditsSequenceCmd_FadeIn"] = [
                TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}),
 ]
 # <<< factory CreditsSequenceCmd_FadeIn
+
+# >>> factory CreditsSequenceCmd_PrintTextBox
+CONTRACT["CreditsSequenceCmd_PrintTextBox"] = {"compare": (), "preserve": ()};
+CASES["CreditsSequenceCmd_PrintTextBox"] = [
+    {"b": 0, "c": 0, "d": 0, "e": 0,
+     "wram": {wLineSeparation: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+     "read": {wLineSeparation: 1, wSequenceCmdPtr: 2}},
+    dict(POISON, d=0, e=0,
+         wram={wLineSeparation: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+         read={wLineSeparation: 1, wSequenceCmdPtr: 2}),
+]
+# <<< factory CreditsSequenceCmd_PrintTextBox
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -280,3 +295,11 @@ MUTATIONS["CreditsSequenceCmd_FadeIn"] = {
     "case_ids": ["CreditsSequenceCmd_FadeIn-0", "CreditsSequenceCmd_FadeIn-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_FadeIn
+# >>> factory-mutation CreditsSequenceCmd_PrintTextBox
+MUTATIONS["CreditsSequenceCmd_PrintTextBox"] = {
+    "source_symbol": "CreditsSequenceCmd_PrintTextBox",
+    "before": "\u0009wLineSeparation = SINGLE_SPACED;",
+    "after": "\u0009wLineSeparation = 0u;",
+    "case_ids": ["CreditsSequenceCmd_PrintTextBox-0", "CreditsSequenceCmd_PrintTextBox-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_PrintTextBox

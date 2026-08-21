@@ -10,6 +10,12 @@
 #include "generated/wram.h"
 #include "home/credits.h"
 #include "home/credits_sequence_commands.h"
+
+#include "generated/wram.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+
+#define SINGLE_SPACED 0x01u
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -151,3 +157,13 @@ void CreditsSequenceCmd_FadeIn(void)
 	AdvanceCreditsSequenceCmdPtrBy2();
 }
 /* <<< factory CreditsSequenceCmd_FadeIn */
+
+/* >>> factory CreditsSequenceCmd_PrintTextBox */
+void CreditsSequenceCmd_PrintTextBox(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	wLineSeparation = SINGLE_SPACED;
+	InitTextPrinting(c, b);
+	(void)PrintTextNoDelay((uint16_t)(((uint16_t)d << 8) | e), c, b);
+	AdvanceCreditsSequenceCmdPtrBy6();
+}
+/* <<< factory CreditsSequenceCmd_PrintTextBox */

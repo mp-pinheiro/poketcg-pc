@@ -3974,3 +3974,10 @@ PotionDamageCheckResult Potion_DamageCheck(void)
 	return (PotionDamageCheckResult){r.f, NoPokemonWithDamageCountersText};
 }
 /* <<< factory Potion_DamageCheck */
+
+/* >>> factory CloysterSpikeCannon_AIEffect */
+void CloysterSpikeCannon_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory CloysterSpikeCannon_AIEffect */

@@ -39,6 +39,10 @@
 #define DECK_4_F 0x03u
 
 #include "generated/wram.h"
+
+#include "home/switch_sram.h"
+#include "mem.h"
+#define DECK_NAME_SIZE 0x18u
 /* <<< factory statics */
 
 
@@ -285,3 +289,14 @@ uint8_t GetSelectedVisibleCardID(void)
 	return gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));
 }
 /* <<< factory GetSelectedVisibleCardID */
+
+/* >>> factory CheckIfDeckHasCards */
+uint8_t CheckIfDeckHasCards(uint16_t hl)
+{
+	hl = (uint16_t)(hl + DECK_NAME_SIZE);
+	EnableSRAM();
+	uint8_t value = gb_read8(hl);
+	DisableSRAM();
+	return value == 0u ? 0x90u : 0x00u;
+}
+/* <<< factory CheckIfDeckHasCards */

@@ -45,4 +45,7 @@ void CreateCardCollectionListWithDeckCards(uint8_t a);
 /* >>> factory GetSelectedVisibleCardID */
 uint8_t GetSelectedVisibleCardID(void);
 /* <<< factory GetSelectedVisibleCardID */
+/* >>> factory CheckIfDeckHasCards */
+uint8_t CheckIfDeckHasCards(uint16_t hl);
+/* <<< factory CheckIfDeckHasCards */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

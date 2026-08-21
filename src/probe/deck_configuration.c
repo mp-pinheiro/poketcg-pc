@@ -129,6 +129,13 @@ static void adapt_GetSelectedVisibleCardID(ProbeState *s)
 }
 /* <<< factory GetSelectedVisibleCardID */
 
+/* >>> factory CheckIfDeckHasCards */
+static void adapt_CheckIfDeckHasCards(ProbeState *s)
+{
+	s->f = CheckIfDeckHasCards(s->hl);
+}
+/* <<< factory CheckIfDeckHasCards */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -144,5 +151,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "IncrementDeckCardsInTempCollection", adapt_IncrementDeckCardsInTempCollection },
 	{ "CreateCardCollectionListWithDeckCards", adapt_CreateCardCollectionListWithDeckCards },
 	{ "GetSelectedVisibleCardID", adapt_GetSelectedVisibleCardID },
+	{ "CheckIfDeckHasCards", adapt_CheckIfDeckHasCards },
 	{ NULL, NULL },
 };

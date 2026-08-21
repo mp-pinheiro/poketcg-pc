@@ -1,0 +1,9 @@
+{
+  "fn": "CreditsSequenceCmd_PrintTextBox",
+  "case": "tests/cases/credits_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreditsSequenceCmd_PrintTextBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"52488\": \"01\", \"54833\": \"0600\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreditsSequenceCmd_PrintTextBox\", \"mismatches\": {\"bus\": {\"address\": 52488, \"reference\": \"010600\", \"native\": \"000600\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52488, 1], [54833, 2]]}}}\n",
+  "restored": "{\"fn\": \"CreditsSequenceCmd_PrintTextBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"52488\": \"01\", \"54833\": \"0600\"}}, \"status\": \"PASS\"}\n"
+}

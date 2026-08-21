@@ -2306,6 +2306,14 @@ static void adapt_Potion_DamageCheck(ProbeState *s)
 }
 /* <<< factory Potion_DamageCheck */
 
+/* >>> factory CloysterSpikeCannon_AIEffect */
+static void adapt_CloysterSpikeCannon_AIEffect(ProbeState *s)
+{
+	(void)s;
+	CloysterSpikeCannon_AIEffect();
+}
+/* <<< factory CloysterSpikeCannon_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2592,5 +2600,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StretchKick_AISelectEffect", adapt_StretchKick_AISelectEffect },
 	{ "VaporeonWaterGunEffect", adapt_VaporeonWaterGunEffect },
 	{ "Potion_DamageCheck", adapt_Potion_DamageCheck },
+	{ "CloysterSpikeCannon_AIEffect", adapt_CloysterSpikeCannon_AIEffect },
 	{ NULL, NULL },
 };

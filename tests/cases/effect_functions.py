@@ -2318,6 +2318,8 @@ wPlayerDeck = 0xC400
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 hTemp_ffa0 = 0xFFA0
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2505,6 +2507,18 @@ CASES["Potion_DamageCheck"] = [
     dict(POISON),
 ]
 # <<< factory Potion_DamageCheck
+
+# >>> factory CloysterSpikeCannon_AIEffect
+CONTRACT["CloysterSpikeCannon_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["CloysterSpikeCannon_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory CloysterSpikeCannon_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4213,3 +4227,6 @@ MUTATIONS["VaporeonWaterGunEffect"] = {
 # >>> factory-mutation Potion_DamageCheck
 MUTATIONS["Potion_DamageCheck"] = {"source_symbol": "Potion_DamageCheck", "before": "\treturn (PotionDamageCheckResult){r.f, NoPokemonWithDamageCountersText};", "after": "\treturn (PotionDamageCheckResult){r.f, (uint16_t)(NoPokemonWithDamageCountersText + 1u)};", "case_ids": ["Potion_DamageCheck-0", "Potion_DamageCheck-1"]}
 # <<< factory-mutation Potion_DamageCheck
+# >>> factory-mutation CloysterSpikeCannon_AIEffect
+MUTATIONS["CloysterSpikeCannon_AIEffect"] = {"source_symbol": "CloysterSpikeCannon_AIEffect", "before": "void CloysterSpikeCannon_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void CloysterSpikeCannon_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["CloysterSpikeCannon_AIEffect-0", "CloysterSpikeCannon_AIEffect-1", "CloysterSpikeCannon_AIEffect-2"]}
+# <<< factory-mutation CloysterSpikeCannon_AIEffect

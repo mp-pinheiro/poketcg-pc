@@ -174,6 +174,16 @@ CASES["GetSelectedVisibleCardID"] = [
 ]
 # <<< factory GetSelectedVisibleCardID
 
+# >>> factory CheckIfDeckHasCards
+CONTRACT["CheckIfDeckHasCards"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckIfDeckHasCards"] = [
+    {"hl": 0xA200, "ramg": False, "sram": {0: {0xA218: b"\x00"}}},
+    {"hl": 0xA200, "ramg": False, "sram": {0: {0xA218: b"\x01"}}},
+    dict(POISON, hl=0xA200, ramg=False, sram={0: {0xA218: b"\x00"}}),
+    {"hl": 0xA200, "sram": {0: {0xA218: b"\xFF"}}},
+]
+# <<< factory CheckIfDeckHasCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -250,3 +260,6 @@ MUTATIONS["CreateCardCollectionListWithDeckCards"] = {"source_symbol": "CreateCa
 # >>> factory-mutation GetSelectedVisibleCardID
 MUTATIONS["GetSelectedVisibleCardID"] = {"source_symbol": "GetSelectedVisibleCardID", "before": "\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor));", "after": "\treturn gb_read8((uint16_t)(wVisibleListCardIDs_ADDR + cursor + 1u));", "case_ids": ["GetSelectedVisibleCardID-0", "GetSelectedVisibleCardID-1", "GetSelectedVisibleCardID-2"]}
 # <<< factory-mutation GetSelectedVisibleCardID
+# >>> factory-mutation CheckIfDeckHasCards
+MUTATIONS["CheckIfDeckHasCards"] = {"source_symbol": "CheckIfDeckHasCards", "before": "return value == 0u ? 0x90u : 0x00u;", "after": "return value != 0u ? 0x90u : 0x00u;", "case_ids": ["CheckIfDeckHasCards-0", "CheckIfDeckHasCards-1", "CheckIfDeckHasCards-2", "CheckIfDeckHasCards-3"]}
+# <<< factory-mutation CheckIfDeckHasCards
