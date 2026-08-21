@@ -52,6 +52,17 @@ wOverworldMapSelection = 0xD32E
 EVENT_VARS = 0xD3D2
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wConsole = 0xCAB4
+wOverworldMapCursorAnimation = 0xD33C
+wOverworldMapCursorSprite = 0xD33B
+wOverworldMapPlayerAnimationState = 0xD33E
+wOverworldMapSelection = 0xD32E
+wOverworldMapStartingPosition = 0xD33D
+wWhichSprite = 0xD4CF
+wEventVars = 0xD3D2
+SPRITE_BUFFER = 0xD4D0
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -102,6 +113,16 @@ CASES["OverworldMap_GetOWMapID"] = [
 ]
 # <<< factory OverworldMap_GetOWMapID
 
+# >>> factory OverworldMap_InitCursorSprite
+CONTRACT["OverworldMap_InitCursorSprite"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_InitCursorSprite"] = [
+    {"wram": {wOverworldMapSelection: b"\x03", wConsole: b"\x01", wEventVars: b"\x00" * 64, SPRITE_BUFFER: b"\x00" * 16}, "read": {wOverworldMapStartingPosition: 1, wOverworldMapPlayerAnimationState: 1, wOverworldMapCursorSprite: 1, wOverworldMapCursorAnimation: 1, wWhichSprite: 1, SPRITE_BUFFER: 16}},
+    {"wram": {wOverworldMapSelection: b"\x07", wConsole: b"\x02", wEventVars: b"\x00" * 64, SPRITE_BUFFER: b"\x00" * 16}, "read": {wOverworldMapStartingPosition: 1, wOverworldMapPlayerAnimationState: 1, wOverworldMapCursorSprite: 1, wOverworldMapCursorAnimation: 1, wWhichSprite: 1, SPRITE_BUFFER: 16}},
+    {"wram": {wOverworldMapSelection: b"\x01", wConsole: b"\x01", wEventVars: b"\xFF" * 64, SPRITE_BUFFER: b"\x00" * 16}, "read": {wOverworldMapStartingPosition: 1, wOverworldMapPlayerAnimationState: 1, wOverworldMapCursorSprite: 1, wOverworldMapCursorAnimation: 1, wWhichSprite: 1, SPRITE_BUFFER: 16}},
+    dict(POISON, wram={wOverworldMapSelection: b"\x02", wConsole: b"\x02", wEventVars: b"\x00" * 64, SPRITE_BUFFER: b"\x00" * 16}, read={wOverworldMapStartingPosition: 1, wOverworldMapPlayerAnimationState: 1, wOverworldMapCursorSprite: 1, wOverworldMapCursorAnimation: 1, wWhichSprite: 1, SPRITE_BUFFER: 16}),
+]
+# <<< factory OverworldMap_InitCursorSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -127,3 +148,6 @@ MUTATIONS["OverworldMap_InitPlayerEastWestMovement"] = {"source_symbol": "Overwo
 # >>> factory-mutation OverworldMap_GetOWMapID
 MUTATIONS["OverworldMap_GetOWMapID"] = {"source_symbol": "OverworldMap_GetOWMapID", "before": "\tif (selection != OWMAP_ISHIHARAS_HOUSE)", "after": "\tif (selection == OWMAP_ISHIHARAS_HOUSE)", "case_ids": ["OverworldMap_GetOWMapID-0", "OverworldMap_GetOWMapID-1", "OverworldMap_GetOWMapID-2", "OverworldMap_GetOWMapID-3", "OverworldMap_GetOWMapID-4"]}
 # <<< factory-mutation OverworldMap_GetOWMapID
+# >>> factory-mutation OverworldMap_InitCursorSprite
+MUTATIONS["OverworldMap_InitCursorSprite"] = {"source_symbol": "OverworldMap_InitCursorSprite", "before": "\tuint16_t flags = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);", "after": "\tuint16_t flags = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_FLAGS + 1u));", "case_ids": ["OverworldMap_InitCursorSprite-0", "OverworldMap_InitCursorSprite-1", "OverworldMap_InitCursorSprite-2", "OverworldMap_InitCursorSprite-3"]}
+# <<< factory-mutation OverworldMap_InitCursorSprite

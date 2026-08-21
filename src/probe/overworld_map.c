@@ -58,6 +58,13 @@ static void adapt_OverworldMap_GetOWMapID(ProbeState *s)
 }
 /* <<< factory OverworldMap_GetOWMapID */
 
+/* >>> factory OverworldMap_InitCursorSprite */
+static void adapt_OverworldMap_InitCursorSprite(ProbeState *s)
+{
+	OverworldMap_InitCursorSprite();
+}
+/* <<< factory OverworldMap_InitCursorSprite */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -66,5 +73,6 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_LoadSelectedMap", adapt_OverworldMap_LoadSelectedMap },
 	{ "OverworldMap_InitPlayerEastWestMovement", adapt_OverworldMap_InitPlayerEastWestMovement },
 	{ "OverworldMap_GetOWMapID", adapt_OverworldMap_GetOWMapID },
+	{ "OverworldMap_InitCursorSprite", adapt_OverworldMap_InitCursorSprite },
 	{ NULL, NULL },
 };

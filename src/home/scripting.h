@@ -303,4 +303,15 @@ typedef struct {
 
 ScriptCommand_JumpIfEventGreaterOrEqualResult ScriptCommand_JumpIfEventGreaterOrEqual(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_JumpIfEventGreaterOrEqual */
+/* >>> factory ScriptCommand_JumpIfEventLessThan */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} ScriptCommand_JumpIfEventLessThanResult;
+
+ScriptCommand_JumpIfEventLessThanResult ScriptCommand_JumpIfEventLessThan(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_JumpIfEventLessThan */
 #endif

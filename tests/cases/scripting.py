@@ -685,6 +685,16 @@ CASES["ScriptCommand_JumpIfEventGreaterOrEqual"] = [
 ]
 # <<< factory ScriptCommand_JumpIfEventGreaterOrEqual
 
+# >>> factory ScriptCommand_JumpIfEventLessThan
+CONTRACT["ScriptCommand_JumpIfEventLessThan"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEventLessThan"] = [
+    {"b": 0x42, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5"}, "read": {0xC500: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x00\x00"}, "read": {0xC500: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x34\x12"}, "read": {0xC500: 2}},
+    dict(POISON, b=0x80, c=0x00, wram={0xD411: b"\x80", 0xC500: b"\x00\xC5", 0xC503: b"\x00\x00"}, read={0xC500: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEventLessThan
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1095,3 +1105,11 @@ MUTATIONS["ScriptCommand_JumpIfEventGreaterOrEqual"] = {
     "case_ids": ["ScriptCommand_JumpIfEventGreaterOrEqual-0", "ScriptCommand_JumpIfEventGreaterOrEqual-1", "ScriptCommand_JumpIfEventGreaterOrEqual-2", "ScriptCommand_JumpIfEventGreaterOrEqual-3"],
 }
 # <<< factory-mutation ScriptCommand_JumpIfEventGreaterOrEqual
+# >>> factory-mutation ScriptCommand_JumpIfEventLessThan
+MUTATIONS["ScriptCommand_JumpIfEventLessThan"] = {
+    "source_symbol": "ScriptCommand_JumpIfEventLessThan",
+    "before": "if (event.a >= event.c) {",
+    "after": "if (event.a < event.c) {",
+    "case_ids": ["ScriptCommand_JumpIfEventLessThan-0", "ScriptCommand_JumpIfEventLessThan-1", "ScriptCommand_JumpIfEventLessThan-2", "ScriptCommand_JumpIfEventLessThan-3"],
+}
+# <<< factory-mutation ScriptCommand_JumpIfEventLessThan

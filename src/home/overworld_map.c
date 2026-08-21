@@ -54,6 +54,18 @@ static const uint8_t overworld_map_warps[13][4] = {
 #define EVENT_ISHIHARAS_HOUSE_MENTIONED 0x1eu
 #define OWMAP_ISHIHARAS_HOUSE 0x02u
 #define OWMAP_MYSTERY_HOUSE 0x0du
+
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/load_animation.h"
+#include "home/scripting.h"
+#include "home/sprite_animations.h"
+
+#define EVENT_MASON_LAB_STATE 0x3eu
+#define SPRITE_ANIM_CGB_OWMAP_CURSOR 0x38u
+#define SPRITE_ANIM_FLAGS 0x0fu
+#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
+#define SPRITE_ANIM_SGB_OWMAP_CURSOR 0x35u
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -174,3 +186,22 @@ uint8_t OverworldMap_GetOWMapID(void)
 	return OWMAP_MYSTERY_HOUSE;
 }
 /* <<< factory OverworldMap_GetOWMapID */
+
+/* >>> factory OverworldMap_InitCursorSprite */
+void OverworldMap_InitCursorSprite(void)
+{
+	wOverworldMapStartingPosition = wOverworldMapSelection;
+	wOverworldMapPlayerAnimationState = 0u;
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_MAP_OAM, 0x80u);
+	wOverworldMapCursorSprite = wWhichSprite;
+	uint8_t animation = SPRITE_ANIM_SGB_OWMAP_CURSOR;
+	if (wConsole == CONSOLE_CGB)
+		animation = SPRITE_ANIM_CGB_OWMAP_CURSOR;
+	wOverworldMapCursorAnimation = animation;
+	StartNewSpriteAnimation(animation);
+	if (GetEventValue(EVENT_MASON_LAB_STATE) == 0u) {
+		uint16_t flags = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);
+		gb_write8(flags, (uint8_t)(gb_read8(flags) | (uint8_t)(1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)));
+	}
+}
+/* <<< factory OverworldMap_InitCursorSprite */

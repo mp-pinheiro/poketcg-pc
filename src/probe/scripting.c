@@ -587,6 +587,18 @@ static void adapt_ScriptCommand_JumpIfEventGreaterOrEqual(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfEventGreaterOrEqual */
 
+/* >>> factory ScriptCommand_JumpIfEventLessThan */
+static void adapt_ScriptCommand_JumpIfEventLessThan(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventLessThanResult r = ScriptCommand_JumpIfEventLessThan(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventLessThan */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -645,5 +657,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfEventEqual", adapt_ScriptCommand_JumpIfEventEqual },
 	{ "ScriptCommand_JumpIfEventZero", adapt_ScriptCommand_JumpIfEventZero },
 	{ "ScriptCommand_JumpIfEventGreaterOrEqual", adapt_ScriptCommand_JumpIfEventGreaterOrEqual },
+	{ "ScriptCommand_JumpIfEventLessThan", adapt_ScriptCommand_JumpIfEventLessThan },
 	{ NULL, NULL },
 };

@@ -30,4 +30,7 @@ void OverworldMap_InitPlayerEastWestMovement(uint8_t b, uint8_t c);
 /* >>> factory OverworldMap_GetOWMapID */
 uint8_t OverworldMap_GetOWMapID(void);
 /* <<< factory OverworldMap_GetOWMapID */
+/* >>> factory OverworldMap_InitCursorSprite */
+void OverworldMap_InitCursorSprite(void);
+/* <<< factory OverworldMap_InitCursorSprite */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */
