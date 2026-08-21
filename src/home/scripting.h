@@ -258,4 +258,7 @@ typedef struct {
 ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOnFightingClubPupilStatus(void);
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* >>> factory GetEventValue */
+uint8_t GetEventValue(uint8_t a);
+/* <<< factory GetEventValue */
 #endif

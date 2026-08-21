@@ -625,6 +625,20 @@ CASES["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = [
 # <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
 # <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus
 
+# >>> factory GetEventValue
+CONTRACT["GetEventValue"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["GetEventValue"] = [
+    {"a": 0, "wram": {0xD411: b"\x80"}},
+    dict(POISON, a=0, wram={0xD411: b"\x00"}),
+    {"a": 8, "wram": {0xD3D2: b"\x80"}},
+    {"a": 16, "wram": {0xD3D2: b"\x01"}},
+    {"a": 16, "wram": {0xD3D2: b"\x00"}},
+]
+# <<< factory GetEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1000,3 +1014,11 @@ MUTATIONS["ScriptCommand_JumpBasedOnFightingClubPupilStatus"] = {
 }
 # <<< factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
 # <<< factory-mutation ScriptCommand_JumpBasedOnFightingClubPupilStatus
+# >>> factory-mutation GetEventValue
+MUTATIONS["GetEventValue"] = {
+    "source_symbol": "GetEventValue",
+    "before": "while ((mask & 1u) == 0u) {",
+    "after": "while ((mask & 1u) != 0u) {",
+    "case_ids": ["GetEventValue-0", "GetEventValue-1", "GetEventValue-2", "GetEventValue-3"],
+}
+# <<< factory-mutation GetEventValue

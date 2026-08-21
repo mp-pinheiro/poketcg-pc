@@ -1,0 +1,9 @@
+{
+  "fn": "GetNPCHeaderPointer",
+  "case": "tests/cases/npc_data.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNPCHeaderPointer\", \"registers\": {\"a\": 221, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 23005, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNPCHeaderPointer\", \"mismatches\": {\"a\": [221, 89], \"hl\": [23005, 56665]}}\n",
+  "restored": "{\"fn\": \"GetNPCHeaderPointer\", \"registers\": {\"a\": 221, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 23005, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

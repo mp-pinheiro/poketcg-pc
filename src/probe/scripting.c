@@ -531,6 +531,15 @@ static void adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus(ProbeState *s
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 
+/* >>> factory GetEventValue */
+static void adapt_GetEventValue(ProbeState *s)
+{
+	uint8_t value = GetEventValue(s->a);
+	s->a = value;
+	s->f = value == 0u ? 0x80u : 0u;
+}
+/* <<< factory GetEventValue */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -584,5 +593,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_RemoveAllEnergyCardsFromCollection", adapt_ScriptCommand_RemoveAllEnergyCardsFromCollection },
 	{ "ScriptCommand_JumpIfAnyEnergyCardsInCollection", adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection },
 	{ "ScriptCommand_JumpBasedOnFightingClubPupilStatus", adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus },
+	{ "GetEventValue", adapt_GetEventValue },
 	{ NULL, NULL },
 };

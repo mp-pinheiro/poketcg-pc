@@ -93,6 +93,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_PUPIL_MICHAEL_STATE 0x11u
 #define PUPIL_DEFEATED 0x08u
 #define PUPIL_INACTIVE 0x00u
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -772,3 +775,17 @@ ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOn
 }
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 /* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+
+/* >>> factory GetEventValue */
+uint8_t GetEventValue(uint8_t a)
+{
+	GetEventVarResult event = GetEventVar(a, 0u, 0u, 0u);
+	uint8_t value = gb_read8(event.hl);
+	uint8_t mask = wLoadedEventBits;
+	while ((mask & 1u) == 0u) {
+		mask = (uint8_t)(mask >> 1);
+		value = (uint8_t)(value >> 1);
+	}
+	return (uint8_t)(mask & value);
+}
+/* <<< factory GetEventValue */
