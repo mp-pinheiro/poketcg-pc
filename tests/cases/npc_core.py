@@ -173,6 +173,12 @@ wLoadedNPCs = 0xD34A
 NPC_TABLE = bytes(range(1, 97))
 NPC_READ = {wLoadedNPCs: 96}
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wLoadedNPCs = 0xD34A
+wLoadedNPCTempIndex = 0xD3AA
+wRonaldIsInMap = 0xD3B8
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -250,6 +256,14 @@ CASES["Func_1c557"] = [
     dict(POISON, wram={wLoadedNPCTempIndex: b"\x03", wTempNPC: b"\x55", wLoadedNPCs: NPC_TABLE}, read=NPC_READ),
 ]
 # <<< factory Func_1c557
+
+# >>> factory LoadNPC
+CONTRACT["LoadNPC"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["LoadNPC"] = [
+    {"wram": {wLoadedNPCs: b"\x01" * 0x60}, "expect": {wLoadedNPCTempIndex: b"\x00"}, "expect_regs": {"a": 0x01}},
+    dict(POISON, wram={wLoadedNPCs: b"\x01" * 0x60, wLoadedNPCTempIndex: b"\xAA"}, expect={wLoadedNPCTempIndex: b"\x00"}, expect_regs={"a": 0x01, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+]
+# <<< factory LoadNPC
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -345,3 +359,6 @@ MUTATIONS["SetAllNPCTilePermissions"] = {"source_symbol": "SetAllNPCTilePermissi
 # >>> factory-mutation Func_1c557
 MUTATIONS["Func_1c557"] = {"source_symbol": "Func_1c557", "before": "\tif ((found.f & 0x10u) == 0u)", "after": "\tif ((found.f & 0x10u) != 0u)", "case_ids": ["Func_1c557-0", "Func_1c557-1", "Func_1c557-2", "Func_1c557-3"]}
 # <<< factory-mutation Func_1c557
+# >>> factory-mutation LoadNPC
+MUTATIONS["LoadNPC"] = {"source_symbol": "LoadNPC", "before": "remaining != 0u", "after": "remaining == 0u", "case_ids": ["LoadNPC-0", "LoadNPC-1"]}
+# <<< factory-mutation LoadNPC

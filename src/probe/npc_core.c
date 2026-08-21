@@ -159,6 +159,13 @@ static void adapt_Func_1c557(ProbeState *s)
 }
 /* <<< factory Func_1c557 */
 
+/* >>> factory LoadNPC */
+static void adapt_LoadNPC(ProbeState *s)
+{
+	s->a = LoadNPC();
+}
+/* <<< factory LoadNPC */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -180,5 +187,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "ClearNPCs", adapt_ClearNPCs },
 	{ "SetAllNPCTilePermissions", adapt_SetAllNPCTilePermissions },
 	{ "Func_1c557", adapt_Func_1c557 },
+	{ "LoadNPC", adapt_LoadNPC },
 	{ NULL, NULL },
 };

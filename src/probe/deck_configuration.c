@@ -151,6 +151,14 @@ static void adapt_OpenDeckConfigurationMenu(ProbeState *s)
 }
 /* <<< factory OpenDeckConfigurationMenu */
 
+/* >>> factory PrintTotalNumberOfCardsInCollection */
+static void adapt_PrintTotalNumberOfCardsInCollection(ProbeState *s)
+{
+	PrintTotalNumberOfCardsInCollection();
+	(void)s;
+}
+/* <<< factory PrintTotalNumberOfCardsInCollection */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -169,5 +177,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CheckIfDeckHasCards", adapt_CheckIfDeckHasCards },
 	{ "FillBGMapLineWithA", adapt_FillBGMapLineWithA },
 	{ "OpenDeckConfigurationMenu", adapt_OpenDeckConfigurationMenu },
+	{ "PrintTotalNumberOfCardsInCollection", adapt_PrintTotalNumberOfCardsInCollection },
 	{ NULL, NULL },
 };

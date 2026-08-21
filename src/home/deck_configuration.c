@@ -52,6 +52,15 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#define ALL_DECKS 0xffu
+#define NUM_CARDS 0xe4u
+#define TX_END 0x00u
+#define TX_SYMBOL 0x05u
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 
@@ -337,3 +346,48 @@ void OpenDeckConfigurationMenu(void)
 	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
 }
 /* <<< factory OpenDeckConfigurationMenu */
+
+/* >>> factory PrintTotalNumberOfCardsInCollection */
+void PrintTotalNumberOfCardsInCollection(void)
+{
+	CreateCardCollectionListWithDeckCards(ALL_DECKS);
+
+	uint16_t collection = (uint16_t)(wTempCardCollection_ADDR + 1u);
+	uint16_t total = 0u;
+	for (uint8_t b = 0u; b < NUM_CARDS; b++) {
+		uint8_t count = (uint8_t)(gb_read8(collection++) & 0x7fu);
+		total = (uint16_t)(total + count);
+	}
+
+	uint16_t remainder = total;
+	uint16_t digit_output = wDecimalDigitsSymbols_ADDR;
+	const uint16_t places[5] = {10000u, 1000u, 100u, 10u, 1u};
+	for (uint8_t i = 0u; i < 5u; i++) {
+		uint8_t digit = 0u;
+		while (remainder >= places[i]) {
+			remainder = (uint16_t)(remainder - places[i]);
+			digit++;
+		}
+		gb_write8(digit_output++, (uint8_t)(SYM_0 + digit));
+	}
+
+	uint16_t text = wTempCardCollection_ADDR;
+	uint16_t symbols = wDecimalDigitsSymbols_ADDR;
+	uint8_t leading = 0u;
+	for (uint8_t i = 0u; i < 5u; i++) {
+		gb_write8(text++, TX_SYMBOL);
+		uint8_t digit = gb_read8(symbols++);
+		if (leading == 0u && digit == SYM_0) {
+			gb_write8(text++, SYM_SPACE);
+		} else {
+			gb_write8(text++, digit);
+			leading = 1u;
+		}
+	}
+	gb_write8(text++, 0x07u);
+	gb_write8(text, TX_END);
+
+	InitTextPrinting(13u, 0u);
+	ProcessText(&text);
+}
+/* <<< factory PrintTotalNumberOfCardsInCollection */

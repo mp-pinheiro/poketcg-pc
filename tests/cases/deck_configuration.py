@@ -202,6 +202,16 @@ CASES["OpenDeckConfigurationMenu"] = [
 ]
 # <<< factory OpenDeckConfigurationMenu
 
+# >>> factory PrintTotalNumberOfCardsInCollection
+CONTRACT["PrintTotalNumberOfCardsInCollection"] = {"compare": (), "preserve": ()}
+CASES["PrintTotalNumberOfCardsInCollection"] = [
+    {"sram": {0: {0xA100: b"\x00" * 255}}, "read": {0xC000: 12, 0xCEB6: 5}},
+    {"sram": {0: {0xA100: b"\x00\x01" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5}},
+    {"sram": {0: {0xA100: b"\x00\xff" + b"\x00" * 253}}, "read": {0xC000: 12, 0xCEB6: 5}},
+    dict(POISON, sram={0: {0xA100: b"\x00\x7f" + b"\x00" * 253}}, read={0xC000: 12, 0xCEB6: 5}),
+]
+# <<< factory PrintTotalNumberOfCardsInCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -287,3 +297,6 @@ MUTATIONS["FillBGMapLineWithA"] = {"source_symbol": "FillBGMapLineWithA", "befor
 # >>> factory-mutation OpenDeckConfigurationMenu
 MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfigurationMenu", "before": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xffu);", "after": "gb_write8(wDuelInitialPrizesUpperBitsSet_ADDR, 0xfeu);", "case_ids": ["OpenDeckConfigurationMenu-0"]};
 # <<< factory-mutation OpenDeckConfigurationMenu
+# >>> factory-mutation PrintTotalNumberOfCardsInCollection
+MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "uint8_t digit = 0u;", "after": "uint8_t digit = 1u;", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}
+# <<< factory-mutation PrintTotalNumberOfCardsInCollection

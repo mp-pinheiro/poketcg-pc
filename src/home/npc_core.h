@@ -76,4 +76,7 @@ SetAllNPCTilePermissionsResult SetAllNPCTilePermissions(void);
 /* >>> factory Func_1c557 */
 uint8_t Func_1c557(uint8_t a);
 /* <<< factory Func_1c557 */
+/* >>> factory LoadNPC */
+uint8_t LoadNPC(void);
+/* <<< factory LoadNPC */
 #endif /* POKETCG_HOME_NPC_CORE_H */

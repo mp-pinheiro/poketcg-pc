@@ -54,4 +54,7 @@ void FillBGMapLineWithA(uint8_t a, uint8_t b, uint8_t c);
 /* >>> factory OpenDeckConfigurationMenu */
 void OpenDeckConfigurationMenu(void);
 /* <<< factory OpenDeckConfigurationMenu */
+/* >>> factory PrintTotalNumberOfCardsInCollection */
+void PrintTotalNumberOfCardsInCollection(void);
+/* <<< factory PrintTotalNumberOfCardsInCollection */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

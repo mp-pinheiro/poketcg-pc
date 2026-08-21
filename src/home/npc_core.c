@@ -82,6 +82,14 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/npc_core.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "home/sprite_animations.h"
+#include "mem.h"
+
+#define TRUE 0x01u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -418,3 +426,58 @@ uint8_t Func_1c557(uint8_t a)
 	return result;
 }
 /* <<< factory Func_1c557 */
+
+/* >>> factory LoadNPC */
+uint8_t LoadNPC(void)
+{
+	wLoadedNPCTempIndex = 0;
+	uint8_t index = 0;
+	uint8_t remaining = LOADED_NPC_MAX;
+	uint16_t entry = wLoadedNPCs_ADDR;
+	while (remaining != 0u) {
+		uint8_t id = gb_read8(entry);
+		if (id == 0u)
+			break;
+		entry = (uint16_t)(entry + LOADED_NPC_LENGTH);
+		index++;
+		remaining--;
+	}
+	if (remaining == 0u)
+		return gb_read8((uint16_t)(wLoadedNPCs_ADDR + (uint16_t)(LOADED_NPC_MAX - 1u) * LOADED_NPC_LENGTH));
+
+	wLoadedNPCTempIndex = index;
+	uint8_t create_result = CreateSpriteAndAnimBufferEntry(wNPCSpriteID, 0u);
+	if ((create_result & 0x10u) != 0u)
+		return create_result;
+
+	PermissionResult result = GetLoadedNPCID(wLoadedNPCTempIndex);
+	uint16_t npc = result.hl;
+	gb_write8(npc, wTempNPC);
+	npc++;
+	gb_write8(npc, wWhichSprite);
+	npc++;
+	gb_write8(npc, wLoadNPCXPos);
+	npc++;
+	gb_write8(npc, wLoadNPCYPos);
+	npc++;
+	gb_write8(npc, wLoadNPCDirection);
+	npc++;
+	gb_write8(npc, wNPCAnimFlags);
+	npc++;
+	gb_write8(npc, wNPCAnim);
+	npc++;
+	gb_write8(npc, wLoadNPCDirection);
+
+	(void)UpdateNPCAnimation();
+	(void)ApplyRandomCountToNPCAnim();
+	wNumLoadedNPCs++;
+	(void)UpdateNPCSpritePosition(result.hl);
+	(void)SetNPCsTilePermission();
+
+	uint8_t npc_id = wTempNPC;
+	if ((CheckIfNPCIsRonald(npc_id) & 0x10u) != 0u) {
+		wRonaldIsInMap = TRUE;
+	}
+	return npc_id;
+}
+/* <<< factory LoadNPC */
