@@ -1,99 +1,43 @@
 # Autonomous Port Factory
 
-Forgejo issues and append-only factory comments are the source of truth. The
-exact user message `start` launches a normal top-level OMP session through
-`tools/factory/run.sh`; the script executes `omp --print start`. There is no
-nested SDK session manager or factory watchdog.
+The factory keeps no external state. Work selection is deterministic tooling
+over the repository itself — inventory, gate record, and `.factory/blocked.toml`
+— and the oracle is the sole acceptance authority. The orchestrating session
+owns every repository and jj write; candidate generators are stateless, run in
+disposable lanes, and receive no credentials.
 
-## Control protocol
+The exact user message `start` launches the loop below in a normal top-level
+session. There is no run lease, no issue tracker authority, and no nested
+session manager.
 
-The top-level session must run `factory preflight` before `run-claim`.
-Project-local model roles are pinned to
-`@smol = openai-codex/gpt-5.4-mini:medium` and
-`@task = openai-codex/gpt-5.6-luna:medium`; preflight must resolve both
-selectors, verify the current gate, and reject a dirty central checkout. After
-`run-claim` succeeds, the extension allows only `factory`, `task`, and `hub`
-until `run-release` or `complete`.
+## The loop
 
-Each loop iteration:
-
-1. Call `factory reconcile` with the winning run lease.
-2. Call `factory frontier`; claim only the returned work IDs.
-3. Pass `agent_name` and the resolved `model_id` to `factory claim`.
-4. Dispatch one exact generator task with the issued packet and attempt ID.
-5. Capture the task completion, then call `hub wait` with `ids: [job_id]`.
-   Every 120-second wait timeout heartbeats both the run and work leases.
-6. Call `factory join` with the exact joined fields below. It selects the
-   newest unused persisted delivery and rejects caller-supplied delivery data
-   that differs from that entry. Then call `factory check`; the control process
-   applies the candidate in its disposable lane, runs the full verifier, and
-   writes an immutable check receipt. A malformed reply stops before lane
-   mutation.
-7. Send a normalized `VerdictV2` and candidate hash to the same generator for
-   a bounded repair round. `@smol` gets rounds `0..1`; `@task` gets rounds
-   `0..2`. A red final receipt is recorded once; a green receipt is recorded
-   immediately.
-8. Call `factory record` with only the receipt `check_id`. It re-hashes the
-   receipt and lane and appends exactly one attempt result.
-9. Integrate a green artifact immediately for the canary and first three pilot
-   greens. Later integration uses at most four artifacts or fifteen minutes of
-   age, whichever comes first.
-
-### Joined delivery contract
-
-`factory join` accepts exactly:
-
-```json
-{
-  "run_id": "<run>",
-  "run_claim_comment_id": 123,
-  "work_id": "<work>",
-  "packet_sha256": "<sha256>",
-  "claim_comment_id": 123,
-  "round": 0,
-  "delivery": {
-    "kind": "task-job",
-    "id": "<Hub job ID>",
-    "agent_id": "<agent>",
-    "respawned_from": null,
-    "resolved_model": "<resolved model>",
-    "duration_ms": 1234,
-    "settled_at": "<timestamp>",
-    "usage": {
-      "input_tokens": null,
-      "output_tokens": null,
-      "cached_tokens": null,
-      "cost_usd": null,
-      "source": "omp-hub-v17.4-unavailable"
-    },
-    "reply": "<TranslationReplyV2 JSON>"
-  }
-}
-```
-
-The delivery `kind` is `task-job` or `agent-message`. A task delivery is
-usable only when the captured result has `status:"completed"`, exact `id`,
-`durationMs`, `resolvedModel`, and `resultText`. A message delivery is usable
-only when targeted `hub wait` returned `waited.id`, `waited.from`, `waited.ts`,
-and `waited.body`; its `kind` is `agent-message`, `id` is the waited message
-ID, `agent_id` is `waited.from`, `settled_at` is `waited.ts`, and `reply` is
-`waited.body`. Both forms are persisted as
-`poketcg.factory.delivery.v1` entries. Usage fields are nullable and must use
-the literal unavailable source above.
-
-A delivery ID may be joined once only. The join operation verifies the active
-run and work leases, claim attempt, packet identity, expected agent, exact
-resolved model, and round before storing its immutable receipt. Round zero is
-always a task job. Repair rounds are targeted messages from the round-zero
-agent; if it disappears, one replacement task job may set `respawned_from` to
-that prior agent ID.
-
-A timeout or lease loss cancels only the captured task job and stops before
-`join`, `check`, or `record`; it must not cancel unrelated jobs or accept a
-later unrelated result.
-
-Only a work-claim election conflict may be dropped. Never consult worker prose
-or worker-edited central files.
+1. `just factory-next 4` — select the next ready routines. Selection reads
+   `work_records` (state `ready`, no operational blocker), so a name listed in
+   `.factory/blocked.toml` is never selected. Routines whose artifacts already
+   exist, and routines with a recorded `.factory/try/<Fn>/result.json`, are
+   skipped; ordering prefers the routine that unblocks the most dependents,
+   then the smallest. Each line prints the routine, its lane, and the exact
+   verification command.
+2. Dispatch `k=3` `port-candidate` agents per routine. Each agent reads
+   `.factory/try/<Fn>/prompt.txt` and writes one TranslationReplyV2 JSON object
+   to `.factory/try/<Fn>/candidate-<i>.json`. Candidates are dispatched by the
+   session itself; there is no model client in the repository.
+3. `just factory-try <Fn>` — or the printed command with the right `--lane` —
+   verifies candidates in lane order with the real verifier. The first green
+   candidate stages a verified artifact in `.factory/artifacts/`. There is no
+   repair round: a routine red on all `k` candidates returns to the pool for a
+   later wave with fresh candidates (`python3 tools/factory/try_one.py --next
+   --retry-red` re-includes recorded reds).
+4. `just factory-land` — land every eligible verified artifact. Per batch, the
+   driver requires a clean tree synced with `main@origin`, applies the bundles,
+   commits, runs `just oracle-release-gate`, asserts the gate names the source
+   commit and is complete, refreshes the progress report, commits, pushes, and
+   appends one record per artifact to `.factory/landings.jsonl`. A gate failure
+   splits the batch; a lone failing artifact is quarantined to
+   `.factory/quarantine.jsonl` with the gate tail.
+5. `just factory-eta` — deterministic forecast computed from recorded landings
+   only.
 
 ## TranslationReplyV2
 
@@ -119,15 +63,16 @@ Generators return one JSON object with no additional fields:
 }
 ```
 
-Routine names must exactly match packet order. The control-owned surgery layer is
-the only writer of the four source files. Generator agents have no tools and no
-access to files, URLs, credentials, Forgejo, VCS, or nested agents.
+Routine names must exactly match packet order. The session-owned surgery layer
+is the only writer of the four source files. Generator agents hold read-only
+tools (`read`, `grep`, `glob`) to confirm generated-header macros exist; they
+never write files, run VCS, hold credentials, or spawn agents.
 
 ## Failure and completion
 
-`status:"stop"` is fatal. `waiting` retries the same idempotent operation after
-its `retry_at`. The run lease is released only after the completion predicate
-proves remote `main`, publication revision, gate record, generated projections,
-and Forgejo state converge. Completion is `PORT COMPLETE`; an ETA remains
-unavailable until a validated productive route and the publication thresholds
-are met.
+A red candidate is a phase verdict, never a traceback; the routine simply
+returns to the pool. A gate failure never leaves the tree dirty: the landing
+driver abandons the batch commit and restores `main`. Progress is measured from
+`site/data/gate.json` plus `site/data/progress.json`; the dashboard reads the
+same files. There is no completion ceremony — the loop is done when
+`factory-next` reports an empty pool.

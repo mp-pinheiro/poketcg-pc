@@ -57,13 +57,12 @@ The commands that matter, from the `justfile`:
 | `just oracle-diff-all` | older PyBoy-only full sweep. Orchestrator only; writes no gate record |
 | `just progress` | rebuild the progress report from registry + gate |
 | `just frontier` | print unported routines whose callees are all ported |
-| `just forgejo-auth-check` | prove git + REST credentials work non-interactively |
-| `just factory-preflight` | prove auth, gate freshness, and snapshot stability |
-| `just factory-status` | per-work state counts and the live factory run lease |
-| `just factory-frontier` | print the next dispatch decision without writing |
-| `just factory-migrate` | dry-run the Forgejo reconciliation |
-| `just factory-migrate-apply` | apply it — the only command that mutates Forgejo issues |
-| `just factory-scenarios` | offline behaviour proofs for the control plane |
+| `just forgejo-auth-check` | prove the push credential works non-interactively |
+| `just factory-next` | select the next ready routines; prompts prepared, blocked.toml respected |
+| `just factory-try <Fn>` | verify k recorded candidates for one routine with the real verifier |
+| `just factory-land` | land every verified artifact: gate, commit, push, record |
+| `just factory-eta` | deterministic forecast from recorded landings |
+| `just factory-smoke` | offline contract rehearsal of the packet→land pipeline |
 | `just launch-port` | run the autonomous port factory loop |
 | `just data-verify` | data/asset extraction round-trip |
 | `just progress-serve` | serve the dashboard at http://127.0.0.1:8765 |
@@ -126,12 +125,13 @@ When, and only when, the user's trimmed message is exactly `start`
 request handling.
 
 The factory model: deterministic tooling under `tools/factory/` builds
-self-contained packets from open `port-ready` Forgejo issues, stateless
-small-model translators fill them in disposable lanes, the oracle plus mutation
-harness accepts or rejects mechanically, and one serial integrator — the
-orchestrator — owns every repo and Forgejo-origin write, gating strictly before
-each push. Lanes never run jj, git, or a central gate and receive no remote
-credentials. Translation prompts are governed by `docs/factory-contract.md`.
+self-contained packets from the ready frontier (inventory + gate +
+`.factory/blocked.toml`), stateless generators fill them in disposable lanes,
+the oracle plus mutation harness accepts or rejects mechanically, and one
+serial landing driver — the orchestrator — owns every repository write, gating
+strictly before each push. Lanes never run jj, git, or a central gate and
+receive no remote credentials. Translation prompts are governed by
+`docs/factory-contract.md`.
 
 ## 10. `tests/cases/*.py` are not unit tests
 

@@ -106,9 +106,9 @@ A more specific path wins outright and inherits nothing from the catch-all, so
 access to `/api/v1` is exactly what it was before that app existed.
 
 The PAT lives in `~/.config/yfrit-forgejo/api/poketcg-issues.token` (mode
-`0600`) — the same file `tools/factory/forgejo.py` reads for the REST client, so
-rotation touches one file: overwrite it with a fresh Forgejo PAT (Settings →
-Applications, scopes `write:repository` + `read:issue`). Point git at the
+`0600`); rotation touches one file: overwrite it with a fresh Forgejo PAT
+(Settings → Applications, scopes `write:repository` + `read:issue`). Point git
+at the
 repo's credential helper, `tools/git-credential-forgejo`, which reads that file
 (it also honours `POKETCG_FORGEJO_TOKEN`/`POKETCG_FORGEJO_TOKEN_FILE` env
 overrides and exits non-zero instead of prompting when no token resolves):
@@ -127,17 +127,11 @@ Forgejo instance; the working shape is `username=mpp` + PAT as password, which
 is what the helper emits. Forgejo remote URLs contain no username — the helper
 supplies it.
 
-Verify both layers non-interactively:
+Verify non-interactively:
 
 ```sh
-just forgejo-auth-check                  # git layer must be green
-python3 tools/factory/auth_check.py --require-rest   # also require REST
+just forgejo-auth-check   # git layer must be green
 ```
-
-It reports `[ok]`/`[warn]`/`[fail]` per check (credential helper, edge headers,
-token resolution, git push auth, REST auth, Cloudflare Access service-token
-expiry) and exits non-zero on any hard failure. `--require-rest` promotes a
-REST `[warn]` to a failure.
 
 ## The change cycle
 

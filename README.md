@@ -56,22 +56,18 @@ audits, and the data round-trip. Concurrent work should use a private
 
 ## Factory dispatch
 
-Forgejo issues are the factory's only authority; `.factory/` holds caches:
+The factory keeps no external state: work selection, verification, and landing
+are all computed from the repository plus `.factory/` local caches.
 
 ```sh
-just factory-preflight
-just factory-status
-just factory-frontier
-just launch-port
+just factory-next 4   # select ready routines, prepare prompts
+just factory-try <Fn> # verify recorded candidates for one routine
+just factory-land     # gate, commit, push, record every verified artifact
+just factory-eta      # forecast from recorded landings
 ```
 
-`factory-preflight` proves REST auth, a gate record built at the current `main`
-revision, and a stable issue snapshot. `factory-status` prints per-work state
-counts and the live run lease. `factory-frontier` prints what the scheduler
-would dispatch next without writing anything. `launch-port` runs the autonomous
-loop: one run lease, one persistent orchestrator session, disposable lanes,
-gated integration. See `docs/factory-workflow.md` for the loop and
-`docs/factory-contract.md` for translator constraints.
+See `docs/factory-workflow.md` for the loop and `docs/factory-contract.md` for
+translator constraints.
 
 ## GB Recompiled replay oracle
 
