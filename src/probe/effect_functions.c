@@ -2204,6 +2204,14 @@ static void adapt_KarateChop_DamageSubtractionEffect(ProbeState *s)
 }
 /* <<< factory KarateChop_DamageSubtractionEffect */
 
+/* >>> factory SpearowMirrorMove_AISelection */
+static void adapt_SpearowMirrorMove_AISelection(ProbeState *s)
+{
+	(void)s;
+	SpearowMirrorMove_AISelection();
+}
+/* <<< factory SpearowMirrorMove_AISelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2477,5 +2485,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MagikarpFlail_HPCheck", adapt_MagikarpFlail_HPCheck },
 	{ "SuperFang_HalfHPEffect", adapt_SuperFang_HalfHPEffect },
 	{ "KarateChop_DamageSubtractionEffect", adapt_KarateChop_DamageSubtractionEffect },
+	{ "SpearowMirrorMove_AISelection", adapt_SpearowMirrorMove_AISelection },
 	{ NULL, NULL },
 };

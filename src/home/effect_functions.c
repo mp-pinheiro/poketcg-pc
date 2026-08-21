@@ -3862,3 +3862,10 @@ void KarateChop_DamageSubtractionEffect(void)
 		SetDefiniteDamage(0u);
 }
 /* <<< factory KarateChop_DamageSubtractionEffect */
+
+/* >>> factory SpearowMirrorMove_AISelection */
+void SpearowMirrorMove_AISelection(void)
+{
+	MirrorMove_AISelection();
+}
+/* <<< factory SpearowMirrorMove_AISelection */

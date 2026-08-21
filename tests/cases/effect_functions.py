@@ -2393,6 +2393,16 @@ CASES["KarateChop_DamageSubtractionEffect"] = [
 ]
 # <<< factory KarateChop_DamageSubtractionEffect
 
+# >>> factory SpearowMirrorMove_AISelection
+CONTRACT["SpearowMirrorMove_AISelection"] = {"compare": (), "preserve": ()}
+CASES["SpearowMirrorMove_AISelection"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x77"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x03", 0xFFA0: b"\x77"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x01", 0xC0EF: b"\x00", 0xFFA0: b"\x77"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2F8: b"\x02", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((BULBASAUR,)), 0xFFA0: b"\x77"}),
+]
+# <<< factory SpearowMirrorMove_AISelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4041,3 +4051,6 @@ MUTATIONS["KarateChop_DamageSubtractionEffect"] = {
     "case_ids": ["KarateChop_DamageSubtractionEffect-0", "KarateChop_DamageSubtractionEffect-1", "KarateChop_DamageSubtractionEffect-2", "KarateChop_DamageSubtractionEffect-3"],
 }
 # <<< factory-mutation KarateChop_DamageSubtractionEffect
+# >>> factory-mutation SpearowMirrorMove_AISelection
+MUTATIONS["SpearowMirrorMove_AISelection"] = {"source_symbol": "SpearowMirrorMove_AISelection", "before": "MirrorMove_AISelection();", "after": "(void)0;", "case_ids": ["SpearowMirrorMove_AISelection-0", "SpearowMirrorMove_AISelection-1"]}
+# <<< factory-mutation SpearowMirrorMove_AISelection

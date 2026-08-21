@@ -1252,3 +1252,10 @@ void Music2_LoadBackup(void)
 	hl = wMusicCh1StackBackup_ADDR; de = wMusicCh1Stack_ADDR;
 	Music2_CopyData(&hl, &de, 48);
 }
+
+/* >>> factory Music2_f400c_2 */
+void Music2_f400c_2(uint8_t a)
+{
+	Music2_f404e(a);
+}
+/* <<< factory Music2_f400c_2 */

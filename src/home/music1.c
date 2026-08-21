@@ -1272,3 +1272,10 @@ void _ResumeSong(void)
 	Music1_ResumeSong();
 }
 /* <<< factory _ResumeSong */
+
+/* >>> factory Music1_f400c */
+void Music1_f400c(uint8_t a)
+{
+	Music1_f404e(a);
+}
+/* <<< factory Music1_f400c */

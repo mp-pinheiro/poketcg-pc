@@ -569,6 +569,14 @@ CONTRACT["_ResumeSong"] = {"compare": (), "preserve": ()}
 CASES["_ResumeSong"] = [{}, dict(POISON, wram={0xC101: b"\x00"})]
 # <<< factory _ResumeSong
 
+# >>> factory Music1_f400c
+CONTRACT["Music1_f400c"] = {"compare": (), "preserve": ()}
+CASES["Music1_f400c"] = [
+    {"a": 0x42, "read": {0xDDF0: 1}},
+    dict(POISON, read={0xDDF0: 1}, wram={0xC103: b"\x00"}),
+]
+# <<< factory Music1_f400c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -586,3 +594,6 @@ MUTATIONS["_PauseSong"] = {"source_symbol": "_PauseSong", "before": "Music1_Paus
 # >>> factory-mutation _ResumeSong
 MUTATIONS["_ResumeSong"] = {"source_symbol": "_ResumeSong", "before": "Music1_ResumeSong();", "after": "Music1_ResumeSong(), gb_write8(0xC101u, 0x01u);", "case_ids": ["_ResumeSong-1"]}
 # <<< factory-mutation _ResumeSong
+# >>> factory-mutation Music1_f400c
+MUTATIONS["Music1_f400c"] = {"source_symbol": "Music1_f400c", "before": "Music1_f404e(a);", "after": "Music1_f404e(a), gb_write8(0xC103u, 0x01u);", "case_ids": ["Music1_f400c-1"]}
+# <<< factory-mutation Music1_f400c

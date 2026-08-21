@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_f400c",
+  "case": "tests/cases/music1.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_f400c\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49411\": \"00\", \"56816\": \"aa\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_f400c\", \"mismatches\": {\"bus\": {\"address\": 49411, \"reference\": \"00aa\", \"native\": \"01aa\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49411, 1], [56816, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music1_f400c\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49411\": \"00\", \"56816\": \"aa\"}}, \"status\": \"PASS\"}\n"
+}

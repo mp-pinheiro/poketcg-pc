@@ -919,6 +919,9 @@ void SuperFang_HalfHPEffect(void);
 /* >>> factory KarateChop_DamageSubtractionEffect */
 void KarateChop_DamageSubtractionEffect(void);
 /* <<< factory KarateChop_DamageSubtractionEffect */
+/* >>> factory SpearowMirrorMove_AISelection */
+void SpearowMirrorMove_AISelection(void);
+/* <<< factory SpearowMirrorMove_AISelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

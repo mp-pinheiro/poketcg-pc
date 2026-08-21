@@ -246,6 +246,13 @@ static void adapt__ResumeSong(ProbeState *s)
 }
 /* <<< factory _ResumeSong */
 
+/* >>> factory Music1_f400c */
+static void adapt_Music1_f400c(ProbeState *s)
+{
+	Music1_f400c(s->a);
+}
+/* <<< factory Music1_f400c */
+
 const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_EmptyFunc",         adapt_Music1_EmptyFunc },
 	{ "Music1_f404e",             adapt_Music1_f404e },
@@ -312,5 +319,6 @@ const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_SetChannelStackPointer", adapt_Music1_SetChannelStackPointer },
 	{ "_PauseSong", adapt__PauseSong },
 	{ "_ResumeSong", adapt__ResumeSong },
+	{ "Music1_f400c", adapt_Music1_f400c },
 	{ NULL, NULL },
 };
