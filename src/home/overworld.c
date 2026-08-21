@@ -432,3 +432,11 @@ void PauseMenu_Exit(void)
 	_PauseMenu_Exit();
 }
 /* <<< factory PauseMenu_Exit */
+
+/* >>> factory AttemptPlayerMovementFromDirection */
+void AttemptPlayerMovementFromDirection(void)
+{
+	FindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();
+	AttemptPlayerMovement(movement.b, movement.c);
+}
+/* <<< factory AttemptPlayerMovementFromDirection */

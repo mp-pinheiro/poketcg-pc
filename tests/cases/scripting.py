@@ -523,6 +523,17 @@ CASES["ScriptCommand_MaxOutEventValue"] = [
 ]
 # <<< factory ScriptCommand_MaxOutEventValue
 
+# >>> factory ScriptCommand_ZeroOutEventValue
+CONTRACT["ScriptCommand_ZeroOutEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_ZeroOutEventValue"] = [
+    {"c": 0, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    dict(POISON, c=1, wram={wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, read={wScriptPointer: 2, wEventVars: 0x40}),
+    {"c": 0x7F, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0x80, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0xFF, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+]
+# <<< factory ScriptCommand_ZeroOutEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -837,3 +848,11 @@ MUTATIONS["ScriptCommand_MaxOutEventValue"] = {
     "case_ids": ["ScriptCommand_MaxOutEventValue-0", "ScriptCommand_MaxOutEventValue-1", "ScriptCommand_MaxOutEventValue-2", "ScriptCommand_MaxOutEventValue-3", "ScriptCommand_MaxOutEventValue-4"],
 }
 # <<< factory-mutation ScriptCommand_MaxOutEventValue
+# >>> factory-mutation ScriptCommand_ZeroOutEventValue
+MUTATIONS["ScriptCommand_ZeroOutEventValue"] = {
+    "source_symbol": "ScriptCommand_ZeroOutEventValue",
+    "before": "\t(void)ZeroOutEventValue(c, f, b, c);",
+    "after": "\t(void)ZeroOutEventValue((uint8_t)(c + 1u), f, b, c);",
+    "case_ids": ["ScriptCommand_ZeroOutEventValue-0", "ScriptCommand_ZeroOutEventValue-1", "ScriptCommand_ZeroOutEventValue-2", "ScriptCommand_ZeroOutEventValue-3", "ScriptCommand_ZeroOutEventValue-4"],
+}
+# <<< factory-mutation ScriptCommand_ZeroOutEventValue

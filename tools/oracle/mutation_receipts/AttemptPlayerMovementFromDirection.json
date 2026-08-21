@@ -1,0 +1,9 @@
+{
+  "fn": "AttemptPlayerMovementFromDirection",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AttemptPlayerMovementFromDirection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1e12\", \"54068\": \"0281\", \"54072\": \"10\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AttemptPlayerMovementFromDirection\", \"mismatches\": {\"bus\": {\"address\": 54065, \"reference\": \"1e12028110\", \"native\": \"1e13028110\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[54064, 2], [54068, 2], [54072, 1]]}}}\n",
+  "restored": "{\"fn\": \"AttemptPlayerMovementFromDirection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1e12\", \"54068\": \"0281\", \"54072\": \"10\"}}, \"status\": \"PASS\"}\n"
+}

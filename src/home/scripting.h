@@ -210,4 +210,7 @@ ScriptCommand_JumpResult ScriptCommand_Jump(void);
 /* >>> factory ScriptCommand_MaxOutEventValue */
 IncreaseScriptPointerResult ScriptCommand_MaxOutEventValue(uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_MaxOutEventValue */
+/* >>> factory ScriptCommand_ZeroOutEventValue */
+IncreaseScriptPointerResult ScriptCommand_ZeroOutEventValue(uint8_t f, uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_ZeroOutEventValue */
 #endif

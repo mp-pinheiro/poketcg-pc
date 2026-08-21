@@ -229,6 +229,15 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wPlayerDirection = 0xD334
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wPlayerDirection = 0xD334
+wPlayerCurrentlyMoving = 0xD335
+wd338 = 0xD338
+wWhichSprite = 0xD4CF
+wSpriteAnimBuffer = 0xD4D0
+wPermissionMap = 0xD133
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -327,6 +336,14 @@ CASES["PauseMenu_Exit"] = [
      "read": {0xD0BF: 1}},
 ]
 # <<< factory PauseMenu_Exit
+
+# >>> factory AttemptPlayerMovementFromDirection
+CONTRACT["AttemptPlayerMovementFromDirection"] = {"compare": (), "preserve": ()}
+CASES["AttemptPlayerMovementFromDirection"] = [
+    {"wram": {wPlayerXCoord: b"\x1e", wPlayerYCoord: b"\x10", wPlayerDirection: b"\x02", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}, "expect": {wPlayerXCoord: b"\x1e", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56"}},
+    dict(POISON, wram={wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerDirection: b"\x00", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56", wWhichSprite: b"\x00", wSpriteAnimBuffer + 0x0E: b"\x00", wSpriteAnimBuffer + 0x0F: b"\x01", wPermissionMap + 0x88: b"\x00"}, expect={wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x81", wd338: b"\x10", wSpriteAnimBuffer + 0x0E: b"\x04", wSpriteAnimBuffer + 0x0F: b"\x03"}),
+]
+# <<< factory AttemptPlayerMovementFromDirection
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -459,3 +476,6 @@ MUTATIONS["Func_c1a0"] = {
 # >>> factory-mutation PauseMenu_Exit
 MUTATIONS["PauseMenu_Exit"] = {"source_symbol": "PauseMenu_Exit", "before": "\t_PauseMenu_Exit();", "after": "\twOverworldMode = 1u;", "case_ids": ["PauseMenu_Exit-1"]}
 # <<< factory-mutation PauseMenu_Exit
+# >>> factory-mutation AttemptPlayerMovementFromDirection
+MUTATIONS["AttemptPlayerMovementFromDirection"] = {"source_symbol": "AttemptPlayerMovementFromDirection", "before": "AttemptPlayerMovement(movement.b, movement.c);", "after": "AttemptPlayerMovement(movement.b, (uint8_t)(movement.c + 1u));", "case_ids": ["AttemptPlayerMovementFromDirection-0", "AttemptPlayerMovementFromDirection-1"]}
+# <<< factory-mutation AttemptPlayerMovementFromDirection

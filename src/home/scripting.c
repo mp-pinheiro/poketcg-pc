@@ -592,3 +592,11 @@ IncreaseScriptPointerResult ScriptCommand_MaxOutEventValue(uint8_t f, uint8_t b,
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_MaxOutEventValue */
+
+/* >>> factory ScriptCommand_ZeroOutEventValue */
+IncreaseScriptPointerResult ScriptCommand_ZeroOutEventValue(uint8_t f, uint8_t b, uint8_t c)
+{
+	(void)ZeroOutEventValue(c, f, b, c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_ZeroOutEventValue */

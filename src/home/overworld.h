@@ -105,4 +105,7 @@ FuncC1A0Result Func_c1a0(uint16_t hl);
 /* >>> factory PauseMenu_Exit */
 void PauseMenu_Exit(void);
 /* <<< factory PauseMenu_Exit */
+/* >>> factory AttemptPlayerMovementFromDirection */
+void AttemptPlayerMovementFromDirection(void);
+/* <<< factory AttemptPlayerMovementFromDirection */
 #endif /* POKETCG_HOME_OVERWORLD_H */
