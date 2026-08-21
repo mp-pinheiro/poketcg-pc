@@ -11,4 +11,8 @@ AIShiftResult HandleAIShift(uint8_t c);
 typedef struct { uint8_t a; uint8_t f; } AIPeekResult;
 AIPeekResult HandleAIPeek(uint8_t c);
 /* <<< factory HandleAIPeek */
+/* >>> factory HandleAIStrangeBehavior */
+typedef struct { uint8_t a; uint8_t f; } HandleAIStrangeBehaviorResult;
+HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c);
+/* <<< factory HandleAIStrangeBehavior */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */

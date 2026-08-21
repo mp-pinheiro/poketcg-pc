@@ -43,6 +43,14 @@ CASES["HandleAIPeek"] = [
 ]
 # <<< factory HandleAIPeek
 
+# >>> factory HandleAIStrangeBehavior
+CONTRACT["HandleAIStrangeBehavior"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["HandleAIStrangeBehavior"] = [
+	{"c": 0},
+	dict(POISON, c=0),
+]
+# <<< factory HandleAIStrangeBehavior
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -63,3 +71,6 @@ MUTATIONS["HandleAIPeek"] = {
 	"case_ids": ["HandleAIPeek-1", "HandleAIPeek-2", "HandleAIPeek-3", "HandleAIPeek-4", "HandleAIPeek-5"],
 }
 # <<< factory-mutation HandleAIPeek
+# >>> factory-mutation HandleAIStrangeBehavior
+MUTATIONS["HandleAIStrangeBehavior"] = {"source_symbol": "HandleAIStrangeBehavior", "before": "\tif (c == 0u)", "after": "\tif (c != 0u)", "case_ids": ["HandleAIStrangeBehavior-1"]}
+# <<< factory-mutation HandleAIStrangeBehavior

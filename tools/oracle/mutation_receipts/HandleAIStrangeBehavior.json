@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAIStrangeBehavior",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAIStrangeBehavior\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAIStrangeBehavior\", \"mismatches\": {\"a\": [0, 22], \"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"HandleAIStrangeBehavior\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 0, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
