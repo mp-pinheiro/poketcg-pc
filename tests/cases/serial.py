@@ -406,6 +406,19 @@ CASES["SetOppAction_SerialSendDuelData"] = [
 ]
 # <<< factory SetOppAction_SerialSendDuelData
 
+# >>> factory SerialRecvDuelData
+CONTRACT["SerialRecvDuelData"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SerialRecvDuelData"] = [
+    {"b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0x4321,
+     "wram": {wDuelType: b"\x00", wSerialRecvCounter: b"\x0A", wcba3: b"\x00",
+              wSerialRecvBuf: b"\x10\x20\x30\x40\x50\x60\x70\x80\x90\xA0", wSerialFlags: b"\x00"},
+     "read": {hOppActionTableIndex: 10}},
+    dict(POISON, wram={wDuelType: b"\x00", wSerialRecvCounter: b"\x0A", wcba3: b"\x00",
+                       wSerialRecvBuf: b"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A", wSerialFlags: b"\x00"},
+         read={hOppActionTableIndex: 10}),
+]
+# <<< factory SerialRecvDuelData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -476,3 +489,11 @@ MUTATIONS["SetOppAction_SerialSendDuelData"] = {
     "case_ids": ["SetOppAction_SerialSendDuelData-2", "SetOppAction_SerialSendDuelData-3"],
 }
 # <<< factory-mutation SetOppAction_SerialSendDuelData
+# >>> factory-mutation SerialRecvDuelData
+MUTATIONS["SerialRecvDuelData"] = {
+    "source_symbol": "SerialRecvDuelData",
+    "before": "SerialRecvBytes(0xFF9Eu, 10u);",
+    "after": "SerialRecvBytes(0xFF9Eu, 9u);",
+    "case_ids": ["SerialRecvDuelData-0"],
+}
+# <<< factory-mutation SerialRecvDuelData

@@ -173,4 +173,10 @@ typedef struct {
 } SetOppActionSerialSendResult;
 SetOppActionSerialSendResult SetOppAction_SerialSendDuelData(uint8_t a, uint16_t de);
 /* <<< factory SetOppAction_SerialSendDuelData */
+/* >>> factory SerialRecvDuelData */
+typedef struct {
+	uint8_t a, f;
+} SerialRecvDuelDataResult;
+SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory SerialRecvDuelData */
 #endif

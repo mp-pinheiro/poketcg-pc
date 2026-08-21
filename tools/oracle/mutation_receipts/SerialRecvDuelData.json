@@ -1,0 +1,9 @@
+{
+  "fn": "SerialRecvDuelData",
+  "case": "tests/cases/serial.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SerialRecvDuelData\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 86, \"e\": 120, \"f\": 112, \"hl\": 17185, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52085\": \"00\", \"52130\": \"000a\", \"52133\": \"102030405060708090a0\", \"52233\": \"00\", \"65438\": \"102030405060708090a0\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SerialRecvDuelData\", \"mismatches\": {\"bus\": {\"address\": 52130, \"reference\": \"00000a102030\", \"native\": \"000109102030\", \"reference_size\": 24, \"native_size\": 24, \"spans\": [[52085, 1], [52130, 2], [52133, 10], [52233, 1], [65438, 10]]}}}\n",
+  "restored": "{\"fn\": \"SerialRecvDuelData\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 86, \"e\": 120, \"f\": 112, \"hl\": 17185, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52085\": \"00\", \"52130\": \"000a\", \"52133\": \"102030405060708090a0\", \"52233\": \"00\", \"65438\": \"102030405060708090a0\"}}, \"status\": \"PASS\"}\n"
+}

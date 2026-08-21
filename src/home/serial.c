@@ -465,3 +465,12 @@ SetOppActionSerialSendResult SetOppAction_SerialSendDuelData(uint8_t a, uint16_t
 	return (SetOppActionSerialSendResult){x.a, x.f, x.de};
 }
 /* <<< factory SetOppAction_SerialSendDuelData */
+
+/* >>> factory SerialRecvDuelData */
+SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	SerialRecvBytesResult r = SerialRecvBytes(0xFF9Eu, 10u);
+	ExchangeRNGResult x = ExchangeRNG(b, c, de, r.hl);
+	return (SerialRecvDuelDataResult){x.a, x.f};
+}
+/* <<< factory SerialRecvDuelData */

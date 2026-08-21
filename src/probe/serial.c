@@ -179,6 +179,15 @@ static void adapt_SetOppAction_SerialSendDuelData(ProbeState *s)
 }
 /* <<< factory SetOppAction_SerialSendDuelData */
 
+/* >>> factory SerialRecvDuelData */
+static void adapt_SerialRecvDuelData(ProbeState *s)
+{
+	SerialRecvDuelDataResult r = SerialRecvDuelData(s->b, s->c, (uint16_t)(s->d << 8 | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory SerialRecvDuelData */
+
 const ProbeEntry probe_entries_serial[] = {
 	{ "SerialTimerHandler", adapt_SerialTimerHandler },
 	{ "Func_0cc5", adapt_Func_0cc5 },
@@ -200,5 +209,6 @@ const ProbeEntry probe_entries_serial[] = {
 	{ "SerialSend8Bytes", adapt_SerialSend8Bytes },
 	{ "LinkOpponentTurnFrameFunction", adapt_LinkOpponentTurnFrameFunction },
 	{ "SetOppAction_SerialSendDuelData", adapt_SetOppAction_SerialSendDuelData },
+	{ "SerialRecvDuelData", adapt_SerialRecvDuelData },
 	{ NULL, NULL },
 };
