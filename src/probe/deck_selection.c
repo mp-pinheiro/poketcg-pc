@@ -41,10 +41,23 @@ static void adapt_InitDeckBuildingParams(ProbeState *s)
 }
 /* <<< factory InitDeckBuildingParams */
 
+/* >>> factory CheckIfCurDeckIsValid */
+static void adapt_CheckIfCurDeckIsValid(ProbeState *s)
+{
+	CheckIfCurDeckIsValidResult result = CheckIfCurDeckIsValid();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory CheckIfCurDeckIsValid */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
 	{ "GetPointerToDeckName", adapt_GetPointerToDeckName },
 	{ "InitDeckBuildingParams", adapt_InitDeckBuildingParams },
+	{ "CheckIfCurDeckIsValid", adapt_CheckIfCurDeckIsValid },
 	{ NULL, NULL },
 };

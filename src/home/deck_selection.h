@@ -28,4 +28,15 @@ typedef struct {
 
 InitDeckBuildingParamsResult InitDeckBuildingParams(uint16_t *hl, uint8_t f);
 /* <<< factory InitDeckBuildingParams */
+/* >>> factory CheckIfCurDeckIsValid */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} CheckIfCurDeckIsValidResult;
+
+CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void);
+/* <<< factory CheckIfCurDeckIsValid */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

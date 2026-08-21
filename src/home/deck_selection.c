@@ -13,6 +13,8 @@
 #define DECK_STRUCT_SIZE 0x54u
 
 #include "generated/wram.h"
+
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -58,3 +60,16 @@ InitDeckBuildingParamsResult InitDeckBuildingParams(uint16_t *hl, uint8_t f)
 	return (InitDeckBuildingParamsResult){a, (uint8_t)((f & 0x10u) | 0xC0u), b, 0xCFD8u, *hl};
 }
 /* <<< factory InitDeckBuildingParams */
+
+/* >>> factory CheckIfCurDeckIsValid */
+CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void)
+{
+	uint8_t deck = gb_read8(0xCEB1u);
+	uint16_t hl = (uint16_t)(0xCEB2u + deck);
+	uint8_t b = 0u;
+	uint8_t c = deck;
+	uint8_t value = gb_read8(hl);
+	uint8_t f = value ? 0x00u : 0x90u;
+	return (CheckIfCurDeckIsValidResult){value, f, b, c, hl};
+}
+/* <<< factory CheckIfCurDeckIsValid */

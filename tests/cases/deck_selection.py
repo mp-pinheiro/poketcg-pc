@@ -49,6 +49,15 @@ CASES["InitDeckBuildingParams"] = [
 ]
 # <<< factory InitDeckBuildingParams
 
+# >>> factory CheckIfCurDeckIsValid
+CONTRACT["CheckIfCurDeckIsValid"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["CheckIfCurDeckIsValid"] = [
+    {"wram": {0xCEB1: b"\x00", 0xCEB2: b"\x00"}},
+    {"wram": {0xCEB1: b"\x02", 0xCEB2: b"\x00\x00\x01"}},
+    dict(POISON, wram={0xCEB1: b"\x01", 0xCEB2: b"\x00\x00"}, expect_regs={"a": 0x00, "f": 0x90, "b": 0x00, "c": 0x01, "d": 0xDD, "e": 0xEE, "hl": 0xCEB3}),
+]
+# <<< factory CheckIfCurDeckIsValid
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +74,6 @@ MUTATIONS["GetPointerToDeckName"] = {"source_symbol": "GetPointerToDeckName", "b
 # >>> factory-mutation InitDeckBuildingParams
 MUTATIONS["InitDeckBuildingParams"] = {"source_symbol": "InitDeckBuildingParams", "before": "for (uint8_t i = 0; i < 7u; i++)", "after": "for (uint8_t i = 0; i < 6u; i++)", "case_ids": ["InitDeckBuildingParams-0", "InitDeckBuildingParams-1", "InitDeckBuildingParams-2"]}
 # <<< factory-mutation InitDeckBuildingParams
+# >>> factory-mutation CheckIfCurDeckIsValid
+MUTATIONS["CheckIfCurDeckIsValid"] = {"source_symbol": "CheckIfCurDeckIsValid", "before": "\tuint8_t value = gb_read8(hl);", "after": "\tuint8_t value = (uint8_t)(gb_read8(hl) ^ 1u);", "case_ids": ["CheckIfCurDeckIsValid-0", "CheckIfCurDeckIsValid-1", "CheckIfCurDeckIsValid-2"]}
+# <<< factory-mutation CheckIfCurDeckIsValid

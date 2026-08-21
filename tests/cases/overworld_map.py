@@ -30,6 +30,10 @@ H_BANK = 0xFF80
 CACHE_SIZE = 0xD618
 SPRITE_BUFFER = 0xD4D0
 wConsole = 0xCAB4
+
+wOverworldMapCursorAnimation = 0xD33C
+wOverworldMapCursorSprite = 0xD33B
+wWhichSprite = 0xD4CF
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -39,6 +43,15 @@ CASES["OverworldMap_InitVolcanoSprite"] = [
     dict(POISON, wram={H_BANK: b"\x04", CACHE_SIZE: b"\x00", wConsole: b"\x02", SPRITE_BUFFER: b"\x00" * 16}, read={CACHE_SIZE: 1, SPRITE_BUFFER: 16, wConsole: 1}),
 ]
 # <<< factory OverworldMap_InitVolcanoSprite
+
+# >>> factory OverworldMap_UpdateCursorAnimation
+CONTRACT["OverworldMap_UpdateCursorAnimation"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_UpdateCursorAnimation"] = [
+    {"wram": {wOverworldMapCursorSprite: b"\x03", wOverworldMapCursorAnimation: b"\x10"}, "read": {wWhichSprite: 1}},
+    {"wram": {wOverworldMapCursorSprite: b"\x00", wOverworldMapCursorAnimation: b"\xff"}, "read": {wWhichSprite: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wOverworldMapCursorSprite: b"\x7f", wOverworldMapCursorAnimation: b"\x80"}, "read": {wWhichSprite: 1}},
+]
+# <<< factory OverworldMap_UpdateCursorAnimation
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -53,3 +66,6 @@ MUTATIONS["OverworldMap_NegateBC"] = {"source_symbol": "OverworldMap_NegateBC", 
 # >>> factory-mutation OverworldMap_InitVolcanoSprite
 MUTATIONS["OverworldMap_InitVolcanoSprite"] = {"source_symbol": "OverworldMap_InitVolcanoSprite", "before": "uint16_t coords = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);", "after": "uint16_t coords = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_COORD_X + 1u));", "case_ids": ["OverworldMap_InitVolcanoSprite-0", "OverworldMap_InitVolcanoSprite-1"]}
 # <<< factory-mutation OverworldMap_InitVolcanoSprite
+# >>> factory-mutation OverworldMap_UpdateCursorAnimation
+MUTATIONS["OverworldMap_UpdateCursorAnimation"] = {"source_symbol": "OverworldMap_UpdateCursorAnimation", "before": "\twWhichSprite = wOverworldMapCursorSprite;", "after": "\twWhichSprite = (uint8_t)(wOverworldMapCursorSprite + 1u);", "case_ids": ["OverworldMap_UpdateCursorAnimation-0", "OverworldMap_UpdateCursorAnimation-1", "OverworldMap_UpdateCursorAnimation-2"]};
+# <<< factory-mutation OverworldMap_UpdateCursorAnimation

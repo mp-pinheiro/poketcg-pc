@@ -18,4 +18,7 @@ OverworldMapNegateBCResult OverworldMap_NegateBC(uint8_t b, uint8_t c);
 /* >>> factory OverworldMap_InitVolcanoSprite */
 void OverworldMap_InitVolcanoSprite(uint8_t f);
 /* <<< factory OverworldMap_InitVolcanoSprite */
+/* >>> factory OverworldMap_UpdateCursorAnimation */
+void OverworldMap_UpdateCursorAnimation(void);
+/* <<< factory OverworldMap_UpdateCursorAnimation */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

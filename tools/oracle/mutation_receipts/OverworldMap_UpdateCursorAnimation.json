@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_UpdateCursorAnimation",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_UpdateCursorAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54075\": \"0310\", \"54479\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_UpdateCursorAnimation\", \"mismatches\": {\"bus\": {\"address\": 54479, \"reference\": \"031003\", \"native\": \"031004\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54075, 2], [54479, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_UpdateCursorAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54075\": \"0310\", \"54479\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

@@ -16,6 +16,9 @@
 #define SPRITE_ANIM_CGB_VOLCANO_SMOKE 0x37u
 #define SPRITE_ANIM_SGB_VOLCANO_SMOKE 0x34u
 #define SPRITE_OW_MAP_OAM 0x25u
+
+#include "generated/wram.h"
+#include "home/sprite_animations.h"
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -77,3 +80,12 @@ void OverworldMap_InitVolcanoSprite(uint8_t f)
 	StartNewSpriteAnimation(animation);
 }
 /* <<< factory OverworldMap_InitVolcanoSprite */
+
+/* >>> factory OverworldMap_UpdateCursorAnimation */
+void OverworldMap_UpdateCursorAnimation(void)
+{
+	wWhichSprite = wOverworldMapCursorSprite;
+	uint8_t animation = (uint8_t)(wOverworldMapCursorAnimation + 1u);
+	StartNewSpriteAnimation(animation);
+}
+/* <<< factory OverworldMap_UpdateCursorAnimation */
