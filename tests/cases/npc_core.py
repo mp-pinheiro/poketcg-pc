@@ -216,6 +216,15 @@ CASES["UpdateIsAnNPCMovingFlag"] = [
 ]
 # <<< factory UpdateIsAnNPCMovingFlag
 
+# >>> factory ClearNPCs
+CONTRACT["ClearNPCs"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")};
+CASES["ClearNPCs"] = [
+	{"wram": {0xD34A: b"\xFF" * 0x60, 0xD349: b"\x7F", 0xD3B8: b"\x01"}, "expect": {0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	{"wram": {0xD34A: bytes(range(0x60)), 0xD349: b"\xAA", 0xD3B8: b"\xBB"}, "expect": {0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	dict(POISON, wram={0xD34A: b"\xA5" * 0x60, 0xD349: b"\x5A", 0xD3B8: b"\xC3"}, expect={0xD34A: b"\x00" * 0x60, 0xD349: b"\x00", 0xD3B8: b"\x00"}, expect_regs={"a": 0x00, "f": 0xC0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+]
+# <<< factory ClearNPCs
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -301,3 +310,6 @@ MUTATIONS["GetNPCPosition"] = {
 # >>> factory-mutation UpdateIsAnNPCMovingFlag
 MUTATIONS["UpdateIsAnNPCMovingFlag"] = {"source_symbol": "UpdateIsAnNPCMovingFlag", "before": "uint8_t a = (uint8_t)(wIsAnNPCMoving | gb_read8((uint16_t)(hl + LOADED_NPC_FLAGS)));", "after": "uint8_t a = wIsAnNPCMoving;", "case_ids": ["UpdateIsAnNPCMovingFlag-1", "UpdateIsAnNPCMovingFlag-2", "UpdateIsAnNPCMovingFlag-3"]}
 # <<< factory-mutation UpdateIsAnNPCMovingFlag
+# >>> factory-mutation ClearNPCs
+MUTATIONS["ClearNPCs"] = {"source_symbol": "ClearNPCs", "before": "wLoadedNPCs_PTR[i] = 0x00u;", "after": "wLoadedNPCs_PTR[i + 1u] = 0x00u;", "case_ids": ["ClearNPCs-0", "ClearNPCs-1", "ClearNPCs-2"]};
+# <<< factory-mutation ClearNPCs

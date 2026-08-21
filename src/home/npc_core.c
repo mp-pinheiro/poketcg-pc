@@ -70,6 +70,11 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+
+#define LOADED_NPC_LENGTH 0x0Cu
+#define LOADED_NPC_MAX 0x08u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -363,3 +368,14 @@ UpdateIsAnNPCMovingFlagResult UpdateIsAnNPCMovingFlag(uint16_t hl)
 	return (UpdateIsAnNPCMovingFlagResult){a, (a == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory UpdateIsAnNPCMovingFlag */
+
+/* >>> factory ClearNPCs */
+uint8_t ClearNPCs(void)
+{
+	for (uint8_t i = 0; i < (LOADED_NPC_MAX * LOADED_NPC_LENGTH); ++i)
+		wLoadedNPCs_PTR[i] = 0x00u;
+	wNumLoadedNPCs = 0x00u;
+	wRonaldIsInMap = 0x00u;
+	return 0x00u;
+}
+/* <<< factory ClearNPCs */

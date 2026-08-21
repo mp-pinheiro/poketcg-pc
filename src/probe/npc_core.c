@@ -134,6 +134,15 @@ static void adapt_UpdateIsAnNPCMovingFlag(ProbeState *s)
 }
 /* <<< factory UpdateIsAnNPCMovingFlag */
 
+/* >>> factory ClearNPCs */
+static void adapt_ClearNPCs(ProbeState *s)
+{
+	ClearNPCs();
+	s->a = 0x00u;
+	s->f = 0xC0u;
+}
+/* <<< factory ClearNPCs */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -152,5 +161,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "GetNPCDirection", adapt_GetNPCDirection },
 	{ "GetNPCPosition", adapt_GetNPCPosition },
 	{ "UpdateIsAnNPCMovingFlag", adapt_UpdateIsAnNPCMovingFlag },
+	{ "ClearNPCs", adapt_ClearNPCs },
 	{ NULL, NULL },
 };

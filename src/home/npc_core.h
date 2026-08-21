@@ -62,4 +62,7 @@ typedef struct {
 
 UpdateIsAnNPCMovingFlagResult UpdateIsAnNPCMovingFlag(uint16_t hl);
 /* <<< factory UpdateIsAnNPCMovingFlag */
+/* >>> factory ClearNPCs */
+uint8_t ClearNPCs(void);
+/* <<< factory ClearNPCs */
 #endif /* POKETCG_HOME_NPC_CORE_H */
