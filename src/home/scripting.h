@@ -196,4 +196,15 @@ SetEventValueResult ZeroOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 /* >>> factory ClearEvents */
 void ClearEvents(void);
 /* <<< factory ClearEvents */
+/* >>> factory ScriptCommand_Jump */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} ScriptCommand_JumpResult;
+
+ScriptCommand_JumpResult ScriptCommand_Jump(void);
+/* <<< factory ScriptCommand_Jump */
 #endif

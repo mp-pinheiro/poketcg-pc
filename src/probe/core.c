@@ -1125,6 +1125,13 @@ static void adapt_CardPageSwitch_PokemonAttack1Page1(ProbeState *s)
 }
 /* <<< factory CardPageSwitch_PokemonAttack1Page1 */
 
+/* >>> factory CheckPrintDoublePoisoned */
+static void adapt_CheckPrintDoublePoisoned(ProbeState *s)
+{
+	s->a = CheckPrintDoublePoisoned(s->a, s->b, s->c);
+}
+/* <<< factory CheckPrintDoublePoisoned */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1257,5 +1264,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawWholeScreenTextBox", adapt_DrawWholeScreenTextBox },
 	{ "HasAlivePokemonInPlayArea", adapt_HasAlivePokemonInPlayArea },
 	{ "CardPageSwitch_PokemonAttack1Page1", adapt_CardPageSwitch_PokemonAttack1Page1 },
+	{ "CheckPrintDoublePoisoned", adapt_CheckPrintDoublePoisoned },
 	{ NULL, NULL },
 };

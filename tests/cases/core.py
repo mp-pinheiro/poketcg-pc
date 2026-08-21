@@ -1445,6 +1445,17 @@ CASES["CardPageSwitch_PokemonAttack1Page1"] = [
 ]
 # <<< factory CardPageSwitch_PokemonAttack1Page1
 
+# >>> factory CheckPrintDoublePoisoned
+CONTRACT["CheckPrintDoublePoisoned"] = {"compare": ("a",), "preserve": ()}
+CASES["CheckPrintDoublePoisoned"] = [
+    {"a": 0x00, "b": 0x01, "c": 0x02, "read": {0x9841: 1}},
+    {"a": 0x40, "b": 0x02, "c": 0x03, "read": {0x9862: 1}},
+    {"a": 0x80, "b": 0x03, "c": 0x04, "read": {0x9883: 1}},
+    {"a": 0xC0, "b": 0x04, "c": 0x05, "read": {0x98A4: 1}},
+    dict(POISON),
+]
+# <<< factory CheckPrintDoublePoisoned
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2302,3 +2313,6 @@ MUTATIONS["HasAlivePokemonInPlayArea"] = {
 # >>> factory-mutation CardPageSwitch_PokemonAttack1Page1
 MUTATIONS["CardPageSwitch_PokemonAttack1Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack1Page1", "before": "\tuint16_t hl = wLoadedCard1Atk1Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack1Page1-0", "CardPageSwitch_PokemonAttack1Page1-1", "CardPageSwitch_PokemonAttack1Page1-2", "CardPageSwitch_PokemonAttack1Page1-3", "CardPageSwitch_PokemonAttack1Page1-4"]}
 # <<< factory-mutation CardPageSwitch_PokemonAttack1Page1
+# >>> factory-mutation CheckPrintDoublePoisoned
+MUTATIONS["CheckPrintDoublePoisoned"] = {"source_symbol": "CheckPrintDoublePoisoned", "before": "printed_status = POISONED;", "after": "printed_status = 0u;", "case_ids": ["CheckPrintDoublePoisoned-1", "CheckPrintDoublePoisoned-3"]}
+# <<< factory-mutation CheckPrintDoublePoisoned

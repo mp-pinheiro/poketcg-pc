@@ -574,3 +574,13 @@ void ClearEvents(void)
 	}
 }
 /* <<< factory ClearEvents */
+
+/* >>> factory ScriptCommand_Jump */
+ScriptCommand_JumpResult ScriptCommand_Jump(void)
+{
+	GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
+	uint16_t target = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	uint16_t hl = SetScriptPointer(target);
+	return (ScriptCommand_JumpResult){args.a, args.f, args.b, args.c, hl};
+}
+/* <<< factory ScriptCommand_Jump */

@@ -393,6 +393,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "home/menus.h"
+
+#include "home/core.h"
+#define DOUBLE_POISONED 0xC0u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2673,3 +2676,15 @@ CardPageExistsResult CardPageSwitch_PokemonAttack1Page1(void)
 	return CheckCardPageExists(&hl);
 }
 /* <<< factory CardPageSwitch_PokemonAttack1Page1 */
+
+/* >>> factory CheckPrintDoublePoisoned */
+uint8_t CheckPrintDoublePoisoned(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint8_t status = a;
+	uint8_t printed_status = 0u;
+	if ((status & (DOUBLE_POISONED & (POISONED ^ 0xFFu))) != 0u)
+		printed_status = POISONED;
+	(void)CheckPrintPoisoned(printed_status, b, c);
+	return status;
+}
+/* <<< factory CheckPrintDoublePoisoned */

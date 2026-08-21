@@ -422,6 +422,18 @@ static void adapt_ClearEvents(ProbeState *s)
 }
 /* <<< factory ClearEvents */
 
+/* >>> factory ScriptCommand_Jump */
+static void adapt_ScriptCommand_Jump(ProbeState *s)
+{
+	ScriptCommand_JumpResult r = ScriptCommand_Jump();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_Jump */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -465,5 +477,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "MaxOutEventValue", adapt_MaxOutEventValue },
 	{ "ZeroOutEventValue", adapt_ZeroOutEventValue },
 	{ "ClearEvents", adapt_ClearEvents },
+	{ "ScriptCommand_Jump", adapt_ScriptCommand_Jump },
 	{ NULL, NULL },
 };

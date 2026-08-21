@@ -46,4 +46,7 @@ GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void);
 /* >>> factory GenerateEnergyBoosterLightningFire */
 GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void);
 /* <<< factory GenerateEnergyBoosterLightningFire */
+/* >>> factory GenerateEnergyBoosterWaterFighting */
+GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void);
+/* <<< factory GenerateEnergyBoosterWaterFighting */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

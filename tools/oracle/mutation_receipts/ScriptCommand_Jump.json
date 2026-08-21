@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_Jump",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_Jump\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50431\": \"0000\", \"54291\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_Jump\", \"mismatches\": {\"bus\": {\"address\": 54291, \"reference\": \"00000000\", \"native\": \"00000100\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50431, 2], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_Jump\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50431\": \"0000\", \"54291\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

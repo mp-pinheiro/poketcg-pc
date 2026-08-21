@@ -496,6 +496,16 @@ CASES["ClearEvents"] = [
 ]
 # <<< factory ClearEvents
 
+# >>> factory ScriptCommand_Jump
+CONTRACT["ScriptCommand_Jump"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_Jump"] = [
+    {"wram": {wScriptPointer: b"\x00\xC5", 0xC501: b"\x34\x12"}, "read": {wScriptPointer: 2}},
+    {"wram": {wScriptPointer: b"\xFE\xC4", 0xC4FF: b"\x00\x00"}, "read": {wScriptPointer: 2}},
+    dict(POISON, wram={wScriptPointer: b"\x00\xC5", 0xC501: b"\xCC\xBB"}, read={wScriptPointer: 2}),
+    {"a": 0xFF, "f": 0x40, "wram": {wScriptPointer: b"\x10\xC5", 0xC511: b"\x00\x80"}, "read": {wScriptPointer: 2}},
+]
+# <<< factory ScriptCommand_Jump
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -794,3 +804,11 @@ MUTATIONS["ClearEvents"] = {
     "case_ids": ["ClearEvents-0", "ClearEvents-1", "ClearEvents-2"],
 }
 # <<< factory-mutation ClearEvents
+# >>> factory-mutation ScriptCommand_Jump
+MUTATIONS["ScriptCommand_Jump"] = {
+    "source_symbol": "ScriptCommand_Jump",
+    "before": "\tuint16_t target = (uint16_t)(((uint16_t)args.b << 8) | args.c);",
+    "after": "\tuint16_t target = (uint16_t)((((uint16_t)args.b << 8) | args.c) + 1u);",
+    "case_ids": ["ScriptCommand_Jump-1", "ScriptCommand_Jump-2", "ScriptCommand_Jump-3"],
+}
+# <<< factory-mutation ScriptCommand_Jump

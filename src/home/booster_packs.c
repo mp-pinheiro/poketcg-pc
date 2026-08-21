@@ -58,6 +58,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/random.h"
 
 #define NUM_COLORED_TYPES 0x06u
+
+#include "home/booster_packs.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -209,3 +211,10 @@ GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterLightningFire(void)
 	return GenerateTwoTypesEnergyBooster(0x63C9u);
 }
 /* <<< factory GenerateEnergyBoosterLightningFire */
+
+/* >>> factory GenerateEnergyBoosterWaterFighting */
+GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterWaterFighting(void)
+{
+	return GenerateTwoTypesEnergyBooster(0x63CBu);
+}
+/* <<< factory GenerateEnergyBoosterWaterFighting */

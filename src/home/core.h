@@ -537,4 +537,7 @@ HasAlivePokemonInPlayAreaResult HasAlivePokemonInPlayArea(void);
 /* >>> factory CardPageSwitch_PokemonAttack1Page1 */
 CardPageExistsResult CardPageSwitch_PokemonAttack1Page1(void);
 /* <<< factory CardPageSwitch_PokemonAttack1Page1 */
+/* >>> factory CheckPrintDoublePoisoned */
+uint8_t CheckPrintDoublePoisoned(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory CheckPrintDoublePoisoned */
 #endif
