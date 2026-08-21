@@ -32,4 +32,7 @@ uint16_t GetSelectedSavedDeckPtr(void);
 /* >>> factory SafelySwitchToSRAM0 */
 void SafelySwitchToSRAM0(void);
 /* <<< factory SafelySwitchToSRAM0 */
+/* >>> factory DrawListScrollArrows */
+void DrawListScrollArrows(void);
+/* <<< factory DrawListScrollArrows */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

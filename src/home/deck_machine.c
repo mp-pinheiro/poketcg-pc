@@ -21,6 +21,16 @@
 
 #define DECK_STRUCT_SIZE            0x54u
 #define NUM_DECK_SAVE_MACHINE_SLOTS 0x3cu
+
+#include "generated/wram.h"
+#include "home/bg_map.h"
+
+#define FALSE 0x00u
+#define NUM_DECK_MACHINE_VISIBLE_DECKS 0x05u
+#define TRUE 0x01u
+#define SYM_CURSOR_U 0x0Cu
+#define SYM_BOX_RIGHT 0x1Fu
+#define SYM_CURSOR_D 0x2Fu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -148,3 +158,25 @@ void SafelySwitchToSRAM0(void)
 	}
 }
 /* <<< factory SafelySwitchToSRAM0 */
+
+/* >>> factory DrawListScrollArrows */
+void DrawListScrollArrows(void)
+{
+	uint8_t tile;
+	if (wCardListVisibleOffset != 0u)
+		tile = SYM_CURSOR_U;
+	else
+		tile = SYM_BOX_RIGHT;
+	WriteByteToBGMap0(tile, 19u, 1u);
+
+	uint8_t threshold = (uint8_t)(wCardListVisibleOffset + NUM_DECK_MACHINE_VISIBLE_DECKS + 1u);
+	if (wNumDeckMachineEntries < threshold) {
+		wUnableToScrollDown = TRUE;
+		tile = SYM_BOX_RIGHT;
+	} else {
+		wUnableToScrollDown = FALSE;
+		tile = SYM_CURSOR_D;
+	}
+	WriteByteToBGMap0(tile, 19u, 11u);
+}
+/* <<< factory DrawListScrollArrows */

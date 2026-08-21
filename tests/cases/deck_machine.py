@@ -106,6 +106,32 @@ CASES["SafelySwitchToSRAM0"] = [
 ]
 # <<< factory SafelySwitchToSRAM0
 
+# >>> factory-cases-statics
+wCardListVisibleOffset = 0xCEA1
+wNumDeckMachineEntries = 0xD0A5
+wUnableToScrollDown = 0xCECD
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory DrawListScrollArrows
+CONTRACT["DrawListScrollArrows"] = {"compare": (), "preserve": ()}
+CASES["DrawListScrollArrows"] = [
+    {"wram": {wCardListVisibleOffset: b"\x00", wNumDeckMachineEntries: b"\x00", wUnableToScrollDown: b"\xAA"},
+     "read": {wCardListVisibleOffset: 1, wNumDeckMachineEntries: 1, wUnableToScrollDown: 1},
+     "vread": {0: {0x9833: 1, 0x9953: 1}}},
+    dict(POISON, wram={wCardListVisibleOffset: b"\x01", wNumDeckMachineEntries: b"\x07", wUnableToScrollDown: b"\xAA"},
+         read={wCardListVisibleOffset: 1, wNumDeckMachineEntries: 1, wUnableToScrollDown: 1},
+         vread={0: {0x9833: 1, 0x9953: 1}}),
+    {"wram": {wCardListVisibleOffset: b"\x05", wNumDeckMachineEntries: b"\x0A", wUnableToScrollDown: b"\x00"},
+     "read": {wCardListVisibleOffset: 1, wNumDeckMachineEntries: 1, wUnableToScrollDown: 1},
+     "vread": {0: {0x9833: 1, 0x9953: 1}}},
+    {"wram": {wCardListVisibleOffset: b"\xFA", wNumDeckMachineEntries: b"\x00", wUnableToScrollDown: b"\xFF"},
+     "read": {wCardListVisibleOffset: 1, wNumDeckMachineEntries: 1, wUnableToScrollDown: 1},
+     "vread": {0: {0x9833: 1, 0x9953: 1}}},
+]
+# <<< factory DrawListScrollArrows
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -139,3 +165,11 @@ MUTATIONS["GetSelectedSavedDeckPtr"] = {"source_symbol": "GetSelectedSavedDeckPt
 # >>> factory-mutation SafelySwitchToSRAM0
 MUTATIONS["SafelySwitchToSRAM0"] = {"source_symbol": "SafelySwitchToSRAM0", "before": "if (bank != 0u)", "after": "if (bank == 0u)", "case_ids": ["SafelySwitchToSRAM0-1", "SafelySwitchToSRAM0-2", "SafelySwitchToSRAM0-3"]}
 # <<< factory-mutation SafelySwitchToSRAM0
+# >>> factory-mutation DrawListScrollArrows
+MUTATIONS["DrawListScrollArrows"] = {
+    "source_symbol": "DrawListScrollArrows",
+    "before": "WriteByteToBGMap0(tile, 19u, 1u);",
+    "after": "WriteByteToBGMap0(tile, 19u, 11u);",
+    "case_ids": ["DrawListScrollArrows-0", "DrawListScrollArrows-1", "DrawListScrollArrows-2", "DrawListScrollArrows-3"],
+}
+# <<< factory-mutation DrawListScrollArrows

@@ -1,0 +1,9 @@
+{
+  "fn": "DrawListScrollArrows",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawListScrollArrows\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38963\": \"1f\", \"39251\": \"00\"}}, \"wram\": {\"52897\": \"00\", \"52941\": \"01\", \"53413\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawListScrollArrows\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawListScrollArrows\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38963\": \"1f\", \"39251\": \"00\"}}, \"wram\": {\"52897\": \"00\", \"52941\": \"01\", \"53413\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

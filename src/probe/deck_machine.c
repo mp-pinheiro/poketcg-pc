@@ -70,6 +70,14 @@ static void adapt_SafelySwitchToSRAM0(ProbeState *s)
 }
 /* <<< factory SafelySwitchToSRAM0 */
 
+/* >>> factory DrawListScrollArrows */
+static void adapt_DrawListScrollArrows(ProbeState *s)
+{
+	DrawListScrollArrows();
+	(void)s;
+}
+/* <<< factory DrawListScrollArrows */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -79,5 +87,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "GetSavedDeckCount", adapt_GetSavedDeckCount },
 	{ "GetSelectedSavedDeckPtr", adapt_GetSelectedSavedDeckPtr },
 	{ "SafelySwitchToSRAM0", adapt_SafelySwitchToSRAM0 },
+	{ "DrawListScrollArrows", adapt_DrawListScrollArrows },
 	{ NULL, NULL },
 };
