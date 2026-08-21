@@ -1300,3 +1300,10 @@ uint8_t _AssertSongFinished(void)
 	return Music1_AssertSongFinished();
 }
 /* <<< factory _AssertSongFinished */
+
+/* >>> factory _PlaySFX */
+void _PlaySFX(uint8_t a)
+{
+	Music1_PlaySFX(a);
+}
+/* <<< factory _PlaySFX */

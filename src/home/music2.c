@@ -1280,3 +1280,10 @@ uint8_t _AssertSongFinished_2(void)
 	return Music2_AssertSongFinished();
 }
 /* <<< factory _AssertSongFinished_2 */
+
+/* >>> factory _PauseSong_2 */
+void _PauseSong_2(void)
+{
+	Music2_PauseSong();
+}
+/* <<< factory _PauseSong_2 */

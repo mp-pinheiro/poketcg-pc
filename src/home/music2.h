@@ -97,4 +97,9 @@ uint8_t _AssertSFXFinished_2(void);
 /* >>> factory _AssertSongFinished_2 */
 uint8_t _AssertSongFinished_2(void);
 /* <<< factory _AssertSongFinished_2 */
+/* >>> factory _PauseSong_2 */
+void _PauseSong_2(void);
+void Music2_PauseSong(void);
+void Music2_ResumeSong(void);
+/* <<< factory _PauseSong_2 */
 #endif /* POKETCG_MUSIC2_H */

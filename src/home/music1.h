@@ -105,4 +105,8 @@ uint8_t Music1_AssertSFXFinished(void);
 uint8_t _AssertSongFinished(void);
 uint8_t Music1_AssertSongFinished(void);
 /* <<< factory _AssertSongFinished */
+/* >>> factory _PlaySFX */
+void _PlaySFX(uint8_t a);
+void Music1_PlaySFX(uint8_t a);
+/* <<< factory _PlaySFX */
 #endif /* POKETCG_MUSIC1_H */

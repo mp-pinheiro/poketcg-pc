@@ -593,6 +593,16 @@ CASES["_AssertSongFinished_2"] = [
 ]
 # <<< factory _AssertSongFinished_2
 
+# >>> factory _PauseSong_2
+CONTRACT["_PauseSong_2"] = {"compare": (), "preserve": ()}
+CASES["_PauseSong_2"] = [
+    {"wram": {0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x00",
+              0xDD8D: b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={0xDD80: b"\x80", 0xDD81: b"\x3D", 0xDD8C: b"\x0F",
+                       0xDD8D: b"\x01\x01\x01\x01"}),
+]
+# <<< factory _PauseSong_2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -616,3 +626,6 @@ MUTATIONS["_AssertSFXFinished_2"] = {"source_symbol": "_AssertSFXFinished_2", "b
 # >>> factory-mutation _AssertSongFinished_2
 MUTATIONS["_AssertSongFinished_2"] = {"source_symbol": "_AssertSongFinished_2", "before": "return Music2_AssertSongFinished();", "after": "return (uint8_t)(Music2_AssertSongFinished() ^ 0x01u);", "case_ids": ["_AssertSongFinished_2-0", "_AssertSongFinished_2-1", "_AssertSongFinished_2-2"]}
 # <<< factory-mutation _AssertSongFinished_2
+# >>> factory-mutation _PauseSong_2
+MUTATIONS["_PauseSong_2"] = {"source_symbol": "_PauseSong_2", "before": "Music2_PauseSong();", "after": "Music2_ResumeSong();", "case_ids": ["_PauseSong_2-0", "_PauseSong_2-1"]}
+# <<< factory-mutation _PauseSong_2
