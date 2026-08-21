@@ -519,3 +519,13 @@ void Func_c3ff(void)
 	SetScreenScroll();
 }
 /* <<< factory Func_c3ff */
+
+/* >>> factory Func_c49c */
+void Func_c49c(void)
+{
+	wPlayerXCoord = (uint8_t)(wPlayerXCoord & 0x1Fu);
+	wPlayerXCoordPixels = (uint8_t)((wPlayerXCoord << 3) | (wPlayerXCoord >> 5));
+	wPlayerYCoord = (uint8_t)(wPlayerYCoord & 0x1Fu);
+	wPlayerYCoordPixels = (uint8_t)((wPlayerYCoord << 3) | (wPlayerYCoord >> 5));
+}
+/* <<< factory Func_c49c */

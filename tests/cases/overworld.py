@@ -248,6 +248,11 @@ wCurMap = 0xD32F
 
 hSCX = 0xFF92
 hSCY = 0xFF93
+
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wPlayerXCoordPixels = 0xD332
+wPlayerYCoordPixels = 0xD333
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -411,6 +416,17 @@ CASES["Func_c3ff"] = [
 ]
 # <<< factory Func_c3ff
 
+# >>> factory Func_c49c
+CONTRACT["Func_c49c"] = {"compare": (), "preserve": ()}
+CASES["Func_c49c"] = [
+	{"wram": {wPlayerXCoord: b"\x00", wPlayerYCoord: b"\x00"}, "read": {wPlayerXCoord: 1, wPlayerYCoord: 1, wPlayerXCoordPixels: 1, wPlayerYCoordPixels: 1}},
+	{"wram": {wPlayerXCoord: b"\x1f", wPlayerYCoord: b"\x1f"}, "read": {wPlayerXCoord: 1, wPlayerYCoord: 1, wPlayerXCoordPixels: 1, wPlayerYCoordPixels: 1}},
+	{"wram": {wPlayerXCoord: b"\x20", wPlayerYCoord: b"\xe0"}, "read": {wPlayerXCoord: 1, wPlayerYCoord: 1, wPlayerXCoordPixels: 1, wPlayerYCoordPixels: 1}},
+	{"wram": {wPlayerXCoord: b"\xa5", wPlayerYCoord: b"\xe7"}, "read": {wPlayerXCoord: 1, wPlayerYCoord: 1, wPlayerXCoordPixels: 1, wPlayerYCoordPixels: 1}},
+	dict(POISON, wram={wPlayerXCoord: b"\x3f", wPlayerYCoord: b"\x7f"}, read={wPlayerXCoord: 1, wPlayerYCoord: 1, wPlayerXCoordPixels: 1, wPlayerYCoordPixels: 1}),
+]
+# <<< factory Func_c49c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -568,3 +584,11 @@ MUTATIONS["Func_c3ff"] = {
 	"case_ids": ["Func_c3ff-0", "Func_c3ff-1", "Func_c3ff-2", "Func_c3ff-3"],
 }
 # <<< factory-mutation Func_c3ff
+# >>> factory-mutation Func_c49c
+MUTATIONS["Func_c49c"] = {
+	"source_symbol": "Func_c49c",
+	"before": "\twPlayerXCoord = (uint8_t)(wPlayerXCoord & 0x1Fu);",
+	"after": "\twPlayerXCoord = (uint8_t)(wPlayerXCoord | 0xE0u);",
+	"case_ids": ["Func_c49c-0", "Func_c49c-1", "Func_c49c-2", "Func_c49c-3", "Func_c49c-4"],
+}
+# <<< factory-mutation Func_c49c

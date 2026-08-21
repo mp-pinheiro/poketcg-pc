@@ -126,4 +126,7 @@ void RestoreObjectPalettes(void);
 /* >>> factory Func_c3ff */
 void Func_c3ff(void);
 /* <<< factory Func_c3ff */
+/* >>> factory Func_c49c */
+void Func_c49c(void);
+/* <<< factory Func_c49c */
 #endif /* POKETCG_HOME_OVERWORLD_H */
