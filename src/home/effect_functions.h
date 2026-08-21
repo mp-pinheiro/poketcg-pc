@@ -943,6 +943,9 @@ void Ember_AISelectEffect(void);
 void AIPickFireEnergyCardToDiscard(void);
 void FlareonFlamethrower_AISelectEffect(void);
 /* <<< factory FlareonFlamethrower_AISelectEffect */
+/* >>> factory DestinyBond_DestinyBondEffect */
+uint16_t DestinyBond_DestinyBondEffect(void);
+/* <<< factory DestinyBond_DestinyBondEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

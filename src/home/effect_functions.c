@@ -254,6 +254,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#define SUBSTATUS1_DESTINY_BOND 0x16u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3897,3 +3899,10 @@ void FlareonFlamethrower_AISelectEffect(void)
 	AIPickFireEnergyCardToDiscard();
 }
 /* <<< factory FlareonFlamethrower_AISelectEffect */
+
+/* >>> factory DestinyBond_DestinyBondEffect */
+uint16_t DestinyBond_DestinyBondEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_DESTINY_BOND);
+}
+/* <<< factory DestinyBond_DestinyBondEffect */

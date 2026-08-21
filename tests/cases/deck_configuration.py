@@ -132,6 +132,13 @@ CASES["CopyNBytesFromHLToDE"] = [
 
 # >>> factory-cases-statics
 wTempCardCollection = 0xC000
+
+sCardCollection = 0xA100
+sDeck1Cards = 0xA218
+sDeck2Cards = 0xA26C
+sDeck3Cards = 0xA2C0
+sDeck4Cards = 0xA314
+wTempCardCollection = 0xC000
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -142,6 +149,16 @@ CASES["IncrementDeckCardsInTempCollection"] = [
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xDDEE: b"\xBB" * 60}, "read": {0xC0BB: 60}},
 ]
 # <<< factory IncrementDeckCardsInTempCollection
+
+# >>> factory CreateCardCollectionListWithDeckCards
+CONTRACT["CreateCardCollectionListWithDeckCards"] = {"compare": (), "preserve": ()}
+CASES["CreateCardCollectionListWithDeckCards"] = [
+    {"a": 0x00, "sram": {0: {sCardCollection: b"\x00" * 255}}, "read": {wTempCardCollection: 255}},
+    {"a": 0x05, "sram": {0: {sCardCollection + 1: b"\x05\x06", sDeck1Cards: b"\x01\x02\x00", sDeck3Cards: b"\x02\x01\x00"}}, "read": {wTempCardCollection + 1: 6, wTempCardCollection + 2: 8}},
+    {"a": 0x0A, "sram": {0: {sDeck2Cards: b"\x01\x00", sDeck4Cards: b"\x01\x00"}}, "read": {wTempCardCollection + 1: 2}},
+    dict({"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, sram={0: {sDeck2Cards: b"\x01\x00", sDeck4Cards: b"\x01\x00"}}, read={wTempCardCollection + 1: 2}),
+]
+# <<< factory CreateCardCollectionListWithDeckCards
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -213,3 +230,6 @@ MUTATIONS["CopyNBytesFromHLToDE"] = {"source_symbol": "CopyNBytesFromHLToDE", "b
 # >>> factory-mutation IncrementDeckCardsInTempCollection
 MUTATIONS["IncrementDeckCardsInTempCollection"] = {"source_symbol": "IncrementDeckCardsInTempCollection", "before": "uint16_t slot = (uint16_t)(bc + card);", "after": "uint16_t slot = (uint16_t)(bc + (uint8_t)(card + 1u));", "case_ids": ["IncrementDeckCardsInTempCollection-0", "IncrementDeckCardsInTempCollection-1", "IncrementDeckCardsInTempCollection-2"]}
 # <<< factory-mutation IncrementDeckCardsInTempCollection
+# >>> factory-mutation CreateCardCollectionListWithDeckCards
+MUTATIONS["CreateCardCollectionListWithDeckCards"] = {"source_symbol": "CreateCardCollectionListWithDeckCards", "before": "IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);", "after": "IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);", "case_ids": ["CreateCardCollectionListWithDeckCards-1"]}
+# <<< factory-mutation CreateCardCollectionListWithDeckCards

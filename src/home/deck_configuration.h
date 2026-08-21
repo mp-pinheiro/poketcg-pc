@@ -39,4 +39,7 @@ void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b);
 /* >>> factory IncrementDeckCardsInTempCollection */
 void IncrementDeckCardsInTempCollection(uint16_t de);
 /* <<< factory IncrementDeckCardsInTempCollection */
+/* >>> factory CreateCardCollectionListWithDeckCards */
+void CreateCardCollectionListWithDeckCards(uint8_t a);
+/* <<< factory CreateCardCollectionListWithDeckCards */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

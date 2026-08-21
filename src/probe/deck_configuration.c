@@ -108,6 +108,13 @@ static void adapt_IncrementDeckCardsInTempCollection(ProbeState *s)
 }
 /* <<< factory IncrementDeckCardsInTempCollection */
 
+/* >>> factory CreateCardCollectionListWithDeckCards */
+static void adapt_CreateCardCollectionListWithDeckCards(ProbeState *s)
+{
+	CreateCardCollectionListWithDeckCards(s->a);
+}
+/* <<< factory CreateCardCollectionListWithDeckCards */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -121,5 +128,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CountNumberOfCardsOfType", adapt_CountNumberOfCardsOfType },
 	{ "CopyNBytesFromHLToDE", adapt_CopyNBytesFromHLToDE },
 	{ "IncrementDeckCardsInTempCollection", adapt_IncrementDeckCardsInTempCollection },
+	{ "CreateCardCollectionListWithDeckCards", adapt_CreateCardCollectionListWithDeckCards },
 	{ NULL, NULL },
 };

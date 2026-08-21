@@ -2244,6 +2244,13 @@ static void adapt_FlareonFlamethrower_AISelectEffect(ProbeState *s)
 }
 /* <<< factory FlareonFlamethrower_AISelectEffect */
 
+/* >>> factory DestinyBond_DestinyBondEffect */
+static void adapt_DestinyBond_DestinyBondEffect(ProbeState *s)
+{
+	s->hl = DestinyBond_DestinyBondEffect();
+}
+/* <<< factory DestinyBond_DestinyBondEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2522,5 +2529,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ClefableMetronome_AISelectEffect", adapt_ClefableMetronome_AISelectEffect },
 	{ "Ember_AISelectEffect", adapt_Ember_AISelectEffect },
 	{ "FlareonFlamethrower_AISelectEffect", adapt_FlareonFlamethrower_AISelectEffect },
+	{ "DestinyBond_DestinyBondEffect", adapt_DestinyBond_DestinyBondEffect },
 	{ NULL, NULL },
 };

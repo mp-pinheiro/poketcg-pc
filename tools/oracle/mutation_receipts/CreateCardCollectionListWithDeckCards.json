@@ -1,0 +1,9 @@
+{
+  "fn": "CreateCardCollectionListWithDeckCards",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateCardCollectionListWithDeckCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41217\": \"0506\", \"41496\": \"010200\", \"41664\": \"020100\"}}, \"vram\": {}, \"wram\": {\"49153\": \"070800000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateCardCollectionListWithDeckCards\", \"mismatches\": {\"bus\": {\"address\": 49153, \"reference\": \"0708000000\", \"native\": \"0607000000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49153, 9]]}}}\n",
+  "restored": "{\"fn\": \"CreateCardCollectionListWithDeckCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41217\": \"0506\", \"41496\": \"010200\", \"41664\": \"020100\"}}, \"vram\": {}, \"wram\": {\"49153\": \"070800000000000000\"}}, \"status\": \"PASS\"}\n"
+}

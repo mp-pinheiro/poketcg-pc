@@ -25,6 +25,18 @@
 
 #include "generated/wram.h"
 #include "home/switch_sram.h"
+
+#include "generated/hram.h"
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/switch_sram.h"
+
+#define CARD_COLLECTION_SIZE 0x100u
+#define DECK_1_F 0x00u
+#define DECK_2_F 0x01u
+#define DECK_3_F 0x02u
+#define DECK_4_F 0x03u
 /* <<< factory statics */
 
 
@@ -238,3 +250,28 @@ void IncrementDeckCardsInTempCollection(uint16_t de)
 	DisableSRAM();
 }
 /* <<< factory IncrementDeckCardsInTempCollection */
+
+/* >>> factory CreateCardCollectionListWithDeckCards */
+void CreateCardCollectionListWithDeckCards(uint8_t a)
+{
+	gb_write8(hffb5_ADDR, a);
+	uint16_t hl = sCardCollection_ADDR;
+	uint16_t de = wTempCardCollection_ADDR;
+	EnableSRAM();
+	CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+	DisableSRAM();
+	uint8_t flags = gb_read8(hffb5_ADDR);
+	if ((flags & (uint8_t)(1u << DECK_1_F)) != 0u) {
+		IncrementDeckCardsInTempCollection(sDeck1Cards_ADDR);
+	}
+	if ((flags & (uint8_t)(1u << DECK_2_F)) != 0u) {
+		IncrementDeckCardsInTempCollection(sDeck2Cards_ADDR);
+	}
+	if ((flags & (uint8_t)(1u << DECK_3_F)) != 0u) {
+		IncrementDeckCardsInTempCollection(sDeck3Cards_ADDR);
+	}
+	if ((flags & (uint8_t)(1u << DECK_4_F)) != 0u) {
+		IncrementDeckCardsInTempCollection(sDeck4Cards_ADDR);
+	}
+}
+/* <<< factory CreateCardCollectionListWithDeckCards */
