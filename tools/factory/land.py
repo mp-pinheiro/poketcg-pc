@@ -298,33 +298,17 @@ def _land_batch(
     progress_completed = subprocess.run(
         progress_command, cwd=root, text=True, capture_output=True, timeout=PROGRESS_TIMEOUT_S, check=False,
     )
-    if progress_completed.returncode != 0:
-        raise LandError(
-            f"progress command failed after a passing gate: "
-            f"{(progress_completed.stdout + progress_completed.stderr)[-2000:]}"
+    if progress_completed.returncode == 0:
+        _run(["jj", "commit", "-m", "chore(progress): refresh port status"], root, 120)
+        publication_revision = _revision(root, "@-")
+    else:
+        publication_revision = source_revision
+        print(
+            "LAND progress-failed batch: "
+            f"{(progress_completed.stdout + progress_completed.stderr)[-1000:].strip()}; "
+            "gate passed and the landing is recorded; rerun the progress command, "
+            "then commit and push manually"
         )
-    _run(["jj", "commit", "-m", "chore(progress): refresh port status"], root, 120)
-    publication_revision = _revision(root, "@-")
-
-    if push:
-        try:
-            _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
-            remote_revision = _revision(root, "main@origin")
-            if remote_revision != publication_revision:
-                _run(["jj", "bookmark", "set", "main", "-r", publication_revision], root, 120)
-                _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
-                remote_revision = _revision(root, "main@origin")
-            if remote_revision != publication_revision:
-                print(
-                    f"LAND push-incomplete batch remote={remote_revision[:12]} "
-                    f"publication={publication_revision[:12]}; run "
-                    "'jj git push --remote origin --bookmark main' to finish publishing"
-                )
-        except LandError as exc:
-            print(
-                f"LAND push-failed batch: {exc}; run "
-                "'jj git push --remote origin --bookmark main' to publish later"
-            )
 
     landed_at = _now_iso()
     batch_id = hashlib.sha256(json.dumps(sorted(artifacts), separators=(",", ":")).encode()).hexdigest()
@@ -343,6 +327,26 @@ def _land_batch(
         }
         _append_jsonl(root / ".factory" / LANDINGS_NAME, record)
         landed_records.append(record)
+
+    if push:
+        try:
+            _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
+            remote_revision = _revision(root, "main@origin")
+            if remote_revision != publication_revision:
+                _run(["jj", "bookmark", "set", "main", "-r", publication_revision], root, 120)
+                _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
+                remote_revision = _revision(root, "main@origin")
+            if remote_revision != publication_revision:
+                print(
+                    f"LAND push-incomplete batch remote={remote_revision[:12]} "
+                    f"publication={publication_revision[:12]}; run "
+                    "'jj git push --remote origin --bookmark main' to finish publishing"
+                )
+        except (LandError, subprocess.TimeoutExpired) as exc:
+            print(
+                f"LAND push-failed batch: {exc}; run "
+                "'jj git push --remote origin --bookmark main' to publish later"
+            )
 
     counter[0] += 1
     print(
