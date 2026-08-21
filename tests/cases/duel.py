@@ -1050,6 +1050,24 @@ CASES["GetDuelInitialPrizesUpperBitsSet"] = [
 ]
 # <<< factory GetDuelInitialPrizesUpperBitsSet
 
+# >>> factory DrawYourOrOppPlayArea_DrawArrows
+CONTRACT["DrawYourOrOppPlayArea_DrawArrows"] = {"compare": (), "preserve": ()}
+CASES["DrawYourOrOppPlayArea_DrawArrows"] = [
+    {"a": 0, "b": 0x5A,
+     "vread": {0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
+                    0x994C: 1, 0x9950: 1}}},
+    {"a": 1, "b": 0x31, "vread": {0: {0x98DE: 1}}},
+    {"a": 2, "b": 0x32, "vread": {0: {0x98BE: 1}}},
+    {"a": 3, "b": 0x33,
+     "vread": {0: {0x98E5: 1, 0x9860: 1, 0x9864: 1, 0x9868: 1,
+                    0x986C: 1, 0x9870: 1}}},
+    {"a": 4, "b": 0x34, "vread": {0: {0x98A0: 1}}},
+    {"a": 5, "b": 0x35, "vread": {0: {0x9900: 1}}},
+    dict(POISON, a=0, vread={0: {0x98A5: 1, 0x9940: 1, 0x9944: 1, 0x9948: 1,
+                                0x994C: 1, 0x9950: 1}}),
+]
+# <<< factory DrawYourOrOppPlayArea_DrawArrows
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1149,3 +1167,12 @@ MUTATIONS["Func_8bf2"] = {
 # >>> factory-mutation GetDuelInitialPrizesUpperBitsSet
 MUTATIONS["GetDuelInitialPrizesUpperBitsSet"] = {"source_symbol": "GetDuelInitialPrizesUpperBitsSet", "before": "\ta = (uint8_t)(b | 0xC0u);", "after": "\ta = (uint8_t)(b | 0x80u);", "case_ids": ["GetDuelInitialPrizesUpperBitsSet-0", "GetDuelInitialPrizesUpperBitsSet-1", "GetDuelInitialPrizesUpperBitsSet-2", "GetDuelInitialPrizesUpperBitsSet-3"]}
 # <<< factory-mutation GetDuelInitialPrizesUpperBitsSet
+# >>> factory-mutation DrawYourOrOppPlayArea_DrawArrows
+MUTATIONS["DrawYourOrOppPlayArea_DrawArrows"] = {
+    "source_symbol": "DrawYourOrOppPlayArea_DrawArrows",
+    "before": "WriteByteToBGMap0(tile, 5u, 5u);",
+    "after": "WriteByteToBGMap0(tile, 6u, 5u);",
+    "case_ids": ["DrawYourOrOppPlayArea_DrawArrows-0",
+                 "DrawYourOrOppPlayArea_DrawArrows-6"],
+}
+# <<< factory-mutation DrawYourOrOppPlayArea_DrawArrows

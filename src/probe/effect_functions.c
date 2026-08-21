@@ -2167,6 +2167,14 @@ static void adapt_AIPickAttackForAmnesia(ProbeState *s)
 }
 /* <<< factory AIPickAttackForAmnesia */
 
+/* >>> factory MirrorMove_AISelection */
+static void adapt_MirrorMove_AISelection(ProbeState *s)
+{
+	(void)s;
+	MirrorMove_AISelection();
+}
+/* <<< factory MirrorMove_AISelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2435,5 +2443,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DreamEaterEffect", adapt_DreamEaterEffect },
 	{ "Barrier_DiscardEffect", adapt_Barrier_DiscardEffect },
 	{ "AIPickAttackForAmnesia", adapt_AIPickAttackForAmnesia },
+	{ "MirrorMove_AISelection", adapt_MirrorMove_AISelection },
 	{ NULL, NULL },
 };

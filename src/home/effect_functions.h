@@ -904,6 +904,9 @@ void HypnoDarkMind_AISelectEffect(void);
 /* >>> factory AIPickAttackForAmnesia */
 uint8_t AIPickAttackForAmnesia(void);
 /* <<< factory AIPickAttackForAmnesia */
+/* >>> factory MirrorMove_AISelection */
+void MirrorMove_AISelection(void);
+/* <<< factory MirrorMove_AISelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

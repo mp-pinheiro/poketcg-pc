@@ -571,4 +571,7 @@ PrizeTileResult Func_8bf2(uint8_t f, uint8_t d, uint8_t e, uint16_t hl);
 /* >>> factory GetDuelInitialPrizesUpperBitsSet */
 void GetDuelInitialPrizesUpperBitsSet(void);
 /* <<< factory GetDuelInitialPrizesUpperBitsSet */
+/* >>> factory DrawYourOrOppPlayArea_DrawArrows */
+void DrawYourOrOppPlayArea_DrawArrows(uint8_t a, uint8_t b);
+/* <<< factory DrawYourOrOppPlayArea_DrawArrows */
 #endif

@@ -240,6 +240,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 #define FIRST_ATTACK_OR_PKMN_POWER 0x00u
 #define SECOND_ATTACK 0x01u
+
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define LAST_TURN_EFFECT_AMNESIA 0x02u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3787,3 +3792,23 @@ chosen:
 	return attack;
 }
 /* <<< factory AIPickAttackForAmnesia */
+
+/* >>> factory MirrorMove_AISelection */
+void MirrorMove_AISelection(void)
+{
+	hTemp_ffa0 = 0xFFu;
+	uint8_t effect = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_EFFECT).a;
+	if (effect == 0u)
+		return;
+	if (effect == LAST_TURN_EFFECT_DISCARD_ENERGY) {
+		AIPickEnergyCardToDiscardResult result =
+			AIPickEnergyCardToDiscardFromDefendingPokemon();
+		hTemp_ffa0 = result.a;
+		return;
+	}
+	if (effect == LAST_TURN_EFFECT_AMNESIA) {
+		hTemp_ffa0 = AIPickAttackForAmnesia();
+	}
+}
+/* <<< factory MirrorMove_AISelection */

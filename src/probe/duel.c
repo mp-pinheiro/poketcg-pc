@@ -679,6 +679,13 @@ static void adapt_GetDuelInitialPrizesUpperBitsSet(ProbeState *s)
 }
 /* <<< factory GetDuelInitialPrizesUpperBitsSet */
 
+/* >>> factory DrawYourOrOppPlayArea_DrawArrows */
+static void adapt_DrawYourOrOppPlayArea_DrawArrows(ProbeState *s)
+{
+	DrawYourOrOppPlayArea_DrawArrows(s->a, s->b);
+}
+/* <<< factory DrawYourOrOppPlayArea_DrawArrows */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -761,5 +768,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "LoadCursorTile", adapt_LoadCursorTile },
 	{ "Func_8bf2", adapt_Func_8bf2 },
 	{ "GetDuelInitialPrizesUpperBitsSet", adapt_GetDuelInitialPrizesUpperBitsSet },
+	{ "DrawYourOrOppPlayArea_DrawArrows", adapt_DrawYourOrOppPlayArea_DrawArrows },
 	{ NULL, NULL },
 };

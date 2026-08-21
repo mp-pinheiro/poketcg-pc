@@ -361,6 +361,8 @@ static const uint8_t kCursorTileData[16] = {
 };
 
 #include "generated/wram.h"
+
+#include "home/bg_map.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1753,3 +1755,42 @@ void GetDuelInitialPrizesUpperBitsSet(void)
 	wDuelInitialPrizesUpperBitsSet = a;
 }
 /* <<< factory GetDuelInitialPrizesUpperBitsSet */
+
+/* >>> factory DrawYourOrOppPlayArea_DrawArrows */
+void DrawYourOrOppPlayArea_DrawArrows(uint8_t a, uint8_t b)
+{
+	uint8_t tile = b;
+	switch (a) {
+	case 0:
+		WriteByteToBGMap0(tile, 5u, 5u);
+		WriteByteToBGMap0(tile, 0u, 10u);
+		WriteByteToBGMap0(tile, 4u, 10u);
+		WriteByteToBGMap0(tile, 8u, 10u);
+		WriteByteToBGMap0(tile, 12u, 10u);
+		WriteByteToBGMap0(tile, 16u, 10u);
+		break;
+	case 1:
+		WriteByteToBGMap0(tile, 14u, 7u);
+		break;
+	case 2:
+		WriteByteToBGMap0(tile, 14u, 5u);
+		break;
+	case 3:
+		WriteByteToBGMap0(tile, 5u, 7u);
+		WriteByteToBGMap0(tile, 0u, 3u);
+		WriteByteToBGMap0(tile, 4u, 3u);
+		WriteByteToBGMap0(tile, 8u, 3u);
+		WriteByteToBGMap0(tile, 12u, 3u);
+		WriteByteToBGMap0(tile, 16u, 3u);
+		break;
+	case 4:
+		WriteByteToBGMap0(tile, 0u, 5u);
+		break;
+	case 5:
+		WriteByteToBGMap0(tile, 0u, 8u);
+		break;
+	default:
+		break;
+	}
+}
+/* <<< factory DrawYourOrOppPlayArea_DrawArrows */

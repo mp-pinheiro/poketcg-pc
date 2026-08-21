@@ -2304,6 +2304,13 @@ wOpponentDeck = 0xC480
 DUELVARS_ARENA_CARD = 0xBB
 SNORLAX = 0xBE
 BULBASAUR = 0x08
+
+hWhoseTurn = 0xFF97
+wOpponentDuelVariables = 0xC300
+wOpponentDeck = 0xC480
+DUELVARS_ARENA_CARD = 0xBB
+BULBASAUR = 0x08
+SNORLAX = 0xBE
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2314,6 +2321,16 @@ CASES["AIPickAttackForAmnesia"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((SNORLAX,))}, read={hWhoseTurn: 1}),
 ]
 # <<< factory AIPickAttackForAmnesia
+
+# >>> factory MirrorMove_AISelection
+CONTRACT["MirrorMove_AISelection"] = {"compare": (), "preserve": ()}
+CASES["MirrorMove_AISelection"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x77"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x03", 0xFFA0: b"\x77"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F8: b"\x01", 0xC0EF: b"\x00", 0xFFA0: b"\x77"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2F8: b"\x02", wOpponentDuelVariables + DUELVARS_ARENA_CARD: b"\x00", wOpponentDeck: bytes((BULBASAUR,)), 0xFFA0: b"\x77"}),
+]
+# <<< factory MirrorMove_AISelection
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -3923,3 +3940,11 @@ MUTATIONS["HypnoDarkMind_AISelectEffect"] = {"source_symbol": "HypnoDarkMind_AIS
 # >>> factory-mutation AIPickAttackForAmnesia
 MUTATIONS["AIPickAttackForAmnesia"] = {"source_symbol": "AIPickAttackForAmnesia", "before": "\t\tif (check.f & 0x10u) {", "after": "\t\tif (!(check.f & 0x10u)) {", "case_ids": ["AIPickAttackForAmnesia-0", "AIPickAttackForAmnesia-1"]}
 # <<< factory-mutation AIPickAttackForAmnesia
+# >>> factory-mutation MirrorMove_AISelection
+MUTATIONS["MirrorMove_AISelection"] = {
+    "source_symbol": "MirrorMove_AISelection",
+    "before": "hTemp_ffa0 = 0xFFu;",
+    "after": "hTemp_ffa0 = 0xFEu;",
+    "case_ids": ["MirrorMove_AISelection-0", "MirrorMove_AISelection-1"],
+}
+# <<< factory-mutation MirrorMove_AISelection
