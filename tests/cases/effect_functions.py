@@ -2315,6 +2315,9 @@ SNORLAX = 0xBE
 hWhoseTurn = 0xFF97
 wDamage = 0xCCB9
 wPlayerDeck = 0xC400
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2454,6 +2457,14 @@ CASES["FlareonRage_AIEffect"] = [
     {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", 0xC400: b"\x01", 0xCCB9: b"\x10\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
 ]
 # <<< factory FlareonRage_AIEffect
+
+# >>> factory GolduckHyperBeam_AISelectEffect
+CONTRACT["GolduckHyperBeam_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["GolduckHyperBeam_AISelectEffect"] = [
+    {"read": {hTemp_ffa0: 1}},
+    dict(POISON, read={hTemp_ffa0: 1}),
+]
+# <<< factory GolduckHyperBeam_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4139,3 +4150,6 @@ MUTATIONS["DestinyBond_DestinyBondEffect"] = {"source_symbol": "DestinyBond_Dest
 # >>> factory-mutation FlareonRage_AIEffect
 MUTATIONS["FlareonRage_AIEffect"] = {"source_symbol": "FlareonRage_AIEffect", "before": "\tFlareonRage_DamageBoostEffect();\n\tSetDefiniteAIDamage();", "after": "\tFlareonRage_DamageBoostEffect();\n\t(void)0;", "case_ids": ["FlareonRage_AIEffect-2"]}
 # <<< factory-mutation FlareonRage_AIEffect
+# >>> factory-mutation GolduckHyperBeam_AISelectEffect
+MUTATIONS["GolduckHyperBeam_AISelectEffect"] = {"source_symbol": "GolduckHyperBeam_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, result.a);", "after": "gb_write8(hTemp_ffa0_ADDR, (uint8_t)(result.a + 1u));", "case_ids": ["GolduckHyperBeam_AISelectEffect-0", "GolduckHyperBeam_AISelectEffect-1"]}
+# <<< factory-mutation GolduckHyperBeam_AISelectEffect

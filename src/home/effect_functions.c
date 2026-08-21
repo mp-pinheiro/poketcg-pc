@@ -256,6 +256,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 
 #define SUBSTATUS1_DESTINY_BOND 0x16u
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3914,3 +3918,11 @@ void FlareonRage_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory FlareonRage_AIEffect */
+
+/* >>> factory GolduckHyperBeam_AISelectEffect */
+void GolduckHyperBeam_AISelectEffect(void)
+{
+	AIPickEnergyCardToDiscardResult result = AIPickEnergyCardToDiscardFromDefendingPokemon();
+	gb_write8(hTemp_ffa0_ADDR, result.a);
+}
+/* <<< factory GolduckHyperBeam_AISelectEffect */

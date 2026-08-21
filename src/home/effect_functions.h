@@ -949,6 +949,9 @@ uint16_t DestinyBond_DestinyBondEffect(void);
 /* >>> factory FlareonRage_AIEffect */
 void FlareonRage_AIEffect(void);
 /* <<< factory FlareonRage_AIEffect */
+/* >>> factory GolduckHyperBeam_AISelectEffect */
+void GolduckHyperBeam_AISelectEffect(void);
+/* <<< factory GolduckHyperBeam_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

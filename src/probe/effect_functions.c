@@ -2258,6 +2258,14 @@ static void adapt_FlareonRage_AIEffect(ProbeState *s)
 }
 /* <<< factory FlareonRage_AIEffect */
 
+/* >>> factory GolduckHyperBeam_AISelectEffect */
+static void adapt_GolduckHyperBeam_AISelectEffect(ProbeState *s)
+{
+	GolduckHyperBeam_AISelectEffect();
+	(void)s;
+}
+/* <<< factory GolduckHyperBeam_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2538,5 +2546,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FlareonFlamethrower_AISelectEffect", adapt_FlareonFlamethrower_AISelectEffect },
 	{ "DestinyBond_DestinyBondEffect", adapt_DestinyBond_DestinyBondEffect },
 	{ "FlareonRage_AIEffect", adapt_FlareonRage_AIEffect },
+	{ "GolduckHyperBeam_AISelectEffect", adapt_GolduckHyperBeam_AISelectEffect },
 	{ NULL, NULL },
 };
