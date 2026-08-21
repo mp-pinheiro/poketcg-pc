@@ -169,6 +169,57 @@ def _append_jsonl(path: Path, entry: dict) -> None:
         stream.write(json.dumps(entry, sort_keys=True, separators=(",", ":")) + "\n")
 
 
+def _stale_owned_artifacts(
+    root: Path,
+    artifacts: list[str],
+    main_revision: str,
+) -> tuple[list[str], list[dict]]:
+    compatible: list[str] = []
+    quarantined: list[dict] = []
+    for artifact_sha256 in artifacts:
+        changed: set[str] = set()
+        basenames: set[str] = set()
+        bases: set[str] = set()
+        for bundle in _artifact_members(artifact_sha256):
+            identity, paths = _bundle_paths(bundle)
+            basename = identity.get("basename")
+            if isinstance(basename, str):
+                basenames.add(basename)
+            base_commit = identity.get("base_commit")
+            if not isinstance(base_commit, str) or not base_commit:
+                changed.add("<unresolvable-base-commit>")
+                continue
+            bases.add(base_commit)
+            try:
+                base_revision = _revision(root, base_commit)
+                output = _run(
+                    ["git", "diff", "--name-only",
+                     f"{base_revision}..{main_revision}", "--", *paths],
+                    root,
+                    120,
+                ).stdout
+            except LandError:
+                changed.add("<unresolvable-base-commit>")
+                continue
+            changed.update(line.strip() for line in output.splitlines() if line.strip())
+        if changed:
+            record = {
+                "quarantined_at": _now_iso(),
+                "artifact_sha256": artifact_sha256,
+                "basename": ",".join(sorted(basenames)),
+                "failure_class": "stale-owned-path",
+                "changed_paths": sorted(changed),
+                "base_commits": sorted(bases),
+                "main_commit": main_revision,
+            }
+            _append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
+            quarantined.append(record)
+            print(f"LAND quarantine {artifact_sha256[:16]} stale-owned-path "
+                  f"paths={record['changed_paths']}")
+        else:
+            compatible.append(artifact_sha256)
+    return compatible, quarantined
+
 def _now_iso() -> str:
     return datetime.datetime.now(datetime.UTC).isoformat()
 
@@ -243,6 +294,10 @@ def _land_batch(
         raise LandError(
             f"main {pre_batch_revision[:12]} diverges from origin main {origin_revision[:12]}"
         )
+    artifacts, stale = _stale_owned_artifacts(root, artifacts, pre_batch_revision)
+    if not artifacts:
+        return [], stale
+
 
     routines = apply_v2_artifacts(root, artifacts)
     _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
@@ -282,7 +337,7 @@ def _land_batch(
                 root, right, gate_command=gate_command, progress_command=progress_command,
                 push=push, counter=counter,
             )
-            return left_landed + right_landed, left_quarantined + right_quarantined
+            return left_landed + right_landed, stale + left_quarantined + right_quarantined
         sha = artifacts[0]
         basenames, _routines = _artifact_identity(sha)
         record = {
@@ -293,7 +348,7 @@ def _land_batch(
         }
         _append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
         print(f"LAND quarantine {sha[:16]} {record['basename']}")
-        return [], [record]
+        return [], stale + [record]
 
     progress_completed = subprocess.run(
         progress_command, cwd=root, text=True, capture_output=True, timeout=PROGRESS_TIMEOUT_S, check=False,
@@ -353,7 +408,7 @@ def _land_batch(
         f"LAND batch {counter[0]} artifacts={len(artifacts)} gate={round(gate_seconds, 1)}s "
         f"source={source_revision[:12]} publication={publication_revision[:12]}"
     )
-    return landed_records, []
+    return landed_records, stale
 
 
 def _print_eta() -> int:

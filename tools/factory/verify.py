@@ -2,14 +2,14 @@
 """Mechanical acceptance for one packet inside a lane.
 
 Pipeline: ninja build -> static case-lint (no PyBoy, no registry import) ->
-schema audit -> GBRT primary comparison over every case (the central gate's
-own comparator, so a packet cannot land something `oracle-fn-all` rejects) ->
-PyBoy diff, scoped to the packet's own routines (refresh on case changes,
-cached fast path otherwise, live evidence required for acceptance) ->
-per-routine mutation RED/PASS -> adapter lint.  Case-lint runs
-before the schema audit deliberately: ``tests/routines.py`` eagerly imports
-every case module to derive the registry, so a malformed case module (the
-exact class of bug case-lint exists to catch) would otherwise crash the
+schema audit -> GBRT primary comparison over records marked primary evidence
+(the central gate's own comparator, so a packet cannot land something
+`oracle-fn-all` rejects) -> PyBoy diff, scoped to the packet's own routines
+(refresh on case changes, cached fast path otherwise, live evidence required
+for acceptance) -> per-routine mutation RED/PASS -> adapter lint. Case-lint
+runs before the schema audit deliberately: ``tests/routines.py`` eagerly
+imports every case module to derive the registry, so a malformed case module
+(the exact class of bug case-lint exists to catch) would otherwise crash the
 audit subprocess with an opaque traceback instead of a targeted verdict.
 Emits a structured verdict; on green, copies the quad + mutation receipts
 into .factory/bundles/<id>/.
@@ -270,15 +270,40 @@ def comparison_status(output: str) -> str | None:
     return None
 
 
-def primary_compare(lane: Path, basename: str, routine_names: list[str],
-                    case_counts: dict, deadline: float | None) -> dict | None:
-    """Every case, not just the mutation witness: ``oracle-fn-all`` runs them
-    all centrally, and a packet that skips one lands a red gate."""
+def primary_compare(
+    lane: Path,
+    basename: str,
+    routine_names: list[str],
+    case_counts: dict,
+    primary_indices: dict[str, list[int]],
+    witness_indices: dict[str, list[int]],
+    deadline: float | None,
+) -> dict | None:
+    """Compare only schema-2 records marked as primary evidence."""
     for fn in routine_names:
         count = case_counts.get(fn)
         if not isinstance(count, int) or count <= 0:
             return verdict("cases", f"SCHEMA2_CASES[{fn!r}] has no cases", fn)
-        for index in range(count):
+        indices = primary_indices.get(fn) or []
+        if not indices:
+            return verdict(
+                "cases",
+                "no primary oracle case",
+                fn,
+                failure_class="unsupported-evidence",
+                retryable=False,
+            )
+        primary_set = set(indices)
+        for witness in witness_indices.get(fn) or []:
+            if witness not in primary_set:
+                return verdict(
+                    "cases",
+                    f"mutation witness {fn}-{witness} is not primary",
+                    fn,
+                    failure_class="unsupported-evidence",
+                    retryable=False,
+                )
+        for index in indices:
             compared = run(
                 [sys.executable, "tools/oracle/gbref/compare_one.py",
                  "--fn", fn, "--index", str(index),
@@ -352,8 +377,15 @@ def verify_packet(packet: dict, lane: Path, cases_changed: bool,
 
     if progress:
         progress("primary")
-    primary = primary_compare(lane, basename, routine_names,
-                              inspection.get("case_counts") or {}, deadline)
+    primary = primary_compare(
+        lane,
+        basename,
+        routine_names,
+        inspection.get("case_counts") or {},
+        inspection.get("primary_indices") or {},
+        inspection.get("witness_indices") or {},
+        deadline,
+    )
     if primary is not None:
         return primary
 

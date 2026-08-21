@@ -197,7 +197,7 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 "snapshot": bool(legacy.get("snapshot", False)),
             }
             reason = legacy.get("reason", legacy.get("why"))
-            if reason is not None:
+            if evidence != "primary" and reason is not None:
                 record["reason"] = reason
             state = _state(
                 legacy.get("sread", {}),

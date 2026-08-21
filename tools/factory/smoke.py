@@ -13,6 +13,8 @@ gate-passing, so any red is a harness defect rather than a port defect.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import os
 import shutil
@@ -32,9 +34,10 @@ import lanes
 import packet as packet_mod
 import prompt as prompt_mod
 import surgery
+import try_one
+import land
 import verify
 import workers
-
 WORK_ID = "port:v1:src/audio/music1.asm:_PauseSong"
 FN = "_PauseSong"
 BASENAME = "music1"
@@ -60,6 +63,401 @@ class StageFailure(RuntimeError):
 def _require(condition: bool, message: str, payload: Any = None) -> None:
     if not condition:
         raise StageFailure(message, payload)
+
+
+def _fixture_rows(limit: int) -> list[dict[str, Any]]:
+    report = packet_mod.report_module()
+    records = report.compute(
+        report.load_inventory(),
+        report.load_routines()[0],
+        report.load_gate(),
+    )["work_records"]
+    rows = [
+        row for row in records
+        if row["state"] == "ready"
+        and not row.get("operational_blocker")
+        and try_one._case_classification(row["name"], row.get("source"))
+        == "legacy-appendable"
+    ]
+    selected: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for row in rows:
+        stem = Path(row["source"]).stem
+        if stem in seen:
+            continue
+        seen.add(stem)
+        selected.append(row)
+        if len(selected) == limit:
+            break
+    _require(len(selected) >= limit, f"need {limit} appendable ready fixture rows",
+             [row["name"] for row in rows])
+    return selected
+
+
+def _patch_report(rows: list[dict[str, Any]]) -> tuple[Any, Any]:
+    report = packet_mod.report_module()
+    previous = report.compute
+    report.compute = lambda *_args, **_kwargs: {"work_records": rows}
+    return report, previous
+
+
+def _restore_report(report: Any, previous: Any) -> None:
+    report.compute = previous
+
+
+def _capture(run: Callable[[], Any]) -> tuple[Any, str]:
+    output = io.StringIO()
+    with contextlib.redirect_stdout(output):
+        result = run()
+    return result, output.getvalue()
+
+
+def stage_immutable_pending(state: dict[str, Any]) -> str:
+    row = _fixture_rows(1)[0]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-attempts-") as directory:
+        previous_root = try_one.TRY_ROOT
+        try_one.TRY_ROOT = Path(directory)
+        issued = try_one.issue_attempt(row["name"], 0)
+        attempt_id = issued["current"]["attempt_id"]
+        report, previous = _patch_report([row])
+        previous_scores = try_one._score_rows
+        try_one._score_rows = lambda _rows, retry: [(1, row)]
+        try:
+            result, output = _capture(lambda: try_one.subcommand_next(1, False, 1))
+            current_id = try_one._read_current(row["name"])[ "attempt_id"]
+            _require(
+                not list(issued["run_dir"].glob("candidate-*.json"))
+                and not (issued["run_dir"] / "result.json").exists(),
+                "pending selection wrote candidate or result artifacts",
+            )
+        finally:
+            _restore_report(report, previous)
+            try_one._score_rows = previous_scores
+            try_one.TRY_ROOT = previous_root
+        _require(result == 3 and "status=active" in output,
+                 "pending factory-next did not stop as active", output)
+        _require(current_id == attempt_id,
+                 "pending factory-next rotated the issued attempt")
+    return f"attempt {attempt_id} remained issued"
+
+
+def stage_unrelated_rebase(state: dict[str, Any]) -> str:
+    row = _fixture_rows(1)[0]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-rebase-") as directory:
+        previous_root = try_one.TRY_ROOT
+        previous_resolve = try_one.resolve
+        try_one.TRY_ROOT = Path(directory)
+        issued = try_one.issue_attempt(row["name"], 0)
+        candidate = issued["run_dir"] / "candidate-0.json"
+        try_one._write_json(
+            candidate, {"attempt_id": issued["current"]["attempt_id"]}
+        )
+
+        def unrelated(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
+            routine, packet = previous_resolve(fn)
+            packet["base_commit"] = "unrelated-landing"
+            return routine, packet
+
+        try_one.resolve = unrelated
+        rebased = try_one.verification_packet(issued)
+        try_one.resolve = previous_resolve
+        try_one.TRY_ROOT = previous_root
+        _require(rebased is not None, "unrelated landing invalidated the attempt")
+        _require(rebased["attempt_id"] == issued["current"]["attempt_id"],
+                 "unrelated landing changed attempt identity")
+        _require(rebased["base_commit"] == "unrelated-landing",
+                 "artifact verification packet did not rebase", rebased)
+        _require(
+            json.loads(candidate.read_text())["attempt_id"]
+            == issued["current"]["attempt_id"],
+            "unrelated landing invalidated the pending candidate",
+        )
+    return f"attempt {issued['current']['attempt_id']} rebased"
+
+
+def stage_same_owner_stale(state: dict[str, Any]) -> str:
+    row = _fixture_rows(1)[0]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-stale-") as directory:
+        previous_root = try_one.TRY_ROOT
+        previous_resolve = try_one.resolve
+        current_id = replacement_id = ""
+        try:
+            try_one.TRY_ROOT = Path(directory)
+            issued = try_one.issue_attempt(row["name"], 0)
+
+            def owned_change(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
+                routine, packet = previous_resolve(fn)
+                packet["routines"][0]["asm"] += "\nowned change"
+                return routine, packet
+
+            try_one.resolve = owned_change
+            stale = try_one.verification_packet(issued)
+            _require(stale is None, "same-owner translation change stayed valid")
+            current = try_one._read_current(row["name"])
+            current_id = current["attempt_id"]
+            _require(current["state"] == "stale", "stale attempt state was not recorded")
+            replacement = try_one.issue_attempt(
+                row["name"],
+                current["generation"] + 1,
+                parent_attempt_id=current["attempt_id"],
+            )
+            replacement_id = replacement["current"]["attempt_id"]
+            _require(replacement["current"]["attempt_id"] != current["attempt_id"],
+                     "stale attempt was not reissued")
+        finally:
+            try_one.resolve = previous_resolve
+            try_one.TRY_ROOT = previous_root
+    return f"{current_id} stale, {replacement_id} reissued"
+def stage_owned_path_quarantine(state: dict[str, Any]) -> str:
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-owned-path-") as directory:
+        root = Path(directory)
+        artifact_sha = "a" * 64
+        bundle = root / "bundle"
+        bundle.mkdir()
+        previous_members = land._artifact_members
+        previous_bundle_paths = land._bundle_paths
+        previous_revision = land._revision
+        previous_run = land._run
+        try:
+            land._artifact_members = lambda _sha: [bundle]
+            land._bundle_paths = lambda _bundle: (
+                {
+                    "basename": "fixture",
+                    "base_commit": "base",
+                    "routines": [{"name": "Fixture"}],
+                },
+                ["src/home/fixture.c"],
+            )
+            land._revision = lambda _root, revision: revision
+            land._run = lambda command, cwd, timeout: subprocess.CompletedProcess(
+                command, 0, "src/home/fixture.c\n", ""
+            )
+            compatible, quarantined = land._stale_owned_artifacts(
+                root, [artifact_sha], "main"
+            )
+        finally:
+            land._artifact_members = previous_members
+            land._bundle_paths = previous_bundle_paths
+            land._revision = previous_revision
+            land._run = previous_run
+        _require(not compatible, "same-owner artifact remained compatible")
+        _require(
+            len(quarantined) == 1
+            and quarantined[0]["failure_class"] == "stale-owned-path"
+            and quarantined[0]["changed_paths"] == ["src/home/fixture.c"],
+            "same-owner artifact was not quarantined with changed paths",
+            quarantined,
+        )
+    return "same-owner artifact quarantined"
+
+
+
+
+def stage_stale_candidates(state: dict[str, Any]) -> str:
+    row = _fixture_rows(1)[0]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-candidates-") as directory:
+        previous_root = try_one.TRY_ROOT
+        try:
+            try_one.TRY_ROOT = Path(directory)
+            issued = try_one.issue_attempt(row["name"], 0)
+            flat = try_one.TRY_ROOT / row["name"] / "candidate-99.json"
+            try_one._write_json(flat, {"attempt_id": "flat-prior-attempt"})
+            active = (
+                try_one.TRY_ROOT / row["name"] / "attempts"
+                / issued["current"]["attempt_id"]
+            )
+            try_one._write_json(
+                active / "candidate-0.json",
+                {"attempt_id": "prior-attempt"},
+            )
+            result, output = _capture(
+                lambda: try_one.main(["--fn", row["name"], "--candidates", "1"])
+            )
+            _require(result == 3 and "stale candidate ignored" in output,
+                     "stale candidate was not ignored", output)
+            _require(not (active / "result.json").exists(),
+                     "stale candidate created a result")
+            _require(
+                json.loads(flat.read_text()) == {"attempt_id": "flat-prior-attempt"},
+                "flat legacy candidate was consumed or rewritten",
+            )
+        finally:
+            try_one.TRY_ROOT = previous_root
+    return "active-attempt stale candidate ignored"
+
+
+def stage_appendability_classifier(state: dict[str, Any]) -> str:
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-cases-") as directory:
+        root = Path(directory)
+        compact = root / "compact.py"
+        compact.write_text(
+            "CASES={}; CONTRACT={}" + chr(10)
+            + "SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)" + chr(10)
+        )
+        native = root / "native.py"
+        native.write_text("SCHEMA2_CASES = {'Fn': []}" + chr(10))
+        _require(common.classify_case_module(root / "missing.py") == "new",
+                 "missing case module was not classified new")
+        _require(common.classify_case_module(compact) == "legacy-appendable",
+                 "compact legacy case module was rejected")
+        _require(
+            surgery._legacy_tail_at(compact.read_text(), compact) >= 0,
+            "surgery rejected compact legacy appendability",
+        )
+        _require(common.classify_case_module(native) == "native-migration-required",
+                 "native case module was accepted")
+    return "new, compact legacy, and native classifications correct"
+
+
+def stage_native_preflight(state: dict[str, Any]) -> str:
+    append_row = _fixture_rows(1)[0]
+    report = packet_mod.report_module()
+    records = report.compute(
+        report.load_inventory(),
+        report.load_routines()[0],
+        report.load_gate(),
+    )["work_records"]
+    native_candidates = [
+        row for row in records
+        if try_one._case_classification(row["name"], row.get("source"))
+        == "native-migration-required"
+    ]
+    _require(native_candidates, "no native schema fixture exists")
+    native_row = dict(native_candidates[0])
+    native_row["state"] = "ready"
+    native_row["operational_blocker"] = None
+    rows = [native_row, append_row]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-preflight-") as directory:
+        previous_root = try_one.TRY_ROOT
+        previous_scores = try_one._score_rows
+        previous_issue = try_one.issue_attempt
+        try_one.TRY_ROOT = Path(directory)
+        report, previous_report = _patch_report(rows)
+        try_one._score_rows = lambda _rows, retry: [
+            (100, native_row), (1, append_row)
+        ]
+
+        def fake_issue(fn: str, generation: int, *,
+                       parent_attempt_id: str | None = None) -> dict[str, Any]:
+            return {
+                "current": {"attempt_id": f"smoke-{fn}"},
+                "packet": {},
+                "routine": {},
+                "run_dir": Path(directory),
+            }
+
+        try_one.issue_attempt = fake_issue
+        try:
+            result, output = _capture(lambda: try_one.subcommand_next(1, False, 1))
+        finally:
+            _restore_report(report, previous_report)
+            try_one._score_rows = previous_scores
+            try_one.issue_attempt = previous_issue
+            try_one.TRY_ROOT = previous_root
+        _require(result == 0 and "phase=preflight detail=native-migration-required" in output,
+                 "native preflight did not block", output)
+        _require(f"NEXT {append_row['name']} " in output,
+                 "selection did not backfill after native preflight", output)
+    return f"{native_row['name']} blocked, {append_row['name']} backfilled"
+
+
+def stage_evidence_filter(state: dict[str, Any]) -> str:
+    calls: list[list[str]] = []
+    previous_run = verify.run
+
+    def fake_run(command: list[str], _cwd: Path, timeout: float = 600,
+                 deadline: float | None = None) -> subprocess.CompletedProcess[str]:
+        calls.append(command)
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    verify.run = fake_run
+    try:
+        result = verify.primary_compare(
+            Path("/tmp/factory-smoke-lane"),
+            "mixed",
+            ["Mixed"],
+            {"Mixed": 3},
+            {"Mixed": [0, 2]},
+            {"Mixed": [0]},
+            None,
+        )
+        _require(result is None, "mixed evidence comparison failed", result)
+        indices = [int(command[command.index("--index") + 1]) for command in calls]
+        _require(indices == [0, 2], "non-primary evidence reached GBRT", indices)
+        unsupported = verify.primary_compare(
+            Path("/tmp/factory-smoke-lane"),
+            "none",
+            ["None"],
+            {"None": 1},
+            {"None": []},
+            {"None": []},
+            None,
+        )
+    finally:
+        verify.run = previous_run
+    _require(
+        unsupported and unsupported["failure_class"] == "unsupported-evidence"
+        and unsupported["detail"] == "no primary oracle case",
+        "no-primary evidence was not operationally blocked",
+        unsupported,
+    )
+    try:
+        try_one.resolve("_TossCoin")
+    except try_one.OperationalBlocker:
+        pass
+    else:
+        raise StageFailure("_TossCoin was not excluded by blocked.toml")
+    return "GBRT saw primary indices 0,2; no-primary was blocked"
+
+
+def stage_retry_fairness(state: dict[str, Any]) -> str:
+    rows = _fixture_rows(3)
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-retry-") as directory:
+        previous_root = try_one.TRY_ROOT
+        previous_issue = try_one.issue_attempt
+        previous_scores = try_one._score_rows
+        try_one.TRY_ROOT = Path(directory)
+        for index, row in enumerate(rows):
+            try_one._store_current({
+                "schema": common.SCHEMA,
+                "fn": row["name"],
+                "attempt_id": f"red-{index}",
+                "generation": 0,
+                "context_sha256": "fixture",
+                "base_commit": "fixture",
+                "state": "red",
+            })
+        report, previous_report = _patch_report(rows)
+        try_one._score_rows = lambda selected_rows, retry: [
+            (index, row) for index, row in enumerate(selected_rows)
+        ]
+        selected: list[tuple[str, int]] = []
+
+        def fake_issue(fn: str, generation: int, *, parent_attempt_id: str | None = None) -> dict[str, Any]:
+            selected.append((fn, generation))
+            current = try_one._read_current(fn)
+            current["attempt_id"] = f"retry-{fn}"
+            current["generation"] = generation
+            try_one._store_current(current)
+            return {"current": current, "packet": {}, "routine": {}, "run_dir": Path(directory)}
+
+        try_one.issue_attempt = fake_issue
+        try:
+            first, first_output = _capture(lambda: try_one.subcommand_next(3, True, 1))
+            second, second_output = _capture(lambda: try_one.subcommand_next(3, True, 1))
+        finally:
+            _restore_report(report, previous_report)
+            try_one._score_rows = previous_scores
+            try_one.issue_attempt = previous_issue
+            try_one.TRY_ROOT = previous_root
+        _require(first == 0 and len(selected) == 3
+                 and all(generation == 1 for _fn, generation in selected),
+                 "retry generation did not rotate every red once",
+                 {"selected": selected, "output": first_output})
+        _require(second == 4 and "status=stalled" in second_output
+                 and "exhausted=3" in second_output,
+                 "retry exhaustion did not stop at stalled", second_output)
+    return f"rotated {len(selected)} reds before stalled"
 
 
 def _recorded_reply(attempt_id: str) -> dict[str, Any]:
@@ -369,6 +767,15 @@ def stage_land(state: dict[str, Any]) -> str:
 
 
 CONTRACT_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
+    ("immutable-pending", stage_immutable_pending),
+    ("unrelated-rebase", stage_unrelated_rebase),
+    ("same-owner-stale", stage_same_owner_stale),
+    ("owned-path-quarantine", stage_owned_path_quarantine),
+    ("stale-candidates", stage_stale_candidates),
+    ("appendability-classifier", stage_appendability_classifier),
+    ("native-preflight", stage_native_preflight),
+    ("evidence-filter", stage_evidence_filter),
+    ("retry-fairness", stage_retry_fairness),
     ("packet", stage_packet),
     ("prompt", stage_prompt),
     ("validate", stage_validate),

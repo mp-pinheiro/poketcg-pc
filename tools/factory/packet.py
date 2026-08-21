@@ -332,19 +332,50 @@ def existing_context(basename: str) -> dict | None:
     header = ROOT / "src" / "home" / f"{basename}.h"
     cases = ROOT / "tests" / "cases" / f"{basename}.py"
     contract_keys: list[str] = []
-    legacy_tail = True
     if cases.exists():
         module = _load_module(f"packet_cases_{basename}", cases)
         contract_keys = list(getattr(module, "CONTRACT", {}).keys())
-        legacy_tail = "legacy_to_schema" in cases.read_text()
     text = home.read_text()
-    includes = [l for l in text.splitlines() if l.startswith("#include")]
+    includes = [line for line in text.splitlines() if line.startswith("#include")]
     return {
         "contract_keys": contract_keys,
         "includes": includes,
         "header": header.read_text() if header.exists() else "",
-        "legacy_tail": legacy_tail,
     }
+
+
+_TRANSLATION_TOP_LEVEL = (
+    "schema", "kind", "mode", "basename", "file", "analyzer_version",
+    "analyzer_cache_sha256", "constants", "symbols", "text_ids", "example",
+    "existing",
+)
+_TRANSLATION_ROUTINE_FIELDS = (
+    "work_id", "name", "asm", "callees", "fallthrough", "feature_class",
+    "semantic_seed",
+)
+
+
+def translation_context(packet: dict) -> dict:
+    """Return the stable packet subset that affects generated translation."""
+    context = {
+        key: packet.get(key)
+        for key in _TRANSLATION_TOP_LEVEL
+    }
+    context["routines"] = [
+        {key: routine.get(key) for key in _TRANSLATION_ROUTINE_FIELDS}
+        for routine in packet.get("routines") or []
+    ]
+    return context
+
+
+def translation_context_sha256(packet: dict) -> str:
+    canonical = json.dumps(
+        translation_context(packet),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode()
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def blocker_graph(functions: list[dict]) -> tuple[dict[str, set[str]], dict[str, list[str]]]:
@@ -522,6 +553,7 @@ def build_packets(
                     "refs": f["refs"],
                     "asm": asm,
                     "callees": [],
+                    "fallthrough": f.get("fallthrough"),
                     "cascade": cascade_of(f["name"]),
                     "feature_class": semantic["feature_class"],
                     "semantic_seed": semantic["semantic_seed"],
@@ -540,11 +572,17 @@ def build_packets(
             inventory_fingerprint = hashlib.sha256(
                 json.dumps(_inventory, sort_keys=True, default=str).encode()
             ).hexdigest()
+            existing = existing_context(basename)
+            case_appendability = common.classify_case_module(
+                ROOT / "tests" / "cases" / f"{basename}.py"
+            )
             packet = {
                 "schema": common.SCHEMA,
                 "attempt_id": attempt_id,
                 "cohort_id": cohort,
                 "kind": "translation",
+                "analyzer_version": analyzer.VERSION,
+                "analyzer_cache_sha256": analyzer_cache_sha256,
                 "parent_attempt_id": None,
                 "id": attempt_id,
                 "basename": basename,
@@ -552,9 +590,6 @@ def build_packets(
                 "routines": routines,
                 "base_commit": base_commit,
                 "inventory_fingerprint": inventory_fingerprint,
-                "analyzer_version": analyzer.VERSION,
-                "analyzer_cache_sha256": analyzer_cache_sha256,
-                "feature_classes": sorted(set(r["feature_class"] for r in routines)),
                 "report_fingerprint": inventory_fingerprint,
                 "mode": "append" if (ROOT / "src/home" / f"{basename}.c").exists() else "create",
                 "state": "pending",
@@ -569,7 +604,8 @@ def build_packets(
                 "symbols": symbols_for("\n".join(packet_asm), symbol_table),
                 "text_ids": text_ids_for("\n".join(packet_asm), text_table),
                 "example": pick_example("\n".join(packet_asm)),
-                "existing": existing_context(basename),
+                "existing": existing,
+                "case_appendability": case_appendability,
                 "bytes": sum(r["size"] for r in routines),
                 "cascade": cascade(graph, dependents, {r["name"] for r in routines}),
             }

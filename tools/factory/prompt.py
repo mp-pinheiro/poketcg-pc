@@ -122,17 +122,22 @@ def render(packet: dict, feedback: str | None = None,
         "your C fragment.",
         "A case with oracle=False needs a non-empty why plus one of expect, expect_regs, "
         "expect_sram, expect_vram.",
+        "Every routine needs at least one primary schema-2 case. Primary cases run "
+        "against the real ROM; scene, intentional-transform, native-stress, and "
+        "dependency-blocked cases are supplemental evidence only.",
+        "MUTATIONS[\"<name>\"][\"case_ids\"] may select only primary cases as mutation "
+        "witnesses; non-primary cases cannot certify the source mutation.",
         "The cases fragment must be valid Python on its own line-by-line: no positional "
         "argument after a keyword argument, no bare C macro names (they do not exist in "
         "Python — use the numeric addresses listed below).",
-        "EVERY case you declare is run against the real ROM. A case whose behaviour your "
-        "C does not reproduce exactly is a failure; declare the cases the asm actually "
-        "supports, including the poisoned one.",
         "",
     ))
     lines.append("# YOUR TASK")
     lines.append(f"Port the following routines from poketcg/{packet['file']} "
                  f"into basename `{packet['basename']}`.")
+    lines.append(
+        f"Case module appendability: {packet.get('case_appendability', 'new')}."
+    )
     if packet.get("existing"):
         existing = packet["existing"]
         lines.append("")

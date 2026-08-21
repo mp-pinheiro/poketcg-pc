@@ -13,6 +13,7 @@ event log and `.factory/state.sqlite3` is gone.
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import os
@@ -159,6 +160,44 @@ def cohort_id(work_ids: list[str] | tuple[str, ...] | set[str]) -> str:
 
 def new_attempt_id() -> str:
     return str(uuid.uuid4())
+
+def classify_case_module(path: Path) -> str:
+    """Classify whether factory legacy fragments can append to a case module."""
+    if not path.is_file():
+        return "new"
+    try:
+        tree = ast.parse(path.read_text(), filename=str(path))
+    except (OSError, SyntaxError):
+        return "native-migration-required"
+
+    def targets_schema2(node: ast.Assign | ast.AnnAssign) -> bool:
+        targets = node.targets if isinstance(node, ast.Assign) else [node.target]
+        return any(
+            isinstance(target, ast.Name) and target.id == "SCHEMA2_CASES"
+            for target in targets
+        )
+
+    def is_legacy_projection(value: ast.expr) -> bool:
+        return (
+            isinstance(value, ast.Call)
+            and isinstance(value.func, ast.Name)
+            and value.func.id == "legacy_to_schema"
+            and len(value.args) == 2
+            and not value.keywords
+            and all(
+                isinstance(argument, ast.Name) and argument.id == expected
+                for argument, expected in zip(value.args, ("CASES", "CONTRACT"))
+            )
+        )
+
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Assign, ast.AnnAssign)) and targets_schema2(node):
+            return (
+                "legacy-appendable"
+                if is_legacy_projection(node.value)
+                else "native-migration-required"
+            )
+    return "native-migration-required"
 
 
 def payload_tree_digest(

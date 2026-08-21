@@ -1,4 +1,4 @@
 [[blocked]]
-name = "InitializeInputName"
-reason = "oracle verification (--oracle-mode refresh) hangs indefinitely: 3/3 attempts across 3 independent candidate sets stalled with zero progress after 300-900s at ~99% CPU, no error, no output. Not candidate-content-dependent (different candidates each time). Likely an expensive or non-terminating cache-refresh path in tools/oracle for this routine."
-unblock = "run tools/oracle/tests/test_leaves.py --fn InitializeInputName --oracle-mode refresh directly with a long bounded timeout and profiling to find the hot loop, or pre-seed its oracle cache out of band, then remove this entry."
+name = "_TossCoin"
+reason = "tests/cases/coin_toss.py intentionally leaves the full interactive animation/RNG/serial routine unregistered; no primary oracle case exists"
+unblock = "add at least one deterministic primary schema-2 case for _TossCoin and a terminating full implementation, or land a separately reviewed permanent transform for it and its callers"

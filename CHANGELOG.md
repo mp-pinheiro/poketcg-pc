@@ -7,6 +7,7 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 ### Miscellaneous
 
 - *(factory)* Replace nested runner with verified OMP control
+- *(factory)* Repair immutable attempt liveness
 - *(factory)* Harden joined V2 recovery and replay proofs
 - *(factory)* Pin GB Recompiled semantic analysis
 ## v0.60.10 - 2026-08-13

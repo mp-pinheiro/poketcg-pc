@@ -15,9 +15,10 @@ packet's four files.
 """
 
 from __future__ import annotations
-
 import re
 from pathlib import Path
+
+import common
 
 
 class SurgeryError(ValueError):
@@ -115,7 +116,6 @@ def quad_paths(root: Path, basename: str) -> dict[str, Path]:
         "cases": root / "tests" / "cases" / f"{basename}.py",
     }
 
-
 def ensure_skeletons(root: Path, packet: dict) -> None:
     paths = quad_paths(root, packet["basename"])
     if not paths["c"].exists():
@@ -126,7 +126,7 @@ def ensure_skeletons(root: Path, packet: dict) -> None:
         paths["probe"].write_text(probe_skeleton(packet["basename"]))
     if not paths["cases"].exists():
         paths["cases"].write_text(cases_skeleton(packet["basename"], packet["file"]))
-    elif "legacy_to_schema" not in paths["cases"].read_text():
+    elif common.classify_case_module(paths["cases"]) != "legacy-appendable":
         raise SurgeryError(
             f"{paths['cases']} hand-writes SCHEMA2_CASES; factory appends are "
             f"not supported for pre-migration modules — escalate")
@@ -145,6 +145,21 @@ CASES_STATICS_OPEN = "# >>> factory-cases-statics"
 CASES_STATICS_CLOSE = "# <<< factory-cases-statics"
 
 INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
+
+LEGACY_SCHEMA2_ASSIGNMENT = re.compile(
+    r"(?ms)^[ \t]*SCHEMA2_CASES[ \t]*=[ \t]*legacy_to_schema"
+    r"[ \t\r\n]*\([ \t\r\n]*CASES[ \t\r\n]*,[ \t\r\n]*CONTRACT"
+    r"[ \t\r\n]*\)[ \t]*(?:\#[^\r\n]*)?$"
+)
+
+
+def _legacy_tail_at(text: str, path: Path | None = None) -> int:
+    if path is not None and common.classify_case_module(path) != "legacy-appendable":
+        raise SurgeryError("cases module has no appendable legacy_to_schema tail")
+    match = LEGACY_SCHEMA2_ASSIGNMENT.search(text)
+    if match is None:
+        raise SurgeryError("cases module has no appendable legacy_to_schema tail")
+    return match.start()
 
 
 def check_includes(root: Path, text: str) -> None:
@@ -462,9 +477,7 @@ def apply(root: Path, packet: dict, translation: dict,
         cs_block = (CASES_STATICS_OPEN + "\n" + "\n".join(merged_cs) + "\n"
                     + CASES_STATICS_CLOSE + "\n")
         # ahead of the routine blocks, which anchor on the migration import
-        tail_at = cases_text.find("SCHEMA2_CASES = legacy_to_schema")
-        if tail_at < 0:
-            raise SurgeryError(f"{paths['cases']} lost its legacy_to_schema tail")
+        tail_at = _legacy_tail_at(cases_text, paths["cases"])
         anchor = cases_text.rfind("from tests.cases._schema_migration", 0, tail_at)
         cases_text = _replace_span(cases_text, CASES_STATICS_OPEN,
                                    CASES_STATICS_CLOSE, cs_block,
@@ -514,10 +527,7 @@ def apply(root: Path, packet: dict, translation: dict,
         open_py = f"# >>> factory {fn}"
         close_py = f"# <<< factory {fn}"
         cases_block = f"{open_py}\n{blocks['CASES'].rstrip()}\n{close_py}\n"
-        tail_at = cases_text.find("SCHEMA2_CASES = legacy_to_schema")
-        if tail_at < 0:
-            raise SurgeryError(f"{paths['cases']} lost its legacy_to_schema tail")
-        # the import line sits directly above the assignment; insert above it
+        tail_at = _legacy_tail_at(cases_text, paths["cases"])
         import_at = cases_text.rfind("from tests.cases._schema_migration", 0, tail_at)
         insert_at = import_at if import_at >= 0 else tail_at
         cases_text = _replace_span(cases_text, open_py, close_py, cases_block,
