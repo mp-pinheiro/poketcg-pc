@@ -207,4 +207,7 @@ typedef struct {
 
 ScriptCommand_JumpResult ScriptCommand_Jump(void);
 /* <<< factory ScriptCommand_Jump */
+/* >>> factory ScriptCommand_MaxOutEventValue */
+IncreaseScriptPointerResult ScriptCommand_MaxOutEventValue(uint8_t f, uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_MaxOutEventValue */
 #endif

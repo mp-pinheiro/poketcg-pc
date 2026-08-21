@@ -1,0 +1,9 @@
+{
+  "fn": "CopyListWithFFTerminatorFromHLToDE_Bank8",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyListWithFFTerminatorFromHLToDE_Bank8\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49664\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyListWithFFTerminatorFromHLToDE_Bank8\", \"mismatches\": {\"a\": [255, 254], \"d\": [194, 0], \"e\": [0, 79], \"hl\": [49409, 65360]}}\n",
+  "restored": "{\"fn\": \"CopyListWithFFTerminatorFromHLToDE_Bank8\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49409, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49664\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

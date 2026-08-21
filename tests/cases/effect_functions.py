@@ -2446,6 +2446,15 @@ CASES["DestinyBond_DestinyBondEffect"] = [
 ]
 # <<< factory DestinyBond_DestinyBondEffect
 
+# >>> factory FlareonRage_AIEffect
+CONTRACT["FlareonRage_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["FlareonRage_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", 0xC400: b"\x01", 0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", 0xC400: b"\x01", 0xCCB9: b"\x10\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory FlareonRage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4127,3 +4136,6 @@ MUTATIONS["FlareonFlamethrower_AISelectEffect"] = {
 # >>> factory-mutation DestinyBond_DestinyBondEffect
 MUTATIONS["DestinyBond_DestinyBondEffect"] = {"source_symbol": "DestinyBond_DestinyBondEffect", "before": "\treturn ApplySubstatus1ToAttackingCard(SUBSTATUS1_DESTINY_BOND);", "after": "\treturn (uint16_t)(ApplySubstatus1ToAttackingCard(SUBSTATUS1_DESTINY_BOND) + 1u);", "case_ids": ["DestinyBond_DestinyBondEffect-0", "DestinyBond_DestinyBondEffect-1"]}
 # <<< factory-mutation DestinyBond_DestinyBondEffect
+# >>> factory-mutation FlareonRage_AIEffect
+MUTATIONS["FlareonRage_AIEffect"] = {"source_symbol": "FlareonRage_AIEffect", "before": "\tFlareonRage_DamageBoostEffect();\n\tSetDefiniteAIDamage();", "after": "\tFlareonRage_DamageBoostEffect();\n\t(void)0;", "case_ids": ["FlareonRage_AIEffect-2"]}
+# <<< factory-mutation FlareonRage_AIEffect

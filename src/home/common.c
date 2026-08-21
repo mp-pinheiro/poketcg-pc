@@ -25,6 +25,8 @@
 
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -182,3 +184,23 @@ uint8_t PickAttachedEnergyCardToRemove(uint8_t a)
 	return gb_read8(wDuelTempList_ADDR);
 }
 /* <<< factory PickAttachedEnergyCardToRemove */
+
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
+CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint16_t *de)
+{
+	uint16_t src = *hl;
+	uint16_t dst = *de;
+
+	for (;;) {
+		uint8_t a = gb_read8(src);
+		src = (uint16_t)(src + 1u);
+		gb_write8(dst, a);
+		if (a == 0xFFu) {
+			*hl = src;
+			*de = dst;
+			return (CopyListBank8Result){a, 0xC0u};
+		}
+		dst = (uint16_t)(dst + 1u);
+	}
+}
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */

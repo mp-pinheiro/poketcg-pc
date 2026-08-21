@@ -14,6 +14,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wEventVars = 0xD3D2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wScriptPointer = 0xD413
+wLoadedEventBits = 0xD3D1
+wEventVars = 0xD3D2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -506,6 +512,17 @@ CASES["ScriptCommand_Jump"] = [
 ]
 # <<< factory ScriptCommand_Jump
 
+# >>> factory ScriptCommand_MaxOutEventValue
+CONTRACT["ScriptCommand_MaxOutEventValue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["ScriptCommand_MaxOutEventValue"] = [
+    {"c": 0, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    dict(POISON, c=1, wram={wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, read={wScriptPointer: 2, wEventVars: 0x40}),
+    {"c": 0x7F, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0x80, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+    {"c": 0xFF, "wram": {wScriptPointer: b"\x00\xC5", wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40}, "read": {wScriptPointer: 2, wEventVars: 0x40}},
+]
+# <<< factory ScriptCommand_MaxOutEventValue
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -812,3 +829,11 @@ MUTATIONS["ScriptCommand_Jump"] = {
     "case_ids": ["ScriptCommand_Jump-1", "ScriptCommand_Jump-2", "ScriptCommand_Jump-3"],
 }
 # <<< factory-mutation ScriptCommand_Jump
+# >>> factory-mutation ScriptCommand_MaxOutEventValue
+MUTATIONS["ScriptCommand_MaxOutEventValue"] = {
+    "source_symbol": "ScriptCommand_MaxOutEventValue",
+    "before": "\t(void)MaxOutEventValue(c, f, b, c);",
+    "after": "\t(void)MaxOutEventValue((uint8_t)(c + 1u), f, b, c);",
+    "case_ids": ["ScriptCommand_MaxOutEventValue-0", "ScriptCommand_MaxOutEventValue-1", "ScriptCommand_MaxOutEventValue-2", "ScriptCommand_MaxOutEventValue-3", "ScriptCommand_MaxOutEventValue-4"],
+}
+# <<< factory-mutation ScriptCommand_MaxOutEventValue

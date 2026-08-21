@@ -78,6 +78,15 @@ CASES["PickAttachedEnergyCardToRemove"] = [
 ]
 # <<< factory PickAttachedEnergyCardToRemove
 
+# >>> factory CopyListWithFFTerminatorFromHLToDE_Bank8
+CONTRACT["CopyListWithFFTerminatorFromHLToDE_Bank8"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["CopyListWithFFTerminatorFromHLToDE_Bank8"] = [
+    {"hl": 0xC100, "d": 0xC2, "e": 0x00, "wram": {0xC100: b"\xFF"}, "read": {0xC100: 1, 0xC200: 1}},
+    dict(POISON, hl=0xC100, d=0xC2, e=0x00, wram={0xC100: b"\x01\x02\xFF"}, read={0xC100: 3, 0xC200: 3}),
+    {"hl": 0xC1FF, "d": 0xC2, "e": 0xFF, "wram": {0xC1FF: b"\x01\xFF"}, "read": {0xC1FF: 2, 0xC2FF: 2}},
+]
+# <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -125,3 +134,6 @@ MUTATIONS["ClearMemory_Bank8"] = {
 # >>> factory-mutation PickAttachedEnergyCardToRemove
 MUTATIONS["PickAttachedEnergyCardToRemove"] = {"source_symbol": "PickAttachedEnergyCardToRemove", "before": "\t\treturn 0xffu;", "after": "\t\treturn 0xfeu;", "case_ids": ["PickAttachedEnergyCardToRemove-0", "PickAttachedEnergyCardToRemove-1", "PickAttachedEnergyCardToRemove-2", "PickAttachedEnergyCardToRemove-3"]}
 # <<< factory-mutation PickAttachedEnergyCardToRemove
+# >>> factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank8
+MUTATIONS["CopyListWithFFTerminatorFromHLToDE_Bank8"] = {"source_symbol": "CopyListWithFFTerminatorFromHLToDE_Bank8", "before": "\t\tif (a == 0xFFu)", "after": "\t\tif (a == 0xFEu)", "case_ids": ["CopyListWithFFTerminatorFromHLToDE_Bank8-0", "CopyListWithFFTerminatorFromHLToDE_Bank8-1", "CopyListWithFFTerminatorFromHLToDE_Bank8-2"]}
+# <<< factory-mutation CopyListWithFFTerminatorFromHLToDE_Bank8

@@ -3906,3 +3906,11 @@ uint16_t DestinyBond_DestinyBondEffect(void)
 	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_DESTINY_BOND);
 }
 /* <<< factory DestinyBond_DestinyBondEffect */
+
+/* >>> factory FlareonRage_AIEffect */
+void FlareonRage_AIEffect(void)
+{
+	FlareonRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory FlareonRage_AIEffect */

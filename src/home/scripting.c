@@ -584,3 +584,11 @@ ScriptCommand_JumpResult ScriptCommand_Jump(void)
 	return (ScriptCommand_JumpResult){args.a, args.f, args.b, args.c, hl};
 }
 /* <<< factory ScriptCommand_Jump */
+
+/* >>> factory ScriptCommand_MaxOutEventValue */
+IncreaseScriptPointerResult ScriptCommand_MaxOutEventValue(uint8_t f, uint8_t b, uint8_t c)
+{
+	(void)MaxOutEventValue(c, f, b, c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_MaxOutEventValue */

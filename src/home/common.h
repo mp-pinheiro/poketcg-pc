@@ -23,4 +23,8 @@ void ClearMemory_Bank8(uint8_t a, uint16_t hl);
 /* >>> factory PickAttachedEnergyCardToRemove */
 uint8_t PickAttachedEnergyCardToRemove(uint8_t a);
 /* <<< factory PickAttachedEnergyCardToRemove */
+/* >>> factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
+typedef struct { uint8_t a; uint8_t f; } CopyListBank8Result;
+CopyListBank8Result CopyListWithFFTerminatorFromHLToDE_Bank8(uint16_t *hl, uint16_t *de);
+/* <<< factory CopyListWithFFTerminatorFromHLToDE_Bank8 */
 #endif /* POKETCG_HOME_COMMON_H */

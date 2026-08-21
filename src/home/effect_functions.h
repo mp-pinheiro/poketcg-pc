@@ -946,6 +946,9 @@ void FlareonFlamethrower_AISelectEffect(void);
 /* >>> factory DestinyBond_DestinyBondEffect */
 uint16_t DestinyBond_DestinyBondEffect(void);
 /* <<< factory DestinyBond_DestinyBondEffect */
+/* >>> factory FlareonRage_AIEffect */
+void FlareonRage_AIEffect(void);
+/* <<< factory FlareonRage_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
