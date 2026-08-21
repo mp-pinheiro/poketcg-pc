@@ -196,6 +196,14 @@ static void adapt_Func_c1a0(ProbeState *s)
 }
 /* <<< factory Func_c1a0 */
 
+/* >>> factory PauseMenu_Exit */
+static void adapt_PauseMenu_Exit(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Exit();
+}
+/* <<< factory PauseMenu_Exit */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -220,5 +228,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "AttemptPlayerMovement", adapt_AttemptPlayerMovement },
 	{ "FindPlayerMovementFromDirection", adapt_FindPlayerMovementFromDirection },
 	{ "Func_c1a0", adapt_Func_c1a0 },
+	{ "PauseMenu_Exit", adapt_PauseMenu_Exit },
 	{ NULL, NULL },
 };

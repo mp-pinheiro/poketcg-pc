@@ -195,3 +195,10 @@ AddBoosterEnergyToDrawnEnergiesResult GenerateRandomEnergy(void)
 	return AddBoosterEnergyToDrawnEnergies((uint8_t)(random + 1u));
 }
 /* <<< factory GenerateRandomEnergy */
+
+/* >>> factory GenerateEnergyBoosterGrassPsychic */
+GenerateTwoTypesEnergyBoosterResult GenerateEnergyBoosterGrassPsychic(void)
+{
+	return GenerateTwoTypesEnergyBooster(0x63CDu);
+}
+/* <<< factory GenerateEnergyBoosterGrassPsychic */

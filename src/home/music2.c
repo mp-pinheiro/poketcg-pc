@@ -1301,3 +1301,10 @@ void _PlaySong_2(uint8_t a)
 	Music2_PlaySong(a);
 }
 /* <<< factory _PlaySong_2 */
+
+/* >>> factory _ResumeSong_2 */
+void _ResumeSong_2(void)
+{
+	Music2_ResumeSong();
+}
+/* <<< factory _ResumeSong_2 */

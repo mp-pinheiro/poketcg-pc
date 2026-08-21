@@ -61,6 +61,9 @@
 #include "generated/wram.h"
 
 #include "home/play_animation.h"
+
+#include "home/give_booster_pack.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -422,3 +425,10 @@ FuncC1A0Result Func_c1a0(uint16_t hl)
 	return (FuncC1A0Result){result.a, result.f, result.hl};
 }
 /* <<< factory Func_c1a0 */
+
+/* >>> factory PauseMenu_Exit */
+void PauseMenu_Exit(void)
+{
+	_PauseMenu_Exit();
+}
+/* <<< factory PauseMenu_Exit */

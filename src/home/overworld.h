@@ -102,4 +102,7 @@ typedef struct {
 } FuncC1A0Result;
 FuncC1A0Result Func_c1a0(uint16_t hl);
 /* <<< factory Func_c1a0 */
+/* >>> factory PauseMenu_Exit */
+void PauseMenu_Exit(void);
+/* <<< factory PauseMenu_Exit */
 #endif /* POKETCG_HOME_OVERWORLD_H */

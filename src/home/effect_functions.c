@@ -3890,3 +3890,10 @@ void Ember_AISelectEffect(void)
 	AIPickFireEnergyCardToDiscard();
 }
 /* <<< factory Ember_AISelectEffect */
+
+/* >>> factory FlareonFlamethrower_AISelectEffect */
+void FlareonFlamethrower_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory FlareonFlamethrower_AISelectEffect */

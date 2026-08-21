@@ -280,6 +280,14 @@ static void adapt__PlaySong_2(ProbeState *s)
 }
 /* <<< factory _PlaySong_2 */
 
+/* >>> factory _ResumeSong_2 */
+static void adapt__ResumeSong_2(ProbeState *s)
+{
+	(void)s;
+	_ResumeSong_2();
+}
+/* <<< factory _ResumeSong_2 */
+
 const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_EmptyFunc",         adapt_Music2_EmptyFunc },
 	{ "Music2_f404e",             adapt_Music2_f404e },
@@ -351,5 +359,6 @@ const ProbeEntry probe_entries_music2[] = {
 	{ "_PauseSong_2", adapt__PauseSong_2 },
 	{ "_PlaySFX_2", adapt__PlaySFX_2 },
 	{ "_PlaySong_2", adapt__PlaySong_2 },
+	{ "_ResumeSong_2", adapt__ResumeSong_2 },
 	{ NULL, NULL },
 };

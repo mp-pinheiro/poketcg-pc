@@ -2429,6 +2429,15 @@ CASES["Ember_AISelectEffect"] = [
 ]
 # <<< factory Ember_AISelectEffect
 
+# >>> factory FlareonFlamethrower_AISelectEffect
+CONTRACT["FlareonFlamethrower_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["FlareonFlamethrower_AISelectEffect"] = [
+    {"wram": {0xC510: bytes(0x40), 0xFFA0: bytes(0x10)}},
+    {"wram": {0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}},
+    dict(POISON, wram={0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}),
+]
+# <<< factory FlareonFlamethrower_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4099,3 +4108,11 @@ MUTATIONS["Ember_AISelectEffect"] = {
     "case_ids": ["Ember_AISelectEffect-1", "Ember_AISelectEffect-2"],
 }
 # <<< factory-mutation Ember_AISelectEffect
+# >>> factory-mutation FlareonFlamethrower_AISelectEffect
+MUTATIONS["FlareonFlamethrower_AISelectEffect"] = {
+    "source_symbol": "FlareonFlamethrower_AISelectEffect",
+    "before": "void FlareonFlamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}",
+    "after": "void FlareonFlamethrower_AISelectEffect(void)\n{\n}",
+    "case_ids": ["FlareonFlamethrower_AISelectEffect-1", "FlareonFlamethrower_AISelectEffect-2"],
+}
+# <<< factory-mutation FlareonFlamethrower_AISelectEffect

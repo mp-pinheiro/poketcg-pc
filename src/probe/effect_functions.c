@@ -2236,6 +2236,14 @@ static void adapt_Ember_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Ember_AISelectEffect */
 
+/* >>> factory FlareonFlamethrower_AISelectEffect */
+static void adapt_FlareonFlamethrower_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	FlareonFlamethrower_AISelectEffect();
+}
+/* <<< factory FlareonFlamethrower_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2513,5 +2521,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CharmeleonFlamethrower_AISelectEffect", adapt_CharmeleonFlamethrower_AISelectEffect },
 	{ "ClefableMetronome_AISelectEffect", adapt_ClefableMetronome_AISelectEffect },
 	{ "Ember_AISelectEffect", adapt_Ember_AISelectEffect },
+	{ "FlareonFlamethrower_AISelectEffect", adapt_FlareonFlamethrower_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -319,6 +319,15 @@ CASES["Func_c1a0"] = [
 ]
 # <<< factory Func_c1a0
 
+# >>> factory PauseMenu_Exit
+CONTRACT["PauseMenu_Exit"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Exit"] = [
+    {"read": {0xD0BF: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "read": {0xD0BF: 1}},
+]
+# <<< factory PauseMenu_Exit
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -447,3 +456,6 @@ MUTATIONS["Func_c1a0"] = {
     "case_ids": ["Func_c1a0-1"],
 }
 # <<< factory-mutation Func_c1a0
+# >>> factory-mutation PauseMenu_Exit
+MUTATIONS["PauseMenu_Exit"] = {"source_symbol": "PauseMenu_Exit", "before": "\t_PauseMenu_Exit();", "after": "\twOverworldMode = 1u;", "case_ids": ["PauseMenu_Exit-1"]}
+# <<< factory-mutation PauseMenu_Exit
