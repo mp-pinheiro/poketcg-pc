@@ -108,4 +108,7 @@ void PauseMenu_Exit(void);
 /* >>> factory AttemptPlayerMovementFromDirection */
 void AttemptPlayerMovementFromDirection(void);
 /* <<< factory AttemptPlayerMovementFromDirection */
+/* >>> factory Func_c687 */
+void Func_c687(void);
+/* <<< factory Func_c687 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

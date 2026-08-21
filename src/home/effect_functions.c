@@ -262,6 +262,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3935,3 +3938,11 @@ uint16_t OnixHardenEffect(void)
 	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);
 }
 /* <<< factory OnixHardenEffect */
+
+/* >>> factory PoliwhirlAmnesia_AISelectEffect */
+void PoliwhirlAmnesia_AISelectEffect(void)
+{
+	uint8_t result = AIPickAttackForAmnesia();
+	hTemp_ffa0 = result;
+}
+/* <<< factory PoliwhirlAmnesia_AISelectEffect */

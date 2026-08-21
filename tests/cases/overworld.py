@@ -238,6 +238,10 @@ wd338 = 0xD338
 wWhichSprite = 0xD4CF
 wSpriteAnimBuffer = 0xD4D0
 wPermissionMap = 0xD133
+
+wd339 = 0xD339
+wd33a = 0xD33A
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -344,6 +348,16 @@ CASES["AttemptPlayerMovementFromDirection"] = [
     dict(POISON, wram={wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerDirection: b"\x00", wPlayerCurrentlyMoving: b"\x80", wd338: b"\x56", wWhichSprite: b"\x00", wSpriteAnimBuffer + 0x0E: b"\x00", wSpriteAnimBuffer + 0x0F: b"\x01", wPermissionMap + 0x88: b"\x00"}, expect={wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x10", wPlayerCurrentlyMoving: b"\x81", wd338: b"\x10", wSpriteAnimBuffer + 0x0E: b"\x04", wSpriteAnimBuffer + 0x0F: b"\x03"}),
 ]
 # <<< factory AttemptPlayerMovementFromDirection
+
+# >>> factory Func_c687
+CONTRACT["Func_c687"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c687"] = [
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x00", wd33a: b"\x01", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x01", wd33a: b"\x03", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x00", 0xD338: b"\x03", 0xD237: b"\x02", 0xD238: b"\x03"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
+    {"b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {wd339: b"\x03", wd33a: b"\x02", 0xD332: b"\x80", 0xD333: b"\x80", 0xD335: b"\x04", 0xD338: b"\x01", 0xD237: b"\x10", 0xD238: b"\x10"}, "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}},
+    dict(POISON, wram={wd339: b"\x02", wd33a: b"\x01", 0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
+]
+# <<< factory Func_c687
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -479,3 +493,6 @@ MUTATIONS["PauseMenu_Exit"] = {"source_symbol": "PauseMenu_Exit", "before": "\t_
 # >>> factory-mutation AttemptPlayerMovementFromDirection
 MUTATIONS["AttemptPlayerMovementFromDirection"] = {"source_symbol": "AttemptPlayerMovementFromDirection", "before": "AttemptPlayerMovement(movement.b, movement.c);", "after": "AttemptPlayerMovement(movement.b, (uint8_t)(movement.c + 1u));", "case_ids": ["AttemptPlayerMovementFromDirection-0", "AttemptPlayerMovementFromDirection-1"]}
 # <<< factory-mutation AttemptPlayerMovementFromDirection
+# >>> factory-mutation Func_c687
+MUTATIONS["Func_c687"] = {"source_symbol": "Func_c687", "before": "\tFunc_c694(a, c);", "after": "\tFunc_c694((uint8_t)(a + 1u), c);", "case_ids": ["Func_c687-0", "Func_c687-1", "Func_c687-2", "Func_c687-3"]}
+# <<< factory-mutation Func_c687

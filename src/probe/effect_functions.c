@@ -2273,6 +2273,14 @@ static void adapt_OnixHardenEffect(ProbeState *s)
 }
 /* <<< factory OnixHardenEffect */
 
+/* >>> factory PoliwhirlAmnesia_AISelectEffect */
+static void adapt_PoliwhirlAmnesia_AISelectEffect(ProbeState *s)
+{
+	PoliwhirlAmnesia_AISelectEffect();
+	(void)s;
+}
+/* <<< factory PoliwhirlAmnesia_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2555,5 +2563,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FlareonRage_AIEffect", adapt_FlareonRage_AIEffect },
 	{ "GolduckHyperBeam_AISelectEffect", adapt_GolduckHyperBeam_AISelectEffect },
 	{ "OnixHardenEffect", adapt_OnixHardenEffect },
+	{ "PoliwhirlAmnesia_AISelectEffect", adapt_PoliwhirlAmnesia_AISelectEffect },
 	{ NULL, NULL },
 };

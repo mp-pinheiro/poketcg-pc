@@ -955,6 +955,9 @@ void GolduckHyperBeam_AISelectEffect(void);
 /* >>> factory OnixHardenEffect */
 uint16_t OnixHardenEffect(void);
 /* <<< factory OnixHardenEffect */
+/* >>> factory PoliwhirlAmnesia_AISelectEffect */
+void PoliwhirlAmnesia_AISelectEffect(void);
+/* <<< factory PoliwhirlAmnesia_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

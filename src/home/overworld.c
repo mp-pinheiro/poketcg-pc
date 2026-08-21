@@ -440,3 +440,12 @@ void AttemptPlayerMovementFromDirection(void)
 	AttemptPlayerMovement(movement.b, movement.c);
 }
 /* <<< factory AttemptPlayerMovementFromDirection */
+
+/* >>> factory Func_c687 */
+void Func_c687(void)
+{
+	uint8_t c = wd33a;
+	uint8_t a = wd339;
+	Func_c694(a, c);
+}
+/* <<< factory Func_c687 */

@@ -2474,6 +2474,14 @@ CASES["OnixHardenEffect"] = [
 ]
 # <<< factory OnixHardenEffect
 
+# >>> factory PoliwhirlAmnesia_AISelectEffect
+CONTRACT["PoliwhirlAmnesia_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["PoliwhirlAmnesia_AISelectEffect"] = [
+	{"read": {hTemp_ffa0: 1}},
+	dict(POISON, read={hTemp_ffa0: 1}),
+]
+# <<< factory PoliwhirlAmnesia_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4164,3 +4172,6 @@ MUTATIONS["GolduckHyperBeam_AISelectEffect"] = {"source_symbol": "GolduckHyperBe
 # >>> factory-mutation OnixHardenEffect
 MUTATIONS["OnixHardenEffect"] = {"source_symbol": "OnixHardenEffect", "before": "	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);", "after": "	return (uint16_t)(ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40) + 1u);", "case_ids": ["OnixHardenEffect-0", "OnixHardenEffect-1"]}
 # <<< factory-mutation OnixHardenEffect
+# >>> factory-mutation PoliwhirlAmnesia_AISelectEffect
+MUTATIONS["PoliwhirlAmnesia_AISelectEffect"] = {"source_symbol": "PoliwhirlAmnesia_AISelectEffect", "before": "\thTemp_ffa0 = result;", "after": "\thTemp_ffa0 = (uint8_t)(result + 1u);", "case_ids": ["PoliwhirlAmnesia_AISelectEffect-0", "PoliwhirlAmnesia_AISelectEffect-1"]}
+# <<< factory-mutation PoliwhirlAmnesia_AISelectEffect
