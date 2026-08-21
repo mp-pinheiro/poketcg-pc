@@ -86,6 +86,27 @@ CONTRACT["DuelAnim156"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "pre
 CASES["DuelAnim156"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
 # <<< factory DuelAnim156
 
+# >>> factory-cases-statics
+wDamageAnimEffectiveness = 0xCE81
+wNoDamageOrEffect = 0xCCC7
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory GetDamageText
+CONTRACT["GetDamageText"] = {"compare": ("hl",), "preserve": ()}
+CASES["GetDamageText"] = [
+    {"hl": 0x2345, "wram": {wDamageAnimEffectiveness: b"\x00"}, "expect_regs": {"hl": 0x003A}},
+    {"hl": 0x2345, "wram": {wDamageAnimEffectiveness: b"\x02"}, "expect_regs": {"hl": 0x0037}},
+    {"hl": 0x2345, "wram": {wDamageAnimEffectiveness: b"\x04"}, "expect_regs": {"hl": 0x0036}},
+    {"hl": 0x2345, "wram": {wDamageAnimEffectiveness: b"\x06"}, "expect_regs": {"hl": 0x0038}},
+    {"hl": 0x0000, "wram": {wNoDamageOrEffect: b"\x00", wDamageAnimEffectiveness: b"\x00"}, "expect_regs": {"hl": 0x003B}},
+    {"hl": 0x0000, "wram": {wNoDamageOrEffect: b"\x00", wDamageAnimEffectiveness: b"\x04"}, "expect_regs": {"hl": 0x0039}},
+    {"hl": 0x0000, "wram": {wNoDamageOrEffect: b"\x80", wDamageAnimEffectiveness: b"\x04"}, "expect_regs": {"hl": 0x0000}},
+    dict(POISON, wram={wDamageAnimEffectiveness: b"\x06"}, expect_regs={"hl": 0x0038}),
+]
+# <<< factory GetDamageText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -128,3 +149,11 @@ MUTATIONS["DuelAnim155"] = {"source_symbol": "DuelAnim155", "before": "\treturn;
 # >>> factory-mutation DuelAnim156
 MUTATIONS["DuelAnim156"] = {"source_symbol": "DuelAnim156", "before": "\treturn; /* DuelAnim156 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim156 */", "case_ids": ["DuelAnim156-2"]}
 # <<< factory-mutation DuelAnim156
+# >>> factory-mutation GetDamageText
+MUTATIONS["GetDamageText"] = {
+    "source_symbol": "GetDamageText",
+    "before": "\tif (hl == 0u) {",
+    "after": "\tif (hl != 0u) {",
+    "case_ids": ["GetDamageText-0", "GetDamageText-4", "GetDamageText-5", "GetDamageText-6"],
+}
+# <<< factory-mutation GetDamageText

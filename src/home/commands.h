@@ -32,4 +32,7 @@ void DuelAnim155(void);
 /* >>> factory DuelAnim156 */
 void DuelAnim156(void);
 /* <<< factory DuelAnim156 */
+/* >>> factory GetDamageText */
+uint16_t GetDamageText(uint16_t hl);
+/* <<< factory GetDamageText */
 #endif

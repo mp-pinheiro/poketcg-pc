@@ -49,6 +49,9 @@ static const uint8_t booster_logo_oam[] = {
 #include "generated/wram.h"
 #include "home/load_gfx.h"
 #define TILEMAP_PLAYER 0x62u
+
+#include "generated/wram.h"
+#define CONSOLE_SGB 0x01u
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -120,3 +123,33 @@ void _DrawPortrait(void)
 	wd291 = saved_wd291;
 }
 /* <<< factory _DrawPortrait */
+
+/* >>> factory LoadScene_LoadSGBPacket */
+LoadScene_LoadSGBPacketResult LoadScene_LoadSGBPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t console = wConsole;
+	uint8_t result_f;
+	if (console != CONSOLE_SGB) {
+		a = console;
+		result_f = (uint8_t)(0x40u | (((console & 0x0Fu) == 0u) ? 0x20u : 0u) | ((console == 0u) ? 0x10u : 0u));
+	} else {
+		uint8_t packet_lo = gb_read8(wSceneSGBPacketPtr_ADDR);
+		uint8_t packet_hi = gb_read8((uint16_t)(wSceneSGBPacketPtr_ADDR + 1u));
+		if ((uint8_t)(packet_lo | packet_hi) == 0u) {
+			a = 0u;
+			result_f = 0x80u;
+		} else {
+			result_f = 0u;
+		}
+	}
+	return (LoadScene_LoadSGBPacketResult){
+		.a = a,
+		.f = result_f,
+		.b = b,
+		.c = c,
+		.d = d,
+		.e = e,
+		.hl = hl,
+	};
+}
+/* <<< factory LoadScene_LoadSGBPacket */

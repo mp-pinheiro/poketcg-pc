@@ -517,6 +517,20 @@ static void adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
 
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+static void adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus(ProbeState *s)
+{
+	ScriptCommand_JumpBasedOnFightingClubPupilStatusResult r = ScriptCommand_JumpBasedOnFightingClubPupilStatus();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -569,5 +583,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfEnoughCardsOwned", adapt_ScriptCommand_JumpIfEnoughCardsOwned },
 	{ "ScriptCommand_RemoveAllEnergyCardsFromCollection", adapt_ScriptCommand_RemoveAllEnergyCardsFromCollection },
 	{ "ScriptCommand_JumpIfAnyEnergyCardsInCollection", adapt_ScriptCommand_JumpIfAnyEnergyCardsInCollection },
+	{ "ScriptCommand_JumpBasedOnFightingClubPupilStatus", adapt_ScriptCommand_JumpBasedOnFightingClubPupilStatus },
 	{ NULL, NULL },
 };

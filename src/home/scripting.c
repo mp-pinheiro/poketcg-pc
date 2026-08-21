@@ -85,6 +85,14 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/card_collection.h"
 #include "home/scripting.h"
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#define EVENT_PUPIL_CHRIS_STATE 0x17u
+#define EVENT_PUPIL_JESSICA_STATE 0x20u
+#define EVENT_PUPIL_MICHAEL_STATE 0x11u
+#define PUPIL_DEFEATED 0x08u
+#define PUPIL_INACTIVE 0x00u
 /* <<< factory statics */
 
 
@@ -710,3 +718,57 @@ ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEner
 	return (ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult){args.a, args.f, args.b, args.c};
 }
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOnFightingClubPupilStatus(void)
+{
+	GetEventVarResult michael_event = GetEventVar(EVENT_PUPIL_MICHAEL_STATE, 0u, 0u, 0u);
+	uint8_t michael_mask = michael_event.a;
+	uint8_t michael = gb_read8(michael_event.hl);
+	while ((michael_mask & 1u) == 0u) {
+		michael_mask = (uint8_t)(michael_mask >> 1);
+		michael = (uint8_t)(michael >> 1);
+	}
+	michael = (uint8_t)(michael & michael_mask);
+	if (michael == PUPIL_INACTIVE) {
+		GetScriptArgsAfterPointerResult args = GetScriptArgs1AfterPointer();
+		uint16_t target = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+		uint16_t hl = SetScriptPointer(target);
+		return (ScriptCommand_JumpBasedOnFightingClubPupilStatusResult){args.a, args.f, args.b, args.c, hl};
+	}
+
+	uint8_t count = 0u;
+	if (michael >= PUPIL_DEFEATED)
+		++count;
+
+	GetEventVarResult chris_event = GetEventVar(EVENT_PUPIL_CHRIS_STATE, 0u, 0u, 0u);
+	uint8_t chris_mask = chris_event.a;
+	uint8_t chris = gb_read8(chris_event.hl);
+	while ((chris_mask & 1u) == 0u) {
+		chris_mask = (uint8_t)(chris_mask >> 1);
+		chris = (uint8_t)(chris >> 1);
+	}
+	chris = (uint8_t)(chris & chris_mask);
+	if (chris >= PUPIL_DEFEATED)
+		++count;
+
+	GetEventVarResult jessica_event = GetEventVar(EVENT_PUPIL_JESSICA_STATE, 0u, 0u, 0u);
+	uint8_t jessica_mask = jessica_event.a;
+	uint8_t jessica = gb_read8(jessica_event.hl);
+	while ((jessica_mask & 1u) == 0u) {
+		jessica_mask = (uint8_t)(jessica_mask >> 1);
+		jessica = (uint8_t)(jessica >> 1);
+	}
+	jessica = (uint8_t)(jessica & jessica_mask);
+	if (jessica >= PUPIL_DEFEATED)
+		++count;
+
+	uint8_t offset = (uint8_t)((count << 1) + 3u);
+	GetScriptArgsAfterPointerResult args = GetScriptArgsAfterPointer(offset);
+	uint16_t target = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	uint16_t hl = SetScriptPointer(target);
+	return (ScriptCommand_JumpBasedOnFightingClubPupilStatusResult){args.a, args.f, args.b, args.c, hl};
+}
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */

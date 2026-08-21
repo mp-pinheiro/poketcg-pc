@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpBasedOnFightingClubPupilStatus",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpBasedOnFightingClubPupilStatus\", \"registers\": {\"a\": 54, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54227\": \"00\", \"54229\": \"10\", \"54232\": \"10\", \"54273\": \"3412\", \"54291\": \"3412\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpBasedOnFightingClubPupilStatus\", \"mismatches\": {\"a\": [54, 0], \"f\": [0, 128], \"b\": [18, 0], \"c\": [52, 0], \"bus\": {\"address\": 54291, \"reference\": \"101034123412\", \"native\": \"101034120000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[54227, 1], [54229, 1], [54232, 1], [54273, 2], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpBasedOnFightingClubPupilStatus\", \"registers\": {\"a\": 54, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 54292, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54227\": \"00\", \"54229\": \"10\", \"54232\": \"10\", \"54273\": \"3412\", \"54291\": \"3412\"}}, \"status\": \"PASS\"}\n"
+}

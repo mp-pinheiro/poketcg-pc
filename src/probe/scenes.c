@@ -18,8 +18,23 @@ static void adapt__DrawPortrait(ProbeState *s)
 }
 /* <<< factory _DrawPortrait */
 
+/* >>> factory LoadScene_LoadSGBPacket */
+static void adapt_LoadScene_LoadSGBPacket(ProbeState *s)
+{
+	LoadScene_LoadSGBPacketResult result = LoadScene_LoadSGBPacket(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory LoadScene_LoadSGBPacket */
+
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
 	{ "_DrawPortrait", adapt__DrawPortrait },
+	{ "LoadScene_LoadSGBPacket", adapt_LoadScene_LoadSGBPacket },
 	{ NULL, NULL },
 };

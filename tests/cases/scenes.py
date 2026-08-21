@@ -44,6 +44,15 @@ CASES["_DrawPortrait"] = [
 ]
 # <<< factory _DrawPortrait
 
+# >>> factory LoadScene_LoadSGBPacket
+CONTRACT["LoadScene_LoadSGBPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LoadScene_LoadSGBPacket"] = [
+    {"a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x2468, "wram": {0xCAB4: b"\x00", 0xD620: b"\x00\x00"}, "read": {0xCAB4: 1, 0xD620: 2}},
+    {"a": 0x66, "f": 0x10, "b": 0x77, "c": 0x88, "d": 0x99, "e": 0xAA, "hl": 0x1357, "wram": {0xCAB4: b"\x02", 0xD620: b"\x00\x00"}, "read": {0xCAB4: 1}},
+    dict(POISON, wram={0xCAB4: b"\x01", 0xD620: b"\x00\x00"}, read={0xCAB4: 1, 0xD620: 2}),
+]
+# <<< factory LoadScene_LoadSGBPacket
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -54,3 +63,6 @@ MUTATIONS["SetBoosterLogoOAM"] = {"source_symbol": "SetBoosterLogoOAM", "before"
 # >>> factory-mutation _DrawPortrait
 MUTATIONS["_DrawPortrait"] = {"source_symbol": "_DrawPortrait", "before": "wCurTileset = tileset;", "after": "wCurTileset = (uint8_t)(tileset + 1u);", "case_ids": ["_DrawPortrait-0", "_DrawPortrait-1"]}
 # <<< factory-mutation _DrawPortrait
+# >>> factory-mutation LoadScene_LoadSGBPacket
+MUTATIONS["LoadScene_LoadSGBPacket"] = {"source_symbol": "LoadScene_LoadSGBPacket", "before": "\tif (console != CONSOLE_SGB)", "after": "\tif (console == CONSOLE_SGB)", "case_ids": ["LoadScene_LoadSGBPacket-0", "LoadScene_LoadSGBPacket-1", "LoadScene_LoadSGBPacket-2"]}
+# <<< factory-mutation LoadScene_LoadSGBPacket

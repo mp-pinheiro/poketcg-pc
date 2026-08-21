@@ -245,4 +245,17 @@ typedef struct {
 
 ScriptCommand_JumpIfAnyEnergyCardsInCollectionResult ScriptCommand_JumpIfAnyEnergyCardsInCollection(void);
 /* <<< factory ScriptCommand_JumpIfAnyEnergyCardsInCollection */
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* >>> factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint16_t hl;
+} ScriptCommand_JumpBasedOnFightingClubPupilStatusResult;
+
+ScriptCommand_JumpBasedOnFightingClubPupilStatusResult ScriptCommand_JumpBasedOnFightingClubPupilStatus(void);
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
+/* <<< factory ScriptCommand_JumpBasedOnFightingClubPupilStatus */
 #endif

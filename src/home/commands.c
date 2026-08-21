@@ -15,6 +15,19 @@
 #define UNKNOWN_SCREEN_5 0x05u
 
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/substatus.h"
+#include "home/print_text.h"
+
+#define RESISTANCE 0x02u
+#define WEAKNESS 0x01u
+#define AttackDamageText 0x003au
+#define NoDamageText 0x003bu
+#define ResistanceLessDamageText 0x0036u
+#define ResistanceNoDamageText 0x0039u
+#define WeaknessMoreDamage2Text 0x0038u
+#define WeaknessMoreDamageText 0x0037u
 /* <<< factory statics */
 
 
@@ -126,3 +139,29 @@ void DuelAnim156(void)
 	return; /* DuelAnim156 */
 }
 /* <<< factory DuelAnim156 */
+
+/* >>> factory GetDamageText */
+uint16_t GetDamageText(uint16_t hl)
+{
+	if (hl == 0u) {
+		NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+		if (check.f & 0x10u)
+			return check.hl;
+		uint8_t effectiveness = gb_read8(wDamageAnimEffectiveness_ADDR);
+		if (effectiveness & (1u << RESISTANCE))
+			return ResistanceNoDamageText;
+		return NoDamageText;
+	}
+
+	LoadTxRam3(hl);
+	uint8_t effectiveness = gb_read8(wDamageAnimEffectiveness_ADDR);
+	uint8_t flags = (uint8_t)(effectiveness & ((1u << RESISTANCE) | (1u << WEAKNESS)));
+	if (flags == 0u)
+		return AttackDamageText;
+	if (flags == ((1u << RESISTANCE) | (1u << WEAKNESS)))
+		return WeaknessMoreDamage2Text;
+	if (flags & (1u << WEAKNESS))
+		return WeaknessMoreDamageText;
+	return ResistanceLessDamageText;
+}
+/* <<< factory GetDamageText */

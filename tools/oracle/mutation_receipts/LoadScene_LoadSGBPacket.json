@@ -1,0 +1,9 @@
+{
+  "fn": "LoadScene_LoadSGBPacket",
+  "case": "tests/cases/scenes.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadScene_LoadSGBPacket\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 112, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54816\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadScene_LoadSGBPacket\", \"mismatches\": {\"f\": [112, 128]}}\n",
+  "restored": "{\"fn\": \"LoadScene_LoadSGBPacket\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 112, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"54816\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}
