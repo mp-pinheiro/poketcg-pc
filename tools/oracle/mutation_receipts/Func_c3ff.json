@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c3ff",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c3ff\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53430\": \"0000\", \"53551\": \"1412\", \"53811\": \"000000000000\", \"54066\": \"4040\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c3ff\", \"mismatches\": {\"bus\": {\"address\": 53815, \"reference\": \"000000000000404000\", \"native\": \"000000002800404000\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[53430, 2], [53551, 2], [53811, 6], [54066, 2], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c3ff\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53430\": \"0000\", \"53551\": \"1412\", \"53811\": \"000000000000\", \"54066\": \"4040\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

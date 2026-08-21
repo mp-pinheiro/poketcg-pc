@@ -123,4 +123,7 @@ void StartScriptedMovement(void);
 /* >>> factory RestoreObjectPalettes */
 void RestoreObjectPalettes(void);
 /* <<< factory RestoreObjectPalettes */
+/* >>> factory Func_c3ff */
+void Func_c3ff(void);
+/* <<< factory Func_c3ff */
 #endif /* POKETCG_HOME_OVERWORLD_H */

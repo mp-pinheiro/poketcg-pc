@@ -401,6 +401,16 @@ CASES["RestoreObjectPalettes"] = [
 ]
 # <<< factory RestoreObjectPalettes
 
+# >>> factory Func_c3ff
+CONTRACT["Func_c3ff"] = {"compare": (), "preserve": ()}
+CASES["Func_c3ff"] = [
+	{"wram": {0xD12F: b"\x14", 0xD130: b"\x12", 0xD332: b"\x40", 0xD333: b"\x40"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
+	{"wram": {0xD12F: b"\x28", 0xD130: b"\x24", 0xD332: b"\x90", 0xD333: b"\xA0"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
+	{"wram": {0xD12F: b"\x1E", 0xD130: b"\x20", 0xD332: b"\x00", 0xD333: b"\x01"}, "read": {0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}},
+	dict(POISON, wram={0xD12F: b"\xAA", 0xD130: b"\x55", 0xD332: b"\xAA", 0xD333: b"\x55"}, read={0xD237: 1, 0xD238: 1, 0xD233: 1, 0xD234: 1, 0xD235: 1, 0xD236: 1, 0xD0B6: 1, 0xD0B7: 1, 0xFF92: 1, 0xFF93: 1}),
+]
+# <<< factory Func_c3ff
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -550,3 +560,11 @@ MUTATIONS["StartScriptedMovement"] = {"source_symbol": "StartScriptedMovement", 
 # >>> factory-mutation RestoreObjectPalettes
 MUTATIONS["RestoreObjectPalettes"] = {"source_symbol": "RestoreObjectPalettes", "before": "\twOBP0 = wOBP0Backup;", "after": "\twOBP0 = (uint8_t)(wOBP0Backup + 1u);", "case_ids": ["RestoreObjectPalettes-0", "RestoreObjectPalettes-1", "RestoreObjectPalettes-2"]}
 # <<< factory-mutation RestoreObjectPalettes
+# >>> factory-mutation Func_c3ff
+MUTATIONS["Func_c3ff"] = {
+	"source_symbol": "Func_c3ff",
+	"before": "wd237 = (uint8_t)(wBGMapWidth - SCREEN_WIDTH);",
+	"after": "wd237 = (uint8_t)(wBGMapWidth + SCREEN_WIDTH);",
+	"case_ids": ["Func_c3ff-0", "Func_c3ff-1", "Func_c3ff-2", "Func_c3ff-3"],
+}
+# <<< factory-mutation Func_c3ff

@@ -76,6 +76,11 @@
 #include "generated/wram.h"
 #include "home/copy.h"
 #include "home/palettes.h"
+
+#include "generated/wram.h"
+#include "home/overworld.h"
+#define SCREEN_WIDTH 0x14u
+#define SCREEN_HEIGHT 0x12u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -502,3 +507,15 @@ void RestoreObjectPalettes(void)
 	FlushAllPalettes();
 }
 /* <<< factory RestoreObjectPalettes */
+
+/* >>> factory Func_c3ff */
+void Func_c3ff(void)
+{
+	wd237 = (uint8_t)(wBGMapWidth - SCREEN_WIDTH);
+	wd238 = (uint8_t)(wBGMapHeight - SCREEN_HEIGHT);
+	Func_c41c();
+	Func_c469();
+	(void)SetScreenScrollWram();
+	SetScreenScroll();
+}
+/* <<< factory Func_c3ff */

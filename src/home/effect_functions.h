@@ -986,6 +986,10 @@ void DestinyBond_AISelectEffect(void);
 /* >>> factory Rampage_AIEffect */
 void Rampage_AIEffect(void);
 /* <<< factory Rampage_AIEffect */
+/* >>> factory SuperPotion_DamageEnergyCheck */
+typedef struct { uint8_t f; uint16_t hl; } SuperPotionDamageEnergyCheckResult;
+SuperPotionDamageEnergyCheckResult SuperPotion_DamageEnergyCheck(void);
+/* <<< factory SuperPotion_DamageEnergyCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -2578,6 +2578,14 @@ CASES["Rampage_AIEffect"] = [
 ]
 # <<< factory Rampage_AIEffect
 
+# >>> factory SuperPotion_DamageEnergyCheck
+CONTRACT["SuperPotion_DamageEnergyCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SuperPotion_DamageEnergyCheck"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory SuperPotion_DamageEnergyCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4313,3 +4321,6 @@ MUTATIONS["Rampage_AIEffect"] = {
     "case_ids": ["Rampage_AIEffect-0", "Rampage_AIEffect-1", "Rampage_AIEffect-2", "Rampage_AIEffect-3"]
 }
 # <<< factory-mutation Rampage_AIEffect
+# >>> factory-mutation SuperPotion_DamageEnergyCheck
+MUTATIONS["SuperPotion_DamageEnergyCheck"] = {"source_symbol": "SuperPotion_DamageEnergyCheck", "before": "\tif ((damage.f & 0x10u) != 0u)", "after": "\tif ((damage.f & 0x10u) == 0u)", "case_ids": ["SuperPotion_DamageEnergyCheck-0", "SuperPotion_DamageEnergyCheck-1"]}
+# <<< factory-mutation SuperPotion_DamageEnergyCheck

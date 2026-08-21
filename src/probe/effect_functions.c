@@ -2353,6 +2353,15 @@ static void adapt_Rampage_AIEffect(ProbeState *s)
 }
 /* <<< factory Rampage_AIEffect */
 
+/* >>> factory SuperPotion_DamageEnergyCheck */
+static void adapt_SuperPotion_DamageEnergyCheck(ProbeState *s)
+{
+	SuperPotionDamageEnergyCheckResult r = SuperPotion_DamageEnergyCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory SuperPotion_DamageEnergyCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2645,5 +2654,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StoneBarrage_AIEffect", adapt_StoneBarrage_AIEffect },
 	{ "DestinyBond_AISelectEffect", adapt_DestinyBond_AISelectEffect },
 	{ "Rampage_AIEffect", adapt_Rampage_AIEffect },
+	{ "SuperPotion_DamageEnergyCheck", adapt_SuperPotion_DamageEnergyCheck },
 	{ NULL, NULL },
 };

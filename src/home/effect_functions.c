@@ -278,6 +278,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/damage.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#define ThereIsNoEnergyCardAttachedText 0x00cdu
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4028,3 +4031,14 @@ void Rampage_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory Rampage_AIEffect */
+
+/* >>> factory SuperPotion_DamageEnergyCheck */
+SuperPotionDamageEnergyCheckResult SuperPotion_DamageEnergyCheck(void)
+{
+	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
+	if ((damage.f & 0x10u) != 0u)
+		return (SuperPotionDamageEnergyCheckResult){damage.f, NoPokemonWithDamageCountersText};
+	CheckIfThereAreAnyEnergyCardsAttachedResult energy = CheckIfThereAreAnyEnergyCardsAttached();
+	return (SuperPotionDamageEnergyCheckResult){energy.f, ThereIsNoEnergyCardAttachedText};
+}
+/* <<< factory SuperPotion_DamageEnergyCheck */
