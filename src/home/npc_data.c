@@ -7,6 +7,8 @@
 #include "mem.h"
 #define NPC_HEADER_POINTERS_BANK 0x04u
 #define NPC_HEADER_POINTERS_ADDR 0x58F5u
+
+#define NPC_DATA_NAME_TEXT 0x07u
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -31,3 +33,14 @@ GetNPCHeaderPointerResult GetNPCHeaderPointer(uint8_t a)
 	return (GetNPCHeaderPointerResult){pointer, pointer_low, f};
 }
 /* <<< factory GetNPCHeaderPointer */
+
+/* >>> factory SetNPCOpponentNameAndPortrait */
+void SetNPCOpponentNameAndPortrait(uint8_t a)
+{
+	GetNPCHeaderPointerResult result = GetNPCHeaderPointer(a);
+	const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(result.hl + NPC_DATA_NAME_TEXT));
+	gb_write8(wOpponentName_ADDR, entry[0]);
+	gb_write8((uint16_t)(wOpponentName_ADDR + 1u), entry[1]);
+	gb_write8(wOpponentPortrait_ADDR, entry[2]);
+}
+/* <<< factory SetNPCOpponentNameAndPortrait */

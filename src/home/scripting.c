@@ -822,3 +822,24 @@ ScriptCommand_JumpIfEventEqualResult ScriptCommand_JumpIfEventEqual(uint8_t b, u
 	return (ScriptCommand_JumpIfEventEqualResult){args.a, args.f, args.b, args.c, next_hl};
 }
 /* <<< factory ScriptCommand_JumpIfEventEqual */
+
+/* >>> factory ScriptCommand_JumpIfEventZero */
+ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventZero(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t event = GetEventValue(c);
+	if (event == 0u) {
+		/* before */
+		(void)SetScriptControlBytePass();
+		GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+		if (args.f & 0x80u) {
+			IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+			return (ScriptCommand_JumpIfEventZeroResult){r.a, r.f, args.b, r.c, hl};
+		}
+		uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+		return (ScriptCommand_JumpIfEventZeroResult){args.a, args.f, args.b, args.c, next_hl};
+	}
+	(void)SetScriptControlByteFail();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (ScriptCommand_JumpIfEventZeroResult){r.a, r.f, b, r.c, hl};
+}
+/* <<< factory ScriptCommand_JumpIfEventZero */

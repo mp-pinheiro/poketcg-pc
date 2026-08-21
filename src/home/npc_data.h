@@ -12,4 +12,7 @@ typedef struct {
 
 GetNPCHeaderPointerResult GetNPCHeaderPointer(uint8_t a);
 /* <<< factory GetNPCHeaderPointer */
+/* >>> factory SetNPCOpponentNameAndPortrait */
+void SetNPCOpponentNameAndPortrait(uint8_t a);
+/* <<< factory SetNPCOpponentNameAndPortrait */
 #endif /* POKETCG_HOME_NPC_DATA_H */

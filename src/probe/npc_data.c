@@ -13,7 +13,15 @@ static void adapt_GetNPCHeaderPointer(ProbeState *s)
 }
 /* <<< factory GetNPCHeaderPointer */
 
+/* >>> factory SetNPCOpponentNameAndPortrait */
+static void adapt_SetNPCOpponentNameAndPortrait(ProbeState *s)
+{
+	SetNPCOpponentNameAndPortrait(s->a);
+}
+/* <<< factory SetNPCOpponentNameAndPortrait */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
+	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
 	{ NULL, NULL },
 };

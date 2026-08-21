@@ -1226,6 +1226,14 @@ static void adapt_WriteTwoDigitNumberInTxSymbol_PadSpace(ProbeState *s)
 }
 /* <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace */
 
+/* >>> factory PrintOpponentNumberOfHandAndDeckCards */
+static void adapt_PrintOpponentNumberOfHandAndDeckCards(ProbeState *s)
+{
+	(void)s;
+	PrintOpponentNumberOfHandAndDeckCards();
+}
+/* <<< factory PrintOpponentNumberOfHandAndDeckCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1371,5 +1379,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn4", adapt_PracticeDuelVerify_Turn4 },
 	{ "ShuffleDeckAndDrawSevenCards", adapt_ShuffleDeckAndDrawSevenCards },
 	{ "WriteTwoDigitNumberInTxSymbol_PadSpace", adapt_WriteTwoDigitNumberInTxSymbol_PadSpace },
+	{ "PrintOpponentNumberOfHandAndDeckCards", adapt_PrintOpponentNumberOfHandAndDeckCards },
 	{ NULL, NULL },
 };

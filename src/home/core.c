@@ -458,6 +458,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/bg_map.h"
 #include "home/core.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2905,3 +2908,13 @@ void WriteTwoDigitNumberInTxSymbol_PadSpace(
 	(void)hl;
 }
 /* <<< factory WriteTwoDigitNumberInTxSymbol_PadSpace */
+
+/* >>> factory PrintOpponentNumberOfHandAndDeckCards */
+void PrintOpponentNumberOfHandAndDeckCards(void)
+{
+	uint8_t hand = (uint8_t)(wOpponentNumberOfCardsInHand + wNumCardsBeingDrawn);
+	uint8_t deck = (uint8_t)(DECK_SIZE - wOpponentNumberOfCardsNotInDeck - wNumCardsBeingDrawn);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(hand, 5, 3, hand, deck, 0);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(deck, 11, 3, hand, deck, 0);
+}
+/* <<< factory PrintOpponentNumberOfHandAndDeckCards */
