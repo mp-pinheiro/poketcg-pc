@@ -48,6 +48,11 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 
 #include "generated/wram.h"
 #include "home/booster_packs.h"
+
+#include "home/booster_packs.h"
+#include "mem.h"
+
+#define NUM_CARDS_IN_BOOSTER 0x0Au
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -162,3 +167,17 @@ void ZeroBoosterRarityData(void)
 	wBoosterData_RareAmount = 0u;
 }
 /* <<< factory ZeroBoosterRarityData */
+
+/* >>> factory GenerateTwoTypesEnergyBooster */
+GenerateTwoTypesEnergyBoosterResult GenerateTwoTypesEnergyBooster(uint16_t hl)
+{
+	for (uint8_t b = 0; b < 2u; b++) {
+		uint8_t card = gb_read8(hl);
+		for (uint8_t c = 0; c < NUM_CARDS_IN_BOOSTER / 2u; c++)
+			(void)AddBoosterEnergyToDrawnEnergies(card);
+		hl = (uint16_t)(hl + 1u);
+	}
+	ZeroBoosterRarityData();
+	return (GenerateTwoTypesEnergyBoosterResult){0u, 0x80u, 0u, 0u, hl};
+}
+/* <<< factory GenerateTwoTypesEnergyBooster */

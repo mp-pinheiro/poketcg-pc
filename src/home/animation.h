@@ -13,4 +13,7 @@ void StoreOWFramesetSubgroup(uint8_t c);
 /* >>> factory LoadOWFrameTiles */
 void LoadOWFrameTiles(void);
 /* <<< factory LoadOWFrameTiles */
+/* >>> factory DoLoadedFramesetSubgroupsFrame */
+void DoLoadedFramesetSubgroupsFrame(void);
+/* <<< factory DoLoadedFramesetSubgroupsFrame */
 #endif

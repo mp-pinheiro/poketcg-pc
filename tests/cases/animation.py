@@ -62,6 +62,22 @@ CASES = {
 # <<< factory LoadOWFrameTiles
 }
 
+# >>> factory-cases-statics
+wNumLoadedFramesetSubgroups = 0xD322
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory DoLoadedFramesetSubgroupsFrame
+CONTRACT["DoLoadedFramesetSubgroupsFrame"] = {"compare": (), "preserve": ()}
+CASES["DoLoadedFramesetSubgroupsFrame"] = [
+    {"wram": {wNumLoadedFramesetSubgroups: b"\x00"}},
+    {"wram": {wNumLoadedFramesetSubgroups: b"\x01", 0xD31A: b"\xff" * 6}},
+    dict(POISON, wram={wNumLoadedFramesetSubgroups: b"\x02", 0xD31A: b"\xff" * 6}),
+    {"c": 0x7F, "wram": {wNumLoadedFramesetSubgroups: b"\x03", 0xD31A: b"\xff" * 6}},
+]
+# <<< factory DoLoadedFramesetSubgroupsFrame
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -105,3 +121,11 @@ MUTATIONS["LoadOWFrameTiles"] = {
     "case_ids": ["LoadOWFrameTiles-0", "LoadOWFrameTiles-1", "LoadOWFrameTiles-2", "LoadOWFrameTiles-3"],
 }
 # <<< factory-mutation LoadOWFrameTiles
+# >>> factory-mutation DoLoadedFramesetSubgroupsFrame
+MUTATIONS["DoLoadedFramesetSubgroupsFrame"] = {
+    "source_symbol": "DoLoadedFramesetSubgroupsFrame",
+    "before": "if (LoadOWFramesetSubgroup(c) != 0xffu) {",
+    "after": "if (LoadOWFramesetSubgroup(c) == 0xffu) {",
+    "case_ids": ["DoLoadedFramesetSubgroupsFrame-1", "DoLoadedFramesetSubgroupsFrame-2", "DoLoadedFramesetSubgroupsFrame-3"],
+}
+# <<< factory-mutation DoLoadedFramesetSubgroupsFrame

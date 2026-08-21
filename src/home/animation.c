@@ -5,6 +5,11 @@
 #include "home/map.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/animation.h"
+#include "generated/wram.h"
+#define NUM_OW_FRAMESET_SUBGROUPS 0x03u
+/* <<< factory statics */
 #define NUM_OW_FRAMESET_SUBGROUPS 3u
 
 void ClearNumLoadedFramesetSubgroups(void)
@@ -100,3 +105,20 @@ void LoadOWFrameTiles(void)
 
 /* >>> factory-mutation LoadOWFrameTiles */
 /* <<< factory-mutation LoadOWFrameTiles */
+
+/* >>> factory DoLoadedFramesetSubgroupsFrame */
+void DoLoadedFramesetSubgroupsFrame(void)
+{
+	if (wNumLoadedFramesetSubgroups == 0u)
+		return;
+
+	uint8_t c = 0u;
+	while (c < NUM_OW_FRAMESET_SUBGROUPS) {
+		if (LoadOWFramesetSubgroup(c) != 0xffu) {
+			LoadOWFrameTiles();
+			StoreOWFramesetSubgroup(c);
+		}
+		c++;
+	}
+}
+/* <<< factory DoLoadedFramesetSubgroupsFrame */

@@ -159,6 +159,14 @@ static void adapt_FindPlayerMovementWithOffset(ProbeState *s)
 }
 /* <<< factory FindPlayerMovementWithOffset */
 
+/* >>> factory BackupObjectPalettes */
+static void adapt_BackupObjectPalettes(ProbeState *s)
+{
+	(void)s;
+	BackupObjectPalettes();
+}
+/* <<< factory BackupObjectPalettes */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -179,5 +187,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "GetDirectionFromDPad", adapt_GetDirectionFromDPad },
 	{ "Func_c694", adapt_Func_c694 },
 	{ "FindPlayerMovementWithOffset", adapt_FindPlayerMovementWithOffset },
+	{ "BackupObjectPalettes", adapt_BackupObjectPalettes },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "GenerateTwoTypesEnergyBooster",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateTwoTypesEnergyBooster\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49170\": \"05\", \"49194\": \"05\", \"50187\": \"12\", \"50432\": \"122a\", \"54894\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateTwoTypesEnergyBooster\", \"mismatches\": {\"bus\": {\"address\": 49170, \"reference\": \"050512122a\", \"native\": \"000013122a\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49170, 1], [49194, 1], [50187, 1], [50432, 2], [54894, 3]]}}}\n",
+  "restored": "{\"fn\": \"GenerateTwoTypesEnergyBooster\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49170\": \"05\", \"49194\": \"05\", \"50187\": \"12\", \"50432\": \"122a\", \"54894\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

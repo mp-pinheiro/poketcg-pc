@@ -85,4 +85,7 @@ typedef struct {
 } FindPlayerMovementWithOffsetResult;
 FindPlayerMovementWithOffsetResult FindPlayerMovementWithOffset(uint8_t a);
 /* <<< factory FindPlayerMovementWithOffset */
+/* >>> factory BackupObjectPalettes */
+void BackupObjectPalettes(void);
+/* <<< factory BackupObjectPalettes */
 #endif /* POKETCG_HOME_OVERWORLD_H */

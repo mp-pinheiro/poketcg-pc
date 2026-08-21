@@ -1,0 +1,9 @@
+{
+  "fn": "DoLoadedFramesetSubgroupsFrame",
+  "case": "tests/cases/animation.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DoLoadedFramesetSubgroupsFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54042\": \"ffffffffffff\", \"54050\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DoLoadedFramesetSubgroupsFrame\", \"mismatches\": {\"bus\": {\"address\": 54043, \"reference\": \"ffffffffffff\", \"native\": \"fffefffefffe\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[54042, 6], [54050, 1]]}}}\n",
+  "restored": "{\"fn\": \"DoLoadedFramesetSubgroupsFrame\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"54042\": \"ffffffffffff\", \"54050\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -47,6 +47,10 @@
 
 #include "generated/wram.h"
 #include "home/overworld.h"
+
+#include "generated/wram.h"
+#include "home/copy.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -365,3 +369,12 @@ FindPlayerMovementWithOffsetResult FindPlayerMovementWithOffset(uint8_t a)
 	return result;
 }
 /* <<< factory FindPlayerMovementWithOffset */
+
+/* >>> factory BackupObjectPalettes */
+void BackupObjectPalettes(void)
+{
+	gb_write8(wOBP0Backup_ADDR, gb_read8(wOBP0_ADDR));
+	gb_write8(wOBP1Backup_ADDR, gb_read8(wOBP1_ADDR));
+	CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGB_ADDR, wObjectPalettesCGBBackup_ADDR, 64u);
+}
+/* <<< factory BackupObjectPalettes */

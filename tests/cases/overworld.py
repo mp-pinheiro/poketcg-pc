@@ -212,6 +212,14 @@ wPermissionMap = 0xD133
 
 wPlayerXCoord = 0xD330
 wPlayerYCoord = 0xD331
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wOBP0 = 0xCABD
+wOBP0Backup = 0xD10C
+wOBP1 = 0xCABE
+wOBP1Backup = 0xD10D
+wObjectPalettesCGB = 0xCB30
+wObjectPalettesCGBBackup = 0xD0CC
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -265,6 +273,15 @@ CASES["FindPlayerMovementWithOffset"] = [
     dict(POISON, a=0x01, wram={wPlayerXCoord: b"\xF0", wPlayerYCoord: b"\x01"}),
 ]
 # <<< factory FindPlayerMovementWithOffset
+
+# >>> factory BackupObjectPalettes
+CONTRACT["BackupObjectPalettes"] = {"compare": (), "preserve": ()}
+CASES["BackupObjectPalettes"] = [
+	{"wram": {wOBP0: b"\x12", wOBP1: b"\x34", wObjectPalettesCGB: bytes(range(64))}, "read": {wOBP0Backup: 1, wOBP1Backup: 1, wObjectPalettesCGBBackup: 64}},
+	dict(POISON, wram={wOBP0: b"\xAA", wOBP1: b"\x55", wObjectPalettesCGB: bytes([0xA5] * 64)}, read={wOBP0Backup: 1, wOBP1Backup: 1, wObjectPalettesCGBBackup: 64}),
+	{"wram": {wOBP0: b"\x00", wOBP1: b"\xFF", wObjectPalettesCGB: b"\x00" * 64}, "read": {wOBP0Backup: 1, wOBP1Backup: 1, wObjectPalettesCGBBackup: 64}},
+]
+# <<< factory BackupObjectPalettes
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -372,3 +389,11 @@ MUTATIONS["Func_c694"] = {"source_symbol": "Func_c694", "before": "wd338--;", "a
 # >>> factory-mutation FindPlayerMovementWithOffset
 MUTATIONS["FindPlayerMovementWithOffset"] = {"source_symbol": "FindPlayerMovementWithOffset", "before": "uint8_t x_offset = offsets[index];", "after": "uint8_t x_offset = (uint8_t)(offsets[index] + 1u);", "case_ids": ["FindPlayerMovementWithOffset-0", "FindPlayerMovementWithOffset-1", "FindPlayerMovementWithOffset-2", "FindPlayerMovementWithOffset-3", "FindPlayerMovementWithOffset-4"]}
 # <<< factory-mutation FindPlayerMovementWithOffset
+# >>> factory-mutation BackupObjectPalettes
+MUTATIONS["BackupObjectPalettes"] = {
+	"source_symbol": "BackupObjectPalettes",
+	"before": "CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGB_ADDR, wObjectPalettesCGBBackup_ADDR, 64u);",
+	"after": "CopyDataHLtoDE_SaveRegisters(wObjectPalettesCGB_ADDR, wObjectPalettesCGBBackup_ADDR, 63u);",
+	"case_ids": ["BackupObjectPalettes-0", "BackupObjectPalettes-1", "BackupObjectPalettes-2"],
+}
+# <<< factory-mutation BackupObjectPalettes

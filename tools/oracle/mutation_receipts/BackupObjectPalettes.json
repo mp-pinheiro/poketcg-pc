@@ -1,0 +1,9 @@
+{
+  "fn": "BackupObjectPalettes",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BackupObjectPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51901\": \"1234\", \"52016\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f\", \"53452\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f1234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BackupObjectPalettes\", \"mismatches\": {\"bus\": {\"address\": 53515, \"reference\": \"3b3c3d3e3f1234\", \"native\": \"3b3c3d3e001234\", \"reference_size\": 132, \"native_size\": 132, \"spans\": [[51901, 2], [52016, 64], [53452, 66]]}}}\n",
+  "restored": "{\"fn\": \"BackupObjectPalettes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51901\": \"1234\", \"52016\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f\", \"53452\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f1234\"}}, \"status\": \"PASS\"}\n"
+}
