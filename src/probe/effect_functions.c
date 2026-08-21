@@ -2228,6 +2228,14 @@ static void adapt_ClefableMetronome_AISelectEffect(ProbeState *s)
 }
 /* <<< factory ClefableMetronome_AISelectEffect */
 
+/* >>> factory Ember_AISelectEffect */
+static void adapt_Ember_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	Ember_AISelectEffect();
+}
+/* <<< factory Ember_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2504,5 +2512,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpearowMirrorMove_AISelection", adapt_SpearowMirrorMove_AISelection },
 	{ "CharmeleonFlamethrower_AISelectEffect", adapt_CharmeleonFlamethrower_AISelectEffect },
 	{ "ClefableMetronome_AISelectEffect", adapt_ClefableMetronome_AISelectEffect },
+	{ "Ember_AISelectEffect", adapt_Ember_AISelectEffect },
 	{ NULL, NULL },
 };

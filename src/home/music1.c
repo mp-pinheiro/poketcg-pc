@@ -1307,3 +1307,10 @@ void _PlaySFX(uint8_t a)
 	Music1_PlaySFX(a);
 }
 /* <<< factory _PlaySFX */
+
+/* >>> factory _PlaySong */
+void _PlaySong(uint8_t a)
+{
+	Music1_PlaySong(a);
+}
+/* <<< factory _PlaySong */

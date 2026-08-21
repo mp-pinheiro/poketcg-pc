@@ -311,6 +311,14 @@ CASES["FindPlayerMovementFromDirection"] = [
 ]
 # <<< factory FindPlayerMovementFromDirection
 
+# >>> factory Func_c1a0
+CONTRACT["Func_c1a0"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["Func_c1a0"] = [
+    {"hl": 0x5678, "read": {0xCAD3: 2}},
+    dict(POISON, read={0xCAD3: 2}),
+]
+# <<< factory Func_c1a0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -431,3 +439,11 @@ MUTATIONS["AttemptPlayerMovement"] = {"source_symbol": "AttemptPlayerMovement", 
 # >>> factory-mutation FindPlayerMovementFromDirection
 MUTATIONS["FindPlayerMovementFromDirection"] = {"source_symbol": "FindPlayerMovementFromDirection", "before": "return FindPlayerMovementWithOffset(wPlayerDirection);", "after": "return FindPlayerMovementWithOffset((uint8_t)(wPlayerDirection + 1u));", "case_ids": ["FindPlayerMovementFromDirection-0", "FindPlayerMovementFromDirection-1", "FindPlayerMovementFromDirection-2", "FindPlayerMovementFromDirection-3", "FindPlayerMovementFromDirection-4"]}
 # <<< factory-mutation FindPlayerMovementFromDirection
+# >>> factory-mutation Func_c1a0
+MUTATIONS["Func_c1a0"] = {
+    "source_symbol": "Func_c1a0",
+    "before": "FrameFunctionResult result = ResetDoFrameFunction(hl);",
+    "after": "FrameFunctionResult result = ResetDoFrameFunction((uint16_t)(hl + 1u));",
+    "case_ids": ["Func_c1a0-1"],
+}
+# <<< factory-mutation Func_c1a0

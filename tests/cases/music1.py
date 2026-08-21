@@ -617,6 +617,17 @@ CASES["_PlaySFX"] = [
 ]
 # <<< factory _PlaySFX
 
+# >>> factory _PlaySong
+CONTRACT["_PlaySong"] = {"compare": ("hl",), "preserve": ("hl",)}
+CASES["_PlaySong"] = [
+    {"a": 0x00, "read": {0xDD80: 1}},
+    {"a": 0x1E, "read": {0xDD80: 1}},
+    {"a": 0x1F, "read": {0xDD80: 1}},
+    {"a": 0xFF, "read": {0xDD80: 1}},
+    dict(POISON, read={0xDD80: 1}),
+]
+# <<< factory _PlaySong
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -649,3 +660,6 @@ MUTATIONS["_AssertSongFinished"] = {"source_symbol": "_AssertSongFinished", "bef
 # >>> factory-mutation _PlaySFX
 MUTATIONS["_PlaySFX"] = {"source_symbol": "_PlaySFX", "before": "Music1_PlaySFX(a);", "after": "Music1_PlaySFX((uint8_t)(a ^ 1u));", "case_ids": ["_PlaySFX-0", "_PlaySFX-1", "_PlaySFX-2", "_PlaySFX-3", "_PlaySFX-4"]};
 # <<< factory-mutation _PlaySFX
+# >>> factory-mutation _PlaySong
+MUTATIONS["_PlaySong"] = {"source_symbol": "_PlaySong", "before": "Music1_PlaySong(a);", "after": "Music1_PlaySong((uint8_t)(a ^ 1u));", "case_ids": ["_PlaySong-0", "_PlaySong-1", "_PlaySong-2", "_PlaySong-3", "_PlaySong-4"]};
+# <<< factory-mutation _PlaySong

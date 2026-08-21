@@ -59,6 +59,8 @@
 
 #include "home/overworld.h"
 #include "generated/wram.h"
+
+#include "home/play_animation.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -412,3 +414,11 @@ FindPlayerMovementWithOffsetResult FindPlayerMovementFromDirection(void)
 	return FindPlayerMovementWithOffset(wPlayerDirection);
 }
 /* <<< factory FindPlayerMovementFromDirection */
+
+/* >>> factory Func_c1a0 */
+FuncC1A0Result Func_c1a0(uint16_t hl)
+{
+	FrameFunctionResult result = ResetDoFrameFunction(hl);
+	return (FuncC1A0Result){result.a, result.f, result.hl};
+}
+/* <<< factory Func_c1a0 */

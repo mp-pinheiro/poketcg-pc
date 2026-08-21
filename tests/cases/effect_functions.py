@@ -2420,6 +2420,15 @@ CASES["ClefableMetronome_AISelectEffect"] = [
 ]
 # <<< factory ClefableMetronome_AISelectEffect
 
+# >>> factory Ember_AISelectEffect
+CONTRACT["Ember_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Ember_AISelectEffect"] = [
+    {"wram": {0xC510: bytes(0x40), 0xFFA0: bytes(0x10)}},
+    {"wram": {0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}},
+    dict(POISON, wram={0xC510: b"\x00\x64\xff\xff" + bytes(0x3C), 0xFFA0: bytes(0x10)}),
+]
+# <<< factory Ember_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4082,3 +4091,11 @@ MUTATIONS["CharmeleonFlamethrower_AISelectEffect"] = {
 # >>> factory-mutation ClefableMetronome_AISelectEffect
 MUTATIONS["ClefableMetronome_AISelectEffect"] = {"source_symbol": "ClefableMetronome_AISelectEffect", "before": "HandleAIMetronomeEffect();", "after": "gb_write8(0xC100u, 0xFFu);", "case_ids": ["ClefableMetronome_AISelectEffect-0", "ClefableMetronome_AISelectEffect-1"]}
 # <<< factory-mutation ClefableMetronome_AISelectEffect
+# >>> factory-mutation Ember_AISelectEffect
+MUTATIONS["Ember_AISelectEffect"] = {
+    "source_symbol": "Ember_AISelectEffect",
+    "before": "void Ember_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}",
+    "after": "void Ember_AISelectEffect(void)\n{\n}",
+    "case_ids": ["Ember_AISelectEffect-1", "Ember_AISelectEffect-2"],
+}
+# <<< factory-mutation Ember_AISelectEffect

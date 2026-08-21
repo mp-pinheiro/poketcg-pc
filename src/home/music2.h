@@ -102,4 +102,7 @@ void _PauseSong_2(void);
 void Music2_PauseSong(void);
 void Music2_ResumeSong(void);
 /* <<< factory _PauseSong_2 */
+/* >>> factory _PlaySFX_2 */
+void _PlaySFX_2(uint8_t a);
+/* <<< factory _PlaySFX_2 */
 #endif /* POKETCG_MUSIC2_H */

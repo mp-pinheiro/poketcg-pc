@@ -185,6 +185,17 @@ static void adapt_FindPlayerMovementFromDirection(ProbeState *s)
 }
 /* <<< factory FindPlayerMovementFromDirection */
 
+/* >>> factory Func_c1a0 */
+static void adapt_Func_c1a0(ProbeState *s)
+{
+	uint8_t f = s->f;
+	FuncC1A0Result result = Func_c1a0(s->hl);
+	s->a = result.a;
+	s->f = f;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c1a0 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -208,5 +219,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "BackupObjectPalettes", adapt_BackupObjectPalettes },
 	{ "AttemptPlayerMovement", adapt_AttemptPlayerMovement },
 	{ "FindPlayerMovementFromDirection", adapt_FindPlayerMovementFromDirection },
+	{ "Func_c1a0", adapt_Func_c1a0 },
 	{ NULL, NULL },
 };

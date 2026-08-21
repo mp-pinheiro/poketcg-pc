@@ -1,0 +1,9 @@
+{
+  "fn": "_PlaySFX_2",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_PlaySFX_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_PlaySFX_2\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"0000\", \"native\": \"010a\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56706, 2]]}}}\n",
+  "restored": "{\"fn\": \"_PlaySFX_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

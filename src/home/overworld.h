@@ -94,4 +94,12 @@ void AttemptPlayerMovement(uint8_t b, uint8_t c);
 /* >>> factory FindPlayerMovementFromDirection */
 FindPlayerMovementWithOffsetResult FindPlayerMovementFromDirection(void);
 /* <<< factory FindPlayerMovementFromDirection */
+/* >>> factory Func_c1a0 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} FuncC1A0Result;
+FuncC1A0Result Func_c1a0(uint16_t hl);
+/* <<< factory Func_c1a0 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

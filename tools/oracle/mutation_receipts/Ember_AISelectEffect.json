@@ -1,0 +1,9 @@
+{
+  "fn": "Ember_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Ember_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff64ffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"65440\": \"ff000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Ember_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 50448, \"reference\": \"ff64ffff00\", \"native\": \"0064ffff00\", \"reference_size\": 80, \"native_size\": 80, \"spans\": [[50448, 64], [65440, 16]]}}}\n",
+  "restored": "{\"fn\": \"Ember_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff64ffff000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\", \"65440\": \"ff000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

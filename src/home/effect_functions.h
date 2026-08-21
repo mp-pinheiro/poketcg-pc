@@ -931,6 +931,12 @@ void CharmeleonFlamethrower_AISelectEffect(void);
 /* >>> factory ClefableMetronome_AISelectEffect */
 void ClefableMetronome_AISelectEffect(void);
 /* <<< factory ClefableMetronome_AISelectEffect */
+/* >>> factory Ember_AISelectEffect */
+/* poketcg/src/engine/duel/effect_functions.asm */
+
+void AIPickFireEnergyCardToDiscard(void);
+void Ember_AISelectEffect(void);
+/* <<< factory Ember_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

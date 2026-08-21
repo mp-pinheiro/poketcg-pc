@@ -1287,3 +1287,10 @@ void _PauseSong_2(void)
 	Music2_PauseSong();
 }
 /* <<< factory _PauseSong_2 */
+
+/* >>> factory _PlaySFX_2 */
+void _PlaySFX_2(uint8_t a)
+{
+	Music2_PlaySFX(a);
+}
+/* <<< factory _PlaySFX_2 */

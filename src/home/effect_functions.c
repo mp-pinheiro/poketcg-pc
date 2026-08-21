@@ -3883,3 +3883,10 @@ void ClefableMetronome_AISelectEffect(void)
 	HandleAIMetronomeEffect();
 }
 /* <<< factory ClefableMetronome_AISelectEffect */
+
+/* >>> factory Ember_AISelectEffect */
+void Ember_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory Ember_AISelectEffect */
