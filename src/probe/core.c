@@ -1179,6 +1179,14 @@ static void adapt_PrintAttachedEnergyToPokemon(ProbeState *s)
 }
 /* <<< factory PrintAttachedEnergyToPokemon */
 
+/* >>> factory PrintPokemonEvolvedIntoPokemon */
+static void adapt_PrintPokemonEvolvedIntoPokemon(ProbeState *s)
+{
+	(void)s;
+	PrintPokemonEvolvedIntoPokemon();
+}
+/* <<< factory PrintPokemonEvolvedIntoPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1318,5 +1326,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn7Or8", adapt_PracticeDuelVerify_Turn7Or8 },
 	{ "SetDiscardPileScreenTexts", adapt_SetDiscardPileScreenTexts },
 	{ "PrintAttachedEnergyToPokemon", adapt_PrintAttachedEnergyToPokemon },
+	{ "PrintPokemonEvolvedIntoPokemon", adapt_PrintPokemonEvolvedIntoPokemon },
 	{ NULL, NULL },
 };

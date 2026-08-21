@@ -36,6 +36,8 @@
 #include "generated/wram.h"
 #include "home/duel.h"
 #include "home/serial.h"
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -474,3 +476,15 @@ SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, u
 	return (SerialRecvDuelDataResult){x.a, x.f};
 }
 /* <<< factory SerialRecvDuelData */
+
+/* >>> factory UnreferencedGoToSerialReturnAddress */
+UnreferencedGoToSerialReturnAddressResult UnreferencedGoToSerialReturnAddress(uint16_t hl)
+{
+	uint8_t low = gb_read8(wSerialReturnAddress_ADDR);
+	uint8_t high = gb_read8((uint16_t)(wSerialReturnAddress_ADDR + 1u));
+	if ((low | high) == 0u) {
+		return (UnreferencedGoToSerialReturnAddressResult){0u, 0x80u, hl};
+	}
+	return (UnreferencedGoToSerialReturnAddressResult){low, 0x10u, (uint16_t)(low | ((uint16_t)high << 8))};
+}
+/* <<< factory UnreferencedGoToSerialReturnAddress */

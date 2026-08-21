@@ -378,6 +378,8 @@ wSerialSendBufToggle = 0xCB7E
 wSerialSendBufIndex = 0xCB7F
 wcb80 = 0xCB80
 wSerialSendBuf = 0xCB81
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetOppAction_SerialSendDuelData
@@ -418,6 +420,11 @@ CASES["SerialRecvDuelData"] = [
          read={hOppActionTableIndex: 10}),
 ]
 # <<< factory SerialRecvDuelData
+
+# >>> factory UnreferencedGoToSerialReturnAddress
+CONTRACT["UnreferencedGoToSerialReturnAddress"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["UnreferencedGoToSerialReturnAddress"] = [{}, dict(POISON)]
+# <<< factory UnreferencedGoToSerialReturnAddress
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -497,3 +504,6 @@ MUTATIONS["SerialRecvDuelData"] = {
     "case_ids": ["SerialRecvDuelData-0"],
 }
 # <<< factory-mutation SerialRecvDuelData
+# >>> factory-mutation UnreferencedGoToSerialReturnAddress
+MUTATIONS["UnreferencedGoToSerialReturnAddress"] = {"source_symbol": "UnreferencedGoToSerialReturnAddress", "before": "\tif ((low | high) == 0u) {", "after": "\tif ((low | high) != 0u) {", "case_ids": ["UnreferencedGoToSerialReturnAddress-0", "UnreferencedGoToSerialReturnAddress-1"]}
+# <<< factory-mutation UnreferencedGoToSerialReturnAddress

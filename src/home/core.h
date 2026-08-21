@@ -560,4 +560,7 @@ void SetDiscardPileScreenTexts(void);
 /* >>> factory PrintAttachedEnergyToPokemon */
 void PrintAttachedEnergyToPokemon(void);
 /* <<< factory PrintAttachedEnergyToPokemon */
+/* >>> factory PrintPokemonEvolvedIntoPokemon */
+void PrintPokemonEvolvedIntoPokemon(void);
+/* <<< factory PrintPokemonEvolvedIntoPokemon */
 #endif

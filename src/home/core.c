@@ -419,6 +419,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define AttachedEnergyToPokemonText 0x005fu
+
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define SFX_POKEMON_EVOLUTION 0x5eu
+#define PokemonEvolvedIntoPokemonText 0x0060u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2773,3 +2781,13 @@ void PrintAttachedEnergyToPokemon(void)
 	(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);
 }
 /* <<< factory PrintAttachedEnergyToPokemon */
+
+/* >>> factory PrintPokemonEvolvedIntoPokemon */
+void PrintPokemonEvolvedIntoPokemon(void)
+{
+	PlaySFX(SFX_POKEMON_EVOLUTION);
+	LoadCardNameToTxRam2(wPreEvolutionPokemonCard);
+	(void)LoadCardNameToTxRam2_b(hTempCardIndex_ff98);
+	(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);
+}
+/* <<< factory PrintPokemonEvolvedIntoPokemon */

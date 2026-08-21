@@ -179,4 +179,11 @@ typedef struct {
 } SerialRecvDuelDataResult;
 SerialRecvDuelDataResult SerialRecvDuelData(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
 /* <<< factory SerialRecvDuelData */
+/* >>> factory UnreferencedGoToSerialReturnAddress */
+typedef struct {
+	uint8_t a, f;
+	uint16_t hl;
+} UnreferencedGoToSerialReturnAddressResult;
+UnreferencedGoToSerialReturnAddressResult UnreferencedGoToSerialReturnAddress(uint16_t hl);
+/* <<< factory UnreferencedGoToSerialReturnAddress */
 #endif

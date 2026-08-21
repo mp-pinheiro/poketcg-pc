@@ -1371,6 +1371,9 @@ hWhoseTurn = 0xFF97
 hTempCardIndex_ff98 = 0xFF98
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wPlayerDeck = 0xC400
+
+hTempCardIndex_ff98 = 0xFF98
+wPreEvolutionPokemonCard = 0xCCEE
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1534,6 +1537,24 @@ CASES["PrintAttachedEnergyToPokemon"] = [
          vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}),
 ]
 # <<< factory PrintAttachedEnergyToPokemon
+
+# >>> factory PrintPokemonEvolvedIntoPokemon
+CONTRACT["PrintPokemonEvolvedIntoPokemon"] = {"compare": (), "preserve": ()}
+CASES["PrintPokemonEvolvedIntoPokemon"] = [
+    {"wram": {wPreEvolutionPokemonCard: b"\x01"},
+     "hram": {hTempCardIndex_ff98: b"\x02"},
+     "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 1000000, "cycle_budget": 4000000,
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}},
+    dict(POISON, wram={wPreEvolutionPokemonCard: b"\x01"},
+         hram={hTempCardIndex_ff98: b"\x02"},
+         keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=1000000, cycle_budget=4000000,
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}),
+]
+# <<< factory PrintPokemonEvolvedIntoPokemon
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2428,3 +2449,6 @@ MUTATIONS["SetDiscardPileScreenTexts"] = {"source_symbol": "SetDiscardPileScreen
 # >>> factory-mutation PrintAttachedEnergyToPokemon
 MUTATIONS["PrintAttachedEnergyToPokemon"] = {"source_symbol": "PrintAttachedEnergyToPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0060u);", "case_ids": ["PrintAttachedEnergyToPokemon-0", "PrintAttachedEnergyToPokemon-1"]}
 # <<< factory-mutation PrintAttachedEnergyToPokemon
+# >>> factory-mutation PrintPokemonEvolvedIntoPokemon
+MUTATIONS["PrintPokemonEvolvedIntoPokemon"] = {"source_symbol": "PrintPokemonEvolvedIntoPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0061u);", "case_ids": ["PrintPokemonEvolvedIntoPokemon-0", "PrintPokemonEvolvedIntoPokemon-1"]}
+# <<< factory-mutation PrintPokemonEvolvedIntoPokemon
