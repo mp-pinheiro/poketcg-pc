@@ -45,6 +45,9 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/booster_packs.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -141,3 +144,12 @@ AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void)
 	return (AddBoosterCardToDrawnEnergiesResult){card, flags};
 }
 /* <<< factory AddBoosterCardToDrawnEnergies */
+
+/* >>> factory AddBoosterEnergyToDrawnEnergies */
+AddBoosterEnergyToDrawnEnergiesResult AddBoosterEnergyToDrawnEnergies(uint8_t a)
+{
+	wBoosterCurrentCard = a;
+	AddBoosterCardToDrawnEnergiesResult result = AddBoosterCardToDrawnEnergies();
+	return (AddBoosterEnergyToDrawnEnergiesResult){result.a, result.f};
+}
+/* <<< factory AddBoosterEnergyToDrawnEnergies */

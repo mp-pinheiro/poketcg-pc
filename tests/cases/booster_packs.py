@@ -78,6 +78,10 @@ CASES["AppendCurrentCardToHL"] = [
 # >>> factory-cases-statics
 wBoosterCurrentCard = 0xD66A
 wTempCardCollection = 0xC000
+
+wBoosterCurrentCard = 0xD66A
+wBoosterTempEnergiesDrawn = 0xC40B
+wTempCardCollection = 0xC000
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -99,6 +103,16 @@ CASES["AddBoosterCardToDrawnEnergies"] = [
     dict(POISON, wram={0xD66A: b"\x7E", 0xC40B: b"\x00", 0xC07E: b"\xFF"}, read={0xC40B: 2, 0xC07E: 1}),
 ]
 # <<< factory AddBoosterCardToDrawnEnergies
+
+# >>> factory AddBoosterEnergyToDrawnEnergies
+CONTRACT["AddBoosterEnergyToDrawnEnergies"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["AddBoosterEnergyToDrawnEnergies"] = [
+    {"a": 0x12, "wram": {wBoosterTempEnergiesDrawn: b"\x00", wBoosterCurrentCard: b"\x00", wTempCardCollection + 0x12: b"\x00"}, "expect": {wBoosterTempEnergiesDrawn: b"\x12\x00", wBoosterCurrentCard: b"\x12", wTempCardCollection + 0x12: b"\x01"}, "expect_regs": {"a": 0x12, "f": 0x00, "hl": 0x0000}},
+    {"a": 0x2A, "hl": 0x4567, "wram": {wBoosterTempEnergiesDrawn: b"\x01\x02\x00", wBoosterCurrentCard: b"\x00", wTempCardCollection + 0x2A: b"\x0F"}, "expect": {wBoosterTempEnergiesDrawn: b"\x01\x02\x2A\x00", wBoosterCurrentCard: b"\x2A", wTempCardCollection + 0x2A: b"\x10"}, "expect_regs": {"a": 0x2A, "f": 0x20, "hl": 0x4567}},
+    {"a": 0xFF, "wram": {wBoosterTempEnergiesDrawn: b"\xAA\xBB\x00", wBoosterCurrentCard: b"\x00", wTempCardCollection + 0xFF: b"\xFF"}, "expect": {wBoosterTempEnergiesDrawn: b"\xAA\xBB\xFF\x00", wBoosterCurrentCard: b"\xFF", wTempCardCollection + 0xFF: b"\x00"}, "expect_regs": {"a": 0xFF, "f": 0x80, "hl": 0x0000}},
+    dict(POISON, a=0x80, wram={wBoosterTempEnergiesDrawn: b"\x00", wBoosterCurrentCard: b"\x00", wTempCardCollection + 0x80: b"\xFE"}, expect={wBoosterTempEnergiesDrawn: b"\x80\x00", wBoosterCurrentCard: b"\x80", wTempCardCollection + 0x80: b"\xFF"}, expect_regs={"a": 0x80, "f": 0x00, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+]
+# <<< factory AddBoosterEnergyToDrawnEnergies
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -155,3 +169,6 @@ MUTATIONS["AddBoosterCardToDrawnEnergies"] = {
     "case_ids": ["AddBoosterCardToDrawnEnergies-0", "AddBoosterCardToDrawnEnergies-1", "AddBoosterCardToDrawnEnergies-2", "AddBoosterCardToDrawnEnergies-3"],
 }
 # <<< factory-mutation AddBoosterCardToDrawnEnergies
+# >>> factory-mutation AddBoosterEnergyToDrawnEnergies
+MUTATIONS["AddBoosterEnergyToDrawnEnergies"] = {"source_symbol": "AddBoosterEnergyToDrawnEnergies", "before": "wBoosterCurrentCard = a;", "after": "wBoosterCurrentCard = (uint8_t)(a + 1u);", "case_ids": ["AddBoosterEnergyToDrawnEnergies-0", "AddBoosterEnergyToDrawnEnergies-1", "AddBoosterEnergyToDrawnEnergies-2", "AddBoosterEnergyToDrawnEnergies-3"]}
+# <<< factory-mutation AddBoosterEnergyToDrawnEnergies

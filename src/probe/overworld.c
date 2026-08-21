@@ -148,6 +148,17 @@ static void adapt_Func_c694(ProbeState *s)
 }
 /* <<< factory Func_c694 */
 
+/* >>> factory FindPlayerMovementWithOffset */
+static void adapt_FindPlayerMovementWithOffset(ProbeState *s)
+{
+	FindPlayerMovementWithOffsetResult result = FindPlayerMovementWithOffset(s->a);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory FindPlayerMovementWithOffset */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -167,5 +178,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c3ca", adapt_Func_c3ca },
 	{ "GetDirectionFromDPad", adapt_GetDirectionFromDPad },
 	{ "Func_c694", adapt_Func_c694 },
+	{ "FindPlayerMovementWithOffset", adapt_FindPlayerMovementWithOffset },
 	{ NULL, NULL },
 };

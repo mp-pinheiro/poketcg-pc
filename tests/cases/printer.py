@@ -86,6 +86,19 @@ CASES = {
          "read": {wPrinterPacketSequence: 1, wPrinterStatus: 1}},
     ],
 }
+# >>> factory-cases-statics
+wce9d = 0xCE9D
+# <<< factory-cases-statics
+
+# >>> factory Func_1a14b
+CONTRACT["Func_1a14b"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["Func_1a14b"] = [
+    {"f": 0x00, "wram": {0xCE9D: b"\x00"}, "expect": {0xCE9D: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x10}},
+    {"f": 0x80, "wram": {0xCE9D: b"\xFF"}, "expect": {0xCE9D: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x90}},
+    dict(POISON, wram={0xCE9D: b"\x00"}, expect={0xCE9D: b"\x01"}, expect_regs={"a": 0x01, "f": 0x90, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+]
+# <<< factory Func_1a14b
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -109,3 +122,6 @@ MUTATIONS = {
         ],
     },
 }
+# >>> factory-mutation Func_1a14b
+MUTATIONS["Func_1a14b"] = {"source_symbol": "Func_1a14b", "before": "wce9d = 0x01u;", "after": "wce9d = 0x02u;", "case_ids": ["Func_1a14b-0", "Func_1a14b-1", "Func_1a14b-2"]}
+# <<< factory-mutation Func_1a14b

@@ -209,6 +209,9 @@ wd237 = 0xD237
 wd238 = 0xD238
 
 wPermissionMap = 0xD133
+
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -251,6 +254,17 @@ CASES["Func_c694"] = [
     dict(POISON, a=0x02, c=0x01, wram={0xD332: b"\x40", 0xD333: b"\x40", 0xD335: b"\x00", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"}, read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1}),
 ]
 # <<< factory Func_c694
+
+# >>> factory FindPlayerMovementWithOffset
+CONTRACT["FindPlayerMovementWithOffset"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["FindPlayerMovementWithOffset"] = [
+    {"a": 0x00, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20"}},
+    {"a": 0x01, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20"}},
+    {"a": 0x02, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20"}},
+    {"a": 0x03, "wram": {wPlayerXCoord: b"\x10", wPlayerYCoord: b"\x20"}},
+    dict(POISON, a=0x01, wram={wPlayerXCoord: b"\xF0", wPlayerYCoord: b"\x01"}),
+]
+# <<< factory FindPlayerMovementWithOffset
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -355,3 +369,6 @@ MUTATIONS["GetDirectionFromDPad"] = {"source_symbol": "GetDirectionFromDPad", "b
 # >>> factory-mutation Func_c694
 MUTATIONS["Func_c694"] = {"source_symbol": "Func_c694", "before": "wd338--;", "after": "wd338 = (uint8_t)(wd338 - 2u);", "case_ids": ["Func_c694-0", "Func_c694-1", "Func_c694-2", "Func_c694-3"]}
 # <<< factory-mutation Func_c694
+# >>> factory-mutation FindPlayerMovementWithOffset
+MUTATIONS["FindPlayerMovementWithOffset"] = {"source_symbol": "FindPlayerMovementWithOffset", "before": "uint8_t x_offset = offsets[index];", "after": "uint8_t x_offset = (uint8_t)(offsets[index] + 1u);", "case_ids": ["FindPlayerMovementWithOffset-0", "FindPlayerMovementWithOffset-1", "FindPlayerMovementWithOffset-2", "FindPlayerMovementWithOffset-3", "FindPlayerMovementWithOffset-4"]}
+# <<< factory-mutation FindPlayerMovementWithOffset

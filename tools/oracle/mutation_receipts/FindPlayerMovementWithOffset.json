@@ -1,0 +1,9 @@
+{
+  "fn": "FindPlayerMovementWithOffset",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindPlayerMovementWithOffset\", \"registers\": {\"a\": 30, \"b\": 16, \"c\": 30, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1020\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindPlayerMovementWithOffset\", \"mismatches\": {\"b\": [16, 17]}}\n",
+  "restored": "{\"fn\": \"FindPlayerMovementWithOffset\", \"registers\": {\"a\": 30, \"b\": 16, \"c\": 30, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1020\"}}, \"status\": \"PASS\"}\n"
+}

@@ -347,3 +347,21 @@ void Func_c694(uint8_t a, uint8_t c)
 	Func_c469();
 }
 /* <<< factory Func_c694 */
+
+/* >>> factory FindPlayerMovementWithOffset */
+FindPlayerMovementWithOffsetResult FindPlayerMovementWithOffset(uint8_t a)
+{
+	static const uint8_t offsets[8] = {0u, 0xFEu, 2u, 0u, 0u, 2u, 0xFEu, 0u};
+	uint8_t index = (uint8_t)(a << 1);
+	uint8_t x_offset = offsets[index];
+	uint8_t y_offset = offsets[(uint8_t)(index + 1u)];
+	uint8_t x = (uint8_t)(wPlayerXCoord + x_offset);
+	uint8_t y0 = wPlayerYCoord;
+	uint8_t y = (uint8_t)(y0 + y_offset);
+	uint8_t f = (uint8_t)((y == 0u ? 0x80u : 0u)
+		| (((y0 & 0x0Fu) + (y_offset & 0x0Fu) > 0x0Fu) ? 0x20u : 0u)
+		| (((uint16_t)y0 + (uint16_t)y_offset > 0xFFu) ? 0x10u : 0u));
+	FindPlayerMovementWithOffsetResult result = {y, f, x, y};
+	return result;
+}
+/* <<< factory FindPlayerMovementWithOffset */

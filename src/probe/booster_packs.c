@@ -65,6 +65,15 @@ static void adapt_AddBoosterCardToDrawnEnergies(ProbeState *s)
 }
 /* <<< factory AddBoosterCardToDrawnEnergies */
 
+/* >>> factory AddBoosterEnergyToDrawnEnergies */
+static void adapt_AddBoosterEnergyToDrawnEnergies(ProbeState *s)
+{
+	AddBoosterEnergyToDrawnEnergiesResult result = AddBoosterEnergyToDrawnEnergies(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AddBoosterEnergyToDrawnEnergies */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -73,5 +82,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "AppendCurrentCardToHL", adapt_AppendCurrentCardToHL },
 	{ "AddBoosterCardToTempCardCollection", adapt_AddBoosterCardToTempCardCollection },
 	{ "AddBoosterCardToDrawnEnergies", adapt_AddBoosterCardToDrawnEnergies },
+	{ "AddBoosterEnergyToDrawnEnergies", adapt_AddBoosterEnergyToDrawnEnergies },
 	{ NULL, NULL },
 };

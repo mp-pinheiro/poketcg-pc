@@ -1,0 +1,9 @@
+{
+  "fn": "SetNPCPosition",
+  "case": "tests/cases/npc_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetNPCPosition\", \"registers\": {\"a\": 64, \"b\": 4, \"c\": 6, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"53605\": \"40\", \"54092\": \"0406\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetNPCPosition\", \"mismatches\": {\"bus\": {\"address\": 53605, \"reference\": \"bf40040600\", \"native\": \"bf00040000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53555, 1], [53605, 1], [54092, 2], [54186, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetNPCPosition\", \"registers\": {\"a\": 64, \"b\": 4, \"c\": 6, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"53605\": \"40\", \"54092\": \"0406\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

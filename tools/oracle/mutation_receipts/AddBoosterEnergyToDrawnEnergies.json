@@ -1,0 +1,9 @@
+{
+  "fn": "AddBoosterEnergyToDrawnEnergies",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49170\": \"01\", \"50187\": \"12\", \"54890\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"mismatches\": {\"a\": [18, 19], \"bus\": {\"address\": 49170, \"reference\": \"011212\", \"native\": \"001313\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49170, 1], [50187, 1], [54890, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddBoosterEnergyToDrawnEnergies\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49170\": \"01\", \"50187\": \"12\", \"54890\": \"12\"}}, \"status\": \"PASS\"}\n"
+}

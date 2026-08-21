@@ -2,6 +2,9 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "generated/wram.h"
+/* <<< factory statics */
 
 #define rSB 0xFF01u
 #define rSC 0xFF02u
@@ -109,3 +112,20 @@ ExecutePrinterPacketSequenceResult ExecutePrinterPacketSequence(uint8_t a, uint8
 		return (ExecutePrinterPacketSequenceResult){0, d, e};
 	}
 }
+
+/* >>> factory Func_1a14b */
+Func_1a14bResult Func_1a14b(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	wce9d = 0x01u;
+	return (Func_1a14bResult){
+		.a = 0x01u,
+		.f = (uint8_t)((f & 0x80u) | 0x10u),
+		.b = b,
+		.c = c,
+		.d = d,
+		.e = e,
+		.hl = hl,
+	};
+}
+/* <<< factory Func_1a14b */

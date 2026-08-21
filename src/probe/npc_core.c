@@ -94,6 +94,13 @@ static void adapt_SetNPCsTilePermission(ProbeState *s)
 }
 /* <<< factory SetNPCsTilePermission */
 
+/* >>> factory SetNPCPosition */
+static void adapt_SetNPCPosition(ProbeState *s)
+{
+	s->a = SetNPCPosition(s->b, s->c);
+}
+/* <<< factory SetNPCPosition */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -107,5 +114,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIsAnNPCMoving", adapt_CheckIsAnNPCMoving },
 	{ "UpdateNPCsTilePermission", adapt_UpdateNPCsTilePermission },
 	{ "SetNPCsTilePermission", adapt_SetNPCsTilePermission },
+	{ "SetNPCPosition", adapt_SetNPCPosition },
 	{ NULL, NULL },
 };

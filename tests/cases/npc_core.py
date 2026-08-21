@@ -157,6 +157,21 @@ CASES["SetNPCsTilePermission"] = [
 ]
 # <<< factory SetNPCsTilePermission
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wLoadedNPCTempIndex = 0xD3AA
+# <<< factory-cases-statics
+
+# >>> factory SetNPCPosition
+CONTRACT["SetNPCPosition"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetNPCPosition"] = [
+    {"b": 0x04, "c": 0x06, "wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF", 0xD165: b"\x00"}, "expect": {0xD133: b"\xBF", 0xD165: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"b": 0x0E, "c": 0x10, "wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\xFF", 0xD1BA: b"\x7F"}, "expect": {0xD165: b"\xBF", 0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"b": 0x02, "c": 0x04, "wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\xFF", 0xD154: b"\x00"}, "expect": {0xD1BA: b"\xBF", 0xD154: b"\x40"}, "expect_regs": {"a": 0x40}},
+    dict(POISON, b=0x12, c=0x14, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF", 0xD1DC: b"\x00"}, expect={0xD183: b"\xBF", 0xD1DC: b"\x40"}, expect_regs={"a": 0x40, "b": 0x12, "c": 0x14, "d": 0xDD, "e": 0xEE, "hl": 0x1234}),
+]
+# <<< factory SetNPCPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -212,3 +227,11 @@ MUTATIONS["UpdateNPCsTilePermission"] = {"source_symbol": "UpdateNPCsTilePermiss
 # >>> factory-mutation SetNPCsTilePermission
 MUTATIONS["SetNPCsTilePermission"] = {"source_symbol": "SetNPCsTilePermission", "before": "SetPermissionOfMapPosition(0x40u, x, y);", "after": "SetPermissionOfMapPosition(0x20u, x, y);", "case_ids": ["SetNPCsTilePermission-0", "SetNPCsTilePermission-1", "SetNPCsTilePermission-2", "SetNPCsTilePermission-3", "SetNPCsTilePermission-4"]}
 # <<< factory-mutation SetNPCsTilePermission
+# >>> factory-mutation SetNPCPosition
+MUTATIONS["SetNPCPosition"] = {
+    "source_symbol": "SetNPCPosition",
+    "before": "gb_write8((uint16_t)(entry.hl + 1u), c);",
+    "after": "gb_write8((uint16_t)(entry.hl + 2u), c);",
+    "case_ids": ["SetNPCPosition-0", "SetNPCPosition-1", "SetNPCPosition-2", "SetNPCPosition-3"],
+}
+# <<< factory-mutation SetNPCPosition

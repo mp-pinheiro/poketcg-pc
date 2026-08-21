@@ -76,4 +76,13 @@ GetDirectionFromDPadResult GetDirectionFromDPad(uint8_t a);
 /* >>> factory Func_c694 */
 void Func_c694(uint8_t a, uint8_t c);
 /* <<< factory Func_c694 */
+/* >>> factory FindPlayerMovementWithOffset */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} FindPlayerMovementWithOffsetResult;
+FindPlayerMovementWithOffsetResult FindPlayerMovementWithOffset(uint8_t a);
+/* <<< factory FindPlayerMovementWithOffset */
 #endif /* POKETCG_HOME_OVERWORLD_H */
