@@ -40,6 +40,10 @@
 #include "home/switch_sram.h"
 
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -261,3 +265,32 @@ void Func_c41c(void)
 	Func_c430();
 }
 /* <<< factory Func_c41c */
+
+/* >>> factory Func_c3ca */
+FuncC3caResult Func_c3ca(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	PermissionResult permission = GetPermissionByteOfMapPosition(d, e);
+	uint8_t columns = (uint8_t)(b >> 1);
+	uint8_t rows = (uint8_t)(c >> 1);
+	uint16_t row_count = rows == 0u ? 256u : rows;
+	uint16_t column_count = columns == 0u ? 256u : columns;
+	uint16_t row_start = permission.hl;
+	uint8_t a = 0u;
+
+	for (uint16_t row = 0u; row < row_count; row++) {
+		uint16_t position = row_start;
+		for (uint16_t column = 0u; column < column_count; column++) {
+			a = (uint8_t)(gb_read8(position) | 0x10u);
+			gb_write8(position++, a);
+		}
+		row_start = (uint16_t)(row_start + 0x10u);
+	}
+
+	uint8_t f = 0x40u;
+	if (rows == 0u)
+		f |= 0x20u;
+	else
+		f |= 0x80u;
+	return (FuncC3caResult){a, f};
+}
+/* <<< factory Func_c3ca */

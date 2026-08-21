@@ -38,4 +38,7 @@ CheckIsAnNPCMovingResult CheckIsAnNPCMoving(void);
 /* >>> factory UpdateNPCsTilePermission */
 uint8_t UpdateNPCsTilePermission(void);
 /* <<< factory UpdateNPCsTilePermission */
+/* >>> factory SetNPCsTilePermission */
+uint8_t SetNPCsTilePermission(void);
+/* <<< factory SetNPCsTilePermission */
 #endif /* POKETCG_HOME_NPC_CORE_H */

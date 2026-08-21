@@ -207,6 +207,8 @@ wSCXBuffer = 0xD235
 wSCYBuffer = 0xD236
 wd237 = 0xD237
 wd238 = 0xD238
+
+wPermissionMap = 0xD133
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -218,6 +220,16 @@ CASES["Func_c41c"] = [
 	dict(POISON, wram={0xD332: b"\xAA", 0xD333: b"\x55", wd237: b"\x10", wd238: b"\x04"}, read={wSCXBuffer: 1, wSCYBuffer: 1}),
 ]
 # <<< factory Func_c41c
+
+# >>> factory Func_c3ca
+CONTRACT["Func_c3ca"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c3ca"] = [
+	{"b": 0x14, "c": 0x0C, "d": 0x08, "e": 0x06, "wram": {wPermissionMap: b"\x00" * 0x100}, "read": {wPermissionMap: 0x100}},
+	{"b": 0x08, "c": 0x06, "d": 0xAA, "e": 0x55, "wram": {wPermissionMap: b"\x0F" * 0x100}, "read": {wPermissionMap: 0x100}},
+	{"b": 0x02, "c": 0x02, "d": 0x00, "e": 0x00, "wram": {wPermissionMap: b"\xF0" * 0x100}, "read": {wPermissionMap: 0x100}},
+	dict(POISON, wram={wPermissionMap: b"\x00" * 0x100}, read={wPermissionMap: 0x100}),
+]
+# <<< factory Func_c3ca
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -308,3 +320,11 @@ MUTATIONS["Func_c41c"] = {
 	"case_ids": ["Func_c41c-1", "Func_c41c-2", "Func_c41c-3"],
 }
 # <<< factory-mutation Func_c41c
+# >>> factory-mutation Func_c3ca
+MUTATIONS["Func_c3ca"] = {
+	"source_symbol": "Func_c3ca",
+	"before": "gb_write8(position++, a);",
+	"after": "gb_write8(position++, (uint8_t)(a & (uint8_t)~0x10u));",
+	"case_ids": ["Func_c3ca-0", "Func_c3ca-1", "Func_c3ca-2", "Func_c3ca-3"],
+}
+# <<< factory-mutation Func_c3ca

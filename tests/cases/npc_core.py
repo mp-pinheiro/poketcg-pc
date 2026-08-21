@@ -146,6 +146,17 @@ CASES["UpdateNPCsTilePermission"] = [
 ]
 # <<< factory UpdateNPCsTilePermission
 
+# >>> factory SetNPCsTilePermission
+CONTRACT["SetNPCsTilePermission"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetNPCsTilePermission"] = [
+    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF"}, "expect": {0xD133: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\x40"}, "expect": {0xD165: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40}},
+    {"wram": {0xD3AA: b"\x08", 0xD34C: b"\x02\x04", 0xD154: b"\xFF"}, "expect": {0xD154: b"\x40"}, "expect_regs": {"a": 0x40}},
+    dict(POISON, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF"}, expect={0xD183: b"\x40"}, expect_regs={"a": 0x40}),
+]
+# <<< factory SetNPCsTilePermission
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -198,3 +209,6 @@ MUTATIONS["CheckIsAnNPCMoving"] = {"source_symbol": "CheckIsAnNPCMoving", "befor
 # >>> factory-mutation UpdateNPCsTilePermission
 MUTATIONS["UpdateNPCsTilePermission"] = {"source_symbol": "UpdateNPCsTilePermission", "before": "uint8_t result = UpdatePermissionOfMapPosition(0x40u, x, y);", "after": "uint8_t result = UpdatePermissionOfMapPosition(0x20u, x, y);", "case_ids": ["UpdateNPCsTilePermission-0", "UpdateNPCsTilePermission-1", "UpdateNPCsTilePermission-2", "UpdateNPCsTilePermission-3", "UpdateNPCsTilePermission-4"]}
 # <<< factory-mutation UpdateNPCsTilePermission
+# >>> factory-mutation SetNPCsTilePermission
+MUTATIONS["SetNPCsTilePermission"] = {"source_symbol": "SetNPCsTilePermission", "before": "SetPermissionOfMapPosition(0x40u, x, y);", "after": "SetPermissionOfMapPosition(0x20u, x, y);", "case_ids": ["SetNPCsTilePermission-0", "SetNPCsTilePermission-1", "SetNPCsTilePermission-2", "SetNPCsTilePermission-3", "SetNPCsTilePermission-4"]}
+# <<< factory-mutation SetNPCsTilePermission
