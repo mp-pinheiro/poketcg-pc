@@ -2362,6 +2362,16 @@ static void adapt_SuperPotion_DamageEnergyCheck(ProbeState *s)
 }
 /* <<< factory SuperPotion_DamageEnergyCheck */
 
+/* >>> factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+static void adapt_KrabbyCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult r = KrabbyCallForFamily_CheckDeckAndPlayArea();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2655,5 +2665,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DestinyBond_AISelectEffect", adapt_DestinyBond_AISelectEffect },
 	{ "Rampage_AIEffect", adapt_Rampage_AIEffect },
 	{ "SuperPotion_DamageEnergyCheck", adapt_SuperPotion_DamageEnergyCheck },
+	{ "KrabbyCallForFamily_CheckDeckAndPlayArea", adapt_KrabbyCallForFamily_CheckDeckAndPlayArea },
 	{ NULL, NULL },
 };

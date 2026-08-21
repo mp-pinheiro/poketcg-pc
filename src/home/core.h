@@ -570,4 +570,8 @@ void SetupDuel(void);
 typedef struct { uint8_t f; } PracticeDuelVerifyTurn6Result;
 PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void);
 /* <<< factory PracticeDuelVerify_Turn6 */
+/* >>> factory PracticeDuelVerify_Turn4 */
+typedef struct { uint8_t f; } PracticeDuelVerifyTurn4Result;
+PracticeDuelVerifyTurn4Result PracticeDuelVerify_Turn4(void);
+/* <<< factory PracticeDuelVerify_Turn4 */
 #endif

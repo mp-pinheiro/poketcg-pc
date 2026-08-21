@@ -439,6 +439,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/duel.h"
 #define STARYU 0x55u
 #define WATER 0x03u
+
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/duel.h"
+#define PLAY_AREA_BENCH_2 0x02u
+#define SEAKING 0x54u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2830,3 +2836,19 @@ PracticeDuelVerifyTurn6Result PracticeDuelVerify_Turn6(void)
 	return (PracticeDuelVerifyTurn6Result){0xC0u};
 }
 /* <<< factory PracticeDuelVerify_Turn6 */
+
+/* >>> factory PracticeDuelVerify_Turn4 */
+PracticeDuelVerifyTurn4Result PracticeDuelVerify_Turn4(void)
+{
+	if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)
+		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0u)};
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_BENCH_2);
+	if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) == 0u)
+		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0x80u)};
+	if (gb_read8(wTempCardID_ccc2_ADDR) != SEAKING)
+		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0u)};
+	if (gb_read8(wSelectedAttack_ADDR) != SECOND_ATTACK)
+		return (PracticeDuelVerifyTurn4Result){ReturnWrongAction(0u)};
+	return (PracticeDuelVerifyTurn4Result){0xC0u};
+}
+/* <<< factory PracticeDuelVerify_Turn4 */

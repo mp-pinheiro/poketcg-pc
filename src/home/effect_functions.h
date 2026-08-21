@@ -990,6 +990,9 @@ void Rampage_AIEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } SuperPotionDamageEnergyCheckResult;
 SuperPotionDamageEnergyCheckResult SuperPotion_DamageEnergyCheck(void);
 /* <<< factory SuperPotion_DamageEnergyCheck */
+/* >>> factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult KrabbyCallForFamily_CheckDeckAndPlayArea(void);
+/* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

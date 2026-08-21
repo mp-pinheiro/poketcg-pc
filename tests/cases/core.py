@@ -1378,6 +1378,10 @@ wPreEvolutionPokemonCard = 0xCCEE
 hWhoseTurn = 0xFF97
 wPlayerCardLocations = 0xC200
 wPlayerDeck = 0xC400
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wPlayerDuelVariables = 0xC200
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1576,6 +1580,17 @@ CASES["PracticeDuelVerify_Turn6"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerCardLocations: b"\x10" * 60, wPlayerDeck: b"\x03\x03\x03" + b"\x00" * 57, 0xC2C8: b"\x28", 0xCCC2: b"\x55"}),
 ]
 # <<< factory PracticeDuelVerify_Turn6
+
+# >>> factory PracticeDuelVerify_Turn4
+CONTRACT["PracticeDuelVerify_Turn4"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuelVerify_Turn4"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
+    {"wram": {0xC2EF: b"\x02", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x55", 0xCCC6: b"\x01"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x12", wPlayerDeck: b"\x03", 0xC2EF: b"\x03", 0xCCC2: b"\x54", 0xCCC6: b"\x02"}),
+]
+# <<< factory PracticeDuelVerify_Turn4
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2484,3 +2499,6 @@ MUTATIONS["SetupDuel"] = {
 # >>> factory-mutation PracticeDuelVerify_Turn6
 MUTATIONS["PracticeDuelVerify_Turn6"] = {"source_symbol": "PracticeDuelVerify_Turn6", "before": "if (wAttachedEnergies_PTR[WATER] != 3u)", "after": "if (wAttachedEnergies_PTR[WATER] == 3u)", "case_ids": ["PracticeDuelVerify_Turn6-0", "PracticeDuelVerify_Turn6-1", "PracticeDuelVerify_Turn6-2"]}
 # <<< factory-mutation PracticeDuelVerify_Turn6
+# >>> factory-mutation PracticeDuelVerify_Turn4
+MUTATIONS["PracticeDuelVerify_Turn4"] = {"source_symbol": "PracticeDuelVerify_Turn4", "before": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) != 3u)", "after": "if (gb_read8(wPlayerNumberOfPokemonInPlayArea_ADDR) == 3u)", "case_ids": ["PracticeDuelVerify_Turn4-0", "PracticeDuelVerify_Turn4-1", "PracticeDuelVerify_Turn4-2", "PracticeDuelVerify_Turn4-3", "PracticeDuelVerify_Turn4-4"]}
+# <<< factory-mutation PracticeDuelVerify_Turn4

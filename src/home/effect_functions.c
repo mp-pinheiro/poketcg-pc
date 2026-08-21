@@ -4042,3 +4042,16 @@ SuperPotionDamageEnergyCheckResult SuperPotion_DamageEnergyCheck(void)
 	return (SuperPotionDamageEnergyCheckResult){energy.f, ThereIsNoEnergyCardAttachedText};
 }
 /* <<< factory SuperPotion_DamageEnergyCheck */
+
+/* >>> factory KrabbyCallForFamily_CheckDeckAndPlayArea */
+CheckIfDeckIsEmptyResult KrabbyCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return deck;
+	DuelistVarResult vars = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t f = (vars.a == MAX_PLAY_AREA_POKEMON ? 0x80u : 0x00u)
+		| (vars.a >= MAX_PLAY_AREA_POKEMON ? 0x10u : 0x00u);
+	return (CheckIfDeckIsEmptyResult){vars.a, NoSpaceOnTheBenchText, f};
+}
+/* <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea */

@@ -2586,6 +2586,17 @@ CASES["SuperPotion_DamageEnergyCheck"] = [
 ]
 # <<< factory SuperPotion_DamageEnergyCheck
 
+# >>> factory KrabbyCallForFamily_CheckDeckAndPlayArea
+CONTRACT["KrabbyCallForFamily_CheckDeckAndPlayArea"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["KrabbyCallForFamily_CheckDeckAndPlayArea"] = [
+    {},
+    dict(POISON),
+    {"wram": {0xC2BA: b"\x01", 0xC2EF: b"\x00"}},
+    {"wram": {0xC2BA: b"\x01", 0xC2EF: b"\x06"}},
+    {"wram": {0xC2BA: b"\x01", 0xC2EF: b"\x07"}},
+]
+# <<< factory KrabbyCallForFamily_CheckDeckAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4324,3 +4335,6 @@ MUTATIONS["Rampage_AIEffect"] = {
 # >>> factory-mutation SuperPotion_DamageEnergyCheck
 MUTATIONS["SuperPotion_DamageEnergyCheck"] = {"source_symbol": "SuperPotion_DamageEnergyCheck", "before": "\tif ((damage.f & 0x10u) != 0u)", "after": "\tif ((damage.f & 0x10u) == 0u)", "case_ids": ["SuperPotion_DamageEnergyCheck-0", "SuperPotion_DamageEnergyCheck-1"]}
 # <<< factory-mutation SuperPotion_DamageEnergyCheck
+# >>> factory-mutation KrabbyCallForFamily_CheckDeckAndPlayArea
+MUTATIONS["KrabbyCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "KrabbyCallForFamily_CheckDeckAndPlayArea", "before": "KrabbyCallForFamily_CheckDeckAndPlayArea(void)\n{\n\tCheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();\n\tif (deck.f & 0x10u)", "after": "KrabbyCallForFamily_CheckDeckAndPlayArea(void)\n{\n\tCheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();\n\tif (!(deck.f & 0x10u))", "case_ids": ["KrabbyCallForFamily_CheckDeckAndPlayArea-0", "KrabbyCallForFamily_CheckDeckAndPlayArea-1"]}
+# <<< factory-mutation KrabbyCallForFamily_CheckDeckAndPlayArea
