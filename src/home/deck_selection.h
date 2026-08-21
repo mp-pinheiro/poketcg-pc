@@ -14,4 +14,7 @@ typedef struct {
 
 ResetCheckMenuCursorPositionAndBlinkResult ResetCheckMenuCursorPositionAndBlink(void);
 /* <<< factory ResetCheckMenuCursorPositionAndBlink */
+/* >>> factory GetPointerToDeckName */
+uint16_t GetPointerToDeckName(void);
+/* <<< factory GetPointerToDeckName */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

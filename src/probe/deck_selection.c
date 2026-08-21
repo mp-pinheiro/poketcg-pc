@@ -19,8 +19,18 @@ static void adapt_ResetCheckMenuCursorPositionAndBlink(ProbeState *s)
 }
 /* <<< factory ResetCheckMenuCursorPositionAndBlink */
 
+/* >>> factory GetPointerToDeckName */
+static void adapt_GetPointerToDeckName(ProbeState *s)
+{
+	s->a = 0;
+	s->f = 0x80;
+	s->hl = GetPointerToDeckName();
+}
+/* <<< factory GetPointerToDeckName */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
+	{ "GetPointerToDeckName", adapt_GetPointerToDeckName },
 	{ NULL, NULL },
 };

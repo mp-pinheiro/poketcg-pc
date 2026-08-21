@@ -130,6 +130,19 @@ CASES["CopyNBytesFromHLToDE"] = [
 ]
 # <<< factory CopyNBytesFromHLToDE
 
+# >>> factory-cases-statics
+wTempCardCollection = 0xC000
+# <<< factory-cases-statics
+
+# >>> factory IncrementDeckCardsInTempCollection
+CONTRACT["IncrementDeckCardsInTempCollection"] = {"compare": (), "preserve": ()}
+CASES["IncrementDeckCardsInTempCollection"] = [
+    {"d": 0xC2, "e": 0x00, "wram": {0xC200: b"\x01\x02\x01\x00"}, "read": {0xC001: 2, 0xC002: 1}},
+    {"d": 0xC2, "e": 0x10, "wram": {0xC210: b"\x00"}, "read": {}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xDDEE: b"\xBB" * 60}, "read": {0xC0BB: 60}},
+]
+# <<< factory IncrementDeckCardsInTempCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -197,3 +210,6 @@ MUTATIONS["CountNumberOfCardsOfType"] = {
 # >>> factory-mutation CopyNBytesFromHLToDE
 MUTATIONS["CopyNBytesFromHLToDE"] = {"source_symbol": "CopyNBytesFromHLToDE", "before": "\t\tgb_write8(dst++, gb_read8(src++));", "after": "\t\tgb_write8(dst++, (uint8_t)(gb_read8(src++) + 1u));", "case_ids": ["CopyNBytesFromHLToDE-0", "CopyNBytesFromHLToDE-1", "CopyNBytesFromHLToDE-2", "CopyNBytesFromHLToDE-3"]}
 # <<< factory-mutation CopyNBytesFromHLToDE
+# >>> factory-mutation IncrementDeckCardsInTempCollection
+MUTATIONS["IncrementDeckCardsInTempCollection"] = {"source_symbol": "IncrementDeckCardsInTempCollection", "before": "uint16_t slot = (uint16_t)(bc + card);", "after": "uint16_t slot = (uint16_t)(bc + (uint8_t)(card + 1u));", "case_ids": ["IncrementDeckCardsInTempCollection-0", "IncrementDeckCardsInTempCollection-1", "IncrementDeckCardsInTempCollection-2"]}
+# <<< factory-mutation IncrementDeckCardsInTempCollection

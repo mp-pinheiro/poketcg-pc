@@ -24,6 +24,19 @@ CASES["ResetCheckMenuCursorPositionAndBlink"] = [
 ]
 # <<< factory ResetCheckMenuCursorPositionAndBlink
 
+# >>> factory-cases-statics
+wCurDeck = 0xCEB1
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory GetPointerToDeckName
+CONTRACT["GetPointerToDeckName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["GetPointerToDeckName"] = [
+    {"wram": {wCurDeck: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80, "hl": 0xA200}},
+    dict(POISON, wram={wCurDeck: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "hl": 0xA254}),
+]
+# <<< factory GetPointerToDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -34,3 +47,6 @@ MUTATIONS["GetPointerToDeckCards"] = {"source_symbol": "GetPointerToDeckCards", 
 # >>> factory-mutation ResetCheckMenuCursorPositionAndBlink
 MUTATIONS["ResetCheckMenuCursorPositionAndBlink"] = {"source_symbol": "ResetCheckMenuCursorPositionAndBlink", "before": "\twCheckMenuCursorYPosition = 0u;", "after": "\twCheckMenuCursorXPosition = 0u;", "case_ids": ["ResetCheckMenuCursorPositionAndBlink-1"]}
 # <<< factory-mutation ResetCheckMenuCursorPositionAndBlink
+# >>> factory-mutation GetPointerToDeckName
+MUTATIONS["GetPointerToDeckName"] = {"source_symbol": "GetPointerToDeckName", "before": "\treturn (uint16_t)(sDeck1Name_ADDR + offset);", "after": "\treturn (uint16_t)(sDeck1Name_ADDR + offset + 1u);", "case_ids": ["GetPointerToDeckName-0", "GetPointerToDeckName-1"]}
+# <<< factory-mutation GetPointerToDeckName

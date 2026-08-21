@@ -36,4 +36,7 @@ uint8_t CountNumberOfCardsOfType(uint8_t a);
 /* >>> factory CopyNBytesFromHLToDE */
 void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b);
 /* <<< factory CopyNBytesFromHLToDE */
+/* >>> factory IncrementDeckCardsInTempCollection */
+void IncrementDeckCardsInTempCollection(uint16_t de);
+/* <<< factory IncrementDeckCardsInTempCollection */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

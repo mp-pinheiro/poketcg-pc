@@ -22,6 +22,9 @@
 #define NUM_DECKS 0x04u
 
 #include "home/tiles.h"
+
+#include "generated/wram.h"
+#include "home/switch_sram.h"
 /* <<< factory statics */
 
 
@@ -215,3 +218,23 @@ void CopyNBytesFromHLToDE(uint16_t *hl, uint16_t *de, uint8_t b)
 	*de = dst;
 }
 /* <<< factory CopyNBytesFromHLToDE */
+
+/* >>> factory IncrementDeckCardsInTempCollection */
+void IncrementDeckCardsInTempCollection(uint16_t de)
+{
+	EnableSRAM();
+	uint16_t bc = wTempCardCollection_ADDR;
+	uint8_t h = DECK_SIZE;
+	for (;;) {
+		uint8_t card = gb_read8(de);
+		de = (uint16_t)(de + 1u);
+		if (card == 0u)
+			break;
+		uint16_t slot = (uint16_t)(bc + card);
+		gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
+		if (--h == 0u)
+			break;
+	}
+	DisableSRAM();
+}
+/* <<< factory IncrementDeckCardsInTempCollection */
