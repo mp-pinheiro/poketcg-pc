@@ -21,6 +21,9 @@ CASES["GetNPCHeaderPointer"] = [
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wOpponentName = 0xCC16
 wOpponentPortrait = 0xCC15
+
+wCurrentNPCNameTx = 0xD0C8
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCOpponentNameAndPortrait
@@ -33,6 +36,17 @@ CASES["SetNPCOpponentNameAndPortrait"] = [
 ]
 # <<< factory SetNPCOpponentNameAndPortrait
 
+# >>> factory GetNPCNameAndScript
+CONTRACT["GetNPCNameAndScript"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl"), "wram_out": True}
+CASES["GetNPCNameAndScript"] = [
+    {"a": 0x00, "read": {wCurrentNPCNameTx: 2}},
+    {"a": 0x01, "read": {wCurrentNPCNameTx: 2}},
+    {"a": 0x02, "read": {wCurrentNPCNameTx: 2}},
+    {"a": 0x03, "read": {wCurrentNPCNameTx: 2}},
+    dict(POISON, a=0x00, read={wCurrentNPCNameTx: 2}),
+]
+# <<< factory GetNPCNameAndScript
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -43,3 +57,6 @@ MUTATIONS["GetNPCHeaderPointer"] = {"source_symbol": "GetNPCHeaderPointer", "bef
 # >>> factory-mutation SetNPCOpponentNameAndPortrait
 MUTATIONS["SetNPCOpponentNameAndPortrait"] = {"source_symbol": "SetNPCOpponentNameAndPortrait", "before": "const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(result.hl + NPC_DATA_NAME_TEXT));", "after": "const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(result.hl + NPC_DATA_NAME_TEXT + 1u));", "case_ids": ["SetNPCOpponentNameAndPortrait-0", "SetNPCOpponentNameAndPortrait-1", "SetNPCOpponentNameAndPortrait-2", "SetNPCOpponentNameAndPortrait-3"]}
 # <<< factory-mutation SetNPCOpponentNameAndPortrait
+# >>> factory-mutation GetNPCNameAndScript
+MUTATIONS["GetNPCNameAndScript"] = {"source_symbol": "GetNPCNameAndScript", "before": "\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR);", "after": "\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR + 1u);", "case_ids": ["GetNPCNameAndScript-0", "GetNPCNameAndScript-1", "GetNPCNameAndScript-2", "GetNPCNameAndScript-3", "GetNPCNameAndScript-4"]}
+# <<< factory-mutation GetNPCNameAndScript

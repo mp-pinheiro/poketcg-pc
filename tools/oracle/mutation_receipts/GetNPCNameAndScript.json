@@ -1,0 +1,9 @@
+{
+  "fn": "GetNPCNameAndScript",
+  "case": "tests/cases/npc_data.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNPCNameAndScript\", \"registers\": {\"a\": 3, \"b\": 87, \"c\": 39, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNPCNameAndScript\", \"mismatches\": {\"a\": [3, 0], \"b\": [87, 172], \"c\": [39, 87], \"bus\": {\"address\": 53448, \"reference\": \"ac03\", \"native\": \"0300\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53448, 2]]}}}\n",
+  "restored": "{\"fn\": \"GetNPCNameAndScript\", \"registers\": {\"a\": 3, \"b\": 87, \"c\": 39, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n"
+}
