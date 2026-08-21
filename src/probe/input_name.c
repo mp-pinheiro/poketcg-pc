@@ -42,11 +42,19 @@ static void adapt_PlayerNamingScreen_GetCharInfoFromPos(ProbeState *s)
 }
 /* <<< factory PlayerNamingScreen_GetCharInfoFromPos */
 
+/* >>> factory PlaySFXConfirmOrCancel_Bank6 */
+static void adapt_PlaySFXConfirmOrCancel_Bank6(ProbeState *s)
+{
+	PlaySFXConfirmOrCancel_Bank6(s->a);
+}
+/* <<< factory PlaySFXConfirmOrCancel_Bank6 */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
 	{ "DrawTextboxForKeyboard", adapt_DrawTextboxForKeyboard },
 	{ "TransformCharacter", adapt_TransformCharacter },
 	{ "PlayerNamingScreen_GetCharInfoFromPos", adapt_PlayerNamingScreen_GetCharInfoFromPos },
+	{ "PlaySFXConfirmOrCancel_Bank6", adapt_PlaySFXConfirmOrCancel_Bank6 },
 	{ NULL, NULL },
 };

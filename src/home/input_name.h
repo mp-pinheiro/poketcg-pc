@@ -20,4 +20,7 @@ TransformCharacterResult TransformCharacter(uint16_t hl, uint8_t d, uint8_t e);
 /* >>> factory PlayerNamingScreen_GetCharInfoFromPos */
 uint16_t PlayerNamingScreen_GetCharInfoFromPos(uint16_t hl);
 /* <<< factory PlayerNamingScreen_GetCharInfoFromPos */
+/* >>> factory PlaySFXConfirmOrCancel_Bank6 */
+void PlaySFXConfirmOrCancel_Bank6(uint8_t a);
+/* <<< factory PlaySFXConfirmOrCancel_Bank6 */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

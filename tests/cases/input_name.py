@@ -74,6 +74,15 @@ CASES["PlayerNamingScreen_GetCharInfoFromPos"] = [
 ]
 # <<< factory PlayerNamingScreen_GetCharInfoFromPos
 
+# >>> factory PlaySFXConfirmOrCancel_Bank6
+CONTRACT["PlaySFXConfirmOrCancel_Bank6"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")};
+CASES["PlaySFXConfirmOrCancel_Bank6"] = [
+    {"a": 0, "read": {0xDD82: 1, 0xDD83: 1}},
+    dict(POISON, a=0xFF, read={0xDD82: 1, 0xDD83: 1}),
+    {"a": 1, "read": {0xDD82: 1, 0xDD83: 1}},
+]
+# <<< factory PlaySFXConfirmOrCancel_Bank6
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -113,3 +122,11 @@ MUTATIONS["TransformCharacter"] = {
 # >>> factory-mutation PlayerNamingScreen_GetCharInfoFromPos
 MUTATIONS["PlayerNamingScreen_GetCharInfoFromPos"] = {"source_symbol": "PlayerNamingScreen_GetCharInfoFromPos", "before": "\tuint8_t index = (uint8_t)(product + (uint8_t)hl);", "after": "\tuint8_t index = (uint8_t)(product + (uint8_t)hl + 1u);", "case_ids": ["PlayerNamingScreen_GetCharInfoFromPos-0", "PlayerNamingScreen_GetCharInfoFromPos-1", "PlayerNamingScreen_GetCharInfoFromPos-2", "PlayerNamingScreen_GetCharInfoFromPos-3", "PlayerNamingScreen_GetCharInfoFromPos-4", "PlayerNamingScreen_GetCharInfoFromPos-5"]}
 # <<< factory-mutation PlayerNamingScreen_GetCharInfoFromPos
+# >>> factory-mutation PlaySFXConfirmOrCancel_Bank6
+MUTATIONS["PlaySFXConfirmOrCancel_Bank6"] = {
+    "source_symbol": "PlaySFXConfirmOrCancel_Bank6",
+    "before": "\tuint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CANCEL : SFX_CONFIRM;",
+    "after": "\tuint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CONFIRM : SFX_CONFIRM;",
+    "case_ids": ["PlaySFXConfirmOrCancel_Bank6-1"],
+};
+# <<< factory-mutation PlaySFXConfirmOrCancel_Bank6

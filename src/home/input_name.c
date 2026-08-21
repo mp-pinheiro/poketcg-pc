@@ -28,6 +28,8 @@
 #include "home/random.h"
 
 #define PLAYER_NAMING_SCREEN_KEYBOARD_DATA 0x6bafu
+
+#include "home/sound.h"
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -128,3 +130,11 @@ uint16_t PlayerNamingScreen_GetCharInfoFromPos(uint16_t hl)
 		(uint16_t)index * 6u);
 }
 /* <<< factory PlayerNamingScreen_GetCharInfoFromPos */
+
+/* >>> factory PlaySFXConfirmOrCancel_Bank6 */
+void PlaySFXConfirmOrCancel_Bank6(uint8_t a)
+{
+	uint8_t sfx_id = (uint8_t)(a + 1u) == 0 ? SFX_CANCEL : SFX_CONFIRM;
+	PlaySFX(sfx_id);
+}
+/* <<< factory PlaySFXConfirmOrCancel_Bank6 */
