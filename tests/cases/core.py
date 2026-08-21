@@ -1366,6 +1366,11 @@ wCardPageNumber = 0xCBC7
 hWhoseTurn = 0xFF97
 wCardListHeaderText = 0xCBDC
 wCardListInfoBoxText = 0xCBDA
+
+hWhoseTurn = 0xFF97
+hTempCardIndex_ff98 = 0xFF98
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1513,6 +1518,22 @@ CASES["SetDiscardPileScreenTexts"] = [
     dict(POISON, hram={hWhoseTurn: b"\xC2"}, wram={wCardListHeaderText: b"\x00\x00", wCardListInfoBoxText: b"\x00\x00"}, expect={wCardListHeaderText: b"\x17\x02", wCardListInfoBoxText: b"\x56\x00"}),
 ]
 # <<< factory SetDiscardPileScreenTexts
+
+# >>> factory PrintAttachedEnergyToPokemon
+CONTRACT["PrintAttachedEnergyToPokemon"] = {"compare": (), "preserve": ()}
+CASES["PrintAttachedEnergyToPokemon"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", hTempCardIndex_ff98: b"\x01", 0xC2BB: b"\x00", wPlayerDeck: b"\x08\x09"},
+     "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 1000000, "cycle_budget": 4000000,
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00", hTempCardIndex_ff98: b"\x01", 0xC2BB: b"\x00", wPlayerDeck: b"\x08\x09"},
+         keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=1000000, cycle_budget=4000000,
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 0x400}, 1: {0x9980: 0x400}}),
+]
+# <<< factory PrintAttachedEnergyToPokemon
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2404,3 +2425,6 @@ MUTATIONS["PracticeDuelVerify_Turn7Or8"] = {"source_symbol": "PracticeDuelVerify
 # >>> factory-mutation SetDiscardPileScreenTexts
 MUTATIONS["SetDiscardPileScreenTexts"] = {"source_symbol": "SetDiscardPileScreenTexts", "before": "\tSetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);", "after": "\tSetCardListHeaderText(de, YourDiscardPileText);", "case_ids": ["SetDiscardPileScreenTexts-0", "SetDiscardPileScreenTexts-1", "SetDiscardPileScreenTexts-2"]}
 # <<< factory-mutation SetDiscardPileScreenTexts
+# >>> factory-mutation PrintAttachedEnergyToPokemon
+MUTATIONS["PrintAttachedEnergyToPokemon"] = {"source_symbol": "PrintAttachedEnergyToPokemon", "before": "\t(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);", "after": "\t(void)DrawWideTextBox_WaitForInput(0x0060u);", "case_ids": ["PrintAttachedEnergyToPokemon-0", "PrintAttachedEnergyToPokemon-1"]}
+# <<< factory-mutation PrintAttachedEnergyToPokemon

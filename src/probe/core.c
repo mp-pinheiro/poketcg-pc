@@ -1171,6 +1171,14 @@ static void adapt_SetDiscardPileScreenTexts(ProbeState *s)
 }
 /* <<< factory SetDiscardPileScreenTexts */
 
+/* >>> factory PrintAttachedEnergyToPokemon */
+static void adapt_PrintAttachedEnergyToPokemon(ProbeState *s)
+{
+	(void)s;
+	PrintAttachedEnergyToPokemon();
+}
+/* <<< factory PrintAttachedEnergyToPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1309,5 +1317,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawPracticeDuelInstructionsTextBox", adapt_DrawPracticeDuelInstructionsTextBox },
 	{ "PracticeDuelVerify_Turn7Or8", adapt_PracticeDuelVerify_Turn7Or8 },
 	{ "SetDiscardPileScreenTexts", adapt_SetDiscardPileScreenTexts },
+	{ "PrintAttachedEnergyToPokemon", adapt_PrintAttachedEnergyToPokemon },
 	{ NULL, NULL },
 };

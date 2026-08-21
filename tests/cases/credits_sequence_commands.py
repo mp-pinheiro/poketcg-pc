@@ -163,6 +163,13 @@ PALETTE_SEED = {
 
 wLineSeparation = 0xCD08
 wSequenceCmdPtr = 0xD631
+
+wd647 = 0xD647
+wd648 = 0xD648
+wd649 = 0xD649
+wd64a = 0xD64A
+wSequenceCmdPtr = 0xD631
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -202,6 +209,18 @@ CASES["CreditsSequenceCmd_PrintTextBox"] = [
          read={wLineSeparation: 1, wSequenceCmdPtr: 2}),
 ]
 # <<< factory CreditsSequenceCmd_PrintTextBox
+
+# >>> factory CreditsSequenceCmd_InitOverlay
+CONTRACT["CreditsSequenceCmd_InitOverlay"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_InitOverlay"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44,
+     "wram": {wd647: b"\x00", wd648: b"\x00", wd649: b"\x00", wd64a: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+     "read": {wd647: 1, wd648: 1, wd649: 1, wd64a: 1, wSequenceCmdPtr: 2}},
+    dict(POISON,
+         wram={wd647: b"\x10", wd648: b"\x20", wd649: b"\x30", wd64a: b"\x40", wSequenceCmdPtr: b"\x00\x00"},
+         read={wd647: 1, wd648: 1, wd649: 1, wd64a: 1, wSequenceCmdPtr: 2}),
+]
+# <<< factory CreditsSequenceCmd_InitOverlay
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -303,3 +322,11 @@ MUTATIONS["CreditsSequenceCmd_PrintTextBox"] = {
     "case_ids": ["CreditsSequenceCmd_PrintTextBox-0", "CreditsSequenceCmd_PrintTextBox-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_PrintTextBox
+# >>> factory-mutation CreditsSequenceCmd_InitOverlay
+MUTATIONS["CreditsSequenceCmd_InitOverlay"] = {
+    "source_symbol": "CreditsSequenceCmd_InitOverlay",
+    "before": "\twd647 = c;",
+    "after": "\twd647 = (uint8_t)(c + 1u);",
+    "case_ids": ["CreditsSequenceCmd_InitOverlay-0", "CreditsSequenceCmd_InitOverlay-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_InitOverlay

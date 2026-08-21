@@ -232,3 +232,18 @@ void GenerateRandomEnergyBooster(void)
 	ZeroBoosterRarityData();
 }
 /* <<< factory GenerateRandomEnergyBooster */
+
+/* >>> factory PutEnergiesAndNonEnergiesTogether */
+PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t *energy = wBoosterTempEnergiesDrawn_PTR;
+	while ((a = *energy++) != 0u) {
+		wBoosterCurrentCard = a;
+		uint16_t cursor = 0xC400u;
+		AppendCurrentCardToHL(&cursor);
+	}
+	a = 0u;
+	f = 0x80u;
+	return (PutEnergiesAndNonEnergiesTogetherResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory PutEnergiesAndNonEnergiesTogether */

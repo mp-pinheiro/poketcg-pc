@@ -557,4 +557,7 @@ PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void);
 /* >>> factory SetDiscardPileScreenTexts */
 void SetDiscardPileScreenTexts(void);
 /* <<< factory SetDiscardPileScreenTexts */
+/* >>> factory PrintAttachedEnergyToPokemon */
+void PrintAttachedEnergyToPokemon(void);
+/* <<< factory PrintAttachedEnergyToPokemon */
 #endif

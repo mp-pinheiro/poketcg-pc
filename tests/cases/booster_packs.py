@@ -86,6 +86,10 @@ wTempCardCollection = 0xC000
 wRNG1 = 0xCACA
 wBoosterTempEnergiesDrawn = 0xC40B
 wTempCardCollection = 0xC000
+
+wBoosterTempEnergiesDrawn = 0xC40B
+wBoosterTempNonEnergiesDrawn = 0xC400
+wBoosterCurrentCard = 0xD66A
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -180,6 +184,16 @@ CASES["GenerateRandomEnergyBooster"] = [
 ]
 # <<< factory GenerateRandomEnergyBooster
 
+# >>> factory PutEnergiesAndNonEnergiesTogether
+CONTRACT["PutEnergiesAndNonEnergiesTogether"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["PutEnergiesAndNonEnergiesTogether"] = [
+	{"a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x2468, "wram": {wBoosterTempEnergiesDrawn: b"\x00", wBoosterTempNonEnergiesDrawn: b"\x00", wBoosterCurrentCard: b"\x77"}, "expect": {wBoosterTempNonEnergiesDrawn: b"\x00", wBoosterCurrentCard: b"\x77"}},
+	{"a": 0x66, "f": 0x10, "b": 0x77, "c": 0x88, "d": 0x99, "e": 0xAA, "hl": 0x1357, "wram": {wBoosterTempEnergiesDrawn: b"\x12\x00", wBoosterTempNonEnergiesDrawn: b"\x00", wBoosterCurrentCard: b"\x00"}, "expect": {wBoosterTempNonEnergiesDrawn: b"\x12\x00", wBoosterCurrentCard: b"\x12"}},
+	{"a": 0x01, "f": 0x20, "b": 0x02, "c": 0x03, "d": 0x04, "e": 0x05, "hl": 0x3456, "wram": {wBoosterTempEnergiesDrawn: b"\x12\x2A\x00", wBoosterTempNonEnergiesDrawn: b"\x99\x00", wBoosterCurrentCard: b"\x00"}, "expect": {wBoosterTempNonEnergiesDrawn: b"\x99\x12\x2A\x00", wBoosterCurrentCard: b"\x2A"}},
+	dict(POISON, wram={wBoosterTempEnergiesDrawn: b"\x80\xFF\x00", wBoosterTempNonEnergiesDrawn: b"\xAA\x00", wBoosterCurrentCard: b"\xCC"}, expect={wBoosterTempNonEnergiesDrawn: b"\xAA\x80\xFF\x00", wBoosterCurrentCard: b"\xFF"}),
+]
+# <<< factory PutEnergiesAndNonEnergiesTogether
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -259,3 +273,6 @@ MUTATIONS["GenerateEnergyBoosterWaterFighting"] = {"source_symbol": "GenerateEne
 # >>> factory-mutation GenerateRandomEnergyBooster
 MUTATIONS["GenerateRandomEnergyBooster"] = {"source_symbol": "GenerateRandomEnergyBooster", "before": "\t\t(void)GenerateRandomEnergy();", "after": "\t\t(void)GenerateRandomEnergy();\n\t\t(void)GenerateRandomEnergy();", "case_ids": ["GenerateRandomEnergyBooster-0", "GenerateRandomEnergyBooster-1", "GenerateRandomEnergyBooster-2", "GenerateRandomEnergyBooster-3"]}
 # <<< factory-mutation GenerateRandomEnergyBooster
+# >>> factory-mutation PutEnergiesAndNonEnergiesTogether
+MUTATIONS["PutEnergiesAndNonEnergiesTogether"] = {"source_symbol": "PutEnergiesAndNonEnergiesTogether", "before": "	while ((a = *energy++) != 0u) {", "after": "	while ((a = *energy++) == 0u) {", "case_ids": ["PutEnergiesAndNonEnergiesTogether-0", "PutEnergiesAndNonEnergiesTogether-1", "PutEnergiesAndNonEnergiesTogether-2", "PutEnergiesAndNonEnergiesTogether-3"]}
+# <<< factory-mutation PutEnergiesAndNonEnergiesTogether

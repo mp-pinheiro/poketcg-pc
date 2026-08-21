@@ -149,6 +149,20 @@ static void adapt_GenerateRandomEnergyBooster(ProbeState *s)
 }
 /* <<< factory GenerateRandomEnergyBooster */
 
+/* >>> factory PutEnergiesAndNonEnergiesTogether */
+static void adapt_PutEnergiesAndNonEnergiesTogether(ProbeState *s)
+{
+	PutEnergiesAndNonEnergiesTogetherResult result = PutEnergiesAndNonEnergiesTogether(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory PutEnergiesAndNonEnergiesTogether */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -165,5 +179,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateEnergyBoosterLightningFire", adapt_GenerateEnergyBoosterLightningFire },
 	{ "GenerateEnergyBoosterWaterFighting", adapt_GenerateEnergyBoosterWaterFighting },
 	{ "GenerateRandomEnergyBooster", adapt_GenerateRandomEnergyBooster },
+	{ "PutEnergiesAndNonEnergiesTogether", adapt_PutEnergiesAndNonEnergiesTogether },
 	{ NULL, NULL },
 };

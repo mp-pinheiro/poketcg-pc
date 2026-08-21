@@ -1,0 +1,9 @@
+{
+  "fn": "PutEnergiesAndNonEnergiesTogether",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"00\", \"50187\": \"00\", \"54890\": \"77\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"mismatches\": {\"bus\": {\"address\": 54890, \"reference\": \"000077\", \"native\": \"000000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50176, 1], [50187, 1], [54890, 1]]}}}\n",
+  "restored": "{\"fn\": \"PutEnergiesAndNonEnergiesTogether\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"hl\": 9320, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"00\", \"50187\": \"00\", \"54890\": \"77\"}}, \"status\": \"PASS\"}\n"
+}

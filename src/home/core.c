@@ -412,6 +412,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define ChooseTheCardYouWishToExamineText 0x0056u
 #define OpponentsDiscardPileText 0x0218u
 #define YourDiscardPileText 0x0217u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define AttachedEnergyToPokemonText 0x005fu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2755,3 +2762,14 @@ void SetDiscardPileScreenTexts(void)
 	SetCardListHeaderText(de, ChooseTheCardYouWishToExamineText);
 }
 /* <<< factory SetDiscardPileScreenTexts */
+
+/* >>> factory PrintAttachedEnergyToPokemon */
+void PrintAttachedEnergyToPokemon(void)
+{
+	DuelistVarResult target = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD + hTempPlayAreaLocation_ff9d));
+	(void)LoadCardNameToTxRam2_b(target.a);
+	LoadCardNameToTxRam2(hTempCardIndex_ff98);
+	(void)DrawWideTextBox_WaitForInput(AttachedEnergyToPokemonText);
+}
+/* <<< factory PrintAttachedEnergyToPokemon */
