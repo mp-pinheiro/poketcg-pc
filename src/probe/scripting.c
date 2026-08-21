@@ -485,6 +485,17 @@ static void adapt_ScriptCommand_SetActiveNPCCoords(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SetActiveNPCCoords */
 
+/* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
+static void adapt_ScriptCommand_JumpIfEnoughCardsOwned(ProbeState *s)
+{
+	JumpIfCardInCollectionResult r = ScriptCommand_JumpIfEnoughCardsOwned(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -534,5 +545,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetEventValue", adapt_ScriptCommand_SetEventValue },
 	{ "ScriptCommand_TryGivePCPack", adapt_ScriptCommand_TryGivePCPack },
 	{ "ScriptCommand_SetActiveNPCCoords", adapt_ScriptCommand_SetActiveNPCCoords },
+	{ "ScriptCommand_JumpIfEnoughCardsOwned", adapt_ScriptCommand_JumpIfEnoughCardsOwned },
 	{ NULL, NULL },
 };

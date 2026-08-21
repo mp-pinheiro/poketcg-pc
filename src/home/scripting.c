@@ -74,6 +74,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "home/npc_core.h"
 #include "generated/wram.h"
+
+#include "home/scripting.h"
+#include "home/card_collection.h"
 /* <<< factory statics */
 
 
@@ -632,3 +635,25 @@ IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uin
 	return (IncreaseScriptPointerResultWithB){pointer.a, pointer.f, c, pointer.c};
 }
 /* <<< factory ScriptCommand_SetActiveNPCCoords */
+
+/* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c)
+{
+	IncreaseScriptPointerBy1();
+	uint16_t owned = GetAmountOfCardsOwned();
+	uint16_t target = (uint16_t)(((uint16_t)b << 8) | c);
+	if (owned >= target) {
+		SetScriptControlBytePass();
+		GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+		if (args.f & 0x80u) {
+			IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+			return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+		}
+		(void)SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+		return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+	}
+	SetScriptControlByteFail();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+}
+/* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */

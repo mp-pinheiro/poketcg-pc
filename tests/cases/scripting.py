@@ -29,6 +29,10 @@ wScriptNPC = 0xD3B6
 wScriptPointer = 0xD413
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wScriptPointer = 0xD413
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -575,6 +579,15 @@ CASES["ScriptCommand_SetActiveNPCCoords"] = [
 ]
 # <<< factory ScriptCommand_SetActiveNPCCoords
 
+# >>> factory ScriptCommand_JumpIfEnoughCardsOwned
+CONTRACT["ScriptCommand_JumpIfEnoughCardsOwned"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEnoughCardsOwned"] = [
+    {"b": 0x00, "c": 0x00, "wram": {wScriptPointer: b"\x00\xC5", 0xC503: b"\x00\x00"}, "read": {wScriptPointer: 2}},
+    {"b": 0xFF, "c": 0xFF, "wram": {wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    dict(POISON, wram={wScriptPointer: b"\x00\xC5"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEnoughCardsOwned
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -916,3 +929,11 @@ MUTATIONS["ScriptCommand_SetActiveNPCCoords"] = {
     "case_ids": ["ScriptCommand_SetActiveNPCCoords-0", "ScriptCommand_SetActiveNPCCoords-1", "ScriptCommand_SetActiveNPCCoords-2", "ScriptCommand_SetActiveNPCCoords-3"],
 }
 # <<< factory-mutation ScriptCommand_SetActiveNPCCoords
+# >>> factory-mutation ScriptCommand_JumpIfEnoughCardsOwned
+MUTATIONS["ScriptCommand_JumpIfEnoughCardsOwned"] = {
+    "source_symbol": "ScriptCommand_JumpIfEnoughCardsOwned",
+    "before": "\tif (owned >= target) {",
+    "after": "\tif (owned < target) {",
+    "case_ids": ["ScriptCommand_JumpIfEnoughCardsOwned-1", "ScriptCommand_JumpIfEnoughCardsOwned-2"],
+}
+# <<< factory-mutation ScriptCommand_JumpIfEnoughCardsOwned

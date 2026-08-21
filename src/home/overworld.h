@@ -114,4 +114,7 @@ void Func_c687(void);
 /* >>> factory Func_c36a */
 void Func_c36a(void);
 /* <<< factory Func_c36a */
+/* >>> factory Func_c915 */
+FuncC3caResult Func_c915(void);
+/* <<< factory Func_c915 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

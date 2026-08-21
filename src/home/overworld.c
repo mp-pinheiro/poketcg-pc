@@ -69,6 +69,9 @@
 #include "mem.h"
 
 #define POKEMON_DOME_ENTRANCE 0x1fu
+
+#include "home/text_box.h"
+#include "home/overworld.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -463,3 +466,16 @@ void Func_c36a(void)
 		gb_write8(0xD324u, 0u);
 }
 /* <<< factory Func_c36a */
+
+/* >>> factory Func_c915 */
+FuncC3caResult Func_c915(void)
+{
+	uint8_t d = 0x00;
+	uint8_t e = 0x0C;
+	uint8_t b = 0x14;
+	uint8_t c = 0x06;
+	AdjustCoordinatesForBGScroll(&d, &e);
+	FuncC3caResult result = Func_c3ca(b, c, d, e);
+	return result;
+}
+/* <<< factory Func_c915 */

@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfEnoughCardsOwned",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"registers\": {\"a\": 197, \"b\": 255, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54291\": \"05c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"mismatches\": {\"b\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfEnoughCardsOwned\", \"registers\": {\"a\": 197, \"b\": 255, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54291\": \"05c5\"}}, \"status\": \"PASS\"}\n"
+}

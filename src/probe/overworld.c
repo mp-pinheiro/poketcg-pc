@@ -227,6 +227,15 @@ static void adapt_Func_c36a(ProbeState *s)
 }
 /* <<< factory Func_c36a */
 
+/* >>> factory Func_c915 */
+static void adapt_Func_c915(ProbeState *s)
+{
+	FuncC3caResult result = Func_c915();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_c915 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -255,5 +264,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "AttemptPlayerMovementFromDirection", adapt_AttemptPlayerMovementFromDirection },
 	{ "Func_c687", adapt_Func_c687 },
 	{ "Func_c36a", adapt_Func_c36a },
+	{ "Func_c915", adapt_Func_c915 },
 	{ NULL, NULL },
 };

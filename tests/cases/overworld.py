@@ -245,6 +245,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wOWMapEvents = 0xD323
 wCurMap = 0xD32F
+
+hSCX = 0xFF92
+hSCY = 0xFF93
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -370,6 +373,16 @@ CASES["Func_c36a"] = [
 	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wOWMapEvents: b"\x12\x34", wCurMap: b"\x1F"}, "read": {wOWMapEvents: 2}},
 ]
 # <<< factory Func_c36a
+
+# >>> factory Func_c915
+CONTRACT["Func_c915"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c915"] = [
+	{"hram": {hSCX: b"\x00", hSCY: b"\x00"}, "wram": {wPermissionMap: b"\x00" * 0x100}, "read": {wPermissionMap: 0x100}},
+	{"hram": {hSCX: b"\x20", hSCY: b"\x10"}, "wram": {wPermissionMap: b"\x0f" * 0x100}, "read": {wPermissionMap: 0x100}},
+	{"hram": {hSCX: b"\xf8", hSCY: b"\xf8"}, "wram": {wPermissionMap: b"\xf0" * 0x100}, "read": {wPermissionMap: 0x100}},
+	dict(POISON, hram={hSCX: b"\xaa", hSCY: b"\x55"}, wram={wPermissionMap: b"\x00" * 0x100}, read={wPermissionMap: 0x100}),
+]
+# <<< factory Func_c915
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -511,3 +524,6 @@ MUTATIONS["Func_c687"] = {"source_symbol": "Func_c687", "before": "\tFunc_c694(a
 # >>> factory-mutation Func_c36a
 MUTATIONS["Func_c36a"] = {"source_symbol": "Func_c36a", "before": "\twOWMapEvents = 0u;", "after": "\twOWMapEvents = 1u;", "case_ids": ["Func_c36a-0", "Func_c36a-1", "Func_c36a-2"]}
 # <<< factory-mutation Func_c36a
+# >>> factory-mutation Func_c915
+MUTATIONS["Func_c915"] = {"source_symbol": "Func_c915", "before": "FuncC3caResult result = Func_c3ca(b, c, d, e);", "after": "FuncC3caResult result = Func_c3ca(b, c, e, d);", "case_ids": ["Func_c915-0", "Func_c915-1", "Func_c915-2", "Func_c915-3"]}
+# <<< factory-mutation Func_c915

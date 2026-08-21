@@ -229,4 +229,7 @@ typedef struct {
 
 IncreaseScriptPointerResultWithB ScriptCommand_SetActiveNPCCoords(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_SetActiveNPCCoords */
+/* >>> factory ScriptCommand_JumpIfEnoughCardsOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfEnoughCardsOwned(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_JumpIfEnoughCardsOwned */
 #endif
