@@ -202,6 +202,23 @@ CASES["Func_c430"] = [
 ]
 # <<< factory Func_c430
 
+# >>> factory-cases-statics
+wSCXBuffer = 0xD235
+wSCYBuffer = 0xD236
+wd237 = 0xD237
+wd238 = 0xD238
+# <<< factory-cases-statics
+
+# >>> factory Func_c41c
+CONTRACT["Func_c41c"] = {"compare": (), "preserve": ()}
+CASES["Func_c41c"] = [
+	{"wram": {0xD332: b"\x40", 0xD333: b"\x40", wd237: b"\x00", wd238: b"\x00"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	{"wram": {0xD332: b"\x90", 0xD333: b"\xA0", wd237: b"\x10", wd238: b"\x10"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	{"wram": {0xD332: b"\x00", 0xD333: b"\x01", wd237: b"\x10", wd238: b"\x04"}, "read": {wSCXBuffer: 1, wSCYBuffer: 1}},
+	dict(POISON, wram={0xD332: b"\xAA", 0xD333: b"\x55", wd237: b"\x10", wd238: b"\x04"}, read={wSCXBuffer: 1, wSCYBuffer: 1}),
+]
+# <<< factory Func_c41c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -283,3 +300,11 @@ MUTATIONS["Func_c430"] = {
     "case_ids": ["Func_c430-0", "Func_c430-1", "Func_c430-2", "Func_c430-3"],
 }
 # <<< factory-mutation Func_c430
+# >>> factory-mutation Func_c41c
+MUTATIONS["Func_c41c"] = {
+	"source_symbol": "Func_c41c",
+	"before": "wSCXBuffer = (uint8_t)(wPlayerXCoordPixels - 0x40u);",
+	"after": "wSCXBuffer = (uint8_t)(wPlayerXCoordPixels + 0x40u);",
+	"case_ids": ["Func_c41c-1", "Func_c41c-2", "Func_c41c-3"],
+}
+# <<< factory-mutation Func_c41c

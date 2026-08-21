@@ -568,4 +568,7 @@ typedef struct {
 } PrizeTileResult;
 PrizeTileResult Func_8bf2(uint8_t f, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory Func_8bf2 */
+/* >>> factory GetDuelInitialPrizesUpperBitsSet */
+void GetDuelInitialPrizesUpperBitsSet(void);
+/* <<< factory GetDuelInitialPrizesUpperBitsSet */
 #endif

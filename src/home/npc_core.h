@@ -35,4 +35,7 @@ UpdateNPCSpritePositionResult UpdateNPCSpritePosition(uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; } CheckIsAnNPCMovingResult;
 CheckIsAnNPCMovingResult CheckIsAnNPCMoving(void);
 /* <<< factory CheckIsAnNPCMoving */
+/* >>> factory UpdateNPCsTilePermission */
+uint8_t UpdateNPCsTilePermission(void);
+/* <<< factory UpdateNPCsTilePermission */
 #endif /* POKETCG_HOME_NPC_CORE_H */

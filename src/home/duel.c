@@ -359,6 +359,8 @@ static const uint8_t kCursorTileData[16] = {
 	0xE0u, 0xC0u, 0x98u, 0xB0u, 0x84u, 0x8Cu, 0x83u, 0x82u,
 	0x86u, 0x8Fu, 0x9Du, 0xBEu, 0xF4u, 0xF8u, 0x50u, 0x60u
 };
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1736,3 +1738,18 @@ PrizeTileResult Func_8bf2(uint8_t f, uint8_t d, uint8_t e, uint16_t hl)
 	return (PrizeTileResult){saved_a, saved_f, b, d, e, hl};
 }
 /* <<< factory Func_8bf2 */
+
+/* >>> factory GetDuelInitialPrizesUpperBitsSet */
+void GetDuelInitialPrizesUpperBitsSet(void)
+{
+	uint8_t a = wDuelInitialPrizes;
+	uint8_t b = 0x01u;
+	while (a != 0u) {
+		b = (uint8_t)(b << 1);
+		--a;
+	}
+	--b;
+	a = (uint8_t)(b | 0xC0u);
+	wDuelInitialPrizesUpperBitsSet = a;
+}
+/* <<< factory GetDuelInitialPrizesUpperBitsSet */

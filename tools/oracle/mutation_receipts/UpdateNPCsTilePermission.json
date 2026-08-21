@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateNPCsTilePermission",
+  "case": "tests/cases/npc_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateNPCsTilePermission\", \"registers\": {\"a\": 191, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"54092\": \"0000\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateNPCsTilePermission\", \"mismatches\": {\"a\": [191, 223], \"bus\": {\"address\": 53555, \"reference\": \"bf000000\", \"native\": \"df000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53555, 1], [54092, 2], [54186, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateNPCsTilePermission\", \"registers\": {\"a\": 191, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53555\": \"bf\", \"54092\": \"0000\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -671,6 +671,14 @@ static void adapt_Func_8bf2(ProbeState *s)
 }
 /* <<< factory Func_8bf2 */
 
+/* >>> factory GetDuelInitialPrizesUpperBitsSet */
+static void adapt_GetDuelInitialPrizesUpperBitsSet(ProbeState *s)
+{
+	(void)s;
+	GetDuelInitialPrizesUpperBitsSet();
+}
+/* <<< factory GetDuelInitialPrizesUpperBitsSet */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -752,5 +760,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "EraseCheckMenuCursor_YourOrOppPlayArea", adapt_EraseCheckMenuCursor_YourOrOppPlayArea },
 	{ "LoadCursorTile", adapt_LoadCursorTile },
 	{ "Func_8bf2", adapt_Func_8bf2 },
+	{ "GetDuelInitialPrizesUpperBitsSet", adapt_GetDuelInitialPrizesUpperBitsSet },
 	{ NULL, NULL },
 };

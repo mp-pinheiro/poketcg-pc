@@ -54,4 +54,7 @@ FuncC70dResult Func_c70d(void);
 /* >>> factory Func_c430 */
 void Func_c430(void);
 /* <<< factory Func_c430 */
+/* >>> factory Func_c41c */
+void Func_c41c(void);
+/* <<< factory Func_c41c */
 #endif /* POKETCG_HOME_OVERWORLD_H */

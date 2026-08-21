@@ -1040,6 +1040,16 @@ CASES["Func_8bf2"] = [
 ]
 # <<< factory Func_8bf2
 
+# >>> factory GetDuelInitialPrizesUpperBitsSet
+CONTRACT["GetDuelInitialPrizesUpperBitsSet"] = {"compare": (), "preserve": ()}
+CASES["GetDuelInitialPrizesUpperBitsSet"] = [
+    {"wram": {0xCC08: b"\x00"}, "read": {0xCE55: 1}},
+    dict(POISON, wram={0xCC08: b"\x01"}, read={0xCE55: 1}),
+    {"wram": {0xCC08: b"\x02"}, "read": {0xCE55: 1}},
+    {"wram": {0xCC08: b"\x06"}, "read": {0xCE55: 1}},
+]
+# <<< factory GetDuelInitialPrizesUpperBitsSet
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1136,3 +1146,6 @@ MUTATIONS["Func_8bf2"] = {
     "case_ids": ["Func_8bf2-1", "Func_8bf2-2", "Func_8bf2-3"],
 }
 # <<< factory-mutation Func_8bf2
+# >>> factory-mutation GetDuelInitialPrizesUpperBitsSet
+MUTATIONS["GetDuelInitialPrizesUpperBitsSet"] = {"source_symbol": "GetDuelInitialPrizesUpperBitsSet", "before": "\ta = (uint8_t)(b | 0xC0u);", "after": "\ta = (uint8_t)(b | 0x80u);", "case_ids": ["GetDuelInitialPrizesUpperBitsSet-0", "GetDuelInitialPrizesUpperBitsSet-1", "GetDuelInitialPrizesUpperBitsSet-2", "GetDuelInitialPrizesUpperBitsSet-3"]}
+# <<< factory-mutation GetDuelInitialPrizesUpperBitsSet

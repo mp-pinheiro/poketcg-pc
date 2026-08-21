@@ -135,6 +135,17 @@ CASES["CheckIsAnNPCMoving"] = [
 ]
 # <<< factory CheckIsAnNPCMoving
 
+# >>> factory UpdateNPCsTilePermission
+CONTRACT["UpdateNPCsTilePermission"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["UpdateNPCsTilePermission"] = [
+    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x00\x00", 0xD133: b"\xFF"}, "expect": {0xD133: b"\xBF"}, "expect_regs": {"a": 0xBF}},
+    {"wram": {0xD3AA: b"\x01", 0xD356: b"\x04\x06", 0xD165: b"\x40"}, "expect": {0xD165: b"\x00"}, "expect_regs": {"a": 0x00}},
+    {"wram": {0xD3AA: b"\x07", 0xD39C: b"\x0E\x10", 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x3F"}, "expect_regs": {"a": 0x3F}},
+    {"wram": {0xD3AA: b"\x08", 0xD34C: b"\x02\x04", 0xD154: b"\xFF"}, "expect": {0xD154: b"\xBF"}, "expect_regs": {"a": 0xBF}},
+    dict(POISON, wram={0xD3AA: b"\xAA", 0xD34C: b"\x08\x0A", 0xD183: b"\xFF"}, expect={0xD183: b"\xBF"}, expect_regs={"a": 0xBF}),
+]
+# <<< factory UpdateNPCsTilePermission
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -184,3 +195,6 @@ MUTATIONS["UpdateNPCSpritePosition"] = {"source_symbol": "UpdateNPCSpritePositio
 # >>> factory-mutation CheckIsAnNPCMoving
 MUTATIONS["CheckIsAnNPCMoving"] = {"source_symbol": "CheckIsAnNPCMoving", "before": "uint8_t a = (uint8_t)(wIsAnNPCMoving & NPC_FLAG_MOVING);", "after": "uint8_t a = wIsAnNPCMoving;", "case_ids": ["CheckIsAnNPCMoving-1", "CheckIsAnNPCMoving-2", "CheckIsAnNPCMoving-3", "CheckIsAnNPCMoving-4"]}
 # <<< factory-mutation CheckIsAnNPCMoving
+# >>> factory-mutation UpdateNPCsTilePermission
+MUTATIONS["UpdateNPCsTilePermission"] = {"source_symbol": "UpdateNPCsTilePermission", "before": "uint8_t result = UpdatePermissionOfMapPosition(0x40u, x, y);", "after": "uint8_t result = UpdatePermissionOfMapPosition(0x20u, x, y);", "case_ids": ["UpdateNPCsTilePermission-0", "UpdateNPCsTilePermission-1", "UpdateNPCsTilePermission-2", "UpdateNPCsTilePermission-3", "UpdateNPCsTilePermission-4"]}
+# <<< factory-mutation UpdateNPCsTilePermission

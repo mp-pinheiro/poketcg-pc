@@ -252,3 +252,12 @@ void Func_c430(void)
 	wSCYBuffer = scy;
 }
 /* <<< factory Func_c430 */
+
+/* >>> factory Func_c41c */
+void Func_c41c(void)
+{
+	wSCXBuffer = (uint8_t)(wPlayerXCoordPixels - 0x40u);
+	wSCYBuffer = (uint8_t)(wPlayerYCoordPixels - 0x40u);
+	Func_c430();
+}
+/* <<< factory Func_c41c */

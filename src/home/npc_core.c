@@ -51,6 +51,10 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #define NPC_FLAG_MOVING (1u << NPC_FLAG_MOVING_F)
 #define SPRITE_ANIM_COORD_X 0x02u
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -270,3 +274,15 @@ CheckIsAnNPCMovingResult CheckIsAnNPCMoving(void)
 	return (CheckIsAnNPCMovingResult){a, f};
 }
 /* <<< factory CheckIsAnNPCMoving */
+
+/* >>> factory UpdateNPCsTilePermission */
+uint8_t UpdateNPCsTilePermission(void)
+{
+	uint8_t index = wLoadedNPCTempIndex;
+	PermissionResult entry = GetItemInLoadedNPCIndex(index, LOADED_NPC_COORD_X);
+	uint8_t x = gb_read8(entry.hl);
+	uint8_t y = gb_read8((uint16_t)(entry.hl + 1u));
+	uint8_t result = UpdatePermissionOfMapPosition(0x40u, x, y);
+	return result;
+}
+/* <<< factory UpdateNPCsTilePermission */
