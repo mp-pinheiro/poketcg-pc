@@ -514,4 +514,7 @@ typedef struct {
 
 CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(uint8_t d, uint8_t e);
 /* <<< factory CheckIfEnoughEnergiesForGivenAttack */
+/* >>> factory SaveDuelData */
+void SaveDuelData(void);
+/* <<< factory SaveDuelData */
 #endif

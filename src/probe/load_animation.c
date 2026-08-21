@@ -72,6 +72,13 @@ static void adapt_DrawPortrait(ProbeState *s)
 }
 /* <<< factory DrawPortrait */
 
+/* >>> factory DrawOpponentPortrait */
+static void adapt_DrawOpponentPortrait(ProbeState *s)
+{
+	DrawOpponentPortrait(s->a);
+}
+/* <<< factory DrawOpponentPortrait */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -84,5 +91,6 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "HandleAllSpriteAnimations", adapt_HandleAllSpriteAnimations },
 	{ "EnableAndClearSpriteAnimations", adapt_EnableAndClearSpriteAnimations },
 	{ "DrawPortrait", adapt_DrawPortrait },
+	{ "DrawOpponentPortrait", adapt_DrawOpponentPortrait },
 	{ NULL, NULL },
 };

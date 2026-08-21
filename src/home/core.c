@@ -375,6 +375,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/tiles.h"
 
 #define PLAY_AREA_CARD_LIST 0x02u
+
+#include "generated/sram.h"
+#include "home/core.h"
+#include "home/unused_save_validation.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2567,3 +2571,11 @@ CheckIfEnoughEnergiesForGivenAttackResult CheckIfEnoughEnergiesForGivenAttack(ui
 	return r;
 }
 /* <<< factory CheckIfEnoughEnergiesForGivenAttack */
+
+/* >>> factory SaveDuelData */
+void SaveDuelData(void)
+{
+	StubbedUnusedSaveDataValidation();
+	SaveDuelDataToDE(sCurrentDuel_ADDR);
+}
+/* <<< factory SaveDuelData */

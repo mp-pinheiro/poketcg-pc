@@ -1,0 +1,9 @@
+{
+  "fn": "SaveDuelData",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SaveDuelData\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"010f1303\"}}, \"vram\": {}, \"wram\": {\"49664\": \"1122\", \"52233\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SaveDuelData\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"010f1303\", \"native\": \"00010f13\"}}}\n",
+  "restored": "{\"fn\": \"SaveDuelData\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"48128\": \"010f1303\"}}, \"vram\": {}, \"wram\": {\"49664\": \"1122\", \"52233\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

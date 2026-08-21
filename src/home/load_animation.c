@@ -14,6 +14,9 @@
 #include "home/scenes.h"
 #include "home/switch_rom.h"
 #define BANK_DRAW_PORTRAIT 0x04u
+
+#include "generated/wram.h"
+#define TILEMAP_OPPONENT 0x63u
 /* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
@@ -251,3 +254,11 @@ void DrawPortrait(uint8_t a)
 	BankswitchROM(saved);
 }
 /* <<< factory DrawPortrait */
+
+/* >>> factory DrawOpponentPortrait */
+void DrawOpponentPortrait(uint8_t a)
+{
+	wCurPortrait = a;
+	DrawPortrait(TILEMAP_OPPONENT);
+}
+/* <<< factory DrawOpponentPortrait */

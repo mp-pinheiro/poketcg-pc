@@ -23,6 +23,14 @@ CASES["LoadRegistersFromIRDataBuffer"] = [
 ]
 # <<< factory LoadRegistersFromIRDataBuffer
 
+# >>> factory ReturnZFlagUnsetAndCarryFlagSet
+CONTRACT["ReturnZFlagUnsetAndCarryFlagSet"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ReturnZFlagUnsetAndCarryFlagSet"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory ReturnZFlagUnsetAndCarryFlagSet
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -33,3 +41,6 @@ MUTATIONS["StoreRegistersInIRDataBuffer"] = {"source_symbol": "StoreRegistersInI
 # >>> factory-mutation LoadRegistersFromIRDataBuffer
 MUTATIONS["LoadRegistersFromIRDataBuffer"] = {"source_symbol": "LoadRegistersFromIRDataBuffer", "before": "\tr.f = (uint8_t)(gb_read8(addr++) & 0xf0u);", "after": "\tr.f = (uint8_t)(gb_read8(addr++) & 0xe0u);", "case_ids": ["LoadRegistersFromIRDataBuffer-1"]}
 # <<< factory-mutation LoadRegistersFromIRDataBuffer
+# >>> factory-mutation ReturnZFlagUnsetAndCarryFlagSet
+MUTATIONS["ReturnZFlagUnsetAndCarryFlagSet"] = {"source_symbol": "ReturnZFlagUnsetAndCarryFlagSet", "before": "return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFFu, 0x10u};", "after": "return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFEu, 0x10u};", "case_ids": ["ReturnZFlagUnsetAndCarryFlagSet-0", "ReturnZFlagUnsetAndCarryFlagSet-1"]}
+# <<< factory-mutation ReturnZFlagUnsetAndCarryFlagSet

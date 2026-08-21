@@ -10,4 +10,12 @@ void StoreRegistersInIRDataBuffer(uint8_t a, uint8_t f, uint8_t b, uint8_t c, ui
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } IRRegisterState;
 IRRegisterState LoadRegistersFromIRDataBuffer(void);
 /* <<< factory LoadRegistersFromIRDataBuffer */
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} ReturnZFlagUnsetAndCarryFlagSetResult;
+
+ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet(void);
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet */
 #endif /* POKETCG_HOME_IR_CORE_H */

@@ -23,4 +23,7 @@ void EnableAndClearSpriteAnimations(void);
 /* >>> factory DrawPortrait */
 void DrawPortrait(uint8_t a);
 /* <<< factory DrawPortrait */
+/* >>> factory DrawOpponentPortrait */
+void DrawOpponentPortrait(uint8_t a);
+/* <<< factory DrawOpponentPortrait */
 #endif

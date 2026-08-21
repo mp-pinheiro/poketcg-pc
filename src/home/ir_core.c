@@ -45,3 +45,10 @@ IRRegisterState LoadRegistersFromIRDataBuffer(void)
 	return r;
 }
 /* <<< factory LoadRegistersFromIRDataBuffer */
+
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet */
+ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet(void)
+{
+	return (ReturnZFlagUnsetAndCarryFlagSetResult){0xFFu, 0x10u};
+}
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet */

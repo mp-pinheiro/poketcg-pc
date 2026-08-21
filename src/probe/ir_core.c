@@ -24,8 +24,18 @@ static void adapt_LoadRegistersFromIRDataBuffer(ProbeState *s)
 }
 /* <<< factory LoadRegistersFromIRDataBuffer */
 
+/* >>> factory ReturnZFlagUnsetAndCarryFlagSet */
+static void adapt_ReturnZFlagUnsetAndCarryFlagSet(ProbeState *s)
+{
+	ReturnZFlagUnsetAndCarryFlagSetResult result = ReturnZFlagUnsetAndCarryFlagSet();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ReturnZFlagUnsetAndCarryFlagSet */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
+	{ "ReturnZFlagUnsetAndCarryFlagSet", adapt_ReturnZFlagUnsetAndCarryFlagSet },
 	{ NULL, NULL },
 };

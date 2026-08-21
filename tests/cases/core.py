@@ -1371,6 +1371,17 @@ CASES["CheckIfEnoughEnergiesForGivenAttack"] = [
 ]
 # <<< factory CheckIfEnoughEnergiesForGivenAttack
 
+# >>> factory SaveDuelData
+CONTRACT["SaveDuelData"] = {"compare": (), "preserve": ()}
+sCurrentDuel = 0xBC00
+wDuelType = 0xCC09
+CASES["SaveDuelData"] = [
+    {"wram": {wDuelType: b"\x02"}, "sread": {0: {sCurrentDuel: 4}}},
+    dict(POISON, wram={wDuelType: b"\x03", 0xC200: b"\x11\x22"}, sread={0: {sCurrentDuel: 4}}),
+    {"wram": {wDuelType: b"\x00"}, "sread": {0: {sCurrentDuel: 1}}},
+]
+# <<< factory SaveDuelData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2187,3 +2198,6 @@ MUTATIONS["SetupPlayAreaScreen"] = {"source_symbol": "SetupPlayAreaScreen", "bef
 # >>> factory-mutation CheckIfEnoughEnergiesForGivenAttack
 MUTATIONS["CheckIfEnoughEnergiesForGivenAttack"] = {"source_symbol": "CheckIfEnoughEnergiesForGivenAttack", "before": "if (category == 0x04u) {", "after": "if (category != 0x04u) {", "case_ids": ["CheckIfEnoughEnergiesForGivenAttack-0", "CheckIfEnoughEnergiesForGivenAttack-1"]}
 # <<< factory-mutation CheckIfEnoughEnergiesForGivenAttack
+# >>> factory-mutation SaveDuelData
+MUTATIONS["SaveDuelData"] = {"source_symbol": "SaveDuelData", "before": "SaveDuelDataToDE(sCurrentDuel_ADDR);", "after": "SaveDuelDataToDE((uint16_t)(sCurrentDuel_ADDR + 1u));", "case_ids": ["SaveDuelData-1"]}
+# <<< factory-mutation SaveDuelData
