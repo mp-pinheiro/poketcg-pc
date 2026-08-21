@@ -1156,6 +1156,14 @@ static void adapt_DrawPracticeDuelInstructionsTextBox(ProbeState *s)
 }
 /* <<< factory DrawPracticeDuelInstructionsTextBox */
 
+/* >>> factory PracticeDuelVerify_Turn7Or8 */
+static void adapt_PracticeDuelVerify_Turn7Or8(ProbeState *s)
+{
+	PracticeDuelVerifyTurn7Or8Result r = PracticeDuelVerify_Turn7Or8();
+	s->f = r.f;
+}
+/* <<< factory PracticeDuelVerify_Turn7Or8 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1292,5 +1300,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPracticeDuelLetsPlayTheGame", adapt_PrintPracticeDuelLetsPlayTheGame },
 	{ "AIAttachEnergyInHandToCardInBench", adapt_AIAttachEnergyInHandToCardInBench },
 	{ "DrawPracticeDuelInstructionsTextBox", adapt_DrawPracticeDuelInstructionsTextBox },
+	{ "PracticeDuelVerify_Turn7Or8", adapt_PracticeDuelVerify_Turn7Or8 },
 	{ NULL, NULL },
 };

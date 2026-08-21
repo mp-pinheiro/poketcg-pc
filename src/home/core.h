@@ -550,4 +550,8 @@ AIAttachEnergyInHandToCardInBenchResult AIAttachEnergyInHandToCardInBench(uint8_
 /* >>> factory DrawPracticeDuelInstructionsTextBox */
 void DrawPracticeDuelInstructionsTextBox(void);
 /* <<< factory DrawPracticeDuelInstructionsTextBox */
+/* >>> factory PracticeDuelVerify_Turn7Or8 */
+typedef struct { uint8_t f; } PracticeDuelVerifyTurn7Or8Result;
+PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void);
+/* <<< factory PracticeDuelVerify_Turn7Or8 */
 #endif

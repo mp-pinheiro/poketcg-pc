@@ -1492,6 +1492,15 @@ CASES["DrawPracticeDuelInstructionsTextBox"] = [
 ]
 # <<< factory DrawPracticeDuelInstructionsTextBox
 
+# >>> factory PracticeDuelVerify_Turn7Or8
+CONTRACT["PracticeDuelVerify_Turn7Or8"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuelVerify_Turn7Or8"] = [
+    {"wram": {0xCCC2: b"\x56", 0xCCC6: b"\x01"}},
+    {"wram": {0xCCC2: b"\x00", 0xCCC6: b"\x01"}},
+    dict(POISON, wram={0xCCC2: b"\x56", 0xCCC6: b"\x01"}),
+]
+# <<< factory PracticeDuelVerify_Turn7Or8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2376,3 +2385,6 @@ MUTATIONS["DrawPracticeDuelInstructionsTextBox"] = {
     "case_ids": ["DrawPracticeDuelInstructionsTextBox-0", "DrawPracticeDuelInstructionsTextBox-1"],
 }
 # <<< factory-mutation DrawPracticeDuelInstructionsTextBox
+# >>> factory-mutation PracticeDuelVerify_Turn7Or8
+MUTATIONS["PracticeDuelVerify_Turn7Or8"] = {"source_symbol": "PracticeDuelVerify_Turn7Or8", "before": "card != STARMIE", "after": "card != 0x57u", "case_ids": ["PracticeDuelVerify_Turn7Or8-0", "PracticeDuelVerify_Turn7Or8-1", "PracticeDuelVerify_Turn7Or8-2"]}
+# <<< factory-mutation PracticeDuelVerify_Turn7Or8

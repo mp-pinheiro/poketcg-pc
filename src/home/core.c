@@ -402,6 +402,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/text_box.h"
 #include "home/empty_screen.h"
+
+#include "generated/wram.h"
+#include "mem.h"
+#define SECOND_ATTACK 0x01u
+#define STARMIE 0x56u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2722,3 +2727,16 @@ void DrawPracticeDuelInstructionsTextBox(void)
 	PrintPracticeDuelInstructionsTextBoxLabel();
 }
 /* <<< factory DrawPracticeDuelInstructionsTextBox */
+
+/* >>> factory PracticeDuelVerify_Turn7Or8 */
+PracticeDuelVerifyTurn7Or8Result PracticeDuelVerify_Turn7Or8(void)
+{
+	uint8_t card = gb_read8(wTempCardID_ccc2_ADDR);
+	if (card != STARMIE)
+		return (PracticeDuelVerifyTurn7Or8Result){0x10u};
+	uint8_t attack = gb_read8(wSelectedAttack_ADDR);
+	if (attack != SECOND_ATTACK)
+		return (PracticeDuelVerifyTurn7Or8Result){0x10u};
+	return (PracticeDuelVerifyTurn7Or8Result){0xC0u};
+}
+/* <<< factory PracticeDuelVerify_Turn7Or8 */
