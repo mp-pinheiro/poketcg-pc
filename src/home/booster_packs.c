@@ -112,3 +112,12 @@ void AppendCurrentCardToHL(uint16_t *hl)
 	*hl = cursor;
 }
 /* <<< factory AppendCurrentCardToHL */
+
+/* >>> factory AddBoosterCardToTempCardCollection */
+void AddBoosterCardToTempCardCollection(void)
+{
+	uint8_t card = gb_read8(wBoosterCurrentCard_ADDR);
+	uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
+	gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
+}
+/* <<< factory AddBoosterCardToTempCardCollection */

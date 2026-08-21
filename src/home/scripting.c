@@ -65,6 +65,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define MAP_NAMES 0x7080u
 
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#define EVENT_VAR_BYTES 0x40u
 /* <<< factory statics */
 
 
@@ -562,3 +565,12 @@ SetEventValueResult ZeroOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	return SetEventValue(a, f, b, 0u);
 }
 /* <<< factory ZeroOutEventValue */
+
+/* >>> factory ClearEvents */
+void ClearEvents(void)
+{
+	for (uint16_t i = 0; i < EVENT_VAR_BYTES; ++i) {
+		gb_write8((uint16_t)(wEventVars_ADDR + i), 0u);
+	}
+}
+/* <<< factory ClearEvents */

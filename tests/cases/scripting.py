@@ -10,6 +10,10 @@ wNextScript = 0xD0C6
 wOverworldMode = 0xD0BF
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wEventVars = 0xD3D2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -479,6 +483,19 @@ CASES["ZeroOutEventValue"] = [
 ]
 # <<< factory ZeroOutEventValue
 
+# >>> factory ClearEvents
+CONTRACT["ClearEvents"] = {
+    "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+    "preserve": ("b", "c", "d", "e", "hl"),
+}
+CASES["ClearEvents"] = [
+    {"wram": {wEventVars: b"\x11" * 0x40}, "read": {wEventVars: 0x40}},
+    dict(POISON, wram={wEventVars: b"\xAA" * 0x40},
+         read={wEventVars: 0x40}),
+    {"wram": {wEventVars: b"\xFF" * 0x40}, "read": {wEventVars: 0x40}},
+]
+# <<< factory ClearEvents
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -769,3 +786,11 @@ MUTATIONS["ZeroOutEventValue"] = {
     "case_ids": ["ZeroOutEventValue-0", "ZeroOutEventValue-1", "ZeroOutEventValue-2", "ZeroOutEventValue-3", "ZeroOutEventValue-4"],
 }
 # <<< factory-mutation ZeroOutEventValue
+# >>> factory-mutation ClearEvents
+MUTATIONS["ClearEvents"] = {
+    "source_symbol": "ClearEvents",
+    "before": "\tfor (uint16_t i = 0; i < EVENT_VAR_BYTES; ++i) {",
+    "after": "\tfor (uint16_t i = 0; i < EVENT_VAR_BYTES - 1u; ++i) {",
+    "case_ids": ["ClearEvents-0", "ClearEvents-1", "ClearEvents-2"],
+}
+# <<< factory-mutation ClearEvents

@@ -19,4 +19,7 @@ uint8_t UpdateBoosterCardTypesChanceByte(void);
 /* >>> factory AppendCurrentCardToHL */
 void AppendCurrentCardToHL(uint16_t *hl);
 /* <<< factory AppendCurrentCardToHL */
+/* >>> factory AddBoosterCardToTempCardCollection */
+void AddBoosterCardToTempCardCollection(void);
+/* <<< factory AddBoosterCardToTempCardCollection */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

@@ -2189,6 +2189,13 @@ static void adapt_MagikarpFlail_HPCheck(ProbeState *s)
 }
 /* <<< factory MagikarpFlail_HPCheck */
 
+/* >>> factory SuperFang_HalfHPEffect */
+static void adapt_SuperFang_HalfHPEffect(ProbeState *s)
+{
+	SuperFang_HalfHPEffect();
+}
+/* <<< factory SuperFang_HalfHPEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2460,5 +2467,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MirrorMove_AISelection", adapt_MirrorMove_AISelection },
 	{ "KinglerFlail_HPCheck", adapt_KinglerFlail_HPCheck },
 	{ "MagikarpFlail_HPCheck", adapt_MagikarpFlail_HPCheck },
+	{ "SuperFang_HalfHPEffect", adapt_SuperFang_HalfHPEffect },
 	{ NULL, NULL },
 };

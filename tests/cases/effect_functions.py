@@ -2356,6 +2356,21 @@ CASES["MagikarpFlail_HPCheck"] = [
 ]
 # <<< factory MagikarpFlail_HPCheck
 
+# >>> factory SuperFang_HalfHPEffect
+CONTRACT["SuperFang_HalfHPEffect"] = {"compare": (), "preserve": ()}
+CASES["SuperFang_HalfHPEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3C8: b"\x00", 0xCCB9: b"\x12\x34", 0xCCBB: b"\x56", 0xCCBC: b"\x78"},
+     "read": {0xFF97: 1, 0xC3C8: 1, 0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC3C8: b"\x3C", 0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+     "read": {0xFF97: 1, 0xC3C8: 1, 0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"wram": {0xFF97: b"\xC3", 0xC2C8: b"\x33", 0xCCB9: b"\x01\x02", 0xCCBB: b"\x03", 0xCCBC: b"\x04"},
+     "read": {0xFF97: 1, 0xC2C8: 1, 0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xFF97: b"\xC2", 0xC3C8: b"\xFF", 0xCCB9: b"\x99\x88", 0xCCBB: b"\x77", 0xCCBC: b"\x66"},
+     "read": {0xFF97: 1, 0xC3C8: 1, 0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory SuperFang_HalfHPEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -3988,3 +4003,11 @@ MUTATIONS["MagikarpFlail_HPCheck"] = {
     "case_ids": ["MagikarpFlail_HPCheck-0", "MagikarpFlail_HPCheck-1", "MagikarpFlail_HPCheck-2"],
 }
 # <<< factory-mutation MagikarpFlail_HPCheck
+# >>> factory-mutation SuperFang_HalfHPEffect
+MUTATIONS["SuperFang_HalfHPEffect"] = {
+    "source_symbol": "SuperFang_HalfHPEffect",
+    "before": "\tSetDefiniteDamage(damage);",
+    "after": "\tSetDefiniteDamage((uint8_t)(damage + 1u));",
+    "case_ids": ["SuperFang_HalfHPEffect-0", "SuperFang_HalfHPEffect-1", "SuperFang_HalfHPEffect-2", "SuperFang_HalfHPEffect-3"],
+}
+# <<< factory-mutation SuperFang_HalfHPEffect

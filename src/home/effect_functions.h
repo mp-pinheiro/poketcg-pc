@@ -913,6 +913,9 @@ void KinglerFlail_HPCheck(void);
 /* >>> factory MagikarpFlail_HPCheck */
 void MagikarpFlail_HPCheck(void);
 /* <<< factory MagikarpFlail_HPCheck */
+/* >>> factory SuperFang_HalfHPEffect */
+void SuperFang_HalfHPEffect(void);
+/* <<< factory SuperFang_HalfHPEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

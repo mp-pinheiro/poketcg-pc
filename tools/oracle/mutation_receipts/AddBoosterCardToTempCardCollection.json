@@ -1,0 +1,9 @@
+{
+  "fn": "AddBoosterCardToTempCardCollection",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddBoosterCardToTempCardCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"01\", \"54890\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddBoosterCardToTempCardCollection\", \"mismatches\": {\"bus\": {\"address\": 49152, \"reference\": \"0100\", \"native\": \"0200\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49152, 1], [54890, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddBoosterCardToTempCardCollection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"01\", \"54890\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

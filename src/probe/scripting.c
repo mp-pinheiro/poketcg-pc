@@ -413,6 +413,15 @@ static void adapt_ZeroOutEventValue(ProbeState *s)
 }
 /* <<< factory ZeroOutEventValue */
 
+/* >>> factory ClearEvents */
+static void adapt_ClearEvents(ProbeState *s)
+{
+	ClearEvents();
+	s->a = 0x00u;
+	s->f = 0x80u;
+}
+/* <<< factory ClearEvents */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -455,5 +464,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetEventValue", adapt_SetEventValue },
 	{ "MaxOutEventValue", adapt_MaxOutEventValue },
 	{ "ZeroOutEventValue", adapt_ZeroOutEventValue },
+	{ "ClearEvents", adapt_ClearEvents },
 	{ NULL, NULL },
 };

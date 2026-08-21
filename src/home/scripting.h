@@ -193,4 +193,7 @@ SetEventValueResult MaxOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c)
 /* >>> factory ZeroOutEventValue */
 SetEventValueResult ZeroOutEventValue(uint8_t a, uint8_t f, uint8_t b, uint8_t c);
 /* <<< factory ZeroOutEventValue */
+/* >>> factory ClearEvents */
+void ClearEvents(void);
+/* <<< factory ClearEvents */
 #endif

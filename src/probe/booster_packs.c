@@ -42,11 +42,26 @@ static void adapt_AppendCurrentCardToHL(ProbeState *s)
 }
 /* <<< factory AppendCurrentCardToHL */
 
+/* >>> factory AddBoosterCardToTempCardCollection */
+static void adapt_AddBoosterCardToTempCardCollection(ProbeState *s)
+{
+	uint8_t card = gb_read8(wBoosterCurrentCard_ADDR);
+	uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
+	uint8_t before = gb_read8(slot);
+	AddBoosterCardToTempCardCollection();
+	s->a = card;
+	s->f = (uint8_t)((s->f & 0x10u) |
+	                ((uint8_t)(before + 1u) == 0u ? 0x80u : 0u) |
+	                ((before & 0x0fu) == 0x0fu ? 0x20u : 0u));
+}
+/* <<< factory AddBoosterCardToTempCardCollection */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
 	{ "CalculateTypeChances", adapt_CalculateTypeChances },
 	{ "UpdateBoosterCardTypesChanceByte", adapt_UpdateBoosterCardTypesChanceByte },
 	{ "AppendCurrentCardToHL", adapt_AppendCurrentCardToHL },
+	{ "AddBoosterCardToTempCardCollection", adapt_AddBoosterCardToTempCardCollection },
 	{ NULL, NULL },
 };

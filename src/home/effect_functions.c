@@ -248,6 +248,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -3831,3 +3834,14 @@ void MagikarpFlail_HPCheck(void)
 	SetDefiniteDamage(r.a);
 }
 /* <<< factory MagikarpFlail_HPCheck */
+
+/* >>> factory SuperFang_HalfHPEffect */
+void SuperFang_HalfHPEffect(void)
+{
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t damage = (uint8_t)(r.a >> 1);
+	if ((damage & 1u) != 0u)
+		damage = (uint8_t)(damage + 5u);
+	SetDefiniteDamage(damage);
+}
+/* <<< factory SuperFang_HalfHPEffect */
