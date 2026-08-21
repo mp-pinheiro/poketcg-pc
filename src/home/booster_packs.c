@@ -247,3 +247,16 @@ PutEnergiesAndNonEnergiesTogetherResult PutEnergiesAndNonEnergiesTogether(uint8_
 	return (PutEnergiesAndNonEnergiesTogetherResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory PutEnergiesAndNonEnergiesTogether */
+
+/* >>> factory LoadRarityAmountsToWram */
+void LoadRarityAmountsToWram(void)
+{
+	uint8_t set = gb_read8(wBoosterData_Set_ADDR);
+	uint8_t common = (set < 2u) ? 5u : 6u;
+	uint8_t uncommon = 3u;
+	uint8_t rare = 1u;
+	gb_write8(wBoosterData_CommonAmount_ADDR, common);
+	gb_write8(wBoosterData_UncommonAmount_ADDR, uncommon);
+	gb_write8(wBoosterData_RareAmount_ADDR, rare);
+}
+/* <<< factory LoadRarityAmountsToWram */

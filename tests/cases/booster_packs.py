@@ -90,6 +90,11 @@ wTempCardCollection = 0xC000
 wBoosterTempEnergiesDrawn = 0xC40B
 wBoosterTempNonEnergiesDrawn = 0xC400
 wBoosterCurrentCard = 0xD66A
+
+wBoosterData_CommonAmount = 0xD66E
+wBoosterData_RareAmount = 0xD670
+wBoosterData_Set = 0xD686
+wBoosterData_UncommonAmount = 0xD66F
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -194,6 +199,17 @@ CASES["PutEnergiesAndNonEnergiesTogether"] = [
 ]
 # <<< factory PutEnergiesAndNonEnergiesTogether
 
+# >>> factory LoadRarityAmountsToWram
+CONTRACT["LoadRarityAmountsToWram"] = {"compare": (), "preserve": ()}
+CASES["LoadRarityAmountsToWram"] = [
+    {"wram": {wBoosterData_Set: b"\x00"}, "read": {wBoosterData_CommonAmount: 1, wBoosterData_UncommonAmount: 1, wBoosterData_RareAmount: 1}},
+    {"wram": {wBoosterData_Set: b"\x01"}, "read": {wBoosterData_CommonAmount: 1, wBoosterData_UncommonAmount: 1, wBoosterData_RareAmount: 1}},
+    {"wram": {wBoosterData_Set: b"\x02"}, "read": {wBoosterData_CommonAmount: 1, wBoosterData_UncommonAmount: 1, wBoosterData_RareAmount: 1}},
+    {"wram": {wBoosterData_Set: b"\x03"}, "read": {wBoosterData_CommonAmount: 1, wBoosterData_UncommonAmount: 1, wBoosterData_RareAmount: 1}},
+    dict(POISON, wram={wBoosterData_Set: b"\x00"}, read={wBoosterData_CommonAmount: 1, wBoosterData_UncommonAmount: 1, wBoosterData_RareAmount: 1}),
+]
+# <<< factory LoadRarityAmountsToWram
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -276,3 +292,6 @@ MUTATIONS["GenerateRandomEnergyBooster"] = {"source_symbol": "GenerateRandomEner
 # >>> factory-mutation PutEnergiesAndNonEnergiesTogether
 MUTATIONS["PutEnergiesAndNonEnergiesTogether"] = {"source_symbol": "PutEnergiesAndNonEnergiesTogether", "before": "	while ((a = *energy++) != 0u) {", "after": "	while ((a = *energy++) == 0u) {", "case_ids": ["PutEnergiesAndNonEnergiesTogether-0", "PutEnergiesAndNonEnergiesTogether-1", "PutEnergiesAndNonEnergiesTogether-2", "PutEnergiesAndNonEnergiesTogether-3"]}
 # <<< factory-mutation PutEnergiesAndNonEnergiesTogether
+# >>> factory-mutation LoadRarityAmountsToWram
+MUTATIONS["LoadRarityAmountsToWram"] = {"source_symbol": "LoadRarityAmountsToWram", "before": "\tuint8_t common = (set < 2u) ? 5u : 6u;", "after": "\tuint8_t common = (set < 2u) ? 6u : 5u;", "case_ids": ["LoadRarityAmountsToWram-0", "LoadRarityAmountsToWram-1", "LoadRarityAmountsToWram-2", "LoadRarityAmountsToWram-3", "LoadRarityAmountsToWram-4"]}
+# <<< factory-mutation LoadRarityAmountsToWram

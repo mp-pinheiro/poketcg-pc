@@ -977,6 +977,9 @@ void JolteonDoubleKick_AIEffect(void);
 /* >>> factory RapidashStomp_AIEffect */
 void RapidashStomp_AIEffect(void);
 /* <<< factory RapidashStomp_AIEffect */
+/* >>> factory StoneBarrage_AIEffect */
+void StoneBarrage_AIEffect(void);
+/* <<< factory StoneBarrage_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

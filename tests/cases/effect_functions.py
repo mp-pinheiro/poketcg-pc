@@ -2544,6 +2544,18 @@ CASES["RapidashStomp_AIEffect"] = [
 ]
 # <<< factory RapidashStomp_AIEffect
 
+# >>> factory StoneBarrage_AIEffect
+CONTRACT["StoneBarrage_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["StoneBarrage_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", 0xCCBB: b"\x00", 0xCCBC: b"\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB", 0xCCBB: b"\xCC", 0xCCBC: b"\xDD"},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+    {"wram": {0xCCB9: b"\xFF\xFF", 0xCCBB: b"\xFF", 0xCCBC: b"\xFF"},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+]
+# <<< factory StoneBarrage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4265,3 +4277,6 @@ MUTATIONS["RapidashStomp_AIEffect"] = {
     "case_ids": ["RapidashStomp_AIEffect-0", "RapidashStomp_AIEffect-1", "RapidashStomp_AIEffect-2"],
 }
 # <<< factory-mutation RapidashStomp_AIEffect
+# >>> factory-mutation StoneBarrage_AIEffect
+MUTATIONS["StoneBarrage_AIEffect"] = {"source_symbol": "StoneBarrage_AIEffect", "before": "\tSetExpectedAIDamage(10u, 0u, 100u);", "after": "\tSetExpectedAIDamage(11u, 0u, 100u);", "case_ids": ["StoneBarrage_AIEffect-0", "StoneBarrage_AIEffect-1", "StoneBarrage_AIEffect-2"]}
+# <<< factory-mutation StoneBarrage_AIEffect

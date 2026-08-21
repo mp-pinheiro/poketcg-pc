@@ -163,6 +163,14 @@ static void adapt_PutEnergiesAndNonEnergiesTogether(ProbeState *s)
 }
 /* <<< factory PutEnergiesAndNonEnergiesTogether */
 
+/* >>> factory LoadRarityAmountsToWram */
+static void adapt_LoadRarityAmountsToWram(ProbeState *s)
+{
+	(void)s;
+	LoadRarityAmountsToWram();
+}
+/* <<< factory LoadRarityAmountsToWram */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -180,5 +188,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GenerateEnergyBoosterWaterFighting", adapt_GenerateEnergyBoosterWaterFighting },
 	{ "GenerateRandomEnergyBooster", adapt_GenerateRandomEnergyBooster },
 	{ "PutEnergiesAndNonEnergiesTogether", adapt_PutEnergiesAndNonEnergiesTogether },
+	{ "LoadRarityAmountsToWram", adapt_LoadRarityAmountsToWram },
 	{ NULL, NULL },
 };

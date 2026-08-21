@@ -3995,3 +3995,10 @@ void RapidashStomp_AIEffect(void)
 	SetExpectedAIDamage(25u, 20u, 30u);
 }
 /* <<< factory RapidashStomp_AIEffect */
+
+/* >>> factory StoneBarrage_AIEffect */
+void StoneBarrage_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 100u);
+}
+/* <<< factory StoneBarrage_AIEffect */

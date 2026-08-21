@@ -2329,6 +2329,14 @@ static void adapt_RapidashStomp_AIEffect(ProbeState *s)
 }
 /* <<< factory RapidashStomp_AIEffect */
 
+/* >>> factory StoneBarrage_AIEffect */
+static void adapt_StoneBarrage_AIEffect(ProbeState *s)
+{
+	(void)s;
+	StoneBarrage_AIEffect();
+}
+/* <<< factory StoneBarrage_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2618,5 +2626,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CloysterSpikeCannon_AIEffect", adapt_CloysterSpikeCannon_AIEffect },
 	{ "JolteonDoubleKick_AIEffect", adapt_JolteonDoubleKick_AIEffect },
 	{ "RapidashStomp_AIEffect", adapt_RapidashStomp_AIEffect },
+	{ "StoneBarrage_AIEffect", adapt_StoneBarrage_AIEffect },
 	{ NULL, NULL },
 };
