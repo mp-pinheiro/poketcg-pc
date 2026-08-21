@@ -1004,6 +1004,10 @@ uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl);
 typedef struct { uint8_t f; } MirrorMoveExecuteStatusEffectResult;
 MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a);
 /* <<< factory MirrorMove_ExecuteStatusEffect */
+/* >>> factory Curse_CheckDamageAndBench */
+typedef struct { uint8_t f; uint16_t hl; } CurseCheckDamageAndBenchResult;
+CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void);
+/* <<< factory Curse_CheckDamageAndBench */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

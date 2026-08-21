@@ -2396,6 +2396,15 @@ static void adapt_MirrorMove_ExecuteStatusEffect(ProbeState *s)
 }
 /* <<< factory MirrorMove_ExecuteStatusEffect */
 
+/* >>> factory Curse_CheckDamageAndBench */
+static void adapt_Curse_CheckDamageAndBench(ProbeState *s)
+{
+	CurseCheckDamageAndBenchResult result = Curse_CheckDamageAndBench();
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Curse_CheckDamageAndBench */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2693,5 +2702,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Revive_BenchCheck", adapt_Revive_BenchCheck },
 	{ "DragonairHyperBeam_DiscardEffect", adapt_DragonairHyperBeam_DiscardEffect },
 	{ "MirrorMove_ExecuteStatusEffect", adapt_MirrorMove_ExecuteStatusEffect },
+	{ "Curse_CheckDamageAndBench", adapt_Curse_CheckDamageAndBench },
 	{ NULL, NULL },
 };

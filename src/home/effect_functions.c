@@ -287,6 +287,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#define CannotUseSinceTheresOnly1PkmnText 0x00cfu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4120,3 +4126,30 @@ MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a)
 	return (MirrorMoveExecuteStatusEffectResult){0x00u};
 }
 /* <<< factory MirrorMove_ExecuteStatusEffect */
+
+/* >>> factory Curse_CheckDamageAndBench */
+CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable(
+		(uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)
+		return (CurseCheckDamageAndBenchResult){0x10u, OnlyOncePerTurnText};
+
+	SwapTurn();
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	SwapTurn();
+	if (count.a < 2u)
+		return (CurseCheckDamageAndBenchResult){0x10u, CannotUseSinceTheresOnly1PkmnText};
+
+	SwapTurn();
+	CheckIfPlayAreaHasAnyDamageResult damage = CheckIfPlayAreaHasAnyDamage();
+	SwapTurn();
+	if ((damage.f & 0x10u) != 0u)
+		return (CurseCheckDamageAndBenchResult){0x10u, NoPokemonWithDamageCountersText};
+
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	return (CurseCheckDamageAndBenchResult){incapable.f, incapable.hl};
+}
+/* <<< factory Curse_CheckDamageAndBench */

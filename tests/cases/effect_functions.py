@@ -2628,6 +2628,16 @@ CASES["MirrorMove_ExecuteStatusEffect"] = [
 ]
 # <<< factory MirrorMove_ExecuteStatusEffect
 
+# >>> factory Curse_CheckDamageAndBench
+CONTRACT["Curse_CheckDamageAndBench"] = {"compare": ("f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e"), "hram_out": True}
+CASES["Curse_CheckDamageAndBench"] = [
+    {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x20"}, "expect": {0xFFA0: b"\x00"}},
+    {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x01"}, "expect": {0xFFA0: b"\x00"}},
+    {"wram": {0xFF9D: b"\x00", 0xC2C2: b"\x00", 0xC3EF: b"\x02", 0xC3BB: b"\x00", 0xC3BC: b"\x00", 0xC3C8: b"\x00", 0xC3C9: b"\x00"}, "expect": {0xFFA0: b"\x00"}},
+    dict(POISON, wram={0xFF9D: b"\x01", 0xC2C3: b"\x20"}, expect={0xFFA0: b"\x01"}),
+]
+# <<< factory Curse_CheckDamageAndBench
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4383,3 +4393,6 @@ MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
     "case_ids": ["MirrorMove_ExecuteStatusEffect-0", "MirrorMove_ExecuteStatusEffect-1", "MirrorMove_ExecuteStatusEffect-2", "MirrorMove_ExecuteStatusEffect-3", "MirrorMove_ExecuteStatusEffect-4"],
 }
 # <<< factory-mutation MirrorMove_ExecuteStatusEffect
+# >>> factory-mutation Curse_CheckDamageAndBench
+MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)", "after": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) == 0u)", "case_ids": ["Curse_CheckDamageAndBench-0", "Curse_CheckDamageAndBench-1", "Curse_CheckDamageAndBench-2", "Curse_CheckDamageAndBench-3"]}
+# <<< factory-mutation Curse_CheckDamageAndBench
