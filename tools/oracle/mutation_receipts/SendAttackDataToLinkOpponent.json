@@ -1,0 +1,9 @@
+{
+  "fn": "SendAttackDataToLinkOpponent",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SendAttackDataToLinkOpponent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52240\": \"0544\", \"52460\": \"01\", \"65439\": \"2233\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SendAttackDataToLinkOpponent\", \"mismatches\": {\"bus\": {\"address\": 52460, \"reference\": \"0544012233\", \"native\": \"0544002233\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52240, 2], [52460, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"SendAttackDataToLinkOpponent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52240\": \"0544\", \"52460\": \"01\", \"65439\": \"2233\"}}, \"status\": \"PASS\"}\n"
+}

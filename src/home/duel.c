@@ -370,6 +370,12 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "home/duel.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/serial.h"
+#define OPPACTION_BEGIN_ATTACK 0x08u
+#define TRUE 0x01u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1823,3 +1829,21 @@ void DrawYourOrOppPlayArea_RefreshArrows(uint8_t a)
 	}
 }
 /* <<< factory DrawYourOrOppPlayArea_RefreshArrows */
+
+/* >>> factory SendAttackDataToLinkOpponent */
+void SendAttackDataToLinkOpponent(void)
+{
+	if (wSentAttackDataToLinkOpponent != 0u)
+		return;
+	uint8_t saved_temp = hTemp_ffa0;
+	uint8_t saved_card = hTempCardIndex_ff9f;
+	wSentAttackDataToLinkOpponent = TRUE;
+	hTempCardIndex_ff9f = wPlayerAttackingCardIndex;
+	hTemp_ffa0 = wPlayerAttackingAttackIndex;
+	SetOppActionSerialSendResult action =
+		SetOppAction_SerialSendDuelData(OPPACTION_BEGIN_ATTACK, 0u);
+	(void)ExchangeRNG(0u, 0u, action.de, 0u);
+	hTempCardIndex_ff9f = saved_card;
+	hTemp_ffa0 = saved_temp;
+}
+/* <<< factory SendAttackDataToLinkOpponent */

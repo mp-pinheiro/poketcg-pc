@@ -580,4 +580,7 @@ void DrawYourOrOppPlayArea_EraseArrows(void);
 /* >>> factory DrawYourOrOppPlayArea_RefreshArrows */
 void DrawYourOrOppPlayArea_RefreshArrows(uint8_t a);
 /* <<< factory DrawYourOrOppPlayArea_RefreshArrows */
+/* >>> factory SendAttackDataToLinkOpponent */
+void SendAttackDataToLinkOpponent(void);
+/* <<< factory SendAttackDataToLinkOpponent */
 #endif

@@ -700,6 +700,14 @@ static void adapt_DrawYourOrOppPlayArea_RefreshArrows(ProbeState *s)
 }
 /* <<< factory DrawYourOrOppPlayArea_RefreshArrows */
 
+/* >>> factory SendAttackDataToLinkOpponent */
+static void adapt_SendAttackDataToLinkOpponent(ProbeState *s)
+{
+	(void)s;
+	SendAttackDataToLinkOpponent();
+}
+/* <<< factory SendAttackDataToLinkOpponent */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -785,5 +793,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawYourOrOppPlayArea_DrawArrows", adapt_DrawYourOrOppPlayArea_DrawArrows },
 	{ "DrawYourOrOppPlayArea_EraseArrows", adapt_DrawYourOrOppPlayArea_EraseArrows },
 	{ "DrawYourOrOppPlayArea_RefreshArrows", adapt_DrawYourOrOppPlayArea_RefreshArrows },
+	{ "SendAttackDataToLinkOpponent", adapt_SendAttackDataToLinkOpponent },
 	{ NULL, NULL },
 };

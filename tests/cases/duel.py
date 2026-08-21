@@ -1074,6 +1074,12 @@ wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
 wCheckMenuCursorXPosition = 0xCEAF
 wCheckMenuCursorYPosition = 0xCEB0
 wYourOrOppPlayAreaLastCursorPosition = 0xCE5F
+
+hTempCardIndex_ff9f = 0xFF9F
+hTemp_ffa0 = 0xFFA0
+wPlayerAttackingAttackIndex = 0xCC10
+wPlayerAttackingCardIndex = 0xCC11
+wSentAttackDataToLinkOpponent = 0xCCEC
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1098,6 +1104,15 @@ CASES["DrawYourOrOppPlayArea_RefreshArrows"] = [
     dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00", wYourOrOppPlayAreaLastCursorPosition: b"\x00"}, read={wYourOrOppPlayAreaLastCursorPosition: 1}),
 ]
 # <<< factory DrawYourOrOppPlayArea_RefreshArrows
+
+# >>> factory SendAttackDataToLinkOpponent
+CONTRACT["SendAttackDataToLinkOpponent"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c", "hl")}
+CASES["SendAttackDataToLinkOpponent"] = [
+    {"wram": {wSentAttackDataToLinkOpponent: b"\x01", hTempCardIndex_ff9f: b"\x22", hTemp_ffa0: b"\x33"}, "read": {wSentAttackDataToLinkOpponent: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}},
+    {"wram": {wSentAttackDataToLinkOpponent: b"\x00", wPlayerAttackingCardIndex: b"\x44", wPlayerAttackingAttackIndex: b"\x05", hTempCardIndex_ff9f: b"\x22", hTemp_ffa0: b"\x33"}, "read": {wSentAttackDataToLinkOpponent: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}},
+    dict(POISON, wram={wSentAttackDataToLinkOpponent: b"\x00", wPlayerAttackingCardIndex: b"\x99", wPlayerAttackingAttackIndex: b"\x07", hTempCardIndex_ff9f: b"\x11", hTemp_ffa0: b"\xEE"}, read={wSentAttackDataToLinkOpponent: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}),
+]
+# <<< factory SendAttackDataToLinkOpponent
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1224,3 +1239,6 @@ MUTATIONS["DrawYourOrOppPlayArea_RefreshArrows"] = {
     "case_ids": ["DrawYourOrOppPlayArea_RefreshArrows-1", "DrawYourOrOppPlayArea_RefreshArrows-2"],
 }
 # <<< factory-mutation DrawYourOrOppPlayArea_RefreshArrows
+# >>> factory-mutation SendAttackDataToLinkOpponent
+MUTATIONS["SendAttackDataToLinkOpponent"] = {"source_symbol": "SendAttackDataToLinkOpponent", "before": "wSentAttackDataToLinkOpponent = TRUE;", "after": "wSentAttackDataToLinkOpponent = 0u;", "case_ids": ["SendAttackDataToLinkOpponent-1", "SendAttackDataToLinkOpponent-2"]}
+# <<< factory-mutation SendAttackDataToLinkOpponent
