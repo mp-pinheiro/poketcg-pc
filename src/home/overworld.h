@@ -120,4 +120,7 @@ FuncC3caResult Func_c915(void);
 /* >>> factory StartScriptedMovement */
 void StartScriptedMovement(void);
 /* <<< factory StartScriptedMovement */
+/* >>> factory RestoreObjectPalettes */
+void RestoreObjectPalettes(void);
+/* <<< factory RestoreObjectPalettes */
 #endif /* POKETCG_HOME_OVERWORLD_H */

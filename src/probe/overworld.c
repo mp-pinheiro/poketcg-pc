@@ -244,6 +244,14 @@ static void adapt_StartScriptedMovement(ProbeState *s)
 }
 /* <<< factory StartScriptedMovement */
 
+/* >>> factory RestoreObjectPalettes */
+static void adapt_RestoreObjectPalettes(ProbeState *s)
+{
+	(void)s;
+	RestoreObjectPalettes();
+}
+/* <<< factory RestoreObjectPalettes */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -274,5 +282,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c36a", adapt_Func_c36a },
 	{ "Func_c915", adapt_Func_c915 },
 	{ "StartScriptedMovement", adapt_StartScriptedMovement },
+	{ "RestoreObjectPalettes", adapt_RestoreObjectPalettes },
 	{ NULL, NULL },
 };

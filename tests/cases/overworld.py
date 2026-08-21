@@ -392,6 +392,15 @@ CASES["StartScriptedMovement"] = [
 ]
 # <<< factory StartScriptedMovement
 
+# >>> factory RestoreObjectPalettes
+CONTRACT["RestoreObjectPalettes"] = {"compare": (), "preserve": ()}
+CASES["RestoreObjectPalettes"] = [
+	{"wram": {wOBP0Backup: b"\x12", wOBP1Backup: b"\x34", wObjectPalettesCGBBackup: b"\x01" * 64}, "read": {wOBP0: 1, wOBP1: 1, wObjectPalettesCGB: 64}},
+	dict(POISON, wram={wOBP0Backup: b"\xA5", wOBP1Backup: b"\x5A", wObjectPalettesCGBBackup: b"\xDE" * 64}, read={wOBP0: 1, wOBP1: 1, wObjectPalettesCGB: 64}),
+	{"wram": {wOBP0Backup: b"\xFF", wOBP1Backup: b"\x00", wObjectPalettesCGBBackup: b"\x80\x7F" * 32}, "read": {wOBP0: 1, wOBP1: 1, wObjectPalettesCGB: 64}},
+]
+# <<< factory RestoreObjectPalettes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -538,3 +547,6 @@ MUTATIONS["Func_c915"] = {"source_symbol": "Func_c915", "before": "FuncC3caResul
 # >>> factory-mutation StartScriptedMovement
 MUTATIONS["StartScriptedMovement"] = {"source_symbol": "StartScriptedMovement", "before": "	AttemptPlayerMovement(result.b, result.c);", "after": "	AttemptPlayerMovement(result.b, (uint8_t)(result.c + 1u));", "case_ids": ["StartScriptedMovement-0", "StartScriptedMovement-1"]};
 # <<< factory-mutation StartScriptedMovement
+# >>> factory-mutation RestoreObjectPalettes
+MUTATIONS["RestoreObjectPalettes"] = {"source_symbol": "RestoreObjectPalettes", "before": "\twOBP0 = wOBP0Backup;", "after": "\twOBP0 = (uint8_t)(wOBP0Backup + 1u);", "case_ids": ["RestoreObjectPalettes-0", "RestoreObjectPalettes-1", "RestoreObjectPalettes-2"]}
+# <<< factory-mutation RestoreObjectPalettes

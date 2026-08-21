@@ -72,6 +72,10 @@
 
 #include "home/text_box.h"
 #include "home/overworld.h"
+
+#include "generated/wram.h"
+#include "home/copy.h"
+#include "home/palettes.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -488,3 +492,13 @@ void StartScriptedMovement(void)
 	AttemptPlayerMovement(result.b, result.c);
 }
 /* <<< factory StartScriptedMovement */
+
+/* >>> factory RestoreObjectPalettes */
+void RestoreObjectPalettes(void)
+{
+	wOBP0 = wOBP0Backup;
+	wOBP1 = wOBP1Backup;
+	CopyDataHLtoDE_SaveRegisters(0xD0CCu, 0xCB30u, 64u);
+	FlushAllPalettes();
+}
+/* <<< factory RestoreObjectPalettes */
