@@ -22,4 +22,8 @@ void AppendCurrentCardToHL(uint16_t *hl);
 /* >>> factory AddBoosterCardToTempCardCollection */
 void AddBoosterCardToTempCardCollection(void);
 /* <<< factory AddBoosterCardToTempCardCollection */
+/* >>> factory AddBoosterCardToDrawnEnergies */
+typedef struct { uint8_t a; uint8_t f; } AddBoosterCardToDrawnEnergiesResult;
+AddBoosterCardToDrawnEnergiesResult AddBoosterCardToDrawnEnergies(void);
+/* <<< factory AddBoosterCardToDrawnEnergies */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

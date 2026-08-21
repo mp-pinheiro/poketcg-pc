@@ -90,6 +90,16 @@ CASES["AddBoosterCardToTempCardCollection"] = [
 ]
 # <<< factory AddBoosterCardToTempCardCollection
 
+# >>> factory AddBoosterCardToDrawnEnergies
+CONTRACT["AddBoosterCardToDrawnEnergies"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["AddBoosterCardToDrawnEnergies"] = [
+    {"wram": {0xD66A: b"\x12", 0xC40B: b"\x00", 0xC012: b"\x00"}, "read": {0xC40B: 2, 0xC012: 1}},
+    {"wram": {0xD66A: b"\xFF", 0xC40B: b"\x01\x02\x00", 0xC0FF: b"\x0F"}, "read": {0xC40B: 4, 0xC0FF: 1}},
+    {"wram": {0xD66A: b"\x00", 0xC40B: b"\xAA\x00", 0xC000: b"\xFF"}, "read": {0xC40B: 3, 0xC000: 1}},
+    dict(POISON, wram={0xD66A: b"\x7E", 0xC40B: b"\x00", 0xC07E: b"\xFF"}, read={0xC40B: 2, 0xC07E: 1}),
+]
+# <<< factory AddBoosterCardToDrawnEnergies
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -137,3 +147,11 @@ MUTATIONS["AppendCurrentCardToHL"] = {
 # >>> factory-mutation AddBoosterCardToTempCardCollection
 MUTATIONS["AddBoosterCardToTempCardCollection"] = {"source_symbol": "AddBoosterCardToTempCardCollection", "before": "gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));", "after": "gb_write8(slot, (uint8_t)(gb_read8(slot) + 2u));", "case_ids": ["AddBoosterCardToTempCardCollection-0", "AddBoosterCardToTempCardCollection-1", "AddBoosterCardToTempCardCollection-2", "AddBoosterCardToTempCardCollection-3"]}
 # <<< factory-mutation AddBoosterCardToTempCardCollection
+# >>> factory-mutation AddBoosterCardToDrawnEnergies
+MUTATIONS["AddBoosterCardToDrawnEnergies"] = {
+    "source_symbol": "AddBoosterCardToDrawnEnergies",
+    "before": "AddBoosterCardToTempCardCollection();",
+    "after": "gb_write8(address, (uint8_t)(old + 2u));",
+    "case_ids": ["AddBoosterCardToDrawnEnergies-0", "AddBoosterCardToDrawnEnergies-1", "AddBoosterCardToDrawnEnergies-2", "AddBoosterCardToDrawnEnergies-3"],
+}
+# <<< factory-mutation AddBoosterCardToDrawnEnergies
