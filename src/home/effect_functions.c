@@ -4092,3 +4092,31 @@ uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl)
 	return result.hl;
 }
 /* <<< factory DragonairHyperBeam_DiscardEffect */
+
+/* >>> factory MirrorMove_ExecuteStatusEffect */
+MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a)
+{
+	uint8_t c = a;
+	if ((a & PSN_DBLPSN) != 0u) {
+		if (a == DOUBLE_POISONED)
+			(void)DoublePoisonEffect();
+		if (a == POISONED)
+			(void)PoisonEffect();
+	}
+	if ((c & CNF_SLP_PRZ) == 0u)
+		return (MirrorMoveExecuteStatusEffectResult){0xa0u};
+	if (c == CONFUSED) {
+		QueueStatusConditionResult r = ConfusionEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	if (c == ASLEEP) {
+		QueueStatusConditionResult r = SleepEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	if (c == PARALYZED) {
+		QueueStatusConditionResult r = ParalysisEffect();
+		return (MirrorMoveExecuteStatusEffectResult){r.f};
+	}
+	return (MirrorMoveExecuteStatusEffectResult){0x00u};
+}
+/* <<< factory MirrorMove_ExecuteStatusEffect */

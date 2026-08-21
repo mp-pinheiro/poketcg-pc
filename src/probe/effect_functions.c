@@ -2388,6 +2388,14 @@ static void adapt_DragonairHyperBeam_DiscardEffect(ProbeState *s)
 }
 /* <<< factory DragonairHyperBeam_DiscardEffect */
 
+/* >>> factory MirrorMove_ExecuteStatusEffect */
+static void adapt_MirrorMove_ExecuteStatusEffect(ProbeState *s)
+{
+	MirrorMoveExecuteStatusEffectResult r = MirrorMove_ExecuteStatusEffect(s->a);
+	s->f = r.f;
+}
+/* <<< factory MirrorMove_ExecuteStatusEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2684,5 +2692,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KrabbyCallForFamily_CheckDeckAndPlayArea", adapt_KrabbyCallForFamily_CheckDeckAndPlayArea },
 	{ "Revive_BenchCheck", adapt_Revive_BenchCheck },
 	{ "DragonairHyperBeam_DiscardEffect", adapt_DragonairHyperBeam_DiscardEffect },
+	{ "MirrorMove_ExecuteStatusEffect", adapt_MirrorMove_ExecuteStatusEffect },
 	{ NULL, NULL },
 };

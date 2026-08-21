@@ -1000,6 +1000,10 @@ ReviveBenchCheckResult Revive_BenchCheck(void);
 /* >>> factory DragonairHyperBeam_DiscardEffect */
 uint16_t DragonairHyperBeam_DiscardEffect(uint16_t hl);
 /* <<< factory DragonairHyperBeam_DiscardEffect */
+/* >>> factory MirrorMove_ExecuteStatusEffect */
+typedef struct { uint8_t f; } MirrorMoveExecuteStatusEffectResult;
+MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a);
+/* <<< factory MirrorMove_ExecuteStatusEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

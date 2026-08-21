@@ -2617,6 +2617,17 @@ CASES["DragonairHyperBeam_DiscardEffect"] = [
 ]
 # <<< factory DragonairHyperBeam_DiscardEffect
 
+# >>> factory MirrorMove_ExecuteStatusEffect
+CONTRACT["MirrorMove_ExecuteStatusEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["MirrorMove_ExecuteStatusEffect"] = [
+    {"a": 0xc0, "wram": {0xff97: b"\x00", 0xcc05: b"\x01"}, "read": {0xccce: 3, 0xcccd: 1}},
+    {"a": 0x80, "wram": {0xff97: b"\x00", 0xcc05: b"\x01"}, "read": {0xccce: 3, 0xcccd: 1}},
+    {"a": 0x01, "wram": {0xff97: b"\x00", 0xcc05: b"\x01"}, "read": {0xccce: 3, 0xcccd: 1}},
+    {"a": 0x02, "wram": {0xff97: b"\x00", 0xcc05: b"\x01"}, "read": {0xccce: 3, 0xcccd: 1}},
+    dict(POISON, a=0x03, wram={0xff97: b"\x00", 0xcc05: b"\x01"}, read={0xccce: 3, 0xcccd: 1}),
+]
+# <<< factory MirrorMove_ExecuteStatusEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4364,3 +4375,11 @@ MUTATIONS["Revive_BenchCheck"] = {"source_symbol": "Revive_BenchCheck", "before"
 # >>> factory-mutation DragonairHyperBeam_DiscardEffect
 MUTATIONS["DragonairHyperBeam_DiscardEffect"] = {"source_symbol": "DragonairHyperBeam_DiscardEffect", "before": "\tgb_write8(result.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);", "after": "\tgb_write8(result.hl, 0x02u);", "case_ids": ["DragonairHyperBeam_DiscardEffect-0", "DragonairHyperBeam_DiscardEffect-3"]}
 # <<< factory-mutation DragonairHyperBeam_DiscardEffect
+# >>> factory-mutation MirrorMove_ExecuteStatusEffect
+MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
+    "source_symbol": "MirrorMove_ExecuteStatusEffect",
+    "before": "\treturn (MirrorMoveExecuteStatusEffectResult){0xa0u};",
+    "after": "\treturn (MirrorMoveExecuteStatusEffectResult){0x00u};",
+    "case_ids": ["MirrorMove_ExecuteStatusEffect-0", "MirrorMove_ExecuteStatusEffect-1", "MirrorMove_ExecuteStatusEffect-2", "MirrorMove_ExecuteStatusEffect-3", "MirrorMove_ExecuteStatusEffect-4"],
+}
+# <<< factory-mutation MirrorMove_ExecuteStatusEffect

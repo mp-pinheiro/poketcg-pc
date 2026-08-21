@@ -1,0 +1,9 @@
+{
+  "fn": "MirrorMove_ExecuteStatusEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MirrorMove_ExecuteStatusEffect\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"01\", \"52429\": \"03c20fc0\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MirrorMove_ExecuteStatusEffect\", \"mismatches\": {\"f\": [160, 0]}}\n",
+  "restored": "{\"fn\": \"MirrorMove_ExecuteStatusEffect\", \"registers\": {\"a\": 192, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"01\", \"52429\": \"03c20fc0\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}
