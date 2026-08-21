@@ -141,3 +141,13 @@ void CreditsSequenceCmd_TransformOverlay(uint8_t b, uint8_t c, uint8_t d, uint8_
 	AdvanceCreditsSequenceCmdPtrBy6();
 }
 /* <<< factory CreditsSequenceCmd_TransformOverlay */
+
+/* >>> factory CreditsSequenceCmd_FadeIn */
+void CreditsSequenceCmd_FadeIn(void)
+{
+	DisableLCD();
+	SetWindowOn();
+	FadeScreenFromWhite();
+	AdvanceCreditsSequenceCmdPtrBy2();
+}
+/* <<< factory CreditsSequenceCmd_FadeIn */

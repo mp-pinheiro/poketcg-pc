@@ -82,6 +82,14 @@ static void adapt_CreditsSequenceCmd_TransformOverlay(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_TransformOverlay */
 
+/* >>> factory CreditsSequenceCmd_FadeIn */
+static void adapt_CreditsSequenceCmd_FadeIn(ProbeState *s)
+{
+	(void)s;
+	CreditsSequenceCmd_FadeIn();
+}
+/* <<< factory CreditsSequenceCmd_FadeIn */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -94,5 +102,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_Wait", adapt_CreditsSequenceCmd_Wait },
 	{ "CreditsSequenceCmd_DisableLCD", adapt_CreditsSequenceCmd_DisableLCD },
 	{ "CreditsSequenceCmd_TransformOverlay", adapt_CreditsSequenceCmd_TransformOverlay },
+	{ "CreditsSequenceCmd_FadeIn", adapt_CreditsSequenceCmd_FadeIn },
 	{ NULL, NULL },
 };

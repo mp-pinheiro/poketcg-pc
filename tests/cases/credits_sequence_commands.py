@@ -138,6 +138,28 @@ wd648 = 0xD648
 wd649 = 0xD649
 wd64a = 0xD64A
 wSequenceDelay = 0xD633
+
+BGP = 0xCABC
+OBP0 = 0xCABD
+OBP1 = 0xCABE
+LCDC = 0xCABB
+RLCDC = 0xFF40
+VBLANK = 0xCAB8
+BG_PALS = 0xCAF0
+OBJ_PALS = 0xCB30
+TEMP_BGP = 0xD294
+TEMP_OBP0 = 0xD295
+TEMP_OBP1 = 0xD296
+TEMP_BG_PALS = 0xD297
+TEMP_OBJ_PALS = 0xD2D7
+SEQ_AREA = 0xD600
+SEQ_AREA_LEN = 0x80
+PALETTE_SEED = {
+    BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4",
+    BG_PALS: bytes(range(64)), OBJ_PALS: bytes(range(64, 128)),
+    TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
+    TEMP_BG_PALS: bytes(reversed(range(64))), TEMP_OBJ_PALS: bytes(reversed(range(64, 128))),
+}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -147,6 +169,24 @@ CASES["CreditsSequenceCmd_TransformOverlay"] = [
     dict(POISON, wram={wd647: b"\x10", wd648: b"\x10", wd649: b"\x10", wd64a: b"\x10"}, read={wd647: 4, wSequenceDelay: 1}),
 ]
 # <<< factory CreditsSequenceCmd_TransformOverlay
+
+# >>> factory CreditsSequenceCmd_FadeIn
+CONTRACT["CreditsSequenceCmd_FadeIn"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_FadeIn"] = [
+    {"wram": {LCDC: b"\x00", VBLANK: b"\xFE", **PALETTE_SEED},
+     "instruction_budget": 1000000, "cycle_budget": 4000000,
+     "read": {SEQ_AREA: SEQ_AREA_LEN, LCDC: 1, RLCDC: 1, VBLANK: 1,
+              BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64,
+              TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1,
+              TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}},
+    dict(POISON, wram={LCDC: b"\x00", VBLANK: b"\xFE", **PALETTE_SEED},
+         instruction_budget=1000000, cycle_budget=4000000,
+         read={SEQ_AREA: SEQ_AREA_LEN, LCDC: 1, RLCDC: 1, VBLANK: 1,
+               BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64,
+               TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1,
+               TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}),
+]
+# <<< factory CreditsSequenceCmd_FadeIn
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -232,3 +272,11 @@ MUTATIONS["CreditsSequenceCmd_DisableLCD"] = {
 # >>> factory-mutation CreditsSequenceCmd_TransformOverlay
 MUTATIONS["CreditsSequenceCmd_TransformOverlay"] = {"source_symbol": "CreditsSequenceCmd_TransformOverlay", "before": "wSequenceDelay = 1;", "after": "wSequenceDelay = 2;", "case_ids": ["CreditsSequenceCmd_TransformOverlay-0"]}
 # <<< factory-mutation CreditsSequenceCmd_TransformOverlay
+# >>> factory-mutation CreditsSequenceCmd_FadeIn
+MUTATIONS["CreditsSequenceCmd_FadeIn"] = {
+    "source_symbol": "CreditsSequenceCmd_FadeIn",
+    "before": "\tDisableLCD();\n\tSetWindowOn();\n\tFadeScreenFromWhite();\n\tAdvanceCreditsSequenceCmdPtrBy2();",
+    "after": "\tDisableLCD();\n\tSetWindowOn();\n\tFadeScreenFromWhite();\n\tAdvanceCreditsSequenceCmdPtrBy3();",
+    "case_ids": ["CreditsSequenceCmd_FadeIn-0", "CreditsSequenceCmd_FadeIn-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_FadeIn
