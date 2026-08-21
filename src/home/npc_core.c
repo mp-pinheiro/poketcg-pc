@@ -75,6 +75,9 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 
 #define LOADED_NPC_LENGTH 0x0Cu
 #define LOADED_NPC_MAX 0x08u
+
+#include "home/npc_core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -379,3 +382,19 @@ uint8_t ClearNPCs(void)
 	return 0x00u;
 }
 /* <<< factory ClearNPCs */
+
+/* >>> factory SetAllNPCTilePermissions */
+SetAllNPCTilePermissionsResult SetAllNPCTilePermissions(void)
+{
+	uint8_t a = 0u;
+	for (uint8_t i = 0u; i < LOADED_NPC_MAX; ++i) {
+		if (wLoadedNPCs_PTR[(uint16_t)i * LOADED_NPC_LENGTH] != 0u) {
+			wLoadedNPCTempIndex = i;
+			a = SetNPCsTilePermission();
+		} else {
+			a = 0u;
+		}
+	}
+	return (SetAllNPCTilePermissionsResult){a, 0xC0u};
+}
+/* <<< factory SetAllNPCTilePermissions */

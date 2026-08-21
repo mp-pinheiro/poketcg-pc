@@ -143,6 +143,15 @@ static void adapt_ClearNPCs(ProbeState *s)
 }
 /* <<< factory ClearNPCs */
 
+/* >>> factory SetAllNPCTilePermissions */
+static void adapt_SetAllNPCTilePermissions(ProbeState *s)
+{
+	SetAllNPCTilePermissionsResult r = SetAllNPCTilePermissions();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory SetAllNPCTilePermissions */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -162,5 +171,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "GetNPCPosition", adapt_GetNPCPosition },
 	{ "UpdateIsAnNPCMovingFlag", adapt_UpdateIsAnNPCMovingFlag },
 	{ "ClearNPCs", adapt_ClearNPCs },
+	{ "SetAllNPCTilePermissions", adapt_SetAllNPCTilePermissions },
 	{ NULL, NULL },
 };

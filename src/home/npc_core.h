@@ -65,4 +65,12 @@ UpdateIsAnNPCMovingFlagResult UpdateIsAnNPCMovingFlag(uint16_t hl);
 /* >>> factory ClearNPCs */
 uint8_t ClearNPCs(void);
 /* <<< factory ClearNPCs */
+/* >>> factory SetAllNPCTilePermissions */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} SetAllNPCTilePermissionsResult;
+
+SetAllNPCTilePermissionsResult SetAllNPCTilePermissions(void);
+/* <<< factory SetAllNPCTilePermissions */
 #endif /* POKETCG_HOME_NPC_CORE_H */

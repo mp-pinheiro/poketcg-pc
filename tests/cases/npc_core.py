@@ -225,6 +225,15 @@ CASES["ClearNPCs"] = [
 ]
 # <<< factory ClearNPCs
 
+# >>> factory SetAllNPCTilePermissions
+CONTRACT["SetAllNPCTilePermissions"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetAllNPCTilePermissions"] = [
+	{"wram": {0xD34A: b"\x01\x00\x00\x00" + b"\x00" * 92, 0xD133: b"\xFF"}, "expect": {0xD133: b"\x40"}, "expect_regs": {"a": 0x00, "f": 0xC0}},
+	{"wram": {0xD34A: b"\x00" * 84 + b"\x01\x00\x0E\x10" + b"\x00" * 8, 0xD1BA: b"\x7F"}, "expect": {0xD1BA: b"\x40"}, "expect_regs": {"a": 0x40, "f": 0xC0}},
+	dict(POISON, wram={0xD34A: b"\x00" * 96, 0xD3AA: b"\x77"}, expect_regs={"a": 0x00, "f": 0xC0}),
+]
+# <<< factory SetAllNPCTilePermissions
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -313,3 +322,6 @@ MUTATIONS["UpdateIsAnNPCMovingFlag"] = {"source_symbol": "UpdateIsAnNPCMovingFla
 # >>> factory-mutation ClearNPCs
 MUTATIONS["ClearNPCs"] = {"source_symbol": "ClearNPCs", "before": "wLoadedNPCs_PTR[i] = 0x00u;", "after": "wLoadedNPCs_PTR[i + 1u] = 0x00u;", "case_ids": ["ClearNPCs-0", "ClearNPCs-1", "ClearNPCs-2"]};
 # <<< factory-mutation ClearNPCs
+# >>> factory-mutation SetAllNPCTilePermissions
+MUTATIONS["SetAllNPCTilePermissions"] = {"source_symbol": "SetAllNPCTilePermissions", "before": "\t\tif (wLoadedNPCs_PTR[(uint16_t)i * LOADED_NPC_LENGTH] != 0u) {", "after": "\t\tif (wLoadedNPCs_PTR[(uint16_t)i * LOADED_NPC_LENGTH] == 0u) {", "case_ids": ["SetAllNPCTilePermissions-0", "SetAllNPCTilePermissions-1", "SetAllNPCTilePermissions-2"]}
+# <<< factory-mutation SetAllNPCTilePermissions
