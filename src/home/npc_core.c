@@ -64,6 +64,9 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/map.h"
 #include "home/npc_core.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -338,3 +341,13 @@ uint8_t GetNPCDirection(void)
 	return gb_read8(r.hl);
 }
 /* <<< factory GetNPCDirection */
+
+/* >>> factory GetNPCPosition */
+NPCPositionResult GetNPCPosition(void)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex, LOADED_NPC_COORD_X);
+	uint8_t x = gb_read8(r.hl);
+	uint8_t y = gb_read8((uint16_t)(r.hl + 1u));
+	return (NPCPositionResult){x, x, y};
+}
+/* <<< factory GetNPCPosition */

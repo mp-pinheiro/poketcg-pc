@@ -115,6 +115,16 @@ static void adapt_GetNPCDirection(ProbeState *s)
 }
 /* <<< factory GetNPCDirection */
 
+/* >>> factory GetNPCPosition */
+static void adapt_GetNPCPosition(ProbeState *s)
+{
+	NPCPositionResult r = GetNPCPosition();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory GetNPCPosition */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -131,5 +141,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "SetNPCPosition", adapt_SetNPCPosition },
 	{ "Func_1c53f", adapt_Func_1c53f },
 	{ "GetNPCDirection", adapt_GetNPCDirection },
+	{ "GetNPCPosition", adapt_GetNPCPosition },
 	{ NULL, NULL },
 };

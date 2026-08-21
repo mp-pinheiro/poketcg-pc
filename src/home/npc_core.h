@@ -50,4 +50,8 @@ uint8_t Func_1c53f(void);
 /* >>> factory GetNPCDirection */
 uint8_t GetNPCDirection(void);
 /* <<< factory GetNPCDirection */
+/* >>> factory GetNPCPosition */
+typedef struct { uint8_t a; uint8_t b; uint8_t c; } NPCPositionResult;
+NPCPositionResult GetNPCPosition(void);
+/* <<< factory GetNPCPosition */
 #endif /* POKETCG_HOME_NPC_CORE_H */

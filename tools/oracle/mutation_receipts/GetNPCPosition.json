@@ -1,0 +1,9 @@
+{
+  "fn": "GetNPCPosition",
+  "case": "tests/cases/npc_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetNPCPosition\", \"registers\": {\"a\": 18, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54092\": \"1234\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetNPCPosition\", \"mismatches\": {\"c\": [52, 0]}}\n",
+  "restored": "{\"fn\": \"GetNPCPosition\", \"registers\": {\"a\": 18, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54092\": \"1234\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

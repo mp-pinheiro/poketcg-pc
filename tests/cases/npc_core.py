@@ -193,6 +193,16 @@ CASES["GetNPCDirection"] = [
 ]
 # <<< factory GetNPCDirection
 
+# >>> factory GetNPCPosition
+CONTRACT["GetNPCPosition"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("hl",)}
+CASES["GetNPCPosition"] = [
+    {"wram": {0xD3AA: b"\x00", 0xD34C: b"\x12\x34"}, "read": {0xD34C: 2}},
+    {"wram": {0xD3AA: b"\x01", 0xD358: b"\x56\x78"}, "read": {0xD358: 2}},
+    {"wram": {0xD3AA: b"\x07", 0xD3A2: b"\x9A\xBC"}, "read": {0xD3A2: 2}},
+    dict(POISON, wram={0xD3AA: b"\x07", 0xD3A2: b"\xDE\xF0"}, read={0xD3A2: 2}),
+]
+# <<< factory GetNPCPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -267,3 +277,11 @@ MUTATIONS["GetNPCDirection"] = {
     "case_ids": ["GetNPCDirection-0", "GetNPCDirection-1", "GetNPCDirection-2"],
 }
 # <<< factory-mutation GetNPCDirection
+# >>> factory-mutation GetNPCPosition
+MUTATIONS["GetNPCPosition"] = {
+    "source_symbol": "GetNPCPosition",
+    "before": "\tuint8_t y = gb_read8((uint16_t)(r.hl + 1u));",
+    "after": "\tuint8_t y = gb_read8((uint16_t)(r.hl + 2u));",
+    "case_ids": ["GetNPCPosition-0", "GetNPCPosition-1", "GetNPCPosition-2", "GetNPCPosition-3"],
+}
+# <<< factory-mutation GetNPCPosition
