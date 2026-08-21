@@ -105,4 +105,7 @@ void Music2_ResumeSong(void);
 /* >>> factory _PlaySFX_2 */
 void _PlaySFX_2(uint8_t a);
 /* <<< factory _PlaySFX_2 */
+/* >>> factory _PlaySong_2 */
+void _PlaySong_2(uint8_t a);
+/* <<< factory _PlaySong_2 */
 #endif /* POKETCG_MUSIC2_H */

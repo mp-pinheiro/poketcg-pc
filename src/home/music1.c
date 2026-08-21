@@ -1314,3 +1314,10 @@ void _PlaySong(uint8_t a)
 	Music1_PlaySong(a);
 }
 /* <<< factory _PlaySong */
+
+/* >>> factory _SetupSound */
+void _SetupSound(void)
+{
+	Music1_Init();
+}
+/* <<< factory _SetupSound */

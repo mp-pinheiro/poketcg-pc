@@ -1116,6 +1116,15 @@ static void adapt_HasAlivePokemonInPlayArea(ProbeState *s)
 }
 /* <<< factory HasAlivePokemonInPlayArea */
 
+/* >>> factory CardPageSwitch_PokemonAttack1Page1 */
+static void adapt_CardPageSwitch_PokemonAttack1Page1(ProbeState *s)
+{
+	CardPageExistsResult r = CardPageSwitch_PokemonAttack1Page1();
+	s->a = r.a;
+	s->f = r.zero ? 0x80u : 0x00u;
+}
+/* <<< factory CardPageSwitch_PokemonAttack1Page1 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1247,5 +1256,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "GoToPreviousCardPage", adapt_GoToPreviousCardPage },
 	{ "DrawWholeScreenTextBox", adapt_DrawWholeScreenTextBox },
 	{ "HasAlivePokemonInPlayArea", adapt_HasAlivePokemonInPlayArea },
+	{ "CardPageSwitch_PokemonAttack1Page1", adapt_CardPageSwitch_PokemonAttack1Page1 },
 	{ NULL, NULL },
 };

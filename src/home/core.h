@@ -534,4 +534,7 @@ void DrawWholeScreenTextBox(uint16_t hl);
 /* >>> factory HasAlivePokemonInPlayArea */
 HasAlivePokemonInPlayAreaResult HasAlivePokemonInPlayArea(void);
 /* <<< factory HasAlivePokemonInPlayArea */
+/* >>> factory CardPageSwitch_PokemonAttack1Page1 */
+CardPageExistsResult CardPageSwitch_PokemonAttack1Page1(void);
+/* <<< factory CardPageSwitch_PokemonAttack1Page1 */
 #endif

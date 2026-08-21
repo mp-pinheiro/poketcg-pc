@@ -113,4 +113,8 @@ void Music1_PlaySFX(uint8_t a);
 void _PlaySong(uint8_t a);
 void Music1_PlaySong(uint8_t a);
 /* <<< factory _PlaySong */
+/* >>> factory _SetupSound */
+void _SetupSound(void);
+void Music1_Init(void);
+/* <<< factory _SetupSound */
 #endif /* POKETCG_MUSIC1_H */

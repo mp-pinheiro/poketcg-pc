@@ -288,6 +288,13 @@ static void adapt__PlaySong(ProbeState *s)
 }
 /* <<< factory _PlaySong */
 
+/* >>> factory _SetupSound */
+static void adapt__SetupSound(ProbeState *s)
+{
+	_SetupSound();
+}
+/* <<< factory _SetupSound */
+
 const ProbeEntry probe_entries_music1[] = {
 	{ "Music1_EmptyFunc",         adapt_Music1_EmptyFunc },
 	{ "Music1_f404e",             adapt_Music1_f404e },
@@ -360,5 +367,6 @@ const ProbeEntry probe_entries_music1[] = {
 	{ "_AssertSongFinished", adapt__AssertSongFinished },
 	{ "_PlaySFX", adapt__PlaySFX },
 	{ "_PlaySong", adapt__PlaySong },
+	{ "_SetupSound", adapt__SetupSound },
 	{ NULL, NULL },
 };

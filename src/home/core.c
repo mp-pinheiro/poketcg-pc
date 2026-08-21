@@ -2665,3 +2665,11 @@ HasAlivePokemonInPlayAreaResult HasAlivePokemonInPlayArea(void)
 	return _HasAlivePokemonInPlayArea(0u);
 }
 /* <<< factory HasAlivePokemonInPlayArea */
+
+/* >>> factory CardPageSwitch_PokemonAttack1Page1 */
+CardPageExistsResult CardPageSwitch_PokemonAttack1Page1(void)
+{
+	uint16_t hl = wLoadedCard1Atk1Name_ADDR;
+	return CheckCardPageExists(&hl);
+}
+/* <<< factory CardPageSwitch_PokemonAttack1Page1 */

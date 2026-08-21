@@ -1,0 +1,9 @@
+{
+  "fn": "_PlaySong_2",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_PlaySong_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56704\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_PlaySong_2\", \"mismatches\": {\"bus\": {\"address\": 56704, \"reference\": \"00\", \"native\": \"01\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[56704, 1]]}}}\n",
+  "restored": "{\"fn\": \"_PlaySong_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56704\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

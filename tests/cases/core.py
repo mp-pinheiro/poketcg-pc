@@ -1434,6 +1434,17 @@ CASES["HasAlivePokemonInPlayArea"] = [
 ]
 # <<< factory HasAlivePokemonInPlayArea
 
+# >>> factory CardPageSwitch_PokemonAttack1Page1
+CONTRACT["CardPageSwitch_PokemonAttack1Page1"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["CardPageSwitch_PokemonAttack1Page1"] = [
+    {"wram": {0xCC34: b"\x00\x00", 0xCC36: b"\x12\x34"}},
+    {"wram": {0xCC34: b"\x0F\xF0", 0xCC36: b"\x00\x00"}},
+    {"wram": {0xCC34: b"\x00\x01", 0xCC36: b"\xAA\xBB"}},
+    dict(POISON, wram={0xCC34: b"\x12\x34", 0xCC36: b"\x00\x00"}),
+    {"b": 1, "c": 2, "d": 3, "e": 4, "wram": {0xCC34: b"\x80\x00", 0xCC36: b"\xFF\xEE"}},
+]
+# <<< factory CardPageSwitch_PokemonAttack1Page1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2288,3 +2299,6 @@ MUTATIONS["HasAlivePokemonInPlayArea"] = {
     "case_ids": ["HasAlivePokemonInPlayArea-0", "HasAlivePokemonInPlayArea-1"],
 }
 # <<< factory-mutation HasAlivePokemonInPlayArea
+# >>> factory-mutation CardPageSwitch_PokemonAttack1Page1
+MUTATIONS["CardPageSwitch_PokemonAttack1Page1"] = {"source_symbol": "CardPageSwitch_PokemonAttack1Page1", "before": "\tuint16_t hl = wLoadedCard1Atk1Name_ADDR;", "after": "\tuint16_t hl = wLoadedCard1Atk1Description_ADDR;", "case_ids": ["CardPageSwitch_PokemonAttack1Page1-0", "CardPageSwitch_PokemonAttack1Page1-1", "CardPageSwitch_PokemonAttack1Page1-2", "CardPageSwitch_PokemonAttack1Page1-3", "CardPageSwitch_PokemonAttack1Page1-4"]}
+# <<< factory-mutation CardPageSwitch_PokemonAttack1Page1
