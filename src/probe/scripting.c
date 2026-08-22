@@ -671,6 +671,17 @@ static void adapt_SetNextNPCAndScript(ProbeState *s)
 }
 /* <<< factory SetNextNPCAndScript */
 
+/* >>> factory ExecuteNPCMovement */
+static void adapt_ExecuteNPCMovement(ProbeState *s)
+{
+	ExecuteNPCMovementResult result = ExecuteNPCMovement((uint16_t)(s->b << 8 | s->c));
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory ExecuteNPCMovement */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -736,5 +747,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfPlayerCoordsMatch", adapt_ScriptCommand_JumpIfPlayerCoordsMatch },
 	{ "ScriptCommand_JumpIfActiveNPCCoordsMatch", adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch },
 	{ "SetNextNPCAndScript", adapt_SetNextNPCAndScript },
+	{ "ExecuteNPCMovement", adapt_ExecuteNPCMovement },
 	{ NULL, NULL },
 };

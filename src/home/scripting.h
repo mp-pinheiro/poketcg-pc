@@ -365,4 +365,14 @@ typedef struct {
 } SetNextNPCAndScriptResult;
 SetNextNPCAndScriptResult SetNextNPCAndScript(uint16_t bc, uint16_t hl);
 /* <<< factory SetNextNPCAndScript */
+/* >>> factory ExecuteNPCMovement */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+} ExecuteNPCMovementResult;
+
+ExecuteNPCMovementResult ExecuteNPCMovement(uint16_t bc);
+/* <<< factory ExecuteNPCMovement */
 #endif

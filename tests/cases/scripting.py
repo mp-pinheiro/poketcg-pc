@@ -785,6 +785,14 @@ CASES["SetNextNPCAndScript"] = [
 ]
 # <<< factory SetNextNPCAndScript
 
+# >>> factory ExecuteNPCMovement
+CONTRACT["ExecuteNPCMovement"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ExecuteNPCMovement"] = [
+	{"b": 0xC1, "c": 0x00, "wram": {0xC100: b"\xff"}, "read": {0xC100: 1}},
+	dict(POISON, b=0xC1, c=0x00, wram={0xC100: b"\xff", 0xD3AA: b"\x02"}, read={0xC100: 1}),
+]
+# <<< factory ExecuteNPCMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1221,3 +1229,6 @@ MUTATIONS["ScriptCommand_JumpIfActiveNPCCoordsMatch"] = {"source_symbol": "Scrip
 # >>> factory-mutation SetNextNPCAndScript
 MUTATIONS["SetNextNPCAndScript"] = {"source_symbol": "SetNextNPCAndScript", "before": "wScriptNPC = wLoadedNPCTempIndex;", "after": "wScriptNPC = (uint8_t)(wLoadedNPCTempIndex + 1u);", "case_ids": ["SetNextNPCAndScript-0", "SetNextNPCAndScript-1", "SetNextNPCAndScript-2"]}
 # <<< factory-mutation SetNextNPCAndScript
+# >>> factory-mutation ExecuteNPCMovement
+MUTATIONS["ExecuteNPCMovement"] = {"source_symbol": "ExecuteNPCMovement", "before": "\treturn (ExecuteNPCMovementResult){pointer.a, pointer.f, (uint8_t)(movement_script >> 8), pointer.c};", "after": "\treturn (ExecuteNPCMovementResult){pointer.a, pointer.f, 0u, pointer.c};", "case_ids": ["ExecuteNPCMovement-0", "ExecuteNPCMovement-1"]}
+# <<< factory-mutation ExecuteNPCMovement

@@ -1,0 +1,9 @@
+{
+  "fn": "ExecuteNPCMovement",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ExecuteNPCMovement\", \"registers\": {\"a\": 0, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ExecuteNPCMovement\", \"mismatches\": {\"b\": [193, 0]}}\n",
+  "restored": "{\"fn\": \"ExecuteNPCMovement\", \"registers\": {\"a\": 0, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

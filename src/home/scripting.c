@@ -107,6 +107,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_core.h"
 #include "home/scripting.h"
 #include "generated/wram.h"
+
+#include "home/scripting.h"
+#include "home/npc_core.h"
+#include "home/lcd_enable_frame.h"
 /* <<< factory statics */
 
 
@@ -1003,3 +1007,19 @@ SetNextNPCAndScriptResult SetNextNPCAndScript(uint16_t bc, uint16_t hl)
 	return (SetNextNPCAndScriptResult){npc.a, npc.f, (uint8_t)(bc >> 8), (uint8_t)bc, npc.hl};
 }
 /* <<< factory SetNextNPCAndScript */
+
+/* >>> factory ExecuteNPCMovement */
+ExecuteNPCMovementResult ExecuteNPCMovement(uint16_t bc)
+{
+	uint16_t movement_script = bc;
+	(void)StartNPCMovement(&movement_script);
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		CheckIsAnNPCMovingResult moving = CheckIsAnNPCMoving();
+		if (moving.a == 0u)
+			break;
+	}
+	IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy3();
+	return (ExecuteNPCMovementResult){pointer.a, pointer.f, (uint8_t)(movement_script >> 8), pointer.c};
+}
+/* <<< factory ExecuteNPCMovement */
