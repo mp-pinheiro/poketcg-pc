@@ -97,6 +97,14 @@ static void adapt_OverworldMap_PrintMapName(ProbeState *s)
 }
 /* <<< factory OverworldMap_PrintMapName */
 
+/* >>> factory OverworldMap_UpdatePlayerAndCursorSprites */
+static void adapt_OverworldMap_UpdatePlayerAndCursorSprites(ProbeState *s)
+{
+	(void)s;
+	OverworldMap_UpdatePlayerAndCursorSprites();
+}
+/* <<< factory OverworldMap_UpdatePlayerAndCursorSprites */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -110,5 +118,6 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_SetSpritePosition", adapt_OverworldMap_SetSpritePosition },
 	{ "OverworldMap_InitPlayerNorthSouthMovement", adapt_OverworldMap_InitPlayerNorthSouthMovement },
 	{ "OverworldMap_PrintMapName", adapt_OverworldMap_PrintMapName },
+	{ "OverworldMap_UpdatePlayerAndCursorSprites", adapt_OverworldMap_UpdatePlayerAndCursorSprites },
 	{ NULL, NULL },
 };

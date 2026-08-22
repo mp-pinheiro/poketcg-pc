@@ -67,6 +67,8 @@ SPRITE_BUFFER = 0xD4D0
 MAPNAME_CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 MAPNAME_PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 MAPNAME_VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
+
+wPlayerSpriteIndex = 0xD336
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -163,6 +165,15 @@ CASES["OverworldMap_PrintMapName"] = [
 ]
 # <<< factory OverworldMap_PrintMapName
 
+# >>> factory OverworldMap_UpdatePlayerAndCursorSprites
+CONTRACT["OverworldMap_UpdatePlayerAndCursorSprites"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_UpdatePlayerAndCursorSprites"] = [
+    {"wram": {wOverworldMapCursorSprite: b"\x02", wOverworldMapSelection: b"\x01", wOverworldMapPlayerAnimationState: b"\x01", wPlayerSpriteIndex: b"\x03", wOverworldMapStartingPosition: b"\x04", SPRITE_BUFFER: b"\x00" * 16}, "read": {wWhichSprite: 1, SPRITE_BUFFER: 16}},
+    {"wram": {wOverworldMapCursorSprite: b"\x02", wOverworldMapSelection: b"\x01", wOverworldMapPlayerAnimationState: b"\x00", wPlayerSpriteIndex: b"\x03", wOverworldMapStartingPosition: b"\x04", SPRITE_BUFFER: b"\x00" * 16}, "read": {wWhichSprite: 1, SPRITE_BUFFER: 16}},
+    dict(POISON, wram={wOverworldMapCursorSprite: b"\x07", wOverworldMapSelection: b"\x02", wOverworldMapPlayerAnimationState: b"\x00", wPlayerSpriteIndex: b"\x05", wOverworldMapStartingPosition: b"\x06", SPRITE_BUFFER: b"\x55" * 16}, read={wWhichSprite: 1, SPRITE_BUFFER: 16}),
+]
+# <<< factory OverworldMap_UpdatePlayerAndCursorSprites
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -203,3 +214,6 @@ MUTATIONS["OverworldMap_InitPlayerNorthSouthMovement"] = {"source_symbol": "Over
 # >>> factory-mutation OverworldMap_PrintMapName
 MUTATIONS["OverworldMap_PrintMapName"] = {"source_symbol": "OverworldMap_PrintMapName", "before": "\tInitTextPrinting(1u, 1u);", "after": "\tInitTextPrinting(1u, 2u);", "case_ids": ["OverworldMap_PrintMapName-0", "OverworldMap_PrintMapName-1", "OverworldMap_PrintMapName-2"]}
 # <<< factory-mutation OverworldMap_PrintMapName
+# >>> factory-mutation OverworldMap_UpdatePlayerAndCursorSprites
+MUTATIONS["OverworldMap_UpdatePlayerAndCursorSprites"] = {"source_symbol": "OverworldMap_UpdatePlayerAndCursorSprites", "before": "\tuint8_t cursor_sprite = wOverworldMapCursorSprite;", "after": "\tuint8_t cursor_sprite = (uint8_t)(wOverworldMapCursorSprite + 1u);", "case_ids": ["OverworldMap_UpdatePlayerAndCursorSprites-0", "OverworldMap_UpdatePlayerAndCursorSprites-1", "OverworldMap_UpdatePlayerAndCursorSprites-2"]}
+# <<< factory-mutation OverworldMap_UpdatePlayerAndCursorSprites

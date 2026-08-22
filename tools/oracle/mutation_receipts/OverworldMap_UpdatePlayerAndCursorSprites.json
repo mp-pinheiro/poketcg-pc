@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_UpdatePlayerAndCursorSprites",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_UpdatePlayerAndCursorSprites\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"03\", \"54075\": \"02\", \"54077\": \"0401\", \"54479\": \"0200000000000000000000000000000000\", \"54480\": \"00000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_UpdatePlayerAndCursorSprites\", \"mismatches\": {\"bus\": {\"address\": 54479, \"reference\": \"030204010200000000\", \"native\": \"030204010300000000\", \"reference_size\": 22, \"native_size\": 22, \"spans\": [[54062, 1], [54070, 1], [54075, 1], [54077, 2], [54479, 17]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_UpdatePlayerAndCursorSprites\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"03\", \"54075\": \"02\", \"54077\": \"0401\", \"54479\": \"0200000000000000000000000000000000\", \"54480\": \"00000000000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

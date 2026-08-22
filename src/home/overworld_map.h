@@ -52,4 +52,7 @@ void OverworldMap_InitPlayerNorthSouthMovement(uint8_t b, uint8_t c);
 /* >>> factory OverworldMap_PrintMapName */
 void OverworldMap_PrintMapName(void);
 /* <<< factory OverworldMap_PrintMapName */
+/* >>> factory OverworldMap_UpdatePlayerAndCursorSprites */
+void OverworldMap_UpdatePlayerAndCursorSprites(void);
+/* <<< factory OverworldMap_UpdatePlayerAndCursorSprites */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

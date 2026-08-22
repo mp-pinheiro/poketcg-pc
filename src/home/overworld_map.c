@@ -299,3 +299,16 @@ void OverworldMap_PrintMapName(void)
 	(void)ProcessTextFromID(map_name_text_ids[OverworldMap_GetOWMapID()]);
 }
 /* <<< factory OverworldMap_PrintMapName */
+
+/* >>> factory OverworldMap_UpdatePlayerAndCursorSprites */
+void OverworldMap_UpdatePlayerAndCursorSprites(void)
+{
+	uint8_t cursor_sprite = wOverworldMapCursorSprite;
+	wWhichSprite = cursor_sprite;
+	OverworldMap_SetSpritePosition(wOverworldMapSelection, 0u, 0xf4u);
+	if (wOverworldMapPlayerAnimationState != 0u)
+		return;
+	wWhichSprite = wPlayerSpriteIndex;
+	OverworldMap_SetSpritePosition(wOverworldMapStartingPosition, 0u, 0u);
+}
+/* <<< factory OverworldMap_UpdatePlayerAndCursorSprites */
