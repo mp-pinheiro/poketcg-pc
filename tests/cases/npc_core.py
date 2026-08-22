@@ -189,6 +189,8 @@ NPC_DATA = b"\x00" * 96
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 wLoadedNPCTempIndex = 0xD3AA
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -305,6 +307,16 @@ CASES["Func_1c52e"] = [
 ]
 # <<< factory Func_1c52e
 
+# >>> factory UpdateNPCMovementStep
+CONTRACT["UpdateNPCMovementStep"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["UpdateNPCMovementStep"] = [
+    {"a": 0x17, "hl": 0xC500, "wram": {0xC505: b"\x00", 0xC508: b"\x0F"}, "expect": {0xC508: b"\x0F"}, "expect_regs": {"a": 0x17}},
+    {"a": 0x42, "hl": 0xC500, "wram": {0xC505: b"\x20", 0xC508: b"\x00"}, "expect": {0xC508: b"\x01"}, "expect_regs": {"a": 0x42}},
+    {"a": 0x99, "hl": 0xC500, "wram": {0xC505: b"\x20", 0xC508: b"\x0E"}, "expect": {0xC508: b"\x0F"}, "expect_regs": {"a": 0x99}},
+    dict(POISON, hl=0xC500, wram={0xC505: b"\x20", 0xC508: b"\x0E"}, expect={0xC508: b"\x0F"}, expect_regs={"a": 0xAA}),
+]
+# <<< factory UpdateNPCMovementStep
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -411,3 +423,6 @@ MUTATIONS["UnloadNPC"] = {"source_symbol": "UnloadNPC", "before": "gb_write8(npc
 # >>> factory-mutation Func_1c52e
 MUTATIONS["Func_1c52e"] = {"source_symbol": "Func_1c52e", "before": "PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,\n\t\tLOADED_NPC_DIRECTION_BACKUP);\n\tgb_write8(r.hl, a);", "after": "PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,\n\t\tLOADED_NPC_DIRECTION_BACKUP);\n\tgb_write8((uint16_t)(r.hl + 1u), a);", "case_ids": ["Func_1c52e-0", "Func_1c52e-1", "Func_1c52e-2", "Func_1c52e-3"]}
 # <<< factory-mutation Func_1c52e
+# >>> factory-mutation UpdateNPCMovementStep
+MUTATIONS["UpdateNPCMovementStep"] = {"source_symbol": "UpdateNPCMovementStep", "before": "\tgb_write8(step, (uint8_t)(gb_read8(step) + 1u));", "after": "\tgb_write8(step, (uint8_t)(gb_read8(step) + 2u));", "case_ids": ["UpdateNPCMovementStep-1", "UpdateNPCMovementStep-2", "UpdateNPCMovementStep-3"]}
+# <<< factory-mutation UpdateNPCMovementStep

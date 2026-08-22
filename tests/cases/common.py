@@ -120,6 +120,14 @@ _CASE_WRAM_MATCH = {
     wPlayerDeck: b"\x01\x00\x06\x00\x07" + b"\x00" * 0x37,
     wDuelTempList: b"\x00" * 0x40,
 }
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wLoadedCard2Type = 0xCC65
+wLoadedCard2ID = 0xCC6C
+DECK_SIZE = 60
+MEWTWO_LV53 = 0x9D
+BULBASAUR = 0x08
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -152,6 +160,19 @@ CASES["CalculateBDividedByA_Bank8"] = [
 	dict(POISON, a=3, b=10),
 ]
 # <<< factory CalculateBDividedByA_Bank8
+
+# >>> factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53
+CONTRACT["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "hl")}
+CASES["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = [
+    {"wram": {hWhoseTurn: b"\xC3", wPlayerDeck: bytes((BULBASAUR,))},
+     "read": {hWhoseTurn: 1, wLoadedCard2Type: 1, wLoadedCard2ID: 1}},
+    {"wram": {hWhoseTurn: b"\xC3", wPlayerDeck: bytes((MEWTWO_LV53,)) * DECK_SIZE},
+     "read": {hWhoseTurn: 1, wLoadedCard2Type: 1, wLoadedCard2ID: 1}},
+    dict(POISON,
+         wram={hWhoseTurn: b"\xC3", wPlayerDeck: bytes((MEWTWO_LV53,)) * DECK_SIZE},
+         read={hWhoseTurn: 1, wLoadedCard2Type: 1, wLoadedCard2ID: 1}),
+]
+# <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -225,3 +246,6 @@ MUTATIONS["FindBasicEnergyCardsInLocation"] = {"source_symbol": "FindBasicEnergy
 # >>> factory-mutation CalculateBDividedByA_Bank8
 MUTATIONS["CalculateBDividedByA_Bank8"] = {"source_symbol": "CalculateBDividedByA_Bank8", "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);", "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);", "case_ids": ["CalculateBDividedByA_Bank8-1", "CalculateBDividedByA_Bank8-2", "CalculateBDividedByA_Bank8-3", "CalculateBDividedByA_Bank8-4", "CalculateBDividedByA_Bank8-5"]}
 # <<< factory-mutation CalculateBDividedByA_Bank8
+# >>> factory-mutation CheckIfPlayerHasPokemonOtherThanMewtwoLv53
+MUTATIONS["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = {"source_symbol": "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", "before": "if (card_id != MEWTWO_LV53) {", "after": "if (card_id == MEWTWO_LV53) {", "case_ids": ["CheckIfPlayerHasPokemonOtherThanMewtwoLv53-0", "CheckIfPlayerHasPokemonOtherThanMewtwoLv53-2"]}
+# <<< factory-mutation CheckIfPlayerHasPokemonOtherThanMewtwoLv53

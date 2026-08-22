@@ -95,4 +95,7 @@ uint8_t UnloadNPC(void);
 /* >>> factory Func_1c52e */
 uint8_t Func_1c52e(uint8_t a);
 /* <<< factory Func_1c52e */
+/* >>> factory UpdateNPCMovementStep */
+uint8_t UpdateNPCMovementStep(uint8_t a, uint16_t hl);
+/* <<< factory UpdateNPCMovementStep */
 #endif /* POKETCG_HOME_NPC_CORE_H */

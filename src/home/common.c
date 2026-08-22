@@ -44,6 +44,8 @@
 
 #define DECK_SIZE 0x3cu
 #define DUELVARS_CARD_LOCATIONS 0x00u
+
+#define MEWTWO_LV53 0x9du
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -312,3 +314,24 @@ CalculateBDividedByA_Bank8Result CalculateBDividedByA_Bank8(uint8_t a, uint8_t b
 	}
 }
 /* <<< factory CalculateBDividedByA_Bank8 */
+
+/* >>> factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
+/* common.asm:4-45 */
+CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result CheckIfPlayerHasPokemonOtherThanMewtwoLv53(uint8_t b, uint8_t c, uint8_t d, uint16_t hl)
+{
+	uint8_t e = 0u;
+	SwapTurn();
+	for (; e < DECK_SIZE; e++) {
+		(void)LoadCardDataToBuffer2_FromDeckIndex(e);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		uint8_t card_id = wLoadedCard2ID;
+		if (card_id != MEWTWO_LV53) {
+			SwapTurn();
+			return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){card_id, F_C, b, c, d, e, hl};
+		}
+	}
+	SwapTurn();
+	return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){DECK_SIZE, 0x00u, b, c, d, e, hl};
+}
+/* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */

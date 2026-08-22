@@ -98,6 +98,10 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/overworld.h"
 #include "mem.h"
 #define RESTORE_FACING_DIRECTION 0x01u
+
+#include "home/npc_core.h"
+#include "mem.h"
+#define LOADED_NPC_MOVEMENT_PTR 0x09u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -532,3 +536,25 @@ uint8_t Func_1c52e(uint8_t a)
 	return Func_1c5e9();
 }
 /* <<< factory Func_1c52e */
+
+/* >>> factory UpdateNPCMovementStep */
+uint8_t UpdateNPCMovementStep(uint8_t a, uint16_t hl)
+{
+	uint16_t flags = (uint16_t)(hl + LOADED_NPC_FLAGS);
+	if ((gb_read8(flags) & (uint8_t)(1u << NPC_FLAG_MOVING_F)) == 0u)
+		return a;
+
+	uint16_t step = (uint16_t)(hl + LOADED_NPC_MOVEMENT_STEP);
+	gb_write8(step, (uint8_t)(gb_read8(step) + 1u));
+	if ((gb_read8(step) & 0x10u) == 0u)
+		return a;
+
+	(void)UpdateNPCsTilePermission();
+	(void)UpdateNPCPosition();
+	uint16_t movement_ptr = (uint16_t)(gb_read8((uint16_t)(hl + LOADED_NPC_MOVEMENT_PTR)) |
+		((uint16_t)gb_read8((uint16_t)(hl + LOADED_NPC_MOVEMENT_PTR + 1u)) << 8));
+	movement_ptr = (uint16_t)(movement_ptr + 1u);
+	(void)StartNPCMovement(&movement_ptr);
+	return SetNPCsTilePermission();
+}
+/* <<< factory UpdateNPCMovementStep */

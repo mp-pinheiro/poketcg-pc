@@ -43,4 +43,16 @@ FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } CalculateBDividedByA_Bank8Result;
 CalculateBDividedByA_Bank8Result CalculateBDividedByA_Bank8(uint8_t a, uint8_t b);
 /* <<< factory CalculateBDividedByA_Bank8 */
+/* >>> factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result;
+CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result CheckIfPlayerHasPokemonOtherThanMewtwoLv53(uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
+/* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
 #endif /* POKETCG_HOME_COMMON_H */

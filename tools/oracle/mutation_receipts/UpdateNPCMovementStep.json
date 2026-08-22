@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateNPCMovementStep",
+  "case": "tests/cases/npc_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateNPCMovementStep\", \"registers\": {\"a\": 66, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50437\": \"20\", \"50440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateNPCMovementStep\", \"mismatches\": {\"bus\": {\"address\": 50440, \"reference\": \"2001\", \"native\": \"2002\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[50437, 1], [50440, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateNPCMovementStep\", \"registers\": {\"a\": 66, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"50437\": \"20\", \"50440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

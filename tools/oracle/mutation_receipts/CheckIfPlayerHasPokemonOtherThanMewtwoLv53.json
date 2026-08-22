@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfPlayerHasPokemonOtherThanMewtwoLv53",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfPlayerHasPokemonOtherThanMewtwoLv53\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52325\": \"01\", \"52332\": \"08\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfPlayerHasPokemonOtherThanMewtwoLv53\", \"mismatches\": {\"a\": [8, 60], \"f\": [16, 0], \"e\": [0, 60], \"bus\": {\"address\": 52325, \"reference\": \"080108c3\", \"native\": \"08c900c3\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50176, 1], [52325, 1], [52332, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckIfPlayerHasPokemonOtherThanMewtwoLv53\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52325\": \"01\", \"52332\": \"08\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

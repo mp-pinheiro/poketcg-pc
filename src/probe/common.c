@@ -103,6 +103,20 @@ static void adapt_CalculateBDividedByA_Bank8(ProbeState *s)
 }
 /* <<< factory CalculateBDividedByA_Bank8 */
 
+/* >>> factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
+static void adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53(ProbeState *s)
+{
+	CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result r = CheckIfPlayerHasPokemonOtherThanMewtwoLv53(s->b, s->c, s->d, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -115,5 +129,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "CheckIfHasCardIDInHand", adapt_CheckIfHasCardIDInHand },
 	{ "FindBasicEnergyCardsInLocation", adapt_FindBasicEnergyCardsInLocation },
 	{ "CalculateBDividedByA_Bank8", adapt_CalculateBDividedByA_Bank8 },
+	{ "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53 },
 	{ NULL, NULL },
 };
