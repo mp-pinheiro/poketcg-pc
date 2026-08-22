@@ -10,7 +10,17 @@ static void adapt_AnimateRandomTitleScreenOrb(ProbeState *s)
 }
 /* <<< factory AnimateRandomTitleScreenOrb */
 
+/* >>> factory AdvanceIntroSequenceCmdPtr */
+static void adapt_AdvanceIntroSequenceCmdPtr(ProbeState *s)
+{
+	AdvanceIntroSequenceCmdPtrResult result = AdvanceIntroSequenceCmdPtr(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AdvanceIntroSequenceCmdPtr */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
+	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
 	{ NULL, NULL },
 };

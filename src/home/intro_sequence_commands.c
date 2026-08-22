@@ -31,6 +31,9 @@ static void UpdateSpriteAttributes(void)
 		de = (uint16_t)(de + 1u);
 	}
 }
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -61,3 +64,21 @@ uint8_t AnimateRandomTitleScreenOrb(void)
 	return a;
 }
 /* <<< factory AnimateRandomTitleScreenOrb */
+
+/* >>> factory AdvanceIntroSequenceCmdPtr */
+AdvanceIntroSequenceCmdPtrResult AdvanceIntroSequenceCmdPtr(uint8_t a)
+{
+	uint8_t low = gb_read8(wSequenceCmdPtr_ADDR);
+	uint16_t low_sum = (uint16_t)a + (uint16_t)low;
+	uint8_t carry = (uint8_t)(low_sum > 0xFFu);
+	gb_write8(wSequenceCmdPtr_ADDR, (uint8_t)low_sum);
+	uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint16_t high_sum = (uint16_t)high_before + (uint16_t)carry;
+	uint8_t high = (uint8_t)high_sum;
+	gb_write8((uint16_t)(wSequenceCmdPtr_ADDR + 1u), high);
+	uint8_t f = (uint8_t)((high == 0u ? 0x80u : 0u) |
+		((uint8_t)((high_before & 0x0Fu) + carry) > 0x0Fu ? 0x20u : 0u) |
+		(high_sum > 0xFFu ? 0x10u : 0u));
+	return (AdvanceIntroSequenceCmdPtrResult){high, f};
+}
+/* <<< factory AdvanceIntroSequenceCmdPtr */

@@ -23,4 +23,7 @@ uint16_t PlayerNamingScreen_GetCharInfoFromPos(uint16_t hl);
 /* >>> factory PlaySFXConfirmOrCancel_Bank6 */
 void PlaySFXConfirmOrCancel_Bank6(uint8_t a);
 /* <<< factory PlaySFXConfirmOrCancel_Bank6 */
+/* >>> factory PlayerNamingScreen_AdjustCursorPosition */
+void PlayerNamingScreen_AdjustCursorPosition(uint8_t a);
+/* <<< factory PlayerNamingScreen_AdjustCursorPosition */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

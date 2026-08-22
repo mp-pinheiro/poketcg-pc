@@ -83,6 +83,15 @@ CASES["PlaySFXConfirmOrCancel_Bank6"] = [
 ]
 # <<< factory PlaySFXConfirmOrCancel_Bank6
 
+# >>> factory PlayerNamingScreen_AdjustCursorPosition
+CONTRACT["PlayerNamingScreen_AdjustCursorPosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["PlayerNamingScreen_AdjustCursorPosition"] = [
+    {"a": 0, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\x00", 0xD004: b"\x02", 0xD007: b"\x00"}, "expect_wram": {0xCA00: b"\x00\x00\x00\x00", 0xCAB5: b"\x00"}},
+    {"a": 1, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x00"}, "expect_wram": {0xCA00: b"\x08\x18\x00\x00", 0xCAB5: b"\x04"}},
+    dict(POISON, wram={0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x00"}, expect_wram={0xCA00: b"\x08\x18\x00\x00", 0xCAB5: b"\x04"}),
+]
+# <<< factory PlayerNamingScreen_AdjustCursorPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -130,3 +139,6 @@ MUTATIONS["PlaySFXConfirmOrCancel_Bank6"] = {
     "case_ids": ["PlaySFXConfirmOrCancel_Bank6-1"],
 };
 # <<< factory-mutation PlaySFXConfirmOrCancel_Bank6
+# >>> factory-mutation PlayerNamingScreen_AdjustCursorPosition
+MUTATIONS["PlayerNamingScreen_AdjustCursorPosition"] = {"source_symbol": "PlayerNamingScreen_AdjustCursorPosition", "before": "\tuint8_t half_max = (uint8_t)(max_length >> 1);", "after": "\tuint8_t half_max = (uint8_t)(max_length >> 2);", "case_ids": ["PlayerNamingScreen_AdjustCursorPosition-1", "PlayerNamingScreen_AdjustCursorPosition-2"]}
+# <<< factory-mutation PlayerNamingScreen_AdjustCursorPosition

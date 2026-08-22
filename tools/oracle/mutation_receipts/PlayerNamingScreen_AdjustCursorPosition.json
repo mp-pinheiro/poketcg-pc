@@ -1,0 +1,9 @@
+{
+  "fn": "PlayerNamingScreen_AdjustCursorPosition",
+  "case": "tests/cases/input_name.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayerNamingScreen_AdjustCursorPosition\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51712\": \"18080000\", \"51893\": \"04\", \"52907\": \"ff\", \"53252\": \"02\", \"53255\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayerNamingScreen_AdjustCursorPosition\", \"mismatches\": {\"bus\": {\"address\": 51713, \"reference\": \"1808000004ff\", \"native\": \"1800000004ff\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51712, 4], [51893, 1], [52907, 1], [53252, 1], [53255, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayerNamingScreen_AdjustCursorPosition\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51712\": \"18080000\", \"51893\": \"04\", \"52907\": \"ff\", \"53252\": \"02\", \"53255\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

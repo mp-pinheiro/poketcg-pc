@@ -49,6 +49,13 @@ static void adapt_PlaySFXConfirmOrCancel_Bank6(ProbeState *s)
 }
 /* <<< factory PlaySFXConfirmOrCancel_Bank6 */
 
+/* >>> factory PlayerNamingScreen_AdjustCursorPosition */
+static void adapt_PlayerNamingScreen_AdjustCursorPosition(ProbeState *s)
+{
+	PlayerNamingScreen_AdjustCursorPosition(s->a);
+}
+/* <<< factory PlayerNamingScreen_AdjustCursorPosition */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -56,5 +63,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "TransformCharacter", adapt_TransformCharacter },
 	{ "PlayerNamingScreen_GetCharInfoFromPos", adapt_PlayerNamingScreen_GetCharInfoFromPos },
 	{ "PlaySFXConfirmOrCancel_Bank6", adapt_PlaySFXConfirmOrCancel_Bank6 },
+	{ "PlayerNamingScreen_AdjustCursorPosition", adapt_PlayerNamingScreen_AdjustCursorPosition },
 	{ NULL, NULL },
 };

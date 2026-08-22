@@ -30,6 +30,10 @@
 #define PLAYER_NAMING_SCREEN_KEYBOARD_DATA 0x6bafu
 
 #include "home/sound.h"
+
+#include "generated/wram.h"
+#include "home/random.h"
+#include "home/objects.h"
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -138,3 +142,23 @@ void PlaySFXConfirmOrCancel_Bank6(uint8_t a)
 	PlaySFX(sfx_id);
 }
 /* <<< factory PlaySFXConfirmOrCancel_Bank6 */
+
+/* >>> factory PlayerNamingScreen_AdjustCursorPosition */
+void PlayerNamingScreen_AdjustCursorPosition(uint8_t a)
+{
+	uint8_t saved_a = a;
+	ZeroObjectPositions();
+	if (saved_a == wInvisibleCursorTile)
+		return;
+	uint8_t length_half = (uint8_t)(wNamingScreenBufferLength >> 1);
+	uint8_t max_length = wNamingScreenBufferMaxLength;
+	uint8_t half_max = (uint8_t)(max_length >> 1);
+	uint8_t position = length_half;
+	if (position == half_max)
+		position = (uint8_t)(position - 1u);
+	position = (uint8_t)(position + wNamingScreenNamePosition);
+	uint16_t product = HtimesL((uint16_t)(0x0800u | position));
+	uint8_t d = (uint8_t)((uint8_t)product + 8u);
+	SetOneObjectAttributes(0x18u, d, 0u, 0u);
+}
+/* <<< factory PlayerNamingScreen_AdjustCursorPosition */

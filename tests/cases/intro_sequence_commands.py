@@ -19,6 +19,19 @@ CASES["AnimateRandomTitleScreenOrb"] = [
 ]
 # <<< factory AnimateRandomTitleScreenOrb
 
+# >>> factory-cases-statics
+wSequenceCmdPtr = 0xD631
+# <<< factory-cases-statics
+
+# >>> factory AdvanceIntroSequenceCmdPtr
+CONTRACT["AdvanceIntroSequenceCmdPtr"] = {"compare": ("a", "f"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceIntroSequenceCmdPtr"] = [
+	{"a": 0x05, "wram": {wSequenceCmdPtr: b"\x10\x20"}, "expect_regs": {"a": 0x20, "f": 0x00}, "expect": {wSequenceCmdPtr: b"\x15\x20"}},
+	{"a": 0x01, "wram": {wSequenceCmdPtr: b"\xFF\x20"}, "expect_regs": {"a": 0x21, "f": 0x00}, "expect": {wSequenceCmdPtr: b"\x00\x21"}},
+	dict(POISON, a=0x01, wram={wSequenceCmdPtr: b"\xFF\xFF"}, expect_regs={"a": 0x00, "f": 0xB0}, expect={wSequenceCmdPtr: b"\x00\x00"}),
+]
+# <<< factory AdvanceIntroSequenceCmdPtr
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -31,3 +44,6 @@ MUTATIONS["AnimateRandomTitleScreenOrb"] = {
     "case_ids": ["AnimateRandomTitleScreenOrb-1", "AnimateRandomTitleScreenOrb-2", "AnimateRandomTitleScreenOrb-4"],
 }
 # <<< factory-mutation AnimateRandomTitleScreenOrb
+# >>> factory-mutation AdvanceIntroSequenceCmdPtr
+MUTATIONS["AdvanceIntroSequenceCmdPtr"] = {"source_symbol": "AdvanceIntroSequenceCmdPtr", "before": "uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));", "after": "uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 2u));", "case_ids": ["AdvanceIntroSequenceCmdPtr-0", "AdvanceIntroSequenceCmdPtr-1", "AdvanceIntroSequenceCmdPtr-2"]}
+# <<< factory-mutation AdvanceIntroSequenceCmdPtr
