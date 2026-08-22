@@ -34,6 +34,8 @@
 #include "generated/wram.h"
 #include "home/random.h"
 #include "home/objects.h"
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -162,3 +164,23 @@ void PlayerNamingScreen_AdjustCursorPosition(uint8_t a)
 	SetOneObjectAttributes(0x18u, d, 0u, 0u);
 }
 /* <<< factory PlayerNamingScreen_AdjustCursorPosition */
+
+/* >>> factory DeckNamingScreen_AdjustCursorPosition */
+void DeckNamingScreen_AdjustCursorPosition(uint8_t a)
+{
+	uint8_t saved_a = a;
+	ZeroObjectPositions();
+	if (saved_a == wInvisibleCursorTile)
+		return;
+	uint8_t d = wNamingScreenBufferLength;
+	uint8_t max_length = wNamingScreenBufferMaxLength;
+	if (d == max_length)
+		d = (uint8_t)(d - 1u);
+	d = (uint8_t)(d - 1u);
+	uint8_t name_position = wNamingScreenNamePosition;
+	d = (uint8_t)(d + (uint8_t)(name_position << 1));
+	uint16_t product = HtimesL((uint16_t)(0x0400u | d));
+	d = (uint8_t)((uint8_t)product + 8u);
+	SetOneObjectAttributes(0x18u, d, 0u, 0u);
+}
+/* <<< factory DeckNamingScreen_AdjustCursorPosition */

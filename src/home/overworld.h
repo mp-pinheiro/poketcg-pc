@@ -132,4 +132,7 @@ void Func_c49c(void);
 /* >>> factory Func_c58b */
 void Func_c58b(void);
 /* <<< factory Func_c58b */
+/* >>> factory UpdatePlayerSprite */
+void UpdatePlayerSprite(void);
+/* <<< factory UpdatePlayerSprite */
 #endif /* POKETCG_HOME_OVERWORLD_H */

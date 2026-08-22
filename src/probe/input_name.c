@@ -56,6 +56,13 @@ static void adapt_PlayerNamingScreen_AdjustCursorPosition(ProbeState *s)
 }
 /* <<< factory PlayerNamingScreen_AdjustCursorPosition */
 
+/* >>> factory DeckNamingScreen_AdjustCursorPosition */
+static void adapt_DeckNamingScreen_AdjustCursorPosition(ProbeState *s)
+{
+	DeckNamingScreen_AdjustCursorPosition(s->a);
+}
+/* <<< factory DeckNamingScreen_AdjustCursorPosition */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -64,5 +71,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PlayerNamingScreen_GetCharInfoFromPos", adapt_PlayerNamingScreen_GetCharInfoFromPos },
 	{ "PlaySFXConfirmOrCancel_Bank6", adapt_PlaySFXConfirmOrCancel_Bank6 },
 	{ "PlayerNamingScreen_AdjustCursorPosition", adapt_PlayerNamingScreen_AdjustCursorPosition },
+	{ "DeckNamingScreen_AdjustCursorPosition", adapt_DeckNamingScreen_AdjustCursorPosition },
 	{ NULL, NULL },
 };

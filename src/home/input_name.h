@@ -26,4 +26,9 @@ void PlaySFXConfirmOrCancel_Bank6(uint8_t a);
 /* >>> factory PlayerNamingScreen_AdjustCursorPosition */
 void PlayerNamingScreen_AdjustCursorPosition(uint8_t a);
 /* <<< factory PlayerNamingScreen_AdjustCursorPosition */
+/* >>> factory DeckNamingScreen_AdjustCursorPosition */
+/* poketcg/src/engine/input_name.asm */
+
+void DeckNamingScreen_AdjustCursorPosition(uint8_t a);
+/* <<< factory DeckNamingScreen_AdjustCursorPosition */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

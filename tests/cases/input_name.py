@@ -92,6 +92,15 @@ CASES["PlayerNamingScreen_AdjustCursorPosition"] = [
 ]
 # <<< factory PlayerNamingScreen_AdjustCursorPosition
 
+# >>> factory DeckNamingScreen_AdjustCursorPosition
+CONTRACT["DeckNamingScreen_AdjustCursorPosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DeckNamingScreen_AdjustCursorPosition"] = [
+    {"a": 0, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\x00", 0xD004: b"\x02", 0xD007: b"\x02"}, "expect_wram": {0xCA00: b"\x00\x00\x00\x00", 0xCAB5: b"\x00"}},
+    {"a": 1, "wram": {0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x02"}, "expect_wram": {0xCA00: b"\x18\x10\x00\x00", 0xCAB5: b"\x04"}},
+    dict(POISON, wram={0xCA00: b"\xAA\xBB\xCC\xDD", 0xCAB5: b"\x00", 0xCEAB: b"\xFF", 0xD004: b"\x02", 0xD007: b"\x02"}, expect_wram={0xCA00: b"\x18\x10\x00\x00", 0xCAB5: b"\x04"}),
+]
+# <<< factory DeckNamingScreen_AdjustCursorPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -142,3 +151,6 @@ MUTATIONS["PlaySFXConfirmOrCancel_Bank6"] = {
 # >>> factory-mutation PlayerNamingScreen_AdjustCursorPosition
 MUTATIONS["PlayerNamingScreen_AdjustCursorPosition"] = {"source_symbol": "PlayerNamingScreen_AdjustCursorPosition", "before": "\tuint8_t half_max = (uint8_t)(max_length >> 1);", "after": "\tuint8_t half_max = (uint8_t)(max_length >> 2);", "case_ids": ["PlayerNamingScreen_AdjustCursorPosition-1", "PlayerNamingScreen_AdjustCursorPosition-2"]}
 # <<< factory-mutation PlayerNamingScreen_AdjustCursorPosition
+# >>> factory-mutation DeckNamingScreen_AdjustCursorPosition
+MUTATIONS["DeckNamingScreen_AdjustCursorPosition"] = {"source_symbol": "DeckNamingScreen_AdjustCursorPosition", "before": "\td = (uint8_t)(d + (uint8_t)(name_position << 1));", "after": "\td = (uint8_t)d;", "case_ids": ["DeckNamingScreen_AdjustCursorPosition-1", "DeckNamingScreen_AdjustCursorPosition-2"]}
+# <<< factory-mutation DeckNamingScreen_AdjustCursorPosition

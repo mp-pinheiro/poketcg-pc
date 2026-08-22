@@ -253,6 +253,13 @@ wPlayerXCoord = 0xD330
 wPlayerYCoord = 0xD331
 wPlayerXCoordPixels = 0xD332
 wPlayerYCoordPixels = 0xD333
+
+wPlayerDirection = 0xD334
+wPlayerSpriteIndex = 0xD336
+wPlayerSpriteBaseAnimation = 0xD337
+wWhichSprite = 0xD4CF
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -436,6 +443,32 @@ CASES["Func_c58b"] = [
 ]
 # <<< factory Func_c58b
 
+# >>> factory UpdatePlayerSprite
+CONTRACT["UpdatePlayerSprite"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["UpdatePlayerSprite"] = [
+    {"wram": {
+        wPlayerDirection: b"\x01",
+        wPlayerSpriteIndex: b"\x07",
+        wPlayerSpriteBaseAnimation: b"\x10",
+        wWhichSprite: b"\x00",
+    }, "read": {wWhichSprite: 1}},
+    dict(POISON,
+         wram={
+             wPlayerDirection: b"\x03",
+             wPlayerSpriteIndex: b"\x0B",
+             wPlayerSpriteBaseAnimation: b"\x20",
+             wWhichSprite: b"\x00",
+         },
+         read={wWhichSprite: 1}),
+    {"wram": {
+        wPlayerDirection: b"\xFF",
+        wPlayerSpriteIndex: b"\x42",
+        wPlayerSpriteBaseAnimation: b"\x01",
+        wWhichSprite: b"\xAA",
+    }, "read": {wWhichSprite: 1}},
+]
+# <<< factory UpdatePlayerSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -604,3 +637,6 @@ MUTATIONS["Func_c49c"] = {
 # >>> factory-mutation Func_c58b
 MUTATIONS["Func_c58b"] = {"source_symbol": "Func_c58b", "before": "\tgb_write8(hl, flags);", "after": "\tgb_write8(hl, (uint8_t)(flags ^ 0x01u));", "case_ids": ["Func_c58b-0", "Func_c58b-1", "Func_c58b-2"]}
 # <<< factory-mutation Func_c58b
+# >>> factory-mutation UpdatePlayerSprite
+MUTATIONS["UpdatePlayerSprite"] = {"source_symbol": "UpdatePlayerSprite", "before": "void UpdatePlayerSprite(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void UpdatePlayerSprite(void)\n{\n\twWhichSprite = wPlayerDirection;", "case_ids": ["UpdatePlayerSprite-0", "UpdatePlayerSprite-1", "UpdatePlayerSprite-2"]}
+# <<< factory-mutation UpdatePlayerSprite

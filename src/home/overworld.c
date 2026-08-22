@@ -87,6 +87,9 @@
 #include "home/load_animation.h"
 
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE 0x80u
+
+#include "generated/wram.h"
+#include "home/sprite_animations.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -549,3 +552,12 @@ void Func_c58b(void)
 	gb_write8(hl, flags);
 }
 /* <<< factory Func_c58b */
+
+/* >>> factory UpdatePlayerSprite */
+void UpdatePlayerSprite(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	uint8_t animation = (uint8_t)(wPlayerSpriteBaseAnimation + wPlayerDirection);
+	StartNewSpriteAnimation(animation);
+}
+/* <<< factory UpdatePlayerSprite */
