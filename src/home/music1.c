@@ -7,6 +7,8 @@
 /* >>> factory statics */
 #include "home/music1.h"
 #include "mem.h"
+
+#include "home/music1.h"
 /* <<< factory statics */
 
 #define MUSIC1_BANK 0x3Du
@@ -1321,3 +1323,10 @@ void _SetupSound(void)
 	Music1_Init();
 }
 /* <<< factory _SetupSound */
+
+/* >>> factory SoundTimerHandler */
+void SoundTimerHandler(void)
+{
+	Music1_Update();
+}
+/* <<< factory SoundTimerHandler */

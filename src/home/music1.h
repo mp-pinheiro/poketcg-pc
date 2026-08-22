@@ -117,4 +117,7 @@ void Music1_PlaySong(uint8_t a);
 void _SetupSound(void);
 void Music1_Init(void);
 /* <<< factory _SetupSound */
+/* >>> factory SoundTimerHandler */
+void SoundTimerHandler(void);
+/* <<< factory SoundTimerHandler */
 #endif /* POKETCG_MUSIC1_H */
