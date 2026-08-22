@@ -141,6 +141,15 @@ CASES["OverworldMap_SetSpritePosition"] = [
 ]
 # <<< factory OverworldMap_SetSpritePosition
 
+# >>> factory OverworldMap_InitPlayerNorthSouthMovement
+CONTRACT["OverworldMap_InitPlayerNorthSouthMovement"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_InitPlayerNorthSouthMovement"] = [
+    {"b": 0x01, "c": 0x04, "wram": {0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, "expect": {0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02"}},
+    {"b": 0x01, "c": 0x04, "wram": {0xD343: b"\x00\xff", 0xD345: b"\x00\xff"}, "expect": {0xD341: b"\x04", 0xD343: b"\xc0\xff", 0xD345: b"\x00\xff", 0xD334: b"\x00"}},
+    dict(POISON, b=0x01, c=0x04, wram={0xD343: b"\x00\x00", 0xD345: b"\x00\x00"}, expect={0xD341: b"\x04", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02"}),
+]
+# <<< factory OverworldMap_InitPlayerNorthSouthMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -175,3 +184,6 @@ MUTATIONS["OverworldMap_GetMapPosition"] = {"source_symbol": "OverworldMap_GetMa
 # >>> factory-mutation OverworldMap_SetSpritePosition
 MUTATIONS["OverworldMap_SetSpritePosition"] = {"source_symbol": "OverworldMap_SetSpritePosition", "before": "\tgb_write8((uint16_t)(hl + 1u), position.e);", "after": "\tgb_write8((uint16_t)(hl + 1u), (uint8_t)(position.e + 1u));", "case_ids": ["OverworldMap_SetSpritePosition-0", "OverworldMap_SetSpritePosition-1"]}
 # <<< factory-mutation OverworldMap_SetSpritePosition
+# >>> factory-mutation OverworldMap_InitPlayerNorthSouthMovement
+MUTATIONS["OverworldMap_InitPlayerNorthSouthMovement"] = {"source_symbol": "OverworldMap_InitPlayerNorthSouthMovement", "before": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)b << 8), (uint16_t)c);", "after": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)b << 8), (uint16_t)(c + 1u));", "case_ids": ["OverworldMap_InitPlayerNorthSouthMovement-0", "OverworldMap_InitPlayerNorthSouthMovement-1", "OverworldMap_InitPlayerNorthSouthMovement-2"]}
+# <<< factory-mutation OverworldMap_InitPlayerNorthSouthMovement

@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_InitPlayerNorthSouthMovement",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_InitPlayerNorthSouthMovement\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54083\": \"40000001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_InitPlayerNorthSouthMovement\", \"mismatches\": {\"bus\": {\"address\": 54083, \"reference\": \"40000001\", \"native\": \"33000001\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54083, 4]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_InitPlayerNorthSouthMovement\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54083\": \"40000001\"}}, \"status\": \"PASS\"}\n"
+}

@@ -70,6 +70,8 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/load_animation.h"
 #include "home/overworld_map.h"
 #include "mem.h"
+
+#define SOUTH 0x02u
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -253,3 +255,30 @@ void OverworldMap_SetSpritePosition(uint8_t a, uint8_t d, uint8_t e)
 	gb_write8((uint16_t)(hl + 1u), position.e);
 }
 /* <<< factory OverworldMap_SetSpritePosition */
+
+/* >>> factory OverworldMap_InitPlayerNorthSouthMovement */
+void OverworldMap_InitPlayerNorthSouthMovement(uint8_t b, uint8_t c)
+{
+	uint8_t vertical_sign = gb_read8((uint16_t)(wOverworldMapPlayerPathVerticalMovement_ADDR + 1u));
+	uint8_t horizontal_sign = gb_read8((uint16_t)(wOverworldMapPlayerPathHorizontalMovement_ADDR + 1u));
+	wOverworldMapPlayerMovementCounter = c;
+
+	wOverworldMapPlayerPathVerticalMovement = 0u;
+	gb_write8((uint16_t)(wOverworldMapPlayerPathVerticalMovement_ADDR + 1u),
+		(vertical_sign & 0x80u) != 0u ? 0xffu : 0x01u);
+
+	DivResult divided = DivideBCbyDE((uint16_t)((uint16_t)b << 8), (uint16_t)c);
+	uint16_t quotient = divided.quotient;
+	if ((horizontal_sign & 0x80u) != 0u) {
+		OverworldMapNegateBCResult negated = OverworldMap_NegateBC((uint8_t)(quotient >> 8), (uint8_t)quotient);
+		quotient = (uint16_t)(((uint16_t)negated.b << 8) | negated.c);
+	}
+	wOverworldMapPlayerPathHorizontalMovement = (uint8_t)quotient;
+	gb_write8((uint16_t)(wOverworldMapPlayerPathHorizontalMovement_ADDR + 1u),
+		(uint8_t)(quotient >> 8));
+
+	wPlayerDirection = (gb_read8((uint16_t)(wOverworldMapPlayerPathVerticalMovement_ADDR + 1u)) & 0x80u) != 0u
+		? NORTH
+		: SOUTH;
+}
+/* <<< factory OverworldMap_InitPlayerNorthSouthMovement */
