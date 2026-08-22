@@ -77,4 +77,7 @@ typedef struct {
 
 DrawListCursorResult DrawListCursor(uint8_t a);
 /* <<< factory DrawListCursor */
+/* >>> factory DrawHorizontalListCursor_Invisible */
+DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void);
+/* <<< factory DrawHorizontalListCursor_Invisible */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -257,6 +257,17 @@ CASES["DrawListCursor"] = [
 ]
 # <<< factory DrawListCursor
 
+# >>> factory DrawHorizontalListCursor_Invisible
+CONTRACT["DrawHorizontalListCursor_Invisible"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["DrawHorizontalListCursor_Invisible"] = [
+    {"wram": {0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+     "vread": {0: {0x98AA: 1}}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xCEAB: b"\x77", 0xCEA4: b"\x04", 0xCEA5: b"\x06", 0xCEA6: b"\x07", 0xCEA8: b"\x03"},
+     "vread": {0: {0x98FA: 1}}},
+]
+# <<< factory DrawHorizontalListCursor_Invisible
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -364,3 +375,6 @@ MUTATIONS["DrawListCursor"] = {
     "case_ids": ["DrawListCursor-1"],
 }
 # <<< factory-mutation DrawListCursor
+# >>> factory-mutation DrawHorizontalListCursor_Invisible
+MUTATIONS["DrawHorizontalListCursor_Invisible"] = {"source_symbol": "DrawHorizontalListCursor_Invisible", "before": "\tuint8_t tile = wInvisibleCursorTile;", "after": "\tuint8_t tile = 0u;", "case_ids": ["DrawHorizontalListCursor_Invisible-0", "DrawHorizontalListCursor_Invisible-1"]}
+# <<< factory-mutation DrawHorizontalListCursor_Invisible

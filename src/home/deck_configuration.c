@@ -69,6 +69,9 @@
 #include "home/random.h"
 #include "home/bg_map.h"
 #include "generated/wram.h"
+
+#include "home/deck_configuration.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -437,3 +440,11 @@ DrawListCursorResult DrawListCursor(uint8_t a)
 	return (DrawListCursorResult){x, y};
 }
 /* <<< factory DrawListCursor */
+
+/* >>> factory DrawHorizontalListCursor_Invisible */
+DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void)
+{
+	uint8_t tile = wInvisibleCursorTile;
+	return DrawHorizontalListCursor(tile);
+}
+/* <<< factory DrawHorizontalListCursor_Invisible */
