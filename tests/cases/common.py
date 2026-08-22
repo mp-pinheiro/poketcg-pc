@@ -102,6 +102,24 @@ CASES["LookForCardIDInPlayArea_Bank8"] = [
 # >>> factory-cases-statics
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
+
+wDuelTempList = 0xC510
+wTempAI = 0xCDF1
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC27E
+
+_CASE_WRAM_EMPTY = {
+    hWhoseTurn: b"\xC2",
+    0xC200: b"\x00" * 0x3C,
+    wPlayerDeck: b"\x00" * 0x3C,
+    wDuelTempList: b"\x00" * 0x40,
+}
+_CASE_WRAM_MATCH = {
+    hWhoseTurn: b"\xC2",
+    0xC200: b"\x01\x00\x01\x00\x01" + b"\x00" * 0x37,
+    wPlayerDeck: b"\x01\x00\x06\x00\x07" + b"\x00" * 0x37,
+    wDuelTempList: b"\x00" * 0x40,
+}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -113,6 +131,15 @@ CASES["CheckIfHasCardIDInHand"] = [
     dict(POISON, a=0x01, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00", 0xC243: b"\x01", 0xC200: b"\x00", 0xC201: b"\x00", wPlayerDeck: b"\x01\x01"}, read={0xC510: 32}),
 ]
 # <<< factory CheckIfHasCardIDInHand
+
+# >>> factory FindBasicEnergyCardsInLocation
+CONTRACT["FindBasicEnergyCardsInLocation"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
+CASES["FindBasicEnergyCardsInLocation"] = [
+    {"a": 0x02, "wram": _CASE_WRAM_EMPTY, "read": {wDuelTempList: 0x40}},
+    {"a": 0x01, "wram": _CASE_WRAM_MATCH, "read": {wDuelTempList: 0x03}},
+    dict(POISON, a=0x01, wram=_CASE_WRAM_MATCH, read={wDuelTempList: 0x03}),
+]
+# <<< factory FindBasicEnergyCardsInLocation
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -180,3 +207,6 @@ MUTATIONS["CheckIfHasCardIDInHand"] = {
     "case_ids": ["CheckIfHasCardIDInHand-2", "CheckIfHasCardIDInHand-3"],
 }
 # <<< factory-mutation CheckIfHasCardIDInHand
+# >>> factory-mutation FindBasicEnergyCardsInLocation
+MUTATIONS["FindBasicEnergyCardsInLocation"] = {"source_symbol": "FindBasicEnergyCardsInLocation", "before": "\t\tgb_write8(hl++, e);", "after": "\t\tgb_write8(hl++, (uint8_t)(e + 1u));", "case_ids": ["FindBasicEnergyCardsInLocation-1", "FindBasicEnergyCardsInLocation-2"]}
+# <<< factory-mutation FindBasicEnergyCardsInLocation

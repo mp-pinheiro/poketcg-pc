@@ -82,6 +82,18 @@ static void adapt_CheckIfHasCardIDInHand(ProbeState *s)
 }
 /* <<< factory CheckIfHasCardIDInHand */
 
+/* >>> factory FindBasicEnergyCardsInLocation */
+static void adapt_FindBasicEnergyCardsInLocation(ProbeState *s)
+{
+	FindBasicEnergyCardsInLocationResult r = FindBasicEnergyCardsInLocation(s->a);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory FindBasicEnergyCardsInLocation */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -92,5 +104,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "CopyListWithFFTerminatorFromHLToDE_Bank8", adapt_CopyListWithFFTerminatorFromHLToDE_Bank8 },
 	{ "LookForCardIDInPlayArea_Bank8", adapt_LookForCardIDInPlayArea_Bank8 },
 	{ "CheckIfHasCardIDInHand", adapt_CheckIfHasCardIDInHand },
+	{ "FindBasicEnergyCardsInLocation", adapt_FindBasicEnergyCardsInLocation },
 	{ NULL, NULL },
 };

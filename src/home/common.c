@@ -36,6 +36,14 @@
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/duel.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "mem.h"
+
+#define DECK_SIZE 0x3cu
+#define DUELVARS_CARD_LOCATIONS 0x00u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -253,3 +261,31 @@ CheckIfHasCardIDInHandResult CheckIfHasCardIDInHand(uint8_t a)
 	}
 }
 /* <<< factory CheckIfHasCardIDInHand */
+
+/* >>> factory FindBasicEnergyCardsInLocation */
+FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
+{
+	wTempAI = a;
+	uint8_t count = 0u;
+	uint8_t e = 0u;
+	uint16_t hl = wDuelTempList_ADDR;
+	for (; e < DECK_SIZE; e++) {
+		DuelistVarResult location = GetTurnDuelistVariable(
+			(uint8_t)(DUELVARS_CARD_LOCATIONS + e));
+		if (location.a != wTempAI)
+			continue;
+
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(e);
+		if (card_id >= DOUBLE_COLORLESS_ENERGY)
+			continue;
+
+		gb_write8(hl++, e);
+		count++;
+	}
+	if (count == 0u)
+		return (FindBasicEnergyCardsInLocationResult){0u, 0x90u, 0u, e, hl};
+
+	gb_write8(hl, 0xffu);
+	return (FindBasicEnergyCardsInLocationResult){count, 0x00u, count, e, hl};
+}
+/* <<< factory FindBasicEnergyCardsInLocation */
