@@ -47,6 +47,10 @@ rIE = 0xFFFF
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wScreenAnimDuration = 0xD4BB
 wScreenAnimUpdatePtr = 0xD4B9
+
+wDuelAnimDamage = 0xD4B1
+WD4C0 = 0xD4C0
+WDUEL_ANIM_RETURN_BANK = 0xD4BE
 # <<< factory-cases-statics
 
 # >>> factory DefaultScreenAnimationUpdate
@@ -82,6 +86,14 @@ CASES["ShakeScreenX"] = [
 ]
 # <<< factory ShakeScreenX
 
+# >>> factory Func_1ce03
+CONTRACT["Func_1ce03"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_1ce03"] = [
+    {"a": 0x9E, "wram": {WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x00", wDuelAnimDamage: b"\x34\x12"}, "expect": {WD4C0: b"\x80"}, "read": {WD4C0: 1}},
+    dict(POISON, a=0x9E, wram={WD4C0: b"\x00", WDUEL_ANIM_RETURN_BANK: b"\x00", wDuelAnimDamage: b"\x78\x56"}, expect={WD4C0: b"\x80"}, read={WD4C0: 1}),
+]
+# <<< factory Func_1ce03
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -114,3 +126,6 @@ MUTATIONS["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"source_symbol": "L
 # >>> factory-mutation ShakeScreenX
 MUTATIONS["ShakeScreenX"] = {"source_symbol": "ShakeScreenX", "before": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_X_UPDATE_FUNC_ADDR);", "after": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)(SHAKE_SCREEN_X_UPDATE_FUNC_ADDR + 1u));", "case_ids": ["ShakeScreenX-0", "ShakeScreenX-1"]}
 # <<< factory-mutation ShakeScreenX
+# >>> factory-mutation Func_1ce03
+MUTATIONS["Func_1ce03"] = {"source_symbol": "Func_1ce03", "before": "\tFunc_3bb5();", "after": "\treturn;", "case_ids": ["Func_1ce03-0", "Func_1ce03-1"]}
+# <<< factory-mutation Func_1ce03

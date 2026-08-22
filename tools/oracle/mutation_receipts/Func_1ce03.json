@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1ce03",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1ce03\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"3412\", \"54462\": \"00\", \"54464\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1ce03\", \"mismatches\": {\"bus\": {\"address\": 54464, \"reference\": \"34120080\", \"native\": \"34120000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54449, 2], [54462, 1], [54464, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_1ce03\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54449\": \"3412\", \"54462\": \"00\", \"54464\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

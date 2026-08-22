@@ -26,6 +26,9 @@
 #include "mem.h"
 
 #define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR 0x4CFFu
+
+#include "generated/wram.h"
+#include "home/play_animation.h"
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -113,3 +116,17 @@ void ShakeScreenX(uint16_t hl)
 	          (uint8_t)(SHAKE_SCREEN_X_UPDATE_FUNC_ADDR >> 8));
 }
 /* <<< factory ShakeScreenX */
+
+/* >>> factory Func_1ce03 */
+void Func_1ce03(uint8_t a)
+{
+	uint16_t hl;
+	if (a == 0x9eu) {
+		hl = (uint16_t)(wDuelAnimDamage | ((uint16_t)gb_read8((uint16_t)(wDuelAnimDamage_ADDR + 1u)) << 8));
+	} else {
+		hl = 0u;
+	}
+	(void)hl;
+	Func_3bb5();
+}
+/* <<< factory Func_1ce03 */

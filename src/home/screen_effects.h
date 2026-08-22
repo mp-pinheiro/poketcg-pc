@@ -28,4 +28,7 @@ void LoadDefaultScreenAnimationUpdateWhenFinished(void);
 /* >>> factory ShakeScreenX */
 void ShakeScreenX(uint16_t hl);
 /* <<< factory ShakeScreenX */
+/* >>> factory Func_1ce03 */
+void Func_1ce03(uint8_t a);
+/* <<< factory Func_1ce03 */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */
