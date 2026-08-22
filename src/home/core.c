@@ -481,6 +481,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/print_text.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3035,3 +3040,25 @@ PrintPracticeDuelNumberedInstructionResult PrintPracticeDuelNumberedInstruction(
 	return (PrintPracticeDuelNumberedInstructionResult){hl};
 }
 /* <<< factory PrintPracticeDuelNumberedInstruction */
+
+/* >>> factory PrintNextPracticeDuelInstruction */
+void PrintNextPracticeDuelInstruction(void)
+{
+	gb_write8(hffb0_ADDR, 1u);
+	PrintPracticeDuelInstructionsTextBoxLabel();
+	uint16_t hl = (uint16_t)(gb_read8(wPracticeDuelTextPointer_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wPracticeDuelTextPointer_ADDR + 1u)) << 8);
+	for (;;) {
+		uint8_t a = gb_read8(wPracticeDuelTextY_ADDR);
+		if (a < gb_read8(hl))
+			break;
+		uint8_t entry = gb_read8(hl++);
+		if (entry == 0u)
+			break;
+		PrintPracticeDuelNumberedInstructionResult result =
+			PrintPracticeDuelNumberedInstruction(1u, entry, hl);
+		hl = result.hl;
+	}
+	gb_write8(hffb0_ADDR, 0u);
+}
+/* <<< factory PrintNextPracticeDuelInstruction */

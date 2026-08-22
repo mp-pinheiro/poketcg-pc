@@ -69,4 +69,12 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; uint8_t d; } GetCountOfCardInCurDeckResult;
 GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(uint8_t e);
 /* <<< factory GetCountOfCardInCurDeck */
+/* >>> factory DrawListCursor */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+} DrawListCursorResult;
+
+DrawListCursorResult DrawListCursor(uint8_t a);
+/* <<< factory DrawListCursor */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

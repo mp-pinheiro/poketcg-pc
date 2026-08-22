@@ -604,4 +604,7 @@ typedef struct {
 } PrintPracticeDuelNumberedInstructionResult;
 PrintPracticeDuelNumberedInstructionResult PrintPracticeDuelNumberedInstruction(uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PrintPracticeDuelNumberedInstruction */
+/* >>> factory PrintNextPracticeDuelInstruction */
+void PrintNextPracticeDuelInstruction(void);
+/* <<< factory PrintNextPracticeDuelInstruction */
 #endif

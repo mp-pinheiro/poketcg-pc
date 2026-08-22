@@ -1,0 +1,9 @@
+{
+  "fn": "DrawListCursor",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawListCursor\", \"registers\": {\"a\": 170, \"b\": 18, \"c\": 7, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39154\": \"aa\"}}, \"wram\": {\"52900\": \"0406070003\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawListCursor\", \"mismatches\": {\"b\": [18, 19], \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawListCursor\", \"registers\": {\"a\": 170, \"b\": 18, \"c\": 7, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39154\": \"aa\"}}, \"wram\": {\"52900\": \"0406070003\"}}, \"status\": \"PASS\"}\n"
+}

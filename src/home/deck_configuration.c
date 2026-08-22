@@ -65,6 +65,10 @@
 #include "generated/wram.h"
 #include "home/random.h"
 #include "home/bg_map.h"
+
+#include "home/random.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -420,3 +424,16 @@ GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(uint8_t e)
 	return (GetCountOfCardInCurDeckResult){count, 0x80u, count};
 }
 /* <<< factory GetCountOfCardInCurDeck */
+
+/* >>> factory DrawListCursor */
+DrawListCursorResult DrawListCursor(uint8_t a)
+{
+	uint8_t e = a;
+	uint16_t hl = (uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListXSpacing);
+	uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos);
+	hl = (uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListYSpacing);
+	uint8_t y = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorYPos);
+	WriteByteToBGMap0(e, x, y);
+	return (DrawListCursorResult){x, y};
+}
+/* <<< factory DrawListCursor */

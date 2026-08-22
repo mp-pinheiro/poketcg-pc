@@ -1728,6 +1728,19 @@ CASES["PrintPracticeDuelNumberedInstruction"] = [
 ]
 # <<< factory PrintPracticeDuelNumberedInstruction
 
+# >>> factory PrintNextPracticeDuelInstruction
+CONTRACT["PrintNextPracticeDuelInstruction"] = {"compare": (), "preserve": (), "hram_out": True}
+CASES["PrintNextPracticeDuelInstruction"] = [
+    {"wram": {0xCC01: b"\x00\xC5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
+     "hram": {0xFFB0: b"\x7F"},
+     "read": {0xFFB0: 1}},
+    dict(POISON,
+         wram={0xCC01: b"\x00\xC5", 0xCBCA: b"\x00", 0xC500: b"\x00"},
+         hram={0xFFB0: b"\x7F"},
+         read={0xFFB0: 1}),
+]
+# <<< factory PrintNextPracticeDuelInstruction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2677,3 +2690,6 @@ MUTATIONS["PrintPracticeDuelNumberedInstruction"] = {
     "case_ids": ["PrintPracticeDuelNumberedInstruction-0", "PrintPracticeDuelNumberedInstruction-1", "PrintPracticeDuelNumberedInstruction-2"],
 }
 # <<< factory-mutation PrintPracticeDuelNumberedInstruction
+# >>> factory-mutation PrintNextPracticeDuelInstruction
+MUTATIONS["PrintNextPracticeDuelInstruction"] = {"source_symbol": "PrintNextPracticeDuelInstruction", "before": "gb_write8(hffb0_ADDR, 0u);", "after": "gb_write8(hffb0_ADDR, 1u);", "case_ids": ["PrintNextPracticeDuelInstruction-0", "PrintNextPracticeDuelInstruction-1"]}
+# <<< factory-mutation PrintNextPracticeDuelInstruction

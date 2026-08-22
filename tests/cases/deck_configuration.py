@@ -241,6 +241,22 @@ CASES["GetCountOfCardInCurDeck"] = [
 ]
 # <<< factory GetCountOfCardInCurDeck
 
+# >>> factory DrawListCursor
+CONTRACT["DrawListCursor"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["DrawListCursor"] = [
+    {"a": 0x66,
+     "wram": {wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
+              wCardListCursorYPos: b"\x05", wCardListXSpacing: b"\x02",
+              0xCEA7: b"\x00"},
+     "vread": {0: {0x98AA: 1}}},
+    dict(POISON,
+         wram={wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
+               wCardListCursorYPos: b"\x07", wCardListXSpacing: b"\x03",
+               0xCEA7: b"\x00"},
+         vread={0: {0x98F2: 1}}),
+]
+# <<< factory DrawListCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -340,3 +356,11 @@ MUTATIONS["DrawHorizontalListCursor"] = {
 # >>> factory-mutation GetCountOfCardInCurDeck
 MUTATIONS["GetCountOfCardInCurDeck"] = {"source_symbol": "GetCountOfCardInCurDeck", "before": "\tuint8_t count = 0u;", "after": "\tuint8_t count = 1u;", "case_ids": ["GetCountOfCardInCurDeck-0", "GetCountOfCardInCurDeck-1"]}
 # <<< factory-mutation GetCountOfCardInCurDeck
+# >>> factory-mutation DrawListCursor
+MUTATIONS["DrawListCursor"] = {
+    "source_symbol": "DrawListCursor",
+    "before": "uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos);",
+    "after": "uint8_t x = (uint8_t)((uint8_t)HtimesL(hl) + wCardListCursorXPos + 1u);",
+    "case_ids": ["DrawListCursor-1"],
+}
+# <<< factory-mutation DrawListCursor
