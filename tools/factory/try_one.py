@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import hashlib
+import re
 import time
 from pathlib import Path
 from typing import Any
@@ -104,6 +106,30 @@ def _check_operational_blocker(fn: str) -> None:
 
 
 
+def _already_implemented(fn: str, source: str | None) -> bool:
+    """True when the ported tree already defines this routine.
+
+    62 inventory routines are reported todo yet already carry a C body, so every
+    attempt on them fails `redefinition of <fn>` regardless of the retry budget.
+    Excluding them at preflight keeps a guaranteed-red class out of the frontier
+    and surfaces it as a registry discrepancy to reconcile rather than as a
+    translation to retry.
+    """
+    basename = Path(source or fn).stem
+    path = common.ROOT / "src" / "home" / f"{basename}.c"
+    if not path.is_file():
+        return False
+    needle = fn + "("
+    for line in path.read_text(errors="replace").splitlines():
+        stripped = line.strip()
+        if needle not in stripped:
+            continue
+        if stripped.startswith(("//", "*", "/*", "#")) or stripped.endswith(";"):
+            continue
+        return True
+    return False
+
+
 def resolve(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
     _check_operational_blocker(fn)
     report = packet_mod.report_module()
@@ -117,6 +143,8 @@ def resolve(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
     classification = _case_classification(fn, routine.get("file"))
     if classification == "native-migration-required":
         raise PreflightBlocker(fn, classification)
+    if _already_implemented(fn, routine.get("file")):
+        raise PreflightBlocker(fn, "already-implemented")
     work_id = routine.get("work_id")
     if not isinstance(work_id, str) or not work_id:
         raise LookupError(f"{fn} has no canonical work id; it is out of scope")
@@ -142,6 +170,101 @@ def await_candidate(path: Path, wait: float) -> dict[str, Any]:
     return _read_json(path)
 
 
+def _attempt_result(fn: str, attempt_id: str | None) -> dict[str, Any] | None:
+    if not attempt_id:
+        return None
+    try:
+        return _read_json(_attempt_root(fn) / "attempts" / attempt_id / "result.json")
+    except (OSError, json.JSONDecodeError, ValueError):
+        return None
+
+
+def _feedback_for(fn: str, parent_attempt_id: str | None) -> str | None:
+    """Verbatim diagnostics of the attempt this retry supersedes.
+
+    A retry that cannot see why the previous attempt failed re-derives the same
+    answer: 7 of 9 measured routines produced byte-identical diagnostics across
+    three independent candidates. Feeding the exact tool output back is what makes
+    a later generation a genuinely different draw rather than a costlier copy.
+    """
+    prior = _attempt_result(fn, parent_attempt_id)
+    if prior is None:
+        return None
+    blocks = []
+    for entry in prior.get("results") or []:
+        if entry.get("outcome") == "productive":
+            continue
+        detail = str(entry.get("detail") or "").strip()
+        if detail:
+            blocks.append(f"phase={entry.get('phase')} "
+                          f"failure_class={entry.get('failure_class')}\n{detail[:1500]}")
+    return "\n\n".join(blocks) or None
+
+
+def _diagnostic_signature(entry: dict[str, Any]) -> str:
+    """Stable identity of one failure, ignoring lane paths that vary per run."""
+    detail = re.sub(r"lane-\d+", "lane-N", str(entry.get("detail") or ""))[:400]
+    payload = f"{entry.get('phase')}\0{entry.get('failure_class')}\0{detail}"
+    return hashlib.sha256(payload.encode()).hexdigest()[:16]
+
+
+def _failure_signatures(fn: str, attempt_id: str | None) -> frozenset[str]:
+    result = _attempt_result(fn, attempt_id)
+    if result is None:
+        return frozenset()
+    return frozenset(
+        _diagnostic_signature(entry)
+        for entry in result.get("results") or []
+        if entry.get("outcome") != "productive"
+    )
+
+
+def _attempt_parent(fn: str, attempt_id: str) -> str | None:
+    try:
+        packet = _read_json(_attempt_root(fn) / "attempts" / attempt_id / "packet.json")
+    except (OSError, json.JSONDecodeError, ValueError):
+        return None
+    parent = packet.get("parent_attempt_id")
+    return parent if isinstance(parent, str) and parent else None
+
+
+def is_trapped(fn: str, current: dict[str, Any]) -> bool:
+    """True when the newest two generations failed with identical diagnostics.
+
+    An identical signature across generations proves the packet -- not the sample
+    -- decides the outcome, so a further retry is a costlier copy of the same
+    answer. This is what lets the attempt budget be generous without burning it on
+    deterministic traps, and it is the difference between a red that teaches
+    something and a red that is silently forgotten.
+    """
+    attempt_id = str(current.get("attempt_id") or "")
+    signatures = _failure_signatures(fn, attempt_id)
+    if not signatures:
+        return False
+    return signatures == _failure_signatures(fn, _attempt_parent(fn, attempt_id))
+
+
+def record_trap(fn: str, current: dict[str, Any]) -> None:
+    """Append a trapped routine and its signatures to the shared trap ledger.
+
+    Reds clustered by signature are the most valuable artefact the factory can
+    emit: one shared signature covered 63 routines and a single harness fix
+    cleared all of them. A red that is merely dropped from both pools teaches
+    nothing and strands every routine that depends on it.
+    """
+    attempt_id = str(current.get("attempt_id") or "")
+    entry = {
+        "fn": fn,
+        "attempt_id": attempt_id,
+        "generation": current.get("generation"),
+        "signatures": sorted(_failure_signatures(fn, attempt_id)),
+    }
+    path = common.FACTORY / "traps.jsonl"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a") as stream:
+        stream.write(json.dumps(entry, sort_keys=True, separators=(",", ":")) + "\n")
+
+
 def issue_attempt(fn: str, generation: int, *, parent_attempt_id: str | None = None) -> dict[str, Any]:
     routine, packet = resolve(fn)
     packet["attempt_generation"] = generation
@@ -151,7 +274,8 @@ def issue_attempt(fn: str, generation: int, *, parent_attempt_id: str | None = N
     run_dir = _attempt_root(fn) / "attempts" / attempt_id
     run_dir.mkdir(parents=True, exist_ok=False)
     _write_json(run_dir / "packet.json", packet)
-    (run_dir / "prompt.txt").write_text(prompt_mod.render(packet))
+    feedback = _feedback_for(fn, parent_attempt_id)
+    (run_dir / "prompt.txt").write_text(prompt_mod.render(packet, feedback=feedback))
     current = {
         "schema": common.SCHEMA,
         "fn": fn,
@@ -343,6 +467,7 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
             if row["name"] not in attempted
             and current.get(row["name"], {}).get("state") == "red"
             and current[row["name"]]["generation"] < retry_limit
+            and not is_trapped(row["name"], current[row["name"]])
         ]
     else:
         pool = [
@@ -478,6 +603,13 @@ def _set_attempt_state(current: dict[str, Any], state: str, *, retry_limit: int,
     current["state"] = state
     if unsupported:
         current["generation"] = max(current["generation"], retry_limit)
+    # A red leaves the retry pool for exactly two reasons: the same diagnostic
+    # twice (the packet decides, not the sample) or an exhausted budget. Either
+    # way it must be recorded, because a red dropped from both pools without a
+    # trace strands every routine that depends on it and stops convergence.
+    retired = is_trapped(str(current["fn"]), current) or current["generation"] >= retry_limit
+    if state == "red" and retired:
+        record_trap(str(current["fn"]), current)
     _store_current(current)
 
 
@@ -498,8 +630,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="prepare prompts for the next N routines")
     parser.add_argument("--retry-red", action="store_true",
                         help="with --next, select only retryable red attempts")
-    parser.add_argument("--retry-limit", type=int, default=1,
-                        help="maximum attempt generation for autonomous retries")
+    parser.add_argument("--retry-limit", type=int, default=8,
+                        help="maximum attempt generation for autonomous retries; "
+                             "each retry carries the previous diagnostic, and a "
+                             "repeated signature is trapped rather than retried, so "
+                             "the budget is spent only where retries are informative")
     arguments = parser.parse_args(argv)
 
     if arguments.retry_limit < 1:
