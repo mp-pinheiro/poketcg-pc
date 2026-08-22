@@ -583,4 +583,7 @@ void DrawYourOrOppPlayArea_RefreshArrows(uint8_t a);
 /* >>> factory SendAttackDataToLinkOpponent */
 void SendAttackDataToLinkOpponent(void);
 /* <<< factory SendAttackDataToLinkOpponent */
+/* >>> factory DrawPlayArea_PrizeCards */
+void DrawPlayArea_PrizeCards(uint16_t hl);
+/* <<< factory DrawPlayArea_PrizeCards */
 #endif

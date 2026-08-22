@@ -1080,6 +1080,11 @@ hTemp_ffa0 = 0xFFA0
 wPlayerAttackingAttackIndex = 0xCC10
 wPlayerAttackingCardIndex = 0xCC11
 wSentAttackDataToLinkOpponent = 0xCCEC
+
+wCheckMenuPlayAreaWhichDuelist = 0xCE50
+wConsole = 0xCAB4
+wDuelInitialPrizes = 0xCC08
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1113,6 +1118,23 @@ CASES["SendAttackDataToLinkOpponent"] = [
     dict(POISON, wram={wSentAttackDataToLinkOpponent: b"\x00", wPlayerAttackingCardIndex: b"\x99", wPlayerAttackingAttackIndex: b"\x07", hTempCardIndex_ff9f: b"\x11", hTemp_ffa0: b"\xEE"}, read={wSentAttackDataToLinkOpponent: 1, hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}),
 ]
 # <<< factory SendAttackDataToLinkOpponent
+
+# >>> factory DrawPlayArea_PrizeCards
+CONTRACT["DrawPlayArea_PrizeCards"] = {"compare": (), "preserve": ()}
+CASES["DrawPlayArea_PrizeCards"] = [
+    {"hl": 0xC500,
+     "wram": {0xCE50: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC500: b"\x00\x00\x00\x02"},
+     "vread": {0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}},
+    {"hl": 0xC510,
+     "wram": {0xCE50: b"\xC4", 0xC4EC: b"\x02", 0xCC08: b"\x02", 0xCAB4: b"\x00", 0xC510: b"\x00\x00\x00\x02"},
+     "vread": {0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}},
+    dict(POISON,
+         hl=0xC520,
+         wram={0xCE50: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x02", 0xC520: b"\x00\x00\x00\x02"},
+         vread={0: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2},
+                1: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}),
+]
+# <<< factory DrawPlayArea_PrizeCards
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1242,3 +1264,6 @@ MUTATIONS["DrawYourOrOppPlayArea_RefreshArrows"] = {
 # >>> factory-mutation SendAttackDataToLinkOpponent
 MUTATIONS["SendAttackDataToLinkOpponent"] = {"source_symbol": "SendAttackDataToLinkOpponent", "before": "wSentAttackDataToLinkOpponent = TRUE;", "after": "wSentAttackDataToLinkOpponent = 0u;", "case_ids": ["SendAttackDataToLinkOpponent-1", "SendAttackDataToLinkOpponent-2"]}
 # <<< factory-mutation SendAttackDataToLinkOpponent
+# >>> factory-mutation DrawPlayArea_PrizeCards
+MUTATIONS["DrawPlayArea_PrizeCards"] = {"source_symbol": "DrawPlayArea_PrizeCards", "before": "\t\tuint8_t taken = (uint8_t)(prize_bits & 1u);", "after": "\t\tuint8_t taken = (uint8_t)(prize_bits & 2u);", "case_ids": ["DrawPlayArea_PrizeCards-0", "DrawPlayArea_PrizeCards-1", "DrawPlayArea_PrizeCards-2"]}
+# <<< factory-mutation DrawPlayArea_PrizeCards

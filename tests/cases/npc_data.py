@@ -24,6 +24,13 @@ wOpponentPortrait = 0xCC15
 
 wCurrentNPCNameTx = 0xD0C8
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wConsole = 0xCAB4
+wTempNPC = 0xD3AB
+wNPCSpriteID = 0xD3B3
+wNPCAnim = 0xD3B1
+wNPCAnimFlags = 0xD3B2
+NPC_OUTPUT = {wTempNPC: 1, wNPCSpriteID: 1, wNPCAnim: 1, wNPCAnimFlags: 1}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCOpponentNameAndPortrait
@@ -47,6 +54,16 @@ CASES["GetNPCNameAndScript"] = [
 ]
 # <<< factory GetNPCNameAndScript
 
+# >>> factory LoadNPCSpriteData
+CONTRACT["LoadNPCSpriteData"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["LoadNPCSpriteData"] = [
+    {"a": 0x00, "wram": {wConsole: b"\x00"}, "read": NPC_OUTPUT},
+    {"a": 0x01, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0x2468, "wram": {wConsole: b"\x02"}, "read": NPC_OUTPUT},
+    {"a": 0x08, "b": 0xA5, "c": 0x5A, "d": 0x3C, "e": 0xC3, "hl": 0x9ABC, "wram": {wConsole: b"\x01"}, "read": NPC_OUTPUT},
+    dict(POISON, a=0x00, wram={wConsole: b"\x02"}, read=NPC_OUTPUT),
+]
+# <<< factory LoadNPCSpriteData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +77,6 @@ MUTATIONS["SetNPCOpponentNameAndPortrait"] = {"source_symbol": "SetNPCOpponentNa
 # >>> factory-mutation GetNPCNameAndScript
 MUTATIONS["GetNPCNameAndScript"] = {"source_symbol": "GetNPCNameAndScript", "before": "\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR);", "after": "\tuint16_t cursor = (uint16_t)(header.hl + NPC_DATA_SCRIPT_PTR + 1u);", "case_ids": ["GetNPCNameAndScript-0", "GetNPCNameAndScript-1", "GetNPCNameAndScript-2", "GetNPCNameAndScript-3", "GetNPCNameAndScript-4"]}
 # <<< factory-mutation GetNPCNameAndScript
+# >>> factory-mutation LoadNPCSpriteData
+MUTATIONS["LoadNPCSpriteData"] = {"source_symbol": "LoadNPCSpriteData", "before": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);", "after": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + 1u));", "case_ids": ["LoadNPCSpriteData-0", "LoadNPCSpriteData-1", "LoadNPCSpriteData-2", "LoadNPCSpriteData-3"]}
+# <<< factory-mutation LoadNPCSpriteData

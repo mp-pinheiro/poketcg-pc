@@ -31,9 +31,24 @@ static void adapt_GetNPCNameAndScript(ProbeState *s)
 }
 /* <<< factory GetNPCNameAndScript */
 
+/* >>> factory LoadNPCSpriteData */
+static void adapt_LoadNPCSpriteData(ProbeState *s)
+{
+	LoadNPCSpriteDataResult result = LoadNPCSpriteData(s->a, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory LoadNPCSpriteData */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
 	{ "GetNPCNameAndScript", adapt_GetNPCNameAndScript },
+	{ "LoadNPCSpriteData", adapt_LoadNPCSpriteData },
 	{ NULL, NULL },
 };

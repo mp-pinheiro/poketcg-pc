@@ -376,6 +376,11 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/serial.h"
 #define OPPACTION_BEGIN_ATTACK 0x08u
 #define TRUE 0x01u
+
+#include "home/duel.h"
+#include "home/tiles.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1847,3 +1852,30 @@ void SendAttackDataToLinkOpponent(void)
 	hTemp_ffa0 = saved_temp;
 }
 /* <<< factory SendAttackDataToLinkOpponent */
+
+/* >>> factory DrawPlayArea_PrizeCards */
+void DrawPlayArea_PrizeCards(uint16_t hl)
+{
+	GetDuelInitialPrizesUpperBitsSet();
+	uint8_t page = wCheckMenuPlayAreaWhichDuelist;
+	uint16_t prize_addr = (uint16_t)(((uint16_t)page << 8) | DUELVARS_PRIZES);
+	uint8_t prize_bits = gb_read8(prize_addr);
+	uint8_t count = wDuelInitialPrizes;
+	for (uint8_t b = 0u; b < count; ++b) {
+		uint8_t taken = (uint8_t)(prize_bits & 1u);
+		prize_bits = (uint8_t)(prize_bits >> 1);
+		uint8_t tile = taken != 0u ? 0xDCu : 0xE0u;
+		uint8_t x = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint8_t y = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint16_t de = (uint16_t)(((uint16_t)y << 8) | x);
+		FillRectangle(tile, 2u, 2u, de, 0x0102u);
+		if (wConsole == CONSOLE_CGB) {
+			gb_write8(0xFF4Fu, 1u);
+			FillRectangle(0x02u, 2u, 2u, de, 0x0000u);
+			gb_write8(0xFF4Fu, 0u);
+		}
+	}
+}
+/* <<< factory DrawPlayArea_PrizeCards */

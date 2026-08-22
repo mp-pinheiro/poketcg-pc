@@ -14,6 +14,11 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define NPC_DATA_SCRIPT_PTR 0x05u
+
+#include "generated/wram.h"
+#include "mem.h"
+#define NPC_DATA_BANK 0x04u
+#define CONSOLE_CGB 0x02u
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -70,3 +75,29 @@ GetNPCNameAndScriptResult GetNPCNameAndScript(uint8_t a)
 	return (GetNPCNameAndScriptResult){name_high, f, script_high, script_low};
 }
 /* <<< factory GetNPCNameAndScript */
+
+/* >>> factory LoadNPCSpriteData */
+LoadNPCSpriteDataResult LoadNPCSpriteData(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
+	const uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);
+	wTempNPC = entry[0];
+	wNPCSpriteID = entry[1];
+	wNPCAnim = entry[2];
+	uint8_t cgb_anim = entry[3];
+	wNPCAnimFlags = entry[4];
+	uint8_t console = wConsole;
+	uint8_t out_a = console;
+	uint8_t f = 0x40u;
+	if (console == CONSOLE_CGB) {
+		out_a = cgb_anim;
+		wNPCAnim = cgb_anim;
+		f |= 0x80u;
+	}
+	if ((uint8_t)(console & 0x0Fu) < (uint8_t)(CONSOLE_CGB & 0x0Fu))
+		f |= 0x20u;
+	if (console < CONSOLE_CGB)
+		f |= 0x10u;
+	return (LoadNPCSpriteDataResult){out_a, f, b, c, d, e, hl};
+}
+/* <<< factory LoadNPCSpriteData */
