@@ -57,6 +57,20 @@ static void adapt_ResetPrinterCommunicationSettings(ProbeState *s)
 }
 /* <<< factory ResetPrinterCommunicationSettings */
 
+/* >>> factory ClearPrinterGfxBuffer */
+static void adapt_ClearPrinterGfxBuffer(ProbeState *s)
+{
+	ClearPrinterGfxBufferResult result = ClearPrinterGfxBuffer(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory ClearPrinterGfxBuffer */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -64,5 +78,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "Func_1a14b", adapt_Func_1a14b },
 	{ "Func_1a025", adapt_Func_1a025 },
 	{ "ResetPrinterCommunicationSettings", adapt_ResetPrinterCommunicationSettings },
+	{ "ClearPrinterGfxBuffer", adapt_ClearPrinterGfxBuffer },
 	{ NULL, NULL },
 };

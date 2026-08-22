@@ -115,6 +115,14 @@ CASES["ResetPrinterCommunicationSettings"] = [
 ]
 # <<< factory ResetPrinterCommunicationSettings
 
+# >>> factory ClearPrinterGfxBuffer
+CONTRACT["ClearPrinterGfxBuffer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e"), "wram_out": True}
+CASES["ClearPrinterGfxBuffer"] = [
+    {"wram": {0xCE9F: b"\x55"}, "sram": {0: {0xA000: b"\xAA" * 0x400}}, "expect": {0xCE9F: b"\x00"}, "expect_sram": {0: {0xA000: b"\x00" * 0x400}}},
+    dict(POISON, wram={0xCE9F: b"\xFF"}, sram={0: {0xA000: b"\xAA" * 0x400}}, expect={0xCE9F: b"\x00"}, expect_sram={0: {0xA000: b"\x00" * 0x400}}),
+]
+# <<< factory ClearPrinterGfxBuffer
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -147,3 +155,6 @@ MUTATIONS["Func_1a025"] = {"source_symbol": "Func_1a025", "before": "\twTilePatt
 # >>> factory-mutation ResetPrinterCommunicationSettings
 MUTATIONS["ResetPrinterCommunicationSettings"] = {"source_symbol": "ResetPrinterCommunicationSettings", "before": "\tuint16_t result_hl = SetupText(0x30u, 0xBFu);", "after": "\tuint16_t result_hl = SetupText(0x31u, 0xBFu);", "case_ids": ["ResetPrinterCommunicationSettings-0", "ResetPrinterCommunicationSettings-1"]}
 # <<< factory-mutation ResetPrinterCommunicationSettings
+# >>> factory-mutation ClearPrinterGfxBuffer
+MUTATIONS["ClearPrinterGfxBuffer"] = {"source_symbol": "ClearPrinterGfxBuffer", "before": "\t\tgb_write8(target, 0u);", "after": "\t\tgb_write8(target, 1u);", "case_ids": ["ClearPrinterGfxBuffer-0", "ClearPrinterGfxBuffer-1"]}
+# <<< factory-mutation ClearPrinterGfxBuffer

@@ -11,6 +11,9 @@
 #include "home/switch_sram.h"
 #include "home/process_text.h"
 #include "generated/wram.h"
+
+#include "generated/sram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -166,3 +169,31 @@ ResetPrinterCommunicationSettingsResult ResetPrinterCommunicationSettings(uint8_
 	};
 }
 /* <<< factory ResetPrinterCommunicationSettings */
+
+/* >>> factory ClearPrinterGfxBuffer */
+ClearPrinterGfxBufferResult ClearPrinterGfxBuffer(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)hl;
+	uint16_t target = sGfxBuffer0_ADDR;
+	uint16_t count = 0x0400u;
+	do {
+		gb_write8(target, 0u);
+		target = (uint16_t)(target + 1u);
+		count = (uint16_t)(count - 1u);
+	} while (count != 0);
+	gb_write8(wce9f_ADDR, 0u);
+	return (ClearPrinterGfxBufferResult){
+		.a = 0x00u,
+		.f = 0x80u,
+		.b = 0x00u,
+		.c = 0x00u,
+		.d = d,
+		.e = e,
+		.hl = target,
+	};
+}
+/* <<< factory ClearPrinterGfxBuffer */
