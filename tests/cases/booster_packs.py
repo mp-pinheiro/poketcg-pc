@@ -101,6 +101,8 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 wBoosterJustDrawnCardType = 0xD66B
 wBoosterTempTypeChancesTable = 0xD67A
 wTempBoosterChances = 0xD4CA
+
+wBoosterPackID = 0xD669
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -226,6 +228,18 @@ CASES["DetermineBoosterCardType"] = [
 ]
 # <<< factory DetermineBoosterCardType
 
+# >>> factory FindBoosterDataPointer
+CONTRACT["FindBoosterDataPointer"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["FindBoosterDataPointer"] = [
+    {"wram": {wBoosterPackID: b"\x00"}},
+    {"wram": {wBoosterPackID: b"\x01"}},
+    {"wram": {wBoosterPackID: b"\x02"}},
+    {"wram": {wBoosterPackID: b"\x1B"}},
+    {"wram": {wBoosterPackID: b"\x1C"}},
+    dict(POISON, wram={wBoosterPackID: b"\x1B"}),
+]
+# <<< factory FindBoosterDataPointer
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -314,3 +328,6 @@ MUTATIONS["LoadRarityAmountsToWram"] = {"source_symbol": "LoadRarityAmountsToWra
 # >>> factory-mutation DetermineBoosterCardType
 MUTATIONS["DetermineBoosterCardType"] = {"source_symbol": "DetermineBoosterCardType", "before": "\t\tuint8_t chance = *table;", "after": "\t\tuint8_t chance = (uint8_t)(*table + 1u);", "case_ids": ["DetermineBoosterCardType-1", "DetermineBoosterCardType-2", "DetermineBoosterCardType-3"]}
 # <<< factory-mutation DetermineBoosterCardType
+# >>> factory-mutation FindBoosterDataPointer
+MUTATIONS["FindBoosterDataPointer"] = {"source_symbol": "FindBoosterDataPointer", "before": "return (uint16_t)(BOOSTER_DATA_BASE + (uint16_t)pack * 0x0Cu);", "after": "return (uint16_t)(BOOSTER_DATA_BASE + 1u + (uint16_t)pack * 0x0Cu);", "case_ids": ["FindBoosterDataPointer-0", "FindBoosterDataPointer-1", "FindBoosterDataPointer-2", "FindBoosterDataPointer-3", "FindBoosterDataPointer-4", "FindBoosterDataPointer-5"]}
+# <<< factory-mutation FindBoosterDataPointer

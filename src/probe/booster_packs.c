@@ -178,6 +178,17 @@ static void adapt_DetermineBoosterCardType(ProbeState *s)
 }
 /* <<< factory DetermineBoosterCardType */
 
+/* >>> factory FindBoosterDataPointer */
+static void adapt_FindBoosterDataPointer(ProbeState *s)
+{
+	uint8_t pack = gb_read8(wBoosterPackID_ADDR);
+	uint16_t pointer = FindBoosterDataPointer();
+	s->a = (uint8_t)pointer;
+	s->f = (pack == 0u) ? 0x80u : 0u;
+	s->hl = pointer;
+}
+/* <<< factory FindBoosterDataPointer */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -197,5 +208,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "PutEnergiesAndNonEnergiesTogether", adapt_PutEnergiesAndNonEnergiesTogether },
 	{ "LoadRarityAmountsToWram", adapt_LoadRarityAmountsToWram },
 	{ "DetermineBoosterCardType", adapt_DetermineBoosterCardType },
+	{ "FindBoosterDataPointer", adapt_FindBoosterDataPointer },
 	{ NULL, NULL },
 };

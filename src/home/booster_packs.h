@@ -70,4 +70,7 @@ void LoadRarityAmountsToWram(void);
 /* >>> factory DetermineBoosterCardType */
 uint8_t DetermineBoosterCardType(uint8_t a);
 /* <<< factory DetermineBoosterCardType */
+/* >>> factory FindBoosterDataPointer */
+uint16_t FindBoosterDataPointer(void);
+/* <<< factory FindBoosterDataPointer */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

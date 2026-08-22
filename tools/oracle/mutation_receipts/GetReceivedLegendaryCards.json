@@ -1,0 +1,9 @@
+{
+  "fn": "GetReceivedLegendaryCards",
+  "case": "tests/cases/map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetReceivedLegendaryCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40970\": \"00\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetReceivedLegendaryCards\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"00\", \"native\": \"01\"}}}\n",
+  "restored": "{\"fn\": \"GetReceivedLegendaryCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40970\": \"00\"}}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

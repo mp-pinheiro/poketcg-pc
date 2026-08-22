@@ -141,6 +141,18 @@ CASES["FindBasicEnergyCardsInLocation"] = [
 ]
 # <<< factory FindBasicEnergyCardsInLocation
 
+# >>> factory CalculateBDividedByA_Bank8
+CONTRACT["CalculateBDividedByA_Bank8"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CalculateBDividedByA_Bank8"] = [
+	{"a": 0, "b": 0, "oracle": False, "why": "Divisor zero enters the assembly loop forever.", "expect_regs": {"a": 0, "b": 0}},
+	{"a": 1, "b": 1},
+	{"a": 1, "b": 255},
+	{"a": 2, "b": 5},
+	{"a": 255, "b": 255},
+	dict(POISON, a=3, b=10),
+]
+# <<< factory CalculateBDividedByA_Bank8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -210,3 +222,6 @@ MUTATIONS["CheckIfHasCardIDInHand"] = {
 # >>> factory-mutation FindBasicEnergyCardsInLocation
 MUTATIONS["FindBasicEnergyCardsInLocation"] = {"source_symbol": "FindBasicEnergyCardsInLocation", "before": "\t\tgb_write8(hl++, e);", "after": "\t\tgb_write8(hl++, (uint8_t)(e + 1u));", "case_ids": ["FindBasicEnergyCardsInLocation-1", "FindBasicEnergyCardsInLocation-2"]}
 # <<< factory-mutation FindBasicEnergyCardsInLocation
+# >>> factory-mutation CalculateBDividedByA_Bank8
+MUTATIONS["CalculateBDividedByA_Bank8"] = {"source_symbol": "CalculateBDividedByA_Bank8", "before": "\t\tuint8_t result = (uint8_t)(remainder - divisor);", "after": "\t\tuint8_t result = (uint8_t)(remainder + divisor);", "case_ids": ["CalculateBDividedByA_Bank8-1", "CalculateBDividedByA_Bank8-2", "CalculateBDividedByA_Bank8-3", "CalculateBDividedByA_Bank8-4", "CalculateBDividedByA_Bank8-5"]}
+# <<< factory-mutation CalculateBDividedByA_Bank8

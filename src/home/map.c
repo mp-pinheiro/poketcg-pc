@@ -8,6 +8,11 @@
 /* >>> factory statics */
 #include "home/warp.h"
 #define BANK_HANDLE_MAP_WARP 7u
+
+#include "generated/sram.h"
+#include "home/scripting.h"
+#include "home/switch_sram.h"
+#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -172,3 +177,14 @@ void HandleMapWarp(void)
 	BankswitchROM(saved);
 }
 /* <<< factory HandleMapWarp */
+
+/* >>> factory GetReceivedLegendaryCards */
+GetReceivedLegendaryCardsResult GetReceivedLegendaryCards(void)
+{
+	uint8_t a = GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS);
+	EnableSRAM();
+	sReceivedLegendaryCards = a;
+	DisableSRAM();
+	return (GetReceivedLegendaryCardsResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+}
+/* <<< factory GetReceivedLegendaryCards */

@@ -94,6 +94,15 @@ static void adapt_FindBasicEnergyCardsInLocation(ProbeState *s)
 }
 /* <<< factory FindBasicEnergyCardsInLocation */
 
+/* >>> factory CalculateBDividedByA_Bank8 */
+static void adapt_CalculateBDividedByA_Bank8(ProbeState *s)
+{
+	CalculateBDividedByA_Bank8Result r = CalculateBDividedByA_Bank8(s->a, s->b);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CalculateBDividedByA_Bank8 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -105,5 +114,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "LookForCardIDInPlayArea_Bank8", adapt_LookForCardIDInPlayArea_Bank8 },
 	{ "CheckIfHasCardIDInHand", adapt_CheckIfHasCardIDInHand },
 	{ "FindBasicEnergyCardsInLocation", adapt_FindBasicEnergyCardsInLocation },
+	{ "CalculateBDividedByA_Bank8", adapt_CalculateBDividedByA_Bank8 },
 	{ NULL, NULL },
 };

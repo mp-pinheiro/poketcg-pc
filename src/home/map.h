@@ -34,4 +34,8 @@ uint8_t GetDefaultSong(void);
 /* >>> factory HandleMapWarp */
 void HandleMapWarp(void);
 /* <<< factory HandleMapWarp */
+/* >>> factory GetReceivedLegendaryCards */
+typedef struct { uint8_t a; uint8_t f; } GetReceivedLegendaryCardsResult;
+GetReceivedLegendaryCardsResult GetReceivedLegendaryCards(void);
+/* <<< factory GetReceivedLegendaryCards */
 #endif

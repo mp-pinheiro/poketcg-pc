@@ -89,6 +89,15 @@ static void adapt_HandleMapWarp(ProbeState *s)
 }
 /* <<< factory HandleMapWarp */
 
+/* >>> factory GetReceivedLegendaryCards */
+static void adapt_GetReceivedLegendaryCards(ProbeState *s)
+{
+	GetReceivedLegendaryCardsResult r = GetReceivedLegendaryCards();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory GetReceivedLegendaryCards */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -103,5 +112,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "GetDefaultSong", adapt_GetDefaultSong },
 	{ "PlayDefaultSong", adapt_PlayDefaultSong },
 	{ "HandleMapWarp", adapt_HandleMapWarp },
+	{ "GetReceivedLegendaryCards", adapt_GetReceivedLegendaryCards },
 	{ NULL, NULL },
 };

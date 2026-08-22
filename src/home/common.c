@@ -289,3 +289,26 @@ FindBasicEnergyCardsInLocationResult FindBasicEnergyCardsInLocation(uint8_t a)
 	return (FindBasicEnergyCardsInLocationResult){count, 0x00u, count, e, hl};
 }
 /* <<< factory FindBasicEnergyCardsInLocation */
+
+/* >>> factory CalculateBDividedByA_Bank8 */
+CalculateBDividedByA_Bank8Result CalculateBDividedByA_Bank8(uint8_t a, uint8_t b)
+{
+	uint8_t divisor = a;
+	uint8_t remainder = b;
+	uint8_t quotient = 0u;
+
+	for (;;) {
+		uint8_t result = (uint8_t)(remainder - divisor);
+		if (remainder < divisor) {
+			uint8_t flags = 0x50u;
+			if ((remainder & 0x0Fu) < (divisor & 0x0Fu))
+				flags = (uint8_t)(flags | 0x20u);
+			if (result == 0u)
+				flags = (uint8_t)(flags | 0x80u);
+			return (CalculateBDividedByA_Bank8Result){quotient, flags};
+		}
+		remainder = result;
+		quotient = (uint8_t)(quotient + 1u);
+	}
+}
+/* <<< factory CalculateBDividedByA_Bank8 */

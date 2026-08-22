@@ -64,6 +64,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 
 #include "generated/wram.h"
+
+#define BOOSTER_DATA_BASE 0x64E4u
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -287,3 +289,11 @@ uint8_t DetermineBoosterCardType(uint8_t a)
 	return c;
 }
 /* <<< factory DetermineBoosterCardType */
+
+/* >>> factory FindBoosterDataPointer */
+uint16_t FindBoosterDataPointer(void)
+{
+	uint8_t pack = gb_read8(wBoosterPackID_ADDR);
+	return (uint16_t)(BOOSTER_DATA_BASE + (uint16_t)pack * 0x0Cu);
+}
+/* <<< factory FindBoosterDataPointer */

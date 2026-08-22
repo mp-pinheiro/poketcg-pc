@@ -183,6 +183,18 @@ CASES["HandleMapWarp"] = [
 ]
 # <<< factory HandleMapWarp
 
+# >>> factory-cases-statics
+sReceivedLegendaryCards = 0xA00A
+# <<< factory-cases-statics
+
+# >>> factory GetReceivedLegendaryCards
+CONTRACT["GetReceivedLegendaryCards"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "sram_out": True}
+CASES["GetReceivedLegendaryCards"] = [
+    {"sram": {0: {sReceivedLegendaryCards: b"\xAA"}}, "expect_sram": {0: {sReceivedLegendaryCards: b"\x00"}}},
+    dict(POISON, sram={0: {sReceivedLegendaryCards: b"\x55"}}, expect_sram={0: {sReceivedLegendaryCards: b"\x00"}}),
+]
+# <<< factory GetReceivedLegendaryCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -209,3 +221,6 @@ MUTATIONS["HandleMapWarp"] = {
     "case_ids": ["HandleMapWarp-1", "HandleMapWarp-2", "HandleMapWarp-3"],
 }
 # <<< factory-mutation HandleMapWarp
+# >>> factory-mutation GetReceivedLegendaryCards
+MUTATIONS["GetReceivedLegendaryCards"] = {"source_symbol": "GetReceivedLegendaryCards", "before": "\tsReceivedLegendaryCards = a;", "after": "\tsReceivedLegendaryCards = (uint8_t)(a ^ 1u);", "case_ids": ["GetReceivedLegendaryCards-0", "GetReceivedLegendaryCards-1"]}
+# <<< factory-mutation GetReceivedLegendaryCards
