@@ -65,6 +65,14 @@ CASES["DoScreenAnimationUpdate"] = [
 ]
 # <<< factory DoScreenAnimationUpdate
 
+# >>> factory LoadDefaultScreenAnimationUpdateWhenFinished
+CONTRACT["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"compare": (), "preserve": ()}
+CASES["LoadDefaultScreenAnimationUpdateWhenFinished"] = [
+    {"wram": {0xD4BB: b"\x00", 0xD42A: b"\x00", 0xD4B9: b"\x00\x00"}, "hram": {0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, "read": {0xD42A: 1, 0xD4B9: 2, 0xFF92: 1, 0xFF93: 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}},
+    dict(POISON, wram={0xD4BB: b"\x01", 0xD42A: b"\x12", 0xD4B9: b"\x34\x56"}, hram={0xFF41: b"\xFF", 0xFFFF: b"\xFF"}, read={0xD42A: 1, 0xD4B9: 2, 0xFF92: 1, 0xFF93: 1, 0xFF41: 1, 0xFF43: 1, 0xFFFF: 1}),
+]
+# <<< factory LoadDefaultScreenAnimationUpdateWhenFinished
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -91,3 +99,6 @@ MUTATIONS["DefaultScreenAnimationUpdate"] = {
 # >>> factory-mutation DoScreenAnimationUpdate
 MUTATIONS["DoScreenAnimationUpdate"] = {"source_symbol": "DoScreenAnimationUpdate", "before": "	wScreenAnimDuration = 1u;", "after": "	wScreenAnimDuration = 2u;", "case_ids": ["DoScreenAnimationUpdate-0", "DoScreenAnimationUpdate-1"]}
 # <<< factory-mutation DoScreenAnimationUpdate
+# >>> factory-mutation LoadDefaultScreenAnimationUpdateWhenFinished
+MUTATIONS["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"source_symbol": "LoadDefaultScreenAnimationUpdateWhenFinished", "before": "\tif (wScreenAnimDuration != 0u)\n\t\treturn;", "after": "\tif (wScreenAnimDuration == 0u)\n\t\treturn;", "case_ids": ["LoadDefaultScreenAnimationUpdateWhenFinished-0", "LoadDefaultScreenAnimationUpdateWhenFinished-1"]}
+# <<< factory-mutation LoadDefaultScreenAnimationUpdateWhenFinished

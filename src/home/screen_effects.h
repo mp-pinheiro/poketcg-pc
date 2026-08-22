@@ -22,4 +22,7 @@ void DefaultScreenAnimationUpdate(void);
 /* >>> factory DoScreenAnimationUpdate */
 void DoScreenAnimationUpdate(void);
 /* <<< factory DoScreenAnimationUpdate */
+/* >>> factory LoadDefaultScreenAnimationUpdateWhenFinished */
+void LoadDefaultScreenAnimationUpdateWhenFinished(void);
+/* <<< factory LoadDefaultScreenAnimationUpdateWhenFinished */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

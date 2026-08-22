@@ -86,3 +86,12 @@ void DoScreenAnimationUpdate(void)
 	DefaultScreenAnimationUpdate();
 }
 /* <<< factory DoScreenAnimationUpdate */
+
+/* >>> factory LoadDefaultScreenAnimationUpdateWhenFinished */
+void LoadDefaultScreenAnimationUpdateWhenFinished(void)
+{
+	if (wScreenAnimDuration != 0u)
+		return;
+	DefaultScreenAnimationUpdate();
+}
+/* <<< factory LoadDefaultScreenAnimationUpdateWhenFinished */

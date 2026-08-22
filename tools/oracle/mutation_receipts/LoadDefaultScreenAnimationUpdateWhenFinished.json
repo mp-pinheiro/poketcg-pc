@@ -1,0 +1,9 @@
+{
+  "fn": "LoadDefaultScreenAnimationUpdateWhenFinished",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadDefaultScreenAnimationUpdateWhenFinished\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54314\": \"ff\", \"54457\": \"bc4c00\", \"65345\": \"80\", \"65347\": \"00\", \"65426\": \"0000\", \"65535\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadDefaultScreenAnimationUpdateWhenFinished\", \"mismatches\": {\"bus\": {\"address\": 54314, \"reference\": \"ffbc4c0080\", \"native\": \"0000000080\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[54314, 1], [54457, 3], [65345, 1], [65347, 1], [65426, 2], [65535, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadDefaultScreenAnimationUpdateWhenFinished\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54314\": \"ff\", \"54457\": \"bc4c00\", \"65345\": \"80\", \"65347\": \"00\", \"65426\": \"0000\", \"65535\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

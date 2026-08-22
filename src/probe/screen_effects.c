@@ -38,10 +38,19 @@ static void adapt_DoScreenAnimationUpdate(ProbeState *s)
 }
 /* <<< factory DoScreenAnimationUpdate */
 
+/* >>> factory LoadDefaultScreenAnimationUpdateWhenFinished */
+static void adapt_LoadDefaultScreenAnimationUpdateWhenFinished(ProbeState *s)
+{
+	LoadDefaultScreenAnimationUpdateWhenFinished();
+	(void)s;
+}
+/* <<< factory LoadDefaultScreenAnimationUpdateWhenFinished */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
 	{ "DefaultScreenAnimationUpdate", adapt_DefaultScreenAnimationUpdate },
 	{ "DoScreenAnimationUpdate", adapt_DoScreenAnimationUpdate },
+	{ "LoadDefaultScreenAnimationUpdateWhenFinished", adapt_LoadDefaultScreenAnimationUpdateWhenFinished },
 	{ NULL, NULL },
 };
