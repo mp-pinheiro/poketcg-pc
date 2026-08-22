@@ -18,6 +18,63 @@ from common import ROOT
 from verify import POISON, RESERVED
 
 
+def _marker_body(lines: list[str], open_mark: str, close_mark: str) -> str:
+    """Text between two exact marker lines; empty when either is absent."""
+    try:
+        start = lines.index(open_mark)
+        end = lines.index(close_mark, start + 1)
+    except ValueError:
+        return ""
+    return "\n".join(lines[start + 1:end]).rstrip()
+
+
+def _worked_case_example(basename: str) -> tuple[str, str] | None:
+    """Verbatim cases and mutation marker bodies of one landed routine.
+
+    Surgery brackets every factory-written routine with markers, so the text
+    lifted here compiled, passed the schema audit and matched the ROM comparator.
+    Copying it whole demonstrates the contract shape, the poisoned registers, the
+    byte-string seeds and a unique, observable mutation anchor all at once; a
+    line-scraped approximation of the same tables demonstrates none of them. The
+    smallest qualifying routine wins so prompts gain a correct example without
+    bloat.
+    """
+    directory = ROOT / "tests" / "cases"
+    ordered = [basename, *sorted(
+        path.stem for path in directory.glob("*.py")
+        if not path.stem.startswith("_"))]
+    seen: set[str] = set()
+    for name in ordered:
+        if name in seen:
+            continue
+        seen.add(name)
+        path = directory / (name + ".py")
+        if not path.is_file():
+            continue
+        lines = path.read_text().splitlines()
+        best: tuple[int, str, str, str] | None = None
+        for line in lines:
+            if not line.startswith("# >>> factory ") or "factory-mutation" in line:
+                continue
+            fn = line[len("# >>> factory "):].strip()
+            cases = _marker_body(lines, "# >>> factory " + fn, "# <<< factory " + fn)
+            mutation = _marker_body(
+                lines, "# >>> factory-mutation " + fn, "# <<< factory-mutation " + fn)
+            # Smallest is only useful if it is also instructive: the example has to
+            # carry real CASES entries, a poisoned case and a populated contract, or
+            # it teaches none of the rules it is here to demonstrate.
+            if not mutation or "CASES[" not in cases or "POISON" not in cases:
+                continue
+            if '"compare": ()' in cases or "'compare': ()" in cases:
+                continue
+            score = len(cases) + len(mutation)
+            if best is None or (score, fn) < (best[0], best[1]):
+                best = (score, fn, cases, mutation)
+        if best is not None:
+            return best[2], best[3]
+    return None
+
+
 def _fragment_example(basename: str) -> str:
     """Return a small, sanitized marker-body example from an existing quartet."""
     home = (ROOT / "src/home" / f"{basename}.c").read_text()
@@ -55,6 +112,9 @@ def _fragment_example(basename: str) -> str:
         line.strip() for line in cases.splitlines()
         if re.match(r"^MUTATIONS\s*\[", line.strip())
     ]
+    worked = _worked_case_example(basename)
+    if worked is not None:
+        case_lines, mutation_lines = [worked[0]], [worked[1]]
     return "\n".join((
         "FRAGMENT EXAMPLE (marker bodies only; never copy a complete file):",
         f"C body:\n{first_function(home)}",
@@ -124,6 +184,15 @@ def render(packet: dict, feedback: str | None = None,
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
         "below the number of cases you declared, and \"before\" must appear verbatim in "
         "your C fragment.",
+        "That \"before\" string must occur EXACTLY ONCE in your C fragment. A string "
+        "that appears twice cannot be located unambiguously and is rejected as "
+        "\"mutation anchor is not unique\"; extend it with surrounding tokens until it "
+        "is unique.",
+        "Choose a \"before\" line whose corruption at least one listed case would "
+        "actually detect. The mutation test corrupts the routine and REQUIRES the "
+        "cases to fail; a mutation on a line no case observes is rejected as "
+        "\"corrupted routine still passed\". Seed and expect whatever that line "
+        "influences.",
         "A case with oracle=False needs a non-empty why plus one of expect, expect_regs, "
         "expect_sram, expect_vram.",
         "Every routine needs at least one primary schema-2 case. Primary cases run "
