@@ -33,4 +33,14 @@ uint8_t OverworldMap_GetOWMapID(void);
 /* >>> factory OverworldMap_InitCursorSprite */
 void OverworldMap_InitCursorSprite(void);
 /* <<< factory OverworldMap_InitCursorSprite */
+/* >>> factory OverworldMap_GetMapPosition */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t d;
+	uint8_t e;
+} OverworldMapGetMapPositionResult;
+
+OverworldMapGetMapPositionResult OverworldMap_GetMapPosition(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory OverworldMap_GetMapPosition */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

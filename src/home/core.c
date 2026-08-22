@@ -472,6 +472,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define NoneText 0x007cu
 #define PrizesLeftActivePokemonCardsInDeckText 0x007bu
 #define YesText 0x007du
+
+#include "home/core.h"
+#include "home/empty_screen.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -2999,3 +3004,16 @@ uint8_t ConvertColorToEnergyCardID(uint8_t a)
 	return result;
 }
 /* <<< factory ConvertColorToEnergyCardID */
+
+/* >>> factory WriteOneByteNumberInTxSymbol_PadSpace */
+void WriteOneByteNumberInTxSymbol_PadSpace(
+	uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t number = (uint16_t)a;
+	(void)TwoByteNumberToTxSymbol_PadSpace_Bank1(b, c, d, e, number);
+	uint16_t dst = BCCoordToBGMap0Address(b, c);
+	uint16_t src = (uint16_t)(wStringBuffer_ADDR + 2u);
+	SafeCopyDataHLtoDE(&src, &dst, 3u);
+	(void)hl;
+}
+/* <<< factory WriteOneByteNumberInTxSymbol_PadSpace */

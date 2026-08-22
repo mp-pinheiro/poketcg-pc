@@ -1,0 +1,9 @@
+{
+  "fn": "UnloadNPC",
+  "case": "tests/cases/npc_core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UnloadNPC\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54089\": \"0200020000\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UnloadNPC\", \"mismatches\": {\"a\": [32, 0], \"bus\": {\"address\": 54090, \"reference\": \"020002000000\", \"native\": \"020100000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[54089, 5], [54186, 1]]}}}\n",
+  "restored": "{\"fn\": \"UnloadNPC\", \"registers\": {\"a\": 32, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54089\": \"0200020000\", \"54186\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

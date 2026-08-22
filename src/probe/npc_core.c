@@ -178,6 +178,13 @@ static void adapt_SetNewScriptNPC(ProbeState *s)
 }
 /* <<< factory SetNewScriptNPC */
 
+/* >>> factory UnloadNPC */
+static void adapt_UnloadNPC(ProbeState *s)
+{
+	s->a = UnloadNPC();
+}
+/* <<< factory UnloadNPC */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -201,5 +208,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "Func_1c557", adapt_Func_1c557 },
 	{ "LoadNPC", adapt_LoadNPC },
 	{ "SetNewScriptNPC", adapt_SetNewScriptNPC },
+	{ "UnloadNPC", adapt_UnloadNPC },
 	{ NULL, NULL },
 };

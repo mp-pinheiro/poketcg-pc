@@ -503,3 +503,22 @@ SetNewScriptNPCResult SetNewScriptNPC(uint16_t hl)
 	return (SetNewScriptNPCResult){result.a, result.f, result.b, result.c, saved_hl};
 }
 /* <<< factory SetNewScriptNPC */
+
+/* >>> factory UnloadNPC */
+uint8_t UnloadNPC(void)
+{
+	UpdateNPCsTilePermission();
+	PermissionResult npc = GetLoadedNPCID(wLoadedNPCTempIndex);
+	uint8_t id = gb_read8(npc.hl);
+	if (id == 0u)
+		return 0u;
+	uint8_t ronald = CheckIfNPCIsRonald(id);
+	if ((ronald & 0x10u) != 0u)
+		wRonaldIsInMap = 0u;
+	gb_write8(npc.hl, 0u);
+	uint8_t sprite = gb_read8((uint16_t)(npc.hl + 1u));
+	DisableSpriteAnim(sprite);
+	wNumLoadedNPCs = (uint8_t)(wNumLoadedNPCs - 1u);
+	return (uint8_t)(sprite << 4);
+}
+/* <<< factory UnloadNPC */

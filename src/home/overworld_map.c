@@ -205,3 +205,37 @@ void OverworldMap_InitCursorSprite(void)
 	}
 }
 /* <<< factory OverworldMap_InitCursorSprite */
+
+/* >>> factory OverworldMap_GetMapPosition */
+OverworldMapGetMapPositionResult OverworldMap_GetMapPosition(uint8_t a, uint8_t d, uint8_t e)
+{
+	static const uint8_t map_positions[] = {
+		0x00u, 0x00u,
+		0x0Cu, 0x68u,
+		0x04u, 0x18u,
+		0x34u, 0x68u,
+		0x14u, 0x38u,
+		0x6Cu, 0x64u,
+		0x24u, 0x50u,
+		0x7Cu, 0x40u,
+		0x5Cu, 0x2Cu,
+		0x7Cu, 0x20u,
+		0x6Cu, 0x10u,
+		0x3Cu, 0x20u,
+		0x44u, 0x44u,
+	};
+	uint8_t index = (uint8_t)(a << 1u);
+	uint8_t x = (uint8_t)((uint8_t)(map_positions[index] + 0x08u) + d);
+	uint8_t y_base = (uint8_t)(map_positions[(uint8_t)(index + 1u)] + 0x10u);
+	uint16_t y_sum = (uint16_t)y_base + e;
+	OverworldMapGetMapPositionResult result = {
+		.a = (uint8_t)y_sum,
+		.f = (uint8_t)(((uint8_t)y_sum == 0u ? 0x80u : 0u) |
+			((((uint8_t)(y_base & 0x0Fu) + (uint8_t)(e & 0x0Fu)) > 0x0Fu) ? 0x20u : 0u) |
+			((y_sum > 0xFFu) ? 0x10u : 0u)),
+		.d = x,
+		.e = (uint8_t)y_sum,
+	};
+	return result;
+}
+/* <<< factory OverworldMap_GetMapPosition */

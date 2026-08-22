@@ -123,6 +123,16 @@ CASES["OverworldMap_InitCursorSprite"] = [
 ]
 # <<< factory OverworldMap_InitCursorSprite
 
+# >>> factory OverworldMap_GetMapPosition
+CONTRACT["OverworldMap_GetMapPosition"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")}
+CASES["OverworldMap_GetMapPosition"] = [
+	{"a": 0x00, "d": 0x00, "e": 0x00},
+	{"a": 0x01, "d": 0x01, "e": 0x02},
+	{"a": 0x0B, "d": 0x10, "e": 0x20},
+	dict(POISON, a=0x02),
+]
+# <<< factory OverworldMap_GetMapPosition
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -151,3 +161,6 @@ MUTATIONS["OverworldMap_GetOWMapID"] = {"source_symbol": "OverworldMap_GetOWMapI
 # >>> factory-mutation OverworldMap_InitCursorSprite
 MUTATIONS["OverworldMap_InitCursorSprite"] = {"source_symbol": "OverworldMap_InitCursorSprite", "before": "\tuint16_t flags = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);", "after": "\tuint16_t flags = GetSpriteAnimBufferProperty((uint8_t)(SPRITE_ANIM_FLAGS + 1u));", "case_ids": ["OverworldMap_InitCursorSprite-0", "OverworldMap_InitCursorSprite-1", "OverworldMap_InitCursorSprite-2", "OverworldMap_InitCursorSprite-3"]}
 # <<< factory-mutation OverworldMap_InitCursorSprite
+# >>> factory-mutation OverworldMap_GetMapPosition
+MUTATIONS["OverworldMap_GetMapPosition"] = {"source_symbol": "OverworldMap_GetMapPosition", "before": "\t\t.d = x,", "after": "\t\t.d = (uint8_t)(x + 1u),", "case_ids": ["OverworldMap_GetMapPosition-0", "OverworldMap_GetMapPosition-1", "OverworldMap_GetMapPosition-2", "OverworldMap_GetMapPosition-3"]}
+# <<< factory-mutation OverworldMap_GetMapPosition

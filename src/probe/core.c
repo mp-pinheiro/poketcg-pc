@@ -1257,6 +1257,13 @@ static void adapt_ConvertColorToEnergyCardID(ProbeState *s)
 }
 /* <<< factory ConvertColorToEnergyCardID */
 
+/* >>> factory WriteOneByteNumberInTxSymbol_PadSpace */
+static void adapt_WriteOneByteNumberInTxSymbol_PadSpace(ProbeState *s)
+{
+	WriteOneByteNumberInTxSymbol_PadSpace(s->a, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory WriteOneByteNumberInTxSymbol_PadSpace */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1406,5 +1413,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPlayerNumberOfHandAndDeckCards", adapt_PrintPlayerNumberOfHandAndDeckCards },
 	{ "PrintDuelResultStats", adapt_PrintDuelResultStats },
 	{ "ConvertColorToEnergyCardID", adapt_ConvertColorToEnergyCardID },
+	{ "WriteOneByteNumberInTxSymbol_PadSpace", adapt_WriteOneByteNumberInTxSymbol_PadSpace },
 	{ NULL, NULL },
 };

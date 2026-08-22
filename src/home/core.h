@@ -594,4 +594,8 @@ void PrintDuelResultStats(void);
 /* >>> factory ConvertColorToEnergyCardID */
 uint8_t ConvertColorToEnergyCardID(uint8_t a);
 /* <<< factory ConvertColorToEnergyCardID */
+/* >>> factory WriteOneByteNumberInTxSymbol_PadSpace */
+void WriteOneByteNumberInTxSymbol_PadSpace(
+	uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory WriteOneByteNumberInTxSymbol_PadSpace */
 #endif

@@ -282,6 +282,17 @@ CASES["SetNewScriptNPC"] = [
 ]
 # <<< factory SetNewScriptNPC
 
+# >>> factory UnloadNPC
+CONTRACT["UnloadNPC"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["UnloadNPC"] = [
+	{},
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x01\x02\x00\x00", 0xD349: b"\x03"}, "expect": {0xD34A: b"\x00\x02", 0xD349: b"\x02"}},
+	{"wram": {0xD3AA: b"\x00", 0xD34A: b"\x71\x03\x00\x00", 0xD349: b"\x02", 0xD3B8: b"\x01"}, "expect": {0xD34A: b"\x00\x03", 0xD349: b"\x01", 0xD3B8: b"\x00"}},
+	dict(POISON, wram={0xD3AA: b"\x01", 0xD356: b"\x01\x04\x00\x00", 0xD349: b"\x05"}, expect={0xD356: b"\x00\x04", 0xD349: b"\x04"}),
+	dict(POISON, wram={0xD3AA: b"\x01", 0xD356: b"\x72\x07\x00\x00", 0xD349: b"\x01", 0xD3B8: b"\x01"}, expect={0xD356: b"\x00\x07", 0xD349: b"\x00", 0xD3B8: b"\x00"}),
+]
+# <<< factory UnloadNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -382,3 +393,6 @@ MUTATIONS["LoadNPC"] = {"source_symbol": "LoadNPC", "before": "remaining != 0u",
 # >>> factory-mutation SetNewScriptNPC
 MUTATIONS["SetNewScriptNPC"] = {"source_symbol": "SetNewScriptNPC", "before": "gb_write8(direction.hl, (uint8_t)(wPlayerDirection ^ 0x02u));", "after": "gb_write8(direction.hl, wPlayerDirection);", "case_ids": ["SetNewScriptNPC-0", "SetNewScriptNPC-1", "SetNewScriptNPC-2"]}
 # <<< factory-mutation SetNewScriptNPC
+# >>> factory-mutation UnloadNPC
+MUTATIONS["UnloadNPC"] = {"source_symbol": "UnloadNPC", "before": "gb_write8(npc.hl, 0u);", "after": "gb_write8((uint16_t)(npc.hl + 1u), 0u);", "case_ids": ["UnloadNPC-1", "UnloadNPC-2", "UnloadNPC-3", "UnloadNPC-4"]}
+# <<< factory-mutation UnloadNPC

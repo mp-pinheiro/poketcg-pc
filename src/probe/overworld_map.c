@@ -65,6 +65,17 @@ static void adapt_OverworldMap_InitCursorSprite(ProbeState *s)
 }
 /* <<< factory OverworldMap_InitCursorSprite */
 
+/* >>> factory OverworldMap_GetMapPosition */
+static void adapt_OverworldMap_GetMapPosition(ProbeState *s)
+{
+	OverworldMapGetMapPositionResult result = OverworldMap_GetMapPosition(s->a, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+}
+/* <<< factory OverworldMap_GetMapPosition */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -74,5 +85,6 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_InitPlayerEastWestMovement", adapt_OverworldMap_InitPlayerEastWestMovement },
 	{ "OverworldMap_GetOWMapID", adapt_OverworldMap_GetOWMapID },
 	{ "OverworldMap_InitCursorSprite", adapt_OverworldMap_InitCursorSprite },
+	{ "OverworldMap_GetMapPosition", adapt_OverworldMap_GetMapPosition },
 	{ NULL, NULL },
 };

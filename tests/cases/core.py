@@ -1687,6 +1687,24 @@ CASES["ConvertColorToEnergyCardID"] = [
 ]
 # <<< factory ConvertColorToEnergyCardID
 
+# >>> factory WriteOneByteNumberInTxSymbol_PadSpace
+CONTRACT["WriteOneByteNumberInTxSymbol_PadSpace"] = {"compare": (), "preserve": ()}
+CASES["WriteOneByteNumberInTxSymbol_PadSpace"] = [
+    {"a": 0x00, "b": 0x07, "c": 0x04, "d": 0x12, "e": 0x34, "hl": 0x5678,
+     "wram": {0xCAA0: b"\xff" * 6},
+     "vram": {0: {0x9887: b"\xee" * 4}},
+     "expect_vram": {0: {0x9887: b"\x00\x20\xff\xee"}}},
+    {"a": 0x63, "b": 0x1B, "c": 0x3E, "d": 0x56, "e": 0x78, "hl": 0x0000,
+     "wram": {0xCAA0: b"\xff" * 6},
+     "vram": {0: {0x9FDB: b"\xee" * 4}},
+     "expect_vram": {0: {0x9FDB: b"\x29\x29\xff\xee"}}},
+    dict(POISON,
+         wram={0xCAA0: b"\xff" * 6},
+         sram={0: {0xAF1B: b"\xee" * 4}},
+         expect_sram={0: {0xAF1B: b"\x27\x20\xff\xee"}}),
+]
+# <<< factory WriteOneByteNumberInTxSymbol_PadSpace
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2620,3 +2638,11 @@ MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "b
 # >>> factory-mutation ConvertColorToEnergyCardID
 MUTATIONS["ConvertColorToEnergyCardID"] = {"source_symbol": "ConvertColorToEnergyCardID", "before": "\treturn result;", "after": "\treturn (uint8_t)(result ^ 1u);", "case_ids": ["ConvertColorToEnergyCardID-0", "ConvertColorToEnergyCardID-1"]}
 # <<< factory-mutation ConvertColorToEnergyCardID
+# >>> factory-mutation WriteOneByteNumberInTxSymbol_PadSpace
+MUTATIONS["WriteOneByteNumberInTxSymbol_PadSpace"] = {
+    "source_symbol": "WriteOneByteNumberInTxSymbol_PadSpace",
+    "before": "SafeCopyDataHLtoDE(&src, &dst, 3u);",
+    "after": "SafeCopyDataHLtoDE(&src, &dst, 4u);",
+    "case_ids": ["WriteOneByteNumberInTxSymbol_PadSpace-0", "WriteOneByteNumberInTxSymbol_PadSpace-1", "WriteOneByteNumberInTxSymbol_PadSpace-2"],
+}
+# <<< factory-mutation WriteOneByteNumberInTxSymbol_PadSpace

@@ -89,4 +89,7 @@ typedef struct {
 } SetNewScriptNPCResult;
 SetNewScriptNPCResult SetNewScriptNPC(uint16_t hl);
 /* <<< factory SetNewScriptNPC */
+/* >>> factory UnloadNPC */
+uint8_t UnloadNPC(void);
+/* <<< factory UnloadNPC */
 #endif /* POKETCG_HOME_NPC_CORE_H */
