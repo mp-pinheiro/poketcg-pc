@@ -1,0 +1,9 @@
+{
+  "fn": "_GetNPCDuelConfigurations",
+  "case": "tests/cases/npc_data.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_GetNPCDuelConfigurations\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"52249\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_GetNPCDuelConfigurations\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"_GetNPCDuelConfigurations\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"52249\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

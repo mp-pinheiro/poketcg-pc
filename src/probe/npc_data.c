@@ -45,10 +45,25 @@ static void adapt_LoadNPCSpriteData(ProbeState *s)
 }
 /* <<< factory LoadNPCSpriteData */
 
+/* >>> factory _GetNPCDuelConfigurations */
+static void adapt__GetNPCDuelConfigurations(ProbeState *s)
+{
+	_GetNPCDuelDuelConfigurationsResult r = _GetNPCDuelConfigurations(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory _GetNPCDuelConfigurations */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
 	{ "GetNPCNameAndScript", adapt_GetNPCNameAndScript },
 	{ "LoadNPCSpriteData", adapt_LoadNPCSpriteData },
+	{ "_GetNPCDuelConfigurations", adapt__GetNPCDuelConfigurations },
 	{ NULL, NULL },
 };

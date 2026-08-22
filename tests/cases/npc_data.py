@@ -31,6 +31,11 @@ wNPCSpriteID = 0xD3B3
 wNPCAnim = 0xD3B1
 wNPCAnimFlags = 0xD3B2
 NPC_OUTPUT = {wTempNPC: 1, wNPCSpriteID: 1, wNPCAnim: 1, wNPCAnimFlags: 1}
+
+wNPCDuelDeckID = 0xCC19
+wNPCDuelPrizes = 0xCC18
+wOpponentName = 0xCC16
+wOpponentPortrait = 0xCC15
 # <<< factory-cases-statics
 
 # >>> factory SetNPCOpponentNameAndPortrait
@@ -64,6 +69,16 @@ CASES["LoadNPCSpriteData"] = [
 ]
 # <<< factory LoadNPCSpriteData
 
+# >>> factory _GetNPCDuelConfigurations
+CONTRACT["_GetNPCDuelConfigurations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["_GetNPCDuelConfigurations"] = [
+    {"wram": {wNPCDuelDeckID: b"\x00"}},
+    {"wram": {wNPCDuelDeckID: b"\x01"}},
+    {"wram": {wNPCDuelDeckID: b"\x03"}},
+    dict(POISON, wram={wNPCDuelDeckID: b"\x01"}),
+]
+# <<< factory _GetNPCDuelConfigurations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -80,3 +95,6 @@ MUTATIONS["GetNPCNameAndScript"] = {"source_symbol": "GetNPCNameAndScript", "bef
 # >>> factory-mutation LoadNPCSpriteData
 MUTATIONS["LoadNPCSpriteData"] = {"source_symbol": "LoadNPCSpriteData", "before": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, header.hl);", "after": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + 1u));", "case_ids": ["LoadNPCSpriteData-0", "LoadNPCSpriteData-1", "LoadNPCSpriteData-2", "LoadNPCSpriteData-3"]}
 # <<< factory-mutation LoadNPCSpriteData
+# >>> factory-mutation _GetNPCDuelConfigurations
+MUTATIONS["_GetNPCDuelConfigurations"] = {"source_symbol": "_GetNPCDuelConfigurations", "before": "\treturn (_GetNPCDuelDuelConfigurationsResult){a, f, b, c, d, e, hl};", "after": "\treturn (_GetNPCDuelDuelConfigurationsResult){0u, f, b, c, d, e, hl};", "case_ids": ["_GetNPCDuelConfigurations-1", "_GetNPCDuelConfigurations-2", "_GetNPCDuelConfigurations-3"]}
+# <<< factory-mutation _GetNPCDuelConfigurations

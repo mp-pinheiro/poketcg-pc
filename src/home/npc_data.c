@@ -19,6 +19,11 @@
 #include "mem.h"
 #define NPC_DATA_BANK 0x04u
 #define CONSOLE_CGB 0x02u
+
+#include "generated/wram.h"
+#include "mem.h"
+#define NPC_DUEL_CONFIGURATIONS_BANK 0x04u
+#define NPC_DUEL_CONFIGURATIONS_ADDR 0x5FAEu
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -101,3 +106,29 @@ LoadNPCSpriteDataResult LoadNPCSpriteData(uint8_t a, uint8_t b, uint8_t c, uint8
 	return (LoadNPCSpriteDataResult){out_a, f, b, c, d, e, hl};
 }
 /* <<< factory LoadNPCSpriteData */
+
+/* >>> factory _GetNPCDuelConfigurations */
+_GetNPCDuelDuelConfigurationsResult _GetNPCDuelConfigurations(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t deck_id = gb_read8(wNPCDuelDeckID_ADDR);
+	const uint8_t *entry = rom_ptr(NPC_DUEL_CONFIGURATIONS_BANK, NPC_DUEL_CONFIGURATIONS_ADDR);
+	for (;;) {
+		a = entry[0];
+		if (a == 0xFFu) {
+			f = 0xC0u;
+			break;
+		}
+		if (a == deck_id) {
+			gb_write8(wOpponentPortrait_ADDR, entry[1]);
+			gb_write8(wOpponentName_ADDR, entry[2]);
+			gb_write8((uint16_t)(wOpponentName_ADDR + 1u), entry[3]);
+			a = entry[4];
+			gb_write8(wNPCDuelPrizes_ADDR, a);
+			f = 0x90u;
+			break;
+		}
+		entry += 10u;
+	}
+	return (_GetNPCDuelDuelConfigurationsResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory _GetNPCDuelConfigurations */
