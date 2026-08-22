@@ -82,3 +82,10 @@ AdvanceIntroSequenceCmdPtrResult AdvanceIntroSequenceCmdPtr(uint8_t a)
 	return (AdvanceIntroSequenceCmdPtrResult){high, f};
 }
 /* <<< factory AdvanceIntroSequenceCmdPtr */
+
+/* >>> factory AdvanceIntroSequenceCmdPtrBy2 */
+void AdvanceIntroSequenceCmdPtrBy2(void)
+{
+	AdvanceIntroSequenceCmdPtr(2u);
+}
+/* <<< factory AdvanceIntroSequenceCmdPtrBy2 */

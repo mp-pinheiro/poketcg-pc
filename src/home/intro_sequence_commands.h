@@ -14,4 +14,7 @@ typedef struct {
 
 AdvanceIntroSequenceCmdPtrResult AdvanceIntroSequenceCmdPtr(uint8_t a);
 /* <<< factory AdvanceIntroSequenceCmdPtr */
+/* >>> factory AdvanceIntroSequenceCmdPtrBy2 */
+void AdvanceIntroSequenceCmdPtrBy2(void);
+/* <<< factory AdvanceIntroSequenceCmdPtrBy2 */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

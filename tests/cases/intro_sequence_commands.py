@@ -32,6 +32,16 @@ CASES["AdvanceIntroSequenceCmdPtr"] = [
 ]
 # <<< factory AdvanceIntroSequenceCmdPtr
 
+# >>> factory AdvanceIntroSequenceCmdPtrBy2
+CONTRACT["AdvanceIntroSequenceCmdPtrBy2"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceIntroSequenceCmdPtrBy2"] = [
+	{"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+	dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+	{"wram": {wSequenceCmdPtr: bytes([254, 0x00])}, "read": {wSequenceCmdPtr: 2}},
+	{"wram": {wSequenceCmdPtr: b"\xFF\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceIntroSequenceCmdPtrBy2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -47,3 +57,6 @@ MUTATIONS["AnimateRandomTitleScreenOrb"] = {
 # >>> factory-mutation AdvanceIntroSequenceCmdPtr
 MUTATIONS["AdvanceIntroSequenceCmdPtr"] = {"source_symbol": "AdvanceIntroSequenceCmdPtr", "before": "uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));", "after": "uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 2u));", "case_ids": ["AdvanceIntroSequenceCmdPtr-0", "AdvanceIntroSequenceCmdPtr-1", "AdvanceIntroSequenceCmdPtr-2"]}
 # <<< factory-mutation AdvanceIntroSequenceCmdPtr
+# >>> factory-mutation AdvanceIntroSequenceCmdPtrBy2
+MUTATIONS["AdvanceIntroSequenceCmdPtrBy2"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy2", "before": "\tAdvanceIntroSequenceCmdPtr(2u);", "after": "\tAdvanceIntroSequenceCmdPtr(3u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy2-0", "AdvanceIntroSequenceCmdPtrBy2-1", "AdvanceIntroSequenceCmdPtrBy2-2", "AdvanceIntroSequenceCmdPtrBy2-3"]}
+# <<< factory-mutation AdvanceIntroSequenceCmdPtrBy2
