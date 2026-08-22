@@ -522,3 +522,13 @@ uint8_t UnloadNPC(void)
 	return (uint8_t)(sprite << 4);
 }
 /* <<< factory UnloadNPC */
+
+/* >>> factory Func_1c52e */
+uint8_t Func_1c52e(uint8_t a)
+{
+	PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,
+		LOADED_NPC_DIRECTION_BACKUP);
+	gb_write8(r.hl, a);
+	return Func_1c5e9();
+}
+/* <<< factory Func_1c52e */

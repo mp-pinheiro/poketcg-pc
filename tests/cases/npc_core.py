@@ -187,6 +187,8 @@ wOverworldNPCFlags = 0xD0C1
 NPC_BASE = 0xD34A
 NPC_DATA = b"\x00" * 96
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wLoadedNPCTempIndex = 0xD3AA
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -293,6 +295,16 @@ CASES["UnloadNPC"] = [
 ]
 # <<< factory UnloadNPC
 
+# >>> factory Func_1c52e
+CONTRACT["Func_1c52e"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
+CASES["Func_1c52e"] = [
+    {"a": 0x00, "wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, "read": {0xD300: 0x200}, "expect": {0xD307: b"\x00"}},
+    {"a": 0x7F, "wram": {0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, "read": {0xD300: 0x200}, "expect": {0xD313: b"\x7F"}},
+    dict(POISON, a=0x33, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x00"}, read={0xD300: 0x200}, expect={0xD307: b"\x33"}),
+    dict(POISON, a=0xFF, wram={0xD300: bytes(range(256)) * 2, 0xD3AA: b"\x01"}, read={0xD300: 0x200}, expect={0xD313: b"\xFF"}),
+]
+# <<< factory Func_1c52e
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -396,3 +408,6 @@ MUTATIONS["SetNewScriptNPC"] = {"source_symbol": "SetNewScriptNPC", "before": "g
 # >>> factory-mutation UnloadNPC
 MUTATIONS["UnloadNPC"] = {"source_symbol": "UnloadNPC", "before": "gb_write8(npc.hl, 0u);", "after": "gb_write8((uint16_t)(npc.hl + 1u), 0u);", "case_ids": ["UnloadNPC-1", "UnloadNPC-2", "UnloadNPC-3", "UnloadNPC-4"]}
 # <<< factory-mutation UnloadNPC
+# >>> factory-mutation Func_1c52e
+MUTATIONS["Func_1c52e"] = {"source_symbol": "Func_1c52e", "before": "PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,\n\t\tLOADED_NPC_DIRECTION_BACKUP);\n\tgb_write8(r.hl, a);", "after": "PermissionResult r = GetItemInLoadedNPCIndex(wLoadedNPCTempIndex,\n\t\tLOADED_NPC_DIRECTION_BACKUP);\n\tgb_write8((uint16_t)(r.hl + 1u), a);", "case_ids": ["Func_1c52e-0", "Func_1c52e-1", "Func_1c52e-2", "Func_1c52e-3"]}
+# <<< factory-mutation Func_1c52e

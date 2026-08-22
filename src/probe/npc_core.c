@@ -185,6 +185,13 @@ static void adapt_UnloadNPC(ProbeState *s)
 }
 /* <<< factory UnloadNPC */
 
+/* >>> factory Func_1c52e */
+static void adapt_Func_1c52e(ProbeState *s)
+{
+	s->a = Func_1c52e(s->a);
+}
+/* <<< factory Func_1c52e */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -209,5 +216,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "LoadNPC", adapt_LoadNPC },
 	{ "SetNewScriptNPC", adapt_SetNewScriptNPC },
 	{ "UnloadNPC", adapt_UnloadNPC },
+	{ "Func_1c52e", adapt_Func_1c52e },
 	{ NULL, NULL },
 };

@@ -92,4 +92,7 @@ SetNewScriptNPCResult SetNewScriptNPC(uint16_t hl);
 /* >>> factory UnloadNPC */
 uint8_t UnloadNPC(void);
 /* <<< factory UnloadNPC */
+/* >>> factory Func_1c52e */
+uint8_t Func_1c52e(uint8_t a);
+/* <<< factory Func_1c52e */
 #endif /* POKETCG_HOME_NPC_CORE_H */
