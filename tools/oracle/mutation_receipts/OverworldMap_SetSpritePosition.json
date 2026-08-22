@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_SetSpritePosition",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_SetSpritePosition\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 2, \"e\": 3, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54479\": \"009999167b999999999999999999999999\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_SetSpritePosition\", \"mismatches\": {\"bus\": {\"address\": 54483, \"reference\": \"009999167b99999999\", \"native\": \"009999167c99999999\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[54479, 17]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_SetSpritePosition\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 2, \"e\": 3, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54479\": \"009999167b999999999999999999999999\"}}, \"status\": \"PASS\"}\n"
+}

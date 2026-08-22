@@ -149,6 +149,8 @@ wCardListCursorPos = 0xCEA4
 wCardListCursorXPos = 0xCEA5
 wCardListCursorYPos = 0xCEA6
 wCardListXSpacing = 0xCEA8
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -230,6 +232,14 @@ CASES["DrawHorizontalListCursor"] = [
          vread={0: {0x98FA: 1}}),
 ]
 # <<< factory DrawHorizontalListCursor
+
+# >>> factory GetCountOfCardInCurDeck
+CONTRACT["GetCountOfCardInCurDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "e", "hl")}
+CASES["GetCountOfCardInCurDeck"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory GetCountOfCardInCurDeck
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -327,3 +337,6 @@ MUTATIONS["DrawHorizontalListCursor"] = {
     "case_ids": ["DrawHorizontalListCursor-0", "DrawHorizontalListCursor-1"],
 }
 # <<< factory-mutation DrawHorizontalListCursor
+# >>> factory-mutation GetCountOfCardInCurDeck
+MUTATIONS["GetCountOfCardInCurDeck"] = {"source_symbol": "GetCountOfCardInCurDeck", "before": "\tuint8_t count = 0u;", "after": "\tuint8_t count = 1u;", "case_ids": ["GetCountOfCardInCurDeck-0", "GetCountOfCardInCurDeck-1"]}
+# <<< factory-mutation GetCountOfCardInCurDeck

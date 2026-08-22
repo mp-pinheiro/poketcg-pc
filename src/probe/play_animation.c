@@ -45,11 +45,21 @@ static void adapt_UpdateQueuedAnimations(ProbeState *s)
 }
 /* <<< factory UpdateQueuedAnimations */
 
+/* >>> factory Func_3bb5 */
+static void adapt_Func_3bb5(ProbeState *s)
+{
+	Func_3bb5();
+	s->a = 0x80u;
+	s->f = 0x80u;
+}
+/* <<< factory Func_3bb5 */
+
 const ProbeEntry probe_entries_play_animation[] = {
 	{ "CheckAnyAnimationPlaying", adapt_CheckAnyAnimationPlaying },
 	{ "SetDoFrameFunction", adapt_SetDoFrameFunction },
 	{ "ResetDoFrameFunction", adapt_ResetDoFrameFunction },
 	{ "PlayDuelAnimation", adapt_PlayDuelAnimation },
 	{ "UpdateQueuedAnimations", adapt_UpdateQueuedAnimations },
+	{ "Func_3bb5", adapt_Func_3bb5 },
 	{ NULL, NULL },
 };

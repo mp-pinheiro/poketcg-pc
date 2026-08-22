@@ -406,3 +406,17 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a)
 	return (DrawHorizontalListCursorResult){x, y};
 }
 /* <<< factory DrawHorizontalListCursor */
+
+/* >>> factory GetCountOfCardInCurDeck */
+GetCountOfCardInCurDeckResult GetCountOfCardInCurDeck(uint8_t e)
+{
+	uint8_t count = 0u;
+	const uint8_t *cards = &wCurDeckCards;
+	while (*cards != 0u) {
+		if (*cards == e)
+			++count;
+		++cards;
+	}
+	return (GetCountOfCardInCurDeckResult){count, 0x80u, count};
+}
+/* <<< factory GetCountOfCardInCurDeck */

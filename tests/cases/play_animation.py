@@ -90,6 +90,27 @@ CASES["UpdateQueuedAnimations"] = [
 ]
 # <<< factory UpdateQueuedAnimations
 
+# >>> factory-cases-statics
+WD4C0 = 0xD4C0
+hBankROM = 0xFF80
+wDuelAnimReturnBank = 0xD4BE
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory Func_3bb5
+CONTRACT["Func_3bb5"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_3bb5"] = [
+    {"wram": {wDuelAnimReturnBank: b"\x02", WD4C0: b"\x00"},
+     "hram": {hBankROM: b"\x01"},
+     "read": {WD4C0: 1, hBankROM: 1}},
+    dict(POISON,
+         wram={wDuelAnimReturnBank: b"\x03", WD4C0: b"\x55"},
+         hram={hBankROM: b"\x07"},
+         read={WD4C0: 1, hBankROM: 1}),
+]
+# <<< factory Func_3bb5
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -117,3 +138,11 @@ MUTATIONS["UpdateQueuedAnimations"] = {
     "case_ids": ["UpdateQueuedAnimations-1", "UpdateQueuedAnimations-2"],
 }
 # <<< factory-mutation UpdateQueuedAnimations
+# >>> factory-mutation Func_3bb5
+MUTATIONS["Func_3bb5"] = {
+    "source_symbol": "Func_3bb5",
+    "before": "gb_write8(wd4c0_ADDR, 0x80u);",
+    "after": "gb_write8(wd4c0_ADDR, 0x00u);",
+    "case_ids": ["Func_3bb5-0", "Func_3bb5-1"],
+}
+# <<< factory-mutation Func_3bb5

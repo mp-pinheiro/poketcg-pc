@@ -1,0 +1,9 @@
+{
+  "fn": "Func_3bb5",
+  "case": "tests/cases/play_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_3bb5\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54462\": \"02\", \"54464\": \"80\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_3bb5\", \"mismatches\": {\"bus\": {\"address\": 54464, \"reference\": \"028001\", \"native\": \"020001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54462, 1], [54464, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_3bb5\", \"registers\": {\"a\": 128, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54462\": \"02\", \"54464\": \"80\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

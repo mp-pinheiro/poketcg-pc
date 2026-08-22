@@ -469,6 +469,16 @@ CASES["UpdatePlayerSprite"] = [
 ]
 # <<< factory UpdatePlayerSprite
 
+# >>> factory UpdatePlayerDirection
+CONTRACT["UpdatePlayerDirection"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["UpdatePlayerDirection"] = [
+    {"a": 0x01, "wram": {0xD334: b"\x00", 0xD336: b"\x07", 0xD337: b"\x10", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0x03, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0xFF, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}}
+]
+# <<< factory UpdatePlayerDirection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -640,3 +650,6 @@ MUTATIONS["Func_c58b"] = {"source_symbol": "Func_c58b", "before": "\tgb_write8(h
 # >>> factory-mutation UpdatePlayerSprite
 MUTATIONS["UpdatePlayerSprite"] = {"source_symbol": "UpdatePlayerSprite", "before": "void UpdatePlayerSprite(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void UpdatePlayerSprite(void)\n{\n\twWhichSprite = wPlayerDirection;", "case_ids": ["UpdatePlayerSprite-0", "UpdatePlayerSprite-1", "UpdatePlayerSprite-2"]}
 # <<< factory-mutation UpdatePlayerSprite
+# >>> factory-mutation UpdatePlayerDirection
+MUTATIONS["UpdatePlayerDirection"] = {"source_symbol": "UpdatePlayerDirection", "before": "\twPlayerDirection = a;", "after": "\twPlayerDirection = 0;", "case_ids": ["UpdatePlayerDirection-0", "UpdatePlayerDirection-1", "UpdatePlayerDirection-2", "UpdatePlayerDirection-3"]}
+# <<< factory-mutation UpdatePlayerDirection

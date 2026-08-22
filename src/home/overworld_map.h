@@ -43,4 +43,7 @@ typedef struct {
 
 OverworldMapGetMapPositionResult OverworldMap_GetMapPosition(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory OverworldMap_GetMapPosition */
+/* >>> factory OverworldMap_SetSpritePosition */
+void OverworldMap_SetSpritePosition(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory OverworldMap_SetSpritePosition */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

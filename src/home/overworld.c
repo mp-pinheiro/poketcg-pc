@@ -561,3 +561,11 @@ void UpdatePlayerSprite(void)
 	StartNewSpriteAnimation(animation);
 }
 /* <<< factory UpdatePlayerSprite */
+
+/* >>> factory UpdatePlayerDirection */
+void UpdatePlayerDirection(uint8_t a)
+{
+	wPlayerDirection = a;
+	UpdatePlayerSprite();
+}
+/* <<< factory UpdatePlayerDirection */

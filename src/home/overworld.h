@@ -135,4 +135,7 @@ void Func_c58b(void);
 /* >>> factory UpdatePlayerSprite */
 void UpdatePlayerSprite(void);
 /* <<< factory UpdatePlayerSprite */
+/* >>> factory UpdatePlayerDirection */
+void UpdatePlayerDirection(uint8_t a);
+/* <<< factory UpdatePlayerDirection */
 #endif /* POKETCG_HOME_OVERWORLD_H */

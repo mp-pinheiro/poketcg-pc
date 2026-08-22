@@ -66,6 +66,10 @@ static const uint8_t overworld_map_warps[13][4] = {
 #define SPRITE_ANIM_FLAGS 0x0fu
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
 #define SPRITE_ANIM_SGB_OWMAP_CURSOR 0x35u
+
+#include "home/load_animation.h"
+#include "home/overworld_map.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -239,3 +243,13 @@ OverworldMapGetMapPositionResult OverworldMap_GetMapPosition(uint8_t a, uint8_t 
 	return result;
 }
 /* <<< factory OverworldMap_GetMapPosition */
+
+/* >>> factory OverworldMap_SetSpritePosition */
+void OverworldMap_SetSpritePosition(uint8_t a, uint8_t d, uint8_t e)
+{
+	OverworldMapGetMapPositionResult position = OverworldMap_GetMapPosition(a, d, e);
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	gb_write8(hl, position.d);
+	gb_write8((uint16_t)(hl + 1u), position.e);
+}
+/* <<< factory OverworldMap_SetSpritePosition */

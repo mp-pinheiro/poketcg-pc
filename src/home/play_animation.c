@@ -12,6 +12,12 @@
 
 #include "home/load_animation.h"
 #define BANK_UPDATE_QUEUED_ANIMATIONS 7u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/switch_rom.h"
+#include "home/load_animation.h"
 /* <<< factory statics */
 
 #define ANIMATION_QUEUE_LENGTH 7u
@@ -80,3 +86,15 @@ UpdateQueuedAnimationsResult UpdateQueuedAnimations(uint16_t hl)
 	return (UpdateQueuedAnimationsResult){saved, result.hl};
 }
 /* <<< factory UpdateQueuedAnimations */
+
+/* >>> factory Func_3bb5 */
+void Func_3bb5(void)
+{
+	gb_write8(wd4c0_ADDR, 0x00u);
+	uint8_t saved_bank = gb_read8(hBankROM_ADDR);
+	BankswitchROM(gb_read8(wDuelAnimReturnBank_ADDR));
+	HandleAllSpriteAnimations();
+	BankswitchROM(saved_bank);
+	gb_write8(wd4c0_ADDR, 0x80u);
+}
+/* <<< factory Func_3bb5 */
