@@ -591,4 +591,7 @@ void PrintPlayerNumberOfHandAndDeckCards(void);
 /* >>> factory PrintDuelResultStats */
 void PrintDuelResultStats(void);
 /* <<< factory PrintDuelResultStats */
+/* >>> factory ConvertColorToEnergyCardID */
+uint8_t ConvertColorToEnergyCardID(uint8_t a);
+/* <<< factory ConvertColorToEnergyCardID */
 #endif

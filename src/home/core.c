@@ -2981,3 +2981,21 @@ void PrintDuelResultStats(void)
 	}
 }
 /* <<< factory PrintDuelResultStats */
+
+/* >>> factory ConvertColorToEnergyCardID */
+uint8_t ConvertColorToEnergyCardID(uint8_t a)
+{
+	static const uint8_t card_id[] = {
+		FIRE_ENERGY,
+		GRASS_ENERGY,
+		LIGHTNING_ENERGY,
+		WATER_ENERGY,
+		FIGHTING_ENERGY,
+		PSYCHIC_ENERGY,
+		DOUBLE_COLORLESS_ENERGY,
+	};
+	uint8_t result = card_id[a];
+	(void)Func_14323();
+	return result;
+}
+/* <<< factory ConvertColorToEnergyCardID */

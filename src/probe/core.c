@@ -1250,6 +1250,13 @@ static void adapt_PrintDuelResultStats(ProbeState *s)
 }
 /* <<< factory PrintDuelResultStats */
 
+/* >>> factory ConvertColorToEnergyCardID */
+static void adapt_ConvertColorToEnergyCardID(ProbeState *s)
+{
+	s->a = ConvertColorToEnergyCardID(s->a);
+}
+/* <<< factory ConvertColorToEnergyCardID */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1398,5 +1405,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintOpponentNumberOfHandAndDeckCards", adapt_PrintOpponentNumberOfHandAndDeckCards },
 	{ "PrintPlayerNumberOfHandAndDeckCards", adapt_PrintPlayerNumberOfHandAndDeckCards },
 	{ "PrintDuelResultStats", adapt_PrintDuelResultStats },
+	{ "ConvertColorToEnergyCardID", adapt_ConvertColorToEnergyCardID },
 	{ NULL, NULL },
 };

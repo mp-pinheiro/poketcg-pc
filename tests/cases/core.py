@@ -1679,6 +1679,14 @@ CASES["PrintDuelResultStats"] = [
 ]
 # <<< factory PrintDuelResultStats
 
+# >>> factory ConvertColorToEnergyCardID
+CONTRACT["ConvertColorToEnergyCardID"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ConvertColorToEnergyCardID"] = [
+    {},
+    dict(POISON, a=0),
+]
+# <<< factory ConvertColorToEnergyCardID
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2609,3 +2617,6 @@ MUTATIONS["PrintPlayerNumberOfHandAndDeckCards"] = {"source_symbol": "PrintPlaye
 # >>> factory-mutation PrintDuelResultStats
 MUTATIONS["PrintDuelResultStats"] = {"source_symbol": "PrintDuelResultStats", "before": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl));", "after": "\t\tuint8_t cards = (uint8_t)(DECK_SIZE - gb_read8(cards_var.hl) + 1u);", "case_ids": ["PrintDuelResultStats-0", "PrintDuelResultStats-1", "PrintDuelResultStats-2"]}
 # <<< factory-mutation PrintDuelResultStats
+# >>> factory-mutation ConvertColorToEnergyCardID
+MUTATIONS["ConvertColorToEnergyCardID"] = {"source_symbol": "ConvertColorToEnergyCardID", "before": "\treturn result;", "after": "\treturn (uint8_t)(result ^ 1u);", "case_ids": ["ConvertColorToEnergyCardID-0", "ConvertColorToEnergyCardID-1"]}
+# <<< factory-mutation ConvertColorToEnergyCardID
