@@ -42,6 +42,16 @@ CASES["AdvanceIntroSequenceCmdPtrBy2"] = [
 ]
 # <<< factory AdvanceIntroSequenceCmdPtrBy2
 
+# >>> factory AdvanceIntroSequenceCmdPtrBy4
+CONTRACT["AdvanceIntroSequenceCmdPtrBy4"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceIntroSequenceCmdPtrBy4"] = [
+	{"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+	dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+	{"wram": {wSequenceCmdPtr: bytes([254, 0x00])}, "read": {wSequenceCmdPtr: 2}},
+	{"wram": {wSequenceCmdPtr: b"\xFF\xFF"}, "read": {wSequenceCmdPtr: 2}},
+]
+# <<< factory AdvanceIntroSequenceCmdPtrBy4
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +70,6 @@ MUTATIONS["AdvanceIntroSequenceCmdPtr"] = {"source_symbol": "AdvanceIntroSequenc
 # >>> factory-mutation AdvanceIntroSequenceCmdPtrBy2
 MUTATIONS["AdvanceIntroSequenceCmdPtrBy2"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy2", "before": "\tAdvanceIntroSequenceCmdPtr(2u);", "after": "\tAdvanceIntroSequenceCmdPtr(3u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy2-0", "AdvanceIntroSequenceCmdPtrBy2-1", "AdvanceIntroSequenceCmdPtrBy2-2", "AdvanceIntroSequenceCmdPtrBy2-3"]}
 # <<< factory-mutation AdvanceIntroSequenceCmdPtrBy2
+# >>> factory-mutation AdvanceIntroSequenceCmdPtrBy4
+MUTATIONS["AdvanceIntroSequenceCmdPtrBy4"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy4", "before": "\tAdvanceIntroSequenceCmdPtr(4u);", "after": "\tAdvanceIntroSequenceCmdPtr(5u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy4-0", "AdvanceIntroSequenceCmdPtrBy4-1", "AdvanceIntroSequenceCmdPtrBy4-2", "AdvanceIntroSequenceCmdPtrBy4-3"]}
+# <<< factory-mutation AdvanceIntroSequenceCmdPtrBy4

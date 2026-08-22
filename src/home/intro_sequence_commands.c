@@ -89,3 +89,10 @@ void AdvanceIntroSequenceCmdPtrBy2(void)
 	AdvanceIntroSequenceCmdPtr(2u);
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy2 */
+
+/* >>> factory AdvanceIntroSequenceCmdPtrBy4 */
+void AdvanceIntroSequenceCmdPtrBy4(void)
+{
+	AdvanceIntroSequenceCmdPtr(4u);
+}
+/* <<< factory AdvanceIntroSequenceCmdPtrBy4 */

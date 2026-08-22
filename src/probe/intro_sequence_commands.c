@@ -26,9 +26,17 @@ static void adapt_AdvanceIntroSequenceCmdPtrBy2(ProbeState *s)
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy2 */
 
+/* >>> factory AdvanceIntroSequenceCmdPtrBy4 */
+static void adapt_AdvanceIntroSequenceCmdPtrBy4(ProbeState *s)
+{
+	AdvanceIntroSequenceCmdPtrBy4();
+}
+/* <<< factory AdvanceIntroSequenceCmdPtrBy4 */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
 	{ "AdvanceIntroSequenceCmdPtrBy2", adapt_AdvanceIntroSequenceCmdPtrBy2 },
+	{ "AdvanceIntroSequenceCmdPtrBy4", adapt_AdvanceIntroSequenceCmdPtrBy4 },
 	{ NULL, NULL },
 };
