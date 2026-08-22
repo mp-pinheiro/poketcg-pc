@@ -682,6 +682,16 @@ static void adapt_ExecuteNPCMovement(ProbeState *s)
 }
 /* <<< factory ExecuteNPCMovement */
 
+/* >>> factory Func_cdd1 */
+static void adapt_Func_cdd1(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = Func_cdd1();
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory Func_cdd1 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -748,5 +758,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfActiveNPCCoordsMatch", adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch },
 	{ "SetNextNPCAndScript", adapt_SetNextNPCAndScript },
 	{ "ExecuteNPCMovement", adapt_ExecuteNPCMovement },
+	{ "Func_cdd1", adapt_Func_cdd1 },
 	{ NULL, NULL },
 };

@@ -66,6 +66,16 @@ wOverworldNPCFlags = 0xD0C1
 wNextScript = 0xD0C6
 wOverworldMode = 0xD0BF
 NPC_TABLE = b"\x00" * 96
+
+POISON = {
+    "a": 0xAA,
+    "f": 0xF0,
+    "b": 0xBB,
+    "c": 0xCC,
+    "d": 0xDD,
+    "e": 0xEE,
+    "hl": 0x1234,
+}
 # <<< factory-cases-statics
 
 
@@ -793,6 +803,14 @@ CASES["ExecuteNPCMovement"] = [
 ]
 # <<< factory ExecuteNPCMovement
 
+# >>> factory Func_cdd1
+CONTRACT["Func_cdd1"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["Func_cdd1"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory Func_cdd1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1232,3 +1250,6 @@ MUTATIONS["SetNextNPCAndScript"] = {"source_symbol": "SetNextNPCAndScript", "bef
 # >>> factory-mutation ExecuteNPCMovement
 MUTATIONS["ExecuteNPCMovement"] = {"source_symbol": "ExecuteNPCMovement", "before": "\treturn (ExecuteNPCMovementResult){pointer.a, pointer.f, (uint8_t)(movement_script >> 8), pointer.c};", "after": "\treturn (ExecuteNPCMovementResult){pointer.a, pointer.f, 0u, pointer.c};", "case_ids": ["ExecuteNPCMovement-0", "ExecuteNPCMovement-1"]}
 # <<< factory-mutation ExecuteNPCMovement
+# >>> factory-mutation Func_cdd1
+MUTATIONS["Func_cdd1"] = {"source_symbol": "Func_cdd1", "before": "\tIncreaseScriptPointerResult result = IncreaseScriptPointerBy1();", "after": "\tIncreaseScriptPointerResult result = (IncreaseScriptPointerResult){0, 0, 0};", "case_ids": ["Func_cdd1-0", "Func_cdd1-1"]}
+# <<< factory-mutation Func_cdd1

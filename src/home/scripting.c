@@ -111,6 +111,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "home/npc_core.h"
 #include "home/lcd_enable_frame.h"
+
+#include "home/scripting.h"
+#include "home/npc_core.h"
 /* <<< factory statics */
 
 
@@ -1023,3 +1026,12 @@ ExecuteNPCMovementResult ExecuteNPCMovement(uint16_t bc)
 	return (ExecuteNPCMovementResult){pointer.a, pointer.f, (uint8_t)(movement_script >> 8), pointer.c};
 }
 /* <<< factory ExecuteNPCMovement */
+
+/* >>> factory Func_cdd1 */
+IncreaseScriptPointerResult Func_cdd1(void)
+{
+	(void)UnloadNPC();
+	IncreaseScriptPointerResult result = IncreaseScriptPointerBy1();
+	return result;
+}
+/* <<< factory Func_cdd1 */

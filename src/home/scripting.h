@@ -375,4 +375,7 @@ typedef struct {
 
 ExecuteNPCMovementResult ExecuteNPCMovement(uint16_t bc);
 /* <<< factory ExecuteNPCMovement */
+/* >>> factory Func_cdd1 */
+IncreaseScriptPointerResult Func_cdd1(void);
+/* <<< factory Func_cdd1 */
 #endif
