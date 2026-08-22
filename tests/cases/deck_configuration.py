@@ -144,6 +144,11 @@ wCardListCursorPos = 0xCEA4
 wVisibleListCardIDs = 0xCEC4
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCardListCursorPos = 0xCEA4
+wCardListCursorXPos = 0xCEA5
+wCardListCursorYPos = 0xCEA6
+wCardListXSpacing = 0xCEA8
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -211,6 +216,20 @@ CASES["PrintTotalNumberOfCardsInCollection"] = [
     dict(POISON, sram={0: {0xA100: b"\x00\x7f" + b"\x00" * 253}}, read={0xC000: 12, 0xCEB6: 5}),
 ]
 # <<< factory PrintTotalNumberOfCardsInCollection
+
+# >>> factory DrawHorizontalListCursor
+CONTRACT["DrawHorizontalListCursor"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["DrawHorizontalListCursor"] = [
+    {"a": 0x66,
+     "wram": {wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
+              wCardListCursorYPos: b"\x05", wCardListXSpacing: b"\x02"},
+     "vread": {0: {0x98AA: 1}}},
+    dict(POISON,
+         wram={wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
+               wCardListCursorYPos: b"\x07", wCardListXSpacing: b"\x03"},
+         vread={0: {0x98FA: 1}}),
+]
+# <<< factory DrawHorizontalListCursor
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -300,3 +319,11 @@ MUTATIONS["OpenDeckConfigurationMenu"] = {"source_symbol": "OpenDeckConfiguratio
 # >>> factory-mutation PrintTotalNumberOfCardsInCollection
 MUTATIONS["PrintTotalNumberOfCardsInCollection"] = {"source_symbol": "PrintTotalNumberOfCardsInCollection", "before": "uint8_t digit = 0u;", "after": "uint8_t digit = 1u;", "case_ids": ["PrintTotalNumberOfCardsInCollection-1", "PrintTotalNumberOfCardsInCollection-3"]}
 # <<< factory-mutation PrintTotalNumberOfCardsInCollection
+# >>> factory-mutation DrawHorizontalListCursor
+MUTATIONS["DrawHorizontalListCursor"] = {
+    "source_symbol": "DrawHorizontalListCursor",
+    "before": "WriteByteToBGMap0(a, x, y);",
+    "after": "WriteByteToBGMap0(a, y, x);",
+    "case_ids": ["DrawHorizontalListCursor-0", "DrawHorizontalListCursor-1"],
+}
+# <<< factory-mutation DrawHorizontalListCursor

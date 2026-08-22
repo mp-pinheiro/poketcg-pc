@@ -477,6 +477,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/empty_screen.h"
 #include "home/bg_map.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/print_text.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3017,3 +3021,17 @@ void WriteOneByteNumberInTxSymbol_PadSpace(
 	(void)hl;
 }
 /* <<< factory WriteOneByteNumberInTxSymbol_PadSpace */
+
+/* >>> factory PrintPracticeDuelNumberedInstruction */
+PrintPracticeDuelNumberedInstructionResult PrintPracticeDuelNumberedInstruction(uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t c = gb_read8((uint16_t)(hl + 2u));
+	uint8_t b = gb_read8((uint16_t)(hl + 3u));
+	uint16_t text_id = (uint16_t)(c | ((uint16_t)b << 8));
+	hl = (uint16_t)(hl + 4u);
+	(void)SetNoLineSeparation();
+	(void)InitTextPrinting_ProcessTextFromID(d, e, text_id);
+	(void)SetOneLineSeparation();
+	return (PrintPracticeDuelNumberedInstructionResult){hl};
+}
+/* <<< factory PrintPracticeDuelNumberedInstruction */

@@ -61,6 +61,10 @@
 #define TX_END 0x00u
 #define TX_SYMBOL 0x05u
 #define SYM_SPACE 0x00u
+
+#include "generated/wram.h"
+#include "home/random.h"
+#include "home/bg_map.h"
 /* <<< factory statics */
 
 
@@ -391,3 +395,14 @@ void PrintTotalNumberOfCardsInCollection(void)
 	ProcessText(&text);
 }
 /* <<< factory PrintTotalNumberOfCardsInCollection */
+
+/* >>> factory DrawHorizontalListCursor */
+DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a)
+{
+	uint16_t product = HtimesL((uint16_t)(((uint16_t)wCardListCursorPos << 8) | wCardListXSpacing));
+	uint8_t x = (uint8_t)((uint8_t)product + wCardListCursorXPos);
+	uint8_t y = wCardListCursorYPos;
+	WriteByteToBGMap0(a, x, y);
+	return (DrawHorizontalListCursorResult){x, y};
+}
+/* <<< factory DrawHorizontalListCursor */

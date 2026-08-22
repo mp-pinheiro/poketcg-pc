@@ -57,4 +57,12 @@ void OpenDeckConfigurationMenu(void);
 /* >>> factory PrintTotalNumberOfCardsInCollection */
 void PrintTotalNumberOfCardsInCollection(void);
 /* <<< factory PrintTotalNumberOfCardsInCollection */
+/* >>> factory DrawHorizontalListCursor */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+} DrawHorizontalListCursorResult;
+
+DrawHorizontalListCursorResult DrawHorizontalListCursor(uint8_t a);
+/* <<< factory DrawHorizontalListCursor */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

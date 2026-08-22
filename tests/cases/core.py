@@ -1415,6 +1415,8 @@ SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 TEXT_READ = {0xCD05: 2, 0xCD0A: 1, 0xCAA0: 5}
 VRAM_FIRST = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
 VRAM_SECOND = VRAM_FIRST
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1704,6 +1706,27 @@ CASES["WriteOneByteNumberInTxSymbol_PadSpace"] = [
          expect_sram={0: {0xAF1B: b"\x27\x20\xff\xee"}}),
 ]
 # <<< factory WriteOneByteNumberInTxSymbol_PadSpace
+
+# >>> factory PrintPracticeDuelNumberedInstruction
+CONTRACT["PrintPracticeDuelNumberedInstruction"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintPracticeDuelNumberedInstruction"] = [
+    {"d": 0x20, "e": 0x40, "hl": 0xC500,
+     "wram": {0xC502: b"\xA9\x01", 0xC504: b"\x00\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    {"d": 0x01, "e": 0x08, "hl": 0xC500,
+     "wram": {0xC502: b"\xAA\x01", 0xC504: b"\xFF\xFF"},
+     "setup": [{"fn": "SetupText", "d": 0x01, "e": 0x08}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, hl=0xC500,
+         wram={0xC502: b"\xAA\x01", 0xC504: b"\x00\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD08: 1, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory PrintPracticeDuelNumberedInstruction
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2646,3 +2669,11 @@ MUTATIONS["WriteOneByteNumberInTxSymbol_PadSpace"] = {
     "case_ids": ["WriteOneByteNumberInTxSymbol_PadSpace-0", "WriteOneByteNumberInTxSymbol_PadSpace-1", "WriteOneByteNumberInTxSymbol_PadSpace-2"],
 }
 # <<< factory-mutation WriteOneByteNumberInTxSymbol_PadSpace
+# >>> factory-mutation PrintPracticeDuelNumberedInstruction
+MUTATIONS["PrintPracticeDuelNumberedInstruction"] = {
+    "source_symbol": "PrintPracticeDuelNumberedInstruction",
+    "before": "uint8_t c = gb_read8((uint16_t)(hl + 2u));",
+    "after": "uint8_t c = gb_read8((uint16_t)(hl + 3u));",
+    "case_ids": ["PrintPracticeDuelNumberedInstruction-0", "PrintPracticeDuelNumberedInstruction-1", "PrintPracticeDuelNumberedInstruction-2"],
+}
+# <<< factory-mutation PrintPracticeDuelNumberedInstruction

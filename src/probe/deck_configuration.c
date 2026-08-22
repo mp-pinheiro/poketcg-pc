@@ -159,6 +159,15 @@ static void adapt_PrintTotalNumberOfCardsInCollection(ProbeState *s)
 }
 /* <<< factory PrintTotalNumberOfCardsInCollection */
 
+/* >>> factory DrawHorizontalListCursor */
+static void adapt_DrawHorizontalListCursor(ProbeState *s)
+{
+	DrawHorizontalListCursorResult result = DrawHorizontalListCursor(s->a);
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory DrawHorizontalListCursor */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -178,5 +187,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "FillBGMapLineWithA", adapt_FillBGMapLineWithA },
 	{ "OpenDeckConfigurationMenu", adapt_OpenDeckConfigurationMenu },
 	{ "PrintTotalNumberOfCardsInCollection", adapt_PrintTotalNumberOfCardsInCollection },
+	{ "DrawHorizontalListCursor", adapt_DrawHorizontalListCursor },
 	{ NULL, NULL },
 };

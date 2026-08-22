@@ -1264,6 +1264,14 @@ static void adapt_WriteOneByteNumberInTxSymbol_PadSpace(ProbeState *s)
 }
 /* <<< factory WriteOneByteNumberInTxSymbol_PadSpace */
 
+/* >>> factory PrintPracticeDuelNumberedInstruction */
+static void adapt_PrintPracticeDuelNumberedInstruction(ProbeState *s)
+{
+	PrintPracticeDuelNumberedInstructionResult result = PrintPracticeDuelNumberedInstruction(s->d, s->e, s->hl);
+	s->hl = result.hl;
+}
+/* <<< factory PrintPracticeDuelNumberedInstruction */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1414,5 +1422,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintDuelResultStats", adapt_PrintDuelResultStats },
 	{ "ConvertColorToEnergyCardID", adapt_ConvertColorToEnergyCardID },
 	{ "WriteOneByteNumberInTxSymbol_PadSpace", adapt_WriteOneByteNumberInTxSymbol_PadSpace },
+	{ "PrintPracticeDuelNumberedInstruction", adapt_PrintPracticeDuelNumberedInstruction },
 	{ NULL, NULL },
 };
