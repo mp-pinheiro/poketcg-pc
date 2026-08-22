@@ -80,4 +80,7 @@ DrawListCursorResult DrawListCursor(uint8_t a);
 /* >>> factory DrawHorizontalListCursor_Invisible */
 DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void);
 /* <<< factory DrawHorizontalListCursor_Invisible */
+/* >>> factory DrawHorizontalListCursor_Visible */
+DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void);
+/* <<< factory DrawHorizontalListCursor_Visible */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

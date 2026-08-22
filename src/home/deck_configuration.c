@@ -448,3 +448,11 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void)
 	return DrawHorizontalListCursor(tile);
 }
 /* <<< factory DrawHorizontalListCursor_Invisible */
+
+/* >>> factory DrawHorizontalListCursor_Visible */
+DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void)
+{
+	uint8_t tile = wVisibleCursorTile;
+	return DrawHorizontalListCursor(tile);
+}
+/* <<< factory DrawHorizontalListCursor_Visible */

@@ -268,6 +268,19 @@ CASES["DrawHorizontalListCursor_Invisible"] = [
 ]
 # <<< factory DrawHorizontalListCursor_Invisible
 
+# >>> factory DrawHorizontalListCursor_Visible
+CONTRACT["DrawHorizontalListCursor_Visible"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["DrawHorizontalListCursor_Visible"] = [
+    {"wram": {0xCEAA: b"\x66", wCardListCursorPos: b"\x03", wCardListCursorXPos: b"\x04",
+              wCardListCursorYPos: b"\x05", wCardListXSpacing: b"\x02"},
+     "vread": {0: {0x98AA: 1}}},
+    dict(POISON,
+         wram={0xCEAA: b"\x77", wCardListCursorPos: b"\x04", wCardListCursorXPos: b"\x06",
+               wCardListCursorYPos: b"\x07", wCardListXSpacing: b"\x03"},
+         vread={0: {0x98FA: 1}}),
+]
+# <<< factory DrawHorizontalListCursor_Visible
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -378,3 +391,11 @@ MUTATIONS["DrawListCursor"] = {
 # >>> factory-mutation DrawHorizontalListCursor_Invisible
 MUTATIONS["DrawHorizontalListCursor_Invisible"] = {"source_symbol": "DrawHorizontalListCursor_Invisible", "before": "\tuint8_t tile = wInvisibleCursorTile;", "after": "\tuint8_t tile = 0u;", "case_ids": ["DrawHorizontalListCursor_Invisible-0", "DrawHorizontalListCursor_Invisible-1"]}
 # <<< factory-mutation DrawHorizontalListCursor_Invisible
+# >>> factory-mutation DrawHorizontalListCursor_Visible
+MUTATIONS["DrawHorizontalListCursor_Visible"] = {
+    "source_symbol": "DrawHorizontalListCursor_Visible",
+    "before": "\tuint8_t tile = wVisibleCursorTile;",
+    "after": "\tuint8_t tile = 0u;",
+    "case_ids": ["DrawHorizontalListCursor_Visible-0", "DrawHorizontalListCursor_Visible-1"],
+}
+# <<< factory-mutation DrawHorizontalListCursor_Visible

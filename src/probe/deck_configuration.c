@@ -196,6 +196,15 @@ static void adapt_DrawHorizontalListCursor_Invisible(ProbeState *s)
 }
 /* <<< factory DrawHorizontalListCursor_Invisible */
 
+/* >>> factory DrawHorizontalListCursor_Visible */
+static void adapt_DrawHorizontalListCursor_Visible(ProbeState *s)
+{
+	DrawHorizontalListCursorResult result = DrawHorizontalListCursor_Visible();
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory DrawHorizontalListCursor_Visible */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -219,5 +228,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "GetCountOfCardInCurDeck", adapt_GetCountOfCardInCurDeck },
 	{ "DrawListCursor", adapt_DrawListCursor },
 	{ "DrawHorizontalListCursor_Invisible", adapt_DrawHorizontalListCursor_Invisible },
+	{ "DrawHorizontalListCursor_Visible", adapt_DrawHorizontalListCursor_Visible },
 	{ NULL, NULL },
 };
