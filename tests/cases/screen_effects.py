@@ -73,6 +73,15 @@ CASES["LoadDefaultScreenAnimationUpdateWhenFinished"] = [
 ]
 # <<< factory LoadDefaultScreenAnimationUpdateWhenFinished
 
+# >>> factory ShakeScreenX
+CONTRACT["ShakeScreenX"] = {"compare": (), "preserve": ()}
+CASES["ShakeScreenX"] = [
+    {"wram": {0xD4B9: b"\x00\x00", 0xD4BC: b"\x00\x00"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xD4B9: b"\x56\x34", 0xD4BC: b"\x78\x9A"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+]
+# <<< factory ShakeScreenX
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -102,3 +111,6 @@ MUTATIONS["DoScreenAnimationUpdate"] = {"source_symbol": "DoScreenAnimationUpdat
 # >>> factory-mutation LoadDefaultScreenAnimationUpdateWhenFinished
 MUTATIONS["LoadDefaultScreenAnimationUpdateWhenFinished"] = {"source_symbol": "LoadDefaultScreenAnimationUpdateWhenFinished", "before": "\tif (wScreenAnimDuration != 0u)\n\t\treturn;", "after": "\tif (wScreenAnimDuration == 0u)\n\t\treturn;", "case_ids": ["LoadDefaultScreenAnimationUpdateWhenFinished-0", "LoadDefaultScreenAnimationUpdateWhenFinished-1"]}
 # <<< factory-mutation LoadDefaultScreenAnimationUpdateWhenFinished
+# >>> factory-mutation ShakeScreenX
+MUTATIONS["ShakeScreenX"] = {"source_symbol": "ShakeScreenX", "before": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_X_UPDATE_FUNC_ADDR);", "after": "\tgb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)(SHAKE_SCREEN_X_UPDATE_FUNC_ADDR + 1u));", "case_ids": ["ShakeScreenX-0", "ShakeScreenX-1"]}
+# <<< factory-mutation ShakeScreenX

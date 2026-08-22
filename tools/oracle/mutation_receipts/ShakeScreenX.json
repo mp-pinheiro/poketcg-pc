@@ -1,0 +1,9 @@
+{
+  "fn": "ShakeScreenX",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ShakeScreenX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54457\": \"ff4c\", \"54460\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ShakeScreenX\", \"mismatches\": {\"bus\": {\"address\": 54457, \"reference\": \"ff4c0000\", \"native\": \"004c0000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54457, 2], [54460, 2]]}}}\n",
+  "restored": "{\"fn\": \"ShakeScreenX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54457\": \"ff4c\", \"54460\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

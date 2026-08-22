@@ -19,6 +19,13 @@
 #define DEFAULT_SCREEN_ANIMATION_UPDATE_ADDR 0x4CBCu
 
 #include "generated/wram.h"
+
+#include "home/screen_effects.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#define SHAKE_SCREEN_X_UPDATE_FUNC_ADDR 0x4CFFu
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -95,3 +102,14 @@ void LoadDefaultScreenAnimationUpdateWhenFinished(void)
 	DefaultScreenAnimationUpdate();
 }
 /* <<< factory LoadDefaultScreenAnimationUpdateWhenFinished */
+
+/* >>> factory ShakeScreenX */
+void ShakeScreenX(uint16_t hl)
+{
+	gb_write8(wScreenShakeOffsetsPtr_ADDR, (uint8_t)hl);
+	gb_write8((uint16_t)(wScreenShakeOffsetsPtr_ADDR + 1u), (uint8_t)(hl >> 8));
+	gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_X_UPDATE_FUNC_ADDR);
+	gb_write8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u),
+	          (uint8_t)(SHAKE_SCREEN_X_UPDATE_FUNC_ADDR >> 8));
+}
+/* <<< factory ShakeScreenX */
