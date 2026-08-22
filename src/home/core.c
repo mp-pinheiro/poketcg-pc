@@ -486,6 +486,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#define TYPE_ENERGY_F 0x03u
+#define TYPE_TRAINER_F 0x04u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3062,3 +3065,31 @@ void PrintNextPracticeDuelInstruction(void)
 	gb_write8(hffb0_ADDR, 0u);
 }
 /* <<< factory PrintNextPracticeDuelInstruction */
+
+/* >>> factory GoToFirstOrNextCardPage */
+CardPageNavigationResult GoToFirstOrNextCardPage(void)
+{
+	uint8_t page = wCardPageNumber;
+	if (page == 0u) {
+		uint8_t type = wLoadedCard1Type;
+		uint8_t initial_page = CARDPAGE_POKEMON_OVERVIEW;
+		if ((type & (uint8_t)(1u << TYPE_ENERGY_F)) != 0u)
+			initial_page = CARDPAGE_ENERGY;
+		else if ((type & (uint8_t)(1u << TYPE_TRAINER_F)) != 0u)
+			initial_page = CARDPAGE_TRAINER_1;
+		wCardPageNumber = initial_page;
+		return (CardPageNavigationResult){initial_page, 0u, type};
+	}
+	for (;;) {
+		uint8_t next_page = (uint8_t)(wCardPageNumber + 1u);
+		wCardPageNumber = next_page;
+		CardPageResult r = SwitchCardPage(next_page);
+		if (r.carry) {
+			wCardPageNumber = r.a;
+			return (CardPageNavigationResult){r.a, 0x10u, 0u};
+		}
+		if (r.a != 0u)
+			return (CardPageNavigationResult){r.a, 0u, 0u};
+	}
+}
+/* <<< factory GoToFirstOrNextCardPage */

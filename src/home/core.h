@@ -607,4 +607,7 @@ PrintPracticeDuelNumberedInstructionResult PrintPracticeDuelNumberedInstruction(
 /* >>> factory PrintNextPracticeDuelInstruction */
 void PrintNextPracticeDuelInstruction(void);
 /* <<< factory PrintNextPracticeDuelInstruction */
+/* >>> factory GoToFirstOrNextCardPage */
+CardPageNavigationResult GoToFirstOrNextCardPage(void);
+/* <<< factory GoToFirstOrNextCardPage */
 #endif

@@ -1417,6 +1417,9 @@ VRAM_FIRST = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x4
 VRAM_SECOND = VRAM_FIRST
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCardPageNumber = 0xCBC7
+wLoadedCard1Type = 0xCC24
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1740,6 +1743,16 @@ CASES["PrintNextPracticeDuelInstruction"] = [
          read={0xFFB0: 1}),
 ]
 # <<< factory PrintNextPracticeDuelInstruction
+
+# >>> factory GoToFirstOrNextCardPage
+CONTRACT["GoToFirstOrNextCardPage"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GoToFirstOrNextCardPage"] = [
+    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x08"}, "read": {wCardPageNumber: 1}},
+    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x10"}, "read": {wCardPageNumber: 1}},
+    {"wram": {wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, wram={wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"}, read={wCardPageNumber: 1}),
+]
+# <<< factory GoToFirstOrNextCardPage
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2693,3 +2706,6 @@ MUTATIONS["PrintPracticeDuelNumberedInstruction"] = {
 # >>> factory-mutation PrintNextPracticeDuelInstruction
 MUTATIONS["PrintNextPracticeDuelInstruction"] = {"source_symbol": "PrintNextPracticeDuelInstruction", "before": "gb_write8(hffb0_ADDR, 0u);", "after": "gb_write8(hffb0_ADDR, 1u);", "case_ids": ["PrintNextPracticeDuelInstruction-0", "PrintNextPracticeDuelInstruction-1"]}
 # <<< factory-mutation PrintNextPracticeDuelInstruction
+# >>> factory-mutation GoToFirstOrNextCardPage
+MUTATIONS["GoToFirstOrNextCardPage"] = {"source_symbol": "GoToFirstOrNextCardPage", "before": "\t\twCardPageNumber = initial_page;", "after": "\t\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "case_ids": ["GoToFirstOrNextCardPage-0", "GoToFirstOrNextCardPage-1", "GoToFirstOrNextCardPage-2", "GoToFirstOrNextCardPage-3"]}
+# <<< factory-mutation GoToFirstOrNextCardPage
