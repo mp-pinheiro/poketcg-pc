@@ -1,7 +1,7 @@
 ---
 name: port-candidate
 description: Produce one TranslationReplyV2 candidate for one issued packet.
-tools: [read, grep, glob]
+tools: [read, grep, glob, write]
 model: "@task"
 read-summarize: false
 output:
