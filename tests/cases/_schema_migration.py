@@ -133,8 +133,20 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
         fields = contract.get(function)
         if isinstance(fields, tuple):
             contract[function] = {"compare": fields, "preserve": fields}
-        elif not isinstance(fields, dict):
+            continue
+        if not isinstance(fields, dict):
             raise TypeError(f"legacy contract {function} must be a tuple or schema-2 mapping")
+        # The comparator observes `compare` and additionally requires `preserve` to be
+        # a subset of it: a register that must not move is still a register under
+        # observation. Authors reasonably write the two as disjoint sets (results vs
+        # callee-saved), which the comparator rejects outright. Widening keeps the
+        # stated intent, is strictly more rigorous, and is a no-op wherever the subset
+        # relation already holds -- which is every landed contract.
+        compare = tuple(fields.get("compare") or ())
+        preserve = tuple(fields.get("preserve") or ())
+        missing = tuple(name for name in preserve if name not in compare)
+        if missing:
+            contract[function] = {**fields, "compare": compare + missing}
     converted: dict[str, list[dict[str, Any]]] = {}
     for function, entries in cases.items():
         records: list[dict[str, Any]] = []

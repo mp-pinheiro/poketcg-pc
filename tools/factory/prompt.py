@@ -110,6 +110,10 @@ def render(packet: dict, feedback: str | None = None,
                       for name, value in POISON.items())
     lines.append("# CASE RULES — ENFORCED MECHANICALLY BEFORE ANY ORACLE RUN")
     lines.extend((
+        "CONTRACT[\"<name>\"] = {\"compare\": (...), \"preserve\": (...)} names registers. "
+        "`compare` is every register the oracle observes; `preserve` is the subset of "
+        "those that must come back unchanged. `preserve` MUST be a subset of `compare` "
+        "— list a preserved register in both, never in `preserve` alone.",
         f"At least one case in CASES[\"<name>\"] must poison four or more registers with "
         f"these exact values: {poison}.",
         f"No case may seed, read, or expect an address in "
