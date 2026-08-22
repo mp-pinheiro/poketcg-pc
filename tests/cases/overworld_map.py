@@ -63,6 +63,10 @@ wOverworldMapStartingPosition = 0xD33D
 wWhichSprite = 0xD4CF
 wEventVars = 0xD3D2
 SPRITE_BUFFER = 0xD4D0
+
+MAPNAME_CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+MAPNAME_PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+MAPNAME_VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -150,6 +154,15 @@ CASES["OverworldMap_InitPlayerNorthSouthMovement"] = [
 ]
 # <<< factory OverworldMap_InitPlayerNorthSouthMovement
 
+# >>> factory OverworldMap_PrintMapName
+CONTRACT["OverworldMap_PrintMapName"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_PrintMapName"] = [
+    {"wram": {0xD32E: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+    {"wram": {0xD32E: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD32E: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {**MAPNAME_CACHE_READ, **MAPNAME_PLACEMENT_READ}, "vread": MAPNAME_VRAM_READ},
+]
+# <<< factory OverworldMap_PrintMapName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -187,3 +200,6 @@ MUTATIONS["OverworldMap_SetSpritePosition"] = {"source_symbol": "OverworldMap_Se
 # >>> factory-mutation OverworldMap_InitPlayerNorthSouthMovement
 MUTATIONS["OverworldMap_InitPlayerNorthSouthMovement"] = {"source_symbol": "OverworldMap_InitPlayerNorthSouthMovement", "before": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)b << 8), (uint16_t)c);", "after": "\tDivResult divided = DivideBCbyDE((uint16_t)((uint16_t)b << 8), (uint16_t)(c + 1u));", "case_ids": ["OverworldMap_InitPlayerNorthSouthMovement-0", "OverworldMap_InitPlayerNorthSouthMovement-1", "OverworldMap_InitPlayerNorthSouthMovement-2"]}
 # <<< factory-mutation OverworldMap_InitPlayerNorthSouthMovement
+# >>> factory-mutation OverworldMap_PrintMapName
+MUTATIONS["OverworldMap_PrintMapName"] = {"source_symbol": "OverworldMap_PrintMapName", "before": "\tInitTextPrinting(1u, 1u);", "after": "\tInitTextPrinting(1u, 2u);", "case_ids": ["OverworldMap_PrintMapName-0", "OverworldMap_PrintMapName-1", "OverworldMap_PrintMapName-2"]}
+# <<< factory-mutation OverworldMap_PrintMapName

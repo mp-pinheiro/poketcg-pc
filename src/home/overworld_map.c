@@ -72,6 +72,11 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "mem.h"
 
 #define SOUTH 0x02u
+
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "home/overworld_map.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -282,3 +287,15 @@ void OverworldMap_InitPlayerNorthSouthMovement(uint8_t b, uint8_t c)
 		: SOUTH;
 }
 /* <<< factory OverworldMap_InitPlayerNorthSouthMovement */
+
+/* >>> factory OverworldMap_PrintMapName */
+void OverworldMap_PrintMapName(void)
+{
+	static const uint16_t map_name_text_ids[] = {
+		0x0323u, 0x0323u, 0x0324u, 0x0325u, 0x0326u, 0x0327u, 0x0328u,
+		0x0329u, 0x032Au, 0x032Bu, 0x032Cu, 0x032Du, 0x032Eu, 0x032Fu,
+	};
+	InitTextPrinting(1u, 1u);
+	(void)ProcessTextFromID(map_name_text_ids[OverworldMap_GetOWMapID()]);
+}
+/* <<< factory OverworldMap_PrintMapName */
