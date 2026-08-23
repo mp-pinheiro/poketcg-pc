@@ -2471,6 +2471,14 @@ static void adapt_OmastarWaterGunEffect(ProbeState *s)
 }
 /* <<< factory OmastarWaterGunEffect */
 
+/* >>> factory CuboneRage_AIEffect */
+static void adapt_CuboneRage_AIEffect(ProbeState *s)
+{
+	(void)s;
+	CuboneRage_AIEffect();
+}
+/* <<< factory CuboneRage_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2777,5 +2785,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergySpike_DeckCheck", adapt_EnergySpike_DeckCheck },
 	{ "MagmarFlamethrower_AISelectEffect", adapt_MagmarFlamethrower_AISelectEffect },
 	{ "OmastarWaterGunEffect", adapt_OmastarWaterGunEffect },
+	{ "CuboneRage_AIEffect", adapt_CuboneRage_AIEffect },
 	{ NULL, NULL },
 };

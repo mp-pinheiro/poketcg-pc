@@ -1,0 +1,9 @@
+{
+  "fn": "RefreshMenuCursor_CheckPlaySFX",
+  "case": "tests/cases/menus.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RefreshMenuCursor_CheckPlaySFX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52633\": \"12\", \"56707\": \"0a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RefreshMenuCursor_CheckPlaySFX\", \"mismatches\": {\"bus\": {\"address\": 56707, \"reference\": \"120a\", \"native\": \"1200\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52633, 1], [56707, 1]]}}}\n",
+  "restored": "{\"fn\": \"RefreshMenuCursor_CheckPlaySFX\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52633\": \"12\", \"56707\": \"0a\"}}, \"status\": \"PASS\"}\n"
+}

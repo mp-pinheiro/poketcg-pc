@@ -703,6 +703,16 @@ static void adapt_ScriptCommand_JumpIfCardOwned(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfCardOwned */
 
+/* >>> factory ScriptCommand_WaitForSongToFinish */
+static void adapt_ScriptCommand_WaitForSongToFinish(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_WaitForSongToFinish();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_WaitForSongToFinish */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -771,5 +781,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ExecuteNPCMovement", adapt_ExecuteNPCMovement },
 	{ "Func_cdd1", adapt_Func_cdd1 },
 	{ "ScriptCommand_JumpIfCardOwned", adapt_ScriptCommand_JumpIfCardOwned },
+	{ "ScriptCommand_WaitForSongToFinish", adapt_ScriptCommand_WaitForSongToFinish },
 	{ NULL, NULL },
 };

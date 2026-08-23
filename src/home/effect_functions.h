@@ -1035,6 +1035,9 @@ void MagmarFlamethrower_AISelectEffect(void);
 /* >>> factory OmastarWaterGunEffect */
 void OmastarWaterGunEffect(void);
 /* <<< factory OmastarWaterGunEffect */
+/* >>> factory CuboneRage_AIEffect */
+void CuboneRage_AIEffect(void);
+/* <<< factory CuboneRage_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -1,0 +1,9 @@
+{
+  "fn": "CuboneRage_AIEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CuboneRage_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"ce\", \"52411\": \"ce\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CuboneRage_AIEffect\", \"mismatches\": {\"bus\": {\"address\": 52411, \"reference\": \"cece\", \"native\": \"ce00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52409, 1], [52411, 1]]}}}\n",
+  "restored": "{\"fn\": \"CuboneRage_AIEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"ce\", \"52411\": \"ce\"}}, \"status\": \"PASS\"}\n"
+}

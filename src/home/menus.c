@@ -9,6 +9,11 @@
 #include "home/random.h"
 #include "home/text_box.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/menus.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+/* <<< factory statics */
 
 #define SYM_0 0x20
 #define SYM_SPACE 0x00
@@ -340,3 +345,13 @@ WaitResult WaitForWideTextBoxInput(void)
 		}
 	}
 }
+
+/* >>> factory RefreshMenuCursor_CheckPlaySFX */
+void RefreshMenuCursor_CheckPlaySFX(void)
+{
+	uint8_t a = wRefreshMenuCursorSFX;
+	if (a != 0u)
+		PlaySFX(a);
+	RefreshMenuCursor();
+}
+/* <<< factory RefreshMenuCursor_CheckPlaySFX */

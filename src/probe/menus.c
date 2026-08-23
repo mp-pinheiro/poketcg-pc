@@ -158,6 +158,14 @@ static void adapt_WaitForWideTextBoxInput(ProbeState *s)
 	WaitForWideTextBoxInput();
 }
 
+/* >>> factory RefreshMenuCursor_CheckPlaySFX */
+static void adapt_RefreshMenuCursor_CheckPlaySFX(ProbeState *s)
+{
+	(void)s;
+	RefreshMenuCursor_CheckPlaySFX();
+}
+/* <<< factory RefreshMenuCursor_CheckPlaySFX */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -185,5 +193,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "DrawNarrowTextBox_WaitForInput", adapt_DrawNarrowTextBox_WaitForInput },
 	{ "DrawWideTextBox_WaitForInput", adapt_DrawWideTextBox_WaitForInput },
 	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
+	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
 	{ NULL, NULL },
 };

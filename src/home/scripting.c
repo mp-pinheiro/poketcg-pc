@@ -1055,3 +1055,11 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c)
 	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
 }
 /* <<< factory ScriptCommand_JumpIfCardOwned */
+
+/* >>> factory ScriptCommand_WaitForSongToFinish */
+IncreaseScriptPointerResult ScriptCommand_WaitForSongToFinish(void)
+{
+	WaitForSongToFinish();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_WaitForSongToFinish */

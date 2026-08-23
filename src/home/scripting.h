@@ -381,4 +381,7 @@ IncreaseScriptPointerResult Func_cdd1(void);
 /* >>> factory ScriptCommand_JumpIfCardOwned */
 JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_JumpIfCardOwned */
+/* >>> factory ScriptCommand_WaitForSongToFinish */
+IncreaseScriptPointerResult ScriptCommand_WaitForSongToFinish(void);
+/* <<< factory ScriptCommand_WaitForSongToFinish */
 #endif

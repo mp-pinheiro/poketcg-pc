@@ -825,6 +825,14 @@ CASES["ScriptCommand_JumpIfCardOwned"] = [
 ]
 # <<< factory ScriptCommand_JumpIfCardOwned
 
+# >>> factory ScriptCommand_WaitForSongToFinish
+CONTRACT["ScriptCommand_WaitForSongToFinish"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_WaitForSongToFinish"] = [
+    {"wram": {0xDD80: b"\x80", 0xFF40: b"\x00"}, "read": {0xDD80: 1}},
+    dict(POISON, wram={0xDD80: b"\x80", 0xFF40: b"\x00"}, read={0xDD80: 1}),
+]
+# <<< factory ScriptCommand_WaitForSongToFinish
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1270,3 +1278,6 @@ MUTATIONS["Func_cdd1"] = {"source_symbol": "Func_cdd1", "before": "\tIncreaseScr
 # >>> factory-mutation ScriptCommand_JumpIfCardOwned
 MUTATIONS["ScriptCommand_JumpIfCardOwned"] = {"source_symbol": "ScriptCommand_JumpIfCardOwned", "before": "\tCardCountResult cnt = GetCardCountInCollectionAndDecks(c);", "after": "\tCardCountResult cnt = GetCardCountInCollection(c);", "case_ids": ["ScriptCommand_JumpIfCardOwned-5"]}
 # <<< factory-mutation ScriptCommand_JumpIfCardOwned
+# >>> factory-mutation ScriptCommand_WaitForSongToFinish
+MUTATIONS["ScriptCommand_WaitForSongToFinish"] = {"source_symbol": "ScriptCommand_WaitForSongToFinish", "before": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy1();", "after": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_WaitForSongToFinish-0", "ScriptCommand_WaitForSongToFinish-1"]}
+# <<< factory-mutation ScriptCommand_WaitForSongToFinish

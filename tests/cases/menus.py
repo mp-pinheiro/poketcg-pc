@@ -251,6 +251,15 @@ CASES.update({
          "vread": {0: {0x9A32: 1}}},
     ],
 })
+# >>> factory RefreshMenuCursor_CheckPlaySFX
+CONTRACT["RefreshMenuCursor_CheckPlaySFX"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["RefreshMenuCursor_CheckPlaySFX"] = [
+    {"wram": {0xCD99: b"\x00"}},
+    {"wram": {0xCD99: b"\x12", 0xDD83: b"\x00"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCD99: b"\x34", 0xDD83: b"\x00"}},
+]
+# <<< factory RefreshMenuCursor_CheckPlaySFX
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -262,3 +271,6 @@ MUTATIONS = {
         "case_ids": ["OneByteNumberToTxSymbol-0", "OneByteNumberToTxSymbol-1", "OneByteNumberToTxSymbol-2", "OneByteNumberToTxSymbol-3", "OneByteNumberToTxSymbol-4"],
     },
 }
+# >>> factory-mutation RefreshMenuCursor_CheckPlaySFX
+MUTATIONS["RefreshMenuCursor_CheckPlaySFX"] = {"source_symbol": "RefreshMenuCursor_CheckPlaySFX", "before": "\t\tPlaySFX(a);", "after": "\t\tPlaySFX(0u);", "case_ids": ["RefreshMenuCursor_CheckPlaySFX-1", "RefreshMenuCursor_CheckPlaySFX-2"]}
+# <<< factory-mutation RefreshMenuCursor_CheckPlaySFX

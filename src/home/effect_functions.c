@@ -4209,3 +4209,11 @@ void OmastarWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
 }
 /* <<< factory OmastarWaterGunEffect */
+
+/* >>> factory CuboneRage_AIEffect */
+void CuboneRage_AIEffect(void)
+{
+	CuboneRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory CuboneRage_AIEffect */

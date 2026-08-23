@@ -2705,6 +2705,14 @@ CASES["OmastarWaterGunEffect"] = [
 ]
 # <<< factory OmastarWaterGunEffect
 
+# >>> factory CuboneRage_AIEffect
+CONTRACT["CuboneRage_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["CuboneRage_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x05"}, "read": {0xCCB9: 1, 0xCCBB: 1}},
+    dict(POISON, wram={0xCCB9: b"\x05"}, read={0xCCB9: 1, 0xCCBB: 1}),
+]
+# <<< factory CuboneRage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4507,3 +4515,6 @@ MUTATIONS["OmastarWaterGunEffect"] = {
     "case_ids": ["OmastarWaterGunEffect-0", "OmastarWaterGunEffect-1"],
 }
 # <<< factory-mutation OmastarWaterGunEffect
+# >>> factory-mutation CuboneRage_AIEffect
+MUTATIONS["CuboneRage_AIEffect"] = {"source_symbol": "CuboneRage_AIEffect", "before": "\tCuboneRage_DamageBoostEffect();\n\tSetDefiniteAIDamage();", "after": "\tCuboneRage_DamageBoostEffect();\n\t(void)0;", "case_ids": ["CuboneRage_AIEffect-0", "CuboneRage_AIEffect-1"]}
+# <<< factory-mutation CuboneRage_AIEffect
