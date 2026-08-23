@@ -217,6 +217,20 @@
 #define MAGNETON_LV35 0x6cu
 #define RAICHU_LV40 0x67u
 #define VOLTORB 0x6du
+
+#include "home/trainer_cards.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define LEGENDARY_MOLTRES_DECK_ID 0x0Cu
+#define LEGENDARY_ARTICUNO_DECK_ID 0x0Eu
+#define LEGENDARY_DRAGONITE_DECK_ID 0x0Fu
+#define LEGENDARY_RONALD_DECK_ID 0x1Bu
+#define BLISTERING_POKEMON_DECK_ID 0x20u
+#define SOUND_OF_THE_WAVES_DECK_ID 0x24u
+#define POWER_GENERATOR_DECK_ID 0x27u
+#define FLOWER_GARDEN_DECK_ID 0x29u
+#define STRANGE_POWER_DECK_ID 0x2Du
+#define FLAMETHROWER_DECK_ID 0x32u
 /* <<< factory statics */
 
 
@@ -2081,3 +2095,51 @@ find_duplicates:
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_PowerGenerator */
+
+/* >>> factory AIDecide_PokemonTrader */
+AIDecide_PokemonTraderResult AIDecide_PokemonTrader(void)
+{
+	uint8_t deck_id = wOpponentDeckID;
+	if (deck_id == LEGENDARY_MOLTRES_DECK_ID) {
+		AIDecide_PokemonTrader_LegendaryMoltresResult r = AIDecide_PokemonTrader_LegendaryMoltres();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == LEGENDARY_ARTICUNO_DECK_ID) {
+		AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == LEGENDARY_DRAGONITE_DECK_ID) {
+		AIDecide_PokemonTrader_LegendaryDragoniteResult r = AIDecide_PokemonTrader_LegendaryDragonite();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == LEGENDARY_RONALD_DECK_ID) {
+		AIDecide_PokemonTrader_LegendaryRonaldResult r = AIDecide_PokemonTrader_LegendaryRonald();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == BLISTERING_POKEMON_DECK_ID) {
+		AIDecide_PokemonTrader_BlisteringPokemonResult r = AIDecide_PokemonTrader_BlisteringPokemon();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == SOUND_OF_THE_WAVES_DECK_ID) {
+		AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == POWER_GENERATOR_DECK_ID) {
+		AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == FLOWER_GARDEN_DECK_ID) {
+		AIDecide_PokemonTrader_FlowerGardenResult r = AIDecide_PokemonTrader_FlowerGarden();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == STRANGE_POWER_DECK_ID) {
+		AIDecide_PokemonTrader_StrangePowerResult r = AIDecide_PokemonTrader_StrangePower();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	if (deck_id == FLAMETHROWER_DECK_ID) {
+		AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower();
+		return (AIDecide_PokemonTraderResult){r.a, r.f};
+	}
+	return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory AIDecide_PokemonTrader */

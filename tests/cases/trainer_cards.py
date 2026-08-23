@@ -273,6 +273,9 @@ wce08 = 0xCE08
 IVYSAUR = 0x09
 
 hWhoseTurn = 0xFF97
+
+hWhoseTurn = 0xFF97
+wOpponentDeckID = 0xCC0E
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -627,6 +630,15 @@ CASES["AIDecide_PokemonTrader_PowerGenerator"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_PowerGenerator
 
+# >>> factory AIDecide_PokemonTrader
+CONTRACT["AIDecide_PokemonTrader"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonTrader"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wOpponentDeckID: b"\xFF"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wOpponentDeckID: b"\x0C"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wOpponentDeckID: b"\xFF"}),
+]
+# <<< factory AIDecide_PokemonTrader
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -834,3 +846,6 @@ MUTATIONS["AIDecide_PokemonTrader_FlowerGarden"] = {"source_symbol": "AIDecide_P
 # >>> factory-mutation AIDecide_PokemonTrader_PowerGenerator
 MUTATIONS["AIDecide_PokemonTrader_PowerGenerator"] = {"source_symbol": "AIDecide_PokemonTrader_PowerGenerator", "before": "a = r16.a;", "after": "a = 0xFFu;", "case_ids": ["AIDecide_PokemonTrader_PowerGenerator-0", "AIDecide_PokemonTrader_PowerGenerator-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_PowerGenerator
+# >>> factory-mutation AIDecide_PokemonTrader
+MUTATIONS["AIDecide_PokemonTrader"] = {"source_symbol": "AIDecide_PokemonTrader", "before": "return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u)};", "after": "return (AIDecide_PokemonTraderResult){deck_id, 0xFFu};", "case_ids": ["AIDecide_PokemonTrader-0", "AIDecide_PokemonTrader-2"]}
+# <<< factory-mutation AIDecide_PokemonTrader
