@@ -195,6 +195,15 @@ static void adapt_AddStarterDeck(ProbeState *s)
 }
 /* <<< factory AddStarterDeck */
 
+/* >>> factory FindDuplicatePokemonCards */
+static void adapt_FindDuplicatePokemonCards(ProbeState *s)
+{
+	FindDuplicatePokemonCardsResult r = FindDuplicatePokemonCards();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory FindDuplicatePokemonCards */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -217,5 +226,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "LookForCardIDInDeck_GivenCardIDInHand", adapt_LookForCardIDInDeck_GivenCardIDInHand },
 	{ "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", adapt_LookForCardIDInDeck_GivenCardIDInHandAndPlayArea },
 	{ "AddStarterDeck", adapt_AddStarterDeck },
+	{ "FindDuplicatePokemonCards", adapt_FindDuplicatePokemonCards },
 	{ NULL, NULL },
 };

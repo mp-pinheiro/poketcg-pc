@@ -138,6 +138,13 @@ sCardCollection = 0xA100
 sDeck1 = 0xA200
 wOpponentDeck = 0xC480
 wPlayerDeck = 0xC400
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wTempAI = 0xCDF1
+wDuelTempList = 0xC510
+IVYSAUR = 0x09
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -308,6 +315,22 @@ CASES["AddStarterDeck"] = [
 ]
 # <<< factory AddStarterDeck
 
+# >>> factory FindDuplicatePokemonCards
+CONTRACT["FindDuplicatePokemonCards"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["FindDuplicatePokemonCards"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x02",
+              wPlayerDuelVariables + 0x42: bytes((5, 6)),
+              wPlayerDuelVariables + 5: b"\x00", wPlayerDuelVariables + 6: b"\x00",
+              wPlayerDeck + 5: bytes((IVYSAUR,)), wPlayerDeck + 6: bytes((IVYSAUR,))},
+     "read": {wTempAI: 1, wDuelTempList: 3}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x01",
+                       wPlayerDuelVariables + 0x42: bytes((5,)),
+                       wPlayerDuelVariables + 5: b"\x00",
+                       wPlayerDeck + 5: bytes((IVYSAUR,))},
+         read={wTempAI: 1, wDuelTempList: 2}),
+]
+# <<< factory FindDuplicatePokemonCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -420,3 +443,6 @@ MUTATIONS["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"source_symbol"
 # >>> factory-mutation AddStarterDeck
 MUTATIONS["AddStarterDeck"] = {"source_symbol": "AddStarterDeck", "before": "\t_AddStarterDeck(a);", "after": "\t_AddStarterDeck((uint8_t)(a + 1u));", "case_ids": ["AddStarterDeck-0", "AddStarterDeck-1"]}
 # <<< factory-mutation AddStarterDeck
+# >>> factory-mutation FindDuplicatePokemonCards
+MUTATIONS["FindDuplicatePokemonCards"] = {"source_symbol": "FindDuplicatePokemonCards", "before": "wTempAI = inner_idx;", "after": "wTempAI = outer_idx;", "case_ids": ["FindDuplicatePokemonCards-0"]}
+# <<< factory-mutation FindDuplicatePokemonCards

@@ -61,6 +61,12 @@
 #define PLAY_AREA_ARENA 0x00u
 
 #define CARD_LOCATION_DECK 0x00u
+
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -551,3 +557,40 @@ void AddStarterDeck(uint8_t a)
 	_AddStarterDeck(a);
 }
 /* <<< factory AddStarterDeck */
+
+/* >>> factory FindDuplicatePokemonCards */
+FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
+{
+	wTempAI = 0xFFu;
+	(void)CreateHandCardList(0u);
+
+	uint16_t list = wDuelTempList_ADDR;
+	uint8_t outer = 0u;
+	for (;;) {
+		uint8_t outer_idx = gb_read8((uint16_t)(list + outer));
+		if (outer_idx == 0xFFu)
+			break;
+		uint8_t outer_id = (uint8_t)GetCardIDFromDeckIndex(outer_idx);
+		uint8_t inner = (uint8_t)(outer + 1u);
+		for (;;) {
+			uint8_t inner_idx = gb_read8((uint16_t)(list + inner));
+			if (inner_idx == 0xFFu)
+				break;
+			uint8_t inner_id = (uint8_t)GetCardIDFromDeckIndex(inner_idx);
+			if (inner_id == outer_id) {
+				uint8_t type = GetCardType(inner_id);
+				if (type < TYPE_ENERGY)
+					wTempAI = inner_idx;
+				break;
+			}
+			inner = (uint8_t)(inner + 1u);
+		}
+		outer = (uint8_t)(outer + 1u);
+	}
+
+	uint8_t final_val = wTempAI;
+	if (final_val == 0xFFu)
+		return (FindDuplicatePokemonCardsResult){final_val, 0x00u};
+	return (FindDuplicatePokemonCardsResult){final_val, 0x10u};
+}
+/* <<< factory FindDuplicatePokemonCards */

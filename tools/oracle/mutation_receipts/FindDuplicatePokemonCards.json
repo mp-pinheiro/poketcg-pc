@@ -1,0 +1,9 @@
+{
+  "fn": "FindDuplicatePokemonCards",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindDuplicatePokemonCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49669\": \"0000\", \"49730\": \"0506\", \"49902\": \"02\", \"50181\": \"0909\", \"50448\": \"0605ff\", \"52721\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindDuplicatePokemonCards\", \"mismatches\": {\"a\": [5, 6], \"bus\": {\"address\": 52721, \"reference\": \"090605ff05c2\", \"native\": \"090605ff06c2\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49669, 2], [49730, 2], [49902, 1], [50181, 2], [50448, 3], [52721, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"FindDuplicatePokemonCards\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49669\": \"0000\", \"49730\": \"0506\", \"49902\": \"02\", \"50181\": \"0909\", \"50448\": \"0605ff\", \"52721\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

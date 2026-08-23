@@ -90,4 +90,8 @@ LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_Given
 /* >>> factory AddStarterDeck */
 void AddStarterDeck(uint8_t a);
 /* <<< factory AddStarterDeck */
+/* >>> factory FindDuplicatePokemonCards */
+typedef struct { uint8_t a; uint8_t f; } FindDuplicatePokemonCardsResult;
+FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void);
+/* <<< factory FindDuplicatePokemonCards */
 #endif /* POKETCG_HOME_COMMON_H */
