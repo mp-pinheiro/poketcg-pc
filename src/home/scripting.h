@@ -390,4 +390,7 @@ IncreaseScriptPointerResult ScriptCommand_SaveGame(uint8_t c);
 /* >>> factory ScriptCommand_MoveActiveNPC */
 ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc);
 /* <<< factory ScriptCommand_MoveActiveNPC */
+/* >>> factory ScriptCommand_SetNextNPCAndScript */
+IncreaseScriptPointerResult ScriptCommand_SetNextNPCAndScript(uint8_t c, uint16_t hl);
+/* <<< factory ScriptCommand_SetNextNPCAndScript */
 #endif

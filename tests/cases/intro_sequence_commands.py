@@ -69,6 +69,15 @@ CASES["IntroSequenceCmd_FadeIn"] = [
 ]
 # <<< factory IntroSequenceCmd_FadeIn
 
+# >>> factory IntroSequenceCmd_WaitSFX
+CONTRACT["IntroSequenceCmd_WaitSFX"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["IntroSequenceCmd_WaitSFX"] = [
+    {"wram": {0xDD82: b"\x80", 0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    {"wram": {0xDD82: b"\x05", 0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    dict(POISON, wram={0xDD82: b"\x80", 0xD631: b"\x00\x00"}, read={0xD631: 2}),
+]
+# <<< factory IntroSequenceCmd_WaitSFX
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -96,3 +105,6 @@ MUTATIONS["IntroSequenceEmptyFunc"] = {"source_symbol": "IntroSequenceEmptyFunc"
 # >>> factory-mutation IntroSequenceCmd_FadeIn
 MUTATIONS["IntroSequenceCmd_FadeIn"] = {"source_symbol": "IntroSequenceCmd_FadeIn", "before": "\tuint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));", "after": "\tuint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 0u));", "case_ids": ["IntroSequenceCmd_FadeIn-0", "IntroSequenceCmd_FadeIn-1"]}
 # <<< factory-mutation IntroSequenceCmd_FadeIn
+# >>> factory-mutation IntroSequenceCmd_WaitSFX
+MUTATIONS["IntroSequenceCmd_WaitSFX"] = {"source_symbol": "IntroSequenceCmd_WaitSFX", "before": "\tuint8_t a = AssertSFXFinished();\n\tif (a == 0u) {", "after": "\tuint8_t a = AssertSFXFinished();\n\tif (a != 0u) {", "case_ids": ["IntroSequenceCmd_WaitSFX-0", "IntroSequenceCmd_WaitSFX-1"]}
+# <<< factory-mutation IntroSequenceCmd_WaitSFX

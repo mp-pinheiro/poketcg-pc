@@ -734,6 +734,16 @@ static void adapt_ScriptCommand_MoveActiveNPC(ProbeState *s)
 }
 /* <<< factory ScriptCommand_MoveActiveNPC */
 
+/* >>> factory ScriptCommand_SetNextNPCAndScript */
+static void adapt_ScriptCommand_SetNextNPCAndScript(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_SetNextNPCAndScript(s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_SetNextNPCAndScript */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -805,5 +815,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_WaitForSongToFinish", adapt_ScriptCommand_WaitForSongToFinish },
 	{ "ScriptCommand_SaveGame", adapt_ScriptCommand_SaveGame },
 	{ "ScriptCommand_MoveActiveNPC", adapt_ScriptCommand_MoveActiveNPC },
+	{ "ScriptCommand_SetNextNPCAndScript", adapt_ScriptCommand_SetNextNPCAndScript },
 	{ NULL, NULL },
 };

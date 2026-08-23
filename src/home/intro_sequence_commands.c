@@ -39,6 +39,10 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"
+
+#include "home/intro_sequence_commands.h"
+#include "home/sound.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -119,3 +123,18 @@ IntroSequenceCmd_FadeInResult IntroSequenceCmd_FadeIn(void)
 	return (IntroSequenceCmd_FadeInResult){hi, f};
 }
 /* <<< factory IntroSequenceCmd_FadeIn */
+
+/* >>> factory IntroSequenceCmd_WaitSFX */
+IntroSequenceCmdWaitSFXResult IntroSequenceCmd_WaitSFX(void)
+{
+	uint8_t a = AssertSFXFinished();
+	if (a == 0u) {
+		AdvanceIntroSequenceCmdPtrBy2();
+		uint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+		uint8_t f = (uint8_t)((hi == 0u ? 0x80u : 0x00u) | 0x10u);
+		return (IntroSequenceCmdWaitSFXResult){hi, f};
+	}
+	uint8_t f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+	return (IntroSequenceCmdWaitSFXResult){a, f};
+}
+/* <<< factory IntroSequenceCmd_WaitSFX */

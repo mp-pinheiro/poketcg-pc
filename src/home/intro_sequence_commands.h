@@ -27,4 +27,8 @@ void IntroSequenceEmptyFunc(void);
 typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmd_FadeInResult;
 IntroSequenceCmd_FadeInResult IntroSequenceCmd_FadeIn(void);
 /* <<< factory IntroSequenceCmd_FadeIn */
+/* >>> factory IntroSequenceCmd_WaitSFX */
+typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdWaitSFXResult;
+IntroSequenceCmdWaitSFXResult IntroSequenceCmd_WaitSFX(void);
+/* <<< factory IntroSequenceCmd_WaitSFX */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

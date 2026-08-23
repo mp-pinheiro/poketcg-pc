@@ -4234,3 +4234,10 @@ void KarateChop_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory KarateChop_AIEffect */
+
+/* >>> factory LaprasWaterGunEffect */
+void LaprasWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory LaprasWaterGunEffect */

@@ -76,6 +76,8 @@ POISON = {
     "e": 0xEE,
     "hl": 0x1234,
 }
+
+NPC_TABLE = b"\x00" * 96
 # <<< factory-cases-statics
 
 
@@ -853,6 +855,14 @@ CASES["ScriptCommand_MoveActiveNPC"] = [
 ]
 # <<< factory ScriptCommand_MoveActiveNPC
 
+# >>> factory ScriptCommand_SetNextNPCAndScript
+CONTRACT["ScriptCommand_SetNextNPCAndScript"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_SetNextNPCAndScript"] = [
+    {"c": 0x05, "hl": 0x4567, "wram": {0xD3AB: b"\x00", 0xD34A: NPC_TABLE, 0xD3AA: b"\xEE", 0xD3B6: b"\xAA", 0xD334: b"\x01", 0xD0C1: b"\x00", 0xD0C6: b"\xFF\xFF", 0xD0BF: b"\x00"}, "read": {0xD3AB: 1, 0xD3B6: 1}},
+    dict(POISON, c=0xCC, hl=0x1234, wram={0xD3AB: b"\x00", 0xD34A: NPC_TABLE, 0xD3AA: b"\xAA", 0xD3B6: b"\x00", 0xD334: b"\x02", 0xD0C1: b"\x04", 0xD0C6: b"\x00\x00", 0xD0BF: b"\x00"}, read={0xD3AB: 1, 0xD3B6: 1}),
+]
+# <<< factory ScriptCommand_SetNextNPCAndScript
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1307,3 +1317,6 @@ MUTATIONS["ScriptCommand_SaveGame"] = {"source_symbol": "ScriptCommand_SaveGame"
 # >>> factory-mutation ScriptCommand_MoveActiveNPC
 MUTATIONS["ScriptCommand_MoveActiveNPC"] = {"source_symbol": "ScriptCommand_MoveActiveNPC", "before": "ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)\n{\n\twLoadedNPCTempIndex = wScriptNPC;\n\treturn ExecuteNPCMovement(bc);\n}", "after": "ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)\n{\n\twLoadedNPCTempIndex = 0u;\n\treturn ExecuteNPCMovement(bc);\n}", "case_ids": ["ScriptCommand_MoveActiveNPC-0", "ScriptCommand_MoveActiveNPC-1"]}
 # <<< factory-mutation ScriptCommand_MoveActiveNPC
+# >>> factory-mutation ScriptCommand_SetNextNPCAndScript
+MUTATIONS["ScriptCommand_SetNextNPCAndScript"] = {"source_symbol": "ScriptCommand_SetNextNPCAndScript", "before": "\twTempNPC = c;", "after": "\twTempNPC = 0u;", "case_ids": ["ScriptCommand_SetNextNPCAndScript-0", "ScriptCommand_SetNextNPCAndScript-1"]}
+# <<< factory-mutation ScriptCommand_SetNextNPCAndScript

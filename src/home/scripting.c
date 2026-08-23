@@ -1082,3 +1082,13 @@ ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)
 	return ExecuteNPCMovement(bc);
 }
 /* <<< factory ScriptCommand_MoveActiveNPC */
+
+/* >>> factory ScriptCommand_SetNextNPCAndScript */
+IncreaseScriptPointerResult ScriptCommand_SetNextNPCAndScript(uint8_t c, uint16_t hl)
+{
+	wTempNPC = c;
+	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	(void)SetNextNPCAndScript((uint16_t)(((uint16_t)args.b << 8) | args.c), hl);
+	return IncreaseScriptPointerBy4();
+}
+/* <<< factory ScriptCommand_SetNextNPCAndScript */
