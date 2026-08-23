@@ -2755,6 +2755,14 @@ static void adapt_MysteryAttack_AIEffect(ProbeState *s)
 }
 /* <<< factory MysteryAttack_AIEffect */
 
+/* >>> factory HurricaneEffect */
+static void adapt_HurricaneEffect(ProbeState *s)
+{
+	QueueStatusConditionResult r = HurricaneEffect(s->hl);
+	s->f = r.f;
+}
+/* <<< factory HurricaneEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3096,5 +3104,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Barrier_BarrierEffect", adapt_Barrier_BarrierEffect },
 	{ "HydroPumpEffect", adapt_HydroPumpEffect },
 	{ "MysteryAttack_AIEffect", adapt_MysteryAttack_AIEffect },
+	{ "HurricaneEffect", adapt_HurricaneEffect },
 	{ NULL, NULL },
 };

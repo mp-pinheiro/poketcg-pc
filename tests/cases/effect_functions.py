@@ -2345,6 +2345,11 @@ wOpponentDuelVariables = 0xC300
 hTemp_ffa0 = 0xFFA0
 
 hWhoseTurn = 0xFF97
+
+hWhoseTurn = 0xFF97
+wOpponentDuelVariables = 0xC300
+wOpponentDeck = 0xC480
+IVYSAUR = 0x09
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3056,6 +3061,25 @@ CASES["MysteryAttack_AIEffect"] = [
     dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
 ]
 # <<< factory MysteryAttack_AIEffect
+
+# >>> factory HurricaneEffect
+CONTRACT["HurricaneEffect"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["HurricaneEffect"] = [
+    {"hl": 0x0000, "wram": {0xCCC7: b"\x80"}},
+    {"hl": 0x1234, "wram": {0xCCC7: b"\x00", hWhoseTurn: b"\xC2",
+              wOpponentDuelVariables + 0xC8: b"\x00"},
+     "read": {hWhoseTurn: 1}},
+    dict(POISON, hl=0x1234, wram={0xCCC7: b"\x00", hWhoseTurn: b"\xC2",
+                       wOpponentDuelVariables + 0xC8: b"\x1E",
+                       wOpponentDuelVariables: b"\x00" * 60,
+                       wOpponentDuelVariables + 0xBB: b"\x00",
+                       wOpponentDeck: bytes((IVYSAUR,))},
+         keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000,
+         read={hWhoseTurn: 1, wOpponentDuelVariables + 0xBB: 1, wOpponentDuelVariables + 0xC8: 1}),
+]
+# <<< factory HurricaneEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4964,3 +4988,6 @@ MUTATIONS["HydroPumpEffect"] = {"source_symbol": "HydroPumpEffect", "before": "v
 # >>> factory-mutation MysteryAttack_AIEffect
 MUTATIONS["MysteryAttack_AIEffect"] = {"source_symbol": "MysteryAttack_AIEffect", "before": "void MysteryAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 20u);", "after": "void MysteryAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 40u);", "case_ids": ["MysteryAttack_AIEffect-0", "MysteryAttack_AIEffect-1"]}
 # <<< factory-mutation MysteryAttack_AIEffect
+# >>> factory-mutation HurricaneEffect
+MUTATIONS["HurricaneEffect"] = {"source_symbol": "HurricaneEffect", "before": "gb_write8(arena_addr, 0xFFu);", "after": "gb_write8(arena_addr, 0x00u);", "case_ids": ["HurricaneEffect-2"]}
+# <<< factory-mutation HurricaneEffect

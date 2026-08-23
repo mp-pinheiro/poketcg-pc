@@ -1147,6 +1147,9 @@ void HydroPumpEffect(void);
 /* >>> factory MysteryAttack_AIEffect */
 void MysteryAttack_AIEffect(void);
 /* <<< factory MysteryAttack_AIEffect */
+/* >>> factory HurricaneEffect */
+QueueStatusConditionResult HurricaneEffect(uint16_t hl);
+/* <<< factory HurricaneEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

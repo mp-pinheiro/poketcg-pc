@@ -337,6 +337,15 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "mem.h"
 #define SUBSTATUS1_BARRIER 0x14u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define PokemonAndAllAttachedCardsReturnedToHandText 0x0147u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4564,3 +4573,39 @@ void MysteryAttack_AIEffect(void)
 	SetExpectedAIDamage(10u, 0u, 20u);
 }
 /* <<< factory MysteryAttack_AIEffect */
+
+/* >>> factory HurricaneEffect */
+QueueStatusConditionResult HurricaneEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult noeff = HandleNoDamageOrEffect(hl);
+	if (noeff.f & 0x10u)
+		return (QueueStatusConditionResult){noeff.f};
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (nonturn.a == 0u)
+		return (QueueStatusConditionResult){0x80u};
+
+	SwapTurn();
+	(void)GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	uint16_t base = (uint16_t)(hWhoseTurn << 8);
+	for (uint8_t l = 0u; l < DECK_SIZE; l++) {
+		uint16_t addr = (uint16_t)(base + l);
+		if (gb_read8(addr) == CARD_LOCATION_ARENA)
+			AddCardToHand(l);
+	}
+
+	uint16_t arena_addr = (uint16_t)(base + DUELVARS_ARENA_CARD);
+	uint8_t old_deck_index = gb_read8(arena_addr);
+	gb_write8(arena_addr, 0xFFu);
+	uint16_t hp_addr = (uint16_t)(base + DUELVARS_ARENA_CARD_HP);
+	gb_write8(hp_addr, 0u);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(old_deck_index);
+	uint16_t name_id = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name_id);
+	(void)DrawWideTextBox_WaitForInput(PokemonAndAllAttachedCardsReturnedToHandText);
+	wDuelDisplayedScreen = 0u;
+	SwapTurn();
+	return (QueueStatusConditionResult){0x80u};
+}
+/* <<< factory HurricaneEffect */
