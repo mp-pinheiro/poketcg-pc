@@ -2797,6 +2797,14 @@ CASES["JolteonQuickAttack_AIEffect"] = [
 ]
 # <<< factory JolteonQuickAttack_AIEffect
 
+# >>> factory LeekSlap_AIEffect
+CONTRACT["LeekSlap_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["LeekSlap_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory LeekSlap_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4632,3 +4640,6 @@ MUTATIONS["ElectabuzzQuickAttack_AIEffect"] = {"source_symbol": "ElectabuzzQuick
 # >>> factory-mutation JolteonQuickAttack_AIEffect
 MUTATIONS["JolteonQuickAttack_AIEffect"] = {"source_symbol": "JolteonQuickAttack_AIEffect", "before": "void JolteonQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(20u, 10u, 30u);\n}", "after": "void JolteonQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(21u, 10u, 30u);\n}", "case_ids": ["JolteonQuickAttack_AIEffect-0", "JolteonQuickAttack_AIEffect-1"]}
 # <<< factory-mutation JolteonQuickAttack_AIEffect
+# >>> factory-mutation LeekSlap_AIEffect
+MUTATIONS["LeekSlap_AIEffect"] = {"source_symbol": "LeekSlap_AIEffect", "before": "void LeekSlap_AIEffect(void)\n{\n\tSetExpectedAIDamage(15u, 0u, 30u);\n}", "after": "void LeekSlap_AIEffect(void)\n{\n\tSetExpectedAIDamage(16u, 0u, 30u);\n}", "case_ids": ["LeekSlap_AIEffect-0", "LeekSlap_AIEffect-1"]}
+# <<< factory-mutation LeekSlap_AIEffect

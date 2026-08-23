@@ -9,6 +9,13 @@
 #include "generated/wram.h"
 #define NPC_RONALD1 0x02u
 #define Script_FirstRonaldEncounter_ADDR 0x6862u
+
+#include "home/map.h"
+#include "home/scripting.h"
+#include "generated/wram.h"
+#define NPC_RONALD2 0x71u
+#define EVENT_RONALD_FIRST_DUEL_STATE 0x4Cu
+#define Script_FirstRonaldDuel_ADDR 0x68C0u
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -22,3 +29,18 @@ TryFirstRonaldEncounterResult TryFirstRonaldEncounter(uint8_t b, uint8_t c, uint
 	return (TryFirstRonaldEncounterResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
 }
 /* <<< factory TryFirstRonaldEncounter */
+
+/* >>> factory TryFirstRonaldDuel */
+TryFirstRonaldDuelResult TryFirstRonaldDuel(uint8_t b, uint8_t c, uint16_t hl)
+{
+	wTempNPC = NPC_RONALD2;
+	NPCSearchResult r = FindLoadedNPC();
+	if (r.f & 0x10u)
+		return (TryFirstRonaldDuelResult){r.a, r.f, b, c, hl};
+	uint8_t event = GetEventValue(EVENT_RONALD_FIRST_DUEL_STATE);
+	if (event != 0u)
+		return (TryFirstRonaldDuelResult){event, 0x00u, b, c, hl};
+	SetNextNPCAndScriptResult r2 = SetNextNPCAndScript(Script_FirstRonaldDuel_ADDR, hl);
+	return (TryFirstRonaldDuelResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
+}
+/* <<< factory TryFirstRonaldDuel */

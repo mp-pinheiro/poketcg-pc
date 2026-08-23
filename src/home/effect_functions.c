@@ -4291,3 +4291,10 @@ void JolteonQuickAttack_AIEffect(void)
 	SetExpectedAIDamage(20u, 10u, 30u);
 }
 /* <<< factory JolteonQuickAttack_AIEffect */
+
+/* >>> factory LeekSlap_AIEffect */
+void LeekSlap_AIEffect(void)
+{
+	SetExpectedAIDamage(15u, 0u, 30u);
+}
+/* <<< factory LeekSlap_AIEffect */

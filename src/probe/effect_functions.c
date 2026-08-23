@@ -2558,6 +2558,14 @@ static void adapt_JolteonQuickAttack_AIEffect(ProbeState *s)
 }
 /* <<< factory JolteonQuickAttack_AIEffect */
 
+/* >>> factory LeekSlap_AIEffect */
+static void adapt_LeekSlap_AIEffect(ProbeState *s)
+{
+	(void)s;
+	LeekSlap_AIEffect();
+}
+/* <<< factory LeekSlap_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2875,5 +2883,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DragoniteLv41Slam_AIEffect", adapt_DragoniteLv41Slam_AIEffect },
 	{ "ElectabuzzQuickAttack_AIEffect", adapt_ElectabuzzQuickAttack_AIEffect },
 	{ "JolteonQuickAttack_AIEffect", adapt_JolteonQuickAttack_AIEffect },
+	{ "LeekSlap_AIEffect", adapt_LeekSlap_AIEffect },
 	{ NULL, NULL },
 };
