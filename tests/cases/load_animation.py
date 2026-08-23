@@ -214,6 +214,14 @@ CASES["DrawPlayerPortrait"] = [
 ]
 # <<< factory DrawPlayerPortrait
 
+# >>> factory Func_3e31
+CONTRACT["Func_3e31"] = {"compare": ("a", "f"), "preserve": ("f",), "wram_out": True}
+CASES["Func_3e31"] = [
+    {"wram": {0xFF80: b"\x03", 0xD322: b"\x00"}, "read": {0xFF80: 1}},
+    dict(POISON, wram={0xFF80: b"\x05", 0xD322: b"\x00"}, read={0xFF80: 1}),
+]
+# <<< factory Func_3e31
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -268,3 +276,11 @@ MUTATIONS["DrawPlayerPortrait"] = {
 	"case_ids": ["DrawPlayerPortrait-0", "DrawPlayerPortrait-1"],
 }
 # <<< factory-mutation DrawPlayerPortrait
+# >>> factory-mutation Func_3e31
+MUTATIONS["Func_3e31"] = {
+    "source_symbol": "Func_3e31",
+    "before": "uint8_t saved_bank = hBankROM;",
+    "after": "uint8_t saved_bank = (uint8_t)(hBankROM + 1u);",
+    "case_ids": ["Func_3e31-0", "Func_3e31-1"],
+}
+# <<< factory-mutation Func_3e31

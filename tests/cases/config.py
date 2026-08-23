@@ -128,6 +128,15 @@ CASES["ConfigScreenDPadLeft"] = [
 ]
 # <<< factory ConfigScreenDPadLeft
 
+# >>> factory ConfigScreenDPadRight
+CONTRACT["ConfigScreenDPadRight"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["ConfigScreenDPadRight"] = [
+    {"wram": {0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
+    {"wram": {0xD11B: b"\x00", 0xD118: b"\x04", 0xD11C: b"\xFF"}, "read": {0xD118: 1, 0xD11C: 1}},
+    dict(POISON, wram={0xD11B: b"\x00", 0xD118: b"\x02", 0xD11C: b"\xFF"}, read={0xD118: 1, 0xD11C: 1}),
+]
+# <<< factory ConfigScreenDPadRight
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -180,3 +189,11 @@ MUTATIONS["ConfigScreenDPadLeft"] = {
     "case_ids": ["ConfigScreenDPadLeft-0", "ConfigScreenDPadLeft-1"],
 }
 # <<< factory-mutation ConfigScreenDPadLeft
+# >>> factory-mutation ConfigScreenDPadRight
+MUTATIONS["ConfigScreenDPadRight"] = {
+    "source_symbol": "ConfigScreenDPadRight",
+    "before": "uint8_t new_val = (uint8_t)(current + 1u);",
+    "after": "uint8_t new_val = (uint8_t)(current + 2u);",
+    "case_ids": ["ConfigScreenDPadRight-0", "ConfigScreenDPadRight-1"],
+}
+# <<< factory-mutation ConfigScreenDPadRight

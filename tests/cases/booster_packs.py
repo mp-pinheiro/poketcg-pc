@@ -304,6 +304,14 @@ CASES["CheckCardAlreadyDrawn"] = [
 ]
 # <<< factory CheckCardAlreadyDrawn
 
+# >>> factory FindCardsInSetAndRarity
+CONTRACT["FindCardsInSetAndRarity"] = {"compare": ("a", "f", "d", "e"), "preserve": (), "wram_out": True}
+CASES["FindCardsInSetAndRarity"] = [
+    dict(wram={0xC001: b"\x01" * 228}, read={0xD671: 9, 0xD133: 1, 0xD66A: 1}),
+    dict(POISON, wram={0xC001: b"\x01" * 228}, read={0xD671: 9, 0xD133: 1, 0xD66A: 1}),
+]
+# <<< factory FindCardsInSetAndRarity
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -418,3 +426,11 @@ MUTATIONS["CheckCardAlreadyDrawn"] = {
     "case_ids": ["CheckCardAlreadyDrawn-1", "CheckCardAlreadyDrawn-2"],
 }
 # <<< factory-mutation CheckCardAlreadyDrawn
+# >>> factory-mutation FindCardsInSetAndRarity
+MUTATIONS["FindCardsInSetAndRarity"] = {
+    "source_symbol": "FindCardsInSetAndRarity",
+    "before": "for (uint16_t card_id = 1u; card_id <= NUM_CARDS; card_id++) {",
+    "after": "for (uint16_t card_id = 1u; card_id <= NUM_CARDS + 1u; card_id++) {",
+    "case_ids": ["FindCardsInSetAndRarity-0", "FindCardsInSetAndRarity-1"],
+}
+# <<< factory-mutation FindCardsInSetAndRarity

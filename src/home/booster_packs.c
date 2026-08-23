@@ -79,6 +79,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 
 #include "home/card_data.h"
 #include "generated/wram.h"
+
+#define NUM_CARDS 0xE4u
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -425,3 +427,31 @@ CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void)
 	return (CheckCardAlreadyDrawnResult){value, f};
 }
 /* <<< factory CheckCardAlreadyDrawn */
+
+/* >>> factory FindCardsInSetAndRarity */
+void FindCardsInSetAndRarity(void)
+{
+	for (uint8_t i = 0u; i < NUM_BOOSTER_CARD_TYPES; i++)
+		gb_write8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + i), 0u);
+	uint16_t list_ptr = wBoosterViableCardList_ADDR;
+	gb_write8(list_ptr, 0u);
+	for (uint16_t card_id = 1u; card_id <= NUM_CARDS; card_id++) {
+		gb_write8(wBoosterCurrentCard_ADDR, (uint8_t)card_id);
+		CheckCardAlreadyDrawnResult drawn = CheckCardAlreadyDrawn();
+		if (drawn.f & 0x10u)
+			continue;
+		CheckCardInSetAndRarityResult r = CheckCardInSetAndRarity(0u, 0u, 0u, (uint8_t)card_id, 0u);
+		if (r.f & 0x10u)
+			continue;
+		uint8_t card_type = gb_read8(wBoosterCurrentCardType_ADDR);
+		uint8_t type_index = GetBoosterCardType(card_type);
+		uint8_t count = gb_read8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type_index));
+		gb_write8((uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type_index), (uint8_t)(count + 1u));
+		gb_write8(list_ptr, (uint8_t)card_id);
+		list_ptr++;
+		gb_write8(list_ptr, type_index);
+		list_ptr++;
+		gb_write8(list_ptr, 0u);
+	}
+}
+/* <<< factory FindCardsInSetAndRarity */

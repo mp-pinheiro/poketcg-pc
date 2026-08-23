@@ -94,4 +94,7 @@ CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint
 typedef struct { uint8_t a; uint8_t f; } CheckCardAlreadyDrawnResult;
 CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void);
 /* <<< factory CheckCardAlreadyDrawn */
+/* >>> factory FindCardsInSetAndRarity */
+void FindCardsInSetAndRarity(void);
+/* <<< factory FindCardsInSetAndRarity */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

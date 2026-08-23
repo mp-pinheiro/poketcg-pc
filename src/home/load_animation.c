@@ -21,6 +21,8 @@
 #include "generated/wram.h"
 #define PLAYER_PIC 0x01u
 #define TILEMAP_PLAYER 0x62u
+
+#include "home/animation.h"
 /* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
@@ -274,3 +276,14 @@ void DrawPlayerPortrait(void)
 	DrawPortrait(TILEMAP_PLAYER);
 }
 /* <<< factory DrawPlayerPortrait */
+
+/* >>> factory Func_3e31 */
+void Func_3e31(void)
+{
+	uint8_t saved_bank = hBankROM;
+	HandleAllSpriteAnimations();
+	BankswitchROM(0x20u);
+	DoLoadedFramesetSubgroupsFrame();
+	BankswitchROM(saved_bank);
+}
+/* <<< factory Func_3e31 */

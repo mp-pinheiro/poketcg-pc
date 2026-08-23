@@ -87,6 +87,16 @@ static void adapt_DrawPlayerPortrait(ProbeState *s)
 }
 /* <<< factory DrawPlayerPortrait */
 
+/* >>> factory Func_3e31 */
+static void adapt_Func_3e31(ProbeState *s)
+{
+	uint8_t entry_f = s->f;
+	Func_3e31();
+	s->a = hBankROM;
+	s->f = entry_f;
+}
+/* <<< factory Func_3e31 */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -101,5 +111,6 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "DrawPortrait", adapt_DrawPortrait },
 	{ "DrawOpponentPortrait", adapt_DrawOpponentPortrait },
 	{ "DrawPlayerPortrait", adapt_DrawPlayerPortrait },
+	{ "Func_3e31", adapt_Func_3e31 },
 	{ NULL, NULL },
 };

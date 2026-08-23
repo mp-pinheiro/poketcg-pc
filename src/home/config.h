@@ -22,4 +22,7 @@ HideConfigMenuCursorResult HideConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
 /* >>> factory ConfigScreenDPadLeft */
 void ConfigScreenDPadLeft(void);
 /* <<< factory ConfigScreenDPadLeft */
+/* >>> factory ConfigScreenDPadRight */
+void ConfigScreenDPadRight(void);
+/* <<< factory ConfigScreenDPadRight */
 #endif /* POKETCG_HOME_CONFIG_H */

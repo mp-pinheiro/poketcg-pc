@@ -1,0 +1,9 @@
+{
+  "fn": "Func_3e31",
+  "case": "tests/cases/load_animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_3e31\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54050\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_3e31\", \"mismatches\": {\"a\": [1, 2], \"bus\": {\"address\": 65408, \"reference\": \"0001\", \"native\": \"0002\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54050, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_3e31\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"54050\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
