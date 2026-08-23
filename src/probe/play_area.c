@@ -11,7 +11,17 @@ static void adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6(ProbeState *s)
 	s->hl = (uint16_t)(wOAM_ADDR + 160u);
 }
 
+/* >>> factory OpenInPlayAreaScreen_HandleInput */
+static void adapt_OpenInPlayAreaScreen_HandleInput(ProbeState *s)
+{
+	OpenInPlayAreaScreenHandleInputResult r = OpenInPlayAreaScreen_HandleInput();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory OpenInPlayAreaScreen_HandleInput */
+
 const ProbeEntry probe_entries_play_area[] = {
 	{ "ZeroObjectPositionsAndToggleOAMCopy_Bank6", adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6 },
+	{ "OpenInPlayAreaScreen_HandleInput", adapt_OpenInPlayAreaScreen_HandleInput },
 	{ NULL, NULL },
 };
