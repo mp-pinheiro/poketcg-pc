@@ -1305,6 +1305,14 @@ static void adapt_DisplayPreviousCardPage(ProbeState *s)
 }
 /* <<< factory DisplayPreviousCardPage */
 
+/* >>> factory PrintNumberOfHandAndDeckCards */
+static void adapt_PrintNumberOfHandAndDeckCards(ProbeState *s)
+{
+	(void)s;
+	PrintNumberOfHandAndDeckCards();
+}
+/* <<< factory PrintNumberOfHandAndDeckCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1460,5 +1468,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "GoToFirstOrNextCardPage", adapt_GoToFirstOrNextCardPage },
 	{ "PrintPracticeDuelInstructions", adapt_PrintPracticeDuelInstructions },
 	{ "DisplayPreviousCardPage", adapt_DisplayPreviousCardPage },
+	{ "PrintNumberOfHandAndDeckCards", adapt_PrintNumberOfHandAndDeckCards },
 	{ NULL, NULL },
 };

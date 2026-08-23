@@ -2455,6 +2455,14 @@ static void adapt_EnergySpike_DeckCheck(ProbeState *s)
 }
 /* <<< factory EnergySpike_DeckCheck */
 
+/* >>> factory MagmarFlamethrower_AISelectEffect */
+static void adapt_MagmarFlamethrower_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	MagmarFlamethrower_AISelectEffect();
+}
+/* <<< factory MagmarFlamethrower_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2759,5 +2767,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeottoMirrorMove_AISelection", adapt_PidgeottoMirrorMove_AISelection },
 	{ "ClefairyMetronome_AISelectEffect", adapt_ClefairyMetronome_AISelectEffect },
 	{ "EnergySpike_DeckCheck", adapt_EnergySpike_DeckCheck },
+	{ "MagmarFlamethrower_AISelectEffect", adapt_MagmarFlamethrower_AISelectEffect },
 	{ NULL, NULL },
 };

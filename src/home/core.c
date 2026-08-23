@@ -494,6 +494,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/print_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3134,3 +3137,14 @@ void DisplayPreviousCardPage(void)
 		DisplayCardPage();
 }
 /* <<< factory DisplayPreviousCardPage */
+
+/* >>> factory PrintNumberOfHandAndDeckCards */
+void PrintNumberOfHandAndDeckCards(void)
+{
+	if (hWhoseTurn != PLAYER_TURN) {
+		PrintOpponentNumberOfHandAndDeckCards();
+		return;
+	}
+	PrintPlayerNumberOfHandAndDeckCards();
+}
+/* <<< factory PrintNumberOfHandAndDeckCards */

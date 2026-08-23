@@ -2688,6 +2688,15 @@ CASES["EnergySpike_DeckCheck"] = [
 ]
 # <<< factory EnergySpike_DeckCheck
 
+# >>> factory MagmarFlamethrower_AISelectEffect
+CONTRACT["MagmarFlamethrower_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["MagmarFlamethrower_AISelectEffect"] = [
+    {"wram": {0xC510: b"\x00\x00\x00\x00", 0xFFA0: b"\x00"}, "read": {0xC510: 8, 0xFFA0: 1}},
+    dict(POISON, wram={0xC510: b"\xAA\xBB\xCC\xDD", 0xFFA0: b"\x00"}, read={0xC510: 8, 0xFFA0: 1}),
+    {"wram": {0xC510: b"\x01\xFF\x00\x00", 0xFFA0: b"\x00"}, "read": {0xC510: 8, 0xFFA0: 1}},
+]
+# <<< factory MagmarFlamethrower_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4479,3 +4488,6 @@ MUTATIONS["ClefairyMetronome_AISelectEffect"] = {"source_symbol": "ClefairyMetro
 # >>> factory-mutation EnergySpike_DeckCheck
 MUTATIONS["EnergySpike_DeckCheck"] = {"source_symbol": "EnergySpike_DeckCheck", "before": "\treturn CheckIfDeckIsEmpty();", "after": "\treturn (CheckIfDeckIsEmptyResult){0u, 0u, 0u};", "case_ids": ["EnergySpike_DeckCheck-0", "EnergySpike_DeckCheck-1", "EnergySpike_DeckCheck-2", "EnergySpike_DeckCheck-3"]}
 # <<< factory-mutation EnergySpike_DeckCheck
+# >>> factory-mutation MagmarFlamethrower_AISelectEffect
+MUTATIONS["MagmarFlamethrower_AISelectEffect"] = {"source_symbol": "MagmarFlamethrower_AISelectEffect", "before": "void MagmarFlamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}", "after": "void MagmarFlamethrower_AISelectEffect(void)\n{\n\treturn;\n}", "case_ids": ["MagmarFlamethrower_AISelectEffect-0", "MagmarFlamethrower_AISelectEffect-1"]}
+# <<< factory-mutation MagmarFlamethrower_AISelectEffect

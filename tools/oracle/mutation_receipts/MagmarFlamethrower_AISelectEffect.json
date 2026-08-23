@@ -1,0 +1,9 @@
+{
+  "fn": "MagmarFlamethrower_AISelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MagmarFlamethrower_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00000000000000\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MagmarFlamethrower_AISelectEffect\", \"mismatches\": {\"bus\": {\"address\": 50448, \"reference\": \"ff00000000\", \"native\": \"0000000000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[50448, 8], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"MagmarFlamethrower_AISelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00000000000000\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

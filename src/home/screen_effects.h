@@ -34,4 +34,7 @@ void Func_1ce03(uint8_t a);
 /* >>> factory ShakeScreenX_Big */
 void ShakeScreenX_Big(void);
 /* <<< factory ShakeScreenX_Big */
+/* >>> factory ShakeScreenX_Small */
+void ShakeScreenX_Small(void);
+/* <<< factory ShakeScreenX_Small */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

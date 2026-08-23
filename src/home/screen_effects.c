@@ -29,6 +29,8 @@
 
 #include "generated/wram.h"
 #include "home/play_animation.h"
+
+#include "home/screen_effects.h"
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -137,3 +139,10 @@ void ShakeScreenX_Big(void)
 	ShakeScreenX(0x4d61u);
 }
 /* <<< factory ShakeScreenX_Big */
+
+/* >>> factory ShakeScreenX_Small */
+void ShakeScreenX_Small(void)
+{
+	ShakeScreenX(0x4d55u);
+}
+/* <<< factory ShakeScreenX_Small */

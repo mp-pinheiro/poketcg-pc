@@ -1426,6 +1426,15 @@ wPracticeDuelTextY = 0xCBCA
 
 wCardPageNumber = 0xCBC7
 wLCDC = 0xCABB
+
+hWhoseTurn = 0xFF97
+BGMAP0 = 0x9800
+wPlayerNumberOfCardsInHand = 0xC2EE
+wNumCardsBeingDrawn = 0xCBE9
+wPlayerNumberOfCardsNotInDeck = 0xC2BA
+wOpponentNumberOfCardsInHand = 0xC3EE
+wOpponentNumberOfCardsNotInDeck = 0xC3BA
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1785,6 +1794,24 @@ CASES["DisplayPreviousCardPage"] = [
     dict(POISON, wram={wCardPageNumber: b"\x01", wLCDC: b"\x00"}, hram={0xFF40: b"\x00"}, expect={0xFF40: b"\x00"}),
 ]
 # <<< factory DisplayPreviousCardPage
+
+# >>> factory PrintNumberOfHandAndDeckCards
+CONTRACT["PrintNumberOfHandAndDeckCards"] = {"compare": (), "preserve": ()}
+CASES["PrintNumberOfHandAndDeckCards"] = [
+    {"hram": {hWhoseTurn: b"\xC2"},
+     "wram": {wPlayerNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wPlayerNumberOfCardsNotInDeck: b"\x0A"},
+     "vram": {0: {BGMAP0 + 10 * 32 + 16: b"\xA5\xA5", BGMAP0 + 10 * 32 + 10: b"\xA5\xA5"}},
+     "expect_vram": {0: {BGMAP0 + 10 * 32 + 16: b"\x00\x25", BGMAP0 + 10 * 32 + 10: b"\x24\x27"}}},
+    {"hram": {hWhoseTurn: b"\x00"},
+     "wram": {wOpponentNumberOfCardsInHand: b"\x02", wNumCardsBeingDrawn: b"\x03", wOpponentNumberOfCardsNotInDeck: b"\x0A"},
+     "vram": {0: {0x9865: b"\xA5\xA5", 0x986B: b"\xA5\xA5"}},
+     "expect_vram": {0: {0x9865: b"\x25\x25", 0x986B: b"\x24\x27"}}},
+    dict(POISON, hram={hWhoseTurn: b"\xC2"},
+         wram={wPlayerNumberOfCardsInHand: b"\x00", wNumCardsBeingDrawn: b"\x00", wPlayerNumberOfCardsNotInDeck: b"\x00"},
+         vram={0: {BGMAP0 + 10 * 32 + 16: b"\xEE\xEE\xEE", BGMAP0 + 10 * 32 + 10: b"\xEE\xEE\xEE"}},
+         expect_vram={0: {BGMAP0 + 10 * 32 + 16: b"\x20\x00\xEE", BGMAP0 + 10 * 32 + 10: b"\x26\x20\xEE"}}),
+]
+# <<< factory PrintNumberOfHandAndDeckCards
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2752,3 +2779,6 @@ MUTATIONS["PrintPracticeDuelInstructions"] = {
 # >>> factory-mutation DisplayPreviousCardPage
 MUTATIONS["DisplayPreviousCardPage"] = {"source_symbol": "DisplayPreviousCardPage", "before": "\tif ((navigation.f & 0x10u) == 0u)", "after": "\tif ((navigation.f & 0x10u) != 0u)", "case_ids": ["DisplayPreviousCardPage-0", "DisplayPreviousCardPage-1"]}
 # <<< factory-mutation DisplayPreviousCardPage
+# >>> factory-mutation PrintNumberOfHandAndDeckCards
+MUTATIONS["PrintNumberOfHandAndDeckCards"] = {"source_symbol": "PrintNumberOfHandAndDeckCards", "before": "\tif (hWhoseTurn != PLAYER_TURN) {", "after": "\tif (hWhoseTurn == PLAYER_TURN) {", "case_ids": ["PrintNumberOfHandAndDeckCards-0", "PrintNumberOfHandAndDeckCards-1", "PrintNumberOfHandAndDeckCards-2"]}
+# <<< factory-mutation PrintNumberOfHandAndDeckCards

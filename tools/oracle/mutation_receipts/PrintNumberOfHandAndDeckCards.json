@@ -1,0 +1,9 @@
+{
+  "fn": "PrintNumberOfHandAndDeckCards",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintNumberOfHandAndDeckCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39242\": \"a5a5\", \"39248\": \"a5a5\"}}, \"wram\": {\"49850\": \"0a\", \"49902\": \"02\", \"52201\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintNumberOfHandAndDeckCards\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintNumberOfHandAndDeckCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"39242\": \"a5a5\", \"39248\": \"a5a5\"}}, \"wram\": {\"49850\": \"0a\", \"49902\": \"02\", \"52201\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

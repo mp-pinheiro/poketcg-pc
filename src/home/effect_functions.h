@@ -1026,6 +1026,12 @@ void ClefairyMetronome_AISelectEffect(void);
 /* >>> factory EnergySpike_DeckCheck */
 CheckIfDeckIsEmptyResult EnergySpike_DeckCheck(void);
 /* <<< factory EnergySpike_DeckCheck */
+/* >>> factory MagmarFlamethrower_AISelectEffect */
+/* poketcg/src/engine/duel/effect_functions.asm */
+
+void AIPickFireEnergyCardToDiscard(void);
+void MagmarFlamethrower_AISelectEffect(void);
+/* <<< factory MagmarFlamethrower_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

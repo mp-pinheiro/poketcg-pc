@@ -616,4 +616,7 @@ void PrintPracticeDuelInstructions(uint16_t hl);
 /* >>> factory DisplayPreviousCardPage */
 void DisplayPreviousCardPage(void);
 /* <<< factory DisplayPreviousCardPage */
+/* >>> factory PrintNumberOfHandAndDeckCards */
+void PrintNumberOfHandAndDeckCards(void);
+/* <<< factory PrintNumberOfHandAndDeckCards */
 #endif

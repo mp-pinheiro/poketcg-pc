@@ -4195,3 +4195,10 @@ CheckIfDeckIsEmptyResult EnergySpike_DeckCheck(void)
 	return CheckIfDeckIsEmpty();
 }
 /* <<< factory EnergySpike_DeckCheck */
+
+/* >>> factory MagmarFlamethrower_AISelectEffect */
+void MagmarFlamethrower_AISelectEffect(void)
+{
+	AIPickFireEnergyCardToDiscard();
+}
+/* <<< factory MagmarFlamethrower_AISelectEffect */
