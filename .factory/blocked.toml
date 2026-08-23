@@ -2,3 +2,8 @@
 name = "_TossCoin"
 reason = "tests/cases/coin_toss.py intentionally leaves the full interactive animation/RNG/serial routine unregistered; no primary oracle case exists"
 unblock = "add at least one deterministic primary schema-2 case for _TossCoin and a terminating full implementation, or land a separately reviewed permanent transform for it and its callers"
+
+[[blocked]]
+name = "UnreferencedSaveSerialReturnAddress"
+reason = "0-callsite dead code (poketcg/src/home/serial.asm:459) whose entire observable output is the raw entry stack pointer (ld hl, sp+-2; pop hl) captured into wSerialReturnSP/wSerialReturnAddress. The factory's own verification phases run two different oracle backends with two different entry-SP conventions for an isolated probed call: tools/oracle/gbref/compare_one.py (primary phase) enters with sp=0xFFFC and a pushed return address of 0xFEA0, while tests/test_leaves.py (diff phase, PyBoy-backed) enters with sp=0xCFBE and a pushed sentinel of 0xCFF0. A single C body can only reproduce one of the two SP values, so it necessarily fails whichever phase it does not target -- confirmed by direct diagnostic evidence from both phases in this cycle."
+unblock = "add a project-wide abstraction that lets a ported routine query its own entry SP consistently across both oracle backends, or land a separately reviewed permanent transform that special-cases this routine (and any other sp-relative dead code) out of the dual-oracle comparison"
