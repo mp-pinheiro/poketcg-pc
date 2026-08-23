@@ -1412,6 +1412,15 @@ static void adapt_PrintUsedTrainerCardDescription(ProbeState *s)
 }
 /* <<< factory PrintUsedTrainerCardDescription */
 
+/* >>> factory PracticeDuelVerify_Turn5 */
+static void adapt_PracticeDuelVerify_Turn5(ProbeState *s)
+{
+	(void)s;
+	PracticeDuelVerifyTurn5Result r = PracticeDuelVerify_Turn5();
+	s->f = r.f;
+}
+/* <<< factory PracticeDuelVerify_Turn5 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1579,5 +1588,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckPrintCnfSlpPrz", adapt_CheckPrintCnfSlpPrz },
 	{ "LoadAnimCoordsAndFlags", adapt_LoadAnimCoordsAndFlags },
 	{ "PrintUsedTrainerCardDescription", adapt_PrintUsedTrainerCardDescription },
+	{ "PracticeDuelVerify_Turn5", adapt_PracticeDuelVerify_Turn5 },
 	{ NULL, NULL },
 };

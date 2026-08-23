@@ -659,4 +659,8 @@ void LoadAnimCoordsAndFlags(void);
 /* >>> factory PrintUsedTrainerCardDescription */
 void PrintUsedTrainerCardDescription(void);
 /* <<< factory PrintUsedTrainerCardDescription */
+/* >>> factory PracticeDuelVerify_Turn5 */
+typedef struct { uint8_t f; } PracticeDuelVerifyTurn5Result;
+PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void);
+/* <<< factory PracticeDuelVerify_Turn5 */
 #endif

@@ -1449,6 +1449,14 @@ wLoadedCard1Name = 0xCC27
 wLoadedCard1NonPokemonDescription = 0xCC2E
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 GENERIC_VREAD = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wAttachedEnergies = 0xCC1B
+wTempCardID_ccc2 = 0xCCC2
+WATER_ENERGY = 0x03
+STARYU = 0x55
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1958,6 +1966,18 @@ CASES["PrintUsedTrainerCardDescription"] = [
          vread=GENERIC_VREAD),
 ]
 # <<< factory PrintUsedTrainerCardDescription
+
+# >>> factory PracticeDuelVerify_Turn5
+CONTRACT["PracticeDuelVerify_Turn5"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["PracticeDuelVerify_Turn5"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10",
+              wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY)),
+              wTempCardID_ccc2: bytes((STARYU,))}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables: b"\x10\x10\x10",
+                       wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY, STARYU)),
+                       wTempCardID_ccc2: b"\x00"}),
+]
+# <<< factory PracticeDuelVerify_Turn5
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2966,3 +2986,6 @@ MUTATIONS["LoadAnimCoordsAndFlags"] = {"source_symbol": "LoadAnimCoordsAndFlags"
 # >>> factory-mutation PrintUsedTrainerCardDescription
 MUTATIONS["PrintUsedTrainerCardDescription"] = {"source_symbol": "PrintUsedTrainerCardDescription", "before": "InitTextPrinting(1u, 1u);", "after": "InitTextPrinting(2u, 1u);", "case_ids": ["PrintUsedTrainerCardDescription-0", "PrintUsedTrainerCardDescription-1"]}
 # <<< factory-mutation PrintUsedTrainerCardDescription
+# >>> factory-mutation PracticeDuelVerify_Turn5
+MUTATIONS["PracticeDuelVerify_Turn5"] = {"source_symbol": "PracticeDuelVerify_Turn5", "before": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)", "after": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 3u)", "case_ids": ["PracticeDuelVerify_Turn5-0"]}
+# <<< factory-mutation PracticeDuelVerify_Turn5

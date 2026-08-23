@@ -567,6 +567,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define UsedText 0x0033u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3503,3 +3507,15 @@ void PrintUsedTrainerCardDescription(void)
 	(void)DrawWideTextBox_WaitForInput(hl);
 }
 /* <<< factory PrintUsedTrainerCardDescription */
+
+/* >>> factory PracticeDuelVerify_Turn5 */
+PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void)
+{
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)
+		return (PracticeDuelVerifyTurn5Result){ReturnWrongAction(0u)};
+	if (gb_read8(wTempCardID_ccc2_ADDR) != STARYU)
+		return (PracticeDuelVerifyTurn5Result){ReturnWrongAction(0u)};
+	return (PracticeDuelVerifyTurn5Result){0xC0u};
+}
+/* <<< factory PracticeDuelVerify_Turn5 */
