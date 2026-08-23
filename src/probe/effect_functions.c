@@ -2820,6 +2820,14 @@ static void adapt_ItemFinder_HandDiscardPileCheck(ProbeState *s)
 }
 /* <<< factory ItemFinder_HandDiscardPileCheck */
 
+/* >>> factory Wildfire_DiscardEnergyEffect */
+static void adapt_Wildfire_DiscardEnergyEffect(ProbeState *s)
+{
+	(void)s;
+	Wildfire_DiscardEnergyEffect();
+}
+/* <<< factory Wildfire_DiscardEnergyEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3169,5 +3177,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StrangeBehavior_CheckDamage", adapt_StrangeBehavior_CheckDamage },
 	{ "EnergyTrans_PrintProcedure", adapt_EnergyTrans_PrintProcedure },
 	{ "ItemFinder_HandDiscardPileCheck", adapt_ItemFinder_HandDiscardPileCheck },
+	{ "Wildfire_DiscardEnergyEffect", adapt_Wildfire_DiscardEnergyEffect },
 	{ NULL, NULL },
 };

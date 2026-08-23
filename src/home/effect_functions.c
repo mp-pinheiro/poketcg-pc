@@ -371,6 +371,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4711,3 +4716,19 @@ ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void)
 	return (ItemFinder_HandDiscardPileCheckResult){r.f, r.hl};
 }
 /* <<< factory ItemFinder_HandDiscardPileCheck */
+
+/* >>> factory Wildfire_DiscardEnergyEffect */
+void Wildfire_DiscardEnergyEffect(void)
+{
+	(void)CreateListOfFireEnergyAttachedToArena();
+	uint8_t count = gb_read8(hTemp_ffa0_ADDR);
+	if (count == 0u)
+		return;
+	uint16_t hl = wDuelTempList_ADDR;
+	for (uint8_t c = count; c != 0u; c--) {
+		uint8_t card = gb_read8(hl);
+		hl++;
+		PutCardInDiscardPile(card);
+	}
+}
+/* <<< factory Wildfire_DiscardEnergyEffect */

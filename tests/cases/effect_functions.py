@@ -2367,6 +2367,13 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 
 hWhoseTurn = 0xFF97
 wPlayerDuelVariables = 0xC200
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+hTemp_ffa0 = 0xFFA0
+wDuelTempList = 0xC510
+CHARMANDER = 0x30
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3167,6 +3174,19 @@ CASES["ItemFinder_HandDiscardPileCheck"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x01"}),
 ]
 # <<< factory ItemFinder_HandDiscardPileCheck
+
+# >>> factory Wildfire_DiscardEnergyEffect
+CONTRACT["Wildfire_DiscardEnergyEffect"] = {"compare": (), "preserve": ()}
+CASES["Wildfire_DiscardEnergyEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x00", 0xC000: b"\x00" * 0xF00}},
+    {"wram": {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x02", 0xC000: b"\x00" * 0xF00,
+              wPlayerDuelVariables: bytes((0x10, 0x10)),
+              wPlayerDeck: bytes((CHARMANDER, CHARMANDER))}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x02", 0xC000: b"\x00" * 0xF00,
+                       wPlayerDuelVariables: bytes((0x10, 0x10)),
+                       wPlayerDeck: bytes((CHARMANDER, CHARMANDER))}),
+]
+# <<< factory Wildfire_DiscardEnergyEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5099,3 +5119,6 @@ MUTATIONS["EnergyTrans_PrintProcedure"] = {"source_symbol": "EnergyTrans_PrintPr
 # >>> factory-mutation ItemFinder_HandDiscardPileCheck
 MUTATIONS["ItemFinder_HandDiscardPileCheck"] = {"source_symbol": "ItemFinder_HandDiscardPileCheck", "before": "if (count.a < 3u)", "after": "if (count.a < 0u)", "case_ids": ["ItemFinder_HandDiscardPileCheck-0", "ItemFinder_HandDiscardPileCheck-2"]}
 # <<< factory-mutation ItemFinder_HandDiscardPileCheck
+# >>> factory-mutation Wildfire_DiscardEnergyEffect
+MUTATIONS["Wildfire_DiscardEnergyEffect"] = {"source_symbol": "Wildfire_DiscardEnergyEffect", "before": "for (uint8_t c = count; c != 0u; c--) {", "after": "for (uint8_t c = (uint8_t)(count - 1u); c != 0u; c--) {", "case_ids": ["Wildfire_DiscardEnergyEffect-1", "Wildfire_DiscardEnergyEffect-2"]}
+# <<< factory-mutation Wildfire_DiscardEnergyEffect

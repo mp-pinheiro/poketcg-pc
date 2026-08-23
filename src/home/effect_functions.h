@@ -1173,6 +1173,9 @@ void EnergyTrans_PrintProcedure(void);
 typedef struct { uint8_t f; uint16_t hl; } ItemFinder_HandDiscardPileCheckResult;
 ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void);
 /* <<< factory ItemFinder_HandDiscardPileCheck */
+/* >>> factory Wildfire_DiscardEnergyEffect */
+void Wildfire_DiscardEnergyEffect(void);
+/* <<< factory Wildfire_DiscardEnergyEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
