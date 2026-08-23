@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_ComputerSearch_Anger",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_ComputerSearch_Anger\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"000000\", \"49730\": \"0a0b0c\", \"49851\": \"ff\", \"49902\": \"03\", \"50181\": \"a8\", \"50186\": \"a7c5db\", \"50448\": \"0affffff00000000000000000000000000000000000000000000000000000000\", \"52758\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_ComputerSearch_Anger\", \"mismatches\": {\"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_ComputerSearch_Anger\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"000000\", \"49730\": \"0a0b0c\", \"49851\": \"ff\", \"49902\": \"03\", \"50181\": \"a8\", \"50186\": \"a7c5db\", \"50448\": \"0affffff00000000000000000000000000000000000000000000000000000000\", \"52758\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -93,4 +93,8 @@ AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryA
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearch_FireChargeResult;
 AIDecide_ComputerSearch_FireChargeResult AIDecide_ComputerSearch_FireCharge(uint8_t b, uint8_t c);
 /* <<< factory AIDecide_ComputerSearch_FireCharge */
+/* >>> factory AIDecide_ComputerSearch_Anger */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearch_AngerResult;
+AIDecide_ComputerSearch_AngerResult AIDecide_ComputerSearch_Anger(uint8_t b, uint8_t c);
+/* <<< factory AIDecide_ComputerSearch_Anger */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -94,6 +94,13 @@
 
 #define JIGGLYPUFF_LV12 0xadu
 #define TAUROS 0xbau
+
+#define ARCANINE_LV34 0x37u
+#define DODRIO 0xb6u
+#define DODUO 0xb5u
+#define GROWLITHE 0x36u
+#define RATICATE 0xa8u
+#define RATTATA 0xa7u
 /* <<< factory statics */
 
 
@@ -997,3 +1004,61 @@ AIDecide_ComputerSearch_FireChargeResult AIDecide_ComputerSearch_FireCharge(uint
 	return (AIDecide_ComputerSearch_FireChargeResult){wce06, 0x90u};
 }
 /* <<< factory AIDecide_ComputerSearch_FireCharge */
+
+/* >>> factory AIDecide_ComputerSearch_Anger */
+AIDecide_ComputerSearch_AngerResult AIDecide_ComputerSearch_Anger(uint8_t b, uint8_t c)
+{
+	uint8_t a_val;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+	LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RATICATE, RATTATA);
+	a_val = r.a;
+	if (r.f & 0x10u) goto find_discard_cards;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(RATTATA, RATICATE);
+	a_val = r2.a;
+	if (r2.f & 0x10u) goto find_discard_cards;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ARCANINE_LV34, GROWLITHE);
+	a_val = r.a;
+	if (r.f & 0x10u) goto find_discard_cards;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(GROWLITHE, ARCANINE_LV34);
+	a_val = r2.a;
+	if (r2.f & 0x10u) goto find_discard_cards;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DODRIO, DODUO);
+	a_val = r.a;
+	if (r.f & 0x10u) goto find_discard_cards;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(DODUO, DODRIO);
+	a_val = r2.a;
+	if (r2.f & 0x10u) goto find_discard_cards;
+
+	{
+		uint8_t f = (a_val == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_AngerResult){a_val, f};
+	}
+
+find_discard_cards:
+	wce06 = a_val;
+	(void)CreateHandCardList(0u);
+	uint8_t trainer_to_play = wAITrainerCardToPlay;
+	RemoveFromListDifferentCardOfGivenTypeResult rm1 =
+		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	if (!(rm1.f & 0x10u)) {
+		uint8_t f = (rm1.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_AngerResult){rm1.a, f};
+	}
+	wce1a = rm1.a;
+	RemoveFromListDifferentCardOfGivenTypeResult rm2 =
+		RemoveFromListDifferentCardOfGivenType(rm1.b, rm1.c, rm1.d, rm1.e, rm1.hl);
+	if (!(rm2.f & 0x10u)) {
+		uint8_t f = (rm2.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_AngerResult){rm2.a, f};
+	}
+	wce1b = rm2.a;
+	return (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u};
+}
+/* <<< factory AIDecide_ComputerSearch_Anger */

@@ -345,6 +345,30 @@ CASES["AIDecide_ComputerSearch_FireCharge"] = [
 ]
 # <<< factory AIDecide_ComputerSearch_FireCharge
 
+# >>> factory AIDecide_ComputerSearch_Anger
+CONTRACT["AIDecide_ComputerSearch_Anger"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_ComputerSearch_Anger"] = [
+    {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x03",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC244: b"\x0C",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC202: b"\x00",
+        0xC40A: b"\xA7",
+        0xC40B: b"\xC5",
+        0xC40C: b"\xDB",
+        0xC405: b"\xA8",
+        0xC2BB: b"\xFF",
+        wAITrainerCardToPlay: b"\xFF",
+    }, "expect": {wce06: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, b=0x00, c=0x00, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_ComputerSearch_Anger
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -513,3 +537,6 @@ MUTATIONS["AIDecide_PokemonTrader_LegendaryArticuno"] = {"source_symbol": "AIDec
 # >>> factory-mutation AIDecide_ComputerSearch_FireCharge
 MUTATIONS["AIDecide_ComputerSearch_FireCharge"] = {"source_symbol": "AIDecide_ComputerSearch_FireCharge", "before": '\tLookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);\n\tif (!(loc.f & 0x10u)) {\n\t\tuint8_t f = (loc.a == 0u) ? 0x80u : 0u;', "after": '\tLookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);\n\tif (!(loc.f & 0x10u)) {\n\t\tuint8_t f = (loc.a == 0u) ? 0x80u : 0x40u;', "case_ids": ["AIDecide_ComputerSearch_FireCharge-0"]}
 # <<< factory-mutation AIDecide_ComputerSearch_FireCharge
+# >>> factory-mutation AIDecide_ComputerSearch_Anger
+MUTATIONS["AIDecide_ComputerSearch_Anger"] = {"source_symbol": "AIDecide_ComputerSearch_Anger", "before": "\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u};", "after": "\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x00u};", "case_ids": ["AIDecide_ComputerSearch_Anger-1"]}
+# <<< factory-mutation AIDecide_ComputerSearch_Anger
