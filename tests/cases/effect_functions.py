@@ -2350,6 +2350,11 @@ hWhoseTurn = 0xFF97
 wOpponentDuelVariables = 0xC300
 wOpponentDeck = 0xC480
 IVYSAUR = 0x09
+
+hWhoseTurn = 0xFF97
+wOpponentDuelVariables = 0xC300
+wOpponentDeck = 0xC480
+WATER_ENERGY = 0x03
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3080,6 +3085,18 @@ CASES["HurricaneEffect"] = [
          read={hWhoseTurn: 1, wOpponentDuelVariables + 0xBB: 1, wOpponentDuelVariables + 0xC8: 1}),
 ]
 # <<< factory HurricaneEffect
+
+# >>> factory Psychic_AIEffect
+CONTRACT["Psychic_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Psychic_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00", hWhoseTurn: b"\xC2",
+              wOpponentDuelVariables: b"\x10", wOpponentDeck: bytes((WATER_ENERGY,))},
+     "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x05\x00", hWhoseTurn: b"\xC2",
+                       wOpponentDuelVariables: b"\x10", wOpponentDeck: bytes((WATER_ENERGY,))},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory Psychic_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4991,3 +5008,6 @@ MUTATIONS["MysteryAttack_AIEffect"] = {"source_symbol": "MysteryAttack_AIEffect"
 # >>> factory-mutation HurricaneEffect
 MUTATIONS["HurricaneEffect"] = {"source_symbol": "HurricaneEffect", "before": "gb_write8(arena_addr, 0xFFu);", "after": "gb_write8(arena_addr, 0x00u);", "case_ids": ["HurricaneEffect-2"]}
 # <<< factory-mutation HurricaneEffect
+# >>> factory-mutation Psychic_AIEffect
+MUTATIONS["Psychic_AIEffect"] = {"source_symbol": "Psychic_AIEffect", "before": "Psychic_DamageBoostEffect();", "after": "(void)0;", "case_ids": ["Psychic_AIEffect-0", "Psychic_AIEffect-1"]}
+# <<< factory-mutation Psychic_AIEffect

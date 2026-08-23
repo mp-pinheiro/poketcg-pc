@@ -1150,6 +1150,9 @@ void MysteryAttack_AIEffect(void);
 /* >>> factory HurricaneEffect */
 QueueStatusConditionResult HurricaneEffect(uint16_t hl);
 /* <<< factory HurricaneEffect */
+/* >>> factory Psychic_AIEffect */
+void Psychic_AIEffect(void);
+/* <<< factory Psychic_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

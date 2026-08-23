@@ -2763,6 +2763,14 @@ static void adapt_HurricaneEffect(ProbeState *s)
 }
 /* <<< factory HurricaneEffect */
 
+/* >>> factory Psychic_AIEffect */
+static void adapt_Psychic_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Psychic_AIEffect();
+}
+/* <<< factory Psychic_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3105,5 +3113,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HydroPumpEffect", adapt_HydroPumpEffect },
 	{ "MysteryAttack_AIEffect", adapt_MysteryAttack_AIEffect },
 	{ "HurricaneEffect", adapt_HurricaneEffect },
+	{ "Psychic_AIEffect", adapt_Psychic_AIEffect },
 	{ NULL, NULL },
 };

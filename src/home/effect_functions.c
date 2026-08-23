@@ -4609,3 +4609,11 @@ QueueStatusConditionResult HurricaneEffect(uint16_t hl)
 	return (QueueStatusConditionResult){0x80u};
 }
 /* <<< factory HurricaneEffect */
+
+/* >>> factory Psychic_AIEffect */
+void Psychic_AIEffect(void)
+{
+	Psychic_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory Psychic_AIEffect */
