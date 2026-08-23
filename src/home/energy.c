@@ -28,6 +28,23 @@
 #define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define LEGENDARY_RONALD_DECK_ID 0x1bu
+
+#include "home/energy.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define CHARIZARD 0x32u
+#define EXEGGUTOR 0x29u
+#define FALSE 0x00u
+#define TRUE 0x01u
+#define FIGHTING_ENERGY 0x05u
+#define FIRE_ENERGY 0x02u
+#define GRASS_ENERGY 0x01u
+#define LIGHTNING_ENERGY 0x04u
+#define PSYCHIC_ENERGY 0x06u
+#define WATER_ENERGY 0x03u
+#define ZAPDOS_LV64 0x75u
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -146,3 +163,68 @@ CheckSpecificDecksToAttachDoubleColorlessResult CheckSpecificDecksToAttachDouble
 	return (CheckSpecificDecksToAttachDoubleColorlessResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b, c, d, e, hl};
 }
 /* <<< factory CheckSpecificDecksToAttachDoubleColorless */
+
+/* >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack */
+GetEnergyCardForDiscardOrEnergyBoostAttackResult GetEnergyCardForDiscardOrEnergyBoostAttack(uint8_t c_in)
+{
+	DuelistVarResult dv = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD));
+	uint8_t a = LoadCardDataToBuffer2_FromDeckIndex(dv.a);
+	uint8_t b = a;
+	uint16_t hl;
+	a = wSelectedAttack;
+	if (a == 0u) {
+		hl = wLoadedCard2Atk1EnergyCost_ADDR;
+	} else {
+		a = b;
+		if (a == ZAPDOS_LV64)
+			return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, c_in, 0u, 0x00u};
+		if (a == CHARIZARD || a == EXEGGUTOR)
+			return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, FALSE, TRUE, 0u, 0x90u};
+		hl = wLoadedCard2Atk2EnergyCost_ADDR;
+	}
+
+	uint8_t e;
+	uint8_t f;
+	a = gb_read8(hl); hl = (uint16_t)(hl + 1u);
+	b = a;
+	a = (uint8_t)(a & 0xF0u);
+	if (a != 0u) {
+		e = FIRE_ENERGY;
+		f = 0x10u;
+	} else {
+		a = b;
+		a = (uint8_t)(a & 0x0Fu);
+		if (a != 0u) {
+			e = GRASS_ENERGY;
+			f = 0x10u;
+		} else {
+			a = gb_read8(hl); hl = (uint16_t)(hl + 1u);
+			b = a;
+			a = (uint8_t)(a & 0xF0u);
+			if (a != 0u) {
+				e = LIGHTNING_ENERGY;
+				f = 0x10u;
+			} else {
+				a = b;
+				a = (uint8_t)(a & 0x0Fu);
+				if (a != 0u) {
+					e = WATER_ENERGY;
+					f = 0x10u;
+				} else {
+					a = gb_read8(hl); hl = (uint16_t)(hl + 1u);
+					b = a;
+					a = (uint8_t)(a & 0xF0u);
+					if (a != 0u) {
+						e = FIGHTING_ENERGY;
+						f = 0x10u;
+					} else {
+						e = PSYCHIC_ENERGY;
+						f = 0x90u;
+					}
+				}
+			}
+		}
+	}
+	return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, TRUE, FALSE, e, f};
+}
+/* <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack */

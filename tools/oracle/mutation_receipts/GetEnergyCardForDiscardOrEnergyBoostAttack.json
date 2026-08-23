@@ -1,0 +1,9 @@
+{
+  "fn": "GetEnergyCardForDiscardOrEnergyBoostAttack",
+  "case": "tests/cases/energy.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 117, \"b\": 117, \"c\": 153, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"02\", \"50178\": \"75\", \"52325\": \"022b2cfc090200755a00000000300010cb09000a00003c006b4c100000000700400000010a020a00006400724c0008000908030008ef0991004005038804030a\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"mismatches\": {\"c\": [153, 154]}}\n",
+  "restored": "{\"fn\": \"GetEnergyCardForDiscardOrEnergyBoostAttack\", \"registers\": {\"a\": 117, \"b\": 117, \"c\": 153, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"02\", \"50178\": \"75\", \"52325\": \"022b2cfc090200755a00000000300010cb09000a00003c006b4c100000000700400000010a020a00006400724c0008000908030008ef0991004005038804030a\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

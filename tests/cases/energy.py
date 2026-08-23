@@ -42,6 +42,41 @@ CASES["CheckSpecificDecksToAttachDoubleColorless"] = [
 ]
 # <<< factory CheckSpecificDecksToAttachDoubleColorless
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wSelectedAttack = 0xCCC6
+wLoadedCard2 = 0xCC65
+BULBASAUR = 0x08
+IVYSAUR = 0x09
+ZAPDOS_LV64_ID = 0x75
+CHARIZARD_ID = 0x32
+# <<< factory-cases-statics
+
+# >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack
+CONTRACT["GetEnergyCardForDiscardOrEnergyBoostAttack"] = {"compare": ("a", "b", "c", "e", "f"), "preserve": (), "wram_out": True}
+CASES["GetEnergyCardForDiscardOrEnergyBoostAttack"] = [
+    {"c": 0x77, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+              wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)),
+              wSelectedAttack: b"\x00"},
+     "read": {wLoadedCard2: 64}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+                       wPlayerArenaCard: b"\x01", wPlayerDeck + 1: bytes((IVYSAUR,)),
+                       wSelectedAttack: b"\x01"},
+         read={wLoadedCard2: 64}),
+    {"c": 0x99, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+              wPlayerArenaCard: b"\x02", wPlayerDeck + 2: bytes((ZAPDOS_LV64_ID,)),
+              wSelectedAttack: b"\x01"},
+     "read": {wLoadedCard2: 64}},
+    {"c": 0x55, "wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+              wPlayerArenaCard: b"\x03", wPlayerDeck + 3: bytes((CHARIZARD_ID,)),
+              wSelectedAttack: b"\x01"},
+     "read": {wLoadedCard2: 64}},
+]
+# <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +100,6 @@ MUTATIONS["FindPlayAreaCardWithHighestAIScore"] = {
 # >>> factory-mutation CheckSpecificDecksToAttachDoubleColorless
 MUTATIONS["CheckSpecificDecksToAttachDoubleColorless"] = {"source_symbol": "CheckSpecificDecksToAttachDoubleColorless", "before": "return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x10u, b, c, d, e, hl};", "after": "return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x00u, b, c, d, e, hl};", "case_ids": ["CheckSpecificDecksToAttachDoubleColorless-2"]}
 # <<< factory-mutation CheckSpecificDecksToAttachDoubleColorless
+# >>> factory-mutation GetEnergyCardForDiscardOrEnergyBoostAttack
+MUTATIONS["GetEnergyCardForDiscardOrEnergyBoostAttack"] = {"source_symbol": "GetEnergyCardForDiscardOrEnergyBoostAttack", "before": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, c_in, 0u, 0x00u};", "after": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, (uint8_t)(c_in + 1u), 0u, 0x00u};", "case_ids": ["GetEnergyCardForDiscardOrEnergyBoostAttack-2"]}
+# <<< factory-mutation GetEnergyCardForDiscardOrEnergyBoostAttack

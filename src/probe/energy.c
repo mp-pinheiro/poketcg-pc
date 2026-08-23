@@ -36,9 +36,22 @@ static void adapt_CheckSpecificDecksToAttachDoubleColorless(ProbeState *s)
 }
 /* <<< factory CheckSpecificDecksToAttachDoubleColorless */
 
+/* >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack */
+static void adapt_GetEnergyCardForDiscardOrEnergyBoostAttack(ProbeState *s)
+{
+	GetEnergyCardForDiscardOrEnergyBoostAttackResult r = GetEnergyCardForDiscardOrEnergyBoostAttack(s->c);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack */
+
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
 	{ "CheckSpecificDecksToAttachDoubleColorless", adapt_CheckSpecificDecksToAttachDoubleColorless },
+	{ "GetEnergyCardForDiscardOrEnergyBoostAttack", adapt_GetEnergyCardForDiscardOrEnergyBoostAttack },
 	{ NULL, NULL },
 };

@@ -738,6 +738,14 @@ static void adapt_DrawPlayArea_IconWithValue(ProbeState *s)
 }
 /* <<< factory DrawPlayArea_IconWithValue */
 
+/* >>> factory SaveDuelStateToSRAM */
+static void adapt_SaveDuelStateToSRAM(ProbeState *s)
+{
+	(void)s;
+	SaveDuelStateToSRAM();
+}
+/* <<< factory SaveDuelStateToSRAM */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -828,5 +836,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "_DrawPlayersPrizeAndBenchCards", adapt__DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayArea_HandText", adapt_DrawPlayArea_HandText },
 	{ "DrawPlayArea_IconWithValue", adapt_DrawPlayArea_IconWithValue },
+	{ "SaveDuelStateToSRAM", adapt_SaveDuelStateToSRAM },
 	{ NULL, NULL },
 };

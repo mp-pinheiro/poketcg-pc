@@ -171,6 +171,13 @@ hffb3 = 0xFFB3
 hDPadHeld = 0xFF8F
 wCardListNumCursorPositions = 0xCEA9
 wCardListVisibleOffset = 0xCEA1
+
+wDefaultText = 0xC590
+sPlayerName = 0xA010
+NAME_BUFFER_LENGTH = 0x10
+GENERIC_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, wDefaultText: NAME_BUFFER_LENGTH}
+GENERIC_VREAD = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -465,6 +472,20 @@ CASES["HandleLeftRightInCardList"] = [
 ]
 # <<< factory HandleLeftRightInCardList
 
+# >>> factory PrintPlayersCardsText
+CONTRACT["PrintPlayersCardsText"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintPlayersCardsText"] = [
+    {"wram": {wDefaultText: b"\x00" * NAME_BUFFER_LENGTH},
+     "sram": {0: {sPlayerName: bytes([0x81, 0x82, 0x83, 0x00] + [0] * 12)}},
+     "setup": SETUP,
+     "read": GENERIC_READ, "vread": GENERIC_VREAD},
+    dict(POISON, wram={wDefaultText: b"\xFF" * NAME_BUFFER_LENGTH},
+         sram={0: {sPlayerName: bytes([0x84, 0x85, 0x00] + [0] * 13)}},
+         setup=SETUP,
+         read=GENERIC_READ, vread=GENERIC_VREAD),
+]
+# <<< factory PrintPlayersCardsText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -641,3 +662,6 @@ MUTATIONS["HandleCardSelectionInput"] = {"source_symbol": "HandleCardSelectionIn
 # >>> factory-mutation HandleLeftRightInCardList
 MUTATIONS["HandleLeftRightInCardList"] = {"source_symbol": "HandleLeftRightInCardList", "before": "\t\tuint8_t f = (dpad == 0u) ? 0x80u : 0x00u;", "after": "\t\tuint8_t f = (dpad == 0u) ? 0x00u : 0x80u;", "case_ids": ["HandleLeftRightInCardList-0", "HandleLeftRightInCardList-1"]}
 # <<< factory-mutation HandleLeftRightInCardList
+# >>> factory-mutation PrintPlayersCardsText
+MUTATIONS["PrintPlayersCardsText"] = {"source_symbol": "PrintPlayersCardsText", "before": "InitTextPrinting(1u, 0u);", "after": "InitTextPrinting(2u, 0u);", "case_ids": ["PrintPlayersCardsText-0", "PrintPlayersCardsText-1"]}
+# <<< factory-mutation PrintPlayersCardsText

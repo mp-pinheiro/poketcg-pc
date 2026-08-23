@@ -653,4 +653,7 @@ HandleAIEnergyScoringForRepeatedBenchPokemonResult HandleAIEnergyScoringForRepea
 /* >>> factory CheckPrintCnfSlpPrz */
 void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory CheckPrintCnfSlpPrz */
+/* >>> factory LoadAnimCoordsAndFlags */
+void LoadAnimCoordsAndFlags(void);
+/* <<< factory LoadAnimCoordsAndFlags */
 #endif

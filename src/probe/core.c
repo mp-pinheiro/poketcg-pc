@@ -1396,6 +1396,14 @@ static void adapt_CheckPrintCnfSlpPrz(ProbeState *s)
 }
 /* <<< factory CheckPrintCnfSlpPrz */
 
+/* >>> factory LoadAnimCoordsAndFlags */
+static void adapt_LoadAnimCoordsAndFlags(ProbeState *s)
+{
+	(void)s;
+	LoadAnimCoordsAndFlags();
+}
+/* <<< factory LoadAnimCoordsAndFlags */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1561,5 +1569,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AIPickPrizeCards", adapt_AIPickPrizeCards },
 	{ "HandleAIEnergyScoringForRepeatedBenchPokemon", adapt_HandleAIEnergyScoringForRepeatedBenchPokemon },
 	{ "CheckPrintCnfSlpPrz", adapt_CheckPrintCnfSlpPrz },
+	{ "LoadAnimCoordsAndFlags", adapt_LoadAnimCoordsAndFlags },
 	{ NULL, NULL },
 };

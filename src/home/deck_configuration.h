@@ -146,4 +146,7 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void);
 typedef struct { uint8_t f; } HandleLeftRightInCardListResult;
 HandleLeftRightInCardListResult HandleLeftRightInCardList(void);
 /* <<< factory HandleLeftRightInCardList */
+/* >>> factory PrintPlayersCardsText */
+void PrintPlayersCardsText(void);
+/* <<< factory PrintPlayersCardsText */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -349,6 +349,14 @@ static void adapt_HandleLeftRightInCardList(ProbeState *s)
 }
 /* <<< factory HandleLeftRightInCardList */
 
+/* >>> factory PrintPlayersCardsText */
+static void adapt_PrintPlayersCardsText(ProbeState *s)
+{
+	(void)s;
+	PrintPlayersCardsText();
+}
+/* <<< factory PrintPlayersCardsText */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -389,5 +397,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DrawHandCardsTileOnCurDeck", adapt_DrawHandCardsTileOnCurDeck },
 	{ "HandleCardSelectionInput", adapt_HandleCardSelectionInput },
 	{ "HandleLeftRightInCardList", adapt_HandleLeftRightInCardList },
+	{ "PrintPlayersCardsText", adapt_PrintPlayersCardsText },
 	{ NULL, NULL },
 };

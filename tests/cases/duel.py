@@ -1093,6 +1093,20 @@ wVBlankOAMCopyToggle = 0xCAC0
 wConsole = 0xCAB4
 wDecimalDigitsSymbols = 0xCEB6
 wDefaultText = 0xC590
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC480
+wPlayerArenaCard = 0xC2BB
+wOpponentArenaCard = 0xC3BB
+wDuelTurns = 0xCC06
+wDuelType = 0xCC09
+wTempTurnDuelistCardID = 0xCCC3
+wTempNonTurnDuelistCardID = 0xCCC4
+s0a008 = 0xA008
+sDuelBuffer0 = 0xA000
+BULBASAUR = 0x08
+IVYSAUR = 0x09
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1184,6 +1198,30 @@ CASES["DrawPlayArea_IconWithValue"] = [
          expect={wDefaultText: b"\x05\x2D\x05\x36\x05\x26\x00", wDecimalDigitsSymbols: b"\x26\x36"}),
 ]
 # <<< factory DrawPlayArea_IconWithValue
+
+# >>> factory SaveDuelStateToSRAM
+CONTRACT["SaveDuelStateToSRAM"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["SaveDuelStateToSRAM"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)),
+              wOpponentArenaCard: b"\x00", wOpponentDeck: bytes((IVYSAUR,)),
+              wDuelTurns: b"\x05", wDuelType: b"\x00"},
+     "sram": {0: {s0a008: b"\x00"}},
+     "read": {wTempTurnDuelistCardID: 1, wTempNonTurnDuelistCardID: 1},
+     "sread": {0: {s0a008: 1}, 3: {sDuelBuffer0: 3, sDuelBuffer0 + 0x10: 4}}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: bytes((BULBASAUR,)),
+                       wOpponentArenaCard: b"\x00", wOpponentDeck: bytes((IVYSAUR,)),
+                       wDuelTurns: b"\x07", wDuelType: b"\x00"},
+         sram={0: {s0a008: b"\x05"}},
+         read={wTempTurnDuelistCardID: 1, wTempNonTurnDuelistCardID: 1},
+         sread={0: {s0a008: 1}, 3: {sDuelBuffer0 + 0x400: 3, sDuelBuffer0 + 0x400 + 0x10: 4}}),
+    {"wram": {hWhoseTurn: b"\xC3", wOpponentArenaCard: b"\x01", wOpponentDeck + 1: bytes((BULBASAUR,)),
+              wPlayerArenaCard: b"\x01", wPlayerDeck + 1: bytes((IVYSAUR,)),
+              wDuelTurns: b"\x0A", wDuelType: b"\x00"},
+     "sram": {0: {s0a008: b"\xFF"}},
+     "read": {wTempTurnDuelistCardID: 1, wTempNonTurnDuelistCardID: 1},
+     "sread": {0: {s0a008: 1}, 3: {sDuelBuffer0 + 0xC00: 3, sDuelBuffer0 + 0xC00 + 0x10: 4}}},
+]
+# <<< factory SaveDuelStateToSRAM
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1325,3 +1363,6 @@ MUTATIONS["DrawPlayArea_HandText"] = {"source_symbol": "DrawPlayArea_HandText", 
 # >>> factory-mutation DrawPlayArea_IconWithValue
 MUTATIONS["DrawPlayArea_IconWithValue"] = {"source_symbol": "DrawPlayArea_IconWithValue", "before": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), SYM_CROSS);", "after": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), 0x2Eu);", "case_ids": ["DrawPlayArea_IconWithValue-0", "DrawPlayArea_IconWithValue-1"]}
 # <<< factory-mutation DrawPlayArea_IconWithValue
+# >>> factory-mutation SaveDuelStateToSRAM
+MUTATIONS["SaveDuelStateToSRAM"] = {"source_symbol": "SaveDuelStateToSRAM", "before": "gb_write8(s0a008_ADDR, (uint8_t)(old + 1u));", "after": "gb_write8(s0a008_ADDR, (uint8_t)(old + 2u));", "case_ids": ["SaveDuelStateToSRAM-0", "SaveDuelStateToSRAM-1"]}
+# <<< factory-mutation SaveDuelStateToSRAM

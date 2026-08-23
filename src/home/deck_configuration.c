@@ -132,6 +132,14 @@
 #include "home/sound.h"
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
+
+#include "home/deck_configuration.h"
+#include "home/duel.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SCardsText 0x025au
 /* <<< factory statics */
 
 
@@ -920,3 +928,20 @@ HandleLeftRightInCardListResult HandleLeftRightInCardList(void)
 	return (HandleLeftRightInCardListResult){0x10u};
 }
 /* <<< factory HandleLeftRightInCardList */
+
+/* >>> factory PrintPlayersCardsText */
+void PrintPlayersCardsText(void)
+{
+	InitTextPrinting(1u, 0u);
+	uint16_t de = wDefaultText_ADDR;
+	(void)CopyPlayerName(de);
+	uint16_t hl = wDefaultText_ADDR;
+	ProcessText(&hl);
+	hl = wDefaultText_ADDR;
+	TextLength len = GetTextLengthInTiles(hl);
+	uint8_t d = (uint8_t)(len.b + 1u);
+	InitTextPrinting(d, 0u);
+	hl = SCardsText;
+	(void)ProcessTextFromID(hl);
+}
+/* <<< factory PrintPlayersCardsText */

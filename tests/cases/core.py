@@ -1435,6 +1435,15 @@ wPlayerNumberOfCardsNotInDeck = 0xC2BA
 wOpponentNumberOfCardsInHand = 0xC3EE
 wOpponentNumberOfCardsNotInDeck = 0xC3BA
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wAnimationQueue = 0xD423
+wAnimFlags = 0xD42B
+wDuelAnimationScreen = 0xD4AE
+wDuelAnimDuelistSide = 0xD4AF
+wDuelAnimLocationParam = 0xD4B0
+SPRITE_BUFFER = 0xD4D0
+def entry_base(idx):
+    return SPRITE_BUFFER + (min(idx, 15) * 16)
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1908,6 +1917,28 @@ CASES["CheckPrintCnfSlpPrz"] = [
     dict(POISON, a=0x03, b=0x05, c=0x03, vread={0: {0x9865: 1}}),
 ]
 # <<< factory CheckPrintCnfSlpPrz
+
+# >>> factory LoadAnimCoordsAndFlags
+CONTRACT["LoadAnimCoordsAndFlags"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["LoadAnimCoordsAndFlags"] = [
+    {"wram": {wAnimationQueue: b"\x02", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00",
+              wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
+              entry_base(2) + 1: b"\x80\x00\x00", entry_base(2) + 15: b"\x80\x00"},
+     "read": {entry_base(2) + 1: 3, entry_base(2) + 15: 2}},
+    dict(POISON, wram={wAnimationQueue: b"\x05", wAnimFlags: b"\x04", wDuelAnimationScreen: b"\x00",
+                       wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
+                       entry_base(5) + 1: b"\x00\x00\x00", entry_base(5) + 15: b"\x00\x00"},
+         read={entry_base(5) + 1: 3, entry_base(5) + 15: 2}),
+    {"wram": {wAnimationQueue: b"\x00", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x01",
+              wDuelAnimDuelistSide: b"\xc2", wDuelAnimLocationParam: b"\x03",
+              entry_base(0) + 1: b"\x00\x00\x00", entry_base(0) + 15: b"\x00\x00"},
+     "read": {entry_base(0) + 1: 3, entry_base(0) + 15: 2}},
+    {"wram": {wAnimationQueue: b"\x10", wAnimFlags: b"\x00", wDuelAnimationScreen: b"\x00",
+              wDuelAnimDuelistSide: b"\x00", wDuelAnimLocationParam: b"\x00",
+              entry_base(15) + 1: b"\x10\x00\x00", entry_base(15) + 15: b"\x20\x00"},
+     "read": {entry_base(15) + 1: 3, entry_base(15) + 15: 2}},
+]
+# <<< factory LoadAnimCoordsAndFlags
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2910,3 +2941,6 @@ MUTATIONS["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
 # >>> factory-mutation CheckPrintCnfSlpPrz
 MUTATIONS["CheckPrintCnfSlpPrz"] = {"source_symbol": "CheckPrintCnfSlpPrz", "before": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_CONFUSED, SYM_ASLEEP, SYM_PARALYZED};", "after": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_PARALYZED, SYM_ASLEEP, SYM_CONFUSED};", "case_ids": ["CheckPrintCnfSlpPrz-1"]}
 # <<< factory-mutation CheckPrintCnfSlpPrz
+# >>> factory-mutation LoadAnimCoordsAndFlags
+MUTATIONS["LoadAnimCoordsAndFlags"] = {"source_symbol": "LoadAnimCoordsAndFlags", "before": "gb_write8(hl, attr);", "after": "gb_write8(hl, (uint8_t)(attr ^ 0xFFu));", "case_ids": ["LoadAnimCoordsAndFlags-0", "LoadAnimCoordsAndFlags-1"]}
+# <<< factory-mutation LoadAnimCoordsAndFlags

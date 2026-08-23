@@ -550,6 +550,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define SYM_ASLEEP 0x09u
 #define SYM_CONFUSED 0x0au
 #define SYM_PARALYZED 0x0bu
+
+#include "home/core.h"
+#include "home/load_animation.h"
+#include "mem.h"
+#define SPRITE_ANIM_FLAG_X_INVERTED_MASK 0x01u
+#define SPRITE_ANIM_FLAG_Y_INVERTED_MASK 0x02u
+#define SPRITE_ANIM_FLAG_X_FLIP_MASK 0x20u
+#define SPRITE_ANIM_FLAG_Y_FLIP_MASK 0x40u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3452,3 +3460,20 @@ void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c)
 	WriteByteToBGMap0(status_symbols[status], b, c);
 }
 /* <<< factory CheckPrintCnfSlpPrz */
+
+/* >>> factory LoadAnimCoordsAndFlags */
+void LoadAnimCoordsAndFlags(void)
+{
+	uint16_t hl = GetSpriteAnimBufferProperty_SpriteInA(gb_read8(0xD423u), 0x01u);
+	AnimCoordsResult r = GetAnimCoordsAndFlags();
+	uint8_t attr = (uint8_t)((r.a & (SPRITE_ANIM_FLAG_Y_FLIP_MASK | SPRITE_ANIM_FLAG_X_FLIP_MASK)) | gb_read8(hl));
+	gb_write8(hl, attr);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, r.b);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, r.c);
+	hl = (uint16_t)(hl + 0x0Cu);
+	uint8_t flags = (uint8_t)((r.a & (SPRITE_ANIM_FLAG_Y_INVERTED_MASK | SPRITE_ANIM_FLAG_X_INVERTED_MASK)) | gb_read8(hl));
+	gb_write8(hl, flags);
+}
+/* <<< factory LoadAnimCoordsAndFlags */

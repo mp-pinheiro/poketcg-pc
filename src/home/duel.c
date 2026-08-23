@@ -406,6 +406,13 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#include "home/switch_sram.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2002,3 +2009,38 @@ void DrawPlayArea_IconWithValue(uint8_t a, uint8_t b, uint16_t *hl)
 	ProcessText(&text_ptr);
 }
 /* <<< factory DrawPlayArea_IconWithValue */
+
+/* >>> factory SaveDuelStateToSRAM */
+void SaveDuelStateToSRAM(void)
+{
+	BankswitchSRAM(sBackupCurrentDuel_BANK);
+	SaveDuelData();
+	BankswitchSRAM(0u);
+	EnableSRAM();
+	uint8_t old = gb_read8(s0a008_ADDR);
+	gb_write8(s0a008_ADDR, (uint8_t)(old + 1u));
+	DisableSRAM();
+	uint8_t masked = (uint8_t)(old & 0x03u);
+	uint16_t buffer = (uint16_t)(sDuelBuffer0_ADDR + (uint16_t)masked * 0x0400u);
+	BankswitchSRAM(sDuelBuffer0_BANK);
+
+	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t turnCardId = (uint8_t)GetCardIDFromDeckIndex(r1.a);
+	wTempTurnDuelistCardID = turnCardId;
+	SwapTurn();
+	DuelistVarResult r2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t nonTurnCardId = (uint8_t)GetCardIDFromDeckIndex(r2.a);
+	wTempNonTurnDuelistCardID = nonTurnCardId;
+	SwapTurn();
+
+	EnableSRAM();
+	gb_write8(buffer, wDuelTurns);
+	gb_write8((uint16_t)(buffer + 1u), wTempNonTurnDuelistCardID);
+	gb_write8((uint16_t)(buffer + 2u), wTempTurnDuelistCardID);
+	DisableSRAM();
+
+	uint16_t de = (uint16_t)(buffer + 0x10u);
+	SaveDuelDataToDE(de);
+	BankswitchSRAM(0u);
+}
+/* <<< factory SaveDuelStateToSRAM */
