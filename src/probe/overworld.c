@@ -305,6 +305,14 @@ static void adapt_SetOverworldDoFrameFunction(ProbeState *s)
 }
 /* <<< factory SetOverworldDoFrameFunction */
 
+/* >>> factory Func_c3ee */
+static void adapt_Func_c3ee(ProbeState *s)
+{
+	(void)s;
+	Func_c3ee();
+}
+/* <<< factory Func_c3ee */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -343,5 +351,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "UpdatePlayerDirection", adapt_UpdatePlayerDirection },
 	{ "UpdatePlayerDirectionFromDPad", adapt_UpdatePlayerDirectionFromDPad },
 	{ "SetOverworldDoFrameFunction", adapt_SetOverworldDoFrameFunction },
+	{ "Func_c3ee", adapt_Func_c3ee },
 	{ NULL, NULL },
 };

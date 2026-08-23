@@ -76,6 +76,10 @@
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -506,3 +510,14 @@ DrawListCursorResult DrawListCursor_Visible(void)
 	return DrawListCursor(tile);
 }
 /* <<< factory DrawListCursor_Visible */
+
+/* >>> factory CountNumberOfCardsForEachCardType */
+void CountNumberOfCardsForEachCardType(void)
+{
+	uint16_t hl = wCardFilterCounts_ADDR;
+	const uint8_t *de = rom_ptr(2u, 0x597Du);
+	uint8_t type;
+	while ((type = *de++) != 0xFFu)
+		gb_write8(hl++, CountNumberOfCardsOfType(type));
+}
+/* <<< factory CountNumberOfCardsForEachCardType */

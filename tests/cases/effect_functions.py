@@ -2765,6 +2765,14 @@ CASES["SeadraWaterGunEffect"] = [
 ]
 # <<< factory SeadraWaterGunEffect
 
+# >>> factory SuperFang_AIEffect
+CONTRACT["SuperFang_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["SuperFang_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCCB9: b"\x0A\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCCB9: b"\x0A\x00"}, read={0xCCB9: 2, 0xCCBB: 1}),
+]
+# <<< factory SuperFang_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4588,3 +4596,6 @@ MUTATIONS["PoliwrathWaterGunEffect"] = {"source_symbol": "PoliwrathWaterGunEffec
 # >>> factory-mutation SeadraWaterGunEffect
 MUTATIONS["SeadraWaterGunEffect"] = {"source_symbol": "SeadraWaterGunEffect", "before": "void SeadraWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(1u, 1u);\n}", "after": "void SeadraWaterGunEffect(void)\n{\n\t(void)0;\n}", "case_ids": ["SeadraWaterGunEffect-0", "SeadraWaterGunEffect-1"]}
 # <<< factory-mutation SeadraWaterGunEffect
+# >>> factory-mutation SuperFang_AIEffect
+MUTATIONS["SuperFang_AIEffect"] = {"source_symbol": "SuperFang_AIEffect", "before": "void SuperFang_AIEffect(void)\n{\n\tSuperFang_HalfHPEffect();\n\tSetDefiniteAIDamage();\n}", "after": "void SuperFang_AIEffect(void)\n{\n\t(void)0;\n\tSetDefiniteAIDamage();\n}", "case_ids": ["SuperFang_AIEffect-0", "SuperFang_AIEffect-1"]}
+# <<< factory-mutation SuperFang_AIEffect

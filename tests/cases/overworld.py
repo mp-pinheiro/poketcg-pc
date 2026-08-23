@@ -500,6 +500,14 @@ CASES["SetOverworldDoFrameFunction"] = [
 ]
 # <<< factory SetOverworldDoFrameFunction
 
+# >>> factory Func_c3ee
+CONTRACT["Func_c3ee"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_c3ee"] = [
+    {"wram": {0xD133: b"\xFF" * 256}, "read": {0xD133: 256}},
+    dict(POISON, wram={0xD133: b"\xFF" * 256}, read={0xD133: 256}),
+]
+# <<< factory Func_c3ee
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -680,3 +688,6 @@ MUTATIONS["UpdatePlayerDirectionFromDPad"] = {"source_symbol": "UpdatePlayerDire
 # >>> factory-mutation SetOverworldDoFrameFunction
 MUTATIONS["SetOverworldDoFrameFunction"] = {"source_symbol": "SetOverworldDoFrameFunction", "before": "\t(void)SetDoFrameFunction(0x380eu);", "after": "\t(void)SetDoFrameFunction(0x380fu);", "case_ids": ["SetOverworldDoFrameFunction-0", "SetOverworldDoFrameFunction-1"]}
 # <<< factory-mutation SetOverworldDoFrameFunction
+# >>> factory-mutation Func_c3ee
+MUTATIONS["Func_c3ee"] = {"source_symbol": "Func_c3ee", "before": "\t\tgb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~0x10u));", "after": "\t\tgb_write8(hl, gb_read8(hl));", "case_ids": ["Func_c3ee-0", "Func_c3ee-1"]}
+# <<< factory-mutation Func_c3ee

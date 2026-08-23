@@ -1056,6 +1056,9 @@ void PoliwrathWaterGunEffect(void);
 /* >>> factory SeadraWaterGunEffect */
 void SeadraWaterGunEffect(void);
 /* <<< factory SeadraWaterGunEffect */
+/* >>> factory SuperFang_AIEffect */
+void SuperFang_AIEffect(void);
+/* <<< factory SuperFang_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

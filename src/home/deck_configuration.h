@@ -97,4 +97,7 @@ DrawListCursorResult DrawListCursor_Invisible(void);
 /* >>> factory DrawListCursor_Visible */
 DrawListCursorResult DrawListCursor_Visible(void);
 /* <<< factory DrawListCursor_Visible */
+/* >>> factory CountNumberOfCardsForEachCardType */
+void CountNumberOfCardsForEachCardType(void);
+/* <<< factory CountNumberOfCardsForEachCardType */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

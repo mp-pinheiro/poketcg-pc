@@ -232,6 +232,14 @@ static void adapt_DrawListCursor_Visible(ProbeState *s)
 }
 /* <<< factory DrawListCursor_Visible */
 
+/* >>> factory CountNumberOfCardsForEachCardType */
+static void adapt_CountNumberOfCardsForEachCardType(ProbeState *s)
+{
+	(void)s;
+	CountNumberOfCardsForEachCardType();
+}
+/* <<< factory CountNumberOfCardsForEachCardType */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -259,5 +267,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "IsCardInAnyDeck", adapt_IsCardInAnyDeck },
 	{ "DrawListCursor_Invisible", adapt_DrawListCursor_Invisible },
 	{ "DrawListCursor_Visible", adapt_DrawListCursor_Visible },
+	{ "CountNumberOfCardsForEachCardType", adapt_CountNumberOfCardsForEachCardType },
 	{ NULL, NULL },
 };

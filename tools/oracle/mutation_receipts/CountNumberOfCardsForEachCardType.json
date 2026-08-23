@@ -1,0 +1,9 @@
+{
+  "fn": "CountNumberOfCardsForEachCardType",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountNumberOfCardsForEachCardType\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52923\": \"000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountNumberOfCardsForEachCardType\", \"mismatches\": {\"bus\": {\"address\": 52923, \"reference\": \"0000000000\", \"native\": \"0101010101\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[52923, 9]]}}}\n",
+  "restored": "{\"fn\": \"CountNumberOfCardsForEachCardType\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52923\": \"000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

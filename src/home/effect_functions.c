@@ -4262,3 +4262,11 @@ void SeadraWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
 }
 /* <<< factory SeadraWaterGunEffect */
+
+/* >>> factory SuperFang_AIEffect */
+void SuperFang_AIEffect(void)
+{
+	SuperFang_HalfHPEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory SuperFang_AIEffect */

@@ -2526,6 +2526,14 @@ static void adapt_SeadraWaterGunEffect(ProbeState *s)
 }
 /* <<< factory SeadraWaterGunEffect */
 
+/* >>> factory SuperFang_AIEffect */
+static void adapt_SuperFang_AIEffect(ProbeState *s)
+{
+	(void)s;
+	SuperFang_AIEffect();
+}
+/* <<< factory SuperFang_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2839,5 +2847,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "OmanyteWaterGunEffect", adapt_OmanyteWaterGunEffect },
 	{ "PoliwrathWaterGunEffect", adapt_PoliwrathWaterGunEffect },
 	{ "SeadraWaterGunEffect", adapt_SeadraWaterGunEffect },
+	{ "SuperFang_AIEffect", adapt_SuperFang_AIEffect },
 	{ NULL, NULL },
 };

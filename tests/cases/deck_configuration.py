@@ -315,6 +315,14 @@ CASES["DrawListCursor_Visible"] = [
 ]
 # <<< factory DrawListCursor_Visible
 
+# >>> factory CountNumberOfCardsForEachCardType
+CONTRACT["CountNumberOfCardsForEachCardType"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["CountNumberOfCardsForEachCardType"] = [
+    {"read": {0xCEBB: 9}},
+    dict(POISON, read={0xCEBB: 9}),
+]
+# <<< factory CountNumberOfCardsForEachCardType
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -442,3 +450,6 @@ MUTATIONS["DrawListCursor_Invisible"] = {"source_symbol": "DrawListCursor_Invisi
 # >>> factory-mutation DrawListCursor_Visible
 MUTATIONS["DrawListCursor_Visible"] = {"source_symbol": "DrawListCursor_Visible", "before": "\tuint8_t tile = wVisibleCursorTile;\n\treturn DrawListCursor(tile);", "after": "\tuint8_t tile = 0u;\n\treturn DrawListCursor(tile);", "case_ids": ["DrawListCursor_Visible-0", "DrawListCursor_Visible-1"]}
 # <<< factory-mutation DrawListCursor_Visible
+# >>> factory-mutation CountNumberOfCardsForEachCardType
+MUTATIONS["CountNumberOfCardsForEachCardType"] = {"source_symbol": "CountNumberOfCardsForEachCardType", "before": "\t\tgb_write8(hl++, CountNumberOfCardsOfType(type));", "after": "\t\tgb_write8(hl++, (uint8_t)(CountNumberOfCardsOfType(type) + 1u));", "case_ids": ["CountNumberOfCardsForEachCardType-0", "CountNumberOfCardsForEachCardType-1"]}
+# <<< factory-mutation CountNumberOfCardsForEachCardType

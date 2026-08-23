@@ -584,3 +584,14 @@ void SetOverworldDoFrameFunction(void)
 	(void)SetDoFrameFunction(0x380eu);
 }
 /* <<< factory SetOverworldDoFrameFunction */
+
+/* >>> factory Func_c3ee */
+void Func_c3ee(void)
+{
+	uint16_t hl = wPermissionMap_ADDR;
+	for (uint16_t i = 0; i < 256u; i++) {
+		gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~0x10u));
+		hl++;
+	}
+}
+/* <<< factory Func_c3ee */
