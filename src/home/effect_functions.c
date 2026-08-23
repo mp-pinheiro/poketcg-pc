@@ -4472,10 +4472,9 @@ void PoliwagWaterGunEffect(void)
 }
 /* <<< factory PoliwagWaterGunEffect */
 
-/* >>> factory DodrioRage_AIEffect */
-void DodrioRage_AIEffect(void)
+/* >>> factory DragoniteLv45Slam_AIEffect */
+void DragoniteLv45Slam_AIEffect(void)
 {
-	DodrioRage_DamageBoostEffect();
-	SetDefiniteAIDamage();
+	SetExpectedAIDamage(40u, 0u, 80u);
 }
-/* <<< factory DodrioRage_AIEffect */
+/* <<< factory DragoniteLv45Slam_AIEffect */

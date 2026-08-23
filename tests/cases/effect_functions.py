@@ -2944,17 +2944,13 @@ CASES["PoliwagWaterGunEffect"] = [
 ]
 # <<< factory PoliwagWaterGunEffect
 
-# >>> factory DodrioRage_AIEffect
-CONTRACT["DodrioRage_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
-CASES["DodrioRage_AIEffect"] = [
-    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xC9",
-              wPlayerDeck: b"\x01", wDamage: b"\x05\x00"},
-     "read": {wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}},
-    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xC9",
-                       wPlayerDeck: b"\x01", wDamage: b"\x05\x00"},
-         read={wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}),
+# >>> factory DragoniteLv45Slam_AIEffect
+CONTRACT["DragoniteLv45Slam_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DragoniteLv45Slam_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
 ]
-# <<< factory DodrioRage_AIEffect
+# <<< factory DragoniteLv45Slam_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4830,6 +4826,6 @@ MUTATIONS["MagikarpFlail_AIEffect"] = {"source_symbol": "MagikarpFlail_AIEffect"
 # >>> factory-mutation PoliwagWaterGunEffect
 MUTATIONS["PoliwagWaterGunEffect"] = {"source_symbol": "PoliwagWaterGunEffect", "before": "void PoliwagWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(1u, 0u);", "after": "void PoliwagWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(2u, 0u);", "case_ids": ["PoliwagWaterGunEffect-0", "PoliwagWaterGunEffect-1"]}
 # <<< factory-mutation PoliwagWaterGunEffect
-# >>> factory-mutation DodrioRage_AIEffect
-MUTATIONS["DodrioRage_AIEffect"] = {"source_symbol": "DodrioRage_AIEffect", "before": "DodrioRage_DamageBoostEffect();", "after": "(void)0;", "case_ids": ["DodrioRage_AIEffect-0", "DodrioRage_AIEffect-1"]}
-# <<< factory-mutation DodrioRage_AIEffect
+# >>> factory-mutation DragoniteLv45Slam_AIEffect
+MUTATIONS["DragoniteLv45Slam_AIEffect"] = {"source_symbol": "DragoniteLv45Slam_AIEffect", "before": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 80u);", "after": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 40u);", "case_ids": ["DragoniteLv45Slam_AIEffect-0", "DragoniteLv45Slam_AIEffect-1"]}
+# <<< factory-mutation DragoniteLv45Slam_AIEffect
