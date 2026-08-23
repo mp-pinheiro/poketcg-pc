@@ -1,0 +1,9 @@
+{
+  "fn": "TimerHandler",
+  "case": "tests/cases/time.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TimerHandler\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51898\": \"00\", \"51907\": \"01\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TimerHandler\", \"mismatches\": {\"bus\": {\"address\": 51907, \"reference\": \"000101\", \"native\": \"000001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51898, 1], [51907, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"TimerHandler\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51898\": \"00\", \"51907\": \"01\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -2,6 +2,16 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/switch_rom.h"
+#include "home/time.h"
+#include "home/serial.h"
+#include "home/music1.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define IN_TIMER 0x01u
+#define BANK_SOUND_TIMER_HANDLER 0x3Du
+/* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
 
@@ -69,3 +79,23 @@ TimerSetupResult SetupTimer(void)
 	gb_write8(rTAC, 0x07u);
 	return (TimerSetupResult){0x07u, b, f};
 }
+
+/* >>> factory TimerHandler */
+void TimerHandler(void)
+{
+	SerialTimerHandler();
+	uint8_t counter = wTimerCounter;
+	wTimerCounter = (uint8_t)(counter + 1u);
+	if ((counter & 0x3u) != 0u)
+		return;
+	IncrementPlayTimeCounter();
+	if ((wReentrancyFlag & (1u << IN_TIMER)) != 0u)
+		return;
+	wReentrancyFlag = (uint8_t)(wReentrancyFlag | (1u << IN_TIMER));
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(BANK_SOUND_TIMER_HANDLER);
+	SoundTimerHandler();
+	BankswitchROM(saved_bank);
+	wReentrancyFlag = (uint8_t)(wReentrancyFlag & (uint8_t)~(1u << IN_TIMER));
+}
+/* <<< factory TimerHandler */

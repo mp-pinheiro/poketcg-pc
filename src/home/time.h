@@ -14,4 +14,7 @@ typedef struct {
 } TimerSetupResult;
 TimerSetupResult SetupTimer(void);
 
+/* >>> factory TimerHandler */
+void TimerHandler(void);
+/* <<< factory TimerHandler */
 #endif /* POKETCG_HOME_TIME_H */
