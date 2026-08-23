@@ -101,6 +101,14 @@ CASES["IntroSequenceCmd_SetOrbsAnimations"] = [
 ]
 # <<< factory IntroSequenceCmd_SetOrbsAnimations
 
+# >>> factory IntroSequenceCmd_SetOrbsCoordinates
+CONTRACT["IntroSequenceCmd_SetOrbsCoordinates"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",), "wram_out": True}
+CASES["IntroSequenceCmd_SetOrbsCoordinates"] = [
+    {"b": 0xC5, "c": 0x00, "wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes(range(1, 15))}},
+    dict(POISON, b=0xC5, c=0x00, wram={0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes(range(1, 15))}),
+]
+# <<< factory IntroSequenceCmd_SetOrbsCoordinates
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -137,3 +145,11 @@ MUTATIONS["IntroSequenceCmd_WaitOrbsAnimation"] = {"source_symbol": "IntroSequen
 # >>> factory-mutation IntroSequenceCmd_SetOrbsAnimations
 MUTATIONS["IntroSequenceCmd_SetOrbsAnimations"] = {"source_symbol": "IntroSequenceCmd_SetOrbsAnimations", "before": "\t\tStartSpriteAnimation(anim);\n\t\tde = (uint16_t)(de + 1u);", "after": "\t\tStartSpriteAnimation(anim);\n\t\tde = (uint16_t)(de + 2u);", "case_ids": ["IntroSequenceCmd_SetOrbsAnimations-0", "IntroSequenceCmd_SetOrbsAnimations-1"]}
 # <<< factory-mutation IntroSequenceCmd_SetOrbsAnimations
+# >>> factory-mutation IntroSequenceCmd_SetOrbsCoordinates
+MUTATIONS["IntroSequenceCmd_SetOrbsCoordinates"] = {
+    "source_symbol": "IntroSequenceCmd_SetOrbsCoordinates",
+    "before": "gb_write8((uint16_t)(prop_addr + 1u), y);\n\t\tde = (uint16_t)(de + 1u);",
+    "after": "gb_write8((uint16_t)(prop_addr + 1u), y);\n\t\tde = (uint16_t)(de + 2u);",
+    "case_ids": ["IntroSequenceCmd_SetOrbsCoordinates-0", "IntroSequenceCmd_SetOrbsCoordinates-1"],
+}
+# <<< factory-mutation IntroSequenceCmd_SetOrbsCoordinates

@@ -190,3 +190,28 @@ IntroSequenceCmdSetOrbsAnimationsResult IntroSequenceCmd_SetOrbsAnimations(uint8
 	return (IntroSequenceCmdSetOrbsAnimationsResult){high_byte, f, b, 0u, (uint8_t)(de >> 8), (uint8_t)(de & 0xFFu), hl};
 }
 /* <<< factory IntroSequenceCmd_SetOrbsAnimations */
+
+/* >>> factory IntroSequenceCmd_SetOrbsCoordinates */
+IntroSequenceCmdSetOrbsCoordinatesResult IntroSequenceCmd_SetOrbsCoordinates(uint8_t b, uint8_t c)
+{
+	uint16_t hl = (uint16_t)(((uint16_t)b << 8) | c);
+	uint16_t de = wTitleScreenSprites_ADDR;
+	for (uint8_t i = 0; i < 7u; i++) {
+		uint8_t sprite = gb_read8(de);
+		wWhichSprite = sprite;
+		uint16_t prop_addr = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+		uint8_t x = (uint8_t)(gb_read8(hl) + 8u);
+		hl = (uint16_t)(hl + 1u);
+		gb_write8(prop_addr, x);
+		uint8_t y = (uint8_t)(gb_read8(hl) + 16u);
+		hl = (uint16_t)(hl + 1u);
+		gb_write8((uint16_t)(prop_addr + 1u), y);
+		de = (uint16_t)(de + 1u);
+	}
+	AdvanceIntroSequenceCmdPtrBy4();
+	uint8_t high_byte = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t z = (high_byte == 0u) ? 0x80u : 0x00u;
+	uint8_t f = (uint8_t)(z | 0x10u);
+	return (IntroSequenceCmdSetOrbsCoordinatesResult){high_byte, f, b, 0u, (uint8_t)(de >> 8), (uint8_t)(de & 0xFFu), hl};
+}
+/* <<< factory IntroSequenceCmd_SetOrbsCoordinates */

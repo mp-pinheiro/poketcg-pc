@@ -82,6 +82,20 @@ static void adapt_IntroSequenceCmd_SetOrbsAnimations(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_SetOrbsAnimations */
 
+/* >>> factory IntroSequenceCmd_SetOrbsCoordinates */
+static void adapt_IntroSequenceCmd_SetOrbsCoordinates(ProbeState *s)
+{
+	IntroSequenceCmdSetOrbsCoordinatesResult r = IntroSequenceCmd_SetOrbsCoordinates(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory IntroSequenceCmd_SetOrbsCoordinates */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -92,5 +106,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_WaitSFX", adapt_IntroSequenceCmd_WaitSFX },
 	{ "IntroSequenceCmd_WaitOrbsAnimation", adapt_IntroSequenceCmd_WaitOrbsAnimation },
 	{ "IntroSequenceCmd_SetOrbsAnimations", adapt_IntroSequenceCmd_SetOrbsAnimations },
+	{ "IntroSequenceCmd_SetOrbsCoordinates", adapt_IntroSequenceCmd_SetOrbsCoordinates },
 	{ NULL, NULL },
 };

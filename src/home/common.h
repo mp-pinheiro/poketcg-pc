@@ -63,4 +63,8 @@ RemoveFromListDifferentCardOfGivenTypeResult RemoveFromListDifferentCardOfGivenT
 /* >>> factory CountPokemonCardsInHandAndInPlayArea */
 uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c);
 /* <<< factory CountPokemonCardsInHandAndInPlayArea */
+/* >>> factory LookForCardIDInLocation_Bank8 */
+typedef struct { uint8_t a; uint8_t f; } LookForCardIDInLocationBank8Result;
+LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, uint8_t card_id_byte);
+/* <<< factory LookForCardIDInLocation_Bank8 */
 #endif /* POKETCG_HOME_COMMON_H */

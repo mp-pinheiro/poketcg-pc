@@ -133,6 +133,15 @@ static void adapt_CountPokemonCardsInHandAndInPlayArea(ProbeState *s)
 }
 /* <<< factory CountPokemonCardsInHandAndInPlayArea */
 
+/* >>> factory LookForCardIDInLocation_Bank8 */
+static void adapt_LookForCardIDInLocation_Bank8(ProbeState *s)
+{
+	LookForCardIDInLocationBank8Result r = LookForCardIDInLocation_Bank8(s->a, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInLocation_Bank8 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -148,5 +157,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53 },
 	{ "RemoveFromListDifferentCardOfGivenType", adapt_RemoveFromListDifferentCardOfGivenType },
 	{ "CountPokemonCardsInHandAndInPlayArea", adapt_CountPokemonCardsInHandAndInPlayArea },
+	{ "LookForCardIDInLocation_Bank8", adapt_LookForCardIDInLocation_Bank8 },
 	{ NULL, NULL },
 };

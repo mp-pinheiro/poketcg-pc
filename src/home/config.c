@@ -30,6 +30,11 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "home/sound.h"
 
 #define SFX_CURSOR 0x01u
+
+#include "generated/hram.h"
+#include "home/overworld.h"
+
+#define PAD_CTRL_PAD 0xF0u
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
@@ -239,3 +244,26 @@ void ConfigScreenDPadUp(void)
 	PlaySFX(SFX_CURSOR);
 }
 /* <<< factory ConfigScreenDPadUp */
+
+/* >>> factory ConfigScreenHandleDPadInput */
+void ConfigScreenHandleDPadInput(void)
+{
+	if ((gb_read8(hDPadHeld_ADDR) & PAD_CTRL_PAD) == 0u)
+		return;
+	GetDirectionFromDPadResult direction = GetDirectionFromDPad(gb_read8(hDPadHeld_ADDR));
+	switch (direction.a) {
+	case 0u:
+		ConfigScreenDPadUp();
+		break;
+	case 1u:
+		ConfigScreenDPadRight();
+		break;
+	case 2u:
+		ConfigScreenDPadDown();
+		break;
+	default:
+		ConfigScreenDPadLeft();
+		break;
+	}
+}
+/* <<< factory ConfigScreenHandleDPadInput */

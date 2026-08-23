@@ -416,3 +416,18 @@ uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c)
 	return count;
 }
 /* <<< factory CountPokemonCardsInHandAndInPlayArea */
+
+/* >>> factory LookForCardIDInLocation_Bank8 */
+LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t location, uint8_t card_id_byte)
+{
+	for (uint8_t e = 0u; e < DECK_SIZE; e++) {
+		uint8_t loc = GetTurnDuelistVariable((uint8_t)(DUELVARS_CARD_LOCATIONS + e)).a;
+		if (loc != location)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(e);
+		if ((uint8_t)card_id == card_id_byte)
+			return (LookForCardIDInLocationBank8Result){e, 0x90u};
+	}
+	return (LookForCardIDInLocationBank8Result){DECK_SIZE, 0x00u};
+}
+/* <<< factory LookForCardIDInLocation_Bank8 */

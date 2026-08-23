@@ -35,4 +35,7 @@ void ConfigScreenDPadDown(void);
 /* >>> factory ConfigScreenDPadUp */
 void ConfigScreenDPadUp(void);
 /* <<< factory ConfigScreenDPadUp */
+/* >>> factory ConfigScreenHandleDPadInput */
+void ConfigScreenHandleDPadInput(void);
+/* <<< factory ConfigScreenHandleDPadInput */
 #endif /* POKETCG_HOME_CONFIG_H */

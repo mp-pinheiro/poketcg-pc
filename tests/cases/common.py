@@ -194,6 +194,19 @@ CASES["CountPokemonCardsInHandAndInPlayArea"] = [
 ]
 # <<< factory CountPokemonCardsInHandAndInPlayArea
 
+# >>> factory LookForCardIDInLocation_Bank8
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+_LOCATIONS_SEED = {0xC200 + i: b"\x00" for i in range(60)}
+_LOCATIONS_SEED[0xC205] = b"\x10"
+_BASE_WRAM = {**_LOCATIONS_SEED, hWhoseTurn: b"\xC2", wPlayerDeck + 5: b"\x2A"}
+CONTRACT["LookForCardIDInLocation_Bank8"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDInLocation_Bank8"] = [
+    {"a": 0x10, "e": 0x2A, "wram": _BASE_WRAM},
+    dict(POISON, a=0x10, e=0x99, wram=_BASE_WRAM),
+]
+# <<< factory LookForCardIDInLocation_Bank8
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -280,3 +293,11 @@ MUTATIONS["CountPokemonCardsInHandAndInPlayArea"] = {
     "case_ids": ["CountPokemonCardsInHandAndInPlayArea-0", "CountPokemonCardsInHandAndInPlayArea-1"],
 }
 # <<< factory-mutation CountPokemonCardsInHandAndInPlayArea
+# >>> factory-mutation LookForCardIDInLocation_Bank8
+MUTATIONS["LookForCardIDInLocation_Bank8"] = {
+    "source_symbol": "LookForCardIDInLocation_Bank8",
+    "before": "if (loc != location)",
+    "after": "if (loc == location)",
+    "case_ids": ["LookForCardIDInLocation_Bank8-0"],
+}
+# <<< factory-mutation LookForCardIDInLocation_Bank8
