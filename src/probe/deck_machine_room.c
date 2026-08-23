@@ -20,8 +20,17 @@ static void adapt_Script_BeatAaron(ProbeState *s)
 }
 /* <<< factory Script_BeatAaron */
 
+/* >>> factory DeckMachineRoomCloseTextBox */
+static void adapt_DeckMachineRoomCloseTextBox(ProbeState *s)
+{
+	(void)s;
+	DeckMachineRoomCloseTextBox();
+}
+/* <<< factory DeckMachineRoomCloseTextBox */
+
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
+	{ "DeckMachineRoomCloseTextBox", adapt_DeckMachineRoomCloseTextBox },
 	{ NULL, NULL },
 };

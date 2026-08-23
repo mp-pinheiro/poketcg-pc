@@ -1,0 +1,9 @@
+{
+  "fn": "DeckMachineRoomCloseTextBox",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DeckMachineRoomCloseTextBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53906\": \"01\", \"54052\": \"ff0101010101010101ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckMachineRoomCloseTextBox\", \"mismatches\": {\"bus\": {\"address\": 54060, \"reference\": \"0101010101ff\", \"native\": \"01010101ffff\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[53906, 1], [54052, 10]]}}}\n",
+  "restored": "{\"fn\": \"DeckMachineRoomCloseTextBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53906\": \"01\", \"54052\": \"ff0101010101010101ff\"}}, \"status\": \"PASS\"}\n"
+}
