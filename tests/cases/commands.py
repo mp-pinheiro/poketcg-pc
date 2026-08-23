@@ -120,6 +120,11 @@ CASES["PlayAttackAnimationCommands_NextCommand"] = [
 ]
 # <<< factory PlayAttackAnimationCommands_NextCommand
 
+# >>> factory DuelAnim157
+CONTRACT["DuelAnim157"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["DuelAnim157"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
+# <<< factory DuelAnim157
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -173,3 +178,6 @@ MUTATIONS["GetDamageText"] = {
 # >>> factory-mutation PlayAttackAnimationCommands_NextCommand
 MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAttackAnimationCommands_NextCommand", "before": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)de};", "after": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)(de + 1u)};", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0", "PlayAttackAnimationCommands_NextCommand-1", "PlayAttackAnimationCommands_NextCommand-2", "PlayAttackAnimationCommands_NextCommand-3", "PlayAttackAnimationCommands_NextCommand-4"]}
 # <<< factory-mutation PlayAttackAnimationCommands_NextCommand
+# >>> factory-mutation DuelAnim157
+MUTATIONS["DuelAnim157"] = {"source_symbol": "DuelAnim157", "before": "\treturn; /* DuelAnim157 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim157 */", "case_ids": ["DuelAnim157-2"]}
+# <<< factory-mutation DuelAnim157

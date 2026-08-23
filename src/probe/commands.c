@@ -74,6 +74,14 @@ static void adapt_PlayAttackAnimationCommands_NextCommand(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
 
+/* >>> factory DuelAnim157 */
+static void adapt_DuelAnim157(ProbeState *s)
+{
+	(void)s;
+	DuelAnim157();
+}
+/* <<< factory DuelAnim157 */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -84,5 +92,6 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "DuelAnim156", adapt_DuelAnim156 },
 	{ "GetDamageText", adapt_GetDamageText },
 	{ "PlayAttackAnimationCommands_NextCommand", adapt_PlayAttackAnimationCommands_NextCommand },
+	{ "DuelAnim157", adapt_DuelAnim157 },
 	{ NULL, NULL },
 };

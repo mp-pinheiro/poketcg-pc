@@ -43,4 +43,8 @@ typedef struct {
 
 PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
+/* >>> factory DuelAnim157 */
+/* poketcg/src/engine/duel/animations/commands.asm */
+void DuelAnim157(void);
+/* <<< factory DuelAnim157 */
 #endif

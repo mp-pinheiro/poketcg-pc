@@ -194,3 +194,10 @@ PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCo
 	}
 }
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
+
+/* >>> factory DuelAnim157 */
+void DuelAnim157(void)
+{
+	return; /* DuelAnim157 */
+}
+/* <<< factory DuelAnim157 */
