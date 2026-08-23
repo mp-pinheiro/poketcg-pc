@@ -1465,6 +1465,8 @@ hWhoseTurn = 0xFF97
 wTempCardID_ccc2 = 0xCCC2
 wSelectedAttack = 0xCCC6
 wAttachedEnergies = 0xCC1B
+
+wDuelTurns = 0xCC06
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2006,6 +2008,18 @@ CASES["PracticeDuelVerify_Turn2"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01", 0xC300 + 0x05: b"\x01"}),
 ]
 # <<< factory PracticeDuelVerify_Turn2
+
+# >>> factory PracticeDuel_PlayStaryuFromBench
+CONTRACT["PracticeDuel_PlayStaryuFromBench"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuel_PlayStaryuFromBench"] = [
+    {"wram": {wDuelTurns: b"\x05"}},
+    {"wram": {wDuelTurns: b"\x00"}},
+    dict(POISON, wram={wDuelTurns: b"\x05"}),
+    {"wram": {wDuelTurns: b"\x07"}, "oracle": False,
+     "why": "PrintPracticeDuelInstructions walks the real PracticeDuelText_SamTurn4 table (2 scrollable-text pages plus a final print), each needing a fresh button press-then-release edge; the harness keys field is a single static value and cannot simulate that sequence, so the run never terminates under any budget. DrawPracticeDuelInstructionsTextBox, EnableLCD, and PrintPracticeDuelInstructions are independently verified by their own landed suites; this case only confirms the draw branch is entered with the correct table pointer.",
+     "expect": {0xCC01: b"\x46\x53", 0xCBCA: b"\x00"}},
+]
+# <<< factory PracticeDuel_PlayStaryuFromBench
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3023,3 +3037,6 @@ MUTATIONS["PracticeDuelVerify_Turn1"] = {"source_symbol": "PracticeDuelVerify_Tu
 # >>> factory-mutation PracticeDuelVerify_Turn2
 MUTATIONS["PracticeDuelVerify_Turn2"] = {"source_symbol": "PracticeDuelVerify_Turn2", "before": "if (psychic == 0u)", "after": "if (psychic != 0u)", "case_ids": ["PracticeDuelVerify_Turn2-0", "PracticeDuelVerify_Turn2-3"]}
 # <<< factory-mutation PracticeDuelVerify_Turn2
+# >>> factory-mutation PracticeDuel_PlayStaryuFromBench
+MUTATIONS["PracticeDuel_PlayStaryuFromBench"] = {"source_symbol": "PracticeDuel_PlayStaryuFromBench", "before": "(uint8_t)(turns == 0u ? 0x80u : 0x00u)", "after": "(uint8_t)(turns == 0u ? 0x00u : 0x80u)", "case_ids": ["PracticeDuel_PlayStaryuFromBench-0", "PracticeDuel_PlayStaryuFromBench-1"]}
+# <<< factory-mutation PracticeDuel_PlayStaryuFromBench

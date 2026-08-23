@@ -582,6 +582,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define PSYCHIC 0x05u
+
+#include "home/core.h"
+#include "home/lcd.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PracticeDuelText_SamTurn4 0x5346u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3557,3 +3563,16 @@ PracticeDuelVerify_Turn2Result PracticeDuelVerify_Turn2(void)
 	return (PracticeDuelVerify_Turn2Result){0x00u};
 }
 /* <<< factory PracticeDuelVerify_Turn2 */
+
+/* >>> factory PracticeDuel_PlayStaryuFromBench */
+PracticeDuel_PlayStaryuFromBenchResult PracticeDuel_PlayStaryuFromBench(void)
+{
+	uint8_t turns = wDuelTurns;
+	if (turns != 7u)
+		return (PracticeDuel_PlayStaryuFromBenchResult){(uint8_t)(turns == 0u ? 0x80u : 0x00u)};
+	DrawPracticeDuelInstructionsTextBox();
+	EnableLCD();
+	PrintPracticeDuelInstructions(PracticeDuelText_SamTurn4);
+	return (PracticeDuel_PlayStaryuFromBenchResult){0x00u};
+}
+/* <<< factory PracticeDuel_PlayStaryuFromBench */

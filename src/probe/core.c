@@ -1435,6 +1435,14 @@ static void adapt_PracticeDuelVerify_Turn2(ProbeState *s)
 }
 /* <<< factory PracticeDuelVerify_Turn2 */
 
+/* >>> factory PracticeDuel_PlayStaryuFromBench */
+static void adapt_PracticeDuel_PlayStaryuFromBench(ProbeState *s)
+{
+	PracticeDuel_PlayStaryuFromBenchResult r = PracticeDuel_PlayStaryuFromBench();
+	s->f = r.f;
+}
+/* <<< factory PracticeDuel_PlayStaryuFromBench */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1605,5 +1613,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn5", adapt_PracticeDuelVerify_Turn5 },
 	{ "PracticeDuelVerify_Turn1", adapt_PracticeDuelVerify_Turn1 },
 	{ "PracticeDuelVerify_Turn2", adapt_PracticeDuelVerify_Turn2 },
+	{ "PracticeDuel_PlayStaryuFromBench", adapt_PracticeDuel_PlayStaryuFromBench },
 	{ NULL, NULL },
 };
