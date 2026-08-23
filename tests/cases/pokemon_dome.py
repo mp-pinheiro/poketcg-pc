@@ -74,9 +74,18 @@ wCurTilemap = 0xD131
 wConsole = 0xCAB4
 wPermissionMap = 0xD133
 
-wEventVarByte_A = 0xD3E9
-wPCPacks_A = 0xD11E
-wNextScript_A = 0xD0C6
+wPlayerYCoord = 0xD331
+wPlayerXCoord = 0xD330
+wTempNPC = 0xD3AB
+wLoadedNPCs = 0xD34A
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wPlayerDirection = 0xD334
+wOverworldNPCFlags = 0xD0C1
+wNextScript = 0xD0C6
+wOverworldMode = 0xD0BF
+NPC_TABLE = b"\x00" * 96
+READ_SPAN = {wTempNPC: 1, wLoadedNPCTempIndex: 1, wScriptNPC: 1, wNextScript: 2}
 # <<< factory-cases-statics
 
 # >>> factory PokemonDomeCloseTextBox
@@ -91,15 +100,25 @@ CASES["PokemonDomeCloseTextBox"] = [
 ]
 # <<< factory PokemonDomeCloseTextBox
 
-# >>> factory PokemonDomeLoadMap
-CONTRACT["PokemonDomeLoadMap"] = {"compare": (), "preserve": (), "wram_out": True}
-CASES["PokemonDomeLoadMap"] = [
-    {"wram": {wEventVarByte_A: b"\x00", wPCPacks_A: bytes(15)},
-     "read": {wPCPacks_A: 15, wNextScript_A: 2}},
-    dict(POISON, wram={wEventVarByte_A: b"\x08", wPCPacks_A: bytes(15)},
-         read={wPCPacks_A: 15, wNextScript_A: 2}),
+# >>> factory PokemonDomeMovePlayer
+CONTRACT["PokemonDomeMovePlayer"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PokemonDomeMovePlayer"] = [
+    {"wram": {wPlayerYCoord: b"\x00", wPlayerXCoord: b"\x0F", wTempNPC: b"\xFF",
+              wScriptNPC: b"\xFF", wLoadedNPCTempIndex: b"\xFF", wNextScript: b"\xFF\xFF"},
+     "read": READ_SPAN},
+    {"wram": {wPlayerYCoord: b"\x16", wPlayerXCoord: b"\x0D", wTempNPC: b"\xFF",
+              wScriptNPC: b"\xFF", wLoadedNPCTempIndex: b"\xFF", wNextScript: b"\xFF\xFF"},
+     "read": READ_SPAN},
+    {"wram": {wPlayerYCoord: b"\x16", wPlayerXCoord: b"\x11", wTempNPC: b"\xFF",
+              wScriptNPC: b"\xFF", wLoadedNPCTempIndex: b"\xFF", wNextScript: b"\xFF\xFF"},
+     "read": READ_SPAN},
+    dict(POISON, wram={wPlayerYCoord: b"\x16", wPlayerXCoord: b"\x0F", wTempNPC: b"\x00",
+                       wLoadedNPCs: NPC_TABLE, wLoadedNPCTempIndex: b"\xEE", wScriptNPC: b"\xAA",
+                       wPlayerDirection: b"\x01", wOverworldNPCFlags: b"\x00",
+                       wNextScript: b"\xFF\xFF", wOverworldMode: b"\x00"},
+         read=READ_SPAN),
 ]
-# <<< factory PokemonDomeLoadMap
+# <<< factory PokemonDomeMovePlayer
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -139,6 +158,6 @@ MUTATIONS["Func_f77d"] = {
 # >>> factory-mutation PokemonDomeCloseTextBox
 MUTATIONS["PokemonDomeCloseTextBox"] = {"source_symbol": "PokemonDomeCloseTextBox", "before": "\tApplyOWMapEventChangeIfEventSet(MAP_EVENT_HALL_OF_HONOR_DOOR);", "after": "\tApplyOWMapEventChangeIfEventSet((uint8_t)(MAP_EVENT_HALL_OF_HONOR_DOOR + 1u));", "case_ids": ["PokemonDomeCloseTextBox-0", "PokemonDomeCloseTextBox-1"]}
 # <<< factory-mutation PokemonDomeCloseTextBox
-# >>> factory-mutation PokemonDomeLoadMap
-MUTATIONS["PokemonDomeLoadMap"] = {"source_symbol": "PokemonDomeLoadMap", "before": "\tSetNextScript(0x780Bu);", "after": "\tSetNextScript(0x780Cu);", "case_ids": ["PokemonDomeLoadMap-1"]}
-# <<< factory-mutation PokemonDomeLoadMap
+# >>> factory-mutation PokemonDomeMovePlayer
+MUTATIONS["PokemonDomeMovePlayer"] = {"source_symbol": "PokemonDomeMovePlayer", "before": "gb_write8(0xD3ABu, 0x3Au);", "after": "gb_write8(0xD3ABu, 0x3Bu);", "case_ids": ["PokemonDomeMovePlayer-3"]}
+# <<< factory-mutation PokemonDomeMovePlayer

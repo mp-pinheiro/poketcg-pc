@@ -39,13 +39,13 @@ static void adapt_PokemonDomeCloseTextBox(ProbeState *s)
 }
 /* <<< factory PokemonDomeCloseTextBox */
 
-/* >>> factory PokemonDomeLoadMap */
-static void adapt_PokemonDomeLoadMap(ProbeState *s)
+/* >>> factory PokemonDomeMovePlayer */
+static void adapt_PokemonDomeMovePlayer(ProbeState *s)
 {
 	(void)s;
-	PokemonDomeLoadMap();
+	PokemonDomeMovePlayer();
 }
-/* <<< factory PokemonDomeLoadMap */
+/* <<< factory PokemonDomeMovePlayer */
 
 const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Func_f762", adapt_Func_f762},
@@ -53,6 +53,6 @@ const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"PlacePokemonDomeOpponentAtDuelTable", adapt_PlacePokemonDomeOpponentAtDuelTable},
 	{ "Func_f77d", adapt_Func_f77d },
 	{ "PokemonDomeCloseTextBox", adapt_PokemonDomeCloseTextBox },
-	{ "PokemonDomeLoadMap", adapt_PokemonDomeLoadMap },
+	{ "PokemonDomeMovePlayer", adapt_PokemonDomeMovePlayer },
 	{NULL, NULL},
 };

@@ -4,9 +4,9 @@
 /* >>> factory statics */
 #define MAP_EVENT_HALL_OF_HONOR_DOOR 0x01u
 
+#include "home/pokemon_dome.h"
 #include "home/scripting.h"
-#include "home/mail.h"
-#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 #define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
@@ -57,13 +57,17 @@ void PokemonDomeCloseTextBox(void)
 }
 /* <<< factory PokemonDomeCloseTextBox */
 
-/* >>> factory PokemonDomeLoadMap */
-void PokemonDomeLoadMap(void)
+/* >>> factory PokemonDomeMovePlayer */
+void PokemonDomeMovePlayer(void)
 {
-	TryGivePCPack(0x0Du);
-	uint8_t value = (uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3);
-	if (value == 0u)
+	if (gb_read8(0xD331u) != 0x16u)
 		return;
-	SetNextScript(0x780Bu);
+	uint8_t x = gb_read8(0xD330u);
+	if (x < 0x0Eu)
+		return;
+	if (x >= 0x11u)
+		return;
+	gb_write8(0xD3ABu, 0x3Au);
+	(void)SetNextNPCAndScript(0x784Cu, 0x76C6u);
 }
-/* <<< factory PokemonDomeLoadMap */
+/* <<< factory PokemonDomeMovePlayer */
