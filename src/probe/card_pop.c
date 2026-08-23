@@ -24,9 +24,17 @@ static void adapt_LookUpNameInCardPopNameList(ProbeState *s)
 }
 /* <<< factory LookUpNameInCardPopNameList */
 
+/* >>> factory DecideCardToReceiveFromCardPop */
+static void adapt_DecideCardToReceiveFromCardPop(ProbeState *s)
+{
+	s->a = DecideCardToReceiveFromCardPop();
+}
+/* <<< factory DecideCardToReceiveFromCardPop */
+
 const ProbeEntry probe_entries_card_pop[] = {
 	{ "CreateCardPopCandidateList", adapt_CreateCardPopCandidateList },
 	{ "CalculateNameHash", adapt_CalculateNameHash },
 	{ "LookUpNameInCardPopNameList", adapt_LookUpNameInCardPopNameList },
+	{ "DecideCardToReceiveFromCardPop", adapt_DecideCardToReceiveFromCardPop },
 	{ NULL, NULL },
 };

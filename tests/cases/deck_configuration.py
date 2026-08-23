@@ -361,6 +361,14 @@ CASES["RemoveCardFromDeck"] = [
 ]
 # <<< factory RemoveCardFromDeck
 
+# >>> factory CheckIfCurrentDeckWasChanged
+CONTRACT["CheckIfCurrentDeckWasChanged"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfCurrentDeckWasChanged"] = [
+    {"wram": {0xCECC: b"\x01"}},
+    dict(POISON, wram={0xCECC: b"\x01"}),
+]
+# <<< factory CheckIfCurrentDeckWasChanged
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -503,3 +511,6 @@ MUTATIONS["TallyCardsInCardFilterLists"] = {"source_symbol": "TallyCardsInCardFi
 # >>> factory-mutation RemoveCardFromDeck
 MUTATIONS["RemoveCardFromDeck"] = {"source_symbol": "RemoveCardFromDeck", "before": "return (RemoveCardFromDeckResult){0u, 0x80u, b, c, d, e, hl};", "after": "return (RemoveCardFromDeckResult){0u, 0x90u, b, c, d, e, hl};", "case_ids": ["RemoveCardFromDeck-0", "RemoveCardFromDeck-1"]}
 # <<< factory-mutation RemoveCardFromDeck
+# >>> factory-mutation CheckIfCurrentDeckWasChanged
+MUTATIONS["CheckIfCurrentDeckWasChanged"] = {"source_symbol": "CheckIfCurrentDeckWasChanged", "before": "return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};", "after": "return (CheckIfCurrentDeckWasChangedResult){total, 0x00u};", "case_ids": ["CheckIfCurrentDeckWasChanged-0", "CheckIfCurrentDeckWasChanged-1"]}
+# <<< factory-mutation CheckIfCurrentDeckWasChanged

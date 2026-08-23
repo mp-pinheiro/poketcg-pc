@@ -9,4 +9,7 @@ void CalculateNameHash(uint16_t *hl, uint16_t *de);
 /* >>> factory LookUpNameInCardPopNameList */
 void LookUpNameInCardPopNameList(void);
 /* <<< factory LookUpNameInCardPopNameList */
+/* >>> factory DecideCardToReceiveFromCardPop */
+uint8_t DecideCardToReceiveFromCardPop(void);
+/* <<< factory DecideCardToReceiveFromCardPop */
 #endif

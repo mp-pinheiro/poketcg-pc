@@ -61,4 +61,8 @@ PickPokedexResult PickPokedexCards_Unreferenced(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecidePokedexResult;
 AIDecidePokedexResult AIDecide_Pokedex(void);
 /* <<< factory AIDecide_Pokedex */
+/* >>> factory AIDecide_ItemFinder */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_ItemFinderResult;
+AIDecide_ItemFinderResult AIDecide_ItemFinder(void);
+/* <<< factory AIDecide_ItemFinder */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

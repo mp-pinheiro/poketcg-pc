@@ -96,6 +96,11 @@
 #include "home/sound.h"
 #include "generated/wram.h"
 #define SFX_CURSOR 0x01u
+
+#include "home/switch_sram.h"
+#include "home/deck_selection.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
 /* <<< factory statics */
 
 
@@ -625,3 +630,70 @@ RemoveCardFromDeckResult RemoveCardFromDeck(uint8_t b, uint8_t c, uint8_t d, uin
 	return (RemoveCardFromDeckResult){0u, 0x90u, (uint8_t)(dst >> 8), (uint8_t)dst, d, e, p};
 }
 /* <<< factory RemoveCardFromDeck */
+
+/* >>> factory CheckIfCurrentDeckWasChanged */
+CheckIfCurrentDeckWasChangedResult CheckIfCurrentDeckWasChanged(void)
+{
+	uint8_t total = wTotalCardCount;
+	if (total != 0u && total != DECK_SIZE) {
+		DisableSRAM();
+		return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};
+	}
+
+	uint16_t src = GetPointerToDeckCards();
+	uint16_t dst = wCurDeckCardChanges_ADDR;
+	EnableSRAM();
+	CopyNBytesFromHLToDE(&src, &dst, DECK_SIZE);
+	DisableSRAM();
+
+	gb_write8((uint16_t)(wCurDeckCardChanges_ADDR + DECK_SIZE), 0xFFu);
+	uint16_t de = wCurDeckCards_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(de);
+		if (card == 0u)
+			break;
+		de = (uint16_t)(de + 1u);
+		uint16_t hl = wCurDeckCardChanges_ADDR;
+		for (;;) {
+			uint8_t v = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			if (v == 0xFFu)
+				break;
+			if (v == card) {
+				gb_write8((uint16_t)(hl - 1u), 0u);
+				break;
+			}
+		}
+	}
+
+	uint16_t hl = wCurDeckCardChanges_ADDR;
+	for (;;) {
+		uint8_t v = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (v == 0xFFu)
+			break;
+		if (v != 0u) {
+			DisableSRAM();
+			return (CheckIfCurrentDeckWasChangedResult){v, 0x10u};
+		}
+	}
+
+	hl = GetPointerToDeckName();
+	uint16_t de2 = wCurDeckName_ADDR;
+	EnableSRAM();
+	for (;;) {
+		uint8_t a = gb_read8(de2);
+		uint8_t nb = gb_read8(hl);
+		if (a != nb) {
+			DisableSRAM();
+			return (CheckIfCurrentDeckWasChangedResult){a, 0x10u};
+		}
+		de2 = (uint16_t)(de2 + 1u);
+		hl = (uint16_t)(hl + 1u);
+		if (a == 0u)
+			break;
+	}
+	DisableSRAM();
+	return (CheckIfCurrentDeckWasChangedResult){0u, 0x80u};
+}
+/* <<< factory CheckIfCurrentDeckWasChanged */

@@ -40,6 +40,13 @@
 #include "home/random.h"
 #include "generated/wram.h"
 #define DECK_SIZE 0x3cu
+
+#include "home/duel.h"
+#include "home/trainer_cards.h"
+#include "generated/wram.h"
+#define ENERGY_REMOVAL 0xd0u
+#define MR_MIME 0x9bu
+#define POKEMON_TRADER 0xc9u
 /* <<< factory statics */
 
 
@@ -436,3 +443,59 @@ AIDecidePokedexResult AIDecide_Pokedex(void)
 	return (AIDecidePokedexResult){picked.a, picked.f};
 }
 /* <<< factory AIDecide_Pokedex */
+
+/* >>> factory AIDecide_ItemFinder */
+AIDecide_ItemFinderResult AIDecide_ItemFinder(void)
+{
+	CardListResult discard = CreateDiscardPileCardList(0u);
+	uint8_t a = discard.a;
+	if (!(discard.f & 0x10u)) {
+		uint16_t hl = wDuelTempList_ADDR;
+		uint8_t deck_index = 0u;
+		uint8_t found = 0u;
+		for (;;) {
+			deck_index = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			if (deck_index == 0xFFu) {
+				a = 0xFFu;
+				break;
+			}
+			uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+			if (card_id == ENERGY_REMOVAL) {
+				found = 1u;
+				break;
+			}
+		}
+		if (found) {
+			wce06 = deck_index;
+
+			(void)CreateHandCardList(0u);
+			hl = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t v = gb_read8(hl);
+				hl = (uint16_t)(hl + 1u);
+				if (v == 0xFFu)
+					break;
+				uint8_t card_id2 = LoadCardDataToBuffer1_FromDeckIndex(v);
+				if (card_id2 == MR_MIME || card_id2 == POKEMON_TRADER)
+					RemoveCardFromList(&hl);
+			}
+
+			FindAndRemoveCardFromList(wAITrainerCardToPlay, wDuelTempList_ADDR);
+			FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR);
+			a = dup1.a;
+			if (!(dup1.f & 0x10u)) {
+				wce1a = dup1.a;
+				FindAndRemoveCardFromList(dup1.a, wDuelTempList_ADDR);
+				FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR);
+				a = dup2.a;
+				if (!(dup2.f & 0x10u)) {
+					wce1b = dup2.a;
+					return (AIDecide_ItemFinderResult){wce06, 0x10u};
+				}
+			}
+		}
+	}
+	return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+}
+/* <<< factory AIDecide_ItemFinder */

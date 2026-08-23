@@ -14,6 +14,20 @@
 
 #include "home/duel.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define CHARMANDER 0x30u
+#define COLORLESS 0x06u
+#define DOUBLE_COLORLESS_ENERGY 0x07u
+#define DRATINI 0xbfu
+#define DUELVARS_ARENA_CARD 0xbbu
+#define GROWLITHE 0x36u
+#define LEGENDARY_DRAGONITE_DECK_ID 0x0fu
+#define FIRE_CHARGE_DECK_ID 0x17u
+#define LEGENDARY_RONALD_DECK_ID 0x1bu
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -85,3 +99,50 @@ AIScoreResult FindPlayAreaCardWithHighestAIScore(uint8_t b, uint8_t c, uint8_t d
 	return r;
 }
 /* <<< factory FindPlayAreaCardWithHighestAIScore */
+
+/* >>> factory CheckSpecificDecksToAttachDoubleColorless */
+static uint8_t CheckSpecificDecksToAttachDoubleColorless_GetID(void)
+{
+	uint8_t loc = hTempPlayAreaLocation_ff9d;
+	DuelistVarResult v = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD));
+	uint16_t id16 = GetCardIDFromDeckIndex(v.a);
+	return (uint8_t)id16;
+}
+
+CheckSpecificDecksToAttachDoubleColorlessResult CheckSpecificDecksToAttachDoubleColorless(
+	uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t deck_id = wOpponentDeckID;
+	uint8_t a = deck_id;
+	uint8_t check_colorless = 0u;
+
+	if (deck_id == LEGENDARY_DRAGONITE_DECK_ID) {
+		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		if (a == CHARMANDER || a == DRATINI)
+			check_colorless = 1u;
+	} else if (deck_id == FIRE_CHARGE_DECK_ID) {
+		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		if (a == GROWLITHE)
+			check_colorless = 1u;
+	} else if (deck_id == LEGENDARY_RONALD_DECK_ID) {
+		a = CheckSpecificDecksToAttachDoubleColorless_GetID();
+		if (a == DRATINI)
+			check_colorless = 1u;
+	}
+
+	if (check_colorless) {
+		uint8_t loc = hTempPlayAreaLocation_ff9d;
+		(void)GetPlayAreaCardAttachedEnergies(loc);
+		a = gb_read8((uint16_t)(wAttachedEnergies_ADDR + COLORLESS));
+		if (a == 0u) {
+			CoreCardListResult r = LookForCardIDInHand(DOUBLE_COLORLESS_ENERGY);
+			if (!(r.f & 0x10u)) {
+				hTemp_ffa0 = r.a;
+				return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x10u, b, c, d, e, hl};
+			}
+			a = r.a;
+		}
+	}
+	return (CheckSpecificDecksToAttachDoubleColorlessResult){a, (uint8_t)(a == 0u ? 0x80u : 0u), b, c, d, e, hl};
+}
+/* <<< factory CheckSpecificDecksToAttachDoubleColorless */

@@ -10,6 +10,23 @@
 #include "mem.h"
 #define CARDPOP_NAME_LIST_MAX_ELEMS 0x10u
 #define NAME_BUFFER_LENGTH 0x10u
+
+#include "home/card_pop.h"
+#include "home/switch_sram.h"
+#include "home/card_data.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "generated/sram.h"
+#define CIRCLE 0x00u
+#define DIAMOND 0x01u
+#define STAR 0x02u
+#define MEW_LV15 0xa1u
+#define MUSIC_BOOSTER_PACK 0x1cu
+#define MUSIC_MATCH_VICTORY 0x18u
+#define MUSIC_MEDAL 0x1du
+#define PLAYER_TURN 0xc2u
+#define VENUSAUR_LV64 0x0au
 /* <<< factory statics */
 
 #define CARDPOP_NAME_LENGTH 16u
@@ -92,3 +109,58 @@ done:
 	gb_write8(wCardPopNameSearchResult_ADDR, result);
 }
 /* <<< factory LookUpNameInCardPopNameList */
+
+/* >>> factory DecideCardToReceiveFromCardPop */
+uint8_t DecideCardToReceiveFromCardPop(void)
+{
+	hWhoseTurn = PLAYER_TURN;
+	uint16_t hl1 = sPlayerName_ADDR;
+	uint16_t de1;
+	EnableSRAM();
+	CalculateNameHash(&hl1, &de1);
+	DisableSRAM();
+	uint16_t bc = de1;
+
+	uint16_t hl2 = wNameBuffer_ADDR;
+	uint16_t de2;
+	CalculateNameHash(&hl2, &de2);
+
+	uint8_t b = (uint8_t)(bc >> 8);
+	uint8_t c = (uint8_t)bc;
+	uint8_t d_hi = (uint8_t)(de2 >> 8);
+	uint8_t e_lo = (uint8_t)de2;
+
+	uint8_t d = (uint8_t)(b - d_hi);
+	uint8_t e = (uint8_t)(c - e_lo);
+	gb_write8(wRNG1_ADDR, d);
+	gb_write8((uint16_t)(wRNG1_ADDR + 1u), e);
+	gb_write8((uint16_t)(wRNG1_ADDR + 2u), 0u);
+
+	uint8_t card_e;
+	uint8_t song;
+	if (e == 5u) {
+		song = MUSIC_MEDAL;
+		gb_write8(wCardPopCardObtainSong_ADDR, song);
+		card_e = (d & 0x01u) ? MEW_LV15 : VENUSAUR_LV64;
+	} else {
+		uint8_t rarity;
+		if (e < 64u) {
+			song = MUSIC_MATCH_VICTORY;
+			rarity = STAR;
+		} else if (e < 154u) {
+			song = MUSIC_BOOSTER_PACK;
+			rarity = DIAMOND;
+		} else {
+			song = MUSIC_BOOSTER_PACK;
+			rarity = CIRCLE;
+		}
+		gb_write8(wCardPopCardObtainSong_ADDR, song);
+		uint8_t count = CreateCardPopCandidateList(rarity);
+		(void)ShuffleCards(count, wCardPopCardCandidates_ADDR);
+		card_e = gb_read8(wCardPopCardCandidates_ADDR);
+	}
+
+	LoadCardDataToBuffer1_FromCardID(card_e);
+	return card_e;
+}
+/* <<< factory DecideCardToReceiveFromCardPop */

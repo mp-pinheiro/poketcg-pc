@@ -136,6 +136,14 @@ static void adapt_AIDecide_Pokedex(ProbeState *s)
 }
 /* <<< factory AIDecide_Pokedex */
 
+/* >>> factory AIDecide_ItemFinder */
+static void adapt_AIDecide_ItemFinder(ProbeState *s)
+{
+	AIDecide_ItemFinderResult r = AIDecide_ItemFinder();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory AIDecide_ItemFinder */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -154,5 +162,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_ImposterProfessorOak", adapt_AIDecide_ImposterProfessorOak },
 	{ "PickPokedexCards_Unreferenced", adapt_PickPokedexCards_Unreferenced },
 	{ "AIDecide_Pokedex", adapt_AIDecide_Pokedex },
+	{ "AIDecide_ItemFinder", adapt_AIDecide_ItemFinder },
 	{ NULL, NULL },
 };

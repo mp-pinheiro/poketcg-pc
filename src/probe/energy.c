@@ -27,8 +27,18 @@ static void adapt_FindPlayAreaCardWithHighestAIScore(ProbeState *s)
 }
 /* <<< factory FindPlayAreaCardWithHighestAIScore */
 
+/* >>> factory CheckSpecificDecksToAttachDoubleColorless */
+static void adapt_CheckSpecificDecksToAttachDoubleColorless(ProbeState *s)
+{
+	CheckSpecificDecksToAttachDoubleColorlessResult r =
+		CheckSpecificDecksToAttachDoubleColorless(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory CheckSpecificDecksToAttachDoubleColorless */
+
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
+	{ "CheckSpecificDecksToAttachDoubleColorless", adapt_CheckSpecificDecksToAttachDoubleColorless },
 	{ NULL, NULL },
 };

@@ -30,6 +30,18 @@ CASES["FindPlayAreaCardWithHighestAIScore"] = [
 ]
 # <<< factory FindPlayAreaCardWithHighestAIScore
 
+# >>> factory CheckSpecificDecksToAttachDoubleColorless
+CONTRACT["CheckSpecificDecksToAttachDoubleColorless"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CheckSpecificDecksToAttachDoubleColorless"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
+     "wram": {0xCC0E: b"\x00"}},
+    dict(POISON, wram={0xCC0E: b"\x00"}),
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
+     "wram": {0xCC0E: b"\x17", 0xFF97: b"\xC2", 0xC2BB: b"\x03", 0xC400+3: b"\x36",
+               0xC2EE: b"\x01", 0xC242: b"\x06", 0xC400+6: b"\x07"}},
+]
+# <<< factory CheckSpecificDecksToAttachDoubleColorless
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -50,3 +62,6 @@ MUTATIONS["FindPlayAreaCardWithHighestAIScore"] = {
     "case_ids": ["FindPlayAreaCardWithHighestAIScore-1"],
 }
 # <<< factory-mutation FindPlayAreaCardWithHighestAIScore
+# >>> factory-mutation CheckSpecificDecksToAttachDoubleColorless
+MUTATIONS["CheckSpecificDecksToAttachDoubleColorless"] = {"source_symbol": "CheckSpecificDecksToAttachDoubleColorless", "before": "return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x10u, b, c, d, e, hl};", "after": "return (CheckSpecificDecksToAttachDoubleColorlessResult){r.a, 0x00u, b, c, d, e, hl};", "case_ids": ["CheckSpecificDecksToAttachDoubleColorless-2"]}
+# <<< factory-mutation CheckSpecificDecksToAttachDoubleColorless

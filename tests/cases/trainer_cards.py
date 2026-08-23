@@ -191,6 +191,15 @@ CASES["AIDecide_Pokedex"] = [
 ]
 # <<< factory AIDecide_Pokedex
 
+# >>> factory AIDecide_ItemFinder
+CONTRACT["AIDecide_ItemFinder"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_ItemFinder"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2ED: b"\x00"}),
+    {"wram": {0xFF97: b"\xC2", 0xC2ED: b"\x01", 0xC27E: b"\x00", 0xC400: b"\x01"}},
+]
+# <<< factory AIDecide_ItemFinder
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -320,3 +329,6 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation AIDecide_Pokedex
 MUTATIONS["AIDecide_Pokedex"] = {"source_symbol": "AIDecide_Pokedex", "before": "\tif (counter < 6u)", "after": "\tif (counter < 5u)", "case_ids": ["AIDecide_Pokedex-0"]}
 # <<< factory-mutation AIDecide_Pokedex
+# >>> factory-mutation AIDecide_ItemFinder
+MUTATIONS["AIDecide_ItemFinder"] = {"source_symbol": "AIDecide_ItemFinder", "before": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};", "after": "return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 1u ? 0x80u : 0u)};", "case_ids": ["AIDecide_ItemFinder-0", "AIDecide_ItemFinder-1"]}
+# <<< factory-mutation AIDecide_ItemFinder

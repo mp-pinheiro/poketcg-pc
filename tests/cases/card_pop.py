@@ -32,6 +32,17 @@ CASES["LookUpNameInCardPopNameList"] = [
 ]
 # <<< factory LookUpNameInCardPopNameList
 
+# >>> factory DecideCardToReceiveFromCardPop
+CONTRACT["DecideCardToReceiveFromCardPop"] = {"compare": ("a",), "preserve": ()}
+CASES["DecideCardToReceiveFromCardPop"] = [
+    {"sram": {0: {0xA010: b"\x00" * 16}}, "wram": {0xC500: b"\x00" * 16},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, sram={0: {0xA010: b"\x00" * 16}}, wram={0xC500: b"\x00" * 16},
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"sram": {0: {0xA010: b"\x00" * 16}}, "wram": {0xC500: b"\xFB" + b"\x00" * 15}},
+]
+# <<< factory DecideCardToReceiveFromCardPop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -52,3 +63,6 @@ MUTATIONS = {
 # >>> factory-mutation LookUpNameInCardPopNameList
 MUTATIONS["LookUpNameInCardPopNameList"] = {"source_symbol": "LookUpNameInCardPopNameList", "before": "\t\t\tresult = 0xff;", "after": "\t\t\tresult = 0x00;", "case_ids": ["LookUpNameInCardPopNameList-0", "LookUpNameInCardPopNameList-2"]}
 # <<< factory-mutation LookUpNameInCardPopNameList
+# >>> factory-mutation DecideCardToReceiveFromCardPop
+MUTATIONS["DecideCardToReceiveFromCardPop"] = {"source_symbol": "DecideCardToReceiveFromCardPop", "before": "card_e = (d & 0x01u) ? MEW_LV15 : VENUSAUR_LV64;", "after": "card_e = (d & 0x01u) ? VENUSAUR_LV64 : MEW_LV15;", "case_ids": ["DecideCardToReceiveFromCardPop-2"]}
+# <<< factory-mutation DecideCardToReceiveFromCardPop
