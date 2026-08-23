@@ -136,4 +136,8 @@ AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_Blistering
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_FlamethrowerResult;
 AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(void);
 /* <<< factory AIDecide_PokemonTrader_Flamethrower */
+/* >>> factory AIDecide_PokemonTrader_FlowerGarden */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_FlowerGardenResult;
+AIDecide_PokemonTrader_FlowerGardenResult AIDecide_PokemonTrader_FlowerGarden(void);
+/* <<< factory AIDecide_PokemonTrader_FlowerGarden */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

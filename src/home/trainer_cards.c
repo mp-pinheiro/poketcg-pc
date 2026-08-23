@@ -193,6 +193,18 @@
 #define FLAREON_LV28 0x3eu
 #define NINETALES_LV32 0x34u
 #define VULPIX 0x33u
+
+#include "home/trainer_cards.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define BELLSPROUT 0x23u
+#define BULBASAUR 0x08u
+#define GLOOM 0x1du
+#define IVYSAUR 0x09u
+#define ODDISH 0x1cu
+#define VICTREEBEL 0x25u
+#define WEEPINBELL 0x24u
 /* <<< factory statics */
 
 
@@ -1894,3 +1906,71 @@ AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(vo
 	return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x00u};
 }
 /* <<< factory AIDecide_PokemonTrader_Flamethrower */
+
+/* >>> factory AIDecide_PokemonTrader_FlowerGarden */
+AIDecide_PokemonTrader_FlowerGardenResult AIDecide_PokemonTrader_FlowerGarden(void)
+{
+	uint8_t a;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+	LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(IVYSAUR, BULBASAUR);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VENUSAUR_LV67, IVYSAUR);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(BULBASAUR, IVYSAUR);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(IVYSAUR, VENUSAUR_LV67);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(WEEPINBELL, BELLSPROUT);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VICTREEBEL, WEEPINBELL);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(BELLSPROUT, WEEPINBELL);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(WEEPINBELL, VICTREEBEL);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(GLOOM, ODDISH);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VILEPLUME, GLOOM);
+	a = r.a;
+	if (r.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(ODDISH, GLOOM);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(GLOOM, VILEPLUME);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	return (AIDecide_PokemonTrader_FlowerGardenResult){a, 0x00u};
+
+find_duplicates:
+	wce1a = a;
+	{
+		FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+		if (dup.f & 0x10u)
+			return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x10u};
+		return (AIDecide_PokemonTrader_FlowerGardenResult){dup.a, 0x00u};
+	}
+}
+/* <<< factory AIDecide_PokemonTrader_FlowerGarden */
