@@ -354,6 +354,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "mem.h"
 #include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4642,3 +4646,21 @@ void KadabraRecover_AISelectEffect(void)
 	gb_write8(hTemp_ffa0_ADDR, a);
 }
 /* <<< factory KadabraRecover_AISelectEffect */
+
+/* >>> factory GolduckHyperBeam_DiscardEffect */
+uint16_t GolduckHyperBeam_DiscardEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult check = HandleNoDamageOrEffect(hl);
+	if (check.f & 0x10u)
+		return check.hl;
+	uint8_t deck_index = hTemp_ffa0;
+	if (deck_index == 0xffu)
+		return check.hl;
+	SwapTurn();
+	PutCardInDiscardPile(deck_index);
+	DuelistVarResult effect_var = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	gb_write8(effect_var.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);
+	SwapTurn();
+	return effect_var.hl;
+}
+/* <<< factory GolduckHyperBeam_DiscardEffect */

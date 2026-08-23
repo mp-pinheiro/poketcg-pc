@@ -3120,6 +3120,16 @@ CASES["KadabraRecover_AISelectEffect"] = [
 ]
 # <<< factory KadabraRecover_AISelectEffect
 
+# >>> factory GolduckHyperBeam_DiscardEffect
+CONTRACT["GolduckHyperBeam_DiscardEffect"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["GolduckHyperBeam_DiscardEffect"] = [
+    {"hl": 0xC100, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x00"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    {"hl": 0xC100, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\xFF"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    {"hl": 0xC300, "wram": {0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xC300: b"\xFF", 0xFFA0: b"\x2A"}, "read": {0xC000: 0xF00, 0xC3F8: 1}},
+    dict(POISON, hl=0xC100, wram={0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x05"}, read={0xC000: 0xF00, 0xC3F8: 1}),
+]
+# <<< factory GolduckHyperBeam_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5039,3 +5049,6 @@ MUTATIONS["SlowpokeAmnesia_AISelectEffect"] = {"source_symbol": "SlowpokeAmnesia
 # >>> factory-mutation KadabraRecover_AISelectEffect
 MUTATIONS["KadabraRecover_AISelectEffect"] = {"source_symbol": "KadabraRecover_AISelectEffect", "before": "uint8_t a = gb_read8(wDuelTempList_ADDR);\n\tgb_write8(hTemp_ffa0_ADDR, a);", "after": "uint8_t a = gb_read8(wDuelTempList_ADDR);\n\tgb_write8(hTemp_ffa0_ADDR, (uint8_t)(a + 1u));", "case_ids": ["KadabraRecover_AISelectEffect-0", "KadabraRecover_AISelectEffect-1"]}
 # <<< factory-mutation KadabraRecover_AISelectEffect
+# >>> factory-mutation GolduckHyperBeam_DiscardEffect
+MUTATIONS["GolduckHyperBeam_DiscardEffect"] = {"source_symbol": "GolduckHyperBeam_DiscardEffect", "before": "gb_write8(effect_var.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);", "after": "gb_write8(effect_var.hl, 0u);", "case_ids": ["GolduckHyperBeam_DiscardEffect-2"]}
+# <<< factory-mutation GolduckHyperBeam_DiscardEffect

@@ -2787,6 +2787,13 @@ static void adapt_KadabraRecover_AISelectEffect(ProbeState *s)
 }
 /* <<< factory KadabraRecover_AISelectEffect */
 
+/* >>> factory GolduckHyperBeam_DiscardEffect */
+static void adapt_GolduckHyperBeam_DiscardEffect(ProbeState *s)
+{
+	s->hl = GolduckHyperBeam_DiscardEffect(s->hl);
+}
+/* <<< factory GolduckHyperBeam_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3132,5 +3139,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Psychic_AIEffect", adapt_Psychic_AIEffect },
 	{ "SlowpokeAmnesia_AISelectEffect", adapt_SlowpokeAmnesia_AISelectEffect },
 	{ "KadabraRecover_AISelectEffect", adapt_KadabraRecover_AISelectEffect },
+	{ "GolduckHyperBeam_DiscardEffect", adapt_GolduckHyperBeam_DiscardEffect },
 	{ NULL, NULL },
 };
