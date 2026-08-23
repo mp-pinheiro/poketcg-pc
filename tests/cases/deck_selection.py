@@ -58,6 +58,14 @@ CASES["CheckIfCurDeckIsValid"] = [
 ]
 # <<< factory CheckIfCurDeckIsValid
 
+# >>> factory CancelDeckSelectionSubMenu
+CONTRACT["CancelDeckSelectionSubMenu"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["CancelDeckSelectionSubMenu"] = [
+	{"wram": {0xCEB1: b"\x00"}},
+	dict(POISON, wram={0xCEB1: b"\x7F"}),
+]
+# <<< factory CancelDeckSelectionSubMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -77,3 +85,6 @@ MUTATIONS["InitDeckBuildingParams"] = {"source_symbol": "InitDeckBuildingParams"
 # >>> factory-mutation CheckIfCurDeckIsValid
 MUTATIONS["CheckIfCurDeckIsValid"] = {"source_symbol": "CheckIfCurDeckIsValid", "before": "\tuint8_t value = gb_read8(hl);", "after": "\tuint8_t value = (uint8_t)(gb_read8(hl) ^ 1u);", "case_ids": ["CheckIfCurDeckIsValid-0", "CheckIfCurDeckIsValid-1", "CheckIfCurDeckIsValid-2"]}
 # <<< factory-mutation CheckIfCurDeckIsValid
+# >>> factory-mutation CancelDeckSelectionSubMenu
+MUTATIONS["CancelDeckSelectionSubMenu"] = {"source_symbol": "CancelDeckSelectionSubMenu", "before": "\treturn;", "after": "\tgb_write8(wCurDeck_ADDR, (uint8_t)(gb_read8(wCurDeck_ADDR) + 1u));", "case_ids": ["CancelDeckSelectionSubMenu-0", "CancelDeckSelectionSubMenu-1"]}
+# <<< factory-mutation CancelDeckSelectionSubMenu

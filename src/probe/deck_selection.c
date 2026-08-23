@@ -53,11 +53,20 @@ static void adapt_CheckIfCurDeckIsValid(ProbeState *s)
 }
 /* <<< factory CheckIfCurDeckIsValid */
 
+/* >>> factory CancelDeckSelectionSubMenu */
+static void adapt_CancelDeckSelectionSubMenu(ProbeState *s)
+{
+	(void)s;
+	CancelDeckSelectionSubMenu();
+}
+/* <<< factory CancelDeckSelectionSubMenu */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
 	{ "GetPointerToDeckName", adapt_GetPointerToDeckName },
 	{ "InitDeckBuildingParams", adapt_InitDeckBuildingParams },
 	{ "CheckIfCurDeckIsValid", adapt_CheckIfCurDeckIsValid },
+	{ "CancelDeckSelectionSubMenu", adapt_CancelDeckSelectionSubMenu },
 	{ NULL, NULL },
 };

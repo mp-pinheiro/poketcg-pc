@@ -15,6 +15,9 @@
 #include "generated/wram.h"
 
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -73,3 +76,10 @@ CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void)
 	return (CheckIfCurDeckIsValidResult){value, f, b, c, hl};
 }
 /* <<< factory CheckIfCurDeckIsValid */
+
+/* >>> factory CancelDeckSelectionSubMenu */
+void CancelDeckSelectionSubMenu(void)
+{
+	return;
+}
+/* <<< factory CancelDeckSelectionSubMenu */

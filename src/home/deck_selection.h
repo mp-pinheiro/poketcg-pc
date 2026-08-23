@@ -39,4 +39,7 @@ typedef struct {
 
 CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void);
 /* <<< factory CheckIfCurDeckIsValid */
+/* >>> factory CancelDeckSelectionSubMenu */
+void CancelDeckSelectionSubMenu(void);
+/* <<< factory CancelDeckSelectionSubMenu */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */
