@@ -811,6 +811,20 @@ CASES["Func_cdd1"] = [
 ]
 # <<< factory Func_cdd1
 
+# >>> factory ScriptCommand_JumpIfCardOwned
+CONTRACT["ScriptCommand_JumpIfCardOwned"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfCardOwned"] = [
+    {},
+    {"c": 1},
+    {"c": 4},
+    {"c": 0xE4},
+    {"c": 0xFF},
+    dict(POISON, b=0xBB, c=0x05, sram={0: {0xA105: b"\x00", 0xA218: b"\x05" + b"\x00" * 59}}),
+    dict(POISON, b=0xBB, c=0x00),
+    dict(POISON, b=0xBB, c=0xFF),
+]
+# <<< factory ScriptCommand_JumpIfCardOwned
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1253,3 +1267,6 @@ MUTATIONS["ExecuteNPCMovement"] = {"source_symbol": "ExecuteNPCMovement", "befor
 # >>> factory-mutation Func_cdd1
 MUTATIONS["Func_cdd1"] = {"source_symbol": "Func_cdd1", "before": "\tIncreaseScriptPointerResult result = IncreaseScriptPointerBy1();", "after": "\tIncreaseScriptPointerResult result = (IncreaseScriptPointerResult){0, 0, 0};", "case_ids": ["Func_cdd1-0", "Func_cdd1-1"]}
 # <<< factory-mutation Func_cdd1
+# >>> factory-mutation ScriptCommand_JumpIfCardOwned
+MUTATIONS["ScriptCommand_JumpIfCardOwned"] = {"source_symbol": "ScriptCommand_JumpIfCardOwned", "before": "\tCardCountResult cnt = GetCardCountInCollectionAndDecks(c);", "after": "\tCardCountResult cnt = GetCardCountInCollection(c);", "case_ids": ["ScriptCommand_JumpIfCardOwned-5"]}
+# <<< factory-mutation ScriptCommand_JumpIfCardOwned

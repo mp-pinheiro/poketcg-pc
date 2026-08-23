@@ -692,6 +692,17 @@ static void adapt_Func_cdd1(ProbeState *s)
 }
 /* <<< factory Func_cdd1 */
 
+/* >>> factory ScriptCommand_JumpIfCardOwned */
+static void adapt_ScriptCommand_JumpIfCardOwned(ProbeState *s)
+{
+	JumpIfCardInCollectionResult r = ScriptCommand_JumpIfCardOwned(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_JumpIfCardOwned */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -759,5 +770,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "SetNextNPCAndScript", adapt_SetNextNPCAndScript },
 	{ "ExecuteNPCMovement", adapt_ExecuteNPCMovement },
 	{ "Func_cdd1", adapt_Func_cdd1 },
+	{ "ScriptCommand_JumpIfCardOwned", adapt_ScriptCommand_JumpIfCardOwned },
 	{ NULL, NULL },
 };

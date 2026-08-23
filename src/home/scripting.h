@@ -378,4 +378,7 @@ ExecuteNPCMovementResult ExecuteNPCMovement(uint16_t bc);
 /* >>> factory Func_cdd1 */
 IncreaseScriptPointerResult Func_cdd1(void);
 /* <<< factory Func_cdd1 */
+/* >>> factory ScriptCommand_JumpIfCardOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_JumpIfCardOwned */
 #endif

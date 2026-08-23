@@ -1035,3 +1035,23 @@ IncreaseScriptPointerResult Func_cdd1(void)
 	return result;
 }
 /* <<< factory Func_cdd1 */
+
+/* >>> factory ScriptCommand_JumpIfCardOwned */
+JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c)
+{
+	CardCountResult cnt = GetCardCountInCollectionAndDecks(c);
+	if (cnt.a == 0) {
+		SetScriptControlByteFail();
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+		return (JumpIfCardInCollectionResult){r.a, r.f, b, r.c};
+	}
+	SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+		return (JumpIfCardInCollectionResult){r.a, r.f, args.b, r.c};
+	}
+	(void)SetScriptPointer((uint16_t)(args.b << 8 | args.c));
+	return (JumpIfCardInCollectionResult){args.a, args.f, args.b, args.c};
+}
+/* <<< factory ScriptCommand_JumpIfCardOwned */
