@@ -42,6 +42,16 @@ CASES = {
     ],
 }
 
+# >>> factory WaterClubMovePlayer
+CONTRACT["WaterClubMovePlayer"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CASES["WaterClubMovePlayer"] = [
+    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {0xD331: b"\x09"}},
+    dict(POISON, wram={0xD331: b"\x09"}),
+    {"b": 0x56, "c": 0x78, "hl": 0x0000, "wram": {0xD331: b"\x08", 0xD3DD: b"\x20"}},
+    {"b": 0x9A, "c": 0xBC, "hl": 0x1234, "wram": {0xD331: b"\x08", 0xD3DD: b"\x00"}},
+]
+# <<< factory WaterClubMovePlayer
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -55,3 +65,6 @@ MUTATIONS = {
 }
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation WaterClubMovePlayer
+MUTATIONS["WaterClubMovePlayer"] = {"source_symbol": "WaterClubMovePlayer", "before": "\tif (y != 8u) {", "after": "\tif (y != 9u) {", "case_ids": ["WaterClubMovePlayer-0", "WaterClubMovePlayer-1"]}
+# <<< factory-mutation WaterClubMovePlayer

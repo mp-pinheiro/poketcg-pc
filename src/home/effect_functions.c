@@ -4305,3 +4305,10 @@ void PinMissile_AIEffect(void)
 	SetExpectedAIDamage(40u, 0u, 80u);
 }
 /* <<< factory PinMissile_AIEffect */
+
+/* >>> factory SandslashFurySwipes_AIEffect */
+void SandslashFurySwipes_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory SandslashFurySwipes_AIEffect */

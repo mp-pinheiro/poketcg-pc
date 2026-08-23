@@ -2813,6 +2813,14 @@ CASES["PinMissile_AIEffect"] = [
 ]
 # <<< factory PinMissile_AIEffect
 
+# >>> factory SandslashFurySwipes_AIEffect
+CONTRACT["SandslashFurySwipes_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["SandslashFurySwipes_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory SandslashFurySwipes_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4654,3 +4662,6 @@ MUTATIONS["LeekSlap_AIEffect"] = {"source_symbol": "LeekSlap_AIEffect", "before"
 # >>> factory-mutation PinMissile_AIEffect
 MUTATIONS["PinMissile_AIEffect"] = {"source_symbol": "PinMissile_AIEffect", "before": "void PinMissile_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 80u);\n}", "after": "void PinMissile_AIEffect(void)\n{\n\tSetExpectedAIDamage(41u, 0u, 80u);\n}", "case_ids": ["PinMissile_AIEffect-0", "PinMissile_AIEffect-1"]}
 # <<< factory-mutation PinMissile_AIEffect
+# >>> factory-mutation SandslashFurySwipes_AIEffect
+MUTATIONS["SandslashFurySwipes_AIEffect"] = {"source_symbol": "SandslashFurySwipes_AIEffect", "before": "void SandslashFurySwipes_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void SandslashFurySwipes_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["SandslashFurySwipes_AIEffect-0", "SandslashFurySwipes_AIEffect-1"]}
+# <<< factory-mutation SandslashFurySwipes_AIEffect

@@ -879,6 +879,15 @@ CASES["ScriptCommand_PlayCredits"] = [
 ]
 # <<< factory ScriptCommand_PlayCredits
 
+# >>> factory ScriptCommand_PickChallengeHallOpponent
+CONTRACT["ScriptCommand_PickChallengeHallOpponent"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_PickChallengeHallOpponent"] = [
+    {"wram": {0xD3E2: b"\x10", 0xD698: b"\x00\x00\x00\x00"}, "read": {0xD3E2: 1, 0xD696: 1, 0xD698: 4}},
+    dict(POISON, wram={0xD3E2: b"\x30", 0xD698: b"\x00\x00\x00\x00"}, read={0xD3E2: 1, 0xD696: 1, 0xD698: 4}),
+    {"wram": {0xD3E2: b"\x18", 0xD698: b"\x00\x00\x00\x00"}, "read": {0xD3E2: 1, 0xD696: 1, 0xD698: 4}},
+]
+# <<< factory ScriptCommand_PickChallengeHallOpponent
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1342,3 +1351,6 @@ MUTATIONS["ScriptCommand_SetActiveNPCDirection"] = {"source_symbol": "ScriptComm
 # >>> factory-mutation ScriptCommand_PlayCredits
 MUTATIONS["ScriptCommand_PlayCredits"] = {"source_symbol": "ScriptCommand_PlayCredits", "before": "\twGameEvent = GAME_EVENT_CREDITS;\n\twOverworldTransition |= 0x40u;", "after": "\twGameEvent = GAME_EVENT_CREDITS;\n\twOverworldTransition &= (uint8_t)~0x40u;", "case_ids": ["ScriptCommand_PlayCredits-0", "ScriptCommand_PlayCredits-1"]}
 # <<< factory-mutation ScriptCommand_PlayCredits
+# >>> factory-mutation ScriptCommand_PickChallengeHallOpponent
+MUTATIONS["ScriptCommand_PickChallengeHallOpponent"] = {"source_symbol": "ScriptCommand_PickChallengeHallOpponent", "before": "\tuint8_t new_opponent_number = (uint8_t)(opponent_number + 1u);", "after": "\tuint8_t new_opponent_number = opponent_number;", "case_ids": ["ScriptCommand_PickChallengeHallOpponent-0", "ScriptCommand_PickChallengeHallOpponent-1"]}
+# <<< factory-mutation ScriptCommand_PickChallengeHallOpponent

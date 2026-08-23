@@ -122,6 +122,18 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/map.h"
 #include "generated/wram.h"
 #define GAME_EVENT_CREDITS 0x04u
+
+#include "home/scripting.h"
+#include "home/random.h"
+#include "home/challenge_hall.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define EVENT_CHALLENGE_CUP_NUMBER 0x44u
+#define EVENT_CHALLENGE_CUP_OPPONENT_NUMBER 0x45u
+#define NPC_RONALD1 0x02u
+#define CHALLENGE_HALL_NPC_COUNT 25u
+#define CHALLENGE_HALL_NPCS_BANK 3u
+#define CHALLENGE_HALL_NPCS_ADDR 0x75B3u
 /* <<< factory statics */
 
 
@@ -1116,3 +1128,35 @@ IncreaseScriptPointerResult ScriptCommand_PlayCredits(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PlayCredits */
+
+/* >>> factory ScriptCommand_PickChallengeHallOpponent */
+IncreaseScriptPointerResult ScriptCommand_PickChallengeHallOpponent(void)
+{
+	/* Func_f580 (challenge_hall.asm:458-487) inlined: not independently
+	 * ported, and this is its only caller. wTempNPC is pushed/popped by the
+	 * real asm around the whole call, so its net effect here is zero. */
+	uint8_t cup_number = GetEventValue(EVENT_CHALLENGE_CUP_NUMBER);
+	uint8_t opponent_number = GetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER);
+	uint8_t new_opponent_number = (uint8_t)(opponent_number + 1u);
+	(void)SetEventValue(EVENT_CHALLENGE_CUP_OPPONENT_NUMBER, 0u, 0u, new_opponent_number);
+
+	uint8_t picked;
+	if (cup_number != 3u && new_opponent_number == 3u) {
+		picked = NPC_RONALD1;
+	} else {
+		uint8_t d = (cup_number == 3u) ? CHALLENGE_HALL_NPC_COUNT : (uint8_t)(CHALLENGE_HALL_NPC_COUNT - 1u);
+		uint8_t c;
+		for (;;) {
+			c = Random(d);
+			ChallengeHallTestBitResult tested = Func_f5cc(c);
+			if (!(tested.f & 0x10u))
+				break;
+		}
+		(void)Func_f5d4(c);
+		const uint8_t *entry = rom_ptr(CHALLENGE_HALL_NPCS_BANK, (uint16_t)(CHALLENGE_HALL_NPCS_ADDR + c));
+		picked = entry[0];
+	}
+	wChallengeHallNPC = picked;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PickChallengeHallOpponent */

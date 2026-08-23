@@ -1074,6 +1074,9 @@ void LeekSlap_AIEffect(void);
 /* >>> factory PinMissile_AIEffect */
 void PinMissile_AIEffect(void);
 /* <<< factory PinMissile_AIEffect */
+/* >>> factory SandslashFurySwipes_AIEffect */
+void SandslashFurySwipes_AIEffect(void);
+/* <<< factory SandslashFurySwipes_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

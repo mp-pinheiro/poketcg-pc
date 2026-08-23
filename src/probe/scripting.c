@@ -764,6 +764,16 @@ static void adapt_ScriptCommand_PlayCredits(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PlayCredits */
 
+/* >>> factory ScriptCommand_PickChallengeHallOpponent */
+static void adapt_ScriptCommand_PickChallengeHallOpponent(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_PickChallengeHallOpponent();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_PickChallengeHallOpponent */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -838,5 +848,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetNextNPCAndScript", adapt_ScriptCommand_SetNextNPCAndScript },
 	{ "ScriptCommand_SetActiveNPCDirection", adapt_ScriptCommand_SetActiveNPCDirection },
 	{ "ScriptCommand_PlayCredits", adapt_ScriptCommand_PlayCredits },
+	{ "ScriptCommand_PickChallengeHallOpponent", adapt_ScriptCommand_PickChallengeHallOpponent },
 	{ NULL, NULL },
 };
