@@ -3125,3 +3125,12 @@ void PrintPracticeDuelInstructions(uint16_t hl)
 	}
 }
 /* <<< factory PrintPracticeDuelInstructions */
+
+/* >>> factory DisplayPreviousCardPage */
+void DisplayPreviousCardPage(void)
+{
+	CardPageNavigationResult navigation = GoToPreviousCardPage();
+	if ((navigation.f & 0x10u) == 0u)
+		DisplayCardPage();
+}
+/* <<< factory DisplayPreviousCardPage */

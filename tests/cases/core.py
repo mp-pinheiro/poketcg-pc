@@ -1423,6 +1423,9 @@ wLoadedCard1Type = 0xCC24
 
 wPracticeDuelTextPointer = 0xCC01
 wPracticeDuelTextY = 0xCBCA
+
+wCardPageNumber = 0xCBC7
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1774,6 +1777,14 @@ CASES["PrintPracticeDuelInstructions"] = [
          vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
 ]
 # <<< factory PrintPracticeDuelInstructions
+
+# >>> factory DisplayPreviousCardPage
+CONTRACT["DisplayPreviousCardPage"] = {"compare": (), "preserve": ()}
+CASES["DisplayPreviousCardPage"] = [
+    {"wram": {wCardPageNumber: b"\x01", wLCDC: b"\x00"}, "hram": {0xFF40: b"\x00"}, "expect": {0xFF40: b"\x00"}},
+    dict(POISON, wram={wCardPageNumber: b"\x01", wLCDC: b"\x00"}, hram={0xFF40: b"\x00"}, expect={0xFF40: b"\x00"}),
+]
+# <<< factory DisplayPreviousCardPage
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2738,3 +2749,6 @@ MUTATIONS["PrintPracticeDuelInstructions"] = {
     "case_ids": ["PrintPracticeDuelInstructions-0", "PrintPracticeDuelInstructions-1"],
 }
 # <<< factory-mutation PrintPracticeDuelInstructions
+# >>> factory-mutation DisplayPreviousCardPage
+MUTATIONS["DisplayPreviousCardPage"] = {"source_symbol": "DisplayPreviousCardPage", "before": "\tif ((navigation.f & 0x10u) == 0u)", "after": "\tif ((navigation.f & 0x10u) != 0u)", "case_ids": ["DisplayPreviousCardPage-0", "DisplayPreviousCardPage-1"]}
+# <<< factory-mutation DisplayPreviousCardPage
