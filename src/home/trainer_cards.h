@@ -57,4 +57,8 @@ AIDecideResult AIDecide_ImposterProfessorOak(void);
 /* >>> factory PickPokedexCards_Unreferenced */
 PickPokedexResult PickPokedexCards_Unreferenced(void);
 /* <<< factory PickPokedexCards_Unreferenced */
+/* >>> factory AIDecide_Pokedex */
+typedef struct { uint8_t a; uint8_t f; } AIDecidePokedexResult;
+AIDecidePokedexResult AIDecide_Pokedex(void);
+/* <<< factory AIDecide_Pokedex */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

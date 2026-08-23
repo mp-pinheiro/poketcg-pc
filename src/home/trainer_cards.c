@@ -34,6 +34,12 @@
 #include "home/trainer_cards.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/trainer_cards.h"
+#include "home/duel.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#define DECK_SIZE 0x3cu
 /* <<< factory statics */
 
 
@@ -413,3 +419,20 @@ PickPokedexResult PickPokedexCards_Unreferenced(void)
 	return (PickPokedexResult){0xFFu, (uint8_t)(0x80u | 0x10u)};
 }
 /* <<< factory PickPokedexCards_Unreferenced */
+
+/* >>> factory AIDecide_Pokedex */
+AIDecidePokedexResult AIDecide_Pokedex(void)
+{
+	uint8_t counter = wAIPokedexCounter;
+	if (counter < 6u)
+		return (AIDecidePokedexResult){counter, (uint8_t)(counter == 0u ? 0x80u : 0u)};
+	DuelistVarResult notindeck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	if (notindeck.a >= (DECK_SIZE - 4u))
+		return (AIDecidePokedexResult){notindeck.a, (uint8_t)(notindeck.a == 0u ? 0x80u : 0u)};
+	uint8_t roll = Random(10u);
+	if (roll >= 3u)
+		return (AIDecidePokedexResult){roll, (uint8_t)(roll == 0u ? 0x80u : 0u)};
+	PickPokedexResult picked = PickPokedexCards();
+	return (AIDecidePokedexResult){picked.a, picked.f};
+}
+/* <<< factory AIDecide_Pokedex */

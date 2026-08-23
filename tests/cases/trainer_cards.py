@@ -176,6 +176,21 @@ CASES["PickPokedexCards_Unreferenced"] = [
 ]
 # <<< factory PickPokedexCards_Unreferenced
 
+# >>> factory AIDecide_Pokedex
+CONTRACT["AIDecide_Pokedex"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Pokedex"] = [
+    {"wram": {0xCDA6: b"\x05"}},
+    dict(POISON, wram={0xCDA6: b"\x05"}),
+    {"wram": {0xCDA6: b"\x06", 0xFF97: b"\xC2", 0xC2BA: b"\x38"}},
+    {"wram": {0xCDA6: b"\x06", 0xFF97: b"\xC2", 0xC2BA: b"\x0A",
+              0xCACA: b"\x00", 0xCACB: b"\x00", 0xCACC: b"\x27"}},
+    {"wram": {0xCDA6: b"\x06", 0xFF97: b"\xC2", 0xC2BA: b"\x00",
+              0xCACA: b"\x00", 0xCACB: b"\x00", 0xCACC: b"\x00",
+              0xC27E: b"\x01\x02\x03\x04\x05"},
+     "read": {0xCDA6: 1, 0xCE1A: 5, 0xCE08: 6, 0xCE0F: 5}},
+]
+# <<< factory AIDecide_Pokedex
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -302,3 +317,6 @@ MUTATIONS["PickPokedexCards"] = {
 # <<< factory-mutation PickPokedexCards
 # Keep schema-2 inventory after appended routine cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation AIDecide_Pokedex
+MUTATIONS["AIDecide_Pokedex"] = {"source_symbol": "AIDecide_Pokedex", "before": "\tif (counter < 6u)", "after": "\tif (counter < 5u)", "case_ids": ["AIDecide_Pokedex-0"]}
+# <<< factory-mutation AIDecide_Pokedex
