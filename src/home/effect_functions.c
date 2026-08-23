@@ -358,6 +358,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "mem.h"
+#define CannotUseBecauseItWillBeKnockedOutText 0x00d0u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4664,3 +4670,19 @@ uint16_t GolduckHyperBeam_DiscardEffect(uint16_t hl)
 	return effect_var.hl;
 }
 /* <<< factory GolduckHyperBeam_DiscardEffect */
+
+/* >>> factory StrangeBehavior_CheckDamage */
+StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void)
+{
+	uint8_t loc = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = loc;
+	CheckIfPlayAreaHasAnyDamageResult r1 = CheckIfPlayAreaHasAnyDamage();
+	if (r1.f & 0x10u)
+		return (StrangeBehavior_CheckDamageResult){(uint8_t)((r1.f & 0x80u) | 0x10u), NoPokemonWithDamageCountersText};
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(loc + DUELVARS_ARENA_CARD_HP));
+	if (hp.a < 20u)
+		return (StrangeBehavior_CheckDamageResult){0x10u, CannotUseBecauseItWillBeKnockedOutText};
+	PkmnPowerIncapableResult r3 = CheckIsIncapableOfUsingPkmnPower(loc);
+	return (StrangeBehavior_CheckDamageResult){r3.f, r3.hl};
+}
+/* <<< factory StrangeBehavior_CheckDamage */

@@ -2361,6 +2361,9 @@ hTemp_ffa0 = 0xFFA0
 hTemp_ffa0 = 0xFFA0
 wDuelTempList = 0xC510
 hWhoseTurn = 0xFF97
+
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3129,6 +3132,15 @@ CASES["GolduckHyperBeam_DiscardEffect"] = [
     dict(POISON, hl=0xC100, wram={0xFF97: b"\xC2", 0xC000: b"\x00" * 0xF00, 0xFFA0: b"\x05"}, read={0xC000: 0xF00, 0xC3F8: 1}),
 ]
 # <<< factory GolduckHyperBeam_DiscardEffect
+
+# >>> factory StrangeBehavior_CheckDamage
+CONTRACT["StrangeBehavior_CheckDamage"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["StrangeBehavior_CheckDamage"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x01"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, hTempPlayAreaLocation_ff9d: b"\x00"}),
+]
+# <<< factory StrangeBehavior_CheckDamage
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5052,3 +5064,6 @@ MUTATIONS["KadabraRecover_AISelectEffect"] = {"source_symbol": "KadabraRecover_A
 # >>> factory-mutation GolduckHyperBeam_DiscardEffect
 MUTATIONS["GolduckHyperBeam_DiscardEffect"] = {"source_symbol": "GolduckHyperBeam_DiscardEffect", "before": "gb_write8(effect_var.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);", "after": "gb_write8(effect_var.hl, 0u);", "case_ids": ["GolduckHyperBeam_DiscardEffect-2"]}
 # <<< factory-mutation GolduckHyperBeam_DiscardEffect
+# >>> factory-mutation StrangeBehavior_CheckDamage
+MUTATIONS["StrangeBehavior_CheckDamage"] = {"source_symbol": "StrangeBehavior_CheckDamage", "before": "if (hp.a < 20u)", "after": "if (hp.a < 0u)", "case_ids": ["StrangeBehavior_CheckDamage-0", "StrangeBehavior_CheckDamage-1"]}
+# <<< factory-mutation StrangeBehavior_CheckDamage

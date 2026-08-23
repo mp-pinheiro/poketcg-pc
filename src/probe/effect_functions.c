@@ -2794,6 +2794,15 @@ static void adapt_GolduckHyperBeam_DiscardEffect(ProbeState *s)
 }
 /* <<< factory GolduckHyperBeam_DiscardEffect */
 
+/* >>> factory StrangeBehavior_CheckDamage */
+static void adapt_StrangeBehavior_CheckDamage(ProbeState *s)
+{
+	StrangeBehavior_CheckDamageResult r = StrangeBehavior_CheckDamage();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory StrangeBehavior_CheckDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3140,5 +3149,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SlowpokeAmnesia_AISelectEffect", adapt_SlowpokeAmnesia_AISelectEffect },
 	{ "KadabraRecover_AISelectEffect", adapt_KadabraRecover_AISelectEffect },
 	{ "GolduckHyperBeam_DiscardEffect", adapt_GolduckHyperBeam_DiscardEffect },
+	{ "StrangeBehavior_CheckDamage", adapt_StrangeBehavior_CheckDamage },
 	{ NULL, NULL },
 };

@@ -1162,6 +1162,10 @@ void KadabraRecover_AISelectEffect(void);
 /* >>> factory GolduckHyperBeam_DiscardEffect */
 uint16_t GolduckHyperBeam_DiscardEffect(uint16_t hl);
 /* <<< factory GolduckHyperBeam_DiscardEffect */
+/* >>> factory StrangeBehavior_CheckDamage */
+typedef struct { uint8_t f; uint16_t hl; } StrangeBehavior_CheckDamageResult;
+StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void);
+/* <<< factory StrangeBehavior_CheckDamage */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
