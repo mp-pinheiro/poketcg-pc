@@ -42,6 +42,12 @@ wConsole = 0xCAB4
 wCurTilemap = 0xD131
 wOWMapEvents = 0xD323
 wPermissionMap = 0xD133
+
+wOWMapEvents = 0xD323
+wWriteBGMapToSRAM = 0xD292
+wCurTilemap = 0xD131
+wConsole = 0xCAB4
+wPermissionMap = 0xD133
 # <<< factory-cases-statics
 
 # >>> factory SetOWMapEvent_SRAMOrVRAM
@@ -55,6 +61,16 @@ CASES["SetOWMapEvent_SRAMOrVRAM"] = [
          read={wOWMapEvents: 1, wCurTilemap: 1, wPermissionMap: 256}),
 ]
 # <<< factory SetOWMapEvent_SRAMOrVRAM
+
+# >>> factory ApplyOWMapEventChangeIfEventSet
+CONTRACT["ApplyOWMapEventChangeIfEventSet"] = {"compare": ("a", "hl", "b", "c"), "preserve": ("a", "hl", "b", "c")}
+CASES["ApplyOWMapEventChangeIfEventSet"] = [
+    {"a": 0x02, "wram": {wOWMapEvents + 2: b"\x00"}, "read": {wWriteBGMapToSRAM: 1}},
+    {"a": 0x00, "wram": {wOWMapEvents: b"\x01", wCurTilemap: b"\x00", wConsole: b"\x00"},
+     "read": {wWriteBGMapToSRAM: 1, wOWMapEvents: 1, wCurTilemap: 1, wPermissionMap: 256}},
+    dict(POISON, a=0x02, wram={wOWMapEvents + 2: b"\x00"}, read={wWriteBGMapToSRAM: 1}),
+]
+# <<< factory ApplyOWMapEventChangeIfEventSet
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -71,3 +87,6 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation SetOWMapEvent_SRAMOrVRAM
 MUTATIONS["SetOWMapEvent_SRAMOrVRAM"] = {"source_symbol": "SetOWMapEvent_SRAMOrVRAM", "before": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), TRUE);", "after": "\tgb_write8((uint16_t)(wOWMapEvents_ADDR + event_index), 0u);", "case_ids": ["SetOWMapEvent_SRAMOrVRAM-0", "SetOWMapEvent_SRAMOrVRAM-1"]}
 # <<< factory-mutation SetOWMapEvent_SRAMOrVRAM
+# >>> factory-mutation ApplyOWMapEventChangeIfEventSet
+MUTATIONS["ApplyOWMapEventChangeIfEventSet"] = {"source_symbol": "ApplyOWMapEventChangeIfEventSet", "before": "\tgb_write8(wWriteBGMapToSRAM_ADDR, TRUE);", "after": "\tgb_write8(wWriteBGMapToSRAM_ADDR, 0u);", "case_ids": ["ApplyOWMapEventChangeIfEventSet-0", "ApplyOWMapEventChangeIfEventSet-1"]}
+# <<< factory-mutation ApplyOWMapEventChangeIfEventSet

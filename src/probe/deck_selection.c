@@ -105,6 +105,14 @@ static void adapt_InitPromotionalCardAndDeckCounterSaveData(ProbeState *s)
 }
 /* <<< factory InitPromotionalCardAndDeckCounterSaveData */
 
+/* >>> factory PrepareMenuGraphics */
+static void adapt_PrepareMenuGraphics(ProbeState *s)
+{
+	(void)s;
+	PrepareMenuGraphics();
+}
+/* <<< factory PrepareMenuGraphics */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -116,5 +124,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "Func_9001", adapt_Func_9001 },
 	{ "LoadHandCardsIcon", adapt_LoadHandCardsIcon },
 	{ "InitPromotionalCardAndDeckCounterSaveData", adapt_InitPromotionalCardAndDeckCounterSaveData },
+	{ "PrepareMenuGraphics", adapt_PrepareMenuGraphics },
 	{ NULL, NULL },
 };

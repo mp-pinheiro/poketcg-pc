@@ -10,6 +10,17 @@
 
 #define DECK_NAME_SIZE 24u
 #define DECK_SIZE 60u
+
+#include "generated/sram.h"
+
+#define CARDPOP_NAME_LIST_MAX_ELEMS 0x10u
+#define CARD_NOT_OWNED 0x80u
+#define NAME_BUFFER_LENGTH 0x10u
+#define PLAYER_TURN 0xc2u
+#define TEXT_SPEED_3 0x02u
+#define CHARMANDER_AND_FRIENDS_DECK 0x05u
+#define SQUIRTLE_AND_FRIENDS_DECK 0x07u
+#define BULBASAUR_AND_FRIENDS_DECK 0x09u
 /* <<< factory statics */
 
 /* >>> factory CopyDeckNameAndCards */
@@ -46,3 +57,40 @@ void CopyDeckNameAndCards(uint8_t a, uint16_t hl)
 	DisableSRAM();
 }
 /* <<< factory CopyDeckNameAndCards */
+
+/* >>> factory InitSaveData */
+void InitSaveData(void)
+{
+	EnableSRAM();
+	hWhoseTurn = PLAYER_TURN;
+	for (uint16_t addr = sCardAndDeckSaveData_ADDR; addr != sCardAndDeckSaveDataEnd_ADDR; addr++)
+		gb_write8(addr, 0u);
+
+	CopyDeckNameAndCards(CHARMANDER_AND_FRIENDS_DECK, sSavedDeck1_ADDR);
+	CopyDeckNameAndCards(SQUIRTLE_AND_FRIENDS_DECK, sSavedDeck2_ADDR);
+	CopyDeckNameAndCards(BULBASAUR_AND_FRIENDS_DECK, sSavedDeck3_ADDR);
+
+	EnableSRAM();
+	for (uint16_t i = 0; i < 256u; i++)
+		gb_write8((uint16_t)(sCardCollection_ADDR + i), CARD_NOT_OWNED);
+
+	gb_write8(sCurrentDuel_ADDR, 0u);
+	gb_write8((uint16_t)(sCurrentDuel_ADDR + 1u), 0u);
+	gb_write8((uint16_t)(sCurrentDuel_ADDR + 2u), 0u);
+
+	for (uint8_t i = 0; i < CARDPOP_NAME_LIST_MAX_ELEMS; i++)
+		gb_write8((uint16_t)(sCardPopNameList_ADDR + (uint16_t)i * NAME_BUFFER_LENGTH), 0u);
+
+	gb_write8(sPrinterContrastLevel_ADDR, 2u);
+	gb_write8(sTextSpeed_ADDR, TEXT_SPEED_3);
+	wTextSpeed = TEXT_SPEED_3;
+
+	gb_write8(sAnimationsDisabled_ADDR, 0u);
+	gb_write8(sSkipDelayAllowed_ADDR, 0u);
+	gb_write8(0xA004u, 0u);
+	gb_write8(sTotalCardPopsDone_ADDR, 0u);
+	gb_write8(sReceivedLegendaryCards_ADDR, 0u);
+	InitPromotionalCardAndDeckCounterSaveData();
+	DisableSRAM();
+}
+/* <<< factory InitSaveData */

@@ -75,3 +75,13 @@ uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a)
 	return saved_tilemap;
 }
 /* <<< factory SetOWMapEvent_SRAMOrVRAM */
+
+/* >>> factory ApplyOWMapEventChangeIfEventSet */
+void ApplyOWMapEventChangeIfEventSet(uint8_t a)
+{
+	uint8_t event_index = a;
+	gb_write8(wWriteBGMapToSRAM_ADDR, TRUE);
+	if (gb_read8((uint16_t)(wOWMapEvents_ADDR + event_index)) != 0u)
+		SetOWMapEvent_SRAMOrVRAM(event_index);
+}
+/* <<< factory ApplyOWMapEventChangeIfEventSet */

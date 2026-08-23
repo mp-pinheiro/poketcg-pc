@@ -28,6 +28,8 @@
 
 #define HandCardsGfx 0x4d15u
 #define v0Tiles2_dest 0x9380u
+
+#define TRUE 0x01u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -170,3 +172,19 @@ LoadHandCardsIconResult InitPromotionalCardAndDeckCounterSaveData(void)
 	return LoadHandCardsIcon();
 }
 /* <<< factory InitPromotionalCardAndDeckCounterSaveData */
+
+/* >>> factory PrepareMenuGraphics */
+void PrepareMenuGraphics(void)
+{
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	EmptyScreen();
+	wVBlankOAMCopyToggle = TRUE;
+	LoadCursorTile();
+	LoadSymbolsFont();
+	LoadDuelCardSymbolTiles();
+	LoadHandCardsIcon();
+	SetDefaultConsolePalettes();
+	SetupText(0x3cu, 0xbfu);
+}
+/* <<< factory PrepareMenuGraphics */

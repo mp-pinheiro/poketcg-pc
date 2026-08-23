@@ -47,6 +47,51 @@ CASES["CopyDeckNameAndCards"] = [
 ]
 # <<< factory CopyDeckNameAndCards
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+sAnimationsDisabled = 0xA007
+sCardAndDeckSaveData = 0xA100
+sCardCollection = 0xA100
+sCardPopNameList = 0xBB00
+sCurrentDuel = 0xBC00
+sPrinterContrastLevel = 0xA003
+sReceivedLegendaryCards = 0xA00A
+sSavedDeck1 = 0xA350
+sSavedDeck2 = 0xA3A4
+sSavedDeck3 = 0xA3F8
+sSkipDelayAllowed = 0xA009
+sTextSpeed = 0xA006
+sTotalCardPopsDone = 0xA005
+wTextSpeed = 0xCE47
+# <<< factory-cases-statics
+
+# >>> factory InitSaveData
+CONTRACT["InitSaveData"] = {"compare": (), "preserve": ()}
+CASES["InitSaveData"] = [
+    {"wram": {hWhoseTurn: b"\xFF"},
+     "sram": {0: {sCardAndDeckSaveData: bytes([0xAA] * 32), sCardCollection: bytes([0x11] * 256),
+                  sCurrentDuel: b"\xAA\xBB\xCC", sCardPopNameList: bytes([0x22] * 256),
+                  sPrinterContrastLevel: b"\xFF", sTextSpeed: b"\xFF", sAnimationsDisabled: b"\xFF",
+                  sSkipDelayAllowed: b"\xFF", 0xA004: b"\xFF", sTotalCardPopsDone: b"\xFF",
+                  sReceivedLegendaryCards: b"\xFF"}},
+     "read": {hWhoseTurn: 1, wTextSpeed: 1},
+     "sread": {0: {sCardAndDeckSaveData: 32, sCardCollection: 256, sSavedDeck1: 32, sSavedDeck2: 32,
+                   sSavedDeck3: 32, sCurrentDuel: 3, sCardPopNameList: 256, sPrinterContrastLevel: 1,
+                   sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, 0xA004: 1,
+                   sTotalCardPopsDone: 1, sReceivedLegendaryCards: 1}},
+     "vread": {0: {0x9380: 32}}},
+    dict(POISON, wram={hWhoseTurn: b"\xFF"},
+         sram={0: {sCardAndDeckSaveData: bytes([0x55] * 32), sCardCollection: bytes([0x33] * 256),
+                   sCurrentDuel: b"\x11\x22\x33", sCardPopNameList: bytes([0x44] * 256)}},
+         read={hWhoseTurn: 1, wTextSpeed: 1},
+         sread={0: {sCardAndDeckSaveData: 32, sCardCollection: 256, sSavedDeck1: 32, sSavedDeck2: 32,
+                    sSavedDeck3: 32, sCurrentDuel: 3, sCardPopNameList: 256, sPrinterContrastLevel: 1,
+                    sTextSpeed: 1, sAnimationsDisabled: 1, sSkipDelayAllowed: 1, 0xA004: 1,
+                    sTotalCardPopsDone: 1, sReceivedLegendaryCards: 1}},
+         vread={0: {0x9380: 32}}),
+]
+# <<< factory InitSaveData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +105,6 @@ MUTATIONS["CopyDeckNameAndCards"] = {
                  "CopyDeckNameAndCards-3", "CopyDeckNameAndCards-4"],
 }
 # <<< factory-mutation CopyDeckNameAndCards
+# >>> factory-mutation InitSaveData
+MUTATIONS["InitSaveData"] = {"source_symbol": "InitSaveData", "before": "\tgb_write8(sPrinterContrastLevel_ADDR, 2u);", "after": "\tgb_write8(sPrinterContrastLevel_ADDR, 3u);", "case_ids": ["InitSaveData-0", "InitSaveData-1"]}
+# <<< factory-mutation InitSaveData

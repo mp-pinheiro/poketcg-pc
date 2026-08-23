@@ -32,6 +32,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 sHasPromotionalCards = 0xB703
 sUnnamedDeckCounter = 0xB701
+
+wConsole = 0xCAB4
+wTileMapFill = 0xCAB6
+wVBlankOAMCopyToggle = 0xCAC0
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -105,6 +110,18 @@ CASES["InitPromotionalCardAndDeckCounterSaveData"] = [
 ]
 # <<< factory InitPromotionalCardAndDeckCounterSaveData
 
+# >>> factory PrepareMenuGraphics
+CONTRACT["PrepareMenuGraphics"] = {"compare": (), "preserve": ()}
+CASES["PrepareMenuGraphics"] = [
+    {"wram": {wConsole: b"\x00", wTileMapFill: b"\xFF", wVBlankOAMCopyToggle: b"\x00", wLCDC: b"\x00"},
+     "read": {wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+     "vread": {0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32}}},
+    dict(POISON, wram={wConsole: b"\x00", wTileMapFill: b"\xFF", wVBlankOAMCopyToggle: b"\x00", wLCDC: b"\x00"},
+         read={wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+         vread={0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32}}),
+]
+# <<< factory PrepareMenuGraphics
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -139,3 +156,6 @@ MUTATIONS["LoadHandCardsIcon"] = {"source_symbol": "LoadHandCardsIcon", "before"
 # >>> factory-mutation InitPromotionalCardAndDeckCounterSaveData
 MUTATIONS["InitPromotionalCardAndDeckCounterSaveData"] = {"source_symbol": "InitPromotionalCardAndDeckCounterSaveData", "before": "\tgb_write8(sUnnamedDeckCounter_ADDR, 1u);", "after": "\tgb_write8(sUnnamedDeckCounter_ADDR, 0u);", "case_ids": ["InitPromotionalCardAndDeckCounterSaveData-0", "InitPromotionalCardAndDeckCounterSaveData-1"]}
 # <<< factory-mutation InitPromotionalCardAndDeckCounterSaveData
+# >>> factory-mutation PrepareMenuGraphics
+MUTATIONS["PrepareMenuGraphics"] = {"source_symbol": "PrepareMenuGraphics", "before": "\twVBlankOAMCopyToggle = TRUE;", "after": "\twVBlankOAMCopyToggle = 0u;", "case_ids": ["PrepareMenuGraphics-0", "PrepareMenuGraphics-1"]}
+# <<< factory-mutation PrepareMenuGraphics

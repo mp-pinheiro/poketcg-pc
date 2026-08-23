@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyOWMapEventChangeIfEventSet",
+  "case": "tests/cases/map_events.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyOWMapEventChangeIfEventSet\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"53906\": \"01\", \"54053\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyOWMapEventChangeIfEventSet\", \"mismatches\": {\"bus\": {\"address\": 53906, \"reference\": \"0100\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53906, 1], [54053, 1]]}}}\n",
+  "restored": "{\"fn\": \"ApplyOWMapEventChangeIfEventSet\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"53906\": \"01\", \"54053\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
