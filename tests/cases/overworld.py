@@ -273,6 +273,16 @@ wBGMapPermissionDataPtr = 0xD23A
 wPermissionMap = 0xD133
 
 hBankROM = 0xFF80
+
+wOverworldMapSelection_A = 0xD32E
+wTempMap_A = 0xD0BB
+wTempPlayerXCoord_A = 0xD0BC
+wTempPlayerYCoord_A = 0xD0BD
+wTempPlayerDirection_A = 0xD0BE
+wPlayTimeCounter_A = 0xCAC5
+wOWMapEvents_A = 0xD323
+wMastersBeatenList_A = 0xD3BB
+hBankROM_A = 0xFF80
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -573,6 +583,28 @@ CASES["Func_c1ed"] = [
 ]
 # <<< factory Func_c1ed
 
+# >>> factory Func_c1b1
+CONTRACT["Func_c1b1"] = {"compare": (), "preserve": (), "wram_out": True, "sram_out": True}
+CASES["Func_c1b1"] = [
+    {"wram": {hBankROM_A: b"\x03", wOverworldMapSelection_A: b"\x00", wTempMap_A: b"\xFF",
+              wTempPlayerXCoord_A: b"\xFF", wTempPlayerYCoord_A: b"\xFF", wTempPlayerDirection_A: b"\xFF",
+              wPlayTimeCounter_A: b"\xFF\xFF\xFF\xFF\xFF", wOWMapEvents_A: bytes([0xFF] * 11),
+              wMastersBeatenList_A: bytes([0xFF] * 10)},
+     "sram": {0: {0xBA44: b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
+     "read": {wOverworldMapSelection_A: 1, wTempMap_A: 1, wTempPlayerXCoord_A: 1, wTempPlayerYCoord_A: 1,
+              wTempPlayerDirection_A: 1, wPlayTimeCounter_A: 5, wOWMapEvents_A: 11, wMastersBeatenList_A: 10},
+     "sread": {0: {0xBA44: 6}}, "instruction_budget": 500000, "cycle_budget": 4000000},
+    dict(POISON, wram={hBankROM_A: b"\x03", wOverworldMapSelection_A: b"\x00", wTempMap_A: b"\xFF",
+              wTempPlayerXCoord_A: b"\xFF", wTempPlayerYCoord_A: b"\xFF", wTempPlayerDirection_A: b"\xFF",
+              wPlayTimeCounter_A: b"\xFF\xFF\xFF\xFF\xFF", wOWMapEvents_A: bytes([0xFF] * 11),
+              wMastersBeatenList_A: bytes([0xFF] * 10)},
+         sram={0: {0xBA44: b"\xFF\xFF\xFF\xFF\xFF\xFF"}},
+         read={wOverworldMapSelection_A: 1, wTempMap_A: 1, wTempPlayerXCoord_A: 1, wTempPlayerYCoord_A: 1,
+              wTempPlayerDirection_A: 1, wPlayTimeCounter_A: 5, wOWMapEvents_A: 11, wMastersBeatenList_A: 10},
+         sread={0: {0xBA44: 6}}, instruction_budget=500000, cycle_budget=4000000),
+]
+# <<< factory Func_c1b1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -776,3 +808,6 @@ MUTATIONS["LoadPermissionMap"] = {"source_symbol": "LoadPermissionMap", "before"
 # >>> factory-mutation Func_c1ed
 MUTATIONS["Func_c1ed"] = {"source_symbol": "Func_c1ed", "before": "\tLoadBackupSaveData();", "after": "\t(void)0;", "case_ids": ["Func_c1ed-0", "Func_c1ed-1"]}
 # <<< factory-mutation Func_c1ed
+# >>> factory-mutation Func_c1b1
+MUTATIONS["Func_c1b1"] = {"source_symbol": "Func_c1b1", "before": "\twOverworldMapSelection = OWMAP_POKEMON_DOME;", "after": "\twOverworldMapSelection = 0u;", "case_ids": ["Func_c1b1-0", "Func_c1b1-1"]}
+# <<< factory-mutation Func_c1b1

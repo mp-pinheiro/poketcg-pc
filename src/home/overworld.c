@@ -110,6 +110,14 @@
 #include "home/scripting.h"
 #include "home/save.h"
 #include "generated/hram.h"
+
+#include "home/scripting.h"
+#include "home/map_events.h"
+#include "home/masters_beaten_list.h"
+#include "home/challenge_machine.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define OWMAP_POKEMON_DOME 0x0Cu
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -711,3 +719,25 @@ void Func_c1ed(void)
 	DetermineImakuniAndChallengeHall();
 }
 /* <<< factory Func_c1ed */
+
+/* >>> factory Func_c1b1 */
+void Func_c1b1(void)
+{
+	wOverworldMapSelection = OWMAP_POKEMON_DOME;
+	wTempMap = OVERWORLD_MAP;
+	wTempPlayerXCoord = 0x0Cu;
+	wTempPlayerYCoord = 0x0Cu;
+	wTempPlayerDirection = SOUTH;
+	ClearEvents();
+	DetermineImakuniAndChallengeHall();
+	ClearOWMapEvents();
+	uint8_t f_out;
+	(void)ClearMasterBeatenList(&f_out);
+	ChallengeMachine_Reset();
+	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 0u), 0u);
+	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 1u), 0u);
+	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 2u), 0u);
+	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 3u), 0u);
+	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 4u), 0u);
+}
+/* <<< factory Func_c1b1 */

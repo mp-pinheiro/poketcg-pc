@@ -355,6 +355,14 @@ static void adapt_Func_c1ed(ProbeState *s)
 }
 /* <<< factory Func_c1ed */
 
+/* >>> factory Func_c1b1 */
+static void adapt_Func_c1b1(ProbeState *s)
+{
+	(void)s;
+	Func_c1b1();
+}
+/* <<< factory Func_c1b1 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -399,5 +407,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "DecompressPermissionMap", adapt_DecompressPermissionMap },
 	{ "LoadPermissionMap", adapt_LoadPermissionMap },
 	{ "Func_c1ed", adapt_Func_c1ed },
+	{ "Func_c1b1", adapt_Func_c1b1 },
 	{ NULL, NULL },
 };

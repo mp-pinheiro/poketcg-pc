@@ -163,4 +163,7 @@ void LoadPermissionMap(void);
 /* >>> factory Func_c1ed */
 void Func_c1ed(void);
 /* <<< factory Func_c1ed */
+/* >>> factory Func_c1b1 */
+void Func_c1b1(void);
+/* <<< factory Func_c1b1 */
 #endif /* POKETCG_HOME_OVERWORLD_H */
