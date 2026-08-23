@@ -2638,6 +2638,14 @@ CASES["Curse_CheckDamageAndBench"] = [
 ]
 # <<< factory Curse_CheckDamageAndBench
 
+# >>> factory SpearowMirrorMove_AIEffect
+CONTRACT["SpearowMirrorMove_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["SpearowMirrorMove_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x2A", 0xCCBB: b"\x00", 0xCCBC: b"\x00"}, "expect": {0xCCBB: b"\x2A", 0xCCBC: b"\x2A"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F3: b"\x7F", 0xCCBB: b"\x11", 0xCCBC: b"\x22"}, expect={0xCCBB: b"\x7F", 0xCCBC: b"\x7F"}),
+]
+# <<< factory SpearowMirrorMove_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4396,3 +4404,11 @@ MUTATIONS["MirrorMove_ExecuteStatusEffect"] = {
 # >>> factory-mutation Curse_CheckDamageAndBench
 MUTATIONS["Curse_CheckDamageAndBench"] = {"source_symbol": "Curse_CheckDamageAndBench", "before": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) != 0u)", "after": "if ((flags.a & USED_PKMN_POWER_THIS_TURN) == 0u)", "case_ids": ["Curse_CheckDamageAndBench-0", "Curse_CheckDamageAndBench-1", "Curse_CheckDamageAndBench-2", "Curse_CheckDamageAndBench-3"]}
 # <<< factory-mutation Curse_CheckDamageAndBench
+# >>> factory-mutation SpearowMirrorMove_AIEffect
+MUTATIONS["SpearowMirrorMove_AIEffect"] = {
+    "source_symbol": "SpearowMirrorMove_AIEffect",
+    "before": "\tMirrorMove_AIEffect();",
+    "after": "\treturn;",
+    "case_ids": ["SpearowMirrorMove_AIEffect-0", "SpearowMirrorMove_AIEffect-1"],
+}
+# <<< factory-mutation SpearowMirrorMove_AIEffect

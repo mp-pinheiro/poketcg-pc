@@ -2405,6 +2405,14 @@ static void adapt_Curse_CheckDamageAndBench(ProbeState *s)
 }
 /* <<< factory Curse_CheckDamageAndBench */
 
+/* >>> factory SpearowMirrorMove_AIEffect */
+static void adapt_SpearowMirrorMove_AIEffect(ProbeState *s)
+{
+	SpearowMirrorMove_AIEffect();
+	(void)s;
+}
+/* <<< factory SpearowMirrorMove_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2703,5 +2711,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DragonairHyperBeam_DiscardEffect", adapt_DragonairHyperBeam_DiscardEffect },
 	{ "MirrorMove_ExecuteStatusEffect", adapt_MirrorMove_ExecuteStatusEffect },
 	{ "Curse_CheckDamageAndBench", adapt_Curse_CheckDamageAndBench },
+	{ "SpearowMirrorMove_AIEffect", adapt_SpearowMirrorMove_AIEffect },
 	{ NULL, NULL },
 };

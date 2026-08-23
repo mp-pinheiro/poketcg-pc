@@ -1008,6 +1008,9 @@ MirrorMoveExecuteStatusEffectResult MirrorMove_ExecuteStatusEffect(uint8_t a);
 typedef struct { uint8_t f; uint16_t hl; } CurseCheckDamageAndBenchResult;
 CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void);
 /* <<< factory Curse_CheckDamageAndBench */
+/* >>> factory SpearowMirrorMove_AIEffect */
+void SpearowMirrorMove_AIEffect(void);
+/* <<< factory SpearowMirrorMove_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

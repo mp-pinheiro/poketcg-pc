@@ -20,4 +20,7 @@ void AdvanceIntroSequenceCmdPtrBy2(void);
 /* >>> factory AdvanceIntroSequenceCmdPtrBy4 */
 void AdvanceIntroSequenceCmdPtrBy4(void);
 /* <<< factory AdvanceIntroSequenceCmdPtrBy4 */
+/* >>> factory IntroSequenceEmptyFunc */
+void IntroSequenceEmptyFunc(void);
+/* <<< factory IntroSequenceEmptyFunc */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

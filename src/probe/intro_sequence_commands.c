@@ -33,10 +33,19 @@ static void adapt_AdvanceIntroSequenceCmdPtrBy4(ProbeState *s)
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy4 */
 
+/* >>> factory IntroSequenceEmptyFunc */
+static void adapt_IntroSequenceEmptyFunc(ProbeState *s)
+{
+	(void)s;
+	IntroSequenceEmptyFunc();
+}
+/* <<< factory IntroSequenceEmptyFunc */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
 	{ "AdvanceIntroSequenceCmdPtrBy2", adapt_AdvanceIntroSequenceCmdPtrBy2 },
 	{ "AdvanceIntroSequenceCmdPtrBy4", adapt_AdvanceIntroSequenceCmdPtrBy4 },
+	{ "IntroSequenceEmptyFunc", adapt_IntroSequenceEmptyFunc },
 	{ NULL, NULL },
 };

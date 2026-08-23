@@ -4153,3 +4153,10 @@ CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void)
 	return (CurseCheckDamageAndBenchResult){incapable.f, incapable.hl};
 }
 /* <<< factory Curse_CheckDamageAndBench */
+
+/* >>> factory SpearowMirrorMove_AIEffect */
+void SpearowMirrorMove_AIEffect(void)
+{
+	MirrorMove_AIEffect();
+}
+/* <<< factory SpearowMirrorMove_AIEffect */

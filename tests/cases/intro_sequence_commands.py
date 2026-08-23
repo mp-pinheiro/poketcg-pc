@@ -52,6 +52,14 @@ CASES["AdvanceIntroSequenceCmdPtrBy4"] = [
 ]
 # <<< factory AdvanceIntroSequenceCmdPtrBy4
 
+# >>> factory IntroSequenceEmptyFunc
+CONTRACT["IntroSequenceEmptyFunc"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["IntroSequenceEmptyFunc"] = [
+    {"wram": {0xC500: b"\x00"}, "expect": {0xC500: b"\x00"}},
+    dict(POISON, wram={0xC500: b"\x00"}, expect={0xC500: b"\x00"}),
+]
+# <<< factory IntroSequenceEmptyFunc
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -73,3 +81,6 @@ MUTATIONS["AdvanceIntroSequenceCmdPtrBy2"] = {"source_symbol": "AdvanceIntroSequ
 # >>> factory-mutation AdvanceIntroSequenceCmdPtrBy4
 MUTATIONS["AdvanceIntroSequenceCmdPtrBy4"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy4", "before": "\tAdvanceIntroSequenceCmdPtr(4u);", "after": "\tAdvanceIntroSequenceCmdPtr(5u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy4-0", "AdvanceIntroSequenceCmdPtrBy4-1", "AdvanceIntroSequenceCmdPtrBy4-2", "AdvanceIntroSequenceCmdPtrBy4-3"]}
 # <<< factory-mutation AdvanceIntroSequenceCmdPtrBy4
+# >>> factory-mutation IntroSequenceEmptyFunc
+MUTATIONS["IntroSequenceEmptyFunc"] = {"source_symbol": "IntroSequenceEmptyFunc", "before": "\t(void)0;", "after": "\tgb_write8(0xC500, 1u);", "case_ids": ["IntroSequenceEmptyFunc-0", "IntroSequenceEmptyFunc-1"]}
+# <<< factory-mutation IntroSequenceEmptyFunc

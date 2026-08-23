@@ -34,6 +34,8 @@ static void UpdateSpriteAttributes(void)
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -96,3 +98,10 @@ void AdvanceIntroSequenceCmdPtrBy4(void)
 	AdvanceIntroSequenceCmdPtr(4u);
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy4 */
+
+/* >>> factory IntroSequenceEmptyFunc */
+void IntroSequenceEmptyFunc(void)
+{
+	(void)0;
+}
+/* <<< factory IntroSequenceEmptyFunc */
