@@ -1092,6 +1092,10 @@ BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckD
 typedef struct { uint8_t a; } SparkAISelectEffectResult;
 SparkAISelectEffectResult Spark_AISelectEffect(void);
 /* <<< factory Spark_AISelectEffect */
+/* >>> factory DamageSwap_CheckDamage */
+typedef struct { uint8_t f; uint16_t hl; } DamageSwapCheckDamageResult;
+DamageSwapCheckDamageResult DamageSwap_CheckDamage(void);
+/* <<< factory DamageSwap_CheckDamage */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

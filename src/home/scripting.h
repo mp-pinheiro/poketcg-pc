@@ -409,4 +409,7 @@ IncreaseScriptPointerResult ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(uin
 typedef struct { uint8_t a; uint8_t f; } Func_c998Result;
 Func_c998Result Func_c998(void);
 /* <<< factory Func_c998 */
+/* >>> factory DetermineImakuniRoom */
+SetEventValueResult DetermineImakuniRoom(void);
+/* <<< factory DetermineImakuniRoom */
 #endif

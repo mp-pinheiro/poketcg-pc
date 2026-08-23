@@ -1,0 +1,9 @@
+{
+  "fn": "DetermineImakuniRoom",
+  "case": "tests/cases/scripting.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DetermineImakuniRoom\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000001\", \"53435\": \"ff\", \"54225\": \"0c\", \"54228\": \"80\", \"54237\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DetermineImakuniRoom\", \"mismatches\": {\"bus\": {\"address\": 51916, \"reference\": \"000001ff0c8000\", \"native\": \"000000ff0c8000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51914, 3], [53435, 1], [54225, 1], [54228, 1], [54237, 1]]}}}\n",
+  "restored": "{\"fn\": \"DetermineImakuniRoom\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"000001\", \"53435\": \"ff\", \"54225\": \"0c\", \"54228\": \"80\", \"54237\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

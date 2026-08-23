@@ -143,6 +143,18 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define NPC_AMY 0x22u
+
+#include "home/scripting.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#define EVENT_IMAKUNI_ROOM 0x34u
+#define EVENT_IMAKUNI_STATE 0x13u
+#define FIGHTING_CLUB_LOBBY 0x05u
+#define IMAKUNI_FIGHTING_CLUB 0x00u
+#define IMAKUNI_TALKED 0x02u
+#define LIGHTNING_CLUB_LOBBY 0x0eu
+#define SCIENCE_CLUB_LOBBY 0x17u
+#define WATER_CLUB_LOBBY 0x0bu
 /* <<< factory statics */
 
 
@@ -1207,3 +1219,18 @@ Func_c998Result Func_c998(void)
 	return (Func_c998Result){0u, f};
 }
 /* <<< factory Func_c998 */
+
+/* >>> factory DetermineImakuniRoom */
+SetEventValueResult DetermineImakuniRoom(void)
+{
+	const uint8_t rooms[4] = {FIGHTING_CLUB_LOBBY, SCIENCE_CLUB_LOBBY, LIGHTNING_CLUB_LOBBY, WATER_CLUB_LOBBY};
+	uint8_t picked = IMAKUNI_FIGHTING_CLUB;
+	uint8_t state = GetEventValue(EVENT_IMAKUNI_STATE);
+	if (state >= IMAKUNI_TALKED) {
+		do {
+			picked = (uint8_t)(UpdateRNGSources() & 0x03u);
+		} while (gb_read8(wTempMap) == rooms[picked]);
+	}
+	return SetEventValue(EVENT_IMAKUNI_ROOM, 0u, 0u, picked);
+}
+/* <<< factory DetermineImakuniRoom */

@@ -793,6 +793,15 @@ static void adapt_Func_c998(ProbeState *s)
 }
 /* <<< factory Func_c998 */
 
+/* >>> factory DetermineImakuniRoom */
+static void adapt_DetermineImakuniRoom(ProbeState *s)
+{
+	SetEventValueResult r = DetermineImakuniRoom();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DetermineImakuniRoom */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -870,5 +879,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PickChallengeHallOpponent", adapt_ScriptCommand_PickChallengeHallOpponent },
 	{ "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot", adapt_ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot },
 	{ "Func_c998", adapt_Func_c998 },
+	{ "DetermineImakuniRoom", adapt_DetermineImakuniRoom },
 	{ NULL, NULL },
 };

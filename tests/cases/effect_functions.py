@@ -2855,6 +2855,15 @@ CASES["Spark_AISelectEffect"] = [
 ]
 # <<< factory Spark_AISelectEffect
 
+# >>> factory DamageSwap_CheckDamage
+CONTRACT["DamageSwap_CheckDamage"] = {"compare": ("f", "hl"), "preserve": (), "wram_out": True}
+CASES["DamageSwap_CheckDamage"] = [
+    {"wram": {0xFF9D: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xFF9D: b"\x00"}, read={0xFFA0: 1}, instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xC2C8: b"\x28", 0xFF9D: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF"}, "read": {0xFFA0: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+]
+# <<< factory DamageSwap_CheckDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4711,3 +4720,6 @@ MUTATIONS["BellsproutCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "B
 # >>> factory-mutation Spark_AISelectEffect
 MUTATIONS["Spark_AISelectEffect"] = {"source_symbol": "Spark_AISelectEffect", "before": "\tif (var.a < 2u)\n\t\treturn (SparkAISelectEffectResult){var.a};", "after": "\tif (var.a < 1u)\n\t\treturn (SparkAISelectEffectResult){var.a};", "case_ids": ["Spark_AISelectEffect-0", "Spark_AISelectEffect-1"]}
 # <<< factory-mutation Spark_AISelectEffect
+# >>> factory-mutation DamageSwap_CheckDamage
+MUTATIONS["DamageSwap_CheckDamage"] = {"source_symbol": "DamageSwap_CheckDamage", "before": "\tif (has_damage.f & 0x10u) {", "after": "\tif (!(has_damage.f & 0x10u)) {", "case_ids": ["DamageSwap_CheckDamage-0", "DamageSwap_CheckDamage-2"]}
+# <<< factory-mutation DamageSwap_CheckDamage

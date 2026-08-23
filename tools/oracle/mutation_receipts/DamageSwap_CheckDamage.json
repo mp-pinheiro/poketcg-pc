@@ -1,0 +1,9 @@
+{
+  "fn": "DamageSwap_CheckDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DamageSwap_CheckDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 212, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DamageSwap_CheckDamage\", \"mismatches\": {\"f\": [128, 16], \"hl\": [212, 172]}}\n",
+  "restored": "{\"fn\": \"DamageSwap_CheckDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 212, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"65437\": \"00\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

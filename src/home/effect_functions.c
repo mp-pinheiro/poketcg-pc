@@ -310,6 +310,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4372,3 +4376,18 @@ SparkAISelectEffectResult Spark_AISelectEffect(void)
 	return (SparkAISelectEffectResult){target.a};
 }
 /* <<< factory Spark_AISelectEffect */
+
+/* >>> factory DamageSwap_CheckDamage */
+DamageSwapCheckDamageResult DamageSwap_CheckDamage(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	CheckIfPlayAreaHasAnyDamageResult has_damage = CheckIfPlayAreaHasAnyDamage();
+	if (has_damage.f & 0x10u) {
+		uint8_t f = (uint8_t)((has_damage.f & 0x80u) | 0x10u);
+		return (DamageSwapCheckDamageResult){f, NoPokemonWithDamageCountersText};
+	}
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(hTempPlayAreaLocation_ff9d);
+	return (DamageSwapCheckDamageResult){incapable.f, incapable.hl};
+}
+/* <<< factory DamageSwap_CheckDamage */

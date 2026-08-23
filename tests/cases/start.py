@@ -37,5 +37,38 @@ MUTATIONS = {
     },
 }
 
+# >>> factory-cases-statics
+def _header_for(payload):
+    checksum = sum(payload) & 0xFFFF
+    return bytes([0x08, 0x00, len(payload) & 0xFF, len(payload) >> 8,
+                  checksum & 0xFF, checksum >> 8])
+
+def _build_image(payload):
+    return _header_for(payload) + b"\x00\x00" + payload
+
+_VALID_PAYLOAD = bytes(179)
+_VALID_IMAGE = _build_image(_VALID_PAYLOAD)
+_INVALID_IMAGE = (bytes([0x08 ^ 0xFF, 0x00 ^ 0xFF]) + _header_for(_VALID_PAYLOAD)[2:]
+                  + b"\x00\x00" + _VALID_PAYLOAD)
+# <<< factory-cases-statics
+
+# >>> factory CheckIfHasSaveData
+CONTRACT["CheckIfHasSaveData"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["CheckIfHasSaveData"] = [
+    {"wram": {0xFF81: b"\x03"}, "ramg": True,
+     "sram": {2: {0xB800: _VALID_IMAGE}, 0: {0xBC03: b"\x00", 0xBC00: b"\x00" * 0x100}},
+     "read": {0xD624: 1, 0xD625: 1}},
+    dict(POISON, wram={0xFF81: b"\x03"}, ramg=True,
+         sram={2: {0xB800: _INVALID_IMAGE}},
+         read={0xD624: 1, 0xD625: 1}),
+    {"wram": {0xFF81: b"\x03"}, "ramg": True,
+     "sram": {2: {0xB800: _INVALID_IMAGE}},
+     "read": {0xD624: 1, 0xD625: 1}},
+]
+# <<< factory CheckIfHasSaveData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation CheckIfHasSaveData
+MUTATIONS["CheckIfHasSaveData"] = {"source_symbol": "CheckIfHasSaveData", "before": "\tuint8_t has_save = (first.f & 0x10u) ? TRUE : FALSE;", "after": "\tuint8_t has_save = (first.f & 0x10u) ? FALSE : TRUE;", "case_ids": ["CheckIfHasSaveData-0", "CheckIfHasSaveData-2"]}
+# <<< factory-mutation CheckIfHasSaveData

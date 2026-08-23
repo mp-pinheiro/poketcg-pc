@@ -5,6 +5,14 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "home/text_box.h"
+/* >>> factory statics */
+#include "home/start.h"
+#include "home/save.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#define FALSE 0x00u
+#define TRUE 0x01u
+/* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
 #define DISCLAIMER_TEXT_ID 0x0378u
@@ -23,3 +31,20 @@ uint8_t ShowCardPopCGBDisclaimer(void)
 	(void)SetCursorParametersForTextBox(18, 17, SYM_CURSOR_D, SYM_BOX_BOTTOM);
 	return 0x10u;
 }
+
+/* >>> factory CheckIfHasSaveData */
+CheckIfHasSaveDataResult CheckIfHasSaveData(void)
+{
+	ValidateResult first = ValidateBackupGeneralSaveData();
+	uint8_t has_save = (first.f & 0x10u) ? TRUE : FALSE;
+	wHasSaveData = has_save;
+	if (has_save != FALSE) {
+		uint8_t flags = ValidateSavedNonLinkDuelData();
+		wHasDuelSaveData = (flags & 0x10u) ? FALSE : TRUE;
+	} else {
+		wHasDuelSaveData = FALSE;
+	}
+	ValidateResult final = ValidateBackupGeneralSaveData();
+	return (CheckIfHasSaveDataResult){final.a, final.f};
+}
+/* <<< factory CheckIfHasSaveData */

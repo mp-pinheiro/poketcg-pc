@@ -2616,6 +2616,15 @@ static void adapt_Spark_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Spark_AISelectEffect */
 
+/* >>> factory DamageSwap_CheckDamage */
+static void adapt_DamageSwap_CheckDamage(ProbeState *s)
+{
+	DamageSwapCheckDamageResult r = DamageSwap_CheckDamage();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory DamageSwap_CheckDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2940,5 +2949,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StarmieRecover_AISelectEffect", adapt_StarmieRecover_AISelectEffect },
 	{ "BellsproutCallForFamily_CheckDeckAndPlayArea", adapt_BellsproutCallForFamily_CheckDeckAndPlayArea },
 	{ "Spark_AISelectEffect", adapt_Spark_AISelectEffect },
+	{ "DamageSwap_CheckDamage", adapt_DamageSwap_CheckDamage },
 	{ NULL, NULL },
 };

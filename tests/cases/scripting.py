@@ -906,6 +906,15 @@ CASES["Func_c998"] = [
 ]
 # <<< factory Func_c998
 
+# >>> factory DetermineImakuniRoom
+CONTRACT["DetermineImakuniRoom"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["DetermineImakuniRoom"] = [
+    {"wram": {0xD3D4: b"\x00", 0xCACA: b"\x00\x00\x00"}, "read": {0xD3DD: 1, 0xD3D1: 1}},
+    dict(POISON, wram={0xD3D4: b"\x00", 0xCACA: b"\x00\x00\x00"}, read={0xD3DD: 1, 0xD3D1: 1}),
+    {"wram": {0xD3D4: b"\x80", 0xCACA: b"\x00\x00\x00", 0xD0BB: b"\xFF"}, "read": {0xD3DD: 1, 0xD3D1: 1}},
+]
+# <<< factory DetermineImakuniRoom
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1378,3 +1387,6 @@ MUTATIONS["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = {"source_symbol"
 # >>> factory-mutation Func_c998
 MUTATIONS["Func_c998"] = {"source_symbol": "Func_c998", "before": "\tuint8_t anim = (console == CONSOLE_CGB) ? 14u : 4u;", "after": "\tuint8_t anim = (console != CONSOLE_CGB) ? 14u : 4u;", "case_ids": ["Func_c998-2", "Func_c998-3"]}
 # <<< factory-mutation Func_c998
+# >>> factory-mutation DetermineImakuniRoom
+MUTATIONS["DetermineImakuniRoom"] = {"source_symbol": "DetermineImakuniRoom", "before": "\tif (state >= IMAKUNI_TALKED) {", "after": "\tif (state > IMAKUNI_TALKED) {", "case_ids": ["DetermineImakuniRoom-2"]}
+# <<< factory-mutation DetermineImakuniRoom
