@@ -569,3 +569,11 @@ void UpdatePlayerDirection(uint8_t a)
 	UpdatePlayerSprite();
 }
 /* <<< factory UpdatePlayerDirection */
+
+/* >>> factory UpdatePlayerDirectionFromDPad */
+void UpdatePlayerDirectionFromDPad(uint8_t a)
+{
+	GetDirectionFromDPadResult result = GetDirectionFromDPad(a);
+	UpdatePlayerDirection(result.a);
+}
+/* <<< factory UpdatePlayerDirectionFromDPad */

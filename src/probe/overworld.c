@@ -290,6 +290,13 @@ static void adapt_UpdatePlayerDirection(ProbeState *s)
 }
 /* <<< factory UpdatePlayerDirection */
 
+/* >>> factory UpdatePlayerDirectionFromDPad */
+static void adapt_UpdatePlayerDirectionFromDPad(ProbeState *s)
+{
+	UpdatePlayerDirectionFromDPad(s->a);
+}
+/* <<< factory UpdatePlayerDirectionFromDPad */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -326,5 +333,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c58b", adapt_Func_c58b },
 	{ "UpdatePlayerSprite", adapt_UpdatePlayerSprite },
 	{ "UpdatePlayerDirection", adapt_UpdatePlayerDirection },
+	{ "UpdatePlayerDirectionFromDPad", adapt_UpdatePlayerDirectionFromDPad },
 	{ NULL, NULL },
 };

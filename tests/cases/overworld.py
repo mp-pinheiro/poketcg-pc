@@ -479,6 +479,17 @@ CASES["UpdatePlayerDirection"] = [
 ]
 # <<< factory UpdatePlayerDirection
 
+# >>> factory UpdatePlayerDirectionFromDPad
+CONTRACT["UpdatePlayerDirectionFromDPad"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["UpdatePlayerDirectionFromDPad"] = [
+    {"a": 0x00, "wram": {0xD334: b"\x00", 0xD336: b"\x07", 0xD337: b"\x10", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0x10, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0x20, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0x40, "wram": {0xD334: b"\x00", 0xD336: b"\x0B", 0xD337: b"\x20", 0xD4CF: b"\x00"}, "read": {0xD334: 1, 0xD4CF: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD334: b"\x00", 0xD336: b"\x42", 0xD337: b"\x01", 0xD4CF: b"\xAA"}, "read": {0xD334: 1, 0xD4CF: 1}},
+]
+# <<< factory UpdatePlayerDirectionFromDPad
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -653,3 +664,6 @@ MUTATIONS["UpdatePlayerSprite"] = {"source_symbol": "UpdatePlayerSprite", "befor
 # >>> factory-mutation UpdatePlayerDirection
 MUTATIONS["UpdatePlayerDirection"] = {"source_symbol": "UpdatePlayerDirection", "before": "\twPlayerDirection = a;", "after": "\twPlayerDirection = 0;", "case_ids": ["UpdatePlayerDirection-0", "UpdatePlayerDirection-1", "UpdatePlayerDirection-2", "UpdatePlayerDirection-3"]}
 # <<< factory-mutation UpdatePlayerDirection
+# >>> factory-mutation UpdatePlayerDirectionFromDPad
+MUTATIONS["UpdatePlayerDirectionFromDPad"] = {"source_symbol": "UpdatePlayerDirectionFromDPad", "before": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.a);\n}", "after": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.f);\n}", "case_ids": ["UpdatePlayerDirectionFromDPad-0", "UpdatePlayerDirectionFromDPad-1", "UpdatePlayerDirectionFromDPad-2", "UpdatePlayerDirectionFromDPad-3", "UpdatePlayerDirectionFromDPad-4"]}
+# <<< factory-mutation UpdatePlayerDirectionFromDPad

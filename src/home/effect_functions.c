@@ -4167,3 +4167,10 @@ MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void)
 	return MirrorMove_InitialEffect1();
 }
 /* <<< factory SpearowMirrorMove_InitialEffect1 */
+
+/* >>> factory PidgeottoMirrorMove_AIEffect */
+void PidgeottoMirrorMove_AIEffect(void)
+{
+	MirrorMove_AIEffect();
+}
+/* <<< factory PidgeottoMirrorMove_AIEffect */

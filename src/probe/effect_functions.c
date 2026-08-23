@@ -2422,6 +2422,14 @@ static void adapt_SpearowMirrorMove_InitialEffect1(ProbeState *s)
 }
 /* <<< factory SpearowMirrorMove_InitialEffect1 */
 
+/* >>> factory PidgeottoMirrorMove_AIEffect */
+static void adapt_PidgeottoMirrorMove_AIEffect(ProbeState *s)
+{
+	PidgeottoMirrorMove_AIEffect();
+	(void)s;
+}
+/* <<< factory PidgeottoMirrorMove_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2722,5 +2730,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Curse_CheckDamageAndBench", adapt_Curse_CheckDamageAndBench },
 	{ "SpearowMirrorMove_AIEffect", adapt_SpearowMirrorMove_AIEffect },
 	{ "SpearowMirrorMove_InitialEffect1", adapt_SpearowMirrorMove_InitialEffect1 },
+	{ "PidgeottoMirrorMove_AIEffect", adapt_PidgeottoMirrorMove_AIEffect },
 	{ NULL, NULL },
 };

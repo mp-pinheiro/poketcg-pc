@@ -2654,6 +2654,14 @@ CASES["SpearowMirrorMove_InitialEffect1"] = [
 ]
 # <<< factory SpearowMirrorMove_InitialEffect1
 
+# >>> factory PidgeottoMirrorMove_AIEffect
+CONTRACT["PidgeottoMirrorMove_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["PidgeottoMirrorMove_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F3: b"\x2A", 0xCCBB: b"\x00", 0xCCBC: b"\x00"}, "expect": {0xCCBB: b"\x2A", 0xCCBC: b"\x2A"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F3: b"\x7F", 0xCCBB: b"\x11", 0xCCBC: b"\x22"}, expect={0xCCBB: b"\x7F", 0xCCBC: b"\x7F"}),
+]
+# <<< factory PidgeottoMirrorMove_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4428,3 +4436,11 @@ MUTATIONS["SpearowMirrorMove_InitialEffect1"] = {
     "case_ids": ["SpearowMirrorMove_InitialEffect1-0", "SpearowMirrorMove_InitialEffect1-1"],
 }
 # <<< factory-mutation SpearowMirrorMove_InitialEffect1
+# >>> factory-mutation PidgeottoMirrorMove_AIEffect
+MUTATIONS["PidgeottoMirrorMove_AIEffect"] = {
+    "source_symbol": "PidgeottoMirrorMove_AIEffect",
+    "before": "void PidgeottoMirrorMove_AIEffect(void)\n{\n\tMirrorMove_AIEffect();\n}",
+    "after": "void PidgeottoMirrorMove_AIEffect(void)\n{\n\treturn;\n}",
+    "case_ids": ["PidgeottoMirrorMove_AIEffect-0", "PidgeottoMirrorMove_AIEffect-1"],
+}
+# <<< factory-mutation PidgeottoMirrorMove_AIEffect
