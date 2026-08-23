@@ -3015,6 +3015,14 @@ CASES["JynxDoubleslap_AIEffect"] = [
 ]
 # <<< factory JynxDoubleslap_AIEffect
 
+# >>> factory Bonemerang_AIEffect
+CONTRACT["Bonemerang_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Bonemerang_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory Bonemerang_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4910,3 +4918,6 @@ MUTATIONS["KinglerFlail_AIEffect"] = {"source_symbol": "KinglerFlail_AIEffect", 
 # >>> factory-mutation JynxDoubleslap_AIEffect
 MUTATIONS["JynxDoubleslap_AIEffect"] = {"source_symbol": "JynxDoubleslap_AIEffect", "before": "void JynxDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 20u);", "after": "void JynxDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 40u);", "case_ids": ["JynxDoubleslap_AIEffect-0", "JynxDoubleslap_AIEffect-1"]}
 # <<< factory-mutation JynxDoubleslap_AIEffect
+# >>> factory-mutation Bonemerang_AIEffect
+MUTATIONS["Bonemerang_AIEffect"] = {"source_symbol": "Bonemerang_AIEffect", "before": "void Bonemerang_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);", "after": "void Bonemerang_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 40u);", "case_ids": ["Bonemerang_AIEffect-0", "Bonemerang_AIEffect-1"]}
+# <<< factory-mutation Bonemerang_AIEffect

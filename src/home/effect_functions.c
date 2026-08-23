@@ -4532,3 +4532,10 @@ void JynxDoubleslap_AIEffect(void)
 	SetExpectedAIDamage(10u, 0u, 20u);
 }
 /* <<< factory JynxDoubleslap_AIEffect */
+
+/* >>> factory Bonemerang_AIEffect */
+void Bonemerang_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory Bonemerang_AIEffect */

@@ -2723,6 +2723,14 @@ static void adapt_JynxDoubleslap_AIEffect(ProbeState *s)
 }
 /* <<< factory JynxDoubleslap_AIEffect */
 
+/* >>> factory Bonemerang_AIEffect */
+static void adapt_Bonemerang_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Bonemerang_AIEffect();
+}
+/* <<< factory Bonemerang_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3060,5 +3068,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PoliwhirlDoubleslap_AIEffect", adapt_PoliwhirlDoubleslap_AIEffect },
 	{ "KinglerFlail_AIEffect", adapt_KinglerFlail_AIEffect },
 	{ "JynxDoubleslap_AIEffect", adapt_JynxDoubleslap_AIEffect },
+	{ "Bonemerang_AIEffect", adapt_Bonemerang_AIEffect },
 	{ NULL, NULL },
 };
