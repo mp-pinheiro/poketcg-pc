@@ -522,3 +522,25 @@ LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHan
 	return (LookForCardIDInDeck_GivenCardIDInHandResult){wTempAIPokemonCard, f};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
+
+/* >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
+LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(uint8_t a, uint8_t b)
+{
+	wTempAI = b;
+	wCurCardCanAttack = a;
+	LookForCardIDInLocationBank8Result r1 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, a);
+	if (!(r1.f & 0x10u))
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r1.a, r1.f};
+	wTempAIPokemonCard = r1.a;
+	LookForCardIDInHandAndPlayAreaResult r2 = LookForCardIDInHandAndPlayArea(wTempAI);
+	if (!(r2.f & 0x10u))
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r2.a, r2.f};
+	LookForCardIDInHandAndPlayAreaResult r3 = LookForCardIDInHandAndPlayArea(wCurCardCanAttack);
+	if (r3.f & 0x10u) {
+		uint8_t f = (r3.a == 0u) ? 0x80u : 0u;
+		return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};
+	}
+	uint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);
+	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f};
+}
+/* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */

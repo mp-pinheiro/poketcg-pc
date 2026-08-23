@@ -91,6 +91,9 @@
 #define DITTO 0xbbu
 #define LAPRAS 0x59u
 #define SEEL 0x4bu
+
+#define JIGGLYPUFF_LV12 0xadu
+#define TAUROS 0xbau
 /* <<< factory statics */
 
 
@@ -945,3 +948,52 @@ AIDecide_PokemonTrader_LegendaryArticunoResult AIDecide_PokemonTrader_LegendaryA
 	return (AIDecide_PokemonTrader_LegendaryArticunoResult){h.a, f};
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */
+
+/* >>> factory AIDecide_ComputerSearch_FireCharge */
+AIDecide_ComputerSearch_FireChargeResult AIDecide_ComputerSearch_FireCharge(uint8_t b, uint8_t c)
+{
+	uint8_t target;
+	LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(CHANSEY);
+	if (!(h.f & 0x10u)) {
+		target = CHANSEY;
+	} else {
+		h = LookForCardIDInHandList_Bank8(TAUROS);
+		if (!(h.f & 0x10u)) {
+			target = TAUROS;
+		} else {
+			h = LookForCardIDInHandList_Bank8(JIGGLYPUFF_LV12);
+			if (!(h.f & 0x10u)) {
+				target = JIGGLYPUFF_LV12;
+			} else {
+				uint8_t f = (h.a == 0u) ? 0x80u : 0u;
+				return (AIDecide_ComputerSearch_FireChargeResult){h.a, f};
+			}
+		}
+	}
+
+	LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);
+	if (!(loc.f & 0x10u)) {
+		uint8_t f = (loc.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_FireChargeResult){loc.a, f};
+	}
+	wce06 = loc.a;
+
+	(void)CreateHandCardList(0u);
+	uint8_t trainer_to_play = wAITrainerCardToPlay;
+	RemoveFromListDifferentCardOfGivenTypeResult r1 =
+		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	if (!(r1.f & 0x10u)) {
+		uint8_t f = (r1.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_FireChargeResult){r1.a, f};
+	}
+	wce1a = r1.a;
+	RemoveFromListDifferentCardOfGivenTypeResult r2 =
+		RemoveFromListDifferentCardOfGivenType(r1.b, r1.c, r1.d, r1.e, r1.hl);
+	if (!(r2.f & 0x10u)) {
+		uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_FireChargeResult){r2.a, f};
+	}
+	wce1b = r2.a;
+	return (AIDecide_ComputerSearch_FireChargeResult){wce06, 0x90u};
+}
+/* <<< factory AIDecide_ComputerSearch_FireCharge */

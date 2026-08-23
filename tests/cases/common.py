@@ -264,6 +264,30 @@ CASES["LookForCardIDInDeck_GivenCardIDInHand"] = [
 ]
 # <<< factory LookForCardIDInDeck_GivenCardIDInHand
 
+# >>> factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
+CONTRACT["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = [
+    {"a": 0xAB, "b": 0x01, "wram": {hWhoseTurn: b"\xC2"}},
+    {"a": 0x00, "b": 0xAB, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
+    {"a": 0x00, "b": 0x01, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x03",
+        0xC200: b"\x00",
+        0xC403: b"\x01",
+        0xC2BB: b"\xFF",
+    }, "read": {0xC510: 32}},
+    dict(POISON, a=0x00, b=0x01, wram={
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x03",
+        0xC200: b"\x00",
+        0xC403: b"\x01",
+        0xC2BB: b"\xFF",
+    }, read={0xC510: 32}),
+]
+# <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -370,3 +394,6 @@ MUTATIONS["LookForCardIDToTradeWithDifferentHandCard"] = {"source_symbol": "Look
 # >>> factory-mutation LookForCardIDInDeck_GivenCardIDInHand
 MUTATIONS["LookForCardIDInDeck_GivenCardIDInHand"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHand", "before": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);", "case_ids": ["LookForCardIDInDeck_GivenCardIDInHand-2"]}
 # <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHand
+# >>> factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
+MUTATIONS["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", "before": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);', "after": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);', "case_ids": ["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea-2"]}
+# <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea

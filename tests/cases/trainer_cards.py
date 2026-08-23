@@ -250,6 +250,13 @@ CASES["AIDecide_PokemonBreeder"] = [
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wce1a = 0xCE1A
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wce06 = 0xCE06
+wce1a = 0xCE1A
+wce1b = 0xCE1B
+wAITrainerCardToPlay = 0xCE16
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -317,6 +324,26 @@ CASES["AIDecide_PokemonTrader_LegendaryArticuno"] = [
     }, read={0xC510: 32}),
 ]
 # <<< factory AIDecide_PokemonTrader_LegendaryArticuno
+
+# >>> factory AIDecide_ComputerSearch_FireCharge
+CONTRACT["AIDecide_ComputerSearch_FireCharge"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_ComputerSearch_FireCharge"] = [
+    {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x02",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC40A: b"\xC5",
+        0xC40B: b"\xDB",
+        0xC405: b"\xB8",
+        wAITrainerCardToPlay: b"\xFF",
+    }, "expect": {wce06: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, b=0x00, c=0x00, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_ComputerSearch_FireCharge
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -483,3 +510,6 @@ MUTATIONS["AIDecide_PokemonTrader_StrangePower"] = {"source_symbol": "AIDecide_P
 # >>> factory-mutation AIDecide_PokemonTrader_LegendaryArticuno
 MUTATIONS["AIDecide_PokemonTrader_LegendaryArticuno"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryArticuno", "before": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);", "after": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DITTO);", "case_ids": ["AIDecide_PokemonTrader_LegendaryArticuno-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_LegendaryArticuno
+# >>> factory-mutation AIDecide_ComputerSearch_FireCharge
+MUTATIONS["AIDecide_ComputerSearch_FireCharge"] = {"source_symbol": "AIDecide_ComputerSearch_FireCharge", "before": '\tLookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);\n\tif (!(loc.f & 0x10u)) {\n\t\tuint8_t f = (loc.a == 0u) ? 0x80u : 0u;', "after": '\tLookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, target);\n\tif (!(loc.f & 0x10u)) {\n\t\tuint8_t f = (loc.a == 0u) ? 0x80u : 0x40u;', "case_ids": ["AIDecide_ComputerSearch_FireCharge-0"]}
+# <<< factory-mutation AIDecide_ComputerSearch_FireCharge
