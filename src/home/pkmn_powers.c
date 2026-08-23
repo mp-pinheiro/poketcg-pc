@@ -62,6 +62,14 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define OPPACTION_6B15 0x15u
 #define PLAY_AREA_ARENA 0x00u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+#define PLAY_AREA_BENCH_1 0x01u
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -218,3 +226,59 @@ HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c)
 	return (HandleAIStrangeBehaviorResult){OPPACTION_DUEL_MAIN_SCENE, result.f};
 }
 /* <<< factory HandleAIStrangeBehavior */
+
+/* >>> factory HandleAICurse */
+HandleAICurseResult HandleAICurse(uint8_t c)
+{
+	hTemp_ffa0 = c;
+
+	uint8_t d = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t e = PLAY_AREA_ARENA;
+	uint8_t found = 0u;
+	uint8_t best_hp = 0xffu;
+	uint8_t best_loc = PLAY_AREA_ARENA;
+	SwapTurn();
+	do {
+		uint8_t remaining = GetCardDamageAndMaxHP(e).a;
+		if (remaining != 0u) {
+			found++;
+			uint8_t hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).a;
+			if (hp < best_hp) {
+				best_hp = hp;
+				best_loc = e;
+			}
+		}
+		e++;
+	} while (e != d);
+
+	if (found == 0u) {
+		SwapTurn();
+		return (HandleAICurseResult){1u, 0x00u};
+	}
+
+	hTempRetreatCostCards = best_loc;
+	uint8_t skip_loc = best_loc;
+	e = (best_hp == 10u) ? PLAY_AREA_ARENA : PLAY_AREA_BENCH_1;
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	for (;;) {
+		if (e != skip_loc) {
+			uint8_t remaining2 = GetCardDamageAndMaxHP(e).a;
+			if (remaining2 != 0u) {
+				hAIPkmnPowerEffectParam = e;
+				SwapTurn();
+				hTempCardIndex_ff9f = wce08;
+				AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+				AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+				AIMakeDecisionResult r = AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+				return (HandleAICurseResult){0u, r.f};
+			}
+		}
+		e++;
+		if (e == d)
+			break;
+	}
+	uint8_t f = (e == 0u) ? 0x80u : 0x00u;
+	SwapTurn();
+	return (HandleAICurseResult){e, f};
+}
+/* <<< factory HandleAICurse */

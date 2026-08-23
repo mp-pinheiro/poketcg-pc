@@ -51,6 +51,19 @@ CASES["HandleAIStrangeBehavior"] = [
 ]
 # <<< factory HandleAIStrangeBehavior
 
+# >>> factory HandleAICurse
+CONTRACT["HandleAICurse"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAICurse"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "wram": {0xC2EF: b"\x01", 0xC2BB: b"\x00", 0xC2C8: b"\x71", 0xC400: b"\x01"},
+        "hram": {0xFF97: b"\xC3"},
+        "expect_regs": {"a": 0x01, "f": 0x00},
+        "expect": {0xFFA0: b"\xCC", 0xFF97: b"\xC3"},
+    },
+]
+# <<< factory HandleAICurse
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -74,3 +87,11 @@ MUTATIONS["HandleAIPeek"] = {
 # >>> factory-mutation HandleAIStrangeBehavior
 MUTATIONS["HandleAIStrangeBehavior"] = {"source_symbol": "HandleAIStrangeBehavior", "before": "\tif (c == 0u)", "after": "\tif (c != 0u)", "case_ids": ["HandleAIStrangeBehavior-1"]}
 # <<< factory-mutation HandleAIStrangeBehavior
+# >>> factory-mutation HandleAICurse
+MUTATIONS["HandleAICurse"] = {
+    "source_symbol": "HandleAICurse",
+    "before": "return (HandleAICurseResult){1u, 0x00u};",
+    "after": "return (HandleAICurseResult){2u, 0x00u};",
+    "case_ids": ["HandleAICurse-0"],
+}
+# <<< factory-mutation HandleAICurse

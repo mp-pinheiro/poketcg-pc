@@ -287,6 +287,15 @@ static void adapt_CheckIfCurrentDeckWasChanged(ProbeState *s)
 }
 /* <<< factory CheckIfCurrentDeckWasChanged */
 
+/* >>> factory CreateFilteredCardList */
+static void adapt_CreateFilteredCardList(ProbeState *s)
+{
+	CreateFilteredCardListResult r =
+		CreateFilteredCardList(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory CreateFilteredCardList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -320,5 +329,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "TallyCardsInCardFilterLists", adapt_TallyCardsInCardFilterLists },
 	{ "RemoveCardFromDeck", adapt_RemoveCardFromDeck },
 	{ "CheckIfCurrentDeckWasChanged", adapt_CheckIfCurrentDeckWasChanged },
+	{ "CreateFilteredCardList", adapt_CreateFilteredCardList },
 	{ NULL, NULL },
 };

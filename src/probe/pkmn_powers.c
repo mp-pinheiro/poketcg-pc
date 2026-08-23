@@ -30,9 +30,19 @@ static void adapt_HandleAIStrangeBehavior(ProbeState *s)
 }
 /* <<< factory HandleAIStrangeBehavior */
 
+/* >>> factory HandleAICurse */
+static void adapt_HandleAICurse(ProbeState *s)
+{
+	HandleAICurseResult r = HandleAICurse(s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAICurse */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
 	{ "HandleAIStrangeBehavior", adapt_HandleAIStrangeBehavior },
+	{ "HandleAICurse", adapt_HandleAICurse },
 	{ NULL, NULL },
 };

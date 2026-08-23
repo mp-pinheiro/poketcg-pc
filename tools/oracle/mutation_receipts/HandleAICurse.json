@@ -1,0 +1,9 @@
+{
+  "fn": "HandleAICurse",
+  "case": "tests/cases/pkmn_powers.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"71\", \"49903\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleAICurse\", \"mismatches\": {\"a\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"HandleAICurse\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"71\", \"49903\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -369,6 +369,19 @@ CASES["CheckIfCurrentDeckWasChanged"] = [
 ]
 # <<< factory CheckIfCurrentDeckWasChanged
 
+# >>> factory CreateFilteredCardList
+CONTRACT["CreateFilteredCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["CreateFilteredCardList"] = [
+    {"a": 0x08, "f": 0x00, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
+     "wram": {0xC000: b"\x00" * 240},
+     "instruction_budget": 8000000, "cycle_budget": 32000000,
+     "read": {0xCEAE: 1}},
+    dict(POISON, a=0x08, wram={0xC000: b"\x00" * 240},
+         instruction_budget=8000000, cycle_budget=32000000,
+         read={0xCEAE: 1}),
+]
+# <<< factory CreateFilteredCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -514,3 +527,6 @@ MUTATIONS["RemoveCardFromDeck"] = {"source_symbol": "RemoveCardFromDeck", "befor
 # >>> factory-mutation CheckIfCurrentDeckWasChanged
 MUTATIONS["CheckIfCurrentDeckWasChanged"] = {"source_symbol": "CheckIfCurrentDeckWasChanged", "before": "return (CheckIfCurrentDeckWasChangedResult){total, 0x10u};", "after": "return (CheckIfCurrentDeckWasChangedResult){total, 0x00u};", "case_ids": ["CheckIfCurrentDeckWasChanged-0", "CheckIfCurrentDeckWasChanged-1"]}
 # <<< factory-mutation CheckIfCurrentDeckWasChanged
+# >>> factory-mutation CreateFilteredCardList
+MUTATIONS["CreateFilteredCardList"] = {"source_symbol": "CreateFilteredCardList", "before": "gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)out_index);", "after": "gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)(out_index + 1u));", "case_ids": ["CreateFilteredCardList-0", "CreateFilteredCardList-1"]}
+# <<< factory-mutation CreateFilteredCardList

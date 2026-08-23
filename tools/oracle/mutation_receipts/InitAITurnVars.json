@@ -1,0 +1,9 @@
+{
+  "fn": "InitAITurnVars",
+  "case": "tests/cases/init.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitAITurnVars\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52240\": \"ff00\", \"52646\": \"0600\", \"52699\": \"0000\", \"52739\": \"00\", \"52768\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitAITurnVars\", \"mismatches\": {\"bus\": {\"address\": 52646, \"reference\": \"ff000600000000\", \"native\": \"ff000700000000\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[52240, 2], [52646, 2], [52699, 2], [52739, 1], [52768, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitAITurnVars\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52240\": \"ff00\", \"52646\": \"0600\", \"52699\": \"0000\", \"52739\": \"00\", \"52768\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

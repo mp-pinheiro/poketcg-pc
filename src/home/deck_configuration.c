@@ -101,6 +101,10 @@
 #include "home/deck_selection.h"
 #include "generated/wram.h"
 #include "generated/sram.h"
+
+#include "home/card_data.h"
+#include "generated/wram.h"
+#define CARD_NOT_OWNED 0x80u
 /* <<< factory statics */
 
 
@@ -697,3 +701,60 @@ CheckIfCurrentDeckWasChangedResult CheckIfCurrentDeckWasChanged(void)
 	return (CheckIfCurrentDeckWasChangedResult){0u, 0x80u};
 }
 /* <<< factory CheckIfCurrentDeckWasChanged */
+
+/* >>> factory CreateFilteredCardList */
+CreateFilteredCardListResult CreateFilteredCardList(
+	uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t filter = a;
+
+	ClearMemory_Bank2(DECK_SIZE, wOwnedCardsCountList_ADDR);
+	ClearMemory_Bank2(DECK_SIZE, wFilteredCardList_ADDR);
+
+	uint16_t out_index = 0u;
+	uint8_t card_id = 0u;
+	for (;;) {
+		card_id++;
+		CardPtrResult ptr = GetCardPointer(card_id);
+		if (ptr.carry)
+			break;
+		uint8_t card_type = GetCardType(card_id);
+
+		uint8_t add = 0u;
+		if (filter == 0xFFu) {
+			add = 1u;
+		} else if ((filter & FILTER_ENERGY) == FILTER_ENERGY) {
+			if ((card_type & TYPE_ENERGY) == TYPE_ENERGY)
+				add = 1u;
+		} else {
+			if (card_type == filter)
+				add = 1u;
+		}
+
+		if (add) {
+			gb_write8((uint16_t)(wFilteredCardList_ADDR + out_index), card_id);
+			uint8_t owned = gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id));
+			if (owned != CARD_NOT_OWNED) {
+				uint8_t skip = 0u;
+				uint8_t count_value = owned;
+				if (owned == 0u) {
+					IsCardInAnyDeckResult r = IsCardInAnyDeck(0u, 0x80u, card_id);
+					if (r.f & 0x10u)
+						skip = 1u;
+					count_value = 0u;
+				}
+				if (!skip) {
+					gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out_index), count_value);
+					out_index++;
+				}
+			}
+		}
+	}
+
+	gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)out_index);
+	gb_write8((uint16_t)(wFilteredCardList_ADDR + out_index), 0u);
+	gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out_index), 0xFFu);
+
+	return (CreateFilteredCardListResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory CreateFilteredCardList */
