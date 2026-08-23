@@ -199,6 +199,14 @@ static void adapt_UpdateNPCMovementStep(ProbeState *s)
 }
 /* <<< factory UpdateNPCMovementStep */
 
+/* >>> factory FindNPCAtLocation */
+static void adapt_FindNPCAtLocation(ProbeState *s)
+{
+	FindNPCAtLocationResult r = FindNPCAtLocation(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory FindNPCAtLocation */
+
 const ProbeEntry probe_entries_npc_core[] = {
 	{ "CheckIfNPCIsRonald", adapt_CheckIfNPCIsRonald },
 	{ "UpdateNPCAnimation", adapt_UpdateNPCAnimation },
@@ -225,5 +233,6 @@ const ProbeEntry probe_entries_npc_core[] = {
 	{ "UnloadNPC", adapt_UnloadNPC },
 	{ "Func_1c52e", adapt_Func_1c52e },
 	{ "UpdateNPCMovementStep", adapt_UpdateNPCMovementStep },
+	{ "FindNPCAtLocation", adapt_FindNPCAtLocation },
 	{ NULL, NULL },
 };

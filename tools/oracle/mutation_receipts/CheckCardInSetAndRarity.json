@@ -1,0 +1,9 @@
+{
+  "fn": "CheckCardInSetAndRarity",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckCardInSetAndRarity\", \"registers\": {\"a\": 1, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 16, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54892\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckCardInSetAndRarity\", \"mismatches\": {\"a\": [1, 8], \"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"CheckCardInSetAndRarity\", \"registers\": {\"a\": 1, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 16, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54892\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

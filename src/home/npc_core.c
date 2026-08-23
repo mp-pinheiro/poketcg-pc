@@ -102,6 +102,8 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #include "home/npc_core.h"
 #include "mem.h"
 #define LOADED_NPC_MOVEMENT_PTR 0x09u
+
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -558,3 +560,34 @@ uint8_t UpdateNPCMovementStep(uint8_t a, uint16_t hl)
 	return SetNPCsTilePermission();
 }
 /* <<< factory UpdateNPCMovementStep */
+
+/* >>> factory FindNPCAtLocation */
+FindNPCAtLocationResult FindNPCAtLocation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t index = 0u;
+	uint16_t slot = wLoadedNPC1CoordX_ADDR;
+	uint8_t remaining = LOADED_NPC_MAX;
+	for (;;) {
+		uint8_t x = gb_read8(slot);
+		if (x == b) {
+			uint8_t y = gb_read8((uint16_t)(slot + 1u));
+			if (y == c) {
+				uint8_t disable = gb_read8((uint16_t)(slot + 3u));
+				if (!(disable & 0x40u)) {
+					uint8_t active = gb_read8((uint16_t)(slot - 1u));
+					if (active != 0u) {
+						gb_write8(wLoadedNPCTempIndex_ADDR, index);
+						return (FindNPCAtLocationResult){index, (uint8_t)(index == 0u ? 0x80u : 0u), b, c, d, e, hl};
+					}
+				}
+			}
+		}
+		slot = (uint16_t)(slot + LOADED_NPC_LENGTH);
+		index++;
+		remaining--;
+		if (remaining == 0u)
+			break;
+	}
+	return (FindNPCAtLocationResult){(uint8_t)(slot >> 8), 0x90u, b, c, d, e, hl};
+}
+/* <<< factory FindNPCAtLocation */

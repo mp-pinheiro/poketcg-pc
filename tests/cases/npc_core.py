@@ -317,6 +317,18 @@ CASES["UpdateNPCMovementStep"] = [
 ]
 # <<< factory UpdateNPCMovementStep
 
+# >>> factory FindNPCAtLocation
+CONTRACT["FindNPCAtLocation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["FindNPCAtLocation"] = [
+    {"b": 0x05, "c": 0x07, "d": 0x11, "e": 0x22, "hl": 0x3344,
+     "wram": {0xD34B: b"\x01", 0xD34C: b"\x05\x07", 0xD34F: b"\x00"}},
+    dict(POISON, b=0x09, c=0x0A,
+         wram={0xD357: b"\x01", 0xD358: b"\x09\x0A", 0xD35B: b"\x00",
+               0xD34C: b"\x00\x00"}),
+    {"b": 0xFF, "c": 0x00, "d": 0x11, "e": 0x22, "hl": 0x3344},
+]
+# <<< factory FindNPCAtLocation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -426,3 +438,6 @@ MUTATIONS["Func_1c52e"] = {"source_symbol": "Func_1c52e", "before": "PermissionR
 # >>> factory-mutation UpdateNPCMovementStep
 MUTATIONS["UpdateNPCMovementStep"] = {"source_symbol": "UpdateNPCMovementStep", "before": "\tgb_write8(step, (uint8_t)(gb_read8(step) + 1u));", "after": "\tgb_write8(step, (uint8_t)(gb_read8(step) + 2u));", "case_ids": ["UpdateNPCMovementStep-1", "UpdateNPCMovementStep-2", "UpdateNPCMovementStep-3"]}
 # <<< factory-mutation UpdateNPCMovementStep
+# >>> factory-mutation FindNPCAtLocation
+MUTATIONS["FindNPCAtLocation"] = {"source_symbol": "FindNPCAtLocation", "before": "if (active != 0u) {", "after": "if (active == 0u) {", "case_ids": ["FindNPCAtLocation-0", "FindNPCAtLocation-1"]}
+# <<< factory-mutation FindNPCAtLocation

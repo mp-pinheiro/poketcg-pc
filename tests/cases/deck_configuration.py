@@ -353,6 +353,14 @@ CASES["TallyCardsInCardFilterLists"] = [
 ]
 # <<< factory TallyCardsInCardFilterLists
 
+# >>> factory RemoveCardFromDeck
+CONTRACT["RemoveCardFromDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["RemoveCardFromDeck"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x01, "hl": 0x4455},
+    dict(POISON, e=0x02),
+]
+# <<< factory RemoveCardFromDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -492,3 +500,6 @@ MUTATIONS["GetOwnedCardCount"] = {"source_symbol": "GetOwnedCardCount", "before"
 # >>> factory-mutation TallyCardsInCardFilterLists
 MUTATIONS["TallyCardsInCardFilterLists"] = {"source_symbol": "TallyCardsInCardFilterLists", "before": "\tif (sum != 0u)", "after": "\tif (sum == 0u)", "case_ids": ["TallyCardsInCardFilterLists-0", "TallyCardsInCardFilterLists-1"]}
 # <<< factory-mutation TallyCardsInCardFilterLists
+# >>> factory-mutation RemoveCardFromDeck
+MUTATIONS["RemoveCardFromDeck"] = {"source_symbol": "RemoveCardFromDeck", "before": "return (RemoveCardFromDeckResult){0u, 0x80u, b, c, d, e, hl};", "after": "return (RemoveCardFromDeckResult){0u, 0x90u, b, c, d, e, hl};", "case_ids": ["RemoveCardFromDeck-0", "RemoveCardFromDeck-1"]}
+# <<< factory-mutation RemoveCardFromDeck

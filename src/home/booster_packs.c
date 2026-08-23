@@ -76,6 +76,9 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 
 #include "home/random.h"
 #include "generated/wram.h"
+
+#include "home/card_data.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -377,3 +380,34 @@ DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
 	}
 }
 /* <<< factory DetermineBoosterCard */
+
+/* >>> factory CheckCardInSetAndRarity */
+CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	CardTRS r = GetCardTypeRarityAndSet(e);
+	wBoosterCurrentCardType = r.type;
+	wBoosterCurrentCardRarity = r.rarity;
+	wBoosterCurrentCardSet = r.set;
+
+	uint8_t rarity = wBoosterCurrentCardRarity;
+	uint8_t cur_rarity = wBoosterCurrentRarity;
+	uint8_t a;
+	if (cur_rarity != rarity) {
+		a = cur_rarity;
+		return (CheckCardInSetAndRarityResult){a, 0x10u, b, c, d, e, hl};
+	}
+
+	uint8_t card_type = wBoosterCurrentCardType;
+	a = GetBoosterCardType(card_type);
+	if (a != BOOSTER_CARD_TYPE_ENERGY) {
+		uint8_t set_hi = (uint8_t)((wBoosterCurrentCardSet >> 4) & 0x0Fu);
+		uint8_t data_set = wBoosterData_Set;
+		if (data_set != set_hi) {
+			a = data_set;
+			return (CheckCardInSetAndRarityResult){a, 0x10u, b, c, d, e, hl};
+		}
+		a = data_set;
+	}
+	return (CheckCardInSetAndRarityResult){a, 0x00u, b, c, d, e, hl};
+}
+/* <<< factory CheckCardInSetAndRarity */

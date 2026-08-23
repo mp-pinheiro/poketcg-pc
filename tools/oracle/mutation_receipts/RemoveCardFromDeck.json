@@ -1,0 +1,9 @@
+{
+  "fn": "RemoveCardFromDeck",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RemoveCardFromDeck\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 128, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RemoveCardFromDeck\", \"mismatches\": {\"f\": [128, 144]}}\n",
+  "restored": "{\"fn\": \"RemoveCardFromDeck\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 1, \"f\": 128, \"hl\": 17493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

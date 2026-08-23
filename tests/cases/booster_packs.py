@@ -282,6 +282,19 @@ CASES["DetermineBoosterCard"] = [
 ]
 # <<< factory DetermineBoosterCard
 
+# >>> factory CheckCardInSetAndRarity
+CONTRACT["CheckCardInSetAndRarity"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["CheckCardInSetAndRarity"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x01, "hl": 0x4455,
+     "wram": {0xD66C: b"\x01"}},
+    dict(POISON, e=0x01, wram={0xD66C: b"\x00"}),
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x40, "hl": 0x4455,
+     "wram": {0xD66C: b"\x02", 0xD686: b"\x09"}},
+    {"b": 0x11, "c": 0x22, "d": 0x33, "e": 0x40, "hl": 0x4455,
+     "wram": {0xD66C: b"\x02", 0xD686: b"\x04"}},
+]
+# <<< factory CheckCardInSetAndRarity
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -385,3 +398,6 @@ MUTATIONS["GenerateBoosterEnergies"] = {"source_symbol": "GenerateBoosterEnergie
 # >>> factory-mutation DetermineBoosterCard
 MUTATIONS["DetermineBoosterCard"] = {"source_symbol": "DetermineBoosterCard", "before": "return (DetermineBoosterCardResult){0u, 0x90u, b, c, d, e, hl};", "after": "return (DetermineBoosterCardResult){0u, 0x80u, b, c, d, e, hl};", "case_ids": ["DetermineBoosterCard-2"]}
 # <<< factory-mutation DetermineBoosterCard
+# >>> factory-mutation CheckCardInSetAndRarity
+MUTATIONS["CheckCardInSetAndRarity"] = {"source_symbol": "CheckCardInSetAndRarity", "before": "if (cur_rarity != rarity) {", "after": "if (cur_rarity == rarity) {", "case_ids": ["CheckCardInSetAndRarity-0", "CheckCardInSetAndRarity-1"]}
+# <<< factory-mutation CheckCardInSetAndRarity

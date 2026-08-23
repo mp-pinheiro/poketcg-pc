@@ -92,6 +92,10 @@
 #include "generated/wram.h"
 #define NUM_FILTERS 0x09u
 #define NoCardsChosenText 0x023eu
+
+#include "home/sound.h"
+#include "generated/wram.h"
+#define SFX_CURSOR 0x01u
 /* <<< factory statics */
 
 
@@ -585,3 +589,39 @@ TallyCardsInCardFilterListsResult TallyCardsInCardFilterLists(uint8_t d, uint8_t
 	return (TallyCardsInCardFilterListsResult){result.a, result.f, result.d, result.e, result.hl};
 }
 /* <<< factory TallyCardsInCardFilterLists */
+
+/* >>> factory RemoveCardFromDeck */
+RemoveCardFromDeckResult RemoveCardFromDeck(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	GetCountOfCardInCurDeckResult r = GetCountOfCardInCurDeck(e);
+	if (r.a == 0u)
+		return (RemoveCardFromDeckResult){0u, 0x80u, b, c, d, e, hl};
+
+	PlaySFX(SFX_CURSOR);
+
+	uint16_t p = wCurDeckCards_ADDR;
+	uint8_t v;
+	for (;;) {
+		v = gb_read8(p);
+		p = (uint16_t)(p + 1u);
+		if (v == e)
+			break;
+	}
+	uint16_t dst = (uint16_t)(p - 1u);
+	for (;;) {
+		v = gb_read8(p);
+		p = (uint16_t)(p + 1u);
+		if (v == 0u)
+			break;
+		gb_write8(dst, v);
+		dst = (uint16_t)(dst + 1u);
+	}
+	gb_write8(dst, 0u);
+
+	uint8_t filter = wCurCardTypeFilter;
+	uint16_t faddr = (uint16_t)(wCardFilterCounts_ADDR + filter);
+	gb_write8(faddr, (uint8_t)(gb_read8(faddr) - 1u));
+
+	return (RemoveCardFromDeckResult){0u, 0x90u, (uint8_t)(dst >> 8), (uint8_t)dst, d, e, p};
+}
+/* <<< factory RemoveCardFromDeck */

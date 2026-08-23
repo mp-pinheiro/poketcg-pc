@@ -271,6 +271,14 @@ static void adapt_TallyCardsInCardFilterLists(ProbeState *s)
 }
 /* <<< factory TallyCardsInCardFilterLists */
 
+/* >>> factory RemoveCardFromDeck */
+static void adapt_RemoveCardFromDeck(ProbeState *s)
+{
+	RemoveCardFromDeckResult r = RemoveCardFromDeck(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory RemoveCardFromDeck */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -302,5 +310,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CopyDeckName", adapt_CopyDeckName },
 	{ "GetOwnedCardCount", adapt_GetOwnedCardCount },
 	{ "TallyCardsInCardFilterLists", adapt_TallyCardsInCardFilterLists },
+	{ "RemoveCardFromDeck", adapt_RemoveCardFromDeck },
 	{ NULL, NULL },
 };
