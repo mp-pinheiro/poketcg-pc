@@ -145,6 +145,14 @@ CASES["UpdateConfigMenuCursor"] = [
 ]
 # <<< factory UpdateConfigMenuCursor
 
+# >>> factory ConfigScreenDPadDown
+CONTRACT["ConfigScreenDPadDown"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ConfigScreenDPadDown"] = [
+    {"wram": {0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD118: b"\x00"}, "read": {0xD11B: 1, 0xD11C: 1, 0x9825: 1}},
+    dict(POISON, wram={0xD11B: b"\x02", 0xD11C: b"\xFF", 0xD118: b"\x00"}, read={0xD11B: 1, 0xD11C: 1, 0x9825: 1}),
+]
+# <<< factory ConfigScreenDPadDown
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -213,3 +221,11 @@ MUTATIONS["UpdateConfigMenuCursor"] = {
     "case_ids": ["UpdateConfigMenuCursor-0", "UpdateConfigMenuCursor-1"],
 }
 # <<< factory-mutation UpdateConfigMenuCursor
+# >>> factory-mutation ConfigScreenDPadDown
+MUTATIONS["ConfigScreenDPadDown"] = {
+    "source_symbol": "ConfigScreenDPadDown",
+    "before": "else if (new_row_candidate == 3u)",
+    "after": "else if (new_row_candidate == 4u)",
+    "case_ids": ["ConfigScreenDPadDown-0", "ConfigScreenDPadDown-1"],
+}
+# <<< factory-mutation ConfigScreenDPadDown
