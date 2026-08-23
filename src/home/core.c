@@ -588,6 +588,16 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define PracticeDuelText_SamTurn4 0x5346u
+
+#include "home/core.h"
+#include "home/tiles.h"
+#include "home/menus.h"
+#include "home/empty_screen.h"
+#include "home/serial.h"
+#include "mem.h"
+#define BOXMSG_OPPONENTS_TURN 0x01u
+#define BOXMSG_PLAYERS_TURN 0x00u
+#define DuelistTurnText 0x005eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3576,3 +3586,17 @@ PracticeDuel_PlayStaryuFromBenchResult PracticeDuel_PlayStaryuFromBench(void)
 	return (PracticeDuel_PlayStaryuFromBenchResult){0x00u};
 }
 /* <<< factory PracticeDuel_PlayStaryuFromBench */
+
+/* >>> factory DisplayDuelistTurnScreen */
+void DisplayDuelistTurnScreen(void)
+{
+	EmptyScreen();
+	uint8_t c = BOXMSG_PLAYERS_TURN;
+	uint8_t turn = hWhoseTurn;
+	if (turn != PLAYER_TURN)
+		c++;
+	DrawDuelBoxMessage(c);
+	(void)DrawWideTextBox_WaitForInput(DuelistTurnText);
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+}
+/* <<< factory DisplayDuelistTurnScreen */

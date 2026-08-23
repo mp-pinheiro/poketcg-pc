@@ -1467,6 +1467,8 @@ wSelectedAttack = 0xCCC6
 wAttachedEnergies = 0xCC1B
 
 wDuelTurns = 0xCC06
+
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2020,6 +2022,24 @@ CASES["PracticeDuel_PlayStaryuFromBench"] = [
      "expect": {0xCC01: b"\x46\x53", 0xCBCA: b"\x00"}},
 ]
 # <<< factory PracticeDuel_PlayStaryuFromBench
+
+# >>> factory DisplayDuelistTurnScreen
+CONTRACT["DisplayDuelistTurnScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayDuelistTurnScreen"] = [
+    {"wram": {hWhoseTurn: b"\xC2"},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}},
+    {"wram": {hWhoseTurn: b"\xC3"},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2"},
+         keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000,
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}}),
+]
+# <<< factory DisplayDuelistTurnScreen
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3040,3 +3060,6 @@ MUTATIONS["PracticeDuelVerify_Turn2"] = {"source_symbol": "PracticeDuelVerify_Tu
 # >>> factory-mutation PracticeDuel_PlayStaryuFromBench
 MUTATIONS["PracticeDuel_PlayStaryuFromBench"] = {"source_symbol": "PracticeDuel_PlayStaryuFromBench", "before": "(uint8_t)(turns == 0u ? 0x80u : 0x00u)", "after": "(uint8_t)(turns == 0u ? 0x00u : 0x80u)", "case_ids": ["PracticeDuel_PlayStaryuFromBench-0", "PracticeDuel_PlayStaryuFromBench-1"]}
 # <<< factory-mutation PracticeDuel_PlayStaryuFromBench
+# >>> factory-mutation DisplayDuelistTurnScreen
+MUTATIONS["DisplayDuelistTurnScreen"] = {"source_symbol": "DisplayDuelistTurnScreen", "before": "if (turn != PLAYER_TURN)", "after": "if (turn == PLAYER_TURN)", "case_ids": ["DisplayDuelistTurnScreen-0", "DisplayDuelistTurnScreen-1"]}
+# <<< factory-mutation DisplayDuelistTurnScreen

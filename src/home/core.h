@@ -675,4 +675,7 @@ PracticeDuelVerify_Turn2Result PracticeDuelVerify_Turn2(void);
 typedef struct { uint8_t f; } PracticeDuel_PlayStaryuFromBenchResult;
 PracticeDuel_PlayStaryuFromBenchResult PracticeDuel_PlayStaryuFromBench(void);
 /* <<< factory PracticeDuel_PlayStaryuFromBench */
+/* >>> factory DisplayDuelistTurnScreen */
+void DisplayDuelistTurnScreen(void);
+/* <<< factory DisplayDuelistTurnScreen */
 #endif
