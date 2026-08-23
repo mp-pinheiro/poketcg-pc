@@ -2821,6 +2821,14 @@ CASES["SandslashFurySwipes_AIEffect"] = [
 ]
 # <<< factory SandslashFurySwipes_AIEffect
 
+# >>> factory Thunderpunch_AIEffect
+CONTRACT["Thunderpunch_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Thunderpunch_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory Thunderpunch_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4665,3 +4673,6 @@ MUTATIONS["PinMissile_AIEffect"] = {"source_symbol": "PinMissile_AIEffect", "bef
 # >>> factory-mutation SandslashFurySwipes_AIEffect
 MUTATIONS["SandslashFurySwipes_AIEffect"] = {"source_symbol": "SandslashFurySwipes_AIEffect", "before": "void SandslashFurySwipes_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void SandslashFurySwipes_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["SandslashFurySwipes_AIEffect-0", "SandslashFurySwipes_AIEffect-1"]}
 # <<< factory-mutation SandslashFurySwipes_AIEffect
+# >>> factory-mutation Thunderpunch_AIEffect
+MUTATIONS["Thunderpunch_AIEffect"] = {"source_symbol": "Thunderpunch_AIEffect", "before": "void Thunderpunch_AIEffect(void)\n{\n\tSetExpectedAIDamage(35u, 30u, 40u);\n}", "after": "void Thunderpunch_AIEffect(void)\n{\n\tSetExpectedAIDamage(36u, 30u, 40u);\n}", "case_ids": ["Thunderpunch_AIEffect-0", "Thunderpunch_AIEffect-1"]}
+# <<< factory-mutation Thunderpunch_AIEffect

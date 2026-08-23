@@ -134,6 +134,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define CHALLENGE_HALL_NPC_COUNT 25u
 #define CHALLENGE_HALL_NPCS_BANK 3u
 #define CHALLENGE_HALL_NPCS_ADDR 0x75B3u
+
+#include "home/scripting.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1160,3 +1165,16 @@ IncreaseScriptPointerResult ScriptCommand_PickChallengeHallOpponent(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_PickChallengeHallOpponent */
+
+/* >>> factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+IncreaseScriptPointerResult ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(uint8_t c)
+{
+	uint8_t shifted = (uint8_t)(c << 1);
+	uint16_t addr = (uint16_t)(wTxRam2_ADDR + shifted);
+	uint8_t event = GetEventValue(EVENT_MAN1_REQUESTED_CARD_ID);
+	uint16_t name = GetCardName(event);
+	gb_write8(addr, (uint8_t)(name & 0xFFu));
+	gb_write8((uint16_t)(addr + 1u), (uint8_t)(name >> 8));
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */

@@ -2,6 +2,15 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/scripting.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DUEL_WIN 0x00u
+#define NPC_HOST 0x4Au
+#define CHALLENGE_HALL_BANK 3u
+#define ChallengeHallAfterDuelTable_ADDR 0x7254u
+/* <<< factory statics */
 
 ChallengeHallClearResult Func_f5db(void)
 {
@@ -45,3 +54,16 @@ ChallengeHallSetBitResult Func_f5d4(uint8_t c)
 	return (ChallengeHallSetBitResult){a, f};
 }
 /* <<< factory Func_f5d4 */
+
+/* >>> factory ChallengeHallAfterDuel */
+ChallengeHallAfterDuelResult ChallengeHallAfterDuel(void)
+{
+	uint8_t c = (wDuelResult == DUEL_WIN) ? 0u : 2u;
+	const uint8_t *entry = rom_ptr(CHALLENGE_HALL_BANK, (uint16_t)(ChallengeHallAfterDuelTable_ADDR + c));
+	uint16_t bc = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));
+	uint16_t hl = (uint16_t)(ChallengeHallAfterDuelTable_ADDR + c + 1u);
+	wTempNPC = NPC_HOST;
+	SetNextNPCAndScriptResult r = SetNextNPCAndScript(bc, hl);
+	return (ChallengeHallAfterDuelResult){r.a, r.f, r.b, r.c, r.hl};
+}
+/* <<< factory ChallengeHallAfterDuel */

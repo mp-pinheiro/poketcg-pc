@@ -69,6 +69,14 @@ CASES["Func_f5d4"] = [
 ]
 # <<< factory Func_f5d4
 
+# >>> factory ChallengeHallAfterDuel
+CONTRACT["ChallengeHallAfterDuel"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": (), "wram_out": True}
+CASES["ChallengeHallAfterDuel"] = [
+    {"wram": {0xD0C3: b"\x00", 0xD3AB: b"\x00"}, "read": {0xD3AB: 1}},
+    dict(POISON, wram={0xD0C3: b"\x01", 0xD3AB: b"\x00"}, read={0xD3AB: 1}),
+]
+# <<< factory ChallengeHallAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -110,3 +118,6 @@ MUTATIONS["Func_f5d4"] = {
                   "Func_f5d4-3", "Func_f5d4-4", "Func_f5d4-5"],
 }
 # <<< factory-mutation Func_f5d4
+# >>> factory-mutation ChallengeHallAfterDuel
+MUTATIONS["ChallengeHallAfterDuel"] = {"source_symbol": "ChallengeHallAfterDuel", "before": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 0u : 2u;", "after": "\tuint8_t c = (wDuelResult == DUEL_WIN) ? 2u : 0u;", "case_ids": ["ChallengeHallAfterDuel-0", "ChallengeHallAfterDuel-1"]}
+# <<< factory-mutation ChallengeHallAfterDuel

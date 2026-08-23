@@ -4312,3 +4312,10 @@ void SandslashFurySwipes_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory SandslashFurySwipes_AIEffect */
+
+/* >>> factory Thunderpunch_AIEffect */
+void Thunderpunch_AIEffect(void)
+{
+	SetExpectedAIDamage(35u, 30u, 40u);
+}
+/* <<< factory Thunderpunch_AIEffect */

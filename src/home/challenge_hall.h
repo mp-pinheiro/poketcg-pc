@@ -43,4 +43,8 @@ typedef struct {
 } ChallengeHallSetBitResult;
 ChallengeHallSetBitResult Func_f5d4(uint8_t c);
 /* <<< factory Func_f5d4 */
+/* >>> factory ChallengeHallAfterDuel */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } ChallengeHallAfterDuelResult;
+ChallengeHallAfterDuelResult ChallengeHallAfterDuel(void);
+/* <<< factory ChallengeHallAfterDuel */
 #endif

@@ -100,4 +100,8 @@ DrawListCursorResult DrawListCursor_Visible(void);
 /* >>> factory CountNumberOfCardsForEachCardType */
 void CountNumberOfCardsForEachCardType(void);
 /* <<< factory CountNumberOfCardsForEachCardType */
+/* >>> factory CopyDeckName */
+typedef struct { uint16_t hl; uint8_t d; uint8_t e; } CopyDeckNameResult;
+CopyDeckNameResult CopyDeckName(uint16_t hl);
+/* <<< factory CopyDeckName */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

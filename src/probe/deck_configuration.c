@@ -240,6 +240,16 @@ static void adapt_CountNumberOfCardsForEachCardType(ProbeState *s)
 }
 /* <<< factory CountNumberOfCardsForEachCardType */
 
+/* >>> factory CopyDeckName */
+static void adapt_CopyDeckName(ProbeState *s)
+{
+	CopyDeckNameResult r = CopyDeckName(s->hl);
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory CopyDeckName */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -268,5 +278,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DrawListCursor_Invisible", adapt_DrawListCursor_Invisible },
 	{ "DrawListCursor_Visible", adapt_DrawListCursor_Visible },
 	{ "CountNumberOfCardsForEachCardType", adapt_CountNumberOfCardsForEachCardType },
+	{ "CopyDeckName", adapt_CopyDeckName },
 	{ NULL, NULL },
 };

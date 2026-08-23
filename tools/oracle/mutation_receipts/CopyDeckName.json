@@ -1,0 +1,9 @@
+{
+  "fn": "CopyDeckName",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyDeckName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 152, \"f\": 0, \"hl\": 21165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41472\": \"41424300\"}}, \"vram\": {}, \"wram\": {\"50576\": \"414243206465636b0000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyDeckName\", \"mismatches\": {\"e\": [152, 151], \"bus\": {\"address\": 50579, \"reference\": \"414243206465636b\", \"native\": \"4142436465636b00\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[50576, 16]]}}}\n",
+  "restored": "{\"fn\": \"CopyDeckName\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 197, \"e\": 152, \"f\": 0, \"hl\": 21165, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 2, \"sram\": {\"0\": {\"41472\": \"41424300\"}}, \"vram\": {}, \"wram\": {\"50576\": \"414243206465636b0000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

@@ -774,6 +774,16 @@ static void adapt_ScriptCommand_PickChallengeHallOpponent(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PickChallengeHallOpponent */
 
+/* >>> factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+static void adapt_ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -849,5 +859,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetActiveNPCDirection", adapt_ScriptCommand_SetActiveNPCDirection },
 	{ "ScriptCommand_PlayCredits", adapt_ScriptCommand_PlayCredits },
 	{ "ScriptCommand_PickChallengeHallOpponent", adapt_ScriptCommand_PickChallengeHallOpponent },
+	{ "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot", adapt_ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot },
 	{ NULL, NULL },
 };

@@ -888,6 +888,14 @@ CASES["ScriptCommand_PickChallengeHallOpponent"] = [
 ]
 # <<< factory ScriptCommand_PickChallengeHallOpponent
 
+# >>> factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
+CONTRACT["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = [
+    {"c": 0x01, "wram": {0xD3DA: b"\x01", 0xCE41: b"\x00\x00"}, "read": {0xCE41: 2}},
+    dict(POISON, c=0x02, wram={0xD3DA: b"\x02", 0xCE43: b"\x00\x00"}, read={0xCE43: 2}),
+]
+# <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1354,3 +1362,6 @@ MUTATIONS["ScriptCommand_PlayCredits"] = {"source_symbol": "ScriptCommand_PlayCr
 # >>> factory-mutation ScriptCommand_PickChallengeHallOpponent
 MUTATIONS["ScriptCommand_PickChallengeHallOpponent"] = {"source_symbol": "ScriptCommand_PickChallengeHallOpponent", "before": "\tuint8_t new_opponent_number = (uint8_t)(opponent_number + 1u);", "after": "\tuint8_t new_opponent_number = opponent_number;", "case_ids": ["ScriptCommand_PickChallengeHallOpponent-0", "ScriptCommand_PickChallengeHallOpponent-1"]}
 # <<< factory-mutation ScriptCommand_PickChallengeHallOpponent
+# >>> factory-mutation ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
+MUTATIONS["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = {"source_symbol": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot", "before": "\tuint8_t shifted = (uint8_t)(c << 1);", "after": "\tuint8_t shifted = c;", "case_ids": ["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-0", "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-1"]}
+# <<< factory-mutation ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot

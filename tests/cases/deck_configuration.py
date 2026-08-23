@@ -323,6 +323,14 @@ CASES["CountNumberOfCardsForEachCardType"] = [
 ]
 # <<< factory CountNumberOfCardsForEachCardType
 
+# >>> factory CopyDeckName
+CONTRACT["CopyDeckName"] = {"compare": ("hl", "d", "e"), "preserve": (), "wram_out": True}
+CASES["CopyDeckName"] = [
+    {"hl": 0xA200, "rom_bank": 2, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "sram": {0: {0xA200: b"ABC\x00"}}, "wram": {0xC590: b"\x00" * 16}, "read": {0xC590: 12}},
+    dict(POISON, hl=0xA200, rom_bank=2, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], sram={0: {0xA200: b"AB\x00"}}, wram={0xC590: b"\x00" * 16}, read={0xC590: 12}),
+]
+# <<< factory CopyDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -453,3 +461,6 @@ MUTATIONS["DrawListCursor_Visible"] = {"source_symbol": "DrawListCursor_Visible"
 # >>> factory-mutation CountNumberOfCardsForEachCardType
 MUTATIONS["CountNumberOfCardsForEachCardType"] = {"source_symbol": "CountNumberOfCardsForEachCardType", "before": "\t\tgb_write8(hl++, CountNumberOfCardsOfType(type));", "after": "\t\tgb_write8(hl++, (uint8_t)(CountNumberOfCardsOfType(type) + 1u));", "case_ids": ["CountNumberOfCardsForEachCardType-0", "CountNumberOfCardsForEachCardType-1"]}
 # <<< factory-mutation CountNumberOfCardsForEachCardType
+# >>> factory-mutation CopyDeckName
+MUTATIONS["CopyDeckName"] = {"source_symbol": "CopyDeckName", "before": "\tuint16_t hl4 = DeckNameSuffix_ADDR;", "after": "\tuint16_t hl4 = (uint16_t)(DeckNameSuffix_ADDR + 1u);", "case_ids": ["CopyDeckName-0", "CopyDeckName-1"]}
+# <<< factory-mutation CopyDeckName

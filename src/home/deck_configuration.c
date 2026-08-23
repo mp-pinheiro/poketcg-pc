@@ -80,6 +80,12 @@
 #include "home/deck_configuration.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DeckNameSuffix_ADDR 0x52A7u
 /* <<< factory statics */
 
 
@@ -521,3 +527,18 @@ void CountNumberOfCardsForEachCardType(void)
 		gb_write8(hl++, CountNumberOfCardsOfType(type));
 }
 /* <<< factory CountNumberOfCardsForEachCardType */
+
+/* >>> factory CopyDeckName */
+CopyDeckNameResult CopyDeckName(uint16_t hl)
+{
+	uint16_t de = wDefaultText_ADDR;
+	CopyListFromHLToDE(&hl, &de);
+	uint16_t hl2 = wDefaultText_ADDR;
+	TextLength len = GetTextLengthInTiles(hl2);
+	uint16_t hl3 = (uint16_t)(wDefaultText_ADDR + len.c);
+	uint16_t de2 = hl3;
+	uint16_t hl4 = DeckNameSuffix_ADDR;
+	CopyListFromHLToDE(&hl4, &de2);
+	return (CopyDeckNameResult){hl4, (uint8_t)(de2 >> 8), (uint8_t)(de2 & 0xFFu)};
+}
+/* <<< factory CopyDeckName */

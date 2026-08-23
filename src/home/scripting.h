@@ -402,4 +402,7 @@ IncreaseScriptPointerResult ScriptCommand_PlayCredits(void);
 /* >>> factory ScriptCommand_PickChallengeHallOpponent */
 IncreaseScriptPointerResult ScriptCommand_PickChallengeHallOpponent(void);
 /* <<< factory ScriptCommand_PickChallengeHallOpponent */
+/* >>> factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+IncreaseScriptPointerResult ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(uint8_t c);
+/* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
 #endif

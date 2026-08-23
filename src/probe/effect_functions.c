@@ -2582,6 +2582,14 @@ static void adapt_SandslashFurySwipes_AIEffect(ProbeState *s)
 }
 /* <<< factory SandslashFurySwipes_AIEffect */
 
+/* >>> factory Thunderpunch_AIEffect */
+static void adapt_Thunderpunch_AIEffect(ProbeState *s)
+{
+	(void)s;
+	Thunderpunch_AIEffect();
+}
+/* <<< factory Thunderpunch_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2902,5 +2910,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_AIEffect", adapt_LeekSlap_AIEffect },
 	{ "PinMissile_AIEffect", adapt_PinMissile_AIEffect },
 	{ "SandslashFurySwipes_AIEffect", adapt_SandslashFurySwipes_AIEffect },
+	{ "Thunderpunch_AIEffect", adapt_Thunderpunch_AIEffect },
 	{ NULL, NULL },
 };
