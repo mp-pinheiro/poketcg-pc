@@ -4517,3 +4517,11 @@ void PoliwhirlDoubleslap_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory PoliwhirlDoubleslap_AIEffect */
+
+/* >>> factory KinglerFlail_AIEffect */
+void KinglerFlail_AIEffect(void)
+{
+	KinglerFlail_HPCheck();
+	SetDefiniteAIDamage();
+}
+/* <<< factory KinglerFlail_AIEffect */

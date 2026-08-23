@@ -1129,6 +1129,9 @@ void GengarDarkMind_AISelectEffect(void);
 /* >>> factory PoliwhirlDoubleslap_AIEffect */
 void PoliwhirlDoubleslap_AIEffect(void);
 /* <<< factory PoliwhirlDoubleslap_AIEffect */
+/* >>> factory KinglerFlail_AIEffect */
+void KinglerFlail_AIEffect(void);
+/* <<< factory KinglerFlail_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

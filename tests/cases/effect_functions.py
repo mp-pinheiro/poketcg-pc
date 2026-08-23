@@ -2995,6 +2995,18 @@ CASES["PoliwhirlDoubleslap_AIEffect"] = [
 ]
 # <<< factory PoliwhirlDoubleslap_AIEffect
 
+# >>> factory KinglerFlail_AIEffect
+CONTRACT["KinglerFlail_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["KinglerFlail_AIEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", wPlayerDeck: b"\x01",
+              wDamage: b"\x99", wAIMinDamage: b"\x88"},
+     "read": {wDamage: 1, wAIMinDamage: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", wPlayerDeck: b"\x01",
+                       wDamage: b"\x77", wAIMinDamage: b"\x66"},
+         read={wDamage: 1, wAIMinDamage: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory KinglerFlail_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4884,3 +4896,6 @@ MUTATIONS["GengarDarkMind_AISelectEffect"] = {"source_symbol": "GengarDarkMind_A
 # >>> factory-mutation PoliwhirlDoubleslap_AIEffect
 MUTATIONS["PoliwhirlDoubleslap_AIEffect"] = {"source_symbol": "PoliwhirlDoubleslap_AIEffect", "before": "void PoliwhirlDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);", "after": "void PoliwhirlDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 40u);", "case_ids": ["PoliwhirlDoubleslap_AIEffect-0", "PoliwhirlDoubleslap_AIEffect-1"]}
 # <<< factory-mutation PoliwhirlDoubleslap_AIEffect
+# >>> factory-mutation KinglerFlail_AIEffect
+MUTATIONS["KinglerFlail_AIEffect"] = {"source_symbol": "KinglerFlail_AIEffect", "before": "KinglerFlail_HPCheck();", "after": "(void)0;", "case_ids": ["KinglerFlail_AIEffect-0", "KinglerFlail_AIEffect-1"]}
+# <<< factory-mutation KinglerFlail_AIEffect
