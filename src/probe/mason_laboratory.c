@@ -26,8 +26,17 @@ static void adapt_MasonLaboratoryAfterDuel(ProbeState *s)
 }
 /* <<< factory MasonLaboratoryAfterDuel */
 
+/* >>> factory MasonLabCloseTextBox */
+static void adapt_MasonLabCloseTextBox(ProbeState *s)
+{
+	(void)s;
+	MasonLabCloseTextBox();
+}
+/* <<< factory MasonLabCloseTextBox */
+
 const ProbeEntry probe_entries_mason_laboratory[] = {
 	{ "Preload_DrMason", adapt_Preload_DrMason },
 	{ "MasonLaboratoryAfterDuel", adapt_MasonLaboratoryAfterDuel },
+	{ "MasonLabCloseTextBox", adapt_MasonLabCloseTextBox },
 	{ NULL, NULL },
 };

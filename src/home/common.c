@@ -544,3 +544,10 @@ LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_Given
 	return (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){wTempAIPokemonCard, f};
 }
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
+
+/* >>> factory AddStarterDeck */
+void AddStarterDeck(uint8_t a)
+{
+	_AddStarterDeck(a);
+}
+/* <<< factory AddStarterDeck */

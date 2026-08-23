@@ -1,6 +1,9 @@
 #include "home/pokemon_dome.h"
 
 #include "mem.h"
+/* >>> factory statics */
+#define MAP_EVENT_HALL_OF_HONOR_DOOR 0x01u
+/* <<< factory statics */
 
 #define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
 #define W_LOAD_NPC_Y_POS_ADDR 0xD3ADu
@@ -42,3 +45,10 @@ PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f)
 	return Func_f782(b, c, f);
 }
 /* <<< factory Func_f77d */
+
+/* >>> factory PokemonDomeCloseTextBox */
+void PokemonDomeCloseTextBox(void)
+{
+	ApplyOWMapEventChangeIfEventSet(MAP_EVENT_HALL_OF_HONOR_DOOR);
+}
+/* <<< factory PokemonDomeCloseTextBox */

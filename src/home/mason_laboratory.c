@@ -13,6 +13,8 @@
 
 #include "home/grass_club_entrance.h"
 #define MasonLaboratoryAfterDuelTable 0x5542u
+
+#define MAP_EVENT_CHALLENGE_MACHINE 0x0au
 /* <<< factory statics */
 
 /* >>> factory Preload_DrMason */
@@ -44,3 +46,10 @@ MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void)
 	return (MasonLaboratoryAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory MasonLaboratoryAfterDuel */
+
+/* >>> factory MasonLabCloseTextBox */
+void MasonLabCloseTextBox(void)
+{
+	ApplyOWMapEventChangeIfEventSet(MAP_EVENT_CHALLENGE_MACHINE);
+}
+/* <<< factory MasonLabCloseTextBox */

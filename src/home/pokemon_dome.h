@@ -12,4 +12,7 @@ PokemonDomeResult PlacePokemonDomeOpponentAtDuelTable(uint8_t f);
 /* >>> factory Func_f77d */
 PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f);
 /* <<< factory Func_f77d */
+/* >>> factory PokemonDomeCloseTextBox */
+void PokemonDomeCloseTextBox(void);
+/* <<< factory PokemonDomeCloseTextBox */
 #endif

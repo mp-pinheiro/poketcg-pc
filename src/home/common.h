@@ -87,4 +87,7 @@ LookForCardIDInDeck_GivenCardIDInHandResult LookForCardIDInDeck_GivenCardIDInHan
 typedef struct { uint8_t a; uint8_t f; } LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult;
 LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(uint8_t a, uint8_t b);
 /* <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea */
+/* >>> factory AddStarterDeck */
+void AddStarterDeck(uint8_t a);
+/* <<< factory AddStarterDeck */
 #endif /* POKETCG_HOME_COMMON_H */

@@ -132,6 +132,12 @@ BULBASAUR = 0x08
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wTempAIPokemonCard = 0xCDF3
+
+hWhoseTurn = 0xFF97
+sCardCollection = 0xA100
+sDeck1 = 0xA200
+wOpponentDeck = 0xC480
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -288,6 +294,20 @@ CASES["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = [
 ]
 # <<< factory LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
 
+# >>> factory AddStarterDeck
+CONTRACT["AddStarterDeck"] = {"compare": (), "preserve": ()}
+CASES["AddStarterDeck"] = [
+    {"a": 0x00, "wram": {hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+     "sram": {0: {sCardCollection: bytes([0x80] * 256)}},
+     "read": {hWhoseTurn: 1},
+     "sread": {0: {sCardCollection: 256, sDeck1: 32}}},
+    dict(POISON, a=0x01, wram={hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+         sram={0: {sCardCollection: bytes([0x80] * 256)}},
+         read={hWhoseTurn: 1},
+         sread={0: {sCardCollection: 256, sDeck1: 32}}),
+]
+# <<< factory AddStarterDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -397,3 +417,6 @@ MUTATIONS["LookForCardIDInDeck_GivenCardIDInHand"] = {"source_symbol": "LookForC
 # >>> factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
 MUTATIONS["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", "before": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);', "after": '\tif (r3.f & 0x10u) {\n\t\tuint8_t f = (r3.a == 0u) ? 0x80u : 0u;\n\t\treturn (LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult){r3.a, f};\n\t}\n\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);', "case_ids": ["LookForCardIDInDeck_GivenCardIDInHandAndPlayArea-2"]}
 # <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHandAndPlayArea
+# >>> factory-mutation AddStarterDeck
+MUTATIONS["AddStarterDeck"] = {"source_symbol": "AddStarterDeck", "before": "\t_AddStarterDeck(a);", "after": "\t_AddStarterDeck((uint8_t)(a + 1u));", "case_ids": ["AddStarterDeck-0", "AddStarterDeck-1"]}
+# <<< factory-mutation AddStarterDeck

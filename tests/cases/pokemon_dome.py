@@ -67,6 +67,26 @@ CASES["Func_f77d"] = [
 ]
 # <<< factory Func_f77d
 
+# >>> factory-cases-statics
+wOWMapEvents = 0xD323
+wWriteBGMapToSRAM = 0xD292
+wCurTilemap = 0xD131
+wConsole = 0xCAB4
+wPermissionMap = 0xD133
+# <<< factory-cases-statics
+
+# >>> factory PokemonDomeCloseTextBox
+CONTRACT["PokemonDomeCloseTextBox"] = {"compare": (), "preserve": ()}
+CASES["PokemonDomeCloseTextBox"] = [
+    {"wram": {wOWMapEvents: b"\x00\xFF\x00", wCurTilemap: b"\x00", wConsole: b"\x00"},
+     "read": {wWriteBGMapToSRAM: 1, wOWMapEvents: 3, wPermissionMap: 256}},
+    {"wram": {wOWMapEvents: b"\x00\x02\x00", wCurTilemap: b"\x00", wConsole: b"\x00"},
+     "read": {wWriteBGMapToSRAM: 1, wOWMapEvents: 3, wPermissionMap: 256}},
+    dict(POISON, wram={wOWMapEvents: b"\x00\x03\x00", wCurTilemap: b"\x00", wConsole: b"\x00"},
+         read={wWriteBGMapToSRAM: 1, wOWMapEvents: 3, wPermissionMap: 256}),
+]
+# <<< factory PokemonDomeCloseTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -102,3 +122,6 @@ MUTATIONS["Func_f77d"] = {
     "case_ids": ["Func_f77d-1", "Func_f77d-2", "Func_f77d-3"],
 }
 # <<< factory-mutation Func_f77d
+# >>> factory-mutation PokemonDomeCloseTextBox
+MUTATIONS["PokemonDomeCloseTextBox"] = {"source_symbol": "PokemonDomeCloseTextBox", "before": "\tApplyOWMapEventChangeIfEventSet(MAP_EVENT_HALL_OF_HONOR_DOOR);", "after": "\tApplyOWMapEventChangeIfEventSet((uint8_t)(MAP_EVENT_HALL_OF_HONOR_DOOR + 1u));", "case_ids": ["PokemonDomeCloseTextBox-0", "PokemonDomeCloseTextBox-1"]}
+# <<< factory-mutation PokemonDomeCloseTextBox
