@@ -178,6 +178,9 @@ NAME_BUFFER_LENGTH = 0x10
 GENERIC_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1, wDefaultText: NAME_BUFFER_LENGTH}
 GENERIC_VREAD = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+sCardCollection = 0xA100
+wTempCardCollection = 0xC000
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -486,6 +489,18 @@ CASES["PrintPlayersCardsText"] = [
 ]
 # <<< factory PrintPlayersCardsText
 
+# >>> factory AddGiftCenterDeckCardsToCollection
+CONTRACT["AddGiftCenterDeckCardsToCollection"] = {"compare": (), "preserve": ()}
+CASES["AddGiftCenterDeckCardsToCollection"] = [
+    {"hl": 0xC300, "wram": {0xC300: b"\x05\x00"},
+     "sram": {0: {sCardCollection: b"\x00" * 255}},
+     "read": {sCardCollection + 5: 1, wTempCardCollection + 5: 1}},
+    dict(POISON, hl=0xC300, wram={0xC300: b"\x05\x00"},
+         sram={0: {sCardCollection: b"\x00" * 255}},
+         read={sCardCollection + 5: 1, wTempCardCollection + 5: 1}),
+]
+# <<< factory AddGiftCenterDeckCardsToCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -665,3 +680,6 @@ MUTATIONS["HandleLeftRightInCardList"] = {"source_symbol": "HandleLeftRightInCar
 # >>> factory-mutation PrintPlayersCardsText
 MUTATIONS["PrintPlayersCardsText"] = {"source_symbol": "PrintPlayersCardsText", "before": "InitTextPrinting(1u, 0u);", "after": "InitTextPrinting(2u, 0u);", "case_ids": ["PrintPlayersCardsText-0", "PrintPlayersCardsText-1"]}
 # <<< factory-mutation PrintPlayersCardsText
+# >>> factory-mutation AddGiftCenterDeckCardsToCollection
+MUTATIONS["AddGiftCenterDeckCardsToCollection"] = {"source_symbol": "AddGiftCenterDeckCardsToCollection", "before": "uint16_t addr = (uint16_t)(sCardCollection_ADDR + card);\n\t\tuint8_t owned = gb_read8(addr);\n\t\tif (owned == CARD_NOT_OWNED)\n\t\t\tgb_write8(addr, 0u);\n\t\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));", "after": "uint16_t addr = (uint16_t)(sCardCollection_ADDR + card);\n\t\tuint8_t owned = gb_read8(addr);\n\t\tif (owned == CARD_NOT_OWNED)\n\t\t\tgb_write8(addr, 0u);\n\t\tgb_write8(addr, gb_read8(addr));", "case_ids": ["AddGiftCenterDeckCardsToCollection-0", "AddGiftCenterDeckCardsToCollection-1"]}
+# <<< factory-mutation AddGiftCenterDeckCardsToCollection

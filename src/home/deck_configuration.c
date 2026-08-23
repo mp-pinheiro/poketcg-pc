@@ -140,6 +140,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define SCardsText 0x025au
+
+#include "home/deck_configuration.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -945,3 +951,25 @@ void PrintPlayersCardsText(void)
 	(void)ProcessTextFromID(hl);
 }
 /* <<< factory PrintPlayersCardsText */
+
+/* >>> factory AddGiftCenterDeckCardsToCollection */
+void AddGiftCenterDeckCardsToCollection(uint16_t hl)
+{
+	for (uint8_t d = DECK_SIZE; d != 0u; d--) {
+		uint8_t card = gb_read8(hl);
+		hl++;
+		if (card == 0u)
+			break;
+		CreateCardCollectionListWithDeckCards(ALL_DECKS);
+		uint8_t temp_count = gb_read8((uint16_t)(wTempCardCollection_ADDR + card));
+		if (temp_count == MAX_AMOUNT_OF_CARD)
+			continue;
+		EnableSRAM();
+		uint16_t addr = (uint16_t)(sCardCollection_ADDR + card);
+		uint8_t owned = gb_read8(addr);
+		if (owned == CARD_NOT_OWNED)
+			gb_write8(addr, 0u);
+		gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
+	}
+}
+/* <<< factory AddGiftCenterDeckCardsToCollection */

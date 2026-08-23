@@ -357,6 +357,13 @@ static void adapt_PrintPlayersCardsText(ProbeState *s)
 }
 /* <<< factory PrintPlayersCardsText */
 
+/* >>> factory AddGiftCenterDeckCardsToCollection */
+static void adapt_AddGiftCenterDeckCardsToCollection(ProbeState *s)
+{
+	AddGiftCenterDeckCardsToCollection(s->hl);
+}
+/* <<< factory AddGiftCenterDeckCardsToCollection */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -398,5 +405,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleCardSelectionInput", adapt_HandleCardSelectionInput },
 	{ "HandleLeftRightInCardList", adapt_HandleLeftRightInCardList },
 	{ "PrintPlayersCardsText", adapt_PrintPlayersCardsText },
+	{ "AddGiftCenterDeckCardsToCollection", adapt_AddGiftCenterDeckCardsToCollection },
 	{ NULL, NULL },
 };

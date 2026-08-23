@@ -149,4 +149,7 @@ HandleLeftRightInCardListResult HandleLeftRightInCardList(void);
 /* >>> factory PrintPlayersCardsText */
 void PrintPlayersCardsText(void);
 /* <<< factory PrintPlayersCardsText */
+/* >>> factory AddGiftCenterDeckCardsToCollection */
+void AddGiftCenterDeckCardsToCollection(uint16_t hl);
+/* <<< factory AddGiftCenterDeckCardsToCollection */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
