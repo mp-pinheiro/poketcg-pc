@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_UpdatePlayerWalkingAnimation",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_UpdatePlayerWalkingAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"00\", \"54077\": \"0100a162b7\", \"54479\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_UpdatePlayerWalkingAnimation\", \"mismatches\": {\"bus\": {\"address\": 54079, \"reference\": \"01000100a162b700\", \"native\": \"01000100a262b700\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[54062, 1], [54070, 1], [54077, 5], [54479, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_UpdatePlayerWalkingAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"00\", \"54077\": \"0100a162b7\", \"54479\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

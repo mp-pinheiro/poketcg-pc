@@ -259,6 +259,14 @@ static void adapt_GenerateBoosterNonEnergies(ProbeState *s)
 }
 /* <<< factory GenerateBoosterNonEnergies */
 
+/* >>> factory InitBoosterData */
+static void adapt_InitBoosterData(ProbeState *s)
+{
+	(void)s;
+	InitBoosterData();
+}
+/* <<< factory InitBoosterData */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -287,5 +295,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "CheckCardAlreadyDrawn", adapt_CheckCardAlreadyDrawn },
 	{ "FindCardsInSetAndRarity", adapt_FindCardsInSetAndRarity },
 	{ "GenerateBoosterNonEnergies", adapt_GenerateBoosterNonEnergies },
+	{ "InitBoosterData", adapt_InitBoosterData },
 	{ NULL, NULL },
 };

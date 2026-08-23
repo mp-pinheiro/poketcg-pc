@@ -283,6 +283,14 @@ wPlayTimeCounter_A = 0xCAC5
 wOWMapEvents_A = 0xD323
 wMastersBeatenList_A = 0xD3BB
 hBankROM_A = 0xFF80
+
+wCurMap_A = 0xD32F
+wPlayerSpriteIndex_A = 0xD336
+wWhichSprite_A = 0xD4CF
+wPlayerXCoordPixels_A = 0xD332
+wPlayerYCoordPixels_A = 0xD333
+wSCXBuffer_A = 0xD235
+wSCYBuffer_A = 0xD236
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -605,6 +613,18 @@ CASES["Func_c1b1"] = [
 ]
 # <<< factory Func_c1b1
 
+# >>> factory Func_c554
+CONTRACT["Func_c554"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_c554"] = [
+    {"wram": {wCurMap_A: b"\x00", wPlayerSpriteIndex_A: b"\x00"},
+     "read": {wWhichSprite_A: 1}},
+    dict(POISON, wram={wCurMap_A: b"\x05", wPlayerSpriteIndex_A: b"\x00",
+                       wPlayerXCoordPixels_A: b"\x20", wPlayerYCoordPixels_A: b"\x30",
+                       wSCXBuffer_A: b"\x04", wSCYBuffer_A: b"\x08"},
+         read={wWhichSprite_A: 1, 0xD4D2: 2}),
+]
+# <<< factory Func_c554
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -811,3 +831,6 @@ MUTATIONS["Func_c1ed"] = {"source_symbol": "Func_c1ed", "before": "\tLoadBackupS
 # >>> factory-mutation Func_c1b1
 MUTATIONS["Func_c1b1"] = {"source_symbol": "Func_c1b1", "before": "\twOverworldMapSelection = OWMAP_POKEMON_DOME;", "after": "\twOverworldMapSelection = 0u;", "case_ids": ["Func_c1b1-0", "Func_c1b1-1"]}
 # <<< factory-mutation Func_c1b1
+# >>> factory-mutation Func_c554
+MUTATIONS["Func_c554"] = {"source_symbol": "Func_c554", "before": "\tuint8_t x = (uint8_t)((uint8_t)(wPlayerXCoordPixels - scx) + 8u);", "after": "\tuint8_t x = (uint8_t)((uint8_t)(wPlayerXCoordPixels - scx) + 9u);", "case_ids": ["Func_c554-1"]}
+# <<< factory-mutation Func_c554

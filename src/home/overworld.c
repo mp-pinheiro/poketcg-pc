@@ -118,6 +118,12 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define OWMAP_POKEMON_DOME 0x0Cu
+
+#include "home/overworld.h"
+#include "home/load_animation.h"
+#include "home/overworld_map.h"
+#include "generated/wram.h"
+#define SPRITE_ANIM_COORD_X 0x02u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -741,3 +747,23 @@ void Func_c1b1(void)
 	gb_write8((uint16_t)(wPlayTimeCounter_ADDR + 4u), 0u);
 }
 /* <<< factory Func_c1b1 */
+
+/* >>> factory Func_c554 */
+void Func_c554(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	if (wCurMap == OVERWORLD_MAP) {
+		OverworldMap_UpdatePlayerAndCursorSprites();
+		return;
+	}
+	Func_c58b();
+	uint8_t scx = wSCXBuffer;
+	uint8_t scy = wSCYBuffer;
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	uint8_t x = (uint8_t)((uint8_t)(wPlayerXCoordPixels - scx) + 8u);
+	gb_write8(hl, x);
+	hl++;
+	uint8_t y = (uint8_t)((uint8_t)(wPlayerYCoordPixels - scy) + 0x10u);
+	gb_write8(hl, y);
+}
+/* <<< factory Func_c554 */

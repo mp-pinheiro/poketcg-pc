@@ -83,6 +83,13 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #define NUM_CARDS 0xE4u
 
 #define STAR 0x02u
+
+#include "home/copy.h"
+#include "home/division.h"
+#include "home/booster_packs.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define BOOSTER_PACKS_BANK 0x07u
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -487,3 +494,34 @@ GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void)
 	}
 }
 /* <<< factory GenerateBoosterNonEnergies */
+
+/* >>> factory InitBoosterData */
+void InitBoosterData(void)
+{
+	for (uint16_t addr = wBoosterCardsDrawn_ADDR; addr < wBoosterCardsDrawnEnd_ADDR; addr++)
+		gb_write8(addr, 0u);
+	for (uint16_t i = 0; i < 256u; i++)
+		gb_write8((uint16_t)(wTempCardCollection_ADDR + i), 0u);
+
+	uint16_t hl = FindBoosterDataPointer();
+	uint16_t bc = (uint16_t)((wBoosterData_TypeChances_ADDR - wBoosterData_Set_ADDR) + NUM_BOOSTER_CARD_TYPES);
+	const uint8_t *src = rom_ptr(BOOSTER_PACKS_BANK, hl);
+	for (uint16_t i = 0; i < bc; i++)
+		gb_write8((uint16_t)(wBoosterData_Set_ADDR + i), src[i]);
+	LoadRarityAmountsToWram();
+
+	uint8_t c = 0u;
+	uint8_t e = 0u;
+	uint16_t ptr = wBoosterData_TypeChances_ADDR;
+	for (uint8_t d = NUM_BOOSTER_CARD_TYPES; d != 0u; d--) {
+		uint8_t a = gb_read8(ptr);
+		ptr++;
+		if (a != 0u) {
+			c = (uint8_t)(a + c);
+			e++;
+		}
+	}
+	DivResult r = DivideBCbyDE((uint16_t)c, (uint16_t)e);
+	wBoosterAveragedTypeChances = (uint8_t)r.quotient;
+}
+/* <<< factory InitBoosterData */

@@ -91,6 +91,10 @@ static const uint8_t overworld_map_warps[13][4] = {
 #define SPRITE_ANIM_FLAG_CENTERED_F 0x02u
 #define OVERWORLD_MAP_BANK 0x04u
 #define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS 0x629Fu
+
+#include "home/overworld_map.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -382,3 +386,42 @@ void OverworldMap_BeginPlayerMovement(void)
 	wOverworldMapPlayerMovementCounter = 0u;
 }
 /* <<< factory OverworldMap_BeginPlayerMovement */
+
+/* >>> factory OverworldMap_UpdatePlayerWalkingAnimation */
+void OverworldMap_UpdatePlayerWalkingAnimation(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	if (wOverworldMapPlayerMovementCounter != 0u) {
+		OverworldMap_ContinuePlayerWalkingAnimation();
+		return;
+	}
+
+	uint16_t hl = (uint16_t)(gb_read8(wOverworldMapPlayerMovementPtr_ADDR)
+	                         | ((uint16_t)gb_read8((uint16_t)(wOverworldMapPlayerMovementPtr_ADDR + 1u)) << 8));
+	const uint8_t *p = rom_ptr(OVERWORLD_MAP_BANK, hl);
+	uint8_t b = p[0];
+	uint8_t c = p[1];
+	hl = (uint16_t)(hl + 2u);
+
+	if ((uint8_t)(b & c) == 0xFFu) {
+		wOverworldMapPlayerAnimationState = 2u;
+		return;
+	}
+
+	if ((uint8_t)(c | b) == 0u) {
+		uint8_t selection = wOverworldMapSelection;
+		uint8_t starting = wOverworldMapStartingPosition;
+		if (selection == starting) {
+			wOverworldMapPlayerAnimationState = 2u;
+			return;
+		}
+		OverworldMapGetMapPositionResult r = OverworldMap_GetMapPosition(selection, 0u, 0u);
+		b = r.d;
+		c = r.e;
+	}
+
+	gb_write8(wOverworldMapPlayerMovementPtr_ADDR, (uint8_t)hl);
+	gb_write8((uint16_t)(wOverworldMapPlayerMovementPtr_ADDR + 1u), (uint8_t)(hl >> 8));
+	OverworldMap_InitNextPlayerVelocity(b, c);
+}
+/* <<< factory OverworldMap_UpdatePlayerWalkingAnimation */

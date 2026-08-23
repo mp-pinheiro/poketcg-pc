@@ -120,6 +120,14 @@ static void adapt_OverworldMap_BeginPlayerMovement(ProbeState *s)
 }
 /* <<< factory OverworldMap_BeginPlayerMovement */
 
+/* >>> factory OverworldMap_UpdatePlayerWalkingAnimation */
+static void adapt_OverworldMap_UpdatePlayerWalkingAnimation(ProbeState *s)
+{
+	(void)s;
+	OverworldMap_UpdatePlayerWalkingAnimation();
+}
+/* <<< factory OverworldMap_UpdatePlayerWalkingAnimation */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -136,5 +144,6 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_UpdatePlayerAndCursorSprites", adapt_OverworldMap_UpdatePlayerAndCursorSprites },
 	{ "OverworldMap_InitNextPlayerVelocity", adapt_OverworldMap_InitNextPlayerVelocity },
 	{ "OverworldMap_BeginPlayerMovement", adapt_OverworldMap_BeginPlayerMovement },
+	{ "OverworldMap_UpdatePlayerWalkingAnimation", adapt_OverworldMap_UpdatePlayerWalkingAnimation },
 	{ NULL, NULL },
 };

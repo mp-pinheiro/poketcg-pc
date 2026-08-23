@@ -103,6 +103,14 @@ wBoosterTempTypeChancesTable = 0xD67A
 wTempBoosterChances = 0xD4CA
 
 wBoosterPackID = 0xD669
+
+wBoosterCardsDrawn_A = 0xC400
+wBoosterCardsDrawnEnd_A = 0xC416
+wTempCardCollection_A = 0xC000
+wBoosterData_Set_A = 0xD686
+wBoosterData_TypeChances_A = 0xD689
+wBoosterPackID_A = 0xD669
+wBoosterAveragedTypeChances_A = 0xD66D
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -320,6 +328,24 @@ CASES["GenerateBoosterNonEnergies"] = [
 ]
 # <<< factory GenerateBoosterNonEnergies
 
+# >>> factory InitBoosterData
+CONTRACT["InitBoosterData"] = {"compare": (), "preserve": (), "wram_out": True, "sram_out": True}
+CASES["InitBoosterData"] = [
+    {"wram": {wBoosterPackID_A: b"\x00", wBoosterCardsDrawn_A: bytes([0xFF] * 0x16),
+              wTempCardCollection_A: bytes([0xFF] * 256), wBoosterData_Set_A: bytes([0xFF] * 12),
+              wBoosterAveragedTypeChances_A: b"\xFF"},
+     "instruction_budget": 200000, "cycle_budget": 1000000,
+     "read": {wBoosterCardsDrawn_A: 0x16, wTempCardCollection_A: 256, wBoosterData_Set_A: 12,
+              wBoosterAveragedTypeChances_A: 1}},
+    dict(POISON, wram={wBoosterPackID_A: b"\x01", wBoosterCardsDrawn_A: bytes([0xFF] * 0x16),
+              wTempCardCollection_A: bytes([0xFF] * 256), wBoosterData_Set_A: bytes([0xFF] * 12),
+              wBoosterAveragedTypeChances_A: b"\xFF"},
+         instruction_budget=200000, cycle_budget=1000000,
+         read={wBoosterCardsDrawn_A: 0x16, wTempCardCollection_A: 256, wBoosterData_Set_A: 12,
+              wBoosterAveragedTypeChances_A: 1}),
+]
+# <<< factory InitBoosterData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -450,3 +476,6 @@ MUTATIONS["GenerateBoosterNonEnergies"] = {
     "case_ids": ["GenerateBoosterNonEnergies-0", "GenerateBoosterNonEnergies-1"],
 }
 # <<< factory-mutation GenerateBoosterNonEnergies
+# >>> factory-mutation InitBoosterData
+MUTATIONS["InitBoosterData"] = {"source_symbol": "InitBoosterData", "before": "\t\t\tc = (uint8_t)(a + c);", "after": "\t\t\tc = (uint8_t)(a + c + 1u);", "case_ids": ["InitBoosterData-0", "InitBoosterData-1"]}
+# <<< factory-mutation InitBoosterData

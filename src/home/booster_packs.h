@@ -101,4 +101,7 @@ void FindCardsInSetAndRarity(void);
 typedef struct { uint8_t a; uint8_t f; } GenerateBoosterNonEnergiesResult;
 GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void);
 /* <<< factory GenerateBoosterNonEnergies */
+/* >>> factory InitBoosterData */
+void InitBoosterData(void);
+/* <<< factory InitBoosterData */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */
