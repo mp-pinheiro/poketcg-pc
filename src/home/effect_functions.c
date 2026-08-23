@@ -4248,3 +4248,10 @@ void OmanyteWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
 }
 /* <<< factory OmanyteWaterGunEffect */
+
+/* >>> factory PoliwrathWaterGunEffect */
+void PoliwrathWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
+}
+/* <<< factory PoliwrathWaterGunEffect */

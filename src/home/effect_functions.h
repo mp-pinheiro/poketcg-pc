@@ -1050,6 +1050,9 @@ void LaprasWaterGunEffect(void);
 /* >>> factory OmanyteWaterGunEffect */
 void OmanyteWaterGunEffect(void);
 /* <<< factory OmanyteWaterGunEffect */
+/* >>> factory PoliwrathWaterGunEffect */
+void PoliwrathWaterGunEffect(void);
+/* <<< factory PoliwrathWaterGunEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
