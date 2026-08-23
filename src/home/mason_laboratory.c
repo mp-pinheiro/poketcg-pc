@@ -10,6 +10,9 @@
 #define EVENT_MASON_LAB_STATE_BYTE_OFFSET 0x0Du
 #define EVENT_MASON_LAB_STATE_MASK 0x0Eu
 #define EVENT_MASON_LAB_STATE_SHIFT 1u
+
+#include "home/grass_club_entrance.h"
+#define MasonLaboratoryAfterDuelTable 0x5542u
 /* <<< factory statics */
 
 /* >>> factory Preload_DrMason */
@@ -32,3 +35,12 @@ PreloadDrMasonResult Preload_DrMason(void)
 	return (PreloadDrMasonResult){a, f};
 }
 /* <<< factory Preload_DrMason */
+
+/* >>> factory MasonLaboratoryAfterDuel */
+MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(MasonLaboratoryAfterDuelTable);
+	return (MasonLaboratoryAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory MasonLaboratoryAfterDuel */

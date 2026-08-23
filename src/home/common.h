@@ -75,4 +75,8 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } LookForCardIDInHandAndPlayAreaResult;
 LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a);
 /* <<< factory LookForCardIDInHandAndPlayArea */
+/* >>> factory LookForCardIDToTradeWithDifferentHandCard */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; } LookForCardIDToTradeWithDifferentHandCardResult;
+LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(uint8_t a, uint8_t e);
+/* <<< factory LookForCardIDToTradeWithDifferentHandCard */
 #endif /* POKETCG_HOME_COMMON_H */

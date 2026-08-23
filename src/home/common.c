@@ -59,6 +59,8 @@
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 
 #define PLAY_AREA_ARENA 0x00u
+
+#define CARD_LOCATION_DECK 0x00u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -465,3 +467,36 @@ LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a)
 	return (LookForCardIDInHandAndPlayAreaResult){r2.a, f};
 }
 /* <<< factory LookForCardIDInHandAndPlayArea */
+
+/* >>> factory LookForCardIDToTradeWithDifferentHandCard */
+LookForCardIDToTradeWithDifferentHandCardResult LookForCardIDToTradeWithDifferentHandCard(uint8_t a, uint8_t e)
+{
+	wCurCardCanAttack = e;
+	wTempAI = a;
+	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(a);
+	if (r1.f & 0x10u) {
+		uint8_t f = (r1.a == 0u) ? 0x80u : 0u;
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r1.a, f, e};
+	}
+	LookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, wTempAI);
+	if (!(r2.f & 0x10u)) {
+		uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
+		return (LookForCardIDToTradeWithDifferentHandCardResult){r2.a, f, e};
+	}
+	wTempAI = r2.a;
+	uint8_t c = wCurCardCanAttack;
+	(void)CreateHandCardList(0u);
+	uint8_t *scan = wDuelTempList_PTR;
+	for (;;) {
+		uint8_t index = *scan++;
+		if (index == 0xFFu)
+			return (LookForCardIDToTradeWithDifferentHandCardResult){0xFFu, 0x00u, e};
+		uint8_t b = index;
+		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id == c)
+			continue;
+		if (wLoadedCard1Type < TYPE_ENERGY)
+			return (LookForCardIDToTradeWithDifferentHandCardResult){wTempAI, 0x10u, b};
+	}
+}
+/* <<< factory LookForCardIDToTradeWithDifferentHandCard */

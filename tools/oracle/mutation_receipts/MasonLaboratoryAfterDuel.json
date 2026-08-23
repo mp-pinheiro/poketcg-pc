@@ -1,0 +1,9 @@
+{
+  "fn": "MasonLaboratoryAfterDuel",
+  "case": "tests/cases/mason_laboratory.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MasonLaboratoryAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 21833, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MasonLaboratoryAfterDuel\", \"mismatches\": {\"hl\": [21833, 21882]}}\n",
+  "restored": "{\"fn\": \"MasonLaboratoryAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 21833, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

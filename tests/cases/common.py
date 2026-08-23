@@ -225,6 +225,17 @@ CASES["LookForCardIDInHandAndPlayArea"] = [
 ]
 # <<< factory LookForCardIDInHandAndPlayArea
 
+# >>> factory LookForCardIDToTradeWithDifferentHandCard
+CONTRACT["LookForCardIDToTradeWithDifferentHandCard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDToTradeWithDifferentHandCard"] = [
+    {"a": 0x01, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01"}, "read": {0xC510: 32}},
+    {"a": 0xAB, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
+    {"a": 0x00, "e": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
+    {"a": 0x00, "e": 0x02, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x01", 0xC200: b"\x00", 0xC401: b"\x01"}, "read": {0xC510: 32}},
+    dict(POISON, a=0x01, e=0x00, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01"}, read={0xC510: 32}),
+]
+# <<< factory LookForCardIDToTradeWithDifferentHandCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -325,3 +336,6 @@ MUTATIONS["LookForCardIDInHandList_Bank8"] = {"source_symbol": "LookForCardIDInH
 # >>> factory-mutation LookForCardIDInHandAndPlayArea
 MUTATIONS["LookForCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInHandAndPlayArea", "before": "\tif (r1.f & 0x10u)", "after": "\tif (r1.f & 0x20u)", "case_ids": ["LookForCardIDInHandAndPlayArea-0"]}
 # <<< factory-mutation LookForCardIDInHandAndPlayArea
+# >>> factory-mutation LookForCardIDToTradeWithDifferentHandCard
+MUTATIONS["LookForCardIDToTradeWithDifferentHandCard"] = {"source_symbol": "LookForCardIDToTradeWithDifferentHandCard", "before": "\tLookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, wTempAI);", "after": "\tLookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8((uint8_t)(CARD_LOCATION_DECK + 1u), wTempAI);", "case_ids": ["LookForCardIDToTradeWithDifferentHandCard-3"]}
+# <<< factory-mutation LookForCardIDToTradeWithDifferentHandCard

@@ -17,6 +17,17 @@ def npc_pos(state_byte, x=0x55, y=0x66):
             wLoadNPCXPos: bytes((x,)), wLoadNPCYPos: bytes((y,))}
 
 NPC_POS_READ = {EVENT_MASON_LAB_STATE_BYTE: 1, wLoadNPCXPos: 1, wLoadNPCYPos: 1}
+
+wDuelResult = 0xD0C3
+wNPCDuelist = 0xD0C4
+wTempNPC = 0xD3AB
+wLoadedNPCs = 0xD34A
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wPlayerDirection = 0xD334
+wOverworldNPCFlags = 0xD0C1
+wNextScript = 0xD0C6
+wOverworldMode = 0xD0BF
 # <<< factory-cases-statics
 
 # >>> factory Preload_DrMason
@@ -33,6 +44,25 @@ CASES["Preload_DrMason"] = [
 ]
 # <<< factory Preload_DrMason
 
+# >>> factory MasonLaboratoryAfterDuel
+CONTRACT["MasonLaboratoryAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["MasonLaboratoryAfterDuel"] = [
+    {"wram": {wDuelResult: b"\x01", wNPCDuelist: b"\x99"}},
+    {"wram": {
+        wDuelResult: b"\x00",
+        wNPCDuelist: b"\x07",
+        wLoadedNPCs: b"\x07" + b"\x00" * 95,
+        wLoadedNPCTempIndex: b"\xEE",
+        wScriptNPC: b"\xAA",
+        wPlayerDirection: b"\x01",
+        wOverworldNPCFlags: b"\x00",
+        wNextScript: b"\xFF\xFF",
+        wOverworldMode: b"\x00",
+    }, "expect": {wTempNPC: b"\x07", wScriptNPC: b"\x00", wOverworldMode: b"\x03"}},
+    dict(POISON, wram={wDuelResult: b"\x01", wNPCDuelist: b"\x99"}),
+]
+# <<< factory MasonLaboratoryAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -46,3 +76,6 @@ MUTATIONS["Preload_DrMason"] = {
                  "Preload_DrMason-3", "Preload_DrMason-4"],
 }
 # <<< factory-mutation Preload_DrMason
+# >>> factory-mutation MasonLaboratoryAfterDuel
+MUTATIONS["MasonLaboratoryAfterDuel"] = {"source_symbol": "MasonLaboratoryAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(MasonLaboratoryAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(MasonLaboratoryAfterDuelTable + 1u));", "case_ids": ["MasonLaboratoryAfterDuel-0"]}
+# <<< factory-mutation MasonLaboratoryAfterDuel

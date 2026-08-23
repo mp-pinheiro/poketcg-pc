@@ -9,6 +9,9 @@
 #include "generated/wram.h"
 #define NPC_RONALD1 0x02u
 #define Script_ea02_ADDR 0x6A02u
+
+#include "home/grass_club_entrance.h"
+#define PsychicClubLobbyAfterDuelTable 0x696au
 /* <<< factory statics */
 
 /* >>> factory PsychicClubLobbyLoadMap */
@@ -22,3 +25,12 @@ PsychicClubLobbyLoadMapResult PsychicClubLobbyLoadMap(uint8_t b, uint8_t c, uint
 	return (PsychicClubLobbyLoadMapResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
 }
 /* <<< factory PsychicClubLobbyLoadMap */
+
+/* >>> factory PsychicClubLobbyAfterDuel */
+PsychicClubLobbyAfterDuelResult PsychicClubLobbyAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PsychicClubLobbyAfterDuelTable);
+	return (PsychicClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory PsychicClubLobbyAfterDuel */
