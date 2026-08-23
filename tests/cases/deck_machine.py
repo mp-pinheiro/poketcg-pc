@@ -115,6 +115,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 
 wConsole = 0xCAB4
 wLCDC = 0xCABB
+
+wConsole = 0xCAB4
+wLCDC = 0xCABB
+wNameBuffer = 0xC500
+wDefaultText = 0xC590
+wTxRam2 = 0xCE3F
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -172,6 +178,18 @@ CASES["PrintCardToSendText"] = [
 ]
 # <<< factory PrintCardToSendText
 
+# >>> factory PrintReceivedTheseCardsText
+CONTRACT["PrintReceivedTheseCardsText"] = {"compare": (), "preserve": ()}
+CASES["PrintReceivedTheseCardsText"] = [
+    {"wram": {wConsole: b"\x00", wLCDC: b"\x00", wNameBuffer: b"\x05\x08\x00"},
+     "read": {wDefaultText: 3, wTxRam2: 2},
+     "vread": {0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}},
+    dict(POISON, wram={wConsole: b"\x00", wLCDC: b"\x00", wNameBuffer: b"\x05\x08\x00"},
+         read={wDefaultText: 3, wTxRam2: 2},
+         vread={0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}),
+]
+# <<< factory PrintReceivedTheseCardsText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -225,3 +243,6 @@ MUTATIONS["EmptyScreenAndDrawTextBox"] = {"source_symbol": "EmptyScreenAndDrawTe
 # >>> factory-mutation PrintCardToSendText
 MUTATIONS["PrintCardToSendText"] = {"source_symbol": "PrintCardToSendText", "before": "\tProcessTextFromID(CardToSendText);", "after": "\tProcessTextFromID(0u);", "case_ids": ["PrintCardToSendText-0", "PrintCardToSendText-1"]}
 # <<< factory-mutation PrintCardToSendText
+# >>> factory-mutation PrintReceivedTheseCardsText
+MUTATIONS["PrintReceivedTheseCardsText"] = {"source_symbol": "PrintReceivedTheseCardsText", "before": "\tCopyListFromHLToDE(&hl, &de);", "after": "\t(void)hl; (void)de;", "case_ids": ["PrintReceivedTheseCardsText-0", "PrintReceivedTheseCardsText-1"]}
+# <<< factory-mutation PrintReceivedTheseCardsText

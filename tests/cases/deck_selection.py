@@ -122,6 +122,18 @@ CASES["PrepareMenuGraphics"] = [
 ]
 # <<< factory PrepareMenuGraphics
 
+# >>> factory EmptyScreenAndLoadFontDuelAndHandCardsIcons
+CONTRACT["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = {"compare": (), "preserve": ()}
+CASES["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = [
+    {"wram": {wConsole: b"\x00", wTileMapFill: b"\xFF", wVBlankOAMCopyToggle: b"\x00", wLCDC: b"\x00"},
+     "read": {wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+     "vread": {0: {0x8D00: 768, 0x9000: 896, 0x9380: 32}}},
+    dict(POISON, wram={wConsole: b"\x00", wTileMapFill: b"\xFF", wVBlankOAMCopyToggle: b"\x00", wLCDC: b"\x00"},
+         read={wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+         vread={0: {0x8D00: 768, 0x9000: 896, 0x9380: 32}}),
+]
+# <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -159,3 +171,6 @@ MUTATIONS["InitPromotionalCardAndDeckCounterSaveData"] = {"source_symbol": "Init
 # >>> factory-mutation PrepareMenuGraphics
 MUTATIONS["PrepareMenuGraphics"] = {"source_symbol": "PrepareMenuGraphics", "before": "\twVBlankOAMCopyToggle = TRUE;", "after": "\twVBlankOAMCopyToggle = 0u;", "case_ids": ["PrepareMenuGraphics-0", "PrepareMenuGraphics-1"]}
 # <<< factory-mutation PrepareMenuGraphics
+# >>> factory-mutation EmptyScreenAndLoadFontDuelAndHandCardsIcons
+MUTATIONS["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = {"source_symbol": "EmptyScreenAndLoadFontDuelAndHandCardsIcons", "before": "\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = TRUE;", "after": "\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = 0u;", "case_ids": ["EmptyScreenAndLoadFontDuelAndHandCardsIcons-0", "EmptyScreenAndLoadFontDuelAndHandCardsIcons-1"]}
+# <<< factory-mutation EmptyScreenAndLoadFontDuelAndHandCardsIcons

@@ -832,6 +832,16 @@ static void adapt_ScriptCommand_ReplaceMapBlocks(ProbeState *s)
 }
 /* <<< factory ScriptCommand_ReplaceMapBlocks */
 
+/* >>> factory ScriptCommand_GiveStarterDeck */
+static void adapt_ScriptCommand_GiveStarterDeck(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_GiveStarterDeck();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_GiveStarterDeck */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -913,5 +923,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetPlayerDirection", adapt_ScriptCommand_SetPlayerDirection },
 	{ "ScriptCommand_UnloadActiveNPC", adapt_ScriptCommand_UnloadActiveNPC },
 	{ "ScriptCommand_ReplaceMapBlocks", adapt_ScriptCommand_ReplaceMapBlocks },
+	{ "ScriptCommand_GiveStarterDeck", adapt_ScriptCommand_GiveStarterDeck },
 	{ NULL, NULL },
 };

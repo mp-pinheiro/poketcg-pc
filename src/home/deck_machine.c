@@ -39,6 +39,9 @@
 #include "home/deck_machine.h"
 
 #define CardToSendText 0x0281u
+
+#define CardReceivedText 0x0280u
+#define ReceivedTheseCardsFromText 0x0283u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -240,3 +243,18 @@ void PrintCardToSendText(void)
 	ProcessTextFromID(CardToSendText);
 }
 /* <<< factory PrintCardToSendText */
+
+/* >>> factory PrintReceivedTheseCardsText */
+void PrintReceivedTheseCardsText(void)
+{
+	EmptyScreenAndDrawTextBox();
+	InitTextPrinting(1u, 1u);
+	ProcessTextFromID(CardReceivedText);
+	uint16_t hl = wNameBuffer_ADDR;
+	uint16_t de = wDefaultText_ADDR;
+	CopyListFromHLToDE(&hl, &de);
+	gb_write8(wTxRam2_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+	DrawWideTextBox_PrintText(ReceivedTheseCardsFromText);
+}
+/* <<< factory PrintReceivedTheseCardsText */

@@ -49,4 +49,7 @@ void EmptyScreenAndDrawTextBox(void);
 /* >>> factory PrintCardToSendText */
 void PrintCardToSendText(void);
 /* <<< factory PrintCardToSendText */
+/* >>> factory PrintReceivedTheseCardsText */
+void PrintReceivedTheseCardsText(void);
+/* <<< factory PrintReceivedTheseCardsText */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

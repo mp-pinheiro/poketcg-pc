@@ -13,4 +13,7 @@ typedef struct {
 ClearSRAMResult ClearSRAMBank(uint8_t bank, uint8_t f);
 ClearSRAMResult RestartSRAM(void);
 
+/* >>> factory ValidateSRAM */
+void ValidateSRAM(void);
+/* <<< factory ValidateSRAM */
 #endif /* POKETCG_HOME_CLEAR_SRAM_H */

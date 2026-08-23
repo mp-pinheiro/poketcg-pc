@@ -83,6 +83,13 @@ wCurTilemap = 0xD131
 wConsole = 0xCAB4
 wOWMapEvents = 0xD323
 wWriteBGMapToSRAM = 0xD292
+
+wStarterDeckChoice = 0xD693
+hWhoseTurn = 0xFF97
+sCardCollection = 0xA100
+sDeck1 = 0xA200
+wOpponentDeck = 0xC480
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 
@@ -947,6 +954,18 @@ CASES["ScriptCommand_ReplaceMapBlocks"] = [
 ]
 # <<< factory ScriptCommand_ReplaceMapBlocks
 
+# >>> factory ScriptCommand_GiveStarterDeck
+CONTRACT["ScriptCommand_GiveStarterDeck"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_GiveStarterDeck"] = [
+    {"wram": {wStarterDeckChoice: b"\x00", hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+     "sram": {0: {sCardCollection: bytes([0x80] * 256)}},
+     "sread": {0: {sCardCollection: 256, sDeck1: 32}}},
+    dict(POISON, wram={wStarterDeckChoice: b"\x01", hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+         sram={0: {sCardCollection: bytes([0x80] * 256)}},
+         sread={0: {sCardCollection: 256, sDeck1: 32}}),
+]
+# <<< factory ScriptCommand_GiveStarterDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1441,3 +1460,6 @@ MUTATIONS["ScriptCommand_UnloadActiveNPC"] = {
 # >>> factory-mutation ScriptCommand_ReplaceMapBlocks
 MUTATIONS["ScriptCommand_ReplaceMapBlocks"] = {"source_symbol": "ScriptCommand_ReplaceMapBlocks", "before": "\tSetOWMapEvent(c);", "after": "\t(void)c;", "case_ids": ["ScriptCommand_ReplaceMapBlocks-0", "ScriptCommand_ReplaceMapBlocks-1"]}
 # <<< factory-mutation ScriptCommand_ReplaceMapBlocks
+# >>> factory-mutation ScriptCommand_GiveStarterDeck
+MUTATIONS["ScriptCommand_GiveStarterDeck"] = {"source_symbol": "ScriptCommand_GiveStarterDeck", "before": "\tAddStarterDeck(wStarterDeckChoice);", "after": "\tAddStarterDeck((uint8_t)(wStarterDeckChoice + 1u));", "case_ids": ["ScriptCommand_GiveStarterDeck-0", "ScriptCommand_GiveStarterDeck-1"]}
+# <<< factory-mutation ScriptCommand_GiveStarterDeck

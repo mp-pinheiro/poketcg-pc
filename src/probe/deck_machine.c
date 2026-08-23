@@ -112,6 +112,14 @@ static void adapt_PrintCardToSendText(ProbeState *s)
 }
 /* <<< factory PrintCardToSendText */
 
+/* >>> factory PrintReceivedTheseCardsText */
+static void adapt_PrintReceivedTheseCardsText(ProbeState *s)
+{
+	(void)s;
+	PrintReceivedTheseCardsText();
+}
+/* <<< factory PrintReceivedTheseCardsText */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -126,5 +134,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "FindFirstEmptyDeckSlot", adapt_FindFirstEmptyDeckSlot },
 	{ "EmptyScreenAndDrawTextBox", adapt_EmptyScreenAndDrawTextBox },
 	{ "PrintCardToSendText", adapt_PrintCardToSendText },
+	{ "PrintReceivedTheseCardsText", adapt_PrintReceivedTheseCardsText },
 	{ NULL, NULL },
 };

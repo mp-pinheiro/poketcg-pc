@@ -21,8 +21,17 @@ static void adapt_RestartSRAM(ProbeState *s)
 	s->hl = result.hl;
 }
 
+/* >>> factory ValidateSRAM */
+static void adapt_ValidateSRAM(ProbeState *s)
+{
+	(void)s;
+	ValidateSRAM();
+}
+/* <<< factory ValidateSRAM */
+
 const ProbeEntry probe_entries_clear_sram[] = {
 	{ "ClearSRAMBank", adapt_ClearSRAMBank },
 	{ "RestartSRAM", adapt_RestartSRAM },
+	{ "ValidateSRAM", adapt_ValidateSRAM },
 	{ NULL, NULL },
 };

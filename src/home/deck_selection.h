@@ -60,4 +60,7 @@ LoadHandCardsIconResult InitPromotionalCardAndDeckCounterSaveData(void);
 /* >>> factory PrepareMenuGraphics */
 void PrepareMenuGraphics(void);
 /* <<< factory PrepareMenuGraphics */
+/* >>> factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+void EmptyScreenAndLoadFontDuelAndHandCardsIcons(void);
+/* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

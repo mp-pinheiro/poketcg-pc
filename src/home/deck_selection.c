@@ -188,3 +188,18 @@ void PrepareMenuGraphics(void)
 	SetupText(0x3cu, 0xbfu);
 }
 /* <<< factory PrepareMenuGraphics */
+
+/* >>> factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+void EmptyScreenAndLoadFontDuelAndHandCardsIcons(void)
+{
+	wTileMapFill = 0u;
+	EmptyScreen();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE;
+	LoadSymbolsFont();
+	LoadDuelCardSymbolTiles();
+	LoadHandCardsIcon();
+	SetDefaultConsolePalettes();
+	SetupText(0x3cu, 0xbfu);
+}
+/* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */

@@ -1260,3 +1260,11 @@ IncreaseScriptPointerResult ScriptCommand_ReplaceMapBlocks(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_ReplaceMapBlocks */
+
+/* >>> factory ScriptCommand_GiveStarterDeck */
+IncreaseScriptPointerResult ScriptCommand_GiveStarterDeck(void)
+{
+	AddStarterDeck(wStarterDeckChoice);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_GiveStarterDeck */

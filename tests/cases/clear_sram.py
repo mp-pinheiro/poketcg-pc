@@ -45,5 +45,22 @@ MUTATIONS = {
         "case_ids": ["ClearSRAMBank-0", "ClearSRAMBank-1", "ClearSRAMBank-2", "ClearSRAMBank-3"],
     },
 }
+# >>> factory ValidateSRAM
+CONTRACT["ValidateSRAM"] = {"compare": (), "preserve": ()}
+CASES["ValidateSRAM"] = [
+    {"instruction_budget": 500000, "cycle_budget": 4000000,
+     "sram": {0: {0xA000: bytes([0x41, 0x93] * 4096)}},
+     "sread": {0: {0xA000: 8, 0xBFF8: 8}}},
+    {"sram": {0: {0xA000: b"\x04\x21\x05\x00" * 2048}},
+     "sread": {0: {0xA000: 8}}},
+    dict(POISON, instruction_budget=500000, cycle_budget=4000000,
+         sram={0: {0xA000: bytes(8192)}},
+         sread={0: {0xA000: 8, 0xBFF8: 8}}),
+]
+# <<< factory ValidateSRAM
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-mutation ValidateSRAM
+MUTATIONS["ValidateSRAM"] = {"source_symbol": "ValidateSRAM", "before": "\t\t\tif (b2 == 0x05u)", "after": "\t\t\tif (b2 == 0x06u)", "case_ids": ["ValidateSRAM-1"]}
+# <<< factory-mutation ValidateSRAM
