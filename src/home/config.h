@@ -15,4 +15,8 @@ void SaveConfigSettings(void);
 typedef struct { uint8_t b; uint8_t c; } ShowConfigMenuCursorResult;
 ShowConfigMenuCursorResult ShowConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory ShowConfigMenuCursor */
+/* >>> factory HideConfigMenuCursor */
+typedef struct { uint8_t b; uint8_t c; } HideConfigMenuCursorResult;
+HideConfigMenuCursorResult HideConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory HideConfigMenuCursor */
 #endif /* POKETCG_HOME_CONFIG_H */

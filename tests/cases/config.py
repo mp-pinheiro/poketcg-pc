@@ -109,6 +109,16 @@ CASES["ShowConfigMenuCursor"] = [
 ]
 # <<< factory ShowConfigMenuCursor
 
+# >>> factory HideConfigMenuCursor
+CONTRACT["HideConfigMenuCursor"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["HideConfigMenuCursor"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "expect_regs": {"b": 0xBB, "c": 0xCC},
+    },
+]
+# <<< factory HideConfigMenuCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -145,3 +155,11 @@ MUTATIONS["ShowConfigMenuCursor"] = {
     "case_ids": ["ShowConfigMenuCursor-0"],
 }
 # <<< factory-mutation ShowConfigMenuCursor
+# >>> factory-mutation HideConfigMenuCursor
+MUTATIONS["HideConfigMenuCursor"] = {
+    "source_symbol": "HideConfigMenuCursor",
+    "before": "return (HideConfigMenuCursorResult){b, c};",
+    "after": "return (HideConfigMenuCursorResult){c, b};",
+    "case_ids": ["HideConfigMenuCursor-0"],
+}
+# <<< factory-mutation HideConfigMenuCursor

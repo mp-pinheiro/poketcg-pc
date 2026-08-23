@@ -24,6 +24,8 @@ static const uint8_t kDuelAnimationSettings[8] = {
 };
 
 #include "home/config.h"
+
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
@@ -102,3 +104,11 @@ ShowConfigMenuCursorResult ShowConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
 	return (ShowConfigMenuCursorResult){b, c};
 }
 /* <<< factory ShowConfigMenuCursor */
+
+/* >>> factory HideConfigMenuCursor */
+HideConfigMenuCursorResult HideConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
+{
+	DrawConfigMenuCursor(SYM_SPACE, a);
+	return (HideConfigMenuCursorResult){b, c};
+}
+/* <<< factory HideConfigMenuCursor */

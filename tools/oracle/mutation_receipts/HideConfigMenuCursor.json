@@ -1,0 +1,9 @@
+{
+  "fn": "HideConfigMenuCursor",
+  "case": "tests/cases/config.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HideConfigMenuCursor\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HideConfigMenuCursor\", \"mismatches\": {\"b\": [187, 204], \"c\": [204, 187]}}\n",
+  "restored": "{\"fn\": \"HideConfigMenuCursor\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

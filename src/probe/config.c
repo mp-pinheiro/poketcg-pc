@@ -31,10 +31,20 @@ static void adapt_ShowConfigMenuCursor(ProbeState *s)
 }
 /* <<< factory ShowConfigMenuCursor */
 
+/* >>> factory HideConfigMenuCursor */
+static void adapt_HideConfigMenuCursor(ProbeState *s)
+{
+	HideConfigMenuCursorResult r = HideConfigMenuCursor(s->a, s->b, s->c);
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory HideConfigMenuCursor */
+
 const ProbeEntry probe_entries_config[] = {
 	{ "DrawConfigMenuCursor", adapt_DrawConfigMenuCursor },
 	{ "GetConfigCursorPositions", adapt_GetConfigCursorPositions },
 	{ "SaveConfigSettings", adapt_SaveConfigSettings },
 	{ "ShowConfigMenuCursor", adapt_ShowConfigMenuCursor },
+	{ "HideConfigMenuCursor", adapt_HideConfigMenuCursor },
 	{ NULL, NULL },
 };
