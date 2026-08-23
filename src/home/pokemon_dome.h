@@ -15,4 +15,7 @@ PokemonDomeResult Func_f77d(uint8_t b, uint8_t c, uint8_t f);
 /* >>> factory PokemonDomeCloseTextBox */
 void PokemonDomeCloseTextBox(void);
 /* <<< factory PokemonDomeCloseTextBox */
+/* >>> factory PokemonDomeLoadMap */
+void PokemonDomeLoadMap(void);
+/* <<< factory PokemonDomeLoadMap */
 #endif

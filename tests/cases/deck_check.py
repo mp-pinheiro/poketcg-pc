@@ -52,6 +52,37 @@ CASES["DisplayCheckMenuCursor"] = [
 ]
 # <<< factory DisplayCheckMenuCursor
 
+# >>> factory-cases-statics
+wMenuInputSFX = 0xCFE3
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+wCheckMenuCursorXPosition = 0xCEAF
+wCheckMenuCursorYPosition = 0xCEB0
+wCheckMenuCursorBlinkCounter = 0xCEA3
+# <<< factory-cases-statics
+
+# >>> factory HandleCheckMenuInput
+CONTRACT["HandleCheckMenuInput"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["HandleCheckMenuInput"] = [
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x02",
+              wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03"}},
+    dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x03",
+                       wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03"}),
+    {"wram": {hDPadHeld: b"\x20", hKeysPressed: b"\x00",
+              wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03",
+              wCheckMenuCursorBlinkCounter: b"\x01"}},
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00",
+              wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03",
+              wCheckMenuCursorBlinkCounter: b"\x05"}},
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00",
+              wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03",
+              wCheckMenuCursorBlinkCounter: b"\x00"}},
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00",
+              wCheckMenuCursorXPosition: b"\x05", wCheckMenuCursorYPosition: b"\x03",
+              wCheckMenuCursorBlinkCounter: b"\x10"}},
+]
+# <<< factory HandleCheckMenuInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -85,3 +116,6 @@ MUTATIONS["DisplayCheckMenuCursor"] = {
     "case_ids": ["DisplayCheckMenuCursor-0", "DisplayCheckMenuCursor-1", "DisplayCheckMenuCursor-2"],
 }
 # <<< factory-mutation DisplayCheckMenuCursor
+# >>> factory-mutation HandleCheckMenuInput
+MUTATIONS["HandleCheckMenuInput"] = {"source_symbol": "HandleCheckMenuInput", "before": "return (HandleCheckMenuInputResult){MENU_CONFIRM, 0x10u};", "after": "return (HandleCheckMenuInputResult){MENU_CANCEL, 0x10u};", "case_ids": ["HandleCheckMenuInput-1"]}
+# <<< factory-mutation HandleCheckMenuInput

@@ -18,4 +18,8 @@ DrawCheckMenuCursorResult EraseCheckMenuCursor(void);
 /* >>> factory DisplayCheckMenuCursor */
 DrawCheckMenuCursorResult DisplayCheckMenuCursor(void);
 /* <<< factory DisplayCheckMenuCursor */
+/* >>> factory HandleCheckMenuInput */
+typedef struct { uint8_t a; uint8_t f; } HandleCheckMenuInputResult;
+HandleCheckMenuInputResult HandleCheckMenuInput(void);
+/* <<< factory HandleCheckMenuInput */
 #endif

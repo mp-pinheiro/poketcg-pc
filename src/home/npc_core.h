@@ -102,4 +102,7 @@ uint8_t UpdateNPCMovementStep(uint8_t a, uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } FindNPCAtLocationResult;
 FindNPCAtLocationResult FindNPCAtLocation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory FindNPCAtLocation */
+/* >>> factory HandleAllNPCMovement */
+void HandleAllNPCMovement(void);
+/* <<< factory HandleAllNPCMovement */
 #endif /* POKETCG_HOME_NPC_CORE_H */

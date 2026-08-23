@@ -39,11 +39,20 @@ static void adapt_PokemonDomeCloseTextBox(ProbeState *s)
 }
 /* <<< factory PokemonDomeCloseTextBox */
 
+/* >>> factory PokemonDomeLoadMap */
+static void adapt_PokemonDomeLoadMap(ProbeState *s)
+{
+	(void)s;
+	PokemonDomeLoadMap();
+}
+/* <<< factory PokemonDomeLoadMap */
+
 const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Func_f762", adapt_Func_f762},
 	{"Func_f782", adapt_Func_f782},
 	{"PlacePokemonDomeOpponentAtDuelTable", adapt_PlacePokemonDomeOpponentAtDuelTable},
 	{ "Func_f77d", adapt_Func_f77d },
 	{ "PokemonDomeCloseTextBox", adapt_PokemonDomeCloseTextBox },
+	{ "PokemonDomeLoadMap", adapt_PokemonDomeLoadMap },
 	{NULL, NULL},
 };

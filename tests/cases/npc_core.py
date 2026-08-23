@@ -191,6 +191,27 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wLoadedNPCTempIndex = 0xD3AA
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wIsAnNPCMoving = 0xD3B7
+wNumLoadedNPCs = 0xD349
+wLoadedNPCs = 0xD34A
+wWhichSprite = 0xD4CF
+wPermissionMap = 0xD133
+SPRITE_BUFFER = 0xD4D0
+hSCX = 0xFF92
+hSCY = 0xFF93
+def npc_entry(npc_id, sprite_id, x, y, direction=0, flags=0, step=0):
+    e = bytearray(12)
+    e[0] = npc_id
+    e[1] = sprite_id
+    e[2] = x
+    e[3] = y
+    e[4] = direction
+    e[5] = flags
+    e[8] = step
+    return bytes(e)
+def sprite_entry(base):
+    return {base + 1: b'\x00', base + 2: b'\x00', base + 3: b'\x00', base + 15: b'\x00'}
 # <<< factory-cases-statics
 
 # >>> factory SetNPCPosition
@@ -329,6 +350,27 @@ CASES["FindNPCAtLocation"] = [
 ]
 # <<< factory FindNPCAtLocation
 
+# >>> factory HandleAllNPCMovement
+CONTRACT["HandleAllNPCMovement"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["HandleAllNPCMovement"] = [
+    {"wram": {wIsAnNPCMoving: b"\xFF", wNumLoadedNPCs: b"\x00"},
+     "read": {wIsAnNPCMoving: 1}},
+    {"wram": {wIsAnNPCMoving: b"\xFF", wNumLoadedNPCs: b"\x01",
+              wLoadedNPCs: npc_entry(0, 0, 0, 0)},
+     "read": {wIsAnNPCMoving: 1, wLoadedNPCs: 12}},
+    dict(POISON, wram={wIsAnNPCMoving: b"\x00", wNumLoadedNPCs: b"\x01",
+                       wLoadedNPCs: npc_entry(5, 3, 0x0A, 0x0B),
+                       wPermissionMap + 0x55: b"\x10",
+                       SPRITE_BUFFER + 3 * 16 + 1: b"\x00",
+                       SPRITE_BUFFER + 3 * 16 + 2: b"\x00",
+                       SPRITE_BUFFER + 3 * 16 + 3: b"\x00",
+                       SPRITE_BUFFER + 3 * 16 + 15: b"\x00",
+                       hSCX: b"\x00", hSCY: b"\x00"},
+         read={wIsAnNPCMoving: 1, wLoadedNPCs: 12, wWhichSprite: 1,
+               SPRITE_BUFFER + 3 * 16 + 1: 3, SPRITE_BUFFER + 3 * 16 + 15: 1}),
+]
+# <<< factory HandleAllNPCMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -441,3 +483,6 @@ MUTATIONS["UpdateNPCMovementStep"] = {"source_symbol": "UpdateNPCMovementStep", 
 # >>> factory-mutation FindNPCAtLocation
 MUTATIONS["FindNPCAtLocation"] = {"source_symbol": "FindNPCAtLocation", "before": "if (active != 0u) {", "after": "if (active == 0u) {", "case_ids": ["FindNPCAtLocation-0", "FindNPCAtLocation-1"]}
 # <<< factory-mutation FindNPCAtLocation
+# >>> factory-mutation HandleAllNPCMovement
+MUTATIONS["HandleAllNPCMovement"] = {"source_symbol": "HandleAllNPCMovement", "before": "wWhichSprite = a;", "after": "wWhichSprite = 0u;", "case_ids": ["HandleAllNPCMovement-2"]}
+# <<< factory-mutation HandleAllNPCMovement

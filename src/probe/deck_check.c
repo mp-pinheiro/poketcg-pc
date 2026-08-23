@@ -34,10 +34,20 @@ static void adapt_DisplayCheckMenuCursor(ProbeState *s)
 }
 /* <<< factory DisplayCheckMenuCursor */
 
+/* >>> factory HandleCheckMenuInput */
+static void adapt_HandleCheckMenuInput(ProbeState *s)
+{
+	HandleCheckMenuInputResult result = HandleCheckMenuInput();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleCheckMenuInput */
+
 const ProbeEntry probe_entries_deck_check[] = {
 	{"DrawCheckMenuCursor", adapt_DrawCheckMenuCursor},
 	{"PlaySFXConfirmOrCancel", adapt_PlaySFXConfirmOrCancel},
 	{ "EraseCheckMenuCursor", adapt_EraseCheckMenuCursor },
 	{ "DisplayCheckMenuCursor", adapt_DisplayCheckMenuCursor },
+	{ "HandleCheckMenuInput", adapt_HandleCheckMenuInput },
 	{NULL, NULL},
 };

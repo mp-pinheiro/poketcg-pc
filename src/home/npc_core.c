@@ -104,6 +104,14 @@ static const uint8_t player_movement_offset_table_tiles[] = {
 #define LOADED_NPC_MOVEMENT_PTR 0x09u
 
 #include "generated/wram.h"
+
+#include "home/npc_core.h"
+#include "home/map.h"
+#include "home/load_animation.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SPRITE_ANIM_FLAGS 0x0Fu
+#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 7u
 /* <<< factory statics */
 
 /* >>> factory CheckIfNPCIsRonald */
@@ -591,3 +599,32 @@ FindNPCAtLocationResult FindNPCAtLocation(uint8_t b, uint8_t c, uint8_t d, uint8
 	return (FindNPCAtLocationResult){(uint8_t)(slot >> 8), 0x90u, b, c, d, e, hl};
 }
 /* <<< factory FindNPCAtLocation */
+
+/* >>> factory HandleAllNPCMovement */
+void HandleAllNPCMovement(void)
+{
+	wIsAnNPCMoving = 0u;
+	if (wNumLoadedNPCs == 0u)
+		return;
+	uint16_t hl = wLoadedNPCs_ADDR;
+	for (uint8_t cnt = LOADED_NPC_MAX; cnt != 0u; cnt--) {
+		if (gb_read8(hl) != 0u) {
+			uint8_t a = gb_read8((uint16_t)(hl + 1u));
+			wWhichSprite = a;
+			(void)UpdateNPCMovementStep(a, hl);
+			uint8_t bx = gb_read8((uint16_t)(hl + LOADED_NPC_COORD_X));
+			uint8_t cy = gb_read8((uint16_t)(hl + LOADED_NPC_COORD_X + 1u));
+			uint8_t permission = GetPermissionOfMapPosition(bx, cy);
+			uint8_t bit4 = (uint8_t)(permission & 0x10u);
+			uint16_t flag_ptr = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);
+			if (bit4 == 0u)
+				gb_write8(flag_ptr, (uint8_t)(gb_read8(flag_ptr) & (uint8_t)~(1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)));
+			else
+				gb_write8(flag_ptr, (uint8_t)(gb_read8(flag_ptr) | (uint8_t)(1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)));
+			(void)UpdateNPCSpritePosition(hl);
+			(void)UpdateIsAnNPCMovingFlag(hl);
+		}
+		hl = (uint16_t)(hl + LOADED_NPC_LENGTH);
+	}
+}
+/* <<< factory HandleAllNPCMovement */

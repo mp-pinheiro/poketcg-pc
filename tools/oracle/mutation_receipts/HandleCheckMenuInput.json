@@ -1,0 +1,9 @@
+{
+  "fn": "HandleCheckMenuInput",
+  "case": "tests/cases/deck_check.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleCheckMenuInput\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52911\": \"0503\", \"65423\": \"00\", \"65425\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleCheckMenuInput\", \"mismatches\": {\"a\": [1, 255]}}\n",
+  "restored": "{\"fn\": \"HandleCheckMenuInput\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52911\": \"0503\", \"65423\": \"00\", \"65425\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

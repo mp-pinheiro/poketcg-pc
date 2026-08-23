@@ -1,0 +1,9 @@
+{
+  "fn": "PokemonDomeLoadMap",
+  "case": "tests/cases/pokemon_dome.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53446\": \"0b78\", \"53534\": \"8d0000000000000000000000000000\", \"54249\": \"08\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonDomeLoadMap\", \"mismatches\": {\"bus\": {\"address\": 53446, \"reference\": \"0b788d0000\", \"native\": \"0c788d0000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[53446, 2], [53534, 15], [54249, 1]]}}}\n",
+  "restored": "{\"fn\": \"PokemonDomeLoadMap\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53446\": \"0b78\", \"53534\": \"8d0000000000000000000000000000\", \"54249\": \"08\"}}, \"status\": \"PASS\"}\n"
+}
