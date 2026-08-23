@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_f4015_2",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_f4015_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56818\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_f4015_2\", \"mismatches\": {\"bus\": {\"address\": 56818, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[56818, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music2_f4015_2\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"56818\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

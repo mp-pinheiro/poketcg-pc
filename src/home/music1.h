@@ -120,4 +120,7 @@ void Music1_Init(void);
 /* >>> factory SoundTimerHandler */
 void SoundTimerHandler(void);
 /* <<< factory SoundTimerHandler */
+/* >>> factory Music1_f4015 */
+void Music1_f4015(void);
+/* <<< factory Music1_f4015 */
 #endif /* POKETCG_MUSIC1_H */

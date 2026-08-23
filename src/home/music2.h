@@ -111,4 +111,7 @@ void _PlaySong_2(uint8_t a);
 /* >>> factory _ResumeSong_2 */
 void _ResumeSong_2(void);
 /* <<< factory _ResumeSong_2 */
+/* >>> factory Music2_f4015_2 */
+void Music2_f4015_2(void);
+/* <<< factory Music2_f4015_2 */
 #endif /* POKETCG_MUSIC2_H */

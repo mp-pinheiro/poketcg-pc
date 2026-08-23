@@ -1308,3 +1308,10 @@ void _ResumeSong_2(void)
 	Music2_ResumeSong();
 }
 /* <<< factory _ResumeSong_2 */
+
+/* >>> factory Music2_f4015_2 */
+void Music2_f4015_2(void)
+{
+	Music2_f4066();
+}
+/* <<< factory Music2_f4015_2 */

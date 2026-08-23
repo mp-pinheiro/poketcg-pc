@@ -1330,3 +1330,10 @@ void SoundTimerHandler(void)
 	Music1_Update();
 }
 /* <<< factory SoundTimerHandler */
+
+/* >>> factory Music1_f4015 */
+void Music1_f4015(void)
+{
+	Music1_f4066();
+}
+/* <<< factory Music1_f4015 */
