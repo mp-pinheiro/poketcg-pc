@@ -5,4 +5,7 @@
 
 void ClearOWMapEvents(void);
 
+/* >>> factory SetOWMapEvent_SRAMOrVRAM */
+uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a);
+/* <<< factory SetOWMapEvent_SRAMOrVRAM */
 #endif
