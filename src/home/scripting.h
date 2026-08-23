@@ -396,4 +396,7 @@ IncreaseScriptPointerResult ScriptCommand_SetNextNPCAndScript(uint8_t c, uint16_
 /* >>> factory ScriptCommand_SetActiveNPCDirection */
 IncreaseScriptPointerResult ScriptCommand_SetActiveNPCDirection(uint8_t c);
 /* <<< factory ScriptCommand_SetActiveNPCDirection */
+/* >>> factory ScriptCommand_PlayCredits */
+IncreaseScriptPointerResult ScriptCommand_PlayCredits(void);
+/* <<< factory ScriptCommand_PlayCredits */
 #endif

@@ -871,6 +871,14 @@ CASES["ScriptCommand_SetActiveNPCDirection"] = [
 ]
 # <<< factory ScriptCommand_SetActiveNPCDirection
 
+# >>> factory ScriptCommand_PlayCredits
+CONTRACT["ScriptCommand_PlayCredits"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PlayCredits"] = [
+    {"wram": {0xD0B5: b"\x00", 0xD0B4: b"\x00"}, "sram": {0: {0xA00A: b"\xAA"}}, "read": {0xD0B5: 1, 0xD0B4: 1}, "sread": {0: {0xA00A: 1}}},
+    dict(POISON, wram={0xD0B5: b"\x00", 0xD0B4: b"\x00"}, sram={0: {0xA00A: b"\x55"}}, read={0xD0B5: 1, 0xD0B4: 1}, sread={0: {0xA00A: 1}}),
+]
+# <<< factory ScriptCommand_PlayCredits
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1331,3 +1339,6 @@ MUTATIONS["ScriptCommand_SetNextNPCAndScript"] = {"source_symbol": "ScriptComman
 # >>> factory-mutation ScriptCommand_SetActiveNPCDirection
 MUTATIONS["ScriptCommand_SetActiveNPCDirection"] = {"source_symbol": "ScriptCommand_SetActiveNPCDirection", "before": "\twLoadedNPCTempIndex = wScriptNPC;\n\t(void)Func_1c52e(c);", "after": "\twLoadedNPCTempIndex = 0u;\n\t(void)Func_1c52e(c);", "case_ids": ["ScriptCommand_SetActiveNPCDirection-0", "ScriptCommand_SetActiveNPCDirection-1"]}
 # <<< factory-mutation ScriptCommand_SetActiveNPCDirection
+# >>> factory-mutation ScriptCommand_PlayCredits
+MUTATIONS["ScriptCommand_PlayCredits"] = {"source_symbol": "ScriptCommand_PlayCredits", "before": "\twGameEvent = GAME_EVENT_CREDITS;\n\twOverworldTransition |= 0x40u;", "after": "\twGameEvent = GAME_EVENT_CREDITS;\n\twOverworldTransition &= (uint8_t)~0x40u;", "case_ids": ["ScriptCommand_PlayCredits-0", "ScriptCommand_PlayCredits-1"]}
+# <<< factory-mutation ScriptCommand_PlayCredits

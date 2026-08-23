@@ -1053,6 +1053,9 @@ void OmanyteWaterGunEffect(void);
 /* >>> factory PoliwrathWaterGunEffect */
 void PoliwrathWaterGunEffect(void);
 /* <<< factory PoliwrathWaterGunEffect */
+/* >>> factory SeadraWaterGunEffect */
+void SeadraWaterGunEffect(void);
+/* <<< factory SeadraWaterGunEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

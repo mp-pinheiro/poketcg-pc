@@ -1,0 +1,9 @@
+{
+  "fn": "SetDeckMachineTitleText",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetDeckMachineTitleText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"53410\": \"0000\", \"65453\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetDeckMachineTitleText\", \"mismatches\": {\"bus\": {\"address\": 65453, \"reference\": \"00000001\", \"native\": \"00000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[51899, 1], [53410, 2], [65453, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetDeckMachineTitleText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 16385, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"53410\": \"0000\", \"65453\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

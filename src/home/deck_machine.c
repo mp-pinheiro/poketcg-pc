@@ -31,6 +31,10 @@
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_BOX_RIGHT 0x1Fu
 #define SYM_CURSOR_D 0x2Fu
+
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -180,3 +184,13 @@ void DrawListScrollArrows(void)
 	WriteByteToBGMap0(tile, 19u, 11u);
 }
 /* <<< factory DrawListScrollArrows */
+
+/* >>> factory SetDeckMachineTitleText */
+SetDeckMachineTitleTextResult SetDeckMachineTitleText(void)
+{
+	InitTextPrinting(1u, 0u);
+	uint16_t hl = (uint16_t)(gb_read8(wDeckMachineTitleText_ADDR) | ((uint16_t)gb_read8((uint16_t)(wDeckMachineTitleText_ADDR + 1u)) << 8));
+	ProcessTextHeaderResult r = ProcessTextFromID(hl);
+	return (SetDeckMachineTitleTextResult){r.hl};
+}
+/* <<< factory SetDeckMachineTitleText */

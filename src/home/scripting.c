@@ -117,6 +117,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/save.h"
 #include "home/scripting.h"
+
+#include "home/scripting.h"
+#include "home/map.h"
+#include "generated/wram.h"
+#define GAME_EVENT_CREDITS 0x04u
 /* <<< factory statics */
 
 
@@ -1101,3 +1106,13 @@ IncreaseScriptPointerResult ScriptCommand_SetActiveNPCDirection(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_SetActiveNPCDirection */
+
+/* >>> factory ScriptCommand_PlayCredits */
+IncreaseScriptPointerResult ScriptCommand_PlayCredits(void)
+{
+	(void)GetReceivedLegendaryCards();
+	wGameEvent = GAME_EVENT_CREDITS;
+	wOverworldTransition |= 0x40u;
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_PlayCredits */

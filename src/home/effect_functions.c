@@ -4255,3 +4255,10 @@ void PoliwrathWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(2u, 1u);
 }
 /* <<< factory PoliwrathWaterGunEffect */
+
+/* >>> factory SeadraWaterGunEffect */
+void SeadraWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
+}
+/* <<< factory SeadraWaterGunEffect */

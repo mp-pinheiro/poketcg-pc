@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_PlayCredits",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_PlayCredits\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"40970\": \"00\"}}, \"vram\": {}, \"wram\": {\"53428\": \"4004\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_PlayCredits\", \"mismatches\": {\"bus\": {\"address\": 53428, \"reference\": \"4004\", \"native\": \"0004\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53428, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_PlayCredits\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {\"0\": {\"40970\": \"00\"}}, \"vram\": {}, \"wram\": {\"53428\": \"4004\"}}, \"status\": \"PASS\"}\n"
+}

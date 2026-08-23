@@ -35,4 +35,8 @@ void SafelySwitchToSRAM0(void);
 /* >>> factory DrawListScrollArrows */
 void DrawListScrollArrows(void);
 /* <<< factory DrawListScrollArrows */
+/* >>> factory SetDeckMachineTitleText */
+typedef struct { uint16_t hl; } SetDeckMachineTitleTextResult;
+SetDeckMachineTitleTextResult SetDeckMachineTitleText(void);
+/* <<< factory SetDeckMachineTitleText */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

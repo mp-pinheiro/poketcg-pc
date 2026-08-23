@@ -78,6 +78,14 @@ static void adapt_DrawListScrollArrows(ProbeState *s)
 }
 /* <<< factory DrawListScrollArrows */
 
+/* >>> factory SetDeckMachineTitleText */
+static void adapt_SetDeckMachineTitleText(ProbeState *s)
+{
+	SetDeckMachineTitleTextResult r = SetDeckMachineTitleText();
+	s->hl = r.hl;
+}
+/* <<< factory SetDeckMachineTitleText */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -88,5 +96,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "GetSelectedSavedDeckPtr", adapt_GetSelectedSavedDeckPtr },
 	{ "SafelySwitchToSRAM0", adapt_SafelySwitchToSRAM0 },
 	{ "DrawListScrollArrows", adapt_DrawListScrollArrows },
+	{ "SetDeckMachineTitleText", adapt_SetDeckMachineTitleText },
 	{ NULL, NULL },
 };

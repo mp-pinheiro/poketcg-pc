@@ -132,6 +132,14 @@ CASES["DrawListScrollArrows"] = [
 ]
 # <<< factory DrawListScrollArrows
 
+# >>> factory SetDeckMachineTitleText
+CONTRACT["SetDeckMachineTitleText"] = {"compare": ("hl",), "preserve": ()}
+CASES["SetDeckMachineTitleText"] = [
+    {"wram": {0xD0A2: b"\x00\x00", 0xCABB: b"\x00"}, "read": {0xFFAD: 1}},
+    dict(POISON, wram={0xD0A2: b"\x00\x00", 0xCABB: b"\x00"}, read={0xFFAD: 1}),
+]
+# <<< factory SetDeckMachineTitleText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -173,3 +181,6 @@ MUTATIONS["DrawListScrollArrows"] = {
     "case_ids": ["DrawListScrollArrows-0", "DrawListScrollArrows-1", "DrawListScrollArrows-2", "DrawListScrollArrows-3"],
 }
 # <<< factory-mutation DrawListScrollArrows
+# >>> factory-mutation SetDeckMachineTitleText
+MUTATIONS["SetDeckMachineTitleText"] = {"source_symbol": "SetDeckMachineTitleText", "before": "\tInitTextPrinting(1u, 0u);", "after": "\tInitTextPrinting(0u, 0u);", "case_ids": ["SetDeckMachineTitleText-0", "SetDeckMachineTitleText-1"]}
+# <<< factory-mutation SetDeckMachineTitleText
