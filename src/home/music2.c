@@ -1315,3 +1315,10 @@ void Music2_f4015_2(void)
 	Music2_f4066();
 }
 /* <<< factory Music2_f4015_2 */
+
+/* >>> factory _SetupSound_2 */
+void _SetupSound_2(void)
+{
+	Music2_Init();
+}
+/* <<< factory _SetupSound_2 */

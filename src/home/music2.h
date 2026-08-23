@@ -114,4 +114,7 @@ void _ResumeSong_2(void);
 /* >>> factory Music2_f4015_2 */
 void Music2_f4015_2(void);
 /* <<< factory Music2_f4015_2 */
+/* >>> factory _SetupSound_2 */
+void _SetupSound_2(void);
+/* <<< factory _SetupSound_2 */
 #endif /* POKETCG_MUSIC2_H */

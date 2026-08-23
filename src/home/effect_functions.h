@@ -1017,6 +1017,9 @@ MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void);
 /* >>> factory PidgeottoMirrorMove_AIEffect */
 void PidgeottoMirrorMove_AIEffect(void);
 /* <<< factory PidgeottoMirrorMove_AIEffect */
+/* >>> factory PidgeottoMirrorMove_AISelection */
+void PidgeottoMirrorMove_AISelection(void);
+/* <<< factory PidgeottoMirrorMove_AISelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

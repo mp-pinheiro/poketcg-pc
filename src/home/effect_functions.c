@@ -4174,3 +4174,10 @@ void PidgeottoMirrorMove_AIEffect(void)
 	MirrorMove_AIEffect();
 }
 /* <<< factory PidgeottoMirrorMove_AIEffect */
+
+/* >>> factory PidgeottoMirrorMove_AISelection */
+void PidgeottoMirrorMove_AISelection(void)
+{
+	MirrorMove_AISelection();
+}
+/* <<< factory PidgeottoMirrorMove_AISelection */

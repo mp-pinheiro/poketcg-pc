@@ -2662,6 +2662,14 @@ CASES["PidgeottoMirrorMove_AIEffect"] = [
 ]
 # <<< factory PidgeottoMirrorMove_AIEffect
 
+# >>> factory PidgeottoMirrorMove_AISelection
+CONTRACT["PidgeottoMirrorMove_AISelection"] = {"compare": (), "preserve": ()}
+CASES["PidgeottoMirrorMove_AISelection"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x77"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x55"}, read={0xFFA0: 1}),
+]
+# <<< factory PidgeottoMirrorMove_AISelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4444,3 +4452,6 @@ MUTATIONS["PidgeottoMirrorMove_AIEffect"] = {
     "case_ids": ["PidgeottoMirrorMove_AIEffect-0", "PidgeottoMirrorMove_AIEffect-1"],
 }
 # <<< factory-mutation PidgeottoMirrorMove_AIEffect
+# >>> factory-mutation PidgeottoMirrorMove_AISelection
+MUTATIONS["PidgeottoMirrorMove_AISelection"] = {"source_symbol": "PidgeottoMirrorMove_AISelection", "before": "void PidgeottoMirrorMove_AISelection(void)\n{\n\tMirrorMove_AISelection();\n}", "after": "void PidgeottoMirrorMove_AISelection(void)\n{\n\treturn;\n}", "case_ids": ["PidgeottoMirrorMove_AISelection-0", "PidgeottoMirrorMove_AISelection-1"]}
+# <<< factory-mutation PidgeottoMirrorMove_AISelection
