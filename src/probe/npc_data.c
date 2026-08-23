@@ -59,11 +59,21 @@ static void adapt__GetNPCDuelConfigurations(ProbeState *s)
 }
 /* <<< factory _GetNPCDuelConfigurations */
 
+/* >>> factory SetNPCDeckIDAndDuelTheme */
+static void adapt_SetNPCDeckIDAndDuelTheme(ProbeState *s)
+{
+	SetNPCDeckIDAndDuelThemeResult r = SetNPCDeckIDAndDuelTheme(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory SetNPCDeckIDAndDuelTheme */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
 	{ "GetNPCNameAndScript", adapt_GetNPCNameAndScript },
 	{ "LoadNPCSpriteData", adapt_LoadNPCSpriteData },
 	{ "_GetNPCDuelConfigurations", adapt__GetNPCDuelConfigurations },
+	{ "SetNPCDeckIDAndDuelTheme", adapt_SetNPCDeckIDAndDuelTheme },
 	{ NULL, NULL },
 };

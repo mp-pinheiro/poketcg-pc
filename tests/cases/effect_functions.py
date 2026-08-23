@@ -2789,6 +2789,14 @@ CASES["ElectabuzzQuickAttack_AIEffect"] = [
 ]
 # <<< factory ElectabuzzQuickAttack_AIEffect
 
+# >>> factory JolteonQuickAttack_AIEffect
+CONTRACT["JolteonQuickAttack_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["JolteonQuickAttack_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory JolteonQuickAttack_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4621,3 +4629,6 @@ MUTATIONS["DragoniteLv41Slam_AIEffect"] = {"source_symbol": "DragoniteLv41Slam_A
 # >>> factory-mutation ElectabuzzQuickAttack_AIEffect
 MUTATIONS["ElectabuzzQuickAttack_AIEffect"] = {"source_symbol": "ElectabuzzQuickAttack_AIEffect", "before": "void ElectabuzzQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(20u, 10u, 30u);\n}", "after": "void ElectabuzzQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(21u, 10u, 30u);\n}", "case_ids": ["ElectabuzzQuickAttack_AIEffect-0", "ElectabuzzQuickAttack_AIEffect-1"]}
 # <<< factory-mutation ElectabuzzQuickAttack_AIEffect
+# >>> factory-mutation JolteonQuickAttack_AIEffect
+MUTATIONS["JolteonQuickAttack_AIEffect"] = {"source_symbol": "JolteonQuickAttack_AIEffect", "before": "void JolteonQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(20u, 10u, 30u);\n}", "after": "void JolteonQuickAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(21u, 10u, 30u);\n}", "case_ids": ["JolteonQuickAttack_AIEffect-0", "JolteonQuickAttack_AIEffect-1"]}
+# <<< factory-mutation JolteonQuickAttack_AIEffect

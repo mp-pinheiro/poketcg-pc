@@ -24,6 +24,11 @@
 #include "mem.h"
 #define NPC_DUEL_CONFIGURATIONS_BANK 0x04u
 #define NPC_DUEL_CONFIGURATIONS_ADDR 0x5FAEu
+
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define NPC_DATA_DECK_ID 0x0Au
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -132,3 +137,21 @@ _GetNPCDuelDuelConfigurationsResult _GetNPCDuelConfigurations(uint8_t a, uint8_t
 	return (_GetNPCDuelDuelConfigurationsResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory _GetNPCDuelConfigurations */
+
+/* >>> factory SetNPCDeckIDAndDuelTheme */
+SetNPCDeckIDAndDuelThemeResult SetNPCDeckIDAndDuelTheme(uint8_t a)
+{
+	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
+	uint8_t f = (uint8_t)(header.f & 0x80u);
+	if (((uint16_t)(header.hl & 0x0FFFu) + NPC_DATA_DECK_ID) > 0x0FFFu)
+		f |= 0x20u;
+	if ((uint32_t)header.hl + NPC_DATA_DECK_ID > 0xFFFFu)
+		f |= 0x10u;
+	const uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + NPC_DATA_DECK_ID));
+	uint8_t deck_id = entry[0];
+	uint8_t duel_theme = entry[1];
+	gb_write8(wNPCDuelDeckID_ADDR, deck_id);
+	gb_write8(wDuelTheme_ADDR, duel_theme);
+	return (SetNPCDeckIDAndDuelThemeResult){duel_theme, f};
+}
+/* <<< factory SetNPCDeckIDAndDuelTheme */

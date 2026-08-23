@@ -79,6 +79,15 @@ CASES["_GetNPCDuelConfigurations"] = [
 ]
 # <<< factory _GetNPCDuelConfigurations
 
+# >>> factory SetNPCDeckIDAndDuelTheme
+CONTRACT["SetNPCDeckIDAndDuelTheme"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["SetNPCDeckIDAndDuelTheme"] = [
+    {"a": 0x00, "wram": {0xCC19: b"\x00", 0xCC1A: b"\x00"}, "read": {0xCC19: 1, 0xCC1A: 1}},
+    dict(POISON, a=0x02, wram={0xCC19: b"\x00", 0xCC1A: b"\x00"}, read={0xCC19: 1, 0xCC1A: 1}),
+    {"a": 0x7F, "wram": {0xCC19: b"\x00", 0xCC1A: b"\x00"}, "read": {0xCC19: 1, 0xCC1A: 1}},
+]
+# <<< factory SetNPCDeckIDAndDuelTheme
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -98,3 +107,6 @@ MUTATIONS["LoadNPCSpriteData"] = {"source_symbol": "LoadNPCSpriteData", "before"
 # >>> factory-mutation _GetNPCDuelConfigurations
 MUTATIONS["_GetNPCDuelConfigurations"] = {"source_symbol": "_GetNPCDuelConfigurations", "before": "\treturn (_GetNPCDuelDuelConfigurationsResult){a, f, b, c, d, e, hl};", "after": "\treturn (_GetNPCDuelDuelConfigurationsResult){0u, f, b, c, d, e, hl};", "case_ids": ["_GetNPCDuelConfigurations-1", "_GetNPCDuelConfigurations-2", "_GetNPCDuelConfigurations-3"]}
 # <<< factory-mutation _GetNPCDuelConfigurations
+# >>> factory-mutation SetNPCDeckIDAndDuelTheme
+MUTATIONS["SetNPCDeckIDAndDuelTheme"] = {"source_symbol": "SetNPCDeckIDAndDuelTheme", "before": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + NPC_DATA_DECK_ID));", "after": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + NPC_DATA_DECK_ID + 1u));", "case_ids": ["SetNPCDeckIDAndDuelTheme-1", "SetNPCDeckIDAndDuelTheme-2"]}
+# <<< factory-mutation SetNPCDeckIDAndDuelTheme

@@ -1065,6 +1065,9 @@ void DragoniteLv41Slam_AIEffect(void);
 /* >>> factory ElectabuzzQuickAttack_AIEffect */
 void ElectabuzzQuickAttack_AIEffect(void);
 /* <<< factory ElectabuzzQuickAttack_AIEffect */
+/* >>> factory JolteonQuickAttack_AIEffect */
+void JolteonQuickAttack_AIEffect(void);
+/* <<< factory JolteonQuickAttack_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

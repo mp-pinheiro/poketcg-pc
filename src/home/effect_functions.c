@@ -4284,3 +4284,10 @@ void ElectabuzzQuickAttack_AIEffect(void)
 	SetExpectedAIDamage(20u, 10u, 30u);
 }
 /* <<< factory ElectabuzzQuickAttack_AIEffect */
+
+/* >>> factory JolteonQuickAttack_AIEffect */
+void JolteonQuickAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(20u, 10u, 30u);
+}
+/* <<< factory JolteonQuickAttack_AIEffect */
