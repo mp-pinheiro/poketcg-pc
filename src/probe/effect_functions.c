@@ -2667,13 +2667,13 @@ static void adapt_PoliwagWaterGunEffect(ProbeState *s)
 }
 /* <<< factory PoliwagWaterGunEffect */
 
-/* >>> factory GengarDarkMind_AISelectEffect */
-static void adapt_GengarDarkMind_AISelectEffect(ProbeState *s)
+/* >>> factory TaurosStomp_AIEffect */
+static void adapt_TaurosStomp_AIEffect(ProbeState *s)
 {
 	(void)s;
-	GengarDarkMind_AISelectEffect();
+	TaurosStomp_AIEffect();
 }
-/* <<< factory GengarDarkMind_AISelectEffect */
+/* <<< factory TaurosStomp_AIEffect */
 
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
@@ -3005,6 +3005,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
 	{ "MagikarpFlail_AIEffect", adapt_MagikarpFlail_AIEffect },
 	{ "PoliwagWaterGunEffect", adapt_PoliwagWaterGunEffect },
-	{ "GengarDarkMind_AISelectEffect", adapt_GengarDarkMind_AISelectEffect },
+	{ "TaurosStomp_AIEffect", adapt_TaurosStomp_AIEffect },
 	{ NULL, NULL },
 };
