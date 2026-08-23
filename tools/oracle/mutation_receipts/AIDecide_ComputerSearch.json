@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_ComputerSearch",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_ComputerSearch\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"141516\", \"49902\": \"03\", \"50196\": \"010101\", \"50448\": \"161514ff00000000000000000000000000000000000000000000000000000000\", \"52238\": \"17\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_ComputerSearch\", \"mismatches\": {\"a\": [60, 23], \"bus\": {\"address\": 50448, \"reference\": \"03010101161514ff00\", \"native\": \"030101010000000000\", \"reference_size\": 41, \"native_size\": 41, \"spans\": [[49730, 3], [49902, 1], [50196, 3], [50448, 32], [52238, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIDecide_ComputerSearch\", \"registers\": {\"a\": 60, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"141516\", \"49902\": \"03\", \"50196\": \"010101\", \"50448\": \"161514ff00000000000000000000000000000000000000000000000000000000\", \"52238\": \"17\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

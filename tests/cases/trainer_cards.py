@@ -257,6 +257,10 @@ wce06 = 0xCE06
 wce1a = 0xCE1A
 wce1b = 0xCE1B
 wAITrainerCardToPlay = 0xCE16
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wOpponentDeckID = 0xCC0E
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -447,6 +451,25 @@ CASES["AIDecide_ComputerSearch_RockCrusher"] = [
 ]
 # <<< factory AIDecide_ComputerSearch_RockCrusher
 
+# >>> factory AIDecide_ComputerSearch
+CONTRACT["AIDecide_ComputerSearch"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_ComputerSearch"] = [
+    {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x03",
+        0xC242: b"\x14",
+        0xC243: b"\x15",
+        0xC244: b"\x16",
+        0xC414: b"\x01",
+        0xC415: b"\x01",
+        0xC416: b"\x01",
+        wOpponentDeckID: b"\x17",
+    }, "read": {0xC510: 32}},
+    dict(POISON, b=0x00, c=0x00, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}),
+]
+# <<< factory AIDecide_ComputerSearch
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -624,3 +647,6 @@ MUTATIONS["AIDecide_ComputerSearch_WondersOfScience"] = {"source_symbol": "AIDec
 # >>> factory-mutation AIDecide_ComputerSearch_RockCrusher
 MUTATIONS["AIDecide_ComputerSearch_RockCrusher"] = {"source_symbol": "AIDecide_ComputerSearch_RockCrusher", "before": '\t\t\t\tif (gb_read8(wce1b_ADDR) != 0xFFu)\n\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};\n\t\t\t\tcontinue;', "after": '\t\t\t\tif (gb_read8(wce1b_ADDR) != 0xFFu)\n\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x00u};\n\t\t\t\tcontinue;', "case_ids": ["AIDecide_ComputerSearch_RockCrusher-1"]}
 # <<< factory-mutation AIDecide_ComputerSearch_RockCrusher
+# >>> factory-mutation AIDecide_ComputerSearch
+MUTATIONS["AIDecide_ComputerSearch"] = {"source_symbol": "AIDecide_ComputerSearch", "before": "\tif (deck_id == FIRE_CHARGE_DECK_ID) {", "after": "\tif (deck_id == ANGER_DECK_ID) {", "case_ids": ["AIDecide_ComputerSearch-1"]}
+# <<< factory-mutation AIDecide_ComputerSearch

@@ -114,6 +114,11 @@
 #define GRAVELER 0x81u
 #define ONIX 0x83u
 #define RHYHORN 0x89u
+
+#define ANGER_DECK_ID 0x31u
+#define FIRE_CHARGE_DECK_ID 0x17u
+#define ROCK_CRUSHER_DECK_ID 0x11u
+#define WONDERS_OF_SCIENCE_DECK_ID 0x16u
 /* <<< factory statics */
 
 
@@ -1259,3 +1264,33 @@ find_discard_cards_2:
 	}
 }
 /* <<< factory AIDecide_ComputerSearch_RockCrusher */
+
+/* >>> factory AIDecide_ComputerSearch */
+AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c)
+{
+	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (hand_count.a < 3u) {
+		uint8_t f = (hand_count.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearchResult){hand_count.a, f};
+	}
+	uint8_t deck_id = wOpponentDeckID;
+	if (deck_id == ROCK_CRUSHER_DECK_ID) {
+		AIDecide_ComputerSearch_RockCrusherResult r = AIDecide_ComputerSearch_RockCrusher(b, c);
+		return (AIDecide_ComputerSearchResult){r.a, r.f};
+	}
+	if (deck_id == WONDERS_OF_SCIENCE_DECK_ID) {
+		AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(b, c);
+		return (AIDecide_ComputerSearchResult){r.a, r.f};
+	}
+	if (deck_id == FIRE_CHARGE_DECK_ID) {
+		AIDecide_ComputerSearch_FireChargeResult r = AIDecide_ComputerSearch_FireCharge(b, c);
+		return (AIDecide_ComputerSearchResult){r.a, r.f};
+	}
+	if (deck_id == ANGER_DECK_ID) {
+		AIDecide_ComputerSearch_AngerResult r = AIDecide_ComputerSearch_Anger(b, c);
+		return (AIDecide_ComputerSearchResult){r.a, r.f};
+	}
+	uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
+	return (AIDecide_ComputerSearchResult){deck_id, f};
+}
+/* <<< factory AIDecide_ComputerSearch */

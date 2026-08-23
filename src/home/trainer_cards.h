@@ -105,4 +105,8 @@ AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOf
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearch_RockCrusherResult;
 AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(uint8_t b, uint8_t c);
 /* <<< factory AIDecide_ComputerSearch_RockCrusher */
+/* >>> factory AIDecide_ComputerSearch */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearchResult;
+AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c);
+/* <<< factory AIDecide_ComputerSearch */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

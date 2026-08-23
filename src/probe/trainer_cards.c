@@ -234,6 +234,15 @@ static void adapt_AIDecide_ComputerSearch_RockCrusher(ProbeState *s)
 }
 /* <<< factory AIDecide_ComputerSearch_RockCrusher */
 
+/* >>> factory AIDecide_ComputerSearch */
+static void adapt_AIDecide_ComputerSearch(ProbeState *s)
+{
+	AIDecide_ComputerSearchResult r = AIDecide_ComputerSearch(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_ComputerSearch */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -263,5 +272,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_ComputerSearch_Anger", adapt_AIDecide_ComputerSearch_Anger },
 	{ "AIDecide_ComputerSearch_WondersOfScience", adapt_AIDecide_ComputerSearch_WondersOfScience },
 	{ "AIDecide_ComputerSearch_RockCrusher", adapt_AIDecide_ComputerSearch_RockCrusher },
+	{ "AIDecide_ComputerSearch", adapt_AIDecide_ComputerSearch },
 	{ NULL, NULL },
 };
