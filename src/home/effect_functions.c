@@ -4478,3 +4478,11 @@ void TaurosStomp_AIEffect(void)
 	SetExpectedAIDamage(25u, 20u, 30u);
 }
 /* <<< factory TaurosStomp_AIEffect */
+
+/* >>> factory DodrioRage_AIEffect */
+void DodrioRage_AIEffect(void)
+{
+	DodrioRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory DodrioRage_AIEffect */

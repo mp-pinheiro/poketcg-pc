@@ -2952,6 +2952,18 @@ CASES["TaurosStomp_AIEffect"] = [
 ]
 # <<< factory TaurosStomp_AIEffect
 
+# >>> factory DodrioRage_AIEffect
+CONTRACT["DodrioRage_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DodrioRage_AIEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xC9",
+              wPlayerDeck: b"\x01", wDamage: b"\x05\x00"},
+     "read": {wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\xC9",
+                       wPlayerDeck: b"\x01", wDamage: b"\x05\x00"},
+         read={wDamage: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory DodrioRage_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4829,3 +4841,6 @@ MUTATIONS["PoliwagWaterGunEffect"] = {"source_symbol": "PoliwagWaterGunEffect", 
 # >>> factory-mutation TaurosStomp_AIEffect
 MUTATIONS["TaurosStomp_AIEffect"] = {"source_symbol": "TaurosStomp_AIEffect", "before": "void TaurosStomp_AIEffect(void)\n{\n\tSetExpectedAIDamage(25u, 20u, 30u);", "after": "void TaurosStomp_AIEffect(void)\n{\n\tSetExpectedAIDamage(25u, 20u, 40u);", "case_ids": ["TaurosStomp_AIEffect-0", "TaurosStomp_AIEffect-1"]}
 # <<< factory-mutation TaurosStomp_AIEffect
+# >>> factory-mutation DodrioRage_AIEffect
+MUTATIONS["DodrioRage_AIEffect"] = {"source_symbol": "DodrioRage_AIEffect", "before": "DodrioRage_DamageBoostEffect();", "after": "(void)0;", "case_ids": ["DodrioRage_AIEffect-0", "DodrioRage_AIEffect-1"]}
+# <<< factory-mutation DodrioRage_AIEffect
