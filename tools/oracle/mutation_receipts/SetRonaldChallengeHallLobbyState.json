@@ -1,0 +1,9 @@
+{
+  "fn": "SetRonaldChallengeHallLobbyState",
+  "case": "tests/cases/challenge_hall_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetRonaldChallengeHallLobbyState\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"01005001030351020000520307005304\", \"54246\": \"8010\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetRonaldChallengeHallLobbyState\", \"mismatches\": {\"a\": [16, 48], \"hl\": [50435, 50443], \"bus\": {\"address\": 54246, \"reference\": \"070053048010\", \"native\": \"070053042030\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[50432, 16], [54246, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetRonaldChallengeHallLobbyState\", \"registers\": {\"a\": 16, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 16, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"01005001030351020000520307005304\", \"54246\": \"8010\"}}, \"status\": \"PASS\"}\n"
+}
