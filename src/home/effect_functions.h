@@ -1180,6 +1180,9 @@ void Wildfire_DiscardEnergyEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } SuperEnergyRemoval_EnergyCheckResult;
 SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void);
 /* <<< factory SuperEnergyRemoval_EnergyCheck */
+/* >>> factory MorphEffect */
+void MorphEffect(void);
+/* <<< factory MorphEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

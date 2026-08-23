@@ -2837,6 +2837,14 @@ static void adapt_SuperEnergyRemoval_EnergyCheck(ProbeState *s)
 }
 /* <<< factory SuperEnergyRemoval_EnergyCheck */
 
+/* >>> factory MorphEffect */
+static void adapt_MorphEffect(ProbeState *s)
+{
+	(void)s;
+	MorphEffect();
+}
+/* <<< factory MorphEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3188,5 +3196,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ItemFinder_HandDiscardPileCheck", adapt_ItemFinder_HandDiscardPileCheck },
 	{ "Wildfire_DiscardEnergyEffect", adapt_Wildfire_DiscardEnergyEffect },
 	{ "SuperEnergyRemoval_EnergyCheck", adapt_SuperEnergyRemoval_EnergyCheck },
+	{ "MorphEffect", adapt_MorphEffect },
 	{ NULL, NULL },
 };

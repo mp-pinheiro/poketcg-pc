@@ -2379,6 +2379,13 @@ hWhoseTurn = 0xFF97
 wPlayerDuelVariables = 0xC200
 wPlayerDeck = 0xC400
 WATER_ENERGY = 0x03
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wTempTurnDuelistCardID = 0xCCC3
+BULBASAUR = 0x08
+IVYSAUR = 0x09
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3202,6 +3209,28 @@ CASES["SuperEnergyRemoval_EnergyCheck"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
 ]
 # <<< factory SuperEnergyRemoval_EnergyCheck
+
+# >>> factory MorphEffect
+CONTRACT["MorphEffect"] = {"compare": (), "preserve": ()}
+CASES["MorphEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBA: b"\x3C"},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "vread": {0: {0x9800: 0x400}}},
+    {"wram": {hWhoseTurn: b"\xC2",
+              wPlayerDuelVariables + 0xBA: b"\x00",
+              wPlayerDeck: bytes([BULBASAUR]) * 60,
+              wPlayerDuelVariables + 0xBB: b"\x05",
+              wPlayerDuelVariables + 0xCE: b"\x00",
+              wTempTurnDuelistCardID: bytes([IVYSAUR])},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBA: b"\x3C"},
+         keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000,
+         vread={0: {0x9800: 0x400}}),
+]
+# <<< factory MorphEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5140,3 +5169,6 @@ MUTATIONS["Wildfire_DiscardEnergyEffect"] = {"source_symbol": "Wildfire_DiscardE
 # >>> factory-mutation SuperEnergyRemoval_EnergyCheck
 MUTATIONS["SuperEnergyRemoval_EnergyCheck"] = {"source_symbol": "SuperEnergyRemoval_EnergyCheck", "before": "CheckIfThereAreAnyEnergyCardsAttached();\n\tif (r1.f & 0x10u)", "after": "CheckIfThereAreAnyEnergyCardsAttached();\n\tif (!(r1.f & 0x10u))", "case_ids": ["SuperEnergyRemoval_EnergyCheck-0", "SuperEnergyRemoval_EnergyCheck-1"]}
 # <<< factory-mutation SuperEnergyRemoval_EnergyCheck
+# >>> factory-mutation MorphEffect
+MUTATIONS["MorphEffect"] = {"source_symbol": "MorphEffect", "before": "(void)DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);", "after": "(void)DrawWideTextBox_WaitForInput(0x0000u);", "case_ids": ["MorphEffect-0", "MorphEffect-2"]}
+# <<< factory-mutation MorphEffect

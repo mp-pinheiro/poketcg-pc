@@ -381,6 +381,20 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #define NoEnergyCardsAttachedToPokemonInOppPlayAreaText 0x00beu
 #define NoEnergyCardsAttachedToPokemonInYourPlayAreaText 0x00bdu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/serial.h"
+#include "home/menus.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define BASIC 0x00u
+#define DITTO 0xbbu
+#define AttackUnsuccessfulText 0x00fdu
+#define MetamorphsToText 0x010du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4750,3 +4764,81 @@ SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void)
 	return (SuperEnergyRemoval_EnergyCheckResult){r2.f, NoEnergyCardsAttachedToPokemonInOppPlayAreaText};
 }
 /* <<< factory SuperEnergyRemoval_EnergyCheck */
+
+/* >>> factory MorphEffect */
+void MorphEffect(void)
+{
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+
+	uint8_t found = 0u;
+	CardListResult deck_list = CreateDeckCardList(0u, 0u);
+	if (!(deck_list.f & 0x10u)) {
+		(void)ShuffleCards(deck_list.a, wDuelTempList_ADDR);
+		uint16_t hl = wDuelTempList_ADDR;
+		for (;;) {
+			uint8_t idx = gb_read8(hl);
+			hl++;
+			hTempCardIndex_ff98 = idx;
+			if (idx == 0xffu)
+				break;
+			(void)LoadCardDataToBuffer2_FromDeckIndex(idx);
+			if (wLoadedCard2Type >= TYPE_ENERGY)
+				continue;
+			if (wLoadedCard2Stage != 0u)
+				continue;
+			if (wLoadedCard2ID == DITTO)
+				continue;
+			found = 1u;
+			break;
+		}
+	}
+
+	if (!found) {
+		(void)DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);
+		return;
+	}
+
+	DuelistVarResult stage = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STAGE);
+	if (stage.a != 0u) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CardOneStageBelowResult below = GetCardOneStageBelow(0u, 0u);
+		PutCardInDiscardPile(below.d);
+		gb_write8(stage.hl, BASIC);
+	}
+
+	uint16_t chosen_card_id = GetCardIDFromDeckIndex(hTempCardIndex_ff98);
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t old_arena_index = arena.a;
+	hTempCardIndex_ff98 = old_arena_index;
+	DeckCardResult old_slot = _GetCardIDFromDeckIndex(old_arena_index);
+	gb_write8(old_slot.hl, (uint8_t)chosen_card_id);
+
+	CardDamageResult dmg = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	gb_write8(hp.hl, dmg.c);
+
+	DuelistVarResult changed_type = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_TYPE);
+	gb_write8(changed_type.hl, 0u);
+	ClearAllStatusConditions();
+
+	uint8_t old_card_id = wTempTurnDuelistCardID;
+	LoadCardDataToBuffer2_FromCardID(old_card_id);
+	uint16_t src = wLoadedCard2Name_ADDR;
+	uint16_t dst = wTxRam2_ADDR;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+	src++;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+
+	(void)LoadCardDataToBuffer2_FromDeckIndex(hTempCardIndex_ff98);
+	src = wLoadedCard2Name_ADDR;
+	gb_write8(dst, gb_read8(src));
+	dst++;
+	src++;
+	gb_write8(dst, gb_read8(src));
+
+	(void)DrawWideTextBox_WaitForInput(MetamorphsToText);
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory MorphEffect */
