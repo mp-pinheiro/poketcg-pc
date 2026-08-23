@@ -150,4 +150,7 @@ void Func_c3ee(void);
 /* >>> factory Func_c66c */
 void Func_c66c(void);
 /* <<< factory Func_c66c */
+/* >>> factory Func_c4b9 */
+void Func_c4b9(void);
+/* <<< factory Func_c4b9 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

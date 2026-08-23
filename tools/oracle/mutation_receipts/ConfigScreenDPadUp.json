@@ -1,0 +1,9 @@
+{
+  "fn": "ConfigScreenDPadUp",
+  "case": "tests/cases/config.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConfigScreenDPadUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"39297\": \"00\", \"53529\": \"00\", \"53531\": \"0118\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConfigScreenDPadUp\", \"mismatches\": {\"bus\": {\"address\": 53531, \"reference\": \"00000118\", \"native\": \"00000018\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[39297, 1], [53529, 1], [53531, 2]]}}}\n",
+  "restored": "{\"fn\": \"ConfigScreenDPadUp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"39297\": \"00\", \"53529\": \"00\", \"53531\": \"0118\"}}, \"status\": \"PASS\"}\n"
+}

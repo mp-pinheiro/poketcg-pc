@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c4b9",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c4b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53438\": \"05\", \"54063\": \"00\", \"54068\": \"0200000000\", \"54474\": \"0400\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c4b9\", \"mismatches\": {\"bus\": {\"address\": 54068, \"reference\": \"0005000200000000\", \"native\": \"0005000500000000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51892, 1], [53438, 1], [54063, 1], [54068, 5], [54474, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c4b9\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"53438\": \"05\", \"54063\": \"00\", \"54068\": \"0200000000\", \"54474\": \"0400\"}}, \"status\": \"PASS\"}\n"
+}

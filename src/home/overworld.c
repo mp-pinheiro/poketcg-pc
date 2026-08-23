@@ -95,6 +95,17 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define B_PAD_B_MASK 0x02u
+
+#include "home/load_gfx.h"
+#include "home/sprite_animations.h"
+#include "home/overworld_map.h"
+
+#define CONSOLE_CGB 0x02u
+#define SOUTH 0x02u
+#define SPRITE_OW_PLAYER 0x00u
+#define SPRITE_ANIM_LIGHT_NPC_UP 0x00u
+#define SPRITE_ANIM_RED_NPC_UP 0x1Eu
+#define PALETTE_OVERWORLD_OAM 0x1Du
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -614,3 +625,45 @@ void Func_c66c(void)
 	Func_c694(wPlayerDirection, c);
 }
 /* <<< factory Func_c66c */
+
+/* >>> factory Func_c4b9 */
+void Func_c4b9(void)
+{
+	wWhichOBP = 0u;
+	wWhichOBPalIndex = 0u;
+	LoadOBPalette(PALETTE_OVERWORLD_OAM);
+
+	uint8_t console = wConsole;
+	uint8_t base_anim = SPRITE_ANIM_LIGHT_NPC_UP;
+	uint8_t f_cgb = 0x40u;
+	if ((console & 0x0Fu) < (CONSOLE_CGB & 0x0Fu))
+		f_cgb |= 0x20u;
+	if (console < CONSOLE_CGB)
+		f_cgb |= 0x10u;
+	if (console == CONSOLE_CGB) {
+		f_cgb |= 0x80u;
+		base_anim = SPRITE_ANIM_RED_NPC_UP;
+	}
+	wPlayerSpriteBaseAnimation = base_anim;
+
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_OW_PLAYER, f_cgb);
+	wPlayerSpriteIndex = wWhichSprite;
+
+	uint8_t cur_map = wCurMap;
+	uint8_t dir = SOUTH;
+	if (cur_map != OVERWORLD_MAP)
+		dir = wTempPlayerDirection;
+	wPlayerDirection = dir;
+	UpdatePlayerSprite();
+
+	if (cur_map != OVERWORLD_MAP) {
+		uint16_t hl = 0u;
+		(void)Func_c6f7(&hl);
+	}
+
+	wPlayerCurrentlyMoving = 0u;
+	wd338 = 0u;
+	if (cur_map == OVERWORLD_MAP)
+		OverworldMap_InitCursorSprite();
+}
+/* <<< factory Func_c4b9 */

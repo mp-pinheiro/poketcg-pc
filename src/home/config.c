@@ -213,3 +213,29 @@ void ConfigScreenDPadDown(void)
 	PlaySFX(SFX_CURSOR);
 }
 /* <<< factory ConfigScreenDPadDown */
+
+/* >>> factory ConfigScreenDPadUp */
+void ConfigScreenDPadUp(void)
+{
+	static const uint8_t kInitTimer[3] = {0x18u, 0x18u, 0x08u};
+	uint8_t direction = 0xFFu;
+	uint8_t old_row = gb_read8(wConfigCursorYPos_ADDR);
+	if (old_row == 2u)
+		(void)HideConfigMenuCursor(old_row, 0u, 0u);
+	else
+		(void)ShowConfigMenuCursor(old_row, 0u, 0u);
+	uint8_t new_row_candidate = (uint8_t)(direction + old_row);
+	uint8_t new_row;
+	if (new_row_candidate < 3u)
+		new_row = new_row_candidate;
+	else if (new_row_candidate == 3u)
+		new_row = 0u;
+	else
+		new_row = 2u;
+	gb_write8(wConfigCursorYPos_ADDR, new_row);
+	uint8_t timer = kInitTimer[new_row];
+	gb_write8(wCursorBlinkTimer_ADDR, timer);
+	(void)UpdateConfigMenuCursor(new_row, 0u, 0u);
+	PlaySFX(SFX_CURSOR);
+}
+/* <<< factory ConfigScreenDPadUp */

@@ -75,6 +75,14 @@ static void adapt_ConfigScreenDPadDown(ProbeState *s)
 }
 /* <<< factory ConfigScreenDPadDown */
 
+/* >>> factory ConfigScreenDPadUp */
+static void adapt_ConfigScreenDPadUp(ProbeState *s)
+{
+	(void)s;
+	ConfigScreenDPadUp();
+}
+/* <<< factory ConfigScreenDPadUp */
+
 const ProbeEntry probe_entries_config[] = {
 	{ "DrawConfigMenuCursor", adapt_DrawConfigMenuCursor },
 	{ "GetConfigCursorPositions", adapt_GetConfigCursorPositions },
@@ -85,5 +93,6 @@ const ProbeEntry probe_entries_config[] = {
 	{ "ConfigScreenDPadRight", adapt_ConfigScreenDPadRight },
 	{ "UpdateConfigMenuCursor", adapt_UpdateConfigMenuCursor },
 	{ "ConfigScreenDPadDown", adapt_ConfigScreenDPadDown },
+	{ "ConfigScreenDPadUp", adapt_ConfigScreenDPadUp },
 	{ NULL, NULL },
 };

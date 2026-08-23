@@ -32,4 +32,7 @@ UpdateConfigMenuCursorResult UpdateConfigMenuCursor(uint8_t a, uint8_t b, uint8_
 /* >>> factory ConfigScreenDPadDown */
 void ConfigScreenDPadDown(void);
 /* <<< factory ConfigScreenDPadDown */
+/* >>> factory ConfigScreenDPadUp */
+void ConfigScreenDPadUp(void);
+/* <<< factory ConfigScreenDPadUp */
 #endif /* POKETCG_HOME_CONFIG_H */

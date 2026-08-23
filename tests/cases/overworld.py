@@ -520,6 +520,16 @@ CASES["Func_c66c"] = [
 ]
 # <<< factory Func_c66c
 
+# >>> factory Func_c4b9
+CONTRACT["Func_c4b9"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_c4b9"] = [
+    {"wram": {0xCAB4: b"\x00", 0xD32F: b"\x00", 0xD0BE: b"\x05"},
+     "read": {0xD4CA: 1, 0xD4CB: 1, 0xD337: 1, 0xD336: 1, 0xD334: 1, 0xD335: 1, 0xD338: 1}},
+    dict(POISON, wram={0xCAB4: b"\x00", 0xD32F: b"\x00", 0xD0BE: b"\x05"},
+         read={0xD4CA: 1, 0xD4CB: 1, 0xD337: 1, 0xD336: 1, 0xD334: 1, 0xD335: 1, 0xD338: 1}),
+]
+# <<< factory Func_c4b9
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -706,3 +716,11 @@ MUTATIONS["Func_c3ee"] = {"source_symbol": "Func_c3ee", "before": "\t\tgb_write8
 # >>> factory-mutation Func_c66c
 MUTATIONS["Func_c66c"] = {"source_symbol": "Func_c66c", "before": "\t\tif (wd338_val >= 2u)\n\t\t\tc = 2u;", "after": "\t\tif (wd338_val >= 3u)\n\t\t\tc = 2u;", "case_ids": ["Func_c66c-2"]}
 # <<< factory-mutation Func_c66c
+# >>> factory-mutation Func_c4b9
+MUTATIONS["Func_c4b9"] = {
+    "source_symbol": "Func_c4b9",
+    "before": "if (cur_map != OVERWORLD_MAP)\n\t\tdir = wTempPlayerDirection;",
+    "after": "if (cur_map == OVERWORLD_MAP)\n\t\tdir = wTempPlayerDirection;",
+    "case_ids": ["Func_c4b9-0", "Func_c4b9-1"],
+}
+# <<< factory-mutation Func_c4b9
