@@ -11,7 +11,16 @@ static void adapt_DrawPauseMenuPlayerPortrait(ProbeState *s)
 }
 /* <<< factory DrawPauseMenuPlayerPortrait */
 
+/* >>> factory FlashReceivedMedal */
+static void adapt_FlashReceivedMedal(ProbeState *s)
+{
+	(void)s;
+	FlashReceivedMedal();
+}
+/* <<< factory FlashReceivedMedal */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
+	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
 	{ NULL, NULL },
 };

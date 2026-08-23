@@ -427,4 +427,7 @@ IncreaseScriptPointerResult ScriptCommand_GiveStarterDeck(void);
 /* >>> factory ScriptCommand_FlashScreen */
 IncreaseScriptPointerResult ScriptCommand_FlashScreen(uint8_t c);
 /* <<< factory ScriptCommand_FlashScreen */
+/* >>> factory ScriptCommand_MoveActiveNPCByDirection */
+ExecuteNPCMovementResult ScriptCommand_MoveActiveNPCByDirection(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_MoveActiveNPCByDirection */
 #endif

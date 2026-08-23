@@ -852,6 +852,17 @@ static void adapt_ScriptCommand_FlashScreen(ProbeState *s)
 }
 /* <<< factory ScriptCommand_FlashScreen */
 
+/* >>> factory ScriptCommand_MoveActiveNPCByDirection */
+static void adapt_ScriptCommand_MoveActiveNPCByDirection(ProbeState *s)
+{
+	ExecuteNPCMovementResult r = ScriptCommand_MoveActiveNPCByDirection(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_MoveActiveNPCByDirection */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -935,5 +946,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_ReplaceMapBlocks", adapt_ScriptCommand_ReplaceMapBlocks },
 	{ "ScriptCommand_GiveStarterDeck", adapt_ScriptCommand_GiveStarterDeck },
 	{ "ScriptCommand_FlashScreen", adapt_ScriptCommand_FlashScreen },
+	{ "ScriptCommand_MoveActiveNPCByDirection", adapt_ScriptCommand_MoveActiveNPCByDirection },
 	{ NULL, NULL },
 };

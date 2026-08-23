@@ -312,6 +312,15 @@ static void adapt_AddCardIDToVisibleList(ProbeState *s)
 }
 /* <<< factory AddCardIDToVisibleList */
 
+/* >>> factory HandleCardSelectionCursorBlink */
+static void adapt_HandleCardSelectionCursorBlink(ProbeState *s)
+{
+	DrawHorizontalListCursorResult r = HandleCardSelectionCursorBlink();
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory HandleCardSelectionCursorBlink */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -348,5 +357,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CreateFilteredCardList", adapt_CreateFilteredCardList },
 	{ "ConfirmSelectionAndReturnCarry", adapt_ConfirmSelectionAndReturnCarry },
 	{ "AddCardIDToVisibleList", adapt_AddCardIDToVisibleList },
+	{ "HandleCardSelectionCursorBlink", adapt_HandleCardSelectionCursorBlink },
 	{ NULL, NULL },
 };

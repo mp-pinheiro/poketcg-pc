@@ -101,6 +101,9 @@ TEMP_BGP = 0xD294
 TEMP_OBP0 = 0xD295
 TEMP_OBP1 = 0xD296
 wScriptPointer = 0xD413
+
+wScriptNPC = 0xD3B6
+wD34E = 0xD34E
 # <<< factory-cases-statics
 
 
@@ -993,6 +996,16 @@ CASES["ScriptCommand_FlashScreen"] = [
 ]
 # <<< factory ScriptCommand_FlashScreen
 
+# >>> factory ScriptCommand_MoveActiveNPCByDirection
+CONTRACT["ScriptCommand_MoveActiveNPCByDirection"] = {"compare": ("a", "f", "b", "c"), "preserve": ()}
+CASES["ScriptCommand_MoveActiveNPCByDirection"] = [
+    {"b": 0xC2, "c": 0x00, "wram": {wScriptNPC: b"\x00", wD34E: b"\x02",
+        0xC204: b"\x00\xC1", 0xC100: b"\xFF"}, "read": {0xC100: 1}},
+    dict(POISON, b=0xC2, c=0x00, wram={wScriptNPC: b"\x00", wD34E: b"\x02",
+        0xC204: b"\x00\xC1", 0xC100: b"\xFF"}, read={0xC100: 1}),
+]
+# <<< factory ScriptCommand_MoveActiveNPCByDirection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1493,3 +1506,6 @@ MUTATIONS["ScriptCommand_GiveStarterDeck"] = {"source_symbol": "ScriptCommand_Gi
 # >>> factory-mutation ScriptCommand_FlashScreen
 MUTATIONS["ScriptCommand_FlashScreen"] = {"source_symbol": "ScriptCommand_FlashScreen", "before": "\tFlashScreenToWhite(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\tFlashScreenToWhite(c);\n\treturn IncreaseScriptPointerBy1();", "case_ids": ["ScriptCommand_FlashScreen-0", "ScriptCommand_FlashScreen-1"]}
 # <<< factory-mutation ScriptCommand_FlashScreen
+# >>> factory-mutation ScriptCommand_MoveActiveNPCByDirection
+MUTATIONS["ScriptCommand_MoveActiveNPCByDirection"] = {"source_symbol": "ScriptCommand_MoveActiveNPCByDirection", "before": "\tuint8_t rotated = (uint8_t)((dir << 1) | (dir >> 7));", "after": "\tuint8_t rotated = dir;", "case_ids": ["ScriptCommand_MoveActiveNPCByDirection-0", "ScriptCommand_MoveActiveNPCByDirection-1"]}
+# <<< factory-mutation ScriptCommand_MoveActiveNPCByDirection

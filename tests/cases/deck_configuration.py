@@ -151,6 +151,12 @@ wCardListCursorYPos = 0xCEA6
 wCardListXSpacing = 0xCEA8
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wMenuInputSFX = 0xCFE3
+wCheckMenuCursorBlinkCounter = 0xCEA3
+wVisibleCursorTile = 0xCEAA
+wCardListCursorPos = 0xCEA4
+wCardListCursorXPos = 0xCEA5
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -402,6 +408,20 @@ CASES["AddCardIDToVisibleList"] = [
 ]
 # <<< factory AddCardIDToVisibleList
 
+# >>> factory HandleCardSelectionCursorBlink
+CONTRACT["HandleCardSelectionCursorBlink"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["HandleCardSelectionCursorBlink"] = [
+    {"wram": {wCheckMenuCursorBlinkCounter: b"\x01"},
+     "read": {wCheckMenuCursorBlinkCounter: 1}},
+    {"wram": {wCheckMenuCursorBlinkCounter: b"\xF0", wVisibleCursorTile: b"\x77",
+              0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+     "read": {wCheckMenuCursorBlinkCounter: 1}, "vread": {0: {0x98AA: 1}}},
+    dict(POISON, wram={wCheckMenuCursorBlinkCounter: b"\x00", wVisibleCursorTile: b"\x77",
+                        0xCEAB: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA8: b"\x02"},
+         read={wCheckMenuCursorBlinkCounter: 1}, vread={0: {0x98AA: 1}}),
+]
+# <<< factory HandleCardSelectionCursorBlink
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -566,3 +586,6 @@ MUTATIONS["AddCardIDToVisibleList"] = {
     "case_ids": ["AddCardIDToVisibleList-0", "AddCardIDToVisibleList-1"],
 }
 # <<< factory-mutation AddCardIDToVisibleList
+# >>> factory-mutation HandleCardSelectionCursorBlink
+MUTATIONS["HandleCardSelectionCursorBlink"] = {"source_symbol": "HandleCardSelectionCursorBlink", "before": "\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(counter_old + 1u));", "after": "\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, counter_old);", "case_ids": ["HandleCardSelectionCursorBlink-0", "HandleCardSelectionCursorBlink-1"]}
+# <<< factory-mutation HandleCardSelectionCursorBlink

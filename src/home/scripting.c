@@ -1276,3 +1276,23 @@ IncreaseScriptPointerResult ScriptCommand_FlashScreen(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_FlashScreen */
+
+/* >>> factory ScriptCommand_MoveActiveNPCByDirection */
+ExecuteNPCMovementResult ScriptCommand_MoveActiveNPCByDirection(uint8_t b, uint8_t c)
+{
+	uint8_t npc = wScriptNPC;
+	wLoadedNPCTempIndex = npc;
+	uint8_t dir = GetNPCDirection();
+	uint8_t rotated = (uint8_t)((dir << 1) | (dir >> 7));
+	uint16_t sum = (uint16_t)(c + rotated);
+	uint8_t l = (uint8_t)sum;
+	uint8_t carry = (uint8_t)(sum >> 8);
+	uint8_t h = (uint8_t)(b + carry);
+	uint16_t hl = (uint16_t)(((uint16_t)h << 8) | l);
+	uint8_t new_c = gb_read8(hl);
+	hl++;
+	uint8_t new_b = gb_read8(hl);
+	uint16_t bc = (uint16_t)(((uint16_t)new_b << 8) | new_c);
+	return ExecuteNPCMovement(bc);
+}
+/* <<< factory ScriptCommand_MoveActiveNPCByDirection */

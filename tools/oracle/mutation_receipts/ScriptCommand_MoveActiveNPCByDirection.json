@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_MoveActiveNPCByDirection",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_MoveActiveNPCByDirection\", \"registers\": {\"a\": 0, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49668\": \"00c1\", \"54094\": \"02\", \"54198\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_MoveActiveNPCByDirection\", \"mismatches\": {\"b\": [193, 0], \"bus\": {\"address\": 54094, \"reference\": \"ff00c10200\", \"native\": \"ff00c10000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49408, 1], [49668, 2], [54094, 1], [54198, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_MoveActiveNPCByDirection\", \"registers\": {\"a\": 0, \"b\": 193, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"49668\": \"00c1\", \"54094\": \"02\", \"54198\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

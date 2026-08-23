@@ -112,6 +112,9 @@
 #include "generated/hram.h"
 
 #define MENU_CONFIRM 0x01u
+
+#define B_CURSOR_BLINK_PERIOD 0x04u
+#define CURSOR_BLINK_PERIOD_MASK 0x0fu
 /* <<< factory statics */
 
 
@@ -785,3 +788,23 @@ void AddCardIDToVisibleList(uint8_t b, uint8_t e)
 	gb_write8((uint16_t)(wVisibleListCardIDs_ADDR + offset), e);
 }
 /* <<< factory AddCardIDToVisibleList */
+
+/* >>> factory HandleCardSelectionCursorBlink */
+DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void)
+{
+	uint8_t sfx = wMenuInputSFX;
+	if (sfx != 0u)
+		PlaySFX(sfx);
+
+	uint8_t counter_old = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
+	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(counter_old + 1u));
+	if ((counter_old & CURSOR_BLINK_PERIOD_MASK) != 0u)
+		return (DrawHorizontalListCursorResult){0u, 0u};
+
+	uint8_t counter_new = (uint8_t)(counter_old + 1u);
+	uint8_t tile = wVisibleCursorTile;
+	if ((counter_new & (1u << B_CURSOR_BLINK_PERIOD)) == 0u)
+		return DrawHorizontalListCursor(tile);
+	return DrawHorizontalListCursor_Invisible();
+}
+/* <<< factory HandleCardSelectionCursorBlink */

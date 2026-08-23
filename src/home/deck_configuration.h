@@ -132,4 +132,7 @@ ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void);
 /* >>> factory AddCardIDToVisibleList */
 void AddCardIDToVisibleList(uint8_t b, uint8_t e);
 /* <<< factory AddCardIDToVisibleList */
+/* >>> factory HandleCardSelectionCursorBlink */
+DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void);
+/* <<< factory HandleCardSelectionCursorBlink */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
