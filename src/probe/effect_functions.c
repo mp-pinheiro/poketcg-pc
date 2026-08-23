@@ -2599,6 +2599,16 @@ static void adapt_StarmieRecover_AISelectEffect(ProbeState *s)
 }
 /* <<< factory StarmieRecover_AISelectEffect */
 
+/* >>> factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+static void adapt_BellsproutCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
+{
+	BellsproutCallForFamilyCheckDeckAndPlayAreaResult r = BellsproutCallForFamily_CheckDeckAndPlayArea();
+	s->a = r.a;
+	s->hl = r.hl;
+	s->f = r.f;
+}
+/* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2921,5 +2931,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SandslashFurySwipes_AIEffect", adapt_SandslashFurySwipes_AIEffect },
 	{ "Thunderpunch_AIEffect", adapt_Thunderpunch_AIEffect },
 	{ "StarmieRecover_AISelectEffect", adapt_StarmieRecover_AISelectEffect },
+	{ "BellsproutCallForFamily_CheckDeckAndPlayArea", adapt_BellsproutCallForFamily_CheckDeckAndPlayArea },
 	{ NULL, NULL },
 };

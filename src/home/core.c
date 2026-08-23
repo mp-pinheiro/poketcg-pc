@@ -505,6 +505,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/duel.h"
 #include "home/core.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/card_color.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3183,3 +3190,18 @@ PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void)
 	return (PracticeDuelVerifyTurn3Result){water, 0x00u};
 }
 /* <<< factory PracticeDuelVerify_Turn3 */
+
+/* >>> factory CheckIfEnoughEnergiesToAttack */
+CheckIfEnoughEnergiesToAttackResult CheckIfEnoughEnergiesToAttack(void)
+{
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	HandleEnergyBurn();
+	uint8_t menu_item = hCurMenuItem;
+	uint8_t doubled = (uint8_t)(menu_item * 2u);
+	uint16_t addr = (uint16_t)(wDuelTempList_ADDR + doubled);
+	uint8_t d = gb_read8(addr);
+	uint8_t e = gb_read8((uint16_t)(addr + 1u));
+	CheckIfEnoughEnergiesForGivenAttackResult result = CheckIfEnoughEnergiesForGivenAttack(d, e);
+	return (CheckIfEnoughEnergiesToAttackResult){result.a, result.f, result.d, result.e};
+}
+/* <<< factory CheckIfEnoughEnergiesToAttack */

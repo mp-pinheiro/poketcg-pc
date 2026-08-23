@@ -542,3 +542,22 @@ CopyDeckNameResult CopyDeckName(uint16_t hl)
 	return (CopyDeckNameResult){hl4, (uint8_t)(de2 >> 8), (uint8_t)(de2 & 0xFFu)};
 }
 /* <<< factory CopyDeckName */
+
+/* >>> factory GetOwnedCardCount */
+GetOwnedCardCountResult GetOwnedCardCount(uint8_t e)
+{
+	uint16_t hl = wFilteredCardList_ADDR;
+	uint8_t d = (uint8_t)(-1);
+	for (;;) {
+		d = (uint8_t)(d + 1u);
+		uint8_t a = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (a == 0u)
+			return (GetOwnedCardCountResult){0u, d};
+		if (a == e) {
+			uint8_t count = gb_read8((uint16_t)(wOwnedCardsCountList_ADDR + d));
+			return (GetOwnedCardCountResult){count, d};
+		}
+	}
+}
+/* <<< factory GetOwnedCardCount */

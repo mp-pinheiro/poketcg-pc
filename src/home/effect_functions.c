@@ -300,6 +300,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define TYPE_ENERGY_WATER 0x0Bu
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4334,3 +4339,18 @@ StarmieRecoverAISelectEffectResult StarmieRecover_AISelectEffect(void)
 	return (StarmieRecoverAISelectEffectResult){a, result.f};
 }
 /* <<< factory StarmieRecover_AISelectEffect */
+
+/* >>> factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckDeckAndPlayArea(void)
+{
+	CheckIfDeckIsEmptyResult deck = CheckIfDeckIsEmpty();
+	if (deck.f & 0x10u)
+		return (BellsproutCallForFamilyCheckDeckAndPlayAreaResult){deck.a, deck.hl, deck.f};
+	DuelistVarResult var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint16_t hl = NoSpaceOnTheBenchText;
+	uint8_t z = (var.a == MAX_PLAY_AREA_POKEMON) ? 0x80u : 0u;
+	uint8_t c = (var.a >= MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;
+	uint8_t f = (uint8_t)(z | c);
+	return (BellsproutCallForFamilyCheckDeckAndPlayAreaResult){var.a, hl, f};
+}
+/* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */

@@ -93,6 +93,14 @@ CASES["IntroSequenceCmd_WaitOrbsAnimation"] = [
 ]
 # <<< factory IntroSequenceCmd_WaitOrbsAnimation
 
+# >>> factory IntroSequenceCmd_SetOrbsAnimations
+CONTRACT["IntroSequenceCmd_SetOrbsAnimations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b",), "wram_out": True}
+CASES["IntroSequenceCmd_SetOrbsAnimations"] = [
+    {"b": 0xC5, "c": 0x00, "wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes([0,0,0,0,0,0,0])}},
+    dict(POISON, b=0xC5, c=0x00, wram={0xD629: bytes([0,1,2,3,4,5,6]), 0xC500: bytes([0,0,0,0,0,0,0])}),
+]
+# <<< factory IntroSequenceCmd_SetOrbsAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -126,3 +134,6 @@ MUTATIONS["IntroSequenceCmd_WaitSFX"] = {"source_symbol": "IntroSequenceCmd_Wait
 # >>> factory-mutation IntroSequenceCmd_WaitOrbsAnimation
 MUTATIONS["IntroSequenceCmd_WaitOrbsAnimation"] = {"source_symbol": "IntroSequenceCmd_WaitOrbsAnimation", "before": "\t\tif (counter != 0xFFu) {", "after": "\t\tif (counter != 0xFEu) {", "case_ids": ["IntroSequenceCmd_WaitOrbsAnimation-1", "IntroSequenceCmd_WaitOrbsAnimation-2"]}
 # <<< factory-mutation IntroSequenceCmd_WaitOrbsAnimation
+# >>> factory-mutation IntroSequenceCmd_SetOrbsAnimations
+MUTATIONS["IntroSequenceCmd_SetOrbsAnimations"] = {"source_symbol": "IntroSequenceCmd_SetOrbsAnimations", "before": "\t\tStartSpriteAnimation(anim);\n\t\tde = (uint16_t)(de + 1u);", "after": "\t\tStartSpriteAnimation(anim);\n\t\tde = (uint16_t)(de + 2u);", "case_ids": ["IntroSequenceCmd_SetOrbsAnimations-0", "IntroSequenceCmd_SetOrbsAnimations-1"]}
+# <<< factory-mutation IntroSequenceCmd_SetOrbsAnimations

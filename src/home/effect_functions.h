@@ -1084,6 +1084,10 @@ void Thunderpunch_AIEffect(void);
 typedef struct { uint8_t a; uint8_t f; } StarmieRecoverAISelectEffectResult;
 StarmieRecoverAISelectEffectResult StarmieRecover_AISelectEffect(void);
 /* <<< factory StarmieRecover_AISelectEffect */
+/* >>> factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+typedef struct { uint8_t a; uint16_t hl; uint8_t f; } BellsproutCallForFamilyCheckDeckAndPlayAreaResult;
+BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckDeckAndPlayArea(void);
+/* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

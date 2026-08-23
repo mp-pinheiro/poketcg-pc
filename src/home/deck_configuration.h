@@ -104,4 +104,8 @@ void CountNumberOfCardsForEachCardType(void);
 typedef struct { uint16_t hl; uint8_t d; uint8_t e; } CopyDeckNameResult;
 CopyDeckNameResult CopyDeckName(uint16_t hl);
 /* <<< factory CopyDeckName */
+/* >>> factory GetOwnedCardCount */
+typedef struct { uint8_t a; uint8_t d; } GetOwnedCardCountResult;
+GetOwnedCardCountResult GetOwnedCardCount(uint8_t e);
+/* <<< factory GetOwnedCardCount */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

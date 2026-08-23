@@ -627,4 +627,8 @@ PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void);
 typedef struct { uint8_t a; uint8_t f; } PracticeDuelVerifyTurn3Result;
 PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void);
 /* <<< factory PracticeDuelVerify_Turn3 */
+/* >>> factory CheckIfEnoughEnergiesToAttack */
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } CheckIfEnoughEnergiesToAttackResult;
+CheckIfEnoughEnergiesToAttackResult CheckIfEnoughEnergiesToAttack(void);
+/* <<< factory CheckIfEnoughEnergiesToAttack */
 #endif

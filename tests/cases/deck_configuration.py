@@ -331,6 +331,18 @@ CASES["CopyDeckName"] = [
 ]
 # <<< factory CopyDeckName
 
+# >>> factory GetOwnedCardCount
+CONTRACT["GetOwnedCardCount"] = {"compare": ("a", "d", "e", "hl"), "preserve": ("e", "hl")}
+CASES["GetOwnedCardCount"] = [
+    {"e": 0x63, "wram": {0xCEDA: b"\x00"}},
+    dict(POISON, e=0x63, wram={0xCEDA: b"\x01\x02\x03\x00"}),
+    {"e": 0x02, "oracle": False,
+     "why": "wOwnedCardsCountList (0xCF68) falls inside $CF00-$CFFF, the oracle's own reserved call frame, so the match branch's real count byte can never be seeded or read live; only the loop index (d) that locates card id 0x02 at position 1 is asserted.",
+     "wram": {0xCEDA: b"\x01\x02\x03\x00"},
+     "expect_regs": {"d": 0x01}},
+]
+# <<< factory GetOwnedCardCount
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -464,3 +476,6 @@ MUTATIONS["CountNumberOfCardsForEachCardType"] = {"source_symbol": "CountNumberO
 # >>> factory-mutation CopyDeckName
 MUTATIONS["CopyDeckName"] = {"source_symbol": "CopyDeckName", "before": "\tuint16_t hl4 = DeckNameSuffix_ADDR;", "after": "\tuint16_t hl4 = (uint16_t)(DeckNameSuffix_ADDR + 1u);", "case_ids": ["CopyDeckName-0", "CopyDeckName-1"]}
 # <<< factory-mutation CopyDeckName
+# >>> factory-mutation GetOwnedCardCount
+MUTATIONS["GetOwnedCardCount"] = {"source_symbol": "GetOwnedCardCount", "before": "\t\tif (a == 0u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};", "after": "\t\tif (a == 1u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};", "case_ids": ["GetOwnedCardCount-1"]}
+# <<< factory-mutation GetOwnedCardCount

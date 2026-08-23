@@ -2837,6 +2837,15 @@ CASES["StarmieRecover_AISelectEffect"] = [
 ]
 # <<< factory StarmieRecover_AISelectEffect
 
+# >>> factory BellsproutCallForFamily_CheckDeckAndPlayArea
+CONTRACT["BellsproutCallForFamily_CheckDeckAndPlayArea"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["BellsproutCallForFamily_CheckDeckAndPlayArea"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2EF: b"\x03"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C"}),
+    {"wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xC2EF: b"\x06"}},
+]
+# <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4687,3 +4696,6 @@ MUTATIONS["Thunderpunch_AIEffect"] = {"source_symbol": "Thunderpunch_AIEffect", 
 # >>> factory-mutation StarmieRecover_AISelectEffect
 MUTATIONS["StarmieRecover_AISelectEffect"] = {"source_symbol": "StarmieRecover_AISelectEffect", "before": "\tuint8_t a = wDuelTempList;\n\thTemp_ffa0 = a;", "after": "\tuint8_t a = wDuelTempList;\n\thTemp_ffa0 = 0u;", "case_ids": ["StarmieRecover_AISelectEffect-0", "StarmieRecover_AISelectEffect-1"]}
 # <<< factory-mutation StarmieRecover_AISelectEffect
+# >>> factory-mutation BellsproutCallForFamily_CheckDeckAndPlayArea
+MUTATIONS["BellsproutCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "BellsproutCallForFamily_CheckDeckAndPlayArea", "before": "\tuint8_t c = (var.a >= MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;", "after": "\tuint8_t c = (var.a > MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;", "case_ids": ["BellsproutCallForFamily_CheckDeckAndPlayArea-2"]}
+# <<< factory-mutation BellsproutCallForFamily_CheckDeckAndPlayArea

@@ -250,6 +250,15 @@ static void adapt_CopyDeckName(ProbeState *s)
 }
 /* <<< factory CopyDeckName */
 
+/* >>> factory GetOwnedCardCount */
+static void adapt_GetOwnedCardCount(ProbeState *s)
+{
+	GetOwnedCardCountResult r = GetOwnedCardCount(s->e);
+	s->a = r.a;
+	s->d = r.d;
+}
+/* <<< factory GetOwnedCardCount */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -279,5 +288,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DrawListCursor_Visible", adapt_DrawListCursor_Visible },
 	{ "CountNumberOfCardsForEachCardType", adapt_CountNumberOfCardsForEachCardType },
 	{ "CopyDeckName", adapt_CopyDeckName },
+	{ "GetOwnedCardCount", adapt_GetOwnedCardCount },
 	{ NULL, NULL },
 };

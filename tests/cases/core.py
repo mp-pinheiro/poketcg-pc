@@ -1831,6 +1831,14 @@ CASES["PracticeDuelVerify_Turn3"] = [
 ]
 # <<< factory PracticeDuelVerify_Turn3
 
+# >>> factory CheckIfEnoughEnergiesToAttack
+CONTRACT["CheckIfEnoughEnergiesToAttack"] = {"compare": ("a", "f", "d", "e", "b", "c", "hl"), "preserve": ("b", "c", "hl"), "wram_out": True}
+CASES["CheckIfEnoughEnergiesToAttack"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFB1: b"\x00", 0xC510: b"\x00\x00", 0xC400: b"\x10"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFB1: b"\x01", 0xC512: b"\x01\x01", 0xC401: b"\x20"}),
+]
+# <<< factory CheckIfEnoughEnergiesToAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2806,3 +2814,6 @@ MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {"source_symbol": "PrintReturnCar
 # >>> factory-mutation PracticeDuelVerify_Turn3
 MUTATIONS["PracticeDuelVerify_Turn3"] = {"source_symbol": "PracticeDuelVerify_Turn3", "before": "\tif (a != SEAKING) {", "after": "\tif (a != (uint8_t)(SEAKING + 1u)) {", "case_ids": ["PracticeDuelVerify_Turn3-0", "PracticeDuelVerify_Turn3-1"]}
 # <<< factory-mutation PracticeDuelVerify_Turn3
+# >>> factory-mutation CheckIfEnoughEnergiesToAttack
+MUTATIONS["CheckIfEnoughEnergiesToAttack"] = {"source_symbol": "CheckIfEnoughEnergiesToAttack", "before": "\tuint8_t doubled = (uint8_t)(menu_item * 2u);", "after": "\tuint8_t doubled = menu_item;", "case_ids": ["CheckIfEnoughEnergiesToAttack-1"]}
+# <<< factory-mutation CheckIfEnoughEnergiesToAttack

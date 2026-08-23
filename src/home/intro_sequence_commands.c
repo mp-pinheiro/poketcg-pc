@@ -169,3 +169,24 @@ IntroSequenceCmdWaitOrbsAnimationResult IntroSequenceCmd_WaitOrbsAnimation(void)
 	return (IntroSequenceCmdWaitOrbsAnimationResult){exit_a, 0x90u};
 }
 /* <<< factory IntroSequenceCmd_WaitOrbsAnimation */
+
+/* >>> factory IntroSequenceCmd_SetOrbsAnimations */
+IntroSequenceCmdSetOrbsAnimationsResult IntroSequenceCmd_SetOrbsAnimations(uint8_t b, uint8_t c)
+{
+	uint16_t hl = (uint16_t)(((uint16_t)b << 8) | c);
+	uint16_t de = wTitleScreenSprites_ADDR;
+	for (uint8_t i = 0; i < 7u; i++) {
+		uint8_t sprite = gb_read8(de);
+		wWhichSprite = sprite;
+		uint8_t anim = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		StartSpriteAnimation(anim);
+		de = (uint16_t)(de + 1u);
+	}
+	AdvanceIntroSequenceCmdPtrBy4();
+	uint8_t high_byte = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t z = (high_byte == 0u) ? 0x80u : 0x00u;
+	uint8_t f = (uint8_t)(z | 0x10u);
+	return (IntroSequenceCmdSetOrbsAnimationsResult){high_byte, f, b, 0u, (uint8_t)(de >> 8), (uint8_t)(de & 0xFFu), hl};
+}
+/* <<< factory IntroSequenceCmd_SetOrbsAnimations */

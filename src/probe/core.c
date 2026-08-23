@@ -1336,6 +1336,17 @@ static void adapt_PracticeDuelVerify_Turn3(ProbeState *s)
 }
 /* <<< factory PracticeDuelVerify_Turn3 */
 
+/* >>> factory CheckIfEnoughEnergiesToAttack */
+static void adapt_CheckIfEnoughEnergiesToAttack(ProbeState *s)
+{
+	CheckIfEnoughEnergiesToAttackResult r = CheckIfEnoughEnergiesToAttack();
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory CheckIfEnoughEnergiesToAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1494,5 +1505,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintNumberOfHandAndDeckCards", adapt_PrintNumberOfHandAndDeckCards },
 	{ "PrintReturnCardsToDeckDrawAgain", adapt_PrintReturnCardsToDeckDrawAgain },
 	{ "PracticeDuelVerify_Turn3", adapt_PracticeDuelVerify_Turn3 },
+	{ "CheckIfEnoughEnergiesToAttack", adapt_CheckIfEnoughEnergiesToAttack },
 	{ NULL, NULL },
 };

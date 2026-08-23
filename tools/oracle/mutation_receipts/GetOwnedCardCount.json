@@ -1,0 +1,9 @@
+{
+  "fn": "GetOwnedCardCount",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetOwnedCardCount\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 3, \"e\": 99, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52954\": \"01020300\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetOwnedCardCount\", \"mismatches\": {\"d\": [3, 0]}}\n",
+  "restored": "{\"fn\": \"GetOwnedCardCount\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 3, \"e\": 99, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52954\": \"01020300\"}}, \"status\": \"PASS\"}\n"
+}
