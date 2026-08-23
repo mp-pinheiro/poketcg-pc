@@ -115,6 +115,17 @@
 
 #define B_CURSOR_BLINK_PERIOD 0x04u
 #define CURSOR_BLINK_PERIOD_MASK 0x0fu
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_check.h"
+#define FALSE 0x00u
+#define MENU_CANCEL 0xFFu
+#define B_PAD_LEFT 5u
+#define B_PAD_RIGHT 4u
+#define PAD_A 0x01u
+#define PAD_B 0x02u
 /* <<< factory statics */
 
 
@@ -823,3 +834,47 @@ void DrawHandCardsTileOnCurDeck(void)
 	DrawHandCardsTileAtDE(de);
 }
 /* <<< factory DrawHandCardsTileOnCurDeck */
+
+/* >>> factory HandleCardSelectionInput */
+HandleCardSelectionInputResult HandleCardSelectionInput(void)
+{
+	gb_write8(wMenuInputSFX_ADDR, FALSE);
+	uint8_t dpad = gb_read8(hDPadHeld_ADDR);
+	if (dpad != 0u) {
+		uint8_t num_positions = gb_read8(wCardListNumCursorPositions_ADDR);
+		uint8_t pos = gb_read8(wCardListCursorPos_ADDR);
+		uint8_t handled = 1u;
+		if ((dpad & (1u << B_PAD_LEFT)) != 0u) {
+			pos = (uint8_t)(pos - 1u);
+			if ((pos & 0x80u) != 0u)
+				pos = (uint8_t)(num_positions - 1u);
+		} else if ((dpad & (1u << B_PAD_RIGHT)) != 0u) {
+			pos = (uint8_t)(pos + 1u);
+			if (pos >= num_positions)
+				pos = 0u;
+		} else {
+			handled = 0u;
+		}
+		if (handled) {
+			gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR);
+			(void)DrawHorizontalListCursor_Invisible();
+			gb_write8(wCardListCursorPos_ADDR, pos);
+			gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+		}
+	}
+
+	gb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));
+	uint8_t keys = gb_read8(hKeysPressed_ADDR);
+	if ((keys & (PAD_A | PAD_B)) == 0u) {
+		DrawHorizontalListCursorResult r = HandleCardSelectionCursorBlink();
+		return (HandleCardSelectionInputResult){0u, 0u, r.b, r.c, 0};
+	}
+	if ((keys & PAD_A) != 0u) {
+		ConfirmSelectionAndReturnCarryResult r = ConfirmSelectionAndReturnCarry();
+		return (HandleCardSelectionInputResult){r.a, r.e, 0u, 0u, 1};
+	}
+	gb_write8(0xFFB3u, MENU_CANCEL);
+	PlaySFXConfirmOrCancel(MENU_CANCEL);
+	return (HandleCardSelectionInputResult){MENU_CANCEL, 0u, 0u, 0u, 1};
+}
+/* <<< factory HandleCardSelectionInput */

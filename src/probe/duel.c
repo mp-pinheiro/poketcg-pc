@@ -731,6 +731,13 @@ static void adapt_DrawPlayArea_HandText(ProbeState *s)
 }
 /* <<< factory DrawPlayArea_HandText */
 
+/* >>> factory DrawPlayArea_IconWithValue */
+static void adapt_DrawPlayArea_IconWithValue(ProbeState *s)
+{
+	DrawPlayArea_IconWithValue(s->a, s->b, &s->hl);
+}
+/* <<< factory DrawPlayArea_IconWithValue */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -820,5 +827,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawPlayArea_PrizeCards", adapt_DrawPlayArea_PrizeCards },
 	{ "_DrawPlayersPrizeAndBenchCards", adapt__DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayArea_HandText", adapt_DrawPlayArea_HandText },
+	{ "DrawPlayArea_IconWithValue", adapt_DrawPlayArea_IconWithValue },
 	{ NULL, NULL },
 };

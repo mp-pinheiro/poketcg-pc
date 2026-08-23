@@ -863,6 +863,14 @@ static void adapt_ScriptCommand_MoveActiveNPCByDirection(ProbeState *s)
 }
 /* <<< factory ScriptCommand_MoveActiveNPCByDirection */
 
+/* >>> factory ScriptCommand_UnloadChallengeHallNPC */
+static void adapt_ScriptCommand_UnloadChallengeHallNPC(ProbeState *s)
+{
+	(void)s;
+	ScriptCommand_UnloadChallengeHallNPC();
+}
+/* <<< factory ScriptCommand_UnloadChallengeHallNPC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -947,5 +955,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_GiveStarterDeck", adapt_ScriptCommand_GiveStarterDeck },
 	{ "ScriptCommand_FlashScreen", adapt_ScriptCommand_FlashScreen },
 	{ "ScriptCommand_MoveActiveNPCByDirection", adapt_ScriptCommand_MoveActiveNPCByDirection },
+	{ "ScriptCommand_UnloadChallengeHallNPC", adapt_ScriptCommand_UnloadChallengeHallNPC },
 	{ NULL, NULL },
 };

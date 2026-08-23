@@ -138,4 +138,8 @@ DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void);
 /* >>> factory DrawHandCardsTileOnCurDeck */
 void DrawHandCardsTileOnCurDeck(void);
 /* <<< factory DrawHandCardsTileOnCurDeck */
+/* >>> factory HandleCardSelectionInput */
+typedef struct { uint8_t a; uint8_t e; uint8_t b; uint8_t c; uint8_t carry; } HandleCardSelectionInputResult;
+HandleCardSelectionInputResult HandleCardSelectionInput(void);
+/* <<< factory HandleCardSelectionInput */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

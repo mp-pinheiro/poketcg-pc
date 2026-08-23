@@ -1089,6 +1089,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wCheckMenuPlayAreaWhichLayout = 0xCE51
 wTileMapFill = 0xCAB6
 wVBlankOAMCopyToggle = 0xCAC0
+
+wConsole = 0xCAB4
+wDecimalDigitsSymbols = 0xCEB6
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1166,6 +1170,20 @@ CASES["DrawPlayArea_HandText"] = [
      "read": {0xC590: 7, 0xCEB6: 2}},
 ]
 # <<< factory DrawPlayArea_HandText
+
+# >>> factory DrawPlayArea_IconWithValue
+CONTRACT["DrawPlayArea_IconWithValue"] = {"compare": ("hl",), "preserve": (), "wram_out": True}
+CASES["DrawPlayArea_IconWithValue"] = [
+    {"a": 0xD4, "b": 0x2A, "c": 0x33, "hl": 0xC500,
+     "wram": {wConsole: b"\x00", 0xC500: b"\x0F\x02"},
+     "read": {wDefaultText: 7, wDecimalDigitsSymbols: 2},
+     "expect": {wDefaultText: b"\x05\x2D\x05\x32\x05\x20\x00", wDecimalDigitsSymbols: b"\x20\x32"}},
+    dict(POISON, a=0xD8, b=0x63, hl=0xC510,
+         wram={wConsole: b"\x02", 0xC510: b"\x01\x09"},
+         read={wDefaultText: 7, wDecimalDigitsSymbols: 2},
+         expect={wDefaultText: b"\x05\x2D\x05\x36\x05\x26\x00", wDecimalDigitsSymbols: b"\x26\x36"}),
+]
+# <<< factory DrawPlayArea_IconWithValue
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1304,3 +1322,6 @@ MUTATIONS["_DrawPlayersPrizeAndBenchCards"] = {"source_symbol": "_DrawPlayersPri
 # >>> factory-mutation DrawPlayArea_HandText
 MUTATIONS["DrawPlayArea_HandText"] = {"source_symbol": "DrawPlayArea_HandText", "before": "gb_write8(p, tens); p++;", "after": "gb_write8(p, (uint8_t)(tens + 1u)); p++;", "case_ids": ["DrawPlayArea_HandText-0", "DrawPlayArea_HandText-2"]}
 # <<< factory-mutation DrawPlayArea_HandText
+# >>> factory-mutation DrawPlayArea_IconWithValue
+MUTATIONS["DrawPlayArea_IconWithValue"] = {"source_symbol": "DrawPlayArea_IconWithValue", "before": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), SYM_CROSS);", "after": "\tgb_write8((uint16_t)(wDefaultText_ADDR + 1u), 0x2Eu);", "case_ids": ["DrawPlayArea_IconWithValue-0", "DrawPlayArea_IconWithValue-1"]}
+# <<< factory-mutation DrawPlayArea_IconWithValue

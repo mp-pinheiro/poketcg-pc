@@ -104,6 +104,10 @@ wScriptPointer = 0xD413
 
 wScriptNPC = 0xD3B6
 wD34E = 0xD34E
+
+wLoadedNPCTempIndex_A = 0xD3AA
+wTempNPC_A = 0xD3AB
+wChallengeHallNPC_A = 0xD696
 # <<< factory-cases-statics
 
 
@@ -1006,6 +1010,16 @@ CASES["ScriptCommand_MoveActiveNPCByDirection"] = [
 ]
 # <<< factory ScriptCommand_MoveActiveNPCByDirection
 
+# >>> factory ScriptCommand_UnloadChallengeHallNPC
+CONTRACT["ScriptCommand_UnloadChallengeHallNPC"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_UnloadChallengeHallNPC"] = [
+    {"wram": {wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66", wChallengeHallNPC_A: b"\x07"},
+     "expect": {wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66"}},
+    dict(POISON, wram={wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66", wChallengeHallNPC_A: b"\x07"},
+         expect={wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66"}),
+]
+# <<< factory ScriptCommand_UnloadChallengeHallNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1509,3 +1523,6 @@ MUTATIONS["ScriptCommand_FlashScreen"] = {"source_symbol": "ScriptCommand_FlashS
 # >>> factory-mutation ScriptCommand_MoveActiveNPCByDirection
 MUTATIONS["ScriptCommand_MoveActiveNPCByDirection"] = {"source_symbol": "ScriptCommand_MoveActiveNPCByDirection", "before": "\tuint8_t rotated = (uint8_t)((dir << 1) | (dir >> 7));", "after": "\tuint8_t rotated = dir;", "case_ids": ["ScriptCommand_MoveActiveNPCByDirection-0", "ScriptCommand_MoveActiveNPCByDirection-1"]}
 # <<< factory-mutation ScriptCommand_MoveActiveNPCByDirection
+# >>> factory-mutation ScriptCommand_UnloadChallengeHallNPC
+MUTATIONS["ScriptCommand_UnloadChallengeHallNPC"] = {"source_symbol": "ScriptCommand_UnloadChallengeHallNPC", "before": "\twLoadedNPCTempIndex = saved_index;", "after": "\twLoadedNPCTempIndex = (uint8_t)(saved_index + 1u);", "case_ids": ["ScriptCommand_UnloadChallengeHallNPC-0", "ScriptCommand_UnloadChallengeHallNPC-1"]}
+# <<< factory-mutation ScriptCommand_UnloadChallengeHallNPC

@@ -329,6 +329,18 @@ static void adapt_DrawHandCardsTileOnCurDeck(ProbeState *s)
 }
 /* <<< factory DrawHandCardsTileOnCurDeck */
 
+/* >>> factory HandleCardSelectionInput */
+static void adapt_HandleCardSelectionInput(ProbeState *s)
+{
+	HandleCardSelectionInputResult r = HandleCardSelectionInput();
+	s->a = r.a;
+	s->e = r.e;
+	s->b = r.b;
+	s->c = r.c;
+	s->f = r.carry ? 0x10u : 0x00u;
+}
+/* <<< factory HandleCardSelectionInput */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -367,5 +379,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AddCardIDToVisibleList", adapt_AddCardIDToVisibleList },
 	{ "HandleCardSelectionCursorBlink", adapt_HandleCardSelectionCursorBlink },
 	{ "DrawHandCardsTileOnCurDeck", adapt_DrawHandCardsTileOnCurDeck },
+	{ "HandleCardSelectionInput", adapt_HandleCardSelectionInput },
 	{ NULL, NULL },
 };

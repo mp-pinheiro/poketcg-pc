@@ -430,4 +430,7 @@ IncreaseScriptPointerResult ScriptCommand_FlashScreen(uint8_t c);
 /* >>> factory ScriptCommand_MoveActiveNPCByDirection */
 ExecuteNPCMovementResult ScriptCommand_MoveActiveNPCByDirection(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_MoveActiveNPCByDirection */
+/* >>> factory ScriptCommand_UnloadChallengeHallNPC */
+void ScriptCommand_UnloadChallengeHallNPC(void);
+/* <<< factory ScriptCommand_UnloadChallengeHallNPC */
 #endif

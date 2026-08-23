@@ -593,4 +593,7 @@ void _DrawPlayersPrizeAndBenchCards(void);
 typedef struct { uint8_t b; uint8_t c; uint16_t hl; } DrawPlayArea_HandTextResult;
 DrawPlayArea_HandTextResult DrawPlayArea_HandText(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory DrawPlayArea_HandText */
+/* >>> factory DrawPlayArea_IconWithValue */
+void DrawPlayArea_IconWithValue(uint8_t a, uint8_t b, uint16_t *hl);
+/* <<< factory DrawPlayArea_IconWithValue */
 #endif

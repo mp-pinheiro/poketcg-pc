@@ -159,6 +159,14 @@ wCardListCursorPos = 0xCEA4
 wCardListCursorXPos = 0xCEA5
 
 sCurrentlySelectedDeck = 0xB700
+
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+wCardListCursorPos = 0xCEA4
+wCardListNumCursorPositions = 0xCEA9
+wCheckMenuCursorBlinkCounter = 0xCEA3
+wMenuInputSFX = 0xCFE3
+hffb3 = 0xFFB3
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -433,6 +441,18 @@ CASES["DrawHandCardsTileOnCurDeck"] = [
 ]
 # <<< factory DrawHandCardsTileOnCurDeck
 
+# >>> factory HandleCardSelectionInput
+CONTRACT["HandleCardSelectionInput"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["HandleCardSelectionInput"] = [
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x02",
+              wCardListNumCursorPositions: b"\x04", wCheckMenuCursorBlinkCounter: b"\x01"},
+     "read": {hffb3: 1}},
+    dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x03",
+                       wCardListNumCursorPositions: b"\x04", wCheckMenuCursorBlinkCounter: b"\x09"},
+         read={hffb3: 1}),
+]
+# <<< factory HandleCardSelectionInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -603,3 +623,6 @@ MUTATIONS["HandleCardSelectionCursorBlink"] = {"source_symbol": "HandleCardSelec
 # >>> factory-mutation DrawHandCardsTileOnCurDeck
 MUTATIONS["DrawHandCardsTileOnCurDeck"] = {"source_symbol": "DrawHandCardsTileOnCurDeck", "before": "\tuint8_t e = (uint8_t)((uint8_t)product + 1u);", "after": "\tuint8_t e = (uint8_t)product;", "case_ids": ["DrawHandCardsTileOnCurDeck-0", "DrawHandCardsTileOnCurDeck-1"]}
 # <<< factory-mutation DrawHandCardsTileOnCurDeck
+# >>> factory-mutation HandleCardSelectionInput
+MUTATIONS["HandleCardSelectionInput"] = {"source_symbol": "HandleCardSelectionInput", "before": "\tgb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));", "after": "\tgb_write8(0xFFB3u, (uint8_t)(gb_read8(wCardListCursorPos_ADDR) + 1u));", "case_ids": ["HandleCardSelectionInput-0", "HandleCardSelectionInput-1"]}
+# <<< factory-mutation HandleCardSelectionInput

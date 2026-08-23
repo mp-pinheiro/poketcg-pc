@@ -1,0 +1,9 @@
+{
+  "fn": "DrawPlayArea_IconWithValue",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayArea_IconWithValue\", \"registers\": {\"a\": 212, \"b\": 42, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0f02\", \"50576\": \"052d0524052200\", \"51892\": \"00\", \"52918\": \"2224\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayArea_IconWithValue\", \"mismatches\": {\"bus\": {\"address\": 50577, \"reference\": \"0f02052d05240522\", \"native\": \"0f02052e05240522\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50432, 2], [50576, 7], [51892, 1], [52918, 2]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayArea_IconWithValue\", \"registers\": {\"a\": 212, \"b\": 42, \"c\": 51, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0f02\", \"50576\": \"052d0524052200\", \"51892\": \"00\", \"52918\": \"2224\"}}, \"status\": \"PASS\"}\n"
+}

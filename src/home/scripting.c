@@ -157,6 +157,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define WATER_CLUB_LOBBY 0x0bu
 
 #include "home/overworld.h"
+
+#include "home/scripting.h"
+#include "home/map.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -1296,3 +1300,16 @@ ExecuteNPCMovementResult ScriptCommand_MoveActiveNPCByDirection(uint8_t b, uint8
 	return ExecuteNPCMovement(bc);
 }
 /* <<< factory ScriptCommand_MoveActiveNPCByDirection */
+
+/* >>> factory ScriptCommand_UnloadChallengeHallNPC */
+void ScriptCommand_UnloadChallengeHallNPC(void)
+{
+	uint8_t saved_index = wLoadedNPCTempIndex;
+	uint8_t saved_temp_npc = wTempNPC;
+	wTempNPC = wChallengeHallNPC;
+	(void)FindLoadedNPC();
+	(void)Func_cdd1();
+	wTempNPC = saved_temp_npc;
+	wLoadedNPCTempIndex = saved_index;
+}
+/* <<< factory ScriptCommand_UnloadChallengeHallNPC */

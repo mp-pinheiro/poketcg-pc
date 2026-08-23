@@ -399,6 +399,13 @@ static const uint8_t kCursorTileData[16] = {
 #define TX_SYMBOL 0x05u
 #define SYM_CROSS 0x2du
 #define HandText_2 0x024eu
+
+#include "home/deck_configuration.h"
+#include "home/tiles.h"
+#include "home/process_text.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1957,3 +1964,41 @@ DrawPlayArea_HandTextResult DrawPlayArea_HandText(uint8_t b, uint8_t c, uint16_t
 	return (DrawPlayArea_HandTextResult){b, c, saved_hl};
 }
 /* <<< factory DrawPlayArea_HandText */
+
+/* >>> factory DrawPlayArea_IconWithValue */
+void DrawPlayArea_IconWithValue(uint8_t a, uint8_t b, uint16_t *hl)
+{
+	uint16_t coordinates = *hl;
+	uint8_t d = gb_read8(coordinates++);
+	uint8_t e = gb_read8(coordinates++);
+	*hl = coordinates;
+	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+	FillRectangle(a, 2u, 2u, de, 0x0102u);
+
+	if (wConsole == CONSOLE_CGB) {
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(0x02u, 2u, 2u, de, 0x0000u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
+	}
+
+	d = (uint8_t)(d + 2u);
+	e = (uint8_t)(e + 1u);
+	InitTextPrinting(d, e);
+	CalculateOnesAndTensDigits(b);
+	uint8_t ones = gb_read8(wDecimalDigitsSymbols_ADDR);
+	uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
+
+	gb_write8(wDefaultText_ADDR, TX_SYMBOL);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 1u), SYM_CROSS);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 2u), TX_SYMBOL);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 3u), tens);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 4u), TX_SYMBOL);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 5u), ones);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 6u), TX_END);
+
+	uint16_t text_ptr = wDefaultText_ADDR;
+	ProcessText(&text_ptr);
+}
+/* <<< factory DrawPlayArea_IconWithValue */

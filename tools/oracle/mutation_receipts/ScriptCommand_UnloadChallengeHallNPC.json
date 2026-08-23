@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_UnloadChallengeHallNPC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_UnloadChallengeHallNPC\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"5566\", \"54934\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_UnloadChallengeHallNPC\", \"mismatches\": {\"bus\": {\"address\": 54186, \"reference\": \"556607\", \"native\": \"566607\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54186, 2], [54934, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_UnloadChallengeHallNPC\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"5566\", \"54934\": \"07\"}}, \"status\": \"PASS\"}\n"
+}
