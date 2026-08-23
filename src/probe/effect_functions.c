@@ -2803,6 +2803,14 @@ static void adapt_StrangeBehavior_CheckDamage(ProbeState *s)
 }
 /* <<< factory StrangeBehavior_CheckDamage */
 
+/* >>> factory EnergyTrans_PrintProcedure */
+static void adapt_EnergyTrans_PrintProcedure(ProbeState *s)
+{
+	(void)s;
+	EnergyTrans_PrintProcedure();
+}
+/* <<< factory EnergyTrans_PrintProcedure */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3150,5 +3158,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KadabraRecover_AISelectEffect", adapt_KadabraRecover_AISelectEffect },
 	{ "GolduckHyperBeam_DiscardEffect", adapt_GolduckHyperBeam_DiscardEffect },
 	{ "StrangeBehavior_CheckDamage", adapt_StrangeBehavior_CheckDamage },
+	{ "EnergyTrans_PrintProcedure", adapt_EnergyTrans_PrintProcedure },
 	{ NULL, NULL },
 };

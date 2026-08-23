@@ -364,6 +364,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "mem.h"
 #define CannotUseBecauseItWillBeKnockedOutText 0x00d0u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#define ProcedureForEnergyTransferText 0x012du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4686,3 +4690,10 @@ StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void)
 	return (StrangeBehavior_CheckDamageResult){r3.f, r3.hl};
 }
 /* <<< factory StrangeBehavior_CheckDamage */
+
+/* >>> factory EnergyTrans_PrintProcedure */
+void EnergyTrans_PrintProcedure(void)
+{
+	DrawWholeScreenTextBox(ProcedureForEnergyTransferText);
+}
+/* <<< factory EnergyTrans_PrintProcedure */

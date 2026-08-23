@@ -3142,6 +3142,20 @@ CASES["StrangeBehavior_CheckDamage"] = [
 ]
 # <<< factory StrangeBehavior_CheckDamage
 
+# >>> factory EnergyTrans_PrintProcedure
+CONTRACT["EnergyTrans_PrintProcedure"] = {"compare": (), "preserve": ()}
+CASES["EnergyTrans_PrintProcedure"] = [
+    {"wram": {hWhoseTurn: b"\xC2"}, "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "vread": {0: {0x9800: 0x400}}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2"}, keys=0x01,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000,
+         vread={0: {0x9800: 0x400}}),
+]
+# <<< factory EnergyTrans_PrintProcedure
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5067,3 +5081,6 @@ MUTATIONS["GolduckHyperBeam_DiscardEffect"] = {"source_symbol": "GolduckHyperBea
 # >>> factory-mutation StrangeBehavior_CheckDamage
 MUTATIONS["StrangeBehavior_CheckDamage"] = {"source_symbol": "StrangeBehavior_CheckDamage", "before": "if (hp.a < 20u)", "after": "if (hp.a < 0u)", "case_ids": ["StrangeBehavior_CheckDamage-0", "StrangeBehavior_CheckDamage-1"]}
 # <<< factory-mutation StrangeBehavior_CheckDamage
+# >>> factory-mutation EnergyTrans_PrintProcedure
+MUTATIONS["EnergyTrans_PrintProcedure"] = {"source_symbol": "EnergyTrans_PrintProcedure", "before": "DrawWholeScreenTextBox(ProcedureForEnergyTransferText);", "after": "DrawWholeScreenTextBox((uint16_t)(ProcedureForEnergyTransferText + 1u));", "case_ids": ["EnergyTrans_PrintProcedure-0", "EnergyTrans_PrintProcedure-1"]}
+# <<< factory-mutation EnergyTrans_PrintProcedure
