@@ -2357,6 +2357,10 @@ wOpponentDeck = 0xC480
 WATER_ENERGY = 0x03
 
 hTemp_ffa0 = 0xFFA0
+
+hTemp_ffa0 = 0xFFA0
+wDuelTempList = 0xC510
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3107,6 +3111,14 @@ CASES["SlowpokeAmnesia_AISelectEffect"] = [
     dict(POISON, read={hTemp_ffa0: 1}),
 ]
 # <<< factory SlowpokeAmnesia_AISelectEffect
+
+# >>> factory KadabraRecover_AISelectEffect
+CONTRACT["KadabraRecover_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["KadabraRecover_AISelectEffect"] = [
+    {"wram": {hWhoseTurn: b"\x00"}, "read": {hTemp_ffa0: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\x00"}, read={hTemp_ffa0: 1}),
+]
+# <<< factory KadabraRecover_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5024,3 +5036,6 @@ MUTATIONS["Psychic_AIEffect"] = {"source_symbol": "Psychic_AIEffect", "before": 
 # >>> factory-mutation SlowpokeAmnesia_AISelectEffect
 MUTATIONS["SlowpokeAmnesia_AISelectEffect"] = {"source_symbol": "SlowpokeAmnesia_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, a);", "after": "gb_write8(hTemp_ffa0_ADDR, (uint8_t)(a + 1u));", "case_ids": ["SlowpokeAmnesia_AISelectEffect-0", "SlowpokeAmnesia_AISelectEffect-1"]}
 # <<< factory-mutation SlowpokeAmnesia_AISelectEffect
+# >>> factory-mutation KadabraRecover_AISelectEffect
+MUTATIONS["KadabraRecover_AISelectEffect"] = {"source_symbol": "KadabraRecover_AISelectEffect", "before": "uint8_t a = gb_read8(wDuelTempList_ADDR);\n\tgb_write8(hTemp_ffa0_ADDR, a);", "after": "uint8_t a = gb_read8(wDuelTempList_ADDR);\n\tgb_write8(hTemp_ffa0_ADDR, (uint8_t)(a + 1u));", "case_ids": ["KadabraRecover_AISelectEffect-0", "KadabraRecover_AISelectEffect-1"]}
+# <<< factory-mutation KadabraRecover_AISelectEffect

@@ -350,6 +350,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "mem.h"
 #define hTemp_ffa0_ADDR 0xFFA0u
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4629,3 +4633,12 @@ void SlowpokeAmnesia_AISelectEffect(void)
 	gb_write8(hTemp_ffa0_ADDR, a);
 }
 /* <<< factory SlowpokeAmnesia_AISelectEffect */
+
+/* >>> factory KadabraRecover_AISelectEffect */
+void KadabraRecover_AISelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t a = gb_read8(wDuelTempList_ADDR);
+	gb_write8(hTemp_ffa0_ADDR, a);
+}
+/* <<< factory KadabraRecover_AISelectEffect */

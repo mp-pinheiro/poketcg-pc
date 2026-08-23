@@ -2779,6 +2779,14 @@ static void adapt_SlowpokeAmnesia_AISelectEffect(ProbeState *s)
 }
 /* <<< factory SlowpokeAmnesia_AISelectEffect */
 
+/* >>> factory KadabraRecover_AISelectEffect */
+static void adapt_KadabraRecover_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	KadabraRecover_AISelectEffect();
+}
+/* <<< factory KadabraRecover_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3123,5 +3131,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HurricaneEffect", adapt_HurricaneEffect },
 	{ "Psychic_AIEffect", adapt_Psychic_AIEffect },
 	{ "SlowpokeAmnesia_AISelectEffect", adapt_SlowpokeAmnesia_AISelectEffect },
+	{ "KadabraRecover_AISelectEffect", adapt_KadabraRecover_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -1156,6 +1156,9 @@ void Psychic_AIEffect(void);
 /* >>> factory SlowpokeAmnesia_AISelectEffect */
 void SlowpokeAmnesia_AISelectEffect(void);
 /* <<< factory SlowpokeAmnesia_AISelectEffect */
+/* >>> factory KadabraRecover_AISelectEffect */
+void KadabraRecover_AISelectEffect(void);
+/* <<< factory KadabraRecover_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
