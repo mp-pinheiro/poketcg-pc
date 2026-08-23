@@ -393,4 +393,7 @@ ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc);
 /* >>> factory ScriptCommand_SetNextNPCAndScript */
 IncreaseScriptPointerResult ScriptCommand_SetNextNPCAndScript(uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_SetNextNPCAndScript */
+/* >>> factory ScriptCommand_SetActiveNPCDirection */
+IncreaseScriptPointerResult ScriptCommand_SetActiveNPCDirection(uint8_t c);
+/* <<< factory ScriptCommand_SetActiveNPCDirection */
 #endif

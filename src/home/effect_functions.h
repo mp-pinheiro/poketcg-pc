@@ -1047,6 +1047,9 @@ void KarateChop_AIEffect(void);
 /* >>> factory LaprasWaterGunEffect */
 void LaprasWaterGunEffect(void);
 /* <<< factory LaprasWaterGunEffect */
+/* >>> factory OmanyteWaterGunEffect */
+void OmanyteWaterGunEffect(void);
+/* <<< factory OmanyteWaterGunEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

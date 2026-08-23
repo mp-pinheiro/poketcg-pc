@@ -2741,6 +2741,14 @@ CASES["LaprasWaterGunEffect"] = [
 ]
 # <<< factory LaprasWaterGunEffect
 
+# >>> factory OmanyteWaterGunEffect
+CONTRACT["OmanyteWaterGunEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["OmanyteWaterGunEffect"] = [
+    {"wram": {0xCCB9: b"\x0A", 0xCCF0: b"\x00", 0xFF9D: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x0A", 0xCCF0: b"\x00", 0xFF9D: b"\x00"}, read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory OmanyteWaterGunEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4555,3 +4563,6 @@ MUTATIONS["KarateChop_AIEffect"] = {"source_symbol": "KarateChop_AIEffect", "bef
 # >>> factory-mutation LaprasWaterGunEffect
 MUTATIONS["LaprasWaterGunEffect"] = {"source_symbol": "LaprasWaterGunEffect", "before": "void LaprasWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(1u, 0u);\n}", "after": "void LaprasWaterGunEffect(void)\n{\n\t(void)0;\n}", "case_ids": ["LaprasWaterGunEffect-0", "LaprasWaterGunEffect-1"]}
 # <<< factory-mutation LaprasWaterGunEffect
+# >>> factory-mutation OmanyteWaterGunEffect
+MUTATIONS["OmanyteWaterGunEffect"] = {"source_symbol": "OmanyteWaterGunEffect", "before": "void OmanyteWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(1u, 0u);\n}", "after": "void OmanyteWaterGunEffect(void)\n{\n\t(void)0;\n}", "case_ids": ["OmanyteWaterGunEffect-0", "OmanyteWaterGunEffect-1"]}
+# <<< factory-mutation OmanyteWaterGunEffect

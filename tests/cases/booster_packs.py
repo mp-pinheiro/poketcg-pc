@@ -249,6 +249,14 @@ CASES["AddBoosterCardToDrawnNonEnergies"] = [
 ]
 # <<< factory AddBoosterCardToDrawnNonEnergies
 
+# >>> factory AddBoosterCardsToCollection
+CONTRACT["AddBoosterCardsToCollection"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",), "wram_out": True}
+CASES["AddBoosterCardsToCollection"] = [
+    {"hl": 0x1234, "wram": {0xC400: b"\x05\x0C\x00"}, "sram": {0: {0xA100: bytes(256)}}, "read": {0xC400: 3}, "sread": {0: {0xA105: 1, 0xA10C: 1}}},
+    dict(POISON, hl=0x5678, wram={0xC400: b"\x2A\x00"}, sram={0: {0xA100: bytes(256)}}, read={0xC400: 2}, sread={0: {0xA12A: 1}}),
+]
+# <<< factory AddBoosterCardsToCollection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -343,3 +351,6 @@ MUTATIONS["FindBoosterDataPointer"] = {"source_symbol": "FindBoosterDataPointer"
 # >>> factory-mutation AddBoosterCardToDrawnNonEnergies
 MUTATIONS["AddBoosterCardToDrawnNonEnergies"] = {"source_symbol": "AddBoosterCardToDrawnNonEnergies", "before": "\tAppendCurrentCardToHL(&cursor);\n\tAddBoosterCardToTempCardCollection();", "after": "\tAppendCurrentCardToHL(&cursor);\n\t(void)0;", "case_ids": ["AddBoosterCardToDrawnNonEnergies-0", "AddBoosterCardToDrawnNonEnergies-1", "AddBoosterCardToDrawnNonEnergies-2"]}
 # <<< factory-mutation AddBoosterCardToDrawnNonEnergies
+# >>> factory-mutation AddBoosterCardsToCollection
+MUTATIONS["AddBoosterCardsToCollection"] = {"source_symbol": "AddBoosterCardsToCollection", "before": "\t\tAddCardToCollection(card);", "after": "\t\t(void)card;", "case_ids": ["AddBoosterCardsToCollection-0", "AddBoosterCardsToCollection-1"]}
+# <<< factory-mutation AddBoosterCardsToCollection

@@ -863,6 +863,14 @@ CASES["ScriptCommand_SetNextNPCAndScript"] = [
 ]
 # <<< factory ScriptCommand_SetNextNPCAndScript
 
+# >>> factory ScriptCommand_SetActiveNPCDirection
+CONTRACT["ScriptCommand_SetActiveNPCDirection"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_SetActiveNPCDirection"] = [
+    {"c": 0x02, "wram": {0xD300: bytes(range(256)) * 2, 0xD3B6: b"\x01"}, "read": {0xD300: 0x200, 0xD3AA: 1}},
+    dict(POISON, c=0x03, wram={0xD300: bytes(range(256)) * 2, 0xD3B6: b"\x01"}, read={0xD300: 0x200, 0xD3AA: 1}),
+]
+# <<< factory ScriptCommand_SetActiveNPCDirection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1320,3 +1328,6 @@ MUTATIONS["ScriptCommand_MoveActiveNPC"] = {"source_symbol": "ScriptCommand_Move
 # >>> factory-mutation ScriptCommand_SetNextNPCAndScript
 MUTATIONS["ScriptCommand_SetNextNPCAndScript"] = {"source_symbol": "ScriptCommand_SetNextNPCAndScript", "before": "\twTempNPC = c;", "after": "\twTempNPC = 0u;", "case_ids": ["ScriptCommand_SetNextNPCAndScript-0", "ScriptCommand_SetNextNPCAndScript-1"]}
 # <<< factory-mutation ScriptCommand_SetNextNPCAndScript
+# >>> factory-mutation ScriptCommand_SetActiveNPCDirection
+MUTATIONS["ScriptCommand_SetActiveNPCDirection"] = {"source_symbol": "ScriptCommand_SetActiveNPCDirection", "before": "\twLoadedNPCTempIndex = wScriptNPC;\n\t(void)Func_1c52e(c);", "after": "\twLoadedNPCTempIndex = 0u;\n\t(void)Func_1c52e(c);", "case_ids": ["ScriptCommand_SetActiveNPCDirection-0", "ScriptCommand_SetActiveNPCDirection-1"]}
+# <<< factory-mutation ScriptCommand_SetActiveNPCDirection

@@ -76,4 +76,7 @@ uint16_t FindBoosterDataPointer(void);
 /* >>> factory AddBoosterCardToDrawnNonEnergies */
 void AddBoosterCardToDrawnNonEnergies(void);
 /* <<< factory AddBoosterCardToDrawnNonEnergies */
+/* >>> factory AddBoosterCardsToCollection */
+void AddBoosterCardsToCollection(void);
+/* <<< factory AddBoosterCardsToCollection */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

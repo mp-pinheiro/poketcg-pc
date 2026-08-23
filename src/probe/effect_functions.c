@@ -2502,6 +2502,14 @@ static void adapt_LaprasWaterGunEffect(ProbeState *s)
 }
 /* <<< factory LaprasWaterGunEffect */
 
+/* >>> factory OmanyteWaterGunEffect */
+static void adapt_OmanyteWaterGunEffect(ProbeState *s)
+{
+	(void)s;
+	OmanyteWaterGunEffect();
+}
+/* <<< factory OmanyteWaterGunEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2812,5 +2820,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GravelerHardenEffect", adapt_GravelerHardenEffect },
 	{ "KarateChop_AIEffect", adapt_KarateChop_AIEffect },
 	{ "LaprasWaterGunEffect", adapt_LaprasWaterGunEffect },
+	{ "OmanyteWaterGunEffect", adapt_OmanyteWaterGunEffect },
 	{ NULL, NULL },
 };

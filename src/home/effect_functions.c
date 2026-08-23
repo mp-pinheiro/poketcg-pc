@@ -4241,3 +4241,10 @@ void LaprasWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
 }
 /* <<< factory LaprasWaterGunEffect */
+
+/* >>> factory OmanyteWaterGunEffect */
+void OmanyteWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory OmanyteWaterGunEffect */

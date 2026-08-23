@@ -197,6 +197,15 @@ static void adapt_AddBoosterCardToDrawnNonEnergies(ProbeState *s)
 }
 /* <<< factory AddBoosterCardToDrawnNonEnergies */
 
+/* >>> factory AddBoosterCardsToCollection */
+static void adapt_AddBoosterCardsToCollection(ProbeState *s)
+{
+	AddBoosterCardsToCollection();
+	s->a = 0u;
+	s->f = 0x80u;
+}
+/* <<< factory AddBoosterCardsToCollection */
+
 const ProbeEntry probe_entries_booster_packs[] = {
 	{ "GetCurrentRarityAmount", adapt_GetCurrentRarityAmount },
 	{ "GetBoosterCardType", adapt_GetBoosterCardType },
@@ -218,5 +227,6 @@ const ProbeEntry probe_entries_booster_packs[] = {
 	{ "DetermineBoosterCardType", adapt_DetermineBoosterCardType },
 	{ "FindBoosterDataPointer", adapt_FindBoosterDataPointer },
 	{ "AddBoosterCardToDrawnNonEnergies", adapt_AddBoosterCardToDrawnNonEnergies },
+	{ "AddBoosterCardsToCollection", adapt_AddBoosterCardsToCollection },
 	{ NULL, NULL },
 };

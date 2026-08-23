@@ -1,0 +1,9 @@
+{
+  "fn": "OmanyteWaterGunEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OmanyteWaterGunEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0a\", \"52411\": \"0a0a\", \"52464\": \"00\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OmanyteWaterGunEffect\", \"mismatches\": {\"bus\": {\"address\": 52411, \"reference\": \"0a0a0a0000\", \"native\": \"0a00000000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52409, 1], [52411, 2], [52464, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"OmanyteWaterGunEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"0a\", \"52411\": \"0a0a\", \"52464\": \"00\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

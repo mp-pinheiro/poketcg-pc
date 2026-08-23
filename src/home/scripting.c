@@ -1092,3 +1092,12 @@ IncreaseScriptPointerResult ScriptCommand_SetNextNPCAndScript(uint8_t c, uint16_
 	return IncreaseScriptPointerBy4();
 }
 /* <<< factory ScriptCommand_SetNextNPCAndScript */
+
+/* >>> factory ScriptCommand_SetActiveNPCDirection */
+IncreaseScriptPointerResult ScriptCommand_SetActiveNPCDirection(uint8_t c)
+{
+	wLoadedNPCTempIndex = wScriptNPC;
+	(void)Func_1c52e(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_SetActiveNPCDirection */
