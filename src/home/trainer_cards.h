@@ -77,4 +77,8 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } AIDecidePokemonBreederResult;
 AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in);
 /* <<< factory AIDecide_PokemonBreeder */
+/* >>> factory AIDecide_PokemonTrader_LegendaryMoltres */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_LegendaryMoltresResult;
+AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(void);
+/* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

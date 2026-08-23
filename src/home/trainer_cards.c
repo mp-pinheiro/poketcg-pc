@@ -79,6 +79,9 @@
 #define VENUSAUR_LV64 0x0au
 #define VENUSAUR_LV67 0x0bu
 #define VILEPLUME 0x1eu
+
+#define MOLTRES_LV35 0x3fu
+#define MOLTRES_LV37 0x40u
 /* <<< factory statics */
 
 
@@ -858,3 +861,16 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in)
 	return (AIDecidePokemonBreederResult){wce07, 0x10u};
 }
 /* <<< factory AIDecide_PokemonBreeder */
+
+/* >>> factory AIDecide_PokemonTrader_LegendaryMoltres */
+AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(void)
+{
+	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MOLTRES_LV37, MOLTRES_LV35);
+	if (!(r.f & 0x10u)) {
+		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.a, f};
+	}
+	wce1a = r.a;
+	return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.e, 0x10u};
+}
+/* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */

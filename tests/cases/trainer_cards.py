@@ -246,6 +246,28 @@ CASES["AIDecide_PokemonBreeder"] = [
 ]
 # <<< factory AIDecide_PokemonBreeder
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wce1a = 0xCE1A
+# <<< factory-cases-statics
+
+# >>> factory AIDecide_PokemonTrader_LegendaryMoltres
+CONTRACT["AIDecide_PokemonTrader_LegendaryMoltres"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_PokemonTrader_LegendaryMoltres"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x0A",
+        0xC200: b"\x00",
+        0xC405: b"\x40",
+        0xC40A: b"\x01",
+    }, "expect": {wce1a: b"\x05"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}),
+]
+# <<< factory AIDecide_PokemonTrader_LegendaryMoltres
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -402,3 +424,6 @@ MUTATIONS["AIDecide_PokemonBreeder"] = {
     "case_ids": ["AIDecide_PokemonBreeder-0"],
 }
 # <<< factory-mutation AIDecide_PokemonBreeder
+# >>> factory-mutation AIDecide_PokemonTrader_LegendaryMoltres
+MUTATIONS["AIDecide_PokemonTrader_LegendaryMoltres"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryMoltres", "before": "\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0u;", "after": "\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0x40u;", "case_ids": ["AIDecide_PokemonTrader_LegendaryMoltres-0"]}
+# <<< factory-mutation AIDecide_PokemonTrader_LegendaryMoltres
