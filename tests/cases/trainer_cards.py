@@ -232,6 +232,20 @@ CASES["AIDecide_SuperEnergyRetrieval"] = [
 ]
 # <<< factory AIDecide_SuperEnergyRetrieval
 
+# >>> factory AIDecide_PokemonBreeder
+CONTRACT["AIDecide_PokemonBreeder"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonBreeder"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+        "wram": {0xC2EE: b"\x00"},   # wPlayerDuelVariables DUELVARS_NUMBER_OF_CARDS_IN_HAND = 0 (empty hand)
+        "hram": {0xFF97: b"\xC2"},
+        "expect_regs": {"a": 0x00, "f": 0x80},
+    },
+]
+# <<< factory AIDecide_PokemonBreeder
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -380,3 +394,11 @@ MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {
     "case_ids": ["AIDecide_SuperEnergyRetrieval-0"],
 }
 # <<< factory-mutation AIDecide_SuperEnergyRetrieval
+# >>> factory-mutation AIDecide_PokemonBreeder
+MUTATIONS["AIDecide_PokemonBreeder"] = {
+    "source_symbol": "AIDecide_PokemonBreeder",
+    "before": "if (wce06 == 0u)\n\t\treturn (AIDecidePokemonBreederResult){0u, 0x80u};",
+    "after": "if (wce06 == 0u)\n\t\treturn (AIDecidePokemonBreederResult){0u, 0x00u};",
+    "case_ids": ["AIDecide_PokemonBreeder-0"],
+}
+# <<< factory-mutation AIDecide_PokemonBreeder

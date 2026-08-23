@@ -64,6 +64,21 @@
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
 #define MUK 0x27u
 #define PLAY_AREA_ARENA 0x00u
+
+#include "home/duel.h"
+#include "home/common.h"
+#include "home/substatus.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define ALAKAZAM 0x90u
+#define DRAGONITE_LV41 0xc1u
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+#define GENGAR 0x98u
+#define VENUSAUR_LV64 0x0au
+#define VENUSAUR_LV67 0x0bu
+#define VILEPLUME 0x1eu
 /* <<< factory statics */
 
 
@@ -700,3 +715,146 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
 	return (AIDecideSuperEnergyRetrievalResult){0xFFu, 0x00u};
 }
 /* <<< factory AIDecide_SuperEnergyRetrieval */
+
+/* >>> factory AIDecide_PokemonBreeder */
+AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in)
+{
+	PrehistoricPowerResult power = IsPrehistoricPowerActive(hl_in);
+	if (power.f & 0x10u)
+		return (AIDecidePokemonBreederResult){power.a, power.f};
+
+	ClearMemory_Bank8(7u, wce08_ADDR);
+	wce06 = 0u;
+	(void)CreateHandCardList(0u);
+	uint16_t hl = wDuelTempList_ADDR;
+
+	for (;;) {
+		uint8_t deck_index = gb_read8(hl);
+		hl++;
+		if (deck_index == 0xFFu)
+			break;
+
+		uint8_t card_type = LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		if (card_type == VENUSAUR_LV64 || card_type == VENUSAUR_LV67 ||
+		    card_type == BLASTOISE || card_type == VILEPLUME ||
+		    card_type == ALAKAZAM || card_type == GENGAR) {
+			uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+			uint8_t e = PLAY_AREA_ARENA;
+			for (; c != 0u; c--, e++) {
+				EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(deck_index, e);
+				if (evolve.f & 0x10u)
+					continue;
+
+				uint8_t damage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).a;
+				uint8_t counters = ConvertHPToDamageCounters_Bank8(damage);
+				uint8_t hi = (uint8_t)(((counters & 0x0Fu) << 4) | ((counters & 0xF0u) >> 4));
+				(void)GetPlayAreaCardAttachedEnergies(e);
+				uint8_t energies = wTotalAttachedEnergies;
+				uint8_t lo = (energies >= 16u) ? 15u : energies;
+				gb_write8((uint16_t)(wce08_ADDR + e), (uint8_t)(hi | lo));
+				gb_write8((uint16_t)(wce0f_ADDR + e), deck_index);
+				wce06++;
+			}
+		}
+	}
+
+	if (wce06 != 0u) {
+		wce06 = 0u;
+		uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		uint8_t e = PLAY_AREA_ARENA;
+		uint8_t best_loc = 0u;
+		for (; c != 0u; c--, e++) {
+			uint8_t score = gb_read8((uint16_t)(wce08_ADDR + e));
+			if (wce06 < score) {
+				wce06 = score;
+				best_loc = e;
+			}
+		}
+		wce07 = best_loc;
+		wce1a = gb_read8((uint16_t)(wce0f_ADDR + best_loc));
+		return (AIDecidePokemonBreederResult){best_loc, 0x10u};
+	}
+
+	ClearMemory_Bank8(7u, wce08_ADDR);
+	wce06 = 0u;
+	(void)CreateHandCardList(0u);
+	uint16_t hl2 = wDuelTempList_ADDR;
+
+	for (;;) {
+		uint8_t deck_index = gb_read8(hl2);
+		hl2++;
+		if (deck_index == 0xFFu)
+			break;
+
+		uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		uint8_t e = PLAY_AREA_ARENA;
+		for (; c != 0u; c--, e++) {
+			EvolveResult evolve = CheckIfCanEvolveInto_BasicToStage2(deck_index, e);
+			if (evolve.f & 0x10u)
+				continue;
+
+			uint8_t evolving_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+			uint8_t dragonite_carry = 0u;
+			if (evolving_id == DRAGONITE_LV41) {
+				if (e == 0u) {
+					uint8_t hp = GetCardDamageAndMaxHP(PLAY_AREA_ARENA).a;
+					uint8_t counters = ConvertHPToDamageCounters_Bank8(hp);
+					CountNumberOfEnergyCardsAttachedResult energy =
+						CountNumberOfEnergyCardsAttached(PLAY_AREA_ARENA);
+					if (counters >= 5u || energy.a < 3u)
+						dragonite_carry = 1u;
+				} else {
+					uint8_t total_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+					uint8_t sum = 0u;
+					uint8_t loc = total_count;
+					while (loc != 0u) {
+						loc--;
+						uint8_t hp = GetCardDamageAndMaxHP(loc).a;
+						sum = (uint8_t)(sum + ConvertHPToDamageCounters_Bank8(hp));
+					}
+					if (sum < 8u)
+						dragonite_carry = 1u;
+				}
+			}
+			if (dragonite_carry)
+				continue;
+
+			uint8_t damage = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + e)).a;
+			uint8_t counters2 = ConvertHPToDamageCounters_Bank8(damage);
+			uint8_t hi = (uint8_t)(((counters2 & 0x0Fu) << 4) | ((counters2 & 0xF0u) >> 4));
+			(void)GetPlayAreaCardAttachedEnergies(e);
+			uint8_t energies = wTotalAttachedEnergies;
+			uint8_t lo = (energies >= 16u) ? 15u : energies;
+			gb_write8((uint16_t)(wce08_ADDR + e), (uint8_t)(hi | lo));
+			gb_write8((uint16_t)(wce0f_ADDR + e), deck_index);
+			wce06++;
+		}
+	}
+
+	if (wce06 == 0u)
+		return (AIDecidePokemonBreederResult){0u, 0x80u};
+
+	wce06 = 0u;
+	wce07 = 0xFFu;
+	{
+		uint8_t c = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		uint8_t e = PLAY_AREA_ARENA;
+		for (; c != 0u; c--, e++) {
+			uint8_t score = gb_read8((uint16_t)(wce08_ADDR + e));
+			if (wce06 < score) {
+				uint8_t energy_count = (uint8_t)(score & 0x0Fu);
+				if (energy_count >= 2u) {
+					wce06 = score;
+					wce07 = e;
+				}
+			}
+		}
+	}
+
+	if (wce07 == 0xFFu)
+		return (AIDecidePokemonBreederResult){0xFFu, 0x00u};
+
+	wce1a = gb_read8((uint16_t)(wce0f_ADDR + wce07));
+	return (AIDecidePokemonBreederResult){wce07, 0x10u};
+}
+/* <<< factory AIDecide_PokemonBreeder */

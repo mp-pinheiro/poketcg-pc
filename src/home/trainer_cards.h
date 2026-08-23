@@ -73,4 +73,8 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } AIDecideSuperEnergyRetrievalResult;
 AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a);
 /* <<< factory AIDecide_SuperEnergyRetrieval */
+/* >>> factory AIDecide_PokemonBreeder */
+typedef struct { uint8_t a; uint8_t f; } AIDecidePokemonBreederResult;
+AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in);
+/* <<< factory AIDecide_PokemonBreeder */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
