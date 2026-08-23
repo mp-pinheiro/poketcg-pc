@@ -923,6 +923,14 @@ CASES["ScriptCommand_SetPlayerDirection"] = [
 ]
 # <<< factory ScriptCommand_SetPlayerDirection
 
+# >>> factory ScriptCommand_UnloadActiveNPC
+CONTRACT["ScriptCommand_UnloadActiveNPC"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_UnloadActiveNPC"] = [
+    {"wram": {0xD3B6: b"\x07"}, "read": {0xD3AA: 1}},
+    dict(POISON, wram={0xD3B6: b"\x07"}, read={0xD3AA: 1}),
+]
+# <<< factory ScriptCommand_UnloadActiveNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1406,3 +1414,11 @@ MUTATIONS["ScriptCommand_SetPlayerDirection"] = {
     "case_ids": ["ScriptCommand_SetPlayerDirection-0", "ScriptCommand_SetPlayerDirection-1"],
 }
 # <<< factory-mutation ScriptCommand_SetPlayerDirection
+# >>> factory-mutation ScriptCommand_UnloadActiveNPC
+MUTATIONS["ScriptCommand_UnloadActiveNPC"] = {
+    "source_symbol": "ScriptCommand_UnloadActiveNPC",
+    "before": "wLoadedNPCTempIndex = wScriptNPC;\n\treturn Func_cdd1();",
+    "after": "wLoadedNPCTempIndex = (uint8_t)(wScriptNPC + 1u);\n\treturn Func_cdd1();",
+    "case_ids": ["ScriptCommand_UnloadActiveNPC-0", "ScriptCommand_UnloadActiveNPC-1"],
+}
+# <<< factory-mutation ScriptCommand_UnloadActiveNPC

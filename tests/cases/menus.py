@@ -260,6 +260,14 @@ CASES["RefreshMenuCursor_CheckPlaySFX"] = [
 ]
 # <<< factory RefreshMenuCursor_CheckPlaySFX
 
+# >>> factory PlayOpenOrExitScreenSFX
+CONTRACT["PlayOpenOrExitScreenSFX"] = {"compare": ("a", "f"), "preserve": ("a", "f"), "wram_out": True}
+CASES["PlayOpenOrExitScreenSFX"] = [
+    {"a": 0x11, "f": 0x00, "wram": {0xFFB1: b"\xFF"}, "read": {0xDD82: 1}},
+    dict(POISON, wram={0xFFB1: b"\x02"}, read={0xDD82: 1}),
+]
+# <<< factory PlayOpenOrExitScreenSFX
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -274,3 +282,11 @@ MUTATIONS = {
 # >>> factory-mutation RefreshMenuCursor_CheckPlaySFX
 MUTATIONS["RefreshMenuCursor_CheckPlaySFX"] = {"source_symbol": "RefreshMenuCursor_CheckPlaySFX", "before": "\t\tPlaySFX(a);", "after": "\t\tPlaySFX(0u);", "case_ids": ["RefreshMenuCursor_CheckPlaySFX-1", "RefreshMenuCursor_CheckPlaySFX-2"]}
 # <<< factory-mutation RefreshMenuCursor_CheckPlaySFX
+# >>> factory-mutation PlayOpenOrExitScreenSFX
+MUTATIONS["PlayOpenOrExitScreenSFX"] = {
+    "source_symbol": "PlayOpenOrExitScreenSFX",
+    "before": "if ((uint8_t)(item + 1u) == 0u)",
+    "after": "if ((uint8_t)(item + 2u) == 0u)",
+    "case_ids": ["PlayOpenOrExitScreenSFX-0", "PlayOpenOrExitScreenSFX-1"],
+}
+# <<< factory-mutation PlayOpenOrExitScreenSFX

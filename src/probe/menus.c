@@ -166,6 +166,15 @@ static void adapt_RefreshMenuCursor_CheckPlaySFX(ProbeState *s)
 }
 /* <<< factory RefreshMenuCursor_CheckPlaySFX */
 
+/* >>> factory PlayOpenOrExitScreenSFX */
+static void adapt_PlayOpenOrExitScreenSFX(ProbeState *s)
+{
+	PlayOpenOrExitScreenSFXResult r = PlayOpenOrExitScreenSFX(s->a, s->f);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayOpenOrExitScreenSFX */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -194,5 +203,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "DrawWideTextBox_WaitForInput", adapt_DrawWideTextBox_WaitForInput },
 	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
 	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
+	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
 	{ NULL, NULL },
 };

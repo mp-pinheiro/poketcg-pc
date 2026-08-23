@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_UnloadActiveNPC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_UnloadActiveNPC\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"07\", \"54198\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_UnloadActiveNPC\", \"mismatches\": {\"bus\": {\"address\": 54186, \"reference\": \"0707\", \"native\": \"0807\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54186, 1], [54198, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_UnloadActiveNPC\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"07\", \"54198\": \"07\"}}, \"status\": \"PASS\"}\n"
+}

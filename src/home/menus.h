@@ -47,4 +47,8 @@ WaitResult WaitForWideTextBoxInput(void);
 /* >>> factory RefreshMenuCursor_CheckPlaySFX */
 void RefreshMenuCursor_CheckPlaySFX(void);
 /* <<< factory RefreshMenuCursor_CheckPlaySFX */
+/* >>> factory PlayOpenOrExitScreenSFX */
+typedef struct { uint8_t a; uint8_t f; } PlayOpenOrExitScreenSFXResult;
+PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f);
+/* <<< factory PlayOpenOrExitScreenSFX */
 #endif

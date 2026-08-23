@@ -1244,3 +1244,11 @@ IncreaseScriptPointerResult ScriptCommand_SetPlayerDirection(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_SetPlayerDirection */
+
+/* >>> factory ScriptCommand_UnloadActiveNPC */
+IncreaseScriptPointerResult ScriptCommand_UnloadActiveNPC(void)
+{
+	wLoadedNPCTempIndex = wScriptNPC;
+	return Func_cdd1();
+}
+/* <<< factory ScriptCommand_UnloadActiveNPC */

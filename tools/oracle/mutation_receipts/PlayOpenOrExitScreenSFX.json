@@ -1,0 +1,9 @@
+{
+  "fn": "PlayOpenOrExitScreenSFX",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayOpenOrExitScreenSFX\", \"registers\": {\"a\": 17, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"03\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayOpenOrExitScreenSFX\", \"mismatches\": {\"bus\": {\"address\": 56706, \"reference\": \"03ff\", \"native\": \"02ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[56706, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayOpenOrExitScreenSFX\", \"registers\": {\"a\": 17, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"56706\": \"03\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

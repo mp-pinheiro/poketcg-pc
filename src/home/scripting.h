@@ -415,4 +415,7 @@ SetEventValueResult DetermineImakuniRoom(void);
 /* >>> factory ScriptCommand_SetPlayerDirection */
 IncreaseScriptPointerResult ScriptCommand_SetPlayerDirection(uint8_t c);
 /* <<< factory ScriptCommand_SetPlayerDirection */
+/* >>> factory ScriptCommand_UnloadActiveNPC */
+IncreaseScriptPointerResult ScriptCommand_UnloadActiveNPC(void);
+/* <<< factory ScriptCommand_UnloadActiveNPC */
 #endif

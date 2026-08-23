@@ -812,6 +812,16 @@ static void adapt_ScriptCommand_SetPlayerDirection(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SetPlayerDirection */
 
+/* >>> factory ScriptCommand_UnloadActiveNPC */
+static void adapt_ScriptCommand_UnloadActiveNPC(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_UnloadActiveNPC();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_UnloadActiveNPC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -891,5 +901,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c998", adapt_Func_c998 },
 	{ "DetermineImakuniRoom", adapt_DetermineImakuniRoom },
 	{ "ScriptCommand_SetPlayerDirection", adapt_ScriptCommand_SetPlayerDirection },
+	{ "ScriptCommand_UnloadActiveNPC", adapt_ScriptCommand_UnloadActiveNPC },
 	{ NULL, NULL },
 };

@@ -13,6 +13,9 @@
 #include "home/menus.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+
+#define SFX_CANCEL 0x03u
+#define SFX_CONFIRM 0x02u
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -355,3 +358,15 @@ void RefreshMenuCursor_CheckPlaySFX(void)
 	RefreshMenuCursor();
 }
 /* <<< factory RefreshMenuCursor_CheckPlaySFX */
+
+/* >>> factory PlayOpenOrExitScreenSFX */
+PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f)
+{
+	uint8_t item = hCurMenuItem;
+	if ((uint8_t)(item + 1u) == 0u)
+		PlaySFX(SFX_CANCEL);
+	else
+		PlaySFX(SFX_CONFIRM);
+	return (PlayOpenOrExitScreenSFXResult){a, f};
+}
+/* <<< factory PlayOpenOrExitScreenSFX */
