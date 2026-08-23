@@ -247,6 +247,26 @@ CASES["ChallengeMachine_Reset"] = [
 ]
 # <<< factory ChallengeMachine_Reset
 
+# >>> factory ChallengeMachine_PrintFinalConsecutiveWinStreak
+CONTRACT["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = [
+    {"hl": 0x5678, "sram": {0: {0xBA47: b"\x00\x00"}}, "read": {0xCE43: 2}},
+    dict(POISON, sram={0: {0xBA47: b"\x00\x00"}}, read={0xCE43: 2}),
+    {"hl": 0x1111, "keys": 0x01, "sram": {0: {0xBA47: b"\x05\x01"}},
+     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCE43: 2}},
+    {"hl": 0x2222, "keys": 0x01, "sram": {0: {0xBA47: b"\x02\x00"}},
+     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCE43: 2}},
+    {"hl": 0x3333, "keys": 0x01, "sram": {0: {0xBA47: b"\x01\x00"}},
+     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCE43: 2}},
+]
+# <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -306,3 +326,6 @@ MUTATIONS["ChallengeMachine_Initialize"] = {"source_symbol": "ChallengeMachine_I
 # >>> factory-mutation ChallengeMachine_Reset
 MUTATIONS["ChallengeMachine_Reset"] = {"source_symbol": "ChallengeMachine_Reset", "before": "\tgb_write8(sPlayerInChallengeMachine_ADDR, 0u);", "after": "\tgb_write8(sPlayerInChallengeMachine_ADDR, 1u);", "case_ids": ["ChallengeMachine_Reset-0", "ChallengeMachine_Reset-2"]}
 # <<< factory-mutation ChallengeMachine_Reset
+# >>> factory-mutation ChallengeMachine_PrintFinalConsecutiveWinStreak
+MUTATIONS["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = {"source_symbol": "ChallengeMachine_PrintFinalConsecutiveWinStreak", "before": "\tif (high == 0u && low < 2u) {", "after": "\tif (high == 0u && low < 1u) {", "case_ids": ["ChallengeMachine_PrintFinalConsecutiveWinStreak-4"]}
+# <<< factory-mutation ChallengeMachine_PrintFinalConsecutiveWinStreak

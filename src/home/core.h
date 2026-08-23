@@ -631,4 +631,8 @@ PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void);
 typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; } CheckIfEnoughEnergiesToAttackResult;
 CheckIfEnoughEnergiesToAttackResult CheckIfEnoughEnergiesToAttack(void);
 /* <<< factory CheckIfEnoughEnergiesToAttack */
+/* >>> factory PlayTurnDuelistDrawAnimation */
+typedef struct { uint8_t e; uint8_t f; } PlayTurnDuelistDrawAnimationResult;
+PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
+/* <<< factory PlayTurnDuelistDrawAnimation */
 #endif

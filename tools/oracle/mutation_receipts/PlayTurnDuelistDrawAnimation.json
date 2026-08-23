@@ -1,0 +1,9 @@
+{
+  "fn": "PlayTurnDuelistDrawAnimation",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayTurnDuelistDrawAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 86, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0000\", \"52466\": \"01\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayTurnDuelistDrawAnimation\", \"mismatches\": {\"e\": [86, 87]}}\n",
+  "restored": "{\"fn\": \"PlayTurnDuelistDrawAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 86, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0000\", \"52466\": \"01\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

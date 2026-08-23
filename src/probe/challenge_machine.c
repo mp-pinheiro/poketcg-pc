@@ -78,6 +78,15 @@ static void adapt_ChallengeMachine_Reset(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_Reset */
 
+/* >>> factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
+static void adapt_ChallengeMachine_PrintFinalConsecutiveWinStreak(ProbeState *s)
+{
+	ChallengeMachinePrintFinalConsecutiveWinStreakResult r = ChallengeMachine_PrintFinalConsecutiveWinStreak(s->hl);
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -88,5 +97,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_RecordDuelResult", adapt_ChallengeMachine_RecordDuelResult },
 	{ "ChallengeMachine_Initialize", adapt_ChallengeMachine_Initialize },
 	{ "ChallengeMachine_Reset", adapt_ChallengeMachine_Reset },
+	{ "ChallengeMachine_PrintFinalConsecutiveWinStreak", adapt_ChallengeMachine_PrintFinalConsecutiveWinStreak },
 	{ NULL, NULL },
 };

@@ -1347,6 +1347,15 @@ static void adapt_CheckIfEnoughEnergiesToAttack(ProbeState *s)
 }
 /* <<< factory CheckIfEnoughEnergiesToAttack */
 
+/* >>> factory PlayTurnDuelistDrawAnimation */
+static void adapt_PlayTurnDuelistDrawAnimation(ProbeState *s)
+{
+	PlayTurnDuelistDrawAnimationResult r = PlayTurnDuelistDrawAnimation(s->f, s->b, s->c, s->d, s->hl);
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory PlayTurnDuelistDrawAnimation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1506,5 +1515,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintReturnCardsToDeckDrawAgain", adapt_PrintReturnCardsToDeckDrawAgain },
 	{ "PracticeDuelVerify_Turn3", adapt_PracticeDuelVerify_Turn3 },
 	{ "CheckIfEnoughEnergiesToAttack", adapt_CheckIfEnoughEnergiesToAttack },
+	{ "PlayTurnDuelistDrawAnimation", adapt_PlayTurnDuelistDrawAnimation },
 	{ NULL, NULL },
 };

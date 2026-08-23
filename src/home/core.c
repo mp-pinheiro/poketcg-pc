@@ -512,6 +512,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/play_animation.h"
+#include "home/frames.h"
+#include "home/script.h"
+#include "generated/hram.h"
+#define DUEL_ANIM_OPP_DRAW 0x57u
+#define DUEL_ANIM_PLAYER_DRAW 0x56u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3205,3 +3213,24 @@ CheckIfEnoughEnergiesToAttackResult CheckIfEnoughEnergiesToAttack(void)
 	return (CheckIfEnoughEnergiesToAttackResult){result.a, result.f, result.d, result.e};
 }
 /* <<< factory CheckIfEnoughEnergiesToAttack */
+
+/* >>> factory PlayTurnDuelistDrawAnimation */
+PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint16_t hl)
+{
+	ResetAnimationQueue();
+	uint8_t e = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;
+	(void)PlayDuelAnimation(e);
+	for (;;) {
+		DoFrame();
+		CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(f, b, c, d, e, hl);
+		b = skip.b; c = skip.c; d = skip.d; f = skip.f; hl = skip.hl;
+		if (f & 0x10u)
+			break;
+		AnimationStatusResult playing = CheckAnyAnimationPlaying();
+		if (!(playing.f & 0x10u))
+			break;
+	}
+	FinishQueuedAnimations();
+	return (PlayTurnDuelistDrawAnimationResult){e, f};
+}
+/* <<< factory PlayTurnDuelistDrawAnimation */

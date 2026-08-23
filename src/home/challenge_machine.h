@@ -57,4 +57,8 @@ ChallengeMachineInitializeResult ChallengeMachine_Initialize(void);
 /* >>> factory ChallengeMachine_Reset */
 void ChallengeMachine_Reset(void);
 /* <<< factory ChallengeMachine_Reset */
+/* >>> factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
+typedef struct { uint8_t f; uint16_t hl; } ChallengeMachinePrintFinalConsecutiveWinStreakResult;
+ChallengeMachinePrintFinalConsecutiveWinStreakResult ChallengeMachine_PrintFinalConsecutiveWinStreak(uint16_t hl);
+/* <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
 #endif

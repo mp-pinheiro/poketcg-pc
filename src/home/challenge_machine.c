@@ -55,6 +55,13 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define sTotalChallengeMachineWins_ADDR 0xBA45u
 #define sPresentConsecutiveWins_ADDR 0xBA47u
 #define sPresentConsecutiveWinsBackup_ADDR 0xBA49u
+
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#define ConsecutiveWinsEndedAtText 0x07e2u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -283,3 +290,21 @@ void ChallengeMachine_Reset(void)
 	DisableSRAM();
 }
 /* <<< factory ChallengeMachine_Reset */
+
+/* >>> factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
+ChallengeMachinePrintFinalConsecutiveWinStreakResult ChallengeMachine_PrintFinalConsecutiveWinStreak(uint16_t hl)
+{
+	EnableSRAM();
+	uint8_t low = gb_read8(sPresentConsecutiveWins_ADDR);
+	gb_write8(wTxRam3_ADDR, low);
+	uint8_t high = gb_read8((uint16_t)(sPresentConsecutiveWins_ADDR + 1u));
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), high);
+	if (high == 0u && low < 2u) {
+		DisableSRAM();
+		return (ChallengeMachinePrintFinalConsecutiveWinStreakResult){0x70u, hl};
+	}
+	WaitResult printed = PrintScrollableText_NoTextBoxLabel(ConsecutiveWinsEndedAtText);
+	DisableSRAM();
+	return (ChallengeMachinePrintFinalConsecutiveWinStreakResult){printed.f, ConsecutiveWinsEndedAtText};
+}
+/* <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
