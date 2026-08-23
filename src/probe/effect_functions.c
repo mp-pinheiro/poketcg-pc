@@ -2667,6 +2667,14 @@ static void adapt_PoliwagWaterGunEffect(ProbeState *s)
 }
 /* <<< factory PoliwagWaterGunEffect */
 
+/* >>> factory DodrioRage_AIEffect */
+static void adapt_DodrioRage_AIEffect(ProbeState *s)
+{
+	(void)s;
+	DodrioRage_AIEffect();
+}
+/* <<< factory DodrioRage_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2997,5 +3005,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
 	{ "MagikarpFlail_AIEffect", adapt_MagikarpFlail_AIEffect },
 	{ "PoliwagWaterGunEffect", adapt_PoliwagWaterGunEffect },
+	{ "DodrioRage_AIEffect", adapt_DodrioRage_AIEffect },
 	{ NULL, NULL },
 };

@@ -4471,3 +4471,11 @@ void PoliwagWaterGunEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
 }
 /* <<< factory PoliwagWaterGunEffect */
+
+/* >>> factory DodrioRage_AIEffect */
+void DodrioRage_AIEffect(void)
+{
+	DodrioRage_DamageBoostEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory DodrioRage_AIEffect */
