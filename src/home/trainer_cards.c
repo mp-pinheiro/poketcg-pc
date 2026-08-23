@@ -136,6 +136,13 @@
 #define SHELLDER 0x4du
 #define TENTACOOL 0x49u
 #define TENTACRUEL 0x4au
+
+#define CHARIZARD 0x32u
+#define CHARMANDER 0x30u
+#define CHARMELEON 0x31u
+#define GYARADOS 0x58u
+#define KANGASKHAN 0xb9u
+#define MAGIKARP 0x57u
 /* <<< factory statics */
 
 
@@ -1461,3 +1468,105 @@ no_carry: ;
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
+
+/* >>> factory AIDecide_PokemonTrader_LegendaryDragonite */
+AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_LegendaryDragonite(void)
+{
+	uint8_t final_a;
+	CountOppEnergyCardsInHandAndAttachedResult energy = CountOppEnergyCardsInHandAndAttached();
+	uint8_t need_kangaskhan = 0u;
+	if (energy.a < 5u) {
+		need_kangaskhan = 1u;
+	} else {
+		uint8_t pokemon_count = CountPokemonCardsInHandAndInPlayArea(0u);
+		if (pokemon_count < 5u)
+			need_kangaskhan = 1u;
+	}
+
+	if (!need_kangaskhan) {
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+		LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(GYARADOS, MAGIKARP);
+		final_a = r.a;
+		if (r.f & 0x10u) goto choose_hand;
+
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(MAGIKARP, GYARADOS);
+		final_a = r2.a;
+		if (r2.f & 0x10u) goto choose_hand;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONAIR, DRATINI);
+		final_a = r.a;
+		if (r.f & 0x10u) goto choose_hand;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONITE_LV41, DRAGONAIR);
+		final_a = r.a;
+		if (r.f & 0x10u) goto choose_hand;
+
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(DRATINI, DRAGONAIR);
+		final_a = r2.a;
+		if (r2.f & 0x10u) goto choose_hand;
+
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(DRAGONAIR, DRAGONITE_LV41);
+		final_a = r2.a;
+		if (r2.f & 0x10u) goto choose_hand;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARMELEON, CHARMANDER);
+		final_a = r.a;
+		if (r.f & 0x10u) goto choose_hand;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
+		final_a = r.a;
+		if (r.f & 0x10u) goto choose_hand;
+
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
+		final_a = r2.a;
+		if (r2.f & 0x10u) goto choose_hand;
+
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(CHARMELEON, CHARIZARD);
+		final_a = r2.a;
+		if (r2.f & 0x10u) goto choose_hand;
+
+		goto no_carry;
+	}
+
+	{
+		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, KANGASKHAN);
+		if (!(loc.f & 0x10u)) {
+			final_a = loc.a;
+			goto no_carry;
+		}
+		final_a = loc.a;
+	}
+
+choose_hand: ;
+	wce1a = final_a;
+	{
+		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(CHARMELEON);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(GYARADOS);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(MAGIKARP);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(CHARMANDER);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(DRATINI);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryDragoniteResult){h.a, h.f};
+		final_a = h.a;
+	}
+
+no_carry: ;
+	{
+		uint8_t f = (final_a == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokemonTrader_LegendaryDragoniteResult){final_a, f};
+	}
+}
+/* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */

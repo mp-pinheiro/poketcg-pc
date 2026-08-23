@@ -117,4 +117,8 @@ AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRon
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_SoundOfTheWavesResult;
 AIDecide_PokemonTrader_SoundOfTheWavesResult AIDecide_PokemonTrader_SoundOfTheWaves(void);
 /* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
+/* >>> factory AIDecide_PokemonTrader_LegendaryDragonite */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_LegendaryDragoniteResult;
+AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_LegendaryDragonite(void);
+/* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

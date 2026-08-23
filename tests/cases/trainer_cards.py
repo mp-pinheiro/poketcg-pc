@@ -513,6 +513,26 @@ CASES["AIDecide_PokemonTrader_SoundOfTheWaves"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_SoundOfTheWaves
 
+# >>> factory AIDecide_PokemonTrader_LegendaryDragonite
+CONTRACT["AIDecide_PokemonTrader_LegendaryDragonite"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_PokemonTrader_LegendaryDragonite"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2EF: b"\x01"}, "read": {0xC510: 32}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x02",
+        0xC2EF: b"\x01",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC40A: b"\xC0",
+        0xC40B: b"\xC0",
+        0xC405: b"\xB9",
+    }, "expect": {wce1a: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2EF: b"\x01"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_PokemonTrader_LegendaryDragonite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -699,3 +719,6 @@ MUTATIONS["AIDecide_PokemonTrader_LegendaryRonald"] = {"source_symbol": "AIDecid
 # >>> factory-mutation AIDecide_PokemonTrader_SoundOfTheWaves
 MUTATIONS["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"source_symbol": "AIDecide_PokemonTrader_SoundOfTheWaves", "before": "\t\th = CheckIfHasCardIDInHand(TENTACOOL);", "after": "\t\th = CheckIfHasCardIDInHand(SEADRA);", "case_ids": ["AIDecide_PokemonTrader_SoundOfTheWaves-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_SoundOfTheWaves
+# >>> factory-mutation AIDecide_PokemonTrader_LegendaryDragonite
+MUTATIONS["AIDecide_PokemonTrader_LegendaryDragonite"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryDragonite", "before": "\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);", "after": "\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(GYARADOS);", "case_ids": ["AIDecide_PokemonTrader_LegendaryDragonite-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_LegendaryDragonite
