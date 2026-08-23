@@ -69,6 +69,15 @@ MAPNAME_PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 MAPNAME_VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 
 wPlayerSpriteIndex = 0xD336
+
+wPlayerSpriteIndex_A = 0xD336
+wWhichSprite_A = 0xD4CF
+wOverworldMapStartingPosition_A = 0xD33D
+wOverworldMapSelection_A = 0xD32E
+wOverworldMapPlayerMovementPtr_A = 0xD33F
+wOverworldMapPlayerAnimationState_A = 0xD33E
+wOverworldMapPlayerMovementCounter_A = 0xD341
+wSpriteAnimFlagsSlot0_A = 0xD4DF
 # <<< factory-cases-statics
 
 # >>> factory OverworldMap_InitVolcanoSprite
@@ -184,6 +193,22 @@ CASES["OverworldMap_InitNextPlayerVelocity"] = [
 ]
 # <<< factory OverworldMap_InitNextPlayerVelocity
 
+# >>> factory OverworldMap_BeginPlayerMovement
+CONTRACT["OverworldMap_BeginPlayerMovement"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["OverworldMap_BeginPlayerMovement"] = [
+    {"wram": {wPlayerSpriteIndex_A: b"\x00", wOverworldMapStartingPosition_A: b"\x01",
+              wOverworldMapSelection_A: b"\x01", wSpriteAnimFlagsSlot0_A: b"\x00",
+              wOverworldMapPlayerAnimationState_A: b"\x00", wOverworldMapPlayerMovementCounter_A: b"\xFF"},
+     "read": {wWhichSprite_A: 1, wSpriteAnimFlagsSlot0_A: 1, wOverworldMapPlayerMovementPtr_A: 2,
+              wOverworldMapPlayerAnimationState_A: 1, wOverworldMapPlayerMovementCounter_A: 1}},
+    dict(POISON, wram={wPlayerSpriteIndex_A: b"\x00", wOverworldMapStartingPosition_A: b"\x02",
+              wOverworldMapSelection_A: b"\x03", wSpriteAnimFlagsSlot0_A: b"\x00",
+              wOverworldMapPlayerAnimationState_A: b"\x00", wOverworldMapPlayerMovementCounter_A: b"\xFF"},
+         read={wWhichSprite_A: 1, wSpriteAnimFlagsSlot0_A: 1, wOverworldMapPlayerMovementPtr_A: 2,
+              wOverworldMapPlayerAnimationState_A: 1, wOverworldMapPlayerMovementCounter_A: 1}),
+]
+# <<< factory OverworldMap_BeginPlayerMovement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -230,3 +255,6 @@ MUTATIONS["OverworldMap_UpdatePlayerAndCursorSprites"] = {"source_symbol": "Over
 # >>> factory-mutation OverworldMap_InitNextPlayerVelocity
 MUTATIONS["OverworldMap_InitNextPlayerVelocity"] = {"source_symbol": "OverworldMap_InitNextPlayerVelocity", "before": "\tif (horizontal_abs < vertical_abs) {", "after": "\tif (horizontal_abs <= vertical_abs) {", "case_ids": ["OverworldMap_InitNextPlayerVelocity-0", "OverworldMap_InitNextPlayerVelocity-1", "OverworldMap_InitNextPlayerVelocity-2", "OverworldMap_InitNextPlayerVelocity-3"]}
 # <<< factory-mutation OverworldMap_InitNextPlayerVelocity
+# >>> factory-mutation OverworldMap_BeginPlayerMovement
+MUTATIONS["OverworldMap_BeginPlayerMovement"] = {"source_symbol": "OverworldMap_BeginPlayerMovement", "before": "\twOverworldMapPlayerAnimationState = 1u;", "after": "\twOverworldMapPlayerAnimationState = 2u;", "case_ids": ["OverworldMap_BeginPlayerMovement-0", "OverworldMap_BeginPlayerMovement-1"]}
+# <<< factory-mutation OverworldMap_BeginPlayerMovement

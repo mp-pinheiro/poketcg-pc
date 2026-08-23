@@ -82,6 +82,15 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/load_animation.h"
 #include "home/overworld.h"
 #include "mem.h"
+
+#include "home/load_animation.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SFX_PLAYER_WALK_MAP 0x57u
+#define SPRITE_ANIM_FLAG_CENTERED_F 0x02u
+#define OVERWORLD_MAP_BANK 0x04u
+#define OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS 0x629Fu
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -350,3 +359,26 @@ void OverworldMap_InitNextPlayerVelocity(uint8_t b, uint8_t c)
 	UpdatePlayerSprite();
 }
 /* <<< factory OverworldMap_InitNextPlayerVelocity */
+
+/* >>> factory OverworldMap_BeginPlayerMovement */
+void OverworldMap_BeginPlayerMovement(void)
+{
+	PlaySFX(SFX_PLAYER_WALK_MAP);
+	wWhichSprite = wPlayerSpriteIndex;
+	uint16_t prop_addr = GetSpriteAnimBufferProperty(SPRITE_ANIM_FLAGS);
+	uint8_t flags = gb_read8(prop_addr);
+	gb_write8(prop_addr, (uint8_t)(flags | (1u << SPRITE_ANIM_FLAG_CENTERED_F)));
+
+	uint8_t start_pos = wOverworldMapStartingPosition;
+	const uint8_t *outer = rom_ptr(OVERWORLD_MAP_BANK, (uint16_t)(OVERWORLD_MAP_PLAYER_MOVEMENT_PATHS + (uint16_t)((uint8_t)(start_pos - 1u) * 2u)));
+	uint16_t inner_ptr = (uint16_t)(outer[0] | ((uint16_t)outer[1] << 8));
+
+	uint8_t selection = wOverworldMapSelection;
+	const uint8_t *entry = rom_ptr(OVERWORLD_MAP_BANK, (uint16_t)(inner_ptr + (uint16_t)((uint8_t)(selection - 1u) * 2u)));
+	gb_write8(wOverworldMapPlayerMovementPtr_ADDR, entry[0]);
+	gb_write8((uint16_t)(wOverworldMapPlayerMovementPtr_ADDR + 1u), entry[1]);
+
+	wOverworldMapPlayerAnimationState = 1u;
+	wOverworldMapPlayerMovementCounter = 0u;
+}
+/* <<< factory OverworldMap_BeginPlayerMovement */

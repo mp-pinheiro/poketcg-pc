@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_BeginPlayerMovement",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_BeginPlayerMovement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"00\", \"54077\": \"01015f6600\", \"54081\": \"00\", \"54479\": \"00\", \"54495\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_BeginPlayerMovement\", \"mismatches\": {\"bus\": {\"address\": 54078, \"reference\": \"010001015f660000\", \"native\": \"010001025f660000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[54062, 1], [54070, 1], [54077, 5], [54479, 1], [54495, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_BeginPlayerMovement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54070\": \"00\", \"54077\": \"01015f6600\", \"54081\": \"00\", \"54479\": \"00\", \"54495\": \"04\"}}, \"status\": \"PASS\"}\n"
+}
