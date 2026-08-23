@@ -2355,6 +2355,8 @@ hWhoseTurn = 0xFF97
 wOpponentDuelVariables = 0xC300
 wOpponentDeck = 0xC480
 WATER_ENERGY = 0x03
+
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3097,6 +3099,14 @@ CASES["Psychic_AIEffect"] = [
          read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
 ]
 # <<< factory Psychic_AIEffect
+
+# >>> factory SlowpokeAmnesia_AISelectEffect
+CONTRACT["SlowpokeAmnesia_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["SlowpokeAmnesia_AISelectEffect"] = [
+    {"read": {hTemp_ffa0: 1}},
+    dict(POISON, read={hTemp_ffa0: 1}),
+]
+# <<< factory SlowpokeAmnesia_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5011,3 +5021,6 @@ MUTATIONS["HurricaneEffect"] = {"source_symbol": "HurricaneEffect", "before": "g
 # >>> factory-mutation Psychic_AIEffect
 MUTATIONS["Psychic_AIEffect"] = {"source_symbol": "Psychic_AIEffect", "before": "Psychic_DamageBoostEffect();", "after": "(void)0;", "case_ids": ["Psychic_AIEffect-0", "Psychic_AIEffect-1"]}
 # <<< factory-mutation Psychic_AIEffect
+# >>> factory-mutation SlowpokeAmnesia_AISelectEffect
+MUTATIONS["SlowpokeAmnesia_AISelectEffect"] = {"source_symbol": "SlowpokeAmnesia_AISelectEffect", "before": "gb_write8(hTemp_ffa0_ADDR, a);", "after": "gb_write8(hTemp_ffa0_ADDR, (uint8_t)(a + 1u));", "case_ids": ["SlowpokeAmnesia_AISelectEffect-0", "SlowpokeAmnesia_AISelectEffect-1"]}
+# <<< factory-mutation SlowpokeAmnesia_AISelectEffect

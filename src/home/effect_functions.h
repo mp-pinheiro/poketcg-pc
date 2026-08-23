@@ -1153,6 +1153,9 @@ QueueStatusConditionResult HurricaneEffect(uint16_t hl);
 /* >>> factory Psychic_AIEffect */
 void Psychic_AIEffect(void);
 /* <<< factory Psychic_AIEffect */
+/* >>> factory SlowpokeAmnesia_AISelectEffect */
+void SlowpokeAmnesia_AISelectEffect(void);
+/* <<< factory SlowpokeAmnesia_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

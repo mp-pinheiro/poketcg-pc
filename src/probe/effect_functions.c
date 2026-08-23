@@ -2771,6 +2771,14 @@ static void adapt_Psychic_AIEffect(ProbeState *s)
 }
 /* <<< factory Psychic_AIEffect */
 
+/* >>> factory SlowpokeAmnesia_AISelectEffect */
+static void adapt_SlowpokeAmnesia_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	SlowpokeAmnesia_AISelectEffect();
+}
+/* <<< factory SlowpokeAmnesia_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3114,5 +3122,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MysteryAttack_AIEffect", adapt_MysteryAttack_AIEffect },
 	{ "HurricaneEffect", adapt_HurricaneEffect },
 	{ "Psychic_AIEffect", adapt_Psychic_AIEffect },
+	{ "SlowpokeAmnesia_AISelectEffect", adapt_SlowpokeAmnesia_AISelectEffect },
 	{ NULL, NULL },
 };

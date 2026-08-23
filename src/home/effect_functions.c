@@ -346,6 +346,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "mem.h"
 #define PokemonAndAllAttachedCardsReturnedToHandText 0x0147u
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#define hTemp_ffa0_ADDR 0xFFA0u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4617,3 +4621,11 @@ void Psychic_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory Psychic_AIEffect */
+
+/* >>> factory SlowpokeAmnesia_AISelectEffect */
+void SlowpokeAmnesia_AISelectEffect(void)
+{
+	uint8_t a = AIPickAttackForAmnesia();
+	gb_write8(hTemp_ffa0_ADDR, a);
+}
+/* <<< factory SlowpokeAmnesia_AISelectEffect */
