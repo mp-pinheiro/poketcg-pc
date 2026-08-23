@@ -617,6 +617,16 @@ CASES["AIDecide_PokemonTrader_FlowerGarden"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_FlowerGarden
 
+# >>> factory AIDecide_PokemonTrader_PowerGenerator
+CONTRACT["AIDecide_PokemonTrader_PowerGenerator"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonTrader_PowerGenerator"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory AIDecide_PokemonTrader_PowerGenerator
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -821,3 +831,6 @@ MUTATIONS["AIDecide_PokemonTrader_Flamethrower"] = {"source_symbol": "AIDecide_P
 # >>> factory-mutation AIDecide_PokemonTrader_FlowerGarden
 MUTATIONS["AIDecide_PokemonTrader_FlowerGarden"] = {"source_symbol": "AIDecide_PokemonTrader_FlowerGarden", "before": "a = r2.a;\n\tif (r2.f & 0x10u) goto find_duplicates;\n\n\treturn", "after": "a = 0u;\n\tif (r2.f & 0x10u) goto find_duplicates;\n\n\treturn", "case_ids": ["AIDecide_PokemonTrader_FlowerGarden-0", "AIDecide_PokemonTrader_FlowerGarden-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_FlowerGarden
+# >>> factory-mutation AIDecide_PokemonTrader_PowerGenerator
+MUTATIONS["AIDecide_PokemonTrader_PowerGenerator"] = {"source_symbol": "AIDecide_PokemonTrader_PowerGenerator", "before": "a = r16.a;", "after": "a = 0xFFu;", "case_ids": ["AIDecide_PokemonTrader_PowerGenerator-0", "AIDecide_PokemonTrader_PowerGenerator-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_PowerGenerator

@@ -205,6 +205,18 @@
 #define ODDISH 0x1cu
 #define VICTREEBEL 0x25u
 #define WEEPINBELL 0x24u
+
+#include "home/trainer_cards.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ELECTRODE_LV35 0x6eu
+#define ELECTRODE_LV42 0x6fu
+#define MAGNEMITE_LV15 0x6au
+#define MAGNETON_LV28 0x6bu
+#define MAGNETON_LV35 0x6cu
+#define RAICHU_LV40 0x67u
+#define VOLTORB 0x6du
 /* <<< factory statics */
 
 
@@ -1974,3 +1986,98 @@ find_duplicates:
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_FlowerGarden */
+
+/* >>> factory AIDecide_PokemonTrader_PowerGenerator */
+AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerator(void)
+{
+	uint8_t a = 0u;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RAICHU_LV40, PIKACHU_LV14);
+	a = r1.a;
+	if (r1.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r2 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RAICHU_LV40, PIKACHU_LV12);
+	a = r2.a;
+	if (r2.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r3 =
+		LookForCardIDInDeck_GivenCardIDInHand(PIKACHU_LV14, RAICHU_LV40);
+	a = r3.a;
+	if (r3.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r4 =
+		LookForCardIDInDeck_GivenCardIDInHand(PIKACHU_LV12, RAICHU_LV40);
+	a = r4.a;
+	if (r4.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r5 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ELECTRODE_LV42, VOLTORB);
+	a = r5.a;
+	if (r5.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r6 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ELECTRODE_LV35, VOLTORB);
+	a = r6.a;
+	if (r6.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r7 =
+		LookForCardIDInDeck_GivenCardIDInHand(VOLTORB, ELECTRODE_LV42);
+	a = r7.a;
+	if (r7.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r8 =
+		LookForCardIDInDeck_GivenCardIDInHand(VOLTORB, ELECTRODE_LV35);
+	a = r8.a;
+	if (r8.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r9 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV35, MAGNEMITE_LV13);
+	a = r9.a;
+	if (r9.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r10 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV35, MAGNEMITE_LV15);
+	a = r10.a;
+	if (r10.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r11 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV28, MAGNEMITE_LV13);
+	a = r11.a;
+	if (r11.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r12 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAGNETON_LV28, MAGNEMITE_LV15);
+	a = r12.a;
+	if (r12.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r13 =
+		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV15, MAGNETON_LV35);
+	a = r13.a;
+	if (r13.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r14 =
+		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV13, MAGNETON_LV35);
+	a = r14.a;
+	if (r14.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r15 =
+		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV15, MAGNETON_LV28);
+	a = r15.a;
+	if (r15.f & 0x10u) goto find_duplicates;
+
+	LookForCardIDInDeck_GivenCardIDInHandResult r16 =
+		LookForCardIDInDeck_GivenCardIDInHand(MAGNEMITE_LV13, MAGNETON_LV28);
+	a = r16.a;
+	if (r16.f & 0x10u) goto find_duplicates;
+
+find_duplicates:
+	wce1a = a;
+	{
+		FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+		if (dup.f & 0x10u)
+			return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x10u};
+		return (AIDecide_PokemonTrader_PowerGeneratorResult){dup.a, 0x00u};
+	}
+}
+/* <<< factory AIDecide_PokemonTrader_PowerGenerator */

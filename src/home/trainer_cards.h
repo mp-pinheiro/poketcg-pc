@@ -140,4 +140,8 @@ AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(vo
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_FlowerGardenResult;
 AIDecide_PokemonTrader_FlowerGardenResult AIDecide_PokemonTrader_FlowerGarden(void);
 /* <<< factory AIDecide_PokemonTrader_FlowerGarden */
+/* >>> factory AIDecide_PokemonTrader_PowerGenerator */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_PowerGeneratorResult;
+AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerator(void);
+/* <<< factory AIDecide_PokemonTrader_PowerGenerator */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

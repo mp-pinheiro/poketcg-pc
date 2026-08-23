@@ -315,6 +315,15 @@ static void adapt_AIDecide_PokemonTrader_FlowerGarden(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader_FlowerGarden */
 
+/* >>> factory AIDecide_PokemonTrader_PowerGenerator */
+static void adapt_AIDecide_PokemonTrader_PowerGenerator(ProbeState *s)
+{
+	AIDecide_PokemonTrader_PowerGeneratorResult r = AIDecide_PokemonTrader_PowerGenerator();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_PokemonTrader_PowerGenerator */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -353,5 +362,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader_BlisteringPokemon", adapt_AIDecide_PokemonTrader_BlisteringPokemon },
 	{ "AIDecide_PokemonTrader_Flamethrower", adapt_AIDecide_PokemonTrader_Flamethrower },
 	{ "AIDecide_PokemonTrader_FlowerGarden", adapt_AIDecide_PokemonTrader_FlowerGarden },
+	{ "AIDecide_PokemonTrader_PowerGenerator", adapt_AIDecide_PokemonTrader_PowerGenerator },
 	{ NULL, NULL },
 };
