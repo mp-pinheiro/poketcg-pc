@@ -2329,6 +2329,16 @@ hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wDamage = 0xCCB9
 wAIMinDamage = 0xCCBA
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wMetronomeEnergyCost = 0xCCF0
+wDamage = 0xCCB9
+wAIMinDamage = 0xCCBB
+wAIMaxDamage = 0xCCBC
+WATER_ENERGY = 0x03
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2917,6 +2927,22 @@ CASES["MagikarpFlail_AIEffect"] = [
          read={wDamage: 1, wAIMinDamage: 1, 0xCCBB: 1, 0xCCBC: 1}),
 ]
 # <<< factory MagikarpFlail_AIEffect
+
+# >>> factory PoliwagWaterGunEffect
+CONTRACT["PoliwagWaterGunEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PoliwagWaterGunEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+              wMetronomeEnergyCost: b"\x00", wDamage: b"\x0A",
+              wPlayerDuelVariables: b"\x10\x10\x10",
+              wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY, WATER_ENERGY))},
+     "read": {wDamage: 1, wAIMinDamage: 1, wAIMaxDamage: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+                       wMetronomeEnergyCost: b"\x00", wDamage: b"\x0A",
+                       wPlayerDuelVariables: b"\x10\x10\x10",
+                       wPlayerDeck: bytes((WATER_ENERGY, WATER_ENERGY, WATER_ENERGY))},
+         read={wDamage: 1, wAIMinDamage: 1, wAIMaxDamage: 1}),
+]
+# <<< factory PoliwagWaterGunEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4789,3 +4815,6 @@ MUTATIONS["Shift_ChangeColorEffect"] = {"source_symbol": "Shift_ChangeColorEffec
 # >>> factory-mutation MagikarpFlail_AIEffect
 MUTATIONS["MagikarpFlail_AIEffect"] = {"source_symbol": "MagikarpFlail_AIEffect", "before": "MagikarpFlail_HPCheck();", "after": "(void)0;", "case_ids": ["MagikarpFlail_AIEffect-0", "MagikarpFlail_AIEffect-1"]}
 # <<< factory-mutation MagikarpFlail_AIEffect
+# >>> factory-mutation PoliwagWaterGunEffect
+MUTATIONS["PoliwagWaterGunEffect"] = {"source_symbol": "PoliwagWaterGunEffect", "before": "void PoliwagWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(1u, 0u);", "after": "void PoliwagWaterGunEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(2u, 0u);", "case_ids": ["PoliwagWaterGunEffect-0", "PoliwagWaterGunEffect-1"]}
+# <<< factory-mutation PoliwagWaterGunEffect

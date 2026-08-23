@@ -2659,6 +2659,14 @@ static void adapt_MagikarpFlail_AIEffect(ProbeState *s)
 }
 /* <<< factory MagikarpFlail_AIEffect */
 
+/* >>> factory PoliwagWaterGunEffect */
+static void adapt_PoliwagWaterGunEffect(ProbeState *s)
+{
+	(void)s;
+	PoliwagWaterGunEffect();
+}
+/* <<< factory PoliwagWaterGunEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2988,5 +2996,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Heal_OncePerTurnCheck", adapt_Heal_OncePerTurnCheck },
 	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
 	{ "MagikarpFlail_AIEffect", adapt_MagikarpFlail_AIEffect },
+	{ "PoliwagWaterGunEffect", adapt_PoliwagWaterGunEffect },
 	{ NULL, NULL },
 };

@@ -4464,3 +4464,10 @@ void MagikarpFlail_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory MagikarpFlail_AIEffect */
+
+/* >>> factory PoliwagWaterGunEffect */
+void PoliwagWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 0u);
+}
+/* <<< factory PoliwagWaterGunEffect */

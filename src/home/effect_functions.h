@@ -1111,6 +1111,9 @@ Shift_ChangeColorEffectResult Shift_ChangeColorEffect(uint8_t d, uint8_t e);
 /* >>> factory MagikarpFlail_AIEffect */
 void MagikarpFlail_AIEffect(void);
 /* <<< factory MagikarpFlail_AIEffect */
+/* >>> factory PoliwagWaterGunEffect */
+void PoliwagWaterGunEffect(void);
+/* <<< factory PoliwagWaterGunEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
