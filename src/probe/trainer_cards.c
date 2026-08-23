@@ -297,6 +297,15 @@ static void adapt_AIDecide_PokemonTrader_BlisteringPokemon(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */
 
+/* >>> factory AIDecide_PokemonTrader_Flamethrower */
+static void adapt_AIDecide_PokemonTrader_Flamethrower(ProbeState *s)
+{
+	AIDecide_PokemonTrader_FlamethrowerResult r = AIDecide_PokemonTrader_Flamethrower();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_PokemonTrader_Flamethrower */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -333,5 +342,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_Pokeball", adapt_AIDecide_Pokeball },
 	{ "AIDecide_MrFuji", adapt_AIDecide_MrFuji },
 	{ "AIDecide_PokemonTrader_BlisteringPokemon", adapt_AIDecide_PokemonTrader_BlisteringPokemon },
+	{ "AIDecide_PokemonTrader_Flamethrower", adapt_AIDecide_PokemonTrader_Flamethrower },
 	{ NULL, NULL },
 };

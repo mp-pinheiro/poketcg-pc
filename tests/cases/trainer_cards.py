@@ -601,6 +601,14 @@ CASES["AIDecide_PokemonTrader_BlisteringPokemon"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_BlisteringPokemon
 
+# >>> factory AIDecide_PokemonTrader_Flamethrower
+CONTRACT["AIDecide_PokemonTrader_Flamethrower"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonTrader_Flamethrower"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
+]
+# <<< factory AIDecide_PokemonTrader_Flamethrower
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -799,3 +807,6 @@ MUTATIONS["AIDecide_MrFuji"] = {"source_symbol": "AIDecide_MrFuji", "before": "r
 # >>> factory-mutation AIDecide_PokemonTrader_BlisteringPokemon
 MUTATIONS["AIDecide_PokemonTrader_BlisteringPokemon"] = {"source_symbol": "AIDecide_PokemonTrader_BlisteringPokemon", "before": "a = r6.a;", "after": "a = 0u;", "case_ids": ["AIDecide_PokemonTrader_BlisteringPokemon-0", "AIDecide_PokemonTrader_BlisteringPokemon-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_BlisteringPokemon
+# >>> factory-mutation AIDecide_PokemonTrader_Flamethrower
+MUTATIONS["AIDecide_PokemonTrader_Flamethrower"] = {"source_symbol": "AIDecide_PokemonTrader_Flamethrower", "before": "a = r10.a;", "after": "a = 0u;", "case_ids": ["AIDecide_PokemonTrader_Flamethrower-0", "AIDecide_PokemonTrader_Flamethrower-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_Flamethrower

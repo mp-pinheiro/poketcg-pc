@@ -132,4 +132,8 @@ AIDecideResult AIDecide_MrFuji(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_BlisteringPokemonResult;
 AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_BlisteringPokemon(void);
 /* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */
+/* >>> factory AIDecide_PokemonTrader_Flamethrower */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_FlamethrowerResult;
+AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(void);
+/* <<< factory AIDecide_PokemonTrader_Flamethrower */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

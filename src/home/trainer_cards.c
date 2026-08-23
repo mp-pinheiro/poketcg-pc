@@ -184,6 +184,15 @@
 #define MAROWAK_LV26 0x85u
 #define PONYTA 0x39u
 #define RAPIDASH 0x3au
+
+#include "home/trainer_cards.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ARCANINE_LV45 0x38u
+#define FLAREON_LV28 0x3eu
+#define NINETALES_LV32 0x34u
+#define VULPIX 0x33u
 /* <<< factory statics */
 
 
@@ -1822,3 +1831,66 @@ AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_Blistering
 	return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x00u};
 }
 /* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */
+
+/* >>> factory AIDecide_PokemonTrader_Flamethrower */
+AIDecide_PokemonTrader_FlamethrowerResult AIDecide_PokemonTrader_Flamethrower(void)
+{
+	uint8_t a;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARMELEON, CHARMANDER);
+	a = r1.a;
+	if (!(r1.f & 0x10u)) {
+		LookForCardIDInDeck_GivenCardIDInHandResult r2 =
+			LookForCardIDInDeck_GivenCardIDInHand(CHARMANDER, CHARMELEON);
+		a = r2.a;
+		if (!(r2.f & 0x10u)) {
+			LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r3 =
+				LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CHARIZARD, CHARMELEON);
+			a = r3.a;
+			if (!(r3.f & 0x10u)) {
+				LookForCardIDInDeck_GivenCardIDInHandResult r4 =
+					LookForCardIDInDeck_GivenCardIDInHand(CHARMELEON, CHARIZARD);
+				a = r4.a;
+				if (!(r4.f & 0x10u)) {
+					LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r5 =
+						LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NINETALES_LV32, VULPIX);
+					a = r5.a;
+					if (!(r5.f & 0x10u)) {
+						LookForCardIDInDeck_GivenCardIDInHandResult r6 =
+							LookForCardIDInDeck_GivenCardIDInHand(VULPIX, NINETALES_LV32);
+						a = r6.a;
+						if (!(r6.f & 0x10u)) {
+							LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r7 =
+								LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(ARCANINE_LV45, GROWLITHE);
+							a = r7.a;
+							if (!(r7.f & 0x10u)) {
+								LookForCardIDInDeck_GivenCardIDInHandResult r8 =
+									LookForCardIDInDeck_GivenCardIDInHand(GROWLITHE, ARCANINE_LV45);
+								a = r8.a;
+								if (!(r8.f & 0x10u)) {
+									LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r9 =
+										LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(FLAREON_LV28, EEVEE);
+									a = r9.a;
+									if (!(r9.f & 0x10u)) {
+										LookForCardIDInDeck_GivenCardIDInHandResult r10 =
+											LookForCardIDInDeck_GivenCardIDInHand(EEVEE, FLAREON_LV28);
+										a = r10.a;
+										if (!(r10.f & 0x10u)) {
+											return (AIDecide_PokemonTrader_FlamethrowerResult){a, 0x00u};
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	wce1a = a;
+	FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+	if (dup.f & 0x10u)
+		return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x10u};
+	return (AIDecide_PokemonTrader_FlamethrowerResult){dup.a, 0x00u};
+}
+/* <<< factory AIDecide_PokemonTrader_Flamethrower */
