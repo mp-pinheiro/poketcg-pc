@@ -4557,3 +4557,10 @@ void HydroPumpEffect(void)
 	ApplyExtraWaterEnergyDamageBonus(3u, 0u);
 }
 /* <<< factory HydroPumpEffect */
+
+/* >>> factory MysteryAttack_AIEffect */
+void MysteryAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory MysteryAttack_AIEffect */

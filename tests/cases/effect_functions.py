@@ -3049,6 +3049,14 @@ CASES["HydroPumpEffect"] = [
 ]
 # <<< factory HydroPumpEffect
 
+# >>> factory MysteryAttack_AIEffect
+CONTRACT["MysteryAttack_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["MysteryAttack_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory MysteryAttack_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4953,3 +4961,6 @@ MUTATIONS["Barrier_BarrierEffect"] = {"source_symbol": "Barrier_BarrierEffect", 
 # >>> factory-mutation HydroPumpEffect
 MUTATIONS["HydroPumpEffect"] = {"source_symbol": "HydroPumpEffect", "before": "void HydroPumpEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(3u, 0u);", "after": "void HydroPumpEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(4u, 0u);", "case_ids": ["HydroPumpEffect-0", "HydroPumpEffect-1"]}
 # <<< factory-mutation HydroPumpEffect
+# >>> factory-mutation MysteryAttack_AIEffect
+MUTATIONS["MysteryAttack_AIEffect"] = {"source_symbol": "MysteryAttack_AIEffect", "before": "void MysteryAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 20u);", "after": "void MysteryAttack_AIEffect(void)\n{\n\tSetExpectedAIDamage(10u, 0u, 40u);", "case_ids": ["MysteryAttack_AIEffect-0", "MysteryAttack_AIEffect-1"]}
+# <<< factory-mutation MysteryAttack_AIEffect

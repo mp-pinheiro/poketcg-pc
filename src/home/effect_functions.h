@@ -1144,6 +1144,9 @@ void Barrier_BarrierEffect(void);
 /* >>> factory HydroPumpEffect */
 void HydroPumpEffect(void);
 /* <<< factory HydroPumpEffect */
+/* >>> factory MysteryAttack_AIEffect */
+void MysteryAttack_AIEffect(void);
+/* <<< factory MysteryAttack_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
