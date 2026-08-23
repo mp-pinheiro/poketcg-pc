@@ -162,6 +162,16 @@ CASES["EmptyScreenAndDrawTextBox"] = [
 ]
 # <<< factory EmptyScreenAndDrawTextBox
 
+# >>> factory PrintCardToSendText
+CONTRACT["PrintCardToSendText"] = {"compare": (), "preserve": ()}
+CASES["PrintCardToSendText"] = [
+    {"wram": {wConsole: b"\x00", wLCDC: b"\x00"},
+     "vread": {0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}},
+    dict(POISON, wram={wConsole: b"\x00", wLCDC: b"\x00"},
+         vread={0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}),
+]
+# <<< factory PrintCardToSendText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -212,3 +222,6 @@ MUTATIONS["FindFirstEmptyDeckSlot"] = {"source_symbol": "FindFirstEmptyDeckSlot"
 # >>> factory-mutation EmptyScreenAndDrawTextBox
 MUTATIONS["EmptyScreenAndDrawTextBox"] = {"source_symbol": "EmptyScreenAndDrawTextBox", "before": "\tDrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);", "after": "\tDrawRegularTextBox(&hl, 0u, 19u, 13u, 0u, 0u);", "case_ids": ["EmptyScreenAndDrawTextBox-0", "EmptyScreenAndDrawTextBox-1"]}
 # <<< factory-mutation EmptyScreenAndDrawTextBox
+# >>> factory-mutation PrintCardToSendText
+MUTATIONS["PrintCardToSendText"] = {"source_symbol": "PrintCardToSendText", "before": "\tProcessTextFromID(CardToSendText);", "after": "\tProcessTextFromID(0u);", "case_ids": ["PrintCardToSendText-0", "PrintCardToSendText-1"]}
+# <<< factory-mutation PrintCardToSendText

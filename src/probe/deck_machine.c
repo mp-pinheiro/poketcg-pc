@@ -104,6 +104,14 @@ static void adapt_EmptyScreenAndDrawTextBox(ProbeState *s)
 }
 /* <<< factory EmptyScreenAndDrawTextBox */
 
+/* >>> factory PrintCardToSendText */
+static void adapt_PrintCardToSendText(ProbeState *s)
+{
+	(void)s;
+	PrintCardToSendText();
+}
+/* <<< factory PrintCardToSendText */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -117,5 +125,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "SetDeckMachineTitleText", adapt_SetDeckMachineTitleText },
 	{ "FindFirstEmptyDeckSlot", adapt_FindFirstEmptyDeckSlot },
 	{ "EmptyScreenAndDrawTextBox", adapt_EmptyScreenAndDrawTextBox },
+	{ "PrintCardToSendText", adapt_PrintCardToSendText },
 	{ NULL, NULL },
 };

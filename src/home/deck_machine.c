@@ -37,6 +37,8 @@
 #include "generated/wram.h"
 
 #include "home/deck_machine.h"
+
+#define CardToSendText 0x0281u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -229,3 +231,12 @@ void EmptyScreenAndDrawTextBox(void)
 	DrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);
 }
 /* <<< factory EmptyScreenAndDrawTextBox */
+
+/* >>> factory PrintCardToSendText */
+void PrintCardToSendText(void)
+{
+	EmptyScreenAndDrawTextBox();
+	InitTextPrinting(1u, 1u);
+	ProcessTextFromID(CardToSendText);
+}
+/* <<< factory PrintCardToSendText */

@@ -418,4 +418,7 @@ IncreaseScriptPointerResult ScriptCommand_SetPlayerDirection(uint8_t c);
 /* >>> factory ScriptCommand_UnloadActiveNPC */
 IncreaseScriptPointerResult ScriptCommand_UnloadActiveNPC(void);
 /* <<< factory ScriptCommand_UnloadActiveNPC */
+/* >>> factory ScriptCommand_ReplaceMapBlocks */
+IncreaseScriptPointerResult ScriptCommand_ReplaceMapBlocks(uint8_t c);
+/* <<< factory ScriptCommand_ReplaceMapBlocks */
 #endif

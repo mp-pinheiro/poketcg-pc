@@ -46,4 +46,7 @@ FindFirstEmptyDeckSlotResult FindFirstEmptyDeckSlot(void);
 /* >>> factory EmptyScreenAndDrawTextBox */
 void EmptyScreenAndDrawTextBox(void);
 /* <<< factory EmptyScreenAndDrawTextBox */
+/* >>> factory PrintCardToSendText */
+void PrintCardToSendText(void);
+/* <<< factory PrintCardToSendText */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

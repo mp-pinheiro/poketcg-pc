@@ -78,6 +78,11 @@ POISON = {
 }
 
 NPC_TABLE = b"\x00" * 96
+
+wCurTilemap = 0xD131
+wConsole = 0xCAB4
+wOWMapEvents = 0xD323
+wWriteBGMapToSRAM = 0xD292
 # <<< factory-cases-statics
 
 
@@ -931,6 +936,17 @@ CASES["ScriptCommand_UnloadActiveNPC"] = [
 ]
 # <<< factory ScriptCommand_UnloadActiveNPC
 
+# >>> factory ScriptCommand_ReplaceMapBlocks
+CONTRACT["ScriptCommand_ReplaceMapBlocks"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ReplaceMapBlocks"] = [
+    {"c": 0x00, "wram": {wCurTilemap: b"\x00", wConsole: b"\x00", wOWMapEvents: b"\xFF"},
+     "read": {wWriteBGMapToSRAM: 1, wOWMapEvents: 1}},
+    {"c": 0x02, "wram": {wCurTilemap: b"\x00", wConsole: b"\x00", wOWMapEvents + 2: b"\xFF"},
+     "read": {wWriteBGMapToSRAM: 1, wOWMapEvents + 2: 1}},
+    dict(POISON, c=0xCC, wram={wCurTilemap: b"\x00", wConsole: b"\x00"}),
+]
+# <<< factory ScriptCommand_ReplaceMapBlocks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1422,3 +1438,6 @@ MUTATIONS["ScriptCommand_UnloadActiveNPC"] = {
     "case_ids": ["ScriptCommand_UnloadActiveNPC-0", "ScriptCommand_UnloadActiveNPC-1"],
 }
 # <<< factory-mutation ScriptCommand_UnloadActiveNPC
+# >>> factory-mutation ScriptCommand_ReplaceMapBlocks
+MUTATIONS["ScriptCommand_ReplaceMapBlocks"] = {"source_symbol": "ScriptCommand_ReplaceMapBlocks", "before": "\tSetOWMapEvent(c);", "after": "\t(void)c;", "case_ids": ["ScriptCommand_ReplaceMapBlocks-0", "ScriptCommand_ReplaceMapBlocks-1"]}
+# <<< factory-mutation ScriptCommand_ReplaceMapBlocks

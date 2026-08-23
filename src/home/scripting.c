@@ -1252,3 +1252,11 @@ IncreaseScriptPointerResult ScriptCommand_UnloadActiveNPC(void)
 	return Func_cdd1();
 }
 /* <<< factory ScriptCommand_UnloadActiveNPC */
+
+/* >>> factory ScriptCommand_ReplaceMapBlocks */
+IncreaseScriptPointerResult ScriptCommand_ReplaceMapBlocks(uint8_t c)
+{
+	SetOWMapEvent(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_ReplaceMapBlocks */

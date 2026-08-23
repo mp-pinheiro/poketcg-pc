@@ -4,6 +4,10 @@
 /* >>> factory statics */
 #define MAP_EVENT_FIGHTING_DECK_MACHINE 0x02u
 #define MAP_EVENT_FIRE_DECK_MACHINE 0x09u
+
+#include "home/grass_club_entrance.h"
+
+#define DeckMachineRoomAfterDuelTable 0x58a6u
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u
@@ -20,3 +24,12 @@ void DeckMachineRoomCloseTextBox(void)
 		ApplyOWMapEventChangeIfEventSet(a);
 }
 /* <<< factory DeckMachineRoomCloseTextBox */
+
+/* >>> factory DeckMachineRoomAfterDuel */
+DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(DeckMachineRoomAfterDuelTable);
+	return (DeckMachineRoomAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory DeckMachineRoomAfterDuel */

@@ -1,0 +1,9 @@
+{
+  "fn": "DeckMachineRoomAfterDuel",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DeckMachineRoomAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 22701, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52231\": \"9901\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckMachineRoomAfterDuel\", \"mismatches\": {\"hl\": [22701, 22720]}}\n",
+  "restored": "{\"fn\": \"DeckMachineRoomAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 22701, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52231\": \"9901\"}}, \"status\": \"PASS\"}\n"
+}
