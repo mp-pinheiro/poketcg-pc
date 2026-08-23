@@ -2739,6 +2739,14 @@ static void adapt_Barrier_BarrierEffect(ProbeState *s)
 }
 /* <<< factory Barrier_BarrierEffect */
 
+/* >>> factory HydroPumpEffect */
+static void adapt_HydroPumpEffect(ProbeState *s)
+{
+	(void)s;
+	HydroPumpEffect();
+}
+/* <<< factory HydroPumpEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3078,5 +3086,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JynxDoubleslap_AIEffect", adapt_JynxDoubleslap_AIEffect },
 	{ "Bonemerang_AIEffect", adapt_Bonemerang_AIEffect },
 	{ "Barrier_BarrierEffect", adapt_Barrier_BarrierEffect },
+	{ "HydroPumpEffect", adapt_HydroPumpEffect },
 	{ NULL, NULL },
 };

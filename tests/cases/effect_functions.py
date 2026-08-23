@@ -3033,6 +3033,22 @@ CASES["Barrier_BarrierEffect"] = [
 ]
 # <<< factory Barrier_BarrierEffect
 
+# >>> factory HydroPumpEffect
+CONTRACT["HydroPumpEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["HydroPumpEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+              wMetronomeEnergyCost: b"\x00", wDamage: b"\x0A",
+              wPlayerDuelVariables: b"\x10\x10\x10\x10\x10",
+              wPlayerDeck: bytes((WATER_ENERGY,)) * 5},
+     "read": {wDamage: 1, wAIMinDamage: 1, wAIMaxDamage: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00",
+                       wMetronomeEnergyCost: b"\x00", wDamage: b"\x0A",
+                       wPlayerDuelVariables: b"\x10\x10\x10\x10\x10",
+                       wPlayerDeck: bytes((WATER_ENERGY,)) * 5},
+         read={wDamage: 1, wAIMinDamage: 1, wAIMaxDamage: 1}),
+]
+# <<< factory HydroPumpEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4934,3 +4950,6 @@ MUTATIONS["Bonemerang_AIEffect"] = {"source_symbol": "Bonemerang_AIEffect", "bef
 # >>> factory-mutation Barrier_BarrierEffect
 MUTATIONS["Barrier_BarrierEffect"] = {"source_symbol": "Barrier_BarrierEffect", "before": "(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_BARRIER);", "after": "(void)ApplySubstatus1ToAttackingCard(0u);", "case_ids": ["Barrier_BarrierEffect-0", "Barrier_BarrierEffect-1"]}
 # <<< factory-mutation Barrier_BarrierEffect
+# >>> factory-mutation HydroPumpEffect
+MUTATIONS["HydroPumpEffect"] = {"source_symbol": "HydroPumpEffect", "before": "void HydroPumpEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(3u, 0u);", "after": "void HydroPumpEffect(void)\n{\n\tApplyExtraWaterEnergyDamageBonus(4u, 0u);", "case_ids": ["HydroPumpEffect-0", "HydroPumpEffect-1"]}
+# <<< factory-mutation HydroPumpEffect

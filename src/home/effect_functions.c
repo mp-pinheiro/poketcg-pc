@@ -4550,3 +4550,10 @@ void Barrier_BarrierEffect(void)
 	(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_BARRIER);
 }
 /* <<< factory Barrier_BarrierEffect */
+
+/* >>> factory HydroPumpEffect */
+void HydroPumpEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(3u, 0u);
+}
+/* <<< factory HydroPumpEffect */
