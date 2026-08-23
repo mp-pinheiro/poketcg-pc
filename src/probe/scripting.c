@@ -842,6 +842,16 @@ static void adapt_ScriptCommand_GiveStarterDeck(ProbeState *s)
 }
 /* <<< factory ScriptCommand_GiveStarterDeck */
 
+/* >>> factory ScriptCommand_FlashScreen */
+static void adapt_ScriptCommand_FlashScreen(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_FlashScreen(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_FlashScreen */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -924,5 +934,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_UnloadActiveNPC", adapt_ScriptCommand_UnloadActiveNPC },
 	{ "ScriptCommand_ReplaceMapBlocks", adapt_ScriptCommand_ReplaceMapBlocks },
 	{ "ScriptCommand_GiveStarterDeck", adapt_ScriptCommand_GiveStarterDeck },
+	{ "ScriptCommand_FlashScreen", adapt_ScriptCommand_FlashScreen },
 	{ NULL, NULL },
 };

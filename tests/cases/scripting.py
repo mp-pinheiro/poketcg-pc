@@ -90,6 +90,17 @@ sCardCollection = 0xA100
 sDeck1 = 0xA200
 wOpponentDeck = 0xC480
 wPlayerDeck = 0xC400
+
+LCDC = 0xCABB
+BGP = 0xCABC
+OBP0 = 0xCABD
+OBP1 = 0xCABE
+BG_PALS = 0xCAF0
+OBJ_PALS = 0xCB30
+TEMP_BGP = 0xD294
+TEMP_OBP0 = 0xD295
+TEMP_OBP1 = 0xD296
+wScriptPointer = 0xD413
 # <<< factory-cases-statics
 
 
@@ -966,6 +977,22 @@ CASES["ScriptCommand_GiveStarterDeck"] = [
 ]
 # <<< factory ScriptCommand_GiveStarterDeck
 
+# >>> factory ScriptCommand_FlashScreen
+CONTRACT["ScriptCommand_FlashScreen"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_FlashScreen"] = [
+    {"c": 1, "wram": {LCDC: b"\x00", BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4",
+             BG_PALS: bytes(range(64)), OBJ_PALS: bytes(range(64, 128)),
+             TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
+             wScriptPointer: b"\x00\xC5"},
+     "ramg": False, "read": {LCDC: 1, BG_PALS: 64, wScriptPointer: 2}},
+    dict(POISON, c=1, wram={LCDC: b"\x00", BGP: b"\xE4", OBP0: b"\x1B", OBP1: b"\xB4",
+             BG_PALS: bytes(range(64)), OBJ_PALS: bytes(range(64, 128)),
+             TEMP_BGP: b"\x00", TEMP_OBP0: b"\x55", TEMP_OBP1: b"\xAA",
+             wScriptPointer: b"\x00\xC5"},
+         ramg=False, read={LCDC: 1, BG_PALS: 64, wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_FlashScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1463,3 +1490,6 @@ MUTATIONS["ScriptCommand_ReplaceMapBlocks"] = {"source_symbol": "ScriptCommand_R
 # >>> factory-mutation ScriptCommand_GiveStarterDeck
 MUTATIONS["ScriptCommand_GiveStarterDeck"] = {"source_symbol": "ScriptCommand_GiveStarterDeck", "before": "\tAddStarterDeck(wStarterDeckChoice);", "after": "\tAddStarterDeck((uint8_t)(wStarterDeckChoice + 1u));", "case_ids": ["ScriptCommand_GiveStarterDeck-0", "ScriptCommand_GiveStarterDeck-1"]}
 # <<< factory-mutation ScriptCommand_GiveStarterDeck
+# >>> factory-mutation ScriptCommand_FlashScreen
+MUTATIONS["ScriptCommand_FlashScreen"] = {"source_symbol": "ScriptCommand_FlashScreen", "before": "\tFlashScreenToWhite(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\tFlashScreenToWhite(c);\n\treturn IncreaseScriptPointerBy1();", "case_ids": ["ScriptCommand_FlashScreen-0", "ScriptCommand_FlashScreen-1"]}
+# <<< factory-mutation ScriptCommand_FlashScreen

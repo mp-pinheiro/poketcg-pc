@@ -1268,3 +1268,11 @@ IncreaseScriptPointerResult ScriptCommand_GiveStarterDeck(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_GiveStarterDeck */
+
+/* >>> factory ScriptCommand_FlashScreen */
+IncreaseScriptPointerResult ScriptCommand_FlashScreen(uint8_t c)
+{
+	FlashScreenToWhite(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_FlashScreen */

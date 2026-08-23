@@ -424,4 +424,7 @@ IncreaseScriptPointerResult ScriptCommand_ReplaceMapBlocks(uint8_t c);
 /* >>> factory ScriptCommand_GiveStarterDeck */
 IncreaseScriptPointerResult ScriptCommand_GiveStarterDeck(void);
 /* <<< factory ScriptCommand_GiveStarterDeck */
+/* >>> factory ScriptCommand_FlashScreen */
+IncreaseScriptPointerResult ScriptCommand_FlashScreen(uint8_t c);
+/* <<< factory ScriptCommand_FlashScreen */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_FlashScreen",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_FlashScreen\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80000000\", \"51952\": \"ff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7f\", \"53908\": \"0055aa\", \"54291\": \"02c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_FlashScreen\", \"mismatches\": {\"c\": [2, 1], \"bus\": {\"address\": 54291, \"reference\": \"7f0055aa02c5\", \"native\": \"7f0055aa01c5\", \"reference_size\": 137, \"native_size\": 137, \"spans\": [[51899, 4], [51952, 128], [53908, 3], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_FlashScreen\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80000000\", \"51952\": \"ff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7fff7f\", \"53908\": \"0055aa\", \"54291\": \"02c5\"}}, \"status\": \"PASS\"}\n"
+}
