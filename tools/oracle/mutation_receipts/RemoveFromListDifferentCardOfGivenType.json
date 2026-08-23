@@ -1,0 +1,9 @@
+{
+  "fn": "RemoveFromListDifferentCardOfGivenType",
+  "case": "tests/cases/common.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"RemoveFromListDifferentCardOfGivenType\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 2, \"e\": 170, \"f\": 144, \"hl\": 50448, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"01\", \"50448\": \"ffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"RemoveFromListDifferentCardOfGivenType\", \"mismatches\": {\"a\": [0, 255], \"f\": [144, 0], \"bus\": {\"address\": 50448, \"reference\": \"01ffffc2\", \"native\": \"0100ffc2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50176, 1], [50448, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"RemoveFromListDifferentCardOfGivenType\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 2, \"e\": 170, \"f\": 144, \"hl\": 50448, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"01\", \"50448\": \"ffff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

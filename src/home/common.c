@@ -46,6 +46,12 @@
 #define DUELVARS_CARD_LOCATIONS 0x00u
 
 #define MEWTWO_LV53 0x9du
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define TYPE_TRAINER 0x10u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -335,3 +341,50 @@ CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result CheckIfPlayerHasPokemonOtherTha
 	return (CheckIfPlayerHasPokemonOtherThanMewtwoLv53Result){DECK_SIZE, 0x00u, b, c, d, e, hl};
 }
 /* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
+
+/* >>> factory RemoveFromListDifferentCardOfGivenType */
+RemoveFromListDifferentCardOfGivenTypeResult RemoveFromListDifferentCardOfGivenType(
+	uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t orig_hl = hl;
+	uint8_t count = CountCardsInDuelTempList().a;
+	(void)ShuffleCards(count, hl);
+
+	uint16_t p = hl;
+	for (;;) {
+		uint8_t deck_index = gb_read8(p);
+		p = (uint16_t)(p + 1u);
+		if (deck_index == 0xFFu)
+			return (RemoveFromListDifferentCardOfGivenTypeResult){0xFFu, 0x00u, b, c, d, e, orig_hl};
+		if (deck_index == e)
+			continue;
+
+		hTempCardIndex_ff98 = deck_index;
+		uint16_t card_id16 = GetCardIDFromDeckIndex(deck_index);
+		uint8_t card_type = GetCardType((uint8_t)card_id16);
+
+		uint8_t matches;
+		if (card_type < TYPE_ENERGY)
+			matches = (d == 0x01u);
+		else if (card_type != TYPE_TRAINER)
+			matches = (d == 0x02u);
+		else
+			matches = (d == 0x00u);
+
+		if (!matches)
+			continue;
+
+		uint16_t src = p;
+		uint16_t dst = (uint16_t)(p - 1u);
+		uint8_t v;
+		do {
+			v = gb_read8(src);
+			src = (uint16_t)(src + 1u);
+			gb_write8(dst, v);
+			dst = (uint16_t)(dst + 1u);
+		} while (v != 0xFFu);
+
+		return (RemoveFromListDifferentCardOfGivenTypeResult){deck_index, 0x90u, b, c, d, e, orig_hl};
+	}
+}
+/* <<< factory RemoveFromListDifferentCardOfGivenType */

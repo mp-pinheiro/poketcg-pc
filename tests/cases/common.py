@@ -174,6 +174,18 @@ CASES["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = [
 ]
 # <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53
 
+# >>> factory RemoveFromListDifferentCardOfGivenType
+CONTRACT["RemoveFromListDifferentCardOfGivenType"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["RemoveFromListDifferentCardOfGivenType"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x00, "e": 0xAA, "hl": 0xC510,
+     "wram": {0xC510: b"\xFF"}},
+    dict(POISON, d=0x00, e=0xAA, hl=0xC510,
+         wram={0xC510: b"\xFF"}),
+    {"b": 0x11, "c": 0x22, "d": 0x02, "e": 0xAA, "hl": 0xC510,
+     "wram": {0xFF97: b"\xC2", 0xC400: b"\x01", 0xC510: b"\x00\xFF"}},
+]
+# <<< factory RemoveFromListDifferentCardOfGivenType
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -249,3 +261,6 @@ MUTATIONS["CalculateBDividedByA_Bank8"] = {"source_symbol": "CalculateBDividedBy
 # >>> factory-mutation CheckIfPlayerHasPokemonOtherThanMewtwoLv53
 MUTATIONS["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = {"source_symbol": "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", "before": "if (card_id != MEWTWO_LV53) {", "after": "if (card_id == MEWTWO_LV53) {", "case_ids": ["CheckIfPlayerHasPokemonOtherThanMewtwoLv53-0", "CheckIfPlayerHasPokemonOtherThanMewtwoLv53-2"]}
 # <<< factory-mutation CheckIfPlayerHasPokemonOtherThanMewtwoLv53
+# >>> factory-mutation RemoveFromListDifferentCardOfGivenType
+MUTATIONS["RemoveFromListDifferentCardOfGivenType"] = {"source_symbol": "RemoveFromListDifferentCardOfGivenType", "before": "matches = (d == 0x02u);", "after": "matches = (d == 0x03u);", "case_ids": ["RemoveFromListDifferentCardOfGivenType-2"]}
+# <<< factory-mutation RemoveFromListDifferentCardOfGivenType

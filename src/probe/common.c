@@ -117,6 +117,15 @@ static void adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53(ProbeState *s)
 }
 /* <<< factory CheckIfPlayerHasPokemonOtherThanMewtwoLv53 */
 
+/* >>> factory RemoveFromListDifferentCardOfGivenType */
+static void adapt_RemoveFromListDifferentCardOfGivenType(ProbeState *s)
+{
+	RemoveFromListDifferentCardOfGivenTypeResult r =
+		RemoveFromListDifferentCardOfGivenType(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory RemoveFromListDifferentCardOfGivenType */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -130,5 +139,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "FindBasicEnergyCardsInLocation", adapt_FindBasicEnergyCardsInLocation },
 	{ "CalculateBDividedByA_Bank8", adapt_CalculateBDividedByA_Bank8 },
 	{ "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53 },
+	{ "RemoveFromListDifferentCardOfGivenType", adapt_RemoveFromListDifferentCardOfGivenType },
 	{ NULL, NULL },
 };

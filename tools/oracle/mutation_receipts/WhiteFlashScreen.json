@@ -1,0 +1,9 @@
+{
+  "fn": "WhiteFlashScreen",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WhiteFlashScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51900\": \"00\", \"51952\": \"ff7fff7fff7fff7f\", \"53911\": \"0000000000000000\", \"54457\": \"a34dff11\", \"54459\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WhiteFlashScreen\", \"mismatches\": {\"bus\": {\"address\": 54460, \"reference\": \"00a34dff11\", \"native\": \"00a34dff12\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[51900, 1], [51952, 8], [53911, 8], [54457, 4]]}}}\n",
+  "restored": "{\"fn\": \"WhiteFlashScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51900\": \"00\", \"51952\": \"ff7fff7fff7fff7f\", \"53911\": \"0000000000000000\", \"54457\": \"a34dff11\", \"54459\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

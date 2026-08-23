@@ -40,4 +40,7 @@ void ShakeScreenX_Small(void);
 /* >>> factory DistortScreen */
 void DistortScreen(void);
 /* <<< factory DistortScreen */
+/* >>> factory WhiteFlashScreen */
+void WhiteFlashScreen(void);
+/* <<< factory WhiteFlashScreen */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

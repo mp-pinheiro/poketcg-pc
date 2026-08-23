@@ -122,6 +122,16 @@ CASES["DistortScreen"] = [
 ]
 # <<< factory DistortScreen
 
+# >>> factory WhiteFlashScreen
+CONTRACT["WhiteFlashScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["WhiteFlashScreen"] = [
+    {"wram": {0xD4BB: b"\x00", 0xCABC: b"\x11"},
+     "read": {0xD4B9: 2, 0xD4BC: 1, 0xCAF0: 8, 0xD297: 8, 0xD4BB: 1}},
+    dict(POISON, wram={0xD4BB: b"\x05", 0xCABC: b"\x22"},
+         read={0xD4B9: 2, 0xD4BC: 1, 0xCAF0: 8, 0xD297: 8, 0xD4BB: 1}),
+]
+# <<< factory WhiteFlashScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -166,3 +176,6 @@ MUTATIONS["ShakeScreenX_Small"] = {"source_symbol": "ShakeScreenX_Small", "befor
 # >>> factory-mutation DistortScreen
 MUTATIONS["DistortScreen"] = {"source_symbol": "DistortScreen", "before": "static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "after": "static const uint8_t BGScrollModData[8] = {5u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "case_ids": ["DistortScreen-0", "DistortScreen-1"]}
 # <<< factory-mutation DistortScreen
+# >>> factory-mutation WhiteFlashScreen
+MUTATIONS["WhiteFlashScreen"] = {"source_symbol": "WhiteFlashScreen", "before": "wTempWhiteFlashBGP = wBGP;", "after": "wTempWhiteFlashBGP = (uint8_t)(wBGP + 1u);", "case_ids": ["WhiteFlashScreen-0", "WhiteFlashScreen-1"]}
+# <<< factory-mutation WhiteFlashScreen

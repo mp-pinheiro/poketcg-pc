@@ -36,6 +36,14 @@
 #include "generated/wram.h"
 #define DISTORTSCREEN_UPDATEFUNC_ADDR 0x4DDFu
 #define APPLYBACKGROUNDSCROLL_ADDR 0x3EA6u
+
+#include "home/copy.h"
+#include "home/memory.h"
+#include "home/palettes.h"
+#include "home/screen_effects.h"
+#include "generated/wram.h"
+#define PALRGB_WHITE 0x7FFFu
+#define WHITEFLASHSCREEN_UPDATEFUNC_ADDR 0x4DA3u
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -173,3 +181,26 @@ void DistortScreen(void)
 	LoadDefaultScreenAnimationUpdateWhenFinished();
 }
 /* <<< factory DistortScreen */
+
+/* >>> factory WhiteFlashScreen */
+void WhiteFlashScreen(void)
+{
+	gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)WHITEFLASHSCREEN_UPDATEFUNC_ADDR);
+	gb_write8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u), (uint8_t)(WHITEFLASHSCREEN_UPDATEFUNC_ADDR >> 8));
+	wTempWhiteFlashBGP = wBGP;
+	CopyDataHLtoDE_SaveRegisters(wBackgroundPalettesCGB_ADDR, wTempBackgroundPalettesCGB_ADDR, 64u);
+	FillMemoryWithDE(wBackgroundPalettesCGB_ADDR, 32u, (uint8_t)(PALRGB_WHITE >> 8), (uint8_t)PALRGB_WHITE);
+	SetBGP(0u);
+	FlushAllPalettes();
+
+	/* .UpdateFunc: real asm has no ret before this label, so it executes
+	 * inline as part of the same call. */
+	(void)DecrementScreenAnimDuration(0u);
+	if (wScreenAnimDuration != 0u)
+		return;
+	CopyDataHLtoDE_SaveRegisters(wTempBackgroundPalettesCGB_ADDR, wBackgroundPalettesCGB_ADDR, 64u);
+	SetBGP(wTempWhiteFlashBGP);
+	FlushAllPalettes();
+	DefaultScreenAnimationUpdate();
+}
+/* <<< factory WhiteFlashScreen */
