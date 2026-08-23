@@ -4525,3 +4525,10 @@ void KinglerFlail_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory KinglerFlail_AIEffect */
+
+/* >>> factory JynxDoubleslap_AIEffect */
+void JynxDoubleslap_AIEffect(void)
+{
+	SetExpectedAIDamage(10u, 0u, 20u);
+}
+/* <<< factory JynxDoubleslap_AIEffect */

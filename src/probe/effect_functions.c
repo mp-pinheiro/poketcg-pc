@@ -2715,6 +2715,14 @@ static void adapt_KinglerFlail_AIEffect(ProbeState *s)
 }
 /* <<< factory KinglerFlail_AIEffect */
 
+/* >>> factory JynxDoubleslap_AIEffect */
+static void adapt_JynxDoubleslap_AIEffect(ProbeState *s)
+{
+	(void)s;
+	JynxDoubleslap_AIEffect();
+}
+/* <<< factory JynxDoubleslap_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3051,5 +3059,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GengarDarkMind_AISelectEffect", adapt_GengarDarkMind_AISelectEffect },
 	{ "PoliwhirlDoubleslap_AIEffect", adapt_PoliwhirlDoubleslap_AIEffect },
 	{ "KinglerFlail_AIEffect", adapt_KinglerFlail_AIEffect },
+	{ "JynxDoubleslap_AIEffect", adapt_JynxDoubleslap_AIEffect },
 	{ NULL, NULL },
 };

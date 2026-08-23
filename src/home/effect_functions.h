@@ -1132,6 +1132,9 @@ void PoliwhirlDoubleslap_AIEffect(void);
 /* >>> factory KinglerFlail_AIEffect */
 void KinglerFlail_AIEffect(void);
 /* <<< factory KinglerFlail_AIEffect */
+/* >>> factory JynxDoubleslap_AIEffect */
+void JynxDoubleslap_AIEffect(void);
+/* <<< factory JynxDoubleslap_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
