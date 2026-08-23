@@ -490,3 +490,11 @@ IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e)
 	return (IsCardInAnyDeckResult){(uint8_t)((f & 0x80u) | 0x10u), 0u};
 }
 /* <<< factory IsCardInAnyDeck */
+
+/* >>> factory DrawListCursor_Invisible */
+DrawListCursorResult DrawListCursor_Invisible(void)
+{
+	uint8_t tile = wInvisibleCursorTile;
+	return DrawListCursor(tile);
+}
+/* <<< factory DrawListCursor_Invisible */

@@ -214,6 +214,15 @@ static void adapt_IsCardInAnyDeck(ProbeState *s)
 }
 /* <<< factory IsCardInAnyDeck */
 
+/* >>> factory DrawListCursor_Invisible */
+static void adapt_DrawListCursor_Invisible(ProbeState *s)
+{
+	DrawListCursorResult result = DrawListCursor_Invisible();
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory DrawListCursor_Invisible */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -239,5 +248,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DrawHorizontalListCursor_Invisible", adapt_DrawHorizontalListCursor_Invisible },
 	{ "DrawHorizontalListCursor_Visible", adapt_DrawHorizontalListCursor_Visible },
 	{ "IsCardInAnyDeck", adapt_IsCardInAnyDeck },
+	{ "DrawListCursor_Invisible", adapt_DrawListCursor_Invisible },
 	{ NULL, NULL },
 };

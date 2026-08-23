@@ -91,4 +91,7 @@ typedef struct {
 
 IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e);
 /* <<< factory IsCardInAnyDeck */
+/* >>> factory DrawListCursor_Invisible */
+DrawListCursorResult DrawListCursor_Invisible(void);
+/* <<< factory DrawListCursor_Invisible */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
