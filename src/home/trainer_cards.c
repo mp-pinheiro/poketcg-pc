@@ -119,6 +119,14 @@
 #define FIRE_CHARGE_DECK_ID 0x17u
 #define ROCK_CRUSHER_DECK_ID 0x11u
 #define WONDERS_OF_SCIENCE_DECK_ID 0x16u
+
+#define DRAGONAIR 0xc0u
+#define DRATINI 0xbfu
+#define EEVEE 0xbcu
+#define FLAREON_LV22 0x3du
+#define JOLTEON_LV24 0x72u
+#define VAPOREON_LV29 0x5au
+#define ZAPDOS_LV68 0x76u
 /* <<< factory statics */
 
 
@@ -1294,3 +1302,75 @@ AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c)
 	return (AIDecide_ComputerSearchResult){deck_id, f};
 }
 /* <<< factory AIDecide_ComputerSearch */
+
+/* >>> factory AIDecide_PokemonTrader_LegendaryRonald */
+AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRonald(void)
+{
+	uint8_t target_a;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+	LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(FLAREON_LV22, EEVEE);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(VAPOREON_LV29, EEVEE);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(JOLTEON_LV24, EEVEE);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, FLAREON_LV22);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, VAPOREON_LV29);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(EEVEE, JOLTEON_LV24);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONAIR, DRATINI);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DRAGONITE_LV41, DRAGONAIR);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(DRATINI, DRAGONAIR);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(DRAGONAIR, DRAGONITE_LV41);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	goto no_carry;
+
+choose_hand: ;
+	wce1a = target_a;
+	{
+		LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(ZAPDOS_LV68);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+		h = LookForCardIDInHandList_Bank8(ARTICUNO_LV37);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+		h = LookForCardIDInHandList_Bank8(MOLTRES_LV37);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_LegendaryRonaldResult){h.a, 0x90u};
+		target_a = h.a;
+	}
+
+no_carry: ;
+	{
+		uint8_t f = (target_a == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokemonTrader_LegendaryRonaldResult){target_a, f};
+	}
+}
+/* <<< factory AIDecide_PokemonTrader_LegendaryRonald */

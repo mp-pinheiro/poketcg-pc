@@ -109,4 +109,8 @@ AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(ui
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearchResult;
 AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c);
 /* <<< factory AIDecide_ComputerSearch */
+/* >>> factory AIDecide_PokemonTrader_LegendaryRonald */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_LegendaryRonaldResult;
+AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRonald(void);
+/* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
