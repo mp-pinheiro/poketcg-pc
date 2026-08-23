@@ -18,8 +18,16 @@ static void adapt_InitSaveData(ProbeState *s)
 }
 /* <<< factory InitSaveData */
 
+/* >>> factory _AddStarterDeck */
+static void adapt__AddStarterDeck(ProbeState *s)
+{
+	_AddStarterDeck(s->a);
+}
+/* <<< factory _AddStarterDeck */
+
 const ProbeEntry probe_entries_starter_deck[] = {
 	{ "CopyDeckNameAndCards", adapt_CopyDeckNameAndCards },
 	{ "InitSaveData", adapt_InitSaveData },
+	{ "_AddStarterDeck", adapt__AddStarterDeck },
 	{ NULL, NULL },
 };

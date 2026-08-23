@@ -63,6 +63,12 @@ sSkipDelayAllowed = 0xA009
 sTextSpeed = 0xA006
 sTotalCardPopsDone = 0xA005
 wTextSpeed = 0xCE47
+
+hWhoseTurn = 0xFF97
+sCardCollection = 0xA100
+sDeck1 = 0xA200
+wOpponentDeck = 0xC480
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory InitSaveData
@@ -92,6 +98,24 @@ CASES["InitSaveData"] = [
 ]
 # <<< factory InitSaveData
 
+# >>> factory _AddStarterDeck
+CONTRACT["_AddStarterDeck"] = {"compare": (), "preserve": ()}
+CASES["_AddStarterDeck"] = [
+    {"a": 0x00, "wram": {hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+     "sram": {0: {sCardCollection: bytes([0x80] * 256)}},
+     "read": {hWhoseTurn: 1},
+     "sread": {0: {sCardCollection: 256, sDeck1: 32}}},
+    {"a": 0x02, "wram": {hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(30, 90)), wOpponentDeck: bytes(range(90, 120))},
+     "sram": {0: {sCardCollection: bytes([0x80] * 256)}},
+     "read": {hWhoseTurn: 1},
+     "sread": {0: {sCardCollection: 256, sDeck1: 32}}},
+    dict(POISON, a=0x00, wram={hWhoseTurn: b"\xFF", wPlayerDeck: bytes(range(60)), wOpponentDeck: bytes(range(60, 90))},
+         sram={0: {sCardCollection: bytes([0x80] * 256)}},
+         read={hWhoseTurn: 1},
+         sread={0: {sCardCollection: 256, sDeck1: 32}}),
+]
+# <<< factory _AddStarterDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -108,3 +132,6 @@ MUTATIONS["CopyDeckNameAndCards"] = {
 # >>> factory-mutation InitSaveData
 MUTATIONS["InitSaveData"] = {"source_symbol": "InitSaveData", "before": "\tgb_write8(sPrinterContrastLevel_ADDR, 2u);", "after": "\tgb_write8(sPrinterContrastLevel_ADDR, 3u);", "case_ids": ["InitSaveData-0", "InitSaveData-1"]}
 # <<< factory-mutation InitSaveData
+# >>> factory-mutation _AddStarterDeck
+MUTATIONS["_AddStarterDeck"] = {"source_symbol": "_AddStarterDeck", "before": "\t\tgb_write8(slot, (uint8_t)(v + 1u));", "after": "\t\tgb_write8(slot, v);", "case_ids": ["_AddStarterDeck-0", "_AddStarterDeck-1"]}
+# <<< factory-mutation _AddStarterDeck

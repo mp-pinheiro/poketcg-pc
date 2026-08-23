@@ -21,9 +21,17 @@ static void adapt_ApplyOWMapEventChangeIfEventSet(ProbeState *s)
 }
 /* <<< factory ApplyOWMapEventChangeIfEventSet */
 
+/* >>> factory SetOWMapEvent */
+static void adapt_SetOWMapEvent(ProbeState *s)
+{
+	s->a = SetOWMapEvent(s->a);
+}
+/* <<< factory SetOWMapEvent */
+
 const ProbeEntry probe_entries_map_events[] = {
 	{ "ClearOWMapEvents", adapt_ClearOWMapEvents },
 	{ "SetOWMapEvent_SRAMOrVRAM", adapt_SetOWMapEvent_SRAMOrVRAM },
 	{ "ApplyOWMapEventChangeIfEventSet", adapt_ApplyOWMapEventChangeIfEventSet },
+	{ "SetOWMapEvent", adapt_SetOWMapEvent },
 	{ NULL, NULL },
 };

@@ -11,4 +11,7 @@ uint8_t SetOWMapEvent_SRAMOrVRAM(uint8_t a);
 /* >>> factory ApplyOWMapEventChangeIfEventSet */
 void ApplyOWMapEventChangeIfEventSet(uint8_t a);
 /* <<< factory ApplyOWMapEventChangeIfEventSet */
+/* >>> factory SetOWMapEvent */
+uint8_t SetOWMapEvent(uint8_t a);
+/* <<< factory SetOWMapEvent */
 #endif

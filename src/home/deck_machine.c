@@ -219,3 +219,13 @@ FindFirstEmptyDeckSlotResult FindFirstEmptyDeckSlot(void)
 	return (FindFirstEmptyDeckSlotResult){a, 0x10u, hl};
 }
 /* <<< factory FindFirstEmptyDeckSlot */
+
+/* >>> factory EmptyScreenAndDrawTextBox */
+void EmptyScreenAndDrawTextBox(void)
+{
+	Set_OBJ_8x8();
+	PrepareMenuGraphics();
+	uint16_t hl = 0xc600u;
+	DrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);
+}
+/* <<< factory EmptyScreenAndDrawTextBox */

@@ -49,6 +49,24 @@ CASES = {
     ],
 }
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wUppercaseHalfWidthLetters = 0xCD0D
+sCardCollection = 0xA100
+# <<< factory-cases-statics
+
+# >>> factory InitSaveDataAndSetUppercase
+CONTRACT["InitSaveDataAndSetUppercase"] = {"compare": (), "preserve": ()}
+CASES["InitSaveDataAndSetUppercase"] = [
+    {"wram": {hWhoseTurn: b"\xFF", wUppercaseHalfWidthLetters: b"\x00"},
+     "read": {wUppercaseHalfWidthLetters: 1},
+     "sread": {0: {sCardCollection: 32}}},
+    dict(POISON, wram={hWhoseTurn: b"\xFF", wUppercaseHalfWidthLetters: b"\x00"},
+         read={wUppercaseHalfWidthLetters: 1},
+         sread={0: {sCardCollection: 32}}),
+]
+# <<< factory InitSaveDataAndSetUppercase
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +78,6 @@ MUTATIONS = {
         "case_ids": ["SetupResetBackUpRamScreen-0", "SetupResetBackUpRamScreen-1"],
     },
 }
+# >>> factory-mutation InitSaveDataAndSetUppercase
+MUTATIONS["InitSaveDataAndSetUppercase"] = {"source_symbol": "InitSaveDataAndSetUppercase", "before": "\twUppercaseHalfWidthLetters = 1u;", "after": "\twUppercaseHalfWidthLetters = 0u;", "case_ids": ["InitSaveDataAndSetUppercase-0", "InitSaveDataAndSetUppercase-1"]}
+# <<< factory-mutation InitSaveDataAndSetUppercase

@@ -112,6 +112,9 @@ wNumDeckMachineEntries = 0xD0A5
 wUnableToScrollDown = 0xCECD
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wConsole = 0xCAB4
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -148,6 +151,16 @@ CASES["FindFirstEmptyDeckSlot"] = [
     {"ramg": True, "sram": {0: {0xA218: b"\x01", 0xA26C: b"\x02", 0xA2C0: b"\x03", 0xA314: b"\x04"}}},
 ]
 # <<< factory FindFirstEmptyDeckSlot
+
+# >>> factory EmptyScreenAndDrawTextBox
+CONTRACT["EmptyScreenAndDrawTextBox"] = {"compare": (), "preserve": ()}
+CASES["EmptyScreenAndDrawTextBox"] = [
+    {"wram": {wConsole: b"\x00", wLCDC: b"\x00"},
+     "vread": {0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}},
+    dict(POISON, wram={wConsole: b"\x00", wLCDC: b"\x00"},
+         vread={0: {0x8000: 16, 0x8D00: 768, 0x9000: 896, 0x9380: 32, 0x9800: 32 * 14}}),
+]
+# <<< factory EmptyScreenAndDrawTextBox
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -196,3 +209,6 @@ MUTATIONS["SetDeckMachineTitleText"] = {"source_symbol": "SetDeckMachineTitleTex
 # >>> factory-mutation FindFirstEmptyDeckSlot
 MUTATIONS["FindFirstEmptyDeckSlot"] = {"source_symbol": "FindFirstEmptyDeckSlot", "before": "\treturn (FindFirstEmptyDeckSlotResult){0u, 0x80u, hl};", "after": "\treturn (FindFirstEmptyDeckSlotResult){1u, 0x80u, hl};", "case_ids": ["FindFirstEmptyDeckSlot-0"]}
 # <<< factory-mutation FindFirstEmptyDeckSlot
+# >>> factory-mutation EmptyScreenAndDrawTextBox
+MUTATIONS["EmptyScreenAndDrawTextBox"] = {"source_symbol": "EmptyScreenAndDrawTextBox", "before": "\tDrawRegularTextBox(&hl, 0u, 20u, 13u, 0u, 0u);", "after": "\tDrawRegularTextBox(&hl, 0u, 19u, 13u, 0u, 0u);", "case_ids": ["EmptyScreenAndDrawTextBox-0", "EmptyScreenAndDrawTextBox-1"]}
+# <<< factory-mutation EmptyScreenAndDrawTextBox

@@ -21,6 +21,10 @@
 #define CHARMANDER_AND_FRIENDS_DECK 0x05u
 #define SQUIRTLE_AND_FRIENDS_DECK 0x07u
 #define BULBASAUR_AND_FRIENDS_DECK 0x09u
+
+#define CARD_NOT_OWNED_F 0x07u
+
+static const uint8_t kStarterCardIDs[6] = {3u, 4u, 5u, 6u, 7u, 8u};
 /* <<< factory statics */
 
 /* >>> factory CopyDeckNameAndCards */
@@ -94,3 +98,31 @@ void InitSaveData(void)
 	DisableSRAM();
 }
 /* <<< factory InitSaveData */
+
+/* >>> factory _AddStarterDeck */
+void _AddStarterDeck(uint8_t a)
+{
+	uint8_t idx = (uint8_t)(a * 2u);
+	hWhoseTurn = PLAYER_TURN;
+	uint8_t main_deck = (uint8_t)(kStarterCardIDs[idx] + 2u);
+	CopyDeckNameAndCards(main_deck, sDeck1_ADDR);
+	SwapTurn();
+	uint8_t extra_deck = (uint8_t)(kStarterCardIDs[(uint8_t)(idx + 1u)] + 2u);
+	LoadDeck(extra_deck);
+	SwapTurn();
+
+	EnableSRAM();
+	for (uint8_t i = 0; i < DECK_SIZE; i++) {
+		uint8_t card_id = gb_read8((uint16_t)(wPlayerDeck_ADDR + i));
+		uint16_t slot = (uint16_t)(sCardCollection_ADDR + card_id);
+		gb_write8(slot, (uint8_t)(gb_read8(slot) & (uint8_t)~(1u << CARD_NOT_OWNED_F)));
+	}
+	for (uint8_t i = 0; i < 30u; i++) {
+		uint8_t card_id = gb_read8((uint16_t)(wOpponentDeck_ADDR + i));
+		uint16_t slot = (uint16_t)(sCardCollection_ADDR + card_id);
+		uint8_t v = (uint8_t)(gb_read8(slot) & (uint8_t)~(1u << CARD_NOT_OWNED_F));
+		gb_write8(slot, (uint8_t)(v + 1u));
+	}
+	DisableSRAM();
+}
+/* <<< factory _AddStarterDeck */

@@ -96,6 +96,14 @@ static void adapt_FindFirstEmptyDeckSlot(ProbeState *s)
 }
 /* <<< factory FindFirstEmptyDeckSlot */
 
+/* >>> factory EmptyScreenAndDrawTextBox */
+static void adapt_EmptyScreenAndDrawTextBox(ProbeState *s)
+{
+	(void)s;
+	EmptyScreenAndDrawTextBox();
+}
+/* <<< factory EmptyScreenAndDrawTextBox */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -108,5 +116,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "DrawListScrollArrows", adapt_DrawListScrollArrows },
 	{ "SetDeckMachineTitleText", adapt_SetDeckMachineTitleText },
 	{ "FindFirstEmptyDeckSlot", adapt_FindFirstEmptyDeckSlot },
+	{ "EmptyScreenAndDrawTextBox", adapt_EmptyScreenAndDrawTextBox },
 	{ NULL, NULL },
 };

@@ -85,3 +85,11 @@ void ApplyOWMapEventChangeIfEventSet(uint8_t a)
 		SetOWMapEvent_SRAMOrVRAM(event_index);
 }
 /* <<< factory ApplyOWMapEventChangeIfEventSet */
+
+/* >>> factory SetOWMapEvent */
+uint8_t SetOWMapEvent(uint8_t a)
+{
+	gb_write8(wWriteBGMapToSRAM_ADDR, 0u);
+	return SetOWMapEvent_SRAMOrVRAM(a);
+}
+/* <<< factory SetOWMapEvent */

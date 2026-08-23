@@ -14,3 +14,11 @@ void SetupResetBackUpRamScreen(void)
 	SetDefaultConsolePalettes();
 	SetupText(0x38, 0x7F);
 }
+
+/* >>> factory InitSaveDataAndSetUppercase */
+void InitSaveDataAndSetUppercase(void)
+{
+	InitSaveData();
+	wUppercaseHalfWidthLetters = 1u;
+}
+/* <<< factory InitSaveDataAndSetUppercase */

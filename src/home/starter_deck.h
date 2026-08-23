@@ -9,4 +9,7 @@ void CopyDeckNameAndCards(uint8_t a, uint16_t hl);
 /* >>> factory InitSaveData */
 void InitSaveData(void);
 /* <<< factory InitSaveData */
+/* >>> factory _AddStarterDeck */
+void _AddStarterDeck(uint8_t a);
+/* <<< factory _AddStarterDeck */
 #endif /* POKETCG_HOME_STARTER_DECK_H */

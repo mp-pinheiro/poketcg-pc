@@ -1,0 +1,9 @@
+{
+  "fn": "InitSaveDataAndSetUppercase",
+  "case": "tests/cases/game_loop.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitSaveDataAndSetUppercase\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"8080808080808080808080808080808080808080808080808080808080808080\"}}, \"vram\": {}, \"wram\": {\"52493\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitSaveDataAndSetUppercase\", \"mismatches\": {\"bus\": {\"address\": 52493, \"reference\": \"01c2\", \"native\": \"00c2\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52493, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitSaveDataAndSetUppercase\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41216\": \"8080808080808080808080808080808080808080808080808080808080808080\"}}, \"vram\": {}, \"wram\": {\"52493\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

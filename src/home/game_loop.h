@@ -3,4 +3,7 @@
 
 void SetupResetBackUpRamScreen(void);
 
+/* >>> factory InitSaveDataAndSetUppercase */
+void InitSaveDataAndSetUppercase(void);
+/* <<< factory InitSaveDataAndSetUppercase */
 #endif
