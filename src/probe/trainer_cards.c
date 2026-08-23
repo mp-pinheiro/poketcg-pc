@@ -216,6 +216,15 @@ static void adapt_AIDecide_ComputerSearch_Anger(ProbeState *s)
 }
 /* <<< factory AIDecide_ComputerSearch_Anger */
 
+/* >>> factory AIDecide_ComputerSearch_WondersOfScience */
+static void adapt_AIDecide_ComputerSearch_WondersOfScience(ProbeState *s)
+{
+	AIDecide_ComputerSearch_WondersOfScienceResult r = AIDecide_ComputerSearch_WondersOfScience(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_ComputerSearch_WondersOfScience */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -243,5 +252,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader_LegendaryArticuno", adapt_AIDecide_PokemonTrader_LegendaryArticuno },
 	{ "AIDecide_ComputerSearch_FireCharge", adapt_AIDecide_ComputerSearch_FireCharge },
 	{ "AIDecide_ComputerSearch_Anger", adapt_AIDecide_ComputerSearch_Anger },
+	{ "AIDecide_ComputerSearch_WondersOfScience", adapt_AIDecide_ComputerSearch_WondersOfScience },
 	{ NULL, NULL },
 };

@@ -101,6 +101,9 @@
 #define GROWLITHE 0x36u
 #define RATICATE 0xa8u
 #define RATTATA 0xa7u
+
+#define GRIMER 0x26u
+#define PROFESSOR_OAK 0xc3u
 /* <<< factory statics */
 
 
@@ -1062,3 +1065,60 @@ find_discard_cards:
 	return (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u};
 }
 /* <<< factory AIDecide_ComputerSearch_Anger */
+
+/* >>> factory AIDecide_ComputerSearch_WondersOfScience */
+AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOfScience(uint8_t b, uint8_t c)
+{
+	uint8_t a_val;
+	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (hand_count.a < 5u) {
+		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PROFESSOR_OAK);
+		a_val = loc.a;
+		if (loc.f & 0x10u) goto find_discard_cards;
+	}
+
+	{
+		LookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(GRIMER);
+		if (!(h.f & 0x10u)) {
+			LookForCardIDInLocationBank8Result loc2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GRIMER);
+			a_val = loc2.a;
+			if (loc2.f & 0x10u) goto find_discard_cards;
+			goto no_carry;
+		}
+		h = LookForCardIDInHandList_Bank8(MUK);
+		if (!(h.f & 0x10u)) {
+			LookForCardIDInLocationBank8Result loc3 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MUK);
+			a_val = loc3.a;
+			if (loc3.f & 0x10u) goto find_discard_cards;
+			goto no_carry;
+		}
+		a_val = h.a;
+	}
+
+no_carry: ;
+	{
+		uint8_t f = (a_val == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){a_val, f};
+	}
+
+find_discard_cards:
+	wce06 = a_val;
+	(void)CreateHandCardList(0u);
+	uint8_t trainer_to_play = wAITrainerCardToPlay;
+	RemoveFromListDifferentCardOfGivenTypeResult rm1 =
+		RemoveFromListDifferentCardOfGivenType(b, c, 0u, trainer_to_play, wDuelTempList_ADDR);
+	if (!(rm1.f & 0x10u)) {
+		uint8_t f = (rm1.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm1.a, f};
+	}
+	wce1a = rm1.a;
+	RemoveFromListDifferentCardOfGivenTypeResult rm2 =
+		RemoveFromListDifferentCardOfGivenType(rm1.b, rm1.c, rm1.d, rm1.e, rm1.hl);
+	if (!(rm2.f & 0x10u)) {
+		uint8_t f = (rm2.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_WondersOfScienceResult){rm2.a, f};
+	}
+	wce1b = rm2.a;
+	return (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u};
+}
+/* <<< factory AIDecide_ComputerSearch_WondersOfScience */

@@ -369,6 +369,62 @@ CASES["AIDecide_ComputerSearch_Anger"] = [
 ]
 # <<< factory AIDecide_ComputerSearch_Anger
 
+# >>> factory AIDecide_ComputerSearch_WondersOfScience
+CONTRACT["AIDecide_ComputerSearch_WondersOfScience"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_ComputerSearch_WondersOfScience"] = [
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x05",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC244: b"\x0C",
+        0xC245: b"\x0D",
+        0xC246: b"\x0E",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC202: b"\x00",
+        0xC203: b"\x00",
+        0xC204: b"\x00",
+        0xC40A: b"\x26",
+        0xC40B: b"\x27",
+        0xC40C: b"\x01",
+        0xC40D: b"\x01",
+        0xC40E: b"\x01",
+    }, "read": {0xC510: 32}},
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x02",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC40A: b"\xC5",
+        0xC40B: b"\xDB",
+        0xC405: b"\x26",
+        wAITrainerCardToPlay: b"\xFF",
+    }, "expect": {wce06: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, b=0x00, c=0x00, wram={
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x05",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC244: b"\x0C",
+        0xC245: b"\x0D",
+        0xC246: b"\x0E",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC202: b"\x00",
+        0xC203: b"\x00",
+        0xC204: b"\x00",
+        0xC40A: b"\x26",
+        0xC40B: b"\x27",
+        0xC40C: b"\x01",
+        0xC40D: b"\x01",
+        0xC40E: b"\x01",
+    }, read={0xC510: 32}),
+]
+# <<< factory AIDecide_ComputerSearch_WondersOfScience
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -540,3 +596,6 @@ MUTATIONS["AIDecide_ComputerSearch_FireCharge"] = {"source_symbol": "AIDecide_Co
 # >>> factory-mutation AIDecide_ComputerSearch_Anger
 MUTATIONS["AIDecide_ComputerSearch_Anger"] = {"source_symbol": "AIDecide_ComputerSearch_Anger", "before": "\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x90u};", "after": "\treturn (AIDecide_ComputerSearch_AngerResult){wce06, 0x00u};", "case_ids": ["AIDecide_ComputerSearch_Anger-1"]}
 # <<< factory-mutation AIDecide_ComputerSearch_Anger
+# >>> factory-mutation AIDecide_ComputerSearch_WondersOfScience
+MUTATIONS["AIDecide_ComputerSearch_WondersOfScience"] = {"source_symbol": "AIDecide_ComputerSearch_WondersOfScience", "before": "\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u};", "after": "\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x00u};", "case_ids": ["AIDecide_ComputerSearch_WondersOfScience-1"]}
+# <<< factory-mutation AIDecide_ComputerSearch_WondersOfScience
