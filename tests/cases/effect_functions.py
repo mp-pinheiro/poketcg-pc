@@ -2343,6 +2343,8 @@ WATER_ENERGY = 0x03
 hWhoseTurn = 0xFF97
 wOpponentDuelVariables = 0xC300
 hTemp_ffa0 = 0xFFA0
+
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3022,6 +3024,14 @@ CASES["Bonemerang_AIEffect"] = [
     dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
 ]
 # <<< factory Bonemerang_AIEffect
+
+# >>> factory Barrier_BarrierEffect
+CONTRACT["Barrier_BarrierEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Barrier_BarrierEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2E7: b"\x00"}, "read": {0xC2E7: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2E7: b"\x00"}, read={0xC2E7: 1}),
+]
+# <<< factory Barrier_BarrierEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4921,3 +4931,6 @@ MUTATIONS["JynxDoubleslap_AIEffect"] = {"source_symbol": "JynxDoubleslap_AIEffec
 # >>> factory-mutation Bonemerang_AIEffect
 MUTATIONS["Bonemerang_AIEffect"] = {"source_symbol": "Bonemerang_AIEffect", "before": "void Bonemerang_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);", "after": "void Bonemerang_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 40u);", "case_ids": ["Bonemerang_AIEffect-0", "Bonemerang_AIEffect-1"]}
 # <<< factory-mutation Bonemerang_AIEffect
+# >>> factory-mutation Barrier_BarrierEffect
+MUTATIONS["Barrier_BarrierEffect"] = {"source_symbol": "Barrier_BarrierEffect", "before": "(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_BARRIER);", "after": "(void)ApplySubstatus1ToAttackingCard(0u);", "case_ids": ["Barrier_BarrierEffect-0", "Barrier_BarrierEffect-1"]}
+# <<< factory-mutation Barrier_BarrierEffect

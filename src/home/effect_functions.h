@@ -1138,6 +1138,9 @@ void JynxDoubleslap_AIEffect(void);
 /* >>> factory Bonemerang_AIEffect */
 void Bonemerang_AIEffect(void);
 /* <<< factory Bonemerang_AIEffect */
+/* >>> factory Barrier_BarrierEffect */
+void Barrier_BarrierEffect(void);
+/* <<< factory Barrier_BarrierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

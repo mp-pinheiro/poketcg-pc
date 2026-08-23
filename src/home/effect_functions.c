@@ -333,6 +333,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/effect_functions.h"
+#include "mem.h"
+#define SUBSTATUS1_BARRIER 0x14u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4539,3 +4543,10 @@ void Bonemerang_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory Bonemerang_AIEffect */
+
+/* >>> factory Barrier_BarrierEffect */
+void Barrier_BarrierEffect(void)
+{
+	(void)ApplySubstatus1ToAttackingCard(SUBSTATUS1_BARRIER);
+}
+/* <<< factory Barrier_BarrierEffect */
