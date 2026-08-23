@@ -520,6 +520,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #define DUEL_ANIM_OPP_DRAW 0x57u
 #define DUEL_ANIM_PLAYER_DRAW 0x56u
+
+#include "home/core.h"
+#include "home/tiles.h"
+#include "generated/wram.h"
+#define PROMOSTAR 0xffu
+#define DUEL_OTHER_GFX 0x4008u
+#define CardRarityTextIDs_ADDR 0x5e14u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3234,3 +3241,18 @@ PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8
 	return (PlayTurnDuelistDrawAnimationResult){e, f};
 }
 /* <<< factory PlayTurnDuelistDrawAnimation */
+
+/* >>> factory DrawCardPageSet2AndRarityIcons */
+DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void)
+{
+	TileCopyResult tiles = LoadCardSet2Tiles(wLoadedCard1Set);
+	if (tiles.hl >= DUEL_OTHER_GFX)
+		FillRectangle(0xfcu, 2u, 2u, 0x0f08u, 0x0102u);
+	uint8_t rarity = wLoadedCard1Rarity;
+	if (rarity != PROMOSTAR) {
+		ProcessTextHeaderResult result = PrintCardPageRarityIcon(rarity, 18u, 9u, CardRarityTextIDs_ADDR);
+		return (DrawCardPageSet2AndRarityIconsResult){result.hl};
+	}
+	return (DrawCardPageSet2AndRarityIconsResult){CardRarityTextIDs_ADDR};
+}
+/* <<< factory DrawCardPageSet2AndRarityIcons */

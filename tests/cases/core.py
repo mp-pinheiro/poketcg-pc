@@ -1850,6 +1850,17 @@ CASES["PlayTurnDuelistDrawAnimation"] = [
 ]
 # <<< factory PlayTurnDuelistDrawAnimation
 
+# >>> factory DrawCardPageSet2AndRarityIcons
+CONTRACT["DrawCardPageSet2AndRarityIcons"] = {"compare": ("hl",), "preserve": ()}
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CASES["DrawCardPageSet2AndRarityIcons"] = [
+    {"wram": {0xCC29: b"\xff", 0xCC2A: b"\x01"}, "setup": SETUP_TEXT, "rom_bank": 1},
+    dict(POISON, wram={0xCC29: b"\xff", 0xCC2A: b"\x01"}, setup=SETUP_TEXT, rom_bank=1),
+    {"wram": {0xCC29: b"\x00", 0xCC2A: b"\x00"}, "setup": SETUP_TEXT, "rom_bank": 1},
+    {"wram": {0xCC29: b"\x00", 0xCC2A: b"\x07"}, "setup": SETUP_TEXT, "rom_bank": 1},
+]
+# <<< factory DrawCardPageSet2AndRarityIcons
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2831,3 +2842,6 @@ MUTATIONS["CheckIfEnoughEnergiesToAttack"] = {"source_symbol": "CheckIfEnoughEne
 # >>> factory-mutation PlayTurnDuelistDrawAnimation
 MUTATIONS["PlayTurnDuelistDrawAnimation"] = {"source_symbol": "PlayTurnDuelistDrawAnimation", "before": "\tuint8_t e = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;", "after": "\tuint8_t e = (hWhoseTurn != PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;", "case_ids": ["PlayTurnDuelistDrawAnimation-0", "PlayTurnDuelistDrawAnimation-2"]}
 # <<< factory-mutation PlayTurnDuelistDrawAnimation
+# >>> factory-mutation DrawCardPageSet2AndRarityIcons
+MUTATIONS["DrawCardPageSet2AndRarityIcons"] = {"source_symbol": "DrawCardPageSet2AndRarityIcons", "before": "\tif (rarity != PROMOSTAR) {", "after": "\tif (rarity == PROMOSTAR) {", "case_ids": ["DrawCardPageSet2AndRarityIcons-0", "DrawCardPageSet2AndRarityIcons-2"]}
+# <<< factory-mutation DrawCardPageSet2AndRarityIcons

@@ -2634,6 +2634,15 @@ static void adapt_PokemonFlute_BenchCheck(ProbeState *s)
 }
 /* <<< factory PokemonFlute_BenchCheck */
 
+/* >>> factory Heal_OncePerTurnCheck */
+static void adapt_Heal_OncePerTurnCheck(ProbeState *s)
+{
+	HealOncePerTurnCheckResult r = Heal_OncePerTurnCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Heal_OncePerTurnCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2960,5 +2969,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Spark_AISelectEffect", adapt_Spark_AISelectEffect },
 	{ "DamageSwap_CheckDamage", adapt_DamageSwap_CheckDamage },
 	{ "PokemonFlute_BenchCheck", adapt_PokemonFlute_BenchCheck },
+	{ "Heal_OncePerTurnCheck", adapt_Heal_OncePerTurnCheck },
 	{ NULL, NULL },
 };

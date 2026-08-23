@@ -4409,3 +4409,19 @@ PokemonFluteBenchCheckResult PokemonFlute_BenchCheck(void)
 	return (PokemonFluteBenchCheckResult){basics.f, ThereAreNoPokemonInDiscardPileText};
 }
 /* <<< factory PokemonFlute_BenchCheck */
+
+/* >>> factory Heal_OncePerTurnCheck */
+HealOncePerTurnCheckResult Heal_OncePerTurnCheck(void)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	hTemp_ffa0 = location;
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	if (flags.a & USED_PKMN_POWER_THIS_TURN)
+		return (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};
+	CheckIfPlayAreaHasAnyDamageResult has_damage = CheckIfPlayAreaHasAnyDamage();
+	if (has_damage.f & 0x10u)
+		return (HealOncePerTurnCheckResult){has_damage.f, NoPokemonWithDamageCountersText};
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(hTempPlayAreaLocation_ff9d);
+	return (HealOncePerTurnCheckResult){incapable.f, incapable.hl};
+}
+/* <<< factory Heal_OncePerTurnCheck */

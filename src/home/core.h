@@ -635,4 +635,8 @@ CheckIfEnoughEnergiesToAttackResult CheckIfEnoughEnergiesToAttack(void);
 typedef struct { uint8_t e; uint8_t f; } PlayTurnDuelistDrawAnimationResult;
 PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint16_t hl);
 /* <<< factory PlayTurnDuelistDrawAnimation */
+/* >>> factory DrawCardPageSet2AndRarityIcons */
+typedef struct { uint16_t hl; } DrawCardPageSet2AndRarityIconsResult;
+DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void);
+/* <<< factory DrawCardPageSet2AndRarityIcons */
 #endif

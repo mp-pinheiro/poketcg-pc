@@ -73,6 +73,18 @@ static void adapt_CopyDeckFromSRAM(ProbeState *s)
 }
 /* <<< factory CopyDeckFromSRAM */
 
+/* >>> factory Func_9001 */
+static void adapt_Func_9001(ProbeState *s)
+{
+	Func_9001Result r = Func_9001(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory Func_9001 */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -81,5 +93,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "CheckIfCurDeckIsValid", adapt_CheckIfCurDeckIsValid },
 	{ "CancelDeckSelectionSubMenu", adapt_CancelDeckSelectionSubMenu },
 	{ "CopyDeckFromSRAM", adapt_CopyDeckFromSRAM },
+	{ "Func_9001", adapt_Func_9001 },
 	{ NULL, NULL },
 };

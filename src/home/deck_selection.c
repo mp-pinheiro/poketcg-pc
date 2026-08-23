@@ -22,6 +22,9 @@
 #include "home/switch_sram.h"
 #include "mem.h"
 #define DECK_SIZE 0x3Cu
+
+#include "home/deck_selection.h"
+#define SYM_0 0x20u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -102,3 +105,40 @@ CopyDeckFromSRAMResult CopyDeckFromSRAM(uint16_t de, uint16_t hl)
 	return (CopyDeckFromSRAMResult){0u, 0x80u, de, hl};
 }
 /* <<< factory CopyDeckFromSRAM */
+
+/* >>> factory Func_9001 */
+Func_9001Result Func_9001(uint16_t hl)
+{
+	uint16_t de = 0xd00au;
+	static const uint16_t steps[3] = {(uint16_t)-100, (uint16_t)-10, (uint16_t)-1};
+	uint8_t a = 0u;
+	uint8_t f = 0u;
+	for (uint8_t i = 0u; i < 3u; i++) {
+		uint16_t bc = steps[i];
+		uint8_t digit = (uint8_t)(SYM_0 - 1u);
+		uint8_t carry;
+		do {
+			digit++;
+			uint32_t sum = (uint32_t)hl + (uint32_t)bc;
+			hl = (uint16_t)sum;
+			carry = (sum > 0xFFFFu) ? 1u : 0u;
+		} while (carry);
+		gb_write8(de, digit);
+		de++;
+		uint8_t bc_lo = (uint8_t)bc;
+		uint8_t bc_hi = (uint8_t)(bc >> 8);
+		uint8_t l = (uint8_t)hl;
+		uint8_t h = (uint8_t)(hl >> 8);
+		uint8_t new_l = (uint8_t)(l - bc_lo);
+		uint8_t borrow_lo = (l < bc_lo) ? 1u : 0u;
+		int result = (int)h - (int)bc_hi - (int)borrow_lo;
+		uint8_t new_h = (uint8_t)result;
+		uint8_t carry_hi = (result < 0) ? 1u : 0u;
+		uint8_t half_hi = (((int)(h & 0xFu) - (int)(bc_hi & 0xFu) - (int)borrow_lo) < 0) ? 1u : 0u;
+		f = (uint8_t)((new_h == 0u ? 0x80u : 0u) | 0x40u | (half_hi ? 0x20u : 0u) | (carry_hi ? 0x10u : 0u));
+		a = new_h;
+		hl = (uint16_t)(((uint16_t)new_h << 8) | new_l);
+	}
+	return (Func_9001Result){a, f, (uint8_t)(de >> 8), (uint8_t)de, hl};
+}
+/* <<< factory Func_9001 */

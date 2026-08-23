@@ -46,4 +46,8 @@ void CancelDeckSelectionSubMenu(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } CopyDeckFromSRAMResult;
 CopyDeckFromSRAMResult CopyDeckFromSRAM(uint16_t de, uint16_t hl);
 /* <<< factory CopyDeckFromSRAM */
+/* >>> factory Func_9001 */
+typedef struct { uint8_t a; uint8_t f; uint8_t d; uint8_t e; uint16_t hl; } Func_9001Result;
+Func_9001Result Func_9001(uint16_t hl);
+/* <<< factory Func_9001 */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

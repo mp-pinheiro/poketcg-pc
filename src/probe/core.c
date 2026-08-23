@@ -1356,6 +1356,14 @@ static void adapt_PlayTurnDuelistDrawAnimation(ProbeState *s)
 }
 /* <<< factory PlayTurnDuelistDrawAnimation */
 
+/* >>> factory DrawCardPageSet2AndRarityIcons */
+static void adapt_DrawCardPageSet2AndRarityIcons(ProbeState *s)
+{
+	DrawCardPageSet2AndRarityIconsResult r = DrawCardPageSet2AndRarityIcons();
+	s->hl = r.hl;
+}
+/* <<< factory DrawCardPageSet2AndRarityIcons */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1516,5 +1524,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn3", adapt_PracticeDuelVerify_Turn3 },
 	{ "CheckIfEnoughEnergiesToAttack", adapt_CheckIfEnoughEnergiesToAttack },
 	{ "PlayTurnDuelistDrawAnimation", adapt_PlayTurnDuelistDrawAnimation },
+	{ "DrawCardPageSet2AndRarityIcons", adapt_DrawCardPageSet2AndRarityIcons },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "Func_9001",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_9001\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 208, \"e\": 13, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53258\": \"222527\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_9001\", \"mismatches\": {\"hl\": [0, 1], \"bus\": {\"address\": 53260, \"reference\": \"222527\", \"native\": \"222523\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53258, 3]]}}}\n",
+  "restored": "{\"fn\": \"Func_9001\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 208, \"e\": 13, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53258\": \"222527\"}}, \"status\": \"PASS\"}\n"
+}

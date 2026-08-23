@@ -74,6 +74,16 @@ CASES["CopyDeckFromSRAM"] = [
 ]
 # <<< factory CopyDeckFromSRAM
 
+# >>> factory Func_9001
+CONTRACT["Func_9001"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["Func_9001"] = [
+    {"hl": 257, "read": {0xD00A: 3}},
+    dict(POISON, hl=257, read={0xD00A: 3}),
+    {"hl": 999, "read": {0xD00A: 3}},
+    {"hl": 5, "read": {0xD00A: 3}},
+]
+# <<< factory Func_9001
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -99,3 +109,6 @@ MUTATIONS["CancelDeckSelectionSubMenu"] = {"source_symbol": "CancelDeckSelection
 # >>> factory-mutation CopyDeckFromSRAM
 MUTATIONS["CopyDeckFromSRAM"] = {"source_symbol": "CopyDeckFromSRAM", "before": "\tfor (uint8_t i = 0; i < DECK_SIZE; i++) {", "after": "\tfor (uint8_t i = 0; i < (uint8_t)(DECK_SIZE - 1u); i++) {", "case_ids": ["CopyDeckFromSRAM-0", "CopyDeckFromSRAM-1"]}
 # <<< factory-mutation CopyDeckFromSRAM
+# >>> factory-mutation Func_9001
+MUTATIONS["Func_9001"] = {"source_symbol": "Func_9001", "before": "\tstatic const uint16_t steps[3] = {(uint16_t)-100, (uint16_t)-10, (uint16_t)-1};", "after": "\tstatic const uint16_t steps[3] = {(uint16_t)-100, (uint16_t)-10, (uint16_t)-2};", "case_ids": ["Func_9001-0", "Func_9001-2"]}
+# <<< factory-mutation Func_9001

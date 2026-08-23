@@ -2873,6 +2873,18 @@ CASES["PokemonFlute_BenchCheck"] = [
 ]
 # <<< factory PokemonFlute_BenchCheck
 
+# >>> factory Heal_OncePerTurnCheck
+CONTRACT["Heal_OncePerTurnCheck"] = {"compare": ("f", "hl"), "preserve": (), "wram_out": True}
+CASES["Heal_OncePerTurnCheck"] = [
+    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2C2: b"\x20"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2C2: b"\x20"}, read={0xFFA0: 1}),
+    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2C2: b"\x00", 0xC2EF: b"\x01",
+              0xC2BB: b"\x00", 0xC400: b"\x08", 0xC2C8: b"\x28"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2C2: b"\x00",
+              0xC2BC: b"\xFF", 0xC3BC: b"\xFF"}, "read": {0xFFA0: 1}},
+]
+# <<< factory Heal_OncePerTurnCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4735,3 +4747,6 @@ MUTATIONS["DamageSwap_CheckDamage"] = {"source_symbol": "DamageSwap_CheckDamage"
 # >>> factory-mutation PokemonFlute_BenchCheck
 MUTATIONS["PokemonFlute_BenchCheck"] = {"source_symbol": "PokemonFlute_BenchCheck", "before": "\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a >= MAX_PLAY_AREA_POKEMON) {", "after": "\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a > MAX_PLAY_AREA_POKEMON) {", "case_ids": ["PokemonFlute_BenchCheck-0"]}
 # <<< factory-mutation PokemonFlute_BenchCheck
+# >>> factory-mutation Heal_OncePerTurnCheck
+MUTATIONS["Heal_OncePerTurnCheck"] = {"source_symbol": "Heal_OncePerTurnCheck", "before": "\tif (flags.a & USED_PKMN_POWER_THIS_TURN)\n\t\treturn (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};", "after": "\tif (!(flags.a & USED_PKMN_POWER_THIS_TURN))\n\t\treturn (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};", "case_ids": ["Heal_OncePerTurnCheck-0", "Heal_OncePerTurnCheck-2"]}
+# <<< factory-mutation Heal_OncePerTurnCheck
