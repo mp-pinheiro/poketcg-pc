@@ -11,4 +11,8 @@ void GetConfigCursorPositions(void);
 /* >>> factory SaveConfigSettings */
 void SaveConfigSettings(void);
 /* <<< factory SaveConfigSettings */
+/* >>> factory ShowConfigMenuCursor */
+typedef struct { uint8_t b; uint8_t c; } ShowConfigMenuCursorResult;
+ShowConfigMenuCursorResult ShowConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory ShowConfigMenuCursor */
 #endif /* POKETCG_HOME_CONFIG_H */

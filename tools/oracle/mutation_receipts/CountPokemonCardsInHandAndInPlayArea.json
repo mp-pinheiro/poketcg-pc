@@ -1,0 +1,9 @@
+{
+  "fn": "CountPokemonCardsInHandAndInPlayArea",
+  "case": "tests/cases/common.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountPokemonCardsInHandAndInPlayArea\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"0003\", \"52721\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountPokemonCardsInHandAndInPlayArea\", \"mismatches\": {\"a\": [3, 0], \"bus\": {\"address\": 52721, \"reference\": \"000303c2\", \"native\": \"000300c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49902, 2], [52721, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CountPokemonCardsInHandAndInPlayArea\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"0003\", \"52721\": \"03\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

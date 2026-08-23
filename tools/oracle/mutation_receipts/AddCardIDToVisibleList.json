@@ -1,0 +1,9 @@
+{
+  "fn": "AddCardIDToVisibleList",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddCardIDToVisibleList\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52932\": \"0000002a00000005\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddCardIDToVisibleList\", \"mismatches\": {\"bus\": {\"address\": 52935, \"reference\": \"0000002a00000005\", \"native\": \"000000000000002a\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[52932, 8]]}}}\n",
+  "restored": "{\"fn\": \"AddCardIDToVisibleList\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 42, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52932\": \"0000002a00000005\"}}, \"status\": \"PASS\"}\n"
+}

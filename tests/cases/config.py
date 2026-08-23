@@ -99,6 +99,16 @@ CASES["SaveConfigSettings"] = [
 ]
 # <<< factory SaveConfigSettings
 
+# >>> factory ShowConfigMenuCursor
+CONTRACT["ShowConfigMenuCursor"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["ShowConfigMenuCursor"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "expect_regs": {"b": 0xBB, "c": 0xCC},
+    },
+]
+# <<< factory ShowConfigMenuCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -127,3 +137,11 @@ MUTATIONS["SaveConfigSettings"] = {
     "case_ids": ["SaveConfigSettings-2", "SaveConfigSettings-4"],
 }
 # <<< factory-mutation SaveConfigSettings
+# >>> factory-mutation ShowConfigMenuCursor
+MUTATIONS["ShowConfigMenuCursor"] = {
+    "source_symbol": "ShowConfigMenuCursor",
+    "before": "return (ShowConfigMenuCursorResult){b, c};",
+    "after": "return (ShowConfigMenuCursorResult){c, b};",
+    "case_ids": ["ShowConfigMenuCursor-0"],
+}
+# <<< factory-mutation ShowConfigMenuCursor

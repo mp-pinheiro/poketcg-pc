@@ -394,6 +394,14 @@ CASES["ConfirmSelectionAndReturnCarry"] = [
 ]
 # <<< factory ConfirmSelectionAndReturnCarry
 
+# >>> factory AddCardIDToVisibleList
+CONTRACT["AddCardIDToVisibleList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["AddCardIDToVisibleList"] = [
+    {"b": 2, "e": 0x2A, "wram": {0xCEC4: b"\x00" * 7, 0xCECB: b"\x05"}, "read": {0xCEC4: 7}},
+    dict(POISON, b=2, e=0x2A, wram={0xCEC4: b"\x00" * 7, 0xCECB: b"\x05"}, read={0xCEC4: 7}),
+]
+# <<< factory AddCardIDToVisibleList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -550,3 +558,11 @@ MUTATIONS["ConfirmSelectionAndReturnCarry"] = {
     "case_ids": ["ConfirmSelectionAndReturnCarry-0"],
 }
 # <<< factory-mutation ConfirmSelectionAndReturnCarry
+# >>> factory-mutation AddCardIDToVisibleList
+MUTATIONS["AddCardIDToVisibleList"] = {
+    "source_symbol": "AddCardIDToVisibleList",
+    "before": "uint8_t offset = (uint8_t)(num_entries - b);",
+    "after": "uint8_t offset = (uint8_t)(num_entries + b);",
+    "case_ids": ["AddCardIDToVisibleList-0", "AddCardIDToVisibleList-1"],
+}
+# <<< factory-mutation AddCardIDToVisibleList

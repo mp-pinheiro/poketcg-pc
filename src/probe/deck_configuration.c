@@ -305,6 +305,13 @@ static void adapt_ConfirmSelectionAndReturnCarry(ProbeState *s)
 }
 /* <<< factory ConfirmSelectionAndReturnCarry */
 
+/* >>> factory AddCardIDToVisibleList */
+static void adapt_AddCardIDToVisibleList(ProbeState *s)
+{
+	AddCardIDToVisibleList(s->b, s->e);
+}
+/* <<< factory AddCardIDToVisibleList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -340,5 +347,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CheckIfCurrentDeckWasChanged", adapt_CheckIfCurrentDeckWasChanged },
 	{ "CreateFilteredCardList", adapt_CreateFilteredCardList },
 	{ "ConfirmSelectionAndReturnCarry", adapt_ConfirmSelectionAndReturnCarry },
+	{ "AddCardIDToVisibleList", adapt_AddCardIDToVisibleList },
 	{ NULL, NULL },
 };

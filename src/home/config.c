@@ -22,6 +22,8 @@ static const uint8_t kDuelAnimationSettingsIndices[4] = { 0u, 0u, 1u, 2u };
 static const uint8_t kDuelAnimationSettings[8] = {
 	0x00u, 0x00u, 0x00u, 0x01u, 0x01u, 0x01u, 0x00u, 0x00u
 };
+
+#include "home/config.h"
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
@@ -92,3 +94,11 @@ void SaveConfigSettings(void)
 	DisableSRAM();
 }
 /* <<< factory SaveConfigSettings */
+
+/* >>> factory ShowConfigMenuCursor */
+ShowConfigMenuCursorResult ShowConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
+{
+	DrawConfigMenuCursor(SYM_CURSOR_R, a);
+	return (ShowConfigMenuCursorResult){b, c};
+}
+/* <<< factory ShowConfigMenuCursor */

@@ -52,6 +52,11 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define TYPE_TRAINER 0x10u
+
+#include "home/duel.h"
+#include "home/card_data.h"
+
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -388,3 +393,26 @@ RemoveFromListDifferentCardOfGivenTypeResult RemoveFromListDifferentCardOfGivenT
 	}
 }
 /* <<< factory RemoveFromListDifferentCardOfGivenType */
+
+/* >>> factory CountPokemonCardsInHandAndInPlayArea */
+uint8_t CountPokemonCardsInHandAndInPlayArea(uint8_t c)
+{
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	gb_write8(wTempAI_ADDR, count);
+	CreateHandCardList(c);
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t deck_index = gb_read8(hl);
+		hl++;
+		if (deck_index == 0xFFu)
+			break;
+		uint16_t card_id = GetCardIDFromDeckIndex(deck_index);
+		uint8_t type = GetCardType((uint8_t)card_id);
+		if (type < TYPE_ENERGY) {
+			count = (uint8_t)(count + 1u);
+			gb_write8(wTempAI_ADDR, count);
+		}
+	}
+	return count;
+}
+/* <<< factory CountPokemonCardsInHandAndInPlayArea */

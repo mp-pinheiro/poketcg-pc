@@ -129,4 +129,7 @@ CreateFilteredCardListResult CreateFilteredCardList(
 typedef struct { uint8_t a; uint8_t e; } ConfirmSelectionAndReturnCarryResult;
 ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void);
 /* <<< factory ConfirmSelectionAndReturnCarry */
+/* >>> factory AddCardIDToVisibleList */
+void AddCardIDToVisibleList(uint8_t b, uint8_t e);
+/* <<< factory AddCardIDToVisibleList */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

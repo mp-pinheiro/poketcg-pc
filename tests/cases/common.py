@@ -186,6 +186,14 @@ CASES["RemoveFromListDifferentCardOfGivenType"] = [
 ]
 # <<< factory RemoveFromListDifferentCardOfGivenType
 
+# >>> factory CountPokemonCardsInHandAndInPlayArea
+CONTRACT["CountPokemonCardsInHandAndInPlayArea"] = {"compare": ("a",), "preserve": (), "wram_out": True}
+CASES["CountPokemonCardsInHandAndInPlayArea"] = [
+    {"c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2EF: b"\x03"}, "read": {wTempAI: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2EF: b"\x03"}, read={wTempAI: 1}),
+]
+# <<< factory CountPokemonCardsInHandAndInPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -264,3 +272,11 @@ MUTATIONS["CheckIfPlayerHasPokemonOtherThanMewtwoLv53"] = {"source_symbol": "Che
 # >>> factory-mutation RemoveFromListDifferentCardOfGivenType
 MUTATIONS["RemoveFromListDifferentCardOfGivenType"] = {"source_symbol": "RemoveFromListDifferentCardOfGivenType", "before": "matches = (d == 0x02u);", "after": "matches = (d == 0x03u);", "case_ids": ["RemoveFromListDifferentCardOfGivenType-2"]}
 # <<< factory-mutation RemoveFromListDifferentCardOfGivenType
+# >>> factory-mutation CountPokemonCardsInHandAndInPlayArea
+MUTATIONS["CountPokemonCardsInHandAndInPlayArea"] = {
+    "source_symbol": "CountPokemonCardsInHandAndInPlayArea",
+    "before": "GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;",
+    "after": "GetTurnDuelistVariable((uint8_t)(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA + 1u)).a;",
+    "case_ids": ["CountPokemonCardsInHandAndInPlayArea-0", "CountPokemonCardsInHandAndInPlayArea-1"],
+}
+# <<< factory-mutation CountPokemonCardsInHandAndInPlayArea

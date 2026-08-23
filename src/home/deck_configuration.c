@@ -776,3 +776,12 @@ ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void)
 	return (ConfirmSelectionAndReturnCarryResult){a, e};
 }
 /* <<< factory ConfirmSelectionAndReturnCarry */
+
+/* >>> factory AddCardIDToVisibleList */
+void AddCardIDToVisibleList(uint8_t b, uint8_t e)
+{
+	uint8_t num_entries = gb_read8(wNumVisibleCardListEntries_ADDR);
+	uint8_t offset = (uint8_t)(num_entries - b);
+	gb_write8((uint16_t)(wVisibleListCardIDs_ADDR + offset), e);
+}
+/* <<< factory AddCardIDToVisibleList */

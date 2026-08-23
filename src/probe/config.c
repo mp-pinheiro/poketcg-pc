@@ -22,9 +22,19 @@ static void adapt_SaveConfigSettings(ProbeState *s)
 }
 /* <<< factory SaveConfigSettings */
 
+/* >>> factory ShowConfigMenuCursor */
+static void adapt_ShowConfigMenuCursor(ProbeState *s)
+{
+	ShowConfigMenuCursorResult r = ShowConfigMenuCursor(s->a, s->b, s->c);
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory ShowConfigMenuCursor */
+
 const ProbeEntry probe_entries_config[] = {
 	{ "DrawConfigMenuCursor", adapt_DrawConfigMenuCursor },
 	{ "GetConfigCursorPositions", adapt_GetConfigCursorPositions },
 	{ "SaveConfigSettings", adapt_SaveConfigSettings },
+	{ "ShowConfigMenuCursor", adapt_ShowConfigMenuCursor },
 	{ NULL, NULL },
 };

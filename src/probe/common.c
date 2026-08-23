@@ -126,6 +126,13 @@ static void adapt_RemoveFromListDifferentCardOfGivenType(ProbeState *s)
 }
 /* <<< factory RemoveFromListDifferentCardOfGivenType */
 
+/* >>> factory CountPokemonCardsInHandAndInPlayArea */
+static void adapt_CountPokemonCardsInHandAndInPlayArea(ProbeState *s)
+{
+	s->a = CountPokemonCardsInHandAndInPlayArea(s->c);
+}
+/* <<< factory CountPokemonCardsInHandAndInPlayArea */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -140,5 +147,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "CalculateBDividedByA_Bank8", adapt_CalculateBDividedByA_Bank8 },
 	{ "CheckIfPlayerHasPokemonOtherThanMewtwoLv53", adapt_CheckIfPlayerHasPokemonOtherThanMewtwoLv53 },
 	{ "RemoveFromListDifferentCardOfGivenType", adapt_RemoveFromListDifferentCardOfGivenType },
+	{ "CountPokemonCardsInHandAndInPlayArea", adapt_CountPokemonCardsInHandAndInPlayArea },
 	{ NULL, NULL },
 };
