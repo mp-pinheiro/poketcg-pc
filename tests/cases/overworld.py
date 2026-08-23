@@ -262,6 +262,12 @@ wWhichSprite = 0xD4CF
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 wDoFrameFunction = 0xCAD3
+
+wBGMapBank = 0xD23D
+wBGMapHeight = 0xD130
+wBGMapPermissionDataPtr = 0xD23A
+wBGMapWidth = 0xD12F
+wDecompressionSecondaryBuffer = 0xC000
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -530,6 +536,20 @@ CASES["Func_c4b9"] = [
 ]
 # <<< factory Func_c4b9
 
+# >>> factory DecompressPermissionMap
+CONTRACT["DecompressPermissionMap"] = {"compare": ("hl", "d", "e"), "preserve": ()}
+CASES["DecompressPermissionMap"] = [
+    {"hl": 0x1234, "wram": {wBGMapPermissionDataPtr: b"\x00\x00"}},
+    {"hl": 0xC300, "wram": {
+        wBGMapPermissionDataPtr: b"\x01\x00",
+        wBGMapBank: b"\x00",
+        wBGMapHeight: b"\x01",
+        wBGMapWidth: b"\x01",
+    }, "read": {wBGMapPermissionDataPtr: 2, wDecompressionSecondaryBuffer: 0x10, 0xC300: 0x10}},
+    dict(POISON, hl=0x1234, wram={wBGMapPermissionDataPtr: b"\x00\x00"}),
+]
+# <<< factory DecompressPermissionMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -724,3 +744,6 @@ MUTATIONS["Func_c4b9"] = {
     "case_ids": ["Func_c4b9-0", "Func_c4b9-1"],
 }
 # <<< factory-mutation Func_c4b9
+# >>> factory-mutation DecompressPermissionMap
+MUTATIONS["DecompressPermissionMap"] = {"source_symbol": "DecompressPermissionMap", "before": "\t\tdest = (uint16_t)(dest + 0x10u);", "after": "\t\tdest = (uint16_t)(dest + 0x08u);", "case_ids": ["DecompressPermissionMap-1"]}
+# <<< factory-mutation DecompressPermissionMap

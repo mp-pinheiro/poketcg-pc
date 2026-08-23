@@ -153,4 +153,8 @@ void Func_c66c(void);
 /* >>> factory Func_c4b9 */
 void Func_c4b9(void);
 /* <<< factory Func_c4b9 */
+/* >>> factory DecompressPermissionMap */
+typedef struct { uint16_t hl; uint8_t d; uint8_t e; } DecompressPermissionMapResult;
+DecompressPermissionMapResult DecompressPermissionMap(uint16_t hl);
+/* <<< factory DecompressPermissionMap */
 #endif /* POKETCG_HOME_OVERWORLD_H */

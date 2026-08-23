@@ -84,6 +84,14 @@ CASES["Func_9001"] = [
 ]
 # <<< factory Func_9001
 
+# >>> factory LoadHandCardsIcon
+CONTRACT["LoadHandCardsIcon"] = {"compare": ("hl", "d", "e"), "preserve": ()}
+CASES["LoadHandCardsIcon"] = [
+    {"vread": {0: {0x9380: 32}}},
+    dict(POISON),
+]
+# <<< factory LoadHandCardsIcon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -112,3 +120,6 @@ MUTATIONS["CopyDeckFromSRAM"] = {"source_symbol": "CopyDeckFromSRAM", "before": 
 # >>> factory-mutation Func_9001
 MUTATIONS["Func_9001"] = {"source_symbol": "Func_9001", "before": "\tstatic const uint16_t steps[3] = {(uint16_t)-100, (uint16_t)-10, (uint16_t)-1};", "after": "\tstatic const uint16_t steps[3] = {(uint16_t)-100, (uint16_t)-10, (uint16_t)-2};", "case_ids": ["Func_9001-0", "Func_9001-2"]}
 # <<< factory-mutation Func_9001
+# >>> factory-mutation LoadHandCardsIcon
+MUTATIONS["LoadHandCardsIcon"] = {"source_symbol": "LoadHandCardsIcon", "before": "\tuint16_t de = v0Tiles2_dest;", "after": "\tuint16_t de = (uint16_t)(v0Tiles2_dest + 1u);", "case_ids": ["LoadHandCardsIcon-0"]}
+# <<< factory-mutation LoadHandCardsIcon

@@ -544,6 +544,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #define DUELVARS_BENCH 0xbcu
 #define PLAY_AREA_BENCH_5 0x05u
+
+#define CONFUSED 0x01u
+#define NO_STATUS 0x00u
+#define SYM_ASLEEP 0x09u
+#define SYM_CONFUSED 0x0au
+#define SYM_PARALYZED 0x0bu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3437,3 +3443,12 @@ loop_bench:
 	goto loop_bench;
 }
 /* <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+
+/* >>> factory CheckPrintCnfSlpPrz */
+void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c)
+{
+	static const uint8_t status_symbols[4] = {SYM_SPACE, SYM_CONFUSED, SYM_ASLEEP, SYM_PARALYZED};
+	uint8_t status = (uint8_t)(a & CNF_SLP_PRZ);
+	WriteByteToBGMap0(status_symbols[status], b, c);
+}
+/* <<< factory CheckPrintCnfSlpPrz */

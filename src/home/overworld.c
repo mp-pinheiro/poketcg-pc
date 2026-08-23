@@ -667,3 +667,25 @@ void Func_c4b9(void)
 		OverworldMap_InitCursorSprite();
 }
 /* <<< factory Func_c4b9 */
+
+/* >>> factory DecompressPermissionMap */
+DecompressPermissionMapResult DecompressPermissionMap(uint16_t hl)
+{
+	uint8_t ptr_lo = gb_read8(wBGMapPermissionDataPtr_ADDR);
+	uint8_t ptr_hi = gb_read8((uint16_t)(wBGMapPermissionDataPtr_ADDR + 1u));
+	if ((uint8_t)(ptr_hi | ptr_lo) == 0u)
+		return (DecompressPermissionMapResult){hl, ptr_hi, ptr_lo};
+
+	InitDataDecompression((uint16_t)((uint16_t)ptr_hi << 8 | ptr_lo), 0xC0u);
+	wTempPointerBank = wBGMapBank;
+	uint8_t rows = (uint8_t)((uint8_t)(wBGMapHeight + 1u) >> 1);
+	uint8_t cols = (uint8_t)((uint8_t)(wBGMapWidth + 1u) >> 1);
+	uint16_t dest = hl;
+	do {
+		DecompressDataFromBank(cols, dest);
+		dest = (uint16_t)(dest + 0x10u);
+		rows--;
+	} while (rows != 0u);
+	return (DecompressPermissionMapResult){hl, (uint8_t)(dest >> 8), (uint8_t)dest};
+}
+/* <<< factory DecompressPermissionMap */

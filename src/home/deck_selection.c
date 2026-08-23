@@ -25,6 +25,9 @@
 
 #include "home/deck_selection.h"
 #define SYM_0 0x20u
+
+#define HandCardsGfx 0x4d15u
+#define v0Tiles2_dest 0x9380u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -142,3 +145,14 @@ Func_9001Result Func_9001(uint16_t hl)
 	return (Func_9001Result){a, f, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
 /* <<< factory Func_9001 */
+
+/* >>> factory LoadHandCardsIcon */
+LoadHandCardsIconResult LoadHandCardsIcon(void)
+{
+	gb_write8(0x2000u, 0x02u);
+	uint16_t hl = HandCardsGfx;
+	uint16_t de = v0Tiles2_dest;
+	CopyListFromHLToDE(&hl, &de);
+	return (LoadHandCardsIconResult){hl, (uint8_t)(de >> 8), (uint8_t)de};
+}
+/* <<< factory LoadHandCardsIcon */

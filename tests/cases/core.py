@@ -1899,6 +1899,16 @@ CASES["HandleAIEnergyScoringForRepeatedBenchPokemon"] = [
 ]
 # <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon
 
+# >>> factory CheckPrintCnfSlpPrz
+CONTRACT["CheckPrintCnfSlpPrz"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
+CASES["CheckPrintCnfSlpPrz"] = [
+    {"a": 0x00, "b": 0x05, "c": 0x03, "vread": {0: {0x9865: 1}}},
+    {"a": 0x01, "b": 0x05, "c": 0x03, "vread": {0: {0x9865: 1}}},
+    {"a": 0x02, "b": 0x05, "c": 0x03, "vread": {0: {0x9865: 1}}},
+    dict(POISON, a=0x03, b=0x05, c=0x03, vread={0: {0x9865: 1}}),
+]
+# <<< factory CheckPrintCnfSlpPrz
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2897,3 +2907,6 @@ MUTATIONS["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
     "case_ids": ["HandleAIEnergyScoringForRepeatedBenchPokemon-0"],
 }
 # <<< factory-mutation HandleAIEnergyScoringForRepeatedBenchPokemon
+# >>> factory-mutation CheckPrintCnfSlpPrz
+MUTATIONS["CheckPrintCnfSlpPrz"] = {"source_symbol": "CheckPrintCnfSlpPrz", "before": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_CONFUSED, SYM_ASLEEP, SYM_PARALYZED};", "after": "\tstatic const uint8_t status_symbols[4] = {SYM_SPACE, SYM_PARALYZED, SYM_ASLEEP, SYM_CONFUSED};", "case_ids": ["CheckPrintCnfSlpPrz-1"]}
+# <<< factory-mutation CheckPrintCnfSlpPrz

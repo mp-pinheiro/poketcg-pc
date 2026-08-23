@@ -650,4 +650,7 @@ void AIPickPrizeCards(void);
 typedef struct { uint8_t a; uint8_t f; } HandleAIEnergyScoringForRepeatedBenchPokemonResult;
 HandleAIEnergyScoringForRepeatedBenchPokemonResult HandleAIEnergyScoringForRepeatedBenchPokemon(void);
 /* <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+/* >>> factory CheckPrintCnfSlpPrz */
+void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory CheckPrintCnfSlpPrz */
 #endif
