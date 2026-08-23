@@ -95,6 +95,16 @@ static void adapt_LoadHandCardsIcon(ProbeState *s)
 }
 /* <<< factory LoadHandCardsIcon */
 
+/* >>> factory InitPromotionalCardAndDeckCounterSaveData */
+static void adapt_InitPromotionalCardAndDeckCounterSaveData(ProbeState *s)
+{
+	LoadHandCardsIconResult r = InitPromotionalCardAndDeckCounterSaveData();
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory InitPromotionalCardAndDeckCounterSaveData */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -105,5 +115,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "CopyDeckFromSRAM", adapt_CopyDeckFromSRAM },
 	{ "Func_9001", adapt_Func_9001 },
 	{ "LoadHandCardsIcon", adapt_LoadHandCardsIcon },
+	{ "InitPromotionalCardAndDeckCounterSaveData", adapt_InitPromotionalCardAndDeckCounterSaveData },
 	{ NULL, NULL },
 };

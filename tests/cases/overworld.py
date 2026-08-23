@@ -268,6 +268,9 @@ wBGMapHeight = 0xD130
 wBGMapPermissionDataPtr = 0xD23A
 wBGMapWidth = 0xD12F
 wDecompressionSecondaryBuffer = 0xC000
+
+wBGMapPermissionDataPtr = 0xD23A
+wPermissionMap = 0xD133
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -550,6 +553,14 @@ CASES["DecompressPermissionMap"] = [
 ]
 # <<< factory DecompressPermissionMap
 
+# >>> factory LoadPermissionMap
+CONTRACT["LoadPermissionMap"] = {"compare": ("hl", "b", "c"), "preserve": ("hl", "b", "c")}
+CASES["LoadPermissionMap"] = [
+    {"wram": {wBGMapPermissionDataPtr: b"\x00\x00"}, "read": {wPermissionMap: 256}},
+    dict(POISON, wram={wBGMapPermissionDataPtr: b"\x00\x00"}, read={wPermissionMap: 256}),
+]
+# <<< factory LoadPermissionMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -747,3 +758,6 @@ MUTATIONS["Func_c4b9"] = {
 # >>> factory-mutation DecompressPermissionMap
 MUTATIONS["DecompressPermissionMap"] = {"source_symbol": "DecompressPermissionMap", "before": "\t\tdest = (uint16_t)(dest + 0x10u);", "after": "\t\tdest = (uint16_t)(dest + 0x08u);", "case_ids": ["DecompressPermissionMap-1"]}
 # <<< factory-mutation DecompressPermissionMap
+# >>> factory-mutation LoadPermissionMap
+MUTATIONS["LoadPermissionMap"] = {"source_symbol": "LoadPermissionMap", "before": "gb_write8((uint16_t)(wPermissionMap_ADDR + i), 0x80u);", "after": "gb_write8((uint16_t)(wPermissionMap_ADDR + i), 0x00u);", "case_ids": ["LoadPermissionMap-0", "LoadPermissionMap-1"]}
+# <<< factory-mutation LoadPermissionMap

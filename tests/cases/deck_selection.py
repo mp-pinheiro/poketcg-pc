@@ -29,6 +29,9 @@ wCurDeck = 0xCEB1
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+sHasPromotionalCards = 0xB703
+sUnnamedDeckCounter = 0xB701
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -92,6 +95,16 @@ CASES["LoadHandCardsIcon"] = [
 ]
 # <<< factory LoadHandCardsIcon
 
+# >>> factory InitPromotionalCardAndDeckCounterSaveData
+CONTRACT["InitPromotionalCardAndDeckCounterSaveData"] = {"compare": ("hl", "d", "e"), "preserve": ()}
+CASES["InitPromotionalCardAndDeckCounterSaveData"] = [
+    {"sram": {0: {sHasPromotionalCards: b"\xFF\xFF\xFF\xFF", sUnnamedDeckCounter: b"\xFF"}},
+     "vread": {0: {0x9380: 32}}, "sread": {0: {sHasPromotionalCards: 4, sUnnamedDeckCounter: 1}}},
+    dict(POISON, sram={0: {sHasPromotionalCards: b"\x00\x00\x00\x00", sUnnamedDeckCounter: b"\x00"}},
+         vread={0: {0x9380: 32}}, sread={0: {sHasPromotionalCards: 4, sUnnamedDeckCounter: 1}}),
+]
+# <<< factory InitPromotionalCardAndDeckCounterSaveData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -123,3 +136,6 @@ MUTATIONS["Func_9001"] = {"source_symbol": "Func_9001", "before": "\tstatic cons
 # >>> factory-mutation LoadHandCardsIcon
 MUTATIONS["LoadHandCardsIcon"] = {"source_symbol": "LoadHandCardsIcon", "before": "\tuint16_t de = v0Tiles2_dest;", "after": "\tuint16_t de = (uint16_t)(v0Tiles2_dest + 1u);", "case_ids": ["LoadHandCardsIcon-0"]}
 # <<< factory-mutation LoadHandCardsIcon
+# >>> factory-mutation InitPromotionalCardAndDeckCounterSaveData
+MUTATIONS["InitPromotionalCardAndDeckCounterSaveData"] = {"source_symbol": "InitPromotionalCardAndDeckCounterSaveData", "before": "\tgb_write8(sUnnamedDeckCounter_ADDR, 1u);", "after": "\tgb_write8(sUnnamedDeckCounter_ADDR, 0u);", "case_ids": ["InitPromotionalCardAndDeckCounterSaveData-0", "InitPromotionalCardAndDeckCounterSaveData-1"]}
+# <<< factory-mutation InitPromotionalCardAndDeckCounterSaveData

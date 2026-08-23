@@ -689,3 +689,12 @@ DecompressPermissionMapResult DecompressPermissionMap(uint16_t hl)
 	return (DecompressPermissionMapResult){hl, (uint8_t)(dest >> 8), (uint8_t)dest};
 }
 /* <<< factory DecompressPermissionMap */
+
+/* >>> factory LoadPermissionMap */
+void LoadPermissionMap(void)
+{
+	for (uint16_t i = 0; i < 256u; i++)
+		gb_write8((uint16_t)(wPermissionMap_ADDR + i), 0x80u);
+	DecompressPermissionMap(wPermissionMap_ADDR);
+}
+/* <<< factory LoadPermissionMap */

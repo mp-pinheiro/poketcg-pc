@@ -1,0 +1,9 @@
+{
+  "fn": "InitPromotionalCardAndDeckCounterSaveData",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitPromotionalCardAndDeckCounterSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 147, \"e\": 192, \"f\": 0, \"hl\": 19798, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"46849\": \"01\", \"46851\": \"00010101\"}}, \"vram\": {\"0\": {\"37760\": \"07071c1c25244d449d849d854e462727f0f01818e424da42bd811d0109018202\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitPromotionalCardAndDeckCounterSaveData\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"0100010101\", \"native\": \"0000010101\"}}}\n",
+  "restored": "{\"fn\": \"InitPromotionalCardAndDeckCounterSaveData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 147, \"e\": 192, \"f\": 0, \"hl\": 19798, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"46849\": \"01\", \"46851\": \"00010101\"}}, \"vram\": {\"0\": {\"37760\": \"07071c1c25244d449d849d854e462727f0f01818e424da42bd811d0109018202\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

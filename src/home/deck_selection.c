@@ -156,3 +156,17 @@ LoadHandCardsIconResult LoadHandCardsIcon(void)
 	return (LoadHandCardsIconResult){hl, (uint8_t)(de >> 8), (uint8_t)de};
 }
 /* <<< factory LoadHandCardsIcon */
+
+/* >>> factory InitPromotionalCardAndDeckCounterSaveData */
+LoadHandCardsIconResult InitPromotionalCardAndDeckCounterSaveData(void)
+{
+	EnableSRAM();
+	gb_write8(sHasPromotionalCards_ADDR, 0u);
+	gb_write8((uint16_t)(sHasPromotionalCards_ADDR + 1u), 1u);
+	gb_write8((uint16_t)(sHasPromotionalCards_ADDR + 2u), 1u);
+	gb_write8((uint16_t)(sHasPromotionalCards_ADDR + 3u), 1u);
+	gb_write8(sUnnamedDeckCounter_ADDR, 1u);
+	DisableSRAM();
+	return LoadHandCardsIcon();
+}
+/* <<< factory InitPromotionalCardAndDeckCounterSaveData */
