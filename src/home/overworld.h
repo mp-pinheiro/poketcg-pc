@@ -147,4 +147,7 @@ void SetOverworldDoFrameFunction(void);
 /* >>> factory Func_c3ee */
 void Func_c3ee(void);
 /* <<< factory Func_c3ee */
+/* >>> factory Func_c66c */
+void Func_c66c(void);
+/* <<< factory Func_c66c */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "IntroSequenceCmd_WaitOrbsAnimation",
+  "case": "tests/cases/intro_sequence_commands.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IntroSequenceCmd_WaitOrbsAnimation\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54494\": \"ff\", \"54510\": \"ff\", \"54526\": \"ff\", \"54542\": \"ff\", \"54558\": \"ff\", \"54574\": \"ff\", \"54590\": \"ff\", \"54825\": \"00010203040506\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IntroSequenceCmd_WaitOrbsAnimation\", \"mismatches\": {\"a\": [0, 255], \"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"IntroSequenceCmd_WaitOrbsAnimation\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54494\": \"ff\", \"54510\": \"ff\", \"54526\": \"ff\", \"54542\": \"ff\", \"54558\": \"ff\", \"54574\": \"ff\", \"54590\": \"ff\", \"54825\": \"00010203040506\"}}, \"status\": \"PASS\"}\n"
+}

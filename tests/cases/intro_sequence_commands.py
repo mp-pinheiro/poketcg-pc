@@ -78,6 +78,21 @@ CASES["IntroSequenceCmd_WaitSFX"] = [
 ]
 # <<< factory IntroSequenceCmd_WaitSFX
 
+# >>> factory IntroSequenceCmd_WaitOrbsAnimation
+CONTRACT["IntroSequenceCmd_WaitOrbsAnimation"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["IntroSequenceCmd_WaitOrbsAnimation"] = [
+    {"wram": {0xD629: bytes([0,1,2,3,4,5,6]), 0xD4D0 + 0*16 + 14: b"\x05"}},
+    dict(POISON, wram={0xD629: bytes([0,1,2,3,4,5,6]),
+         0xD4D0 + 0*16 + 14: b"\xFF", 0xD4D0 + 1*16 + 14: b"\xFF", 0xD4D0 + 2*16 + 14: b"\xFF",
+         0xD4D0 + 3*16 + 14: b"\xFF", 0xD4D0 + 4*16 + 14: b"\xFF", 0xD4D0 + 5*16 + 14: b"\xFF",
+         0xD4D0 + 6*16 + 14: b"\xFF"}),
+    {"wram": {0xD629: bytes([0,1,2,3,4,5,6]),
+        0xD4D0 + 0*16 + 14: b"\xFF", 0xD4D0 + 1*16 + 14: b"\xFF", 0xD4D0 + 2*16 + 14: b"\xFF",
+        0xD4D0 + 3*16 + 14: b"\xFF", 0xD4D0 + 4*16 + 14: b"\xFF", 0xD4D0 + 5*16 + 14: b"\xFF",
+        0xD4D0 + 6*16 + 14: b"\x00"}},
+]
+# <<< factory IntroSequenceCmd_WaitOrbsAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -108,3 +123,6 @@ MUTATIONS["IntroSequenceCmd_FadeIn"] = {"source_symbol": "IntroSequenceCmd_FadeI
 # >>> factory-mutation IntroSequenceCmd_WaitSFX
 MUTATIONS["IntroSequenceCmd_WaitSFX"] = {"source_symbol": "IntroSequenceCmd_WaitSFX", "before": "\tuint8_t a = AssertSFXFinished();\n\tif (a == 0u) {", "after": "\tuint8_t a = AssertSFXFinished();\n\tif (a != 0u) {", "case_ids": ["IntroSequenceCmd_WaitSFX-0", "IntroSequenceCmd_WaitSFX-1"]}
 # <<< factory-mutation IntroSequenceCmd_WaitSFX
+# >>> factory-mutation IntroSequenceCmd_WaitOrbsAnimation
+MUTATIONS["IntroSequenceCmd_WaitOrbsAnimation"] = {"source_symbol": "IntroSequenceCmd_WaitOrbsAnimation", "before": "\t\tif (counter != 0xFFu) {", "after": "\t\tif (counter != 0xFEu) {", "case_ids": ["IntroSequenceCmd_WaitOrbsAnimation-1", "IntroSequenceCmd_WaitOrbsAnimation-2"]}
+# <<< factory-mutation IntroSequenceCmd_WaitOrbsAnimation

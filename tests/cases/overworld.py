@@ -508,6 +508,18 @@ CASES["Func_c3ee"] = [
 ]
 # <<< factory Func_c3ee
 
+# >>> factory Func_c66c
+CONTRACT["Func_c66c"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_c66c"] = [
+    {"wram": {0xFF90: b"\x00", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x10", 0xD237: b"\x00", 0xD238: b"\x00"},
+     "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
+    dict(POISON, wram={0xFF90: b"\x02", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x01", 0xD237: b"\x00", 0xD238: b"\x00"},
+         read={0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}),
+    {"wram": {0xFF90: b"\x02", 0xD334: b"\x00", 0xD332: b"\x20", 0xD333: b"\x30", 0xD335: b"\x01", 0xD338: b"\x02", 0xD237: b"\x00", 0xD238: b"\x00"},
+     "read": {0xD332: 1, 0xD333: 1, 0xD335: 1, 0xD338: 1, 0xD233: 1, 0xD234: 1, 0xD3A0: 1, 0xD3A1: 1}},
+]
+# <<< factory Func_c66c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -691,3 +703,6 @@ MUTATIONS["SetOverworldDoFrameFunction"] = {"source_symbol": "SetOverworldDoFram
 # >>> factory-mutation Func_c3ee
 MUTATIONS["Func_c3ee"] = {"source_symbol": "Func_c3ee", "before": "\t\tgb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~0x10u));", "after": "\t\tgb_write8(hl, gb_read8(hl));", "case_ids": ["Func_c3ee-0", "Func_c3ee-1"]}
 # <<< factory-mutation Func_c3ee
+# >>> factory-mutation Func_c66c
+MUTATIONS["Func_c66c"] = {"source_symbol": "Func_c66c", "before": "\t\tif (wd338_val >= 2u)\n\t\t\tc = 2u;", "after": "\t\tif (wd338_val >= 3u)\n\t\t\tc = 2u;", "case_ids": ["Func_c66c-2"]}
+# <<< factory-mutation Func_c66c

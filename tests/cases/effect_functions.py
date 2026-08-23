@@ -2829,6 +2829,14 @@ CASES["Thunderpunch_AIEffect"] = [
 ]
 # <<< factory Thunderpunch_AIEffect
 
+# >>> factory StarmieRecover_AISelectEffect
+CONTRACT["StarmieRecover_AISelectEffect"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["StarmieRecover_AISelectEffect"] = [
+    {"wram": {0xFF97: b"\x00"}, "read": {0xC510: 1, 0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\x00"}, read={0xC510: 1, 0xFFA0: 1}),
+]
+# <<< factory StarmieRecover_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4676,3 +4684,6 @@ MUTATIONS["SandslashFurySwipes_AIEffect"] = {"source_symbol": "SandslashFurySwip
 # >>> factory-mutation Thunderpunch_AIEffect
 MUTATIONS["Thunderpunch_AIEffect"] = {"source_symbol": "Thunderpunch_AIEffect", "before": "void Thunderpunch_AIEffect(void)\n{\n\tSetExpectedAIDamage(35u, 30u, 40u);\n}", "after": "void Thunderpunch_AIEffect(void)\n{\n\tSetExpectedAIDamage(36u, 30u, 40u);\n}", "case_ids": ["Thunderpunch_AIEffect-0", "Thunderpunch_AIEffect-1"]}
 # <<< factory-mutation Thunderpunch_AIEffect
+# >>> factory-mutation StarmieRecover_AISelectEffect
+MUTATIONS["StarmieRecover_AISelectEffect"] = {"source_symbol": "StarmieRecover_AISelectEffect", "before": "\tuint8_t a = wDuelTempList;\n\thTemp_ffa0 = a;", "after": "\tuint8_t a = wDuelTempList;\n\thTemp_ffa0 = 0u;", "case_ids": ["StarmieRecover_AISelectEffect-0", "StarmieRecover_AISelectEffect-1"]}
+# <<< factory-mutation StarmieRecover_AISelectEffect

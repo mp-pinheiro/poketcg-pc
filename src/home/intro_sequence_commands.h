@@ -31,4 +31,8 @@ IntroSequenceCmd_FadeInResult IntroSequenceCmd_FadeIn(void);
 typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdWaitSFXResult;
 IntroSequenceCmdWaitSFXResult IntroSequenceCmd_WaitSFX(void);
 /* <<< factory IntroSequenceCmd_WaitSFX */
+/* >>> factory IntroSequenceCmd_WaitOrbsAnimation */
+typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdWaitOrbsAnimationResult;
+IntroSequenceCmdWaitOrbsAnimationResult IntroSequenceCmd_WaitOrbsAnimation(void);
+/* <<< factory IntroSequenceCmd_WaitOrbsAnimation */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

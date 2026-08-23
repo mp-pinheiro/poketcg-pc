@@ -295,6 +295,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define CannotUseSinceTheresOnly1PkmnText 0x00cfu
 
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define TYPE_ENERGY_WATER 0x0Bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4319,3 +4324,13 @@ void Thunderpunch_AIEffect(void)
 	SetExpectedAIDamage(35u, 30u, 40u);
 }
 /* <<< factory Thunderpunch_AIEffect */
+
+/* >>> factory StarmieRecover_AISelectEffect */
+StarmieRecoverAISelectEffectResult StarmieRecover_AISelectEffect(void)
+{
+	CreateListOfEnergyAttachedToArenaResult result = CreateListOfEnergyAttachedToArena(TYPE_ENERGY_WATER);
+	uint8_t a = wDuelTempList;
+	hTemp_ffa0 = a;
+	return (StarmieRecoverAISelectEffectResult){a, result.f};
+}
+/* <<< factory StarmieRecover_AISelectEffect */

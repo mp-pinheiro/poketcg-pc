@@ -90,6 +90,11 @@
 
 #include "generated/wram.h"
 #include "home/sprite_animations.h"
+
+#include "home/overworld.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define B_PAD_B_MASK 0x02u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -595,3 +600,17 @@ void Func_c3ee(void)
 	}
 }
 /* <<< factory Func_c3ee */
+
+/* >>> factory Func_c66c */
+void Func_c66c(void)
+{
+	uint8_t c = 1u;
+	uint8_t keys = hKeysHeld;
+	if (keys & B_PAD_B_MASK) {
+		uint8_t wd338_val = wd338;
+		if (wd338_val >= 2u)
+			c = 2u;
+	}
+	Func_c694(wPlayerDirection, c);
+}
+/* <<< factory Func_c66c */

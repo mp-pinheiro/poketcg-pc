@@ -2590,6 +2590,15 @@ static void adapt_Thunderpunch_AIEffect(ProbeState *s)
 }
 /* <<< factory Thunderpunch_AIEffect */
 
+/* >>> factory StarmieRecover_AISelectEffect */
+static void adapt_StarmieRecover_AISelectEffect(ProbeState *s)
+{
+	StarmieRecoverAISelectEffectResult r = StarmieRecover_AISelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory StarmieRecover_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2911,5 +2920,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PinMissile_AIEffect", adapt_PinMissile_AIEffect },
 	{ "SandslashFurySwipes_AIEffect", adapt_SandslashFurySwipes_AIEffect },
 	{ "Thunderpunch_AIEffect", adapt_Thunderpunch_AIEffect },
+	{ "StarmieRecover_AISelectEffect", adapt_StarmieRecover_AISelectEffect },
 	{ NULL, NULL },
 };

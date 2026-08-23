@@ -43,6 +43,11 @@ static void UpdateSpriteAttributes(void)
 #include "home/intro_sequence_commands.h"
 #include "home/sound.h"
 #include "generated/wram.h"
+
+#include "home/intro_sequence_commands.h"
+#include "home/sprite_animations.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -138,3 +143,29 @@ IntroSequenceCmdWaitSFXResult IntroSequenceCmd_WaitSFX(void)
 	return (IntroSequenceCmdWaitSFXResult){a, f};
 }
 /* <<< factory IntroSequenceCmd_WaitSFX */
+
+/* >>> factory IntroSequenceCmd_WaitOrbsAnimation */
+IntroSequenceCmdWaitOrbsAnimationResult IntroSequenceCmd_WaitOrbsAnimation(void)
+{
+	uint16_t de = wTitleScreenSprites_ADDR;
+	uint8_t c = 7u;
+	uint8_t counter;
+	for (;;) {
+		uint8_t a = gb_read8(de);
+		wWhichSprite = a;
+		counter = GetSpriteAnimCounter();
+		if (counter != 0xFFu) {
+			uint8_t z = (counter == 0u) ? 0x80u : 0x00u;
+			return (IntroSequenceCmdWaitOrbsAnimationResult){counter, z};
+		}
+		de = (uint16_t)(de + 1u);
+		c = (uint8_t)(c - 1u);
+		if (c != 0u)
+			continue;
+		break;
+	}
+	AdvanceIntroSequenceCmdPtrBy2();
+	uint8_t exit_a = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	return (IntroSequenceCmdWaitOrbsAnimationResult){exit_a, 0x90u};
+}
+/* <<< factory IntroSequenceCmd_WaitOrbsAnimation */
