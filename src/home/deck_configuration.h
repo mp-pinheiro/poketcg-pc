@@ -135,4 +135,7 @@ void AddCardIDToVisibleList(uint8_t b, uint8_t e);
 /* >>> factory HandleCardSelectionCursorBlink */
 DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void);
 /* <<< factory HandleCardSelectionCursorBlink */
+/* >>> factory DrawHandCardsTileOnCurDeck */
+void DrawHandCardsTileOnCurDeck(void);
+/* <<< factory DrawHandCardsTileOnCurDeck */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

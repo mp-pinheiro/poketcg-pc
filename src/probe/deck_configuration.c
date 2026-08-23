@@ -321,6 +321,14 @@ static void adapt_HandleCardSelectionCursorBlink(ProbeState *s)
 }
 /* <<< factory HandleCardSelectionCursorBlink */
 
+/* >>> factory DrawHandCardsTileOnCurDeck */
+static void adapt_DrawHandCardsTileOnCurDeck(ProbeState *s)
+{
+	(void)s;
+	DrawHandCardsTileOnCurDeck();
+}
+/* <<< factory DrawHandCardsTileOnCurDeck */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -358,5 +366,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "ConfirmSelectionAndReturnCarry", adapt_ConfirmSelectionAndReturnCarry },
 	{ "AddCardIDToVisibleList", adapt_AddCardIDToVisibleList },
 	{ "HandleCardSelectionCursorBlink", adapt_HandleCardSelectionCursorBlink },
+	{ "DrawHandCardsTileOnCurDeck", adapt_DrawHandCardsTileOnCurDeck },
 	{ NULL, NULL },
 };

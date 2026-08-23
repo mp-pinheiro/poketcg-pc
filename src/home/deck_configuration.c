@@ -808,3 +808,18 @@ DrawHorizontalListCursorResult HandleCardSelectionCursorBlink(void)
 	return DrawHorizontalListCursor_Invisible();
 }
 /* <<< factory HandleCardSelectionCursorBlink */
+
+/* >>> factory DrawHandCardsTileOnCurDeck */
+void DrawHandCardsTileOnCurDeck(void)
+{
+	/* rebuild after quarantine */
+	EnableSRAM();
+	uint8_t deck = gb_read8(sCurrentlySelectedDeck_ADDR);
+	DisableSRAM();
+	uint16_t hl = (uint16_t)(((uint16_t)3u << 8) | deck);
+	uint16_t product = HtimesL(hl);
+	uint8_t e = (uint8_t)((uint8_t)product + 1u);
+	uint16_t de = (uint16_t)(((uint16_t)2u << 8) | e);
+	DrawHandCardsTileAtDE(de);
+}
+/* <<< factory DrawHandCardsTileOnCurDeck */

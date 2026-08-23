@@ -157,6 +157,8 @@ wCheckMenuCursorBlinkCounter = 0xCEA3
 wVisibleCursorTile = 0xCEAA
 wCardListCursorPos = 0xCEA4
 wCardListCursorXPos = 0xCEA5
+
+sCurrentlySelectedDeck = 0xB700
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -422,6 +424,15 @@ CASES["HandleCardSelectionCursorBlink"] = [
 ]
 # <<< factory HandleCardSelectionCursorBlink
 
+# >>> factory DrawHandCardsTileOnCurDeck
+CONTRACT["DrawHandCardsTileOnCurDeck"] = {"compare": (), "preserve": ()}
+CASES["DrawHandCardsTileOnCurDeck"] = [
+    {"sram": {0: {sCurrentlySelectedDeck: b"\x00"}}, "vread": {0: {0x9800: 0x40}}},
+    {"sram": {0: {sCurrentlySelectedDeck: b"\x02"}}, "vread": {0: {0x9800: 0x100}}},
+    dict(POISON, sram={0: {sCurrentlySelectedDeck: b"\x00"}}, vread={0: {0x9800: 0x40}}),
+]
+# <<< factory DrawHandCardsTileOnCurDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -589,3 +600,6 @@ MUTATIONS["AddCardIDToVisibleList"] = {
 # >>> factory-mutation HandleCardSelectionCursorBlink
 MUTATIONS["HandleCardSelectionCursorBlink"] = {"source_symbol": "HandleCardSelectionCursorBlink", "before": "\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(counter_old + 1u));", "after": "\tgb_write8(wCheckMenuCursorBlinkCounter_ADDR, counter_old);", "case_ids": ["HandleCardSelectionCursorBlink-0", "HandleCardSelectionCursorBlink-1"]}
 # <<< factory-mutation HandleCardSelectionCursorBlink
+# >>> factory-mutation DrawHandCardsTileOnCurDeck
+MUTATIONS["DrawHandCardsTileOnCurDeck"] = {"source_symbol": "DrawHandCardsTileOnCurDeck", "before": "\tuint8_t e = (uint8_t)((uint8_t)product + 1u);", "after": "\tuint8_t e = (uint8_t)product;", "case_ids": ["DrawHandCardsTileOnCurDeck-0", "DrawHandCardsTileOnCurDeck-1"]}
+# <<< factory-mutation DrawHandCardsTileOnCurDeck

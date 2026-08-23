@@ -1,0 +1,9 @@
+{
+  "fn": "DrawHandCardsTileOnCurDeck",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawHandCardsTileOnCurDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"46848\": \"00\"}}, \"vram\": {\"0\": {\"38912\": \"00000000000000000000000000000000000000000000000000000000000000000000383900000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawHandCardsTileOnCurDeck\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawHandCardsTileOnCurDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"46848\": \"00\"}}, \"vram\": {\"0\": {\"38912\": \"00000000000000000000000000000000000000000000000000000000000000000000383900000000000000000000000000000000000000000000000000000000\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}
