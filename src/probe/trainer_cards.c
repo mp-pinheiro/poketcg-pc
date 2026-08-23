@@ -189,6 +189,15 @@ static void adapt_AIDecide_PokemonTrader_StrangePower(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader_StrangePower */
 
+/* >>> factory AIDecide_PokemonTrader_LegendaryArticuno */
+static void adapt_AIDecide_PokemonTrader_LegendaryArticuno(ProbeState *s)
+{
+	AIDecide_PokemonTrader_LegendaryArticunoResult r = AIDecide_PokemonTrader_LegendaryArticuno();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_PokemonTrader_LegendaryArticuno */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -213,5 +222,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonBreeder", adapt_AIDecide_PokemonBreeder },
 	{ "AIDecide_PokemonTrader_LegendaryMoltres", adapt_AIDecide_PokemonTrader_LegendaryMoltres },
 	{ "AIDecide_PokemonTrader_StrangePower", adapt_AIDecide_PokemonTrader_StrangePower },
+	{ "AIDecide_PokemonTrader_LegendaryArticuno", adapt_AIDecide_PokemonTrader_LegendaryArticuno },
 	{ NULL, NULL },
 };

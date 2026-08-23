@@ -1,0 +1,9 @@
+{
+  "fn": "WaterClubAfterDuel",
+  "case": "tests/cases/water_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WaterClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 24951, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WaterClubAfterDuel\", \"mismatches\": {\"hl\": [24951, 25168]}}\n",
+  "restored": "{\"fn\": \"WaterClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 24951, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

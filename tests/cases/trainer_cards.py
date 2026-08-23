@@ -284,6 +284,40 @@ CASES["AIDecide_PokemonTrader_StrangePower"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_StrangePower
 
+# >>> factory AIDecide_PokemonTrader_LegendaryArticuno
+CONTRACT["AIDecide_PokemonTrader_LegendaryArticuno"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_PokemonTrader_LegendaryArticuno"] = [
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x00",
+        0xC200: b"\x00",
+        wPlayerDeck: b"\x5E",
+        0xC2BB: b"\xFF",
+    }, "read": {0xC510: 32}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x02",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC40A: b"\xB8",
+        0xC40B: b"\xB8",
+        0xC405: b"\x4B",
+        0xC2BB: b"\xFF",
+    }, "expect": {wce1a: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, wram={
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x00",
+        0xC200: b"\x00",
+        wPlayerDeck: b"\x5E",
+        0xC2BB: b"\xFF",
+    }, read={0xC510: 32}),
+]
+# <<< factory AIDecide_PokemonTrader_LegendaryArticuno
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -446,3 +480,6 @@ MUTATIONS["AIDecide_PokemonTrader_LegendaryMoltres"] = {"source_symbol": "AIDeci
 # >>> factory-mutation AIDecide_PokemonTrader_StrangePower
 MUTATIONS["AIDecide_PokemonTrader_StrangePower"] = {"source_symbol": "AIDecide_PokemonTrader_StrangePower", "before": '\tLookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);\n\tif (!(r.f & 0x10u)) {\n\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0u;', "after": '\tLookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);\n\tif (!(r.f & 0x10u)) {\n\t\tuint8_t f = (r.a == 0u) ? 0x80u : 0x40u;', "case_ids": ["AIDecide_PokemonTrader_StrangePower-0"]}
 # <<< factory-mutation AIDecide_PokemonTrader_StrangePower
+# >>> factory-mutation AIDecide_PokemonTrader_LegendaryArticuno
+MUTATIONS["AIDecide_PokemonTrader_LegendaryArticuno"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryArticuno", "before": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(CHANSEY);", "after": "\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DITTO);", "case_ids": ["AIDecide_PokemonTrader_LegendaryArticuno-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_LegendaryArticuno

@@ -128,6 +128,10 @@ wLoadedCard2ID = 0xCC6C
 DECK_SIZE = 60
 MEWTWO_LV53 = 0x9D
 BULBASAUR = 0x08
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wTempAIPokemonCard = 0xCDF3
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -236,6 +240,30 @@ CASES["LookForCardIDToTradeWithDifferentHandCard"] = [
 ]
 # <<< factory LookForCardIDToTradeWithDifferentHandCard
 
+# >>> factory LookForCardIDInDeck_GivenCardIDInHand
+CONTRACT["LookForCardIDInDeck_GivenCardIDInHand"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDInDeck_GivenCardIDInHand"] = [
+    {"a": 0xAB, "b": 0x01, "wram": {hWhoseTurn: b"\xC2"}},
+    {"a": 0x00, "b": 0xAB, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
+    {"a": 0x00, "b": 0x01, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x03",
+        0xC200: b"\x00",
+        0xC403: b"\x01",
+        0xC2BB: b"\xFF",
+    }, "read": {0xC510: 32}},
+    dict(POISON, a=0x00, b=0x01, wram={
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x01",
+        0xC242: b"\x03",
+        0xC200: b"\x00",
+        0xC403: b"\x01",
+        0xC2BB: b"\xFF",
+    }, read={0xC510: 32}),
+]
+# <<< factory LookForCardIDInDeck_GivenCardIDInHand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -339,3 +367,6 @@ MUTATIONS["LookForCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDIn
 # >>> factory-mutation LookForCardIDToTradeWithDifferentHandCard
 MUTATIONS["LookForCardIDToTradeWithDifferentHandCard"] = {"source_symbol": "LookForCardIDToTradeWithDifferentHandCard", "before": "\tLookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, wTempAI);", "after": "\tLookForCardIDInLocationBank8Result r2 = LookForCardIDInLocation_Bank8((uint8_t)(CARD_LOCATION_DECK + 1u), wTempAI);", "case_ids": ["LookForCardIDToTradeWithDifferentHandCard-3"]}
 # <<< factory-mutation LookForCardIDToTradeWithDifferentHandCard
+# >>> factory-mutation LookForCardIDInDeck_GivenCardIDInHand
+MUTATIONS["LookForCardIDInDeck_GivenCardIDInHand"] = {"source_symbol": "LookForCardIDInDeck_GivenCardIDInHand", "before": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((r3.f & 0x80u) | 0x00u);", "case_ids": ["LookForCardIDInDeck_GivenCardIDInHand-2"]}
+# <<< factory-mutation LookForCardIDInDeck_GivenCardIDInHand

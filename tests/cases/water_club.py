@@ -52,6 +52,38 @@ CASES["WaterClubMovePlayer"] = [
 ]
 # <<< factory WaterClubMovePlayer
 
+# >>> factory-cases-statics
+wDuelResult = 0xD0C3
+wNPCDuelist = 0xD0C4
+wTempNPC = 0xD3AB
+wLoadedNPCs = 0xD34A
+wLoadedNPCTempIndex = 0xD3AA
+wScriptNPC = 0xD3B6
+wPlayerDirection = 0xD334
+wOverworldNPCFlags = 0xD0C1
+wNextScript = 0xD0C6
+wOverworldMode = 0xD0BF
+# <<< factory-cases-statics
+
+# >>> factory WaterClubAfterDuel
+CONTRACT["WaterClubAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["WaterClubAfterDuel"] = [
+    {"wram": {wDuelResult: b"\x01", wNPCDuelist: b"\x99"}},
+    {"wram": {
+        wDuelResult: b"\x00",
+        wNPCDuelist: b"\x1f",
+        wLoadedNPCs: b"\x1f" + b"\x00" * 95,
+        wLoadedNPCTempIndex: b"\xEE",
+        wScriptNPC: b"\xAA",
+        wPlayerDirection: b"\x01",
+        wOverworldNPCFlags: b"\x00",
+        wNextScript: b"\xFF\xFF",
+        wOverworldMode: b"\x00",
+    }, "expect": {wTempNPC: b"\x1f", wScriptNPC: b"\x00", wOverworldMode: b"\x03"}},
+    dict(POISON, wram={wDuelResult: b"\x01", wNPCDuelist: b"\x99"}),
+]
+# <<< factory WaterClubAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -68,3 +100,6 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation WaterClubMovePlayer
 MUTATIONS["WaterClubMovePlayer"] = {"source_symbol": "WaterClubMovePlayer", "before": "\tif (y != 8u) {", "after": "\tif (y != 9u) {", "case_ids": ["WaterClubMovePlayer-0", "WaterClubMovePlayer-1"]}
 # <<< factory-mutation WaterClubMovePlayer
+# >>> factory-mutation WaterClubAfterDuel
+MUTATIONS["WaterClubAfterDuel"] = {"source_symbol": "WaterClubAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(WaterClubAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(WaterClubAfterDuelTable + 1u));", "case_ids": ["WaterClubAfterDuel-0"]}
+# <<< factory-mutation WaterClubAfterDuel

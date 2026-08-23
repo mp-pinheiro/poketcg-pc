@@ -20,8 +20,23 @@ static void adapt_WaterClubMovePlayer(ProbeState *s)
 }
 /* <<< factory WaterClubMovePlayer */
 
+/* >>> factory WaterClubAfterDuel */
+static void adapt_WaterClubAfterDuel(ProbeState *s)
+{
+	WaterClubAfterDuelResult r = WaterClubAfterDuel();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory WaterClubAfterDuel */
+
 const ProbeEntry probe_entries_water_club[] = {
 	{"Preload_Amy", adapt_PreloadAmy},
 	{ "WaterClubMovePlayer", adapt_WaterClubMovePlayer },
+	{ "WaterClubAfterDuel", adapt_WaterClubAfterDuel },
 	{NULL, NULL},
 };

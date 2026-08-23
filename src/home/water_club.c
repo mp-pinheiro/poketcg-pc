@@ -8,6 +8,9 @@
 #define JOSHUA_DEFEATED 0x02u
 #define NPC_JOSHUA 0x21u
 #define Script_NotReadyToSeeAmy_ADDR 0x61C5u
+
+#include "home/grass_club_entrance.h"
+#define WaterClubAfterDuelTable 0x615eu
 /* <<< factory statics */
 
 #define W_ACTIVE_GAME_EVENT_ADDR 0xD0C2u
@@ -67,3 +70,12 @@ WaterClubMovePlayerResult WaterClubMovePlayer(uint8_t b, uint8_t c, uint16_t hl)
 	return (WaterClubMovePlayerResult){r.a, r.f, r.b, r.c, r.hl};
 }
 /* <<< factory WaterClubMovePlayer */
+
+/* >>> factory WaterClubAfterDuel */
+WaterClubAfterDuelResult WaterClubAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(WaterClubAfterDuelTable);
+	return (WaterClubAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory WaterClubAfterDuel */

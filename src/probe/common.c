@@ -170,6 +170,15 @@ static void adapt_LookForCardIDToTradeWithDifferentHandCard(ProbeState *s)
 }
 /* <<< factory LookForCardIDToTradeWithDifferentHandCard */
 
+/* >>> factory LookForCardIDInDeck_GivenCardIDInHand */
+static void adapt_LookForCardIDInDeck_GivenCardIDInHand(ProbeState *s)
+{
+	LookForCardIDInDeck_GivenCardIDInHandResult r = LookForCardIDInDeck_GivenCardIDInHand(s->a, s->b);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInDeck_GivenCardIDInHand */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -189,5 +198,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "LookForCardIDInHandList_Bank8", adapt_LookForCardIDInHandList_Bank8 },
 	{ "LookForCardIDInHandAndPlayArea", adapt_LookForCardIDInHandAndPlayArea },
 	{ "LookForCardIDToTradeWithDifferentHandCard", adapt_LookForCardIDToTradeWithDifferentHandCard },
+	{ "LookForCardIDInDeck_GivenCardIDInHand", adapt_LookForCardIDInDeck_GivenCardIDInHand },
 	{ NULL, NULL },
 };

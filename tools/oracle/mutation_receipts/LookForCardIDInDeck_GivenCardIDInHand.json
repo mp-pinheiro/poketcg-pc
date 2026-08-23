@@ -1,0 +1,9 @@
+{
+  "fn": "LookForCardIDInDeck_GivenCardIDInHand",
+  "case": "tests/cases/common.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"49730\": \"03\", \"49851\": \"ff\", \"49902\": \"01\", \"50179\": \"01\", \"50448\": \"03ff000000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"mismatches\": {\"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"LookForCardIDInDeck_GivenCardIDInHand\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"00\", \"49730\": \"03\", \"49851\": \"ff\", \"49902\": \"01\", \"50179\": \"01\", \"50448\": \"03ff000000000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
