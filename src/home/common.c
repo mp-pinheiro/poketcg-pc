@@ -431,3 +431,21 @@ LookForCardIDInLocationBank8Result LookForCardIDInLocation_Bank8(uint8_t locatio
 	return (LookForCardIDInLocationBank8Result){DECK_SIZE, 0x00u};
 }
 /* <<< factory LookForCardIDInLocation_Bank8 */
+
+/* >>> factory LookForCardIDInHandList_Bank8 */
+LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a)
+{
+	wTempCardIDToLook = a;
+	(void)CreateHandCardList(0u);
+	uint8_t *scan = wDuelTempList_PTR;
+	for (;;) {
+		uint8_t index = *scan++;
+		if (index == 0xFFu)
+			return (LookForCardIDInHandListResult){0xFFu, 0xC0u};
+		hTempCardIndex_ff98 = index;
+		uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(index);
+		if (card_id == wTempCardIDToLook)
+			return (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u};
+	}
+}
+/* <<< factory LookForCardIDInHandList_Bank8 */

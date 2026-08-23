@@ -142,6 +142,15 @@ static void adapt_LookForCardIDInLocation_Bank8(ProbeState *s)
 }
 /* <<< factory LookForCardIDInLocation_Bank8 */
 
+/* >>> factory LookForCardIDInHandList_Bank8 */
+static void adapt_LookForCardIDInHandList_Bank8(ProbeState *s)
+{
+	LookForCardIDInHandListResult r = LookForCardIDInHandList_Bank8(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory LookForCardIDInHandList_Bank8 */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -158,5 +167,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "RemoveFromListDifferentCardOfGivenType", adapt_RemoveFromListDifferentCardOfGivenType },
 	{ "CountPokemonCardsInHandAndInPlayArea", adapt_CountPokemonCardsInHandAndInPlayArea },
 	{ "LookForCardIDInLocation_Bank8", adapt_LookForCardIDInLocation_Bank8 },
+	{ "LookForCardIDInHandList_Bank8", adapt_LookForCardIDInHandList_Bank8 },
 	{ NULL, NULL },
 };
