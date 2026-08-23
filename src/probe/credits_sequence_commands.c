@@ -104,6 +104,13 @@ static void adapt_CreditsSequenceCmd_InitOverlay(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_InitOverlay */
 
+/* >>> factory CreditsSequenceCmd_InitVolcanoSprite */
+static void adapt_CreditsSequenceCmd_InitVolcanoSprite(ProbeState *s)
+{
+	CreditsSequenceCmd_InitVolcanoSprite(s->f);
+}
+/* <<< factory CreditsSequenceCmd_InitVolcanoSprite */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -119,5 +126,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_FadeIn", adapt_CreditsSequenceCmd_FadeIn },
 	{ "CreditsSequenceCmd_PrintTextBox", adapt_CreditsSequenceCmd_PrintTextBox },
 	{ "CreditsSequenceCmd_InitOverlay", adapt_CreditsSequenceCmd_InitOverlay },
+	{ "CreditsSequenceCmd_InitVolcanoSprite", adapt_CreditsSequenceCmd_InitVolcanoSprite },
 	{ NULL, NULL },
 };

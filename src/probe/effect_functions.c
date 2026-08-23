@@ -2463,6 +2463,14 @@ static void adapt_MagmarFlamethrower_AISelectEffect(ProbeState *s)
 }
 /* <<< factory MagmarFlamethrower_AISelectEffect */
 
+/* >>> factory OmastarWaterGunEffect */
+static void adapt_OmastarWaterGunEffect(ProbeState *s)
+{
+	(void)s;
+	OmastarWaterGunEffect();
+}
+/* <<< factory OmastarWaterGunEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2768,5 +2776,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ClefairyMetronome_AISelectEffect", adapt_ClefairyMetronome_AISelectEffect },
 	{ "EnergySpike_DeckCheck", adapt_EnergySpike_DeckCheck },
 	{ "MagmarFlamethrower_AISelectEffect", adapt_MagmarFlamethrower_AISelectEffect },
+	{ "OmastarWaterGunEffect", adapt_OmastarWaterGunEffect },
 	{ NULL, NULL },
 };

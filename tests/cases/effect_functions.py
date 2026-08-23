@@ -2697,6 +2697,14 @@ CASES["MagmarFlamethrower_AISelectEffect"] = [
 ]
 # <<< factory MagmarFlamethrower_AISelectEffect
 
+# >>> factory OmastarWaterGunEffect
+CONTRACT["OmastarWaterGunEffect"] = {"compare": (), "preserve": ()};
+CASES["OmastarWaterGunEffect"] = [
+    {"wram": {0xCCB9: b"\x0A", 0xCCF0: b"\x00", 0xFF9D: b"\x00"}, "read": {0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, read={0xCCB9: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory OmastarWaterGunEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4491,3 +4499,11 @@ MUTATIONS["EnergySpike_DeckCheck"] = {"source_symbol": "EnergySpike_DeckCheck", 
 # >>> factory-mutation MagmarFlamethrower_AISelectEffect
 MUTATIONS["MagmarFlamethrower_AISelectEffect"] = {"source_symbol": "MagmarFlamethrower_AISelectEffect", "before": "void MagmarFlamethrower_AISelectEffect(void)\n{\n\tAIPickFireEnergyCardToDiscard();\n}", "after": "void MagmarFlamethrower_AISelectEffect(void)\n{\n\treturn;\n}", "case_ids": ["MagmarFlamethrower_AISelectEffect-0", "MagmarFlamethrower_AISelectEffect-1"]}
 # <<< factory-mutation MagmarFlamethrower_AISelectEffect
+# >>> factory-mutation OmastarWaterGunEffect
+MUTATIONS["OmastarWaterGunEffect"] = {
+    "source_symbol": "OmastarWaterGunEffect",
+    "before": "\tApplyExtraWaterEnergyDamageBonus(1u, 1u);",
+    "after": "\tApplyExtraWaterEnergyDamageBonus(1u, 1u);\n\twAIMinDamage = (uint8_t)(wAIMinDamage + 1u);",
+    "case_ids": ["OmastarWaterGunEffect-0", "OmastarWaterGunEffect-1"],
+}
+# <<< factory-mutation OmastarWaterGunEffect

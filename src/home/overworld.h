@@ -141,4 +141,7 @@ void UpdatePlayerDirection(uint8_t a);
 /* >>> factory UpdatePlayerDirectionFromDPad */
 void UpdatePlayerDirectionFromDPad(uint8_t a);
 /* <<< factory UpdatePlayerDirectionFromDPad */
+/* >>> factory SetOverworldDoFrameFunction */
+void SetOverworldDoFrameFunction(void);
+/* <<< factory SetOverworldDoFrameFunction */
 #endif /* POKETCG_HOME_OVERWORLD_H */

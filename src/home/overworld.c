@@ -577,3 +577,10 @@ void UpdatePlayerDirectionFromDPad(uint8_t a)
 	UpdatePlayerDirection(result.a);
 }
 /* <<< factory UpdatePlayerDirectionFromDPad */
+
+/* >>> factory SetOverworldDoFrameFunction */
+void SetOverworldDoFrameFunction(void)
+{
+	(void)SetDoFrameFunction(0x380eu);
+}
+/* <<< factory SetOverworldDoFrameFunction */

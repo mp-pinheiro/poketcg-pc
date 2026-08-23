@@ -1,0 +1,9 @@
+{
+  "fn": "SetOverworldDoFrameFunction",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetOverworldDoFrameFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0e38\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetOverworldDoFrameFunction\", \"mismatches\": {\"bus\": {\"address\": 51923, \"reference\": \"0e38\", \"native\": \"0f38\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51923, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetOverworldDoFrameFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"0e38\"}}, \"status\": \"PASS\"}\n"
+}

@@ -4202,3 +4202,10 @@ void MagmarFlamethrower_AISelectEffect(void)
 	AIPickFireEnergyCardToDiscard();
 }
 /* <<< factory MagmarFlamethrower_AISelectEffect */
+
+/* >>> factory OmastarWaterGunEffect */
+void OmastarWaterGunEffect(void)
+{
+	ApplyExtraWaterEnergyDamageBonus(1u, 1u);
+}
+/* <<< factory OmastarWaterGunEffect */

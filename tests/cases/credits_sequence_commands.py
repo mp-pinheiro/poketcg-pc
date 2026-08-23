@@ -222,6 +222,14 @@ CASES["CreditsSequenceCmd_InitOverlay"] = [
 ]
 # <<< factory CreditsSequenceCmd_InitOverlay
 
+# >>> factory CreditsSequenceCmd_InitVolcanoSprite
+CONTRACT["CreditsSequenceCmd_InitVolcanoSprite"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_InitVolcanoSprite"] = [
+    {"f": 0x00, "wram": {0xD631: b"\x00\x40"}, "expect": {0xD631: b"\x02\x40"}},
+    dict(POISON, wram={0xD631: b"\xFE\xFF"}, expect={0xD631: b"\x00\x00"}),
+]
+# <<< factory CreditsSequenceCmd_InitVolcanoSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -330,3 +338,6 @@ MUTATIONS["CreditsSequenceCmd_InitOverlay"] = {
     "case_ids": ["CreditsSequenceCmd_InitOverlay-0", "CreditsSequenceCmd_InitOverlay-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_InitOverlay
+# >>> factory-mutation CreditsSequenceCmd_InitVolcanoSprite
+MUTATIONS["CreditsSequenceCmd_InitVolcanoSprite"] = {"source_symbol": "CreditsSequenceCmd_InitVolcanoSprite", "before": "\tOverworldMap_InitVolcanoSprite(f);\n\tAdvanceCreditsSequenceCmdPtrBy2();", "after": "\tOverworldMap_InitVolcanoSprite(f);", "case_ids": ["CreditsSequenceCmd_InitVolcanoSprite-0", "CreditsSequenceCmd_InitVolcanoSprite-1"]}
+# <<< factory-mutation CreditsSequenceCmd_InitVolcanoSprite

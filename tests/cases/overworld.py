@@ -260,6 +260,8 @@ wPlayerSpriteBaseAnimation = 0xD337
 wWhichSprite = 0xD4CF
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDoFrameFunction = 0xCAD3
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -490,6 +492,14 @@ CASES["UpdatePlayerDirectionFromDPad"] = [
 ]
 # <<< factory UpdatePlayerDirectionFromDPad
 
+# >>> factory SetOverworldDoFrameFunction
+CONTRACT["SetOverworldDoFrameFunction"] = {"compare": (), "preserve": ()}
+CASES["SetOverworldDoFrameFunction"] = [
+	{"wram": {wDoFrameFunction: b"\x00\x00"}, "read": {wDoFrameFunction: 2}},
+	dict(POISON, wram={wDoFrameFunction: b"\xAA\xBB"}, read={wDoFrameFunction: 2}),
+]
+# <<< factory SetOverworldDoFrameFunction
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -667,3 +677,6 @@ MUTATIONS["UpdatePlayerDirection"] = {"source_symbol": "UpdatePlayerDirection", 
 # >>> factory-mutation UpdatePlayerDirectionFromDPad
 MUTATIONS["UpdatePlayerDirectionFromDPad"] = {"source_symbol": "UpdatePlayerDirectionFromDPad", "before": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.a);\n}", "after": "void UpdatePlayerDirectionFromDPad(uint8_t a)\n{\n\tGetDirectionFromDPadResult result = GetDirectionFromDPad(a);\n\tUpdatePlayerDirection(result.f);\n}", "case_ids": ["UpdatePlayerDirectionFromDPad-0", "UpdatePlayerDirectionFromDPad-1", "UpdatePlayerDirectionFromDPad-2", "UpdatePlayerDirectionFromDPad-3", "UpdatePlayerDirectionFromDPad-4"]}
 # <<< factory-mutation UpdatePlayerDirectionFromDPad
+# >>> factory-mutation SetOverworldDoFrameFunction
+MUTATIONS["SetOverworldDoFrameFunction"] = {"source_symbol": "SetOverworldDoFrameFunction", "before": "\t(void)SetDoFrameFunction(0x380eu);", "after": "\t(void)SetDoFrameFunction(0x380fu);", "case_ids": ["SetOverworldDoFrameFunction-0", "SetOverworldDoFrameFunction-1"]}
+# <<< factory-mutation SetOverworldDoFrameFunction
