@@ -1096,6 +1096,10 @@ SparkAISelectEffectResult Spark_AISelectEffect(void);
 typedef struct { uint8_t f; uint16_t hl; } DamageSwapCheckDamageResult;
 DamageSwapCheckDamageResult DamageSwap_CheckDamage(void);
 /* <<< factory DamageSwap_CheckDamage */
+/* >>> factory PokemonFlute_BenchCheck */
+typedef struct { uint8_t f; uint16_t hl; } PokemonFluteBenchCheckResult;
+PokemonFluteBenchCheckResult PokemonFlute_BenchCheck(void);
+/* <<< factory PokemonFlute_BenchCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

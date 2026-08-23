@@ -2864,6 +2864,15 @@ CASES["DamageSwap_CheckDamage"] = [
 ]
 # <<< factory DamageSwap_CheckDamage
 
+# >>> factory PokemonFlute_BenchCheck
+CONTRACT["PokemonFlute_BenchCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["PokemonFlute_BenchCheck"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x06"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x06"}),
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x02", 0xC37E: b"\x00"}, "read": {0xC510: 1}},
+]
+# <<< factory PokemonFlute_BenchCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4723,3 +4732,6 @@ MUTATIONS["Spark_AISelectEffect"] = {"source_symbol": "Spark_AISelectEffect", "b
 # >>> factory-mutation DamageSwap_CheckDamage
 MUTATIONS["DamageSwap_CheckDamage"] = {"source_symbol": "DamageSwap_CheckDamage", "before": "\tif (has_damage.f & 0x10u) {", "after": "\tif (!(has_damage.f & 0x10u)) {", "case_ids": ["DamageSwap_CheckDamage-0", "DamageSwap_CheckDamage-2"]}
 # <<< factory-mutation DamageSwap_CheckDamage
+# >>> factory-mutation PokemonFlute_BenchCheck
+MUTATIONS["PokemonFlute_BenchCheck"] = {"source_symbol": "PokemonFlute_BenchCheck", "before": "\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a >= MAX_PLAY_AREA_POKEMON) {", "after": "\tDuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (count.a > MAX_PLAY_AREA_POKEMON) {", "case_ids": ["PokemonFlute_BenchCheck-0"]}
+# <<< factory-mutation PokemonFlute_BenchCheck

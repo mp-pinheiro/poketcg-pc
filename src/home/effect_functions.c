@@ -314,6 +314,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/substatus.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4391,3 +4394,18 @@ DamageSwapCheckDamageResult DamageSwap_CheckDamage(void)
 	return (DamageSwapCheckDamageResult){incapable.f, incapable.hl};
 }
 /* <<< factory DamageSwap_CheckDamage */
+
+/* >>> factory PokemonFlute_BenchCheck */
+PokemonFluteBenchCheckResult PokemonFlute_BenchCheck(void)
+{
+	DuelistVarResult count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= MAX_PLAY_AREA_POKEMON) {
+		uint8_t f = (uint8_t)(((count.a == MAX_PLAY_AREA_POKEMON) ? 0x80u : 0u) | 0x10u);
+		return (PokemonFluteBenchCheckResult){f, NoSpaceOnTheBenchText};
+	}
+	SwapTurn();
+	CreateBasicPokemonCardListFromDiscardPileResult basics = CreateBasicPokemonCardListFromDiscardPile();
+	SwapTurn();
+	return (PokemonFluteBenchCheckResult){basics.f, ThereAreNoPokemonInDiscardPileText};
+}
+/* <<< factory PokemonFlute_BenchCheck */

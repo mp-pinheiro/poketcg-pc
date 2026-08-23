@@ -2625,6 +2625,15 @@ static void adapt_DamageSwap_CheckDamage(ProbeState *s)
 }
 /* <<< factory DamageSwap_CheckDamage */
 
+/* >>> factory PokemonFlute_BenchCheck */
+static void adapt_PokemonFlute_BenchCheck(ProbeState *s)
+{
+	PokemonFluteBenchCheckResult r = PokemonFlute_BenchCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory PokemonFlute_BenchCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2950,5 +2959,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BellsproutCallForFamily_CheckDeckAndPlayArea", adapt_BellsproutCallForFamily_CheckDeckAndPlayArea },
 	{ "Spark_AISelectEffect", adapt_Spark_AISelectEffect },
 	{ "DamageSwap_CheckDamage", adapt_DamageSwap_CheckDamage },
+	{ "PokemonFlute_BenchCheck", adapt_PokemonFlute_BenchCheck },
 	{ NULL, NULL },
 };
