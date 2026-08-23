@@ -108,6 +108,10 @@ wD34E = 0xD34E
 wLoadedNPCTempIndex_A = 0xD3AA
 wTempNPC_A = 0xD3AB
 wChallengeHallNPC_A = 0xD696
+
+wOverworldMapSelection_A = 0xD32E
+wEventLegendaryByte = 0xD3D8
+wEventCup12Byte = 0xD3E0
 # <<< factory-cases-statics
 
 
@@ -1020,6 +1024,16 @@ CASES["ScriptCommand_UnloadChallengeHallNPC"] = [
 ]
 # <<< factory ScriptCommand_UnloadChallengeHallNPC
 
+# >>> factory DetermineChallengeHallEvent
+CONTRACT["DetermineChallengeHallEvent"] = {"compare": (), "preserve": ()}
+CASES["DetermineChallengeHallEvent"] = [
+    {"wram": {wOverworldMapSelection_A: b"\x00", wEventLegendaryByte: b"\x00", wEventCup12Byte: b"\xA0"},
+     "expect": {wEventCup12Byte: b"\x20"}},
+    dict(POISON, wram={wOverworldMapSelection_A: b"\x00", wEventLegendaryByte: b"\x00", wEventCup12Byte: b"\xA0"},
+         expect={wEventCup12Byte: b"\x20"}),
+]
+# <<< factory DetermineChallengeHallEvent
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1526,3 +1540,6 @@ MUTATIONS["ScriptCommand_MoveActiveNPCByDirection"] = {"source_symbol": "ScriptC
 # >>> factory-mutation ScriptCommand_UnloadChallengeHallNPC
 MUTATIONS["ScriptCommand_UnloadChallengeHallNPC"] = {"source_symbol": "ScriptCommand_UnloadChallengeHallNPC", "before": "\twLoadedNPCTempIndex = saved_index;", "after": "\twLoadedNPCTempIndex = (uint8_t)(saved_index + 1u);", "case_ids": ["ScriptCommand_UnloadChallengeHallNPC-0", "ScriptCommand_UnloadChallengeHallNPC-1"]}
 # <<< factory-mutation ScriptCommand_UnloadChallengeHallNPC
+# >>> factory-mutation DetermineChallengeHallEvent
+MUTATIONS["DetermineChallengeHallEvent"] = {"source_symbol": "DetermineChallengeHallEvent", "before": "\t\t(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_READY_TO_START);", "after": "\t\t(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_NOT_STARTED);", "case_ids": ["DetermineChallengeHallEvent-0", "DetermineChallengeHallEvent-1"]}
+# <<< factory-mutation DetermineChallengeHallEvent

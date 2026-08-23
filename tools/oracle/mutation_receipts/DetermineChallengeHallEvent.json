@@ -1,0 +1,9 @@
+{
+  "fn": "DetermineChallengeHallEvent",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DetermineChallengeHallEvent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"00\", \"54232\": \"00\", \"54240\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DetermineChallengeHallEvent\", \"mismatches\": {\"bus\": {\"address\": 54240, \"reference\": \"000020\", \"native\": \"000000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54062, 1], [54232, 1], [54240, 1]]}}}\n",
+  "restored": "{\"fn\": \"DetermineChallengeHallEvent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"00\", \"54232\": \"00\", \"54240\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

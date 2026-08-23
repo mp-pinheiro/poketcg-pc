@@ -433,4 +433,7 @@ ExecuteNPCMovementResult ScriptCommand_MoveActiveNPCByDirection(uint8_t b, uint8
 /* >>> factory ScriptCommand_UnloadChallengeHallNPC */
 void ScriptCommand_UnloadChallengeHallNPC(void);
 /* <<< factory ScriptCommand_UnloadChallengeHallNPC */
+/* >>> factory DetermineChallengeHallEvent */
+void DetermineChallengeHallEvent(void);
+/* <<< factory DetermineChallengeHallEvent */
 #endif

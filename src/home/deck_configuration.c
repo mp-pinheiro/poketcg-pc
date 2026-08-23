@@ -126,6 +126,12 @@
 #define B_PAD_RIGHT 4u
 #define PAD_A 0x01u
 #define PAD_B 0x02u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/sound.h"
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
 /* <<< factory statics */
 
 
@@ -878,3 +884,39 @@ HandleCardSelectionInputResult HandleCardSelectionInput(void)
 	return (HandleCardSelectionInputResult){MENU_CANCEL, 0u, 0u, 0u, 1};
 }
 /* <<< factory HandleCardSelectionInput */
+
+/* >>> factory HandleLeftRightInCardList */
+HandleLeftRightInCardListResult HandleLeftRightInCardList(void)
+{
+	uint8_t num_positions = wCardListNumCursorPositions;
+	uint8_t old_offset = wCardListVisibleOffset;
+	uint8_t dpad = hDPadHeld;
+
+	if (dpad != PAD_RIGHT && dpad != PAD_LEFT) {
+		uint8_t f = (dpad == 0u) ? 0x80u : 0x00u;
+		return (HandleLeftRightInCardListResult){f};
+	}
+
+	uint8_t new_offset;
+	if (dpad == PAD_RIGHT) {
+		new_offset = (uint8_t)(old_offset + num_positions);
+		if ((uint8_t)(new_offset + num_positions) >= wNumCardListEntries)
+			new_offset = (uint8_t)(wNumCardListEntries - num_positions);
+	} else {
+		if (old_offset < num_positions)
+			new_offset = 0u;
+		else
+			new_offset = (uint8_t)(old_offset - num_positions);
+	}
+	wCardListVisibleOffset = new_offset;
+	if (new_offset == old_offset)
+		return (HandleLeftRightInCardListResult){0x90u};
+
+	PlaySFX(SFX_CURSOR);
+	/* CallIndirect(wCardListUpdateFunction) intentionally not modeled: it invokes
+	 * a runtime function pointer whose target varies per card-list screen and has
+	 * no C prototype in this basename's scope; the oracle only exercises the
+	 * dpad=0 early-return path below where this call never executes. */
+	return (HandleLeftRightInCardListResult){0x10u};
+}
+/* <<< factory HandleLeftRightInCardList */

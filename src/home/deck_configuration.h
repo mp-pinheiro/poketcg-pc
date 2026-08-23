@@ -142,4 +142,8 @@ void DrawHandCardsTileOnCurDeck(void);
 typedef struct { uint8_t a; uint8_t e; uint8_t b; uint8_t c; uint8_t carry; } HandleCardSelectionInputResult;
 HandleCardSelectionInputResult HandleCardSelectionInput(void);
 /* <<< factory HandleCardSelectionInput */
+/* >>> factory HandleLeftRightInCardList */
+typedef struct { uint8_t f; } HandleLeftRightInCardListResult;
+HandleLeftRightInCardListResult HandleLeftRightInCardList(void);
+/* <<< factory HandleLeftRightInCardList */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

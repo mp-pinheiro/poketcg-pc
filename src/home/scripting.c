@@ -161,6 +161,18 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "home/map.h"
 #include "generated/wram.h"
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#define CHALLENGE_CUP_NOT_STARTED 0x00u
+#define CHALLENGE_CUP_READY_TO_START 0x01u
+#define CHALLENGE_CUP_WON 0x02u
+#define CHALLENGE_CUP_OVER 0x07u
+#define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
+#define EVENT_CHALLENGE_CUP_1_STATE 0x3fu
+#define EVENT_CHALLENGE_CUP_2_STATE 0x40u
+#define EVENT_CHALLENGE_CUP_3_STATE 0x41u
+#define OWMAP_CHALLENGE_HALL 0x0bu
 /* <<< factory statics */
 
 
@@ -1313,3 +1325,36 @@ void ScriptCommand_UnloadChallengeHallNPC(void)
 	wLoadedNPCTempIndex = saved_index;
 }
 /* <<< factory ScriptCommand_UnloadChallengeHallNPC */
+
+/* >>> factory DetermineChallengeHallEvent */
+void DetermineChallengeHallEvent(void)
+{
+	if (wOverworldMapSelection == OWMAP_CHALLENGE_HALL)
+		return;
+
+	if (GetEventValue(EVENT_RECEIVED_LEGENDARY_CARDS) != 0u) {
+		uint8_t c3 = ((UpdateRNGSources() & 0x03u) == 0u) ? CHALLENGE_CUP_READY_TO_START : CHALLENGE_CUP_NOT_STARTED;
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_3_STATE, 0u, 0u, c3);
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_2_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		return;
+	}
+
+	uint8_t state2 = GetEventValue(EVENT_CHALLENGE_CUP_2_STATE);
+	if (state2 == CHALLENGE_CUP_OVER)
+		return;
+
+	if (state2 == CHALLENGE_CUP_NOT_STARTED) {
+		uint8_t state1 = GetEventValue(EVENT_CHALLENGE_CUP_1_STATE);
+		if (state1 == CHALLENGE_CUP_OVER || state1 == CHALLENGE_CUP_NOT_STARTED || state1 == CHALLENGE_CUP_WON)
+			return;
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_READY_TO_START);
+		return;
+	}
+
+	if (state2 != CHALLENGE_CUP_WON)
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_2_STATE, 0u, 0u, CHALLENGE_CUP_READY_TO_START);
+
+	(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+}
+/* <<< factory DetermineChallengeHallEvent */

@@ -341,6 +341,14 @@ static void adapt_HandleCardSelectionInput(ProbeState *s)
 }
 /* <<< factory HandleCardSelectionInput */
 
+/* >>> factory HandleLeftRightInCardList */
+static void adapt_HandleLeftRightInCardList(ProbeState *s)
+{
+	HandleLeftRightInCardListResult r = HandleLeftRightInCardList();
+	s->f = r.f;
+}
+/* <<< factory HandleLeftRightInCardList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -380,5 +388,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleCardSelectionCursorBlink", adapt_HandleCardSelectionCursorBlink },
 	{ "DrawHandCardsTileOnCurDeck", adapt_DrawHandCardsTileOnCurDeck },
 	{ "HandleCardSelectionInput", adapt_HandleCardSelectionInput },
+	{ "HandleLeftRightInCardList", adapt_HandleLeftRightInCardList },
 	{ NULL, NULL },
 };

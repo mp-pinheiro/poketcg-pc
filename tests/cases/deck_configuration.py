@@ -167,6 +167,10 @@ wCardListNumCursorPositions = 0xCEA9
 wCheckMenuCursorBlinkCounter = 0xCEA3
 wMenuInputSFX = 0xCFE3
 hffb3 = 0xFFB3
+
+hDPadHeld = 0xFF8F
+wCardListNumCursorPositions = 0xCEA9
+wCardListVisibleOffset = 0xCEA1
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -453,6 +457,14 @@ CASES["HandleCardSelectionInput"] = [
 ]
 # <<< factory HandleCardSelectionInput
 
+# >>> factory HandleLeftRightInCardList
+CONTRACT["HandleLeftRightInCardList"] = {"compare": ("f",), "preserve": ()}
+CASES["HandleLeftRightInCardList"] = [
+    {"wram": {hDPadHeld: b"\x00", wCardListNumCursorPositions: b"\x02", wCardListVisibleOffset: b"\x03"}},
+    dict(POISON, wram={hDPadHeld: b"\x40", wCardListNumCursorPositions: b"\x02", wCardListVisibleOffset: b"\x03"}),
+]
+# <<< factory HandleLeftRightInCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -626,3 +638,6 @@ MUTATIONS["DrawHandCardsTileOnCurDeck"] = {"source_symbol": "DrawHandCardsTileOn
 # >>> factory-mutation HandleCardSelectionInput
 MUTATIONS["HandleCardSelectionInput"] = {"source_symbol": "HandleCardSelectionInput", "before": "\tgb_write8(0xFFB3u, gb_read8(wCardListCursorPos_ADDR));", "after": "\tgb_write8(0xFFB3u, (uint8_t)(gb_read8(wCardListCursorPos_ADDR) + 1u));", "case_ids": ["HandleCardSelectionInput-0", "HandleCardSelectionInput-1"]}
 # <<< factory-mutation HandleCardSelectionInput
+# >>> factory-mutation HandleLeftRightInCardList
+MUTATIONS["HandleLeftRightInCardList"] = {"source_symbol": "HandleLeftRightInCardList", "before": "\t\tuint8_t f = (dpad == 0u) ? 0x80u : 0x00u;", "after": "\t\tuint8_t f = (dpad == 0u) ? 0x00u : 0x80u;", "case_ids": ["HandleLeftRightInCardList-0", "HandleLeftRightInCardList-1"]}
+# <<< factory-mutation HandleLeftRightInCardList

@@ -871,6 +871,14 @@ static void adapt_ScriptCommand_UnloadChallengeHallNPC(ProbeState *s)
 }
 /* <<< factory ScriptCommand_UnloadChallengeHallNPC */
 
+/* >>> factory DetermineChallengeHallEvent */
+static void adapt_DetermineChallengeHallEvent(ProbeState *s)
+{
+	(void)s;
+	DetermineChallengeHallEvent();
+}
+/* <<< factory DetermineChallengeHallEvent */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -956,5 +964,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_FlashScreen", adapt_ScriptCommand_FlashScreen },
 	{ "ScriptCommand_MoveActiveNPCByDirection", adapt_ScriptCommand_MoveActiveNPCByDirection },
 	{ "ScriptCommand_UnloadChallengeHallNPC", adapt_ScriptCommand_UnloadChallengeHallNPC },
+	{ "DetermineChallengeHallEvent", adapt_DetermineChallengeHallEvent },
 	{ NULL, NULL },
 };
