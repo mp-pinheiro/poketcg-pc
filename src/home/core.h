@@ -646,4 +646,8 @@ CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(
 /* >>> factory AIPickPrizeCards */
 void AIPickPrizeCards(void);
 /* <<< factory AIPickPrizeCards */
+/* >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+typedef struct { uint8_t a; uint8_t f; } HandleAIEnergyScoringForRepeatedBenchPokemonResult;
+HandleAIEnergyScoringForRepeatedBenchPokemonResult HandleAIEnergyScoringForRepeatedBenchPokemon(void);
+/* <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon */
 #endif

@@ -47,6 +47,23 @@
 #define ENERGY_REMOVAL 0xd0u
 #define MR_MIME 0x9bu
 #define POKEMON_TRADER 0xc9u
+
+#include "home/core.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "home/common.h"
+#include "home/trainer_cards.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define BLASTOISE 0x43u
+#define CARD_LOCATION_DISCARD_PILE 0x02u
+#define DUELVARS_ARENA_CARD 0xbbu
+#define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
+#define GO_GO_RAIN_DANCE_DECK_ID 0x12u
+#define MUK 0x27u
+#define PLAY_AREA_ARENA 0x00u
 /* <<< factory statics */
 
 
@@ -499,3 +516,82 @@ AIDecide_ItemFinderResult AIDecide_ItemFinder(void)
 	return (AIDecide_ItemFinderResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
 }
 /* <<< factory AIDecide_ItemFinder */
+
+/* >>> factory AIDecide_EnergyRetrieval */
+AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
+{
+	CoreCardListResult hand_energy = CreateEnergyCardListFromHand(a);
+	if (!(hand_energy.f & 0x10u))
+		return (AIDecideEnergyRetrievalResult){hand_energy.a, 0x00u};
+
+	if (wOpponentDeckID == GO_GO_RAIN_DANCE_DECK_ID) {
+		PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+		if (!(muk.f & 0x10u)) {
+			PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
+			if (!(blastoise.f & 0x10u))
+				return (AIDecideEnergyRetrievalResult){blastoise.a, 0x00u};
+		}
+	}
+
+	(void)CreateHandCardList(0u);
+	FindDupResult dup = FindDuplicateCards(wDuelTempList_ADDR);
+	if (dup.f & 0x10u)
+		return (AIDecideEnergyRetrievalResult){dup.a, 0x00u};
+	uint8_t saved_card = dup.a;
+
+	FindBasicEnergyCardsInLocationResult discard = FindBasicEnergyCardsInLocation(CARD_LOCATION_DISCARD_PILE);
+	if (discard.f & 0x10u)
+		return (AIDecideEnergyRetrievalResult){discard.a, 0x00u};
+
+	wce1a = 0xFFu;
+	wce1b = 0xFFu;
+	wce1c = 0xFFu;
+
+	uint8_t d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t e = PLAY_AREA_ARENA;
+	while (d != 0u) {
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e)).a;
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		wTempCardID = card_id;
+		LoadCardDataToBuffer1_FromCardID(card_id);
+		wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+
+		uint16_t hl = wDuelTempList_ADDR;
+		for (;;) {
+			uint8_t entry = gb_read8(hl);
+			hl++;
+			if (entry == 0xFFu)
+				break;
+			if (!(CheckIfEnergyIsUseful(entry).f & 0x10u))
+				continue;
+			if (wce1a != 0xFFu) {
+				wce1b = entry;
+				return (AIDecideEnergyRetrievalResult){saved_card, 0x10u};
+			}
+			wce1a = entry;
+			RemoveCardFromList(&hl);
+			break;
+		}
+		e++;
+		d--;
+	}
+
+	uint16_t hl2 = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t entry = gb_read8(hl2);
+		hl2++;
+		if (entry == 0xFFu)
+			break;
+		if (wce1a != 0xFFu) {
+			wce1b = entry;
+			return (AIDecideEnergyRetrievalResult){saved_card, 0x10u};
+		}
+		wce1a = entry;
+		RemoveCardFromList(&hl2);
+	}
+
+	if (wce1a != 0xFFu)
+		return (AIDecideEnergyRetrievalResult){saved_card, 0x10u};
+	return (AIDecideEnergyRetrievalResult){wce1a, 0x00u};
+}
+/* <<< factory AIDecide_EnergyRetrieval */

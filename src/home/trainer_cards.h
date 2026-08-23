@@ -65,4 +65,8 @@ AIDecidePokedexResult AIDecide_Pokedex(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ItemFinderResult;
 AIDecide_ItemFinderResult AIDecide_ItemFinder(void);
 /* <<< factory AIDecide_ItemFinder */
+/* >>> factory AIDecide_EnergyRetrieval */
+typedef struct { uint8_t a; uint8_t f; } AIDecideEnergyRetrievalResult;
+AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a);
+/* <<< factory AIDecide_EnergyRetrieval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

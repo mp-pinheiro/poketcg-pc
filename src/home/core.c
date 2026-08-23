@@ -536,6 +536,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/random.h"
 #include "generated/wram.h"
 #define DUELVARS_PRIZES 0xecu
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define DUELVARS_BENCH 0xbcu
+#define PLAY_AREA_BENCH_5 0x05u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3336,3 +3344,96 @@ void AIPickPrizeCards(void)
 	}
 }
 /* <<< factory AIPickPrizeCards */
+
+/* >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+HandleAIEnergyScoringForRepeatedBenchPokemonResult HandleAIEnergyScoringForRepeatedBenchPokemon(void)
+{
+	ClearMemory_Bank5(MAX_PLAY_AREA_POKEMON, wSamePokemonEnergyScoreHandled_ADDR);
+
+	uint16_t hl = GetTurnDuelistVariable(DUELVARS_BENCH).hl;
+	uint8_t e = 0u;
+
+loop_bench:
+	ClearMemory_Bank5(MAX_PLAY_AREA_POKEMON, wSamePokemonEnergyScore_ADDR);
+
+	e++;
+	{
+		uint8_t deck_index = gb_read8(hl);
+		hl++;
+		if (deck_index == 0xFFu)
+			return (HandleAIEnergyScoringForRepeatedBenchPokemonResult){0xFFu, 0xC0u};
+		wSamePokemonCardID = deck_index;
+	}
+
+	if (gb_read8((uint16_t)(wSamePokemonEnergyScoreHandled_ADDR + e)) != 0u)
+		goto loop_bench;
+
+	wSamePokemonCardID = (uint8_t)GetCardIDFromDeckIndex(wSamePokemonCardID);
+
+	{
+		uint16_t saved_hl = hl;
+		uint8_t saved_e = e;
+
+		{
+			uint8_t dam = GetCardDamageAndMaxHP(e).a;
+			uint8_t counters = ConvertHPToDamageCounters_Bank5(dam).a;
+			uint8_t energy = CountNumberOfEnergyCardsAttached(e).a;
+			gb_write8((uint16_t)(wSamePokemonEnergyScore_ADDR + e),
+				(uint8_t)((uint8_t)(energy << 1) + 0x80u - counters));
+			gb_write8((uint16_t)(wSamePokemonEnergyScoreHandled_ADDR + e), 0x01u);
+		}
+		for (;;) {
+			e++;
+			uint8_t deck_index = gb_read8(hl);
+			hl++;
+			if (deck_index == 0xFFu)
+				break;
+			uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+			if (card_id != wSamePokemonCardID)
+				continue;
+			uint8_t dam = GetCardDamageAndMaxHP(e).a;
+			uint8_t counters = ConvertHPToDamageCounters_Bank5(dam).a;
+			uint8_t energy = CountNumberOfEnergyCardsAttached(e).a;
+			gb_write8((uint16_t)(wSamePokemonEnergyScore_ADDR + e),
+				(uint8_t)((uint8_t)(energy << 1) + 0x80u - counters));
+			gb_write8((uint16_t)(wSamePokemonEnergyScoreHandled_ADDR + e), 0x01u);
+		}
+
+		uint8_t count = 0u;
+		for (uint8_t i = 0u; i < MAX_PLAY_AREA_POKEMON; i++)
+			if (gb_read8((uint16_t)(wSamePokemonEnergyScore_ADDR + i)) != 0u)
+				count++;
+
+		if (count >= 2u) {
+			uint8_t highest_score = 0u;
+			uint8_t highest_loc = 0u;
+			for (uint8_t loc = PLAY_AREA_BENCH_5 + 1u; ; ) {
+				loc--;
+				if (loc == 0u)
+					break;
+				uint8_t score = gb_read8((uint16_t)(wSamePokemonEnergyScore_ADDR + loc));
+				if (score >= highest_score) {
+					highest_score = score;
+					highest_loc = loc;
+				}
+			}
+			for (uint8_t b = PLAY_AREA_ARENA; ; b++) {
+				uint16_t addr = (uint16_t)(wPlayAreaEnergyAIScore_ADDR + b);
+				if (b == highest_loc) {
+					gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
+				} else {
+					uint8_t score = gb_read8((uint16_t)(wSamePokemonEnergyScore_ADDR + b));
+					if (score != 0u)
+						gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));
+				}
+				if ((uint8_t)(b + 1u) == MAX_PLAY_AREA_POKEMON)
+					break;
+			}
+		}
+
+		hl = saved_hl;
+		e = saved_e;
+	}
+	goto loop_bench;
+}
+/* <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon */

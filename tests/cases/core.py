@@ -1885,6 +1885,20 @@ CASES["AIPickPrizeCards"] = [
 ]
 # <<< factory AIPickPrizeCards
 
+# >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon
+CONTRACT["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIEnergyScoringForRepeatedBenchPokemon"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "instruction_budget": 2000000,
+        "cycle_budget": 8000000,
+        "wram": {0xC2BC: b"\xFF"},   # wPlayerDuelVariables DUELVARS_BENCH[0] = 0xFF (empty bench)
+        "hram": {0xFF97: b"\xC2"},
+        "expect_regs": {"a": 0xFF, "f": 0xC0},
+    },
+]
+# <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2875,3 +2889,11 @@ MUTATIONS["CountOppEnergyCardsInHandAndAttached"] = {"source_symbol": "CountOppE
 # >>> factory-mutation AIPickPrizeCards
 MUTATIONS["AIPickPrizeCards"] = {"source_symbol": "AIPickPrizeCards", "before": "gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~bit));", "after": "gb_write8(hl, (uint8_t)(gb_read8(hl) | bit));", "case_ids": ["AIPickPrizeCards-0", "AIPickPrizeCards-1"]}
 # <<< factory-mutation AIPickPrizeCards
+# >>> factory-mutation HandleAIEnergyScoringForRepeatedBenchPokemon
+MUTATIONS["HandleAIEnergyScoringForRepeatedBenchPokemon"] = {
+    "source_symbol": "HandleAIEnergyScoringForRepeatedBenchPokemon",
+    "before": "return (HandleAIEnergyScoringForRepeatedBenchPokemonResult){0xFFu, 0xC0u};",
+    "after": "return (HandleAIEnergyScoringForRepeatedBenchPokemonResult){0xFFu, 0x00u};",
+    "case_ids": ["HandleAIEnergyScoringForRepeatedBenchPokemon-0"],
+}
+# <<< factory-mutation HandleAIEnergyScoringForRepeatedBenchPokemon

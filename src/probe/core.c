@@ -1380,6 +1380,15 @@ static void adapt_AIPickPrizeCards(ProbeState *s)
 }
 /* <<< factory AIPickPrizeCards */
 
+/* >>> factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+static void adapt_HandleAIEnergyScoringForRepeatedBenchPokemon(ProbeState *s)
+{
+	HandleAIEnergyScoringForRepeatedBenchPokemonResult r = HandleAIEnergyScoringForRepeatedBenchPokemon();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAIEnergyScoringForRepeatedBenchPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1543,5 +1552,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawCardPageSet2AndRarityIcons", adapt_DrawCardPageSet2AndRarityIcons },
 	{ "CountOppEnergyCardsInHandAndAttached", adapt_CountOppEnergyCardsInHandAndAttached },
 	{ "AIPickPrizeCards", adapt_AIPickPrizeCards },
+	{ "HandleAIEnergyScoringForRepeatedBenchPokemon", adapt_HandleAIEnergyScoringForRepeatedBenchPokemon },
 	{ NULL, NULL },
 };
