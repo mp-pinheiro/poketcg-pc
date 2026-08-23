@@ -4486,3 +4486,10 @@ void DodrioRage_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory DodrioRage_AIEffect */
+
+/* >>> factory DragoniteLv45Slam_AIEffect */
+void DragoniteLv45Slam_AIEffect(void)
+{
+	SetExpectedAIDamage(40u, 0u, 80u);
+}
+/* <<< factory DragoniteLv45Slam_AIEffect */

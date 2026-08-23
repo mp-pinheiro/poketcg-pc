@@ -2964,6 +2964,14 @@ CASES["DodrioRage_AIEffect"] = [
 ]
 # <<< factory DodrioRage_AIEffect
 
+# >>> factory DragoniteLv45Slam_AIEffect
+CONTRACT["DragoniteLv45Slam_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DragoniteLv45Slam_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory DragoniteLv45Slam_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4844,3 +4852,6 @@ MUTATIONS["TaurosStomp_AIEffect"] = {"source_symbol": "TaurosStomp_AIEffect", "b
 # >>> factory-mutation DodrioRage_AIEffect
 MUTATIONS["DodrioRage_AIEffect"] = {"source_symbol": "DodrioRage_AIEffect", "before": "DodrioRage_DamageBoostEffect();", "after": "(void)0;", "case_ids": ["DodrioRage_AIEffect-0", "DodrioRage_AIEffect-1"]}
 # <<< factory-mutation DodrioRage_AIEffect
+# >>> factory-mutation DragoniteLv45Slam_AIEffect
+MUTATIONS["DragoniteLv45Slam_AIEffect"] = {"source_symbol": "DragoniteLv45Slam_AIEffect", "before": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 80u);", "after": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 40u);", "case_ids": ["DragoniteLv45Slam_AIEffect-0", "DragoniteLv45Slam_AIEffect-1"]}
+# <<< factory-mutation DragoniteLv45Slam_AIEffect
