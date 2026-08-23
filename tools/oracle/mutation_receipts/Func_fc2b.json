@@ -1,0 +1,9 @@
+{
+  "fn": "Func_fc2b",
+  "case": "tests/cases/battle_center.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_fc2b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"00\", \"53446\": \"647cb003\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_fc2b\", \"mismatches\": {\"bus\": {\"address\": 53446, \"reference\": \"00647cb003\", \"native\": \"00607cb003\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53443, 1], [53446, 4]]}}}\n",
+  "restored": "{\"fn\": \"Func_fc2b\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"00\", \"53446\": \"647cb003\"}}, \"status\": \"PASS\"}\n"
+}
