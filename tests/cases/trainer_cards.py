@@ -533,6 +533,34 @@ CASES["AIDecide_PokemonTrader_LegendaryDragonite"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_LegendaryDragonite
 
+# >>> factory AIDecide_Pokeball
+CONTRACT["AIDecide_Pokeball"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_Pokeball"] = [
+    {"wram": {wOpponentDeckID: b"\x00"}},
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x17", 0xC405: b"\xB8"}, "read": {0xC510: 32}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        wOpponentDeckID: b"\x28",
+        0xC2EE: b"\x01",
+        0xC242: b"\x0A",
+        0xC200: b"\x00",
+        0xC40A: b"\x02",
+        0xC405: b"\x30",
+    }, "read": {0xC510: 32}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        wOpponentDeckID: b"\x2F",
+        0xC2EE: b"\x01",
+        0xC242: b"\x0A",
+        0xC200: b"\x00",
+        0xC40A: b"\x17",
+        0xC405: b"\x18",
+        0xC2BB: b"\xFF",
+    }, "read": {0xC510: 32}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDeckID: b"\x17", 0xC405: b"\xB8"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_Pokeball
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -722,3 +750,6 @@ MUTATIONS["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"source_symbol": "AIDecid
 # >>> factory-mutation AIDecide_PokemonTrader_LegendaryDragonite
 MUTATIONS["AIDecide_PokemonTrader_LegendaryDragonite"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryDragonite", "before": "\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(DRAGONAIR);", "after": "\t\tCheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(GYARADOS);", "case_ids": ["AIDecide_PokemonTrader_LegendaryDragonite-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_LegendaryDragonite
+# >>> factory-mutation AIDecide_Pokeball
+MUTATIONS["AIDecide_Pokeball"] = {"source_symbol": "AIDecide_Pokeball", "before": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);", "after": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);", "case_ids": ["AIDecide_Pokeball-1"]}
+# <<< factory-mutation AIDecide_Pokeball

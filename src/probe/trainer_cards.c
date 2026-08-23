@@ -270,6 +270,15 @@ static void adapt_AIDecide_PokemonTrader_LegendaryDragonite(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */
 
+/* >>> factory AIDecide_Pokeball */
+static void adapt_AIDecide_Pokeball(ProbeState *s)
+{
+	AIDecide_PokeballResult r = AIDecide_Pokeball();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_Pokeball */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -303,5 +312,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader_LegendaryRonald", adapt_AIDecide_PokemonTrader_LegendaryRonald },
 	{ "AIDecide_PokemonTrader_SoundOfTheWaves", adapt_AIDecide_PokemonTrader_SoundOfTheWaves },
 	{ "AIDecide_PokemonTrader_LegendaryDragonite", adapt_AIDecide_PokemonTrader_LegendaryDragonite },
+	{ "AIDecide_Pokeball", adapt_AIDecide_Pokeball },
 	{ NULL, NULL },
 };

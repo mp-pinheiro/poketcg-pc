@@ -143,6 +143,31 @@
 #define GYARADOS 0x58u
 #define KANGASKHAN 0xb9u
 #define MAGIKARP 0x57u
+
+#define ETCETERA_DECK_ID 0x28u
+#define FIRE_ENERGY 0x02u
+#define FLYING_PIKACHU 0x64u
+#define GASTLY_LV8 0x94u
+#define HARD_POKEMON_DECK_ID 0x21u
+#define JYNX 0x9cu
+#define LIGHTNING_ENERGY 0x04u
+#define LOVELY_NIDORAN_DECK_ID 0x2fu
+#define MACHOP 0x7du
+#define MAGMAR_LV31 0x3cu
+#define MAGNEMITE_LV13 0x69u
+#define NIDOKING 0x19u
+#define NIDOQUEEN 0x16u
+#define NIDORANF 0x14u
+#define NIDORANM 0x17u
+#define NIDORINA 0x15u
+#define NIDORINO 0x18u
+#define PIKACHU_ALT_LV16 0x63u
+#define PIKACHU_DECK_ID 0x25u
+#define PIKACHU_LV12 0x60u
+#define PIKACHU_LV14 0x61u
+#define PIKACHU_LV16 0x62u
+#define PSYCHIC_ENERGY 0x06u
+#define RHYDON 0x8au
 /* <<< factory statics */
 
 
@@ -1570,3 +1595,133 @@ no_carry: ;
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryDragonite */
+
+/* >>> factory AIDecide_Pokeball */
+AIDecide_PokeballResult AIDecide_Pokeball(void)
+{
+	uint8_t deck_id = wOpponentDeckID;
+
+	if (deck_id == FIRE_CHARGE_DECK_ID) {
+		LookForCardIDInLocationBank8Result r;
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JIGGLYPUFF_LV12);
+		return (AIDecide_PokeballResult){r.a, r.f};
+	}
+
+	if (deck_id == HARD_POKEMON_DECK_ID) {
+		LookForCardIDInLocationBank8Result r;
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, RHYHORN);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, RHYDON);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, ONIX);
+		return (AIDecide_PokeballResult){r.a, r.f};
+	}
+
+	if (deck_id == PIKACHU_DECK_ID) {
+		LookForCardIDInLocationBank8Result r;
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV14);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV16);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_ALT_LV16);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV12);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, FLYING_PIKACHU);
+		return (AIDecide_PokeballResult){r.a, r.f};
+	}
+
+	if (deck_id == ETCETERA_DECK_ID) {
+		LookForCardIDInHandListResult h;
+		LookForCardIDInLocationBank8Result r;
+
+		h = LookForCardIDInHandList_Bank8(FIRE_ENERGY);
+		if (h.f & 0x10u) {
+			h = LookForCardIDInHandList_Bank8(CHARMANDER);
+			if (!(h.f & 0x10u)) {
+				h = LookForCardIDInHandList_Bank8(MAGMAR_LV31);
+				if (!(h.f & 0x10u)) {
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHARMANDER);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MAGMAR_LV31);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+				}
+			}
+		}
+
+		h = LookForCardIDInHandList_Bank8(LIGHTNING_ENERGY);
+		if (h.f & 0x10u) {
+			h = LookForCardIDInHandList_Bank8(PIKACHU_LV12);
+			if (!(h.f & 0x10u)) {
+				h = LookForCardIDInHandList_Bank8(MAGNEMITE_LV13);
+				if (!(h.f & 0x10u)) {
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PIKACHU_LV12);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MAGNEMITE_LV13);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+				}
+			}
+		}
+
+		h = LookForCardIDInHandList_Bank8(FIGHTING_ENERGY);
+		if (h.f & 0x10u) {
+			h = LookForCardIDInHandList_Bank8(DIGLETT);
+			if (!(h.f & 0x10u)) {
+				h = LookForCardIDInHandList_Bank8(MACHOP);
+				if (!(h.f & 0x10u)) {
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DIGLETT);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, MACHOP);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+				}
+			}
+		}
+
+		h = LookForCardIDInHandList_Bank8(PSYCHIC_ENERGY);
+		if (h.f & 0x10u) {
+			h = LookForCardIDInHandList_Bank8(GASTLY_LV8);
+			if (!(h.f & 0x10u)) {
+				h = LookForCardIDInHandList_Bank8(JYNX);
+				if (!(h.f & 0x10u)) {
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GASTLY_LV8);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+					r = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, JYNX);
+					if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+				}
+			}
+		}
+
+		uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokeballResult){deck_id, f};
+	}
+
+	if (deck_id == LOVELY_NIDORAN_DECK_ID) {
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+		LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDORINO, NIDORANM);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDOKING, NIDORINO);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORANM, NIDORINO);
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORINO, NIDOKING);
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDORINA, NIDORANF);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(NIDOQUEEN, NIDORINA);
+		if (r.f & 0x10u) return (AIDecide_PokeballResult){r.a, r.f};
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORANF, NIDORINA);
+		if (r2.f & 0x10u) return (AIDecide_PokeballResult){r2.a, r2.f};
+		r2 = LookForCardIDInDeck_GivenCardIDInHand(NIDORINA, NIDOQUEEN);
+		return (AIDecide_PokeballResult){r2.a, r2.f};
+	}
+
+	uint8_t f = (deck_id == 0u) ? 0x80u : 0u;
+	return (AIDecide_PokeballResult){deck_id, f};
+}
+/* <<< factory AIDecide_Pokeball */
