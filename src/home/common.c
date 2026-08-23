@@ -57,6 +57,8 @@
 #include "home/card_data.h"
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xEFu
+
+#define PLAY_AREA_ARENA 0x00u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -449,3 +451,17 @@ LookForCardIDInHandListResult LookForCardIDInHandList_Bank8(uint8_t a)
 	}
 }
 /* <<< factory LookForCardIDInHandList_Bank8 */
+
+/* >>> factory LookForCardIDInHandAndPlayArea */
+LookForCardIDInHandAndPlayAreaResult LookForCardIDInHandAndPlayArea(uint8_t a)
+{
+	LookForCardIDInHandListResult r1 = LookForCardIDInHandList_Bank8(a);
+	if (r1.f & 0x10u)
+		return (LookForCardIDInHandAndPlayAreaResult){r1.a, r1.f};
+	LookForCardIDInPlayAreaResult r2 = LookForCardIDInPlayArea_Bank8(a, PLAY_AREA_ARENA);
+	if (r2.f & 0x10u)
+		return (LookForCardIDInHandAndPlayAreaResult){r2.a, r2.f};
+	uint8_t f = (r2.a == 0u) ? 0x80u : 0u;
+	return (LookForCardIDInHandAndPlayAreaResult){r2.a, f};
+}
+/* <<< factory LookForCardIDInHandAndPlayArea */

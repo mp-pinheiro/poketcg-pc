@@ -8,6 +8,8 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #define DUEL_WIN 0x00u
+
+#define GrassClubEntranceAfterDuelTable 0x6553u
 /* <<< factory statics */
 
 /* >>> factory FindEndOfDuelScript */
@@ -38,3 +40,11 @@ FindEndOfDuelScriptResult FindEndOfDuelScript(uint16_t hl)
 	return (FindEndOfDuelScriptResult){r.a, r.f, r.b, r.c, 0u, 5u, r.hl};
 }
 /* <<< factory FindEndOfDuelScript */
+
+/* >>> factory GrassClubEntranceAfterDuel */
+FindEndOfDuelScriptResult GrassClubEntranceAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	return FindEndOfDuelScript(GrassClubEntranceAfterDuelTable);
+}
+/* <<< factory GrassClubEntranceAfterDuel */

@@ -40,6 +40,25 @@ CASES["FindEndOfDuelScript"] = [
 ]
 # <<< factory FindEndOfDuelScript
 
+# >>> factory GrassClubEntranceAfterDuel
+CONTRACT["GrassClubEntranceAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["GrassClubEntranceAfterDuel"] = [
+    {"wram": {wDuelResult: b"\x01", wNPCDuelist: b"\x99"}},
+    {"wram": {
+        wDuelResult: b"\x00",
+        wNPCDuelist: b"\x18",
+        wLoadedNPCs: b"\x18" + b"\x00" * 95,
+        wLoadedNPCTempIndex: b"\xEE",
+        wScriptNPC: b"\xAA",
+        wPlayerDirection: b"\x01",
+        wOverworldNPCFlags: b"\x00",
+        wNextScript: b"\xFF\xFF",
+        wOverworldMode: b"\x00",
+    }, "expect": {wTempNPC: b"\x18", wScriptNPC: b"\x00", wOverworldMode: b"\x03"}},
+    dict(POISON, wram={wDuelResult: b"\x01", wNPCDuelist: b"\x99"}),
+]
+# <<< factory GrassClubEntranceAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -47,3 +66,6 @@ MUTATIONS = {}
 # >>> factory-mutation FindEndOfDuelScript
 MUTATIONS["FindEndOfDuelScript"] = {"source_symbol": "FindEndOfDuelScript", "before": "\thl = (uint16_t)(hl + c);", "after": "\thl = (uint16_t)(hl + c + 1u);", "case_ids": ["FindEndOfDuelScript-0"]}
 # <<< factory-mutation FindEndOfDuelScript
+# >>> factory-mutation GrassClubEntranceAfterDuel
+MUTATIONS["GrassClubEntranceAfterDuel"] = {"source_symbol": "GrassClubEntranceAfterDuel", "before": "\treturn FindEndOfDuelScript(GrassClubEntranceAfterDuelTable);", "after": "\treturn FindEndOfDuelScript((uint16_t)(GrassClubEntranceAfterDuelTable + 1u));", "case_ids": ["GrassClubEntranceAfterDuel-0"]}
+# <<< factory-mutation GrassClubEntranceAfterDuel

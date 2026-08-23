@@ -1,0 +1,9 @@
+{
+  "fn": "GrassClubEntranceAfterDuel",
+  "case": "tests/cases/grass_club_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GrassClubEntranceAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 25958, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GrassClubEntranceAfterDuel\", \"mismatches\": {\"hl\": [25958, 26223]}}\n",
+  "restored": "{\"fn\": \"GrassClubEntranceAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 25958, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

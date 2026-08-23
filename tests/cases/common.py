@@ -216,6 +216,15 @@ CASES["LookForCardIDInHandList_Bank8"] = [
 ]
 # <<< factory LookForCardIDInHandList_Bank8
 
+# >>> factory LookForCardIDInHandAndPlayArea
+CONTRACT["LookForCardIDInHandAndPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardIDInHandAndPlayArea"] = [
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
+    dict(POISON, a=0x01, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC200: b"\x00", wPlayerDeck: b"\x01", 0xC2BB: b"\xFF"}, read={0xC510: 32}),
+]
+# <<< factory LookForCardIDInHandAndPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -313,3 +322,6 @@ MUTATIONS["LookForCardIDInLocation_Bank8"] = {
 # >>> factory-mutation LookForCardIDInHandList_Bank8
 MUTATIONS["LookForCardIDInHandList_Bank8"] = {"source_symbol": "LookForCardIDInHandList_Bank8", "before": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x90u};", "after": "\t\t\treturn (LookForCardIDInHandListResult){hTempCardIndex_ff98, 0x10u};", "case_ids": ["LookForCardIDInHandList_Bank8-1"]}
 # <<< factory-mutation LookForCardIDInHandList_Bank8
+# >>> factory-mutation LookForCardIDInHandAndPlayArea
+MUTATIONS["LookForCardIDInHandAndPlayArea"] = {"source_symbol": "LookForCardIDInHandAndPlayArea", "before": "\tif (r1.f & 0x10u)", "after": "\tif (r1.f & 0x20u)", "case_ids": ["LookForCardIDInHandAndPlayArea-0"]}
+# <<< factory-mutation LookForCardIDInHandAndPlayArea

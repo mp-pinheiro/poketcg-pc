@@ -1,0 +1,9 @@
+{
+  "fn": "GrassClubLobbyAfterDuel",
+  "case": "tests/cases/grass_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GrassClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 26066, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GrassClubLobbyAfterDuel\", \"mismatches\": {\"hl\": [26066, 26223]}}\n",
+  "restored": "{\"fn\": \"GrassClubLobbyAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 26066, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}
