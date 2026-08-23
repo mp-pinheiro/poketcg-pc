@@ -2339,6 +2339,10 @@ wDamage = 0xCCB9
 wAIMinDamage = 0xCCBB
 wAIMaxDamage = 0xCCBC
 WATER_ENERGY = 0x03
+
+hWhoseTurn = 0xFF97
+wOpponentDuelVariables = 0xC300
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2971,6 +2975,17 @@ CASES["DragoniteLv45Slam_AIEffect"] = [
     dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
 ]
 # <<< factory DragoniteLv45Slam_AIEffect
+
+# >>> factory GengarDarkMind_AISelectEffect
+CONTRACT["GengarDarkMind_AISelectEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["GengarDarkMind_AISelectEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentDuelVariables + 0xEF: b"\x01"},
+     "read": {hTemp_ffa0: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentDuelVariables + 0xEF: b"\x02",
+                       0xC0EF: b"\x01", 0xC1EF: b"\x01"},
+         read={hTemp_ffa0: 1}),
+]
+# <<< factory GengarDarkMind_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4855,3 +4870,6 @@ MUTATIONS["DodrioRage_AIEffect"] = {"source_symbol": "DodrioRage_AIEffect", "bef
 # >>> factory-mutation DragoniteLv45Slam_AIEffect
 MUTATIONS["DragoniteLv45Slam_AIEffect"] = {"source_symbol": "DragoniteLv45Slam_AIEffect", "before": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 80u);", "after": "void DragoniteLv45Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 40u);", "case_ids": ["DragoniteLv45Slam_AIEffect-0", "DragoniteLv45Slam_AIEffect-1"]}
 # <<< factory-mutation DragoniteLv45Slam_AIEffect
+# >>> factory-mutation GengarDarkMind_AISelectEffect
+MUTATIONS["GengarDarkMind_AISelectEffect"] = {"source_symbol": "GengarDarkMind_AISelectEffect", "before": "DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (r.a < 2u)", "after": "DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (r.a < 1u)", "case_ids": ["GengarDarkMind_AISelectEffect-0"]}
+# <<< factory-mutation GengarDarkMind_AISelectEffect

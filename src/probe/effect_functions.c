@@ -2691,6 +2691,14 @@ static void adapt_DragoniteLv45Slam_AIEffect(ProbeState *s)
 }
 /* <<< factory DragoniteLv45Slam_AIEffect */
 
+/* >>> factory GengarDarkMind_AISelectEffect */
+static void adapt_GengarDarkMind_AISelectEffect(ProbeState *s)
+{
+	(void)s;
+	GengarDarkMind_AISelectEffect();
+}
+/* <<< factory GengarDarkMind_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3024,5 +3032,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TaurosStomp_AIEffect", adapt_TaurosStomp_AIEffect },
 	{ "DodrioRage_AIEffect", adapt_DodrioRage_AIEffect },
 	{ "DragoniteLv45Slam_AIEffect", adapt_DragoniteLv45Slam_AIEffect },
+	{ "GengarDarkMind_AISelectEffect", adapt_GengarDarkMind_AISelectEffect },
 	{ NULL, NULL },
 };
