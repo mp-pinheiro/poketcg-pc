@@ -61,6 +61,18 @@ static void adapt_CancelDeckSelectionSubMenu(ProbeState *s)
 }
 /* <<< factory CancelDeckSelectionSubMenu */
 
+/* >>> factory CopyDeckFromSRAM */
+static void adapt_CopyDeckFromSRAM(ProbeState *s)
+{
+	CopyDeckFromSRAMResult r = CopyDeckFromSRAM((uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory CopyDeckFromSRAM */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -68,5 +80,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "InitDeckBuildingParams", adapt_InitDeckBuildingParams },
 	{ "CheckIfCurDeckIsValid", adapt_CheckIfCurDeckIsValid },
 	{ "CancelDeckSelectionSubMenu", adapt_CancelDeckSelectionSubMenu },
+	{ "CopyDeckFromSRAM", adapt_CopyDeckFromSRAM },
 	{ NULL, NULL },
 };

@@ -44,4 +44,8 @@ void CreditsSequenceCmd_InitOverlay(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* poketcg/src/engine/sequences/credits_sequence_commands.asm:412 */
 void CreditsSequenceCmd_InitVolcanoSprite(uint8_t f);
 /* <<< factory CreditsSequenceCmd_InitVolcanoSprite */
+/* >>> factory CreditsSequenceCmd_DrawRectangle */
+typedef struct { uint8_t a; uint8_t f; } CreditsSequenceCmdDrawRectangleResult;
+CreditsSequenceCmdDrawRectangleResult CreditsSequenceCmd_DrawRectangle(uint8_t b, uint8_t c);
+/* <<< factory CreditsSequenceCmd_DrawRectangle */
 #endif

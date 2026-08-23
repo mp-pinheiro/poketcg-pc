@@ -16,6 +16,10 @@
 #include "home/print_text.h"
 
 #define SINGLE_SPACED 0x01u
+
+#include "home/credits_sequence_commands.h"
+#include "home/tiles.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -187,3 +191,15 @@ void CreditsSequenceCmd_InitVolcanoSprite(uint8_t f)
 	AdvanceCreditsSequenceCmdPtrBy2();
 }
 /* <<< factory CreditsSequenceCmd_InitVolcanoSprite */
+
+/* >>> factory CreditsSequenceCmd_DrawRectangle */
+CreditsSequenceCmdDrawRectangleResult CreditsSequenceCmd_DrawRectangle(uint8_t b, uint8_t c)
+{
+	uint8_t e = (uint8_t)(c | 0x20u);
+	FillRectangle(0u, 20u, b, (uint16_t)((uint16_t)0u << 8 | e), 0u);
+	AdvanceCreditsSequenceCmdPtrBy4();
+	uint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t f = (uint8_t)(hi == 0u ? 0x80u : 0x00u);
+	return (CreditsSequenceCmdDrawRectangleResult){hi, f};
+}
+/* <<< factory CreditsSequenceCmd_DrawRectangle */

@@ -4270,3 +4270,10 @@ void SuperFang_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory SuperFang_AIEffect */
+
+/* >>> factory DragoniteLv41Slam_AIEffect */
+void DragoniteLv41Slam_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory DragoniteLv41Slam_AIEffect */

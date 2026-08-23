@@ -18,6 +18,10 @@
 
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/switch_sram.h"
+#include "mem.h"
+#define DECK_SIZE 0x3Cu
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -83,3 +87,18 @@ void CancelDeckSelectionSubMenu(void)
 	return;
 }
 /* <<< factory CancelDeckSelectionSubMenu */
+
+/* >>> factory CopyDeckFromSRAM */
+CopyDeckFromSRAMResult CopyDeckFromSRAM(uint16_t de, uint16_t hl)
+{
+	EnableSRAM();
+	for (uint8_t i = 0; i < DECK_SIZE; i++) {
+		gb_write8(hl, gb_read8(de));
+		de++;
+		hl++;
+	}
+	gb_write8(hl, 0u);
+	DisableSRAM();
+	return (CopyDeckFromSRAMResult){0u, 0x80u, de, hl};
+}
+/* <<< factory CopyDeckFromSRAM */

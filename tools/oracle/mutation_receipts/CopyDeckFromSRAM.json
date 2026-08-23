@@ -1,0 +1,9 @@
+{
+  "fn": "CopyDeckFromSRAM",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyDeckFromSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 160, \"e\": 60, \"f\": 128, \"hl\": 50492, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"40960\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\"}}, \"vram\": {}, \"wram\": {\"50432\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyDeckFromSRAM\", \"mismatches\": {\"e\": [60, 59], \"hl\": [50492, 50491], \"bus\": {\"address\": 50491, \"reference\": \"3738393a3b00\", \"native\": \"3738393a0000\", \"reference_size\": 61, \"native_size\": 61, \"spans\": [[50432, 61]]}}}\n",
+  "restored": "{\"fn\": \"CopyDeckFromSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 160, \"e\": 60, \"f\": 128, \"hl\": 50492, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"40960\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b\"}}, \"vram\": {}, \"wram\": {\"50432\": \"000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b00\"}}, \"status\": \"PASS\"}\n"
+}

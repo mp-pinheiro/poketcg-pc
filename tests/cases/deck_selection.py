@@ -66,6 +66,14 @@ CASES["CancelDeckSelectionSubMenu"] = [
 ]
 # <<< factory CancelDeckSelectionSubMenu
 
+# >>> factory CopyDeckFromSRAM
+CONTRACT["CopyDeckFromSRAM"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
+CASES["CopyDeckFromSRAM"] = [
+    {"d": 0xA0, "e": 0x00, "hl": 0xC500, "sram": {0: {0xA000: bytes(range(60))}}, "wram": {0xC500: bytes(61)}, "read": {0xC500: 61}},
+    dict(POISON, d=0xA0, e=0x00, hl=0xC500, sram={0: {0xA000: bytes(range(60))}}, wram={0xC500: bytes(61)}, read={0xC500: 61}),
+]
+# <<< factory CopyDeckFromSRAM
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -88,3 +96,6 @@ MUTATIONS["CheckIfCurDeckIsValid"] = {"source_symbol": "CheckIfCurDeckIsValid", 
 # >>> factory-mutation CancelDeckSelectionSubMenu
 MUTATIONS["CancelDeckSelectionSubMenu"] = {"source_symbol": "CancelDeckSelectionSubMenu", "before": "\treturn;", "after": "\tgb_write8(wCurDeck_ADDR, (uint8_t)(gb_read8(wCurDeck_ADDR) + 1u));", "case_ids": ["CancelDeckSelectionSubMenu-0", "CancelDeckSelectionSubMenu-1"]}
 # <<< factory-mutation CancelDeckSelectionSubMenu
+# >>> factory-mutation CopyDeckFromSRAM
+MUTATIONS["CopyDeckFromSRAM"] = {"source_symbol": "CopyDeckFromSRAM", "before": "\tfor (uint8_t i = 0; i < DECK_SIZE; i++) {", "after": "\tfor (uint8_t i = 0; i < (uint8_t)(DECK_SIZE - 1u); i++) {", "case_ids": ["CopyDeckFromSRAM-0", "CopyDeckFromSRAM-1"]}
+# <<< factory-mutation CopyDeckFromSRAM

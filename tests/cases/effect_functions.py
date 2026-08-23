@@ -2773,6 +2773,14 @@ CASES["SuperFang_AIEffect"] = [
 ]
 # <<< factory SuperFang_AIEffect
 
+# >>> factory DragoniteLv41Slam_AIEffect
+CONTRACT["DragoniteLv41Slam_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DragoniteLv41Slam_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory DragoniteLv41Slam_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4599,3 +4607,6 @@ MUTATIONS["SeadraWaterGunEffect"] = {"source_symbol": "SeadraWaterGunEffect", "b
 # >>> factory-mutation SuperFang_AIEffect
 MUTATIONS["SuperFang_AIEffect"] = {"source_symbol": "SuperFang_AIEffect", "before": "void SuperFang_AIEffect(void)\n{\n\tSuperFang_HalfHPEffect();\n\tSetDefiniteAIDamage();\n}", "after": "void SuperFang_AIEffect(void)\n{\n\t(void)0;\n\tSetDefiniteAIDamage();\n}", "case_ids": ["SuperFang_AIEffect-0", "SuperFang_AIEffect-1"]}
 # <<< factory-mutation SuperFang_AIEffect
+# >>> factory-mutation DragoniteLv41Slam_AIEffect
+MUTATIONS["DragoniteLv41Slam_AIEffect"] = {"source_symbol": "DragoniteLv41Slam_AIEffect", "before": "void DragoniteLv41Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);\n}", "after": "void DragoniteLv41Slam_AIEffect(void)\n{\n\tSetExpectedAIDamage(31u, 0u, 60u);\n}", "case_ids": ["DragoniteLv41Slam_AIEffect-0", "DragoniteLv41Slam_AIEffect-1"]}
+# <<< factory-mutation DragoniteLv41Slam_AIEffect

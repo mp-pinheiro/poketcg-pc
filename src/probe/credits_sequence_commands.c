@@ -111,6 +111,15 @@ static void adapt_CreditsSequenceCmd_InitVolcanoSprite(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_InitVolcanoSprite */
 
+/* >>> factory CreditsSequenceCmd_DrawRectangle */
+static void adapt_CreditsSequenceCmd_DrawRectangle(ProbeState *s)
+{
+	CreditsSequenceCmdDrawRectangleResult r = CreditsSequenceCmd_DrawRectangle(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CreditsSequenceCmd_DrawRectangle */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -127,5 +136,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_PrintTextBox", adapt_CreditsSequenceCmd_PrintTextBox },
 	{ "CreditsSequenceCmd_InitOverlay", adapt_CreditsSequenceCmd_InitOverlay },
 	{ "CreditsSequenceCmd_InitVolcanoSprite", adapt_CreditsSequenceCmd_InitVolcanoSprite },
+	{ "CreditsSequenceCmd_DrawRectangle", adapt_CreditsSequenceCmd_DrawRectangle },
 	{ NULL, NULL },
 };

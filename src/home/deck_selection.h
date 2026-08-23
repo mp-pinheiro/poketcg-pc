@@ -42,4 +42,8 @@ CheckIfCurDeckIsValidResult CheckIfCurDeckIsValid(void);
 /* >>> factory CancelDeckSelectionSubMenu */
 void CancelDeckSelectionSubMenu(void);
 /* <<< factory CancelDeckSelectionSubMenu */
+/* >>> factory CopyDeckFromSRAM */
+typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } CopyDeckFromSRAMResult;
+CopyDeckFromSRAMResult CopyDeckFromSRAM(uint16_t de, uint16_t hl);
+/* <<< factory CopyDeckFromSRAM */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

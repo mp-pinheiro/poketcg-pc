@@ -230,6 +230,14 @@ CASES["CreditsSequenceCmd_InitVolcanoSprite"] = [
 ]
 # <<< factory CreditsSequenceCmd_InitVolcanoSprite
 
+# >>> factory CreditsSequenceCmd_DrawRectangle
+CONTRACT["CreditsSequenceCmd_DrawRectangle"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CreditsSequenceCmd_DrawRectangle"] = [
+    {"b": 0x01, "c": 0x02, "wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    dict(POISON, b=0x01, c=0x02, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+]
+# <<< factory CreditsSequenceCmd_DrawRectangle
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -341,3 +349,6 @@ MUTATIONS["CreditsSequenceCmd_InitOverlay"] = {
 # >>> factory-mutation CreditsSequenceCmd_InitVolcanoSprite
 MUTATIONS["CreditsSequenceCmd_InitVolcanoSprite"] = {"source_symbol": "CreditsSequenceCmd_InitVolcanoSprite", "before": "\tOverworldMap_InitVolcanoSprite(f);\n\tAdvanceCreditsSequenceCmdPtrBy2();", "after": "\tOverworldMap_InitVolcanoSprite(f);", "case_ids": ["CreditsSequenceCmd_InitVolcanoSprite-0", "CreditsSequenceCmd_InitVolcanoSprite-1"]}
 # <<< factory-mutation CreditsSequenceCmd_InitVolcanoSprite
+# >>> factory-mutation CreditsSequenceCmd_DrawRectangle
+MUTATIONS["CreditsSequenceCmd_DrawRectangle"] = {"source_symbol": "CreditsSequenceCmd_DrawRectangle", "before": "\tAdvanceCreditsSequenceCmdPtrBy4();", "after": "\t(void)0;", "case_ids": ["CreditsSequenceCmd_DrawRectangle-0", "CreditsSequenceCmd_DrawRectangle-1"]}
+# <<< factory-mutation CreditsSequenceCmd_DrawRectangle
