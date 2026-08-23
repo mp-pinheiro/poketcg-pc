@@ -323,3 +323,24 @@ void AddBoosterCardsToCollection(void)
 		AddCardToCollection(card);
 }
 /* <<< factory AddBoosterCardsToCollection */
+
+/* >>> factory GenerateBoosterEnergies */
+void GenerateBoosterEnergies(void)
+{
+	uint16_t ptr_addr = wBoosterData_EnergyFunctionPointer_ADDR;
+	uint8_t hi = gb_read8((uint16_t)(ptr_addr + 1u));
+	if (hi != 0u) {
+		uint8_t lo = gb_read8(ptr_addr);
+		uint16_t target = (uint16_t)(lo | ((uint16_t)hi << 8));
+		if (target == 0x6390u) { GenerateRandomEnergyBooster(); return; }
+		if (target == 0x639Cu) { GenerateEnergyBoosterLightningFire(); return; }
+		if (target == 0x63A1u) { GenerateEnergyBoosterWaterFighting(); return; }
+		if (target == 0x63A6u) { GenerateEnergyBoosterGrassPsychic(); return; }
+		return;
+	}
+	uint8_t a = gb_read8(ptr_addr);
+	if (a == 0u)
+		return;
+	(void)AddBoosterEnergyToDrawnEnergies(a);
+}
+/* <<< factory GenerateBoosterEnergies */

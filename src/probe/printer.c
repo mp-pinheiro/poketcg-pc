@@ -71,6 +71,15 @@ static void adapt_ClearPrinterGfxBuffer(ProbeState *s)
 }
 /* <<< factory ClearPrinterGfxBuffer */
 
+/* >>> factory GetPrinterContrastSerialData */
+static void adapt_GetPrinterContrastSerialData(ProbeState *s)
+{
+	GetPrinterContrastSerialDataResult r = GetPrinterContrastSerialData();
+	s->a = r.a;
+	s->hl = r.hl;
+}
+/* <<< factory GetPrinterContrastSerialData */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -79,5 +88,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "Func_1a025", adapt_Func_1a025 },
 	{ "ResetPrinterCommunicationSettings", adapt_ResetPrinterCommunicationSettings },
 	{ "ClearPrinterGfxBuffer", adapt_ClearPrinterGfxBuffer },
+	{ "GetPrinterContrastSerialData", adapt_GetPrinterContrastSerialData },
 	{ NULL, NULL },
 };

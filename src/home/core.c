@@ -501,6 +501,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/menus.h"
 #include "home/serial.h"
 #define ReturnCardsToDeckAndDrawAgainText 0x006cu
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3161,3 +3165,21 @@ PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void)
 	return (PrintReturnCardsToDeckDrawAgainResult){x.a, x.b, x.c, x.f, x.hl, x.de};
 }
 /* <<< factory PrintReturnCardsToDeckDrawAgain */
+
+/* >>> factory PracticeDuelVerify_Turn3 */
+PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void)
+{
+	uint8_t a = wTempCardID_ccc2;
+	if (a != SEAKING) {
+		uint8_t f = ReturnWrongAction(0x00u);
+		return (PracticeDuelVerifyTurn3Result){a, f};
+	}
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_BENCH_1);
+	uint8_t water = gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER));
+	if (water == 0u) {
+		uint8_t f = ReturnWrongAction(0x80u);
+		return (PracticeDuelVerifyTurn3Result){water, f};
+	}
+	return (PracticeDuelVerifyTurn3Result){water, 0x00u};
+}
+/* <<< factory PracticeDuelVerify_Turn3 */

@@ -4277,3 +4277,10 @@ void DragoniteLv41Slam_AIEffect(void)
 	SetExpectedAIDamage(30u, 0u, 60u);
 }
 /* <<< factory DragoniteLv41Slam_AIEffect */
+
+/* >>> factory ElectabuzzQuickAttack_AIEffect */
+void ElectabuzzQuickAttack_AIEffect(void)
+{
+	SetExpectedAIDamage(20u, 10u, 30u);
+}
+/* <<< factory ElectabuzzQuickAttack_AIEffect */

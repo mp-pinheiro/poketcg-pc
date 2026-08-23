@@ -79,4 +79,7 @@ void AddBoosterCardToDrawnNonEnergies(void);
 /* >>> factory AddBoosterCardsToCollection */
 void AddBoosterCardsToCollection(void);
 /* <<< factory AddBoosterCardsToCollection */
+/* >>> factory GenerateBoosterEnergies */
+void GenerateBoosterEnergies(void);
+/* <<< factory GenerateBoosterEnergies */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

@@ -14,6 +14,9 @@
 
 #include "generated/sram.h"
 #include "generated/wram.h"
+
+#include "home/printer.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -197,3 +200,14 @@ ClearPrinterGfxBufferResult ClearPrinterGfxBuffer(uint8_t a, uint8_t f, uint8_t 
 	};
 }
 /* <<< factory ClearPrinterGfxBuffer */
+
+/* >>> factory GetPrinterContrastSerialData */
+GetPrinterContrastSerialDataResult GetPrinterContrastSerialData(void)
+{
+	static const uint8_t contrast_level_data[5] = {0x00u, 0x20u, 0x40u, 0x60u, 0x7Fu};
+	uint8_t level = wPrinterContrastLevel;
+	uint8_t h_val = contrast_level_data[level];
+	uint16_t hl = (uint16_t)(((uint16_t)h_val << 8) | 0xE4u);
+	return (GetPrinterContrastSerialDataResult){level, hl};
+}
+/* <<< factory GetPrinterContrastSerialData */

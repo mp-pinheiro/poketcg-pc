@@ -257,6 +257,16 @@ CASES["AddBoosterCardsToCollection"] = [
 ]
 # <<< factory AddBoosterCardsToCollection
 
+# >>> factory GenerateBoosterEnergies
+CONTRACT["GenerateBoosterEnergies"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["GenerateBoosterEnergies"] = [
+    {"wram": {0xD687: b"\x01\x00", 0xC40B: b"\x00", 0xD66A: b"\x00", 0xC001: b"\x00"},
+     "expect": {0xC40B: b"\x01\x00", 0xD66A: b"\x01", 0xC001: b"\x01"}},
+    dict(POISON, wram={0xD687: b"\x01\x00", 0xC40B: b"\x00", 0xD66A: b"\x00", 0xC001: b"\x00"},
+         expect={0xC40B: b"\x01\x00", 0xD66A: b"\x01", 0xC001: b"\x01"}),
+]
+# <<< factory GenerateBoosterEnergies
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -354,3 +364,6 @@ MUTATIONS["AddBoosterCardToDrawnNonEnergies"] = {"source_symbol": "AddBoosterCar
 # >>> factory-mutation AddBoosterCardsToCollection
 MUTATIONS["AddBoosterCardsToCollection"] = {"source_symbol": "AddBoosterCardsToCollection", "before": "\t\tAddCardToCollection(card);", "after": "\t\t(void)card;", "case_ids": ["AddBoosterCardsToCollection-0", "AddBoosterCardsToCollection-1"]}
 # <<< factory-mutation AddBoosterCardsToCollection
+# >>> factory-mutation GenerateBoosterEnergies
+MUTATIONS["GenerateBoosterEnergies"] = {"source_symbol": "GenerateBoosterEnergies", "before": "\t(void)AddBoosterEnergyToDrawnEnergies(a);", "after": "\t(void)AddBoosterEnergyToDrawnEnergies(0u);", "case_ids": ["GenerateBoosterEnergies-0", "GenerateBoosterEnergies-1"]}
+# <<< factory-mutation GenerateBoosterEnergies

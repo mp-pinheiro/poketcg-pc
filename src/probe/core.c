@@ -1327,6 +1327,15 @@ static void adapt_PrintReturnCardsToDeckDrawAgain(ProbeState *s)
 }
 /* <<< factory PrintReturnCardsToDeckDrawAgain */
 
+/* >>> factory PracticeDuelVerify_Turn3 */
+static void adapt_PracticeDuelVerify_Turn3(ProbeState *s)
+{
+	PracticeDuelVerifyTurn3Result r = PracticeDuelVerify_Turn3();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PracticeDuelVerify_Turn3 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1484,5 +1493,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayPreviousCardPage", adapt_DisplayPreviousCardPage },
 	{ "PrintNumberOfHandAndDeckCards", adapt_PrintNumberOfHandAndDeckCards },
 	{ "PrintReturnCardsToDeckDrawAgain", adapt_PrintReturnCardsToDeckDrawAgain },
+	{ "PracticeDuelVerify_Turn3", adapt_PracticeDuelVerify_Turn3 },
 	{ NULL, NULL },
 };

@@ -1823,6 +1823,14 @@ CASES["PrintReturnCardsToDeckDrawAgain"] = [
 ]
 # <<< factory PrintReturnCardsToDeckDrawAgain
 
+# >>> factory PracticeDuelVerify_Turn3
+CONTRACT["PracticeDuelVerify_Turn3"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PracticeDuelVerify_Turn3"] = [
+    {"wram": {0xCCC2: b"\x54", 0xFF97: b"\xC2"}},
+    dict(POISON, wram={0xCCC2: b"\x00", 0xFF97: b"\xC2"}),
+]
+# <<< factory PracticeDuelVerify_Turn3
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2795,3 +2803,6 @@ MUTATIONS["PrintNumberOfHandAndDeckCards"] = {"source_symbol": "PrintNumberOfHan
 # >>> factory-mutation PrintReturnCardsToDeckDrawAgain
 MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {"source_symbol": "PrintReturnCardsToDeckDrawAgain", "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);", "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD13u);", "case_ids": ["PrintReturnCardsToDeckDrawAgain-0", "PrintReturnCardsToDeckDrawAgain-1"]}
 # <<< factory-mutation PrintReturnCardsToDeckDrawAgain
+# >>> factory-mutation PracticeDuelVerify_Turn3
+MUTATIONS["PracticeDuelVerify_Turn3"] = {"source_symbol": "PracticeDuelVerify_Turn3", "before": "\tif (a != SEAKING) {", "after": "\tif (a != (uint8_t)(SEAKING + 1u)) {", "case_ids": ["PracticeDuelVerify_Turn3-0", "PracticeDuelVerify_Turn3-1"]}
+# <<< factory-mutation PracticeDuelVerify_Turn3

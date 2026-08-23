@@ -2542,6 +2542,14 @@ static void adapt_DragoniteLv41Slam_AIEffect(ProbeState *s)
 }
 /* <<< factory DragoniteLv41Slam_AIEffect */
 
+/* >>> factory ElectabuzzQuickAttack_AIEffect */
+static void adapt_ElectabuzzQuickAttack_AIEffect(ProbeState *s)
+{
+	(void)s;
+	ElectabuzzQuickAttack_AIEffect();
+}
+/* <<< factory ElectabuzzQuickAttack_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2857,5 +2865,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SeadraWaterGunEffect", adapt_SeadraWaterGunEffect },
 	{ "SuperFang_AIEffect", adapt_SuperFang_AIEffect },
 	{ "DragoniteLv41Slam_AIEffect", adapt_DragoniteLv41Slam_AIEffect },
+	{ "ElectabuzzQuickAttack_AIEffect", adapt_ElectabuzzQuickAttack_AIEffect },
 	{ NULL, NULL },
 };

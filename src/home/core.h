@@ -623,4 +623,8 @@ void PrintNumberOfHandAndDeckCards(void);
 typedef struct { uint8_t a, b, c, f; uint16_t hl, de; } PrintReturnCardsToDeckDrawAgainResult;
 PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void);
 /* <<< factory PrintReturnCardsToDeckDrawAgain */
+/* >>> factory PracticeDuelVerify_Turn3 */
+typedef struct { uint8_t a; uint8_t f; } PracticeDuelVerifyTurn3Result;
+PracticeDuelVerifyTurn3Result PracticeDuelVerify_Turn3(void);
+/* <<< factory PracticeDuelVerify_Turn3 */
 #endif
