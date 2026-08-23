@@ -526,3 +526,20 @@ void InitBoosterData(void)
 	wBoosterAveragedTypeChances = (uint8_t)r.quotient;
 }
 /* <<< factory InitBoosterData */
+
+/* >>> factory GenerateBoosterPack */
+void GenerateBoosterPack(uint8_t a)
+{
+	wBoosterPackID = a;
+	for (;;) {
+		InitBoosterData();
+		GenerateBoosterEnergies();
+		GenerateBoosterNonEnergiesResult r = GenerateBoosterNonEnergies();
+		if ((r.f & 0x10u) != 0u)
+			continue;
+		(void)PutEnergiesAndNonEnergiesTogether(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		AddBoosterCardsToCollection();
+		return;
+	}
+}
+/* <<< factory GenerateBoosterPack */

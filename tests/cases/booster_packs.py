@@ -111,6 +111,11 @@ wBoosterData_Set_A = 0xD686
 wBoosterData_TypeChances_A = 0xD689
 wBoosterPackID_A = 0xD669
 wBoosterAveragedTypeChances_A = 0xD66D
+
+wBoosterPackID_A = 0xD669
+wBoosterCardsDrawn_A = 0xC400
+wTempCardCollection_A = 0xC000
+sCardCollection_A = 0xA100
 # <<< factory-cases-statics
 
 # >>> factory AddBoosterCardToTempCardCollection
@@ -346,6 +351,20 @@ CASES["InitBoosterData"] = [
 ]
 # <<< factory InitBoosterData
 
+# >>> factory GenerateBoosterPack
+CONTRACT["GenerateBoosterPack"] = {"compare": (), "preserve": (), "wram_out": True, "sram_out": True}
+CASES["GenerateBoosterPack"] = [
+    {"a": 0x00, "wram": {wBoosterCardsDrawn_A: bytes([0xFF] * 0x16), wTempCardCollection_A: bytes([0xFF] * 256)},
+     "sram": {0: {sCardCollection_A: bytes(256)}},
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "read": {wBoosterCardsDrawn_A: 0x16}, "sread": {0: {sCardCollection_A: 256}}},
+    dict(POISON, a=0x01, wram={wBoosterCardsDrawn_A: bytes([0xFF] * 0x16), wTempCardCollection_A: bytes([0xFF] * 256)},
+         sram={0: {sCardCollection_A: bytes(256)}},
+         instruction_budget=2000000, cycle_budget=8000000,
+         read={wBoosterCardsDrawn_A: 0x16}, sread={0: {sCardCollection_A: 256}}),
+]
+# <<< factory GenerateBoosterPack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -479,3 +498,6 @@ MUTATIONS["GenerateBoosterNonEnergies"] = {
 # >>> factory-mutation InitBoosterData
 MUTATIONS["InitBoosterData"] = {"source_symbol": "InitBoosterData", "before": "\t\t\tc = (uint8_t)(a + c);", "after": "\t\t\tc = (uint8_t)(a + c + 1u);", "case_ids": ["InitBoosterData-0", "InitBoosterData-1"]}
 # <<< factory-mutation InitBoosterData
+# >>> factory-mutation GenerateBoosterPack
+MUTATIONS["GenerateBoosterPack"] = {"source_symbol": "GenerateBoosterPack", "before": "\twBoosterPackID = a;", "after": "\twBoosterPackID = (uint8_t)(a + 1u);", "case_ids": ["GenerateBoosterPack-0", "GenerateBoosterPack-1"]}
+# <<< factory-mutation GenerateBoosterPack

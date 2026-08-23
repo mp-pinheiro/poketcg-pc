@@ -104,4 +104,7 @@ GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void);
 /* >>> factory InitBoosterData */
 void InitBoosterData(void);
 /* <<< factory InitBoosterData */
+/* >>> factory GenerateBoosterPack */
+void GenerateBoosterPack(uint8_t a);
+/* <<< factory GenerateBoosterPack */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */
