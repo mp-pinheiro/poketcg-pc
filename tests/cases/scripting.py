@@ -114,6 +114,15 @@ wEventLegendaryByte = 0xD3D8
 wEventCup12Byte = 0xD3E0
 
 wEventVarsLastByte = 0xD411
+
+wLoadedNPCTempIndex_A = 0xD3AA
+wTempNPC_A = 0xD3AB
+wChallengeHallNPC_A = 0xD696
+wLoadNPCXPos_A = 0xD3AC
+wLoadNPCYPos_A = 0xD3AD
+wLoadNPCDirection_A = 0xD3AE
+wLoadedNPCs_A = 0xD34A
+wScriptPointer_A = 0xD413
 # <<< factory-cases-statics
 
 
@@ -1044,6 +1053,22 @@ CASES["DetermineImakuniAndChallengeHall"] = [
 ]
 # <<< factory DetermineImakuniAndChallengeHall
 
+# >>> factory ScriptCommand_SetChallengeHallNPCCoords
+CONTRACT["ScriptCommand_SetChallengeHallNPCCoords"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_SetChallengeHallNPCCoords"] = [
+    {"b": 0x05, "c": 0x0A, "wram": {wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66",
+              wChallengeHallNPC_A: b"\x07", wLoadedNPCs_A: bytes([0x01] * 0x60),
+              wScriptPointer_A: b"\x00\xC5"},
+     "read": {wLoadNPCXPos_A: 1, wLoadNPCYPos_A: 1, wLoadNPCDirection_A: 1,
+              wTempNPC_A: 1, wLoadedNPCTempIndex_A: 1, wScriptPointer_A: 2}},
+    dict(POISON, b=0x08, c=0x03, wram={wLoadedNPCTempIndex_A: b"\x55", wTempNPC_A: b"\x66",
+              wChallengeHallNPC_A: b"\x07", wLoadedNPCs_A: bytes([0x01] * 0x60),
+              wScriptPointer_A: b"\x00\xC5"},
+         read={wLoadNPCXPos_A: 1, wLoadNPCYPos_A: 1, wLoadNPCDirection_A: 1,
+              wTempNPC_A: 1, wLoadedNPCTempIndex_A: 1, wScriptPointer_A: 2}),
+]
+# <<< factory ScriptCommand_SetChallengeHallNPCCoords
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1556,3 +1581,6 @@ MUTATIONS["DetermineChallengeHallEvent"] = {"source_symbol": "DetermineChallenge
 # >>> factory-mutation DetermineImakuniAndChallengeHall
 MUTATIONS["DetermineImakuniAndChallengeHall"] = {"source_symbol": "DetermineImakuniAndChallengeHall", "before": "\tgb_write8((uint16_t)(wEventVars_ADDR + EVENT_VAR_BYTES - 1u), 0u);", "after": "\tgb_write8((uint16_t)(wEventVars_ADDR + EVENT_VAR_BYTES - 1u), 0xFFu);", "case_ids": ["DetermineImakuniAndChallengeHall-0", "DetermineImakuniAndChallengeHall-1"]}
 # <<< factory-mutation DetermineImakuniAndChallengeHall
+# >>> factory-mutation ScriptCommand_SetChallengeHallNPCCoords
+MUTATIONS["ScriptCommand_SetChallengeHallNPCCoords"] = {"source_symbol": "ScriptCommand_SetChallengeHallNPCCoords", "before": "\twLoadNPCDirection = SOUTH;", "after": "\twLoadNPCDirection = (uint8_t)(SOUTH + 1u);", "case_ids": ["ScriptCommand_SetChallengeHallNPCCoords-0", "ScriptCommand_SetChallengeHallNPCCoords-1"]}
+# <<< factory-mutation ScriptCommand_SetChallengeHallNPCCoords

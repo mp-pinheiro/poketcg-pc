@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_SetChallengeHallNPCCoords",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_SetChallengeHallNPCCoords\", \"registers\": {\"a\": 197, \"b\": 5, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010155660a0502\", \"54291\": \"03c5\", \"54934\": \"07\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_SetChallengeHallNPCCoords\", \"mismatches\": {\"bus\": {\"address\": 54190, \"reference\": \"55660a050203c507\", \"native\": \"55660a050303c507\", \"reference_size\": 104, \"native_size\": 104, \"spans\": [[54090, 101], [54291, 2], [54934, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_SetChallengeHallNPCCoords\", \"registers\": {\"a\": 197, \"b\": 5, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"01010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010155660a0502\", \"54291\": \"03c5\", \"54934\": \"07\"}}, \"status\": \"PASS\"}\n"
+}

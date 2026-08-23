@@ -176,6 +176,12 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "generated/wram.h"
+
+#include "home/scripting.h"
+#include "home/npc_core.h"
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#define SOUTH 0x02u
 /* <<< factory statics */
 
 
@@ -1370,3 +1376,21 @@ void DetermineImakuniAndChallengeHall(void)
 	DetermineChallengeHallEvent();
 }
 /* <<< factory DetermineImakuniAndChallengeHall */
+
+/* >>> factory ScriptCommand_SetChallengeHallNPCCoords */
+IncreaseScriptPointerResult ScriptCommand_SetChallengeHallNPCCoords(uint8_t b, uint8_t c)
+{
+	uint8_t saved_index = wLoadedNPCTempIndex;
+	uint8_t saved_temp_npc = wTempNPC;
+	wTempNPC = wChallengeHallNPC;
+	wLoadNPCXPos = c;
+	wLoadNPCYPos = b;
+	wLoadNPCDirection = SOUTH;
+	uint8_t npc_id = wTempNPC;
+	(void)LoadNPCSpriteData(npc_id, 0u, 0u, 0u, 0u, 0u);
+	(void)LoadNPC();
+	wTempNPC = saved_temp_npc;
+	wLoadedNPCTempIndex = saved_index;
+	return IncreaseScriptPointerBy3();
+}
+/* <<< factory ScriptCommand_SetChallengeHallNPCCoords */
