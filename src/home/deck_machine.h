@@ -39,4 +39,8 @@ void DrawListScrollArrows(void);
 typedef struct { uint16_t hl; } SetDeckMachineTitleTextResult;
 SetDeckMachineTitleTextResult SetDeckMachineTitleText(void);
 /* <<< factory SetDeckMachineTitleText */
+/* >>> factory FindFirstEmptyDeckSlot */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } FindFirstEmptyDeckSlotResult;
+FindFirstEmptyDeckSlotResult FindFirstEmptyDeckSlot(void);
+/* <<< factory FindFirstEmptyDeckSlot */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

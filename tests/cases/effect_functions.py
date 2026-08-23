@@ -2885,6 +2885,22 @@ CASES["Heal_OncePerTurnCheck"] = [
 ]
 # <<< factory Heal_OncePerTurnCheck
 
+# >>> factory Shift_ChangeColorEffect
+CONTRACT["Shift_ChangeColorEffect"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["Shift_ChangeColorEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x03",
+              0xC2BB: b"\x10", 0xC400 + 0x10: b"\x20", 0xC2C2: b"\x00", 0xC2D4: b"\x00",
+              0xCC27: b"\x00\x00"},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC2C2: 1, 0xC2D4: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xFFA1: b"\x03",
+              0xC2BB: b"\x10", 0xC400 + 0x10: b"\x20", 0xC2C2: b"\x00", 0xC2D4: b"\x00",
+              0xCC27: b"\x00\x00"},
+         keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC2C2: 1, 0xC2D4: 1}),
+]
+# <<< factory Shift_ChangeColorEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4750,3 +4766,6 @@ MUTATIONS["PokemonFlute_BenchCheck"] = {"source_symbol": "PokemonFlute_BenchChec
 # >>> factory-mutation Heal_OncePerTurnCheck
 MUTATIONS["Heal_OncePerTurnCheck"] = {"source_symbol": "Heal_OncePerTurnCheck", "before": "\tif (flags.a & USED_PKMN_POWER_THIS_TURN)\n\t\treturn (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};", "after": "\tif (!(flags.a & USED_PKMN_POWER_THIS_TURN))\n\t\treturn (HealOncePerTurnCheckResult){0x10u, OnlyOncePerTurnText};", "case_ids": ["Heal_OncePerTurnCheck-0", "Heal_OncePerTurnCheck-2"]}
 # <<< factory-mutation Heal_OncePerTurnCheck
+# >>> factory-mutation Shift_ChangeColorEffect
+MUTATIONS["Shift_ChangeColorEffect"] = {"source_symbol": "Shift_ChangeColorEffect", "before": "\tuint8_t new_type = (uint8_t)(hAIPkmnPowerEffectParam | HAS_CHANGED_COLOR);", "after": "\tuint8_t new_type = hAIPkmnPowerEffectParam;", "case_ids": ["Shift_ChangeColorEffect-0"]}
+# <<< factory-mutation Shift_ChangeColorEffect

@@ -86,6 +86,16 @@ static void adapt_SetDeckMachineTitleText(ProbeState *s)
 }
 /* <<< factory SetDeckMachineTitleText */
 
+/* >>> factory FindFirstEmptyDeckSlot */
+static void adapt_FindFirstEmptyDeckSlot(ProbeState *s)
+{
+	FindFirstEmptyDeckSlotResult r = FindFirstEmptyDeckSlot();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory FindFirstEmptyDeckSlot */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -97,5 +107,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "SafelySwitchToSRAM0", adapt_SafelySwitchToSRAM0 },
 	{ "DrawListScrollArrows", adapt_DrawListScrollArrows },
 	{ "SetDeckMachineTitleText", adapt_SetDeckMachineTitleText },
+	{ "FindFirstEmptyDeckSlot", adapt_FindFirstEmptyDeckSlot },
 	{ NULL, NULL },
 };

@@ -35,6 +35,8 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
+
+#include "home/deck_machine.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -194,3 +196,26 @@ SetDeckMachineTitleTextResult SetDeckMachineTitleText(void)
 	return (SetDeckMachineTitleTextResult){r.hl};
 }
 /* <<< factory SetDeckMachineTitleText */
+
+/* >>> factory FindFirstEmptyDeckSlot */
+FindFirstEmptyDeckSlotResult FindFirstEmptyDeckSlot(void)
+{
+	uint16_t hl = 0xA218u;
+	uint8_t a = gb_read8(hl);
+	if (a == 0u)
+		return (FindFirstEmptyDeckSlotResult){0u, 0x80u, hl};
+	hl = 0xA26Cu;
+	a = gb_read8(hl);
+	if (a == 0u)
+		return (FindFirstEmptyDeckSlotResult){1u, 0x80u, hl};
+	hl = 0xA2C0u;
+	a = gb_read8(hl);
+	if (a == 0u)
+		return (FindFirstEmptyDeckSlotResult){2u, 0x80u, hl};
+	hl = 0xA314u;
+	a = gb_read8(hl);
+	if (a == 0u)
+		return (FindFirstEmptyDeckSlotResult){3u, 0x80u, hl};
+	return (FindFirstEmptyDeckSlotResult){a, 0x10u, hl};
+}
+/* <<< factory FindFirstEmptyDeckSlot */

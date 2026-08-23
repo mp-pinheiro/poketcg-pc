@@ -1,0 +1,9 @@
+{
+  "fn": "Shift_ChangeColorEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Shift_ChangeColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"10\", \"49858\": \"20\", \"49876\": \"83\", \"50192\": \"20\", \"52263\": \"8808\", \"65431\": \"c2\", \"65440\": \"0003\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Shift_ChangeColorEffect\", \"mismatches\": {\"bus\": {\"address\": 49876, \"reference\": \"102083208808c2\", \"native\": \"102003208808c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 1], [49858, 1], [49876, 1], [50192, 1], [52263, 2], [65431, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"Shift_ChangeColorEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"10\", \"49858\": \"20\", \"49876\": \"83\", \"50192\": \"20\", \"52263\": \"8808\", \"65431\": \"c2\", \"65440\": \"0003\"}}, \"status\": \"PASS\"}\n"
+}

@@ -317,6 +317,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#define HAS_CHANGED_COLOR 0x80u
+#define USED_PKMN_POWER_THIS_TURN_F 0x05u
+#define ChangedTheColorOfText 0x0116u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4425,3 +4433,23 @@ HealOncePerTurnCheckResult Heal_OncePerTurnCheck(void)
 	return (HealOncePerTurnCheckResult){incapable.f, incapable.hl};
 }
 /* <<< factory Heal_OncePerTurnCheck */
+
+/* >>> factory Shift_ChangeColorEffect */
+Shift_ChangeColorEffectResult Shift_ChangeColorEffect(uint8_t d, uint8_t e)
+{
+	uint8_t location = hTemp_ffa0;
+	DuelistVarResult arena_card = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena_card.a);
+
+	DuelistVarResult flags = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_FLAGS));
+	gb_write8(flags.hl, (uint8_t)(gb_read8(flags.hl) | (1u << USED_PKMN_POWER_THIS_TURN_F)));
+
+	DuelistVarResult changed_type = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD_CHANGED_TYPE));
+	uint8_t new_type = (uint8_t)(hAIPkmnPowerEffectParam | HAS_CHANGED_COLOR);
+	gb_write8(changed_type.hl, new_type);
+
+	LoadCardNameAndInputColor(new_type, d, e);
+	WaitResult result = DrawWideTextBox_WaitForInput(ChangedTheColorOfText);
+	return (Shift_ChangeColorEffectResult){result.f};
+}
+/* <<< factory Shift_ChangeColorEffect */

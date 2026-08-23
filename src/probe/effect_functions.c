@@ -2643,6 +2643,14 @@ static void adapt_Heal_OncePerTurnCheck(ProbeState *s)
 }
 /* <<< factory Heal_OncePerTurnCheck */
 
+/* >>> factory Shift_ChangeColorEffect */
+static void adapt_Shift_ChangeColorEffect(ProbeState *s)
+{
+	Shift_ChangeColorEffectResult r = Shift_ChangeColorEffect(s->d, s->e);
+	s->f = r.f;
+}
+/* <<< factory Shift_ChangeColorEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2970,5 +2978,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DamageSwap_CheckDamage", adapt_DamageSwap_CheckDamage },
 	{ "PokemonFlute_BenchCheck", adapt_PokemonFlute_BenchCheck },
 	{ "Heal_OncePerTurnCheck", adapt_Heal_OncePerTurnCheck },
+	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
 	{ NULL, NULL },
 };

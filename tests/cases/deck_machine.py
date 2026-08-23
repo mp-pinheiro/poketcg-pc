@@ -140,6 +140,15 @@ CASES["SetDeckMachineTitleText"] = [
 ]
 # <<< factory SetDeckMachineTitleText
 
+# >>> factory FindFirstEmptyDeckSlot
+CONTRACT["FindFirstEmptyDeckSlot"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["FindFirstEmptyDeckSlot"] = [
+    {"ramg": True, "sram": {0: {0xA218: b"\x00"}}},
+    dict(POISON, ramg=True, sram={0: {0xA218: b"\x01", 0xA26C: b"\x00"}}),
+    {"ramg": True, "sram": {0: {0xA218: b"\x01", 0xA26C: b"\x02", 0xA2C0: b"\x03", 0xA314: b"\x04"}}},
+]
+# <<< factory FindFirstEmptyDeckSlot
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -184,3 +193,6 @@ MUTATIONS["DrawListScrollArrows"] = {
 # >>> factory-mutation SetDeckMachineTitleText
 MUTATIONS["SetDeckMachineTitleText"] = {"source_symbol": "SetDeckMachineTitleText", "before": "\tInitTextPrinting(1u, 0u);", "after": "\tInitTextPrinting(0u, 0u);", "case_ids": ["SetDeckMachineTitleText-0", "SetDeckMachineTitleText-1"]}
 # <<< factory-mutation SetDeckMachineTitleText
+# >>> factory-mutation FindFirstEmptyDeckSlot
+MUTATIONS["FindFirstEmptyDeckSlot"] = {"source_symbol": "FindFirstEmptyDeckSlot", "before": "\treturn (FindFirstEmptyDeckSlotResult){0u, 0x80u, hl};", "after": "\treturn (FindFirstEmptyDeckSlotResult){1u, 0x80u, hl};", "case_ids": ["FindFirstEmptyDeckSlot-0"]}
+# <<< factory-mutation FindFirstEmptyDeckSlot
