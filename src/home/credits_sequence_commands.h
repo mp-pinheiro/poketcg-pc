@@ -48,4 +48,7 @@ void CreditsSequenceCmd_InitVolcanoSprite(uint8_t f);
 typedef struct { uint8_t a; uint8_t f; } CreditsSequenceCmdDrawRectangleResult;
 CreditsSequenceCmdDrawRectangleResult CreditsSequenceCmd_DrawRectangle(uint8_t b, uint8_t c);
 /* <<< factory CreditsSequenceCmd_DrawRectangle */
+/* >>> factory CreditsSequenceCmd_PrintText */
+void CreditsSequenceCmd_PrintText(uint8_t b, uint8_t c, uint16_t de);
+/* <<< factory CreditsSequenceCmd_PrintText */
 #endif

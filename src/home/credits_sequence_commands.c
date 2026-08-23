@@ -20,6 +20,11 @@
 #include "home/credits_sequence_commands.h"
 #include "home/tiles.h"
 #include "generated/wram.h"
+
+#include "home/credits_sequence_commands.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -203,3 +208,15 @@ CreditsSequenceCmdDrawRectangleResult CreditsSequenceCmd_DrawRectangle(uint8_t b
 	return (CreditsSequenceCmdDrawRectangleResult){hi, f};
 }
 /* <<< factory CreditsSequenceCmd_DrawRectangle */
+
+/* >>> factory CreditsSequenceCmd_PrintText */
+void CreditsSequenceCmd_PrintText(uint8_t b, uint8_t c, uint16_t de)
+{
+	wLineSeparation = SINGLE_SPACED;
+	uint8_t d = c;
+	uint8_t e = (uint8_t)(b | 0x20u);
+	InitTextPrinting(d, e);
+	(void)PrintTextNoDelay(de, d, e);
+	AdvanceCreditsSequenceCmdPtrBy6();
+}
+/* <<< factory CreditsSequenceCmd_PrintText */

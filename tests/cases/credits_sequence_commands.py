@@ -170,6 +170,14 @@ wd649 = 0xD649
 wd64a = 0xD64A
 wSequenceCmdPtr = 0xD631
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wLineSeparation = 0xCD08
+wSequenceCmdPtr = 0xD631
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
+BOX_READ = {0x9800: 0x400}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -237,6 +245,22 @@ CASES["CreditsSequenceCmd_DrawRectangle"] = [
     dict(POISON, b=0x01, c=0x02, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
 ]
 # <<< factory CreditsSequenceCmd_DrawRectangle
+
+# >>> factory CreditsSequenceCmd_PrintText
+CONTRACT["CreditsSequenceCmd_PrintText"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_PrintText"] = [
+    {"b": 0, "c": 0, "d": 0, "e": 1,
+     "wram": {wLineSeparation: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+     "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ, wLineSeparation: 1, wSequenceCmdPtr: 2},
+     "vread": VRAM_READ},
+    {"b": 0, "c": 0, "d": 0, "e": 0,
+     "wram": {wLineSeparation: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+     "setup": SETUP, "vread": {0: BOX_READ}},
+    dict(POISON,
+         wram={wLineSeparation: b"\x00", wSequenceCmdPtr: b"\x00\x00"},
+         setup=SETUP, vread={0: BOX_READ}),
+]
+# <<< factory CreditsSequenceCmd_PrintText
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -352,3 +376,6 @@ MUTATIONS["CreditsSequenceCmd_InitVolcanoSprite"] = {"source_symbol": "CreditsSe
 # >>> factory-mutation CreditsSequenceCmd_DrawRectangle
 MUTATIONS["CreditsSequenceCmd_DrawRectangle"] = {"source_symbol": "CreditsSequenceCmd_DrawRectangle", "before": "\tAdvanceCreditsSequenceCmdPtrBy4();", "after": "\t(void)0;", "case_ids": ["CreditsSequenceCmd_DrawRectangle-0", "CreditsSequenceCmd_DrawRectangle-1"]}
 # <<< factory-mutation CreditsSequenceCmd_DrawRectangle
+# >>> factory-mutation CreditsSequenceCmd_PrintText
+MUTATIONS["CreditsSequenceCmd_PrintText"] = {"source_symbol": "CreditsSequenceCmd_PrintText", "before": "uint8_t e = (uint8_t)(b | 0x20u);", "after": "uint8_t e = b;", "case_ids": ["CreditsSequenceCmd_PrintText-0", "CreditsSequenceCmd_PrintText-1"]}
+# <<< factory-mutation CreditsSequenceCmd_PrintText
