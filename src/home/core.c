@@ -576,6 +576,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define GOLDEEN 0x53u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PSYCHIC 0x05u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3534,3 +3540,20 @@ PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void)
 	return (PracticeDuelVerify_Turn1Result){0xC0u};
 }
 /* <<< factory PracticeDuelVerify_Turn1 */
+
+/* >>> factory PracticeDuelVerify_Turn2 */
+PracticeDuelVerify_Turn2Result PracticeDuelVerify_Turn2(void)
+{
+	uint8_t a = wTempCardID_ccc2;
+	if (a != SEAKING)
+		return (PracticeDuelVerify_Turn2Result){ReturnWrongAction(0u)};
+	uint8_t attack = wSelectedAttack;
+	if (attack != SECOND_ATTACK)
+		return (PracticeDuelVerify_Turn2Result){ReturnWrongAction(0u)};
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t psychic = gb_read8((uint16_t)(wAttachedEnergies_ADDR + PSYCHIC));
+	if (psychic == 0u)
+		return (PracticeDuelVerify_Turn2Result){ReturnWrongAction(0x80u)};
+	return (PracticeDuelVerify_Turn2Result){0x00u};
+}
+/* <<< factory PracticeDuelVerify_Turn2 */

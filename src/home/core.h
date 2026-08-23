@@ -667,4 +667,8 @@ PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void);
 typedef struct { uint8_t f; } PracticeDuelVerify_Turn1Result;
 PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void);
 /* <<< factory PracticeDuelVerify_Turn1 */
+/* >>> factory PracticeDuelVerify_Turn2 */
+typedef struct { uint8_t f; } PracticeDuelVerify_Turn2Result;
+PracticeDuelVerify_Turn2Result PracticeDuelVerify_Turn2(void);
+/* <<< factory PracticeDuelVerify_Turn2 */
 #endif

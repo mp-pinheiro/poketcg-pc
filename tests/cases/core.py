@@ -1460,6 +1460,11 @@ STARYU = 0x55
 
 hWhoseTurn = 0xFF97
 wTempCardID_ccc2 = 0xCCC2
+
+hWhoseTurn = 0xFF97
+wTempCardID_ccc2 = 0xCCC2
+wSelectedAttack = 0xCCC6
+wAttachedEnergies = 0xCC1B
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1990,6 +1995,17 @@ CASES["PracticeDuelVerify_Turn1"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x53"}),
 ]
 # <<< factory PracticeDuelVerify_Turn1
+
+# >>> factory PracticeDuelVerify_Turn2
+CONTRACT["PracticeDuelVerify_Turn2"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuelVerify_Turn2"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01", 0xC300 + 0x05: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x55", wSelectedAttack: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x02"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00, wTempCardID_ccc2: b"\x54", wSelectedAttack: b"\x01", 0xC300 + 0x05: b"\x01"}),
+]
+# <<< factory PracticeDuelVerify_Turn2
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3004,3 +3020,6 @@ MUTATIONS["PracticeDuelVerify_Turn5"] = {"source_symbol": "PracticeDuelVerify_Tu
 # >>> factory-mutation PracticeDuelVerify_Turn1
 MUTATIONS["PracticeDuelVerify_Turn1"] = {"source_symbol": "PracticeDuelVerify_Turn1", "before": "if (a != GOLDEEN)", "after": "if (a == GOLDEEN)", "case_ids": ["PracticeDuelVerify_Turn1-0", "PracticeDuelVerify_Turn1-1"]}
 # <<< factory-mutation PracticeDuelVerify_Turn1
+# >>> factory-mutation PracticeDuelVerify_Turn2
+MUTATIONS["PracticeDuelVerify_Turn2"] = {"source_symbol": "PracticeDuelVerify_Turn2", "before": "if (psychic == 0u)", "after": "if (psychic != 0u)", "case_ids": ["PracticeDuelVerify_Turn2-0", "PracticeDuelVerify_Turn2-3"]}
+# <<< factory-mutation PracticeDuelVerify_Turn2
