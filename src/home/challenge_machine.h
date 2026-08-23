@@ -46,4 +46,12 @@ ChallengeMachineRecordResult ChallengeMachine_CheckForNewRecord(uint8_t b, uint8
 /* >>> factory ChallengeMachine_RecordDuelResult */
 void ChallengeMachine_RecordDuelResult(void);
 /* <<< factory ChallengeMachine_RecordDuelResult */
+/* >>> factory ChallengeMachine_Initialize */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} ChallengeMachineInitializeResult;
+
+ChallengeMachineInitializeResult ChallengeMachine_Initialize(void);
+/* <<< factory ChallengeMachine_Initialize */
 #endif

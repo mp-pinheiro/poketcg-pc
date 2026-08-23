@@ -77,6 +77,11 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/print_text.h"
 #include "home/overworld_map.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/load_animation.h"
+#include "home/overworld.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -312,3 +317,36 @@ void OverworldMap_UpdatePlayerAndCursorSprites(void)
 	OverworldMap_SetSpritePosition(wOverworldMapStartingPosition, 0u, 0u);
 }
 /* <<< factory OverworldMap_UpdatePlayerAndCursorSprites */
+
+/* >>> factory OverworldMap_InitNextPlayerVelocity */
+void OverworldMap_InitNextPlayerVelocity(uint8_t b, uint8_t c)
+{
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	uint8_t current_x = gb_read8(hl);
+	uint8_t current_y = gb_read8((uint16_t)(hl + 1u));
+	uint8_t horizontal_low = (uint8_t)(b - current_x);
+	uint8_t horizontal_high = b < current_x ? 0xffu : 0x00u;
+	wOverworldMapPlayerPathHorizontalMovement = horizontal_low;
+	gb_write8((uint16_t)(wOverworldMapPlayerPathHorizontalMovement_ADDR + 1u), horizontal_high);
+	uint8_t vertical_low = (uint8_t)(c - current_y);
+	uint8_t vertical_high = c < current_y ? 0xffu : 0x00u;
+	wOverworldMapPlayerPathVerticalMovement = vertical_low;
+	gb_write8((uint16_t)(wOverworldMapPlayerPathVerticalMovement_ADDR + 1u), vertical_high);
+
+	uint8_t horizontal_abs = horizontal_low;
+	if ((horizontal_high & 0x80u) != 0u)
+		horizontal_abs = (uint8_t)(0u - horizontal_abs);
+	uint8_t vertical_abs = vertical_low;
+	if ((vertical_high & 0x80u) != 0u)
+		vertical_abs = (uint8_t)(0u - vertical_abs);
+
+	if (horizontal_abs < vertical_abs) {
+		OverworldMap_InitPlayerNorthSouthMovement(horizontal_abs, vertical_abs);
+	} else {
+		OverworldMap_InitPlayerEastWestMovement(horizontal_abs, vertical_abs);
+	}
+	wOverworldMapPlayerHorizontalSubPixelPosition = 0u;
+	wOverworldMapPlayerVerticalSubPixelPosition = 0u;
+	UpdatePlayerSprite();
+}
+/* <<< factory OverworldMap_InitNextPlayerVelocity */

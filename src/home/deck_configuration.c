@@ -72,6 +72,10 @@
 
 #include "home/deck_configuration.h"
 #include "generated/wram.h"
+
+#include "generated/sram.h"
+#include "home/switch_sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -456,3 +460,33 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void)
 	return DrawHorizontalListCursor(tile);
 }
 /* <<< factory DrawHorizontalListCursor_Visible */
+
+/* >>> factory IsCardInAnyDeck */
+/* deck_configuration.asm:1133-1190 */
+IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e)
+{
+	const uint16_t decks[] = {
+		sDeck1Cards_ADDR,
+		sDeck2Cards_ADDR,
+		sDeck3Cards_ADDR,
+		sDeck4Cards_ADDR,
+	};
+
+	for (uint8_t deck = 0; deck < 4u; deck++) {
+		uint16_t address = decks[deck];
+		uint8_t b = DECK_SIZE;
+		EnableSRAM();
+		while (b != 0u) {
+			uint8_t card = gb_read8(address++);
+			if (card == e) {
+				DisableSRAM();
+				return (IsCardInAnyDeckResult){(a == 0u) ? 0x80u : 0x00u, b};
+			}
+			b = (uint8_t)(b - 1u);
+		}
+		DisableSRAM();
+	}
+
+	return (IsCardInAnyDeckResult){(uint8_t)((f & 0x80u) | 0x10u), 0u};
+}
+/* <<< factory IsCardInAnyDeck */

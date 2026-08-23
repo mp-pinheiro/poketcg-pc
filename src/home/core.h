@@ -610,4 +610,7 @@ void PrintNextPracticeDuelInstruction(void);
 /* >>> factory GoToFirstOrNextCardPage */
 CardPageNavigationResult GoToFirstOrNextCardPage(void);
 /* <<< factory GoToFirstOrNextCardPage */
+/* >>> factory PrintPracticeDuelInstructions */
+void PrintPracticeDuelInstructions(uint16_t hl);
+/* <<< factory PrintPracticeDuelInstructions */
 #endif

@@ -213,6 +213,24 @@ CASES["ChallengeMachine_RecordDuelResult"] = [
 ]
 # <<< factory ChallengeMachine_RecordDuelResult
 
+# >>> factory ChallengeMachine_Initialize
+CONTRACT["ChallengeMachine_Initialize"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ChallengeMachine_Initialize"] = [
+    {"sram": {0: {0xBA42: b"\xE3\x95" + b"\xAA" * 0x25}},
+     "sread": {0: {0xBA42: 0x27}},
+     "expect_regs": {"a": 0xAA, "f": 0xC0}},
+    dict(POISON,
+         sram={0: {0xBA42: b"\x00" * 0x27}},
+         sread={0: {0xBA42: 0x27}},
+         expect_sram={0: {0xBA42: b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}},
+         expect_regs={"a": 0x00, "f": 0x80}),
+    {"sram": {0: {0xBA42: b"\xE3\x94" + b"\x55" * 0x25}},
+     "sread": {0: {0xBA42: 0x27}},
+     "expect_regs": {"a": 0x00, "f": 0x80},
+     "expect_sram": {0: {0xBA42: b"\xE3\x95" + b"\x00" * 0x14 + b"\x01\x00" + b"Dr. Mason" + b"\x00" * 7 + b"\x00"}}},
+]
+# <<< factory ChallengeMachine_Initialize
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -266,3 +284,6 @@ MUTATIONS["ChallengeMachine_CheckForNewRecord"] = {
 # >>> factory-mutation ChallengeMachine_RecordDuelResult
 MUTATIONS["ChallengeMachine_RecordDuelResult"] = {"source_symbol": "ChallengeMachine_RecordDuelResult", "before": "\tif (result == 0u) {", "after": "\tif (result != 0u) {", "case_ids": ["ChallengeMachine_RecordDuelResult-0", "ChallengeMachine_RecordDuelResult-1", "ChallengeMachine_RecordDuelResult-2", "ChallengeMachine_RecordDuelResult-3"]}
 # <<< factory-mutation ChallengeMachine_RecordDuelResult
+# >>> factory-mutation ChallengeMachine_Initialize
+MUTATIONS["ChallengeMachine_Initialize"] = {"source_symbol": "ChallengeMachine_Initialize", "before": "\t\tgb_write8(sMaximumConsecutiveWins_ADDR, 1u);", "after": "\t\tgb_write8(sMaximumConsecutiveWins_ADDR, 2u);", "case_ids": ["ChallengeMachine_Initialize-1", "ChallengeMachine_Initialize-2"]}
+# <<< factory-mutation ChallengeMachine_Initialize

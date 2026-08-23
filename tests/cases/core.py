@@ -1420,6 +1420,9 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wCardPageNumber = 0xCBC7
 wLoadedCard1Type = 0xCC24
+
+wPracticeDuelTextPointer = 0xCC01
+wPracticeDuelTextY = 0xCBCA
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1753,6 +1756,24 @@ CASES["GoToFirstOrNextCardPage"] = [
     dict(POISON, wram={wCardPageNumber: b"\x00", wLoadedCard1Type: b"\x00"}, read={wCardPageNumber: 1}),
 ]
 # <<< factory GoToFirstOrNextCardPage
+
+# >>> factory PrintPracticeDuelInstructions
+CONTRACT["PrintPracticeDuelInstructions"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintPracticeDuelInstructions"] = [
+    {"hl": 0xC500, "keys": 0x01,
+     "wram": {0xC500: b"\x00"},
+     "expect": {0xCC01: b"\x00\xC5", 0xCBCA: b"\x00"},
+     "read": {0xCC01: 2, 0xCBCA: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, hl=0xC500, keys=0x01,
+         wram={0xC500: b"\x00"},
+         expect={0xCC01: b"\x00\xC5", 0xCBCA: b"\x00"},
+         read={0xCC01: 2, 0xCBCA: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory PrintPracticeDuelInstructions
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2709,3 +2730,11 @@ MUTATIONS["PrintNextPracticeDuelInstruction"] = {"source_symbol": "PrintNextPrac
 # >>> factory-mutation GoToFirstOrNextCardPage
 MUTATIONS["GoToFirstOrNextCardPage"] = {"source_symbol": "GoToFirstOrNextCardPage", "before": "\t\twCardPageNumber = initial_page;", "after": "\t\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "case_ids": ["GoToFirstOrNextCardPage-0", "GoToFirstOrNextCardPage-1", "GoToFirstOrNextCardPage-2", "GoToFirstOrNextCardPage-3"]}
 # <<< factory-mutation GoToFirstOrNextCardPage
+# >>> factory-mutation PrintPracticeDuelInstructions
+MUTATIONS["PrintPracticeDuelInstructions"] = {
+    "source_symbol": "PrintPracticeDuelInstructions",
+    "before": "\tgb_write8(wPracticeDuelTextPointer_ADDR, (uint8_t)hl);",
+    "after": "\tgb_write8(wPracticeDuelTextPointer_ADDR, (uint8_t)(hl + 1u));",
+    "case_ids": ["PrintPracticeDuelInstructions-0", "PrintPracticeDuelInstructions-1"],
+}
+# <<< factory-mutation PrintPracticeDuelInstructions

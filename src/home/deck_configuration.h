@@ -83,4 +83,12 @@ DrawHorizontalListCursorResult DrawHorizontalListCursor_Invisible(void);
 /* >>> factory DrawHorizontalListCursor_Visible */
 DrawHorizontalListCursorResult DrawHorizontalListCursor_Visible(void);
 /* <<< factory DrawHorizontalListCursor_Visible */
+/* >>> factory IsCardInAnyDeck */
+typedef struct {
+	uint8_t f;
+	uint8_t b;
+} IsCardInAnyDeckResult;
+
+IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e);
+/* <<< factory IsCardInAnyDeck */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

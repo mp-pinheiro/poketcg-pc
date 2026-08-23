@@ -174,6 +174,16 @@ CASES["OverworldMap_UpdatePlayerAndCursorSprites"] = [
 ]
 # <<< factory OverworldMap_UpdatePlayerAndCursorSprites
 
+# >>> factory OverworldMap_InitNextPlayerVelocity
+CONTRACT["OverworldMap_InitNextPlayerVelocity"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_InitNextPlayerVelocity"] = [
+    {"b": 0x20, "c": 0x30, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x10\x20"}, "expect": {0xD341: b"\x10", 0xD343: b"\x00\x01", 0xD345: b"\x00\x01", 0xD334: b"\x01", 0xD347: b"\x00", 0xD348: b"\x00"}},
+    {"b": 0x10, "c": 0x20, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x20"}, "expect": {0xD341: b"\x10", 0xD343: b"\x00\xff", 0xD345: b"\x00\x01", 0xD334: b"\x03", 0xD347: b"\x00", 0xD348: b"\x00"}},
+    {"b": 0x28, "c": 0x40, "wram": {0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x20"}, "expect": {0xD341: b"\x20", 0xD343: b"\x40\x00", 0xD345: b"\x00\x01", 0xD334: b"\x02", 0xD347: b"\x00", 0xD348: b"\x00"}},
+    dict(POISON, b=0xAA, c=0xCC, wram={0xD4CF: b"\x00", 0xD4D0: b"\x00" * 16, 0xD4D2: b"\x20\x10"}, expect={0xD341: b"\xbc", 0xD343: b"\x60\xff", 0xD345: b"\x00\x01", 0xD334: b"\x02", 0xD347: b"\x00", 0xD348: b"\x00"}),
+]
+# <<< factory OverworldMap_InitNextPlayerVelocity
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -217,3 +227,6 @@ MUTATIONS["OverworldMap_PrintMapName"] = {"source_symbol": "OverworldMap_PrintMa
 # >>> factory-mutation OverworldMap_UpdatePlayerAndCursorSprites
 MUTATIONS["OverworldMap_UpdatePlayerAndCursorSprites"] = {"source_symbol": "OverworldMap_UpdatePlayerAndCursorSprites", "before": "\tuint8_t cursor_sprite = wOverworldMapCursorSprite;", "after": "\tuint8_t cursor_sprite = (uint8_t)(wOverworldMapCursorSprite + 1u);", "case_ids": ["OverworldMap_UpdatePlayerAndCursorSprites-0", "OverworldMap_UpdatePlayerAndCursorSprites-1", "OverworldMap_UpdatePlayerAndCursorSprites-2"]}
 # <<< factory-mutation OverworldMap_UpdatePlayerAndCursorSprites
+# >>> factory-mutation OverworldMap_InitNextPlayerVelocity
+MUTATIONS["OverworldMap_InitNextPlayerVelocity"] = {"source_symbol": "OverworldMap_InitNextPlayerVelocity", "before": "\tif (horizontal_abs < vertical_abs) {", "after": "\tif (horizontal_abs <= vertical_abs) {", "case_ids": ["OverworldMap_InitNextPlayerVelocity-0", "OverworldMap_InitNextPlayerVelocity-1", "OverworldMap_InitNextPlayerVelocity-2", "OverworldMap_InitNextPlayerVelocity-3"]}
+# <<< factory-mutation OverworldMap_InitNextPlayerVelocity

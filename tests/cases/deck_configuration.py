@@ -281,6 +281,18 @@ CASES["DrawHorizontalListCursor_Visible"] = [
 ]
 # <<< factory DrawHorizontalListCursor_Visible
 
+# >>> factory IsCardInAnyDeck
+CONTRACT["IsCardInAnyDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "c", "d", "e", "hl")}
+CASES["IsCardInAnyDeck"] = [
+    {"a": 0x01, "f": 0x00, "e": 0x42, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00\x00\x42" + b"\x00" * 57, 0xA314: b"\x00" * 60}},
+     "expect_regs": {"a": 0x01, "f": 0x00, "b": 0x3A, "c": 0x00, "d": 0x00, "e": 0x42, "hl": 0x0000}},
+    {"a": 0x00, "f": 0x00, "e": 0x7F, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00" * 60, 0xA314: b"\x00" * 59 + b"\x7F"}},
+     "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x01, "c": 0x00, "d": 0x00, "e": 0x7F, "hl": 0x0000}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "ramg": False, "sram": {0: {0xA218: b"\x00" * 60, 0xA26C: b"\x00" * 60, 0xA2C0: b"\x00" * 60, 0xA314: b"\x00" * 60}},
+     "expect_regs": {"a": 0xAA, "f": 0xD0, "b": 0x00, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}},
+]
+# <<< factory IsCardInAnyDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -399,3 +411,6 @@ MUTATIONS["DrawHorizontalListCursor_Visible"] = {
     "case_ids": ["DrawHorizontalListCursor_Visible-0", "DrawHorizontalListCursor_Visible-1"],
 }
 # <<< factory-mutation DrawHorizontalListCursor_Visible
+# >>> factory-mutation IsCardInAnyDeck
+MUTATIONS["IsCardInAnyDeck"] = {"source_symbol": "IsCardInAnyDeck", "before": "\t\t\tif (card == e) {", "after": "\t\t\tif (card != e) {", "case_ids": ["IsCardInAnyDeck-0", "IsCardInAnyDeck-1", "IsCardInAnyDeck-2"]}
+# <<< factory-mutation IsCardInAnyDeck

@@ -43,6 +43,11 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/sram.h"
 #include "generated/wram.h"
 #include "home/switch_sram.h"
+
+#include "home/challenge_machine.h"
+#include "generated/sram.h"
+#include "home/switch_sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -226,3 +231,32 @@ void ChallengeMachine_RecordDuelResult(void)
 	DisableSRAM();
 }
 /* <<< factory ChallengeMachine_RecordDuelResult */
+
+/* >>> factory ChallengeMachine_Initialize */
+ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
+{
+	EnableSRAM();
+	uint8_t initialized = 0u;
+	if (gb_read8(sChallengeMachineMagic_ADDR) == 0xE3u &&
+		gb_read8((uint16_t)(sChallengeMachineMagic_ADDR + 1u)) == 0x95u) {
+		initialized = 1u;
+	} else {
+		uint16_t hl = sChallengeMachineMagic_ADDR;
+		uint8_t c = (uint8_t)(sChallengeMachineEnd_ADDR - sChallengeMachineStart_ADDR);
+		gb_write8(hl++, 0xE3u);
+		gb_write8(hl++, 0x95u);
+		while (c != 0u) {
+			gb_write8(hl++, 0u);
+			c--;
+		}
+		const uint8_t *text = rom_ptr(0x04u, 0x7674u);
+		for (uint8_t i = 0u; i < NAME_BUFFER_LENGTH; i++)
+			gb_write8((uint16_t)(sChallengeMachineRecordHolderName_ADDR + i), text[i]);
+		gb_write8(sMaximumConsecutiveWins_ADDR, 1u);
+		gb_write8((uint16_t)(sMaximumConsecutiveWins_ADDR + 1u), 0u);
+	}
+	uint8_t a = gb_read8(sPlayerInChallengeMachine_ADDR);
+	DisableSRAM();
+	return (ChallengeMachineInitializeResult){.a = a, .f = initialized ? 0xC0u : 0x80u};
+}
+/* <<< factory ChallengeMachine_Initialize */

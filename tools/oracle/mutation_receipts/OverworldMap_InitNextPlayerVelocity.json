@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_InitNextPlayerVelocity",
+  "case": "tests/cases/overworld_map.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_InitNextPlayerVelocity\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 48, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54479\": \"00000010200001204c7c537c2ab24e1000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_InitNextPlayerVelocity\", \"mismatches\": {\"bus\": {\"address\": 54485, \"reference\": \"0010200001204c7c53\", \"native\": \"001020000222e47feb\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[54479, 17]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_InitNextPlayerVelocity\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 48, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54479\": \"00000010200001204c7c537c2ab24e1000\"}}, \"status\": \"PASS\"}\n"
+}

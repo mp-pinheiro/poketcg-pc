@@ -61,6 +61,15 @@ static void adapt_ChallengeMachine_RecordDuelResult(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_RecordDuelResult */
 
+/* >>> factory ChallengeMachine_Initialize */
+static void adapt_ChallengeMachine_Initialize(ProbeState *s)
+{
+	ChallengeMachineInitializeResult result = ChallengeMachine_Initialize();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ChallengeMachine_Initialize */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -69,5 +78,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_IncrementHLMax999", adapt_ChallengeMachine_IncrementHLMax999 },
 	{ "ChallengeMachine_CheckForNewRecord", adapt_ChallengeMachine_CheckForNewRecord },
 	{ "ChallengeMachine_RecordDuelResult", adapt_ChallengeMachine_RecordDuelResult },
+	{ "ChallengeMachine_Initialize", adapt_ChallengeMachine_Initialize },
 	{ NULL, NULL },
 };

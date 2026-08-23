@@ -489,6 +489,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #define TYPE_ENERGY_F 0x03u
 #define TYPE_TRAINER_F 0x04u
+
+#include "home/core.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3093,3 +3098,30 @@ CardPageNavigationResult GoToFirstOrNextCardPage(void)
 	}
 }
 /* <<< factory GoToFirstOrNextCardPage */
+
+/* >>> factory PrintPracticeDuelInstructions */
+void PrintPracticeDuelInstructions(uint16_t hl)
+{
+	gb_write8(wPracticeDuelTextY_ADDR, 0u);
+	gb_write8(wPracticeDuelTextPointer_ADDR, (uint8_t)hl);
+	gb_write8((uint16_t)(wPracticeDuelTextPointer_ADDR + 1u), (uint8_t)(hl >> 8));
+	for (;;) {
+		PrintNextPracticeDuelInstruction();
+		uint8_t a = gb_read8(hl++);
+		gb_write8(wPracticeDuelTextY_ADDR, a);
+		if (a == 0u) {
+			PrintPracticeDuelLetsPlayTheGame();
+			return;
+		}
+		uint16_t text_box_label = gb_read8(hl++);
+		text_box_label |= (uint16_t)gb_read8(hl++) << 8;
+		(void)PrintScrollableText_WithTextBoxLabel(text_box_label, DrMasonText);
+		uint16_t text_id = gb_read8(hl++);
+		text_id |= (uint16_t)gb_read8(hl++) << 8;
+		(void)SetNoLineSeparation();
+		uint8_t text_y = gb_read8(wPracticeDuelTextY_ADDR);
+		(void)InitTextPrinting_ProcessTextFromID(1u, text_y, text_id);
+		(void)SetOneLineSeparation();
+	}
+}
+/* <<< factory PrintPracticeDuelInstructions */

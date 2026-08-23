@@ -55,4 +55,7 @@ void OverworldMap_PrintMapName(void);
 /* >>> factory OverworldMap_UpdatePlayerAndCursorSprites */
 void OverworldMap_UpdatePlayerAndCursorSprites(void);
 /* <<< factory OverworldMap_UpdatePlayerAndCursorSprites */
+/* >>> factory OverworldMap_InitNextPlayerVelocity */
+void OverworldMap_InitNextPlayerVelocity(uint8_t b, uint8_t c);
+/* <<< factory OverworldMap_InitNextPlayerVelocity */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

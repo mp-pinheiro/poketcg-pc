@@ -1290,6 +1290,13 @@ static void adapt_GoToFirstOrNextCardPage(ProbeState *s)
 }
 /* <<< factory GoToFirstOrNextCardPage */
 
+/* >>> factory PrintPracticeDuelInstructions */
+static void adapt_PrintPracticeDuelInstructions(ProbeState *s)
+{
+	PrintPracticeDuelInstructions(s->hl);
+}
+/* <<< factory PrintPracticeDuelInstructions */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1443,5 +1450,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPracticeDuelNumberedInstruction", adapt_PrintPracticeDuelNumberedInstruction },
 	{ "PrintNextPracticeDuelInstruction", adapt_PrintNextPracticeDuelInstruction },
 	{ "GoToFirstOrNextCardPage", adapt_GoToFirstOrNextCardPage },
+	{ "PrintPracticeDuelInstructions", adapt_PrintPracticeDuelInstructions },
 	{ NULL, NULL },
 };
