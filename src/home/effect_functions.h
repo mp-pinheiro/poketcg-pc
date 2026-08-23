@@ -1176,6 +1176,10 @@ ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void);
 /* >>> factory Wildfire_DiscardEnergyEffect */
 void Wildfire_DiscardEnergyEffect(void);
 /* <<< factory Wildfire_DiscardEnergyEffect */
+/* >>> factory SuperEnergyRemoval_EnergyCheck */
+typedef struct { uint8_t f; uint16_t hl; } SuperEnergyRemoval_EnergyCheckResult;
+SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void);
+/* <<< factory SuperEnergyRemoval_EnergyCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

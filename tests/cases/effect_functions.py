@@ -2374,6 +2374,11 @@ wPlayerDeck = 0xC400
 hTemp_ffa0 = 0xFFA0
 wDuelTempList = 0xC510
 CHARMANDER = 0x30
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+WATER_ENERGY = 0x03
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3187,6 +3192,16 @@ CASES["Wildfire_DiscardEnergyEffect"] = [
                        wPlayerDeck: bytes((CHARMANDER, CHARMANDER))}),
 ]
 # <<< factory Wildfire_DiscardEnergyEffect
+
+# >>> factory SuperEnergyRemoval_EnergyCheck
+CONTRACT["SuperEnergyRemoval_EnergyCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SuperEnergyRemoval_EnergyCheck"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00,
+              wPlayerDuelVariables: b"\x10", wPlayerDeck: bytes((WATER_ENERGY,))}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
+]
+# <<< factory SuperEnergyRemoval_EnergyCheck
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5122,3 +5137,6 @@ MUTATIONS["ItemFinder_HandDiscardPileCheck"] = {"source_symbol": "ItemFinder_Han
 # >>> factory-mutation Wildfire_DiscardEnergyEffect
 MUTATIONS["Wildfire_DiscardEnergyEffect"] = {"source_symbol": "Wildfire_DiscardEnergyEffect", "before": "for (uint8_t c = count; c != 0u; c--) {", "after": "for (uint8_t c = (uint8_t)(count - 1u); c != 0u; c--) {", "case_ids": ["Wildfire_DiscardEnergyEffect-1", "Wildfire_DiscardEnergyEffect-2"]}
 # <<< factory-mutation Wildfire_DiscardEnergyEffect
+# >>> factory-mutation SuperEnergyRemoval_EnergyCheck
+MUTATIONS["SuperEnergyRemoval_EnergyCheck"] = {"source_symbol": "SuperEnergyRemoval_EnergyCheck", "before": "CheckIfThereAreAnyEnergyCardsAttached();\n\tif (r1.f & 0x10u)", "after": "CheckIfThereAreAnyEnergyCardsAttached();\n\tif (!(r1.f & 0x10u))", "case_ids": ["SuperEnergyRemoval_EnergyCheck-0", "SuperEnergyRemoval_EnergyCheck-1"]}
+# <<< factory-mutation SuperEnergyRemoval_EnergyCheck

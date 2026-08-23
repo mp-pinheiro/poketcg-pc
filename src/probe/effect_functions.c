@@ -2828,6 +2828,15 @@ static void adapt_Wildfire_DiscardEnergyEffect(ProbeState *s)
 }
 /* <<< factory Wildfire_DiscardEnergyEffect */
 
+/* >>> factory SuperEnergyRemoval_EnergyCheck */
+static void adapt_SuperEnergyRemoval_EnergyCheck(ProbeState *s)
+{
+	SuperEnergyRemoval_EnergyCheckResult r = SuperEnergyRemoval_EnergyCheck();
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory SuperEnergyRemoval_EnergyCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3178,5 +3187,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyTrans_PrintProcedure", adapt_EnergyTrans_PrintProcedure },
 	{ "ItemFinder_HandDiscardPileCheck", adapt_ItemFinder_HandDiscardPileCheck },
 	{ "Wildfire_DiscardEnergyEffect", adapt_Wildfire_DiscardEnergyEffect },
+	{ "SuperEnergyRemoval_EnergyCheck", adapt_SuperEnergyRemoval_EnergyCheck },
 	{ NULL, NULL },
 };

@@ -376,6 +376,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#define NoEnergyCardsAttachedToPokemonInOppPlayAreaText 0x00beu
+#define NoEnergyCardsAttachedToPokemonInYourPlayAreaText 0x00bdu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4732,3 +4737,16 @@ void Wildfire_DiscardEnergyEffect(void)
 	}
 }
 /* <<< factory Wildfire_DiscardEnergyEffect */
+
+/* >>> factory SuperEnergyRemoval_EnergyCheck */
+SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void)
+{
+	CheckIfThereAreAnyEnergyCardsAttachedResult r1 = CheckIfThereAreAnyEnergyCardsAttached();
+	if (r1.f & 0x10u)
+		return (SuperEnergyRemoval_EnergyCheckResult){r1.f, NoEnergyCardsAttachedToPokemonInYourPlayAreaText};
+	SwapTurn();
+	CheckIfThereAreAnyEnergyCardsAttachedResult r2 = CheckIfThereAreAnyEnergyCardsAttached();
+	SwapTurn();
+	return (SuperEnergyRemoval_EnergyCheckResult){r2.f, NoEnergyCardsAttachedToPokemonInOppPlayAreaText};
+}
+/* <<< factory SuperEnergyRemoval_EnergyCheck */
