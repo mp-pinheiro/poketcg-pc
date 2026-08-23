@@ -48,6 +48,14 @@ CASES["FinishQueuedAnimations"] = [
 ]
 # <<< factory FinishQueuedAnimations
 
+# >>> factory GetNPCDuelConfigurations
+CONTRACT["GetNPCDuelConfigurations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["GetNPCDuelConfigurations"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory GetNPCDuelConfigurations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -75,3 +83,6 @@ MUTATIONS["FinishQueuedAnimations"] = {
 	"case_ids": ["FinishQueuedAnimations-0", "FinishQueuedAnimations-1"],
 }
 # <<< factory-mutation FinishQueuedAnimations
+# >>> factory-mutation GetNPCDuelConfigurations
+MUTATIONS["GetNPCDuelConfigurations"] = {"source_symbol": "GetNPCDuelConfigurations", "before": "\t_GetNPCDuelDuelConfigurationsResult result = _GetNPCDuelConfigurations(a, f, b, c, d, e, hl);", "after": "\t_GetNPCDuelDuelConfigurationsResult result = _GetNPCDuelConfigurations(a, f, b, c, d, 0u, hl);", "case_ids": ["GetNPCDuelConfigurations-1"]}
+# <<< factory-mutation GetNPCDuelConfigurations

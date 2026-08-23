@@ -94,4 +94,7 @@ IsCardInAnyDeckResult IsCardInAnyDeck(uint8_t a, uint8_t f, uint8_t e);
 /* >>> factory DrawListCursor_Invisible */
 DrawListCursorResult DrawListCursor_Invisible(void);
 /* <<< factory DrawListCursor_Invisible */
+/* >>> factory DrawListCursor_Visible */
+DrawListCursorResult DrawListCursor_Visible(void);
+/* <<< factory DrawListCursor_Visible */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

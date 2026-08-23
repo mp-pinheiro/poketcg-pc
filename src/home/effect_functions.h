@@ -1020,6 +1020,9 @@ void PidgeottoMirrorMove_AIEffect(void);
 /* >>> factory PidgeottoMirrorMove_AISelection */
 void PidgeottoMirrorMove_AISelection(void);
 /* <<< factory PidgeottoMirrorMove_AISelection */
+/* >>> factory ClefairyMetronome_AISelectEffect */
+void ClefairyMetronome_AISelectEffect(void);
+/* <<< factory ClefairyMetronome_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

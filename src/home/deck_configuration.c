@@ -498,3 +498,11 @@ DrawListCursorResult DrawListCursor_Invisible(void)
 	return DrawListCursor(tile);
 }
 /* <<< factory DrawListCursor_Invisible */
+
+/* >>> factory DrawListCursor_Visible */
+DrawListCursorResult DrawListCursor_Visible(void)
+{
+	uint8_t tile = wVisibleCursorTile;
+	return DrawListCursor(tile);
+}
+/* <<< factory DrawListCursor_Visible */

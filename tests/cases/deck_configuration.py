@@ -304,6 +304,17 @@ CASES["DrawListCursor_Invisible"] = [
 ]
 # <<< factory DrawListCursor_Invisible
 
+# >>> factory DrawListCursor_Visible
+CONTRACT["DrawListCursor_Visible"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["DrawListCursor_Visible"] = [
+    {"wram": {0xCEAA: b"\x66", 0xCEA4: b"\x03", 0xCEA5: b"\x04", 0xCEA6: b"\x05", 0xCEA7: b"\x00", 0xCEA8: b"\x02"},
+     "vread": {0: {0x98AA: 1}}},
+    dict(POISON,
+         wram={0xCEAA: b"\x77", 0xCEA4: b"\x04", 0xCEA5: b"\x06", 0xCEA6: b"\x07", 0xCEA7: b"\x00", 0xCEA8: b"\x03"},
+         vread={0: {0x98F2: 1}}),
+]
+# <<< factory DrawListCursor_Visible
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -428,3 +439,6 @@ MUTATIONS["IsCardInAnyDeck"] = {"source_symbol": "IsCardInAnyDeck", "before": "\
 # >>> factory-mutation DrawListCursor_Invisible
 MUTATIONS["DrawListCursor_Invisible"] = {"source_symbol": "DrawListCursor_Invisible", "before": "\tuint8_t tile = wInvisibleCursorTile;\n\treturn DrawListCursor(tile);", "after": "\tuint8_t tile = 0u;\n\treturn DrawListCursor(tile);", "case_ids": ["DrawListCursor_Invisible-0", "DrawListCursor_Invisible-1"]}
 # <<< factory-mutation DrawListCursor_Invisible
+# >>> factory-mutation DrawListCursor_Visible
+MUTATIONS["DrawListCursor_Visible"] = {"source_symbol": "DrawListCursor_Visible", "before": "\tuint8_t tile = wVisibleCursorTile;\n\treturn DrawListCursor(tile);", "after": "\tuint8_t tile = 0u;\n\treturn DrawListCursor(tile);", "case_ids": ["DrawListCursor_Visible-0", "DrawListCursor_Visible-1"]}
+# <<< factory-mutation DrawListCursor_Visible

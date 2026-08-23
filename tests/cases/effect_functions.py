@@ -2670,6 +2670,14 @@ CASES["PidgeottoMirrorMove_AISelection"] = [
 ]
 # <<< factory PidgeottoMirrorMove_AISelection
 
+# >>> factory ClefairyMetronome_AISelectEffect
+CONTRACT["ClefairyMetronome_AISelectEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["ClefairyMetronome_AISelectEffect"] = [
+    {"wram": {0xC100: b"\x00"}, "expect": {0xC100: b"\x00"}},
+    dict(POISON, wram={0xC100: b"\x00"}, expect={0xC100: b"\x00"}),
+]
+# <<< factory ClefairyMetronome_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4455,3 +4463,6 @@ MUTATIONS["PidgeottoMirrorMove_AIEffect"] = {
 # >>> factory-mutation PidgeottoMirrorMove_AISelection
 MUTATIONS["PidgeottoMirrorMove_AISelection"] = {"source_symbol": "PidgeottoMirrorMove_AISelection", "before": "void PidgeottoMirrorMove_AISelection(void)\n{\n\tMirrorMove_AISelection();\n}", "after": "void PidgeottoMirrorMove_AISelection(void)\n{\n\treturn;\n}", "case_ids": ["PidgeottoMirrorMove_AISelection-0", "PidgeottoMirrorMove_AISelection-1"]}
 # <<< factory-mutation PidgeottoMirrorMove_AISelection
+# >>> factory-mutation ClefairyMetronome_AISelectEffect
+MUTATIONS["ClefairyMetronome_AISelectEffect"] = {"source_symbol": "ClefairyMetronome_AISelectEffect", "before": "void ClefairyMetronome_AISelectEffect(void)\n{\n\tHandleAIMetronomeEffect();\n}", "after": "void ClefairyMetronome_AISelectEffect(void)\n{\n\tgb_write8(0xC100u, 0xFFu);\n}", "case_ids": ["ClefairyMetronome_AISelectEffect-0", "ClefairyMetronome_AISelectEffect-1"]}
+# <<< factory-mutation ClefairyMetronome_AISelectEffect

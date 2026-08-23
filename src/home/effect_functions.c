@@ -4181,3 +4181,10 @@ void PidgeottoMirrorMove_AISelection(void)
 	MirrorMove_AISelection();
 }
 /* <<< factory PidgeottoMirrorMove_AISelection */
+
+/* >>> factory ClefairyMetronome_AISelectEffect */
+void ClefairyMetronome_AISelectEffect(void)
+{
+	HandleAIMetronomeEffect();
+}
+/* <<< factory ClefairyMetronome_AISelectEffect */
