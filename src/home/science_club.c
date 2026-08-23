@@ -8,6 +8,9 @@
 #include "generated/wram.h"
 #define EVENT_BEAT_JOSEPH 0x1Bu
 #define WEST 0x03u
+
+#include "home/grass_club_entrance.h"
+#define ScienceClubAfterDuelTable 0x6bf8u
 /* <<< factory statics */
 
 /* >>> factory Preload_Joseph */
@@ -25,3 +28,12 @@ PreloadJosephResult Preload_Joseph(void)
 	return (PreloadJosephResult){event, 0x90u};
 }
 /* <<< factory Preload_Joseph */
+
+/* >>> factory ScienceClubAfterDuel */
+ScienceClubAfterDuelResult ScienceClubAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(ScienceClubAfterDuelTable);
+	return (ScienceClubAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory ScienceClubAfterDuel */

@@ -1,0 +1,9 @@
+{
+  "fn": "FireClubAfterDuel",
+  "case": "tests/cases/fire_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 28339, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireClubAfterDuel\", \"mismatches\": {\"hl\": [28339, 28466]}}\n",
+  "restored": "{\"fn\": \"FireClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 28339, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

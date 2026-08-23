@@ -1,0 +1,9 @@
+{
+  "fn": "LightningClubAfterDuel",
+  "case": "tests/cases/lightning_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LightningClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 25608, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LightningClubAfterDuel\", \"mismatches\": {\"hl\": [25608, 25801]}}\n",
+  "restored": "{\"fn\": \"LightningClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 25608, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

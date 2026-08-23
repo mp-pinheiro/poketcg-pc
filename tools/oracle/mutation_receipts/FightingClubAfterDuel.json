@@ -1,0 +1,9 @@
+{
+  "fn": "FightingClubAfterDuel",
+  "case": "tests/cases/fighting_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FightingClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 24003, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FightingClubAfterDuel\", \"mismatches\": {\"hl\": [24003, 24388]}}\n",
+  "restored": "{\"fn\": \"FightingClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 24003, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}
