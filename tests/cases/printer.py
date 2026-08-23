@@ -131,6 +131,14 @@ CASES["GetPrinterContrastSerialData"] = [
 ]
 # <<< factory GetPrinterContrastSerialData
 
+# >>> factory PrepareForPrinterCommunications
+CONTRACT["PrepareForPrinterCommunications"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["PrepareForPrinterCommunications"] = [
+    {"wram": {0xFF81: b"\x00"}, "sram": {0: {0xA003: b"\x2A"}}, "read": {0xCE99: 1, 0xCE9B: 1, 0xCE8F: 1, 0xFF81: 1}},
+    dict(POISON, wram={0xFF81: b"\x00"}, sram={0: {0xA003: b"\x2A"}}, read={0xCE99: 1, 0xCE9B: 1, 0xCE8F: 1, 0xFF81: 1}),
+]
+# <<< factory PrepareForPrinterCommunications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -169,3 +177,11 @@ MUTATIONS["ClearPrinterGfxBuffer"] = {"source_symbol": "ClearPrinterGfxBuffer", 
 # >>> factory-mutation GetPrinterContrastSerialData
 MUTATIONS["GetPrinterContrastSerialData"] = {"source_symbol": "GetPrinterContrastSerialData", "before": "\tuint16_t hl = (uint16_t)(((uint16_t)h_val << 8) | 0xE4u);", "after": "\tuint16_t hl = (uint16_t)(((uint16_t)h_val << 8) | 0xE5u);", "case_ids": ["GetPrinterContrastSerialData-0", "GetPrinterContrastSerialData-1"]}
 # <<< factory-mutation GetPrinterContrastSerialData
+# >>> factory-mutation PrepareForPrinterCommunications
+MUTATIONS["PrepareForPrinterCommunications"] = {
+    "source_symbol": "PrepareForPrinterCommunications",
+    "before": "wPrinterNumberLineFeeds = 0x10u;",
+    "after": "wPrinterNumberLineFeeds = 0x11u;",
+    "case_ids": ["PrepareForPrinterCommunications-0", "PrepareForPrinterCommunications-1"],
+}
+# <<< factory-mutation PrepareForPrinterCommunications

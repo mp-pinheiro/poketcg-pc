@@ -58,6 +58,15 @@ static void adapt_ConfigScreenDPadRight(ProbeState *s)
 }
 /* <<< factory ConfigScreenDPadRight */
 
+/* >>> factory UpdateConfigMenuCursor */
+static void adapt_UpdateConfigMenuCursor(ProbeState *s)
+{
+	UpdateConfigMenuCursorResult r = UpdateConfigMenuCursor(s->a, s->b, s->c);
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory UpdateConfigMenuCursor */
+
 const ProbeEntry probe_entries_config[] = {
 	{ "DrawConfigMenuCursor", adapt_DrawConfigMenuCursor },
 	{ "GetConfigCursorPositions", adapt_GetConfigCursorPositions },
@@ -66,5 +75,6 @@ const ProbeEntry probe_entries_config[] = {
 	{ "HideConfigMenuCursor", adapt_HideConfigMenuCursor },
 	{ "ConfigScreenDPadLeft", adapt_ConfigScreenDPadLeft },
 	{ "ConfigScreenDPadRight", adapt_ConfigScreenDPadRight },
+	{ "UpdateConfigMenuCursor", adapt_UpdateConfigMenuCursor },
 	{ NULL, NULL },
 };

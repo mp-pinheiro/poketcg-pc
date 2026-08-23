@@ -174,3 +174,16 @@ void ConfigScreenDPadRight(void)
 	gb_write8(wCursorBlinkTimer_ADDR, 0u);
 }
 /* <<< factory ConfigScreenDPadRight */
+
+/* >>> factory UpdateConfigMenuCursor */
+UpdateConfigMenuCursorResult UpdateConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint8_t timer = gb_read8(wCursorBlinkTimer_ADDR);
+	if (timer & 0x10u) {
+		HideConfigMenuCursorResult r = HideConfigMenuCursor(a, b, c);
+		return (UpdateConfigMenuCursorResult){r.b, r.c};
+	}
+	ShowConfigMenuCursorResult r = ShowConfigMenuCursor(a, b, c);
+	return (UpdateConfigMenuCursorResult){r.b, r.c};
+}
+/* <<< factory UpdateConfigMenuCursor */

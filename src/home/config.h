@@ -25,4 +25,8 @@ void ConfigScreenDPadLeft(void);
 /* >>> factory ConfigScreenDPadRight */
 void ConfigScreenDPadRight(void);
 /* <<< factory ConfigScreenDPadRight */
+/* >>> factory UpdateConfigMenuCursor */
+typedef struct { uint8_t b; uint8_t c; } UpdateConfigMenuCursorResult;
+UpdateConfigMenuCursorResult UpdateConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory UpdateConfigMenuCursor */
 #endif /* POKETCG_HOME_CONFIG_H */

@@ -97,4 +97,8 @@ CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void);
 /* >>> factory FindCardsInSetAndRarity */
 void FindCardsInSetAndRarity(void);
 /* <<< factory FindCardsInSetAndRarity */
+/* >>> factory GenerateBoosterNonEnergies */
+typedef struct { uint8_t a; uint8_t f; } GenerateBoosterNonEnergiesResult;
+GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void);
+/* <<< factory GenerateBoosterNonEnergies */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */

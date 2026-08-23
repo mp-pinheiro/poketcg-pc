@@ -81,6 +81,8 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "generated/wram.h"
 
 #define NUM_CARDS 0xE4u
+
+#define STAR 0x02u
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -455,3 +457,33 @@ void FindCardsInSetAndRarity(void)
 	}
 }
 /* <<< factory FindCardsInSetAndRarity */
+
+/* >>> factory GenerateBoosterNonEnergies */
+GenerateBoosterNonEnergiesResult GenerateBoosterNonEnergies(void)
+{
+	wBoosterCurrentRarity = STAR;
+	for (;;) {
+		RarityAmount ra = GetCurrentRarityAmount();
+		uint8_t amount = gb_read8(ra.hl);
+		if (amount != 0u) {
+			FindCardsInSetAndRarity();
+			uint8_t chances = CalculateTypeChances();
+			if (chances == 0u)
+				return (GenerateBoosterNonEnergiesResult){0u, 0x10u};
+			uint8_t roll = Random(chances);
+			uint8_t type = DetermineBoosterCardType(roll);
+			(void)DetermineBoosterCard(0u, type);
+			(void)UpdateBoosterCardTypesChanceByte();
+			AddBoosterCardToDrawnNonEnergies();
+			RarityAmount ra2 = GetCurrentRarityAmount();
+			gb_write8(ra2.hl, (uint8_t)(gb_read8(ra2.hl) - 1u));
+			continue;
+		}
+		uint8_t rarity = (uint8_t)(wBoosterCurrentRarity - 1u);
+		wBoosterCurrentRarity = rarity;
+		if (!(rarity & 0x80u))
+			continue;
+		return (GenerateBoosterNonEnergiesResult){rarity, 0x00u};
+	}
+}
+/* <<< factory GenerateBoosterNonEnergies */

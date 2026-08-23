@@ -80,6 +80,20 @@ static void adapt_GetPrinterContrastSerialData(ProbeState *s)
 }
 /* <<< factory GetPrinterContrastSerialData */
 
+/* >>> factory PrepareForPrinterCommunications */
+static void adapt_PrepareForPrinterCommunications(ProbeState *s)
+{
+	PrepareForPrinterCommunicationsResult r = PrepareForPrinterCommunications(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory PrepareForPrinterCommunications */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -89,5 +103,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "ResetPrinterCommunicationSettings", adapt_ResetPrinterCommunicationSettings },
 	{ "ClearPrinterGfxBuffer", adapt_ClearPrinterGfxBuffer },
 	{ "GetPrinterContrastSerialData", adapt_GetPrinterContrastSerialData },
+	{ "PrepareForPrinterCommunications", adapt_PrepareForPrinterCommunications },
 	{ NULL, NULL },
 };

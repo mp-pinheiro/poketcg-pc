@@ -412,4 +412,7 @@ Func_c998Result Func_c998(void);
 /* >>> factory DetermineImakuniRoom */
 SetEventValueResult DetermineImakuniRoom(void);
 /* <<< factory DetermineImakuniRoom */
+/* >>> factory ScriptCommand_SetPlayerDirection */
+IncreaseScriptPointerResult ScriptCommand_SetPlayerDirection(uint8_t c);
+/* <<< factory ScriptCommand_SetPlayerDirection */
 #endif

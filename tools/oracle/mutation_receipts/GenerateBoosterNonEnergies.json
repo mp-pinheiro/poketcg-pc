@@ -1,0 +1,9 @@
+{
+  "fn": "GenerateBoosterNonEnergies",
+  "case": "tests/cases/booster_packs.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GenerateBoosterNonEnergies\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54892\": \"ff\", \"54894\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GenerateBoosterNonEnergies\", \"mismatches\": {\"f\": [0, 16]}}\n",
+  "restored": "{\"fn\": \"GenerateBoosterNonEnergies\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54892\": \"ff\", \"54894\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

@@ -155,6 +155,8 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define LIGHTNING_CLUB_LOBBY 0x0eu
 #define SCIENCE_CLUB_LOBBY 0x17u
 #define WATER_CLUB_LOBBY 0x0bu
+
+#include "home/overworld.h"
 /* <<< factory statics */
 
 
@@ -1234,3 +1236,11 @@ SetEventValueResult DetermineImakuniRoom(void)
 	return SetEventValue(EVENT_IMAKUNI_ROOM, 0u, 0u, picked);
 }
 /* <<< factory DetermineImakuniRoom */
+
+/* >>> factory ScriptCommand_SetPlayerDirection */
+IncreaseScriptPointerResult ScriptCommand_SetPlayerDirection(uint8_t c)
+{
+	UpdatePlayerDirection(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_SetPlayerDirection */

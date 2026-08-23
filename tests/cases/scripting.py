@@ -915,6 +915,14 @@ CASES["DetermineImakuniRoom"] = [
 ]
 # <<< factory DetermineImakuniRoom
 
+# >>> factory ScriptCommand_SetPlayerDirection
+CONTRACT["ScriptCommand_SetPlayerDirection"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_SetPlayerDirection"] = [
+    {"c": 0x01, "read": {0xD334: 1}},
+    dict(POISON, c=0x02, read={0xD334: 1}),
+]
+# <<< factory ScriptCommand_SetPlayerDirection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1390,3 +1398,11 @@ MUTATIONS["Func_c998"] = {"source_symbol": "Func_c998", "before": "\tuint8_t ani
 # >>> factory-mutation DetermineImakuniRoom
 MUTATIONS["DetermineImakuniRoom"] = {"source_symbol": "DetermineImakuniRoom", "before": "\tif (state >= IMAKUNI_TALKED) {", "after": "\tif (state > IMAKUNI_TALKED) {", "case_ids": ["DetermineImakuniRoom-2"]}
 # <<< factory-mutation DetermineImakuniRoom
+# >>> factory-mutation ScriptCommand_SetPlayerDirection
+MUTATIONS["ScriptCommand_SetPlayerDirection"] = {
+    "source_symbol": "ScriptCommand_SetPlayerDirection",
+    "before": "UpdatePlayerDirection(c);",
+    "after": "UpdatePlayerDirection((uint8_t)(c + 1u));",
+    "case_ids": ["ScriptCommand_SetPlayerDirection-0", "ScriptCommand_SetPlayerDirection-1"],
+}
+# <<< factory-mutation ScriptCommand_SetPlayerDirection

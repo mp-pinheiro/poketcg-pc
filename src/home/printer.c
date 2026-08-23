@@ -17,6 +17,8 @@
 
 #include "home/printer.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -211,3 +213,19 @@ GetPrinterContrastSerialDataResult GetPrinterContrastSerialData(void)
 	return (GetPrinterContrastSerialDataResult){level, hl};
 }
 /* <<< factory GetPrinterContrastSerialData */
+
+/* >>> factory PrepareForPrinterCommunications */
+PrepareForPrinterCommunicationsResult PrepareForPrinterCommunications(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ResetSerial();
+	wPrinterNumberLineFeeds = 0x10u;
+	EnableSRAM();
+	wPrinterContrastLevel = sPrinterContrastLevel;
+	DisableSRAM();
+	wTempPrinterSRAM = hBankSRAM;
+	BankswitchSRAM(0x01u);
+	EnableSRAM();
+	ClearPrinterGfxBufferResult r = ClearPrinterGfxBuffer(a, f, b, c, d, e, hl);
+	return (PrepareForPrinterCommunicationsResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory PrepareForPrinterCommunications */

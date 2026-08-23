@@ -312,6 +312,14 @@ CASES["FindCardsInSetAndRarity"] = [
 ]
 # <<< factory FindCardsInSetAndRarity
 
+# >>> factory GenerateBoosterNonEnergies
+CONTRACT["GenerateBoosterNonEnergies"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["GenerateBoosterNonEnergies"] = [
+    {"wram": {0xD66C: b"\x00", 0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}, "expect_regs": {"a": 0xFF, "f": 0x00}},
+    dict(POISON, wram={0xD66C: b"\x00", 0xD66E: b"\x00", 0xD66F: b"\x00", 0xD670: b"\x00"}, expect_regs={"a": 0xFF, "f": 0x00}),
+]
+# <<< factory GenerateBoosterNonEnergies
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -434,3 +442,11 @@ MUTATIONS["FindCardsInSetAndRarity"] = {
     "case_ids": ["FindCardsInSetAndRarity-0", "FindCardsInSetAndRarity-1"],
 }
 # <<< factory-mutation FindCardsInSetAndRarity
+# >>> factory-mutation GenerateBoosterNonEnergies
+MUTATIONS["GenerateBoosterNonEnergies"] = {
+    "source_symbol": "GenerateBoosterNonEnergies",
+    "before": "return (GenerateBoosterNonEnergiesResult){rarity, 0x00u};",
+    "after": "return (GenerateBoosterNonEnergiesResult){rarity, 0x10u};",
+    "case_ids": ["GenerateBoosterNonEnergies-0", "GenerateBoosterNonEnergies-1"],
+}
+# <<< factory-mutation GenerateBoosterNonEnergies

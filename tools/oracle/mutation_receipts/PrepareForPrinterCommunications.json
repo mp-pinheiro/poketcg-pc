@@ -1,0 +1,9 @@
+{
+  "fn": "PrepareForPrinterCommunications",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrepareForPrinterCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 41984, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 1, \"rom_bank\": 6, \"sram\": {\"0\": {\"40963\": \"2a\"}}, \"vram\": {}, \"wram\": {\"52879\": \"00\", \"52889\": \"2a\", \"52891\": \"10\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrepareForPrinterCommunications\", \"mismatches\": {\"bus\": {\"address\": 52891, \"reference\": \"002a1001\", \"native\": \"002a1101\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52879, 1], [52889, 1], [52891, 1], [65409, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrepareForPrinterCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 41984, \"palette\": {}, \"ram_bank\": 1, \"ram_enable\": 1, \"rom_bank\": 6, \"sram\": {\"0\": {\"40963\": \"2a\"}}, \"vram\": {}, \"wram\": {\"52879\": \"00\", \"52889\": \"2a\", \"52891\": \"10\", \"65409\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

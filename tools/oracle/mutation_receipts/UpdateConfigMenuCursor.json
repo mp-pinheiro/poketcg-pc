@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateConfigMenuCursor",
+  "case": "tests/cases/config.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateConfigMenuCursor\", \"registers\": {\"a\": 2, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"39425\": \"00\", \"53532\": \"10\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateConfigMenuCursor\", \"mismatches\": {\"bus\": {\"address\": 39425, \"reference\": \"0010\", \"native\": \"0110\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[39425, 1], [53532, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateConfigMenuCursor\", \"registers\": {\"a\": 2, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"39425\": \"00\", \"53532\": \"10\"}}, \"status\": \"PASS\"}\n"
+}

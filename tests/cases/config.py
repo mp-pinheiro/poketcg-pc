@@ -137,6 +137,14 @@ CASES["ConfigScreenDPadRight"] = [
 ]
 # <<< factory ConfigScreenDPadRight
 
+# >>> factory UpdateConfigMenuCursor
+CONTRACT["UpdateConfigMenuCursor"] = {"compare": ("b", "c"), "preserve": ("b", "c"), "wram_out": True}
+CASES["UpdateConfigMenuCursor"] = [
+    {"a": 0x02, "b": 0xBB, "c": 0xCC, "wram": {0xD11C: b"\x10"}, "read": {0x9A01: 1}},
+    dict(POISON, a=0x02, wram={0xD11C: b"\x10"}, read={0x9A01: 1}),
+]
+# <<< factory UpdateConfigMenuCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -197,3 +205,11 @@ MUTATIONS["ConfigScreenDPadRight"] = {
     "case_ids": ["ConfigScreenDPadRight-0", "ConfigScreenDPadRight-1"],
 }
 # <<< factory-mutation ConfigScreenDPadRight
+# >>> factory-mutation UpdateConfigMenuCursor
+MUTATIONS["UpdateConfigMenuCursor"] = {
+    "source_symbol": "UpdateConfigMenuCursor",
+    "before": "if (timer & 0x10u) {",
+    "after": "if (timer & 0x00u) {",
+    "case_ids": ["UpdateConfigMenuCursor-0", "UpdateConfigMenuCursor-1"],
+}
+# <<< factory-mutation UpdateConfigMenuCursor
