@@ -4298,3 +4298,10 @@ void LeekSlap_AIEffect(void)
 	SetExpectedAIDamage(15u, 0u, 30u);
 }
 /* <<< factory LeekSlap_AIEffect */
+
+/* >>> factory PinMissile_AIEffect */
+void PinMissile_AIEffect(void)
+{
+	SetExpectedAIDamage(40u, 0u, 80u);
+}
+/* <<< factory PinMissile_AIEffect */

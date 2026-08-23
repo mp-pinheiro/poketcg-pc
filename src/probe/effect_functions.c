@@ -2566,6 +2566,14 @@ static void adapt_LeekSlap_AIEffect(ProbeState *s)
 }
 /* <<< factory LeekSlap_AIEffect */
 
+/* >>> factory PinMissile_AIEffect */
+static void adapt_PinMissile_AIEffect(ProbeState *s)
+{
+	(void)s;
+	PinMissile_AIEffect();
+}
+/* <<< factory PinMissile_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2884,5 +2892,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ElectabuzzQuickAttack_AIEffect", adapt_ElectabuzzQuickAttack_AIEffect },
 	{ "JolteonQuickAttack_AIEffect", adapt_JolteonQuickAttack_AIEffect },
 	{ "LeekSlap_AIEffect", adapt_LeekSlap_AIEffect },
+	{ "PinMissile_AIEffect", adapt_PinMissile_AIEffect },
 	{ NULL, NULL },
 };

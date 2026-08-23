@@ -1071,6 +1071,9 @@ void JolteonQuickAttack_AIEffect(void);
 /* >>> factory LeekSlap_AIEffect */
 void LeekSlap_AIEffect(void);
 /* <<< factory LeekSlap_AIEffect */
+/* >>> factory PinMissile_AIEffect */
+void PinMissile_AIEffect(void);
+/* <<< factory PinMissile_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

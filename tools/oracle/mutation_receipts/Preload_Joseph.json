@@ -1,0 +1,9 @@
+{
+  "fn": "Preload_Joseph",
+  "case": "tests/cases/science_club.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Preload_Joseph\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"07\", \"54190\": \"03\", \"54231\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Preload_Joseph\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"070380\", \"native\": \"080380\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54188, 1], [54190, 1], [54231, 1]]}}}\n",
+  "restored": "{\"fn\": \"Preload_Joseph\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 16, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"07\", \"54190\": \"03\", \"54231\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

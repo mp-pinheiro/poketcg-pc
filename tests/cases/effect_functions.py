@@ -2805,6 +2805,14 @@ CASES["LeekSlap_AIEffect"] = [
 ]
 # <<< factory LeekSlap_AIEffect
 
+# >>> factory PinMissile_AIEffect
+CONTRACT["PinMissile_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PinMissile_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\x00\x00"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory PinMissile_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4643,3 +4651,6 @@ MUTATIONS["JolteonQuickAttack_AIEffect"] = {"source_symbol": "JolteonQuickAttack
 # >>> factory-mutation LeekSlap_AIEffect
 MUTATIONS["LeekSlap_AIEffect"] = {"source_symbol": "LeekSlap_AIEffect", "before": "void LeekSlap_AIEffect(void)\n{\n\tSetExpectedAIDamage(15u, 0u, 30u);\n}", "after": "void LeekSlap_AIEffect(void)\n{\n\tSetExpectedAIDamage(16u, 0u, 30u);\n}", "case_ids": ["LeekSlap_AIEffect-0", "LeekSlap_AIEffect-1"]}
 # <<< factory-mutation LeekSlap_AIEffect
+# >>> factory-mutation PinMissile_AIEffect
+MUTATIONS["PinMissile_AIEffect"] = {"source_symbol": "PinMissile_AIEffect", "before": "void PinMissile_AIEffect(void)\n{\n\tSetExpectedAIDamage(40u, 0u, 80u);\n}", "after": "void PinMissile_AIEffect(void)\n{\n\tSetExpectedAIDamage(41u, 0u, 80u);\n}", "case_ids": ["PinMissile_AIEffect-0", "PinMissile_AIEffect-1"]}
+# <<< factory-mutation PinMissile_AIEffect
