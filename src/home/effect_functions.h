@@ -1114,9 +1114,9 @@ void MagikarpFlail_AIEffect(void);
 /* >>> factory PoliwagWaterGunEffect */
 void PoliwagWaterGunEffect(void);
 /* <<< factory PoliwagWaterGunEffect */
-/* >>> factory DragoniteLv45Slam_AIEffect */
-void DragoniteLv45Slam_AIEffect(void);
-/* <<< factory DragoniteLv45Slam_AIEffect */
+/* >>> factory GengarDarkMind_AISelectEffect */
+void GengarDarkMind_AISelectEffect(void);
+/* <<< factory GengarDarkMind_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

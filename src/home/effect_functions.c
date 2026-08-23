@@ -328,6 +328,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "mem.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4472,9 +4477,14 @@ void PoliwagWaterGunEffect(void)
 }
 /* <<< factory PoliwagWaterGunEffect */
 
-/* >>> factory DragoniteLv45Slam_AIEffect */
-void DragoniteLv45Slam_AIEffect(void)
+/* >>> factory GengarDarkMind_AISelectEffect */
+void GengarDarkMind_AISelectEffect(void)
 {
-	SetExpectedAIDamage(40u, 0u, 80u);
+	hTemp_ffa0 = 0xFFu;
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (r.a < 2u)
+		return;
+	AIFindTargetForBenchAttackResult t = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = t.a;
 }
-/* <<< factory DragoniteLv45Slam_AIEffect */
+/* <<< factory GengarDarkMind_AISelectEffect */

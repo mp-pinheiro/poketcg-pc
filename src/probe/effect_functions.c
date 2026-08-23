@@ -2667,13 +2667,13 @@ static void adapt_PoliwagWaterGunEffect(ProbeState *s)
 }
 /* <<< factory PoliwagWaterGunEffect */
 
-/* >>> factory DragoniteLv45Slam_AIEffect */
-static void adapt_DragoniteLv45Slam_AIEffect(ProbeState *s)
+/* >>> factory GengarDarkMind_AISelectEffect */
+static void adapt_GengarDarkMind_AISelectEffect(ProbeState *s)
 {
 	(void)s;
-	DragoniteLv45Slam_AIEffect();
+	GengarDarkMind_AISelectEffect();
 }
-/* <<< factory DragoniteLv45Slam_AIEffect */
+/* <<< factory GengarDarkMind_AISelectEffect */
 
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
@@ -3005,6 +3005,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
 	{ "MagikarpFlail_AIEffect", adapt_MagikarpFlail_AIEffect },
 	{ "PoliwagWaterGunEffect", adapt_PoliwagWaterGunEffect },
-	{ "DragoniteLv45Slam_AIEffect", adapt_DragoniteLv45Slam_AIEffect },
+	{ "GengarDarkMind_AISelectEffect", adapt_GengarDarkMind_AISelectEffect },
 	{ NULL, NULL },
 };
