@@ -113,4 +113,8 @@ AIDecide_ComputerSearchResult AIDecide_ComputerSearch(uint8_t b, uint8_t c);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_LegendaryRonaldResult;
 AIDecide_PokemonTrader_LegendaryRonaldResult AIDecide_PokemonTrader_LegendaryRonald(void);
 /* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
+/* >>> factory AIDecide_PokemonTrader_SoundOfTheWaves */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_SoundOfTheWavesResult;
+AIDecide_PokemonTrader_SoundOfTheWavesResult AIDecide_PokemonTrader_SoundOfTheWaves(void);
+/* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_PokemonTrader_SoundOfTheWaves",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_PokemonTrader_SoundOfTheWaves\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"000000\", \"49730\": \"0a0b0c\", \"49851\": \"ff\", \"49902\": \"03\", \"50181\": \"52\", \"50186\": \"514949\", \"50448\": \"0c0b0aff00000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonTrader_SoundOfTheWaves\", \"mismatches\": {\"a\": [11, 255], \"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_PokemonTrader_SoundOfTheWaves\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"000000\", \"49730\": \"0a0b0c\", \"49851\": \"ff\", \"49902\": \"03\", \"50181\": \"52\", \"50186\": \"514949\", \"50448\": \"0c0b0aff00000000000000000000000000000000000000000000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

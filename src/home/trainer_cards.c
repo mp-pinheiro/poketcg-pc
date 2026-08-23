@@ -127,6 +127,15 @@
 #define JOLTEON_LV24 0x72u
 #define VAPOREON_LV29 0x5au
 #define ZAPDOS_LV68 0x76u
+
+#define CLOYSTER 0x4eu
+#define HORSEA 0x51u
+#define KINGLER 0x50u
+#define KRABBY 0x4fu
+#define SEADRA 0x52u
+#define SHELLDER 0x4du
+#define TENTACOOL 0x49u
+#define TENTACRUEL 0x4au
 /* <<< factory statics */
 
 
@@ -1374,3 +1383,81 @@ no_carry: ;
 	}
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
+
+/* >>> factory AIDecide_PokemonTrader_SoundOfTheWaves */
+AIDecide_PokemonTrader_SoundOfTheWavesResult AIDecide_PokemonTrader_SoundOfTheWaves(void)
+{
+	uint8_t target_a;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r;
+	LookForCardIDInDeck_GivenCardIDInHandResult r2;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(DEWGONG, SEEL);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(SEEL, DEWGONG);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(KINGLER, KRABBY);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(KRABBY, KINGLER);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(CLOYSTER, SHELLDER);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(SHELLDER, CLOYSTER);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(SEADRA, HORSEA);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(HORSEA, SEADRA);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	r = LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(TENTACRUEL, TENTACOOL);
+	target_a = r.a;
+	if (r.f & 0x10u) goto choose_hand;
+
+	r2 = LookForCardIDInDeck_GivenCardIDInHand(TENTACOOL, TENTACRUEL);
+	target_a = r2.a;
+	if (r2.f & 0x10u) goto choose_hand;
+
+	goto no_carry;
+
+choose_hand: ;
+	wce1a = target_a;
+	{
+		CheckIfHasCardIDInHandResult h = CheckIfHasCardIDInHand(SEEL);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(KRABBY);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(HORSEA);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(SHELLDER);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+		h = CheckIfHasCardIDInHand(TENTACOOL);
+		if (h.f & 0x10u)
+			return (AIDecide_PokemonTrader_SoundOfTheWavesResult){h.a, h.f};
+		target_a = h.a;
+	}
+
+no_carry: ;
+	{
+		uint8_t f = (target_a == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokemonTrader_SoundOfTheWavesResult){target_a, f};
+	}
+}
+/* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */

@@ -252,6 +252,15 @@ static void adapt_AIDecide_PokemonTrader_LegendaryRonald(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryRonald */
 
+/* >>> factory AIDecide_PokemonTrader_SoundOfTheWaves */
+static void adapt_AIDecide_PokemonTrader_SoundOfTheWaves(ProbeState *s)
+{
+	AIDecide_PokemonTrader_SoundOfTheWavesResult r = AIDecide_PokemonTrader_SoundOfTheWaves();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_PokemonTrader_SoundOfTheWaves */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -283,5 +292,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_ComputerSearch_RockCrusher", adapt_AIDecide_ComputerSearch_RockCrusher },
 	{ "AIDecide_ComputerSearch", adapt_AIDecide_ComputerSearch },
 	{ "AIDecide_PokemonTrader_LegendaryRonald", adapt_AIDecide_PokemonTrader_LegendaryRonald },
+	{ "AIDecide_PokemonTrader_SoundOfTheWaves", adapt_AIDecide_PokemonTrader_SoundOfTheWaves },
 	{ NULL, NULL },
 };

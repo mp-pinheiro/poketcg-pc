@@ -490,6 +490,29 @@ CASES["AIDecide_PokemonTrader_LegendaryRonald"] = [
 ]
 # <<< factory AIDecide_PokemonTrader_LegendaryRonald
 
+# >>> factory AIDecide_PokemonTrader_SoundOfTheWaves
+CONTRACT["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_PokemonTrader_SoundOfTheWaves"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, "read": {0xC510: 32}},
+    {"wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x03",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC244: b"\x0C",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC202: b"\x00",
+        0xC40A: b"\x51",
+        0xC40B: b"\x49",
+        0xC40C: b"\x49",
+        0xC405: b"\x52",
+        0xC2BB: b"\xFF",
+    }, "expect": {wce1a: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00", 0xC2BB: b"\xFF"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_PokemonTrader_SoundOfTheWaves
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -673,3 +696,6 @@ MUTATIONS["AIDecide_ComputerSearch"] = {"source_symbol": "AIDecide_ComputerSearc
 # >>> factory-mutation AIDecide_PokemonTrader_LegendaryRonald
 MUTATIONS["AIDecide_PokemonTrader_LegendaryRonald"] = {"source_symbol": "AIDecide_PokemonTrader_LegendaryRonald", "before": "\t\tLookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(ZAPDOS_LV68);", "after": "\t\tLookForCardIDInHandListResult h = LookForCardIDInHandList_Bank8(ARTICUNO_LV37);", "case_ids": ["AIDecide_PokemonTrader_LegendaryRonald-1"]}
 # <<< factory-mutation AIDecide_PokemonTrader_LegendaryRonald
+# >>> factory-mutation AIDecide_PokemonTrader_SoundOfTheWaves
+MUTATIONS["AIDecide_PokemonTrader_SoundOfTheWaves"] = {"source_symbol": "AIDecide_PokemonTrader_SoundOfTheWaves", "before": "\t\th = CheckIfHasCardIDInHand(TENTACOOL);", "after": "\t\th = CheckIfHasCardIDInHand(SEADRA);", "case_ids": ["AIDecide_PokemonTrader_SoundOfTheWaves-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_SoundOfTheWaves
