@@ -4226,3 +4226,11 @@ uint16_t GravelerHardenEffect(void)
 	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);
 }
 /* <<< factory GravelerHardenEffect */
+
+/* >>> factory KarateChop_AIEffect */
+void KarateChop_AIEffect(void)
+{
+	KarateChop_DamageSubtractionEffect();
+	SetDefiniteAIDamage();
+}
+/* <<< factory KarateChop_AIEffect */

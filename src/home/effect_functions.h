@@ -1041,6 +1041,9 @@ void CuboneRage_AIEffect(void);
 /* >>> factory GravelerHardenEffect */
 uint16_t GravelerHardenEffect(void);
 /* <<< factory GravelerHardenEffect */
+/* >>> factory KarateChop_AIEffect */
+void KarateChop_AIEffect(void);
+/* <<< factory KarateChop_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

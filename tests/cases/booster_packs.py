@@ -240,6 +240,15 @@ CASES["FindBoosterDataPointer"] = [
 ]
 # <<< factory FindBoosterDataPointer
 
+# >>> factory AddBoosterCardToDrawnNonEnergies
+CONTRACT["AddBoosterCardToDrawnNonEnergies"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["AddBoosterCardToDrawnNonEnergies"] = [
+    {"wram": {0xC400: b"\x00", 0xD66A: b"\x12", 0xC012: b"\x00"}, "read": {0xC400: 2, 0xC012: 1}},
+    {"wram": {0xC400: b"\x01\x02\x00", 0xD66A: b"\xFF", 0xC0FF: b"\x0F"}, "read": {0xC400: 4, 0xC0FF: 1}},
+    dict(POISON, wram={0xC400: b"\x00", 0xD66A: b"\x7E", 0xC07E: b"\x00"}, read={0xC400: 2, 0xC07E: 1}),
+]
+# <<< factory AddBoosterCardToDrawnNonEnergies
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -331,3 +340,6 @@ MUTATIONS["DetermineBoosterCardType"] = {"source_symbol": "DetermineBoosterCardT
 # >>> factory-mutation FindBoosterDataPointer
 MUTATIONS["FindBoosterDataPointer"] = {"source_symbol": "FindBoosterDataPointer", "before": "return (uint16_t)(BOOSTER_DATA_BASE + (uint16_t)pack * 0x0Cu);", "after": "return (uint16_t)(BOOSTER_DATA_BASE + 1u + (uint16_t)pack * 0x0Cu);", "case_ids": ["FindBoosterDataPointer-0", "FindBoosterDataPointer-1", "FindBoosterDataPointer-2", "FindBoosterDataPointer-3", "FindBoosterDataPointer-4", "FindBoosterDataPointer-5"]}
 # <<< factory-mutation FindBoosterDataPointer
+# >>> factory-mutation AddBoosterCardToDrawnNonEnergies
+MUTATIONS["AddBoosterCardToDrawnNonEnergies"] = {"source_symbol": "AddBoosterCardToDrawnNonEnergies", "before": "\tAppendCurrentCardToHL(&cursor);\n\tAddBoosterCardToTempCardCollection();", "after": "\tAppendCurrentCardToHL(&cursor);\n\t(void)0;", "case_ids": ["AddBoosterCardToDrawnNonEnergies-0", "AddBoosterCardToDrawnNonEnergies-1", "AddBoosterCardToDrawnNonEnergies-2"]}
+# <<< factory-mutation AddBoosterCardToDrawnNonEnergies

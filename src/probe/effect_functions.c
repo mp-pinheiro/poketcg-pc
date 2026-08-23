@@ -2486,6 +2486,14 @@ static void adapt_GravelerHardenEffect(ProbeState *s)
 }
 /* <<< factory GravelerHardenEffect */
 
+/* >>> factory KarateChop_AIEffect */
+static void adapt_KarateChop_AIEffect(ProbeState *s)
+{
+	(void)s;
+	KarateChop_AIEffect();
+}
+/* <<< factory KarateChop_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2794,5 +2802,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "OmastarWaterGunEffect", adapt_OmastarWaterGunEffect },
 	{ "CuboneRage_AIEffect", adapt_CuboneRage_AIEffect },
 	{ "GravelerHardenEffect", adapt_GravelerHardenEffect },
+	{ "KarateChop_AIEffect", adapt_KarateChop_AIEffect },
 	{ NULL, NULL },
 };

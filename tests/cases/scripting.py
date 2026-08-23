@@ -845,6 +845,14 @@ CASES["ScriptCommand_SaveGame"] = [
 ]
 # <<< factory ScriptCommand_SaveGame
 
+# >>> factory ScriptCommand_MoveActiveNPC
+CONTRACT["ScriptCommand_MoveActiveNPC"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["ScriptCommand_MoveActiveNPC"] = [
+    {"b": 0xC1, "c": 0x00, "wram": {0xC100: b"\xff", 0xD3B6: b"\x02"}, "read": {0xC100: 1, 0xD3AA: 1}},
+    dict(POISON, b=0xC1, c=0x00, wram={0xC100: b"\xff", 0xD3B6: b"\x02"}, read={0xC100: 1, 0xD3AA: 1}),
+]
+# <<< factory ScriptCommand_MoveActiveNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1296,3 +1304,6 @@ MUTATIONS["ScriptCommand_WaitForSongToFinish"] = {"source_symbol": "ScriptComman
 # >>> factory-mutation ScriptCommand_SaveGame
 MUTATIONS["ScriptCommand_SaveGame"] = {"source_symbol": "ScriptCommand_SaveGame", "before": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy3();", "case_ids": ["ScriptCommand_SaveGame-0", "ScriptCommand_SaveGame-1"]}
 # <<< factory-mutation ScriptCommand_SaveGame
+# >>> factory-mutation ScriptCommand_MoveActiveNPC
+MUTATIONS["ScriptCommand_MoveActiveNPC"] = {"source_symbol": "ScriptCommand_MoveActiveNPC", "before": "ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)\n{\n\twLoadedNPCTempIndex = wScriptNPC;\n\treturn ExecuteNPCMovement(bc);\n}", "after": "ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)\n{\n\twLoadedNPCTempIndex = 0u;\n\treturn ExecuteNPCMovement(bc);\n}", "case_ids": ["ScriptCommand_MoveActiveNPC-0", "ScriptCommand_MoveActiveNPC-1"]}
+# <<< factory-mutation ScriptCommand_MoveActiveNPC

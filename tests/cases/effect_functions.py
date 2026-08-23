@@ -2721,6 +2721,18 @@ CASES["GravelerHardenEffect"] = [
 ]
 # <<< factory GravelerHardenEffect
 
+# >>> factory KarateChop_AIEffect
+CONTRACT["KarateChop_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["KarateChop_AIEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+              0xC400: b"\x01", 0xCCB9: b"\xFA\x00"},
+     "read": {0xCCB9: 2, 0xCCBB: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00",
+                       0xC400: b"\x01", 0xCCB9: b"\xFA\x00"},
+         read={0xCCB9: 2, 0xCCBB: 1}),
+]
+# <<< factory KarateChop_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4529,3 +4541,6 @@ MUTATIONS["CuboneRage_AIEffect"] = {"source_symbol": "CuboneRage_AIEffect", "bef
 # >>> factory-mutation GravelerHardenEffect
 MUTATIONS["GravelerHardenEffect"] = {"source_symbol": "GravelerHardenEffect", "before": "uint16_t GravelerHardenEffect(void)\n{\n\treturn ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);\n}", "after": "uint16_t GravelerHardenEffect(void)\n{\n\treturn (uint16_t)(ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40) + 1u);\n}", "case_ids": ["GravelerHardenEffect-0", "GravelerHardenEffect-1"]}
 # <<< factory-mutation GravelerHardenEffect
+# >>> factory-mutation KarateChop_AIEffect
+MUTATIONS["KarateChop_AIEffect"] = {"source_symbol": "KarateChop_AIEffect", "before": "void KarateChop_AIEffect(void)\n{\n\tKarateChop_DamageSubtractionEffect();\n\tSetDefiniteAIDamage();\n}", "after": "void KarateChop_AIEffect(void)\n{\n\tKarateChop_DamageSubtractionEffect();\n\t(void)0;\n}", "case_ids": ["KarateChop_AIEffect-0", "KarateChop_AIEffect-1"]}
+# <<< factory-mutation KarateChop_AIEffect

@@ -723,6 +723,17 @@ static void adapt_ScriptCommand_SaveGame(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SaveGame */
 
+/* >>> factory ScriptCommand_MoveActiveNPC */
+static void adapt_ScriptCommand_MoveActiveNPC(ProbeState *s)
+{
+	ExecuteNPCMovementResult result = ScriptCommand_MoveActiveNPC((uint16_t)(((uint16_t)s->b << 8) | s->c));
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_MoveActiveNPC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -793,5 +804,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfCardOwned", adapt_ScriptCommand_JumpIfCardOwned },
 	{ "ScriptCommand_WaitForSongToFinish", adapt_ScriptCommand_WaitForSongToFinish },
 	{ "ScriptCommand_SaveGame", adapt_ScriptCommand_SaveGame },
+	{ "ScriptCommand_MoveActiveNPC", adapt_ScriptCommand_MoveActiveNPC },
 	{ NULL, NULL },
 };

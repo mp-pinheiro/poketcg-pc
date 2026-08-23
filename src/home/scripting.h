@@ -387,4 +387,7 @@ IncreaseScriptPointerResult ScriptCommand_WaitForSongToFinish(void);
 /* >>> factory ScriptCommand_SaveGame */
 IncreaseScriptPointerResult ScriptCommand_SaveGame(uint8_t c);
 /* <<< factory ScriptCommand_SaveGame */
+/* >>> factory ScriptCommand_MoveActiveNPC */
+ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc);
+/* <<< factory ScriptCommand_MoveActiveNPC */
 #endif

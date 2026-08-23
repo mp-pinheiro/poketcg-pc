@@ -1074,3 +1074,11 @@ IncreaseScriptPointerResult ScriptCommand_SaveGame(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_SaveGame */
+
+/* >>> factory ScriptCommand_MoveActiveNPC */
+ExecuteNPCMovementResult ScriptCommand_MoveActiveNPC(uint16_t bc)
+{
+	wLoadedNPCTempIndex = wScriptNPC;
+	return ExecuteNPCMovement(bc);
+}
+/* <<< factory ScriptCommand_MoveActiveNPC */

@@ -73,4 +73,7 @@ uint8_t DetermineBoosterCardType(uint8_t a);
 /* >>> factory FindBoosterDataPointer */
 uint16_t FindBoosterDataPointer(void);
 /* <<< factory FindBoosterDataPointer */
+/* >>> factory AddBoosterCardToDrawnNonEnergies */
+void AddBoosterCardToDrawnNonEnergies(void);
+/* <<< factory AddBoosterCardToDrawnNonEnergies */
 #endif /* POKETCG_HOME_BOOSTER_PACKS_H */
