@@ -531,6 +531,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/duel.h"
 #include "generated/wram.h"
+
+#include "home/duel.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#define DUELVARS_PRIZES 0xecu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3296,3 +3301,38 @@ CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(
 	return (CountOppEnergyCardsInHandAndAttachedResult){gb_read8(wTempAI_ADDR), f, wTempAI_ADDR};
 }
 /* <<< factory CountOppEnergyCardsInHandAndAttached */
+
+/* >>> factory AIPickPrizeCards */
+static void AIPickPrizeCards_PickPrizeCard(void)
+{
+	DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+	uint16_t hl = prizes.hl;
+	uint8_t c = prizes.a;
+	static const uint8_t prize_flags[6] = {1u, 2u, 4u, 8u, 16u, 32u};
+	uint8_t e;
+	for (;;) {
+		e = Random(6u);
+		if (prize_flags[e] & c)
+			break;
+	}
+	uint8_t bit = prize_flags[e];
+	gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~bit));
+
+	DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_PRIZE_CARDS + e));
+	AddCardToHand(card.a);
+}
+
+void AIPickPrizeCards(void)
+{
+	uint8_t remaining_picks = wNumberPrizeCardsToTake;
+	for (;;) {
+		AIPickPrizeCards_PickPrizeCard();
+		DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+		if (prizes.a == 0u)
+			break;
+		remaining_picks--;
+		if (remaining_picks == 0u)
+			break;
+	}
+}
+/* <<< factory AIPickPrizeCards */

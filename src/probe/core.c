@@ -1372,6 +1372,14 @@ static void adapt_CountOppEnergyCardsInHandAndAttached(ProbeState *s)
 }
 /* <<< factory CountOppEnergyCardsInHandAndAttached */
 
+/* >>> factory AIPickPrizeCards */
+static void adapt_AIPickPrizeCards(ProbeState *s)
+{
+	AIPickPrizeCards();
+	(void)s;
+}
+/* <<< factory AIPickPrizeCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1534,5 +1542,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayTurnDuelistDrawAnimation", adapt_PlayTurnDuelistDrawAnimation },
 	{ "DrawCardPageSet2AndRarityIcons", adapt_DrawCardPageSet2AndRarityIcons },
 	{ "CountOppEnergyCardsInHandAndAttached", adapt_CountOppEnergyCardsInHandAndAttached },
+	{ "AIPickPrizeCards", adapt_AIPickPrizeCards },
 	{ NULL, NULL },
 };

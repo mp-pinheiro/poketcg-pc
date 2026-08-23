@@ -76,6 +76,14 @@ static void adapt_ShakeScreenX_Small(ProbeState *s)
 }
 /* <<< factory ShakeScreenX_Small */
 
+/* >>> factory DistortScreen */
+static void adapt_DistortScreen(ProbeState *s)
+{
+	DistortScreen();
+	(void)s;
+}
+/* <<< factory DistortScreen */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
@@ -86,5 +94,6 @@ const ProbeEntry probe_entries_screen_effects[] = {
 	{ "Func_1ce03", adapt_Func_1ce03 },
 	{ "ShakeScreenX_Big", adapt_ShakeScreenX_Big },
 	{ "ShakeScreenX_Small", adapt_ShakeScreenX_Small },
+	{ "DistortScreen", adapt_DistortScreen },
 	{ NULL, NULL },
 };

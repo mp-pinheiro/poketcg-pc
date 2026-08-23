@@ -1,0 +1,9 @@
+{
+  "fn": "AIPickPrizeCards",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPickPrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49980\": \"00000000000000\", \"50156\": \"3e\", \"50158\": \"01\", \"52424\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPickPrizeCards\", \"mismatches\": {\"bus\": {\"address\": 50156, \"reference\": \"000000003e0101c3\", \"native\": \"000000003f0101c3\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49980, 7], [50156, 1], [50158, 1], [52424, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIPickPrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49980\": \"00000000000000\", \"50156\": \"3e\", \"50158\": \"01\", \"52424\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

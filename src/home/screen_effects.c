@@ -31,6 +31,11 @@
 #include "home/play_animation.h"
 
 #include "home/screen_effects.h"
+
+#include "home/scroll.h"
+#include "generated/wram.h"
+#define DISTORTSCREEN_UPDATEFUNC_ADDR 0x4DDFu
+#define APPLYBACKGROUNDSCROLL_ADDR 0x3EA6u
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -146,3 +151,25 @@ void ShakeScreenX_Small(void)
 	ShakeScreenX(0x4d55u);
 }
 /* <<< factory ShakeScreenX_Small */
+
+/* >>> factory DistortScreen */
+void DistortScreen(void)
+{
+	gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)DISTORTSCREEN_UPDATEFUNC_ADDR);
+	gb_write8((uint16_t)(wScreenAnimUpdatePtr_ADDR + 1u), (uint8_t)(DISTORTSCREEN_UPDATEFUNC_ADDR >> 8));
+	wApplyBGScroll = 0u;
+	gb_write8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 1u), (uint8_t)APPLYBACKGROUNDSCROLL_ADDR);
+	gb_write8((uint16_t)(wLCDCFunctionTrampoline_ADDR + 2u), (uint8_t)(APPLYBACKGROUNDSCROLL_ADDR >> 8));
+	wBGScrollMod = 1u;
+	EnableInt_LYCoincidence();
+
+	/* .UpdateFunc: real asm has no ret before this label, so it executes
+	 * inline as part of the same call. */
+	uint8_t duration = wScreenAnimDuration;
+	uint8_t index = (uint8_t)((duration >> 3) & 0x07u);
+	static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};
+	wBGScrollMod = BGScrollModData[index];
+	(void)DecrementScreenAnimDuration(0u);
+	LoadDefaultScreenAnimationUpdateWhenFinished();
+}
+/* <<< factory DistortScreen */

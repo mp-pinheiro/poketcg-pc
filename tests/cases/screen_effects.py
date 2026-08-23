@@ -112,6 +112,16 @@ CASES["ShakeScreenX_Small"] = [
 ]
 # <<< factory ShakeScreenX_Small
 
+# >>> factory DistortScreen
+CONTRACT["DistortScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DistortScreen"] = [
+    {"wram": {0xD4BB: b"\x03"},
+     "read": {0xD4B9: 2, 0xD667: 1, 0xCACE: 2, 0xD666: 1, 0xD4BB: 1}},
+    dict(POISON, wram={0xD4BB: b"\x10"},
+         read={0xD4B9: 2, 0xD667: 1, 0xCACE: 2, 0xD666: 1, 0xD4BB: 1}),
+]
+# <<< factory DistortScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -153,3 +163,6 @@ MUTATIONS["ShakeScreenX_Big"] = {"source_symbol": "ShakeScreenX_Big", "before": 
 # >>> factory-mutation ShakeScreenX_Small
 MUTATIONS["ShakeScreenX_Small"] = {"source_symbol": "ShakeScreenX_Small", "before": "void ShakeScreenX_Small(void)\n{\n\tShakeScreenX(0x4d55u);\n}", "after": "void ShakeScreenX_Small(void)\n{\n\tShakeScreenX(0x4d56u);\n}", "case_ids": ["ShakeScreenX_Small-0", "ShakeScreenX_Small-1"]}
 # <<< factory-mutation ShakeScreenX_Small
+# >>> factory-mutation DistortScreen
+MUTATIONS["DistortScreen"] = {"source_symbol": "DistortScreen", "before": "static const uint8_t BGScrollModData[8] = {4u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "after": "static const uint8_t BGScrollModData[8] = {5u, 3u, 2u, 1u, 1u, 1u, 1u, 2u};", "case_ids": ["DistortScreen-0", "DistortScreen-1"]}
+# <<< factory-mutation DistortScreen

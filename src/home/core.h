@@ -643,4 +643,7 @@ DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CountOppEnergyCardsInHandAndAttachedResult;
 CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(void);
 /* <<< factory CountOppEnergyCardsInHandAndAttached */
+/* >>> factory AIPickPrizeCards */
+void AIPickPrizeCards(void);
+/* <<< factory AIPickPrizeCards */
 #endif

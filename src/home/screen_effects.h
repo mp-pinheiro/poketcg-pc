@@ -37,4 +37,7 @@ void ShakeScreenX_Big(void);
 /* >>> factory ShakeScreenX_Small */
 void ShakeScreenX_Small(void);
 /* <<< factory ShakeScreenX_Small */
+/* >>> factory DistortScreen */
+void DistortScreen(void);
+/* <<< factory DistortScreen */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "DistortScreen",
+  "case": "tests/cases/screen_effects.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DistortScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51918\": \"a63e\", \"54457\": \"df4d02\", \"54459\": \"02\", \"54886\": \"0400\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DistortScreen\", \"mismatches\": {\"bus\": {\"address\": 54886, \"reference\": \"3edf4d020400\", \"native\": \"3edf4d020500\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[51918, 2], [54457, 3], [54886, 2]]}}}\n",
+  "restored": "{\"fn\": \"DistortScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51918\": \"a63e\", \"54457\": \"df4d02\", \"54459\": \"02\", \"54886\": \"0400\"}}, \"status\": \"PASS\"}\n"
+}

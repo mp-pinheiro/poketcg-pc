@@ -1873,6 +1873,18 @@ CASES["CountOppEnergyCardsInHandAndAttached"] = [
 ]
 # <<< factory CountOppEnergyCardsInHandAndAttached
 
+# >>> factory AIPickPrizeCards
+CONTRACT["AIPickPrizeCards"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["AIPickPrizeCards"] = [
+    {"wram": {0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
+               0xC33C: b"\x00\x00\x00\x00\x00\x00"},
+     "read": {0xC3EC: 1, 0xC3EE: 1, 0xC342: 1}},
+    dict(POISON, wram={0xFF97: b"\xC3", 0xCCC8: b"\x01", 0xC3EC: b"\x3F", 0xC3EE: b"\x00",
+                        0xC33C: b"\x00\x00\x00\x00\x00\x00"},
+         read={0xC3EC: 1, 0xC3EE: 1, 0xC342: 1}),
+]
+# <<< factory AIPickPrizeCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2860,3 +2872,6 @@ MUTATIONS["DrawCardPageSet2AndRarityIcons"] = {"source_symbol": "DrawCardPageSet
 # >>> factory-mutation CountOppEnergyCardsInHandAndAttached
 MUTATIONS["CountOppEnergyCardsInHandAndAttached"] = {"source_symbol": "CountOppEnergyCardsInHandAndAttached", "before": "\tif (!(listed.f & 0x10u)) {", "after": "\tif ((listed.f & 0x10u)) {", "case_ids": ["CountOppEnergyCardsInHandAndAttached-0"]}
 # <<< factory-mutation CountOppEnergyCardsInHandAndAttached
+# >>> factory-mutation AIPickPrizeCards
+MUTATIONS["AIPickPrizeCards"] = {"source_symbol": "AIPickPrizeCards", "before": "gb_write8(hl, (uint8_t)(gb_read8(hl) & (uint8_t)~bit));", "after": "gb_write8(hl, (uint8_t)(gb_read8(hl) | bit));", "case_ids": ["AIPickPrizeCards-0", "AIPickPrizeCards-1"]}
+# <<< factory-mutation AIPickPrizeCards
