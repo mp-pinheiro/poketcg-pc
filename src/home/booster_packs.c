@@ -349,6 +349,7 @@ void GenerateBoosterEnergies(void)
 	if (hi != 0u) {
 		uint8_t lo = gb_read8(ptr_addr);
 		uint16_t target = (uint16_t)(lo | ((uint16_t)hi << 8));
+		if (target == 0x6387u) { GenerateRandomEnergy(); return; }
 		if (target == 0x6390u) { GenerateRandomEnergyBooster(); return; }
 		if (target == 0x639Cu) { GenerateEnergyBoosterLightningFire(); return; }
 		if (target == 0x63A1u) { GenerateEnergyBoosterWaterFighting(); return; }
