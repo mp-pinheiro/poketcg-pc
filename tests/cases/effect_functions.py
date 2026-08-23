@@ -2364,6 +2364,9 @@ hWhoseTurn = 0xFF97
 
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3155,6 +3158,15 @@ CASES["EnergyTrans_PrintProcedure"] = [
          vread={0: {0x9800: 0x400}}),
 ]
 # <<< factory EnergyTrans_PrintProcedure
+
+# >>> factory ItemFinder_HandDiscardPileCheck
+CONTRACT["ItemFinder_HandDiscardPileCheck"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["ItemFinder_HandDiscardPileCheck"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x05", 0xC37E: b"\x00"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEE: b"\x01"}),
+]
+# <<< factory ItemFinder_HandDiscardPileCheck
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5084,3 +5096,6 @@ MUTATIONS["StrangeBehavior_CheckDamage"] = {"source_symbol": "StrangeBehavior_Ch
 # >>> factory-mutation EnergyTrans_PrintProcedure
 MUTATIONS["EnergyTrans_PrintProcedure"] = {"source_symbol": "EnergyTrans_PrintProcedure", "before": "DrawWholeScreenTextBox(ProcedureForEnergyTransferText);", "after": "DrawWholeScreenTextBox((uint16_t)(ProcedureForEnergyTransferText + 1u));", "case_ids": ["EnergyTrans_PrintProcedure-0", "EnergyTrans_PrintProcedure-1"]}
 # <<< factory-mutation EnergyTrans_PrintProcedure
+# >>> factory-mutation ItemFinder_HandDiscardPileCheck
+MUTATIONS["ItemFinder_HandDiscardPileCheck"] = {"source_symbol": "ItemFinder_HandDiscardPileCheck", "before": "if (count.a < 3u)", "after": "if (count.a < 0u)", "case_ids": ["ItemFinder_HandDiscardPileCheck-0", "ItemFinder_HandDiscardPileCheck-2"]}
+# <<< factory-mutation ItemFinder_HandDiscardPileCheck

@@ -368,6 +368,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/core.h"
 #define ProcedureForEnergyTransferText 0x012du
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4697,3 +4700,14 @@ void EnergyTrans_PrintProcedure(void)
 	DrawWholeScreenTextBox(ProcedureForEnergyTransferText);
 }
 /* <<< factory EnergyTrans_PrintProcedure */
+
+/* >>> factory ItemFinder_HandDiscardPileCheck */
+ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (count.a < 3u)
+		return (ItemFinder_HandDiscardPileCheckResult){0x70u, NotEnoughCardsInHandText};
+	CreateTrainerCardListFromDiscardPileResult r = CreateTrainerCardListFromDiscardPile();
+	return (ItemFinder_HandDiscardPileCheckResult){r.f, r.hl};
+}
+/* <<< factory ItemFinder_HandDiscardPileCheck */

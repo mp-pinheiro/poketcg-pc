@@ -1169,6 +1169,10 @@ StrangeBehavior_CheckDamageResult StrangeBehavior_CheckDamage(void);
 /* >>> factory EnergyTrans_PrintProcedure */
 void EnergyTrans_PrintProcedure(void);
 /* <<< factory EnergyTrans_PrintProcedure */
+/* >>> factory ItemFinder_HandDiscardPileCheck */
+typedef struct { uint8_t f; uint16_t hl; } ItemFinder_HandDiscardPileCheckResult;
+ItemFinder_HandDiscardPileCheckResult ItemFinder_HandDiscardPileCheck(void);
+/* <<< factory ItemFinder_HandDiscardPileCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

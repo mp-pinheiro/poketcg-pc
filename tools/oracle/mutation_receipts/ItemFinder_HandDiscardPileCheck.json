@@ -1,0 +1,9 @@
+{
+  "fn": "ItemFinder_HandDiscardPileCheck",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ItemFinder_HandDiscardPileCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 182, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ItemFinder_HandDiscardPileCheck\", \"mismatches\": {\"f\": [112, 144], \"hl\": [182, 196]}}\n",
+  "restored": "{\"fn\": \"ItemFinder_HandDiscardPileCheck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 182, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
