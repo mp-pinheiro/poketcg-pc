@@ -436,4 +436,7 @@ void ScriptCommand_UnloadChallengeHallNPC(void);
 /* >>> factory DetermineChallengeHallEvent */
 void DetermineChallengeHallEvent(void);
 /* <<< factory DetermineChallengeHallEvent */
+/* >>> factory DetermineImakuniAndChallengeHall */
+void DetermineImakuniAndChallengeHall(void);
+/* <<< factory DetermineImakuniAndChallengeHall */
 #endif

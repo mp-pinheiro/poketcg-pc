@@ -173,6 +173,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_CHALLENGE_CUP_2_STATE 0x40u
 #define EVENT_CHALLENGE_CUP_3_STATE 0x41u
 #define OWMAP_CHALLENGE_HALL 0x0bu
+
+#include "home/scripting.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -1358,3 +1361,12 @@ void DetermineChallengeHallEvent(void)
 	(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
 }
 /* <<< factory DetermineChallengeHallEvent */
+
+/* >>> factory DetermineImakuniAndChallengeHall */
+void DetermineImakuniAndChallengeHall(void)
+{
+	gb_write8((uint16_t)(wEventVars_ADDR + EVENT_VAR_BYTES - 1u), 0u);
+	(void)DetermineImakuniRoom();
+	DetermineChallengeHallEvent();
+}
+/* <<< factory DetermineImakuniAndChallengeHall */

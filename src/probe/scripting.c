@@ -879,6 +879,14 @@ static void adapt_DetermineChallengeHallEvent(ProbeState *s)
 }
 /* <<< factory DetermineChallengeHallEvent */
 
+/* >>> factory DetermineImakuniAndChallengeHall */
+static void adapt_DetermineImakuniAndChallengeHall(ProbeState *s)
+{
+	(void)s;
+	DetermineImakuniAndChallengeHall();
+}
+/* <<< factory DetermineImakuniAndChallengeHall */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -965,5 +973,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_MoveActiveNPCByDirection", adapt_ScriptCommand_MoveActiveNPCByDirection },
 	{ "ScriptCommand_UnloadChallengeHallNPC", adapt_ScriptCommand_UnloadChallengeHallNPC },
 	{ "DetermineChallengeHallEvent", adapt_DetermineChallengeHallEvent },
+	{ "DetermineImakuniAndChallengeHall", adapt_DetermineImakuniAndChallengeHall },
 	{ NULL, NULL },
 };

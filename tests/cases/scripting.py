@@ -112,6 +112,8 @@ wChallengeHallNPC_A = 0xD696
 wOverworldMapSelection_A = 0xD32E
 wEventLegendaryByte = 0xD3D8
 wEventCup12Byte = 0xD3E0
+
+wEventVarsLastByte = 0xD411
 # <<< factory-cases-statics
 
 
@@ -1034,6 +1036,14 @@ CASES["DetermineChallengeHallEvent"] = [
 ]
 # <<< factory DetermineChallengeHallEvent
 
+# >>> factory DetermineImakuniAndChallengeHall
+CONTRACT["DetermineImakuniAndChallengeHall"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DetermineImakuniAndChallengeHall"] = [
+    {"wram": {wEventVarsLastByte: b"\xFF"}, "read": {wEventVarsLastByte: 1}},
+    dict(POISON, wram={wEventVarsLastByte: b"\x7F"}, read={wEventVarsLastByte: 1}),
+]
+# <<< factory DetermineImakuniAndChallengeHall
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1543,3 +1553,6 @@ MUTATIONS["ScriptCommand_UnloadChallengeHallNPC"] = {"source_symbol": "ScriptCom
 # >>> factory-mutation DetermineChallengeHallEvent
 MUTATIONS["DetermineChallengeHallEvent"] = {"source_symbol": "DetermineChallengeHallEvent", "before": "\t\t(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_READY_TO_START);", "after": "\t\t(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_NOT_STARTED);", "case_ids": ["DetermineChallengeHallEvent-0", "DetermineChallengeHallEvent-1"]}
 # <<< factory-mutation DetermineChallengeHallEvent
+# >>> factory-mutation DetermineImakuniAndChallengeHall
+MUTATIONS["DetermineImakuniAndChallengeHall"] = {"source_symbol": "DetermineImakuniAndChallengeHall", "before": "\tgb_write8((uint16_t)(wEventVars_ADDR + EVENT_VAR_BYTES - 1u), 0u);", "after": "\tgb_write8((uint16_t)(wEventVars_ADDR + EVENT_VAR_BYTES - 1u), 0xFFu);", "case_ids": ["DetermineImakuniAndChallengeHall-0", "DetermineImakuniAndChallengeHall-1"]}
+# <<< factory-mutation DetermineImakuniAndChallengeHall
