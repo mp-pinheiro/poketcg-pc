@@ -105,6 +105,13 @@
 #include "home/card_data.h"
 #include "generated/wram.h"
 #define CARD_NOT_OWNED 0x80u
+
+#include "home/deck_configuration.h"
+#include "home/deck_check.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+
+#define MENU_CONFIRM 0x01u
 /* <<< factory statics */
 
 
@@ -758,3 +765,14 @@ CreateFilteredCardListResult CreateFilteredCardList(
 	return (CreateFilteredCardListResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory CreateFilteredCardList */
+
+/* >>> factory ConfirmSelectionAndReturnCarry */
+ConfirmSelectionAndReturnCarryResult ConfirmSelectionAndReturnCarry(void)
+{
+	(void)DrawHorizontalListCursor_Visible();
+	PlaySFXConfirmOrCancel(MENU_CONFIRM);
+	uint8_t e = wCardListCursorPos;
+	uint8_t a = hffb3;
+	return (ConfirmSelectionAndReturnCarryResult){a, e};
+}
+/* <<< factory ConfirmSelectionAndReturnCarry */

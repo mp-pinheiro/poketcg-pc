@@ -296,6 +296,15 @@ static void adapt_CreateFilteredCardList(ProbeState *s)
 }
 /* <<< factory CreateFilteredCardList */
 
+/* >>> factory ConfirmSelectionAndReturnCarry */
+static void adapt_ConfirmSelectionAndReturnCarry(ProbeState *s)
+{
+	ConfirmSelectionAndReturnCarryResult r = ConfirmSelectionAndReturnCarry();
+	s->a = r.a;
+	s->e = r.e;
+}
+/* <<< factory ConfirmSelectionAndReturnCarry */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -330,5 +339,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "RemoveCardFromDeck", adapt_RemoveCardFromDeck },
 	{ "CheckIfCurrentDeckWasChanged", adapt_CheckIfCurrentDeckWasChanged },
 	{ "CreateFilteredCardList", adapt_CreateFilteredCardList },
+	{ "ConfirmSelectionAndReturnCarry", adapt_ConfirmSelectionAndReturnCarry },
 	{ NULL, NULL },
 };

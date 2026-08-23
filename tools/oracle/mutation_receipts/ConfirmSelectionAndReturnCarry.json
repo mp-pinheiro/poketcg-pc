@@ -1,0 +1,9 @@
+{
+  "fn": "ConfirmSelectionAndReturnCarry",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConfirmSelectionAndReturnCarry\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 5, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConfirmSelectionAndReturnCarry\", \"mismatches\": {\"a\": [0, 5], \"e\": [5, 0]}}\n",
+  "restored": "{\"fn\": \"ConfirmSelectionAndReturnCarry\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 5, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

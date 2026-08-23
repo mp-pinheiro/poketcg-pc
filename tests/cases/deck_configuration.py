@@ -382,6 +382,18 @@ CASES["CreateFilteredCardList"] = [
 ]
 # <<< factory CreateFilteredCardList
 
+# >>> factory ConfirmSelectionAndReturnCarry
+CONTRACT["ConfirmSelectionAndReturnCarry"] = {"compare": ("a", "e"), "preserve": ()}
+CASES["ConfirmSelectionAndReturnCarry"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "wram": {0xCEA4: b"\x05"},
+        "hram": {0xFFB3: b"\x07"},
+        "expect_regs": {"a": 0x07, "e": 0x05},
+    },
+]
+# <<< factory ConfirmSelectionAndReturnCarry
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -530,3 +542,11 @@ MUTATIONS["CheckIfCurrentDeckWasChanged"] = {"source_symbol": "CheckIfCurrentDec
 # >>> factory-mutation CreateFilteredCardList
 MUTATIONS["CreateFilteredCardList"] = {"source_symbol": "CreateFilteredCardList", "before": "gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)out_index);", "after": "gb_write8(wNumEntriesInCurFilter_ADDR, (uint8_t)(out_index + 1u));", "case_ids": ["CreateFilteredCardList-0", "CreateFilteredCardList-1"]}
 # <<< factory-mutation CreateFilteredCardList
+# >>> factory-mutation ConfirmSelectionAndReturnCarry
+MUTATIONS["ConfirmSelectionAndReturnCarry"] = {
+    "source_symbol": "ConfirmSelectionAndReturnCarry",
+    "before": "return (ConfirmSelectionAndReturnCarryResult){a, e};",
+    "after": "return (ConfirmSelectionAndReturnCarryResult){e, a};",
+    "case_ids": ["ConfirmSelectionAndReturnCarry-0"],
+}
+# <<< factory-mutation ConfirmSelectionAndReturnCarry
