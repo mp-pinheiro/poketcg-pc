@@ -2987,6 +2987,14 @@ CASES["GengarDarkMind_AISelectEffect"] = [
 ]
 # <<< factory GengarDarkMind_AISelectEffect
 
+# >>> factory PoliwhirlDoubleslap_AIEffect
+CONTRACT["PoliwhirlDoubleslap_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PoliwhirlDoubleslap_AIEffect"] = [
+    {"wram": {0xCCB9: b"\x00\x00"}, "read": {0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={0xCCB9: b"\xAA\xBB"}, read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory PoliwhirlDoubleslap_AIEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4873,3 +4881,6 @@ MUTATIONS["DragoniteLv45Slam_AIEffect"] = {"source_symbol": "DragoniteLv45Slam_A
 # >>> factory-mutation GengarDarkMind_AISelectEffect
 MUTATIONS["GengarDarkMind_AISelectEffect"] = {"source_symbol": "GengarDarkMind_AISelectEffect", "before": "DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (r.a < 2u)", "after": "DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tif (r.a < 1u)", "case_ids": ["GengarDarkMind_AISelectEffect-0"]}
 # <<< factory-mutation GengarDarkMind_AISelectEffect
+# >>> factory-mutation PoliwhirlDoubleslap_AIEffect
+MUTATIONS["PoliwhirlDoubleslap_AIEffect"] = {"source_symbol": "PoliwhirlDoubleslap_AIEffect", "before": "void PoliwhirlDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 60u);", "after": "void PoliwhirlDoubleslap_AIEffect(void)\n{\n\tSetExpectedAIDamage(30u, 0u, 40u);", "case_ids": ["PoliwhirlDoubleslap_AIEffect-0", "PoliwhirlDoubleslap_AIEffect-1"]}
+# <<< factory-mutation PoliwhirlDoubleslap_AIEffect

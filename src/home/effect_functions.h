@@ -1126,6 +1126,9 @@ void DragoniteLv45Slam_AIEffect(void);
 /* >>> factory GengarDarkMind_AISelectEffect */
 void GengarDarkMind_AISelectEffect(void);
 /* <<< factory GengarDarkMind_AISelectEffect */
+/* >>> factory PoliwhirlDoubleslap_AIEffect */
+void PoliwhirlDoubleslap_AIEffect(void);
+/* <<< factory PoliwhirlDoubleslap_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

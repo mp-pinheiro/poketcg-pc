@@ -4510,3 +4510,10 @@ void GengarDarkMind_AISelectEffect(void)
 	hTemp_ffa0 = t.a;
 }
 /* <<< factory GengarDarkMind_AISelectEffect */
+
+/* >>> factory PoliwhirlDoubleslap_AIEffect */
+void PoliwhirlDoubleslap_AIEffect(void)
+{
+	SetExpectedAIDamage(30u, 0u, 60u);
+}
+/* <<< factory PoliwhirlDoubleslap_AIEffect */
