@@ -390,6 +390,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "mem.h"
 #define PLAYER_TURN 0xC2u
 #define OPPONENT_TURN 0xC3u
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#define TX_END 0x00u
+#define TX_SYMBOL 0x05u
+#define SYM_CROSS 0x2du
+#define HandText_2 0x024eu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1915,3 +1924,36 @@ void _DrawPlayersPrizeAndBenchCards(void)
 	DrawPlayArea_BenchCards(3u, 1u, 0u);
 }
 /* <<< factory _DrawPlayersPrizeAndBenchCards */
+
+/* >>> factory DrawPlayArea_HandText */
+DrawPlayArea_HandTextResult DrawPlayArea_HandText(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t d = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t e = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint16_t saved_hl = hl;
+
+	InitTextPrinting(d, e);
+	(void)ProcessTextFromID(HandText_2);
+
+	CalculateOnesAndTensDigits(b);
+	uint8_t ones = gb_read8(wDecimalDigitsSymbols_ADDR);
+	uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
+	b = ones;
+
+	uint16_t p = wDefaultText_ADDR;
+	gb_write8(p, TX_SYMBOL); p++;
+	gb_write8(p, SYM_CROSS); p++;
+	gb_write8(p, TX_SYMBOL); p++;
+	gb_write8(p, tens); p++;
+	gb_write8(p, TX_SYMBOL); p++;
+	gb_write8(p, b); p++;
+	gb_write8(p, TX_END);
+
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+
+	return (DrawPlayArea_HandTextResult){b, c, saved_hl};
+}
+/* <<< factory DrawPlayArea_HandText */

@@ -589,4 +589,8 @@ void DrawPlayArea_PrizeCards(uint16_t hl);
 /* >>> factory _DrawPlayersPrizeAndBenchCards */
 void _DrawPlayersPrizeAndBenchCards(void);
 /* <<< factory _DrawPlayersPrizeAndBenchCards */
+/* >>> factory DrawPlayArea_HandText */
+typedef struct { uint8_t b; uint8_t c; uint16_t hl; } DrawPlayArea_HandTextResult;
+DrawPlayArea_HandTextResult DrawPlayArea_HandText(uint8_t b, uint8_t c, uint16_t hl);
+/* <<< factory DrawPlayArea_HandText */
 #endif

@@ -275,6 +275,24 @@ CASES["ChallengeMachine_ShowNewRecord"] = [
 ]
 # <<< factory ChallengeMachine_ShowNewRecord
 
+# >>> factory ChallengeMachine_DuelWon
+CONTRACT["ChallengeMachine_DuelWon"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_DuelWon"] = [
+    {"keys": 0x01, "sram": {0: {0xBA55: b"\x00"}},
+     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCE43: 2}},
+    dict(POISON, keys=0x01, sram={0: {0xBA55: b"\x00"}},
+         wram={0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCE43: 2}),
+    {"keys": 0x01, "sram": {0: {0xBA55: b"\x02"}},
+     "wram": {0xC590: b"\x00", 0xCE4B: b"\xff", 0xCD0F: b"\x05", 0xCD10: b"\x04", 0xCD16: b"\x22"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCE43: 2}},
+]
+# <<< factory ChallengeMachine_DuelWon
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -340,3 +358,6 @@ MUTATIONS["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = {"source_symbol":
 # >>> factory-mutation ChallengeMachine_ShowNewRecord
 MUTATIONS["ChallengeMachine_ShowNewRecord"] = {"source_symbol": "ChallengeMachine_ShowNewRecord", "before": "return (ChallengeMachineShowNewRecordResult){0u, 0x80u, hl};", "after": "return (ChallengeMachineShowNewRecordResult){0u, 0x90u, hl};", "case_ids": ["ChallengeMachine_ShowNewRecord-0", "ChallengeMachine_ShowNewRecord-1"]}
 # <<< factory-mutation ChallengeMachine_ShowNewRecord
+# >>> factory-mutation ChallengeMachine_DuelWon
+MUTATIONS["ChallengeMachine_DuelWon"] = {"source_symbol": "ChallengeMachine_DuelWon", "before": "gb_write8(wTxRam3_ADDR, (uint8_t)(opponent_number + 1u));", "after": "gb_write8(wTxRam3_ADDR, (uint8_t)(opponent_number + 2u));", "case_ids": ["ChallengeMachine_DuelWon-0", "ChallengeMachine_DuelWon-2"]}
+# <<< factory-mutation ChallengeMachine_DuelWon

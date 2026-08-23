@@ -1,0 +1,9 @@
+{
+  "fn": "DrawPlayArea_HandText",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayArea_HandText\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 7, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0102\", \"50576\": \"052d0500052000\", \"52918\": \"2000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayArea_HandText\", \"mismatches\": {\"bus\": {\"address\": 50579, \"reference\": \"02052d050005200020\", \"native\": \"02052d050105200020\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[50432, 2], [50576, 7], [52918, 2]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayArea_HandText\", \"registers\": {\"a\": 0, \"b\": 32, \"c\": 7, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50434, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0102\", \"50576\": \"052d0500052000\", \"52918\": \"2000\"}}, \"status\": \"PASS\"}\n"
+}

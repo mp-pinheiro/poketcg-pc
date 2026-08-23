@@ -95,6 +95,14 @@ static void adapt_ChallengeMachine_ShowNewRecord(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_ShowNewRecord */
 
+/* >>> factory ChallengeMachine_DuelWon */
+static void adapt_ChallengeMachine_DuelWon(ProbeState *s)
+{
+	ChallengeMachineDuelWonResult r = ChallengeMachine_DuelWon();
+	s->f = r.f;
+}
+/* <<< factory ChallengeMachine_DuelWon */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -107,5 +115,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_Reset", adapt_ChallengeMachine_Reset },
 	{ "ChallengeMachine_PrintFinalConsecutiveWinStreak", adapt_ChallengeMachine_PrintFinalConsecutiveWinStreak },
 	{ "ChallengeMachine_ShowNewRecord", adapt_ChallengeMachine_ShowNewRecord },
+	{ "ChallengeMachine_DuelWon", adapt_ChallengeMachine_DuelWon },
 	{ NULL, NULL },
 };

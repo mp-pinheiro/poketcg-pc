@@ -73,6 +73,9 @@ static const uint8_t CardTypeTable[NUM_CARD_TYPES] = {
 #include "home/booster_packs.h"
 #include "home/card_collection.h"
 #include "generated/wram.h"
+
+#include "home/random.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory GetCurrentRarityAmount */
@@ -344,3 +347,33 @@ void GenerateBoosterEnergies(void)
 	(void)AddBoosterEnergyToDrawnEnergies(a);
 }
 /* <<< factory GenerateBoosterEnergies */
+
+/* >>> factory DetermineBoosterCard */
+DetermineBoosterCardResult DetermineBoosterCard(uint8_t d, uint8_t e)
+{
+	uint8_t type = wBoosterJustDrawnCardType;
+	uint8_t b = 0u;
+	uint8_t c = type;
+	uint16_t hl = (uint16_t)(wBoosterAmountOfCardTypeTable_ADDR + type);
+	uint8_t amount = gb_read8(hl);
+	uint8_t chances = Random(amount);
+	wTempBoosterChances = chances;
+	hl = wBoosterViableCardList_ADDR;
+	for (;;) {
+		uint8_t card_id = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (card_id == 0u)
+			return (DetermineBoosterCardResult){0u, 0x90u, b, c, d, e, hl};
+		wBoosterCurrentCard = card_id;
+		uint8_t entry_type = gb_read8(hl);
+		if (entry_type == type) {
+			chances = wTempBoosterChances;
+			if (chances == 0u)
+				return (DetermineBoosterCardResult){0u, 0x80u, b, c, d, e, hl};
+			chances = (uint8_t)(chances - 1u);
+			wTempBoosterChances = chances;
+		}
+		hl = (uint16_t)(hl + 1u);
+	}
+}
+/* <<< factory DetermineBoosterCard */

@@ -65,4 +65,8 @@ ChallengeMachinePrintFinalConsecutiveWinStreakResult ChallengeMachine_PrintFinal
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } ChallengeMachineShowNewRecordResult;
 ChallengeMachineShowNewRecordResult ChallengeMachine_ShowNewRecord(uint16_t hl);
 /* <<< factory ChallengeMachine_ShowNewRecord */
+/* >>> factory ChallengeMachine_DuelWon */
+typedef struct { uint8_t f; } ChallengeMachineDuelWonResult;
+ChallengeMachineDuelWonResult ChallengeMachine_DuelWon(void);
+/* <<< factory ChallengeMachine_DuelWon */
 #endif

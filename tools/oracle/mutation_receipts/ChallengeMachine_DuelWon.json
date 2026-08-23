@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_DuelWon",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_DuelWon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47701\": \"00\"}}, \"vram\": {}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\", \"52803\": \"0100\", \"52811\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_DuelWon\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"0001001d010000\", \"native\": \"0001001d020000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50576, 1], [52495, 2], [52502, 1], [52803, 2], [52811, 1]]}}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_DuelWon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47701\": \"00\"}}, \"vram\": {}, \"wram\": {\"50576\": \"00\", \"52495\": \"0100\", \"52502\": \"1d\", \"52803\": \"0100\", \"52811\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

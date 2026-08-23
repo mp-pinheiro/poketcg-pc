@@ -1152,6 +1152,21 @@ CASES["_DrawPlayersPrizeAndBenchCards"] = [
 ]
 # <<< factory _DrawPlayersPrizeAndBenchCards
 
+# >>> factory DrawPlayArea_HandText
+CONTRACT["DrawPlayArea_HandText"] = {"compare": ("b", "c", "hl"), "preserve": ("c",)}
+CASES["DrawPlayArea_HandText"] = [
+    {"b": 0x00, "c": 0x07, "hl": 0xC500, "wram": {0xC500: b"\x01\x02"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC590: 7, 0xCEB6: 2}},
+    dict(POISON, b=0x00, c=0x07, hl=0xC500, wram={0xC500: b"\x01\x02"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC590: 7, 0xCEB6: 2}),
+    {"b": 0x2D, "c": 0x11, "hl": 0xC500, "wram": {0xC500: b"\x03\x04"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC590: 7, 0xCEB6: 2}},
+]
+# <<< factory DrawPlayArea_HandText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1286,3 +1301,6 @@ MUTATIONS["DrawPlayArea_PrizeCards"] = {"source_symbol": "DrawPlayArea_PrizeCard
 # >>> factory-mutation _DrawPlayersPrizeAndBenchCards
 MUTATIONS["_DrawPlayersPrizeAndBenchCards"] = {"source_symbol": "_DrawPlayersPrizeAndBenchCards", "before": "\twCheckMenuPlayAreaWhichLayout = PLAYER_TURN;", "after": "\twCheckMenuPlayAreaWhichLayout = OPPONENT_TURN;", "case_ids": ["_DrawPlayersPrizeAndBenchCards-0", "_DrawPlayersPrizeAndBenchCards-1"]}
 # <<< factory-mutation _DrawPlayersPrizeAndBenchCards
+# >>> factory-mutation DrawPlayArea_HandText
+MUTATIONS["DrawPlayArea_HandText"] = {"source_symbol": "DrawPlayArea_HandText", "before": "gb_write8(p, tens); p++;", "after": "gb_write8(p, (uint8_t)(tens + 1u)); p++;", "case_ids": ["DrawPlayArea_HandText-0", "DrawPlayArea_HandText-2"]}
+# <<< factory-mutation DrawPlayArea_HandText

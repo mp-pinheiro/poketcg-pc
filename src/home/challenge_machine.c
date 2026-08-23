@@ -74,6 +74,15 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define ConsecutiveWinRecordIncreasedText 0x07e8u
 #define sConsecutiveWinRecordIncreased_ADDR 0xBA68u
 #define sMaximumConsecutiveWins_ADDR 0xBA56u
+
+#include "home/switch_sram.h"
+#include "home/sound.h"
+#include "home/play_song.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#define Defeated5OpponentsText 0x07e6u
+#define WonAgainstXOpponentsText 0x07e5u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -342,3 +351,24 @@ ChallengeMachineShowNewRecordResult ChallengeMachine_ShowNewRecord(uint16_t hl)
 	return (ChallengeMachineShowNewRecordResult){0u, 0u, hl};
 }
 /* <<< factory ChallengeMachine_ShowNewRecord */
+
+/* >>> factory ChallengeMachine_DuelWon */
+ChallengeMachineDuelWonResult ChallengeMachine_DuelWon(void)
+{
+	EnableSRAM();
+	uint8_t opponent_number = gb_read8(sChallengeMachineOpponentNumber_ADDR);
+	gb_write8(wTxRam3_ADDR, (uint8_t)(opponent_number + 1u));
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);
+	DisableSRAM();
+	if (opponent_number == NUM_CHALLENGE_MACHINE_OPPONENTS - 1u) {
+		PauseSong();
+		PlaySong(MUSIC_MEDAL);
+		WaitResult r = PrintScrollableText_NoTextBoxLabel(Defeated5OpponentsText);
+		WaitForSongToFinish();
+		ResumeSong();
+		return (ChallengeMachineDuelWonResult){r.f};
+	}
+	WaitResult r2 = PrintScrollableText_NoTextBoxLabel(WonAgainstXOpponentsText);
+	return (ChallengeMachineDuelWonResult){r2.f};
+}
+/* <<< factory ChallengeMachine_DuelWon */
