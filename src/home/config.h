@@ -19,4 +19,7 @@ ShowConfigMenuCursorResult ShowConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
 typedef struct { uint8_t b; uint8_t c; } HideConfigMenuCursorResult;
 HideConfigMenuCursorResult HideConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory HideConfigMenuCursor */
+/* >>> factory ConfigScreenDPadLeft */
+void ConfigScreenDPadLeft(void);
+/* <<< factory ConfigScreenDPadLeft */
 #endif /* POKETCG_HOME_CONFIG_H */

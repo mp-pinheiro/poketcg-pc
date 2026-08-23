@@ -26,6 +26,10 @@ static const uint8_t kDuelAnimationSettings[8] = {
 #include "home/config.h"
 
 #define SYM_SPACE 0x00u
+
+#include "home/sound.h"
+
+#define SFX_CURSOR 0x01u
 /* <<< factory statics */
 
 void DrawConfigMenuCursor(uint8_t a, uint8_t c)
@@ -112,3 +116,32 @@ HideConfigMenuCursorResult HideConfigMenuCursor(uint8_t a, uint8_t b, uint8_t c)
 	return (HideConfigMenuCursorResult){b, c};
 }
 /* <<< factory HideConfigMenuCursor */
+
+/* >>> factory ConfigScreenDPadLeft */
+void ConfigScreenDPadLeft(void)
+{
+	static const uint16_t kAddrs[3] = {
+		wConfigMessageSpeedCursorPos_ADDR,
+		wConfigDuelAnimationCursorPos_ADDR,
+		wConfigExitSettingsCursorPos_ADDR,
+	};
+	static const uint8_t kMaxes[3] = {4u, 2u, 0u};
+	uint8_t row = gb_read8(wConfigCursorYPos_ADDR);
+	(void)HideConfigMenuCursor(row, 0u, 0u);
+	uint16_t addr = kAddrs[row];
+	uint8_t max = kMaxes[row];
+	uint8_t current = gb_read8(addr);
+	uint8_t new_val = (uint8_t)(current - 1u);
+	if (new_val > max) {
+		if (new_val < 0x80u)
+			new_val = 0u;
+		else
+			new_val = max;
+	}
+	gb_write8(addr, new_val);
+	if (max != 0u)
+		PlaySFX(SFX_CURSOR);
+	(void)ShowConfigMenuCursor(row, 0u, 0u);
+	gb_write8(wCursorBlinkTimer_ADDR, 0u);
+}
+/* <<< factory ConfigScreenDPadLeft */

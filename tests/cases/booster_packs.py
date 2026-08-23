@@ -295,6 +295,15 @@ CASES["CheckCardInSetAndRarity"] = [
 ]
 # <<< factory CheckCardInSetAndRarity
 
+# >>> factory CheckCardAlreadyDrawn
+CONTRACT["CheckCardAlreadyDrawn"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckCardAlreadyDrawn"] = [
+    {"wram": {0xD66A: b"\x03", 0xC003: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x00}},
+    {"wram": {0xD66A: b"\x03", 0xC003: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x90}},
+    dict(POISON, wram={0xD66A: b"\x03", 0xC003: b"\x02"}, expect_regs={"a": 0x02, "f": 0x10}),
+]
+# <<< factory CheckCardAlreadyDrawn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -401,3 +410,11 @@ MUTATIONS["DetermineBoosterCard"] = {"source_symbol": "DetermineBoosterCard", "b
 # >>> factory-mutation CheckCardInSetAndRarity
 MUTATIONS["CheckCardInSetAndRarity"] = {"source_symbol": "CheckCardInSetAndRarity", "before": "if (cur_rarity != rarity) {", "after": "if (cur_rarity == rarity) {", "case_ids": ["CheckCardInSetAndRarity-0", "CheckCardInSetAndRarity-1"]}
 # <<< factory-mutation CheckCardInSetAndRarity
+# >>> factory-mutation CheckCardAlreadyDrawn
+MUTATIONS["CheckCardAlreadyDrawn"] = {
+    "source_symbol": "CheckCardAlreadyDrawn",
+    "before": "uint8_t value = gb_read8((uint16_t)(wTempCardCollection_ADDR + index));",
+    "after": "uint8_t value = gb_read8((uint16_t)(wTempCardCollection_ADDR + index + 1u));",
+    "case_ids": ["CheckCardAlreadyDrawn-1", "CheckCardAlreadyDrawn-2"],
+}
+# <<< factory-mutation CheckCardAlreadyDrawn

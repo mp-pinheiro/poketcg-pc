@@ -411,3 +411,17 @@ CheckCardInSetAndRarityResult CheckCardInSetAndRarity(uint8_t b, uint8_t c, uint
 	return (CheckCardInSetAndRarityResult){a, 0x00u, b, c, d, e, hl};
 }
 /* <<< factory CheckCardInSetAndRarity */
+
+/* >>> factory CheckCardAlreadyDrawn */
+CheckCardAlreadyDrawnResult CheckCardAlreadyDrawn(void)
+{
+	uint8_t index = gb_read8(wBoosterCurrentCard_ADDR);
+	uint8_t value = gb_read8((uint16_t)(wTempCardCollection_ADDR + index));
+	uint8_t f = 0x00u;
+	if (value == 1u)
+		f |= 0x80u;
+	if (value != 0u)
+		f |= 0x10u;
+	return (CheckCardAlreadyDrawnResult){value, f};
+}
+/* <<< factory CheckCardAlreadyDrawn */
