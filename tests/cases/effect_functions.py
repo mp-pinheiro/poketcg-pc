@@ -2324,6 +2324,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wDuelTempList = 0xC510
 hTempList = 0xFFA0
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wDamage = 0xCCB9
+wAIMinDamage = 0xCCBA
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -2900,6 +2905,18 @@ CASES["Shift_ChangeColorEffect"] = [
          read={0xC2C2: 1, 0xC2D4: 1}),
 ]
 # <<< factory Shift_ChangeColorEffect
+
+# >>> factory MagikarpFlail_AIEffect
+CONTRACT["MagikarpFlail_AIEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["MagikarpFlail_AIEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x00", wPlayerDeck: b"\x01",
+              wDamage: b"\x99", wAIMinDamage: b"\x88"},
+     "read": {wDamage: 1, wAIMinDamage: 1, 0xCCBB: 1, 0xCCBC: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", 0xC2C8: b"\x05", wPlayerDeck: b"\x01",
+                       wDamage: b"\x77", wAIMinDamage: b"\x66"},
+         read={wDamage: 1, wAIMinDamage: 1, 0xCCBB: 1, 0xCCBC: 1}),
+]
+# <<< factory MagikarpFlail_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -4769,3 +4786,6 @@ MUTATIONS["Heal_OncePerTurnCheck"] = {"source_symbol": "Heal_OncePerTurnCheck", 
 # >>> factory-mutation Shift_ChangeColorEffect
 MUTATIONS["Shift_ChangeColorEffect"] = {"source_symbol": "Shift_ChangeColorEffect", "before": "\tuint8_t new_type = (uint8_t)(hAIPkmnPowerEffectParam | HAS_CHANGED_COLOR);", "after": "\tuint8_t new_type = hAIPkmnPowerEffectParam;", "case_ids": ["Shift_ChangeColorEffect-0"]}
 # <<< factory-mutation Shift_ChangeColorEffect
+# >>> factory-mutation MagikarpFlail_AIEffect
+MUTATIONS["MagikarpFlail_AIEffect"] = {"source_symbol": "MagikarpFlail_AIEffect", "before": "MagikarpFlail_HPCheck();", "after": "(void)0;", "case_ids": ["MagikarpFlail_AIEffect-0", "MagikarpFlail_AIEffect-1"]}
+# <<< factory-mutation MagikarpFlail_AIEffect

@@ -125,4 +125,7 @@ AIDecide_PokemonTrader_LegendaryDragoniteResult AIDecide_PokemonTrader_Legendary
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokeballResult;
 AIDecide_PokeballResult AIDecide_Pokeball(void);
 /* <<< factory AIDecide_Pokeball */
+/* >>> factory AIDecide_MrFuji */
+AIDecideResult AIDecide_MrFuji(void);
+/* <<< factory AIDecide_MrFuji */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

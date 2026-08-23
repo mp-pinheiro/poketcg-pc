@@ -2651,6 +2651,14 @@ static void adapt_Shift_ChangeColorEffect(ProbeState *s)
 }
 /* <<< factory Shift_ChangeColorEffect */
 
+/* >>> factory MagikarpFlail_AIEffect */
+static void adapt_MagikarpFlail_AIEffect(ProbeState *s)
+{
+	(void)s;
+	MagikarpFlail_AIEffect();
+}
+/* <<< factory MagikarpFlail_AIEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2979,5 +2987,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonFlute_BenchCheck", adapt_PokemonFlute_BenchCheck },
 	{ "Heal_OncePerTurnCheck", adapt_Heal_OncePerTurnCheck },
 	{ "Shift_ChangeColorEffect", adapt_Shift_ChangeColorEffect },
+	{ "MagikarpFlail_AIEffect", adapt_MagikarpFlail_AIEffect },
 	{ NULL, NULL },
 };

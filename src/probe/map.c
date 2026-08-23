@@ -98,6 +98,14 @@ static void adapt_GetReceivedLegendaryCards(ProbeState *s)
 }
 /* <<< factory GetReceivedLegendaryCards */
 
+/* >>> factory OverworldDoFrameFunction */
+static void adapt_OverworldDoFrameFunction(ProbeState *s)
+{
+	(void)s;
+	OverworldDoFrameFunction();
+}
+/* <<< factory OverworldDoFrameFunction */
+
 const ProbeEntry probe_entries_map[] = {
 	{ "GetPermissionByteOfMapPosition", adapt_GetPermissionByteOfMapPosition },
 	{ "GetPermissionOfMapPosition", adapt_GetPermissionOfMapPosition },
@@ -113,5 +121,6 @@ const ProbeEntry probe_entries_map[] = {
 	{ "PlayDefaultSong", adapt_PlayDefaultSong },
 	{ "HandleMapWarp", adapt_HandleMapWarp },
 	{ "GetReceivedLegendaryCards", adapt_GetReceivedLegendaryCards },
+	{ "OverworldDoFrameFunction", adapt_OverworldDoFrameFunction },
 	{ NULL, NULL },
 };

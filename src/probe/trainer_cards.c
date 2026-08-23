@@ -279,6 +279,15 @@ static void adapt_AIDecide_Pokeball(ProbeState *s)
 }
 /* <<< factory AIDecide_Pokeball */
 
+/* >>> factory AIDecide_MrFuji */
+static void adapt_AIDecide_MrFuji(ProbeState *s)
+{
+	(void)s;
+	AIDecideResult r = AIDecide_MrFuji();
+	s->f = r.f;
+}
+/* <<< factory AIDecide_MrFuji */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -313,5 +322,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader_SoundOfTheWaves", adapt_AIDecide_PokemonTrader_SoundOfTheWaves },
 	{ "AIDecide_PokemonTrader_LegendaryDragonite", adapt_AIDecide_PokemonTrader_LegendaryDragonite },
 	{ "AIDecide_Pokeball", adapt_AIDecide_Pokeball },
+	{ "AIDecide_MrFuji", adapt_AIDecide_MrFuji },
 	{ NULL, NULL },
 };

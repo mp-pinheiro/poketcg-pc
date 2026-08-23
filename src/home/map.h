@@ -38,4 +38,7 @@ void HandleMapWarp(void);
 typedef struct { uint8_t a; uint8_t f; } GetReceivedLegendaryCardsResult;
 GetReceivedLegendaryCardsResult GetReceivedLegendaryCards(void);
 /* <<< factory GetReceivedLegendaryCards */
+/* >>> factory OverworldDoFrameFunction */
+void OverworldDoFrameFunction(void);
+/* <<< factory OverworldDoFrameFunction */
 #endif

@@ -558,6 +558,15 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define SPRITE_ANIM_FLAG_Y_INVERTED_MASK 0x02u
 #define SPRITE_ANIM_FLAG_X_FLIP_MASK 0x20u
 #define SPRITE_ANIM_FLAG_Y_FLIP_MASK 0x40u
+
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/empty_screen.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define UsedText 0x0033u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3477,3 +3486,20 @@ void LoadAnimCoordsAndFlags(void)
 	gb_write8(hl, flags);
 }
 /* <<< factory LoadAnimCoordsAndFlags */
+
+/* >>> factory PrintUsedTrainerCardDescription */
+void PrintUsedTrainerCardDescription(void)
+{
+	EmptyScreen();
+	(void)SetNoLineSeparation();
+	InitTextPrinting(1u, 1u);
+	uint16_t hl = wLoadedCard1Name_ADDR;
+	(void)ProcessTextFromPointerToID(hl);
+	InitTextPrintingInTextbox(19u, 1u, 3u);
+	hl = wLoadedCard1NonPokemonDescription_ADDR;
+	(void)ProcessTextFromPointerToID(hl);
+	(void)SetOneLineSeparation();
+	hl = UsedText;
+	(void)DrawWideTextBox_WaitForInput(hl);
+}
+/* <<< factory PrintUsedTrainerCardDescription */

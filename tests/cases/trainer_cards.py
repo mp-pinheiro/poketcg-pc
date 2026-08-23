@@ -261,6 +261,16 @@ wAITrainerCardToPlay = 0xCE16
 hWhoseTurn = 0xFF97
 wPlayerDeck = 0xC400
 wOpponentDeckID = 0xCC0E
+
+hWhoseTurn = 0xFF97
+wPlayerDeck = 0xC400
+wPlayerDuelVariables = 0xC200
+DUELVARS_ARENA_CARD = 0xBB
+DUELVARS_ARENA_CARD_HP = 0xC8
+DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
+wce06 = 0xCE06
+wce08 = 0xCE08
+IVYSAUR = 0x09
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -561,6 +571,26 @@ CASES["AIDecide_Pokeball"] = [
 ]
 # <<< factory AIDecide_Pokeball
 
+# >>> factory AIDecide_MrFuji
+CONTRACT["AIDecide_MrFuji"] = {"compare": ("f",), "preserve": (), "wram_out": True}
+CASES["AIDecide_MrFuji"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"},
+     "read": {wce06: 1, wce08: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2",
+                       wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x02",
+                       wPlayerDuelVariables + DUELVARS_ARENA_CARD + 1: b"\x01",
+                       wPlayerDeck + 1: bytes((IVYSAUR,)),
+                       wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP + 1: b"\x10"},
+         read={wce06: 1, wce08: 1}),
+    {"wram": {hWhoseTurn: b"\xC2",
+              wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x02",
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD + 1: b"\x01",
+              wPlayerDeck + 1: bytes((IVYSAUR,)),
+              wPlayerDuelVariables + DUELVARS_ARENA_CARD_HP + 1: b"\x00"},
+     "read": {wce06: 1, wce08: 1}},
+]
+# <<< factory AIDecide_MrFuji
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -753,3 +783,6 @@ MUTATIONS["AIDecide_PokemonTrader_LegendaryDragonite"] = {"source_symbol": "AIDe
 # >>> factory-mutation AIDecide_Pokeball
 MUTATIONS["AIDecide_Pokeball"] = {"source_symbol": "AIDecide_Pokeball", "before": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, CHANSEY);", "after": "\t\tr = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, TAUROS);", "case_ids": ["AIDecide_Pokeball-1"]}
 # <<< factory-mutation AIDecide_Pokeball
+# >>> factory-mutation AIDecide_MrFuji
+MUTATIONS["AIDecide_MrFuji"] = {"source_symbol": "AIDecide_MrFuji", "before": "return (AIDecideResult){0xC0u};\n\n\tuint8_t d", "after": "return (AIDecideResult){0x10u};\n\n\tuint8_t d", "case_ids": ["AIDecide_MrFuji-0"]}
+# <<< factory-mutation AIDecide_MrFuji

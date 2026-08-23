@@ -168,6 +168,13 @@
 #define PIKACHU_LV16 0x62u
 #define PSYCHIC_ENERGY 0x06u
 #define RHYDON 0x8au
+
+#include "home/trainer_cards.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PLAY_AREA_BENCH_1 0x01u
 /* <<< factory statics */
 
 
@@ -1725,3 +1732,42 @@ AIDecide_PokeballResult AIDecide_Pokeball(void)
 	return (AIDecide_PokeballResult){deck_id, f};
 }
 /* <<< factory AIDecide_Pokeball */
+
+/* >>> factory AIDecide_MrFuji */
+AIDecideResult AIDecide_MrFuji(void)
+{
+	gb_write8(0xCE06u, 0xFFu);
+	gb_write8(0xCE08u, 0xFFu);
+
+	DuelistVarResult r1 = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count = r1.a;
+	if (count == 1u)
+		return (AIDecideResult){0xC0u};
+
+	uint8_t d = (uint8_t)(count - 1u);
+	uint8_t e = PLAY_AREA_BENCH_1;
+
+	while (d != 0u) {
+		DuelistVarResult r2 = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
+		(void)LoadCardDataToBuffer1_FromDeckIndex(r2.a);
+
+		uint8_t maxHP = wLoadedCard1HP;
+
+		CardDamageResult dmg = GetCardDamageAndMaxHP(e);
+		uint8_t counters = ConvertHPToDamageCounters_Bank8(dmg.a);
+		if (counters != 0u) {
+			CalculateBDividedByA_Bank8Result div = CalculateBDividedByA_Bank8(counters, maxHP);
+			if (div.a < 20u && div.a < gb_read8(0xCE08u)) {
+				gb_write8(0xCE08u, div.a);
+				gb_write8(0xCE06u, e);
+			}
+		}
+		e++;
+		d--;
+	}
+
+	if (gb_read8(0xCE06u) == 0xFFu)
+		return (AIDecideResult){0xC0u};
+	return (AIDecideResult){0x10u};
+}
+/* <<< factory AIDecide_MrFuji */

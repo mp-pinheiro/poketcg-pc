@@ -1404,6 +1404,14 @@ static void adapt_LoadAnimCoordsAndFlags(ProbeState *s)
 }
 /* <<< factory LoadAnimCoordsAndFlags */
 
+/* >>> factory PrintUsedTrainerCardDescription */
+static void adapt_PrintUsedTrainerCardDescription(ProbeState *s)
+{
+	(void)s;
+	PrintUsedTrainerCardDescription();
+}
+/* <<< factory PrintUsedTrainerCardDescription */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1570,5 +1578,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleAIEnergyScoringForRepeatedBenchPokemon", adapt_HandleAIEnergyScoringForRepeatedBenchPokemon },
 	{ "CheckPrintCnfSlpPrz", adapt_CheckPrintCnfSlpPrz },
 	{ "LoadAnimCoordsAndFlags", adapt_LoadAnimCoordsAndFlags },
+	{ "PrintUsedTrainerCardDescription", adapt_PrintUsedTrainerCardDescription },
 	{ NULL, NULL },
 };

@@ -656,4 +656,7 @@ void CheckPrintCnfSlpPrz(uint8_t a, uint8_t b, uint8_t c);
 /* >>> factory LoadAnimCoordsAndFlags */
 void LoadAnimCoordsAndFlags(void);
 /* <<< factory LoadAnimCoordsAndFlags */
+/* >>> factory PrintUsedTrainerCardDescription */
+void PrintUsedTrainerCardDescription(void);
+/* <<< factory PrintUsedTrainerCardDescription */
 #endif

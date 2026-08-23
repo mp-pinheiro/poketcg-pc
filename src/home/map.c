@@ -13,6 +13,18 @@
 #include "home/scripting.h"
 #include "home/switch_sram.h"
 #define EVENT_RECEIVED_LEGENDARY_CARDS 0x22u
+
+#include "home/map.h"
+#include "home/switch_rom.h"
+#include "home/animation.h"
+#include "home/overworld.h"
+#include "home/npc_core.h"
+#include "home/load_animation.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define HIDE_ALL_NPC_SPRITES 7u
 /* <<< factory statics */
 
 #define BANK_EXECUTE_NPC_MOVEMENT 0x03u
@@ -188,3 +200,22 @@ GetReceivedLegendaryCardsResult GetReceivedLegendaryCards(void)
 	return (GetReceivedLegendaryCardsResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
 }
 /* <<< factory GetReceivedLegendaryCards */
+
+/* >>> factory OverworldDoFrameFunction */
+void OverworldDoFrameFunction(void)
+{
+	if (wOverworldNPCFlags & (1u << HIDE_ALL_NPC_SPRITES))
+		return;
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(3u);
+	(void)SetScreenScrollWram();
+	Func_c554();
+	BankswitchROM(7u);
+	HandleAllNPCMovement();
+	HandleAllSpriteAnimations();
+	BankswitchROM(32u);
+	DoLoadedFramesetSubgroupsFrame();
+	(void)UpdateRNGSources();
+	BankswitchROM(saved_bank);
+}
+/* <<< factory OverworldDoFrameFunction */

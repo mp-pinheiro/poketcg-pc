@@ -185,6 +185,13 @@ CASES["HandleMapWarp"] = [
 
 # >>> factory-cases-statics
 sReceivedLegendaryCards = 0xA00A
+
+wOverworldNPCFlags = 0xD0C1
+hBankROM = 0xFF80
+wSCXBuffer = 0xD235
+wSCYBuffer = 0xD236
+wSCX = 0xD0B6
+wSCY = 0xD0B7
 # <<< factory-cases-statics
 
 # >>> factory GetReceivedLegendaryCards
@@ -194,6 +201,17 @@ CASES["GetReceivedLegendaryCards"] = [
     dict(POISON, sram={0: {sReceivedLegendaryCards: b"\x55"}}, expect_sram={0: {sReceivedLegendaryCards: b"\x00"}}),
 ]
 # <<< factory GetReceivedLegendaryCards
+
+# >>> factory OverworldDoFrameFunction
+CONTRACT["OverworldDoFrameFunction"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["OverworldDoFrameFunction"] = [
+    {"hram": {hBankROM: b"\x01"}, "wram": {wOverworldNPCFlags: b"\x80"}},
+    dict(POISON, hram={hBankROM: b"\x05"}, wram={wOverworldNPCFlags: b"\x00",
+                       wSCXBuffer: b"\x11", wSCYBuffer: b"\x22"},
+         read={wSCX: 1, wSCY: 1, hBankROM: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory OverworldDoFrameFunction
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -224,3 +242,6 @@ MUTATIONS["HandleMapWarp"] = {
 # >>> factory-mutation GetReceivedLegendaryCards
 MUTATIONS["GetReceivedLegendaryCards"] = {"source_symbol": "GetReceivedLegendaryCards", "before": "\tsReceivedLegendaryCards = a;", "after": "\tsReceivedLegendaryCards = (uint8_t)(a ^ 1u);", "case_ids": ["GetReceivedLegendaryCards-0", "GetReceivedLegendaryCards-1"]}
 # <<< factory-mutation GetReceivedLegendaryCards
+# >>> factory-mutation OverworldDoFrameFunction
+MUTATIONS["OverworldDoFrameFunction"] = {"source_symbol": "OverworldDoFrameFunction", "before": "BankswitchROM(saved_bank);", "after": "BankswitchROM(0u);", "case_ids": ["OverworldDoFrameFunction-1"]}
+# <<< factory-mutation OverworldDoFrameFunction

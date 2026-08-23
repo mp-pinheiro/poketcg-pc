@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldDoFrameFunction",
+  "case": "tests/cases/map.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldDoFrameFunction\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"53430\": \"1122\", \"53441\": \"00\", \"53813\": \"1122\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldDoFrameFunction\", \"mismatches\": {\"bus\": {\"address\": 65408, \"reference\": \"2200112201\", \"native\": \"2200112200\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[53430, 2], [53441, 1], [53813, 2], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldDoFrameFunction\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"53430\": \"1122\", \"53441\": \"00\", \"53813\": \"1122\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

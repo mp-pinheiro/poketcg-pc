@@ -325,6 +325,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define HAS_CHANGED_COLOR 0x80u
 #define USED_PKMN_POWER_THIS_TURN_F 0x05u
 #define ChangedTheColorOfText 0x0116u
+
+#include "home/effect_functions.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4453,3 +4456,11 @@ Shift_ChangeColorEffectResult Shift_ChangeColorEffect(uint8_t d, uint8_t e)
 	return (Shift_ChangeColorEffectResult){result.f};
 }
 /* <<< factory Shift_ChangeColorEffect */
+
+/* >>> factory MagikarpFlail_AIEffect */
+void MagikarpFlail_AIEffect(void)
+{
+	MagikarpFlail_HPCheck();
+	SetDefiniteAIDamage();
+}
+/* <<< factory MagikarpFlail_AIEffect */

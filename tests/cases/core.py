@@ -1444,6 +1444,11 @@ wDuelAnimLocationParam = 0xD4B0
 SPRITE_BUFFER = 0xD4D0
 def entry_base(idx):
     return SPRITE_BUFFER + (min(idx, 15) * 16)
+
+wLoadedCard1Name = 0xCC27
+wLoadedCard1NonPokemonDescription = 0xCC2E
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+GENERIC_VREAD = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1939,6 +1944,20 @@ CASES["LoadAnimCoordsAndFlags"] = [
      "read": {entry_base(15) + 1: 3, entry_base(15) + 15: 2}},
 ]
 # <<< factory LoadAnimCoordsAndFlags
+
+# >>> factory PrintUsedTrainerCardDescription
+CONTRACT["PrintUsedTrainerCardDescription"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintUsedTrainerCardDescription"] = [
+    {"keys": 0x01, "wram": {wLoadedCard1Name: b"\x33\x00", wLoadedCard1NonPokemonDescription: b"\x00\x00"},
+     "setup": SETUP,
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "vread": GENERIC_VREAD},
+    dict(POISON, keys=0x01, wram={wLoadedCard1Name: b"\x33\x00", wLoadedCard1NonPokemonDescription: b"\x00\x00"},
+         setup=SETUP,
+         instruction_budget=2000000, cycle_budget=8000000,
+         vread=GENERIC_VREAD),
+]
+# <<< factory PrintUsedTrainerCardDescription
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2944,3 +2963,6 @@ MUTATIONS["CheckPrintCnfSlpPrz"] = {"source_symbol": "CheckPrintCnfSlpPrz", "bef
 # >>> factory-mutation LoadAnimCoordsAndFlags
 MUTATIONS["LoadAnimCoordsAndFlags"] = {"source_symbol": "LoadAnimCoordsAndFlags", "before": "gb_write8(hl, attr);", "after": "gb_write8(hl, (uint8_t)(attr ^ 0xFFu));", "case_ids": ["LoadAnimCoordsAndFlags-0", "LoadAnimCoordsAndFlags-1"]}
 # <<< factory-mutation LoadAnimCoordsAndFlags
+# >>> factory-mutation PrintUsedTrainerCardDescription
+MUTATIONS["PrintUsedTrainerCardDescription"] = {"source_symbol": "PrintUsedTrainerCardDescription", "before": "InitTextPrinting(1u, 1u);", "after": "InitTextPrinting(2u, 1u);", "case_ids": ["PrintUsedTrainerCardDescription-0", "PrintUsedTrainerCardDescription-1"]}
+# <<< factory-mutation PrintUsedTrainerCardDescription
