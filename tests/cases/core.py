@@ -1457,6 +1457,9 @@ wAttachedEnergies = 0xCC1B
 wTempCardID_ccc2 = 0xCCC2
 WATER_ENERGY = 0x03
 STARYU = 0x55
+
+hWhoseTurn = 0xFF97
+wTempCardID_ccc2 = 0xCCC2
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -1978,6 +1981,15 @@ CASES["PracticeDuelVerify_Turn5"] = [
                        wTempCardID_ccc2: b"\x00"}),
 ]
 # <<< factory PracticeDuelVerify_Turn5
+
+# >>> factory PracticeDuelVerify_Turn1
+CONTRACT["PracticeDuelVerify_Turn1"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuelVerify_Turn1"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x53"}},
+    {"wram": {hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x54"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wTempCardID_ccc2: b"\x53"}),
+]
+# <<< factory PracticeDuelVerify_Turn1
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -2989,3 +3001,6 @@ MUTATIONS["PrintUsedTrainerCardDescription"] = {"source_symbol": "PrintUsedTrain
 # >>> factory-mutation PracticeDuelVerify_Turn5
 MUTATIONS["PracticeDuelVerify_Turn5"] = {"source_symbol": "PracticeDuelVerify_Turn5", "before": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 2u)", "after": "if (gb_read8((uint16_t)(wAttachedEnergies_ADDR + WATER)) != 3u)", "case_ids": ["PracticeDuelVerify_Turn5-0"]}
 # <<< factory-mutation PracticeDuelVerify_Turn5
+# >>> factory-mutation PracticeDuelVerify_Turn1
+MUTATIONS["PracticeDuelVerify_Turn1"] = {"source_symbol": "PracticeDuelVerify_Turn1", "before": "if (a != GOLDEEN)", "after": "if (a == GOLDEEN)", "case_ids": ["PracticeDuelVerify_Turn1-0", "PracticeDuelVerify_Turn1-1"]}
+# <<< factory-mutation PracticeDuelVerify_Turn1

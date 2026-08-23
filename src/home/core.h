@@ -663,4 +663,8 @@ void PrintUsedTrainerCardDescription(void);
 typedef struct { uint8_t f; } PracticeDuelVerifyTurn5Result;
 PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void);
 /* <<< factory PracticeDuelVerify_Turn5 */
+/* >>> factory PracticeDuelVerify_Turn1 */
+typedef struct { uint8_t f; } PracticeDuelVerify_Turn1Result;
+PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void);
+/* <<< factory PracticeDuelVerify_Turn1 */
 #endif

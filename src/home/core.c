@@ -571,6 +571,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/duel.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define GOLDEEN 0x53u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3519,3 +3524,13 @@ PracticeDuelVerifyTurn5Result PracticeDuelVerify_Turn5(void)
 	return (PracticeDuelVerifyTurn5Result){0xC0u};
 }
 /* <<< factory PracticeDuelVerify_Turn5 */
+
+/* >>> factory PracticeDuelVerify_Turn1 */
+PracticeDuelVerify_Turn1Result PracticeDuelVerify_Turn1(void)
+{
+	uint8_t a = wTempCardID_ccc2;
+	if (a != GOLDEEN)
+		return (PracticeDuelVerify_Turn1Result){ReturnWrongAction(0u)};
+	return (PracticeDuelVerify_Turn1Result){0xC0u};
+}
+/* <<< factory PracticeDuelVerify_Turn1 */
