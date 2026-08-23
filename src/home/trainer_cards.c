@@ -874,3 +874,16 @@ AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMo
 	return (AIDecide_PokemonTrader_LegendaryMoltresResult){r.e, 0x10u};
 }
 /* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */
+
+/* >>> factory AIDecide_PokemonTrader_StrangePower */
+AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(void)
+{
+	LookForCardIDToTradeWithDifferentHandCardResult r = LookForCardIDToTradeWithDifferentHandCard(MR_MIME, MR_MIME);
+	if (!(r.f & 0x10u)) {
+		uint8_t f = (r.a == 0u) ? 0x80u : 0u;
+		return (AIDecide_PokemonTrader_StrangePowerResult){r.a, f};
+	}
+	wce1a = r.a;
+	return (AIDecide_PokemonTrader_StrangePowerResult){r.e, 0x10u};
+}
+/* <<< factory AIDecide_PokemonTrader_StrangePower */

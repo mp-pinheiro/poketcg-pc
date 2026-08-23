@@ -1,0 +1,9 @@
+{
+  "fn": "PsychicClubAfterDuel",
+  "case": "tests/cases/psychic_club.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PsychicClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 27232, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PsychicClubAfterDuel\", \"mismatches\": {\"hl\": [27232, 27383]}}\n",
+  "restored": "{\"fn\": \"PsychicClubAfterDuel\", \"registers\": {\"a\": 0, \"b\": 153, \"c\": 2, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 27232, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0199\"}}, \"status\": \"PASS\"}\n"
+}

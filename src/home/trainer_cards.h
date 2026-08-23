@@ -81,4 +81,8 @@ AIDecidePokemonBreederResult AIDecide_PokemonBreeder(uint16_t hl_in);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_LegendaryMoltresResult;
 AIDecide_PokemonTrader_LegendaryMoltresResult AIDecide_PokemonTrader_LegendaryMoltres(void);
 /* <<< factory AIDecide_PokemonTrader_LegendaryMoltres */
+/* >>> factory AIDecide_PokemonTrader_StrangePower */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTrader_StrangePowerResult;
+AIDecide_PokemonTrader_StrangePowerResult AIDecide_PokemonTrader_StrangePower(void);
+/* <<< factory AIDecide_PokemonTrader_StrangePower */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
