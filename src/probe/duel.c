@@ -715,6 +715,14 @@ static void adapt_DrawPlayArea_PrizeCards(ProbeState *s)
 }
 /* <<< factory DrawPlayArea_PrizeCards */
 
+/* >>> factory _DrawPlayersPrizeAndBenchCards */
+static void adapt__DrawPlayersPrizeAndBenchCards(ProbeState *s)
+{
+	_DrawPlayersPrizeAndBenchCards();
+	(void)s;
+}
+/* <<< factory _DrawPlayersPrizeAndBenchCards */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -802,5 +810,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawYourOrOppPlayArea_RefreshArrows", adapt_DrawYourOrOppPlayArea_RefreshArrows },
 	{ "SendAttackDataToLinkOpponent", adapt_SendAttackDataToLinkOpponent },
 	{ "DrawPlayArea_PrizeCards", adapt_DrawPlayArea_PrizeCards },
+	{ "_DrawPlayersPrizeAndBenchCards", adapt__DrawPlayersPrizeAndBenchCards },
 	{ NULL, NULL },
 };

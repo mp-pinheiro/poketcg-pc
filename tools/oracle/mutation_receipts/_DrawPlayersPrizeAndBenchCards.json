@@ -1,0 +1,9 @@
+{
+  "fn": "_DrawPlayersPrizeAndBenchCards",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_DrawPlayersPrizeAndBenchCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"51904\": \"01\", \"52817\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_DrawPlayersPrizeAndBenchCards\", \"mismatches\": {\"bus\": {\"address\": 52817, \"reference\": \"0001c2\", \"native\": \"0001c3\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51894, 1], [51904, 1], [52817, 1]]}}}\n",
+  "restored": "{\"fn\": \"_DrawPlayersPrizeAndBenchCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"51904\": \"01\", \"52817\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

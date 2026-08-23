@@ -1085,6 +1085,10 @@ wCheckMenuPlayAreaWhichDuelist = 0xCE50
 wConsole = 0xCAB4
 wDuelInitialPrizes = 0xCC08
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCheckMenuPlayAreaWhichLayout = 0xCE51
+wTileMapFill = 0xCAB6
+wVBlankOAMCopyToggle = 0xCAC0
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1135,6 +1139,18 @@ CASES["DrawPlayArea_PrizeCards"] = [
                 1: {0x9800: 2, 0x9820: 2, 0x9840: 2, 0x9860: 2}}),
 ]
 # <<< factory DrawPlayArea_PrizeCards
+
+# >>> factory _DrawPlayersPrizeAndBenchCards
+CONTRACT["_DrawPlayersPrizeAndBenchCards"] = {"compare": (), "preserve": ()}
+CASES["_DrawPlayersPrizeAndBenchCards"] = [
+    {"instruction_budget": 1000000, "cycle_budget": 4000000,
+     "read": {wCheckMenuPlayAreaWhichLayout: 1, wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+     "expect": {wCheckMenuPlayAreaWhichLayout: b"\xC2", wTileMapFill: b"\x00", wVBlankOAMCopyToggle: b"\x01"}},
+    dict(POISON, instruction_budget=1000000, cycle_budget=4000000,
+         read={wCheckMenuPlayAreaWhichLayout: 1, wTileMapFill: 1, wVBlankOAMCopyToggle: 1},
+         expect={wCheckMenuPlayAreaWhichLayout: b"\xC2", wTileMapFill: b"\x00", wVBlankOAMCopyToggle: b"\x01"}),
+]
+# <<< factory _DrawPlayersPrizeAndBenchCards
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1267,3 +1283,6 @@ MUTATIONS["SendAttackDataToLinkOpponent"] = {"source_symbol": "SendAttackDataToL
 # >>> factory-mutation DrawPlayArea_PrizeCards
 MUTATIONS["DrawPlayArea_PrizeCards"] = {"source_symbol": "DrawPlayArea_PrizeCards", "before": "\t\tuint8_t taken = (uint8_t)(prize_bits & 1u);", "after": "\t\tuint8_t taken = (uint8_t)(prize_bits & 2u);", "case_ids": ["DrawPlayArea_PrizeCards-0", "DrawPlayArea_PrizeCards-1", "DrawPlayArea_PrizeCards-2"]}
 # <<< factory-mutation DrawPlayArea_PrizeCards
+# >>> factory-mutation _DrawPlayersPrizeAndBenchCards
+MUTATIONS["_DrawPlayersPrizeAndBenchCards"] = {"source_symbol": "_DrawPlayersPrizeAndBenchCards", "before": "\twCheckMenuPlayAreaWhichLayout = PLAYER_TURN;", "after": "\twCheckMenuPlayAreaWhichLayout = OPPONENT_TURN;", "case_ids": ["_DrawPlayersPrizeAndBenchCards-0", "_DrawPlayersPrizeAndBenchCards-1"]}
+# <<< factory-mutation _DrawPlayersPrizeAndBenchCards

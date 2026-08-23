@@ -381,6 +381,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/tiles.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/frames.h"
+#include "home/empty_screen.h"
+#include "home/tiles.h"
+#include "home/objects.h"
+#include "mem.h"
+#define PLAYER_TURN 0xC2u
+#define OPPONENT_TURN 0xC3u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -1879,3 +1888,30 @@ void DrawPlayArea_PrizeCards(uint16_t hl)
 	}
 }
 /* <<< factory DrawPlayArea_PrizeCards */
+
+/* >>> factory _DrawPlayersPrizeAndBenchCards */
+void _DrawPlayersPrizeAndBenchCards(void)
+{
+	static const uint8_t player_coords[] = {6u, 0u, 6u, 2u, 8u, 0u, 8u, 2u, 10u, 0u, 10u, 2u};
+	static const uint8_t opponent_coords[] = {4u, 18u, 4u, 16u, 2u, 18u, 2u, 16u, 0u, 18u, 0u, 16u};
+	const uint16_t coords_addr = 0xC100u;
+	for (uint8_t i = 0u; i < sizeof(player_coords); ++i)
+		gb_write8((uint16_t)(coords_addr + i), player_coords[i]);
+	gb_write8(wTileMapFill_ADDR, 0u);
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE;
+	DoFrame();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	(void)LoadDeckAndDiscardPileIcons();
+	wCheckMenuPlayAreaWhichDuelist = PLAYER_TURN;
+	wCheckMenuPlayAreaWhichLayout = PLAYER_TURN;
+	DrawPlayArea_PrizeCards(coords_addr);
+	DrawPlayArea_BenchCards(3u, 5u, 10u);
+	for (uint8_t i = 0u; i < sizeof(opponent_coords); ++i)
+		gb_write8((uint16_t)(coords_addr + i), opponent_coords[i]);
+	wCheckMenuPlayAreaWhichDuelist = OPPONENT_TURN;
+	DrawPlayArea_PrizeCards(coords_addr);
+	DrawPlayArea_BenchCards(3u, 1u, 0u);
+}
+/* <<< factory _DrawPlayersPrizeAndBenchCards */

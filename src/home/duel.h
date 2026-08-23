@@ -586,4 +586,7 @@ void SendAttackDataToLinkOpponent(void);
 /* >>> factory DrawPlayArea_PrizeCards */
 void DrawPlayArea_PrizeCards(uint16_t hl);
 /* <<< factory DrawPlayArea_PrizeCards */
+/* >>> factory _DrawPlayersPrizeAndBenchCards */
+void _DrawPlayersPrizeAndBenchCards(void);
+/* <<< factory _DrawPlayersPrizeAndBenchCards */
 #endif
