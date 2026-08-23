@@ -784,6 +784,15 @@ static void adapt_ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(ProbeState *s
 }
 /* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
 
+/* >>> factory Func_c998 */
+static void adapt_Func_c998(ProbeState *s)
+{
+	Func_c998Result r = Func_c998();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_c998 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -860,5 +869,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PlayCredits", adapt_ScriptCommand_PlayCredits },
 	{ "ScriptCommand_PickChallengeHallOpponent", adapt_ScriptCommand_PickChallengeHallOpponent },
 	{ "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot", adapt_ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot },
+	{ "Func_c998", adapt_Func_c998 },
 	{ NULL, NULL },
 };

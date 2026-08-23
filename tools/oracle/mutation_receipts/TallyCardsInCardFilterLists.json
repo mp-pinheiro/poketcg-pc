@@ -1,0 +1,9 @@
+{
+  "fn": "TallyCardsInCardFilterLists",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TallyCardsInCardFilterLists\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52932, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52923\": \"010000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TallyCardsInCardFilterLists\", \"mismatches\": {\"hl\": [52932, 31754]}}\n",
+  "restored": "{\"fn\": \"TallyCardsInCardFilterLists\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 52932, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52923\": \"010000000000000000\"}}, \"status\": \"PASS\"}\n"
+}

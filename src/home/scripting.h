@@ -405,4 +405,8 @@ IncreaseScriptPointerResult ScriptCommand_PickChallengeHallOpponent(void);
 /* >>> factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
 IncreaseScriptPointerResult ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(uint8_t c);
 /* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+/* >>> factory Func_c998 */
+typedef struct { uint8_t a; uint8_t f; } Func_c998Result;
+Func_c998Result Func_c998(void);
+/* <<< factory Func_c998 */
 #endif

@@ -139,6 +139,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/card_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#define NPC_AMY 0x22u
 /* <<< factory statics */
 
 
@@ -1178,3 +1182,28 @@ IncreaseScriptPointerResult ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot(uin
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot */
+
+/* >>> factory Func_c998 */
+Func_c998Result Func_c998(void)
+{
+	uint8_t npc = wTempNPC;
+	if (npc != NPC_AMY) {
+		uint8_t f = (uint8_t)(0x40u
+			| ((npc == NPC_AMY) ? 0x80u : 0u)
+			| (((npc & 0x0Fu) < (NPC_AMY & 0x0Fu)) ? 0x20u : 0u)
+			| ((npc < NPC_AMY) ? 0x10u : 0u));
+		return (Func_c998Result){npc, f};
+	}
+	if (wd3d0 == 0u)
+		return (Func_c998Result){0u, 0x80u};
+	uint8_t console = wConsole;
+	uint8_t anim = (console == CONSOLE_CGB) ? 14u : 4u;
+	wNPCAnim = anim;
+	wNPCAnimFlags = 0u;
+	uint8_t f = (uint8_t)(0x40u
+		| ((console == CONSOLE_CGB) ? 0x80u : 0u)
+		| (((console & 0x0Fu) < (CONSOLE_CGB & 0x0Fu)) ? 0x20u : 0u)
+		| ((console < CONSOLE_CGB) ? 0x10u : 0u));
+	return (Func_c998Result){0u, f};
+}
+/* <<< factory Func_c998 */

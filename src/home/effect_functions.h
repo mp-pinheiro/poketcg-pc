@@ -1088,6 +1088,10 @@ StarmieRecoverAISelectEffectResult StarmieRecover_AISelectEffect(void);
 typedef struct { uint8_t a; uint16_t hl; uint8_t f; } BellsproutCallForFamilyCheckDeckAndPlayAreaResult;
 BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckDeckAndPlayArea(void);
 /* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+/* >>> factory Spark_AISelectEffect */
+typedef struct { uint8_t a; } SparkAISelectEffectResult;
+SparkAISelectEffectResult Spark_AISelectEffect(void);
+/* <<< factory Spark_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

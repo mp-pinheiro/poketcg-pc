@@ -48,6 +48,13 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/sram.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#define sPlayerInChallengeMachine_ADDR 0xBA44u
+#define sTotalChallengeMachineWins_ADDR 0xBA45u
+#define sPresentConsecutiveWins_ADDR 0xBA47u
+#define sPresentConsecutiveWinsBackup_ADDR 0xBA49u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -260,3 +267,19 @@ ChallengeMachineInitializeResult ChallengeMachine_Initialize(void)
 	return (ChallengeMachineInitializeResult){.a = a, .f = initialized ? 0xC0u : 0x80u};
 }
 /* <<< factory ChallengeMachine_Initialize */
+
+/* >>> factory ChallengeMachine_Reset */
+void ChallengeMachine_Reset(void)
+{
+	(void)ChallengeMachine_Initialize();
+	EnableSRAM();
+	gb_write8(sTotalChallengeMachineWins_ADDR, 0u);
+	gb_write8((uint16_t)(sTotalChallengeMachineWins_ADDR + 1u), 0u);
+	gb_write8(sPresentConsecutiveWins_ADDR, 0u);
+	gb_write8((uint16_t)(sPresentConsecutiveWins_ADDR + 1u), 0u);
+	gb_write8(sPresentConsecutiveWinsBackup_ADDR, 0u);
+	gb_write8((uint16_t)(sPresentConsecutiveWinsBackup_ADDR + 1u), 0u);
+	gb_write8(sPlayerInChallengeMachine_ADDR, 0u);
+	DisableSRAM();
+}
+/* <<< factory ChallengeMachine_Reset */

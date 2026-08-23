@@ -70,6 +70,14 @@ static void adapt_ChallengeMachine_Initialize(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_Initialize */
 
+/* >>> factory ChallengeMachine_Reset */
+static void adapt_ChallengeMachine_Reset(ProbeState *s)
+{
+	(void)s;
+	ChallengeMachine_Reset();
+}
+/* <<< factory ChallengeMachine_Reset */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -79,5 +87,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckForNewRecord", adapt_ChallengeMachine_CheckForNewRecord },
 	{ "ChallengeMachine_RecordDuelResult", adapt_ChallengeMachine_RecordDuelResult },
 	{ "ChallengeMachine_Initialize", adapt_ChallengeMachine_Initialize },
+	{ "ChallengeMachine_Reset", adapt_ChallengeMachine_Reset },
 	{ NULL, NULL },
 };

@@ -2609,6 +2609,13 @@ static void adapt_BellsproutCallForFamily_CheckDeckAndPlayArea(ProbeState *s)
 }
 /* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
 
+/* >>> factory Spark_AISelectEffect */
+static void adapt_Spark_AISelectEffect(ProbeState *s)
+{
+	s->a = Spark_AISelectEffect().a;
+}
+/* <<< factory Spark_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2932,5 +2939,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Thunderpunch_AIEffect", adapt_Thunderpunch_AIEffect },
 	{ "StarmieRecover_AISelectEffect", adapt_StarmieRecover_AISelectEffect },
 	{ "BellsproutCallForFamily_CheckDeckAndPlayArea", adapt_BellsproutCallForFamily_CheckDeckAndPlayArea },
+	{ "Spark_AISelectEffect", adapt_Spark_AISelectEffect },
 	{ NULL, NULL },
 };

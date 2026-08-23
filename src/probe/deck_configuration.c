@@ -259,6 +259,18 @@ static void adapt_GetOwnedCardCount(ProbeState *s)
 }
 /* <<< factory GetOwnedCardCount */
 
+/* >>> factory TallyCardsInCardFilterLists */
+static void adapt_TallyCardsInCardFilterLists(ProbeState *s)
+{
+	TallyCardsInCardFilterListsResult r = TallyCardsInCardFilterLists(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory TallyCardsInCardFilterLists */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -289,5 +301,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CountNumberOfCardsForEachCardType", adapt_CountNumberOfCardsForEachCardType },
 	{ "CopyDeckName", adapt_CopyDeckName },
 	{ "GetOwnedCardCount", adapt_GetOwnedCardCount },
+	{ "TallyCardsInCardFilterLists", adapt_TallyCardsInCardFilterLists },
 	{ NULL, NULL },
 };

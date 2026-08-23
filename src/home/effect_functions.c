@@ -305,6 +305,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4354,3 +4359,16 @@ BellsproutCallForFamilyCheckDeckAndPlayAreaResult BellsproutCallForFamily_CheckD
 	return (BellsproutCallForFamilyCheckDeckAndPlayAreaResult){var.a, hl, f};
 }
 /* <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea */
+
+/* >>> factory Spark_AISelectEffect */
+SparkAISelectEffectResult Spark_AISelectEffect(void)
+{
+	hTemp_ffa0 = 0xFFu;
+	DuelistVarResult var = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (var.a < 2u)
+		return (SparkAISelectEffectResult){var.a};
+	AIFindTargetForBenchAttackResult target = AIFindTargetForBenchAttack();
+	hTemp_ffa0 = target.a;
+	return (SparkAISelectEffectResult){target.a};
+}
+/* <<< factory Spark_AISelectEffect */

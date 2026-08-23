@@ -896,6 +896,16 @@ CASES["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = [
 ]
 # <<< factory ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
 
+# >>> factory Func_c998
+CONTRACT["Func_c998"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Func_c998"] = [
+    {"wram": {0xD3AB: b"\x10"}},
+    {"wram": {0xD3AB: b"\x22", 0xD3D0: b"\x00"}},
+    {"wram": {0xD3AB: b"\x22", 0xD3D0: b"\x01", 0xCAB4: b"\x02"}, "read": {0xD3B1: 1, 0xD3B2: 1}},
+    dict(POISON, wram={0xD3AB: b"\x22", 0xD3D0: b"\x01", 0xCAB4: b"\x00"}, read={0xD3B1: 1, 0xD3B2: 1}),
+]
+# <<< factory Func_c998
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1365,3 +1375,6 @@ MUTATIONS["ScriptCommand_PickChallengeHallOpponent"] = {"source_symbol": "Script
 # >>> factory-mutation ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
 MUTATIONS["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot"] = {"source_symbol": "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot", "before": "\tuint8_t shifted = (uint8_t)(c << 1);", "after": "\tuint8_t shifted = c;", "case_ids": ["ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-0", "ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot-1"]}
 # <<< factory-mutation ScriptCommand_LoadMan1RequestedCardIntoTxRamSlot
+# >>> factory-mutation Func_c998
+MUTATIONS["Func_c998"] = {"source_symbol": "Func_c998", "before": "\tuint8_t anim = (console == CONSOLE_CGB) ? 14u : 4u;", "after": "\tuint8_t anim = (console != CONSOLE_CGB) ? 14u : 4u;", "case_ids": ["Func_c998-2", "Func_c998-3"]}
+# <<< factory-mutation Func_c998

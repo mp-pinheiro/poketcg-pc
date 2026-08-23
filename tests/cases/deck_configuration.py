@@ -343,6 +343,16 @@ CASES["GetOwnedCardCount"] = [
 ]
 # <<< factory GetOwnedCardCount
 
+# >>> factory TallyCardsInCardFilterLists
+CONTRACT["TallyCardsInCardFilterLists"] = {"compare": ("hl",), "preserve": ()}
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CASES["TallyCardsInCardFilterLists"] = [
+    {"wram": {0xCEBB: b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
+    dict(POISON, wram={0xCEBB: b"\x01\x00\x00\x00\x00\x00\x00\x00\x00"}, setup=SETUP_TEXT),
+    {"wram": {0xCEBB: b"\x00\x00\x00\x00\x00\x00\x00\x00\x00"}, "setup": SETUP_TEXT},
+]
+# <<< factory TallyCardsInCardFilterLists
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -479,3 +489,6 @@ MUTATIONS["CopyDeckName"] = {"source_symbol": "CopyDeckName", "before": "\tuint1
 # >>> factory-mutation GetOwnedCardCount
 MUTATIONS["GetOwnedCardCount"] = {"source_symbol": "GetOwnedCardCount", "before": "\t\tif (a == 0u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};", "after": "\t\tif (a == 1u)\n\t\t\treturn (GetOwnedCardCountResult){0u, d};", "case_ids": ["GetOwnedCardCount-1"]}
 # <<< factory-mutation GetOwnedCardCount
+# >>> factory-mutation TallyCardsInCardFilterLists
+MUTATIONS["TallyCardsInCardFilterLists"] = {"source_symbol": "TallyCardsInCardFilterLists", "before": "\tif (sum != 0u)", "after": "\tif (sum == 0u)", "case_ids": ["TallyCardsInCardFilterLists-0", "TallyCardsInCardFilterLists-1"]}
+# <<< factory-mutation TallyCardsInCardFilterLists

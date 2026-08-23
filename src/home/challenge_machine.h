@@ -54,4 +54,7 @@ typedef struct {
 
 ChallengeMachineInitializeResult ChallengeMachine_Initialize(void);
 /* <<< factory ChallengeMachine_Initialize */
+/* >>> factory ChallengeMachine_Reset */
+void ChallengeMachine_Reset(void);
+/* <<< factory ChallengeMachine_Reset */
 #endif

@@ -231,6 +231,22 @@ CASES["ChallengeMachine_Initialize"] = [
 ]
 # <<< factory ChallengeMachine_Initialize
 
+# >>> factory ChallengeMachine_Reset
+CONTRACT["ChallengeMachine_Reset"] = {"compare": (), "preserve": (), "sram_out": True}
+CASES["ChallengeMachine_Reset"] = [
+    {"sram": {0: {0xBA42: b"\xE3\x95" + b"\xAA" * 0x25}},
+     "sread": {0: {0xBA42: 0x27}},
+     "expect_sram": {0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}},
+    dict(POISON,
+         sram={0: {0xBA42: b"\x00" * 0x27}},
+         sread={0: {0xBA42: 0x27}},
+         expect_sram={0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}),
+    {"sram": {0: {0xBA42: b"\xE3\x94" + b"\x55" * 0x25}},
+     "sread": {0: {0xBA42: 0x27}},
+     "expect_sram": {0: {0xBA44: b"\x00\x00\x00\x00\x00\x00\x00"}}},
+]
+# <<< factory ChallengeMachine_Reset
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -287,3 +303,6 @@ MUTATIONS["ChallengeMachine_RecordDuelResult"] = {"source_symbol": "ChallengeMac
 # >>> factory-mutation ChallengeMachine_Initialize
 MUTATIONS["ChallengeMachine_Initialize"] = {"source_symbol": "ChallengeMachine_Initialize", "before": "\t\tgb_write8(sMaximumConsecutiveWins_ADDR, 1u);", "after": "\t\tgb_write8(sMaximumConsecutiveWins_ADDR, 2u);", "case_ids": ["ChallengeMachine_Initialize-1", "ChallengeMachine_Initialize-2"]}
 # <<< factory-mutation ChallengeMachine_Initialize
+# >>> factory-mutation ChallengeMachine_Reset
+MUTATIONS["ChallengeMachine_Reset"] = {"source_symbol": "ChallengeMachine_Reset", "before": "\tgb_write8(sPlayerInChallengeMachine_ADDR, 0u);", "after": "\tgb_write8(sPlayerInChallengeMachine_ADDR, 1u);", "case_ids": ["ChallengeMachine_Reset-0", "ChallengeMachine_Reset-2"]}
+# <<< factory-mutation ChallengeMachine_Reset

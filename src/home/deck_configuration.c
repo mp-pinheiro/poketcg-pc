@@ -86,6 +86,12 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define DeckNameSuffix_ADDR 0x52A7u
+
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#define NUM_FILTERS 0x09u
+#define NoCardsChosenText 0x023eu
 /* <<< factory statics */
 
 
@@ -561,3 +567,21 @@ GetOwnedCardCountResult GetOwnedCardCount(uint8_t e)
 	}
 }
 /* <<< factory GetOwnedCardCount */
+
+/* >>> factory TallyCardsInCardFilterLists */
+TallyCardsInCardFilterListsResult TallyCardsInCardFilterLists(uint8_t d, uint8_t e)
+{
+	uint8_t sum = 0u;
+	uint16_t hl = wCardFilterCounts_ADDR;
+	for (uint8_t i = 0u; i < NUM_FILTERS; i++) {
+		uint8_t a = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		sum = (uint8_t)(sum + a);
+	}
+	if (sum != 0u)
+		return (TallyCardsInCardFilterListsResult){sum, 0x00u, d, e, hl};
+	InitTextPrinting(11u, 1u);
+	ProcessTextHeaderResult result = ProcessTextFromID(NoCardsChosenText);
+	return (TallyCardsInCardFilterListsResult){result.a, result.f, result.d, result.e, result.hl};
+}
+/* <<< factory TallyCardsInCardFilterLists */

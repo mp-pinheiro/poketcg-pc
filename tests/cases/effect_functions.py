@@ -2846,6 +2846,15 @@ CASES["BellsproutCallForFamily_CheckDeckAndPlayArea"] = [
 ]
 # <<< factory BellsproutCallForFamily_CheckDeckAndPlayArea
 
+# >>> factory Spark_AISelectEffect
+CONTRACT["Spark_AISelectEffect"] = {"compare": ("a",), "preserve": (), "wram_out": True}
+CASES["Spark_AISelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01"}, read={0xFFA0: 1}),
+    {"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x02", 0xC0EF: b"\x01"}, "read": {0xFFA0: 1}},
+]
+# <<< factory Spark_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4699,3 +4708,6 @@ MUTATIONS["StarmieRecover_AISelectEffect"] = {"source_symbol": "StarmieRecover_A
 # >>> factory-mutation BellsproutCallForFamily_CheckDeckAndPlayArea
 MUTATIONS["BellsproutCallForFamily_CheckDeckAndPlayArea"] = {"source_symbol": "BellsproutCallForFamily_CheckDeckAndPlayArea", "before": "\tuint8_t c = (var.a >= MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;", "after": "\tuint8_t c = (var.a > MAX_PLAY_AREA_POKEMON) ? 0x10u : 0u;", "case_ids": ["BellsproutCallForFamily_CheckDeckAndPlayArea-2"]}
 # <<< factory-mutation BellsproutCallForFamily_CheckDeckAndPlayArea
+# >>> factory-mutation Spark_AISelectEffect
+MUTATIONS["Spark_AISelectEffect"] = {"source_symbol": "Spark_AISelectEffect", "before": "\tif (var.a < 2u)\n\t\treturn (SparkAISelectEffectResult){var.a};", "after": "\tif (var.a < 1u)\n\t\treturn (SparkAISelectEffectResult){var.a};", "case_ids": ["Spark_AISelectEffect-0", "Spark_AISelectEffect-1"]}
+# <<< factory-mutation Spark_AISelectEffect
