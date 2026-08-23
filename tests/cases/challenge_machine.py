@@ -267,6 +267,14 @@ CASES["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = [
 ]
 # <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak
 
+# >>> factory ChallengeMachine_ShowNewRecord
+CONTRACT["ChallengeMachine_ShowNewRecord"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["ChallengeMachine_ShowNewRecord"] = [
+    {"hl": 0x5678, "sram": {0: {0xBA68: b"\x00"}}},
+    dict(POISON, sram={0: {0xBA68: b"\x00"}}),
+]
+# <<< factory ChallengeMachine_ShowNewRecord
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -329,3 +337,6 @@ MUTATIONS["ChallengeMachine_Reset"] = {"source_symbol": "ChallengeMachine_Reset"
 # >>> factory-mutation ChallengeMachine_PrintFinalConsecutiveWinStreak
 MUTATIONS["ChallengeMachine_PrintFinalConsecutiveWinStreak"] = {"source_symbol": "ChallengeMachine_PrintFinalConsecutiveWinStreak", "before": "\tif (high == 0u && low < 2u) {", "after": "\tif (high == 0u && low < 1u) {", "case_ids": ["ChallengeMachine_PrintFinalConsecutiveWinStreak-4"]}
 # <<< factory-mutation ChallengeMachine_PrintFinalConsecutiveWinStreak
+# >>> factory-mutation ChallengeMachine_ShowNewRecord
+MUTATIONS["ChallengeMachine_ShowNewRecord"] = {"source_symbol": "ChallengeMachine_ShowNewRecord", "before": "return (ChallengeMachineShowNewRecordResult){0u, 0x80u, hl};", "after": "return (ChallengeMachineShowNewRecordResult){0u, 0x90u, hl};", "case_ids": ["ChallengeMachine_ShowNewRecord-0", "ChallengeMachine_ShowNewRecord-1"]}
+# <<< factory-mutation ChallengeMachine_ShowNewRecord

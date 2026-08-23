@@ -1861,6 +1861,18 @@ CASES["DrawCardPageSet2AndRarityIcons"] = [
 ]
 # <<< factory DrawCardPageSet2AndRarityIcons
 
+# >>> factory CountOppEnergyCardsInHandAndAttached
+CONTRACT["CountOppEnergyCardsInHandAndAttached"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["CountOppEnergyCardsInHandAndAttached"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
+               0xC400: b"\x01\xCB", 0xC2EF: b"\x01"}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00",
+               0xC400: b"\xCB", 0xC2EF: b"\x01", 0xC205: b"\x10", 0xC405: b"\x01"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x02", 0xC242: b"\x00\x01",
+                        0xC400: b"\x01\xCB", 0xC2EF: b"\x01"}),
+]
+# <<< factory CountOppEnergyCardsInHandAndAttached
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2845,3 +2857,6 @@ MUTATIONS["PlayTurnDuelistDrawAnimation"] = {"source_symbol": "PlayTurnDuelistDr
 # >>> factory-mutation DrawCardPageSet2AndRarityIcons
 MUTATIONS["DrawCardPageSet2AndRarityIcons"] = {"source_symbol": "DrawCardPageSet2AndRarityIcons", "before": "\tif (rarity != PROMOSTAR) {", "after": "\tif (rarity == PROMOSTAR) {", "case_ids": ["DrawCardPageSet2AndRarityIcons-0", "DrawCardPageSet2AndRarityIcons-2"]}
 # <<< factory-mutation DrawCardPageSet2AndRarityIcons
+# >>> factory-mutation CountOppEnergyCardsInHandAndAttached
+MUTATIONS["CountOppEnergyCardsInHandAndAttached"] = {"source_symbol": "CountOppEnergyCardsInHandAndAttached", "before": "\tif (!(listed.f & 0x10u)) {", "after": "\tif ((listed.f & 0x10u)) {", "case_ids": ["CountOppEnergyCardsInHandAndAttached-0"]}
+# <<< factory-mutation CountOppEnergyCardsInHandAndAttached

@@ -62,6 +62,18 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/wram.h"
 #include "generated/sram.h"
 #define ConsecutiveWinsEndedAtText 0x07e2u
+
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "home/sound.h"
+#include "home/play_song.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#define MUSIC_MEDAL 0x1du
+#define ConsecutiveWinRecordIncreasedText 0x07e8u
+#define sConsecutiveWinRecordIncreased_ADDR 0xBA68u
+#define sMaximumConsecutiveWins_ADDR 0xBA56u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -308,3 +320,25 @@ ChallengeMachinePrintFinalConsecutiveWinStreakResult ChallengeMachine_PrintFinal
 	return (ChallengeMachinePrintFinalConsecutiveWinStreakResult){printed.f, ConsecutiveWinsEndedAtText};
 }
 /* <<< factory ChallengeMachine_PrintFinalConsecutiveWinStreak */
+
+/* >>> factory ChallengeMachine_ShowNewRecord */
+ChallengeMachineShowNewRecordResult ChallengeMachine_ShowNewRecord(uint16_t hl)
+{
+	EnableSRAM();
+	uint8_t increased = gb_read8(sConsecutiveWinRecordIncreased_ADDR);
+	if (increased == 0u)
+		return (ChallengeMachineShowNewRecordResult){0u, 0x80u, hl};
+
+	uint8_t low = gb_read8(sMaximumConsecutiveWins_ADDR);
+	gb_write8(wTxRam3_ADDR, low);
+	uint8_t high = gb_read8((uint16_t)(sMaximumConsecutiveWins_ADDR + 1u));
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), high);
+	DisableSRAM();
+	PauseSong();
+	PlaySong(MUSIC_MEDAL);
+	(void)PrintScrollableText_NoTextBoxLabel(ConsecutiveWinRecordIncreasedText);
+	WaitForSongToFinish();
+	ResumeSong();
+	return (ChallengeMachineShowNewRecordResult){0u, 0u, hl};
+}
+/* <<< factory ChallengeMachine_ShowNewRecord */

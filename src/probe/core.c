@@ -1364,6 +1364,14 @@ static void adapt_DrawCardPageSet2AndRarityIcons(ProbeState *s)
 }
 /* <<< factory DrawCardPageSet2AndRarityIcons */
 
+/* >>> factory CountOppEnergyCardsInHandAndAttached */
+static void adapt_CountOppEnergyCardsInHandAndAttached(ProbeState *s)
+{
+	CountOppEnergyCardsInHandAndAttachedResult r = CountOppEnergyCardsInHandAndAttached();
+	s->a = r.a; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory CountOppEnergyCardsInHandAndAttached */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1525,5 +1533,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfEnoughEnergiesToAttack", adapt_CheckIfEnoughEnergiesToAttack },
 	{ "PlayTurnDuelistDrawAnimation", adapt_PlayTurnDuelistDrawAnimation },
 	{ "DrawCardPageSet2AndRarityIcons", adapt_DrawCardPageSet2AndRarityIcons },
+	{ "CountOppEnergyCardsInHandAndAttached", adapt_CountOppEnergyCardsInHandAndAttached },
 	{ NULL, NULL },
 };

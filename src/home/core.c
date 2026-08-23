@@ -527,6 +527,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define PROMOSTAR 0xffu
 #define DUEL_OTHER_GFX 0x4008u
 #define CardRarityTextIDs_ADDR 0x5e14u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3256,3 +3260,39 @@ DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void)
 	return (DrawCardPageSet2AndRarityIconsResult){CardRarityTextIDs_ADDR};
 }
 /* <<< factory DrawCardPageSet2AndRarityIcons */
+
+/* >>> factory CountOppEnergyCardsInHandAndAttached */
+CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(void)
+{
+	gb_write8(wTempAI_ADDR, 0u);
+	CoreCardListResult listed = CreateEnergyCardListFromHand(0u);
+	if (!(listed.f & 0x10u)) {
+		uint8_t count = 0u;
+		uint16_t p = wDuelTempList_ADDR;
+		while (gb_read8(p) != 0xFFu) {
+			count++;
+			p++;
+		}
+		gb_write8(wTempAI_ADDR, count);
+	}
+
+	DuelistVarResult numInPlay = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t d = numInPlay.a;
+	uint8_t e = PLAY_AREA_ARENA;
+	uint8_t f = 0u;
+	for (;;) {
+		CountNumberOfEnergyCardsAttachedResult r = CountNumberOfEnergyCardsAttached(e);
+		uint8_t total = gb_read8(wTempAI_ADDR);
+		uint16_t sum = (uint16_t)(total + r.a);
+		uint8_t carry = (sum > 0xFFu) ? 0x10u : 0u;
+		total = (uint8_t)sum;
+		gb_write8(wTempAI_ADDR, total);
+		e = (uint8_t)(e + 1u);
+		d = (uint8_t)(d - 1u);
+		f = (uint8_t)(carry | 0x40u | ((d == 0u) ? 0x80u : 0u) | (((d & 0x0Fu) == 0x0Fu) ? 0x20u : 0u));
+		if (d == 0u)
+			break;
+	}
+	return (CountOppEnergyCardsInHandAndAttachedResult){gb_read8(wTempAI_ADDR), f, wTempAI_ADDR};
+}
+/* <<< factory CountOppEnergyCardsInHandAndAttached */

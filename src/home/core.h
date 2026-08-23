@@ -639,4 +639,8 @@ PlayTurnDuelistDrawAnimationResult PlayTurnDuelistDrawAnimation(uint8_t f, uint8
 typedef struct { uint16_t hl; } DrawCardPageSet2AndRarityIconsResult;
 DrawCardPageSet2AndRarityIconsResult DrawCardPageSet2AndRarityIcons(void);
 /* <<< factory DrawCardPageSet2AndRarityIcons */
+/* >>> factory CountOppEnergyCardsInHandAndAttached */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CountOppEnergyCardsInHandAndAttachedResult;
+CountOppEnergyCardsInHandAndAttachedResult CountOppEnergyCardsInHandAndAttached(void);
+/* <<< factory CountOppEnergyCardsInHandAndAttached */
 #endif
