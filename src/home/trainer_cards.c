@@ -175,6 +175,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define PLAY_AREA_BENCH_1 0x01u
+
+#include "home/trainer_cards.h"
+#include "home/common.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CUBONE 0x84u
+#define MAROWAK_LV26 0x85u
+#define PONYTA 0x39u
+#define RAPIDASH 0x3au
 /* <<< factory statics */
 
 
@@ -1771,3 +1780,45 @@ AIDecideResult AIDecide_MrFuji(void)
 	return (AIDecideResult){0x10u};
 }
 /* <<< factory AIDecide_MrFuji */
+
+/* >>> factory AIDecide_PokemonTrader_BlisteringPokemon */
+AIDecide_PokemonTrader_BlisteringPokemonResult AIDecide_PokemonTrader_BlisteringPokemon(void)
+{
+	uint8_t a;
+	LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r1 =
+		LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RHYDON, RHYHORN);
+	a = r1.a;
+	if (!(r1.f & 0x10u)) {
+		LookForCardIDInDeck_GivenCardIDInHandResult r2 =
+			LookForCardIDInDeck_GivenCardIDInHand(RHYHORN, RHYDON);
+		a = r2.a;
+		if (!(r2.f & 0x10u)) {
+			LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r3 =
+				LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(MAROWAK_LV26, CUBONE);
+			a = r3.a;
+			if (!(r3.f & 0x10u)) {
+				LookForCardIDInDeck_GivenCardIDInHandResult r4 =
+					LookForCardIDInDeck_GivenCardIDInHand(CUBONE, MAROWAK_LV26);
+				a = r4.a;
+				if (!(r4.f & 0x10u)) {
+					LookForCardIDInDeck_GivenCardIDInHandAndPlayAreaResult r5 =
+						LookForCardIDInDeck_GivenCardIDInHandAndPlayArea(RAPIDASH, PONYTA);
+					a = r5.a;
+					if (!(r5.f & 0x10u)) {
+						LookForCardIDInDeck_GivenCardIDInHandResult r6 =
+							LookForCardIDInDeck_GivenCardIDInHand(PONYTA, RAPIDASH);
+						a = r6.a;
+						if (!(r6.f & 0x10u))
+							return (AIDecide_PokemonTrader_BlisteringPokemonResult){a, 0x00u};
+					}
+				}
+			}
+		}
+	}
+	wce1a = a;
+	FindDuplicatePokemonCardsResult dup = FindDuplicatePokemonCards();
+	if (dup.f & 0x10u)
+		return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x10u};
+	return (AIDecide_PokemonTrader_BlisteringPokemonResult){dup.a, 0x00u};
+}
+/* <<< factory AIDecide_PokemonTrader_BlisteringPokemon */

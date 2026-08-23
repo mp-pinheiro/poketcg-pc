@@ -271,6 +271,8 @@ DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
 wce06 = 0xCE06
 wce08 = 0xCE08
 IVYSAUR = 0x09
+
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -591,6 +593,14 @@ CASES["AIDecide_MrFuji"] = [
 ]
 # <<< factory AIDecide_MrFuji
 
+# >>> factory AIDecide_PokemonTrader_BlisteringPokemon
+CONTRACT["AIDecide_PokemonTrader_BlisteringPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_PokemonTrader_BlisteringPokemon"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC000: b"\x00" * 0xF00}),
+]
+# <<< factory AIDecide_PokemonTrader_BlisteringPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -786,3 +796,6 @@ MUTATIONS["AIDecide_Pokeball"] = {"source_symbol": "AIDecide_Pokeball", "before"
 # >>> factory-mutation AIDecide_MrFuji
 MUTATIONS["AIDecide_MrFuji"] = {"source_symbol": "AIDecide_MrFuji", "before": "return (AIDecideResult){0xC0u};\n\n\tuint8_t d", "after": "return (AIDecideResult){0x10u};\n\n\tuint8_t d", "case_ids": ["AIDecide_MrFuji-0"]}
 # <<< factory-mutation AIDecide_MrFuji
+# >>> factory-mutation AIDecide_PokemonTrader_BlisteringPokemon
+MUTATIONS["AIDecide_PokemonTrader_BlisteringPokemon"] = {"source_symbol": "AIDecide_PokemonTrader_BlisteringPokemon", "before": "a = r6.a;", "after": "a = 0u;", "case_ids": ["AIDecide_PokemonTrader_BlisteringPokemon-0", "AIDecide_PokemonTrader_BlisteringPokemon-1"]}
+# <<< factory-mutation AIDecide_PokemonTrader_BlisteringPokemon
