@@ -106,6 +106,10 @@
 #define SPRITE_ANIM_LIGHT_NPC_UP 0x00u
 #define SPRITE_ANIM_RED_NPC_UP 0x1Eu
 #define PALETTE_OVERWORLD_OAM 0x1Du
+
+#include "home/scripting.h"
+#include "home/save.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -698,3 +702,12 @@ void LoadPermissionMap(void)
 	DecompressPermissionMap(wPermissionMap_ADDR);
 }
 /* <<< factory LoadPermissionMap */
+
+/* >>> factory Func_c1ed */
+void Func_c1ed(void)
+{
+	ClearEvents();
+	LoadBackupSaveData();
+	DetermineImakuniAndChallengeHall();
+}
+/* <<< factory Func_c1ed */

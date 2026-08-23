@@ -160,4 +160,7 @@ DecompressPermissionMapResult DecompressPermissionMap(uint16_t hl);
 /* >>> factory LoadPermissionMap */
 void LoadPermissionMap(void);
 /* <<< factory LoadPermissionMap */
+/* >>> factory Func_c1ed */
+void Func_c1ed(void);
+/* <<< factory Func_c1ed */
 #endif /* POKETCG_HOME_OVERWORLD_H */

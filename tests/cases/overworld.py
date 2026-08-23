@@ -271,6 +271,8 @@ wDecompressionSecondaryBuffer = 0xC000
 
 wBGMapPermissionDataPtr = 0xD23A
 wPermissionMap = 0xD133
+
+hBankROM = 0xFF80
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -561,6 +563,16 @@ CASES["LoadPermissionMap"] = [
 ]
 # <<< factory LoadPermissionMap
 
+# >>> factory Func_c1ed
+CONTRACT["Func_c1ed"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_c1ed"] = [
+    {"wram": {hBankROM: b"\x03"}, "sram": {0: {0xB800: bytes([0xAB]) * 256}},
+     "read": {0xD32E: 1}, "instruction_budget": 500000, "cycle_budget": 4000000},
+    dict(POISON, wram={hBankROM: b"\x03"}, sram={0: {0xB800: bytes([0xAB]) * 256}},
+         read={0xD32E: 1}, instruction_budget=500000, cycle_budget=4000000),
+]
+# <<< factory Func_c1ed
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -761,3 +773,6 @@ MUTATIONS["DecompressPermissionMap"] = {"source_symbol": "DecompressPermissionMa
 # >>> factory-mutation LoadPermissionMap
 MUTATIONS["LoadPermissionMap"] = {"source_symbol": "LoadPermissionMap", "before": "gb_write8((uint16_t)(wPermissionMap_ADDR + i), 0x80u);", "after": "gb_write8((uint16_t)(wPermissionMap_ADDR + i), 0x00u);", "case_ids": ["LoadPermissionMap-0", "LoadPermissionMap-1"]}
 # <<< factory-mutation LoadPermissionMap
+# >>> factory-mutation Func_c1ed
+MUTATIONS["Func_c1ed"] = {"source_symbol": "Func_c1ed", "before": "\tLoadBackupSaveData();", "after": "\t(void)0;", "case_ids": ["Func_c1ed-0", "Func_c1ed-1"]}
+# <<< factory-mutation Func_c1ed
