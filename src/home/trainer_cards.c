@@ -104,6 +104,16 @@
 
 #define GRIMER 0x26u
 #define PROFESSOR_OAK 0xc3u
+
+#define DIGLETT 0x79u
+#define DOUBLE_COLORLESS_ENERGY 0x07u
+#define DUGTRIO 0x7au
+#define FIGHTING_ENERGY 0x05u
+#define GEODUDE 0x80u
+#define GOLEM 0x82u
+#define GRAVELER 0x81u
+#define ONIX 0x83u
+#define RHYHORN 0x89u
 /* <<< factory statics */
 
 
@@ -1122,3 +1132,130 @@ find_discard_cards:
 	return (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u};
 }
 /* <<< factory AIDecide_ComputerSearch_WondersOfScience */
+
+/* >>> factory AIDecide_ComputerSearch_RockCrusher */
+AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(uint8_t b, uint8_t c)
+{
+	uint8_t final_a;
+	DuelistVarResult hand_count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+	if (hand_count.a == 3u) {
+		LookForCardIDInLocationBank8Result oak = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, PROFESSOR_OAK);
+		if (!(oak.f & 0x10u)) {
+			final_a = oak.a;
+			goto no_carry;
+		}
+		wce06 = oak.a;
+		wce1a = 0xFFu;
+		wce1b = 0xFFu;
+		(void)CreateHandCardList(c);
+		uint16_t scan = wDuelTempList_ADDR;
+		uint16_t store = wce1a_ADDR;
+		uint8_t trainer_to_play = wAITrainerCardToPlay;
+		for (;;) {
+			uint8_t idx = gb_read8(scan);
+			scan = (uint16_t)(scan + 1u);
+			if (idx == 0xFFu)
+				break;
+			uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(idx);
+			if (card_id == PROFESSOR_OAK || card_id == FIGHTING_ENERGY ||
+			    card_id == DOUBLE_COLORLESS_ENERGY || card_id == DIGLETT ||
+			    card_id == GEODUDE || card_id == ONIX || card_id == RHYHORN) {
+				final_a = card_id;
+				goto no_carry;
+			}
+			if (card_id == trainer_to_play)
+				continue;
+			gb_write8(store, idx);
+			store = (uint16_t)(store + 1u);
+		}
+		if (gb_read8(wce1b_ADDR) != 0xFFu)
+			return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};
+		final_a = 0xFFu;
+		goto no_carry;
+	}
+
+	{
+		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GRAVELER);
+		if (loc.f & 0x10u) {
+			wce06 = loc.a;
+			LookForCardIDInHandAndPlayAreaResult geo = LookForCardIDInHandAndPlayArea(GEODUDE);
+			if (geo.f & 0x10u) {
+				LookForCardIDInHandListResult grav_hand = LookForCardIDInHandList_Bank8(GRAVELER);
+				if (!(grav_hand.f & 0x10u)) {
+					(void)CreateHandCardList(c);
+					uint16_t hl = wDuelTempList_ADDR;
+					(void)RemoveCardIDInList(&hl, GEODUDE);
+					goto find_discard_cards_2;
+				}
+			}
+		}
+	}
+
+	{
+		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, GOLEM);
+		if (loc.f & 0x10u) {
+			wce06 = loc.a;
+			LookForCardIDInPlayAreaResult grav_pa = LookForCardIDInPlayArea_Bank8(GRAVELER, b);
+			if (grav_pa.f & 0x10u) {
+				LookForCardIDInHandListResult golem_hand = LookForCardIDInHandList_Bank8(GOLEM);
+				if (!(golem_hand.f & 0x10u)) {
+					(void)CreateHandCardList(c);
+					goto find_discard_cards_2;
+				}
+			}
+		}
+	}
+
+	{
+		LookForCardIDInLocationBank8Result loc = LookForCardIDInLocation_Bank8(CARD_LOCATION_DECK, DUGTRIO);
+		if (!(loc.f & 0x10u)) {
+			final_a = loc.a;
+			goto no_carry;
+		}
+		wce06 = loc.a;
+		LookForCardIDInPlayAreaResult dig_pa = LookForCardIDInPlayArea_Bank8(DIGLETT, b);
+		if (!(dig_pa.f & 0x10u)) {
+			final_a = dig_pa.a;
+			goto no_carry;
+		}
+		LookForCardIDInHandListResult dug_hand = LookForCardIDInHandList_Bank8(DUGTRIO);
+		if (dug_hand.f & 0x10u) {
+			final_a = dug_hand.a;
+			goto no_carry;
+		}
+		(void)CreateHandCardList(c);
+		goto find_discard_cards_2;
+	}
+
+no_carry: ;
+	{
+		uint8_t f = (final_a == 0u) ? 0x80u : 0u;
+		return (AIDecide_ComputerSearch_RockCrusherResult){final_a, f};
+	}
+
+find_discard_cards_2:
+	wce1a = 0xFFu;
+	wce1b = 0xFFu;
+	{
+		uint16_t bc_ptr = wce1a_ADDR;
+		uint8_t d = 0u;
+		uint8_t trainer_to_play2 = wAITrainerCardToPlay;
+		for (;;) {
+			RemoveFromListDifferentCardOfGivenTypeResult r =
+				RemoveFromListDifferentCardOfGivenType(b, c, d, trainer_to_play2, wDuelTempList_ADDR);
+			if (r.f & 0x10u) {
+				gb_write8(bc_ptr, r.a);
+				bc_ptr = (uint16_t)(bc_ptr + 1u);
+				if (gb_read8(wce1b_ADDR) != 0xFFu)
+					return (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};
+				continue;
+			}
+			d = (uint8_t)(d + 1u);
+			if (d == 3u) {
+				final_a = r.a;
+				goto no_carry;
+			}
+		}
+	}
+}
+/* <<< factory AIDecide_ComputerSearch_RockCrusher */

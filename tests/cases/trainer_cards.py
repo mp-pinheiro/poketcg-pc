@@ -425,6 +425,28 @@ CASES["AIDecide_ComputerSearch_WondersOfScience"] = [
 ]
 # <<< factory AIDecide_ComputerSearch_WondersOfScience
 
+# >>> factory AIDecide_ComputerSearch_RockCrusher
+CONTRACT["AIDecide_ComputerSearch_RockCrusher"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["AIDecide_ComputerSearch_RockCrusher"] = [
+    {"b": 0x00, "c": 0x00, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 32}},
+    {"b": 0x00, "c": 0x00, "wram": {
+        hWhoseTurn: b"\xC2",
+        0xC2EE: b"\x02",
+        0xC242: b"\x0A",
+        0xC243: b"\x0B",
+        0xC200: b"\x00",
+        0xC201: b"\x00",
+        0xC40A: b"\xC5",
+        0xC40B: b"\xDB",
+        0xC405: b"\x7A",
+        0xC2BB: b"\x06",
+        0xC406: b"\x79",
+        wAITrainerCardToPlay: b"\xFF",
+    }, "expect": {wce06: b"\x05"}, "read": {0xC510: 32}},
+    dict(POISON, b=0x00, c=0x00, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 32}),
+]
+# <<< factory AIDecide_ComputerSearch_RockCrusher
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -599,3 +621,6 @@ MUTATIONS["AIDecide_ComputerSearch_Anger"] = {"source_symbol": "AIDecide_Compute
 # >>> factory-mutation AIDecide_ComputerSearch_WondersOfScience
 MUTATIONS["AIDecide_ComputerSearch_WondersOfScience"] = {"source_symbol": "AIDecide_ComputerSearch_WondersOfScience", "before": "\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x90u};", "after": "\treturn (AIDecide_ComputerSearch_WondersOfScienceResult){wce06, 0x00u};", "case_ids": ["AIDecide_ComputerSearch_WondersOfScience-1"]}
 # <<< factory-mutation AIDecide_ComputerSearch_WondersOfScience
+# >>> factory-mutation AIDecide_ComputerSearch_RockCrusher
+MUTATIONS["AIDecide_ComputerSearch_RockCrusher"] = {"source_symbol": "AIDecide_ComputerSearch_RockCrusher", "before": '\t\t\t\tif (gb_read8(wce1b_ADDR) != 0xFFu)\n\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x10u};\n\t\t\t\tcontinue;', "after": '\t\t\t\tif (gb_read8(wce1b_ADDR) != 0xFFu)\n\t\t\t\t\treturn (AIDecide_ComputerSearch_RockCrusherResult){wce06, 0x00u};\n\t\t\t\tcontinue;', "case_ids": ["AIDecide_ComputerSearch_RockCrusher-1"]}
+# <<< factory-mutation AIDecide_ComputerSearch_RockCrusher

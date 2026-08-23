@@ -101,4 +101,8 @@ AIDecide_ComputerSearch_AngerResult AIDecide_ComputerSearch_Anger(uint8_t b, uin
 typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearch_WondersOfScienceResult;
 AIDecide_ComputerSearch_WondersOfScienceResult AIDecide_ComputerSearch_WondersOfScience(uint8_t b, uint8_t c);
 /* <<< factory AIDecide_ComputerSearch_WondersOfScience */
+/* >>> factory AIDecide_ComputerSearch_RockCrusher */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_ComputerSearch_RockCrusherResult;
+AIDecide_ComputerSearch_RockCrusherResult AIDecide_ComputerSearch_RockCrusher(uint8_t b, uint8_t c);
+/* <<< factory AIDecide_ComputerSearch_RockCrusher */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
