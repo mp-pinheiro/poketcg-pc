@@ -94,6 +94,15 @@ CASES["Func_1ce03"] = [
 ]
 # <<< factory Func_1ce03
 
+# >>> factory ShakeScreenX_Big
+CONTRACT["ShakeScreenX_Big"] = {"compare": (), "preserve": ()}
+CASES["ShakeScreenX_Big"] = [
+    {"wram": {0xD4B9: b"\x00\x00", 0xD4BC: b"\x00\x00"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xD4B9: b"\x56\x78", 0xD4BC: b"\x9A\xBC"}, "read": {0xD4B9: 2, 0xD4BC: 2}},
+]
+# <<< factory ShakeScreenX_Big
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -129,3 +138,6 @@ MUTATIONS["ShakeScreenX"] = {"source_symbol": "ShakeScreenX", "before": "\tgb_wr
 # >>> factory-mutation Func_1ce03
 MUTATIONS["Func_1ce03"] = {"source_symbol": "Func_1ce03", "before": "\tFunc_3bb5();", "after": "\treturn;", "case_ids": ["Func_1ce03-0", "Func_1ce03-1"]}
 # <<< factory-mutation Func_1ce03
+# >>> factory-mutation ShakeScreenX_Big
+MUTATIONS["ShakeScreenX_Big"] = {"source_symbol": "ShakeScreenX_Big", "before": "\tShakeScreenX(0x4d61u);", "after": "\tShakeScreenX(0x4d62u);", "case_ids": ["ShakeScreenX_Big-0", "ShakeScreenX_Big-1"]}
+# <<< factory-mutation ShakeScreenX_Big

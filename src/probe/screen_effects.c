@@ -62,6 +62,13 @@ static void adapt_Func_1ce03(ProbeState *s)
 }
 /* <<< factory Func_1ce03 */
 
+/* >>> factory ShakeScreenX_Big */
+static void adapt_ShakeScreenX_Big(ProbeState *s)
+{
+	ShakeScreenX_Big();
+}
+/* <<< factory ShakeScreenX_Big */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
@@ -70,5 +77,6 @@ const ProbeEntry probe_entries_screen_effects[] = {
 	{ "LoadDefaultScreenAnimationUpdateWhenFinished", adapt_LoadDefaultScreenAnimationUpdateWhenFinished },
 	{ "ShakeScreenX", adapt_ShakeScreenX },
 	{ "Func_1ce03", adapt_Func_1ce03 },
+	{ "ShakeScreenX_Big", adapt_ShakeScreenX_Big },
 	{ NULL, NULL },
 };

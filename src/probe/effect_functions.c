@@ -2445,6 +2445,16 @@ static void adapt_ClefairyMetronome_AISelectEffect(ProbeState *s)
 }
 /* <<< factory ClefairyMetronome_AISelectEffect */
 
+/* >>> factory EnergySpike_DeckCheck */
+static void adapt_EnergySpike_DeckCheck(ProbeState *s)
+{
+	CheckIfDeckIsEmptyResult result = EnergySpike_DeckCheck();
+	s->a = result.a;
+	s->hl = result.hl;
+	s->f = result.f;
+}
+/* <<< factory EnergySpike_DeckCheck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2748,5 +2758,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeottoMirrorMove_AIEffect", adapt_PidgeottoMirrorMove_AIEffect },
 	{ "PidgeottoMirrorMove_AISelection", adapt_PidgeottoMirrorMove_AISelection },
 	{ "ClefairyMetronome_AISelectEffect", adapt_ClefairyMetronome_AISelectEffect },
+	{ "EnergySpike_DeckCheck", adapt_EnergySpike_DeckCheck },
 	{ NULL, NULL },
 };

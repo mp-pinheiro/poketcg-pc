@@ -4188,3 +4188,10 @@ void ClefairyMetronome_AISelectEffect(void)
 	HandleAIMetronomeEffect();
 }
 /* <<< factory ClefairyMetronome_AISelectEffect */
+
+/* >>> factory EnergySpike_DeckCheck */
+CheckIfDeckIsEmptyResult EnergySpike_DeckCheck(void)
+{
+	return CheckIfDeckIsEmpty();
+}
+/* <<< factory EnergySpike_DeckCheck */

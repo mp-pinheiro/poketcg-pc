@@ -2678,6 +2678,16 @@ CASES["ClefairyMetronome_AISelectEffect"] = [
 ]
 # <<< factory ClefairyMetronome_AISelectEffect
 
+# >>> factory EnergySpike_DeckCheck
+CONTRACT["EnergySpike_DeckCheck"] = {"compare": ("a", "f", "hl", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["EnergySpike_DeckCheck"] = [
+    {},
+    {"wram": {0xC2BA: b"\x3C"}},
+    {"wram": {0xC2BA: b"\x50"}},
+    dict(POISON),
+]
+# <<< factory EnergySpike_DeckCheck
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4466,3 +4476,6 @@ MUTATIONS["PidgeottoMirrorMove_AISelection"] = {"source_symbol": "PidgeottoMirro
 # >>> factory-mutation ClefairyMetronome_AISelectEffect
 MUTATIONS["ClefairyMetronome_AISelectEffect"] = {"source_symbol": "ClefairyMetronome_AISelectEffect", "before": "void ClefairyMetronome_AISelectEffect(void)\n{\n\tHandleAIMetronomeEffect();\n}", "after": "void ClefairyMetronome_AISelectEffect(void)\n{\n\tgb_write8(0xC100u, 0xFFu);\n}", "case_ids": ["ClefairyMetronome_AISelectEffect-0", "ClefairyMetronome_AISelectEffect-1"]}
 # <<< factory-mutation ClefairyMetronome_AISelectEffect
+# >>> factory-mutation EnergySpike_DeckCheck
+MUTATIONS["EnergySpike_DeckCheck"] = {"source_symbol": "EnergySpike_DeckCheck", "before": "\treturn CheckIfDeckIsEmpty();", "after": "\treturn (CheckIfDeckIsEmptyResult){0u, 0u, 0u};", "case_ids": ["EnergySpike_DeckCheck-0", "EnergySpike_DeckCheck-1", "EnergySpike_DeckCheck-2", "EnergySpike_DeckCheck-3"]}
+# <<< factory-mutation EnergySpike_DeckCheck

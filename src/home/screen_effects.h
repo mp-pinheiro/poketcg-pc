@@ -31,4 +31,7 @@ void ShakeScreenX(uint16_t hl);
 /* >>> factory Func_1ce03 */
 void Func_1ce03(uint8_t a);
 /* <<< factory Func_1ce03 */
+/* >>> factory ShakeScreenX_Big */
+void ShakeScreenX_Big(void);
+/* <<< factory ShakeScreenX_Big */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

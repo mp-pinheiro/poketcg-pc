@@ -1023,6 +1023,9 @@ void PidgeottoMirrorMove_AISelection(void);
 /* >>> factory ClefairyMetronome_AISelectEffect */
 void ClefairyMetronome_AISelectEffect(void);
 /* <<< factory ClefairyMetronome_AISelectEffect */
+/* >>> factory EnergySpike_DeckCheck */
+CheckIfDeckIsEmptyResult EnergySpike_DeckCheck(void);
+/* <<< factory EnergySpike_DeckCheck */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

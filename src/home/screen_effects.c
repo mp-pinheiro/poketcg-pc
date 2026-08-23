@@ -130,3 +130,10 @@ void Func_1ce03(uint8_t a)
 	Func_3bb5();
 }
 /* <<< factory Func_1ce03 */
+
+/* >>> factory ShakeScreenX_Big */
+void ShakeScreenX_Big(void)
+{
+	ShakeScreenX(0x4d61u);
+}
+/* <<< factory ShakeScreenX_Big */
