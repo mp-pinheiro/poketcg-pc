@@ -1011,6 +1011,9 @@ CurseCheckDamageAndBenchResult Curse_CheckDamageAndBench(void);
 /* >>> factory SpearowMirrorMove_AIEffect */
 void SpearowMirrorMove_AIEffect(void);
 /* <<< factory SpearowMirrorMove_AIEffect */
+/* >>> factory SpearowMirrorMove_InitialEffect1 */
+MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void);
+/* <<< factory SpearowMirrorMove_InitialEffect1 */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

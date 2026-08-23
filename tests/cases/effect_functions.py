@@ -2646,6 +2646,14 @@ CASES["SpearowMirrorMove_AIEffect"] = [
 ]
 # <<< factory SpearowMirrorMove_AIEffect
 
+# >>> factory SpearowMirrorMove_InitialEffect1
+CONTRACT["SpearowMirrorMove_InitialEffect1"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["SpearowMirrorMove_InitialEffect1"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory SpearowMirrorMove_InitialEffect1
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4412,3 +4420,11 @@ MUTATIONS["SpearowMirrorMove_AIEffect"] = {
     "case_ids": ["SpearowMirrorMove_AIEffect-0", "SpearowMirrorMove_AIEffect-1"],
 }
 # <<< factory-mutation SpearowMirrorMove_AIEffect
+# >>> factory-mutation SpearowMirrorMove_InitialEffect1
+MUTATIONS["SpearowMirrorMove_InitialEffect1"] = {
+    "source_symbol": "SpearowMirrorMove_InitialEffect1",
+    "before": "MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void)\n{\n\treturn MirrorMove_InitialEffect1();\n}",
+    "after": "MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void)\n{\n\treturn (MirrorMoveInitialEffect1Result){0};\n}",
+    "case_ids": ["SpearowMirrorMove_InitialEffect1-0", "SpearowMirrorMove_InitialEffect1-1"],
+}
+# <<< factory-mutation SpearowMirrorMove_InitialEffect1

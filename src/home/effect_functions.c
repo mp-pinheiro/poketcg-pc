@@ -4160,3 +4160,10 @@ void SpearowMirrorMove_AIEffect(void)
 	MirrorMove_AIEffect();
 }
 /* <<< factory SpearowMirrorMove_AIEffect */
+
+/* >>> factory SpearowMirrorMove_InitialEffect1 */
+MirrorMoveInitialEffect1Result SpearowMirrorMove_InitialEffect1(void)
+{
+	return MirrorMove_InitialEffect1();
+}
+/* <<< factory SpearowMirrorMove_InitialEffect1 */
