@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_SuperEnergyRetrieval",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_SuperEnergyRetrieval\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49902\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_SuperEnergyRetrieval\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"AIDecide_SuperEnergyRetrieval\", \"registers\": {\"a\": 255, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49730\": \"00\", \"49902\": \"01\", \"50176\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

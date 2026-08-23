@@ -216,6 +216,22 @@ CASES["AIDecide_EnergyRetrieval"] = [
 ]
 # <<< factory AIDecide_EnergyRetrieval
 
+# >>> factory AIDecide_SuperEnergyRetrieval
+CONTRACT["AIDecide_SuperEnergyRetrieval"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_SuperEnergyRetrieval"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "wram": {
+            0xC2EE: b"\x01",   # wPlayerDuelVariables DUELVARS_NUMBER_OF_CARDS_IN_HAND = 1
+            0xC242: b"\x00",   # wPlayerDuelVariables DUELVARS_HAND[0] = deck_index 0
+            0xC400: b"\x01",   # wPlayerDeck[0] = card id 1 (TYPE_ENERGY set on real ROM)
+        },
+        "hram": {0xFF97: b"\xC2"},
+        "expect_regs": {"a": 0xFF, "f": 0x00},
+    },
+]
+# <<< factory AIDecide_SuperEnergyRetrieval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -356,3 +372,11 @@ MUTATIONS["AIDecide_EnergyRetrieval"] = {
     "case_ids": ["AIDecide_EnergyRetrieval-0"],
 }
 # <<< factory-mutation AIDecide_EnergyRetrieval
+# >>> factory-mutation AIDecide_SuperEnergyRetrieval
+MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {
+    "source_symbol": "AIDecide_SuperEnergyRetrieval",
+    "before": "return (AIDecideSuperEnergyRetrievalResult){dup1.a, 0x00u};",
+    "after": "return (AIDecideSuperEnergyRetrievalResult){0u, 0x00u};",
+    "case_ids": ["AIDecide_SuperEnergyRetrieval-0"],
+}
+# <<< factory-mutation AIDecide_SuperEnergyRetrieval

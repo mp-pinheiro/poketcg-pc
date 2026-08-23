@@ -153,6 +153,15 @@ static void adapt_AIDecide_EnergyRetrieval(ProbeState *s)
 }
 /* <<< factory AIDecide_EnergyRetrieval */
 
+/* >>> factory AIDecide_SuperEnergyRetrieval */
+static void adapt_AIDecide_SuperEnergyRetrieval(ProbeState *s)
+{
+	AIDecideSuperEnergyRetrievalResult r = AIDecide_SuperEnergyRetrieval(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_SuperEnergyRetrieval */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -173,5 +182,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_Pokedex", adapt_AIDecide_Pokedex },
 	{ "AIDecide_ItemFinder", adapt_AIDecide_ItemFinder },
 	{ "AIDecide_EnergyRetrieval", adapt_AIDecide_EnergyRetrieval },
+	{ "AIDecide_SuperEnergyRetrieval", adapt_AIDecide_SuperEnergyRetrieval },
 	{ NULL, NULL },
 };
