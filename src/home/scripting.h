@@ -384,4 +384,7 @@ JumpIfCardInCollectionResult ScriptCommand_JumpIfCardOwned(uint8_t b, uint8_t c)
 /* >>> factory ScriptCommand_WaitForSongToFinish */
 IncreaseScriptPointerResult ScriptCommand_WaitForSongToFinish(void);
 /* <<< factory ScriptCommand_WaitForSongToFinish */
+/* >>> factory ScriptCommand_SaveGame */
+IncreaseScriptPointerResult ScriptCommand_SaveGame(uint8_t c);
+/* <<< factory ScriptCommand_SaveGame */
 #endif

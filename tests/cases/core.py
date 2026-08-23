@@ -1813,6 +1813,16 @@ CASES["PrintNumberOfHandAndDeckCards"] = [
 ]
 # <<< factory PrintNumberOfHandAndDeckCards
 
+# >>> factory PrintReturnCardsToDeckDrawAgain
+CONTRACT["PrintReturnCardsToDeckDrawAgain"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["PrintReturnCardsToDeckDrawAgain"] = [
+    {"keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=1000000, cycle_budget=4000000),
+]
+# <<< factory PrintReturnCardsToDeckDrawAgain
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -2782,3 +2792,6 @@ MUTATIONS["DisplayPreviousCardPage"] = {"source_symbol": "DisplayPreviousCardPag
 # >>> factory-mutation PrintNumberOfHandAndDeckCards
 MUTATIONS["PrintNumberOfHandAndDeckCards"] = {"source_symbol": "PrintNumberOfHandAndDeckCards", "before": "\tif (hWhoseTurn != PLAYER_TURN) {", "after": "\tif (hWhoseTurn == PLAYER_TURN) {", "case_ids": ["PrintNumberOfHandAndDeckCards-0", "PrintNumberOfHandAndDeckCards-1", "PrintNumberOfHandAndDeckCards-2"]}
 # <<< factory-mutation PrintNumberOfHandAndDeckCards
+# >>> factory-mutation PrintReturnCardsToDeckDrawAgain
+MUTATIONS["PrintReturnCardsToDeckDrawAgain"] = {"source_symbol": "PrintReturnCardsToDeckDrawAgain", "before": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);", "after": "\tExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD13u);", "case_ids": ["PrintReturnCardsToDeckDrawAgain-0", "PrintReturnCardsToDeckDrawAgain-1"]}
+# <<< factory-mutation PrintReturnCardsToDeckDrawAgain

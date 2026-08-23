@@ -619,4 +619,8 @@ void DisplayPreviousCardPage(void);
 /* >>> factory PrintNumberOfHandAndDeckCards */
 void PrintNumberOfHandAndDeckCards(void);
 /* <<< factory PrintNumberOfHandAndDeckCards */
+/* >>> factory PrintReturnCardsToDeckDrawAgain */
+typedef struct { uint8_t a, b, c, f; uint16_t hl, de; } PrintReturnCardsToDeckDrawAgainResult;
+PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void);
+/* <<< factory PrintReturnCardsToDeckDrawAgain */
 #endif

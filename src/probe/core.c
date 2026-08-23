@@ -1313,6 +1313,20 @@ static void adapt_PrintNumberOfHandAndDeckCards(ProbeState *s)
 }
 /* <<< factory PrintNumberOfHandAndDeckCards */
 
+/* >>> factory PrintReturnCardsToDeckDrawAgain */
+static void adapt_PrintReturnCardsToDeckDrawAgain(ProbeState *s)
+{
+	PrintReturnCardsToDeckDrawAgainResult r = PrintReturnCardsToDeckDrawAgain();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->f = r.f;
+	s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+}
+/* <<< factory PrintReturnCardsToDeckDrawAgain */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1469,5 +1483,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPracticeDuelInstructions", adapt_PrintPracticeDuelInstructions },
 	{ "DisplayPreviousCardPage", adapt_DisplayPreviousCardPage },
 	{ "PrintNumberOfHandAndDeckCards", adapt_PrintNumberOfHandAndDeckCards },
+	{ "PrintReturnCardsToDeckDrawAgain", adapt_PrintReturnCardsToDeckDrawAgain },
 	{ NULL, NULL },
 };

@@ -2713,6 +2713,14 @@ CASES["CuboneRage_AIEffect"] = [
 ]
 # <<< factory CuboneRage_AIEffect
 
+# >>> factory GravelerHardenEffect
+CONTRACT["GravelerHardenEffect"] = {"compare": ("hl",), "preserve": ()}
+CASES["GravelerHardenEffect"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory GravelerHardenEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -4518,3 +4526,6 @@ MUTATIONS["OmastarWaterGunEffect"] = {
 # >>> factory-mutation CuboneRage_AIEffect
 MUTATIONS["CuboneRage_AIEffect"] = {"source_symbol": "CuboneRage_AIEffect", "before": "\tCuboneRage_DamageBoostEffect();\n\tSetDefiniteAIDamage();", "after": "\tCuboneRage_DamageBoostEffect();\n\t(void)0;", "case_ids": ["CuboneRage_AIEffect-0", "CuboneRage_AIEffect-1"]}
 # <<< factory-mutation CuboneRage_AIEffect
+# >>> factory-mutation GravelerHardenEffect
+MUTATIONS["GravelerHardenEffect"] = {"source_symbol": "GravelerHardenEffect", "before": "uint16_t GravelerHardenEffect(void)\n{\n\treturn ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);\n}", "after": "uint16_t GravelerHardenEffect(void)\n{\n\treturn (uint16_t)(ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40) + 1u);\n}", "case_ids": ["GravelerHardenEffect-0", "GravelerHardenEffect-1"]}
+# <<< factory-mutation GravelerHardenEffect

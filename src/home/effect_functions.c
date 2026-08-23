@@ -293,6 +293,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "generated/hram.h"
 #define CannotUseSinceTheresOnly1PkmnText 0x00cfu
+
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4217,3 +4219,10 @@ void CuboneRage_AIEffect(void)
 	SetDefiniteAIDamage();
 }
 /* <<< factory CuboneRage_AIEffect */
+
+/* >>> factory GravelerHardenEffect */
+uint16_t GravelerHardenEffect(void)
+{
+	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_PREVENT_LESS_THAN_40);
+}
+/* <<< factory GravelerHardenEffect */

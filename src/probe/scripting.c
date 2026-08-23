@@ -713,6 +713,16 @@ static void adapt_ScriptCommand_WaitForSongToFinish(ProbeState *s)
 }
 /* <<< factory ScriptCommand_WaitForSongToFinish */
 
+/* >>> factory ScriptCommand_SaveGame */
+static void adapt_ScriptCommand_SaveGame(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_SaveGame(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_SaveGame */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -782,5 +792,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_cdd1", adapt_Func_cdd1 },
 	{ "ScriptCommand_JumpIfCardOwned", adapt_ScriptCommand_JumpIfCardOwned },
 	{ "ScriptCommand_WaitForSongToFinish", adapt_ScriptCommand_WaitForSongToFinish },
+	{ "ScriptCommand_SaveGame", adapt_ScriptCommand_SaveGame },
 	{ NULL, NULL },
 };

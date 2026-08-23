@@ -41,11 +41,21 @@ static void adapt_IntroSequenceEmptyFunc(ProbeState *s)
 }
 /* <<< factory IntroSequenceEmptyFunc */
 
+/* >>> factory IntroSequenceCmd_FadeIn */
+static void adapt_IntroSequenceCmd_FadeIn(ProbeState *s)
+{
+	IntroSequenceCmd_FadeInResult r = IntroSequenceCmd_FadeIn();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory IntroSequenceCmd_FadeIn */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
 	{ "AdvanceIntroSequenceCmdPtrBy2", adapt_AdvanceIntroSequenceCmdPtrBy2 },
 	{ "AdvanceIntroSequenceCmdPtrBy4", adapt_AdvanceIntroSequenceCmdPtrBy4 },
 	{ "IntroSequenceEmptyFunc", adapt_IntroSequenceEmptyFunc },
+	{ "IntroSequenceCmd_FadeIn", adapt_IntroSequenceCmd_FadeIn },
 	{ NULL, NULL },
 };

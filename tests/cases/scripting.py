@@ -833,6 +833,18 @@ CASES["ScriptCommand_WaitForSongToFinish"] = [
 ]
 # <<< factory ScriptCommand_WaitForSongToFinish
 
+# >>> factory ScriptCommand_SaveGame
+CONTRACT["ScriptCommand_SaveGame"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_SaveGame"] = [
+    {"c": 0x00, "instruction_budget": 500000, "cycle_budget": 2000000,
+     "wram": {0xD32F: b"\x07", 0xD330: b"\x12", 0xD331: b"\x34", 0xD334: b"\x01"},
+     "sram": {0: {0xB800: bytes(256)}}},
+    dict(POISON, c=0x01, instruction_budget=500000, cycle_budget=2000000,
+         wram={0xD32E: b"\x04"},
+         sram={0: {0xB800: bytes(256)}}),
+]
+# <<< factory ScriptCommand_SaveGame
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1281,3 +1293,6 @@ MUTATIONS["ScriptCommand_JumpIfCardOwned"] = {"source_symbol": "ScriptCommand_Ju
 # >>> factory-mutation ScriptCommand_WaitForSongToFinish
 MUTATIONS["ScriptCommand_WaitForSongToFinish"] = {"source_symbol": "ScriptCommand_WaitForSongToFinish", "before": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy1();", "after": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_WaitForSongToFinish-0", "ScriptCommand_WaitForSongToFinish-1"]}
 # <<< factory-mutation ScriptCommand_WaitForSongToFinish
+# >>> factory-mutation ScriptCommand_SaveGame
+MUTATIONS["ScriptCommand_SaveGame"] = {"source_symbol": "ScriptCommand_SaveGame", "before": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy3();", "case_ids": ["ScriptCommand_SaveGame-0", "ScriptCommand_SaveGame-1"]}
+# <<< factory-mutation ScriptCommand_SaveGame

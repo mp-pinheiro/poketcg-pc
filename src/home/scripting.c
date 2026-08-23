@@ -114,6 +114,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "home/npc_core.h"
+
+#include "home/save.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -1063,3 +1066,11 @@ IncreaseScriptPointerResult ScriptCommand_WaitForSongToFinish(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_WaitForSongToFinish */
+
+/* >>> factory ScriptCommand_SaveGame */
+IncreaseScriptPointerResult ScriptCommand_SaveGame(uint8_t c)
+{
+	_SaveGame(c);
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_SaveGame */

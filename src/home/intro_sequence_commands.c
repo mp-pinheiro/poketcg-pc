@@ -36,6 +36,9 @@ static void UpdateSpriteAttributes(void)
 #include "mem.h"
 
 #include "mem.h"
+
+#include "home/intro_sequence_commands.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -105,3 +108,14 @@ void IntroSequenceEmptyFunc(void)
 	(void)0;
 }
 /* <<< factory IntroSequenceEmptyFunc */
+
+/* >>> factory IntroSequenceCmd_FadeIn */
+IntroSequenceCmd_FadeInResult IntroSequenceCmd_FadeIn(void)
+{
+	gb_write8(wIntroSequencePalsNeedUpdate_ADDR, 0x01u);
+	AdvanceIntroSequenceCmdPtrBy2();
+	uint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t f = (uint8_t)((hi == 0u ? 0x80u : 0x00u) | 0x10u);
+	return (IntroSequenceCmd_FadeInResult){hi, f};
+}
+/* <<< factory IntroSequenceCmd_FadeIn */

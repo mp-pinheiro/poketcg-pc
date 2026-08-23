@@ -1,0 +1,9 @@
+{
+  "fn": "PrintReturnCardsToDeckDrawAgain",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 112, \"hl\": 52498, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"mismatches\": {\"hl\": [52498, 52499]}}\n",
+  "restored": "{\"fn\": \"PrintReturnCardsToDeckDrawAgain\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 112, \"hl\": 52498, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

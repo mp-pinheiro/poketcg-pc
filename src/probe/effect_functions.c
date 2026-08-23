@@ -2479,6 +2479,13 @@ static void adapt_CuboneRage_AIEffect(ProbeState *s)
 }
 /* <<< factory CuboneRage_AIEffect */
 
+/* >>> factory GravelerHardenEffect */
+static void adapt_GravelerHardenEffect(ProbeState *s)
+{
+	s->hl = GravelerHardenEffect();
+}
+/* <<< factory GravelerHardenEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -2786,5 +2793,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MagmarFlamethrower_AISelectEffect", adapt_MagmarFlamethrower_AISelectEffect },
 	{ "OmastarWaterGunEffect", adapt_OmastarWaterGunEffect },
 	{ "CuboneRage_AIEffect", adapt_CuboneRage_AIEffect },
+	{ "GravelerHardenEffect", adapt_GravelerHardenEffect },
 	{ NULL, NULL },
 };

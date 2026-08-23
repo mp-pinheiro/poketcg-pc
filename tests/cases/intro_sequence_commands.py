@@ -60,6 +60,15 @@ CASES["IntroSequenceEmptyFunc"] = [
 ]
 # <<< factory IntroSequenceEmptyFunc
 
+# >>> factory IntroSequenceCmd_FadeIn
+CONTRACT["IntroSequenceCmd_FadeIn"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["IntroSequenceCmd_FadeIn"] = [
+    {"wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    {"wram": {0xD631: b"\x00\x05"}, "read": {0xD631: 2}},
+    dict(POISON, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+]
+# <<< factory IntroSequenceCmd_FadeIn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -84,3 +93,6 @@ MUTATIONS["AdvanceIntroSequenceCmdPtrBy4"] = {"source_symbol": "AdvanceIntroSequ
 # >>> factory-mutation IntroSequenceEmptyFunc
 MUTATIONS["IntroSequenceEmptyFunc"] = {"source_symbol": "IntroSequenceEmptyFunc", "before": "\t(void)0;", "after": "\tgb_write8(0xC500, 1u);", "case_ids": ["IntroSequenceEmptyFunc-0", "IntroSequenceEmptyFunc-1"]}
 # <<< factory-mutation IntroSequenceEmptyFunc
+# >>> factory-mutation IntroSequenceCmd_FadeIn
+MUTATIONS["IntroSequenceCmd_FadeIn"] = {"source_symbol": "IntroSequenceCmd_FadeIn", "before": "\tuint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));", "after": "\tuint8_t hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 0u));", "case_ids": ["IntroSequenceCmd_FadeIn-0", "IntroSequenceCmd_FadeIn-1"]}
+# <<< factory-mutation IntroSequenceCmd_FadeIn

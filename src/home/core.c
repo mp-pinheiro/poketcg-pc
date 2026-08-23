@@ -497,6 +497,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #include "generated/hram.h"
+
+#include "home/menus.h"
+#include "home/serial.h"
+#define ReturnCardsToDeckAndDrawAgainText 0x006cu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3148,3 +3152,12 @@ void PrintNumberOfHandAndDeckCards(void)
 	PrintPlayerNumberOfHandAndDeckCards();
 }
 /* <<< factory PrintNumberOfHandAndDeckCards */
+
+/* >>> factory PrintReturnCardsToDeckDrawAgain */
+PrintReturnCardsToDeckDrawAgainResult PrintReturnCardsToDeckDrawAgain(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ReturnCardsToDeckAndDrawAgainText);
+	ExchangeRNGResult x = ExchangeRNG(0x12u, 0x11u, 0x1211u, 0xCD12u);
+	return (PrintReturnCardsToDeckDrawAgainResult){x.a, x.b, x.c, x.f, x.hl, x.de};
+}
+/* <<< factory PrintReturnCardsToDeckDrawAgain */

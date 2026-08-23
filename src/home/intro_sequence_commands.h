@@ -23,4 +23,8 @@ void AdvanceIntroSequenceCmdPtrBy4(void);
 /* >>> factory IntroSequenceEmptyFunc */
 void IntroSequenceEmptyFunc(void);
 /* <<< factory IntroSequenceEmptyFunc */
+/* >>> factory IntroSequenceCmd_FadeIn */
+typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmd_FadeInResult;
+IntroSequenceCmd_FadeInResult IntroSequenceCmd_FadeIn(void);
+/* <<< factory IntroSequenceCmd_FadeIn */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */
