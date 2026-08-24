@@ -137,6 +137,10 @@ wOverworldTransition = 0xD0B4
 wScriptNPC = 0xD3B6
 wLoadedNPCs = 0xD34A
 wScriptPointer = 0xD0C6
+
+wChallengeHallNPC = 0xD696
+wMatchStartTheme = 0xD113
+wScriptPointer = 0xD413
 # <<< factory-cases-statics
 
 
@@ -1145,6 +1149,14 @@ CASES["ScriptCommand_StartDuel"] = [
 ]
 # <<< factory ScriptCommand_StartDuel
 
+# >>> factory ScriptCommand_StartChallengeHallDuel
+CONTRACT["ScriptCommand_StartChallengeHallDuel"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_StartChallengeHallDuel"] = [
+    {"b": 0x01, "c": 0x02, "wram": {wChallengeHallNPC: b"\x00", wMatchStartTheme: b"\x00", wScriptPointer: b"\x00\xC0", 0xC003: b"\x00\x00"}, "expect_regs": {"a": 0xC0, "f": 0x80, "c": 0x04}, "expect_vram": {wMatchStartTheme: b"\x16"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, b=0x01, c=0x02, wram={wChallengeHallNPC: b"\x00", wMatchStartTheme: b"\x00", wScriptPointer: b"\x00\xC0", 0xC003: b"\x00\x00"}, expect_regs={"a": 0xC0, "f": 0x80, "c": 0x04}, expect_vram={wMatchStartTheme: b"\x16"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ScriptCommand_StartChallengeHallDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1686,3 +1698,11 @@ MUTATIONS["ScriptCommand_StartDuel"] = {
     "case_ids": ["ScriptCommand_StartDuel-0", "ScriptCommand_StartDuel-1"],
 }
 # <<< factory-mutation ScriptCommand_StartDuel
+# >>> factory-mutation ScriptCommand_StartChallengeHallDuel
+MUTATIONS["ScriptCommand_StartChallengeHallDuel"] = {
+    "source_symbol": "ScriptCommand_StartChallengeHallDuel",
+    "before": "\tgb_write8(wMatchStartTheme_ADDR, MUSIC_MATCH_START_2);",
+    "after": "\tgb_write8(wMatchStartTheme_ADDR, 0x00u);",
+    "case_ids": ["ScriptCommand_StartChallengeHallDuel-0", "ScriptCommand_StartChallengeHallDuel-1"],
+}
+# <<< factory-mutation ScriptCommand_StartChallengeHallDuel

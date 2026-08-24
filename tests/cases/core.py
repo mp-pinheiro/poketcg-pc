@@ -1618,6 +1618,10 @@ wSkipDuelistIsThinkingDelay = 0xCBF9
 
 hCurMenuItem = 0xFFB1
 V0_TILES1 = 0x8800
+
+hKeysPressed = 0xFF91
+hKeysReleased = 0xFF8E
+hCurMenuItem = 0xFFB1
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2714,6 +2718,18 @@ CASES["AIProcessHandTrainerCards"] = [
     dict(POISON, a=0xAA),
 ]
 # <<< factory AIProcessHandTrainerCards
+
+# >>> factory CardListFunction
+CONTRACT["CardListFunction"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CardListFunction"] = [
+    {"wram": {hKeysPressed: b"\x00", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0xA0}},
+    {"wram": {hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x00"}, "expect": {hCurMenuItem: b"\xFF"}, "expect_regs": {"a": 0xFF, "f": 0x10}},
+    {"wram": {hKeysPressed: b"\x01", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x01, "f": 0x10}},
+    {"wram": {hKeysPressed: b"\x04", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x04, "f": 0x10}},
+    {"wram": {hKeysPressed: b"\x08", hKeysReleased: b"\x00"}, "expect_regs": {"a": 0x08, "f": 0x10}},
+    dict(POISON, wram={hKeysPressed: b"\x02", hKeysReleased: b"\x00", hCurMenuItem: b"\x55"}, expect={hCurMenuItem: b"\xFF"}, expect_regs={"a": 0xFF, "f": 0x10}),
+]
+# <<< factory CardListFunction
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3894,3 +3910,11 @@ MUTATIONS["AIProcessHandTrainerCards"] = {
     "case_ids": ["AIProcessHandTrainerCards-0", "AIProcessHandTrainerCards-1"],
 }
 # <<< factory-mutation AIProcessHandTrainerCards
+# >>> factory-mutation CardListFunction
+MUTATIONS["CardListFunction"] = {
+    "source_symbol": "CardListFunction",
+    "before": "\tif ((a & PAD_B) != 0u) {\n\t\thCurMenuItem = MENU_CANCEL;\n\t\treturn (CardListFunctionResult){MENU_CANCEL, 0x10u};\n\t}",
+    "after": "\tif ((a & PAD_B) != 0u) {\n\t\thCurMenuItem = 0u;\n\t\treturn (CardListFunctionResult){MENU_CANCEL, 0x10u};\n\t}",
+    "case_ids": ["CardListFunction-1", "CardListFunction-5"],
+}
+# <<< factory-mutation CardListFunction

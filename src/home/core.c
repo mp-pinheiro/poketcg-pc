@@ -863,6 +863,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define V0_TILES1 0x8800u
 
 #include "home/trainer_cards.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#define PAD_SELECT 0x04u
+#define PAD_CTRL_PAD 0xF0u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4918,3 +4923,23 @@ AIProcessHandTrainerCardsWrapResult AIProcessHandTrainerCards(uint8_t a)
 	return (AIProcessHandTrainerCardsWrapResult){r.a, r.f};
 }
 /* <<< factory AIProcessHandTrainerCards */
+
+/* >>> factory CardListFunction */
+CardListFunctionResult CardListFunction(void)
+{
+	uint8_t a = hKeysPressed;
+	if ((a & PAD_B) != 0u) {
+		hCurMenuItem = MENU_CANCEL;
+		return (CardListFunctionResult){MENU_CANCEL, 0x10u};
+	}
+	a = (uint8_t)(a & (PAD_A | PAD_SELECT | PAD_START));
+	if (a != 0u)
+		return (CardListFunctionResult){a, 0x10u};
+	a = (uint8_t)(hKeysReleased & PAD_CTRL_PAD);
+	if (a != 0u) {
+		LoadSelectedCardGfx();
+		return (CardListFunctionResult){0u, 0x00u};
+	}
+	return (CardListFunctionResult){a, 0xA0u};
+}
+/* <<< factory CardListFunction */

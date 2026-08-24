@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_StartChallengeHallDuel",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_StartChallengeHallDuel\", \"registers\": {\"a\": 192, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49155\": \"0000\", \"53523\": \"16\", \"54291\": \"04c0\", \"54934\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_StartChallengeHallDuel\", \"mismatches\": {\"bus\": {\"address\": 53523, \"reference\": \"00001604c000\", \"native\": \"00000004c000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49155, 2], [53523, 1], [54291, 2], [54934, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_StartChallengeHallDuel\", \"registers\": {\"a\": 192, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"49155\": \"0000\", \"53523\": \"16\", \"54291\": \"04c0\", \"54934\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

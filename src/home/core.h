@@ -810,4 +810,8 @@ void LoadSelectedCardGfx(void);
 typedef struct { uint8_t a; uint8_t f; } AIProcessHandTrainerCardsWrapResult;
 AIProcessHandTrainerCardsWrapResult AIProcessHandTrainerCards(uint8_t a);
 /* <<< factory AIProcessHandTrainerCards */
+/* >>> factory CardListFunction */
+typedef struct { uint8_t a; uint8_t f; } CardListFunctionResult;
+CardListFunctionResult CardListFunction(void);
+/* <<< factory CardListFunction */
 #endif

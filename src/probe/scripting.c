@@ -966,6 +966,16 @@ static void adapt_ScriptCommand_StartDuel(ProbeState *s)
 }
 /* <<< factory ScriptCommand_StartDuel */
 
+/* >>> factory ScriptCommand_StartChallengeHallDuel */
+static void adapt_ScriptCommand_StartChallengeHallDuel(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_StartChallengeHallDuel(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_StartChallengeHallDuel */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1061,5 +1071,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetDialogNPC", adapt_ScriptCommand_SetDialogNPC },
 	{ "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot", adapt_ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot },
 	{ "ScriptCommand_StartDuel", adapt_ScriptCommand_StartDuel },
+	{ "ScriptCommand_StartChallengeHallDuel", adapt_ScriptCommand_StartChallengeHallDuel },
 	{ NULL, NULL },
 };

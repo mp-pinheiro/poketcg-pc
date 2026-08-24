@@ -223,6 +223,13 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define GAME_EVENT_DUEL 0x01u
 #define LOADED_NPC_ID 0x00u
 static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
+
+#include "home/scripting.h"
+#include "home/npc_data.h"
+#include "home/npc_core.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define MUSIC_MATCH_START_2 0x16u
 /* <<< factory statics */
 
 
@@ -1568,3 +1575,21 @@ IncreaseScriptPointerResult ScriptCommand_StartDuel(uint8_t b, uint8_t c)
 	return IncreaseScriptPointerBy4();
 }
 /* <<< factory ScriptCommand_StartDuel */
+
+/* >>> factory ScriptCommand_StartChallengeHallDuel */
+IncreaseScriptPointerResult ScriptCommand_StartChallengeHallDuel(uint8_t b, uint8_t c)
+{
+	(void)SetNPCDuelParams(b, c);
+	uint8_t npc = gb_read8(wChallengeHallNPC_ADDR);
+	(void)SetNPCDeckIDAndDuelTheme(npc);
+	gb_write8(wMatchStartTheme_ADDR, MUSIC_MATCH_START_2);
+	npc = gb_read8(wChallengeHallNPC_ADDR);
+	wNPCDuelist = npc;
+	wNPCDuelistCopy = npc;
+	wNPCDuelistDirection = Func_1c557(npc);
+	SetNPCOpponentNameAndPortrait(npc);
+	wGameEvent = GAME_EVENT_DUEL;
+	wOverworldTransition = (uint8_t)(wOverworldTransition | 0x40u);
+	return IncreaseScriptPointerBy4();
+}
+/* <<< factory ScriptCommand_StartChallengeHallDuel */
