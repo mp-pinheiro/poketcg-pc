@@ -45,3 +45,4 @@ saves/
 /tools/oracle/gbref/build/
 .factory/*
 !.factory/blocked.toml
+.wrangler/
