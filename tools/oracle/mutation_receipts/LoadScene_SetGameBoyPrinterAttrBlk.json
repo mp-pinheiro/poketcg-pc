@@ -1,0 +1,9 @@
+{
+  "fn": "LoadScene_SetGameBoyPrinterAttrBlk",
+  "case": "tests/cases/scenes.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadScene_SetGameBoyPrinterAttrBlk\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadScene_SetGameBoyPrinterAttrBlk\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"LoadScene_SetGameBoyPrinterAttrBlk\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

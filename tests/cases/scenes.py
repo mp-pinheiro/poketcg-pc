@@ -83,6 +83,14 @@ CASES["LoadScene_SetCardPopAttrBlk"] = [
 ]
 # <<< factory LoadScene_SetCardPopAttrBlk
 
+# >>> factory LoadScene_SetGameBoyPrinterAttrBlk
+CONTRACT["LoadScene_SetGameBoyPrinterAttrBlk"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LoadScene_SetGameBoyPrinterAttrBlk"] = [
+    {"wram": {}, "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={}, sram={0: {}}, expect_regs={"a": 0x00, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LoadScene_SetGameBoyPrinterAttrBlk
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -107,3 +115,11 @@ MUTATIONS["LoadScene_LoadCompressedSGBPacket"] = {
 # >>> factory-mutation LoadScene_SetCardPopAttrBlk
 MUTATIONS["LoadScene_SetCardPopAttrBlk"] = {"source_symbol": "LoadScene_SetCardPopAttrBlk", "before": "\treturn (LoadScene_SetCardPopAttrBlkResult){result.a, result.f, b, c, d, e, hl};", "after": "\treturn (LoadScene_SetCardPopAttrBlkResult){1u, result.f, b, c, d, e, hl};", "case_ids": ["LoadScene_SetCardPopAttrBlk-0", "LoadScene_SetCardPopAttrBlk-1"]}
 # <<< factory-mutation LoadScene_SetCardPopAttrBlk
+# >>> factory-mutation LoadScene_SetGameBoyPrinterAttrBlk
+MUTATIONS["LoadScene_SetGameBoyPrinterAttrBlk"] = {
+    "source_symbol": "LoadScene_SetGameBoyPrinterAttrBlk",
+    "before": "\tuint8_t result_f = result.f;",
+    "after": "\tuint8_t result_f = 0u;",
+    "case_ids": ["LoadScene_SetGameBoyPrinterAttrBlk-0", "LoadScene_SetGameBoyPrinterAttrBlk-1"],
+}
+# <<< factory-mutation LoadScene_SetGameBoyPrinterAttrBlk

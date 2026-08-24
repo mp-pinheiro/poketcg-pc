@@ -59,6 +59,10 @@ static const uint8_t booster_logo_oam[] = {
 #include "home/sgb.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/sgb.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -200,3 +204,30 @@ LoadScene_SetCardPopAttrBlkResult LoadScene_SetCardPopAttrBlk(uint8_t a, uint8_t
 	return (LoadScene_SetCardPopAttrBlkResult){result.a, result.f, b, c, d, e, hl};
 }
 /* <<< factory LoadScene_SetCardPopAttrBlk */
+
+/* >>> factory LoadScene_SetGameBoyPrinterAttrBlk */
+LoadScene_SetGameBoyPrinterAttrBlkResult LoadScene_SetGameBoyPrinterAttrBlk(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	gb_write8(wTempSGBPacket_ADDR, 0x21u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x01u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x07u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 3u), 0x2Fu);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 4u), 11u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 5u), 0u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 6u), 16u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 7u), 9u);
+	for (uint8_t i = 8u; i < 16u; i++)
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + i), 0u);
+	SendSGBResult result = SendSGB(a, f, b, c, d, e, wTempSGBPacket_ADDR);
+	uint8_t result_f = result.f;
+	return (LoadScene_SetGameBoyPrinterAttrBlkResult){
+		.a = result.a,
+		.f = result_f,
+		.b = b,
+		.c = c,
+		.d = d,
+		.e = e,
+		.hl = hl,
+	};
+}
+/* <<< factory LoadScene_SetGameBoyPrinterAttrBlk */
