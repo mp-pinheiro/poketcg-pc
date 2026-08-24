@@ -897,6 +897,14 @@ static void adapt_ScriptCommand_SetChallengeHallNPCCoords(ProbeState *s)
 }
 /* <<< factory ScriptCommand_SetChallengeHallNPCCoords */
 
+/* >>> factory LoadOverworld */
+static void adapt_LoadOverworld(ProbeState *s)
+{
+	(void)s;
+	LoadOverworld();
+}
+/* <<< factory LoadOverworld */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -985,5 +993,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "DetermineChallengeHallEvent", adapt_DetermineChallengeHallEvent },
 	{ "DetermineImakuniAndChallengeHall", adapt_DetermineImakuniAndChallengeHall },
 	{ "ScriptCommand_SetChallengeHallNPCCoords", adapt_ScriptCommand_SetChallengeHallNPCCoords },
+	{ "LoadOverworld", adapt_LoadOverworld },
 	{ NULL, NULL },
 };

@@ -182,6 +182,12 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #define SOUTH 0x02u
+
+#include "home/scripting.h"
+#define EVENT_MASON_LAB_STATE 0x3eu
+#define EVENT_PLAYER_ENTERED_CHALLENGE_CUP 0x59u
+#define EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN 0x46u
+#define Script_BeginGame 0x552eu
 /* <<< factory statics */
 
 
@@ -1394,3 +1400,26 @@ IncreaseScriptPointerResult ScriptCommand_SetChallengeHallNPCCoords(uint8_t b, u
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_SetChallengeHallNPCCoords */
+
+/* >>> factory LoadOverworld */
+void LoadOverworld(void)
+{
+	(void)ZeroOutEventValue(EVENT_PLAYER_ENTERED_CHALLENGE_CUP, 0u, 0u, 0u);
+	(void)ZeroOutEventValue(EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN, 0u, 0u, 0u);
+
+	if (GetEventValue(EVENT_CHALLENGE_CUP_1_STATE) == CHALLENGE_CUP_WON) {
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+	} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE) == CHALLENGE_CUP_WON) {
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_2_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+	} else if (GetEventValue(EVENT_CHALLENGE_CUP_3_STATE) == CHALLENGE_CUP_WON) {
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_3_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_2_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+		(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);
+	}
+
+	if (GetEventValue(EVENT_MASON_LAB_STATE) != 0u)
+		return;
+	SetNextScript(Script_BeginGame);
+}
+/* <<< factory LoadOverworld */

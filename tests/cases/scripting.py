@@ -123,6 +123,9 @@ wLoadNPCYPos_A = 0xD3AD
 wLoadNPCDirection_A = 0xD3AE
 wLoadedNPCs_A = 0xD34A
 wScriptPointer_A = 0xD413
+
+wEventVars = 0xD3D2
+wLoadedEventBits = 0xD3D1
 # <<< factory-cases-statics
 
 
@@ -1069,6 +1072,15 @@ CASES["ScriptCommand_SetChallengeHallNPCCoords"] = [
 ]
 # <<< factory ScriptCommand_SetChallengeHallNPCCoords
 
+# >>> factory LoadOverworld
+CONTRACT["LoadOverworld"] = {"compare": (), "preserve": ()}
+CASES["LoadOverworld"] = [
+    {"wram": {wEventVars: b"\x00" * 64}, "read": {wEventVars: 64}},
+    {"wram": {wEventVars: b"\x00" * 14 + b"\x40" + b"\x00" * 49}, "read": {wEventVars: 64}},
+    dict(POISON, wram={wEventVars: b"\x00" * 64}, read={wEventVars: 64}),
+]
+# <<< factory LoadOverworld
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1584,3 +1596,6 @@ MUTATIONS["DetermineImakuniAndChallengeHall"] = {"source_symbol": "DetermineImak
 # >>> factory-mutation ScriptCommand_SetChallengeHallNPCCoords
 MUTATIONS["ScriptCommand_SetChallengeHallNPCCoords"] = {"source_symbol": "ScriptCommand_SetChallengeHallNPCCoords", "before": "\twLoadNPCDirection = SOUTH;", "after": "\twLoadNPCDirection = (uint8_t)(SOUTH + 1u);", "case_ids": ["ScriptCommand_SetChallengeHallNPCCoords-0", "ScriptCommand_SetChallengeHallNPCCoords-1"]}
 # <<< factory-mutation ScriptCommand_SetChallengeHallNPCCoords
+# >>> factory-mutation LoadOverworld
+MUTATIONS["LoadOverworld"] = {"source_symbol": "LoadOverworld", "before": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)", "after": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, 0u);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)", "case_ids": ["LoadOverworld-1"]}
+# <<< factory-mutation LoadOverworld

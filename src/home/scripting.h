@@ -442,4 +442,7 @@ void DetermineImakuniAndChallengeHall(void);
 /* >>> factory ScriptCommand_SetChallengeHallNPCCoords */
 IncreaseScriptPointerResult ScriptCommand_SetChallengeHallNPCCoords(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_SetChallengeHallNPCCoords */
+/* >>> factory LoadOverworld */
+void LoadOverworld(void);
+/* <<< factory LoadOverworld */
 #endif
