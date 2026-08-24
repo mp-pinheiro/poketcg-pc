@@ -747,6 +747,28 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #define FeetText 0x0215u
 #define InchesText 0x0216u
+
+#include "home/core.h"
+#include "home/play_animation.h"
+#include "home/frames.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/script.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define DECK_SIZE_490 0x3Cu
+#define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK_490 0xBAu
+#define DUEL_ANIM_OPP_SHUFFLE_490 0x52u
+#define DUEL_ANIM_PLAYER_SHUFFLE_490 0x51u
+#define PLAYER_TURN_490 0xC2u
+#define SHUFFLE_DECK_490 0x09u
+#define FLAG_C_490 0x10u
+#define DeckHasXCardsText 0x0068u
+#define ShufflesTheDeckText 0x0063u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4459,3 +4481,54 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 	}
 }
 /* <<< factory PrintPokemonCardLength */
+
+/* >>> factory PlayDeckShuffleAnimation */
+uint8_t PlayDeckShuffleAnimation(void)
+{
+	if (gb_read8(wDuelDisplayedScreen_ADDR) != SHUFFLE_DECK_490) {
+		ZeroObjectPositionsAndToggleOAMCopy();
+		EmptyScreen();
+		DrawDuelistPortraitsAndNames();
+	}
+	gb_write8(wDuelDisplayedScreen_ADDR, SHUFFLE_DECK_490);
+
+	DuelistVarResult var = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK_490);
+	uint8_t remaining = (uint8_t)(DECK_SIZE_490 - var.a);
+	if (remaining < 2u) {
+		uint16_t hl = remaining;
+		LoadTxRam3(hl);
+		(void)DrawWideTextBox_PrintText(DeckHasXCardsText);
+		EnableLCD();
+		uint8_t counter = 60u;
+		do {
+			DoFrame();
+			counter = (uint8_t)(counter - 1u);
+		} while (counter != 0u);
+		return 0x01u;
+	}
+
+	(void)DrawWideTextBox_PrintText(ShufflesTheDeckText);
+	EnableLCD();
+	ResetAnimationQueue();
+
+	uint8_t e = DUEL_ANIM_PLAYER_SHUFFLE_490;
+	if (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)
+		e = DUEL_ANIM_OPP_SHUFFLE_490;
+
+	(void)PlayDuelAnimation(e);
+	(void)PlayDuelAnimation(e);
+	(void)PlayDuelAnimation(e);
+
+	for (;;) {
+		DoFrame();
+		CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(0u, 0u, 0u, 0u, 0u, 0u);
+		if ((skip.f & FLAG_C_490) != 0u)
+			break;
+		AnimationStatusResult anim = CheckAnyAnimationPlaying();
+		if ((anim.f & FLAG_C_490) == 0u)
+			break;
+	}
+	FinishQueuedAnimations();
+	return 0x01u;
+}
+/* <<< factory PlayDeckShuffleAnimation */

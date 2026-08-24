@@ -1626,6 +1626,13 @@ static void adapt_PrintPokemonCardLength(ProbeState *s)
 }
 /* <<< factory PrintPokemonCardLength */
 
+/* >>> factory PlayDeckShuffleAnimation */
+static void adapt_PlayDeckShuffleAnimation(ProbeState *s)
+{
+	s->a = PlayDeckShuffleAnimation();
+}
+/* <<< factory PlayDeckShuffleAnimation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1820,5 +1827,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPageOnLeftOrRightPressed", adapt_DisplayCardPageOnLeftOrRightPressed },
 	{ "PrintPlayAreaCardHeader", adapt_PrintPlayAreaCardHeader },
 	{ "PrintPokemonCardLength", adapt_PrintPokemonCardLength },
+	{ "PlayDeckShuffleAnimation", adapt_PlayDeckShuffleAnimation },
 	{ NULL, NULL },
 };

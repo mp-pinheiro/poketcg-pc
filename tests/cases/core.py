@@ -2292,6 +2292,20 @@ CASES["PrintPokemonCardLength"] = [
 ]
 # <<< factory PrintPokemonCardLength
 
+# >>> factory PlayDeckShuffleAnimation
+CONTRACT["PlayDeckShuffleAnimation"] = {"compare": ("a",), "preserve": ()}
+CASES["PlayDeckShuffleAnimation"] = [
+    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PlayDeckShuffleAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3390,3 +3404,6 @@ MUTATIONS["PrintPlayAreaCardHeader"] = {"source_symbol": "PrintPlayAreaCardHeade
 # >>> factory-mutation PrintPokemonCardLength
 MUTATIONS["PrintPokemonCardLength"] = {"source_symbol": "PrintPokemonCardLength", "before": "\t\trow = (uint8_t)(new_row + 1u);", "after": "\t\trow = new_row;", "case_ids": ["PrintPokemonCardLength-0", "PrintPokemonCardLength-1"]}
 # <<< factory-mutation PrintPokemonCardLength
+# >>> factory-mutation PlayDeckShuffleAnimation
+MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimation", "before": "} while (counter != 0u);\n\t\treturn 0x01u;", "after": "} while (counter != 0u);\n\t\treturn 0x02u;", "case_ids": ["PlayDeckShuffleAnimation-0"]}
+# <<< factory-mutation PlayDeckShuffleAnimation

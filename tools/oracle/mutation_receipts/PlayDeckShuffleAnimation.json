@@ -1,0 +1,9 @@
+{
+  "fn": "PlayDeckShuffleAnimation",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayDeckShuffleAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"50688\": \"00\", \"51906\": \"09\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayDeckShuffleAnimation\", \"mismatches\": {\"a\": [1, 2]}}\n",
+  "restored": "{\"fn\": \"PlayDeckShuffleAnimation\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3c\", \"50688\": \"00\", \"51906\": \"09\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n"
+}
