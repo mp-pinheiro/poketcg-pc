@@ -2095,6 +2095,17 @@ CASES["DrawOpponentSelectionScreen"] = [
 ]
 # <<< factory DrawOpponentSelectionScreen
 
+# >>> factory PracticeDuel_ReplaceKnockedOutPokemon
+CONTRACT["PracticeDuel_ReplaceKnockedOutPokemon"] = {"compare": (), "preserve": ()}
+CASES["PracticeDuel_ReplaceKnockedOutPokemon"] = [
+    {"wram": {0xFF9D: b"\x01"}},
+    {"wram": {0xFF9D: b"\x00", 0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"},
+     "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}},
+    dict(POISON, wram={0xFF9D: b"\x01"}),
+]
+# <<< factory PracticeDuel_ReplaceKnockedOutPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3132,3 +3143,6 @@ MUTATIONS["HasAlivePokemonInBench"] = {"source_symbol": "HasAlivePokemonInBench"
 # >>> factory-mutation DrawOpponentSelectionScreen
 MUTATIONS["DrawOpponentSelectionScreen"] = {"source_symbol": "DrawOpponentSelectionScreen", "before": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 5u, 16u, 0u, 0u, 0u);", "after": "WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 6u, 16u, 0u, 0u, 0u);", "case_ids": ["DrawOpponentSelectionScreen-0"]}
 # <<< factory-mutation DrawOpponentSelectionScreen
+# >>> factory-mutation PracticeDuel_ReplaceKnockedOutPokemon
+MUTATIONS["PracticeDuel_ReplaceKnockedOutPokemon"] = {"source_symbol": "PracticeDuel_ReplaceKnockedOutPokemon", "before": "PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);", "after": "PrintPracticeDuelDrMasonInstructions((uint16_t)(SelectStaryuPracticeDuelText + 1u));", "case_ids": ["PracticeDuel_ReplaceKnockedOutPokemon-1"]}
+# <<< factory-mutation PracticeDuel_ReplaceKnockedOutPokemon

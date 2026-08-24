@@ -1,0 +1,9 @@
+{
+  "fn": "PracticeDuel_ReplaceKnockedOutPokemon",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PracticeDuel_ReplaceKnockedOutPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"001000\", \"49903\": \"03\", \"50720\": \"70722061\", \"50976\": \"00442e4d\", \"51232\": \"25002122\", \"51488\": \"26222324\", \"52485\": \"3688\", \"52490\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PracticeDuel_ReplaceKnockedOutPokemon\", \"mismatches\": {\"bus\": {\"address\": 52485, \"reference\": \"26222324368801c200\", \"native\": \"26222324328801c200\", \"reference_size\": 25, \"native_size\": 25, \"spans\": [[49864, 3], [49903, 1], [50720, 4], [50976, 4], [51232, 4], [51488, 4], [52485, 2], [52490, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"PracticeDuel_ReplaceKnockedOutPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"001000\", \"49903\": \"03\", \"50720\": \"70722061\", \"50976\": \"00442e4d\", \"51232\": \"25002122\", \"51488\": \"26222324\", \"52485\": \"3688\", \"52490\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

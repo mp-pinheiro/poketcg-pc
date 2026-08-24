@@ -694,4 +694,7 @@ HasAlivePokemonInPlayAreaResult HasAlivePokemonInBench(void);
 /* >>> factory DrawOpponentSelectionScreen */
 void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory DrawOpponentSelectionScreen */
+/* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
+void PracticeDuel_ReplaceKnockedOutPokemon(void);
+/* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
 #endif

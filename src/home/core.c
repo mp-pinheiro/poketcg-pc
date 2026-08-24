@@ -634,6 +634,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 0x7408u
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define PLAY_AREA_BENCH_1_730 0x01u
+#define SelectStaryuPracticeDuelText 0x01D7u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3795,3 +3801,14 @@ void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 	WriteOneByteNumberInTxSymbol_PadSpace(prizes, 15u, 10u, 0u, 0u, 0u);
 }
 /* <<< factory DrawOpponentSelectionScreen */
+
+/* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
+void PracticeDuel_ReplaceKnockedOutPokemon(void)
+{
+	uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	if (loc == PLAY_AREA_BENCH_1_730)
+		return;
+	(void)HasAlivePokemonInBench();
+	PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);
+}
+/* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
