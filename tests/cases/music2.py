@@ -658,6 +658,14 @@ CASES["_SetupSound_2"] = [
 ]
 # <<< factory _SetupSound_2
 
+# >>> factory SoundTimerHandler_2
+CONTRACT["SoundTimerHandler_2"] = {"compare": (), "preserve": ()}
+CASES["SoundTimerHandler_2"] = [
+    {"wram": {0xDD80: b"\x01", 0xDD82: b"\x80"}, "read": {0xDD80: 1}},
+    dict(POISON, wram={0xDD80: b"\x01", 0xDD82: b"\x80"}, read={0xDD80: 1}),
+]
+# <<< factory SoundTimerHandler_2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -699,3 +707,11 @@ MUTATIONS["Music2_f4015_2"] = {"source_symbol": "Music2_f4015_2", "before": "\tM
 # >>> factory-mutation _SetupSound_2
 MUTATIONS["_SetupSound_2"] = {"source_symbol": "_SetupSound_2", "before": "\tMusic2_Init();", "after": "\tMusic2_EmptyFunc();", "case_ids": ["_SetupSound_2-0", "_SetupSound_2-1"]}
 # <<< factory-mutation _SetupSound_2
+# >>> factory-mutation SoundTimerHandler_2
+MUTATIONS["SoundTimerHandler_2"] = {
+    "source_symbol": "SoundTimerHandler_2",
+    "before": "\tMusic2_Update();",
+    "after": "\t(void)0;",
+    "case_ids": ["SoundTimerHandler_2-0", "SoundTimerHandler_2-1"],
+}
+# <<< factory-mutation SoundTimerHandler_2

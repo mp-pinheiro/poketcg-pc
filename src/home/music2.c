@@ -4,6 +4,9 @@
 #include "mem.h"
 #include "home/switch_rom.h"
 #include "home/sfx.h"
+/* >>> factory statics */
+#include "home/music2.h"
+/* <<< factory statics */
 
 #define MUSIC2_BANK 0x3Eu
 
@@ -1322,3 +1325,10 @@ void _SetupSound_2(void)
 	Music2_Init();
 }
 /* <<< factory _SetupSound_2 */
+
+/* >>> factory SoundTimerHandler_2 */
+void SoundTimerHandler_2(void)
+{
+	Music2_Update();
+}
+/* <<< factory SoundTimerHandler_2 */

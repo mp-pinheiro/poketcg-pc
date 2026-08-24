@@ -303,6 +303,13 @@ static void adapt__SetupSound_2(ProbeState *s)
 }
 /* <<< factory _SetupSound_2 */
 
+/* >>> factory SoundTimerHandler_2 */
+static void adapt_SoundTimerHandler_2(ProbeState *s)
+{
+	SoundTimerHandler_2();
+}
+/* <<< factory SoundTimerHandler_2 */
+
 const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_EmptyFunc",         adapt_Music2_EmptyFunc },
 	{ "Music2_f404e",             adapt_Music2_f404e },
@@ -377,5 +384,6 @@ const ProbeEntry probe_entries_music2[] = {
 	{ "_ResumeSong_2", adapt__ResumeSong_2 },
 	{ "Music2_f4015_2", adapt_Music2_f4015_2 },
 	{ "_SetupSound_2", adapt__SetupSound_2 },
+	{ "SoundTimerHandler_2", adapt_SoundTimerHandler_2 },
 	{ NULL, NULL },
 };

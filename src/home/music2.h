@@ -117,4 +117,7 @@ void Music2_f4015_2(void);
 /* >>> factory _SetupSound_2 */
 void _SetupSound_2(void);
 /* <<< factory _SetupSound_2 */
+/* >>> factory SoundTimerHandler_2 */
+void SoundTimerHandler_2(void);
+/* <<< factory SoundTimerHandler_2 */
 #endif /* POKETCG_MUSIC2_H */
