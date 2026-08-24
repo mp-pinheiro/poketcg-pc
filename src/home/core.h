@@ -760,4 +760,7 @@ uint8_t OppAction_6b30(void);
 typedef struct { uint16_t hl; } PrintPlayAreaCardInformationResult;
 PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void);
 /* <<< factory PrintPlayAreaCardInformation */
+/* >>> factory PrintPlayAreaCardInformationAndLocation */
+void PrintPlayAreaCardInformationAndLocation(void);
+/* <<< factory PrintPlayAreaCardInformationAndLocation */
 #endif

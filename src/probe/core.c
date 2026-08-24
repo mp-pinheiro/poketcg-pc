@@ -1648,6 +1648,14 @@ static void adapt_PrintPlayAreaCardInformation(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardInformation */
 
+/* >>> factory PrintPlayAreaCardInformationAndLocation */
+static void adapt_PrintPlayAreaCardInformationAndLocation(ProbeState *s)
+{
+	(void)s;
+	PrintPlayAreaCardInformationAndLocation();
+}
+/* <<< factory PrintPlayAreaCardInformationAndLocation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1845,5 +1853,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayDeckShuffleAnimation", adapt_PlayDeckShuffleAnimation },
 	{ "OppAction_6b30", adapt_OppAction_6b30 },
 	{ "PrintPlayAreaCardInformation", adapt_PrintPlayAreaCardInformation },
+	{ "PrintPlayAreaCardInformationAndLocation", adapt_PrintPlayAreaCardInformationAndLocation },
 	{ NULL, NULL },
 };

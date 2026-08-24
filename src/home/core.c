@@ -779,6 +779,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define KnockOutText 0x004eu
 #define SYM_E 0x0Bu
 #define SYM_HP 0x0Cu
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4592,3 +4596,15 @@ PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void)
 	return (PrintPlayAreaCardInformationResult){0u};
 }
 /* <<< factory PrintPlayAreaCardInformation */
+
+/* >>> factory PrintPlayAreaCardInformationAndLocation */
+void PrintPlayAreaCardInformationAndLocation(void)
+{
+	uint8_t slot = wCurPlayAreaSlot;
+	DuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));
+	if (r.a == 0xFFu)
+		return;
+	(void)PrintPlayAreaCardInformation();
+	PrintPlayAreaCardLocation();
+}
+/* <<< factory PrintPlayAreaCardInformationAndLocation */
