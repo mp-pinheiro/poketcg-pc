@@ -72,4 +72,8 @@ LoadOpeningSceneAndUpdateSGBBorderResult LoadOpeningSceneAndUpdateSGBBorder(uint
 /* >>> factory IntroSequenceCmd_LoadCharizardScene */
 LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadCharizardScene(void);
 /* <<< factory IntroSequenceCmd_LoadCharizardScene */
+/* >>> factory IntroSequenceCmd_LoadTitleScreenScene */
+typedef struct { uint8_t f; } IntroSequenceCmdLoadTitleScreenSceneResult;
+IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene(void);
+/* <<< factory IntroSequenceCmd_LoadTitleScreenScene */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

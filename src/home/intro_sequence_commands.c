@@ -81,6 +81,8 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/intro_sequence_commands.h"
 #define SCENE_CHARIZARD_INTRO 0x05u
+
+#define SCENE_TITLE_SCREEN 0x00u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -336,3 +338,12 @@ LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadCharizardScene(voi
 	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_CHARIZARD_INTRO, 6u, 3u);
 }
 /* <<< factory IntroSequenceCmd_LoadCharizardScene */
+
+/* >>> factory IntroSequenceCmd_LoadTitleScreenScene */
+IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene(void)
+{
+	LoadOpeningScene(SCENE_TITLE_SCREEN, 0u, 0u);
+	IntroSequenceEmptyFunc();
+	return (IntroSequenceCmdLoadTitleScreenSceneResult){0x10u};
+}
+/* <<< factory IntroSequenceCmd_LoadTitleScreenScene */
