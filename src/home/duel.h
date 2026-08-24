@@ -611,4 +611,7 @@ void DrawYourOrOppPlayArea_Icons(uint8_t a);
 /* >>> factory DrawInPlayArea_Icons */
 void DrawInPlayArea_Icons(uint16_t hl);
 /* <<< factory DrawInPlayArea_Icons */
+/* >>> factory DisplayUsePokemonPowerScreen_WaitForInput */
+uint8_t DisplayUsePokemonPowerScreen_WaitForInput(uint16_t hl);
+/* <<< factory DisplayUsePokemonPowerScreen_WaitForInput */
 #endif

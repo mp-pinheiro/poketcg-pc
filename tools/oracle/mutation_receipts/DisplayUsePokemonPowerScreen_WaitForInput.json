@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayUsePokemonPowerScreen_WaitForInput",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayUsePokemonPowerScreen_WaitForInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"50576\": \"00\", \"51892\": \"00\", \"52169\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayUsePokemonPowerScreen_WaitForInput\", \"mismatches\": {\"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"DisplayUsePokemonPowerScreen_WaitForInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"50576\": \"00\", \"51892\": \"00\", \"52169\": \"0000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

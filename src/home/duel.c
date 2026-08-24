@@ -445,6 +445,12 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2213,3 +2219,11 @@ void DrawInPlayArea_Icons(uint16_t hl)
 	DrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);
 }
 /* <<< factory DrawInPlayArea_Icons */
+
+/* >>> factory DisplayUsePokemonPowerScreen_WaitForInput */
+uint8_t DisplayUsePokemonPowerScreen_WaitForInput(uint16_t hl)
+{
+	DisplayUsePokemonPowerScreen();
+	return DrawWideTextBox_WaitForInput_ReturnCarry(hl);
+}
+/* <<< factory DisplayUsePokemonPowerScreen_WaitForInput */

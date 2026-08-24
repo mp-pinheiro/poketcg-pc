@@ -1119,6 +1119,24 @@ wCheckMenuPlayAreaWhichDuelist = 0xCE50
 wDefaultText = 0xC590
 
 wDefaultText = 0xC590
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+wLoadedCard1Atk1Name = 0xCC34
+wLoadedCard1Atk1Description = 0xCC36
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wConsole = 0xCAB4
+wDefaultText = 0xC590
+wLoadedCard1HP = 0xCC2C
+DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1278,6 +1296,34 @@ CASES["DrawInPlayArea_Icons"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DrawInPlayArea_Icons
+
+# >>> factory DisplayUsePokemonPowerScreen_WaitForInput
+CONTRACT["DisplayUsePokemonPowerScreen_WaitForInput"] = {"compare": ("f",), "preserve": ()}
+CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
+    {"hl": 0x0000, "keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
+     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
+              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+              wDefaultText: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, hl=0x0000, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
+         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
+               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+               wDefaultText: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DisplayUsePokemonPowerScreen_WaitForInput
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1439,3 +1485,6 @@ MUTATIONS["DrawYourOrOppPlayArea_Icons"] = {"source_symbol": "DrawYourOrOppPlayA
 # >>> factory-mutation DrawInPlayArea_Icons
 MUTATIONS["DrawInPlayArea_Icons"] = {"source_symbol": "DrawInPlayArea_Icons", "before": "\tpage = hWhoseTurn;\n\tuint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));\n\tDrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);", "after": "\tpage = hWhoseTurn;\n\tuint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));\n\tDrawPlayArea_IconWithValue(0xD8u, (uint8_t)(discard_count + 1u), &coords);", "case_ids": ["DrawInPlayArea_Icons-0", "DrawInPlayArea_Icons-1"]}
 # <<< factory-mutation DrawInPlayArea_Icons
+# >>> factory-mutation DisplayUsePokemonPowerScreen_WaitForInput
+MUTATIONS["DisplayUsePokemonPowerScreen_WaitForInput"] = {"source_symbol": "DisplayUsePokemonPowerScreen_WaitForInput", "before": "\treturn DrawWideTextBox_WaitForInput_ReturnCarry(hl);", "after": "\treturn 0u;", "case_ids": ["DisplayUsePokemonPowerScreen_WaitForInput-0", "DisplayUsePokemonPowerScreen_WaitForInput-1"]}
+# <<< factory-mutation DisplayUsePokemonPowerScreen_WaitForInput

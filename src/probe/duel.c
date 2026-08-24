@@ -776,6 +776,13 @@ static void adapt_DrawInPlayArea_Icons(ProbeState *s)
 }
 /* <<< factory DrawInPlayArea_Icons */
 
+/* >>> factory DisplayUsePokemonPowerScreen_WaitForInput */
+static void adapt_DisplayUsePokemonPowerScreen_WaitForInput(ProbeState *s)
+{
+	s->f = DisplayUsePokemonPowerScreen_WaitForInput(s->hl);
+}
+/* <<< factory DisplayUsePokemonPowerScreen_WaitForInput */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -871,5 +878,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "HandleCheckMenuInput_YourOrOppPlayArea", adapt_HandleCheckMenuInput_YourOrOppPlayArea },
 	{ "DrawYourOrOppPlayArea_Icons", adapt_DrawYourOrOppPlayArea_Icons },
 	{ "DrawInPlayArea_Icons", adapt_DrawInPlayArea_Icons },
+	{ "DisplayUsePokemonPowerScreen_WaitForInput", adapt_DisplayUsePokemonPowerScreen_WaitForInput },
 	{ NULL, NULL },
 };
