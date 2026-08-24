@@ -700,6 +700,15 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define B_PAD_LEFT 5u
 #define B_PAD_UP 6u
 #define B_PAD_DOWN 7u
+
+#include "home/core.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/card_color.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define COLORLESS 0x06u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4109,3 +4118,97 @@ Func_7364Result Func_7364(void)
 	}
 }
 /* <<< factory Func_7364 */
+
+/* >>> factory CheckEnergyNeededForAttackAfterDiscard */
+CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDiscard(void)
+{
+	DuelistVarResult duelist = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD));
+	uint8_t d = duelist.a;
+	uint8_t e = wSelectedAttack;
+	(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);
+
+	uint8_t name0 = gb_read8(wLoadedAttackName_ADDR);
+	uint8_t name1 = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
+	uint8_t a = (uint8_t)(name0 | name1);
+	if (a == 0u)
+		return (CheckEnergyNeededForAttackAfterDiscardResult){0u, 0u, d, 0u, 0x90u};
+	a = wLoadedAttackCategory;
+	if (a == POKEMON_POWER)
+		return (CheckEnergyNeededForAttackAfterDiscardResult){0u, 0u, d, 0u, 0x90u};
+
+	uint8_t discard_loc = hTempPlayAreaLocation_ff9d;
+	uint8_t discarded = AIPickEnergyCardToDiscard(discard_loc);
+	uint8_t deck_idx = LoadCardDataToBuffer1_FromDeckIndex(discarded);
+	if (deck_idx == DOUBLE_COLORLESS_ENERGY) {
+		uint16_t hl0 = (uint16_t)(wAttachedEnergies_ADDR + COLORLESS);
+		gb_write8(hl0, (uint8_t)(gb_read8(hl0) - 1u));
+		gb_write8(hl0, (uint8_t)(gb_read8(hl0) - 1u));
+		gb_write8(wTotalAttachedEnergies_ADDR, (uint8_t)(gb_read8(wTotalAttachedEnergies_ADDR) - 1u));
+		gb_write8(wTotalAttachedEnergies_ADDR, (uint8_t)(gb_read8(wTotalAttachedEnergies_ADDR) - 1u));
+	} else {
+		uint8_t idx = (uint8_t)(deck_idx - 1u);
+		uint16_t hl0 = (uint16_t)(wAttachedEnergies_ADDR + idx);
+		gb_write8(hl0, (uint8_t)(gb_read8(hl0) - 1u));
+		gb_write8(wTotalAttachedEnergies_ADDR, (uint8_t)(gb_read8(wTotalAttachedEnergies_ADDR) - 1u));
+	}
+
+	HandleEnergyBurn();
+
+	wTempLoadedAttackEnergyCost = 0u;
+	wTempLoadedAttackEnergyNeededAmount = 0u;
+	wTempLoadedAttackEnergyNeededType = 0u;
+
+	uint16_t hl = wAttachedEnergies_ADDR;
+	uint16_t de = wLoadedAttackEnergyCost_ADDR;
+	uint8_t b = 0u;
+	uint8_t c = (NUM_TYPES / 2u) - 1u;
+	do {
+		uint8_t byte0 = gb_read8(de);
+		a = (uint8_t)((byte0 >> 4) | (byte0 << 4));
+		CheckIfEnoughParticularAttachedEnergyResult r1 = CheckIfEnoughParticularAttachedEnergy(a, hl, b);
+		b = r1.b; hl = r1.hl;
+		a = gb_read8(de);
+		CheckIfEnoughParticularAttachedEnergyResult r2 = CheckIfEnoughParticularAttachedEnergy(a, hl, b);
+		b = r2.b; hl = r2.hl;
+		de = (uint16_t)(de + 1u);
+		c = (uint8_t)(c - 1u);
+	} while (c != 0u);
+
+	uint8_t byte1 = gb_read8(de);
+	uint8_t swapped = (uint8_t)((byte1 >> 4) | (byte1 << 4));
+	b = (uint8_t)(swapped & 0x0Fu);
+	a = wTempLoadedAttackEnergyCost;
+	hl = wTempLoadedAttackEnergyNeededAmount_ADDR;
+	a = (uint8_t)(a - gb_read8(hl));
+	c = a;
+	a = wTotalAttachedEnergies;
+	uint8_t sub1 = (uint8_t)(a - c);
+	uint8_t sub2 = (uint8_t)(sub1 - b);
+	a = sub2;
+	if (sub1 < b) {
+		uint8_t colorless_needed = (uint8_t)((uint8_t)(~a) + 1u);
+		uint8_t not_enough_f = (uint8_t)((colorless_needed == 0u ? 0x80u : 0u) | 0x10u);
+		c = colorless_needed;
+		b = wTempLoadedAttackEnergyNeededAmount;
+		a = wTempLoadedAttackEnergyNeededType;
+		a = ConvertColorToEnergyCardID(a);
+		e = a;
+		d = 0u;
+		return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, d, e, not_enough_f};
+	}
+
+	a = wTempLoadedAttackEnergyNeededAmount;
+	if (a == 0u)
+		return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, (uint8_t)(de >> 8), (uint8_t)de, 0x80u};
+
+	uint8_t colorless_needed2 = (uint8_t)((uint8_t)(~(uint8_t)0u) + 1u);
+	uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);
+	c = colorless_needed2;
+	b = wTempLoadedAttackEnergyNeededAmount;
+	a = wTempLoadedAttackEnergyNeededType;
+	a = ConvertColorToEnergyCardID(a);
+	e = a;
+	d = 0u;
+	return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, d, e, final_f};
+}
+/* <<< factory CheckEnergyNeededForAttackAfterDiscard */

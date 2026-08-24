@@ -1,0 +1,9 @@
+{
+  "fn": "CheckEnergyNeededForAttackAfterDiscard",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"mismatches\": {\"f\": [144, 48]}}\n",
+  "restored": "{\"fn\": \"CheckEnergyNeededForAttackAfterDiscard\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

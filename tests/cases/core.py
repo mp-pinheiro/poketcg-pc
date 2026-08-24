@@ -2178,6 +2178,16 @@ CASES["Func_7364"] = [
 ]
 # <<< factory Func_7364
 
+# >>> factory CheckEnergyNeededForAttackAfterDiscard
+CONTRACT["CheckEnergyNeededForAttackAfterDiscard"] = {"compare": ("f", "b", "c", "d", "e"), "preserve": ()}
+CASES["CheckEnergyNeededForAttackAfterDiscard"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x08", wSelectedAttack: b"\x00",
+             hTempPlayAreaLocation_ff9d: b"\x00"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x08", wSelectedAttack: b"\x00",
+             hTempPlayAreaLocation_ff9d: b"\x00"}),
+]
+# <<< factory CheckEnergyNeededForAttackAfterDiscard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3242,3 +3252,6 @@ MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededI
 # >>> factory-mutation Func_7364
 MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};", "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};", "case_ids": ["Func_7364-0", "Func_7364-1"]}
 # <<< factory-mutation Func_7364
+# >>> factory-mutation CheckEnergyNeededForAttackAfterDiscard
+MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {"source_symbol": "CheckEnergyNeededForAttackAfterDiscard", "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);", "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);", "case_ids": ["CheckEnergyNeededForAttackAfterDiscard-0"]}
+# <<< factory-mutation CheckEnergyNeededForAttackAfterDiscard

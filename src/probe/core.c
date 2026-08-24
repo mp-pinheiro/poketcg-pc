@@ -1560,6 +1560,18 @@ static void adapt_Func_7364(ProbeState *s)
 }
 /* <<< factory Func_7364 */
 
+/* >>> factory CheckEnergyNeededForAttackAfterDiscard */
+static void adapt_CheckEnergyNeededForAttackAfterDiscard(ProbeState *s)
+{
+	CheckEnergyNeededForAttackAfterDiscardResult r = CheckEnergyNeededForAttackAfterDiscard();
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory CheckEnergyNeededForAttackAfterDiscard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1746,5 +1758,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckAbleToRetreat", adapt_CheckAbleToRetreat },
 	{ "LookForEnergyNeededInHand", adapt_LookForEnergyNeededInHand },
 	{ "Func_7364", adapt_Func_7364 },
+	{ "CheckEnergyNeededForAttackAfterDiscard", adapt_CheckEnergyNeededForAttackAfterDiscard },
 	{ NULL, NULL },
 };

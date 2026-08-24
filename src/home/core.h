@@ -723,4 +723,8 @@ uint8_t LookForEnergyNeededInHand(void);
 typedef struct { uint8_t a; uint8_t f; } Func_7364Result;
 Func_7364Result Func_7364(void);
 /* <<< factory Func_7364 */
+/* >>> factory CheckEnergyNeededForAttackAfterDiscard */
+typedef struct { uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint8_t f; } CheckEnergyNeededForAttackAfterDiscardResult;
+CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDiscard(void);
+/* <<< factory CheckEnergyNeededForAttackAfterDiscard */
 #endif
