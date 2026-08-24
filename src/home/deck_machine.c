@@ -54,6 +54,13 @@
 #include "home/deck_machine.h"
 #include "home/deck_configuration.h"
 #define WMACHINEDECKPTRS_ADDR 0xD00Du
+
+#include "home/deck_machine.h"
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#define EmptyDeckNameText 0x025bu
+#define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR 0x74D4u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -327,3 +334,37 @@ DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b)
 	return r;
 }
 /* <<< factory CheckIfCanBuildSavedDeck */
+
+/* >>> factory PrintDeckMachineEntry */
+PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t e)
+{
+	uint8_t deck_index = a;
+	uint16_t hl = wDefaultText_ADDR;
+	uint8_t num = (uint8_t)(a + 1u);
+	ConvertToNumericalDigitsResult cd = ConvertToNumericalDigits(num, hl);
+	hl = cd.hl;
+	gb_write8(hl, 0x77u);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, TX_END);
+	InitTextPrinting(d, e);
+	hl = wDefaultText_ADDR;
+	ProcessText(&hl);
+
+	uint16_t table_addr = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)((uint8_t)(deck_index << 1)));
+	uint16_t ptr = (uint16_t)(gb_read8(table_addr) | (uint16_t)gb_read8((uint16_t)(table_addr + 1u)) << 8);
+
+	uint8_t d2 = (uint8_t)(d + 3u);
+	uint8_t af_result = AppendDeckName(ptr, d2, e);
+	if (af_result & 0x10u) {
+		InitTextPrinting(d2, e);
+		(void)ProcessTextFromID(EmptyDeckNameText);
+		uint8_t e2 = (uint8_t)(e + 1u);
+		InitTextPrinting(13u, e2);
+		uint16_t text_hl = PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR;
+		ProcessText(&text_hl);
+		return (PrintDeckMachineEntryResult){0u, 0x90u};
+	}
+
+	return (PrintDeckMachineEntryResult){0u, 0u};
+}
+/* <<< factory PrintDeckMachineEntry */

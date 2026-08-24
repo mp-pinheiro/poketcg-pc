@@ -61,4 +61,8 @@ void Func_b568(void);
 /* >>> factory CheckIfCanBuildSavedDeck */
 DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b);
 /* <<< factory CheckIfCanBuildSavedDeck */
+/* >>> factory PrintDeckMachineEntry */
+typedef struct { uint8_t a; uint8_t f; } PrintDeckMachineEntryResult;
+PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory PrintDeckMachineEntry */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

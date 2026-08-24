@@ -142,6 +142,14 @@ static void adapt_CheckIfCanBuildSavedDeck(ProbeState *s)
 }
 /* <<< factory CheckIfCanBuildSavedDeck */
 
+/* >>> factory PrintDeckMachineEntry */
+static void adapt_PrintDeckMachineEntry(ProbeState *s)
+{
+	PrintDeckMachineEntryResult r = PrintDeckMachineEntry(s->a, s->d, s->e);
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory PrintDeckMachineEntry */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -160,5 +168,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "PrintNumSavedDecks", adapt_PrintNumSavedDecks },
 	{ "Func_b568", adapt_Func_b568 },
 	{ "CheckIfCanBuildSavedDeck", adapt_CheckIfCanBuildSavedDeck },
+	{ "PrintDeckMachineEntry", adapt_PrintDeckMachineEntry },
 	{ NULL, NULL },
 };

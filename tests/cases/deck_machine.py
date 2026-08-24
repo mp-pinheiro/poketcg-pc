@@ -125,6 +125,9 @@ wTxRam2 = 0xCE3F
 hBankSRAM = 0xFF81
 wTempBankSRAM = 0xD0A4
 wMachineDeckPtrs = 0xD00D
+
+wMachineDeckPtrs = 0xD00D
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -222,6 +225,22 @@ CASES["CheckIfCanBuildSavedDeck"] = [
 ]
 # <<< factory CheckIfCanBuildSavedDeck
 
+# >>> factory PrintDeckMachineEntry
+CONTRACT["PrintDeckMachineEntry"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PrintDeckMachineEntry"] = [
+    {"a": 0x00, "d": 0x01, "e": 0x0E,
+     "wram": {wDefaultText: b"\x00" * 8, wMachineDeckPtrs: b"\x00\xA2"},
+     "ramg": False,
+     "sram": {0: {0xA200: b"\x00"}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, a=0x00, d=0x01, e=0x0E,
+         wram={wDefaultText: b"\xFF" * 8, wMachineDeckPtrs: b"\x00\xA2"},
+         ramg=False,
+         sram={0: {0xA200: b"\xFF"}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintDeckMachineEntry
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -292,3 +311,11 @@ MUTATIONS["CheckIfCanBuildSavedDeck"] = {
     "case_ids": ["CheckIfCanBuildSavedDeck-0", "CheckIfCanBuildSavedDeck-1"],
 }
 # <<< factory-mutation CheckIfCanBuildSavedDeck
+# >>> factory-mutation PrintDeckMachineEntry
+MUTATIONS["PrintDeckMachineEntry"] = {
+    "source_symbol": "PrintDeckMachineEntry",
+    "before": "if (af_result & 0x10u) {",
+    "after": "if (af_result & 0x20u) {",
+    "case_ids": ["PrintDeckMachineEntry-0", "PrintDeckMachineEntry-1"],
+}
+# <<< factory-mutation PrintDeckMachineEntry
