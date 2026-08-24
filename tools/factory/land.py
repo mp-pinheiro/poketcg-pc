@@ -325,8 +325,7 @@ def _land_batch(
         _run(["jj", "restore"], root, 120)
         if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
             raise LandError("working copy dirty after abandoning a failed batch")
-        if _revision(root, "main") != pre_batch_revision:
-            _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
+        _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
         if len(artifacts) > 1:
             middle = len(artifacts) // 2
             left, right = artifacts[:middle], artifacts[middle:]
