@@ -441,6 +441,10 @@ static const uint8_t kCursorTileData[16] = {
 #define DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
 #define PLAYER_ICON_COORDS 0x4635u
 #define OPPONENT_ICON_COORDS 0x463Bu
+
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2190,3 +2194,22 @@ void DrawYourOrOppPlayArea_Icons(uint8_t a)
 	DrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);
 }
 /* <<< factory DrawYourOrOppPlayArea_Icons */
+
+/* >>> factory DrawInPlayArea_Icons */
+void DrawInPlayArea_Icons(uint16_t hl)
+{
+	uint8_t page = hWhoseTurn;
+	uint8_t hand_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_HAND));
+	DrawPlayArea_HandTextResult r1 = DrawPlayArea_HandText(hand_count, 0u, hl);
+	uint16_t coords = r1.hl;
+
+	page = hWhoseTurn;
+	uint8_t not_in_deck = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK));
+	uint8_t deck_count = (uint8_t)(DECK_SIZE - not_in_deck);
+	DrawPlayArea_IconWithValue(0xD4u, deck_count, &coords);
+
+	page = hWhoseTurn;
+	uint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));
+	DrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);
+}
+/* <<< factory DrawInPlayArea_Icons */

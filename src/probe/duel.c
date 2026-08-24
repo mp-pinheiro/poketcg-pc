@@ -769,6 +769,13 @@ static void adapt_DrawYourOrOppPlayArea_Icons(ProbeState *s)
 }
 /* <<< factory DrawYourOrOppPlayArea_Icons */
 
+/* >>> factory DrawInPlayArea_Icons */
+static void adapt_DrawInPlayArea_Icons(ProbeState *s)
+{
+	DrawInPlayArea_Icons(s->hl);
+}
+/* <<< factory DrawInPlayArea_Icons */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -863,5 +870,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DisplayCheckMenuCursor_YourOrOppPlayArea", adapt_DisplayCheckMenuCursor_YourOrOppPlayArea },
 	{ "HandleCheckMenuInput_YourOrOppPlayArea", adapt_HandleCheckMenuInput_YourOrOppPlayArea },
 	{ "DrawYourOrOppPlayArea_Icons", adapt_DrawYourOrOppPlayArea_Icons },
+	{ "DrawInPlayArea_Icons", adapt_DrawInPlayArea_Icons },
 	{ NULL, NULL },
 };

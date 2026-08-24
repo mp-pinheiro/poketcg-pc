@@ -608,4 +608,7 @@ TempListResult HandleCheckMenuInput_YourOrOppPlayArea(void);
 /* >>> factory DrawYourOrOppPlayArea_Icons */
 void DrawYourOrOppPlayArea_Icons(uint8_t a);
 /* <<< factory DrawYourOrOppPlayArea_Icons */
+/* >>> factory DrawInPlayArea_Icons */
+void DrawInPlayArea_Icons(uint16_t hl);
+/* <<< factory DrawInPlayArea_Icons */
 #endif

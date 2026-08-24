@@ -1117,6 +1117,8 @@ wCheckMenuCursorBlinkCounter = 0xCEA3
 
 wCheckMenuPlayAreaWhichDuelist = 0xCE50
 wDefaultText = 0xC590
+
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1264,6 +1266,18 @@ CASES["DrawYourOrOppPlayArea_Icons"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DrawYourOrOppPlayArea_Icons
+
+# >>> factory DrawInPlayArea_Icons
+CONTRACT["DrawInPlayArea_Icons"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawInPlayArea_Icons"] = [
+    {"hl": 0xC500, "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+              0xC500: b"\x0F\x02\x0F\x04\x0F\x06"}, "read": {wDefaultText: 7},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, hl=0xC500, wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+              0xC500: b"\x0F\x02\x0F\x04\x0F\x06"}, read={wDefaultText: 7},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DrawInPlayArea_Icons
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1422,3 +1436,6 @@ MUTATIONS["HandleCheckMenuInput_YourOrOppPlayArea"] = {
 # >>> factory-mutation DrawYourOrOppPlayArea_Icons
 MUTATIONS["DrawYourOrOppPlayArea_Icons"] = {"source_symbol": "DrawYourOrOppPlayArea_Icons", "before": "\tDrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);", "after": "\tDrawPlayArea_IconWithValue(0xD8u, (uint8_t)(discard_count + 1u), &coords);", "case_ids": ["DrawYourOrOppPlayArea_Icons-0", "DrawYourOrOppPlayArea_Icons-1"]}
 # <<< factory-mutation DrawYourOrOppPlayArea_Icons
+# >>> factory-mutation DrawInPlayArea_Icons
+MUTATIONS["DrawInPlayArea_Icons"] = {"source_symbol": "DrawInPlayArea_Icons", "before": "\tpage = hWhoseTurn;\n\tuint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));\n\tDrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);", "after": "\tpage = hWhoseTurn;\n\tuint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));\n\tDrawPlayArea_IconWithValue(0xD8u, (uint8_t)(discard_count + 1u), &coords);", "case_ids": ["DrawInPlayArea_Icons-0", "DrawInPlayArea_Icons-1"]}
+# <<< factory-mutation DrawInPlayArea_Icons
