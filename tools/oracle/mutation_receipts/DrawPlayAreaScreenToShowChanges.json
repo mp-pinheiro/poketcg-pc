@@ -1,0 +1,9 @@
+{
+  "fn": "DrawPlayAreaScreenToShowChanges",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawPlayAreaScreenToShowChanges\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50051\": \"00\", \"50057\": \"00\", \"50091\": \"00\", \"50093\": \"00\", \"50176\": \"08\", \"52178\": \"00\", \"65431\": \"c2\", \"65437\": \"12\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawPlayAreaScreenToShowChanges\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"000800c212\", \"native\": \"000800c213\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 1], [50051, 1], [50057, 1], [50091, 1], [50093, 1], [50176, 1], [52178, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawPlayAreaScreenToShowChanges\", \"registers\": {\"a\": 18, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50051\": \"00\", \"50057\": \"00\", \"50091\": \"00\", \"50093\": \"00\", \"50176\": \"08\", \"52178\": \"00\", \"65431\": \"c2\", \"65437\": \"12\"}}, \"status\": \"PASS\"}\n"
+}

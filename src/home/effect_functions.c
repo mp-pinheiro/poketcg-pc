@@ -434,6 +434,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/serial.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5069,3 +5072,13 @@ ShuffleCardsInDeckResult ShuffleCardsInDeck(uint8_t b, uint8_t c, uint16_t de, u
 	return (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};
 }
 /* <<< factory ShuffleCardsInDeck */
+
+/* >>> factory DrawPlayAreaScreenToShowChanges */
+void DrawPlayAreaScreenToShowChanges(uint8_t a)
+{
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);
+	SetupPlayAreaScreen();
+	(void)PrintPlayAreaCardList_EnableLCD();
+	InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+}
+/* <<< factory DrawPlayAreaScreenToShowChanges */

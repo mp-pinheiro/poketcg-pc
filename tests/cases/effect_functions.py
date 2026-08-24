@@ -3342,6 +3342,28 @@ CASES["ShuffleCardsInDeck"] = [
 ]
 # <<< factory ShuffleCardsInDeck
 
+# >>> factory DrawPlayAreaScreenToShowChanges
+CONTRACT["DrawPlayAreaScreenToShowChanges"] = {"compare": (), "preserve": ()}
+CASES["DrawPlayAreaScreenToShowChanges"] = [
+    {"a": 0x12, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "hram": {0xFF9D: b"\x00"},
+     "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08",
+              0xC2BB + 0xC8: b"\x00", 0xC2BB + 0xCE: b"\x00",
+              0xC2BB + 0xF0: b"\x00", 0xC2BB + 0xF2: b"\x00",
+              0xCBD2: b"\x00"},
+     "expect": {0xFF9D: b"\x12"}, "read": {0xFF9D: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, a=0xAA, keys=0x01, instruction_budget=20000000, cycle_budget=80000000,
+         hram={0xFF9D: b"\x00"},
+         wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08",
+               0xC2BB + 0xC8: b"\x00", 0xC2BB + 0xCE: b"\x00",
+               0xC2BB + 0xF0: b"\x00", 0xC2BB + 0xF2: b"\x00",
+               0xCBD2: b"\x00"},
+         expect={0xFF9D: b"\xAA"}, read={0xFF9D: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DrawPlayAreaScreenToShowChanges
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5342,3 +5364,11 @@ MUTATIONS["Func_2c0a8"] = {"source_symbol": "Func_2c0a8", "before": "\thTemp_ffa
 # >>> factory-mutation ShuffleCardsInDeck
 MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\t(void)PlayDeckShuffleAnimation();", "after": "", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
 # <<< factory-mutation ShuffleCardsInDeck
+# >>> factory-mutation DrawPlayAreaScreenToShowChanges
+MUTATIONS["DrawPlayAreaScreenToShowChanges"] = {
+    "source_symbol": "DrawPlayAreaScreenToShowChanges",
+    "before": "\tgb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);",
+    "after": "\tgb_write8(hTempPlayAreaLocation_ff9d_ADDR, (uint8_t)(a + 1u));",
+    "case_ids": ["DrawPlayAreaScreenToShowChanges-0", "DrawPlayAreaScreenToShowChanges-1"],
+}
+# <<< factory-mutation DrawPlayAreaScreenToShowChanges

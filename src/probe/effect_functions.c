@@ -2922,6 +2922,13 @@ static void adapt_ShuffleCardsInDeck(ProbeState *s)
 }
 /* <<< factory ShuffleCardsInDeck */
 
+/* >>> factory DrawPlayAreaScreenToShowChanges */
+static void adapt_DrawPlayAreaScreenToShowChanges(ProbeState *s)
+{
+	DrawPlayAreaScreenToShowChanges(s->a);
+}
+/* <<< factory DrawPlayAreaScreenToShowChanges */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3284,5 +3291,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpearowMirrorMove_AfterDamage", adapt_SpearowMirrorMove_AfterDamage },
 	{ "Func_2c0a8", adapt_Func_2c0a8 },
 	{ "ShuffleCardsInDeck", adapt_ShuffleCardsInDeck },
+	{ "DrawPlayAreaScreenToShowChanges", adapt_DrawPlayAreaScreenToShowChanges },
 	{ NULL, NULL },
 };
