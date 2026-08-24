@@ -12,6 +12,11 @@
 
 #include "home/grass_club_entrance.h"
 #define PsychicClubLobbyAfterDuelTable 0x696au
+
+#include "home/scripting.h"
+#include "mem.h"
+#define EVENT_MEDAL_COUNT_540 0x2Eu
+#define EVENT_RONALD_ENCOUNTER_540 0x32u
 /* <<< factory statics */
 
 /* >>> factory PsychicClubLobbyLoadMap */
@@ -34,3 +39,20 @@ PsychicClubLobbyAfterDuelResult PsychicClubLobbyAfterDuel(void)
 	return (PsychicClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory PsychicClubLobbyAfterDuel */
+
+/* >>> factory _Preload_Ronald1InPsychicClubLobby */
+_Preload_Ronald1InPsychicClubLobbyResult _Preload_Ronald1InPsychicClubLobby(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)TryGiveMedalPCPacks(b, c, d, e, hl);
+	uint8_t medal_count = GetEventValue(EVENT_MEDAL_COUNT_540);
+	if (medal_count != 4u) {
+		uint8_t f = (medal_count == 0u) ? 0x80u : 0x00u;
+		return (_Preload_Ronald1InPsychicClubLobbyResult){medal_count, f};
+	}
+	uint8_t encounter = GetEventValue(EVENT_RONALD_ENCOUNTER_540);
+	if (encounter != 0u) {
+		return (_Preload_Ronald1InPsychicClubLobbyResult){encounter, 0x00u};
+	}
+	return (_Preload_Ronald1InPsychicClubLobbyResult){0u, 0x90u};
+}
+/* <<< factory _Preload_Ronald1InPsychicClubLobby */

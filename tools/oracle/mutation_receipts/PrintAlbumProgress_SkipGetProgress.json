@@ -1,0 +1,9 @@
+{
+  "fn": "PrintAlbumProgress_SkipGetProgress",
+  "case": "tests/cases/print_stats.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 10, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"000025\", \"38916\": \"002120\"}}, \"wram\": {\"54452\": \"002120\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintAlbumProgress_SkipGetProgress\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 5, \"e\": 10, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"000025\", \"38916\": \"002120\"}}, \"wram\": {\"54452\": \"002120\"}}, \"status\": \"PASS\"}\n"
+}

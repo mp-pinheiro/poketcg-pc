@@ -17,7 +17,17 @@ static void adapt_PsychicClubAfterDuel(ProbeState *s)
 }
 /* <<< factory PsychicClubAfterDuel */
 
+/* >>> factory Preload_Murray2 */
+static void adapt_Preload_Murray2(ProbeState *s)
+{
+	Preload_Murray2Result r = Preload_Murray2(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Preload_Murray2 */
+
 const ProbeEntry probe_entries_psychic_club[] = {
 	{ "PsychicClubAfterDuel", adapt_PsychicClubAfterDuel },
+	{ "Preload_Murray2", adapt_Preload_Murray2 },
 	{ NULL, NULL },
 };

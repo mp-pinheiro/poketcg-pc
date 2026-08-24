@@ -42,6 +42,14 @@ CASES["ConvertWordToNumericalDigits"] = [
 ]
 # <<< factory ConvertWordToNumericalDigits
 
+# >>> factory PrintAlbumProgress_SkipGetProgress
+CONTRACT["PrintAlbumProgress_SkipGetProgress"] = {"compare": (), "preserve": ()}
+CASES["PrintAlbumProgress_SkipGetProgress"] = [
+    {"b": 0, "c": 0, "d": 5, "e": 10, "read": {0xD4B4: 3}, "vread": {0: {0x9800: 3, 0x9804: 3}}},
+    dict(POISON, read={0xD4B4: 3}, vread={0: {0x9800: 3}}),
+]
+# <<< factory PrintAlbumProgress_SkipGetProgress
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +68,6 @@ MUTATIONS["FlashReceivedMedal"] = {"source_symbol": "FlashReceivedMedal", "befor
 # >>> factory-mutation ConvertWordToNumericalDigits
 MUTATIONS["ConvertWordToNumericalDigits"] = {"source_symbol": "ConvertWordToNumericalDigits", "before": "uint8_t a = (uint8_t)((uint8_t)hl + SYM_0);", "after": "uint8_t a = (uint8_t)((uint8_t)hl + SYM_0 + 1u);", "case_ids": ["ConvertWordToNumericalDigits-0", "ConvertWordToNumericalDigits-1"]}
 # <<< factory-mutation ConvertWordToNumericalDigits
+# >>> factory-mutation PrintAlbumProgress_SkipGetProgress
+MUTATIONS["PrintAlbumProgress_SkipGetProgress"] = {"source_symbol": "PrintAlbumProgress_SkipGetProgress", "before": "uint8_t b2 = (uint8_t)(b + 4u);", "after": "uint8_t b2 = (uint8_t)(b + 5u);", "case_ids": ["PrintAlbumProgress_SkipGetProgress-0"]}
+# <<< factory-mutation PrintAlbumProgress_SkipGetProgress

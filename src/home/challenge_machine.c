@@ -89,6 +89,13 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "mem.h"
 #define CHALLENGE_MACHINE_DATA_BANK_500 0x04u
 #define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 0x7707u
+
+#include "home/empty_screen.h"
+#include "home/print_stats.h"
+#include "home/switch_sram.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -396,3 +403,37 @@ ChallengeMachine_GetOpponentNameAndDeckResult ChallengeMachine_GetOpponentNameAn
 	return (ChallengeMachine_GetOpponentNameAndDeckResult){r.a, r.f, r.b, r.c, d, e, r.hl};
 }
 /* <<< factory ChallengeMachine_GetOpponentNameAndDeck */
+
+/* >>> factory ChallengeMachine_PrintScores */
+void ChallengeMachine_PrintScores(uint16_t hl)
+{
+	for (;;) {
+		EnableSRAM();
+		uint8_t e = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint8_t d = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+		if (de == 0u)
+			break;
+		uint8_t b = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint8_t c = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		uint16_t saved_hl = hl;
+
+		uint8_t lo = gb_read8(de);
+		de = (uint16_t)(de + 1u);
+		uint8_t hi = gb_read8(de);
+		uint16_t word = (uint16_t)(((uint16_t)hi << 8) | lo);
+		(void)ConvertWordToNumericalDigits(word);
+
+		uint16_t dest = BCCoordToBGMap0Address(b, c);
+		uint16_t src = wDecimalChars_ADDR;
+		SafeCopyDataHLtoDE(&src, &dest, 3u);
+
+		hl = saved_hl;
+	}
+	DisableSRAM();
+}
+/* <<< factory ChallengeMachine_PrintScores */

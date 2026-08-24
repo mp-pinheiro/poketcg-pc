@@ -27,9 +27,17 @@ static void adapt_ConvertWordToNumericalDigits(ProbeState *s)
 }
 /* <<< factory ConvertWordToNumericalDigits */
 
+/* >>> factory PrintAlbumProgress_SkipGetProgress */
+static void adapt_PrintAlbumProgress_SkipGetProgress(ProbeState *s)
+{
+	PrintAlbumProgress_SkipGetProgress(s->b, s->c, s->d, s->e);
+}
+/* <<< factory PrintAlbumProgress_SkipGetProgress */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
 	{ "ConvertWordToNumericalDigits", adapt_ConvertWordToNumericalDigits },
+	{ "PrintAlbumProgress_SkipGetProgress", adapt_PrintAlbumProgress_SkipGetProgress },
 	{ NULL, NULL },
 };

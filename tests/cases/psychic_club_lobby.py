@@ -46,6 +46,14 @@ CASES["PsychicClubLobbyAfterDuel"] = [
 ]
 # <<< factory PsychicClubLobbyAfterDuel
 
+# >>> factory _Preload_Ronald1InPsychicClubLobby
+CONTRACT["_Preload_Ronald1InPsychicClubLobby"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["_Preload_Ronald1InPsychicClubLobby"] = [
+    {"wram": {0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}},
+    dict(POISON, wram={0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}),
+]
+# <<< factory _Preload_Ronald1InPsychicClubLobby
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -56,3 +64,6 @@ MUTATIONS["PsychicClubLobbyLoadMap"] = {"source_symbol": "PsychicClubLobbyLoadMa
 # >>> factory-mutation PsychicClubLobbyAfterDuel
 MUTATIONS["PsychicClubLobbyAfterDuel"] = {"source_symbol": "PsychicClubLobbyAfterDuel", "before": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PsychicClubLobbyAfterDuelTable);", "after": "	FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(PsychicClubLobbyAfterDuelTable + 1u));", "case_ids": ["PsychicClubLobbyAfterDuel-0"]}
 # <<< factory-mutation PsychicClubLobbyAfterDuel
+# >>> factory-mutation _Preload_Ronald1InPsychicClubLobby
+MUTATIONS["_Preload_Ronald1InPsychicClubLobby"] = {"source_symbol": "_Preload_Ronald1InPsychicClubLobby", "before": "uint8_t f = (medal_count == 0u) ? 0x80u : 0x00u;", "after": "uint8_t f = (medal_count == 0u) ? 0x00u : 0x80u;", "case_ids": ["_Preload_Ronald1InPsychicClubLobby-0"]}
+# <<< factory-mutation _Preload_Ronald1InPsychicClubLobby

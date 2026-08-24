@@ -22,6 +22,12 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "mem.h"
 #define SYM_0 0x20u
 #define SYM_SPACE 0x00u
+
+#include "home/print_stats.h"
+#include "home/empty_screen.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
@@ -88,3 +94,19 @@ ConvertWordToNumericalDigitsResult ConvertWordToNumericalDigits(uint16_t hl)
 	return (ConvertWordToNumericalDigitsResult){a, f, 0xFFu, c, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
 /* <<< factory ConvertWordToNumericalDigits */
+
+/* >>> factory PrintAlbumProgress_SkipGetProgress */
+void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	(void)ConvertWordToNumericalDigits((uint16_t)d);
+	uint16_t dest1 = BCCoordToBGMap0Address(b, c);
+	uint16_t src1 = wDecimalChars_ADDR;
+	SafeCopyDataHLtoDE(&src1, &dest1, 3u);
+
+	(void)ConvertWordToNumericalDigits((uint16_t)e);
+	uint8_t b2 = (uint8_t)(b + 4u);
+	uint16_t dest2 = BCCoordToBGMap0Address(b2, c);
+	uint16_t src2 = wDecimalChars_ADDR;
+	SafeCopyDataHLtoDE(&src2, &dest2, 3u);
+}
+/* <<< factory PrintAlbumProgress_SkipGetProgress */
