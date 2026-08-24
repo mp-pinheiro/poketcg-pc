@@ -64,6 +64,20 @@ CASES["HandleAICurse"] = [
 ]
 # <<< factory HandleAICurse
 
+# >>> factory-cases-statics
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory HandleAIDamageSwap
+CONTRACT["HandleAIDamageSwap"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIDamageSwap"] = [
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEF: b"\x01"}),
+    {"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xEF: b"\x01"}},
+]
+# <<< factory HandleAIDamageSwap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -95,3 +109,11 @@ MUTATIONS["HandleAICurse"] = {
     "case_ids": ["HandleAICurse-0"],
 }
 # <<< factory-mutation HandleAICurse
+# >>> factory-mutation HandleAIDamageSwap
+MUTATIONS["HandleAIDamageSwap"] = {
+    "source_symbol": "HandleAIDamageSwap",
+    "before": "\t\treturn (HandleAIDamageSwapResult){0u, (uint8_t)(0xc0u | (f & 0x10u))};",
+    "after": "\t\treturn (HandleAIDamageSwapResult){1u, (uint8_t)(0xc0u | (f & 0x10u))};",
+    "case_ids": ["HandleAIDamageSwap-0", "HandleAIDamageSwap-1"],
+}
+# <<< factory-mutation HandleAIDamageSwap

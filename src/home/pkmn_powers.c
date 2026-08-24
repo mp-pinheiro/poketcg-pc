@@ -70,6 +70,23 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 
 #define DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA 0xefu
 #define PLAY_AREA_BENCH_1 0x01u
+
+#include "home/core.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ABRA 0x8eu
+#define ALAKAZAM 0x90u
+#define CHANSEY 0xb8u
+#define KADABRA 0x8fu
+#define KANGASKHAN 0xb9u
+#define MR_MIME 0x9bu
+#define MUK 0x27u
+#define SNORLAX 0xbeu
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -282,3 +299,31 @@ HandleAICurseResult HandleAICurse(uint8_t c)
 	return (HandleAICurseResult){e, f};
 }
 /* <<< factory HandleAICurse */
+
+/* >>> factory HandleAIDamageSwap */
+HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t bench_count = (uint8_t)(count.a - 1u);
+	if (bench_count == 0u)
+		return (HandleAIDamageSwapResult){0u, (uint8_t)(0xc0u | (f & 0x10u))};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAIDamageSwapResult){0u, 0x10u};
+	PkmnPowerCountResult alakazam = CountTurnDuelistPokemonWithActivePkmnPower(ALAKAZAM);
+	if (!(alakazam.f & 0x10u))
+		return (HandleAIDamageSwapResult){0u, 0x00u};
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAIDamageSwapResult){0u, 0x10u};
+	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(arena_index);
+	if (arena_id != ALAKAZAM && arena_id != KADABRA && arena_id != ABRA && arena_id != MR_MIME) {
+		uint8_t half_borrow = (uint8_t)((arena_id & 0x0fu) < (MR_MIME & 0x0fu));
+		uint8_t borrow = (uint8_t)(arena_id < MR_MIME);
+		return (HandleAIDamageSwapResult){arena_id, (uint8_t)(0x40u | (half_borrow << 5) | (borrow << 4))};
+	}
+	return (HandleAIDamageSwapResult){0u, 0x00u};
+}
+/* <<< factory HandleAIDamageSwap */

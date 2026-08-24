@@ -19,4 +19,8 @@ HandleAIStrangeBehaviorResult HandleAIStrangeBehavior(uint8_t c);
 typedef struct { uint8_t a; uint8_t f; } HandleAICurseResult;
 HandleAICurseResult HandleAICurse(uint8_t c);
 /* <<< factory HandleAICurse */
+/* >>> factory HandleAIDamageSwap */
+typedef struct { uint8_t a; uint8_t f; } HandleAIDamageSwapResult;
+HandleAIDamageSwapResult HandleAIDamageSwap(uint8_t f);
+/* <<< factory HandleAIDamageSwap */
 #endif /* POKETCG_HOME_PKMN_POWERS_H */
