@@ -1,0 +1,9 @@
+{
+  "fn": "MirrorMove_AfterDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MirrorMove_AfterDamage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MirrorMove_AfterDamage\", \"mismatches\": {\"a\": [1, 0], \"hl\": [0, 247]}}\n",
+  "restored": "{\"fn\": \"MirrorMove_AfterDamage\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

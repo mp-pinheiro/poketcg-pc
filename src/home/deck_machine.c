@@ -50,6 +50,10 @@
 #define TX_END 0x00u
 #define TX_SYMBOL 0x05u
 #define SYM_SLASH 0x2Eu
+
+#include "home/deck_machine.h"
+#include "home/deck_configuration.h"
+#define WMACHINEDECKPTRS_ADDR 0xD00Du
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -308,3 +312,18 @@ void Func_b568(void)
 	ProcessText(&text_hl);
 }
 /* <<< factory Func_b568 */
+
+/* >>> factory CheckIfCanBuildSavedDeck */
+DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b)
+{
+	SafelySwitchToSRAM0();
+	CreateCardCollectionListWithDeckCards(a);
+	SafelySwitchToTempSRAMBank();
+	uint8_t c = (uint8_t)(b << 1);
+	uint16_t hl = (uint16_t)(WMACHINEDECKPTRS_ADDR + c);
+	uint16_t ptr = (uint16_t)(gb_read8(hl) | (uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8);
+	ptr = (uint16_t)(ptr + DECK_NAME_SIZE);
+	DeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&ptr);
+	return r;
+}
+/* <<< factory CheckIfCanBuildSavedDeck */

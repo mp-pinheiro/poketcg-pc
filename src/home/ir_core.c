@@ -18,6 +18,10 @@
 
 #include "home/ir_core.h"
 #include "mem.h"
+
+#include "home/ir_core.h"
+#define P11 0x02u
+#define RJOYP_ADDR 0xFF00u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -157,3 +161,31 @@ ReceiveByteThroughIRResult ReceiveNBytesToHLThroughIR(uint16_t hl, uint8_t c)
 	return (ReceiveByteThroughIRResult){a, f};
 }
 /* <<< factory ReceiveNBytesToHLThroughIR */
+
+/* >>> factory TransmitByteThroughIR */
+TransmitByteThroughIRResult TransmitByteThroughIR(uint8_t a, uint16_t hl_in, uint16_t de, uint16_t bc)
+{
+	uint8_t b = a;
+
+	TransmitIRBitResult r = TransmitIRBit(0u, 0x10u, RP_ADDR);
+	r = TransmitIRBit(0u, 0x00u, RP_ADDR);
+
+	uint8_t c = 8u;
+	for (;;) {
+		uint8_t carry_in = (uint8_t)(b & 0x01u);
+		b = (uint8_t)(b >> 1);
+		r = TransmitIRBit(0u, (uint8_t)(carry_in ? 0x10u : 0x00u), RP_ADDR);
+		c = (uint8_t)(c - 1u);
+		if (c == 0u) {
+			break;
+		}
+	}
+
+	uint8_t joyp = gb_read8(RJOYP_ADDR);
+	if ((joyp & P11) == 0u) {
+		ReturnZFlagUnsetAndCarryFlagSetResult err = ReturnZFlagUnsetAndCarryFlagSet();
+		return (TransmitByteThroughIRResult){err.a, err.f, hl_in, de, bc};
+	}
+	return (TransmitByteThroughIRResult){0u, 0x80u, hl_in, de, bc};
+}
+/* <<< factory TransmitByteThroughIR */

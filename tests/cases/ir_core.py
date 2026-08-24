@@ -77,6 +77,16 @@ CASES["ReceiveNBytesToHLThroughIR"] = [
 ]
 # <<< factory ReceiveNBytesToHLThroughIR
 
+# >>> factory TransmitByteThroughIR
+CONTRACT["TransmitByteThroughIR"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["TransmitByteThroughIR"] = [
+    {"a": 0x00, "keys": 0x02},
+    {"a": 0xA5, "keys": 0x02},
+    {"a": 0xFF, "keys": 0x02},
+    dict(POISON, a=0xAA, keys=0x02),
+]
+# <<< factory TransmitByteThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -105,3 +115,11 @@ MUTATIONS["ReceiveByteThroughIR_ZeroIfUnsuccessful"] = {"source_symbol": "Receiv
 # >>> factory-mutation ReceiveNBytesToHLThroughIR
 MUTATIONS["ReceiveNBytesToHLThroughIR"] = {"source_symbol": "ReceiveNBytesToHLThroughIR", "before": "\t\tif (r.f & 0x10u) {", "after": "\t\tif (r.f & 0x20u) {", "case_ids": ["ReceiveNBytesToHLThroughIR-0", "ReceiveNBytesToHLThroughIR-1"]}
 # <<< factory-mutation ReceiveNBytesToHLThroughIR
+# >>> factory-mutation TransmitByteThroughIR
+MUTATIONS["TransmitByteThroughIR"] = {
+    "source_symbol": "TransmitByteThroughIR",
+    "before": "\tif ((joyp & P11) == 0u) {",
+    "after": "\tif ((joyp & P11) != 0u) {",
+    "case_ids": ["TransmitByteThroughIR-0", "TransmitByteThroughIR-1"],
+}
+# <<< factory-mutation TransmitByteThroughIR

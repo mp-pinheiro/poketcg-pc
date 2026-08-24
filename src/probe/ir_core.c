@@ -78,6 +78,16 @@ static void adapt_ReceiveNBytesToHLThroughIR(ProbeState *s)
 }
 /* <<< factory ReceiveNBytesToHLThroughIR */
 
+/* >>> factory TransmitByteThroughIR */
+static void adapt_TransmitByteThroughIR(ProbeState *s)
+{
+	TransmitByteThroughIRResult r = TransmitByteThroughIR(s->a, s->hl, (uint16_t)(((uint16_t)s->d << 8) | s->e), (uint16_t)(((uint16_t)s->b << 8) | s->c));
+	s->a = r.a; s->f = r.f; s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8); s->e = (uint8_t)r.de;
+	s->b = (uint8_t)(r.bc >> 8); s->c = (uint8_t)r.bc;
+}
+/* <<< factory TransmitByteThroughIR */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -87,5 +97,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "ReceiveByteThroughIR", adapt_ReceiveByteThroughIR },
 	{ "ReceiveByteThroughIR_ZeroIfUnsuccessful", adapt_ReceiveByteThroughIR_ZeroIfUnsuccessful },
 	{ "ReceiveNBytesToHLThroughIR", adapt_ReceiveNBytesToHLThroughIR },
+	{ "TransmitByteThroughIR", adapt_TransmitByteThroughIR },
 	{ NULL, NULL },
 };

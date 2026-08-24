@@ -38,4 +38,8 @@ ReceiveByteThroughIRResult ReceiveByteThroughIR_ZeroIfUnsuccessful(void);
 /* >>> factory ReceiveNBytesToHLThroughIR */
 ReceiveByteThroughIRResult ReceiveNBytesToHLThroughIR(uint16_t hl, uint8_t c);
 /* <<< factory ReceiveNBytesToHLThroughIR */
+/* >>> factory TransmitByteThroughIR */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; uint16_t de; uint16_t bc; } TransmitByteThroughIRResult;
+TransmitByteThroughIRResult TransmitByteThroughIR(uint8_t a, uint16_t hl_in, uint16_t de, uint16_t bc);
+/* <<< factory TransmitByteThroughIR */
 #endif /* POKETCG_HOME_IR_CORE_H */

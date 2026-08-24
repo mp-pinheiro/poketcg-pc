@@ -2882,6 +2882,14 @@ static void adapt_Conversion2_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Conversion2_AISelectEffect */
 
+/* >>> factory MirrorMove_AfterDamage */
+static void adapt_MirrorMove_AfterDamage(ProbeState *s)
+{
+	TextResult r = MirrorMove_AfterDamage(s->d, s->e, s->hl);
+	s->a = r.a; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory MirrorMove_AfterDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3239,5 +3247,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Conversion1_AISelectEffect", adapt_Conversion1_AISelectEffect },
 	{ "Conversion2_ChangeResistanceEffect", adapt_Conversion2_ChangeResistanceEffect },
 	{ "Conversion2_AISelectEffect", adapt_Conversion2_AISelectEffect },
+	{ "MirrorMove_AfterDamage", adapt_MirrorMove_AfterDamage },
 	{ NULL, NULL },
 };

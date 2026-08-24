@@ -418,6 +418,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #include "home/duel.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
+#define DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK 0xF7u
+#define ChangedTheWeaknessOfPokemonToColorText 0x0114u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4952,3 +4959,67 @@ void Conversion2_AISelectEffect(void)
 	}
 }
 /* <<< factory Conversion2_AISelectEffect */
+
+/* >>> factory MirrorMove_AfterDamage */
+TextResult MirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
+{
+	uint8_t a = gb_read8(wNoDamageOrEffect_ADDR);
+	if (a != 0u) {
+		return (TextResult){a, 0u, 0u, d, e, hl_in};
+	}
+
+	DuelistVarResult v1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	a = v1.a;
+	if (a == LAST_TURN_EFFECT_DISCARD_ENERGY) {
+		SwapTurn();
+		uint8_t card = gb_read8(hTemp_ffa0_ADDR);
+		PutCardInDiscardPile(card);
+		DuelistVarResult v2 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+		gb_write8(v2.hl, LAST_TURN_EFFECT_DISCARD_ENERGY);
+		SwapTurn();
+	}
+
+	DuelistVarResult v3 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK);
+	a = gb_read8(v3.hl);
+	if (a == 0u) {
+		return (TextResult){0u, 0u, 0u, d, e, v3.hl};
+	}
+
+	uint16_t saved_hl = v3.hl;
+	SwapTurn();
+	DuelistVarResult v4 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer2_FromDeckIndex(v4.a);
+	SwapTurn();
+
+	a = gb_read8(wLoadedCard2Weakness_ADDR);
+	if (a == 0u) {
+		return (TextResult){0u, 0u, 0u, d, e, saved_hl};
+	}
+
+	uint8_t saved_a = gb_read8(saved_hl);
+	DuelistVarResult v5 = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);
+	a = saved_a;
+	gb_write8(v5.hl, a);
+
+	uint8_t c = (uint8_t)-1;
+	do {
+		c = (uint8_t)(c + 1u);
+		uint8_t carry_out = (uint8_t)(a & 0x80u);
+		a = (uint8_t)(a << 1);
+		if (carry_out != 0u) {
+			break;
+		}
+	} while (1);
+
+	a = c;
+	SwapTurn();
+	uint8_t color = a;
+	DuelistVarResult v6 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(v6.a);
+	a = color;
+	LoadCardNameAndInputColor(a, d, e);
+	TextResult t = DrawWideTextBox_PrintText(ChangedTheWeaknessOfPokemonToColorText);
+	SwapTurn();
+	return t;
+}
+/* <<< factory MirrorMove_AfterDamage */

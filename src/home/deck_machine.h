@@ -58,4 +58,7 @@ void PrintNumSavedDecks(void);
 /* >>> factory Func_b568 */
 void Func_b568(void);
 /* <<< factory Func_b568 */
+/* >>> factory CheckIfCanBuildSavedDeck */
+DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b);
+/* <<< factory CheckIfCanBuildSavedDeck */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

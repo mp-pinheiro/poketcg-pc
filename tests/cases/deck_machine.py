@@ -121,6 +121,10 @@ wLCDC = 0xCABB
 wNameBuffer = 0xC500
 wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
+
+hBankSRAM = 0xFF81
+wTempBankSRAM = 0xD0A4
+wMachineDeckPtrs = 0xD00D
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -208,6 +212,16 @@ CASES["Func_b568"] = [
 ]
 # <<< factory Func_b568
 
+# >>> factory CheckIfCanBuildSavedDeck
+CONTRACT["CheckIfCanBuildSavedDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfCanBuildSavedDeck"] = [
+    {"a": 0x00, "b": 0x00, "wram": {hBankSRAM: b"\x00", wTempBankSRAM: b"\x00", wMachineDeckPtrs: b"\xE8\xC0", 0xC000: b"\x00", 0xC100: b"\x00"},
+     "sram": {0: {}}},
+    dict(POISON, a=0x00, b=0x00, wram={hBankSRAM: b"\x00", wTempBankSRAM: b"\x00", wMachineDeckPtrs: b"\xE8\xC0", 0xC000: b"\x00", 0xC100: b"\x00"},
+         sram={0: {}}),
+]
+# <<< factory CheckIfCanBuildSavedDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -270,3 +284,11 @@ MUTATIONS["PrintNumSavedDecks"] = {"source_symbol": "PrintNumSavedDecks", "befor
 # >>> factory-mutation Func_b568
 MUTATIONS["Func_b568"] = {"source_symbol": "Func_b568", "before": "\tuint8_t b = wCardListCursorPos;\n\tuint8_t a = (uint8_t)(wCardListVisibleOffset + b + 1u);", "after": "\tuint8_t b = wCardListCursorPos;\n\tuint8_t a = (uint8_t)(wCardListVisibleOffset + b);", "case_ids": ["Func_b568-0", "Func_b568-1"]}
 # <<< factory-mutation Func_b568
+# >>> factory-mutation CheckIfCanBuildSavedDeck
+MUTATIONS["CheckIfCanBuildSavedDeck"] = {
+    "source_symbol": "CheckIfCanBuildSavedDeck",
+    "before": "\tDeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&ptr);\n\treturn r;",
+    "after": "\tDeckBuildCheckResult r = CheckIfHasEnoughCardsToBuildDeck(&ptr);\n\tr.a = (uint8_t)(r.a + 1u);\n\treturn r;",
+    "case_ids": ["CheckIfCanBuildSavedDeck-0", "CheckIfCanBuildSavedDeck-1"],
+}
+# <<< factory-mutation CheckIfCanBuildSavedDeck

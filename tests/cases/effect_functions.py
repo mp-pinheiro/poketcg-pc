@@ -2390,6 +2390,8 @@ IVYSAUR = 0x09
 hWhoseTurn = 0xFF97
 wOpponentArenaCard = 0xC3BB
 wOpponentDeck = 0xC480
+
+wNoDamageOrEffect = 0xCCC7
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3277,6 +3279,14 @@ CASES["Conversion2_AISelectEffect"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentArenaCard: b"\x00", wOpponentDeck: b"\x10"}, read={0xFFA0: 1}),
 ]
 # <<< factory Conversion2_AISelectEffect
+
+# >>> factory MirrorMove_AfterDamage
+CONTRACT["MirrorMove_AfterDamage"] = {"compare": ("a", "hl", "d", "e"), "preserve": ("d", "e")}
+CASES["MirrorMove_AfterDamage"] = [
+    {"d": 0x01, "e": 0x0E, "wram": {wNoDamageOrEffect: b"\x01"}},
+    dict(POISON, d=0x01, e=0x0E, wram={wNoDamageOrEffect: b"\x01"}),
+]
+# <<< factory MirrorMove_AfterDamage
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5248,3 +5258,11 @@ MUTATIONS["Conversion2_AISelectEffect"] = {
     "case_ids": ["Conversion2_AISelectEffect-0", "Conversion2_AISelectEffect-1"],
 }
 # <<< factory-mutation Conversion2_AISelectEffect
+# >>> factory-mutation MirrorMove_AfterDamage
+MUTATIONS["MirrorMove_AfterDamage"] = {
+    "source_symbol": "MirrorMove_AfterDamage",
+    "before": "\tif (a != 0u) {",
+    "after": "\tif (a != 1u) {",
+    "case_ids": ["MirrorMove_AfterDamage-0", "MirrorMove_AfterDamage-1"],
+}
+# <<< factory-mutation MirrorMove_AfterDamage
