@@ -181,6 +181,11 @@ SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 sCardCollection = 0xA100
 wTempCardCollection = 0xC000
+
+wCardFilterCounts = 0xCEBB
+wDefaultText = 0xC590
+wTotalCardCount = 0xCECC
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -599,6 +604,18 @@ CASES["DrawDecksScreen"] = [
 ]
 # <<< factory DrawDecksScreen
 
+# >>> factory PrintTotalCardCount
+CONTRACT["PrintTotalCardCount"] = {"compare": ("d", "e"), "preserve": ("d", "e"), "wram_out": True}
+CASES["PrintTotalCardCount"] = [
+    {"d": 0x20, "e": 0x40,
+     "wram": {wCardFilterCounts: b"\x01\x02\x00\x00\x00\x00\x00\x00\x00", wDefaultText: b"\x00" * 16},
+     "setup": SETUP_TEXT, "read": {wTotalCardCount: 1, wDefaultText: 5}},
+    dict(POISON, d=0x20, e=0x40,
+         wram={wCardFilterCounts: b"\x09\x00\x00\x00\x00\x00\x00\x00\x00", wDefaultText: b"\x00" * 16},
+         setup=SETUP_TEXT, read={wTotalCardCount: 1, wDefaultText: 5}),
+]
+# <<< factory PrintTotalCardCount
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -808,3 +825,6 @@ MUTATIONS["AppendDeckName"] = {"source_symbol": "AppendDeckName", "before": "\ti
 # >>> factory-mutation DrawDecksScreen
 MUTATIONS["DrawDecksScreen"] = {"source_symbol": "DrawDecksScreen", "before": "\tif (!(nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;", "after": "\tif ((nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;", "case_ids": ["DrawDecksScreen-0", "DrawDecksScreen-1"]}
 # <<< factory-mutation DrawDecksScreen
+# >>> factory-mutation PrintTotalCardCount
+MUTATIONS["PrintTotalCardCount"] = {"source_symbol": "PrintTotalCardCount", "before": "uint8_t value = gb_read8(hl);\n\t\tsum = (uint8_t)(value + sum);", "after": "uint8_t value = gb_read8((uint16_t)(hl + 1u));\n\t\tsum = (uint8_t)(value + sum);", "case_ids": ["PrintTotalCardCount-0", "PrintTotalCardCount-1"]}
+# <<< factory-mutation PrintTotalCardCount

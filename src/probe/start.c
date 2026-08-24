@@ -15,8 +15,22 @@ static void adapt_CheckIfHasSaveData(ProbeState *s)
 }
 /* <<< factory CheckIfHasSaveData */
 
+/* >>> factory PrintStartMenuDescriptionText */
+static void adapt_PrintStartMenuDescriptionText(ProbeState *s)
+{
+	PrintStartMenuDescriptionTextResult r = PrintStartMenuDescriptionText(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory PrintStartMenuDescriptionText */
+
 const ProbeEntry probe_entries_start[] = {
 	{ "ShowCardPopCGBDisclaimer", adapt_ShowCardPopCGBDisclaimer },
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
+	{ "PrintStartMenuDescriptionText", adapt_PrintStartMenuDescriptionText },
 	{ NULL, NULL },
 };

@@ -181,4 +181,7 @@ uint8_t AppendDeckName(uint16_t hl, uint8_t d, uint8_t e);
 /* >>> factory DrawDecksScreen */
 void DrawDecksScreen(uint8_t a);
 /* <<< factory DrawDecksScreen */
+/* >>> factory PrintTotalCardCount */
+void PrintTotalCardCount(uint8_t d, uint8_t e);
+/* <<< factory PrintTotalCardCount */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

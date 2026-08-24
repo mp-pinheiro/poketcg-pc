@@ -50,6 +50,17 @@ _VALID_PAYLOAD = bytes(179)
 _VALID_IMAGE = _build_image(_VALID_PAYLOAD)
 _INVALID_IMAGE = (bytes([0x08 ^ 0xFF, 0x00 ^ 0xFF]) + _header_for(_VALID_PAYLOAD)[2:]
                   + b"\x00\x00" + _VALID_PAYLOAD)
+
+wCurHighlightedStartMenuItem = 0xD626
+wCurMenuItem = 0xCD10
+wHasSaveData = 0xD624
+wCurOverworldMap = 0xD3CB
+wMedalCount = 0xD3CC
+wTotalNumCardsCollected = 0xD3CD
+wTotalNumCardsToCollect = 0xD3CE
+wTxRam2 = 0xCE3F
+wTxRam3 = 0xCE43
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasSaveData
@@ -67,8 +78,20 @@ CASES["CheckIfHasSaveData"] = [
 ]
 # <<< factory CheckIfHasSaveData
 
+# >>> factory PrintStartMenuDescriptionText
+CONTRACT["PrintStartMenuDescriptionText"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("b", "c", "d", "e")}
+CASES["PrintStartMenuDescriptionText"] = [
+    {"wram": {wCurMenuItem: b"\x02", wCurHighlightedStartMenuItem: b"\x02", wHasSaveData: b"\x01"}},
+    dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234,
+         wram={wCurMenuItem: b"\x03", wCurHighlightedStartMenuItem: b"\x03", wHasSaveData: b"\x00"})
+]
+# <<< factory PrintStartMenuDescriptionText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
 MUTATIONS["CheckIfHasSaveData"] = {"source_symbol": "CheckIfHasSaveData", "before": "\tuint8_t has_save = (first.f & 0x10u) ? TRUE : FALSE;", "after": "\tuint8_t has_save = (first.f & 0x10u) ? FALSE : TRUE;", "case_ids": ["CheckIfHasSaveData-0", "CheckIfHasSaveData-2"]}
 # <<< factory-mutation CheckIfHasSaveData
+# >>> factory-mutation PrintStartMenuDescriptionText
+MUTATIONS["PrintStartMenuDescriptionText"] = {"source_symbol": "PrintStartMenuDescriptionText", "before": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;", "after": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0x80u : f;", "case_ids": ["PrintStartMenuDescriptionText-0", "PrintStartMenuDescriptionText-1"]}
+# <<< factory-mutation PrintStartMenuDescriptionText

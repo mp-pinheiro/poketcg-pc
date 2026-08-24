@@ -199,6 +199,11 @@
 #include "mem.h"
 #define TRUE 0x01u
 #define DECK_NAME_MENU_DATA_ADDR 0x5242u
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1256,3 +1261,27 @@ void DrawDecksScreen(uint8_t a)
 	EnableLCD();
 }
 /* <<< factory DrawDecksScreen */
+
+/* >>> factory PrintTotalCardCount */
+void PrintTotalCardCount(uint8_t d, uint8_t e)
+{
+	uint8_t sum = 0u;
+	uint8_t count = 0u;
+	uint16_t hl = wCardFilterCounts_ADDR;
+	while (count != NUM_FILTERS) {
+		uint8_t value = gb_read8(hl);
+		sum = (uint8_t)(value + sum);
+		hl = (uint16_t)(hl + 1u);
+		count = (uint8_t)(count + 1u);
+	}
+
+	hl = wDefaultText_ADDR;
+	wTotalCardCount = sum;
+	ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(sum, hl);
+	hl = digits.hl;
+	gb_write8(hl, TX_END);
+	InitTextPrinting(d, e);
+	hl = wDefaultText_ADDR;
+	ProcessText(&hl);
+}
+/* <<< factory PrintTotalCardCount */
