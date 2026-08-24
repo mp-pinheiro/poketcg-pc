@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "home/copy_card_name.h"
 #include "home/print_text.h"
 
 typedef struct {
@@ -55,4 +56,11 @@ PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f);
 typedef struct { uint8_t a; uint8_t f; } HandleYesOrNoMenuResult;
 HandleYesOrNoMenuResult HandleYesOrNoMenu(uint8_t d, uint8_t e, uint8_t b, uint8_t c);
 /* <<< factory HandleYesOrNoMenu */
+/* >>> factory CopyCardNameAndLevel */
+/* menus.asm:702 is `farcall _CopyCardNameAndLevel; ret` -- the home-bank entry
+ * that 19 callers use. Result shape is the callee's, declared in
+ * home/copy_card_name.h. */
+CopyCardNameAndLevelResult CopyCardNameAndLevel(uint8_t a, uint8_t b, uint8_t c,
+						uint8_t d, uint8_t e);
+/* <<< factory CopyCardNameAndLevel */
 #endif

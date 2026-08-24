@@ -184,6 +184,21 @@ static void adapt_HandleYesOrNoMenu(ProbeState *s)
 }
 /* <<< factory HandleYesOrNoMenu */
 
+/* >>> factory CopyCardNameAndLevel */
+static void adapt_CopyCardNameAndLevel(ProbeState *s)
+{
+	CopyCardNameAndLevelResult result =
+		CopyCardNameAndLevel(s->a, s->b, s->c, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory CopyCardNameAndLevel */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -214,5 +229,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
 	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
 	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
+	{ "CopyCardNameAndLevel", adapt_CopyCardNameAndLevel },
 	{ NULL, NULL },
 };

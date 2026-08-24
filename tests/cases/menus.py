@@ -295,6 +295,25 @@ CASES["HandleYesOrNoMenu"] = [
 ]
 # <<< factory HandleYesOrNoMenu
 
+# >>> factory CopyCardNameAndLevel
+# The home-bank entry point 19 callers use. The setup call loads real card data,
+# so CopyText expands an actual name into wDefaultText and the callee's halfwidth
+# path appends the level; entry a is the pad width in tiles.
+CONTRACT["CopyCardNameAndLevel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"),
+                                    "preserve": ()}
+CASES["CopyCardNameAndLevel"] = [
+    {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
+     "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
+     "read": {0xC590: 32}},
+    {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
+     "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x03}],
+     "read": {0xC590: 32}},
+    dict(POISON, a=0x0D,
+         setup=[{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
+         read={0xC590: 32}),
+]
+# <<< factory CopyCardNameAndLevel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -325,3 +344,12 @@ MUTATIONS["HandleYesOrNoMenu"] = {
     "case_ids": ["HandleYesOrNoMenu-0", "HandleYesOrNoMenu-1"],
 }
 # <<< factory-mutation HandleYesOrNoMenu
+
+# >>> factory-mutation CopyCardNameAndLevel
+MUTATIONS["CopyCardNameAndLevel"] = {
+    "source_symbol": "CopyCardNameAndLevel",
+    "before": "\treturn _CopyCardNameAndLevel(a, b, c, d, e);",
+    "after": "\treturn _CopyCardNameAndLevel((uint8_t)(a + 1u), b, c, d, e);",
+    "case_ids": ["CopyCardNameAndLevel-0", "CopyCardNameAndLevel-1"],
+}
+# <<< factory-mutation CopyCardNameAndLevel
