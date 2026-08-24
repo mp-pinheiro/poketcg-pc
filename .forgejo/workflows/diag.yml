@@ -2,7 +2,25 @@ name: diag
 on:
   workflow_dispatch:
 jobs:
-  probe:
+  changelog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
+            https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
+          install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - run: git cliff --unreleased --strip header >/dev/null && echo "changelog OK"
+
+  lint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     container:
@@ -11,29 +29,41 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: uv only
-        run: |
-          set -x
+      - run: |
           curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
             | env UV_INSTALL_DIR=/usr/local/bin sh
-          echo "uv install exit=$?"
-      - name: jq only
-        run: |
-          set -x
-          curl -fsSL -o /usr/local/bin/jq \
-            https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
-          chmod +x /usr/local/bin/jq
-          echo "jq install exit=$?"
-      - name: just only
-        run: |
-          set -x
+          uv python install 3.13
+          ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
+      - run: python3 tools/lint_adapters.py && echo "lint OK"
+
+  verifyhooks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: |
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
             | bash -s -- --tag 1.58.0 --to /usr/local/bin
-          echo "just install exit=$?"
-      - name: git-cliff only
-        run: |
-          set -x
-          curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
-            https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
-          echo "git-cliff download exit=$?"
-      - run: echo "all installs reached"
+      - run: mkdir -p .jj
+      - run: just verify-hooks && echo "verify-hooks OK"
+
+  progresscheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
+            | env UV_INSTALL_DIR=/usr/local/bin sh
+          uv python install 3.13
+          ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
+      - run: python3 tools/progress/report.py check && echo "progress check OK"
