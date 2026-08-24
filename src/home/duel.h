@@ -614,4 +614,7 @@ void DrawInPlayArea_Icons(uint16_t hl);
 /* >>> factory DisplayUsePokemonPowerScreen_WaitForInput */
 uint8_t DisplayUsePokemonPowerScreen_WaitForInput(uint16_t hl);
 /* <<< factory DisplayUsePokemonPowerScreen_WaitForInput */
+/* >>> factory _DrawPlayAreaToPlacePrizeCards */
+void _DrawPlayAreaToPlacePrizeCards(void);
+/* <<< factory _DrawPlayAreaToPlacePrizeCards */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "_DrawPlayAreaToPlacePrizeCards",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"_DrawPlayAreaToPlacePrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"0a\", \"49901\": \"0305\", \"50106\": \"37\", \"50157\": \"0002\", \"50992\": \"00000000000000\", \"52817\": \"c2\", \"52822\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"_DrawPlayAreaToPlacePrizeCards\", \"mismatches\": {\"bus\": {\"address\": 52822, \"reference\": \"000000c201c2\", \"native\": \"000000c200c2\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49850, 1], [49901, 2], [50106, 1], [50157, 2], [50992, 7], [52817, 1], [52822, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"_DrawPlayAreaToPlacePrizeCards\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"0a\", \"49901\": \"0305\", \"50106\": \"37\", \"50157\": \"0002\", \"50992\": \"00000000000000\", \"52817\": \"c2\", \"52822\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

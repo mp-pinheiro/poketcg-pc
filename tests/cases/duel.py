@@ -1137,6 +1137,14 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+OPPONENT_TURN = 0xC3
+wCheckMenuPlayAreaWhichDuelist = 0xCE50
+wCheckMenuPlayAreaWhichLayout = 0xCE51
+wIsSwapTurnPending = 0xCE56
+wDefaultText = 0xC730
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1323,6 +1331,24 @@ CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
 ]
 # <<< factory DisplayUsePokemonPowerScreen_WaitForInput
 
+# >>> factory _DrawPlayAreaToPlacePrizeCards
+CONTRACT["_DrawPlayAreaToPlacePrizeCards"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["_DrawPlayAreaToPlacePrizeCards"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
+              0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+              0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+     "read": {wDefaultText: 7, wIsSwapTurnPending: 1, wCheckMenuPlayAreaWhichLayout: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
+               0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+         read={wDefaultText: 7, wIsSwapTurnPending: 1, wCheckMenuPlayAreaWhichLayout: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory _DrawPlayAreaToPlacePrizeCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1486,3 +1512,6 @@ MUTATIONS["DrawInPlayArea_Icons"] = {"source_symbol": "DrawInPlayArea_Icons", "b
 # >>> factory-mutation DisplayUsePokemonPowerScreen_WaitForInput
 MUTATIONS["DisplayUsePokemonPowerScreen_WaitForInput"] = {"source_symbol": "DisplayUsePokemonPowerScreen_WaitForInput", "before": "\treturn DrawWideTextBox_WaitForInput_ReturnCarry(hl);", "after": "\treturn 0u;", "case_ids": ["DisplayUsePokemonPowerScreen_WaitForInput-0", "DisplayUsePokemonPowerScreen_WaitForInput-1"]}
 # <<< factory-mutation DisplayUsePokemonPowerScreen_WaitForInput
+# >>> factory-mutation _DrawPlayAreaToPlacePrizeCards
+MUTATIONS["_DrawPlayAreaToPlacePrizeCards"] = {"source_symbol": "_DrawPlayAreaToPlacePrizeCards", "before": "\tgb_write8(wIsSwapTurnPending_ADDR, TRUE);", "after": "\tgb_write8(wIsSwapTurnPending_ADDR, 0u);", "case_ids": ["_DrawPlayAreaToPlacePrizeCards-0", "_DrawPlayAreaToPlacePrizeCards-1"]}
+# <<< factory-mutation _DrawPlayAreaToPlacePrizeCards

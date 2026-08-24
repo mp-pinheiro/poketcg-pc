@@ -451,6 +451,19 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
+
+#include "home/duel.h"
+#include "home/empty_screen.h"
+#include "home/tiles.h"
+#include "home/objects.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PLAYER_ICON_COORDINATES_ADDR 0x4BE6u
+#define OPP_ICON_COORDINATES_ADDR 0x4BECu
+#define wTileMapFill_ADDR 0xCAB6u
+#define wCheckMenuPlayAreaWhichDuelist_ADDR 0xCE50u
+#define wCheckMenuPlayAreaWhichLayout_ADDR 0xCE51u
+#define wIsSwapTurnPending_ADDR 0xCE56u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2227,3 +2240,58 @@ uint8_t DisplayUsePokemonPowerScreen_WaitForInput(uint16_t hl)
 	return DrawWideTextBox_WaitForInput_ReturnCarry(hl);
 }
 /* <<< factory DisplayUsePokemonPowerScreen_WaitForInput */
+
+/* >>> factory _DrawPlayAreaToPlacePrizeCards */
+void _DrawPlayAreaToPlacePrizeCards(void)
+{
+	gb_write8(wTileMapFill_ADDR, 0u);
+	ZeroObjectPositions();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	(void)LoadPlacingThePrizesScreenTiles();
+
+	uint8_t turn = gb_read8(hWhoseTurn_ADDR);
+	gb_write8(wCheckMenuPlayAreaWhichLayout_ADDR, turn);
+	gb_write8(wCheckMenuPlayAreaWhichDuelist_ADDR, turn);
+
+	DrawPlayArea_BenchCards(3u, 0u, 10u);
+
+	uint16_t coords = PLAYER_ICON_COORDINATES_ADDR;
+	uint8_t page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	uint8_t hand_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_HAND));
+	DrawPlayArea_HandTextResult r1 = DrawPlayArea_HandText(hand_count, 0u, coords);
+	coords = r1.hl;
+	page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	uint8_t not_in_deck = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK));
+	uint8_t deck_count = (uint8_t)(DECK_SIZE - not_in_deck);
+	DrawPlayArea_IconWithValue(0xD4u, deck_count, &coords);
+	page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	uint8_t discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));
+	DrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);
+
+	FillRectangle(0xA0u, 4u, 3u, 0x0806u, 0x0104u);
+
+	SwapTurn();
+	gb_write8(wIsSwapTurnPending_ADDR, TRUE);
+	turn = gb_read8(hWhoseTurn_ADDR);
+	gb_write8(wCheckMenuPlayAreaWhichDuelist_ADDR, turn);
+
+	DrawPlayArea_BenchCards(3u, 6u, 0u);
+
+	coords = OPP_ICON_COORDINATES_ADDR;
+	page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	hand_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_HAND));
+	r1 = DrawPlayArea_HandText(hand_count, 0u, coords);
+	coords = r1.hl;
+	page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	not_in_deck = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK));
+	deck_count = (uint8_t)(DECK_SIZE - not_in_deck);
+	DrawPlayArea_IconWithValue(0xD4u, deck_count, &coords);
+	page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	discard_count = gb_read8((uint16_t)(((uint16_t)page << 8) | DUELVARS_NUMBER_OF_CARDS_IN_DISCARD_PILE));
+	DrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);
+
+	FillRectangle(0xA0u, 4u, 3u, 0x0803u, 0x0104u);
+	SwapTurn();
+}
+/* <<< factory _DrawPlayAreaToPlacePrizeCards */
