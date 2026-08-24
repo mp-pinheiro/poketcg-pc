@@ -785,4 +785,7 @@ void Func_616e(uint8_t a);
 typedef struct { uint8_t a; } NumPlayAreaItemsResult;
 NumPlayAreaItemsResult PrintPlayAreaCardList_EnableLCD(void);
 /* <<< factory PrintPlayAreaCardList_EnableLCD */
+/* >>> factory FlushAllPalettesOrSendPal23Packet */
+void FlushAllPalettesOrSendPal23Packet(void);
+/* <<< factory FlushAllPalettesOrSendPal23Packet */
 #endif

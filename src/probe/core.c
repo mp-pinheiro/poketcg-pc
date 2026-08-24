@@ -1710,6 +1710,13 @@ static void adapt_PrintPlayAreaCardList_EnableLCD(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardList_EnableLCD */
 
+/* >>> factory FlushAllPalettesOrSendPal23Packet */
+static void adapt_FlushAllPalettesOrSendPal23Packet(ProbeState *s)
+{
+	FlushAllPalettesOrSendPal23Packet();
+}
+/* <<< factory FlushAllPalettesOrSendPal23Packet */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1915,5 +1922,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_UsePokemonPower", adapt_OppAction_UsePokemonPower },
 	{ "Func_616e", adapt_Func_616e },
 	{ "PrintPlayAreaCardList_EnableLCD", adapt_PrintPlayAreaCardList_EnableLCD },
+	{ "FlushAllPalettesOrSendPal23Packet", adapt_FlushAllPalettesOrSendPal23Packet },
 	{ NULL, NULL },
 };

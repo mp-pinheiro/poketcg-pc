@@ -835,6 +835,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "home/lcd.h"
 #include "generated/wram.h"
+
+#include "home/palettes.h"
+#include "home/sgb.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4787,3 +4792,22 @@ NumPlayAreaItemsResult PrintPlayAreaCardList_EnableLCD(void)
 	return (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};
 }
 /* <<< factory PrintPlayAreaCardList_EnableLCD */
+
+/* >>> factory FlushAllPalettesOrSendPal23Packet */
+void FlushAllPalettesOrSendPal23Packet(void)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+	if (console == 0u)
+		return;
+	if (console != 1u) {
+		FlushAllPalettes();
+		return;
+	}
+	gb_write8(wTempSGBPacket_ADDR, 9u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x9Cu);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x63u);
+	gb_write8((uint16_t)(wTempSGBPacket_ADDR + 0x0Fu), 0u);
+	SendSGBResult result = SendSGB(0u, 0x80u, 0u, 0u, 0u, 0u, wTempSGBPacket_ADDR);
+	(void)result;
+}
+/* <<< factory FlushAllPalettesOrSendPal23Packet */

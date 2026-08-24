@@ -2655,6 +2655,16 @@ CASES["PrintPlayAreaCardList_EnableLCD"] = [
 ]
 # <<< factory PrintPlayAreaCardList_EnableLCD
 
+# >>> factory FlushAllPalettesOrSendPal23Packet
+CONTRACT["FlushAllPalettesOrSendPal23Packet"] = {"compare": (), "preserve": ()}
+CASES["FlushAllPalettesOrSendPal23Packet"] = [
+    {"wram": {0xCAB4: b"\x00", 0xCAE0: b"\xAA" * 16}, "read": {0xCAE0: 16}},
+    {"wram": {0xCAB4: b"\x02", 0xCAE0: b"\x55" * 16}, "read": {0xCAE0: 16}},
+    {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00" * 16}, "read": {0xCAE0: 16}},
+    dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00" * 16}, read={0xCAE0: 16}),
+]
+# <<< factory FlushAllPalettesOrSendPal23Packet
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3786,3 +3796,11 @@ MUTATIONS["Func_616e"] = {"source_symbol": "Func_616e", "before": "\tgb_write8(w
 # >>> factory-mutation PrintPlayAreaCardList_EnableLCD
 MUTATIONS["PrintPlayAreaCardList_EnableLCD"] = {"source_symbol": "PrintPlayAreaCardList_EnableLCD", "before": "\treturn (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};", "after": "\treturn (NumPlayAreaItemsResult){0u};", "case_ids": ["PrintPlayAreaCardList_EnableLCD-0", "PrintPlayAreaCardList_EnableLCD-1"]}
 # <<< factory-mutation PrintPlayAreaCardList_EnableLCD
+# >>> factory-mutation FlushAllPalettesOrSendPal23Packet
+MUTATIONS["FlushAllPalettesOrSendPal23Packet"] = {
+    "source_symbol": "FlushAllPalettesOrSendPal23Packet",
+    "before": "\tgb_write8(wTempSGBPacket_ADDR, 9u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x9Cu);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x63u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 0x0Fu), 0u);",
+    "after": "\tgb_write8(wTempSGBPacket_ADDR, 9u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 0x9Cu);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 0x63u);\n\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 0x0Fu), 1u);",
+    "case_ids": ["FlushAllPalettesOrSendPal23Packet-2", "FlushAllPalettesOrSendPal23Packet-3"]
+}
+# <<< factory-mutation FlushAllPalettesOrSendPal23Packet

@@ -1,0 +1,9 @@
+{
+  "fn": "FlushAllPalettesOrSendPal23Packet",
+  "case": "tests/cases/core.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FlushAllPalettesOrSendPal23Packet\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"099c6300000000000000000000000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FlushAllPalettesOrSendPal23Packet\", \"mismatches\": {\"bus\": {\"address\": 51951, \"reference\": \"0000000000\", \"native\": \"0000000001\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[51892, 1], [51936, 16]]}}}\n",
+  "restored": "{\"fn\": \"FlushAllPalettesOrSendPal23Packet\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"099c6300000000000000000000000000\"}}, \"status\": \"PASS\"}\n"
+}
