@@ -1,0 +1,9 @@
+{
+  "fn": "PlayerNamingScreen_ProcessInput",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayerNamingScreen_ProcessInput\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"05\", \"52905\": \"06\", \"53254\": \"00\", \"53257\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayerNamingScreen_ProcessInput\", \"mismatches\": {\"a\": [9, 0], \"f\": [144, 0]}}\n",
+  "restored": "{\"fn\": \"PlayerNamingScreen_ProcessInput\", \"registers\": {\"a\": 9, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"05\", \"52905\": \"06\", \"53254\": \"00\", \"53257\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

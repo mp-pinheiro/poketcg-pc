@@ -69,6 +69,14 @@ CASES["ReceiveByteThroughIR_ZeroIfUnsuccessful"] = [
 ]
 # <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful
 
+# >>> factory ReceiveNBytesToHLThroughIR
+CONTRACT["ReceiveNBytesToHLThroughIR"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["ReceiveNBytesToHLThroughIR"] = [
+    {"hl": 0xC500, "c": 0x03, "wram": {0xFF56: b"\x3E", 0xC500: b"\xFF\xFF\xFF"}, "read": {0xC500: 3}},
+    dict(POISON, hl=0xC500, c=0x03, wram={0xFF56: b"\x3E", 0xC500: b"\xFF\xFF\xFF"}, read={0xC500: 3}),
+]
+# <<< factory ReceiveNBytesToHLThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -94,3 +102,6 @@ MUTATIONS["ReceiveByteThroughIR"] = {"source_symbol": "ReceiveByteThroughIR", "b
 # >>> factory-mutation ReceiveByteThroughIR_ZeroIfUnsuccessful
 MUTATIONS["ReceiveByteThroughIR_ZeroIfUnsuccessful"] = {"source_symbol": "ReceiveByteThroughIR_ZeroIfUnsuccessful", "before": "if (r.f & 0x10u)\n\t\treturn (ReceiveByteThroughIRResult){0u, 0x80u};", "after": "if (r.f & 0x10u)\n\t\treturn (ReceiveByteThroughIRResult){1u, 0x00u};", "case_ids": ["ReceiveByteThroughIR_ZeroIfUnsuccessful-0"]}
 # <<< factory-mutation ReceiveByteThroughIR_ZeroIfUnsuccessful
+# >>> factory-mutation ReceiveNBytesToHLThroughIR
+MUTATIONS["ReceiveNBytesToHLThroughIR"] = {"source_symbol": "ReceiveNBytesToHLThroughIR", "before": "\t\tif (r.f & 0x10u) {", "after": "\t\tif (r.f & 0x20u) {", "case_ids": ["ReceiveNBytesToHLThroughIR-0", "ReceiveNBytesToHLThroughIR-1"]}
+# <<< factory-mutation ReceiveNBytesToHLThroughIR

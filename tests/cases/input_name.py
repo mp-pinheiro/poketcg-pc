@@ -197,6 +197,14 @@ CASES["DrawPlayerNamingScreenBG"] = [
 ]
 # <<< factory DrawPlayerNamingScreenBG
 
+# >>> factory PlayerNamingScreen_ProcessInput
+CONTRACT["PlayerNamingScreen_ProcessInput"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PlayerNamingScreen_ProcessInput"] = [
+    {"wram": {0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, "rom_bank": 6},
+    dict(POISON, wram={0xD006: b"\x00", 0xCEA4: b"\x05", 0xCEA9: b"\x06", 0xD009: b"\x00"}, rom_bank=6),
+]
+# <<< factory PlayerNamingScreen_ProcessInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -277,3 +285,6 @@ MUTATIONS["PrintPlayerNameFromInput"] = {"source_symbol": "PrintPlayerNameFromIn
 # >>> factory-mutation DrawPlayerNamingScreenBG
 MUTATIONS["DrawPlayerNamingScreenBG"] = {"source_symbol": "DrawPlayerNamingScreenBG", "before": "InitTextPrinting(2u, 4u);", "after": "InitTextPrinting(3u, 4u);", "case_ids": ["DrawPlayerNamingScreenBG-0", "DrawPlayerNamingScreenBG-1"]}
 # <<< factory-mutation DrawPlayerNamingScreenBG
+# >>> factory-mutation PlayerNamingScreen_ProcessInput
+MUTATIONS["PlayerNamingScreen_ProcessInput"] = {"source_symbol": "PlayerNamingScreen_ProcessInput", "before": "if (d == 0x09u) {", "after": "if (d == 0x0Au) {", "case_ids": ["PlayerNamingScreen_ProcessInput-0", "PlayerNamingScreen_ProcessInput-1"]}
+# <<< factory-mutation PlayerNamingScreen_ProcessInput

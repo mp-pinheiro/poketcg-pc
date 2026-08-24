@@ -76,6 +76,12 @@
 #include "mem.h"
 #define PlayerNameKeyboardText 0x0221u
 #define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR 0x68BCu
+
+#include "home/input_name.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PLAYER_NAMING_TRANSITION_TABLE1 0x6CF9u
+#define PLAYER_NAMING_TRANSITION_TABLE2 0x6D5Fu
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -454,3 +460,118 @@ void DrawPlayerNamingScreenBG(void)
 	EnableLCD();
 }
 /* <<< factory DrawPlayerNamingScreenBG */
+
+/* >>> factory PlayerNamingScreen_ProcessInput */
+PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
+{
+	uint8_t cx = wNamingScreenCursorX;
+	uint8_t cy = wNamingScreenCursorY;
+	uint16_t hl = (uint16_t)(((uint16_t)cx << 8) | cy);
+
+	hl = PlayerNamingScreen_GetCharInfoFromPos(hl);
+	hl = (uint16_t)(hl + 2u);
+	uint8_t e = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t d = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+
+	if (d == 0x09u) {
+		return (PlayerNamingScreen_ProcessInputResult){9u, 0x90u};
+	}
+
+	if (d == 0x07u) {
+		uint8_t wd = wd009;
+		uint8_t a2;
+		if (wd == 0u) {
+			a2 = 1u;
+		} else if ((uint8_t)(wd - 1u) == 0u) {
+			a2 = 2u;
+		} else {
+			a2 = 0u;
+		}
+		wd009 = a2;
+		DrawPlayerNamingScreenBG();
+		uint8_t exit_a = gb_read8(wLCDC_ADDR);
+		return (PlayerNamingScreen_ProcessInputResult){exit_a, (uint8_t)((exit_a == 0u) ? 0x80u : 0x00u)};
+	}
+
+	if (d == 0x08u) {
+		uint8_t wd = wd009;
+		uint8_t a2;
+		if (wd == 0u) {
+			a2 = 2u;
+		} else if ((uint8_t)(wd - 1u) == 0u) {
+			a2 = 0u;
+		} else {
+			a2 = 1u;
+		}
+		wd009 = a2;
+		DrawPlayerNamingScreenBG();
+		uint8_t exit_a = gb_read8(wLCDC_ADDR);
+		return (PlayerNamingScreen_ProcessInputResult){exit_a, (uint8_t)((exit_a == 0u) ? 0x80u : 0x00u)};
+	}
+
+	uint8_t final_d;
+	uint8_t final_e;
+	uint8_t no_append = 0u;
+
+	if (wd009 == 0x02u) {
+		uint8_t char_e = gb_read8(hl);
+		uint8_t char_a = gb_read8((uint16_t)(hl + 1u));
+		final_d = (char_a != 0u) ? char_a : 0x0Eu;
+		final_e = char_e;
+	} else if (d == 0x03u && e == 0x59u) {
+		TransformCharacterResult r = TransformCharacter(PLAYER_NAMING_TRANSITION_TABLE1, d, e);
+		if (r.f & 0x10u) {
+			no_append = 1u;
+			final_d = 0u;
+			final_e = 0u;
+		} else {
+			uint8_t len = (uint8_t)(wNamingScreenBufferLength - 2u);
+			wNamingScreenBufferLength = len;
+			final_d = gb_read8((uint16_t)(wNamingScreenBuffer_ADDR + len));
+			final_e = r.e;
+		}
+	} else if (d == 0x03u && e == 0x5Bu) {
+		TransformCharacterResult r = TransformCharacter(PLAYER_NAMING_TRANSITION_TABLE2, d, e);
+		if (r.f & 0x10u) {
+			no_append = 1u;
+			final_d = 0u;
+			final_e = 0u;
+		} else {
+			uint8_t len = (uint8_t)(wNamingScreenBufferLength - 2u);
+			wNamingScreenBufferLength = len;
+			final_d = gb_read8((uint16_t)(wNamingScreenBuffer_ADDR + len));
+			final_e = r.e;
+		}
+	} else {
+		if (d != 0u) {
+			final_d = d;
+		} else if (wd009 != 0u) {
+			final_d = 0x0Fu;
+		} else {
+			final_d = 0x0Eu;
+		}
+		final_e = e;
+	}
+
+	if (no_append) {
+		return (PlayerNamingScreen_ProcessInputResult){0u, 0x80u};
+	}
+
+	uint8_t old_len = wNamingScreenBufferLength;
+	uint8_t max_len = wNamingScreenBufferMaxLength;
+	uint16_t insert_addr;
+	if (old_len != max_len) {
+		wNamingScreenBufferLength = (uint8_t)(old_len + 2u);
+		insert_addr = (uint16_t)(wNamingScreenBuffer_ADDR + old_len);
+	} else {
+		insert_addr = (uint16_t)(wNamingScreenBuffer_ADDR + old_len - 2u);
+	}
+	gb_write8(insert_addr, final_d);
+	gb_write8((uint16_t)(insert_addr + 1u), final_e);
+	gb_write8((uint16_t)(insert_addr + 2u), 0x00u);
+	PrintPlayerNameFromInput();
+	return (PlayerNamingScreen_ProcessInputResult){0u, 0x00u};
+}
+/* <<< factory PlayerNamingScreen_ProcessInput */

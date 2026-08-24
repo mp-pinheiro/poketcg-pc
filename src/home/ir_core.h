@@ -35,4 +35,7 @@ ReceiveByteThroughIRResult ReceiveByteThroughIR(void);
 /* >>> factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
 ReceiveByteThroughIRResult ReceiveByteThroughIR_ZeroIfUnsuccessful(void);
 /* <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+/* >>> factory ReceiveNBytesToHLThroughIR */
+ReceiveByteThroughIRResult ReceiveNBytesToHLThroughIR(uint16_t hl, uint8_t c);
+/* <<< factory ReceiveNBytesToHLThroughIR */
 #endif /* POKETCG_HOME_IR_CORE_H */

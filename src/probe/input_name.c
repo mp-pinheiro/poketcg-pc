@@ -163,6 +163,15 @@ static void adapt_DrawPlayerNamingScreenBG(ProbeState *s)
 }
 /* <<< factory DrawPlayerNamingScreenBG */
 
+/* >>> factory PlayerNamingScreen_ProcessInput */
+static void adapt_PlayerNamingScreen_ProcessInput(ProbeState *s)
+{
+	PlayerNamingScreen_ProcessInputResult r = PlayerNamingScreen_ProcessInput();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayerNamingScreen_ProcessInput */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -181,5 +190,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PlayerNamingScreen_CheckButtonState", adapt_PlayerNamingScreen_CheckButtonState },
 	{ "PrintPlayerNameFromInput", adapt_PrintPlayerNameFromInput },
 	{ "DrawPlayerNamingScreenBG", adapt_DrawPlayerNamingScreenBG },
+	{ "PlayerNamingScreen_ProcessInput", adapt_PlayerNamingScreen_ProcessInput },
 	{ NULL, NULL },
 };

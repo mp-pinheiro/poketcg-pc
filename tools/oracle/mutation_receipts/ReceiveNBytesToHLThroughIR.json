@@ -1,0 +1,9 @@
+{
+  "fn": "ReceiveNBytesToHLThroughIR",
+  "case": "tests/cases/ir_core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReceiveNBytesToHLThroughIR\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"ffffff\", \"65366\": \"3e\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReceiveNBytesToHLThroughIR\", \"mismatches\": {\"a\": [255, 252], \"f\": [16, 0]}}\n",
+  "restored": "{\"fn\": \"ReceiveNBytesToHLThroughIR\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"ffffff\", \"65366\": \"3e\"}}, \"status\": \"PASS\"}\n"
+}

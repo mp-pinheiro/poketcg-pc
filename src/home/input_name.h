@@ -60,4 +60,8 @@ void PrintPlayerNameFromInput(void);
 /* >>> factory DrawPlayerNamingScreenBG */
 void DrawPlayerNamingScreenBG(void);
 /* <<< factory DrawPlayerNamingScreenBG */
+/* >>> factory PlayerNamingScreen_ProcessInput */
+typedef struct { uint8_t a; uint8_t f; } PlayerNamingScreen_ProcessInputResult;
+PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void);
+/* <<< factory PlayerNamingScreen_ProcessInput */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

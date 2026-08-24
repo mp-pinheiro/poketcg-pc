@@ -104,6 +104,13 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "mem.h"
+
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "mem.h"
+#define CHALLENGE_MACHINE_PRIZES_ADDR 0x7362u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -478,3 +485,16 @@ ChallengeMachine_PrintOpponentClubStatusResult ChallengeMachine_PrintOpponentClu
 	return result;
 }
 /* <<< factory ChallengeMachine_PrintOpponentClubStatus */
+
+/* >>> factory ChallengeMachine_PrepareDuel */
+void ChallengeMachine_PrepareDuel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)ChallengeMachine_GetOpponentNameAndDeck(f, b, c, d, e, hl);
+	EnableSRAM();
+	uint8_t opponent_num = gb_read8(sChallengeMachineOpponentNumber_ADDR);
+	DisableSRAM();
+	uint16_t prize_addr = (uint16_t)(CHALLENGE_MACHINE_PRIZES_ADDR + opponent_num);
+	uint8_t prize = gb_read8(prize_addr);
+	gb_write8(wNPCDuelPrizes_ADDR, prize);
+}
+/* <<< factory ChallengeMachine_PrepareDuel */

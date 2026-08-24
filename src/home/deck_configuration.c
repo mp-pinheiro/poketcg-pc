@@ -162,6 +162,9 @@
 #include "mem.h"
 #define NewDeckText 0x0223u
 #define DECK_NAME_SUFFIX_ADDR_590 0x52A7u
+
+#include "home/deck_configuration.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1041,3 +1044,16 @@ void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e)
 	ProcessText(&text_ptr);
 }
 /* <<< factory PrintDeckName */
+
+/* >>> factory AppendOwnedCardCountNumber */
+void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e)
+{
+	uint16_t walk = hl;
+	while (gb_read8(walk) != 0u) {
+		walk = (uint16_t)(walk + 1u);
+	}
+	GetOwnedCardCountResult r1 = GetOwnedCardCount(e);
+	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(r1.a, walk);
+	gb_write8(r2.hl, 0u);
+}
+/* <<< factory AppendOwnedCardCountNumber */

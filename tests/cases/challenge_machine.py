@@ -329,6 +329,14 @@ CASES["ChallengeMachine_PrintOpponentClubStatus"] = [
 ]
 # <<< factory ChallengeMachine_PrintOpponentClubStatus
 
+# >>> factory ChallengeMachine_PrepareDuel
+CONTRACT["ChallengeMachine_PrepareDuel"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_PrepareDuel"] = [
+    {"sram": {0: {0xBA55: b"\x02"}}, "rom_bank": 4, "read": {0xCC18: 1}},
+    dict(POISON, sram={0: {0xBA55: b"\x02"}}, rom_bank=4, read={0xCC18: 1}),
+]
+# <<< factory ChallengeMachine_PrepareDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -409,3 +417,6 @@ MUTATIONS["ChallengeMachine_PrintOpponentName"] = {"source_symbol": "ChallengeMa
 # >>> factory-mutation ChallengeMachine_PrintOpponentClubStatus
 MUTATIONS["ChallengeMachine_PrintOpponentClubStatus"] = {"source_symbol": "ChallengeMachine_PrintOpponentClubStatus", "before": "uint16_t elem_addr = (uint16_t)(entry_hl + 8u);", "after": "uint16_t elem_addr = (uint16_t)(entry_hl + 9u);", "case_ids": ["ChallengeMachine_PrintOpponentClubStatus-0"]}
 # <<< factory-mutation ChallengeMachine_PrintOpponentClubStatus
+# >>> factory-mutation ChallengeMachine_PrepareDuel
+MUTATIONS["ChallengeMachine_PrepareDuel"] = {"source_symbol": "ChallengeMachine_PrepareDuel", "before": "uint16_t prize_addr = (uint16_t)(CHALLENGE_MACHINE_PRIZES_ADDR + opponent_num);", "after": "uint16_t prize_addr = (uint16_t)(CHALLENGE_MACHINE_PRIZES_ADDR + opponent_num + 1u);", "case_ids": ["ChallengeMachine_PrepareDuel-0", "ChallengeMachine_PrepareDuel-1"]}
+# <<< factory-mutation ChallengeMachine_PrepareDuel

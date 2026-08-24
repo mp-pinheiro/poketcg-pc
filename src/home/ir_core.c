@@ -135,3 +135,25 @@ ReceiveByteThroughIRResult ReceiveByteThroughIR_ZeroIfUnsuccessful(void)
 	return r;
 }
 /* <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+
+/* >>> factory ReceiveNBytesToHLThroughIR */
+ReceiveByteThroughIRResult ReceiveNBytesToHLThroughIR(uint16_t hl, uint8_t c)
+{
+	uint8_t b = 0;
+	while (c != 0u) {
+		ReceiveByteThroughIRResult r = ReceiveByteThroughIR();
+		if (r.f & 0x10u) {
+			ReturnZFlagUnsetAndCarryFlagSetResult fail = ReturnZFlagUnsetAndCarryFlagSet2();
+			return (ReceiveByteThroughIRResult){fail.a, fail.f};
+		}
+		gb_write8(hl, r.a);
+		hl = (uint16_t)(hl + 1u);
+		b = (uint8_t)(b + r.a);
+		c--;
+	}
+	ReceiveByteThroughIRResult r2 = ReceiveByteThroughIR();
+	uint8_t a = (uint8_t)(r2.a + b);
+	uint8_t f = (a == 0u) ? 0x80u : 0x00u;
+	return (ReceiveByteThroughIRResult){a, f};
+}
+/* <<< factory ReceiveNBytesToHLThroughIR */

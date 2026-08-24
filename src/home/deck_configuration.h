@@ -163,4 +163,7 @@ CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de
 /* >>> factory PrintDeckName */
 void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory PrintDeckName */
+/* >>> factory AppendOwnedCardCountNumber */
+void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e);
+/* <<< factory AppendOwnedCardCountNumber */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
