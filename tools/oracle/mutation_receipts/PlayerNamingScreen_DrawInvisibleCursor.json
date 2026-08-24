@@ -1,0 +1,9 @@
+{
+  "fn": "PlayerNamingScreen_DrawInvisibleCursor",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayerNamingScreen_DrawInvisibleCursor\", \"registers\": {\"a\": 23, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 23, \"f\": 0, \"hl\": 27568, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"00\", \"52905\": \"00\", \"52907\": \"17\", \"53254\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayerNamingScreen_DrawInvisibleCursor\", \"mismatches\": {\"a\": [23, 24], \"e\": [23, 24]}}\n",
+  "restored": "{\"fn\": \"PlayerNamingScreen_DrawInvisibleCursor\", \"registers\": {\"a\": 23, \"b\": 1, \"c\": 4, \"d\": 0, \"e\": 23, \"f\": 0, \"hl\": 27568, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"00\", \"52905\": \"00\", \"52907\": \"17\", \"53254\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

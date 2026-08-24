@@ -230,3 +230,10 @@ void ShakeScreenY_Big(void)
 	ShakeScreenY(0x4D61u);
 }
 /* <<< factory ShakeScreenY_Big */
+
+/* >>> factory ShakeScreenY_Small */
+void ShakeScreenY_Small(void)
+{
+	ShakeScreenY(0x4D55u);
+}
+/* <<< factory ShakeScreenY_Small */

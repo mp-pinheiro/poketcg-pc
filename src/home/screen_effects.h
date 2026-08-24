@@ -49,4 +49,7 @@ void ShakeScreenY(uint16_t hl);
 /* >>> factory ShakeScreenY_Big */
 void ShakeScreenY_Big(void);
 /* <<< factory ShakeScreenY_Big */
+/* >>> factory ShakeScreenY_Small */
+void ShakeScreenY_Small(void);
+/* <<< factory ShakeScreenY_Small */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

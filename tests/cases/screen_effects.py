@@ -149,6 +149,14 @@ CASES["ShakeScreenY_Big"] = [
 ]
 # <<< factory ShakeScreenY_Big
 
+# >>> factory ShakeScreenY_Small
+CONTRACT["ShakeScreenY_Small"] = {"compare": (), "preserve": ()}
+CASES["ShakeScreenY_Small"] = [
+    {"read": {0xD4B9: 2, 0xD4BC: 2}},
+    dict(POISON, read={0xD4B9: 2, 0xD4BC: 2}),
+]
+# <<< factory ShakeScreenY_Small
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -202,3 +210,6 @@ MUTATIONS["ShakeScreenY"] = {"source_symbol": "ShakeScreenY", "before": "gb_writ
 # >>> factory-mutation ShakeScreenY_Big
 MUTATIONS["ShakeScreenY_Big"] = {"source_symbol": "ShakeScreenY_Big", "before": "ShakeScreenY(0x4D61u);", "after": "ShakeScreenY(0x4D10u);", "case_ids": ["ShakeScreenY_Big-0"]}
 # <<< factory-mutation ShakeScreenY_Big
+# >>> factory-mutation ShakeScreenY_Small
+MUTATIONS["ShakeScreenY_Small"] = {"source_symbol": "ShakeScreenY_Small", "before": "ShakeScreenY(0x4D55u);", "after": "ShakeScreenY(0x4D61u);", "case_ids": ["ShakeScreenY_Small-0"]}
+# <<< factory-mutation ShakeScreenY_Small
