@@ -1518,6 +1518,24 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+wLoadedCard1Atk1Name = 0xCC34
+wLoadedCard1Atk1Description = 0xCC36
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wConsole = 0xCAB4
+wDefaultText = 0xC590
+wLoadedCard1HP = 0xCC2C
+DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2404,6 +2422,36 @@ CASES["PrintPlayAreaCardInformationAndLocation"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory PrintPlayAreaCardInformationAndLocation
+
+# >>> factory DisplayUsePokemonPowerScreen
+CONTRACT["DisplayUsePokemonPowerScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayUsePokemonPowerScreen"] = [
+    {"keys": 0, "instruction_budget": 5000000, "cycle_budget": 20000000,
+     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
+              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+              wLoadedCard1Atk1Name: b"\x00\x00",
+              wLoadedCard1Atk1Description: b"\x00\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0, instruction_budget=5000000, cycle_budget=20000000,
+         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00",
+               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+               wLoadedCard1Atk1Name: b"\x00\x00",
+               wLoadedCard1Atk1Description: b"\x00\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DisplayUsePokemonPowerScreen
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3515,3 +3563,6 @@ MUTATIONS["PrintPlayAreaCardInformation"] = {"source_symbol": "PrintPlayAreaCard
 # >>> factory-mutation PrintPlayAreaCardInformationAndLocation
 MUTATIONS["PrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "PrintPlayAreaCardInformationAndLocation", "before": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a == 0xFFu)", "after": "\tDuelistVarResult r = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));\n\tif (r.a != 0xFFu)", "case_ids": ["PrintPlayAreaCardInformationAndLocation-0", "PrintPlayAreaCardInformationAndLocation-1"]}
 # <<< factory-mutation PrintPlayAreaCardInformationAndLocation
+# >>> factory-mutation DisplayUsePokemonPowerScreen
+MUTATIONS["DisplayUsePokemonPowerScreen"] = {"source_symbol": "DisplayUsePokemonPowerScreen", "before": "\twCurPlayAreaY = 0u;", "after": "\twCurPlayAreaY = 1u;", "case_ids": ["DisplayUsePokemonPowerScreen-0", "DisplayUsePokemonPowerScreen-1"]}
+# <<< factory-mutation DisplayUsePokemonPowerScreen

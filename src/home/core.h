@@ -763,4 +763,7 @@ PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void);
 /* >>> factory PrintPlayAreaCardInformationAndLocation */
 void PrintPlayAreaCardInformationAndLocation(void);
 /* <<< factory PrintPlayAreaCardInformationAndLocation */
+/* >>> factory DisplayUsePokemonPowerScreen */
+void DisplayUsePokemonPowerScreen(void);
+/* <<< factory DisplayUsePokemonPowerScreen */
 #endif

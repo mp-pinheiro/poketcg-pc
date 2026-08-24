@@ -783,6 +783,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #include "home/core.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/empty_screen.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4608,3 +4617,22 @@ void PrintPlayAreaCardInformationAndLocation(void)
 	PrintPlayAreaCardLocation();
 }
 /* <<< factory PrintPlayAreaCardInformationAndLocation */
+
+/* >>> factory DisplayUsePokemonPowerScreen */
+void DisplayUsePokemonPowerScreen(void)
+{
+	uint8_t slot = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	wCurPlayAreaSlot = slot;
+	wCurPlayAreaY = 0u;
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelCheckPokemonScreenTiles();
+	PrintPlayAreaCardInformationAndLocation();
+	InitTextPrinting(1u, 4u);
+	uint16_t hl = wLoadedCard1Atk1Name_ADDR;
+	(void)InitTextPrinting_ProcessTextFromPointerToID(1u, 4u, hl);
+	hl = wLoadedCard1Atk1Description_ADDR;
+	(void)PrintAttackOrCardDescription(hl, 1u, 6u);
+}
+/* <<< factory DisplayUsePokemonPowerScreen */

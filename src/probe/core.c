@@ -1656,6 +1656,14 @@ static void adapt_PrintPlayAreaCardInformationAndLocation(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardInformationAndLocation */
 
+/* >>> factory DisplayUsePokemonPowerScreen */
+static void adapt_DisplayUsePokemonPowerScreen(ProbeState *s)
+{
+	(void)s;
+	DisplayUsePokemonPowerScreen();
+}
+/* <<< factory DisplayUsePokemonPowerScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1854,5 +1862,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_6b30", adapt_OppAction_6b30 },
 	{ "PrintPlayAreaCardInformation", adapt_PrintPlayAreaCardInformation },
 	{ "PrintPlayAreaCardInformationAndLocation", adapt_PrintPlayAreaCardInformationAndLocation },
+	{ "DisplayUsePokemonPowerScreen", adapt_DisplayUsePokemonPowerScreen },
 	{ NULL, NULL },
 };
