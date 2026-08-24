@@ -1,0 +1,9 @@
+{
+  "fn": "ConvertWordToNumericalDigits",
+  "case": "tests/cases/print_stats.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConvertWordToNumericalDigits\", \"registers\": {\"a\": 34, \"b\": 255, \"c\": 2, \"d\": 212, \"e\": 182, \"f\": 64, \"hl\": 54452, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54452\": \"222527\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConvertWordToNumericalDigits\", \"mismatches\": {\"bus\": {\"address\": 54454, \"reference\": \"222527\", \"native\": \"222528\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54452, 3]]}}}\n",
+  "restored": "{\"fn\": \"ConvertWordToNumericalDigits\", \"registers\": {\"a\": 34, \"b\": 255, \"c\": 2, \"d\": 212, \"e\": 182, \"f\": 64, \"hl\": 54452, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54452\": \"222527\"}}, \"status\": \"PASS\"}\n"
+}

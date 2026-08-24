@@ -905,6 +905,14 @@ static void adapt_LoadOverworld(ProbeState *s)
 }
 /* <<< factory LoadOverworld */
 
+/* >>> factory TryGiveMedalPCPacks */
+static void adapt_TryGiveMedalPCPacks(ProbeState *s)
+{
+	TryGiveMedalPCPacksResult r = TryGiveMedalPCPacks(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory TryGiveMedalPCPacks */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -994,5 +1002,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "DetermineImakuniAndChallengeHall", adapt_DetermineImakuniAndChallengeHall },
 	{ "ScriptCommand_SetChallengeHallNPCCoords", adapt_ScriptCommand_SetChallengeHallNPCCoords },
 	{ "LoadOverworld", adapt_LoadOverworld },
+	{ "TryGiveMedalPCPacks", adapt_TryGiveMedalPCPacks },
 	{ NULL, NULL },
 };

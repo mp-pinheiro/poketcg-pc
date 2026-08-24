@@ -188,6 +188,20 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_PLAYER_ENTERED_CHALLENGE_CUP 0x59u
 #define EVENT_CHALLENGE_CUP_OPPONENT_CHOSEN 0x46u
 #define Script_BeginGame 0x552eu
+
+#include "home/scripting.h"
+#include "home/mail.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define EVENT_BEAT_NIKKI 0x08u
+#define EVENT_BEAT_RICK 0x09u
+#define EVENT_BEAT_KEN 0x0Au
+#define EVENT_BEAT_AMY 0x0Bu
+#define EVENT_BEAT_ISAAC 0x0Cu
+#define EVENT_BEAT_MURRAY 0x0Du
+#define EVENT_BEAT_GENE 0x0Eu
+#define EVENT_BEAT_MITCH 0x0Fu
+#define EVENT_MEDAL_COUNT 0x2Eu
 /* <<< factory statics */
 
 
@@ -1423,3 +1437,32 @@ void LoadOverworld(void)
 	SetNextScript(Script_BeginGame);
 }
 /* <<< factory LoadOverworld */
+
+/* >>> factory TryGiveMedalPCPacks */
+TryGiveMedalPCPacksResult TryGiveMedalPCPacks(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	static const uint8_t medal_events[8] = {
+		EVENT_BEAT_NIKKI, EVENT_BEAT_RICK, EVENT_BEAT_KEN, EVENT_BEAT_AMY,
+		EVENT_BEAT_ISAAC, EVENT_BEAT_MURRAY, EVENT_BEAT_GENE, EVENT_BEAT_MITCH,
+	};
+	uint8_t medal_count = 0u;
+	for (uint8_t i = 0u; i < 8u; i++) {
+		if (GetEventValue(medal_events[i]) != 0u)
+			medal_count = (uint8_t)(medal_count + 1u);
+	}
+	SetEventValueResult sev = SetEventValue(EVENT_MEDAL_COUNT, 0u, 0u, medal_count);
+	uint8_t saved_a = medal_count;
+	uint8_t saved_f = sev.f;
+	if (medal_count >= 8u) {
+		TryGivePCPack(0xCu);
+		TryGivePCPack(0xBu);
+		TryGivePCPack(0xAu);
+	} else if (medal_count >= 7u) {
+		TryGivePCPack(0xBu);
+		TryGivePCPack(0xAu);
+	} else if (medal_count >= 3u) {
+		TryGivePCPack(0xAu);
+	}
+	return (TryGiveMedalPCPacksResult){saved_a, saved_f, b, c, d, e, hl};
+}
+/* <<< factory TryGiveMedalPCPacks */

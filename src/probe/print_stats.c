@@ -19,8 +19,17 @@ static void adapt_FlashReceivedMedal(ProbeState *s)
 }
 /* <<< factory FlashReceivedMedal */
 
+/* >>> factory ConvertWordToNumericalDigits */
+static void adapt_ConvertWordToNumericalDigits(ProbeState *s)
+{
+	ConvertWordToNumericalDigitsResult r = ConvertWordToNumericalDigits(s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory ConvertWordToNumericalDigits */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
+	{ "ConvertWordToNumericalDigits", adapt_ConvertWordToNumericalDigits },
 	{ NULL, NULL },
 };

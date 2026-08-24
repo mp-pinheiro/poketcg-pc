@@ -16,6 +16,12 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 	11u, 14u, 0x44u,
 	16u, 14u, 0x43u,
 };
+
+#include "home/print_stats.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SYM_0 0x20u
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
@@ -44,3 +50,41 @@ void FlashReceivedMedal(void)
 	LoadTilemap_ToVRAM(x, y);
 }
 /* <<< factory FlashReceivedMedal */
+
+/* >>> factory ConvertWordToNumericalDigits */
+static uint8_t get_number_symbol(uint16_t *hl, uint16_t bc, uint16_t *de)
+{
+	uint8_t a = (uint8_t)(SYM_0 - 1u);
+	for (;;) {
+		a = (uint8_t)(a + 1u);
+		uint32_t sum = (uint32_t)*hl + bc;
+		*hl = (uint16_t)sum;
+		if (sum <= 0xFFFFu) break;
+	}
+	gb_write8(*de, a);
+	*de = (uint16_t)(*de + 1u);
+	*hl = (uint16_t)(*hl - bc);
+	return a;
+}
+
+ConvertWordToNumericalDigitsResult ConvertWordToNumericalDigits(uint16_t hl)
+{
+	uint16_t de = wDecimalChars_ADDR;
+	(void)get_number_symbol(&hl, 0xFF9Cu, &de);
+	(void)get_number_symbol(&hl, 0xFFF6u, &de);
+	uint8_t a = (uint8_t)((uint8_t)hl + SYM_0);
+	gb_write8(de, a);
+	hl = wDecimalChars_ADDR;
+	uint8_t c = 2u;
+	uint8_t f;
+	for (;;) {
+		a = gb_read8(hl);
+		if (a != SYM_0) { f = 0x40u; break; }
+		gb_write8(hl, SYM_SPACE);
+		hl = (uint16_t)(hl + 1u);
+		c = (uint8_t)(c - 1u);
+		if (c == 0u) { f = 0xC0u; break; }
+	}
+	return (ConvertWordToNumericalDigitsResult){a, f, 0xFFu, c, (uint8_t)(de >> 8), (uint8_t)de, hl};
+}
+/* <<< factory ConvertWordToNumericalDigits */

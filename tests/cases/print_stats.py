@@ -33,6 +33,15 @@ CASES["FlashReceivedMedal"] = [
 ]
 # <<< factory FlashReceivedMedal
 
+# >>> factory ConvertWordToNumericalDigits
+CONTRACT["ConvertWordToNumericalDigits"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ConvertWordToNumericalDigits"] = [
+    {"hl": 257, "wram": {0xD4B4: b"\x00\x00\x00"}, "expect": {0xD4B4: b"\x22\x25\x27"}},
+    {"hl": 5, "wram": {0xD4B4: b"\x00\x00\x00"}, "expect": {0xD4B4: b"\x00\x00\x25"}},
+    dict(POISON, hl=0x1234, wram={0xD4B4: b"\x00\x00\x00"}),
+]
+# <<< factory ConvertWordToNumericalDigits
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -48,3 +57,6 @@ MUTATIONS["DrawPauseMenuPlayerPortrait"] = {
 # >>> factory-mutation FlashReceivedMedal
 MUTATIONS["FlashReceivedMedal"] = {"source_symbol": "FlashReceivedMedal", "before": "\twCurTilemap = tilemap;", "after": "\twCurTilemap = 0u;", "case_ids": ["FlashReceivedMedal-0"]}
 # <<< factory-mutation FlashReceivedMedal
+# >>> factory-mutation ConvertWordToNumericalDigits
+MUTATIONS["ConvertWordToNumericalDigits"] = {"source_symbol": "ConvertWordToNumericalDigits", "before": "uint8_t a = (uint8_t)((uint8_t)hl + SYM_0);", "after": "uint8_t a = (uint8_t)((uint8_t)hl + SYM_0 + 1u);", "case_ids": ["ConvertWordToNumericalDigits-0", "ConvertWordToNumericalDigits-1"]}
+# <<< factory-mutation ConvertWordToNumericalDigits

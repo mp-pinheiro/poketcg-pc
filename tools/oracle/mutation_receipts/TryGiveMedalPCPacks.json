@@ -1,0 +1,9 @@
+{
+  "fn": "TryGiveMedalPCPacks",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryGiveMedalPCPacks\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"f0ffffffffffffffffffff8fffffffffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryGiveMedalPCPacks\", \"mismatches\": {\"a\": [8, 16], \"bus\": {\"address\": 54236, \"reference\": \"ffffffff8fffffffff\", \"native\": \"ffffffff0fffffffff\", \"reference_size\": 25, \"native_size\": 25, \"spans\": [[54225, 25]]}}}\n",
+  "restored": "{\"fn\": \"TryGiveMedalPCPacks\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"f0ffffffffffffffffffff8fffffffffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n"
+}

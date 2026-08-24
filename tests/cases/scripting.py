@@ -1081,6 +1081,14 @@ CASES["LoadOverworld"] = [
 ]
 # <<< factory LoadOverworld
 
+# >>> factory TryGiveMedalPCPacks
+CONTRACT["TryGiveMedalPCPacks"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["TryGiveMedalPCPacks"] = [
+    {"wram": {0xD3D1: bytes([0xFF] * 24), 0xD3D2: bytes([0xFF] * 24)}},
+    dict(POISON, wram={0xD3D1: bytes(24), 0xD3D2: bytes(24)}),
+]
+# <<< factory TryGiveMedalPCPacks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1599,3 +1607,6 @@ MUTATIONS["ScriptCommand_SetChallengeHallNPCCoords"] = {"source_symbol": "Script
 # >>> factory-mutation LoadOverworld
 MUTATIONS["LoadOverworld"] = {"source_symbol": "LoadOverworld", "before": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, CHALLENGE_CUP_OVER);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)", "after": "(void)SetEventValue(EVENT_CHALLENGE_CUP_1_STATE, 0u, 0u, 0u);\n\t} else if (GetEventValue(EVENT_CHALLENGE_CUP_2_STATE)", "case_ids": ["LoadOverworld-1"]}
 # <<< factory-mutation LoadOverworld
+# >>> factory-mutation TryGiveMedalPCPacks
+MUTATIONS["TryGiveMedalPCPacks"] = {"source_symbol": "TryGiveMedalPCPacks", "before": "medal_count = (uint8_t)(medal_count + 1u);", "after": "medal_count = (uint8_t)(medal_count + 2u);", "case_ids": ["TryGiveMedalPCPacks-0", "TryGiveMedalPCPacks-1"]}
+# <<< factory-mutation TryGiveMedalPCPacks
