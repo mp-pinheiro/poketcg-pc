@@ -405,6 +405,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define COLORLESS 0x06u
 #define NUM_COLORED_TYPES 0x06u
 #define TYPE_PKMN 0x07u
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4892,3 +4897,14 @@ void AISelectConversionColor(void)
 	gb_write8(hTemp_ffa0_ADDR, Random(NUM_COLORED_TYPES));
 }
 /* <<< factory AISelectConversionColor */
+
+/* >>> factory PrintArenaCardNameAndColorText */
+TextResult PrintArenaCardNameAndColorText(uint8_t d, uint8_t e, uint16_t hl)
+{
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(duelist.a);
+	uint8_t color = hTemp_ffa0;
+	LoadCardNameAndInputColor(color, d, e);
+	return DrawWideTextBox_PrintText(hl);
+}
+/* <<< factory PrintArenaCardNameAndColorText */

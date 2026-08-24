@@ -3240,6 +3240,14 @@ CASES["AISelectConversionColor"] = [
 ]
 # <<< factory AISelectConversionColor
 
+# >>> factory PrintArenaCardNameAndColorText
+CONTRACT["PrintArenaCardNameAndColorText"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintArenaCardNameAndColorText"] = [
+    {"hl": 0, "d": 0x01, "e": 0x0E, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xFFA0: b"\x00", 0xC590: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, hl=0, d=0x01, e=0x0E, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xFFA0: b"\x00", 0xC590: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintArenaCardNameAndColorText
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5183,3 +5191,6 @@ MUTATIONS["MorphEffect"] = {"source_symbol": "MorphEffect", "before": "(void)Dra
 # >>> factory-mutation AISelectConversionColor
 MUTATIONS["AISelectConversionColor"] = {"source_symbol": "AISelectConversionColor", "before": "\tgb_write8(hTemp_ffa0_ADDR, Random(NUM_COLORED_TYPES));", "after": "\tgb_write8(hTemp_ffa0_ADDR, (uint8_t)(Random(NUM_COLORED_TYPES) + 1u));", "case_ids": ["AISelectConversionColor-0", "AISelectConversionColor-1"]}
 # <<< factory-mutation AISelectConversionColor
+# >>> factory-mutation PrintArenaCardNameAndColorText
+MUTATIONS["PrintArenaCardNameAndColorText"] = {"source_symbol": "PrintArenaCardNameAndColorText", "before": "\treturn DrawWideTextBox_PrintText(hl);", "after": "\treturn DrawWideTextBox_PrintText((uint16_t)(hl + 1u));", "case_ids": ["PrintArenaCardNameAndColorText-0", "PrintArenaCardNameAndColorText-1"]}
+# <<< factory-mutation PrintArenaCardNameAndColorText
