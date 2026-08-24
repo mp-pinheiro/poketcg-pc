@@ -114,15 +114,20 @@ def _already_implemented(fn: str, source: str | None) -> bool:
     Excluding them at preflight keeps a guaranteed-red class out of the frontier
     and surfaces it as a registry discrepancy to reconcile rather than as a
     translation to retry.
+
+    The match requires a non-identifier character (or start of line) immediately
+    before `fn`, so a routine like `Preload_Ronald1InPsychicClubLobby` is never
+    matched by an unrelated `_Preload_Ronald1InPsychicClubLobby(` definition that
+    merely contains it as a substring.
     """
     basename = Path(source or fn).stem
     path = common.ROOT / "src" / "home" / f"{basename}.c"
     if not path.is_file():
         return False
-    needle = fn + "("
+    pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(fn) + r"\(")
     for line in path.read_text(errors="replace").splitlines():
         stripped = line.strip()
-        if needle not in stripped:
+        if not pattern.search(stripped):
             continue
         if stripped.startswith(("//", "*", "/*", "#")) or stripped.endswith(";"):
             continue
