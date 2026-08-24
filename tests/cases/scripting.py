@@ -997,7 +997,7 @@ CASES["ScriptCommand_ReplaceMapBlocks"] = [
      "read": {wWriteBGMapToSRAM: 1, wOWMapEvents: 1}},
     {"c": 0x02, "wram": {wCurTilemap: b"\x00", wConsole: b"\x00", wOWMapEvents + 2: b"\xFF"},
      "read": {wWriteBGMapToSRAM: 1, wOWMapEvents + 2: 1}},
-    dict(POISON, c=0xCC, wram={wCurTilemap: b"\x00", wConsole: b"\x00"}),
+    dict(POISON, c=0xCC),
 ]
 # <<< factory ScriptCommand_ReplaceMapBlocks
 
