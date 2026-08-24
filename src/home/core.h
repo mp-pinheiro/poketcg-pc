@@ -678,4 +678,7 @@ PracticeDuel_PlayStaryuFromBenchResult PracticeDuel_PlayStaryuFromBench(void);
 /* >>> factory DisplayDuelistTurnScreen */
 void DisplayDuelistTurnScreen(void);
 /* <<< factory DisplayDuelistTurnScreen */
+/* >>> factory DrawDuelistPortraitsAndNames */
+void DrawDuelistPortraitsAndNames(void);
+/* <<< factory DrawDuelistPortraitsAndNames */
 #endif

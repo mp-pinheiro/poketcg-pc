@@ -152,4 +152,8 @@ void PrintPlayersCardsText(void);
 /* >>> factory AddGiftCenterDeckCardsToCollection */
 void AddGiftCenterDeckCardsToCollection(uint16_t hl);
 /* <<< factory AddGiftCenterDeckCardsToCollection */
+/* >>> factory ConvertToNumericalDigits */
+typedef struct { uint8_t a; uint8_t b; uint16_t hl; } ConvertToNumericalDigitsResult;
+ConvertToNumericalDigitsResult ConvertToNumericalDigits(uint8_t a, uint16_t hl);
+/* <<< factory ConvertToNumericalDigits */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

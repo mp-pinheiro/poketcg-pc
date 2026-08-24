@@ -1451,6 +1451,14 @@ static void adapt_DisplayDuelistTurnScreen(ProbeState *s)
 }
 /* <<< factory DisplayDuelistTurnScreen */
 
+/* >>> factory DrawDuelistPortraitsAndNames */
+static void adapt_DrawDuelistPortraitsAndNames(ProbeState *s)
+{
+	(void)s;
+	DrawDuelistPortraitsAndNames();
+}
+/* <<< factory DrawDuelistPortraitsAndNames */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1623,5 +1631,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuelVerify_Turn2", adapt_PracticeDuelVerify_Turn2 },
 	{ "PracticeDuel_PlayStaryuFromBench", adapt_PracticeDuel_PlayStaryuFromBench },
 	{ "DisplayDuelistTurnScreen", adapt_DisplayDuelistTurnScreen },
+	{ "DrawDuelistPortraitsAndNames", adapt_DrawDuelistPortraitsAndNames },
 	{ NULL, NULL },
 };

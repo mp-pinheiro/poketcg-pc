@@ -598,6 +598,14 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define BOXMSG_OPPONENTS_TURN 0x01u
 #define BOXMSG_PLAYERS_TURN 0x00u
 #define DuelistTurnText 0x005eu
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/load_animation.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "generated/wram.h"
+#define SCREEN_WIDTH 20u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3600,3 +3608,26 @@ void DisplayDuelistTurnScreen(void)
 	(void)ExchangeRNG(0u, 0u, 0u, 0u);
 }
 /* <<< factory DisplayDuelistTurnScreen */
+
+/* >>> factory DrawDuelistPortraitsAndNames */
+void DrawDuelistPortraitsAndNames(void)
+{
+	(void)LoadSymbolsFont();
+
+	uint16_t hl = wDefaultText_ADDR;
+	(void)CopyPlayerName(wDefaultText_ADDR);
+	InitTextPrinting(0, 11);
+	ProcessText(&hl);
+
+	DrawPlayerPortrait();
+
+	hl = wDefaultText_ADDR;
+	(void)CopyOpponentName(wDefaultText_ADDR);
+	TextLength length = GetTextLengthInTiles(hl);
+	InitTextPrinting((uint8_t)(length.a + SCREEN_WIDTH), 0);
+	ProcessText(&hl);
+
+	DrawOpponentPortrait(wOpponentPortrait);
+	DrawDuelHorizontalSeparator();
+}
+/* <<< factory DrawDuelistPortraitsAndNames */

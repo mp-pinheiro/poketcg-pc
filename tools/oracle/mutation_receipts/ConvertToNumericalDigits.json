@@ -1,0 +1,9 @@
+{
+  "fn": "ConvertToNumericalDigits",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ConvertToNumericalDigits\", \"registers\": {\"a\": 34, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50436, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"05240522\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ConvertToNumericalDigits\", \"mismatches\": {\"bus\": {\"address\": 50433, \"reference\": \"05240522\", \"native\": \"05220522\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50432, 4]]}}}\n",
+  "restored": "{\"fn\": \"ConvertToNumericalDigits\", \"registers\": {\"a\": 34, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50436, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"05240522\"}}, \"status\": \"PASS\"}\n"
+}

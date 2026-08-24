@@ -146,6 +146,10 @@
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -973,3 +977,21 @@ void AddGiftCenterDeckCardsToCollection(uint16_t hl)
 	}
 }
 /* <<< factory AddGiftCenterDeckCardsToCollection */
+
+/* >>> factory ConvertToNumericalDigits */
+ConvertToNumericalDigitsResult ConvertToNumericalDigits(uint8_t a, uint16_t hl)
+{
+	CalculateOnesAndTensDigits(a);
+	uint8_t ones = wDecimalDigitsSymbols;
+	uint8_t tens = gb_read8((uint16_t)(wDecimalDigitsSymbols_ADDR + 1u));
+	gb_write8(hl, TX_SYMBOL);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, tens);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, TX_SYMBOL);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, ones);
+	hl = (uint16_t)(hl + 1u);
+	return (ConvertToNumericalDigitsResult){ones, ones, hl};
+}
+/* <<< factory ConvertToNumericalDigits */

@@ -2041,6 +2041,16 @@ CASES["DisplayDuelistTurnScreen"] = [
 ]
 # <<< factory DisplayDuelistTurnScreen
 
+# >>> factory DrawDuelistPortraitsAndNames
+CONTRACT["DrawDuelistPortraitsAndNames"] = {"compare": (), "preserve": (), "wram_out": True, "vram_out": True}
+CASES["DrawDuelistPortraitsAndNames"] = [
+    {"wram": {0xCC15: b"\x02"}, "sram": {0: {0xA010: b"\x21\x22\x00"}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xD61E: 1}},
+    dict(POISON, wram={0xCC15: b"\x02"}, sram={0: {0xA010: b"\x21\x22\x00"}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xD61E: 1}),
+]
+# <<< factory DrawDuelistPortraitsAndNames
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3063,3 +3073,6 @@ MUTATIONS["PracticeDuel_PlayStaryuFromBench"] = {"source_symbol": "PracticeDuel_
 # >>> factory-mutation DisplayDuelistTurnScreen
 MUTATIONS["DisplayDuelistTurnScreen"] = {"source_symbol": "DisplayDuelistTurnScreen", "before": "if (turn != PLAYER_TURN)", "after": "if (turn == PLAYER_TURN)", "case_ids": ["DisplayDuelistTurnScreen-0", "DisplayDuelistTurnScreen-1"]}
 # <<< factory-mutation DisplayDuelistTurnScreen
+# >>> factory-mutation DrawDuelistPortraitsAndNames
+MUTATIONS["DrawDuelistPortraitsAndNames"] = {"source_symbol": "DrawDuelistPortraitsAndNames", "before": "DrawOpponentPortrait(wOpponentPortrait);", "after": "DrawOpponentPortrait(0);", "case_ids": ["DrawDuelistPortraitsAndNames-0", "DrawDuelistPortraitsAndNames-1"]}
+# <<< factory-mutation DrawDuelistPortraitsAndNames

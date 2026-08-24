@@ -501,6 +501,17 @@ CASES["AddGiftCenterDeckCardsToCollection"] = [
 ]
 # <<< factory AddGiftCenterDeckCardsToCollection
 
+# >>> factory ConvertToNumericalDigits
+CONTRACT["ConvertToNumericalDigits"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "c", "d", "e")}
+CASES["ConvertToNumericalDigits"] = [
+    {"a": 0x2A, "hl": 0xC500, "wram": {0xC500: b"\x00\x00\x00\x00"},
+     "expect": {0xC500: b"\x05\x24\x05\x22"}},
+    {"a": 17, "hl": 0xC500, "wram": {0xC500: b"\x00\x00\x00\x00"},
+     "expect": {0xC500: b"\x05\x21\x05\x27"}},
+    dict(POISON, a=17),
+]
+# <<< factory ConvertToNumericalDigits
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -683,3 +694,6 @@ MUTATIONS["PrintPlayersCardsText"] = {"source_symbol": "PrintPlayersCardsText", 
 # >>> factory-mutation AddGiftCenterDeckCardsToCollection
 MUTATIONS["AddGiftCenterDeckCardsToCollection"] = {"source_symbol": "AddGiftCenterDeckCardsToCollection", "before": "uint16_t addr = (uint16_t)(sCardCollection_ADDR + card);\n\t\tuint8_t owned = gb_read8(addr);\n\t\tif (owned == CARD_NOT_OWNED)\n\t\t\tgb_write8(addr, 0u);\n\t\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));", "after": "uint16_t addr = (uint16_t)(sCardCollection_ADDR + card);\n\t\tuint8_t owned = gb_read8(addr);\n\t\tif (owned == CARD_NOT_OWNED)\n\t\t\tgb_write8(addr, 0u);\n\t\tgb_write8(addr, gb_read8(addr));", "case_ids": ["AddGiftCenterDeckCardsToCollection-0", "AddGiftCenterDeckCardsToCollection-1"]}
 # <<< factory-mutation AddGiftCenterDeckCardsToCollection
+# >>> factory-mutation ConvertToNumericalDigits
+MUTATIONS["ConvertToNumericalDigits"] = {"source_symbol": "ConvertToNumericalDigits", "before": "gb_write8(hl, tens);", "after": "gb_write8(hl, ones);", "case_ids": ["ConvertToNumericalDigits-0", "ConvertToNumericalDigits-1"]}
+# <<< factory-mutation ConvertToNumericalDigits

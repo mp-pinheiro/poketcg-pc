@@ -364,6 +364,14 @@ static void adapt_AddGiftCenterDeckCardsToCollection(ProbeState *s)
 }
 /* <<< factory AddGiftCenterDeckCardsToCollection */
 
+/* >>> factory ConvertToNumericalDigits */
+static void adapt_ConvertToNumericalDigits(ProbeState *s)
+{
+	ConvertToNumericalDigitsResult r = ConvertToNumericalDigits(s->a, s->hl);
+	s->a = r.a; s->b = r.b; s->hl = r.hl;
+}
+/* <<< factory ConvertToNumericalDigits */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -406,5 +414,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleLeftRightInCardList", adapt_HandleLeftRightInCardList },
 	{ "PrintPlayersCardsText", adapt_PrintPlayersCardsText },
 	{ "AddGiftCenterDeckCardsToCollection", adapt_AddGiftCenterDeckCardsToCollection },
+	{ "ConvertToNumericalDigits", adapt_ConvertToNumericalDigits },
 	{ NULL, NULL },
 };
