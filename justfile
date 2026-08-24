@@ -270,6 +270,17 @@ frontier LIMIT="30":
 progress-serve:
     python3 -m http.server 8765 --directory site
 
+# Publish site/ to Cloudflare Pages, falling back to the `cf` OAuth session.
+publish-dashboard:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export CLOUDFLARE_ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-70e78683a3a8f9c4dce4343d65b091d7}"
+    if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+        cf auth whoami >/dev/null 2>&1 || true
+        CLOUDFLARE_API_TOKEN="$(python3 -c "import json,pathlib;p=pathlib.Path.home()/'.config/cloudflare/config/default.json';print(json.loads(p.read_text())['oauth_token'])")"
+        export CLOUDFLARE_API_TOKEN
+    fi
+    npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
 
 # Rehearse the real pipeline on a landed routine: packet, prompt, reply
 # validation, surgery. Offline, no compiler, no model, no Forgejo.

@@ -46,3 +46,4 @@ saves/
 .factory/*
 !.factory/blocked.toml
 .wrangler/
+.cloudflare/
