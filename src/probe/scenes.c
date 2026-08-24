@@ -46,10 +46,25 @@ static void adapt_LoadScene_LoadCompressedSGBPacket(ProbeState *s)
 }
 /* <<< factory LoadScene_LoadCompressedSGBPacket */
 
+/* >>> factory LoadScene_SetCardPopAttrBlk */
+static void adapt_LoadScene_SetCardPopAttrBlk(ProbeState *s)
+{
+	LoadScene_SetCardPopAttrBlkResult result = LoadScene_SetCardPopAttrBlk(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory LoadScene_SetCardPopAttrBlk */
+
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
 	{ "_DrawPortrait", adapt__DrawPortrait },
 	{ "LoadScene_LoadSGBPacket", adapt_LoadScene_LoadSGBPacket },
 	{ "LoadScene_LoadCompressedSGBPacket", adapt_LoadScene_LoadCompressedSGBPacket },
+	{ "LoadScene_SetCardPopAttrBlk", adapt_LoadScene_SetCardPopAttrBlk },
 	{ NULL, NULL },
 };

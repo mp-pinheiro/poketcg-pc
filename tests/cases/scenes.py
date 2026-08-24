@@ -57,6 +57,8 @@ CASES["LoadScene_LoadSGBPacket"] = [
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wConsole = 0xCAB4
 wSceneSGBPacketPtr = 0xD620
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory LoadScene_LoadCompressedSGBPacket
@@ -72,6 +74,14 @@ CASES["LoadScene_LoadCompressedSGBPacket"] = [
          expect_regs={"a": 0x00, "f": 0x70}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory LoadScene_LoadCompressedSGBPacket
+
+# >>> factory LoadScene_SetCardPopAttrBlk
+CONTRACT["LoadScene_SetCardPopAttrBlk"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LoadScene_SetCardPopAttrBlk"] = [
+    {"expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, expect_regs={"a": 0x00, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LoadScene_SetCardPopAttrBlk
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -94,3 +104,6 @@ MUTATIONS["LoadScene_LoadCompressedSGBPacket"] = {
     "case_ids": ["LoadScene_LoadCompressedSGBPacket-0", "LoadScene_LoadCompressedSGBPacket-1"],
 }
 # <<< factory-mutation LoadScene_LoadCompressedSGBPacket
+# >>> factory-mutation LoadScene_SetCardPopAttrBlk
+MUTATIONS["LoadScene_SetCardPopAttrBlk"] = {"source_symbol": "LoadScene_SetCardPopAttrBlk", "before": "\treturn (LoadScene_SetCardPopAttrBlkResult){result.a, result.f, b, c, d, e, hl};", "after": "\treturn (LoadScene_SetCardPopAttrBlkResult){1u, result.f, b, c, d, e, hl};", "case_ids": ["LoadScene_SetCardPopAttrBlk-0", "LoadScene_SetCardPopAttrBlk-1"]}
+# <<< factory-mutation LoadScene_SetCardPopAttrBlk
