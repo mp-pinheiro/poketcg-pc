@@ -1566,6 +1566,16 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+wDuelDisplayedScreen = 0xCAC2
+wDuelTempList = 0xC510
+wExcludeArenaPokemon = 0xCBD2
+wNumPlayAreaItems = 0xCBC8
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerArenaCard = 0xC2BB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2538,6 +2548,24 @@ CASES["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
+
+# >>> factory PrintPlayAreaCardList
+CONTRACT["PrintPlayAreaCardList"] = {"compare": (), "preserve": ()}
+CASES["PrintPlayAreaCardList"] = [
+    {"instruction_budget": 4000000, "cycle_budget": 16000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+              wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x00"},
+     "read": {wNumPlayAreaItems: 1, wDuelTempList: 1}},
+    dict(POISON, instruction_budget=4000000, cycle_budget=16000000,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+               wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x00"},
+         read={wNumPlayAreaItems: 1, wDuelTempList: 1}),
+    {"instruction_budget": 4000000, "cycle_budget": 16000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+              wPlayerArenaCard: b"\xFF", wExcludeArenaPokemon: b"\x01"},
+     "read": {wNumPlayAreaItems: 1, wDuelTempList: 1}},
+]
+# <<< factory PrintPlayAreaCardList
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3658,3 +3686,6 @@ MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation"] = {"source_symbol": 
 # >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
 MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", "before": "\t(void)SetCursorParametersForTextBox_Default(0u, e);", "after": "\t(void)SetCursorParametersForTextBox_Default(1u, e);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0", "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1"]}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
+# >>> factory-mutation PrintPlayAreaCardList
+MUTATIONS["PrintPlayAreaCardList"] = {"source_symbol": "PrintPlayAreaCardList", "before": "\tb = saved_count;\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "after": "\tb = (uint8_t)(saved_count + 1u);\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "case_ids": ["PrintPlayAreaCardList-0", "PrintPlayAreaCardList-1"]}
+# <<< factory-mutation PrintPlayAreaCardList

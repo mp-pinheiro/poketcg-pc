@@ -772,4 +772,7 @@ void InitAndPrintPlayAreaCardInformationAndLocation(void);
 /* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void);
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+/* >>> factory PrintPlayAreaCardList */
+void PrintPlayAreaCardList(void);
+/* <<< factory PrintPlayAreaCardList */
 #endif

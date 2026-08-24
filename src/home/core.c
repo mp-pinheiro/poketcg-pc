@@ -801,6 +801,16 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/list.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define wDuelDisplayedScreen_ADDR 0xCAC2u
+#define wDuelTempList_ADDR 0xC510u
+#define wExcludeArenaPokemon_ADDR 0xCBD2u
+#define wNumPlayAreaItems_ADDR 0xCBC8u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4667,3 +4677,42 @@ void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void)
 	(void)SetCursorParametersForTextBox_Default(0u, e);
 }
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+
+/* >>> factory PrintPlayAreaCardList */
+void PrintPlayAreaCardList(void)
+{
+	gb_write8(wDuelDisplayedScreen_ADDR, PLAY_AREA_CARD_LIST);
+	SetListPointer(wDuelTempList_ADDR);
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t b;
+	for (b = 0u; b < count; ++b) {
+		gb_write8(wCurPlayAreaSlot_ADDR, b);
+		gb_write8(wCurPlayAreaY_ADDR, (uint8_t)(b + b + b));
+		uint8_t card = GetTurnDuelistVariable((uint8_t)(b + DUELVARS_ARENA_CARD)).a;
+		SetNextElementOfList(card);
+		PrintPlayAreaCardInformationAndLocation();
+	}
+	uint8_t saved_count = b;
+	uint8_t loc;
+	for (loc = b; loc != MAX_PLAY_AREA_POKEMON; ++loc) {
+		gb_write8(wCurPlayAreaSlot_ADDR, loc);
+		gb_write8(wCurPlayAreaY_ADDR, (uint8_t)(loc + loc + loc));
+		PrintPlayAreaCardLocation();
+	}
+	b = saved_count;
+	gb_write8(wNumPlayAreaItems_ADDR, b);
+	if (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)
+		return;
+	b = (uint8_t)(b - 1u);
+	gb_write8(wNumPlayAreaItems_ADDR, b);
+	uint16_t src = (uint16_t)(wDuelTempList_ADDR + 1u);
+	uint16_t dst = wDuelTempList_ADDR;
+	do {
+		uint8_t v = gb_read8(src);
+		gb_write8(dst, v);
+		src = (uint16_t)(src + 1u);
+		dst = (uint16_t)(dst + 1u);
+		--b;
+	} while (b != 0u);
+}
+/* <<< factory PrintPlayAreaCardList */
