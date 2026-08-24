@@ -61,6 +61,12 @@
 #define PADF_RIGHT_800 0x10u
 #define PAD_A_800 0x01u
 #define PAD_B_800 0x02u
+
+#include "home/input_name.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CHAR_UNDERBAR_ADDR 0x68F2u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -399,3 +405,21 @@ done_dir:
 	}
 }
 /* <<< factory PlayerNamingScreen_CheckButtonState */
+
+/* >>> factory PrintPlayerNameFromInput */
+void PrintPlayerNameFromInput(void)
+{
+	uint8_t d = wNamingScreenNamePosition;
+	uint8_t e = gb_read8((uint16_t)(wNamingScreenNamePosition_ADDR + 1u));
+	InitTextPrinting(d, e);
+
+	uint8_t max_len = wNamingScreenBufferMaxLength;
+	uint8_t offset = (uint8_t)(0x15u - max_len);
+	uint16_t underbar_hl = (uint16_t)(CHAR_UNDERBAR_ADDR + offset);
+	ProcessText(&underbar_hl);
+
+	InitTextPrinting(d, e);
+	uint16_t buf_hl = wNamingScreenBuffer_ADDR;
+	ProcessText(&buf_hl);
+}
+/* <<< factory PrintPlayerNameFromInput */

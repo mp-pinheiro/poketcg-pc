@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_PrintOpponentClubStatus",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_PrintOpponentClubStatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 29577, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54930\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PrintOpponentClubStatus\", \"mismatches\": {\"hl\": [29577, 16385]}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_PrintOpponentClubStatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 29577, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54930\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

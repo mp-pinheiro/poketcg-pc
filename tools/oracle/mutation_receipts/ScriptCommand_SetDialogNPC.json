@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_SetDialogNPC",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_SetDialogNPC\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_SetDialogNPC\", \"mismatches\": {\"hl\": [4660, 4661]}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_SetDialogNPC\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n"
+}

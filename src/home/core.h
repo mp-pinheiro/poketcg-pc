@@ -697,4 +697,7 @@ void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 /* >>> factory PracticeDuel_ReplaceKnockedOutPokemon */
 void PracticeDuel_ReplaceKnockedOutPokemon(void);
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
+/* >>> factory DrawDamageAnimationArrow */
+void DrawDamageAnimationArrow(uint8_t f);
+/* <<< factory DrawDamageAnimationArrow */
 #endif

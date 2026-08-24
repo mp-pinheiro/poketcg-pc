@@ -640,6 +640,11 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "mem.h"
 #define PLAY_AREA_BENCH_1_730 0x01u
 #define SelectStaryuPracticeDuelText 0x01D7u
+
+#include "home/core.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SPRITE_ANIM_89_850 0x59u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3812,3 +3817,12 @@ void PracticeDuel_ReplaceKnockedOutPokemon(void)
 	PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);
 }
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
+
+/* >>> factory DrawDamageAnimationArrow */
+void DrawDamageAnimationArrow(uint8_t f)
+{
+	gb_write8(wDamageCharIndex_ADDR, 5u);
+	uint16_t de = (uint16_t)(wAnimationQueue_ADDR + 6u);
+	CreateDamageCharSprite(SPRITE_ANIM_89_850, f, de);
+}
+/* <<< factory DrawDamageAnimationArrow */

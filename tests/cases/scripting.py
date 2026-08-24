@@ -1108,6 +1108,15 @@ CASES["ScriptCommand_TryGiveMedalPCPacks"] = [
 ]
 # <<< factory ScriptCommand_TryGiveMedalPCPacks
 
+# >>> factory ScriptCommand_SetDialogNPC
+CONTRACT["ScriptCommand_SetDialogNPC"] = {"compare": ("b", "hl"), "preserve": ("b", "hl")}
+CASES["ScriptCommand_SetDialogNPC"] = [
+    {"b": 0xBB, "c": 0x00, "hl": 0x1234, "wram": {0xD0C8: b"\x00\x00"}},
+    {"b": 0x11, "c": 0x01, "hl": 0xC500, "wram": {0xD0C8: b"\x00\x00"}},
+    dict(POISON, c=0x00, wram={0xD0C8: b"\x00\x00"}),
+]
+# <<< factory ScriptCommand_SetDialogNPC
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1635,3 +1644,6 @@ MUTATIONS["GetByteAfterCall"] = {"source_symbol": "GetByteAfterCall", "before": 
 # >>> factory-mutation ScriptCommand_TryGiveMedalPCPacks
 MUTATIONS["ScriptCommand_TryGiveMedalPCPacks"] = {"source_symbol": "ScriptCommand_TryGiveMedalPCPacks", "before": "IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy1();", "after": "IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_TryGiveMedalPCPacks-0", "ScriptCommand_TryGiveMedalPCPacks-1"]}
 # <<< factory-mutation ScriptCommand_TryGiveMedalPCPacks
+# >>> factory-mutation ScriptCommand_SetDialogNPC
+MUTATIONS["ScriptCommand_SetDialogNPC"] = {"source_symbol": "ScriptCommand_SetDialogNPC", "before": "SetNPCDialogNameResult r1 = SetNPCDialogName(c, f, b, c, hl);", "after": "SetNPCDialogNameResult r1 = SetNPCDialogName(c, f, b, c, (uint16_t)(hl + 1u));", "case_ids": ["ScriptCommand_SetDialogNPC-0", "ScriptCommand_SetDialogNPC-1"]}
+# <<< factory-mutation ScriptCommand_SetDialogNPC

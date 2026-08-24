@@ -1497,6 +1497,13 @@ static void adapt_PracticeDuel_ReplaceKnockedOutPokemon(ProbeState *s)
 }
 /* <<< factory PracticeDuel_ReplaceKnockedOutPokemon */
 
+/* >>> factory DrawDamageAnimationArrow */
+static void adapt_DrawDamageAnimationArrow(ProbeState *s)
+{
+	DrawDamageAnimationArrow(s->f);
+}
+/* <<< factory DrawDamageAnimationArrow */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1675,5 +1682,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HasAlivePokemonInBench", adapt_HasAlivePokemonInBench },
 	{ "DrawOpponentSelectionScreen", adapt_DrawOpponentSelectionScreen },
 	{ "PracticeDuel_ReplaceKnockedOutPokemon", adapt_PracticeDuel_ReplaceKnockedOutPokemon },
+	{ "DrawDamageAnimationArrow", adapt_DrawDamageAnimationArrow },
 	{ NULL, NULL },
 };

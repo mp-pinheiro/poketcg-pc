@@ -99,6 +99,11 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 
 #include "home/challenge_machine.h"
 #include "mem.h"
+
+#include "home/challenge_machine.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "mem.h"
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -449,3 +454,27 @@ ChallengeMachinePrintResult ChallengeMachine_PrintOpponentName(uint8_t f, uint8_
 	return ChallengeMachine_PrintText(hl2, r1.b, r1.c);
 }
 /* <<< factory ChallengeMachine_PrintOpponentName */
+
+/* >>> factory ChallengeMachine_PrintOpponentClubStatus */
+ChallengeMachine_PrintOpponentClubStatusResult ChallengeMachine_PrintOpponentClubStatus(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ChallengeMachine_GetOpponentNameAndDeckResult r1 = ChallengeMachine_GetOpponentNameAndDeck(f, b, c, d, e, hl);
+	uint16_t entry_hl = r1.hl;
+	uint16_t rank_addr = (uint16_t)(entry_hl + 6u);
+	ChallengeMachinePrintResult r2 = ChallengeMachine_PrintText(rank_addr, r1.b, r1.c);
+	uint8_t d2 = (uint8_t)(r2.d + 7u);
+	InitTextPrinting(d2, r2.e);
+
+	uint16_t elem_addr = (uint16_t)(entry_hl + 8u);
+	uint8_t lo = gb_read8(elem_addr);
+	uint8_t hi = gb_read8((uint16_t)(elem_addr + 1u));
+	uint16_t text_id = (uint16_t)(((uint16_t)hi << 8) | lo);
+	uint16_t final_hl = text_id;
+	if (text_id != 0u) {
+		TextResult r3 = PrintTextNoDelay(text_id, d2, r2.e);
+		final_hl = r3.hl;
+	}
+	ChallengeMachine_PrintOpponentClubStatusResult result = { final_hl, b, c };
+	return result;
+}
+/* <<< factory ChallengeMachine_PrintOpponentClubStatus */

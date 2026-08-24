@@ -2106,6 +2106,16 @@ CASES["PracticeDuel_ReplaceKnockedOutPokemon"] = [
 ]
 # <<< factory PracticeDuel_ReplaceKnockedOutPokemon
 
+# >>> factory DrawDamageAnimationArrow
+CONTRACT["DrawDamageAnimationArrow"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawDamageAnimationArrow"] = [
+    {"f": 0x00, "wram": {0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B8: b"\x05", 0xD429: b"\x00\x00"},
+     "read": {0xD4B7: 1}},
+    dict(POISON, wram={0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B8: b"\x05", 0xD429: b"\x00\x00"},
+         read={0xD4B7: 1}),
+]
+# <<< factory DrawDamageAnimationArrow
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3146,3 +3156,6 @@ MUTATIONS["DrawOpponentSelectionScreen"] = {"source_symbol": "DrawOpponentSelect
 # >>> factory-mutation PracticeDuel_ReplaceKnockedOutPokemon
 MUTATIONS["PracticeDuel_ReplaceKnockedOutPokemon"] = {"source_symbol": "PracticeDuel_ReplaceKnockedOutPokemon", "before": "PrintPracticeDuelDrMasonInstructions(SelectStaryuPracticeDuelText);", "after": "PrintPracticeDuelDrMasonInstructions((uint16_t)(SelectStaryuPracticeDuelText + 1u));", "case_ids": ["PracticeDuel_ReplaceKnockedOutPokemon-1"]}
 # <<< factory-mutation PracticeDuel_ReplaceKnockedOutPokemon
+# >>> factory-mutation DrawDamageAnimationArrow
+MUTATIONS["DrawDamageAnimationArrow"] = {"source_symbol": "DrawDamageAnimationArrow", "before": "gb_write8(wDamageCharIndex_ADDR, 5u);", "after": "gb_write8(wDamageCharIndex_ADDR, 4u);", "case_ids": ["DrawDamageAnimationArrow-0", "DrawDamageAnimationArrow-1"]}
+# <<< factory-mutation DrawDamageAnimationArrow

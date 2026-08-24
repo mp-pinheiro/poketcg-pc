@@ -934,6 +934,18 @@ static void adapt_ScriptCommand_TryGiveMedalPCPacks(ProbeState *s)
 }
 /* <<< factory ScriptCommand_TryGiveMedalPCPacks */
 
+/* >>> factory ScriptCommand_SetDialogNPC */
+static void adapt_ScriptCommand_SetDialogNPC(ProbeState *s)
+{
+	ScriptCommand_SetDialogNPCResult r = ScriptCommand_SetDialogNPC(s->f, s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_SetDialogNPC */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1026,5 +1038,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "TryGiveMedalPCPacks", adapt_TryGiveMedalPCPacks },
 	{ "GetByteAfterCall", adapt_GetByteAfterCall },
 	{ "ScriptCommand_TryGiveMedalPCPacks", adapt_ScriptCommand_TryGiveMedalPCPacks },
+	{ "ScriptCommand_SetDialogNPC", adapt_ScriptCommand_SetDialogNPC },
 	{ NULL, NULL },
 };

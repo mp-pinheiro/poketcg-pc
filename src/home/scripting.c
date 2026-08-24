@@ -205,6 +205,10 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 
 #include "home/scripting.h"
 #include "mem.h"
+
+#include "home/scripting.h"
+#include "home/npc_data.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1493,3 +1497,12 @@ ScriptCommand_TryGiveMedalPCPacksResult ScriptCommand_TryGiveMedalPCPacks(uint8_
 	return (ScriptCommand_TryGiveMedalPCPacksResult){r2.a, r2.f, r1.b, r2.c, r1.d, r1.e, r1.hl};
 }
 /* <<< factory ScriptCommand_TryGiveMedalPCPacks */
+
+/* >>> factory ScriptCommand_SetDialogNPC */
+ScriptCommand_SetDialogNPCResult ScriptCommand_SetDialogNPC(uint8_t f, uint8_t b, uint8_t c, uint16_t hl)
+{
+	SetNPCDialogNameResult r1 = SetNPCDialogName(c, f, b, c, hl);
+	IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy2();
+	return (ScriptCommand_SetDialogNPCResult){r2.a, r2.f, r1.b, r2.c, r1.hl};
+}
+/* <<< factory ScriptCommand_SetDialogNPC */
