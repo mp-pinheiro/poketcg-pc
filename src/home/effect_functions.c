@@ -5030,3 +5030,11 @@ TextResult PidgeottoMirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
 	return MirrorMove_AfterDamage(d, e, hl_in);
 }
 /* <<< factory PidgeottoMirrorMove_AfterDamage */
+
+/* >>> factory SpearowMirrorMove_AfterDamage */
+TextResult SpearowMirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
+{
+	TextResult r = MirrorMove_AfterDamage(d, e, hl_in);
+	return r;
+}
+/* <<< factory SpearowMirrorMove_AfterDamage */

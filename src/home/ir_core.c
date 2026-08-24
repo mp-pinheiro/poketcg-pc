@@ -22,6 +22,8 @@
 #include "home/ir_core.h"
 #define P11 0x02u
 #define RJOYP_ADDR 0xFF00u
+
+#include "home/ir_core.h"
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -207,3 +209,26 @@ Func_1971eResult Func_1971e(void)
 	}
 }
 /* <<< factory Func_1971e */
+
+/* >>> factory TransmitNBytesFromHLThroughIR */
+TransmitNBytesFromHLThroughIRResult TransmitNBytesFromHLThroughIR(uint16_t hl, uint8_t c)
+{
+	uint8_t b = 0u;
+	for (;;) {
+		uint8_t byte = gb_read8(hl);
+		b = (uint8_t)(b + byte);
+		hl = (uint16_t)(hl + 1u);
+		TransmitByteThroughIRResult r = TransmitByteThroughIR(byte, 0u, 0u, 0u);
+		if (r.f & 0x10u) {
+			return (TransmitNBytesFromHLThroughIRResult){r.a, r.f, hl};
+		}
+		c = (uint8_t)(c - 1u);
+		if (c == 0u) {
+			break;
+		}
+	}
+	uint8_t checksum = (uint8_t)(-(int8_t)b);
+	TransmitByteThroughIRResult r2 = TransmitByteThroughIR(checksum, 0u, 0u, 0u);
+	return (TransmitNBytesFromHLThroughIRResult){r2.a, r2.f, hl};
+}
+/* <<< factory TransmitNBytesFromHLThroughIR */

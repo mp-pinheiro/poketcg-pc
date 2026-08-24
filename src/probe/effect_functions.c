@@ -2898,6 +2898,14 @@ static void adapt_PidgeottoMirrorMove_AfterDamage(ProbeState *s)
 }
 /* <<< factory PidgeottoMirrorMove_AfterDamage */
 
+/* >>> factory SpearowMirrorMove_AfterDamage */
+static void adapt_SpearowMirrorMove_AfterDamage(ProbeState *s)
+{
+	TextResult r = SpearowMirrorMove_AfterDamage(s->d, s->e, s->hl);
+	s->a = r.a; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory SpearowMirrorMove_AfterDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3257,5 +3265,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Conversion2_AISelectEffect", adapt_Conversion2_AISelectEffect },
 	{ "MirrorMove_AfterDamage", adapt_MirrorMove_AfterDamage },
 	{ "PidgeottoMirrorMove_AfterDamage", adapt_PidgeottoMirrorMove_AfterDamage },
+	{ "SpearowMirrorMove_AfterDamage", adapt_SpearowMirrorMove_AfterDamage },
 	{ NULL, NULL },
 };
