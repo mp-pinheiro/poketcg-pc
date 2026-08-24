@@ -756,4 +756,8 @@ uint8_t PlayDeckShuffleAnimation(void);
 /* >>> factory OppAction_6b30 */
 uint8_t OppAction_6b30(void);
 /* <<< factory OppAction_6b30 */
+/* >>> factory PrintPlayAreaCardInformation */
+typedef struct { uint16_t hl; } PrintPlayAreaCardInformationResult;
+PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void);
+/* <<< factory PrintPlayAreaCardInformation */
 #endif

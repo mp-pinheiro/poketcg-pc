@@ -769,6 +769,16 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define FLAG_C_490 0x10u
 #define DeckHasXCardsText 0x0068u
 #define ShufflesTheDeckText 0x0063u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/bg_map.h"
+#include "home/empty_screen.h"
+#include "generated/wram.h"
+#define KnockOutText 0x004eu
+#define SYM_E 0x0Bu
+#define SYM_HP 0x0Cu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4543,3 +4553,42 @@ uint8_t OppAction_6b30(void)
 	return saved;
 }
 /* <<< factory OppAction_6b30 */
+
+/* >>> factory PrintPlayAreaCardInformation */
+PrintPlayAreaCardInformationResult PrintPlayAreaCardInformation(void)
+{
+	PrintPlayAreaCardHeader();
+
+	uint8_t slot = wCurPlayAreaSlot;
+	uint8_t e = slot;
+	uint8_t y1 = (uint8_t)(wCurPlayAreaY + 1u);
+	uint8_t c = y1;
+	uint8_t b = 7u;
+	PrintPlayAreaCardAttachedEnergies(b, c, e);
+
+	c = (uint8_t)(wCurPlayAreaY + 1u);
+	b = 5u;
+	WriteByteToBGMap0(SYM_E, b, c);
+
+	c = (uint8_t)(c + 1u);
+	WriteByteToBGMap0(SYM_HP, b, c);
+
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD_HP));
+	if (hp.a == 0u) {
+		uint8_t ke = (uint8_t)(wCurPlayAreaY + 2u);
+		uint8_t kd = 7u;
+		ProcessTextHeaderResult r = InitTextPrinting_ProcessTextFromID(kd, ke, KnockOutText);
+		return (PrintPlayAreaCardInformationResult){r.hl};
+	}
+
+	uint8_t hd = wLoadedCard1HP;
+	DrawHPBar(hd, hp.a);
+
+	c = (uint8_t)(wCurPlayAreaY + 2u);
+	b = 7u;
+	uint16_t de = BCCoordToBGMap0Address(b, c);
+	uint16_t hl = wDefaultText_ADDR;
+	SafeCopyDataHLtoDE(&hl, &de, 12u);
+	return (PrintPlayAreaCardInformationResult){0u};
+}
+/* <<< factory PrintPlayAreaCardInformation */
