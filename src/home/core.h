@@ -747,4 +747,7 @@ void DisplayCardPageOnLeftOrRightPressed(uint8_t a);
 /* >>> factory PrintPlayAreaCardHeader */
 void PrintPlayAreaCardHeader(void);
 /* <<< factory PrintPlayAreaCardHeader */
+/* >>> factory PrintPokemonCardLength */
+void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c);
+/* <<< factory PrintPokemonCardLength */
 #endif

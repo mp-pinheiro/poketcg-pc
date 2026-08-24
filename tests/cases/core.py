@@ -1481,6 +1481,10 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+wConsole = 0xCAB4
+wLCDC = 0xCABB
+wPokemonLengthPrintOffset = 0xCC03
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2271,6 +2275,22 @@ CASES["PrintPlayAreaCardHeader"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory PrintPlayAreaCardHeader
+
+# >>> factory PrintPokemonCardLength
+CONTRACT["PrintPokemonCardLength"] = {"compare": (), "preserve": ()}
+CASES["PrintPokemonCardLength"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "hl": 0x0503, "b": 4, "c": 2, "wram": {wConsole: b"\x00", wLCDC: b"\x00"},
+     "read": {wPokemonLengthPrintOffset: 1},
+     "vread": {0: {0x9800: 32 * 8}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
+         hl=0x0503, b=4, c=2, wram={wConsole: b"\x00", wLCDC: b"\x00"},
+         read={wPokemonLengthPrintOffset: 1},
+         vread={0: {0x9800: 32 * 8}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintPokemonCardLength
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3367,3 +3387,6 @@ MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
 # >>> factory-mutation PrintPlayAreaCardHeader
 MUTATIONS["PrintPlayAreaCardHeader"] = {"source_symbol": "PrintPlayAreaCardHeader", "before": "\tWriteByteToBGMap0(SYM_Lv, 14u, y);", "after": "\tWriteByteToBGMap0(SYM_0, 14u, y);", "case_ids": ["PrintPlayAreaCardHeader-0", "PrintPlayAreaCardHeader-1"]}
 # <<< factory-mutation PrintPlayAreaCardHeader
+# >>> factory-mutation PrintPokemonCardLength
+MUTATIONS["PrintPokemonCardLength"] = {"source_symbol": "PrintPokemonCardLength", "before": "\t\trow = (uint8_t)(new_row + 1u);", "after": "\t\trow = new_row;", "case_ids": ["PrintPokemonCardLength-0", "PrintPokemonCardLength-1"]}
+# <<< factory-mutation PrintPokemonCardLength

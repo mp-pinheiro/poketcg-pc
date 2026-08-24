@@ -1619,6 +1619,13 @@ static void adapt_PrintPlayAreaCardHeader(ProbeState *s)
 }
 /* <<< factory PrintPlayAreaCardHeader */
 
+/* >>> factory PrintPokemonCardLength */
+static void adapt_PrintPokemonCardLength(ProbeState *s)
+{
+	PrintPokemonCardLength(s->hl, s->b, s->c);
+}
+/* <<< factory PrintPokemonCardLength */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1812,5 +1819,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintAttackOrNonPokemonCardDescription", adapt_PrintAttackOrNonPokemonCardDescription },
 	{ "DisplayCardPageOnLeftOrRightPressed", adapt_DisplayCardPageOnLeftOrRightPressed },
 	{ "PrintPlayAreaCardHeader", adapt_PrintPlayAreaCardHeader },
+	{ "PrintPokemonCardLength", adapt_PrintPokemonCardLength },
 	{ NULL, NULL },
 };

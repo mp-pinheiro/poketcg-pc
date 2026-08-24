@@ -744,6 +744,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 	0xd8u, 0x01u, /* stage 2 */
 	0xdcu, 0x01u, /* stage 2 special */
 };
+
+#define FeetText 0x0215u
+#define InchesText 0x0216u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4420,3 +4423,39 @@ void PrintPlayAreaCardHeader(void)
 	}
 }
 /* <<< factory PrintPlayAreaCardHeader */
+
+/* >>> factory PrintPokemonCardLength */
+void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
+{
+	uint8_t feet = (uint8_t)(hl >> 8);
+	uint8_t inches = (uint8_t)hl;
+	uint8_t row = b;
+	uint8_t col = c;
+
+	{
+		TwoByteNumberToTxSymbolPadResult digits = TwoByteNumberToTxSymbol_PadSpace_Bank1(0u, 0u, 0u, 0u, (uint16_t)feet);
+		uint8_t offset = (uint8_t)(digits.b + 1u);
+		gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
+		uint16_t bgmap_addr = BCCoordToBGMap0Address(row, col);
+		uint16_t src = digits.hl;
+		uint16_t dst = bgmap_addr;
+		SafeCopyDataHLtoDE(&src, &dst, offset);
+		uint8_t new_row = (uint8_t)(offset + row);
+		InitTextPrinting(new_row, col);
+		ProcessTextFromID(FeetText);
+		row = (uint8_t)(new_row + 1u);
+	}
+	{
+		TwoByteNumberToTxSymbolPadResult digits = TwoByteNumberToTxSymbol_PadSpace_Bank1(0u, 0u, 0u, 0u, (uint16_t)inches);
+		uint8_t offset = (uint8_t)(digits.b + 1u);
+		gb_write8(wPokemonLengthPrintOffset_ADDR, offset);
+		uint16_t bgmap_addr = BCCoordToBGMap0Address(row, col);
+		uint16_t src = digits.hl;
+		uint16_t dst = bgmap_addr;
+		SafeCopyDataHLtoDE(&src, &dst, offset);
+		uint8_t new_row = (uint8_t)(offset + row);
+		InitTextPrinting(new_row, col);
+		ProcessTextFromID(InchesText);
+	}
+}
+/* <<< factory PrintPokemonCardLength */
