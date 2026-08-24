@@ -1223,6 +1223,14 @@ CASES["SaveDuelStateToSRAM"] = [
 ]
 # <<< factory SaveDuelStateToSRAM
 
+# >>> factory DisplayCheckMenuCursor_YourOrOppPlayArea
+CONTRACT["DisplayCheckMenuCursor_YourOrOppPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DisplayCheckMenuCursor_YourOrOppPlayArea"] = [
+    {},
+    dict(POISON),
+]
+# <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1366,3 +1374,6 @@ MUTATIONS["DrawPlayArea_IconWithValue"] = {"source_symbol": "DrawPlayArea_IconWi
 # >>> factory-mutation SaveDuelStateToSRAM
 MUTATIONS["SaveDuelStateToSRAM"] = {"source_symbol": "SaveDuelStateToSRAM", "before": "gb_write8(s0a008_ADDR, (uint8_t)(old + 1u));", "after": "gb_write8(s0a008_ADDR, (uint8_t)(old + 2u));", "case_ids": ["SaveDuelStateToSRAM-0", "SaveDuelStateToSRAM-1"]}
 # <<< factory-mutation SaveDuelStateToSRAM
+# >>> factory-mutation DisplayCheckMenuCursor_YourOrOppPlayArea
+MUTATIONS["DisplayCheckMenuCursor_YourOrOppPlayArea"] = {"source_symbol": "DisplayCheckMenuCursor_YourOrOppPlayArea", "before": "\treturn DrawCheckMenuCursor_YourOrOppPlayArea(SYM_CURSOR_R);", "after": "\treturn DrawCheckMenuCursor_YourOrOppPlayArea((uint8_t)(SYM_CURSOR_R + 1u));", "case_ids": ["DisplayCheckMenuCursor_YourOrOppPlayArea-0", "DisplayCheckMenuCursor_YourOrOppPlayArea-1"]}
+# <<< factory-mutation DisplayCheckMenuCursor_YourOrOppPlayArea

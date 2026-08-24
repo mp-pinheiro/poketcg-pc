@@ -3232,6 +3232,14 @@ CASES["MorphEffect"] = [
 ]
 # <<< factory MorphEffect
 
+# >>> factory AISelectConversionColor
+CONTRACT["AISelectConversionColor"] = {"compare": (), "preserve": ()}
+CASES["AISelectConversionColor"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01"}, read={0xFFA0: 1}),
+]
+# <<< factory AISelectConversionColor
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5172,3 +5180,6 @@ MUTATIONS["SuperEnergyRemoval_EnergyCheck"] = {"source_symbol": "SuperEnergyRemo
 # >>> factory-mutation MorphEffect
 MUTATIONS["MorphEffect"] = {"source_symbol": "MorphEffect", "before": "(void)DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);", "after": "(void)DrawWideTextBox_WaitForInput(0x0000u);", "case_ids": ["MorphEffect-0", "MorphEffect-2"]}
 # <<< factory-mutation MorphEffect
+# >>> factory-mutation AISelectConversionColor
+MUTATIONS["AISelectConversionColor"] = {"source_symbol": "AISelectConversionColor", "before": "\tgb_write8(hTemp_ffa0_ADDR, Random(NUM_COLORED_TYPES));", "after": "\tgb_write8(hTemp_ffa0_ADDR, (uint8_t)(Random(NUM_COLORED_TYPES) + 1u));", "case_ids": ["AISelectConversionColor-0", "AISelectConversionColor-1"]}
+# <<< factory-mutation AISelectConversionColor

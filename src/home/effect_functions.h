@@ -1183,6 +1183,9 @@ SuperEnergyRemoval_EnergyCheckResult SuperEnergyRemoval_EnergyCheck(void);
 /* >>> factory MorphEffect */
 void MorphEffect(void);
 /* <<< factory MorphEffect */
+/* >>> factory AISelectConversionColor */
+void AISelectConversionColor(void);
+/* <<< factory AISelectConversionColor */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

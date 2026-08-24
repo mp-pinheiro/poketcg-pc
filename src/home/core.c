@@ -4212,3 +4212,12 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 	return (CheckEnergyNeededForAttackAfterDiscardResult){b, c, d, e, final_f};
 }
 /* <<< factory CheckEnergyNeededForAttackAfterDiscard */
+
+/* >>> factory DisplayFirstOrNextCardPage */
+CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b)
+{
+	CardPageNavigationResult r = GoToFirstOrNextCardPage();
+	r.b = b;
+	return r;
+}
+/* <<< factory DisplayFirstOrNextCardPage */

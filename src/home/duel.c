@@ -413,6 +413,9 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 #include "generated/sram.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#define SYM_CURSOR_R 0x0Fu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2044,3 +2047,10 @@ void SaveDuelStateToSRAM(void)
 	BankswitchSRAM(0u);
 }
 /* <<< factory SaveDuelStateToSRAM */
+
+/* >>> factory DisplayCheckMenuCursor_YourOrOppPlayArea */
+TempListResult DisplayCheckMenuCursor_YourOrOppPlayArea(void)
+{
+	return DrawCheckMenuCursor_YourOrOppPlayArea(SYM_CURSOR_R);
+}
+/* <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea */

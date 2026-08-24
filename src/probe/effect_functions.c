@@ -2845,6 +2845,13 @@ static void adapt_MorphEffect(ProbeState *s)
 }
 /* <<< factory MorphEffect */
 
+/* >>> factory AISelectConversionColor */
+static void adapt_AISelectConversionColor(ProbeState *s)
+{
+	AISelectConversionColor();
+}
+/* <<< factory AISelectConversionColor */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3197,5 +3204,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Wildfire_DiscardEnergyEffect", adapt_Wildfire_DiscardEnergyEffect },
 	{ "SuperEnergyRemoval_EnergyCheck", adapt_SuperEnergyRemoval_EnergyCheck },
 	{ "MorphEffect", adapt_MorphEffect },
+	{ "AISelectConversionColor", adapt_AISelectConversionColor },
 	{ NULL, NULL },
 };

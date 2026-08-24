@@ -599,4 +599,7 @@ void DrawPlayArea_IconWithValue(uint8_t a, uint8_t b, uint16_t *hl);
 /* >>> factory SaveDuelStateToSRAM */
 void SaveDuelStateToSRAM(void);
 /* <<< factory SaveDuelStateToSRAM */
+/* >>> factory DisplayCheckMenuCursor_YourOrOppPlayArea */
+TempListResult DisplayCheckMenuCursor_YourOrOppPlayArea(void);
+/* <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea */
 #endif

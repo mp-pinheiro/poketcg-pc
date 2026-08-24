@@ -395,6 +395,16 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define DITTO 0xbbu
 #define AttackUnsuccessfulText 0x00fdu
 #define MetamorphsToText 0x010du
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define COLORLESS 0x06u
+#define NUM_COLORED_TYPES 0x06u
+#define TYPE_PKMN 0x07u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4842,3 +4852,43 @@ void MorphEffect(void)
 	wDuelDisplayedScreen = 0u;
 }
 /* <<< factory MorphEffect */
+
+/* >>> factory AISelectConversionColor */
+void AISelectConversionColor(void)
+{
+	DuelistVarResult duelists = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t pokemon_count = duelists.a;
+
+	for (uint8_t location = (uint8_t)(PLAY_AREA_ARENA + 1u); location < pokemon_count; ++location) {
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		duelists = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+		(void)LoadCardDataToBuffer1_FromDeckIndex(duelists.a);
+		if (wLoadedCard1Type != COLORLESS) {
+			CheckIfEnoughEnergiesForGivenAttackResult first_attack = CheckIfEnoughEnergiesForGivenAttack(duelists.a, FIRST_ATTACK_OR_PKMN_POWER);
+			if (!(first_attack.f & 0x10u)) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+			CheckIfEnoughEnergiesForGivenAttackResult second_attack = CheckIfEnoughEnergiesForGivenAttack(duelists.a, SECOND_ATTACK);
+			if (!(second_attack.f & 0x10u)) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+		}
+	}
+
+	for (uint8_t location = (uint8_t)(PLAY_AREA_ARENA + 1u); location < pokemon_count; ++location) {
+		(void)GetPlayAreaCardAttachedEnergies(location);
+		if (wTotalAttachedEnergies != 0u) {
+			duelists = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+			(void)LoadCardDataToBuffer1_FromDeckIndex(duelists.a);
+			if (wLoadedCard1Type != COLORLESS) {
+				gb_write8(hTemp_ffa0_ADDR, (uint8_t)(wLoadedCard1Type & TYPE_PKMN));
+				return;
+			}
+		}
+	}
+
+	gb_write8(hTemp_ffa0_ADDR, Random(NUM_COLORED_TYPES));
+}
+/* <<< factory AISelectConversionColor */

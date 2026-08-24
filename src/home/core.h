@@ -727,4 +727,7 @@ Func_7364Result Func_7364(void);
 typedef struct { uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint8_t f; } CheckEnergyNeededForAttackAfterDiscardResult;
 CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDiscard(void);
 /* <<< factory CheckEnergyNeededForAttackAfterDiscard */
+/* >>> factory DisplayFirstOrNextCardPage */
+CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b);
+/* <<< factory DisplayFirstOrNextCardPage */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayCheckMenuCursor_YourOrOppPlayArea",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayCheckMenuCursor_YourOrOppPlayArea\", \"registers\": {\"a\": 15, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayCheckMenuCursor_YourOrOppPlayArea\", \"mismatches\": {\"a\": [15, 16]}}\n",
+  "restored": "{\"fn\": \"DisplayCheckMenuCursor_YourOrOppPlayArea\", \"registers\": {\"a\": 15, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

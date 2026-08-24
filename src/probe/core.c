@@ -1572,6 +1572,14 @@ static void adapt_CheckEnergyNeededForAttackAfterDiscard(ProbeState *s)
 }
 /* <<< factory CheckEnergyNeededForAttackAfterDiscard */
 
+/* >>> factory DisplayFirstOrNextCardPage */
+static void adapt_DisplayFirstOrNextCardPage(ProbeState *s)
+{
+	CardPageNavigationResult r = DisplayFirstOrNextCardPage(s->b);
+	s->a = r.a; s->f = r.f; s->b = r.b;
+}
+/* <<< factory DisplayFirstOrNextCardPage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1759,5 +1767,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LookForEnergyNeededInHand", adapt_LookForEnergyNeededInHand },
 	{ "Func_7364", adapt_Func_7364 },
 	{ "CheckEnergyNeededForAttackAfterDiscard", adapt_CheckEnergyNeededForAttackAfterDiscard },
+	{ "DisplayFirstOrNextCardPage", adapt_DisplayFirstOrNextCardPage },
 	{ NULL, NULL },
 };

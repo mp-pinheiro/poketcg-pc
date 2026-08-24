@@ -2188,6 +2188,14 @@ CASES["CheckEnergyNeededForAttackAfterDiscard"] = [
 ]
 # <<< factory CheckEnergyNeededForAttackAfterDiscard
 
+# >>> factory DisplayFirstOrNextCardPage
+CONTRACT["DisplayFirstOrNextCardPage"] = {"compare": ("a", "f", "b"), "preserve": ()}
+CASES["DisplayFirstOrNextCardPage"] = [
+    {"wram": {wCardPageNumber: b"\xFF"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, wram={wCardPageNumber: b"\xFF"}, read={wCardPageNumber: 1}),
+]
+# <<< factory DisplayFirstOrNextCardPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3255,3 +3263,6 @@ MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (
 # >>> factory-mutation CheckEnergyNeededForAttackAfterDiscard
 MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {"source_symbol": "CheckEnergyNeededForAttackAfterDiscard", "before": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x80u : 0u) | 0x10u);", "after": "uint8_t final_f = (uint8_t)((colorless_needed2 == 0u ? 0x20u : 0u) | 0x10u);", "case_ids": ["CheckEnergyNeededForAttackAfterDiscard-0"]}
 # <<< factory-mutation CheckEnergyNeededForAttackAfterDiscard
+# >>> factory-mutation DisplayFirstOrNextCardPage
+MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayFirstOrNextCardPage", "before": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = b;", "after": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = (uint8_t)(b + 1u);", "case_ids": ["DisplayFirstOrNextCardPage-0", "DisplayFirstOrNextCardPage-1"]}
+# <<< factory-mutation DisplayFirstOrNextCardPage
