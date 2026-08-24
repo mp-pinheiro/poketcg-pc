@@ -424,6 +424,13 @@ static void adapt_AppendDeckName(ProbeState *s)
 }
 /* <<< factory AppendDeckName */
 
+/* >>> factory DrawDecksScreen */
+static void adapt_DrawDecksScreen(ProbeState *s)
+{
+	DrawDecksScreen(s->a);
+}
+/* <<< factory DrawDecksScreen */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -474,5 +481,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AppendOwnedCardCountAndStorageCountNumbers", adapt_AppendOwnedCardCountAndStorageCountNumbers },
 	{ "PrintCardTypeCounts", adapt_PrintCardTypeCounts },
 	{ "AppendDeckName", adapt_AppendDeckName },
+	{ "DrawDecksScreen", adapt_DrawDecksScreen },
 	{ NULL, NULL },
 };

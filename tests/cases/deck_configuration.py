@@ -585,6 +585,20 @@ CASES["AppendDeckName"] = [
 ]
 # <<< factory AppendDeckName
 
+# >>> factory DrawDecksScreen
+CONTRACT["DrawDecksScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawDecksScreen"] = [
+    {"a": 0x00, "sram": {0: {0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xB700: b"\x00"}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 2,
+     "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "read": {0xCEB2: 4}},
+    dict(POISON, a=0x00, sram={0: {0xA218: b"\x00", 0xA26C: b"\x00", 0xA2C0: b"\x00", 0xA314: b"\x00", 0xB700: b"\x00"}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=2,
+         instruction_budget=2000000, cycle_budget=8000000,
+         read={0xCEB2: 4}),
+]
+# <<< factory DrawDecksScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -791,3 +805,6 @@ MUTATIONS["PrintCardTypeCounts"] = {"source_symbol": "PrintCardTypeCounts", "bef
 # >>> factory-mutation AppendDeckName
 MUTATIONS["AppendDeckName"] = {"source_symbol": "AppendDeckName", "before": "\tif (no_cards & 0x10u) {", "after": "\tif (no_cards & 0x20u) {", "case_ids": ["AppendDeckName-0", "AppendDeckName-1"]}
 # <<< factory-mutation AppendDeckName
+# >>> factory-mutation DrawDecksScreen
+MUTATIONS["DrawDecksScreen"] = {"source_symbol": "DrawDecksScreen", "before": "\tif (!(nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;", "after": "\tif ((nc1 & 0x10u)) {\n\t\twDeck1Valid = TRUE;", "case_ids": ["DrawDecksScreen-0", "DrawDecksScreen-1"]}
+# <<< factory-mutation DrawDecksScreen

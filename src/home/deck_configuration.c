@@ -187,6 +187,18 @@
 #include "mem.h"
 #define DECK_NAME_SIZE_WO_SUFFIX 0x15u
 #define APPEND_DECK_NAME_TEXT_START_ADDR 0x52F8u
+
+#include "home/deck_configuration.h"
+#include "home/text_box.h"
+#include "home/deck_selection.h"
+#include "home/lcd.h"
+#include "home/switch_sram.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define TRUE 0x01u
+#define DECK_NAME_MENU_DATA_ADDR 0x5242u
 /* <<< factory statics */
 
 
@@ -1165,3 +1177,82 @@ uint8_t AppendDeckName(uint16_t hl, uint8_t d, uint8_t e)
 	return 0u;
 }
 /* <<< factory AppendDeckName */
+
+/* >>> factory DrawDecksScreen */
+void DrawDecksScreen(uint8_t a)
+{
+	hffb5 = a;
+	EmptyScreenAndLoadFontDuelAndHandCardsIcons();
+
+	uint16_t box1 = 0;
+	DrawRegularTextBox(&box1, 0u, 20u, 4u, 0u, 0u);
+	uint16_t box2 = 0;
+	DrawRegularTextBox(&box2, 0u, 20u, 4u, 0u, 3u);
+	uint16_t box3 = 0;
+	DrawRegularTextBox(&box3, 0u, 20u, 4u, 0u, 6u);
+	uint16_t box4 = 0;
+	DrawRegularTextBox(&box4, 0u, 20u, 4u, 0u, 9u);
+
+	(void)PlaceTextItems(DECK_NAME_MENU_DATA_ADDR);
+
+	ClearMemory_Bank2(NUM_DECKS, wDecksValid_ADDR);
+
+	uint8_t flags = hffb5;
+	if (flags & 0x01u) {
+		PrintDeckName(sDeck1Name_ADDR, 6u, 2u);
+	}
+	uint8_t nc1 = CheckIfDeckHasCards(sDeck1Cards_ADDR);
+	if (!(nc1 & 0x10u)) {
+		wDeck1Valid = TRUE;
+	}
+
+	flags = hffb5;
+	if (flags & 0x02u) {
+		PrintDeckName(sDeck2Name_ADDR, 6u, 5u);
+	}
+	uint8_t nc2 = CheckIfDeckHasCards(sDeck2Cards_ADDR);
+	if (!(nc2 & 0x10u)) {
+		wDeck2Valid = TRUE;
+	}
+
+	flags = hffb5;
+	if (flags & 0x04u) {
+		PrintDeckName(sDeck3Name_ADDR, 6u, 8u);
+	}
+	uint8_t nc3 = CheckIfDeckHasCards(sDeck3Cards_ADDR);
+	if (!(nc3 & 0x10u)) {
+		wDeck3Valid = TRUE;
+	}
+
+	flags = hffb5;
+	if (flags & 0x08u) {
+		PrintDeckName(sDeck4Name_ADDR, 6u, 11u);
+	}
+	uint8_t nc4 = CheckIfDeckHasCards(sDeck4Cards_ADDR);
+	if (!(nc4 & 0x10u)) {
+		wDeck4Valid = TRUE;
+	}
+
+	EnableSRAM();
+	uint8_t c = gb_read8(sCurrentlySelectedDeck_ADDR);
+	uint8_t d = 2u;
+	for (;;) {
+		uint8_t valid = gb_read8((uint16_t)(wDecksValid_ADDR + c));
+		if (valid != 0u) {
+			break;
+		}
+		c = (uint8_t)(c + 1u);
+		if (c == NUM_DECKS) {
+			c = 0u;
+			d = (uint8_t)(d - 1u);
+			if (d == 0u) {
+				break;
+			}
+		}
+	}
+	gb_write8(sCurrentlySelectedDeck_ADDR, c);
+	DisableSRAM();
+	DrawHandCardsTileOnCurDeck();
+	EnableLCD();
+}
+/* <<< factory DrawDecksScreen */

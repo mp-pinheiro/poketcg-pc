@@ -1,0 +1,9 @@
+{
+  "fn": "DrawDecksScreen",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawDecksScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41496\": \"00\", \"41580\": \"00\", \"41664\": \"00\", \"41748\": \"00\", \"46848\": \"00\"}}, \"vram\": {}, \"wram\": {\"52914\": \"00000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawDecksScreen\", \"mismatches\": {\"bus\": {\"address\": 52914, \"reference\": \"00000000\", \"native\": \"01000000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52914, 4]]}}}\n",
+  "restored": "{\"fn\": \"DrawDecksScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {\"0\": {\"41496\": \"00\", \"41580\": \"00\", \"41664\": \"00\", \"41748\": \"00\", \"46848\": \"00\"}}, \"vram\": {}, \"wram\": {\"52914\": \"00000000\"}}, \"status\": \"PASS\"}\n"
+}

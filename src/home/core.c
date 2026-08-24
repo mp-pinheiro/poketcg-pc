@@ -682,6 +682,24 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #include "mem.h"
 #define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+
+#include "home/core.h"
+#include "home/frames.h"
+#include "home/empty_screen.h"
+#include "home/tiles.h"
+#include "home/process_text.h"
+#include "home/menus.h"
+#include "home/lcd.h"
+#include "home/script.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define NUM_DECK_IDS 0x35u
+#define B_PAD_B 1u
+#define B_PAD_RIGHT 4u
+#define B_PAD_LEFT 5u
+#define B_PAD_UP 6u
+#define B_PAD_DOWN 7u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4027,3 +4045,67 @@ uint8_t LookForEnergyNeededInHand(void)
 	return 0x80u;
 }
 /* <<< factory LookForEnergyNeededInHand */
+
+/* >>> factory Func_7364 */
+Func_7364Result Func_7364(void)
+{
+	wTileMapFill = 0u;
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	(void)SetupText(0x38u, 0x9Fu);
+	(void)DrawWideTextBox();
+	EnableLCD();
+
+	wOpponentDeckID = 0u;
+	DrawOpponentSelectionScreen(0u, 0u, 0u, 0u, 0u, 0u);
+
+	for (;;) {
+		DoFrame();
+		uint8_t keys = hDPadHeld;
+		if (keys == 0u) {
+			continue;
+		}
+		uint8_t b = keys;
+		if (keys & (PAD_A | PAD_START)) {
+			uint8_t opp = wOpponentDeckID;
+			wNPCDuelDeckID = opp;
+			(void)GetNPCDuelConfigurations(opp, 0u, 0u, 0u, 0u, 0u, 0u);
+			return (Func_7364Result){0u, 0x80u};
+		}
+		if (b & (1u << B_PAD_B)) {
+			return (Func_7364Result){0u, 0x10u};
+		}
+
+		uint8_t a = wOpponentDeckID;
+		if (b & (1u << B_PAD_RIGHT)) {
+			a = (uint8_t)(a + 1u);
+			if (a >= NUM_DECK_IDS) {
+				a = 0u;
+			}
+		}
+		if (b & (1u << B_PAD_LEFT)) {
+			if (a != 0u) {
+				a = (uint8_t)(a - 1u);
+			} else {
+				a = (uint8_t)(NUM_DECK_IDS - 1u);
+			}
+		}
+		if (b & (1u << B_PAD_UP)) {
+			a = (uint8_t)(a + 10u);
+			if (a >= NUM_DECK_IDS) {
+				a = 0u;
+			}
+		}
+		if (b & (1u << B_PAD_DOWN)) {
+			if (a >= 10u) {
+				a = (uint8_t)(a - 10u);
+			} else {
+				a = (uint8_t)(NUM_DECK_IDS - 1u);
+			}
+		}
+		wOpponentDeckID = a;
+		DrawOpponentSelectionScreen(0u, 0u, 0u, 0u, 0u, 0u);
+	}
+}
+/* <<< factory Func_7364 */

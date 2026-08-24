@@ -2166,6 +2166,18 @@ CASES["LookForEnergyNeededInHand"] = [
 ]
 # <<< factory LookForEnergyNeededInHand
 
+# >>> factory Func_7364
+CONTRACT["Func_7364"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_7364"] = [
+    {"keys": 0x02, "wram": {0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+     "sram": {0: {0xA010: b"\x21\x22\x00"}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=0x02, wram={0xCC0E: b"\x00", 0xCC15: b"\x02", 0xCC18: b"\x03"},
+         sram={0: {0xA010: b"\x21\x22\x00"}}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_7364
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3227,3 +3239,6 @@ MUTATIONS["CheckAbleToRetreat"] = {"source_symbol": "CheckAbleToRetreat", "befor
 # >>> factory-mutation LookForEnergyNeededInHand
 MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededInHand", "before": "\t}\n\treturn 0x80u;\n}", "after": "\t}\n\treturn 0x00u;\n}", "case_ids": ["LookForEnergyNeededInHand-0", "LookForEnergyNeededInHand-1"]}
 # <<< factory-mutation LookForEnergyNeededInHand
+# >>> factory-mutation Func_7364
+MUTATIONS["Func_7364"] = {"source_symbol": "Func_7364", "before": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x10u};", "after": "\t\tif (b & (1u << B_PAD_B)) {\n\t\t\treturn (Func_7364Result){0u, 0x20u};", "case_ids": ["Func_7364-0", "Func_7364-1"]}
+# <<< factory-mutation Func_7364

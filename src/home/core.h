@@ -719,4 +719,8 @@ CheckAbleToRetreatResult CheckAbleToRetreat(void);
 /* >>> factory LookForEnergyNeededInHand */
 uint8_t LookForEnergyNeededInHand(void);
 /* <<< factory LookForEnergyNeededInHand */
+/* >>> factory Func_7364 */
+typedef struct { uint8_t a; uint8_t f; } Func_7364Result;
+Func_7364Result Func_7364(void);
+/* <<< factory Func_7364 */
 #endif
