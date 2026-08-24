@@ -198,6 +198,16 @@ CASES["PrintNumSavedDecks"] = [
 ]
 # <<< factory PrintNumSavedDecks
 
+# >>> factory Func_b568
+CONTRACT["Func_b568"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_b568"] = [
+    {"wram": {0xCEA4: b"\x02", 0xCEA1: b"\x01", 0xD085: b"\x05"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 9}},
+    dict(POISON, wram={0xCEA4: b"\x02", 0xCEA1: b"\x01", 0xD085: b"\x05"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 9}),
+]
+# <<< factory Func_b568
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -257,3 +267,6 @@ MUTATIONS["PrintReceivedTheseCardsText"] = {"source_symbol": "PrintReceivedThese
 # >>> factory-mutation PrintNumSavedDecks
 MUTATIONS["PrintNumSavedDecks"] = {"source_symbol": "PrintNumSavedDecks", "before": "gb_write8(hl, SYM_SLASH);", "after": "gb_write8(hl, TX_SYMBOL);", "case_ids": ["PrintNumSavedDecks-0", "PrintNumSavedDecks-1"]}
 # <<< factory-mutation PrintNumSavedDecks
+# >>> factory-mutation Func_b568
+MUTATIONS["Func_b568"] = {"source_symbol": "Func_b568", "before": "\tuint8_t b = wCardListCursorPos;\n\tuint8_t a = (uint8_t)(wCardListVisibleOffset + b + 1u);", "after": "\tuint8_t b = wCardListCursorPos;\n\tuint8_t a = (uint8_t)(wCardListVisibleOffset + b);", "case_ids": ["Func_b568-0", "Func_b568-1"]}
+# <<< factory-mutation Func_b568

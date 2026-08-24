@@ -460,4 +460,7 @@ ScriptCommand_TryGiveMedalPCPacksResult ScriptCommand_TryGiveMedalPCPacks(uint8_
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } ScriptCommand_SetDialogNPCResult;
 ScriptCommand_SetDialogNPCResult ScriptCommand_SetDialogNPC(uint8_t f, uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory ScriptCommand_SetDialogNPC */
+/* >>> factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
+IncreaseScriptPointerResult ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot(uint8_t c);
+/* <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
 #endif

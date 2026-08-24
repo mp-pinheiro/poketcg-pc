@@ -209,6 +209,11 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/scripting.h"
 #include "home/npc_data.h"
 #include "mem.h"
+
+#include "home/scripting.h"
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1506,3 +1511,27 @@ ScriptCommand_SetDialogNPCResult ScriptCommand_SetDialogNPC(uint8_t f, uint8_t b
 	return (ScriptCommand_SetDialogNPCResult){r2.a, r2.f, r1.b, r2.c, r1.hl};
 }
 /* <<< factory ScriptCommand_SetDialogNPC */
+
+/* >>> factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
+IncreaseScriptPointerResult ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot(uint8_t c)
+{
+	uint8_t saved_e = gb_read8(wCurrentNPCNameTx_ADDR);
+	uint8_t saved_d = gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u));
+
+	uint8_t slot_c = (uint8_t)(c << 1);
+	uint16_t slot_hl = (uint16_t)(wTxRam2_ADDR + slot_c);
+
+	uint8_t a = wChallengeHallNPC;
+	(void)SetNPCDialogName(a, 0u, 0u, slot_c, slot_hl);
+
+	uint8_t name_lo = gb_read8(wCurrentNPCNameTx_ADDR);
+	gb_write8(slot_hl, name_lo);
+	uint8_t name_hi = gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u));
+	gb_write8((uint16_t)(slot_hl + 1u), name_hi);
+
+	gb_write8(wCurrentNPCNameTx_ADDR, saved_e);
+	gb_write8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u), saved_d);
+
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */

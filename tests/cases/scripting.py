@@ -1117,6 +1117,14 @@ CASES["ScriptCommand_SetDialogNPC"] = [
 ]
 # <<< factory ScriptCommand_SetDialogNPC
 
+# >>> factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
+CONTRACT["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot"] = {"compare": ("a", "f", "c"), "preserve": (), "wram_out": True}
+CASES["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot"] = [
+    {"c": 0x02, "wram": {0xD0C8: b"\x11\x22", 0xD696: b"\x01"}, "read": {0xCE43: 2, 0xD0C8: 2}},
+    dict(POISON, c=0x02, wram={0xD0C8: b"\x11\x22", 0xD696: b"\x01"}, read={0xCE43: 2, 0xD0C8: 2}),
+]
+# <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1647,3 +1655,6 @@ MUTATIONS["ScriptCommand_TryGiveMedalPCPacks"] = {"source_symbol": "ScriptComman
 # >>> factory-mutation ScriptCommand_SetDialogNPC
 MUTATIONS["ScriptCommand_SetDialogNPC"] = {"source_symbol": "ScriptCommand_SetDialogNPC", "before": "SetNPCDialogNameResult r1 = SetNPCDialogName(c, f, b, c, hl);", "after": "SetNPCDialogNameResult r1 = SetNPCDialogName(c, f, b, c, (uint16_t)(hl + 1u));", "case_ids": ["ScriptCommand_SetDialogNPC-0", "ScriptCommand_SetDialogNPC-1"]}
 # <<< factory-mutation ScriptCommand_SetDialogNPC
+# >>> factory-mutation ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
+MUTATIONS["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot"] = {"source_symbol": "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot", "before": "\tuint8_t slot_c = (uint8_t)(c << 1);", "after": "\tuint8_t slot_c = c;", "case_ids": ["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot-0", "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot-1"]}
+# <<< factory-mutation ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot

@@ -1,0 +1,9 @@
+{
+  "fn": "AppendOwnedCardCountAndStorageCountNumbers",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"414205000520052e05000520\", \"52954\": \"01020300\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"mismatches\": {\"bus\": {\"address\": 50439, \"reference\": \"000520052e05000520\", \"native\": \"000520050505000520\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[50432, 12], [52954, 4]]}}}\n",
+  "restored": "{\"fn\": \"AppendOwnedCardCountAndStorageCountNumbers\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 99, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"414205000520052e05000520\", \"52954\": \"01020300\"}}, \"status\": \"PASS\"}\n"
+}

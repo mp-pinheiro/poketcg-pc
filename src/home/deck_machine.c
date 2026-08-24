@@ -286,3 +286,25 @@ void PrintNumSavedDecks(void)
 	ProcessText(&text_hl);
 }
 /* <<< factory PrintNumSavedDecks */
+
+/* >>> factory Func_b568 */
+void Func_b568(void)
+{
+	uint8_t b = wCardListCursorPos;
+	uint8_t a = (uint8_t)(wCardListVisibleOffset + b + 1u);
+	uint16_t hl = wDefaultText_ADDR;
+	ConvertToNumericalDigitsResult r1 = ConvertToNumericalDigits(a, hl);
+	hl = r1.hl;
+	gb_write8(hl, TX_SYMBOL);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, SYM_SLASH);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t num_saved = wNumSavedDecks;
+	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(num_saved, hl);
+	hl = r2.hl;
+	gb_write8(hl, TX_END);
+	InitTextPrinting(14u, 1u);
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+}
+/* <<< factory Func_b568 */

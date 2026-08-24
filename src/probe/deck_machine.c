@@ -127,6 +127,13 @@ static void adapt_PrintNumSavedDecks(ProbeState *s)
 }
 /* <<< factory PrintNumSavedDecks */
 
+/* >>> factory Func_b568 */
+static void adapt_Func_b568(ProbeState *s)
+{
+	Func_b568();
+}
+/* <<< factory Func_b568 */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -143,5 +150,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "PrintCardToSendText", adapt_PrintCardToSendText },
 	{ "PrintReceivedTheseCardsText", adapt_PrintReceivedTheseCardsText },
 	{ "PrintNumSavedDecks", adapt_PrintNumSavedDecks },
+	{ "Func_b568", adapt_Func_b568 },
 	{ NULL, NULL },
 };

@@ -171,6 +171,10 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "mem.h"
+#define SYM_SLASH 0x2Eu
 /* <<< factory statics */
 
 
@@ -1083,3 +1087,23 @@ void PrintNumberValueInCursorYPos(uint8_t a)
 	ProcessText(&text_hl);
 }
 /* <<< factory PrintNumberValueInCursorYPos */
+
+/* >>> factory AppendOwnedCardCountAndStorageCountNumbers */
+void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e)
+{
+	uint16_t walk = hl;
+	while (gb_read8(walk) != 0u) {
+		walk = (uint16_t)(walk + 1u);
+	}
+	GetCountOfCardInCurDeckResult r1 = GetCountOfCardInCurDeck(e);
+	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(r1.a, walk);
+	walk = r2.hl;
+	gb_write8(walk, TX_SYMBOL);
+	walk = (uint16_t)(walk + 1u);
+	gb_write8(walk, SYM_SLASH);
+	walk = (uint16_t)(walk + 1u);
+	GetOwnedCardCountResult r3 = GetOwnedCardCount(e);
+	ConvertToNumericalDigitsResult r4 = ConvertToNumericalDigits(r3.a, walk);
+	gb_write8(r4.hl, TX_END);
+}
+/* <<< factory AppendOwnedCardCountAndStorageCountNumbers */

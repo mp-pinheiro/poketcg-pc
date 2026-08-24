@@ -1,0 +1,9 @@
+{
+  "fn": "Func_b568",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_b568\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000524052e050005\", \"52897\": \"01\", \"52900\": \"02\", \"53381\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_b568\", \"mismatches\": {\"bus\": {\"address\": 50579, \"reference\": \"05000524052e0500\", \"native\": \"05000523052e0500\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50576, 9], [52897, 1], [52900, 1], [53381, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_b568\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000524052e050005\", \"52897\": \"01\", \"52900\": \"02\", \"53381\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

@@ -55,4 +55,7 @@ void PrintReceivedTheseCardsText(void);
 /* >>> factory PrintNumSavedDecks */
 void PrintNumSavedDecks(void);
 /* <<< factory PrintNumSavedDecks */
+/* >>> factory Func_b568 */
+void Func_b568(void);
+/* <<< factory Func_b568 */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

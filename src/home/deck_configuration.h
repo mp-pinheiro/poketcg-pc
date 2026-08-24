@@ -169,4 +169,7 @@ void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e);
 /* >>> factory PrintNumberValueInCursorYPos */
 void PrintNumberValueInCursorYPos(uint8_t a);
 /* <<< factory PrintNumberValueInCursorYPos */
+/* >>> factory AppendOwnedCardCountAndStorageCountNumbers */
+void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e);
+/* <<< factory AppendOwnedCardCountAndStorageCountNumbers */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
