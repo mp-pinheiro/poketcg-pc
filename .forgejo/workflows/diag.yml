@@ -2,71 +2,46 @@ name: diag
 on:
   workflow_dispatch:
 jobs:
-  envcheck:
+  clifftimed:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     container:
       image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - run: |
-          test -n "$GITHUB_WORKSPACE" || { echo "GITHUB_WORKSPACE_EMPTY" >&2; exit 17; }
-          test "$GITHUB_WORKSPACE" = "$PWD" || { echo "GITHUB_WORKSPACE_MISMATCH" >&2; exit 18; }
-          echo "env OK"
-
-  cliffbare:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    container:
-      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
       - run: |
           curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
             https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
+          echo "download exit=$?"
           tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
+          echo "extract exit=$?"
           install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
-      - run: git-cliff --version
+          echo "install exit=$?"
+          file /usr/local/bin/git-cliff || true
+          uname -m
+      - run: |
+          timeout 8 git-cliff --version
+          echo "version-exit=$?"
+      - run: echo "reached step after version"
 
-  cliffsafedir:
+  archcheck:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     container:
       image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - run: |
-          curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
-            https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
-          tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
-          install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
-      - run: git config --global --add safe.directory '*'
-      - run: git cliff --unreleased --strip header && echo "wildcard safedir OK"
+      - run: uname -m && cat /etc/os-release | head -3
 
-  hookraw:
+  cliffalt:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     container:
       image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - run: |
-          curl -fsSL -o /usr/local/bin/jq \
-            https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
-          chmod +x /usr/local/bin/jq
-      - run: mkdir -p .jj
+          curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
+            | env UV_INSTALL_DIR=/usr/local/bin sh
       - run: |
-          rc=0
-          printf '{"tool_input":{"command":"%s"}}' 'git commit -m x' | bash ".claude/hooks/enforce-jj.sh"; rc=$?
-          echo "hook rc=$rc"
-          test "$rc" = 2 && echo "HOOK_RC_MATCHES_EXPECTED_2"
+          timeout 60 uv tool install git-cliff 2>&1 | tail -20
+      - run: |
+          timeout 8 "$HOME/.local/bin/git-cliff" --version || timeout 8 git-cliff --version
+          echo "alt-version-exit=$?"
