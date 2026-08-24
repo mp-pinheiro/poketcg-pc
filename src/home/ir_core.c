@@ -10,6 +10,11 @@
 #define RP_ENABLE 0xC0u
 #define RP_WRITE_HIGH 0x01u
 #define RP_WRITE_LOW 0x00u
+
+#include "home/ir_core.h"
+#include "mem.h"
+#define RP_ADDR_470 0xFF56u
+#define B_RP_DATA_IN_470 1u
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -84,3 +89,36 @@ ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet2(void)
 	return result;
 }
 /* <<< factory ReturnZFlagUnsetAndCarryFlagSet2 */
+
+/* >>> factory ReceiveByteThroughIR */
+ReceiveByteThroughIRResult ReceiveByteThroughIR(void)
+{
+	uint8_t loop_count = 0u;
+	for (;;) {
+		uint8_t rp = gb_read8(RP_ADDR_470);
+		if ((rp & (1u << B_RP_DATA_IN_470)) == 0u)
+			break;
+		loop_count = (uint8_t)(loop_count - 1u);
+		if (loop_count != 0u)
+			continue;
+		return (ReceiveByteThroughIRResult){0xFFu, 0x90u};
+	}
+
+	uint8_t d = 0u;
+	for (uint8_t e = 8u; e != 0u; e--) {
+		uint8_t bit_val = 1u;
+		uint8_t rp = gb_read8(RP_ADDR_470);
+		if ((rp & (1u << B_RP_DATA_IN_470)) == 0u)
+			bit_val = 0u;
+		for (uint8_t inner = 9u; inner != 0u; inner--) {
+			rp = gb_read8(RP_ADDR_470);
+			if ((rp & (1u << B_RP_DATA_IN_470)) == 0u)
+				bit_val = 0u;
+		}
+		d = (uint8_t)((d >> 1) | (uint8_t)(bit_val << 7));
+	}
+	uint8_t result_a = d;
+	uint8_t result_f = (result_a == 0u) ? 0x80u : 0x00u;
+	return (ReceiveByteThroughIRResult){result_a, result_f};
+}
+/* <<< factory ReceiveByteThroughIR */

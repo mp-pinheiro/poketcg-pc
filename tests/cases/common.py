@@ -331,6 +331,15 @@ CASES["FindDuplicatePokemonCards"] = [
 ]
 # <<< factory FindDuplicatePokemonCards
 
+# >>> factory AIPickEnergyCardToDiscard
+CONTRACT["AIPickEnergyCardToDiscard"] = {"compare": ("a",), "preserve": ()}
+CASES["AIPickEnergyCardToDiscard"] = [
+    {"a": 0, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC510: 32}},
+    {"a": 3, "wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, "read": {0xC510: 32}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC200: b"\x00" * 60}, read={0xC510: 32}),
+]
+# <<< factory AIPickEnergyCardToDiscard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -446,3 +455,6 @@ MUTATIONS["AddStarterDeck"] = {"source_symbol": "AddStarterDeck", "before": "\t_
 # >>> factory-mutation FindDuplicatePokemonCards
 MUTATIONS["FindDuplicatePokemonCards"] = {"source_symbol": "FindDuplicatePokemonCards", "before": "wTempAI = inner_idx;", "after": "wTempAI = outer_idx;", "case_ids": ["FindDuplicatePokemonCards-0"]}
 # <<< factory-mutation FindDuplicatePokemonCards
+# >>> factory-mutation AIPickEnergyCardToDiscard
+MUTATIONS["AIPickEnergyCardToDiscard"] = {"source_symbol": "AIPickEnergyCardToDiscard", "before": "if (total == 0u)\n\t\treturn 0xFFu;", "after": "if (total == 0u)\n\t\treturn 0xFEu;", "case_ids": ["AIPickEnergyCardToDiscard-0", "AIPickEnergyCardToDiscard-1"]}
+# <<< factory-mutation AIPickEnergyCardToDiscard

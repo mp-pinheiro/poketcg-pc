@@ -49,6 +49,18 @@ CASES["ReturnZFlagUnsetAndCarryFlagSet2"] = [
 ]
 # <<< factory ReturnZFlagUnsetAndCarryFlagSet2
 
+# >>> factory ReceiveByteThroughIR
+CONTRACT["ReceiveByteThroughIR"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ReceiveByteThroughIR"] = [
+    {"wram": {0xFF56: b"\x3E"}},
+    dict(POISON, wram={0xFF56: b"\x3E"}),
+    dict(POISON, wram={0xFF56: b"\x3C"},
+         oracle=False,
+         why="rRP is a real hardware IR port register; the reference oracle ignores memory seeds there and always reads back the idle value, so the light-received (bit1-clear) branch is only reachable in the native harness, not against real hardware",
+         expect_regs={"a": 0x00, "f": 0x80}),
+]
+# <<< factory ReceiveByteThroughIR
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -68,3 +80,6 @@ MUTATIONS["TransmitIRBit"] = {"source_symbol": "TransmitIRBit", "before": "if ((
 # >>> factory-mutation ReturnZFlagUnsetAndCarryFlagSet2
 MUTATIONS["ReturnZFlagUnsetAndCarryFlagSet2"] = {"source_symbol": "ReturnZFlagUnsetAndCarryFlagSet2", "before": "return result;", "after": "result.a ^= 1u;\n\treturn result;", "case_ids": ["ReturnZFlagUnsetAndCarryFlagSet2-0", "ReturnZFlagUnsetAndCarryFlagSet2-1"]}
 # <<< factory-mutation ReturnZFlagUnsetAndCarryFlagSet2
+# >>> factory-mutation ReceiveByteThroughIR
+MUTATIONS["ReceiveByteThroughIR"] = {"source_symbol": "ReceiveByteThroughIR", "before": "if ((rp & (1u << B_RP_DATA_IN_470)) == 0u)\n\t\t\tbreak;", "after": "if ((rp & (1u << B_RP_DATA_IN_470)) != 0u)\n\t\t\tbreak;", "case_ids": ["ReceiveByteThroughIR-0"]}
+# <<< factory-mutation ReceiveByteThroughIR

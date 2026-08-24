@@ -94,4 +94,7 @@ void AddStarterDeck(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } FindDuplicatePokemonCardsResult;
 FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void);
 /* <<< factory FindDuplicatePokemonCards */
+/* >>> factory AIPickEnergyCardToDiscard */
+uint8_t AIPickEnergyCardToDiscard(uint8_t a);
+/* <<< factory AIPickEnergyCardToDiscard */
 #endif /* POKETCG_HOME_COMMON_H */

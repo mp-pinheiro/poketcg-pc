@@ -1,0 +1,9 @@
+{
+  "fn": "FindExtraInteractableObjects",
+  "case": "tests/cases/fire_club_lobby.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindExtraInteractableObjects\", \"registers\": {\"a\": 0, \"b\": 154, \"c\": 188, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 50437, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"aa00000000050600bc9a00\", \"54064\": \"0506\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindExtraInteractableObjects\", \"mismatches\": {\"b\": [154, 0], \"c\": [188, 0], \"hl\": [50437, 50442]}}\n",
+  "restored": "{\"fn\": \"FindExtraInteractableObjects\", \"registers\": {\"a\": 0, \"b\": 154, \"c\": 188, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 50437, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"aa00000000050600bc9a00\", \"54064\": \"0506\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

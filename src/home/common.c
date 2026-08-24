@@ -67,6 +67,15 @@
 #include "home/card_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_480 0xBBu
+#define TYPE_ENERGY_480 0x08u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -594,3 +603,36 @@ FindDuplicatePokemonCardsResult FindDuplicatePokemonCards(void)
 	return (FindDuplicatePokemonCardsResult){final_val, 0x10u};
 }
 /* <<< factory FindDuplicatePokemonCards */
+
+/* >>> factory AIPickEnergyCardToDiscard */
+uint8_t AIPickEnergyCardToDiscard(uint8_t a)
+{
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);
+	(void)CreateArenaOrBenchEnergyCardList(a);
+	uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	(void)GetPlayAreaCardAttachedEnergies(loc);
+	uint8_t total = gb_read8(wTotalAttachedEnergies_ADDR);
+	if (total == 0u)
+		return 0xFFu;
+
+	uint8_t b = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	DuelistVarResult var = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_480 + b));
+	uint16_t id16 = GetCardIDFromDeckIndex(var.a);
+	uint8_t card_id = (uint8_t)id16;
+	gb_write8(wTempCardID_ADDR, card_id);
+	LoadCardDataToBuffer1_FromCardID(card_id);
+	uint8_t type = (uint8_t)(gb_read8(wLoadedCard1Type_ADDR) | TYPE_ENERGY_480);
+	gb_write8(wTempCardType_ADDR, type);
+
+	uint16_t hl = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t v = gb_read8(hl);
+		if (v == 0xFFu)
+			return gb_read8(wDuelTempList_ADDR);
+		CheckIfEnergyIsUsefulResult r = CheckIfEnergyIsUseful(v);
+		if ((r.f & 0x10u) == 0u)
+			return v;
+		hl = (uint16_t)(hl + 1u);
+	}
+}
+/* <<< factory AIPickEnergyCardToDiscard */

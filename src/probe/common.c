@@ -204,6 +204,13 @@ static void adapt_FindDuplicatePokemonCards(ProbeState *s)
 }
 /* <<< factory FindDuplicatePokemonCards */
 
+/* >>> factory AIPickEnergyCardToDiscard */
+static void adapt_AIPickEnergyCardToDiscard(ProbeState *s)
+{
+	s->a = AIPickEnergyCardToDiscard(s->a);
+}
+/* <<< factory AIPickEnergyCardToDiscard */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -227,5 +234,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "LookForCardIDInDeck_GivenCardIDInHandAndPlayArea", adapt_LookForCardIDInDeck_GivenCardIDInHandAndPlayArea },
 	{ "AddStarterDeck", adapt_AddStarterDeck },
 	{ "FindDuplicatePokemonCards", adapt_FindDuplicatePokemonCards },
+	{ "AIPickEnergyCardToDiscard", adapt_AIPickEnergyCardToDiscard },
 	{ NULL, NULL },
 };

@@ -1,0 +1,39 @@
+#include "home/fire_club_lobby.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* >>> factory statics */
+#include "home/scripting.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* <<< factory statics */
+
+/* >>> factory FindExtraInteractableObjects */
+FindExtraInteractableObjectsResult FindExtraInteractableObjects(uint16_t hl)
+{
+	for (;;) {
+		uint8_t a = gb_read8(hl);
+		if (a == 0u)
+			return (FindExtraInteractableObjectsResult){hl, 0u, 0u, 0u, 5u, 0u};
+		uint16_t entry_start = hl;
+		uint16_t cursor = hl;
+		if (gb_read8(wPlayerXCoord_ADDR) == gb_read8(cursor)) {
+			cursor = (uint16_t)(cursor + 1u);
+			if (gb_read8(wPlayerYCoord_ADDR) == gb_read8(cursor)) {
+				cursor = (uint16_t)(cursor + 1u);
+				if (gb_read8(wPlayerDirection_ADDR) == gb_read8(cursor)) {
+					cursor = (uint16_t)(cursor + 1u);
+					uint8_t c = gb_read8(cursor);
+					cursor = (uint16_t)(cursor + 1u);
+					uint8_t b = gb_read8(cursor);
+					uint16_t bc = (uint16_t)(c | ((uint16_t)b << 8));
+					SetNextScript(bc);
+					return (FindExtraInteractableObjectsResult){entry_start, b, c, 0u, 5u, 1u};
+				}
+			}
+		}
+		hl = (uint16_t)(entry_start + 5u);
+	}
+}
+/* <<< factory FindExtraInteractableObjects */
