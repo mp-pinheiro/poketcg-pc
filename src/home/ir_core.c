@@ -265,3 +265,24 @@ TransmitIRDataBufferResult TransmitIRDataBuffer(void)
 	return (TransmitIRDataBufferResult){r2.a, r2.f};
 }
 /* <<< factory TransmitIRDataBuffer */
+
+/* >>> factory ReceiveIRDataBuffer */
+ReceiveIRDataBufferResult ReceiveIRDataBuffer(void)
+{
+	Func_1971eResult r = Func_1971e();
+	if (r.f & 0x10u) {
+		ReturnZFlagUnsetAndCarryFlagSetResult err = ReturnZFlagUnsetAndCarryFlagSet2();
+		return (ReceiveIRDataBufferResult){err.a, err.f};
+	}
+	ReceiveByteThroughIRResult r1 = ReceiveByteThroughIR();
+	if (r1.a != 0x49u) {
+		return ReceiveIRDataBuffer();
+	}
+	ReceiveByteThroughIRResult r2 = ReceiveByteThroughIR();
+	if (r2.a != 0x52u) {
+		return ReceiveIRDataBuffer();
+	}
+	ReceiveByteThroughIRResult r3 = ReceiveNBytesToHLThroughIR(wIRDataBuffer_ADDR, 8u);
+	return (ReceiveIRDataBufferResult){r3.a, r3.f};
+}
+/* <<< factory ReceiveIRDataBuffer */

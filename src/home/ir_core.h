@@ -58,4 +58,8 @@ Func_19705Result Func_19705(void);
 typedef struct { uint8_t a; uint8_t f; } TransmitIRDataBufferResult;
 TransmitIRDataBufferResult TransmitIRDataBuffer(void);
 /* <<< factory TransmitIRDataBuffer */
+/* >>> factory ReceiveIRDataBuffer */
+typedef struct { uint8_t a; uint8_t f; } ReceiveIRDataBufferResult;
+ReceiveIRDataBufferResult ReceiveIRDataBuffer(void);
+/* <<< factory ReceiveIRDataBuffer */
 #endif /* POKETCG_HOME_IR_CORE_H */

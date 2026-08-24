@@ -119,6 +119,14 @@ CASES["TransmitIRDataBuffer"] = [
 ]
 # <<< factory TransmitIRDataBuffer
 
+# >>> factory ReceiveIRDataBuffer
+CONTRACT["ReceiveIRDataBuffer"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ReceiveIRDataBuffer"] = [
+    {"keys": 0x02},
+    dict(POISON, keys=0x02),
+]
+# <<< factory ReceiveIRDataBuffer
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -187,3 +195,11 @@ MUTATIONS["TransmitIRDataBuffer"] = {
     "case_ids": ["TransmitIRDataBuffer-0", "TransmitIRDataBuffer-1"],
 }
 # <<< factory-mutation TransmitIRDataBuffer
+# >>> factory-mutation ReceiveIRDataBuffer
+MUTATIONS["ReceiveIRDataBuffer"] = {
+    "source_symbol": "ReceiveIRDataBuffer",
+    "before": "\t\treturn (ReceiveIRDataBufferResult){err.a, err.f};",
+    "after": "\t\treturn (ReceiveIRDataBufferResult){(uint8_t)(err.a + 1u), err.f};",
+    "case_ids": ["ReceiveIRDataBuffer-0", "ReceiveIRDataBuffer-1"],
+}
+# <<< factory-mutation ReceiveIRDataBuffer

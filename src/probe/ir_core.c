@@ -120,6 +120,14 @@ static void adapt_TransmitIRDataBuffer(ProbeState *s)
 }
 /* <<< factory TransmitIRDataBuffer */
 
+/* >>> factory ReceiveIRDataBuffer */
+static void adapt_ReceiveIRDataBuffer(ProbeState *s)
+{
+	ReceiveIRDataBufferResult r = ReceiveIRDataBuffer();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory ReceiveIRDataBuffer */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -134,5 +142,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "TransmitNBytesFromHLThroughIR", adapt_TransmitNBytesFromHLThroughIR },
 	{ "Func_19705", adapt_Func_19705 },
 	{ "TransmitIRDataBuffer", adapt_TransmitIRDataBuffer },
+	{ "ReceiveIRDataBuffer", adapt_ReceiveIRDataBuffer },
 	{ NULL, NULL },
 };
