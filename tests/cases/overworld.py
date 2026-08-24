@@ -291,6 +291,8 @@ wPlayerXCoordPixels_A = 0xD332
 wPlayerYCoordPixels_A = 0xD333
 wSCXBuffer_A = 0xD235
 wSCYBuffer_A = 0xD236
+
+wVBlankOAMCopyToggle = 0xCAC0
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -625,6 +627,20 @@ CASES["Func_c554"] = [
 ]
 # <<< factory Func_c554
 
+# >>> factory Func_c280
+CONTRACT["Func_c280"] = {"compare": (), "preserve": ()}
+CASES["Func_c280"] = [
+    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {wVBlankOAMCopyToggle: b"\x05"},
+     "read": {wVBlankOAMCopyToggle: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={wVBlankOAMCopyToggle: b"\x05"},
+         read={wVBlankOAMCopyToggle: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory Func_c280
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -834,3 +850,6 @@ MUTATIONS["Func_c1b1"] = {"source_symbol": "Func_c1b1", "before": "\twOverworldM
 # >>> factory-mutation Func_c554
 MUTATIONS["Func_c554"] = {"source_symbol": "Func_c554", "before": "\tuint8_t x = (uint8_t)((uint8_t)(wPlayerXCoordPixels - scx) + 8u);", "after": "\tuint8_t x = (uint8_t)((uint8_t)(wPlayerXCoordPixels - scx) + 9u);", "case_ids": ["Func_c554-1"]}
 # <<< factory-mutation Func_c554
+# >>> factory-mutation Func_c280
+MUTATIONS["Func_c280"] = {"source_symbol": "Func_c280", "before": "\tFunc_12871();", "after": "", "case_ids": ["Func_c280-0", "Func_c280-1"]}
+# <<< factory-mutation Func_c280

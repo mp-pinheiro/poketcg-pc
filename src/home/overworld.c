@@ -124,6 +124,14 @@
 #include "home/overworld_map.h"
 #include "generated/wram.h"
 #define SPRITE_ANIM_COORD_X 0x02u
+
+#include "home/overworld.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/default_palettes.h"
+#include "home/objects.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -767,3 +775,17 @@ void Func_c554(void)
 	gb_write8(hl, y);
 }
 /* <<< factory Func_c554 */
+
+/* >>> factory Func_c280 */
+void Func_c280(void)
+{
+	BackupPlayerPosition();
+	EnableAndClearSpriteAnimations();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = (uint8_t)(wVBlankOAMCopyToggle + 1u);
+	EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+	Func_12871();
+}
+/* <<< factory Func_c280 */
