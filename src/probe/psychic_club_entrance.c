@@ -47,10 +47,19 @@ static void adapt_LoadClubEntrance(ProbeState *s)
 }
 /* <<< factory LoadClubEntrance */
 
+/* >>> factory ClubEntranceAfterDuel */
+static void adapt_ClubEntranceAfterDuel(ProbeState *s)
+{
+	ClubEntranceAfterDuelResult r = ClubEntranceAfterDuel();
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory ClubEntranceAfterDuel */
+
 const ProbeEntry probe_entries_psychic_club_entrance[] = {
 	{ "TryFirstRonaldEncounter", adapt_TryFirstRonaldEncounter },
 	{ "TryFirstRonaldDuel", adapt_TryFirstRonaldDuel },
 	{ "TrySecondRonaldDuel", adapt_TrySecondRonaldDuel },
 	{ "LoadClubEntrance", adapt_LoadClubEntrance },
+	{ "ClubEntranceAfterDuel", adapt_ClubEntranceAfterDuel },
 	{ NULL, NULL },
 };

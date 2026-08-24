@@ -25,6 +25,12 @@
 #define Script_SecondRonaldDuel_ADDR 0x691Eu
 
 #include "home/psychic_club_entrance.h"
+
+#include "home/psychic_club_entrance.h"
+#include "home/grass_club_entrance.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ClubEntranceAfterDuelTable 0x67FCu
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -78,3 +84,12 @@ void LoadClubEntrance(void)
 	(void)r3;
 }
 /* <<< factory LoadClubEntrance */
+
+/* >>> factory ClubEntranceAfterDuel */
+ClubEntranceAfterDuelResult ClubEntranceAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(ClubEntranceAfterDuelTable);
+	return (ClubEntranceAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory ClubEntranceAfterDuel */

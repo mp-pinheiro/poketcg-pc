@@ -1,0 +1,9 @@
+{
+  "fn": "ClubEntranceAfterDuel",
+  "case": "tests/cases/psychic_club_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ClubEntranceAfterDuel\", \"registers\": {\"a\": 3, \"b\": 104, \"c\": 247, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 26625, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0171\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ClubEntranceAfterDuel\", \"mismatches\": {\"b\": [104, 114], \"c\": [247, 104], \"hl\": [26625, 26626]}}\n",
+  "restored": "{\"fn\": \"ClubEntranceAfterDuel\", \"registers\": {\"a\": 3, \"b\": 104, \"c\": 247, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 26625, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0171\"}}, \"status\": \"PASS\"}\n"
+}

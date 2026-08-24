@@ -22,6 +22,9 @@ def _npc_table(ids):
     return bytes(entries)
 
 wTempNPC = 0xD3AB
+
+wDuelResult = 0xD0C3
+wNPCDuelist = 0xD0C4
 # <<< factory-cases-statics
 
 # >>> factory TryFirstRonaldDuel
@@ -49,6 +52,15 @@ CASES["LoadClubEntrance"] = [
 ]
 # <<< factory LoadClubEntrance
 
+# >>> factory ClubEntranceAfterDuel
+CONTRACT["ClubEntranceAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": (), "wram_out": True}
+CASES["ClubEntranceAfterDuel"] = [
+    {"wram": {wDuelResult: b"\x01", wNPCDuelist: b"\x71"}},
+    {"wram": {wDuelResult: b"\x00", wNPCDuelist: b"\x72"}},
+    dict(POISON, wram={wDuelResult: b"\x01", wNPCDuelist: b"\x71"}),
+]
+# <<< factory ClubEntranceAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +77,6 @@ MUTATIONS["TrySecondRonaldDuel"] = {"source_symbol": "TrySecondRonaldDuel", "bef
 # >>> factory-mutation LoadClubEntrance
 MUTATIONS["LoadClubEntrance"] = {"source_symbol": "LoadClubEntrance", "before": "TryFirstRonaldEncounterResult r3 = TryFirstRonaldEncounter(r2.b, r2.c, r2.hl);", "after": "TryFirstRonaldEncounterResult r3 = {0};", "case_ids": ["LoadClubEntrance-0", "LoadClubEntrance-1"]}
 # <<< factory-mutation LoadClubEntrance
+# >>> factory-mutation ClubEntranceAfterDuel
+MUTATIONS["ClubEntranceAfterDuel"] = {"source_symbol": "ClubEntranceAfterDuel", "before": "FindEndOfDuelScriptResult r = FindEndOfDuelScript(ClubEntranceAfterDuelTable);", "after": "FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(ClubEntranceAfterDuelTable + 1u));", "case_ids": ["ClubEntranceAfterDuel-0", "ClubEntranceAfterDuel-1"]}
+# <<< factory-mutation ClubEntranceAfterDuel
