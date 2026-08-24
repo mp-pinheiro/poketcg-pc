@@ -8,6 +8,11 @@
 #include "home/duel.h"
 #include "generated/hram.h"
 #define BANK__DrawPlayersPrizeAndBenchCards 0x02u
+
+#include "generated/hram.h"
+#include "home/switch_rom.h"
+#include "home/duel.h"
+#define DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
@@ -19,3 +24,13 @@ void DrawPlayersPrizeAndBenchCards(void)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory DrawPlayersPrizeAndBenchCards */
+
+/* >>> factory DrawPlayAreaToPlacePrizeCards */
+void DrawPlayAreaToPlacePrizeCards(void)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(DRAW_PLAY_AREA_TO_PLACE_PRIZE_CARDS_BANK);
+	_DrawPlayAreaToPlacePrizeCards();
+	BankswitchROM(saved_bank);
+}
+/* <<< factory DrawPlayAreaToPlacePrizeCards */

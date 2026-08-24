@@ -1,0 +1,9 @@
+{
+  "fn": "StrangeBehavior_SwapEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"StrangeBehavior_SwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49608, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49608\": \"0a\", \"49647\": \"00\", \"65431\": \"c1\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"StrangeBehavior_SwapEffect\", \"mismatches\": {\"f\": [144, 128], \"hl\": [49608, 0]}}\n",
+  "restored": "{\"fn\": \"StrangeBehavior_SwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 49608, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49608\": \"0a\", \"49647\": \"00\", \"65431\": \"c1\", \"65440\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

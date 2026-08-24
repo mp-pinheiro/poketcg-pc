@@ -11,7 +11,16 @@ static void adapt_DrawPlayersPrizeAndBenchCards(ProbeState *s)
 }
 /* <<< factory DrawPlayersPrizeAndBenchCards */
 
+/* >>> factory DrawPlayAreaToPlacePrizeCards */
+static void adapt_DrawPlayAreaToPlacePrizeCards(ProbeState *s)
+{
+	(void)s;
+	DrawPlayAreaToPlacePrizeCards();
+}
+/* <<< factory DrawPlayAreaToPlacePrizeCards */
+
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
+	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
 	{ NULL, NULL },
 };

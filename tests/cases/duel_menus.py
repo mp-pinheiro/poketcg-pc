@@ -25,6 +25,26 @@ CASES["DrawPlayersPrizeAndBenchCards"] = [
 ]
 # <<< factory DrawPlayersPrizeAndBenchCards
 
+# >>> factory DrawPlayAreaToPlacePrizeCards
+CONTRACT["DrawPlayAreaToPlacePrizeCards"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawPlayAreaToPlacePrizeCards"] = [
+    {"instruction_budget": 2000000, "cycle_budget": 8000000,
+     "hram": {0xFF80: b"\x01", 0xFF97: b"\xC2"},
+     "wram": {0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+     "read": {0xFF80: 1, 0xCE51: 1, 0xCE56: 1},
+     "expect": {0xFF80: b"\x01"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=2000000, cycle_budget=8000000,
+         hram={0xFF80: b"\x37", 0xFF97: b"\xC2"},
+         wram={0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+         read={0xFF80: 1, 0xCE51: 1, 0xCE56: 1},
+         expect={0xFF80: b"\x37"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DrawPlayAreaToPlacePrizeCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -32,3 +52,11 @@ MUTATIONS = {}
 # >>> factory-mutation DrawPlayersPrizeAndBenchCards
 MUTATIONS["DrawPlayersPrizeAndBenchCards"] = {"source_symbol": "DrawPlayersPrizeAndBenchCards", "before": "\tBankswitchROM(saved_bank);", "after": "\tBankswitchROM(0u);", "case_ids": ["DrawPlayersPrizeAndBenchCards-0", "DrawPlayersPrizeAndBenchCards-1"]}
 # <<< factory-mutation DrawPlayersPrizeAndBenchCards
+# >>> factory-mutation DrawPlayAreaToPlacePrizeCards
+MUTATIONS["DrawPlayAreaToPlacePrizeCards"] = {
+    "source_symbol": "DrawPlayAreaToPlacePrizeCards",
+    "before": "\t_DrawPlayAreaToPlacePrizeCards();\n\tBankswitchROM(saved_bank);",
+    "after": "\t_DrawPlayAreaToPlacePrizeCards();\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));",
+    "case_ids": ["DrawPlayAreaToPlacePrizeCards-0", "DrawPlayAreaToPlacePrizeCards-1"],
+}
+# <<< factory-mutation DrawPlayAreaToPlacePrizeCards

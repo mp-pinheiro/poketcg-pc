@@ -2955,6 +2955,16 @@ static void adapt_EnergyTrans_AIEffect(ProbeState *s)
 }
 /* <<< factory EnergyTrans_AIEffect */
 
+/* >>> factory StrangeBehavior_SwapEffect */
+static void adapt_StrangeBehavior_SwapEffect(ProbeState *s)
+{
+	StrangeBehaviorSwapEffectResult result = StrangeBehavior_SwapEffect();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory StrangeBehavior_SwapEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3321,5 +3331,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRemoval_DiscardEffect", adapt_EnergyRemoval_DiscardEffect },
 	{ "SuperEnergyRemoval_DiscardEffect", adapt_SuperEnergyRemoval_DiscardEffect },
 	{ "EnergyTrans_AIEffect", adapt_EnergyTrans_AIEffect },
+	{ "StrangeBehavior_SwapEffect", adapt_StrangeBehavior_SwapEffect },
 	{ NULL, NULL },
 };

@@ -3412,6 +3412,18 @@ CASES["EnergyTrans_AIEffect"] = [
 ]
 # <<< factory EnergyTrans_AIEffect
 
+# >>> factory StrangeBehavior_SwapEffect
+CONTRACT["StrangeBehavior_SwapEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["StrangeBehavior_SwapEffect"] = [
+    {"wram": {0xFF97: b"\xC1", 0xFFA0: b"\x00", 0xFFA1: b"\x00", 0xFFA2: b"\x00", 0xC1C8: b"\x0A", 0xC1EF: b"\x00"},
+     "sram": {0: {}}, "setup": [{"fn": "SetupText", "d": 0x38, "e": 0x9F}],
+     "read": {0xC1C8: 1}, "instruction_budget": 12000000, "cycle_budget": 48000000},
+    dict(POISON, wram={0xFF97: b"\xC1", 0xFFA0: b"\x00", 0xFFA1: b"\x00", 0xFFA2: b"\x00", 0xC1C8: b"\x0A", 0xC1EF: b"\x00"},
+         sram={0: {}}, setup=[{"fn": "SetupText", "d": 0x38, "e": 0x9F}], read={0xC1C8: 1},
+         instruction_budget=12000000, cycle_budget=48000000),
+]
+# <<< factory StrangeBehavior_SwapEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5444,3 +5456,11 @@ MUTATIONS["EnergyTrans_AIEffect"] = {
     "case_ids": ["EnergyTrans_AIEffect-0", "EnergyTrans_AIEffect-1"],
 }
 # <<< factory-mutation EnergyTrans_AIEffect
+# >>> factory-mutation StrangeBehavior_SwapEffect
+MUTATIONS["StrangeBehavior_SwapEffect"] = {
+    "source_symbol": "StrangeBehavior_SwapEffect",
+    "before": "\tif ((damage.f & 0x10u) != 0u)\n\t\treturn (StrangeBehaviorSwapEffectResult){damage.a, (uint8_t)(damage.a == 0u ? 0x90u : damage.f), damage.hl};",
+    "after": "\tif ((damage.f & 0x10u) == 0u)\n\t\treturn (StrangeBehaviorSwapEffectResult){damage.a, (uint8_t)(damage.a == 0u ? 0x90u : damage.f), damage.hl};",
+    "case_ids": ["StrangeBehavior_SwapEffect-0", "StrangeBehavior_SwapEffect-1"],
+}
+# <<< factory-mutation StrangeBehavior_SwapEffect

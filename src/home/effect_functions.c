@@ -451,6 +451,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "home/core.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5148,3 +5151,14 @@ void EnergyTrans_AIEffect(void)
 	(void)PrintPlayAreaCardList_EnableLCD();
 }
 /* <<< factory EnergyTrans_AIEffect */
+
+/* >>> factory StrangeBehavior_SwapEffect */
+StrangeBehaviorSwapEffectResult StrangeBehavior_SwapEffect(void)
+{
+	TryGiveDamageCounter_StrangeBehaviorResult damage = TryGiveDamageCounter_StrangeBehavior();
+	if ((damage.f & 0x10u) != 0u)
+		return (StrangeBehaviorSwapEffectResult){damage.a, (uint8_t)(damage.a == 0u ? 0x90u : damage.f), damage.hl};
+	NumPlayAreaItemsResult items = PrintPlayAreaCardList_EnableLCD();
+	return (StrangeBehaviorSwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
+}
+/* <<< factory StrangeBehavior_SwapEffect */
