@@ -1231,6 +1231,10 @@ void EnergyTrans_AIEffect(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } StrangeBehaviorSwapEffectResult;
 StrangeBehaviorSwapEffectResult StrangeBehavior_SwapEffect(void);
 /* <<< factory StrangeBehavior_SwapEffect */
+/* >>> factory Defender_AttachDefenderEffect */
+typedef struct { uint8_t f; } DefenderAttachDefenderEffectResult;
+DefenderAttachDefenderEffectResult Defender_AttachDefenderEffect(void);
+/* <<< factory Defender_AttachDefenderEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

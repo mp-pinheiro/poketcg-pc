@@ -2402,6 +2402,10 @@ wDuelType = 0xCE22
 hAIEnergyTransEnergyCard = 0xFFA2
 hAIEnergyTransPlayAreaLocation = 0xFFA3
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hTempCardIndex_ff9f = 0xFF9F
+hTemp_ffa0 = 0xFFA0
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3423,6 +3427,14 @@ CASES["StrangeBehavior_SwapEffect"] = [
          instruction_budget=12000000, cycle_budget=48000000),
 ]
 # <<< factory StrangeBehavior_SwapEffect
+
+# >>> factory Defender_AttachDefenderEffect
+CONTRACT["Defender_AttachDefenderEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Defender_AttachDefenderEffect"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", hTempCardIndex_ff9f: b"\x01", hTemp_ffa0: b"\x00", 0xC2DA: b"\x00", 0xC201: b"\x00", 0xC2F1: b"\x00"}, "expect": {0xC2DA: b"\x01"}, "read": {0xC2DA: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempCardIndex_ff9f: b"\x01", hTemp_ffa0: b"\x00", 0xC2DA: b"\x00", 0xC201: b"\x00", 0xC2F1: b"\x00"}, expect={0xC2DA: b"\x01"}, read={0xC2DA: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Defender_AttachDefenderEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5464,3 +5476,11 @@ MUTATIONS["StrangeBehavior_SwapEffect"] = {
     "case_ids": ["StrangeBehavior_SwapEffect-0", "StrangeBehavior_SwapEffect-1"],
 }
 # <<< factory-mutation StrangeBehavior_SwapEffect
+# >>> factory-mutation Defender_AttachDefenderEffect
+MUTATIONS["Defender_AttachDefenderEffect"] = {
+    "source_symbol": "Defender_AttachDefenderEffect",
+    "before": "\tgb_write8(defender.hl, (uint8_t)(gb_read8(defender.hl) + 1u));",
+    "after": "\tgb_write8(defender.hl, gb_read8(defender.hl));",
+    "case_ids": ["Defender_AttachDefenderEffect-0", "Defender_AttachDefenderEffect-1"],
+}
+# <<< factory-mutation Defender_AttachDefenderEffect

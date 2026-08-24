@@ -1,0 +1,9 @@
+{
+  "fn": "Defender_AttachDefenderEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Defender_AttachDefenderEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"10\", \"49882\": \"01\", \"49905\": \"00\", \"65431\": \"c2\", \"65439\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Defender_AttachDefenderEffect\", \"mismatches\": {\"bus\": {\"address\": 49882, \"reference\": \"100100c20100\", \"native\": \"100000c20100\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49665, 1], [49882, 1], [49905, 1], [65431, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"Defender_AttachDefenderEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"10\", \"49882\": \"01\", \"49905\": \"00\", \"65431\": \"c2\", \"65439\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}

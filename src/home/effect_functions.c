@@ -454,6 +454,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/core.h"
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xDAu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5162,3 +5169,19 @@ StrangeBehaviorSwapEffectResult StrangeBehavior_SwapEffect(void)
 	return (StrangeBehaviorSwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
 }
 /* <<< factory StrangeBehavior_SwapEffect */
+
+/* >>> factory Defender_AttachDefenderEffect */
+DefenderAttachDefenderEffectResult Defender_AttachDefenderEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	(void)PutHandCardInPlayArea(hTempCardIndex_ff9f, location);
+	DuelistVarResult defender = GetTurnDuelistVariable(
+		(uint8_t)(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER + location));
+	gb_write8(defender.hl, (uint8_t)(gb_read8(defender.hl) + 1u));
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return (DefenderAttachDefenderEffectResult){turn.f};
+	DrawPlayAreaScreenToShowChanges(location);
+	return (DefenderAttachDefenderEffectResult){0x00u};
+}
+/* <<< factory Defender_AttachDefenderEffect */
