@@ -243,6 +243,20 @@
 #define TYPE_ENERGY_GRASS 0x09u
 #define TYPE_ENERGY_LIGHTNING 0x0Au
 #define HEATED_BATTLE_DECK_ID 0x15u
+
+#include "home/core.h"
+#include "home/substatus.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define AI_FLAG_MODIFIED_HAND 0x08u
+#define AI_FLAG_USED_SWITCH 0x02u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
+#define OPPACTION_PLAY_TRAINER 0x06u
+#define SWITCH 0xd2u
 /* <<< factory statics */
 
 
@@ -2241,3 +2255,15 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
 	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u};
 }
 /* <<< factory AIDecide_EnergySearch */
+
+/* >>> factory _AIProcessHandTrainerCards */
+AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
+{
+	wAITrainerCardPhase = a;
+	(void)CreateHandCardList(0u);
+	uint16_t hl = wDuelTempList_ADDR;
+	uint16_t de = wTempHandCardList_ADDR;
+	(void)CopyListWithFFTerminatorFromHLToDE_Bank8(&hl, &de);
+	return (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};
+}
+/* <<< factory _AIProcessHandTrainerCards */

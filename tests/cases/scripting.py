@@ -126,6 +126,17 @@ wScriptPointer_A = 0xD413
 
 wEventVars = 0xD3D2
 wLoadedEventBits = 0xD3D1
+
+wGameEvent = 0xD0B5
+wMultichoiceTextboxResult_ChooseDeckToDuelAgainst = 0xD695
+wNPCDuelDeckID = 0xCC19
+wNPCDuelist = 0xD0C4
+wNPCDuelistCopy = 0xCC14
+wNPCDuelistDirection = 0xD0C5
+wOverworldTransition = 0xD0B4
+wScriptNPC = 0xD3B6
+wLoadedNPCs = 0xD34A
+wScriptPointer = 0xD0C6
 # <<< factory-cases-statics
 
 
@@ -1125,6 +1136,14 @@ CASES["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot"] = [
 ]
 # <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
 
+# >>> factory ScriptCommand_StartDuel
+CONTRACT["ScriptCommand_StartDuel"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_StartDuel"] = [
+    {"b": 0x02, "c": 0x03, "wram": {wScriptNPC: b"\x00", wLoadedNPCs: b"\x00", wNPCDuelDeckID: b"\x05", wScriptPointer: b"\x10\x20", wGameEvent: b"\x00", wOverworldTransition: b"\x00"}, "expect": {wNPCDuelist: b"\x00", wNPCDuelistCopy: b"\x00", wNPCDuelistDirection: b"\x00", wGameEvent: b"\x01", wOverworldTransition: b"@", wNPCDuelDeckID: b"\x05", wScriptPointer: b"\x14\x20"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={wScriptNPC: b"\x00", wLoadedNPCs: b"\x00", wNPCDuelDeckID: b"\x05", wScriptPointer: b"\x10\x20", wGameEvent: b"\x00", wOverworldTransition: b"\x00"}, expect={wNPCDuelist: b"\x00", wNPCDuelistCopy: b"\x00", wNPCDuelistDirection: b"\x00", wGameEvent: b"\x01", wOverworldTransition: b"@", wNPCDuelDeckID: b"\x05", wScriptPointer: b"\x14\x20"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ScriptCommand_StartDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1658,3 +1677,11 @@ MUTATIONS["ScriptCommand_SetDialogNPC"] = {"source_symbol": "ScriptCommand_SetDi
 # >>> factory-mutation ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
 MUTATIONS["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot"] = {"source_symbol": "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot", "before": "\tuint8_t slot_c = (uint8_t)(c << 1);", "after": "\tuint8_t slot_c = c;", "case_ids": ["ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot-0", "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot-1"]}
 # <<< factory-mutation ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot
+# >>> factory-mutation ScriptCommand_StartDuel
+MUTATIONS["ScriptCommand_StartDuel"] = {
+    "source_symbol": "ScriptCommand_StartDuel",
+    "before": "\twGameEvent = GAME_EVENT_DUEL;",
+    "after": "\twGameEvent = 0x00u;",
+    "case_ids": ["ScriptCommand_StartDuel-0", "ScriptCommand_StartDuel-1"],
+}
+# <<< factory-mutation ScriptCommand_StartDuel

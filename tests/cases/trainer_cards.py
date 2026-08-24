@@ -280,6 +280,8 @@ wOpponentDeckID = 0xCC0E
 wDuelTempList = 0xC510
 wOpponentDeckID = 0xCC0E
 hWhoseTurn = 0xFF97
+
+wAITrainerCardPhase = 0xCE18
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -654,6 +656,14 @@ CASES["AIDecide_EnergySearch"] = [
 ]
 # <<< factory AIDecide_EnergySearch
 
+# >>> factory _AIProcessHandTrainerCards
+CONTRACT["_AIProcessHandTrainerCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["_AIProcessHandTrainerCards"] = [
+    {"a": 0x00, "wram": {wAITrainerCardPhase: b"\x00"}, "expect": {wAITrainerCardPhase: b"\x00"}},
+    dict(POISON, a=0x00, wram={wAITrainerCardPhase: b"\x00"}, expect={wAITrainerCardPhase: b"\x00"}),
+]
+# <<< factory _AIProcessHandTrainerCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -872,3 +882,11 @@ MUTATIONS["AIDecide_EnergySearch"] = {
     "case_ids": ["AIDecide_EnergySearch-0", "AIDecide_EnergySearch-1"],
 }
 # <<< factory-mutation AIDecide_EnergySearch
+# >>> factory-mutation _AIProcessHandTrainerCards
+MUTATIONS["_AIProcessHandTrainerCards"] = {
+    "source_symbol": "_AIProcessHandTrainerCards",
+    "before": "\twAITrainerCardPhase = a;",
+    "after": "\twAITrainerCardPhase = (uint8_t)(a ^ 0x01u);",
+    "case_ids": ["_AIProcessHandTrainerCards-0", "_AIProcessHandTrainerCards-1"],
+}
+# <<< factory-mutation _AIProcessHandTrainerCards

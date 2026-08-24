@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_StartDuel",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_StartDuel\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52249\": \"02\", \"53428\": \"4001\", \"53446\": \"1020\", \"54090\": \"00\", \"54198\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_StartDuel\", \"mismatches\": {\"bus\": {\"address\": 53429, \"reference\": \"02400110200000\", \"native\": \"02400010200000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[52249, 1], [53428, 2], [53446, 2], [54090, 1], [54198, 1]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_StartDuel\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 4, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52249\": \"02\", \"53428\": \"4001\", \"53446\": \"1020\", \"54090\": \"00\", \"54198\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

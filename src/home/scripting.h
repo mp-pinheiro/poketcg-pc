@@ -463,4 +463,7 @@ ScriptCommand_SetDialogNPCResult ScriptCommand_SetDialogNPC(uint8_t f, uint8_t b
 /* >>> factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
 IncreaseScriptPointerResult ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot(uint8_t c);
 /* <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
+/* >>> factory ScriptCommand_StartDuel */
+IncreaseScriptPointerResult ScriptCommand_StartDuel(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_StartDuel */
 #endif

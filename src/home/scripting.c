@@ -214,6 +214,15 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/npc_core.h"
+#include "home/map.h"
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define GAME_EVENT_DUEL 0x01u
+#define LOADED_NPC_ID 0x00u
+static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 /* <<< factory statics */
 
 
@@ -1535,3 +1544,27 @@ IncreaseScriptPointerResult ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot(uint
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot */
+
+/* >>> factory ScriptCommand_StartDuel */
+IncreaseScriptPointerResult ScriptCommand_StartDuel(uint8_t b, uint8_t c)
+{
+	SetNPCDuelParamsResult params = SetNPCDuelParams(b, c);
+	PermissionResult item = GetItemInLoadedNPCIndex(wScriptNPC, LOADED_NPC_ID);
+	uint8_t npc = gb_read8(item.hl);
+	SetNPCMatchStartThemeResult theme = SetNPCMatchStartTheme(npc, params.f, params.b, params.c, 0, 0, 0);
+	(void)theme;
+	if (wNPCDuelDeckID == 0xFFu) {
+		uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
+		wNPCDuelDeckID = sAaronDeckIDs[choice & 0x03u];
+	}
+	item = GetItemInLoadedNPCIndex(wScriptNPC, LOADED_NPC_ID);
+	npc = gb_read8(item.hl);
+	wNPCDuelist = npc;
+	wNPCDuelistCopy = npc;
+	wNPCDuelistDirection = Func_1c557(npc);
+	SetNPCOpponentNameAndPortrait(npc);
+	wGameEvent = GAME_EVENT_DUEL;
+	wOverworldTransition |= 0x40u;
+	return IncreaseScriptPointerBy4();
+}
+/* <<< factory ScriptCommand_StartDuel */
