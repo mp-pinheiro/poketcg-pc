@@ -1622,6 +1622,13 @@ V0_TILES1 = 0x8800
 hKeysPressed = 0xFF91
 hKeysReleased = 0xFF8E
 hCurMenuItem = 0xFFB1
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wArenaCard = 0xC2BB
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wSelectedAttack = 0xCCC6
+wSamePokemonCardID = 0xCDF9
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2740,6 +2747,14 @@ CASES["CheckIfSelectedAttackIsUnusable"] = [
          sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
 ]
 # <<< factory CheckIfSelectedAttackIsUnusable
+
+# >>> factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
+CONTRACT["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = [
+    {"a": 0x12, "wram": {hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
+]
+# <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3936,3 +3951,11 @@ MUTATIONS["CheckIfSelectedAttackIsUnusable"] = {
     "case_ids": ["CheckIfSelectedAttackIsUnusable-0", "CheckIfSelectedAttackIsUnusable-1"],
 }
 # <<< factory-mutation CheckIfSelectedAttackIsUnusable
+# >>> factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
+MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
+    "source_symbol": "CheckForBenchIDAtHalfHPAndCanUseSecondAttack",
+    "before": "\tf = (uint8_t)(b == 0u ? 0x80u : 0x10u);",
+    "after": "\tf = (uint8_t)(b == 0u ? 0x00u : 0x10u);",
+    "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-0", "CheckForBenchIDAtHalfHPAndCanUseSecondAttack-1"],
+}
+# <<< factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack

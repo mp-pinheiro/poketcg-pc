@@ -877,6 +877,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/substatus.h"
 #define ATTACK_FLAG2_ADDRESS 0x08u
 #define IGNORE_THIS_ATTACK_F 0x05u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4985,3 +4991,43 @@ CheckIfSelectedAttackIsUnusableResult CheckIfSelectedAttackIsUnusable(uint8_t a,
 	return (CheckIfSelectedAttackIsUnusableResult){flag.a, flag.f, energy.b, energy.c, energy.d, energy.e, energy.hl};
 }
 /* <<< factory CheckIfSelectedAttackIsUnusable */
+
+/* >>> factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
+CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCanUseSecondAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)f;
+	wSamePokemonCardID = a;
+	uint8_t saved_location = hTempPlayAreaLocation_ff9d;
+	uint8_t saved_attack = wSelectedAttack;
+	d = saved_location;
+	e = saved_attack;
+	DuelistVarResult arena = GetTurnDuelistVariable(0xBBu);
+	b = 0u;
+	c = 0u;
+	hl = arena.hl;
+	for (;;) {
+		c = (uint8_t)(c + 1u);
+		uint8_t deck_index = gb_read8(hl++);
+		if (deck_index == 0xFFu)
+			break;
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(0xBBu + c));
+		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		uint8_t current_hp = card.a;
+		uint8_t half_max_hp = (uint8_t)((wLoadedCard1HP >> 1) | (wLoadedCard1HP << 7));
+		if (half_max_hp >= current_hp || wLoadedCard1ID != wSamePokemonCardID)
+			continue;
+		hTempPlayAreaLocation_ff9d = c;
+		wSelectedAttack = 1u;
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(1u, 0u, b, c, current_hp, deck_index, hl);
+		if (unusable.f & 0x10u)
+			continue;
+		b = (uint8_t)(b + 1u);
+	}
+	wSelectedAttack = saved_attack;
+	hTempPlayAreaLocation_ff9d = saved_location;
+	a = b;
+	f = (uint8_t)(b == 0u ? 0x80u : 0x10u);
+	return (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
