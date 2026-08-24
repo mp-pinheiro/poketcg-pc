@@ -5,5 +5,7 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
     steps:
-      - run: echo "hello from bare runner, no checkout, no container"
+      - run: echo "hello from container, no checkout"
