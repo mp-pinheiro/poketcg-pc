@@ -2,9 +2,14 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.61.2 - 2026-08-24
+## v0.62.0 - 2026-08-24
 
-### CI/CD
+### Features
 
-- *(forgejo)* Skip deploy without token, add publish recipe
+- *(port)* Land 1 routines
+
+### Miscellaneous
+
+- *(progress)* Refresh port status
+- *(gate)* Refresh gate.json commit reference
 
