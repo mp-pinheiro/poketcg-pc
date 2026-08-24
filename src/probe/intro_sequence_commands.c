@@ -157,6 +157,17 @@ static void adapt_LoadOpeningSceneAndUpdateSGBBorder(ProbeState *s)
 }
 /* <<< factory LoadOpeningSceneAndUpdateSGBBorder */
 
+/* >>> factory IntroSequenceCmd_LoadCharizardScene */
+static void adapt_IntroSequenceCmd_LoadCharizardScene(ProbeState *s)
+{
+	LoadOpeningSceneAndUpdateSGBBorderResult r = IntroSequenceCmd_LoadCharizardScene();
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory IntroSequenceCmd_LoadCharizardScene */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -175,5 +186,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_PlaySFX", adapt_IntroSequenceCmd_PlaySFX },
 	{ "LoadOpeningScene", adapt_LoadOpeningScene },
 	{ "LoadOpeningSceneAndUpdateSGBBorder", adapt_LoadOpeningSceneAndUpdateSGBBorder },
+	{ "IntroSequenceCmd_LoadCharizardScene", adapt_IntroSequenceCmd_LoadCharizardScene },
 	{ NULL, NULL },
 };

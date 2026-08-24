@@ -69,4 +69,7 @@ void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c);
 typedef struct { uint8_t b, c, d, e; } LoadOpeningSceneAndUpdateSGBBorderResult;
 LoadOpeningSceneAndUpdateSGBBorderResult LoadOpeningSceneAndUpdateSGBBorder(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory LoadOpeningSceneAndUpdateSGBBorder */
+/* >>> factory IntroSequenceCmd_LoadCharizardScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadCharizardScene(void);
+/* <<< factory IntroSequenceCmd_LoadCharizardScene */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

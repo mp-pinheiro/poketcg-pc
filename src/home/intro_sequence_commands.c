@@ -78,6 +78,9 @@ static void UpdateSpriteAttributes(void)
 #include "home/intro_sequence_commands.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/intro_sequence_commands.h"
+#define SCENE_CHARIZARD_INTRO 0x05u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -326,3 +329,10 @@ LoadOpeningSceneAndUpdateSGBBorderResult LoadOpeningSceneAndUpdateSGBBorder(uint
 	return (LoadOpeningSceneAndUpdateSGBBorderResult){0u, 0u, 20u, 18u};
 }
 /* <<< factory LoadOpeningSceneAndUpdateSGBBorder */
+
+/* >>> factory IntroSequenceCmd_LoadCharizardScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadCharizardScene(void)
+{
+	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_CHARIZARD_INTRO, 6u, 3u);
+}
+/* <<< factory IntroSequenceCmd_LoadCharizardScene */
