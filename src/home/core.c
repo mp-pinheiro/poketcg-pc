@@ -868,6 +868,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #define PAD_SELECT 0x04u
 #define PAD_CTRL_PAD 0xF0u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/substatus.h"
+#define ATTACK_FLAG2_ADDRESS 0x08u
+#define IGNORE_THIS_ATTACK_F 0x05u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4943,3 +4952,36 @@ CardListFunctionResult CardListFunction(void)
 	return (CardListFunctionResult){a, 0xA0u};
 }
 /* <<< factory CardListFunction */
+
+/* >>> factory CheckIfSelectedAttackIsUnusable */
+CheckIfSelectedAttackIsUnusableResult CheckIfSelectedAttackIsUnusable(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	if (location == 0u) {
+		CantAttackResult cant = HandleCantAttackSubstatus();
+		if (cant.f & 0x10u)
+			return (CheckIfSelectedAttackIsUnusableResult){0u, cant.f, b, c, d, e, cant.hl};
+		CheckIfActiveStatusResult active = CheckIfActiveCardParalyzedOrAsleep();
+		if (active.f & 0x10u)
+			return (CheckIfSelectedAttackIsUnusableResult){active.a, active.f, b, c, d, e, active.hl};
+		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		d = arena.a;
+		e = wSelectedAttack;
+		AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);
+		d = (uint8_t)(copy.de >> 8);
+		e = (uint8_t)copy.de;
+		c = copy.c;
+		AmnesiaResult amnesia = HandleAmnesiaSubstatus();
+		if (amnesia.f & 0x10u)
+			return (CheckIfSelectedAttackIsUnusableResult){copy.a, amnesia.f, b, c, d, e, amnesia.hl};
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		if (effect.f & 0x10u)
+			return (CheckIfSelectedAttackIsUnusableResult){effect.a, effect.f, b, effect.c, d, e, effect.hl};
+	}
+	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	if (energy.f & 0x10u)
+		return (CheckIfSelectedAttackIsUnusableResult){energy.a, energy.f, energy.b, energy.c, energy.d, energy.e, energy.hl};
+	AttackFlagResult flag = CheckLoadedAttackFlag((uint8_t)(ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F));
+	return (CheckIfSelectedAttackIsUnusableResult){flag.a, flag.f, energy.b, energy.c, energy.d, energy.e, energy.hl};
+}
+/* <<< factory CheckIfSelectedAttackIsUnusable */

@@ -2731,6 +2731,16 @@ CASES["CardListFunction"] = [
 ]
 # <<< factory CardListFunction
 
+# >>> factory CheckIfSelectedAttackIsUnusable
+CONTRACT["CheckIfSelectedAttackIsUnusable"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CheckIfSelectedAttackIsUnusable"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
+     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
+         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory CheckIfSelectedAttackIsUnusable
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3918,3 +3928,11 @@ MUTATIONS["CardListFunction"] = {
     "case_ids": ["CardListFunction-1", "CardListFunction-5"],
 }
 # <<< factory-mutation CardListFunction
+# >>> factory-mutation CheckIfSelectedAttackIsUnusable
+MUTATIONS["CheckIfSelectedAttackIsUnusable"] = {
+    "source_symbol": "CheckIfSelectedAttackIsUnusable",
+    "before": "\tif (energy.f & 0x10u)\n\t\treturn (CheckIfSelectedAttackIsUnusableResult){energy.a, energy.f, energy.b, energy.c, energy.d, energy.e, energy.hl};",
+    "after": "\tif (energy.f & 0x10u)\n\t\treturn (CheckIfSelectedAttackIsUnusableResult){energy.a, 0u, energy.b, energy.c, energy.d, energy.e, energy.hl};",
+    "case_ids": ["CheckIfSelectedAttackIsUnusable-0", "CheckIfSelectedAttackIsUnusable-1"],
+}
+# <<< factory-mutation CheckIfSelectedAttackIsUnusable

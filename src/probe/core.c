@@ -1774,6 +1774,20 @@ static void adapt_CardListFunction(ProbeState *s)
 }
 /* <<< factory CardListFunction */
 
+/* >>> factory CheckIfSelectedAttackIsUnusable */
+static void adapt_CheckIfSelectedAttackIsUnusable(ProbeState *s)
+{
+	CheckIfSelectedAttackIsUnusableResult r = CheckIfSelectedAttackIsUnusable(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfSelectedAttackIsUnusable */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1986,5 +2000,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "LoadSelectedCardGfx", adapt_LoadSelectedCardGfx },
 	{ "AIProcessHandTrainerCards", adapt_AIProcessHandTrainerCards },
 	{ "CardListFunction", adapt_CardListFunction },
+	{ "CheckIfSelectedAttackIsUnusable", adapt_CheckIfSelectedAttackIsUnusable },
 	{ NULL, NULL },
 };
