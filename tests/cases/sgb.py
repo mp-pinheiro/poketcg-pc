@@ -28,6 +28,25 @@ CASES = {
     ],
 }
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory SendSGB
+CONTRACT["SendSGB"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["SendSGB"] = [
+    {"a": 0x00, "hl": 0xC500, "wram": {0xC500: b"\x00"}, "sram": {0: {}},
+     "expect_regs": {"a": 0x00, "f": 0xA0, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC500},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"hl": 0xC500, "wram": {0xC500: b"\x01" + b"\x00" * 16}, "sram": {0: {}},
+     "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC510},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0xC500, wram={0xC500: b"\x00"}, sram={0: {}},
+         expect_regs={"a": 0x00, "f": 0xA0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0xC500},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory SendSGB
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -39,3 +58,11 @@ MUTATIONS = {
         "case_ids": ["Wait-0", "Wait-1", "Wait-2"],
     },
 }
+# >>> factory-mutation SendSGB
+MUTATIONS["SendSGB"] = {
+    "source_symbol": "SendSGB",
+    "before": "\t\treturn (SendSGBResult){0u, 0xA0u, b, c, d, e, hl};",
+    "after": "\t\treturn (SendSGBResult){0u, 0x80u, b, c, d, e, hl};",
+    "case_ids": ["SendSGB-0", "SendSGB-2", "SendSGB-1"],
+}
+# <<< factory-mutation SendSGB

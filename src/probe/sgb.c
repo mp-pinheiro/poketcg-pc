@@ -13,7 +13,22 @@ static void adapt_Wait(ProbeState *s)
 	s->e = r.e;
 }
 
+/* >>> factory SendSGB */
+static void adapt_SendSGB(ProbeState *s)
+{
+	SendSGBResult r = SendSGB(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SendSGB */
+
 const ProbeEntry probe_entries_sgb[] = {
 	{ "Wait", adapt_Wait },
+	{ "SendSGB", adapt_SendSGB },
 	{ NULL, NULL },
 };
