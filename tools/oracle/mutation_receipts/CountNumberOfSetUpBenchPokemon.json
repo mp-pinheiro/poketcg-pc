@@ -1,0 +1,9 @@
+{
+  "fn": "CountNumberOfSetUpBenchPokemon",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CountNumberOfSetUpBenchPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 3, \"e\": 0, \"f\": 128, \"hl\": 49853, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CountNumberOfSetUpBenchPokemon\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"CountNumberOfSetUpBenchPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 1, \"d\": 3, \"e\": 0, \"f\": 128, \"hl\": 49853, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

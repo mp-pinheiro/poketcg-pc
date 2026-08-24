@@ -883,6 +883,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define HAS_EVOLUTION 0x01u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5031,3 +5037,47 @@ CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult CheckForBenchIDAtHalfHPAndCan
 	return (CheckForBenchIDAtHalfHPAndCanUseSecondAttackResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
+
+/* >>> factory CountNumberOfSetUpBenchPokemon */
+CountNumberOfSetUpBenchPokemonResult CountNumberOfSetUpBenchPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	uint8_t saved_location = hTempPlayAreaLocation_ff9d;
+	uint8_t saved_attack = wSelectedAttack;
+	DuelistVarResult bench = GetTurnDuelistVariable(DUELVARS_BENCH);
+	b = 0u;
+	c = 0u;
+	hl = bench.hl;
+	for (;;) {
+		c = (uint8_t)(c + 1u);
+		uint8_t deck_index = gb_read8(hl++);
+		if (deck_index == 0xFFu)
+			break;
+		d = deck_index;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + c));
+		d = card.a;
+		uint8_t half_max_hp = (uint8_t)((wLoadedCard1HP >> 1) | (wLoadedCard1HP << 7));
+		if (half_max_hp >= d)
+			continue;
+		if ((wLoadedCard1AIInfo & HAS_EVOLUTION) != 0u) {
+			CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);
+			if ((evolution.f & 0x10u) != 0u)
+				continue;
+		}
+		hTempPlayAreaLocation_ff9d = c;
+		wSelectedAttack = SECOND_ATTACK;
+		CheckIfSelectedAttackIsUnusableResult unusable =
+			CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, b, c, d, deck_index, hl);
+		if ((unusable.f & 0x10u) != 0u)
+			continue;
+		b = (uint8_t)(b + 1u);
+	}
+	wSelectedAttack = saved_attack;
+	hTempPlayAreaLocation_ff9d = saved_location;
+	a = b;
+	f = (uint8_t)(b == 0u ? 0x80u : 0x10u);
+	return (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};
+}
+/* <<< factory CountNumberOfSetUpBenchPokemon */

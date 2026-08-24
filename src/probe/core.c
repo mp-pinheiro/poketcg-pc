@@ -1796,6 +1796,14 @@ static void adapt_CheckForBenchIDAtHalfHPAndCanUseSecondAttack(ProbeState *s)
 }
 /* <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack */
 
+/* >>> factory CountNumberOfSetUpBenchPokemon */
+static void adapt_CountNumberOfSetUpBenchPokemon(ProbeState *s)
+{
+	CountNumberOfSetUpBenchPokemonResult r = CountNumberOfSetUpBenchPokemon(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory CountNumberOfSetUpBenchPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2010,5 +2018,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardListFunction", adapt_CardListFunction },
 	{ "CheckIfSelectedAttackIsUnusable", adapt_CheckIfSelectedAttackIsUnusable },
 	{ "CheckForBenchIDAtHalfHPAndCanUseSecondAttack", adapt_CheckForBenchIDAtHalfHPAndCanUseSecondAttack },
+	{ "CountNumberOfSetUpBenchPokemon", adapt_CountNumberOfSetUpBenchPokemon },
 	{ NULL, NULL },
 };

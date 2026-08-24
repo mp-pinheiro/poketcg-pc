@@ -1629,6 +1629,10 @@ wArenaCard = 0xC2BB
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wSelectedAttack = 0xCCC6
 wSamePokemonCardID = 0xCDF9
+
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wSelectedAttack = 0xCCC6
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2755,6 +2759,14 @@ CASES["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", wArenaCard: b"\xFF", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
 ]
 # <<< factory CheckForBenchIDAtHalfHPAndCanUseSecondAttack
+
+# >>> factory CountNumberOfSetUpBenchPokemon
+CONTRACT["CountNumberOfSetUpBenchPokemon"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CountNumberOfSetUpBenchPokemon"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x03", wSelectedAttack: b"\x00", 0xC2BC: b"\xFF"}, "expect_regs": {"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x03, "e": 0x00, "hl": 0xC2BC}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01", 0xC2BC: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
+]
+# <<< factory CountNumberOfSetUpBenchPokemon
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3959,3 +3971,11 @@ MUTATIONS["CheckForBenchIDAtHalfHPAndCanUseSecondAttack"] = {
     "case_ids": ["CheckForBenchIDAtHalfHPAndCanUseSecondAttack-0", "CheckForBenchIDAtHalfHPAndCanUseSecondAttack-1"],
 }
 # <<< factory-mutation CheckForBenchIDAtHalfHPAndCanUseSecondAttack
+# >>> factory-mutation CountNumberOfSetUpBenchPokemon
+MUTATIONS["CountNumberOfSetUpBenchPokemon"] = {
+    "source_symbol": "CountNumberOfSetUpBenchPokemon",
+    "before": "\ta = b;\n\tf = (uint8_t)(b == 0u ? 0x80u : 0x10u);\n\treturn (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};",
+    "after": "\ta = b;\n\tf = (uint8_t)(b == 0u ? 0x00u : 0x10u);\n\treturn (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};",
+    "case_ids": ["CountNumberOfSetUpBenchPokemon-0", "CountNumberOfSetUpBenchPokemon-1"],
+}
+# <<< factory-mutation CountNumberOfSetUpBenchPokemon
