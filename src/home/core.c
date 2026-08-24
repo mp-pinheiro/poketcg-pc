@@ -713,6 +713,21 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "home/print_text.h"
 #include "home/process_text.h"
+
+#include "home/core.h"
+#include "home/print_text.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CARD_DATA_ATTACK1_CATEGORY 0x17u
+#define CARD_DATA_ATTACK1_ENERGY_COST 0x0Cu
+#define DAMAGE_MINUS 0x02u
+#define DAMAGE_PLUS 0x01u
+#define DAMAGE_X 0x03u
+#define RESIDUAL 0x80u
+#define SYM_ATK_DESCR 0x0Eu
+#define SYM_PLUS_OFFSET 0x2Au
+#define PKMNPWRText 0x000Au
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4241,3 +4256,64 @@ PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uin
 	return (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};
 }
 /* <<< factory PrintAttackOrCardDescription */
+
+/* >>> factory PrintAttackOrPkmnPowerInformation */
+PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t lo = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t hi = gb_read8(hl);
+	if ((uint8_t)(lo | hi) == 0u) {
+		return (PrintAttackOrPkmnPowerInformationResult){0u, b, c, d, e, 0x80u, hl};
+	}
+
+	uint16_t saved_hl = hl;
+	(void)InitTextPrinting_ProcessTextFromPointerToID(7u, e, (uint16_t)(hl - 1u));
+	hl = (uint16_t)(saved_hl + 2u);
+
+	if (wCardPageNumber == 0u) {
+		uint8_t alo = gb_read8((uint16_t)(hl - 1u));
+		uint8_t ahi = gb_read8(hl);
+		if ((uint8_t)(alo | ahi) != 0u) {
+			WriteByteToBGMap0(SYM_ATK_DESCR, 18u, e);
+		}
+	}
+
+	hl = (uint16_t)(hl + 3u);
+	uint16_t damage_hl = hl;
+	uint8_t damage = gb_read8(hl);
+	if (damage != 0u) {
+		WriteOneByteNumberInTxSymbol_PadSpace(damage, 15u, (uint8_t)(e + 1u), d, e, hl);
+	}
+	hl = (uint16_t)(damage_hl + 1u);
+
+	uint8_t category = (uint8_t)(gb_read8(hl) & (uint8_t)~RESIDUAL);
+	if (category == 0u) {
+		/* .print_energy_cost, fallthrough below */
+	} else if (category == POKEMON_POWER) {
+		uint16_t text_hl = PKMNPWRText;
+		ProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromID(2u, e, text_hl);
+		return (PrintAttackOrPkmnPowerInformationResult){text.a, b, c, text.d, text.e, text.f, text.hl};
+	} else {
+		uint8_t sym = (uint8_t)(category + SYM_PLUS_OFFSET);
+		WriteByteToBGMap0(sym, 18u, (uint8_t)(e + 1u));
+	}
+
+	hl = (uint16_t)(hl - 11u);
+	c = e;
+	uint8_t row = 2u;
+	uint8_t running_e = 0u;
+	uint8_t last_a = 0u;
+	for (uint8_t i = NUM_TYPES / 2u; i != 0u; i--) {
+		uint8_t byte1 = gb_read8(hl);
+		uint8_t swapped = (uint8_t)((byte1 >> 4) | (byte1 << 4));
+		PrintEnergiesResult r1 = PrintEnergiesOfColor(swapped, row, c, running_e);
+		row = r1.b; running_e = r1.e; last_a = r1.a;
+		uint8_t byte2 = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		PrintEnergiesResult r2 = PrintEnergiesOfColor(byte2, row, c, running_e);
+		row = r2.b; running_e = r2.e; last_a = r2.a;
+	}
+	return (PrintAttackOrPkmnPowerInformationResult){last_a, b, c, 0u, running_e, 0u, hl};
+}
+/* <<< factory PrintAttackOrPkmnPowerInformation */

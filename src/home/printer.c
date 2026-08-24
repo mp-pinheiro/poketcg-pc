@@ -19,6 +19,9 @@
 #include "generated/wram.h"
 
 #include "generated/hram.h"
+
+#include "home/printer.h"
+#include "mem.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -229,3 +232,91 @@ PrepareForPrinterCommunicationsResult PrepareForPrinterCommunications(uint8_t a,
 	return (PrepareForPrinterCommunicationsResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory PrepareForPrinterCommunications */
+
+/* >>> factory CheckDataCompression */
+CheckDataCompressionResult CheckDataCompression(uint8_t c, uint16_t hl)
+{
+	uint16_t entry_hl = hl;
+	uint8_t e = c;
+	uint8_t a = c;
+	uint8_t b;
+	uint8_t d;
+	uint8_t z_flag;
+
+	if (a < 4u) {
+		goto no_carry;
+	}
+
+	b = c;
+	a = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	if (a != gb_read8(hl)) {
+		goto literal_copy;
+	}
+	hl = (uint16_t)(hl + 1u);
+	if (a != gb_read8(hl)) {
+		goto literal_copy;
+	}
+	hl = (uint16_t)(hl + 1u);
+
+	c = (uint8_t)(c - 3u);
+	e = 3u;
+	for (;;) {
+		if (a != gb_read8(hl)) {
+			z_flag = 0u;
+			goto set_carry;
+		}
+		hl = (uint16_t)(hl + 1u);
+		e = (uint8_t)(e + 1u);
+		c = (uint8_t)(c - 1u);
+		if (c == 0u) {
+			z_flag = 1u;
+			goto set_carry;
+		}
+		if (e & 0x20u) {
+			z_flag = 0u;
+			goto set_carry;
+		}
+	}
+
+set_carry:
+	return (CheckDataCompressionResult){a, e, (uint8_t)((z_flag ? 0x80u : 0u) | 0x10u), entry_hl};
+
+literal_copy:
+	hl = entry_hl;
+	c = b;
+	e = 1u;
+	a = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	c = (uint8_t)(c - 1u);
+	if (c == 0u) {
+		goto no_carry;
+	}
+reset_same_value_count:
+	d = 2u;
+next_byte:
+	e = (uint8_t)(e + 1u);
+	c = (uint8_t)(c - 1u);
+	if (c == 0u) {
+		goto no_carry;
+	}
+	if (e & 0x80u) {
+		goto no_carry;
+	}
+	if (a == gb_read8(hl)) {
+		hl = (uint16_t)(hl + 1u);
+		d = (uint8_t)(d - 1u);
+		if (d != 0u) {
+			goto next_byte;
+		}
+		e = (uint8_t)(e - 3u);
+		goto no_carry;
+	}
+	a = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	goto reset_same_value_count;
+
+no_carry:
+	return (CheckDataCompressionResult){a, e, (uint8_t)(a == 0u ? 0x80u : 0u), entry_hl};
+}
+/* <<< factory CheckDataCompression */

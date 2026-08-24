@@ -139,6 +139,14 @@ CASES["PrepareForPrinterCommunications"] = [
 ]
 # <<< factory PrepareForPrinterCommunications
 
+# >>> factory CheckDataCompression
+CONTRACT["CheckDataCompression"] = {"compare": ("a", "e", "f", "hl"), "preserve": ()}
+CASES["CheckDataCompression"] = [
+    {"c": 0x06, "hl": 0xC500, "wram": {0xC500: bytes([1, 1, 1, 1, 5, 6])}},
+    dict(POISON, c=0x04, hl=0xC500, wram={0xC500: bytes([1, 2, 3, 4])}),
+]
+# <<< factory CheckDataCompression
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -185,3 +193,6 @@ MUTATIONS["PrepareForPrinterCommunications"] = {
     "case_ids": ["PrepareForPrinterCommunications-0", "PrepareForPrinterCommunications-1"],
 }
 # <<< factory-mutation PrepareForPrinterCommunications
+# >>> factory-mutation CheckDataCompression
+MUTATIONS["CheckDataCompression"] = {"source_symbol": "CheckDataCompression", "before": "\t\thl = (uint16_t)(hl + 1u);\n\t\te = (uint8_t)(e + 1u);\n\t\tc = (uint8_t)(c - 1u);\n\t\tif (c == 0u) {\n\t\t\tz_flag = 1u;\n\t\t\tgoto set_carry;\n\t\t}", "after": "\t\thl = (uint16_t)(hl + 1u);\n\t\te = (uint8_t)(e + 2u);\n\t\tc = (uint8_t)(c - 1u);\n\t\tif (c == 0u) {\n\t\t\tz_flag = 1u;\n\t\t\tgoto set_carry;\n\t\t}", "case_ids": ["CheckDataCompression-0"]}
+# <<< factory-mutation CheckDataCompression

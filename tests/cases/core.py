@@ -2204,6 +2204,14 @@ CASES["PrintAttackOrCardDescription"] = [
 ]
 # <<< factory PrintAttackOrCardDescription
 
+# >>> factory PrintAttackOrPkmnPowerInformation
+CONTRACT["PrintAttackOrPkmnPowerInformation"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["PrintAttackOrPkmnPowerInformation"] = [
+    {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
+    dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
+]
+# <<< factory PrintAttackOrPkmnPowerInformation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3277,3 +3285,6 @@ MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayFirstOrNextC
 # >>> factory-mutation PrintAttackOrCardDescription
 MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCardDescription", "before": "\treturn (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};", "after": "\treturn (PrintAttackOrCardDescriptionResult){(uint8_t)(text.a + 1u), text.d, text.e, text.f, text.hl};", "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"]}
 # <<< factory-mutation PrintAttackOrCardDescription
+# >>> factory-mutation PrintAttackOrPkmnPowerInformation
+MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\tif ((uint8_t)(lo | hi) == 0u) {", "after": "\tif ((uint8_t)(lo | hi) == 1u) {", "case_ids": ["PrintAttackOrPkmnPowerInformation-0", "PrintAttackOrPkmnPowerInformation-1"]}
+# <<< factory-mutation PrintAttackOrPkmnPowerInformation

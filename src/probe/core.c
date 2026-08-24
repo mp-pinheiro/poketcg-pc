@@ -1588,6 +1588,14 @@ static void adapt_PrintAttackOrCardDescription(ProbeState *s)
 }
 /* <<< factory PrintAttackOrCardDescription */
 
+/* >>> factory PrintAttackOrPkmnPowerInformation */
+static void adapt_PrintAttackOrPkmnPowerInformation(ProbeState *s)
+{
+	PrintAttackOrPkmnPowerInformationResult r = PrintAttackOrPkmnPowerInformation(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory PrintAttackOrPkmnPowerInformation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1777,5 +1785,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckEnergyNeededForAttackAfterDiscard", adapt_CheckEnergyNeededForAttackAfterDiscard },
 	{ "DisplayFirstOrNextCardPage", adapt_DisplayFirstOrNextCardPage },
 	{ "PrintAttackOrCardDescription", adapt_PrintAttackOrCardDescription },
+	{ "PrintAttackOrPkmnPowerInformation", adapt_PrintAttackOrPkmnPowerInformation },
 	{ NULL, NULL },
 };
