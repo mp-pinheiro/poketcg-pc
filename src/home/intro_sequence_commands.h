@@ -62,4 +62,7 @@ IntroSequenceCmdWaitResult IntroSequenceCmd_Wait(uint8_t c);
 typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdPlaySFXResult;
 IntroSequenceCmdPlaySFXResult IntroSequenceCmd_PlaySFX(uint8_t c);
 /* <<< factory IntroSequenceCmd_PlaySFX */
+/* >>> factory LoadOpeningScene */
+void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory LoadOpeningScene */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

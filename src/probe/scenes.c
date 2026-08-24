@@ -81,6 +81,13 @@ static void adapt__LoadScene(ProbeState *s)
 }
 /* <<< factory _LoadScene */
 
+/* >>> factory LoadBoosterGfx */
+static void adapt_LoadBoosterGfx(ProbeState *s)
+{
+	s->a = LoadBoosterGfx(s->a, s->b, s->c);
+}
+/* <<< factory LoadBoosterGfx */
+
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
 	{ "_DrawPortrait", adapt__DrawPortrait },
@@ -89,5 +96,6 @@ const ProbeEntry probe_entries_scenes[] = {
 	{ "LoadScene_SetCardPopAttrBlk", adapt_LoadScene_SetCardPopAttrBlk },
 	{ "LoadScene_SetGameBoyPrinterAttrBlk", adapt_LoadScene_SetGameBoyPrinterAttrBlk },
 	{ "_LoadScene", adapt__LoadScene },
+	{ "LoadBoosterGfx", adapt_LoadBoosterGfx },
 	{ NULL, NULL },
 };

@@ -139,6 +139,13 @@ static void adapt_IntroSequenceCmd_PlaySFX(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_PlaySFX */
 
+/* >>> factory LoadOpeningScene */
+static void adapt_LoadOpeningScene(ProbeState *s)
+{
+	LoadOpeningScene(s->a, s->b, s->c);
+}
+/* <<< factory LoadOpeningScene */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -155,5 +162,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AdvanceIntroSequenceCmdPtrBy3", adapt_AdvanceIntroSequenceCmdPtrBy3 },
 	{ "IntroSequenceCmd_Wait", adapt_IntroSequenceCmd_Wait },
 	{ "IntroSequenceCmd_PlaySFX", adapt_IntroSequenceCmd_PlaySFX },
+	{ "LoadOpeningScene", adapt_LoadOpeningScene },
 	{ NULL, NULL },
 };

@@ -73,6 +73,8 @@ wd291 = 0xD291
 wVRAMTileOffset = 0xD4CA
 wWhichVRAMBank = 0xD4CB
 wAllSpriteAnimationsDisabled = 0xD5D7
+
+wCurTilemap = 0xD131
 # <<< factory-cases-statics
 
 # >>> factory LoadScene_LoadCompressedSGBPacket
@@ -120,6 +122,14 @@ CASES["_LoadScene"] = [
 ]
 # <<< factory _LoadScene
 
+# >>> factory LoadBoosterGfx
+CONTRACT["LoadBoosterGfx"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["LoadBoosterGfx"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00, "wram": {wCurTilemap: b"\x42"}, "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, a=0x00, b=0x00, c=0x00, wram={wCurTilemap: b"\x3C"}, sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory LoadBoosterGfx
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -160,3 +170,11 @@ MUTATIONS["_LoadScene"] = {
     "case_ids": ["_LoadScene-0", "_LoadScene-1"],
 }
 # <<< factory-mutation _LoadScene
+# >>> factory-mutation LoadBoosterGfx
+MUTATIONS["LoadBoosterGfx"] = {
+    "source_symbol": "LoadBoosterGfx",
+    "before": "\twCurTilemap = saved_tilemap;\n\treturn wCurTilemap;",
+    "after": "\twCurTilemap = 0u;\n\treturn wCurTilemap;",
+    "case_ids": ["LoadBoosterGfx-0", "LoadBoosterGfx-1"],
+}
+# <<< factory-mutation LoadBoosterGfx

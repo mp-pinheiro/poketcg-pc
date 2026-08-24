@@ -73,6 +73,10 @@ static const uint8_t booster_logo_oam[] = {
 #define SCENE_POINTERS_BANK 0x04u
 #define SCENE_POINTERS_ADDR 0x6D6Fu
 #define SPRITE_ANIM_COORD_X 0x02u
+
+#include "home/palettes.h"
+#include "home/scenes.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -327,3 +331,15 @@ void _LoadScene(uint8_t a, uint8_t b, uint8_t c)
 	gb_write8(wCurTilemap_ADDR, saved_tilemap);
 }
 /* <<< factory _LoadScene */
+
+/* >>> factory LoadBoosterGfx */
+uint8_t LoadBoosterGfx(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint8_t saved_tilemap = wCurTilemap;
+	_LoadScene(a, b, c);
+	FlushAllPalettes();
+	SetBoosterLogoOAM();
+	wCurTilemap = saved_tilemap;
+	return wCurTilemap;
+}
+/* <<< factory LoadBoosterGfx */

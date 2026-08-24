@@ -27,6 +27,8 @@ wIntroSequencePalsNeedUpdate = 0xD634
 
 wSequenceDelay = 0xD633
 wSequenceCmdPtr = 0xD631
+
+wIntroSequencePalsNeedUpdate = 0xD634
 # <<< factory-cases-statics
 
 # >>> factory AdvanceIntroSequenceCmdPtr
@@ -165,6 +167,20 @@ CASES["IntroSequenceCmd_PlaySFX"] = [
 ]
 # <<< factory IntroSequenceCmd_PlaySFX
 
+# >>> factory LoadOpeningScene
+CONTRACT["LoadOpeningScene"] = {"compare": (), "preserve": ()}
+CASES["LoadOpeningScene"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00,
+     "wram": {wIntroSequencePalsNeedUpdate: b"\xAA"},
+     "expect": {wIntroSequencePalsNeedUpdate: b"\x00"},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x01, b=0x02, c=0x03,
+         wram={wIntroSequencePalsNeedUpdate: b"\xFF"},
+         expect={wIntroSequencePalsNeedUpdate: b"\x00"},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LoadOpeningScene
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -224,3 +240,11 @@ MUTATIONS["IntroSequenceCmd_Wait"] = {"source_symbol": "IntroSequenceCmd_Wait", 
 # >>> factory-mutation IntroSequenceCmd_PlaySFX
 MUTATIONS["IntroSequenceCmd_PlaySFX"] = {"source_symbol": "IntroSequenceCmd_PlaySFX", "before": "\tuint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) | 0x00u);", "case_ids": ["IntroSequenceCmd_PlaySFX-0", "IntroSequenceCmd_PlaySFX-1", "IntroSequenceCmd_PlaySFX-2"]}
 # <<< factory-mutation IntroSequenceCmd_PlaySFX
+# >>> factory-mutation LoadOpeningScene
+MUTATIONS["LoadOpeningScene"] = {
+    "source_symbol": "LoadOpeningScene",
+    "before": "\tgb_write8(wIntroSequencePalsNeedUpdate_ADDR, 0u);",
+    "after": "\tgb_write8(wIntroSequencePalsNeedUpdate_ADDR, 1u);",
+    "case_ids": ["LoadOpeningScene-0", "LoadOpeningScene-1"],
+}
+# <<< factory-mutation LoadOpeningScene

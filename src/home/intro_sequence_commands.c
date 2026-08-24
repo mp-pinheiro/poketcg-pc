@@ -67,6 +67,13 @@ static void UpdateSpriteAttributes(void)
 
 #include "home/sound.h"
 #include "generated/wram.h"
+
+#include "home/intro_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/color.h"
+#include "home/scenes.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -285,3 +292,15 @@ IntroSequenceCmdPlaySFXResult IntroSequenceCmd_PlaySFX(uint8_t c)
 	return (IntroSequenceCmdPlaySFXResult){a, f};
 }
 /* <<< factory IntroSequenceCmd_PlaySFX */
+
+/* >>> factory LoadOpeningScene */
+void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c)
+{
+	DisableLCD();
+	_LoadScene(a, b, c);
+	Func_10d17();
+	gb_write8(wIntroSequencePalsNeedUpdate_ADDR, 0u);
+	AdvanceIntroSequenceCmdPtrBy2();
+	EnableLCD();
+}
+/* <<< factory LoadOpeningScene */
