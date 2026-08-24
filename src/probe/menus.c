@@ -175,6 +175,15 @@ static void adapt_PlayOpenOrExitScreenSFX(ProbeState *s)
 }
 /* <<< factory PlayOpenOrExitScreenSFX */
 
+/* >>> factory HandleYesOrNoMenu */
+static void adapt_HandleYesOrNoMenu(ProbeState *s)
+{
+	HandleYesOrNoMenuResult result = HandleYesOrNoMenu(s->d, s->e, s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleYesOrNoMenu */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -204,5 +213,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
 	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
 	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
+	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
 	{ NULL, NULL },
 };

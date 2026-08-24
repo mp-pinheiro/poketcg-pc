@@ -1,0 +1,9 @@
+{
+  "fn": "HandleYesOrNoMenu",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleYesOrNoMenu\", \"registers\": {\"a\": 1, \"b\": 170, \"c\": 187, \"d\": 32, \"e\": 16, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52634\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleYesOrNoMenu\", \"mismatches\": {\"a\": [1, 0], \"f\": [144, 128]}}\n",
+  "restored": "{\"fn\": \"HandleYesOrNoMenu\", \"registers\": {\"a\": 1, \"b\": 170, \"c\": 187, \"d\": 32, \"e\": 16, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52634\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

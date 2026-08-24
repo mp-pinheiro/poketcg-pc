@@ -16,6 +16,20 @@
 
 #define SFX_CANCEL 0x03u
 #define SFX_CONFIRM 0x02u
+
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+
+#define SYM_CURSOR_R 0x0Fu
+#define SYM_SPACE 0x00u
+#define PAD_A 0x01u
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
+#define SFX_CURSOR 0x01u
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -370,3 +384,37 @@ PlayOpenOrExitScreenSFXResult PlayOpenOrExitScreenSFX(uint8_t a, uint8_t f)
 	return (PlayOpenOrExitScreenSFXResult){a, f};
 }
 /* <<< factory PlayOpenOrExitScreenSFX */
+
+/* >>> factory HandleYesOrNoMenu */
+HandleYesOrNoMenuResult HandleYesOrNoMenu(uint8_t d, uint8_t e, uint8_t b, uint8_t c)
+{
+	wLeftmostItemCursorX = d;
+	(void)SetCursorParametersForTextBox(d, e, SYM_CURSOR_R, SYM_SPACE);
+	uint8_t selected = (uint8_t)(wDefaultYesOrNo ^ 1u);
+	wCurMenuItem = (uint8_t)(wDefaultYesOrNo ^ 1u);
+	EnableLCD();
+	wMenuCursorXOffset = (uint8_t)(wCurMenuItem * 4u + wLeftmostItemCursorX);
+	wCursorBlinkCounter = 0u;
+	for (;;) {
+		DoFrame();
+		RefreshMenuCursor();
+		if ((hKeysPressed & PAD_A) != 0u) {
+			hCurMenuItem = wCurMenuItem;
+			if (wCurMenuItem == 0u) {
+				wDefaultYesOrNo = 0u;
+				return (HandleYesOrNoMenuResult){0u, 0x80u};
+			}
+			wDefaultYesOrNo = 0u;
+			hCurMenuItem = 1u;
+			return (HandleYesOrNoMenuResult){1u, 0x90u};
+		}
+		if ((hDPadHeld & (PAD_RIGHT | PAD_LEFT)) == 0u)
+			continue;
+		PlaySFX(SFX_CURSOR);
+		EraseCursor();
+		wCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);
+		wMenuCursorXOffset = (uint8_t)(wCurMenuItem * 4u + wLeftmostItemCursorX);
+		wCursorBlinkCounter = 0u;
+	}
+}
+/* <<< factory HandleYesOrNoMenu */

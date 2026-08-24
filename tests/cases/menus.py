@@ -268,6 +268,33 @@ CASES["PlayOpenOrExitScreenSFX"] = [
 ]
 # <<< factory PlayOpenOrExitScreenSFX
 
+# >>> factory-cases-statics
+hCurMenuItem = 0xFFB1
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+wCurMenuItem = 0xCD10
+wCursorBlinkCounter = 0xCD0F
+wDefaultYesOrNo = 0xCD9A
+wLeftmostItemCursorX = 0xCD98
+wMenuCursorXOffset = 0xCD11
+# <<< factory-cases-statics
+
+# >>> factory HandleYesOrNoMenu
+CONTRACT["HandleYesOrNoMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleYesOrNoMenu"] = [
+    {"d": 0x20, "e": 0x10, "b": 0xAA, "c": 0xBB, "keys": 0x01,
+     "wram": {wDefaultYesOrNo: b"\x00"},
+     "expect": {wDefaultYesOrNo: b"\x00", hCurMenuItem: b"\x01", wCurMenuItem: b"\x01"},
+     "expect_regs": {"a": 0x01, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, d=0x20, e=0x10, keys=0x01,
+         wram={wDefaultYesOrNo: b"\x01"},
+         expect={wDefaultYesOrNo: b"\x00", hCurMenuItem: b"\x00", wCurMenuItem: b"\x00"},
+         expect_regs={"a": 0x00, "f": 0x80},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory HandleYesOrNoMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -290,3 +317,11 @@ MUTATIONS["PlayOpenOrExitScreenSFX"] = {
     "case_ids": ["PlayOpenOrExitScreenSFX-0", "PlayOpenOrExitScreenSFX-1"],
 }
 # <<< factory-mutation PlayOpenOrExitScreenSFX
+# >>> factory-mutation HandleYesOrNoMenu
+MUTATIONS["HandleYesOrNoMenu"] = {
+    "source_symbol": "HandleYesOrNoMenu",
+    "before": "\twCurMenuItem = (uint8_t)(wDefaultYesOrNo ^ 1u);",
+    "after": "\twCurMenuItem = (uint8_t)(wDefaultYesOrNo ^ 0u);",
+    "case_ids": ["HandleYesOrNoMenu-0", "HandleYesOrNoMenu-1"],
+}
+# <<< factory-mutation HandleYesOrNoMenu
