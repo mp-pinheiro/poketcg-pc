@@ -11,7 +11,16 @@ static void adapt_ReadAutoDeckConfiguration(ProbeState *s)
 }
 /* <<< factory ReadAutoDeckConfiguration */
 
+/* >>> factory CheckWhichDecksToDismantleToBuildSavedDeck */
+static void adapt_CheckWhichDecksToDismantleToBuildSavedDeck(ProbeState *s)
+{
+	CheckWhichDecksToDismantleToBuildSavedDeckResult r = CheckWhichDecksToDismantleToBuildSavedDeck();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory CheckWhichDecksToDismantleToBuildSavedDeck */
+
 const ProbeEntry probe_entries_auto_deck_machines[] = {
 	{ "ReadAutoDeckConfiguration", adapt_ReadAutoDeckConfiguration },
+	{ "CheckWhichDecksToDismantleToBuildSavedDeck", adapt_CheckWhichDecksToDismantleToBuildSavedDeck },
 	{ NULL, NULL },
 };

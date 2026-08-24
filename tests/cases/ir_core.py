@@ -87,6 +87,14 @@ CASES["TransmitByteThroughIR"] = [
 ]
 # <<< factory TransmitByteThroughIR
 
+# >>> factory Func_1971e
+CONTRACT["Func_1971e"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_1971e"] = [
+    {"keys": 0x02},
+    dict(POISON, keys=0x02),
+]
+# <<< factory Func_1971e
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -123,3 +131,11 @@ MUTATIONS["TransmitByteThroughIR"] = {
     "case_ids": ["TransmitByteThroughIR-0", "TransmitByteThroughIR-1"],
 }
 # <<< factory-mutation TransmitByteThroughIR
+# >>> factory-mutation Func_1971e
+MUTATIONS["Func_1971e"] = {
+    "source_symbol": "Func_1971e",
+    "before": "\t\t\treturn (Func_1971eResult){err.a, err.f};",
+    "after": "\t\t\treturn (Func_1971eResult){(uint8_t)(err.a + 1u), err.f};",
+    "case_ids": ["Func_1971e-0", "Func_1971e-1"],
+}
+# <<< factory-mutation Func_1971e

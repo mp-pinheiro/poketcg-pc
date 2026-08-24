@@ -3288,6 +3288,14 @@ CASES["MirrorMove_AfterDamage"] = [
 ]
 # <<< factory MirrorMove_AfterDamage
 
+# >>> factory PidgeottoMirrorMove_AfterDamage
+CONTRACT["PidgeottoMirrorMove_AfterDamage"] = {"compare": ("a", "hl", "d", "e"), "preserve": ("d", "e")}
+CASES["PidgeottoMirrorMove_AfterDamage"] = [
+    {"d": 0x01, "e": 0x0E, "wram": {wNoDamageOrEffect: b"\x01"}},
+    dict(POISON, d=0x01, e=0x0E, wram={wNoDamageOrEffect: b"\x01"}),
+]
+# <<< factory PidgeottoMirrorMove_AfterDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5266,3 +5274,11 @@ MUTATIONS["MirrorMove_AfterDamage"] = {
     "case_ids": ["MirrorMove_AfterDamage-0", "MirrorMove_AfterDamage-1"],
 }
 # <<< factory-mutation MirrorMove_AfterDamage
+# >>> factory-mutation PidgeottoMirrorMove_AfterDamage
+MUTATIONS["PidgeottoMirrorMove_AfterDamage"] = {
+    "source_symbol": "PidgeottoMirrorMove_AfterDamage",
+    "before": "\treturn MirrorMove_AfterDamage(d, e, hl_in);",
+    "after": "\treturn MirrorMove_AfterDamage(d, e, (uint16_t)(hl_in + 1u));",
+    "case_ids": ["PidgeottoMirrorMove_AfterDamage-0", "PidgeottoMirrorMove_AfterDamage-1"],
+}
+# <<< factory-mutation PidgeottoMirrorMove_AfterDamage

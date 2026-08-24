@@ -1,0 +1,9 @@
+{
+  "fn": "CheckWhichDecksToDismantleToBuildSavedDeck",
+  "case": "tests/cases/auto_deck_machines.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckWhichDecksToDismantleToBuildSavedDeck\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"49408\": \"00\", \"53261\": \"e8c0\", \"53384\": \"00\", \"53412\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckWhichDecksToDismantleToBuildSavedDeck\", \"mismatches\": {\"f\": [144, 128]}}\n",
+  "restored": "{\"fn\": \"CheckWhichDecksToDismantleToBuildSavedDeck\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49152\": \"00\", \"49408\": \"00\", \"53261\": \"e8c0\", \"53384\": \"00\", \"53412\": \"00\", \"65409\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

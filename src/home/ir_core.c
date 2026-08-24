@@ -189,3 +189,21 @@ TransmitByteThroughIRResult TransmitByteThroughIR(uint8_t a, uint16_t hl_in, uin
 	return (TransmitByteThroughIRResult){0u, 0x80u, hl_in, de, bc};
 }
 /* <<< factory TransmitByteThroughIR */
+
+/* >>> factory Func_1971e */
+Func_1971eResult Func_1971e(void)
+{
+	for (;;) {
+		uint8_t joyp = gb_read8(RJOYP_ADDR);
+		if ((joyp & P11) == 0u) {
+			ReturnZFlagUnsetAndCarryFlagSetResult err = ReturnZFlagUnsetAndCarryFlagSet();
+			return (Func_1971eResult){err.a, err.f};
+		}
+		ReceiveByteThroughIRResult r = ReceiveByteThroughIR_ZeroIfUnsuccessful();
+		if (r.a == 0xAAu) {
+			(void)TransmitByteThroughIR(0x33u, 0u, 0u, 0u);
+			return (Func_1971eResult){0u, 0x80u};
+		}
+	}
+}
+/* <<< factory Func_1971e */
