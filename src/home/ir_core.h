@@ -32,4 +32,7 @@ ReturnZFlagUnsetAndCarryFlagSetResult ReturnZFlagUnsetAndCarryFlagSet2(void);
 typedef struct { uint8_t a; uint8_t f; } ReceiveByteThroughIRResult;
 ReceiveByteThroughIRResult ReceiveByteThroughIR(void);
 /* <<< factory ReceiveByteThroughIR */
+/* >>> factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+ReceiveByteThroughIRResult ReceiveByteThroughIR_ZeroIfUnsuccessful(void);
+/* <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
 #endif /* POKETCG_HOME_IR_CORE_H */

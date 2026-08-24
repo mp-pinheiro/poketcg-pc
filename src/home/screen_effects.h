@@ -46,4 +46,7 @@ void WhiteFlashScreen(void);
 /* >>> factory ShakeScreenY */
 void ShakeScreenY(uint16_t hl);
 /* <<< factory ShakeScreenY */
+/* >>> factory ShakeScreenY_Big */
+void ShakeScreenY_Big(void);
+/* <<< factory ShakeScreenY_Big */
 #endif /* POKETCG_HOME_SCREEN_EFFECTS_H */

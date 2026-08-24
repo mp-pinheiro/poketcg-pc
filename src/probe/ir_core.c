@@ -60,6 +60,15 @@ static void adapt_ReceiveByteThroughIR(ProbeState *s)
 }
 /* <<< factory ReceiveByteThroughIR */
 
+/* >>> factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+static void adapt_ReceiveByteThroughIR_ZeroIfUnsuccessful(ProbeState *s)
+{
+	ReceiveByteThroughIRResult r = ReceiveByteThroughIR_ZeroIfUnsuccessful();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -67,5 +76,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "TransmitIRBit", adapt_TransmitIRBit },
 	{ "ReturnZFlagUnsetAndCarryFlagSet2", adapt_ReturnZFlagUnsetAndCarryFlagSet2 },
 	{ "ReceiveByteThroughIR", adapt_ReceiveByteThroughIR },
+	{ "ReceiveByteThroughIR_ZeroIfUnsuccessful", adapt_ReceiveByteThroughIR_ZeroIfUnsuccessful },
 	{ NULL, NULL },
 };

@@ -93,6 +93,20 @@ static void adapt_DeckNamingScreen_DrawInvisibleCursor(ProbeState *s)
 }
 /* <<< factory DeckNamingScreen_DrawInvisibleCursor */
 
+/* >>> factory DeckNamingScreen_DrawVisibleCursor */
+static void adapt_DeckNamingScreen_DrawVisibleCursor(ProbeState *s)
+{
+	DeckNamingScreen_DrawCursorResult r = DeckNamingScreen_DrawVisibleCursor(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory DeckNamingScreen_DrawVisibleCursor */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -105,5 +119,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PlayerNamingScreen_DrawCursor", adapt_PlayerNamingScreen_DrawCursor },
 	{ "DeckNamingScreen_DrawCursor", adapt_DeckNamingScreen_DrawCursor },
 	{ "DeckNamingScreen_DrawInvisibleCursor", adapt_DeckNamingScreen_DrawInvisibleCursor },
+	{ "DeckNamingScreen_DrawVisibleCursor", adapt_DeckNamingScreen_DrawVisibleCursor },
 	{ NULL, NULL },
 };

@@ -49,6 +49,9 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR 0x4D2Bu
+
+#include "home/screen_effects.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DecrementScreenAnimDuration */
@@ -220,3 +223,10 @@ void ShakeScreenY(uint16_t hl)
 	          (uint8_t)(SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR >> 8));
 }
 /* <<< factory ShakeScreenY */
+
+/* >>> factory ShakeScreenY_Big */
+void ShakeScreenY_Big(void)
+{
+	ShakeScreenY(0x4D61u);
+}
+/* <<< factory ShakeScreenY_Big */

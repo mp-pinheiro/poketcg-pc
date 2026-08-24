@@ -15,6 +15,9 @@
 #include "mem.h"
 #define RP_ADDR_470 0xFF56u
 #define B_RP_DATA_IN_470 1u
+
+#include "home/ir_core.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory StoreRegistersInIRDataBuffer */
@@ -122,3 +125,13 @@ ReceiveByteThroughIRResult ReceiveByteThroughIR(void)
 	return (ReceiveByteThroughIRResult){result_a, result_f};
 }
 /* <<< factory ReceiveByteThroughIR */
+
+/* >>> factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
+ReceiveByteThroughIRResult ReceiveByteThroughIR_ZeroIfUnsuccessful(void)
+{
+	ReceiveByteThroughIRResult r = ReceiveByteThroughIR();
+	if (r.f & 0x10u)
+		return (ReceiveByteThroughIRResult){0u, 0x80u};
+	return r;
+}
+/* <<< factory ReceiveByteThroughIR_ZeroIfUnsuccessful */
