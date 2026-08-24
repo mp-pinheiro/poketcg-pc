@@ -63,4 +63,8 @@ _GetChallengeMachineDuelConfigurationsResult _GetChallengeMachineDuelConfigurati
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } SetNPCDialogNameResult;
 SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory SetNPCDialogName */
+/* >>> factory SetNPCMatchStartTheme */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } SetNPCMatchStartThemeResult;
+SetNPCMatchStartThemeResult SetNPCMatchStartTheme(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory SetNPCMatchStartTheme */
 #endif /* POKETCG_HOME_NPC_DATA_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "SetNPCMatchStartTheme",
+  "case": "tests/cases/npc_data.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetNPCMatchStartTheme\", \"registers\": {\"a\": 23, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53523\": \"17\", \"54063\": \"20\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetNPCMatchStartTheme\", \"mismatches\": {\"a\": [23, 2], \"bus\": {\"address\": 53523, \"reference\": \"1720\", \"native\": \"1620\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53523, 1], [54063, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetNPCMatchStartTheme\", \"registers\": {\"a\": 23, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 192, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53523\": \"17\", \"54063\": \"20\"}}, \"status\": \"PASS\"}\n"
+}

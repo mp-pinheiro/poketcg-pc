@@ -84,6 +84,20 @@ static void adapt_SetNPCDialogName(ProbeState *s)
 }
 /* <<< factory SetNPCDialogName */
 
+/* >>> factory SetNPCMatchStartTheme */
+static void adapt_SetNPCMatchStartTheme(ProbeState *s)
+{
+	SetNPCMatchStartThemeResult r = SetNPCMatchStartTheme(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SetNPCMatchStartTheme */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
@@ -93,5 +107,6 @@ const ProbeEntry probe_entries_npc_data[] = {
 	{ "SetNPCDeckIDAndDuelTheme", adapt_SetNPCDeckIDAndDuelTheme },
 	{ "_GetChallengeMachineDuelConfigurations", adapt__GetChallengeMachineDuelConfigurations },
 	{ "SetNPCDialogName", adapt_SetNPCDialogName },
+	{ "SetNPCMatchStartTheme", adapt_SetNPCMatchStartTheme },
 	{ NULL, NULL },
 };

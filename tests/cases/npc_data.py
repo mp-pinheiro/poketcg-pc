@@ -36,6 +36,10 @@ wNPCDuelDeckID = 0xCC19
 wNPCDuelPrizes = 0xCC18
 wOpponentName = 0xCC16
 wOpponentPortrait = 0xCC15
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wCurMap = 0xD32F
+wMatchStartTheme = 0xD113
 # <<< factory-cases-statics
 
 # >>> factory SetNPCOpponentNameAndPortrait
@@ -106,6 +110,16 @@ CASES["SetNPCDialogName"] = [
 ]
 # <<< factory SetNPCDialogName
 
+# >>> factory SetNPCMatchStartTheme
+CONTRACT["SetNPCMatchStartTheme"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["SetNPCMatchStartTheme"] = [
+    {"a": 0x00, "wram": {wCurMap: b"\x00", wMatchStartTheme: b"\xFF"}, "read": {wMatchStartTheme: 1}, "expect_regs": {"a": 0x00, "f": 0x70}},
+    {"a": 0x02, "wram": {wCurMap: b"\x00", wMatchStartTheme: b"\xFF"}, "read": {wMatchStartTheme: 1}, "expect_regs": {"a": 0x00, "f": 0x50}},
+    {"a": 0x02, "wram": {wCurMap: b"\x20", wMatchStartTheme: b"\xFF"}, "read": {wMatchStartTheme: 1}, "expect_regs": {"a": 0x17, "f": 0xC0}, "expect": {wMatchStartTheme: b"\x17"}},
+    dict(POISON, a=0xAA, wram={wCurMap: b"\x00"}, expect_regs={"a": 0xAA, "f": 0x40}),
+]
+# <<< factory SetNPCMatchStartTheme
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -134,3 +148,11 @@ MUTATIONS["_GetChallengeMachineDuelConfigurations"] = {"source_symbol": "_GetCha
 # >>> factory-mutation SetNPCDialogName
 MUTATIONS["SetNPCDialogName"] = {"source_symbol": "SetNPCDialogName", "before": "wCurrentNPCNameTx = lo;", "after": "wCurrentNPCNameTx = (uint8_t)(lo + 1u);", "case_ids": ["SetNPCDialogName-0", "SetNPCDialogName-1"]}
 # <<< factory-mutation SetNPCDialogName
+# >>> factory-mutation SetNPCMatchStartTheme
+MUTATIONS["SetNPCMatchStartTheme"] = {
+    "source_symbol": "SetNPCMatchStartTheme",
+    "before": "\tif (a != NPC_RONALD1)\n\t\treturn (SetNPCMatchStartThemeResult){a, f1, b, c, d, e, hl};",
+    "after": "\tif (a != 0xFFu)\n\t\treturn (SetNPCMatchStartThemeResult){a, f1, b, c, d, e, hl};",
+    "case_ids": ["SetNPCMatchStartTheme-2", "SetNPCMatchStartTheme-0", "SetNPCMatchStartTheme-1"],
+}
+# <<< factory-mutation SetNPCMatchStartTheme

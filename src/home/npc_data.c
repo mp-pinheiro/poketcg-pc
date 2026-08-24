@@ -33,6 +33,14 @@
 #include "home/npc_data.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define MUSIC_MATCH_START_3 0x17u
+#define NPC_DATA_MATCH_START_ID 0x0Cu
+#define NPC_RONALD1 0x02u
+#define POKEMON_DOME 0x20u
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -207,3 +215,26 @@ SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t
 	return (SetNPCDialogNameResult){a, (uint8_t)(z | half | carry), b, c, hl};
 }
 /* <<< factory SetNPCDialogName */
+
+/* >>> factory SetNPCMatchStartTheme */
+SetNPCMatchStartThemeResult SetNPCMatchStartTheme(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
+	const uint8_t *entry = rom_ptr(NPC_HEADER_POINTERS_BANK, (uint16_t)(header.hl + NPC_DATA_MATCH_START_ID));
+	gb_write8(wMatchStartTheme_ADDR, entry[0]);
+
+	uint8_t r1 = (uint8_t)(a - NPC_RONALD1);
+	uint8_t f1 = (uint8_t)(0x40u | (r1 == 0u ? 0x80u : 0u) | (((a & 0x0Fu) < (NPC_RONALD1 & 0x0Fu)) ? 0x20u : 0u) | ((a < NPC_RONALD1) ? 0x10u : 0u));
+	if (a != NPC_RONALD1)
+		return (SetNPCMatchStartThemeResult){a, f1, b, c, d, e, hl};
+
+	uint8_t map = wCurMap;
+	uint8_t r2 = (uint8_t)(map - POKEMON_DOME);
+	uint8_t f2 = (uint8_t)(0x40u | (r2 == 0u ? 0x80u : 0u) | (((map & 0x0Fu) < (POKEMON_DOME & 0x0Fu)) ? 0x20u : 0u) | ((map < POKEMON_DOME) ? 0x10u : 0u));
+	if (map != POKEMON_DOME)
+		return (SetNPCMatchStartThemeResult){map, f2, b, c, d, e, hl};
+
+	gb_write8(wMatchStartTheme_ADDR, MUSIC_MATCH_START_3);
+	return (SetNPCMatchStartThemeResult){MUSIC_MATCH_START_3, f2, b, c, d, e, hl};
+}
+/* <<< factory SetNPCMatchStartTheme */
