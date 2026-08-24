@@ -50,6 +50,16 @@ CASES["PrintAlbumProgress_SkipGetProgress"] = [
 ]
 # <<< factory PrintAlbumProgress_SkipGetProgress
 
+# >>> factory PrintPlayTime_SkipUpdateTime
+CONTRACT["PrintPlayTime_SkipUpdateTime"] = {"compare": (), "preserve": ()}
+CASES["PrintPlayTime_SkipUpdateTime"] = [
+    {"b": 0, "c": 0, "wram": {0xD3C8: b"\x1E\x05\x00"},
+     "read": {0xD4B4: 3}, "vread": {0: {0x9800: 3, 0x9804: 2}}},
+    dict(POISON, wram={0xD3C8: b"\x1E\x05\x00"},
+         read={0xD4B4: 3}, vread={0: {0x9800: 3}}),
+]
+# <<< factory PrintPlayTime_SkipUpdateTime
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -71,3 +81,6 @@ MUTATIONS["ConvertWordToNumericalDigits"] = {"source_symbol": "ConvertWordToNume
 # >>> factory-mutation PrintAlbumProgress_SkipGetProgress
 MUTATIONS["PrintAlbumProgress_SkipGetProgress"] = {"source_symbol": "PrintAlbumProgress_SkipGetProgress", "before": "uint8_t b2 = (uint8_t)(b + 4u);", "after": "uint8_t b2 = (uint8_t)(b + 5u);", "case_ids": ["PrintAlbumProgress_SkipGetProgress-0"]}
 # <<< factory-mutation PrintAlbumProgress_SkipGetProgress
+# >>> factory-mutation PrintPlayTime_SkipUpdateTime
+MUTATIONS["PrintPlayTime_SkipUpdateTime"] = {"source_symbol": "PrintPlayTime_SkipUpdateTime", "before": "uint16_t sum = (uint16_t)((uint16_t)minutes + 100u);", "after": "uint16_t sum = (uint16_t)((uint16_t)minutes + 99u);", "case_ids": ["PrintPlayTime_SkipUpdateTime-0"]}
+# <<< factory-mutation PrintPlayTime_SkipUpdateTime

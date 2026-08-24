@@ -62,11 +62,19 @@ static void adapt_CheckIfEvolutionNeedsEnergyForAttack(ProbeState *s)
 }
 /* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
 
+/* >>> factory AITryToPlayEnergyCard */
+static void adapt_AITryToPlayEnergyCard(ProbeState *s)
+{
+	s->a = AITryToPlayEnergyCard();
+}
+/* <<< factory AITryToPlayEnergyCard */
+
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
 	{ "CheckSpecificDecksToAttachDoubleColorless", adapt_CheckSpecificDecksToAttachDoubleColorless },
 	{ "GetEnergyCardForDiscardOrEnergyBoostAttack", adapt_GetEnergyCardForDiscardOrEnergyBoostAttack },
 	{ "CheckIfEvolutionNeedsEnergyForAttack", adapt_CheckIfEvolutionNeedsEnergyForAttack },
+	{ "AITryToPlayEnergyCard", adapt_AITryToPlayEnergyCard },
 	{ NULL, NULL },
 };

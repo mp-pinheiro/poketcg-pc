@@ -521,6 +521,20 @@ CASES["CopyListFromHLToDEInSRAM"] = [
 ]
 # <<< factory CopyListFromHLToDEInSRAM
 
+# >>> factory PrintDeckName
+CONTRACT["PrintDeckName"] = {"compare": (), "preserve": ()}
+CASES["PrintDeckName"] = [
+    {"hl": 0xA200, "d": 0x01, "e": 0x08, "sram": {0: {0xA218: b"\x00"}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"hl": 0xA200, "d": 0x01, "e": 0x08, "sram": {0: {0xA200: b"AB\x00", 0xA218: b"\x01"}},
+     "wram": {0xC590: b"\x00" * 16},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "rom_bank": 2, "read": {0xC590: 8}},
+    dict(POISON, hl=0xA200, sram={0: {0xA218: b"\x00"}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintDeckName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -709,3 +723,6 @@ MUTATIONS["ConvertToNumericalDigits"] = {"source_symbol": "ConvertToNumericalDig
 # >>> factory-mutation CopyListFromHLToDEInSRAM
 MUTATIONS["CopyListFromHLToDEInSRAM"] = {"source_symbol": "CopyListFromHLToDEInSRAM", "before": "EnableSRAM();\n\tCopyListFromHLToDE(&hl, &de);", "after": "EnableSRAM();\n\tCopyListFromHLToDE(&de, &hl);", "case_ids": ["CopyListFromHLToDEInSRAM-0"]}
 # <<< factory-mutation CopyListFromHLToDEInSRAM
+# >>> factory-mutation PrintDeckName
+MUTATIONS["PrintDeckName"] = {"source_symbol": "PrintDeckName", "before": "uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c);", "after": "uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c + 1u);", "case_ids": ["PrintDeckName-1"]}
+# <<< factory-mutation PrintDeckName

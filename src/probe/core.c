@@ -1482,6 +1482,13 @@ static void adapt_HasAlivePokemonInBench(ProbeState *s)
 }
 /* <<< factory HasAlivePokemonInBench */
 
+/* >>> factory DrawOpponentSelectionScreen */
+static void adapt_DrawOpponentSelectionScreen(ProbeState *s)
+{
+	DrawOpponentSelectionScreen(s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory DrawOpponentSelectionScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1658,5 +1665,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckEnergyNeededForAttack", adapt_CheckEnergyNeededForAttack },
 	{ "CreateDamageCharSprite", adapt_CreateDamageCharSprite },
 	{ "HasAlivePokemonInBench", adapt_HasAlivePokemonInBench },
+	{ "DrawOpponentSelectionScreen", adapt_DrawOpponentSelectionScreen },
 	{ NULL, NULL },
 };

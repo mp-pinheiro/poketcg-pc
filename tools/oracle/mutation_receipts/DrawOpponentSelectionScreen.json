@@ -1,0 +1,9 @@
+{
+  "fn": "DrawOpponentSelectionScreen",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawOpponentSelectionScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"212200\"}}, \"vram\": {\"0\": {\"39429\": \"000020\"}}, \"wram\": {\"52238\": \"00\", \"52245\": \"03\", \"52248\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawOpponentSelectionScreen\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawOpponentSelectionScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {\"0\": {\"40976\": \"212200\"}}, \"vram\": {\"0\": {\"39429\": \"000020\"}}, \"wram\": {\"52238\": \"00\", \"52245\": \"03\", \"52248\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

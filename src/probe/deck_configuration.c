@@ -381,6 +381,13 @@ static void adapt_CopyListFromHLToDEInSRAM(ProbeState *s)
 }
 /* <<< factory CopyListFromHLToDEInSRAM */
 
+/* >>> factory PrintDeckName */
+static void adapt_PrintDeckName(ProbeState *s)
+{
+	PrintDeckName(s->hl, s->d, s->e);
+}
+/* <<< factory PrintDeckName */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -425,5 +432,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AddGiftCenterDeckCardsToCollection", adapt_AddGiftCenterDeckCardsToCollection },
 	{ "ConvertToNumericalDigits", adapt_ConvertToNumericalDigits },
 	{ "CopyListFromHLToDEInSRAM", adapt_CopyListFromHLToDEInSRAM },
+	{ "PrintDeckName", adapt_PrintDeckName },
 	{ NULL, NULL },
 };

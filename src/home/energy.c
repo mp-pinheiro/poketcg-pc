@@ -52,6 +52,20 @@
 #include "generated/hram.h"
 #include "mem.h"
 #define DUELVARS_ARENA_CARD_510 0xBBu
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/energy.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define ATTACHED_ENERGY_BOOST_F_600 0x4u
+#define ATTACK_FLAG2_ADDRESS_600 0x8u
+#define DISCARD_ENERGY_F_600 0x3u
+#define DOUBLE_COLORLESS_ENERGY_600 0x07u
+#define FIRST_ATTACK_OR_PKMN_POWER_600 0x00u
+#define SECOND_ATTACK_600 0x01u
+#define OPPACTION_PLAY_ENERGY_600 0x03u
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -269,3 +283,143 @@ CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(
 	return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out3, new_b, c, d, e, var4.hl};
 }
 /* <<< factory CheckIfEvolutionNeedsEnergyForAttack */
+
+/* >>> factory AITryToPlayEnergyCard */
+uint8_t AITryToPlayEnergyCard(void)
+{
+	gb_write8(wTempAI_ADDR, 0u);
+	gb_write8(wSelectedAttack_ADDR, FIRST_ATTACK_OR_PKMN_POWER_600);
+	CheckEnergyNeededForAttackResult r1 = CheckEnergyNeededForAttack();
+	if (r1.f & 0x10u) {
+		if (r1.b != 0u || r1.c != 0u)
+			goto check_deck;
+	}
+
+second_attack:
+	gb_write8(wSelectedAttack_ADDR, SECOND_ATTACK_600);
+	CheckEnergyNeededForAttackResult r2 = CheckEnergyNeededForAttack();
+	if (r2.f & 0x10u) {
+		if (r2.b != 0u || r2.c != 0u)
+			goto check_deck;
+	}
+
+	{
+		gb_write8(wTempAI_ADDR, 1u);
+		gb_write8(wSelectedAttack_ADDR, FIRST_ATTACK_OR_PKMN_POWER_600);
+		(void)CheckEnergyNeededForAttack();
+		AttackFlagResult f1a = CheckLoadedAttackFlag((uint8_t)(ATTACK_FLAG2_ADDRESS_600 | ATTACHED_ENERGY_BOOST_F_600));
+		if (f1a.f & 0x10u)
+			goto energy_boost_or_discard_energy;
+		AttackFlagResult f1b = CheckLoadedAttackFlag((uint8_t)(ATTACK_FLAG2_ADDRESS_600 | DISCARD_ENERGY_F_600));
+		if (f1b.f & 0x10u)
+			goto energy_boost_or_discard_energy;
+
+		gb_write8(wSelectedAttack_ADDR, SECOND_ATTACK_600);
+		(void)CheckEnergyNeededForAttack();
+		AttackFlagResult f2a = CheckLoadedAttackFlag((uint8_t)(ATTACK_FLAG2_ADDRESS_600 | ATTACHED_ENERGY_BOOST_F_600));
+		if (f2a.f & 0x10u)
+			goto energy_boost_or_discard_energy;
+		AttackFlagResult f2b = CheckLoadedAttackFlag((uint8_t)(ATTACK_FLAG2_ADDRESS_600 | DISCARD_ENERGY_F_600));
+		if (f2b.f & 0x10u)
+			goto energy_boost_or_discard_energy;
+
+		CheckIfEvolutionNeedsEnergyForAttackResult evo =
+			CheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);
+		if ((evo.f & 0x10u) == 0u)
+			return 0u;
+		(void)CreateEnergyCardListFromHand(evo.a);
+		goto check_deck;
+	}
+
+energy_boost_or_discard_energy:
+	{
+		GetEnergyCardForDiscardOrEnergyBoostAttackResult g =
+			GetEnergyCardForDiscardOrEnergyBoostAttack(0u);
+		if ((g.f & 0x10u) == 0u)
+			return 0u;
+	}
+
+check_deck:
+	{
+		CheckSpecificDecksToAttachDoubleColorlessResult sd =
+			CheckSpecificDecksToAttachDoubleColorless(0u, 0u, 0u, 0u, 0u);
+		if (sd.f & 0x10u)
+			goto play_energy_card;
+
+		if (sd.b != 0u) {
+			CoreCardListResult look = LookForCardIDInHand(sd.e);
+			gb_write8(hTemp_ffa0_ADDR, look.a);
+			if ((look.f & 0x10u) == 0u)
+				goto play_energy_card;
+			goto colorless_energy_fallthrough_look_for_any;
+		}
+
+	colorless_energy:
+		if (gb_read8(hTempPlayAreaLocation_ff9d_ADDR) != 0u)
+			goto look_for_any_energy;
+		if (sd.c == 0u)
+			goto check_if_done;
+		if (sd.c != 2u)
+			goto look_for_any_energy;
+
+		{
+			uint16_t hl = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t v = gb_read8(hl);
+				hl = (uint16_t)(hl + 1u);
+				if (v == 0xFFu)
+					goto look_for_any_energy;
+				gb_write8(hTemp_ffa0_ADDR, v);
+				uint16_t id16 = GetCardIDFromDeckIndex(v);
+				uint8_t id_e = (uint8_t)id16;
+				if (id_e == DOUBLE_COLORLESS_ENERGY_600)
+					goto play_energy_card;
+			}
+		}
+
+	colorless_energy_fallthrough_look_for_any:
+		goto colorless_energy;
+
+	look_for_any_energy:
+		{
+			uint16_t hl = wDuelTempList_ADDR;
+			(void)CountCardsInDuelTempList();
+			(void)ShuffleCards(0u, hl);
+			for (;;) {
+				uint8_t v = gb_read8(hl);
+				hl = (uint16_t)(hl + 1u);
+				if (v == 0xFFu)
+					goto check_if_done;
+				CheckIfOpponentHasBossDeckIDResult boss = CheckIfOpponentHasBossDeckID(v);
+				uint8_t load;
+				if (boss.carry == 0u) {
+					load = v;
+				} else {
+					uint16_t id16b = GetCardIDFromDeckIndex(v);
+					uint8_t id_e2 = (uint8_t)id16b;
+					if (id_e2 == DOUBLE_COLORLESS_ENERGY_600)
+						continue;
+					load = boss.a;
+				}
+				gb_write8(hTemp_ffa0_ADDR, load);
+				break;
+			}
+		}
+	}
+
+play_energy_card:
+	{
+		uint8_t loc = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+		gb_write8(hTempPlayAreaLocation_ffa1_ADDR, loc);
+		(void)AIMakeDecision(OPPACTION_PLAY_ENERGY_600);
+		return 1u;
+	}
+
+check_if_done:
+	if (gb_read8(wTempAI_ADDR) != 0u)
+		return 0u;
+	if (gb_read8(wSelectedAttack_ADDR) == 0u)
+		goto second_attack;
+	return 0u;
+}
+/* <<< factory AITryToPlayEnergyCard */

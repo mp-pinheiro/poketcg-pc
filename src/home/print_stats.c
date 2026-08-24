@@ -110,3 +110,26 @@ void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t
 	SafeCopyDataHLtoDE(&src2, &dest2, 3u);
 }
 /* <<< factory PrintAlbumProgress_SkipGetProgress */
+
+/* >>> factory PrintPlayTime_SkipUpdateTime */
+void PrintPlayTime_SkipUpdateTime(uint8_t b, uint8_t c)
+{
+	uint8_t lo = gb_read8((uint16_t)(wPlayTimeHourMinutes_ADDR + 1u));
+	uint8_t hi = gb_read8((uint16_t)(wPlayTimeHourMinutes_ADDR + 2u));
+	uint16_t hours = (uint16_t)(((uint16_t)hi << 8) | lo);
+	(void)ConvertWordToNumericalDigits(hours);
+
+	uint16_t dest1 = BCCoordToBGMap0Address(b, c);
+	uint16_t src1 = wDecimalChars_ADDR;
+	SafeCopyDataHLtoDE(&src1, &dest1, 3u);
+
+	uint8_t minutes = gb_read8(wPlayTimeHourMinutes_ADDR);
+	uint16_t sum = (uint16_t)((uint16_t)minutes + 100u);
+	(void)ConvertWordToNumericalDigits(sum);
+
+	uint8_t b2 = (uint8_t)(b + 4u);
+	uint16_t dest2 = BCCoordToBGMap0Address(b2, c);
+	uint16_t src2 = (uint16_t)(wDecimalChars_ADDR + 1u);
+	SafeCopyDataHLtoDE(&src2, &dest2, 2u);
+}
+/* <<< factory PrintPlayTime_SkipUpdateTime */

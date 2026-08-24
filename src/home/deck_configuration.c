@@ -154,6 +154,14 @@
 #include "home/deck_configuration.h"
 #include "home/switch_sram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define NewDeckText 0x0223u
+#define DECK_NAME_SUFFIX_ADDR_590 0x52A7u
 /* <<< factory statics */
 
 
@@ -1009,3 +1017,27 @@ CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de
 	return (CopyListFromHLToDEInSRAMResult){0x80u, hl, de};
 }
 /* <<< factory CopyListFromHLToDEInSRAM */
+
+/* >>> factory PrintDeckName */
+void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e)
+{
+	uint8_t flags = CheckIfDeckHasCards(hl);
+	if (flags & 0x10u) {
+		InitTextPrinting(d, e);
+		(void)ProcessTextFromID(NewDeckText);
+		return;
+	}
+
+	uint16_t dst = wDefaultText_ADDR;
+	(void)CopyListFromHLToDEInSRAM(hl, dst);
+
+	TextLength len = GetTextLengthInTiles(wDefaultText_ADDR);
+	uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + len.c);
+	uint16_t suffix_src = DECK_NAME_SUFFIX_ADDR_590;
+	CopyListFromHLToDE(&suffix_src, &suffix_dst);
+
+	InitTextPrinting(d, e);
+	uint16_t text_ptr = wDefaultText_ADDR;
+	ProcessText(&text_ptr);
+}
+/* <<< factory PrintDeckName */

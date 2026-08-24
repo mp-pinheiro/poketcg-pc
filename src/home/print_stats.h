@@ -17,4 +17,7 @@ ConvertWordToNumericalDigitsResult ConvertWordToNumericalDigits(uint16_t hl);
 /* >>> factory PrintAlbumProgress_SkipGetProgress */
 void PrintAlbumProgress_SkipGetProgress(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory PrintAlbumProgress_SkipGetProgress */
+/* >>> factory PrintPlayTime_SkipUpdateTime */
+void PrintPlayTime_SkipUpdateTime(uint8_t b, uint8_t c);
+/* <<< factory PrintPlayTime_SkipUpdateTime */
 #endif /* POKETCG_HOME_PRINT_STATS_H */

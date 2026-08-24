@@ -627,6 +627,13 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 
 #include "home/core.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/script.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SELECT_COMPUTER_OPPONENT_DATA_ADDR_580 0x7408u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3765,3 +3772,26 @@ HasAlivePokemonInPlayAreaResult HasAlivePokemonInBench(void)
 	return _HasAlivePokemonInPlayArea(1u);
 }
 /* <<< factory HasAlivePokemonInBench */
+
+/* >>> factory DrawOpponentSelectionScreen */
+void DrawOpponentSelectionScreen(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t deck_id = gb_read8(wOpponentDeckID_ADDR);
+	gb_write8(wNPCDuelDeckID_ADDR, deck_id);
+	GetNPCDuelConfigurationsResult cfg = GetNPCDuelConfigurations(deck_id, f, b, c, d, e, hl);
+	if ((cfg.f & 0x10u) == 0u) {
+		gb_write8(wOpponentPortrait_ADDR, 0u);
+		gb_write8(wOpponentName_ADDR, 0u);
+		gb_write8((uint16_t)(wOpponentName_ADDR + 1u), 0u);
+	}
+
+	(void)PlaceTextItems(SELECT_COMPUTER_OPPONENT_DATA_ADDR_580);
+	DrawDuelistPortraitsAndNames();
+
+	uint8_t deck_id2 = gb_read8(wOpponentDeckID_ADDR);
+	WriteOneByteNumberInTxSymbol_PadSpace(deck_id2, 5u, 16u, 0u, 0u, 0u);
+
+	uint8_t prizes = gb_read8(wNPCDuelPrizes_ADDR);
+	WriteOneByteNumberInTxSymbol_PadSpace(prizes, 15u, 10u, 0u, 0u, 0u);
+}
+/* <<< factory DrawOpponentSelectionScreen */

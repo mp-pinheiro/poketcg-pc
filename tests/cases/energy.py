@@ -86,6 +86,14 @@ CASES["CheckIfEvolutionNeedsEnergyForAttack"] = [
 ]
 # <<< factory CheckIfEvolutionNeedsEnergyForAttack
 
+# >>> factory AITryToPlayEnergyCard
+CONTRACT["AITryToPlayEnergyCard"] = {"compare": ("a",), "preserve": ()}
+CASES["AITryToPlayEnergyCard"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC200: b"\xFF" * 60}),
+]
+# <<< factory AITryToPlayEnergyCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -115,3 +123,6 @@ MUTATIONS["GetEnergyCardForDiscardOrEnergyBoostAttack"] = {"source_symbol": "Get
 # >>> factory-mutation CheckIfEvolutionNeedsEnergyForAttack
 MUTATIONS["CheckIfEvolutionNeedsEnergyForAttack"] = {"source_symbol": "CheckIfEvolutionNeedsEnergyForAttack", "before": "uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;", "after": "uint8_t f_out = (evo.a == 0u) ? 0x00u : 0x80u;", "case_ids": ["CheckIfEvolutionNeedsEnergyForAttack-0", "CheckIfEvolutionNeedsEnergyForAttack-1"]}
 # <<< factory-mutation CheckIfEvolutionNeedsEnergyForAttack
+# >>> factory-mutation AITryToPlayEnergyCard
+MUTATIONS["AITryToPlayEnergyCard"] = {"source_symbol": "AITryToPlayEnergyCard", "before": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 0u;", "after": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 1u;", "case_ids": ["AITryToPlayEnergyCard-0"]}
+# <<< factory-mutation AITryToPlayEnergyCard

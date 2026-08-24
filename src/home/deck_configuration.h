@@ -160,4 +160,7 @@ ConvertToNumericalDigitsResult ConvertToNumericalDigits(uint8_t a, uint16_t hl);
 typedef struct { uint8_t f; uint16_t hl; uint16_t de; } CopyListFromHLToDEInSRAMResult;
 CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de);
 /* <<< factory CopyListFromHLToDEInSRAM */
+/* >>> factory PrintDeckName */
+void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e);
+/* <<< factory PrintDeckName */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
