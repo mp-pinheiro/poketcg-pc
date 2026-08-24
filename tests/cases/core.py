@@ -2156,6 +2156,16 @@ CASES["CheckAbleToRetreat"] = [
 ]
 # <<< factory CheckAbleToRetreat
 
+# >>> factory LookForEnergyNeededInHand
+CONTRACT["LookForEnergyNeededInHand"] = {"compare": ("f",), "preserve": ()}
+CASES["LookForEnergyNeededInHand"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCC23: b"\x00"},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LookForEnergyNeededInHand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3214,3 +3224,6 @@ MUTATIONS["Func_15886"] = {"source_symbol": "Func_15886", "before": "\tif (check
 # >>> factory-mutation CheckAbleToRetreat
 MUTATIONS["CheckAbleToRetreat"] = {"source_symbol": "CheckAbleToRetreat", "before": "\tif (r1.f & 0x10u) {", "after": "\tif (r1.f & 0x20u) {", "case_ids": ["CheckAbleToRetreat-0", "CheckAbleToRetreat-1"]}
 # <<< factory-mutation CheckAbleToRetreat
+# >>> factory-mutation LookForEnergyNeededInHand
+MUTATIONS["LookForEnergyNeededInHand"] = {"source_symbol": "LookForEnergyNeededInHand", "before": "\t}\n\treturn 0x80u;\n}", "after": "\t}\n\treturn 0x00u;\n}", "case_ids": ["LookForEnergyNeededInHand-0", "LookForEnergyNeededInHand-1"]}
+# <<< factory-mutation LookForEnergyNeededInHand

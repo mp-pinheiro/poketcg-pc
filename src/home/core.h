@@ -716,4 +716,7 @@ CoreCardListResult Func_15886(uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CheckAbleToRetreatResult;
 CheckAbleToRetreatResult CheckAbleToRetreat(void);
 /* <<< factory CheckAbleToRetreat */
+/* >>> factory LookForEnergyNeededInHand */
+uint8_t LookForEnergyNeededInHand(void);
+/* <<< factory LookForEnergyNeededInHand */
 #endif

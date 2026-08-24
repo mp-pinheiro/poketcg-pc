@@ -1543,6 +1543,14 @@ static void adapt_CheckAbleToRetreat(ProbeState *s)
 }
 /* <<< factory CheckAbleToRetreat */
 
+/* >>> factory LookForEnergyNeededInHand */
+static void adapt_LookForEnergyNeededInHand(ProbeState *s)
+{
+	uint8_t r = LookForEnergyNeededInHand();
+	s->f = r;
+}
+/* <<< factory LookForEnergyNeededInHand */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1727,5 +1735,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDamageAnimationNumbers", adapt_DrawDamageAnimationNumbers },
 	{ "Func_15886", adapt_Func_15886 },
 	{ "CheckAbleToRetreat", adapt_CheckAbleToRetreat },
+	{ "LookForEnergyNeededInHand", adapt_LookForEnergyNeededInHand },
 	{ NULL, NULL },
 };

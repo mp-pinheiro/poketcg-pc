@@ -676,6 +676,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define TYPE_TRAINER 0x10u
 #define EnergyCardsRequiredToRetreatText 0x00BFu
 #define UnableToRetreatText 0x003Du
+
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3965,3 +3971,59 @@ CheckAbleToRetreatResult CheckAbleToRetreat(void)
 	return (CheckAbleToRetreatResult){final_a, final_f, 0u};
 }
 /* <<< factory CheckAbleToRetreat */
+
+/* >>> factory LookForEnergyNeededInHand */
+uint8_t LookForEnergyNeededInHand(void)
+{
+	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+	CheckEnergyNeededForAttackResult r1 = CheckEnergyNeededForAttack();
+	uint8_t total1 = (uint8_t)(r1.b + r1.c);
+	if (total1 == 1u) {
+		if (r1.b == 0u) {
+			CoreCardListResult cr = CreateEnergyCardListFromHand(0u);
+			if (!(cr.f & 0x10u)) {
+				return 0x90u;
+			}
+		} else {
+			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r1.e);
+			if (cr.f & 0x10u) {
+				return cr.f;
+			}
+		}
+		return 0x80u;
+	}
+	if (total1 == 2u && r1.c == 2u) {
+		CoreCardListResult cr = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
+		if (cr.f & 0x10u) {
+			return cr.f;
+		}
+		return 0x80u;
+	}
+
+	wSelectedAttack = SECOND_ATTACK;
+	CheckEnergyNeededForAttackResult r2 = CheckEnergyNeededForAttack();
+	uint8_t total2 = (uint8_t)(r2.b + r2.c);
+	if (total2 == 1u) {
+		if (r2.b == 0u) {
+			CoreCardListResult cr = CreateEnergyCardListFromHand(0u);
+			if (!(cr.f & 0x10u)) {
+				return 0x90u;
+			}
+		} else {
+			CoreCardListResult cr = LookForCardIDInHandList_Bank5(r2.e);
+			if (cr.f & 0x10u) {
+				return cr.f;
+			}
+		}
+		return 0x80u;
+	}
+	if (total2 == 2u && r2.c == 2u) {
+		CoreCardListResult cr = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
+		if (cr.f & 0x10u) {
+			return cr.f;
+		}
+		return 0x80u;
+	}
+	return 0x80u;
+}
+/* <<< factory LookForEnergyNeededInHand */
