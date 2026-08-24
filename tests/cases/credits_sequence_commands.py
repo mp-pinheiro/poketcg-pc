@@ -178,6 +178,11 @@ CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800}}
 BOX_READ = {0x9800: 0x400}
+
+wSequenceCmdPtr = 0xD631
+hSCX = 0xFF92
+hSCY = 0xFF93
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -261,6 +266,20 @@ CASES["CreditsSequenceCmd_PrintText"] = [
          setup=SETUP, vread={0: BOX_READ}),
 ]
 # <<< factory CreditsSequenceCmd_PrintText
+
+# >>> factory CreditsSequenceCmd_LoadBooster
+CONTRACT["CreditsSequenceCmd_LoadBooster"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_LoadBooster"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00,
+     "wram": {wSequenceCmdPtr: b"\x00\x00"},
+     "read": {wSequenceCmdPtr: 2, hSCX: 1, hSCY: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, b=0x00, c=0x00, e=0x00,
+         wram={wSequenceCmdPtr: b"\x00\x00"},
+         read={wSequenceCmdPtr: 2, hSCX: 1, hSCY: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory CreditsSequenceCmd_LoadBooster
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -379,3 +398,11 @@ MUTATIONS["CreditsSequenceCmd_DrawRectangle"] = {"source_symbol": "CreditsSequen
 # >>> factory-mutation CreditsSequenceCmd_PrintText
 MUTATIONS["CreditsSequenceCmd_PrintText"] = {"source_symbol": "CreditsSequenceCmd_PrintText", "before": "uint8_t e = (uint8_t)(b | 0x20u);", "after": "uint8_t e = b;", "case_ids": ["CreditsSequenceCmd_PrintText-0", "CreditsSequenceCmd_PrintText-1"]}
 # <<< factory-mutation CreditsSequenceCmd_PrintText
+# >>> factory-mutation CreditsSequenceCmd_LoadBooster
+MUTATIONS["CreditsSequenceCmd_LoadBooster"] = {
+    "source_symbol": "CreditsSequenceCmd_LoadBooster",
+    "before": "\tAdvanceCreditsSequenceCmdPtrBy5();",
+    "after": "\tAdvanceCreditsSequenceCmdPtrBy4();",
+    "case_ids": ["CreditsSequenceCmd_LoadBooster-0", "CreditsSequenceCmd_LoadBooster-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_LoadBooster

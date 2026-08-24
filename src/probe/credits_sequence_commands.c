@@ -127,6 +127,13 @@ static void adapt_CreditsSequenceCmd_PrintText(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_PrintText */
 
+/* >>> factory CreditsSequenceCmd_LoadBooster */
+static void adapt_CreditsSequenceCmd_LoadBooster(ProbeState *s)
+{
+	CreditsSequenceCmd_LoadBooster(s->b, s->c, s->d, s->e);
+}
+/* <<< factory CreditsSequenceCmd_LoadBooster */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -145,5 +152,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_InitVolcanoSprite", adapt_CreditsSequenceCmd_InitVolcanoSprite },
 	{ "CreditsSequenceCmd_DrawRectangle", adapt_CreditsSequenceCmd_DrawRectangle },
 	{ "CreditsSequenceCmd_PrintText", adapt_CreditsSequenceCmd_PrintText },
+	{ "CreditsSequenceCmd_LoadBooster", adapt_CreditsSequenceCmd_LoadBooster },
 	{ NULL, NULL },
 };

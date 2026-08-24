@@ -74,6 +74,10 @@ static void UpdateSpriteAttributes(void)
 #include "home/scenes.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/intro_sequence_commands.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -304,3 +308,21 @@ void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c)
 	EnableLCD();
 }
 /* <<< factory LoadOpeningScene */
+
+/* >>> factory LoadOpeningSceneAndUpdateSGBBorder */
+LoadOpeningSceneAndUpdateSGBBorderResult LoadOpeningSceneAndUpdateSGBBorder(uint8_t a, uint8_t b, uint8_t c)
+{
+	LoadOpeningScene(a, b, c);
+	if (gb_read8(wConsole_ADDR) == 1u) {
+		gb_write8(wTempSGBPacket_ADDR, 0x21u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 1u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 2u), 1u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 3u), 0x0Au);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 4u), 0u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 5u), 0u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 6u), 19u);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 7u), 17u);
+	}
+	return (LoadOpeningSceneAndUpdateSGBBorderResult){0u, 0u, 20u, 18u};
+}
+/* <<< factory LoadOpeningSceneAndUpdateSGBBorder */

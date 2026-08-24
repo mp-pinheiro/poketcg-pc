@@ -181,6 +181,20 @@ CASES["LoadOpeningScene"] = [
 ]
 # <<< factory LoadOpeningScene
 
+# >>> factory LoadOpeningSceneAndUpdateSGBBorder
+CONTRACT["LoadOpeningSceneAndUpdateSGBBorder"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
+CASES["LoadOpeningSceneAndUpdateSGBBorder"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00,
+     "wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
+     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x01, b=0x00, c=0x00,
+         wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
+         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LoadOpeningSceneAndUpdateSGBBorder
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -248,3 +262,11 @@ MUTATIONS["LoadOpeningScene"] = {
     "case_ids": ["LoadOpeningScene-0", "LoadOpeningScene-1"],
 }
 # <<< factory-mutation LoadOpeningScene
+# >>> factory-mutation LoadOpeningSceneAndUpdateSGBBorder
+MUTATIONS["LoadOpeningSceneAndUpdateSGBBorder"] = {
+    "source_symbol": "LoadOpeningSceneAndUpdateSGBBorder",
+    "before": "\t\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 6u), 19u);",
+    "after": "\t\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 6u), 20u);",
+    "case_ids": ["LoadOpeningSceneAndUpdateSGBBorder-0", "LoadOpeningSceneAndUpdateSGBBorder-1"],
+}
+# <<< factory-mutation LoadOpeningSceneAndUpdateSGBBorder

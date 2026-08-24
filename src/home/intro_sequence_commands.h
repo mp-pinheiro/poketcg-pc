@@ -65,4 +65,8 @@ IntroSequenceCmdPlaySFXResult IntroSequenceCmd_PlaySFX(uint8_t c);
 /* >>> factory LoadOpeningScene */
 void LoadOpeningScene(uint8_t a, uint8_t b, uint8_t c);
 /* <<< factory LoadOpeningScene */
+/* >>> factory LoadOpeningSceneAndUpdateSGBBorder */
+typedef struct { uint8_t b, c, d, e; } LoadOpeningSceneAndUpdateSGBBorderResult;
+LoadOpeningSceneAndUpdateSGBBorderResult LoadOpeningSceneAndUpdateSGBBorder(uint8_t a, uint8_t b, uint8_t c);
+/* <<< factory LoadOpeningSceneAndUpdateSGBBorder */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

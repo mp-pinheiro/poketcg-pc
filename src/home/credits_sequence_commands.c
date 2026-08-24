@@ -25,6 +25,12 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "home/animation.h"
+#include "home/empty_screen.h"
+#include "home/scenes.h"
+#include "home/default_palettes.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -220,3 +226,16 @@ void CreditsSequenceCmd_PrintText(uint8_t b, uint8_t c, uint16_t de)
 	AdvanceCreditsSequenceCmdPtrBy6();
 }
 /* <<< factory CreditsSequenceCmd_PrintText */
+
+/* >>> factory CreditsSequenceCmd_LoadBooster */
+void CreditsSequenceCmd_LoadBooster(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	ClearNumLoadedFramesetSubgroups();
+	EmptyScreen();
+	hSCX = 0;
+	hSCY = 0;
+	SetDefaultPalettes();
+	(void)LoadBoosterGfx(e, c, b);
+	AdvanceCreditsSequenceCmdPtrBy5();
+}
+/* <<< factory CreditsSequenceCmd_LoadBooster */

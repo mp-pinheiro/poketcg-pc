@@ -1,0 +1,9 @@
+{
+  "fn": "LoadOpeningSceneAndUpdateSGBBorder",
+  "case": "tests/cases/intro_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadOpeningSceneAndUpdateSGBBorder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 20, \"e\": 18, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"2101010a00001311\", \"54836\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadOpeningSceneAndUpdateSGBBorder\", \"mismatches\": {\"bus\": {\"address\": 51942, \"reference\": \"010a0000131100\", \"native\": \"010a0000141100\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51892, 1], [51936, 8], [54836, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadOpeningSceneAndUpdateSGBBorder\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 20, \"e\": 18, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"2101010a00001311\", \"54836\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -51,4 +51,13 @@ CreditsSequenceCmdDrawRectangleResult CreditsSequenceCmd_DrawRectangle(uint8_t b
 /* >>> factory CreditsSequenceCmd_PrintText */
 void CreditsSequenceCmd_PrintText(uint8_t b, uint8_t c, uint16_t de);
 /* <<< factory CreditsSequenceCmd_PrintText */
+/* >>> factory CreditsSequenceCmd_LoadBooster */
+void CreditsSequenceCmd_LoadBooster(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
+
+void AdvanceCreditsSequenceCmdPtrBy5(void);
+void ClearNumLoadedFramesetSubgroups(void);
+void EmptyScreen(void);
+uint8_t LoadBoosterGfx(uint8_t a, uint8_t b, uint8_t c);
+void SetDefaultPalettes(void);
+/* <<< factory CreditsSequenceCmd_LoadBooster */
 #endif
