@@ -97,6 +97,15 @@ CASES["_GetChallengeMachineDuelConfigurations"] = [
 ]
 # <<< factory _GetChallengeMachineDuelConfigurations
 
+# >>> factory SetNPCDialogName
+CONTRACT["SetNPCDialogName"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ("b", "c", "hl")}
+CASES["SetNPCDialogName"] = [
+    {"a": 0x00, "b": 0xBB, "c": 0xCC, "hl": 0x1234, "wram": {0xD0C8: b"\x00\x00"}, "read": {0xD0C8: 2}},
+    {"a": 0x01, "b": 0x11, "c": 0x22, "hl": 0xC500, "wram": {0xD0C8: b"\x00\x00"}, "read": {0xD0C8: 2}},
+    dict(POISON, a=0x00, wram={0xD0C8: b"\x00\x00"}, read={0xD0C8: 2}),
+]
+# <<< factory SetNPCDialogName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -122,3 +131,6 @@ MUTATIONS["SetNPCDeckIDAndDuelTheme"] = {"source_symbol": "SetNPCDeckIDAndDuelTh
 # >>> factory-mutation _GetChallengeMachineDuelConfigurations
 MUTATIONS["_GetChallengeMachineDuelConfigurations"] = {"source_symbol": "_GetChallengeMachineDuelConfigurations", "before": "a = entry[5];", "after": "a = entry[4];", "case_ids": ["_GetChallengeMachineDuelConfigurations-0", "_GetChallengeMachineDuelConfigurations-1"]}
 # <<< factory-mutation _GetChallengeMachineDuelConfigurations
+# >>> factory-mutation SetNPCDialogName
+MUTATIONS["SetNPCDialogName"] = {"source_symbol": "SetNPCDialogName", "before": "wCurrentNPCNameTx = lo;", "after": "wCurrentNPCNameTx = (uint8_t)(lo + 1u);", "case_ids": ["SetNPCDialogName-0", "SetNPCDialogName-1"]}
+# <<< factory-mutation SetNPCDialogName

@@ -4,6 +4,15 @@
 #include "home/print_text.h"
 #include "home/text_box.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/labels.h"
+#include "home/text_box.h"
+#include "home/overworld.h"
+#include "home/lcd_enable_frame.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* <<< factory statics */
 
 LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e)
 {
@@ -46,3 +55,31 @@ LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e)
 		hl = (uint16_t)(hl + 1u);
 	}
 }
+
+/* >>> factory InitAndPrintMenu */
+void InitAndPrintMenu(uint16_t hl, uint8_t a)
+{
+	uint8_t d = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t e = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t b = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t c = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint16_t saved_hl = hl;
+
+	AdjustCoordinatesForBGScroll(&d, &e);
+
+	FuncC3caResult r_c3ca = Func_c3ca(b, c, d, e);
+
+	uint16_t draw_hl = saved_hl;
+	DrawRegularTextBox(&draw_hl, r_c3ca.a, b, c, d, e);
+	DoFrameIfLCDEnabled();
+
+	LabelsResult labels = PrintLabels(saved_hl, d, e);
+
+	uint16_t menu_hl = labels.hl;
+	InitializeMenuParameters(a, &menu_hl);
+}
+/* <<< factory InitAndPrintMenu */

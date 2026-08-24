@@ -76,6 +76,14 @@ static void adapt__GetChallengeMachineDuelConfigurations(ProbeState *s)
 }
 /* <<< factory _GetChallengeMachineDuelConfigurations */
 
+/* >>> factory SetNPCDialogName */
+static void adapt_SetNPCDialogName(ProbeState *s)
+{
+	SetNPCDialogNameResult r = SetNPCDialogName(s->a, s->f, s->b, s->c, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl;
+}
+/* <<< factory SetNPCDialogName */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
@@ -84,5 +92,6 @@ const ProbeEntry probe_entries_npc_data[] = {
 	{ "_GetNPCDuelConfigurations", adapt__GetNPCDuelConfigurations },
 	{ "SetNPCDeckIDAndDuelTheme", adapt_SetNPCDeckIDAndDuelTheme },
 	{ "_GetChallengeMachineDuelConfigurations", adapt__GetChallengeMachineDuelConfigurations },
+	{ "SetNPCDialogName", adapt_SetNPCDialogName },
 	{ NULL, NULL },
 };

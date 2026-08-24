@@ -36,6 +36,15 @@ CASES = {
          "read": {0xFFFC: 4, 0x0000: 1, HFFB0: 1, 0xCABB: 1}},
     ],
 }
+# >>> factory InitAndPrintMenu
+CONTRACT["InitAndPrintMenu"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["InitAndPrintMenu"] = [
+    {"hl": 0xC500, "a": 0x05, "wram": {0xC500: b"\x00\x00\x04\x04\x80"},
+     "read": {0xCD10: 1}},
+    dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00\x04\x04\x80"}),
+]
+# <<< factory InitAndPrintMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -47,3 +56,6 @@ MUTATIONS = {
         "case_ids": ["PrintLabels-0", "PrintLabels-1", "PrintLabels-2", "PrintLabels-3", "PrintLabels-4"],
     },
 }
+# >>> factory-mutation InitAndPrintMenu
+MUTATIONS["InitAndPrintMenu"] = {"source_symbol": "InitAndPrintMenu", "before": "InitializeMenuParameters(a, &menu_hl);", "after": "InitializeMenuParameters((uint8_t)(a + 1u), &menu_hl);", "case_ids": ["InitAndPrintMenu-0"]}
+# <<< factory-mutation InitAndPrintMenu

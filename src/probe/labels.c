@@ -9,7 +9,15 @@ static void adapt_PrintLabels(ProbeState *s)
 	s->hl = r.hl;
 }
 
+/* >>> factory InitAndPrintMenu */
+static void adapt_InitAndPrintMenu(ProbeState *s)
+{
+	InitAndPrintMenu(s->hl, s->a);
+}
+/* <<< factory InitAndPrintMenu */
+
 const ProbeEntry probe_entries_labels[] = {
 	{ "PrintLabels", adapt_PrintLabels },
+	{ "InitAndPrintMenu", adapt_InitAndPrintMenu },
 	{ NULL, NULL },
 };

@@ -92,6 +92,13 @@ static void adapt_WhiteFlashScreen(ProbeState *s)
 }
 /* <<< factory WhiteFlashScreen */
 
+/* >>> factory ShakeScreenY */
+static void adapt_ShakeScreenY(ProbeState *s)
+{
+	ShakeScreenY(s->hl);
+}
+/* <<< factory ShakeScreenY */
+
 const ProbeEntry probe_entries_screen_effects[] = {
 	{ "DecrementScreenAnimDuration", adapt_DecrementScreenAnimDuration },
 	{ "UpdateShakeOffset", adapt_UpdateShakeOffset },
@@ -104,5 +111,6 @@ const ProbeEntry probe_entries_screen_effects[] = {
 	{ "ShakeScreenX_Small", adapt_ShakeScreenX_Small },
 	{ "DistortScreen", adapt_DistortScreen },
 	{ "WhiteFlashScreen", adapt_WhiteFlashScreen },
+	{ "ShakeScreenY", adapt_ShakeScreenY },
 	{ NULL, NULL },
 };

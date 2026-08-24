@@ -1,0 +1,9 @@
+{
+  "fn": "SetNPCDialogName",
+  "case": "tests/cases/npc_data.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetNPCDialogName\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetNPCDialogName\", \"mismatches\": {\"bus\": {\"address\": 53448, \"reference\": \"ac03\", \"native\": \"ad03\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53448, 2]]}}}\n",
+  "restored": "{\"fn\": \"SetNPCDialogName\", \"registers\": {\"a\": 3, \"b\": 187, \"c\": 204, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53448\": \"ac03\"}}, \"status\": \"PASS\"}\n"
+}

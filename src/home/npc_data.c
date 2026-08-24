@@ -29,6 +29,10 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define NPC_DATA_DECK_ID 0x0Au
+
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory GetNPCHeaderPointer */
@@ -183,3 +187,23 @@ _GetChallengeMachineDuelConfigurationsResult _GetChallengeMachineDuelConfigurati
 	return (_GetChallengeMachineDuelConfigurationsResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory _GetChallengeMachineDuelConfigurations */
+
+/* >>> factory SetNPCDialogName */
+SetNPCDialogNameResult SetNPCDialogName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint16_t hl)
+{
+	GetNPCHeaderPointerResult header = GetNPCHeaderPointer(a);
+	uint16_t addr = header.hl;
+	uint8_t z = header.f & 0x80u;
+	uint32_t sum = (uint32_t)addr + NPC_DATA_NAME_TEXT;
+	uint8_t half = (uint8_t)(((addr & 0x0FFFu) + NPC_DATA_NAME_TEXT) > 0x0FFFu ? 0x20u : 0u);
+	uint8_t carry = (uint8_t)(sum > 0xFFFFu ? 0x10u : 0u);
+	addr = (uint16_t)sum;
+	gb_write8(0x2000u, 0x04u);
+	uint8_t lo = gb_read8(addr);
+	wCurrentNPCNameTx = lo;
+	uint8_t hi = gb_read8((uint16_t)(addr + 1u));
+	gb_write8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u), hi);
+	a = hi;
+	return (SetNPCDialogNameResult){a, (uint8_t)(z | half | carry), b, c, hl};
+}
+/* <<< factory SetNPCDialogName */

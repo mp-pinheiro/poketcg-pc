@@ -11,4 +11,7 @@ typedef struct {
 
 LabelsResult PrintLabels(uint16_t hl, uint8_t d, uint8_t e);
 
+/* >>> factory InitAndPrintMenu */
+void InitAndPrintMenu(uint16_t hl, uint8_t a);
+/* <<< factory InitAndPrintMenu */
 #endif

@@ -132,6 +132,15 @@ CASES["WhiteFlashScreen"] = [
 ]
 # <<< factory WhiteFlashScreen
 
+# >>> factory ShakeScreenY
+CONTRACT["ShakeScreenY"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ShakeScreenY"] = [
+    {"hl": 0x4D61, "wram": {0xD4BC: b"\x00\x00", 0xD4B9: b"\x00\x00"},
+     "expect": {0xD4BC: b"\x61\x4D", 0xD4B9: b"\x2B\x4D"}},
+    dict(POISON, wram={0xD4BC: b"\x00\x00", 0xD4B9: b"\x00\x00"}),
+]
+# <<< factory ShakeScreenY
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -179,3 +188,6 @@ MUTATIONS["DistortScreen"] = {"source_symbol": "DistortScreen", "before": "stati
 # >>> factory-mutation WhiteFlashScreen
 MUTATIONS["WhiteFlashScreen"] = {"source_symbol": "WhiteFlashScreen", "before": "wTempWhiteFlashBGP = wBGP;", "after": "wTempWhiteFlashBGP = (uint8_t)(wBGP + 1u);", "case_ids": ["WhiteFlashScreen-0", "WhiteFlashScreen-1"]}
 # <<< factory-mutation WhiteFlashScreen
+# >>> factory-mutation ShakeScreenY
+MUTATIONS["ShakeScreenY"] = {"source_symbol": "ShakeScreenY", "before": "gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR);", "after": "gb_write8(wScreenAnimUpdatePtr_ADDR, (uint8_t)(SHAKE_SCREEN_Y_UPDATE_FUNC_ADDR + 1u));", "case_ids": ["ShakeScreenY-0"]}
+# <<< factory-mutation ShakeScreenY
