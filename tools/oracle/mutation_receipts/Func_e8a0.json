@@ -1,0 +1,9 @@
+{
+  "fn": "Func_e8a0",
+  "case": "tests/cases/psychic_club_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_e8a0\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"0808\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_e8a0\", \"mismatches\": {\"bus\": {\"address\": 54188, \"reference\": \"0808\", \"native\": \"0908\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54188, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_e8a0\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54188\": \"0808\"}}, \"status\": \"PASS\"}\n"
+}

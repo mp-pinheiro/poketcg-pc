@@ -2124,6 +2124,14 @@ CASES["DrawDamageAnimationWeak"] = [
 ]
 # <<< factory DrawDamageAnimationWeak
 
+# >>> factory DrawDamageAnimationResist
+CONTRACT["DrawDamageAnimationResist"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawDamageAnimationResist"] = [
+    {"wram": {0xFF80: b"\x07", 0xD4B8: b"\x05"}, "read": {0xD4B7: 1, 0xD4B8: 1}},
+    dict(POISON, wram={0xFF80: b"\x07", 0xD4B8: b"\x05"}, read={0xD4B7: 1, 0xD4B8: 1}),
+]
+# <<< factory DrawDamageAnimationResist
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3170,3 +3178,6 @@ MUTATIONS["DrawDamageAnimationArrow"] = {"source_symbol": "DrawDamageAnimationAr
 # >>> factory-mutation DrawDamageAnimationWeak
 MUTATIONS["DrawDamageAnimationWeak"] = {"source_symbol": "DrawDamageAnimationWeak", "before": "wDamageCharIndex = 3u;", "after": "wDamageCharIndex = 4u;", "case_ids": ["DrawDamageAnimationWeak-0", "DrawDamageAnimationWeak-1"]}
 # <<< factory-mutation DrawDamageAnimationWeak
+# >>> factory-mutation DrawDamageAnimationResist
+MUTATIONS["DrawDamageAnimationResist"] = {"source_symbol": "DrawDamageAnimationResist", "before": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);", "after": "wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 19u);", "case_ids": ["DrawDamageAnimationResist-0", "DrawDamageAnimationResist-1"]}
+# <<< factory-mutation DrawDamageAnimationResist

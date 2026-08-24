@@ -1,0 +1,9 @@
+{
+  "fn": "PrintMedalCount",
+  "case": "tests/cases/print_stats.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintMedalCount\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38978\": \"28\"}}, \"wram\": {\"54225\": \"f0ffffffffffffffffffff80ffffffffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintMedalCount\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintMedalCount\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38978\": \"28\"}}, \"wram\": {\"54225\": \"f0ffffffffffffffffffff80ffffffffffffffffffffffffff\"}}, \"status\": \"PASS\"}\n"
+}

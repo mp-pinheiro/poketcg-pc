@@ -82,6 +82,10 @@
 #include "mem.h"
 #define PLAYER_NAMING_TRANSITION_TABLE1 0x6CF9u
 #define PLAYER_NAMING_TRANSITION_TABLE2 0x6D5Fu
+
+#include "mem.h"
+#define TILE_SIZE 16u
+#define V0TILES0_ADDR 0x8000u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -575,3 +579,14 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void)
 	return (PlayerNamingScreen_ProcessInputResult){0u, 0x00u};
 }
 /* <<< factory PlayerNamingScreen_ProcessInput */
+
+/* >>> factory LoadTextCursorTile */
+void LoadTextCursorTile(void)
+{
+	uint16_t hl = V0TILES0_ADDR;
+	for (uint8_t b = 0; b < TILE_SIZE; b++) {
+		gb_write8(hl, 0xFFu);
+		hl = (uint16_t)(hl + 1u);
+	}
+}
+/* <<< factory LoadTextCursorTile */

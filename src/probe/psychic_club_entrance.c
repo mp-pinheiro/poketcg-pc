@@ -55,11 +55,21 @@ static void adapt_ClubEntranceAfterDuel(ProbeState *s)
 }
 /* <<< factory ClubEntranceAfterDuel */
 
+/* >>> factory Func_e8a0 */
+static void adapt_Func_e8a0(ProbeState *s)
+{
+	Func_e8a0Result r = Func_e8a0(s->a, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_e8a0 */
+
 const ProbeEntry probe_entries_psychic_club_entrance[] = {
 	{ "TryFirstRonaldEncounter", adapt_TryFirstRonaldEncounter },
 	{ "TryFirstRonaldDuel", adapt_TryFirstRonaldDuel },
 	{ "TrySecondRonaldDuel", adapt_TrySecondRonaldDuel },
 	{ "LoadClubEntrance", adapt_LoadClubEntrance },
 	{ "ClubEntranceAfterDuel", adapt_ClubEntranceAfterDuel },
+	{ "Func_e8a0", adapt_Func_e8a0 },
 	{ NULL, NULL },
 };

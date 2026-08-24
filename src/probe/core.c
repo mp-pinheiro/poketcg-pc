@@ -1511,6 +1511,13 @@ static void adapt_DrawDamageAnimationWeak(ProbeState *s)
 }
 /* <<< factory DrawDamageAnimationWeak */
 
+/* >>> factory DrawDamageAnimationResist */
+static void adapt_DrawDamageAnimationResist(ProbeState *s)
+{
+	DrawDamageAnimationResist();
+}
+/* <<< factory DrawDamageAnimationResist */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1691,5 +1698,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_ReplaceKnockedOutPokemon", adapt_PracticeDuel_ReplaceKnockedOutPokemon },
 	{ "DrawDamageAnimationArrow", adapt_DrawDamageAnimationArrow },
 	{ "DrawDamageAnimationWeak", adapt_DrawDamageAnimationWeak },
+	{ "DrawDamageAnimationResist", adapt_DrawDamageAnimationResist },
 	{ NULL, NULL },
 };

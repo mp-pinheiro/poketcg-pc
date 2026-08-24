@@ -703,4 +703,7 @@ void DrawDamageAnimationArrow(uint8_t f);
 /* >>> factory DrawDamageAnimationWeak */
 void DrawDamageAnimationWeak(void);
 /* <<< factory DrawDamageAnimationWeak */
+/* >>> factory DrawDamageAnimationResist */
+void DrawDamageAnimationResist(void);
+/* <<< factory DrawDamageAnimationResist */
 #endif

@@ -79,6 +79,16 @@ CASES["PrintPlayTime"] = [
 ]
 # <<< factory PrintPlayTime
 
+# >>> factory PrintMedalCount
+CONTRACT["PrintMedalCount"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintMedalCount"] = [
+    {"b": 0x02, "c": 0x02, "wram": {0xD3D1: bytes([0xFF] * 24), 0xD3D2: bytes([0xFF] * 24), 0xD3DC: b"\x20"},
+     "vread": {0: {0x9842: 1}}},
+    dict(POISON, b=0x02, c=0x02, wram={0xD3D1: bytes([0xFF] * 24), 0xD3D2: bytes([0xFF] * 24), 0xD3DC: b"\x20"},
+         vread={0: {0x9842: 1}}),
+]
+# <<< factory PrintMedalCount
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -109,3 +119,6 @@ MUTATIONS["PrintAlbumProgress"] = {"source_symbol": "PrintAlbumProgress", "befor
 # >>> factory-mutation PrintPlayTime
 MUTATIONS["PrintPlayTime"] = {"source_symbol": "PrintPlayTime", "before": "gb_write8(wPlayTimeHourMinutes_ADDR, gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 2u)));", "after": "gb_write8(wPlayTimeHourMinutes_ADDR, gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 3u)));", "case_ids": ["PrintPlayTime-0", "PrintPlayTime-1"]}
 # <<< factory-mutation PrintPlayTime
+# >>> factory-mutation PrintMedalCount
+MUTATIONS["PrintMedalCount"] = {"source_symbol": "PrintMedalCount", "before": "uint16_t src = (uint16_t)(wDecimalChars_ADDR + 2u);", "after": "uint16_t src = (uint16_t)(wDecimalChars_ADDR + 1u);", "case_ids": ["PrintMedalCount-0", "PrintMedalCount-1"]}
+# <<< factory-mutation PrintMedalCount

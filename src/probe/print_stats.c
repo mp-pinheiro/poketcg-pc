@@ -55,6 +55,13 @@ static void adapt_PrintPlayTime(ProbeState *s)
 }
 /* <<< factory PrintPlayTime */
 
+/* >>> factory PrintMedalCount */
+static void adapt_PrintMedalCount(ProbeState *s)
+{
+	PrintMedalCount(s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory PrintMedalCount */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
@@ -63,5 +70,6 @@ const ProbeEntry probe_entries_print_stats[] = {
 	{ "PrintPlayTime_SkipUpdateTime", adapt_PrintPlayTime_SkipUpdateTime },
 	{ "PrintAlbumProgress", adapt_PrintAlbumProgress },
 	{ "PrintPlayTime", adapt_PrintPlayTime },
+	{ "PrintMedalCount", adapt_PrintMedalCount },
 	{ NULL, NULL },
 };

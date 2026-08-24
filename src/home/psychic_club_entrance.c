@@ -31,6 +31,13 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define ClubEntranceAfterDuelTable 0x67FCu
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define EVENT_MEDAL_COUNT 0x2Eu
+#define RONALD_DUEL_WON 0x01u
+#define RONALD_DUEL_LOST 0x02u
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -93,3 +100,23 @@ ClubEntranceAfterDuelResult ClubEntranceAfterDuel(void)
 	return (ClubEntranceAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory ClubEntranceAfterDuel */
+
+/* >>> factory Func_e8a0 */
+Func_e8a0Result Func_e8a0(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	if (a == RONALD_DUEL_WON) {
+		wLoadNPCXPos = 0x08u;
+		wLoadNPCYPos = 0x08u;
+		return (Func_e8a0Result){0x08u, 0x90u};
+	}
+	if (a >= RONALD_DUEL_LOST) {
+		return (Func_e8a0Result){a, 0x00u};
+	}
+	(void)TryGiveMedalPCPacks(b, c, d, e, hl);
+	uint8_t medal_count = GetEventValue(EVENT_MEDAL_COUNT);
+	if (medal_count == e) {
+		return (Func_e8a0Result){medal_count, 0x90u};
+	}
+	return (Func_e8a0Result){medal_count, (uint8_t)((medal_count == 0u) ? 0x80u : 0x00u)};
+}
+/* <<< factory Func_e8a0 */

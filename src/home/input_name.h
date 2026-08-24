@@ -64,4 +64,7 @@ void DrawPlayerNamingScreenBG(void);
 typedef struct { uint8_t a; uint8_t f; } PlayerNamingScreen_ProcessInputResult;
 PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void);
 /* <<< factory PlayerNamingScreen_ProcessInput */
+/* >>> factory LoadTextCursorTile */
+void LoadTextCursorTile(void);
+/* <<< factory LoadTextCursorTile */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

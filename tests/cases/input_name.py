@@ -205,6 +205,14 @@ CASES["PlayerNamingScreen_ProcessInput"] = [
 ]
 # <<< factory PlayerNamingScreen_ProcessInput
 
+# >>> factory LoadTextCursorTile
+CONTRACT["LoadTextCursorTile"] = {"compare": (), "preserve": ()}
+CASES["LoadTextCursorTile"] = [
+    {"vread": {0: {0x8000: 16}}},
+    dict(POISON, vread={0: {0x8000: 16}}),
+]
+# <<< factory LoadTextCursorTile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -288,3 +296,6 @@ MUTATIONS["DrawPlayerNamingScreenBG"] = {"source_symbol": "DrawPlayerNamingScree
 # >>> factory-mutation PlayerNamingScreen_ProcessInput
 MUTATIONS["PlayerNamingScreen_ProcessInput"] = {"source_symbol": "PlayerNamingScreen_ProcessInput", "before": "if (d == 0x09u) {", "after": "if (d == 0x0Au) {", "case_ids": ["PlayerNamingScreen_ProcessInput-0", "PlayerNamingScreen_ProcessInput-1"]}
 # <<< factory-mutation PlayerNamingScreen_ProcessInput
+# >>> factory-mutation LoadTextCursorTile
+MUTATIONS["LoadTextCursorTile"] = {"source_symbol": "LoadTextCursorTile", "before": "for (uint8_t b = 0; b < TILE_SIZE; b++) {", "after": "for (uint8_t b = 0; b < (uint8_t)(TILE_SIZE - 1u); b++) {", "case_ids": ["LoadTextCursorTile-0", "LoadTextCursorTile-1"]}
+# <<< factory-mutation LoadTextCursorTile

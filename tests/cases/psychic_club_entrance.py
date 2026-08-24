@@ -61,6 +61,15 @@ CASES["ClubEntranceAfterDuel"] = [
 ]
 # <<< factory ClubEntranceAfterDuel
 
+# >>> factory Func_e8a0
+CONTRACT["Func_e8a0"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Func_e8a0"] = [
+    {"a": 0x01, "read": {0xD3AC: 1, 0xD3AD: 1}},
+    {"a": 0x02},
+    dict(POISON, a=0x02),
+]
+# <<< factory Func_e8a0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -80,3 +89,6 @@ MUTATIONS["LoadClubEntrance"] = {"source_symbol": "LoadClubEntrance", "before": 
 # >>> factory-mutation ClubEntranceAfterDuel
 MUTATIONS["ClubEntranceAfterDuel"] = {"source_symbol": "ClubEntranceAfterDuel", "before": "FindEndOfDuelScriptResult r = FindEndOfDuelScript(ClubEntranceAfterDuelTable);", "after": "FindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(ClubEntranceAfterDuelTable + 1u));", "case_ids": ["ClubEntranceAfterDuel-0", "ClubEntranceAfterDuel-1"]}
 # <<< factory-mutation ClubEntranceAfterDuel
+# >>> factory-mutation Func_e8a0
+MUTATIONS["Func_e8a0"] = {"source_symbol": "Func_e8a0", "before": "\t\twLoadNPCXPos = 0x08u;", "after": "\t\twLoadNPCXPos = 0x09u;", "case_ids": ["Func_e8a0-0"]}
+# <<< factory-mutation Func_e8a0

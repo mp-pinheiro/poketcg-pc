@@ -172,6 +172,13 @@ static void adapt_PlayerNamingScreen_ProcessInput(ProbeState *s)
 }
 /* <<< factory PlayerNamingScreen_ProcessInput */
 
+/* >>> factory LoadTextCursorTile */
+static void adapt_LoadTextCursorTile(ProbeState *s)
+{
+	LoadTextCursorTile();
+}
+/* <<< factory LoadTextCursorTile */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -191,5 +198,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PrintPlayerNameFromInput", adapt_PrintPlayerNameFromInput },
 	{ "DrawPlayerNamingScreenBG", adapt_DrawPlayerNamingScreenBG },
 	{ "PlayerNamingScreen_ProcessInput", adapt_PlayerNamingScreen_ProcessInput },
+	{ "LoadTextCursorTile", adapt_LoadTextCursorTile },
 	{ NULL, NULL },
 };
