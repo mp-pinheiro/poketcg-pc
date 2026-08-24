@@ -605,4 +605,7 @@ TempListResult DisplayCheckMenuCursor_YourOrOppPlayArea(void);
 /* >>> factory HandleCheckMenuInput_YourOrOppPlayArea */
 TempListResult HandleCheckMenuInput_YourOrOppPlayArea(void);
 /* <<< factory HandleCheckMenuInput_YourOrOppPlayArea */
+/* >>> factory DrawYourOrOppPlayArea_Icons */
+void DrawYourOrOppPlayArea_Icons(uint8_t a);
+/* <<< factory DrawYourOrOppPlayArea_Icons */
 #endif

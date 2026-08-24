@@ -1114,6 +1114,9 @@ wMenuInputSFX = 0xCFE3
 wCheckMenuCursorXPosition = 0xCEAF
 wCheckMenuCursorYPosition = 0xCEB0
 wCheckMenuCursorBlinkCounter = 0xCEA3
+
+wCheckMenuPlayAreaWhichDuelist = 0xCE50
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1249,6 +1252,18 @@ CASES["HandleCheckMenuInput_YourOrOppPlayArea"] = [
          vread={0: {0x9800: 0x400}}),
 ]
 # <<< factory HandleCheckMenuInput_YourOrOppPlayArea
+
+# >>> factory DrawYourOrOppPlayArea_Icons
+CONTRACT["DrawYourOrOppPlayArea_Icons"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawYourOrOppPlayArea_Icons"] = [
+    {"a": 0x00, "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03"},
+     "read": {wDefaultText: 7},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, a=0x01, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC3", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00"},
+         read={wDefaultText: 7},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DrawYourOrOppPlayArea_Icons
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1404,3 +1419,6 @@ MUTATIONS["HandleCheckMenuInput_YourOrOppPlayArea"] = {
     "case_ids": ["HandleCheckMenuInput_YourOrOppPlayArea-0", "HandleCheckMenuInput_YourOrOppPlayArea-1"],
 }
 # <<< factory-mutation HandleCheckMenuInput_YourOrOppPlayArea
+# >>> factory-mutation DrawYourOrOppPlayArea_Icons
+MUTATIONS["DrawYourOrOppPlayArea_Icons"] = {"source_symbol": "DrawYourOrOppPlayArea_Icons", "before": "\tDrawPlayArea_IconWithValue(0xD8u, discard_count, &coords);", "after": "\tDrawPlayArea_IconWithValue(0xD8u, (uint8_t)(discard_count + 1u), &coords);", "case_ids": ["DrawYourOrOppPlayArea_Icons-0", "DrawYourOrOppPlayArea_Icons-1"]}
+# <<< factory-mutation DrawYourOrOppPlayArea_Icons
