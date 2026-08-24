@@ -1717,6 +1717,15 @@ static void adapt_FlushAllPalettesOrSendPal23Packet(ProbeState *s)
 }
 /* <<< factory FlushAllPalettesOrSendPal23Packet */
 
+/* >>> factory CheckIfCardCanBePlayed */
+static void adapt_CheckIfCardCanBePlayed(ProbeState *s)
+{
+	CheckIfCardCanBePlayedResult r = CheckIfCardCanBePlayed(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfCardCanBePlayed */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1923,5 +1932,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "Func_616e", adapt_Func_616e },
 	{ "PrintPlayAreaCardList_EnableLCD", adapt_PrintPlayAreaCardList_EnableLCD },
 	{ "FlushAllPalettesOrSendPal23Packet", adapt_FlushAllPalettesOrSendPal23Packet },
+	{ "CheckIfCardCanBePlayed", adapt_CheckIfCardCanBePlayed },
 	{ NULL, NULL },
 };

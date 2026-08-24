@@ -788,4 +788,11 @@ NumPlayAreaItemsResult PrintPlayAreaCardList_EnableLCD(void);
 /* >>> factory FlushAllPalettesOrSendPal23Packet */
 void FlushAllPalettesOrSendPal23Packet(void);
 /* <<< factory FlushAllPalettesOrSendPal23Packet */
+/* >>> factory CheckIfCardCanBePlayed */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} CheckIfCardCanBePlayedResult;
+CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a);
+/* <<< factory CheckIfCardCanBePlayed */
 #endif

@@ -840,6 +840,13 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/sgb.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/substatus.h"
+#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4811,3 +4818,49 @@ void FlushAllPalettesOrSendPal23Packet(void)
 	(void)result;
 }
 /* <<< factory FlushAllPalettesOrSendPal23Packet */
+
+/* >>> factory CheckIfCardCanBePlayed */
+CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
+{
+	hTempCardIndex_ff9f = a;
+	(void)LoadCardDataToBuffer1_FromDeckIndex(a);
+	uint8_t type = wLoadedCard1Type; /* verified post gate-flake fix */
+	if (type < TYPE_ENERGY) {
+		if (wLoadedCard1Stage == 0u) {
+			DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			uint8_t f = 0x40u;
+			if (count.a == MAX_PLAY_AREA_POKEMON) f |= 0x80u;
+			if ((count.a & 0x0Fu) < (MAX_PLAY_AREA_POKEMON & 0x0Fu)) f |= 0x20u;
+			if (count.a < MAX_PLAY_AREA_POKEMON) f |= 0x10u;
+			f ^= 0x10u;
+			return (CheckIfCardCanBePlayedResult){count.a, f};
+		}
+		PrehistoricPowerResult power = IsPrehistoricPowerActive(0u);
+		if (power.f & 0x10u)
+			return (CheckIfCardCanBePlayedResult){power.a, power.f};
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		uint8_t remaining = count.a;
+		uint8_t last_a = count.a;
+		uint8_t last_f = 0x10u;
+		for (uint8_t slot = 0u; slot < remaining; slot++) {
+			EvolveResult check = CheckIfCanEvolveInto(a, slot);
+			last_a = check.a;
+			last_f = check.f;
+			if ((check.f & 0x10u) == 0u)
+				return (CheckIfCardCanBePlayedResult){check.a, check.f};
+		}
+		return (CheckIfCardCanBePlayedResult){last_a, (uint8_t)((last_f & 0x80u) | 0x10u)};
+	}
+	if (type == TYPE_TRAINER) {
+		TrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();
+		if (blocked.f & 0x10u)
+			return (CheckIfCardCanBePlayedResult){0u, blocked.f};
+		LoadEffectResult loaded = LoadNonPokemonCardEffectCommands();
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		return (CheckIfCardCanBePlayedResult){effect.a, effect.f};
+	}
+	uint8_t energy = wAlreadyPlayedEnergy;
+	uint8_t f = (energy == 0u) ? 0x80u : 0x10u;
+	return (CheckIfCardCanBePlayedResult){energy, f};
+}
+/* <<< factory CheckIfCardCanBePlayed */

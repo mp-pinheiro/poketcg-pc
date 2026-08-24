@@ -1608,6 +1608,11 @@ PLAYER_TURN = 0xC2
 wPlayerArenaCard = 0xC2BB
 wExcludeArenaPokemon = 0xCBD2
 wNumPlayAreaItems = 0xCBC8
+
+hTempCardIndex_ff9f = 0xFF9F
+wAlreadyPlayedEnergy = 0xCC0B
+wLoadedCard1Stage = 0xCC2D
+wLoadedCard1Type = 0xCC24
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2664,6 +2669,14 @@ CASES["FlushAllPalettesOrSendPal23Packet"] = [
     dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00" * 16}, read={0xCAE0: 16}),
 ]
 # <<< factory FlushAllPalettesOrSendPal23Packet
+
+# >>> factory CheckIfCardCanBePlayed
+CONTRACT["CheckIfCardCanBePlayed"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfCardCanBePlayed"] = [
+    {"a": 0x00, "wram": {0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory CheckIfCardCanBePlayed
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3804,3 +3817,11 @@ MUTATIONS["FlushAllPalettesOrSendPal23Packet"] = {
     "case_ids": ["FlushAllPalettesOrSendPal23Packet-2", "FlushAllPalettesOrSendPal23Packet-3"]
 }
 # <<< factory-mutation FlushAllPalettesOrSendPal23Packet
+# >>> factory-mutation CheckIfCardCanBePlayed
+MUTATIONS["CheckIfCardCanBePlayed"] = {
+    "source_symbol": "CheckIfCardCanBePlayed",
+    "before": "\tuint8_t f = (energy == 0u) ? 0x80u : 0x10u;\n\treturn (CheckIfCardCanBePlayedResult){energy, f};",
+    "after": "\tuint8_t f = (energy == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCardCanBePlayedResult){energy, f};",
+    "case_ids": ["CheckIfCardCanBePlayed-0", "CheckIfCardCanBePlayed-1"],
+}
+# <<< factory-mutation CheckIfCardCanBePlayed
