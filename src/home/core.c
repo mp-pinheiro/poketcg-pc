@@ -824,6 +824,13 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define wLoadedAttackName_ADDR 0xCCAAu
 #define wSkipDuelistIsThinkingDelay_ADDR 0xCBF9u
 #define wTxRam2_b_ADDR 0xCE41u
+
+#include "home/core.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4751,3 +4758,18 @@ void OppAction_UsePokemonPower(void)
 	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);
 }
 /* <<< factory OppAction_UsePokemonPower */
+
+/* >>> factory Func_616e */
+void Func_616e(uint8_t a)
+{
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, a);
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelCheckPokemonScreenTiles();
+	gb_write8(wExcludeArenaPokemon_ADDR, 0u);
+	PrintPlayAreaCardList();
+	EnableLCD();
+	InitAndPrintPlayAreaCardInformationAndLocation();
+}
+/* <<< factory Func_616e */

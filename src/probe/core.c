@@ -1696,6 +1696,13 @@ static void adapt_OppAction_UsePokemonPower(ProbeState *s)
 }
 /* <<< factory OppAction_UsePokemonPower */
 
+/* >>> factory Func_616e */
+static void adapt_Func_616e(ProbeState *s)
+{
+	Func_616e(s->a);
+}
+/* <<< factory Func_616e */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1899,5 +1906,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", adapt_InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox },
 	{ "PrintPlayAreaCardList", adapt_PrintPlayAreaCardList },
 	{ "OppAction_UsePokemonPower", adapt_OppAction_UsePokemonPower },
+	{ "Func_616e", adapt_Func_616e },
 	{ NULL, NULL },
 };

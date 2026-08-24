@@ -1596,6 +1596,12 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerArenaCard = 0xC2BB
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2616,6 +2622,20 @@ CASES["OppAction_UsePokemonPower"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory OppAction_UsePokemonPower
+
+# >>> factory Func_616e
+CONTRACT["Func_616e"] = {"compare": (), "preserve": ()}
+CASES["Func_616e"] = [
+    {"a": 0x00, "instruction_budget": 6000000, "cycle_budget": 20000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
+              wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x01"},
+     "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}},
+    dict(POISON, a=0xAA, instruction_budget=6000000, cycle_budget=20000000,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
+               wPlayerArenaCard + 0xEF - 0xBB: b"\x01", 0xC265: b"\xFF", wExcludeArenaPokemon: b"\x01"},
+         read={wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}),
+]
+# <<< factory Func_616e
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3742,3 +3762,6 @@ MUTATIONS["PrintPlayAreaCardList"] = {"source_symbol": "PrintPlayAreaCardList", 
 # >>> factory-mutation OppAction_UsePokemonPower
 MUTATIONS["OppAction_UsePokemonPower"] = {"source_symbol": "OppAction_UsePokemonPower", "before": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_UsePokemonPower-0", "OppAction_UsePokemonPower-1"]}
 # <<< factory-mutation OppAction_UsePokemonPower
+# >>> factory-mutation Func_616e
+MUTATIONS["Func_616e"] = {"source_symbol": "Func_616e", "before": "\tgb_write8(wExcludeArenaPokemon_ADDR, 0u);", "after": "\tgb_write8(wExcludeArenaPokemon_ADDR, 1u);", "case_ids": ["Func_616e-0", "Func_616e-1"]}
+# <<< factory-mutation Func_616e

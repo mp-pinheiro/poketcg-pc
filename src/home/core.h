@@ -778,4 +778,7 @@ void PrintPlayAreaCardList(void);
 /* >>> factory OppAction_UsePokemonPower */
 void OppAction_UsePokemonPower(void);
 /* <<< factory OppAction_UsePokemonPower */
+/* >>> factory Func_616e */
+void Func_616e(uint8_t a);
+/* <<< factory Func_616e */
 #endif
