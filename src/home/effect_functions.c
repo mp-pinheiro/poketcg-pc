@@ -1295,7 +1295,7 @@ TryGiveDamageCounter_DamageSwapResult TryGiveDamageCounter_DamageSwap(void)
 	uint8_t remaining = (uint8_t)(result.a - 10u);
 
 	if (remaining == 0u)
-		return (TryGiveDamageCounter_DamageSwapResult){0u, 0x10u, result.hl};
+		return (TryGiveDamageCounter_DamageSwapResult){0u, 0x90u, result.hl};
 
 	gb_write8(result.hl, remaining);
 
