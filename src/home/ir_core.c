@@ -250,3 +250,18 @@ Func_19705Result Func_19705(void)
 	}
 }
 /* <<< factory Func_19705 */
+
+/* >>> factory TransmitIRDataBuffer */
+TransmitIRDataBufferResult TransmitIRDataBuffer(void)
+{
+	Func_19705Result r = Func_19705();
+	if (r.f & 0x10u) {
+		ReturnZFlagUnsetAndCarryFlagSetResult err = ReturnZFlagUnsetAndCarryFlagSet2();
+		return (TransmitIRDataBufferResult){err.a, err.f};
+	}
+	(void)TransmitByteThroughIR(0x49u, 0u, 0u, 0u);
+	(void)TransmitByteThroughIR(0x52u, 0u, 0u, 0u);
+	TransmitNBytesFromHLThroughIRResult r2 = TransmitNBytesFromHLThroughIR(wIRDataBuffer_ADDR, 8u);
+	return (TransmitIRDataBufferResult){r2.a, r2.f};
+}
+/* <<< factory TransmitIRDataBuffer */

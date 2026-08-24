@@ -54,4 +54,8 @@ TransmitNBytesFromHLThroughIRResult TransmitNBytesFromHLThroughIR(uint16_t hl, u
 typedef struct { uint8_t a; uint8_t f; } Func_19705Result;
 Func_19705Result Func_19705(void);
 /* <<< factory Func_19705 */
+/* >>> factory TransmitIRDataBuffer */
+typedef struct { uint8_t a; uint8_t f; } TransmitIRDataBufferResult;
+TransmitIRDataBufferResult TransmitIRDataBuffer(void);
+/* <<< factory TransmitIRDataBuffer */
 #endif /* POKETCG_HOME_IR_CORE_H */
