@@ -1235,6 +1235,10 @@ StrangeBehaviorSwapEffectResult StrangeBehavior_SwapEffect(void);
 typedef struct { uint8_t f; } DefenderAttachDefenderEffectResult;
 DefenderAttachDefenderEffectResult Defender_AttachDefenderEffect(void);
 /* <<< factory Defender_AttachDefenderEffect */
+/* >>> factory DamageSwap_SwapEffect */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } DamageSwap_SwapEffectResult;
+DamageSwap_SwapEffectResult DamageSwap_SwapEffect(void);
+/* <<< factory DamageSwap_SwapEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

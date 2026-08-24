@@ -5185,3 +5185,14 @@ DefenderAttachDefenderEffectResult Defender_AttachDefenderEffect(void)
 	return (DefenderAttachDefenderEffectResult){0x00u};
 }
 /* <<< factory Defender_AttachDefenderEffect */
+
+/* >>> factory DamageSwap_SwapEffect */
+DamageSwap_SwapEffectResult DamageSwap_SwapEffect(void)
+{
+	TryGiveDamageCounter_DamageSwapResult damage = TryGiveDamageCounter_DamageSwap(); /* forward flags verbatim per ret c */
+	if ((damage.f & 0x10u) != 0u)
+		return (DamageSwap_SwapEffectResult){damage.a, damage.f, damage.hl};
+	NumPlayAreaItemsResult items = PrintPlayAreaCardList_EnableLCD();
+	return (DamageSwap_SwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
+}
+/* <<< factory DamageSwap_SwapEffect */

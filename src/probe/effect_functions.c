@@ -2973,6 +2973,16 @@ static void adapt_Defender_AttachDefenderEffect(ProbeState *s)
 }
 /* <<< factory Defender_AttachDefenderEffect */
 
+/* >>> factory DamageSwap_SwapEffect */
+static void adapt_DamageSwap_SwapEffect(ProbeState *s)
+{
+	DamageSwap_SwapEffectResult result = DamageSwap_SwapEffect();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory DamageSwap_SwapEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3341,5 +3351,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyTrans_AIEffect", adapt_EnergyTrans_AIEffect },
 	{ "StrangeBehavior_SwapEffect", adapt_StrangeBehavior_SwapEffect },
 	{ "Defender_AttachDefenderEffect", adapt_Defender_AttachDefenderEffect },
+	{ "DamageSwap_SwapEffect", adapt_DamageSwap_SwapEffect },
 	{ NULL, NULL },
 };
