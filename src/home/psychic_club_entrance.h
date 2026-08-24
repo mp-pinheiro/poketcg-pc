@@ -15,4 +15,7 @@ TryFirstRonaldDuelResult TryFirstRonaldDuel(uint8_t b, uint8_t c, uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } TrySecondRonaldDuelResult;
 TrySecondRonaldDuelResult TrySecondRonaldDuel(uint8_t b, uint8_t c, uint16_t hl);
 /* <<< factory TrySecondRonaldDuel */
+/* >>> factory LoadClubEntrance */
+void LoadClubEntrance(void);
+/* <<< factory LoadClubEntrance */
 #endif /* POKETCG_HOME_PSYCHIC_CLUB_ENTRANCE_H */

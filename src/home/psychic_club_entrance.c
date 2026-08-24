@@ -23,6 +23,8 @@
 #define NPC_RONALD3 0x72u
 #define EVENT_RONALD_SECOND_DUEL_STATE 0x4Du
 #define Script_SecondRonaldDuel_ADDR 0x691Eu
+
+#include "home/psychic_club_entrance.h"
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -66,3 +68,13 @@ TrySecondRonaldDuelResult TrySecondRonaldDuel(uint8_t b, uint8_t c, uint16_t hl)
 	return (TrySecondRonaldDuelResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
 }
 /* <<< factory TrySecondRonaldDuel */
+
+/* >>> factory LoadClubEntrance */
+void LoadClubEntrance(void)
+{
+	TryFirstRonaldDuelResult r1 = TryFirstRonaldDuel(0u, 0u, 0u);
+	TrySecondRonaldDuelResult r2 = TrySecondRonaldDuel(r1.b, r1.c, r1.hl);
+	TryFirstRonaldEncounterResult r3 = TryFirstRonaldEncounter(r2.b, r2.c, r2.hl);
+	(void)r3;
+}
+/* <<< factory LoadClubEntrance */

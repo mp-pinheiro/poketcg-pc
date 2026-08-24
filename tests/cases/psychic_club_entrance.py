@@ -20,6 +20,8 @@ def _npc_table(ids):
     for i, npc_id in enumerate(ids):
         entries += bytes([npc_id & 0xFF]) + bytes((i * 7 + k) & 0xFF for k in range(1, 12))
     return bytes(entries)
+
+wTempNPC = 0xD3AB
 # <<< factory-cases-statics
 
 # >>> factory TryFirstRonaldDuel
@@ -39,6 +41,14 @@ CASES["TrySecondRonaldDuel"] = [
 ]
 # <<< factory TrySecondRonaldDuel
 
+# >>> factory LoadClubEntrance
+CONTRACT["LoadClubEntrance"] = {"compare": (), "preserve": ()}
+CASES["LoadClubEntrance"] = [
+    {"wram": {0xD34A: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x01\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x02\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x03\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f \x04\x1d\x1e\x1f !"#$%&\'\x05$%&\'()*+,-.\x06+,-./012345\x0723456789:;<'}, "read": {wTempNPC: 1}},
+    dict(POISON, wram={0xD34A: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x01\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x02\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x03\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f \x04\x1d\x1e\x1f !"#$%&\'\x05$%&\'()*+,-.\x06+,-./012345\x0723456789:;<'}, read={wTempNPC: 1}),
+]
+# <<< factory LoadClubEntrance
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -52,3 +62,6 @@ MUTATIONS["TryFirstRonaldDuel"] = {"source_symbol": "TryFirstRonaldDuel", "befor
 # >>> factory-mutation TrySecondRonaldDuel
 MUTATIONS["TrySecondRonaldDuel"] = {"source_symbol": "TrySecondRonaldDuel", "before": "return (TrySecondRonaldDuelResult){r.a, r.f, b, c, hl};", "after": "return (TrySecondRonaldDuelResult){0u, r.f, b, c, hl};", "case_ids": ["TrySecondRonaldDuel-0", "TrySecondRonaldDuel-1"]}
 # <<< factory-mutation TrySecondRonaldDuel
+# >>> factory-mutation LoadClubEntrance
+MUTATIONS["LoadClubEntrance"] = {"source_symbol": "LoadClubEntrance", "before": "TryFirstRonaldEncounterResult r3 = TryFirstRonaldEncounter(r2.b, r2.c, r2.hl);", "after": "TryFirstRonaldEncounterResult r3 = {0};", "case_ids": ["LoadClubEntrance-0", "LoadClubEntrance-1"]}
+# <<< factory-mutation LoadClubEntrance
