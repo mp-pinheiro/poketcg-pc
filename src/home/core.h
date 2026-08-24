@@ -706,4 +706,7 @@ void DrawDamageAnimationWeak(void);
 /* >>> factory DrawDamageAnimationResist */
 void DrawDamageAnimationResist(void);
 /* <<< factory DrawDamageAnimationResist */
+/* >>> factory DrawDamageAnimationNumbers */
+void DrawDamageAnimationNumbers(void);
+/* <<< factory DrawDamageAnimationNumbers */
 #endif

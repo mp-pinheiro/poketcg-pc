@@ -165,6 +165,12 @@
 
 #include "home/deck_configuration.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/random.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1057,3 +1063,23 @@ void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e)
 	gb_write8(r2.hl, 0u);
 }
 /* <<< factory AppendOwnedCardCountNumber */
+
+/* >>> factory PrintNumberValueInCursorYPos */
+void PrintNumberValueInCursorYPos(uint8_t a)
+{
+	uint16_t hl = wDefaultText_ADDR;
+	ConvertToNumericalDigitsResult r1 = ConvertToNumericalDigits(a, hl);
+	hl = r1.hl;
+	gb_write8(hl, TX_END);
+
+	uint8_t spacing = wCardListYSpacing;
+	uint8_t cursor_pos = wCardListCursorPos;
+	uint16_t product = HtimesL((uint16_t)(((uint16_t)cursor_pos << 8) | spacing));
+	uint8_t lo = (uint8_t)product;
+	uint8_t cursor_y = wCardListCursorYPos;
+	uint8_t e = (uint8_t)(lo + cursor_y);
+	InitTextPrinting(14u, e);
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+}
+/* <<< factory PrintNumberValueInCursorYPos */

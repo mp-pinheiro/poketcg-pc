@@ -655,6 +655,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define SPRITE_ANIM_90 0x5Au
+
+#include "home/core.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3853,3 +3857,22 @@ void DrawDamageAnimationResist(void)
 	wDamageCharAnimDelay = (uint8_t)(wDamageCharAnimDelay + 18u);
 }
 /* <<< factory DrawDamageAnimationResist */
+
+/* >>> factory DrawDamageAnimationNumbers */
+void DrawDamageAnimationNumbers(void)
+{
+	GetDamageNumberChars();
+	wDamageCharIndex = 0u;
+	uint16_t hl = wDecimalChars_ADDR;
+	uint16_t de = (uint16_t)(wAnimationQueue_ADDR + 1u);
+	for (uint8_t i = 0; i < 3u; i++) {
+		uint8_t ch = gb_read8(hl);
+		if (ch != 0u) {
+			CreateDamageCharSprite(ch, 0u, de);
+		}
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(de + 1u);
+		wDamageCharIndex = (uint8_t)(wDamageCharIndex + 1u);
+	}
+}
+/* <<< factory DrawDamageAnimationNumbers */

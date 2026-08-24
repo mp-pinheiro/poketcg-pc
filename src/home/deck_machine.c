@@ -42,6 +42,14 @@
 
 #define CardReceivedText 0x0280u
 #define ReceivedTheseCardsFromText 0x0283u
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define TX_END 0x00u
+#define TX_SYMBOL 0x05u
+#define SYM_SLASH 0x2Eu
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -258,3 +266,23 @@ void PrintReceivedTheseCardsText(void)
 	DrawWideTextBox_PrintText(ReceivedTheseCardsFromText);
 }
 /* <<< factory PrintReceivedTheseCardsText */
+
+/* >>> factory PrintNumSavedDecks */
+void PrintNumSavedDecks(void)
+{
+	uint8_t num = wNumSavedDecks;
+	uint16_t hl = wDefaultText_ADDR;
+	ConvertToNumericalDigitsResult r1 = ConvertToNumericalDigits(num, hl);
+	hl = r1.hl;
+	gb_write8(hl, TX_SYMBOL);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, SYM_SLASH);
+	hl = (uint16_t)(hl + 1u);
+	ConvertToNumericalDigitsResult r2 = ConvertToNumericalDigits(NUM_DECK_SAVE_MACHINE_SLOTS, hl);
+	hl = r2.hl;
+	gb_write8(hl, TX_END);
+	InitTextPrinting(14u, 1u);
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+}
+/* <<< factory PrintNumSavedDecks */

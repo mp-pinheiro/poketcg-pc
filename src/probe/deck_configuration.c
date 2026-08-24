@@ -395,6 +395,13 @@ static void adapt_AppendOwnedCardCountNumber(ProbeState *s)
 }
 /* <<< factory AppendOwnedCardCountNumber */
 
+/* >>> factory PrintNumberValueInCursorYPos */
+static void adapt_PrintNumberValueInCursorYPos(ProbeState *s)
+{
+	PrintNumberValueInCursorYPos(s->a);
+}
+/* <<< factory PrintNumberValueInCursorYPos */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -441,5 +448,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CopyListFromHLToDEInSRAM", adapt_CopyListFromHLToDEInSRAM },
 	{ "PrintDeckName", adapt_PrintDeckName },
 	{ "AppendOwnedCardCountNumber", adapt_AppendOwnedCardCountNumber },
+	{ "PrintNumberValueInCursorYPos", adapt_PrintNumberValueInCursorYPos },
 	{ NULL, NULL },
 };

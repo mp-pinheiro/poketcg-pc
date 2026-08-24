@@ -190,6 +190,14 @@ CASES["PrintReceivedTheseCardsText"] = [
 ]
 # <<< factory PrintReceivedTheseCardsText
 
+# >>> factory PrintNumSavedDecks
+CONTRACT["PrintNumSavedDecks"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintNumSavedDecks"] = [
+    {"wram": {0xD085: b"\x05"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 9}},
+    dict(POISON, wram={0xD085: b"\x05"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 9}),
+]
+# <<< factory PrintNumSavedDecks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -246,3 +254,6 @@ MUTATIONS["PrintCardToSendText"] = {"source_symbol": "PrintCardToSendText", "bef
 # >>> factory-mutation PrintReceivedTheseCardsText
 MUTATIONS["PrintReceivedTheseCardsText"] = {"source_symbol": "PrintReceivedTheseCardsText", "before": "\tCopyListFromHLToDE(&hl, &de);", "after": "\t(void)hl; (void)de;", "case_ids": ["PrintReceivedTheseCardsText-0", "PrintReceivedTheseCardsText-1"]}
 # <<< factory-mutation PrintReceivedTheseCardsText
+# >>> factory-mutation PrintNumSavedDecks
+MUTATIONS["PrintNumSavedDecks"] = {"source_symbol": "PrintNumSavedDecks", "before": "gb_write8(hl, SYM_SLASH);", "after": "gb_write8(hl, TX_SYMBOL);", "case_ids": ["PrintNumSavedDecks-0", "PrintNumSavedDecks-1"]}
+# <<< factory-mutation PrintNumSavedDecks

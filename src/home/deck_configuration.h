@@ -166,4 +166,7 @@ void PrintDeckName(uint16_t hl, uint8_t d, uint8_t e);
 /* >>> factory AppendOwnedCardCountNumber */
 void AppendOwnedCardCountNumber(uint16_t hl, uint8_t e);
 /* <<< factory AppendOwnedCardCountNumber */
+/* >>> factory PrintNumberValueInCursorYPos */
+void PrintNumberValueInCursorYPos(uint8_t a);
+/* <<< factory PrintNumberValueInCursorYPos */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

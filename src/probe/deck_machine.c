@@ -120,6 +120,13 @@ static void adapt_PrintReceivedTheseCardsText(ProbeState *s)
 }
 /* <<< factory PrintReceivedTheseCardsText */
 
+/* >>> factory PrintNumSavedDecks */
+static void adapt_PrintNumSavedDecks(ProbeState *s)
+{
+	PrintNumSavedDecks();
+}
+/* <<< factory PrintNumSavedDecks */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -135,5 +142,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "EmptyScreenAndDrawTextBox", adapt_EmptyScreenAndDrawTextBox },
 	{ "PrintCardToSendText", adapt_PrintCardToSendText },
 	{ "PrintReceivedTheseCardsText", adapt_PrintReceivedTheseCardsText },
+	{ "PrintNumSavedDecks", adapt_PrintNumSavedDecks },
 	{ NULL, NULL },
 };

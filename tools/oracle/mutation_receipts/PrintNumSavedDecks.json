@@ -1,0 +1,9 @@
+{
+  "fn": "PrintNumSavedDecks",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintNumSavedDecks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000525052e052605\", \"53381\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintNumSavedDecks\", \"mismatches\": {\"bus\": {\"address\": 50581, \"reference\": \"000525052e05260505\", \"native\": \"000525050505260505\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50576, 9], [53381, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrintNumSavedDecks\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000525052e052605\", \"53381\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

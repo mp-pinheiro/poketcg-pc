@@ -52,4 +52,7 @@ void PrintCardToSendText(void);
 /* >>> factory PrintReceivedTheseCardsText */
 void PrintReceivedTheseCardsText(void);
 /* <<< factory PrintReceivedTheseCardsText */
+/* >>> factory PrintNumSavedDecks */
+void PrintNumSavedDecks(void);
+/* <<< factory PrintNumSavedDecks */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

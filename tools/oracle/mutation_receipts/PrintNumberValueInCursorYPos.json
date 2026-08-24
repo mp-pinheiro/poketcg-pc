@@ -1,0 +1,9 @@
+{
+  "fn": "PrintNumberValueInCursorYPos",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintNumberValueInCursorYPos\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39246\": \"0025000000\"}}, \"wram\": {\"50576\": \"0500052500\", \"52900\": \"02\", \"52902\": \"0801\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintNumberValueInCursorYPos\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintNumberValueInCursorYPos\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39246\": \"0025000000\"}}, \"wram\": {\"50576\": \"0500052500\", \"52900\": \"02\", \"52902\": \"0801\"}}, \"status\": \"PASS\"}\n"
+}

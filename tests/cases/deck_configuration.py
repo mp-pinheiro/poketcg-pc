@@ -545,6 +545,18 @@ CASES["AppendOwnedCardCountNumber"] = [
 ]
 # <<< factory AppendOwnedCardCountNumber
 
+# >>> factory PrintNumberValueInCursorYPos
+CONTRACT["PrintNumberValueInCursorYPos"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintNumberValueInCursorYPos"] = [
+    {"a": 0x05, "wram": {0xCEA7: b"\x01", 0xCEA4: b"\x02", 0xCEA6: b"\x08"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 5},
+     "vread": {0: {0x994E: 5}}},
+    dict(POISON, a=0x05, wram={0xCEA7: b"\x01", 0xCEA4: b"\x02", 0xCEA6: b"\x08"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 5},
+         vread={0: {0x994E: 5}}),
+]
+# <<< factory PrintNumberValueInCursorYPos
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -739,3 +751,6 @@ MUTATIONS["PrintDeckName"] = {"source_symbol": "PrintDeckName", "before": "uint1
 # >>> factory-mutation AppendOwnedCardCountNumber
 MUTATIONS["AppendOwnedCardCountNumber"] = {"source_symbol": "AppendOwnedCardCountNumber", "before": "\twhile (gb_read8(walk) != 0u) {", "after": "\twhile (gb_read8(walk) != 1u) {", "case_ids": ["AppendOwnedCardCountNumber-0", "AppendOwnedCardCountNumber-1"]}
 # <<< factory-mutation AppendOwnedCardCountNumber
+# >>> factory-mutation PrintNumberValueInCursorYPos
+MUTATIONS["PrintNumberValueInCursorYPos"] = {"source_symbol": "PrintNumberValueInCursorYPos", "before": "\tuint8_t e = (uint8_t)(lo + cursor_y);", "after": "\tuint8_t e = (uint8_t)(lo + cursor_y + 1u);", "case_ids": ["PrintNumberValueInCursorYPos-0", "PrintNumberValueInCursorYPos-1"]}
+# <<< factory-mutation PrintNumberValueInCursorYPos
