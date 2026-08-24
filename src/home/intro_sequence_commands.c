@@ -250,3 +250,10 @@ IntroSequenceCmd_FadeOutResult IntroSequenceCmd_FadeOut(void)
 	return (IntroSequenceCmd_FadeOutResult){ptr_hi, exit_f};
 }
 /* <<< factory IntroSequenceCmd_FadeOut */
+
+/* >>> factory AdvanceIntroSequenceCmdPtrBy3 */
+void AdvanceIntroSequenceCmdPtrBy3(void)
+{
+	AdvanceIntroSequenceCmdPtr(3u);
+}
+/* <<< factory AdvanceIntroSequenceCmdPtrBy3 */

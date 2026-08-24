@@ -133,6 +133,17 @@ CASES["IntroSequenceCmd_FadeOut"] = [
 ]
 # <<< factory IntroSequenceCmd_FadeOut
 
+# >>> factory AdvanceIntroSequenceCmdPtrBy3
+CONTRACT["AdvanceIntroSequenceCmdPtrBy3"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["AdvanceIntroSequenceCmdPtrBy3"] = [
+    {"wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    {"wram": {0xD631: b"\x10\x20"}, "read": {0xD631: 2}},
+    {"wram": {0xD631: b"\xFD\xFF"}, "read": {0xD631: 2}},
+    dict(POISON, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+    {"wram": {0xD631: b"\xFF\xFF"}, "read": {0xD631: 2}},
+]
+# <<< factory AdvanceIntroSequenceCmdPtrBy3
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -183,3 +194,6 @@ MUTATIONS["IntroSequenceCmd_PlayTitleScreenMusic"] = {"source_symbol": "IntroSeq
 # >>> factory-mutation IntroSequenceCmd_FadeOut
 MUTATIONS["IntroSequenceCmd_FadeOut"] = {"source_symbol": "IntroSequenceCmd_FadeOut", "before": "wIntroSequencePalsNeedUpdate = TRUE;", "after": "wIntroSequencePalsNeedUpdate = 0u;", "case_ids": ["IntroSequenceCmd_FadeOut-0", "IntroSequenceCmd_FadeOut-1"]}
 # <<< factory-mutation IntroSequenceCmd_FadeOut
+# >>> factory-mutation AdvanceIntroSequenceCmdPtrBy3
+MUTATIONS["AdvanceIntroSequenceCmdPtrBy3"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy3", "before": "\tAdvanceIntroSequenceCmdPtr(3u);", "after": "\tAdvanceIntroSequenceCmdPtr(4u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy3-0", "AdvanceIntroSequenceCmdPtrBy3-1", "AdvanceIntroSequenceCmdPtrBy3-2", "AdvanceIntroSequenceCmdPtrBy3-3", "AdvanceIntroSequenceCmdPtrBy3-4"]}
+# <<< factory-mutation AdvanceIntroSequenceCmdPtrBy3

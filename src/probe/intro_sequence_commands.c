@@ -114,6 +114,13 @@ static void adapt_IntroSequenceCmd_FadeOut(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_FadeOut */
 
+/* >>> factory AdvanceIntroSequenceCmdPtrBy3 */
+static void adapt_AdvanceIntroSequenceCmdPtrBy3(ProbeState *s)
+{
+	AdvanceIntroSequenceCmdPtrBy3();
+}
+/* <<< factory AdvanceIntroSequenceCmdPtrBy3 */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -127,5 +134,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_SetOrbsCoordinates", adapt_IntroSequenceCmd_SetOrbsCoordinates },
 	{ "IntroSequenceCmd_PlayTitleScreenMusic", adapt_IntroSequenceCmd_PlayTitleScreenMusic },
 	{ "IntroSequenceCmd_FadeOut", adapt_IntroSequenceCmd_FadeOut },
+	{ "AdvanceIntroSequenceCmdPtrBy3", adapt_AdvanceIntroSequenceCmdPtrBy3 },
 	{ NULL, NULL },
 };

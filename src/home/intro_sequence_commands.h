@@ -51,4 +51,7 @@ IntroSequenceCmd_PlayTitleScreenMusicResult IntroSequenceCmd_PlayTitleScreenMusi
 typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmd_FadeOutResult;
 IntroSequenceCmd_FadeOutResult IntroSequenceCmd_FadeOut(void);
 /* <<< factory IntroSequenceCmd_FadeOut */
+/* >>> factory AdvanceIntroSequenceCmdPtrBy3 */
+void AdvanceIntroSequenceCmdPtrBy3(void);
+/* <<< factory AdvanceIntroSequenceCmdPtrBy3 */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */
