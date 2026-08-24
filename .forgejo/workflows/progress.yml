@@ -30,8 +30,9 @@ jobs:
             | env UV_INSTALL_DIR=/usr/local/bin sh
           uv python install 3.13
           ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
+          jq_arch=amd64; [ "$(uname -m)" = "aarch64" ] && jq_arch=arm64
           curl -fsSL -o /usr/local/bin/jq \
-            https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
+            "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-${jq_arch}"
           chmod +x /usr/local/bin/jq
       - name: Build daily snapshot
         run: python3 tools/progress/report.py build
