@@ -441,6 +441,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "home/effect_functions.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5102,3 +5108,28 @@ EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void)
 	return (EnergyRemovalDiscardEffectResult){turn.a, turn.f, turn.hl};
 }
 /* <<< factory EnergyRemoval_DiscardEffect */
+
+/* >>> factory SuperEnergyRemoval_DiscardEffect */
+void SuperEnergyRemoval_DiscardEffect(void)
+{
+	uint16_t hl = (uint16_t)(hTempList_ADDR + 1u);
+	PutCardInDiscardPile(gb_read8(hl++));
+	hl++;
+	SwapTurn();
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		if (card == 0xffu)
+			break;
+		PutCardInDiscardPile(card);
+	}
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return;
+	DrawPlayAreaScreenToShowChanges(gb_read8(hTemp_ffa0_ADDR));
+	gb_write8(wDuelDisplayedScreen_ADDR, 0u);
+	SwapTurn();
+	DrawPlayAreaScreenToShowChanges(gb_read8(hPlayAreaEffectTarget_ADDR));
+	SwapTurn();
+}
+/* <<< factory SuperEnergyRemoval_DiscardEffect */

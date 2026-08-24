@@ -2939,6 +2939,14 @@ static void adapt_EnergyRemoval_DiscardEffect(ProbeState *s)
 }
 /* <<< factory EnergyRemoval_DiscardEffect */
 
+/* >>> factory SuperEnergyRemoval_DiscardEffect */
+static void adapt_SuperEnergyRemoval_DiscardEffect(ProbeState *s)
+{
+	(void)s;
+	SuperEnergyRemoval_DiscardEffect();
+}
+/* <<< factory SuperEnergyRemoval_DiscardEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3303,5 +3311,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ShuffleCardsInDeck", adapt_ShuffleCardsInDeck },
 	{ "DrawPlayAreaScreenToShowChanges", adapt_DrawPlayAreaScreenToShowChanges },
 	{ "EnergyRemoval_DiscardEffect", adapt_EnergyRemoval_DiscardEffect },
+	{ "SuperEnergyRemoval_DiscardEffect", adapt_SuperEnergyRemoval_DiscardEffect },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "SuperEnergyRemoval_DiscardEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SuperEnergyRemoval_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"49905\": \"00\", \"50157\": \"01\", \"65431\": \"c2\", \"65441\": \"05\", \"65443\": \"06ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperEnergyRemoval_DiscardEffect\", \"mismatches\": {\"bus\": {\"address\": 50157, \"reference\": \"010001c20506ff\", \"native\": \"010002c20506ff\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49901, 1], [49905, 1], [50157, 1], [65431, 1], [65441, 1], [65443, 2]]}}}\n",
+  "restored": "{\"fn\": \"SuperEnergyRemoval_DiscardEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"49905\": \"00\", \"50157\": \"01\", \"65431\": \"c2\", \"65441\": \"05\", \"65443\": \"06ff\"}}, \"status\": \"PASS\"}\n"
+}

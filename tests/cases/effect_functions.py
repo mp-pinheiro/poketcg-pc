@@ -3372,6 +3372,20 @@ CASES["EnergyRemoval_DiscardEffect"] = [
 ]
 # <<< factory EnergyRemoval_DiscardEffect
 
+# >>> factory SuperEnergyRemoval_DiscardEffect
+CONTRACT["SuperEnergyRemoval_DiscardEffect"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["SuperEnergyRemoval_DiscardEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA3: b"\x06\xFF",
+              0xC2F1: b"\x00", 0xC2ED: b"\x00", 0xC3ED: b"\x00"},
+     "expect": {0xC205: b"\x02", 0xC27D: b"\x05", 0xC306: b"\x02",
+                 0xC37D: b"\x06", 0xC2ED: b"\x01", 0xC3ED: b"\x01"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA3: b"\x06\xFF",
+                       0xC2F1: b"\x00", 0xC2ED: b"\x00", 0xC3ED: b"\x00"},
+         expect={0xC205: b"\x02", 0xC27D: b"\x05", 0xC306: b"\x02",
+                 0xC37D: b"\x06", 0xC2ED: b"\x01", 0xC3ED: b"\x01"}),
+]
+# <<< factory SuperEnergyRemoval_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5388,3 +5402,11 @@ MUTATIONS["EnergyRemoval_DiscardEffect"] = {
     "case_ids": ["EnergyRemoval_DiscardEffect-0", "EnergyRemoval_DiscardEffect-1"],
 }
 # <<< factory-mutation EnergyRemoval_DiscardEffect
+# >>> factory-mutation SuperEnergyRemoval_DiscardEffect
+MUTATIONS["SuperEnergyRemoval_DiscardEffect"] = {
+    "source_symbol": "SuperEnergyRemoval_DiscardEffect",
+    "before": "\tPutCardInDiscardPile(gb_read8(hl++));",
+    "after": "\tPutCardInDiscardPile(0u);",
+    "case_ids": ["SuperEnergyRemoval_DiscardEffect-0", "SuperEnergyRemoval_DiscardEffect-1"],
+}
+# <<< factory-mutation SuperEnergyRemoval_DiscardEffect

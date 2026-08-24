@@ -1221,6 +1221,9 @@ void DrawPlayAreaScreenToShowChanges(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } EnergyRemovalDiscardEffectResult;
 EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void);
 /* <<< factory EnergyRemoval_DiscardEffect */
+/* >>> factory SuperEnergyRemoval_DiscardEffect */
+void SuperEnergyRemoval_DiscardEffect(void);
+/* <<< factory SuperEnergyRemoval_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
