@@ -28,6 +28,10 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "home/bg_map.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/card_collection.h"
+#include "home/print_stats.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
@@ -133,3 +137,11 @@ void PrintPlayTime_SkipUpdateTime(uint8_t b, uint8_t c)
 	SafeCopyDataHLtoDE(&src2, &dest2, 2u);
 }
 /* <<< factory PrintPlayTime_SkipUpdateTime */
+
+/* >>> factory PrintAlbumProgress */
+void PrintAlbumProgress(uint8_t b, uint8_t c)
+{
+	AlbumProgress prog = GetCardAlbumProgress();
+	PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e);
+}
+/* <<< factory PrintAlbumProgress */

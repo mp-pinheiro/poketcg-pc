@@ -127,6 +127,15 @@ CASES["DeckNamingScreen_DrawCursor"] = [
 ]
 # <<< factory DeckNamingScreen_DrawCursor
 
+# >>> factory DeckNamingScreen_DrawInvisibleCursor
+CONTRACT["DeckNamingScreen_DrawInvisibleCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
+CASES["DeckNamingScreen_DrawInvisibleCursor"] = [
+    {"d": 0x22, "wram": {0xCEAB: b"\x11", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+     "expect_regs": {"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x22, "e": 0x11}},
+    dict(POISON, wram={0xCEAB: b"\x37\x44"[:1], 0xD006: b"\x01", 0xCEA4: b"\x00", 0xCEA9: b"\x05"}),
+]
+# <<< factory DeckNamingScreen_DrawInvisibleCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -186,3 +195,6 @@ MUTATIONS["PlayerNamingScreen_DrawCursor"] = {"source_symbol": "PlayerNamingScre
 # >>> factory-mutation DeckNamingScreen_DrawCursor
 MUTATIONS["DeckNamingScreen_DrawCursor"] = {"source_symbol": "DeckNamingScreen_DrawCursor", "before": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));", "after": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | (uint16_t)(gb_read8(wNamingScreenCursorY_ADDR) + 1u)));", "case_ids": ["DeckNamingScreen_DrawCursor-0"]}
 # <<< factory-mutation DeckNamingScreen_DrawCursor
+# >>> factory-mutation DeckNamingScreen_DrawInvisibleCursor
+MUTATIONS["DeckNamingScreen_DrawInvisibleCursor"] = {"source_symbol": "DeckNamingScreen_DrawInvisibleCursor", "before": "uint8_t a = gb_read8(wInvisibleCursorTile_ADDR);", "after": "uint8_t a = (uint8_t)(gb_read8(wInvisibleCursorTile_ADDR) + 1u);", "case_ids": ["DeckNamingScreen_DrawInvisibleCursor-0"]}
+# <<< factory-mutation DeckNamingScreen_DrawInvisibleCursor

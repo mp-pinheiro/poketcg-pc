@@ -12,6 +12,9 @@
 #include "home/scripting.h"
 #include "mem.h"
 #define EVENT_MEDAL_COUNT_530 0x2Eu
+
+#include "home/psychic_club.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory PsychicClubAfterDuel */
@@ -38,3 +41,13 @@ Preload_Murray2Result Preload_Murray2(uint8_t b, uint8_t c, uint8_t d, uint8_t e
 	return (Preload_Murray2Result){a, f};
 }
 /* <<< factory Preload_Murray2 */
+
+/* >>> factory Preload_Murray1 */
+Preload_Murray2Result Preload_Murray1(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	Preload_Murray2Result r = Preload_Murray2(b, c, d, e, hl);
+	uint8_t old_c = (uint8_t)(r.f & 0x10u);
+	uint8_t new_f = (uint8_t)((r.f & 0x80u) | (old_c ? 0u : 0x10u));
+	return (Preload_Murray2Result){r.a, new_f};
+}
+/* <<< factory Preload_Murray1 */

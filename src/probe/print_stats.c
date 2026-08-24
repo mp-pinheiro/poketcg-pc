@@ -41,11 +41,19 @@ static void adapt_PrintPlayTime_SkipUpdateTime(ProbeState *s)
 }
 /* <<< factory PrintPlayTime_SkipUpdateTime */
 
+/* >>> factory PrintAlbumProgress */
+static void adapt_PrintAlbumProgress(ProbeState *s)
+{
+	PrintAlbumProgress(s->b, s->c);
+}
+/* <<< factory PrintAlbumProgress */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
 	{ "ConvertWordToNumericalDigits", adapt_ConvertWordToNumericalDigits },
 	{ "PrintAlbumProgress_SkipGetProgress", adapt_PrintAlbumProgress_SkipGetProgress },
 	{ "PrintPlayTime_SkipUpdateTime", adapt_PrintPlayTime_SkipUpdateTime },
+	{ "PrintAlbumProgress", adapt_PrintAlbumProgress },
 	{ NULL, NULL },
 };

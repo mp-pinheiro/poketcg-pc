@@ -46,6 +46,14 @@ CASES["Preload_Murray2"] = [
 ]
 # <<< factory Preload_Murray2
 
+# >>> factory Preload_Murray1
+CONTRACT["Preload_Murray1"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Preload_Murray1"] = [
+    {"wram": {0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}},
+    dict(POISON, wram={0xD3D1: bytes([0xFF]), 0xD3D2: bytes(0x40)}),
+]
+# <<< factory Preload_Murray1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -56,3 +64,6 @@ MUTATIONS["PsychicClubAfterDuel"] = {"source_symbol": "PsychicClubAfterDuel", "b
 # >>> factory-mutation Preload_Murray2
 MUTATIONS["Preload_Murray2"] = {"source_symbol": "Preload_Murray2", "before": "uint8_t f = 0x40u;", "after": "uint8_t f = 0x00u;", "case_ids": ["Preload_Murray2-0"]}
 # <<< factory-mutation Preload_Murray2
+# >>> factory-mutation Preload_Murray1
+MUTATIONS["Preload_Murray1"] = {"source_symbol": "Preload_Murray1", "before": "uint8_t old_c = (uint8_t)(r.f & 0x10u);", "after": "uint8_t old_c = 0u;", "case_ids": ["Preload_Murray1-0"]}
+# <<< factory-mutation Preload_Murray1
