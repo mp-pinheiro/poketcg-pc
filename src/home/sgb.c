@@ -8,6 +8,8 @@
 #define JOYP_SGB_ONE 0x10u
 #define JOYP_SGB_ZERO 0x20u
 #define JOYP_SGB_FINISH 0x30u
+
+#include "home/sgb.h"
 /* <<< factory statics */
 
 /* sgb.asm:258-274. The delay loop has no observable effects beyond its
@@ -52,3 +54,22 @@ SendSGBResult SendSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 	return (SendSGBResult){wait.a, wait.f, wait.b, wait.c, wait.d, wait.e, hl};
 }
 /* <<< factory SendSGB */
+
+/* >>> factory InitSGB */
+InitSGBResult InitSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	SendSGBResult r = {a, f, b, c, d, e, hl};
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AD0u); /* MaskEnPacket_Freeze */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A50u); /* DataSndPacket1 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A60u); /* DataSndPacket2 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A70u); /* DataSndPacket3 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A80u); /* DataSndPacket4 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0A90u); /* DataSndPacket5 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AA0u); /* DataSndPacket6 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AB0u); /* DataSndPacket7 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AC0u); /* DataSndPacket8 */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AF0u); /* Pal01Packet_InitSGB */
+	r = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AE0u); /* MaskEnPacket_Cancel */
+	return (InitSGBResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory InitSGB */

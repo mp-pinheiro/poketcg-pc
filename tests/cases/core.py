@@ -2688,6 +2688,14 @@ CASES["OppAction_6b15"] = [
 ]
 # <<< factory OppAction_6b15
 
+# >>> factory OppAction_ExecutePokemonPowerEffect
+CONTRACT["OppAction_ExecutePokemonPowerEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e")}
+CASES["OppAction_ExecutePokemonPowerEffect"] = [
+    {"wram": {wSkipDuelistIsThinkingDelay: b"\x00"}, "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory OppAction_ExecutePokemonPowerEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3843,3 +3851,11 @@ MUTATIONS["OppAction_6b15"] = {
     "case_ids": ["OppAction_6b15-0", "OppAction_6b15-1"],
 }
 # <<< factory-mutation OppAction_6b15
+# >>> factory-mutation OppAction_ExecutePokemonPowerEffect
+MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {
+    "source_symbol": "OppAction_ExecutePokemonPowerEffect",
+    "before": "\twSkipDuelistIsThinkingDelay = 0x01u;\n\treturn (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};",
+    "after": "\twSkipDuelistIsThinkingDelay = 0x00u;\n\treturn (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};",
+    "case_ids": ["OppAction_ExecutePokemonPowerEffect-0", "OppAction_ExecutePokemonPowerEffect-1"],
+}
+# <<< factory-mutation OppAction_ExecutePokemonPowerEffect

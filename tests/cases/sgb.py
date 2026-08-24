@@ -47,6 +47,14 @@ CASES["SendSGB"] = [
 ]
 # <<< factory SendSGB
 
+# >>> factory InitSGB
+CONTRACT["InitSGB"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["InitSGB"] = [
+    {"sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory InitSGB
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -66,3 +74,11 @@ MUTATIONS["SendSGB"] = {
     "case_ids": ["SendSGB-0", "SendSGB-2", "SendSGB-1"],
 }
 # <<< factory-mutation SendSGB
+# >>> factory-mutation InitSGB
+MUTATIONS["InitSGB"] = {
+    "source_symbol": "InitSGB",
+    "before": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AE0u); /* MaskEnPacket_Cancel */",
+    "after": "\tr = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0AD0u); /* MaskEnPacket_Cancel (mutated) */",
+    "case_ids": ["InitSGB-0", "InitSGB-1"],
+}
+# <<< factory-mutation InitSGB

@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_ExecutePokemonPowerEffect",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_ExecutePokemonPowerEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52217\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_ExecutePokemonPowerEffect\", \"mismatches\": {\"bus\": {\"address\": 52217, \"reference\": \"01\", \"native\": \"00\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52217, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_ExecutePokemonPowerEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52217\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
