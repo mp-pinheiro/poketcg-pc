@@ -1308,8 +1308,7 @@ CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-              wDefaultText: b"\x00"},
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, hl=0x0000, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
          hram={hTempPlayAreaLocation_ff9d: b"\x00"},
@@ -1319,8 +1318,7 @@ CASES["DisplayUsePokemonPowerScreen_WaitForInput"] = [
                wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
                wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
                wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
-               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
-               wDefaultText: b"\x00"},
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory DisplayUsePokemonPowerScreen_WaitForInput
