@@ -1,0 +1,9 @@
+{
+  "fn": "HandleLegendaryArticunoEnergyScoring",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleLegendaryArticunoEnergyScoring\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff00ff\", \"49865\": \"00\", \"50156\": \"07\", \"50176\": \"5e\", \"52238\": \"0e\", \"52709\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleLegendaryArticunoEnergyScoring\", \"mismatches\": {\"bus\": {\"address\": 52709, \"reference\": \"00075e0e05c2\", \"native\": \"00075e0e00c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49851, 3], [49865, 1], [50156, 1], [50176, 1], [52238, 1], [52709, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleLegendaryArticunoEnergyScoring\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff00ff\", \"49865\": \"00\", \"50156\": \"07\", \"50176\": \"5e\", \"52238\": \"0e\", \"52709\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

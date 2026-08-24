@@ -1804,6 +1804,14 @@ static void adapt_CountNumberOfSetUpBenchPokemon(ProbeState *s)
 }
 /* <<< factory CountNumberOfSetUpBenchPokemon */
 
+/* >>> factory HandleLegendaryArticunoEnergyScoring */
+static void adapt_HandleLegendaryArticunoEnergyScoring(ProbeState *s)
+{
+	(void)s;
+	HandleLegendaryArticunoEnergyScoring();
+}
+/* <<< factory HandleLegendaryArticunoEnergyScoring */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2019,5 +2027,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfSelectedAttackIsUnusable", adapt_CheckIfSelectedAttackIsUnusable },
 	{ "CheckForBenchIDAtHalfHPAndCanUseSecondAttack", adapt_CheckForBenchIDAtHalfHPAndCanUseSecondAttack },
 	{ "CountNumberOfSetUpBenchPokemon", adapt_CountNumberOfSetUpBenchPokemon },
+	{ "HandleLegendaryArticunoEnergyScoring", adapt_HandleLegendaryArticunoEnergyScoring },
 	{ NULL, NULL },
 };

@@ -889,6 +889,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define HAS_EVOLUTION 0x01u
+
+#include "generated/wram.h"
+#include "home/legendary_articuno.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5081,3 +5084,12 @@ CountNumberOfSetUpBenchPokemonResult CountNumberOfSetUpBenchPokemon(uint8_t a, u
 	return (CountNumberOfSetUpBenchPokemonResult){a, f, b, c, saved_location, saved_attack, hl};
 }
 /* <<< factory CountNumberOfSetUpBenchPokemon */
+
+/* >>> factory HandleLegendaryArticunoEnergyScoring */
+void HandleLegendaryArticunoEnergyScoring(void)
+{
+	if (wOpponentDeckID == 0x0Eu) {
+		ScoreLegendaryArticunoCards();
+	}
+}
+/* <<< factory HandleLegendaryArticunoEnergyScoring */

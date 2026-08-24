@@ -1633,6 +1633,11 @@ wSamePokemonCardID = 0xCDF9
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
 wSelectedAttack = 0xCCC6
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wOpponentDeckID = 0xCC0E
+hWhoseTurn = 0xFF97
+ARTICUNO_SCORE = 0xCDE5
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2767,6 +2772,15 @@ CASES["CountNumberOfSetUpBenchPokemon"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", wSelectedAttack: b"\x01", 0xC2BC: b"\xFF"}, expect_regs={"a": 0x00, "f": 0x80, "b": 0x00, "c": 0x01, "d": 0x5A, "e": 0x01, "hl": 0xC2BC}),
 ]
 # <<< factory CountNumberOfSetUpBenchPokemon
+
+# >>> factory HandleLegendaryArticunoEnergyScoring
+CONTRACT["HandleLegendaryArticunoEnergyScoring"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["HandleLegendaryArticunoEnergyScoring"] = [
+    {"wram": {wOpponentDeckID: b"\x0E", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, "expect": {ARTICUNO_SCORE: b"\x05"}},
+    dict(POISON, wram={wOpponentDeckID: b"\x0E", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, expect={ARTICUNO_SCORE: b"\x05"}),
+    {"wram": {wOpponentDeckID: b"\x00", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, "expect": {ARTICUNO_SCORE: b"\x00"}},
+]
+# <<< factory HandleLegendaryArticunoEnergyScoring
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3979,3 +3993,11 @@ MUTATIONS["CountNumberOfSetUpBenchPokemon"] = {
     "case_ids": ["CountNumberOfSetUpBenchPokemon-0", "CountNumberOfSetUpBenchPokemon-1"],
 }
 # <<< factory-mutation CountNumberOfSetUpBenchPokemon
+# >>> factory-mutation HandleLegendaryArticunoEnergyScoring
+MUTATIONS["HandleLegendaryArticunoEnergyScoring"] = {
+    "source_symbol": "HandleLegendaryArticunoEnergyScoring",
+    "before": "\tif (wOpponentDeckID == 0x0Eu) {",
+    "after": "\tif (wOpponentDeckID != 0x0Eu) {",
+    "case_ids": ["HandleLegendaryArticunoEnergyScoring-0", "HandleLegendaryArticunoEnergyScoring-2"],
+}
+# <<< factory-mutation HandleLegendaryArticunoEnergyScoring
