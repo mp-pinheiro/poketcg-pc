@@ -29,6 +29,10 @@ CONTRACT = {
         "compare": ("a", "f", "b", "c", "d", "e", "hl"),
         "preserve": (),
     },
+    "_CopyCardNameAndLevel": {
+        "compare": ("a", "f", "b", "c", "d", "e", "hl"),
+        "preserve": (),
+    },
 }
 
 CASES = {
@@ -46,6 +50,26 @@ CASES = {
         {"wram": _seed(0x00, 0x0C), "stack": [_SAVED_BC, _SAVED_DE],
          "read": {wDefaultText: 10}},
     ],
+    # The parent runs against real card data: the setup call populates
+    # wLoadedCard1Name/Type/Level, then CopyText expands the name into
+    # wDefaultText and the TX_HALFWIDTH check tail-jumps into the label above.
+    # Entry a is the pad width in tiles; bc and de must survive the round trip.
+    "_CopyCardNameAndLevel": [
+        # Blastoise: a Pokemon at level 52, so the halfwidth path appends " Lv52"
+        # through its two-digit branch.
+        {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
+         "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
+         "read": {wDefaultText: 32}},
+        # Water Energy: type >= TYPE_ENERGY, so no level is appended.
+        {"a": 0x0D, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE,
+         "setup": [{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x03}],
+         "read": {wDefaultText: 32}},
+        # Poisoned entry registers, real pad width: f/b/c/d/e/hl carry the poison
+        # values, so a leak of any of them shows up in the exit contract.
+        dict(POISON, a=0x0D,
+             setup=[{"fn": "LoadCardDataToBuffer1_FromCardID", "e": 0x43}],
+             read={wDefaultText: 32}),
+    ],
 }
 
 from tests.cases._schema_migration import legacy_to_schema
@@ -58,4 +82,10 @@ MUTATIONS["_CopyCardNameAndLevel_HalfwidthText"] = {
     "after": "\tuint8_t b = (uint8_t)((uint8_t)(wCardNameLength + 2u) << 1);",
     "case_ids": ["_CopyCardNameAndLevel_HalfwidthText-0",
                  "_CopyCardNameAndLevel_HalfwidthText-2"],
+}
+MUTATIONS["_CopyCardNameAndLevel"] = {
+    "source_symbol": "_CopyCardNameAndLevel",
+    "before": "\tif (gb_read8(wDefaultText_ADDR) == TX_HALFWIDTH)",
+    "after": "\tif (gb_read8(wDefaultText_ADDR) != TX_HALFWIDTH)",
+    "case_ids": ["_CopyCardNameAndLevel-0", "_CopyCardNameAndLevel-1"],
 }

@@ -18,7 +18,23 @@ static void adapt__CopyCardNameAndLevel_HalfwidthText(ProbeState *s)
 }
 /* <<< factory _CopyCardNameAndLevel_HalfwidthText */
 
+/* >>> factory _CopyCardNameAndLevel */
+static void adapt__CopyCardNameAndLevel(ProbeState *s)
+{
+	CopyCardNameAndLevelResult result =
+		_CopyCardNameAndLevel(s->a, s->b, s->c, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory _CopyCardNameAndLevel */
+
 const ProbeEntry probe_entries_copy_card_name[] = {
 	{ "_CopyCardNameAndLevel_HalfwidthText", adapt__CopyCardNameAndLevel_HalfwidthText },
+	{ "_CopyCardNameAndLevel", adapt__CopyCardNameAndLevel },
 	{NULL, NULL},
 };
