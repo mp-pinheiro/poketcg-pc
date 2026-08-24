@@ -163,11 +163,6 @@ def _read_shas(path: Path, key: str) -> set[str]:
     return shas
 
 
-def _append_jsonl(path: Path, entry: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a") as stream:
-        stream.write(json.dumps(entry, sort_keys=True, separators=(",", ":")) + "\n")
-
 
 def _stale_owned_artifacts(
     root: Path,
@@ -212,7 +207,7 @@ def _stale_owned_artifacts(
                 "base_commits": sorted(bases),
                 "main_commit": main_revision,
             }
-            _append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
+            common.append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
             quarantined.append(record)
             print(f"LAND quarantine {artifact_sha256[:16]} stale-owned-path "
                   f"paths={record['changed_paths']}")
@@ -298,10 +293,15 @@ def _land_batch(
     if not artifacts:
         return [], stale
 
-
-    routines = apply_v2_artifacts(root, artifacts)
-    _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
-    source_revision = _revision(root, "@-")
+    # Exclusive only while the working copy is mid-rewrite: a lane rsyncing a
+    # half-applied quartet would verify a tree that never existed. The gate and
+    # progress runs below stay outside the lock - they touch only site/,
+    # build-barrier/, and tools/oracle/gbref/build/, all rsync-excluded, and a
+    # 3600s exclusive hold would stall every lane.
+    with common.file_lock(common.locks_dir(root) / "tree.lock", timeout=1800):
+        routines = apply_v2_artifacts(root, artifacts)
+        _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
+        source_revision = _revision(root, "@-")
 
     gate_started = time.monotonic()
     gate_completed = subprocess.run(
@@ -321,11 +321,14 @@ def _land_batch(
             gate_ok = gate_data.get("commit") == source_revision and gate_data.get("complete") is True
 
     if not gate_ok:
-        _run(["jj", "abandon", "@-"], root, 120)
-        _run(["jj", "restore"], root, 120)
-        if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
-            raise LandError("working copy dirty after abandoning a failed batch")
-        _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
+        # Must close before the bisect recursion below: the recursive call takes
+        # this same lock on a new descriptor and would block on its own caller.
+        with common.file_lock(common.locks_dir(root) / "tree.lock", timeout=1800):
+            _run(["jj", "abandon", "@-"], root, 120)
+            _run(["jj", "restore"], root, 120)
+            if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
+                raise LandError("working copy dirty after abandoning a failed batch")
+            _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
         if len(artifacts) > 1:
             middle = len(artifacts) // 2
             left, right = artifacts[:middle], artifacts[middle:]
@@ -346,7 +349,7 @@ def _land_batch(
             "basename": ",".join(sorted(basenames)),
             "gate_tail": gate_tail,
         }
-        _append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
+        common.append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
         print(f"LAND quarantine {sha[:16]} {record['basename']}")
         return [], stale + [record]
 
@@ -380,7 +383,7 @@ def _land_batch(
             "batch_id": batch_id,
             "seconds_gate": round(gate_seconds, 3),
         }
-        _append_jsonl(root / ".factory" / LANDINGS_NAME, record)
+        common.append_jsonl(root / ".factory" / LANDINGS_NAME, record)
         landed_records.append(record)
 
     if push:
@@ -517,22 +520,30 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     try:
-        shas = select_artifacts(root, arguments.artifacts)
-        if not shas:
-            print("LAND done landed=0 quarantined=0")
-            return 0
+        # One lander per checkout. Everything below writes the working copy, the
+        # central gate's build-barrier, and site/data - none of it survives two
+        # interleaved drivers. Refuse immediately rather than queue: a busy
+        # session should keep generating and let the holder land the artifacts.
+        with common.file_lock(common.locks_dir(root) / "land.lock", blocking=False):
+            shas = select_artifacts(root, arguments.artifacts)
+            if not shas:
+                print("LAND done landed=0 quarantined=0")
+                return 0
 
-        batches = batch_artifacts(shas, arguments.batch)
-        landed: list[dict] = []
-        quarantined: list[dict] = []
-        counter = [0]
-        for batch in batches:
-            batch_landed, batch_quarantined = _land_batch(
-                root, batch, gate_command=gate_command, progress_command=progress_command,
-                push=not arguments.no_push, counter=counter,
-            )
-            landed.extend(batch_landed)
-            quarantined.extend(batch_quarantined)
+            batches = batch_artifacts(shas, arguments.batch)
+            landed: list[dict] = []
+            quarantined: list[dict] = []
+            counter = [0]
+            for batch in batches:
+                batch_landed, batch_quarantined = _land_batch(
+                    root, batch, gate_command=gate_command, progress_command=progress_command,
+                    push=not arguments.no_push, counter=counter,
+                )
+                landed.extend(batch_landed)
+                quarantined.extend(batch_quarantined)
+    except common.LockBusy:
+        print("LAND busy detail=another session holds the land lock")
+        return 3
     except LandError as exc:
         print(f"LAND error {exc}", file=sys.stderr)
         return 2

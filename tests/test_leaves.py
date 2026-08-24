@@ -238,22 +238,31 @@ def dependencies(rom: Path) -> dict[str, str]:
         "pyboy": importlib.metadata.version("pyboy")}
 
 
+def _write_json_atomic(path: Path, payload: dict) -> None:
+    """Publish a JSON file by rename, never in place.
+
+    The gate record is read by every factory selection while the lander is
+    still writing it; a partially written file would fail an unrelated attempt.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            json.dump(payload, stream, sort_keys=True, separators=(",", ":"))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp, path)
+    finally:
+        if os.path.exists(temp):
+            os.unlink(temp)
+
+
 def cache_reference(cache_dir: Path, key: str, fn: str, fields: tuple[str, ...], reference: dict) -> dict:
     entry = {"schema": CACHE_SCHEMA, "key": key, "fn": fn, "contract": list(fields),
              "registers": reference["registers"], "wram": [[int(a), v] for a, v in sorted(reference["wram"].items(), key=lambda x: int(x[0]))],
              "sram": [[int(b), int(a), v] for b, spans in sorted(reference["sram"].items(), key=lambda x: int(x[0])) for a, v in sorted(spans.items(), key=lambda x: int(x[0]))],
              "vram": [[int(b), int(a), v] for b, spans in sorted(reference["vram"].items(), key=lambda x: int(x[0])) for a, v in sorted(spans.items(), key=lambda x: int(x[0]))]}
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    fd, temp = tempfile.mkstemp(prefix=f".{key}.", suffix=".tmp", dir=cache_dir)
-    try:
-        with os.fdopen(fd, "w") as stream:
-            json.dump(entry, stream, sort_keys=True, separators=(",", ":"))
-            stream.flush()
-            os.fsync(stream.fileno())
-        os.replace(temp, cache_dir / f"{key}.json")
-    finally:
-        if os.path.exists(temp):
-            os.unlink(temp)
+    _write_json_atomic(cache_dir / f"{key}.json", entry)
     return entry
 
 
@@ -439,18 +448,14 @@ def main() -> int:
                     "status": status, "cases": len(entries), "failing": bad_cases,
                 }
                 report_data["generated_at"] = int(time.time())
-                args.report.write_text(
-                    json.dumps(report_data, sort_keys=True, separators=(",", ":"))
-                )
+                _write_json_atomic(args.report, report_data)
     finally:
         if oracle is not None:
             oracle.close()
         if report_data is not None:
             report_data["complete"] = True
             report_data["generated_at"] = int(time.time())
-            args.report.write_text(
-                json.dumps(report_data, sort_keys=True, separators=(",", ":"))
-            )
+            _write_json_atomic(args.report, report_data)
     print(f"\n{len(wanted) - failures}/{len(wanted)} routines clean")
     return 1 if failures else 0
 

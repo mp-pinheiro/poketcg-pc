@@ -110,6 +110,37 @@ revision, refreshes progress, commits, pushes, and records
 failure is quarantined. The release gate and clean-tree/origin guards are
 unchanged.
 
+## Concurrent orchestrators
+
+Any number of top-level sessions may run this loop in one checkout. There is no
+session id and no registration; every guard is a `flock` under
+`.factory/locks/`, so a killed session releases everything it held.
+
+Selection and issuance hold `select.lock`. A session never issues a routine
+already claimed by another session's issued attempt, and never issues a second
+routine of a basename that another issued attempt owns — surgery is per
+basename, so two live attempts on one basename would guarantee that one of the
+two greens is later quarantined `stale-owned-path`.
+
+Each verifying process claims one lane by `flock` under
+`/tmp/poketcg-factory/`. `factory-next` no longer prints a lane and
+`factory-try` no longer accepts `--lane`: a lane index derived from position in
+a wave collides across sessions, and two rsyncs into one lane can green an
+artifact built from another attempt's tree.
+
+`factory-land` holds `land.lock` and is the only central-gate runner. A second
+session gets `LAND busy detail=another session holds the land lock` and exit
+`3`. That is not a failure: keep generating and verifying, artifacts persist in
+`.factory/artifacts/`, and whichever session next acquires the lock lands them.
+`just factory-land` will additionally print its own recipe-failed line for exit
+3; that is expected for a busy lander.
+
+A session whose translation context changes under it because another session
+landed gets `stale` on its next verification and reissues. So does an attempt
+whose `base_commit` was a landing the gate then rejected and abandoned; if such
+an artifact reaches landing first it is quarantined
+`<unresolvable-base-commit>` and the routine is reissued. Both paths self-heal.
+
 ## TranslationReplyV2
 
 Generators return one JSON object with no additional fields:
@@ -145,3 +176,7 @@ exists but every candidate is operationally blocked, preflight-blocked, or has
 exhausted its retry limit. `complete` means no eligible or unresolved work
 remains. Progress is measured from `site/data/gate.json` and
 `site/data/progress.json`; the dashboard reads those same files.
+
+With more than one session running, `stalled` and `complete` are per-session
+verdicts and are not authoritative while another session still holds issued
+attempts; the same status line reports that as `active=<n>`.

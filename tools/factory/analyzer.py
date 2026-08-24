@@ -284,6 +284,10 @@ def cache_records(records: list[dict[str, Any]], *, inputs: dict[str, Any] | Non
     path = cache_path(root)
     path.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(path) as db:
+        # Concurrent orchestrators both cache here; the default journal and
+        # zero busy timeout turn the second writer into "database is locked".
+        db.execute("PRAGMA journal_mode=WAL")
+        db.execute("PRAGMA busy_timeout=30000")
         db.execute("CREATE TABLE IF NOT EXISTS semantic_index (key TEXT PRIMARY KEY, record TEXT NOT NULL)")
         for record in records:
             key = hashlib.sha256(

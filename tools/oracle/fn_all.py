@@ -8,6 +8,7 @@ import importlib.util
 import os
 import subprocess
 import json
+import tempfile
 import time
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -35,6 +36,25 @@ def load_cases() -> dict[str, list[tuple[Path, dict]]]:
         for fn, records in getattr(module, "SCHEMA2_CASES", {}).items():
             found.setdefault(fn, []).extend((path, record) for record in records)
     return found
+
+
+def write_json_atomic(path: Path, payload: dict) -> None:
+    """Publish the gate record by rename, never in place.
+
+    Every factory selection reads site/data/gate.json while the landing driver
+    is still writing it; a torn read would fail an unrelated attempt.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            stream.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp, path)
+    finally:
+        if os.path.exists(temp):
+            os.unlink(temp)
 
 
 def main() -> int:
@@ -166,10 +186,7 @@ def main() -> int:
         }
         report_data["complete"] = True
         report_data["generated_at"] = int(time.time())
-        args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.report.write_text(
-            json.dumps(report_data, sort_keys=True, separators=(",", ":"))
-        )
+        write_json_atomic(args.report, report_data)
     return 2 if failures or primary_missing else 0
 
 

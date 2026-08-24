@@ -460,6 +460,97 @@ def stage_retry_fairness(state: dict[str, Any]) -> str:
     return f"rotated {len(selected)} reds before stalled"
 
 
+def _claimed_current(fn: str) -> dict[str, Any]:
+    return {
+        "schema": common.SCHEMA,
+        "fn": fn,
+        "attempt_id": f"smoke-claim-{fn}",
+        "generation": 0,
+        "context_sha256": "0" * 64,
+        "base_commit": "0" * 40,
+        "state": "issued",
+    }
+
+
+def stage_concurrent_claims(state: dict[str, Any]) -> str:
+    """Every guard that lets two orchestrators share one checkout."""
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-locks-") as directory:
+        lock = Path(directory) / "a.lock"
+        with common.file_lock(lock):
+            try:
+                with common.file_lock(lock, blocking=False):
+                    raise StageFailure("exclusive lock admitted a second holder")
+            except common.LockBusy:
+                pass
+        with common.file_lock(lock, exclusive=False):
+            with common.file_lock(lock, exclusive=False, blocking=False):
+                pass
+
+    previous_slots = lanes.LANE_SLOT_COUNT
+    lanes.LANE_SLOT_COUNT = 2
+    try:
+        with lanes.claim() as first_lane:
+            with lanes.claim() as second_lane:
+                _require(first_lane != second_lane,
+                         "two claims returned the same lane", [first_lane, second_lane])
+                try:
+                    with lanes.claim(timeout=0.5):
+                        raise StageFailure("lane claim exceeded its slot range")
+                except RuntimeError as exhausted:
+                    _require("no free factory lane" in str(exhausted),
+                             "unexpected lane exhaustion error", str(exhausted))
+    finally:
+        lanes.LANE_SLOT_COUNT = previous_slots
+
+    row = _fixture_rows(1)[0]
+    sibling = dict(row)
+    sibling["name"] = f"{row['name']}__smoke_sibling"
+    sibling["work_id"] = f"{row['work_id']}__smoke_sibling"
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-claims-") as directory:
+        previous_root = try_one.TRY_ROOT
+        previous_scores = try_one._score_rows
+        previous_issue = try_one.issue_attempt
+        try_one.TRY_ROOT = Path(directory)
+        report, previous_report = _patch_report([row, sibling])
+        try_one._score_rows = lambda _rows, retry: [(1, sibling)]
+        try_one.issue_attempt = lambda fn, generation, *, parent_attempt_id=None: {
+            "current": {"attempt_id": f"smoke-{fn}"},
+            "packet": {},
+            "routine": {},
+            "run_dir": Path(directory),
+        }
+        claim_path = Path(directory) / row["name"] / "current.json"
+        claim_path.parent.mkdir(parents=True, exist_ok=True)
+        claim_path.write_text(json.dumps(_claimed_current(row["name"])))
+        try:
+            _blocked_code, blocked_output = _capture(
+                lambda: try_one.subcommand_next(1, False, 1))
+            claim_path.unlink()
+            _free_code, free_output = _capture(
+                lambda: try_one.subcommand_next(1, False, 1))
+        finally:
+            _restore_report(report, previous_report)
+            try_one._score_rows = previous_scores
+            try_one.issue_attempt = previous_issue
+            try_one.TRY_ROOT = previous_root
+        _require("selected=0" in blocked_output
+                 and f"NEXT {sibling['name']} " not in blocked_output,
+                 "a claimed basename was selected by a second session",
+                 blocked_output)
+        _require(f"NEXT {sibling['name']} " in free_output,
+                 "basename exclusion outlived the claim", free_output)
+
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-land-lock-") as directory:
+        root = Path(directory)
+        (root / ".factory").mkdir(parents=True, exist_ok=True)
+        with common.file_lock(common.locks_dir(root) / "land.lock"):
+            code, output = _capture(
+                lambda: land.main(["--all", "--root", str(root)]))
+        _require(code == 3 and "LAND busy" in output,
+                 "a second lander did not refuse", {"code": code, "output": output})
+    return "locks exclusive, lanes disjoint, basename claimed, land single-writer"
+
+
 def _recorded_reply(attempt_id: str) -> dict[str, Any]:
     reply = json.loads(FIXTURE.read_text())
     reply["attempt_id"] = attempt_id
@@ -776,6 +867,7 @@ CONTRACT_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
     ("native-preflight", stage_native_preflight),
     ("evidence-filter", stage_evidence_filter),
     ("retry-fairness", stage_retry_fairness),
+    ("concurrent-claims", stage_concurrent_claims),
     ("packet", stage_packet),
     ("prompt", stage_prompt),
     ("validate", stage_validate),

@@ -10,8 +10,10 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import subprocess
 import sys
+import tempfile
 import time
 import tomllib
 import importlib.util
@@ -31,6 +33,21 @@ LIFECYCLE_STATES = (
     "ready", "blocked", "active", "awaiting-gate", "failing", "complete",
     "excluded",
 )
+
+
+def _write_json_atomic(path: Path, payload: dict) -> None:
+    """Publish progress.json by rename: the factory reads it while we write."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w") as stream:
+            stream.write(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp, path)
+    finally:
+        if os.path.exists(temp):
+            os.unlink(temp)
 
 
 def tier_for(size: int) -> int:
@@ -639,8 +656,7 @@ def subcommand_build():
         report["commit"] = commit[:12]
         report["commit_url"] = f"https://github.com/mp-pinheiro/poketcg-pc/commit/{commit}"
 
-    PROGRESS.parent.mkdir(parents=True, exist_ok=True)
-    PROGRESS.write_text(json.dumps(report, sort_keys=True, separators=(",", ":")))
+    _write_json_atomic(PROGRESS, report)
 
     line = {
         "commit": commit[:12] if commit else None,

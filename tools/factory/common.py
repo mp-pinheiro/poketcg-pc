@@ -14,6 +14,8 @@ event log and `.factory/state.sqlite3` is gone.
 from __future__ import annotations
 
 import ast
+import contextlib
+import fcntl
 import hashlib
 import json
 import os
@@ -23,6 +25,7 @@ import tempfile
 import threading
 import time
 import uuid
+from collections.abc import Iterator
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -40,6 +43,64 @@ _append_lock = threading.Lock()
 
 SCHEMA = 2
 STATES = frozenset({"pending"})
+
+
+class LockBusy(RuntimeError):
+    pass
+
+
+def locks_dir(root: Path = ROOT) -> Path:
+    """Cross-process lock directory for one checkout.
+
+    Under .factory/, which .gitignore excludes wholesale (only blocked.toml is
+    re-included) and lanes.RSYNC_EXCLUDES skips, so a lock file can neither
+    dirty the working copy nor reach a lane.
+    """
+    return root / ".factory" / "locks"
+
+
+@contextlib.contextmanager
+def file_lock(path: Path, *, exclusive: bool = True, blocking: bool = True,
+              timeout: float = 600.0, poll: float = 0.25) -> Iterator[None]:
+    """Advisory whole-file lock. Released by the kernel if the holder dies, so
+    a killed session never strands the factory.
+
+    Always polls LOCK_NB rather than waiting in the kernel: an untimed flock
+    inside the port loop is indistinguishable from a hang.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    mode = (fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH) | fcntl.LOCK_NB
+    fd = os.open(path, os.O_CREAT | os.O_RDWR, 0o644)
+    deadline = time.monotonic() + max(0.0, timeout)
+    held = False
+    try:
+        while True:
+            try:
+                fcntl.flock(fd, mode)
+                held = True
+                break
+            except OSError:
+                if not blocking or time.monotonic() >= deadline:
+                    raise LockBusy(f"{path} is held by another process") from None
+                time.sleep(poll)
+        yield
+    finally:
+        if held:
+            fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
+
+
+def append_jsonl(path: Path, entry: dict) -> None:
+    """Append one JSON line, serialized against every other appender."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    line = json.dumps(entry, sort_keys=True, separators=(",", ":")) + "\n"
+    with path.open("a") as stream:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+        try:
+            stream.write(line)
+            stream.flush()
+        finally:
+            fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
 

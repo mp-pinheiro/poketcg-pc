@@ -9,14 +9,23 @@ rebuilds stay incremental.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import shutil
 import subprocess
 import time
+from collections.abc import Iterator
 from pathlib import Path
 
-from common import LANE_BASE, ROOT, run_bounded
+from common import (
+    LANE_BASE,
+    ROOT,
+    LockBusy,
+    file_lock,
+    locks_dir,
+    run_bounded,
+)
 
 RSYNC_EXCLUDES = (
     ".jj", ".git", ".factory", ".github", ".claude", ".entire", ".pi", ".omp",
@@ -107,6 +116,40 @@ def lane_dir(index: int) -> Path:
     return LANE_BASE / f"lane-{index}"
 
 
+LANE_SLOT_BASE = 700
+LANE_SLOT_COUNT = 64
+
+
+@contextlib.contextmanager
+def claim(timeout: float = 900.0) -> Iterator[int]:
+    """Reserve one lane index for the caller's lifetime.
+
+    The lock is held on <lane>.lock, not on the lane directory, so a claim
+    costs nothing and a crashed holder releases it automatically. Slots start
+    at 700 to reuse the already-warm build directories in /tmp.
+
+    Every concurrent orchestrator draws from this one registry: a lane index
+    derived from position in a wave collides across sessions, and two rsyncs
+    into one lane can green an artifact built from another attempt's tree.
+    """
+    deadline = time.monotonic() + max(0.0, timeout)
+    while True:
+        for index in range(LANE_SLOT_BASE, LANE_SLOT_BASE + LANE_SLOT_COUNT):
+            with contextlib.ExitStack() as stack:
+                try:
+                    stack.enter_context(
+                        file_lock(LANE_BASE / f"lane-{index}.lock", blocking=False))
+                except LockBusy:
+                    continue
+                yield index
+                return
+        if time.monotonic() >= deadline:
+            raise RuntimeError(
+                f"no free factory lane in {LANE_SLOT_BASE}.."
+                f"{LANE_SLOT_BASE + LANE_SLOT_COUNT - 1}")
+        time.sleep(1.0)
+
+
 def _restore_packet_receipts(lane: Path, packet: dict | None) -> None:
     if packet is None:
         return
@@ -151,21 +194,25 @@ def ensure(index: int, deadline: float | None = None,
     later packet in it fails to build. rsync cannot fix this - once content
     matches the repo again it transfers nothing - so every file surgery is
     allowed to write is stamped after the sync.
+
+    The sync holds tree.lock shared so a lane is never copied from a working
+    copy the landing driver is halfway through rewriting.
     """
     lane = lane_dir(index)
     lane.mkdir(parents=True, exist_ok=True)
-    _purge_forbidden_lane_paths(lane)
-    command = ["rsync", "-a", "--checksum", "--no-times", "--delete"]
-    for pattern in RSYNC_EXCLUDES:
-        command += ["--exclude", pattern]
-    command += [f"{ROOT}/", f"{lane}/"]
-    run_bounded(command, cwd=ROOT, cap=300, deadline=deadline, check=True)
-    _restore_packet_receipts(lane, packet)
-    stamp = time.time()
-    for folder in ("src/home", "src/probe", "tests/cases"):
-        for path in (lane / folder).glob("*"):
-            if path.is_file():
-                os.utime(path, (stamp, stamp))
+    with file_lock(locks_dir() / "tree.lock", exclusive=False, timeout=1800):
+        _purge_forbidden_lane_paths(lane)
+        command = ["rsync", "-a", "--checksum", "--no-times", "--delete"]
+        for pattern in RSYNC_EXCLUDES:
+            command += ["--exclude", pattern]
+        command += [f"{ROOT}/", f"{lane}/"]
+        run_bounded(command, cwd=ROOT, cap=300, deadline=deadline, check=True)
+        _restore_packet_receipts(lane, packet)
+        stamp = time.time()
+        for folder in ("src/home", "src/probe", "tests/cases"):
+            for path in (lane / folder).glob("*"):
+                if path.is_file():
+                    os.utime(path, (stamp, stamp))
     link = lane / "poketcg"
     if not link.is_symlink():
         if link.exists():

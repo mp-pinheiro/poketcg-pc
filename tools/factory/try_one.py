@@ -264,10 +264,7 @@ def record_trap(fn: str, current: dict[str, Any]) -> None:
         "generation": current.get("generation"),
         "signatures": sorted(_failure_signatures(fn, attempt_id)),
     }
-    path = common.FACTORY / "traps.jsonl"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a") as stream:
-        stream.write(json.dumps(entry, sort_keys=True, separators=(",", ":")) + "\n")
+    common.append_jsonl(common.FACTORY / "traps.jsonl", entry)
 
 
 def issue_attempt(fn: str, generation: int, *, parent_attempt_id: str | None = None) -> dict[str, Any]:
@@ -458,82 +455,95 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
     report = packet_mod.report_module()
     records = report.compute(report.load_inventory(), report.load_routines()[0],
                              report.load_gate())["work_records"]
-    current = _current_states()
-    attempted = _artifact_attempted_names()
-    quarantined = _quarantined_artifacts()
-    active_attempts = sum(
-        1 for state in current.values() if state["state"] == "issued"
-    )
-    ready = [row for row in records if row["state"] == "ready"]
-    unresolved = [row for row in records if row["state"] in {"ready", "blocked"}]
-    if retry_red:
-        pool = [
-            row for row in ready
-            if row["name"] not in attempted
-            and current.get(row["name"], {}).get("state") == "red"
-            and current[row["name"]]["generation"] < retry_limit
-            and not is_trapped(row["name"], current[row["name"]])
-        ]
-    else:
-        pool = [
-            row for row in ready
-            if (
-                row["name"] not in attempted
-                or current.get(row["name"], {}).get("state") == "stale"
-            )
-            and (
-                current.get(row["name"], {}).get("state") in {None, "stale"}
-                or _green_attempt_is_quarantined(
-                    row["name"], current.get(row["name"], {}), quarantined
-                )
-            )
-        ]
     prepared = 0
     fresh_selected = 0
     retry_selected = 0
     preflight_blocked = 0
-    seen: set[str] = set()
-    for cascade, row in _score_rows(pool, retry=retry_red):
-        if prepared >= count:
-            break
-        stem = Path(row["source"]).stem
-        if stem in seen:
-            continue
-        seen.add(stem)
-        classification = _case_classification(row["name"], row.get("source"))
-        if classification == "native-migration-required":
-            preflight_blocked += 1
-            print(f"NEXT {row['name']} blocked phase=preflight detail={classification}")
-            continue
-        kind = "retry" if retry_red else "fresh"
-        state = current.get(row["name"])
-        generation = (
-            state["generation"] + 1
-            if state and (kind == "retry" or state["state"] == "stale")
-            else 0
+    # Every concurrent orchestrator issues under one lock: the read of the
+    # current attempt states and the writes that claim them must not interleave,
+    # or two sessions claim the same routine and one session's candidates are
+    # discarded as stale.
+    with common.file_lock(common.locks_dir() / "select.lock", timeout=900):
+        current = _current_states()
+        attempted = _artifact_attempted_names()
+        quarantined = _quarantined_artifacts()
+        active_attempts = sum(
+            1 for state in current.values() if state["state"] == "issued"
         )
-        parent = state.get("attempt_id") if state else None
-        lane = 700 + 10 * prepared
-        fn = row["name"]
-        try:
-            issued = issue_attempt(fn, generation, parent_attempt_id=parent)
-        except PreflightBlocker as exc:
-            preflight_blocked += 1
-            print(f"NEXT {fn} blocked phase=preflight detail={exc.detail}")
-            continue
-        except (LookupError, OSError, RuntimeError, ValueError) as exc:
-            print(f"NEXT {fn} red detail={exc}")
-            continue
-        prepared += 1
-        if kind == "retry":
-            retry_selected += 1
+        ready = [row for row in records if row["state"] == "ready"]
+        unresolved = [row for row in records if row["state"] in {"ready", "blocked"}]
+        if retry_red:
+            pool = [
+                row for row in ready
+                if row["name"] not in attempted
+                and current.get(row["name"], {}).get("state") == "red"
+                and current[row["name"]]["generation"] < retry_limit
+                and not is_trapped(row["name"], current[row["name"]])
+            ]
         else:
-            fresh_selected += 1
-        run_dir = issued["run_dir"]
-        print(f"NEXT {fn} lane={lane} size={row['size']}B basename={stem} cascade={cascade} "
-              f"attempt_id={issued['current']['attempt_id']} generation={generation}")
-        print(f"python3 tools/factory/try_one.py --fn {fn} --candidates 3 --lane {lane} "
-              f"--attempt-dir {run_dir}")
+            pool = [
+                row for row in ready
+                if (
+                    row["name"] not in attempted
+                    or current.get(row["name"], {}).get("state") == "stale"
+                )
+                and (
+                    current.get(row["name"], {}).get("state") in {None, "stale"}
+                    or _green_attempt_is_quarantined(
+                        row["name"], current.get(row["name"], {}), quarantined
+                    )
+                )
+            ]
+        # A basename is owned by whichever attempt claimed it first, in this
+        # session or another: surgery is per basename, so two live attempts on
+        # one basename guarantee that one of the two greens is later quarantined
+        # stale-owned-path.
+        by_name = _rows_by_name(records)
+        seen = {
+            Path(by_name[name]["source"]).stem
+            for name, state in current.items()
+            if state["state"] == "issued" and name in by_name
+        }
+        for cascade, row in _score_rows(pool, retry=retry_red):
+            if prepared >= count:
+                break
+            stem = Path(row["source"]).stem
+            if stem in seen:
+                continue
+            seen.add(stem)
+            classification = _case_classification(row["name"], row.get("source"))
+            if classification == "native-migration-required":
+                preflight_blocked += 1
+                print(f"NEXT {row['name']} blocked phase=preflight detail={classification}")
+                continue
+            kind = "retry" if retry_red else "fresh"
+            state = current.get(row["name"])
+            generation = (
+                state["generation"] + 1
+                if state and (kind == "retry" or state["state"] == "stale")
+                else 0
+            )
+            parent = state.get("attempt_id") if state else None
+            fn = row["name"]
+            try:
+                issued = issue_attempt(fn, generation, parent_attempt_id=parent)
+            except PreflightBlocker as exc:
+                preflight_blocked += 1
+                print(f"NEXT {fn} blocked phase=preflight detail={exc.detail}")
+                continue
+            except (LookupError, OSError, RuntimeError, ValueError) as exc:
+                print(f"NEXT {fn} red detail={exc}")
+                continue
+            prepared += 1
+            if kind == "retry":
+                retry_selected += 1
+            else:
+                fresh_selected += 1
+            run_dir = issued["run_dir"]
+            print(f"NEXT {fn} size={row['size']}B basename={stem} cascade={cascade} "
+                  f"attempt_id={issued['current']['attempt_id']} generation={generation}")
+            print(f"python3 tools/factory/try_one.py --fn {fn} --candidates 3 "
+                  f"--attempt-dir {run_dir}")
 
     current = _current_states()
     active = sum(1 for state in current.values() if state["state"] == "issued")
@@ -590,17 +600,20 @@ def summarize() -> int:
 
 def _prepare_direct(fn: str) -> dict[str, Any]:
     _check_operational_blocker(fn)
-    existing = load_current_attempt(fn)
-    if existing is None:
-        return issue_attempt(fn, 0)
-    state = existing["current"]
-    if state["state"] == "issued":
-        return existing
-    return issue_attempt(
-        fn,
-        state["generation"] + 1,
-        parent_attempt_id=state["attempt_id"],
-    )
+    # Same lock as subcommand_next: a direct try must not race a loop's
+    # selection into a double claim on one routine.
+    with common.file_lock(common.locks_dir() / "select.lock", timeout=900):
+        existing = load_current_attempt(fn)
+        if existing is None:
+            return issue_attempt(fn, 0)
+        state = existing["current"]
+        if state["state"] == "issued":
+            return existing
+        return issue_attempt(
+            fn,
+            state["generation"] + 1,
+            parent_attempt_id=state["attempt_id"],
+        )
 
 
 def _set_attempt_state(current: dict[str, Any], state: str, *, retry_limit: int,
@@ -624,7 +637,6 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--summary", action="store_true",
                         help="aggregate every recorded run instead of verifying")
     parser.add_argument("--candidates", type=int, default=3)
-    parser.add_argument("--lane", type=int, default=700, help="first lane index")
     parser.add_argument("--reply", type=Path,
                         help="verify this recorded reply instead of polling for candidates")
     parser.add_argument("--wait", type=float, default=0.0,
@@ -728,20 +740,23 @@ def main(argv: list[str] | None = None) -> int:
 
     results: list[dict[str, Any]] = []
     green: dict[str, Any] | None = None
-    for index, reply, error in replies:
-        if reply is None:
-            record = {"candidate": index, "outcome": "diagnostic", "phase": "reply",
-                      "failure_class": "schema", "witness": {}, "detail": error,
-                      "seconds": 0.0}
-        else:
-            record = attempt(built, reply, lane_index=arguments.lane + index,
-                             candidate=index)
-        results.append(record)
-        print(f"candidate {index}: {record['outcome']} phase={record['phase']} "
-              f"{record['seconds']}s")
-        if record["outcome"] == "productive":
-            green = record
-            break
+    # One claimed lane for the whole attempt: ensure() re-syncs it per candidate,
+    # so candidate n's surgery cannot survive into candidate n+1, and no other
+    # session can rsync into the slot while this process holds it.
+    with lanes.claim() as lane_index:
+        for index, reply, error in replies:
+            if reply is None:
+                record = {"candidate": index, "outcome": "diagnostic", "phase": "reply",
+                          "failure_class": "schema", "witness": {}, "detail": error,
+                          "seconds": 0.0}
+            else:
+                record = attempt(built, reply, lane_index=lane_index, candidate=index)
+            results.append(record)
+            print(f"candidate {index}: {record['outcome']} phase={record['phase']} "
+                  f"{record['seconds']}s")
+            if record["outcome"] == "productive":
+                green = record
+                break
 
     _write_json(issued["run_dir"] / "result.json", {
         "fn": fn,
