@@ -447,6 +447,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/duel.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5133,3 +5137,14 @@ void SuperEnergyRemoval_DiscardEffect(void)
 	SwapTurn();
 }
 /* <<< factory SuperEnergyRemoval_DiscardEffect */
+
+/* >>> factory EnergyTrans_AIEffect */
+void EnergyTrans_AIEffect(void)
+{
+	uint8_t location = hAIEnergyTransPlayAreaLocation;
+	uint8_t card = hAIEnergyTransEnergyCard;
+	AddCardToHand(card);
+	(void)PutHandCardInPlayArea(card, location);
+	(void)PrintPlayAreaCardList_EnableLCD();
+}
+/* <<< factory EnergyTrans_AIEffect */

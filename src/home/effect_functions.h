@@ -1224,6 +1224,9 @@ EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void);
 /* >>> factory SuperEnergyRemoval_DiscardEffect */
 void SuperEnergyRemoval_DiscardEffect(void);
 /* <<< factory SuperEnergyRemoval_DiscardEffect */
+/* >>> factory EnergyTrans_AIEffect */
+void EnergyTrans_AIEffect(void);
+/* <<< factory EnergyTrans_AIEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

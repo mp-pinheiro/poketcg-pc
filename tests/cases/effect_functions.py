@@ -2398,6 +2398,10 @@ hTemp_ffa0 = 0xFFA0
 
 hWhoseTurn = 0xFF97
 wDuelType = 0xCE22
+
+hAIEnergyTransEnergyCard = 0xFFA2
+hAIEnergyTransPlayAreaLocation = 0xFFA3
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3385,6 +3389,28 @@ CASES["SuperEnergyRemoval_DiscardEffect"] = [
                  0xC37D: b"\x06", 0xC2ED: b"\x01", 0xC3ED: b"\x01"}),
 ]
 # <<< factory SuperEnergyRemoval_DiscardEffect
+
+# >>> factory EnergyTrans_AIEffect
+CONTRACT["EnergyTrans_AIEffect"] = {"compare": (), "preserve": ()}
+CASES["EnergyTrans_AIEffect"] = [
+    {"hram": {hAIEnergyTransEnergyCard: b"\x05", hAIEnergyTransPlayAreaLocation: b"\x02"},
+     "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC205: b"\x00", 0xC2EE: b"\x00",
+              0xC242: b"\x00", 0xC400: b"\x08", 0xC2BB + 0xC8: b"\x00",
+              0xC2BB + 0xCE: b"\x00", 0xC2BB + 0xF0: b"\x00",
+              0xC2BB + 0xF2: b"\x00", 0xCBD2: b"\x00"},
+     "expect": {0xC205: b"\x12", 0xC242: b"\x05"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, hram={hAIEnergyTransEnergyCard: b"\x05", hAIEnergyTransPlayAreaLocation: b"\x02"},
+         keys=0x01, instruction_budget=20000000, cycle_budget=80000000,
+         wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC205: b"\x00", 0xC2EE: b"\x00",
+               0xC242: b"\x00", 0xC400: b"\x08", 0xC2BB + 0xC8: b"\x00",
+               0xC2BB + 0xCE: b"\x00", 0xC2BB + 0xF0: b"\x00",
+               0xC2BB + 0xF2: b"\x00", 0xCBD2: b"\x00"},
+         expect={0xC205: b"\x12", 0xC242: b"\x05"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory EnergyTrans_AIEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5410,3 +5436,11 @@ MUTATIONS["SuperEnergyRemoval_DiscardEffect"] = {
     "case_ids": ["SuperEnergyRemoval_DiscardEffect-0", "SuperEnergyRemoval_DiscardEffect-1"],
 }
 # <<< factory-mutation SuperEnergyRemoval_DiscardEffect
+# >>> factory-mutation EnergyTrans_AIEffect
+MUTATIONS["EnergyTrans_AIEffect"] = {
+    "source_symbol": "EnergyTrans_AIEffect",
+    "before": "\t(void)PutHandCardInPlayArea(card, location);",
+    "after": "\t(void)PutHandCardInPlayArea((uint8_t)(card + 1u), location);",
+    "case_ids": ["EnergyTrans_AIEffect-0", "EnergyTrans_AIEffect-1"],
+}
+# <<< factory-mutation EnergyTrans_AIEffect
