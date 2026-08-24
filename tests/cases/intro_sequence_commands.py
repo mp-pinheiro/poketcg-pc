@@ -24,6 +24,9 @@ wSequenceCmdPtr = 0xD631
 
 wSequenceCmdPtr = 0xD631
 wIntroSequencePalsNeedUpdate = 0xD634
+
+wSequenceDelay = 0xD633
+wSequenceCmdPtr = 0xD631
 # <<< factory-cases-statics
 
 # >>> factory AdvanceIntroSequenceCmdPtr
@@ -144,6 +147,15 @@ CASES["AdvanceIntroSequenceCmdPtrBy3"] = [
 ]
 # <<< factory AdvanceIntroSequenceCmdPtrBy3
 
+# >>> factory IntroSequenceCmd_Wait
+CONTRACT["IntroSequenceCmd_Wait"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["IntroSequenceCmd_Wait"] = [
+    {"c": 0x00, "wram": {wSequenceDelay: b"\x00", wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceDelay: 1, wSequenceCmdPtr: 2}},
+    {"c": 0x7F, "wram": {wSequenceDelay: b"\xFF", wSequenceCmdPtr: b"\xFF\x20"}, "read": {wSequenceDelay: 1, wSequenceCmdPtr: 2}},
+    dict(POISON, c=0xCC, wram={wSequenceDelay: b"\x12", wSequenceCmdPtr: b"\x10\x20"}, read={wSequenceDelay: 1, wSequenceCmdPtr: 2}),
+]
+# <<< factory IntroSequenceCmd_Wait
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -197,3 +209,6 @@ MUTATIONS["IntroSequenceCmd_FadeOut"] = {"source_symbol": "IntroSequenceCmd_Fade
 # >>> factory-mutation AdvanceIntroSequenceCmdPtrBy3
 MUTATIONS["AdvanceIntroSequenceCmdPtrBy3"] = {"source_symbol": "AdvanceIntroSequenceCmdPtrBy3", "before": "\tAdvanceIntroSequenceCmdPtr(3u);", "after": "\tAdvanceIntroSequenceCmdPtr(4u);", "case_ids": ["AdvanceIntroSequenceCmdPtrBy3-0", "AdvanceIntroSequenceCmdPtrBy3-1", "AdvanceIntroSequenceCmdPtrBy3-2", "AdvanceIntroSequenceCmdPtrBy3-3", "AdvanceIntroSequenceCmdPtrBy3-4"]}
 # <<< factory-mutation AdvanceIntroSequenceCmdPtrBy3
+# >>> factory-mutation IntroSequenceCmd_Wait
+MUTATIONS["IntroSequenceCmd_Wait"] = {"source_symbol": "IntroSequenceCmd_Wait", "before": "\tuint8_t f = (uint8_t)((adv.f & 0x80u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((adv.f & 0x80u) | 0x00u);", "case_ids": ["IntroSequenceCmd_Wait-0", "IntroSequenceCmd_Wait-1", "IntroSequenceCmd_Wait-2"]}
+# <<< factory-mutation IntroSequenceCmd_Wait

@@ -54,4 +54,8 @@ IntroSequenceCmd_FadeOutResult IntroSequenceCmd_FadeOut(void);
 /* >>> factory AdvanceIntroSequenceCmdPtrBy3 */
 void AdvanceIntroSequenceCmdPtrBy3(void);
 /* <<< factory AdvanceIntroSequenceCmdPtrBy3 */
+/* >>> factory IntroSequenceCmd_Wait */
+typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdWaitResult;
+IntroSequenceCmdWaitResult IntroSequenceCmd_Wait(uint8_t c);
+/* <<< factory IntroSequenceCmd_Wait */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

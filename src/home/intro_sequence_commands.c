@@ -60,6 +60,10 @@ static void UpdateSpriteAttributes(void)
 #include "generated/wram.h"
 #include "mem.h"
 #define TRUE 0x01u
+
+#include "generated/wram.h"
+#include "home/intro_sequence_commands.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -257,3 +261,13 @@ void AdvanceIntroSequenceCmdPtrBy3(void)
 	AdvanceIntroSequenceCmdPtr(3u);
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy3 */
+
+/* >>> factory IntroSequenceCmd_Wait */
+IntroSequenceCmdWaitResult IntroSequenceCmd_Wait(uint8_t c)
+{
+	gb_write8(wSequenceDelay_ADDR, c);
+	AdvanceIntroSequenceCmdPtrResult adv = AdvanceIntroSequenceCmdPtr(3u);
+	uint8_t f = (uint8_t)((adv.f & 0x80u) | 0x10u);
+	return (IntroSequenceCmdWaitResult){adv.a, f};
+}
+/* <<< factory IntroSequenceCmd_Wait */

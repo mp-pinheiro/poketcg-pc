@@ -121,6 +121,15 @@ static void adapt_AdvanceIntroSequenceCmdPtrBy3(ProbeState *s)
 }
 /* <<< factory AdvanceIntroSequenceCmdPtrBy3 */
 
+/* >>> factory IntroSequenceCmd_Wait */
+static void adapt_IntroSequenceCmd_Wait(ProbeState *s)
+{
+	IntroSequenceCmdWaitResult r = IntroSequenceCmd_Wait(s->c);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory IntroSequenceCmd_Wait */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -135,5 +144,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_PlayTitleScreenMusic", adapt_IntroSequenceCmd_PlayTitleScreenMusic },
 	{ "IntroSequenceCmd_FadeOut", adapt_IntroSequenceCmd_FadeOut },
 	{ "AdvanceIntroSequenceCmdPtrBy3", adapt_AdvanceIntroSequenceCmdPtrBy3 },
+	{ "IntroSequenceCmd_Wait", adapt_IntroSequenceCmd_Wait },
 	{ NULL, NULL },
 };
