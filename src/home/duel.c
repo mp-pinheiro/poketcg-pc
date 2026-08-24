@@ -464,6 +464,17 @@ static const uint8_t kCursorTileData[16] = {
 #define wCheckMenuPlayAreaWhichDuelist_ADDR 0xCE50u
 #define wCheckMenuPlayAreaWhichLayout_ADDR 0xCE51u
 #define wIsSwapTurnPending_ADDR 0xCE56u
+
+#include "home/duel.h"
+#include "home/serial.h"
+#include "home/duel_core.h"
+#include "home/effect_commands.h"
+#define EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
+#define EFFECTCMDTYPE_REQUIRE_SELECTION 0x05u
+#define OPPACTION_DUEL_MAIN_SCENE 0x16u
+#define OPPACTION_EXECUTE_PKMN_POWER_EFFECT 0x0du
+#define OPPACTION_USE_PKMN_POWER 0x0cu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2295,3 +2306,57 @@ void _DrawPlayAreaToPlacePrizeCards(void)
 	SwapTurn();
 }
 /* <<< factory _DrawPlayAreaToPlacePrizeCards */
+
+/* >>> factory UsePokemonPower */
+UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ResetAttackAnimationIsPlaying();
+	TryExecuteEffectCommandFunctionResult initial = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	a = initial.a;
+	f = initial.f;
+	c = initial.c;
+	hl = initial.hl;
+	if ((f & 0x10u) != 0u) {
+		f = DisplayUsePokemonPowerScreen_WaitForInput(hl);
+		return (UsePokemonPowerResult){a, f, b, c, d, e, (uint16_t)hl};
+	}
+	TryExecuteEffectCommandFunctionResult selection = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION);
+	a = selection.a;
+	f = selection.f;
+	c = selection.c;
+	hl = selection.hl;
+	if ((f & 0x10u) != 0u) {
+		f = ReturnCarry(f);
+		return (UsePokemonPowerResult){a, f, b, c, d, e, (uint16_t)hl};
+	}
+	SetOppActionSerialSendResult sent = SetOppAction_SerialSendDuelData(OPPACTION_USE_PKMN_POWER, (uint16_t)((uint16_t)d << 8 | e));
+	a = sent.a;
+	f = sent.f;
+	d = (uint8_t)(sent.de >> 8);
+	e = (uint8_t)sent.de;
+	ExchangeRNGResult rng = ExchangeRNG(b, c, sent.de, hl);
+	a = rng.a;
+	b = rng.b;
+	c = rng.c;
+	f = rng.f;
+	hl = rng.hl;
+	d = (uint8_t)(rng.de >> 8);
+	e = (uint8_t)rng.de;
+	sent = SetOppAction_SerialSendDuelData(OPPACTION_EXECUTE_PKMN_POWER_EFFECT, rng.de);
+	a = sent.a;
+	f = sent.f;
+	d = (uint8_t)(sent.de >> 8);
+	e = (uint8_t)sent.de;
+	TryExecuteEffectCommandFunctionResult before_damage = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE);
+	a = before_damage.a;
+	f = before_damage.f;
+	c = before_damage.c;
+	hl = before_damage.hl;
+	sent = SetOppAction_SerialSendDuelData(OPPACTION_DUEL_MAIN_SCENE, (uint16_t)((uint16_t)d << 8 | e));
+	a = sent.a;
+	f = sent.f;
+	d = (uint8_t)(sent.de >> 8);
+	e = (uint8_t)sent.de;
+	return (UsePokemonPowerResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory UsePokemonPower */

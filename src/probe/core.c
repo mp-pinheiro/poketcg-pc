@@ -1748,6 +1748,14 @@ static void adapt_OppAction_ExecutePokemonPowerEffect(ProbeState *s)
 }
 /* <<< factory OppAction_ExecutePokemonPowerEffect */
 
+/* >>> factory LoadSelectedCardGfx */
+static void adapt_LoadSelectedCardGfx(ProbeState *s)
+{
+	(void)s;
+	LoadSelectedCardGfx();
+}
+/* <<< factory LoadSelectedCardGfx */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1957,5 +1965,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfCardCanBePlayed", adapt_CheckIfCardCanBePlayed },
 	{ "OppAction_6b15", adapt_OppAction_6b15 },
 	{ "OppAction_ExecutePokemonPowerEffect", adapt_OppAction_ExecutePokemonPowerEffect },
+	{ "LoadSelectedCardGfx", adapt_LoadSelectedCardGfx },
 	{ NULL, NULL },
 };

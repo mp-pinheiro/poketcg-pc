@@ -156,6 +156,15 @@ CASES["IntroSequenceCmd_Wait"] = [
 ]
 # <<< factory IntroSequenceCmd_Wait
 
+# >>> factory IntroSequenceCmd_PlaySFX
+CONTRACT["IntroSequenceCmd_PlaySFX"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["IntroSequenceCmd_PlaySFX"] = [
+    {"c": 0x00, "wram": {0xD631: b"\x00\x00"}, "read": {0xD631: 2}},
+    {"c": 0x7F, "wram": {0xD631: b"\x00\x05"}, "read": {0xD631: 2}},
+    dict(POISON, c=0xCC, wram={0xD631: b"\x00\x00"}, read={0xD631: 2}),
+]
+# <<< factory IntroSequenceCmd_PlaySFX
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -212,3 +221,6 @@ MUTATIONS["AdvanceIntroSequenceCmdPtrBy3"] = {"source_symbol": "AdvanceIntroSequ
 # >>> factory-mutation IntroSequenceCmd_Wait
 MUTATIONS["IntroSequenceCmd_Wait"] = {"source_symbol": "IntroSequenceCmd_Wait", "before": "\tuint8_t f = (uint8_t)((adv.f & 0x80u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((adv.f & 0x80u) | 0x00u);", "case_ids": ["IntroSequenceCmd_Wait-0", "IntroSequenceCmd_Wait-1", "IntroSequenceCmd_Wait-2"]}
 # <<< factory-mutation IntroSequenceCmd_Wait
+# >>> factory-mutation IntroSequenceCmd_PlaySFX
+MUTATIONS["IntroSequenceCmd_PlaySFX"] = {"source_symbol": "IntroSequenceCmd_PlaySFX", "before": "\tuint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) | 0x10u);", "after": "\tuint8_t f = (uint8_t)((a == 0u ? 0x80u : 0u) | 0x00u);", "case_ids": ["IntroSequenceCmd_PlaySFX-0", "IntroSequenceCmd_PlaySFX-1", "IntroSequenceCmd_PlaySFX-2"]}
+# <<< factory-mutation IntroSequenceCmd_PlaySFX

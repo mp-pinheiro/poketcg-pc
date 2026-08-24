@@ -1349,6 +1349,14 @@ CASES["_DrawPlayAreaToPlacePrizeCards"] = [
 ]
 # <<< factory _DrawPlayAreaToPlacePrizeCards
 
+# >>> factory UsePokemonPower
+CONTRACT["UsePokemonPower"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["UsePokemonPower"] = [
+    {"sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory UsePokemonPower
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1515,3 +1523,11 @@ MUTATIONS["DisplayUsePokemonPowerScreen_WaitForInput"] = {"source_symbol": "Disp
 # >>> factory-mutation _DrawPlayAreaToPlacePrizeCards
 MUTATIONS["_DrawPlayAreaToPlacePrizeCards"] = {"source_symbol": "_DrawPlayAreaToPlacePrizeCards", "before": "\tgb_write8(wIsSwapTurnPending_ADDR, TRUE);", "after": "\tgb_write8(wIsSwapTurnPending_ADDR, 0u);", "case_ids": ["_DrawPlayAreaToPlacePrizeCards-0", "_DrawPlayAreaToPlacePrizeCards-1"]}
 # <<< factory-mutation _DrawPlayAreaToPlacePrizeCards
+# >>> factory-mutation UsePokemonPower
+MUTATIONS["UsePokemonPower"] = {
+    "source_symbol": "UsePokemonPower",
+    "before": "\treturn (UsePokemonPowerResult){a, f, b, c, d, e, hl};",
+    "after": "\treturn (UsePokemonPowerResult){a, 0u, b, c, d, e, hl};",
+    "case_ids": ["UsePokemonPower-0", "UsePokemonPower-1"],
+}
+# <<< factory-mutation UsePokemonPower

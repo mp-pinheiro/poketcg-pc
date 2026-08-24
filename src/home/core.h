@@ -803,4 +803,7 @@ OppAction_6b15Result OppAction_6b15(void);
 typedef struct { uint8_t a; uint8_t f; uint8_t c; uint16_t hl; } OppAction_ExecutePokemonPowerEffectResult;
 OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(void);
 /* <<< factory OppAction_ExecutePokemonPowerEffect */
+/* >>> factory LoadSelectedCardGfx */
+void LoadSelectedCardGfx(void);
+/* <<< factory LoadSelectedCardGfx */
 #endif

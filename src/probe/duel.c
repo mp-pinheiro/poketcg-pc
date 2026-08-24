@@ -791,6 +791,20 @@ static void adapt__DrawPlayAreaToPlacePrizeCards(ProbeState *s)
 }
 /* <<< factory _DrawPlayAreaToPlacePrizeCards */
 
+/* >>> factory UsePokemonPower */
+static void adapt_UsePokemonPower(ProbeState *s)
+{
+	UsePokemonPowerResult r = UsePokemonPower(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory UsePokemonPower */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -888,5 +902,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawInPlayArea_Icons", adapt_DrawInPlayArea_Icons },
 	{ "DisplayUsePokemonPowerScreen_WaitForInput", adapt_DisplayUsePokemonPowerScreen_WaitForInput },
 	{ "_DrawPlayAreaToPlacePrizeCards", adapt__DrawPlayAreaToPlacePrizeCards },
+	{ "UsePokemonPower", adapt_UsePokemonPower },
 	{ NULL, NULL },
 };

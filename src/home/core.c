@@ -855,6 +855,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/duel_core.h"
 #include "home/effect_commands.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "generated/hram.h"
+#define V0_TILES1 0x8800u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4891,3 +4897,14 @@ OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(vo
 	return (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};
 }
 /* <<< factory OppAction_ExecutePokemonPowerEffect */
+
+/* >>> factory LoadSelectedCardGfx */
+void LoadSelectedCardGfx(void)
+{
+	DeckEntryResult result = GetCardInDuelTempList(hCurMenuItem, 0u);
+	LoadCardDataToBuffer1_FromCardID(result.e);
+	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+}
+/* <<< factory LoadSelectedCardGfx */

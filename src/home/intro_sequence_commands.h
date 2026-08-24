@@ -58,4 +58,8 @@ void AdvanceIntroSequenceCmdPtrBy3(void);
 typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdWaitResult;
 IntroSequenceCmdWaitResult IntroSequenceCmd_Wait(uint8_t c);
 /* <<< factory IntroSequenceCmd_Wait */
+/* >>> factory IntroSequenceCmd_PlaySFX */
+typedef struct { uint8_t a; uint8_t f; } IntroSequenceCmdPlaySFXResult;
+IntroSequenceCmdPlaySFXResult IntroSequenceCmd_PlaySFX(uint8_t c);
+/* <<< factory IntroSequenceCmd_PlaySFX */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

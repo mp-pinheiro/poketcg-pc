@@ -1615,6 +1615,9 @@ wLoadedCard1Stage = 0xCC2D
 wLoadedCard1Type = 0xCC24
 
 wSkipDuelistIsThinkingDelay = 0xCBF9
+
+hCurMenuItem = 0xFFB1
+V0_TILES1 = 0x8800
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2695,6 +2698,14 @@ CASES["OppAction_ExecutePokemonPowerEffect"] = [
     dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory OppAction_ExecutePokemonPowerEffect
+
+# >>> factory LoadSelectedCardGfx
+CONTRACT["LoadSelectedCardGfx"] = {"compare": (), "preserve": ()}
+CASES["LoadSelectedCardGfx"] = [
+    {"vread": {0: {0x8A00: 0x300}}},
+    dict(POISON, vread={0: {0x8A00: 0x300}}),
+]
+# <<< factory LoadSelectedCardGfx
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3859,3 +3870,11 @@ MUTATIONS["OppAction_ExecutePokemonPowerEffect"] = {
     "case_ids": ["OppAction_ExecutePokemonPowerEffect-0", "OppAction_ExecutePokemonPowerEffect-1"],
 }
 # <<< factory-mutation OppAction_ExecutePokemonPowerEffect
+# >>> factory-mutation LoadSelectedCardGfx
+MUTATIONS["LoadSelectedCardGfx"] = {
+    "source_symbol": "LoadSelectedCardGfx",
+    "before": "LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));",
+    "after": "LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x201u));",
+    "case_ids": ["LoadSelectedCardGfx-0", "LoadSelectedCardGfx-1"],
+}
+# <<< factory-mutation LoadSelectedCardGfx
