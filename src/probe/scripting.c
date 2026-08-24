@@ -913,6 +913,13 @@ static void adapt_TryGiveMedalPCPacks(ProbeState *s)
 }
 /* <<< factory TryGiveMedalPCPacks */
 
+/* >>> factory GetByteAfterCall */
+static void adapt_GetByteAfterCall(ProbeState *s)
+{
+	s->a = GetByteAfterCall(s->hl);
+}
+/* <<< factory GetByteAfterCall */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1003,5 +1010,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_SetChallengeHallNPCCoords", adapt_ScriptCommand_SetChallengeHallNPCCoords },
 	{ "LoadOverworld", adapt_LoadOverworld },
 	{ "TryGiveMedalPCPacks", adapt_TryGiveMedalPCPacks },
+	{ "GetByteAfterCall", adapt_GetByteAfterCall },
 	{ NULL, NULL },
 };

@@ -88,6 +88,15 @@ CASES["SetNPCDeckIDAndDuelTheme"] = [
 ]
 # <<< factory SetNPCDeckIDAndDuelTheme
 
+# >>> factory _GetChallengeMachineDuelConfigurations
+CONTRACT["_GetChallengeMachineDuelConfigurations"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["_GetChallengeMachineDuelConfigurations"] = [
+    {"wram": {0xCC19: b"\x00"}},
+    {"wram": {0xCC19: b"\xFE"}},
+    dict(POISON, wram={0xCC19: b"\x00"}),
+]
+# <<< factory _GetChallengeMachineDuelConfigurations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -110,3 +119,6 @@ MUTATIONS["_GetNPCDuelConfigurations"] = {"source_symbol": "_GetNPCDuelConfigura
 # >>> factory-mutation SetNPCDeckIDAndDuelTheme
 MUTATIONS["SetNPCDeckIDAndDuelTheme"] = {"source_symbol": "SetNPCDeckIDAndDuelTheme", "before": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + NPC_DATA_DECK_ID));", "after": "\tconst uint8_t *entry = rom_ptr(NPC_DATA_BANK, (uint16_t)(header.hl + NPC_DATA_DECK_ID + 1u));", "case_ids": ["SetNPCDeckIDAndDuelTheme-1", "SetNPCDeckIDAndDuelTheme-2"]}
 # <<< factory-mutation SetNPCDeckIDAndDuelTheme
+# >>> factory-mutation _GetChallengeMachineDuelConfigurations
+MUTATIONS["_GetChallengeMachineDuelConfigurations"] = {"source_symbol": "_GetChallengeMachineDuelConfigurations", "before": "a = entry[5];", "after": "a = entry[4];", "case_ids": ["_GetChallengeMachineDuelConfigurations-0", "_GetChallengeMachineDuelConfigurations-1"]}
+# <<< factory-mutation _GetChallengeMachineDuelConfigurations

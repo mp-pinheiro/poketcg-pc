@@ -155,3 +155,31 @@ SetNPCDeckIDAndDuelThemeResult SetNPCDeckIDAndDuelTheme(uint8_t a)
 	return (SetNPCDeckIDAndDuelThemeResult){duel_theme, f};
 }
 /* <<< factory SetNPCDeckIDAndDuelTheme */
+
+/* >>> factory _GetChallengeMachineDuelConfigurations */
+_GetChallengeMachineDuelConfigurationsResult _GetChallengeMachineDuelConfigurations(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t deck_id = gb_read8(wNPCDuelDeckID_ADDR);
+	const uint8_t *entry = rom_ptr(NPC_DUEL_CONFIGURATIONS_BANK, NPC_DUEL_CONFIGURATIONS_ADDR);
+	for (;;) {
+		a = entry[0];
+		if (a == 0xFFu) {
+			f = 0xC0u;
+			hl = (uint16_t)(NPC_DUEL_CONFIGURATIONS_ADDR + (uint16_t)(entry - rom_ptr(NPC_DUEL_CONFIGURATIONS_BANK, NPC_DUEL_CONFIGURATIONS_ADDR)) + 1u);
+			break;
+		}
+		if (a == deck_id) {
+			gb_write8(wOpponentPortrait_ADDR, entry[1]);
+			gb_write8(wOpponentName_ADDR, entry[2]);
+			gb_write8((uint16_t)(wOpponentName_ADDR + 1u), entry[3]);
+			a = entry[5];
+			gb_write8(wDuelTheme_ADDR, a);
+			f = 0x90u;
+			hl = (uint16_t)(NPC_DUEL_CONFIGURATIONS_ADDR + (uint16_t)(entry - rom_ptr(NPC_DUEL_CONFIGURATIONS_BANK, NPC_DUEL_CONFIGURATIONS_ADDR)));
+			break;
+		}
+		entry += 10;
+	}
+	return (_GetChallengeMachineDuelConfigurationsResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory _GetChallengeMachineDuelConfigurations */

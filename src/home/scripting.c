@@ -202,6 +202,9 @@ static uint8_t adc_zero_flags(uint8_t old, uint8_t result, uint8_t carry)
 #define EVENT_BEAT_GENE 0x0Eu
 #define EVENT_BEAT_MITCH 0x0Fu
 #define EVENT_MEDAL_COUNT 0x2Eu
+
+#include "home/scripting.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1466,3 +1469,18 @@ TryGiveMedalPCPacksResult TryGiveMedalPCPacks(uint8_t b, uint8_t c, uint8_t d, u
 	return (TryGiveMedalPCPacksResult){saved_a, saved_f, b, c, d, e, hl};
 }
 /* <<< factory TryGiveMedalPCPacks */
+
+/* >>> factory GetByteAfterCall */
+/* scripting.asm:273-286. `ld hl, sp+4` reads the caller's caller's return
+ * address (the byte after that call site's own `call` instruction), an
+ * explicit stand-in per Func_2057's established sp-relative-as-parameter
+ * convention: hl carries that address value. The routine's only real
+ * effect other than reading it (advancing the stack-resident copy by one)
+ * lands in the harness's own reserved $CF00-$CFFF call frame and is not
+ * independently observable; future callers derive the advanced pointer
+ * as hl+1 inline. */
+uint8_t GetByteAfterCall(uint16_t hl)
+{
+	return gb_read8(hl);
+}
+/* <<< factory GetByteAfterCall */

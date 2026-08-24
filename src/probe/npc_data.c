@@ -68,6 +68,14 @@ static void adapt_SetNPCDeckIDAndDuelTheme(ProbeState *s)
 }
 /* <<< factory SetNPCDeckIDAndDuelTheme */
 
+/* >>> factory _GetChallengeMachineDuelConfigurations */
+static void adapt__GetChallengeMachineDuelConfigurations(ProbeState *s)
+{
+	_GetChallengeMachineDuelConfigurationsResult r = _GetChallengeMachineDuelConfigurations(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory _GetChallengeMachineDuelConfigurations */
+
 const ProbeEntry probe_entries_npc_data[] = {
 	{ "GetNPCHeaderPointer", adapt_GetNPCHeaderPointer },
 	{ "SetNPCOpponentNameAndPortrait", adapt_SetNPCOpponentNameAndPortrait },
@@ -75,5 +83,6 @@ const ProbeEntry probe_entries_npc_data[] = {
 	{ "LoadNPCSpriteData", adapt_LoadNPCSpriteData },
 	{ "_GetNPCDuelConfigurations", adapt__GetNPCDuelConfigurations },
 	{ "SetNPCDeckIDAndDuelTheme", adapt_SetNPCDeckIDAndDuelTheme },
+	{ "_GetChallengeMachineDuelConfigurations", adapt__GetChallengeMachineDuelConfigurations },
 	{ NULL, NULL },
 };

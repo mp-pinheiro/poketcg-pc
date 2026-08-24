@@ -1089,6 +1089,17 @@ CASES["TryGiveMedalPCPacks"] = [
 ]
 # <<< factory TryGiveMedalPCPacks
 
+# >>> factory GetByteAfterCall
+CONTRACT["GetByteAfterCall"] = {"compare": ("a",), "preserve": ()}
+CASES["GetByteAfterCall"] = [
+    {"hl": 0x0000},
+    dict(POISON,
+         oracle=False,
+         why="hl stands in for the caller's caller's return address at sp+4, per Func_2057's established convention; a live isolated call can only supply the harness's own zeroed $CF00-$CFFF reserved frame there (never these poison bytes), so a non-zero address is asm-derived rather than oracle-run.",
+         expect_regs={"a": 0xAA}),
+]
+# <<< factory GetByteAfterCall
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1610,3 +1621,6 @@ MUTATIONS["LoadOverworld"] = {"source_symbol": "LoadOverworld", "before": "(void
 # >>> factory-mutation TryGiveMedalPCPacks
 MUTATIONS["TryGiveMedalPCPacks"] = {"source_symbol": "TryGiveMedalPCPacks", "before": "medal_count = (uint8_t)(medal_count + 1u);", "after": "medal_count = (uint8_t)(medal_count + 2u);", "case_ids": ["TryGiveMedalPCPacks-0", "TryGiveMedalPCPacks-1"]}
 # <<< factory-mutation TryGiveMedalPCPacks
+# >>> factory-mutation GetByteAfterCall
+MUTATIONS["GetByteAfterCall"] = {"source_symbol": "GetByteAfterCall", "before": "return gb_read8(hl);", "after": "return gb_read8((uint16_t)(hl + 1u));", "case_ids": ["GetByteAfterCall-0"]}
+# <<< factory-mutation GetByteAfterCall
