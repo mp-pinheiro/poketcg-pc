@@ -616,6 +616,14 @@ CASES["PrintTotalCardCount"] = [
 ]
 # <<< factory PrintTotalCardCount
 
+# >>> factory RemoveCardFromDeckAndUpdateCount
+CONTRACT["RemoveCardFromDeckAndUpdateCount"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["RemoveCardFromDeckAndUpdateCount"] = [
+    {"e": 0x01},
+    dict(POISON, e=0x02),
+]
+# <<< factory RemoveCardFromDeckAndUpdateCount
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -828,3 +836,6 @@ MUTATIONS["DrawDecksScreen"] = {"source_symbol": "DrawDecksScreen", "before": "\
 # >>> factory-mutation PrintTotalCardCount
 MUTATIONS["PrintTotalCardCount"] = {"source_symbol": "PrintTotalCardCount", "before": "uint8_t value = gb_read8(hl);\n\t\tsum = (uint8_t)(value + sum);", "after": "uint8_t value = gb_read8((uint16_t)(hl + 1u));\n\t\tsum = (uint8_t)(value + sum);", "case_ids": ["PrintTotalCardCount-0", "PrintTotalCardCount-1"]}
 # <<< factory-mutation PrintTotalCardCount
+# >>> factory-mutation RemoveCardFromDeckAndUpdateCount
+MUTATIONS["RemoveCardFromDeckAndUpdateCount"] = {"source_symbol": "RemoveCardFromDeckAndUpdateCount", "before": "\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};", "after": "\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.c, r.e, r.hl};", "case_ids": ["RemoveCardFromDeckAndUpdateCount-1"]}
+# <<< factory-mutation RemoveCardFromDeckAndUpdateCount

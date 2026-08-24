@@ -204,6 +204,8 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
 /* <<< factory statics */
 
 
@@ -1285,3 +1287,18 @@ void PrintTotalCardCount(uint8_t d, uint8_t e)
 	ProcessText(&hl);
 }
 /* <<< factory PrintTotalCardCount */
+
+/* >>> factory RemoveCardFromDeckAndUpdateCount */
+RemoveCardFromDeckAndUpdateCountResult RemoveCardFromDeckAndUpdateCount(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	RemoveCardFromDeckResult r = RemoveCardFromDeck(b, c, d, e, hl);
+	if (!(r.f & 0x10u)) {
+		return (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+	}
+	PrintCardTypeCounts();
+	PrintTotalCardCount(15u, 0u);
+	GetCountOfCardInCurDeckResult r2 = GetCountOfCardInCurDeck(r.e);
+	PrintNumberValueInCursorYPos(r2.a);
+	return (RemoveCardFromDeckAndUpdateCountResult){r2.a, r2.f, r.b, r.c, r2.d, r.e, r.hl};
+}
+/* <<< factory RemoveCardFromDeckAndUpdateCount */

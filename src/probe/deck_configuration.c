@@ -438,6 +438,14 @@ static void adapt_PrintTotalCardCount(ProbeState *s)
 }
 /* <<< factory PrintTotalCardCount */
 
+/* >>> factory RemoveCardFromDeckAndUpdateCount */
+static void adapt_RemoveCardFromDeckAndUpdateCount(ProbeState *s)
+{
+	RemoveCardFromDeckAndUpdateCountResult r = RemoveCardFromDeckAndUpdateCount(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory RemoveCardFromDeckAndUpdateCount */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -490,5 +498,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AppendDeckName", adapt_AppendDeckName },
 	{ "DrawDecksScreen", adapt_DrawDecksScreen },
 	{ "PrintTotalCardCount", adapt_PrintTotalCardCount },
+	{ "RemoveCardFromDeckAndUpdateCount", adapt_RemoveCardFromDeckAndUpdateCount },
 	{ NULL, NULL },
 };
