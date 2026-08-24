@@ -169,11 +169,13 @@ uint8_t gb_read8(uint16_t addr)
 		return g_pal[0x40u + (g_io[0x6A] & 0x3Fu)];
 	/* JOYP ($FF00): the stored byte only ever holds the two selection bits a
 	 * routine wrote (P14/P15); the input nibble is synthesized from g_keys on
-	 * every read, matching hardware's active-low matrix. */
+	 * every read, matching hardware's active-low matrix. Neither group
+	 * selected (sel == $30) still floats the low nibble high, exactly like
+	 * either group selected with no keys held -- PyBoy returns $FF there, not
+	 * the raw select bits, and SGB detection protocols (DetectSGB) rely on
+	 * that floating-high nibble while both P14/P15 sit deselected. */
 	if (addr == 0xFF00u) {
 		uint8_t sel = (uint8_t)(*gb_ptr(addr) & 0x30u);
-		if (sel == 0x30u)
-			return sel;
 		uint8_t low = 0x0Fu;
 		if (!(sel & 0x10u)) /* P14 low: d-pad */
 			low &= (uint8_t)~(g_keys >> 4);
