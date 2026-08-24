@@ -861,6 +861,8 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/card_data.h"
 #include "generated/hram.h"
 #define V0_TILES1 0x8800u
+
+#include "home/trainer_cards.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4908,3 +4910,11 @@ void LoadSelectedCardGfx(void)
 	FlushAllPalettesOrSendPal23Packet();
 }
 /* <<< factory LoadSelectedCardGfx */
+
+/* >>> factory AIProcessHandTrainerCards */
+AIProcessHandTrainerCardsWrapResult AIProcessHandTrainerCards(uint8_t a)
+{
+	AIProcessHandTrainerCardsResult r = _AIProcessHandTrainerCards(a);
+	return (AIProcessHandTrainerCardsWrapResult){r.a, r.f};
+}
+/* <<< factory AIProcessHandTrainerCards */

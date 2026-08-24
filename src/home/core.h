@@ -806,4 +806,8 @@ OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(vo
 /* >>> factory LoadSelectedCardGfx */
 void LoadSelectedCardGfx(void);
 /* <<< factory LoadSelectedCardGfx */
+/* >>> factory AIProcessHandTrainerCards */
+typedef struct { uint8_t a; uint8_t f; } AIProcessHandTrainerCardsWrapResult;
+AIProcessHandTrainerCardsWrapResult AIProcessHandTrainerCards(uint8_t a);
+/* <<< factory AIProcessHandTrainerCards */
 #endif

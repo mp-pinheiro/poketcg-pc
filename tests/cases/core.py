@@ -2707,6 +2707,14 @@ CASES["LoadSelectedCardGfx"] = [
 ]
 # <<< factory LoadSelectedCardGfx
 
+# >>> factory AIProcessHandTrainerCards
+CONTRACT["AIProcessHandTrainerCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIProcessHandTrainerCards"] = [
+    {"a": 0x00},
+    dict(POISON, a=0xAA),
+]
+# <<< factory AIProcessHandTrainerCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3878,3 +3886,11 @@ MUTATIONS["LoadSelectedCardGfx"] = {
     "case_ids": ["LoadSelectedCardGfx-0", "LoadSelectedCardGfx-1"],
 }
 # <<< factory-mutation LoadSelectedCardGfx
+# >>> factory-mutation AIProcessHandTrainerCards
+MUTATIONS["AIProcessHandTrainerCards"] = {
+    "source_symbol": "AIProcessHandTrainerCards",
+    "before": "\treturn (AIProcessHandTrainerCardsWrapResult){r.a, r.f};",
+    "after": "\treturn (AIProcessHandTrainerCardsWrapResult){r.a, (uint8_t)(r.f ^ 1u)};",
+    "case_ids": ["AIProcessHandTrainerCards-0", "AIProcessHandTrainerCards-1"],
+}
+# <<< factory-mutation AIProcessHandTrainerCards

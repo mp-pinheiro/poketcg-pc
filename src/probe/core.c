@@ -1756,6 +1756,15 @@ static void adapt_LoadSelectedCardGfx(ProbeState *s)
 }
 /* <<< factory LoadSelectedCardGfx */
 
+/* >>> factory AIProcessHandTrainerCards */
+static void adapt_AIProcessHandTrainerCards(ProbeState *s)
+{
+	AIProcessHandTrainerCardsWrapResult r = AIProcessHandTrainerCards(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIProcessHandTrainerCards */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1966,5 +1975,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_6b15", adapt_OppAction_6b15 },
 	{ "OppAction_ExecutePokemonPowerEffect", adapt_OppAction_ExecutePokemonPowerEffect },
 	{ "LoadSelectedCardGfx", adapt_LoadSelectedCardGfx },
+	{ "AIProcessHandTrainerCards", adapt_AIProcessHandTrainerCards },
 	{ NULL, NULL },
 };
