@@ -53,6 +53,26 @@ CASES["LoadScene_LoadSGBPacket"] = [
 ]
 # <<< factory LoadScene_LoadSGBPacket
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wConsole = 0xCAB4
+wSceneSGBPacketPtr = 0xD620
+# <<< factory-cases-statics
+
+# >>> factory LoadScene_LoadCompressedSGBPacket
+CONTRACT["LoadScene_LoadCompressedSGBPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LoadScene_LoadCompressedSGBPacket"] = [
+    {"a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x2468,
+     "wram": {wConsole: b"\x00", wSceneSGBPacketPtr: b"\x00\x00"}, "read": {wConsole: 1},
+     "expect_regs": {"a": 0x00, "f": 0x70}},
+    {"a": 0x66, "f": 0x10, "b": 0x77, "c": 0x88, "d": 0x99, "e": 0xAA, "hl": 0x1357,
+     "wram": {wConsole: b"\x01", wSceneSGBPacketPtr: b"\x00\x00"}, "read": {wConsole: 1, wSceneSGBPacketPtr: 2},
+     "expect_regs": {"a": 0x00, "f": 0x80}},
+    dict(POISON, wram={wConsole: b"\x00", wSceneSGBPacketPtr: b"\x00\x00"}, read={wConsole: 1},
+         expect_regs={"a": 0x00, "f": 0x70}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory LoadScene_LoadCompressedSGBPacket
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -66,3 +86,11 @@ MUTATIONS["_DrawPortrait"] = {"source_symbol": "_DrawPortrait", "before": "wCurT
 # >>> factory-mutation LoadScene_LoadSGBPacket
 MUTATIONS["LoadScene_LoadSGBPacket"] = {"source_symbol": "LoadScene_LoadSGBPacket", "before": "\tif (console != CONSOLE_SGB)", "after": "\tif (console == CONSOLE_SGB)", "case_ids": ["LoadScene_LoadSGBPacket-0", "LoadScene_LoadSGBPacket-1", "LoadScene_LoadSGBPacket-2"]}
 # <<< factory-mutation LoadScene_LoadSGBPacket
+# >>> factory-mutation LoadScene_LoadCompressedSGBPacket
+MUTATIONS["LoadScene_LoadCompressedSGBPacket"] = {
+    "source_symbol": "LoadScene_LoadCompressedSGBPacket",
+    "before": "\tif (console != CONSOLE_SGB)\n\t\treturn (LoadScene_LoadCompressedSGBPacketResult){console, cmp_f, b, c, d, e, hl};",
+    "after": "\tif (console == CONSOLE_SGB)\n\t\treturn (LoadScene_LoadCompressedSGBPacketResult){console, cmp_f, b, c, d, e, hl};",
+    "case_ids": ["LoadScene_LoadCompressedSGBPacket-0", "LoadScene_LoadCompressedSGBPacket-1"],
+}
+# <<< factory-mutation LoadScene_LoadCompressedSGBPacket

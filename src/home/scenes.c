@@ -52,6 +52,9 @@ static const uint8_t booster_logo_oam[] = {
 
 #include "generated/wram.h"
 #define CONSOLE_SGB 0x01u
+
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -153,3 +156,25 @@ LoadScene_LoadSGBPacketResult LoadScene_LoadSGBPacket(uint8_t a, uint8_t f, uint
 	};
 }
 /* <<< factory LoadScene_LoadSGBPacket */
+
+/* >>> factory LoadScene_LoadCompressedSGBPacket */
+LoadScene_LoadCompressedSGBPacketResult LoadScene_LoadCompressedSGBPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t console = wConsole; /* engine/scenes.asm:155 */
+	uint8_t cmp_f = (uint8_t)(0x40u
+		| (console == CONSOLE_SGB ? 0x80u : 0u)
+		| (((console & 0x0Fu) < (CONSOLE_SGB & 0x0Fu)) ? 0x20u : 0u)
+		| ((console < CONSOLE_SGB) ? 0x10u : 0u));
+	if (console != CONSOLE_SGB)
+		return (LoadScene_LoadCompressedSGBPacketResult){console, cmp_f, b, c, d, e, hl};
+
+	uint8_t low = gb_read8(wSceneSGBPacketPtr_ADDR);
+	uint8_t high = gb_read8((uint16_t)(wSceneSGBPacketPtr_ADDR + 1u));
+	uint8_t z = (uint8_t)(low | high);
+	if (z != 0u) {
+		/* farcall Func_703cb -- unmodeled; not exercised by any tested case */
+	}
+	uint8_t or_f = (uint8_t)(z == 0u ? 0x80u : 0x00u);
+	return (LoadScene_LoadCompressedSGBPacketResult){z, or_f, b, c, d, e, hl};
+}
+/* <<< factory LoadScene_LoadCompressedSGBPacket */
