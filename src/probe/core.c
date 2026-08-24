@@ -1467,6 +1467,13 @@ static void adapt_CheckEnergyNeededForAttack(ProbeState *s)
 }
 /* <<< factory CheckEnergyNeededForAttack */
 
+/* >>> factory CreateDamageCharSprite */
+static void adapt_CreateDamageCharSprite(ProbeState *s)
+{
+	CreateDamageCharSprite(s->a, s->f, (uint16_t)(s->d << 8 | s->e));
+}
+/* <<< factory CreateDamageCharSprite */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1641,5 +1648,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayDuelistTurnScreen", adapt_DisplayDuelistTurnScreen },
 	{ "DrawDuelistPortraitsAndNames", adapt_DrawDuelistPortraitsAndNames },
 	{ "CheckEnergyNeededForAttack", adapt_CheckEnergyNeededForAttack },
+	{ "CreateDamageCharSprite", adapt_CreateDamageCharSprite },
 	{ NULL, NULL },
 };

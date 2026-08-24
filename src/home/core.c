@@ -613,6 +613,17 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/sprite_animations.h"
+#include "home/load_animation.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SPRITE_ANIM_COORD_X 0x02u
+#define SPRITE_ANIM_COORD_Y 0x03u
+#define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
+#define SPRITE_ANIM_FLAG_UNSKIPPABLE (1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)
+#define SPRITE_DUEL_DAMAGE 0x2Eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3719,3 +3730,28 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 	return (CheckEnergyNeededForAttackResult){a, final_f, b, c, d, e, hl};
 }
 /* <<< factory CheckEnergyNeededForAttack */
+
+/* >>> factory CreateDamageCharSprite */
+void CreateDamageCharSprite(uint8_t a, uint8_t f, uint16_t de)
+{
+	uint8_t saved_a = a;
+	uint8_t saved_f = f;
+	(void)CreateSpriteAndAnimBufferEntry(SPRITE_DUEL_DAMAGE, f);
+	gb_write8(de, wWhichSprite);
+	wAnimFlags = SPRITE_ANIM_FLAG_UNSKIPPABLE;
+	uint16_t hl = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+	AnimCoordsResult coords = GetAnimCoordsAndFlags();
+
+	static const int8_t relative_x_pos[6] = { -16, -8, 0, 8, -8, -16 };
+	uint8_t idx = wDamageCharIndex;
+	uint8_t rel = (uint8_t)relative_x_pos[idx];
+	uint8_t x = (uint8_t)(rel + coords.b);
+	gb_write8(hl, x);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(hl, coords.c);
+
+	uint8_t c = wDamageCharAnimDelay;
+	Func_12ac9(saved_a, c);
+	(void)saved_f;
+}
+/* <<< factory CreateDamageCharSprite */

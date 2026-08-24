@@ -1,0 +1,9 @@
+{
+  "fn": "DeckNamingScreen_DrawCursor",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DeckNamingScreen_DrawCursor\", \"registers\": {\"a\": 17, \"b\": 1, \"c\": 4, \"d\": 34, \"e\": 17, \"f\": 0, \"hl\": 28698, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"00\", \"52905\": \"05\", \"53254\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DeckNamingScreen_DrawCursor\", \"mismatches\": {\"c\": [4, 6], \"hl\": [28698, 28701]}}\n",
+  "restored": "{\"fn\": \"DeckNamingScreen_DrawCursor\", \"registers\": {\"a\": 17, \"b\": 1, \"c\": 4, \"d\": 34, \"e\": 17, \"f\": 0, \"hl\": 28698, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52900\": \"00\", \"52905\": \"05\", \"53254\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

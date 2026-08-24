@@ -2061,6 +2061,18 @@ CASES["CheckEnergyNeededForAttack"] = [
 ]
 # <<< factory CheckEnergyNeededForAttack
 
+# >>> factory CreateDamageCharSprite
+CONTRACT["CreateDamageCharSprite"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["CreateDamageCharSprite"] = [
+    {"a": 1, "f": 0, "d": 0xC1, "e": 0x00,
+     "wram": {0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B7: b"\x02", 0xD4B8: b"\x05", 0xC100: b"\x00"},
+     "read": {0xC100: 1, 0xD42B: 1}},
+    dict(POISON, d=0xC1, e=0x00,
+         wram={0xFF80: b"\x07", 0xD618: b"\x00", 0xD4B7: b"\x02", 0xD4B8: b"\x05", 0xC100: b"\x00"},
+         read={0xC100: 1, 0xD42B: 1}),
+]
+# <<< factory CreateDamageCharSprite
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3089,3 +3101,6 @@ MUTATIONS["DrawDuelistPortraitsAndNames"] = {"source_symbol": "DrawDuelistPortra
 # >>> factory-mutation CheckEnergyNeededForAttack
 MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededForAttack", "before": "uint8_t e = wSelectedAttack;\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "after": "uint8_t e = (uint8_t)(wSelectedAttack + 1u);\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "case_ids": ["CheckEnergyNeededForAttack-0"]}
 # <<< factory-mutation CheckEnergyNeededForAttack
+# >>> factory-mutation CreateDamageCharSprite
+MUTATIONS["CreateDamageCharSprite"] = {"source_symbol": "CreateDamageCharSprite", "before": "gb_write8(de, wWhichSprite);", "after": "gb_write8(de, (uint8_t)(wWhichSprite + 1u));", "case_ids": ["CreateDamageCharSprite-0"]}
+# <<< factory-mutation CreateDamageCharSprite

@@ -114,6 +114,19 @@ CASES["PlayerNamingScreen_DrawCursor"] = [
 ]
 # <<< factory PlayerNamingScreen_DrawCursor
 
+# >>> factory DeckNamingScreen_DrawCursor
+CONTRACT["DeckNamingScreen_DrawCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
+CASES["DeckNamingScreen_DrawCursor"] = [
+    {"a": 0x11, "d": 0x22, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+     "expect_regs": {"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x22, "e": 0x11}},
+    {"a": 0x37, "d": 0x44, "wram": {0xD006: b"\x01", 0xCEA4: b"\x00", 0xCEA9: b"\x05"},
+     "expect_regs": {"a": 0x37, "f": 0x00, "b": 0x01, "c": 0x0E, "d": 0x44, "e": 0x37}},
+    dict(POISON, a=0x11,
+         wram={0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05"},
+         expect_regs={"a": 0x11, "f": 0x00, "b": 0x01, "c": 0x06, "d": 0xDD, "e": 0x11}),
+]
+# <<< factory DeckNamingScreen_DrawCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -170,3 +183,6 @@ MUTATIONS["DeckNamingScreen_AdjustCursorPosition"] = {"source_symbol": "DeckNami
 # >>> factory-mutation PlayerNamingScreen_DrawCursor
 MUTATIONS["PlayerNamingScreen_DrawCursor"] = {"source_symbol": "PlayerNamingScreen_DrawCursor", "before": "uint8_t tile = gb_read8(char_info++);", "after": "uint8_t tile = gb_read8((uint16_t)(char_info + 1u));", "case_ids": ["PlayerNamingScreen_DrawCursor-0"]}
 # <<< factory-mutation PlayerNamingScreen_DrawCursor
+# >>> factory-mutation DeckNamingScreen_DrawCursor
+MUTATIONS["DeckNamingScreen_DrawCursor"] = {"source_symbol": "DeckNamingScreen_DrawCursor", "before": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));", "after": "uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | (uint16_t)(gb_read8(wNamingScreenCursorY_ADDR) + 1u)));", "case_ids": ["DeckNamingScreen_DrawCursor-0"]}
+# <<< factory-mutation DeckNamingScreen_DrawCursor

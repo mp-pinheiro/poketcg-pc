@@ -204,3 +204,18 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uin
 	return (PlayerNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
 }
 /* <<< factory PlayerNamingScreen_DrawCursor */
+
+/* >>> factory DeckNamingScreen_DrawCursor */
+DeckNamingScreen_DrawCursorResult DeckNamingScreen_DrawCursor(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_a = a;
+	uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
+	gb_write8(0x2000u, 0x06u);
+	uint8_t tile = gb_read8(char_info++);
+	c = tile;
+	b = (uint8_t)(gb_read8(char_info) - 1u);
+	DeckNamingScreen_AdjustCursorPosition(saved_a);
+	WriteByteToBGMap0(saved_a, b, c);
+	return (DeckNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
+}
+/* <<< factory DeckNamingScreen_DrawCursor */
