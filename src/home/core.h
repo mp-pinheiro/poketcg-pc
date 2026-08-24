@@ -769,4 +769,7 @@ void DisplayUsePokemonPowerScreen(void);
 /* >>> factory InitAndPrintPlayAreaCardInformationAndLocation */
 void InitAndPrintPlayAreaCardInformationAndLocation(void);
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */
+/* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void);
+/* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
 #endif

@@ -796,6 +796,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4653,3 +4658,12 @@ void InitAndPrintPlayAreaCardInformationAndLocation(void)
 	PrintPlayAreaCardInformationAndLocation();
 }
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */
+
+/* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void)
+{
+	InitAndPrintPlayAreaCardInformationAndLocation();
+	uint8_t e = wCurPlayAreaY;
+	(void)SetCursorParametersForTextBox_Default(0u, e);
+}
+/* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */

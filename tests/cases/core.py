@@ -1552,6 +1552,20 @@ DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
 DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
 DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wConsole = 0xCAB4
+DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2496,6 +2510,34 @@ CASES["InitAndPrintPlayAreaCardInformationAndLocation"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory InitAndPrintPlayAreaCardInformationAndLocation
+
+# >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
+CONTRACT["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"compare": (), "preserve": ()}
+CASES["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = [
+    {"keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
+     "hram": {hTempPlayAreaLocation_ff9d: b"\x00"},
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
+              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
+     "read": {0xCD11: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
+         hram={hTempPlayAreaLocation_ff9d: b"\x00"},
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
+               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
+         read={0xCD11: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3613,3 +3655,6 @@ MUTATIONS["DisplayUsePokemonPowerScreen"] = {"source_symbol": "DisplayUsePokemon
 # >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation
 MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation", "before": "\twCurPlayAreaSlot = a;", "after": "\twCurPlayAreaSlot = (uint8_t)(a + 1u);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation-0", "InitAndPrintPlayAreaCardInformationAndLocation-1"]}
 # <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation
+# >>> factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox
+MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"source_symbol": "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", "before": "\t(void)SetCursorParametersForTextBox_Default(0u, e);", "after": "\t(void)SetCursorParametersForTextBox_Default(1u, e);", "case_ids": ["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-0", "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox-1"]}
+# <<< factory-mutation InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox

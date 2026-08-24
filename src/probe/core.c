@@ -1672,6 +1672,14 @@ static void adapt_InitAndPrintPlayAreaCardInformationAndLocation(ProbeState *s)
 }
 /* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */
 
+/* >>> factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+static void adapt_InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(ProbeState *s)
+{
+	(void)s;
+	InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
+}
+/* <<< factory InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1872,5 +1880,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPlayAreaCardInformationAndLocation", adapt_PrintPlayAreaCardInformationAndLocation },
 	{ "DisplayUsePokemonPowerScreen", adapt_DisplayUsePokemonPowerScreen },
 	{ "InitAndPrintPlayAreaCardInformationAndLocation", adapt_InitAndPrintPlayAreaCardInformationAndLocation },
+	{ "InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox", adapt_InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox },
 	{ NULL, NULL },
 };
