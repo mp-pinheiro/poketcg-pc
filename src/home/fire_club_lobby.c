@@ -12,6 +12,9 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 0x6D5Eu
+
+#include "mem.h"
+#define AFTER_DUEL_TABLE_830 0x6D50u
 /* <<< factory statics */
 
 /* >>> factory FindExtraInteractableObjects */
@@ -50,3 +53,10 @@ FireClubPressedAResult FireClubPressedA(void)
 	return (FireClubPressedAResult){r.hl, r.b, r.c, r.d, r.e, r.carry};
 }
 /* <<< factory FireClubPressedA */
+
+/* >>> factory FireClubLobbyAfterDuel */
+FindEndOfDuelScriptResult FireClubLobbyAfterDuel(void)
+{
+	return FindEndOfDuelScript(AFTER_DUEL_TABLE_830);
+}
+/* <<< factory FireClubLobbyAfterDuel */

@@ -163,6 +163,16 @@ CASES["PlayerNamingScreen_DrawVisibleCursor"] = [
 ]
 # <<< factory PlayerNamingScreen_DrawVisibleCursor
 
+# >>> factory PlayerNamingScreen_CheckButtonState
+CONTRACT["PlayerNamingScreen_CheckButtonState"] = {"compare": ("a",), "preserve": ()}
+CASES["PlayerNamingScreen_CheckButtonState"] = [
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}},
+    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x00", 0xCEA3: b"\x00",
+                       0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"}),
+]
+# <<< factory PlayerNamingScreen_CheckButtonState
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -234,3 +244,6 @@ MUTATIONS["PlayerNamingScreen_DrawInvisibleCursor"] = {"source_symbol": "PlayerN
 # >>> factory-mutation PlayerNamingScreen_DrawVisibleCursor
 MUTATIONS["PlayerNamingScreen_DrawVisibleCursor"] = {"source_symbol": "PlayerNamingScreen_DrawVisibleCursor", "before": "uint8_t a = gb_read8(wVisibleCursorTile_ADDR);\n\treturn PlayerNamingScreen_DrawCursor(a, f, b, c, d, e, hl);", "after": "uint8_t a = (uint8_t)(gb_read8(wVisibleCursorTile_ADDR) + 1u);\n\treturn PlayerNamingScreen_DrawCursor(a, f, b, c, d, e, hl);", "case_ids": ["PlayerNamingScreen_DrawVisibleCursor-0"]}
 # <<< factory-mutation PlayerNamingScreen_DrawVisibleCursor
+# >>> factory-mutation PlayerNamingScreen_CheckButtonState
+MUTATIONS["PlayerNamingScreen_CheckButtonState"] = {"source_symbol": "PlayerNamingScreen_CheckButtonState", "before": "uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);", "after": "uint8_t vis_tile = (uint8_t)(gb_read8(wVisibleCursorTile_ADDR) + 1u);", "case_ids": ["PlayerNamingScreen_CheckButtonState-0"]}
+# <<< factory-mutation PlayerNamingScreen_CheckButtonState

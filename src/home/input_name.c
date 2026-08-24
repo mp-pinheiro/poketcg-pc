@@ -45,6 +45,22 @@
 #include "home/input_name.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/input_name.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define B_CURSOR_BLINK_PERIOD_800 4u
+#define CURSOR_BLINK_PERIOD_MASK_800 0x0Fu
+#define MENU_CANCEL_800 0xFFu
+#define SFX_CURSOR_800 0x01u
+#define PADF_DOWN_800 0x80u
+#define PADF_UP_800 0x40u
+#define PADF_LEFT_800 0x20u
+#define PADF_RIGHT_800 0x10u
+#define PAD_A_800 0x01u
+#define PAD_B_800 0x02u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -255,3 +271,131 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawVisibleCursor(uint8_t
 	return PlayerNamingScreen_DrawCursor(a, f, b, c, d, e, hl);
 }
 /* <<< factory PlayerNamingScreen_DrawVisibleCursor */
+
+/* >>> factory PlayerNamingScreen_CheckButtonState */
+PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void)
+{
+	gb_write8(wMenuInputSFX_ADDR, 0u);
+	uint8_t dpad = gb_read8(hDPadHeld_ADDR);
+	uint8_t newX = 0u, newY = 0u;
+	int did_move = 0;
+
+	if (dpad != 0u) {
+		uint8_t b = dpad;
+		uint8_t c = gb_read8(wNamingScreenKeyboardHeight_ADDR);
+		uint8_t h = gb_read8(wNamingScreenCursorX_ADDR);
+		uint8_t l = gb_read8(wNamingScreenCursorY_ADDR);
+		uint8_t a = l;
+
+		if (b & PADF_UP_800) {
+			a = (uint8_t)(a - 1u);
+			if (a & 0x80u)
+				a = (uint8_t)(c - 1u);
+			newY = a;
+			newX = h;
+			did_move = 1;
+		} else if (b & PADF_DOWN_800) {
+			a = (uint8_t)(a + 1u);
+			if (a >= c)
+				a = 0u;
+			newY = a;
+			newX = h;
+			did_move = 1;
+		} else {
+			c = gb_read8(wNamingScreenNumColumns_ADDR);
+			a = h;
+			if (b & PADF_LEFT_800) {
+				uint8_t saved = a;
+				if (l == 6u) {
+					uint16_t hl_in = (uint16_t)(((uint16_t)h << 8) | l);
+					uint16_t base = PlayerNamingScreen_GetCharInfoFromPos(hl_in);
+					uint8_t entry = gb_read8((uint16_t)(base + 5u));
+					uint8_t sub = (uint8_t)(entry - 1u);
+					a = (uint8_t)(saved - sub);
+					if (a == 0xFFu) {
+						newX = (uint8_t)(c - 2u);
+						did_move = 1;
+						goto done_dir;
+					}
+					if (a == 0xFEu) {
+						newX = (uint8_t)(c - 3u);
+						did_move = 1;
+						goto done_dir;
+					}
+				} else {
+					a = saved;
+				}
+				a = (uint8_t)(a - 1u);
+				if (a & 0x80u)
+					a = (uint8_t)(c - 1u);
+				newX = a;
+				did_move = 1;
+			} else if (b & PADF_RIGHT_800) {
+				uint8_t saved = a;
+				if (l == 6u) {
+					uint16_t hl_in = (uint16_t)(((uint16_t)h << 8) | l);
+					uint16_t base = PlayerNamingScreen_GetCharInfoFromPos(hl_in);
+					uint8_t entry = gb_read8((uint16_t)(base + 4u));
+					uint8_t sub = (uint8_t)(entry - 1u);
+					a = (uint8_t)(saved + sub);
+				} else {
+					a = saved;
+				}
+				a = (uint8_t)(a + 1u);
+				if (a < c) {
+					newX = a;
+				} else {
+					uint8_t c1 = (uint8_t)(c + 1u);
+					if (a < c1) {
+						newX = 0u;
+					} else {
+						uint8_t c2 = (uint8_t)(c1 + 1u);
+						newX = (a < c2) ? 1u : 2u;
+					}
+				}
+				did_move = 1;
+			}
+		}
+	}
+
+done_dir:
+	if (did_move) {
+		uint16_t hl_pos = (uint16_t)(((uint16_t)newX << 8) | newY);
+		uint16_t base2 = PlayerNamingScreen_GetCharInfoFromPos(hl_pos);
+		uint16_t entry_addr = (uint16_t)(base2 + 3u);
+		if (gb_read8(wd009_ADDR) == 2u)
+			entry_addr = (uint16_t)(entry_addr + 2u);
+		uint8_t d_reg = gb_read8(entry_addr);
+
+		(void)PlayerNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+
+		gb_write8(wNamingScreenCursorY_ADDR, newY);
+		gb_write8(wNamingScreenCursorX_ADDR, newX);
+		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+
+		if (d_reg == 6u)
+			return PlayerNamingScreen_CheckButtonState();
+		gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR_800);
+	}
+
+	{
+		uint8_t keys = gb_read8(hKeysPressed_ADDR);
+		if (keys & (PAD_A_800 | PAD_B_800)) {
+			uint8_t press_a = (keys & PAD_A_800) ? 0u : MENU_CANCEL_800;
+			(void)PlaySFXConfirmOrCancel_Bank6(press_a);
+			return PlayerNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+		}
+		uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
+		if (sfx != 0u)
+			PlaySFX(sfx);
+
+		uint8_t old_blink = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
+		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, (uint8_t)(old_blink + 1u));
+		if ((old_blink & CURSOR_BLINK_PERIOD_MASK_800) != 0u)
+			return (PlayerNamingScreen_DrawCursorResult){old_blink, 0u, 0u, 0u, 0u, 0u, 0u};
+
+		uint8_t vis_tile = gb_read8(wVisibleCursorTile_ADDR);
+		return PlayerNamingScreen_DrawCursor(vis_tile, 0u, 0u, 0u, 0u, 0u, 0u);
+	}
+}
+/* <<< factory PlayerNamingScreen_CheckButtonState */

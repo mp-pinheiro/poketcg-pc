@@ -1100,6 +1100,14 @@ CASES["GetByteAfterCall"] = [
 ]
 # <<< factory GetByteAfterCall
 
+# >>> factory ScriptCommand_TryGiveMedalPCPacks
+CONTRACT["ScriptCommand_TryGiveMedalPCPacks"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ScriptCommand_TryGiveMedalPCPacks"] = [
+    {"wram": {0xD3D1: bytes([0xFF] * 24), 0xD3D2: bytes([0xFF] * 24)}},
+    dict(POISON, wram={0xD3D1: bytes(24), 0xD3D2: bytes(24)}),
+]
+# <<< factory ScriptCommand_TryGiveMedalPCPacks
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1624,3 +1632,6 @@ MUTATIONS["TryGiveMedalPCPacks"] = {"source_symbol": "TryGiveMedalPCPacks", "bef
 # >>> factory-mutation GetByteAfterCall
 MUTATIONS["GetByteAfterCall"] = {"source_symbol": "GetByteAfterCall", "before": "return gb_read8(hl);", "after": "return gb_read8((uint16_t)(hl + 1u));", "case_ids": ["GetByteAfterCall-0"]}
 # <<< factory-mutation GetByteAfterCall
+# >>> factory-mutation ScriptCommand_TryGiveMedalPCPacks
+MUTATIONS["ScriptCommand_TryGiveMedalPCPacks"] = {"source_symbol": "ScriptCommand_TryGiveMedalPCPacks", "before": "IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy1();", "after": "IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_TryGiveMedalPCPacks-0", "ScriptCommand_TryGiveMedalPCPacks-1"]}
+# <<< factory-mutation ScriptCommand_TryGiveMedalPCPacks

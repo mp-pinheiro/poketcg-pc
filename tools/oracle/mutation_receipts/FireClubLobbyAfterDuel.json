@@ -1,0 +1,9 @@
+{
+  "fn": "FireClubLobbyAfterDuel",
+  "case": "tests/cases/fire_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireClubLobbyAfterDuel\", \"registers\": {\"a\": 3, \"b\": 109, \"c\": 186, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 27987, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0019\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireClubLobbyAfterDuel\", \"mismatches\": {\"b\": [109, 206], \"c\": [186, 109], \"hl\": [27987, 27988]}}\n",
+  "restored": "{\"fn\": \"FireClubLobbyAfterDuel\", \"registers\": {\"a\": 3, \"b\": 109, \"c\": 186, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 27987, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0019\"}}, \"status\": \"PASS\"}\n"
+}

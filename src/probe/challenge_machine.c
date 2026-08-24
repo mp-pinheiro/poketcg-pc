@@ -124,6 +124,16 @@ static void adapt_ChallengeMachine_PrintScores(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_PrintScores */
 
+/* >>> factory ChallengeMachine_PrintOpponentName */
+static void adapt_ChallengeMachine_PrintOpponentName(ProbeState *s)
+{
+	ChallengeMachinePrintResult r = ChallengeMachine_PrintOpponentName(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->hl = r.hl;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory ChallengeMachine_PrintOpponentName */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -139,5 +149,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_DuelWon", adapt_ChallengeMachine_DuelWon },
 	{ "ChallengeMachine_GetOpponentNameAndDeck", adapt_ChallengeMachine_GetOpponentNameAndDeck },
 	{ "ChallengeMachine_PrintScores", adapt_ChallengeMachine_PrintScores },
+	{ "ChallengeMachine_PrintOpponentName", adapt_ChallengeMachine_PrintOpponentName },
 	{ NULL, NULL },
 };

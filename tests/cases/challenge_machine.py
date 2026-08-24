@@ -313,6 +313,14 @@ CASES["ChallengeMachine_PrintScores"] = [
 ]
 # <<< factory ChallengeMachine_PrintScores
 
+# >>> factory ChallengeMachine_PrintOpponentName
+CONTRACT["ChallengeMachine_PrintOpponentName"] = {"compare": ("d", "e", "hl"), "preserve": ()}
+CASES["ChallengeMachine_PrintOpponentName"] = [
+    {"wram": {0xD692: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 4},
+    dict(POISON, wram={0xD692: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=4),
+]
+# <<< factory ChallengeMachine_PrintOpponentName
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -387,3 +395,6 @@ MUTATIONS["ChallengeMachine_GetOpponentNameAndDeck"] = {"source_symbol": "Challe
 # >>> factory-mutation ChallengeMachine_PrintScores
 MUTATIONS["ChallengeMachine_PrintScores"] = {"source_symbol": "ChallengeMachine_PrintScores", "before": "if (de == 0u)\n\t\t\tbreak;", "after": "if (de == 1u)\n\t\t\tbreak;", "case_ids": ["ChallengeMachine_PrintScores-1"]}
 # <<< factory-mutation ChallengeMachine_PrintScores
+# >>> factory-mutation ChallengeMachine_PrintOpponentName
+MUTATIONS["ChallengeMachine_PrintOpponentName"] = {"source_symbol": "ChallengeMachine_PrintOpponentName", "before": "uint16_t hl2 = (uint16_t)(r1.hl + 2u);", "after": "uint16_t hl2 = (uint16_t)(r1.hl + 3u);", "case_ids": ["ChallengeMachine_PrintOpponentName-0"]}
+# <<< factory-mutation ChallengeMachine_PrintOpponentName

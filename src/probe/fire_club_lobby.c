@@ -29,8 +29,23 @@ static void adapt_FireClubPressedA(ProbeState *s)
 }
 /* <<< factory FireClubPressedA */
 
+/* >>> factory FireClubLobbyAfterDuel */
+static void adapt_FireClubLobbyAfterDuel(ProbeState *s)
+{
+	FindEndOfDuelScriptResult r = FireClubLobbyAfterDuel();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory FireClubLobbyAfterDuel */
+
 const ProbeEntry probe_entries_fire_club_lobby[] = {
 	{ "FindExtraInteractableObjects", adapt_FindExtraInteractableObjects },
 	{ "FireClubPressedA", adapt_FireClubPressedA },
+	{ "FireClubLobbyAfterDuel", adapt_FireClubLobbyAfterDuel },
 	{ NULL, NULL },
 };

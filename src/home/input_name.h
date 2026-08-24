@@ -51,4 +51,7 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawInvisibleCursor(uint8
 /* >>> factory PlayerNamingScreen_DrawVisibleCursor */
 PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawVisibleCursor(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PlayerNamingScreen_DrawVisibleCursor */
+/* >>> factory PlayerNamingScreen_CheckButtonState */
+PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void);
+/* <<< factory PlayerNamingScreen_CheckButtonState */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

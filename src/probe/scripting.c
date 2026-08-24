@@ -920,6 +920,20 @@ static void adapt_GetByteAfterCall(ProbeState *s)
 }
 /* <<< factory GetByteAfterCall */
 
+/* >>> factory ScriptCommand_TryGiveMedalPCPacks */
+static void adapt_ScriptCommand_TryGiveMedalPCPacks(ProbeState *s)
+{
+	ScriptCommand_TryGiveMedalPCPacksResult r = ScriptCommand_TryGiveMedalPCPacks(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_TryGiveMedalPCPacks */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1011,5 +1025,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "LoadOverworld", adapt_LoadOverworld },
 	{ "TryGiveMedalPCPacks", adapt_TryGiveMedalPCPacks },
 	{ "GetByteAfterCall", adapt_GetByteAfterCall },
+	{ "ScriptCommand_TryGiveMedalPCPacks", adapt_ScriptCommand_TryGiveMedalPCPacks },
 	{ NULL, NULL },
 };

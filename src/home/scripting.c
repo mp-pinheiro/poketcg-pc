@@ -1484,3 +1484,12 @@ uint8_t GetByteAfterCall(uint16_t hl)
 	return gb_read8(hl);
 }
 /* <<< factory GetByteAfterCall */
+
+/* >>> factory ScriptCommand_TryGiveMedalPCPacks */
+ScriptCommand_TryGiveMedalPCPacksResult ScriptCommand_TryGiveMedalPCPacks(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	TryGiveMedalPCPacksResult r1 = TryGiveMedalPCPacks(b, c, d, e, hl);
+	IncreaseScriptPointerResult r2 = IncreaseScriptPointerBy1();
+	return (ScriptCommand_TryGiveMedalPCPacksResult){r2.a, r2.f, r1.b, r2.c, r1.d, r1.e, r1.hl};
+}
+/* <<< factory ScriptCommand_TryGiveMedalPCPacks */

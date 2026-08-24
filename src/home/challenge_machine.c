@@ -96,6 +96,9 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "home/bg_map.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/challenge_machine.h"
+#include "mem.h"
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -437,3 +440,12 @@ void ChallengeMachine_PrintScores(uint16_t hl)
 	DisableSRAM();
 }
 /* <<< factory ChallengeMachine_PrintScores */
+
+/* >>> factory ChallengeMachine_PrintOpponentName */
+ChallengeMachinePrintResult ChallengeMachine_PrintOpponentName(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ChallengeMachine_GetOpponentNameAndDeckResult r1 = ChallengeMachine_GetOpponentNameAndDeck(f, b, c, d, e, hl);
+	uint16_t hl2 = (uint16_t)(r1.hl + 2u);
+	return ChallengeMachine_PrintText(hl2, r1.b, r1.c);
+}
+/* <<< factory ChallengeMachine_PrintOpponentName */
