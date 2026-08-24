@@ -21,6 +21,9 @@ CASES["AnimateRandomTitleScreenOrb"] = [
 
 # >>> factory-cases-statics
 wSequenceCmdPtr = 0xD631
+
+wSequenceCmdPtr = 0xD631
+wIntroSequencePalsNeedUpdate = 0xD634
 # <<< factory-cases-statics
 
 # >>> factory AdvanceIntroSequenceCmdPtr
@@ -118,6 +121,18 @@ CASES["IntroSequenceCmd_PlayTitleScreenMusic"] = [
 ]
 # <<< factory IntroSequenceCmd_PlayTitleScreenMusic
 
+# >>> factory IntroSequenceCmd_FadeOut
+CONTRACT["IntroSequenceCmd_FadeOut"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["IntroSequenceCmd_FadeOut"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00", wIntroSequencePalsNeedUpdate: b"\x00"},
+     "read": {wSequenceCmdPtr: 2, wIntroSequencePalsNeedUpdate: 1}},
+    {"wram": {wSequenceCmdPtr: b"\x00\x05", wIntroSequencePalsNeedUpdate: b"\x00"},
+     "read": {wSequenceCmdPtr: 2, wIntroSequencePalsNeedUpdate: 1}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00", wIntroSequencePalsNeedUpdate: b"\x00"},
+         read={wSequenceCmdPtr: 2, wIntroSequencePalsNeedUpdate: 1}),
+]
+# <<< factory IntroSequenceCmd_FadeOut
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -165,3 +180,6 @@ MUTATIONS["IntroSequenceCmd_SetOrbsCoordinates"] = {
 # >>> factory-mutation IntroSequenceCmd_PlayTitleScreenMusic
 MUTATIONS["IntroSequenceCmd_PlayTitleScreenMusic"] = {"source_symbol": "IntroSequenceCmd_PlayTitleScreenMusic", "before": "uint8_t exit_f = (uint8_t)((ptr_hi == 0u ? 0x80u : 0x00u) | 0x10u);", "after": "uint8_t exit_f = 0x10u;", "case_ids": ["IntroSequenceCmd_PlayTitleScreenMusic-0", "IntroSequenceCmd_PlayTitleScreenMusic-1"]}
 # <<< factory-mutation IntroSequenceCmd_PlayTitleScreenMusic
+# >>> factory-mutation IntroSequenceCmd_FadeOut
+MUTATIONS["IntroSequenceCmd_FadeOut"] = {"source_symbol": "IntroSequenceCmd_FadeOut", "before": "wIntroSequencePalsNeedUpdate = TRUE;", "after": "wIntroSequencePalsNeedUpdate = 0u;", "case_ids": ["IntroSequenceCmd_FadeOut-0", "IntroSequenceCmd_FadeOut-1"]}
+# <<< factory-mutation IntroSequenceCmd_FadeOut

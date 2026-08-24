@@ -54,6 +54,12 @@ static void UpdateSpriteAttributes(void)
 #include "generated/wram.h"
 #include "mem.h"
 #define MUSIC_TITLESCREEN 0x01u
+
+#include "home/intro_sequence_commands.h"
+#include "home/color.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define TRUE 0x01u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -232,3 +238,15 @@ IntroSequenceCmd_PlayTitleScreenMusicResult IntroSequenceCmd_PlayTitleScreenMusi
 	return (IntroSequenceCmd_PlayTitleScreenMusicResult){ptr_hi, exit_f};
 }
 /* <<< factory IntroSequenceCmd_PlayTitleScreenMusic */
+
+/* >>> factory IntroSequenceCmd_FadeOut */
+IntroSequenceCmd_FadeOutResult IntroSequenceCmd_FadeOut(void)
+{
+	Func_10d50();
+	wIntroSequencePalsNeedUpdate = TRUE;
+	AdvanceIntroSequenceCmdPtrBy2();
+	uint8_t ptr_hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t exit_f = (uint8_t)((ptr_hi == 0u ? 0x80u : 0x00u) | 0x10u);
+	return (IntroSequenceCmd_FadeOutResult){ptr_hi, exit_f};
+}
+/* <<< factory IntroSequenceCmd_FadeOut */

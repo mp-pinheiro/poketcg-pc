@@ -1,0 +1,9 @@
+{
+  "fn": "IntroSequenceCmd_FadeOut",
+  "case": "tests/cases/intro_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IntroSequenceCmd_FadeOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54833\": \"0200\", \"54836\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IntroSequenceCmd_FadeOut\", \"mismatches\": {\"bus\": {\"address\": 54836, \"reference\": \"020001\", \"native\": \"020000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54833, 2], [54836, 1]]}}}\n",
+  "restored": "{\"fn\": \"IntroSequenceCmd_FadeOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54833\": \"0200\", \"54836\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
