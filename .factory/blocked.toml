@@ -497,3 +497,18 @@ unblock = "same as Script_Nikki/Script_Tech1: port RunOverworldScript/the RST20 
 name = "Func_fc279"
 reason = "src/home/sfx.c:34 already defines `static void Func_fc279(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Music1_note/ExecuteNextSFXCommand above; after ExecuteNextSFXCommand was blocked, this fn became the next-scored `sfx`-basename routine and now itself permanently consumes that basename's per-call dedup slot ahead of its real, still-open siblings (Func_fc26c, SFX_end, Func_fc1cd, SFX_frequency, SFX_ApplyPitchOffset)."
 unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc279 is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc279/current.json issued state so it stops consuming the `sfx` basename's dedup slot ahead of its real open siblings"
+
+[[blocked]]
+name = "Func_fc26c"
+reason = "src/home/sfx.c:46 already defines `static void Func_fc26c(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above; the next-scored `sfx`-basename routine after Func_fc279 was blocked, permanently consuming that basename's per-call dedup slot."
+unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc26c is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc26c/current.json issued state"
+
+[[blocked]]
+name = "Func_fc1cd"
+reason = "src/home/sfx.c:130 already defines `static void Func_fc1cd(void)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above."
+unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so Func_fc1cd is reported done rather than todo, and reset or remove this fn's stale .factory/try/Func_fc1cd/current.json issued state"
+
+[[blocked]]
+name = "SFX_ApplyPitchOffset"
+reason = "src/home/sfx.c:111 already defines `static void SFX_ApplyPitchOffset(uint8_t c)` -- confirmed by direct grep. Same already-implemented-registry-discrepancy class as Func_fc279/ExecuteNextSFXCommand above."
+unblock = "reconcile the pret routine inventory/gate against the landed src/home/sfx.c so SFX_ApplyPitchOffset is reported done rather than todo, and reset or remove this fn's stale .factory/try/SFX_ApplyPitchOffset/current.json issued state"
