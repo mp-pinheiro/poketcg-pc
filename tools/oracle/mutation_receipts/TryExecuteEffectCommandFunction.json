@@ -1,0 +1,9 @@
+{
+  "fn": "TryExecuteEffectCommandFunction",
+  "case": "tests/cases/effect_commands.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryExecuteEffectCommandFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52402\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryExecuteEffectCommandFunction\", \"mismatches\": {\"a\": [0, 1], \"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"TryExecuteEffectCommandFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52402\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

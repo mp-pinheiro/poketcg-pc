@@ -17,7 +17,19 @@ static void adapt_CheckMatchingCommand(ProbeState *s)
 		s->f = (uint8_t)(hBankROM == 0 ? 0x80u : 0u);
 }
 
+/* >>> factory TryExecuteEffectCommandFunction */
+static void adapt_TryExecuteEffectCommandFunction(ProbeState *s)
+{
+	TryExecuteEffectCommandFunctionResult r = TryExecuteEffectCommandFunction(s->a);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory TryExecuteEffectCommandFunction */
+
 const ProbeEntry probe_entries_effect_commands[] = {
 	{ "CheckMatchingCommand", adapt_CheckMatchingCommand },
+	{ "TryExecuteEffectCommandFunction", adapt_TryExecuteEffectCommandFunction },
 	{ NULL, NULL },
 };

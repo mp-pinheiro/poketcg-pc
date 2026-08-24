@@ -4,6 +4,13 @@
 #include "generated/wram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/effect_commands.h"
+#include "home/switch_rom.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+/* <<< factory statics */
 
 #define BANK_EFFECT_COMMANDS 0x06u
 #define BANK_EFFECT_FUNCTIONS 0x0Bu
@@ -36,3 +43,15 @@ EffectCmdLookup CheckMatchingCommand(uint8_t a, uint16_t hl)
 		hl = (uint16_t)(hl + 2u);
 	}
 }
+
+/* >>> factory TryExecuteEffectCommandFunction */
+TryExecuteEffectCommandFunctionResult TryExecuteEffectCommandFunction(uint8_t a)
+{
+	uint16_t list = (uint16_t)(gb_read8(wLoadedAttackEffectCommands_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
+	EffectCmdLookup lookup = CheckMatchingCommand(a, list);
+	uint8_t result_a = (lookup.carry != 0u && lookup.hl == 0u) ? 0u : hBankROM;
+	uint8_t result_f = (uint8_t)(result_a == 0u ? 0x80u : 0x00u);
+	return (TryExecuteEffectCommandFunctionResult){result_a, result_f, a, lookup.hl};
+}
+/* <<< factory TryExecuteEffectCommandFunction */
