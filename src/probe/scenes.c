@@ -74,6 +74,13 @@ static void adapt_LoadScene_SetGameBoyPrinterAttrBlk(ProbeState *s)
 }
 /* <<< factory LoadScene_SetGameBoyPrinterAttrBlk */
 
+/* >>> factory _LoadScene */
+static void adapt__LoadScene(ProbeState *s)
+{
+	_LoadScene(s->a, s->b, s->c);
+}
+/* <<< factory _LoadScene */
+
 const ProbeEntry probe_entries_scenes[] = {
 	{ "SetBoosterLogoOAM", adapt_SetBoosterLogoOAM },
 	{ "_DrawPortrait", adapt__DrawPortrait },
@@ -81,5 +88,6 @@ const ProbeEntry probe_entries_scenes[] = {
 	{ "LoadScene_LoadCompressedSGBPacket", adapt_LoadScene_LoadCompressedSGBPacket },
 	{ "LoadScene_SetCardPopAttrBlk", adapt_LoadScene_SetCardPopAttrBlk },
 	{ "LoadScene_SetGameBoyPrinterAttrBlk", adapt_LoadScene_SetGameBoyPrinterAttrBlk },
+	{ "_LoadScene", adapt__LoadScene },
 	{ NULL, NULL },
 };

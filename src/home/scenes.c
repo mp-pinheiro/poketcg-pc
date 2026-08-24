@@ -63,6 +63,16 @@ static const uint8_t booster_logo_oam[] = {
 #include "generated/wram.h"
 #include "home/sgb.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/load_animation.h"
+#include "home/load_gfx.h"
+#include "home/scenes.h"
+#include "home/sprite_animations.h"
+#include "mem.h"
+#define SCENE_POINTERS_BANK 0x04u
+#define SCENE_POINTERS_ADDR 0x6D6Fu
+#define SPRITE_ANIM_COORD_X 0x02u
 /* <<< factory statics */
 
 /* >>> factory SetBoosterLogoOAM */
@@ -231,3 +241,89 @@ LoadScene_SetGameBoyPrinterAttrBlkResult LoadScene_SetGameBoyPrinterAttrBlk(uint
 	};
 }
 /* <<< factory LoadScene_SetGameBoyPrinterAttrBlk */
+
+/* >>> factory _LoadScene */
+void _LoadScene(uint8_t a, uint8_t b, uint8_t c)
+{
+	uint8_t saved_tilemap = gb_read8(wCurTilemap_ADDR);
+	uint8_t saved_d291 = gb_read8(wd291_ADDR);
+
+	uint8_t base_x = (uint8_t)((uint8_t)(b << 3) + 0x08u);
+	uint8_t base_y = (uint8_t)((uint8_t)(c << 3) + 0x10u);
+	gb_write8(wSceneBaseX_ADDR, base_x);
+	gb_write8(wSceneBaseY_ADDR, base_y);
+
+	const uint8_t *ptr_entry = rom_ptr(SCENE_POINTERS_BANK, (uint16_t)(SCENE_POINTERS_ADDR + (uint16_t)a * 2u));
+	uint16_t hl = (uint16_t)(ptr_entry[0] | ((uint16_t)ptr_entry[1] << 8));
+
+	const uint8_t *sd = rom_ptr(SCENE_POINTERS_BANK, hl);
+	uint16_t idx = 0u;
+	gb_write8(wSceneSGBPacketPtr_ADDR, sd[idx]); idx++;
+	gb_write8((uint16_t)(wSceneSGBPacketPtr_ADDR + 1u), sd[idx]); idx++;
+	gb_write8(wSceneSGBRoutinePtr_ADDR, sd[idx]); idx++;
+	gb_write8((uint16_t)(wSceneSGBRoutinePtr_ADDR + 1u), sd[idx]); idx++;
+	(void)LoadScene_LoadCompressedSGBPacket(0u, 0u, b, c, 0u, 0u, 0u);
+
+	gb_write8(wBGP_ADDR, 0xE4u);
+
+	uint8_t console = gb_read8(wConsole_ADDR);
+	uint8_t palette = sd[idx];
+	if (console == CONSOLE_CGB) palette = sd[idx + 1u];
+	idx = (uint16_t)(idx + 2u);
+	gb_write8(wWhichOBP_ADDR, 0u);
+	uint8_t palette_offset = sd[idx]; idx++;
+	gb_write8(wWhichBGPalIndex_ADDR, palette_offset);
+	gb_write8(wd291_ADDR, palette_offset);
+	LoadBGPalette(palette);
+
+	uint8_t tilemap = sd[idx];
+	if (console == CONSOLE_CGB) tilemap = sd[idx + 1u];
+	idx = (uint16_t)(idx + 2u);
+	gb_write8(wCurTilemap_ADDR, tilemap);
+	LoadTilemap_ToVRAM(b, c);
+
+	(void)LoadScene_LoadSGBPacket(0u, 0u, b, c, 0u, 0u, 0u);
+	gb_write8(wVRAMTileOffset_ADDR, sd[idx]); idx++;
+	gb_write8(wWhichVRAMBank_ADDR, sd[idx]); idx++;
+	LoadTilesetGfx();
+
+	for (;;) {
+		uint8_t sprite = sd[idx]; idx++;
+		if (sprite == 0u)
+			break;
+		gb_write8(wSceneSprite_ADDR, sprite);
+		uint8_t sprite_palette = sd[idx];
+		if (console == CONSOLE_CGB) sprite_palette = sd[idx + 1u];
+		idx = (uint16_t)(idx + 2u);
+		gb_write8(wWhichOBP_ADDR, 0u);
+		uint8_t sprite_pal_offset = sd[idx]; idx++;
+		gb_write8(wWhichOBPalIndex_ADDR, sprite_pal_offset);
+		(void)LoadOBPalette(sprite_palette);
+
+		for (;;) {
+			uint8_t anim0 = sd[idx];
+			if (anim0 == 0u) {
+				idx++;
+				break;
+			}
+			uint8_t anim = anim0;
+			if (console == CONSOLE_CGB) anim = sd[idx + 1u];
+			idx = (uint16_t)(idx + 2u);
+			gb_write8(wSceneSpriteAnimation_ADDR, anim);
+			uint8_t created = CreateSpriteAndAnimBufferEntry(gb_read8(wSceneSprite_ADDR), 0u);
+			(void)created;
+			gb_write8(wSceneSpriteIndex_ADDR, gb_read8(wWhichSprite_ADDR));
+			uint16_t coords = GetSpriteAnimBufferProperty(SPRITE_ANIM_COORD_X);
+			gb_write8(coords, (uint8_t)(gb_read8(wSceneBaseX_ADDR) + sd[idx]));
+			idx++;
+			gb_write8((uint16_t)(coords + 1u), (uint8_t)(gb_read8(wSceneBaseY_ADDR) + sd[idx]));
+			idx++;
+			if (gb_read8(wSceneSpriteAnimation_ADDR) != 0xFFu)
+				StartSpriteAnimation(gb_read8(wSceneSpriteAnimation_ADDR));
+		}
+	}
+
+	gb_write8(wd291_ADDR, saved_d291);
+	gb_write8(wCurTilemap_ADDR, saved_tilemap);
+}
+/* <<< factory _LoadScene */

@@ -59,6 +59,20 @@ wConsole = 0xCAB4
 wSceneSGBPacketPtr = 0xD620
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wSceneBaseX = 0xD61C
+wSceneBaseY = 0xD61D
+wSceneSGBPacketPtr = 0xD620
+wSceneSGBRoutinePtr = 0xD622
+wConsole = 0xCAB4
+wCurTilemap = 0xD131
+wCurTileset = 0xD239
+wBGP = 0xCABC
+wWhichBGPalIndex = 0xD4CB
+wd291 = 0xD291
+wVRAMTileOffset = 0xD4CA
+wWhichVRAMBank = 0xD4CB
+wAllSpriteAnimationsDisabled = 0xD5D7
 # <<< factory-cases-statics
 
 # >>> factory LoadScene_LoadCompressedSGBPacket
@@ -90,6 +104,21 @@ CASES["LoadScene_SetGameBoyPrinterAttrBlk"] = [
     dict(POISON, wram={}, sram={0: {}}, expect_regs={"a": 0x00, "f": 0x80, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory LoadScene_SetGameBoyPrinterAttrBlk
+
+# >>> factory _LoadScene
+CONTRACT["_LoadScene"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["_LoadScene"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00, "wram": {wConsole: b"\x00", wAllSpriteAnimationsDisabled: b"\x00", wCurTilemap: b"\x00", wd291: b"\x00"}, "sram": {0: {}},
+     "read": {wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wBGP: 1, wd291: 1, wCurTilemap: 1},
+     "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, a=0x00, b=0x00, c=0x00, wram={wConsole: b"\x00", wAllSpriteAnimationsDisabled: b"\x00", wCurTilemap: b"\x77", wd291: b"\x22"}, sram={0: {}},
+         read={wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wBGP: 1, wd291: 1, wCurTilemap: 1},
+         instruction_budget=4000000, cycle_budget=20000000),
+    {"a": 0x13, "b": 0x02, "c": 0x03, "wram": {wConsole: b"\x02", wAllSpriteAnimationsDisabled: b"\x00", wCurTilemap: b"\x00", wd291: b"\x00"}, "sram": {0: {}},
+     "read": {wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wBGP: 1, wd291: 1, wCurTilemap: 1},
+     "instruction_budget": 4000000, "cycle_budget": 20000000},
+]
+# <<< factory _LoadScene
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -123,3 +152,11 @@ MUTATIONS["LoadScene_SetGameBoyPrinterAttrBlk"] = {
     "case_ids": ["LoadScene_SetGameBoyPrinterAttrBlk-0", "LoadScene_SetGameBoyPrinterAttrBlk-1"],
 }
 # <<< factory-mutation LoadScene_SetGameBoyPrinterAttrBlk
+# >>> factory-mutation _LoadScene
+MUTATIONS["_LoadScene"] = {
+    "source_symbol": "_LoadScene",
+    "before": "\tgb_write8(wCurTilemap_ADDR, saved_tilemap);",
+    "after": "\tgb_write8(wCurTilemap_ADDR, tilemap);",
+    "case_ids": ["_LoadScene-0", "_LoadScene-1"],
+}
+# <<< factory-mutation _LoadScene
