@@ -1613,6 +1613,8 @@ hTempCardIndex_ff9f = 0xFF9F
 wAlreadyPlayedEnergy = 0xCC0B
 wLoadedCard1Stage = 0xCC2D
 wLoadedCard1Type = 0xCC24
+
+wSkipDuelistIsThinkingDelay = 0xCBF9
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2677,6 +2679,14 @@ CASES["CheckIfCardCanBePlayed"] = [
     dict(POISON, wram={0xCC0B: b"\x01", 0xCC24: b"\x08", 0xCC2D: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory CheckIfCardCanBePlayed
+
+# >>> factory OppAction_6b15
+CONTRACT["OppAction_6b15"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e")}
+CASES["OppAction_6b15"] = [
+    {"wram": {wSkipDuelistIsThinkingDelay: b"\x00"}, "expect_wram": {wSkipDuelistIsThinkingDelay: b"\x01"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={wSkipDuelistIsThinkingDelay: b"\x00"}, expect_wram={wSkipDuelistIsThinkingDelay: b"\x01"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory OppAction_6b15
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3825,3 +3835,11 @@ MUTATIONS["CheckIfCardCanBePlayed"] = {
     "case_ids": ["CheckIfCardCanBePlayed-0", "CheckIfCardCanBePlayed-1"],
 }
 # <<< factory-mutation CheckIfCardCanBePlayed
+# >>> factory-mutation OppAction_6b15
+MUTATIONS["OppAction_6b15"] = {
+    "source_symbol": "OppAction_6b15",
+    "before": "\twSkipDuelistIsThinkingDelay = 0x01u;",
+    "after": "\twSkipDuelistIsThinkingDelay = 0x00u;",
+    "case_ids": ["OppAction_6b15-0", "OppAction_6b15-1"],
+}
+# <<< factory-mutation OppAction_6b15

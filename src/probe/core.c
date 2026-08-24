@@ -1726,6 +1726,17 @@ static void adapt_CheckIfCardCanBePlayed(ProbeState *s)
 }
 /* <<< factory CheckIfCardCanBePlayed */
 
+/* >>> factory OppAction_6b15 */
+static void adapt_OppAction_6b15(ProbeState *s)
+{
+	OppAction_6b15Result r = OppAction_6b15();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory OppAction_6b15 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1933,5 +1944,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPlayAreaCardList_EnableLCD", adapt_PrintPlayAreaCardList_EnableLCD },
 	{ "FlushAllPalettesOrSendPal23Packet", adapt_FlushAllPalettesOrSendPal23Packet },
 	{ "CheckIfCardCanBePlayed", adapt_CheckIfCardCanBePlayed },
+	{ "OppAction_6b15", adapt_OppAction_6b15 },
 	{ NULL, NULL },
 };

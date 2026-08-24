@@ -847,6 +847,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/effect_commands.h"
 #include "home/substatus.h"
 #define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
+
+#include "generated/wram.h"
+#include "home/effect_commands.h"
+#define EFFECTCMDTYPE_AFTER_DAMAGE 0x04u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4864,3 +4868,12 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
 	return (CheckIfCardCanBePlayedResult){energy, f};
 }
 /* <<< factory CheckIfCardCanBePlayed */
+
+/* >>> factory OppAction_6b15 */
+OppAction_6b15Result OppAction_6b15(void)
+{
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AFTER_DAMAGE);
+	wSkipDuelistIsThinkingDelay = 0x01u;
+	return (OppAction_6b15Result){0x01u, effect.f, effect.c, effect.hl};
+}
+/* <<< factory OppAction_6b15 */

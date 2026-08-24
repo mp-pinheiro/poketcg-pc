@@ -795,4 +795,8 @@ typedef struct {
 } CheckIfCardCanBePlayedResult;
 CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a);
 /* <<< factory CheckIfCardCanBePlayed */
+/* >>> factory OppAction_6b15 */
+typedef struct { uint8_t a; uint8_t f; uint8_t c; uint16_t hl; } OppAction_6b15Result;
+OppAction_6b15Result OppAction_6b15(void);
+/* <<< factory OppAction_6b15 */
 #endif
