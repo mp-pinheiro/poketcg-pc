@@ -430,6 +430,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/serial.h"
 #include "generated/hram.h"
 #define OPPACTION_6B30 0x12u
+
+#include "home/serial.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5055,3 +5059,13 @@ uint8_t Func_2c0a8(void)
 	return result;
 }
 /* <<< factory Func_2c0a8 */
+
+/* >>> factory ShuffleCardsInDeck */
+ShuffleCardsInDeckResult ShuffleCardsInDeck(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	ExchangeRNGResult r = ExchangeRNG(b, c, de, hl);
+	(void)PlayDeckShuffleAnimation();
+	ShuffleDeckResult sd = ShuffleDeck(r.c, (uint8_t)r.de);
+	return (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};
+}
+/* <<< factory ShuffleCardsInDeck */

@@ -2395,6 +2395,9 @@ wNoDamageOrEffect = 0xCCC7
 
 hWhoseTurn = 0xFF97
 hTemp_ffa0 = 0xFFA0
+
+hWhoseTurn = 0xFF97
+wDuelType = 0xCE22
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3324,6 +3327,20 @@ CASES["Func_2c0a8"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory Func_2c0a8
+
+# >>> factory ShuffleCardsInDeck
+CONTRACT["ShuffleCardsInDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ShuffleCardsInDeck"] = [
+    {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {wDuelType: b"\x00", hWhoseTurn: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09",
+              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={wDuelType: b"\x00", hWhoseTurn: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09",
+               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory ShuffleCardsInDeck
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5322,3 +5339,6 @@ MUTATIONS["SpearowMirrorMove_AfterDamage"] = {
 # >>> factory-mutation Func_2c0a8
 MUTATIONS["Func_2c0a8"] = {"source_symbol": "Func_2c0a8", "before": "\thTemp_ffa0 = saved;", "after": "\thTemp_ffa0 = hWhoseTurn;", "case_ids": ["Func_2c0a8-0", "Func_2c0a8-1"]}
 # <<< factory-mutation Func_2c0a8
+# >>> factory-mutation ShuffleCardsInDeck
+MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\t(void)PlayDeckShuffleAnimation();", "after": "", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
+# <<< factory-mutation ShuffleCardsInDeck

@@ -2913,6 +2913,15 @@ static void adapt_Func_2c0a8(ProbeState *s)
 }
 /* <<< factory Func_2c0a8 */
 
+/* >>> factory ShuffleCardsInDeck */
+static void adapt_ShuffleCardsInDeck(ProbeState *s)
+{
+	uint16_t de = (uint16_t)(((uint16_t)s->d << 8) | s->e);
+	ShuffleCardsInDeckResult r = ShuffleCardsInDeck(s->b, s->c, de, s->hl);
+	s->a = r.a; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory ShuffleCardsInDeck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3274,5 +3283,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeottoMirrorMove_AfterDamage", adapt_PidgeottoMirrorMove_AfterDamage },
 	{ "SpearowMirrorMove_AfterDamage", adapt_SpearowMirrorMove_AfterDamage },
 	{ "Func_2c0a8", adapt_Func_2c0a8 },
+	{ "ShuffleCardsInDeck", adapt_ShuffleCardsInDeck },
 	{ NULL, NULL },
 };
