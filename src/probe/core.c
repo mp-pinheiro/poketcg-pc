@@ -1534,6 +1534,15 @@ static void adapt_Func_15886(ProbeState *s)
 }
 /* <<< factory Func_15886 */
 
+/* >>> factory CheckAbleToRetreat */
+static void adapt_CheckAbleToRetreat(ProbeState *s)
+{
+	CheckAbleToRetreatResult r = CheckAbleToRetreat();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckAbleToRetreat */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1717,5 +1726,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDamageAnimationResist", adapt_DrawDamageAnimationResist },
 	{ "DrawDamageAnimationNumbers", adapt_DrawDamageAnimationNumbers },
 	{ "Func_15886", adapt_Func_15886 },
+	{ "CheckAbleToRetreat", adapt_CheckAbleToRetreat },
 	{ NULL, NULL },
 };

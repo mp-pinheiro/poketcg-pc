@@ -180,6 +180,13 @@
 #include "home/process_text.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DECK_NAME_SIZE_WO_SUFFIX 0x15u
+#define APPEND_DECK_NAME_TEXT_START_ADDR 0x52F8u
 /* <<< factory statics */
 
 
@@ -1128,3 +1135,33 @@ void PrintCardTypeCounts(void)
 	ProcessText(&text_hl);
 }
 /* <<< factory PrintCardTypeCounts */
+
+/* >>> factory AppendDeckName */
+uint8_t AppendDeckName(uint16_t hl, uint8_t d, uint8_t e)
+{
+	uint8_t no_cards = CheckIfDeckHasCards(hl);
+	if (no_cards & 0x10u) {
+		return no_cards;
+	}
+
+	uint16_t dst_de = wDefaultText_ADDR;
+	(void)CopyListFromHLToDEInSRAM(hl, dst_de);
+
+	uint16_t name_hl = wDefaultText_ADDR;
+	TextLength len = GetTextLengthInTiles(name_hl);
+	uint8_t c = len.c;
+	if (c >= DECK_NAME_SIZE_WO_SUFFIX) {
+		c = DECK_NAME_SIZE_WO_SUFFIX;
+	}
+	uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + c);
+	uint16_t suffix_src = APPEND_DECK_NAME_TEXT_START_ADDR;
+	CopyNBytesFromHLToDE(&suffix_src, &suffix_dst, 0x1Cu);
+
+	gb_write8((uint16_t)(wDefaultText_ADDR + DECK_NAME_SIZE + 2u), TX_END);
+
+	InitTextPrinting(d, e);
+	uint16_t print_hl = wDefaultText_ADDR;
+	ProcessText(&print_hl);
+	return 0u;
+}
+/* <<< factory AppendDeckName */

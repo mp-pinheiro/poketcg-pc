@@ -416,6 +416,14 @@ static void adapt_PrintCardTypeCounts(ProbeState *s)
 }
 /* <<< factory PrintCardTypeCounts */
 
+/* >>> factory AppendDeckName */
+static void adapt_AppendDeckName(ProbeState *s)
+{
+	uint8_t r = AppendDeckName(s->hl, s->d, s->e);
+	s->f = r;
+}
+/* <<< factory AppendDeckName */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -465,5 +473,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintNumberValueInCursorYPos", adapt_PrintNumberValueInCursorYPos },
 	{ "AppendOwnedCardCountAndStorageCountNumbers", adapt_AppendOwnedCardCountAndStorageCountNumbers },
 	{ "PrintCardTypeCounts", adapt_PrintCardTypeCounts },
+	{ "AppendDeckName", adapt_AppendDeckName },
 	{ NULL, NULL },
 };

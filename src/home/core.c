@@ -665,6 +665,17 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define TYPE_TRAINER 0x10u
+#define EnergyCardsRequiredToRetreatText 0x00BFu
+#define UnableToRetreatText 0x003Du
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3919,3 +3930,38 @@ CoreCardListResult Func_15886(uint16_t hl)
 	}
 }
 /* <<< factory Func_15886 */
+
+/* >>> factory CheckAbleToRetreat */
+CheckAbleToRetreatResult CheckAbleToRetreat(void)
+{
+	RetreatEffectResult r1 = CheckUnableToRetreatDueToEffect();
+	if (r1.f & 0x10u) {
+		return (CheckAbleToRetreatResult){0u, r1.f, r1.hl};
+	}
+	CheckIfActiveStatusResult r2 = CheckIfActiveCardParalyzedOrAsleep();
+	if (r2.f & 0x10u) {
+		return (CheckAbleToRetreatResult){r2.a, r2.f, r2.hl};
+	}
+	HasAlivePokemonInPlayAreaResult r3 = HasAlivePokemonInBench();
+	if (r3.f & 0x10u) {
+		uint8_t f_out = (uint8_t)((r3.f & 0x80u) | 0x10u);
+		return (CheckAbleToRetreatResult){r3.a, f_out, UnableToRetreatText};
+	}
+	DuelistVarResult deck_idx = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint16_t card_id = GetCardIDFromDeckIndex(deck_idx.a);
+	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	uint8_t card_type = wLoadedCard1Type;
+	if (card_type == TYPE_TRAINER) {
+		return (CheckAbleToRetreatResult){TYPE_TRAINER, 0x90u, UnableToRetreatText};
+	}
+	EnoughRetreatEnergiesResult r4 = CheckIfEnoughEnergiesToRetreat();
+	if (r4.f & 0x10u) {
+		uint8_t required = wEnergyCardsRequiredToRetreat;
+		LoadTxRam3((uint16_t)required);
+		return (CheckAbleToRetreatResult){0u, 0x90u, EnergyCardsRequiredToRetreatText};
+	}
+	uint8_t final_a = r4.a;
+	uint8_t final_f = (uint8_t)((final_a == 0u) ? 0x80u : 0x00u);
+	return (CheckAbleToRetreatResult){final_a, final_f, 0u};
+}
+/* <<< factory CheckAbleToRetreat */

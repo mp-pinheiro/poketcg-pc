@@ -175,4 +175,7 @@ void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e);
 /* >>> factory PrintCardTypeCounts */
 void PrintCardTypeCounts(void);
 /* <<< factory PrintCardTypeCounts */
+/* >>> factory AppendDeckName */
+uint8_t AppendDeckName(uint16_t hl, uint8_t d, uint8_t e);
+/* <<< factory AppendDeckName */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

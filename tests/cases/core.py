@@ -2148,6 +2148,14 @@ CASES["Func_15886"] = [
 ]
 # <<< factory Func_15886
 
+# >>> factory CheckAbleToRetreat
+CONTRACT["CheckAbleToRetreat"] = {"compare": ("f",), "preserve": ()}
+CASES["CheckAbleToRetreat"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2E8: b"\x09"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2E8: b"\x09"}),
+]
+# <<< factory CheckAbleToRetreat
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3203,3 +3211,6 @@ MUTATIONS["DrawDamageAnimationNumbers"] = {"source_symbol": "DrawDamageAnimation
 # >>> factory-mutation Func_15886
 MUTATIONS["Func_15886"] = {"source_symbol": "Func_15886", "before": "\tif (check.f & 0x10u) {", "after": "\tif (check.f & 0x20u) {", "case_ids": ["Func_15886-0", "Func_15886-1"]}
 # <<< factory-mutation Func_15886
+# >>> factory-mutation CheckAbleToRetreat
+MUTATIONS["CheckAbleToRetreat"] = {"source_symbol": "CheckAbleToRetreat", "before": "\tif (r1.f & 0x10u) {", "after": "\tif (r1.f & 0x20u) {", "case_ids": ["CheckAbleToRetreat-0", "CheckAbleToRetreat-1"]}
+# <<< factory-mutation CheckAbleToRetreat

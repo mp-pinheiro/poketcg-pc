@@ -712,4 +712,8 @@ void DrawDamageAnimationNumbers(void);
 /* >>> factory Func_15886 */
 CoreCardListResult Func_15886(uint16_t hl);
 /* <<< factory Func_15886 */
+/* >>> factory CheckAbleToRetreat */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CheckAbleToRetreatResult;
+CheckAbleToRetreatResult CheckAbleToRetreat(void);
+/* <<< factory CheckAbleToRetreat */
 #endif
