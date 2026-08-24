@@ -51,7 +51,7 @@ is just `jj commit` then `jj git push --remote origin --bookmark main` — no ma
 
 ## Remotes
 
-- `origin` is `https://forgejo.yfrit.com/mpp/poketcg-pc.git`. Local and factory
+- `origin` is `https://forgejo.yfrit.com/fairfruit/poketcg-pc.git`. Local and factory
   repository writes target this Forgejo remote.
 - This maintained checkout also has
   `github-mirror = https://github.com/mp-pinheiro/poketcg-pc.git` for reading

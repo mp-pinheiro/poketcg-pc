@@ -1,0 +1,170 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  quality:
+    if: github.repository == 'fairfruit/poketcg-pc'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install python3, jq, just and git-cliff
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          apt-get update
+          apt-get install -y --no-install-recommends python3 jq
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
+            | bash -s -- --tag 1.58.0 --to /usr/local/bin
+          curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
+            https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
+          install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Validate changelog generation
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git cliff "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" --strip header >/dev/null
+          else
+            git cliff --unreleased --strip header >/dev/null
+          fi
+      - name: Lint probe adapters
+        run: python3 tools/lint_adapters.py
+      - name: Ensure .jj marker
+        run: mkdir -p .jj
+      - name: Verify PreToolUse guards
+        run: just verify-hooks
+      - name: Check progress report is current
+        run: python3 tools/progress/report.py check
+
+  deploy:
+    if: github.repository == 'fairfruit/poketcg-pc' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [quality]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Deploy dashboard to Cloudflare Pages
+        run: npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
+      - name: Confirm the live dashboard serves this commit's data
+        run: |
+          set -euo pipefail
+          apt-get update && apt-get install -y --no-install-recommends jq
+          want_commit=$(jq -r .commit        site/data/progress.json)
+          want_gen=$(jq    -r .generated_at  site/data/progress.json)
+          for i in $(seq 1 10); do
+            live=$(curl -fsS --max-time 20 https://poketcg-pc.pages.dev/data/progress.json || echo '{}')
+            live_commit=$(printf '%s' "$live" | jq -r '.commit // empty')
+            live_gen=$(printf    '%s' "$live" | jq -r '.generated_at // empty')
+            echo "attempt $i: live=$live_commit/$live_gen want=$want_commit/$want_gen"
+            if [ "$live_commit" = "$want_commit" ] && [ "$live_gen" = "$want_gen" ]; then
+              echo "dashboard is serving this commit's snapshot"
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "live dashboard never converged to $want_commit/$want_gen"
+          exit 1
+
+  release:
+    if: github.repository == 'fairfruit/poketcg-pc' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [quality]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Install jq and git-cliff
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          apt-get update
+          apt-get install -y --no-install-recommends jq
+          curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
+            https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp
+          install -m755 /tmp/git-cliff /usr/local/bin/git-cliff
+      - name: Compute next version
+        id: ver
+        run: |
+          set -euo pipefail
+          git fetch origin main --tags
+          current="$(git rev-parse origin/main)"
+          if [ "$current" != "$GITHUB_SHA" ]; then
+            echo "source $GITHUB_SHA was superseded by main $current; no release"
+            echo "cut=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          message="$(git log -1 --format=%s)"
+          case "$message" in
+            chore\(release\):*|chore\(progress\):\ daily\ snapshot)
+              echo "generated commit does not cut a release"
+              echo "cut=false" >> "$GITHUB_OUTPUT"
+              exit 0
+              ;;
+          esac
+          next=$(git cliff --bump --unreleased --context | jq -r 'map(select(.version != null and ((.commits // []) | length > 0))) | .[0].version // empty | ltrimstr("v")')
+          cur=$(tr -d '[:space:]' < VERSION 2>/dev/null || echo none)
+          {
+            echo "next=$next"
+            echo "current=$cur"
+            if [ -n "$next" ] && [ "$next" != "$cur" ]; then echo "cut=true"; else echo "cut=false"; fi
+          } >> "$GITHUB_OUTPUT"
+      - name: Cut release
+        if: steps.ver.outputs.cut == 'true'
+        env:
+          FORGEJO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          next="${{ steps.ver.outputs.next }}"
+          printf '%s\n' "$next" > VERSION
+          git cliff --bump --unreleased -o CHANGELOG.md
+          git config user.name  "forgejo-actions[bot]"
+          git config user.email "forgejo-actions[bot]@noreply.forgejo.yfrit.com"
+          git add VERSION CHANGELOG.md
+          git commit -m "chore(release): v${next}"
+          git tag "v${next}"
+          git push origin HEAD:main
+          git push origin "v${next}"
+          # Tag and changelog are now durable. Publishing the Release object needs
+          # /api/v1, which Cloudflare Access fronts; probe first and fail loudly.
+          api="${GITHUB_API_URL:-${GITHUB_SERVER_URL%/}/api/v1}"
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
+                   -H "Authorization: token ${FORGEJO_TOKEN}" "${api}/version")
+          if [ "$code" != "200" ]; then
+            echo "Forgejo API unreachable from the runner (HTTP $code)."
+            echo "Commit and tag v${next} ARE pushed; only the Release object is missing."
+            echo "Publish it from the workstation:"
+            echo "  git cliff --latest --strip header > /tmp/notes.md"
+            echo "  fj release create v${next} --repo fairfruit/poketcg-pc --notes-file /tmp/notes.md"
+            exit 1
+          fi
+          git cliff --latest --strip header > /tmp/notes.md
+          curl -fsS -X POST \
+            -H "Authorization: token ${FORGEJO_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            "${api}/repos/${GITHUB_REPOSITORY}/releases" \
+            -d "$(jq -n --arg t "v${next}" --rawfile b /tmp/notes.md '{tag_name:$t,name:$t,body:$b}')"

@@ -1,0 +1,46 @@
+name: progress snapshot
+on:
+  schedule:
+    - cron: '5 0 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: progress-snapshot
+  cancel-in-progress: false
+jobs:
+  snapshot:
+    if: github.repository == 'fairfruit/poketcg-pc'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: node:24-bookworm@sha256:934240a162082fd8b8a2f90cd5114446443f1eba1c5378f6687167ca405e6584
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Install python3 and jq
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          apt-get update
+          apt-get install -y --no-install-recommends python3 jq
+      - name: Build daily snapshot
+        run: python3 tools/progress/report.py build
+      - name: Commit snapshot
+        run: |
+          set -euo pipefail
+          git config user.name  "forgejo-actions[bot]"
+          git config user.email "forgejo-actions[bot]@noreply.forgejo.yfrit.com"
+          git add site/data/progress.json site/data/history.jsonl
+          if git diff --cached --quiet; then
+            echo "Today's snapshot already exists"
+            exit 0
+          fi
+          git commit -m "chore(progress): daily snapshot"
+          git push origin HEAD:main
+      - name: Deploy daily snapshot
+        run: npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
