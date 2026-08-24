@@ -2116,6 +2116,14 @@ CASES["DrawDamageAnimationArrow"] = [
 ]
 # <<< factory DrawDamageAnimationArrow
 
+# >>> factory DrawDamageAnimationWeak
+CONTRACT["DrawDamageAnimationWeak"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawDamageAnimationWeak"] = [
+    {"wram": {0xFF80: b"\x07"}, "read": {0xD4B7: 1}},
+    dict(POISON, wram={0xFF80: b"\x07"}, read={0xD4B7: 1}),
+]
+# <<< factory DrawDamageAnimationWeak
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3159,3 +3167,6 @@ MUTATIONS["PracticeDuel_ReplaceKnockedOutPokemon"] = {"source_symbol": "Practice
 # >>> factory-mutation DrawDamageAnimationArrow
 MUTATIONS["DrawDamageAnimationArrow"] = {"source_symbol": "DrawDamageAnimationArrow", "before": "gb_write8(wDamageCharIndex_ADDR, 5u);", "after": "gb_write8(wDamageCharIndex_ADDR, 4u);", "case_ids": ["DrawDamageAnimationArrow-0", "DrawDamageAnimationArrow-1"]}
 # <<< factory-mutation DrawDamageAnimationArrow
+# >>> factory-mutation DrawDamageAnimationWeak
+MUTATIONS["DrawDamageAnimationWeak"] = {"source_symbol": "DrawDamageAnimationWeak", "before": "wDamageCharIndex = 3u;", "after": "wDamageCharIndex = 4u;", "case_ids": ["DrawDamageAnimationWeak-0", "DrawDamageAnimationWeak-1"]}
+# <<< factory-mutation DrawDamageAnimationWeak

@@ -67,6 +67,15 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define CHAR_UNDERBAR_ADDR 0x68F2u
+
+#include "home/input_name.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PlayerNameKeyboardText 0x0221u
+#define DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR 0x68BCu
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -423,3 +432,25 @@ void PrintPlayerNameFromInput(void)
 	ProcessText(&buf_hl);
 }
 /* <<< factory PrintPlayerNameFromInput */
+
+/* >>> factory DrawPlayerNamingScreenBG */
+void DrawPlayerNamingScreenBG(void)
+{
+	uint16_t box_hl;
+	DrawTextboxForKeyboard(&box_hl, wd009);
+	PrintPlayerNameFromInput();
+
+	uint8_t c = gb_read8(wNamingScreenQuestionPointer_ADDR);
+	uint8_t h = gb_read8((uint16_t)(wNamingScreenQuestionPointer_ADDR + 1u));
+	uint16_t question_hl = (uint16_t)(((uint16_t)h << 8) | c);
+	if (question_hl != 0u) {
+		(void)PlaceTextItems(question_hl);
+	}
+
+	(void)PlaceTextItems(DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR);
+
+	InitTextPrinting(2u, 4u);
+	(void)ProcessTextFromID(PlayerNameKeyboardText);
+	EnableLCD();
+}
+/* <<< factory DrawPlayerNamingScreenBG */

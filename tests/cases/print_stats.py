@@ -69,6 +69,16 @@ CASES["PrintAlbumProgress"] = [
 ]
 # <<< factory PrintAlbumProgress
 
+# >>> factory PrintPlayTime
+CONTRACT["PrintPlayTime"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintPlayTime"] = [
+    {"b": 0x02, "c": 0x02, "wram": {0xCAC7: b"\x1E", 0xCAC8: b"\x05", 0xCAC9: b"\x00"},
+     "vread": {0: {0x9842: 5}}},
+    dict(POISON, b=0x02, c=0x02, wram={0xCAC7: b"\x1E", 0xCAC8: b"\x05", 0xCAC9: b"\x00"},
+         vread={0: {0x9842: 5}}),
+]
+# <<< factory PrintPlayTime
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -96,3 +106,6 @@ MUTATIONS["PrintPlayTime_SkipUpdateTime"] = {"source_symbol": "PrintPlayTime_Ski
 # >>> factory-mutation PrintAlbumProgress
 MUTATIONS["PrintAlbumProgress"] = {"source_symbol": "PrintAlbumProgress", "before": "PrintAlbumProgress_SkipGetProgress(b, c, prog.d, prog.e);", "after": "PrintAlbumProgress_SkipGetProgress(b, c, (uint8_t)(prog.d + 1u), prog.e);", "case_ids": ["PrintAlbumProgress-0"]}
 # <<< factory-mutation PrintAlbumProgress
+# >>> factory-mutation PrintPlayTime
+MUTATIONS["PrintPlayTime"] = {"source_symbol": "PrintPlayTime", "before": "gb_write8(wPlayTimeHourMinutes_ADDR, gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 2u)));", "after": "gb_write8(wPlayTimeHourMinutes_ADDR, gb_read8((uint16_t)(wPlayTimeCounter_ADDR + 3u)));", "case_ids": ["PrintPlayTime-0", "PrintPlayTime-1"]}
+# <<< factory-mutation PrintPlayTime

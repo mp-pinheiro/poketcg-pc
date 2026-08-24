@@ -700,4 +700,7 @@ void PracticeDuel_ReplaceKnockedOutPokemon(void);
 /* >>> factory DrawDamageAnimationArrow */
 void DrawDamageAnimationArrow(uint8_t f);
 /* <<< factory DrawDamageAnimationArrow */
+/* >>> factory DrawDamageAnimationWeak */
+void DrawDamageAnimationWeak(void);
+/* <<< factory DrawDamageAnimationWeak */
 #endif

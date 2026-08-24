@@ -57,4 +57,7 @@ PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_CheckButtonState(void);
 /* >>> factory PrintPlayerNameFromInput */
 void PrintPlayerNameFromInput(void);
 /* <<< factory PrintPlayerNameFromInput */
+/* >>> factory DrawPlayerNamingScreenBG */
+void DrawPlayerNamingScreenBG(void);
+/* <<< factory DrawPlayerNamingScreenBG */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

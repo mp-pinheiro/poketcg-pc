@@ -1,0 +1,9 @@
+{
+  "fn": "PrintPlayTime",
+  "case": "tests/cases/print_stats.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintPlayTime\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38978\": \"0000250023\"}}, \"wram\": {\"51911\": \"1e0500\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintPlayTime\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintPlayTime\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {\"0\": {\"38978\": \"0000250023\"}}, \"wram\": {\"51911\": \"1e0500\"}}, \"status\": \"PASS\"}\n"
+}

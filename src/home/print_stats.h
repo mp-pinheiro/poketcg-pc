@@ -23,4 +23,7 @@ void PrintPlayTime_SkipUpdateTime(uint8_t b, uint8_t c);
 /* >>> factory PrintAlbumProgress */
 void PrintAlbumProgress(uint8_t b, uint8_t c);
 /* <<< factory PrintAlbumProgress */
+/* >>> factory PrintPlayTime */
+void PrintPlayTime(uint8_t b, uint8_t c);
+/* <<< factory PrintPlayTime */
 #endif /* POKETCG_HOME_PRINT_STATS_H */

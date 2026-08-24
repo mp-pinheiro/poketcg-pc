@@ -156,6 +156,13 @@ static void adapt_PrintPlayerNameFromInput(ProbeState *s)
 }
 /* <<< factory PrintPlayerNameFromInput */
 
+/* >>> factory DrawPlayerNamingScreenBG */
+static void adapt_DrawPlayerNamingScreenBG(ProbeState *s)
+{
+	DrawPlayerNamingScreenBG();
+}
+/* <<< factory DrawPlayerNamingScreenBG */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -173,5 +180,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "PlayerNamingScreen_DrawVisibleCursor", adapt_PlayerNamingScreen_DrawVisibleCursor },
 	{ "PlayerNamingScreen_CheckButtonState", adapt_PlayerNamingScreen_CheckButtonState },
 	{ "PrintPlayerNameFromInput", adapt_PrintPlayerNameFromInput },
+	{ "DrawPlayerNamingScreenBG", adapt_DrawPlayerNamingScreenBG },
 	{ NULL, NULL },
 };

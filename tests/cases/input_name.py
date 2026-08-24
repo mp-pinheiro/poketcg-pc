@@ -185,6 +185,18 @@ CASES["PrintPlayerNameFromInput"] = [
 ]
 # <<< factory PrintPlayerNameFromInput
 
+# >>> factory DrawPlayerNamingScreenBG
+CONTRACT["DrawPlayerNamingScreenBG"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawPlayerNamingScreenBG"] = [
+    {"wram": {0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, "rom_bank": 6,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "vread": {0: {0x9882: 32}}},
+    dict(POISON, wram={0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, rom_bank=6,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         vread={0: {0x9882: 32}}),
+]
+# <<< factory DrawPlayerNamingScreenBG
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -262,3 +274,6 @@ MUTATIONS["PlayerNamingScreen_CheckButtonState"] = {"source_symbol": "PlayerNami
 # >>> factory-mutation PrintPlayerNameFromInput
 MUTATIONS["PrintPlayerNameFromInput"] = {"source_symbol": "PrintPlayerNameFromInput", "before": "uint8_t offset = (uint8_t)(0x15u - max_len);", "after": "uint8_t offset = (uint8_t)(0x16u - max_len);", "case_ids": ["PrintPlayerNameFromInput-0", "PrintPlayerNameFromInput-1"]}
 # <<< factory-mutation PrintPlayerNameFromInput
+# >>> factory-mutation DrawPlayerNamingScreenBG
+MUTATIONS["DrawPlayerNamingScreenBG"] = {"source_symbol": "DrawPlayerNamingScreenBG", "before": "InitTextPrinting(2u, 4u);", "after": "InitTextPrinting(3u, 4u);", "case_ids": ["DrawPlayerNamingScreenBG-0", "DrawPlayerNamingScreenBG-1"]}
+# <<< factory-mutation DrawPlayerNamingScreenBG

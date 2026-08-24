@@ -48,6 +48,13 @@ static void adapt_PrintAlbumProgress(ProbeState *s)
 }
 /* <<< factory PrintAlbumProgress */
 
+/* >>> factory PrintPlayTime */
+static void adapt_PrintPlayTime(ProbeState *s)
+{
+	PrintPlayTime(s->b, s->c);
+}
+/* <<< factory PrintPlayTime */
+
 const ProbeEntry probe_entries_print_stats[] = {
 	{ "DrawPauseMenuPlayerPortrait", adapt_DrawPauseMenuPlayerPortrait },
 	{ "FlashReceivedMedal", adapt_FlashReceivedMedal },
@@ -55,5 +62,6 @@ const ProbeEntry probe_entries_print_stats[] = {
 	{ "PrintAlbumProgress_SkipGetProgress", adapt_PrintAlbumProgress_SkipGetProgress },
 	{ "PrintPlayTime_SkipUpdateTime", adapt_PrintPlayTime_SkipUpdateTime },
 	{ "PrintAlbumProgress", adapt_PrintAlbumProgress },
+	{ "PrintPlayTime", adapt_PrintPlayTime },
 	{ NULL, NULL },
 };
