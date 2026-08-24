@@ -66,6 +66,9 @@ CASES = {
 wNumLoadedFramesetSubgroups = 0xD322
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCurMap = 0xD32F
+wConsole = 0xCAB4
 # <<< factory-cases-statics
 
 # >>> factory DoLoadedFramesetSubgroupsFrame
@@ -85,6 +88,14 @@ CASES["ProcessOWFrameset"] = [
     dict(POISON, hl=0xC500, wram={0xD31A: b"\xFF" * 6, 0xC500: bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, read={0xD322: 1}),
 ]
 # <<< factory ProcessOWFrameset
+
+# >>> factory DoMapOWFrame
+CONTRACT["DoMapOWFrame"] = {"compare": (), "preserve": ()}
+CASES["DoMapOWFrame"] = [
+    {"wram": {wCurMap: b"\x02", wConsole: b"\x00", 0xD31A: b"\xFF" * 6}, "rom_bank": 0x20, "read": {0xD31A: 6}},
+    dict(POISON, wram={wCurMap: b"\x02", wConsole: b"\x00", 0xD31A: b"\xFF" * 6}, rom_bank=0x20, read={0xD31A: 6}),
+]
+# <<< factory DoMapOWFrame
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -140,3 +151,11 @@ MUTATIONS["DoLoadedFramesetSubgroupsFrame"] = {
 # >>> factory-mutation ProcessOWFrameset
 MUTATIONS["ProcessOWFrameset"] = {"source_symbol": "ProcessOWFrameset", "before": "\t\tif (gb_read8(wCurOWFrameDataOffset_ADDR) == 0xFFu) {", "after": "\t\tif (gb_read8(wCurOWFrameDataOffset_ADDR) == 0xFEu) {", "case_ids": ["ProcessOWFrameset-0", "ProcessOWFrameset-1"]}
 # <<< factory-mutation ProcessOWFrameset
+# >>> factory-mutation DoMapOWFrame
+MUTATIONS["DoMapOWFrame"] = {
+    "source_symbol": "DoMapOWFrame",
+    "before": "\tuint8_t c = (uint8_t)(map * 4u);",
+    "after": "\tuint8_t c = (uint8_t)(map * 4u + 1u);",
+    "case_ids": ["DoMapOWFrame-0", "DoMapOWFrame-1"],
+}
+# <<< factory-mutation DoMapOWFrame

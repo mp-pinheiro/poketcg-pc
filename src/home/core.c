@@ -4317,3 +4317,18 @@ PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_
 	return (PrintAttackOrPkmnPowerInformationResult){last_a, b, c, 0u, running_e, 0u, hl};
 }
 /* <<< factory PrintAttackOrPkmnPowerInformation */
+
+/* >>> factory PrintAttackOrNonPokemonCardDescription */
+PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16_t hl, uint8_t d, uint8_t e)
+{
+	uint8_t a = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t b = gb_read8(hl);
+	a = (uint8_t)(a | b);
+	if (a == 0u) {
+		return (PrintAttackOrCardDescriptionResult){a, d, e, 0x80u, hl};
+	}
+	hl = (uint16_t)(hl - 1u);
+	return PrintAttackOrCardDescription(hl, 1u, 11u);
+}
+/* <<< factory PrintAttackOrNonPokemonCardDescription */

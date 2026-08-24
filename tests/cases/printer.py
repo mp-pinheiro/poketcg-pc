@@ -88,6 +88,8 @@ CASES = {
 }
 # >>> factory-cases-statics
 wce9d = 0xCE9D
+
+SGFXBUFFER5 = 0xB400
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -147,6 +149,14 @@ CASES["CheckDataCompression"] = [
 ]
 # <<< factory CheckDataCompression
 
+# >>> factory CompressDataForPrinterSerialTransfer
+CONTRACT["CompressDataForPrinterSerialTransfer"] = {"compare": ("b", "c", "hl", "d", "e"), "preserve": ()}
+CASES["CompressDataForPrinterSerialTransfer"] = [
+    {"sram": {0: {SGFXBUFFER5: b"\x00" * 0x280}}, "ramg": True, "sread": {0: {SGFXBUFFER5 + 0x280: 0x280}}},
+    dict(POISON, sram={0: {SGFXBUFFER5: b"\x00" * 0x280}}, ramg=True, sread={0: {SGFXBUFFER5 + 0x280: 0x280}}),
+]
+# <<< factory CompressDataForPrinterSerialTransfer
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -196,3 +206,11 @@ MUTATIONS["PrepareForPrinterCommunications"] = {
 # >>> factory-mutation CheckDataCompression
 MUTATIONS["CheckDataCompression"] = {"source_symbol": "CheckDataCompression", "before": "\t\thl = (uint16_t)(hl + 1u);\n\t\te = (uint8_t)(e + 1u);\n\t\tc = (uint8_t)(c - 1u);\n\t\tif (c == 0u) {\n\t\t\tz_flag = 1u;\n\t\t\tgoto set_carry;\n\t\t}", "after": "\t\thl = (uint16_t)(hl + 1u);\n\t\te = (uint8_t)(e + 2u);\n\t\tc = (uint8_t)(c - 1u);\n\t\tif (c == 0u) {\n\t\t\tz_flag = 1u;\n\t\t\tgoto set_carry;\n\t\t}", "case_ids": ["CheckDataCompression-0"]}
 # <<< factory-mutation CheckDataCompression
+# >>> factory-mutation CompressDataForPrinterSerialTransfer
+MUTATIONS["CompressDataForPrinterSerialTransfer"] = {
+    "source_symbol": "CompressDataForPrinterSerialTransfer",
+    "before": "\t\t\tgb_write8(de, (uint8_t)(((uint8_t)(found - 2u)) | 0x80u));",
+    "after": "\t\t\tgb_write8(de, (uint8_t)(((uint8_t)(found - 1u)) | 0x80u));",
+    "case_ids": ["CompressDataForPrinterSerialTransfer-0", "CompressDataForPrinterSerialTransfer-1"],
+}
+# <<< factory-mutation CompressDataForPrinterSerialTransfer

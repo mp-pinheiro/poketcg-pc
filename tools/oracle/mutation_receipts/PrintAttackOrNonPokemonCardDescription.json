@@ -1,0 +1,9 @@
+{
+  "fn": "PrintAttackOrNonPokemonCardDescription",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintAttackOrNonPokemonCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50433, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintAttackOrNonPokemonCardDescription\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"PrintAttackOrNonPokemonCardDescription\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 50433, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

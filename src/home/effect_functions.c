@@ -4908,3 +4908,10 @@ TextResult PrintArenaCardNameAndColorText(uint8_t d, uint8_t e, uint16_t hl)
 	return DrawWideTextBox_PrintText(hl);
 }
 /* <<< factory PrintArenaCardNameAndColorText */
+
+/* >>> factory Conversion1_AISelectEffect */
+void Conversion1_AISelectEffect(void)
+{
+	AISelectConversionColor();
+}
+/* <<< factory Conversion1_AISelectEffect */

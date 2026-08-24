@@ -1596,6 +1596,14 @@ static void adapt_PrintAttackOrPkmnPowerInformation(ProbeState *s)
 }
 /* <<< factory PrintAttackOrPkmnPowerInformation */
 
+/* >>> factory PrintAttackOrNonPokemonCardDescription */
+static void adapt_PrintAttackOrNonPokemonCardDescription(ProbeState *s)
+{
+	PrintAttackOrCardDescriptionResult r = PrintAttackOrNonPokemonCardDescription(s->hl, s->d, s->e);
+	s->a = r.a; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory PrintAttackOrNonPokemonCardDescription */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1786,5 +1794,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayFirstOrNextCardPage", adapt_DisplayFirstOrNextCardPage },
 	{ "PrintAttackOrCardDescription", adapt_PrintAttackOrCardDescription },
 	{ "PrintAttackOrPkmnPowerInformation", adapt_PrintAttackOrPkmnPowerInformation },
+	{ "PrintAttackOrNonPokemonCardDescription", adapt_PrintAttackOrNonPokemonCardDescription },
 	{ NULL, NULL },
 };

@@ -2212,6 +2212,14 @@ CASES["PrintAttackOrPkmnPowerInformation"] = [
 ]
 # <<< factory PrintAttackOrPkmnPowerInformation
 
+# >>> factory PrintAttackOrNonPokemonCardDescription
+CONTRACT["PrintAttackOrNonPokemonCardDescription"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ("d", "e")}
+CASES["PrintAttackOrNonPokemonCardDescription"] = [
+    {"hl": 0xC500, "wram": {0xC500: b"\x00\x00"}},
+    dict(POISON, hl=0xC500, wram={0xC500: b"\x00\x00"}),
+]
+# <<< factory PrintAttackOrNonPokemonCardDescription
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3288,3 +3296,11 @@ MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCard
 # >>> factory-mutation PrintAttackOrPkmnPowerInformation
 MUTATIONS["PrintAttackOrPkmnPowerInformation"] = {"source_symbol": "PrintAttackOrPkmnPowerInformation", "before": "\tif ((uint8_t)(lo | hi) == 0u) {", "after": "\tif ((uint8_t)(lo | hi) == 1u) {", "case_ids": ["PrintAttackOrPkmnPowerInformation-0", "PrintAttackOrPkmnPowerInformation-1"]}
 # <<< factory-mutation PrintAttackOrPkmnPowerInformation
+# >>> factory-mutation PrintAttackOrNonPokemonCardDescription
+MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {
+    "source_symbol": "PrintAttackOrNonPokemonCardDescription",
+    "before": "\t\treturn (PrintAttackOrCardDescriptionResult){a, d, e, 0x80u, hl};",
+    "after": "\t\treturn (PrintAttackOrCardDescriptionResult){a, d, e, 0x00u, hl};",
+    "case_ids": ["PrintAttackOrNonPokemonCardDescription-0", "PrintAttackOrNonPokemonCardDescription-1"],
+}
+# <<< factory-mutation PrintAttackOrNonPokemonCardDescription

@@ -3248,6 +3248,14 @@ CASES["PrintArenaCardNameAndColorText"] = [
 ]
 # <<< factory PrintArenaCardNameAndColorText
 
+# >>> factory Conversion1_AISelectEffect
+CONTRACT["Conversion1_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Conversion1_AISelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFFA0: b"\xAA"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xFFA0: b"\xAA"}, read={0xFFA0: 1}),
+]
+# <<< factory Conversion1_AISelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5194,3 +5202,11 @@ MUTATIONS["AISelectConversionColor"] = {"source_symbol": "AISelectConversionColo
 # >>> factory-mutation PrintArenaCardNameAndColorText
 MUTATIONS["PrintArenaCardNameAndColorText"] = {"source_symbol": "PrintArenaCardNameAndColorText", "before": "\treturn DrawWideTextBox_PrintText(hl);", "after": "\treturn DrawWideTextBox_PrintText((uint16_t)(hl + 1u));", "case_ids": ["PrintArenaCardNameAndColorText-0", "PrintArenaCardNameAndColorText-1"]}
 # <<< factory-mutation PrintArenaCardNameAndColorText
+# >>> factory-mutation Conversion1_AISelectEffect
+MUTATIONS["Conversion1_AISelectEffect"] = {
+    "source_symbol": "Conversion1_AISelectEffect",
+    "before": "\tAISelectConversionColor();",
+    "after": "\t(void)0;",
+    "case_ids": ["Conversion1_AISelectEffect-0", "Conversion1_AISelectEffect-1"],
+}
+# <<< factory-mutation Conversion1_AISelectEffect

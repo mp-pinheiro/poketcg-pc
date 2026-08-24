@@ -52,6 +52,13 @@ static void adapt_ProcessOWFrameset(ProbeState *s)
 }
 /* <<< factory ProcessOWFrameset */
 
+/* >>> factory DoMapOWFrame */
+static void adapt_DoMapOWFrame(ProbeState *s)
+{
+	DoMapOWFrame();
+}
+/* <<< factory DoMapOWFrame */
+
 const ProbeEntry probe_entries_animation[] = {
 	{ "ClearNumLoadedFramesetSubgroups", adapt_ClearNumLoadedFramesetSubgroups },
 	{ "ClearOWFramesetSubgroups", adapt_ClearOWFramesetSubgroups },
@@ -61,5 +68,6 @@ const ProbeEntry probe_entries_animation[] = {
 	{ "LoadOWFrameTiles", adapt_LoadOWFrameTiles },
 	{ "DoLoadedFramesetSubgroupsFrame", adapt_DoLoadedFramesetSubgroupsFrame },
 	{ "ProcessOWFrameset", adapt_ProcessOWFrameset },
+	{ "DoMapOWFrame", adapt_DoMapOWFrame },
 	{ NULL, NULL },
 };

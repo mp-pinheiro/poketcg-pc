@@ -102,6 +102,15 @@ static void adapt_CheckDataCompression(ProbeState *s)
 }
 /* <<< factory CheckDataCompression */
 
+/* >>> factory CompressDataForPrinterSerialTransfer */
+static void adapt_CompressDataForPrinterSerialTransfer(ProbeState *s)
+{
+	CompressDataForPrinterSerialTransferResult r = CompressDataForPrinterSerialTransfer();
+	s->b = (uint8_t)(r.bc >> 8); s->c = (uint8_t)r.bc;
+	s->hl = r.hl; s->d = r.d; s->e = r.e;
+}
+/* <<< factory CompressDataForPrinterSerialTransfer */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -113,5 +122,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "GetPrinterContrastSerialData", adapt_GetPrinterContrastSerialData },
 	{ "PrepareForPrinterCommunications", adapt_PrepareForPrinterCommunications },
 	{ "CheckDataCompression", adapt_CheckDataCompression },
+	{ "CompressDataForPrinterSerialTransfer", adapt_CompressDataForPrinterSerialTransfer },
 	{ NULL, NULL },
 };

@@ -2860,6 +2860,13 @@ static void adapt_PrintArenaCardNameAndColorText(ProbeState *s)
 }
 /* <<< factory PrintArenaCardNameAndColorText */
 
+/* >>> factory Conversion1_AISelectEffect */
+static void adapt_Conversion1_AISelectEffect(ProbeState *s)
+{
+	Conversion1_AISelectEffect();
+}
+/* <<< factory Conversion1_AISelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3214,5 +3221,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MorphEffect", adapt_MorphEffect },
 	{ "AISelectConversionColor", adapt_AISelectConversionColor },
 	{ "PrintArenaCardNameAndColorText", adapt_PrintArenaCardNameAndColorText },
+	{ "Conversion1_AISelectEffect", adapt_Conversion1_AISelectEffect },
 	{ NULL, NULL },
 };

@@ -13,6 +13,11 @@
 #include "home/animation.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/animation.h"
+#define CONSOLE_CGB 0x02u
+#define MAP_OW_FRAMESET_POINTERS_BANK 0x20u
+#define MAP_OW_FRAMESET_POINTERS_ADDR 0x45D6u
 /* <<< factory statics */
 #define NUM_OW_FRAMESET_SUBGROUPS 3u
 
@@ -146,3 +151,19 @@ void ProcessOWFrameset(uint16_t hl)
 	}
 }
 /* <<< factory ProcessOWFrameset */
+
+/* >>> factory DoMapOWFrame */
+void DoMapOWFrame(void)
+{
+	uint8_t map = gb_read8(wCurMap_ADDR);
+	uint8_t c = (uint8_t)(map * 4u);
+	uint8_t console = gb_read8(wConsole_ADDR);
+	if (console == CONSOLE_CGB) {
+		c = (uint8_t)(c + 2u);
+	}
+
+	const uint8_t *p = rom_ptr(MAP_OW_FRAMESET_POINTERS_BANK, (uint16_t)(MAP_OW_FRAMESET_POINTERS_ADDR + c));
+	uint16_t hl = (uint16_t)(p[0] | (uint16_t)p[1] << 8);
+	ProcessOWFrameset(hl);
+}
+/* <<< factory DoMapOWFrame */

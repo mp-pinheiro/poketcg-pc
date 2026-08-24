@@ -19,4 +19,7 @@ void DoLoadedFramesetSubgroupsFrame(void);
 /* >>> factory ProcessOWFrameset */
 void ProcessOWFrameset(uint16_t hl);
 /* <<< factory ProcessOWFrameset */
+/* >>> factory DoMapOWFrame */
+void DoMapOWFrame(void);
+/* <<< factory DoMapOWFrame */
 #endif

@@ -22,6 +22,11 @@
 
 #include "home/printer.h"
 #include "mem.h"
+
+#include "home/printer.h"
+#define PRINTERPKT_DATA 0x04u
+#define TRUE 0x01u
+#define SGFXBUFFER5_ADDR 0xB400u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -320,3 +325,44 @@ no_carry:
 	return (CheckDataCompressionResult){a, e, (uint8_t)(a == 0u ? 0x80u : 0u), entry_hl};
 }
 /* <<< factory CheckDataCompression */
+
+/* >>> factory CompressDataForPrinterSerialTransfer */
+CompressDataForPrinterSerialTransferResult CompressDataForPrinterSerialTransfer(void)
+{
+	uint16_t hl = SGFXBUFFER5_ADDR;
+	uint16_t de = (uint16_t)(SGFXBUFFER5_ADDR + 0x280u);
+	uint16_t remaining = 0x280u;
+
+	for (;;) {
+		uint8_t count = (remaining > 0xFFu) ? 0xFFu : (uint8_t)remaining;
+		CheckDataCompressionResult r = CheckDataCompression(count, hl);
+		uint8_t found = r.e;
+		uint8_t carry = (uint8_t)(r.f & 0x10u) != 0u;
+
+		if (carry) {
+			gb_write8(de, (uint8_t)(((uint8_t)(found - 2u)) | 0x80u));
+			de = (uint16_t)(de + 1u);
+			gb_write8(de, gb_read8(hl));
+			de = (uint16_t)(de + 1u);
+			hl = (uint16_t)(hl + found);
+		} else {
+			gb_write8(de, (uint8_t)(found - 1u));
+			de = (uint16_t)(de + 1u);
+			for (uint8_t i = 0u; i < found; i++) {
+				gb_write8(de, gb_read8(hl));
+				hl = (uint16_t)(hl + 1u);
+				de = (uint16_t)(de + 1u);
+			}
+		}
+
+		remaining = (uint16_t)(remaining - found);
+		if (remaining == 0u) {
+			break;
+		}
+	}
+
+	uint16_t hl_out = (uint16_t)(SGFXBUFFER5_ADDR + 0x280u);
+	uint16_t bc_out = (uint16_t)(de - hl_out);
+	return (CompressDataForPrinterSerialTransferResult){bc_out, hl_out, PRINTERPKT_DATA, TRUE};
+}
+/* <<< factory CompressDataForPrinterSerialTransfer */

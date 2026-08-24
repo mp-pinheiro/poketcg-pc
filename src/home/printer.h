@@ -94,4 +94,8 @@ PrepareForPrinterCommunicationsResult PrepareForPrinterCommunications(uint8_t a,
 typedef struct { uint8_t a; uint8_t e; uint8_t f; uint16_t hl; } CheckDataCompressionResult;
 CheckDataCompressionResult CheckDataCompression(uint8_t c, uint16_t hl);
 /* <<< factory CheckDataCompression */
+/* >>> factory CompressDataForPrinterSerialTransfer */
+typedef struct { uint16_t bc; uint16_t hl; uint8_t d; uint8_t e; } CompressDataForPrinterSerialTransferResult;
+CompressDataForPrinterSerialTransferResult CompressDataForPrinterSerialTransfer(void);
+/* <<< factory CompressDataForPrinterSerialTransfer */
 #endif
