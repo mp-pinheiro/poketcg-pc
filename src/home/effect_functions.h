@@ -1217,6 +1217,10 @@ ShuffleCardsInDeckResult ShuffleCardsInDeck(uint8_t b, uint8_t c, uint16_t de, u
 /* >>> factory DrawPlayAreaScreenToShowChanges */
 void DrawPlayAreaScreenToShowChanges(uint8_t a);
 /* <<< factory DrawPlayAreaScreenToShowChanges */
+/* >>> factory EnergyRemoval_DiscardEffect */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } EnergyRemovalDiscardEffectResult;
+EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void);
+/* <<< factory EnergyRemoval_DiscardEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -437,6 +437,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "generated/hram.h"
 #include "home/core.h"
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5082,3 +5086,19 @@ void DrawPlayAreaScreenToShowChanges(uint8_t a)
 	InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox();
 }
 /* <<< factory DrawPlayAreaScreenToShowChanges */
+
+/* >>> factory EnergyRemoval_DiscardEffect */
+EnergyRemovalDiscardEffectResult EnergyRemoval_DiscardEffect(void)
+{
+	SwapTurn();
+	PutCardInDiscardPile(hTempPlayAreaLocation_ffa1);
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (!(turn.f & 0x10u)) {
+		SwapTurn();
+		DrawPlayAreaScreenToShowChanges(hTemp_ffa0);
+		SwapTurn();
+	}
+	return (EnergyRemovalDiscardEffectResult){turn.a, turn.f, turn.hl};
+}
+/* <<< factory EnergyRemoval_DiscardEffect */

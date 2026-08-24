@@ -3364,6 +3364,14 @@ CASES["DrawPlayAreaScreenToShowChanges"] = [
 ]
 # <<< factory DrawPlayAreaScreenToShowChanges
 
+# >>> factory EnergyRemoval_DiscardEffect
+CONTRACT["EnergyRemoval_DiscardEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["EnergyRemoval_DiscardEffect"] = [
+    {"wram": {0xFFA1: b"\x00", 0xFFA0: b"\x00"}},
+    dict(POISON, wram={0xFFA1: b"\x00", 0xFFA0: b"\x00"}),
+]
+# <<< factory EnergyRemoval_DiscardEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5372,3 +5380,11 @@ MUTATIONS["DrawPlayAreaScreenToShowChanges"] = {
     "case_ids": ["DrawPlayAreaScreenToShowChanges-0", "DrawPlayAreaScreenToShowChanges-1"],
 }
 # <<< factory-mutation DrawPlayAreaScreenToShowChanges
+# >>> factory-mutation EnergyRemoval_DiscardEffect
+MUTATIONS["EnergyRemoval_DiscardEffect"] = {
+    "source_symbol": "EnergyRemoval_DiscardEffect",
+    "before": "\treturn (EnergyRemovalDiscardEffectResult){turn.a, turn.f, turn.hl};",
+    "after": "\treturn (EnergyRemovalDiscardEffectResult){turn.a, 0x00u, turn.hl};",
+    "case_ids": ["EnergyRemoval_DiscardEffect-0", "EnergyRemoval_DiscardEffect-1"],
+}
+# <<< factory-mutation EnergyRemoval_DiscardEffect
