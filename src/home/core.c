@@ -811,6 +811,19 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define wDuelTempList_ADDR 0xC510u
 #define wExcludeArenaPokemon_ADDR 0xCBD2u
 #define wNumPlayAreaItems_ADDR 0xCBC8u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
+#define WillUseThePokemonPowerText 0x005Cu
+#define hTempCardIndex_ff9f_ADDR 0xFF9Fu
+#define hTemp_ffa0_ADDR 0xFFA0u
+#define wLoadedAttackName_ADDR 0xCCAAu
+#define wSkipDuelistIsThinkingDelay_ADDR 0xCBF9u
+#define wTxRam2_b_ADDR 0xCE41u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4716,3 +4729,25 @@ void PrintPlayAreaCardList(void)
 	} while (b != 0u);
 }
 /* <<< factory PrintPlayAreaCardList */
+
+/* >>> factory OppAction_UsePokemonPower */
+void OppAction_UsePokemonPower(void)
+{
+	uint8_t d = gb_read8(hTempCardIndex_ff9f_ADDR);
+	(void)CopyAttackDataAndDamage_FromDeckIndex(d, FIRST_ATTACK_OR_PKMN_POWER);
+	uint8_t slot = gb_read8(hTemp_ffa0_ADDR);
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, slot);
+	DisplayUsePokemonPowerScreen();
+	uint8_t card = gb_read8(hTempCardIndex_ff9f_ADDR);
+	LoadCardNameToTxRam2(card);
+	uint16_t hl = wLoadedAttackName_ADDR;
+	uint8_t lo = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8(wTxRam2_b_ADDR, lo);
+	uint8_t hi = gb_read8(hl);
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), hi);
+	(void)DrawWideTextBox_WaitForInput_Bank1(WillUseThePokemonPowerText);
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);
+}
+/* <<< factory OppAction_UsePokemonPower */

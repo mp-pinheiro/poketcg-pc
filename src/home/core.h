@@ -775,4 +775,7 @@ void InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox(void);
 /* >>> factory PrintPlayAreaCardList */
 void PrintPlayAreaCardList(void);
 /* <<< factory PrintPlayAreaCardList */
+/* >>> factory OppAction_UsePokemonPower */
+void OppAction_UsePokemonPower(void);
+/* <<< factory OppAction_UsePokemonPower */
 #endif

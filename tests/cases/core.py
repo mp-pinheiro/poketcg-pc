@@ -1576,6 +1576,26 @@ wNumPlayAreaItems = 0xCBC8
 hWhoseTurn = 0xFF97
 PLAYER_TURN = 0xC2
 wPlayerArenaCard = 0xC2BB
+
+hTempCardIndex_ff9f = 0xFF9F
+hTempPlayAreaLocation_ff9d = 0xFF9D
+hTemp_ffa0 = 0xFFA0
+wLoadedAttackName = 0xCCAA
+wSkipDuelistIsThinkingDelay = 0xCBF9
+wTxRam2_b = 0xCE41
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wConsole = 0xCAB4
+wDuelType = 0xCE22
+DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2566,6 +2586,36 @@ CASES["PrintPlayAreaCardList"] = [
      "read": {wNumPlayAreaItems: 1, wDuelTempList: 1}},
 ]
 # <<< factory PrintPlayAreaCardList
+
+# >>> factory OppAction_UsePokemonPower
+CONTRACT["OppAction_UsePokemonPower"] = {"compare": (), "preserve": ()}
+CASES["OppAction_UsePokemonPower"] = [
+    {"keys": 0x01, "instruction_budget": 5000000, "cycle_budget": 20000000,
+     "hram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)),
+              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+              wDuelType: b"\x00"},
+     "read": {wSkipDuelistIsThinkingDelay: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0x01, instruction_budget=5000000, cycle_budget=20000000,
+         hram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00"},
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)),
+               wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+               wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+               wDuelType: b"\x00"},
+         read={wSkipDuelistIsThinkingDelay: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory OppAction_UsePokemonPower
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3689,3 +3739,6 @@ MUTATIONS["InitAndPrintPlayAreaCardInformationAndLocation_WithTextBox"] = {"sour
 # >>> factory-mutation PrintPlayAreaCardList
 MUTATIONS["PrintPlayAreaCardList"] = {"source_symbol": "PrintPlayAreaCardList", "before": "\tb = saved_count;\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "after": "\tb = (uint8_t)(saved_count + 1u);\n\tgb_write8(wNumPlayAreaItems_ADDR, b);\n\tif (gb_read8(wExcludeArenaPokemon_ADDR) == 0u)", "case_ids": ["PrintPlayAreaCardList-0", "PrintPlayAreaCardList-1"]}
 # <<< factory-mutation PrintPlayAreaCardList
+# >>> factory-mutation OppAction_UsePokemonPower
+MUTATIONS["OppAction_UsePokemonPower"] = {"source_symbol": "OppAction_UsePokemonPower", "before": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_UsePokemonPower-0", "OppAction_UsePokemonPower-1"]}
+# <<< factory-mutation OppAction_UsePokemonPower
