@@ -121,6 +121,13 @@ static void adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons(ProbeState *s)
 }
 /* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
 
+/* >>> factory PrintThereIsNoDeckHereText */
+static void adapt_PrintThereIsNoDeckHereText(ProbeState *s)
+{
+	s->a = PrintThereIsNoDeckHereText();
+}
+/* <<< factory PrintThereIsNoDeckHereText */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -134,5 +141,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "InitPromotionalCardAndDeckCounterSaveData", adapt_InitPromotionalCardAndDeckCounterSaveData },
 	{ "PrepareMenuGraphics", adapt_PrepareMenuGraphics },
 	{ "EmptyScreenAndLoadFontDuelAndHandCardsIcons", adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons },
+	{ "PrintThereIsNoDeckHereText", adapt_PrintThereIsNoDeckHereText },
 	{ NULL, NULL },
 };

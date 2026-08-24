@@ -1,0 +1,9 @@
+{
+  "fn": "PrintThereIsNoDeckHereText",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintThereIsNoDeckHereText\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52913\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintThereIsNoDeckHereText\", \"mismatches\": {\"a\": [2, 3]}}\n",
+  "restored": "{\"fn\": \"PrintThereIsNoDeckHereText\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52913\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

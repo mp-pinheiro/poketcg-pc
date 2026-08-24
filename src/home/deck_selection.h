@@ -63,4 +63,7 @@ void PrepareMenuGraphics(void);
 /* >>> factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
 void EmptyScreenAndLoadFontDuelAndHandCardsIcons(void);
 /* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+/* >>> factory PrintThereIsNoDeckHereText */
+uint8_t PrintThereIsNoDeckHereText(void);
+/* <<< factory PrintThereIsNoDeckHereText */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

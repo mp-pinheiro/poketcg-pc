@@ -30,6 +30,8 @@
 #define v0Tiles2_dest 0x9380u
 
 #define TRUE 0x01u
+
+#define ThereIsNoDeckHereText 0x022fu
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -203,3 +205,11 @@ void EmptyScreenAndLoadFontDuelAndHandCardsIcons(void)
 	SetupText(0x3cu, 0xbfu);
 }
 /* <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons */
+
+/* >>> factory PrintThereIsNoDeckHereText */
+uint8_t PrintThereIsNoDeckHereText(void)
+{
+	DrawWideTextBox_WaitForInput(ThereIsNoDeckHereText);
+	return wCurDeck;
+}
+/* <<< factory PrintThereIsNoDeckHereText */

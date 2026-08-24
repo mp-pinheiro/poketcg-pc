@@ -37,6 +37,8 @@ wConsole = 0xCAB4
 wTileMapFill = 0xCAB6
 wVBlankOAMCopyToggle = 0xCAC0
 wLCDC = 0xCABB
+
+wCurDeck = 0xCEB1
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -134,6 +136,18 @@ CASES["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = [
 ]
 # <<< factory EmptyScreenAndLoadFontDuelAndHandCardsIcons
 
+# >>> factory PrintThereIsNoDeckHereText
+CONTRACT["PrintThereIsNoDeckHereText"] = {"compare": ("a",), "preserve": ()}
+CASES["PrintThereIsNoDeckHereText"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "keys": 0x01, "wram": {wCurDeck: b"\x02"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
+         keys=0x01, wram={wCurDeck: b"\x03"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintThereIsNoDeckHereText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -174,3 +188,6 @@ MUTATIONS["PrepareMenuGraphics"] = {"source_symbol": "PrepareMenuGraphics", "bef
 # >>> factory-mutation EmptyScreenAndLoadFontDuelAndHandCardsIcons
 MUTATIONS["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = {"source_symbol": "EmptyScreenAndLoadFontDuelAndHandCardsIcons", "before": "\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = TRUE;", "after": "\tZeroObjectPositions();\n\twVBlankOAMCopyToggle = 0u;", "case_ids": ["EmptyScreenAndLoadFontDuelAndHandCardsIcons-0", "EmptyScreenAndLoadFontDuelAndHandCardsIcons-1"]}
 # <<< factory-mutation EmptyScreenAndLoadFontDuelAndHandCardsIcons
+# >>> factory-mutation PrintThereIsNoDeckHereText
+MUTATIONS["PrintThereIsNoDeckHereText"] = {"source_symbol": "PrintThereIsNoDeckHereText", "before": "\treturn wCurDeck;", "after": "\treturn (uint8_t)(wCurDeck + 1u);", "case_ids": ["PrintThereIsNoDeckHereText-0", "PrintThereIsNoDeckHereText-1"]}
+# <<< factory-mutation PrintThereIsNoDeckHereText
