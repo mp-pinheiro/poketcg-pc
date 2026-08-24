@@ -831,6 +831,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/lcd.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4773,3 +4777,13 @@ void Func_616e(uint8_t a)
 	InitAndPrintPlayAreaCardInformationAndLocation();
 }
 /* <<< factory Func_616e */
+
+/* >>> factory PrintPlayAreaCardList_EnableLCD */
+NumPlayAreaItemsResult PrintPlayAreaCardList_EnableLCD(void)
+{
+	gb_write8(wDuelDisplayedScreen_ADDR, PLAY_AREA_CARD_LIST);
+	PrintPlayAreaCardList();
+	EnableLCD();
+	return (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};
+}
+/* <<< factory PrintPlayAreaCardList_EnableLCD */

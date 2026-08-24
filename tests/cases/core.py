@@ -1602,6 +1602,12 @@ PLAYER_TURN = 0xC2
 wPlayerArenaCard = 0xC2BB
 wCurPlayAreaSlot = 0xCBC9
 wCurPlayAreaY = 0xCBCA
+
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerArenaCard = 0xC2BB
+wExcludeArenaPokemon = 0xCBD2
+wNumPlayAreaItems = 0xCBC8
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2636,6 +2642,18 @@ CASES["Func_616e"] = [
          read={wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}),
 ]
 # <<< factory Func_616e
+
+# >>> factory PrintPlayAreaCardList_EnableLCD
+CONTRACT["PrintPlayAreaCardList_EnableLCD"] = {"compare": ("a",), "preserve": ()}
+CASES["PrintPlayAreaCardList_EnableLCD"] = [
+    {"instruction_budget": 6000000, "cycle_budget": 20000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
+              wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00"}},
+    dict(POISON, instruction_budget=6000000, cycle_budget=20000000,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wPlayerArenaCard: b"\xFF",
+               wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00"}),
+]
+# <<< factory PrintPlayAreaCardList_EnableLCD
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3765,3 +3783,6 @@ MUTATIONS["OppAction_UsePokemonPower"] = {"source_symbol": "OppAction_UsePokemon
 # >>> factory-mutation Func_616e
 MUTATIONS["Func_616e"] = {"source_symbol": "Func_616e", "before": "\tgb_write8(wExcludeArenaPokemon_ADDR, 0u);", "after": "\tgb_write8(wExcludeArenaPokemon_ADDR, 1u);", "case_ids": ["Func_616e-0", "Func_616e-1"]}
 # <<< factory-mutation Func_616e
+# >>> factory-mutation PrintPlayAreaCardList_EnableLCD
+MUTATIONS["PrintPlayAreaCardList_EnableLCD"] = {"source_symbol": "PrintPlayAreaCardList_EnableLCD", "before": "\treturn (NumPlayAreaItemsResult){gb_read8(wNumPlayAreaItems_ADDR)};", "after": "\treturn (NumPlayAreaItemsResult){0u};", "case_ids": ["PrintPlayAreaCardList_EnableLCD-0", "PrintPlayAreaCardList_EnableLCD-1"]}
+# <<< factory-mutation PrintPlayAreaCardList_EnableLCD

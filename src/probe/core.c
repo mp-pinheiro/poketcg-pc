@@ -1703,6 +1703,13 @@ static void adapt_Func_616e(ProbeState *s)
 }
 /* <<< factory Func_616e */
 
+/* >>> factory PrintPlayAreaCardList_EnableLCD */
+static void adapt_PrintPlayAreaCardList_EnableLCD(ProbeState *s)
+{
+	s->a = PrintPlayAreaCardList_EnableLCD().a;
+}
+/* <<< factory PrintPlayAreaCardList_EnableLCD */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1907,5 +1914,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPlayAreaCardList", adapt_PrintPlayAreaCardList },
 	{ "OppAction_UsePokemonPower", adapt_OppAction_UsePokemonPower },
 	{ "Func_616e", adapt_Func_616e },
+	{ "PrintPlayAreaCardList_EnableLCD", adapt_PrintPlayAreaCardList_EnableLCD },
 	{ NULL, NULL },
 };

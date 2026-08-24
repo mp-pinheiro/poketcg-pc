@@ -781,4 +781,8 @@ void OppAction_UsePokemonPower(void);
 /* >>> factory Func_616e */
 void Func_616e(uint8_t a);
 /* <<< factory Func_616e */
+/* >>> factory PrintPlayAreaCardList_EnableLCD */
+typedef struct { uint8_t a; } NumPlayAreaItemsResult;
+NumPlayAreaItemsResult PrintPlayAreaCardList_EnableLCD(void);
+/* <<< factory PrintPlayAreaCardList_EnableLCD */
 #endif
