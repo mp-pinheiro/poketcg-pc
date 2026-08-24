@@ -512,6 +512,15 @@ CASES["ConvertToNumericalDigits"] = [
 ]
 # <<< factory ConvertToNumericalDigits
 
+# >>> factory CopyListFromHLToDEInSRAM
+CONTRACT["CopyListFromHLToDEInSRAM"] = {"compare": ("f", "d", "e", "hl"), "preserve": ()}
+CASES["CopyListFromHLToDEInSRAM"] = [
+    {"hl": 0xC500, "d": 0xC6, "e": 0x00, "wram": {0xC500: b"\x41\x42\x00", 0xC600: b"\x00\x00\x00"},
+     "expect": {0xC600: b"\x41\x42\x00"}, "expect_regs": {"hl": 0xC503, "d": 0xC6, "e": 0x02}},
+    dict(POISON, hl=0xC500, d=0xC6, e=0x00, wram={0xC500: b"\x41\x42\x00", 0xC600: b"\x00\x00\x00"}),
+]
+# <<< factory CopyListFromHLToDEInSRAM
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -697,3 +706,6 @@ MUTATIONS["AddGiftCenterDeckCardsToCollection"] = {"source_symbol": "AddGiftCent
 # >>> factory-mutation ConvertToNumericalDigits
 MUTATIONS["ConvertToNumericalDigits"] = {"source_symbol": "ConvertToNumericalDigits", "before": "gb_write8(hl, tens);", "after": "gb_write8(hl, ones);", "case_ids": ["ConvertToNumericalDigits-0", "ConvertToNumericalDigits-1"]}
 # <<< factory-mutation ConvertToNumericalDigits
+# >>> factory-mutation CopyListFromHLToDEInSRAM
+MUTATIONS["CopyListFromHLToDEInSRAM"] = {"source_symbol": "CopyListFromHLToDEInSRAM", "before": "EnableSRAM();\n\tCopyListFromHLToDE(&hl, &de);", "after": "EnableSRAM();\n\tCopyListFromHLToDE(&de, &hl);", "case_ids": ["CopyListFromHLToDEInSRAM-0"]}
+# <<< factory-mutation CopyListFromHLToDEInSRAM

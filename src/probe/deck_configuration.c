@@ -372,6 +372,15 @@ static void adapt_ConvertToNumericalDigits(ProbeState *s)
 }
 /* <<< factory ConvertToNumericalDigits */
 
+/* >>> factory CopyListFromHLToDEInSRAM */
+static void adapt_CopyListFromHLToDEInSRAM(ProbeState *s)
+{
+	CopyListFromHLToDEInSRAMResult r = CopyListFromHLToDEInSRAM(s->hl, (uint16_t)(s->d << 8 | s->e));
+	s->f = r.f; s->hl = r.hl;
+	s->d = (uint8_t)(r.de >> 8); s->e = (uint8_t)r.de;
+}
+/* <<< factory CopyListFromHLToDEInSRAM */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -415,5 +424,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintPlayersCardsText", adapt_PrintPlayersCardsText },
 	{ "AddGiftCenterDeckCardsToCollection", adapt_AddGiftCenterDeckCardsToCollection },
 	{ "ConvertToNumericalDigits", adapt_ConvertToNumericalDigits },
+	{ "CopyListFromHLToDEInSRAM", adapt_CopyListFromHLToDEInSRAM },
 	{ NULL, NULL },
 };

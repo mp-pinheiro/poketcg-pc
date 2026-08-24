@@ -1,0 +1,9 @@
+{
+  "fn": "CopyListFromHLToDEInSRAM",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyListFromHLToDEInSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 198, \"e\": 2, \"f\": 128, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"414200\", \"50688\": \"414200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyListFromHLToDEInSRAM\", \"mismatches\": {\"e\": [2, 1], \"hl\": [50435, 50432], \"bus\": {\"address\": 50432, \"reference\": \"4142004142\", \"native\": \"0042000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50432, 3], [50688, 3]]}}}\n",
+  "restored": "{\"fn\": \"CopyListFromHLToDEInSRAM\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 198, \"e\": 2, \"f\": 128, \"hl\": 50435, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"414200\", \"50688\": \"414200\"}}, \"status\": \"PASS\"}\n"
+}

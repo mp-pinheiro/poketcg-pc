@@ -2051,6 +2051,16 @@ CASES["DrawDuelistPortraitsAndNames"] = [
 ]
 # <<< factory DrawDuelistPortraitsAndNames
 
+# >>> factory CheckEnergyNeededForAttack
+CONTRACT["CheckEnergyNeededForAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CheckEnergyNeededForAttack"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+              0xCCC6: b"\x00", 0xCC23: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+                        0xCCC6: b"\x00", 0xCC23: b"\x00"}),
+]
+# <<< factory CheckEnergyNeededForAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3076,3 +3086,6 @@ MUTATIONS["DisplayDuelistTurnScreen"] = {"source_symbol": "DisplayDuelistTurnScr
 # >>> factory-mutation DrawDuelistPortraitsAndNames
 MUTATIONS["DrawDuelistPortraitsAndNames"] = {"source_symbol": "DrawDuelistPortraitsAndNames", "before": "DrawOpponentPortrait(wOpponentPortrait);", "after": "DrawOpponentPortrait(0);", "case_ids": ["DrawDuelistPortraitsAndNames-0", "DrawDuelistPortraitsAndNames-1"]}
 # <<< factory-mutation DrawDuelistPortraitsAndNames
+# >>> factory-mutation CheckEnergyNeededForAttack
+MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededForAttack", "before": "uint8_t e = wSelectedAttack;\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "after": "uint8_t e = (uint8_t)(wSelectedAttack + 1u);\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "case_ids": ["CheckEnergyNeededForAttack-0"]}
+# <<< factory-mutation CheckEnergyNeededForAttack

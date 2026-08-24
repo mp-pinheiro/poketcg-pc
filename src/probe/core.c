@@ -1459,6 +1459,14 @@ static void adapt_DrawDuelistPortraitsAndNames(ProbeState *s)
 }
 /* <<< factory DrawDuelistPortraitsAndNames */
 
+/* >>> factory CheckEnergyNeededForAttack */
+static void adapt_CheckEnergyNeededForAttack(ProbeState *s)
+{
+	CheckEnergyNeededForAttackResult r = CheckEnergyNeededForAttack();
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory CheckEnergyNeededForAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1632,5 +1640,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_PlayStaryuFromBench", adapt_PracticeDuel_PlayStaryuFromBench },
 	{ "DisplayDuelistTurnScreen", adapt_DisplayDuelistTurnScreen },
 	{ "DrawDuelistPortraitsAndNames", adapt_DrawDuelistPortraitsAndNames },
+	{ "CheckEnergyNeededForAttack", adapt_CheckEnergyNeededForAttack },
 	{ NULL, NULL },
 };

@@ -150,6 +150,10 @@
 #include "home/deck_configuration.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/switch_sram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -995,3 +999,13 @@ ConvertToNumericalDigitsResult ConvertToNumericalDigits(uint8_t a, uint16_t hl)
 	return (ConvertToNumericalDigitsResult){ones, ones, hl};
 }
 /* <<< factory ConvertToNumericalDigits */
+
+/* >>> factory CopyListFromHLToDEInSRAM */
+CopyListFromHLToDEInSRAMResult CopyListFromHLToDEInSRAM(uint16_t hl, uint16_t de)
+{
+	EnableSRAM();
+	CopyListFromHLToDE(&hl, &de);
+	DisableSRAM();
+	return (CopyListFromHLToDEInSRAMResult){0x80u, hl, de};
+}
+/* <<< factory CopyListFromHLToDEInSRAM */
