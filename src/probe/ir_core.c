@@ -104,6 +104,14 @@ static void adapt_TransmitNBytesFromHLThroughIR(ProbeState *s)
 }
 /* <<< factory TransmitNBytesFromHLThroughIR */
 
+/* >>> factory Func_19705 */
+static void adapt_Func_19705(ProbeState *s)
+{
+	Func_19705Result r = Func_19705();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory Func_19705 */
+
 const ProbeEntry probe_entries_ir_core[] = {
 	{ "StoreRegistersInIRDataBuffer", adapt_StoreRegistersInIRDataBuffer },
 	{ "LoadRegistersFromIRDataBuffer", adapt_LoadRegistersFromIRDataBuffer },
@@ -116,5 +124,6 @@ const ProbeEntry probe_entries_ir_core[] = {
 	{ "TransmitByteThroughIR", adapt_TransmitByteThroughIR },
 	{ "Func_1971e", adapt_Func_1971e },
 	{ "TransmitNBytesFromHLThroughIR", adapt_TransmitNBytesFromHLThroughIR },
+	{ "Func_19705", adapt_Func_19705 },
 	{ NULL, NULL },
 };

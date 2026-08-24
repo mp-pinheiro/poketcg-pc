@@ -50,4 +50,8 @@ Func_1971eResult Func_1971e(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TransmitNBytesFromHLThroughIRResult;
 TransmitNBytesFromHLThroughIRResult TransmitNBytesFromHLThroughIR(uint16_t hl, uint8_t c);
 /* <<< factory TransmitNBytesFromHLThroughIR */
+/* >>> factory Func_19705 */
+typedef struct { uint8_t a; uint8_t f; } Func_19705Result;
+Func_19705Result Func_19705(void);
+/* <<< factory Func_19705 */
 #endif /* POKETCG_HOME_IR_CORE_H */

@@ -232,3 +232,21 @@ TransmitNBytesFromHLThroughIRResult TransmitNBytesFromHLThroughIR(uint16_t hl, u
 	return (TransmitNBytesFromHLThroughIRResult){r2.a, r2.f, hl};
 }
 /* <<< factory TransmitNBytesFromHLThroughIR */
+
+/* >>> factory Func_19705 */
+Func_19705Result Func_19705(void)
+{
+	for (;;) {
+		uint8_t joyp = gb_read8(RJOYP_ADDR);
+		if ((joyp & P11) == 0u) {
+			ReturnZFlagUnsetAndCarryFlagSetResult err = ReturnZFlagUnsetAndCarryFlagSet();
+			return (Func_19705Result){err.a, err.f};
+		}
+		(void)TransmitByteThroughIR(0xAAu, 0u, 0u, 0u);
+		ReceiveByteThroughIRResult r = ReceiveByteThroughIR_ZeroIfUnsuccessful();
+		if (r.a == 0x33u) {
+			return (Func_19705Result){0u, 0x80u};
+		}
+	}
+}
+/* <<< factory Func_19705 */
