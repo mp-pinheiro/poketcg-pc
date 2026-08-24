@@ -2196,6 +2196,14 @@ CASES["DisplayFirstOrNextCardPage"] = [
 ]
 # <<< factory DisplayFirstOrNextCardPage
 
+# >>> factory PrintAttackOrCardDescription
+CONTRACT["PrintAttackOrCardDescription"] = {"compare": ("a", "hl"), "preserve": ()}
+CASES["PrintAttackOrCardDescription"] = [
+    {"hl": 0xC500, "d": 0x01, "e": 0x0E, "wram": {0xC500: b"\x00\x00"}},
+    dict(POISON, hl=0xC500, d=0x01, e=0x0E, wram={0xC500: b"\x00\x00"}),
+]
+# <<< factory PrintAttackOrCardDescription
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3266,3 +3274,6 @@ MUTATIONS["CheckEnergyNeededForAttackAfterDiscard"] = {"source_symbol": "CheckEn
 # >>> factory-mutation DisplayFirstOrNextCardPage
 MUTATIONS["DisplayFirstOrNextCardPage"] = {"source_symbol": "DisplayFirstOrNextCardPage", "before": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = b;", "after": "\tCardPageNavigationResult r = GoToFirstOrNextCardPage();\n\tr.b = (uint8_t)(b + 1u);", "case_ids": ["DisplayFirstOrNextCardPage-0", "DisplayFirstOrNextCardPage-1"]}
 # <<< factory-mutation DisplayFirstOrNextCardPage
+# >>> factory-mutation PrintAttackOrCardDescription
+MUTATIONS["PrintAttackOrCardDescription"] = {"source_symbol": "PrintAttackOrCardDescription", "before": "\treturn (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};", "after": "\treturn (PrintAttackOrCardDescriptionResult){(uint8_t)(text.a + 1u), text.d, text.e, text.f, text.hl};", "case_ids": ["PrintAttackOrCardDescription-0", "PrintAttackOrCardDescription-1"]}
+# <<< factory-mutation PrintAttackOrCardDescription

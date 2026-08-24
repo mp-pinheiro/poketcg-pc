@@ -709,6 +709,10 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "generated/hram.h"
 #include "mem.h"
 #define COLORLESS 0x06u
+
+#include "home/core.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4221,3 +4225,19 @@ CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b)
 	return r;
 }
 /* <<< factory DisplayFirstOrNextCardPage */
+
+/* >>> factory PrintAttackOrCardDescription */
+PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uint8_t d, uint8_t e)
+{
+	(void)SetNoLineSeparation();
+	uint16_t text_id = (uint16_t)(gb_read8(hl) | ((uint16_t)gb_read8((uint16_t)(hl + 1u)) << 8));
+	uint8_t lines = CountLinesOfTextFromID(text_id);
+	if (lines >= 7u) {
+		e = (uint8_t)(e - 1u);
+	}
+	InitTextPrintingInTextbox(19u, d, e);
+	ProcessTextHeaderResult text = ProcessTextFromID(text_id);
+	(void)SetOneLineSeparation();
+	return (PrintAttackOrCardDescriptionResult){text.a, text.d, text.e, text.f, text.hl};
+}
+/* <<< factory PrintAttackOrCardDescription */

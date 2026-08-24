@@ -1580,6 +1580,14 @@ static void adapt_DisplayFirstOrNextCardPage(ProbeState *s)
 }
 /* <<< factory DisplayFirstOrNextCardPage */
 
+/* >>> factory PrintAttackOrCardDescription */
+static void adapt_PrintAttackOrCardDescription(ProbeState *s)
+{
+	PrintAttackOrCardDescriptionResult r = PrintAttackOrCardDescription(s->hl, s->d, s->e);
+	s->a = r.a; s->hl = r.hl;
+}
+/* <<< factory PrintAttackOrCardDescription */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1768,5 +1776,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "Func_7364", adapt_Func_7364 },
 	{ "CheckEnergyNeededForAttackAfterDiscard", adapt_CheckEnergyNeededForAttackAfterDiscard },
 	{ "DisplayFirstOrNextCardPage", adapt_DisplayFirstOrNextCardPage },
+	{ "PrintAttackOrCardDescription", adapt_PrintAttackOrCardDescription },
 	{ NULL, NULL },
 };

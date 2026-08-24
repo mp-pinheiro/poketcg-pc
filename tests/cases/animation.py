@@ -78,6 +78,14 @@ CASES["DoLoadedFramesetSubgroupsFrame"] = [
 ]
 # <<< factory DoLoadedFramesetSubgroupsFrame
 
+# >>> factory ProcessOWFrameset
+CONTRACT["ProcessOWFrameset"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ProcessOWFrameset"] = [
+    {"hl": 0xC500, "wram": {0xD31A: b"\xFF" * 6, 0xC500: bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, "read": {0xD322: 1}},
+    dict(POISON, hl=0xC500, wram={0xD31A: b"\xFF" * 6, 0xC500: bytes([3, 4, 5, 0xFF, 0xFF, 0xFF])}, read={0xD322: 1}),
+]
+# <<< factory ProcessOWFrameset
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -129,3 +137,6 @@ MUTATIONS["DoLoadedFramesetSubgroupsFrame"] = {
     "case_ids": ["DoLoadedFramesetSubgroupsFrame-1", "DoLoadedFramesetSubgroupsFrame-2", "DoLoadedFramesetSubgroupsFrame-3"],
 }
 # <<< factory-mutation DoLoadedFramesetSubgroupsFrame
+# >>> factory-mutation ProcessOWFrameset
+MUTATIONS["ProcessOWFrameset"] = {"source_symbol": "ProcessOWFrameset", "before": "\t\tif (gb_read8(wCurOWFrameDataOffset_ADDR) == 0xFFu) {", "after": "\t\tif (gb_read8(wCurOWFrameDataOffset_ADDR) == 0xFEu) {", "case_ids": ["ProcessOWFrameset-0", "ProcessOWFrameset-1"]}
+# <<< factory-mutation ProcessOWFrameset

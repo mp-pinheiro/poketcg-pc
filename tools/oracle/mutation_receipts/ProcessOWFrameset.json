@@ -1,0 +1,9 @@
+{
+  "fn": "ProcessOWFrameset",
+  "case": "tests/cases/animation.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ProcessOWFrameset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"030405ffffff\", \"54042\": \"ffffffffffff\", \"54050\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ProcessOWFrameset\", \"mismatches\": {\"bus\": {\"address\": 54043, \"reference\": \"ffffffffffffffffff\", \"native\": \"fffffffffefffefffe\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[50432, 6], [54042, 6], [54050, 1]]}}}\n",
+  "restored": "{\"fn\": \"ProcessOWFrameset\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"030405ffffff\", \"54042\": \"ffffffffffff\", \"54050\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

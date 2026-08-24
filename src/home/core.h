@@ -730,4 +730,8 @@ CheckEnergyNeededForAttackAfterDiscardResult CheckEnergyNeededForAttackAfterDisc
 /* >>> factory DisplayFirstOrNextCardPage */
 CardPageNavigationResult DisplayFirstOrNextCardPage(uint8_t b);
 /* <<< factory DisplayFirstOrNextCardPage */
+/* >>> factory PrintAttackOrCardDescription */
+typedef struct { uint8_t a; uint8_t d; uint8_t e; uint8_t f; uint16_t hl; } PrintAttackOrCardDescriptionResult;
+PrintAttackOrCardDescriptionResult PrintAttackOrCardDescription(uint16_t hl, uint8_t d, uint8_t e);
+/* <<< factory PrintAttackOrCardDescription */
 #endif

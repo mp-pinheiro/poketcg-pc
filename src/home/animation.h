@@ -16,4 +16,7 @@ void LoadOWFrameTiles(void);
 /* >>> factory DoLoadedFramesetSubgroupsFrame */
 void DoLoadedFramesetSubgroupsFrame(void);
 /* <<< factory DoLoadedFramesetSubgroupsFrame */
+/* >>> factory ProcessOWFrameset */
+void ProcessOWFrameset(uint16_t hl);
+/* <<< factory ProcessOWFrameset */
 #endif

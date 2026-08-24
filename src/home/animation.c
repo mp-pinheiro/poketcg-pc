@@ -9,6 +9,10 @@
 #include "home/animation.h"
 #include "generated/wram.h"
 #define NUM_OW_FRAMESET_SUBGROUPS 0x03u
+
+#include "home/animation.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 #define NUM_OW_FRAMESET_SUBGROUPS 3u
 
@@ -122,3 +126,23 @@ void DoLoadedFramesetSubgroupsFrame(void)
 	}
 }
 /* <<< factory DoLoadedFramesetSubgroupsFrame */
+
+/* >>> factory ProcessOWFrameset */
+void ProcessOWFrameset(uint16_t hl)
+{
+	gb_write8(wCurMapOWFrameset_ADDR, (uint8_t)hl);
+	gb_write8((uint16_t)(wCurMapOWFrameset_ADDR + 1u), (uint8_t)(hl >> 8));
+	wNumLoadedFramesetSubgroups = 0u;
+	ClearOWFramesetSubgroups();
+	for (uint8_t c = 0u; c < NUM_OW_FRAMESET_SUBGROUPS; c++) {
+		(void)LoadOWFramesetSubgroup(c);
+		GetOWFramesetSubgroupData(hl, c);
+		if (gb_read8(wCurOWFrameDataOffset_ADDR) == 0xFFu) {
+			continue;
+		}
+		wNumLoadedFramesetSubgroups = (uint8_t)(wNumLoadedFramesetSubgroups + 1u);
+		LoadOWFrameTiles();
+		StoreOWFramesetSubgroup(c);
+	}
+}
+/* <<< factory ProcessOWFrameset */
