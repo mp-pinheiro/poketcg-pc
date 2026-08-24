@@ -48,6 +48,12 @@ static void UpdateSpriteAttributes(void)
 #include "home/sprite_animations.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/intro_sequence_commands.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define MUSIC_TITLESCREEN 0x01u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -215,3 +221,14 @@ IntroSequenceCmdSetOrbsCoordinatesResult IntroSequenceCmd_SetOrbsCoordinates(uin
 	return (IntroSequenceCmdSetOrbsCoordinatesResult){high_byte, f, b, 0u, (uint8_t)(de >> 8), (uint8_t)(de & 0xFFu), hl};
 }
 /* <<< factory IntroSequenceCmd_SetOrbsCoordinates */
+
+/* >>> factory IntroSequenceCmd_PlayTitleScreenMusic */
+IntroSequenceCmd_PlayTitleScreenMusicResult IntroSequenceCmd_PlayTitleScreenMusic(void)
+{
+	PlaySong(MUSIC_TITLESCREEN);
+	AdvanceIntroSequenceCmdPtrBy2();
+	uint8_t ptr_hi = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint8_t exit_f = (uint8_t)((ptr_hi == 0u ? 0x80u : 0x00u) | 0x10u);
+	return (IntroSequenceCmd_PlayTitleScreenMusicResult){ptr_hi, exit_f};
+}
+/* <<< factory IntroSequenceCmd_PlayTitleScreenMusic */

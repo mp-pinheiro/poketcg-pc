@@ -96,6 +96,15 @@ static void adapt_IntroSequenceCmd_SetOrbsCoordinates(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_SetOrbsCoordinates */
 
+/* >>> factory IntroSequenceCmd_PlayTitleScreenMusic */
+static void adapt_IntroSequenceCmd_PlayTitleScreenMusic(ProbeState *s)
+{
+	IntroSequenceCmd_PlayTitleScreenMusicResult r = IntroSequenceCmd_PlayTitleScreenMusic();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory IntroSequenceCmd_PlayTitleScreenMusic */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -107,5 +116,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_WaitOrbsAnimation", adapt_IntroSequenceCmd_WaitOrbsAnimation },
 	{ "IntroSequenceCmd_SetOrbsAnimations", adapt_IntroSequenceCmd_SetOrbsAnimations },
 	{ "IntroSequenceCmd_SetOrbsCoordinates", adapt_IntroSequenceCmd_SetOrbsCoordinates },
+	{ "IntroSequenceCmd_PlayTitleScreenMusic", adapt_IntroSequenceCmd_PlayTitleScreenMusic },
 	{ NULL, NULL },
 };

@@ -109,6 +109,15 @@ CASES["IntroSequenceCmd_SetOrbsCoordinates"] = [
 ]
 # <<< factory IntroSequenceCmd_SetOrbsCoordinates
 
+# >>> factory IntroSequenceCmd_PlayTitleScreenMusic
+CONTRACT["IntroSequenceCmd_PlayTitleScreenMusic"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["IntroSequenceCmd_PlayTitleScreenMusic"] = [
+    {"wram": {wSequenceCmdPtr: b"\x00\x00"}, "read": {wSequenceCmdPtr: 2}},
+    {"wram": {wSequenceCmdPtr: b"\x00\x05"}, "read": {wSequenceCmdPtr: 2}},
+    dict(POISON, wram={wSequenceCmdPtr: b"\x00\x00"}, read={wSequenceCmdPtr: 2}),
+]
+# <<< factory IntroSequenceCmd_PlayTitleScreenMusic
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -153,3 +162,6 @@ MUTATIONS["IntroSequenceCmd_SetOrbsCoordinates"] = {
     "case_ids": ["IntroSequenceCmd_SetOrbsCoordinates-0", "IntroSequenceCmd_SetOrbsCoordinates-1"],
 }
 # <<< factory-mutation IntroSequenceCmd_SetOrbsCoordinates
+# >>> factory-mutation IntroSequenceCmd_PlayTitleScreenMusic
+MUTATIONS["IntroSequenceCmd_PlayTitleScreenMusic"] = {"source_symbol": "IntroSequenceCmd_PlayTitleScreenMusic", "before": "uint8_t exit_f = (uint8_t)((ptr_hi == 0u ? 0x80u : 0x00u) | 0x10u);", "after": "uint8_t exit_f = 0x10u;", "case_ids": ["IntroSequenceCmd_PlayTitleScreenMusic-0", "IntroSequenceCmd_PlayTitleScreenMusic-1"]}
+# <<< factory-mutation IntroSequenceCmd_PlayTitleScreenMusic
