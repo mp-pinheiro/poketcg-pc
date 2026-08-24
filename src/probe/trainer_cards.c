@@ -333,6 +333,15 @@ static void adapt_AIDecide_PokemonTrader(ProbeState *s)
 }
 /* <<< factory AIDecide_PokemonTrader */
 
+/* >>> factory AIDecide_EnergySearch */
+static void adapt_AIDecide_EnergySearch(ProbeState *s)
+{
+	AIDecideEnergySearchResult r = AIDecide_EnergySearch(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_EnergySearch */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -373,5 +382,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader_FlowerGarden", adapt_AIDecide_PokemonTrader_FlowerGarden },
 	{ "AIDecide_PokemonTrader_PowerGenerator", adapt_AIDecide_PokemonTrader_PowerGenerator },
 	{ "AIDecide_PokemonTrader", adapt_AIDecide_PokemonTrader },
+	{ "AIDecide_EnergySearch", adapt_AIDecide_EnergySearch },
 	{ NULL, NULL },
 };

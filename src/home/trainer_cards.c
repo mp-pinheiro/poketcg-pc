@@ -231,6 +231,18 @@
 #define FLOWER_GARDEN_DECK_ID 0x29u
 #define STRANGE_POWER_DECK_ID 0x2Du
 #define FLAMETHROWER_DECK_ID 0x32u
+
+#include "home/core.h"
+#include "home/common.h"
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define TYPE_ENERGY_FIRE 0x08u
+#define TYPE_ENERGY_GRASS 0x09u
+#define TYPE_ENERGY_LIGHTNING 0x0Au
+#define HEATED_BATTLE_DECK_ID 0x15u
 /* <<< factory statics */
 
 
@@ -2143,3 +2155,89 @@ AIDecide_PokemonTraderResult AIDecide_PokemonTrader(void)
 	return (AIDecide_PokemonTraderResult){deck_id, (uint8_t)(deck_id == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory AIDecide_PokemonTrader */
+
+/* >>> factory AIDecide_EnergySearch */
+AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a)
+{
+	CoreCardListResult hand = CreateEnergyCardListFromHand(a);
+	uint8_t d;
+	uint8_t e;
+	uint8_t mode;
+	uint8_t found;
+	uint8_t found_flags;
+	uint16_t hl;
+
+	if (!(hand.f & 0x10u)) {
+		d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+		e = PLAY_AREA_ARENA;
+		for (;;) {
+			uint8_t slot = (uint8_t)(DUELVARS_ARENA_CARD + e);
+			uint8_t deck_index = GetTurnDuelistVariable(slot).a;
+			uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+			wTempCardID = card_id;
+			LoadCardDataToBuffer1_FromCardID(card_id);
+			wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+			hl = wDuelTempList_ADDR;
+			for (;;) {
+				uint8_t entry = gb_read8(hl++);
+				if (entry == 0xFFu)
+					break;
+				CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
+				if (useful.f & 0x10u) {
+					found = entry;
+					found_flags = (uint8_t)(entry == 0u ? 0x90u : 0x10u);
+					return (AIDecideEnergySearchResult){found, found_flags};
+				}
+			}
+			e++;
+			if (e == d)
+				break;
+		}
+	}
+
+	if (wOpponentDeckID == HEATED_BATTLE_DECK_ID)
+		mode = 1u;
+	else if (wOpponentDeckID == WONDERS_OF_SCIENCE_DECK_ID)
+		mode = 1u;
+	else
+		mode = 0u;
+
+	FindBasicEnergyCardsInLocationResult deck = FindBasicEnergyCardsInLocation(CARD_LOCATION_DECK);
+	if (deck.f & 0x10u)
+		return (AIDecideEnergySearchResult){0u, 0x80u};
+
+	d = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	e = PLAY_AREA_ARENA;
+	for (;;) {
+		uint8_t slot = (uint8_t)(DUELVARS_ARENA_CARD + e);
+		uint8_t deck_index = GetTurnDuelistVariable(slot).a;
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		wTempCardID = card_id;
+		LoadCardDataToBuffer1_FromCardID(card_id);
+		wTempCardType = (uint8_t)(wLoadedCard1Type | TYPE_ENERGY);
+		if (mode == 1u && wTempCardType != TYPE_ENERGY_FIRE && wTempCardType != TYPE_ENERGY_LIGHTNING)
+			goto next_play_area;
+		if (mode == 2u && wTempCardType != TYPE_ENERGY_GRASS)
+			goto next_play_area;
+		hl = wDuelTempList_ADDR;
+		for (;;) {
+			uint8_t entry = gb_read8(hl++);
+			if (entry == 0xFFu)
+				break;
+			CheckIfEnergyIsUsefulResult useful = CheckIfEnergyIsUseful(entry);
+			if (useful.f & 0x10u) {
+				found = entry;
+				found_flags = (uint8_t)(entry == 0u ? 0x90u : 0x10u);
+				return (AIDecideEnergySearchResult){found, (uint8_t)(found_flags | 0x10u)};
+			}
+		}
+
+	next_play_area:
+		e++;
+		if (e == d)
+			break;
+	}
+
+	return (AIDecideEnergySearchResult){wDuelTempList, 0x90u};
+}
+/* <<< factory AIDecide_EnergySearch */

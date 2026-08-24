@@ -148,4 +148,8 @@ AIDecide_PokemonTrader_PowerGeneratorResult AIDecide_PokemonTrader_PowerGenerato
 typedef struct { uint8_t a; uint8_t f; } AIDecide_PokemonTraderResult;
 AIDecide_PokemonTraderResult AIDecide_PokemonTrader(void);
 /* <<< factory AIDecide_PokemonTrader */
+/* >>> factory AIDecide_EnergySearch */
+typedef struct { uint8_t a; uint8_t f; } AIDecideEnergySearchResult;
+AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a);
+/* <<< factory AIDecide_EnergySearch */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
