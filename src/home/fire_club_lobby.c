@@ -7,6 +7,11 @@
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/fire_club_lobby.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 0x6D5Eu
 /* <<< factory statics */
 
 /* >>> factory FindExtraInteractableObjects */
@@ -37,3 +42,11 @@ FindExtraInteractableObjectsResult FindExtraInteractableObjects(uint16_t hl)
 	}
 }
 /* <<< factory FindExtraInteractableObjects */
+
+/* >>> factory FireClubPressedA */
+FireClubPressedAResult FireClubPressedA(void)
+{
+	FindExtraInteractableObjectsResult r = FindExtraInteractableObjects(SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520);
+	return (FireClubPressedAResult){r.hl, r.b, r.c, r.d, r.e, r.carry};
+}
+/* <<< factory FireClubPressedA */

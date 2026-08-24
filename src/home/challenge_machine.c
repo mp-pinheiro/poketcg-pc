@@ -83,6 +83,12 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/sram.h"
 #define Defeated5OpponentsText 0x07e6u
 #define WonAgainstXOpponentsText 0x07e5u
+
+#include "home/npc_data.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CHALLENGE_MACHINE_DATA_BANK_500 0x04u
+#define CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 0x7707u
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -372,3 +378,21 @@ ChallengeMachineDuelWonResult ChallengeMachine_DuelWon(void)
 	return (ChallengeMachineDuelWonResult){r2.f};
 }
 /* <<< factory ChallengeMachine_DuelWon */
+
+/* >>> factory ChallengeMachine_GetOpponentNameAndDeck */
+ChallengeMachine_GetOpponentNameAndDeckResult ChallengeMachine_GetOpponentNameAndDeck(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t opponent = gb_read8(wChallengeMachineOpponent_ADDR);
+	uint16_t de = (uint16_t)opponent;
+	uint16_t table_hl = (uint16_t)(CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 + de);
+	uint8_t deck_id = *rom_ptr(CHALLENGE_MACHINE_DATA_BANK_500, table_hl);
+	gb_write8(wNPCDuelDeckID_ADDR, deck_id);
+
+	uint8_t h_flag = (((CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 & 0x0FFFu) + (de & 0x0FFFu)) > 0x0FFFu) ? 0x20u : 0u;
+	uint8_t c_flag = (((uint32_t)CHALLENGE_MACHINE_OPPONENT_DECK_IDS_ADDR_500 + (uint32_t)de) > 0xFFFFu) ? 0x10u : 0u;
+	uint8_t f_after_add = (uint8_t)((f & 0x80u) | h_flag | c_flag);
+
+	_GetChallengeMachineDuelConfigurationsResult r = _GetChallengeMachineDuelConfigurations(deck_id, f_after_add, b, c, 0u, opponent, table_hl);
+	return (ChallengeMachine_GetOpponentNameAndDeckResult){r.a, r.f, r.b, r.c, d, e, r.hl};
+}
+/* <<< factory ChallengeMachine_GetOpponentNameAndDeck */

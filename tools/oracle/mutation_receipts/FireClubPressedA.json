@@ -1,0 +1,9 @@
+{
+  "fn": "FireClubPressedA",
+  "case": "tests/cases/fire_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireClubPressedA\", \"registers\": {\"a\": 0, \"b\": 110, \"c\": 118, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 27998, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1002\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireClubPressedA\", \"mismatches\": {\"b\": [110, 0], \"c\": [118, 0], \"hl\": [27998, 28003]}}\n",
+  "restored": "{\"fn\": \"FireClubPressedA\", \"registers\": {\"a\": 0, \"b\": 110, \"c\": 118, \"d\": 0, \"e\": 5, \"f\": 0, \"hl\": 27998, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54064\": \"1002\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -77,6 +77,15 @@ CASES["GetEnergyCardForDiscardOrEnergyBoostAttack"] = [
 ]
 # <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack
 
+# >>> factory CheckIfEvolutionNeedsEnergyForAttack
+CONTRACT["CheckIfEvolutionNeedsEnergyForAttack"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfEvolutionNeedsEnergyForAttack"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x01", 0xC2BB: b"\x03", 0xC2BC: b"\x05", 0xC200: b"\xFF" * 60}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60}),
+]
+# <<< factory CheckIfEvolutionNeedsEnergyForAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -103,3 +112,6 @@ MUTATIONS["CheckSpecificDecksToAttachDoubleColorless"] = {"source_symbol": "Chec
 # >>> factory-mutation GetEnergyCardForDiscardOrEnergyBoostAttack
 MUTATIONS["GetEnergyCardForDiscardOrEnergyBoostAttack"] = {"source_symbol": "GetEnergyCardForDiscardOrEnergyBoostAttack", "before": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, c_in, 0u, 0x00u};", "after": "return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, b, (uint8_t)(c_in + 1u), 0u, 0x00u};", "case_ids": ["GetEnergyCardForDiscardOrEnergyBoostAttack-2"]}
 # <<< factory-mutation GetEnergyCardForDiscardOrEnergyBoostAttack
+# >>> factory-mutation CheckIfEvolutionNeedsEnergyForAttack
+MUTATIONS["CheckIfEvolutionNeedsEnergyForAttack"] = {"source_symbol": "CheckIfEvolutionNeedsEnergyForAttack", "before": "uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;", "after": "uint8_t f_out = (evo.a == 0u) ? 0x00u : 0x80u;", "case_ids": ["CheckIfEvolutionNeedsEnergyForAttack-0", "CheckIfEvolutionNeedsEnergyForAttack-1"]}
+# <<< factory-mutation CheckIfEvolutionNeedsEnergyForAttack

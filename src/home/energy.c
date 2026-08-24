@@ -45,6 +45,13 @@
 #define PSYCHIC_ENERGY 0x06u
 #define WATER_ENERGY 0x03u
 #define ZAPDOS_LV64 0x75u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_510 0xBBu
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -228,3 +235,37 @@ GetEnergyCardForDiscardOrEnergyBoostAttackResult GetEnergyCardForDiscardOrEnergy
 	return (GetEnergyCardForDiscardOrEnergyBoostAttackResult){a, TRUE, FALSE, e, f};
 }
 /* <<< factory GetEnergyCardForDiscardOrEnergyBoostAttack */
+
+/* >>> factory CheckIfEvolutionNeedsEnergyForAttack */
+CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)CreateHandCardList(c);
+	uint8_t loc1 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	DuelistVarResult var1 = GetTurnDuelistVariable((uint8_t)(loc1 + DUELVARS_ARENA_CARD_510));
+	CheckCardEvolutionInHandOrDeckResult evo = CheckCardEvolutionInHandOrDeck(var1.a);
+	if ((evo.f & 0x10u) == 0u) {
+		uint8_t f_out = (evo.a == 0u) ? 0x80u : 0x00u;
+		return (CheckIfEvolutionNeedsEnergyForAttackResult){evo.a, f_out, b, c, d, e, var1.hl};
+	}
+
+	uint8_t new_b = evo.a;
+	uint8_t loc2 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	DuelistVarResult var2 = GetTurnDuelistVariable((uint8_t)(loc2 + DUELVARS_ARENA_CARD_510));
+	uint8_t saved_a = var2.a;
+	gb_write8(var2.hl, new_b);
+	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	if (energy.f & 0x10u) {
+		uint8_t loc3 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+		DuelistVarResult var3 = GetTurnDuelistVariable((uint8_t)(loc3 + DUELVARS_ARENA_CARD_510));
+		gb_write8(var3.hl, saved_a);
+		uint8_t f_out2 = (uint8_t)((evo.f & 0x80u) | 0x10u);
+		return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out2, new_b, c, d, e, var3.hl};
+	}
+
+	uint8_t loc4 = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	DuelistVarResult var4 = GetTurnDuelistVariable((uint8_t)(loc4 + DUELVARS_ARENA_CARD_510));
+	gb_write8(var4.hl, saved_a);
+	uint8_t f_out3 = (saved_a == 0u) ? 0x80u : 0x00u;
+	return (CheckIfEvolutionNeedsEnergyForAttackResult){saved_a, f_out3, new_b, c, d, e, var4.hl};
+}
+/* <<< factory CheckIfEvolutionNeedsEnergyForAttack */

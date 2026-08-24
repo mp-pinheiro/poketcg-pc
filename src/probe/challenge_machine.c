@@ -103,6 +103,20 @@ static void adapt_ChallengeMachine_DuelWon(ProbeState *s)
 }
 /* <<< factory ChallengeMachine_DuelWon */
 
+/* >>> factory ChallengeMachine_GetOpponentNameAndDeck */
+static void adapt_ChallengeMachine_GetOpponentNameAndDeck(ProbeState *s)
+{
+	ChallengeMachine_GetOpponentNameAndDeckResult r = ChallengeMachine_GetOpponentNameAndDeck(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ChallengeMachine_GetOpponentNameAndDeck */
+
 const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_CheckIfOpponentAlreadySelected", adapt_ChallengeMachine_CheckIfOpponentAlreadySelected },
 	{ "ChallengeMachine_PrintText", adapt_ChallengeMachine_PrintText },
@@ -116,5 +130,6 @@ const ProbeEntry probe_entries_challenge_machine[] = {
 	{ "ChallengeMachine_PrintFinalConsecutiveWinStreak", adapt_ChallengeMachine_PrintFinalConsecutiveWinStreak },
 	{ "ChallengeMachine_ShowNewRecord", adapt_ChallengeMachine_ShowNewRecord },
 	{ "ChallengeMachine_DuelWon", adapt_ChallengeMachine_DuelWon },
+	{ "ChallengeMachine_GetOpponentNameAndDeck", adapt_ChallengeMachine_GetOpponentNameAndDeck },
 	{ NULL, NULL },
 };

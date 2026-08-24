@@ -293,6 +293,15 @@ CASES["ChallengeMachine_DuelWon"] = [
 ]
 # <<< factory ChallengeMachine_DuelWon
 
+# >>> factory ChallengeMachine_GetOpponentNameAndDeck
+CONTRACT["ChallengeMachine_GetOpponentNameAndDeck"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ChallengeMachine_GetOpponentNameAndDeck"] = [
+    {"wram": {0xD692: b"\x00"}},
+    {"wram": {0xD692: b"\x05"}},
+    dict(POISON, wram={0xD692: b"\x00"}),
+]
+# <<< factory ChallengeMachine_GetOpponentNameAndDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -361,3 +370,6 @@ MUTATIONS["ChallengeMachine_ShowNewRecord"] = {"source_symbol": "ChallengeMachin
 # >>> factory-mutation ChallengeMachine_DuelWon
 MUTATIONS["ChallengeMachine_DuelWon"] = {"source_symbol": "ChallengeMachine_DuelWon", "before": "gb_write8(wTxRam3_ADDR, (uint8_t)(opponent_number + 1u));", "after": "gb_write8(wTxRam3_ADDR, (uint8_t)(opponent_number + 2u));", "case_ids": ["ChallengeMachine_DuelWon-0", "ChallengeMachine_DuelWon-2"]}
 # <<< factory-mutation ChallengeMachine_DuelWon
+# >>> factory-mutation ChallengeMachine_GetOpponentNameAndDeck
+MUTATIONS["ChallengeMachine_GetOpponentNameAndDeck"] = {"source_symbol": "ChallengeMachine_GetOpponentNameAndDeck", "before": "gb_write8(wNPCDuelDeckID_ADDR, deck_id);", "after": "gb_write8(wNPCDuelDeckID_ADDR, (uint8_t)(deck_id + 1u));", "case_ids": ["ChallengeMachine_GetOpponentNameAndDeck-0", "ChallengeMachine_GetOpponentNameAndDeck-1"]}
+# <<< factory-mutation ChallengeMachine_GetOpponentNameAndDeck

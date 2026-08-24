@@ -69,4 +69,8 @@ ChallengeMachineShowNewRecordResult ChallengeMachine_ShowNewRecord(uint16_t hl);
 typedef struct { uint8_t f; } ChallengeMachineDuelWonResult;
 ChallengeMachineDuelWonResult ChallengeMachine_DuelWon(void);
 /* <<< factory ChallengeMachine_DuelWon */
+/* >>> factory ChallengeMachine_GetOpponentNameAndDeck */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } ChallengeMachine_GetOpponentNameAndDeckResult;
+ChallengeMachine_GetOpponentNameAndDeckResult ChallengeMachine_GetOpponentNameAndDeck(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ChallengeMachine_GetOpponentNameAndDeck */
 #endif

@@ -17,7 +17,20 @@ static void adapt_FindExtraInteractableObjects(ProbeState *s)
 }
 /* <<< factory FindExtraInteractableObjects */
 
+/* >>> factory FireClubPressedA */
+static void adapt_FireClubPressedA(ProbeState *s)
+{
+	FireClubPressedAResult r = FireClubPressedA();
+	s->hl = r.hl;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory FireClubPressedA */
+
 const ProbeEntry probe_entries_fire_club_lobby[] = {
 	{ "FindExtraInteractableObjects", adapt_FindExtraInteractableObjects },
+	{ "FireClubPressedA", adapt_FireClubPressedA },
 	{ NULL, NULL },
 };

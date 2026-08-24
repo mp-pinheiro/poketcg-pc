@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_GetOpponentNameAndDeck",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_GetOpponentNameAndDeck\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 24704, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54930\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_GetOpponentNameAndDeck\", \"mismatches\": {\"hl\": [24704, 24714]}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_GetOpponentNameAndDeck\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 24704, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"54930\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
