@@ -208,6 +208,16 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 "evidence": evidence,
                 "snapshot": bool(legacy.get("snapshot", False)),
             }
+            stack = legacy.get("stack")
+            if stack is not None:
+                if not isinstance(stack, (list, tuple)):
+                    raise TypeError(
+                        f"legacy case {function}[{index}].stack must be a sequence")
+                record["stack"] = [
+                    _integer(word, f"legacy case {function}[{index}].stack[{position}]",
+                             maximum=0xFFFF)
+                    for position, word in enumerate(stack)
+                ]
             reason = legacy.get("reason", legacy.get("why"))
             if evidence != "primary" and reason is not None:
                 record["reason"] = reason

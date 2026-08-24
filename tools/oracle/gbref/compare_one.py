@@ -182,13 +182,21 @@ def main() -> int:
         "cycle_budget", "mapper", "registers", "compare", "preserve", "state",
         "snapshot", "bus", "sram", "vram", "setup", "input_events", "evidence",
     }
+    # `stack` is optional: only a routine entered mid-frame declares caller-pushed
+    # words, so demanding the key everywhere would invalidate every landed case.
+    optional = {"stack"}
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
     if mode == "event":
         if isinstance(completion, str):
             required.update({"event_addr", "event_value", "event_mask"})
-    if set(case) != required:
+    if set(case) - optional != required:
         raise SystemExit("SCHEMA case keys do not match schema-2")
+    stack_words = case.get("stack") or []
+    if (not isinstance(stack_words, list) or len(stack_words) > 4
+            or any(isinstance(word, bool) or not isinstance(word, int)
+                   or not 0 <= word <= 0xffff for word in stack_words)):
+        raise SystemExit("SCHEMA stack must hold at most 4 words below 0x10000")
     if case["hardware"] not in {"dmg", "cgb"}:
         raise SystemExit("SCHEMA hardware must be dmg or cgb")
     if not isinstance(case["registers"], dict) or not set(case["registers"]).issubset(REGISTERS):
@@ -301,6 +309,8 @@ def main() -> int:
         "input_events": case["input_events"],
         **registers,
     }
+    if stack_words:
+        request["stack"] = [int(word) for word in stack_words]
     if mode == "pre-ret":
         request["stop_pc"] = int(case["stop_pc"] if isinstance(completion, str) else completion["pc"])
     if mode == "event":
@@ -420,6 +430,8 @@ def main() -> int:
         "setup": case["setup"],
         "keys": keys,
     }
+    if stack_words:
+        probe_request["stack"] = [int(word) for word in stack_words]
     if seed_native_rom_bank:
         probe_request["rom_bank"] = int(case["mapper"]["rom_bank"])
     probe = subprocess.run(

@@ -22,7 +22,7 @@ COMPLETIONS = frozenset({"return", "pre-ret", "event"})
 _CASE_KEYS = frozenset({
     "id", "hardware", "mapper", "registers", "bus", "seeds", "state", "snapshot",
     "setup", "input_events", "instruction_budget", "cycle_budget", "completion",
-    "evidence", "reason",
+    "evidence", "reason", "stack",
 })
 _MAPPER_KEYS = frozenset({
     "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode",
@@ -178,6 +178,23 @@ def _validate_input_events(value: Any) -> None:
         if set(event) != {"keys"}:
             _fail(f"case.input_events[{index}]", "must contain exactly the keys field")
         _integer(event["keys"], f"case.input_events[{index}].keys", maximum=255)
+
+
+def _validate_stack(value: Any) -> None:
+    """Caller-pushed words below the return address, in push order.
+
+    Bounded at four words: the convention exists for routines entered by `jp`
+    from inside their own caller, and no such routine in the tree pops more
+    than two register pairs before its `ret`. An unbounded knob would let a
+    case fabricate an arbitrary frame instead of reproducing a real one.
+    """
+    if not isinstance(value, list):
+        _fail("case.stack", "must be an array")
+    if len(value) > 4:
+        _fail("case.stack", "must not exceed 4 words")
+    for index, word in enumerate(value):
+        _integer(word, f"case.stack[{index}]", maximum=0xFFFF)
+
 def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Mapping[str, Any]:
     """Validate one schema-2 case and return it unchanged.
 
@@ -225,6 +242,8 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
                 _fail("case.state", "snapshot regions must be arrays")
     _validate_setup(case.get("setup", []))
     _validate_input_events(case.get("input_events", []))
+    if "stack" in case:
+        _validate_stack(case["stack"])
     _integer(case.get("instruction_budget"), "case.instruction_budget", minimum=1)
     _integer(case.get("cycle_budget"), "case.cycle_budget", minimum=1)
 

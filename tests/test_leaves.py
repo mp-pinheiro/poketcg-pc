@@ -86,6 +86,8 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
                         for pre in case["setup"]]
     if case.get("keys"):
         req["keys"] = int(case["keys"])
+    if case.get("stack"):
+        req["stack"] = [int(word) for word in case["stack"]]
     if case.get("rom_bank") is not None:
         # PyBoy enters a routine at its own symbol bank (pyboy_oracle.py);
         # the probe otherwise retains the reset default. A routine that reads
@@ -197,7 +199,8 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0),
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
                       ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0),
-                      stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None)
+                      stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None,
+                      stack=case.get("stack"))
     reads, sreads, vreads = merged_spans(case)
     got = run_probe(probe, fn, case, reads, sreads, vreads)
     reference = {"registers": {field: getattr(ref, field) for field in fields},
@@ -226,6 +229,7 @@ def normalize_case(case: dict, fn: str, fields: tuple[str, ...], dependencies: d
                                for addr, data in sorted(spans.items(), key=lambda x: int(x[0]))]},
             "ramg": None if case.get("ramg") is None else bool(case["ramg"]), "setup": setup,
             "keys": int(case.get("keys", 0)),
+            "stack": [int(word) for word in case.get("stack") or ()],
             "completion": case.get("_completion", {"mode": "return"}),
             "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
             "sread": span_map(sreads), "vread": span_map(vreads)}
@@ -425,7 +429,7 @@ def main() -> int:
                             key = hashlib.sha256(payload).hexdigest()
                             ref = None
                             completion = case.get("_completion", {"mode": "return"})
-                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None)
+                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=case.get("keys", 0), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None, stack=case.get("stack"))
                             reads, sreads, vreads = merged_spans(case)
                             ref = {"registers": {field: getattr(result, field) for field in fields}, "wram": {str(a): result.mem(a, n).hex() for a, n in reads.items()}, "sram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in sreads.items()}, "vram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in vreads.items()}}
                             cache_reference(args.cache_dir, key, fn, fields, ref)

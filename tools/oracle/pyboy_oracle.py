@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import io
 import os
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -216,7 +217,8 @@ class Oracle:
         pb.memory[self._WVBLANK_COUNTER] = (pb.memory[self._WVBLANK_COUNTER] + 1) & 0xFF
         self.pyboy.register_file.PC = self._VBLANK_NOP
 
-    def _run(self, symbol: str, regs: dict, stop_pc: int | None = None) -> Result:
+    def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
+             stack: Sequence[int] | None = None) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
@@ -227,11 +229,21 @@ class Oracle:
             pb.memory[0xFF80] = fn_bank & 0xFF
         pb.memory[SPIN] = 0x18  # jr
         pb.memory[SPIN + 1] = 0xFE  # -2
+        words = list(stack or ())
+        if len(words) > 4:
+            raise OracleError("stack declares more than 4 caller-pushed words")
         pb.memory[STACK_TOP - 2] = SENTINEL & 0xFF
         pb.memory[STACK_TOP - 1] = SENTINEL >> 8
+        # Caller-pushed saves sit below the return address, in push order, so the
+        # routine's first `pop` reads the last word and its `ret` still finds the
+        # sentinel underneath. STACK_TOP-2 stays the sentinel slot either way.
+        for index, word in enumerate(words):
+            base = STACK_TOP - 4 - 2 * index
+            pb.memory[base] = word & 0xFF
+            pb.memory[base + 1] = (word >> 8) & 0xFF
 
         rf = pb.register_file
-        rf.SP = STACK_TOP - 2
+        rf.SP = STACK_TOP - 2 - 2 * len(words)
         rf.PC = addr
         rf.A = regs.get("a", 0)
         rf.F = regs.get("f", 0)
@@ -268,7 +280,8 @@ class Oracle:
              ramg: bool | None = None,
              setup: list[dict] | None = None,
              keys: int = 0,
-             stop_pc: int | None = None) -> Result:
+             stop_pc: int | None = None,
+             stack: Sequence[int] | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -319,4 +332,5 @@ class Oracle:
             symbol,
             {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl},
             stop_pc,
+            stack,
         )

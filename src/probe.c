@@ -220,6 +220,23 @@ int main(void)
 				st.e = (uint8_t)jnum();
 			} else if (strcmp(key, "hl") == 0) {
 				st.hl = (uint16_t)jnum();
+			} else if (strcmp(key, "stack") == 0) {
+				/* Caller-pushed words below the return address, in push
+				 * order. The reference oracles push these onto the real
+				 * GB stack; the native side has no frame, so the adapter
+				 * reads them as explicit inputs instead. */
+				need('[');
+				if (!eat(']')) {
+					do {
+						if (st.stack_count >= PROBE_MAX_STACK_WORDS)
+							die("too many stack words");
+						long word = jnum();
+						if (word < 0 || word > 0xffff)
+							die("stack word out of range");
+						st.stack[st.stack_count++] = (uint16_t)word;
+					} while (eat(','));
+					need(']');
+				}
 			} else if (strcmp(key, "rom_bank") == 0) {
 				romb = jnum();
 				if (romb < 0 || romb > 0xff)

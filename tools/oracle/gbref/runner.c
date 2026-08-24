@@ -218,6 +218,36 @@ static int parse_setup(const char *json, SetupCall *calls, size_t cap, size_t *c
     }
 }
 
+#define MAX_STACK_WORDS 4
+
+/* Words the caller pushed below this routine's return address, in push order.
+ * A routine entered by `jp` from inside its own caller pops saves that caller
+ * made, so a synthesized frame holding only a return address underflows into
+ * whatever preceded it. Declaring them here reproduces the real frame. */
+static int parse_stack_words(const char *json, uint16_t *words, size_t cap,
+                             size_t *count) {
+    const char *p = NULL;
+    int state = json_array_start(json, "stack", &p);
+    if (state == 0) { *count = 0; return 1; }
+    if (state < 0) return 0;
+    size_t used = 0;
+    p = skip_json_ws(p);
+    if (*p == ']') { *count = 0; return 1; }
+    for (;;) {
+        p = skip_json_ws(p);
+        if (*p == '-' || *p < '0' || *p > '9') return 0;
+        errno = 0;
+        char *end = NULL;
+        unsigned long long value = strtoull(p, &end, 10);
+        if (errno != 0 || end == p || value > 0xffff || used >= cap) return 0;
+        words[used++] = (uint16_t)value;
+        p = skip_json_ws(end);
+        if (*p == ',') { p++; continue; }
+        if (*p == ']') { *count = used; return 1; }
+        return 0;
+    }
+}
+
 static int parse_input_keys(const char *json, uint8_t *buttons, uint8_t *dpad,
                             int *has_event) {
     const char *p = NULL;
@@ -466,12 +496,20 @@ int main(int argc, char **argv) {
     size_t setup_count = 0;
     uint8_t input_buttons = 0xff, input_dpad = 0xff;
     int has_input_event = 0;
+    uint16_t stack_words[MAX_STACK_WORDS];
+    size_t stack_count = 0;
     int setup_state = parse_setup(request, setup_calls, 256, &setup_count);
     int input_state = parse_input_keys(request, &input_buttons, &input_dpad,
                                        &has_input_event);
+    int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
+                                        &stack_count);
     if (!setup_state || !input_state) {
         free(request);
         fail("SCHEMA", "setup and input_events must be bounded arrays");
+    }
+    if (!stack_state) {
+        free(request);
+        fail("SCHEMA", "stack must be an array of at most 4 words below 0x10000");
     }
     char read_bus[65536];
     int read_bus_state = json_string(request, "read_bus", read_bus, sizeof read_bus);
@@ -595,6 +633,10 @@ int main(int argc, char **argv) {
     }
     ctx->sp = 0xfffe;
     gb_push16(ctx, 0xfea0);
+    /* Sentinel first, so it stays the deepest word: the routine's final `ret`
+     * must still land on it after popping every caller-pushed save below. */
+    for (size_t i = 0; i < stack_count; i++)
+        gb_push16(ctx, stack_words[i]);
     ctx->pc = (uint16_t)entry;
     set_call_registers(ctx, reg_a, reg_f, reg_b, reg_c, reg_d, reg_e, reg_hl);
     while (strcmp(completion, "event") == 0
