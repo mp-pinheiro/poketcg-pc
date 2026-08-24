@@ -2220,6 +2220,14 @@ CASES["PrintAttackOrNonPokemonCardDescription"] = [
 ]
 # <<< factory PrintAttackOrNonPokemonCardDescription
 
+# >>> factory DisplayCardPageOnLeftOrRightPressed
+CONTRACT["DisplayCardPageOnLeftOrRightPressed"] = {"compare": (), "preserve": ()}
+CASES["DisplayCardPageOnLeftOrRightPressed"] = [
+    {"a": 1 << 5, "wram": {wCardPageNumber: b"\x0E"}, "read": {wCardPageNumber: 1}},
+    dict(POISON, a=1 << 5, wram={wCardPageNumber: b"\x0E"}, read={wCardPageNumber: 1}),
+]
+# <<< factory DisplayCardPageOnLeftOrRightPressed
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3304,3 +3312,11 @@ MUTATIONS["PrintAttackOrNonPokemonCardDescription"] = {
     "case_ids": ["PrintAttackOrNonPokemonCardDescription-0", "PrintAttackOrNonPokemonCardDescription-1"],
 }
 # <<< factory-mutation PrintAttackOrNonPokemonCardDescription
+# >>> factory-mutation DisplayCardPageOnLeftOrRightPressed
+MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
+    "source_symbol": "DisplayCardPageOnLeftOrRightPressed",
+    "before": "\tif (a & (1u << B_PAD_LEFT)) {",
+    "after": "\tif (a & (1u << B_PAD_LEFT + 1u)) {",
+    "case_ids": ["DisplayCardPageOnLeftOrRightPressed-0", "DisplayCardPageOnLeftOrRightPressed-1"],
+}
+# <<< factory-mutation DisplayCardPageOnLeftOrRightPressed

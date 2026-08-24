@@ -416,6 +416,22 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "home/duel.h"
 #define SYM_CURSOR_R 0x0Fu
+
+#include "home/duel.h"
+#include "home/sound.h"
+#include "home/deck_check.h"
+#define B_CURSOR_BLINK_PERIOD 0x04u
+#define CURSOR_BLINK_PERIOD_MASK 0x0Fu
+#define MENU_CANCEL 0xFFu
+#define MENU_CONFIRM 0x01u
+#define SFX_CURSOR 0x01u
+#define B_PAD_LEFT 5u
+#define B_PAD_RIGHT 4u
+#define B_PAD_UP 6u
+#define B_PAD_DOWN 7u
+#define PAD_A 0x01u
+#define PAD_B 0x02u
+#define WCE5E_ADDR 0xCE5Eu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2054,3 +2070,93 @@ TempListResult DisplayCheckMenuCursor_YourOrOppPlayArea(void)
 	return DrawCheckMenuCursor_YourOrOppPlayArea(SYM_CURSOR_R);
 }
 /* <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea */
+
+/* >>> factory HandleCheckMenuInput_YourOrOppPlayArea */
+TempListResult HandleCheckMenuInput_YourOrOppPlayArea(void)
+{
+	gb_write8(wMenuInputSFX_ADDR, 0u);
+	uint8_t d = gb_read8(wCheckMenuCursorXPosition_ADDR);
+	uint8_t e = gb_read8(wCheckMenuCursorYPosition_ADDR);
+
+	uint8_t dpad = gb_read8(hDPadHeld_ADDR);
+	if (dpad != 0u) {
+		uint8_t latch = (uint8_t)(gb_read8(WCE5E_ADDR) & 0x80u);
+		if (latch == 0u) {
+			uint8_t horiz;
+			if (dpad & (1u << B_PAD_LEFT)) {
+				horiz = 1u;
+			} else if (dpad & (1u << B_PAD_RIGHT)) {
+				horiz = 1u;
+			} else {
+				horiz = 0u;
+			}
+			if (horiz) {
+				uint8_t low7 = (uint8_t)(gb_read8(WCE5E_ADDR) & 0x7Fu);
+				if (low7 != 0u) {
+					if (e != 0u) {
+						e = (uint8_t)(e + 1u);
+					}
+				} else {
+					if (e == 0u) {
+						e = (uint8_t)(e - 1u);
+					}
+				}
+				d = (uint8_t)(d ^ 0x01u);
+				goto erase;
+			}
+		}
+		if (dpad & (1u << B_PAD_UP)) {
+			if (d != 0u) {
+				d = (uint8_t)(d - 1u);
+			}
+			e = (uint8_t)(e ^ 0x01u);
+			goto erase;
+		}
+		if (dpad & (1u << B_PAD_DOWN)) {
+			if (d != 0u) {
+				d = (uint8_t)(d - 1u);
+			}
+			e = (uint8_t)(e ^ 0x01u);
+			goto erase;
+		}
+		goto skip;
+
+	erase:
+		gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR);
+		(void)EraseCheckMenuCursor_YourOrOppPlayArea();
+		gb_write8(wCheckMenuCursorXPosition_ADDR, d);
+		gb_write8(wCheckMenuCursorYPosition_ADDR, e);
+		gb_write8(wCheckMenuCursorBlinkCounter_ADDR, 0u);
+	}
+
+skip:
+	uint8_t keys = (uint8_t)(gb_read8(hKeysPressed_ADDR) & (PAD_A | PAD_B));
+	if (keys != 0u) {
+		if (keys & PAD_A) {
+			(void)DisplayCheckMenuCursor_YourOrOppPlayArea();
+			PlaySFXConfirmOrCancel(MENU_CONFIRM);
+			return (TempListResult){MENU_CONFIRM, 0x10u};
+		}
+		PlaySFXConfirmOrCancel(MENU_CANCEL);
+		return (TempListResult){MENU_CANCEL, 0x10u};
+	}
+
+	uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
+	if (sfx != 0u) {
+		PlaySFX(sfx);
+	}
+
+	uint8_t old_counter = gb_read8(wCheckMenuCursorBlinkCounter_ADDR);
+	uint8_t new_counter = (uint8_t)(old_counter + 1u);
+	gb_write8(wCheckMenuCursorBlinkCounter_ADDR, new_counter);
+	uint8_t masked = (uint8_t)(old_counter & CURSOR_BLINK_PERIOD_MASK);
+	if (masked != 0u) {
+		return (TempListResult){masked, 0x20u};
+	}
+
+	if ((new_counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) {
+		return DrawCheckMenuCursor_YourOrOppPlayArea(SYM_CURSOR_R);
+	}
+	return EraseCheckMenuCursor_YourOrOppPlayArea();
+}
+/* <<< factory HandleCheckMenuInput_YourOrOppPlayArea */

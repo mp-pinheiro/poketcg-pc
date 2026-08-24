@@ -1,0 +1,9 @@
+{
+  "fn": "Conversion2_ChangeResistanceEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Conversion2_ChangeResistanceEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 18131, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49898\": \"80\", \"50176\": \"08\", \"50576\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Conversion2_ChangeResistanceEffect\", \"mismatches\": {\"bus\": {\"address\": 49898, \"reference\": \"00800800c200\", \"native\": \"00810800c200\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49898, 1], [50176, 1], [50576, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Conversion2_ChangeResistanceEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 1, \"e\": 14, \"f\": 0, \"hl\": 18131, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49898\": \"80\", \"50176\": \"08\", \"50576\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

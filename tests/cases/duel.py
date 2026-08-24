@@ -1107,6 +1107,13 @@ s0a008 = 0xA008
 sDuelBuffer0 = 0xA000
 BULBASAUR = 0x08
 IVYSAUR = 0x09
+
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+wMenuInputSFX = 0xCFE3
+wCheckMenuCursorXPosition = 0xCEAF
+wCheckMenuCursorYPosition = 0xCEB0
+wCheckMenuCursorBlinkCounter = 0xCEA3
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1230,6 +1237,18 @@ CASES["DisplayCheckMenuCursor_YourOrOppPlayArea"] = [
     dict(POISON),
 ]
 # <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea
+
+# >>> factory HandleCheckMenuInput_YourOrOppPlayArea
+CONTRACT["HandleCheckMenuInput_YourOrOppPlayArea"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleCheckMenuInput_YourOrOppPlayArea"] = [
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCheckMenuCursorBlinkCounter: b"\x00",
+              wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00"},
+     "vread": {0: {0x9800: 0x400}}},
+    dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCheckMenuCursorBlinkCounter: b"\x00",
+                       wCheckMenuCursorXPosition: b"\x00", wCheckMenuCursorYPosition: b"\x00"},
+         vread={0: {0x9800: 0x400}}),
+]
+# <<< factory HandleCheckMenuInput_YourOrOppPlayArea
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -1377,3 +1396,11 @@ MUTATIONS["SaveDuelStateToSRAM"] = {"source_symbol": "SaveDuelStateToSRAM", "bef
 # >>> factory-mutation DisplayCheckMenuCursor_YourOrOppPlayArea
 MUTATIONS["DisplayCheckMenuCursor_YourOrOppPlayArea"] = {"source_symbol": "DisplayCheckMenuCursor_YourOrOppPlayArea", "before": "\treturn DrawCheckMenuCursor_YourOrOppPlayArea(SYM_CURSOR_R);", "after": "\treturn DrawCheckMenuCursor_YourOrOppPlayArea((uint8_t)(SYM_CURSOR_R + 1u));", "case_ids": ["DisplayCheckMenuCursor_YourOrOppPlayArea-0", "DisplayCheckMenuCursor_YourOrOppPlayArea-1"]}
 # <<< factory-mutation DisplayCheckMenuCursor_YourOrOppPlayArea
+# >>> factory-mutation HandleCheckMenuInput_YourOrOppPlayArea
+MUTATIONS["HandleCheckMenuInput_YourOrOppPlayArea"] = {
+    "source_symbol": "HandleCheckMenuInput_YourOrOppPlayArea",
+    "before": "\tif ((new_counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) {",
+    "after": "\tif ((new_counter & (1u << B_CURSOR_BLINK_PERIOD)) != 0u) {",
+    "case_ids": ["HandleCheckMenuInput_YourOrOppPlayArea-0", "HandleCheckMenuInput_YourOrOppPlayArea-1"],
+}
+# <<< factory-mutation HandleCheckMenuInput_YourOrOppPlayArea

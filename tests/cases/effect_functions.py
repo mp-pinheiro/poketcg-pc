@@ -3256,6 +3256,16 @@ CASES["Conversion1_AISelectEffect"] = [
 ]
 # <<< factory Conversion1_AISelectEffect
 
+# >>> factory Conversion2_ChangeResistanceEffect
+CONTRACT["Conversion2_ChangeResistanceEffect"] = {"compare": ("hl",), "preserve": ()}
+CASES["Conversion2_ChangeResistanceEffect"] = [
+    {"d": 0x01, "e": 0x0E, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xFFA0: b"\x00", 0xC590: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC2EA: 1}},
+    dict(POISON, d=0x01, e=0x0E, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xFFA0: b"\x00", 0xC590: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC2EA: 1}),
+]
+# <<< factory Conversion2_ChangeResistanceEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5210,3 +5220,11 @@ MUTATIONS["Conversion1_AISelectEffect"] = {
     "case_ids": ["Conversion1_AISelectEffect-0", "Conversion1_AISelectEffect-1"],
 }
 # <<< factory-mutation Conversion1_AISelectEffect
+# >>> factory-mutation Conversion2_ChangeResistanceEffect
+MUTATIONS["Conversion2_ChangeResistanceEffect"] = {
+    "source_symbol": "Conversion2_ChangeResistanceEffect",
+    "before": "\tgb_write8(v.hl, wr);",
+    "after": "\tgb_write8(v.hl, (uint8_t)(wr + 1u));",
+    "case_ids": ["Conversion2_ChangeResistanceEffect-0", "Conversion2_ChangeResistanceEffect-1"],
+}
+# <<< factory-mutation Conversion2_ChangeResistanceEffect

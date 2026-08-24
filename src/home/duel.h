@@ -602,4 +602,7 @@ void SaveDuelStateToSRAM(void);
 /* >>> factory DisplayCheckMenuCursor_YourOrOppPlayArea */
 TempListResult DisplayCheckMenuCursor_YourOrOppPlayArea(void);
 /* <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea */
+/* >>> factory HandleCheckMenuInput_YourOrOppPlayArea */
+TempListResult HandleCheckMenuInput_YourOrOppPlayArea(void);
+/* <<< factory HandleCheckMenuInput_YourOrOppPlayArea */
 #endif

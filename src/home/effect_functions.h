@@ -1192,6 +1192,9 @@ TextResult PrintArenaCardNameAndColorText(uint8_t d, uint8_t e, uint16_t hl);
 /* >>> factory Conversion1_AISelectEffect */
 void Conversion1_AISelectEffect(void);
 /* <<< factory Conversion1_AISelectEffect */
+/* >>> factory Conversion2_ChangeResistanceEffect */
+TextResult Conversion2_ChangeResistanceEffect(uint8_t d, uint8_t e);
+/* <<< factory Conversion2_ChangeResistanceEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

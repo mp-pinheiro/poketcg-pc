@@ -2867,6 +2867,14 @@ static void adapt_Conversion1_AISelectEffect(ProbeState *s)
 }
 /* <<< factory Conversion1_AISelectEffect */
 
+/* >>> factory Conversion2_ChangeResistanceEffect */
+static void adapt_Conversion2_ChangeResistanceEffect(ProbeState *s)
+{
+	TextResult r = Conversion2_ChangeResistanceEffect(s->d, s->e);
+	s->hl = r.hl;
+}
+/* <<< factory Conversion2_ChangeResistanceEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3222,5 +3230,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AISelectConversionColor", adapt_AISelectConversionColor },
 	{ "PrintArenaCardNameAndColorText", adapt_PrintArenaCardNameAndColorText },
 	{ "Conversion1_AISelectEffect", adapt_Conversion1_AISelectEffect },
+	{ "Conversion2_ChangeResistanceEffect", adapt_Conversion2_ChangeResistanceEffect },
 	{ NULL, NULL },
 };

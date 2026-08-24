@@ -741,4 +741,7 @@ PrintAttackOrPkmnPowerInformationResult PrintAttackOrPkmnPowerInformation(uint8_
 /* >>> factory PrintAttackOrNonPokemonCardDescription */
 PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16_t hl, uint8_t d, uint8_t e);
 /* <<< factory PrintAttackOrNonPokemonCardDescription */
+/* >>> factory DisplayCardPageOnLeftOrRightPressed */
+void DisplayCardPageOnLeftOrRightPressed(uint8_t a);
+/* <<< factory DisplayCardPageOnLeftOrRightPressed */
 #endif

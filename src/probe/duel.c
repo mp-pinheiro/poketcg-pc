@@ -754,6 +754,14 @@ static void adapt_DisplayCheckMenuCursor_YourOrOppPlayArea(ProbeState *s)
 }
 /* <<< factory DisplayCheckMenuCursor_YourOrOppPlayArea */
 
+/* >>> factory HandleCheckMenuInput_YourOrOppPlayArea */
+static void adapt_HandleCheckMenuInput_YourOrOppPlayArea(ProbeState *s)
+{
+	TempListResult r = HandleCheckMenuInput_YourOrOppPlayArea();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory HandleCheckMenuInput_YourOrOppPlayArea */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -846,5 +854,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawPlayArea_IconWithValue", adapt_DrawPlayArea_IconWithValue },
 	{ "SaveDuelStateToSRAM", adapt_SaveDuelStateToSRAM },
 	{ "DisplayCheckMenuCursor_YourOrOppPlayArea", adapt_DisplayCheckMenuCursor_YourOrOppPlayArea },
+	{ "HandleCheckMenuInput_YourOrOppPlayArea", adapt_HandleCheckMenuInput_YourOrOppPlayArea },
 	{ NULL, NULL },
 };

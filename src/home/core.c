@@ -728,6 +728,8 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define SYM_ATK_DESCR 0x0Eu
 #define SYM_PLUS_OFFSET 0x2Au
 #define PKMNPWRText 0x000Au
+
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4332,3 +4334,15 @@ PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16
 	return PrintAttackOrCardDescription(hl, 1u, 11u);
 }
 /* <<< factory PrintAttackOrNonPokemonCardDescription */
+
+/* >>> factory DisplayCardPageOnLeftOrRightPressed */
+void DisplayCardPageOnLeftOrRightPressed(uint8_t a)
+{
+	if (a & (1u << B_PAD_LEFT)) {
+		(void)GoToPreviousCardPage();
+	} else {
+		(void)GoToFirstOrNextCardPage();
+	}
+	DisplayCardPage();
+}
+/* <<< factory DisplayCardPageOnLeftOrRightPressed */

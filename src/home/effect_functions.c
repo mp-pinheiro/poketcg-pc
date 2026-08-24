@@ -410,6 +410,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/duel.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#define DUELVARS_ARENA_CARD_CHANGED_RESISTANCE 0xEAu
+#define ChangedTheResistanceOfPokemonToColorText 0x0115u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -4915,3 +4920,14 @@ void Conversion1_AISelectEffect(void)
 	AISelectConversionColor();
 }
 /* <<< factory Conversion1_AISelectEffect */
+
+/* >>> factory Conversion2_ChangeResistanceEffect */
+TextResult Conversion2_ChangeResistanceEffect(uint8_t d, uint8_t e)
+{
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_RESISTANCE);
+	uint8_t color = gb_read8(hTemp_ffa0_ADDR);
+	uint8_t wr = TranslateColorToWR(color);
+	gb_write8(v.hl, wr);
+	return PrintArenaCardNameAndColorText(d, e, ChangedTheResistanceOfPokemonToColorText);
+}
+/* <<< factory Conversion2_ChangeResistanceEffect */
