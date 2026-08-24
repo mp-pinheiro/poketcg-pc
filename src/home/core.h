@@ -744,4 +744,7 @@ PrintAttackOrCardDescriptionResult PrintAttackOrNonPokemonCardDescription(uint16
 /* >>> factory DisplayCardPageOnLeftOrRightPressed */
 void DisplayCardPageOnLeftOrRightPressed(uint8_t a);
 /* <<< factory DisplayCardPageOnLeftOrRightPressed */
+/* >>> factory PrintPlayAreaCardHeader */
+void PrintPlayAreaCardHeader(void);
+/* <<< factory PrintPlayAreaCardHeader */
 #endif

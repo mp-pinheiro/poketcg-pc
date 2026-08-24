@@ -730,6 +730,20 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define PKMNPWRText 0x000Au
 
 #include "home/core.h"
+
+#define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xdau
+#define DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER 0xe0u
+#define DUELVARS_ARENA_CARD_STAGE 0xceu
+#define SYM_Lv 0x11u
+#define SYM_PLUSPOWER 0x14u
+#define SYM_DEFENDER 0x15u
+
+static const uint8_t kFaceDownCardTileNumbers[8] = {
+	0xd0u, 0x02u, /* basic */
+	0xd4u, 0x02u, /* stage 1 */
+	0xd8u, 0x01u, /* stage 2 */
+	0xdcu, 0x01u, /* stage 2 special */
+};
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4346,3 +4360,63 @@ void DisplayCardPageOnLeftOrRightPressed(uint8_t a)
 	DisplayCardPage();
 }
 /* <<< factory DisplayCardPageOnLeftOrRightPressed */
+
+/* >>> factory PrintPlayAreaCardHeader */
+void PrintPlayAreaCardHeader(void)
+{
+	uint8_t slot = wCurPlayAreaSlot;
+	uint8_t y = wCurPlayAreaY;
+
+	DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));
+	LoadCardDataToBuffer1_FromDeckIndex(card.a);
+	InitTextPrinting(4u, y);
+
+	uint16_t name_ptr = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) |
+		((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+	CopyTextData_FromTextID(10u, name_ptr, wDefaultText_ADDR);
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+
+	uint8_t color = GetPlayAreaCardColor(slot);
+	JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, y);
+	WriteByteToBGMap0(SYM_Lv, 14u, y);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(wLoadedCard1Level, 15u, y, 0u, 0u, 0u);
+
+	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD_STAGE));
+	uint8_t idx = (uint8_t)(stage.a * 2u);
+	uint8_t tile = kFaceDownCardTileNumbers[idx];
+	uint8_t palette = kFaceDownCardTileNumbers[(uint8_t)(idx + 1u)];
+	uint16_t de = (uint16_t)(((uint16_t)2u << 8) | y);
+	FillRectangle(tile, 2u, 2u, de, (uint16_t)((1u << 8) | 2u));
+
+	if (wConsole == CONSOLE_CGB) {
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		FillRectangle(palette, 2u, 2u, de, 0u);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
+	}
+
+	if (slot == 0u) {
+		uint8_t c = (uint8_t)(y + 2u);
+		DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+		CheckPrintCnfSlpPrz(status.a, 2u, c);
+		CheckPrintPoisoned(status.a, 3u, c);
+		CheckPrintDoublePoisoned(status.a, 4u, c);
+	}
+
+	DuelistVarResult plus = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER));
+	if (plus.a != 0u) {
+		uint8_t c2 = (uint8_t)(y + 1u);
+		WriteByteToBGMap0(SYM_PLUSPOWER, 15u, c2);
+		WriteByteToBGMap0((uint8_t)(plus.a + SYM_0), 16u, c2);
+	}
+
+	DuelistVarResult def = GetTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER));
+	if (def.a != 0u) {
+		uint8_t c3 = (uint8_t)(y + 1u);
+		WriteByteToBGMap0(SYM_DEFENDER, 17u, c3);
+		WriteByteToBGMap0((uint8_t)(def.a + SYM_0), 18u, c3);
+	}
+}
+/* <<< factory PrintPlayAreaCardHeader */

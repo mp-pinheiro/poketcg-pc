@@ -1611,6 +1611,14 @@ static void adapt_DisplayCardPageOnLeftOrRightPressed(ProbeState *s)
 }
 /* <<< factory DisplayCardPageOnLeftOrRightPressed */
 
+/* >>> factory PrintPlayAreaCardHeader */
+static void adapt_PrintPlayAreaCardHeader(ProbeState *s)
+{
+	(void)s;
+	PrintPlayAreaCardHeader();
+}
+/* <<< factory PrintPlayAreaCardHeader */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1803,5 +1811,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintAttackOrPkmnPowerInformation", adapt_PrintAttackOrPkmnPowerInformation },
 	{ "PrintAttackOrNonPokemonCardDescription", adapt_PrintAttackOrNonPokemonCardDescription },
 	{ "DisplayCardPageOnLeftOrRightPressed", adapt_DisplayCardPageOnLeftOrRightPressed },
+	{ "PrintPlayAreaCardHeader", adapt_PrintPlayAreaCardHeader },
 	{ NULL, NULL },
 };

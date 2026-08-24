@@ -1469,6 +1469,18 @@ wAttachedEnergies = 0xCC1B
 wDuelTurns = 0xCC06
 
 hWhoseTurn = 0xFF97
+
+hWhoseTurn = 0xFF97
+PLAYER_TURN = 0xC2
+wPlayerDeck = 0xC400
+wPlayerArenaCard = 0xC2BB
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+wConsole = 0xCAB4
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2227,6 +2239,38 @@ CASES["DisplayCardPageOnLeftOrRightPressed"] = [
     dict(POISON, a=1 << 5, wram={wCardPageNumber: b"\x0E"}, read={wCardPageNumber: 1}),
 ]
 # <<< factory DisplayCardPageOnLeftOrRightPressed
+
+# >>> factory PrintPlayAreaCardHeader
+CONTRACT["PrintPlayAreaCardHeader"] = {"compare": (), "preserve": ()}
+CASES["PrintPlayAreaCardHeader"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
+              wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+              wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
+     "vread": {0: {0x9800 + 3 * 32: 32 * 5}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x03",
+              wConsole: b"\x02", wPlayerArenaCard + 1: b"\x01", wPlayerDeck + 1: b"\x08",
+              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x02",
+              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x05",
+              wPlayerArenaCard + 1 + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x07"},
+     "vread": {0: {0x9800 + 2 * 32: 32 * 5}, 1: {0x9800 + 2 * 32: 32 * 5}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x04",
+                        wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08",
+                        wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+                        wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+                        wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+                        wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00"},
+         vread={0: {0x9800 + 3 * 32: 32 * 5}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintPlayAreaCardHeader
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3320,3 +3364,6 @@ MUTATIONS["DisplayCardPageOnLeftOrRightPressed"] = {
     "case_ids": ["DisplayCardPageOnLeftOrRightPressed-0", "DisplayCardPageOnLeftOrRightPressed-1"],
 }
 # <<< factory-mutation DisplayCardPageOnLeftOrRightPressed
+# >>> factory-mutation PrintPlayAreaCardHeader
+MUTATIONS["PrintPlayAreaCardHeader"] = {"source_symbol": "PrintPlayAreaCardHeader", "before": "\tWriteByteToBGMap0(SYM_Lv, 14u, y);", "after": "\tWriteByteToBGMap0(SYM_0, 14u, y);", "case_ids": ["PrintPlayAreaCardHeader-0", "PrintPlayAreaCardHeader-1"]}
+# <<< factory-mutation PrintPlayAreaCardHeader
