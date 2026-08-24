@@ -31,6 +31,14 @@ CASES["TryFirstRonaldDuel"] = [
 ]
 # <<< factory TryFirstRonaldDuel
 
+# >>> factory TrySecondRonaldDuel
+CONTRACT["TrySecondRonaldDuel"] = {"compare": ("a", "f", "b", "c", "hl"), "preserve": ()}
+CASES["TrySecondRonaldDuel"] = [
+    {"b": 0x12, "c": 0x34, "hl": 0x0000, "wram": {0xD34A: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x01\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x02\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x03\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f \x04\x1d\x1e\x1f !"#$%&\'\x05$%&\'()*+,-.\x06+,-./012345\x0723456789:;<'}},
+    dict(POISON, wram={0xD34A: b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x01\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x02\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x03\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f \x04\x1d\x1e\x1f !"#$%&\'\x05$%&\'()*+,-.\x06+,-./012345\x0723456789:;<'}),
+]
+# <<< factory TrySecondRonaldDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -41,3 +49,6 @@ MUTATIONS["TryFirstRonaldEncounter"] = {"source_symbol": "TryFirstRonaldEncounte
 # >>> factory-mutation TryFirstRonaldDuel
 MUTATIONS["TryFirstRonaldDuel"] = {"source_symbol": "TryFirstRonaldDuel", "before": "\tSetNextNPCAndScriptResult r2 = SetNextNPCAndScript(Script_FirstRonaldDuel_ADDR, hl);", "after": "\tSetNextNPCAndScriptResult r2 = SetNextNPCAndScript((uint16_t)(Script_FirstRonaldDuel_ADDR + 1u), hl);", "case_ids": ["TryFirstRonaldDuel-0"]}
 # <<< factory-mutation TryFirstRonaldDuel
+# >>> factory-mutation TrySecondRonaldDuel
+MUTATIONS["TrySecondRonaldDuel"] = {"source_symbol": "TrySecondRonaldDuel", "before": "return (TrySecondRonaldDuelResult){r.a, r.f, b, c, hl};", "after": "return (TrySecondRonaldDuelResult){0u, r.f, b, c, hl};", "case_ids": ["TrySecondRonaldDuel-0", "TrySecondRonaldDuel-1"]}
+# <<< factory-mutation TrySecondRonaldDuel

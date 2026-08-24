@@ -27,8 +27,21 @@ static void adapt_TryFirstRonaldDuel(ProbeState *s)
 }
 /* <<< factory TryFirstRonaldDuel */
 
+/* >>> factory TrySecondRonaldDuel */
+static void adapt_TrySecondRonaldDuel(ProbeState *s)
+{
+	TrySecondRonaldDuelResult r = TrySecondRonaldDuel(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory TrySecondRonaldDuel */
+
 const ProbeEntry probe_entries_psychic_club_entrance[] = {
 	{ "TryFirstRonaldEncounter", adapt_TryFirstRonaldEncounter },
 	{ "TryFirstRonaldDuel", adapt_TryFirstRonaldDuel },
+	{ "TrySecondRonaldDuel", adapt_TrySecondRonaldDuel },
 	{ NULL, NULL },
 };

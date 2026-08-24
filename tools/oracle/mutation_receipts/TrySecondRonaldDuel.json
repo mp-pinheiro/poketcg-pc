@@ -1,0 +1,9 @@
+{
+  "fn": "TrySecondRonaldDuel",
+  "case": "tests/cases/psychic_club_entrance.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TrySecondRonaldDuel\", \"registers\": {\"a\": 114, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"000102030405060708090a0b0108090a0b0c0d0e0f101112020f1011121314151617181903161718191a1b1c1d1e1f20041d1e1f2021222324252627052425262728292a2b2c2d2e062b2c2d2e2f3031323334350732333435363738393a3b3c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TrySecondRonaldDuel\", \"mismatches\": {\"a\": [114, 0]}}\n",
+  "restored": "{\"fn\": \"TrySecondRonaldDuel\", \"registers\": {\"a\": 114, \"b\": 18, \"c\": 52, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54090\": \"000102030405060708090a0b0108090a0b0c0d0e0f101112020f1011121314151617181903161718191a1b1c1d1e1f20041d1e1f2021222324252627052425262728292a2b2c2d2e062b2c2d2e2f3031323334350732333435363738393a3b3c\"}}, \"status\": \"PASS\"}\n"
+}

@@ -16,6 +16,13 @@
 #define NPC_RONALD2 0x71u
 #define EVENT_RONALD_FIRST_DUEL_STATE 0x4Cu
 #define Script_FirstRonaldDuel_ADDR 0x68C0u
+
+#include "home/psychic_club_entrance.h"
+#include "home/map.h"
+#include "home/scripting.h"
+#define NPC_RONALD3 0x72u
+#define EVENT_RONALD_SECOND_DUEL_STATE 0x4Du
+#define Script_SecondRonaldDuel_ADDR 0x691Eu
 /* <<< factory statics */
 
 /* >>> factory TryFirstRonaldEncounter */
@@ -44,3 +51,18 @@ TryFirstRonaldDuelResult TryFirstRonaldDuel(uint8_t b, uint8_t c, uint16_t hl)
 	return (TryFirstRonaldDuelResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
 }
 /* <<< factory TryFirstRonaldDuel */
+
+/* >>> factory TrySecondRonaldDuel */
+TrySecondRonaldDuelResult TrySecondRonaldDuel(uint8_t b, uint8_t c, uint16_t hl)
+{
+	wTempNPC = NPC_RONALD3;
+	NPCSearchResult r = FindLoadedNPC();
+	if (r.f & 0x10u)
+		return (TrySecondRonaldDuelResult){r.a, r.f, b, c, hl};
+	uint8_t event = GetEventValue(EVENT_RONALD_SECOND_DUEL_STATE);
+	if (event != 0u)
+		return (TrySecondRonaldDuelResult){event, 0x00u, b, c, hl};
+	SetNextNPCAndScriptResult r2 = SetNextNPCAndScript(Script_SecondRonaldDuel_ADDR, hl);
+	return (TrySecondRonaldDuelResult){r2.a, r2.f, r2.b, r2.c, r2.hl};
+}
+/* <<< factory TrySecondRonaldDuel */
