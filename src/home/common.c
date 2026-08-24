@@ -76,6 +76,13 @@
 #include "mem.h"
 #define DUELVARS_ARENA_CARD_480 0xBBu
 #define TYPE_ENERGY_480 0x08u
+
+#include "home/core.h"
+#include "generated/wram.h"
+
+#define AI_MEWTWO_MILL_F 0x07u
+#define AI_MEWTWO_MILL (1u << AI_MEWTWO_MILL_F)
+#define AI_TRAINER_CARD_PHASE_05 0x05u
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -636,3 +643,31 @@ uint8_t AIPickEnergyCardToDiscard(uint8_t a)
 	}
 }
 /* <<< factory AIPickEnergyCardToDiscard */
+
+/* >>> factory HandleAIAntiMewtwoDeckStrategy */
+HandleAIAntiMewtwoDeckStrategyResult HandleAIAntiMewtwoDeckStrategy(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t carry_z;
+	a = wAIBarrierFlagCounter;
+	if ((a & (1u << AI_MEWTWO_MILL_F)) == 0u) {
+		carry_z = 0x80u;
+		goto set_carry;
+	}
+	if (a >= (uint8_t)(AI_MEWTWO_MILL + 2u)) {
+		wAIBarrierFlagCounter = 0u;
+		a = 0u;
+		carry_z = 0x80u;
+		goto set_carry;
+	}
+	CountNumberOfSetUpBenchPokemonResult bench = CountNumberOfSetUpBenchPokemon(a, f, b, c, d, e, hl);
+	if (bench.a < 4u)
+		return (HandleAIAntiMewtwoDeckStrategyResult){bench.a, 0x10u};
+	AIProcessHandTrainerCardsWrapResult trainer = AIProcessHandTrainerCards(AI_TRAINER_CARD_PHASE_05);
+	f = (trainer.a == 0u) ? 0x80u : 0x00u;
+	return (HandleAIAntiMewtwoDeckStrategyResult){trainer.a, f};
+set_carry:
+	f = carry_z;
+	f = (uint8_t)((f & 0x80u) | 0x10u);
+	return (HandleAIAntiMewtwoDeckStrategyResult){a, f};
+}
+/* <<< factory HandleAIAntiMewtwoDeckStrategy */

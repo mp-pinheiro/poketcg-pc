@@ -1812,6 +1812,15 @@ static void adapt_HandleLegendaryArticunoEnergyScoring(ProbeState *s)
 }
 /* <<< factory HandleLegendaryArticunoEnergyScoring */
 
+/* >>> factory CheckIfArenaCardIsFullyPowered */
+static void adapt_CheckIfArenaCardIsFullyPowered(ProbeState *s)
+{
+	CheckIfArenaCardIsFullyPoweredResult r = CheckIfArenaCardIsFullyPowered();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfArenaCardIsFullyPowered */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2028,5 +2037,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckForBenchIDAtHalfHPAndCanUseSecondAttack", adapt_CheckForBenchIDAtHalfHPAndCanUseSecondAttack },
 	{ "CountNumberOfSetUpBenchPokemon", adapt_CountNumberOfSetUpBenchPokemon },
 	{ "HandleLegendaryArticunoEnergyScoring", adapt_HandleLegendaryArticunoEnergyScoring },
+	{ "CheckIfArenaCardIsFullyPowered", adapt_CheckIfArenaCardIsFullyPowered },
 	{ NULL, NULL },
 };

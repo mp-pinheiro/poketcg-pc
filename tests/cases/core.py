@@ -1638,6 +1638,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wOpponentDeckID = 0xCC0E
 hWhoseTurn = 0xFF97
 ARTICUNO_SCORE = 0xCDE5
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wLoadedCard1AIInfo = 0xCC64
+wLoadedCard1HP = 0xCC2C
+wSelectedAttack = 0xCCC6
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2781,6 +2788,14 @@ CASES["HandleLegendaryArticunoEnergyScoring"] = [
     {"wram": {wOpponentDeckID: b"\x00", hWhoseTurn: b"\xC2", 0xC3EC: b"\x07", 0xC2BB: b"\xFF", 0xC2BC: b"\x00\xFF", 0xC400: b"\x5E", 0xC2C9: b"\x00", ARTICUNO_SCORE: b"\x00"}, "expect": {ARTICUNO_SCORE: b"\x00"}},
 ]
 # <<< factory HandleLegendaryArticunoEnergyScoring
+
+# >>> factory CheckIfArenaCardIsFullyPowered
+CONTRACT["CheckIfArenaCardIsFullyPowered"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfArenaCardIsFullyPowered"] = [
+    {"hram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, "wram": {0xC2BB: b"\xFF", wSelectedAttack: b"\x00"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x00"}, wram={0xC2BB: b"\x0A", 0xC2C8: b"\x00", wSelectedAttack: b"\x00"}, sram={0: {}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory CheckIfArenaCardIsFullyPowered
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4001,3 +4016,11 @@ MUTATIONS["HandleLegendaryArticunoEnergyScoring"] = {
     "case_ids": ["HandleLegendaryArticunoEnergyScoring-0", "HandleLegendaryArticunoEnergyScoring-2"],
 }
 # <<< factory-mutation HandleLegendaryArticunoEnergyScoring
+# >>> factory-mutation CheckIfArenaCardIsFullyPowered
+MUTATIONS["CheckIfArenaCardIsFullyPowered"] = {
+    "source_symbol": "CheckIfArenaCardIsFullyPowered",
+    "before": "\tif (a >= d) {\n\t\tf = (uint8_t)(a == 0u ? 0x80u : 0x00u);\n\t\treturn (CheckIfArenaCardIsFullyPoweredResult){a, f};\n\t}",
+    "after": "\tif (a >= d) {\n\t\tf = 0xFFu;\n\t\treturn (CheckIfArenaCardIsFullyPoweredResult){a, f};\n\t}",
+    "case_ids": ["CheckIfArenaCardIsFullyPowered-0", "CheckIfArenaCardIsFullyPowered-1"],
+}
+# <<< factory-mutation CheckIfArenaCardIsFullyPowered

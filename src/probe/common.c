@@ -211,6 +211,15 @@ static void adapt_AIPickEnergyCardToDiscard(ProbeState *s)
 }
 /* <<< factory AIPickEnergyCardToDiscard */
 
+/* >>> factory HandleAIAntiMewtwoDeckStrategy */
+static void adapt_HandleAIAntiMewtwoDeckStrategy(ProbeState *s)
+{
+	HandleAIAntiMewtwoDeckStrategyResult r = HandleAIAntiMewtwoDeckStrategy(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAIAntiMewtwoDeckStrategy */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -235,5 +244,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "AddStarterDeck", adapt_AddStarterDeck },
 	{ "FindDuplicatePokemonCards", adapt_FindDuplicatePokemonCards },
 	{ "AIPickEnergyCardToDiscard", adapt_AIPickEnergyCardToDiscard },
+	{ "HandleAIAntiMewtwoDeckStrategy", adapt_HandleAIAntiMewtwoDeckStrategy },
 	{ NULL, NULL },
 };

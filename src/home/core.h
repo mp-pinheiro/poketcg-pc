@@ -829,4 +829,8 @@ CountNumberOfSetUpBenchPokemonResult CountNumberOfSetUpBenchPokemon(uint8_t a, u
 /* >>> factory HandleLegendaryArticunoEnergyScoring */
 void HandleLegendaryArticunoEnergyScoring(void);
 /* <<< factory HandleLegendaryArticunoEnergyScoring */
+/* >>> factory CheckIfArenaCardIsFullyPowered */
+typedef struct { uint8_t a; uint8_t f; } CheckIfArenaCardIsFullyPoweredResult;
+CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void);
+/* <<< factory CheckIfArenaCardIsFullyPowered */
 #endif

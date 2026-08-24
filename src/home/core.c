@@ -892,6 +892,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "generated/wram.h"
 #include "home/legendary_articuno.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5093,3 +5098,43 @@ void HandleLegendaryArticunoEnergyScoring(void)
 	}
 }
 /* <<< factory HandleLegendaryArticunoEnergyScoring */
+
+/* >>> factory CheckIfArenaCardIsFullyPowered */
+CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void)
+{
+	uint8_t f;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t deck_index = arena.a;
+	(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t d = hp.a;
+	uint8_t a = wLoadedCard1HP;
+	a = (uint8_t)((a >> 1) | (uint8_t)(a << 7));
+	if (a >= d) {
+		f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+		return (CheckIfArenaCardIsFullyPoweredResult){a, f};
+	}
+	a = (uint8_t)(wLoadedCard1AIInfo & HAS_EVOLUTION);
+	if (a != 0u) {
+		CheckCardEvolutionInHandOrDeckResult evolution = CheckCardEvolutionInHandOrDeck(d);
+		a = evolution.a;
+		f = evolution.f;
+		if ((f & 0x10u) != 0u) {
+			f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+			return (CheckIfArenaCardIsFullyPoweredResult){a, f};
+		}
+	}
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	wSelectedAttack = SECOND_ATTACK;
+	CheckIfSelectedAttackIsUnusableResult unusable =
+		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, 0u, 0u, 0u, d, 0u, hp.hl);
+	a = unusable.a;
+	f = unusable.f;
+	if ((f & 0x10u) != 0u) {
+		f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+		return (CheckIfArenaCardIsFullyPoweredResult){a, f};
+	}
+	f = (uint8_t)((f & 0x80u) | 0x10u);
+	return (CheckIfArenaCardIsFullyPoweredResult){a, f};
+}
+/* <<< factory CheckIfArenaCardIsFullyPowered */

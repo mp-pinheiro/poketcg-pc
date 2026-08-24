@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfArenaCardIsFullyPowered",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfArenaCardIsFullyPowered\", \"registers\": {\"a\": 228, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"52422\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfArenaCardIsFullyPowered\", \"mismatches\": {\"f\": [0, 255]}}\n",
+  "restored": "{\"fn\": \"CheckIfArenaCardIsFullyPowered\", \"registers\": {\"a\": 228, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"52422\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

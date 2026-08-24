@@ -145,6 +145,8 @@ wPlayerDeck = 0xC400
 wTempAI = 0xCDF1
 wDuelTempList = 0xC510
 IVYSAUR = 0x09
+
+wAIBarrierFlagCounter = 0xCDA7
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -340,6 +342,14 @@ CASES["AIPickEnergyCardToDiscard"] = [
 ]
 # <<< factory AIPickEnergyCardToDiscard
 
+# >>> factory HandleAIAntiMewtwoDeckStrategy
+CONTRACT["HandleAIAntiMewtwoDeckStrategy"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAIAntiMewtwoDeckStrategy"] = [
+    {"wram": {wAIBarrierFlagCounter: b"\x00"}, "sram": {0: {}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {wAIBarrierFlagCounter: b"\x00"}, "sram": {0: {}}, "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "instruction_budget": 2000000, "cycle_budget": 8000000},
+]
+# <<< factory HandleAIAntiMewtwoDeckStrategy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -458,3 +468,11 @@ MUTATIONS["FindDuplicatePokemonCards"] = {"source_symbol": "FindDuplicatePokemon
 # >>> factory-mutation AIPickEnergyCardToDiscard
 MUTATIONS["AIPickEnergyCardToDiscard"] = {"source_symbol": "AIPickEnergyCardToDiscard", "before": "if (total == 0u)\n\t\treturn 0xFFu;", "after": "if (total == 0u)\n\t\treturn 0xFEu;", "case_ids": ["AIPickEnergyCardToDiscard-0", "AIPickEnergyCardToDiscard-1"]}
 # <<< factory-mutation AIPickEnergyCardToDiscard
+# >>> factory-mutation HandleAIAntiMewtwoDeckStrategy
+MUTATIONS["HandleAIAntiMewtwoDeckStrategy"] = {
+    "source_symbol": "HandleAIAntiMewtwoDeckStrategy",
+    "before": "\tf = (uint8_t)((f & 0x80u) | 0x10u);\n\treturn (HandleAIAntiMewtwoDeckStrategyResult){a, f};",
+    "after": "\tf = (uint8_t)((f & 0x80u) | 0x00u);\n\treturn (HandleAIAntiMewtwoDeckStrategyResult){a, f};",
+    "case_ids": ["HandleAIAntiMewtwoDeckStrategy-0", "HandleAIAntiMewtwoDeckStrategy-1"],
+}
+# <<< factory-mutation HandleAIAntiMewtwoDeckStrategy
