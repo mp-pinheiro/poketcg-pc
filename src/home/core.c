@@ -792,6 +792,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define hTempPlayAreaLocation_ff9d_ADDR 0xFF9Du
+
+#include "home/core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -4636,3 +4640,16 @@ void DisplayUsePokemonPowerScreen(void)
 	(void)PrintAttackOrCardDescription(hl, 1u, 6u);
 }
 /* <<< factory DisplayUsePokemonPowerScreen */
+
+/* >>> factory InitAndPrintPlayAreaCardInformationAndLocation */
+void InitAndPrintPlayAreaCardInformationAndLocation(void)
+{
+	uint8_t a = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	wCurPlayAreaSlot = a;
+	uint8_t c = a;
+	a = (uint8_t)(a + a);
+	a = (uint8_t)(a + c);
+	wCurPlayAreaY = a;
+	PrintPlayAreaCardInformationAndLocation();
+}
+/* <<< factory InitAndPrintPlayAreaCardInformationAndLocation */

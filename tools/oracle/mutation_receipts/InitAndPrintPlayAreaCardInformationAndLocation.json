@@ -1,0 +1,9 @@
+{
+  "fn": "InitAndPrintPlayAreaCardInformationAndLocation",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"InitAndPrintPlayAreaCardInformationAndLocation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"51892\": \"00\", \"52169\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"InitAndPrintPlayAreaCardInformationAndLocation\", \"mismatches\": {\"bus\": {\"address\": 52169, \"reference\": \"0000080000c2\", \"native\": \"0000080001c2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [49882, 1], [49888, 1], [49904, 1], [50176, 1], [51892, 1], [52169, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"InitAndPrintPlayAreaCardInformationAndLocation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49882\": \"00\", \"49888\": \"00\", \"49904\": \"00\", \"50176\": \"08\", \"51892\": \"00\", \"52169\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
