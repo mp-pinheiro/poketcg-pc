@@ -753,4 +753,7 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c);
 /* >>> factory PlayDeckShuffleAnimation */
 uint8_t PlayDeckShuffleAnimation(void);
 /* <<< factory PlayDeckShuffleAnimation */
+/* >>> factory OppAction_6b30 */
+uint8_t OppAction_6b30(void);
+/* <<< factory OppAction_6b30 */
 #endif

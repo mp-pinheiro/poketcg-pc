@@ -4532,3 +4532,14 @@ uint8_t PlayDeckShuffleAnimation(void)
 	return 0x01u;
 }
 /* <<< factory PlayDeckShuffleAnimation */
+
+/* >>> factory OppAction_6b30 */
+uint8_t OppAction_6b30(void)
+{
+	uint8_t saved = hWhoseTurn;
+	hWhoseTurn = hTemp_ffa0;
+	(void)PlayDeckShuffleAnimation();
+	hWhoseTurn = saved;
+	return saved;
+}
+/* <<< factory OppAction_6b30 */

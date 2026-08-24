@@ -1207,6 +1207,9 @@ TextResult PidgeottoMirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
 /* >>> factory SpearowMirrorMove_AfterDamage */
 TextResult SpearowMirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in);
 /* <<< factory SpearowMirrorMove_AfterDamage */
+/* >>> factory Func_2c0a8 */
+uint8_t Func_2c0a8(void);
+/* <<< factory Func_2c0a8 */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

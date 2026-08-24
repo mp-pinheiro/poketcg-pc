@@ -425,6 +425,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define DUELVARS_ARENA_CARD_CHANGED_WEAKNESS 0xE9u
 #define DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK 0xF7u
 #define ChangedTheWeaknessOfPokemonToColorText 0x0114u
+
+#include "home/core.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#define OPPACTION_6B30 0x12u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5038,3 +5043,15 @@ TextResult SpearowMirrorMove_AfterDamage(uint8_t d, uint8_t e, uint16_t hl_in)
 	return r;
 }
 /* <<< factory SpearowMirrorMove_AfterDamage */
+
+/* >>> factory Func_2c0a8 */
+uint8_t Func_2c0a8(void)
+{
+	uint8_t saved = hTemp_ffa0;
+	hTemp_ffa0 = hWhoseTurn;
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_6B30, 0u);
+	uint8_t result = PlayDeckShuffleAnimation();
+	hTemp_ffa0 = saved;
+	return result;
+}
+/* <<< factory Func_2c0a8 */

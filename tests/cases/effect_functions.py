@@ -2392,6 +2392,9 @@ wOpponentArenaCard = 0xC3BB
 wOpponentDeck = 0xC480
 
 wNoDamageOrEffect = 0xCCC7
+
+hWhoseTurn = 0xFF97
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3303,6 +3306,24 @@ CASES["SpearowMirrorMove_AfterDamage"] = [
     dict(POISON, d=0x01, e=0x0E, wram={wNoDamageOrEffect: b"\x01"}),
 ]
 # <<< factory SpearowMirrorMove_AfterDamage
+
+# >>> factory Func_2c0a8
+CONTRACT["Func_2c0a8"] = {"compare": ("a",), "preserve": ()}
+CASES["Func_2c0a8"] = [
+    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x99", 0xC3F1: b"\x00",
+              0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "read": {hTemp_ffa0: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x99", 0xC3F1: b"\x00",
+               0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+         read={hTemp_ffa0: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory Func_2c0a8
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5298,3 +5319,6 @@ MUTATIONS["SpearowMirrorMove_AfterDamage"] = {
     "case_ids": ["SpearowMirrorMove_AfterDamage-0", "SpearowMirrorMove_AfterDamage-1"],
 }
 # <<< factory-mutation SpearowMirrorMove_AfterDamage
+# >>> factory-mutation Func_2c0a8
+MUTATIONS["Func_2c0a8"] = {"source_symbol": "Func_2c0a8", "before": "\thTemp_ffa0 = saved;", "after": "\thTemp_ffa0 = hWhoseTurn;", "case_ids": ["Func_2c0a8-0", "Func_2c0a8-1"]}
+# <<< factory-mutation Func_2c0a8

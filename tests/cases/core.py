@@ -1485,6 +1485,9 @@ DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xDA - 0xBB
 wConsole = 0xCAB4
 wLCDC = 0xCABB
 wPokemonLengthPrintOffset = 0xCC03
+
+hWhoseTurn = 0xFF97
+hTemp_ffa0 = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2305,6 +2308,22 @@ CASES["PlayDeckShuffleAnimation"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory PlayDeckShuffleAnimation
+
+# >>> factory OppAction_6b30
+CONTRACT["OppAction_6b30"] = {"compare": ("a",), "preserve": ()}
+CASES["OppAction_6b30"] = [
+    {"keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {hWhoseTurn: b"\xC3", hTemp_ffa0: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+              0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "read": {hWhoseTurn: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={hWhoseTurn: b"\xC3", hTemp_ffa0: b"\xC2", 0xC2BA: b"\x3C", 0xCAC2: b"\x09",
+               0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+         read={hWhoseTurn: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory OppAction_6b30
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -3407,3 +3426,6 @@ MUTATIONS["PrintPokemonCardLength"] = {"source_symbol": "PrintPokemonCardLength"
 # >>> factory-mutation PlayDeckShuffleAnimation
 MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimation", "before": "} while (counter != 0u);\n\t\treturn 0x01u;", "after": "} while (counter != 0u);\n\t\treturn 0x02u;", "case_ids": ["PlayDeckShuffleAnimation-0"]}
 # <<< factory-mutation PlayDeckShuffleAnimation
+# >>> factory-mutation OppAction_6b30
+MUTATIONS["OppAction_6b30"] = {"source_symbol": "OppAction_6b30", "before": "\treturn saved;", "after": "\treturn hTemp_ffa0;", "case_ids": ["OppAction_6b30-0", "OppAction_6b30-1"]}
+# <<< factory-mutation OppAction_6b30

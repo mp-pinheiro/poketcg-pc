@@ -2906,6 +2906,13 @@ static void adapt_SpearowMirrorMove_AfterDamage(ProbeState *s)
 }
 /* <<< factory SpearowMirrorMove_AfterDamage */
 
+/* >>> factory Func_2c0a8 */
+static void adapt_Func_2c0a8(ProbeState *s)
+{
+	s->a = Func_2c0a8();
+}
+/* <<< factory Func_2c0a8 */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3266,5 +3273,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MirrorMove_AfterDamage", adapt_MirrorMove_AfterDamage },
 	{ "PidgeottoMirrorMove_AfterDamage", adapt_PidgeottoMirrorMove_AfterDamage },
 	{ "SpearowMirrorMove_AfterDamage", adapt_SpearowMirrorMove_AfterDamage },
+	{ "Func_2c0a8", adapt_Func_2c0a8 },
 	{ NULL, NULL },
 };
