@@ -322,6 +322,7 @@ def _land_batch(
 
     if not gate_ok:
         _run(["jj", "abandon", "@-"], root, 120)
+        _run(["jj", "restore"], root, 120)
         if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
             raise LandError("working copy dirty after abandoning a failed batch")
         if _revision(root, "main") != pre_batch_revision:
