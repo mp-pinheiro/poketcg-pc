@@ -31,4 +31,8 @@ void PlayerNamingScreen_AdjustCursorPosition(uint8_t a);
 
 void DeckNamingScreen_AdjustCursorPosition(uint8_t a);
 /* <<< factory DeckNamingScreen_AdjustCursorPosition */
+/* >>> factory PlayerNamingScreen_DrawCursor */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } PlayerNamingScreen_DrawCursorResult;
+PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory PlayerNamingScreen_DrawCursor */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

@@ -101,6 +101,19 @@ CASES["DeckNamingScreen_AdjustCursorPosition"] = [
 ]
 # <<< factory DeckNamingScreen_AdjustCursorPosition
 
+# >>> factory PlayerNamingScreen_DrawCursor
+CONTRACT["PlayerNamingScreen_DrawCursor"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d",)}
+CASES["PlayerNamingScreen_DrawCursor"] = [
+    {"a": 0x17, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+     "expect_regs": {"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x00, "e": 0x17, "hl": 0x6BB0}},
+    {"a": 0x23, "wram": {0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+     "expect_regs": {"a": 0x23, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0x00, "e": 0x23, "hl": 0x6BB0}},
+    dict(POISON, a=0x17,
+         wram={0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x00"},
+         expect_regs={"a": 0x17, "f": 0x00, "b": 0x01, "c": 0x04, "d": 0xDD, "e": 0x17, "hl": 0x6BB0}),
+]
+# <<< factory PlayerNamingScreen_DrawCursor
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -154,3 +167,6 @@ MUTATIONS["PlayerNamingScreen_AdjustCursorPosition"] = {"source_symbol": "Player
 # >>> factory-mutation DeckNamingScreen_AdjustCursorPosition
 MUTATIONS["DeckNamingScreen_AdjustCursorPosition"] = {"source_symbol": "DeckNamingScreen_AdjustCursorPosition", "before": "\td = (uint8_t)(d + (uint8_t)(name_position << 1));", "after": "\td = (uint8_t)d;", "case_ids": ["DeckNamingScreen_AdjustCursorPosition-1", "DeckNamingScreen_AdjustCursorPosition-2"]}
 # <<< factory-mutation DeckNamingScreen_AdjustCursorPosition
+# >>> factory-mutation PlayerNamingScreen_DrawCursor
+MUTATIONS["PlayerNamingScreen_DrawCursor"] = {"source_symbol": "PlayerNamingScreen_DrawCursor", "before": "uint8_t tile = gb_read8(char_info++);", "after": "uint8_t tile = gb_read8((uint16_t)(char_info + 1u));", "case_ids": ["PlayerNamingScreen_DrawCursor-0"]}
+# <<< factory-mutation PlayerNamingScreen_DrawCursor

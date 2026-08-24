@@ -36,6 +36,11 @@
 #include "home/objects.h"
 
 #include "generated/wram.h"
+
+#include "home/input_name.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -184,3 +189,18 @@ void DeckNamingScreen_AdjustCursorPosition(uint8_t a)
 	SetOneObjectAttributes(0x18u, d, 0u, 0u);
 }
 /* <<< factory DeckNamingScreen_AdjustCursorPosition */
+
+/* >>> factory PlayerNamingScreen_DrawCursor */
+PlayerNamingScreen_DrawCursorResult PlayerNamingScreen_DrawCursor(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_a = a;
+	uint16_t char_info = PlayerNamingScreen_GetCharInfoFromPos((uint16_t)((uint16_t)gb_read8(wNamingScreenCursorX_ADDR) << 8 | gb_read8(wNamingScreenCursorY_ADDR)));
+	gb_write8(0x2000u, 0x06u);
+	uint8_t tile = gb_read8(char_info++);
+	c = tile;
+	b = (uint8_t)(gb_read8(char_info) - 1u);
+	PlayerNamingScreen_AdjustCursorPosition(saved_a);
+	WriteByteToBGMap0(saved_a, b, c);
+	return (PlayerNamingScreen_DrawCursorResult){saved_a, (uint8_t)(saved_a == 0u ? 0x80u : 0u), b, c, d, saved_a, char_info};
+}
+/* <<< factory PlayerNamingScreen_DrawCursor */
