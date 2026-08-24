@@ -17,6 +17,9 @@
 #include "mem.h"
 #define EVENT_MEDAL_COUNT_540 0x2Eu
 #define EVENT_RONALD_ENCOUNTER_540 0x32u
+
+#include "home/psychic_club_lobby.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory PsychicClubLobbyLoadMap */
@@ -56,3 +59,16 @@ _Preload_Ronald1InPsychicClubLobbyResult _Preload_Ronald1InPsychicClubLobby(uint
 	return (_Preload_Ronald1InPsychicClubLobbyResult){0u, 0x90u};
 }
 /* <<< factory _Preload_Ronald1InPsychicClubLobby */
+
+/* >>> factory Preload_Ronald1InPsychicClubLobby */
+Preload_Ronald1InPsychicClubLobbyResult Preload_Ronald1InPsychicClubLobby(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	_Preload_Ronald1InPsychicClubLobbyResult r = _Preload_Ronald1InPsychicClubLobby(b, c, d, e, hl);
+	if (!(r.f & 0x10u)) {
+		return (Preload_Ronald1InPsychicClubLobbyResult){r.a, r.f, b, c, d, e, hl};
+	}
+	uint8_t y = wPlayerYCoord;
+	wLoadNPCYPos = y;
+	return (Preload_Ronald1InPsychicClubLobbyResult){y, r.f, b, c, d, e, hl};
+}
+/* <<< factory Preload_Ronald1InPsychicClubLobby */
