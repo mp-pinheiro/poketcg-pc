@@ -26,8 +26,13 @@ jobs:
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          apt-get update
-          apt-get install -y --no-install-recommends python3 jq
+          curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
+            | env UV_INSTALL_DIR=/usr/local/bin sh
+          uv python install 3.13
+          ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
+          curl -fsSL -o /usr/local/bin/jq \
+            https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
+          chmod +x /usr/local/bin/jq
           curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh \
             | bash -s -- --tag 1.58.0 --to /usr/local/bin
           curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
@@ -69,7 +74,7 @@ jobs:
       - name: Confirm the live dashboard serves this commit's data
         run: |
           set -euo pipefail
-          apt-get update && apt-get install -y --no-install-recommends jq
+          curl -fsSL -o /usr/local/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64 && chmod +x /usr/local/bin/jq
           want_commit=$(jq -r .commit        site/data/progress.json)
           want_gen=$(jq    -r .generated_at  site/data/progress.json)
           for i in $(seq 1 10); do
@@ -101,8 +106,8 @@ jobs:
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          apt-get update
-          apt-get install -y --no-install-recommends jq
+          curl -fsSL -o /usr/local/bin/jq https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
+          chmod +x /usr/local/bin/jq
           curl --proto '=https' --tlsv1.2 -fsSL -o /tmp/git-cliff.tar.gz \
             https://github.com/orhun/git-cliff/releases/download/v2.13.1/git-cliff-2.13.1-x86_64-unknown-linux-gnu.tar.gz
           tar -xzf /tmp/git-cliff.tar.gz --strip-components=1 -C /tmp

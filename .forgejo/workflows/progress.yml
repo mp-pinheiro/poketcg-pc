@@ -26,8 +26,13 @@ jobs:
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          apt-get update
-          apt-get install -y --no-install-recommends python3 jq
+          curl --proto '=https' --tlsv1.2 -LsSf https://astral.sh/uv/install.sh \
+            | env UV_INSTALL_DIR=/usr/local/bin sh
+          uv python install 3.13
+          ln -sf "$(uv python find 3.13)" /usr/local/bin/python3
+          curl -fsSL -o /usr/local/bin/jq \
+            https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64
+          chmod +x /usr/local/bin/jq
       - name: Build daily snapshot
         run: python3 tools/progress/report.py build
       - name: Commit snapshot
