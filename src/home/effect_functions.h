@@ -1195,6 +1195,9 @@ void Conversion1_AISelectEffect(void);
 /* >>> factory Conversion2_ChangeResistanceEffect */
 TextResult Conversion2_ChangeResistanceEffect(uint8_t d, uint8_t e);
 /* <<< factory Conversion2_ChangeResistanceEffect */
+/* >>> factory Conversion2_AISelectEffect */
+void Conversion2_AISelectEffect(void);
+/* <<< factory Conversion2_AISelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

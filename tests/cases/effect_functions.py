@@ -2386,6 +2386,10 @@ wPlayerDeck = 0xC400
 wTempTurnDuelistCardID = 0xCCC3
 BULBASAUR = 0x08
 IVYSAUR = 0x09
+
+hWhoseTurn = 0xFF97
+wOpponentArenaCard = 0xC3BB
+wOpponentDeck = 0xC480
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3265,6 +3269,14 @@ CASES["Conversion2_ChangeResistanceEffect"] = [
          setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC2EA: 1}),
 ]
 # <<< factory Conversion2_ChangeResistanceEffect
+
+# >>> factory Conversion2_AISelectEffect
+CONTRACT["Conversion2_AISelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Conversion2_AISelectEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wOpponentArenaCard: b"\x00", wOpponentDeck: b"\x10"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wOpponentArenaCard: b"\x00", wOpponentDeck: b"\x10"}, read={0xFFA0: 1}),
+]
+# <<< factory Conversion2_AISelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5228,3 +5240,11 @@ MUTATIONS["Conversion2_ChangeResistanceEffect"] = {
     "case_ids": ["Conversion2_ChangeResistanceEffect-0", "Conversion2_ChangeResistanceEffect-1"],
 }
 # <<< factory-mutation Conversion2_ChangeResistanceEffect
+# >>> factory-mutation Conversion2_AISelectEffect
+MUTATIONS["Conversion2_AISelectEffect"] = {
+    "source_symbol": "Conversion2_AISelectEffect",
+    "before": "\t\tgb_write8(hTemp_ffa0_ADDR, type);",
+    "after": "\t\tgb_write8(hTemp_ffa0_ADDR, (uint8_t)(type + 1u));",
+    "case_ids": ["Conversion2_AISelectEffect-0", "Conversion2_AISelectEffect-1"],
+}
+# <<< factory-mutation Conversion2_AISelectEffect
