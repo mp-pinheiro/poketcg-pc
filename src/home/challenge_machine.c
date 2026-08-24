@@ -111,6 +111,19 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #include "generated/sram.h"
 #include "mem.h"
 #define CHALLENGE_MACHINE_PRIZES_ADDR 0x7362u
+
+#include "home/challenge_machine.h"
+#include "home/copy.h"
+#include "home/switch_sram.h"
+#include "home/text_box.h"
+#include "home/init_menu.h"
+#include "home/labels.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR 0xBA58u
+#define CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR 0x74F2u
+#define CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR 0x750Fu
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -498,3 +511,29 @@ void ChallengeMachine_PrepareDuel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, ui
 	gb_write8(wNPCDuelPrizes_ADDR, prize);
 }
 /* <<< factory ChallengeMachine_PrepareDuel */
+
+/* >>> factory ChallengeMachine_DrawScoreScreen */
+void ChallengeMachine_DrawScoreScreen(void)
+{
+	(void)InitMenuScreen();
+	(void)SetupText(0x30u, 0xBFu);
+
+	uint16_t box1_hl = 0;
+	DrawRegularTextBox(&box1_hl, 0u, 20u, 13u, 0u, 0u);
+
+	uint16_t box2_hl = 0;
+	DrawRegularTextBox(&box2_hl, 0u, 20u, 6u, 0u, 12u);
+
+	EnableSRAM();
+	uint16_t src_hl = CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR;
+	uint16_t dst_de = wDefaultText_ADDR;
+	CopyDataHLtoDE(&src_hl, &dst_de, NAME_BUFFER_LENGTH);
+	DisableSRAM();
+
+	wTxRam2 = 0u;
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+
+	(void)PrintLabels(CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR, 0u, 0u);
+	ChallengeMachine_PrintScores(CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR);
+}
+/* <<< factory ChallengeMachine_DrawScoreScreen */

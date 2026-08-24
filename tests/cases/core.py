@@ -2140,6 +2140,14 @@ CASES["DrawDamageAnimationNumbers"] = [
 ]
 # <<< factory DrawDamageAnimationNumbers
 
+# >>> factory Func_15886
+CONTRACT["Func_15886"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_15886"] = [
+    {"hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}),
+]
+# <<< factory Func_15886
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3192,3 +3200,6 @@ MUTATIONS["DrawDamageAnimationResist"] = {"source_symbol": "DrawDamageAnimationR
 # >>> factory-mutation DrawDamageAnimationNumbers
 MUTATIONS["DrawDamageAnimationNumbers"] = {"source_symbol": "DrawDamageAnimationNumbers", "before": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 1u);", "after": "wDamageCharIndex = (uint8_t)(wDamageCharIndex + 2u);", "case_ids": ["DrawDamageAnimationNumbers-0", "DrawDamageAnimationNumbers-1"]}
 # <<< factory-mutation DrawDamageAnimationNumbers
+# >>> factory-mutation Func_15886
+MUTATIONS["Func_15886"] = {"source_symbol": "Func_15886", "before": "\tif (check.f & 0x10u) {", "after": "\tif (check.f & 0x20u) {", "case_ids": ["Func_15886-0", "Func_15886-1"]}
+# <<< factory-mutation Func_15886

@@ -409,6 +409,13 @@ static void adapt_AppendOwnedCardCountAndStorageCountNumbers(ProbeState *s)
 }
 /* <<< factory AppendOwnedCardCountAndStorageCountNumbers */
 
+/* >>> factory PrintCardTypeCounts */
+static void adapt_PrintCardTypeCounts(ProbeState *s)
+{
+	PrintCardTypeCounts();
+}
+/* <<< factory PrintCardTypeCounts */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -457,5 +464,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AppendOwnedCardCountNumber", adapt_AppendOwnedCardCountNumber },
 	{ "PrintNumberValueInCursorYPos", adapt_PrintNumberValueInCursorYPos },
 	{ "AppendOwnedCardCountAndStorageCountNumbers", adapt_AppendOwnedCardCountAndStorageCountNumbers },
+	{ "PrintCardTypeCounts", adapt_PrintCardTypeCounts },
 	{ NULL, NULL },
 };

@@ -709,4 +709,7 @@ void DrawDamageAnimationResist(void);
 /* >>> factory DrawDamageAnimationNumbers */
 void DrawDamageAnimationNumbers(void);
 /* <<< factory DrawDamageAnimationNumbers */
+/* >>> factory Func_15886 */
+CoreCardListResult Func_15886(uint16_t hl);
+/* <<< factory Func_15886 */
 #endif

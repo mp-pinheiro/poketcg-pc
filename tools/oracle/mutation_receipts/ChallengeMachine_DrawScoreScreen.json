@@ -1,0 +1,9 @@
+{
+  "fn": "ChallengeMachine_DrawScoreScreen",
+  "case": "tests/cases/challenge_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ChallengeMachine_DrawScoreScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47685\": \"01\", \"47687\": \"02\", \"47702\": \"03\", \"47704\": \"4142434445464748494a4b4c4d4e4f50\"}}, \"vram\": {}, \"wram\": {\"50576\": \"4142434445464748494a4b4c4d4e4f50\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ChallengeMachine_DrawScoreScreen\", \"mismatches\": {\"bus\": {\"address\": 50576, \"reference\": \"4142434445\", \"native\": \"4243444546\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[50576, 16]]}}}\n",
+  "restored": "{\"fn\": \"ChallengeMachine_DrawScoreScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {\"0\": {\"47685\": \"01\", \"47687\": \"02\", \"47702\": \"03\", \"47704\": \"4142434445464748494a4b4c4d4e4f50\"}}, \"vram\": {}, \"wram\": {\"50576\": \"4142434445464748494a4b4c4d4e4f50\"}}, \"status\": \"PASS\"}\n"
+}

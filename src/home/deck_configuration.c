@@ -175,6 +175,11 @@
 #include "home/deck_configuration.h"
 #include "mem.h"
 #define SYM_SLASH 0x2Eu
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1107,3 +1112,19 @@ void AppendOwnedCardCountAndStorageCountNumbers(uint16_t hl, uint8_t e)
 	gb_write8(r4.hl, TX_END);
 }
 /* <<< factory AppendOwnedCardCountAndStorageCountNumbers */
+
+/* >>> factory PrintCardTypeCounts */
+void PrintCardTypeCounts(void)
+{
+	uint16_t hl = wDefaultText_ADDR;
+	for (uint8_t c = 0; c < NUM_FILTERS; c++) {
+		uint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c));
+		ConvertToNumericalDigitsResult r = ConvertToNumericalDigits(count, hl);
+		hl = r.hl;
+	}
+	gb_write8(hl, TX_END);
+	InitTextPrinting(1u, 4u);
+	uint16_t text_hl = wDefaultText_ADDR;
+	ProcessText(&text_hl);
+}
+/* <<< factory PrintCardTypeCounts */

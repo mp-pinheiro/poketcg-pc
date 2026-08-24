@@ -1525,6 +1525,15 @@ static void adapt_DrawDamageAnimationNumbers(ProbeState *s)
 }
 /* <<< factory DrawDamageAnimationNumbers */
 
+/* >>> factory Func_15886 */
+static void adapt_Func_15886(ProbeState *s)
+{
+	CoreCardListResult r = Func_15886(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Func_15886 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1707,5 +1716,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDamageAnimationWeak", adapt_DrawDamageAnimationWeak },
 	{ "DrawDamageAnimationResist", adapt_DrawDamageAnimationResist },
 	{ "DrawDamageAnimationNumbers", adapt_DrawDamageAnimationNumbers },
+	{ "Func_15886", adapt_Func_15886 },
 	{ NULL, NULL },
 };

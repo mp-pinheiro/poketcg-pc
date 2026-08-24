@@ -567,6 +567,16 @@ CASES["AppendOwnedCardCountAndStorageCountNumbers"] = [
 ]
 # <<< factory AppendOwnedCardCountAndStorageCountNumbers
 
+# >>> factory PrintCardTypeCounts
+CONTRACT["PrintCardTypeCounts"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintCardTypeCounts"] = [
+    {"wram": {0xCEBB: bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC590: 37}},
+    dict(POISON, wram={0xCEBB: bytes([1, 2, 3, 4, 5, 6, 7, 8, 9])},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC590: 37}),
+]
+# <<< factory PrintCardTypeCounts
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -767,3 +777,6 @@ MUTATIONS["PrintNumberValueInCursorYPos"] = {"source_symbol": "PrintNumberValueI
 # >>> factory-mutation AppendOwnedCardCountAndStorageCountNumbers
 MUTATIONS["AppendOwnedCardCountAndStorageCountNumbers"] = {"source_symbol": "AppendOwnedCardCountAndStorageCountNumbers", "before": "gb_write8(walk, SYM_SLASH);", "after": "gb_write8(walk, TX_SYMBOL);", "case_ids": ["AppendOwnedCardCountAndStorageCountNumbers-0", "AppendOwnedCardCountAndStorageCountNumbers-1"]}
 # <<< factory-mutation AppendOwnedCardCountAndStorageCountNumbers
+# >>> factory-mutation PrintCardTypeCounts
+MUTATIONS["PrintCardTypeCounts"] = {"source_symbol": "PrintCardTypeCounts", "before": "\t\tuint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c));", "after": "\t\tuint8_t count = gb_read8((uint16_t)(wCardFilterCounts_ADDR + c + 1u));", "case_ids": ["PrintCardTypeCounts-0", "PrintCardTypeCounts-1"]}
+# <<< factory-mutation PrintCardTypeCounts

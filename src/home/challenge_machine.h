@@ -86,4 +86,7 @@ ChallengeMachine_PrintOpponentClubStatusResult ChallengeMachine_PrintOpponentClu
 /* >>> factory ChallengeMachine_PrepareDuel */
 void ChallengeMachine_PrepareDuel(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ChallengeMachine_PrepareDuel */
+/* >>> factory ChallengeMachine_DrawScoreScreen */
+void ChallengeMachine_DrawScoreScreen(void);
+/* <<< factory ChallengeMachine_DrawScoreScreen */
 #endif

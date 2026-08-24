@@ -1,0 +1,9 @@
+{
+  "fn": "PrintCardTypeCounts",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintCardTypeCounts\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000521050005220500052305000524050005250500052605000527050005280500052900\", \"52923\": \"010203040506070809\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintCardTypeCounts\", \"mismatches\": {\"bus\": {\"address\": 50579, \"reference\": \"0500052105000522\", \"native\": \"0500052205000523\", \"reference_size\": 46, \"native_size\": 46, \"spans\": [[50576, 37], [52923, 9]]}}}\n",
+  "restored": "{\"fn\": \"PrintCardTypeCounts\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"05000521050005220500052305000524050005250500052605000527050005280500052900\", \"52923\": \"010203040506070809\"}}, \"status\": \"PASS\"}\n"
+}

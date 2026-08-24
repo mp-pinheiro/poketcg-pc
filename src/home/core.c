@@ -659,6 +659,12 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #include "home/core.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/energy.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3876,3 +3882,40 @@ void DrawDamageAnimationNumbers(void)
 	}
 }
 /* <<< factory DrawDamageAnimationNumbers */
+
+/* >>> factory Func_15886 */
+CoreCardListResult Func_15886(uint16_t hl)
+{
+	CoreCardListResult check = CreateEnergyCardListFromHand(0u);
+	if (check.f & 0x10u) {
+		return check;
+	}
+
+	for (;;) {
+		uint8_t flag = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (flag == 0u) {
+			return (CoreCardListResult){0u, 0x80u};
+		}
+		uint8_t card_id = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		LookResult loc = LookForCardIDInPlayArea_Bank5(card_id, PLAY_AREA_ARENA);
+		if (loc.f & 0x10u) {
+			uint8_t e = loc.a;
+			CountNumberOfEnergyCardsAttachedResult cnt = CountNumberOfEnergyCardsAttached(e);
+			uint8_t threshold = gb_read8(hl);
+			hl = (uint16_t)(hl + 1u);
+			if (cnt.a >= threshold) {
+				continue;
+			}
+			hTempPlayAreaLocation_ff9d = e;
+			uint8_t play_f = AITryToPlayEnergyCard();
+			if (play_f & 0x10u) {
+				return (CoreCardListResult){0u, play_f};
+			}
+			continue;
+		}
+		hl = (uint16_t)(hl + 1u);
+	}
+}
+/* <<< factory Func_15886 */

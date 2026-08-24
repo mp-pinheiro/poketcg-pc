@@ -337,6 +337,18 @@ CASES["ChallengeMachine_PrepareDuel"] = [
 ]
 # <<< factory ChallengeMachine_PrepareDuel
 
+# >>> factory ChallengeMachine_DrawScoreScreen
+CONTRACT["ChallengeMachine_DrawScoreScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ChallengeMachine_DrawScoreScreen"] = [
+    {"sram": {0: {0xBA58: b"ABCDEFGHIJKLMNOP", 0xBA45: b"\x01", 0xBA47: b"\x02", 0xBA56: b"\x03"}},
+     "rom_bank": 4, "instruction_budget": 2000000, "cycle_budget": 8000000,
+     "read": {0xC590: 16}},
+    dict(POISON, sram={0: {0xBA58: b"ABCDEFGHIJKLMNOP", 0xBA45: b"\x01", 0xBA47: b"\x02", 0xBA56: b"\x03"}},
+         rom_bank=4, instruction_budget=2000000, cycle_budget=8000000,
+         read={0xC590: 16}),
+]
+# <<< factory ChallengeMachine_DrawScoreScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -420,3 +432,6 @@ MUTATIONS["ChallengeMachine_PrintOpponentClubStatus"] = {"source_symbol": "Chall
 # >>> factory-mutation ChallengeMachine_PrepareDuel
 MUTATIONS["ChallengeMachine_PrepareDuel"] = {"source_symbol": "ChallengeMachine_PrepareDuel", "before": "uint16_t prize_addr = (uint16_t)(CHALLENGE_MACHINE_PRIZES_ADDR + opponent_num);", "after": "uint16_t prize_addr = (uint16_t)(CHALLENGE_MACHINE_PRIZES_ADDR + opponent_num + 1u);", "case_ids": ["ChallengeMachine_PrepareDuel-0", "ChallengeMachine_PrepareDuel-1"]}
 # <<< factory-mutation ChallengeMachine_PrepareDuel
+# >>> factory-mutation ChallengeMachine_DrawScoreScreen
+MUTATIONS["ChallengeMachine_DrawScoreScreen"] = {"source_symbol": "ChallengeMachine_DrawScoreScreen", "before": "\tuint16_t src_hl = CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR;", "after": "\tuint16_t src_hl = (uint16_t)(CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR + 1u);", "case_ids": ["ChallengeMachine_DrawScoreScreen-0", "ChallengeMachine_DrawScoreScreen-1"]}
+# <<< factory-mutation ChallengeMachine_DrawScoreScreen
