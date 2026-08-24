@@ -688,4 +688,7 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void);
 /* >>> factory CreateDamageCharSprite */
 void CreateDamageCharSprite(uint8_t a, uint8_t f, uint16_t de);
 /* <<< factory CreateDamageCharSprite */
+/* >>> factory HasAlivePokemonInBench */
+HasAlivePokemonInPlayAreaResult HasAlivePokemonInBench(void);
+/* <<< factory HasAlivePokemonInBench */
 #endif

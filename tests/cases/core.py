@@ -2073,6 +2073,14 @@ CASES["CreateDamageCharSprite"] = [
 ]
 # <<< factory CreateDamageCharSprite
 
+# >>> factory HasAlivePokemonInBench
+CONTRACT["HasAlivePokemonInBench"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HasAlivePokemonInBench"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"}, "read": {0xCBD2: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x03", 0xC2C8: b"\x00\x10\x00"}),
+]
+# <<< factory HasAlivePokemonInBench
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -3104,3 +3112,6 @@ MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededFo
 # >>> factory-mutation CreateDamageCharSprite
 MUTATIONS["CreateDamageCharSprite"] = {"source_symbol": "CreateDamageCharSprite", "before": "gb_write8(de, wWhichSprite);", "after": "gb_write8(de, (uint8_t)(wWhichSprite + 1u));", "case_ids": ["CreateDamageCharSprite-0"]}
 # <<< factory-mutation CreateDamageCharSprite
+# >>> factory-mutation HasAlivePokemonInBench
+MUTATIONS["HasAlivePokemonInBench"] = {"source_symbol": "HasAlivePokemonInBench", "before": "return _HasAlivePokemonInPlayArea(1u);", "after": "return _HasAlivePokemonInPlayArea(2u);", "case_ids": ["HasAlivePokemonInBench-0", "HasAlivePokemonInBench-1"]}
+# <<< factory-mutation HasAlivePokemonInBench

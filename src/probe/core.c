@@ -1474,6 +1474,14 @@ static void adapt_CreateDamageCharSprite(ProbeState *s)
 }
 /* <<< factory CreateDamageCharSprite */
 
+/* >>> factory HasAlivePokemonInBench */
+static void adapt_HasAlivePokemonInBench(ProbeState *s)
+{
+	HasAlivePokemonInPlayAreaResult r = HasAlivePokemonInBench();
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory HasAlivePokemonInBench */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -1649,5 +1657,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDuelistPortraitsAndNames", adapt_DrawDuelistPortraitsAndNames },
 	{ "CheckEnergyNeededForAttack", adapt_CheckEnergyNeededForAttack },
 	{ "CreateDamageCharSprite", adapt_CreateDamageCharSprite },
+	{ "HasAlivePokemonInBench", adapt_HasAlivePokemonInBench },
 	{ NULL, NULL },
 };

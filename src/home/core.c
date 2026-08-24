@@ -624,6 +624,9 @@ static const uint8_t kPlayAreaLocationTileNumbers[24] = {
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE_F 0x07u
 #define SPRITE_ANIM_FLAG_UNSKIPPABLE (1u << SPRITE_ANIM_FLAG_UNSKIPPABLE_F)
 #define SPRITE_DUEL_DAMAGE 0x2Eu
+
+#include "home/core.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -3755,3 +3758,10 @@ void CreateDamageCharSprite(uint8_t a, uint8_t f, uint16_t de)
 	(void)saved_f;
 }
 /* <<< factory CreateDamageCharSprite */
+
+/* >>> factory HasAlivePokemonInBench */
+HasAlivePokemonInPlayAreaResult HasAlivePokemonInBench(void)
+{
+	return _HasAlivePokemonInPlayArea(1u);
+}
+/* <<< factory HasAlivePokemonInBench */
