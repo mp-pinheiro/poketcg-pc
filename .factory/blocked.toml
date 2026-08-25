@@ -728,3 +728,8 @@ unblock = "read the recorded diagnostics under .factory/try/HandleDestinyBondSub
 name = "PracticeDuel_PutStaryuInBench"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2658 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_PutStaryuInBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "PracticeDuel_DonePuttingOnBench"
+reason = "AUTO-RETIRED: src/engine/duel/core.asm:2673 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DonePuttingOnBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
