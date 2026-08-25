@@ -54,7 +54,7 @@ dispatched, and the selector backfills from the next basename. Direct
 `factory-try <Fn>` applies the same preflight and operational-blocker policy.
 
 `--retry-red` is a disjoint mode. It selects only current `red` attempts whose
-`generation < --retry-limit`; the default is `8`. Retry order
+`generation < --retry-limit`; the default is `16`. Retry order
 is `(generation, -cascade, size, name)`, so every red receives its bounded retry
 before any routine receives another. A quarantined artifact does not suppress
 reissuance. A red that exhausts the limit, or repeats one diagnostic, is retired
@@ -76,9 +76,10 @@ retry pass.
 
 ## Candidate and verification flow
 
-1. Run `python3 tools/factory/try_one.py --next 4` and dispatch the printed
-   candidate commands. Each command names the attempt-scoped prompt and
-   candidate directory.
+1. Run `python3 tools/factory/try_one.py --next 5` and dispatch the printed
+   candidate commands in a single `tasks[]` batch (15 agents fit under the
+   16-task cap). Each command names the attempt-scoped prompt and candidate
+   directory.
 2. Run the printed `factory-try` command. It validates the exact
    TranslationReplyV2 shape, applies marker fragments in a disposable lane,
    and validates the whole issued wave before any `factory-land` invocation.
@@ -115,6 +116,11 @@ gate naming the checked source revision, refreshes progress, commits, pushes,
 and records `.factory/landings.jsonl`. Every rejection - gate, census, graft -
 splits the batch in half and recurses; a rejected singleton is quarantined with
 its `failure_class` and moves on.
+
+Keep `factory-land`'s `--batch` at its default 4; raise it only after a
+measured A/B (`python3 tools/factory/measure.py`) shows land latency p50
+under 20 minutes and gate share above 25% — frontier-refill latency, not
+gate amortization, is the binding resource.
 
 ## Concurrent orchestrators
 

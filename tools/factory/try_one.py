@@ -777,7 +777,7 @@ def main(argv: list[str] | None = None) -> int:
                         help="seconds to wait for each candidate-<i>.json")
     parser.add_argument("--attempt-dir", type=Path,
                         help="explicit current attempt directory for dispatch output")
-    parser.add_argument("--next", type=int, nargs="?", const=4, default=None,
+    parser.add_argument("--next", type=int, nargs="?", const=5, default=None,
                         help="prepare prompts for the next N routines")
     parser.add_argument("--retry-red", action="store_true",
                         help="with --next, select only retryable red attempts")
