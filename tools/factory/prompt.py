@@ -248,7 +248,12 @@ def render(packet: dict, feedback: str | None = None,
         "bytes the VBlank handler mutates.",
         "Letting frames elapse needs two more things, and without either one the case "
         "dies at pc $0271 however generous its budget. First, install the game's DMA "
-        "routine: \"setup\": [{\"fn\": \"CopyDMAFunction\"}] before any other setup entry. "
+        "routine: \"setup\": [{\"fn\": \"CopyDMAFunction\"}, {\"fn\": \"SetupText\", "
+        "\"d\": 0x20, \"e\": 0x40}]. That is the whole setup list for a frame routine that "
+        "also prints text - CopyDMAFunction does not replace SetupText, and dropping the "
+        "latter trades the $0271 halt for the glyph-cache spin above, which the "
+        "BUDGET_EXHAUSTED payload distinguishes by reporting \"halted\":0 with pc near "
+        "$2380. "
         "VBlankHandler (poketcg/src/home/vblank.asm:13-18) calls hDMAFunction whenever "
         "wVBlankOAMCopyToggle is non-zero, that routine lives in HRAM and no synthetic "
         "call frame has copied it there, so the handler runs junk, never reaches its "
