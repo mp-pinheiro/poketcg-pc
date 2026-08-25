@@ -1734,6 +1734,8 @@ DUT_wPlayerDeck = 0xC400
 DUT_wLoadedCard1 = 0xCC24
 DUT_wLCDC = 0xCABB
 DUT_rLCDC = 0xFF40
+
+wCardPageExitKeys = 0xCBD7
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3312,6 +3314,14 @@ CASES["DisplayNoBasicPokemonInHandScreenAndText"] = [
 ]
 # <<< factory DisplayNoBasicPokemonInHandScreenAndText
 
+# >>> factory OpenCardPage_FromCheckHandOrDiscardPile
+CONTRACT["OpenCardPage_FromCheckHandOrDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["OpenCardPage_FromCheckHandOrDiscardPile"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageExitKeys: 1}, "expect": {wCardPageExitKeys: b"\xC2"}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x80", 0xFF40: b"\x84"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageExitKeys: 1}, expect={wCardPageExitKeys: b"\xC2"}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory OpenCardPage_FromCheckHandOrDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4713,3 +4723,6 @@ MUTATIONS["DisplayUsedTrainerCardDetailScreen"] = {
 # >>> factory-mutation DisplayNoBasicPokemonInHandScreenAndText
 MUTATIONS["DisplayNoBasicPokemonInHandScreenAndText"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreenAndText", "before": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){result.a, result.b, result.c, result.f, result.hl, result.de};\n}", "after": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){0u};\n}", "case_ids": ["DisplayNoBasicPokemonInHandScreenAndText-0", "DisplayNoBasicPokemonInHandScreenAndText-1"]}
 # <<< factory-mutation DisplayNoBasicPokemonInHandScreenAndText
+# >>> factory-mutation OpenCardPage_FromCheckHandOrDiscardPile
+MUTATIONS["OpenCardPage_FromCheckHandOrDiscardPile"] = {"source_symbol": "OpenCardPage_FromCheckHandOrDiscardPile", "before": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, (uint8_t)(PAD_B | PAD_UP | PAD_DOWN));", "after": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckHandOrDiscardPile-0", "OpenCardPage_FromCheckHandOrDiscardPile-1"]}
+# <<< factory-mutation OpenCardPage_FromCheckHandOrDiscardPile

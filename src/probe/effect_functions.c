@@ -3316,6 +3316,15 @@ static void adapt_MagmarFlamethrower_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory MagmarFlamethrower_PlayerSelectEffect */
 
+/* >>> factory FlareonFlamethrower_PlayerSelectEffect */
+static void adapt_FlareonFlamethrower_PlayerSelectEffect(ProbeState *s)
+{
+	PlayerPickFireEnergyCardToDiscardResult r = FlareonFlamethrower_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory FlareonFlamethrower_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3725,5 +3734,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FireBlast_PlayerSelectEffect", adapt_FireBlast_PlayerSelectEffect },
 	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "MagmarFlamethrower_PlayerSelectEffect", adapt_MagmarFlamethrower_PlayerSelectEffect },
+	{ "FlareonFlamethrower_PlayerSelectEffect", adapt_FlareonFlamethrower_PlayerSelectEffect },
 	{ NULL, NULL },
 };

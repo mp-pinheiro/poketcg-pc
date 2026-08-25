@@ -1377,6 +1377,9 @@ PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void);
 /* >>> factory MagmarFlamethrower_PlayerSelectEffect */
 PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(void);
 /* <<< factory MagmarFlamethrower_PlayerSelectEffect */
+/* >>> factory FlareonFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult FlareonFlamethrower_PlayerSelectEffect(void);
+/* <<< factory FlareonFlamethrower_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

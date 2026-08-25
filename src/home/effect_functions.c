@@ -6023,3 +6023,10 @@ PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(vo
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory MagmarFlamethrower_PlayerSelectEffect */
+
+/* >>> factory FlareonFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult FlareonFlamethrower_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory FlareonFlamethrower_PlayerSelectEffect */

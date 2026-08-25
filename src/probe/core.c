@@ -2173,6 +2173,13 @@ static void adapt_DisplayNoBasicPokemonInHandScreenAndText(ProbeState *s)
 }
 /* <<< factory DisplayNoBasicPokemonInHandScreenAndText */
 
+/* >>> factory OpenCardPage_FromCheckHandOrDiscardPile */
+static void adapt_OpenCardPage_FromCheckHandOrDiscardPile(ProbeState *s)
+{
+	OpenCardPage_FromCheckHandOrDiscardPile(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory OpenCardPage_FromCheckHandOrDiscardPile */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2433,5 +2440,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenCardPage_FromCheckPlayArea", adapt_OpenCardPage_FromCheckPlayArea },
 	{ "DisplayUsedTrainerCardDetailScreen", adapt_DisplayUsedTrainerCardDetailScreen },
 	{ "DisplayNoBasicPokemonInHandScreenAndText", adapt_DisplayNoBasicPokemonInHandScreenAndText },
+	{ "OpenCardPage_FromCheckHandOrDiscardPile", adapt_OpenCardPage_FromCheckHandOrDiscardPile },
 	{ NULL, NULL },
 };

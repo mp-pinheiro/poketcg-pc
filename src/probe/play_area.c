@@ -20,8 +20,17 @@ static void adapt_OpenInPlayAreaScreen_HandleInput(ProbeState *s)
 }
 /* <<< factory OpenInPlayAreaScreen_HandleInput */
 
+/* >>> factory OpenInPlayAreaScreen_TurnHolderPlayArea */
+static void adapt_OpenInPlayAreaScreen_TurnHolderPlayArea(ProbeState *s)
+{
+	(void)s;
+	OpenInPlayAreaScreen_TurnHolderPlayArea();
+}
+/* <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea */
+
 const ProbeEntry probe_entries_play_area[] = {
 	{ "ZeroObjectPositionsAndToggleOAMCopy_Bank6", adapt_ZeroObjectPositionsAndToggleOAMCopy_Bank6 },
 	{ "OpenInPlayAreaScreen_HandleInput", adapt_OpenInPlayAreaScreen_HandleInput },
+	{ "OpenInPlayAreaScreen_TurnHolderPlayArea", adapt_OpenInPlayAreaScreen_TurnHolderPlayArea },
 	{ NULL, NULL },
 };

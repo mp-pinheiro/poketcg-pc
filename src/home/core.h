@@ -971,4 +971,7 @@ WaitResult DisplayUsedTrainerCardDetailScreen(void);
 typedef struct { uint8_t a, b, c, f; uint16_t hl, de; } DisplayNoBasicPokemonInHandScreenAndTextResult;
 DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void);
 /* <<< factory DisplayNoBasicPokemonInHandScreenAndText */
+/* >>> factory OpenCardPage_FromCheckHandOrDiscardPile */
+void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory OpenCardPage_FromCheckHandOrDiscardPile */
 #endif

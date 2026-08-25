@@ -9,4 +9,7 @@ void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void);
 typedef struct { uint8_t a; uint8_t f; } OpenInPlayAreaScreenHandleInputResult;
 OpenInPlayAreaScreenHandleInputResult OpenInPlayAreaScreen_HandleInput(void);
 /* <<< factory OpenInPlayAreaScreen_HandleInput */
+/* >>> factory OpenInPlayAreaScreen_TurnHolderPlayArea */
+void OpenInPlayAreaScreen_TurnHolderPlayArea(void);
+/* <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea */
 #endif

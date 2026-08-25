@@ -53,6 +53,14 @@ CASES["OpenInPlayAreaScreen_HandleInput"] = [
 ]
 # <<< factory OpenInPlayAreaScreen_HandleInput
 
+# >>> factory OpenInPlayAreaScreen_TurnHolderPlayArea
+CONTRACT["OpenInPlayAreaScreen_TurnHolderPlayArea"] = {"compare": (), "preserve": ()}
+CASES["OpenInPlayAreaScreen_TurnHolderPlayArea"] = [
+    {"wram": {0xCE52: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x00"}},
+    {"wram": {0xCE52: b"\x00", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x01"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCE52: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCBC9: 1}, "expect": {0xCBC9: b"\x00"}}]
+# <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation OpenInPlayAreaScreen_HandleInput
@@ -63,3 +71,6 @@ MUTATIONS["OpenInPlayAreaScreen_HandleInput"] = {
     "case_ids": ["OpenInPlayAreaScreen_HandleInput-0"],
 }
 # <<< factory-mutation OpenInPlayAreaScreen_HandleInput
+# >>> factory-mutation OpenInPlayAreaScreen_TurnHolderPlayArea
+MUTATIONS["OpenInPlayAreaScreen_TurnHolderPlayArea"] = {"source_symbol": "OpenInPlayAreaScreen_TurnHolderPlayArea", "before": "void OpenInPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition + 1u);", "after": "void OpenInPlayAreaScreen_TurnHolderPlayArea(void)\n{\n\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition + 2u);", "case_ids": ["OpenInPlayAreaScreen_TurnHolderPlayArea-0", "OpenInPlayAreaScreen_TurnHolderPlayArea-1", "OpenInPlayAreaScreen_TurnHolderPlayArea-2"]}
+# <<< factory-mutation OpenInPlayAreaScreen_TurnHolderPlayArea

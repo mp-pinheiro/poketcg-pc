@@ -4167,6 +4167,40 @@ CASES["MagmarFlamethrower_PlayerSelectEffect"] = [
 ]
 # <<< factory MagmarFlamethrower_PlayerSelectEffect
 
+# >>> factory FlareonFlamethrower_PlayerSelectEffect
+CONTRACT["FlareonFlamethrower_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["FlareonFlamethrower_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x02], "rom_bank": 1,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x02], rom_bank=1,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory FlareonFlamethrower_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6368,3 +6402,11 @@ MUTATIONS["FireBlast_PlayerSelectEffect"] = {
 # >>> factory-mutation MagmarFlamethrower_PlayerSelectEffect
 MUTATIONS["MagmarFlamethrower_PlayerSelectEffect"] = {"source_symbol": "MagmarFlamethrower_PlayerSelectEffect", "before": "PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();\n}", "after": "PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(void)\n{\n\treturn (PlayerPickFireEnergyCardToDiscardResult){0u, 0u};\n}", "case_ids": ["MagmarFlamethrower_PlayerSelectEffect-0", "MagmarFlamethrower_PlayerSelectEffect-1"]}
 # <<< factory-mutation MagmarFlamethrower_PlayerSelectEffect
+# >>> factory-mutation FlareonFlamethrower_PlayerSelectEffect
+MUTATIONS["FlareonFlamethrower_PlayerSelectEffect"] = {
+ "source_symbol": "FlareonFlamethrower_PlayerSelectEffect",
+ "before": "PlayerPickFireEnergyCardToDiscardResult FlareonFlamethrower_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();",
+ "after": "PlayerPickFireEnergyCardToDiscardResult FlareonFlamethrower_PlayerSelectEffect(void)\n{\n\t(void)PlayerPickFireEnergyCardToDiscard();\n\treturn (PlayerPickFireEnergyCardToDiscardResult){0u, 0u};",
+ "case_ids": ["FlareonFlamethrower_PlayerSelectEffect-0", "FlareonFlamethrower_PlayerSelectEffect-1"],
+}
+# <<< factory-mutation FlareonFlamethrower_PlayerSelectEffect
