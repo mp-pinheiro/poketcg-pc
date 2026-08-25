@@ -733,3 +733,8 @@ unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_PutStar
 name = "PracticeDuel_DonePuttingOnBench"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2673 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DonePuttingOnBench/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "OppAction_PlayEnergyCard"
+reason = "AUTO-RETIRED: src/engine/duel/core.asm:6529 (basename `core`). 12 generations exhausted (trapped=False); last diagnostic phase=infra-error failure_class=infrastructure detail=Traceback (most recent call last): File \"<path>\", line 561, in <module> raise SystemExit(main()) ^^^^^^ File \"<path>\", line 437, in main probe = subprocess.run( ^^^^^^^^^^^^^^^ File \"<path>\", line 550, in run stdout, stderr = process.communicate(input, timeout=timeout) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \""
+unblock = "read the recorded diagnostics under .factory/try/OppAction_PlayEnergyCard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
