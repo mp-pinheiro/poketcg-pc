@@ -291,7 +291,14 @@ def render(packet: dict, feedback: str | None = None,
         "table and answers `unknown setup routine` for anything else. Check the "
         "already-ported list below before naming one.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
-        "`read` and `expect` use the same shape.",
+        "One address-keyed map covers the whole bus, HRAM included - wram={0xFF97: "
+        "b\"\\xC2\"} seeds hWhoseTurn, and there is no separate `hram` seed key; "
+        "writing one drops those seeds silently and the routine then reads garbage. "
+        "`expect` takes the same byte-string shape, but `read` does NOT: it maps an "
+        "address to a NUMBER OF BYTES to observe, so read={0xFFA0: 1} reads one byte "
+        "at $FFA0. Passing an expected value there asks for that many bytes instead, "
+        "and address+count above $10000 is rejected before any oracle run as `read "
+        "probe span exceeds address space`.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
         "below the number of cases you declared, and \"before\" must appear verbatim in "
         "your C fragment.",
