@@ -981,4 +981,7 @@ CardListItemSelectionMenuResult CardListItemSelectionMenu(void);
 /* >>> factory DisplayPlayerDrawCardScreen */
 WaitResult DisplayPlayerDrawCardScreen(void);
 /* <<< factory DisplayPlayerDrawCardScreen */
+/* >>> factory OppAction_PlayTrainerCard */
+void OppAction_PlayTrainerCard(void);
+/* <<< factory OppAction_PlayTrainerCard */
 #endif

@@ -3788,7 +3788,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
 	{ "FlamesOfRage_PlayerSelectEffect", adapt_FlamesOfRage_PlayerSelectEffect },
 	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
-	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
 	{ "FireBlast_PlayerSelectEffect", adapt_FireBlast_PlayerSelectEffect },
 	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "MagmarFlamethrower_PlayerSelectEffect", adapt_MagmarFlamethrower_PlayerSelectEffect },
@@ -3800,5 +3799,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Recycle_AddToHandEffect", adapt_Recycle_AddToHandEffect },
 	{ "PokemonBreeder_EvolveEffect", adapt_PokemonBreeder_EvolveEffect },
 	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
+	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
 	{ NULL, NULL },
 };

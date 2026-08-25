@@ -2197,6 +2197,14 @@ static void adapt_DisplayPlayerDrawCardScreen(ProbeState *s)
 }
 /* <<< factory DisplayPlayerDrawCardScreen */
 
+/* >>> factory OppAction_PlayTrainerCard */
+static void adapt_OppAction_PlayTrainerCard(ProbeState *s)
+{
+	(void)s;
+	OppAction_PlayTrainerCard();
+}
+/* <<< factory OppAction_PlayTrainerCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2460,5 +2468,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenCardPage_FromCheckHandOrDiscardPile", adapt_OpenCardPage_FromCheckHandOrDiscardPile },
 	{ "CardListItemSelectionMenu", adapt_CardListItemSelectionMenu },
 	{ "DisplayPlayerDrawCardScreen", adapt_DisplayPlayerDrawCardScreen },
+	{ "OppAction_PlayTrainerCard", adapt_OppAction_PlayTrainerCard },
 	{ NULL, NULL },
 };

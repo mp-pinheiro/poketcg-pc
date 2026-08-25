@@ -3338,6 +3338,26 @@ CASES["DisplayPlayerDrawCardScreen"] = [
 ]
 # <<< factory DisplayPlayerDrawCardScreen
 
+# >>> factory OppAction_PlayTrainerCard
+CONTRACT["OppAction_PlayTrainerCard"] = {"compare": (), "preserve": ()}
+CASES["OppAction_PlayTrainerCard"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
+              DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck: b"\x10",
+              DUT_hTempCardIndex_ff9f: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
+               DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck + 3: b"\x20",
+               DUT_hTempCardIndex_ff9f: b"\x03"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={DUT_wLoadedCard1: 64, wSkipDuelistIsThinkingDelay: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OppAction_PlayTrainerCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4748,3 +4768,6 @@ MUTATIONS["CardListItemSelectionMenu"] = {"source_symbol": "CardListItemSelectio
 # >>> factory-mutation DisplayPlayerDrawCardScreen
 MUTATIONS["DisplayPlayerDrawCardScreen"] = {"source_symbol": "DisplayPlayerDrawCardScreen", "before": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);", "after": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff98 + 1u), YouDrewText);", "case_ids": ["DisplayPlayerDrawCardScreen-0", "DisplayPlayerDrawCardScreen-1"]}
 # <<< factory-mutation DisplayPlayerDrawCardScreen
+# >>> factory-mutation OppAction_PlayTrainerCard
+MUTATIONS["OppAction_PlayTrainerCard"] = {"source_symbol": "OppAction_PlayTrainerCard", "before": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_PlayTrainerCard-0", "OppAction_PlayTrainerCard-1"]}
+# <<< factory-mutation OppAction_PlayTrainerCard

@@ -6192,3 +6192,14 @@ WaitResult DisplayPlayerDrawCardScreen(void)
 	return DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);
 }
 /* <<< factory DisplayPlayerDrawCardScreen */
+
+/* >>> factory OppAction_PlayTrainerCard */
+void OppAction_PlayTrainerCard(void)
+{
+	(void)LoadNonPokemonCardEffectCommands();
+	(void)DisplayUsedTrainerCardDetailScreen();
+	PrintUsedTrainerCardDescription();
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);
+}
+/* <<< factory OppAction_PlayTrainerCard */
