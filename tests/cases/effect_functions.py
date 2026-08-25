@@ -4468,6 +4468,22 @@ CASES["ItemFinder_DiscardAddToHandEffect"] = [
 ]
 # <<< factory ItemFinder_DiscardAddToHandEffect
 
+# >>> factory BellsproutCallForFamily_PutInPlayAreaEffect
+CONTRACT["BellsproutCallForFamily_PutInPlayAreaEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["BellsproutCallForFamily_PutInPlayAreaEffect"] = [
+    # hTemp_ffa0 defaults to 0, selecting the fetch-and-bench branch; the
+    # player's own turn then makes `jr c` skip the detail screen (covered by
+    # DisplayCardDetailScreen's own cases). SetupText seeds the glyph cache
+    # the deck-shuffle animation walks.
+    {"wram": {CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+      CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+         CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory BellsproutCallForFamily_PutInPlayAreaEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6771,3 +6787,11 @@ MUTATIONS["ItemFinder_DiscardAddToHandEffect"] = {
  "case_ids": ["ItemFinder_DiscardAddToHandEffect-0", "ItemFinder_DiscardAddToHandEffect-1"],
 }
 # <<< factory-mutation ItemFinder_DiscardAddToHandEffect
+# >>> factory-mutation BellsproutCallForFamily_PutInPlayAreaEffect
+MUTATIONS["BellsproutCallForFamily_PutInPlayAreaEffect"] = {
+ "source_symbol": "BellsproutCallForFamily_PutInPlayAreaEffect",
+ "before": "ShuffleCardsInDeckResult BellsproutCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index != 0xFFu) {\n\t\tSearchCardInDeckAndAddToHand(index);",
+ "after": "ShuffleCardsInDeckResult BellsproutCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index != 0xFFu) {\n\t\tSearchCardInDeckAndAddToHand((uint8_t)(index + 1u));",
+ "case_ids": ["BellsproutCallForFamily_PutInPlayAreaEffect-0", "BellsproutCallForFamily_PutInPlayAreaEffect-1"],
+}
+# <<< factory-mutation BellsproutCallForFamily_PutInPlayAreaEffect

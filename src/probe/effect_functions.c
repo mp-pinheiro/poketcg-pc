@@ -3462,6 +3462,19 @@ static void adapt_ItemFinder_DiscardAddToHandEffect(ProbeState *s)
 }
 /* <<< factory ItemFinder_DiscardAddToHandEffect */
 
+/* >>> factory BellsproutCallForFamily_PutInPlayAreaEffect */
+static void adapt_BellsproutCallForFamily_PutInPlayAreaEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = BellsproutCallForFamily_PutInPlayAreaEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->hl = r.hl;
+}
+/* <<< factory BellsproutCallForFamily_PutInPlayAreaEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3885,5 +3898,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonFlute_PlaceInPlayAreaText", adapt_PokemonFlute_PlaceInPlayAreaText },
 	{ "Revive_PlaceInPlayAreaEffect", adapt_Revive_PlaceInPlayAreaEffect },
 	{ "ItemFinder_DiscardAddToHandEffect", adapt_ItemFinder_DiscardAddToHandEffect },
+	{ "BellsproutCallForFamily_PutInPlayAreaEffect", adapt_BellsproutCallForFamily_PutInPlayAreaEffect },
 	{ NULL, NULL },
 };
