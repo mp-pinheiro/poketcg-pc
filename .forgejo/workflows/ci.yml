@@ -203,3 +203,48 @@ jobs:
           echo "    -H 'Content-Type: application/json' --data @/tmp/rel.json \\"
           echo "    ${api}/repos/${GITHUB_REPOSITORY}/releases"
           exit 1
+      # The push mirror replicates refs only, so the GitHub Release object needs
+      # its own call. Posting before the mirror lands the tag would make GitHub
+      # create v${next} itself, pointing at whatever main happened to be.
+      - name: Mirror the release object to GitHub
+        if: steps.ver.outputs.cut == 'true'
+        env:
+          GH_APP_ID: ${{ secrets.GH_APP_ID }}
+          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          GH_MIRROR_REPO: mp-pinheiro/poketcg-pc
+        run: |
+          set -euo pipefail
+          next="${{ steps.ver.outputs.next }}"
+          token=$(tools/gh_app_token.sh)
+          auth="Authorization: Bearer ${token}"
+          for delay in 0 5 15 30 60; do
+            [ "$delay" = 0 ] || sleep "$delay"
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H "$auth" \
+                     "https://api.github.com/repos/${GH_MIRROR_REPO}/git/ref/tags/v${next}")
+            [ "$code" = "200" ] && break
+          done
+          if [ "$code" != "200" ]; then
+            echo "tag v${next} never reached the GitHub mirror (HTTP $code)."
+            echo "Refusing to POST: GitHub would create the tag at main instead."
+            exit 1
+          fi
+          jq -n --arg t "v${next}" --rawfile b /tmp/notes.md \
+             '{tag_name:$t,name:$t,body:$b,draft:false,make_latest:"true"}' \
+             > /tmp/gh-release-request.json
+          for delay in 0 5 15 30 60; do
+            [ "$delay" = 0 ] || sleep "$delay"
+            code=$(curl -s -o /tmp/gh-release-response.json -w '%{http_code}' --max-time 30 \
+                     -X POST -H "$auth" -H 'Accept: application/vnd.github+json' \
+                     --data @/tmp/gh-release-request.json \
+                     "https://api.github.com/repos/${GH_MIRROR_REPO}/releases")
+            case "$code" in
+              201) echo "mirrored release v${next} to ${GH_MIRROR_REPO}"; exit 0 ;;
+              422) echo "release v${next} already exists on the mirror";  exit 0 ;;
+            esac
+            echo "HTTP $code: $(head -c 300 /tmp/gh-release-response.json)"
+          done
+          echo "GitHub refused the Release object for v${next} on every attempt."
+          echo "The tag is mirrored; only the GitHub Release is missing. Republish with:"
+          echo "  GH_MIRROR_REPO=${GH_MIRROR_REPO} tools/gh_app_token.sh   # then POST"
+          echo "  /repos/${GH_MIRROR_REPO}/releases with tag_name v${next}"
+          exit 1
