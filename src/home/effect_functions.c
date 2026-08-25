@@ -584,6 +584,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define BANK_DUEL_CORE 0x01u
 #define KADABRA_TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA 0x00u
+#define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE 0x01u
+#define Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC 0x0du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5786,3 +5794,28 @@ KadabraRecover_PlayerSelectEffectResult KadabraRecover_PlayerSelectEffect(void)
 	return (KadabraRecover_PlayerSelectEffectResult){card, input.f};
 }
 /* <<< factory KadabraRecover_PlayerSelectEffect */
+
+/* >>> factory Scavenge_PlayerSelectEnergyEffect */
+Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	BankswitchROM(Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	BankswitchROM(saved);
+	if ((input.f & 0x10u) != 0u)
+		return (Scavenge_PlayerSelectEnergyEffectResult){input.a, input.f};
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	/* `or a` clears carry and sets Z from the stored card index. */
+	return (Scavenge_PlayerSelectEnergyEffectResult){card, (uint8_t)(card == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory Scavenge_PlayerSelectEnergyEffect */

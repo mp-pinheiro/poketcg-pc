@@ -2487,6 +2487,15 @@ KR_ARENA_STAGE = 0xCE - 0xBB
 KR_ARENA_STATUS = 0xF0 - 0xBB
 KR_ARENA_PLUSPOWER = 0xE0 - 0xBB
 KR_ARENA_DEFENDER = 0xE6 - 0xBB
+
+Scaven_TURN = 0xC2
+Scaven_CONSOLE = 0xCAB4
+Scaven_LCDC = 0xCABB
+Scaven_HP = 0xC8 - 0xBB
+Scaven_STAGE = 0xCE - 0xBB
+Scaven_STATUS = 0xF0 - 0xBB
+Scaven_PLUS = 0xE0 - 0xBB
+Scaven_DEF = 0xE6 - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3817,6 +3826,51 @@ CASES["KadabraRecover_PlayerSelectEffect"] = [
          instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory KadabraRecover_PlayerSelectEffect
+
+# >>> factory Scavenge_PlayerSelectEnergyEffect
+CONTRACT["Scavenge_PlayerSelectEnergyEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Scavenge_PlayerSelectEnergyEffect"] = [
+    {"keys": [0x00, 0x02],
+     "wram": {hWhoseTurn: bytes((Scaven_TURN,)), Scaven_CONSOLE: b"\x00", Scaven_LCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + Scaven_HP: b"\x00",
+      wPlayerArenaCard + Scaven_STAGE: b"\x00",
+      wPlayerArenaCard + Scaven_STATUS: b"\x00",
+      wPlayerArenaCard + Scaven_PLUS: b"\x00",
+      wPlayerArenaCard + Scaven_DEF: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    {"keys": [0x00, 0x01],
+     "wram": {hWhoseTurn: bytes((Scaven_TURN,)), Scaven_CONSOLE: b"\x00", Scaven_LCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + Scaven_HP: b"\x00",
+      wPlayerArenaCard + Scaven_STAGE: b"\x00",
+      wPlayerArenaCard + Scaven_STATUS: b"\x00",
+      wPlayerArenaCard + Scaven_PLUS: b"\x00",
+      wPlayerArenaCard + Scaven_DEF: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={hWhoseTurn: bytes((Scaven_TURN,)), Scaven_CONSOLE: b"\x00", Scaven_LCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + Scaven_HP: b"\x00",
+      wPlayerArenaCard + Scaven_STAGE: b"\x00",
+      wPlayerArenaCard + Scaven_STATUS: b"\x00",
+      wPlayerArenaCard + Scaven_PLUS: b"\x00",
+      wPlayerArenaCard + Scaven_DEF: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory Scavenge_PlayerSelectEnergyEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5963,3 +6017,11 @@ MUTATIONS["KadabraRecover_PlayerSelectEffect"] = {
  "case_ids": ["KadabraRecover_PlayerSelectEffect-1", "KadabraRecover_PlayerSelectEffect-2"],
 }
 # <<< factory-mutation KadabraRecover_PlayerSelectEffect
+# >>> factory-mutation Scavenge_PlayerSelectEnergyEffect
+MUTATIONS["Scavenge_PlayerSelectEnergyEffect"] = {
+ "source_symbol": "Scavenge_PlayerSelectEnergyEffect",
+ "before": "\treturn (Scavenge_PlayerSelectEnergyEffectResult){card, (uint8_t)(card == 0u ? 0x80u : 0x00u)};",
+ "after": "\treturn (Scavenge_PlayerSelectEnergyEffectResult){card, 0x10u};",
+ "case_ids": ["Scavenge_PlayerSelectEnergyEffect-1", "Scavenge_PlayerSelectEnergyEffect-2"],
+}
+# <<< factory-mutation Scavenge_PlayerSelectEnergyEffect

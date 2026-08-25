@@ -1335,6 +1335,10 @@ LookForCardsInDeckResult LookForCardsInDeck(uint8_t a, uint8_t b, uint8_t c, uin
 typedef struct { uint8_t a; uint8_t f; } KadabraRecover_PlayerSelectEffectResult;
 KadabraRecover_PlayerSelectEffectResult KadabraRecover_PlayerSelectEffect(void);
 /* <<< factory KadabraRecover_PlayerSelectEffect */
+/* >>> factory Scavenge_PlayerSelectEnergyEffect */
+typedef struct { uint8_t a; uint8_t f; } Scavenge_PlayerSelectEnergyEffectResult;
+Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void);
+/* <<< factory Scavenge_PlayerSelectEnergyEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
