@@ -2435,6 +2435,17 @@ wLoadedAttackAnimation = 0xCCB8
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 hWhoseTurn = 0xFF97
 hTemp_ffa0 = 0xFFA0
+
+hTempList = 0xFFA0
+wDuelTempList = 0xC510
+hWhoseTurn = 0xFF97
+player_duel_page = 0xC200
+card_location = 0xC203
+hand_count = 0xC2EE
+discard_count = 0xC2ED
+duelist_type = 0xC2F1
+hand_card = 0xC242
+discard_card = 0xC27E
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3623,6 +3634,15 @@ CASES["Conversion1_ChangeWeaknessEffect"] = [
     dict(POISON, d=0x01, e=0x0E, hl=0xC240, wram={0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC3BB: b"\x00", 0xC3E9: b"\x55", 0xC400: b"\x08", 0xC590: b"\x00", 0xFFA0: b"\x02"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC3E9: 1, 0xC3F7: 1}),
 ]
 # <<< factory Conversion1_ChangeWeaknessEffect
+
+# >>> factory EnergyRetrieval_DiscardAndAddToHandEffect
+CONTRACT["EnergyRetrieval_DiscardAndAddToHandEffect"] = {"compare": (), "preserve": ()}
+CASES["EnergyRetrieval_DiscardAndAddToHandEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", hTempList: b"\x03\x03\xFF", player_duel_page: b"\x00", card_location: b"\x01", hand_count: b"\x01", discard_count: b"\x00", duelist_type: b"\x00", hand_card: b"\x03", discard_card: b"\x00", wDuelTempList: b"\x00\x00\x00"}},
+    {"wram": {hWhoseTurn: b"\xC2", hTempList: b"\x03\x03\x04\xFF", player_duel_page: b"\x00", card_location: b"\x01", hand_count: b"\x01", discard_count: b"\x00", duelist_type: b"\x00", hand_card: b"\x03", discard_card: b"\x00", wDuelTempList: b"\x00\x00\x00\x00"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTempList: b"\x03\x03\xFF", player_duel_page: b"\x00", card_location: b"\x01", hand_count: b"\x01", discard_count: b"\x00", duelist_type: b"\x00", hand_card: b"\x03", discard_card: b"\x00", wDuelTempList: b"\x00\x00\x00"}),
+]
+# <<< factory EnergyRetrieval_DiscardAndAddToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5728,3 +5748,6 @@ MUTATIONS["SnivelEffect"] = {"source_symbol": "SnivelEffect", "before": "uint16_
 # >>> factory-mutation Conversion1_ChangeWeaknessEffect
 MUTATIONS["Conversion1_ChangeWeaknessEffect"] = {"source_symbol": "Conversion1_ChangeWeaknessEffect", "before": "\tgb_write8(nonturn.hl, weakness);", "after": "\tgb_write8(nonturn.hl, (uint8_t)(weakness + 1u));", "case_ids": ["Conversion1_ChangeWeaknessEffect-1", "Conversion1_ChangeWeaknessEffect-2"]}
 # <<< factory-mutation Conversion1_ChangeWeaknessEffect
+# >>> factory-mutation EnergyRetrieval_DiscardAndAddToHandEffect
+MUTATIONS["EnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": "EnergyRetrieval_DiscardAndAddToHandEffect", "before": "\t\tAddCardToHand(moved.a);", "after": "\t\tAddCardToHand((uint8_t)(moved.a + 1u));", "case_ids": ["EnergyRetrieval_DiscardAndAddToHandEffect-0", "EnergyRetrieval_DiscardAndAddToHandEffect-1"]}
+# <<< factory-mutation EnergyRetrieval_DiscardAndAddToHandEffect

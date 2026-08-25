@@ -3105,6 +3105,14 @@ static void adapt_Conversion1_ChangeWeaknessEffect(ProbeState *s)
 }
 /* <<< factory Conversion1_ChangeWeaknessEffect */
 
+/* >>> factory EnergyRetrieval_DiscardAndAddToHandEffect */
+static void adapt_EnergyRetrieval_DiscardAndAddToHandEffect(ProbeState *s)
+{
+	(void)s;
+	EnergyRetrieval_DiscardAndAddToHandEffect();
+}
+/* <<< factory EnergyRetrieval_DiscardAndAddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3490,5 +3498,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SandAttackEffect", adapt_SandAttackEffect },
 	{ "SnivelEffect", adapt_SnivelEffect },
 	{ "Conversion1_ChangeWeaknessEffect", adapt_Conversion1_ChangeWeaknessEffect },
+	{ "EnergyRetrieval_DiscardAndAddToHandEffect", adapt_EnergyRetrieval_DiscardAndAddToHandEffect },
 	{ NULL, NULL },
 };

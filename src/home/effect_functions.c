@@ -513,6 +513,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "mem.h"
 #define SUBSTATUS2_CONVERSION2 0x08u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5445,3 +5452,26 @@ uint16_t Conversion1_ChangeWeaknessEffect(uint8_t d, uint8_t e, uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_CONVERSION2, text.hl);
 }
 /* <<< factory Conversion1_ChangeWeaknessEffect */
+
+/* >>> factory EnergyRetrieval_DiscardAndAddToHandEffect */
+void EnergyRetrieval_DiscardAndAddToHandEffect(void)
+{
+	uint16_t hl = hTempList_ADDR;
+	uint8_t card = gb_read8(hl++);
+	RemoveCardFromHand(card);
+	PutCardInDiscardPile(card);
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		card = gb_read8(hl++);
+		gb_write8(de++, card);
+		if (card == 0xFFu)
+			break;
+		MoveDiscardResult moved = MoveDiscardPileCardToHand(card);
+		AddCardToHand(moved.a);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return;
+	(void)DisplayCardListDetails();
+}
+/* <<< factory EnergyRetrieval_DiscardAndAddToHandEffect */
