@@ -5731,3 +5731,10 @@ void DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d)
 	DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack1Page1 */
+
+/* >>> factory DisplayCardPage_PokemonAttack1Page2 */
+void DisplayCardPage_PokemonAttack1Page2(uint8_t b, uint8_t c, uint8_t d)
+{
+	DisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u), wLoadedCard1Atk1Name_ADDR);
+}
+/* <<< factory DisplayCardPage_PokemonAttack1Page2 */
