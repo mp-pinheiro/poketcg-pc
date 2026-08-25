@@ -3587,6 +3587,14 @@ CASES["PikachuLv16GrowlEffect"] = [
 ]
 # <<< factory PikachuLv16GrowlEffect
 
+# >>> factory PounceEffect
+CONTRACT["PounceEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["PounceEffect"] = [
+    {"hl": 0xC200, "wram": {0xFF97: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"hl": 0xC240, "wram": {0xFF97: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),]
+# <<< factory PounceEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5679,3 +5687,6 @@ MUTATIONS["MagmarSmokescreenEffect"] = {"source_symbol": "MagmarSmokescreenEffec
 # >>> factory-mutation PikachuLv16GrowlEffect
 MUTATIONS["PikachuLv16GrowlEffect"] = {"source_symbol": "PikachuLv16GrowlEffect", "before": "uint16_t PikachuLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);", "after": "uint16_t PikachuLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["PikachuLv16GrowlEffect-0", "PikachuLv16GrowlEffect-1", "PikachuLv16GrowlEffect-2"]}
 # <<< factory-mutation PikachuLv16GrowlEffect
+# >>> factory-mutation PounceEffect
+MUTATIONS["PounceEffect"] = {"source_symbol": "PounceEffect", "before": "uint16_t PounceEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_POUNCE, hl);", "after": "uint16_t PounceEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["PounceEffect-0", "PounceEffect-1", "PounceEffect-2"]}
+# <<< factory-mutation PounceEffect

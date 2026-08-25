@@ -498,6 +498,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #define SUBSTATUS2_GROWL 0x12u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_POUNCE 0x07u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5388,3 +5391,10 @@ uint16_t PikachuLv16GrowlEffect(uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);
 }
 /* <<< factory PikachuLv16GrowlEffect */
+
+/* >>> factory PounceEffect */
+uint16_t PounceEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_POUNCE, hl);
+}
+/* <<< factory PounceEffect */
