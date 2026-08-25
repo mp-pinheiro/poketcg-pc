@@ -178,4 +178,8 @@ void UpdateOverworldMap(void);
 /* >>> factory DisplayPauseMenu */
 void DisplayPauseMenu(void);
 /* <<< factory DisplayPauseMenu */
+/* >>> factory Func_c8ed */
+typedef struct { uint8_t a; uint8_t f; } FuncC8edResult;
+FuncC8edResult Func_c8ed(uint16_t hl);
+/* <<< factory Func_c8ed */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -395,6 +395,15 @@ static void adapt_DisplayPauseMenu(ProbeState *s)
 }
 /* <<< factory DisplayPauseMenu */
 
+/* >>> factory Func_c8ed */
+static void adapt_Func_c8ed(ProbeState *s)
+{
+	FuncC8edResult result = Func_c8ed(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_c8ed */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -444,5 +453,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c280", adapt_Func_c280 },
 	{ "UpdateOverworldMap", adapt_UpdateOverworldMap },
 	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
+	{ "Func_c8ed", adapt_Func_c8ed },
 	{ NULL, NULL },
 };

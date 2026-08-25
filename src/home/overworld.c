@@ -139,6 +139,11 @@
 #include "generated/wram.h"
 #include "home/labels.h"
 #define PAUSE_MENU_PARAMS 0x4D98u
+
+#include "generated/wram.h"
+#include "home/lcd_enable_frame.h"
+#include "home/menus.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -811,3 +816,21 @@ void DisplayPauseMenu(void)
 	InitAndPrintMenu(PAUSE_MENU_PARAMS, selected);
 }
 /* <<< factory DisplayPauseMenu */
+
+/* >>> factory Func_c8ed */
+FuncC8edResult Func_c8ed(uint16_t hl)
+{
+	(void)SetOverworldNPCFlags(1u);
+	(void)Func_c915();
+	DoFrameIfLCDEnabled();
+	HandleYesOrNoMenuResult result;
+	if (hl != 0u) {
+		gb_write8(wd3b9_ADDR, 0u);
+		gb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);
+		result = YesOrNoMenuWithText(hl);
+	} else {
+		result = YesOrNoMenu();
+	}
+	return (FuncC8edResult){result.a, result.f};
+}
+/* <<< factory Func_c8ed */

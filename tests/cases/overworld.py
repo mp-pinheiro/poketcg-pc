@@ -297,6 +297,9 @@ wVBlankOAMCopyToggle = 0xCAC0
 hCurMenuItem = 0xFFB1
 wCurMenuItem = 0xCD10
 wSelectedPauseMenuItem = 0xD0B8
+
+def menu_state(default_yes=0):
+    return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -663,6 +666,15 @@ CASES["DisplayPauseMenu"] = [
 ]
 # <<< factory DisplayPauseMenu
 
+# >>> factory Func_c8ed
+CONTRACT["Func_c8ed"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c8ed"] = [
+    {"hl": 0x0000, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": menu_state(0), "read": {0xD3B9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"hl": 0x0001, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {**menu_state(0), 0xD3B9: b"\xAA\xAA"}, "read": {0xD3B9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0x1234, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={**menu_state(1), 0xD3B9: b"\xAA\xAA"}, read={0xD3B9: 2}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_c8ed
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -881,3 +893,6 @@ MUTATIONS["UpdateOverworldMap"] = {"source_symbol": "UpdateOverworldMap", "befor
 # >>> factory-mutation DisplayPauseMenu
 MUTATIONS["DisplayPauseMenu"] = {"source_symbol": "DisplayPauseMenu", "before": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, selected);", "after": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPauseMenu-0", "DisplayPauseMenu-1", "DisplayPauseMenu-2"]}
 # <<< factory-mutation DisplayPauseMenu
+# >>> factory-mutation Func_c8ed
+MUTATIONS["Func_c8ed"] = {"source_symbol": "Func_c8ed", "before": "\tgb_write8(wd3b9_ADDR, 0u);", "after": "\tgb_write8(wd3b9_ADDR, 0xFFu);", "case_ids": ["Func_c8ed-1", "Func_c8ed-2"]}
+# <<< factory-mutation Func_c8ed
