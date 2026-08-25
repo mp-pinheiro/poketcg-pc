@@ -3042,6 +3042,14 @@ static void adapt_SlowpokeAmnesia_DisableEffect(ProbeState *s)
 }
 /* <<< factory SlowpokeAmnesia_DisableEffect */
 
+/* >>> factory HorseaSmokescreenEffect */
+static void adapt_HorseaSmokescreenEffect(ProbeState *s)
+{
+	s->a = 0x01u;
+	s->hl = HorseaSmokescreenEffect(s->hl);
+}
+/* <<< factory HorseaSmokescreenEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3419,5 +3427,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeottoMirrorMove_BeforeDamage", adapt_PidgeottoMirrorMove_BeforeDamage },
 	{ "PoliwhirlAmnesia_DisableEffect", adapt_PoliwhirlAmnesia_DisableEffect },
 	{ "SlowpokeAmnesia_DisableEffect", adapt_SlowpokeAmnesia_DisableEffect },
+	{ "HorseaSmokescreenEffect", adapt_HorseaSmokescreenEffect },
 	{ NULL, NULL },
 };

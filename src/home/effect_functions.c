@@ -492,6 +492,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define ATK_ANIM_HIT 0x01u
 #define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE 0xf3u
 #define DUELVARS_ARENA_CARD_LAST_TURN_STATUS 0xf5u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_SMOKESCREEN 0x01u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5354,3 +5357,10 @@ void SlowpokeAmnesia_DisableEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, u
 	ApplyAmnesiaToAttack(a, f, b, c, d, e, hl);
 }
 /* <<< factory SlowpokeAmnesia_DisableEffect */
+
+/* >>> factory HorseaSmokescreenEffect */
+uint16_t HorseaSmokescreenEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);
+}
+/* <<< factory HorseaSmokescreenEffect */

@@ -3551,6 +3551,15 @@ CASES["SlowpokeAmnesia_DisableEffect"] = [
 ]
 # <<< factory SlowpokeAmnesia_DisableEffect
 
+# >>> factory HorseaSmokescreenEffect
+CONTRACT["HorseaSmokescreenEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["HorseaSmokescreenEffect"] = [
+    {"hl": 0xC200, "wram": {0xFF97: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"hl": 0xC240, "wram": {0xFF97: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, hl=0xC280, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),
+]
+# <<< factory HorseaSmokescreenEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5631,3 +5640,6 @@ MUTATIONS["PoliwhirlAmnesia_DisableEffect"] = {"source_symbol": "PoliwhirlAmnesi
 # >>> factory-mutation SlowpokeAmnesia_DisableEffect
 MUTATIONS["SlowpokeAmnesia_DisableEffect"] = {"source_symbol": "SlowpokeAmnesia_DisableEffect", "before": "void SlowpokeAmnesia_DisableEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tApplyAmnesiaToAttack(a, f, b, c, d, e, hl);", "after": "void SlowpokeAmnesia_DisableEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)0;", "case_ids": ["SlowpokeAmnesia_DisableEffect-0", "SlowpokeAmnesia_DisableEffect-1"]}
 # <<< factory-mutation SlowpokeAmnesia_DisableEffect
+# >>> factory-mutation HorseaSmokescreenEffect
+MUTATIONS["HorseaSmokescreenEffect"] = {"source_symbol": "HorseaSmokescreenEffect", "before": "return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);", "after": "return ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["HorseaSmokescreenEffect-0", "HorseaSmokescreenEffect-1", "HorseaSmokescreenEffect-2"]}
+# <<< factory-mutation HorseaSmokescreenEffect
