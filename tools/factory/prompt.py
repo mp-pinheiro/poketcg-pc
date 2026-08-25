@@ -278,6 +278,13 @@ def render(packet: dict, feedback: str | None = None,
         "and 0x01 is A. Never pick 0x02: B cancels, HandleEnergyDiscardMenuInput "
         "returns carry, the routine takes its `ret c` exit, and every line after it - "
         "including the one a mutation corrupts - never executes.",
+        "The probe fragment MUST report what the routine actually returns. Writing a "
+        "constant into s->a or s->f - `Whirlpool_PlayerSelectEffect(); s->a = 0xffu; "
+        "s->f = 0x90u;` - can pass the oracle whenever your one case happens to take "
+        "the branch that produces those bytes, and it then lands a register contract "
+        "the routine does not honour on any other path. If the routine has two exits "
+        "with different register results, give it a typed return covering both and "
+        "copy the fields through; never hardcode the answer the case expects.",
         "A mutation must corrupt state that survives to the return. hCurSelectionItem "
         "($FFB2) does not: it is the menu's own cursor item and "
         "DisplayEnergyDiscardScreen and HandleEnergyDiscardMenuInput overwrite it, so "
