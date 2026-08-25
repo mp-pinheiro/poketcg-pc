@@ -833,4 +833,8 @@ void HandleLegendaryArticunoEnergyScoring(void);
 typedef struct { uint8_t a; uint8_t f; } CheckIfArenaCardIsFullyPoweredResult;
 CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void);
 /* <<< factory CheckIfArenaCardIsFullyPowered */
+/* >>> factory SendCardAttrBlkPacket */
+typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } SendCardAttrBlkPacketResult;
+SendCardAttrBlkPacketResult SendCardAttrBlkPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory SendCardAttrBlkPacket */
 #endif

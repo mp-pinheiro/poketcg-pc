@@ -1,0 +1,9 @@
+{
+  "fn": "DetectSGB",
+  "case": "tests/cases/sgb.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DetectSGB\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 3003, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DetectSGB\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"DetectSGB\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 3003, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

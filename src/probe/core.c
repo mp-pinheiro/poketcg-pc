@@ -1821,6 +1821,20 @@ static void adapt_CheckIfArenaCardIsFullyPowered(ProbeState *s)
 }
 /* <<< factory CheckIfArenaCardIsFullyPowered */
 
+/* >>> factory SendCardAttrBlkPacket */
+static void adapt_SendCardAttrBlkPacket(ProbeState *s)
+{
+	SendCardAttrBlkPacketResult r = SendCardAttrBlkPacket(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SendCardAttrBlkPacket */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2038,5 +2052,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CountNumberOfSetUpBenchPokemon", adapt_CountNumberOfSetUpBenchPokemon },
 	{ "HandleLegendaryArticunoEnergyScoring", adapt_HandleLegendaryArticunoEnergyScoring },
 	{ "CheckIfArenaCardIsFullyPowered", adapt_CheckIfArenaCardIsFullyPowered },
+	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ NULL, NULL },
 };

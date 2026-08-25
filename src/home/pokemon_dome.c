@@ -7,6 +7,10 @@
 #include "home/pokemon_dome.h"
 #include "home/scripting.h"
 #include "mem.h"
+
+#include "home/scripting.h"
+#include "home/mail.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
@@ -71,3 +75,14 @@ void PokemonDomeMovePlayer(void)
 	(void)SetNextNPCAndScript(0x784Cu, 0x76C6u);
 }
 /* <<< factory PokemonDomeMovePlayer */
+
+/* >>> factory PokemonDomeLoadMap */
+void PokemonDomeLoadMap(void)
+{
+	TryGivePCPack(0x0Du);
+	uint8_t value = (uint8_t)((gb_read8(0xD3E9u) & 0x08u) >> 3);
+	if (value == 0u)
+		return;
+	SetNextScript(0x780Bu);
+}
+/* <<< factory PokemonDomeLoadMap */

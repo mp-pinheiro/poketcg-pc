@@ -2797,6 +2797,14 @@ CASES["CheckIfArenaCardIsFullyPowered"] = [
 ]
 # <<< factory CheckIfArenaCardIsFullyPowered
 
+# >>> factory SendCardAttrBlkPacket
+CONTRACT["SendCardAttrBlkPacket"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["SendCardAttrBlkPacket"] = [
+    {"instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory SendCardAttrBlkPacket
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4024,3 +4032,11 @@ MUTATIONS["CheckIfArenaCardIsFullyPowered"] = {
     "case_ids": ["CheckIfArenaCardIsFullyPowered-0", "CheckIfArenaCardIsFullyPowered-1"],
 }
 # <<< factory-mutation CheckIfArenaCardIsFullyPowered
+# >>> factory-mutation SendCardAttrBlkPacket
+MUTATIONS["SendCardAttrBlkPacket"] = {
+    "source_symbol": "SendCardAttrBlkPacket",
+    "before": "\tSendSGBResult result = SendSGB(a, f, b, c, d, e, packet);",
+    "after": "\tSendSGBResult result = SendSGB(a, f, b, c, d, e, 0u);",
+    "case_ids": ["SendCardAttrBlkPacket-0", "SendCardAttrBlkPacket-1"],
+}
+# <<< factory-mutation SendCardAttrBlkPacket

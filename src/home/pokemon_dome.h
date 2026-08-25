@@ -18,4 +18,7 @@ void PokemonDomeCloseTextBox(void);
 /* >>> factory PokemonDomeMovePlayer */
 void PokemonDomeMovePlayer(void);
 /* <<< factory PokemonDomeMovePlayer */
+/* >>> factory PokemonDomeLoadMap */
+void PokemonDomeLoadMap(void);
+/* <<< factory PokemonDomeLoadMap */
 #endif

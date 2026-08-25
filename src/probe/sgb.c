@@ -41,9 +41,24 @@ static void adapt_InitSGB(ProbeState *s)
 }
 /* <<< factory InitSGB */
 
+/* >>> factory DetectSGB */
+static void adapt_DetectSGB(ProbeState *s)
+{
+	DetectSGBResult r = DetectSGB(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory DetectSGB */
+
 const ProbeEntry probe_entries_sgb[] = {
 	{ "Wait", adapt_Wait },
 	{ "SendSGB", adapt_SendSGB },
 	{ "InitSGB", adapt_InitSGB },
+	{ "DetectSGB", adapt_DetectSGB },
 	{ NULL, NULL },
 };

@@ -10,6 +10,9 @@
 #define JOYP_SGB_FINISH 0x30u
 
 #include "home/sgb.h"
+
+#include "home/sgb.h"
+#define JOYP_SGB_MLT_REQ 0x03u
 /* <<< factory statics */
 
 /* sgb.asm:258-274. The delay loop has no observable effects beyond its
@@ -73,3 +76,33 @@ InitSGBResult InitSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uin
 	return (InitSGBResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory InitSGB */
+
+/* >>> factory DetectSGB */
+DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	SGBWaitResult w = Wait(60u);
+	SendSGBResult r = SendSGB(w.a, w.f, w.b, w.c, w.d, w.e, 0x0BBBu); /* MltReq2Packet */
+	uint8_t joyp = (uint8_t)(gb_read8(0xFF00u) & JOYP_SGB_MLT_REQ);
+	if (joyp != JOYP_SGB_MLT_REQ) {
+		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+		return (DetectSGBResult){fail.a, (uint8_t)((fail.f & 0x80u) | 0x10u), fail.b, fail.c, fail.d, fail.e, fail.hl};
+	}
+	gb_write8(0xFF00u, JOYP_SGB_ZERO);
+	(void)gb_read8(0xFF00u);
+	(void)gb_read8(0xFF00u);
+	gb_write8(0xFF00u, JOYP_SGB_FINISH);
+	gb_write8(0xFF00u, JOYP_SGB_ONE);
+	for (uint8_t i = 0u; i < 6u; i++)
+		(void)gb_read8(0xFF00u);
+	gb_write8(0xFF00u, JOYP_SGB_FINISH);
+	for (uint8_t i = 0u; i < 3u; i++)
+		(void)gb_read8(0xFF00u);
+	joyp = (uint8_t)(gb_read8(0xFF00u) & JOYP_SGB_MLT_REQ);
+	if (joyp != JOYP_SGB_MLT_REQ) {
+		SendSGBResult fail = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+		return (DetectSGBResult){fail.a, (uint8_t)((fail.f & 0x80u) | 0x10u), fail.b, fail.c, fail.d, fail.e, fail.hl};
+	}
+	SendSGBResult ok = SendSGB(r.a, r.f, r.b, r.c, r.d, r.e, 0x0BABu); /* MltReq1Packet */
+	return (DetectSGBResult){ok.a, (uint8_t)(ok.a == 0u ? 0x80u : 0x00u), ok.b, ok.c, ok.d, ok.e, ok.hl};
+}
+/* <<< factory DetectSGB */

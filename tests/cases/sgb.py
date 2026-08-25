@@ -55,6 +55,14 @@ CASES["InitSGB"] = [
 ]
 # <<< factory InitSGB
 
+# >>> factory DetectSGB
+CONTRACT["DetectSGB"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["DetectSGB"] = [
+    {"instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory DetectSGB
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -82,3 +90,11 @@ MUTATIONS["InitSGB"] = {
     "case_ids": ["InitSGB-0", "InitSGB-1"],
 }
 # <<< factory-mutation InitSGB
+# >>> factory-mutation DetectSGB
+MUTATIONS["DetectSGB"] = {
+    "source_symbol": "DetectSGB",
+    "before": "\treturn (DetectSGBResult){ok.a, (uint8_t)(ok.a == 0u ? 0x80u : 0x00u), ok.b, ok.c, ok.d, ok.e, ok.hl};",
+    "after": "\treturn (DetectSGBResult){ok.a, (uint8_t)(ok.a == 0u ? 0x00u : 0x80u), ok.b, ok.c, ok.d, ok.e, ok.hl};",
+    "case_ids": ["DetectSGB-0", "DetectSGB-1"],
+}
+# <<< factory-mutation DetectSGB

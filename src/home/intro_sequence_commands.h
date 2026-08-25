@@ -76,4 +76,7 @@ LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadCharizardScene(voi
 typedef struct { uint8_t f; } IntroSequenceCmdLoadTitleScreenSceneResult;
 IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene(void);
 /* <<< factory IntroSequenceCmd_LoadTitleScreenScene */
+/* >>> factory IntroSequenceCmd_LoadAerodactylScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadAerodactylScene(void);
+/* <<< factory IntroSequenceCmd_LoadAerodactylScene */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

@@ -83,6 +83,8 @@ static void UpdateSpriteAttributes(void)
 #define SCENE_CHARIZARD_INTRO 0x05u
 
 #define SCENE_TITLE_SCREEN 0x00u
+
+#define SCENE_AERODACTYL_INTRO 0x07u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -347,3 +349,10 @@ IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene
 	return (IntroSequenceCmdLoadTitleScreenSceneResult){0x10u};
 }
 /* <<< factory IntroSequenceCmd_LoadTitleScreenScene */
+
+/* >>> factory IntroSequenceCmd_LoadAerodactylScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadAerodactylScene(void)
+{
+	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_AERODACTYL_INTRO, 6u, 3u);
+}
+/* <<< factory IntroSequenceCmd_LoadAerodactylScene */

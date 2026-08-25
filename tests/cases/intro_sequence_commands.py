@@ -215,6 +215,18 @@ CASES["IntroSequenceCmd_LoadTitleScreenScene"] = [
 ]
 # <<< factory IntroSequenceCmd_LoadTitleScreenScene
 
+# >>> factory IntroSequenceCmd_LoadAerodactylScene
+CONTRACT["IntroSequenceCmd_LoadAerodactylScene"] = {"compare": ("b", "c", "d", "e"), "preserve": ()}
+CASES["IntroSequenceCmd_LoadAerodactylScene"] = [
+    {"wram": {0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xAA"},
+     "expect": {0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCAB4: b"\x01", 0xCAE0: b"\x00\x00\x00\x00\x00\x00\x00\x00", 0xD634: b"\xFF"},
+         expect={0xCAE0: b"\x21\x01\x01\x0A\x00\x00\x13\x11"},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory IntroSequenceCmd_LoadAerodactylScene
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -306,3 +318,11 @@ MUTATIONS["IntroSequenceCmd_LoadTitleScreenScene"] = {
     "case_ids": ["IntroSequenceCmd_LoadTitleScreenScene-0", "IntroSequenceCmd_LoadTitleScreenScene-1"],
 }
 # <<< factory-mutation IntroSequenceCmd_LoadTitleScreenScene
+# >>> factory-mutation IntroSequenceCmd_LoadAerodactylScene
+MUTATIONS["IntroSequenceCmd_LoadAerodactylScene"] = {
+    "source_symbol": "IntroSequenceCmd_LoadAerodactylScene",
+    "before": "\treturn LoadOpeningSceneAndUpdateSGBBorder(SCENE_AERODACTYL_INTRO, 6u, 3u);",
+    "after": "\treturn (LoadOpeningSceneAndUpdateSGBBorderResult){0u, 0u, 0u, 0u};",
+    "case_ids": ["IntroSequenceCmd_LoadAerodactylScene-0", "IntroSequenceCmd_LoadAerodactylScene-1"],
+}
+# <<< factory-mutation IntroSequenceCmd_LoadAerodactylScene
