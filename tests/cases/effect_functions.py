@@ -4374,6 +4374,22 @@ CASES["MarowakCallForFamily_PutInPlayAreaEffect"] = [
 ]
 # <<< factory MarowakCallForFamily_PutInPlayAreaEffect
 
+# >>> factory KrabbyCallForFamily_PutInPlayAreaEffect
+CONTRACT["KrabbyCallForFamily_PutInPlayAreaEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["KrabbyCallForFamily_PutInPlayAreaEffect"] = [
+    # hTemp_ffa0 defaults to 0, selecting the fetch-and-bench branch; the
+    # player's own turn then makes `jr c` skip the detail screen (covered by
+    # DisplayCardDetailScreen's own cases). SetupText seeds the glyph cache
+    # the deck-shuffle animation walks.
+    {"wram": {CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+      CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+         CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory KrabbyCallForFamily_PutInPlayAreaEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6645,3 +6661,11 @@ MUTATIONS["MarowakCallForFamily_PutInPlayAreaEffect"] = {
  "case_ids": ["MarowakCallForFamily_PutInPlayAreaEffect-0", "MarowakCallForFamily_PutInPlayAreaEffect-1"],
 }
 # <<< factory-mutation MarowakCallForFamily_PutInPlayAreaEffect
+# >>> factory-mutation KrabbyCallForFamily_PutInPlayAreaEffect
+MUTATIONS["KrabbyCallForFamily_PutInPlayAreaEffect"] = {
+ "source_symbol": "KrabbyCallForFamily_PutInPlayAreaEffect",
+ "before": "\t\tSearchCardInDeckAndAddToHand(index);\n\t\tAddCardToHand(index);",
+ "after": "\t\tSearchCardInDeckAndAddToHand(index);\n\t\tAddCardToHand((uint8_t)(index + 1u));",
+ "case_ids": ["KrabbyCallForFamily_PutInPlayAreaEffect-0", "KrabbyCallForFamily_PutInPlayAreaEffect-1"],
+}
+# <<< factory-mutation KrabbyCallForFamily_PutInPlayAreaEffect

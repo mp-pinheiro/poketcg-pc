@@ -1107,6 +1107,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "generated/hram.h"
 #define YouDrewText 0x0070u
+
+#include "home/duel.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6208,3 +6214,17 @@ void OppAction_PlayTrainerCard(void)
 	gb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);
 }
 /* <<< factory OppAction_PlayTrainerCard */
+
+/* >>> factory OpenActivePokemonScreen */
+void OpenActivePokemonScreen(void)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (arena.a == 0xFFu)
+		return;
+	uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
+	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	wCurPlayAreaSlot = 0u;
+	wCurPlayAreaY = 0u;
+	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+}
+/* <<< factory OpenActivePokemonScreen */

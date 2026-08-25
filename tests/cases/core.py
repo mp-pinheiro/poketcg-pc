@@ -3358,6 +3358,14 @@ CASES["OppAction_PlayTrainerCard"] = [
 ]
 # <<< factory OppAction_PlayTrainerCard
 
+# >>> factory OpenActivePokemonScreen
+CONTRACT["OpenActivePokemonScreen"] = {"compare": (), "preserve": ()}
+CASES["OpenActivePokemonScreen"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xCBC9: b"\xAA", 0xCBCA: b"\x55"}, "read": {0xCBC9: 1, 0xCBCA: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xCBC9: b"\xAA", 0xCBCA: b"\x55", 0xCABB: b"\x00", 0xCBD7: b"\x01"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 4000000, "cycle_budget": 16000000, "read": {0xCBC9: 1, 0xCBCA: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xCBC9: b"\xAA", 0xCBCA: b"\x55", 0xCABB: b"\x00", 0xCBD7: b"\x01"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 4000000, "cycle_budget": 16000000, "read": {0xCBC9: 1, 0xCBCA: 1}}]
+# <<< factory OpenActivePokemonScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4771,3 +4779,6 @@ MUTATIONS["DisplayPlayerDrawCardScreen"] = {"source_symbol": "DisplayPlayerDrawC
 # >>> factory-mutation OppAction_PlayTrainerCard
 MUTATIONS["OppAction_PlayTrainerCard"] = {"source_symbol": "OppAction_PlayTrainerCard", "before": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 1u);", "after": "void OppAction_PlayTrainerCard(void)\n{\n\t(void)LoadNonPokemonCardEffectCommands();\n\t(void)DisplayUsedTrainerCardDetailScreen();\n\tPrintUsedTrainerCardDescription();\n\t(void)ExchangeRNG(0u, 0u, 0u, 0u);\n\tgb_write8(wSkipDuelistIsThinkingDelay_ADDR, 0u);", "case_ids": ["OppAction_PlayTrainerCard-0", "OppAction_PlayTrainerCard-1"]}
 # <<< factory-mutation OppAction_PlayTrainerCard
+# >>> factory-mutation OpenActivePokemonScreen
+MUTATIONS["OpenActivePokemonScreen"] = {"source_symbol": "OpenActivePokemonScreen", "before": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 0u;", "after": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 1u;", "case_ids": ["OpenActivePokemonScreen-1", "OpenActivePokemonScreen-2"]}
+# <<< factory-mutation OpenActivePokemonScreen

@@ -3423,6 +3423,19 @@ static void adapt_MarowakCallForFamily_PutInPlayAreaEffect(ProbeState *s)
 }
 /* <<< factory MarowakCallForFamily_PutInPlayAreaEffect */
 
+/* >>> factory KrabbyCallForFamily_PutInPlayAreaEffect */
+static void adapt_KrabbyCallForFamily_PutInPlayAreaEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = KrabbyCallForFamily_PutInPlayAreaEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->hl = r.hl;
+}
+/* <<< factory KrabbyCallForFamily_PutInPlayAreaEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3842,5 +3855,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Sprout_PutInPlayAreaEffect", adapt_Sprout_PutInPlayAreaEffect },
 	{ "NidoranFCallForFamily_PutInPlayAreaEffect", adapt_NidoranFCallForFamily_PutInPlayAreaEffect },
 	{ "MarowakCallForFamily_PutInPlayAreaEffect", adapt_MarowakCallForFamily_PutInPlayAreaEffect },
+	{ "KrabbyCallForFamily_PutInPlayAreaEffect", adapt_KrabbyCallForFamily_PutInPlayAreaEffect },
 	{ NULL, NULL },
 };

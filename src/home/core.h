@@ -985,4 +985,7 @@ WaitResult DisplayPlayerDrawCardScreen(void);
 /* >>> factory OppAction_PlayTrainerCard */
 void OppAction_PlayTrainerCard(void);
 /* <<< factory OppAction_PlayTrainerCard */
+/* >>> factory OpenActivePokemonScreen */
+void OpenActivePokemonScreen(void);
+/* <<< factory OpenActivePokemonScreen */
 #endif

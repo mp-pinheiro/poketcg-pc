@@ -705,6 +705,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define MarowakCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
 #define MarowakCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
+#define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6301,3 +6309,36 @@ ShuffleCardsInDeckResult MarowakCallForFamily_PutInPlayAreaEffect(uint8_t b, uin
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory MarowakCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory KrabbyCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult KrabbyCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(index, 0u);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		hl = turn.hl;
+		/* IsPlayerTurn sets carry on the player's own turn, and `jr c` skips
+		 * straight to the shuffle: the screen exists to show the opponent's
+		 * pick to the player. */
+		if ((turn.f & 0x10u) == 0u) {
+			/* `bank1call` selects bank 1 for the callee and restores this
+			 * routine's own bank on return. */
+			uint8_t saved = hBankROM;
+			BankswitchROM(KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE);
+			(void)DisplayCardDetailScreen(hTemp_ffa0,
+						      KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText);
+			BankswitchROM(saved);
+		}
+		(void)placed;
+	}
+	/* ShuffleCardsInDeck shuffles purely from WRAM deck state and only echoes
+	 * b/c/d/e/hl back out (duel.c ShuffleDeck), so PutHandPokemonCardInPlayArea's
+	 * undocumented exit e cannot change behaviour here; e is left out of the
+	 * contract rather than guessed. */
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory KrabbyCallForFamily_PutInPlayAreaEffect */

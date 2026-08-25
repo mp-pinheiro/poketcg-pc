@@ -2207,6 +2207,14 @@ static void adapt_OppAction_PlayTrainerCard(ProbeState *s)
 }
 /* <<< factory OppAction_PlayTrainerCard */
 
+/* >>> factory OpenActivePokemonScreen */
+static void adapt_OpenActivePokemonScreen(ProbeState *s)
+{
+	(void)s;
+	OpenActivePokemonScreen();
+}
+/* <<< factory OpenActivePokemonScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2471,5 +2479,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CardListItemSelectionMenu", adapt_CardListItemSelectionMenu },
 	{ "DisplayPlayerDrawCardScreen", adapt_DisplayPlayerDrawCardScreen },
 	{ "OppAction_PlayTrainerCard", adapt_OppAction_PlayTrainerCard },
+	{ "OpenActivePokemonScreen", adapt_OpenActivePokemonScreen },
 	{ NULL, NULL },
 };
