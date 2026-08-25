@@ -903,4 +903,7 @@ void DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, 
 /* >>> factory DisplayCardPage_PokemonAttack2Page2 */
 void DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d);
 /* <<< factory DisplayCardPage_PokemonAttack2Page2 */
+/* >>> factory DisplayCardPage_PokemonAttack1Page1 */
+void DisplayCardPage_PokemonAttack1Page1(uint8_t b, uint8_t c, uint8_t d);
+/* <<< factory DisplayCardPage_PokemonAttack1Page1 */
 #endif

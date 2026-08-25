@@ -2012,6 +2012,13 @@ static void adapt_DisplayCardPage_PokemonAttack2Page2(ProbeState *s)
 }
 /* <<< factory DisplayCardPage_PokemonAttack2Page2 */
 
+/* >>> factory DisplayCardPage_PokemonAttack1Page1 */
+static void adapt_DisplayCardPage_PokemonAttack1Page1(ProbeState *s)
+{
+	DisplayCardPage_PokemonAttack1Page1(s->b, s->c, s->d);
+}
+/* <<< factory DisplayCardPage_PokemonAttack1Page1 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2251,5 +2258,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintAndLoadAttacksToDuelTempList", adapt_PrintAndLoadAttacksToDuelTempList },
 	{ "DisplayPokemonAttackCardPage", adapt_DisplayPokemonAttackCardPage },
 	{ "DisplayCardPage_PokemonAttack2Page2", adapt_DisplayCardPage_PokemonAttack2Page2 },
+	{ "DisplayCardPage_PokemonAttack1Page1", adapt_DisplayCardPage_PokemonAttack1Page1 },
 	{ NULL, NULL },
 };

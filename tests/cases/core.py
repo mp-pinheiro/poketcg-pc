@@ -3066,6 +3066,14 @@ CASES["DisplayCardPage_PokemonAttack2Page2"] = [
 ]
 # <<< factory DisplayCardPage_PokemonAttack2Page2
 
+# >>> factory DisplayCardPage_PokemonAttack1Page1
+CONTRACT["DisplayCardPage_PokemonAttack1Page1"] = {"compare": (), "preserve": ()}
+CASES["DisplayCardPage_PokemonAttack1Page1"] = [
+    {"wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x14\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x11\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+]
+# <<< factory DisplayCardPage_PokemonAttack1Page1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4384,3 +4392,6 @@ MUTATIONS["DisplayPokemonAttackCardPage"] = {"source_symbol": "DisplayPokemonAtt
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page2
 MUTATIONS["DisplayCardPage_PokemonAttack2Page2"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page2", "before": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u), wLoadedCard1Atk2Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u), wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page2-0", "DisplayCardPage_PokemonAttack2Page2-1"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page2
+# >>> factory-mutation DisplayCardPage_PokemonAttack1Page1
+MUTATIONS["DisplayCardPage_PokemonAttack1Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack1Page1", "before": "\tDisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk1Description_ADDR, wLoadedCard1Atk1Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk1Description_ADDR + 1u), wLoadedCard1Atk1Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack1Page1-0", "DisplayCardPage_PokemonAttack1Page1-1"]}
+# <<< factory-mutation DisplayCardPage_PokemonAttack1Page1
