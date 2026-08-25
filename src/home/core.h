@@ -943,4 +943,7 @@ HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void);
 /* >>> factory DisplayRetreatScreen */
 void DisplayRetreatScreen(uint8_t a);
 /* <<< factory DisplayRetreatScreen */
+/* >>> factory PrintPracticeDuelInstructions_Fast */
+void PrintPracticeDuelInstructions_Fast(uint16_t hl);
+/* <<< factory PrintPracticeDuelInstructions_Fast */
 #endif

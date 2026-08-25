@@ -1057,6 +1057,8 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "mem.h"
 #include "home/duel.h"
+
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5963,3 +5965,19 @@ void DisplayRetreatScreen(uint8_t a)
 	}
 }
 /* <<< factory DisplayRetreatScreen */
+
+/* >>> factory PrintPracticeDuelInstructions_Fast */
+void PrintPracticeDuelInstructions_Fast(uint16_t hl)
+{
+	for (;;) {
+		uint8_t count = gb_read8(hl);
+		hl = (uint16_t)(hl + 1u);
+		if (count == 0u) {
+			PrintPracticeDuelLetsPlayTheGame();
+			return;
+		}
+		PrintPracticeDuelNumberedInstructionResult r = PrintPracticeDuelNumberedInstruction(1u, count, hl);
+		hl = r.hl;
+	}
+}
+/* <<< factory PrintPracticeDuelInstructions_Fast */

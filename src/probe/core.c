@@ -2100,6 +2100,13 @@ static void adapt_DisplayRetreatScreen(ProbeState *s)
 }
 /* <<< factory DisplayRetreatScreen */
 
+/* >>> factory PrintPracticeDuelInstructions_Fast */
+static void adapt_PrintPracticeDuelInstructions_Fast(ProbeState *s)
+{
+	PrintPracticeDuelInstructions_Fast(s->hl);
+}
+/* <<< factory PrintPracticeDuelInstructions_Fast */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2351,5 +2358,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleEnergyDiscardMenuInput", adapt_HandleEnergyDiscardMenuInput },
 	{ "DisplayRetreatScreen", adapt_DisplayRetreatScreen },
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
+	{ "PrintPracticeDuelInstructions_Fast", adapt_PrintPracticeDuelInstructions_Fast },
 	{ NULL, NULL },
 };

@@ -3189,6 +3189,14 @@ CASES["DisplayRetreatScreen"] = [
 ]
 # <<< factory DisplayRetreatScreen
 
+# >>> factory PrintPracticeDuelInstructions_Fast
+CONTRACT["PrintPracticeDuelInstructions_Fast"] = {"compare": (), "preserve": ()}
+CASES["PrintPracticeDuelInstructions_Fast"] = [
+    {"hl": 0xC500, "keys": 0x01, "wram": {0xC500: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}, "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0xC500, keys=0x01, wram={0xC500: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}, vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory PrintPracticeDuelInstructions_Fast
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4548,3 +4556,6 @@ MUTATIONS["HandleEnergyDiscardMenuInput"] = {
 # >>> factory-mutation DisplayRetreatScreen
 MUTATIONS["DisplayRetreatScreen"] = {"source_symbol": "DisplayRetreatScreen", "before": "\thTempRetreatCostCards = 0xFFu;", "after": "\thTempRetreatCostCards = 0u;", "case_ids": ["DisplayRetreatScreen-0", "DisplayRetreatScreen-1"]}
 # <<< factory-mutation DisplayRetreatScreen
+# >>> factory-mutation PrintPracticeDuelInstructions_Fast
+MUTATIONS["PrintPracticeDuelInstructions_Fast"] = {"source_symbol": "PrintPracticeDuelInstructions_Fast", "before": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\tPrintPracticeDuelLetsPlayTheGame();\n\t\t\treturn;\n\t\t}", "after": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\treturn;\n\t\t}", "case_ids": ["PrintPracticeDuelInstructions_Fast-0", "PrintPracticeDuelInstructions_Fast-1"]}
+# <<< factory-mutation PrintPracticeDuelInstructions_Fast
