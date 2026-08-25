@@ -192,11 +192,20 @@ authoritative source:
   `{bank: {addr: bytes}}` and `expect_vram` has the same shape. All are derived
   from the asm, never read off the oracle; seeded `wram`/`sram` and requested
   banked reads are not compared automatically in a C-only case.
-- `keys` — `int`, buttons held for the whole call. Bit layout matches the game's
-  own `hKeysHeld` (`poketcg/src/constants/hardware.inc:88-105`): bit0 `A`, 1
-  `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
+- `keys` — `int`, buttons held for the whole call, or `[int, ...]` (up to 16), a
+  per-frame timeline that cycles. Bit layout matches the game's own `hKeysHeld`
+  (`poketcg/src/constants/hardware.inc:88-105`): bit0 `A`, 1 `B`, 2 `SELECT`, 3
+  `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
   The only way to test a routine that spins on `ReadJoypad`/
   `WaitForButtonAorB` — with `keys` unset (0) it waits forever.
+  A scalar is held from the first instruction and is therefore *newly pressed
+  exactly once*, which is invisible to every wait that starts after that first
+  frame. The game's waits read edge-triggered `hKeysPressed`, so a routine with
+  more than one wait needs a cycle: `keys=[0x00, 0x01]` taps `A` forever. All
+  three lanes cycle it — the reference per rendered frame
+  (`tools/oracle/gbref/runner.c`), PyBoy per tick (`tools/oracle/pyboy_oracle.py`),
+  and the native probe per completed joypad poll (`src/mem.c`, which has no
+  frames). A one-entry timeline never advances, so it is exactly a held scalar.
 - `stack` — `[int, ...]`, at most four caller-pushed words below the synthesized
   return address, in push order (`stack[-1]` is what the routine's first `pop`
   reads). Declare it only for a routine entered mid-frame — a `jp` target whose
