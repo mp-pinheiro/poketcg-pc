@@ -222,17 +222,22 @@ def normalize_case(case: dict, fn: str, fields: tuple[str, ...], dependencies: d
     for pre in case.get("setup", []):
         setup.append({"fn": pre["fn"], **{r: int(pre.get(r, 0)) for r in REGS}})
     reads, sreads, vreads = merged_spans(case)
-    return {"semantic": CACHE_SEMANTICS, "dependencies": dependencies, "fn": fn,
-            "contract": list(fields), "registers": {r: int(case.get(r, 0)) for r in REGS},
-            "seeds": {"wram": byte_map(case.get("wram", {})),
-                      "sram": [[int(bank), int(addr), bytes(data).hex()] for bank, spans in sorted(case.get("sram", {}).items(), key=lambda x: int(x[0]))
-                               for addr, data in sorted(spans.items(), key=lambda x: int(x[0]))]},
-            "ramg": None if case.get("ramg") is None else bool(case["ramg"]), "setup": setup,
-            "keys": int(case.get("keys", 0)),
-            "stack": [int(word) for word in case.get("stack") or ()],
-            "completion": case.get("_completion", {"mode": "return"}),
-            "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
-            "sread": span_map(sreads), "vread": span_map(vreads)}
+    normalized = {"semantic": CACHE_SEMANTICS, "dependencies": dependencies, "fn": fn,
+                  "contract": list(fields), "registers": {r: int(case.get(r, 0)) for r in REGS},
+                  "seeds": {"wram": byte_map(case.get("wram", {})),
+                            "sram": [[int(bank), int(addr), bytes(data).hex()] for bank, spans in sorted(case.get("sram", {}).items(), key=lambda x: int(x[0]))
+                                     for addr, data in sorted(spans.items(), key=lambda x: int(x[0]))]},
+                  "ramg": None if case.get("ramg") is None else bool(case["ramg"]), "setup": setup,
+                  "keys": int(case.get("keys", 0)),
+                  "completion": case.get("_completion", {"mode": "return"}),
+                  "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
+                  "sread": span_map(sreads), "vread": span_map(vreads)}
+    # Only a stack-sensitive case carries the key: this dict is the oracle cache
+    # key (sha256 of its JSON), so emitting "stack": [] unconditionally would
+    # invalidate every warm reference in .factory/oracle-cache/ at once.
+    if case.get("stack"):
+        normalized["stack"] = [int(word) for word in case["stack"]]
+    return normalized
 
 
 def dependencies(rom: Path) -> dict[str, str]:
