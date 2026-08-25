@@ -187,6 +187,17 @@ static void adapt_IntroSequenceCmd_LoadAerodactylScene(ProbeState *s)
 }
 /* <<< factory IntroSequenceCmd_LoadAerodactylScene */
 
+/* >>> factory IntroSequenceCmd_LoadScytherScene */
+static void adapt_IntroSequenceCmd_LoadScytherScene(ProbeState *s)
+{
+	LoadOpeningSceneAndUpdateSGBBorderResult r = IntroSequenceCmd_LoadScytherScene();
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory IntroSequenceCmd_LoadScytherScene */
+
 const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "AnimateRandomTitleScreenOrb", adapt_AnimateRandomTitleScreenOrb },
 	{ "AdvanceIntroSequenceCmdPtr", adapt_AdvanceIntroSequenceCmdPtr },
@@ -208,5 +219,6 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "IntroSequenceCmd_LoadCharizardScene", adapt_IntroSequenceCmd_LoadCharizardScene },
 	{ "IntroSequenceCmd_LoadTitleScreenScene", adapt_IntroSequenceCmd_LoadTitleScreenScene },
 	{ "IntroSequenceCmd_LoadAerodactylScene", adapt_IntroSequenceCmd_LoadAerodactylScene },
+	{ "IntroSequenceCmd_LoadScytherScene", adapt_IntroSequenceCmd_LoadScytherScene },
 	{ NULL, NULL },
 };

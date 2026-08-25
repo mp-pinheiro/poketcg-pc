@@ -1,0 +1,9 @@
+{
+  "fn": "IntroSequenceCmd_LoadScytherScene",
+  "case": "tests/cases/intro_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"IntroSequenceCmd_LoadScytherScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 20, \"e\": 18, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"2101010a00001311\", \"54836\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"IntroSequenceCmd_LoadScytherScene\", \"mismatches\": {\"d\": [20, 0], \"e\": [18, 0], \"bus\": {\"address\": 51936, \"reference\": \"012101010a00\", \"native\": \"010000000000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[51892, 1], [51936, 8], [54836, 1]]}}}\n",
+  "restored": "{\"fn\": \"IntroSequenceCmd_LoadScytherScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 20, \"e\": 18, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51936\": \"2101010a00001311\", \"54836\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

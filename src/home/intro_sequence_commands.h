@@ -79,4 +79,7 @@ IntroSequenceCmdLoadTitleScreenSceneResult IntroSequenceCmd_LoadTitleScreenScene
 /* >>> factory IntroSequenceCmd_LoadAerodactylScene */
 LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadAerodactylScene(void);
 /* <<< factory IntroSequenceCmd_LoadAerodactylScene */
+/* >>> factory IntroSequenceCmd_LoadScytherScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadScytherScene(void);
+/* <<< factory IntroSequenceCmd_LoadScytherScene */
 #endif /* POKETCG_HOME_INTRO_SEQUENCE_COMMANDS_H */

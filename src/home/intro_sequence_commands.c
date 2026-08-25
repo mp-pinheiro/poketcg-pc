@@ -85,6 +85,9 @@ static void UpdateSpriteAttributes(void)
 #define SCENE_TITLE_SCREEN 0x00u
 
 #define SCENE_AERODACTYL_INTRO 0x07u
+
+#include "home/intro_sequence_commands.h"
+#define SCENE_SCYTHER_INTRO 0x06u
 /* <<< factory statics */
 
 /* >>> factory AnimateRandomTitleScreenOrb */
@@ -356,3 +359,10 @@ LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadAerodactylScene(vo
 	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_AERODACTYL_INTRO, 6u, 3u);
 }
 /* <<< factory IntroSequenceCmd_LoadAerodactylScene */
+
+/* >>> factory IntroSequenceCmd_LoadScytherScene */
+LoadOpeningSceneAndUpdateSGBBorderResult IntroSequenceCmd_LoadScytherScene(void)
+{
+	return LoadOpeningSceneAndUpdateSGBBorder(SCENE_SCYTHER_INTRO, 6u, 3u);
+}
+/* <<< factory IntroSequenceCmd_LoadScytherScene */
