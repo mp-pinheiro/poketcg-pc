@@ -146,6 +146,13 @@ CASES_STATICS_CLOSE = "# <<< factory-cases-statics"
 
 INCLUDE_LINE = re.compile(r'^\s*#include\s+"([^"]+)"', re.MULTILINE)
 
+# Build products of `just bootstrap`, absent from a fresh clone, so resolving
+# them against the destination tree would reject a fragment for a missing file
+# the fragment cannot be blamed for. Naming them explicitly still rejects a typo.
+GENERATED_HEADERS = frozenset({
+    "generated/wram.h", "generated/hram.h", "generated/sram.h",
+})
+
 LEGACY_SCHEMA2_ASSIGNMENT = re.compile(
     r"(?ms)^[ \t]*SCHEMA2_CASES[ \t]*=[ \t]*legacy_to_schema"
     r"[ \t\r\n]*\([ \t\r\n]*CASES[ \t\r\n]*,[ \t\r\n]*CONTRACT"
@@ -165,7 +172,7 @@ def _legacy_tail_at(text: str, path: Path | None = None) -> int:
 def check_includes(root: Path, text: str) -> None:
     """Reject #include paths that do not resolve in this tree."""
     for header in INCLUDE_LINE.findall(text):
-        if header in ("mem.h", "probe.h"):
+        if header in ("mem.h", "probe.h") or header in GENERATED_HEADERS:
             continue
         if (root / "src" / header).exists() or (root / "include" / header).exists():
             continue

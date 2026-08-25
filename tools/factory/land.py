@@ -17,6 +17,7 @@ import importlib.util
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +27,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
+import heal
+import surgery
 import workers
 
 GIT_ENV = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
@@ -35,6 +38,10 @@ GATE_TIMEOUT_S = 3600
 PROGRESS_TIMEOUT_S = 300
 LANDINGS_NAME = "landings.jsonl"
 QUARANTINE_NAME = "quarantine.jsonl"
+
+# The statics block shares the routine marker shape, so it has to be filtered
+# out of the census; every other match is a landed routine's C fragment.
+C_MARKER = re.compile(r"^/\* >>> factory ([A-Za-z_][\w.]*) \*/$", re.MULTILINE)
 
 
 class LandError(RuntimeError):
@@ -95,21 +102,52 @@ def _bundle_paths(bundle: Path) -> tuple[dict, list[str]]:
     return identity, paths
 
 
+RECEIPT_PREFIX = "tools/oracle/mutation_receipts/"
+
+
+def marker_census(cwd: Path) -> set[str]:
+    """Every routine with a landed C fragment under src/home.
+
+    Landing must be monotone in this set: a batch that shrinks it has erased a
+    routine some earlier batch proved, which is exactly how PokemonDomeLoadMap
+    was lost when a same-basename sibling copied a stale whole file over it.
+    """
+    names: set[str] = set()
+    home = cwd / "src" / "home"
+    if not home.is_dir():
+        return names
+    for path in sorted(home.glob("*.c")):
+        names.update(C_MARKER.findall(path.read_text(errors="replace")))
+    names.discard("statics")
+    return names
+
+
 def apply_v2_artifacts(cwd: Path, artifact_sha256s: list[str]) -> tuple[str, ...]:
-    applied: set[str] = set()
+    """Graft each bundle's marker blocks into the checkout.
+
+    The quartet is transplanted through surgery.extract/apply, never copied
+    wholesale: apply() replaces a block in place when its marker exists and
+    appends otherwise, and merges statics append-only against the destination's
+    current block. Two artifacts for one basename therefore compose instead of
+    the later one erasing the earlier. Mutation receipts stay a plain copy -
+    one file per routine, shared with nothing.
+    """
+    grafted = 0
     routines: set[str] = set()
     for artifact_sha256 in sorted(set(artifact_sha256s)):
         for bundle in _artifact_members(artifact_sha256):
             identity, paths = _bundle_paths(bundle)
+            surgery.apply(cwd, identity, surgery.extract(bundle, identity))
+            grafted += 1
             for relative in paths:
-                source = bundle / relative
+                if not relative.startswith(RECEIPT_PREFIX):
+                    continue
                 destination = cwd / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(source, destination)
-                applied.add(relative)
+                shutil.copy2(bundle / relative, destination)
             for routine in identity["routines"]:
                 routines.add(str(routine["name"]))
-    if not applied:
+    if not grafted:
         raise LandError("landing has no artifact paths")
     return tuple(sorted(routines))
 
@@ -163,58 +201,6 @@ def _read_shas(path: Path, key: str) -> set[str]:
     return shas
 
 
-
-def _stale_owned_artifacts(
-    root: Path,
-    artifacts: list[str],
-    main_revision: str,
-) -> tuple[list[str], list[dict]]:
-    compatible: list[str] = []
-    quarantined: list[dict] = []
-    for artifact_sha256 in artifacts:
-        changed: set[str] = set()
-        basenames: set[str] = set()
-        bases: set[str] = set()
-        for bundle in _artifact_members(artifact_sha256):
-            identity, paths = _bundle_paths(bundle)
-            basename = identity.get("basename")
-            if isinstance(basename, str):
-                basenames.add(basename)
-            base_commit = identity.get("base_commit")
-            if not isinstance(base_commit, str) or not base_commit:
-                changed.add("<unresolvable-base-commit>")
-                continue
-            bases.add(base_commit)
-            try:
-                base_revision = _revision(root, base_commit)
-                output = _run(
-                    ["git", "diff", "--name-only",
-                     f"{base_revision}..{main_revision}", "--", *paths],
-                    root,
-                    120,
-                ).stdout
-            except LandError:
-                changed.add("<unresolvable-base-commit>")
-                continue
-            changed.update(line.strip() for line in output.splitlines() if line.strip())
-        if changed:
-            record = {
-                "quarantined_at": _now_iso(),
-                "artifact_sha256": artifact_sha256,
-                "basename": ",".join(sorted(basenames)),
-                "failure_class": "stale-owned-path",
-                "changed_paths": sorted(changed),
-                "base_commits": sorted(bases),
-                "main_commit": main_revision,
-            }
-            common.append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
-            quarantined.append(record)
-            print(f"LAND quarantine {artifact_sha256[:16]} stale-owned-path "
-                  f"paths={record['changed_paths']}")
-        else:
-            compatible.append(artifact_sha256)
-    return compatible, quarantined
-
 def _now_iso() -> str:
     return datetime.datetime.now(datetime.UTC).isoformat()
 
@@ -231,6 +217,10 @@ def select_artifacts(root: Path, explicit: list[str] | None) -> list[str]:
 
     excluded = _read_shas(root / ".factory" / LANDINGS_NAME, "artifact_sha256")
     excluded |= _read_shas(root / ".factory" / QUARANTINE_NAME, "artifact_sha256")
+    # A revoked artifact is a landing this checkout recorded but never kept. The
+    # payload is immutable and gate-verified, so re-landing it is the repair;
+    # leaving it excluded is what made the loss permanent.
+    excluded -= heal.revoked_artifacts(root)
     work_state = {record["name"]: record.get("state") for record in _work_records(root)}
 
     candidates: dict[str, frozenset[str]] = {}
@@ -270,6 +260,51 @@ def batch_artifacts(shas: list[str], batch_size: int) -> list[list[str]]:
     return batches
 
 
+def _reject_batch(
+    root: Path,
+    artifacts: list[str],
+    failure_class: str,
+    detail: str,
+    *,
+    gate_command: tuple[str, ...],
+    progress_command: tuple[str, ...],
+    push: bool,
+    counter: list[int],
+    stale: list[dict],
+) -> tuple[list[dict], list[dict]]:
+    """Bisect a rejected batch, or quarantine it once it is a singleton.
+
+    The caller must already have restored the working copy and left main where
+    it was: the recursion re-enters _land_batch, which demands a clean tree, and
+    it must not hold tree.lock, which the recursive call takes on a new
+    descriptor.
+    """
+    if len(artifacts) > 1:
+        middle = len(artifacts) // 2
+        left_landed, left_quarantined = _land_batch(
+            root, artifacts[:middle], gate_command=gate_command,
+            progress_command=progress_command, push=push, counter=counter,
+        )
+        right_landed, right_quarantined = _land_batch(
+            root, artifacts[middle:], gate_command=gate_command,
+            progress_command=progress_command, push=push, counter=counter,
+        )
+        return (left_landed + right_landed,
+                stale + left_quarantined + right_quarantined)
+    sha = artifacts[0]
+    basenames, _routines = _artifact_identity(sha)
+    record = {
+        "quarantined_at": _now_iso(),
+        "artifact_sha256": sha,
+        "basename": ",".join(sorted(basenames)),
+        "failure_class": failure_class,
+        "detail": detail,
+    }
+    common.append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
+    print(f"LAND quarantine {sha[:16]} {failure_class} {record['basename']}")
+    return [], stale + [record]
+
+
 def _land_batch(
     root: Path,
     artifacts: list[str],
@@ -289,9 +324,7 @@ def _land_batch(
         raise LandError(
             f"main {pre_batch_revision[:12]} diverges from origin main {origin_revision[:12]}"
         )
-    artifacts, stale = _stale_owned_artifacts(root, artifacts, pre_batch_revision)
-    if not artifacts:
-        return [], stale
+    stale: list[dict] = []
 
     # Exclusive only while the working copy is mid-rewrite: a lane rsyncing a
     # half-applied quartet would verify a tree that never existed. The gate and
@@ -299,9 +332,29 @@ def _land_batch(
     # build-barrier/, and tools/oracle/gbref/build/, all rsync-excluded, and a
     # 3600s exclusive hold would stall every lane.
     with common.file_lock(common.locks_dir(root) / "tree.lock", timeout=1800):
-        routines = apply_v2_artifacts(root, artifacts)
-        _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
-        source_revision = _revision(root, "@-")
+        before_markers = marker_census(root)
+        rejection: tuple[str, str] | None = None
+        try:
+            routines = apply_v2_artifacts(root, artifacts)
+        except (surgery.SurgeryError, LandError, OSError) as exc:
+            rejection = ("graft-failed", f"{type(exc).__name__}: {exc}"[-2000:])
+        else:
+            dropped = sorted(before_markers - marker_census(root))
+            if dropped:
+                rejection = ("marker-regression",
+                             f"landing dropped landed markers: {dropped}")
+        if rejection is None:
+            _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
+            source_revision = _revision(root, "@-")
+        else:
+            # Nothing is committed yet, so discarding the working copy is the
+            # entire undo and main never moved.
+            _run(["jj", "restore"], root, 120)
+    if rejection is not None:
+        return _reject_batch(
+            root, artifacts, rejection[0], rejection[1], gate_command=gate_command,
+            progress_command=progress_command, push=push, counter=counter, stale=stale,
+        )
 
     gate_started = time.monotonic()
     gate_completed = subprocess.run(
@@ -329,29 +382,10 @@ def _land_batch(
             if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
                 raise LandError("working copy dirty after abandoning a failed batch")
             _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
-        if len(artifacts) > 1:
-            middle = len(artifacts) // 2
-            left, right = artifacts[:middle], artifacts[middle:]
-            left_landed, left_quarantined = _land_batch(
-                root, left, gate_command=gate_command, progress_command=progress_command,
-                push=push, counter=counter,
-            )
-            right_landed, right_quarantined = _land_batch(
-                root, right, gate_command=gate_command, progress_command=progress_command,
-                push=push, counter=counter,
-            )
-            return left_landed + right_landed, stale + left_quarantined + right_quarantined
-        sha = artifacts[0]
-        basenames, _routines = _artifact_identity(sha)
-        record = {
-            "quarantined_at": _now_iso(),
-            "artifact_sha256": sha,
-            "basename": ",".join(sorted(basenames)),
-            "gate_tail": gate_tail,
-        }
-        common.append_jsonl(root / ".factory" / QUARANTINE_NAME, record)
-        print(f"LAND quarantine {sha[:16]} {record['basename']}")
-        return [], stale + [record]
+        return _reject_batch(
+            root, artifacts, "gate", gate_tail, gate_command=gate_command,
+            progress_command=progress_command, push=push, counter=counter, stale=stale,
+        )
 
     progress_completed = subprocess.run(
         progress_command, cwd=root, text=True, capture_output=True, timeout=PROGRESS_TIMEOUT_S, check=False,
