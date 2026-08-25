@@ -1026,6 +1026,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/core.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/text_box.h"
+#include "home/lcd.h"
+#include "home/duel.h"
+#define ChooseEnergyCardToDiscardText 0x0050u
+#define EnergyDiscardCardListParameters 0x46f3u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5785,3 +5794,17 @@ void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)
 	SwitchAttackPage();
 }
 /* <<< factory DisplayAttackPage_Attack1Page2 */
+
+/* >>> factory DisplayEnergyDiscardMenu */
+void DisplayEnergyDiscardMenu(void)
+{
+	uint16_t box_hl = 0u;
+	DrawRegularTextBox(&box_hl, 0u, 20u, 10u, 0u, 3u);
+	(void)DrawWideTextBox_PrintTextNoDelay(ChooseEnergyCardToDiscardText);
+	EnableLCD();
+	uint8_t count = CountCardsInDuelTempList().a;
+	uint16_t params = EnergyDiscardCardListParameters;
+	PrintCardListItems(count, 0u, 0u, &params);
+	wCardListIndicatorYPosition = 4u;
+}
+/* <<< factory DisplayEnergyDiscardMenu */

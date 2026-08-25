@@ -3122,6 +3122,22 @@ CASES["DisplayAttackPage_Attack1Page2"] = [
 ]
 # <<< factory DisplayAttackPage_Attack1Page2
 
+# >>> factory DisplayEnergyDiscardMenu
+CONTRACT["DisplayEnergyDiscardMenu"] = {"compare": (), "preserve": ()}
+CASES["DisplayEnergyDiscardMenu"] = [
+    {"wram": {wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory DisplayEnergyDiscardMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4461,3 +4477,6 @@ MUTATIONS["DisplayAttackPage_Attack2Page2"] = {"source_symbol": "DisplayAttackPa
 # >>> factory-mutation DisplayAttackPage_Attack1Page2
 MUTATIONS["DisplayAttackPage_Attack1Page2"] = {"source_symbol": "DisplayAttackPage_Attack1Page2", "before": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)", "after": "void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk1Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)", "case_ids": ["DisplayAttackPage_Attack1Page2-0", "DisplayAttackPage_Attack1Page2-1"]}
 # <<< factory-mutation DisplayAttackPage_Attack1Page2
+# >>> factory-mutation DisplayEnergyDiscardMenu
+MUTATIONS["DisplayEnergyDiscardMenu"] = {"source_symbol": "DisplayEnergyDiscardMenu", "before": "\twCardListIndicatorYPosition = 4u;", "after": "\twCardListIndicatorYPosition = 5u;", "case_ids": ["DisplayEnergyDiscardMenu-0", "DisplayEnergyDiscardMenu-1"]}
+# <<< factory-mutation DisplayEnergyDiscardMenu
