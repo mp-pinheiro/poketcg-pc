@@ -1956,6 +1956,16 @@ static void adapt_InitAndDrawCardListScreenLayout_WithSelectCheckMenu(ProbeState
 }
 /* <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
 
+/* >>> factory DisplayCardListDetails */
+static void adapt_DisplayCardListDetails(ProbeState *s)
+{
+	(void)s;
+	DisplayCardListDetailsResult r = DisplayCardListDetails();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DisplayCardListDetails */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2188,5 +2198,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "RedrawTurnDuelistsDuelHUD", adapt_RedrawTurnDuelistsDuelHUD },
 	{ "OppAction_DrawDuelMainScene", adapt_OppAction_DrawDuelMainScene },
 	{ "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", adapt_InitAndDrawCardListScreenLayout_WithSelectCheckMenu },
+	{ "DisplayCardListDetails", adapt_DisplayCardListDetails },
 	{ NULL, NULL },
 };

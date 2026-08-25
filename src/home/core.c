@@ -982,6 +982,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "generated/wram.h"
 #define SELECT_CHECK 0x02u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#define TheCardYouReceivedText 0x0170u
+#define YouReceivedTheseCardsText 0x0171u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5559,3 +5568,22 @@ DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout_WithSelectCheckMe
 	return (DrawCardListScreenLayoutResult){SELECT_CHECK, result.f};
 }
 /* <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
+
+/* >>> factory DisplayCardListDetails */
+DisplayCardListDetailsResult DisplayCardListDetails(void)
+{
+	uint8_t value = gb_read8(wDuelTempList_ADDR);
+	if (value == 0xFFu) {
+		uint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u) | 0x80u);
+		return (DisplayCardListDetailsResult){value, f};
+	}
+	(void)InitAndDrawCardListScreenLayout();
+	uint8_t count = CountCardsInDuelTempList().a;
+	uint16_t params = CARD_LIST_PARAMETERS;
+	PrintCardListItems(count, 0u, 0u, &params);
+	InitTextPrinting(1u, 1u);
+	(void)PrintTextNoDelay(TheCardYouReceivedText, 1u, 1u);
+	(void)DrawWideTextBox_WaitForInput(YouReceivedTheseCardsText);
+	return (DisplayCardListDetailsResult){value, 0u};
+}
+/* <<< factory DisplayCardListDetails */

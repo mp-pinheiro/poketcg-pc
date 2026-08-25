@@ -1688,6 +1688,9 @@ hWhoseTurn = 0xFF97
 wOpponentDuelistType = 0xC2F1
 wDuelDisplayedScreen = 0xCAC2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDuelTempList = 0xC510
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2988,6 +2991,14 @@ CASES["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = [
 ]
 # <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu
 
+# >>> factory DisplayCardListDetails
+CONTRACT["DisplayCardListDetails"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DisplayCardListDetails"] = [
+    {"wram": {wDuelTempList: b"\xFF"}, "read": {wDuelTempList: 1}, "expect_regs": {"a": 0xFF, "f": 0xC0}},
+    dict(POISON, wram={wDuelTempList: b"\xFF"}, read={wDuelTempList: 1}, expect_regs={"a": 0xFF, "f": 0xC0}),
+]
+# <<< factory DisplayCardListDetails
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4285,3 +4296,6 @@ MUTATIONS["OppAction_DrawDuelMainScene"] = {"source_symbol": "OppAction_DrawDuel
 # >>> factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu
 MUTATIONS["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"source_symbol": "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", "before": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, SELECT_CHECK);", "after": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, 0u);", "case_ids": ["InitAndDrawCardListScreenLayout_WithSelectCheckMenu-0", "InitAndDrawCardListScreenLayout_WithSelectCheckMenu-1"]}
 # <<< factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu
+# >>> factory-mutation DisplayCardListDetails
+MUTATIONS["DisplayCardListDetails"] = {"source_symbol": "DisplayCardListDetails", "before": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u) | 0x80u);", "after": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u));", "case_ids": ["DisplayCardListDetails-0", "DisplayCardListDetails-1"]}
+# <<< factory-mutation DisplayCardListDetails

@@ -881,4 +881,8 @@ void OppAction_DrawDuelMainScene(void);
 /* >>> factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
 DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout_WithSelectCheckMenu(void);
 /* <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
+/* >>> factory DisplayCardListDetails */
+typedef struct { uint8_t a; uint8_t f; } DisplayCardListDetailsResult;
+DisplayCardListDetailsResult DisplayCardListDetails(void);
+/* <<< factory DisplayCardListDetails */
 #endif
