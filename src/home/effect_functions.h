@@ -1318,6 +1318,9 @@ void GolduckHyperBeam_PlayerSelectEffect(void);
 /* >>> factory MirrorMove_PlayerSelection */
 void MirrorMove_PlayerSelection(void);
 /* <<< factory MirrorMove_PlayerSelection */
+/* >>> factory SpearowMirrorMove_PlayerSelection */
+void SpearowMirrorMove_PlayerSelection(void);
+/* <<< factory SpearowMirrorMove_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

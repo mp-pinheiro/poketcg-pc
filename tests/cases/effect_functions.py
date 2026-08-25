@@ -3716,6 +3716,15 @@ CASES["MirrorMove_PlayerSelection"] = [
 ]
 # <<< factory MirrorMove_PlayerSelection
 
+# >>> factory SpearowMirrorMove_PlayerSelection
+CONTRACT["SpearowMirrorMove_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["SpearowMirrorMove_PlayerSelection"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory SpearowMirrorMove_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5841,3 +5850,6 @@ MUTATIONS["GolduckHyperBeam_PlayerSelectEffect"] = {"source_symbol": "GolduckHyp
 # >>> factory-mutation MirrorMove_PlayerSelection
 MUTATIONS["MirrorMove_PlayerSelection"] = {"source_symbol": "MirrorMove_PlayerSelection", "before": "\tif (r.a == LAST_TURN_EFFECT_DISCARD_ENERGY)", "after": "\tif (r.a == 0x02u)", "case_ids": ["MirrorMove_PlayerSelection-0"]}
 # <<< factory-mutation MirrorMove_PlayerSelection
+# >>> factory-mutation SpearowMirrorMove_PlayerSelection
+MUTATIONS["SpearowMirrorMove_PlayerSelection"] = {"source_symbol": "SpearowMirrorMove_PlayerSelection", "before": "\tMirrorMove_PlayerSelection();", "after": "\treturn;", "case_ids": ["SpearowMirrorMove_PlayerSelection-0", "SpearowMirrorMove_PlayerSelection-2"]}
+# <<< factory-mutation SpearowMirrorMove_PlayerSelection

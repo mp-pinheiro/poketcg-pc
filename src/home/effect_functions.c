@@ -5641,3 +5641,10 @@ void MirrorMove_PlayerSelection(void)
 		HandleEnergyDiscardEffectSelection();
 }
 /* <<< factory MirrorMove_PlayerSelection */
+
+/* >>> factory SpearowMirrorMove_PlayerSelection */
+void SpearowMirrorMove_PlayerSelection(void)
+{
+	MirrorMove_PlayerSelection();
+}
+/* <<< factory SpearowMirrorMove_PlayerSelection */

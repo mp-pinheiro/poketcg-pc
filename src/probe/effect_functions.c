@@ -3168,6 +3168,14 @@ static void adapt_MirrorMove_PlayerSelection(ProbeState *s)
 }
 /* <<< factory MirrorMove_PlayerSelection */
 
+/* >>> factory SpearowMirrorMove_PlayerSelection */
+static void adapt_SpearowMirrorMove_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	SpearowMirrorMove_PlayerSelection();
+}
+/* <<< factory SpearowMirrorMove_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3560,5 +3568,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DragonairHyperBeam_PlayerSelectEffect", adapt_DragonairHyperBeam_PlayerSelectEffect },
 	{ "GolduckHyperBeam_PlayerSelectEffect", adapt_GolduckHyperBeam_PlayerSelectEffect },
 	{ "MirrorMove_PlayerSelection", adapt_MirrorMove_PlayerSelection },
+	{ "SpearowMirrorMove_PlayerSelection", adapt_SpearowMirrorMove_PlayerSelection },
 	{ NULL, NULL },
 };
