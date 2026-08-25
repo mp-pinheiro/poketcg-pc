@@ -72,6 +72,16 @@ def _revision(cwd: Path, revision: str) -> str:
     return value
 
 
+def _has_conflict(cwd: Path, revision: str) -> bool:
+    """Whether `revision` carries unresolved merge conflicts.
+
+    `jj resolve --list` cannot serve as this check because it exits non-zero
+    precisely when a revision is clean.
+    """
+    listed = _run(["jj", "log", "--no-graph", "-r", revision, "-T", "conflict"], cwd, 120)
+    return listed.stdout.strip() == "true"
+
+
 def _is_ancestor(cwd: Path, ancestor: str, descendant: str) -> bool:
     """True when `descendant` already contains `ancestor`."""
     listed = _run(["jj", "log", "--no-graph", "-r", f"{ancestor} & ::{descendant}",
@@ -495,25 +505,30 @@ def _land_batch(
 
     if push:
         try:
-            # Another session can advance main while this batch was gating, and
-            # then the batch commits are no longer descendants of the bookmark.
-            # `bookmark set` refuses that as "backwards or sideways" and the
-            # landing is stranded off-trunk with nothing naming it. Rebase onto
-            # the bookmark first; the gate already accepted the content, and a
-            # graft that no longer applies surfaces as a conflict here rather
-            # than as a silent loss.
+            # The release pipeline pushes to main during the gate, which leaves
+            # the local bookmark conflicted: it still names this publication
+            # while origin names the release. `jj log -r main` refuses a
+            # conflicted name, so anchor on main@origin, a single remote ref
+            # that resolves either way. Without the rebase the landing is
+            # stranded off-trunk with nothing naming it; the gate already
+            # accepted the content, so a graft that no longer applies surfaces
+            # as a conflict here rather than as a silent loss.
             _run(["jj", "git", "fetch", "--remote", "origin"], root, 300)
-            head = _revision(root, "main")
+            head = _revision(root, "main@origin")
             if head != publication_revision and not _is_ancestor(root, head, publication_revision):
-                _run(["jj", "rebase", "-s", source_revision, "-d", "main"], root, 300)
+                _run(["jj", "rebase", "-s", source_revision, "-d", head], root, 300)
                 publication_revision = _revision(root, "@-")
-                if _run(["jj", "resolve", "--list"], root, 120).stdout.strip():
+                if _has_conflict(root, publication_revision):
                     raise LandError("rebase onto the advanced main conflicts")
-                _run(["jj", "bookmark", "set", "main", "-r", publication_revision], root, 120)
+                # The side a conflicted bookmark resolved to need not be an
+                # ancestor, which plain `bookmark set` refuses as backwards.
+                _run(["jj", "bookmark", "set", "main", "-r", publication_revision,
+                      "--allow-backwards"], root, 120)
             _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
             remote_revision = _revision(root, "main@origin")
             if remote_revision != publication_revision:
-                _run(["jj", "bookmark", "set", "main", "-r", publication_revision], root, 120)
+                _run(["jj", "bookmark", "set", "main", "-r", publication_revision,
+                      "--allow-backwards"], root, 120)
                 _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
                 remote_revision = _revision(root, "main@origin")
             if remote_revision != publication_revision:
