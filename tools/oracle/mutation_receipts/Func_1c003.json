@@ -1,0 +1,9 @@
+{
+  "fn": "Func_1c003",
+  "case": "tests/cases/debug_player_coordinates.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_1c003\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"00\", \"54063\": \"010102\", \"65424\": \"0200\", \"65428\": \"7788\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_1c003\", \"mismatches\": {\"bus\": {\"address\": 65428, \"reference\": \"010202007788\", \"native\": \"010202007888\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[53439, 1], [54063, 3], [65424, 2], [65428, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_1c003\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"00\", \"54063\": \"010102\", \"65424\": \"0200\", \"65428\": \"7788\"}}, \"status\": \"PASS\"}\n"
+}
