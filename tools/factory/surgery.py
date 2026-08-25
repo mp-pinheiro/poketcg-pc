@@ -540,6 +540,14 @@ def apply(root: Path, packet: dict, translation: dict,
         cases_text = _replace_span(cases_text, open_py, close_py, cases_block,
                                    insert_at, trail="\n")
 
+        # A module whose last line has no trailing newline would otherwise take
+        # the appended open marker onto that line - `}# >>> factory-mutation Fn`
+        # is still valid Python and still defines MUTATIONS, so such a routine
+        # verifies green and then dies in extraction, which reads markers per
+        # line. Three landed case modules end without that newline.
+        if cases_text and not cases_text.endswith("\n"):
+            cases_text += "\n"
+
         open_mut = f"# >>> factory-mutation {fn}"
         close_mut = f"# <<< factory-mutation {fn}"
         mut_block = f"{open_mut}\n{blocks['MUTATION'].rstrip()}\n{close_mut}\n"

@@ -39,6 +39,11 @@ PROGRESS_TIMEOUT_S = 300
 LANDINGS_NAME = "landings.jsonl"
 QUARANTINE_NAME = "quarantine.jsonl"
 
+# The only trees a graft writes. Rolling a rejected batch back through these
+# paths instead of the whole working copy keeps a concurrent orchestrator's
+# uncommitted work - typically a harness fix under tools/ - alive.
+SURGERY_TREES = ("src/home", "src/probe", "tests/cases")
+
 # The statics block shares the routine marker shape, so it has to be filtered
 # out of the census; every other match is a landed routine's C fragment.
 C_MARKER = re.compile(r"^/\* >>> factory ([A-Za-z_][\w.]*) \*/$", re.MULTILINE)
@@ -347,9 +352,12 @@ def _land_batch(
             _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
             source_revision = _revision(root, "@-")
         else:
-            # Nothing is committed yet, so discarding the working copy is the
-            # entire undo and main never moved.
-            _run(["jj", "restore"], root, 120)
+            # Nothing is committed yet, so discarding the graft is the entire
+            # undo and main never moved. Restore only the trees surgery writes:
+            # a bare `jj restore` also throws away whatever another session has
+            # uncommitted in tools/, which is how a concurrent orchestrator's
+            # harness fix silently disappeared mid-session.
+            _run(["jj", "restore", *SURGERY_TREES], root, 120)
     if rejection is not None:
         return _reject_batch(
             root, artifacts, rejection[0], rejection[1], gate_command=gate_command,
@@ -377,11 +385,18 @@ def _land_batch(
         # Must close before the bisect recursion below: the recursive call takes
         # this same lock on a new descriptor and would block on its own caller.
         with common.file_lock(common.locks_dir(root) / "tree.lock", timeout=1800):
-            _run(["jj", "abandon", "@-"], root, 120)
-            _run(["jj", "restore"], root, 120)
-            if _run(["jj", "diff", "--summary"], root, 120).stdout.strip():
+            # By revision, never `@-`: another session may have committed on top
+            # of this landing, and abandoning `@-` would destroy its commit
+            # instead of this batch. Abandoning the named revision rebases any
+            # such descendant onto the parent and keeps its content.
+            _run(["jj", "abandon", source_revision], root, 120)
+            _run(["jj", "restore", *SURGERY_TREES], root, 120)
+            if _run(["jj", "diff", "--summary", *SURGERY_TREES], root, 120).stdout.strip():
                 raise LandError("working copy dirty after abandoning a failed batch")
-            _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
+            # Only rewind the bookmark this batch advanced. If another session
+            # has moved main on, rewinding would unpublish its work.
+            if _revision(root, "main") == source_revision:
+                _run(["jj", "bookmark", "set", "main", "-r", pre_batch_revision], root, 120)
         return _reject_batch(
             root, artifacts, "gate", gate_tail, gate_command=gate_command,
             progress_command=progress_command, push=push, counter=counter, stale=stale,
