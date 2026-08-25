@@ -115,6 +115,14 @@ static const uint8_t overworld_map_cursor_transitions[13][4] = {
 	{0x00u, 0x08u, 0x0Cu, 0x02u},
 	{0x0Bu, 0x08u, 0x03u, 0x04u},
 };
+
+#include "home/overworld.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PAD_CTRL_PAD 0xF0u
+#define PAD_A 0x01u
+#define SFX_CONFIRM 0x02u
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -461,3 +469,19 @@ void OverworldMap_HandleDPad(uint16_t w0, uint16_t w1)
 	PlaySFX(0x01u);
 }
 /* <<< factory OverworldMap_HandleDPad */
+
+/* >>> factory OverworldMap_HandleKeyPress */
+void OverworldMap_HandleKeyPress(void)
+{
+	uint8_t keys = hKeysPressed;
+	if ((keys & PAD_CTRL_PAD) != 0u) {
+		GetDirectionFromDPadResult direction = GetDirectionFromDPad((uint8_t)(keys & PAD_CTRL_PAD));
+		wPlayerDirection = direction.a;
+		OverworldMap_HandleDPad(0u, 0u);
+	} else if ((keys & PAD_A) != 0u) {
+		PlaySFX(SFX_CONFIRM);
+		OverworldMap_UpdateCursorAnimation();
+		OverworldMap_BeginPlayerMovement();
+	}
+}
+/* <<< factory OverworldMap_HandleKeyPress */

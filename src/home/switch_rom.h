@@ -30,4 +30,16 @@ typedef struct {
 } BankpushROM2Result;
 BankpushROM2Result BankpushROM2(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory BankpushROM2 */
+/* >>> factory BankpopROM */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} BankpopROMResult;
+BankpopROMResult BankpopROM(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl, uint16_t bank_stack, uint16_t saved_af);
+/* <<< factory BankpopROM */
 #endif /* POKETCG_HOME_SWITCH_ROM_H */

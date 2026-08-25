@@ -39,3 +39,14 @@ BankpushROM2Result BankpushROM2(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint
 	return (BankpushROM2Result){a, f, b, c, d, e, hl};
 }
 /* <<< factory BankpushROM2 */
+
+/* >>> factory BankpopROM */
+BankpopROMResult BankpopROM(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl, uint16_t bank_stack, uint16_t saved_af)
+{
+	uint8_t bank = (uint8_t)(bank_stack >> 8);
+	uint8_t out_a = (uint8_t)(saved_af >> 8);
+	uint8_t out_f = (uint8_t)(saved_af & 0xF0u);
+	BankswitchROM(bank);
+	return (BankpopROMResult){out_a, out_f, b, c, d, e, hl};
+}
+/* <<< factory BankpopROM */

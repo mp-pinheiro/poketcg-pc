@@ -67,4 +67,7 @@ void OverworldMap_UpdatePlayerWalkingAnimation(void);
 /* >>> factory OverworldMap_HandleDPad */
 void OverworldMap_HandleDPad(uint16_t w0, uint16_t w1);
 /* <<< factory OverworldMap_HandleDPad */
+/* >>> factory OverworldMap_HandleKeyPress */
+void OverworldMap_HandleKeyPress(void);
+/* <<< factory OverworldMap_HandleKeyPress */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

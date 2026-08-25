@@ -47,6 +47,15 @@ CASES["BankpushROM2"] = [
 ]
 # <<< factory BankpushROM2
 
+# >>> factory BankpopROM
+CONTRACT["BankpopROM"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["BankpopROM"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "stack": [0x0100, 0x0000], "wram": {0xFF80: b"\x00"}, "read": {HBANK_ROM: 1}, "expect": {HBANK_ROM: b"\x01"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, stack=[0x0100, 0x0000], wram={0xFF80: b"\x00"}, read={HBANK_ROM: 1}, expect={HBANK_ROM: b"\x01"}, instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0xFF, "f": 0x01, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0xC3FF, "stack": [0x0100, 0x0000], "wram": {0xFF80: b"\x00"}, "read": {HBANK_ROM: 1}, "expect": {HBANK_ROM: b"\x01"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+]
+# <<< factory BankpopROM
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +74,6 @@ MUTATIONS["BankpushROM"] = {"source_symbol": "BankpushROM", "before": "\tuint8_t
 # >>> factory-mutation BankpushROM2
 MUTATIONS["BankpushROM2"] = {"source_symbol": "BankpushROM2", "before": "\tBankswitchROM(a);\n	return (BankpushROM2Result){a, f, b, c, d, e, hl};", "after": "\tBankswitchROM((uint8_t)(a ^ 1u));\n	return (BankpushROM2Result){a, f, b, c, d, e, hl};", "case_ids": ["BankpushROM2-0", "BankpushROM2-1", "BankpushROM2-2"]}
 # <<< factory-mutation BankpushROM2
+# >>> factory-mutation BankpopROM
+MUTATIONS["BankpopROM"] = {"source_symbol": "BankpopROM", "before": "\tuint8_t bank = (uint8_t)(bank_stack >> 8);", "after": "\tuint8_t bank = (uint8_t)(bank_stack & 0xFFu);", "case_ids": ["BankpopROM-0", "BankpopROM-1", "BankpopROM-2"]}
+# <<< factory-mutation BankpopROM

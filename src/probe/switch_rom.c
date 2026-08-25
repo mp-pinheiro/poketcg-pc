@@ -34,9 +34,24 @@ static void adapt_BankpushROM2(ProbeState *s)
 }
 /* <<< factory BankpushROM2 */
 
+/* >>> factory BankpopROM */
+static void adapt_BankpopROM(ProbeState *s)
+{
+	BankpopROMResult out = BankpopROM(s->b, s->c, s->d, s->e, s->hl, s->stack[0], s->stack[1]);
+	s->a = out.a;
+	s->f = out.f;
+	s->b = out.b;
+	s->c = out.c;
+	s->d = out.d;
+	s->e = out.e;
+	s->hl = out.hl;
+}
+/* <<< factory BankpopROM */
+
 const ProbeEntry probe_entries_switch_rom[] = {
 	{ "BankswitchROM", adapt_BankswitchROM },
 	{ "BankpushROM", adapt_BankpushROM },
 	{ "BankpushROM2", adapt_BankpushROM2 },
+	{ "BankpopROM", adapt_BankpopROM },
 	{ NULL, NULL },
 };
