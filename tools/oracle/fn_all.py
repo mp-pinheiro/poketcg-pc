@@ -38,6 +38,31 @@ def load_cases() -> dict[str, list[tuple[Path, dict]]]:
     return found
 
 
+# The gate's own measured inputs, identified by tree object id so the record
+# survives a rebase: a landing that CI re-parents onto a release commit keeps
+# byte-identical trees, while the commit id it was built at is orphaned.
+# tools/progress/report.py recomputes this exact list at HEAD.
+# Every path must be tracked: include/ (only gitignored generated headers) and
+# poketcg/ (the ignored pret checkout, pinned by tools/oracle/artifacts.json)
+# have no tree object, and one unresolvable path voids the whole record.
+GATE_INPUT_PATHS = ("src", "tests", "tools/oracle", "CMakeLists.txt")
+
+
+def gate_input_trees(commit: str) -> dict[str, str] | None:
+    """Map every measured gate input to its git tree id at `commit`."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", *(f"{commit}:{path}" for path in GATE_INPUT_PATHS)],
+            cwd=ROOT, capture_output=True, text=True, timeout=30,
+        )
+    except Exception:
+        return None
+    ids = result.stdout.split()
+    if result.returncode != 0 or len(ids) != len(GATE_INPUT_PATHS):
+        return None
+    return dict(zip(GATE_INPUT_PATHS, ids))
+
+
 def write_json_atomic(path: Path, payload: dict) -> None:
     """Publish the gate record by rename, never in place.
 
@@ -86,6 +111,7 @@ def main() -> int:
             "schema": 1,
             "generated_at": 0,
             "commit": report_commit,
+            "input_trees": gate_input_trees(report_commit) if report_commit else None,
             "complete": False,
             "routines": {},
         }

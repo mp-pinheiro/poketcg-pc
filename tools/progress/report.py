@@ -63,62 +63,34 @@ def canonical_work_id(source: str, name: str) -> str:
     return f"port:v1:{source}:{name}"
 
 
-def current_revision() -> str | None:
-    """Revision under test. CI has git and no jj; colocated jj keeps HEAD on @-."""
-    for command in (
-        ["git", "rev-parse", "HEAD"],
-        ["jj", "log", "--no-graph", "-r", "@-", "-T", "commit_id"],
-        ["jj", "log", "--no-graph", "-r", "main", "-T", "commit_id"],
-    ):
-        try:
-            result = subprocess.run(
-                command, cwd=ROOT, capture_output=True, text=True, timeout=5,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
-    return None
+# Mirrors tools/oracle/fn_all.py's GATE_INPUT_PATHS; both sides must name the
+# same tracked paths in the same order or the gate reads as untrusted.
+GATE_INPUT_PATHS = ("src", "tests", "tools/oracle", "CMakeLists.txt")
 
 
-GATE_INPUT_PREFIXES = (
-    "src/", "tests/", "include/", "tools/oracle/", "CMakeLists.txt", "poketcg/",
-)
+def gate_input_trees() -> dict[str, str] | None:
+    """Map every measured gate input to its git tree id at the revision under test.
 
-
-def gate_inputs_changed(recorded: str, tested: str) -> bool:
-    """True when a file the gate actually measures differs between two revisions.
-
-    The gate records its own parent commit, so the commit that publishes a gate
-    report is always one ahead of it. Comparing hashes would make every gate
-    stale on publication; only changes under a measured path invalidate it.
+    Identity travels inside the commit, so a landing keeps its trust when CI
+    re-parents it onto a release commit: the trees are byte-identical while the
+    commit id the gate ran at no longer exists in the published history. In CI
+    HEAD is the commit under test; in the colocated jj checkout HEAD is @-,
+    which is the revision tools/oracle/fn_all.py recorded.
     """
-    plans = (
-        (["git", "diff", "--name-only", f"{recorded}..{tested}"], 1),
-        (["jj", "diff", "--from", recorded, "--to", tested, "--summary"], 2),
-    )
-    for command, fields in plans:
-        try:
-            result = subprocess.run(
-                command, cwd=ROOT, capture_output=True, text=True, timeout=30,
-            )
-        except (OSError, subprocess.TimeoutExpired):
-            continue
-        if result.returncode != 0:
-            continue
-        for line in result.stdout.splitlines():
-            parts = line.split(maxsplit=fields - 1)
-            if len(parts) == fields and parts[-1].startswith(GATE_INPUT_PREFIXES):
-                return True
-        return False
-    return True
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", *(f"HEAD:{path}" for path in GATE_INPUT_PATHS)],
+            cwd=ROOT, capture_output=True, text=True, timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    ids = result.stdout.split()
+    if result.returncode != 0 or len(ids) != len(GATE_INPUT_PATHS):
+        return None
+    return dict(zip(GATE_INPUT_PATHS, ids))
 
 
-def gate_is_trusted(
-    gate_data: dict | None,
-    *,
-    revision: str | None = None,
-) -> bool:
+def gate_is_trusted(gate_data: dict | None) -> bool:
     """Return true only for a complete, structurally valid gate."""
     if not gate_data or gate_data.get("schema") != 1:
         return False
@@ -145,13 +117,15 @@ def gate_is_trusted(
         )
     ):
         return False
-    recorded = gate_data.get("commit")
-    if not recorded:
+    if not gate_data.get("commit"):
         return False
-    tested = revision if revision is not None else current_revision()
-    if not tested:
+    recorded_trees = gate_data.get("input_trees")
+    if not isinstance(recorded_trees, dict) or not recorded_trees:
         return False
-    return recorded == tested or not gate_inputs_changed(recorded, tested)
+    computed_trees = gate_input_trees()
+    if computed_trees is None:
+        return False
+    return recorded_trees == computed_trees
 
 
 def load_operational_blockers() -> dict[str, dict]:
@@ -177,11 +151,10 @@ def project_work_records(
     functions: list[dict],
     gate_data: dict | None,
     *,
-    revision: str | None = None,
     active_packets: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Project report rows into stable, issue-sized desired work records."""
-    trusted = gate_is_trusted(gate_data, revision=revision)
+    trusted = gate_is_trusted(gate_data)
     gate_routines = (gate_data or {}).get("routines") or {}
     operational = load_operational_blockers()
     active_packets = active_packets or {}
