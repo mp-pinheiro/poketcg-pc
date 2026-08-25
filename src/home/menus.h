@@ -96,4 +96,7 @@ HandleYesOrNoMenuResult TwoItemHorizontalMenu(uint16_t hl);
 /* >>> factory YesOrNoMenu */
 HandleYesOrNoMenuResult YesOrNoMenu(void);
 /* <<< factory YesOrNoMenu */
+/* >>> factory YesOrNoMenuWithText */
+HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl);
+/* <<< factory YesOrNoMenuWithText */
 #endif

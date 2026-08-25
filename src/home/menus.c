@@ -790,3 +790,11 @@ HandleYesOrNoMenuResult YesOrNoMenu(void)
 	return HandleYesOrNoMenu(6u, 16u, 0u, 0u);
 }
 /* <<< factory YesOrNoMenu */
+
+/* >>> factory YesOrNoMenuWithText */
+HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl)
+{
+	(void)DrawWideTextBox_PrintText(hl);
+	return YesOrNoMenu();
+}
+/* <<< factory YesOrNoMenuWithText */

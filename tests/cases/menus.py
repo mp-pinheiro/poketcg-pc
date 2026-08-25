@@ -458,6 +458,26 @@ CASES["YesOrNoMenu"] = [
 ]
 # <<< factory YesOrNoMenu
 
+# >>> factory YesOrNoMenuWithText
+CONTRACT["YesOrNoMenuWithText"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["YesOrNoMenuWithText"] = [
+    {"hl": 1, "keys": 0x01,
+     "setup": SETUP,
+     "wram": {**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x00"},
+     "read": {**CACHE_READ, **PLACEMENT_READ},
+     "vread": VRAM_READ,
+     "expect_regs": {"a": 0x01, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=1, keys=0x01,
+         setup=SETUP,
+         wram={**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x01"},
+         read={**CACHE_READ, **PLACEMENT_READ},
+         vread=VRAM_READ,
+         expect_regs={"a": 0x00, "f": 0x80},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory YesOrNoMenuWithText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -547,3 +567,11 @@ MUTATIONS["TwoItemHorizontalMenu"] = {"source_symbol": "TwoItemHorizontalMenu", 
 # >>> factory-mutation YesOrNoMenu
 MUTATIONS["YesOrNoMenu"] = {"source_symbol": "YesOrNoMenu", "before": "\treturn HandleYesOrNoMenu(6u, 16u, 0u, 0u);", "after": "\treturn HandleYesOrNoMenu(7u, 16u, 0u, 0u);", "case_ids": ["YesOrNoMenu-0", "YesOrNoMenu-1"]}
 # <<< factory-mutation YesOrNoMenu
+# >>> factory-mutation YesOrNoMenuWithText
+MUTATIONS["YesOrNoMenuWithText"] = {
+    "source_symbol": "YesOrNoMenuWithText",
+    "before": "HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl)\n{\n\t(void)DrawWideTextBox_PrintText(hl);",
+    "after": "HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl)\n{\n\t(void)DrawWideTextBox_PrintText(0u);",
+    "case_ids": ["YesOrNoMenuWithText-0", "YesOrNoMenuWithText-1"],
+}
+# <<< factory-mutation YesOrNoMenuWithText
