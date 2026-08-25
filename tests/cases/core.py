@@ -2897,6 +2897,22 @@ CASES["ApplyBGP7OrSGB2ToCardImage"] = [
 ]
 # <<< factory ApplyBGP7OrSGB2ToCardImage
 
+# >>> factory DisplayPracticeDuelPlayerHandScreen
+CONTRACT["DisplayPracticeDuelPlayerHandScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayPracticeDuelPlayerHandScreen"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xC510: 1, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory DisplayPracticeDuelPlayerHandScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4171,3 +4187,6 @@ MUTATIONS["DrawCardListScreenLayout"] = {"source_symbol": "DrawCardListScreenLay
 # >>> factory-mutation ApplyBGP7OrSGB2ToCardImage
 MUTATIONS["ApplyBGP7OrSGB2ToCardImage"] = {"source_symbol": "ApplyBGP7OrSGB2ToCardImage", "before": "\t\ta = 0x0Au;", "after": "\t\ta = 0x20u;", "case_ids": ["ApplyBGP7OrSGB2ToCardImage-1"]}
 # <<< factory-mutation ApplyBGP7OrSGB2ToCardImage
+# >>> factory-mutation DisplayPracticeDuelPlayerHandScreen
+MUTATIONS["DisplayPracticeDuelPlayerHandScreen"] = {"source_symbol": "DisplayPracticeDuelPlayerHandScreen", "before": "\tDrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);", "after": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);", "case_ids": ["DisplayPracticeDuelPlayerHandScreen-0", "DisplayPracticeDuelPlayerHandScreen-1"]}
+# <<< factory-mutation DisplayPracticeDuelPlayerHandScreen

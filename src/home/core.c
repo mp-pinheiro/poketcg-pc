@@ -946,6 +946,19 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/text_box.h"
 #include "home/credits_sequence_commands.h"
 #include "home/tiles.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/text_box.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define DuelistHandText 0x00a7u
+#define CARD_LIST_PARAMETERS 0x5710u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5404,3 +5417,20 @@ SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uin
 	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory ApplyBGP7OrSGB2ToCardImage */
+
+/* >>> factory DisplayPracticeDuelPlayerHandScreen */
+void DisplayPracticeDuelPlayerHandScreen(void)
+{
+	(void)CreateHandCardList(0u);
+	EmptyScreen();
+	TileCopyResult tiles = LoadDuelCardSymbolTiles();
+	uint16_t box = tiles.hl;
+	DrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);
+	uint8_t count = CountCardsInDuelTempList().a;
+	uint16_t params = CARD_LIST_PARAMETERS;
+	PrintCardListItems(count, 0u, 0u, &params);
+	InitTextPrinting(1u, 1u);
+	(void)PrintTextNoDelay(DuelistHandText, 1u, 1u);
+	EnableLCD();
+}
+/* <<< factory DisplayPracticeDuelPlayerHandScreen */
