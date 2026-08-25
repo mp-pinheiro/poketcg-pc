@@ -106,3 +106,23 @@ DetectSGBResult DetectSGB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	return (DetectSGBResult){ok.a, (uint8_t)(ok.a == 0u ? 0x80u : 0x00u), ok.b, ok.c, ok.d, ok.e, ok.hl};
 }
 /* <<< factory DetectSGB */
+
+/* >>> factory Func_0bcb */
+Func_0bcbResult Func_0bcb(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	for (uint16_t i = 0; i < 0x1000u; i++) {
+		uint8_t value = gb_read8((uint16_t)(hl + i));
+		gb_write8((uint16_t)(0x8800u + i), value);
+	}
+	uint8_t tilemap_value = 0x80u;
+	for (uint8_t row = 0; row < 0x0Du; row++) {
+		for (uint8_t col = 0; col < 0x14u; col++) {
+			gb_write8((uint16_t)(0x9800u + (uint16_t)row * 0x20u + col), tilemap_value++);
+		}
+	}
+	gb_write8(0xFF40u, 0xC3u);
+	gb_write8(0xFF47u, 0xE4u);
+	SendSGBResult result = SendSGB(0xC3u, 0x00u, 0x00u, 0x00u, 0x00u, 0x0Cu, (uint16_t)((uint16_t)d << 8 | e));
+	return (Func_0bcbResult){result.a, result.f, result.b, result.c, result.d, result.e, result.hl};
+}
+/* <<< factory Func_0bcb */

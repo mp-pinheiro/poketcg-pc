@@ -63,6 +63,14 @@ CASES["DetectSGB"] = [
 ]
 # <<< factory DetectSGB
 
+# >>> factory Func_0bcb
+CONTRACT["Func_0bcb"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["Func_0bcb"] = [
+    {"hl": 0xD000, "wram": {0xCABB: b"\xC3", 0xFF40: b"\x80", 0xD000: bytes(range(256)) * 16}, "vread": {0: {0x8800: 0x1000, 0x9800: 0x1A0}}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    dict(POISON, hl=0xD000, wram={0xCABB: b"\xC3", 0xFF40: b"\x80", 0xD000: bytes(range(256)) * 16}, vread={0: {0x8800: 0x1000, 0x9800: 0x1A0}}, instruction_budget=500000, cycle_budget=2000000),
+]
+# <<< factory Func_0bcb
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -98,3 +106,11 @@ MUTATIONS["DetectSGB"] = {
     "case_ids": ["DetectSGB-0", "DetectSGB-1"],
 }
 # <<< factory-mutation DetectSGB
+# >>> factory-mutation Func_0bcb
+MUTATIONS["Func_0bcb"] = {
+    "source_symbol": "Func_0bcb",
+    "before": "\t\tuint8_t value = gb_read8((uint16_t)(hl + i));",
+    "after": "\t\tuint8_t value = gb_read8((uint16_t)(hl + i + 1u));",
+    "case_ids": ["Func_0bcb-0"],
+}
+# <<< factory-mutation Func_0bcb
