@@ -1180,6 +1180,14 @@ wEffectFailed = 0xCCED
 
 wArenaCardsInPlayArea = 0xCE5D
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wTileMapFill = 0xCAB6
+wDuelDisplayedScreen = 0xCAC2
+wCheckMenuPlayAreaWhichDuelist = 0xCE50
+wCheckMenuPlayAreaWhichLayout = 0xCE51
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1471,6 +1479,14 @@ CASES["DrawInPlayArea_ActiveCardGfx"] = [
 ]
 # <<< factory DrawInPlayArea_ActiveCardGfx
 
+# >>> factory DrawInPlayAreaScreen
+CONTRACT["DrawInPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawInPlayAreaScreen"] = [
+    {"wram": {0xFF97: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, "instruction_budget": 3000000, "cycle_budget": 12000000},
+    dict(POISON, wram={0xFF97: b"\x01", 0xCABB: b"\x00"}, read={0xCAB6: 1, 0xCAC2: 1, 0xCE50: 1, 0xCE51: 1}, instruction_budget=3000000, cycle_budget=12000000),
+]
+# <<< factory DrawInPlayAreaScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1671,3 +1687,11 @@ MUTATIONS["PrintFailedEffectText"] = {"source_symbol": "PrintFailedEffectText", 
 # >>> factory-mutation DrawInPlayArea_ActiveCardGfx
 MUTATIONS["DrawInPlayArea_ActiveCardGfx"] = {"source_symbol": "DrawInPlayArea_ActiveCardGfx", "before": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 0u);", "after": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 1u);", "case_ids": ["DrawInPlayArea_ActiveCardGfx-0"]}
 # <<< factory-mutation DrawInPlayArea_ActiveCardGfx
+# >>> factory-mutation DrawInPlayAreaScreen
+MUTATIONS["DrawInPlayAreaScreen"] = {
+    "source_symbol": "DrawInPlayAreaScreen",
+    "before": "wTileMapFill = 0u;",
+    "after": "wTileMapFill = 1u;",
+    "case_ids": ["DrawInPlayAreaScreen-0", "DrawInPlayAreaScreen-1"],
+}
+# <<< factory-mutation DrawInPlayAreaScreen

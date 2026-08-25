@@ -528,6 +528,17 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/tiles.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/credits_sequence_commands.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/objects.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#define CHECK_PLAY_AREA 0x0Au
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2615,3 +2626,35 @@ void DrawInPlayArea_ActiveCardGfx(void)
 	SwapTurn();
 }
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
+
+/* >>> factory DrawInPlayAreaScreen */
+void DrawInPlayAreaScreen(void)
+{
+	wTileMapFill = 0u;
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE;
+	DoFrame();
+	EmptyScreen();
+	wDuelDisplayedScreen = CHECK_PLAY_AREA;
+	Set_OBJ_8x8();
+	LoadCursorTile();
+	(void)LoadSymbolsFont();
+	(void)LoadDeckAndDiscardPileIcons();
+	(void)SetupText(0x80u, 0x9Fu);
+
+	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
+	wCheckMenuPlayAreaWhichLayout = hWhoseTurn;
+	DrawPlayArea_PrizeCards(0x4629u);
+	DrawPlayArea_BenchCards(3u, 3u, 15u);
+	DrawInPlayArea_Icons(0x4635u);
+	SwapTurn();
+	wCheckMenuPlayAreaWhichDuelist = hWhoseTurn;
+	SwapTurn();
+	DrawPlayArea_PrizeCards(0x462Fu);
+	DrawPlayArea_BenchCards(3u, 3u, 0u);
+	SwapTurn();
+	DrawInPlayArea_Icons(0x463Bu);
+	SwapTurn();
+	DrawInPlayArea_ActiveCardGfx();
+}
+/* <<< factory DrawInPlayAreaScreen */

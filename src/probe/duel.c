@@ -859,6 +859,13 @@ static void adapt_DrawInPlayArea_ActiveCardGfx(ProbeState *s)
 }
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
 
+/* >>> factory DrawInPlayAreaScreen */
+static void adapt_DrawInPlayAreaScreen(ProbeState *s)
+{
+	DrawInPlayAreaScreen();
+}
+/* <<< factory DrawInPlayAreaScreen */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -964,5 +971,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "PrintPokemonsAttackText", adapt_PrintPokemonsAttackText },
 	{ "PrintFailedEffectText", adapt_PrintFailedEffectText },
 	{ "DrawInPlayArea_ActiveCardGfx", adapt_DrawInPlayArea_ActiveCardGfx },
+	{ "DrawInPlayAreaScreen", adapt_DrawInPlayAreaScreen },
 	{ NULL, NULL },
 };

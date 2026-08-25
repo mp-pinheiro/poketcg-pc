@@ -644,4 +644,7 @@ PrintFailedEffectTextResult PrintFailedEffectText(void);
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void);
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
+/* >>> factory DrawInPlayAreaScreen */
+void DrawInPlayAreaScreen(void);
+/* <<< factory DrawInPlayAreaScreen */
 #endif
