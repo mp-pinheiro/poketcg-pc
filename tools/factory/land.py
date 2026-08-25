@@ -591,6 +591,15 @@ def _print_eta() -> int:
         1 for record in work_records
         if record.get("state") in ("ready", "blocked") and not record.get("operational_blocker")
     )
+    excluded = [
+        record for record in work_records
+        if record.get("state") in ("ready", "blocked") and record.get("operational_blocker")
+    ]
+    if excluded:
+        excluded_bytes = sum(record.get("size", 0) for record in excluded)
+        print(f"ETA excluded_operational={len(excluded)} "
+              f"excluded_bytes={excluded_bytes} "
+              f"note=capability-blocked; see .factory/blocked.toml")
 
     seed = hashlib.sha256(landings_path.read_bytes()).hexdigest()[:16]
     rng = random.Random(seed)
