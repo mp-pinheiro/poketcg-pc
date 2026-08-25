@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.115.0 - 2026-08-25
+## v0.116.0 - 2026-08-25
 
 ### Features
 
@@ -12,5 +12,6 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 ### Miscellaneous
 
 - *(progress)* Refresh port status
+- *(factory)* Retire MagneticStormEffect, exhausted retries
 - *(progress)* Refresh port status
 
