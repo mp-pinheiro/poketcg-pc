@@ -69,6 +69,13 @@ def _revision(cwd: Path, revision: str) -> str:
     return value
 
 
+def _is_ancestor(cwd: Path, ancestor: str, descendant: str) -> bool:
+    """True when `descendant` already contains `ancestor`."""
+    listed = _run(["jj", "log", "--no-graph", "-r", f"{ancestor} & ::{descendant}",
+                   "-T", "commit_id"], cwd, 120).stdout.strip()
+    return listed.startswith(ancestor)
+
+
 def _artifact_members(artifact_sha256: str) -> list[Path]:
     if not workers.artifact_exists(artifact_sha256):
         raise LandError(f"artifact {artifact_sha256} is missing or corrupt")
@@ -437,6 +444,21 @@ def _land_batch(
 
     if push:
         try:
+            # Another session can advance main while this batch was gating, and
+            # then the batch commits are no longer descendants of the bookmark.
+            # `bookmark set` refuses that as "backwards or sideways" and the
+            # landing is stranded off-trunk with nothing naming it. Rebase onto
+            # the bookmark first; the gate already accepted the content, and a
+            # graft that no longer applies surfaces as a conflict here rather
+            # than as a silent loss.
+            _run(["jj", "git", "fetch", "--remote", "origin"], root, 300)
+            head = _revision(root, "main")
+            if head != publication_revision and not _is_ancestor(root, head, publication_revision):
+                _run(["jj", "rebase", "-s", source_revision, "-d", "main"], root, 300)
+                publication_revision = _revision(root, "@-")
+                if _run(["jj", "resolve", "--list"], root, 120).stdout.strip():
+                    raise LandError("rebase onto the advanced main conflicts")
+                _run(["jj", "bookmark", "set", "main", "-r", publication_revision], root, 120)
             _run(["jj", "git", "push", "--remote", "origin", "--bookmark", "main"], root, 300)
             remote_revision = _revision(root, "main@origin")
             if remote_revision != publication_revision:
