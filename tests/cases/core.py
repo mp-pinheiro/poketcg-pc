@@ -3304,6 +3304,14 @@ CASES["DisplayUsedTrainerCardDetailScreen"] = [
 ]
 # <<< factory DisplayUsedTrainerCardDetailScreen
 
+# >>> factory DisplayNoBasicPokemonInHandScreenAndText
+CONTRACT["DisplayNoBasicPokemonInHandScreenAndText"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["DisplayNoBasicPokemonInHandScreenAndText"] = [
+    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayNoBasicPokemonInHandScreenAndText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4702,3 +4710,6 @@ MUTATIONS["DisplayUsedTrainerCardDetailScreen"] = {
  "case_ids": ["DisplayUsedTrainerCardDetailScreen-0", "DisplayUsedTrainerCardDetailScreen-1"],
 }
 # <<< factory-mutation DisplayUsedTrainerCardDetailScreen
+# >>> factory-mutation DisplayNoBasicPokemonInHandScreenAndText
+MUTATIONS["DisplayNoBasicPokemonInHandScreenAndText"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreenAndText", "before": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){result.a, result.b, result.c, result.f, result.hl, result.de};\n}", "after": "DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);\n\tDisplayNoBasicPokemonInHandScreen();\n\tPrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();\n\treturn (DisplayNoBasicPokemonInHandScreenAndTextResult){0u};\n}", "case_ids": ["DisplayNoBasicPokemonInHandScreenAndText-0", "DisplayNoBasicPokemonInHandScreenAndText-1"]}
+# <<< factory-mutation DisplayNoBasicPokemonInHandScreenAndText

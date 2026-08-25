@@ -1084,6 +1084,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "generated/hram.h"
 #include "home/core.h"
+
+#include "home/core.h"
+#include "home/menus.h"
+#define ThereAreNoBasicPokemonInHand 0x006au
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6110,3 +6114,13 @@ WaitResult DisplayUsedTrainerCardDetailScreen(void)
 	return DisplayCardDetailScreen(hTempCardIndex_ff9f, UsedText);
 }
 /* <<< factory DisplayUsedTrainerCardDetailScreen */
+
+/* >>> factory DisplayNoBasicPokemonInHandScreenAndText */
+DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ThereAreNoBasicPokemonInHand);
+	DisplayNoBasicPokemonInHandScreen();
+	PrintReturnCardsToDeckDrawAgainResult result = PrintReturnCardsToDeckDrawAgain();
+	return (DisplayNoBasicPokemonInHandScreenAndTextResult){result.a, result.b, result.c, result.f, result.hl, result.de};
+}
+/* <<< factory DisplayNoBasicPokemonInHandScreenAndText */

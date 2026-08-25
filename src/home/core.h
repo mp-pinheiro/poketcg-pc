@@ -967,4 +967,8 @@ void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, 
 /* >>> factory DisplayUsedTrainerCardDetailScreen */
 WaitResult DisplayUsedTrainerCardDetailScreen(void);
 /* <<< factory DisplayUsedTrainerCardDetailScreen */
+/* >>> factory DisplayNoBasicPokemonInHandScreenAndText */
+typedef struct { uint8_t a, b, c, f; uint16_t hl, de; } DisplayNoBasicPokemonInHandScreenAndTextResult;
+DisplayNoBasicPokemonInHandScreenAndTextResult DisplayNoBasicPokemonInHandScreenAndText(void);
+/* <<< factory DisplayNoBasicPokemonInHandScreenAndText */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayNoBasicPokemonInHandScreenAndText",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayNoBasicPokemonInHandScreenAndText\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 112, \"hl\": 52498, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayNoBasicPokemonInHandScreenAndText\", \"mismatches\": {\"f\": [112, 0], \"b\": [18, 0], \"c\": [17, 0], \"d\": [18, 0], \"e\": [17, 0], \"hl\": [52498, 0]}}\n",
+  "restored": "{\"fn\": \"DisplayNoBasicPokemonInHandScreenAndText\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 17, \"d\": 18, \"e\": 17, \"f\": 112, \"hl\": 52498, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

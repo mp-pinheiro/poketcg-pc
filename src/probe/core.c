@@ -2159,6 +2159,20 @@ static void adapt_DisplayUsedTrainerCardDetailScreen(ProbeState *s)
 }
 /* <<< factory DisplayUsedTrainerCardDetailScreen */
 
+/* >>> factory DisplayNoBasicPokemonInHandScreenAndText */
+static void adapt_DisplayNoBasicPokemonInHandScreenAndText(ProbeState *s)
+{
+	DisplayNoBasicPokemonInHandScreenAndTextResult r = DisplayNoBasicPokemonInHandScreenAndText();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory DisplayNoBasicPokemonInHandScreenAndText */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2418,5 +2432,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenCardPage_FromHand", adapt_OpenCardPage_FromHand },
 	{ "OpenCardPage_FromCheckPlayArea", adapt_OpenCardPage_FromCheckPlayArea },
 	{ "DisplayUsedTrainerCardDetailScreen", adapt_DisplayUsedTrainerCardDetailScreen },
+	{ "DisplayNoBasicPokemonInHandScreenAndText", adapt_DisplayNoBasicPokemonInHandScreenAndText },
 	{ NULL, NULL },
 };
