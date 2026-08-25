@@ -1272,6 +1272,9 @@ uint16_t PikachuAltLv16GrowlEffect(uint16_t hl);
 /* >>> factory MagmarSmokescreenEffect */
 uint16_t MagmarSmokescreenEffect(uint16_t hl);
 /* <<< factory MagmarSmokescreenEffect */
+/* >>> factory PikachuLv16GrowlEffect */
+uint16_t PikachuLv16GrowlEffect(uint16_t hl);
+/* <<< factory PikachuLv16GrowlEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
