@@ -302,6 +302,21 @@ factory-try FN:
 factory-next N="4":
     python3 tools/factory/try_one.py --next {{N}}
 
+
+# Reconcile the ledgers against the tree: reap issued attempts that can never be
+# verified, re-offer landings whose content is missing, retire exhausted reds.
+# Writes .factory/blocked.toml (tracked) when a red is retired.
+factory-heal:
+    python3 tools/factory/heal.py --apply
+
+# What the ledgers would repair, without touching anything.
+factory-heal-dry:
+    python3 tools/factory/heal.py
+
+# Rank the remaining obstructions by how many routines clearing each one frees.
+factory-capabilities N="5":
+    python3 tools/factory/try_one.py --capabilities {{N}}
+
 # Land every verified artifact: gate, commit, push, record.
 factory-land:
     python3 tools/factory/land.py --all

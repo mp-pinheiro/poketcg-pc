@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import hashlib
 import re
@@ -15,6 +16,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
+import heal
 import lanes
 import packet as packet_mod
 import prompt as prompt_mod
@@ -106,6 +108,17 @@ def _check_operational_blocker(fn: str) -> None:
 
 
 
+@functools.cache
+def _home_source_lines(basename: str) -> tuple[str, ...] | None:
+    """Lines of src/home/<basename>.c, cached: the capability report asks about
+    every blocked root, and re-reading one file per routine dominated its cost.
+    """
+    path = common.ROOT / "src" / "home" / f"{basename}.c"
+    if not path.is_file():
+        return None
+    return tuple(path.read_text(errors="replace").splitlines())
+
+
 def _already_implemented(fn: str, source: str | None) -> bool:
     """True when the ported tree already defines this routine.
 
@@ -120,12 +133,11 @@ def _already_implemented(fn: str, source: str | None) -> bool:
     matched by an unrelated `_Preload_Ronald1InPsychicClubLobby(` definition that
     merely contains it as a substring.
     """
-    basename = Path(source or fn).stem
-    path = common.ROOT / "src" / "home" / f"{basename}.c"
-    if not path.is_file():
+    lines = _home_source_lines(Path(source or fn).stem)
+    if lines is None:
         return False
     pattern = re.compile(r"(?<![A-Za-z0-9_])" + re.escape(fn) + r"\(")
-    for line in path.read_text(errors="replace").splitlines():
+    for line in lines:
         stripped = line.strip()
         if not pattern.search(stripped):
             continue
@@ -387,15 +399,20 @@ def _quarantined_artifacts() -> set[str]:
 
 
 def _artifact_attempted_names() -> set[str]:
-    quarantined = _quarantined_artifacts()
+    # A revoked artifact is one whose landing never reached the tree: its routine
+    # must stop counting as attempted, so a re-land that the gate then rejects
+    # returns the routine to the fresh pool instead of stranding it.
+    excluded = _quarantined_artifacts() | heal.revoked_artifacts()
     names: set[str] = set()
     for record in workers.artifact_records():
-        if record.get("artifact_sha256") in quarantined:
+        if record.get("artifact_sha256") in excluded:
             continue
         for routine in (record.get("identity") or {}).get("routines") or []:
             if isinstance(routine, dict) and isinstance(routine.get("name"), str):
                 names.add(routine["name"])
     return names
+
+
 def _green_attempt_is_quarantined(fn: str, current: dict[str, Any],
                                   quarantined: set[str]) -> bool:
     if current.get("state") != "green":
@@ -451,6 +468,87 @@ def _score_rows(rows: list[dict[str, Any]], *, retry: bool) -> list[tuple[int, d
     return sorted(scored, key=lambda item: (-item[0], item[1]["size"], item[1]["name"]))
 
 
+DONE_STATES = frozenset({"awaiting-gate", "complete", "failing", "excluded"})
+IMPLEMENTED_UNBLOCK = (
+    "register the existing C body (cases, probe, mutation) - the factory "
+    "preflight rejects this routine as already-implemented, so no candidate can "
+    "ever be issued for it"
+)
+
+
+def capability_frontier(records: list[dict[str, Any]], *, limit: int = 5
+                        ) -> tuple[int, list[tuple[int, str, str, str]]]:
+    """(routines reachable today, levers ranked by marginal unblock count).
+
+    Marginal, not transitive-dependents: a routine gated by four blocked roots is
+    freed by none of them alone, so a dependents count wildly overstates what one
+    capability buys. Each lever is scored by re-running the reachability fixpoint
+    with exactly that one obstruction removed.
+
+    Two obstruction kinds are modelled, because both are permanently unportable
+    for the loop as it stands: an operational blocker in blocked.toml, and a
+    routine whose C body already exists (resolve() raises
+    PreflightBlocker("already-implemented") for it forever).
+    """
+    rows = {str(row["name"]): row for row in records}
+    edges = {name: [b for b in (row.get("blockers") or []) if b in rows]
+             for name, row in rows.items()}
+    done = {name for name, row in rows.items() if row.get("state") in DONE_STATES}
+    blocked_roots = {name for name, row in rows.items()
+                     if row.get("operational_blocker")}
+    implemented = {
+        name for name, row in rows.items()
+        if row.get("state") in {"ready", "blocked"}
+        and _already_implemented(name, row.get("source"))
+    }
+    excluded = {name for name, row in rows.items() if row.get("state") == "excluded"}
+    unportable = blocked_roots | implemented
+
+    def reachable(cleared: frozenset[str], forced: frozenset[str] = frozenset()) -> int:
+        ported = done | forced
+        gained = 0
+        changed = True
+        while changed:
+            changed = False
+            for name in rows:
+                if name in ported or name in excluded:
+                    continue
+                if name in unportable and name not in cleared:
+                    continue
+                if all(blocker in ported for blocker in edges[name]):
+                    ported.add(name)
+                    gained += 1
+                    changed = True
+        return gained
+
+    base = reachable(frozenset())
+    levers: list[tuple[int, str, str, str]] = []
+    for name in sorted(blocked_roots):
+        marginal = reachable(frozenset({name})) - base
+        unblock = str((rows[name].get("operational_blocker") or {}).get("unblock", ""))
+        levers.append((marginal, "blocked", name, unblock))
+    for name in sorted(implemented):
+        marginal = reachable(frozenset({name}), frozenset({name})) - base
+        levers.append((marginal, "implemented", name, IMPLEMENTED_UNBLOCK))
+    levers.sort(key=lambda item: (-item[0], item[2]))
+    return base, levers[:limit]
+
+
+def print_capability_frontier(records: list[dict[str, Any]], *, limit: int = 5) -> None:
+    reachable, levers = capability_frontier(records, limit=limit)
+    for marginal, kind, name, unblock in levers:
+        print(f"CAPABILITY {kind} {name} marginal={marginal} "
+              f"unblock={' '.join(unblock.split())[:240]}")
+    blocked_roots = sum(1 for row in records if row.get("operational_blocker"))
+    implemented = sum(
+        1 for row in records
+        if row.get("state") in {"ready", "blocked"}
+        and _already_implemented(str(row["name"]), row.get("source"))
+    )
+    print(f"CAPABILITY status reachable={reachable} blocked_roots={blocked_roots} "
+          f"already_implemented={implemented}")
+
+
 def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
     report = packet_mod.report_module()
     records = report.compute(report.load_inventory(), report.load_routines()[0],
@@ -464,6 +562,12 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
     # or two sessions claim the same routine and one session's candidates are
     # discarded as stale.
     with common.file_lock(common.locks_dir() / "select.lock", timeout=900):
+        # Cheap, tracked-file-free repairs, under the same lock that claims a
+        # routine: without them a landing lost from the tree is never re-offered
+        # and an issued attempt on a now-blocked routine reports `active`
+        # forever, so the loop announces work in flight while nothing can move.
+        revoked = heal.revoke_lost_landings(apply=True)
+        reaped = heal.reap_stale_issued(_current_states(), _rows_by_name(records))
         current = _current_states()
         attempted = _artifact_attempted_names()
         quarantined = _quarantined_artifacts()
@@ -495,9 +599,8 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
                 )
             ]
         # A basename is owned by whichever attempt claimed it first, in this
-        # session or another: surgery is per basename, so two live attempts on
-        # one basename guarantee that one of the two greens is later quarantined
-        # stale-owned-path.
+        # session or another: surgery is per basename, so two live attempts on one
+        # basename spend two candidate budgets to land one translation.
         by_name = _rows_by_name(records)
         seen = {
             Path(by_name[name]["source"]).stem
@@ -563,8 +666,13 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
     print(
         f"NEXT status={status} selected={prepared} fresh={fresh_selected} "
         f"retry={retry_selected} active={active} preflight_blocked={preflight_blocked} "
-        f"exhausted={exhausted} eligible={eligible}"
+        f"exhausted={exhausted} eligible={eligible} reaped={len(reaped)} "
+        f"revoked={len(revoked)}"
     )
+    # A stall is only actionable if it names the next capability, so the report
+    # goes out with the verdict rather than waiting for someone to ask.
+    if status == "stalled":
+        print_capability_frontier(records)
     return exit_code
 
 
@@ -618,6 +726,15 @@ def _prepare_direct(fn: str) -> dict[str, Any]:
 
 def _set_attempt_state(current: dict[str, Any], state: str, *, retry_limit: int,
                        unsupported: bool = False) -> None:
+    fn = str(current["fn"])
+    # A verification that finishes after its attempt was reaped and reissued must
+    # discard its own result, not stamp it over the newer attempt: the on-disk
+    # attempt id, not this process's memory, is the identity of record.
+    on_disk = _read_current(fn)
+    if on_disk is not None and on_disk["attempt_id"] != current["attempt_id"]:
+        print(f"TRY {fn} superseded detail=attempt {str(current['attempt_id'])[:8]} "
+              f"was replaced by {str(on_disk['attempt_id'])[:8]}")
+        return
     current["state"] = state
     if unsupported:
         current["generation"] = max(current["generation"], retry_limit)
@@ -625,9 +742,9 @@ def _set_attempt_state(current: dict[str, Any], state: str, *, retry_limit: int,
     # twice (the packet decides, not the sample) or an exhausted budget. Either
     # way it must be recorded, because a red dropped from both pools without a
     # trace strands every routine that depends on it and stops convergence.
-    retired = is_trapped(str(current["fn"]), current) or current["generation"] >= retry_limit
+    retired = is_trapped(fn, current) or current["generation"] >= retry_limit
     if state == "red" and retired:
-        record_trap(str(current["fn"]), current)
+        record_trap(fn, current)
     _store_current(current)
 
 
@@ -652,6 +769,9 @@ def main(argv: list[str] | None = None) -> int:
                              "each retry carries the previous diagnostic, and a "
                              "repeated signature is trapped rather than retried, so "
                              "the budget is spent only where retries are informative")
+    parser.add_argument("--capabilities", type=int, nargs="?", const=5, default=None,
+                        help="rank the remaining obstructions by how many routines "
+                             "clearing each one alone would make reachable")
     arguments = parser.parse_args(argv)
 
     if arguments.retry_limit < 1:
@@ -659,12 +779,22 @@ def main(argv: list[str] | None = None) -> int:
     fn = arguments.fn
     if arguments.next is not None and fn:
         parser.error("--next and --fn are mutually exclusive")
+    if arguments.capabilities is not None and (fn or arguments.next is not None):
+        parser.error("--capabilities is exclusive with --fn and --next")
     if arguments.summary:
         return summarize()
+    if arguments.capabilities is not None:
+        if arguments.capabilities < 1:
+            parser.error("--capabilities must be at least 1")
+        report = packet_mod.report_module()
+        records = report.compute(report.load_inventory(), report.load_routines()[0],
+                                 report.load_gate())["work_records"]
+        print_capability_frontier(records, limit=arguments.capabilities)
+        return 0
     if arguments.next is not None:
         return subcommand_next(arguments.next, arguments.retry_red, arguments.retry_limit)
     if not fn:
-        parser.error("--fn is required unless --summary or --next is given")
+        parser.error("--fn is required unless --summary, --next, or --capabilities is given")
     try:
         issued = _prepare_direct(fn)
     except OperationalBlocker as exc:
