@@ -211,6 +211,44 @@ def _reap_reason(fn: str, state: dict[str, Any], rows: dict[str, dict[str, Any]]
     return "abandoned" if age > ttl_seconds else None
 
 
+def reconcile_landed(states: dict[str, dict[str, Any]], *,
+                     root: Path = common.ROOT, apply: bool = True) -> list[str]:
+    """Retire attempt state for routines the tree has already landed.
+
+    Two sessions land into one tree, so a routine can be published while another
+    session still holds a `red` or `issued` current.json for it. Nothing else
+    clears that: `reap_stale_issued` only ages `issued` claims and never looks at
+    a `red`, and `retire_exhausted_reds` waits for the retry ceiling. Until it is
+    cleared the routine is offered by every retry pass, `resolve` rejects it as
+    `already-implemented`, and the discarded attempt still consumes its
+    basename's per-call selection slot -- a claim that can never be satisfied and
+    never expires.
+
+    Landed means both markers `land.py` writes: the C block under src/home and
+    the cases block under tests/cases. Requiring the pair keeps a half-applied
+    surgery -- which `lost_landings` reports and revokes -- out of this path.
+    """
+    import try_one
+
+    c_names, py_names = marker_census(root)
+    landed = c_names & py_names
+    prefix = "HEAL " if apply else "HEAL would-"
+    reconciled: list[str] = []
+    for fn in sorted(states):
+        state = states[fn]
+        if state.get("state") not in ("red", "issued"):
+            continue
+        if fn not in landed:
+            continue
+        if apply:
+            current = dict(state)
+            current["state"] = "stale"
+            try_one._store_current(current)
+        reconciled.append(fn)
+        print(f"{prefix}landed {fn} state={state.get('state')}")
+    return reconciled
+
+
 def reap_stale_issued(states: dict[str, dict[str, Any]],
                       rows: dict[str, dict[str, Any]], *,
                       ttl_seconds: float = DEFAULT_TTL_SECONDS,
