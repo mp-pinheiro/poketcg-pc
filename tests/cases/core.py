@@ -1676,6 +1676,13 @@ wCardListItemSelectionMenuType = 0xCBDE
 wNoItemSelectionMenuKeys = 0xCBD6
 wDuelTempList = 0xC510
 wCardListScratch = 0xC51A
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wWhoseTurn = 0xCC05
+HUD_TILE = 0x996F
+HUD_SEED = {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00", 0xC3F1: b"\x00"}
+HUD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2948,6 +2955,15 @@ CASES["InitAndDrawCardListScreenLayout"] = [
     dict(POISON, wram={0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory InitAndDrawCardListScreenLayout
+
+# >>> factory RedrawTurnDuelistsDuelHUD
+CONTRACT["RedrawTurnDuelistsDuelHUD"] = {"compare": (), "preserve": ()}
+CASES["RedrawTurnDuelistsDuelHUD"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": HUD_SEED, "read": {wWhoseTurn: 0xC2}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {**HUD_SEED, hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, "read": {wWhoseTurn: 0xC3}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
+    dict(POISON, wram={**HUD_SEED, hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, read={wWhoseTurn: 0xC3}, vread={0: {HUD_TILE: 1}}, **HUD_BUDGET),
+]
+# <<< factory RedrawTurnDuelistsDuelHUD
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4237,3 +4253,6 @@ MUTATIONS["DrawDuelMainScene"] = {
 # >>> factory-mutation InitAndDrawCardListScreenLayout
 MUTATIONS["InitAndDrawCardListScreenLayout"] = {"source_symbol": "InitAndDrawCardListScreenLayout", "before": "\twSelectedDuelSubMenuItem = 0u;", "after": "\twSelectedDuelSubMenuItem = 1u;", "case_ids": ["InitAndDrawCardListScreenLayout-0", "InitAndDrawCardListScreenLayout-1"]}
 # <<< factory-mutation InitAndDrawCardListScreenLayout
+# >>> factory-mutation RedrawTurnDuelistsDuelHUD
+MUTATIONS["RedrawTurnDuelistsDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsDuelHUD", "before": "\tSwapTurn();\n\tDrawDuelHUDs();\n\tSwapTurn();", "after": "\tSwapTurn();\n\tDrawDuelHUDs();", "case_ids": ["RedrawTurnDuelistsDuelHUD-1", "RedrawTurnDuelistsDuelHUD-2"]}
+# <<< factory-mutation RedrawTurnDuelistsDuelHUD

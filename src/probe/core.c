@@ -1931,6 +1931,14 @@ static void adapt_InitAndDrawCardListScreenLayout(ProbeState *s)
 }
 /* <<< factory InitAndDrawCardListScreenLayout */
 
+/* >>> factory RedrawTurnDuelistsDuelHUD */
+static void adapt_RedrawTurnDuelistsDuelHUD(ProbeState *s)
+{
+	(void)s;
+	RedrawTurnDuelistsDuelHUD();
+}
+/* <<< factory RedrawTurnDuelistsDuelHUD */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2160,5 +2168,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayPracticeDuelPlayerHandScreen", adapt_DisplayPracticeDuelPlayerHandScreen },
 	{ "DrawDuelMainScene", adapt_DrawDuelMainScene },
 	{ "InitAndDrawCardListScreenLayout", adapt_InitAndDrawCardListScreenLayout },
+	{ "RedrawTurnDuelistsDuelHUD", adapt_RedrawTurnDuelistsDuelHUD },
 	{ NULL, NULL },
 };

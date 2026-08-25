@@ -872,4 +872,7 @@ void DrawDuelMainScene(void);
 /* >>> factory InitAndDrawCardListScreenLayout */
 DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void);
 /* <<< factory InitAndDrawCardListScreenLayout */
+/* >>> factory RedrawTurnDuelistsDuelHUD */
+void RedrawTurnDuelistsDuelHUD(void);
+/* <<< factory RedrawTurnDuelistsDuelHUD */
 #endif

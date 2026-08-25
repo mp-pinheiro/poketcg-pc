@@ -973,6 +973,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/core.h"
 #define PleaseSelectHandText 0x00AAu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5521,3 +5526,16 @@ DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void)
 	return DrawCardListScreenLayout();
 }
 /* <<< factory InitAndDrawCardListScreenLayout */
+
+/* >>> factory RedrawTurnDuelistsDuelHUD */
+void RedrawTurnDuelistsDuelHUD(void)
+{
+	if (hWhoseTurn == wWhoseTurn) {
+		DrawDuelHUDs();
+		return;
+	}
+	SwapTurn();
+	DrawDuelHUDs();
+	SwapTurn();
+}
+/* <<< factory RedrawTurnDuelistsDuelHUD */
