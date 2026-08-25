@@ -2,13 +2,14 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.159.0 - 2026-08-25
+## v0.160.0 - 2026-08-25
 
 ### Features
 
-- *(port)* Land 4 routines
+- *(port)* Land 1 routines
 
 ### Miscellaneous
 
-- *(progress)* Refresh gate report
+- *(factory)* Unblock OpenCardPage for retry
+- *(progress)* Refresh port status
 
