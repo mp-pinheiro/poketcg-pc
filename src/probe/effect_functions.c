@@ -3144,6 +3144,14 @@ static void adapt_HandleEnergyDiscardEffectSelection(ProbeState *s)
 }
 /* <<< factory HandleEnergyDiscardEffectSelection */
 
+/* >>> factory DragonairHyperBeam_PlayerSelectEffect */
+static void adapt_DragonairHyperBeam_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	DragonairHyperBeam_PlayerSelectEffect();
+}
+/* <<< factory DragonairHyperBeam_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3533,5 +3541,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperEnergyRetrieval_DiscardAndAddToHandEffect", adapt_SuperEnergyRetrieval_DiscardAndAddToHandEffect },
 	{ "HandleDefendingPokemonAttackSelection", adapt_HandleDefendingPokemonAttackSelection },
 	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
+	{ "DragonairHyperBeam_PlayerSelectEffect", adapt_DragonairHyperBeam_PlayerSelectEffect },
 	{ NULL, NULL },
 };

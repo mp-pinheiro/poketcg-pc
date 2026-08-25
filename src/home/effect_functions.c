@@ -5594,3 +5594,10 @@ void HandleEnergyDiscardEffectSelection(void)
 	}
 }
 /* <<< factory HandleEnergyDiscardEffectSelection */
+
+/* >>> factory DragonairHyperBeam_PlayerSelectEffect */
+void DragonairHyperBeam_PlayerSelectEffect(void)
+{
+	HandleEnergyDiscardEffectSelection();
+}
+/* <<< factory DragonairHyperBeam_PlayerSelectEffect */

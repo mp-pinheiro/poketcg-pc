@@ -3687,6 +3687,15 @@ CASES["HandleEnergyDiscardEffectSelection"] = [
 ]
 # <<< factory HandleEnergyDiscardEffectSelection
 
+# >>> factory DragonairHyperBeam_PlayerSelectEffect
+CONTRACT["DragonairHyperBeam_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["DragonairHyperBeam_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, "read": {0xFF97: 1, 0xFFA0: 1}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    {"wram": {0xFF97: b"\xC3", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, "read": {0xFF97: 1, 0xFFA0: 1}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x55", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, read={0xFF97: 1, 0xFFA0: 1}, instruction_budget=500000, cycle_budget=2000000),
+]
+# <<< factory DragonairHyperBeam_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5803,3 +5812,6 @@ MUTATIONS["HandleDefendingPokemonAttackSelection"] = {"source_symbol": "HandleDe
 # >>> factory-mutation HandleEnergyDiscardEffectSelection
 MUTATIONS["HandleEnergyDiscardEffectSelection"] = {"source_symbol": "HandleEnergyDiscardEffectSelection", "before": "\t\thTemp_ffa0 = 0xffu;", "after": "\t\thTemp_ffa0 = 0u;", "case_ids": ["HandleEnergyDiscardEffectSelection-0", "HandleEnergyDiscardEffectSelection-1", "HandleEnergyDiscardEffectSelection-2"]}
 # <<< factory-mutation HandleEnergyDiscardEffectSelection
+# >>> factory-mutation DragonairHyperBeam_PlayerSelectEffect
+MUTATIONS["DragonairHyperBeam_PlayerSelectEffect"] = {"source_symbol": "DragonairHyperBeam_PlayerSelectEffect", "before": "\tHandleEnergyDiscardEffectSelection();", "after": "\t(void)0;", "case_ids": ["DragonairHyperBeam_PlayerSelectEffect-0", "DragonairHyperBeam_PlayerSelectEffect-1", "DragonairHyperBeam_PlayerSelectEffect-2"]}
+# <<< factory-mutation DragonairHyperBeam_PlayerSelectEffect
