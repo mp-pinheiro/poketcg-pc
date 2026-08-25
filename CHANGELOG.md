@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.154.0 - 2026-08-25
+## v0.155.0 - 2026-08-25
 
 ### Features
 
@@ -10,5 +10,7 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 
 ### Miscellaneous
 
+- *(factory)* Document DeleteSaveDataForNewGame blocker
+- *(progress)* Refresh port status
 - *(progress)* Refresh port status
 
