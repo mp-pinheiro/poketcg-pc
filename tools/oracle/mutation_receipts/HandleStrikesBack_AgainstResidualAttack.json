@@ -1,0 +1,9 @@
+{
+  "fn": "HandleStrikesBack_AgainstResidualAttack",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleStrikesBack_AgainstResidualAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52420\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleStrikesBack_AgainstResidualAttack\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"HandleStrikesBack_AgainstResidualAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52420\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

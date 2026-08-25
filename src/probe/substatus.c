@@ -175,6 +175,15 @@ static void adapt_ApplyStrikesBack_AgainstResidualAttack(ProbeState *s)
 }
 /* <<< factory ApplyStrikesBack_AgainstResidualAttack */
 
+/* >>> factory HandleStrikesBack_AgainstResidualAttack */
+static void adapt_HandleStrikesBack_AgainstResidualAttack(ProbeState *s)
+{
+	HandleStrikesBackResidualResult r = HandleStrikesBack_AgainstResidualAttack();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleStrikesBack_AgainstResidualAttack */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -201,5 +210,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "ClearChangedTypesIfMuk", adapt_ClearChangedTypesIfMuk },
 	{ "HandleStrikesBack_AgainstDamagingAttack", adapt_HandleStrikesBack_AgainstDamagingAttack },
 	{ "ApplyStrikesBack_AgainstResidualAttack", adapt_ApplyStrikesBack_AgainstResidualAttack },
+	{ "HandleStrikesBack_AgainstResidualAttack", adapt_HandleStrikesBack_AgainstResidualAttack },
 	{ NULL, NULL },
 };

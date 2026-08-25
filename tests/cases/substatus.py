@@ -455,6 +455,11 @@ CASES.update({
 # >>> factory-cases-statics
 wLoadedCard2Name = 0xCC68
 wTempTurnDuelistCardID = 0xCCC3
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wTempNonTurnDuelistCardID = 0xCCC4
+wLoadedAttackCategory = 0xCCB1
+wDealtDamage = 0xCCBF
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -465,6 +470,17 @@ CASES["ApplyStrikesBack_AgainstResidualAttack"] = [
     dict(POISON, hl=0, wram={0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wLoadedCard2Name: 2}),
 ]
 # <<< factory ApplyStrikesBack_AgainstResidualAttack
+
+# >>> factory HandleStrikesBack_AgainstResidualAttack
+CONTRACT["HandleStrikesBack_AgainstResidualAttack"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleStrikesBack_AgainstResidualAttack"] = [
+    {"wram": {wTempNonTurnDuelistCardID: b"\x01"}},
+    {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x80"}},
+    {"wram": {wTempNonTurnDuelistCardID: b"\x7f", wLoadedAttackCategory: b"\x00", wDealtDamage: b"\x00"}},
+    {"wram": {wTempNonTurnDuelistCardID: b"\x01", wLoadedAttackCategory: b"\x80", wDealtDamage: b"\x01"}},
+    dict(POISON, wram={wTempNonTurnDuelistCardID: b"\x01"}),
+]
+# <<< factory HandleStrikesBack_AgainstResidualAttack
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -480,3 +496,6 @@ MUTATIONS = {
 # >>> factory-mutation ApplyStrikesBack_AgainstResidualAttack
 MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplyStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempTurnDuelistCardID;", "after": "\tuint8_t card_id = 0;", "case_ids": ["ApplyStrikesBack_AgainstResidualAttack-0", "ApplyStrikesBack_AgainstResidualAttack-1", "ApplyStrikesBack_AgainstResidualAttack-2"]}
 # <<< factory-mutation ApplyStrikesBack_AgainstResidualAttack
+# >>> factory-mutation HandleStrikesBack_AgainstResidualAttack
+MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "HandleStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempNonTurnDuelistCardID;", "after": "\tuint8_t card_id = 0u;", "case_ids": ["HandleStrikesBack_AgainstResidualAttack-0", "HandleStrikesBack_AgainstResidualAttack-1", "HandleStrikesBack_AgainstResidualAttack-2", "HandleStrikesBack_AgainstResidualAttack-3", "HandleStrikesBack_AgainstResidualAttack-4"]}
+# <<< factory-mutation HandleStrikesBack_AgainstResidualAttack

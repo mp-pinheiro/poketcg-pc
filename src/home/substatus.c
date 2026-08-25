@@ -21,6 +21,13 @@
 #define DUELVARS_ARENA_CARD_HP 0xc8u
 #define PLAY_AREA_ARENA 0x00u
 #define ReceivesDamageDueToStrikesBackText 0x0105u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/substatus.h"
+#define MACHAMP 0x7fu
+#define RESIDUAL 0x80u
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -571,3 +578,36 @@ ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
 	return (ApplyStrikesBackResult){0, 0x10u};
 }
 /* <<< factory ApplyStrikesBack_AgainstResidualAttack */
+
+/* >>> factory HandleStrikesBack_AgainstResidualAttack */
+HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void)
+{
+	uint8_t card_id = wTempNonTurnDuelistCardID;
+	if (card_id != MACHAMP) {
+		uint8_t f = 0x50u;
+		if ((card_id & 0x0Fu) < (MACHAMP & 0x0Fu))
+			f |= 0x20u;
+		if (card_id < MACHAMP)
+			f |= 0x10u;
+		return (HandleStrikesBackResidualResult){card_id, f};
+	}
+	uint8_t category = wLoadedAttackCategory;
+	uint8_t residual = (uint8_t)(category & RESIDUAL);
+	if (residual)
+		return (HandleStrikesBackResidualResult){residual, 0x20u};
+	uint8_t damage = wDealtDamage;
+	if (!damage)
+		return (HandleStrikesBackResidualResult){0x00u, 0x80u};
+	SwapTurn();
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower_ArenaCard();
+	SwapTurn();
+	if (incapable.f & 0x10u)
+		return (HandleStrikesBackResidualResult){0x00u, incapable.f};
+	ApplyStrikesBackResult applied = ApplyStrikesBack_AgainstResidualAttack(10u);
+	if (!(applied.f & 0x10u)) {
+		WaitResult waited = WaitForWideTextBoxInput();
+		return (HandleStrikesBackResidualResult){applied.a, waited.f};
+	}
+	return (HandleStrikesBackResidualResult){applied.a, applied.f};
+}
+/* <<< factory HandleStrikesBack_AgainstResidualAttack */
