@@ -5,6 +5,11 @@
 #include "home/copy.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "home/switch_rom.h"
+#include "mem.h"
+#define PKMN_CARD_DATA_LENGTH 0x41u
+/* <<< factory statics */
 
 /* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
  * reaches them through BankpushROM2/BankpopROM, whose net effect is a temporary bank
@@ -125,3 +130,26 @@ CardPtrResult GetCardPointer(uint8_t e)
 	const uint8_t *p = rom_ptr(BANK_CARD_DATA, hl);
 	return (CardPtrResult){(uint16_t)(p[0] | (uint16_t)p[1] << 8), 0, 0};
 }
+
+/* >>> factory LoadCardDataToHL_FromCardID */
+void LoadCardDataToHL_FromCardID(uint8_t e, uint16_t *hl, uint16_t saved_hl)
+{
+	uint16_t de = *hl;
+	CardPtrResult card = GetCardPointer(e);
+	if (card.carry) {
+		*hl = saved_hl;
+		return;
+	}
+	BankpushROM2Result pushed = BankpushROM2(BANK_CARD_DATA, 0u, 0u, 0u, 0u, e, card.hl);
+	uint16_t src = pushed.hl;
+	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
+	for (uint8_t i = 0u; i < copy_length; i++) {
+		uint8_t a = gb_read8(src);
+		gb_write8(de, a);
+		src = (uint16_t)(src + 1u);
+		de = (uint16_t)(de + 1u);
+	}
+	(void)BankpopROM(0u, 0u, 0u, 0u, src, 0u, 0u);
+	*hl = saved_hl;
+}
+/* <<< factory LoadCardDataToHL_FromCardID */

@@ -48,6 +48,13 @@ static void adapt_GetCardPointer(ProbeState *s)
 	s->f = r.carry ? (uint8_t)(0x10u | (r.bound_zero ? 0x80u : 0u)) : 0x00u;
 }
 
+/* >>> factory LoadCardDataToHL_FromCardID */
+static void adapt_LoadCardDataToHL_FromCardID(ProbeState *s)
+{
+	LoadCardDataToHL_FromCardID(s->e, &s->hl, s->stack[0]);
+}
+/* <<< factory LoadCardDataToHL_FromCardID */
+
 const ProbeEntry probe_entries_card_data[] = {
 	{ "GetCardType", adapt_GetCardType },
 	{ "GetCardName", adapt_GetCardName },
@@ -57,5 +64,6 @@ const ProbeEntry probe_entries_card_data[] = {
 	{ "LoadCardDataToBuffer1_FromName", adapt_LoadCardDataToBuffer1_FromName },
 	{ "LoadCardGfx", adapt_LoadCardGfx },
 	{ "GetCardPointer", adapt_GetCardPointer },
+	{ "LoadCardDataToHL_FromCardID", adapt_LoadCardDataToHL_FromCardID },
 	{ NULL, NULL },
 };

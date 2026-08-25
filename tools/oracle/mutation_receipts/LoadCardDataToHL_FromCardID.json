@@ -1,0 +1,9 @@
+{
+  "fn": "LoadCardDataToHL_FromCardID",
+  "case": "tests/cases/card_data.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadCardDataToHL_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"090000fc07005001714efd070000086100fe07005002704eff0700000bc20000080050036f4e010800000a230102080050046e4e030800000c840104080050056d\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadCardDataToHL_FromCardID\", \"mismatches\": {\"bus\": {\"address\": 49472, \"reference\": \"080050056d\", \"native\": \"08005005aa\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[49408, 65]]}}}\n",
+  "restored": "{\"fn\": \"LoadCardDataToHL_FromCardID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 0, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"090000fc07005001714efd070000086100fe07005002704eff0700000bc20000080050036f4e010800000a230102080050046e4e030800000c840104080050056d\"}}, \"status\": \"PASS\"}\n"
+}

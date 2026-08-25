@@ -71,6 +71,22 @@ CASES = {
         dict(POISON, e=229),
     ],
 }
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+CARD_DATA_LENGTH = 0x41
+# <<< factory-cases-statics
+
+# >>> factory LoadCardDataToHL_FromCardID
+CONTRACT["LoadCardDataToHL_FromCardID"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["LoadCardDataToHL_FromCardID"] = [
+    {"stack": [0]},
+    {"e": 1, "hl": 0xC100, "stack": [0xC100], "wram": {0xC100: b"\xAA" * CARD_DATA_LENGTH}, "read": {0xC100: 0x41}},
+    {"e": 0xE4, "hl": 0xC200, "stack": [0xC200], "wram": {0xC200: b"\xAA" * CARD_DATA_LENGTH}, "read": {0xC200: 0x41}},
+    dict(POISON, stack=[0x1234]),
+    dict(POISON, e=1, hl=0xC300, stack=[0xC300], wram={0xC300: b"\xAA" * CARD_DATA_LENGTH}, read={0xC300: 0x41}),
+]
+# <<< factory LoadCardDataToHL_FromCardID
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -82,3 +98,6 @@ MUTATIONS = {
         "case_ids": ["GetCardType-0", "GetCardType-1", "GetCardType-2", "GetCardType-3", "GetCardType-4", "GetCardType-5"],
     },
 }
+# >>> factory-mutation LoadCardDataToHL_FromCardID
+MUTATIONS["LoadCardDataToHL_FromCardID"] = {"source_symbol": "LoadCardDataToHL_FromCardID", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["LoadCardDataToHL_FromCardID-1", "LoadCardDataToHL_FromCardID-2", "LoadCardDataToHL_FromCardID-4"]}
+# <<< factory-mutation LoadCardDataToHL_FromCardID
