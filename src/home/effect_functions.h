@@ -1306,6 +1306,9 @@ SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_Discard
 typedef struct { uint16_t hl; uint8_t f; } HandleDefendingPokemonAttackSelectionResult;
 HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelection(void);
 /* <<< factory HandleDefendingPokemonAttackSelection */
+/* >>> factory HandleEnergyDiscardEffectSelection */
+void HandleEnergyDiscardEffectSelection(void);
+/* <<< factory HandleEnergyDiscardEffectSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

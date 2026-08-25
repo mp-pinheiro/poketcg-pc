@@ -3136,6 +3136,14 @@ static void adapt_HandleDefendingPokemonAttackSelection(ProbeState *s)
 }
 /* <<< factory HandleDefendingPokemonAttackSelection */
 
+/* >>> factory HandleEnergyDiscardEffectSelection */
+static void adapt_HandleEnergyDiscardEffectSelection(ProbeState *s)
+{
+	(void)s;
+	HandleEnergyDiscardEffectSelection();
+}
+/* <<< factory HandleEnergyDiscardEffectSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3524,5 +3532,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRetrieval_DiscardAndAddToHandEffect", adapt_EnergyRetrieval_DiscardAndAddToHandEffect },
 	{ "SuperEnergyRetrieval_DiscardAndAddToHandEffect", adapt_SuperEnergyRetrieval_DiscardAndAddToHandEffect },
 	{ "HandleDefendingPokemonAttackSelection", adapt_HandleDefendingPokemonAttackSelection },
+	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ NULL, NULL },
 };

@@ -538,6 +538,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define PAD_B 0x02u
 #define PAD_START 0x08u
 #define MENU_CANCEL 0xFFu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define ChooseDiscardEnergyCardFromOpponentText 0x0123u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5565,3 +5571,26 @@ HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelectio
 	}
 }
 /* <<< factory HandleDefendingPokemonAttackSelection */
+
+/* >>> factory HandleEnergyDiscardEffectSelection */
+void HandleEnergyDiscardEffectSelection(void)
+{
+	SwapTurn();
+	HandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	if (list.f & 0x10u) {
+		SwapTurn();
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChooseDiscardEnergyCardFromOpponentText);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+		if (input.f & 0x10u)
+			continue;
+		SwapTurn();
+		hTemp_ffa0 = hTempCardIndex_ff98;
+		return;
+	}
+}
+/* <<< factory HandleEnergyDiscardEffectSelection */

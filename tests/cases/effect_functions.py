@@ -3678,6 +3678,15 @@ CASES["HandleDefendingPokemonAttackSelection"] = [
 ]
 # <<< factory HandleDefendingPokemonAttackSelection
 
+# >>> factory HandleEnergyDiscardEffectSelection
+CONTRACT["HandleEnergyDiscardEffectSelection"] = {"compare": (), "preserve": ()}
+CASES["HandleEnergyDiscardEffectSelection"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, "read": {hWhoseTurn: 1, hTemp_ffa0: 1}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    {"wram": {hWhoseTurn: b"\xC3", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, "read": {hWhoseTurn: 1, hTemp_ffa0: 1}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x55", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, read={hWhoseTurn: 1, hTemp_ffa0: 1}, instruction_budget=500000, cycle_budget=2000000),
+]
+# <<< factory HandleEnergyDiscardEffectSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5791,3 +5800,6 @@ MUTATIONS["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": 
 # >>> factory-mutation HandleDefendingPokemonAttackSelection
 MUTATIONS["HandleDefendingPokemonAttackSelection"] = {"source_symbol": "HandleDefendingPokemonAttackSelection", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["HandleDefendingPokemonAttackSelection-0", "HandleDefendingPokemonAttackSelection-1"]}
 # <<< factory-mutation HandleDefendingPokemonAttackSelection
+# >>> factory-mutation HandleEnergyDiscardEffectSelection
+MUTATIONS["HandleEnergyDiscardEffectSelection"] = {"source_symbol": "HandleEnergyDiscardEffectSelection", "before": "\t\thTemp_ffa0 = 0xffu;", "after": "\t\thTemp_ffa0 = 0u;", "case_ids": ["HandleEnergyDiscardEffectSelection-0", "HandleEnergyDiscardEffectSelection-1", "HandleEnergyDiscardEffectSelection-2"]}
+# <<< factory-mutation HandleEnergyDiscardEffectSelection
