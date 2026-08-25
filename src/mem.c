@@ -133,6 +133,10 @@ void mem_reset(void)
 	memset(g_io, 0, sizeof g_io);
 	memset(g_pal, 0, sizeof g_pal);
 	g_keys = 0;
+	g_key_count = 0;
+	g_key_index = 0;
+	g_key_latch_armed = 0;
+	g_key_latch_addr = 0;
 	memset(g_scratch, 0, sizeof g_scratch);
 	g_rom_bank = 1;
 	g_sram_bank = 0;
@@ -274,6 +278,14 @@ void gb_write8(uint16_t addr, uint8_t v)
 		g_pal[offset] = v;
 		if (*index & 0x80u)
 			*index = (uint8_t)(0x80u | ((*index + 1u) & 0x3Fu));
+	}
+	/* A completed joypad poll is the native frame boundary: advance to the next
+	 * timeline entry so the following poll sees a fresh press edge, exactly as a
+	 * new reference frame does. Cycles modulo the entry count, matching
+	 * runner.c. Disarmed unless the case declared more than one entry. */
+	if (g_key_latch_armed && addr == g_key_latch_addr) {
+		g_key_index = (uint8_t)((g_key_index + 1u) % g_key_count);
+		g_keys = g_key_entries[g_key_index];
 	}
 	apu_trace_record(addr, v);
 	*gb_ptr(addr) = v;

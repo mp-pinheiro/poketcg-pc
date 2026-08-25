@@ -141,6 +141,7 @@ class Oracle:
         )
         self._hit: Result | None = None
         self._armed_addr: int | None = None
+        self._key_timeline: list[int] = [0]
         self._baseline = io.BytesIO()
         self._reset_ram()
         self.pyboy.save_state(self._baseline)
@@ -217,8 +218,20 @@ class Oracle:
         pb.memory[self._WVBLANK_COUNTER] = (pb.memory[self._WVBLANK_COUNTER] + 1) & 0xFF
         self.pyboy.register_file.PC = self._VBLANK_NOP
 
+    def _apply_keys(self, old: int, new: int) -> None:
+        """Emit only the button edges that actually changed between two frames."""
+        pb = self.pyboy
+        for bit, button in enumerate(BUTTONS):
+            was, now = old & (1 << bit), new & (1 << bit)
+            if was == now:
+                continue
+            if now:
+                pb.button_press(button)
+            else:
+                pb.button_release(button)
+
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
-             stack: Sequence[int] | None = None) -> Result:
+             stack: Sequence[int] | None = None, cycle: bool = False) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
@@ -260,6 +273,12 @@ class Oracle:
         except (ValueError, KeyError):
             pass
         pb.hook_register(0, self._VBLANK_HALT, self._service_vblank, None)
+        # One tick is one frame, so this is the frame boundary the reference
+        # advances its timeline on (tools/oracle/gbref/runner.c). Cycle modulo the
+        # entry count, and only for the routine under test -- runner.c holds entry
+        # 0 across every setup call and starts cycling afterwards.
+        timeline = self._key_timeline if cycle else [0]
+        index, current = 0, timeline[0]
         for _ in range(MAX_FRAMES):
             pb.tick(1, False, False)
             if self._hit is not None:
@@ -268,6 +287,11 @@ class Oracle:
                 except (ValueError, KeyError):
                     pass
                 return self._hit
+            if len(timeline) > 1:
+                index = (index + 1) % len(timeline)
+                if timeline[index] != current:
+                    self._apply_keys(current, timeline[index])
+                    current = timeline[index]
         try:
             pb.hook_deregister(0, self._VBLANK_HALT)
         except (ValueError, KeyError):
@@ -279,7 +303,7 @@ class Oracle:
              sram: dict[int, dict[int, bytes]] | None = None,
              ramg: bool | None = None,
              setup: list[dict] | None = None,
-             keys: int = 0,
+             keys: int | Sequence[int] = 0,
              stop_pc: int | None = None,
              stack: Sequence[int] | None = None) -> Result:
         pb = self.pyboy
@@ -292,8 +316,12 @@ class Oracle:
         # events still reach `mb.buttonevent` on the next tick.
         for button in BUTTONS:
             pb.button_release(button)
+        # A schema-2 case may declare `keys` as a cycled per-frame timeline. The
+        # run starts on entry 0, exactly as runner.c does; _run cycles the rest.
+        self._key_timeline = ([int(k) for k in keys] or [0]) \
+            if isinstance(keys, (list, tuple)) else [int(keys)]
         for bit, button in enumerate(BUTTONS):
-            if keys & (1 << bit):
+            if self._key_timeline[0] & (1 << bit):
                 pb.button_press(button)
 
         self._reset_ram()
@@ -333,4 +361,5 @@ class Oracle:
             {"a": a, "f": f, "b": b, "c": c, "d": d, "e": e, "hl": hl},
             stop_pc,
             stack,
+            cycle=True,
         )

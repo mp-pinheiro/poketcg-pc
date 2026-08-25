@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "generated/hram.h"
 #include "mem.h"
 #include "probe.h"
 
@@ -191,6 +192,10 @@ int main(void)
 	 * every seed and before the routine under test, exactly as the oracle does. */
 	struct { char fn[MAX_NAME]; ProbeState st; } setups[MAX_SETUPS];
 	size_t nsetups = 0;
+	/* Per-frame key timeline, mirroring the reference's `input_events`. Parsed
+	 * here and armed alongside the scalar `keys` seed below. */
+	uint8_t key_events[MEM_KEY_TIMELINE_MAX];
+	uint8_t nkey_events = 0;
 
 	mem_reset();
 
@@ -256,6 +261,30 @@ int main(void)
 				ramg = jnum() != 0;
 			} else if (strcmp(key, "keys") == 0) {
 				keys = jnum();
+			} else if (strcmp(key, "input_events") == 0) {
+				/* [{"keys": n}, ...], one entry per reference frame. */
+				need('[');
+				if (!eat(']')) {
+					do {
+						if (nkey_events >= MEM_KEY_TIMELINE_MAX)
+							die("too many input events");
+						need('{');
+						if (!eat('}')) {
+							do {
+								char ek[MAX_NAME];
+								jstr(ek, MAX_NAME);
+								need(':');
+								if (strcmp(ek, "keys") == 0)
+									key_events[nkey_events] = (uint8_t)jnum();
+								else
+									die("unknown input event key");
+							} while (eat(','));
+							need('}');
+						}
+						nkey_events++;
+					} while (eat(','));
+					need(']');
+				}
 			} else if (strcmp(key, "setup") == 0) {
 				need('[');
 				if (!eat(']')) {
@@ -526,6 +555,11 @@ int main(void)
 	if (ramg >= 0)
 		g_sram_enabled = ramg;
 	g_keys = (uint8_t)keys;
+	/* hKeysHeld is written exactly once per ReadJoypad, by SaveButtonsHeld, and
+	 * nowhere else in the tree -- the one unambiguous "a poll just completed"
+	 * marker. SGB packet sends drive JOYP directly and never touch it, so they
+	 * cannot advance the cycle. Inert unless the case declared >1 entry. */
+	gb_keys_arm_timeline(key_events, nkey_events, hKeysHeld_ADDR);
 
 	for (size_t i = 0; i < nsetups; i++) {
 		ProbeFn pre = probe_lookup(setups[i].fn);

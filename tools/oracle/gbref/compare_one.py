@@ -296,9 +296,11 @@ def main() -> int:
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
-    # The native probe has no frames, so it models the state the timeline settles
-    # on: the last entry, which the reference holds for the rest of the run.
-    keys = case["input_events"][-1]["keys"] if case["input_events"] else 0
+    # The native probe renders no frames, so it cycles the timeline on each
+    # completed joypad poll instead (src/mem.c). `keys` stays the entry the run
+    # starts on -- index 0, matching runner.c -- and is the whole story for a
+    # zero- or one-entry timeline.
+    keys = case["input_events"][0]["keys"] if case["input_events"] else 0
     request = {
         "completion": mode,
         "hardware": case["hardware"],
@@ -433,6 +435,7 @@ def main() -> int:
         "pread": {str(addr): size for addr, size in palette_spans},
         "setup": case["setup"],
         "keys": keys,
+        "input_events": case["input_events"],
     }
     if stack_words:
         probe_request["stack"] = [int(word) for word in stack_words]

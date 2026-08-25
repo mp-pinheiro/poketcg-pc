@@ -85,7 +85,12 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]
     if case.get("keys"):
-        req["keys"] = held_keys(case)
+        # The probe cycles `input_events` one entry per completed joypad poll
+        # (src/mem.c); `keys` is the entry the run starts on, as in runner.c.
+        timeline = key_timeline(case)
+        timeline = timeline if isinstance(timeline, list) else [timeline]
+        req["keys"] = timeline[0]
+        req["input_events"] = [{"keys": int(k)} for k in timeline]
     if case.get("stack"):
         req["stack"] = [int(word) for word in case["stack"]]
     if case.get("rom_bank") is not None:
