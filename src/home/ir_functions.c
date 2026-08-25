@@ -10,6 +10,13 @@
 
 #define NAME_BUFFER_LENGTH 0x10u
 #define PLAYER_TURN 0xC2u
+
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/sprite_vblank.h"
+#define SCENE_GAMEBOY_LINK_CONNECTING 0x0eu
 /* <<< factory statics */
 
 #define MUSIC_CARD_POP 0x08u
@@ -40,3 +47,14 @@ void InitIRCommunications(uint8_t a)
 	DisableSRAM();
 }
 /* <<< factory InitIRCommunications */
+
+/* >>> factory LoadLinkConnectingScene */
+void LoadLinkConnectingScene(uint16_t hl)
+{
+	uint16_t saved_hl = hl;
+	SetSpriteAnimationsAsVBlankFunction();
+	LoadScene(SCENE_GAMEBOY_LINK_CONNECTING, 0u, 0u, 0u, 0u, 0u, saved_hl);
+	DrawWideTextBox_PrintText(saved_hl);
+	EnableLCD();
+}
+/* <<< factory LoadLinkConnectingScene */

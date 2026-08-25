@@ -232,6 +232,13 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/card_data.h"
 #include "home/bg_map.h"
 #include "mem.h"
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/switch_sram.h"
+#define NUM_FILTERED_LIST_VISIBLE_CARDS 0x06u
 /* <<< factory statics */
 
 
@@ -1433,3 +1440,38 @@ void PrintDeckBuildingCardList(void)
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 2u));
 }
 /* <<< factory PrintDeckBuildingCardList */
+
+/* >>> factory PrintFilteredCardList */
+PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_a = a;
+	uint8_t saved_f = f;
+	static const uint8_t card_type_filters[] = {0x00u, 0x01u, 0x02u, 0x03u, 0x04u, 0x05u, 0x06u, 0x07u, FILTER_ENERGY};
+	uint8_t filter = (a < 9u) ? card_type_filters[a] : 0xFFu;
+	uint16_t src = sCardCollection_ADDR;
+	uint16_t dst = wTempCardCollection_ADDR;
+	EnableSRAM();
+	CopyNBytesFromHLToDE(&src, &dst, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+	DisableSRAM();
+	if (gb_read8(wIncludeCardsInDeck_ADDR) != 0u) {
+		dst = GetPointerToDeckCards();
+		IncrementDeckCardsInTempCollection(dst);
+	}
+	CreateFilteredCardListResult filtered = CreateFilteredCardList(filter, saved_f, 0u, a, (uint8_t)(dst >> 8), (uint8_t)dst, src);
+	a = filtered.a;
+	f = filtered.f;
+	b = filtered.b;
+	c = filtered.c;
+	d = filtered.d;
+	e = filtered.e;
+	hl = filtered.hl;
+	gb_write8(wNumVisibleCardListEntries_ADDR, NUM_FILTERED_LIST_VISIBLE_CARDS);
+	e = 0x13u;
+	d = 0x01u;
+	gb_write8(wCardListCoords_ADDR, 0x07u);
+	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x01u);
+	hl = 0xCEE1u;
+	PrintDeckBuildingCardList();
+	return (PrintFilteredCardListResult){saved_a, saved_f, b, c, d, e, hl};
+}
+/* <<< factory PrintFilteredCardList */

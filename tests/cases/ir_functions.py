@@ -63,6 +63,22 @@ CASES["InitIRCommunications"] = [
 # <<< factory InitIRCommunications
 
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+WRAM_SEED = {0xCAB4: b"\x00", 0xC590: b"\x00", 0xD131: b"\x00", 0xD291: b"\x00", 0xD5D7: b"\x00"}
+SCENE_READ = {0xCAB4: 1, 0xCABC: 1, 0xD131: 1, 0xD291: 1, 0xD61C: 1, 0xD61D: 1, 0xD620: 2, 0xD622: 2}
+TEXT_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+# <<< factory-cases-statics
+
+# >>> factory LoadLinkConnectingScene
+CONTRACT["LoadLinkConnectingScene"] = {"compare": (), "preserve": ()}
+CASES["LoadLinkConnectingScene"] = [
+    {"hl": 0x0000, "wram": WRAM_SEED, "sram": {0: {}}, "setup": SETUP_TEXT, "read": {**SCENE_READ, **TEXT_READ}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+    dict(POISON, wram=WRAM_SEED, sram={0: {}}, setup=SETUP_TEXT, read={**SCENE_READ, **TEXT_READ}, instruction_budget=8000000, cycle_budget=32000000),
+]
+# <<< factory LoadLinkConnectingScene
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -89,3 +105,6 @@ MUTATIONS["InitIRCommunications"] = {
 	"case_ids": ["InitIRCommunications-0", "InitIRCommunications-1", "InitIRCommunications-2"],
 }
 # <<< factory-mutation InitIRCommunications
+# >>> factory-mutation LoadLinkConnectingScene
+MUTATIONS["LoadLinkConnectingScene"] = {"source_symbol": "LoadLinkConnectingScene", "before": "\tLoadScene(SCENE_GAMEBOY_LINK_CONNECTING, 0u, 0u, 0u, 0u, 0u, saved_hl);", "after": "\tLoadScene(0u, 0u, 0u, 0u, 0u, 0u, saved_hl);", "case_ids": ["LoadLinkConnectingScene-0", "LoadLinkConnectingScene-1"]}
+# <<< factory-mutation LoadLinkConnectingScene

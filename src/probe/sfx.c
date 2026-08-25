@@ -19,9 +19,24 @@ static void adapt_Func_fc105(ProbeState *s)
 }
 /* <<< factory Func_fc105 */
 
+/* >>> factory SFX_end */
+static void adapt_SFX_end(ProbeState *s)
+{
+	SFX_endResult result = SFX_end(s->b, s->c, s->stack[0]);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory SFX_end */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
 	{ "Func_fc105", adapt_Func_fc105 },
+	{ "SFX_end", adapt_SFX_end },
 	{ NULL, NULL },
 };

@@ -57,6 +57,21 @@ CASES["Func_fc105"] = [
 ]
 # <<< factory Func_fc105
 
+# >>> factory-cases-statics
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+_STACK = [0x2468]
+# <<< factory-cases-statics
+
+# >>> factory SFX_end
+CONTRACT["SFX_end"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["SFX_end"] = [
+    {"b": 0, "c": 0, "wram": {0xDD8C: b"\xFF"}, "stack": _STACK, "read": {0xDD8C: 1}},
+    dict(POISON, b=0, c=1, wram={0xDD8C: b"\xFF"}, stack=_STACK, read={0xDD8C: 1}),
+    {"b": 0, "c": 3, "wram": {0xDD8C: b"\x01"}, "stack": [0x1357], "read": {0xDD8C: 1}},
+    dict(POISON, b=0, c=0xFF, wram={0xDD8C: b"\xFF"}, stack=[0xBEEF], read={0xDD8C: 1})
+]
+# <<< factory SFX_end
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -76,3 +91,11 @@ MUTATIONS["Func_fc105"] = {
     "case_ids": ["Func_fc105-1", "Func_fc105-3"],
 }
 # <<< factory-mutation Func_fc105
+# >>> factory-mutation SFX_end
+MUTATIONS["SFX_end"] = {
+    "source_symbol": "SFX_end",
+    "before": "\twdd8c = (uint8_t)(wdd8c & mask);",
+    "after": "\twdd8c = (uint8_t)(wdd8c | mask);",
+    "case_ids": ["SFX_end-0", "SFX_end-1", "SFX_end-2", "SFX_end-3"]
+}
+# <<< factory-mutation SFX_end

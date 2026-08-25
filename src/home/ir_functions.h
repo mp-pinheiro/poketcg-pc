@@ -8,4 +8,7 @@ void PlayCardPopSong(void);
 /* >>> factory InitIRCommunications */
 void InitIRCommunications(uint8_t a);
 /* <<< factory InitIRCommunications */
+/* >>> factory LoadLinkConnectingScene */
+void LoadLinkConnectingScene(uint16_t hl);
+/* <<< factory LoadLinkConnectingScene */
 #endif

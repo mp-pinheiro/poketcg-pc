@@ -15,8 +15,16 @@ static void adapt_InitIRCommunications(ProbeState *s)
 /* <<< factory InitIRCommunications */
 
 
+/* >>> factory LoadLinkConnectingScene */
+static void adapt_LoadLinkConnectingScene(ProbeState *s)
+{
+	LoadLinkConnectingScene(s->hl);
+}
+/* <<< factory LoadLinkConnectingScene */
+
 const ProbeEntry probe_entries_ir_functions[] = {
 	{ "PlayCardPopSong", adapt_PlayCardPopSong },
 	{ "InitIRCommunications", adapt_InitIRCommunications },
+	{ "LoadLinkConnectingScene", adapt_LoadLinkConnectingScene },
 	{ NULL, NULL },
 };

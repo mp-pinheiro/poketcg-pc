@@ -10,6 +10,10 @@
 #define RAUD1ENV     0xff12u
 #define AUD1ENV_UP   0x08u
 #define WDD8C        0xdd8cu
+
+#include "generated/wram.h"
+#include "mem.h"
+#define rAUD1ENV 0xFF12u
 /* <<< factory statics */
 
 #define SFX_BANK 0x3Fu
@@ -414,3 +418,20 @@ uint16_t Func_fc105(uint16_t bc, uint16_t de)
 	return hl;
 }
 /* <<< factory Func_fc105 */
+
+/* >>> factory SFX_end */
+SFX_endResult SFX_end(uint8_t b, uint8_t c, uint16_t caller_hl)
+{
+	uint8_t e = (uint8_t)(c + 1u);
+	uint8_t mask = 0x7Fu;
+	do {
+		mask = (uint8_t)((mask << 1u) | (mask >> 7u));
+		e = (uint8_t)(e - 1u);
+	} while (e != 0u);
+	wdd8c = (uint8_t)(wdd8c & mask);
+	uint8_t rotated = (uint8_t)((c << 2u) | (c >> 6u));
+	e = (uint8_t)(rotated + c);
+	uint8_t d = b;
+	return (SFX_endResult){0x80u, 0x00u, b, c, d, e, caller_hl};
+}
+/* <<< factory SFX_end */

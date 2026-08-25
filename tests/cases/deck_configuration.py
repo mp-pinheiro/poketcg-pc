@@ -186,6 +186,10 @@ wCardFilterCounts = 0xCEBB
 wDefaultText = 0xC590
 wTotalCardCount = 0xCECC
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wCardCollection = 0xA100
+wCardListCoords = 0xCED0
+wNumVisibleCardListEntries = 0xCECB
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -651,6 +655,14 @@ CASES["PrintDeckBuildingCardList"] = [
 ]
 # <<< factory PrintDeckBuildingCardList
 
+# >>> factory PrintFilteredCardList
+CONTRACT["PrintFilteredCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f")}
+CASES["PrintFilteredCardList"] = [
+    {"a": 0x00, "wram": {0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, "sram": {0: {0xA100: b"\x00" * 0xFF}}, "read": {0xCECB: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x00, wram={0xC000: b"\x00", 0xCECB: b"\x00", 0xCED0: b"\x00\x00"}, sram={0: {0xA100: b"\x00" * 0xFF}}, read={0xCECB: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory PrintFilteredCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -885,3 +897,11 @@ MUTATIONS["PrintDeckBuildingCardList"] = {
     "case_ids": ["PrintDeckBuildingCardList-1", "PrintDeckBuildingCardList-2"],
 }
 # <<< factory-mutation PrintDeckBuildingCardList
+# >>> factory-mutation PrintFilteredCardList
+MUTATIONS["PrintFilteredCardList"] = {
+    "source_symbol": "PrintFilteredCardList",
+    "before": "\tgb_write8(wNumVisibleCardListEntries_ADDR, NUM_FILTERED_LIST_VISIBLE_CARDS);",
+    "after": "\tgb_write8(wNumVisibleCardListEntries_ADDR, 0x00u);",
+    "case_ids": ["PrintFilteredCardList-0", "PrintFilteredCardList-1"],
+}
+# <<< factory-mutation PrintFilteredCardList
