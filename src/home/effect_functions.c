@@ -577,6 +577,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define TYPE_PKMN_FIGHTING 0x04u
 #define ThereIsNoInTheDeckText 0x013bu
 #define WouldYouLikeToCheckTheDeckText 0x013cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define BANK_DUEL_CORE 0x01u
+#define KADABRA_TYPE_ENERGY_PSYCHIC 0x0du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5755,3 +5762,27 @@ LookForCardsInDeckResult LookForCardsInDeck(uint8_t a, uint8_t b, uint8_t c, uin
 	return (LookForCardsInDeckResult){menu.a, menu.f};
 }
 /* <<< factory LookForCardsInDeck */
+
+/* >>> factory KadabraRecover_PlayerSelectEffect */
+KadabraRecover_PlayerSelectEffectResult KadabraRecover_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(KADABRA_TYPE_ENERGY_PSYCHIC);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	BankswitchROM(BANK_DUEL_CORE);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	BankswitchROM(saved);
+	if ((input.f & 0x10u) != 0u)
+		return (KadabraRecover_PlayerSelectEffectResult){input.a, input.f};
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	return (KadabraRecover_PlayerSelectEffectResult){card, input.f};
+}
+/* <<< factory KadabraRecover_PlayerSelectEffect */

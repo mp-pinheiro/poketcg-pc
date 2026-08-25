@@ -3201,6 +3201,15 @@ static void adapt_LookForCardsInDeck(ProbeState *s)
 }
 /* <<< factory LookForCardsInDeck */
 
+/* >>> factory KadabraRecover_PlayerSelectEffect */
+static void adapt_KadabraRecover_PlayerSelectEffect(ProbeState *s)
+{
+	KadabraRecover_PlayerSelectEffectResult r = KadabraRecover_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory KadabraRecover_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3597,5 +3606,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeottoMirrorMove_PlayerSelection", adapt_PidgeottoMirrorMove_PlayerSelection },
 	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ "LookForCardsInDeck", adapt_LookForCardsInDeck },
+	{ "KadabraRecover_PlayerSelectEffect", adapt_KadabraRecover_PlayerSelectEffect },
 	{ NULL, NULL },
 };

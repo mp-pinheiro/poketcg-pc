@@ -2478,6 +2478,15 @@ wExcludeArenaPokemon = 0xCBD2
 wDuelTempList = 0xC510
 wLoadedCard2Type = 0xCC65
 wLoadedCard2Stage = 0xCC6E
+
+KR_PLAYER_TURN = 0xC2
+KR_wConsole = 0xCAB4
+KR_wLCDC = 0xCABB
+KR_ARENA_HP = 0xC8 - 0xBB
+KR_ARENA_STAGE = 0xCE - 0xBB
+KR_ARENA_STATUS = 0xF0 - 0xBB
+KR_ARENA_PLUSPOWER = 0xE0 - 0xBB
+KR_ARENA_DEFENDER = 0xE6 - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3761,6 +3770,53 @@ CASES["LookForCardsInDeck"] = [
     {"a": 0x00, "d": 0x04, "e": 0x00, "hl": 0x0000, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
 ]
 # <<< factory LookForCardsInDeck
+
+# >>> factory KadabraRecover_PlayerSelectEffect
+CONTRACT["KadabraRecover_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["KadabraRecover_PlayerSelectEffect"] = [
+    # B cancels: `ret c` fires and hTemp_ffa0 is left alone.
+    {"keys": [0x00, 0x02],
+     "wram": {hWhoseTurn: bytes((KR_PLAYER_TURN,)), KR_wConsole: b"\x00", KR_wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + KR_ARENA_HP: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STAGE: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STATUS: b"\x00",
+      wPlayerArenaCard + KR_ARENA_PLUSPOWER: b"\x00",
+      wPlayerArenaCard + KR_ARENA_DEFENDER: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    # A accepts: the tail copies hTempCardIndex_ff98 into hTemp_ffa0.
+    {"keys": [0x00, 0x01],
+     "wram": {hWhoseTurn: bytes((KR_PLAYER_TURN,)), KR_wConsole: b"\x00", KR_wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + KR_ARENA_HP: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STAGE: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STATUS: b"\x00",
+      wPlayerArenaCard + KR_ARENA_PLUSPOWER: b"\x00",
+      wPlayerArenaCard + KR_ARENA_DEFENDER: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={hWhoseTurn: bytes((KR_PLAYER_TURN,)), KR_wConsole: b"\x00", KR_wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + KR_ARENA_HP: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STAGE: b"\x00",
+      wPlayerArenaCard + KR_ARENA_STATUS: b"\x00",
+      wPlayerArenaCard + KR_ARENA_PLUSPOWER: b"\x00",
+      wPlayerArenaCard + KR_ARENA_DEFENDER: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory KadabraRecover_PlayerSelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5899,3 +5955,11 @@ MUTATIONS["PidgeottoMirrorMove_PlayerSelection"] = {"source_symbol": "PidgeottoM
 # >>> factory-mutation LookForCardsInDeck
 MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "\tuint8_t no_cards = (wDuelTempList == 0xffu);", "after": "\tuint8_t no_cards = (wDuelTempList != 0xffu);", "case_ids": ["LookForCardsInDeck-0", "LookForCardsInDeck-1", "LookForCardsInDeck-2"]}
 # <<< factory-mutation LookForCardsInDeck
+# >>> factory-mutation KadabraRecover_PlayerSelectEffect
+MUTATIONS["KadabraRecover_PlayerSelectEffect"] = {
+ "source_symbol": "KadabraRecover_PlayerSelectEffect",
+ "before": "\treturn (KadabraRecover_PlayerSelectEffectResult){card, input.f};",
+ "after": "\treturn (KadabraRecover_PlayerSelectEffectResult){card, 0x10u};",
+ "case_ids": ["KadabraRecover_PlayerSelectEffect-1", "KadabraRecover_PlayerSelectEffect-2"],
+}
+# <<< factory-mutation KadabraRecover_PlayerSelectEffect
