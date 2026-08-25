@@ -3572,11 +3572,11 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRetrieval_DiscardAndAddToHandEffect", adapt_EnergyRetrieval_DiscardAndAddToHandEffect },
 	{ "SuperEnergyRetrieval_DiscardAndAddToHandEffect", adapt_SuperEnergyRetrieval_DiscardAndAddToHandEffect },
 	{ "HandleDefendingPokemonAttackSelection", adapt_HandleDefendingPokemonAttackSelection },
-	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ "DragonairHyperBeam_PlayerSelectEffect", adapt_DragonairHyperBeam_PlayerSelectEffect },
 	{ "GolduckHyperBeam_PlayerSelectEffect", adapt_GolduckHyperBeam_PlayerSelectEffect },
 	{ "MirrorMove_PlayerSelection", adapt_MirrorMove_PlayerSelection },
 	{ "SpearowMirrorMove_PlayerSelection", adapt_SpearowMirrorMove_PlayerSelection },
 	{ "StrangeBehavior_SelectAndSwapEffect", adapt_StrangeBehavior_SelectAndSwapEffect },
+	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ NULL, NULL },
 };
