@@ -132,6 +132,9 @@
 #include "home/default_palettes.h"
 #include "home/objects.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "home/overworld_map.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -789,3 +792,10 @@ void Func_c280(void)
 	Func_12871();
 }
 /* <<< factory Func_c280 */
+
+/* >>> factory UpdateOverworldMap */
+void UpdateOverworldMap(void)
+{
+	OverworldMap_Update();
+}
+/* <<< factory UpdateOverworldMap */

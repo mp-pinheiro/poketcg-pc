@@ -641,6 +641,15 @@ CASES["Func_c280"] = [
 ]
 # <<< factory Func_c280
 
+# >>> factory UpdateOverworldMap
+CONTRACT["UpdateOverworldMap"] = {"compare": (), "preserve": ()}
+CASES["UpdateOverworldMap"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "hram": {0xFF91: b"\x00"}, "wram": {0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "read": {0xD4CF: 1}},
+    {"hram": {0xFF91: b"\x00"}, "wram": {0xD336: b"\x34", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "read": {0xD4CF: 1}},
+    dict(POISON, hram={0xFF91: b"\x00"}, wram={0xD336: b"\x56", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, read={0xD4CF: 1}),
+]
+# <<< factory UpdateOverworldMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -853,3 +862,6 @@ MUTATIONS["Func_c554"] = {"source_symbol": "Func_c554", "before": "\tuint8_t x =
 # >>> factory-mutation Func_c280
 MUTATIONS["Func_c280"] = {"source_symbol": "Func_c280", "before": "\tFunc_12871();", "after": "", "case_ids": ["Func_c280-0", "Func_c280-1"]}
 # <<< factory-mutation Func_c280
+# >>> factory-mutation UpdateOverworldMap
+MUTATIONS["UpdateOverworldMap"] = {"source_symbol": "UpdateOverworldMap", "before": "\tOverworldMap_Update();", "after": "\t(void)0;", "case_ids": ["UpdateOverworldMap-0", "UpdateOverworldMap-1", "UpdateOverworldMap-2"]}
+# <<< factory-mutation UpdateOverworldMap

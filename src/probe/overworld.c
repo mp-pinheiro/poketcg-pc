@@ -379,6 +379,14 @@ static void adapt_Func_c280(ProbeState *s)
 }
 /* <<< factory Func_c280 */
 
+/* >>> factory UpdateOverworldMap */
+static void adapt_UpdateOverworldMap(ProbeState *s)
+{
+	(void)s;
+	UpdateOverworldMap();
+}
+/* <<< factory UpdateOverworldMap */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -426,5 +434,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c1b1", adapt_Func_c1b1 },
 	{ "Func_c554", adapt_Func_c554 },
 	{ "Func_c280", adapt_Func_c280 },
+	{ "UpdateOverworldMap", adapt_UpdateOverworldMap },
 	{ NULL, NULL },
 };

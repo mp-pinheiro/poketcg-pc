@@ -172,4 +172,7 @@ void Func_c554(void);
 /* >>> factory Func_c280 */
 void Func_c280(void);
 /* <<< factory Func_c280 */
+/* >>> factory UpdateOverworldMap */
+void UpdateOverworldMap(void);
+/* <<< factory UpdateOverworldMap */
 #endif /* POKETCG_HOME_OVERWORLD_H */
