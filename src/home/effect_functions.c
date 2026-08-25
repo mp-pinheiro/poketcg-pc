@@ -592,6 +592,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define Scavenge_PlayerSelectEnergyEffect_PLAY_AREA_ARENA 0x00u
 #define Scavenge_PlayerSelectEnergyEffect_BANK_DUEL_CORE 0x01u
 #define Scavenge_PlayerSelectEnergyEffect_TYPE_ENERGY_PSYCHIC 0x0du
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5819,3 +5824,25 @@ Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void)
 	return (Scavenge_PlayerSelectEnergyEffectResult){card, (uint8_t)(card == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory Scavenge_PlayerSelectEnergyEffect */
+
+/* >>> factory PlayerPickFireEnergyCardToDiscard */
+PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void)
+{
+	(void)CreateListOfFireEnergyAttachedToArena();
+	/* Both screens are reached by `bank1call`, which selects bank 1 for the
+	 * callee and restores the caller's bank on return. The switch is load-bearing:
+	 * DisplayEnergyDiscardMenu reads EnergyDiscardCardListParameters ($46F3) from
+	 * the switched window, so under this routine's own bank 11 it would install a
+	 * garbage wListFunctionPointer and the menu could never report a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	BankswitchROM(BANK_DUEL_CORE);
+	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+	BankswitchROM(saved);
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	return (PlayerPickFireEnergyCardToDiscardResult){card, input.f};
+}
+/* <<< factory PlayerPickFireEnergyCardToDiscard */

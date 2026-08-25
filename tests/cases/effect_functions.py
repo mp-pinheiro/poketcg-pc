@@ -2496,6 +2496,17 @@ Scaven_STAGE = 0xCE - 0xBB
 Scaven_STATUS = 0xF0 - 0xBB
 Scaven_PLUS = 0xE0 - 0xBB
 Scaven_DEF = 0xE6 - 0xBB
+
+PLAYER_TURN = 0xC2
+wConsole = 0xCAB4
+wLCDC = 0xCABB
+wEnergyDiscardMenuDenominator = 0xCBFA
+wEnergyDiscardMenuNumerator = 0xCBFB
+DUELVARS_ARENA_CARD_HP_OFF = 0xC8 - 0xBB
+DUELVARS_ARENA_CARD_STAGE_OFF = 0xCE - 0xBB
+DUELVARS_ARENA_CARD_STATUS_OFF = 0xF0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF = 0xE0 - 0xBB
+DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF = 0xE6 - 0xBB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3871,6 +3882,40 @@ CASES["Scavenge_PlayerSelectEnergyEffect"] = [
          instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory Scavenge_PlayerSelectEnergyEffect
+
+# >>> factory PlayerPickFireEnergyCardToDiscard
+CONTRACT["PlayerPickFireEnergyCardToDiscard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PlayerPickFireEnergyCardToDiscard"] = [
+    {"keys": [0x00, 0x02], "rom_bank": 1,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x02], rom_bank=1,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory PlayerPickFireEnergyCardToDiscard
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6025,3 +6070,11 @@ MUTATIONS["Scavenge_PlayerSelectEnergyEffect"] = {
  "case_ids": ["Scavenge_PlayerSelectEnergyEffect-1", "Scavenge_PlayerSelectEnergyEffect-2"],
 }
 # <<< factory-mutation Scavenge_PlayerSelectEnergyEffect
+# >>> factory-mutation PlayerPickFireEnergyCardToDiscard
+MUTATIONS["PlayerPickFireEnergyCardToDiscard"] = {
+ "source_symbol": "PlayerPickFireEnergyCardToDiscard",
+ "before": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, input.f};",
+ "after": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, 0u};",
+ "case_ids": ["PlayerPickFireEnergyCardToDiscard-0", "PlayerPickFireEnergyCardToDiscard-1"],
+}
+# <<< factory-mutation PlayerPickFireEnergyCardToDiscard

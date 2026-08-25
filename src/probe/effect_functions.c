@@ -3219,6 +3219,15 @@ static void adapt_Scavenge_PlayerSelectEnergyEffect(ProbeState *s)
 }
 /* <<< factory Scavenge_PlayerSelectEnergyEffect */
 
+/* >>> factory PlayerPickFireEnergyCardToDiscard */
+static void adapt_PlayerPickFireEnergyCardToDiscard(ProbeState *s)
+{
+	PlayerPickFireEnergyCardToDiscardResult r = PlayerPickFireEnergyCardToDiscard();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayerPickFireEnergyCardToDiscard */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3617,5 +3626,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LookForCardsInDeck", adapt_LookForCardsInDeck },
 	{ "KadabraRecover_PlayerSelectEffect", adapt_KadabraRecover_PlayerSelectEffect },
 	{ "Scavenge_PlayerSelectEnergyEffect", adapt_Scavenge_PlayerSelectEnergyEffect },
+	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ NULL, NULL },
 };
