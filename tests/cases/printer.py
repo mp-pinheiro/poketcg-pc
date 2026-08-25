@@ -90,6 +90,12 @@ CASES = {
 wce9d = 0xCE9D
 
 SGFXBUFFER5 = 0xB400
+
+wDefaultText = 0xC590
+wPrintOnlyStarRarity = 0xCE9C
+wPrinterCardCount = 0xCE91
+wPrinterHorizontalOffset = 0xCE90
+wPrinterTotalCardCount = 0xCE92
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -157,6 +163,14 @@ CASES["CompressDataForPrinterSerialTransfer"] = [
 ]
 # <<< factory CompressDataForPrinterSerialTransfer
 
+# >>> factory LoadCardInfoForPrinter
+CONTRACT["LoadCardInfoForPrinter"] = {"compare": ("hl",), "preserve": ("hl",), "wram_out": True}
+CASES["LoadCardInfoForPrinter"] = [
+    {"b": 0x00, "c": 0x00, "wram": {wDefaultText: b"\x00" * 16, wPrintOnlyStarRarity: b"\x00", wPrinterCardCount: b"\x00", wPrinterHorizontalOffset: b"\x00", wPrinterTotalCardCount: b"\x00\x00"}, "read": {wDefaultText: 16, wPrintOnlyStarRarity: 1, wPrinterCardCount: 1, wPrinterHorizontalOffset: 1, wPrinterTotalCardCount: 2}, "vread": {0: {0x9800: 0x400, 0x9C00: 0x400}}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, b=0x00, c=0x00, wram={wDefaultText: b"\x00" * 16, wPrintOnlyStarRarity: b"\x00", wPrinterCardCount: b"\x01", wPrinterHorizontalOffset: b"\x02", wPrinterTotalCardCount: b"\x01\x00"}, read={wDefaultText: 16, wPrintOnlyStarRarity: 1, wPrinterCardCount: 1, wPrinterHorizontalOffset: 1, wPrinterTotalCardCount: 2}, vread={0: {0x9800: 0x400, 0x9C00: 0x400}}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory LoadCardInfoForPrinter
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -214,3 +228,6 @@ MUTATIONS["CompressDataForPrinterSerialTransfer"] = {
     "case_ids": ["CompressDataForPrinterSerialTransfer-0", "CompressDataForPrinterSerialTransfer-1"],
 }
 # <<< factory-mutation CompressDataForPrinterSerialTransfer
+# >>> factory-mutation LoadCardInfoForPrinter
+MUTATIONS["LoadCardInfoForPrinter"] = {"source_symbol": "LoadCardInfoForPrinter", "before": "\tuint8_t x = (uint8_t)(wPrinterHorizontalOffset | 0x40u);\n\tuint8_t d = 3u;", "after": "\tuint8_t x = (uint8_t)(wPrinterHorizontalOffset | 0x20u);\n\tuint8_t d = 3u;", "case_ids": ["LoadCardInfoForPrinter-0", "LoadCardInfoForPrinter-1"]}
+# <<< factory-mutation LoadCardInfoForPrinter

@@ -26,9 +26,19 @@ static void adapt_DrawYourOrOppPlayAreaScreen_Bank0(ProbeState *s)
 }
 /* <<< factory DrawYourOrOppPlayAreaScreen_Bank0 */
 
+/* >>> factory DrawAIPeekScreen */
+static void adapt_DrawAIPeekScreen(ProbeState *s)
+{
+	DrawAIPeekScreenResult result = DrawAIPeekScreen(s->a, s->f);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory DrawAIPeekScreen */
+
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
 	{ "DrawYourOrOppPlayAreaScreen_Bank0", adapt_DrawYourOrOppPlayAreaScreen_Bank0 },
+	{ "DrawAIPeekScreen", adapt_DrawAIPeekScreen },
 	{ NULL, NULL },
 };

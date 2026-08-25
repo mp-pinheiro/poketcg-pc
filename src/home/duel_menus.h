@@ -12,4 +12,8 @@ void DrawPlayAreaToPlacePrizeCards(void);
 /* >>> factory DrawYourOrOppPlayAreaScreen_Bank0 */
 void DrawYourOrOppPlayAreaScreen_Bank0(uint16_t hl);
 /* <<< factory DrawYourOrOppPlayAreaScreen_Bank0 */
+/* >>> factory DrawAIPeekScreen */
+typedef struct { uint8_t a; uint8_t f; } DrawAIPeekScreenResult;
+DrawAIPeekScreenResult DrawAIPeekScreen(uint8_t a, uint8_t f);
+/* <<< factory DrawAIPeekScreen */
 #endif /* POKETCG_HOME_DUEL_MENUS_H */

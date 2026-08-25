@@ -111,6 +111,13 @@ static void adapt_CompressDataForPrinterSerialTransfer(ProbeState *s)
 }
 /* <<< factory CompressDataForPrinterSerialTransfer */
 
+/* >>> factory LoadCardInfoForPrinter */
+static void adapt_LoadCardInfoForPrinter(ProbeState *s)
+{
+	LoadCardInfoForPrinter(s->b, s->c, &s->hl);
+}
+/* <<< factory LoadCardInfoForPrinter */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -123,5 +130,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "PrepareForPrinterCommunications", adapt_PrepareForPrinterCommunications },
 	{ "CheckDataCompression", adapt_CheckDataCompression },
 	{ "CompressDataForPrinterSerialTransfer", adapt_CompressDataForPrinterSerialTransfer },
+	{ "LoadCardInfoForPrinter", adapt_LoadCardInfoForPrinter },
 	{ NULL, NULL },
 };

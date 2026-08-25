@@ -31,3 +31,11 @@ BankpushROMResult BankpushROM(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 	return (BankpushROMResult){out_a, out_f, b, c, d, e, out_hl};
 }
 /* <<< factory BankpushROM */
+
+/* >>> factory BankpushROM2 */
+BankpushROM2Result BankpushROM2(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	BankswitchROM(a);
+	return (BankpushROM2Result){a, f, b, c, d, e, hl};
+}
+/* <<< factory BankpushROM2 */

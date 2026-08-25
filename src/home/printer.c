@@ -27,6 +27,13 @@
 #define PRINTERPKT_DATA 0x04u
 #define TRUE 0x01u
 #define SGFXBUFFER5_ADDR 0xB400u
+
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "home/bg_map.h"
+#include "home/core.h"
+#define SYM_CROSS 0x2Du
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -366,3 +373,31 @@ CompressDataForPrinterSerialTransferResult CompressDataForPrinterSerialTransfer(
 	return (CompressDataForPrinterSerialTransferResult){bc_out, hl_out, PRINTERPKT_DATA, TRUE};
 }
 /* <<< factory CompressDataForPrinterSerialTransfer */
+
+/* >>> factory LoadCardInfoForPrinter */
+void LoadCardInfoForPrinter(uint8_t b, uint8_t c, uint16_t *hl)
+{
+	uint16_t saved_hl = *hl;
+	uint8_t x = (uint8_t)(wPrinterHorizontalOffset | 0x40u);
+	uint8_t d = 3u;
+	if (wPrintOnlyStarRarity == 0u) {
+		uint16_t total = wPrinterTotalCardCount_ADDR;
+		uint8_t total_count = gb_read8(total);
+		total = (uint16_t)(total + 1u);
+		total_count = (uint8_t)(total_count | gb_read8(total));
+		if (total_count == 0u)
+			DrawCardSymbol(d, x);
+	}
+	CopyCardNameAndLevel(14u, b, c, d, x);
+	InitTextPrinting(d, x);
+	uint16_t text = wDefaultText_ADDR;
+	ProcessText(&text);
+	x = (uint8_t)(wPrinterHorizontalOffset | 0x40u);
+	uint8_t bg_column = x;
+	uint8_t bg_row = 16u;
+	WriteByteToBGMap0(SYM_CROSS, bg_row, bg_column);
+	bg_row = (uint8_t)(bg_row + 1u);
+	WriteTwoDigitNumberInTxSymbol_PadSpace(wPrinterCardCount, bg_row, bg_column, d, x, text);
+	*hl = saved_hl;
+}
+/* <<< factory LoadCardInfoForPrinter */

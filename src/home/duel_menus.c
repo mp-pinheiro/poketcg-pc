@@ -20,6 +20,12 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define BANK__DrawYourOrOppPlayAreaScreen 0x02u
+
+#include "home/switch_rom.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BANK__DrawAIPeekScreen 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
@@ -54,3 +60,15 @@ void DrawYourOrOppPlayAreaScreen_Bank0(uint16_t hl)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory DrawYourOrOppPlayAreaScreen_Bank0 */
+
+/* >>> factory DrawAIPeekScreen */
+/* duel_menus.asm:67-83 */
+DrawAIPeekScreenResult DrawAIPeekScreen(uint8_t a, uint8_t f)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(BANK__DrawAIPeekScreen);
+	_DrawAIPeekScreen(a);
+	BankswitchROM(saved_bank);
+	return (DrawAIPeekScreenResult){saved_bank, f};
+}
+/* <<< factory DrawAIPeekScreen */
