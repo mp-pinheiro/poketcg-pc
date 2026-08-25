@@ -397,6 +397,7 @@ def main() -> int:
     ap.add_argument("--probe", type=Path, default=ROOT / "build" / "poketcg_probe")
     ap.add_argument("--rom", default=os.environ.get("POKETCG_ROM", str(ROOT / "poketcg" / "poketcg.gbc")))
     ap.add_argument("--report", type=Path, help="write gate record to JSON (requires --all)")
+    ap.add_argument("--shard", help="I/K: run only sorted routines where index %% K == I")
     args = ap.parse_args()
     if args.oracle_mode in ("refresh", "cache") and args.cache_dir is None:
         ap.error("--cache-dir is required for refresh and cache modes")
@@ -421,6 +422,15 @@ def main() -> int:
         name for entries in EXCLUSIONS.values() for name in entries
     }
     wanted = [fn for fn in wanted if fn not in excluded]
+    if args.shard:
+        try:
+            shard_index, shard_count = (int(part) for part in args.shard.split("/", 1))
+        except ValueError:
+            ap.error(f"--shard must be I/K, got {args.shard!r}")
+        if shard_count < 1 or not 0 <= shard_index < shard_count:
+            ap.error(f"--shard requires 0 <= I < K, got {args.shard!r}")
+        wanted = [fn for pos, fn in enumerate(sorted(wanted))
+                  if pos % shard_count == shard_index]
     if args.group:
         warm_hint = "just oracle-warm-group " + args.group[0]
     else:

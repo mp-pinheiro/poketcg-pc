@@ -204,8 +204,27 @@ oracle-audit-all: oracle-health-pyboy
     export POKETCG_ROM=poketcg/poketcg.gbc
     uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe
 
+# Sharded PyBoy audit: 4 processes over the sorted census; same verdicts as --all.
+oracle-audit-all-parallel: oracle-health-pyboy
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export POKETCG_ROM=poketcg/poketcg.gbc
+    tmp=$(mktemp -d)
+    pids=()
+    for i in 0 1 2 3; do
+        uv run --project tools/oracle --frozen --python 3.12.3 python tests/test_leaves.py --all --oracle-mode live --probe build-barrier/poketcg_probe --shard "$i/4" >"$tmp/$i.log" 2>&1 &
+        pids+=("$!")
+    done
+    rc=0
+    for pid in "${pids[@]}"; do
+        wait "$pid" || rc=1
+    done
+    cat "$tmp"/0.log "$tmp"/1.log "$tmp"/2.log "$tmp"/3.log
+    rm -rf "$tmp"
+    exit "$rc"
+
 # Aggregate function gate adds the independent PyBoy audit.
-oracle-gate: oracle-fn-gate oracle-audit-all
+oracle-gate: oracle-fn-gate oracle-audit-all-parallel
     python3 tools/audit_oracle_cases.py --stage routine
 
 # Release barrier: primary and independent oracles, data round-trip, complete
