@@ -39,10 +39,13 @@ PROGRESS_TIMEOUT_S = 300
 LANDINGS_NAME = "landings.jsonl"
 QUARANTINE_NAME = "quarantine.jsonl"
 
-# The only trees a graft writes. Rolling a rejected batch back through these
-# paths instead of the whole working copy keeps a concurrent orchestrator's
-# uncommitted work - typically a harness fix under tools/ - alive.
-SURGERY_TREES = ("src/home", "src/probe", "tests/cases")
+# The only trees a graft writes: the quartet plus the per-routine mutation
+# receipts. Rolling a rejected batch back through these paths instead of the
+# whole working copy keeps a concurrent orchestrator's uncommitted work - a
+# harness fix under tools/factory, say - alive. Omitting the receipts left
+# stray files behind, which is what the marker-regression smoke stage checks.
+SURGERY_TREES = ("src/home", "src/probe", "tests/cases",
+                 "tools/oracle/mutation_receipts")
 
 # The statics block shares the routine marker shape, so it has to be filtered
 # out of the census; every other match is a landed routine's C fragment.

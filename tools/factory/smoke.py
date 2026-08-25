@@ -342,8 +342,8 @@ def stage_marker_regression(state: dict[str, Any]) -> str:
         _require(len(quarantined) == 1
                  and quarantined[0]["failure_class"] == "marker-regression",
                  "marker regression was not quarantined", quarantined)
-        _require(["jj", "restore"] in commands,
-                 "marker regression did not restore the working copy", commands)
+        _require(["jj", "restore", *land.SURGERY_TREES] in commands,
+                 "marker regression did not restore the graft paths", commands)
         _require(not any(command[:2] == ["jj", "commit"] for command in commands),
                  "marker regression still committed", commands)
         record = json.loads(
