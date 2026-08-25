@@ -4213,6 +4213,18 @@ CASES["Conversion1_PlayerSelectEffect"] = [
 ]
 # <<< factory Conversion1_PlayerSelectEffect
 
+# >>> factory Conversion2_PlayerSelectEffect
+CONTRACT["Conversion2_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Conversion2_PlayerSelectEffect"] = [
+    {"wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": FRAME_SETUP,
+     "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000,
+     "read": {0xFFA0: 1, 0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}},
+    dict(POISON, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=FRAME_SETUP,
+         keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000,
+         read={0xFFA0: 1, 0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}),
+]
+# <<< factory Conversion2_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6430,3 +6442,11 @@ MUTATIONS["Conversion1_PlayerSelectEffect"] = {
  "case_ids": ["Conversion1_PlayerSelectEffect-0", "Conversion1_PlayerSelectEffect-1"],
 }
 # <<< factory-mutation Conversion1_PlayerSelectEffect
+# >>> factory-mutation Conversion2_PlayerSelectEffect
+MUTATIONS["Conversion2_PlayerSelectEffect"] = {
+ "source_symbol": "Conversion2_PlayerSelectEffect",
+ "before": "HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void)\n{\n\tHandleColorChangeScreenResult r =\n\t\tHandleColorChangeScreen(0x80u, 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChooseResistanceYouWishToChangeText);\n\thTemp_ffa0 = r.a;",
+ "after": "HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void)\n{\n\tHandleColorChangeScreenResult r =\n\t\tHandleColorChangeScreen(0x80u, 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChooseResistanceYouWishToChangeText);\n\thTemp_ffa0 = (uint8_t)(r.a + 1u);",
+ "case_ids": ["Conversion2_PlayerSelectEffect-0", "Conversion2_PlayerSelectEffect-1"]
+}
+# <<< factory-mutation Conversion2_PlayerSelectEffect

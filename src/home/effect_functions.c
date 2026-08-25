@@ -644,6 +644,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #define C1_PLAY_AREA_ARENA 0x00u
 #define ChooseWeaknessYouWishToChangeText 0x0111u
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#define ChooseResistanceYouWishToChangeText 0x0112u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6048,3 +6052,14 @@ HandleColorChangeScreenResult Conversion1_PlayerSelectEffect(void)
 	return r;
 }
 /* <<< factory Conversion1_PlayerSelectEffect */
+
+/* >>> factory Conversion2_PlayerSelectEffect */
+HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void)
+{
+	HandleColorChangeScreenResult r =
+		HandleColorChangeScreen(0x80u, 0u, 0u, 0u, 0u, 0u,
+				ChooseResistanceYouWishToChangeText);
+	hTemp_ffa0 = r.a;
+	return r;
+}
+/* <<< factory Conversion2_PlayerSelectEffect */
