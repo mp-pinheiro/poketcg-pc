@@ -866,4 +866,7 @@ SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uin
 /* >>> factory DisplayPracticeDuelPlayerHandScreen */
 void DisplayPracticeDuelPlayerHandScreen(void);
 /* <<< factory DisplayPracticeDuelPlayerHandScreen */
+/* >>> factory DrawDuelMainScene */
+void DrawDuelMainScene(void);
+/* <<< factory DrawDuelMainScene */
 #endif

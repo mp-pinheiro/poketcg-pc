@@ -1660,6 +1660,12 @@ HUD_TILE = 0x996F
 
 wDuelTempList = 0xC510
 wCardListScratch = 0xC51A
+
+hWhoseTurn = 0xFF97
+wDuelDisplayedScreen = 0xCAC2
+wPlayerDuelistType = 0xC2F1
+wOpponentDuelistType = 0xC3F1
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2912,6 +2918,18 @@ CASES["DisplayPracticeDuelPlayerHandScreen"] = [
          instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory DisplayPracticeDuelPlayerHandScreen
+
+# >>> factory DrawDuelMainScene
+CONTRACT["DrawDuelMainScene"] = {"compare": (), "preserve": ()}
+CASES["DrawDuelMainScene"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
+     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
+    {"wram": {hWhoseTurn: b"\xC3", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
+     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC3", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
+         read={hWhoseTurn: 1, wDuelDisplayedScreen: 1}),
+]
+# <<< factory DrawDuelMainScene
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4190,3 +4208,11 @@ MUTATIONS["ApplyBGP7OrSGB2ToCardImage"] = {"source_symbol": "ApplyBGP7OrSGB2ToCa
 # >>> factory-mutation DisplayPracticeDuelPlayerHandScreen
 MUTATIONS["DisplayPracticeDuelPlayerHandScreen"] = {"source_symbol": "DisplayPracticeDuelPlayerHandScreen", "before": "\tDrawRegularTextBox(&box, 0u, 20u, 13u, 0u, 0u);", "after": "\tDrawRegularTextBox(&box, 0u, 20u, 12u, 0u, 0u);", "case_ids": ["DisplayPracticeDuelPlayerHandScreen-0", "DisplayPracticeDuelPlayerHandScreen-1"]}
 # <<< factory-mutation DisplayPracticeDuelPlayerHandScreen
+# >>> factory-mutation DrawDuelMainScene
+MUTATIONS["DrawDuelMainScene"] = {
+    "source_symbol": "DrawDuelMainScene",
+    "before": "\t\t\tgb_write8(hWhoseTurn_ADDR, saved_turn);\n\t\t\treturn;",
+    "after": "\t\t\tgb_write8(hWhoseTurn_ADDR, PLAYER_TURN);\n\t\t\treturn;",
+    "case_ids": ["DrawDuelMainScene-1"],
+}
+# <<< factory-mutation DrawDuelMainScene

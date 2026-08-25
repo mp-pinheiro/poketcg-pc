@@ -959,6 +959,16 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/print_text.h"
 #define DuelistHandText 0x00a7u
 #define CARD_LIST_PARAMETERS 0x5710u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/credits_sequence_commands.h"
+#include "home/tiles.h"
+#include "home/bg_map.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define DUEL_MAIN_SCENE 0x01u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5434,3 +5444,59 @@ void DisplayPracticeDuelPlayerHandScreen(void)
 	EnableLCD();
 }
 /* <<< factory DisplayPracticeDuelPlayerHandScreen */
+
+/* >>> factory DrawDuelMainScene */
+void DrawDuelMainScene(void)
+{
+	uint8_t saved_turn = 0u;
+	uint8_t restore_turn = 0u;
+	DuelistVarResult result = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (result.a != DUELIST_TYPE_PLAYER) {
+		saved_turn = gb_read8(hWhoseTurn_ADDR);
+		gb_write8(hWhoseTurn_ADDR, PLAYER_TURN);
+		restore_turn = 1u;
+	}
+	if (gb_read8(wDuelDisplayedScreen_ADDR) == DUEL_MAIN_SCENE) {
+		if (restore_turn != 0u) {
+			gb_write8(hWhoseTurn_ADDR, saved_turn);
+			return;
+		}
+		return;
+	}
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	gb_write8(wDuelDisplayedScreen_ADDR, DUEL_MAIN_SCENE);
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadPlayAreaCardGfx(result.a, 0x8500u);
+	SetBGP7OrSGB2ToCardPalette();
+	SwapTurn();
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	LoadPlayAreaCardGfx(result.a, 0x8200u);
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+	SwapTurn();
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (result.a != 0xFFu) {
+		FillRectangle(0xD0u, 8u, 6u, 0x0005u, 0x0601u);
+		(void)ApplyBGP7OrSGB2ToCardImage(0xD0u, 0u, 8u, 6u, 0u, 5u, 0x0601u);
+	}
+	SwapTurn();
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (result.a != 0xFFu) {
+		FillRectangle(0xA0u, 8u, 6u, 0x0C01u, 0x0601u);
+		(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 6u, 0x0Cu, 1u, 0x0601u);
+	}
+	SwapTurn();
+	uint16_t tile_data = 0u;
+	uint16_t bg_map = 0u;
+	uint8_t a = 0u, b = 0u, c = 0u;
+	WriteDataBlocksToBGMap0(&tile_data, &bg_map, &a, &b, &c);
+	DrawDuelHorizontalSeparator();
+	DrawDuelHUDs();
+	(void)DrawWideTextBox();
+	EnableLCD();
+	if (restore_turn != 0u)
+		gb_write8(hWhoseTurn_ADDR, saved_turn);
+}
+/* <<< factory DrawDuelMainScene */
