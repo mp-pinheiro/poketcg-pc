@@ -3211,6 +3211,14 @@ CASES["PracticeDuel_RepeatInstructions"] = [
 ]
 # <<< factory PracticeDuel_RepeatInstructions
 
+# >>> factory _DisplayCardDetailScreen
+CONTRACT["_DisplayCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["_DisplayCardDetailScreen"] = [
+    {"hl": 0xC100, "keys": [0x00, 0x01], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, hl=0x1234, keys=[0x00, 0x01], wram={0xCABB: b"\x80", 0xFF40: b"\x80", 0xCC24: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory _DisplayCardDetailScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4581,3 +4589,6 @@ MUTATIONS["PracticeDuel_RepeatInstructions"] = {
     "case_ids": ["PracticeDuel_RepeatInstructions-0", "PracticeDuel_RepeatInstructions-1"],
 }
 # <<< factory-mutation PracticeDuel_RepeatInstructions
+# >>> factory-mutation _DisplayCardDetailScreen
+MUTATIONS["_DisplayCardDetailScreen"] = {"source_symbol": "_DisplayCardDetailScreen", "before": "\tWaitResult waited = DrawWideTextBox_WaitForInput(saved_hl);", "after": "\tWaitResult waited = (WaitResult){0u};", "case_ids": ["_DisplayCardDetailScreen-0", "_DisplayCardDetailScreen-1"]}
+# <<< factory-mutation _DisplayCardDetailScreen

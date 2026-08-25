@@ -2114,6 +2114,14 @@ static void adapt_PracticeDuel_RepeatInstructions(ProbeState *s)
 }
 /* <<< factory PracticeDuel_RepeatInstructions */
 
+/* >>> factory _DisplayCardDetailScreen */
+static void adapt__DisplayCardDetailScreen(ProbeState *s)
+{
+	WaitResult r = _DisplayCardDetailScreen(s->hl);
+	s->f = r.f;
+}
+/* <<< factory _DisplayCardDetailScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2367,5 +2375,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPracticeDuelInstructions_Fast", adapt_PrintPracticeDuelInstructions_Fast },
 	{ "PracticeDuel_RepeatInstructions", adapt_PracticeDuel_RepeatInstructions },
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
+	{ "_DisplayCardDetailScreen", adapt__DisplayCardDetailScreen },
 	{ NULL, NULL },
 };

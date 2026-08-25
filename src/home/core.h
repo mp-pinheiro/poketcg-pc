@@ -949,4 +949,7 @@ void PrintPracticeDuelInstructions_Fast(uint16_t hl);
 /* >>> factory PracticeDuel_RepeatInstructions */
 uint8_t PracticeDuel_RepeatInstructions(void);
 /* <<< factory PracticeDuel_RepeatInstructions */
+/* >>> factory _DisplayCardDetailScreen */
+WaitResult _DisplayCardDetailScreen(uint16_t hl);
+/* <<< factory _DisplayCardDetailScreen */
 #endif

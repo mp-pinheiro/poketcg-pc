@@ -1064,6 +1064,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/switch_sram.h"
 #include "home/core.h"
 #define FollowMyGuidancePracticeDuelText 0x01dau
+
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5998,3 +6003,16 @@ uint8_t PracticeDuel_RepeatInstructions(void)
 	return 0x90u;
 }
 /* <<< factory PracticeDuel_RepeatInstructions */
+
+/* >>> factory _DisplayCardDetailScreen */
+WaitResult _DisplayCardDetailScreen(uint16_t hl)
+{
+	uint16_t saved_hl = hl;
+	DrawLargePictureOfCard();
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(18u, 0u, 0u, 6u, 3u);
+	gb_write8(name.hl, 0u);
+	LoadTxRam2(0u);
+	WaitResult waited = DrawWideTextBox_WaitForInput(saved_hl);
+	return waited;
+}
+/* <<< factory _DisplayCardDetailScreen */
