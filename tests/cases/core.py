@@ -3106,6 +3106,14 @@ CASES["DisplayAttackPage_Attack2Page1"] = [
 ]
 # <<< factory DisplayAttackPage_Attack2Page1
 
+# >>> factory DisplayAttackPage_Attack2Page2
+CONTRACT["DisplayAttackPage_Attack2Page2"] = {"compare": (), "preserve": ()}
+CASES["DisplayAttackPage_Attack2Page2"] = [
+    {"b": 0x01, "c": 0x02, "d": 0x03, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC47: b"\x00\x00", 0xCC49: b"\x00\x00\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+]
+# <<< factory DisplayAttackPage_Attack2Page2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4439,3 +4447,6 @@ MUTATIONS["DisplayAttackPage_Attack1Page1"] = {"source_symbol": "DisplayAttackPa
 # >>> factory-mutation DisplayAttackPage_Attack2Page1
 MUTATIONS["DisplayAttackPage_Attack2Page1"] = {"source_symbol": "DisplayAttackPage_Attack2Page1", "before": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\tSwitchAttackPage();", "after": "void DisplayAttackPage_Attack2Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack2Page1(b, c, d);\n\t(void)0;", "case_ids": ["DisplayAttackPage_Attack2Page1-0", "DisplayAttackPage_Attack2Page1-1"]}
 # <<< factory-mutation DisplayAttackPage_Attack2Page1
+# >>> factory-mutation DisplayAttackPage_Attack2Page2
+MUTATIONS["DisplayAttackPage_Attack2Page2"] = {"source_symbol": "DisplayAttackPage_Attack2Page2", "before": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) == 0u)", "after": "void DisplayAttackPage_Attack2Page2(uint8_t b, uint8_t c, uint8_t d)\n{\n\tuint8_t lo = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 2u));\n\tuint8_t hi = gb_read8((uint16_t)(wLoadedCard1Atk2Description_ADDR + 3u));\n\tif ((uint8_t)(lo | hi) != 0u)", "case_ids": ["DisplayAttackPage_Attack2Page2-0", "DisplayAttackPage_Attack2Page2-1"]}
+# <<< factory-mutation DisplayAttackPage_Attack2Page2
