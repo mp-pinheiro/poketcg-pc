@@ -2983,6 +2983,13 @@ static void adapt_DamageSwap_SwapEffect(ProbeState *s)
 }
 /* <<< factory DamageSwap_SwapEffect */
 
+/* >>> factory PrintDevolvedCardNameAndLevelText */
+static void adapt_PrintDevolvedCardNameAndLevelText(ProbeState *s)
+{
+	PrintDevolvedCardNameAndLevelText(s->b, s->c, s->d, s->e);
+}
+/* <<< factory PrintDevolvedCardNameAndLevelText */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3352,5 +3359,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StrangeBehavior_SwapEffect", adapt_StrangeBehavior_SwapEffect },
 	{ "Defender_AttachDefenderEffect", adapt_Defender_AttachDefenderEffect },
 	{ "DamageSwap_SwapEffect", adapt_DamageSwap_SwapEffect },
+	{ "PrintDevolvedCardNameAndLevelText", adapt_PrintDevolvedCardNameAndLevelText },
 	{ NULL, NULL },
 };

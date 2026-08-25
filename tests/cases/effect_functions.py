@@ -2406,6 +2406,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 hTempCardIndex_ff9f = 0xFF9F
 hTemp_ffa0 = 0xFFA0
 hWhoseTurn = 0xFF97
+
+wLoadedCard1Name = 0xCC27
+wTxRam2 = 0xCE3F
+wTxRam2_b = 0xCE41
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3447,6 +3451,19 @@ CASES["DamageSwap_SwapEffect"] = [
          instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory DamageSwap_SwapEffect
+
+# >>> factory PrintDevolvedCardNameAndLevelText
+CONTRACT["PrintDevolvedCardNameAndLevelText"] = {"compare": (), "preserve": ()}
+CASES["PrintDevolvedCardNameAndLevelText"] = [
+    {"b": 0x11, "c": 0x22, "d": 0x00, "e": 0x01, "keys": 0x01,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "wram": {0xFF97: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
+     "read": {0xCC27: 2, 0xCE3F: 4}},
+    dict(POISON, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         wram={0xFF97: b"\x00", 0xC400: b"\x08\x09", 0xC590: b"\x00", 0xCE3F: b"\x00\x00\x00\x00"},
+         read={0xCC27: 2, 0xCE3F: 4}),
+]
+# <<< factory PrintDevolvedCardNameAndLevelText
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5504,3 +5521,6 @@ MUTATIONS["DamageSwap_SwapEffect"] = {
     "case_ids": ["DamageSwap_SwapEffect-0", "DamageSwap_SwapEffect-1"],
 }
 # <<< factory-mutation DamageSwap_SwapEffect
+# >>> factory-mutation PrintDevolvedCardNameAndLevelText
+MUTATIONS["PrintDevolvedCardNameAndLevelText"] = {"source_symbol": "PrintDevolvedCardNameAndLevelText", "before": "\tgb_write8(wTxRam2_b_ADDR, 0u);", "after": "\tgb_write8(wTxRam2_b_ADDR, 1u);", "case_ids": ["PrintDevolvedCardNameAndLevelText-0", "PrintDevolvedCardNameAndLevelText-1"]}
+# <<< factory-mutation PrintDevolvedCardNameAndLevelText

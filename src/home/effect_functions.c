@@ -461,6 +461,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "mem.h"
 #define DUELVARS_ARENA_CARD_ATTACHED_DEFENDER 0xDAu
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "mem.h"
+#define PokemonDevolvedToText 0x017au
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5196,3 +5202,18 @@ DamageSwap_SwapEffectResult DamageSwap_SwapEffect(void)
 	return (DamageSwap_SwapEffectResult){items.a, (uint8_t)(items.a == 0u ? 0x80u : 0u), 0u};
 }
 /* <<< factory DamageSwap_SwapEffect */
+
+/* >>> factory PrintDevolvedCardNameAndLevelText */
+void PrintDevolvedCardNameAndLevelText(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	(void)LoadCardDataToBuffer1_FromDeckIndex(e);
+	gb_write8(wTxRam2_ADDR, gb_read8(wLoadedCard1Name_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+	gb_write8(wTxRam2_b_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(d);
+	CopyCardNameAndLevelResult result = CopyCardNameAndLevel(18u, b, c, d, e);
+	gb_write8(result.hl, 0u);
+	(void)DrawWideTextBox_WaitForInput(PokemonDevolvedToText);
+}
+/* <<< factory PrintDevolvedCardNameAndLevelText */

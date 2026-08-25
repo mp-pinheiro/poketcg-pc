@@ -1,0 +1,9 @@
+{
+  "fn": "PrintDevolvedCardNameAndLevelText",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintDevolvedCardNameAndLevelText\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"0809\", \"50576\": \"00\", \"52263\": \"0000\", \"52799\": \"00000000\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintDevolvedCardNameAndLevelText\", \"mismatches\": {\"bus\": {\"address\": 52801, \"reference\": \"00000000000000\", \"native\": \"00000000010000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[50176, 2], [50576, 1], [52263, 2], [52799, 4], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrintDevolvedCardNameAndLevelText\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 0, \"e\": 1, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"0809\", \"50576\": \"00\", \"52263\": \"0000\", \"52799\": \"00000000\", \"65431\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
