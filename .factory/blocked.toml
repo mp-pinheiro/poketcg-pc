@@ -703,3 +703,13 @@ unblock = "read the recorded diagnostics under .factory/try/DisplayCardPage_Poke
 name = "ShowPrinterConnectionErrorScene"
 reason = "AUTO-RETIRED: src/engine/link/printer.asm:64 (basename `printer`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ShowPrinterConnectionErrorScene-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":2472,\"sp\":65518,\"instructions\":53663,\"cycles\":400004}"
 unblock = "read the recorded diagnostics under .factory/try/ShowPrinterConnectionErrorScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "DuelCheckMenu_OppPlayArea"
+reason = "CAPABILITY: src/engine/menus/duel.asm:151 (basename `duel`) needs VBlank interrupt emulation. The routine reaches DoFrame only after a callee has enabled the LCD, so WaitForVBlank (src/home/lcd.asm:9-13) halts on wVBlankCounter, which nothing advances inside the oracle's synthetic call frame. Seeding wLCDC=0 short-circuits that wait for routines that never enable the LCD, and it fixed several this session, but it cannot help here: the reference burns 19.5M instructions parked at pc 0x0271 in every case that reaches the menu loop."
+unblock = "give the oracle runner a VBlank interrupt that advances wVBlankCounter, or add a case channel that steps frames, then delete this entry"
+
+[[blocked]]
+name = "ShowPrinterTransmitting"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:957 (basename `printer`). 10 generations exhausted (trapped=False); last diagnostic phase=mutation failure_class=code detail=MUTATION_GREEN: corrupted routine still passed {\"fn\": \"ShowPrinterTransmitting\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"39361\": \"38\"}}, \"wram\": {\"51899\": \"80\"}}, \"status\": \"PASS\"}"
+unblock = "read the recorded diagnostics under .factory/try/ShowPrinterTransmitting/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"

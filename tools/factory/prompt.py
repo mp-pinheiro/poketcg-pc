@@ -161,6 +161,16 @@ def render(packet: dict, feedback: str | None = None,
         "generated/sram.h, and mem.h; anything else fails the tree check. A constant the "
         "asm uses and this packet does not list must be #define'd here from its numeric "
         "value, never assumed to exist.",
+        "Never redeclare something the tree already has. A typedef, struct, macro or "
+        "prototype that already exists in the callee header you include is a "
+        "\"conflicting types\" or duplicate-macro compile error, and the compile phase "
+        "costs a whole generation. Your header fragment adds only what is missing; "
+        "check the callee header before declaring its result type yourself.",
+        "Compute an assembler constant from the ROM, not from precedence intuition. "
+        "rgbasm binds `<<` tighter than `+`, so core.asm's `2 << 0 + 2 << 2` assembles "
+        "to (2<<0)+(2<<2) = $0A, and the oracle measured exactly that byte against "
+        "candidates that reasoned their way to $20. When an expression mixes shifts and "
+        "addition, evaluate it that way and say the resulting byte in a comment.",
         "cases_statics: module-level Python helpers and addresses shared by this "
         "basename's cases; do not repeat CONTRACT/CASES/MUTATIONS/SCHEMA2_CASES tables.",
         "Do not emit file guards, complete modules, prose, markdown, or tagged blocks.",
