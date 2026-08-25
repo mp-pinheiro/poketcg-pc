@@ -2990,6 +2990,13 @@ static void adapt_PrintDevolvedCardNameAndLevelText(ProbeState *s)
 }
 /* <<< factory PrintDevolvedCardNameAndLevelText */
 
+/* >>> factory ApplySubstatus2ToDefendingCard */
+static void adapt_ApplySubstatus2ToDefendingCard(ProbeState *s)
+{
+	s->hl = ApplySubstatus2ToDefendingCard(s->a, s->hl);
+}
+/* <<< factory ApplySubstatus2ToDefendingCard */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3360,5 +3367,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Defender_AttachDefenderEffect", adapt_Defender_AttachDefenderEffect },
 	{ "DamageSwap_SwapEffect", adapt_DamageSwap_SwapEffect },
 	{ "PrintDevolvedCardNameAndLevelText", adapt_PrintDevolvedCardNameAndLevelText },
+	{ "ApplySubstatus2ToDefendingCard", adapt_ApplySubstatus2ToDefendingCard },
 	{ NULL, NULL },
 };

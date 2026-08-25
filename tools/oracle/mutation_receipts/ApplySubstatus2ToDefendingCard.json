@@ -1,0 +1,9 @@
+{
+  "fn": "ApplySubstatus2ToDefendingCard",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplySubstatus2ToDefendingCard\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50166, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50152\": \"01\", \"50166\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplySubstatus2ToDefendingCard\", \"mismatches\": {\"bus\": {\"address\": 50152, \"reference\": \"0101c2\", \"native\": \"0001c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50152, 1], [50166, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ApplySubstatus2ToDefendingCard\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50166, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50152\": \"01\", \"50166\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

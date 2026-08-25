@@ -2410,6 +2410,9 @@ hWhoseTurn = 0xFF97
 wLoadedCard1Name = 0xCC27
 wTxRam2 = 0xCE3F
 wTxRam2_b = 0xCE41
+
+hWhoseTurn = 0xFF97
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3464,6 +3467,15 @@ CASES["PrintDevolvedCardNameAndLevelText"] = [
          read={0xCC27: 2, 0xCE3F: 4}),
 ]
 # <<< factory PrintDevolvedCardNameAndLevelText
+
+# >>> factory ApplySubstatus2ToDefendingCard
+CONTRACT["ApplySubstatus2ToDefendingCard"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e")}
+CASES["ApplySubstatus2ToDefendingCard"] = [
+    {"a": 0x01, "hl": 0xC200, "wram": {hWhoseTurn: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"a": 0x7F, "hl": 0xC240, "wram": {hWhoseTurn: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, a=0xA5, hl=0xC280, wram={hWhoseTurn: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),
+]
+# <<< factory ApplySubstatus2ToDefendingCard
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5524,3 +5536,6 @@ MUTATIONS["DamageSwap_SwapEffect"] = {
 # >>> factory-mutation PrintDevolvedCardNameAndLevelText
 MUTATIONS["PrintDevolvedCardNameAndLevelText"] = {"source_symbol": "PrintDevolvedCardNameAndLevelText", "before": "\tgb_write8(wTxRam2_b_ADDR, 0u);", "after": "\tgb_write8(wTxRam2_b_ADDR, 1u);", "case_ids": ["PrintDevolvedCardNameAndLevelText-0", "PrintDevolvedCardNameAndLevelText-1"]}
 # <<< factory-mutation PrintDevolvedCardNameAndLevelText
+# >>> factory-mutation ApplySubstatus2ToDefendingCard
+MUTATIONS["ApplySubstatus2ToDefendingCard"] = {"source_symbol": "ApplySubstatus2ToDefendingCard", "before": "\tgb_write8(r.hl, a);\n\tuint16_t last_turn", "after": "\tgb_write8(r.hl, 0u);\n\tuint16_t last_turn", "case_ids": ["ApplySubstatus2ToDefendingCard-0", "ApplySubstatus2ToDefendingCard-1", "ApplySubstatus2ToDefendingCard-2"]}
+# <<< factory-mutation ApplySubstatus2ToDefendingCard

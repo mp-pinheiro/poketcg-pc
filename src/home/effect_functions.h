@@ -1242,6 +1242,9 @@ DamageSwap_SwapEffectResult DamageSwap_SwapEffect(void);
 /* >>> factory PrintDevolvedCardNameAndLevelText */
 void PrintDevolvedCardNameAndLevelText(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory PrintDevolvedCardNameAndLevelText */
+/* >>> factory ApplySubstatus2ToDefendingCard */
+uint16_t ApplySubstatus2ToDefendingCard(uint8_t a, uint16_t hl);
+/* <<< factory ApplySubstatus2ToDefendingCard */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -467,6 +467,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "mem.h"
 #define PokemonDevolvedToText 0x017au
+
+#include "home/substatus.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 0xf6u
+#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5217,3 +5225,21 @@ void PrintDevolvedCardNameAndLevelText(uint8_t b, uint8_t c, uint8_t d, uint8_t 
 	(void)DrawWideTextBox_WaitForInput(PokemonDevolvedToText);
 }
 /* <<< factory PrintDevolvedCardNameAndLevelText */
+
+/* >>> factory ApplySubstatus2ToDefendingCard */
+uint16_t ApplySubstatus2ToDefendingCard(uint8_t a, uint16_t hl)
+{
+	NoDamageOrEffectCheckResult check = CheckNoDamageOrEffect(hl);
+	if (check.f & 0x10u) {
+		DrawDuelMainScene();
+		if (check.hl != 0u)
+			return DrawWideTextBox_PrintText(check.hl).hl;
+		return check.hl;
+	}
+	DuelistVarResult r = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
+	gb_write8(r.hl, a);
+	uint16_t last_turn = (uint16_t)((r.hl & 0xff00u) | DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2);
+	gb_write8(last_turn, a);
+	return last_turn;
+}
+/* <<< factory ApplySubstatus2ToDefendingCard */
