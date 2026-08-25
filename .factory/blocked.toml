@@ -753,3 +753,8 @@ unblock = "read the recorded diagnostics under .factory/try/_DisplayCardDetailSc
 name = "PlayBetweenTurnsAnimation"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:6975 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/PlayBetweenTurnsAnimation/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "DisplayNoBasicPokemonInHandScreenAndText"
+reason = "AUTO-RETIRED: src/engine/duel/core.asm:2080 (basename `core`). 3 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayNoBasicPokemonInHandScreenAndText-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"instructions\":39229175,\"cycles\":160000000}"
+unblock = "read the recorded diagnostics under .factory/try/DisplayNoBasicPokemonInHandScreenAndText/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
