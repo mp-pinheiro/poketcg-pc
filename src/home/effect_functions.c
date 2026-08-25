@@ -520,6 +520,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/effect_functions.h"
 #include "mem.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5475,3 +5481,31 @@ void EnergyRetrieval_DiscardAndAddToHandEffect(void)
 	(void)DisplayCardListDetails();
 }
 /* <<< factory EnergyRetrieval_DiscardAndAddToHandEffect */
+
+/* >>> factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_DiscardAndAddToHandEffect(uint8_t b, uint8_t c)
+{
+	uint16_t hl = hTemp_ffa0_ADDR;
+	uint8_t a = gb_read8(hl++);
+	RemoveCardFromHand(a);
+	PutCardInDiscardPile(a);
+	a = gb_read8(hl++);
+	RemoveCardFromHand(a);
+	PutCardInDiscardPile(a);
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		a = gb_read8(hl++);
+		gb_write8(de, a);
+		de++;
+		if (a == 0xFFu)
+			break;
+		MoveDiscardResult moved = MoveDiscardPileCardToHand(a);
+		AddCardToHand(moved.a);
+	}
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return (SuperEnergyRetrievalDiscardAndAddToHandEffectResult){turn.a, turn.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, turn.hl};
+	DisplayCardListDetailsResult details = DisplayCardListDetails();
+	return (SuperEnergyRetrievalDiscardAndAddToHandEffectResult){details.a, details.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, hl};
+}
+/* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */

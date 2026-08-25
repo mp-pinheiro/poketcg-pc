@@ -3113,6 +3113,20 @@ static void adapt_EnergyRetrieval_DiscardAndAddToHandEffect(ProbeState *s)
 }
 /* <<< factory EnergyRetrieval_DiscardAndAddToHandEffect */
 
+/* >>> factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+static void adapt_SuperEnergyRetrieval_DiscardAndAddToHandEffect(ProbeState *s)
+{
+	SuperEnergyRetrievalDiscardAndAddToHandEffectResult r = SuperEnergyRetrieval_DiscardAndAddToHandEffect(s->b, s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3499,5 +3513,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SnivelEffect", adapt_SnivelEffect },
 	{ "Conversion1_ChangeWeaknessEffect", adapt_Conversion1_ChangeWeaknessEffect },
 	{ "EnergyRetrieval_DiscardAndAddToHandEffect", adapt_EnergyRetrieval_DiscardAndAddToHandEffect },
+	{ "SuperEnergyRetrieval_DiscardAndAddToHandEffect", adapt_SuperEnergyRetrieval_DiscardAndAddToHandEffect },
 	{ NULL, NULL },
 };

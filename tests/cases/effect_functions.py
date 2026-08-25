@@ -2446,6 +2446,12 @@ discard_count = 0xC2ED
 duelist_type = 0xC2F1
 hand_card = 0xC242
 discard_card = 0xC27E
+
+hTemp_ffa0 = 0xFFA0
+wDuelTempList = 0xC510
+hWhoseTurn = 0xFF97
+wDuelistType = 0xC2F1
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3643,6 +3649,15 @@ CASES["EnergyRetrieval_DiscardAndAddToHandEffect"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", hTempList: b"\x03\x03\xFF", player_duel_page: b"\x00", card_location: b"\x01", hand_count: b"\x01", discard_count: b"\x00", duelist_type: b"\x00", hand_card: b"\x03", discard_card: b"\x00", wDuelTempList: b"\x00\x00\x00"}),
 ]
 # <<< factory EnergyRetrieval_DiscardAndAddToHandEffect
+
+# >>> factory SuperEnergyRetrieval_DiscardAndAddToHandEffect
+CONTRACT["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = [
+    {"b": 0x12, "c": 0x34, "wram": {hTemp_ffa0: b"\x03\x04\x03\x04\xFF", hWhoseTurn: b"\xC2", wDuelistType: b"\x00", 0xC2EE: b"\x02", 0xC2ED: b"\x00", 0xC203: b"\x01", 0xC204: b"\x01", 0xC242: b"\x03\x04"}, "read": {wDuelTempList: 3}},
+    {"b": 0x56, "c": 0x78, "wram": {hTemp_ffa0: b"\x05\x06\x05\x06\xFF", hWhoseTurn: b"\xC2", wDuelistType: b"\x00", 0xC2EE: b"\x02", 0xC2ED: b"\x00", 0xC205: b"\x01", 0xC206: b"\x01", 0xC244: b"\x05\x06"}, "read": {wDuelTempList: 3}},
+    dict(POISON, wram={hTemp_ffa0: b"\x03\x04\x03\x04\xFF", hWhoseTurn: b"\xC2", wDuelistType: b"\x00", 0xC2EE: b"\x02", 0xC2ED: b"\x00", 0xC203: b"\x01", 0xC204: b"\x01", 0xC242: b"\x03\x04"}, read={wDuelTempList: 3}),
+]
+# <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5751,3 +5766,6 @@ MUTATIONS["Conversion1_ChangeWeaknessEffect"] = {"source_symbol": "Conversion1_C
 # >>> factory-mutation EnergyRetrieval_DiscardAndAddToHandEffect
 MUTATIONS["EnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": "EnergyRetrieval_DiscardAndAddToHandEffect", "before": "\t\tAddCardToHand(moved.a);", "after": "\t\tAddCardToHand((uint8_t)(moved.a + 1u));", "case_ids": ["EnergyRetrieval_DiscardAndAddToHandEffect-0", "EnergyRetrieval_DiscardAndAddToHandEffect-1"]}
 # <<< factory-mutation EnergyRetrieval_DiscardAndAddToHandEffect
+# >>> factory-mutation SuperEnergyRetrieval_DiscardAndAddToHandEffect
+MUTATIONS["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": "SuperEnergyRetrieval_DiscardAndAddToHandEffect", "before": "\t\tgb_write8(de, a);", "after": "\t\tgb_write8(de, 0u);", "case_ids": ["SuperEnergyRetrieval_DiscardAndAddToHandEffect-0", "SuperEnergyRetrieval_DiscardAndAddToHandEffect-1", "SuperEnergyRetrieval_DiscardAndAddToHandEffect-2"]}
+# <<< factory-mutation SuperEnergyRetrieval_DiscardAndAddToHandEffect

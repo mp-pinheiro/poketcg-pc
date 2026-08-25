@@ -1,0 +1,9 @@
+{
+  "fn": "SuperEnergyRetrieval_DiscardAndAddToHandEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 197, \"e\": 19, \"f\": 144, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49667\": \"0101\", \"49730\": \"0304\", \"49901\": \"0002\", \"49905\": \"00\", \"50448\": \"0304ff\", \"65431\": \"c2\", \"65440\": \"03040304ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 50448, \"reference\": \"040002000304ffc203\", \"native\": \"04000200000000c203\", \"reference_size\": 16, \"native_size\": 16, \"spans\": [[49667, 2], [49730, 2], [49901, 2], [49905, 1], [50448, 3], [65431, 1], [65440, 5]]}}}\n",
+  "restored": "{\"fn\": \"SuperEnergyRetrieval_DiscardAndAddToHandEffect\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 52, \"d\": 197, \"e\": 19, \"f\": 144, \"hl\": 49905, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49667\": \"0101\", \"49730\": \"0304\", \"49901\": \"0002\", \"49905\": \"00\", \"50448\": \"0304ff\", \"65431\": \"c2\", \"65440\": \"03040304ff\"}}, \"status\": \"PASS\"}\n"
+}
