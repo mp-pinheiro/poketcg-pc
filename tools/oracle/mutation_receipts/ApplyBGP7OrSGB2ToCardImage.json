@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyBGP7OrSGB2ToCardImage",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyBGP7OrSGB2ToCardImage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51939\": \"0a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyBGP7OrSGB2ToCardImage\", \"mismatches\": {\"bus\": {\"address\": 51939, \"reference\": \"010a\", \"native\": \"0120\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51892, 1], [51939, 1]]}}}\n",
+  "restored": "{\"fn\": \"ApplyBGP7OrSGB2ToCardImage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"01\", \"51939\": \"0a\"}}, \"status\": \"PASS\"}\n"
+}

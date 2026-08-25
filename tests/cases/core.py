@@ -2887,6 +2887,16 @@ CASES["DrawCardListScreenLayout"] = [
 ]
 # <<< factory DrawCardListScreenLayout
 
+# >>> factory ApplyBGP7OrSGB2ToCardImage
+CONTRACT["ApplyBGP7OrSGB2ToCardImage"] = {"compare": ("a",), "preserve": ()}
+CASES["ApplyBGP7OrSGB2ToCardImage"] = [
+    {"wram": {0xCAB4: b"\x00"}},
+    {"wram": {0xCAB4: b"\x01"}, "read": {0xCAE3: 1}},
+    {"wram": {0xCAB4: b"\x02"}},
+    dict(POISON, wram={0xCAB4: b"\x00"}),
+]
+# <<< factory ApplyBGP7OrSGB2ToCardImage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4158,3 +4168,6 @@ MUTATIONS["DrawDuelHUDs"] = {"source_symbol": "DrawDuelHUDs", "before": "\tDrawD
 # >>> factory-mutation DrawCardListScreenLayout
 MUTATIONS["DrawCardListScreenLayout"] = {"source_symbol": "DrawCardListScreenLayout", "before": "return (DrawCardListScreenLayoutResult){a, 0x90u};", "after": "return (DrawCardListScreenLayoutResult){a, 0x10u};", "case_ids": ["DrawCardListScreenLayout-0", "DrawCardListScreenLayout-2"]}
 # <<< factory-mutation DrawCardListScreenLayout
+# >>> factory-mutation ApplyBGP7OrSGB2ToCardImage
+MUTATIONS["ApplyBGP7OrSGB2ToCardImage"] = {"source_symbol": "ApplyBGP7OrSGB2ToCardImage", "before": "\t\ta = 0x0Au;", "after": "\t\ta = 0x20u;", "case_ids": ["ApplyBGP7OrSGB2ToCardImage-1"]}
+# <<< factory-mutation ApplyBGP7OrSGB2ToCardImage

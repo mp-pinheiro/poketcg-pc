@@ -5381,3 +5381,26 @@ DrawCardListScreenLayoutResult DrawCardListScreenLayout(void)
 	return (DrawCardListScreenLayoutResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory DrawCardListScreenLayout */
+
+/* >>> factory ApplyBGP7OrSGB2ToCardImage */
+/* core.asm:4043-4061 */
+SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+	a = console;
+	if (console == CONSOLE_DMG) {
+		f = 0x80u;
+		return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+	}
+	if (console == CONSOLE_SGB) {
+		/* 2 << 0 + 2 << 2 binds as (2 << 0) + (2 << 2), so the SGB byte is 0x0A. */
+		a = 0x0Au;
+		f = 0x80u;
+		return SendCardAttrBlkPacket(a, f, b, c, d, e, hl);
+	}
+	a = 0x07u;
+	f = 0x40u;
+	ApplyCardCGBAttributes((uint16_t)((uint16_t)d << 8 | e));
+	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory ApplyBGP7OrSGB2ToCardImage */

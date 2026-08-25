@@ -1897,6 +1897,15 @@ static void adapt_DrawCardListScreenLayout(ProbeState *s)
 }
 /* <<< factory DrawCardListScreenLayout */
 
+/* >>> factory ApplyBGP7OrSGB2ToCardImage */
+static void adapt_ApplyBGP7OrSGB2ToCardImage(ProbeState *s)
+{
+	SendCardAttrBlkPacketResult r = ApplyBGP7OrSGB2ToCardImage(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ApplyBGP7OrSGB2ToCardImage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2122,5 +2131,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DrawDuelHUD", adapt_DrawDuelHUD },
 	{ "DrawDuelHUDs", adapt_DrawDuelHUDs },
 	{ "DrawCardListScreenLayout", adapt_DrawCardListScreenLayout },
+	{ "ApplyBGP7OrSGB2ToCardImage", adapt_ApplyBGP7OrSGB2ToCardImage },
 	{ NULL, NULL },
 };

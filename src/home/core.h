@@ -860,4 +860,7 @@ void DrawDuelHUDs(void);
 typedef struct { uint8_t a, f; } DrawCardListScreenLayoutResult;
 DrawCardListScreenLayoutResult DrawCardListScreenLayout(void);
 /* <<< factory DrawCardListScreenLayout */
+/* >>> factory ApplyBGP7OrSGB2ToCardImage */
+SendCardAttrBlkPacketResult ApplyBGP7OrSGB2ToCardImage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ApplyBGP7OrSGB2ToCardImage */
 #endif
