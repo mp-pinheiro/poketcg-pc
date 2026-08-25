@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayNoBasicPokemonInHandScreen",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayNoBasicPokemonInHandScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\", \"50448\": \"ff\", \"51899\": \"80\", \"52506\": \"0400\", \"65408\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayNoBasicPokemonInHandScreen\", \"mismatches\": {\"bus\": {\"address\": 52507, \"reference\": \"00ff80040001c2\", \"native\": \"00ff80040101c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49902, 1], [50448, 1], [51899, 1], [52506, 2], [65408, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisplayNoBasicPokemonInHandScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\", \"50448\": \"ff\", \"51899\": \"80\", \"52506\": \"0400\", \"65408\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

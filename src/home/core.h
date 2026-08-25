@@ -891,4 +891,7 @@ void OppAction_FinishTurnWithoutAttacking(void);
 /* >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD */
 void RedrawTurnDuelistsMainSceneOrDuelHUD(void);
 /* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+/* >>> factory DisplayNoBasicPokemonInHandScreen */
+void DisplayNoBasicPokemonInHandScreen(void);
+/* <<< factory DisplayNoBasicPokemonInHandScreen */
 #endif

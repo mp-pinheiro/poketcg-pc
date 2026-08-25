@@ -1002,6 +1002,18 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/text_box.h"
+#include "home/lcd.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define NoBasicPokemonCardListParameters 0x4e37u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5625,3 +5637,21 @@ void RedrawTurnDuelistsMainSceneOrDuelHUD(void)
 	SwapTurn();
 }
 /* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+
+/* >>> factory DisplayNoBasicPokemonInHandScreen */
+void DisplayNoBasicPokemonInHandScreen(void)
+{
+	EmptyScreen();
+	TileCopyResult tiles = LoadDuelCardSymbolTiles();
+	uint16_t box = tiles.hl;
+	DrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);
+	(void)CreateHandCardList(0u);
+	uint8_t count = CountCardsInDuelTempList().a;
+	uint16_t params = NoBasicPokemonCardListParameters;
+	PrintCardListItems(count, 0u, 0u, &params);
+	InitTextPrinting(1u, 1u);
+	(void)PrintTextNoDelay(DuelistHandText, 1u, 1u);
+	EnableLCD();
+	(void)WaitForWideTextBoxInput();
+}
+/* <<< factory DisplayNoBasicPokemonInHandScreen */

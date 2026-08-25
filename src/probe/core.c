@@ -1982,6 +1982,14 @@ static void adapt_RedrawTurnDuelistsMainSceneOrDuelHUD(ProbeState *s)
 }
 /* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */
 
+/* >>> factory DisplayNoBasicPokemonInHandScreen */
+static void adapt_DisplayNoBasicPokemonInHandScreen(ProbeState *s)
+{
+	(void)s;
+	DisplayNoBasicPokemonInHandScreen();
+}
+/* <<< factory DisplayNoBasicPokemonInHandScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2217,5 +2225,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardListDetails", adapt_DisplayCardListDetails },
 	{ "OppAction_FinishTurnWithoutAttacking", adapt_OppAction_FinishTurnWithoutAttacking },
 	{ "RedrawTurnDuelistsMainSceneOrDuelHUD", adapt_RedrawTurnDuelistsMainSceneOrDuelHUD },
+	{ "DisplayNoBasicPokemonInHandScreen", adapt_DisplayNoBasicPokemonInHandScreen },
 	{ NULL, NULL },
 };

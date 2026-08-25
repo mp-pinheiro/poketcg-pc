@@ -1695,6 +1695,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wDuelDisplayedScreen = 0xCAC2
 wLCDC = 0xCABB
 wOpponentTurnEnded = 0xCBE1
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wDuelTempList = 0xC510
+wListItemXPosition = 0xCD1A
+wNumListItems = 0xCD1B
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3021,6 +3027,14 @@ CASES["RedrawTurnDuelistsMainSceneOrDuelHUD"] = [
 ]
 # <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD
 
+# >>> factory DisplayNoBasicPokemonInHandScreen
+CONTRACT["DisplayNoBasicPokemonInHandScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayNoBasicPokemonInHandScreen"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xFF80: b"\x01", 0xC2EE: b"\x00", 0xCABB: b"\x00", wDuelTempList: b"\xFF"}, "read": {wListItemXPosition: 1, wNumListItems: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": 0x01, "instruction_budget": 40000000, "cycle_budget": 160000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xFF80: b"\x01", 0xC2EE: b"\x00", 0xCABB: b"\x00", wDuelTempList: b"\xFF"}, read={wListItemXPosition: 1, wNumListItems: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=0x01, instruction_budget=40000000, cycle_budget=160000000),
+]
+# <<< factory DisplayNoBasicPokemonInHandScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4327,3 +4341,6 @@ MUTATIONS["OppAction_FinishTurnWithoutAttacking"] = {"source_symbol": "OppAction
 # >>> factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD
 MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsMainSceneOrDuelHUD", "before": "\tif (wDuelDisplayedScreen == DUEL_MAIN_SCENE) {", "after": "\tif (wDuelDisplayedScreen != DUEL_MAIN_SCENE) {", "case_ids": ["RedrawTurnDuelistsMainSceneOrDuelHUD-0", "RedrawTurnDuelistsMainSceneOrDuelHUD-1"]}
 # <<< factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD
+# >>> factory-mutation DisplayNoBasicPokemonInHandScreen
+MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreen", "before": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = CountCardsInDuelTempList().a;", "after": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);", "case_ids": ["DisplayNoBasicPokemonInHandScreen-0", "DisplayNoBasicPokemonInHandScreen-1"]}
+# <<< factory-mutation DisplayNoBasicPokemonInHandScreen
