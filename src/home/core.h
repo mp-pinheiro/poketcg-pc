@@ -930,4 +930,7 @@ void DisplayEnergyDiscardMenu(void);
 /* >>> factory DisplayEnergyDiscardScreen */
 void DisplayEnergyDiscardScreen(uint8_t a);
 /* <<< factory DisplayEnergyDiscardScreen */
+/* >>> factory OpenAttackPage */
+void OpenAttackPage(void);
+/* <<< factory OpenAttackPage */
 #endif

@@ -1035,6 +1035,14 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #define ChooseEnergyCardToDiscardText 0x0050u
 #define EnergyDiscardCardListParameters 0x46f3u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/core.h"
+#define ATTACKPAGE_ATTACK1_1 0x00u
+#define ATTACKPAGE_ATTACK2_1 0x02u
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5825,3 +5833,53 @@ void DisplayEnergyDiscardScreen(uint8_t a)
 	DisplayEnergyDiscardMenu();
 }
 /* <<< factory DisplayEnergyDiscardScreen */
+
+/* >>> factory OpenAttackPage */
+static void SetOBP1OrSGB3ToCardPalette(void)
+{
+	wOBP0 = 0xE4u;
+	uint8_t console = gb_read8(wConsole_ADDR);
+	if (console == CONSOLE_DMG)
+		return;
+	if (console == CONSOLE_SGB) {
+		SetSGB3ToCardPalette();
+		return;
+	}
+	CopyCGBCardPalette(0x09u);
+}
+
+void OpenAttackPage(void)
+{
+	wCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;
+	wCurPlayAreaSlot = 0u;
+	EmptyScreen();
+	FinishQueuedAnimations();
+	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));
+	SetOBP1OrSGB3ToCardPalette();
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+
+	uint16_t oam_hl = 0u;
+	uint16_t oam_de = (uint16_t)((0x38u << 8) | 0x30u);
+	(void)PlaceCardImageOAM(&oam_hl, &oam_de);
+	(void)ApplyBGP6OrSGB3ToCardImage(0u, 0u, 0u, 0u, 6u, 4u, 0u);
+
+	uint8_t item = hCurMenuItem;
+	wSelectedDuelSubMenuItem = item;
+	uint8_t idx = (uint8_t)(item * 2u);
+	uint8_t v = gb_read8((uint16_t)(wDuelTempList_ADDR + 1u + idx));
+	wAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK2_1 : ATTACKPAGE_ATTACK1_1;
+
+	for (;;) {
+		DisplayAttackPage();
+		EnableLCD();
+		for (;;) {
+			DoFrame();
+			if ((hDPadHeld & (PAD_RIGHT | PAD_LEFT)) != 0u)
+				break;
+			if ((hKeysPressed & (PAD_A | PAD_B)) != 0u)
+				return;
+		}
+	}
+}
+/* <<< factory OpenAttackPage */

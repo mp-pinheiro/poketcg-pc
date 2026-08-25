@@ -3152,6 +3152,20 @@ CASES["DisplayEnergyDiscardScreen"] = [
 ]
 # <<< factory DisplayEnergyDiscardScreen
 
+# >>> factory OpenAttackPage
+CONTRACT["OpenAttackPage"] = {"compare": (), "preserve": ()}
+CASES["OpenAttackPage"] = [
+    {"keys": 0x01, "wram": {wDuelTempList: b"\xFF", 0xCABB: b"\x00", 0xFF97: b"\xC2"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=0x01, wram={wDuelTempList: b"\xFF", 0xCABB: b"\x00", 0xFF97: b"\xC2"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCBC7: 1, 0xCBC9: 1, 0xCBCF: 1, 0xCC04: 1, wDuelTempList: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory OpenAttackPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4497,3 +4511,6 @@ MUTATIONS["DisplayEnergyDiscardMenu"] = {"source_symbol": "DisplayEnergyDiscardM
 # >>> factory-mutation DisplayEnergyDiscardScreen
 MUTATIONS["DisplayEnergyDiscardScreen"] = {"source_symbol": "DisplayEnergyDiscardScreen", "before": "\twEnergyDiscardMenuDenominator = 1u;", "after": "\twEnergyDiscardMenuDenominator = 2u;", "case_ids": ["DisplayEnergyDiscardScreen-0", "DisplayEnergyDiscardScreen-1"]}
 # <<< factory-mutation DisplayEnergyDiscardScreen
+# >>> factory-mutation OpenAttackPage
+MUTATIONS["OpenAttackPage"] = {"source_symbol": "OpenAttackPage", "before": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK2_1 : ATTACKPAGE_ATTACK1_1;", "after": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK1_1 : ATTACKPAGE_ATTACK2_1;", "case_ids": ["OpenAttackPage-0", "OpenAttackPage-1"]}
+# <<< factory-mutation OpenAttackPage
