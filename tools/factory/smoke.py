@@ -22,6 +22,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 import traceback
 from collections.abc import Callable
 from pathlib import Path
@@ -30,6 +31,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common
+import heal
 import lanes
 import packet as packet_mod
 import prompt as prompt_mod
@@ -208,48 +210,193 @@ def stage_same_owner_stale(state: dict[str, Any]) -> str:
             try_one.resolve = previous_resolve
             try_one.TRY_ROOT = previous_root
     return f"{current_id} stale, {replacement_id} reissued"
-def stage_owned_path_quarantine(state: dict[str, Any]) -> str:
-    with tempfile.TemporaryDirectory(prefix="factory-smoke-owned-path-") as directory:
+
+
+SIBLING = "_ResumeSong"
+
+
+def _bundle_from_tree(root: Path, packet: dict[str, Any]) -> Path:
+    """A stale artifact bundle: this packet's routine, plus the quartet as it
+    looked before a sibling landed. Whole-file copying such a bundle is exactly
+    how PokemonDomeLoadMap was erased by PokemonDomeMovePlayer.
+    """
+    bundle = root / "bundle"
+    _minimal_tree(bundle)
+    sibling_packet = {**packet, "routines": [{"name": SIBLING}]}
+    surgery.remove(bundle, sibling_packet, [SIBLING])
+    identity = {
+        "schema": common.SCHEMA,
+        "basename": packet["basename"],
+        "file": packet["file"],
+        "base_commit": "stale-base",
+        "attempt_id": packet["attempt_id"],
+        "routines": [{"name": FN}],
+    }
+    (bundle / "packet.json").write_text(json.dumps(identity, indent=2) + "\n")
+    return bundle
+
+
+def stage_graft_composition(state: dict[str, Any]) -> str:
+    built = state["packet"]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-graft-") as directory:
         root = Path(directory)
-        artifact_sha = "a" * 64
-        bundle = root / "bundle"
-        bundle.mkdir()
+        bundle = _bundle_from_tree(root, built)
+        tree = root / "tree"
+        _minimal_tree(tree)
+        surgery.remove(tree, built, [FN])
+
+        before = land.marker_census(tree)
+        _require(SIBLING in before, "fixture tree lost the sibling routine", sorted(before))
+        _require(FN not in before, "fixture tree still holds the grafted routine")
+        _require(SIBLING not in land.marker_census(bundle),
+                 "bundle is not stale: it still carries the sibling")
+
         previous_members = land._artifact_members
-        previous_bundle_paths = land._bundle_paths
-        previous_revision = land._revision
-        previous_run = land._run
         try:
             land._artifact_members = lambda _sha: [bundle]
-            land._bundle_paths = lambda _bundle: (
-                {
-                    "basename": "fixture",
-                    "base_commit": "base",
-                    "routines": [{"name": "Fixture"}],
-                },
-                ["src/home/fixture.c"],
-            )
-            land._revision = lambda _root, revision: revision
-            land._run = lambda command, cwd, timeout: subprocess.CompletedProcess(
-                command, 0, "src/home/fixture.c\n", ""
-            )
-            compatible, quarantined = land._stale_owned_artifacts(
-                root, [artifact_sha], "main"
-            )
+            routines = land.apply_v2_artifacts(tree, ["a" * 64])
+            first = {relative: (tree / relative).read_bytes() for relative in QUARTET}
+            land.apply_v2_artifacts(tree, ["a" * 64])
+            second = {relative: (tree / relative).read_bytes() for relative in QUARTET}
         finally:
             land._artifact_members = previous_members
-            land._bundle_paths = previous_bundle_paths
-            land._revision = previous_revision
-            land._run = previous_run
-        _require(not compatible, "same-owner artifact remained compatible")
-        _require(
-            len(quarantined) == 1
-            and quarantined[0]["failure_class"] == "stale-owned-path"
-            and quarantined[0]["changed_paths"] == ["src/home/fixture.c"],
-            "same-owner artifact was not quarantined with changed paths",
-            quarantined,
-        )
-    return "same-owner artifact quarantined"
 
+        after = land.marker_census(tree)
+        _require(routines == (FN,), "graft reported the wrong routines", routines)
+        _require(not (before - after),
+                 f"graft erased a landed routine: {sorted(before - after)}",
+                 sorted(after))
+        _require(FN in after, "graft did not land its own routine", sorted(after))
+        cases = (tree / QUARTET[3]).read_text()
+        for name in (FN, SIBLING):
+            _require(f"# >>> factory {name}" in cases,
+                     f"{name} has no cases block after the graft")
+        unstable = [relative for relative in QUARTET if first[relative] != second[relative]]
+        _require(not unstable, f"graft is not a fixed point: {unstable}")
+    return f"stale bundle composed with {SIBLING}, idempotent"
+
+
+def stage_marker_regression(state: dict[str, Any]) -> str:
+    built = state["packet"]
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-regression-") as directory:
+        root = Path(directory)
+        _minimal_tree(root)
+        (root / ".factory" / "locks").mkdir(parents=True, exist_ok=True)
+        commands: list[list[str]] = []
+
+        def fake_run(command, cwd, timeout):
+            commands.append(list(command))
+            return subprocess.CompletedProcess(command, 0, "", "")
+
+        def clobber(cwd, _shas):
+            surgery.remove(cwd, built, [FN])
+            return (FN,)
+
+        previous_run = land._run
+        previous_revision = land._revision
+        previous_apply = land.apply_v2_artifacts
+        previous_identity = land._artifact_identity
+        try:
+            land._run = fake_run
+            land._revision = lambda _root, _revision: "0" * 40
+            land.apply_v2_artifacts = clobber
+            land._artifact_identity = lambda _sha: (frozenset({BASENAME}), frozenset({FN}))
+            landed, quarantined = land._land_batch(
+                root, ["b" * 64], gate_command=("true",),
+                progress_command=("true",), push=False, counter=[0],
+            )
+        finally:
+            land._run = previous_run
+            land._revision = previous_revision
+            land.apply_v2_artifacts = previous_apply
+            land._artifact_identity = previous_identity
+
+        _require(not landed, "a marker-dropping batch was landed", landed)
+        _require(len(quarantined) == 1
+                 and quarantined[0]["failure_class"] == "marker-regression",
+                 "marker regression was not quarantined", quarantined)
+        _require(["jj", "restore"] in commands,
+                 "marker regression did not restore the working copy", commands)
+        _require(not any(command[:2] == ["jj", "commit"] for command in commands),
+                 "marker regression still committed", commands)
+        record = json.loads(
+            (root / ".factory" / "quarantine.jsonl").read_text().splitlines()[-1])
+        _require(record["artifact_sha256"] == "b" * 64,
+                 "quarantine record names the wrong artifact", record)
+    return "dropped marker restored and quarantined"
+
+
+def _heal_row(name: str, *, state: str, blocker: dict | None = None) -> dict[str, Any]:
+    return {"name": name, "state": state, "source": "src/audio/music1.asm",
+            "line": 1, "blockers": [], "operational_blocker": blocker}
+
+
+def stage_heal_reconcile(state: dict[str, Any]) -> str:
+    with tempfile.TemporaryDirectory(prefix="factory-smoke-heal-") as directory:
+        root = Path(directory)
+        factory = root / ".factory"
+        (factory / "locks").mkdir(parents=True, exist_ok=True)
+        # a landing whose routine has no marker anywhere in this tree
+        common.append_jsonl(factory / "landings.jsonl", {
+            "artifact_sha256": "c" * 64, "basename": BASENAME, "routines": [FN],
+        })
+        previous_try_root = try_one.TRY_ROOT
+        previous_exists = workers.artifact_exists
+        try:
+            try_one.TRY_ROOT = factory / "try"
+            workers.artifact_exists = lambda _sha: True
+            revoked = heal.revoke_lost_landings(root)
+            _require(len(revoked) == 1 and revoked[0]["routines"] == [FN],
+                     "a lost landing was not revoked", revoked)
+            _require(heal.revoked_artifacts(root) == {"c" * 64},
+                     "revocation ledger did not read back",
+                     sorted(heal.revoked_artifacts(root)))
+            _require(not heal.revoke_lost_landings(root),
+                     "revoking a lost landing is not idempotent")
+
+            blocked_fn, dead_red = "BlockedIssued", "DeadRed"
+            states = {
+                blocked_fn: {"schema": common.SCHEMA, "fn": blocked_fn,
+                             "attempt_id": "issued-1", "generation": 0,
+                             "context_sha256": "x", "base_commit": "y",
+                             "state": "issued"},
+                dead_red: {"schema": common.SCHEMA, "fn": dead_red,
+                           "attempt_id": "red-1", "generation": 3,
+                           "context_sha256": "x", "base_commit": "y",
+                           "state": "red"},
+            }
+            for current in states.values():
+                try_one._store_current(current)
+            rows = {
+                blocked_fn: _heal_row(blocked_fn, state="blocked",
+                                      blocker={"reason": "r", "unblock": "u"}),
+                dead_red: _heal_row(dead_red, state="ready"),
+            }
+            reaped = heal.reap_stale_issued(states, rows)
+            _require(reaped == [blocked_fn], "the blocked issued attempt was not reaped",
+                     reaped)
+            _require(try_one._read_current(blocked_fn)["state"] == "stale",
+                     "reaped attempt was not written back as stale")
+
+            retired = heal.retire_exhausted_reds(states, rows, retry_limit=3, root=root)
+            _require([entry["name"] for entry in retired] == [dead_red],
+                     "the exhausted red was not retired", retired)
+            parsed = tomllib.loads((factory / "blocked.toml").read_text())
+            names = [row["name"] for row in parsed["blocked"]]
+            _require(names == [dead_red], "blocked.toml stanza did not reparse", names)
+            _require(parsed["blocked"][0]["reason"].startswith(heal.RETIRED_PREFIX),
+                     "retired stanza is not marked machine-generated",
+                     parsed["blocked"][0])
+            duplicated = False
+            try:
+                heal.append_blockers(retired, root)
+            except ValueError:
+                duplicated = True
+            _require(duplicated, "appending a duplicate blocked name was accepted")
+        finally:
+            try_one.TRY_ROOT = previous_try_root
+            workers.artifact_exists = previous_exists
+    return "lost landing revoked, dead attempt reaped, exhausted red retired"
 
 
 
@@ -861,7 +1008,7 @@ CONTRACT_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
     ("immutable-pending", stage_immutable_pending),
     ("unrelated-rebase", stage_unrelated_rebase),
     ("same-owner-stale", stage_same_owner_stale),
-    ("owned-path-quarantine", stage_owned_path_quarantine),
+    ("heal-reconcile", stage_heal_reconcile),
     ("stale-candidates", stage_stale_candidates),
     ("appendability-classifier", stage_appendability_classifier),
     ("native-preflight", stage_native_preflight),
@@ -872,6 +1019,8 @@ CONTRACT_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
     ("prompt", stage_prompt),
     ("validate", stage_validate),
     ("surgery-roundtrip", stage_surgery_roundtrip),
+    ("graft-composition", stage_graft_composition),
+    ("marker-regression", stage_marker_regression),
 )
 
 FULL_STAGES: tuple[tuple[str, Callable[[dict], str]], ...] = (
