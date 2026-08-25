@@ -55,6 +55,13 @@ static void adapt_LoadCardDataToHL_FromCardID(ProbeState *s)
 }
 /* <<< factory LoadCardDataToHL_FromCardID */
 
+/* >>> factory CopyFontsOrDuelGraphicsTiles2 */
+static void adapt_CopyFontsOrDuelGraphicsTiles2(ProbeState *s)
+{
+	CopyFontsOrDuelGraphicsTiles2(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory CopyFontsOrDuelGraphicsTiles2 */
+
 const ProbeEntry probe_entries_card_data[] = {
 	{ "GetCardType", adapt_GetCardType },
 	{ "GetCardName", adapt_GetCardName },
@@ -65,5 +72,6 @@ const ProbeEntry probe_entries_card_data[] = {
 	{ "LoadCardGfx", adapt_LoadCardGfx },
 	{ "GetCardPointer", adapt_GetCardPointer },
 	{ "LoadCardDataToHL_FromCardID", adapt_LoadCardDataToHL_FromCardID },
+	{ "CopyFontsOrDuelGraphicsTiles2", adapt_CopyFontsOrDuelGraphicsTiles2 },
 	{ NULL, NULL },
 };

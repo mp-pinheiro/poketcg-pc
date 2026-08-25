@@ -1175,6 +1175,8 @@ wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
 wTxRam2_b = 0xCE41
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wEffectFailed = 0xCCED
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1449,6 +1451,14 @@ CASES["PrintPokemonsAttackText"] = [
 ]
 # <<< factory PrintPokemonsAttackText
 
+# >>> factory PrintFailedEffectText
+CONTRACT["PrintFailedEffectText"] = {"compare": ("f",), "preserve": ()}
+CASES["PrintFailedEffectText"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "wram": {wEffectFailed: b"\x00"}, "expect_regs": {"f": 0x80}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wEffectFailed: b"\x00"}, "expect_regs": {"f": 0x80}},
+]
+# <<< factory PrintFailedEffectText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1643,3 +1653,6 @@ MUTATIONS["_DrawAIPeekScreen"] = {"source_symbol": "_DrawAIPeekScreen", "before"
 # >>> factory-mutation PrintPokemonsAttackText
 MUTATIONS["PrintPokemonsAttackText"] = {"source_symbol": "PrintPokemonsAttackText", "before": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8(wLoadedAttackName_ADDR));", "after": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));", "case_ids": ["PrintPokemonsAttackText-0", "PrintPokemonsAttackText-1"]}
 # <<< factory-mutation PrintPokemonsAttackText
+# >>> factory-mutation PrintFailedEffectText
+MUTATIONS["PrintFailedEffectText"] = {"source_symbol": "PrintFailedEffectText", "before": "\t\treturn (PrintFailedEffectTextResult){0x80u};", "after": "\t\treturn (PrintFailedEffectTextResult){0x00u};", "case_ids": ["PrintFailedEffectText-0", "PrintFailedEffectText-1"]}
+# <<< factory-mutation PrintFailedEffectText

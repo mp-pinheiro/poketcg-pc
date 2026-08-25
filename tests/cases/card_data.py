@@ -74,6 +74,8 @@ CASES = {
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 CARD_DATA_LENGTH = 0x41
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory LoadCardDataToHL_FromCardID
@@ -86,6 +88,16 @@ CASES["LoadCardDataToHL_FromCardID"] = [
     dict(POISON, e=1, hl=0xC300, stack=[0xC300], wram={0xC300: b"\xAA" * CARD_DATA_LENGTH}, read={0xC300: 0x41}),
 ]
 # <<< factory LoadCardDataToHL_FromCardID
+
+# >>> factory CopyFontsOrDuelGraphicsTiles2
+CONTRACT["CopyFontsOrDuelGraphicsTiles2"] = {"compare": (), "preserve": ()}
+CASES["CopyFontsOrDuelGraphicsTiles2"] = [
+    {},
+    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x00, "wram": {0xC500: b"\xAA" * 16}, "read": {0xC500: 16, 0xFF80: 1}},
+    dict(POISON, b=1, hl=0x4000, wram={0xDDEE: b"\x55" * 16}, read={0xDDEE: 16, 0xFF80: 1}),
+    {"b": 1, "hl": 0x4000, "d": 0xC5, "e": 0x20, "wram": {0xC520: b"\x33" * 16}, "read": {0xC520: 16, 0xFF80: 1}}
+]
+# <<< factory CopyFontsOrDuelGraphicsTiles2
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -101,3 +113,6 @@ MUTATIONS = {
 # >>> factory-mutation LoadCardDataToHL_FromCardID
 MUTATIONS["LoadCardDataToHL_FromCardID"] = {"source_symbol": "LoadCardDataToHL_FromCardID", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["LoadCardDataToHL_FromCardID-1", "LoadCardDataToHL_FromCardID-2", "LoadCardDataToHL_FromCardID-4"]}
 # <<< factory-mutation LoadCardDataToHL_FromCardID
+# >>> factory-mutation CopyFontsOrDuelGraphicsTiles2
+MUTATIONS["CopyFontsOrDuelGraphicsTiles2"] = {"source_symbol": "CopyFontsOrDuelGraphicsTiles2", "before": "\tuint8_t copy_length = 0x10u;", "after": "\tuint8_t copy_length = 0x08u;", "case_ids": ["CopyFontsOrDuelGraphicsTiles2-1", "CopyFontsOrDuelGraphicsTiles2-2", "CopyFontsOrDuelGraphicsTiles2-3"]}
+# <<< factory-mutation CopyFontsOrDuelGraphicsTiles2

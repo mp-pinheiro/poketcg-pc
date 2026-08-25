@@ -513,6 +513,15 @@ static const uint8_t kCursorTileData[16] = {
 #include "mem.h"
 #define DUELVARS_ARENA_CARD 0xBBu
 #define PokemonsAttackText 0x0035u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+#define WasUnsuccessfulText 0x014au
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2537,3 +2546,26 @@ PrintPokemonsAttackTextResult PrintPokemonsAttackText(void)
 	return (PrintPokemonsAttackTextResult){text.a, text.b, text.c, text.d, text.e, text.hl};
 }
 /* <<< factory PrintPokemonsAttackText */
+
+/* >>> factory PrintFailedEffectText */
+PrintFailedEffectTextResult PrintFailedEffectText(void)
+{
+	uint8_t failed = gb_read8(wEffectFailed_ADDR);
+	if (failed == 0u)
+		return (PrintFailedEffectTextResult){0x80u};
+	if (failed == 1u) {
+		uint16_t status_text = PrintThereWasNoEffectFromStatusText();
+		(void)DrawWideTextBox_PrintText(status_text);
+		return (PrintFailedEffectTextResult){0x10u};
+	}
+	DuelistVarResult duelist = GetTurnDuelistVariable((uint8_t)(gb_read8(hTempPlayAreaLocation_ff9d_ADDR) + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(duelist.a);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	gb_write8(copied.hl, 0u);
+	LoadTxRam2(0u);
+	gb_write8(wTxRam2_b_ADDR, gb_read8(wLoadedAttackName_ADDR));
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));
+	(void)DrawWideTextBox_PrintText(WasUnsuccessfulText);
+	return (PrintFailedEffectTextResult){0x10u};
+}
+/* <<< factory PrintFailedEffectText */

@@ -1648,6 +1648,11 @@ wSelectedAttack = 0xCCC6
 
 wDuelDisplayedScreen = 0xCAC2
 wLoadedCard1Type = 0xCC24
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wHUDEnergyAndHPBarsX = 0xCBC9
+wHUDEnergyAndHPBarsY = 0xCBCA
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2849,6 +2854,14 @@ CASES["PrintPokemonCardPageGenericInformation"] = [
          instruction_budget=1000000, cycle_budget=4000000),
 ]
 # <<< factory PrintPokemonCardPageGenericInformation
+
+# >>> factory DrawDuelHUD
+CONTRACT["DrawDuelHUD"] = {"compare": (), "preserve": ()}
+CASES["DrawDuelHUD"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, "read": {wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}},
+    dict(POISON, wram={0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}),
+]
+# <<< factory DrawDuelHUD
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4112,3 +4125,6 @@ MUTATIONS["DrawCardPageSurroundingBox"] = {
 # >>> factory-mutation PrintPokemonCardPageGenericInformation
 MUTATIONS["PrintPokemonCardPageGenericInformation"] = {"source_symbol": "PrintPokemonCardPageGenericInformation", "before": "JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);", "after": "JPWriteByteToBGMap0((uint8_t)(color + 2u), 18u, 1u);", "case_ids": ["PrintPokemonCardPageGenericInformation-0", "PrintPokemonCardPageGenericInformation-1"]}
 # <<< factory-mutation PrintPokemonCardPageGenericInformation
+# >>> factory-mutation DrawDuelHUD
+MUTATIONS["DrawDuelHUD"] = {"source_symbol": "DrawDuelHUD", "before": "wHUDEnergyAndHPBarsX = b;", "after": "wHUDEnergyAndHPBarsX = (uint8_t)(b + 1u);", "case_ids": ["DrawDuelHUD-0", "DrawDuelHUD-1"]}
+# <<< factory-mutation DrawDuelHUD

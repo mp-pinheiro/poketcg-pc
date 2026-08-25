@@ -918,6 +918,21 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/card_color.h"
 #include "home/print_text.h"
+
+#include "home/empty_screen.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/card_color.h"
+#include "home/process_text.h"
+#include "home/bg_map.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define TX_END 0x00u
+#define TX_SYMBOL 0x05u
+#define SYM_POKEMON 0x0Du
+#define SYM_PRIZE 0x30u
+#define TILEMAP_WIDTH 32u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5251,3 +5266,46 @@ PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformat
 	return (PrintPokemonCardPageGenericInformationResult){result.hl};
 }
 /* <<< factory PrintPokemonCardPageGenericInformation */
+
+/* >>> factory DrawDuelHUD */
+void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	wHUDEnergyAndHPBarsX = b;
+	wHUDEnergyAndHPBarsY = c;
+	uint8_t name_d = d, name_e = e;
+	uint8_t icon_b = (e == 0u) ? 1u : 15u, icon_c = e;
+	WriteByteToBGMap0(SYM_POKEMON, icon_b, icon_c);
+	icon_b++;
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	WriteByteToBGMap0((uint8_t)(count.a + SYM_0 - 1u), icon_b, icon_c);
+	icon_b++;
+	WriteByteToBGMap0(SYM_PRIZE, icon_b, icon_c);
+	icon_b++;
+	WriteByteToBGMap0((uint8_t)(CountPrizes() + SYM_0), icon_b, icon_c);
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (arena.a == 0xFFu) return;
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(32u, icon_b, icon_c, name_d, name_e);
+	gb_write8(copied.hl, TX_END);
+	uint8_t text_d = name_d;
+	if (name_e == 0u) { TextLength length = GetTextLengthInTiles(wDefaultText_ADDR); text_d = (uint8_t)(length.a + SCREEN_WIDTH); }
+	InitTextPrinting(text_d, name_e);
+	uint16_t text_hl = wDefaultText_ADDR; ProcessText(&text_hl);
+	JPWriteByteToBGMap0((uint8_t)(GetArenaCardColor() + 1u), (uint8_t)(text_d - 1u), name_e);
+	uint8_t hud_x = wHUDEnergyAndHPBarsX, hud_y = wHUDEnergyAndHPBarsY;
+	PrintPlayAreaCardAttachedEnergies(hud_x, hud_y, PLAY_AREA_ARENA);
+	DuelistVarResult arena_again = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena_again.a);
+	uint8_t max_hp = wLoadedCard1HP, cur_hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	DrawHPBar(max_hp, cur_hp);
+	uint16_t dst = BCCoordToBGMap0Address(hud_x, (uint8_t)(hud_y + 1u)), src = wDefaultText_ADDR;
+	SafeCopyDataHLtoDE(&src, &dst, 6u);
+	dst = (uint16_t)(dst + TILEMAP_WIDTH); src = (uint16_t)(wDefaultText_ADDR + 6u);
+	SafeCopyDataHLtoDE(&src, &dst, 6u);
+	uint8_t attr_b = (uint8_t)(hud_x + 6u), attr_c = (uint8_t)(hud_y + 1u);
+	uint8_t plus = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER).a;
+	if (plus != 0u) { WriteByteToBGMap0(SYM_PLUSPOWER, attr_b, attr_c); WriteByteToBGMap0((uint8_t)(plus + SYM_0), (uint8_t)(attr_b + 1u), attr_c); }
+	uint8_t defender = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_ATTACHED_DEFENDER).a;
+	if (defender != 0u) { attr_c++; WriteByteToBGMap0(SYM_DEFENDER, attr_b, attr_c); WriteByteToBGMap0((uint8_t)(defender + SYM_0), (uint8_t)(attr_b + 1u), attr_c); }
+}
+/* <<< factory DrawDuelHUD */

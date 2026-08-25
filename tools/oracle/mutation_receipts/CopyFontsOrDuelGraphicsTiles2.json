@@ -1,0 +1,9 @@
+{
+  "fn": "CopyFontsOrDuelGraphicsTiles2",
+  "case": "tests/cases/card_data.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyFontsOrDuelGraphicsTiles2\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 0, \"hl\": 16384, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"e808e8081808f8f8ffffacd3cfb0dca0\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyFontsOrDuelGraphicsTiles2\", \"mismatches\": {\"bus\": {\"address\": 50440, \"reference\": \"1808f8f8ffffacd3cf\", \"native\": \"1808f8f8aaaaaaaaaa\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[50432, 16], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"CopyFontsOrDuelGraphicsTiles2\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 197, \"e\": 0, \"f\": 0, \"hl\": 16384, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"e808e8081808f8f8ffffacd3cfb0dca0\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

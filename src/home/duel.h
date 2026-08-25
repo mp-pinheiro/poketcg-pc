@@ -637,4 +637,8 @@ void _DrawAIPeekScreen(uint8_t b);
 typedef struct { uint8_t a; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } PrintPokemonsAttackTextResult;
 PrintPokemonsAttackTextResult PrintPokemonsAttackText(void);
 /* <<< factory PrintPokemonsAttackText */
+/* >>> factory PrintFailedEffectText */
+typedef struct { uint8_t f; } PrintFailedEffectTextResult;
+PrintFailedEffectTextResult PrintFailedEffectText(void);
+/* <<< factory PrintFailedEffectText */
 #endif

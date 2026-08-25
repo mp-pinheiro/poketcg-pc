@@ -9,6 +9,10 @@
 #include "home/switch_rom.h"
 #include "mem.h"
 #define PKMN_CARD_DATA_LENGTH 0x41u
+
+#include "home/switch_rom.h"
+#include "home/copy.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* Card data and CardPointers both live in ROM bank 0x0c (data/cards.asm). The asm
@@ -153,3 +157,17 @@ void LoadCardDataToHL_FromCardID(uint8_t e, uint16_t *hl, uint16_t saved_hl)
 	*hl = saved_hl;
 }
 /* <<< factory LoadCardDataToHL_FromCardID */
+
+/* >>> factory CopyFontsOrDuelGraphicsTiles2 */
+void CopyFontsOrDuelGraphicsTiles2(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t bank_stack = (uint16_t)((uint16_t)hBankROM << 8);
+	uint16_t saved_af = (uint16_t)(((uint16_t)a << 8) | f);
+	BankpushROMResult pushed = BankpushROM(0x1du, f, b, c, d, e, hl);
+	uint16_t src = pushed.hl;
+	uint16_t dst = (uint16_t)(((uint16_t)d << 8) | e);
+	uint8_t copy_length = 0x10u;
+	CopyGfxData(&src, &dst, b, copy_length);
+	(void)BankpopROM(0u, 0u, 0u, 0u, src, bank_stack, saved_af);
+}
+/* <<< factory CopyFontsOrDuelGraphicsTiles2 */
