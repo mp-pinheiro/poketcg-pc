@@ -3098,6 +3098,13 @@ static void adapt_SnivelEffect(ProbeState *s)
 }
 /* <<< factory SnivelEffect */
 
+/* >>> factory Conversion1_ChangeWeaknessEffect */
+static void adapt_Conversion1_ChangeWeaknessEffect(ProbeState *s)
+{
+	s->hl = Conversion1_ChangeWeaknessEffect(s->d, s->e, s->hl);
+}
+/* <<< factory Conversion1_ChangeWeaknessEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3482,5 +3489,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PounceEffect", adapt_PounceEffect },
 	{ "SandAttackEffect", adapt_SandAttackEffect },
 	{ "SnivelEffect", adapt_SnivelEffect },
+	{ "Conversion1_ChangeWeaknessEffect", adapt_Conversion1_ChangeWeaknessEffect },
 	{ NULL, NULL },
 };

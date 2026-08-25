@@ -507,6 +507,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #define SUBSTATUS2_REDUCE_BY_20 0x03u
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "mem.h"
+#define SUBSTATUS2_CONVERSION2 0x08u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5418,3 +5424,24 @@ uint16_t SnivelEffect(uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_REDUCE_BY_20, hl);
 }
 /* <<< factory SnivelEffect */
+
+/* >>> factory Conversion1_ChangeWeaknessEffect */
+uint16_t Conversion1_ChangeWeaknessEffect(uint8_t d, uint8_t e, uint16_t hl)
+{
+	HandleNoDamageOrEffectResult check = HandleNoDamageOrEffect(hl);
+	if (check.f & 0x10u)
+		return check.hl;
+
+	DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_CHANGED_WEAKNESS);
+	uint8_t color = gb_read8(hTemp_ffa0_ADDR);
+	uint8_t weakness = TranslateColorToWR(color);
+	gb_write8(nonturn.hl, weakness);
+	gb_write8((uint16_t)(nonturn.hl + (DUELVARS_ARENA_CARD_LAST_TURN_CHANGE_WEAK - DUELVARS_ARENA_CARD_CHANGED_WEAKNESS)), weakness);
+
+	SwapTurn();
+	TextResult text = PrintArenaCardNameAndColorText(d, e, ChangedTheWeaknessOfPokemonToColorText);
+	SwapTurn();
+
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_CONVERSION2, text.hl);
+}
+/* <<< factory Conversion1_ChangeWeaknessEffect */

@@ -1284,6 +1284,9 @@ uint16_t SandAttackEffect(uint16_t hl);
 /* >>> factory SnivelEffect */
 uint16_t SnivelEffect(uint16_t hl);
 /* <<< factory SnivelEffect */
+/* >>> factory Conversion1_ChangeWeaknessEffect */
+uint16_t Conversion1_ChangeWeaknessEffect(uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory Conversion1_ChangeWeaknessEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
