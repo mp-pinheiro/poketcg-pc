@@ -1390,6 +1390,10 @@ HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; } AskWhetherToQuitSelectingCardsResult;
 AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a);
 /* <<< factory AskWhetherToQuitSelectingCards */
+/* >>> factory Scavenge_AddToHandEffect */
+typedef struct { uint8_t a; uint8_t f; } Scavenge_AddToHandEffectResult;
+Scavenge_AddToHandEffectResult Scavenge_AddToHandEffect(void);
+/* <<< factory Scavenge_AddToHandEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -3352,6 +3352,15 @@ static void adapt_AskWhetherToQuitSelectingCards(ProbeState *s)
 }
 /* <<< factory AskWhetherToQuitSelectingCards */
 
+/* >>> factory Scavenge_AddToHandEffect */
+static void adapt_Scavenge_AddToHandEffect(ProbeState *s)
+{
+	Scavenge_AddToHandEffectResult r = Scavenge_AddToHandEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Scavenge_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3765,5 +3774,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Conversion1_PlayerSelectEffect", adapt_Conversion1_PlayerSelectEffect },
 	{ "Conversion2_PlayerSelectEffect", adapt_Conversion2_PlayerSelectEffect },
 	{ "AskWhetherToQuitSelectingCards", adapt_AskWhetherToQuitSelectingCards },
+	{ "Scavenge_AddToHandEffect", adapt_Scavenge_AddToHandEffect },
 	{ NULL, NULL },
 };

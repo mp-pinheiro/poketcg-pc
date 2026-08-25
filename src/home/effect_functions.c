@@ -654,6 +654,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/print_text.h"
 #define YouCanSelectMoreCardsQuitText 0x017cu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define SAH_BANK_DUEL_CORE 0x01u
+#define WasPlacedInTheHandText 0x016fu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6079,3 +6087,24 @@ AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a)
 	return (AskWhetherToQuitSelectingCardsResult){menu.a, menu.f};
 }
 /* <<< factory AskWhetherToQuitSelectingCards */
+
+/* >>> factory Scavenge_AddToHandEffect */
+Scavenge_AddToHandEffectResult Scavenge_AddToHandEffect(void)
+{
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(hTempPlayAreaLocation_ffa1);
+	AddCardToHand(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn, and `ret c` skips the
+	 * screen there: the detail screen exists to show the *opponent's* pick. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Scavenge_AddToHandEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(SAH_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTempPlayAreaLocation_ffa1,
+						   WasPlacedInTheHandText);
+	BankswitchROM(saved);
+	return (Scavenge_AddToHandEffectResult){hTempPlayAreaLocation_ffa1, shown.f};
+}
+/* <<< factory Scavenge_AddToHandEffect */

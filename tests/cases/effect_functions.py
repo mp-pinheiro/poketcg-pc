@@ -2522,6 +2522,17 @@ wTxRam2 = 0xCE3F
 wTxRam2_b = 0xCE41
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+SAH_hTempPlayAreaLocation_ffa1 = 0xFFA1
+SAH_hWhoseTurn = 0xFF97
+SAH_TURN = 0xC2
+SAH_DUELIST_TYPE = 0xC2F1
+SAH_HAND_COUNT = 0xC2EE
+SAH_HAND = 0xC242
+SAH_wPlayerDeck = 0xC400
+SAH_wLoadedCard1 = 0xCC24
+SAH_wLCDC = 0xCABB
+SAH_rLCDC = 0xFF40
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4233,6 +4244,37 @@ CASES["AskWhetherToQuitSelectingCards"] = [
 	dict(POISON, a=0x07, wram={0xFFB2: b"\x01", 0xCABB: b"\x00", 0xC510: b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={0xCE43: 2}),
 ]
 # <<< factory AskWhetherToQuitSelectingCards
+
+# >>> factory Scavenge_AddToHandEffect
+CONTRACT["Scavenge_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Scavenge_AddToHandEffect"] = [
+    # Player's own turn: IsPlayerTurn sets carry and `ret c` returns before the
+    # detail screen, so no frame/input machinery is reachable here.
+    {"wram": {SAH_hWhoseTurn: bytes((SAH_TURN,)), SAH_DUELIST_TYPE: b"\x00",
+      SAH_HAND_COUNT: b"\x00", SAH_HAND: b"\xFF\xFF",
+      SAH_hTempPlayAreaLocation_ffa1: b"\x00"},
+     "read": {SAH_HAND_COUNT: 1, SAH_HAND: 2}},
+    # Opponent's turn: the screen runs, so real frames and a cycled A are needed.
+    {"keys": [0x00, 0x01],
+     "wram": {SAH_wLCDC: b"\x80", SAH_rLCDC: b"\x80",
+      SAH_hWhoseTurn: bytes((SAH_TURN,)), SAH_DUELIST_TYPE: b"\x01",
+      SAH_HAND_COUNT: b"\x00", SAH_HAND: b"\xFF\xFF",
+      SAH_wPlayerDeck: b"\x10", SAH_wLoadedCard1: b"\x00",
+      SAH_hTempPlayAreaLocation_ffa1: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {SAH_HAND_COUNT: 1, SAH_HAND: 2, SAH_wLoadedCard1: 64},
+     "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={SAH_wLCDC: b"\x80", SAH_rLCDC: b"\x80",
+         SAH_hWhoseTurn: bytes((SAH_TURN,)), SAH_DUELIST_TYPE: b"\x01",
+         SAH_HAND_COUNT: b"\x00", SAH_HAND: b"\xFF\xFF",
+         SAH_wPlayerDeck: b"\x10", SAH_wLoadedCard1: b"\x00",
+         SAH_hTempPlayAreaLocation_ffa1: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={SAH_HAND_COUNT: 1, SAH_HAND: 2, SAH_wLoadedCard1: 64},
+         instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory Scavenge_AddToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6462,3 +6504,11 @@ MUTATIONS["Conversion2_PlayerSelectEffect"] = {
 # >>> factory-mutation AskWhetherToQuitSelectingCards
 MUTATIONS["AskWhetherToQuitSelectingCards"] = {"source_symbol": "AskWhetherToQuitSelectingCards", "before": "\tuint8_t remaining = (uint8_t)(a - hCurSelectionItem);", "after": "\tuint8_t remaining = (uint8_t)(a - hCurSelectionItem - 1u);", "case_ids": ["AskWhetherToQuitSelectingCards-0", "AskWhetherToQuitSelectingCards-1", "AskWhetherToQuitSelectingCards-2"]}
 # <<< factory-mutation AskWhetherToQuitSelectingCards
+# >>> factory-mutation Scavenge_AddToHandEffect
+MUTATIONS["Scavenge_AddToHandEffect"] = {
+ "source_symbol": "Scavenge_AddToHandEffect",
+ "before": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(hTempPlayAreaLocation_ffa1);\n\tAddCardToHand(moved.a);",
+ "after": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(hTempPlayAreaLocation_ffa1);\n\tAddCardToHand((uint8_t)(moved.a + 1u));",
+ "case_ids": ["Scavenge_AddToHandEffect-0", "Scavenge_AddToHandEffect-1"],
+}
+# <<< factory-mutation Scavenge_AddToHandEffect
