@@ -4002,6 +4002,39 @@ CASES["Barrier_PlayerSelectEffect"] = [
 ]
 # <<< factory Barrier_PlayerSelectEffect
 
+# >>> factory StarmieRecover_PlayerSelectEffect
+CONTRACT["StarmieRecover_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["StarmieRecover_PlayerSelectEffect"] = [
+    # Only an accept leaves .loop_input, so A is the terminating input.
+    {"keys": [0x00, 0x01],
+     "wram": {hWhoseTurn: bytes((SR_TURN,)), SR_CONSOLE: b"\x00", SR_LCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + SR_HP: b"\x00",
+      wPlayerArenaCard + SR_STAGE: b"\x00",
+      wPlayerArenaCard + SR_STATUS: b"\x00",
+      wPlayerArenaCard + SR_PLUS: b"\x00",
+      wPlayerArenaCard + SR_DEF: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={hWhoseTurn: bytes((SR_TURN,)), SR_CONSOLE: b"\x00", SR_LCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + SR_HP: b"\x00",
+      wPlayerArenaCard + SR_STAGE: b"\x00",
+      wPlayerArenaCard + SR_STATUS: b"\x00",
+      wPlayerArenaCard + SR_PLUS: b"\x00",
+      wPlayerArenaCard + SR_DEF: b"\x00",
+      wDuelTempList: b"\xFF",
+      hTempCardIndex_ff98: b"\x05", hTemp_ffa0: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory StarmieRecover_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6172,3 +6205,11 @@ MUTATIONS["CharmeleonFlamethrower_PlayerSelectEffect"] = {"source_symbol": "Char
 # >>> factory-mutation Barrier_PlayerSelectEffect
 MUTATIONS["Barrier_PlayerSelectEffect"] = {"source_symbol": "Barrier_PlayerSelectEffect", "before": "Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);\n\t\tBankswitchROM(saved);\n\t}\n\tHandleEnergyDiscardMenuInputResult menu;\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tmenu = HandleEnergyDiscardMenuInput();\n\t\tBankswitchROM(saved);\n\t}\n\tif (menu.f & 0x10)\n\t\treturn (Barrier_PlayerSelectEffectResult){menu.a, menu.f};\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);\n\t\tBankswitchROM(saved);\n\t}\n\tHandleEnergyDiscardMenuInputResult menu;\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tmenu = HandleEnergyDiscardMenuInput();\n\t\tBankswitchROM(saved);\n\t}\n\tif (menu.f & 0x10)\n\t\treturn (Barrier_PlayerSelectEffectResult){menu.a, menu.f};\n\thTemp_ffa0 = 0x00;", "case_ids": ["Barrier_PlayerSelectEffect-0", "Barrier_PlayerSelectEffect-1"]}
 # <<< factory-mutation Barrier_PlayerSelectEffect
+# >>> factory-mutation StarmieRecover_PlayerSelectEffect
+MUTATIONS["StarmieRecover_PlayerSelectEffect"] = {
+ "source_symbol": "StarmieRecover_PlayerSelectEffect",
+ "before": "\treturn (StarmieRecover_PlayerSelectEffectResult){card, input.f};",
+ "after": "\treturn (StarmieRecover_PlayerSelectEffectResult){card, 0x10u};",
+ "case_ids": ["StarmieRecover_PlayerSelectEffect-0", "StarmieRecover_PlayerSelectEffect-1"],
+}
+# <<< factory-mutation StarmieRecover_PlayerSelectEffect

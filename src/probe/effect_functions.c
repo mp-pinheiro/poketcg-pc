@@ -3255,6 +3255,15 @@ static void adapt_Barrier_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Barrier_PlayerSelectEffect */
 
+/* >>> factory StarmieRecover_PlayerSelectEffect */
+static void adapt_StarmieRecover_PlayerSelectEffect(ProbeState *s)
+{
+	StarmieRecover_PlayerSelectEffectResult r = StarmieRecover_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory StarmieRecover_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3657,5 +3666,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ArcanineFlamethrower_PlayerSelectEffect", adapt_ArcanineFlamethrower_PlayerSelectEffect },
 	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
 	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
+	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
 	{ NULL, NULL },
 };

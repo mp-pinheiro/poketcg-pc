@@ -5896,3 +5896,29 @@ Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)
 	return (Barrier_PlayerSelectEffectResult){hTemp_ffa0, menu.f};
 }
 /* <<< factory Barrier_PlayerSelectEffect */
+
+/* >>> factory StarmieRecover_PlayerSelectEffect */
+StarmieRecover_PlayerSelectEffectResult StarmieRecover_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(SR_TYPE_ENERGY_WATER);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank 11 on return. The switch is load-bearing: DisplayEnergyDiscardMenu
+	 * reads EnergyDiscardCardListParameters ($46F3) out of the switched window,
+	 * so under bank 11 it installs a garbage wListFunctionPointer and the menu
+	 * never reports a selection. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(SR_BANK_DUEL_CORE);
+	DisplayEnergyDiscardScreen(SR_PLAY_AREA_ARENA);
+	BankswitchROM(saved);
+	/* .loop_input: cancelling re-opens the menu, so only an accept leaves it. */
+	HandleEnergyDiscardMenuInputResult input;
+	do {
+		BankswitchROM(SR_BANK_DUEL_CORE);
+		input = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+	} while ((input.f & 0x10u) != 0u);
+	uint8_t card = hTempCardIndex_ff98;
+	hTemp_ffa0 = card;
+	return (StarmieRecover_PlayerSelectEffectResult){card, input.f};
+}
+/* <<< factory StarmieRecover_PlayerSelectEffect */
