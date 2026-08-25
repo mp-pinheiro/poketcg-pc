@@ -135,6 +135,17 @@ hBankROM = 0xFF80
 wCurTilemap = 0xD131
 
 wCurPortrait = 0xD61E
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hBankROM = 0xFF80
+wSceneBaseX = 0xD61C
+wSceneBaseY = 0xD61D
+wSceneSGBPacketPtr = 0xD620
+wSceneSGBRoutinePtr = 0xD622
+wd291 = 0xD291
+wCurTilemap = 0xD131
+wAllSpriteAnimationsDisabled = 0xD5D7
+wSceneSpriteIndex = 0xD61B
 # <<< factory-cases-statics
 
 
@@ -222,6 +233,15 @@ CASES["Func_3e31"] = [
 ]
 # <<< factory Func_3e31
 
+# >>> factory LoadScene
+CONTRACT["LoadScene"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["LoadScene"] = [
+    {"a": 0x00, "b": 0x00, "c": 0x00, "read": {wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wd291: 1, wCurTilemap: 1, hBankROM: 1}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    {"a": 0x00, "b": 0x02, "c": 0x03, "read": {wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wd291: 1, wCurTilemap: 1, hBankROM: 1}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, a=0x00, b=0x00, c=0x00, read={wSceneBaseX: 1, wSceneBaseY: 1, wSceneSGBPacketPtr: 2, wSceneSGBRoutinePtr: 2, wd291: 1, wCurTilemap: 1, hBankROM: 1}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory LoadScene
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -284,3 +304,11 @@ MUTATIONS["Func_3e31"] = {
     "case_ids": ["Func_3e31-0", "Func_3e31-1"],
 }
 # <<< factory-mutation Func_3e31
+# >>> factory-mutation LoadScene
+MUTATIONS["LoadScene"] = {
+    "source_symbol": "LoadScene",
+    "before": "\t_LoadScene(a, b, c);",
+    "after": "\t(void)0;",
+    "case_ids": ["LoadScene-0", "LoadScene-1", "LoadScene-2"],
+}
+# <<< factory-mutation LoadScene

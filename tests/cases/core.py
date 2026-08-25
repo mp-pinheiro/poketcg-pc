@@ -2805,6 +2805,14 @@ CASES["SendCardAttrBlkPacket"] = [
 ]
 # <<< factory SendCardAttrBlkPacket
 
+# >>> factory ApplyBGP6OrSGB3ToCardImage
+CONTRACT["ApplyBGP6OrSGB3ToCardImage"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ApplyBGP6OrSGB3ToCardImage"] = [
+    {"wram": {0xCAB4: b"\x00"}},
+    dict(POISON, wram={0xCAB4: b"\x00"}),
+]
+# <<< factory ApplyBGP6OrSGB3ToCardImage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4040,3 +4048,11 @@ MUTATIONS["SendCardAttrBlkPacket"] = {
     "case_ids": ["SendCardAttrBlkPacket-0", "SendCardAttrBlkPacket-1"],
 }
 # <<< factory-mutation SendCardAttrBlkPacket
+# >>> factory-mutation ApplyBGP6OrSGB3ToCardImage
+MUTATIONS["ApplyBGP6OrSGB3ToCardImage"] = {
+    "source_symbol": "ApplyBGP6OrSGB3ToCardImage",
+    "before": "if (console == CONSOLE_DMG) {",
+    "after": "if (console != CONSOLE_DMG) {",
+    "case_ids": ["ApplyBGP6OrSGB3ToCardImage-0", "ApplyBGP6OrSGB3ToCardImage-1"],
+}
+# <<< factory-mutation ApplyBGP6OrSGB3ToCardImage

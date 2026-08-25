@@ -1,0 +1,9 @@
+{
+  "fn": "ReloadCardListItems",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReloadCardListItems\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39218\": \"00\", \"39378\": \"00\", \"50448\": \"ff\", \"52498\": \"0a\", \"52500\": \"03\", \"52505\": \"00\", \"52507\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReloadCardListItems\", \"mismatches\": {\"bus\": {\"address\": 39218, \"reference\": \"0000ff0a03\", \"native\": \"0c00ff0a03\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[39218, 1], [39378, 1], [50448, 1], [52498, 1], [52500, 1], [52505, 1], [52507, 1]]}}}\n",
+  "restored": "{\"fn\": \"ReloadCardListItems\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"39218\": \"00\", \"39378\": \"00\", \"50448\": \"ff\", \"52498\": \"0a\", \"52500\": \"03\", \"52505\": \"00\", \"52507\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

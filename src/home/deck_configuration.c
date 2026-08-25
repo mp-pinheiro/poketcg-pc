@@ -206,6 +206,17 @@
 #include "mem.h"
 
 #include "home/deck_configuration.h"
+
+#define SYM_CURSOR_U 0x0Cu
+#define SYM_CURSOR_D 0x2Fu
+#define Text_9a36 0x9A36u
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "home/card_data.h"
+#include "home/bg_map.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1302,3 +1313,51 @@ RemoveCardFromDeckAndUpdateCountResult RemoveCardFromDeckAndUpdateCount(uint8_t 
 	return (RemoveCardFromDeckAndUpdateCountResult){r2.a, r2.f, r.b, r.c, r2.d, r.e, r.hl};
 }
 /* <<< factory RemoveCardFromDeckAndUpdateCount */
+
+/* >>> factory PrintCardSelectionList */
+void PrintCardSelectionList(void)
+{
+	uint8_t e = wCardListCoords;
+	uint8_t d = gb_read8((uint16_t)(wCardListCoords_ADDR + 1u));
+	uint8_t tile;
+	if (wCardListVisibleOffset != 0u) {
+		tile = SYM_CURSOR_U;
+	} else {
+		tile = wCursorAlternateTile;
+	}
+	WriteByteToBGMap0(tile, 19u, e);
+
+	uint8_t offset = wCardListVisibleOffset;
+	uint8_t c = offset;
+	uint16_t hl = (uint16_t)(wFilteredCardList_ADDR + offset);
+	uint8_t count = wNumVisibleCardListEntries;
+	while (count != 0u) {
+		uint8_t card_id = gb_read8(hl++);
+		if (card_id != 0u) {
+			uint8_t b = count;
+			AddCardIDToVisibleList(b, card_id);
+			LoadCardDataToBuffer1_FromCardID(card_id);
+			CopyCardNameAndLevelResult name = CopyCardNameAndLevel(14u, b, c, d, card_id);
+			AppendOwnedCardCountNumber(name.hl, card_id);
+			InitTextPrinting(d, card_id);
+			uint16_t text = wDefaultText_ADDR;
+			ProcessText(&text);
+		} else {
+			InitTextPrinting(d, e);
+			uint16_t text = Text_9a36;
+			ProcessText(&text);
+		}
+		--count;
+		e = (uint8_t)(e + 2u);
+	}
+
+	if (gb_read8(hl) != 0u) {
+		wUnableToScrollDown = FALSE;
+		tile = SYM_CURSOR_D;
+	} else {
+		wUnableToScrollDown = TRUE;
+		tile = wCursorAlternateTile;
+	}
+	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 2u));
+}
+/* <<< factory PrintCardSelectionList */

@@ -30,6 +30,14 @@
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
 #define SFX_CURSOR 0x01u
+
+#define SYM_CURSOR_U 0x0Cu
+#define SYM_CURSOR_D 0x2Fu
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "home/duel.h"
+#include "home/bg_map.h"
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -426,3 +434,52 @@ CopyCardNameAndLevelResult CopyCardNameAndLevel(uint8_t a, uint8_t b, uint8_t c,
 	return _CopyCardNameAndLevel(a, b, c, d, e);
 }
 /* <<< factory CopyCardNameAndLevel */
+
+/* >>> factory ReloadCardListItems */
+void ReloadCardListItems(void)
+{
+	uint8_t e = SYM_SPACE;
+	uint8_t scroll = wListScrollOffset;
+	uint8_t c = (uint8_t)(wMenuCursorYOffset - 1u);
+	uint8_t up = SYM_SPACE;
+	if (scroll != 0u)
+		up = SYM_CURSOR_U;
+	WriteByteToBGMap0(up, 18u, c);
+
+	if ((uint8_t)(scroll + wNumMenuItems) < wNumListItems)
+		e = SYM_CURSOR_D;
+	uint8_t down_row = (uint8_t)((uint8_t)(wNumMenuItems + wNumMenuItems) + c - 1u);
+	WriteByteToBGMap0(e, 18u, down_row);
+
+	uint16_t hl = (uint16_t)(wDuelTempList_ADDR + scroll);
+	uint8_t b = wNumMenuItems;
+	uint8_t d = wListItemXPosition;
+	e = wMenuCursorYOffset;
+	c = 0u;
+	while (b != 0u) {
+		uint8_t a = gb_read8(hl);
+		if (a == 0xFFu)
+			break;
+		uint8_t saved_b = b;
+		uint8_t saved_c = c;
+		uint8_t saved_d = d;
+		uint8_t saved_e = e;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(a);
+		DrawCardSymbol(saved_d, saved_e);
+		InitTextPrinting(saved_d, saved_e);
+		(void)CopyCardNameAndLevel(wListItemNameMaxLength, saved_b, saved_c, saved_d, saved_e);
+		uint16_t text_hl = wDefaultText_ADDR;
+		ProcessText(&text_hl);
+		b = saved_b;
+		c = saved_c;
+		d = saved_d;
+		e = saved_e;
+		hl = (uint16_t)(hl + 1u);
+		c = (uint8_t)(c + 1u);
+		if (c >= wNumListItems)
+			break;
+		e = (uint8_t)(e + 2u);
+		b = (uint8_t)(b - 1u);
+	}
+}
+/* <<< factory ReloadCardListItems */

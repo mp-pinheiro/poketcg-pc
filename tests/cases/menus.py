@@ -277,6 +277,15 @@ wCursorBlinkCounter = 0xCD0F
 wDefaultYesOrNo = 0xCD9A
 wLeftmostItemCursorX = 0xCD98
 wMenuCursorXOffset = 0xCD11
+
+wDuelTempList = 0xC510
+wListScrollOffset = 0xCD19
+wMenuCursorYOffset = 0xCD12
+wNumMenuItems = 0xCD14
+wNumListItems = 0xCD1B
+wListItemXPosition = 0xCD1A
+wListItemNameMaxLength = 0xCD1C
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -313,6 +322,14 @@ CASES["CopyCardNameAndLevel"] = [
          read={0xC590: 32}),
 ]
 # <<< factory CopyCardNameAndLevel
+
+# >>> factory ReloadCardListItems
+CONTRACT["ReloadCardListItems"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ReloadCardListItems"] = [
+    {"wram": {wListScrollOffset: b"\x00", wMenuCursorYOffset: b"\x0a", wNumMenuItems: b"\x03", wNumListItems: b"\x03", wDuelTempList: b"\xff"}, "read": {0x9932: 1, 0x99d2: 1}},
+    dict(POISON, wram={wListScrollOffset: b"\x01", wMenuCursorYOffset: b"\x0a", wNumMenuItems: b"\x02", wNumListItems: b"\x05", wDuelTempList + 1: b"\xff"}, read={0x9932: 1, 0x99b2: 1}),
+]
+# <<< factory ReloadCardListItems
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -353,3 +370,11 @@ MUTATIONS["CopyCardNameAndLevel"] = {
     "case_ids": ["CopyCardNameAndLevel-0", "CopyCardNameAndLevel-1"],
 }
 # <<< factory-mutation CopyCardNameAndLevel
+# >>> factory-mutation ReloadCardListItems
+MUTATIONS["ReloadCardListItems"] = {
+    "source_symbol": "ReloadCardListItems",
+    "before": "uint8_t up = SYM_SPACE;",
+    "after": "uint8_t up = SYM_CURSOR_U;",
+    "case_ids": ["ReloadCardListItems-0", "ReloadCardListItems-1"],
+}
+# <<< factory-mutation ReloadCardListItems

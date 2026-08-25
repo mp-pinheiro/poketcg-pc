@@ -23,6 +23,13 @@
 #define TILEMAP_PLAYER 0x62u
 
 #include "home/animation.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/palettes.h"
+#include "home/scenes.h"
+#include "home/switch_rom.h"
+#define BANK_LOAD_SCENE 0x04u
 /* <<< factory statics */
 
 #define SPRITE_ANIM_BUFFER_CAPACITY 16u
@@ -287,3 +294,15 @@ void Func_3e31(void)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory Func_3e31 */
+
+/* >>> factory LoadScene */
+LoadSceneResult LoadScene(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(BANK_LOAD_SCENE);
+	_LoadScene(a, b, c);
+	FlushAllPalettes();
+	BankswitchROM(saved_bank);
+	return (LoadSceneResult){wSceneSpriteIndex, f, b, c, d, e, hl};
+}
+/* <<< factory LoadScene */

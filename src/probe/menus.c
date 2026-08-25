@@ -199,6 +199,13 @@ static void adapt_CopyCardNameAndLevel(ProbeState *s)
 }
 /* <<< factory CopyCardNameAndLevel */
 
+/* >>> factory ReloadCardListItems */
+static void adapt_ReloadCardListItems(ProbeState *s)
+{
+	ReloadCardListItems();
+}
+/* <<< factory ReloadCardListItems */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -230,5 +237,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
 	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
 	{ "CopyCardNameAndLevel", adapt_CopyCardNameAndLevel },
+	{ "ReloadCardListItems", adapt_ReloadCardListItems },
 	{ NULL, NULL },
 };

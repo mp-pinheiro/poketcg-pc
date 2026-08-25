@@ -837,4 +837,7 @@ CheckIfArenaCardIsFullyPoweredResult CheckIfArenaCardIsFullyPowered(void);
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } SendCardAttrBlkPacketResult;
 SendCardAttrBlkPacketResult SendCardAttrBlkPacket(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory SendCardAttrBlkPacket */
+/* >>> factory ApplyBGP6OrSGB3ToCardImage */
+SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ApplyBGP6OrSGB3ToCardImage */
 #endif

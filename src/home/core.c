@@ -5150,3 +5150,24 @@ SendCardAttrBlkPacketResult SendCardAttrBlkPacket(uint8_t a, uint8_t f, uint8_t 
 	return (SendCardAttrBlkPacketResult){result.a, result.f, result.b, result.c, result.d, result.e, result.hl};
 }
 /* <<< factory SendCardAttrBlkPacket */
+
+/* >>> factory ApplyBGP6OrSGB3ToCardImage */
+SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+	a = console;
+	if (console == CONSOLE_DMG) {
+		f = 0x80u;
+		return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+	}
+	if (console == CONSOLE_SGB) {
+		a = 0x0Cu;
+		f = 0x80u;
+		return SendCardAttrBlkPacket(a, f, b, c, d, e, hl);
+	}
+	a = 0x06u;
+	f = 0x40u;
+	ApplyCardCGBAttributes((uint16_t)((uint16_t)d << 8 | e));
+	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory ApplyBGP6OrSGB3ToCardImage */

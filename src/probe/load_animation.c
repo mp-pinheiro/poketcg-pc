@@ -97,6 +97,20 @@ static void adapt_Func_3e31(ProbeState *s)
 }
 /* <<< factory Func_3e31 */
 
+/* >>> factory LoadScene */
+static void adapt_LoadScene(ProbeState *s)
+{
+	LoadSceneResult r = LoadScene(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory LoadScene */
+
 const ProbeEntry probe_entries_load_animation[] = {
 	{ "GetFirstSpriteAnimBufferProperty", adapt_GetFirstSpriteAnimBufferProperty },
 	{ "GetSpriteAnimBufferProperty", adapt_GetSpriteAnimBufferProperty },
@@ -112,5 +126,6 @@ const ProbeEntry probe_entries_load_animation[] = {
 	{ "DrawOpponentPortrait", adapt_DrawOpponentPortrait },
 	{ "DrawPlayerPortrait", adapt_DrawPlayerPortrait },
 	{ "Func_3e31", adapt_Func_3e31 },
+	{ "LoadScene", adapt_LoadScene },
 	{ NULL, NULL },
 };

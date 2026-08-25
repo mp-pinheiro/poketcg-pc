@@ -32,4 +32,8 @@ void DrawPlayerPortrait(void);
 /* >>> factory Func_3e31 */
 void Func_3e31(void);
 /* <<< factory Func_3e31 */
+/* >>> factory LoadScene */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } LoadSceneResult;
+LoadSceneResult LoadScene(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory LoadScene */
 #endif

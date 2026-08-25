@@ -1835,6 +1835,20 @@ static void adapt_SendCardAttrBlkPacket(ProbeState *s)
 }
 /* <<< factory SendCardAttrBlkPacket */
 
+/* >>> factory ApplyBGP6OrSGB3ToCardImage */
+static void adapt_ApplyBGP6OrSGB3ToCardImage(ProbeState *s)
+{
+	SendCardAttrBlkPacketResult r = ApplyBGP6OrSGB3ToCardImage(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory ApplyBGP6OrSGB3ToCardImage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2053,5 +2067,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleLegendaryArticunoEnergyScoring", adapt_HandleLegendaryArticunoEnergyScoring },
 	{ "CheckIfArenaCardIsFullyPowered", adapt_CheckIfArenaCardIsFullyPowered },
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
+	{ "ApplyBGP6OrSGB3ToCardImage", adapt_ApplyBGP6OrSGB3ToCardImage },
 	{ NULL, NULL },
 };

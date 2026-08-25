@@ -624,6 +624,15 @@ CASES["RemoveCardFromDeckAndUpdateCount"] = [
 ]
 # <<< factory RemoveCardFromDeckAndUpdateCount
 
+# >>> factory PrintCardSelectionList
+CONTRACT["PrintCardSelectionList"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintCardSelectionList"] = [
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1}}},
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, "read": {0xCECD: 1}, "vread": {0: {0x9833: 1, 0x9873: 1}}},
+    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00\x01"}, read={0xCECD: 1}, vread={0: {0x9833: 1, 0x9873: 1}}),
+]
+# <<< factory PrintCardSelectionList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -839,3 +848,11 @@ MUTATIONS["PrintTotalCardCount"] = {"source_symbol": "PrintTotalCardCount", "bef
 # >>> factory-mutation RemoveCardFromDeckAndUpdateCount
 MUTATIONS["RemoveCardFromDeckAndUpdateCount"] = {"source_symbol": "RemoveCardFromDeckAndUpdateCount", "before": "\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};", "after": "\t\treturn (RemoveCardFromDeckAndUpdateCountResult){r.a, r.f, r.b, r.c, r.c, r.e, r.hl};", "case_ids": ["RemoveCardFromDeckAndUpdateCount-1"]}
 # <<< factory-mutation RemoveCardFromDeckAndUpdateCount
+# >>> factory-mutation PrintCardSelectionList
+MUTATIONS["PrintCardSelectionList"] = {
+    "source_symbol": "PrintCardSelectionList",
+    "before": "\t\ttile = SYM_CURSOR_U;",
+    "after": "\t\ttile = SYM_CURSOR_D;",
+    "case_ids": ["PrintCardSelectionList-1", "PrintCardSelectionList-2"],
+}
+# <<< factory-mutation PrintCardSelectionList
