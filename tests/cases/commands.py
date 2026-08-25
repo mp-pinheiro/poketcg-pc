@@ -93,6 +93,12 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDamageAnimAmount = 0xCE7F
+wLoadedAttackAnimation = 0xCCB8
+wTempNonTurnDuelistCardID = 0xCCC4
+wTxRam2 = 0xCE3F
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory GetDamageText
@@ -124,6 +130,16 @@ CASES["PlayAttackAnimationCommands_NextCommand"] = [
 CONTRACT["DuelAnim157"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("a", "f", "b", "c", "d", "e", "hl")}
 CASES["DuelAnim157"] = [{}, dict(POISON), {"wram": {0xC100: b"\x00"}}]
 # <<< factory DuelAnim157
+
+# >>> factory PrintDamageText
+CONTRACT["PrintDamageText"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PrintDamageText"] = [
+    {"hl": 0xC100, "wram": {wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", 0xCAD3: b"\x48\x03", wTxRam2: b"\xAA\x55"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wTxRam2: 2}, "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, wram={wLoadedAttackAnimation: b"\x00", wTempNonTurnDuelistCardID: b"\x08", wDamageAnimAmount: b"\x01\x00", 0xCAD3: b"\x48\x03", wTxRam2: b"\x12\x34"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wTxRam2: 2}, instruction_budget=1000000, cycle_budget=4000000),
+    {"b": 1, "c": 2, "d": 3, "e": 4, "hl": 0xC101, "wram": {wLoadedAttackAnimation: b"\x79", wTxRam2: b"\xAA\x55"}, "read": {wTxRam2: 2}},
+    dict(POISON, wram={wLoadedAttackAnimation: b"\x86", wTxRam2: b"\x12\x34"}, read={wTxRam2: 2}),
+]
+# <<< factory PrintDamageText
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -181,3 +197,11 @@ MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAt
 # >>> factory-mutation DuelAnim157
 MUTATIONS["DuelAnim157"] = {"source_symbol": "DuelAnim157", "before": "\treturn; /* DuelAnim157 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim157 */", "case_ids": ["DuelAnim157-2"]}
 # <<< factory-mutation DuelAnim157
+# >>> factory-mutation PrintDamageText
+MUTATIONS["PrintDamageText"] = {
+    "source_symbol": "PrintDamageText",
+    "before": "\tgb_write8(wTxRam2_ADDR, 0u);",
+    "after": "\tgb_write8(wTxRam2_ADDR, 1u);",
+    "case_ids": ["PrintDamageText-0", "PrintDamageText-1"],
+}
+# <<< factory-mutation PrintDamageText

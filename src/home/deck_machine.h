@@ -65,4 +65,7 @@ DeckBuildCheckResult CheckIfCanBuildSavedDeck(uint8_t a, uint8_t b);
 typedef struct { uint8_t a; uint8_t f; } PrintDeckMachineEntryResult;
 PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory PrintDeckMachineEntry */
+/* >>> factory ShowReceivedCardsList */
+void ShowReceivedCardsList(void);
+/* <<< factory ShowReceivedCardsList */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

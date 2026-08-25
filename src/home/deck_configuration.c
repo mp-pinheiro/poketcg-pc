@@ -217,6 +217,12 @@
 #include "home/card_data.h"
 #include "home/bg_map.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define NUM_DECK_CONFIRMATION_VISIBLE_CARDS 0x07u
+static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 0x05u, 0x06u, 0x10u, 0x20u};
 /* <<< factory statics */
 
 
@@ -1361,3 +1367,18 @@ void PrintCardSelectionList(void)
 	WriteByteToBGMap0(tile, 19u, (uint8_t)(e - 2u));
 }
 /* <<< factory PrintCardSelectionList */
+
+/* >>> factory PrintFilteredCardSelectionList */
+void PrintFilteredCardSelectionList(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t input_a = a;
+	uint8_t filter = (input_a < 9u) ? card_type_filters[input_a] : 0xffu;
+	CreateCardCollectionListWithDeckCards(ALL_DECKS);
+	(void)CreateFilteredCardList(filter, f, 0u, input_a, d, e, wCardListCoords_ADDR);
+	gb_write8(wNumVisibleCardListEntries_ADDR, NUM_DECK_CONFIRMATION_VISIBLE_CARDS);
+	gb_write8(wCardListCoords_ADDR, 0x05u);
+	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);
+	gb_write8(wCursorAlternateTile_ADDR, SYM_SPACE);
+	PrintCardSelectionList();
+}
+/* <<< factory PrintFilteredCardSelectionList */

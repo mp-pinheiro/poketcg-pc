@@ -475,6 +475,14 @@ static const uint8_t kCursorTileData[16] = {
 #define OPPACTION_DUEL_MAIN_SCENE 0x16u
 #define OPPACTION_EXECUTE_PKMN_POWER_EFFECT 0x0du
 #define OPPACTION_USE_PKMN_POWER 0x0cu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/tiles.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2360,3 +2368,30 @@ UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	return (UsePokemonPowerResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory UsePokemonPower */
+
+/* >>> factory DrawYourOrOppPlayArea_ActiveCardGfx */
+void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
+{
+	uint8_t page = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	uint16_t arena_addr = (uint16_t)(((uint16_t)page << 8) | DUELVARS_ARENA_CARD);
+	uint8_t arena_card = gb_read8(arena_addr);
+	if (arena_card == 0xFFu)
+		return;
+
+	uint8_t turn = gb_read8(hWhoseTurn_ADDR);
+	if (turn != page)
+		SwapTurn();
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena_card);
+	if (turn != page)
+		SwapTurn();
+
+	uint16_t gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8);
+	LoadCardGfx(gfx, 0x8A00u, 0x30u, 0x10u);
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+	FillRectangle(0xA0u, 8u, 6u, de, 0x0601u);
+	(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 0u,
+		(uint8_t)(de >> 8), (uint8_t)de, 0x0601u);
+}
+/* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */

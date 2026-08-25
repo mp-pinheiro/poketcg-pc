@@ -128,6 +128,11 @@ wMachineDeckPtrs = 0xD00D
 
 wMachineDeckPtrs = 0xD00D
 wDefaultText = 0xC590
+
+wNameBuffer = 0xC500
+wDefaultText = 0xC590
+wTxRam2 = 0xCE3F
+hffb0 = 0xFFB0
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -241,6 +246,17 @@ CASES["PrintDeckMachineEntry"] = [
 ]
 # <<< factory PrintDeckMachineEntry
 
+# >>> factory ShowReceivedCardsList
+CONTRACT["ShowReceivedCardsList"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ShowReceivedCardsList"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x5566,
+     "wram": {wNameBuffer: b"\x00", wTxRam2: b"\xFF\xFF"},
+     "read": {hffb0: 1, wTxRam2: 2}},
+    dict(POISON, wram={wNameBuffer: b"\x00", wTxRam2: b"\xFF\xFF"},
+         read={hffb0: 1, wTxRam2: 2}),
+]
+# <<< factory ShowReceivedCardsList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -319,3 +335,6 @@ MUTATIONS["PrintDeckMachineEntry"] = {
     "case_ids": ["PrintDeckMachineEntry-0", "PrintDeckMachineEntry-1"],
 }
 # <<< factory-mutation PrintDeckMachineEntry
+# >>> factory-mutation ShowReceivedCardsList
+MUTATIONS["ShowReceivedCardsList"] = {"source_symbol": "ShowReceivedCardsList", "before": "gb_write8(wTxRam2_ADDR, 0x00u);", "after": "gb_write8(wTxRam2_ADDR, 0x01u);", "case_ids": ["ShowReceivedCardsList-0", "ShowReceivedCardsList-1"]}
+# <<< factory-mutation ShowReceivedCardsList

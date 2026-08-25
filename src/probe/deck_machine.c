@@ -150,6 +150,14 @@ static void adapt_PrintDeckMachineEntry(ProbeState *s)
 }
 /* <<< factory PrintDeckMachineEntry */
 
+/* >>> factory ShowReceivedCardsList */
+static void adapt_ShowReceivedCardsList(ProbeState *s)
+{
+	(void)s;
+	ShowReceivedCardsList();
+}
+/* <<< factory ShowReceivedCardsList */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -169,5 +177,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "Func_b568", adapt_Func_b568 },
 	{ "CheckIfCanBuildSavedDeck", adapt_CheckIfCanBuildSavedDeck },
 	{ "PrintDeckMachineEntry", adapt_PrintDeckMachineEntry },
+	{ "ShowReceivedCardsList", adapt_ShowReceivedCardsList },
 	{ NULL, NULL },
 };

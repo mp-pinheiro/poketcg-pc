@@ -1,0 +1,9 @@
+{
+  "fn": "DrawYourOrOppPlayArea_ActiveCardGfx",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawYourOrOppPlayArea_ActiveCardGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"35328\": \"00\", \"38912\": \"00\"}}, \"wram\": {\"49851\": \"ff00\", \"52816\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawYourOrOppPlayArea_ActiveCardGfx\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawYourOrOppPlayArea_ActiveCardGfx\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"35328\": \"00\", \"38912\": \"00\"}}, \"wram\": {\"49851\": \"ff00\", \"52816\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

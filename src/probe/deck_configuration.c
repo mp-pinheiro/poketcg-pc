@@ -453,6 +453,13 @@ static void adapt_PrintCardSelectionList(ProbeState *s)
 }
 /* <<< factory PrintCardSelectionList */
 
+/* >>> factory PrintFilteredCardSelectionList */
+static void adapt_PrintFilteredCardSelectionList(ProbeState *s)
+{
+	PrintFilteredCardSelectionList(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory PrintFilteredCardSelectionList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -507,5 +514,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintTotalCardCount", adapt_PrintTotalCardCount },
 	{ "RemoveCardFromDeckAndUpdateCount", adapt_RemoveCardFromDeckAndUpdateCount },
 	{ "PrintCardSelectionList", adapt_PrintCardSelectionList },
+	{ "PrintFilteredCardSelectionList", adapt_PrintFilteredCardSelectionList },
 	{ NULL, NULL },
 };

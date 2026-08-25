@@ -82,6 +82,18 @@ static void adapt_DuelAnim157(ProbeState *s)
 }
 /* <<< factory DuelAnim157 */
 
+/* >>> factory PrintDamageText */
+static void adapt_PrintDamageText(ProbeState *s)
+{
+	PrintDamageTextResult result = PrintDamageText(s->b, s->c, s->d, s->e, s->hl);
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory PrintDamageText */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -93,5 +105,6 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "GetDamageText", adapt_GetDamageText },
 	{ "PlayAttackAnimationCommands_NextCommand", adapt_PlayAttackAnimationCommands_NextCommand },
 	{ "DuelAnim157", adapt_DuelAnim157 },
+	{ "PrintDamageText", adapt_PrintDamageText },
 	{ NULL, NULL },
 };

@@ -633,6 +633,15 @@ CASES["PrintCardSelectionList"] = [
 ]
 # <<< factory PrintCardSelectionList
 
+# >>> factory PrintFilteredCardSelectionList
+CONTRACT["PrintFilteredCardSelectionList"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CASES["PrintFilteredCardSelectionList"] = [
+    {"a": 0x00, "f": 0x00, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+    dict(POISON, a=0x00, wram={0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, read={0xCECB: 1}, instruction_budget=8000000, cycle_budget=32000000),
+    {"a": 0x08, "f": 0x80, "wram": {0xC000: b"\x00" * 240, 0xCECB: b"\x00"}, "read": {0xCECB: 1}, "instruction_budget": 8000000, "cycle_budget": 32000000},
+]
+# <<< factory PrintFilteredCardSelectionList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -856,3 +865,6 @@ MUTATIONS["PrintCardSelectionList"] = {
     "case_ids": ["PrintCardSelectionList-1", "PrintCardSelectionList-2"],
 }
 # <<< factory-mutation PrintCardSelectionList
+# >>> factory-mutation PrintFilteredCardSelectionList
+MUTATIONS["PrintFilteredCardSelectionList"] = {"source_symbol": "PrintFilteredCardSelectionList", "before": "\tgb_write8(wNumVisibleCardListEntries_ADDR, NUM_DECK_CONFIRMATION_VISIBLE_CARDS);", "after": "\tgb_write8(wNumVisibleCardListEntries_ADDR, 0x06u);", "case_ids": ["PrintFilteredCardSelectionList-0", "PrintFilteredCardSelectionList-1"]}
+# <<< factory-mutation PrintFilteredCardSelectionList

@@ -1357,6 +1357,19 @@ CASES["UsePokemonPower"] = [
 ]
 # <<< factory UsePokemonPower
 
+# >>> factory DrawYourOrOppPlayArea_ActiveCardGfx
+CONTRACT["DrawYourOrOppPlayArea_ActiveCardGfx"] = {"compare": ("d", "e"), "preserve": ("d", "e")}
+CASES["DrawYourOrOppPlayArea_ActiveCardGfx"] = [
+    {"wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\xFF", 0xC2BC: b"\x00"},
+     "sram": {}, "vread": {0: {0x8A00: 1, 0x9800: 1}}},
+    dict(POISON, wram={wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\xFF", 0xC2BC: b"\x00"},
+         vread={0: {0x8A00: 1, 0x9800: 1}}),
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0x08, "e": 0x06,
+     "wram": {wCheckMenuPlayAreaWhichDuelist: b"\xC2", 0xC2BB: b"\x00", wPlayerDeck: b"\x00"},
+     "vread": {0: {0x8A00: 1, 0x98C8: 1}}},
+]
+# <<< factory DrawYourOrOppPlayArea_ActiveCardGfx
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1531,3 +1544,11 @@ MUTATIONS["UsePokemonPower"] = {
     "case_ids": ["UsePokemonPower-0", "UsePokemonPower-1"],
 }
 # <<< factory-mutation UsePokemonPower
+# >>> factory-mutation DrawYourOrOppPlayArea_ActiveCardGfx
+MUTATIONS["DrawYourOrOppPlayArea_ActiveCardGfx"] = {
+    "source_symbol": "DrawYourOrOppPlayArea_ActiveCardGfx",
+    "before": "uint8_t arena_card = gb_read8(arena_addr);",
+    "after": "uint8_t arena_card = gb_read8((uint16_t)(arena_addr + 1u));",
+    "case_ids": ["DrawYourOrOppPlayArea_ActiveCardGfx-0"],
+}
+# <<< factory-mutation DrawYourOrOppPlayArea_ActiveCardGfx

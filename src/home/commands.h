@@ -47,4 +47,16 @@ PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCo
 /* poketcg/src/engine/duel/animations/commands.asm */
 void DuelAnim157(void);
 /* <<< factory DuelAnim157 */
+/* >>> factory PrintDamageText */
+/* poketcg/src/engine/duel/animations/commands.asm */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} PrintDamageTextResult;
+
+PrintDamageTextResult PrintDamageText(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory PrintDamageText */
 #endif

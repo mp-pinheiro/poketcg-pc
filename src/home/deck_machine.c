@@ -61,6 +61,13 @@
 #include "home/print_text.h"
 #define EmptyDeckNameText 0x025bu
 #define PRINT_DECK_MACHINE_ENTRY_TEXT_ADDR 0x74D4u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -368,3 +375,21 @@ PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t 
 	return (PrintDeckMachineEntryResult){0u, 0u};
 }
 /* <<< factory PrintDeckMachineEntry */
+
+/* >>> factory ShowReceivedCardsList */
+void ShowReceivedCardsList(void)
+{
+	gb_write8(hffb0_ADDR, 0x01u);
+	InitTextPrinting(1u, 1u);
+	(void)ProcessTextFromID(CardReceivedText);
+	uint16_t hl = wNameBuffer_ADDR;
+	uint16_t de = wDefaultText_ADDR;
+	CopyListFromHLToDE(&hl, &de);
+	gb_write8(wTxRam2_ADDR, 0x00u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0x00u);
+	InitTextPrinting(1u, 14u);
+	(void)PrintTextNoDelay(ReceivedTheseCardsFromText, 1u, 14u);
+	gb_write8(hffb0_ADDR, 0x00u);
+	PrintCardSelectionList();
+}
+/* <<< factory ShowReceivedCardsList */

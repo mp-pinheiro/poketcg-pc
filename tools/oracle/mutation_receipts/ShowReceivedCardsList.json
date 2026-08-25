@@ -1,0 +1,9 @@
+{
+  "fn": "ShowReceivedCardsList",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ShowReceivedCardsList\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"00\", \"52799\": \"0000\", \"65456\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ShowReceivedCardsList\", \"mismatches\": {\"bus\": {\"address\": 52799, \"reference\": \"00000000\", \"native\": \"00010000\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[50432, 1], [52799, 2], [65456, 1]]}}}\n",
+  "restored": "{\"fn\": \"ShowReceivedCardsList\", \"registers\": {\"a\": 0, \"b\": 17, \"c\": 34, \"d\": 51, \"e\": 68, \"f\": 0, \"hl\": 21862, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"00\", \"52799\": \"0000\", \"65456\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

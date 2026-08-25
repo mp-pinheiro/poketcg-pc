@@ -1,0 +1,9 @@
+{
+  "fn": "PrintDamageText",
+  "case": "tests/cases/commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"4803\", \"52408\": \"00\", \"52420\": \"08\", \"52799\": \"0000\", \"52863\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintDamageText\", \"mismatches\": {\"bus\": {\"address\": 52799, \"reference\": \"4803000800000100\", \"native\": \"4803000801000100\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[51923, 2], [52408, 1], [52420, 1], [52799, 2], [52863, 2]]}}}\n",
+  "restored": "{\"fn\": \"PrintDamageText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51923\": \"4803\", \"52408\": \"00\", \"52420\": \"08\", \"52799\": \"0000\", \"52863\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}

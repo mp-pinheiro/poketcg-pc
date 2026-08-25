@@ -805,6 +805,14 @@ static void adapt_UsePokemonPower(ProbeState *s)
 }
 /* <<< factory UsePokemonPower */
 
+/* >>> factory DrawYourOrOppPlayArea_ActiveCardGfx */
+static void adapt_DrawYourOrOppPlayArea_ActiveCardGfx(ProbeState *s)
+{
+	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
+	DrawYourOrOppPlayArea_ActiveCardGfx(de);
+}
+/* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -903,5 +911,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DisplayUsePokemonPowerScreen_WaitForInput", adapt_DisplayUsePokemonPowerScreen_WaitForInput },
 	{ "_DrawPlayAreaToPlacePrizeCards", adapt__DrawPlayAreaToPlacePrizeCards },
 	{ "UsePokemonPower", adapt_UsePokemonPower },
+	{ "DrawYourOrOppPlayArea_ActiveCardGfx", adapt_DrawYourOrOppPlayArea_ActiveCardGfx },
 	{ NULL, NULL },
 };
