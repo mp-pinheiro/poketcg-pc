@@ -2545,6 +2545,8 @@ RAH_wPlayerDeck = 0xC400
 RAH_wLoadedCard1 = 0xCC24
 RAH_wLCDC = 0xCABB
 RAH_rLCDC = 0xFF40
+
+wStage = 0xC2CF
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4302,6 +4304,16 @@ CASES["Recycle_AddToHandEffect"] = [
          RAH_hTempList: b"\x00", RAH_NOT_IN_DECK: b"\x01"}, read={RAH_LOCATIONS: 4, RAH_DECK_CARDS: 4, RAH_NOT_IN_DECK: 1}),
 ]
 # <<< factory Recycle_AddToHandEffect
+
+# >>> factory PokemonBreeder_EvolveEffect
+CONTRACT["PokemonBreeder_EvolveEffect"] = {"compare": ("a", "f", "c", "d", "e", "hl"), "preserve": ()}
+# b is a callee clobber that no ported callee models, so it is not compared.
+CASES["PokemonBreeder_EvolveEffect"] = [
+    {"keys": [0x00, 0x01], "a": 0x12, "f": 0x00, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": 0x4567, "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFFA0: b"\x01", 0xFFA1: b"\x01", 0xC2F1: b"\x01", 0xCAC2: b"\x01"}, "read": {0xFF98: 1, 0xC2CF: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "a": 0xA5, "f": 0x80, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89AB, "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFFA0: b"\x01", 0xFFA1: b"\x01", 0xC2F1: b"\x01", 0xCAC2: b"\x01"}, "read": {0xFF98: 1, 0xC2CF: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFFA0: b"\x01", 0xFFA1: b"\x01", 0xC2F1: b"\x01", 0xCAC2: b"\x01"}, read={0xFF98: 1, 0xC2CF: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory PokemonBreeder_EvolveEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6547,3 +6559,6 @@ MUTATIONS["Recycle_AddToHandEffect"] = {
  "case_ids": ["Recycle_AddToHandEffect-1", "Recycle_AddToHandEffect-2"],
 }
 # <<< factory-mutation Recycle_AddToHandEffect
+# >>> factory-mutation PokemonBreeder_EvolveEffect
+MUTATIONS["PokemonBreeder_EvolveEffect"] = {"source_symbol": "PokemonBreeder_EvolveEffect", "before": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = hTemp_ffa0;", "after": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = 0u;", "case_ids": ["PokemonBreeder_EvolveEffect-0", "PokemonBreeder_EvolveEffect-1", "PokemonBreeder_EvolveEffect-2"]}
+# <<< factory-mutation PokemonBreeder_EvolveEffect

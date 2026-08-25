@@ -3370,6 +3370,20 @@ static void adapt_Recycle_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory Recycle_AddToHandEffect */
 
+/* >>> factory PokemonBreeder_EvolveEffect */
+static void adapt_PokemonBreeder_EvolveEffect(ProbeState *s)
+{
+	PokemonBreederEvolveEffectResult r = PokemonBreeder_EvolveEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory PokemonBreeder_EvolveEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3785,5 +3799,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "AskWhetherToQuitSelectingCards", adapt_AskWhetherToQuitSelectingCards },
 	{ "Scavenge_AddToHandEffect", adapt_Scavenge_AddToHandEffect },
 	{ "Recycle_AddToHandEffect", adapt_Recycle_AddToHandEffect },
+	{ "PokemonBreeder_EvolveEffect", adapt_PokemonBreeder_EvolveEffect },
 	{ NULL, NULL },
 };

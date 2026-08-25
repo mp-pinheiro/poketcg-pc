@@ -670,6 +670,17 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define RAH_BANK_DUEL_CORE 0x01u
 #define CardWasChosenText 0x0165u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/menus.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/sound.h"
+#define SFX_POKEMON_EVOLUTION 0x5Eu
+#define STAGE2_WITHOUT_STAGE1 0x03u
+#define PokemonEvolvedIntoPokemonText 0x0060u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6138,3 +6149,30 @@ Recycle_AddToHandEffectResult Recycle_AddToHandEffect(void)
 	return (Recycle_AddToHandEffectResult){hTempList, shown.f};
 }
 /* <<< factory Recycle_AddToHandEffect */
+
+/* >>> factory PokemonBreeder_EvolveEffect */
+PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_a = hTempCardIndex_ff9f;
+	uint8_t entry_f = f;
+	hTempCardIndex_ff98 = hTemp_ffa0;
+	hTempPlayAreaLocation_ff9d = hTempPlayAreaLocation_ffa1;
+	DuelistVarResult turn = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + hTempPlayAreaLocation_ff9d));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(turn.a);
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+	LoadTxRam2(name);
+	EvolveResult evolved = EvolvePokemonCard();
+	gb_write8(evolved.hl, STAGE2_WITHOUT_STAGE1);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+	CopyCardNameAndLevelResult copied = CopyCardNameAndLevel(18u, b, c, d, e);
+	gb_write8(copied.hl, 0u);
+	gb_write8(wTxRam2_b_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), 0u);
+	DrawLargePictureOfCard();
+	PlaySFX(SFX_POKEMON_EVOLUTION);
+	WaitResult waited = DrawWideTextBox_WaitForInput(PokemonEvolvedIntoPokemonText);
+	DuelRoutineResult processed = ProcessPlayedPokemonCard(SFX_POKEMON_EVOLUTION, waited.f, copied.b, copied.c, copied.d, copied.e, PokemonEvolvedIntoPokemonText);
+	hTempCardIndex_ff9f = saved_a;
+	return (PokemonBreederEvolveEffectResult){saved_a, entry_f, processed.b, processed.c, processed.d, processed.e, processed.hl};
+}
+/* <<< factory PokemonBreeder_EvolveEffect */
