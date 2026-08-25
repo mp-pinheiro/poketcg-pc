@@ -135,6 +135,20 @@ def main() -> int:
             encoded = bytes(payload).hex()
             seed_wram_map[str(parsed_address)] = encoded
             seed_parts.append(f"{parsed_address:04x}={encoded}")
+        # The real game keeps wLCDC and rLCDC identical - EnableLCD writes both,
+        # DisableLCD clears both. A case that seeds the shadow with LCDC_ON while
+        # the synthetic call frame leaves rLCDC off describes a state the ROM
+        # never reaches, and it is not benign: WaitForVBlank
+        # (poketcg/src/home/lcd.asm:2) branches on the shadow, halts, and waits
+        # for a VBlank the disabled PPU never publishes, so the case burns its
+        # whole budget at pc $0271. Mirror the shadow into the register on the
+        # reference side only - the native probe has no LCD, and putting rLCDC in
+        # seed_wram_map would make it an implicitly compared bus address.
+        lcdc_shadow = symbols.get("wLCDC")
+        if lcdc_shadow is not None:
+            shadow = seed_wram_map.get(str(lcdc_shadow[1]))
+            if shadow and bytes.fromhex(shadow)[0] & 0x80 and str(0xFF40) not in seed_wram_map:
+                seed_parts.append(f"{0xFF40:04x}={shadow[:2]}")
         seed_sram_parts = []
         for bank, spans in seeds.get("sram", {}).items():
             for address, payload in spans.items():

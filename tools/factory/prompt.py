@@ -231,14 +231,19 @@ def render(packet: dict, feedback: str | None = None,
         "same way on an unterminated card list; seed that list so the lookup ends.",
         "The other reference-side hang is WaitForVBlank (poketcg/src/home/lcd.asm:2-16). "
         "It reads wLCDC at $CABB, and if the LCD-enable bit is clear it returns at once; "
-        "if that bit is set it halts until a VBlank interrupt bumps wVBlankCounter, "
-        "which never happens inside the oracle's synthetic call frame, so the case burns "
-        "its whole budget at pc $0271. Any routine reaching DoFrame, "
-        "DrawWideTextBox_WaitForInput, or WaitForWideTextBoxInput therefore needs "
-        "wram={0xCABB: b\"\\x00\"} to stay bounded, exactly as tests/cases/copy.py seeds "
-        "that byte for the opposite branch. Seeding it is safe under the rule above "
-        "because both sides leave it identical - unless the routine itself calls "
-        "EnableLCD before the wait, in which case pick a case that exits before it.",
+        "if that bit is set it halts until a VBlank interrupt bumps wVBlankCounter. Both "
+        "branches are now reachable: when a case seeds $CABB with LCDC_ON, "
+        "tools/oracle/gbref/compare_one.py mirrors that byte into rLCDC ($FF40) on the "
+        "reference side, so the PPU runs, the ROM's own VBlank ISR fires, and the wait "
+        "terminates instead of burning the whole budget at pc $0271. Never seed $FF40 "
+        "yourself to get that: an explicit seed is an implicitly compared bus address and "
+        "the native probe has no LCD register to match it. Choose the branch by what the "
+        "routine observes. wram={0xCABB: b\"\\x00\"} keeps a routine reaching DoFrame, "
+        "DrawWideTextBox_WaitForInput, or WaitForWideTextBoxInput from waiting at all, "
+        "exactly as tests/cases/copy.py seeds that byte. wram={0xCABB: b\"\\x80\"} lets "
+        "frames elapse for a routine that must see the wait return - but then the ISR "
+        "runs, so observe none of the bytes it mutates, and a routine that calls "
+        "EnableLCD itself arms the same machinery mid-case.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "`read` and `expect` use the same shape.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
