@@ -5374,3 +5374,10 @@ uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);
 }
 /* <<< factory PikachuAltLv16GrowlEffect */
+
+/* >>> factory MagmarSmokescreenEffect */
+uint16_t MagmarSmokescreenEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);
+}
+/* <<< factory MagmarSmokescreenEffect */

@@ -1269,6 +1269,9 @@ uint16_t HorseaSmokescreenEffect(uint16_t hl);
 /* >>> factory PikachuAltLv16GrowlEffect */
 uint16_t PikachuAltLv16GrowlEffect(uint16_t hl);
 /* <<< factory PikachuAltLv16GrowlEffect */
+/* >>> factory MagmarSmokescreenEffect */
+uint16_t MagmarSmokescreenEffect(uint16_t hl);
+/* <<< factory MagmarSmokescreenEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

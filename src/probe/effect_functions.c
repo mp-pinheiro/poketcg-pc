@@ -3058,6 +3058,14 @@ static void adapt_PikachuAltLv16GrowlEffect(ProbeState *s)
 }
 /* <<< factory PikachuAltLv16GrowlEffect */
 
+/* >>> factory MagmarSmokescreenEffect */
+static void adapt_MagmarSmokescreenEffect(ProbeState *s)
+{
+	s->a = 0x01u;
+	s->hl = MagmarSmokescreenEffect(s->hl);
+}
+/* <<< factory MagmarSmokescreenEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3437,5 +3445,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SlowpokeAmnesia_DisableEffect", adapt_SlowpokeAmnesia_DisableEffect },
 	{ "HorseaSmokescreenEffect", adapt_HorseaSmokescreenEffect },
 	{ "PikachuAltLv16GrowlEffect", adapt_PikachuAltLv16GrowlEffect },
+	{ "MagmarSmokescreenEffect", adapt_MagmarSmokescreenEffect },
 	{ NULL, NULL },
 };

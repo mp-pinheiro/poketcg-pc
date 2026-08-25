@@ -3569,6 +3569,15 @@ CASES["PikachuAltLv16GrowlEffect"] = [
 ]
 # <<< factory PikachuAltLv16GrowlEffect
 
+# >>> factory MagmarSmokescreenEffect
+CONTRACT["MagmarSmokescreenEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["MagmarSmokescreenEffect"] = [
+    {"hl": 0xC200, "wram": {0xFF97: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"hl": 0xC240, "wram": {0xFF97: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, hl=0xC280, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),
+]
+# <<< factory MagmarSmokescreenEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5655,3 +5664,6 @@ MUTATIONS["HorseaSmokescreenEffect"] = {"source_symbol": "HorseaSmokescreenEffec
 # >>> factory-mutation PikachuAltLv16GrowlEffect
 MUTATIONS["PikachuAltLv16GrowlEffect"] = {"source_symbol": "PikachuAltLv16GrowlEffect", "before": "uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);", "after": "uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["PikachuAltLv16GrowlEffect-0", "PikachuAltLv16GrowlEffect-1", "PikachuAltLv16GrowlEffect-2"]}
 # <<< factory-mutation PikachuAltLv16GrowlEffect
+# >>> factory-mutation MagmarSmokescreenEffect
+MUTATIONS["MagmarSmokescreenEffect"] = {"source_symbol": "MagmarSmokescreenEffect", "before": "uint16_t MagmarSmokescreenEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);", "after": "uint16_t MagmarSmokescreenEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["MagmarSmokescreenEffect-0", "MagmarSmokescreenEffect-1", "MagmarSmokescreenEffect-2"]}
+# <<< factory-mutation MagmarSmokescreenEffect
