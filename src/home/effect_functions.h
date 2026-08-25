@@ -1312,6 +1312,9 @@ void HandleEnergyDiscardEffectSelection(void);
 /* >>> factory DragonairHyperBeam_PlayerSelectEffect */
 void DragonairHyperBeam_PlayerSelectEffect(void);
 /* <<< factory DragonairHyperBeam_PlayerSelectEffect */
+/* >>> factory GolduckHyperBeam_PlayerSelectEffect */
+void GolduckHyperBeam_PlayerSelectEffect(void);
+/* <<< factory GolduckHyperBeam_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

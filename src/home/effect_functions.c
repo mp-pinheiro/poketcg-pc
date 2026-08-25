@@ -544,6 +544,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/menus.h"
 #define ChooseDiscardEnergyCardFromOpponentText 0x0123u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5601,3 +5607,26 @@ void DragonairHyperBeam_PlayerSelectEffect(void)
 	HandleEnergyDiscardEffectSelection();
 }
 /* <<< factory DragonairHyperBeam_PlayerSelectEffect */
+
+/* >>> factory GolduckHyperBeam_PlayerSelectEffect */
+void GolduckHyperBeam_PlayerSelectEffect(void)
+{
+	SwapTurn();
+	(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	uint8_t total = wTotalAttachedEnergies;
+	if (total == 0u) {
+		SwapTurn();
+		hTemp_ffa0 = 0xFFu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChooseDiscardEnergyCardFromOpponentText);
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	HandleEnergyDiscardMenuInputResult input;
+	do {
+		input = HandleEnergyDiscardMenuInput();
+	} while ((input.f & 0x10u) != 0u);
+	SwapTurn();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+}
+/* <<< factory GolduckHyperBeam_PlayerSelectEffect */

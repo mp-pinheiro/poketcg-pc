@@ -2463,6 +2463,9 @@ wOpponentDuelistType = 0xC301
 wDuelDisplayedScreen = 0xCAC2
 wDuelTempList = 0xC510
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hTempCardIndex_ff98 = 0xFF98
+wTotalAttachedEnergies = 0xCC23
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3695,6 +3698,14 @@ CASES["DragonairHyperBeam_PlayerSelectEffect"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xFFA0: b"\x55", 0xC200: b"\x00" * 0x3C, 0xC300: b"\x00" * 0x3C}, read={0xFF97: 1, 0xFFA0: 1}, instruction_budget=500000, cycle_budget=2000000),
 ]
 # <<< factory DragonairHyperBeam_PlayerSelectEffect
+
+# >>> factory GolduckHyperBeam_PlayerSelectEffect
+CONTRACT["GolduckHyperBeam_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["GolduckHyperBeam_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC300: b"\x00" * 60, 0xCABB: b"\x00", hTempCardIndex_ff98: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC300: b"\x00" * 60, 0xCABB: b"\x00", hTempCardIndex_ff98: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory GolduckHyperBeam_PlayerSelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5815,3 +5826,6 @@ MUTATIONS["HandleEnergyDiscardEffectSelection"] = {"source_symbol": "HandleEnerg
 # >>> factory-mutation DragonairHyperBeam_PlayerSelectEffect
 MUTATIONS["DragonairHyperBeam_PlayerSelectEffect"] = {"source_symbol": "DragonairHyperBeam_PlayerSelectEffect", "before": "\tHandleEnergyDiscardEffectSelection();", "after": "\t(void)0;", "case_ids": ["DragonairHyperBeam_PlayerSelectEffect-0", "DragonairHyperBeam_PlayerSelectEffect-1", "DragonairHyperBeam_PlayerSelectEffect-2"]}
 # <<< factory-mutation DragonairHyperBeam_PlayerSelectEffect
+# >>> factory-mutation GolduckHyperBeam_PlayerSelectEffect
+MUTATIONS["GolduckHyperBeam_PlayerSelectEffect"] = {"source_symbol": "GolduckHyperBeam_PlayerSelectEffect", "before": "\t\thTemp_ffa0 = 0xFFu;", "after": "\t\thTemp_ffa0 = 0u;", "case_ids": ["GolduckHyperBeam_PlayerSelectEffect-0", "GolduckHyperBeam_PlayerSelectEffect-1"]}
+# <<< factory-mutation GolduckHyperBeam_PlayerSelectEffect
