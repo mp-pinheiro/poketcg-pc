@@ -3741,6 +3741,14 @@ CASES["StrangeBehavior_SelectAndSwapEffect"] = [
 ]
 # <<< factory StrangeBehavior_SelectAndSwapEffect
 
+# >>> factory PidgeottoMirrorMove_PlayerSelection
+CONTRACT["PidgeottoMirrorMove_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["PidgeottoMirrorMove_PlayerSelection"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory PidgeottoMirrorMove_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5872,3 +5880,6 @@ MUTATIONS["SpearowMirrorMove_PlayerSelection"] = {"source_symbol": "SpearowMirro
 # >>> factory-mutation StrangeBehavior_SelectAndSwapEffect
 MUTATIONS["StrangeBehavior_SelectAndSwapEffect"] = {"source_symbol": "StrangeBehavior_SelectAndSwapEffect", "before": "\t\t(void)PrintPlayAreaCardList_EnableLCD();\n\t\treturn;", "after": "\t\treturn;", "case_ids": ["StrangeBehavior_SelectAndSwapEffect-0", "StrangeBehavior_SelectAndSwapEffect-1"]}
 # <<< factory-mutation StrangeBehavior_SelectAndSwapEffect
+# >>> factory-mutation PidgeottoMirrorMove_PlayerSelection
+MUTATIONS["PidgeottoMirrorMove_PlayerSelection"] = {"source_symbol": "PidgeottoMirrorMove_PlayerSelection", "before": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\tMirrorMove_PlayerSelection();\n}", "after": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\t(void)0;\n}", "case_ids": ["PidgeottoMirrorMove_PlayerSelection-0"]}
+# <<< factory-mutation PidgeottoMirrorMove_PlayerSelection

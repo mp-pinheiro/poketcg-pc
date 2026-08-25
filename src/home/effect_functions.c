@@ -5707,3 +5707,10 @@ void StrangeBehavior_SelectAndSwapEffect(void)
 	}
 }
 /* <<< factory StrangeBehavior_SelectAndSwapEffect */
+
+/* >>> factory PidgeottoMirrorMove_PlayerSelection */
+void PidgeottoMirrorMove_PlayerSelection(void)
+{
+	MirrorMove_PlayerSelection();
+}
+/* <<< factory PidgeottoMirrorMove_PlayerSelection */

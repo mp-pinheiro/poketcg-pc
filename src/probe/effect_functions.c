@@ -3184,6 +3184,14 @@ static void adapt_StrangeBehavior_SelectAndSwapEffect(ProbeState *s)
 }
 /* <<< factory StrangeBehavior_SelectAndSwapEffect */
 
+/* >>> factory PidgeottoMirrorMove_PlayerSelection */
+static void adapt_PidgeottoMirrorMove_PlayerSelection(ProbeState *s)
+{
+	(void)s;
+	PidgeottoMirrorMove_PlayerSelection();
+}
+/* <<< factory PidgeottoMirrorMove_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3578,5 +3586,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpearowMirrorMove_PlayerSelection", adapt_SpearowMirrorMove_PlayerSelection },
 	{ "StrangeBehavior_SelectAndSwapEffect", adapt_StrangeBehavior_SelectAndSwapEffect },
 	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
+	{ "PidgeottoMirrorMove_PlayerSelection", adapt_PidgeottoMirrorMove_PlayerSelection },
 	{ NULL, NULL },
 };
