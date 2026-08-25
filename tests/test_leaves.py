@@ -198,7 +198,7 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
     ref = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0),
                       c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0),
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
-                      ramg=case.get("ramg"), setup=case.get("setup"), keys=held_keys(case),
+                      ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case),
                       stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None,
                       stack=case.get("stack"))
     reads, sreads, vreads = merged_spans(case)
@@ -228,7 +228,7 @@ def normalize_case(case: dict, fn: str, fields: tuple[str, ...], dependencies: d
                             "sram": [[int(bank), int(addr), bytes(data).hex()] for bank, spans in sorted(case.get("sram", {}).items(), key=lambda x: int(x[0]))
                                      for addr, data in sorted(spans.items(), key=lambda x: int(x[0]))]},
                   "ramg": None if case.get("ramg") is None else bool(case["ramg"]), "setup": setup,
-                  "keys": held_keys(case),
+                  "keys": key_timeline(case),
                   "completion": case.get("_completion", {"mode": "return"}),
                   "wram": [[int(a), int(n)] for a, n in sorted(reads.items())],
                   "sread": span_map(sreads), "vread": span_map(vreads)}
@@ -331,17 +331,28 @@ def load_reference(cache_dir: Path, key: str, fn: str, fields: tuple[str, ...], 
         raise RuntimeError(miss)
 
 
-def held_keys(case: dict) -> int:
-    """The key state this case settles on, as one byte.
+def key_timeline(case: dict) -> int | list[int]:
+    """This case's `keys` as the PyBoy oracle wants it.
 
-    Schema-2 `keys` may be a cycled per-frame timeline; PyBoy's lane models a
-    single held state, so it takes the last entry, exactly as the schema-2
-    comparator does for the native probe.
+    A schema-2 case may declare a cycled per-frame timeline, which
+    pyboy_oracle.call cycles one entry per frame exactly as
+    tools/oracle/gbref/runner.c does. Collapsing it here would strand every
+    routine whose wait reads edge-triggered hKeysPressed.
     """
     keys = case.get("keys") or 0
     if isinstance(keys, (list, tuple)):
-        return int(keys[-1]) if keys else 0
+        return [int(k) for k in keys] or 0
     return int(keys)
+
+
+def held_keys(case: dict) -> int:
+    """The single byte the native probe models: the state a timeline settles on.
+
+    The probe has no frames, so it takes the last entry, exactly as the schema-2
+    comparator does.
+    """
+    keys = key_timeline(case)
+    return keys[-1] if isinstance(keys, list) and keys else (keys if isinstance(keys, int) else 0)
 
 
 def describe(case: dict) -> str:
@@ -350,7 +361,10 @@ def describe(case: dict) -> str:
     sram = " ".join(f"sram{b}:${a:04X}={bytes(d).hex()}" for b, sp in case.get("sram", {}).items() for a, d in sp.items())
     sread = " ".join(f"sread{b}:${a:04X}+{n}" for b, sp in case.get("sread", {}).items() for a, n in sp.items())
     latch = "" if case.get("ramg") is None else f"ramg={int(bool(case['ramg']))}"
-    keys = f"keys=${held_keys(case):02X}" if case.get("keys") else ""
+    timeline = key_timeline(case)
+    keys = ("keys=" + ("/".join(f"${k:02X}" for k in timeline)
+                       if isinstance(timeline, list) else f"${timeline:02X}")
+            ) if case.get("keys") else ""
     tag = "" if case.get("oracle", True) else "[c-only] "
     return tag + (" ".join(x for x in (regs, mem, sram, sread, latch, keys) if x) or "all-zero")
 
@@ -447,7 +461,7 @@ def main() -> int:
                             key = hashlib.sha256(payload).hexdigest()
                             ref = None
                             completion = case.get("_completion", {"mode": "return"})
-                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=held_keys(case), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None, stack=case.get("stack"))
+                            result = oracle.call(fn, a=case.get("a", 0), f=case.get("f", 0), b=case.get("b", 0), c=case.get("c", 0), d=case.get("d", 0), e=case.get("e", 0), hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"), ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case), stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None, stack=case.get("stack"))
                             reads, sreads, vreads = merged_spans(case)
                             ref = {"registers": {field: getattr(result, field) for field in fields}, "wram": {str(a): result.mem(a, n).hex() for a, n in reads.items()}, "sram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in sreads.items()}, "vram": {str(b): {str(a): result.mem(a, n, bank=b).hex() for a, n in spans.items()} for b, spans in vreads.items()}}
                             cache_reference(args.cache_dir, key, fn, fields, ref)
