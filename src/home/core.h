@@ -991,4 +991,7 @@ void OpenActivePokemonScreen(void);
 /* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
 void DisplayPlayAreaScreenToUsePkmnPower(void);
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
+/* >>> factory DisplayCardPage_PokemonOverview */
+void DisplayCardPage_PokemonOverview(void);
+/* <<< factory DisplayCardPage_PokemonOverview */
 #endif

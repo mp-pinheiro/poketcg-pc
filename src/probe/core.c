@@ -2222,6 +2222,14 @@ static void adapt_DisplayPlayAreaScreenToUsePkmnPower(ProbeState *s)
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 
+/* >>> factory DisplayCardPage_PokemonOverview */
+static void adapt_DisplayCardPage_PokemonOverview(ProbeState *s)
+{
+	(void)s;
+	DisplayCardPage_PokemonOverview();
+}
+/* <<< factory DisplayCardPage_PokemonOverview */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2488,5 +2496,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_PlayTrainerCard", adapt_OppAction_PlayTrainerCard },
 	{ "OpenActivePokemonScreen", adapt_OpenActivePokemonScreen },
 	{ "DisplayPlayAreaScreenToUsePkmnPower", adapt_DisplayPlayAreaScreenToUsePkmnPower },
+	{ "DisplayCardPage_PokemonOverview", adapt_DisplayCardPage_PokemonOverview },
 	{ NULL, NULL },
 };

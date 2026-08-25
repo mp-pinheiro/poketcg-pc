@@ -1736,6 +1736,20 @@ DUT_wLCDC = 0xCABB
 DUT_rLCDC = 0xFF40
 
 wCardPageExitKeys = 0xCBD7
+
+wCardPageType = 0xCBD1
+wCurPlayAreaSlot = 0xCBC9
+wCurPlayAreaY = 0xCBCA
+wLoadedCard1Atk1Name = 0xCC34
+wLoadedCard1Atk2Name = 0xCC47
+wLoadedCard1HP = 0xCC2C
+wLoadedCard1Level = 0xCC5D
+wLoadedCard1PokedexNumber = 0xCC5B
+wLoadedCard1PreEvoName = 0xCC2E
+wLoadedCard1Resistance = 0xCC58
+wLoadedCard1RetreatCost = 0xCC56
+wLoadedCard1Stage = 0xCC2D
+wLoadedCard1Weakness = 0xCC57
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3374,6 +3388,14 @@ CASES["DisplayPlayAreaScreenToUsePkmnPower"] = [
 ]
 # <<< factory DisplayPlayAreaScreenToUsePkmnPower
 
+# >>> factory DisplayCardPage_PokemonOverview
+CONTRACT["DisplayCardPage_PokemonOverview"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DisplayCardPage_PokemonOverview"] = [
+    dict(id="DisplayCardPage_PokemonOverview-0", wram={wCardPageType: b"\x01", wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00", wLoadedCard1Stage: b"\x00", wLoadedCard1RetreatCost: b"\x01", 0xCABB: b"\x00", 0xFF80: b"\x01"}, read={wCurPlayAreaY: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
+    dict(POISON, id="DisplayCardPage_PokemonOverview-1", wram={wCardPageType: b"\x01", wCurPlayAreaSlot: b"\x01", wCurPlayAreaY: b"\x00", wLoadedCard1Stage: b"\x00", wLoadedCard1RetreatCost: b"\x02", 0xCABB: b"\x00", 0xFF80: b"\x01"}, read={wCurPlayAreaY: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory DisplayCardPage_PokemonOverview
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4793,3 +4815,11 @@ MUTATIONS["OpenActivePokemonScreen"] = {"source_symbol": "OpenActivePokemonScree
 # >>> factory-mutation DisplayPlayAreaScreenToUsePkmnPower
 MUTATIONS["DisplayPlayAreaScreenToUsePkmnPower"] = {"source_symbol": "DisplayPlayAreaScreenToUsePkmnPower", "before": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);", "after": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 1u);", "case_ids": ["DisplayPlayAreaScreenToUsePkmnPower-0", "DisplayPlayAreaScreenToUsePkmnPower-1"]}
 # <<< factory-mutation DisplayPlayAreaScreenToUsePkmnPower
+# >>> factory-mutation DisplayCardPage_PokemonOverview
+MUTATIONS["DisplayCardPage_PokemonOverview"] = {
+    "source_symbol": "DisplayCardPage_PokemonOverview",
+    "before": "if (page_type != CARDPAGETYPE_NOT_PLAY_AREA) {",
+    "after": "if (page_type == CARDPAGETYPE_NOT_PLAY_AREA) {",
+    "case_ids": ["DisplayCardPage_PokemonOverview-0", "DisplayCardPage_PokemonOverview-1"],
+}
+# <<< factory-mutation DisplayCardPage_PokemonOverview

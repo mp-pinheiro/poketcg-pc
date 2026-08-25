@@ -1117,6 +1117,21 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PokemonPowerSelectNotRequiredText 0x0040u
 #define UseThisPokemonPowerText 0x003fu
 #include "home/effect_commands.h"
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/card_color.h"
+#include "home/print_text.h"
+#include "home/tiles.h"
+#include "home/bg_map.h"
+#include "mem.h"
+#define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
+#define CARDPAGETYPE_PLAY_AREA 0x01u
+#define SYM_COLORLESS 0x0Au
+#define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x4000u
+#define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x4004u
+#define CARD_PAGE_NO_TEXT_TILE_DATA 0x400Cu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6302,3 +6317,61 @@ draw_screen:
 	}
 }
 /* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
+
+/* >>> factory DisplayCardPage_PokemonOverview */
+void DisplayCardPage_PokemonOverview(void)
+{
+	uint8_t page_type = gb_read8(wCardPageType_ADDR);
+	uint8_t b, c, e, retreat;
+	uint16_t hl, de;
+	uint8_t data_a, data_b, data_c;
+	if (page_type != CARDPAGETYPE_NOT_PLAY_AREA) {
+		DrawCardPageSurroundingBox();
+		(void)LoadDuelCheckPokemonScreenTiles();
+		(void)PlaceTextItems(CARD_PAGE_RETREAT_WR_TEXT_DATA);
+		hl = CARD_PAGE_NO_TEXT_TILE_DATA;
+		de = 0u; data_a = 0u; data_b = 0u; data_c = 0u;
+		WriteDataBlocksToBGMap0(&hl, &de, &data_a, &data_b, &data_c);
+		gb_write8(wCurPlayAreaY_ADDR, 1u);
+		(void)DrawCardPageSet2AndRarityIcons();
+		PrintPlayAreaCardInformationAndLocation();
+	} else {
+		(void)PrintPokemonCardPageGenericInformation();
+		(void)PlaceTextItems(CARD_PAGE_RETREAT_WR_TEXT_DATA);
+		hl = CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA;
+		de = 0u; data_a = 0u; data_b = 0u; data_c = 0u;
+		WriteDataBlocksToBGMap0(&hl, &de, &data_a, &data_b, &data_c);
+		DrawCardSymbol(3u, 2u);
+		if (gb_read8(wLoadedCard1Stage_ADDR) != 0u)
+			(void)InitTextPrinting_ProcessTextFromPointerToID(1u, 3u, wLoadedCard1PreEvoName_ADDR);
+		WriteTwoDigitNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1Level_ADDR), 12u, 2u, 0u, 0u, 0u);
+		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1HP_ADDR), 16u, 2u, 0u, 0u, 0u);
+	}
+	WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 16u, 16u, 0u, 0u, 0u);
+	c = 10u;
+	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk1Name_ADDR);
+	c = 12u;
+	(void)PrintAttackOrPkmnPowerInformation(5u, c, 0u, c, wLoadedCard1Atk2Name_ADDR);
+	c = 14u;
+	retreat = gb_read8(wLoadedCard1RetreatCost_ADDR);
+	e = (uint8_t)(retreat + 1u);
+	b = 8u;
+	while (e != 0u) {
+		e = (uint8_t)(e - 1u);
+		if (e == 0u)
+			break;
+		JPWriteByteToBGMap0(SYM_COLORLESS, b, c);
+		b = (uint8_t)(b + 1u);
+	}
+	c = 15u;
+	if (page_type != CARDPAGETYPE_NOT_PLAY_AREA && gb_read8(wCurPlayAreaSlot_ADDR) == 0u) {
+		retreat = GetArenaCardWeakness();
+		e = GetArenaCardResistance();
+	} else {
+		retreat = gb_read8(wLoadedCard1Weakness_ADDR);
+		e = gb_read8(wLoadedCard1Resistance_ADDR);
+	}
+	PrintCardPageWeaknessesOrResistances(retreat, 8u, c);
+	PrintCardPageWeaknessesOrResistances(e, 8u, 16u);
+}
+/* <<< factory DisplayCardPage_PokemonOverview */
