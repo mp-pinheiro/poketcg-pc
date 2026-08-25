@@ -3192,6 +3192,15 @@ static void adapt_PidgeottoMirrorMove_PlayerSelection(ProbeState *s)
 }
 /* <<< factory PidgeottoMirrorMove_PlayerSelection */
 
+/* >>> factory LookForCardsInDeck */
+static void adapt_LookForCardsInDeck(ProbeState *s)
+{
+	LookForCardsInDeckResult result = LookForCardsInDeck(s->a, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory LookForCardsInDeck */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3587,5 +3596,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StrangeBehavior_SelectAndSwapEffect", adapt_StrangeBehavior_SelectAndSwapEffect },
 	{ "PidgeottoMirrorMove_PlayerSelection", adapt_PidgeottoMirrorMove_PlayerSelection },
 	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
+	{ "LookForCardsInDeck", adapt_LookForCardsInDeck },
 	{ NULL, NULL },
 };

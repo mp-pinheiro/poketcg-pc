@@ -2474,6 +2474,10 @@ wNumMenuItems = 0xCD14
 hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wExcludeArenaPokemon = 0xCBD2
+
+wDuelTempList = 0xC510
+wLoadedCard2Type = 0xCC65
+wLoadedCard2Stage = 0xCC6E
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3748,6 +3752,15 @@ CASES["PidgeottoMirrorMove_PlayerSelection"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory PidgeottoMirrorMove_PlayerSelection
+
+# >>> factory LookForCardsInDeck
+CONTRACT["LookForCardsInDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForCardsInDeck"] = [
+    {"a": 0x01, "d": 0x00, "e": 0x12, "hl": 0x1234, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000),
+    {"a": 0x00, "d": 0x04, "e": 0x00, "hl": 0x0000, "wram": {0xC510: b"\xff", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
+]
+# <<< factory LookForCardsInDeck
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5883,3 +5896,6 @@ MUTATIONS["StrangeBehavior_SelectAndSwapEffect"] = {"source_symbol": "StrangeBeh
 # >>> factory-mutation PidgeottoMirrorMove_PlayerSelection
 MUTATIONS["PidgeottoMirrorMove_PlayerSelection"] = {"source_symbol": "PidgeottoMirrorMove_PlayerSelection", "before": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\tMirrorMove_PlayerSelection();\n}", "after": "void PidgeottoMirrorMove_PlayerSelection(void)\n{\n\t(void)0;\n}", "case_ids": ["PidgeottoMirrorMove_PlayerSelection-0"]}
 # <<< factory-mutation PidgeottoMirrorMove_PlayerSelection
+# >>> factory-mutation LookForCardsInDeck
+MUTATIONS["LookForCardsInDeck"] = {"source_symbol": "LookForCardsInDeck", "before": "\tuint8_t no_cards = (wDuelTempList == 0xffu);", "after": "\tuint8_t no_cards = (wDuelTempList != 0xffu);", "case_ids": ["LookForCardsInDeck-0", "LookForCardsInDeck-1", "LookForCardsInDeck-2"]}
+# <<< factory-mutation LookForCardsInDeck

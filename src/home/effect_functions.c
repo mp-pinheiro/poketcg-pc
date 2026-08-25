@@ -562,6 +562,21 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #define OPPACTION_6B15 0x15u
 #define ProcedureForStrangeBehaviorText 0x0139u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define NIDORANF 0x14u
+#define NIDORANM 0x17u
+#define SEARCHEFFECT_BASIC_ENERGY 0x03u
+#define SEARCHEFFECT_BASIC_FIGHTING 0x02u
+#define SEARCHEFFECT_CARD_ID 0x00u
+#define SEARCHEFFECT_NIDORAN 0x01u
+#define SEARCHEFFECT_POKEMON 0x04u
+#define TYPE_PKMN_FIGHTING 0x04u
+#define ThereIsNoInTheDeckText 0x013bu
+#define WouldYouLikeToCheckTheDeckText 0x013cu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5714,3 +5729,29 @@ void PidgeottoMirrorMove_PlayerSelection(void)
 	MirrorMove_PlayerSelection();
 }
 /* <<< factory PidgeottoMirrorMove_PlayerSelection */
+
+/* >>> factory LookForCardsInDeck */
+LookForCardsInDeckResult LookForCardsInDeck(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t no_cards = (wDuelTempList == 0xffu);
+	if (!no_cards) {
+		uint8_t found = 0u;
+		for (uint8_t i = 0u; i < 60u; ++i) {
+			uint8_t index = gb_read8((uint16_t)(wDuelTempList_ADDR + i));
+			if (index == 0xffu) break;
+			if (d == SEARCHEFFECT_CARD_ID) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (card_id == e) { found = 1u; break; } }
+			else if (d == SEARCHEFFECT_NIDORAN) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (card_id == NIDORANF || card_id == NIDORANM) { found = 1u; break; } }
+			else if (d == SEARCHEFFECT_BASIC_FIGHTING) { (void)LoadCardDataToBuffer2_FromDeckIndex(index); if (wLoadedCard2Type == TYPE_PKMN_FIGHTING && wLoadedCard2Stage == BASIC) { found = 1u; break; } }
+			else if (d == SEARCHEFFECT_BASIC_ENERGY) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); uint8_t type = GetCardType(card_id); if (type != TYPE_ENERGY_DOUBLE_COLORLESS && (type & TYPE_ENERGY) != 0u) { found = 1u; break; } }
+			else if (d == SEARCHEFFECT_POKEMON) { uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(index); if (GetCardType(card_id) < TYPE_ENERGY) { found = 1u; break; } }
+		}
+		if (!found) return (LookForCardsInDeckResult){a, 0x10u};
+		WaitResult waited = DrawWideTextBox_WaitForInput(hl);
+		return (LookForCardsInDeckResult){a, waited.f};
+	}
+	LoadTxRam2((uint16_t)(((uint16_t)b << 8) | c));
+	(void)DrawWideTextBox_WaitForInput(ThereIsNoInTheDeckText);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText_SetCursorToYes(WouldYouLikeToCheckTheDeckText);
+	return (LookForCardsInDeckResult){menu.a, menu.f};
+}
+/* <<< factory LookForCardsInDeck */
