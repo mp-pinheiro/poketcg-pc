@@ -204,6 +204,16 @@ def render(packet: dict, feedback: str | None = None,
         "case modules do - \"setup\": [{\"fn\": \"SetupText\", \"d\": 0x20, \"e\": 0x40}] - "
         "which zeroes hffa9 and the whole key1 page. GetCardIDFromDeckIndex spins the "
         "same way on an unterminated card list; seed that list so the lookup ends.",
+        "The other reference-side hang is WaitForVBlank (poketcg/src/home/lcd.asm:2-16). "
+        "It reads wLCDC at $CABB, and if the LCD-enable bit is clear it returns at once; "
+        "if that bit is set it halts until a VBlank interrupt bumps wVBlankCounter, "
+        "which never happens inside the oracle's synthetic call frame, so the case burns "
+        "its whole budget at pc $0271. Any routine reaching DoFrame, "
+        "DrawWideTextBox_WaitForInput, or WaitForWideTextBoxInput therefore needs "
+        "wram={0xCABB: b\"\\x00\"} to stay bounded, exactly as tests/cases/copy.py seeds "
+        "that byte for the opposite branch. Seeding it is safe under the rule above "
+        "because both sides leave it identical - unless the routine itself calls "
+        "EnableLCD before the wait, in which case pick a case that exits before it.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "`read` and `expect` use the same shape.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
