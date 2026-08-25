@@ -263,6 +263,10 @@ def render(packet: dict, feedback: str | None = None,
         "that follows printed text. With the pair seeded, CopyDMAFunction in setup, and a "
         "cycled key, a text-then-menu routine such as PlayerPickAttackForAmnesia returns "
         "normally against the real ROM.",
+        "Every \"setup\" entry runs on both sides, so it may only name a routine this "
+        "tree has already ported: the native probe resolves it through its adapter "
+        "table and answers `unknown setup routine` for anything else. Check the "
+        "already-ported list below before naming one.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "`read` and `expect` use the same shape.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
