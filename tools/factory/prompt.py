@@ -179,6 +179,31 @@ def render(packet: dict, feedback: str | None = None,
         f"No case may seed, read, or expect an address in "
         f"${RESERVED.start:04X}-${RESERVED.stop - 1:04X}: that range is the oracle's own "
         f"call frame.",
+        "The port has no interrupt handler; the reference ROM does. Its VBlank handler "
+        "clears wVBlankOAMCopyToggle ($CAC0), flushes wFlushPaletteFlags ($CABF), and "
+        "mirrors hSCX/hSCY/hWX/hWY and wLCDC into the LCD registers, so those bytes "
+        "diverge for any routine that enables the LCD, loads a scene, or lets frames "
+        "elapse. Never read or expect a byte the VBlank handler mutates, and never "
+        "declare a sweeping whole-WRAM or whole-VRAM observation: the comparator then "
+        "diffs everything and every unported callee side effect lands as a mismatch. "
+        "Observe only the bytes this routine's own asm writes.",
+        "EVERY `wram` seed address is implicitly compared. tools/oracle/gbref/"
+        "compare_one.py builds the compared bus spans from your declared reads UNION "
+        "the addresses of your wram seeds, so a case with an empty compare tuple and "
+        "no reads still fails if any byte it seeded ends up different. Seed a WRAM "
+        "address only when both the real ROM and the port leave it the same value. "
+        "`hram` seeds are not compared unless the case is a snapshot case, so a "
+        "control byte that lives in HRAM belongs in `hram`, never in `wram`.",
+        "A reference-side BUDGET_EXHAUSTED is a seeding defect, never a budget defect: "
+        "raising instruction_budget or cycle_budget cannot fix it. The real ROM spins "
+        "when a list it walks has no terminator. A routine that prints text reaches "
+        "Func_235e, which walks a glyph cache (key1 $C6xx, key2 $C7xx, next $C8xx, head "
+        "index in hffa9 at $FFA9) and cycles forever on an uninitialised chain. Do not "
+        "hand-seed those pages: one zeroed byte only survives until the cache interns "
+        "its first glyph. Run the game's own initialiser instead, exactly as the landed "
+        "case modules do - \"setup\": [{\"fn\": \"SetupText\", \"d\": 0x20, \"e\": 0x40}] - "
+        "which zeroes hffa9 and the whole key1 page. GetCardIDFromDeckIndex spins the "
+        "same way on an unterminated card list; seed that list so the lookup ends.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "`read` and `expect` use the same shape.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
