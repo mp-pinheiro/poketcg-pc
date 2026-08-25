@@ -718,3 +718,8 @@ unblock = "read the recorded diagnostics under .factory/try/ShowPrinterTransmitt
 name = "MagneticStormEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:7149 (basename `effect_functions`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/MagneticStormEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "HandleDestinyBondSubstatus"
+reason = "AUTO-RETIRED: src/home/substatus.asm:746 (basename `substatus`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=translation detail={\"HandleDestinyBondSubstatus\": [\"case module fails to import: name 'MUTATIONS' is not defined\"]}"
+unblock = "read the recorded diagnostics under .factory/try/HandleDestinyBondSubstatus/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
