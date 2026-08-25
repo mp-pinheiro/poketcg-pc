@@ -1394,6 +1394,10 @@ AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } Scavenge_AddToHandEffectResult;
 Scavenge_AddToHandEffectResult Scavenge_AddToHandEffect(void);
 /* <<< factory Scavenge_AddToHandEffect */
+/* >>> factory Recycle_AddToHandEffect */
+typedef struct { uint8_t a; uint8_t f; } Recycle_AddToHandEffectResult;
+Recycle_AddToHandEffectResult Recycle_AddToHandEffect(void);
+/* <<< factory Recycle_AddToHandEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -662,6 +662,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define SAH_BANK_DUEL_CORE 0x01u
 #define WasPlacedInTheHandText 0x016fu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define RAH_BANK_DUEL_CORE 0x01u
+#define CardWasChosenText 0x0165u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6108,3 +6116,25 @@ Scavenge_AddToHandEffectResult Scavenge_AddToHandEffect(void)
 	return (Scavenge_AddToHandEffectResult){hTempPlayAreaLocation_ffa1, shown.f};
 }
 /* <<< factory Scavenge_AddToHandEffect */
+
+/* >>> factory Recycle_AddToHandEffect */
+Recycle_AddToHandEffectResult Recycle_AddToHandEffect(void)
+{
+	uint8_t index = hTempList;
+	if (index == 0xFFu)
+		/* `cp $ff` against $ff: Z and N set, no borrow, so H and C stay clear. */
+		return (Recycle_AddToHandEffectResult){index, 0xC0u};
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	ReturnCardToDeck(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn; `ret c` skips the screen
+	 * because it exists to show the opponent's choice to the player. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Recycle_AddToHandEffectResult){turn.a, turn.f};
+	uint8_t saved = hBankROM;
+	BankswitchROM(RAH_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTempList, CardWasChosenText);
+	BankswitchROM(saved);
+	return (Recycle_AddToHandEffectResult){hTempList, shown.f};
+}
+/* <<< factory Recycle_AddToHandEffect */

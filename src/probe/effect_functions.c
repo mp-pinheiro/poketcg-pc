@@ -3361,6 +3361,15 @@ static void adapt_Scavenge_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory Scavenge_AddToHandEffect */
 
+/* >>> factory Recycle_AddToHandEffect */
+static void adapt_Recycle_AddToHandEffect(ProbeState *s)
+{
+	Recycle_AddToHandEffectResult r = Recycle_AddToHandEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Recycle_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3775,5 +3784,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Conversion2_PlayerSelectEffect", adapt_Conversion2_PlayerSelectEffect },
 	{ "AskWhetherToQuitSelectingCards", adapt_AskWhetherToQuitSelectingCards },
 	{ "Scavenge_AddToHandEffect", adapt_Scavenge_AddToHandEffect },
+	{ "Recycle_AddToHandEffect", adapt_Recycle_AddToHandEffect },
 	{ NULL, NULL },
 };

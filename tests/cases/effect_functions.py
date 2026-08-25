@@ -2533,6 +2533,18 @@ SAH_wPlayerDeck = 0xC400
 SAH_wLoadedCard1 = 0xCC24
 SAH_wLCDC = 0xCABB
 SAH_rLCDC = 0xFF40
+
+RAH_hTempList = 0xFFA0
+RAH_hWhoseTurn = 0xFF97
+RAH_TURN = 0xC2
+RAH_DUELIST_TYPE = 0xC2F1
+RAH_LOCATIONS = 0xC200
+RAH_DECK_CARDS = 0xC27E
+RAH_NOT_IN_DECK = 0xC2BA
+RAH_wPlayerDeck = 0xC400
+RAH_wLoadedCard1 = 0xCC24
+RAH_wLCDC = 0xCABB
+RAH_rLCDC = 0xFF40
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4275,6 +4287,21 @@ CASES["Scavenge_AddToHandEffect"] = [
          instruction_budget=10000000, cycle_budget=40000000),
 ]
 # <<< factory Scavenge_AddToHandEffect
+
+# >>> factory Recycle_AddToHandEffect
+CONTRACT["Recycle_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Recycle_AddToHandEffect"] = [
+    # No card selected: `cp $ff` / `ret z` leaves before any side effect.
+    {"wram": {RAH_hTempList: b"\xFF"}, "read": {RAH_LOCATIONS: 4, RAH_DECK_CARDS: 4, RAH_NOT_IN_DECK: 1}},
+    # Player's own turn: the card moves to hand and back onto the deck, then
+    # `ret c` returns before the detail screen. The screen branch itself is
+    # covered by DisplayCardDetailScreen's own cases.
+    {"wram": {RAH_hWhoseTurn: bytes((RAH_TURN,)), RAH_DUELIST_TYPE: b"\x00",
+      RAH_hTempList: b"\x00", RAH_NOT_IN_DECK: b"\x01"}, "read": {RAH_LOCATIONS: 4, RAH_DECK_CARDS: 4, RAH_NOT_IN_DECK: 1}},
+    dict(POISON, wram={RAH_hWhoseTurn: bytes((RAH_TURN,)), RAH_DUELIST_TYPE: b"\x00",
+         RAH_hTempList: b"\x00", RAH_NOT_IN_DECK: b"\x01"}, read={RAH_LOCATIONS: 4, RAH_DECK_CARDS: 4, RAH_NOT_IN_DECK: 1}),
+]
+# <<< factory Recycle_AddToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6512,3 +6539,11 @@ MUTATIONS["Scavenge_AddToHandEffect"] = {
  "case_ids": ["Scavenge_AddToHandEffect-0", "Scavenge_AddToHandEffect-1"],
 }
 # <<< factory-mutation Scavenge_AddToHandEffect
+# >>> factory-mutation Recycle_AddToHandEffect
+MUTATIONS["Recycle_AddToHandEffect"] = {
+ "source_symbol": "Recycle_AddToHandEffect",
+ "before": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(index);\n\tReturnCardToDeck(moved.a);",
+ "after": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(index);\n\tReturnCardToDeck((uint8_t)(moved.a + 1u));",
+ "case_ids": ["Recycle_AddToHandEffect-1", "Recycle_AddToHandEffect-2"],
+}
+# <<< factory-mutation Recycle_AddToHandEffect
