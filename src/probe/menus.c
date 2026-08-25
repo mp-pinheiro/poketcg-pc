@@ -270,6 +270,15 @@ static void adapt_YesOrNoMenuWithText_LeftAligned(ProbeState *s)
 }
 /* <<< factory YesOrNoMenuWithText_LeftAligned */
 
+/* >>> factory TwoItemHorizontalMenu */
+static void adapt_TwoItemHorizontalMenu(ProbeState *s)
+{
+	HandleYesOrNoMenuResult r = TwoItemHorizontalMenu(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory TwoItemHorizontalMenu */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -309,5 +318,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "HandleCardListInput", adapt_HandleCardListInput },
 	{ "HandleDuelMenuInput", adapt_HandleDuelMenuInput },
 	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
+	{ "TwoItemHorizontalMenu", adapt_TwoItemHorizontalMenu },
 	{ NULL, NULL },
 };

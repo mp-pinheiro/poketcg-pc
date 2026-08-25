@@ -59,6 +59,9 @@
 #include "home/menus.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -742,3 +745,40 @@ HandleYesOrNoMenuResult YesOrNoMenuWithText_LeftAligned(uint16_t hl, uint8_t b, 
 	return HandleYesOrNoMenu(2u, 16u, b, c);
 }
 /* <<< factory YesOrNoMenuWithText_LeftAligned */
+
+/* >>> factory TwoItemHorizontalMenu */
+HandleYesOrNoMenuResult TwoItemHorizontalMenu(uint16_t hl)
+{
+	(void)DrawWideTextBox_PrintText(hl);
+	wLeftmostItemCursorX = 6u;
+	(void)SetCursorParametersForTextBox(6u, 16u, SYM_CURSOR_R, SYM_SPACE);
+	wCurMenuItem = 1u;
+	EnableLCD();
+	/* jp target lands inside .refresh_menu, whose own xor $1 flips */
+	/* wCurMenuItem unconditionally before the wait loop begins. */
+	wCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);
+	wMenuCursorXOffset = (uint8_t)(wCurMenuItem * 4u + wLeftmostItemCursorX);
+	wCursorBlinkCounter = 0u;
+	for (;;) {
+		DoFrame();
+		RefreshMenuCursor();
+		if ((hKeysPressed & PAD_A) != 0u) {
+			hCurMenuItem = wCurMenuItem;
+			if (wCurMenuItem == 0u) {
+				wDefaultYesOrNo = 0u;
+				return (HandleYesOrNoMenuResult){0u, 0x80u};
+			}
+			wDefaultYesOrNo = 0u;
+			hCurMenuItem = 1u;
+			return (HandleYesOrNoMenuResult){1u, 0x90u};
+		}
+		if ((hDPadHeld & (PAD_RIGHT | PAD_LEFT)) == 0u)
+			continue;
+		PlaySFX(SFX_CURSOR);
+		EraseCursor();
+		wCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);
+		wMenuCursorXOffset = (uint8_t)(wCurMenuItem * 4u + wLeftmostItemCursorX);
+		wCursorBlinkCounter = 0u;
+	}
+}
+/* <<< factory TwoItemHorizontalMenu */

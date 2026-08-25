@@ -1,0 +1,9 @@
+{
+  "fn": "TwoItemHorizontalMenu",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TwoItemHorizontalMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TwoItemHorizontalMenu\", \"mismatches\": {\"a\": [0, 1], \"f\": [128, 144]}}\n",
+  "restored": "{\"fn\": \"TwoItemHorizontalMenu\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

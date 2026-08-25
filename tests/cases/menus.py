@@ -305,6 +305,13 @@ wListFunctionPointer = 0xCD1D
 wCardListIndicatorYPosition = 0xCD97
 wRefreshMenuCursorSFX = 0xCD99
 wDefaultText = 0xC590
+
+wCurMenuItem = 0xCD10
+wLeftmostItemCursorX = 0xCD98
+wDefaultYesOrNo = 0xCD9A
+wMenuCursorXOffset = 0xCD11
+wCursorBlinkCounter = 0xCD0F
+hCurMenuItem = 0xFFB1
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -423,6 +430,14 @@ CASES["YesOrNoMenuWithText_LeftAligned"] = [
 ]
 # <<< factory YesOrNoMenuWithText_LeftAligned
 
+# >>> factory TwoItemHorizontalMenu
+CONTRACT["TwoItemHorizontalMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TwoItemHorizontalMenu"] = [
+    {"hl": 0, "keys": 0x01, "wram": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect_regs": {"a": 0, "f": 0x80}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0, keys=0x01, wram={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect_regs={"a": 0, "f": 0x80}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory TwoItemHorizontalMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -506,3 +521,6 @@ MUTATIONS["YesOrNoMenuWithText_LeftAligned"] = {
     "case_ids": ["YesOrNoMenuWithText_LeftAligned-0", "YesOrNoMenuWithText_LeftAligned-1"],
 }
 # <<< factory-mutation YesOrNoMenuWithText_LeftAligned
+# >>> factory-mutation TwoItemHorizontalMenu
+MUTATIONS["TwoItemHorizontalMenu"] = {"source_symbol": "TwoItemHorizontalMenu", "before": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n\twCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);", "after": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n", "case_ids": ["TwoItemHorizontalMenu-0", "TwoItemHorizontalMenu-1"]}
+# <<< factory-mutation TwoItemHorizontalMenu
