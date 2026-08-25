@@ -438,6 +438,26 @@ CASES["TwoItemHorizontalMenu"] = [
 ]
 # <<< factory TwoItemHorizontalMenu
 
+# >>> factory YesOrNoMenu
+CONTRACT["YesOrNoMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["YesOrNoMenu"] = [
+    {"keys": 0x01,
+     "setup": SETUP,
+     "wram": {**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x00"},
+     "read": {**CACHE_READ, **PLACEMENT_READ},
+     "vread": VRAM_READ,
+     "expect_regs": {"a": 0x01, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=0x01,
+         setup=SETUP,
+         wram={**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x01"},
+         read={**CACHE_READ, **PLACEMENT_READ},
+         vread=VRAM_READ,
+         expect_regs={"a": 0x00, "f": 0x80},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory YesOrNoMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -524,3 +544,6 @@ MUTATIONS["YesOrNoMenuWithText_LeftAligned"] = {
 # >>> factory-mutation TwoItemHorizontalMenu
 MUTATIONS["TwoItemHorizontalMenu"] = {"source_symbol": "TwoItemHorizontalMenu", "before": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n\twCurMenuItem = (uint8_t)(wCurMenuItem ^ 1u);", "after": "\tEnableLCD();\n\t/* jp target lands inside .refresh_menu, whose own xor $1 flips */\n\t/* wCurMenuItem unconditionally before the wait loop begins. */\n", "case_ids": ["TwoItemHorizontalMenu-0", "TwoItemHorizontalMenu-1"]}
 # <<< factory-mutation TwoItemHorizontalMenu
+# >>> factory-mutation YesOrNoMenu
+MUTATIONS["YesOrNoMenu"] = {"source_symbol": "YesOrNoMenu", "before": "\treturn HandleYesOrNoMenu(6u, 16u, 0u, 0u);", "after": "\treturn HandleYesOrNoMenu(7u, 16u, 0u, 0u);", "case_ids": ["YesOrNoMenu-0", "YesOrNoMenu-1"]}
+# <<< factory-mutation YesOrNoMenu

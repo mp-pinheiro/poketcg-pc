@@ -782,3 +782,11 @@ HandleYesOrNoMenuResult TwoItemHorizontalMenu(uint16_t hl)
 	}
 }
 /* <<< factory TwoItemHorizontalMenu */
+
+/* >>> factory YesOrNoMenu */
+HandleYesOrNoMenuResult YesOrNoMenu(void)
+{
+	(void)PrintYesOrNoItems(7u, 16u);
+	return HandleYesOrNoMenu(6u, 16u, 0u, 0u);
+}
+/* <<< factory YesOrNoMenu */

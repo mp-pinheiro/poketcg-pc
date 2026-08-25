@@ -93,4 +93,7 @@ HandleYesOrNoMenuResult YesOrNoMenuWithText_LeftAligned(uint16_t hl, uint8_t b, 
 /* >>> factory TwoItemHorizontalMenu */
 HandleYesOrNoMenuResult TwoItemHorizontalMenu(uint16_t hl);
 /* <<< factory TwoItemHorizontalMenu */
+/* >>> factory YesOrNoMenu */
+HandleYesOrNoMenuResult YesOrNoMenu(void);
+/* <<< factory YesOrNoMenu */
 #endif
