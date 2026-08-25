@@ -718,6 +718,16 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define RV_BANK_DUEL_CORE 0x01u
+#define RV_DUELVARS_ARENA_CARD_HP 0xC8u
+#define PlacedOnTheBenchText 0x0061u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6365,3 +6375,32 @@ void PokemonFlute_PlaceInPlayAreaText(void)
 	SwapTurn();
 }
 /* <<< factory PokemonFlute_PlaceInPlayAreaText */
+
+/* >>> factory Revive_PlaceInPlayAreaEffect */
+Revive_PlaceInPlayAreaEffectResult Revive_PlaceInPlayAreaEffect(void)
+{
+	uint8_t index = hTemp_ffa0;
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	AddCardToHand(moved.a);
+	PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(moved.a, moved.f);
+	DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(placed.a
+							     + RV_DUELVARS_ARENA_CARD_HP));
+	uint8_t half = (uint8_t)(hp.a >> 1);
+	/* `bit 0, a` tests the already-halved value, so an odd half gets +5 to land
+	 * back on a multiple of 10. */
+	if ((half & 0x01u) != 0u)
+		half = (uint8_t)(half + 5u);
+	gb_write8(hp.hl, half);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* `ret c`: the player played Revive themselves, so no screen is shown. */
+	if ((turn.f & 0x10u) != 0u)
+		return (Revive_PlaceInPlayAreaEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(RV_BANK_DUEL_CORE);
+	WaitResult shown = DisplayCardDetailScreen(hTemp_ffa0, PlacedOnTheBenchText);
+	BankswitchROM(saved);
+	return (Revive_PlaceInPlayAreaEffectResult){hTemp_ffa0, shown.f};
+}
+/* <<< factory Revive_PlaceInPlayAreaEffect */

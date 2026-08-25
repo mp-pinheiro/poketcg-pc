@@ -2569,6 +2569,18 @@ CFF_OTHER_DECK_CARDS = 0xC37E
 CFF_OTHER_DISCARD_COUNT = 0xC3ED
 CFF_OTHER_HAND_COUNT = 0xC3EE
 CFF_OTHER_PLAY_COUNT = 0xC3CF
+
+RV_hTemp_ffa0 = 0xFFA0
+RV_hWhoseTurn = 0xFF97
+RV_TURN = 0xC2
+RV_DUELIST_TYPE = 0xC2F1
+RV_LOCATIONS = 0xC200
+RV_ARENA_HP = 0xC2C8
+RV_NUM_IN_PLAY = 0xC2CF
+RV_HAND_COUNT = 0xC2EE
+RV_DECK_CARDS = 0xC27E
+RV_NOT_IN_DECK = 0xC2BA
+RV_BULBASAUR = 0x08
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4408,6 +4420,24 @@ CASES["PokemonFlute_PlaceInPlayAreaText"] = [
     dict(POISON, wram={CFF_hWhoseTurn: b"\xC2", CFF_DUELIST_TYPE: b"\x00", CFF_OTHER_DUELIST_TYPE: b"\x00", CFF_hTemp_ffa0: b"\x00", CFF_OTHER_LOCATIONS: b"\x02", CFF_OTHER_DECK_CARDS: b"\x00", CFF_OTHER_DISCARD_COUNT: b"\x01", CFF_OTHER_HAND_COUNT: b"\x00", CFF_OTHER_PLAY_COUNT: b"\x00", 0xFF40: b"\x00", CFF_LCD_SHADOW: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={CFF_OTHER_LOCATIONS: 2, CFF_OTHER_DECK_CARDS: 2, CFF_OTHER_DISCARD_COUNT: 1, CFF_OTHER_HAND_COUNT: 1, CFF_OTHER_PLAY_COUNT: 1}, instruction_budget=20000000, cycle_budget=100000000),
 ]
 # <<< factory PokemonFlute_PlaceInPlayAreaText
+
+# >>> factory Revive_PlaceInPlayAreaEffect
+CONTRACT["Revive_PlaceInPlayAreaEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Revive_PlaceInPlayAreaEffect"] = [
+    # Player's own turn: the card is benched and its HP halved, then `ret c`
+    # returns before the detail screen.
+    {"wram": {RV_hWhoseTurn: bytes((RV_TURN,)), RV_DUELIST_TYPE: b"\x00",
+      RV_hTemp_ffa0: b"\x01",
+      RV_DECK_CARDS: bytes((RV_BULBASAUR,)),
+      RV_LOCATIONS + 1: b"\x08",
+      RV_NOT_IN_DECK: b"\x01", RV_NUM_IN_PLAY: b"\x00"}, "read": {RV_ARENA_HP: 8, RV_LOCATIONS: 4, RV_NUM_IN_PLAY: 1, RV_HAND_COUNT: 1}},
+    dict(POISON, wram={RV_hWhoseTurn: bytes((RV_TURN,)), RV_DUELIST_TYPE: b"\x00",
+         RV_hTemp_ffa0: b"\x01",
+         RV_DECK_CARDS: bytes((RV_BULBASAUR,)),
+         RV_LOCATIONS + 1: b"\x08",
+         RV_NOT_IN_DECK: b"\x01", RV_NUM_IN_PLAY: b"\x00"}, read={RV_ARENA_HP: 8, RV_LOCATIONS: 4, RV_NUM_IN_PLAY: 1, RV_HAND_COUNT: 1}),
+]
+# <<< factory Revive_PlaceInPlayAreaEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6696,3 +6726,11 @@ MUTATIONS["PokemonFlute_PlaceInPlayAreaText"] = {
     "case_ids": ["PokemonFlute_PlaceInPlayAreaText-0", "PokemonFlute_PlaceInPlayAreaText-1"],
 }
 # <<< factory-mutation PokemonFlute_PlaceInPlayAreaText
+# >>> factory-mutation Revive_PlaceInPlayAreaEffect
+MUTATIONS["Revive_PlaceInPlayAreaEffect"] = {
+ "source_symbol": "Revive_PlaceInPlayAreaEffect",
+ "before": "\tif ((half & 0x01u) != 0u)\n\t\thalf = (uint8_t)(half + 5u);",
+ "after": "\tif ((half & 0x01u) == 0u)\n\t\thalf = (uint8_t)(half + 5u);",
+ "case_ids": ["Revive_PlaceInPlayAreaEffect-0", "Revive_PlaceInPlayAreaEffect-1"],
+}
+# <<< factory-mutation Revive_PlaceInPlayAreaEffect

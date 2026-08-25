@@ -1,0 +1,9 @@
+{
+  "fn": "Revive_PlaceInPlayAreaEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Revive_PlaceInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10480000\", \"49665\": \"48\", \"49790\": \"08\", \"49850\": \"01\", \"49864\": \"6400000000000000\", \"49871\": \"00\", \"49902\": \"00\", \"49905\": \"00\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Revive_PlaceInPlayAreaEffect\", \"mismatches\": {\"bus\": {\"address\": 49864, \"reference\": \"000008016400000000\", \"native\": \"000008016900000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[49664, 4], [49790, 1], [49850, 1], [49864, 8], [49902, 1], [49905, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Revive_PlaceInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10480000\", \"49665\": \"48\", \"49790\": \"08\", \"49850\": \"01\", \"49864\": \"6400000000000000\", \"49871\": \"00\", \"49902\": \"00\", \"49905\": \"00\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

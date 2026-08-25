@@ -1421,6 +1421,10 @@ ShuffleCardsInDeckResult KrabbyCallForFamily_PutInPlayAreaEffect(uint8_t b, uint
 /* >>> factory PokemonFlute_PlaceInPlayAreaText */
 void PokemonFlute_PlaceInPlayAreaText(void);
 /* <<< factory PokemonFlute_PlaceInPlayAreaText */
+/* >>> factory Revive_PlaceInPlayAreaEffect */
+typedef struct { uint8_t a; uint8_t f; } Revive_PlaceInPlayAreaEffectResult;
+Revive_PlaceInPlayAreaEffectResult Revive_PlaceInPlayAreaEffect(void);
+/* <<< factory Revive_PlaceInPlayAreaEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

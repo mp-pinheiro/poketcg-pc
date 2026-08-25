@@ -3444,6 +3444,15 @@ static void adapt_PokemonFlute_PlaceInPlayAreaText(ProbeState *s)
 }
 /* <<< factory PokemonFlute_PlaceInPlayAreaText */
 
+/* >>> factory Revive_PlaceInPlayAreaEffect */
+static void adapt_Revive_PlaceInPlayAreaEffect(ProbeState *s)
+{
+	Revive_PlaceInPlayAreaEffectResult r = Revive_PlaceInPlayAreaEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Revive_PlaceInPlayAreaEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3865,5 +3874,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MarowakCallForFamily_PutInPlayAreaEffect", adapt_MarowakCallForFamily_PutInPlayAreaEffect },
 	{ "KrabbyCallForFamily_PutInPlayAreaEffect", adapt_KrabbyCallForFamily_PutInPlayAreaEffect },
 	{ "PokemonFlute_PlaceInPlayAreaText", adapt_PokemonFlute_PlaceInPlayAreaText },
+	{ "Revive_PlaceInPlayAreaEffect", adapt_Revive_PlaceInPlayAreaEffect },
 	{ NULL, NULL },
 };
