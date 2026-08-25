@@ -2,14 +2,9 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.156.1 - 2026-08-25
-
-### Bug Fixes
-
-- *(oracle)* Accept key timelines in the pyboy lane
+## v0.156.2 - 2026-08-25
 
 ### Miscellaneous
 
-- *(factory)* Retire _DisplayCardDetailScreen, exhausted retries
-- *(progress)* Refresh port status
+- *(factory)* Retire CloseIRCommunications
 
