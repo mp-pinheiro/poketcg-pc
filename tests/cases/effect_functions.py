@@ -4498,6 +4498,14 @@ CASES["Wildfire_PlayerSelectEffect"] = [
 ]
 # <<< factory Wildfire_PlayerSelectEffect
 
+# >>> factory Whirlpool_PlayerSelectEffect
+CONTRACT["Whirlpool_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Whirlpool_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFF98: 1, 0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFF98: 1, 0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Whirlpool_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6812,3 +6820,6 @@ MUTATIONS["BellsproutCallForFamily_PutInPlayAreaEffect"] = {
 # >>> factory-mutation Wildfire_PlayerSelectEffect
 MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSelectEffect", "before": "Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01u);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);","after":"Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01u);\n\t\tDisplayEnergyDiscardScreen(0x01u);","case_ids": ["Wildfire_PlayerSelectEffect-0", "Wildfire_PlayerSelectEffect-1"]}
 # <<< factory-mutation Wildfire_PlayerSelectEffect
+# >>> factory-mutation Whirlpool_PlayerSelectEffect
+MUTATIONS["Whirlpool_PlayerSelectEffect"] = {"source_symbol": "Whirlpool_PlayerSelectEffect", "before": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0xffu;", "after": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["Whirlpool_PlayerSelectEffect-0", "Whirlpool_PlayerSelectEffect-1"]}
+# <<< factory-mutation Whirlpool_PlayerSelectEffect

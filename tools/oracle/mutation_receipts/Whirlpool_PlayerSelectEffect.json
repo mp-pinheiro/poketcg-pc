@@ -1,0 +1,9 @@
+{
+  "fn": "Whirlpool_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Whirlpool_PlayerSelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"00\", \"65431\": \"c200\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Whirlpool_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 65440, \"reference\": \"ff00c200ff\", \"native\": \"ff00c20000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 1], [51899, 1], [65431, 2], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Whirlpool_PlayerSelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"00\", \"65431\": \"c200\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

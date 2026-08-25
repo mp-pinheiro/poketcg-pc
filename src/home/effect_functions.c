@@ -6528,3 +6528,26 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
 	return (Wildfire_PlayerSelectEffectResult){count, count ? 0u : 0x10u};
 }
 /* <<< factory Wildfire_PlayerSelectEffect */
+
+/* >>> factory Whirlpool_PlayerSelectEffect */
+void Whirlpool_PlayerSelectEffect(void)
+{
+	SwapTurn();
+	HandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	if ((list.f & 0x10u) != 0u) {
+		SwapTurn();
+		hTemp_ffa0 = 0xffu;
+		return;
+	}
+	(void)DrawWideTextBox_WaitForInput(ChooseDiscardEnergyCardFromOpponentText);
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+		if ((input.f & 0x10u) != 0u)
+			continue;
+		SwapTurn();
+		hTemp_ffa0 = hTempCardIndex_ff98;
+		return;
+	}
+}
+/* <<< factory Whirlpool_PlayerSelectEffect */
