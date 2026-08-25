@@ -72,4 +72,8 @@ void ShowReceivedCardsList(void);
 typedef struct { uint8_t a; uint8_t f; } Func_b088Result;
 Func_b088Result Func_b088(void);
 /* <<< factory Func_b088 */
+/* >>> factory TryDeleteSavedDeck */
+typedef struct { uint8_t a; uint8_t f; } TryDeleteSavedDeckResult;
+TryDeleteSavedDeckResult TryDeleteSavedDeck(void);
+/* <<< factory TryDeleteSavedDeck */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

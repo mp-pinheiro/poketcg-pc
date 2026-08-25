@@ -473,4 +473,7 @@ IncreaseScriptPointerResult ScriptCommand_StartChallengeHallDuel(uint8_t b, uint
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } ScriptCommand_AskQuestionJumpResult;
 ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJump(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_AskQuestionJump */
+/* >>> factory ScriptCommand_AskQuestionJumpDefaultYes */
+ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJumpDefaultYes(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_AskQuestionJumpDefaultYes */
 #endif

@@ -984,6 +984,14 @@ static void adapt_ScriptCommand_AskQuestionJump(ProbeState *s)
 }
 /* <<< factory ScriptCommand_AskQuestionJump */
 
+/* >>> factory ScriptCommand_AskQuestionJumpDefaultYes */
+static void adapt_ScriptCommand_AskQuestionJumpDefaultYes(ProbeState *s)
+{
+	ScriptCommand_AskQuestionJumpResult r = ScriptCommand_AskQuestionJumpDefaultYes(s->b, s->c);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_AskQuestionJumpDefaultYes */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1081,5 +1089,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_StartDuel", adapt_ScriptCommand_StartDuel },
 	{ "ScriptCommand_StartChallengeHallDuel", adapt_ScriptCommand_StartChallengeHallDuel },
 	{ "ScriptCommand_AskQuestionJump", adapt_ScriptCommand_AskQuestionJump },
+	{ "ScriptCommand_AskQuestionJumpDefaultYes", adapt_ScriptCommand_AskQuestionJumpDefaultYes },
 	{ NULL, NULL },
 };

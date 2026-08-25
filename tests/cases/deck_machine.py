@@ -143,6 +143,20 @@ wCardListCoords = 0xCED0
 wCursorAlternateTile = 0xCFDE
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
           "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCardListCursorPos = 0xCEA4
+wDefaultYesOrNo = 0xCD9A
+
+def menu_state(counter=0, item=0, xoff=0, yoff=0, ysep=0, vis=0, invis=0):
+    return {0xCD0F: bytes([counter]), 0xCD10: bytes([item]), 0xCD11: bytes([xoff]),
+            0xCD12: bytes([yoff]), 0xCD13: bytes([ysep]), 0xCD15: bytes([vis]),
+            0xCD16: bytes([invis])}
+
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1, 0xFFAE: 1}
+VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 192}, 1: {0x9980: 192}}
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -277,6 +291,24 @@ CASES["Func_b088"] = [
 ]
 # <<< factory Func_b088
 
+# >>> factory TryDeleteSavedDeck
+CONTRACT["TryDeleteSavedDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TryDeleteSavedDeck"] = [
+    {"keys": 0x01, "setup": SETUP,
+     "wram": {**menu_state(counter=5, item=1, xoff=2, invis=0x22),
+              wDefaultYesOrNo: b"\x00", wCardListCursorPos: b"\x03", 0xCABB: b"\x00"},
+     "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": VRAM_READ,
+     "expect_regs": {"a": 0x03, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=0x01, setup=SETUP,
+         wram={**menu_state(counter=5, item=1, xoff=2, invis=0x22),
+               wDefaultYesOrNo: b"\x00", wCardListCursorPos: b"\xAA", 0xCABB: b"\x00"},
+         read={**CACHE_READ, **PLACEMENT_READ}, vread=VRAM_READ,
+         expect_regs={"a": 0xAA, "f": 0x90},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory TryDeleteSavedDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -366,3 +398,11 @@ MUTATIONS["Func_b088"] = {
     "case_ids": ["Func_b088-0", "Func_b088-1"],
 }
 # <<< factory-mutation Func_b088
+# >>> factory-mutation TryDeleteSavedDeck
+MUTATIONS["TryDeleteSavedDeck"] = {
+    "source_symbol": "TryDeleteSavedDeck",
+    "before": "TryDeleteSavedDeckResult TryDeleteSavedDeck(void)\n{\n\tHandleYesOrNoMenuResult choice = YesOrNoMenuWithText(DoYouReallyWishToDeleteText);\n\tif (choice.f & 0x10u) {\n\t\tuint8_t cursor = wCardListCursorPos;",
+    "after": "TryDeleteSavedDeckResult TryDeleteSavedDeck(void)\n{\n\tHandleYesOrNoMenuResult choice = YesOrNoMenuWithText(DoYouReallyWishToDeleteText);\n\tif (choice.f & 0x10u) {\n\t\tuint8_t cursor = (uint8_t)(wCardListCursorPos + 1u);",
+    "case_ids": ["TryDeleteSavedDeck-0", "TryDeleteSavedDeck-1"],
+}
+# <<< factory-mutation TryDeleteSavedDeck

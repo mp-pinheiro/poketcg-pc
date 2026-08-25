@@ -1618,3 +1618,11 @@ ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJump(uint8_t b, uin
 	return (ScriptCommand_AskQuestionJumpResult){args.a, args.f, args.b, args.c, hl};
 }
 /* <<< factory ScriptCommand_AskQuestionJump */
+
+/* >>> factory ScriptCommand_AskQuestionJumpDefaultYes */
+ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJumpDefaultYes(uint8_t b, uint8_t c)
+{
+	wDefaultYesOrNo = 1u;
+	return ScriptCommand_AskQuestionJump(b, c);
+}
+/* <<< factory ScriptCommand_AskQuestionJumpDefaultYes */

@@ -167,6 +167,15 @@ static void adapt_Func_b088(ProbeState *s)
 }
 /* <<< factory Func_b088 */
 
+/* >>> factory TryDeleteSavedDeck */
+static void adapt_TryDeleteSavedDeck(ProbeState *s)
+{
+	TryDeleteSavedDeckResult result = TryDeleteSavedDeck();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory TryDeleteSavedDeck */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -188,5 +197,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "PrintDeckMachineEntry", adapt_PrintDeckMachineEntry },
 	{ "ShowReceivedCardsList", adapt_ShowReceivedCardsList },
 	{ "Func_b088", adapt_Func_b088 },
+	{ "TryDeleteSavedDeck", adapt_TryDeleteSavedDeck },
 	{ NULL, NULL },
 };

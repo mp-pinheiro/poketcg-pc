@@ -77,6 +77,13 @@
 #define FILTER_ENERGY 0x20u
 #define TYPE_ENERGY 0x08u
 #define FUNC_B088_CARD_LIMIT 0xe4u
+
+#include "home/deck_configuration.h"
+#include "home/menus.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#define DeletedTheConfigurationForText 0x0267u
+#define DoYouReallyWishToDeleteText 0x0266u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -445,3 +452,23 @@ Func_b088Result Func_b088(void)
 	return (Func_b088Result){a, f};
 }
 /* <<< factory Func_b088 */
+
+/* >>> factory TryDeleteSavedDeck */
+TryDeleteSavedDeckResult TryDeleteSavedDeck(void)
+{
+	HandleYesOrNoMenuResult choice = YesOrNoMenuWithText(DoYouReallyWishToDeleteText);
+	if (choice.f & 0x10u) {
+		uint8_t cursor = wCardListCursorPos;
+		return (TryDeleteSavedDeckResult){cursor, (uint8_t)((choice.f & 0x80u) | 0x10u)};
+	}
+	uint16_t deck = GetSelectedSavedDeckPtr();
+	EnableSRAM();
+	(void)CopyDeckName(deck);
+	ClearMemory_Bank2(DECK_STRUCT_SIZE, deck);
+	DisableSRAM();
+	gb_write8(wTxRam2_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+	WaitResult waited = DrawWideTextBox_WaitForInput(DeletedTheConfigurationForText);
+	return (TryDeleteSavedDeckResult){0u, waited.f};
+}
+/* <<< factory TryDeleteSavedDeck */

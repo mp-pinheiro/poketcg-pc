@@ -146,6 +146,12 @@ hCurMenuItem = 0xFFB1
 wScriptControlByte = 0xD415
 def menu_state(default_yes=0):
     return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
+
+wDefaultYesOrNo = 0xCD9A
+wScriptPointer = 0xD413
+wScriptControlByte = 0xD415
+def menu_state(default_yes=0):
+    return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
 # <<< factory-cases-statics
 
 
@@ -1170,6 +1176,14 @@ CASES["ScriptCommand_AskQuestionJump"] = [
 ]
 # <<< factory ScriptCommand_AskQuestionJump
 
+# >>> factory ScriptCommand_AskQuestionJumpDefaultYes
+CONTRACT["ScriptCommand_AskQuestionJumpDefaultYes"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_AskQuestionJumpDefaultYes"] = [
+    {"b": 0, "c": 0, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": menu_state(0), "read": {wScriptPointer: 2, wScriptControlByte: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, b=0, c=0, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram=menu_state(0), read={wScriptPointer: 2, wScriptControlByte: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ScriptCommand_AskQuestionJumpDefaultYes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1722,3 +1736,6 @@ MUTATIONS["ScriptCommand_StartChallengeHallDuel"] = {
 # >>> factory-mutation ScriptCommand_AskQuestionJump
 MUTATIONS["ScriptCommand_AskQuestionJump"] = {"source_symbol": "ScriptCommand_AskQuestionJump", "before": "\twScriptControlByte = hCurMenuItem;", "after": "\twScriptControlByte = 0u;", "case_ids": ["ScriptCommand_AskQuestionJump-0", "ScriptCommand_AskQuestionJump-1"]}
 # <<< factory-mutation ScriptCommand_AskQuestionJump
+# >>> factory-mutation ScriptCommand_AskQuestionJumpDefaultYes
+MUTATIONS["ScriptCommand_AskQuestionJumpDefaultYes"] = {"source_symbol": "ScriptCommand_AskQuestionJumpDefaultYes", "before": "\twDefaultYesOrNo = 1u;", "after": "\twDefaultYesOrNo = 0u;", "case_ids": ["ScriptCommand_AskQuestionJumpDefaultYes-0", "ScriptCommand_AskQuestionJumpDefaultYes-1"]}
+# <<< factory-mutation ScriptCommand_AskQuestionJumpDefaultYes
