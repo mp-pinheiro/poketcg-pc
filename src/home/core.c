@@ -1113,6 +1113,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#define PokemonPowerSelectNotRequiredText 0x0040u
+#define UseThisPokemonPowerText 0x003fu
+#include "home/effect_commands.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6228,3 +6232,73 @@ void OpenActivePokemonScreen(void)
 	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 }
 /* <<< factory OpenActivePokemonScreen */
+
+/* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
+void DisplayPlayAreaScreenToUsePkmnPower(void)
+{
+	/* DisplayPlayAreaScreenToUsePkmnPower */
+	gb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);
+draw_screen:
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelCheckPokemonScreenTiles();
+	SetListPointer(wDuelTempList_ADDR);
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	uint8_t b = 0u;
+	do {
+		gb_write8(wHUDEnergyAndHPBarsX_ADDR, b);
+		gb_write8(wCurPlayAreaY_ADDR, (uint8_t)(b + b + b));
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(b + DUELVARS_ARENA_CARD));
+		SetNextElementOfList(card.a);
+		PrintPlayAreaCardHeader();
+		PrintPlayAreaCardLocation();
+		if (wLoadedCard1Atk1Category == POKEMON_POWER) {
+			uint8_t y = (uint8_t)(wCurPlayAreaY + 1u);
+			(void)InitTextPrinting_ProcessTextFromPointerToID(4u, y, wLoadedCard1Atk1Name_ADDR);
+		}
+		SetNextElementOfList(wLoadedCard1Atk1Category);
+		++b;
+	} while (b != count);
+	gb_write8(wNumPlayAreaItems_ADDR, b);
+	EnableLCD();
+	for (;;) {
+		DoFrame();
+		HandleMenuInputResult input = HandleMenuInput();
+		gb_write8(hTempPlayAreaLocation_ff9d_ADDR, input.a);
+		gb_write8(wHUDEnergyAndHPBarsX_ADDR, input.a);
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL) {
+			return;
+		}
+		gb_write8(wSelectedDuelSubMenuItem_ADDR, input.a);
+		if ((hKeysPressed & PAD_START) != 0u) {
+			uint8_t item = (uint8_t)(hCurMenuItem + DUELVARS_ARENA_CARD);
+			DuelistVarResult arena = GetTurnDuelistVariable(item);
+			uint16_t card_id = GetCardIDFromDeckIndex(arena.a);
+			LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+			OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+			goto draw_screen;
+		}
+		uint8_t menu_item = hCurMenuItem;
+		uint16_t list_entry = (uint16_t)(wDuelTempList_ADDR + 1u + (uint16_t)(menu_item + menu_item));
+		uint8_t category = gb_read8(list_entry);
+		if (category != POKEMON_POWER)
+			continue;
+		gb_write8(hTempCardIndex_ff98_ADDR, gb_read8((uint16_t)(list_entry - 1u)));
+		(void)CopyAttackDataAndDamage_FromDeckIndex(gb_read8(hTempCardIndex_ff98_ADDR), FIRST_ATTACK_OR_PKMN_POWER);
+		DisplayUsePokemonPowerScreen();
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		if ((effect.f & 0x10u) != 0u) {
+			(void)DrawWideTextBox_WaitForInput(PokemonPowerSelectNotRequiredText);
+			goto draw_screen;
+		}
+		HandleYesOrNoMenuResult answer = YesOrNoMenuWithText(UseThisPokemonPowerText);
+		if ((answer.f & 0x10u) != 0u)
+			goto draw_screen;
+		gb_write8(hTemp_ffa0_ADDR, gb_read8(hTempCardIndex_ff98_ADDR));
+		return;
+	}
+}
+/* <<< factory DisplayPlayAreaScreenToUsePkmnPower */

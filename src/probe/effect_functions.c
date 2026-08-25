@@ -3475,6 +3475,15 @@ static void adapt_BellsproutCallForFamily_PutInPlayAreaEffect(ProbeState *s)
 }
 /* <<< factory BellsproutCallForFamily_PutInPlayAreaEffect */
 
+/* >>> factory Wildfire_PlayerSelectEffect */
+static void adapt_Wildfire_PlayerSelectEffect(ProbeState *s)
+{
+	Wildfire_PlayerSelectEffectResult result = Wildfire_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Wildfire_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3899,5 +3908,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Revive_PlaceInPlayAreaEffect", adapt_Revive_PlaceInPlayAreaEffect },
 	{ "ItemFinder_DiscardAddToHandEffect", adapt_ItemFinder_DiscardAddToHandEffect },
 	{ "BellsproutCallForFamily_PutInPlayAreaEffect", adapt_BellsproutCallForFamily_PutInPlayAreaEffect },
+	{ "Wildfire_PlayerSelectEffect", adapt_Wildfire_PlayerSelectEffect },
 	{ NULL, NULL },
 };

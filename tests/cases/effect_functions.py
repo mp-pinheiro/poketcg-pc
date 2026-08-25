@@ -2591,6 +2591,12 @@ IF_HAND_COUNT = 0xC2EE
 IF_HAND = 0xC242
 IF_DISCARD_COUNT = 0xC2F2
 IF_NOT_IN_DECK = 0xC2BA
+
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+wDuelTempList = 0xC510
+hTemp_ffa0 = 0xFFA0
+wEnergyDiscardPlayAreaLocation = 0xCBE0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4483,6 +4489,14 @@ CASES["BellsproutCallForFamily_PutInPlayAreaEffect"] = [
          instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory BellsproutCallForFamily_PutInPlayAreaEffect
+
+# >>> factory Wildfire_PlayerSelectEffect
+CONTRACT["Wildfire_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Wildfire_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wLCDC: b"\x00", wDuelTempList: b"\xFF"}, "read": {wEnergyDiscardPlayAreaLocation: 1, hTemp_ffa0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory Wildfire_PlayerSelectEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6795,3 +6809,6 @@ MUTATIONS["BellsproutCallForFamily_PutInPlayAreaEffect"] = {
  "case_ids": ["BellsproutCallForFamily_PutInPlayAreaEffect-0", "BellsproutCallForFamily_PutInPlayAreaEffect-1"],
 }
 # <<< factory-mutation BellsproutCallForFamily_PutInPlayAreaEffect
+# >>> factory-mutation Wildfire_PlayerSelectEffect
+MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSelectEffect", "before": "Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01u);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);","after":"Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01u);\n\t\tDisplayEnergyDiscardScreen(0x01u);","case_ids": ["Wildfire_PlayerSelectEffect-0", "Wildfire_PlayerSelectEffect-1"]}
+# <<< factory-mutation Wildfire_PlayerSelectEffect

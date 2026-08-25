@@ -1,0 +1,9 @@
+{
+  "fn": "Wildfire_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Wildfire_PlayerSelectEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52192\": \"00\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Wildfire_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 52192, \"reference\": \"ff8000c201\", \"native\": \"ff8001c201\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 1], [51899, 1], [52192, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"Wildfire_PlayerSelectEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52192\": \"00\", \"65431\": \"c2\", \"65440\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

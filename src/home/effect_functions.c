@@ -744,6 +744,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define BellsproutCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
 #define BellsproutCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "home/switch_rom.h"
+#define DiscardOppDeckAsManyFireEnergyCardsText 0x0120u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6484,3 +6487,44 @@ ShuffleCardsInDeckResult BellsproutCallForFamily_PutInPlayAreaEffect(uint8_t b, 
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory BellsproutCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory Wildfire_PlayerSelectEffect */
+Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(DiscardOppDeckAsManyFireEnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateListOfFireEnergyAttachedToArena();
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01u);
+		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+		BankswitchROM(saved);
+	}
+	wEnergyDiscardMenuDenominator = 0u;
+	for (;;) {
+		wEnergyDiscardMenuNumerator = hCurSelectionItem;
+		HandleEnergyDiscardMenuInputResult input;
+		{
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			input = HandleEnergyDiscardMenuInput();
+			BankswitchROM(saved);
+		}
+		if ((input.f & 0x10u) != 0u)
+			break;
+		hCurSelectionItem++;
+		TempListResult removed = RemoveCardFromDuelTempList(input.a);
+		if ((removed.f & 0x10u) != 0u)
+			break;
+		{
+			uint8_t saved = hBankROM;
+			BankswitchROM(0x01u);
+			DisplayEnergyDiscardMenu();
+			BankswitchROM(saved);
+		}
+	}
+	uint8_t count = hCurSelectionItem;
+	hTemp_ffa0 = count;
+	return (Wildfire_PlayerSelectEffectResult){count, count ? 0u : 0x10u};
+}
+/* <<< factory Wildfire_PlayerSelectEffect */

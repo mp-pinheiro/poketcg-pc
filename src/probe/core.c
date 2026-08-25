@@ -2215,6 +2215,13 @@ static void adapt_OpenActivePokemonScreen(ProbeState *s)
 }
 /* <<< factory OpenActivePokemonScreen */
 
+/* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
+static void adapt_DisplayPlayAreaScreenToUsePkmnPower(ProbeState *s)
+{
+	DisplayPlayAreaScreenToUsePkmnPower();
+}
+/* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2480,5 +2487,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayPlayerDrawCardScreen", adapt_DisplayPlayerDrawCardScreen },
 	{ "OppAction_PlayTrainerCard", adapt_OppAction_PlayTrainerCard },
 	{ "OpenActivePokemonScreen", adapt_OpenActivePokemonScreen },
+	{ "DisplayPlayAreaScreenToUsePkmnPower", adapt_DisplayPlayAreaScreenToUsePkmnPower },
 	{ NULL, NULL },
 };

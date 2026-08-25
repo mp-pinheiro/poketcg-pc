@@ -3366,6 +3366,14 @@ CASES["OpenActivePokemonScreen"] = [
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xCBC9: b"\xAA", 0xCBCA: b"\x55", 0xCABB: b"\x00", 0xCBD7: b"\x01"}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 4000000, "cycle_budget": 16000000, "read": {0xCBC9: 1, 0xCBCA: 1}}]
 # <<< factory OpenActivePokemonScreen
 
+# >>> factory DisplayPlayAreaScreenToUsePkmnPower
+CONTRACT["DisplayPlayAreaScreenToUsePkmnPower"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DisplayPlayAreaScreenToUsePkmnPower"] = [
+    {"keys": [0x00, 0x02], "instruction_budget": 5000000, "cycle_budget": 20000000, "wram": {0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBCF: 1}, "expect": {0xCBCF: b"\x00"}},
+    dict(POISON, keys=[0x00, 0x02], instruction_budget=5000000, cycle_budget=20000000, wram={0xFF97: b"\x00", 0xC2EF: b"\x00", 0xCABB: b"\x00"}, read={0xCBCF: 1}, expect={0xCBCF: b"\x00"}),
+]
+# <<< factory DisplayPlayAreaScreenToUsePkmnPower
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4782,3 +4790,6 @@ MUTATIONS["OppAction_PlayTrainerCard"] = {"source_symbol": "OppAction_PlayTraine
 # >>> factory-mutation OpenActivePokemonScreen
 MUTATIONS["OpenActivePokemonScreen"] = {"source_symbol": "OpenActivePokemonScreen", "before": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 0u;", "after": "void OpenActivePokemonScreen(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tif (arena.a == 0xFFu)\n\t\treturn;\n\tuint16_t card_id = GetCardIDFromDeckIndex(arena.a);\n\tLoadCardDataToBuffer1_FromCardID((uint8_t)card_id);\n\twCurPlayAreaSlot = 1u;", "case_ids": ["OpenActivePokemonScreen-1", "OpenActivePokemonScreen-2"]}
 # <<< factory-mutation OpenActivePokemonScreen
+# >>> factory-mutation DisplayPlayAreaScreenToUsePkmnPower
+MUTATIONS["DisplayPlayAreaScreenToUsePkmnPower"] = {"source_symbol": "DisplayPlayAreaScreenToUsePkmnPower", "before": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 0u);", "after": "\tgb_write8(wSelectedDuelSubMenuItem_ADDR, 1u);", "case_ids": ["DisplayPlayAreaScreenToUsePkmnPower-0", "DisplayPlayAreaScreenToUsePkmnPower-1"]}
+# <<< factory-mutation DisplayPlayAreaScreenToUsePkmnPower

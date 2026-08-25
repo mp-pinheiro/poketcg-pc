@@ -988,4 +988,7 @@ void OppAction_PlayTrainerCard(void);
 /* >>> factory OpenActivePokemonScreen */
 void OpenActivePokemonScreen(void);
 /* <<< factory OpenActivePokemonScreen */
+/* >>> factory DisplayPlayAreaScreenToUsePkmnPower */
+void DisplayPlayAreaScreenToUsePkmnPower(void);
+/* <<< factory DisplayPlayAreaScreenToUsePkmnPower */
 #endif
