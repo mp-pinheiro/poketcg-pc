@@ -1701,6 +1701,10 @@ hWhoseTurn = 0xFF97
 wDuelTempList = 0xC510
 wListItemXPosition = 0xCD1A
 wNumListItems = 0xCD1B
+
+hWhoseTurn = 0xFF97
+wPlayerArenaCard = 0xC2BB
+wPlayerDeck = 0xC400
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3035,6 +3039,14 @@ CASES["DisplayNoBasicPokemonInHandScreen"] = [
 ]
 # <<< factory DisplayNoBasicPokemonInHandScreen
 
+# >>> factory PrintAndLoadAttacksToDuelTempList
+CONTRACT["PrintAndLoadAttacksToDuelTempList"] = {"compare": ("a",), "preserve": ()}
+CASES["PrintAndLoadAttacksToDuelTempList"] = [
+    {"setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, "read": {0xC510: 4, 0xCBC7: 1}, "instruction_budget": 200000, "cycle_budget": 2000000},
+    dict(POISON, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07"}, read={0xC510: 4, 0xCBC7: 1}, instruction_budget=200000, cycle_budget=2000000),
+]
+# <<< factory PrintAndLoadAttacksToDuelTempList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4344,3 +4356,6 @@ MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"source_symbol": "RedrawTur
 # >>> factory-mutation DisplayNoBasicPokemonInHandScreen
 MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {"source_symbol": "DisplayNoBasicPokemonInHandScreen", "before": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = CountCardsInDuelTempList().a;", "after": "void DisplayNoBasicPokemonInHandScreen(void)\n{\n\tEmptyScreen();\n\tTileCopyResult tiles = LoadDuelCardSymbolTiles();\n\tuint16_t box = tiles.hl;\n\tDrawRegularTextBox(&box, 0u, 20u, 18u, 0u, 0u);\n\t(void)CreateHandCardList(0u);\n\tuint8_t count = (uint8_t)(CountCardsInDuelTempList().a + 1u);", "case_ids": ["DisplayNoBasicPokemonInHandScreen-0", "DisplayNoBasicPokemonInHandScreen-1"]}
 # <<< factory-mutation DisplayNoBasicPokemonInHandScreen
+# >>> factory-mutation PrintAndLoadAttacksToDuelTempList
+MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoadAttacksToDuelTempList", "before": "\t\tc = (uint8_t)(c + 1u);\n\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "after": "\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "case_ids": ["PrintAndLoadAttacksToDuelTempList-0", "PrintAndLoadAttacksToDuelTempList-1"]}
+# <<< factory-mutation PrintAndLoadAttacksToDuelTempList

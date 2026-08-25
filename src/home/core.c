@@ -1014,6 +1014,14 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "home/print_text.h"
 #define NoBasicPokemonCardListParameters 0x4e37u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define CARD_DATA_ATTACK1_NAME 0x10u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5655,3 +5663,43 @@ void DisplayNoBasicPokemonInHandScreen(void)
 	(void)WaitForWideTextBoxInput();
 }
 /* <<< factory DisplayNoBasicPokemonInHandScreen */
+
+/* >>> factory PrintAndLoadAttacksToDuelTempList */
+static uint8_t check_attack_slot_empty_or_pkmn_power(uint16_t de)
+{
+	uint8_t lo = gb_read8(de);
+	uint8_t hi = gb_read8((uint16_t)(de + 1u));
+	if ((uint8_t)(lo | hi) == 0u)
+		return 1u;
+	uint8_t category = gb_read8((uint16_t)(de + (CARD_DATA_ATTACK1_CATEGORY - CARD_DATA_ATTACK1_NAME + 1u)));
+	category = (uint8_t)(category & (uint8_t)~RESIDUAL);
+	return (uint8_t)(category == POKEMON_POWER);
+}
+
+uint8_t PrintAndLoadAttacksToDuelTempList(void)
+{
+	(void)DrawWideTextBox();
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t card_index = arena.a;
+	gb_write8(hTempCardIndex_ff98_ADDR, card_index);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(card_index);
+	uint8_t c = 0u;
+	uint8_t b = 13u;
+	uint16_t hl = wDuelTempList_ADDR;
+	gb_write8(wCardPageNumber_ADDR, 0u);
+	if (!check_attack_slot_empty_or_pkmn_power(wLoadedCard1Atk1Name_ADDR)) {
+		gb_write8(hl++, card_index);
+		gb_write8(hl++, 0u);
+		c = (uint8_t)(c + 1u);
+		(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);
+		b = (uint8_t)(b + 2u);
+	}
+	if (!check_attack_slot_empty_or_pkmn_power(wLoadedCard1Atk2Name_ADDR)) {
+		gb_write8(hl++, card_index);
+		gb_write8(hl++, 1u);
+		c = (uint8_t)(c + 1u);
+		(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk2Name_ADDR);
+	}
+	return c;
+}
+/* <<< factory PrintAndLoadAttacksToDuelTempList */

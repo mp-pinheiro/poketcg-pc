@@ -1,0 +1,9 @@
+{
+  "fn": "PrintAndLoadAttacksToDuelTempList",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintAndLoadAttacksToDuelTempList\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"07\", \"50448\": \"00000001\", \"52167\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintAndLoadAttacksToDuelTempList\", \"mismatches\": {\"a\": [2, 1]}}\n",
+  "restored": "{\"fn\": \"PrintAndLoadAttacksToDuelTempList\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"07\", \"50448\": \"00000001\", \"52167\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

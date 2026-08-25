@@ -894,4 +894,7 @@ void RedrawTurnDuelistsMainSceneOrDuelHUD(void);
 /* >>> factory DisplayNoBasicPokemonInHandScreen */
 void DisplayNoBasicPokemonInHandScreen(void);
 /* <<< factory DisplayNoBasicPokemonInHandScreen */
+/* >>> factory PrintAndLoadAttacksToDuelTempList */
+uint8_t PrintAndLoadAttacksToDuelTempList(void);
+/* <<< factory PrintAndLoadAttacksToDuelTempList */
 #endif
