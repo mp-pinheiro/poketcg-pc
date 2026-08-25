@@ -3090,6 +3090,14 @@ static void adapt_SandAttackEffect(ProbeState *s)
 }
 /* <<< factory SandAttackEffect */
 
+/* >>> factory SnivelEffect */
+static void adapt_SnivelEffect(ProbeState *s)
+{
+	s->a = 0x03u;
+	s->hl = SnivelEffect(s->hl);
+}
+/* <<< factory SnivelEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3473,5 +3481,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PikachuLv16GrowlEffect", adapt_PikachuLv16GrowlEffect },
 	{ "PounceEffect", adapt_PounceEffect },
 	{ "SandAttackEffect", adapt_SandAttackEffect },
+	{ "SnivelEffect", adapt_SnivelEffect },
 	{ NULL, NULL },
 };

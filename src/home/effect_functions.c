@@ -504,6 +504,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #define SUBSTATUS2_SAND_ATTACK 0x02u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_REDUCE_BY_20 0x03u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5408,3 +5411,10 @@ uint16_t SandAttackEffect(uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SAND_ATTACK, hl);
 }
 /* <<< factory SandAttackEffect */
+
+/* >>> factory SnivelEffect */
+uint16_t SnivelEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_REDUCE_BY_20, hl);
+}
+/* <<< factory SnivelEffect */
