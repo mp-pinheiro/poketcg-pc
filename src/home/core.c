@@ -1092,6 +1092,17 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PLAY_CHECK 0x01u
+#define PlayCheck1Text 0x0084u
+#define PlayCheck2Text 0x0085u
+#define SelectCheckText 0x0086u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6137,3 +6148,36 @@ void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, ui
 	OpenCardPage(a, f, b, c, d, e, hl);
 }
 /* <<< factory OpenCardPage_FromCheckHandOrDiscardPile */
+
+/* >>> factory CardListItemSelectionMenu */
+CardListItemSelectionMenuResult CardListItemSelectionMenu(void)
+{
+	uint8_t menu_type = wCardListItemSelectionMenuType;
+	if (menu_type == 0u)
+		return (CardListItemSelectionMenuResult){0u, 0x80u};
+	uint16_t text = SelectCheckText;
+	if (menu_type == PLAY_CHECK) {
+		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+		text = PlayCheck2Text;
+		if (wLoadedCard1Type == TYPE_TRAINER)
+			text = PlayCheck1Text;
+	}
+	(void)DrawNarrowTextBox_PrintTextNoDelay(text);
+	uint16_t parameters = 0x0E01u;
+	InitializeMenuParameters(0u, &parameters);
+	for (;;) {
+		DoFrame();
+		HandleMenuInputResult input = HandleMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (input.a == MENU_CANCEL)
+			return (CardListItemSelectionMenuResult){input.a, 0x10u};
+		if (input.a == 0u)
+			return (CardListItemSelectionMenuResult){input.a, 0x80u};
+		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+		OpenCardPage_FromHand(input.a, input.f, 0u, 0u, 0u, 0u, text);
+		DrawCardListScreenLayoutResult screen = DrawCardListScreenLayout();
+		return (CardListItemSelectionMenuResult){screen.a, 0x10u};
+	}
+}
+/* <<< factory CardListItemSelectionMenu */

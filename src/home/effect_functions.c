@@ -648,6 +648,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/hram.h"
 #define ChooseResistanceYouWishToChangeText 0x0112u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define YouCanSelectMoreCardsQuitText 0x017cu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6063,3 +6069,13 @@ HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void)
 	return r;
 }
 /* <<< factory Conversion2_PlayerSelectEffect */
+
+/* >>> factory AskWhetherToQuitSelectingCards */
+AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a)
+{
+	uint8_t remaining = (uint8_t)(a - hCurSelectionItem);
+	LoadTxRam3(remaining);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText(YouCanSelectMoreCardsQuitText);
+	return (AskWhetherToQuitSelectingCardsResult){menu.a, menu.f};
+}
+/* <<< factory AskWhetherToQuitSelectingCards */

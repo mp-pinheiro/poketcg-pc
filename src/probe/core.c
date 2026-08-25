@@ -2180,6 +2180,15 @@ static void adapt_OpenCardPage_FromCheckHandOrDiscardPile(ProbeState *s)
 }
 /* <<< factory OpenCardPage_FromCheckHandOrDiscardPile */
 
+/* >>> factory CardListItemSelectionMenu */
+static void adapt_CardListItemSelectionMenu(ProbeState *s)
+{
+	CardListItemSelectionMenuResult r = CardListItemSelectionMenu();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CardListItemSelectionMenu */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2441,5 +2450,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayUsedTrainerCardDetailScreen", adapt_DisplayUsedTrainerCardDetailScreen },
 	{ "DisplayNoBasicPokemonInHandScreenAndText", adapt_DisplayNoBasicPokemonInHandScreenAndText },
 	{ "OpenCardPage_FromCheckHandOrDiscardPile", adapt_OpenCardPage_FromCheckHandOrDiscardPile },
+	{ "CardListItemSelectionMenu", adapt_CardListItemSelectionMenu },
 	{ NULL, NULL },
 };

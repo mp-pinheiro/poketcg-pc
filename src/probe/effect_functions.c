@@ -3343,6 +3343,15 @@ static void adapt_Conversion2_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Conversion2_PlayerSelectEffect */
 
+/* >>> factory AskWhetherToQuitSelectingCards */
+static void adapt_AskWhetherToQuitSelectingCards(ProbeState *s)
+{
+	AskWhetherToQuitSelectingCardsResult result = AskWhetherToQuitSelectingCards(s->a);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AskWhetherToQuitSelectingCards */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3755,5 +3764,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FlareonFlamethrower_PlayerSelectEffect", adapt_FlareonFlamethrower_PlayerSelectEffect },
 	{ "Conversion1_PlayerSelectEffect", adapt_Conversion1_PlayerSelectEffect },
 	{ "Conversion2_PlayerSelectEffect", adapt_Conversion2_PlayerSelectEffect },
+	{ "AskWhetherToQuitSelectingCards", adapt_AskWhetherToQuitSelectingCards },
 	{ NULL, NULL },
 };

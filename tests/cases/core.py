@@ -3322,6 +3322,14 @@ CASES["OpenCardPage_FromCheckHandOrDiscardPile"] = [
 ]
 # <<< factory OpenCardPage_FromCheckHandOrDiscardPile
 
+# >>> factory CardListItemSelectionMenu
+CONTRACT["CardListItemSelectionMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CardListItemSelectionMenu"] = [
+    {"wram": {0xCBDE: b"\x00"}},
+    dict(POISON, wram={0xCBDE: b"\x00"}),
+]
+# <<< factory CardListItemSelectionMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4726,3 +4734,6 @@ MUTATIONS["DisplayNoBasicPokemonInHandScreenAndText"] = {"source_symbol": "Displ
 # >>> factory-mutation OpenCardPage_FromCheckHandOrDiscardPile
 MUTATIONS["OpenCardPage_FromCheckHandOrDiscardPile"] = {"source_symbol": "OpenCardPage_FromCheckHandOrDiscardPile", "before": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, (uint8_t)(PAD_B | PAD_UP | PAD_DOWN));", "after": "void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckHandOrDiscardPile-0", "OpenCardPage_FromCheckHandOrDiscardPile-1"]}
 # <<< factory-mutation OpenCardPage_FromCheckHandOrDiscardPile
+# >>> factory-mutation CardListItemSelectionMenu
+MUTATIONS["CardListItemSelectionMenu"] = {"source_symbol": "CardListItemSelectionMenu", "before": "\t\treturn (CardListItemSelectionMenuResult){0u, 0x80u};", "after": "\t\treturn (CardListItemSelectionMenuResult){1u, 0x80u};", "case_ids": ["CardListItemSelectionMenu-0", "CardListItemSelectionMenu-1"]}
+# <<< factory-mutation CardListItemSelectionMenu

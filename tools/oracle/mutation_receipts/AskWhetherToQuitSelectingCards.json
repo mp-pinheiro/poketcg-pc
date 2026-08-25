@@ -1,0 +1,9 @@
+{
+  "fn": "AskWhetherToQuitSelectingCards",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AskWhetherToQuitSelectingCards\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52803\": \"0300\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AskWhetherToQuitSelectingCards\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"ff80030000\", \"native\": \"ff80020000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 1], [51899, 1], [52803, 2], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"AskWhetherToQuitSelectingCards\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52803\": \"0300\", \"65458\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

@@ -4225,6 +4225,15 @@ CASES["Conversion2_PlayerSelectEffect"] = [
 ]
 # <<< factory Conversion2_PlayerSelectEffect
 
+# >>> factory AskWhetherToQuitSelectingCards
+CONTRACT["AskWhetherToQuitSelectingCards"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AskWhetherToQuitSelectingCards"] = [
+	{"a": 0x03, "wram": {0xFFB2: b"\x00", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCE43: 2}},
+	{"a": 0x05, "wram": {0xFFB2: b"\x02", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCE43: 2}},
+	dict(POISON, a=0x07, wram={0xFFB2: b"\x01", 0xCABB: b"\x00", 0xC510: b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={0xCE43: 2}),
+]
+# <<< factory AskWhetherToQuitSelectingCards
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6450,3 +6459,6 @@ MUTATIONS["Conversion2_PlayerSelectEffect"] = {
  "case_ids": ["Conversion2_PlayerSelectEffect-0", "Conversion2_PlayerSelectEffect-1"]
 }
 # <<< factory-mutation Conversion2_PlayerSelectEffect
+# >>> factory-mutation AskWhetherToQuitSelectingCards
+MUTATIONS["AskWhetherToQuitSelectingCards"] = {"source_symbol": "AskWhetherToQuitSelectingCards", "before": "\tuint8_t remaining = (uint8_t)(a - hCurSelectionItem);", "after": "\tuint8_t remaining = (uint8_t)(a - hCurSelectionItem - 1u);", "case_ids": ["AskWhetherToQuitSelectingCards-0", "AskWhetherToQuitSelectingCards-1", "AskWhetherToQuitSelectingCards-2"]}
+# <<< factory-mutation AskWhetherToQuitSelectingCards

@@ -1386,6 +1386,10 @@ HandleColorChangeScreenResult Conversion1_PlayerSelectEffect(void);
 /* >>> factory Conversion2_PlayerSelectEffect */
 HandleColorChangeScreenResult Conversion2_PlayerSelectEffect(void);
 /* <<< factory Conversion2_PlayerSelectEffect */
+/* >>> factory AskWhetherToQuitSelectingCards */
+typedef struct { uint8_t a; uint8_t f; } AskWhetherToQuitSelectingCardsResult;
+AskWhetherToQuitSelectingCardsResult AskWhetherToQuitSelectingCards(uint8_t a);
+/* <<< factory AskWhetherToQuitSelectingCards */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
