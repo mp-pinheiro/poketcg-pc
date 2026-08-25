@@ -249,6 +249,19 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "mem.h"
 #define F9CED_TRUE 0x01u
 #define F9CED_BANK_DUEL_CORE 0x01u
+
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/process_text.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PAD_SELECT 0x04u
+#define PAD_START 0x08u
+#define PAD_UP 0x40u
+#define PAD_DOWN 0x80u
+#define B_PAD_UP 6u
+#define B_PAD_DOWN 7u
 /* <<< factory statics */
 
 
@@ -1506,3 +1519,78 @@ void Func_9ced(void)
 	wVBlankOAMCopyToggle = F9CED_TRUE;
 }
 /* <<< factory Func_9ced */
+
+/* >>> factory OpenCardPageFromCardList */
+void OpenCardPageFromCardList(void)
+{
+restart:
+	uint16_t list_ptr = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
+	list_ptr |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
+	uint8_t cursor = gb_read8(wCardListCursorPos_ADDR);
+	list_ptr = (uint16_t)(list_ptr + cursor);
+	list_ptr = (uint16_t)(list_ptr + gb_read8(wCardListVisibleOffset_ADDR));
+	uint8_t card_id = gb_read8(list_ptr);
+	LoadCardDataToBuffer1_FromCardID(card_id);
+	uint16_t text_hl = SetupText(0x38u, 0x9Fu);
+	OpenCardPage_FromCheckHandOrDiscardPile(0u, 0u, 0u, 0u, 0x38u, 0x9Fu, text_hl);
+
+handle_input:
+	uint8_t held = gb_read8(hDPadHeld_ADDR);
+	uint8_t b = held;
+	uint8_t offset;
+	if ((held & (PAD_A | PAD_B | PAD_SELECT | PAD_START)) != 0u)
+		goto exit;
+
+	gb_write8(wMenuInputSFX_ADDR, FALSE);
+	uint8_t count = gb_read8(wCardListNumCursorPositions_ADDR);
+	cursor = gb_read8(wCardListCursorPos_ADDR);
+	if ((b & (uint8_t)(1u << B_PAD_UP)) != 0u) {
+		gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR);
+		cursor = (uint8_t)(cursor - 1u);
+		if ((cursor & 0x80u) == 0u)
+			goto reopen_card_page;
+		offset = gb_read8(wCardListVisibleOffset_ADDR);
+		if (offset != 0u) {
+			offset = (uint8_t)(offset - 1u);
+			gb_write8(wCardListVisibleOffset_ADDR, offset);
+			cursor = 0u;
+			goto reopen_card_page;
+		}
+		goto handle_regular_card_page_input;
+	}
+	if ((b & (uint8_t)(1u << B_PAD_DOWN)) != 0u) {
+		gb_write8(wMenuInputSFX_ADDR, SFX_CURSOR);
+		cursor = (uint8_t)(cursor + 1u);
+		if (cursor < count)
+			goto reopen_card_page;
+		list_ptr = (uint16_t)gb_read8(wCurCardListPtr_ADDR);
+		list_ptr |= (uint16_t)((uint16_t)gb_read8((uint16_t)(wCurCardListPtr_ADDR + 1u)) << 8);
+		cursor = gb_read8(wCardListCursorPos_ADDR);
+		list_ptr = (uint16_t)(list_ptr + cursor);
+		offset = (uint8_t)(gb_read8(wCardListVisibleOffset_ADDR) + 1u);
+		list_ptr = (uint16_t)(list_ptr + offset);
+		if (gb_read8(list_ptr) != 0u) {
+			offset = (uint8_t)(gb_read8(wCardListVisibleOffset_ADDR) + 1u);
+			gb_write8(wCardListVisibleOffset_ADDR, offset);
+			cursor = (uint8_t)(cursor - 1u);
+			goto reopen_card_page;
+		}
+	}
+
+handle_regular_card_page_input:
+	OpenCardPage(0u, 0u, 0u, 0u, 0u, card_id, 0u);
+	goto handle_input;
+
+reopen_card_page:
+	gb_write8(wCardListCursorPos_ADDR, cursor);
+	if (gb_read8(wMenuInputSFX_ADDR) == 0u)
+		goto restart;
+	PlaySFX(gb_read8(wMenuInputSFX_ADDR));
+	goto restart;
+
+exit:
+	gb_write8(wVBlankOAMCopyToggle_ADDR, TRUE);
+	cursor = gb_read8(wCardListCursorPos_ADDR);
+	wTempCardListCursorPos = cursor;
+}
+/* <<< factory OpenCardPageFromCardList */

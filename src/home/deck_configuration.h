@@ -212,4 +212,7 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 /* >>> factory Func_9ced */
 void Func_9ced(void);
 /* <<< factory Func_9ced */
+/* >>> factory OpenCardPageFromCardList */
+void OpenCardPageFromCardList(void);
+/* <<< factory OpenCardPageFromCardList */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

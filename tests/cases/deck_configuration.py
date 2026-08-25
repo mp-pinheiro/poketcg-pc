@@ -197,6 +197,11 @@ F9_wVBlankOAMCopyToggle = 0xCAC0
 F9_wLCDC = 0xCABB
 F9_rLCDC = 0xFF40
 F9_wLoadedCard1 = 0xCC24
+
+wCardListCursorPos = 0xCEA4
+wCardListVisibleOffset = 0xCEA1
+wMenuInputSFX = 0xCFE3
+wTempCardListCursorPos = 0xCED4
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -697,6 +702,13 @@ CASES["Func_9ced"] = [
 ]
 # <<< factory Func_9ced
 
+# >>> factory OpenCardPageFromCardList
+CONTRACT["OpenCardPageFromCardList"] = {"compare": (), "preserve": ()}
+CASES["OpenCardPageFromCardList"] = [
+    {"wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}}]
+# <<< factory OpenCardPageFromCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -947,3 +959,6 @@ MUTATIONS["Func_9ced"] = {
  "case_ids": ["Func_9ced-0", "Func_9ced-1"],
 }
 # <<< factory-mutation Func_9ced
+# >>> factory-mutation OpenCardPageFromCardList
+MUTATIONS["OpenCardPageFromCardList"] = {"source_symbol": "OpenCardPageFromCardList", "before": "\twTempCardListCursorPos = cursor;", "after": "\twTempCardListCursorPos = 0u;", "case_ids": ["OpenCardPageFromCardList-0", "OpenCardPageFromCardList-1"]}
+# <<< factory-mutation OpenCardPageFromCardList
