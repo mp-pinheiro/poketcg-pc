@@ -2,9 +2,14 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.143.2 - 2026-08-25
+## v0.144.0 - 2026-08-25
 
-### Bug Fixes
+### Features
 
-- *(factory)* Guard one-sided blocker commits
+- *(port)* Land 1 routines
+
+### Miscellaneous
+
+- *(factory)* Document PlayerPickAttackForAmnesia blocker
+- *(progress)* Refresh port status
 
