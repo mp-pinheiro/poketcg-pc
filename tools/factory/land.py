@@ -216,6 +216,54 @@ def _read_shas(path: Path, key: str) -> set[str]:
     return shas
 
 
+def _latest_timestamps(path: Path, key: str) -> dict[str, datetime.datetime]:
+    """Newest `key` timestamp per artifact_sha256 in a JSONL ledger."""
+    latest: dict[str, datetime.datetime] = {}
+    if not path.is_file():
+        return latest
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            entry = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        sha, stamp = entry.get("artifact_sha256"), entry.get(key)
+        if not isinstance(sha, str) or not isinstance(stamp, str):
+            continue
+        try:
+            moment = datetime.datetime.fromisoformat(stamp)
+        except ValueError:
+            continue
+        if sha not in latest or moment > latest[sha]:
+            latest[sha] = moment
+    return latest
+
+
+def unexcluded_by_revocation(root: Path) -> set[str]:
+    """Revoked artifacts that still need re-landing.
+
+    A revocation says a recorded landing never reached the tree, so the artifact
+    must become selectable again. It stops being selectable the moment a landing
+    newer than that revocation is recorded: without that expiry every artifact
+    ever revoked is re-grafted and re-gated on every batch forever, at roughly
+    140s of gate time apiece. A revocation with no comparable landing timestamp
+    keeps the artifact selectable, because losing a landing is worse than
+    regrafting one.
+    """
+    revoked = heal.revoked_artifacts(root)
+    if not revoked:
+        return revoked
+    landings = _latest_timestamps(root / ".factory" / LANDINGS_NAME, "landed_at")
+    revocations = _latest_timestamps(root / ".factory" / heal.REVOCATIONS_NAME, "revoked_at")
+    return {
+        sha for sha in revoked
+        if sha not in landings or sha not in revocations
+        or revocations[sha] > landings[sha]
+    }
+
+
 def _now_iso() -> str:
     return datetime.datetime.now(datetime.UTC).isoformat()
 
@@ -235,7 +283,7 @@ def select_artifacts(root: Path, explicit: list[str] | None) -> list[str]:
     # A revoked artifact is a landing this checkout recorded but never kept. The
     # payload is immutable and gate-verified, so re-landing it is the repair;
     # leaving it excluded is what made the loss permanent.
-    excluded -= heal.revoked_artifacts(root)
+    excluded -= unexcluded_by_revocation(root)
     work_state = {record["name"]: record.get("state") for record in _work_records(root)}
 
     candidates: dict[str, frozenset[str]] = {}
