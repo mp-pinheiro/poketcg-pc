@@ -85,7 +85,7 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
         req["setup"] = [{k: int(v) if k != "fn" else v for k, v in pre.items()}
                         for pre in case["setup"]]
     if case.get("keys"):
-        req["keys"] = int(case["keys"])
+        req["keys"] = held_keys(case)
     if case.get("stack"):
         req["stack"] = [int(word) for word in case["stack"]]
     if case.get("rom_bank") is not None:
@@ -331,13 +331,26 @@ def load_reference(cache_dir: Path, key: str, fn: str, fields: tuple[str, ...], 
         raise RuntimeError(miss)
 
 
+def held_keys(case: dict) -> int:
+    """The key state this case settles on, as one byte.
+
+    Schema-2 `keys` may be a cycled per-frame timeline; PyBoy's lane models a
+    single held state, so it takes the last entry, exactly as the schema-2
+    comparator does for the native probe.
+    """
+    keys = case.get("keys") or 0
+    if isinstance(keys, (list, tuple)):
+        return int(keys[-1]) if keys else 0
+    return int(keys)
+
+
 def describe(case: dict) -> str:
     regs = " ".join(f"{r}=${case[r]:X}" for r in REGS if case.get(r))
     mem = " ".join(f"${a:04X}={bytes(d).hex()}" for a, d in case.get("wram", {}).items())
     sram = " ".join(f"sram{b}:${a:04X}={bytes(d).hex()}" for b, sp in case.get("sram", {}).items() for a, d in sp.items())
     sread = " ".join(f"sread{b}:${a:04X}+{n}" for b, sp in case.get("sread", {}).items() for a, n in sp.items())
     latch = "" if case.get("ramg") is None else f"ramg={int(bool(case['ramg']))}"
-    keys = f"keys=${case['keys']:02X}" if case.get("keys") else ""
+    keys = f"keys=${held_keys(case):02X}" if case.get("keys") else ""
     tag = "" if case.get("oracle", True) else "[c-only] "
     return tag + (" ".join(x for x in (regs, mem, sram, sread, latch, keys) if x) or "all-zero")
 
