@@ -143,6 +143,14 @@ static void adapt_OverworldMap_HandleKeyPress(ProbeState *s)
 }
 /* <<< factory OverworldMap_HandleKeyPress */
 
+/* >>> factory OverworldMap_Update */
+static void adapt_OverworldMap_Update(ProbeState *s)
+{
+	(void)s;
+	OverworldMap_Update();
+}
+/* <<< factory OverworldMap_Update */
+
 const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_ContinuePlayerWalkingAnimation", adapt_OverworldMap_ContinuePlayerWalkingAnimation },
 	{ "OverworldMap_NegateBC", adapt_OverworldMap_NegateBC },
@@ -162,5 +170,6 @@ const ProbeEntry probe_entries_overworld_map[] = {
 	{ "OverworldMap_UpdatePlayerWalkingAnimation", adapt_OverworldMap_UpdatePlayerWalkingAnimation },
 	{ "OverworldMap_HandleDPad", adapt_OverworldMap_HandleDPad },
 	{ "OverworldMap_HandleKeyPress", adapt_OverworldMap_HandleKeyPress },
+	{ "OverworldMap_Update", adapt_OverworldMap_Update },
 	{ NULL, NULL },
 };

@@ -250,6 +250,15 @@ CASES["OverworldMap_HandleKeyPress"] = [
 ]
 # <<< factory OverworldMap_HandleKeyPress
 
+# >>> factory OverworldMap_Update
+CONTRACT["OverworldMap_Update"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_Update"] = [
+    {"wram": {0xD336: b"\x12", 0xD33E: b"\x00", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x12"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {0xD336: b"\x34", 0xD33E: b"\x01", 0xD4CF: b"\x00"}, "expect": {0xD4CF: b"\x34"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xD336: b"\x56", 0xD33E: b"\x02", 0xD4CF: b"\x00"}, expect={0xD4CF: b"\x56"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory OverworldMap_Update
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -313,3 +322,11 @@ MUTATIONS["OverworldMap_HandleDPad"] = {
 # >>> factory-mutation OverworldMap_HandleKeyPress
 MUTATIONS["OverworldMap_HandleKeyPress"] = {"source_symbol": "OverworldMap_HandleKeyPress", "before": "\tif ((keys & PAD_CTRL_PAD) != 0u) {", "after": "\tif ((keys & PAD_CTRL_PAD) == 0u) {", "case_ids": ["OverworldMap_HandleKeyPress-1"]}
 # <<< factory-mutation OverworldMap_HandleKeyPress
+# >>> factory-mutation OverworldMap_Update
+MUTATIONS["OverworldMap_Update"] = {
+    "source_symbol": "OverworldMap_Update",
+    "before": "\twWhichSprite = wPlayerSpriteIndex;\n\tuint8_t animation_state = wOverworldMapPlayerAnimationState;",
+    "after": "\twWhichSprite = 0x00u;\n\tuint8_t animation_state = wOverworldMapPlayerAnimationState;",
+    "case_ids": ["OverworldMap_Update-0", "OverworldMap_Update-1", "OverworldMap_Update-2"],
+}
+# <<< factory-mutation OverworldMap_Update

@@ -70,4 +70,7 @@ void OverworldMap_HandleDPad(uint16_t w0, uint16_t w1);
 /* >>> factory OverworldMap_HandleKeyPress */
 void OverworldMap_HandleKeyPress(void);
 /* <<< factory OverworldMap_HandleKeyPress */
+/* >>> factory OverworldMap_Update */
+void OverworldMap_Update(void);
+/* <<< factory OverworldMap_Update */
 #endif /* POKETCG_HOME_OVERWORLD_MAP_H */

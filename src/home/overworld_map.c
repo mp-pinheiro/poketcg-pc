@@ -485,3 +485,20 @@ void OverworldMap_HandleKeyPress(void)
 	}
 }
 /* <<< factory OverworldMap_HandleKeyPress */
+
+/* >>> factory OverworldMap_Update */
+void OverworldMap_Update(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	uint8_t animation_state = wOverworldMapPlayerAnimationState;
+	if (animation_state == 0u) {
+		OverworldMap_HandleKeyPress();
+		return;
+	}
+	if (animation_state == 2u) {
+		OverworldMap_LoadSelectedMap();
+		return;
+	}
+	OverworldMap_UpdatePlayerWalkingAnimation();
+}
+/* <<< factory OverworldMap_Update */
