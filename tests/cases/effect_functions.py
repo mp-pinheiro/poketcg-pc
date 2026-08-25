@@ -4035,6 +4035,14 @@ CASES["StarmieRecover_PlayerSelectEffect"] = [
 ]
 # <<< factory StarmieRecover_PlayerSelectEffect
 
+# >>> factory DestinyBond_PlayerSelectEffect
+CONTRACT["DestinyBond_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DestinyBond_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFF98: 1, 0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFF98: 1, 0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DestinyBond_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6213,3 +6221,6 @@ MUTATIONS["StarmieRecover_PlayerSelectEffect"] = {
  "case_ids": ["StarmieRecover_PlayerSelectEffect-0", "StarmieRecover_PlayerSelectEffect-1"],
 }
 # <<< factory-mutation StarmieRecover_PlayerSelectEffect
+# >>> factory-mutation DestinyBond_PlayerSelectEffect
+MUTATIONS["DestinyBond_PlayerSelectEffect"] = {"source_symbol": "DestinyBond_PlayerSelectEffect", "before": "DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x01);\n\tDisplayEnergyDiscardScreen(0x00);\n\tBankswitchROM(saved);\n\tHandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();\n\tif (result.f & 0x10)\n\t\treturn (DestinyBond_PlayerSelectEffectResult){result.a, result.f};\n\thTempList = hTempCardIndex_ff98;", "after": "DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\tuint8_t saved = hBankROM;\n\tBankswitchROM(0x01);\n\tDisplayEnergyDiscardScreen(0x00);\n\tBankswitchROM(saved);\n\tHandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();\n\tif (result.f & 0x10)\n\t\treturn (DestinyBond_PlayerSelectEffectResult){result.a, result.f};\n\thTempList = 0x00;", "case_ids": ["DestinyBond_PlayerSelectEffect-0"]}
+# <<< factory-mutation DestinyBond_PlayerSelectEffect

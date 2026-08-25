@@ -3264,6 +3264,15 @@ static void adapt_StarmieRecover_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory StarmieRecover_PlayerSelectEffect */
 
+/* >>> factory DestinyBond_PlayerSelectEffect */
+static void adapt_DestinyBond_PlayerSelectEffect(ProbeState *s)
+{
+	DestinyBond_PlayerSelectEffectResult result = DestinyBond_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory DestinyBond_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3667,5 +3676,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
 	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
 	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
+	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
 	{ NULL, NULL },
 };

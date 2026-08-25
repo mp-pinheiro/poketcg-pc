@@ -1357,6 +1357,10 @@ Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; } StarmieRecover_PlayerSelectEffectResult;
 StarmieRecover_PlayerSelectEffectResult StarmieRecover_PlayerSelectEffect(void);
 /* <<< factory StarmieRecover_PlayerSelectEffect */
+/* >>> factory DestinyBond_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } DestinyBond_PlayerSelectEffectResult;
+DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void);
+/* <<< factory DestinyBond_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

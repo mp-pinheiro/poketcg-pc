@@ -609,6 +609,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "home/core.h"
 #include "home/effect_functions.h"
+
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5922,3 +5927,19 @@ StarmieRecover_PlayerSelectEffectResult StarmieRecover_PlayerSelectEffect(void)
 	return (StarmieRecover_PlayerSelectEffectResult){card, input.f};
 }
 /* <<< factory StarmieRecover_PlayerSelectEffect */
+
+/* >>> factory DestinyBond_PlayerSelectEffect */
+DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	uint8_t saved = hBankROM;
+	BankswitchROM(0x01);
+	DisplayEnergyDiscardScreen(0x00);
+	BankswitchROM(saved);
+	HandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();
+	if (result.f & 0x10)
+		return (DestinyBond_PlayerSelectEffectResult){result.a, result.f};
+	hTempList = hTempCardIndex_ff98;
+	return (DestinyBond_PlayerSelectEffectResult){hTempList, result.f};
+}
+/* <<< factory DestinyBond_PlayerSelectEffect */

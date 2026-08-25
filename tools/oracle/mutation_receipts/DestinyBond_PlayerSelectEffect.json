@@ -1,0 +1,9 @@
+{
+  "fn": "DestinyBond_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DestinyBond_PlayerSelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"65431\": \"c2ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DestinyBond_PlayerSelectEffect\", \"mismatches\": {\"a\": [255, 0], \"bus\": {\"address\": 65440, \"reference\": \"ff80c2ffff\", \"native\": \"ff80c2ff00\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 1], [51899, 1], [65431, 2], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"DestinyBond_PlayerSelectEffect\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"65431\": \"c2ff\", \"65440\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}
