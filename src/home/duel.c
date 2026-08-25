@@ -545,6 +545,26 @@ static const uint8_t kCursorTileData[16] = {
 #include "generated/wram.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "mem.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/effect_commands.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/print_text.h"
+#include "home/duel_core.h"
+#define EFFECTCMDTYPE_PKMN_POWER_TRIGGER 0x07u
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define MUK 0x27u
+#define PLAY_AREA_BENCH_1 0x01u
+#define POKEMON_POWER 0x04u
+#define HavePokemonPowerText 0x0082u
+#define UnableToUsePkmnPowerDueToToxicGasText 0x0083u
+#define WillUseThePokemonPowerText 0x005cu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2672,3 +2692,66 @@ PrintPokemonsAttackTextResult DrawDuelMainScene_PrintPokemonsAttackText(void)
 	return PrintPokemonsAttackText();
 }
 /* <<< factory DrawDuelMainScene_PrintPokemonsAttackText */
+
+/* >>> factory ProcessPlayedPokemonCard */
+DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTempCardIndex_ff98;
+	ClearChangedTypesIfMuk(index);
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(index, FIRST_ATTACK_OR_PKMN_POWER);
+	a = copy.a; c = copy.c; f = copy.f; hl = copy.hl; d = (uint8_t)(copy.de >> 8); e = (uint8_t)copy.de;
+	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);
+	a = updated.a; f = updated.f; b = updated.b; c = updated.c; d = updated.d; e = updated.e; hl = updated.hl;
+	index = hTempCardIndex_ff98;
+	hTempCardIndex_ff9f = index;
+	uint16_t card_id = GetCardIDFromDeckIndex(index);
+	d = (uint8_t)(card_id >> 8); e = (uint8_t)card_id;
+	wTempTurnDuelistCardID = e;
+	{
+		uint8_t category = wLoadedAttackCategory;
+		uint8_t z_bit = (category == POKEMON_POWER) ? 0x80u : 0u;
+		uint8_t h_bit = ((category & 0x0Fu) < (POKEMON_POWER & 0x0Fu)) ? 0x20u : 0u;
+		uint8_t c_bit = (category < POKEMON_POWER) ? 0x10u : 0u;
+		f = (uint8_t)(z_bit | 0x40u | h_bit | c_bit);
+		if (category != POKEMON_POWER)
+			return (DuelRoutineResult){a, f, b, c, d, e, hl};
+	}
+	DisplayUsePokemonPowerScreen();
+	(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+	hl = (uint16_t)(wLoadedCard1Name_ADDR | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+	LoadTxRam2(hl);
+	hl = HavePokemonPowerText;
+	WaitResult wait = DrawWideTextBox_WaitForInput(hl);
+	f = wait.f;
+	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	a = rng.a; b = rng.b; c = rng.c; f = rng.f; hl = rng.hl; d = (uint8_t)(rng.de >> 8); e = (uint8_t)rng.de;
+	if (wLoadedCard1ID != MUK) {
+		PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(PLAY_AREA_BENCH_1);
+		if (incapable.f & 0x10u) {
+			a = PLAY_AREA_BENCH_1; f = incapable.f; hl = incapable.hl;
+			DisplayUsePokemonPowerScreen();
+			hl = UnableToUsePkmnPowerDueToToxicGasText;
+			wait = DrawWideTextBox_WaitForInput(hl); f = wait.f;
+			rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+			return (DuelRoutineResult){rng.a, rng.f, rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
+		}
+	}
+	hl = (uint16_t)(wLoadedAttackEffectCommands_ADDR | ((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
+	EffectCmdLookup command = CheckMatchingCommand(EFFECTCMDTYPE_PKMN_POWER_TRIGGER, hl);
+	hl = command.hl;
+	if (command.carry) { f |= 0x10u; return (DuelRoutineResult){a, f, b, c, d, e, hl}; }
+	DrawDuelMainScene();
+	index = hTempCardIndex_ff9f;
+	(void)LoadCardDataToBuffer1_FromDeckIndex(index);
+	gb_write8(wTxRam2_ADDR, gb_read8(wLoadedCard1Name_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8(wLoadedAttackName_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 3u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));
+	hl = WillUseThePokemonPowerText;
+	wait = DrawWideTextBox_WaitForInput(hl); f = wait.f;
+	rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	ResetAttackAnimationIsPlaying();
+	TryExecuteEffectCommandFunctionResult executed = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_PKMN_POWER_TRIGGER);
+	return (DuelRoutineResult){executed.a, executed.f, b, executed.c, d, e, executed.hl};
+}
+/* <<< factory ProcessPlayedPokemonCard */

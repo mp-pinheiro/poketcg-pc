@@ -879,6 +879,14 @@ static void adapt_DrawDuelMainScene_PrintPokemonsAttackText(ProbeState *s)
 }
 /* <<< factory DrawDuelMainScene_PrintPokemonsAttackText */
 
+/* >>> factory ProcessPlayedPokemonCard */
+static void adapt_ProcessPlayedPokemonCard(ProbeState *s)
+{
+	DuelRoutineResult r = ProcessPlayedPokemonCard(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory ProcessPlayedPokemonCard */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -986,5 +994,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawInPlayArea_ActiveCardGfx", adapt_DrawInPlayArea_ActiveCardGfx },
 	{ "DrawInPlayAreaScreen", adapt_DrawInPlayAreaScreen },
 	{ "DrawDuelMainScene_PrintPokemonsAttackText", adapt_DrawDuelMainScene_PrintPokemonsAttackText },
+	{ "ProcessPlayedPokemonCard", adapt_ProcessPlayedPokemonCard },
 	{ NULL, NULL },
 };

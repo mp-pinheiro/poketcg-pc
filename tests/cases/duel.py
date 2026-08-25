@@ -1199,6 +1199,19 @@ wLoadedAttackName = 0xCCAA
 wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+hTempCardIndex_ff98 = 0xFF98
+hTempCardIndex_ff9f = 0xFF9F
+wLoadedAttackCategory = 0xCCB1
+wLoadedAttackEffectCommands = 0xCCB2
+wLoadedCard1ID = 0xCC2B
+wLoadedCard1Name = 0xCC27
+wLoadedAttackName = 0xCCAA
+wTempTurnDuelistCardID = 0xCCC3
+wTxRam2 = 0xCE3F
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC480
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1508,6 +1521,14 @@ CASES["DrawDuelMainScene_PrintPokemonsAttackText"] = [
 ]
 # <<< factory DrawDuelMainScene_PrintPokemonsAttackText
 
+# >>> factory ProcessPlayedPokemonCard
+CONTRACT["ProcessPlayedPokemonCard"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ProcessPlayedPokemonCard"] = [
+    {"a": 0x11, "f": 0x20, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567, "wram": {hTempCardIndex_ff98: b"\x00", hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08"}, "read": {wTempTurnDuelistCardID: 1, hTempCardIndex_ff9f: 1}},
+    dict(POISON, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={hTempCardIndex_ff98: b"\x01", hWhoseTurn: b"\xC2", wPlayerDeck: b"\x08"}, read={wTempTurnDuelistCardID: 1, hTempCardIndex_ff9f: 1}),
+]
+# <<< factory ProcessPlayedPokemonCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1719,3 +1740,6 @@ MUTATIONS["DrawInPlayAreaScreen"] = {
 # >>> factory-mutation DrawDuelMainScene_PrintPokemonsAttackText
 MUTATIONS["DrawDuelMainScene_PrintPokemonsAttackText"] = {"source_symbol": "DrawDuelMainScene_PrintPokemonsAttackText", "before": "\treturn PrintPokemonsAttackText();", "after": "\treturn (PrintPokemonsAttackTextResult){0};", "case_ids": ["DrawDuelMainScene_PrintPokemonsAttackText-0", "DrawDuelMainScene_PrintPokemonsAttackText-1"]}
 # <<< factory-mutation DrawDuelMainScene_PrintPokemonsAttackText
+# >>> factory-mutation ProcessPlayedPokemonCard
+MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonCard", "before": "\twTempTurnDuelistCardID = e;", "after": "\twTempTurnDuelistCardID = d;", "case_ids": ["ProcessPlayedPokemonCard-0", "ProcessPlayedPokemonCard-1"]}
+# <<< factory-mutation ProcessPlayedPokemonCard

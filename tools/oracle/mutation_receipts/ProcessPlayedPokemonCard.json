@@ -1,0 +1,9 @@
+{
+  "fn": "ProcessPlayedPokemonCard",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ProcessPlayedPokemonCard\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 112, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52419\": \"08\", \"65431\": \"c200\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ProcessPlayedPokemonCard\", \"mismatches\": {\"bus\": {\"address\": 52419, \"reference\": \"0808c20000\", \"native\": \"0800c20000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50176, 1], [52419, 1], [65431, 2], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"ProcessPlayedPokemonCard\", \"registers\": {\"a\": 0, \"b\": 34, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 112, \"hl\": 50169, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"08\", \"52419\": \"08\", \"65431\": \"c200\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
