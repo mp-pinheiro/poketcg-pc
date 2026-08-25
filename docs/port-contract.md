@@ -120,7 +120,13 @@ const ProbeEntry probe_entries_<file>[] = {
 };
 ```
 
-`ProbeState` is `{ uint8_t a, f, b, c, d, e; uint16_t hl; }`. Two hard rules:
+`ProbeState` is `{ uint8_t a, f, b, c, d, e; uint16_t hl;
+uint16_t stack[PROBE_MAX_STACK_WORDS]; uint8_t stack_count; }`
+(`src/probe.h`). The native side has no GB frame, so an adapter for a routine
+entered mid-frame reads the words its asm would have popped out of
+`s->stack[0 .. s->stack_count - 1]` — index 0 is the caller's first push, so
+`s->stack[s->stack_count - 1]` is what the routine's first `pop` reads — and
+writes them back into whichever registers the asm leaves them in. Two hard rules:
 
 - A register the asm **preserves** must be left untouched by the adapter, so a C
   body that clobbers it shows up as a diff.
@@ -191,6 +197,15 @@ authoritative source:
   `B`, 2 `SELECT`, 3 `START`, 4 `RIGHT`, 5 `LEFT`, 6 `UP`, 7 `DOWN`.
   The only way to test a routine that spins on `ReadJoypad`/
   `WaitForButtonAorB` — with `keys` unset (0) it waits forever.
+- `stack` — `[int, ...]`, at most four caller-pushed words below the synthesized
+  return address, in push order (`stack[-1]` is what the routine's first `pop`
+  reads). Declare it only for a routine entered mid-frame — a `jp` target whose
+  epilogue pops words its own caller pushed, or a routine that reads `sp+N` above
+  its own frame. `_CopyCardNameAndLevel_HalfwidthText`
+  (`tests/cases/copy_card_name.py`) is the worked example: its parent does
+  `push bc` / `push de` before the `jp`, so its cases declare
+  `stack: [saved_bc, saved_de]`. A wrong `stack` produces a red, never a false
+  green.
 
 Required coverage per routine:
 

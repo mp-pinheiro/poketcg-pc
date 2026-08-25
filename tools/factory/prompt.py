@@ -203,6 +203,14 @@ def render(packet: dict, feedback: str | None = None,
         "The cases fragment must be valid Python on its own line-by-line: no positional "
         "argument after a keyword argument, no bare C macro names (they do not exist in "
         "Python — use the numeric addresses listed below).",
+        "A routine entered mid-frame — a `jp` target whose epilogue pops words its "
+        "own caller pushed, or a body that reads sp+N above its own frame — declares "
+        "stack=[w0, w1] in every case: caller-pushed words below the synthesized "
+        "return address, in push order, four maximum. w0 is the caller's first push, "
+        "so the routine's first pop reads the LAST element. Its probe adapter takes "
+        "those words from s->stack[0 .. s->stack_count-1] because the native side has "
+        "no GB stack, and its C signature accepts them as ordinary parameters. Omit "
+        "stack entirely for every routine whose pushes and pops balance.",
         "",
     ))
     lines.append("# YOUR TASK")
