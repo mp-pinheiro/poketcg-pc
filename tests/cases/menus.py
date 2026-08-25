@@ -385,6 +385,15 @@ CASES["HandleMenuInput"] = [
 ]
 # <<< factory HandleMenuInput
 
+# >>> factory HandleCardListInput
+CONTRACT["HandleCardListInput"] = {"compare": ("a", "d", "e", "f"), "preserve": ()}
+CASES["HandleCardListInput"] = [
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00", 0xCD19: b"\x03"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00", 0xCD19: b"\x01"}, "read": {0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}},
+    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00", 0xCD19: b"\x07"}, read={0xFFB1: 1, 0xCD10: 1, 0xCD19: 1}),
+]
+# <<< factory HandleCardListInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -454,3 +463,6 @@ MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "b
 # >>> factory-mutation HandleMenuInput
 MUTATIONS["HandleMenuInput"] = {"source_symbol": "HandleMenuInput", "before": "\thCurMenuItem = 0xFFu;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "after": "\thCurMenuItem = 0x00u;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "case_ids": ["HandleMenuInput-1"]}
 # <<< factory-mutation HandleMenuInput
+# >>> factory-mutation HandleCardListInput
+MUTATIONS["HandleCardListInput"] = {"source_symbol": "HandleCardListInput", "before": "\tresult.d = wListScrollOffset;", "after": "\tresult.d = (uint8_t)(wListScrollOffset + 1u);", "case_ids": ["HandleCardListInput-0", "HandleCardListInput-1", "HandleCardListInput-2"]}
+# <<< factory-mutation HandleCardListInput

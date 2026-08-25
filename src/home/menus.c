@@ -55,6 +55,10 @@
 #define SYM_SLASH 0x2Eu
 
 #define PAD_B 0x02u
+
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -665,3 +669,17 @@ HandleMenuInputResult HandleMenuInput(void)
 	return (HandleMenuInputResult){0xFFu, e2, 0x90u};
 }
 /* <<< factory HandleMenuInput */
+
+/* >>> factory HandleCardListInput */
+HandleCardListInputResult HandleCardListInput(void)
+{
+	HandleMenuInputResult input = HandleMenuInput();
+	HandleCardListInputResult result = {input.a, 0u, input.e, input.f};
+	if ((input.f & 0x10u) == 0u)
+		return result;
+	result.d = wListScrollOffset;
+	result.e = wCurMenuItem;
+	result.a = hCurMenuItem;
+	return result;
+}
+/* <<< factory HandleCardListInput */
