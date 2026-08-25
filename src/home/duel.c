@@ -522,6 +522,12 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/print_text.h"
 #include "mem.h"
 #define WasUnsuccessfulText 0x014au
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/tiles.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2569,3 +2575,43 @@ PrintFailedEffectTextResult PrintFailedEffectText(void)
 	return (PrintFailedEffectTextResult){0x10u};
 }
 /* <<< factory PrintFailedEffectText */
+
+/* >>> factory DrawInPlayArea_ActiveCardGfx */
+void DrawInPlayArea_ActiveCardGfx(void)
+{
+	DuelistVarResult result;
+	uint16_t gfx;
+	gb_write8(wArenaCardsInPlayArea_ADDR, 0u);
+	result = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (result.a != 0xFFu) {
+		gb_write8(wArenaCardsInPlayArea_ADDR, (uint8_t)(gb_read8(wArenaCardsInPlayArea_ADDR) | 0x01u));
+		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
+		gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
+		LoadCardGfx(gfx, 0x8A00u, 0x30u, 0x08u);
+		SetBGP6OrSGB3ToCardPalette();
+	}
+	result = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (result.a != 0xFFu) {
+		gb_write8(wArenaCardsInPlayArea_ADDR, (uint8_t)(gb_read8(wArenaCardsInPlayArea_ADDR) | 0x02u));
+		SwapTurn();
+		(void)LoadCardDataToBuffer1_FromDeckIndex(result.a);
+		gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
+		LoadCardGfx(gfx, 0x9500u, 0x30u, 0x08u);
+		SetBGP7OrSGB2ToCardPalette();
+		SwapTurn();
+	}
+	if (gb_read8(wArenaCardsInPlayArea_ADDR) == 0u)
+		return;
+	FlushAllPalettesOrSendPal23Packet();
+	if ((gb_read8(wArenaCardsInPlayArea_ADDR) & 0x01u) != 0u) {
+		FillRectangle(0xA0u, 8u, 6u, 0x0609u, 0x0601u);
+		(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 6u, 6u, 9u, 0x0601u);
+	}
+	if ((gb_read8(wArenaCardsInPlayArea_ADDR) & 0x02u) == 0u)
+		return;
+	SwapTurn();
+	FillRectangle(0x50u, 8u, 6u, 0x0602u, 0x0601u);
+	(void)ApplyBGP7OrSGB2ToCardImage(0x50u, 0u, 8u, 6u, 6u, 2u, 0x0601u);
+	SwapTurn();
+}
+/* <<< factory DrawInPlayArea_ActiveCardGfx */

@@ -1177,6 +1177,9 @@ wTxRam2_b = 0xCE41
 TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wEffectFailed = 0xCCED
+
+wArenaCardsInPlayArea = 0xCE5D
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1459,6 +1462,15 @@ CASES["PrintFailedEffectText"] = [
 ]
 # <<< factory PrintFailedEffectText
 
+# >>> factory DrawInPlayArea_ActiveCardGfx
+CONTRACT["DrawInPlayArea_ActiveCardGfx"] = {"compare": (), "preserve": ()}
+CASES["DrawInPlayArea_ActiveCardGfx"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
+    {"wram": {0xFF97: b"\xC3", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, "read": {0xCE5D: 1}, "expect": {0xCE5D: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF"}, read={0xCE5D: 1}, expect={0xCE5D: b"\x00"}),
+]
+# <<< factory DrawInPlayArea_ActiveCardGfx
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1656,3 +1668,6 @@ MUTATIONS["PrintPokemonsAttackText"] = {"source_symbol": "PrintPokemonsAttackTex
 # >>> factory-mutation PrintFailedEffectText
 MUTATIONS["PrintFailedEffectText"] = {"source_symbol": "PrintFailedEffectText", "before": "\t\treturn (PrintFailedEffectTextResult){0x80u};", "after": "\t\treturn (PrintFailedEffectTextResult){0x00u};", "case_ids": ["PrintFailedEffectText-0", "PrintFailedEffectText-1"]}
 # <<< factory-mutation PrintFailedEffectText
+# >>> factory-mutation DrawInPlayArea_ActiveCardGfx
+MUTATIONS["DrawInPlayArea_ActiveCardGfx"] = {"source_symbol": "DrawInPlayArea_ActiveCardGfx", "before": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 0u);", "after": "\tgb_write8(wArenaCardsInPlayArea_ADDR, 1u);", "case_ids": ["DrawInPlayArea_ActiveCardGfx-0"]}
+# <<< factory-mutation DrawInPlayArea_ActiveCardGfx

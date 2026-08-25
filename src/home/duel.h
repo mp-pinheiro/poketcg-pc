@@ -641,4 +641,7 @@ PrintPokemonsAttackTextResult PrintPokemonsAttackText(void);
 typedef struct { uint8_t f; } PrintFailedEffectTextResult;
 PrintFailedEffectTextResult PrintFailedEffectText(void);
 /* <<< factory PrintFailedEffectText */
+/* >>> factory DrawInPlayArea_ActiveCardGfx */
+void DrawInPlayArea_ActiveCardGfx(void);
+/* <<< factory DrawInPlayArea_ActiveCardGfx */
 #endif
