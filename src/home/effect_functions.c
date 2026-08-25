@@ -622,6 +622,23 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "mem.h"
 #define ChooseAndDiscard2FireEnergyCardsText 0x011fu
+
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/card_color.h"
+#include "home/card_data.h"
+#include "home/credits_sequence_commands.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/objects.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/tiles.h"
+#define TX_END 0x00u
+#define ColorListText 0x0046u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5973,3 +5990,26 @@ void FlamesOfRage_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
+
+/* >>> factory HandleColorChangeScreen */
+HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)f; (void)b; (void)c; (void)d; (void)e; (void)hl;
+	uint8_t location = (uint8_t)(a & 0x7Fu);
+	if (a == 0u) SwapTurn();
+	EmptyScreen(); ZeroObjectPositions(); (void)LoadDuelCardSymbolTiles();
+	gb_write8(wTempPlayAreaLocation_cceb_ADDR, location);
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	uint16_t gfx = (uint16_t)(gb_read8(wLoadedCard1Gfx_ADDR) | ((uint16_t)gb_read8((uint16_t)(wLoadedCard1Gfx_ADDR + 1u)) << 8));
+	LoadCardGfx(gfx, 0x8820u, 0x30u, 0x08u); SetBGP6OrSGB3ToCardPalette(); FlushAllPalettesOrSendPal23Packet();
+	FillRectangle(0xA0u, 0x01u, 0x06u, 0x0902u, 0x0601u); (void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(16u, 0u, 0u, 0u, 0u); gb_write8(name.hl, TX_END);
+	InitTextPrinting(7u, 0u); uint16_t text = wDefaultText_ADDR; ProcessText(&text); (void)PlaceTextItems(0u);
+	WriteByteToBGMap0((uint8_t)(GetPlayAreaCardColor(location) + 1u), 15u, 9u);
+	PrintCardPageWeaknessesOrResistances(GetPlayAreaCardWeakness(location), 15u, 10u); PrintCardPageWeaknessesOrResistances(GetPlayAreaCardResistance(location), 15u, 11u); DrawWideTextBox();
+	(void)InitTextPrinting_ProcessTextFromID(4u, 1u, ColorListText); (void)InitTextPrinting_ProcessTextFromID(1u, 14u, 0u);
+	EnableLCD(); uint16_t menu = 0x0101u; InitializeMenuParameters(0u, &menu);
+	for (;;) { DoFrame(); HandleMenuInputResult input = HandleMenuInput(); if (!(input.f & 0x10u)) continue; if (input.a == MENU_CANCEL) return (HandleColorChangeScreenResult){input.a, 0x10u}; uint8_t item = input.a; uint8_t color = (uint8_t)(item + 1u); uint8_t selected = (color <= NUM_COLORED_TYPES) ? (uint8_t[]){0x01u, 0x00u, 0x03u, 0x04u, 0x06u, 0x05u}[color - 1u] : 0u; if ((uint8_t)(item + 1u) == 0u) selected = color; return (HandleColorChangeScreenResult){selected, (selected == 0u) ? 0x80u : 0x00u}; }
+}
+/* <<< factory HandleColorChangeScreen */

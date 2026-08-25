@@ -2129,6 +2129,14 @@ static void adapt_OpenCardPage(ProbeState *s)
 }
 /* <<< factory OpenCardPage */
 
+/* >>> factory DisplayCardDetailScreen */
+static void adapt_DisplayCardDetailScreen(ProbeState *s)
+{
+	WaitResult r = DisplayCardDetailScreen(s->a, s->hl);
+	s->f = r.f;
+}
+/* <<< factory DisplayCardDetailScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2384,5 +2392,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "_DisplayCardDetailScreen", adapt__DisplayCardDetailScreen },
 	{ "OpenCardPage", adapt_OpenCardPage },
 	{ "PracticeDuel_RepeatInstructions", adapt_PracticeDuel_RepeatInstructions },
+	{ "DisplayCardDetailScreen", adapt_DisplayCardDetailScreen },
 	{ NULL, NULL },
 };

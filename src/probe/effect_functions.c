@@ -3281,6 +3281,14 @@ static void adapt_FlamesOfRage_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory FlamesOfRage_PlayerSelectEffect */
 
+/* >>> factory HandleColorChangeScreen */
+static void adapt_HandleColorChangeScreen(ProbeState *s)
+{
+	HandleColorChangeScreenResult r = HandleColorChangeScreen(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f;
+}
+/* <<< factory HandleColorChangeScreen */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3686,5 +3694,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
 	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
 	{ "FlamesOfRage_PlayerSelectEffect", adapt_FlamesOfRage_PlayerSelectEffect },
+	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
 	{ NULL, NULL },
 };

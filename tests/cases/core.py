@@ -1719,6 +1719,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wCardPageExitKeys = 0xCBD7
 wCardPageNumber = 0xCBC7
 wCardPageType = 0xCBD1
+
+DCDS_TURN = 0xC2
+DCDS_hWhoseTurn = 0xFF97
+DCDS_wPlayerDeck = 0xC400
+DCDS_wLoadedCard1 = 0xCC24
+DCDS_wLCDC = 0xCABB
+DCDS_rLCDC = 0xFF40
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3232,6 +3239,26 @@ CASES["OpenCardPage"] = [
 ]
 # <<< factory OpenCardPage
 
+# >>> factory DisplayCardDetailScreen
+CONTRACT["DisplayCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["DisplayCardDetailScreen"] = [
+    # wLoadedCard1 is the observable: the deck index picks which card is loaded
+    # before the detail screen draws it.
+    {"a": 0, "hl": 0xC100, "keys": [0x00, 0x01],
+     "wram": {DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00",
+      DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck: b"\x10"},
+     "read": {DCDS_wLoadedCard1: 64},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, a=3, hl=0xC100, keys=[0x00, 0x01],
+         wram={DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00",
+         DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck + 3: b"\x20"},
+         read={DCDS_wLoadedCard1: 64},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory DisplayCardDetailScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4608,3 +4635,11 @@ MUTATIONS["_DisplayCardDetailScreen"] = {"source_symbol": "_DisplayCardDetailScr
 # >>> factory-mutation OpenCardPage
 MUTATIONS["OpenCardPage"] = {"source_symbol": "OpenCardPage", "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);", "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);", "case_ids": ["OpenCardPage-0", "OpenCardPage-1"]}
 # <<< factory-mutation OpenCardPage
+# >>> factory-mutation DisplayCardDetailScreen
+MUTATIONS["DisplayCardDetailScreen"] = {
+ "source_symbol": "DisplayCardDetailScreen",
+ "before": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex(a);",
+ "after": "\t * what reaches the screen routine. */\n\t(void)LoadCardDataToBuffer1_FromDeckIndex((uint8_t)(a + 1u));",
+ "case_ids": ["DisplayCardDetailScreen-0", "DisplayCardDetailScreen-1"],
+}
+# <<< factory-mutation DisplayCardDetailScreen

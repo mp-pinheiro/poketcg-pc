@@ -2516,6 +2516,12 @@ SR_STAGE = 0xCE - 0xBB
 SR_STATUS = 0xF0 - 0xBB
 SR_PLUS = 0xE0 - 0xBB
 SR_DEF = 0xE6 - 0xBB
+
+wTempPlayAreaLocation_cceb = 0xCCEB
+wTxRam2 = 0xCE3F
+wTxRam2_b = 0xCE41
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4050,6 +4056,14 @@ CASES["FlamesOfRage_PlayerSelectEffect"] = [
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFF98: 1, 0xFFB2: 1, 0xCBE0: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory FlamesOfRage_PlayerSelectEffect
+
+# >>> factory HandleColorChangeScreen
+CONTRACT["HandleColorChangeScreen"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["HandleColorChangeScreen"] = [
+    {"a": 0x01, "f": 0x00, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": FRAME_SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}},
+    dict(POISON, a=0x00, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=FRAME_SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}),
+]
+# <<< factory HandleColorChangeScreen
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6235,3 +6249,6 @@ MUTATIONS["DestinyBond_PlayerSelectEffect"] = {"source_symbol": "DestinyBond_Pla
 # >>> factory-mutation FlamesOfRage_PlayerSelectEffect
 MUTATIONS["FlamesOfRage_PlayerSelectEffect"] = {"source_symbol": "FlamesOfRage_PlayerSelectEffect", "before": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);", "after": "void FlamesOfRage_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateListOfFireEnergyAttachedToArena();\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(0x01);", "case_ids": ["FlamesOfRage_PlayerSelectEffect-0", "FlamesOfRage_PlayerSelectEffect-1"]}
 # <<< factory-mutation FlamesOfRage_PlayerSelectEffect
+# >>> factory-mutation HandleColorChangeScreen
+MUTATIONS["HandleColorChangeScreen"] = {"source_symbol": "HandleColorChangeScreen", "before": "uint8_t color = (uint8_t)(item + 1u);", "after": "uint8_t color = (uint8_t)(item + 2u);", "case_ids": ["HandleColorChangeScreen-0", "HandleColorChangeScreen-1"]}
+# <<< factory-mutation HandleColorChangeScreen

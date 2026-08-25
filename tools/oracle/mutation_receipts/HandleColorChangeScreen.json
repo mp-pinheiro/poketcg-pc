@@ -1,0 +1,9 @@
+{
+  "fn": "HandleColorChangeScreen",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleColorChangeScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52459\": \"01\", \"52799\": \"00\", \"52801\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleColorChangeScreen\", \"mismatches\": {\"a\": [1, 0], \"f\": [0, 128]}}\n",
+  "restored": "{\"fn\": \"HandleColorChangeScreen\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52459\": \"01\", \"52799\": \"00\", \"52801\": \"00\", \"65344\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1078,6 +1078,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/tiles.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6070,3 +6073,13 @@ void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t
 	}
 }
 /* <<< factory OpenCardPage */
+
+/* >>> factory DisplayCardDetailScreen */
+WaitResult DisplayCardDetailScreen(uint8_t a, uint16_t hl)
+{
+	/* LoadCardDataToBuffer1_FromDeckIndex preserves hl, so the caller's hl is
+	 * what reaches the screen routine. */
+	(void)LoadCardDataToBuffer1_FromDeckIndex(a);
+	return _DisplayCardDetailScreen(hl);
+}
+/* <<< factory DisplayCardDetailScreen */
