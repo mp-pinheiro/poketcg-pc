@@ -3397,6 +3397,19 @@ static void adapt_Sprout_PutInPlayAreaEffect(ProbeState *s)
 }
 /* <<< factory Sprout_PutInPlayAreaEffect */
 
+/* >>> factory NidoranFCallForFamily_PutInPlayAreaEffect */
+static void adapt_NidoranFCallForFamily_PutInPlayAreaEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = NidoranFCallForFamily_PutInPlayAreaEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->hl = r.hl;
+}
+/* <<< factory NidoranFCallForFamily_PutInPlayAreaEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3814,5 +3827,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
 	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
 	{ "Sprout_PutInPlayAreaEffect", adapt_Sprout_PutInPlayAreaEffect },
+	{ "NidoranFCallForFamily_PutInPlayAreaEffect", adapt_NidoranFCallForFamily_PutInPlayAreaEffect },
 	{ NULL, NULL },
 };

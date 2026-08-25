@@ -1406,6 +1406,10 @@ PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t 
 ShuffleCardsInDeckResult Sprout_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
 							   uint8_t e, uint16_t hl);
 /* <<< factory Sprout_PutInPlayAreaEffect */
+/* >>> factory NidoranFCallForFamily_PutInPlayAreaEffect */
+ShuffleCardsInDeckResult NidoranFCallForFamily_PutInPlayAreaEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl);
+/* <<< factory NidoranFCallForFamily_PutInPlayAreaEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

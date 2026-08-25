@@ -1,0 +1,9 @@
+{
+  "fn": "NidoranFCallForFamily_PutInPlayAreaEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"NidoranFCallForFamily_PutInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 58, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49792, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10000000\", \"49790\": \"0000000000000000\", \"49850\": \"02\", \"49871\": \"00\", \"49902\": \"00\", \"49905\": \"00\", \"51899\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"NidoranFCallForFamily_PutInPlayAreaEffect\", \"mismatches\": {\"bus\": {\"address\": 49665, \"reference\": \"100000000000\", \"native\": \"100100000000\", \"reference_size\": 18, \"native_size\": 18, \"spans\": [[49664, 4], [49790, 8], [49850, 1], [49871, 1], [49902, 1], [49905, 1], [51899, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"NidoranFCallForFamily_PutInPlayAreaEffect\", \"registers\": {\"a\": 0, \"b\": 58, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49792, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"10000000\", \"49790\": \"0000000000000000\", \"49850\": \"02\", \"49871\": \"00\", \"49902\": \"00\", \"49905\": \"00\", \"51899\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
