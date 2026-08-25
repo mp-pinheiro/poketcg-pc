@@ -61,6 +61,8 @@ wTotalNumCardsToCollect = 0xD3CE
 wTxRam2 = 0xCE3F
 wTxRam3 = 0xCE43
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wHasDuelSaveData = 0xD625
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasSaveData
@@ -87,6 +89,14 @@ CASES["PrintStartMenuDescriptionText"] = [
 ]
 # <<< factory PrintStartMenuDescriptionText
 
+# >>> factory AskToContinueFromDiaryWithDuelData
+CONTRACT["AskToContinueFromDiaryWithDuelData"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AskToContinueFromDiaryWithDuelData"] = [
+    {"wram": {0xD625: b"\x00"}, "read": {0xD625: 1}},
+    dict(POISON, wram={0xD625: b"\x00"}, read={0xD625: 1}),
+]
+# <<< factory AskToContinueFromDiaryWithDuelData
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -95,3 +105,6 @@ MUTATIONS["CheckIfHasSaveData"] = {"source_symbol": "CheckIfHasSaveData", "befor
 # >>> factory-mutation PrintStartMenuDescriptionText
 MUTATIONS["PrintStartMenuDescriptionText"] = {"source_symbol": "PrintStartMenuDescriptionText", "before": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0xC0u : f;", "after": "\tuint8_t out_f = (menu_item == wCurHighlightedStartMenuItem) ? 0x80u : f;", "case_ids": ["PrintStartMenuDescriptionText-0", "PrintStartMenuDescriptionText-1"]}
 # <<< factory-mutation PrintStartMenuDescriptionText
+# >>> factory-mutation AskToContinueFromDiaryWithDuelData
+MUTATIONS["AskToContinueFromDiaryWithDuelData"] = {"source_symbol": "AskToContinueFromDiaryWithDuelData", "before": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};", "after": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){0xFFu, 0x80u};", "case_ids": ["AskToContinueFromDiaryWithDuelData-0", "AskToContinueFromDiaryWithDuelData-1"]}
+# <<< factory-mutation AskToContinueFromDiaryWithDuelData

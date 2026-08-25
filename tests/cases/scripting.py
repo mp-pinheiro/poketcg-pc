@@ -141,6 +141,11 @@ wScriptPointer = 0xD0C6
 wChallengeHallNPC = 0xD696
 wMatchStartTheme = 0xD113
 wScriptPointer = 0xD413
+
+hCurMenuItem = 0xFFB1
+wScriptControlByte = 0xD415
+def menu_state(default_yes=0):
+    return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
 # <<< factory-cases-statics
 
 
@@ -1157,6 +1162,14 @@ CASES["ScriptCommand_StartChallengeHallDuel"] = [
 ]
 # <<< factory ScriptCommand_StartChallengeHallDuel
 
+# >>> factory ScriptCommand_AskQuestionJump
+CONTRACT["ScriptCommand_AskQuestionJump"] = {"compare": (), "preserve": ()}
+CASES["ScriptCommand_AskQuestionJump"] = [
+    {"b": 0, "c": 0, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": menu_state(0), "read": {wScriptPointer: 2, wScriptControlByte: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, b=0, c=0, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram=menu_state(0), read={wScriptPointer: 2, wScriptControlByte: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ScriptCommand_AskQuestionJump
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1706,3 +1719,6 @@ MUTATIONS["ScriptCommand_StartChallengeHallDuel"] = {
     "case_ids": ["ScriptCommand_StartChallengeHallDuel-0", "ScriptCommand_StartChallengeHallDuel-1"],
 }
 # <<< factory-mutation ScriptCommand_StartChallengeHallDuel
+# >>> factory-mutation ScriptCommand_AskQuestionJump
+MUTATIONS["ScriptCommand_AskQuestionJump"] = {"source_symbol": "ScriptCommand_AskQuestionJump", "before": "\twScriptControlByte = hCurMenuItem;", "after": "\twScriptControlByte = 0u;", "case_ids": ["ScriptCommand_AskQuestionJump-0", "ScriptCommand_AskQuestionJump-1"]}
+# <<< factory-mutation ScriptCommand_AskQuestionJump

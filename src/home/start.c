@@ -24,6 +24,16 @@
 #define TheGameWillContinueFromThePointInTheDuelText 0x0372u
 #define WhenYouCardPopWithFriendText 0x036fu
 #define MAP_NAMES 0x7080u
+
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#define ContinueFromDiaryText 0x0377u
+#define DataExistsWhenPowerWasTurnedOFFDuringDuelText 0x0376u
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -122,3 +132,23 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 	return (PrintStartMenuDescriptionTextResult){out_a, out_f, saved_b, saved_c, saved_d, saved_e};
 }
 /* <<< factory PrintStartMenuDescriptionText */
+
+/* >>> factory AskToContinueFromDiaryWithDuelData */
+AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void)
+{
+	uint8_t a = wHasDuelSaveData;
+	if (a == 0u)
+		return (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};
+
+	DisableLCD();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)FlashWhiteScreen();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(DataExistsWhenPowerWasTurnedOFFDuringDuelText);
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText(ContinueFromDiaryText);
+	if ((menu.f & 0x10u) != 0u)
+		return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.f};
+	return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.a == 0u ? 0x80u : 0u};
+}
+/* <<< factory AskToContinueFromDiaryWithDuelData */

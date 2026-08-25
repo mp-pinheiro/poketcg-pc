@@ -3585,7 +3585,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MirrorMove_PlayerSelection", adapt_MirrorMove_PlayerSelection },
 	{ "SpearowMirrorMove_PlayerSelection", adapt_SpearowMirrorMove_PlayerSelection },
 	{ "StrangeBehavior_SelectAndSwapEffect", adapt_StrangeBehavior_SelectAndSwapEffect },
-	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ "PidgeottoMirrorMove_PlayerSelection", adapt_PidgeottoMirrorMove_PlayerSelection },
+	{ "HandleEnergyDiscardEffectSelection", adapt_HandleEnergyDiscardEffectSelection },
 	{ NULL, NULL },
 };

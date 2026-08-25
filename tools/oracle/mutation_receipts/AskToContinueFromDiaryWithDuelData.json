@@ -1,0 +1,9 @@
+{
+  "fn": "AskToContinueFromDiaryWithDuelData",
+  "case": "tests/cases/start.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AskToContinueFromDiaryWithDuelData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54821\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AskToContinueFromDiaryWithDuelData\", \"mismatches\": {\"a\": [0, 255]}}\n",
+  "restored": "{\"fn\": \"AskToContinueFromDiaryWithDuelData\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54821\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

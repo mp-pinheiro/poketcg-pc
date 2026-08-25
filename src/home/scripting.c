@@ -230,6 +230,11 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #include "mem.h"
 #define MUSIC_MATCH_START_2 0x16u
+
+#include "home/overworld.h"
+#include "home/scripting.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 
@@ -1593,3 +1598,23 @@ IncreaseScriptPointerResult ScriptCommand_StartChallengeHallDuel(uint8_t b, uint
 	return IncreaseScriptPointerBy4();
 }
 /* <<< factory ScriptCommand_StartChallengeHallDuel */
+
+/* >>> factory ScriptCommand_AskQuestionJump */
+ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJump(uint8_t b, uint8_t c)
+{
+	FuncC8edResult r = Func_c8ed((uint16_t)(((uint16_t)b << 8) | c));
+	wScriptControlByte = hCurMenuItem;
+	if (r.f & 0x10u) {
+		IncreaseScriptPointerResult inc = IncreaseScriptPointerBy5();
+		return (ScriptCommand_AskQuestionJumpResult){inc.a, inc.f, b, inc.c, 0u};
+	}
+	GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult inc = IncreaseScriptPointerBy5();
+		return (ScriptCommand_AskQuestionJumpResult){inc.a, inc.f, args.b, inc.c, 0u};
+	}
+	uint16_t target = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	uint16_t hl = SetScriptPointer(target);
+	return (ScriptCommand_AskQuestionJumpResult){args.a, args.f, args.b, args.c, hl};
+}
+/* <<< factory ScriptCommand_AskQuestionJump */

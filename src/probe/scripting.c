@@ -976,6 +976,14 @@ static void adapt_ScriptCommand_StartChallengeHallDuel(ProbeState *s)
 }
 /* <<< factory ScriptCommand_StartChallengeHallDuel */
 
+/* >>> factory ScriptCommand_AskQuestionJump */
+static void adapt_ScriptCommand_AskQuestionJump(ProbeState *s)
+{
+	ScriptCommand_AskQuestionJumpResult r = ScriptCommand_AskQuestionJump(s->b, s->c);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_AskQuestionJump */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1072,5 +1080,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot", adapt_ScriptCommand_LoadChallengeHallNPCIntoTxRamSlot },
 	{ "ScriptCommand_StartDuel", adapt_ScriptCommand_StartDuel },
 	{ "ScriptCommand_StartChallengeHallDuel", adapt_ScriptCommand_StartChallengeHallDuel },
+	{ "ScriptCommand_AskQuestionJump", adapt_ScriptCommand_AskQuestionJump },
 	{ NULL, NULL },
 };

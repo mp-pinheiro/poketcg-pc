@@ -28,9 +28,19 @@ static void adapt_PrintStartMenuDescriptionText(ProbeState *s)
 }
 /* <<< factory PrintStartMenuDescriptionText */
 
+/* >>> factory AskToContinueFromDiaryWithDuelData */
+static void adapt_AskToContinueFromDiaryWithDuelData(ProbeState *s)
+{
+	AskToContinueFromDiaryWithDuelDataResult result = AskToContinueFromDiaryWithDuelData();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AskToContinueFromDiaryWithDuelData */
+
 const ProbeEntry probe_entries_start[] = {
 	{ "ShowCardPopCGBDisclaimer", adapt_ShowCardPopCGBDisclaimer },
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
 	{ "PrintStartMenuDescriptionText", adapt_PrintStartMenuDescriptionText },
+	{ "AskToContinueFromDiaryWithDuelData", adapt_AskToContinueFromDiaryWithDuelData },
 	{ NULL, NULL },
 };
