@@ -933,6 +933,13 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define SYM_POKEMON 0x0Du
 #define SYM_PRIZE 0x30u
 #define TILEMAP_WIDTH 32u
+
+#include "mem.h"
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#define DUELIST_TYPE_PLAYER 0x00u
+#define DUELVARS_DUELIST_TYPE 0xF1u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5309,3 +5316,42 @@ void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	if (defender != 0u) { attr_c++; WriteByteToBGMap0(SYM_DEFENDER, attr_b, attr_c); WriteByteToBGMap0((uint8_t)(defender + SYM_0), (uint8_t)(attr_b + 1u), attr_c); }
 }
 /* <<< factory DrawDuelHUD */
+
+/* >>> factory DrawDuelHUDs */
+void DrawDuelHUDs(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (turn.a != DUELIST_TYPE_PLAYER) {
+		uint8_t saved_turn = hWhoseTurn;
+		hWhoseTurn = PLAYER_TURN;
+		DrawDuelHUD(11u, 8u, 1u, 11u);
+		DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+		CheckPrintCnfSlpPrz(status.a, 8u, 5u);
+		uint8_t a = CheckPrintPoisoned(status.a, 8u, 6u);
+		a = CheckPrintDoublePoisoned(a, 8u, 7u);
+		SwapTurn();
+		(void)GetNonTurnDuelistVariable(a);
+		DrawDuelHUD(3u, 1u, 7u, 0u);
+		status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+		CheckPrintCnfSlpPrz(status.a, 11u, 6u);
+		a = CheckPrintPoisoned(status.a, 11u, 5u);
+		(void)CheckPrintDoublePoisoned(a, 11u, 4u);
+		SwapTurn();
+		hWhoseTurn = saved_turn;
+		return;
+	}
+	DrawDuelHUD(11u, 8u, 1u, 11u);
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	CheckPrintCnfSlpPrz(status.a, 8u, 5u);
+	uint8_t a = CheckPrintPoisoned(status.a, 8u, 6u);
+	a = CheckPrintDoublePoisoned(a, 8u, 7u);
+	SwapTurn();
+	(void)GetNonTurnDuelistVariable(a);
+	DrawDuelHUD(3u, 1u, 7u, 0u);
+	status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	CheckPrintCnfSlpPrz(status.a, 11u, 6u);
+	a = CheckPrintPoisoned(status.a, 11u, 5u);
+	(void)CheckPrintDoublePoisoned(a, 11u, 4u);
+	SwapTurn();
+}
+/* <<< factory DrawDuelHUDs */

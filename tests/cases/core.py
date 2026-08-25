@@ -1653,6 +1653,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 hWhoseTurn = 0xFF97
 wHUDEnergyAndHPBarsX = 0xCBC9
 wHUDEnergyAndHPBarsY = 0xCBCA
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+HUD_TILE = 0x996F
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2862,6 +2866,14 @@ CASES["DrawDuelHUD"] = [
     dict(POISON, wram={0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", hWhoseTurn: b"\xC2"}, read={wHUDEnergyAndHPBarsX: 1, wHUDEnergyAndHPBarsY: 1}),
 ]
 # <<< factory DrawDuelHUD
+
+# >>> factory DrawDuelHUDs
+CONTRACT["DrawDuelHUDs"] = {"compare": (), "preserve": ()}
+CASES["DrawDuelHUDs"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
+]
+# <<< factory DrawDuelHUDs
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4128,3 +4140,6 @@ MUTATIONS["PrintPokemonCardPageGenericInformation"] = {"source_symbol": "PrintPo
 # >>> factory-mutation DrawDuelHUD
 MUTATIONS["DrawDuelHUD"] = {"source_symbol": "DrawDuelHUD", "before": "wHUDEnergyAndHPBarsX = b;", "after": "wHUDEnergyAndHPBarsX = (uint8_t)(b + 1u);", "case_ids": ["DrawDuelHUD-0", "DrawDuelHUD-1"]}
 # <<< factory-mutation DrawDuelHUD
+# >>> factory-mutation DrawDuelHUDs
+MUTATIONS["DrawDuelHUDs"] = {"source_symbol": "DrawDuelHUDs", "before": "\tDrawDuelHUD(11u, 8u, 1u, 11u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "after": "\tDrawDuelHUD(11u, 8u, 1u, 12u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "case_ids": ["DrawDuelHUDs-0", "DrawDuelHUDs-1"]}
+# <<< factory-mutation DrawDuelHUDs
