@@ -900,4 +900,7 @@ uint8_t PrintAndLoadAttacksToDuelTempList(void);
 /* >>> factory DisplayPokemonAttackCardPage */
 void DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl);
 /* <<< factory DisplayPokemonAttackCardPage */
+/* >>> factory DisplayCardPage_PokemonAttack2Page2 */
+void DisplayCardPage_PokemonAttack2Page2(uint8_t b, uint8_t c, uint8_t d);
+/* <<< factory DisplayCardPage_PokemonAttack2Page2 */
 #endif
