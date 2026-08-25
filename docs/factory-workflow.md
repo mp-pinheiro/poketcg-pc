@@ -171,9 +171,13 @@ HEAL status reaped=<n> revoked=<n> retired=<n> half_landed=<n> blocked_toml_dirt
   issuing session died. It becomes `stale`, which is what the fresh pool
   accepts, so the routine re-enters selection with its generation intact.
 - **retired** — a `red` that both pools have abandoned gains an `AUTO-RETIRED:`
-  stanza in `.factory/blocked.toml` carrying its last diagnostic. This is the
-  only write to a tracked file; commit it when `blocked_toml_dirty=1`, before
-  `factory-land`, which requires a clean checkout.
+  stanza in `.factory/blocked.toml` carrying its last diagnostic. An operational
+  blocker is an input to the derived work records, so `factory-heal` also
+  refreshes `site/data/progress.json` and `site/data/history.jsonl`; commit
+  `.factory/blocked.toml` together with `site/data/` in one `chore(factory):`
+  commit when `blocked_toml_dirty=1`, before `factory-land`, which requires a
+  clean checkout. Committing the blocker alone publishes a snapshot that
+  disagrees with its own blocker file, and `report.py check` fails the push.
 
 `factory-next` performs the revoke and reap steps inline under `select.lock`, so
 a bare selection is self-healing; only retiring needs the explicit command.

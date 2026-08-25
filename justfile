@@ -305,9 +305,12 @@ factory-next N="4":
 
 # Reconcile the ledgers against the tree: reap issued attempts that can never be
 # verified, re-offer landings whose content is missing, retire exhausted reds.
-# Writes .factory/blocked.toml (tracked) when a red is retired.
+# Writes .factory/blocked.toml (tracked) when a red is retired; an operational
+# blocker is an input to the derived work records, so the snapshot is rebuilt in
+# the same breath and both are committed together.
 factory-heal:
     python3 tools/factory/heal.py --apply
+    python3 tools/progress/report.py build
 
 # What the ledgers would repair, without touching anything.
 factory-heal-dry:
