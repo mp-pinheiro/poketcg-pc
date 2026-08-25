@@ -875,4 +875,7 @@ DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void);
 /* >>> factory RedrawTurnDuelistsDuelHUD */
 void RedrawTurnDuelistsDuelHUD(void);
 /* <<< factory RedrawTurnDuelistsDuelHUD */
+/* >>> factory OppAction_DrawDuelMainScene */
+void OppAction_DrawDuelMainScene(void);
+/* <<< factory OppAction_DrawDuelMainScene */
 #endif

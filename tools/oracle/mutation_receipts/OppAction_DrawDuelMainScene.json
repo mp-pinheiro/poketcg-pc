@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_DrawDuelMainScene",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_DrawDuelMainScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51906\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_DrawDuelMainScene\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"0101c3\", \"native\": \"0100c3\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49905, 1], [51906, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_DrawDuelMainScene\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"01\", \"51906\": \"01\", \"65431\": \"c3\"}}, \"status\": \"PASS\"}\n"
+}

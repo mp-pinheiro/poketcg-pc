@@ -475,6 +475,16 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "mem.h"
 #define DUELVARS_ARENA_CARD_LAST_TURN_SUBSTATUS2 0xf6u
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xF2u
+#define SUBSTATUS2_AMNESIA 0x04u
+#define WasChosenForTheEffectOfAmnesiaText 0x0148u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5243,3 +5253,36 @@ uint16_t ApplySubstatus2ToDefendingCard(uint8_t a, uint16_t hl)
 	return last_turn;
 }
 /* <<< factory ApplySubstatus2ToDefendingCard */
+
+/* >>> factory ApplyAmnesiaToAttack */
+void ApplyAmnesiaToAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	(void)b;
+	(void)c;
+	(void)d;
+	(void)e;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_AMNESIA, hl);
+	if (wNoDamageOrEffect != 0u)
+		return;
+
+	DuelistVarResult non_turn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX);
+	gb_write8(non_turn.hl, hTemp_ffa0);
+	uint16_t last_turn_effect = (uint16_t)((non_turn.hl & 0xFF00u) | DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	gb_write8(last_turn_effect, LAST_TURN_EFFECT_AMNESIA);
+
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u)
+		return;
+
+	SwapTurn();
+	DuelistVarResult turn_arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t card = turn_arena.a;
+	uint8_t attack = hTemp_ffa0;
+	uint16_t attack_name = GetAttackName(card, attack);
+	LoadTxRam2(attack_name);
+	(void)DrawWideTextBox_WaitForInput(WasChosenForTheEffectOfAmnesiaText);
+	SwapTurn();
+}
+/* <<< factory ApplyAmnesiaToAttack */

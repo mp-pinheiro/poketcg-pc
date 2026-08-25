@@ -2997,6 +2997,13 @@ static void adapt_ApplySubstatus2ToDefendingCard(ProbeState *s)
 }
 /* <<< factory ApplySubstatus2ToDefendingCard */
 
+/* >>> factory ApplyAmnesiaToAttack */
+static void adapt_ApplyAmnesiaToAttack(ProbeState *s)
+{
+	ApplyAmnesiaToAttack(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory ApplyAmnesiaToAttack */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3368,5 +3375,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DamageSwap_SwapEffect", adapt_DamageSwap_SwapEffect },
 	{ "PrintDevolvedCardNameAndLevelText", adapt_PrintDevolvedCardNameAndLevelText },
 	{ "ApplySubstatus2ToDefendingCard", adapt_ApplySubstatus2ToDefendingCard },
+	{ "ApplyAmnesiaToAttack", adapt_ApplyAmnesiaToAttack },
 	{ NULL, NULL },
 };

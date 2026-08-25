@@ -1683,6 +1683,11 @@ wWhoseTurn = 0xCC05
 HUD_TILE = 0x996F
 HUD_SEED = {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC2F1: b"\x00", 0xC3BB: b"\xFF", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00", 0xC3F1: b"\x00"}
 HUD_BUDGET = {"instruction_budget": 20000000, "cycle_budget": 80000000}
+
+hWhoseTurn = 0xFF97
+wOpponentDuelistType = 0xC2F1
+wDuelDisplayedScreen = 0xCAC2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2964,6 +2969,16 @@ CASES["RedrawTurnDuelistsDuelHUD"] = [
     dict(POISON, wram={**HUD_SEED, hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, read={wWhoseTurn: 0xC3}, vread={0: {HUD_TILE: 1}}, **HUD_BUDGET),
 ]
 # <<< factory RedrawTurnDuelistsDuelHUD
+
+# >>> factory OppAction_DrawDuelMainScene
+CONTRACT["OppAction_DrawDuelMainScene"] = {"compare": (), "preserve": ()}
+CASES["OppAction_DrawDuelMainScene"] = [
+    {"wram": {hWhoseTurn: b"\xC3", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
+     "read": {hWhoseTurn: 1, wDuelDisplayedScreen: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC3", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"},
+         read={hWhoseTurn: 1, wDuelDisplayedScreen: 1}),
+]
+# <<< factory OppAction_DrawDuelMainScene
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4256,3 +4271,6 @@ MUTATIONS["InitAndDrawCardListScreenLayout"] = {"source_symbol": "InitAndDrawCar
 # >>> factory-mutation RedrawTurnDuelistsDuelHUD
 MUTATIONS["RedrawTurnDuelistsDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsDuelHUD", "before": "\tSwapTurn();\n\tDrawDuelHUDs();\n\tSwapTurn();", "after": "\tSwapTurn();\n\tDrawDuelHUDs();", "case_ids": ["RedrawTurnDuelistsDuelHUD-1", "RedrawTurnDuelistsDuelHUD-2"]}
 # <<< factory-mutation RedrawTurnDuelistsDuelHUD
+# >>> factory-mutation OppAction_DrawDuelMainScene
+MUTATIONS["OppAction_DrawDuelMainScene"] = {"source_symbol": "OppAction_DrawDuelMainScene", "before": "\tDrawDuelMainScene();", "after": "\tgb_write8(0xCAC2u, 0u);", "case_ids": ["OppAction_DrawDuelMainScene-0", "OppAction_DrawDuelMainScene-1"]}
+# <<< factory-mutation OppAction_DrawDuelMainScene

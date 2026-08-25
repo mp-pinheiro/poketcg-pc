@@ -5539,3 +5539,10 @@ void RedrawTurnDuelistsDuelHUD(void)
 	SwapTurn();
 }
 /* <<< factory RedrawTurnDuelistsDuelHUD */
+
+/* >>> factory OppAction_DrawDuelMainScene */
+void OppAction_DrawDuelMainScene(void)
+{
+	DrawDuelMainScene();
+}
+/* <<< factory OppAction_DrawDuelMainScene */

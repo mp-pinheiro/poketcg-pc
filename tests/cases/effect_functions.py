@@ -2413,6 +2413,10 @@ wTxRam2_b = 0xCE41
 
 hWhoseTurn = 0xFF97
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hWhoseTurn = 0xFF97
+hTemp_ffa0 = 0xFFA0
+wNoDamageOrEffect = 0xCCC7
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3476,6 +3480,14 @@ CASES["ApplySubstatus2ToDefendingCard"] = [
     dict(POISON, a=0xA5, hl=0xC280, wram={hWhoseTurn: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),
 ]
 # <<< factory ApplySubstatus2ToDefendingCard
+
+# >>> factory ApplyAmnesiaToAttack
+CONTRACT["ApplyAmnesiaToAttack"] = {"compare": (), "preserve": ()}
+CASES["ApplyAmnesiaToAttack"] = [
+    {"a": 0x01, "f": 0x00, "b": 0x02, "c": 0x03, "d": 0x04, "e": 0x05, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", wNoDamageOrEffect: b"\x00", 0xC3E8: b"\x00", 0xC3F6: b"\x00", 0xC3F2: b"\x00", 0xC3F8: b"\x00", hTemp_ffa0: b"\x02"}, "read": {0xC3E8: 1, 0xC3F6: 1, 0xC3F2: 1, 0xC3F8: 1}},
+    dict(POISON, hl=0x0000, wram={hWhoseTurn: b"\xC2", wNoDamageOrEffect: b"\x00", 0xC3E8: b"\x11", 0xC3F6: b"\x22", 0xC3F2: b"\x33", 0xC3F8: b"\x44", hTemp_ffa0: b"\x03"}, read={0xC3E8: 1, 0xC3F6: 1, 0xC3F2: 1, 0xC3F8: 1}),
+]
+# <<< factory ApplyAmnesiaToAttack
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5539,3 +5551,6 @@ MUTATIONS["PrintDevolvedCardNameAndLevelText"] = {"source_symbol": "PrintDevolve
 # >>> factory-mutation ApplySubstatus2ToDefendingCard
 MUTATIONS["ApplySubstatus2ToDefendingCard"] = {"source_symbol": "ApplySubstatus2ToDefendingCard", "before": "\tgb_write8(r.hl, a);\n\tuint16_t last_turn", "after": "\tgb_write8(r.hl, 0u);\n\tuint16_t last_turn", "case_ids": ["ApplySubstatus2ToDefendingCard-0", "ApplySubstatus2ToDefendingCard-1", "ApplySubstatus2ToDefendingCard-2"]}
 # <<< factory-mutation ApplySubstatus2ToDefendingCard
+# >>> factory-mutation ApplyAmnesiaToAttack
+MUTATIONS["ApplyAmnesiaToAttack"] = {"source_symbol": "ApplyAmnesiaToAttack", "before": "\tgb_write8(non_turn.hl, hTemp_ffa0);", "after": "\tgb_write8(non_turn.hl, 0x00u);", "case_ids": ["ApplyAmnesiaToAttack-0", "ApplyAmnesiaToAttack-1"]}
+# <<< factory-mutation ApplyAmnesiaToAttack
