@@ -2558,6 +2558,17 @@ CFF_NOT_IN_DECK = 0xC2BA
 CFF_HAND_COUNT = 0xC2EE
 CFF_NUM_IN_PLAY = 0xC2CF
 CFF_wLCDC = 0xCABB
+
+CFF_hTemp_ffa0 = 0xFFA0
+CFF_hWhoseTurn = 0xFF97
+CFF_LCD_SHADOW = 0xCABB
+CFF_DUELIST_TYPE = 0xC2F1
+CFF_OTHER_DUELIST_TYPE = 0xC3F1
+CFF_OTHER_LOCATIONS = 0xC300
+CFF_OTHER_DECK_CARDS = 0xC37E
+CFF_OTHER_DISCARD_COUNT = 0xC3ED
+CFF_OTHER_HAND_COUNT = 0xC3EE
+CFF_OTHER_PLAY_COUNT = 0xC3CF
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4389,6 +4400,14 @@ CASES["KrabbyCallForFamily_PutInPlayAreaEffect"] = [
          instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory KrabbyCallForFamily_PutInPlayAreaEffect
+
+# >>> factory PokemonFlute_PlaceInPlayAreaText
+CONTRACT["PokemonFlute_PlaceInPlayAreaText"] = {"compare": (), "preserve": ()}
+CASES["PokemonFlute_PlaceInPlayAreaText"] = [
+    {"wram": {CFF_hWhoseTurn: b"\xC2", CFF_DUELIST_TYPE: b"\x00", CFF_OTHER_DUELIST_TYPE: b"\x00", CFF_hTemp_ffa0: b"\x00", CFF_OTHER_LOCATIONS: b"\x02", CFF_OTHER_DECK_CARDS: b"\x00", CFF_OTHER_DISCARD_COUNT: b"\x01", CFF_OTHER_HAND_COUNT: b"\x00", CFF_OTHER_PLAY_COUNT: b"\x00", 0xFF40: b"\x00", CFF_LCD_SHADOW: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "read": {CFF_OTHER_LOCATIONS: 2, CFF_OTHER_DECK_CARDS: 2, CFF_OTHER_DISCARD_COUNT: 1, CFF_OTHER_HAND_COUNT: 1, CFF_OTHER_PLAY_COUNT: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={CFF_hWhoseTurn: b"\xC2", CFF_DUELIST_TYPE: b"\x00", CFF_OTHER_DUELIST_TYPE: b"\x00", CFF_hTemp_ffa0: b"\x00", CFF_OTHER_LOCATIONS: b"\x02", CFF_OTHER_DECK_CARDS: b"\x00", CFF_OTHER_DISCARD_COUNT: b"\x01", CFF_OTHER_HAND_COUNT: b"\x00", CFF_OTHER_PLAY_COUNT: b"\x00", 0xFF40: b"\x00", CFF_LCD_SHADOW: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], read={CFF_OTHER_LOCATIONS: 2, CFF_OTHER_DECK_CARDS: 2, CFF_OTHER_DISCARD_COUNT: 1, CFF_OTHER_HAND_COUNT: 1, CFF_OTHER_PLAY_COUNT: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PokemonFlute_PlaceInPlayAreaText
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6669,3 +6688,11 @@ MUTATIONS["KrabbyCallForFamily_PutInPlayAreaEffect"] = {
  "case_ids": ["KrabbyCallForFamily_PutInPlayAreaEffect-0", "KrabbyCallForFamily_PutInPlayAreaEffect-1"],
 }
 # <<< factory-mutation KrabbyCallForFamily_PutInPlayAreaEffect
+# >>> factory-mutation PokemonFlute_PlaceInPlayAreaText
+MUTATIONS["PokemonFlute_PlaceInPlayAreaText"] = {
+    "source_symbol": "PokemonFlute_PlaceInPlayAreaText",
+    "before": "void PokemonFlute_PlaceInPlayAreaText(void)\n{\n\tuint8_t index = hTemp_ffa0;",
+    "after": "void PokemonFlute_PlaceInPlayAreaText(void)\n{\n\tuint8_t index = (uint8_t)(hTemp_ffa0 + 1u);",
+    "case_ids": ["PokemonFlute_PlaceInPlayAreaText-0", "PokemonFlute_PlaceInPlayAreaText-1"],
+}
+# <<< factory-mutation PokemonFlute_PlaceInPlayAreaText

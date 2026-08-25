@@ -713,6 +713,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/switch_rom.h"
 #define KrabbyCallForFamily_PutInPlayAreaEffect_BANK_DUEL_CORE 0x01u
 #define KrabbyCallForFamily_PutInPlayAreaEffect_PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6342,3 +6347,21 @@ ShuffleCardsInDeckResult KrabbyCallForFamily_PutInPlayAreaEffect(uint8_t b, uint
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory KrabbyCallForFamily_PutInPlayAreaEffect */
+
+/* >>> factory PokemonFlute_PlaceInPlayAreaText */
+void PokemonFlute_PlaceInPlayAreaText(void)
+{
+	uint8_t index = hTemp_ffa0;
+	SwapTurn();
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(index);
+	AddCardToHand(moved.a);
+	(void)PutHandPokemonCardInPlayArea(moved.a, moved.f);
+	SwapTurn();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if (turn.f & 0x10u)
+		return;
+	SwapTurn();
+	(void)DisplayCardDetailScreen(hTemp_ffa0, CardWasChosenText);
+	SwapTurn();
+}
+/* <<< factory PokemonFlute_PlaceInPlayAreaText */

@@ -3436,6 +3436,14 @@ static void adapt_KrabbyCallForFamily_PutInPlayAreaEffect(ProbeState *s)
 }
 /* <<< factory KrabbyCallForFamily_PutInPlayAreaEffect */
 
+/* >>> factory PokemonFlute_PlaceInPlayAreaText */
+static void adapt_PokemonFlute_PlaceInPlayAreaText(ProbeState *s)
+{
+	(void)s;
+	PokemonFlute_PlaceInPlayAreaText();
+}
+/* <<< factory PokemonFlute_PlaceInPlayAreaText */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3856,5 +3864,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidoranFCallForFamily_PutInPlayAreaEffect", adapt_NidoranFCallForFamily_PutInPlayAreaEffect },
 	{ "MarowakCallForFamily_PutInPlayAreaEffect", adapt_MarowakCallForFamily_PutInPlayAreaEffect },
 	{ "KrabbyCallForFamily_PutInPlayAreaEffect", adapt_KrabbyCallForFamily_PutInPlayAreaEffect },
+	{ "PokemonFlute_PlaceInPlayAreaText", adapt_PokemonFlute_PlaceInPlayAreaText },
 	{ NULL, NULL },
 };

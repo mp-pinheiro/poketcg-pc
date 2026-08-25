@@ -1,0 +1,9 @@
+{
+  "fn": "PokemonFlute_PlaceInPlayAreaText",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokemonFlute_PlaceInPlayAreaText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"49920\": \"1000\", \"50046\": \"0000\", \"50127\": \"00\", \"50157\": \"0000\", \"50161\": \"00\", \"51899\": \"00\", \"65344\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonFlute_PlaceInPlayAreaText\", \"mismatches\": {\"bus\": {\"address\": 49920, \"reference\": \"001000000000\", \"native\": \"000210000000\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[49905, 1], [49920, 2], [50046, 2], [50127, 1], [50157, 2], [50161, 1], [51899, 1], [65344, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"PokemonFlute_PlaceInPlayAreaText\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"49920\": \"1000\", \"50046\": \"0000\", \"50127\": \"00\", \"50157\": \"0000\", \"50161\": \"00\", \"51899\": \"00\", \"65344\": \"00\", \"65431\": \"c2\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
