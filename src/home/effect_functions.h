@@ -1321,6 +1321,9 @@ void MirrorMove_PlayerSelection(void);
 /* >>> factory SpearowMirrorMove_PlayerSelection */
 void SpearowMirrorMove_PlayerSelection(void);
 /* <<< factory SpearowMirrorMove_PlayerSelection */
+/* >>> factory StrangeBehavior_SelectAndSwapEffect */
+void StrangeBehavior_SelectAndSwapEffect(void);
+/* <<< factory StrangeBehavior_SelectAndSwapEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

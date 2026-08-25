@@ -2317,7 +2317,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CountNumberOfSetUpBenchPokemon", adapt_CountNumberOfSetUpBenchPokemon },
 	{ "HandleLegendaryArticunoEnergyScoring", adapt_HandleLegendaryArticunoEnergyScoring },
 	{ "CheckIfArenaCardIsFullyPowered", adapt_CheckIfArenaCardIsFullyPowered },
-	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "ApplyBGP6OrSGB3ToCardImage", adapt_ApplyBGP6OrSGB3ToCardImage },
 	{ "DrawLargePictureOfCard", adapt_DrawLargePictureOfCard },
 	{ "DrawCardPageSurroundingBox", adapt_DrawCardPageSurroundingBox },
@@ -2351,5 +2350,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenAttackPage", adapt_OpenAttackPage },
 	{ "HandleEnergyDiscardMenuInput", adapt_HandleEnergyDiscardMenuInput },
 	{ "DisplayRetreatScreen", adapt_DisplayRetreatScreen },
+	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ NULL, NULL },
 };

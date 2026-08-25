@@ -76,7 +76,7 @@ const ProbeEntry probe_entries_pokemon_dome[] = {
 	{ "Func_f77d", adapt_Func_f77d },
 	{ "PokemonDomeCloseTextBox", adapt_PokemonDomeCloseTextBox },
 	{ "PokemonDomeMovePlayer", adapt_PokemonDomeMovePlayer },
-	{ "PokemonDomeLoadMap", adapt_PokemonDomeLoadMap },
 	{ "PokemonDomeAfterDuel", adapt_PokemonDomeAfterDuel },
+	{ "PokemonDomeLoadMap", adapt_PokemonDomeLoadMap },
 	{NULL, NULL},
 };

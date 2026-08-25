@@ -3176,6 +3176,14 @@ static void adapt_SpearowMirrorMove_PlayerSelection(ProbeState *s)
 }
 /* <<< factory SpearowMirrorMove_PlayerSelection */
 
+/* >>> factory StrangeBehavior_SelectAndSwapEffect */
+static void adapt_StrangeBehavior_SelectAndSwapEffect(ProbeState *s)
+{
+	(void)s;
+	StrangeBehavior_SelectAndSwapEffect();
+}
+/* <<< factory StrangeBehavior_SelectAndSwapEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3569,5 +3577,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "GolduckHyperBeam_PlayerSelectEffect", adapt_GolduckHyperBeam_PlayerSelectEffect },
 	{ "MirrorMove_PlayerSelection", adapt_MirrorMove_PlayerSelection },
 	{ "SpearowMirrorMove_PlayerSelection", adapt_SpearowMirrorMove_PlayerSelection },
+	{ "StrangeBehavior_SelectAndSwapEffect", adapt_StrangeBehavior_SelectAndSwapEffect },
 	{ NULL, NULL },
 };

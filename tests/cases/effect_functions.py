@@ -2466,6 +2466,14 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 hTempCardIndex_ff98 = 0xFF98
 wTotalAttachedEnergies = 0xCC23
+
+hCurSelectionItem = 0xFFB2
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTemp_ffa0 = 0xFFA0
+wNumMenuItems = 0xCD14
+hWhoseTurn = 0xFF97
+wPlayerArenaCard = 0xC2BB
+wExcludeArenaPokemon = 0xCBD2
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3724,6 +3732,14 @@ CASES["SpearowMirrorMove_PlayerSelection"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
 ]
 # <<< factory SpearowMirrorMove_PlayerSelection
+
+# >>> factory StrangeBehavior_SelectAndSwapEffect
+CONTRACT["StrangeBehavior_SelectAndSwapEffect"] = {"compare": (), "preserve": ()}
+CASES["StrangeBehavior_SelectAndSwapEffect"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00", 0xC2F1: b"\x01"}, "read": {0xCBC8: 1}, "instruction_budget": 6000000, "cycle_budget": 20000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01", wExcludeArenaPokemon: b"\x00", 0xC2F1: b"\x01"}, read={0xCBC8: 1}, instruction_budget=6000000, cycle_budget=20000000),
+]
+# <<< factory StrangeBehavior_SelectAndSwapEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5853,3 +5869,6 @@ MUTATIONS["MirrorMove_PlayerSelection"] = {"source_symbol": "MirrorMove_PlayerSe
 # >>> factory-mutation SpearowMirrorMove_PlayerSelection
 MUTATIONS["SpearowMirrorMove_PlayerSelection"] = {"source_symbol": "SpearowMirrorMove_PlayerSelection", "before": "\tMirrorMove_PlayerSelection();", "after": "\treturn;", "case_ids": ["SpearowMirrorMove_PlayerSelection-0", "SpearowMirrorMove_PlayerSelection-2"]}
 # <<< factory-mutation SpearowMirrorMove_PlayerSelection
+# >>> factory-mutation StrangeBehavior_SelectAndSwapEffect
+MUTATIONS["StrangeBehavior_SelectAndSwapEffect"] = {"source_symbol": "StrangeBehavior_SelectAndSwapEffect", "before": "\t\t(void)PrintPlayAreaCardList_EnableLCD();\n\t\treturn;", "after": "\t\treturn;", "case_ids": ["StrangeBehavior_SelectAndSwapEffect-0", "StrangeBehavior_SelectAndSwapEffect-1"]}
+# <<< factory-mutation StrangeBehavior_SelectAndSwapEffect

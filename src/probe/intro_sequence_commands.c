@@ -218,7 +218,7 @@ const ProbeEntry probe_entries_intro_sequence_commands[] = {
 	{ "LoadOpeningSceneAndUpdateSGBBorder", adapt_LoadOpeningSceneAndUpdateSGBBorder },
 	{ "IntroSequenceCmd_LoadCharizardScene", adapt_IntroSequenceCmd_LoadCharizardScene },
 	{ "IntroSequenceCmd_LoadTitleScreenScene", adapt_IntroSequenceCmd_LoadTitleScreenScene },
-	{ "IntroSequenceCmd_LoadAerodactylScene", adapt_IntroSequenceCmd_LoadAerodactylScene },
 	{ "IntroSequenceCmd_LoadScytherScene", adapt_IntroSequenceCmd_LoadScytherScene },
+	{ "IntroSequenceCmd_LoadAerodactylScene", adapt_IntroSequenceCmd_LoadAerodactylScene },
 	{ NULL, NULL },
 };

@@ -550,6 +550,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/menus.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/sound.h"
+#include "home/serial.h"
+#include "home/frames.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define OPPACTION_6B15 0x15u
+#define ProcedureForStrangeBehaviorText 0x0139u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5648,3 +5660,50 @@ void SpearowMirrorMove_PlayerSelection(void)
 	MirrorMove_PlayerSelection();
 }
 /* <<< factory SpearowMirrorMove_PlayerSelection */
+
+/* >>> factory StrangeBehavior_SelectAndSwapEffect */
+void StrangeBehavior_SelectAndSwapEffect(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (r.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		(void)PrintPlayAreaCardList_EnableLCD();
+		return;
+	}
+	(void)DrawWholeScreenTextBox(ProcedureForStrangeBehaviorText);
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return;
+			hCurSelectionItem = input.a;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			if (input.a == hTemp_ffa0) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			CardDamageResult dmg = GetCardDamageAndMaxHP(input.e);
+			if (dmg.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			TryGiveDamageCounter_StrangeBehaviorResult t = TryGiveDamageCounter_StrangeBehavior();
+			if (t.f & 0x10u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			(void)SetOppAction_SerialSendDuelData(OPPACTION_6B15, t.hl);
+			break;
+		}
+	}
+}
+/* <<< factory StrangeBehavior_SelectAndSwapEffect */
