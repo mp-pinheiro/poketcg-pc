@@ -1974,6 +1974,14 @@ static void adapt_OppAction_FinishTurnWithoutAttacking(ProbeState *s)
 }
 /* <<< factory OppAction_FinishTurnWithoutAttacking */
 
+/* >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+static void adapt_RedrawTurnDuelistsMainSceneOrDuelHUD(ProbeState *s)
+{
+	(void)s;
+	RedrawTurnDuelistsMainSceneOrDuelHUD();
+}
+/* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2208,5 +2216,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", adapt_InitAndDrawCardListScreenLayout_WithSelectCheckMenu },
 	{ "DisplayCardListDetails", adapt_DisplayCardListDetails },
 	{ "OppAction_FinishTurnWithoutAttacking", adapt_OppAction_FinishTurnWithoutAttacking },
+	{ "RedrawTurnDuelistsMainSceneOrDuelHUD", adapt_RedrawTurnDuelistsMainSceneOrDuelHUD },
 	{ NULL, NULL },
 };

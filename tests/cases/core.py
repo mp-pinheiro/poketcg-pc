@@ -3011,6 +3011,16 @@ CASES["OppAction_FinishTurnWithoutAttacking"] = [
 ]
 # <<< factory OppAction_FinishTurnWithoutAttacking
 
+# >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD
+CONTRACT["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"compare": (), "preserve": ()}
+CASES["RedrawTurnDuelistsMainSceneOrDuelHUD"] = [
+    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x01"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {HUD_TILE: 1}}, **HUD_BUDGET},
+    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2"}, "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET},
+    {"wram": {**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, "read": {wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET},
+    dict(POISON, wram={**HUD_SEED, wDuelDisplayedScreen: b"\x00", hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3"}, read={wDuelDisplayedScreen: 1, wWhoseTurn: 1}, **HUD_BUDGET),
+]
+# <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4314,3 +4324,6 @@ MUTATIONS["DisplayCardListDetails"] = {"source_symbol": "DisplayCardListDetails"
 # >>> factory-mutation OppAction_FinishTurnWithoutAttacking
 MUTATIONS["OppAction_FinishTurnWithoutAttacking"] = {"source_symbol": "OppAction_FinishTurnWithoutAttacking", "before": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 1u;", "after": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 0u;", "case_ids": ["OppAction_FinishTurnWithoutAttacking-0", "OppAction_FinishTurnWithoutAttacking-1"]}
 # <<< factory-mutation OppAction_FinishTurnWithoutAttacking
+# >>> factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD
+MUTATIONS["RedrawTurnDuelistsMainSceneOrDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsMainSceneOrDuelHUD", "before": "\tif (wDuelDisplayedScreen == DUEL_MAIN_SCENE) {", "after": "\tif (wDuelDisplayedScreen != DUEL_MAIN_SCENE) {", "case_ids": ["RedrawTurnDuelistsMainSceneOrDuelHUD-0", "RedrawTurnDuelistsMainSceneOrDuelHUD-1"]}
+# <<< factory-mutation RedrawTurnDuelistsMainSceneOrDuelHUD

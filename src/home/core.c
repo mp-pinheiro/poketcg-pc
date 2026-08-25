@@ -997,6 +997,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel_core.h"
 #include "home/menus.h"
 #define FinishedTurnWithoutAttackingText 0x005du
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5603,3 +5608,20 @@ void OppAction_FinishTurnWithoutAttacking(void)
 	wOpponentTurnEnded = 1u;
 }
 /* <<< factory OppAction_FinishTurnWithoutAttacking */
+
+/* >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+void RedrawTurnDuelistsMainSceneOrDuelHUD(void)
+{
+	if (wDuelDisplayedScreen == DUEL_MAIN_SCENE) {
+		RedrawTurnDuelistsDuelHUD();
+		return;
+	}
+	if (hWhoseTurn == wWhoseTurn) {
+		DrawDuelMainScene();
+		return;
+	}
+	SwapTurn();
+	DrawDuelMainScene();
+	SwapTurn();
+}
+/* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */

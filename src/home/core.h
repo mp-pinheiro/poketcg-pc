@@ -888,4 +888,7 @@ DisplayCardListDetailsResult DisplayCardListDetails(void);
 /* >>> factory OppAction_FinishTurnWithoutAttacking */
 void OppAction_FinishTurnWithoutAttacking(void);
 /* <<< factory OppAction_FinishTurnWithoutAttacking */
+/* >>> factory RedrawTurnDuelistsMainSceneOrDuelHUD */
+void RedrawTurnDuelistsMainSceneOrDuelHUD(void);
+/* <<< factory RedrawTurnDuelistsMainSceneOrDuelHUD */
 #endif
