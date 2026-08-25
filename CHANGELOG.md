@@ -2,11 +2,15 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.192.0 - 2026-08-25
+## v0.193.0 - 2026-08-25
+
+### Documentation
+
+- *(factory)* Correct read probe shape guidance
 
 ### Features
 
-- *(port)* Land 2 routines
+- *(port)* Land 1 routines
 
 ### Miscellaneous
 
