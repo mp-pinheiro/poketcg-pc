@@ -1,0 +1,9 @@
+{
+  "fn": "CopyDMAFunction",
+  "case": "tests/cases/dma.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CopyDMAFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65411\": \"3ecae0463e283d20fdc9\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CopyDMAFunction\", \"mismatches\": {\"bus\": {\"address\": 65411, \"reference\": \"3ecae0463e\", \"native\": \"cae0463e28\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[65411, 10]]}}}\n",
+  "restored": "{\"fn\": \"CopyDMAFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"65411\": \"3ecae0463e283d20fdc9\"}}, \"status\": \"PASS\"}\n"
+}

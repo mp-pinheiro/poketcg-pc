@@ -5,4 +5,7 @@
 
 void DMA(void);
 
+/* >>> factory CopyDMAFunction */
+void CopyDMAFunction(void);
+/* <<< factory CopyDMAFunction */
 #endif

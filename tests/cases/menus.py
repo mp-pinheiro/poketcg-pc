@@ -478,6 +478,26 @@ CASES["YesOrNoMenuWithText"] = [
 ]
 # <<< factory YesOrNoMenuWithText
 
+# >>> factory YesOrNoMenuWithText_SetCursorToYes
+CONTRACT["YesOrNoMenuWithText_SetCursorToYes"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["YesOrNoMenuWithText_SetCursorToYes"] = [
+    {"hl": 1, "keys": 0x01,
+     "setup": SETUP,
+     "wram": {**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x00"},
+     "read": {**CACHE_READ, **PLACEMENT_READ},
+     "vread": VRAM_READ,
+     "expect_regs": {"a": 0x01, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=1, keys=0x01,
+         setup=SETUP,
+         wram={**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x00"},
+         read={**CACHE_READ, **PLACEMENT_READ},
+         vread=VRAM_READ,
+         expect_regs={"a": 0x01, "f": 0x90},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory YesOrNoMenuWithText_SetCursorToYes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -575,3 +595,6 @@ MUTATIONS["YesOrNoMenuWithText"] = {
     "case_ids": ["YesOrNoMenuWithText-0", "YesOrNoMenuWithText-1"],
 }
 # <<< factory-mutation YesOrNoMenuWithText
+# >>> factory-mutation YesOrNoMenuWithText_SetCursorToYes
+MUTATIONS["YesOrNoMenuWithText_SetCursorToYes"] = {"source_symbol": "YesOrNoMenuWithText_SetCursorToYes", "before": "HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)\n{\n\twDefaultYesOrNo = 1u;", "after": "HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)\n{\n\twDefaultYesOrNo = 0u;", "case_ids": ["YesOrNoMenuWithText_SetCursorToYes-0", "YesOrNoMenuWithText_SetCursorToYes-1"]}
+# <<< factory-mutation YesOrNoMenuWithText_SetCursorToYes

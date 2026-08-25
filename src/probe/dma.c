@@ -8,7 +8,16 @@ static void adapt_DMA(ProbeState *s)
 	s->f = (uint8_t)(0xC0u | (s->f & 0x10u));
 }
 
+/* >>> factory CopyDMAFunction */
+static void adapt_CopyDMAFunction(ProbeState *s)
+{
+	(void)s;
+	CopyDMAFunction();
+}
+/* <<< factory CopyDMAFunction */
+
 const ProbeEntry probe_entries_dma[] = {
 	{ "DMA", adapt_DMA },
+	{ "CopyDMAFunction", adapt_CopyDMAFunction },
 	{ NULL, NULL },
 };

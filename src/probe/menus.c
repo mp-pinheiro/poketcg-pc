@@ -298,6 +298,15 @@ static void adapt_YesOrNoMenuWithText(ProbeState *s)
 }
 /* <<< factory YesOrNoMenuWithText */
 
+/* >>> factory YesOrNoMenuWithText_SetCursorToYes */
+static void adapt_YesOrNoMenuWithText_SetCursorToYes(ProbeState *s)
+{
+	HandleYesOrNoMenuResult result = YesOrNoMenuWithText_SetCursorToYes(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory YesOrNoMenuWithText_SetCursorToYes */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -340,5 +349,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "TwoItemHorizontalMenu", adapt_TwoItemHorizontalMenu },
 	{ "YesOrNoMenu", adapt_YesOrNoMenu },
 	{ "YesOrNoMenuWithText", adapt_YesOrNoMenuWithText },
+	{ "YesOrNoMenuWithText_SetCursorToYes", adapt_YesOrNoMenuWithText_SetCursorToYes },
 	{ NULL, NULL },
 };

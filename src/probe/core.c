@@ -2357,7 +2357,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenAttackPage", adapt_OpenAttackPage },
 	{ "HandleEnergyDiscardMenuInput", adapt_HandleEnergyDiscardMenuInput },
 	{ "DisplayRetreatScreen", adapt_DisplayRetreatScreen },
-	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "PrintPracticeDuelInstructions_Fast", adapt_PrintPracticeDuelInstructions_Fast },
+	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ NULL, NULL },
 };

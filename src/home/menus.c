@@ -798,3 +798,11 @@ HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl)
 	return YesOrNoMenu();
 }
 /* <<< factory YesOrNoMenuWithText */
+
+/* >>> factory YesOrNoMenuWithText_SetCursorToYes */
+HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)
+{
+	wDefaultYesOrNo = 1u;
+	return YesOrNoMenuWithText(hl);
+}
+/* <<< factory YesOrNoMenuWithText_SetCursorToYes */

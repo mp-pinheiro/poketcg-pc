@@ -452,7 +452,7 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c554", adapt_Func_c554 },
 	{ "Func_c280", adapt_Func_c280 },
 	{ "UpdateOverworldMap", adapt_UpdateOverworldMap },
-	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
 	{ "Func_c8ed", adapt_Func_c8ed },
+	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
 	{ NULL, NULL },
 };

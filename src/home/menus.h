@@ -99,4 +99,7 @@ HandleYesOrNoMenuResult YesOrNoMenu(void);
 /* >>> factory YesOrNoMenuWithText */
 HandleYesOrNoMenuResult YesOrNoMenuWithText(uint16_t hl);
 /* <<< factory YesOrNoMenuWithText */
+/* >>> factory YesOrNoMenuWithText_SetCursorToYes */
+HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl);
+/* <<< factory YesOrNoMenuWithText_SetCursorToYes */
 #endif
