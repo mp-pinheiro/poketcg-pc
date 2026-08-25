@@ -4201,6 +4201,18 @@ CASES["FlareonFlamethrower_PlayerSelectEffect"] = [
 ]
 # <<< factory FlareonFlamethrower_PlayerSelectEffect
 
+# >>> factory Conversion1_PlayerSelectEffect
+CONTRACT["Conversion1_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["Conversion1_PlayerSelectEffect"] = [
+    {"wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": FRAME_SETUP,
+     "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000,
+     "read": {hTemp_ffa0: 1, 0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}},
+    dict(POISON, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=FRAME_SETUP,
+         keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000,
+         read={hTemp_ffa0: 1, 0xCCEB: 1, 0xCE3F: 1, 0xCE41: 1}),
+]
+# <<< factory Conversion1_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6410,3 +6422,11 @@ MUTATIONS["FlareonFlamethrower_PlayerSelectEffect"] = {
  "case_ids": ["FlareonFlamethrower_PlayerSelectEffect-0", "FlareonFlamethrower_PlayerSelectEffect-1"],
 }
 # <<< factory-mutation FlareonFlamethrower_PlayerSelectEffect
+# >>> factory-mutation Conversion1_PlayerSelectEffect
+MUTATIONS["Conversion1_PlayerSelectEffect"] = {
+ "source_symbol": "Conversion1_PlayerSelectEffect",
+ "before": "\thTemp_ffa0 = r.a;\n\treturn r;\n}",
+ "after": "\thTemp_ffa0 = (uint8_t)(r.a + 1u);\n\treturn r;\n}",
+ "case_ids": ["Conversion1_PlayerSelectEffect-0", "Conversion1_PlayerSelectEffect-1"],
+}
+# <<< factory-mutation Conversion1_PlayerSelectEffect

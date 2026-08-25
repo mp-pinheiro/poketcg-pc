@@ -37,6 +37,9 @@
 #include "home/core.h"
 #define DUELVARS_ARENA_CARD 0xBBu
 #define PLAY_AREA_ARENA 0x00u
+
+#define INPLAYAREA_OPP_ACTIVE 0x08u
+#define PLAY_AREA_BENCH_1 0x01u
 /* <<< factory statics */
 
 void ZeroObjectPositionsAndToggleOAMCopy_Bank6(void)
@@ -165,3 +168,22 @@ void OpenInPlayAreaScreen_TurnHolderPlayArea(void)
 	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
 }
 /* <<< factory OpenInPlayAreaScreen_TurnHolderPlayArea */
+
+/* >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
+void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)
+{
+	uint8_t slot = (uint8_t)(wInPlayAreaCurPosition - INPLAYAREA_OPP_ACTIVE);
+	if (slot != 0u)
+		slot = (uint8_t)(slot - (INPLAYAREA_OPP_BENCH_1 - INPLAYAREA_OPP_ACTIVE - PLAY_AREA_BENCH_1));
+	wCurPlayAreaSlot = slot;
+	DuelistVarResult duel = GetNonTurnDuelistVariable((uint8_t)(slot + DUELVARS_ARENA_CARD));
+	if (duel.a == 0xFFu)
+		return;
+	SwapTurn();
+	uint16_t card_id = GetCardIDFromDeckIndex(duel.a);
+	LoadCardDataToBuffer1_FromCardID((uint8_t)card_id);
+	wCurPlayAreaY = 0u;
+	OpenCardPage_FromCheckPlayArea(0u, 0u, 0u, 0u, 0u, (uint8_t)card_id, card_id);
+	SwapTurn();
+}
+/* <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */

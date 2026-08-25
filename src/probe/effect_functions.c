@@ -3325,6 +3325,15 @@ static void adapt_FlareonFlamethrower_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory FlareonFlamethrower_PlayerSelectEffect */
 
+/* >>> factory Conversion1_PlayerSelectEffect */
+static void adapt_Conversion1_PlayerSelectEffect(ProbeState *s)
+{
+	HandleColorChangeScreenResult r = Conversion1_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Conversion1_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3735,5 +3744,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "MagmarFlamethrower_PlayerSelectEffect", adapt_MagmarFlamethrower_PlayerSelectEffect },
 	{ "FlareonFlamethrower_PlayerSelectEffect", adapt_FlareonFlamethrower_PlayerSelectEffect },
+	{ "Conversion1_PlayerSelectEffect", adapt_Conversion1_PlayerSelectEffect },
 	{ NULL, NULL },
 };

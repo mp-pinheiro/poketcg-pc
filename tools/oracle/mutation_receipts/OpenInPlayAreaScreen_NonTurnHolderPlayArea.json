@@ -1,0 +1,9 @@
+{
+  "fn": "OpenInPlayAreaScreen_NonTurnHolderPlayArea",
+  "case": "tests/cases/play_area.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenInPlayAreaScreen_NonTurnHolderPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"84\", \"52169\": \"0000\", \"52818\": \"08\", \"65344\": \"84\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenInPlayAreaScreen_NonTurnHolderPlayArea\", \"mismatches\": {\"bus\": {\"address\": 52169, \"reference\": \"8400000884\", \"native\": \"84fd000884\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51899, 1], [52169, 2], [52818, 1], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenInPlayAreaScreen_NonTurnHolderPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"84\", \"52169\": \"0000\", \"52818\": \"08\", \"65344\": \"84\"}}, \"status\": \"PASS\"}\n"
+}

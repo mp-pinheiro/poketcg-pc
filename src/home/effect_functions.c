@@ -639,6 +639,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/tiles.h"
 #define TX_END 0x00u
 #define ColorListText 0x0046u
+
+#include "generated/hram.h"
+#include "home/effect_functions.h"
+#define C1_PLAY_AREA_ARENA 0x00u
+#define ChooseWeaknessYouWishToChangeText 0x0111u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6030,3 +6035,16 @@ PlayerPickFireEnergyCardToDiscardResult FlareonFlamethrower_PlayerSelectEffect(v
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory FlareonFlamethrower_PlayerSelectEffect */
+
+/* >>> factory Conversion1_PlayerSelectEffect */
+HandleColorChangeScreenResult Conversion1_PlayerSelectEffect(void)
+{
+	/* `xor a` leaves a = PLAY_AREA_ARENA with Z set; HandleColorChangeScreen
+	 * consumes only a, so the other registers carry no contract here. */
+	HandleColorChangeScreenResult r =
+		HandleColorChangeScreen(C1_PLAY_AREA_ARENA, 0x80u, 0u, 0u, 0u, 0u,
+				ChooseWeaknessYouWishToChangeText);
+	hTemp_ffa0 = r.a;
+	return r;
+}
+/* <<< factory Conversion1_PlayerSelectEffect */
