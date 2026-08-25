@@ -1705,6 +1705,9 @@ wNumListItems = 0xCD1B
 hWhoseTurn = 0xFF97
 wPlayerArenaCard = 0xC2BB
 wPlayerDeck = 0xC400
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wLoadedCard1AttackDescriptions = 0xCEA0
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3047,6 +3050,14 @@ CASES["PrintAndLoadAttacksToDuelTempList"] = [
 ]
 # <<< factory PrintAndLoadAttacksToDuelTempList
 
+# >>> factory DisplayPokemonAttackCardPage
+CONTRACT["DisplayPokemonAttackCardPage"] = {"compare": (), "preserve": ()}
+CASES["DisplayPokemonAttackCardPage"] = [
+    {"hl": 0x0114, "d": 0x01, "e": 0x14, "wram": {wLoadedCard1AttackDescriptions: b"\x00\x00", 0xFF80: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCC27: 1}, "vread": {0: {0x9800: 0x400}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0x0114, d=0x01, e=0x14, wram={wLoadedCard1AttackDescriptions: b"\x00\x00", 0xFF80: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCC27: 1}, vread={0: {0x9800: 0x400}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DisplayPokemonAttackCardPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4359,3 +4370,6 @@ MUTATIONS["DisplayNoBasicPokemonInHandScreen"] = {"source_symbol": "DisplayNoBas
 # >>> factory-mutation PrintAndLoadAttacksToDuelTempList
 MUTATIONS["PrintAndLoadAttacksToDuelTempList"] = {"source_symbol": "PrintAndLoadAttacksToDuelTempList", "before": "\t\tc = (uint8_t)(c + 1u);\n\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "after": "\t\t(void)PrintAttackOrPkmnPowerInformation(b, c, 0u, b, wLoadedCard1Atk1Name_ADDR);", "case_ids": ["PrintAndLoadAttacksToDuelTempList-0", "PrintAndLoadAttacksToDuelTempList-1"]}
 # <<< factory-mutation PrintAndLoadAttacksToDuelTempList
+# >>> factory-mutation DisplayPokemonAttackCardPage
+MUTATIONS["DisplayPokemonAttackCardPage"] = {"source_symbol": "DisplayPokemonAttackCardPage", "before": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);", "after": "\tPrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 3u, hl);", "case_ids": ["DisplayPokemonAttackCardPage-0", "DisplayPokemonAttackCardPage-1"]}
+# <<< factory-mutation DisplayPokemonAttackCardPage

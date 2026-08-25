@@ -1997,6 +1997,14 @@ static void adapt_PrintAndLoadAttacksToDuelTempList(ProbeState *s)
 }
 /* <<< factory PrintAndLoadAttacksToDuelTempList */
 
+/* >>> factory DisplayPokemonAttackCardPage */
+static void adapt_DisplayPokemonAttackCardPage(ProbeState *s)
+{
+	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
+	DisplayPokemonAttackCardPage(s->b, s->c, s->d, de, s->hl);
+}
+/* <<< factory DisplayPokemonAttackCardPage */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2234,5 +2242,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "RedrawTurnDuelistsMainSceneOrDuelHUD", adapt_RedrawTurnDuelistsMainSceneOrDuelHUD },
 	{ "DisplayNoBasicPokemonInHandScreen", adapt_DisplayNoBasicPokemonInHandScreen },
 	{ "PrintAndLoadAttacksToDuelTempList", adapt_PrintAndLoadAttacksToDuelTempList },
+	{ "DisplayPokemonAttackCardPage", adapt_DisplayPokemonAttackCardPage },
 	{ NULL, NULL },
 };

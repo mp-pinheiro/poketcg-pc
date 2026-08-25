@@ -1022,6 +1022,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "mem.h"
 #define CARD_DATA_ATTACK1_NAME 0x10u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5703,3 +5707,13 @@ uint8_t PrintAndLoadAttacksToDuelTempList(void)
 	return c;
 }
 /* <<< factory PrintAndLoadAttacksToDuelTempList */
+
+/* >>> factory DisplayPokemonAttackCardPage */
+void DisplayPokemonAttackCardPage(uint8_t b, uint8_t c, uint8_t d, uint16_t de, uint16_t hl)
+{
+	(void)PrintPokemonCardPageGenericInformation();
+	PrintAttackOrPkmnPowerInformationResult printed = PrintAttackOrPkmnPowerInformation(b, c, d, 2u, hl);
+	(void)printed;
+	PrintAttackOrNonPokemonCardDescription(de, 1u, 11u);
+}
+/* <<< factory DisplayPokemonAttackCardPage */
