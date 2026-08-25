@@ -1645,6 +1645,9 @@ hTempPlayAreaLocation_ff9d = 0xFF9D
 wLoadedCard1AIInfo = 0xCC64
 wLoadedCard1HP = 0xCC2C
 wSelectedAttack = 0xCCC6
+
+wDuelDisplayedScreen = 0xCAC2
+wLoadedCard1Type = 0xCC24
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2812,6 +2815,16 @@ CASES["ApplyBGP6OrSGB3ToCardImage"] = [
     dict(POISON, wram={0xCAB4: b"\x00"}),
 ]
 # <<< factory ApplyBGP6OrSGB3ToCardImage
+
+# >>> factory DrawLargePictureOfCard
+CONTRACT["DrawLargePictureOfCard"] = {"compare": (), "preserve": ()}
+CASES["DrawLargePictureOfCard"] = [
+    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
+    dict(POISON, wram={wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x00"}, read={wDuelDisplayedScreen: 1}, vread={0: {0x9800: 1}}),
+    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x01"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
+    {"wram": {wDuelDisplayedScreen: b"\x00", wLoadedCard1Type: b"\x08"}, "read": {wDuelDisplayedScreen: 1}, "vread": {0: {0x9800: 1}}},
+]
+# <<< factory DrawLargePictureOfCard
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4056,3 +4069,11 @@ MUTATIONS["ApplyBGP6OrSGB3ToCardImage"] = {
     "case_ids": ["ApplyBGP6OrSGB3ToCardImage-0", "ApplyBGP6OrSGB3ToCardImage-1"],
 }
 # <<< factory-mutation ApplyBGP6OrSGB3ToCardImage
+# >>> factory-mutation DrawLargePictureOfCard
+MUTATIONS["DrawLargePictureOfCard"] = {
+    "source_symbol": "DrawLargePictureOfCard",
+    "before": "wDuelDisplayedScreen = LARGE_CARD_PICTURE;",
+    "after": "wDuelDisplayedScreen = 0u;",
+    "case_ids": ["DrawLargePictureOfCard-0"],
+}
+# <<< factory-mutation DrawLargePictureOfCard

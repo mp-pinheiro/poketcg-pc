@@ -1849,6 +1849,14 @@ static void adapt_ApplyBGP6OrSGB3ToCardImage(ProbeState *s)
 }
 /* <<< factory ApplyBGP6OrSGB3ToCardImage */
 
+/* >>> factory DrawLargePictureOfCard */
+static void adapt_DrawLargePictureOfCard(ProbeState *s)
+{
+	(void)s;
+	DrawLargePictureOfCard();
+}
+/* <<< factory DrawLargePictureOfCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2068,5 +2076,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfArenaCardIsFullyPowered", adapt_CheckIfArenaCardIsFullyPowered },
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "ApplyBGP6OrSGB3ToCardImage", adapt_ApplyBGP6OrSGB3ToCardImage },
+	{ "DrawLargePictureOfCard", adapt_DrawLargePictureOfCard },
 	{ NULL, NULL },
 };

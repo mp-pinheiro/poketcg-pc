@@ -1,0 +1,9 @@
+{
+  "fn": "DrawLargePictureOfCard",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawLargePictureOfCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"00\"}}, \"wram\": {\"51906\": \"08\", \"52260\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawLargePictureOfCard\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"0800\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51906, 1], [52260, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawLargePictureOfCard\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"00\"}}, \"wram\": {\"51906\": \"08\", \"52260\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

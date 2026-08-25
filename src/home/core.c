@@ -899,6 +899,17 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 
 #include "home/sgb.h"
+
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/credits_sequence_commands.h"
+#include "home/duel_core.h"
+#include "home/tiles.h"
+#define HEADER_ENERGY 0x01u
+#define HEADER_POKEMON 0x02u
+#define HEADER_TRAINER 0x00u
+#define LARGE_CARD_PICTURE 0x08u
+#define LARGE_CARD_TILE_DATA 0x5EB7u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5171,3 +5182,33 @@ SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uin
 	return (SendCardAttrBlkPacketResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory ApplyBGP6OrSGB3ToCardImage */
+
+/* >>> factory DrawLargePictureOfCard */
+void DrawLargePictureOfCard(void)
+{
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	SetDefaultConsolePalettes();
+	wDuelDisplayedScreen = LARGE_CARD_PICTURE;
+	(void)LoadCardOrDuelMenuBorderTiles();
+	uint8_t header = HEADER_TRAINER;
+	uint8_t type = wLoadedCard1Type;
+	if (type != TYPE_TRAINER) {
+		header = HEADER_ENERGY;
+		if ((type & TYPE_ENERGY) == 0u)
+			header = HEADER_POKEMON;
+	}
+	(void)LoadCardTypeHeaderTiles(header);
+	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+	uint16_t hl = LARGE_CARD_TILE_DATA;
+	uint16_t de = 0u;
+	uint8_t a = 0u;
+	uint8_t b = 0u;
+	uint8_t c = 0u;
+	WriteDataBlocksToBGMap0(&hl, &de, &a, &b, &c);
+	(void)ApplyBGP6OrSGB3ToCardImage(a, 0u, b, c, 6u, 3u, hl);
+}
+/* <<< factory DrawLargePictureOfCard */
