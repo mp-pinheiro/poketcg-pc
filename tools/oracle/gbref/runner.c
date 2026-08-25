@@ -610,6 +610,7 @@ int main(int argc, char **argv) {
     uint64_t steps = 0;
     uint64_t cycles = 0;
     size_t input_index = 0;
+    uint64_t frame_cycles = 0;
     g_joypad_buttons = input_count ? input_buttons[0] : 0xff;
     g_joypad_dpad = input_count ? input_dpad[0] : 0xff;
     for (size_t i = 0; i < setup_count; i++) {
@@ -706,9 +707,22 @@ int main(int argc, char **argv) {
          * that boundary here after the instruction has completed.  IF/IE and
          * HALT state are intentionally left intact; the next debug step
          * observes the pending interrupt through the normal GBRT path.
+         *
+         * With the LCD disabled the PPU publishes no frames at all, so the
+         * input timeline has to be driven by elapsed time instead. Without
+         * that, a routine polling the joypad with the screen off - DoFrame's
+         * game_paused_loop, say - never observes a second key state and spins
+         * until its budget dies. One DMG frame is 70224 cycles.
          */
-        if (gb_frame_complete(ctx)) {
+        frame_cycles += delta;
+        int boundary = gb_frame_complete(ctx);
+        if (boundary) {
             gb_reset_frame(ctx);
+        } else if (!(gb_read8(ctx, 0xff40) & 0x80) && frame_cycles >= 70224u) {
+            boundary = 1;
+        }
+        if (boundary) {
+            frame_cycles = 0;
             if (input_count > 1) {
                 input_index = (input_index + 1) % input_count;
                 g_joypad_buttons = input_buttons[input_index];
