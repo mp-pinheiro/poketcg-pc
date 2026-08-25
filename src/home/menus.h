@@ -84,4 +84,7 @@ HandleMenuInputResult HandleMenuInput(void);
 typedef struct { uint8_t a; uint8_t d; uint8_t e; uint8_t f; } HandleCardListInputResult;
 HandleCardListInputResult HandleCardListInput(void);
 /* <<< factory HandleCardListInput */
+/* >>> factory HandleDuelMenuInput */
+HandleMenuInputResult HandleDuelMenuInput(uint8_t e);
+/* <<< factory HandleDuelMenuInput */
 #endif

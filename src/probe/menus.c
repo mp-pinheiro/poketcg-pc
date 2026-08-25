@@ -251,6 +251,16 @@ static void adapt_HandleCardListInput(ProbeState *s)
 }
 /* <<< factory HandleCardListInput */
 
+/* >>> factory HandleDuelMenuInput */
+static void adapt_HandleDuelMenuInput(ProbeState *s)
+{
+	HandleMenuInputResult r = HandleDuelMenuInput(s->e);
+	s->a = r.a;
+	s->e = r.e;
+	s->f = r.f;
+}
+/* <<< factory HandleDuelMenuInput */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -288,5 +298,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "CardListMenuFunction", adapt_CardListMenuFunction },
 	{ "HandleMenuInput", adapt_HandleMenuInput },
 	{ "HandleCardListInput", adapt_HandleCardListInput },
+	{ "HandleDuelMenuInput", adapt_HandleDuelMenuInput },
 	{ NULL, NULL },
 };

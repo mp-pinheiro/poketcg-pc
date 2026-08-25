@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDuelMenuInput",
+  "case": "tests/cases/menus.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDuelMenuInput\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 32, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52495\": \"0200\", \"65423\": \"00\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDuelMenuInput\", \"mismatches\": {\"f\": [32, 0]}}\n",
+  "restored": "{\"fn\": \"HandleDuelMenuInput\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 32, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52495\": \"0200\", \"65423\": \"00\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

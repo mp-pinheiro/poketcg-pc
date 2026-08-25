@@ -683,3 +683,53 @@ HandleCardListInputResult HandleCardListInput(void)
 	return result;
 }
 /* <<< factory HandleCardListInput */
+
+/* >>> factory HandleDuelMenuInput */
+HandleMenuInputResult HandleDuelMenuInput(uint8_t e)
+{
+	static const uint8_t coords[12] = {2u,14u, 2u,16u, 8u,14u, 8u,16u, 14u,14u, 14u,16u};
+	uint8_t dpad = hDPadHeld;
+	if (dpad != 0u) {
+		uint8_t b = dpad;
+		uint8_t item = wCurMenuItem;
+		uint8_t moved = 1u;
+		if ((b & (PAD_UP | PAD_DOWN)) != 0u) {
+			item = (uint8_t)(item ^ 1u);
+		} else if ((b & PAD_LEFT) != 0u) {
+			if (item >= 2u)
+				item = (uint8_t)(item - 2u);
+			else
+				item = (uint8_t)((item & 1u) + 4u);
+		} else if ((b & PAD_RIGHT) != 0u) {
+			item = (uint8_t)(item + 2u);
+			if (item >= 6u)
+				item = (uint8_t)(item & 1u);
+		} else {
+			moved = 0u;
+			if ((b & PAD_A) != 0u) {
+				(void)PlayOpenOrExitScreenSFX(0u, 0x00u);
+				uint8_t e2 = wCurMenuItem;
+				uint8_t a2 = hCurMenuItem;
+				return (HandleMenuInputResult){a2, e2, 0x10u};
+			}
+		}
+		if (moved != 0u) {
+			PlaySFX(SFX_CURSOR);
+			uint8_t old_item = wCurMenuItem;
+			WriteByteToBGMap0(SYM_SPACE, coords[(uint8_t)(old_item * 2u)], coords[(uint8_t)(old_item * 2u + 1u)]);
+			wCurMenuItem = item;
+			hCurMenuItem = item;
+			wCursorBlinkCounter = 0u;
+		}
+	}
+	uint8_t counter = wCursorBlinkCounter;
+	wCursorBlinkCounter = (uint8_t)(counter + 1u);
+	uint8_t masked = (uint8_t)(counter & 0x0Fu);
+	if (masked != 0u)
+		return (HandleMenuInputResult){masked, e, 0x20u};
+	uint8_t item2 = wCurMenuItem;
+	uint8_t tile = ((wCursorBlinkCounter & 0x10u) != 0u) ? SYM_SPACE : SYM_CURSOR_R;
+	WriteByteToBGMap0(tile, coords[(uint8_t)(item2 * 2u)], coords[(uint8_t)(item2 * 2u + 1u)]);
+	return (HandleMenuInputResult){item2, item2, (item2 == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory HandleDuelMenuInput */
