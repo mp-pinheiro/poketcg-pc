@@ -314,6 +314,64 @@ def _context_is_stale(fn: str) -> bool:
     except (LookupError, OSError, RuntimeError, ValueError):
         return False
 
+# Cross-routine trap short-circuit: a red whose diagnostic names a harness
+# failure identity (status, pc) already documented by several blocked.toml
+# stanzas is rediscovering a known root cause; retire it immediately instead of
+# burning its remaining generations (12 attempts were spent re-deriving the
+# AIPlay_* root cause on AITryToRetreat alone). Guards: only hang/divergence
+# statuses cluster (ordinary PORT mismatches also print a pc), the pc must
+# match exactly and be nonzero (pc drifts across siblings of one root cause,
+# so an exact repeat at one nonzero pc across two routines is already strong;
+# pc=0 is a missing-value artifact), at least _CLUSTER_MIN_STANZAS stanzas
+# must already name the identity, and generations 0-1 always get their honest
+# retry.
+_CLUSTER_STATUS = re.compile(r"BUDGET_EXHAUSTED|REFERENCE_DIVERGENCE")
+_CLUSTER_PC = re.compile(r"[\"']?pc[\"']?\s*[:=]\s*(\d+)")
+_CLUSTER_MIN_STANZAS = 2
+_CLUSTER_MIN_GENERATION = 2
+
+
+def _cluster_keys(text: str) -> set[tuple[str, int]]:
+    """(status, pc) harness-failure identities named in `text`."""
+    statuses = set(_CLUSTER_STATUS.findall(text))
+    pcs = {int(pc) for pc in _CLUSTER_PC.findall(text) if int(pc) != 0}
+    return {(status, pc) for status in statuses for pc in pcs}
+
+
+def _blocked_cluster_index(root: Path) -> dict[tuple[str, int], dict[str, Any]]:
+    """Map documented (status, pc) identities to their first stanza and count."""
+    path = root / ".factory" / BLOCKED_NAME
+    if not path.is_file():
+        return {}
+    index: dict[tuple[str, int], dict[str, Any]] = {}
+    for stanza in tomllib.loads(path.read_text()).get("blocked", []):
+        reason = str(stanza.get("reason") or "")
+        phase = re.search(r"phase=([\w-]+)", reason)
+        for key in _cluster_keys(reason):
+            row = index.setdefault(key, {
+                "name": str(stanza.get("name") or ""),
+                "unblock": str(stanza.get("unblock") or ""),
+                "phase": phase.group(1) if phase else "",
+                "count": 0,
+            })
+            row["count"] += 1
+    return index
+
+
+def _cluster_match(index: dict[tuple[str, int], dict[str, Any]], fn: str,
+                   phase: str, detail: str) -> tuple[tuple[str, int], dict[str, Any]] | None:
+    """First documented identity this diagnostic rediscovers, if any."""
+    for key in sorted(_cluster_keys(str(detail or ""))):
+        row = index.get(key)
+        if row is None or row["count"] < _CLUSTER_MIN_STANZAS:
+            continue
+        if row["name"] == fn:
+            continue
+        if row["phase"] and phase and row["phase"] != phase:
+            continue
+        return key, row
+    return None
+
 
 def retire_exhausted_reds(states: dict[str, dict[str, Any]],
                           rows: dict[str, dict[str, Any]], *,
@@ -330,6 +388,7 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
     import try_one
 
     prefix = "HEAL " if apply else "HEAL would-"
+    cluster_index = _blocked_cluster_index(root)
     entries: list[dict[str, Any]] = []
     for fn in sorted(states):
         state = states[fn]
@@ -340,7 +399,11 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
             continue
         generation = int(state.get("generation", 0))
         trapped = try_one.is_trapped(fn, state)
-        if generation < retry_limit and not trapped:
+        phase, failure_class, detail = _last_diagnostic(fn, state)
+        cluster = None
+        if generation >= _CLUSTER_MIN_GENERATION:
+            cluster = _cluster_match(cluster_index, fn, phase, detail)
+        if generation < retry_limit and not trapped and cluster is None:
             continue
         if _context_is_stale(fn):
             if apply:
@@ -350,8 +413,22 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
             print(f"{prefix}refresh {fn} generation={generation} "
                   f"detail=translation context changed since its last attempt")
             continue
-        phase, failure_class, detail = _last_diagnostic(fn, state)
         source = str(row.get("source") or "")
+        if cluster is not None:
+            (status, pc), matched = cluster
+            entries.append({
+                "name": fn,
+                "reason": (
+                    f"AUTO-RETIRED (cluster): matches {matched['name']} on "
+                    f"{status} pc={pc} ({matched['count']} stanzas). "
+                    f"{source}:{row.get('line')} (basename `{Path(source).stem}`). "
+                    f"generation={generation}; last diagnostic phase={phase} "
+                    f"failure_class={failure_class} detail={detail}"
+                ),
+                "unblock": matched["unblock"],
+            })
+            print(f"{prefix}cluster-retired {fn} matches={matched['name']}")
+            continue
         entries.append({
             "name": fn,
             "reason": (
