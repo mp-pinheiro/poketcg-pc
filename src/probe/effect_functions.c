@@ -3273,6 +3273,14 @@ static void adapt_DestinyBond_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory DestinyBond_PlayerSelectEffect */
 
+/* >>> factory FlamesOfRage_PlayerSelectEffect */
+static void adapt_FlamesOfRage_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	FlamesOfRage_PlayerSelectEffect();
+}
+/* <<< factory FlamesOfRage_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3677,5 +3685,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
 	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
 	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
+	{ "FlamesOfRage_PlayerSelectEffect", adapt_FlamesOfRage_PlayerSelectEffect },
 	{ NULL, NULL },
 };

@@ -1361,6 +1361,9 @@ StarmieRecover_PlayerSelectEffectResult StarmieRecover_PlayerSelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; } DestinyBond_PlayerSelectEffectResult;
 DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void);
 /* <<< factory DestinyBond_PlayerSelectEffect */
+/* >>> factory FlamesOfRage_PlayerSelectEffect */
+void FlamesOfRage_PlayerSelectEffect(void);
+/* <<< factory FlamesOfRage_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

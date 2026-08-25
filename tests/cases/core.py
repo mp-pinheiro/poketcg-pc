@@ -3206,11 +3206,11 @@ CASES["PrintPracticeDuelInstructions_Fast"] = [
 CONTRACT["PracticeDuel_RepeatInstructions"] = {"compare": ("f",), "preserve": ()}
 CASES["PracticeDuel_RepeatInstructions"] = [
     {"keys": [0x00, 0x01], "instruction_budget": 4000000, "cycle_budget": 16000000,
-     "wram": {0xCABB: b"\x00"},
+     "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"},
      "setup": [{"fn": "CopyDMAFunction"},
                {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
     dict(POISON, keys=[0x00, 0x01], instruction_budget=4000000, cycle_budget=16000000,
-         wram={0xCABB: b"\x00"},
+         wram={0xCABB: b"\x80", 0xFF40: b"\x80"},
          setup=[{"fn": "CopyDMAFunction"},
                 {"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
@@ -4596,10 +4596,10 @@ MUTATIONS["PrintPracticeDuelInstructions_Fast"] = {"source_symbol": "PrintPracti
 # <<< factory-mutation PrintPracticeDuelInstructions_Fast
 # >>> factory-mutation PracticeDuel_RepeatInstructions
 MUTATIONS["PracticeDuel_RepeatInstructions"] = {
-    "source_symbol": "PracticeDuel_RepeatInstructions",
-    "before": "uint8_t PracticeDuel_RepeatInstructions(void)\n{\n\tPrintPracticeDuelDrMasonInstructions(FollowMyGuidancePracticeDuelText);\n\tBankswitchSRAM(sBackupCurrentDuel_BANK);\n\tLoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);\n\tBankswitchSRAM(0u);\n\t/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */\n\treturn 0x90u;\n}",
-    "after": "uint8_t PracticeDuel_RepeatInstructions(void)\n{\n\tPrintPracticeDuelDrMasonInstructions(FollowMyGuidancePracticeDuelText);\n\tBankswitchSRAM(sBackupCurrentDuel_BANK);\n\tLoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);\n\tBankswitchSRAM(0u);\n\t/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */\n\treturn 0x00u;\n}",
-    "case_ids": ["PracticeDuel_RepeatInstructions-0", "PracticeDuel_RepeatInstructions-1"],
+ "source_symbol": "PracticeDuel_RepeatInstructions",
+ "before": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x90u;",
+ "after": "\t * clear it, so the caller sees Z|C, not carry alone. */\n\treturn 0x00u;",
+ "case_ids": ["PracticeDuel_RepeatInstructions-0", "PracticeDuel_RepeatInstructions-1"],
 }
 # <<< factory-mutation PracticeDuel_RepeatInstructions
 # >>> factory-mutation _DisplayCardDetailScreen

@@ -614,6 +614,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "mem.h"
+#define ChooseAndDiscard2FireEnergyCardsText 0x011fu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5943,3 +5951,25 @@ DestinyBond_PlayerSelectEffectResult DestinyBond_PlayerSelectEffect(void)
 	return (DestinyBond_PlayerSelectEffectResult){hTempList, result.f};
 }
 /* <<< factory DestinyBond_PlayerSelectEffect */
+
+/* >>> factory FlamesOfRage_PlayerSelectEffect */
+void FlamesOfRage_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2FireEnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateListOfFireEnergyAttachedToArena();
+	{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult menu;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		if ((menu.f & 0x10u) != 0u)
+			return;
+		uint16_t hl = GetNextPositionInTempList();
+		gb_write8(hl, hTempCardIndex_ff98);
+		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+		if (hCurSelectionItem >= 2u)
+			return;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+	}
+}
+/* <<< factory FlamesOfRage_PlayerSelectEffect */

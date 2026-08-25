@@ -345,10 +345,10 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "HandleMenuInput", adapt_HandleMenuInput },
 	{ "HandleCardListInput", adapt_HandleCardListInput },
 	{ "HandleDuelMenuInput", adapt_HandleDuelMenuInput },
-	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
 	{ "TwoItemHorizontalMenu", adapt_TwoItemHorizontalMenu },
 	{ "YesOrNoMenu", adapt_YesOrNoMenu },
 	{ "YesOrNoMenuWithText", adapt_YesOrNoMenuWithText },
 	{ "YesOrNoMenuWithText_SetCursorToYes", adapt_YesOrNoMenuWithText_SetCursorToYes },
+	{ "YesOrNoMenuWithText_LeftAligned", adapt_YesOrNoMenuWithText_LeftAligned },
 	{ NULL, NULL },
 };

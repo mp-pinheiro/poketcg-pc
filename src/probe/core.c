@@ -2380,9 +2380,9 @@ const ProbeEntry probe_entries_core[] = {
 	{ "HandleEnergyDiscardMenuInput", adapt_HandleEnergyDiscardMenuInput },
 	{ "DisplayRetreatScreen", adapt_DisplayRetreatScreen },
 	{ "PrintPracticeDuelInstructions_Fast", adapt_PrintPracticeDuelInstructions_Fast },
-	{ "PracticeDuel_RepeatInstructions", adapt_PracticeDuel_RepeatInstructions },
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "_DisplayCardDetailScreen", adapt__DisplayCardDetailScreen },
 	{ "OpenCardPage", adapt_OpenCardPage },
+	{ "PracticeDuel_RepeatInstructions", adapt_PracticeDuel_RepeatInstructions },
 	{ NULL, NULL },
 };

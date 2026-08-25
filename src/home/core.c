@@ -6008,7 +6008,8 @@ uint8_t PracticeDuel_RepeatInstructions(void)
 	BankswitchSRAM(sBackupCurrentDuel_BANK);
 	LoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);
 	BankswitchSRAM(0u);
-	/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */
+	/* `xor a` for the SRAM0 bank leaves Z set and the trailing `scf` does not
+	 * clear it, so the caller sees Z|C, not carry alone. */
 	return 0x90u;
 }
 /* <<< factory PracticeDuel_RepeatInstructions */
