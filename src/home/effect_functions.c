@@ -597,6 +597,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/effect_functions.h"
 #include "home/switch_rom.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#define SR_PLAY_AREA_ARENA 0x00u
+#define SR_BANK_DUEL_CORE 0x01u
+#define SR_TYPE_ENERGY_WATER 0x0Bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5846,3 +5854,10 @@ PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void)
 	return (PlayerPickFireEnergyCardToDiscardResult){card, input.f};
 }
 /* <<< factory PlayerPickFireEnergyCardToDiscard */
+
+/* >>> factory ArcanineFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory ArcanineFlamethrower_PlayerSelectEffect */

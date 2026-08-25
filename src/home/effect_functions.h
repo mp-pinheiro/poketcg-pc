@@ -1343,6 +1343,9 @@ Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void);
 typedef struct { uint8_t a; uint8_t f; } PlayerPickFireEnergyCardToDiscardResult;
 PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void);
 /* <<< factory PlayerPickFireEnergyCardToDiscard */
+/* >>> factory ArcanineFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(void);
+/* <<< factory ArcanineFlamethrower_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
