@@ -5745,3 +5745,11 @@ void DisplayCardPage_PokemonAttack2Page1(uint8_t b, uint8_t c, uint8_t d)
 	DisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);
 }
 /* <<< factory DisplayCardPage_PokemonAttack2Page1 */
+
+/* >>> factory DisplayAttackPage_Attack1Page1 */
+void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)
+{
+	DisplayCardPage_PokemonAttack1Page1(b, c, d);
+	SwitchAttackPage();
+}
+/* <<< factory DisplayAttackPage_Attack1Page1 */

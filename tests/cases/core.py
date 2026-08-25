@@ -3090,6 +3090,14 @@ CASES["DisplayCardPage_PokemonAttack2Page1"] = [
 ]
 # <<< factory DisplayCardPage_PokemonAttack2Page1
 
+# >>> factory DisplayAttackPage_Attack1Page1
+CONTRACT["DisplayAttackPage_Attack1Page1"] = {"compare": (), "preserve": ()}
+CASES["DisplayAttackPage_Attack1Page1"] = [
+    {"wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x14\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCC34: b"\x14\x01", 0xCC36: b"\x11\x01\x14\x01\x01", 0xFF80: b"\x01", 0xCABB: b"\x00", 0xCC04: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "vread": {0: {0x9800: 0x400}}, "read": {0xCC04: 0x01}, "instruction_budget": 2000000, "cycle_budget": 8000000}
+]
+# <<< factory DisplayAttackPage_Attack1Page1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4417,3 +4425,6 @@ MUTATIONS["DisplayCardPage_PokemonAttack1Page2"] = {"source_symbol": "DisplayCar
 # >>> factory-mutation DisplayCardPage_PokemonAttack2Page1
 MUTATIONS["DisplayCardPage_PokemonAttack2Page1"] = {"source_symbol": "DisplayCardPage_PokemonAttack2Page1", "before": "\tDisplayPokemonAttackCardPage(b, c, d, wLoadedCard1Atk2Description_ADDR, wLoadedCard1Atk2Name_ADDR);", "after": "\tDisplayPokemonAttackCardPage(b, c, d, (uint16_t)(wLoadedCard1Atk2Description_ADDR + 1u), wLoadedCard1Atk2Name_ADDR);", "case_ids": ["DisplayCardPage_PokemonAttack2Page1-0", "DisplayCardPage_PokemonAttack2Page1-1"]}
 # <<< factory-mutation DisplayCardPage_PokemonAttack2Page1
+# >>> factory-mutation DisplayAttackPage_Attack1Page1
+MUTATIONS["DisplayAttackPage_Attack1Page1"] = {"source_symbol": "DisplayAttackPage_Attack1Page1", "before": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\tSwitchAttackPage();", "after": "void DisplayAttackPage_Attack1Page1(uint8_t b, uint8_t c, uint8_t d)\n{\n\tDisplayCardPage_PokemonAttack1Page1(b, c, d);\n\t(void)0;", "case_ids": ["DisplayAttackPage_Attack1Page1-0", "DisplayAttackPage_Attack1Page1-1"]}
+# <<< factory-mutation DisplayAttackPage_Attack1Page1
