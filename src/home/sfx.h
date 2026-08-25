@@ -21,4 +21,7 @@ typedef struct {
 } SFX_endResult;
 SFX_endResult SFX_end(uint8_t b, uint8_t c, uint16_t caller_hl);
 /* <<< factory SFX_end */
+/* >>> factory SFX_frequency */
+void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high);
+/* <<< factory SFX_frequency */
 #endif

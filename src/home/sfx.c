@@ -14,6 +14,11 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define rAUD1ENV 0xFF12u
+
+#include "home/sfx.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define rAUD1LEN 0xFF11u
 /* <<< factory statics */
 
 #define SFX_BANK 0x3Fu
@@ -435,3 +440,31 @@ SFX_endResult SFX_end(uint8_t b, uint8_t c, uint16_t caller_hl)
 	return (SFX_endResult){0x80u, 0x00u, b, c, d, e, caller_hl};
 }
 /* <<< factory SFX_end */
+
+/* >>> factory SFX_frequency */
+void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
+{
+	uint8_t d = high;
+	uint8_t e = gb_read8(caller_hl);
+	caller_hl = (uint16_t)(caller_hl + 1u);
+	uint16_t freq_addr = (uint16_t)(wde37_ADDR + bc + bc);
+	uint8_t old_low = gb_read8(freq_addr);
+	gb_write8(freq_addr, e);
+	gb_write8((uint16_t)(freq_addr + 1u), d);
+	uint8_t c = (uint8_t)bc;
+	if (c == 3u) {
+		d = (uint8_t)((uint8_t)((old_low ^ e) & 0x08u) << 4u);
+	}
+	uint16_t env_addr = (uint16_t)(wde2b_ADDR + bc);
+	uint8_t env = gb_read8(env_addr);
+	gb_write8(env_addr, 0u);
+	d = (uint8_t)(env | d);
+	uint16_t reg = (uint16_t)(rAUD1LEN + (uint16_t)c * 5u);
+	uint8_t length = gb_read8(reg);
+	gb_write8(reg, (uint8_t)(length & 0xC0u));
+	gb_write8((uint16_t)(reg + 2u), e);
+	gb_write8((uint16_t)(reg + 3u), d);
+	uint16_t de = caller_hl;
+	Func_fc105(bc, de);
+}
+/* <<< factory SFX_frequency */

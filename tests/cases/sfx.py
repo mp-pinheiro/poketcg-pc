@@ -72,6 +72,16 @@ CASES["SFX_end"] = [
 ]
 # <<< factory SFX_end
 
+# >>> factory SFX_frequency
+CONTRACT["SFX_frequency"] = {"compare": (), "preserve": ()}
+CASES["SFX_frequency"] = [
+    {"stack": [0], "wram": {0xDE37: b"\x00\x00", 0xDE2B: b"\x00"}, "hram": {0xFF11: b"\x00"}, "read": {0xDE4B: 2}},
+    {"a": 0x12, "c": 0, "stack": [0xC500], "wram": {0xC500: b"\x34", 0xDE37: b"\x78\x56", 0xDE2B: b"\x20"}, "hram": {0xFF11: b"\xC0"}, "read": {0xDE4B: 2}},
+    {"a": 0xAB, "c": 3, "stack": [0xC510], "wram": {0xC510: b"\x41", 0xDE3D: b"\x49\x00", 0xDE2E: b"\x10"}, "hram": {0xFF20: b"\x80"}, "read": {0xDE4B: 2}},
+    dict(POISON, stack=[0x1234], read={0xDE4B: 2})
+]
+# <<< factory SFX_frequency
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -99,3 +109,6 @@ MUTATIONS["SFX_end"] = {
     "case_ids": ["SFX_end-0", "SFX_end-1", "SFX_end-2", "SFX_end-3"]
 }
 # <<< factory-mutation SFX_end
+# >>> factory-mutation SFX_frequency
+MUTATIONS["SFX_frequency"] = {"source_symbol": "SFX_frequency", "before": "\tuint16_t de = caller_hl;", "after": "\tuint16_t de = (uint16_t)(caller_hl + 2u);", "case_ids": ["SFX_frequency-0", "SFX_frequency-1", "SFX_frequency-2"]}
+# <<< factory-mutation SFX_frequency

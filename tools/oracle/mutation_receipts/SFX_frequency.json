@@ -1,0 +1,9 @@
+{
+  "fn": "SFX_frequency",
+  "case": "tests/cases/sfx.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SFX_frequency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56875\": \"00\", \"56887\": \"c900\", \"56907\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SFX_frequency\", \"mismatches\": {\"bus\": {\"address\": 56907, \"reference\": \"00c9000100\", \"native\": \"00c9000300\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[56875, 1], [56887, 2], [56907, 2]]}}}\n",
+  "restored": "{\"fn\": \"SFX_frequency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56875\": \"00\", \"56887\": \"c900\", \"56907\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}
