@@ -179,8 +179,19 @@ def resolve(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
         return routine, packets[0]
 
 
-def dispatch_line(fn: str, run_dir: Path, index: int) -> str:
-    return (f"task(agent=\"port-candidate\", task=\"Read {run_dir / 'prompt.txt'} and write the "
+# Retry model ladder: generations 0-5 use the session task model, 6-11 switch
+# model family (cross-model diversity beats same-model resampling on
+# correlated failures), 12+ spend the strongest model. Retry limit is 16.
+LADDER = ((12, "port-candidate-max"), (6, "port-candidate-hard"))
+
+
+def dispatch_line(fn: str, run_dir: Path, index: int, generation: int) -> str:
+    agent = "port-candidate"
+    for floor, name in LADDER:
+        if generation >= floor:
+            agent = name
+            break
+    return (f"task(agent=\"{agent}\", task=\"Read {run_dir / 'prompt.txt'} and write the "
             f"TranslationReplyV2 JSON object it asks for to "
             f"{run_dir / f'candidate-{index}.json'}. Emit no prose.\")")
 
@@ -865,7 +876,8 @@ def main(argv: list[str] | None = None) -> int:
             path = run_dir / f"candidate-{index}.json"
             if not path.is_file() and arguments.wait <= 0:
                 print(f"awaiting candidate {index}: {path}")
-                print(dispatch_line(fn, run_dir, index))
+                print(dispatch_line(fn, run_dir, index,
+                                    issued["current"].get("generation", 0)))
                 continue
             try:
                 reply = await_candidate(path, arguments.wait)
