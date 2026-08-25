@@ -673,3 +673,8 @@ unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_Pri
 name = "PrinterMenu_QuitPrint"
 reason = "AUTO-RETIRED: src/engine/menus/printer.asm:261 (basename `printer`). 10 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PrinterMenu_QuitPrint-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9091,\"sp\":65508,\"instructions\":995581,\"cycles\":8000000}"
 unblock = "read the recorded diagnostics under .factory/try/PrinterMenu_QuitPrint/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "OpenCardPage"
+reason = "AUTO-RETIRED: src/engine/duel/core.asm:3489 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/OpenCardPage/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
