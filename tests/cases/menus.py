@@ -286,6 +286,13 @@ wNumListItems = 0xCD1B
 wListItemXPosition = 0xCD1A
 wListItemNameMaxLength = 0xCD1C
 wDefaultText = 0xC590
+
+hffb0 = 0xFFB0
+wDuelTempList = 0xC510
+wListScrollOffset = 0xCD19
+wMenuCursorYOffset = 0xCD12
+wNumMenuItems = 0xCD14
+wNumListItems = 0xCD1B
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -330,6 +337,14 @@ CASES["ReloadCardListItems"] = [
     dict(POISON, wram={wListScrollOffset: b"\x01", wMenuCursorYOffset: b"\x0a", wNumMenuItems: b"\x02", wNumListItems: b"\x05", wDuelTempList + 1: b"\xff"}, read={0x9932: 1, 0x99b2: 1}),
 ]
 # <<< factory ReloadCardListItems
+
+# >>> factory Func_2827
+CONTRACT["Func_2827"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Func_2827"] = [
+    {"wram": {wListScrollOffset: b"\x00", wMenuCursorYOffset: b"\x0a", wNumMenuItems: b"\x03", wNumListItems: b"\x03", wDuelTempList: b"\xff"}, "read": {hffb0: 1, 0x9932: 1, 0x99d2: 1}},
+    dict(POISON, wram={wListScrollOffset: b"\x01", wMenuCursorYOffset: b"\x0a", wNumMenuItems: b"\x02", wNumListItems: b"\x05", wDuelTempList + 1: b"\xff"}, read={hffb0: 1, 0x9932: 1, 0x99b2: 1}),
+]
+# <<< factory Func_2827
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -378,3 +393,11 @@ MUTATIONS["ReloadCardListItems"] = {
     "case_ids": ["ReloadCardListItems-0", "ReloadCardListItems-1"],
 }
 # <<< factory-mutation ReloadCardListItems
+# >>> factory-mutation Func_2827
+MUTATIONS["Func_2827"] = {
+    "source_symbol": "Func_2827",
+    "before": "\tgb_write8(hffb0_ADDR, 0x00u);",
+    "after": "\tgb_write8(hffb0_ADDR, 0x01u);",
+    "case_ids": ["Func_2827-0", "Func_2827-1"],
+}
+# <<< factory-mutation Func_2827

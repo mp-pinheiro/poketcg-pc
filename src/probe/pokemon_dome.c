@@ -55,6 +55,20 @@ static void adapt_PokemonDomeLoadMap(ProbeState *s)
 }
 /* <<< factory PokemonDomeLoadMap */
 
+/* >>> factory PokemonDomeAfterDuel */
+static void adapt_PokemonDomeAfterDuel(ProbeState *s)
+{
+	PokemonDomeAfterDuelResult r = PokemonDomeAfterDuel();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory PokemonDomeAfterDuel */
+
 const ProbeEntry probe_entries_pokemon_dome[] = {
 	{"Func_f762", adapt_Func_f762},
 	{"Func_f782", adapt_Func_f782},
@@ -63,5 +77,6 @@ const ProbeEntry probe_entries_pokemon_dome[] = {
 	{ "PokemonDomeCloseTextBox", adapt_PokemonDomeCloseTextBox },
 	{ "PokemonDomeMovePlayer", adapt_PokemonDomeMovePlayer },
 	{ "PokemonDomeLoadMap", adapt_PokemonDomeLoadMap },
+	{ "PokemonDomeAfterDuel", adapt_PokemonDomeAfterDuel },
 	{NULL, NULL},
 };

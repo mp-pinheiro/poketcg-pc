@@ -206,6 +206,14 @@ static void adapt_ReloadCardListItems(ProbeState *s)
 }
 /* <<< factory ReloadCardListItems */
 
+/* >>> factory Func_2827 */
+static void adapt_Func_2827(ProbeState *s)
+{
+	(void)s;
+	Func_2827();
+}
+/* <<< factory Func_2827 */
+
 const ProbeEntry probe_entries_menus[] = {
 	{ "InitializeCardListParameters", adapt_InitializeCardListParameters },
 	{ "InitializeMenuParameters", adapt_InitializeMenuParameters },
@@ -238,5 +246,6 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
 	{ "CopyCardNameAndLevel", adapt_CopyCardNameAndLevel },
 	{ "ReloadCardListItems", adapt_ReloadCardListItems },
+	{ "Func_2827", adapt_Func_2827 },
 	{ NULL, NULL },
 };

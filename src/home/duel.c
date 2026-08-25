@@ -483,6 +483,19 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "home/tiles.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/objects.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "home/tiles.h"
+#define DuelistsPlayAreaText 0x0247u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2395,3 +2408,53 @@ void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de)
 		(uint8_t)(de >> 8), (uint8_t)de, 0x0601u);
 }
 /* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */
+
+/* >>> factory _DrawYourOrOppPlayAreaScreen */
+void _DrawYourOrOppPlayAreaScreen(void)
+{
+	static const uint8_t player_prizes[] = {12u, 2u, 14u, 2u, 12u, 4u, 14u, 4u, 12u, 6u, 14u, 6u};
+	static const uint8_t opponent_prizes[] = {12u, 12u, 14u, 12u, 12u, 14u, 14u, 14u, 12u, 16u, 14u, 16u};
+	const uint16_t prize_coords = 0xC100u;
+	gb_write8(wTileMapFill_ADDR, 0u);
+	ZeroObjectPositions();
+	gb_write8(wVBlankOAMCopyToggle_ADDR, TRUE);
+	DoFrame();
+	EmptyScreen();
+	Set_OBJ_8x8();
+	LoadCursorTile();
+	(void)LoadSymbolsFont();
+	(void)LoadDeckAndDiscardPileIcons();
+	if (wCheckMenuPlayAreaWhichDuelist == PLAYER_TURN) {
+		(void)CopyPlayerName(wDefaultText_ADDR);
+	} else {
+		(void)CopyOpponentName(wDefaultText_ADDR);
+	}
+	TextLength length = GetTextLengthInTiles(wDefaultText_ADDR);
+	uint8_t a = (uint8_t)(6u - length.b);
+	a = (uint8_t)((a >> 1u) + 4u);
+	InitTextPrinting(a, 0u);
+	if (hWhoseTurn != PLAYER_TURN || wCheckMenuPlayAreaWhichDuelist == PLAYER_TURN) {
+		(void)PrintTextNoDelay(DuelistsPlayAreaText, a, 0u);
+	} else {
+		SwapTurn();
+		(void)PrintTextNoDelay(DuelistsPlayAreaText, a, 0u);
+		SwapTurn();
+	}
+	if (wCheckMenuPlayAreaWhichDuelist == wCheckMenuPlayAreaWhichLayout) {
+		for (uint8_t i = 0u; i < sizeof(player_prizes); ++i)
+			gb_write8((uint16_t)(prize_coords + i), player_prizes[i]);
+		DrawPlayArea_PrizeCards(prize_coords);
+		DrawYourOrOppPlayArea_ActiveCardGfx(0x0602u);
+		DrawPlayArea_BenchCards(4u, 1u, 9u);
+		DrawYourOrOppPlayArea_Icons(0u);
+	} else {
+		for (uint8_t i = 0u; i < sizeof(opponent_prizes); ++i)
+			gb_write8((uint16_t)(prize_coords + i), opponent_prizes[i]);
+		DrawPlayArea_PrizeCards(prize_coords);
+		DrawYourOrOppPlayArea_ActiveCardGfx(0x0605u);
+		DrawPlayArea_BenchCards(4u, 1u, 2u);
+		DrawYourOrOppPlayArea_Icons(1u);
+	}
+	EnableLCD();
+}
+/* <<< factory _DrawYourOrOppPlayAreaScreen */

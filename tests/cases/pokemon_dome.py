@@ -134,6 +134,15 @@ CASES["PokemonDomeLoadMap"] = [
 ]
 # <<< factory PokemonDomeLoadMap
 
+# >>> factory PokemonDomeAfterDuel
+CONTRACT["PokemonDomeAfterDuel"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["PokemonDomeAfterDuel"] = [
+    {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {0xD0C3: b"\x00", 0xD0C4: b"\x37"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xD0C3: b"\x01", 0xD0C4: b"\x37"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory PokemonDomeAfterDuel
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -178,3 +187,11 @@ MUTATIONS["PokemonDomeMovePlayer"] = {"source_symbol": "PokemonDomeMovePlayer", 
 # >>> factory-mutation PokemonDomeLoadMap
 MUTATIONS["PokemonDomeLoadMap"] = {"source_symbol": "PokemonDomeLoadMap", "before": "\tSetNextScript(0x780Bu);", "after": "\tSetNextScript(0x780Cu);", "case_ids": ["PokemonDomeLoadMap-1"]}
 # <<< factory-mutation PokemonDomeLoadMap
+# >>> factory-mutation PokemonDomeAfterDuel
+MUTATIONS["PokemonDomeAfterDuel"] = {
+    "source_symbol": "PokemonDomeAfterDuel",
+    "before": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);",
+    "after": "\tFindEndOfDuelScriptResult r = FindEndOfDuelScript((uint16_t)(PokemonDomeAfterDuelTable + 1u));",
+    "case_ids": ["PokemonDomeAfterDuel-0", "PokemonDomeAfterDuel-1"]
+}
+# <<< factory-mutation PokemonDomeAfterDuel

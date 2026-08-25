@@ -624,4 +624,7 @@ UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 /* >>> factory DrawYourOrOppPlayArea_ActiveCardGfx */
 void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de);
 /* <<< factory DrawYourOrOppPlayArea_ActiveCardGfx */
+/* >>> factory _DrawYourOrOppPlayAreaScreen */
+void _DrawYourOrOppPlayAreaScreen(void);
+/* <<< factory _DrawYourOrOppPlayAreaScreen */
 #endif

@@ -66,4 +66,7 @@ CopyCardNameAndLevelResult CopyCardNameAndLevel(uint8_t a, uint8_t b, uint8_t c,
 /* >>> factory ReloadCardListItems */
 void ReloadCardListItems(void);
 /* <<< factory ReloadCardListItems */
+/* >>> factory Func_2827 */
+void Func_2827(void);
+/* <<< factory Func_2827 */
 #endif

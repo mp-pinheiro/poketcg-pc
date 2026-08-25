@@ -38,6 +38,10 @@
 #include "home/process_text.h"
 #include "home/duel.h"
 #include "home/bg_map.h"
+
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -483,3 +487,12 @@ void ReloadCardListItems(void)
 	}
 }
 /* <<< factory ReloadCardListItems */
+
+/* >>> factory Func_2827 */
+void Func_2827(void)
+{
+	gb_write8(hffb0_ADDR, 0x01u);
+	ReloadCardListItems();
+	gb_write8(hffb0_ADDR, 0x00u);
+}
+/* <<< factory Func_2827 */

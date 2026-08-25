@@ -1,0 +1,9 @@
+{
+  "fn": "PokemonDomeAfterDuel",
+  "case": "tests/cases/pokemon_dome.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PokemonDomeAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 30470, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PokemonDomeAfterDuel\", \"mismatches\": {\"hl\": [30470, 30711]}}\n",
+  "restored": "{\"fn\": \"PokemonDomeAfterDuel\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 5, \"f\": 128, \"hl\": 30470, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53443\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

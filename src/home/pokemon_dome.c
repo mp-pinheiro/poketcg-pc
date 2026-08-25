@@ -11,6 +11,9 @@
 #include "home/scripting.h"
 #include "home/mail.h"
 #include "generated/wram.h"
+
+#include "home/fire_club_lobby.h"
+#define PokemonDomeAfterDuelTable 0x76E7u
 /* <<< factory statics */
 
 #define W_LOAD_NPC_X_POS_ADDR 0xD3ACu
@@ -86,3 +89,13 @@ void PokemonDomeLoadMap(void)
 	SetNextScript(0x780Bu);
 }
 /* <<< factory PokemonDomeLoadMap */
+
+/* >>> factory PokemonDomeAfterDuel */
+PokemonDomeAfterDuelResult PokemonDomeAfterDuel(void)
+{
+	gb_write8(0x2000u, 0x03u);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(PokemonDomeAfterDuelTable);
+	PokemonDomeLoadMap();
+	return (PokemonDomeAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
+}
+/* <<< factory PokemonDomeAfterDuel */

@@ -1145,6 +1145,13 @@ wCheckMenuPlayAreaWhichDuelist = 0xCE50
 wCheckMenuPlayAreaWhichLayout = 0xCE51
 wIsSwapTurnPending = 0xCE56
 wDefaultText = 0xC730
+
+hWhoseTurn = 0xFF97
+wCheckMenuPlayAreaWhichDuelist = 0xCE50
+wCheckMenuPlayAreaWhichLayout = 0xCE51
+wDefaultText = 0xC590
+wTileMapFill = 0xCAB6
+wVBlankOAMCopyToggle = 0xCAC0
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1370,6 +1377,14 @@ CASES["DrawYourOrOppPlayArea_ActiveCardGfx"] = [
 ]
 # <<< factory DrawYourOrOppPlayArea_ActiveCardGfx
 
+# >>> factory _DrawYourOrOppPlayAreaScreen
+CONTRACT["_DrawYourOrOppPlayAreaScreen"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["_DrawYourOrOppPlayAreaScreen"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000, "wram": {hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC2", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16}, "read": {wDefaultText: 7}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, instruction_budget=20000000, cycle_budget=80000000, wram={hWhoseTurn: b"\xC2", wCheckMenuPlayAreaWhichDuelist: b"\xC3", wCheckMenuPlayAreaWhichLayout: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16}, read={wDefaultText: 7}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory _DrawYourOrOppPlayAreaScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1552,3 +1567,6 @@ MUTATIONS["DrawYourOrOppPlayArea_ActiveCardGfx"] = {
     "case_ids": ["DrawYourOrOppPlayArea_ActiveCardGfx-0"],
 }
 # <<< factory-mutation DrawYourOrOppPlayArea_ActiveCardGfx
+# >>> factory-mutation _DrawYourOrOppPlayAreaScreen
+MUTATIONS["_DrawYourOrOppPlayAreaScreen"] = {"source_symbol": "_DrawYourOrOppPlayAreaScreen", "before": "\tif (wCheckMenuPlayAreaWhichDuelist == PLAYER_TURN) {", "after": "\tif (wCheckMenuPlayAreaWhichDuelist != PLAYER_TURN) {", "case_ids": ["_DrawYourOrOppPlayAreaScreen-0", "_DrawYourOrOppPlayAreaScreen-1"]}
+# <<< factory-mutation _DrawYourOrOppPlayAreaScreen
