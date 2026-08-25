@@ -154,8 +154,6 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - name: Cut release
         if: steps.ver.outputs.cut == 'true'
-        env:
-          FORGEJO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           next="${{ steps.ver.outputs.next }}"
@@ -168,22 +166,40 @@ jobs:
           git tag "v${next}"
           git push origin HEAD:main
           git push origin "v${next}"
-          # Tag and changelog are now durable. Publishing the Release object needs
-          # /api/v1, which Cloudflare Access fronts; probe first and fail loudly.
+      # The commit and tag are durable once pushed; the Release object needs
+      # /api/v1, and one transient non-200 there used to orphan the tag for good
+      # because nothing ever retried. v0.132.0 and v0.140.1 both lost their
+      # object that way. Retry, treat an existing release as done, then fail loud.
+      - name: Publish the release object
+        if: steps.ver.outputs.cut == 'true'
+        env:
+          FORGEJO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          next="${{ steps.ver.outputs.next }}"
           api="${GITHUB_API_URL:-${GITHUB_SERVER_URL%/}/api/v1}"
-          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 \
-                   -H "Authorization: token ${FORGEJO_TOKEN}" "${api}/version")
-          if [ "$code" != "200" ]; then
-            echo "Forgejo API unreachable from the runner (HTTP $code)."
-            echo "Commit and tag v${next} ARE pushed; only the Release object is missing."
-            echo "Publish it from the workstation:"
-            echo "  git cliff --latest --strip header > /tmp/notes.md"
-            echo "  fj release create v${next} --repo fairfruit/poketcg-pc --notes-file /tmp/notes.md"
-            exit 1
-          fi
           git cliff --latest --strip header > /tmp/notes.md
-          curl -fsS -X POST \
-            -H "Authorization: token ${FORGEJO_TOKEN}" \
-            -H 'Content-Type: application/json' \
-            "${api}/repos/${GITHUB_REPOSITORY}/releases" \
-            -d "$(jq -n --arg t "v${next}" --rawfile b /tmp/notes.md '{tag_name:$t,name:$t,body:$b}')"
+          jq -n --arg t "v${next}" --rawfile b /tmp/notes.md \
+             '{tag_name:$t,name:$t,body:$b}' > /tmp/release-request.json
+          for delay in 0 5 15 30 60; do
+            [ "$delay" = 0 ] || sleep "$delay"
+            code=$(curl -s -o /tmp/release-response.json -w '%{http_code}' --max-time 30 \
+                     -X POST -H "Authorization: token ${FORGEJO_TOKEN}" \
+                     -H 'Content-Type: application/json' \
+                     --data @/tmp/release-request.json \
+                     "${api}/repos/${GITHUB_REPOSITORY}/releases")
+            case "$code" in
+              201)     echo "published release v${next}";      exit 0 ;;
+              409|422) echo "release v${next} already exists"; exit 0 ;;
+            esac
+            echo "HTTP $code: $(head -c 300 /tmp/release-response.json)"
+          done
+          echo "Forgejo refused the Release object for v${next} on every attempt."
+          echo "Commit and tag v${next} ARE pushed; only the Release object is missing."
+          echo "Republish from the workstation (fj release create takes no notes file):"
+          echo "  git cliff --latest --strip header > /tmp/notes.md"
+          echo "  jq -n --arg t v${next} --rawfile b /tmp/notes.md '{tag_name:\$t,name:\$t,body:\$b}' > /tmp/rel.json"
+          echo "  curl -fsS -X POST -H \"Authorization: token \$FJ_FORGEJO_TOKEN\" \\"
+          echo "    -H 'Content-Type: application/json' --data @/tmp/rel.json \\"
+          echo "    ${api}/repos/${GITHUB_REPOSITORY}/releases"
+          exit 1
