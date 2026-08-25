@@ -647,4 +647,7 @@ void DrawInPlayArea_ActiveCardGfx(void);
 /* >>> factory DrawInPlayAreaScreen */
 void DrawInPlayAreaScreen(void);
 /* <<< factory DrawInPlayAreaScreen */
+/* >>> factory DrawDuelMainScene_PrintPokemonsAttackText */
+PrintPokemonsAttackTextResult DrawDuelMainScene_PrintPokemonsAttackText(void);
+/* <<< factory DrawDuelMainScene_PrintPokemonsAttackText */
 #endif

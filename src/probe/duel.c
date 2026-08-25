@@ -866,6 +866,19 @@ static void adapt_DrawInPlayAreaScreen(ProbeState *s)
 }
 /* <<< factory DrawInPlayAreaScreen */
 
+/* >>> factory DrawDuelMainScene_PrintPokemonsAttackText */
+static void adapt_DrawDuelMainScene_PrintPokemonsAttackText(ProbeState *s)
+{
+	PrintPokemonsAttackTextResult r = DrawDuelMainScene_PrintPokemonsAttackText();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory DrawDuelMainScene_PrintPokemonsAttackText */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -972,5 +985,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "PrintFailedEffectText", adapt_PrintFailedEffectText },
 	{ "DrawInPlayArea_ActiveCardGfx", adapt_DrawInPlayArea_ActiveCardGfx },
 	{ "DrawInPlayAreaScreen", adapt_DrawInPlayAreaScreen },
+	{ "DrawDuelMainScene_PrintPokemonsAttackText", adapt_DrawDuelMainScene_PrintPokemonsAttackText },
 	{ NULL, NULL },
 };

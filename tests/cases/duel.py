@@ -1188,6 +1188,17 @@ wCheckMenuPlayAreaWhichLayout = 0xCE51
 hWhoseTurn = 0xFF97
 wLCDC = 0xCABB
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wDuelDisplayedScreen = 0xCAC2
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wLoadedCard1Name = 0xCC27
+wLoadedAttackName = 0xCCAA
+wDefaultText = 0xC590
+wTxRam2 = 0xCE3F
+TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1487,6 +1498,16 @@ CASES["DrawInPlayAreaScreen"] = [
 ]
 # <<< factory DrawInPlayAreaScreen
 
+# >>> factory DrawDuelMainScene_PrintPokemonsAttackText
+CONTRACT["DrawDuelMainScene_PrintPokemonsAttackText"] = {"compare": ("hl",), "preserve": ()}
+CASES["DrawDuelMainScene_PrintPokemonsAttackText"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wDuelDisplayedScreen: b"\x01", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x08", wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00", wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00"},
+     "setup": TEXT_SETUP, "instruction_budget": 1000000, "cycle_budget": 10000000, "read": {wDefaultText: 64, wTxRam2: 4}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wDuelDisplayedScreen: b"\x01", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x08", wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00", wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00"},
+         setup=TEXT_SETUP, instruction_budget=1000000, cycle_budget=10000000, read={wDefaultText: 64, wTxRam2: 4}),
+]
+# <<< factory DrawDuelMainScene_PrintPokemonsAttackText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1695,3 +1716,6 @@ MUTATIONS["DrawInPlayAreaScreen"] = {
     "case_ids": ["DrawInPlayAreaScreen-0", "DrawInPlayAreaScreen-1"],
 }
 # <<< factory-mutation DrawInPlayAreaScreen
+# >>> factory-mutation DrawDuelMainScene_PrintPokemonsAttackText
+MUTATIONS["DrawDuelMainScene_PrintPokemonsAttackText"] = {"source_symbol": "DrawDuelMainScene_PrintPokemonsAttackText", "before": "\treturn PrintPokemonsAttackText();", "after": "\treturn (PrintPokemonsAttackTextResult){0};", "case_ids": ["DrawDuelMainScene_PrintPokemonsAttackText-0", "DrawDuelMainScene_PrintPokemonsAttackText-1"]}
+# <<< factory-mutation DrawDuelMainScene_PrintPokemonsAttackText

@@ -539,6 +539,12 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/process_text.h"
 #include "home/tiles.h"
 #define CHECK_PLAY_AREA 0x0Au
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2658,3 +2664,11 @@ void DrawInPlayAreaScreen(void)
 	DrawInPlayArea_ActiveCardGfx();
 }
 /* <<< factory DrawInPlayAreaScreen */
+
+/* >>> factory DrawDuelMainScene_PrintPokemonsAttackText */
+PrintPokemonsAttackTextResult DrawDuelMainScene_PrintPokemonsAttackText(void)
+{
+	DrawDuelMainScene();
+	return PrintPokemonsAttackText();
+}
+/* <<< factory DrawDuelMainScene_PrintPokemonsAttackText */
