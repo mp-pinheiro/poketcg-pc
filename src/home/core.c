@@ -5808,3 +5808,20 @@ void DisplayEnergyDiscardMenu(void)
 	wCardListIndicatorYPosition = 4u;
 }
 /* <<< factory DisplayEnergyDiscardMenu */
+
+/* >>> factory DisplayEnergyDiscardScreen */
+void DisplayEnergyDiscardScreen(uint8_t a)
+{
+	wEnergyDiscardPlayAreaLocation = a;
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelFaceDownCardTiles();
+	a = wEnergyDiscardPlayAreaLocation;
+	wCurPlayAreaSlot = a;
+	wCurPlayAreaY = 0u;
+	(void)PrintPlayAreaCardInformation();
+	wEnergyDiscardMenuNumerator = 0u;
+	wEnergyDiscardMenuDenominator = 1u;
+	DisplayEnergyDiscardMenu();
+}
+/* <<< factory DisplayEnergyDiscardScreen */

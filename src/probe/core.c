@@ -2069,6 +2069,13 @@ static void adapt_DisplayEnergyDiscardMenu(ProbeState *s)
 }
 /* <<< factory DisplayEnergyDiscardMenu */
 
+/* >>> factory DisplayEnergyDiscardScreen */
+static void adapt_DisplayEnergyDiscardScreen(ProbeState *s)
+{
+	DisplayEnergyDiscardScreen(s->a);
+}
+/* <<< factory DisplayEnergyDiscardScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2316,5 +2323,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayAttackPage_Attack2Page2", adapt_DisplayAttackPage_Attack2Page2 },
 	{ "DisplayAttackPage_Attack1Page2", adapt_DisplayAttackPage_Attack1Page2 },
 	{ "DisplayEnergyDiscardMenu", adapt_DisplayEnergyDiscardMenu },
+	{ "DisplayEnergyDiscardScreen", adapt_DisplayEnergyDiscardScreen },
 	{ NULL, NULL },
 };

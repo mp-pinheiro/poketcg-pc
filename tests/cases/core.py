@@ -3138,6 +3138,20 @@ CASES["DisplayEnergyDiscardMenu"] = [
 ]
 # <<< factory DisplayEnergyDiscardMenu
 
+# >>> factory DisplayEnergyDiscardScreen
+CONTRACT["DisplayEnergyDiscardScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayEnergyDiscardScreen"] = [
+    {"a": 0x00, "keys": 0, "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08", wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00", wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1, 0xCBE0: 1, wCurPlayAreaSlot: 1, wCurPlayAreaY: 1, 0xCBFB: 1, 0xCBFA: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, a=0x00, keys=0, wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x08", wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00", wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00", wDuelTempList: b"\xFF", 0xCABB: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={wDuelTempList: 1, 0xCD97: 1, 0xCD05: 2, 0xCD0A: 1, 0xCBE0: 1, wCurPlayAreaSlot: 1, wCurPlayAreaY: 1, 0xCBFB: 1, 0xCBFA: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory DisplayEnergyDiscardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4480,3 +4494,6 @@ MUTATIONS["DisplayAttackPage_Attack1Page2"] = {"source_symbol": "DisplayAttackPa
 # >>> factory-mutation DisplayEnergyDiscardMenu
 MUTATIONS["DisplayEnergyDiscardMenu"] = {"source_symbol": "DisplayEnergyDiscardMenu", "before": "\twCardListIndicatorYPosition = 4u;", "after": "\twCardListIndicatorYPosition = 5u;", "case_ids": ["DisplayEnergyDiscardMenu-0", "DisplayEnergyDiscardMenu-1"]}
 # <<< factory-mutation DisplayEnergyDiscardMenu
+# >>> factory-mutation DisplayEnergyDiscardScreen
+MUTATIONS["DisplayEnergyDiscardScreen"] = {"source_symbol": "DisplayEnergyDiscardScreen", "before": "\twEnergyDiscardMenuDenominator = 1u;", "after": "\twEnergyDiscardMenuDenominator = 2u;", "case_ids": ["DisplayEnergyDiscardScreen-0", "DisplayEnergyDiscardScreen-1"]}
+# <<< factory-mutation DisplayEnergyDiscardScreen

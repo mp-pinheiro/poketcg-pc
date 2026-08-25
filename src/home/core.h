@@ -927,4 +927,7 @@ void DisplayAttackPage_Attack1Page2(uint8_t b, uint8_t c, uint8_t d);
 /* >>> factory DisplayEnergyDiscardMenu */
 void DisplayEnergyDiscardMenu(void);
 /* <<< factory DisplayEnergyDiscardMenu */
+/* >>> factory DisplayEnergyDiscardScreen */
+void DisplayEnergyDiscardScreen(uint8_t a);
+/* <<< factory DisplayEnergyDiscardScreen */
 #endif
