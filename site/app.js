@@ -9,7 +9,6 @@ const UNITS = document.getElementById('units');
 const FILTER = document.getElementById('filter');
 const FRONTIER = document.getElementById('frontier');
 const RECENT = document.getElementById('recent');
-const FORECAST = document.getElementById('forecast');
 
 let progressData = null;
 let PRET_SHORT = '';
@@ -51,29 +50,6 @@ function renderHeader(p) {
   }
   commitHtml += (commitHtml ? ' \u00b7 ' : '') + `updated ${fmtDate(p.generated_at)}`;
   COMMIT_INFO.innerHTML = commitHtml;
-}
-
-function renderForecast(value) {
-  if (!value) {
-    FORECAST.innerHTML = '<div class="forecast-muted">Forecast unavailable until factory telemetry is published.</div>';
-    return;
-  }
-  if (value.status === 'unavailable') {
-    const reason = value.reason || 'no-validated-productive-route';
-    FORECAST.innerHTML = `<div class="forecast-card"><strong>ETA unavailable</strong><span>${reason}</span><span>${value.valid_attempts || 0} valid attempts · ${value.productive_attempts || 0} productive · ${value.landed || 0} landed</span></div>`;
-    return;
-  }
-  if (value.unconditional_eta === null) {
-    const blockers = (value.conditional_on || []).slice(0, 5).join(', ');
-    FORECAST.innerHTML = `<div class="forecast-card"><strong>Conditional forecast only</strong><span>Resolve: ${blockers || 'external blocker'}</span></div>`;
-    return;
-  }
-  const rows = [
-    ['P50', value.p50_at],
-    ['P85', value.p85_at],
-    ['P95', value.p95_at],
-  ].filter(([, date]) => date);
-  FORECAST.innerHTML = `<div class="forecast-card"><div class="forecast-dates">${rows.map(([label, date]) => `<span><strong>${label}</strong> ${new Date(date).toLocaleDateString()}</span>`).join('')}</div><span>${value.remaining_nodes?.toLocaleString() || '0'} routines · ${value.remaining_bytes?.toLocaleString() || '0'} bytes remaining · ${value.samples || 0} samples · ${value.confidence || 'low'} confidence</span></div>`;
 }
 
 function renderChart(points) {
@@ -271,7 +247,6 @@ async function main() {
   PRET_SHORT = progressData.pret_commit.slice(0, 7);
 
   renderHeader(progressData);
-  renderForecast(progressData.forecast);
   renderRecent(progressData.recent);
   renderCategories(progressData.categories);
   renderUnits(progressData.units, progressData.functions);

@@ -42,11 +42,6 @@ header { margin-bottom: 1rem; }
 .bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
 .bar-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.3s; }
 .category .detail { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
-#forecast { display: grid; grid-template-columns: 1fr; }
-.forecast-card, .forecast-muted { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; color: var(--muted); display: grid; gap: 0.4rem; }
-.forecast-card strong { color: var(--text); }
-.forecast-dates { display: flex; flex-wrap: wrap; gap: 0.75rem; color: var(--muted); }
-.forecast-dates strong { color: var(--green); margin-right: 0.25rem; }
 
 #filter { width: 100%; padding: 0.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 0.95rem; margin-top: 1rem; }
 
