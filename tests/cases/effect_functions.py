@@ -3707,6 +3707,15 @@ CASES["GolduckHyperBeam_PlayerSelectEffect"] = [
 ]
 # <<< factory GolduckHyperBeam_PlayerSelectEffect
 
+# >>> factory MirrorMove_PlayerSelection
+CONTRACT["MirrorMove_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["MirrorMove_PlayerSelection"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x00", 0xFFA0: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01", 0xC300: b"\x00" * 60, 0xFFA0: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory MirrorMove_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5829,3 +5838,6 @@ MUTATIONS["DragonairHyperBeam_PlayerSelectEffect"] = {"source_symbol": "Dragonai
 # >>> factory-mutation GolduckHyperBeam_PlayerSelectEffect
 MUTATIONS["GolduckHyperBeam_PlayerSelectEffect"] = {"source_symbol": "GolduckHyperBeam_PlayerSelectEffect", "before": "\t\thTemp_ffa0 = 0xFFu;", "after": "\t\thTemp_ffa0 = 0u;", "case_ids": ["GolduckHyperBeam_PlayerSelectEffect-0", "GolduckHyperBeam_PlayerSelectEffect-1"]}
 # <<< factory-mutation GolduckHyperBeam_PlayerSelectEffect
+# >>> factory-mutation MirrorMove_PlayerSelection
+MUTATIONS["MirrorMove_PlayerSelection"] = {"source_symbol": "MirrorMove_PlayerSelection", "before": "\tif (r.a == LAST_TURN_EFFECT_DISCARD_ENERGY)", "after": "\tif (r.a == 0x02u)", "case_ids": ["MirrorMove_PlayerSelection-0"]}
+# <<< factory-mutation MirrorMove_PlayerSelection

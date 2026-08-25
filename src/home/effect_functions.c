@@ -5630,3 +5630,14 @@ void GolduckHyperBeam_PlayerSelectEffect(void)
 	hTemp_ffa0 = hTempCardIndex_ff98;
 }
 /* <<< factory GolduckHyperBeam_PlayerSelectEffect */
+
+/* >>> factory MirrorMove_PlayerSelection */
+void MirrorMove_PlayerSelection(void)
+{
+	DuelistVarResult r = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (r.a == 0u)
+		return;
+	if (r.a == LAST_TURN_EFFECT_DISCARD_ENERGY)
+		HandleEnergyDiscardEffectSelection();
+}
+/* <<< factory MirrorMove_PlayerSelection */
