@@ -223,6 +223,10 @@ oracle-audit-all-parallel: oracle-health-pyboy
     rm -rf "$tmp"
     exit "$rc"
 
+# Advisory differential fuzz over the thinnest landed matrices; never gates.
+oracle-fuzz-thin: oracle-build-gbref build-barrier
+    python3 tools/oracle/fuzz_one.py --thinnest 20 --variants 16
+
 # Aggregate function gate adds the independent PyBoy audit.
 oracle-gate: oracle-fn-gate oracle-audit-all-parallel
     python3 tools/audit_oracle_cases.py --stage routine
