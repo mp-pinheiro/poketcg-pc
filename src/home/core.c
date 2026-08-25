@@ -910,6 +910,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define HEADER_TRAINER 0x00u
 #define LARGE_CARD_PICTURE 0x08u
 #define LARGE_CARD_TILE_DATA 0x5EB7u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/text_box.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5212,3 +5216,16 @@ void DrawLargePictureOfCard(void)
 	(void)ApplyBGP6OrSGB3ToCardImage(a, 0u, b, c, 6u, 3u, hl);
 }
 /* <<< factory DrawLargePictureOfCard */
+
+/* >>> factory DrawCardPageSurroundingBox */
+void DrawCardPageSurroundingBox(void)
+{
+	uint16_t hl = wTextBoxFrameType_ADDR;
+	gb_write8(wTextBoxFrameType_ADDR, (uint8_t)(gb_read8(wTextBoxFrameType_ADDR) | 0x80u));
+	DrawRegularTextBox(&hl, 0u, 20u, 18u, 0u, 0u);
+	hl = wTextBoxFrameType_ADDR;
+	gb_write8(wTextBoxFrameType_ADDR, (uint8_t)(gb_read8(wTextBoxFrameType_ADDR) & 0x7fu));
+	SendCardAttrBlkPacketResult result = ApplyBGP6OrSGB3ToCardImage(0u, 0u, 0u, 0u, 4u, 6u, hl);
+	(void)result;
+}
+/* <<< factory DrawCardPageSurroundingBox */

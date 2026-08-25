@@ -1,0 +1,9 @@
+{
+  "fn": "PrintCardListItems",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintCardListItems\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50441, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38962\": \"00\", \"39026\": \"00\"}}, \"wram\": {\"50432\": \"010203040120210000\", \"50448\": \"ff\", \"52499\": \"02\", \"52503\": \"3f28\", \"52631\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintCardListItems\", \"mismatches\": {\"bus\": {\"address\": 52499, \"reference\": \"210000ff023f2801\", \"native\": \"210000ff033f2801\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[50432, 9], [50448, 1], [52499, 1], [52503, 2], [52631, 1]]}}}\n",
+  "restored": "{\"fn\": \"PrintCardListItems\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 50441, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38962\": \"00\", \"39026\": \"00\"}}, \"wram\": {\"50432\": \"010203040120210000\", \"50448\": \"ff\", \"52499\": \"02\", \"52503\": \"3f28\", \"52631\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

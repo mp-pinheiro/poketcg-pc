@@ -2826,6 +2826,14 @@ CASES["DrawLargePictureOfCard"] = [
 ]
 # <<< factory DrawLargePictureOfCard
 
+# >>> factory DrawCardPageSurroundingBox
+CONTRACT["DrawCardPageSurroundingBox"] = {"compare": (), "preserve": ()}
+CASES["DrawCardPageSurroundingBox"] = [
+    {"wram": {0xCCF3: b"\x00"}, "expect": {0xCCF3: b"\x00"}},
+    dict(POISON, wram={0xCCF3: b"\x00"}, expect={0xCCF3: b"\x00"}),
+]
+# <<< factory DrawCardPageSurroundingBox
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4077,3 +4085,11 @@ MUTATIONS["DrawLargePictureOfCard"] = {
     "case_ids": ["DrawLargePictureOfCard-0"],
 }
 # <<< factory-mutation DrawLargePictureOfCard
+# >>> factory-mutation DrawCardPageSurroundingBox
+MUTATIONS["DrawCardPageSurroundingBox"] = {
+    "source_symbol": "DrawCardPageSurroundingBox",
+    "before": "gb_write8(wTextBoxFrameType_ADDR, (uint8_t)(gb_read8(wTextBoxFrameType_ADDR) & 0x7fu));",
+    "after": "gb_write8(wTextBoxFrameType_ADDR, (uint8_t)(gb_read8(wTextBoxFrameType_ADDR) | 0x80u));",
+    "case_ids": ["DrawCardPageSurroundingBox-0", "DrawCardPageSurroundingBox-1"],
+}
+# <<< factory-mutation DrawCardPageSurroundingBox

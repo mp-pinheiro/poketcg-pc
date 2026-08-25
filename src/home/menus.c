@@ -42,6 +42,9 @@
 #include "generated/hram.h"
 #include "mem.h"
 #include "home/menus.h"
+
+#include "generated/wram.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -496,3 +499,15 @@ void Func_2827(void)
 	gb_write8(hffb0_ADDR, 0x00u);
 }
 /* <<< factory Func_2827 */
+
+/* >>> factory PrintCardListItems */
+void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
+{
+	InitializeCardListParameters(a, d, e, hl);
+	gb_write8(wMenuUpdateFunc_ADDR, 0x3Fu);
+	gb_write8((uint16_t)(wMenuUpdateFunc_ADDR + 1u), 0x28u);
+	wMenuYSeparation = 2u;
+	wCardListIndicatorYPosition = 1u;
+	ReloadCardListItems();
+}
+/* <<< factory PrintCardListItems */

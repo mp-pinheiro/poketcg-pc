@@ -346,6 +346,14 @@ CASES["Func_2827"] = [
 ]
 # <<< factory Func_2827
 
+# >>> factory PrintCardListItems
+CONTRACT["PrintCardListItems"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintCardListItems"] = [
+    {"a": 0x01, "d": 0x00, "e": 0x00, "hl": 0xC500, "wram": {0xC500: b"\x01\x02\x03\x04\x01\x20\x21\x00\x00", 0xC510: b"\xFF"}, "read": {0xCD13: 1, 0xCD17: 2, 0xCD97: 1}, "vread": {0: {0x9832: 1, 0x9872: 1}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0x1234, wram={0xC5ED: b"\xFF"}, read={0xCD13: 1, 0xCD17: 2, 0xCD97: 1}, vread={0: {0x9832: 1, 0x9872: 1}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory PrintCardListItems
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -401,3 +409,11 @@ MUTATIONS["Func_2827"] = {
     "case_ids": ["Func_2827-0", "Func_2827-1"],
 }
 # <<< factory-mutation Func_2827
+# >>> factory-mutation PrintCardListItems
+MUTATIONS["PrintCardListItems"] = {
+    "source_symbol": "PrintCardListItems",
+    "before": "\twMenuYSeparation = 2u;",
+    "after": "\twMenuYSeparation = 3u;",
+    "case_ids": ["PrintCardListItems-0", "PrintCardListItems-1"],
+}
+# <<< factory-mutation PrintCardListItems

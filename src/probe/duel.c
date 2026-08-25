@@ -821,6 +821,13 @@ static void adapt__DrawYourOrOppPlayAreaScreen(ProbeState *s)
 }
 /* <<< factory _DrawYourOrOppPlayAreaScreen */
 
+/* >>> factory DrawYourOrOppPlayAreaScreen */
+static void adapt_DrawYourOrOppPlayAreaScreen(ProbeState *s)
+{
+	DrawYourOrOppPlayAreaScreen(s->hl);
+}
+/* <<< factory DrawYourOrOppPlayAreaScreen */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -921,5 +928,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "UsePokemonPower", adapt_UsePokemonPower },
 	{ "DrawYourOrOppPlayArea_ActiveCardGfx", adapt_DrawYourOrOppPlayArea_ActiveCardGfx },
 	{ "_DrawYourOrOppPlayAreaScreen", adapt__DrawYourOrOppPlayAreaScreen },
+	{ "DrawYourOrOppPlayAreaScreen", adapt_DrawYourOrOppPlayAreaScreen },
 	{ NULL, NULL },
 };

@@ -843,4 +843,7 @@ SendCardAttrBlkPacketResult ApplyBGP6OrSGB3ToCardImage(uint8_t a, uint8_t f, uin
 /* >>> factory DrawLargePictureOfCard */
 void DrawLargePictureOfCard(void);
 /* <<< factory DrawLargePictureOfCard */
+/* >>> factory DrawCardPageSurroundingBox */
+void DrawCardPageSurroundingBox(void);
+/* <<< factory DrawCardPageSurroundingBox */
 #endif

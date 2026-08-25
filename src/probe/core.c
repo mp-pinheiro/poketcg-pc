@@ -1857,6 +1857,14 @@ static void adapt_DrawLargePictureOfCard(ProbeState *s)
 }
 /* <<< factory DrawLargePictureOfCard */
 
+/* >>> factory DrawCardPageSurroundingBox */
+static void adapt_DrawCardPageSurroundingBox(ProbeState *s)
+{
+	DrawCardPageSurroundingBox();
+	(void)s;
+}
+/* <<< factory DrawCardPageSurroundingBox */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2077,5 +2085,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "SendCardAttrBlkPacket", adapt_SendCardAttrBlkPacket },
 	{ "ApplyBGP6OrSGB3ToCardImage", adapt_ApplyBGP6OrSGB3ToCardImage },
 	{ "DrawLargePictureOfCard", adapt_DrawLargePictureOfCard },
+	{ "DrawCardPageSurroundingBox", adapt_DrawCardPageSurroundingBox },
 	{ NULL, NULL },
 };

@@ -627,4 +627,7 @@ void DrawYourOrOppPlayArea_ActiveCardGfx(uint16_t de);
 /* >>> factory _DrawYourOrOppPlayAreaScreen */
 void _DrawYourOrOppPlayAreaScreen(void);
 /* <<< factory _DrawYourOrOppPlayAreaScreen */
+/* >>> factory DrawYourOrOppPlayAreaScreen */
+void DrawYourOrOppPlayAreaScreen(uint16_t hl);
+/* <<< factory DrawYourOrOppPlayAreaScreen */
 #endif

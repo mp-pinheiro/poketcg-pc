@@ -9,4 +9,7 @@ void DrawPlayersPrizeAndBenchCards(void);
 /* >>> factory DrawPlayAreaToPlacePrizeCards */
 void DrawPlayAreaToPlacePrizeCards(void);
 /* <<< factory DrawPlayAreaToPlacePrizeCards */
+/* >>> factory DrawYourOrOppPlayAreaScreen_Bank0 */
+void DrawYourOrOppPlayAreaScreen_Bank0(uint16_t hl);
+/* <<< factory DrawYourOrOppPlayAreaScreen_Bank0 */
 #endif /* POKETCG_HOME_DUEL_MENUS_H */

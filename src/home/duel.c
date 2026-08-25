@@ -496,6 +496,9 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/print_text.h"
 #include "home/tiles.h"
 #define DuelistsPlayAreaText 0x0247u
+
+#include "generated/wram.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2458,3 +2461,12 @@ void _DrawYourOrOppPlayAreaScreen(void)
 	EnableLCD();
 }
 /* <<< factory _DrawYourOrOppPlayAreaScreen */
+
+/* >>> factory DrawYourOrOppPlayAreaScreen */
+void DrawYourOrOppPlayAreaScreen(uint16_t hl)
+{
+	wCheckMenuPlayAreaWhichDuelist = (uint8_t)(hl >> 8);
+	wCheckMenuPlayAreaWhichLayout = (uint8_t)hl;
+	_DrawYourOrOppPlayAreaScreen();
+}
+/* <<< factory DrawYourOrOppPlayAreaScreen */

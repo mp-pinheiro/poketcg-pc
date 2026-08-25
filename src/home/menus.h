@@ -69,4 +69,7 @@ void ReloadCardListItems(void);
 /* >>> factory Func_2827 */
 void Func_2827(void);
 /* <<< factory Func_2827 */
+/* >>> factory PrintCardListItems */
+void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl);
+/* <<< factory PrintCardListItems */
 #endif

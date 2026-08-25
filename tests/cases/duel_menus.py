@@ -11,6 +11,13 @@ hBankROM_A = 0xFF80
 wCheckMenuPlayAreaWhichLayout = 0xCE51
 wTileMapFill = 0xCEC7
 wVBlankOAMCopyToggle = 0xCAC0
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hBankROM_B = 0xFF80
+hWhoseTurn_B = 0xFF97
+wCheckMenuPlayAreaWhichDuelist_B = 0xCE50
+wCheckMenuPlayAreaWhichLayout_B = 0xCE51
+wDefaultText_B = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawPlayersPrizeAndBenchCards
@@ -45,6 +52,25 @@ CASES["DrawPlayAreaToPlacePrizeCards"] = [
 ]
 # <<< factory DrawPlayAreaToPlacePrizeCards
 
+# >>> factory DrawYourOrOppPlayAreaScreen_Bank0
+CONTRACT["DrawYourOrOppPlayAreaScreen_Bank0"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawYourOrOppPlayAreaScreen_Bank0"] = [
+    {"instruction_budget": 20000000, "cycle_budget": 80000000,
+     "hram": {hBankROM_B: b"\x01", hWhoseTurn_B: b"\xC2"},
+     "wram": {wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText_B: b"\x00" * 16},
+     "read": {hBankROM_B: 1, wCheckMenuPlayAreaWhichDuelist_B: 1, wCheckMenuPlayAreaWhichLayout_B: 1},
+     "expect": {hBankROM_B: b"\x01", wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "hl": 0xC2C2},
+    dict(POISON, hl=0xC2C2, instruction_budget=20000000, cycle_budget=80000000,
+         hram={hBankROM_B: b"\x37", hWhoseTurn_B: b"\xC2"},
+         wram={wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03", 0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText_B: b"\x00" * 16},
+         read={hBankROM_B: 1, wCheckMenuPlayAreaWhichDuelist_B: 1, wCheckMenuPlayAreaWhichLayout_B: 1},
+         expect={hBankROM_B: b"\x37", wCheckMenuPlayAreaWhichDuelist_B: b"\xC2", wCheckMenuPlayAreaWhichLayout_B: b"\xC2"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory DrawYourOrOppPlayAreaScreen_Bank0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -60,3 +86,6 @@ MUTATIONS["DrawPlayAreaToPlacePrizeCards"] = {
     "case_ids": ["DrawPlayAreaToPlacePrizeCards-0", "DrawPlayAreaToPlacePrizeCards-1"],
 }
 # <<< factory-mutation DrawPlayAreaToPlacePrizeCards
+# >>> factory-mutation DrawYourOrOppPlayAreaScreen_Bank0
+MUTATIONS["DrawYourOrOppPlayAreaScreen_Bank0"] = {"source_symbol": "DrawYourOrOppPlayAreaScreen_Bank0", "before": "\t(void)DrawWideTextBox();\n\tBankswitchROM(saved_bank);", "after": "\t(void)DrawWideTextBox();\n\tBankswitchROM(0u);", "case_ids": ["DrawYourOrOppPlayAreaScreen_Bank0-0", "DrawYourOrOppPlayAreaScreen_Bank0-1"]}
+# <<< factory-mutation DrawYourOrOppPlayAreaScreen_Bank0
