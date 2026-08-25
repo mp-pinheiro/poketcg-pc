@@ -2581,6 +2581,16 @@ RV_HAND_COUNT = 0xC2EE
 RV_DECK_CARDS = 0xC27E
 RV_NOT_IN_DECK = 0xC2BA
 RV_BULBASAUR = 0x08
+
+IF_hTempList = 0xFFA0
+IF_hWhoseTurn = 0xFF97
+IF_TURN = 0xC2
+IF_DUELIST_TYPE = 0xC2F1
+IF_LOCATIONS = 0xC200
+IF_HAND_COUNT = 0xC2EE
+IF_HAND = 0xC242
+IF_DISCARD_COUNT = 0xC2F2
+IF_NOT_IN_DECK = 0xC2BA
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4438,6 +4448,25 @@ CASES["Revive_PlaceInPlayAreaEffect"] = [
          RV_NOT_IN_DECK: b"\x01", RV_NUM_IN_PLAY: b"\x00"}, read={RV_ARENA_HP: 8, RV_LOCATIONS: 4, RV_NUM_IN_PLAY: 1, RV_HAND_COUNT: 1}),
 ]
 # <<< factory Revive_PlaceInPlayAreaEffect
+
+# >>> factory ItemFinder_DiscardAddToHandEffect
+CONTRACT["ItemFinder_DiscardAddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ItemFinder_DiscardAddToHandEffect"] = [
+    # Player's own turn: both hand cards are discarded and the wanted card is
+    # pulled back, then `ret c` returns before the detail screen (which
+    # DisplayCardDetailScreen's own cases already cover).
+    {"wram": {IF_hWhoseTurn: bytes((IF_TURN,)), IF_DUELIST_TYPE: b"\x00",
+      IF_hTempList: b"\x01\x02\x03",
+      IF_LOCATIONS + 1: b"\x01", IF_LOCATIONS + 2: b"\x01",
+      IF_HAND_COUNT: b"\x02", IF_HAND: b"\x01\x02",
+      IF_NOT_IN_DECK: b"\x03"}, "read": {IF_LOCATIONS: 6, IF_HAND_COUNT: 1, IF_HAND: 4, IF_NOT_IN_DECK: 1}},
+    dict(POISON, wram={IF_hWhoseTurn: bytes((IF_TURN,)), IF_DUELIST_TYPE: b"\x00",
+         IF_hTempList: b"\x01\x02\x03",
+         IF_LOCATIONS + 1: b"\x01", IF_LOCATIONS + 2: b"\x01",
+         IF_HAND_COUNT: b"\x02", IF_HAND: b"\x01\x02",
+         IF_NOT_IN_DECK: b"\x03"}, read={IF_LOCATIONS: 6, IF_HAND_COUNT: 1, IF_HAND: 4, IF_NOT_IN_DECK: 1}),
+]
+# <<< factory ItemFinder_DiscardAddToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6734,3 +6763,11 @@ MUTATIONS["Revive_PlaceInPlayAreaEffect"] = {
  "case_ids": ["Revive_PlaceInPlayAreaEffect-0", "Revive_PlaceInPlayAreaEffect-1"],
 }
 # <<< factory-mutation Revive_PlaceInPlayAreaEffect
+# >>> factory-mutation ItemFinder_DiscardAddToHandEffect
+MUTATIONS["ItemFinder_DiscardAddToHandEffect"] = {
+ "source_symbol": "ItemFinder_DiscardAddToHandEffect",
+ "before": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(wanted);\n\tAddCardToHand(moved.a);",
+ "after": "\tMoveDiscardResult moved = MoveDiscardPileCardToHand(wanted);\n\tAddCardToHand((uint8_t)(moved.a + 1u));",
+ "case_ids": ["ItemFinder_DiscardAddToHandEffect-0", "ItemFinder_DiscardAddToHandEffect-1"],
+}
+# <<< factory-mutation ItemFinder_DiscardAddToHandEffect

@@ -1425,6 +1425,10 @@ void PokemonFlute_PlaceInPlayAreaText(void);
 typedef struct { uint8_t a; uint8_t f; } Revive_PlaceInPlayAreaEffectResult;
 Revive_PlaceInPlayAreaEffectResult Revive_PlaceInPlayAreaEffect(void);
 /* <<< factory Revive_PlaceInPlayAreaEffect */
+/* >>> factory ItemFinder_DiscardAddToHandEffect */
+typedef struct { uint8_t a; uint8_t f; } ItemFinder_DiscardAddToHandEffectResult;
+ItemFinder_DiscardAddToHandEffectResult ItemFinder_DiscardAddToHandEffect(void);
+/* <<< factory ItemFinder_DiscardAddToHandEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

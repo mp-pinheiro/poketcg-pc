@@ -728,6 +728,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define RV_BANK_DUEL_CORE 0x01u
 #define RV_DUELVARS_ARENA_CARD_HP 0xC8u
 #define PlacedOnTheBenchText 0x0061u
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define IF_BANK_DUEL_CORE 0x01u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6404,3 +6412,34 @@ Revive_PlaceInPlayAreaEffectResult Revive_PlaceInPlayAreaEffect(void)
 	return (Revive_PlaceInPlayAreaEffectResult){hTemp_ffa0, shown.f};
 }
 /* <<< factory Revive_PlaceInPlayAreaEffect */
+
+/* >>> factory ItemFinder_DiscardAddToHandEffect */
+ItemFinder_DiscardAddToHandEffectResult ItemFinder_DiscardAddToHandEffect(void)
+{
+	/* hl walks hTempList: two hand cards to discard, then the discard-pile card
+	 * to retrieve. RemoveCardFromHand and PutCardInDiscardPile both preserve
+	 * every register, so each pair shares one deck index. */
+	uint8_t first = gb_read8(hTempList_ADDR);
+	RemoveCardFromHand(first);
+	PutCardInDiscardPile(first);
+	uint8_t second = gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	RemoveCardFromHand(second);
+	PutCardInDiscardPile(second);
+	uint8_t wanted = gb_read8((uint16_t)(hTempList_ADDR + 2u));
+	MoveDiscardResult moved = MoveDiscardPileCardToHand(wanted);
+	AddCardToHand(moved.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	/* IsPlayerTurn sets carry on the player's own turn, and `ret c` skips the
+	 * screen: it exists to show the opponent's pick to the player. */
+	if ((turn.f & 0x10u) != 0u)
+		return (ItemFinder_DiscardAddToHandEffectResult){turn.a, turn.f};
+	/* `bank1call` selects bank 1 for the callee and restores this routine's own
+	 * bank on return. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(IF_BANK_DUEL_CORE);
+	uint8_t shown_index = gb_read8((uint16_t)(hTempList_ADDR + 2u));
+	WaitResult shown = DisplayCardDetailScreen(shown_index, WasPlacedInTheHandText);
+	BankswitchROM(saved);
+	return (ItemFinder_DiscardAddToHandEffectResult){shown_index, shown.f};
+}
+/* <<< factory ItemFinder_DiscardAddToHandEffect */

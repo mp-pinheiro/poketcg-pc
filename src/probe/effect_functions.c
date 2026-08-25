@@ -3453,6 +3453,15 @@ static void adapt_Revive_PlaceInPlayAreaEffect(ProbeState *s)
 }
 /* <<< factory Revive_PlaceInPlayAreaEffect */
 
+/* >>> factory ItemFinder_DiscardAddToHandEffect */
+static void adapt_ItemFinder_DiscardAddToHandEffect(ProbeState *s)
+{
+	ItemFinder_DiscardAddToHandEffectResult r = ItemFinder_DiscardAddToHandEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ItemFinder_DiscardAddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3875,5 +3884,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KrabbyCallForFamily_PutInPlayAreaEffect", adapt_KrabbyCallForFamily_PutInPlayAreaEffect },
 	{ "PokemonFlute_PlaceInPlayAreaText", adapt_PokemonFlute_PlaceInPlayAreaText },
 	{ "Revive_PlaceInPlayAreaEffect", adapt_Revive_PlaceInPlayAreaEffect },
+	{ "ItemFinder_DiscardAddToHandEffect", adapt_ItemFinder_DiscardAddToHandEffect },
 	{ NULL, NULL },
 };
