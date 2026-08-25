@@ -53,6 +53,11 @@ A native module is reported as
 dispatched, and the selector backfills from the next basename. Direct
 `factory-try <Fn>` applies the same preflight and operational-blocker policy.
 
+Fresh selection defers a routine whose basename has a staged, unlanded green
+artifact: that landing will rewrite the basename's case module and stale the
+attempt, so pending basenames are ordered last and only fill what the rest of
+the frontier cannot.
+
 `--retry-red` is a disjoint mode. It selects only current `red` attempts whose
 `generation < --retry-limit`; the default is `16`. Retry order
 is `(generation, -cascade, size, name)`, so every red receives its bounded retry

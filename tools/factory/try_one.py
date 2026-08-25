@@ -635,7 +635,20 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
             for name, state in current.items()
             if state["state"] == "issued" and name in by_name
         }
-        for cascade, row in _score_rows(pool, retry=retry_red):
+        scored = list(_score_rows(pool, retry=retry_red))
+        if not retry_red:
+            # A staged green artifact rewrites its basename's case module at
+            # landing, so a sibling issued now spends its candidates on a
+            # context about to go stale (44 of the last 64 stales were
+            # same-basename). Stable sort: pending basenames only fill what
+            # the rest of the frontier cannot.
+            pending = {
+                Path(by_name[name]["source"]).stem
+                for name, state in current.items()
+                if state["state"] == "green" and name in by_name
+            }
+            scored.sort(key=lambda item: Path(item[1]["source"]).stem in pending)
+        for cascade, row in scored:
             if prepared >= count:
                 break
             stem = Path(row["source"]).stem
