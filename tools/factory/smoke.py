@@ -96,6 +96,33 @@ def _fixture_rows(limit: int) -> list[dict[str, Any]]:
     return selected
 
 
+def _sibling_rows(count: int) -> list[dict[str, Any]]:
+    """`count` fixture rows on distinct basenames, cloned from one real row.
+
+    subcommand_next claims at most one attempt per basename, so a stage that
+    issues several at once needs that many distinct source stems. Harvesting
+    them from the live frontier tied the stage to how the remaining work happens
+    to be spread across pret files, and it aged out the moment every
+    appendable-ready routine left shared one source. The behaviour under test
+    reads a row's name, source stem and size only, so synthetic siblings - the
+    convention stage_concurrent_claims already uses - exercise it exactly, and
+    their absent case modules classify as "new" rather than blocking preflight.
+    """
+    row = _fixture_rows(1)[0]
+    source = Path(row["source"])
+    siblings = []
+    for index in range(count):
+        suffix = f"__smoke_sibling_{index}"
+        sibling = dict(row)
+        sibling["name"] = f"{row['name']}{suffix}"
+        sibling["work_id"] = f"{row['work_id']}{suffix}"
+        sibling["source"] = str(
+            source.with_name(f"{source.stem}{suffix}{source.suffix}")
+        )
+        siblings.append(sibling)
+    return siblings
+
+
 def _patch_report(rows: list[dict[str, Any]]) -> tuple[Any, Any]:
     report = packet_mod.report_module()
     previous = report.compute
@@ -558,7 +585,7 @@ def stage_evidence_filter(state: dict[str, Any]) -> str:
 
 
 def stage_retry_fairness(state: dict[str, Any]) -> str:
-    rows = _fixture_rows(3)
+    rows = _sibling_rows(3)
     with tempfile.TemporaryDirectory(prefix="factory-smoke-retry-") as directory:
         previous_root = try_one.TRY_ROOT
         previous_issue = try_one.issue_attempt
