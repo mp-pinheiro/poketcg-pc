@@ -233,6 +233,15 @@ CASES["OverworldMap_UpdatePlayerWalkingAnimation"] = [
 ]
 # <<< factory OverworldMap_UpdatePlayerWalkingAnimation
 
+# >>> factory OverworldMap_HandleDPad
+CONTRACT["OverworldMap_HandleDPad"] = {"compare": (), "preserve": ()}
+CASES["OverworldMap_HandleDPad"] = [
+    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, "stack": [0xBBCC, 0xDDEE], "expect": {wOverworldMapSelection: b"\x01"}},
+    {"wram": {wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x00"}, "stack": [0xBBCC, 0xDDEE], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOverworldMapSelection: b"\x06"}},
+    dict(POISON, wram={wOverworldMapSelection: b"\x01", wPlayerDirection: b"\x02"}, stack=[0xBBCC, 0xDDEE], expect={wOverworldMapSelection: b"\x01"}),
+]
+# <<< factory OverworldMap_HandleDPad
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -285,3 +294,11 @@ MUTATIONS["OverworldMap_BeginPlayerMovement"] = {"source_symbol": "OverworldMap_
 # >>> factory-mutation OverworldMap_UpdatePlayerWalkingAnimation
 MUTATIONS["OverworldMap_UpdatePlayerWalkingAnimation"] = {"source_symbol": "OverworldMap_UpdatePlayerWalkingAnimation", "before": "\tgb_write8(wOverworldMapPlayerMovementPtr_ADDR, (uint8_t)hl);", "after": "\tgb_write8(wOverworldMapPlayerMovementPtr_ADDR, (uint8_t)(hl + 1u));", "case_ids": ["OverworldMap_UpdatePlayerWalkingAnimation-0", "OverworldMap_UpdatePlayerWalkingAnimation-1"]}
 # <<< factory-mutation OverworldMap_UpdatePlayerWalkingAnimation
+# >>> factory-mutation OverworldMap_HandleDPad
+MUTATIONS["OverworldMap_HandleDPad"] = {
+    "source_symbol": "OverworldMap_HandleDPad",
+    "before": "\twOverworldMapSelection = next;",
+    "after": "\twOverworldMapSelection = 0u;",
+    "case_ids": ["OverworldMap_HandleDPad-1"],
+}
+# <<< factory-mutation OverworldMap_HandleDPad

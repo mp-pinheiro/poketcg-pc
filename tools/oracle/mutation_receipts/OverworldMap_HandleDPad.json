@@ -1,0 +1,9 @@
+{
+  "fn": "OverworldMap_HandleDPad",
+  "case": "tests/cases/overworld_map.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OverworldMap_HandleDPad\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"06\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OverworldMap_HandleDPad\", \"mismatches\": {\"bus\": {\"address\": 54062, \"reference\": \"0600\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54062, 1], [54068, 1]]}}}\n",
+  "restored": "{\"fn\": \"OverworldMap_HandleDPad\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"06\", \"54068\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

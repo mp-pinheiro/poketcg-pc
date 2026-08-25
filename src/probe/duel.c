@@ -835,6 +835,14 @@ static void adapt__DrawAIPeekScreen(ProbeState *s)
 }
 /* <<< factory _DrawAIPeekScreen */
 
+/* >>> factory PrintPokemonsAttackText */
+static void adapt_PrintPokemonsAttackText(ProbeState *s)
+{
+	PrintPokemonsAttackTextResult r = PrintPokemonsAttackText();
+	s->hl = r.hl;
+}
+/* <<< factory PrintPokemonsAttackText */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -937,5 +945,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "_DrawYourOrOppPlayAreaScreen", adapt__DrawYourOrOppPlayAreaScreen },
 	{ "DrawYourOrOppPlayAreaScreen", adapt_DrawYourOrOppPlayAreaScreen },
 	{ "_DrawAIPeekScreen", adapt__DrawAIPeekScreen },
+	{ "PrintPokemonsAttackText", adapt_PrintPokemonsAttackText },
 	{ NULL, NULL },
 };

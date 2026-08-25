@@ -95,6 +95,26 @@ static const uint8_t overworld_map_warps[13][4] = {
 #include "home/overworld_map.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/overworld_map.h"
+#include "home/sound.h"
+
+static const uint8_t overworld_map_cursor_transitions[13][4] = {
+	{0x00u, 0x00u, 0x00u, 0x00u},
+	{0x06u, 0x03u, 0x00u, 0x00u},
+	{0x00u, 0x0Bu, 0x04u, 0x00u},
+	{0x06u, 0x05u, 0x00u, 0x01u},
+	{0x02u, 0x0Cu, 0x06u, 0x00u},
+	{0x07u, 0x00u, 0x00u, 0x03u},
+	{0x04u, 0x0Cu, 0x03u, 0x01u},
+	{0x00u, 0x00u, 0x05u, 0x08u},
+	{0x09u, 0x00u, 0x07u, 0x0Cu},
+	{0x09u, 0x00u, 0x07u, 0x08u},
+	{0x00u, 0x09u, 0x09u, 0x08u},
+	{0x00u, 0x08u, 0x0Cu, 0x02u},
+	{0x0Bu, 0x08u, 0x03u, 0x04u},
+};
 /* <<< factory statics */
 
 /* >>> factory OverworldMap_ContinuePlayerWalkingAnimation */
@@ -425,3 +445,19 @@ void OverworldMap_UpdatePlayerWalkingAnimation(void)
 	OverworldMap_InitNextPlayerVelocity(b, c);
 }
 /* <<< factory OverworldMap_UpdatePlayerWalkingAnimation */
+
+/* >>> factory OverworldMap_HandleDPad */
+void OverworldMap_HandleDPad(uint16_t w0, uint16_t w1)
+{
+	(void)w0;
+	(void)w1;
+	uint8_t selection = wOverworldMapSelection;
+	uint8_t direction = wPlayerDirection;
+	uint8_t next = overworld_map_cursor_transitions[selection][direction];
+	if (next == 0u)
+		return;
+	wOverworldMapSelection = next;
+	OverworldMap_PrintMapName();
+	PlaySFX(0x01u);
+}
+/* <<< factory OverworldMap_HandleDPad */

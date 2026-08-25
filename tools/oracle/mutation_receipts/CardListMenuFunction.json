@@ -1,0 +1,9 @@
+{
+  "fn": "CardListMenuFunction",
+  "case": "tests/cases/menus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardListMenuFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52496\": \"00\", \"52500\": \"02\", \"52505\": \"00\", \"52507\": \"04\", \"52509\": \"0000\", \"52631\": \"ff\", \"52633\": \"77\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardListMenuFunction\", \"mismatches\": {\"bus\": {\"address\": 65457, \"reference\": \"0000ff7700\", \"native\": \"0000ff7701\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[52496, 1], [52500, 1], [52505, 1], [52507, 1], [52509, 2], [52631, 1], [52633, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"CardListMenuFunction\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 160, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52496\": \"00\", \"52500\": \"02\", \"52505\": \"00\", \"52507\": \"04\", \"52509\": \"0000\", \"52631\": \"ff\", \"52633\": \"77\", \"65457\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

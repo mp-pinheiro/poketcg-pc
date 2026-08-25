@@ -293,6 +293,18 @@ wListScrollOffset = 0xCD19
 wMenuCursorYOffset = 0xCD12
 wNumMenuItems = 0xCD14
 wNumListItems = 0xCD1B
+
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+hCurMenuItem = 0xFFB1
+wCurMenuItem = 0xCD10
+wNumMenuItems = 0xCD14
+wListScrollOffset = 0xCD19
+wNumListItems = 0xCD1B
+wListFunctionPointer = 0xCD1D
+wCardListIndicatorYPosition = 0xCD97
+wRefreshMenuCursorSFX = 0xCD99
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory HandleYesOrNoMenu
@@ -353,6 +365,16 @@ CASES["PrintCardListItems"] = [
     dict(POISON, hl=0x1234, wram={0xC5ED: b"\xFF"}, read={0xCD13: 1, 0xCD17: 2, 0xCD97: 1}, vread={0: {0x9832: 1, 0x9872: 1}}, instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory PrintCardListItems
+
+# >>> factory CardListMenuFunction
+CONTRACT["CardListMenuFunction"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CardListMenuFunction"] = [
+    {"keys": 0x00, "wram": {wCurMenuItem: b"\x00", wNumMenuItems: b"\x02", wListScrollOffset: b"\x00", wNumListItems: b"\x04", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x77"}, "read": {hCurMenuItem: 1}},
+    {"keys": 0x00, "wram": {wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x12"}, "read": {hCurMenuItem: 1}},
+    {"keys": 0x02, "wram": {wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\xAA"}, "read": {hCurMenuItem: 1}},
+    dict(POISON, keys=0x00, wram={wCurMenuItem: b"\x01", wNumMenuItems: b"\x03", wListScrollOffset: b"\x02", wNumListItems: b"\x05", wCardListIndicatorYPosition: b"\xFF", wListFunctionPointer: b"\x00\x00", wRefreshMenuCursorSFX: b"\x55"}, read={hCurMenuItem: 1}),
+]
+# <<< factory CardListMenuFunction
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -417,3 +439,6 @@ MUTATIONS["PrintCardListItems"] = {
     "case_ids": ["PrintCardListItems-0", "PrintCardListItems-1"],
 }
 # <<< factory-mutation PrintCardListItems
+# >>> factory-mutation CardListMenuFunction
+MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "before": "hCurMenuItem = selected;", "after": "hCurMenuItem = (uint8_t)(selected + 1u);", "case_ids": ["CardListMenuFunction-0", "CardListMenuFunction-1", "CardListMenuFunction-2", "CardListMenuFunction-3"]}
+# <<< factory-mutation CardListMenuFunction

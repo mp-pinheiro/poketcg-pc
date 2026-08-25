@@ -505,6 +505,14 @@ static const uint8_t kCursorTileData[16] = {
 #include "home/duel.h"
 #include "home/lcd.h"
 #include "mem.h"
+
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD 0xBBu
+#define PokemonsAttackText 0x0035u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2513,3 +2521,19 @@ void _DrawAIPeekScreen(uint8_t b)
 		SwapTurn();
 }
 /* <<< factory _DrawAIPeekScreen */
+
+/* >>> factory PrintPokemonsAttackText */
+PrintPokemonsAttackTextResult PrintPokemonsAttackText(void)
+{
+	DuelistVarResult duelist = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(duelist.a);
+	CopyCardNameAndLevelResult name = CopyCardNameAndLevel(18u, 0u, 0u, 0u, 0u);
+	gb_write8(name.hl, TX_END);
+	gb_write8(wTxRam2_ADDR, 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8(wLoadedAttackName_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 3u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));
+	TextResult text = DrawWideTextBox_PrintText(PokemonsAttackText);
+	return (PrintPokemonsAttackTextResult){text.a, text.b, text.c, text.d, text.e, text.hl};
+}
+/* <<< factory PrintPokemonsAttackText */

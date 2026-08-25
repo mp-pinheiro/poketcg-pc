@@ -45,6 +45,14 @@
 
 #include "generated/wram.h"
 #include "home/menus.h"
+
+#include "home/menus.h"
+#include "home/bg_map.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PAD_UP 0x40u
+#define PAD_DOWN 0x80u
+#define SYM_SLASH 0x2Eu
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -511,3 +519,83 @@ void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 	ReloadCardListItems();
 }
 /* <<< factory PrintCardListItems */
+
+/* >>> factory CardListMenuFunction */
+CardListMenuFunctionResult CardListMenuFunction(void)
+{
+	uint8_t keys = hDPadHeld;
+	uint8_t count = (uint8_t)(wNumMenuItems - 1u);
+	uint8_t cur = wCurMenuItem;
+	if ((keys & PAD_UP) != 0u) {
+		if (cur == count) {
+			wCurMenuItem = 0u;
+			if (wListScrollOffset != 0u) {
+				wListScrollOffset = (uint8_t)(wListScrollOffset - 1u);
+				ReloadCardListItems();
+			}
+		}
+	} else if ((keys & PAD_DOWN) != 0u) {
+		if (cur == 0u) {
+			wCurMenuItem = count;
+			if ((uint8_t)(wListScrollOffset + count + 1u) < wNumListItems) {
+				wListScrollOffset = (uint8_t)(wListScrollOffset + 1u);
+				ReloadCardListItems();
+			}
+		} else if ((uint8_t)(cur + wListScrollOffset) >= wNumListItems) {
+			wCurMenuItem = (uint8_t)(cur - 1u);
+		}
+	} else if ((keys & 0x20u) != 0u) {
+		if (wListScrollOffset != 0u) {
+			uint8_t next = (uint8_t)(wListScrollOffset - wNumMenuItems);
+			if (wListScrollOffset >= wNumMenuItems) {
+				wListScrollOffset = next;
+				ReloadCardListItems();
+			} else {
+				EraseCursor();
+				wCurMenuItem = (uint8_t)(wListScrollOffset + cur);
+				wListScrollOffset = 0u;
+				wRefreshMenuCursorSFX = 0u;
+				ReloadCardListItems();
+			}
+		}
+	} else if ((keys & 0x10u) != 0u) {
+		if (wNumMenuItems < wNumListItems) {
+			uint8_t next = (uint8_t)(wListScrollOffset + wNumMenuItems);
+			if ((uint8_t)(next + wNumMenuItems - 1u) < wNumListItems) {
+				wListScrollOffset = next;
+				ReloadCardListItems();
+			} else {
+				EraseCursor();
+				uint8_t old_scroll = wListScrollOffset;
+				wListScrollOffset = (uint8_t)(wNumListItems - wNumMenuItems);
+				wCurMenuItem = (uint8_t)(old_scroll + cur - wListScrollOffset);
+				ReloadCardListItems();
+			}
+		}
+	}
+	uint8_t selected = (uint8_t)(wListScrollOffset + wCurMenuItem);
+	hCurMenuItem = selected;
+	if (wCardListIndicatorYPosition != 0xFFu) {
+		uint8_t y = wCardListIndicatorYPosition;
+		TxSymbolResult first = OneByteNumberToTxSymbol_PadSpace((uint8_t)(selected + 1u));
+		uint16_t first_hl = first.hl;
+		uint16_t first_de = 0u;
+		CopyDataToBGMap0(2u, &first_hl, &first_de, 13u, y);
+		WriteByteToBGMap0(SYM_SLASH, 15u, y);
+		TxSymbolResult total = OneByteNumberToTxSymbol_PadSpace(wNumListItems);
+		uint16_t total_hl = total.hl;
+		uint16_t total_de = 0u;
+		CopyDataToBGMap0(2u, &total_hl, &total_de, 16u, y);
+	}
+	if (wListFunctionPointer != 0u || gb_read8((uint16_t)(wListFunctionPointer_ADDR + 1u)) != 0u)
+		return (CardListMenuFunctionResult){0u, 0x00u};
+	uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
+	if (pressed == 0u)
+		return (CardListMenuFunctionResult){0u, 0xA0u};
+	if ((pressed & PAD_B) != 0u) {
+		hCurMenuItem = 0xFFu;
+		return (CardListMenuFunctionResult){0xFFu, 0x10u};
+	}
+	return (CardListMenuFunctionResult){0u, 0x10u};
+}
+/* <<< factory CardListMenuFunction */

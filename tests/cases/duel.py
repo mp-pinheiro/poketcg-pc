@@ -1164,6 +1164,17 @@ wMenuInputTablePointer = 0xCE53
 wVBlankOAMCopyToggle = 0xCAC0
 wYourOrOppPlayAreaCurPosition = 0xCE52
 wDefaultText = 0xC590
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wLoadedCard1Name = 0xCC27
+wLoadedAttackName = 0xCCAA
+wDefaultText = 0xC590
+wTxRam2 = 0xCE3F
+wTxRam2_b = 0xCE41
+TEXT_SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1428,6 +1439,16 @@ CASES["_DrawAIPeekScreen"] = [
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}]
 # <<< factory _DrawAIPeekScreen
 
+# >>> factory PrintPokemonsAttackText
+CONTRACT["PrintPokemonsAttackText"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintPokemonsAttackText"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x08", wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00", wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00"},
+     "setup": TEXT_SETUP, "read": {wDefaultText: 64, wTxRam2: 4}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x08", wLoadedCard1Name: b"\x35\x00", wLoadedAttackName: b"\x35\x00", wDefaultText: b"\x00", wTxRam2: b"\x00\x00\x35\x00"},
+         setup=TEXT_SETUP, read={wDefaultText: 64, wTxRam2: 4}),
+]
+# <<< factory PrintPokemonsAttackText
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1619,3 +1640,6 @@ MUTATIONS["DrawYourOrOppPlayAreaScreen"] = {"source_symbol": "DrawYourOrOppPlayA
 # >>> factory-mutation _DrawAIPeekScreen
 MUTATIONS["_DrawAIPeekScreen"] = {"source_symbol": "_DrawAIPeekScreen", "before": "\tif ((b & 0x80u) != 0u) {", "after": "\tif ((b & 0x80u) == 0u) {", "case_ids": ["_DrawAIPeekScreen-0", "_DrawAIPeekScreen-1"]}
 # <<< factory-mutation _DrawAIPeekScreen
+# >>> factory-mutation PrintPokemonsAttackText
+MUTATIONS["PrintPokemonsAttackText"] = {"source_symbol": "PrintPokemonsAttackText", "before": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8(wLoadedAttackName_ADDR));", "after": "\tgb_write8((uint16_t)(wTxRam2_ADDR + 2u), gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u)));", "case_ids": ["PrintPokemonsAttackText-0", "PrintPokemonsAttackText-1"]}
+# <<< factory-mutation PrintPokemonsAttackText

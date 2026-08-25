@@ -72,4 +72,8 @@ void Func_2827(void);
 /* >>> factory PrintCardListItems */
 void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl);
 /* <<< factory PrintCardListItems */
+/* >>> factory CardListMenuFunction */
+typedef struct { uint8_t a; uint8_t f; } CardListMenuFunctionResult;
+CardListMenuFunctionResult CardListMenuFunction(void);
+/* <<< factory CardListMenuFunction */
 #endif
