@@ -13,6 +13,28 @@ uint8_t g_io[0x80];
 uint8_t g_pal[0x80];
 uint8_t g_keys;
 
+/* Key timeline: entries[0..count-1], cycled per completed joypad poll. count <= 1
+ * disarms the advance entirely, leaving g_keys exactly as seeded. */
+static uint8_t g_key_entries[MEM_KEY_TIMELINE_MAX];
+static uint8_t g_key_count;
+static uint8_t g_key_index;
+static uint16_t g_key_latch_addr;
+static int g_key_latch_armed;
+
+void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_addr)
+{
+	if (count > MEM_KEY_TIMELINE_MAX)
+		count = MEM_KEY_TIMELINE_MAX;
+	for (uint8_t i = 0; i < count; i++)
+		g_key_entries[i] = entries[i];
+	g_key_count = count;
+	g_key_index = 0;
+	g_key_latch_addr = latch_addr;
+	g_key_latch_armed = count > 1;
+	if (count)
+		g_keys = entries[0];
+}
+
 uint8_t *g_rom = NULL;
 size_t g_rom_size = 0;
 

@@ -20,6 +20,23 @@ extern uint8_t g_pal[0x80];    /* CGB palette RAM; reached through $FF68-$FF6B, 
  * against it so ReadJoypad (and anything that waits on it) can observe input. */
 extern uint8_t g_keys;
 
+/* Per-poll key timeline, the native mirror of the reference's per-frame
+ * `input_events` cycle (tools/oracle/gbref/runner.c: input_index advances on each
+ * frame boundary, modulo the entry count, and only when more than one entry
+ * exists). The native probe renders no frames, so the faithful analogue of a
+ * frame boundary is a completed joypad poll: ReadJoypad ends by having
+ * SaveButtonsHeld store hKeysHeld, the only write to that address in the tree.
+ * gb_keys_arm_timeline() registers that latch address and the cycle; every write
+ * to it advances g_keys to the next entry.
+ *
+ * With zero or one entry the index never leaves 0 and g_keys is exactly the
+ * single seeded value, so an armed timeline is inert for every case that does not
+ * declare a multi-frame one. That is what keeps a held `keys` scalar -- newly
+ * pressed exactly once -- unchanged.
+ */
+#define MEM_KEY_TIMELINE_MAX 16
+void gb_keys_arm_timeline(const uint8_t *entries, uint8_t count, uint16_t latch_addr);
+
 /* $FEA0-$FEFF, the unusable hole, plus the landing page for out-of-image ROM reads.
  * Writable through the bus, so it belongs in any full-state snapshot. */
 #define MEM_SCRATCH_SIZE 0x100
