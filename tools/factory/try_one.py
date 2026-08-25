@@ -149,26 +149,34 @@ def _already_implemented(fn: str, source: str | None) -> bool:
 
 def resolve(fn: str) -> tuple[dict[str, Any], dict[str, Any]]:
     _check_operational_blocker(fn)
-    report = packet_mod.report_module()
-    functions, _inventory = packet_mod.compute_functions()
-    matched = [f for f in functions if f["name"] == fn]
-    if not matched:
-        raise LookupError(f"{fn} is not in the pret inventory")
-    if len(matched) > 1:
-        raise LookupError(f"{fn} is ambiguous across {len(matched)} inventory records")
-    routine = matched[0]
-    classification = _case_classification(fn, routine.get("file"))
-    if classification == "native-migration-required":
-        raise PreflightBlocker(fn, classification)
-    if _already_implemented(fn, routine.get("file")):
-        raise PreflightBlocker(fn, "already-implemented")
-    work_id = routine.get("work_id")
-    if not isinstance(work_id, str) or not work_id:
-        raise LookupError(f"{fn} has no canonical work id; it is out of scope")
-    packets = packet_mod.build_packets_for_work_ids({work_id}, issue_numbers={work_id: 0})
-    if len(packets) != 1:
-        raise LookupError(f"{fn} produced {len(packets)} packets")
-    return routine, packets[0]
+    # Shared tree.lock for the same reason lanes.py takes it around an rsync: a
+    # packet built while another session's surgery is half applied describes a
+    # tree that never existed, and the only visible effect is that this attempt
+    # goes `stale` on its next verification. A concurrent orchestrator whose
+    # candidates take longer than the lander's cycle then verifies nothing at
+    # all, because every one of its attempts is reissued before it can be used.
+    with common.file_lock(common.locks_dir() / "tree.lock", exclusive=False,
+                          timeout=1800):
+        report = packet_mod.report_module()
+        functions, _inventory = packet_mod.compute_functions()
+        matched = [f for f in functions if f["name"] == fn]
+        if not matched:
+            raise LookupError(f"{fn} is not in the pret inventory")
+        if len(matched) > 1:
+            raise LookupError(f"{fn} is ambiguous across {len(matched)} inventory records")
+        routine = matched[0]
+        classification = _case_classification(fn, routine.get("file"))
+        if classification == "native-migration-required":
+            raise PreflightBlocker(fn, classification)
+        if _already_implemented(fn, routine.get("file")):
+            raise PreflightBlocker(fn, "already-implemented")
+        work_id = routine.get("work_id")
+        if not isinstance(work_id, str) or not work_id:
+            raise LookupError(f"{fn} has no canonical work id; it is out of scope")
+        packets = packet_mod.build_packets_for_work_ids({work_id}, issue_numbers={work_id: 0})
+        if len(packets) != 1:
+            raise LookupError(f"{fn} produced {len(packets)} packets")
+        return routine, packets[0]
 
 
 def dispatch_line(fn: str, run_dir: Path, index: int) -> str:
@@ -377,7 +385,16 @@ def attempt(built: dict[str, Any], reply: dict[str, Any], *, lane_index: int,
         "seconds": seconds,
     }
     if green:
-        stored = workers.store_artifact(workers.stage_bundle(built, lane))
+        # Bundling reads back what surgery wrote, so it can fail on a
+        # translation the oracle already accepted. That is a diagnostic about
+        # this candidate, not a reason to abort the whole wave with a traceback
+        # and lose every other candidate's result.
+        try:
+            stored = workers.store_artifact(workers.stage_bundle(built, lane))
+        except (OSError, RuntimeError, TypeError, ValueError) as exc:
+            return {**record, "outcome": "diagnostic", "phase": "bundle",
+                    "failure_class": "bundle",
+                    "detail": f"{type(exc).__name__}: {exc}"[-2000:]}
         record["artifact_sha256"] = stored["artifact_sha256"]
     return record
 
