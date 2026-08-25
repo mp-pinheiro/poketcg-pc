@@ -365,6 +365,11 @@ launch-port:
     tools/factory/run.sh
 
 
+
+# Supervised loop: auto-restarts until `.factory/STOP` exists (500 max).
+launch-port-supervised:
+    tools/factory/supervise.sh
+
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
     @git cliff --bump --unreleased --context 2>/dev/null \
