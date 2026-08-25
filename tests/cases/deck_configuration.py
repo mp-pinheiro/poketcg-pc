@@ -642,6 +642,15 @@ CASES["PrintFilteredCardSelectionList"] = [
 ]
 # <<< factory PrintFilteredCardSelectionList
 
+# >>> factory PrintDeckBuildingCardList
+CONTRACT["PrintDeckBuildingCardList"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintDeckBuildingCardList"] = [
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x00", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0, 0x9833: 0}}},
+    {"wram": {0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, "read": {0xCECD: 1}, "vread": {0: {0x9853: 0x0C, 0x9833: 0}}},
+    dict(POISON, wram={0xCED0: b"\x03\x04", 0xCEA1: b"\x01", 0xCECB: b"\x00", 0xCEDA: b"\x00"}, read={0xCECD: 1}, vread={0: {0x9853: 0x0C, 0x9833: 0}}),
+]
+# <<< factory PrintDeckBuildingCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -868,3 +877,11 @@ MUTATIONS["PrintCardSelectionList"] = {
 # >>> factory-mutation PrintFilteredCardSelectionList
 MUTATIONS["PrintFilteredCardSelectionList"] = {"source_symbol": "PrintFilteredCardSelectionList", "before": "\tgb_write8(wNumVisibleCardListEntries_ADDR, NUM_DECK_CONFIRMATION_VISIBLE_CARDS);", "after": "\tgb_write8(wNumVisibleCardListEntries_ADDR, 0x06u);", "case_ids": ["PrintFilteredCardSelectionList-0", "PrintFilteredCardSelectionList-1"]}
 # <<< factory-mutation PrintFilteredCardSelectionList
+# >>> factory-mutation PrintDeckBuildingCardList
+MUTATIONS["PrintDeckBuildingCardList"] = {
+    "source_symbol": "PrintDeckBuildingCardList",
+    "before": "\tuint8_t tile = (wCardListVisibleOffset != 0u) ? SYM_CURSOR_U : SYM_SPACE;",
+    "after": "\tuint8_t tile = (wCardListVisibleOffset != 0u) ? SYM_CURSOR_D : SYM_SPACE;",
+    "case_ids": ["PrintDeckBuildingCardList-1", "PrintDeckBuildingCardList-2"],
+}
+# <<< factory-mutation PrintDeckBuildingCardList
