@@ -750,6 +750,6 @@ reason = "Same confirmed Display+Handle chaining bug as PlayerPickFireEnergyCard
 unblock = "same as PlayerPickFireEnergyCardToDiscard/KadabraRecover_PlayerSelectEffect: fix the DisplayEnergyDiscardScreen+HandleEnergyDiscardMenuInput chaining bug directly and re-verify with tools/oracle/gbref/compare_one.py at a realistic budget. Once fixed, this routine has no gating branch to work around."
 
 [[blocked]]
-name = "PlayerPickFireEnergyCardToDiscard"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:3517 (basename `effect_functions`). 13 generations exhausted (trapped=False); last diagnostic phase=validate failure_class=schema detail=PlayerPickFireEnergyCardToDiscard: all marker bodies must be nonempty strings"
-unblock = "read the recorded diagnostics under .factory/try/PlayerPickFireEnergyCardToDiscard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+name = "PlayerPickAttackForAmnesia"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:3217 (basename `effect_functions`). 13 generations exhausted (trapped=False); last diagnostic phase=infra-error failure_class=infrastructure detail={\"error\":\"unknown setup routine: CopyDMAFunction\"}"
+unblock = "read the recorded diagnostics under .factory/try/PlayerPickAttackForAmnesia/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"

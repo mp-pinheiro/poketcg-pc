@@ -316,6 +316,26 @@ def primary_compare(
             if compared.returncode == 0:
                 continue
             output = compared.stdout + compared.stderr
+            # Two comparator failures carry no JSON status yet are the
+            # candidate's to fix, and reporting them as infrastructure told the
+            # next generation nothing. A setup entry naming a routine the probe
+            # has no adapter for is a case-authoring error; a probe that never
+            # returns is a port that does not terminate.
+            unknown_setup = re.search(r"unknown setup routine: (\S+?)\"", output)
+            if unknown_setup:
+                return verdict(
+                    "cases",
+                    f"setup routine {unknown_setup.group(1)} has no probe adapter; "
+                    "a setup entry may only name an already-ported routine",
+                    fn, failure_class="code",
+                )
+            if "TimeoutExpired" in output:
+                return verdict(
+                    "primary",
+                    f"case {fn}-{index} native probe did not terminate; the C body "
+                    "loops forever on state the reference resolves",
+                    fn, failure_class="code",
+                )
             if comparison_status(output) is None and not output.startswith("SCHEMA"):
                 return verdict("infra-error", _normalize_diagnostic(output), fn)
             result = verdict("primary", f"case {fn}-{index}\n{output}", fn)
