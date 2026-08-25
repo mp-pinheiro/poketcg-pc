@@ -495,6 +495,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/effect_functions.h"
 #define SUBSTATUS2_SMOKESCREEN 0x01u
+
+#include "home/effect_functions.h"
+#define SUBSTATUS2_GROWL 0x12u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5364,3 +5367,10 @@ uint16_t HorseaSmokescreenEffect(uint16_t hl)
 	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);
 }
 /* <<< factory HorseaSmokescreenEffect */
+
+/* >>> factory PikachuAltLv16GrowlEffect */
+uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)
+{
+	return ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);
+}
+/* <<< factory PikachuAltLv16GrowlEffect */

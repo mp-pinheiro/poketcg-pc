@@ -1266,6 +1266,9 @@ void SlowpokeAmnesia_DisableEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, u
 /* >>> factory HorseaSmokescreenEffect */
 uint16_t HorseaSmokescreenEffect(uint16_t hl);
 /* <<< factory HorseaSmokescreenEffect */
+/* >>> factory PikachuAltLv16GrowlEffect */
+uint16_t PikachuAltLv16GrowlEffect(uint16_t hl);
+/* <<< factory PikachuAltLv16GrowlEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -3560,6 +3560,15 @@ CASES["HorseaSmokescreenEffect"] = [
 ]
 # <<< factory HorseaSmokescreenEffect
 
+# >>> factory PikachuAltLv16GrowlEffect
+CONTRACT["PikachuAltLv16GrowlEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["PikachuAltLv16GrowlEffect"] = [
+    {"hl": 0xC200, "wram": {0xFF97: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"hl": 0xC240, "wram": {0xFF97: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, hl=0xC280, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),
+]
+# <<< factory PikachuAltLv16GrowlEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5643,3 +5652,6 @@ MUTATIONS["SlowpokeAmnesia_DisableEffect"] = {"source_symbol": "SlowpokeAmnesia_
 # >>> factory-mutation HorseaSmokescreenEffect
 MUTATIONS["HorseaSmokescreenEffect"] = {"source_symbol": "HorseaSmokescreenEffect", "before": "return ApplySubstatus2ToDefendingCard(SUBSTATUS2_SMOKESCREEN, hl);", "after": "return ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["HorseaSmokescreenEffect-0", "HorseaSmokescreenEffect-1", "HorseaSmokescreenEffect-2"]}
 # <<< factory-mutation HorseaSmokescreenEffect
+# >>> factory-mutation PikachuAltLv16GrowlEffect
+MUTATIONS["PikachuAltLv16GrowlEffect"] = {"source_symbol": "PikachuAltLv16GrowlEffect", "before": "uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_GROWL, hl);", "after": "uint16_t PikachuAltLv16GrowlEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["PikachuAltLv16GrowlEffect-0", "PikachuAltLv16GrowlEffect-1", "PikachuAltLv16GrowlEffect-2"]}
+# <<< factory-mutation PikachuAltLv16GrowlEffect
