@@ -42,7 +42,14 @@ import packet as packet_mod
 REVOCATIONS_NAME = "revocations.jsonl"
 BLOCKED_NAME = "blocked.toml"
 DEFAULT_TTL_SECONDS = 21600.0  # 6h; a live wave settles in minutes
-DEFAULT_RETRY_LIMIT = 8  # must match try_one.main's --retry-limit default
+# Must match try_one.main's --retry-limit default. The generation ceiling is not
+# the waste guard - is_trapped is, and it retires any red that repeats one
+# diagnostic whatever its generation. The ceiling only reaches routines that
+# keep producing NEW diagnostics, which is to say the ones still converging:
+# PracticeDuel_RepeatInstructions greened at generation 8, and OpenCardPage
+# passed its oracle comparison at generation 11. A ceiling of 8 retired both of
+# those a wave or two before they were done.
+DEFAULT_RETRY_LIMIT = 16
 RETIRED_PREFIX = "AUTO-RETIRED: "
 
 # Both markers require a space after `factory`, so `factory-mutation`,

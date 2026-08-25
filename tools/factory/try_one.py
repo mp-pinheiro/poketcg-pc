@@ -781,7 +781,7 @@ def main(argv: list[str] | None = None) -> int:
                         help="prepare prompts for the next N routines")
     parser.add_argument("--retry-red", action="store_true",
                         help="with --next, select only retryable red attempts")
-    parser.add_argument("--retry-limit", type=int, default=8,
+    parser.add_argument("--retry-limit", type=int, default=heal.DEFAULT_RETRY_LIMIT,
                         help="maximum attempt generation for autonomous retries; "
                              "each retry carries the previous diagnostic, and a "
                              "repeated signature is trapped rather than retried, so "
