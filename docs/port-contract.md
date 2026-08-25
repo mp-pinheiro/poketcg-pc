@@ -322,6 +322,14 @@ packet construction away. `AIDoAction` (indexes `DeckAIPointerTable`),
 also `state=blocked` is correct, not a bug — do not remove the entry to make the
 frontier look larger.
 
+Writing an entry by hand is a write to a *derived-data input*, not just to a
+ledger: `state=blocked` is recomputed into `site/data/progress.json`, so run
+`python3 tools/progress/report.py build` and commit the refreshed `site/data/`
+in the same `chore(factory):` commit. A blocker committed alone publishes a
+snapshot that contradicts its own blocker file, and `report.py check` then fails
+that push and every later one until somebody republishes. The
+`enforce-derived-data.sh` PreToolUse guard blocks that commit for this reason.
+
 ## The four recurring traps
 
 - **`ld a,[hl]` is a bus read**, resolved under the *caller's* bank via

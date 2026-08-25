@@ -39,10 +39,32 @@ verify-hooks:
     #!/usr/bin/env bash
     set -euo pipefail
     fail=0
+    # printf built the payload by hand, so any command containing a double quote
+    # produced invalid JSON, jq inside the hook returned empty and the hook fell
+    # open -- every such case passed without exercising the guard at all. The
+    # payload is materialised before the pipe on purpose: a hook that exits
+    # before draining stdin (the derived-data guard does, wherever jj is absent)
+    # would hand jq a SIGPIPE and pipefail would report 141 as the hook's verdict.
+    payload() { jq -n --arg c "$1" '{tool_input:{command:$c}}'; }
     check() {  # check <expected-exit> <hook> <command>
         rc=0
-        printf '{"tool_input":{"command":"%s"}}' "$3" | bash ".claude/hooks/$2" >/dev/null 2>&1 || rc=$?
+        json=$(payload "$3")
+        printf '%s' "$json" | bash ".claude/hooks/$2" >/dev/null 2>&1 || rc=$?
         [ "$rc" = "$1" ] || { echo "hook $2: [$3] want exit $1, got $rc" >&2; fail=1; }
+    }
+    check_stub() {  # check_stub <expected-exit> <hook> <command> <dirty-paths>
+        # The derived-data guard reads the working copy, so its verdict is only
+        # deterministic against a stub jj; the real binary is absent in CI, where
+        # the guard fails open.
+        rc=0
+        stub=$(mktemp -d)
+        printf '#!/usr/bin/env bash\nprintf "%%b" "%s\\n"\n' "$4" > "$stub/jj"
+        chmod +x "$stub/jj"
+        json=$(payload "$3")
+        printf '%s' "$json" \
+            | PATH="$stub:$PATH" bash ".claude/hooks/$2" >/dev/null 2>&1 || rc=$?
+        rm -rf "$stub"
+        [ "$rc" = "$1" ] || { echo "hook $2: [$3] dirty=[$4] want exit $1, got $rc" >&2; fail=1; }
     }
     check 2 enforce-jj.sh                     'git commit -m x'
     check 2 enforce-jj.sh                     'git push origin main'
@@ -53,6 +75,11 @@ verify-hooks:
     check 0 enforce-jj.sh                     'git tag v1.0.0'
     check 2 enforce-conventional-commits.sh   'jj commit -m wip'
     check 0 enforce-conventional-commits.sh   'jj commit -m "feat: x"'
+    check 0 enforce-derived-data.sh            'jj log -r @'
+    check 0 enforce-derived-data.sh            'python3 tools/progress/report.py build'
+    check_stub 2 enforce-derived-data.sh 'jj commit -m "chore(factory): block x"' '.factory/blocked.toml'
+    check_stub 0 enforce-derived-data.sh 'jj commit -m "chore(factory): block x"' '.factory/blocked.toml\nsite/data/progress.json'
+    check_stub 0 enforce-derived-data.sh 'jj commit -m "feat(port): land 1 routines"' 'src/home/menus.c\ntests/cases/menus.py'
     exit $fail
 
 # Python venv holding PyBoy, used only by the oracle.

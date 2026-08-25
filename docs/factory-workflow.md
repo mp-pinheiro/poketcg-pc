@@ -177,7 +177,11 @@ HEAL status reaped=<n> revoked=<n> retired=<n> half_landed=<n> blocked_toml_dirt
   `.factory/blocked.toml` together with `site/data/` in one `chore(factory):`
   commit when `blocked_toml_dirty=1`, before `factory-land`, which requires a
   clean checkout. Committing the blocker alone publishes a snapshot that
-  disagrees with its own blocker file, and `report.py check` fails the push.
+  disagrees with its own blocker file, and `report.py check` fails that push and
+  every later one until somebody republishes. The same holds for a blocker you
+  write by hand rather than one `factory-heal` retires: rebuild with
+  `python3 tools/progress/report.py build` first. The `enforce-derived-data.sh`
+  PreToolUse guard blocks the one-sided commit.
 
 `factory-next` performs the revoke and reap steps inline under `select.lock`, so
 a bare selection is self-healing; only retiring needs the explicit command.
