@@ -765,16 +765,6 @@ reason = "AUTO-RETIRED: src/engine/menus/start.asm:104 (basename `start`). 9 gen
 unblock = "read the recorded diagnostics under .factory/try/HandleStartMenu/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "OpenCardPage"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:3489 (basename `core`). 11 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case OpenCardPage-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9090,\"sp\":65502,\"instructions\":1996498,\"cycles\":16000000,\"lcdc\":0,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"0401000100\"}"
-unblock = "read the recorded diagnostics under .factory/try/OpenCardPage/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "_DisplayCardDetailScreen"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:4707 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=bad_cases += 1; print(f\" fail {fn}[{i}] {describe(case)}\"); [print(f\" {line}\") for line in bad] TypeError: unsupported format string passed to list.__format__"
-unblock = "read the recorded diagnostics under .factory/try/_DisplayCardDetailScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "CloseIRCommunications"
 reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:252 (basename `ir_core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=fail CloseIRCommunications[0] $CABB=80 $FF40=80 $FF00: oracle cf != C ff fail CloseIRCommunications[1] a=$AA f=$F0 b=$BB c=$CC d=$DD e=$EE hl=$1234 $CABB=80 $FF40=80 $FF00: oracle cf != C ff FAIL CloseIRCommunications: 2/2 cases differ"
 unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunications/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -789,7 +779,3 @@ name = "PrintPracticeDuelInstructionsForCurrentTurn"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2792 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=000000000000000202122232425262728292a242b2c2d00000000000000000000000000000000002e2f303132333435363738393a3b3c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000018242c2d2e2f30241c1c1c1c1c1c1c1c1c1c1c190000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e29332b343536373831323c3d3e00000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001a1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unblock = "read the recorded diagnostics under .factory/try/PrintPracticeDuelInstructionsForCurrentTurn/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
-[[blocked]]
-name = "_PauseMenu_Diary"
-reason = "AUTO-RETIRED: src/engine/menus/diary.asm:1 (basename `diary`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _PauseMenu_Diary-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"instructions\":19523028,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":90,\"ppu_mode\":3,\"bus\":\"8000\"}"
-unblock = "read the recorded diagnostics under .factory/try/_PauseMenu_Diary/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
