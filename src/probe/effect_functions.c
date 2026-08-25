@@ -3384,6 +3384,19 @@ static void adapt_PokemonBreeder_EvolveEffect(ProbeState *s)
 }
 /* <<< factory PokemonBreeder_EvolveEffect */
 
+/* >>> factory Sprout_PutInPlayAreaEffect */
+static void adapt_Sprout_PutInPlayAreaEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = Sprout_PutInPlayAreaEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->hl = r.hl;
+}
+/* <<< factory Sprout_PutInPlayAreaEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3800,5 +3813,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PokemonBreeder_EvolveEffect", adapt_PokemonBreeder_EvolveEffect },
 	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
 	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
+	{ "Sprout_PutInPlayAreaEffect", adapt_Sprout_PutInPlayAreaEffect },
 	{ NULL, NULL },
 };

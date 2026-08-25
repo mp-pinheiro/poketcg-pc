@@ -2547,6 +2547,17 @@ RAH_wLCDC = 0xCABB
 RAH_rLCDC = 0xFF40
 
 wStage = 0xC2CF
+
+CFF_hTemp_ffa0 = 0xFFA0
+CFF_hWhoseTurn = 0xFF97
+CFF_TURN = 0xC2
+CFF_DUELIST_TYPE = 0xC2F1
+CFF_LOCATIONS = 0xC200
+CFF_DECK_CARDS = 0xC27E
+CFF_NOT_IN_DECK = 0xC2BA
+CFF_HAND_COUNT = 0xC2EE
+CFF_NUM_IN_PLAY = 0xC2CF
+CFF_wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4314,6 +4325,22 @@ CASES["PokemonBreeder_EvolveEffect"] = [
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFFA0: b"\x01", 0xFFA1: b"\x01", 0xC2F1: b"\x01", 0xCAC2: b"\x01"}, read={0xFF98: 1, 0xC2CF: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
 ]
 # <<< factory PokemonBreeder_EvolveEffect
+
+# >>> factory Sprout_PutInPlayAreaEffect
+CONTRACT["Sprout_PutInPlayAreaEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Sprout_PutInPlayAreaEffect"] = [
+    # hTemp_ffa0 defaults to 0, selecting the fetch-and-bench branch; the
+    # player's own turn then makes `jr c` skip the detail screen (covered by
+    # DisplayCardDetailScreen's own cases). SetupText seeds the glyph cache
+    # the deck-shuffle animation walks.
+    {"wram": {CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+      CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, wram={CFF_hWhoseTurn: bytes((CFF_TURN,)), CFF_DUELIST_TYPE: b"\x00",
+         CFF_NOT_IN_DECK: b"\x01", CFF_wLCDC: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={CFF_LOCATIONS: 4, CFF_DECK_CARDS: 8, CFF_NOT_IN_DECK: 1, CFF_HAND_COUNT: 1, CFF_NUM_IN_PLAY: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory Sprout_PutInPlayAreaEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6562,3 +6589,11 @@ MUTATIONS["Recycle_AddToHandEffect"] = {
 # >>> factory-mutation PokemonBreeder_EvolveEffect
 MUTATIONS["PokemonBreeder_EvolveEffect"] = {"source_symbol": "PokemonBreeder_EvolveEffect", "before": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = hTemp_ffa0;", "after": "PokemonBreederEvolveEffectResult PokemonBreeder_EvolveEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_a = hTempCardIndex_ff9f;\n\tuint8_t entry_f = f;\n\thTempCardIndex_ff98 = 0u;", "case_ids": ["PokemonBreeder_EvolveEffect-0", "PokemonBreeder_EvolveEffect-1", "PokemonBreeder_EvolveEffect-2"]}
 # <<< factory-mutation PokemonBreeder_EvolveEffect
+# >>> factory-mutation Sprout_PutInPlayAreaEffect
+MUTATIONS["Sprout_PutInPlayAreaEffect"] = {
+ "source_symbol": "Sprout_PutInPlayAreaEffect",
+ "before": "\t\tSearchCardInDeckAndAddToHand(index);\n\t\tAddCardToHand(index);",
+ "after": "\t\tSearchCardInDeckAndAddToHand(index);\n\t\tAddCardToHand((uint8_t)(index + 1u));",
+ "case_ids": ["Sprout_PutInPlayAreaEffect-0", "Sprout_PutInPlayAreaEffect-1"],
+}
+# <<< factory-mutation Sprout_PutInPlayAreaEffect
