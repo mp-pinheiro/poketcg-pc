@@ -2,22 +2,20 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.146.0 - 2026-08-25
-
-### Bug Fixes
-
-- *(factory)* Teach candidates LCD-on vblank pair
+## v0.147.0 - 2026-08-25
 
 ### Features
 
-- *(oracle)* Report machine state at budget death
-- *(oracle)* Cycle input events per frame
+- *(port)* Land 4 routines
+- *(port)* Land 3 routines
+- *(port)* Land 1 routines
 
 ### Miscellaneous
 
+- *(factory)* Clear vblank-trap blockers
 - *(progress)* Refresh port status
-- *(factory)* Unblock PlayerPickAttackForAmnesia for VBlank ISR retry
-- *(progress)* Refresh gate after vblank revert
-- *(factory)* Note VBlank ISR retest for energy-discard hang
-- *(progress)* Refresh gate for input timeline
+- *(factory)* Clear 15 frame-wait blockers
+- *(progress)* Republish after rebase
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
 
