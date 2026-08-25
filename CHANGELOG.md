@@ -2,15 +2,22 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.145.0 - 2026-08-25
+## v0.146.0 - 2026-08-25
+
+### Bug Fixes
+
+- *(factory)* Teach candidates LCD-on vblank pair
 
 ### Features
 
-- *(port)* Land 1 routines
+- *(oracle)* Report machine state at budget death
+- *(oracle)* Cycle input events per frame
 
 ### Miscellaneous
 
-- *(factory)* Isolate energy-discard hang to Display+Handle pair
-- *(factory)* Document Scavenge_PlayerSelectEnergyEffect blocker
 - *(progress)* Refresh port status
+- *(factory)* Unblock PlayerPickAttackForAmnesia for VBlank ISR retry
+- *(progress)* Refresh gate after vblank revert
+- *(factory)* Note VBlank ISR retest for energy-discard hang
+- *(progress)* Refresh gate for input timeline
 
