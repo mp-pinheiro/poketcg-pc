@@ -211,8 +211,9 @@ def _reap_reason(fn: str, state: dict[str, Any], rows: dict[str, dict[str, Any]]
     return "abandoned" if age > ttl_seconds else None
 
 
-def reconcile_landed(states: dict[str, dict[str, Any]], *,
-                     root: Path = common.ROOT, apply: bool = True) -> list[str]:
+def reconcile_landed(states: dict[str, dict[str, Any]],
+                     rows: dict[str, dict[str, Any]], *,
+                     apply: bool = True) -> list[str]:
     """Retire attempt state for routines the tree has already landed.
 
     Two sessions land into one tree, so a routine can be published while another
@@ -224,28 +225,28 @@ def reconcile_landed(states: dict[str, dict[str, Any]], *,
     basename's per-call selection slot -- a claim that can never be satisfied and
     never expires.
 
-    Landed means both markers `land.py` writes: the C block under src/home and
-    the cases block under tests/cases. Requiring the pair keeps a half-applied
-    surgery -- which `lost_landings` reports and revokes -- out of this path.
+    The work record decides, not a marker census: `state == "complete"` is the
+    same verdict the release gate and the dashboard read, and it holds for a
+    routine whose cases module predates the `# >>> factory` convention. Age and
+    generation are irrelevant here -- completeness is a property of the tree.
     """
     import try_one
 
-    c_names, py_names = marker_census(root)
-    landed = c_names & py_names
     prefix = "HEAL " if apply else "HEAL would-"
     reconciled: list[str] = []
     for fn in sorted(states):
         state = states[fn]
         if state.get("state") not in ("red", "issued"):
             continue
-        if fn not in landed:
+        row = rows.get(fn)
+        if row is None or row.get("state") != "complete":
             continue
         if apply:
             current = dict(state)
             current["state"] = "stale"
             try_one._store_current(current)
         reconciled.append(fn)
-        print(f"{prefix}landed {fn} state={state.get('state')}")
+        print(f"{prefix}landed {fn} was={state.get('state')}")
     return reconciled
 
 
@@ -439,6 +440,10 @@ def main(argv: list[str] | None = None) -> int:
     # The same lock issuance takes: a reap must not interleave with a selection
     # that is about to claim the routine it is reaping.
     with common.file_lock(common.locks_dir(root) / "select.lock", timeout=900):
+        # Before ageing or retiring anything: a claim on an already-landed
+        # routine is settled by the tree, not by its own age or generation.
+        landed = reconcile_landed(try_one._current_states(), rows,
+                                  apply=arguments.apply)
         reaped = reap_stale_issued(
             try_one._current_states(), rows,
             ttl_seconds=arguments.ttl_hours * 3600,
@@ -451,8 +456,8 @@ def main(argv: list[str] | None = None) -> int:
         )
     _lost, half = lost_landings(root)
     print(
-        f"HEAL status reaped={len(reaped)} revoked={len(revoked)} "
-        f"retired={len(retired)} half_landed={len(half)} "
+        f"HEAL status landed={len(landed)} reaped={len(reaped)} "
+        f"revoked={len(revoked)} retired={len(retired)} half_landed={len(half)} "
         f"blocked_toml_dirty={1 if (retired and arguments.apply) else 0}"
     )
     return 0

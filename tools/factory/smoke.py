@@ -399,6 +399,29 @@ def stage_heal_reconcile(state: dict[str, Any]) -> str:
                                       blocker={"reason": "r", "unblock": "u"}),
                 dead_red: _heal_row(dead_red, state="ready"),
             }
+            # A claim on a routine another session already landed is settled by
+            # the tree: the reconcile pass runs before ageing and generation
+            # checks, which never clear a red.
+            landed_fn = "LandedRed"
+            landed_state = {"schema": common.SCHEMA, "fn": landed_fn,
+                            "attempt_id": "red-2", "generation": 1,
+                            "context_sha256": "x", "base_commit": "y",
+                            "state": "red"}
+            try_one._store_current(landed_state)
+            landed_rows = {landed_fn: _heal_row(landed_fn, state="complete"),
+                           dead_red: _heal_row(dead_red, state="ready")}
+            reconciled = heal.reconcile_landed(
+                {landed_fn: landed_state, dead_red: states[dead_red]}, landed_rows)
+            _require(reconciled == [landed_fn],
+                     "the landed red was not reconciled", reconciled)
+            _require(try_one._read_current(landed_fn)["state"] == "stale",
+                     "reconciled attempt was not written back as stale")
+            _require(try_one._read_current(dead_red)["state"] == "red",
+                     "reconcile clobbered a still-open red")
+            _require(not heal.reconcile_landed(
+                {landed_fn: try_one._read_current(landed_fn)}, landed_rows),
+                "reconciling a landed routine is not idempotent")
+
             reaped = heal.reap_stale_issued(states, rows)
             _require(reaped == [blocked_fn], "the blocked issued attempt was not reaped",
                      reaped)
