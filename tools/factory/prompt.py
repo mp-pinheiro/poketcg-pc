@@ -289,7 +289,12 @@ def render(packet: dict, feedback: str | None = None,
         "Every \"setup\" entry runs on both sides, so it may only name a routine this "
         "tree has already ported: the native probe resolves it through its adapter "
         "table and answers `unknown setup routine` for anything else. Check the "
-        "already-ported list below before naming one.",
+        "already-ported list below before naming one. A setup entry also runs WITHOUT "
+        "the per-frame key timeline the routine under test gets: runner.c drives it to "
+        "pc=$fea0 under the case budget with no button ever pressed, so naming a "
+        "routine that waits for input - a card-detail screen, a menu, a text box that "
+        "waits - fails with `SCHEMA setup exceeds execution budget`. That message means "
+        "the setup routine never returned, not that your case is malformed.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "One address-keyed map covers the whole bus, HRAM included - wram={0xFF97: "
         "b\"\\xC2\"} seeds hWhoseTurn, and there is no separate `hram` seed key; "
