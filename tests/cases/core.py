@@ -1691,6 +1691,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wDuelTempList = 0xC510
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDuelDisplayedScreen = 0xCAC2
+wLCDC = 0xCABB
+wOpponentTurnEnded = 0xCBE1
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2999,6 +3003,14 @@ CASES["DisplayCardListDetails"] = [
 ]
 # <<< factory DisplayCardListDetails
 
+# >>> factory OppAction_FinishTurnWithoutAttacking
+CONTRACT["OppAction_FinishTurnWithoutAttacking"] = {"compare": (), "preserve": ()}
+CASES["OppAction_FinishTurnWithoutAttacking"] = [
+    {"wram": {wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wOpponentTurnEnded: b"\x00"}, "keys": 0x01, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "expect": {wOpponentTurnEnded: b"\x01"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", wOpponentTurnEnded: b"\x00"}, keys=0x01, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], expect={wOpponentTurnEnded: b"\x01"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory OppAction_FinishTurnWithoutAttacking
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4299,3 +4311,6 @@ MUTATIONS["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"source_symb
 # >>> factory-mutation DisplayCardListDetails
 MUTATIONS["DisplayCardListDetails"] = {"source_symbol": "DisplayCardListDetails", "before": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u) | 0x80u);", "after": "\t\tuint8_t f = (uint8_t)(0x40u | (((value & 0x0Fu) < 0x0Fu) ? 0x20u : 0u) | ((value < 0xFFu) ? 0x10u : 0u));", "case_ids": ["DisplayCardListDetails-0", "DisplayCardListDetails-1"]}
 # <<< factory-mutation DisplayCardListDetails
+# >>> factory-mutation OppAction_FinishTurnWithoutAttacking
+MUTATIONS["OppAction_FinishTurnWithoutAttacking"] = {"source_symbol": "OppAction_FinishTurnWithoutAttacking", "before": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 1u;", "after": "\t(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);\n\twOpponentTurnEnded = 0u;", "case_ids": ["OppAction_FinishTurnWithoutAttacking-0", "OppAction_FinishTurnWithoutAttacking-1"]}
+# <<< factory-mutation OppAction_FinishTurnWithoutAttacking

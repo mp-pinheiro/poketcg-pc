@@ -1966,6 +1966,14 @@ static void adapt_DisplayCardListDetails(ProbeState *s)
 }
 /* <<< factory DisplayCardListDetails */
 
+/* >>> factory OppAction_FinishTurnWithoutAttacking */
+static void adapt_OppAction_FinishTurnWithoutAttacking(ProbeState *s)
+{
+	(void)s;
+	OppAction_FinishTurnWithoutAttacking();
+}
+/* <<< factory OppAction_FinishTurnWithoutAttacking */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2199,5 +2207,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_DrawDuelMainScene", adapt_OppAction_DrawDuelMainScene },
 	{ "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", adapt_InitAndDrawCardListScreenLayout_WithSelectCheckMenu },
 	{ "DisplayCardListDetails", adapt_DisplayCardListDetails },
+	{ "OppAction_FinishTurnWithoutAttacking", adapt_OppAction_FinishTurnWithoutAttacking },
 	{ NULL, NULL },
 };

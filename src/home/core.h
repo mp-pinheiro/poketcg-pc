@@ -885,4 +885,7 @@ DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout_WithSelectCheckMe
 typedef struct { uint8_t a; uint8_t f; } DisplayCardListDetailsResult;
 DisplayCardListDetailsResult DisplayCardListDetails(void);
 /* <<< factory DisplayCardListDetails */
+/* >>> factory OppAction_FinishTurnWithoutAttacking */
+void OppAction_FinishTurnWithoutAttacking(void);
+/* <<< factory OppAction_FinishTurnWithoutAttacking */
 #endif

@@ -991,6 +991,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/print_text.h"
 #define TheCardYouReceivedText 0x0170u
 #define YouReceivedTheseCardsText 0x0171u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel_core.h"
+#include "home/menus.h"
+#define FinishedTurnWithoutAttackingText 0x005du
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5587,3 +5593,13 @@ DisplayCardListDetailsResult DisplayCardListDetails(void)
 	return (DisplayCardListDetailsResult){value, 0u};
 }
 /* <<< factory DisplayCardListDetails */
+
+/* >>> factory OppAction_FinishTurnWithoutAttacking */
+void OppAction_FinishTurnWithoutAttacking(void)
+{
+	DrawDuelMainScene();
+	ClearNonTurnTemporaryDuelvars();
+	(void)DrawWideTextBox_WaitForInput(FinishedTurnWithoutAttackingText);
+	wOpponentTurnEnded = 1u;
+}
+/* <<< factory OppAction_FinishTurnWithoutAttacking */

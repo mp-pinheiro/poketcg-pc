@@ -3035,6 +3035,13 @@ static void adapt_PoliwhirlAmnesia_DisableEffect(ProbeState *s)
 }
 /* <<< factory PoliwhirlAmnesia_DisableEffect */
 
+/* >>> factory SlowpokeAmnesia_DisableEffect */
+static void adapt_SlowpokeAmnesia_DisableEffect(ProbeState *s)
+{
+	SlowpokeAmnesia_DisableEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory SlowpokeAmnesia_DisableEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3411,5 +3418,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SpearowMirrorMove_BeforeDamage", adapt_SpearowMirrorMove_BeforeDamage },
 	{ "PidgeottoMirrorMove_BeforeDamage", adapt_PidgeottoMirrorMove_BeforeDamage },
 	{ "PoliwhirlAmnesia_DisableEffect", adapt_PoliwhirlAmnesia_DisableEffect },
+	{ "SlowpokeAmnesia_DisableEffect", adapt_SlowpokeAmnesia_DisableEffect },
 	{ NULL, NULL },
 };

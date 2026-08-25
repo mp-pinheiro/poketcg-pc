@@ -1,0 +1,9 @@
+{
+  "fn": "SlowpokeAmnesia_DisableEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SlowpokeAmnesia_DisableEffect\", \"registers\": {\"a\": 1, \"b\": 2, \"c\": 3, \"d\": 4, \"e\": 5, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50152\": \"04\", \"50162\": \"02\", \"50166\": \"04\", \"50168\": \"02\", \"52423\": \"00\", \"65431\": \"c2\", \"65440\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SlowpokeAmnesia_DisableEffect\", \"mismatches\": {\"bus\": {\"address\": 50152, \"reference\": \"0402040200\", \"native\": \"0000000000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50152, 1], [50162, 1], [50166, 1], [50168, 1], [52423, 1], [65431, 1], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"SlowpokeAmnesia_DisableEffect\", \"registers\": {\"a\": 1, \"b\": 2, \"c\": 3, \"d\": 4, \"e\": 5, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50152\": \"04\", \"50162\": \"02\", \"50166\": \"04\", \"50168\": \"02\", \"52423\": \"00\", \"65431\": \"c2\", \"65440\": \"02\"}}, \"status\": \"PASS\"}\n"
+}
