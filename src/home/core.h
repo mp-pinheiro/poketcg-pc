@@ -846,4 +846,8 @@ void DrawLargePictureOfCard(void);
 /* >>> factory DrawCardPageSurroundingBox */
 void DrawCardPageSurroundingBox(void);
 /* <<< factory DrawCardPageSurroundingBox */
+/* >>> factory PrintPokemonCardPageGenericInformation */
+typedef struct { uint16_t hl; } PrintPokemonCardPageGenericInformationResult;
+PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformation(void);
+/* <<< factory PrintPokemonCardPageGenericInformation */
 #endif

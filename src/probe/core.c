@@ -1865,6 +1865,14 @@ static void adapt_DrawCardPageSurroundingBox(ProbeState *s)
 }
 /* <<< factory DrawCardPageSurroundingBox */
 
+/* >>> factory PrintPokemonCardPageGenericInformation */
+static void adapt_PrintPokemonCardPageGenericInformation(ProbeState *s)
+{
+	PrintPokemonCardPageGenericInformationResult r = PrintPokemonCardPageGenericInformation();
+	s->hl = r.hl;
+}
+/* <<< factory PrintPokemonCardPageGenericInformation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2086,5 +2094,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ApplyBGP6OrSGB3ToCardImage", adapt_ApplyBGP6OrSGB3ToCardImage },
 	{ "DrawLargePictureOfCard", adapt_DrawLargePictureOfCard },
 	{ "DrawCardPageSurroundingBox", adapt_DrawCardPageSurroundingBox },
+	{ "PrintPokemonCardPageGenericInformation", adapt_PrintPokemonCardPageGenericInformation },
 	{ NULL, NULL },
 };

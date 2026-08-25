@@ -1156,6 +1156,14 @@ wVBlankOAMCopyToggle = 0xCAC0
 wCheckMenuPlayAreaWhichDuelist = 0xCE50
 wCheckMenuPlayAreaWhichLayout = 0xCE51
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+wIsSwapTurnPending = 0xCE56
+wMenuInputTablePointer = 0xCE53
+wVBlankOAMCopyToggle = 0xCAC0
+wYourOrOppPlayAreaCurPosition = 0xCE52
+wDefaultText = 0xC590
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1397,6 +1405,29 @@ CASES["DrawYourOrOppPlayAreaScreen"] = [
 ]
 # <<< factory DrawYourOrOppPlayAreaScreen
 
+# >>> factory _DrawAIPeekScreen
+CONTRACT["_DrawAIPeekScreen"] = {"compare": (), "preserve": ()}
+CASES["_DrawAIPeekScreen"] = [
+    {"b": 0x00, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "read": {wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
+     "vread": {0: {0x9800: 32, 0x9C00: 32}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, b=0x80, keys=0x01, instruction_budget=20000000, cycle_budget=80000000,
+         wram={hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+         read={wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
+         vread={0: {0x9800: 32, 0x9C00: 32}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+    {"b": 0xFF, "keys": 0x01, "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "wram": {hWhoseTurn: b"\xC2", 0xC2EE: b"\x05", 0xC2BA: b"\x0A", 0xC2ED: b"\x03",
+               0xC3EE: b"\x02", 0xC3BA: b"\x37", 0xC3ED: b"\x00", wDefaultText: b"\x00" * 16},
+     "read": {wIsSwapTurnPending: 1, wMenuInputTablePointer: 2, wYourOrOppPlayAreaCurPosition: 1, wVBlankOAMCopyToggle: 1, wDefaultText: 7},
+     "vread": {0: {0x9800: 32, 0x9C00: 32}},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}]
+# <<< factory _DrawAIPeekScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1585,3 +1616,6 @@ MUTATIONS["_DrawYourOrOppPlayAreaScreen"] = {"source_symbol": "_DrawYourOrOppPla
 # >>> factory-mutation DrawYourOrOppPlayAreaScreen
 MUTATIONS["DrawYourOrOppPlayAreaScreen"] = {"source_symbol": "DrawYourOrOppPlayAreaScreen", "before": "\twCheckMenuPlayAreaWhichDuelist = (uint8_t)(hl >> 8);", "after": "\twCheckMenuPlayAreaWhichDuelist = (uint8_t)hl;", "case_ids": ["DrawYourOrOppPlayAreaScreen-0", "DrawYourOrOppPlayAreaScreen-1"]}
 # <<< factory-mutation DrawYourOrOppPlayAreaScreen
+# >>> factory-mutation _DrawAIPeekScreen
+MUTATIONS["_DrawAIPeekScreen"] = {"source_symbol": "_DrawAIPeekScreen", "before": "\tif ((b & 0x80u) != 0u) {", "after": "\tif ((b & 0x80u) == 0u) {", "case_ids": ["_DrawAIPeekScreen-0", "_DrawAIPeekScreen-1"]}
+# <<< factory-mutation _DrawAIPeekScreen

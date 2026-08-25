@@ -1,0 +1,9 @@
+{
+  "fn": "PrintPokemonCardPageGenericInformation",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintPokemonCardPageGenericInformation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 24084, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38962\": \"01\"}}, \"wram\": {\"52177\": \"00\", \"52260\": \"00\", \"52263\": \"0000ff01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintPokemonCardPageGenericInformation\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintPokemonCardPageGenericInformation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 24084, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {\"0\": {\"38962\": \"01\"}}, \"wram\": {\"52177\": \"00\", \"52260\": \"00\", \"52263\": \"0000ff01\"}}, \"status\": \"PASS\"}\n"
+}

@@ -499,6 +499,12 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "generated/wram.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/lcd.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2470,3 +2476,40 @@ void DrawYourOrOppPlayAreaScreen(uint16_t hl)
 	_DrawYourOrOppPlayAreaScreen();
 }
 /* <<< factory DrawYourOrOppPlayAreaScreen */
+
+/* >>> factory _DrawAIPeekScreen */
+void _DrawAIPeekScreen(uint8_t b)
+{
+	Set_OBJ_8x8();
+	LoadCursorTile();
+	wIsSwapTurnPending = 0u;
+
+	uint8_t turn = hWhoseTurn;
+	uint16_t transition_table;
+	if ((b & 0x80u) != 0u) {
+		SwapTurn();
+		wIsSwapTurnPending = 1u;
+		turn = hWhoseTurn;
+		transition_table = 0x48FAu;
+	} else {
+		transition_table = 0x48C2u;
+	}
+
+	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
+	wMenuInputTablePointer = (uint8_t)transition_table;
+	gb_write8((uint16_t)(wMenuInputTablePointer_ADDR + 1u), (uint8_t)(transition_table >> 8));
+
+	uint8_t action = (uint8_t)(b & 0x7Fu);
+	if (action == 0x7Fu)
+		wYourOrOppPlayAreaCurPosition = 0x07u;
+	else if ((action & 0x40u) != 0u)
+		wYourOrOppPlayAreaCurPosition = (uint8_t)(action & 0x3Fu);
+	else
+		wYourOrOppPlayAreaCurPosition = 0x06u;
+
+	yoopa_draw_cursor();
+	wVBlankOAMCopyToggle = 1u;
+	if (wIsSwapTurnPending != 0u)
+		SwapTurn();
+}
+/* <<< factory _DrawAIPeekScreen */

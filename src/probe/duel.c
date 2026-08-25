@@ -828,6 +828,13 @@ static void adapt_DrawYourOrOppPlayAreaScreen(ProbeState *s)
 }
 /* <<< factory DrawYourOrOppPlayAreaScreen */
 
+/* >>> factory _DrawAIPeekScreen */
+static void adapt__DrawAIPeekScreen(ProbeState *s)
+{
+	_DrawAIPeekScreen(s->b);
+}
+/* <<< factory _DrawAIPeekScreen */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -929,5 +936,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawYourOrOppPlayArea_ActiveCardGfx", adapt_DrawYourOrOppPlayArea_ActiveCardGfx },
 	{ "_DrawYourOrOppPlayAreaScreen", adapt__DrawYourOrOppPlayAreaScreen },
 	{ "DrawYourOrOppPlayAreaScreen", adapt_DrawYourOrOppPlayAreaScreen },
+	{ "_DrawAIPeekScreen", adapt__DrawAIPeekScreen },
 	{ NULL, NULL },
 };

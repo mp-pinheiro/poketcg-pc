@@ -914,6 +914,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/text_box.h"
+
+#include "generated/wram.h"
+#include "home/card_color.h"
+#include "home/print_text.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5229,3 +5233,21 @@ void DrawCardPageSurroundingBox(void)
 	(void)result;
 }
 /* <<< factory DrawCardPageSurroundingBox */
+
+/* >>> factory PrintPokemonCardPageGenericInformation */
+PrintPokemonCardPageGenericInformationResult PrintPokemonCardPageGenericInformation(void)
+{
+	DrawCardPageSurroundingBox();
+	(void)InitTextPrinting_ProcessTextFromPointerToID(5u, 1u, wLoadedCard1Name_ADDR);
+
+	uint8_t color;
+	if (wCardPageType != 0u)
+		color = GetPlayAreaCardColor(wCurPlayAreaSlot);
+	else
+		color = wLoadedCard1Type;
+
+	JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);
+	DrawCardPageSet2AndRarityIconsResult result = DrawCardPageSet2AndRarityIcons();
+	return (PrintPokemonCardPageGenericInformationResult){result.hl};
+}
+/* <<< factory PrintPokemonCardPageGenericInformation */

@@ -630,4 +630,7 @@ void _DrawYourOrOppPlayAreaScreen(void);
 /* >>> factory DrawYourOrOppPlayAreaScreen */
 void DrawYourOrOppPlayAreaScreen(uint16_t hl);
 /* <<< factory DrawYourOrOppPlayAreaScreen */
+/* >>> factory _DrawAIPeekScreen */
+void _DrawAIPeekScreen(uint8_t b);
+/* <<< factory _DrawAIPeekScreen */
 #endif

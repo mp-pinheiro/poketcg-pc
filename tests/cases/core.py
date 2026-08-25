@@ -2834,6 +2834,22 @@ CASES["DrawCardPageSurroundingBox"] = [
 ]
 # <<< factory DrawCardPageSurroundingBox
 
+# >>> factory PrintPokemonCardPageGenericInformation
+CONTRACT["PrintPokemonCardPageGenericInformation"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintPokemonCardPageGenericInformation"] = [
+    {"wram": {0xCBD1: b"\x00", 0xCC24: b"\x00", 0xCC27: b"\x00\x00", 0xCC29: b"\xff", 0xCC2A: b"\x01"},
+     "setup": SETUP_TEXT, "rom_bank": 1,
+     "vram": {0: {0x9832: b"\xA5"}},
+     "expect_vram": {0: {0x9832: b"\x01"}},
+     "instruction_budget": 1000000, "cycle_budget": 4000000},
+    dict(POISON, wram={0xCBD1: b"\x00", 0xCC24: b"\x00", 0xCC27: b"\x00\x00", 0xCC29: b"\xff", 0xCC2A: b"\x01"},
+         setup=SETUP_TEXT, rom_bank=1,
+         vram={0: {0x9832: b"\xEE"}},
+         expect_vram={0: {0x9832: b"\x01"}},
+         instruction_budget=1000000, cycle_budget=4000000),
+]
+# <<< factory PrintPokemonCardPageGenericInformation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4093,3 +4109,6 @@ MUTATIONS["DrawCardPageSurroundingBox"] = {
     "case_ids": ["DrawCardPageSurroundingBox-0", "DrawCardPageSurroundingBox-1"],
 }
 # <<< factory-mutation DrawCardPageSurroundingBox
+# >>> factory-mutation PrintPokemonCardPageGenericInformation
+MUTATIONS["PrintPokemonCardPageGenericInformation"] = {"source_symbol": "PrintPokemonCardPageGenericInformation", "before": "JPWriteByteToBGMap0((uint8_t)(color + 1u), 18u, 1u);", "after": "JPWriteByteToBGMap0((uint8_t)(color + 2u), 18u, 1u);", "case_ids": ["PrintPokemonCardPageGenericInformation-0", "PrintPokemonCardPageGenericInformation-1"]}
+# <<< factory-mutation PrintPokemonCardPageGenericInformation
