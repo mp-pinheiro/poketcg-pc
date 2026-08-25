@@ -3525,6 +3525,16 @@ CASES["SpearowMirrorMove_BeforeDamage"] = [
 ]
 # <<< factory SpearowMirrorMove_BeforeDamage
 
+# >>> factory PidgeottoMirrorMove_BeforeDamage
+CONTRACT["PidgeottoMirrorMove_BeforeDamage"] = {"compare": (), "preserve": ()}
+CASES["PidgeottoMirrorMove_BeforeDamage"] = [
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x00\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x11", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x01", TURN_DAMAGE: b"\x12\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x22", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x01\x02", TURN_STATUS: b"\x10", TURN_SUBSTATUS2: b"\x33", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x34\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x44", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}}
+]
+# <<< factory PidgeottoMirrorMove_BeforeDamage
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5596,3 +5606,6 @@ MUTATIONS["MirrorMove_BeforeDamage"] = {"source_symbol": "MirrorMove_BeforeDamag
 # >>> factory-mutation SpearowMirrorMove_BeforeDamage
 MUTATIONS["SpearowMirrorMove_BeforeDamage"] = {"source_symbol": "SpearowMirrorMove_BeforeDamage", "before": "\tMirrorMove_BeforeDamage();", "after": "\treturn;", "case_ids": ["SpearowMirrorMove_BeforeDamage-1", "SpearowMirrorMove_BeforeDamage-2", "SpearowMirrorMove_BeforeDamage-3"]}
 # <<< factory-mutation SpearowMirrorMove_BeforeDamage
+# >>> factory-mutation PidgeottoMirrorMove_BeforeDamage
+MUTATIONS["PidgeottoMirrorMove_BeforeDamage"] = {"source_symbol": "PidgeottoMirrorMove_BeforeDamage", "before": "void PidgeottoMirrorMove_BeforeDamage(void)\n{\n\tMirrorMove_BeforeDamage();", "after": "void PidgeottoMirrorMove_BeforeDamage(void)\n{\n\treturn;", "case_ids": ["PidgeottoMirrorMove_BeforeDamage-1", "PidgeottoMirrorMove_BeforeDamage-2", "PidgeottoMirrorMove_BeforeDamage-3"]}
+# <<< factory-mutation PidgeottoMirrorMove_BeforeDamage

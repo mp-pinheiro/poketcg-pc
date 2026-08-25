@@ -5333,3 +5333,10 @@ void SpearowMirrorMove_BeforeDamage(void)
 	MirrorMove_BeforeDamage();
 }
 /* <<< factory SpearowMirrorMove_BeforeDamage */
+
+/* >>> factory PidgeottoMirrorMove_BeforeDamage */
+void PidgeottoMirrorMove_BeforeDamage(void)
+{
+	MirrorMove_BeforeDamage();
+}
+/* <<< factory PidgeottoMirrorMove_BeforeDamage */

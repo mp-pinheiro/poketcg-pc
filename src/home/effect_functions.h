@@ -1254,6 +1254,9 @@ void MirrorMove_BeforeDamage(void);
 /* >>> factory SpearowMirrorMove_BeforeDamage */
 void SpearowMirrorMove_BeforeDamage(void);
 /* <<< factory SpearowMirrorMove_BeforeDamage */
+/* >>> factory PidgeottoMirrorMove_BeforeDamage */
+void PidgeottoMirrorMove_BeforeDamage(void);
+/* <<< factory PidgeottoMirrorMove_BeforeDamage */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

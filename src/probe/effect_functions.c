@@ -3020,6 +3020,14 @@ static void adapt_SpearowMirrorMove_BeforeDamage(ProbeState *s)
 }
 /* <<< factory SpearowMirrorMove_BeforeDamage */
 
+/* >>> factory PidgeottoMirrorMove_BeforeDamage */
+static void adapt_PidgeottoMirrorMove_BeforeDamage(ProbeState *s)
+{
+	(void)s;
+	PidgeottoMirrorMove_BeforeDamage();
+}
+/* <<< factory PidgeottoMirrorMove_BeforeDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3394,5 +3402,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplyAmnesiaToAttack", adapt_ApplyAmnesiaToAttack },
 	{ "MirrorMove_BeforeDamage", adapt_MirrorMove_BeforeDamage },
 	{ "SpearowMirrorMove_BeforeDamage", adapt_SpearowMirrorMove_BeforeDamage },
+	{ "PidgeottoMirrorMove_BeforeDamage", adapt_PidgeottoMirrorMove_BeforeDamage },
 	{ NULL, NULL },
 };
