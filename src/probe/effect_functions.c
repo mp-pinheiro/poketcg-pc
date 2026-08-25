@@ -3692,8 +3692,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
 	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
 	{ "StarmieRecover_PlayerSelectEffect", adapt_StarmieRecover_PlayerSelectEffect },
-	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
 	{ "FlamesOfRage_PlayerSelectEffect", adapt_FlamesOfRage_PlayerSelectEffect },
 	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
+	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
 	{ NULL, NULL },
 };
