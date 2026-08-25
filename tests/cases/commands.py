@@ -99,6 +99,11 @@ wLoadedAttackAnimation = 0xCCB8
 wTempNonTurnDuelistCardID = 0xCCC4
 wTxRam2 = 0xCE3F
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wDuelDisplayedScreen = 0xCAC2
+hWhoseTurn = 0xFF97
+HUD_TILE = 0x996F
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory GetDamageText
@@ -140,6 +145,15 @@ CASES["PrintDamageText"] = [
     dict(POISON, wram={wLoadedAttackAnimation: b"\x86", wTxRam2: b"\x12\x34"}, read={wTxRam2: 2}),
 ]
 # <<< factory PrintDamageText
+
+# >>> factory UpdateMainSceneHUD
+CONTRACT["UpdateMainSceneHUD"] = {"compare": (), "preserve": ()}
+CASES["UpdateMainSceneHUD"] = [
+    {"wram": {wDuelDisplayedScreen: b"\x00"}},
+    {"wram": {wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, "vread": {0: {HUD_TILE: 1}}},
+    dict(POISON, wram={wDuelDisplayedScreen: b"\x01", hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
+]
+# <<< factory UpdateMainSceneHUD
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -205,3 +219,6 @@ MUTATIONS["PrintDamageText"] = {
     "case_ids": ["PrintDamageText-0", "PrintDamageText-1"],
 }
 # <<< factory-mutation PrintDamageText
+# >>> factory-mutation UpdateMainSceneHUD
+MUTATIONS["UpdateMainSceneHUD"] = {"source_symbol": "UpdateMainSceneHUD", "before": "if (displayed_screen == DUEL_MAIN_SCENE) {", "after": "if (displayed_screen != DUEL_MAIN_SCENE) {", "case_ids": ["UpdateMainSceneHUD-1", "UpdateMainSceneHUD-2"]}
+# <<< factory-mutation UpdateMainSceneHUD

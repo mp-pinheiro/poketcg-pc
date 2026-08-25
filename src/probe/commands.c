@@ -94,6 +94,14 @@ static void adapt_PrintDamageText(ProbeState *s)
 }
 /* <<< factory PrintDamageText */
 
+/* >>> factory UpdateMainSceneHUD */
+static void adapt_UpdateMainSceneHUD(ProbeState *s)
+{
+	(void)s;
+	UpdateMainSceneHUD();
+}
+/* <<< factory UpdateMainSceneHUD */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -106,5 +114,6 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "PlayAttackAnimationCommands_NextCommand", adapt_PlayAttackAnimationCommands_NextCommand },
 	{ "DuelAnim157", adapt_DuelAnim157 },
 	{ "PrintDamageText", adapt_PrintDamageText },
+	{ "UpdateMainSceneHUD", adapt_UpdateMainSceneHUD },
 	{ NULL, NULL },
 };

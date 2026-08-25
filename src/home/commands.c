@@ -38,6 +38,11 @@
 #define ATK_ANIM_HEAL 0x79u
 #define ATK_ANIM_HEALING_WIND_PLAY_AREA 0x86u
 #define TX_END 0x00u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "mem.h"
+#define DUEL_MAIN_SCENE 0x01u
 /* <<< factory statics */
 
 
@@ -236,3 +241,13 @@ PrintDamageTextResult PrintDamageText(uint8_t b, uint8_t c, uint8_t d, uint8_t e
 	return (PrintDamageTextResult){saved_b, saved_c, saved_d, saved_e, saved_hl};
 }
 /* <<< factory PrintDamageText */
+
+/* >>> factory UpdateMainSceneHUD */
+void UpdateMainSceneHUD(void)
+{
+	uint8_t displayed_screen = gb_read8(wDuelDisplayedScreen_ADDR);
+	if (displayed_screen == DUEL_MAIN_SCENE) {
+		DrawDuelHUDs();
+	}
+}
+/* <<< factory UpdateMainSceneHUD */
