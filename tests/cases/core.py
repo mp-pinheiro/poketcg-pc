@@ -1657,6 +1657,9 @@ wHUDEnergyAndHPBarsY = 0xCBCA
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 hWhoseTurn = 0xFF97
 HUD_TILE = 0x996F
+
+wDuelTempList = 0xC510
+wCardListScratch = 0xC51A
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2874,6 +2877,15 @@ CASES["DrawDuelHUDs"] = [
     dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00"}, vread={0: {HUD_TILE: 1}}),
 ]
 # <<< factory DrawDuelHUDs
+
+# >>> factory DrawCardListScreenLayout
+CONTRACT["DrawCardListScreenLayout"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DrawCardListScreenLayout"] = [
+    {"wram": {0xC510: b"\xff", 0xC51A: b"\xff"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"wram": {0xC510: b"\x00\xff", 0xC51A: b"\xff"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xC510: b"\xff", 0xC51A: b"\xff"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DrawCardListScreenLayout
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4143,3 +4155,6 @@ MUTATIONS["DrawDuelHUD"] = {"source_symbol": "DrawDuelHUD", "before": "wHUDEnerg
 # >>> factory-mutation DrawDuelHUDs
 MUTATIONS["DrawDuelHUDs"] = {"source_symbol": "DrawDuelHUDs", "before": "\tDrawDuelHUD(11u, 8u, 1u, 11u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "after": "\tDrawDuelHUD(11u, 8u, 1u, 12u);\n\tDuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);", "case_ids": ["DrawDuelHUDs-0", "DrawDuelHUDs-1"]}
 # <<< factory-mutation DrawDuelHUDs
+# >>> factory-mutation DrawCardListScreenLayout
+MUTATIONS["DrawCardListScreenLayout"] = {"source_symbol": "DrawCardListScreenLayout", "before": "return (DrawCardListScreenLayoutResult){a, 0x90u};", "after": "return (DrawCardListScreenLayoutResult){a, 0x10u};", "case_ids": ["DrawCardListScreenLayout-0", "DrawCardListScreenLayout-2"]}
+# <<< factory-mutation DrawCardListScreenLayout

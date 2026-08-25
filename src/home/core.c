@@ -940,6 +940,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 #define DUELIST_TYPE_PLAYER 0x00u
 #define DUELVARS_DUELIST_TYPE 0xF1u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/text_box.h"
+#include "home/credits_sequence_commands.h"
+#include "home/tiles.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5355,3 +5361,23 @@ void DrawDuelHUDs(void)
 	SwapTurn();
 }
 /* <<< factory DrawDuelHUDs */
+
+/* >>> factory DrawCardListScreenLayout */
+DrawCardListScreenLayoutResult DrawCardListScreenLayout(void)
+{
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadSymbolsFont();
+	TileCopyResult tiles = LoadDuelCardSymbolTiles();
+	uint16_t box_hl = tiles.hl;
+	DrawRegularTextBox(&box_hl, 0u, 20u, 13u, 0u, 0u);
+	uint16_t image_hl = 0x0601u;
+	FillRectangle(0xA0u, 8u, 6u, 0x0C0Cu, image_hl);
+	(void)ApplyBGP6OrSGB3ToCardImage(0xA0u, 0u, 8u, 6u, 0x0Cu, 0x0Cu, image_hl);
+	PrintSortNumberInCardList_CallFromPointer();
+	uint8_t a = gb_read8(wDuelTempList_ADDR);
+	if (a == 0xFFu)
+		return (DrawCardListScreenLayoutResult){a, 0x90u};
+	return (DrawCardListScreenLayoutResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory DrawCardListScreenLayout */

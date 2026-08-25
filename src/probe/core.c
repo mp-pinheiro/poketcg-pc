@@ -1888,6 +1888,15 @@ static void adapt_DrawDuelHUDs(ProbeState *s)
 }
 /* <<< factory DrawDuelHUDs */
 
+/* >>> factory DrawCardListScreenLayout */
+static void adapt_DrawCardListScreenLayout(ProbeState *s)
+{
+	DrawCardListScreenLayoutResult r = DrawCardListScreenLayout();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DrawCardListScreenLayout */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2112,5 +2121,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PrintPokemonCardPageGenericInformation", adapt_PrintPokemonCardPageGenericInformation },
 	{ "DrawDuelHUD", adapt_DrawDuelHUD },
 	{ "DrawDuelHUDs", adapt_DrawDuelHUDs },
+	{ "DrawCardListScreenLayout", adapt_DrawCardListScreenLayout },
 	{ NULL, NULL },
 };

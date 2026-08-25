@@ -856,4 +856,8 @@ void DrawDuelHUD(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* >>> factory DrawDuelHUDs */
 void DrawDuelHUDs(void);
 /* <<< factory DrawDuelHUDs */
+/* >>> factory DrawCardListScreenLayout */
+typedef struct { uint8_t a, f; } DrawCardListScreenLayoutResult;
+DrawCardListScreenLayoutResult DrawCardListScreenLayout(void);
+/* <<< factory DrawCardListScreenLayout */
 #endif
