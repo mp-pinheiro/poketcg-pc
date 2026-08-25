@@ -21,6 +21,23 @@ CASES["GetFirstOwnedCardIndex"] = [
 ]
 # <<< factory GetFirstOwnedCardIndex
 
+# >>> factory-cases-statics
+wCardListCoords = 0xCED0
+wCardListVisibleOffset = 0xCEA1
+wFilteredCardList = 0xCEDA
+wNumVisibleCardListEntries = 0xCECB
+wUnableToScrollDown = 0xCECD
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+# <<< factory-cases-statics
+
+# >>> factory PrintCardSetListEntries
+CONTRACT["PrintCardSetListEntries"] = {"compare": ("hl",), "preserve": ()}
+CASES["PrintCardSetListEntries"] = [
+    {"wram": {wCardListCoords: b"\x10\x08", wCardListVisibleOffset: b"\x00", wNumVisibleCardListEntries: b"\x00", wFilteredCardList: b"\x00\x00"}, "read": {wUnableToScrollDown: 1, wFilteredCardList: 2}},
+    dict(POISON, wram={wCardListCoords: b"\x10\x08", wCardListVisibleOffset: b"\x00", wNumVisibleCardListEntries: b"\x00", wFilteredCardList: b"\x00\x00"}, read={wUnableToScrollDown: 1, wFilteredCardList: 2}),
+]
+# <<< factory PrintCardSetListEntries
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -33,3 +50,6 @@ MUTATIONS["GetFirstOwnedCardIndex"] = {
     "case_ids": ["GetFirstOwnedCardIndex-2", "GetFirstOwnedCardIndex-3", "GetFirstOwnedCardIndex-4"],
 }
 # <<< factory-mutation GetFirstOwnedCardIndex
+# >>> factory-mutation PrintCardSetListEntries
+MUTATIONS["PrintCardSetListEntries"] = {"source_symbol": "PrintCardSetListEntries", "before": "gb_write8(wUnableToScrollDown_ADDR, TRUE);", "after": "gb_write8(wUnableToScrollDown_ADDR, FALSE);", "case_ids": ["PrintCardSetListEntries-0", "PrintCardSetListEntries-1"]}
+# <<< factory-mutation PrintCardSetListEntries

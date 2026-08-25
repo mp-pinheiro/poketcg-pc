@@ -13,7 +13,16 @@ static void adapt_GetFirstOwnedCardIndex(ProbeState *s)
 }
 /* <<< factory GetFirstOwnedCardIndex */
 
+/* >>> factory PrintCardSetListEntries */
+static void adapt_PrintCardSetListEntries(ProbeState *s)
+{
+	PrintCardSetListEntriesResult r = PrintCardSetListEntries();
+	s->hl = r.hl;
+}
+/* <<< factory PrintCardSetListEntries */
+
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
+	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
 	{ NULL, NULL },
 };
