@@ -376,6 +376,15 @@ CASES["CardListMenuFunction"] = [
 ]
 # <<< factory CardListMenuFunction
 
+# >>> factory HandleMenuInput
+CONTRACT["HandleMenuInput"] = {"compare": ("a", "e", "f"), "preserve": ()}
+CASES["HandleMenuInput"] = [
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCD17: b"\x00\x00", 0xCD10: b"\x02", 0xCD14: b"\x04", 0xFFB1: b"\x02", 0xCD15: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x03", 0xCD14: b"\x04", 0xFFB1: b"\x03", 0xCD15: b"\x00"}, "read": {0xFFB1: 1, 0xCD10: 1}},
+    dict(POISON, wram={0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCD17: b"\x00\x00", 0xCD10: b"\x01", 0xCD14: b"\x04", 0xFFB1: b"\x01", 0xCD15: b"\x00"}, read={0xFFB1: 1, 0xCD10: 1}),
+]
+# <<< factory HandleMenuInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -442,3 +451,6 @@ MUTATIONS["PrintCardListItems"] = {
 # >>> factory-mutation CardListMenuFunction
 MUTATIONS["CardListMenuFunction"] = {"source_symbol": "CardListMenuFunction", "before": "hCurMenuItem = selected;", "after": "hCurMenuItem = (uint8_t)(selected + 1u);", "case_ids": ["CardListMenuFunction-0", "CardListMenuFunction-1", "CardListMenuFunction-2", "CardListMenuFunction-3"]}
 # <<< factory-mutation CardListMenuFunction
+# >>> factory-mutation HandleMenuInput
+MUTATIONS["HandleMenuInput"] = {"source_symbol": "HandleMenuInput", "before": "\thCurMenuItem = 0xFFu;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "after": "\thCurMenuItem = 0x00u;\n\t(void)PlayOpenOrExitScreenSFX(0u, 0x80u);", "case_ids": ["HandleMenuInput-1"]}
+# <<< factory-mutation HandleMenuInput

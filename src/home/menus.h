@@ -76,4 +76,8 @@ void PrintCardListItems(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl);
 typedef struct { uint8_t a; uint8_t f; } CardListMenuFunctionResult;
 CardListMenuFunctionResult CardListMenuFunction(void);
 /* <<< factory CardListMenuFunction */
+/* >>> factory HandleMenuInput */
+typedef struct { uint8_t a; uint8_t e; uint8_t f; } HandleMenuInputResult;
+HandleMenuInputResult HandleMenuInput(void);
+/* <<< factory HandleMenuInput */
 #endif

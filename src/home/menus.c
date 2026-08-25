@@ -53,6 +53,8 @@
 #define PAD_UP 0x40u
 #define PAD_DOWN 0x80u
 #define SYM_SLASH 0x2Eu
+
+#define PAD_B 0x02u
 /* <<< factory statics */
 
 #define SYM_0 0x20
@@ -599,3 +601,67 @@ CardListMenuFunctionResult CardListMenuFunction(void)
 	return (CardListMenuFunctionResult){0u, 0x10u};
 }
 /* <<< factory CardListMenuFunction */
+
+/* >>> factory HandleMenuInput */
+HandleMenuInputResult HandleMenuInput(void)
+{
+	wRefreshMenuCursorSFX = 0u;
+	uint8_t dpad = hDPadHeld;
+	if (dpad != 0u) {
+		uint8_t count = wNumMenuItems;
+		uint8_t item = wCurMenuItem;
+		if ((dpad & PAD_UP) != 0u) {
+			item = (uint8_t)(item - 1u);
+			if ((item & 0x80u) != 0u)
+				item = (uint8_t)(wNumMenuItems - 1u);
+			wRefreshMenuCursorSFX = 1u;
+			EraseCursor();
+			wCurMenuItem = item;
+			wCursorBlinkCounter = 0u;
+		} else if ((dpad & PAD_DOWN) != 0u) {
+			item = (uint8_t)(item + 1u);
+			if (item >= count)
+				item = 0u;
+			wRefreshMenuCursorSFX = 1u;
+			EraseCursor();
+			wCurMenuItem = item;
+			wCursorBlinkCounter = 0u;
+		}
+	}
+	hCurMenuItem = wCurMenuItem;
+
+	if (wMenuUpdateFunc != 0u) {
+		CardListMenuFunctionResult r = CardListMenuFunction();
+		if ((r.f & 0x10u) == 0u) {
+			RefreshMenuCursor_CheckPlaySFX();
+			return (HandleMenuInputResult){0u, 0u, 0u};
+		}
+		DrawCursor2();
+		uint8_t drawn_tile = wMenuVisibleCursorTile;
+		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
+		(void)PlayOpenOrExitScreenSFX(r.a, (uint8_t)(z_bit));
+		uint8_t e2 = wCurMenuItem;
+		uint8_t a2 = hCurMenuItem;
+		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};
+	}
+
+	uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A | PAD_B));
+	if (pressed == 0u) {
+		RefreshMenuCursor_CheckPlaySFX();
+		return (HandleMenuInputResult){0u, 0u, 0u};
+	}
+	if ((pressed & PAD_A) != 0u) {
+		DrawCursor2();
+		uint8_t drawn_tile = wMenuVisibleCursorTile;
+		uint8_t z_bit = (drawn_tile == 0u) ? 0x80u : 0u;
+		(void)PlayOpenOrExitScreenSFX(0u, z_bit);
+		uint8_t e2 = wCurMenuItem;
+		uint8_t a2 = hCurMenuItem;
+		return (HandleMenuInputResult){a2, e2, (uint8_t)(0x10u | z_bit)};
+	}
+	uint8_t e2 = wCurMenuItem;
+	hCurMenuItem = 0xFFu;
+	(void)PlayOpenOrExitScreenSFX(0u, 0x80u);
+	return (HandleMenuInputResult){0xFFu, e2, 0x90u};
+}
+/* <<< factory HandleMenuInput */
