@@ -1371,6 +1371,9 @@ HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint
 /* >>> factory Ember_PlayerSelectEffect */
 PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void);
 /* <<< factory Ember_PlayerSelectEffect */
+/* >>> factory FireBlast_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void);
+/* <<< factory FireBlast_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

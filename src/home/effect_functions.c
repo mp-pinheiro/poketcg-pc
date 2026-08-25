@@ -6020,3 +6020,10 @@ PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory Ember_PlayerSelectEffect */
+
+/* >>> factory FireBlast_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory FireBlast_PlayerSelectEffect */
