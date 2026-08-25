@@ -749,3 +749,7 @@ name = "Scavenge_PlayerSelectEnergyEffect"
 reason = "Same confirmed Display+Handle chaining bug as PlayerPickFireEnergyCardToDiscard (see that entry). poketcg/src/engine/duel/effect_functions.asm:5670: `ld a, TYPE_ENERGY_PSYCHIC / call CreateListOfEnergyAttachedToArena / xor a / bank1call DisplayEnergyDiscardScreen / bank1call HandleEnergyDiscardMenuInput / ret c / ...` has no gating check before DisplayEnergyDiscardScreen+HandleEnergyDiscardMenuInput, identical in shape to KadabraRecover_PlayerSelectEffect; every primary case must call the broken pair."
 unblock = "same as PlayerPickFireEnergyCardToDiscard/KadabraRecover_PlayerSelectEffect: fix the DisplayEnergyDiscardScreen+HandleEnergyDiscardMenuInput chaining bug directly and re-verify with tools/oracle/gbref/compare_one.py at a realistic budget. Once fixed, this routine has no gating branch to work around."
 
+[[blocked]]
+name = "PlayerPickFireEnergyCardToDiscard"
+reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:3517 (basename `effect_functions`). 13 generations exhausted (trapped=False); last diagnostic phase=validate failure_class=schema detail=PlayerPickFireEnergyCardToDiscard: all marker bodies must be nonempty strings"
+unblock = "read the recorded diagnostics under .factory/try/PlayerPickFireEnergyCardToDiscard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
