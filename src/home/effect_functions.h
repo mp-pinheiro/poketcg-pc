@@ -1302,6 +1302,10 @@ typedef struct {
 } SuperEnergyRetrievalDiscardAndAddToHandEffectResult;
 SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_DiscardAndAddToHandEffect(uint8_t b, uint8_t c);
 /* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+/* >>> factory HandleDefendingPokemonAttackSelection */
+typedef struct { uint16_t hl; uint8_t f; } HandleDefendingPokemonAttackSelectionResult;
+HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelection(void);
+/* <<< factory HandleDefendingPokemonAttackSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

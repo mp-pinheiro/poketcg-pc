@@ -526,6 +526,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/core.h"
 #include "home/duel.h"
 #include "home/effect_functions.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/frames.h"
+#include "home/core.h"
+#include "home/lcd.h"
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define PAD_B 0x02u
+#define PAD_START 0x08u
+#define MENU_CANCEL 0xFFu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5509,3 +5521,47 @@ SuperEnergyRetrievalDiscardAndAddToHandEffectResult SuperEnergyRetrieval_Discard
 	return (SuperEnergyRetrievalDiscardAndAddToHandEffectResult){details.a, details.f, b, c, (uint8_t)(de >> 8), (uint8_t)de, hl};
 }
 /* <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect */
+
+/* >>> factory HandleDefendingPokemonAttackSelection */
+HandleDefendingPokemonAttackSelectionResult HandleDefendingPokemonAttackSelection(void)
+{
+	DrawDuelMainScene();
+	SwapTurn();
+	hCurSelectionItem = 0u;
+	for (;;) {
+		uint8_t count = PrintAndLoadAttacksToDuelTempList();
+		uint16_t menu_parameters = 0x43F4u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		EnableLCD();
+		for (;;) {
+			DoFrame();
+			uint8_t keys = hKeysPressed;
+			if ((keys & PAD_B) != 0u) {
+				SwapTurn();
+				return (HandleDefendingPokemonAttackSelectionResult){menu_parameters, 0x10u};
+			}
+			if ((keys & PAD_START) != 0u) {
+				hCurSelectionItem = hCurMenuItem;
+				DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+				(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+				OpenAttackPage();
+				SwapTurn();
+				DrawDuelMainScene();
+				SwapTurn();
+				break;
+			}
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				continue;
+			uint8_t index = (uint8_t)(hCurMenuItem + hCurMenuItem);
+			uint8_t d = gb_read8((uint16_t)(wDuelTempList_ADDR + index));
+			uint8_t e = gb_read8((uint16_t)(wDuelTempList_ADDR + index + 1u));
+			SwapTurn();
+			return (HandleDefendingPokemonAttackSelectionResult){GetAttackName(d, e), 0u};
+		}
+	}
+}
+/* <<< factory HandleDefendingPokemonAttackSelection */

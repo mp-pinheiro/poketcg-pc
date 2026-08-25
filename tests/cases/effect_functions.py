@@ -2452,6 +2452,17 @@ wDuelTempList = 0xC510
 hWhoseTurn = 0xFF97
 wDuelistType = 0xC2F1
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hCurSelectionItem = 0xFFB2
+hKeysPressed = 0xFF91
+hWhoseTurn = 0xFF97
+wPlayerArenaCard = 0xC2BB
+wPlayerDeck = 0xC242
+wPlayerDuelistType = 0xC201
+wOpponentDuelistType = 0xC301
+wDuelDisplayedScreen = 0xCAC2
+wDuelTempList = 0xC510
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3658,6 +3669,14 @@ CASES["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = [
     dict(POISON, wram={hTemp_ffa0: b"\x03\x04\x03\x04\xFF", hWhoseTurn: b"\xC2", wDuelistType: b"\x00", 0xC2EE: b"\x02", 0xC2ED: b"\x00", 0xC203: b"\x01", 0xC204: b"\x01", 0xC242: b"\x03\x04"}, read={wDuelTempList: 3}),
 ]
 # <<< factory SuperEnergyRetrieval_DiscardAndAddToHandEffect
+
+# >>> factory HandleDefendingPokemonAttackSelection
+CONTRACT["HandleDefendingPokemonAttackSelection"] = {"compare": ("f", "hl"), "preserve": ()}
+CASES["HandleDefendingPokemonAttackSelection"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": 0x02, "read": {hCurSelectionItem: 1, wDuelTempList: 4}, "instruction_budget": 1000000, "cycle_budget": 10000000},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerArenaCard: b"\x00", wPlayerDeck: b"\x07", wPlayerDuelistType: b"\x00", wOpponentDuelistType: b"\x01", wDuelDisplayedScreen: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=0x02, read={hCurSelectionItem: 1, wDuelTempList: 4}, instruction_budget=1000000, cycle_budget=10000000),
+]
+# <<< factory HandleDefendingPokemonAttackSelection
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5769,3 +5788,6 @@ MUTATIONS["EnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": "Ener
 # >>> factory-mutation SuperEnergyRetrieval_DiscardAndAddToHandEffect
 MUTATIONS["SuperEnergyRetrieval_DiscardAndAddToHandEffect"] = {"source_symbol": "SuperEnergyRetrieval_DiscardAndAddToHandEffect", "before": "\t\tgb_write8(de, a);", "after": "\t\tgb_write8(de, 0u);", "case_ids": ["SuperEnergyRetrieval_DiscardAndAddToHandEffect-0", "SuperEnergyRetrieval_DiscardAndAddToHandEffect-1", "SuperEnergyRetrieval_DiscardAndAddToHandEffect-2"]}
 # <<< factory-mutation SuperEnergyRetrieval_DiscardAndAddToHandEffect
+# >>> factory-mutation HandleDefendingPokemonAttackSelection
+MUTATIONS["HandleDefendingPokemonAttackSelection"] = {"source_symbol": "HandleDefendingPokemonAttackSelection", "before": "\thCurSelectionItem = 0u;", "after": "\thCurSelectionItem = 1u;", "case_ids": ["HandleDefendingPokemonAttackSelection-0", "HandleDefendingPokemonAttackSelection-1"]}
+# <<< factory-mutation HandleDefendingPokemonAttackSelection
