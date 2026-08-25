@@ -1059,6 +1059,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/duel.h"
 
 #include "mem.h"
+
+#include "generated/sram.h"
+#include "home/switch_sram.h"
+#include "home/core.h"
+#define FollowMyGuidancePracticeDuelText 0x01dau
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5981,3 +5986,15 @@ void PrintPracticeDuelInstructions_Fast(uint16_t hl)
 	}
 }
 /* <<< factory PrintPracticeDuelInstructions_Fast */
+
+/* >>> factory PracticeDuel_RepeatInstructions */
+uint8_t PracticeDuel_RepeatInstructions(void)
+{
+	PrintPracticeDuelDrMasonInstructions(FollowMyGuidancePracticeDuelText);
+	BankswitchSRAM(sBackupCurrentDuel_BANK);
+	LoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);
+	BankswitchSRAM(0u);
+	/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */
+	return 0x90u;
+}
+/* <<< factory PracticeDuel_RepeatInstructions */

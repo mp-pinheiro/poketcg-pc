@@ -3197,6 +3197,20 @@ CASES["PrintPracticeDuelInstructions_Fast"] = [
 ]
 # <<< factory PrintPracticeDuelInstructions_Fast
 
+# >>> factory PracticeDuel_RepeatInstructions
+CONTRACT["PracticeDuel_RepeatInstructions"] = {"compare": ("f",), "preserve": ()}
+CASES["PracticeDuel_RepeatInstructions"] = [
+    {"keys": [0x00, 0x01], "instruction_budget": 4000000, "cycle_budget": 16000000,
+     "wram": {0xCABB: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"},
+               {"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, keys=[0x00, 0x01], instruction_budget=4000000, cycle_budget=16000000,
+         wram={0xCABB: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PracticeDuel_RepeatInstructions
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4559,3 +4573,11 @@ MUTATIONS["DisplayRetreatScreen"] = {"source_symbol": "DisplayRetreatScreen", "b
 # >>> factory-mutation PrintPracticeDuelInstructions_Fast
 MUTATIONS["PrintPracticeDuelInstructions_Fast"] = {"source_symbol": "PrintPracticeDuelInstructions_Fast", "before": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\tPrintPracticeDuelLetsPlayTheGame();\n\t\t\treturn;\n\t\t}", "after": "void PrintPracticeDuelInstructions_Fast(uint16_t hl)\n{\n\tfor (;;) {\n\t\tuint8_t count = gb_read8(hl);\n\t\thl = (uint16_t)(hl + 1u);\n\t\tif (count == 0u) {\n\t\t\treturn;\n\t\t}", "case_ids": ["PrintPracticeDuelInstructions_Fast-0", "PrintPracticeDuelInstructions_Fast-1"]}
 # <<< factory-mutation PrintPracticeDuelInstructions_Fast
+# >>> factory-mutation PracticeDuel_RepeatInstructions
+MUTATIONS["PracticeDuel_RepeatInstructions"] = {
+    "source_symbol": "PracticeDuel_RepeatInstructions",
+    "before": "uint8_t PracticeDuel_RepeatInstructions(void)\n{\n\tPrintPracticeDuelDrMasonInstructions(FollowMyGuidancePracticeDuelText);\n\tBankswitchSRAM(sBackupCurrentDuel_BANK);\n\tLoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);\n\tBankswitchSRAM(0u);\n\t/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */\n\treturn 0x90u;\n}",
+    "after": "uint8_t PracticeDuel_RepeatInstructions(void)\n{\n\tPrintPracticeDuelDrMasonInstructions(FollowMyGuidancePracticeDuelText);\n\tBankswitchSRAM(sBackupCurrentDuel_BANK);\n\tLoadSavedDuelDataFromDE(sBackupCurrentDuel_ADDR);\n\tBankswitchSRAM(0u);\n\t/* xor a sets Z and the trailing scf leaves it set, so F is Z|C. */\n\treturn 0x00u;\n}",
+    "case_ids": ["PracticeDuel_RepeatInstructions-0", "PracticeDuel_RepeatInstructions-1"],
+}
+# <<< factory-mutation PracticeDuel_RepeatInstructions
