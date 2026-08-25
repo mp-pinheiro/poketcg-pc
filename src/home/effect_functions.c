@@ -6013,3 +6013,10 @@ HandleColorChangeScreenResult HandleColorChangeScreen(uint8_t a, uint8_t f, uint
 	for (;;) { DoFrame(); HandleMenuInputResult input = HandleMenuInput(); if (!(input.f & 0x10u)) continue; if (input.a == MENU_CANCEL) return (HandleColorChangeScreenResult){input.a, 0x10u}; uint8_t item = input.a; uint8_t color = (uint8_t)(item + 1u); uint8_t selected = (color <= NUM_COLORED_TYPES) ? (uint8_t[]){0x01u, 0x00u, 0x03u, 0x04u, 0x06u, 0x05u}[color - 1u] : 0u; if ((uint8_t)(item + 1u) == 0u) selected = color; return (HandleColorChangeScreenResult){selected, (selected == 0u) ? 0x80u : 0x00u}; }
 }
 /* <<< factory HandleColorChangeScreen */
+
+/* >>> factory Ember_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory Ember_PlayerSelectEffect */

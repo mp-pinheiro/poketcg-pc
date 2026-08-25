@@ -3289,6 +3289,15 @@ static void adapt_HandleColorChangeScreen(ProbeState *s)
 }
 /* <<< factory HandleColorChangeScreen */
 
+/* >>> factory Ember_PlayerSelectEffect */
+static void adapt_Ember_PlayerSelectEffect(ProbeState *s)
+{
+	PlayerPickFireEnergyCardToDiscardResult r = Ember_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Ember_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3695,5 +3704,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FlamesOfRage_PlayerSelectEffect", adapt_FlamesOfRage_PlayerSelectEffect },
 	{ "HandleColorChangeScreen", adapt_HandleColorChangeScreen },
 	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
+	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
 	{ NULL, NULL },
 };

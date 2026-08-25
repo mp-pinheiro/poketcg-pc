@@ -4065,6 +4065,40 @@ CASES["HandleColorChangeScreen"] = [
 ]
 # <<< factory HandleColorChangeScreen
 
+# >>> factory Ember_PlayerSelectEffect
+CONTRACT["Ember_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Ember_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x02], "rom_bank": 1,
+     "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {hTemp_ffa0: 1},
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x02], rom_bank=1,
+         wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
+      wPlayerArenaCard: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STAGE_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_STATUS_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_PLUSPOWER_OFF: b"\x00",
+      wPlayerArenaCard + DUELVARS_ARENA_CARD_ATTACHED_DEFENDER_OFF: b"\x00",
+      wDuelTempList: b"\xFF",
+      wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07",
+      hTempCardIndex_ff98: b"\x05"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={hTemp_ffa0: 1},
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory Ember_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6252,3 +6286,6 @@ MUTATIONS["FlamesOfRage_PlayerSelectEffect"] = {"source_symbol": "FlamesOfRage_P
 # >>> factory-mutation HandleColorChangeScreen
 MUTATIONS["HandleColorChangeScreen"] = {"source_symbol": "HandleColorChangeScreen", "before": "uint8_t color = (uint8_t)(item + 1u);", "after": "uint8_t color = (uint8_t)(item + 2u);", "case_ids": ["HandleColorChangeScreen-0", "HandleColorChangeScreen-1"]}
 # <<< factory-mutation HandleColorChangeScreen
+# >>> factory-mutation Ember_PlayerSelectEffect
+MUTATIONS["Ember_PlayerSelectEffect"] = {"source_symbol": "Ember_PlayerSelectEffect", "before": "PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();\n}", "after": "PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void)\n{\n\tPlayerPickFireEnergyCardToDiscardResult r = PlayerPickFireEnergyCardToDiscard();\n\treturn (PlayerPickFireEnergyCardToDiscardResult){r.a, (uint8_t)(r.f ^ 0x01u)};\n}", "case_ids": ["Ember_PlayerSelectEffect-0", "Ember_PlayerSelectEffect-1"]}
+# <<< factory-mutation Ember_PlayerSelectEffect
