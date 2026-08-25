@@ -43,6 +43,8 @@
 #include "home/core.h"
 #include "mem.h"
 #define DUEL_MAIN_SCENE 0x01u
+
+#include "home/duel_menus.h"
 /* <<< factory statics */
 
 
@@ -251,3 +253,29 @@ void UpdateMainSceneHUD(void)
 	}
 }
 /* <<< factory UpdateMainSceneHUD */
+
+/* >>> factory SetScreenForDuelAnimation */
+void SetScreenForDuelAnimation(uint16_t hl)
+{
+	uint8_t set_screen = gb_read8(wDuelAnimSetScreen_ADDR);
+	if (set_screen == SET_ANIM_SCREEN_MAIN) {
+		gb_write8(wDuelAnimationScreen_ADDR, DUEL_ANIM_SCREEN_MAIN_SCENE);
+		if (gb_read8(wDuelDisplayedScreen_ADDR) != DUEL_MAIN_SCENE)
+			DrawDuelMainScene();
+		return;
+	}
+	if (set_screen != SET_ANIM_SCREEN_PLAY_AREA)
+		return;
+	UpdateDuelAnimationScreenResult updated = UpdateDuelAnimationScreen(hl);
+	uint8_t screen = (uint8_t)updated.hl;
+	if (gb_read8(wDuelDisplayedScreen_ADDR) != screen) {
+		uint8_t saved_screen = screen;
+		uint8_t turn = PLAYER_TURN;
+		if (gb_read8(wDuelType_ADDR) == 0u)
+			turn = gb_read8(wWhoseTurn_ADDR);
+		DrawYourOrOppPlayAreaScreen_Bank0((uint16_t)((updated.hl & 0xff00u) | turn));
+		gb_write8(wDuelDisplayedScreen_ADDR, saved_screen);
+	}
+	(void)DrawWideTextBox();
+}
+/* <<< factory SetScreenForDuelAnimation */

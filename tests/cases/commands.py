@@ -155,6 +155,16 @@ CASES["UpdateMainSceneHUD"] = [
 ]
 # <<< factory UpdateMainSceneHUD
 
+# >>> factory SetScreenForDuelAnimation
+CONTRACT["SetScreenForDuelAnimation"] = {"compare": (), "preserve": ()}
+CASES["SetScreenForDuelAnimation"] = [
+    {"hl": 0xC100, "wram": {wDuelAnimSetScreen: b"\x00", wDuelDisplayedScreen: b"\x00"}, "read": {wDuelDisplayedScreen: 0}},
+    {"hl": 0xC101, "wram": {wDuelAnimSetScreen: b"\x01", wDuelDisplayedScreen: b"\x01"}, "read": {wDuelAnimationScreen: 0}},
+    {"hl": 0xC102, "wram": {wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wDuelDisplayedScreen: 4}, "instruction_budget": 60000000, "cycle_budget": 240000000},
+    dict(POISON, hl=0xC103, wram={wDuelAnimSetScreen: b"\x04", wDuelAnimLocationParam: b"\x00", wWhoseTurn: b"\xC2", wDuelType: b"\x00", wDuelDisplayedScreen: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wDuelDisplayedScreen: 4}, instruction_budget=60000000, cycle_budget=240000000),
+]
+# <<< factory SetScreenForDuelAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -222,3 +232,6 @@ MUTATIONS["PrintDamageText"] = {
 # >>> factory-mutation UpdateMainSceneHUD
 MUTATIONS["UpdateMainSceneHUD"] = {"source_symbol": "UpdateMainSceneHUD", "before": "if (displayed_screen == DUEL_MAIN_SCENE) {", "after": "if (displayed_screen != DUEL_MAIN_SCENE) {", "case_ids": ["UpdateMainSceneHUD-1", "UpdateMainSceneHUD-2"]}
 # <<< factory-mutation UpdateMainSceneHUD
+# >>> factory-mutation SetScreenForDuelAnimation
+MUTATIONS["SetScreenForDuelAnimation"] = {"source_symbol": "SetScreenForDuelAnimation", "before": "\t\tgb_write8(wDuelDisplayedScreen_ADDR, saved_screen);", "after": "\t\tgb_write8(wDuelDisplayedScreen_ADDR, (uint8_t)(saved_screen ^ 1u));", "case_ids": ["SetScreenForDuelAnimation-2", "SetScreenForDuelAnimation-3"]}
+# <<< factory-mutation SetScreenForDuelAnimation

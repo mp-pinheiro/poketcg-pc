@@ -1,0 +1,9 @@
+{
+  "fn": "SetScreenForDuelAnimation",
+  "case": "tests/cases/commands.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SetScreenForDuelAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"04000000\", \"52229\": \"c2\", \"52233\": \"00\", \"54448\": \"00\", \"54451\": \"04\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SetScreenForDuelAnimation\", \"mismatches\": {\"bus\": {\"address\": 51906, \"reference\": \"8004000000c2\", \"native\": \"8005000000c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51899, 1], [51906, 4], [52229, 1], [52233, 1], [54448, 1], [54451, 1]]}}}\n",
+  "restored": "{\"fn\": \"SetScreenForDuelAnimation\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 49410, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"04000000\", \"52229\": \"c2\", \"52233\": \"00\", \"54448\": \"00\", \"54451\": \"04\"}}, \"status\": \"PASS\"}\n"
+}
