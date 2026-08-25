@@ -3012,6 +3012,14 @@ static void adapt_MirrorMove_BeforeDamage(ProbeState *s)
 }
 /* <<< factory MirrorMove_BeforeDamage */
 
+/* >>> factory SpearowMirrorMove_BeforeDamage */
+static void adapt_SpearowMirrorMove_BeforeDamage(ProbeState *s)
+{
+	(void)s;
+	SpearowMirrorMove_BeforeDamage();
+}
+/* <<< factory SpearowMirrorMove_BeforeDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3385,5 +3393,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplySubstatus2ToDefendingCard", adapt_ApplySubstatus2ToDefendingCard },
 	{ "ApplyAmnesiaToAttack", adapt_ApplyAmnesiaToAttack },
 	{ "MirrorMove_BeforeDamage", adapt_MirrorMove_BeforeDamage },
+	{ "SpearowMirrorMove_BeforeDamage", adapt_SpearowMirrorMove_BeforeDamage },
 	{ NULL, NULL },
 };

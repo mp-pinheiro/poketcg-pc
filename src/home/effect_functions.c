@@ -5326,3 +5326,10 @@ void MirrorMove_BeforeDamage(void)
 	(void)target_status;
 }
 /* <<< factory MirrorMove_BeforeDamage */
+
+/* >>> factory SpearowMirrorMove_BeforeDamage */
+void SpearowMirrorMove_BeforeDamage(void)
+{
+	MirrorMove_BeforeDamage();
+}
+/* <<< factory SpearowMirrorMove_BeforeDamage */

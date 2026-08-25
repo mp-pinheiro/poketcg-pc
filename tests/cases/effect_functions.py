@@ -2421,6 +2421,16 @@ wNoDamageOrEffect = 0xCCC7
 hWhoseTurn = 0xFF97
 wDamage = 0xCCB9
 wLoadedAttackAnimation = 0xCCB8
+
+hWhoseTurn = 0xFF97
+TURN_EFFECT = 0xC2F8
+TURN_DAMAGE = 0xC2F3
+TURN_STATUS = 0xC2F5
+TURN_SUBSTATUS2 = 0xC2F6
+NON_TURN_STATUS = 0xC3F0
+NON_TURN_SUBSTATUS2 = 0xC3E8
+wDamage = 0xCCB9
+wLoadedAttackAnimation = 0xCCB8
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3504,6 +3514,16 @@ CASES["MirrorMove_BeforeDamage"] = [
          read={wDamage: 2, 0xCCB8: 1, 0xC3E8: 1}),
 ]
 # <<< factory MirrorMove_BeforeDamage
+
+# >>> factory SpearowMirrorMove_BeforeDamage
+CONTRACT["SpearowMirrorMove_BeforeDamage"] = {"compare": (), "preserve": ()}
+CASES["SpearowMirrorMove_BeforeDamage"] = [
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x00\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x11", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x01", TURN_DAMAGE: b"\x12\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x22", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x01\x02", TURN_STATUS: b"\x10", TURN_SUBSTATUS2: b"\x33", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", TURN_EFFECT: b"\x00", TURN_DAMAGE: b"\x34\x00", TURN_STATUS: b"\x00", TURN_SUBSTATUS2: b"\x44", NON_TURN_STATUS: b"\x00", NON_TURN_SUBSTATUS2: b"\x00", wDamage: b"\x00\x00", wLoadedAttackAnimation: b"\x00"}, "read": {wDamage: 2, wLoadedAttackAnimation: 1, NON_TURN_SUBSTATUS2: 1}}
+]
+# <<< factory SpearowMirrorMove_BeforeDamage
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5573,3 +5593,6 @@ MUTATIONS["ApplyAmnesiaToAttack"] = {"source_symbol": "ApplyAmnesiaToAttack", "b
 # >>> factory-mutation MirrorMove_BeforeDamage
 MUTATIONS["MirrorMove_BeforeDamage"] = {"source_symbol": "MirrorMove_BeforeDamage", "before": "gb_write8(wDamage_ADDR, damage_lo);", "after": "gb_write8(wDamage_ADDR, 0u);", "case_ids": ["MirrorMove_BeforeDamage-1", "MirrorMove_BeforeDamage-2"]}
 # <<< factory-mutation MirrorMove_BeforeDamage
+# >>> factory-mutation SpearowMirrorMove_BeforeDamage
+MUTATIONS["SpearowMirrorMove_BeforeDamage"] = {"source_symbol": "SpearowMirrorMove_BeforeDamage", "before": "\tMirrorMove_BeforeDamage();", "after": "\treturn;", "case_ids": ["SpearowMirrorMove_BeforeDamage-1", "SpearowMirrorMove_BeforeDamage-2", "SpearowMirrorMove_BeforeDamage-3"]}
+# <<< factory-mutation SpearowMirrorMove_BeforeDamage
