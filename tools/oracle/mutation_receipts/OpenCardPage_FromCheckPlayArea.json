@@ -1,0 +1,9 @@
+{
+  "fn": "OpenCardPage_FromCheckPlayArea",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenCardPage_FromCheckPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"84\", \"52177\": \"01\", \"52183\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenCardPage_FromCheckPlayArea\", \"mismatches\": {\"bus\": {\"address\": 52183, \"reference\": \"840102\", \"native\": \"840100\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [52177, 1], [52183, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenCardPage_FromCheckPlayArea\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"84\", \"52177\": \"01\", \"52183\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

@@ -3705,7 +3705,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LookForCardsInDeck", adapt_LookForCardsInDeck },
 	{ "KadabraRecover_PlayerSelectEffect", adapt_KadabraRecover_PlayerSelectEffect },
 	{ "Scavenge_PlayerSelectEnergyEffect", adapt_Scavenge_PlayerSelectEnergyEffect },
-	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "ArcanineFlamethrower_PlayerSelectEffect", adapt_ArcanineFlamethrower_PlayerSelectEffect },
 	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
 	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
@@ -3715,5 +3714,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DestinyBond_PlayerSelectEffect", adapt_DestinyBond_PlayerSelectEffect },
 	{ "Ember_PlayerSelectEffect", adapt_Ember_PlayerSelectEffect },
 	{ "FireBlast_PlayerSelectEffect", adapt_FireBlast_PlayerSelectEffect },
+	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ NULL, NULL },
 };

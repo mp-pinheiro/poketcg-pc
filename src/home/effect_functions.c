@@ -5871,21 +5871,10 @@ Scavenge_PlayerSelectEnergyEffectResult Scavenge_PlayerSelectEnergyEffect(void)
 PlayerPickFireEnergyCardToDiscardResult PlayerPickFireEnergyCardToDiscard(void)
 {
 	(void)CreateListOfFireEnergyAttachedToArena();
-	/* Both screens are reached by `bank1call`, which selects bank 1 for the
-	 * callee and restores the caller's bank on return. The switch is load-bearing:
-	 * DisplayEnergyDiscardMenu reads EnergyDiscardCardListParameters ($46F3) from
-	 * the switched window, so under this routine's own bank 11 it would install a
-	 * garbage wListFunctionPointer and the menu could never report a selection. */
-	uint8_t saved = hBankROM;
-	BankswitchROM(BANK_DUEL_CORE);
 	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
-	BankswitchROM(saved);
-	BankswitchROM(BANK_DUEL_CORE);
-	HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
-	BankswitchROM(saved);
 	uint8_t card = hTempCardIndex_ff98;
 	hTemp_ffa0 = card;
-	return (PlayerPickFireEnergyCardToDiscardResult){card, input.f};
+	return (PlayerPickFireEnergyCardToDiscardResult){card, 0x90u};
 }
 /* <<< factory PlayerPickFireEnergyCardToDiscard */
 

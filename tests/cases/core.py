@@ -3267,6 +3267,14 @@ CASES["OpenCardPage_FromHand"] = [
 ]
 # <<< factory OpenCardPage_FromHand
 
+# >>> factory OpenCardPage_FromCheckPlayArea
+CONTRACT["OpenCardPage_FromCheckPlayArea"] = {"compare": (), "preserve": ()}
+CASES["OpenCardPage_FromCheckPlayArea"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageExitKeys: 1, wCardPageType: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageExitKeys: 1, wCardPageType: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory OpenCardPage_FromCheckPlayArea
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4654,3 +4662,6 @@ MUTATIONS["DisplayCardDetailScreen"] = {
 # >>> factory-mutation OpenCardPage_FromHand
 MUTATIONS["OpenCardPage_FromHand"] = {"source_symbol": "OpenCardPage_FromHand", "before": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);", "after": "void OpenCardPage_FromHand(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromHand-0", "OpenCardPage_FromHand-1"]}
 # <<< factory-mutation OpenCardPage_FromHand
+# >>> factory-mutation OpenCardPage_FromCheckPlayArea
+MUTATIONS["OpenCardPage_FromCheckPlayArea"] = {"source_symbol": "OpenCardPage_FromCheckPlayArea", "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);", "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckPlayArea-0", "OpenCardPage_FromCheckPlayArea-1"]}
+# <<< factory-mutation OpenCardPage_FromCheckPlayArea

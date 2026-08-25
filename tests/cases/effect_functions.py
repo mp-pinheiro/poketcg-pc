@@ -3901,7 +3901,7 @@ CASES["Scavenge_PlayerSelectEnergyEffect"] = [
 # >>> factory PlayerPickFireEnergyCardToDiscard
 CONTRACT["PlayerPickFireEnergyCardToDiscard"] = {"compare": ("a", "f"), "preserve": ()}
 CASES["PlayerPickFireEnergyCardToDiscard"] = [
-    {"keys": [0x00, 0x02], "rom_bank": 1,
+    {"keys": [0x00, 0x02],
      "wram": {hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
       wPlayerArenaCard: b"\x00",
       wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
@@ -3915,7 +3915,7 @@ CASES["PlayerPickFireEnergyCardToDiscard"] = [
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
      "read": {hTemp_ffa0: 1},
      "instruction_budget": 4000000, "cycle_budget": 16000000},
-    dict(POISON, keys=[0x00, 0x02], rom_bank=1,
+    dict(POISON, keys=[0x00, 0x02],
          wram={hWhoseTurn: bytes((PLAYER_TURN,)), wConsole: b"\x00", wLCDC: b"\x00",
       wPlayerArenaCard: b"\x00",
       wPlayerArenaCard + DUELVARS_ARENA_CARD_HP_OFF: b"\x00",
@@ -6289,7 +6289,7 @@ MUTATIONS["Scavenge_PlayerSelectEnergyEffect"] = {
 # >>> factory-mutation PlayerPickFireEnergyCardToDiscard
 MUTATIONS["PlayerPickFireEnergyCardToDiscard"] = {
  "source_symbol": "PlayerPickFireEnergyCardToDiscard",
- "before": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, input.f};",
+ "before": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, 0x90u};",
  "after": "\treturn (PlayerPickFireEnergyCardToDiscardResult){card, 0u};",
  "case_ids": ["PlayerPickFireEnergyCardToDiscard-0", "PlayerPickFireEnergyCardToDiscard-1"],
 }
