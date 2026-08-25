@@ -96,6 +96,10 @@ wPrintOnlyStarRarity = 0xCE9C
 wPrinterCardCount = 0xCE91
 wPrinterHorizontalOffset = 0xCE90
 wPrinterTotalCardCount = 0xCE92
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wCardPageType = 0xCBD1
+wLoadedCard1Type = 0xCC24
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -179,6 +183,14 @@ CASES["PrinterMenu_QuitPrint"] = [
 ]
 # <<< factory PrinterMenu_QuitPrint
 
+# >>> factory DrawBottomCardInfoInSRAMGfxBuffer0
+CONTRACT["DrawBottomCardInfoInSRAMGfxBuffer0"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawBottomCardInfoInSRAMGfxBuffer0"] = [
+    {"wram": {wLoadedCard1Type: b"\x08"}, "read": {wCardPageType: 1}},
+    dict(POISON, wram={wLoadedCard1Type: b"\x08"}, read={wCardPageType: 1}),
+]
+# <<< factory DrawBottomCardInfoInSRAMGfxBuffer0
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -242,3 +254,11 @@ MUTATIONS["LoadCardInfoForPrinter"] = {"source_symbol": "LoadCardInfoForPrinter"
 # >>> factory-mutation PrinterMenu_QuitPrint
 MUTATIONS["PrinterMenu_QuitPrint"] = {"source_symbol": "PrinterMenu_QuitPrint", "before": "\treturn result.f;", "after": "\treturn 0u;", "case_ids": ["PrinterMenu_QuitPrint-0", "PrinterMenu_QuitPrint-1"]}
 # <<< factory-mutation PrinterMenu_QuitPrint
+# >>> factory-mutation DrawBottomCardInfoInSRAMGfxBuffer0
+MUTATIONS["DrawBottomCardInfoInSRAMGfxBuffer0"] = {
+    "source_symbol": "DrawBottomCardInfoInSRAMGfxBuffer0",
+    "before": "void DrawBottomCardInfoInSRAMGfxBuffer0(void)\n{\n\tFunc_1a025();\n\tgb_write8(wCardPageType_ADDR, CARDPAGETYPE_NOT_PLAY_AREA);",
+    "after": "void DrawBottomCardInfoInSRAMGfxBuffer0(void)\n{\n\tFunc_1a025();\n\tgb_write8(wCardPageType_ADDR, 0x01u);",
+    "case_ids": ["DrawBottomCardInfoInSRAMGfxBuffer0-0", "DrawBottomCardInfoInSRAMGfxBuffer0-1"],
+}
+# <<< factory-mutation DrawBottomCardInfoInSRAMGfxBuffer0

@@ -125,6 +125,14 @@ static void adapt_PrinterMenu_QuitPrint(ProbeState *s)
 }
 /* <<< factory PrinterMenu_QuitPrint */
 
+/* >>> factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+static void adapt_DrawBottomCardInfoInSRAMGfxBuffer0(ProbeState *s)
+{
+	(void)s;
+	DrawBottomCardInfoInSRAMGfxBuffer0();
+}
+/* <<< factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -139,5 +147,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "CompressDataForPrinterSerialTransfer", adapt_CompressDataForPrinterSerialTransfer },
 	{ "LoadCardInfoForPrinter", adapt_LoadCardInfoForPrinter },
 	{ "PrinterMenu_QuitPrint", adapt_PrinterMenu_QuitPrint },
+	{ "DrawBottomCardInfoInSRAMGfxBuffer0", adapt_DrawBottomCardInfoInSRAMGfxBuffer0 },
 	{ NULL, NULL },
 };

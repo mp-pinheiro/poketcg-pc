@@ -104,4 +104,7 @@ void LoadCardInfoForPrinter(uint8_t b, uint8_t c, uint16_t *hl);
 /* >>> factory PrinterMenu_QuitPrint */
 uint8_t PrinterMenu_QuitPrint(uint16_t w0);
 /* <<< factory PrinterMenu_QuitPrint */
+/* >>> factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+void DrawBottomCardInfoInSRAMGfxBuffer0(void);
+/* <<< factory DrawBottomCardInfoInSRAMGfxBuffer0 */
 #endif

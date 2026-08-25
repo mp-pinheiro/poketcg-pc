@@ -37,6 +37,20 @@
 
 #include "home/menus.h"
 #define PleaseMakeSureToTurnGameBoyPrinterOffText 0x027bu
+
+#include "generated/sram.h"
+#include "generated/wram.h"
+#include "home/bg_map.h"
+#include "home/core.h"
+#include "home/printer.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/text_box.h"
+#define CARDPAGETYPE_NOT_PLAY_AREA 0x00u
+#define RetreatWeakResistData 0x4000u
+#define SYM_SPACE 0x00u
+#define SYM_No 0x01u
+#define TYPE_ENERGY 0x08u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -413,3 +427,29 @@ uint8_t PrinterMenu_QuitPrint(uint16_t w0)
 	return result.f;
 }
 /* <<< factory PrinterMenu_QuitPrint */
+
+/* >>> factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+void DrawBottomCardInfoInSRAMGfxBuffer0(void)
+{
+	Func_1a025();
+	gb_write8(wCardPageType_ADDR, CARDPAGETYPE_NOT_PLAY_AREA);
+	uint16_t hl = sGfxBuffer0_ADDR;
+	uint8_t c = 9u;
+	while (c != 0u) {
+		CopyLine(&hl, SYM_SPACE, 20u, 0x36u, 0x37u);
+		c = (uint8_t)(c - 1u);
+	}
+	CopyLine(&hl, 0x35u, 20u, 0x32u, 0x33u);
+	if (gb_read8(wLoadedCard1Type_ADDR) < TYPE_ENERGY) {
+		(void)PlaceTextItems(RetreatWeakResistData);
+		DisplayCardPage_PokemonOverview();
+		WriteByteToBGMap0(SYM_No, 15u, 72u);
+		WriteOneByteNumberInTxSymbol_PadSpace(gb_read8(wLoadedCard1PokedexNumber_ADDR), 15u, 73u, 0u, 0u, 0u);
+		return;
+	}
+	(void)SetNoLineSeparation();
+	InitTextPrintingInTextbox(19u, 1u, 66u);
+	(void)ProcessTextFromPointerToID(wLoadedCard1NonPokemonDescription_ADDR);
+	(void)SetOneLineSeparation();
+}
+/* <<< factory DrawBottomCardInfoInSRAMGfxBuffer0 */
