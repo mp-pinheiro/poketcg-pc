@@ -978,6 +978,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "home/core.h"
+#include "generated/wram.h"
+#define SELECT_CHECK 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5546,3 +5550,12 @@ void OppAction_DrawDuelMainScene(void)
 	DrawDuelMainScene();
 }
 /* <<< factory OppAction_DrawDuelMainScene */
+
+/* >>> factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
+DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout_WithSelectCheckMenu(void)
+{
+	DrawCardListScreenLayoutResult result = InitAndDrawCardListScreenLayout();
+	gb_write8(wCardListItemSelectionMenuType_ADDR, SELECT_CHECK);
+	return (DrawCardListScreenLayoutResult){SELECT_CHECK, result.f};
+}
+/* <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */

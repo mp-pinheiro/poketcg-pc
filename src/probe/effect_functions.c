@@ -3004,6 +3004,14 @@ static void adapt_ApplyAmnesiaToAttack(ProbeState *s)
 }
 /* <<< factory ApplyAmnesiaToAttack */
 
+/* >>> factory MirrorMove_BeforeDamage */
+static void adapt_MirrorMove_BeforeDamage(ProbeState *s)
+{
+	(void)s;
+	MirrorMove_BeforeDamage();
+}
+/* <<< factory MirrorMove_BeforeDamage */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3376,5 +3384,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PrintDevolvedCardNameAndLevelText", adapt_PrintDevolvedCardNameAndLevelText },
 	{ "ApplySubstatus2ToDefendingCard", adapt_ApplySubstatus2ToDefendingCard },
 	{ "ApplyAmnesiaToAttack", adapt_ApplyAmnesiaToAttack },
+	{ "MirrorMove_BeforeDamage", adapt_MirrorMove_BeforeDamage },
 	{ NULL, NULL },
 };

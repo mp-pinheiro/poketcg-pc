@@ -2417,6 +2417,10 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 hWhoseTurn = 0xFF97
 hTemp_ffa0 = 0xFFA0
 wNoDamageOrEffect = 0xCCC7
+
+hWhoseTurn = 0xFF97
+wDamage = 0xCCB9
+wLoadedAttackAnimation = 0xCCB8
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -3488,6 +3492,18 @@ CASES["ApplyAmnesiaToAttack"] = [
     dict(POISON, hl=0x0000, wram={hWhoseTurn: b"\xC2", wNoDamageOrEffect: b"\x00", 0xC3E8: b"\x11", 0xC3F6: b"\x22", 0xC3F2: b"\x33", 0xC3F8: b"\x44", hTemp_ffa0: b"\x03"}, read={0xC3E8: 1, 0xC3F6: 1, 0xC3F2: 1, 0xC3F8: 1}),
 ]
 # <<< factory ApplyAmnesiaToAttack
+
+# >>> factory MirrorMove_BeforeDamage
+CONTRACT["MirrorMove_BeforeDamage"] = {"compare": (), "preserve": ()}
+CASES["MirrorMove_BeforeDamage"] = [
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F3: b"\x00\x00\x00\x00", 0xC3E8: b"\x00"},
+     "read": {wDamage: 2, 0xCCB8: 1, 0xC3E8: 1}},
+    {"wram": {hWhoseTurn: b"\xC2", 0xC2F3: b"\x34\x12\x00\x00", 0xC3E8: b"\x00"},
+     "read": {wDamage: 2, 0xCCB8: 1, 0xC3E8: 1}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", 0xC2F3: b"\x34\x12\x00\x00", 0xC3E8: b"\x00"},
+         read={wDamage: 2, 0xCCB8: 1, 0xC3E8: 1}),
+]
+# <<< factory MirrorMove_BeforeDamage
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -5554,3 +5570,6 @@ MUTATIONS["ApplySubstatus2ToDefendingCard"] = {"source_symbol": "ApplySubstatus2
 # >>> factory-mutation ApplyAmnesiaToAttack
 MUTATIONS["ApplyAmnesiaToAttack"] = {"source_symbol": "ApplyAmnesiaToAttack", "before": "\tgb_write8(non_turn.hl, hTemp_ffa0);", "after": "\tgb_write8(non_turn.hl, 0x00u);", "case_ids": ["ApplyAmnesiaToAttack-0", "ApplyAmnesiaToAttack-1"]}
 # <<< factory-mutation ApplyAmnesiaToAttack
+# >>> factory-mutation MirrorMove_BeforeDamage
+MUTATIONS["MirrorMove_BeforeDamage"] = {"source_symbol": "MirrorMove_BeforeDamage", "before": "gb_write8(wDamage_ADDR, damage_lo);", "after": "gb_write8(wDamage_ADDR, 0u);", "case_ids": ["MirrorMove_BeforeDamage-1", "MirrorMove_BeforeDamage-2"]}
+# <<< factory-mutation MirrorMove_BeforeDamage

@@ -1,0 +1,9 @@
+{
+  "fn": "MirrorMove_BeforeDamage",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MirrorMove_BeforeDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49907\": \"34120000\", \"50152\": \"00\", \"52408\": \"013412\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MirrorMove_BeforeDamage\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"000000013412c2\", \"native\": \"000000010012c2\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49907, 4], [50152, 1], [52408, 3], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"MirrorMove_BeforeDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49907\": \"34120000\", \"50152\": \"00\", \"52408\": \"013412\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

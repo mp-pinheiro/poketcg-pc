@@ -485,6 +485,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define DUELVARS_ARENA_CARD_DISABLED_ATTACK_INDEX 0xF2u
 #define SUBSTATUS2_AMNESIA 0x04u
 #define WasChosenForTheEffectOfAmnesiaText 0x0148u
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#define ATK_ANIM_HIT 0x01u
+#define DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE 0xf3u
+#define DUELVARS_ARENA_CARD_LAST_TURN_STATUS 0xf5u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5286,3 +5293,36 @@ void ApplyAmnesiaToAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	SwapTurn();
 }
 /* <<< factory ApplyAmnesiaToAttack */
+
+/* >>> factory MirrorMove_BeforeDamage */
+void MirrorMove_BeforeDamage(void)
+{
+	DuelistVarResult last_effect = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (last_effect.a == LAST_TURN_EFFECT_AMNESIA) {
+		ApplyAmnesiaToAttack(last_effect.a, 0u, 0u, 0u, 0u, 0u, last_effect.hl);
+		return;
+	}
+
+	DuelistVarResult damage = GetTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_LAST_TURN_DAMAGE);
+	uint8_t damage_lo = gb_read8(damage.hl);
+	uint8_t damage_hi = gb_read8((uint16_t)(damage.hl + 1u));
+	gb_write8(wDamage_ADDR, damage_lo);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), damage_hi);
+	if ((uint8_t)(damage_lo | damage_hi) != 0u)
+		gb_write8(wLoadedAttackAnimation_ADDR, ATK_ANIM_HIT);
+
+	uint16_t status_addr = (uint16_t)(damage.hl + 2u);
+	uint8_t status = gb_read8(status_addr);
+	DuelistVarResult target_status = GetNonTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_STATUS);
+	if (status != 0u)
+		(void)MirrorMove_ExecuteStatusEffect(status);
+
+	DuelistVarResult target_substatus = GetNonTurnDuelistVariable(
+		DUELVARS_ARENA_CARD_SUBSTATUS2);
+	gb_write8(target_substatus.hl, gb_read8((uint16_t)(status_addr + 1u)));
+	(void)target_status;
+}
+/* <<< factory MirrorMove_BeforeDamage */

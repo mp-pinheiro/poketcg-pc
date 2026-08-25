@@ -2980,6 +2980,14 @@ CASES["OppAction_DrawDuelMainScene"] = [
 ]
 # <<< factory OppAction_DrawDuelMainScene
 
+# >>> factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu
+CONTRACT["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = [
+    {"wram": {0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, "read": {0xCBDE: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, read={0xCBDE: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4274,3 +4282,6 @@ MUTATIONS["RedrawTurnDuelistsDuelHUD"] = {"source_symbol": "RedrawTurnDuelistsDu
 # >>> factory-mutation OppAction_DrawDuelMainScene
 MUTATIONS["OppAction_DrawDuelMainScene"] = {"source_symbol": "OppAction_DrawDuelMainScene", "before": "\tDrawDuelMainScene();", "after": "\tgb_write8(0xCAC2u, 0u);", "case_ids": ["OppAction_DrawDuelMainScene-0", "OppAction_DrawDuelMainScene-1"]}
 # <<< factory-mutation OppAction_DrawDuelMainScene
+# >>> factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu
+MUTATIONS["InitAndDrawCardListScreenLayout_WithSelectCheckMenu"] = {"source_symbol": "InitAndDrawCardListScreenLayout_WithSelectCheckMenu", "before": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, SELECT_CHECK);", "after": "\tgb_write8(wCardListItemSelectionMenuType_ADDR, 0u);", "case_ids": ["InitAndDrawCardListScreenLayout_WithSelectCheckMenu-0", "InitAndDrawCardListScreenLayout_WithSelectCheckMenu-1"]}
+# <<< factory-mutation InitAndDrawCardListScreenLayout_WithSelectCheckMenu

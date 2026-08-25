@@ -878,4 +878,7 @@ void RedrawTurnDuelistsDuelHUD(void);
 /* >>> factory OppAction_DrawDuelMainScene */
 void OppAction_DrawDuelMainScene(void);
 /* <<< factory OppAction_DrawDuelMainScene */
+/* >>> factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
+DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout_WithSelectCheckMenu(void);
+/* <<< factory InitAndDrawCardListScreenLayout_WithSelectCheckMenu */
 #endif
