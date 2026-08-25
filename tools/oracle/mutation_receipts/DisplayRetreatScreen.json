@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayRetreatScreen",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayRetreatScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52172\": \"00\", \"65442\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayRetreatScreen\", \"mismatches\": {\"bus\": {\"address\": 65442, \"reference\": \"00ff\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52172, 1], [65442, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisplayRetreatScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52172\": \"00\", \"65442\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

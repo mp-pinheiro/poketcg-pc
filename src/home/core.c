@@ -1052,6 +1052,11 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/bg_map.h"
 #include "home/core.h"
 #define SYM_SLASH 0x2Eu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5921,3 +5926,40 @@ HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void)
 	return (HandleEnergyDiscardMenuInputResult){card.a, (card.a == 0u) ? 0x80u : 0u};
 }
 /* <<< factory HandleEnergyDiscardMenuInput */
+
+/* >>> factory DisplayRetreatScreen */
+void DisplayRetreatScreen(uint8_t a)
+{
+	hTempRetreatCostCards = 0xFFu;
+	uint8_t required = wEnergyCardsRequiredToRetreat;
+	if (required == 0u)
+		return;
+	wNumRetreatEnergiesSelected = 0u;
+	(void)CreateArenaOrBenchEnergyCardList(a);
+	(void)SortCardsInDuelTempListByID(0u, 0u, wDuelTempList_ADDR);
+	wTempRetreatCostCardsPos = (uint8_t)hTempRetreatCostCards_ADDR;
+	DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+	wEnergyDiscardMenuDenominator = required;
+	for (;;) {
+		wEnergyDiscardMenuNumerator = wNumRetreatEnergiesSelected;
+		HandleEnergyDiscardMenuInputResult input = HandleEnergyDiscardMenuInput();
+		if ((input.f & 0x10u) != 0u)
+			return;
+		hTempCardIndex_ff98 = input.a;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(hTempCardIndex_ff98);
+		uint8_t pos = wTempRetreatCostCardsPos;
+		wTempRetreatCostCardsPos = (uint8_t)(pos + 1u);
+		gb_write8((uint16_t)(0xFF00u + pos), hTempCardIndex_ff98);
+		uint8_t amount = 1u;
+		if (wLoadedCard2Type == TYPE_ENERGY_DOUBLE_COLORLESS)
+			amount++;
+		wNumRetreatEnergiesSelected = (uint8_t)(wNumRetreatEnergiesSelected + amount);
+		if (wNumRetreatEnergiesSelected >= wEnergyCardsRequiredToRetreat) {
+			gb_write8((uint16_t)(0xFF00u + wTempRetreatCostCardsPos), 0xFFu);
+			return;
+		}
+		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+		DisplayEnergyDiscardMenu();
+	}
+}
+/* <<< factory DisplayRetreatScreen */

@@ -1711,6 +1711,9 @@ wLoadedCard1AttackDescriptions = 0xCEA0
 
 wEnergyDiscardMenuDenominator = 0xCBFA
 wEnergyDiscardMenuNumerator = 0xCBFB
+
+wEnergyCardsRequiredToRetreat = 0xCBCC
+hTempRetreatCostCards = 0xFFA2
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3178,6 +3181,14 @@ CASES["HandleEnergyDiscardMenuInput"] = [
 ]
 # <<< factory HandleEnergyDiscardMenuInput
 
+# >>> factory DisplayRetreatScreen
+CONTRACT["DisplayRetreatScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayRetreatScreen"] = [
+    {"a": 0x00, "wram": {wEnergyCardsRequiredToRetreat: b"\x00"}, "read": {wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1}},
+    dict(POISON, wram={wEnergyCardsRequiredToRetreat: b"\x00"}, read={wEnergyCardsRequiredToRetreat: 1, hTempRetreatCostCards: 1}),
+]
+# <<< factory DisplayRetreatScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4534,3 +4545,6 @@ MUTATIONS["HandleEnergyDiscardMenuInput"] = {
     "case_ids": ["HandleEnergyDiscardMenuInput-1"],
 }
 # <<< factory-mutation HandleEnergyDiscardMenuInput
+# >>> factory-mutation DisplayRetreatScreen
+MUTATIONS["DisplayRetreatScreen"] = {"source_symbol": "DisplayRetreatScreen", "before": "\thTempRetreatCostCards = 0xFFu;", "after": "\thTempRetreatCostCards = 0u;", "case_ids": ["DisplayRetreatScreen-0", "DisplayRetreatScreen-1"]}
+# <<< factory-mutation DisplayRetreatScreen

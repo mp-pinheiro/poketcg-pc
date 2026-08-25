@@ -940,4 +940,7 @@ typedef struct {
 } HandleEnergyDiscardMenuInputResult;
 HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void);
 /* <<< factory HandleEnergyDiscardMenuInput */
+/* >>> factory DisplayRetreatScreen */
+void DisplayRetreatScreen(uint8_t a);
+/* <<< factory DisplayRetreatScreen */
 #endif
