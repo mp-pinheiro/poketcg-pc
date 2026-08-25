@@ -3595,6 +3595,14 @@ CASES["PounceEffect"] = [
     dict(POISON, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),]
 # <<< factory PounceEffect
 
+# >>> factory SandAttackEffect
+CONTRACT["SandAttackEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e")}
+CASES["SandAttackEffect"] = [
+    {"hl": 0xC200, "wram": {0xFF97: b"\xC2", 0xC3E8: b"\x00", 0xC3F6: b"\x00"}, "read": {0xC3E8: 1, 0xC3F6: 1}},
+    {"hl": 0xC240, "wram": {0xFF97: b"\xC3", 0xC2E8: b"\x12", 0xC2F6: b"\x34"}, "read": {0xC2E8: 1, 0xC2F6: 1}},
+    dict(POISON, hl=0xC280, wram={0xFF97: b"\xC2", 0xC3E8: b"\x55", 0xC3F6: b"\x66"}, read={0xC3E8: 1, 0xC3F6: 1}),]
+# <<< factory SandAttackEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5690,3 +5698,6 @@ MUTATIONS["PikachuLv16GrowlEffect"] = {"source_symbol": "PikachuLv16GrowlEffect"
 # >>> factory-mutation PounceEffect
 MUTATIONS["PounceEffect"] = {"source_symbol": "PounceEffect", "before": "uint16_t PounceEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_POUNCE, hl);", "after": "uint16_t PounceEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["PounceEffect-0", "PounceEffect-1", "PounceEffect-2"]}
 # <<< factory-mutation PounceEffect
+# >>> factory-mutation SandAttackEffect
+MUTATIONS["SandAttackEffect"] = {"source_symbol": "SandAttackEffect", "before": "uint16_t SandAttackEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(SUBSTATUS2_SAND_ATTACK, hl);", "after": "uint16_t SandAttackEffect(uint16_t hl)\n{\n\treturn ApplySubstatus2ToDefendingCard(0x00u, hl);", "case_ids": ["SandAttackEffect-0", "SandAttackEffect-1", "SandAttackEffect-2"]}
+# <<< factory-mutation SandAttackEffect
