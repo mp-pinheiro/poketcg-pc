@@ -783,3 +783,4 @@ unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunication
 name = "DrawPlayerPortraitAndPrintNewGameText"
 reason = "AUTO-RETIRED: src/engine/menus/start.asm:403 (basename `start`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case DrawPlayerPortraitAndPrintNewGameText-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":15545,\"sp\":65508,\"instructions\":56124281,\"cycles\":240000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":149,\"ppu_mode\":1,\"bus\":\"b43c0001\"}"
 unblock = "read the recorded diagnostics under .factory/try/DrawPlayerPortraitAndPrintNewGameText/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
