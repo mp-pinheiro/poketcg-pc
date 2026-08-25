@@ -773,3 +773,8 @@ unblock = "read the recorded diagnostics under .factory/try/OppAction_ExecuteTra
 name = "DisplayEnergyOrTrainerCardPage"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:4679 (basename `core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayEnergyOrTrainerCardPage-0 {\"status\": \"PORT\", \"fn\": \"DisplayEnergyOrTrainerCardPage\", \"mismatches\": {\"d\": [18, 6], \"e\": [9, 4], \"vram\": \"reference/native state differs\"}}"
 unblock = "read the recorded diagnostics under .factory/try/DisplayEnergyOrTrainerCardPage/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Func_5a81"
+reason = "AUTO-RETIRED: src/engine/duel/core.asm:4056 (basename `core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case Func_5a81-1 {\"status\": \"PORT\", \"fn\": \"Func_5a81\", \"mismatches\": {\"f\": [0, 64], \"b\": [8, 51], \"c\": [0, 68], \"hl\": [39148, 17767]}}"
+unblock = "read the recorded diagnostics under .factory/try/Func_5a81/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
