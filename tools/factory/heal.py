@@ -249,6 +249,26 @@ def _last_diagnostic(fn: str, state: dict[str, Any]) -> tuple[str, str, str]:
     return "unknown", "unknown", "unknown"
 
 
+def _context_is_stale(fn: str) -> bool:
+    """True when this red's recorded translation context no longer matches the
+    tree, so its spent budget is evidence about a tree that no longer exists.
+
+    An exhausted red is normally retired to a blocker, but a routine whose
+    blocker was just cleared, or whose callees have since landed, is being judged
+    on attempts it never had a fair chance at. Rebuilding the packet is the same
+    comparison `factory-try` makes before it verifies a candidate.
+    """
+    import try_one
+
+    try:
+        issued = try_one.load_current_attempt(fn)
+        if issued is None:
+            return False
+        return try_one.verification_packet(issued) is None
+    except (LookupError, OSError, RuntimeError, ValueError):
+        return False
+
+
 def retire_exhausted_reds(states: dict[str, dict[str, Any]],
                           rows: dict[str, dict[str, Any]], *,
                           retry_limit: int = DEFAULT_RETRY_LIMIT,
@@ -275,6 +295,14 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
         generation = int(state.get("generation", 0))
         trapped = try_one.is_trapped(fn, state)
         if generation < retry_limit and not trapped:
+            continue
+        if _context_is_stale(fn):
+            if apply:
+                refreshed = dict(state)
+                refreshed["state"] = "stale"
+                try_one._store_current(refreshed)
+            print(f"{prefix}refresh {fn} generation={generation} "
+                  f"detail=translation context changed since its last attempt")
             continue
         phase, failure_class, detail = _last_diagnostic(fn, state)
         source = str(row.get("source") or "")
