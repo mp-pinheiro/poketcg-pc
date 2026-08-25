@@ -3028,6 +3028,13 @@ static void adapt_PidgeottoMirrorMove_BeforeDamage(ProbeState *s)
 }
 /* <<< factory PidgeottoMirrorMove_BeforeDamage */
 
+/* >>> factory PoliwhirlAmnesia_DisableEffect */
+static void adapt_PoliwhirlAmnesia_DisableEffect(ProbeState *s)
+{
+	PoliwhirlAmnesia_DisableEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory PoliwhirlAmnesia_DisableEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3403,5 +3410,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MirrorMove_BeforeDamage", adapt_MirrorMove_BeforeDamage },
 	{ "SpearowMirrorMove_BeforeDamage", adapt_SpearowMirrorMove_BeforeDamage },
 	{ "PidgeottoMirrorMove_BeforeDamage", adapt_PidgeottoMirrorMove_BeforeDamage },
+	{ "PoliwhirlAmnesia_DisableEffect", adapt_PoliwhirlAmnesia_DisableEffect },
 	{ NULL, NULL },
 };

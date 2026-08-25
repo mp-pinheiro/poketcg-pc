@@ -3535,6 +3535,14 @@ CASES["PidgeottoMirrorMove_BeforeDamage"] = [
 ]
 # <<< factory PidgeottoMirrorMove_BeforeDamage
 
+# >>> factory PoliwhirlAmnesia_DisableEffect
+CONTRACT["PoliwhirlAmnesia_DisableEffect"] = {"compare": (), "preserve": ()}
+CASES["PoliwhirlAmnesia_DisableEffect"] = [
+    {"a": 0x01, "f": 0x00, "b": 0x02, "c": 0x03, "d": 0x04, "e": 0x05, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", wNoDamageOrEffect: b"\x00", 0xC3E8: b"\x00", 0xC3F6: b"\x00", 0xC3F2: b"\x00", 0xC3F8: b"\x00", hTemp_ffa0: b"\x02"}, "read": {0xC3E8: 1, 0xC3F6: 1, 0xC3F2: 1, 0xC3F8: 1}},
+    dict(POISON, hl=0x0000, wram={hWhoseTurn: b"\xC2", wNoDamageOrEffect: b"\x00", 0xC3E8: b"\x11", 0xC3F6: b"\x22", 0xC3F2: b"\x33", 0xC3F8: b"\x44", hTemp_ffa0: b"\x03"}, read={0xC3E8: 1, 0xC3F6: 1, 0xC3F2: 1, 0xC3F8: 1}),
+]
+# <<< factory PoliwhirlAmnesia_DisableEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -5609,3 +5617,6 @@ MUTATIONS["SpearowMirrorMove_BeforeDamage"] = {"source_symbol": "SpearowMirrorMo
 # >>> factory-mutation PidgeottoMirrorMove_BeforeDamage
 MUTATIONS["PidgeottoMirrorMove_BeforeDamage"] = {"source_symbol": "PidgeottoMirrorMove_BeforeDamage", "before": "void PidgeottoMirrorMove_BeforeDamage(void)\n{\n\tMirrorMove_BeforeDamage();", "after": "void PidgeottoMirrorMove_BeforeDamage(void)\n{\n\treturn;", "case_ids": ["PidgeottoMirrorMove_BeforeDamage-1", "PidgeottoMirrorMove_BeforeDamage-2", "PidgeottoMirrorMove_BeforeDamage-3"]}
 # <<< factory-mutation PidgeottoMirrorMove_BeforeDamage
+# >>> factory-mutation PoliwhirlAmnesia_DisableEffect
+MUTATIONS["PoliwhirlAmnesia_DisableEffect"] = {"source_symbol": "PoliwhirlAmnesia_DisableEffect", "before": "\tApplyAmnesiaToAttack(a, f, b, c, d, e, hl);", "after": "\t(void)0;", "case_ids": ["PoliwhirlAmnesia_DisableEffect-0", "PoliwhirlAmnesia_DisableEffect-1"]}
+# <<< factory-mutation PoliwhirlAmnesia_DisableEffect
