@@ -2189,6 +2189,14 @@ static void adapt_CardListItemSelectionMenu(ProbeState *s)
 }
 /* <<< factory CardListItemSelectionMenu */
 
+/* >>> factory DisplayPlayerDrawCardScreen */
+static void adapt_DisplayPlayerDrawCardScreen(ProbeState *s)
+{
+	WaitResult r = DisplayPlayerDrawCardScreen();
+	s->f = r.f;
+}
+/* <<< factory DisplayPlayerDrawCardScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2451,5 +2459,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayNoBasicPokemonInHandScreenAndText", adapt_DisplayNoBasicPokemonInHandScreenAndText },
 	{ "OpenCardPage_FromCheckHandOrDiscardPile", adapt_OpenCardPage_FromCheckHandOrDiscardPile },
 	{ "CardListItemSelectionMenu", adapt_CardListItemSelectionMenu },
+	{ "DisplayPlayerDrawCardScreen", adapt_DisplayPlayerDrawCardScreen },
 	{ NULL, NULL },
 };

@@ -3330,6 +3330,14 @@ CASES["CardListItemSelectionMenu"] = [
 ]
 # <<< factory CardListItemSelectionMenu
 
+# >>> factory DisplayPlayerDrawCardScreen
+CONTRACT["DisplayPlayerDrawCardScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["DisplayPlayerDrawCardScreen"] = [
+    {"wram": {0xFF98: b"\x00", DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00", DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck: b"\x10"}, "read": {DCDS_wLoadedCard1: 64}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, wram={0xFF98: b"\x03", DCDS_wLCDC: b"\x80", DCDS_rLCDC: b"\x80", DCDS_wLoadedCard1: b"\x00", DCDS_hWhoseTurn: bytes((DCDS_TURN,)), DCDS_wPlayerDeck + 3: b"\x20"}, read={DCDS_wLoadedCard1: 64}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory DisplayPlayerDrawCardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4737,3 +4745,6 @@ MUTATIONS["OpenCardPage_FromCheckHandOrDiscardPile"] = {"source_symbol": "OpenCa
 # >>> factory-mutation CardListItemSelectionMenu
 MUTATIONS["CardListItemSelectionMenu"] = {"source_symbol": "CardListItemSelectionMenu", "before": "\t\treturn (CardListItemSelectionMenuResult){0u, 0x80u};", "after": "\t\treturn (CardListItemSelectionMenuResult){1u, 0x80u};", "case_ids": ["CardListItemSelectionMenu-0", "CardListItemSelectionMenu-1"]}
 # <<< factory-mutation CardListItemSelectionMenu
+# >>> factory-mutation DisplayPlayerDrawCardScreen
+MUTATIONS["DisplayPlayerDrawCardScreen"] = {"source_symbol": "DisplayPlayerDrawCardScreen", "before": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);", "after": "WaitResult DisplayPlayerDrawCardScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff98 + 1u), YouDrewText);", "case_ids": ["DisplayPlayerDrawCardScreen-0", "DisplayPlayerDrawCardScreen-1"]}
+# <<< factory-mutation DisplayPlayerDrawCardScreen

@@ -978,4 +978,7 @@ void OpenCardPage_FromCheckHandOrDiscardPile(uint8_t a, uint8_t f, uint8_t b, ui
 typedef struct { uint8_t a; uint8_t f; } CardListItemSelectionMenuResult;
 CardListItemSelectionMenuResult CardListItemSelectionMenu(void);
 /* <<< factory CardListItemSelectionMenu */
+/* >>> factory DisplayPlayerDrawCardScreen */
+WaitResult DisplayPlayerDrawCardScreen(void);
+/* <<< factory DisplayPlayerDrawCardScreen */
 #endif

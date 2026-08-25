@@ -1103,6 +1103,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PlayCheck1Text 0x0084u
 #define PlayCheck2Text 0x0085u
 #define SelectCheckText 0x0086u
+
+#include "home/core.h"
+#include "generated/hram.h"
+#define YouDrewText 0x0070u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6181,3 +6185,10 @@ CardListItemSelectionMenuResult CardListItemSelectionMenu(void)
 	}
 }
 /* <<< factory CardListItemSelectionMenu */
+
+/* >>> factory DisplayPlayerDrawCardScreen */
+WaitResult DisplayPlayerDrawCardScreen(void)
+{
+	return DisplayCardDetailScreen(hTempCardIndex_ff98, YouDrewText);
+}
+/* <<< factory DisplayPlayerDrawCardScreen */
