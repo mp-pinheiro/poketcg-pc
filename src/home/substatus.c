@@ -10,6 +10,18 @@
 #include "home/frames.h"
 #include "home/print_text.h"
 #include "mem.h"
+/* >>> factory statics */
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+#define DUELVARS_ARENA_CARD_HP 0xc8u
+#define PLAY_AREA_ARENA 0x00u
+#define ReceivesDamageDueToStrikesBackText 0x0105u
+/* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
 #define SUBSTATUS2_SMOKESCREEN 0x01u
@@ -539,3 +551,23 @@ StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de)
 	SwapTurn();
 	return (StrikesBackResult){0, 0x10u};
 }
+/* >>> factory ApplyStrikesBack_AgainstResidualAttack */
+ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl)
+{
+	LoadTxRam3(hl);
+	uint8_t card_id = wTempTurnDuelistCardID;
+	LoadCardDataToBuffer2_FromCardID(card_id);
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR) |
+		(uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name);
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	SubtractHPResult subtracted = SubtractHP(hp.hl, hl);
+	(void)DrawWideTextBox_PrintText(ReceivesDamageDueToStrikesBackText);
+	if (subtracted.a == 0)
+		return (ApplyStrikesBackResult){0, 0x80u};
+	(void)WaitForWideTextBoxInput();
+	(void)PrintPlayAreaCardKnockedOutIfNoHP(PLAY_AREA_ARENA);
+	DrawDuelHUDs();
+	return (ApplyStrikesBackResult){0, 0x10u};
+}
+/* <<< factory ApplyStrikesBack_AgainstResidualAttack */

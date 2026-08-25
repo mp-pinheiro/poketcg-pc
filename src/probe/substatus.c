@@ -166,6 +166,15 @@ static void adapt_HandleStrikesBack_AgainstDamagingAttack(ProbeState *s)
 }
 static void adapt_CheckRainDanceScenario(ProbeState *s) { RainDanceResult r = CheckRainDanceScenario(); s->a = r.a; s->f = r.f; }
 
+/* >>> factory ApplyStrikesBack_AgainstResidualAttack */
+static void adapt_ApplyStrikesBack_AgainstResidualAttack(ProbeState *s)
+{
+	ApplyStrikesBackResult r = ApplyStrikesBack_AgainstResidualAttack(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory ApplyStrikesBack_AgainstResidualAttack */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -191,5 +200,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckRainDanceScenario", adapt_CheckRainDanceScenario },
 	{ "ClearChangedTypesIfMuk", adapt_ClearChangedTypesIfMuk },
 	{ "HandleStrikesBack_AgainstDamagingAttack", adapt_HandleStrikesBack_AgainstDamagingAttack },
+	{ "ApplyStrikesBack_AgainstResidualAttack", adapt_ApplyStrikesBack_AgainstResidualAttack },
 	{ NULL, NULL },
 };

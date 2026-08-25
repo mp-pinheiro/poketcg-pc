@@ -142,4 +142,8 @@ typedef struct { uint8_t a, f; } StrikesBackResult;
 StrikesBackResult HandleStrikesBack_AgainstDamagingAttack(uint16_t de);
 
 
+/* >>> factory ApplyStrikesBack_AgainstResidualAttack */
+typedef struct { uint8_t a, f; } ApplyStrikesBackResult;
+ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl);
+/* <<< factory ApplyStrikesBack_AgainstResidualAttack */
 #endif

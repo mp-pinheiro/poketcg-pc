@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyStrikesBack_AgainstResidualAttack",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyStrikesBack_AgainstResidualAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52328\": \"fc07\", \"52419\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyStrikesBack_AgainstResidualAttack\", \"mismatches\": {\"bus\": {\"address\": 52328, \"reference\": \"fc0701c2\", \"native\": \"000001c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52328, 2], [52419, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ApplyStrikesBack_AgainstResidualAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52328\": \"fc07\", \"52419\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

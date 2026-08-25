@@ -452,6 +452,20 @@ CASES.update({
         dict(POISON, d=0, e=0, wram=STRIKES_WRAM),
     ],
 })
+# >>> factory-cases-statics
+wLoadedCard2Name = 0xCC68
+wTempTurnDuelistCardID = 0xCCC3
+# <<< factory-cases-statics
+
+# >>> factory ApplyStrikesBack_AgainstResidualAttack
+CONTRACT["ApplyStrikesBack_AgainstResidualAttack"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ApplyStrikesBack_AgainstResidualAttack"] = [
+    {"hl": 0, "wram": {0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\x01"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
+    {"hl": 0, "wram": {0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wLoadedCard2Name: 2}},
+    dict(POISON, hl=0, wram={0xFF97: b"\xC2", wTempTurnDuelistCardID: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wLoadedCard2Name: 2}),
+]
+# <<< factory ApplyStrikesBack_AgainstResidualAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -463,3 +477,6 @@ MUTATIONS = {
         "case_ids": ["HandleDoubleDamageSubstatus-0", "HandleDoubleDamageSubstatus-1", "HandleDoubleDamageSubstatus-2", "HandleDoubleDamageSubstatus-3", "HandleDoubleDamageSubstatus-4"],
     },
 }
+# >>> factory-mutation ApplyStrikesBack_AgainstResidualAttack
+MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplyStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempTurnDuelistCardID;", "after": "\tuint8_t card_id = 0;", "case_ids": ["ApplyStrikesBack_AgainstResidualAttack-0", "ApplyStrikesBack_AgainstResidualAttack-1", "ApplyStrikesBack_AgainstResidualAttack-2"]}
+# <<< factory-mutation ApplyStrikesBack_AgainstResidualAttack
