@@ -6372,7 +6372,7 @@ MUTATIONS["SpearowMirrorMove_AfterDamage"] = {
 MUTATIONS["Func_2c0a8"] = {"source_symbol": "Func_2c0a8", "before": "\thTemp_ffa0 = saved;", "after": "\thTemp_ffa0 = hWhoseTurn;", "case_ids": ["Func_2c0a8-0", "Func_2c0a8-1"]}
 # <<< factory-mutation Func_2c0a8
 # >>> factory-mutation ShuffleCardsInDeck
-MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\t(void)PlayDeckShuffleAnimation();", "after": "", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
+MUTATIONS["ShuffleCardsInDeck"] = {"source_symbol": "ShuffleCardsInDeck", "before": "\tShuffleDeckResult sd = ShuffleDeck(r.c, anim.e);", "after": "\tShuffleDeckResult sd = ShuffleDeck(r.c, (uint8_t)r.de);", "case_ids": ["ShuffleCardsInDeck-0", "ShuffleCardsInDeck-1"]}
 # <<< factory-mutation ShuffleCardsInDeck
 # >>> factory-mutation DrawPlayAreaScreenToShowChanges
 MUTATIONS["DrawPlayAreaScreenToShowChanges"] = {

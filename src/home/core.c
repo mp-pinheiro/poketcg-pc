@@ -4821,7 +4821,12 @@ void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c)
 /* <<< factory PrintPokemonCardLength */
 
 /* >>> factory PlayDeckShuffleAnimation */
-uint8_t PlayDeckShuffleAnimation(void)
+/* The ROM leaves the animation id it selected in `e`, and ShuffleCardsInDeck
+ * feeds that register straight to ShuffleDeck, so `e` is a real output and not
+ * scratch. The one-card path never assigns it, so it has to arrive as a
+ * parameter to survive. Measured: reference returns e=$51 on the player's turn
+ * and e=$52 on the opponent's. */
+PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t e)
 {
 	if (gb_read8(wDuelDisplayedScreen_ADDR) != SHUFFLE_DECK_490) {
 		ZeroObjectPositionsAndToggleOAMCopy();
@@ -4842,14 +4847,14 @@ uint8_t PlayDeckShuffleAnimation(void)
 			DoFrame();
 			counter = (uint8_t)(counter - 1u);
 		} while (counter != 0u);
-		return 0x01u;
+		return (PlayDeckShuffleAnimationResult){0x01u, e};
 	}
 
 	(void)DrawWideTextBox_PrintText(ShufflesTheDeckText);
 	EnableLCD();
 	ResetAnimationQueue();
 
-	uint8_t e = DUEL_ANIM_PLAYER_SHUFFLE_490;
+	e = DUEL_ANIM_PLAYER_SHUFFLE_490;
 	if (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)
 		e = DUEL_ANIM_OPP_SHUFFLE_490;
 
@@ -4867,7 +4872,7 @@ uint8_t PlayDeckShuffleAnimation(void)
 			break;
 	}
 	FinishQueuedAnimations();
-	return 0x01u;
+	return (PlayDeckShuffleAnimationResult){0x01u, e};
 }
 /* <<< factory PlayDeckShuffleAnimation */
 
@@ -4876,7 +4881,7 @@ uint8_t OppAction_6b30(void)
 {
 	uint8_t saved = hWhoseTurn;
 	hWhoseTurn = hTemp_ffa0;
-	(void)PlayDeckShuffleAnimation();
+	(void)PlayDeckShuffleAnimation(0u);
 	hWhoseTurn = saved;
 	return saved;
 }

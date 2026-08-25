@@ -751,7 +751,8 @@ void PrintPlayAreaCardHeader(void);
 void PrintPokemonCardLength(uint16_t hl, uint8_t b, uint8_t c);
 /* <<< factory PrintPokemonCardLength */
 /* >>> factory PlayDeckShuffleAnimation */
-uint8_t PlayDeckShuffleAnimation(void);
+typedef struct { uint8_t a; uint8_t e; } PlayDeckShuffleAnimationResult;
+PlayDeckShuffleAnimationResult PlayDeckShuffleAnimation(uint8_t e);
 /* <<< factory PlayDeckShuffleAnimation */
 /* >>> factory OppAction_6b30 */
 uint8_t OppAction_6b30(void);

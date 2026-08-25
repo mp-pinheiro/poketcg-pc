@@ -5325,7 +5325,7 @@ uint8_t Func_2c0a8(void)
 	uint8_t saved = hTemp_ffa0;
 	hTemp_ffa0 = hWhoseTurn;
 	(void)SetOppAction_SerialSendDuelData(OPPACTION_6B30, 0u);
-	uint8_t result = PlayDeckShuffleAnimation();
+	uint8_t result = PlayDeckShuffleAnimation(0u).a;
 	hTemp_ffa0 = saved;
 	return result;
 }
@@ -5335,8 +5335,10 @@ uint8_t Func_2c0a8(void)
 ShuffleCardsInDeckResult ShuffleCardsInDeck(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
 {
 	ExchangeRNGResult r = ExchangeRNG(b, c, de, hl);
-	(void)PlayDeckShuffleAnimation();
-	ShuffleDeckResult sd = ShuffleDeck(r.c, (uint8_t)r.de);
+	/* The ROM reaches `call ShuffleDeck` with `e` still holding the id
+	 * PlayDeckShuffleAnimation selected, not ExchangeRNG's de low byte. */
+	PlayDeckShuffleAnimationResult anim = PlayDeckShuffleAnimation((uint8_t)r.de);
+	ShuffleDeckResult sd = ShuffleDeck(r.c, anim.e);
 	return (ShuffleCardsInDeckResult){sd.a, sd.b, sd.c, sd.d, sd.e, sd.f, sd.hl};
 }
 /* <<< factory ShuffleCardsInDeck */

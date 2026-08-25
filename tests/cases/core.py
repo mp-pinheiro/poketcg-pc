@@ -4457,7 +4457,7 @@ MUTATIONS["PrintPlayAreaCardHeader"] = {"source_symbol": "PrintPlayAreaCardHeade
 MUTATIONS["PrintPokemonCardLength"] = {"source_symbol": "PrintPokemonCardLength", "before": "\t\trow = (uint8_t)(new_row + 1u);", "after": "\t\trow = new_row;", "case_ids": ["PrintPokemonCardLength-0", "PrintPokemonCardLength-1"]}
 # <<< factory-mutation PrintPokemonCardLength
 # >>> factory-mutation PlayDeckShuffleAnimation
-MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimation", "before": "} while (counter != 0u);\n\t\treturn 0x01u;", "after": "} while (counter != 0u);\n\t\treturn 0x02u;", "case_ids": ["PlayDeckShuffleAnimation-0"]}
+MUTATIONS["PlayDeckShuffleAnimation"] = {"source_symbol": "PlayDeckShuffleAnimation", "before": "\te = DUEL_ANIM_PLAYER_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_OPP_SHUFFLE_490;", "after": "\te = DUEL_ANIM_OPP_SHUFFLE_490;\n\tif (gb_read8(hWhoseTurn_ADDR) != PLAYER_TURN_490)\n\t\te = DUEL_ANIM_PLAYER_SHUFFLE_490;", "case_ids": ["PlayDeckShuffleAnimation-0"]}
 # <<< factory-mutation PlayDeckShuffleAnimation
 # >>> factory-mutation OppAction_6b30
 MUTATIONS["OppAction_6b30"] = {"source_symbol": "OppAction_6b30", "before": "\treturn saved;", "after": "\treturn hTemp_ffa0;", "case_ids": ["OppAction_6b30-0", "OppAction_6b30-1"]}
