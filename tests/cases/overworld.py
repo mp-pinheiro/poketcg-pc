@@ -293,6 +293,10 @@ wSCXBuffer_A = 0xD235
 wSCYBuffer_A = 0xD236
 
 wVBlankOAMCopyToggle = 0xCAC0
+
+hCurMenuItem = 0xFFB1
+wCurMenuItem = 0xCD10
+wSelectedPauseMenuItem = 0xD0B8
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -650,6 +654,15 @@ CASES["UpdateOverworldMap"] = [
 ]
 # <<< factory UpdateOverworldMap
 
+# >>> factory DisplayPauseMenu
+CONTRACT["DisplayPauseMenu"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DisplayPauseMenu"] = [
+    {"wram": {wSelectedPauseMenuItem: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wSelectedPauseMenuItem: b"\x05", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCurMenuItem: 1, hCurMenuItem: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wSelectedPauseMenuItem: b"\x02", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCurMenuItem: 1, hCurMenuItem: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayPauseMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -865,3 +878,6 @@ MUTATIONS["Func_c280"] = {"source_symbol": "Func_c280", "before": "\tFunc_12871(
 # >>> factory-mutation UpdateOverworldMap
 MUTATIONS["UpdateOverworldMap"] = {"source_symbol": "UpdateOverworldMap", "before": "\tOverworldMap_Update();", "after": "\t(void)0;", "case_ids": ["UpdateOverworldMap-0", "UpdateOverworldMap-1", "UpdateOverworldMap-2"]}
 # <<< factory-mutation UpdateOverworldMap
+# >>> factory-mutation DisplayPauseMenu
+MUTATIONS["DisplayPauseMenu"] = {"source_symbol": "DisplayPauseMenu", "before": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, selected);", "after": "void DisplayPauseMenu(void)\n{\n\tuint8_t selected = wSelectedPauseMenuItem;\n\tInitAndPrintMenu(PAUSE_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPauseMenu-0", "DisplayPauseMenu-1", "DisplayPauseMenu-2"]}
+# <<< factory-mutation DisplayPauseMenu

@@ -135,6 +135,10 @@
 
 #include "generated/wram.h"
 #include "home/overworld_map.h"
+
+#include "generated/wram.h"
+#include "home/labels.h"
+#define PAUSE_MENU_PARAMS 0x4D98u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -799,3 +803,11 @@ void UpdateOverworldMap(void)
 	OverworldMap_Update();
 }
 /* <<< factory UpdateOverworldMap */
+
+/* >>> factory DisplayPauseMenu */
+void DisplayPauseMenu(void)
+{
+	uint8_t selected = wSelectedPauseMenuItem;
+	InitAndPrintMenu(PAUSE_MENU_PARAMS, selected);
+}
+/* <<< factory DisplayPauseMenu */

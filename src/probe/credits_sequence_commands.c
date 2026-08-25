@@ -134,6 +134,13 @@ static void adapt_CreditsSequenceCmd_LoadBooster(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_LoadBooster */
 
+/* >>> factory CreditsSequenceCmd_FadeOut */
+static void adapt_CreditsSequenceCmd_FadeOut(ProbeState *s)
+{
+	CreditsSequenceCmd_FadeOut();
+}
+/* <<< factory CreditsSequenceCmd_FadeOut */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -153,5 +160,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_DrawRectangle", adapt_CreditsSequenceCmd_DrawRectangle },
 	{ "CreditsSequenceCmd_PrintText", adapt_CreditsSequenceCmd_PrintText },
 	{ "CreditsSequenceCmd_LoadBooster", adapt_CreditsSequenceCmd_LoadBooster },
+	{ "CreditsSequenceCmd_FadeOut", adapt_CreditsSequenceCmd_FadeOut },
 	{ NULL, NULL },
 };

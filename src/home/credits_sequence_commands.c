@@ -31,6 +31,9 @@
 #include "home/empty_screen.h"
 #include "home/scenes.h"
 #include "home/default_palettes.h"
+
+#include "home/load_animation.h"
+#include "home/lcd_enable_frame.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -239,3 +242,16 @@ void CreditsSequenceCmd_LoadBooster(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	AdvanceCreditsSequenceCmdPtrBy5();
 }
 /* <<< factory CreditsSequenceCmd_LoadBooster */
+
+/* >>> factory CreditsSequenceCmd_FadeOut */
+void CreditsSequenceCmd_FadeOut(void)
+{
+	FadeScreenToWhite();
+	ClearSpriteAnimations();
+	EnableLCD();
+	DoFrameIfLCDEnabled();
+	DisableLCD();
+	SetWindowOff();
+	AdvanceCreditsSequenceCmdPtrBy2();
+}
+/* <<< factory CreditsSequenceCmd_FadeOut */

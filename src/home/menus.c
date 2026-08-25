@@ -733,3 +733,12 @@ HandleMenuInputResult HandleDuelMenuInput(uint8_t e)
 	return (HandleMenuInputResult){item2, item2, (item2 == 0u) ? 0x80u : 0x00u};
 }
 /* <<< factory HandleDuelMenuInput */
+
+/* >>> factory YesOrNoMenuWithText_LeftAligned */
+HandleYesOrNoMenuResult YesOrNoMenuWithText_LeftAligned(uint16_t hl, uint8_t b, uint8_t c)
+{
+	(void)DrawNarrowTextBox_PrintTextNoDelay(hl);
+	(void)PrintYesOrNoItems(3u, 16u);
+	return HandleYesOrNoMenu(2u, 16u, b, c);
+}
+/* <<< factory YesOrNoMenuWithText_LeftAligned */

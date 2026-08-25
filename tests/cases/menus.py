@@ -403,6 +403,26 @@ CASES["HandleDuelMenuInput"] = [
 ]
 # <<< factory HandleDuelMenuInput
 
+# >>> factory YesOrNoMenuWithText_LeftAligned
+CONTRACT["YesOrNoMenuWithText_LeftAligned"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["YesOrNoMenuWithText_LeftAligned"] = [
+    {"hl": 1, "b": 0x12, "c": 0x34, "keys": 0x01,
+     "setup": SETUP,
+     "wram": {**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x00"},
+     "read": {**CACHE_READ, **PLACEMENT_READ},
+     "vread": VRAM_READ,
+     "expect_regs": {"a": 0x01, "f": 0x90},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=1, keys=0x01,
+         setup=SETUP,
+         wram={**menu_state(counter=5, item=1, xoff=2, invis=0x22), wDefaultYesOrNo: b"\x01"},
+         read={**CACHE_READ, **PLACEMENT_READ},
+         vread=VRAM_READ,
+         expect_regs={"a": 0x00, "f": 0x80},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory YesOrNoMenuWithText_LeftAligned
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -478,3 +498,11 @@ MUTATIONS["HandleCardListInput"] = {"source_symbol": "HandleCardListInput", "bef
 # >>> factory-mutation HandleDuelMenuInput
 MUTATIONS["HandleDuelMenuInput"] = {"source_symbol": "HandleDuelMenuInput", "before": "\tif (masked != 0u)\n\t\treturn (HandleMenuInputResult){masked, e, 0x20u};", "after": "\tif (masked != 0u)\n\t\treturn (HandleMenuInputResult){masked, e, 0x00u};", "case_ids": ["HandleDuelMenuInput-2"]}
 # <<< factory-mutation HandleDuelMenuInput
+# >>> factory-mutation YesOrNoMenuWithText_LeftAligned
+MUTATIONS["YesOrNoMenuWithText_LeftAligned"] = {
+    "source_symbol": "YesOrNoMenuWithText_LeftAligned",
+    "before": "\treturn HandleYesOrNoMenu(2u, 16u, b, c);",
+    "after": "\treturn (HandleYesOrNoMenuResult){0u, 0x80u};",
+    "case_ids": ["YesOrNoMenuWithText_LeftAligned-0", "YesOrNoMenuWithText_LeftAligned-1"],
+}
+# <<< factory-mutation YesOrNoMenuWithText_LeftAligned

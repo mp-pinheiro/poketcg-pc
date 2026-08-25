@@ -281,6 +281,24 @@ CASES["CreditsSequenceCmd_LoadBooster"] = [
 ]
 # <<< factory CreditsSequenceCmd_LoadBooster
 
+# >>> factory CreditsSequenceCmd_FadeOut
+CONTRACT["CreditsSequenceCmd_FadeOut"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_FadeOut"] = [
+    {"wram": {LCDC: b"\x80", RLCDC: b"\x00", VBLANK: b"\xfe", **PALETTE_SEED, wSequenceCmdPtr: b"\x00\x00"},
+     "instruction_budget": 1000000, "cycle_budget": 4000000,
+     "read": {SEQ_AREA: SEQ_AREA_LEN, LCDC: 1, RLCDC: 1, VBLANK: 1,
+              BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64,
+              TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1,
+              TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}},
+    dict(POISON, wram={LCDC: b"\x80", RLCDC: b"\x00", VBLANK: b"\xfe", **PALETTE_SEED, wSequenceCmdPtr: b"\x00\x00"},
+         instruction_budget=1000000, cycle_budget=4000000,
+         read={SEQ_AREA: SEQ_AREA_LEN, LCDC: 1, RLCDC: 1, VBLANK: 1,
+              BGP: 1, OBP0: 1, OBP1: 1, BG_PALS: 64, OBJ_PALS: 64,
+              TEMP_BGP: 1, TEMP_OBP0: 1, TEMP_OBP1: 1,
+              TEMP_BG_PALS: 64, TEMP_OBJ_PALS: 64}),
+]
+# <<< factory CreditsSequenceCmd_FadeOut
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -406,3 +424,6 @@ MUTATIONS["CreditsSequenceCmd_LoadBooster"] = {
     "case_ids": ["CreditsSequenceCmd_LoadBooster-0", "CreditsSequenceCmd_LoadBooster-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_LoadBooster
+# >>> factory-mutation CreditsSequenceCmd_FadeOut
+MUTATIONS["CreditsSequenceCmd_FadeOut"] = {"source_symbol": "CreditsSequenceCmd_FadeOut", "before": "\tSetWindowOff();", "after": "\tSetWindowOn();", "case_ids": ["CreditsSequenceCmd_FadeOut-0", "CreditsSequenceCmd_FadeOut-1"]}
+# <<< factory-mutation CreditsSequenceCmd_FadeOut

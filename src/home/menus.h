@@ -87,4 +87,7 @@ HandleCardListInputResult HandleCardListInput(void);
 /* >>> factory HandleDuelMenuInput */
 HandleMenuInputResult HandleDuelMenuInput(uint8_t e);
 /* <<< factory HandleDuelMenuInput */
+/* >>> factory YesOrNoMenuWithText_LeftAligned */
+HandleYesOrNoMenuResult YesOrNoMenuWithText_LeftAligned(uint16_t hl, uint8_t b, uint8_t c);
+/* <<< factory YesOrNoMenuWithText_LeftAligned */
 #endif

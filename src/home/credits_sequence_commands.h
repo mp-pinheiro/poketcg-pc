@@ -60,4 +60,7 @@ void EmptyScreen(void);
 uint8_t LoadBoosterGfx(uint8_t a, uint8_t b, uint8_t c);
 void SetDefaultPalettes(void);
 /* <<< factory CreditsSequenceCmd_LoadBooster */
+/* >>> factory CreditsSequenceCmd_FadeOut */
+void CreditsSequenceCmd_FadeOut(void);
+/* <<< factory CreditsSequenceCmd_FadeOut */
 #endif
