@@ -2,13 +2,10 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.172.0 - 2026-08-25
-
-### Features
-
-- *(port)* Land 1 routines
+## v0.172.1 - 2026-08-25
 
 ### Miscellaneous
 
-- *(progress)* Refresh gate report
+- *(factory)* Retire _PauseMenu_Diary
+- *(progress)* Refresh port status
 
