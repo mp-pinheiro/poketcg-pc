@@ -75,22 +75,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Check for a Cloudflare token
-        id: cfcreds
-        run: |
-          if [ -n "${CLOUDFLARE_API_TOKEN:-}" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "CLOUDFLARE_API_TOKEN is unset; skipping deploy."
-            echo "Publish from the workstation with 'just publish-dashboard', or set the"
-            echo "secret to enable this job: fj actions secrets create CLOUDFLARE_API_TOKEN <token> --repo fairfruit/poketcg-pc"
-          fi
       - name: Deploy dashboard to Cloudflare Pages
-        if: steps.cfcreds.outputs.present == 'true'
         run: npx wrangler@4 pages deploy site/ --project-name poketcg-pc --branch main
       - name: Confirm the live dashboard serves this commit's data
-        if: steps.cfcreds.outputs.present == 'true'
         run: |
           set -euo pipefail
           jq_arch=amd64; [ "$(uname -m)" = "aarch64" ] && jq_arch=arm64
