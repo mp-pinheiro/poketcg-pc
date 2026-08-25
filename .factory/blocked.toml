@@ -610,11 +610,6 @@ reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:580 (basename `challeng
 unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_PrintDuelResultIcons/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "PrinterMenu_QuitPrint"
-reason = "AUTO-RETIRED: src/engine/menus/printer.asm:261 (basename `printer`). 10 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case PrinterMenu_QuitPrint-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9091,\"sp\":65508,\"instructions\":995581,\"cycles\":8000000}"
-unblock = "read the recorded diagnostics under .factory/try/PrinterMenu_QuitPrint/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "CreditsSequenceCmd_LoadScene"
 reason = "AUTO-RETIRED: src/engine/sequences/credits_sequence_commands.asm:81 (basename `credits_sequence_commands`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case CreditsSequenceCmd_LoadScene-1 {\"cycles\": 381660, \"fn\": \"CreditsSequenceCmd_LoadScene\", \"instructions\": 42927, \"mismatches\": {\"preserve:b\": [187, 204], \"preserve:c\": [204, 187]}, \"pc\": 65184, \"sp\": 65534, \"status\": \"REFERENCE_DIVERGENCE\"}"
 unblock = "read the recorded diagnostics under .factory/try/CreditsSequenceCmd_LoadScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -628,11 +623,6 @@ unblock = "read the recorded diagnostics under .factory/try/MrFuji_ReturnToDeckE
 name = "UnusedCopyrightScreen"
 reason = "AUTO-RETIRED: src/engine/unused_copyright.asm:3 (basename `unused_copyright`). 10 generations exhausted (trapped=False); last diagnostic phase=surgery failure_class=schema detail=SurgeryError: cases module is not valid Python: invalid hexadecimal literal (unused_copyright.py, line 11)"
 unblock = "read the recorded diagnostics under .factory/try/UnusedCopyrightScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "DisplayCardPage_PokemonOverview"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:4222 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case DisplayCardPage_PokemonOverview-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9100,\"sp\":65506,\"instructions\":49450,\"cycles\":400004}"
-unblock = "read the recorded diagnostics under .factory/try/DisplayCardPage_PokemonOverview/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "ShowPrinterConnectionErrorScene"
@@ -685,11 +675,6 @@ reason = "AUTO-RETIRED: src/engine/duel/core.asm:6975 (basename `core`). 9 gener
 unblock = "read the recorded diagnostics under .factory/try/PlayBetweenTurnsAnimation/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "DisplayNoBasicPokemonInHandScreenAndText"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:2080 (basename `core`). 3 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayNoBasicPokemonInHandScreenAndText-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"instructions\":39229175,\"cycles\":160000000}"
-unblock = "read the recorded diagnostics under .factory/try/DisplayNoBasicPokemonInHandScreenAndText/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "PracticeDuel_DrawSevenCards"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2643 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DrawSevenCards/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -715,24 +700,9 @@ reason = "AUTO-RETIRED: src/home/duel.asm:2214 (basename `duel`). 10 generations
 unblock = "read the recorded diagnostics under .factory/try/Func_1bb4/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "OppAction_EvolvePokemonCard"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:6546 (basename `core`). 11 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case OppAction_EvolvePokemonCard-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9091,\"sp\":65508,\"instructions\":1989999,\"cycles\":16000000}"
-unblock = "read the recorded diagnostics under .factory/try/OppAction_EvolvePokemonCard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PokemonBreeder_EvolveEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:9777 (basename `effect_functions`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case PokemonBreeder_EvolveEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9101,\"sp\":65508,\"instructions\":97715,\"cycles\":800000}"
-unblock = "read the recorded diagnostics under .factory/try/PokemonBreeder_EvolveEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "Func_12661"
 reason = "AUTO-RETIRED: src/engine/menus/debug_main.asm:2 (basename `debug_main`). 10 generations exhausted (trapped=True); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "HandleColorChangeScreen"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:1194 (basename `effect_functions`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case HandleColorChangeScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9091,\"sp\":65500,\"instructions\":9998741,\"cycles\":80000000}"
-unblock = "read the recorded diagnostics under .factory/try/HandleColorChangeScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "PlayerPickAttackForAmnesia"
@@ -763,16 +733,6 @@ unblock = "read the recorded diagnostics under .factory/try/DrawPlayerPortraitAn
 name = "PrintPracticeDuelInstructionsForCurrentTurn"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:2792 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=000000000000000202122232425262728292a242b2c2d00000000000000000000000000000000002e2f303132333435363738393a3b3c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000018242c2d2e2f30241c1c1c1c1c1c1c1c1c1c1c190000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e29332b343536373831323c3d3e00000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001a1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
 unblock = "read the recorded diagnostics under .factory/try/PrintPracticeDuelInstructionsForCurrentTurn/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "ChallengeMachine_AreYouReady"
-reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:292 (basename `challenge_machine`). 10 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ChallengeMachine_AreYouReady-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65516,\"instructions\":19585192,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":4,\"ppu_mode\":3,\"bus\":\"80b4036d000610000f00b403010001000080\"}"
-unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_AreYouReady/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "_PauseMenu_Diary"
-reason = "AUTO-RETIRED: src/engine/menus/diary.asm:1 (basename `diary`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _PauseMenu_Diary-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"instructions\":19523028,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":90,\"ppu_mode\":3,\"bus\":\"8000\"}"
-unblock = "read the recorded diagnostics under .factory/try/_PauseMenu_Diary/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "MixUpEffect"
