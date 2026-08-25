@@ -68,6 +68,15 @@
 #include "home/process_text.h"
 #include "home/print_text.h"
 #include "mem.h"
+
+#include "home/deck_machine.h"
+#include "home/deck_configuration.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
+#define CARD_COLLECTION_SIZE 0x100u
+#define FILTER_ENERGY 0x20u
+#define TYPE_ENERGY 0x08u
+#define FUNC_B088_CARD_LIMIT 0xe4u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -393,3 +402,46 @@ void ShowReceivedCardsList(void)
 	PrintCardSelectionList();
 }
 /* <<< factory ShowReceivedCardsList */
+
+/* >>> factory Func_b088 */
+Func_b088Result Func_b088(void)
+{
+	ClearMemory_Bank2((uint8_t)(CARD_COLLECTION_SIZE - 1u), wTempCardCollection_ADDR);
+
+	uint16_t de = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(de);
+		de = (uint16_t)(de + 1u);
+		if (card == 0u)
+			break;
+		uint16_t slot = (uint16_t)(wTempCardCollection_ADDR + card);
+		gb_write8(slot, (uint8_t)(gb_read8(slot) + 1u));
+	}
+
+	ClearMemory_Bank2(DECK_SIZE, wOwnedCardsCountList_ADDR);
+	ClearMemory_Bank2(DECK_SIZE, wFilteredCardList_ADDR);
+	uint8_t out = 0u;
+	for (uint16_t id = 1u; id <= FUNC_B088_CARD_LIMIT; id++) {
+		uint8_t card_id = (uint8_t)id;
+		uint8_t card_type = GetCardType(card_id);
+		gb_write8((uint16_t)(wFilteredCardList_ADDR + out), card_id);
+		uint8_t owned = (uint8_t)(gb_read8((uint16_t)(wTempCardCollection_ADDR + card_id)) & 0x7fu);
+		if (owned != 0u) {
+			gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out), owned);
+			out = (uint8_t)(out + 1u);
+		}
+		(void)card_type;
+	}
+	wNumEntriesInCurFilter = out;
+	gb_write8((uint16_t)(wFilteredCardList_ADDR + out), 0u);
+	gb_write8((uint16_t)(wOwnedCardsCountList_ADDR + out), 0xffu);
+	wNumVisibleCardListEntries = 5u;
+	wCardListCoords = 3u;
+	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 2u);
+	wCursorAlternateTile = SYM_BOX_RIGHT;
+	PrintCardSelectionList();
+	uint8_t a = SYM_BOX_RIGHT;
+	uint8_t f = 0x40u;
+	return (Func_b088Result){a, f};
+}
+/* <<< factory Func_b088 */

@@ -133,6 +133,16 @@ wNameBuffer = 0xC500
 wDefaultText = 0xC590
 wTxRam2 = 0xCE3F
 hffb0 = 0xFFB0
+
+wDuelTempList = 0xC510
+wTempCardCollection = 0xC000
+wFilteredCardList = 0xCEDA
+wNumEntriesInCurFilter = 0xCEAE
+wNumVisibleCardListEntries = 0xCECB
+wCardListCoords = 0xCED0
+wCursorAlternateTile = 0xCFDE
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -257,6 +267,16 @@ CASES["ShowReceivedCardsList"] = [
 ]
 # <<< factory ShowReceivedCardsList
 
+# >>> factory Func_b088
+CONTRACT["Func_b088"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_b088"] = [
+    {"wram": {wDuelTempList: b"\x00", wTempCardCollection: bytes(0x100)},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={wDuelTempList: b"\x00", wTempCardCollection: bytes(0x100)},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_b088
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -338,3 +358,11 @@ MUTATIONS["PrintDeckMachineEntry"] = {
 # >>> factory-mutation ShowReceivedCardsList
 MUTATIONS["ShowReceivedCardsList"] = {"source_symbol": "ShowReceivedCardsList", "before": "gb_write8(wTxRam2_ADDR, 0x00u);", "after": "gb_write8(wTxRam2_ADDR, 0x01u);", "case_ids": ["ShowReceivedCardsList-0", "ShowReceivedCardsList-1"]}
 # <<< factory-mutation ShowReceivedCardsList
+# >>> factory-mutation Func_b088
+MUTATIONS["Func_b088"] = {
+    "source_symbol": "Func_b088",
+    "before": "\tuint8_t f = 0x40u;\n\treturn (Func_b088Result){a, f};",
+    "after": "\tuint8_t f = 0x00u;\n\treturn (Func_b088Result){a, f};",
+    "case_ids": ["Func_b088-0", "Func_b088-1"],
+}
+# <<< factory-mutation Func_b088

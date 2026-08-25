@@ -68,4 +68,8 @@ PrintDeckMachineEntryResult PrintDeckMachineEntry(uint8_t a, uint8_t d, uint8_t 
 /* >>> factory ShowReceivedCardsList */
 void ShowReceivedCardsList(void);
 /* <<< factory ShowReceivedCardsList */
+/* >>> factory Func_b088 */
+typedef struct { uint8_t a; uint8_t f; } Func_b088Result;
+Func_b088Result Func_b088(void);
+/* <<< factory Func_b088 */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */
