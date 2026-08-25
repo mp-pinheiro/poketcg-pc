@@ -5861,3 +5861,10 @@ PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory ArcanineFlamethrower_PlayerSelectEffect */
+
+/* >>> factory CharmeleonFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult CharmeleonFlamethrower_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory CharmeleonFlamethrower_PlayerSelectEffect */

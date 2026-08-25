@@ -124,6 +124,17 @@ static const uint8_t ChallengeMachine_FinalOpponentProbabilities[16] = {
 #define CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR 0xBA58u
 #define CHALLENGE_MACHINE_PLAYER_SCORE_LABELS_ADDR 0x74F2u
 #define CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR 0x750Fu
+
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "home/challenge_machine.h"
+#include "home/switch_sram.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "mem.h"
+#define NthOpponentIsText 0x07dbu
+#define WouldYouLikeToBeginTheDuelText 0x07dcu
+#define XConsecutiveWinsNthOpponentIsText 0x07dau
 /* <<< factory statics */
 
 ChallengeMachineCheckResult ChallengeMachine_CheckIfOpponentAlreadySelected(uint8_t a, uint8_t c)
@@ -537,3 +548,34 @@ void ChallengeMachine_DrawScoreScreen(void)
 	ChallengeMachine_PrintScores(CHALLENGE_MACHINE_PLAYER_SCORE_VALUES_ADDR);
 }
 /* <<< factory ChallengeMachine_DrawScoreScreen */
+
+/* >>> factory ChallengeMachine_AreYouReady */
+ChallengeMachine_AreYouReadyResult ChallengeMachine_AreYouReady(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	EnableSRAM();
+	a = (uint8_t)(gb_read8(sChallengeMachineOpponentNumber_ADDR) + 1u);
+	gb_write8(wTxRam3_ADDR, a);
+	gb_write8(wTxRam3_b_ADDR, a);
+	gb_write8((uint16_t)(wTxRam3_ADDR + 1u), 0u);
+	gb_write8((uint16_t)(wTxRam3_b_ADDR + 1u), 0u);
+	hl = NthOpponentIsText;
+	uint8_t streak_hi = gb_read8((uint16_t)(sPresentConsecutiveWins_ADDR + 1u));
+	uint8_t streak_lo = gb_read8(sPresentConsecutiveWins_ADDR);
+	if (streak_hi != 0u || streak_lo >= 2u) {
+		hl = XConsecutiveWinsNthOpponentIsText;
+		gb_write8(wTxRam3_ADDR, streak_lo);
+		gb_write8((uint16_t)(wTxRam3_ADDR + 1u), streak_hi);
+	}
+	DisableSRAM();
+	ChallengeMachine_GetOpponentNameAndDeckResult deck = ChallengeMachine_GetOpponentNameAndDeck(f, b, c, d, e, hl);
+	(void)deck;
+	gb_write8(wTxRam2_ADDR, gb_read8(wOpponentName_ADDR));
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), gb_read8((uint16_t)(wOpponentName_ADDR + 1u)));
+	WaitResult text = PrintScrollableText_NoTextBoxLabel(hl);
+	(void)text;
+	HandleYesOrNoMenuResult menu = YesOrNoMenuWithText_SetCursorToYes(WouldYouLikeToBeginTheDuelText);
+	f = menu.f;
+	a = menu.a;
+	return (ChallengeMachine_AreYouReadyResult){a, f};
+}
+/* <<< factory ChallengeMachine_AreYouReady */

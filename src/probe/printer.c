@@ -118,6 +118,13 @@ static void adapt_LoadCardInfoForPrinter(ProbeState *s)
 }
 /* <<< factory LoadCardInfoForPrinter */
 
+/* >>> factory PrinterMenu_QuitPrint */
+static void adapt_PrinterMenu_QuitPrint(ProbeState *s)
+{
+	s->f = PrinterMenu_QuitPrint(s->stack[0]);
+}
+/* <<< factory PrinterMenu_QuitPrint */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
@@ -131,5 +138,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "CheckDataCompression", adapt_CheckDataCompression },
 	{ "CompressDataForPrinterSerialTransfer", adapt_CompressDataForPrinterSerialTransfer },
 	{ "LoadCardInfoForPrinter", adapt_LoadCardInfoForPrinter },
+	{ "PrinterMenu_QuitPrint", adapt_PrinterMenu_QuitPrint },
 	{ NULL, NULL },
 };

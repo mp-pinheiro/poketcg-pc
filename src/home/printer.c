@@ -34,6 +34,9 @@
 #include "home/bg_map.h"
 #include "home/core.h"
 #define SYM_CROSS 0x2Du
+
+#include "home/menus.h"
+#define PleaseMakeSureToTurnGameBoyPrinterOffText 0x027bu
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -401,3 +404,12 @@ void LoadCardInfoForPrinter(uint8_t b, uint8_t c, uint16_t *hl)
 	*hl = saved_hl;
 }
 /* <<< factory LoadCardInfoForPrinter */
+
+/* >>> factory PrinterMenu_QuitPrint */
+uint8_t PrinterMenu_QuitPrint(uint16_t w0)
+{
+	(void)w0;
+	WaitResult result = DrawWideTextBox_WaitForInput(PleaseMakeSureToTurnGameBoyPrinterOffText);
+	return result.f;
+}
+/* <<< factory PrinterMenu_QuitPrint */

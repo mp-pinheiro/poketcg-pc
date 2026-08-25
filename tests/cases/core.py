@@ -1714,6 +1714,11 @@ wEnergyDiscardMenuNumerator = 0xCBFB
 
 wEnergyCardsRequiredToRetreat = 0xCBCC
 hTempRetreatCostCards = 0xFFA2
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wCardPageExitKeys = 0xCBD7
+wCardPageNumber = 0xCBC7
+wCardPageType = 0xCBD1
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3219,6 +3224,14 @@ CASES["_DisplayCardDetailScreen"] = [
 ]
 # <<< factory _DisplayCardDetailScreen
 
+# >>> factory OpenCardPage
+CONTRACT["OpenCardPage"] = {"compare": (), "preserve": ()}
+CASES["OpenCardPage"] = [
+    {"a": 0x02, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": [0x00, 0x01], "wram": {wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {wCardPageType: 1, wCardPageNumber: 1}, "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, keys=[0x00, 0x01], wram={wCardPageExitKeys: b"\x01", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={wCardPageType: 1, wCardPageNumber: 1}, instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory OpenCardPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4592,3 +4605,6 @@ MUTATIONS["PracticeDuel_RepeatInstructions"] = {
 # >>> factory-mutation _DisplayCardDetailScreen
 MUTATIONS["_DisplayCardDetailScreen"] = {"source_symbol": "_DisplayCardDetailScreen", "before": "\tWaitResult waited = DrawWideTextBox_WaitForInput(saved_hl);", "after": "\tWaitResult waited = (WaitResult){0u};", "case_ids": ["_DisplayCardDetailScreen-0", "_DisplayCardDetailScreen-1"]}
 # <<< factory-mutation _DisplayCardDetailScreen
+# >>> factory-mutation OpenCardPage
+MUTATIONS["OpenCardPage"] = {"source_symbol": "OpenCardPage", "before": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, a);", "after": "void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageType_ADDR, 0u);", "case_ids": ["OpenCardPage-0", "OpenCardPage-1"]}
+# <<< factory-mutation OpenCardPage

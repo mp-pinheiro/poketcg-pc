@@ -3237,6 +3237,15 @@ static void adapt_ArcanineFlamethrower_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory ArcanineFlamethrower_PlayerSelectEffect */
 
+/* >>> factory CharmeleonFlamethrower_PlayerSelectEffect */
+static void adapt_CharmeleonFlamethrower_PlayerSelectEffect(ProbeState *s)
+{
+	PlayerPickFireEnergyCardToDiscardResult r = CharmeleonFlamethrower_PlayerSelectEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CharmeleonFlamethrower_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3637,5 +3646,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Scavenge_PlayerSelectEnergyEffect", adapt_Scavenge_PlayerSelectEnergyEffect },
 	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "ArcanineFlamethrower_PlayerSelectEffect", adapt_ArcanineFlamethrower_PlayerSelectEffect },
+	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
 	{ NULL, NULL },
 };

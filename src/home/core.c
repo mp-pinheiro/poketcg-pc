@@ -1069,6 +1069,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/menus.h"
 #include "home/print_text.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/frames.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
+#include "home/script.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6016,3 +6025,47 @@ WaitResult _DisplayCardDetailScreen(uint16_t hl)
 	return waited;
 }
 /* <<< factory _DisplayCardDetailScreen */
+
+/* >>> factory OpenCardPage */
+void OpenCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	gb_write8(wCardPageType_ADDR, a);
+	(void)f;
+	(void)c;
+	(void)d;
+	(void)e;
+	(void)hl;
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	FinishQueuedAnimations();
+	TileCopyResult tiles = LoadDuelCardSymbolTiles();
+	LoadLoaded1CardGfx((uint16_t)(V0_TILES1 + 0x200u));
+	SetOBP1OrSGB3ToCardPalette();
+	SetBGP6OrSGB3ToCardPalette();
+	FlushAllPalettesOrSendPal23Packet();
+	uint16_t oam_hl = tiles.hl;
+	uint16_t oam_de = (uint16_t)((0x38u << 8) | 0x30u);
+	uint8_t place_a = PlaceCardImageOAM(&oam_hl, &oam_de);
+	SendCardAttrBlkPacketResult image =
+		ApplyBGP6OrSGB3ToCardImage(place_a, 0u, b, 0u, 6u, 4u, oam_hl);
+	b = image.b;
+	gb_write8(wCardPageNumber_ADDR, 0u);
+	for (;;) {
+		CardPageNavigationResult page = DisplayFirstOrNextCardPage(b);
+		if ((page.f & 0x10u) != 0u)
+			return;
+		EnableLCD();
+		for (;;) {
+			DoFrame();
+			if ((gb_read8(wCardPageExitKeys_ADDR) & hDPadHeld) != 0u)
+				return;
+			uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_START | PAD_A));
+			if (pressed != 0u)
+				break;
+			pressed = (uint8_t)(hKeysPressed & (PAD_RIGHT | PAD_LEFT));
+			if (pressed != 0u)
+				DisplayCardPageOnLeftOrRightPressed(pressed);
+		}
+	}
+}
+/* <<< factory OpenCardPage */

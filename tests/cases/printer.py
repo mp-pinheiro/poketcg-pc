@@ -171,6 +171,14 @@ CASES["LoadCardInfoForPrinter"] = [
 ]
 # <<< factory LoadCardInfoForPrinter
 
+# >>> factory PrinterMenu_QuitPrint
+CONTRACT["PrinterMenu_QuitPrint"] = {"compare": ("f",), "preserve": ()}
+CASES["PrinterMenu_QuitPrint"] = [
+    {"stack": [0], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0x1234], "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000}
+]
+# <<< factory PrinterMenu_QuitPrint
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -231,3 +239,6 @@ MUTATIONS["CompressDataForPrinterSerialTransfer"] = {
 # >>> factory-mutation LoadCardInfoForPrinter
 MUTATIONS["LoadCardInfoForPrinter"] = {"source_symbol": "LoadCardInfoForPrinter", "before": "\tuint8_t x = (uint8_t)(wPrinterHorizontalOffset | 0x40u);\n\tuint8_t d = 3u;", "after": "\tuint8_t x = (uint8_t)(wPrinterHorizontalOffset | 0x20u);\n\tuint8_t d = 3u;", "case_ids": ["LoadCardInfoForPrinter-0", "LoadCardInfoForPrinter-1"]}
 # <<< factory-mutation LoadCardInfoForPrinter
+# >>> factory-mutation PrinterMenu_QuitPrint
+MUTATIONS["PrinterMenu_QuitPrint"] = {"source_symbol": "PrinterMenu_QuitPrint", "before": "\treturn result.f;", "after": "\treturn 0u;", "case_ids": ["PrinterMenu_QuitPrint-0", "PrinterMenu_QuitPrint-1"]}
+# <<< factory-mutation PrinterMenu_QuitPrint

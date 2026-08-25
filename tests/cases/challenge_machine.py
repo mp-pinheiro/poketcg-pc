@@ -349,6 +349,14 @@ CASES["ChallengeMachine_DrawScoreScreen"] = [
 ]
 # <<< factory ChallengeMachine_DrawScoreScreen
 
+# >>> factory ChallengeMachine_AreYouReady
+CONTRACT["ChallengeMachine_AreYouReady"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ChallengeMachine_AreYouReady"] = [
+    {"sram": {0: {0xBA55: b"\x00", 0xBA47: b"\x00\x00"}}, "wram": {0xCABB: b"\x80", 0xFF40: b"\x80"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCE3F: 2, 0xCE43: 2, 0xCE45: 2}},
+    dict(POISON, sram={0: {0xBA55: b"\x03", 0xBA47: b"\x05\x01"}}, wram={0xCABB: b"\x80", 0xFF40: b"\x80"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCE3F: 2, 0xCE43: 2, 0xCE45: 2}),
+]
+# <<< factory ChallengeMachine_AreYouReady
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -435,3 +443,11 @@ MUTATIONS["ChallengeMachine_PrepareDuel"] = {"source_symbol": "ChallengeMachine_
 # >>> factory-mutation ChallengeMachine_DrawScoreScreen
 MUTATIONS["ChallengeMachine_DrawScoreScreen"] = {"source_symbol": "ChallengeMachine_DrawScoreScreen", "before": "\tuint16_t src_hl = CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR;", "after": "\tuint16_t src_hl = (uint16_t)(CHALLENGE_MACHINE_RECORD_HOLDER_NAME_ADDR + 1u);", "case_ids": ["ChallengeMachine_DrawScoreScreen-0", "ChallengeMachine_DrawScoreScreen-1"]}
 # <<< factory-mutation ChallengeMachine_DrawScoreScreen
+# >>> factory-mutation ChallengeMachine_AreYouReady
+MUTATIONS["ChallengeMachine_AreYouReady"] = {
+    "source_symbol": "ChallengeMachine_AreYouReady",
+    "before": "\tf = menu.f;\n\ta = menu.a;\n\treturn (ChallengeMachine_AreYouReadyResult){a, f};",
+    "after": "\tf = menu.f;\n\ta = menu.a;\n\treturn (ChallengeMachine_AreYouReadyResult){a, 0u};",
+    "case_ids": ["ChallengeMachine_AreYouReady-0", "ChallengeMachine_AreYouReady-1"],
+}
+# <<< factory-mutation ChallengeMachine_AreYouReady
