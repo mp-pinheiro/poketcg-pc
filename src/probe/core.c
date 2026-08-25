@@ -1922,6 +1922,15 @@ static void adapt_DrawDuelMainScene(ProbeState *s)
 }
 /* <<< factory DrawDuelMainScene */
 
+/* >>> factory InitAndDrawCardListScreenLayout */
+static void adapt_InitAndDrawCardListScreenLayout(ProbeState *s)
+{
+	DrawCardListScreenLayoutResult r = InitAndDrawCardListScreenLayout();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory InitAndDrawCardListScreenLayout */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2150,5 +2159,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "ApplyBGP7OrSGB2ToCardImage", adapt_ApplyBGP7OrSGB2ToCardImage },
 	{ "DisplayPracticeDuelPlayerHandScreen", adapt_DisplayPracticeDuelPlayerHandScreen },
 	{ "DrawDuelMainScene", adapt_DrawDuelMainScene },
+	{ "InitAndDrawCardListScreenLayout", adapt_InitAndDrawCardListScreenLayout },
 	{ NULL, NULL },
 };

@@ -969,6 +969,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define DUEL_MAIN_SCENE 0x01u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#define PleaseSelectHandText 0x00AAu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5500,3 +5504,20 @@ void DrawDuelMainScene(void)
 		gb_write8(hWhoseTurn_ADDR, saved_turn);
 }
 /* <<< factory DrawDuelMainScene */
+
+/* >>> factory InitAndDrawCardListScreenLayout */
+DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void)
+{
+	wSelectedDuelSubMenuItem = 0u;
+	wSortCardListByID = 0u;
+	wPrintSortNumberInCardListPtr = 0u;
+	gb_write8(wPrintSortNumberInCardListPtr_ADDR + 1u, 0u);
+	wCardListItemSelectionMenuType = 0u;
+	wNoItemSelectionMenuKeys = 0x08u;
+	wCardListInfoBoxText = (uint8_t)(PleaseSelectHandText & 0xFFu);
+	gb_write8(wCardListInfoBoxText_ADDR + 1u, (uint8_t)(PleaseSelectHandText >> 8));
+	wCardListHeaderText = (uint8_t)(DuelistHandText & 0xFFu);
+	gb_write8(wCardListHeaderText_ADDR + 1u, (uint8_t)(DuelistHandText >> 8));
+	return DrawCardListScreenLayout();
+}
+/* <<< factory InitAndDrawCardListScreenLayout */

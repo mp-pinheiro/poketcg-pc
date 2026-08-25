@@ -1666,6 +1666,16 @@ wDuelDisplayedScreen = 0xCAC2
 wPlayerDuelistType = 0xC2F1
 wOpponentDuelistType = 0xC3F1
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wSelectedDuelSubMenuItem = 0xCBCF
+wSortCardListByID = 0xCBDF
+wPrintSortNumberInCardListPtr = 0xCBD8
+wCardListInfoBoxText = 0xCBDA
+wCardListHeaderText = 0xCBDC
+wCardListItemSelectionMenuType = 0xCBDE
+wNoItemSelectionMenuKeys = 0xCBD6
+wDuelTempList = 0xC510
+wCardListScratch = 0xC51A
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -2930,6 +2940,14 @@ CASES["DrawDuelMainScene"] = [
          read={hWhoseTurn: 1, wDuelDisplayedScreen: 1}),
 ]
 # <<< factory DrawDuelMainScene
+
+# >>> factory InitAndDrawCardListScreenLayout
+CONTRACT["InitAndDrawCardListScreenLayout"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["InitAndDrawCardListScreenLayout"] = [
+    {"wram": {0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCBCF: b"\xFF", 0xCBDF: b"\xFF", 0xCBD8: b"\xFF\xFF", 0xCBDE: b"\xFF", 0xCBD6: b"\xFF", 0xCBDA: b"\xFF\xFF", 0xCBDC: b"\xFF\xFF", 0xC510: b"\xFF", 0xC51A: b"\xFF"}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory InitAndDrawCardListScreenLayout
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -4216,3 +4234,6 @@ MUTATIONS["DrawDuelMainScene"] = {
     "case_ids": ["DrawDuelMainScene-1"],
 }
 # <<< factory-mutation DrawDuelMainScene
+# >>> factory-mutation InitAndDrawCardListScreenLayout
+MUTATIONS["InitAndDrawCardListScreenLayout"] = {"source_symbol": "InitAndDrawCardListScreenLayout", "before": "\twSelectedDuelSubMenuItem = 0u;", "after": "\twSelectedDuelSubMenuItem = 1u;", "case_ids": ["InitAndDrawCardListScreenLayout-0", "InitAndDrawCardListScreenLayout-1"]}
+# <<< factory-mutation InitAndDrawCardListScreenLayout

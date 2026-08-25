@@ -869,4 +869,7 @@ void DisplayPracticeDuelPlayerHandScreen(void);
 /* >>> factory DrawDuelMainScene */
 void DrawDuelMainScene(void);
 /* <<< factory DrawDuelMainScene */
+/* >>> factory InitAndDrawCardListScreenLayout */
+DrawCardListScreenLayoutResult InitAndDrawCardListScreenLayout(void);
+/* <<< factory InitAndDrawCardListScreenLayout */
 #endif
