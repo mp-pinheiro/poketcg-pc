@@ -240,15 +240,17 @@ def main() -> int:
         raise SystemExit("SCHEMA state spans must be arrays")
     if not isinstance(case["setup"], list) or not isinstance(case["input_events"], list):
         raise SystemExit("SCHEMA setup and input_events must be arrays")
-    if len(case["input_events"]) > 1 or (
-        case["input_events"] and
-        (not isinstance(case["input_events"][0], dict)
-         or set(case["input_events"][0]) != {"keys"}
-         or isinstance(case["input_events"][0]["keys"], bool)
-         or not isinstance(case["input_events"][0]["keys"], int)
-         or not 0 <= case["input_events"][0]["keys"] <= 0xff)
+    # A timeline, one entry per rendered frame, with the last entry held for the
+    # rest of the run. The cap matches MAX_INPUT_EVENTS in runner.c.
+    if len(case["input_events"]) > 16 or any(
+        not isinstance(event, dict)
+        or set(event) != {"keys"}
+        or isinstance(event["keys"], bool)
+        or not isinstance(event["keys"], int)
+        or not 0 <= event["keys"] <= 0xff
+        for event in case["input_events"]
     ):
-        raise SystemExit("SCHEMA input_events must be [] or [{keys: 0..255}]")
+        raise SystemExit("SCHEMA input_events must be up to 16 {keys: 0..255} frames")
     resolved_setup = []
     for setup in case["setup"]:
         if not isinstance(setup, dict) or "fn" not in setup or not isinstance(setup["fn"], str):
@@ -294,7 +296,9 @@ def main() -> int:
     registers = {name: int(case["registers"].get(name, 0)) for name in REGISTERS}
     env = os.environ.copy()
     env["POKETCG_ROM"] = str(args.rom.resolve())
-    keys = case["input_events"][0]["keys"] if case["input_events"] else 0
+    # The native probe has no frames, so it models the state the timeline settles
+    # on: the last entry, which the reference holds for the rest of the run.
+    keys = case["input_events"][-1]["keys"] if case["input_events"] else 0
     request = {
         "completion": mode,
         "hardware": case["hardware"],

@@ -246,6 +246,23 @@ def render(packet: dict, feedback: str | None = None,
         "already rely on. $FF40 is then an implicitly compared byte that the ISR keeps "
         "equal to the shadow, so leave it out of `read` and observe none of the other "
         "bytes the VBlank handler mutates.",
+        "Letting frames elapse needs two more things, and without either one the case "
+        "dies at pc $0271 however generous its budget. First, install the game's DMA "
+        "routine: \"setup\": [{\"fn\": \"CopyDMAFunction\"}] before any other setup entry. "
+        "VBlankHandler (poketcg/src/home/vblank.asm:13-18) calls hDMAFunction whenever "
+        "wVBlankOAMCopyToggle is non-zero, that routine lives in HRAM and no synthetic "
+        "call frame has copied it there, so the handler runs junk, never reaches its "
+        "`res IN_VBLANK`, and leaves wReentrancyFlag ($CABA) set - after which every "
+        "later VBlank exits early, wVBlankCounter ($CAB8) freezes, and WaitForVBlank can "
+        "never return. A wildly drifted sp in the BUDGET_EXHAUSTED payload is that junk "
+        "call. Second, drive input as a cycle, not a hold: \"keys\" accepts a list of up "
+        "to 16 per-frame values that repeats, so keys=[0x00, 0x01] taps A forever, while "
+        "keys=0x01 holds A from the first instruction and is newly pressed exactly once. "
+        "The ROM's waits read edge-triggered hKeysPressed ($FF91), so a held button is "
+        "invisible to any loop that starts after that first frame - which is every wait "
+        "that follows printed text. With the pair seeded, CopyDMAFunction in setup, and a "
+        "cycled key, a text-then-menu routine such as PlayerPickAttackForAmnesia returns "
+        "normally against the real ROM.",
         "Memory seeds are byte strings, never ints: wram={0xC500: b\"\\x00\\x01\"}. "
         "`read` and `expect` use the same shape.",
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "

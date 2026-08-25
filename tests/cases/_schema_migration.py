@@ -164,8 +164,19 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
             vram_bank = _seed_byte(seeds["wram"], 0xFF82, 0) & 1
             ram_enable = bool(legacy.get("ramg", bool(seeds.get("sram"))))
             keys = legacy.get("keys")
-            if keys is not None:
-                keys = _integer(keys, f"legacy case {function}[{index}].keys", maximum=255)
+            if isinstance(keys, (list, tuple)):
+                # A per-frame timeline; the last entry stays held. Needed by any
+                # routine whose wait loop reads edge-triggered hKeysPressed after
+                # the frame on which a permanently held button became new.
+                if not keys or len(keys) > 16:
+                    raise ValueError(
+                        f"legacy case {function}[{index}].keys must hold 1..16 frames")
+                keys = [
+                    _integer(entry, f"legacy case {function}[{index}].keys", maximum=255)
+                    for entry in keys
+                ]
+            elif keys is not None:
+                keys = [_integer(keys, f"legacy case {function}[{index}].keys", maximum=255)]
             if "ramg" in legacy and not isinstance(legacy["ramg"], bool):
                 raise TypeError(f"legacy case {function}[{index}].ramg must be a boolean")
             evidence = legacy.get(
@@ -193,7 +204,7 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                 "bus": _probes(legacy.get("read", {}), "read"),
                 "seeds": seeds,
                 "setup": _setup(legacy.get("setup", [])),
-                "input_events": [] if keys is None else [{"keys": keys}],
+                "input_events": [] if keys is None else [{"keys": k} for k in keys],
                 "instruction_budget": _integer(
                     legacy.get("instruction_budget", 100000),
                     f"legacy case {function}[{index}].instruction_budget",

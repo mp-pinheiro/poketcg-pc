@@ -248,33 +248,43 @@ static int parse_stack_words(const char *json, uint16_t *words, size_t cap,
     }
 }
 
+#define MAX_INPUT_EVENTS 16
+
+/* One entry per rendered frame, cycled. The ROM's own key handling is edge
+ * triggered: hKeysPressed holds what became newly pressed this frame, so a
+ * button held from the first instruction is new exactly once, and a wait loop
+ * that starts after that frame never sees it. Cycling a release/press pair
+ * reproduces a human tapping the button, which lands an edge inside any wait
+ * however many frames of text or animation precede it. A single-entry array
+ * cycles onto itself and therefore still means held for the whole run. */
 static int parse_input_keys(const char *json, uint8_t *buttons, uint8_t *dpad,
-                            int *has_event) {
+                            size_t cap, size_t *count) {
     const char *p = NULL;
     int state = json_array_start(json, "input_events", &p);
-    if (state == 0) {
-        *buttons = *dpad = 0xff;
-        *has_event = 0;
-        return 1;
-    }
+    if (state == 0) { *count = 0; return 1; }
     if (state < 0) return 0;
-    p = skip_json_ws(p);
-    if (*p == ']') {
-        *buttons = *dpad = 0xff;
-        *has_event = 0;
-        return 1;
+    size_t used = 0;
+    for (;;) {
+        p = skip_json_ws(p);
+        if (*p == ']') { *count = used; return 1; }
+        if (*p != '{' || used >= cap) return 0;
+        const char *end = strchr(p, '}');
+        if (!end) return 0;
+        size_t length = (size_t)(end - p + 1);
+        char object[128];
+        if (length >= sizeof object) return 0;
+        memcpy(object, p, length);
+        object[length] = '\0';
+        uint64_t keys = 0;
+        if (json_number(object, "keys", &keys) != 1 || keys > 0xff) return 0;
+        buttons[used] = (uint8_t)(~keys & 0x0f);
+        dpad[used] = (uint8_t)(~(keys >> 4) & 0x0f);
+        used++;
+        p = skip_json_ws(end + 1);
+        if (*p == ',') { p++; continue; }
+        if (*p == ']') { *count = used; return 1; }
+        return 0;
     }
-    if (*p != '{') return 0;
-    const char *object_end = strchr(p, '}');
-    if (!object_end) return 0;
-    const char *array_end = skip_json_ws(object_end + 1);
-    if (*array_end != ']') return 0;
-    uint64_t keys = 0;
-    if (json_number(p, "keys", &keys) != 1 || keys > 0xff) return 0;
-    *buttons = (uint8_t)(~keys & 0x0f);
-    *dpad = (uint8_t)(~(keys >> 4) & 0x0f);
-    *has_event = 1;
-    return 1;
 }
 
 static void seed_mapper_shadows(GBContext *ctx, uint64_t rom_bank,
@@ -499,13 +509,13 @@ int main(int argc, char **argv) {
     if (mapper_mode_state == 0) mapper_mode_state = 1;
     SetupCall setup_calls[256];
     size_t setup_count = 0;
-    uint8_t input_buttons = 0xff, input_dpad = 0xff;
-    int has_input_event = 0;
+    uint8_t input_buttons[MAX_INPUT_EVENTS], input_dpad[MAX_INPUT_EVENTS];
+    size_t input_count = 0;
     uint16_t stack_words[MAX_STACK_WORDS];
     size_t stack_count = 0;
     int setup_state = parse_setup(request, setup_calls, 256, &setup_count);
-    int input_state = parse_input_keys(request, &input_buttons, &input_dpad,
-                                       &has_input_event);
+    int input_state = parse_input_keys(request, input_buttons, input_dpad,
+                                       MAX_INPUT_EVENTS, &input_count);
     int stack_state = parse_stack_words(request, stack_words, MAX_STACK_WORDS,
                                         &stack_count);
     if (!setup_state || !input_state) {
@@ -599,8 +609,9 @@ int main(int argc, char **argv) {
     }
     uint64_t steps = 0;
     uint64_t cycles = 0;
-    g_joypad_buttons = input_buttons;
-    g_joypad_dpad = input_dpad;
+    size_t input_index = 0;
+    g_joypad_buttons = input_count ? input_buttons[0] : 0xff;
+    g_joypad_dpad = input_count ? input_dpad[0] : 0xff;
     for (size_t i = 0; i < setup_count; i++) {
         SetupCall *call = &setup_calls[i];
         seed_mapper_shadows(ctx, call->rom_bank, mapper_ram_bank, mapper_ram_enable);
@@ -631,7 +642,7 @@ int main(int argc, char **argv) {
     }
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
-    int vblank_scheduler_armed = has_input_event || (gb_read8(ctx, 0xff40) & 0x80);
+    int vblank_scheduler_armed = input_count > 0 || (gb_read8(ctx, 0xff40) & 0x80);
     if (vblank_scheduler_armed) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));
         ctx->ime = 1;
@@ -696,7 +707,14 @@ int main(int argc, char **argv) {
          * HALT state are intentionally left intact; the next debug step
          * observes the pending interrupt through the normal GBRT path.
          */
-        if (gb_frame_complete(ctx)) gb_reset_frame(ctx);
+        if (gb_frame_complete(ctx)) {
+            gb_reset_frame(ctx);
+            if (input_count > 1) {
+                input_index = (input_index + 1) % input_count;
+                g_joypad_buttons = input_buttons[input_index];
+                g_joypad_dpad = input_dpad[input_index];
+            }
+        }
     }
     print_result(ctx, completion, steps, cycles, bus_addresses, bus_sizes, bus_count);
     gb_context_destroy(ctx);
