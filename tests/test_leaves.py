@@ -360,15 +360,27 @@ def held_keys(case: dict) -> int:
     return keys[-1] if isinstance(keys, list) and keys else (keys if isinstance(keys, int) else 0)
 
 
+def _hexnum(value: object, width: int = 0) -> str:
+    """Render one case field for a diagnostic line without trusting its type.
+
+    A candidate may put any JSON value in a register or key slot. Applying a hex
+    format spec to a list crashes the reporter, which then hides the very diff it
+    was called to explain -- that masked every generation of _DisplayCardDetailScreen.
+    """
+    if isinstance(value, int) and not isinstance(value, bool):
+        return f"${value:0{width}X}" if width else f"${value:X}"
+    return repr(value)
+
+
 def describe(case: dict) -> str:
-    regs = " ".join(f"{r}=${case[r]:X}" for r in REGS if case.get(r))
+    regs = " ".join(f"{r}={_hexnum(case[r])}" for r in REGS if case.get(r))
     mem = " ".join(f"${a:04X}={bytes(d).hex()}" for a, d in case.get("wram", {}).items())
     sram = " ".join(f"sram{b}:${a:04X}={bytes(d).hex()}" for b, sp in case.get("sram", {}).items() for a, d in sp.items())
     sread = " ".join(f"sread{b}:${a:04X}+{n}" for b, sp in case.get("sread", {}).items() for a, n in sp.items())
     latch = "" if case.get("ramg") is None else f"ramg={int(bool(case['ramg']))}"
     timeline = key_timeline(case)
-    keys = ("keys=" + ("/".join(f"${k:02X}" for k in timeline)
-                       if isinstance(timeline, list) else f"${timeline:02X}")
+    keys = ("keys=" + ("/".join(_hexnum(k, 2) for k in timeline)
+                       if isinstance(timeline, list) else _hexnum(timeline, 2))
             ) if case.get("keys") else ""
     tag = "" if case.get("oracle", True) else "[c-only] "
     return tag + (" ".join(x for x in (regs, mem, sram, sread, latch, keys) if x) or "all-zero")
