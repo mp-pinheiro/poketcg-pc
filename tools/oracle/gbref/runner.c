@@ -364,6 +364,17 @@ static int apply_banked_spans(GBContext *ctx, char *spec, uint8_t *region,
     return 1;
 }
 
+static void print_bus_spans(const GBContext *ctx, const uint16_t *bus_addresses,
+                            const uint16_t *bus_sizes, size_t bus_count) {
+    for (size_t i = 0; i < bus_count; i++) {
+        for (uint32_t j = 0; j < bus_sizes[i]; j++) {
+            uint8_t value = gb_read8((GBContext *)ctx,
+                                     (uint16_t)(bus_addresses[i] + j));
+            printf("%02x", value);
+        }
+    }
+}
+
 static void print_result(const GBContext *ctx, const char *completion,
                          uint64_t steps, uint64_t cycles,
                          const uint16_t *bus_addresses, const uint16_t *bus_sizes,
@@ -400,13 +411,7 @@ static void print_result(const GBContext *ctx, const char *completion,
     printf("\",\"sram\":\"");
     print_hex(ctx->eram, ctx->eram_size);
     printf("\",\"bus\":\"");
-    for (size_t i = 0; i < bus_count; i++) {
-        for (uint32_t j = 0; j < bus_sizes[i]; j++) {
-            uint8_t value = gb_read8((GBContext *)ctx,
-                                     (uint16_t)(bus_addresses[i] + j));
-            printf("%02x", value);
-        }
-    }
+    print_bus_spans(ctx, bus_addresses, bus_sizes, bus_count);
     printf("\",\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
            steps, cycles);
 }
@@ -644,9 +649,24 @@ int main(int argc, char **argv) {
                   != (uint8_t)event_value)
                : ctx->pc != (strcmp(completion, "pre-ret") == 0 ? stop_pc : 0xfea0)) {
         if (steps >= instruction_budget || cycles >= cycle_budget) {
+            /* A budget death parked in a halt is the common trap, and pc alone
+             * cannot tell a spin apart from a wait for an interrupt that can
+             * never arrive. Report the machine state that decides it: rLCDC
+             * gates whether the PPU still publishes VBlank at all, and IF/IE
+             * with halted say whether the wake condition is merely masked. */
+            const GBPPU *view = (const GBPPU *)ctx->ppu;
             fprintf(stdout, "{\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
-                    "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 "}\n",
-                    ctx->pc, ctx->sp, steps, cycles);
+                    "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 ","
+                    "\"lcdc\":%u,\"if\":%u,\"ie\":%u,\"ime\":%u,\"halted\":%u,"
+                    "\"ppu_lcdc\":%u,\"ppu_ly\":%u,\"ppu_mode\":%u,\"bus\":\"",
+                    ctx->pc, ctx->sp, steps, cycles,
+                    gb_read8(ctx, 0xff40), gb_read8(ctx, 0xff0f),
+                    gb_read8(ctx, 0xffff), (unsigned)(ctx->ime ? 1 : 0),
+                    (unsigned)(ctx->halted ? 1 : 0),
+                    view ? view->lcdc : 0u, view ? view->ly : 0u,
+                    view ? (unsigned)view->mode : 0u);
+            print_bus_spans(ctx, bus_addresses, bus_sizes, bus_count);
+            fprintf(stdout, "\"}\n");
             gb_context_destroy(ctx);
             free(rom);
             return 4;
