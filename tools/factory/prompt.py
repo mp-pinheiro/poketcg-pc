@@ -244,10 +244,14 @@ def render(packet: dict, feedback: str | None = None,
         "MUTATIONS[\"<name>\"][\"case_ids\"] entries must read <name>-<index> with index "
         "below the number of cases you declared, and \"before\" must appear verbatim in "
         "your C fragment.",
-        "That \"before\" string must occur EXACTLY ONCE in your C fragment. A string "
-        "that appears twice cannot be located unambiguously and is rejected as "
-        "\"mutation anchor is not unique\"; extend it with surrounding tokens until it "
-        "is unique.",
+        "That \"before\" string must occur EXACTLY ONCE in the whole destination "
+        "file src/home/<basename>.c, not merely once inside your own fragment: "
+        "tools/run_mutation.py counts it in the assembled module. A one-line "
+        "delegating body is therefore never a safe anchor on its own - an "
+        "already-landed sibling wrapper around the same callee carries the "
+        "identical line and the mutation is rejected as \"mutation anchor is not "
+        "unique\". Anchor such a routine on a multi-line string that includes its "
+        "own signature line, which no sibling can repeat.",
         "Choose a \"before\" line whose corruption at least one listed case would "
         "actually detect. The mutation test corrupts the routine and REQUIRES the "
         "cases to fail; a mutation on a line no case observes is rejected as "
