@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayUsedTrainerCardDetailScreen",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayUsedTrainerCardDetailScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"10\", \"51899\": \"80\", \"52260\": \"01af053708011010500132080000002026083808000000803e4700040000000200000011083408000014004247010000003702800029080e00170200dc003908\", \"65344\": \"80\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayUsedTrainerCardDetailScreen\", \"mismatches\": {\"bus\": {\"address\": 52260, \"reference\": \"108001af053708\", \"native\": \"1080c900000000\", \"reference_size\": 69, \"native_size\": 69, \"spans\": [[50176, 1], [51899, 1], [52260, 64], [65344, 1], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"DisplayUsedTrainerCardDetailScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50176\": \"10\", \"51899\": \"80\", \"52260\": \"01af053708011010500132080000002026083808000000803e4700040000000200000011083408000014004247010000003702800029080e00170200dc003908\", \"65344\": \"80\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

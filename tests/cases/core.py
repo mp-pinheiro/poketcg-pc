@@ -1726,6 +1726,14 @@ DCDS_wPlayerDeck = 0xC400
 DCDS_wLoadedCard1 = 0xCC24
 DCDS_wLCDC = 0xCABB
 DCDS_rLCDC = 0xFF40
+
+DUT_hTempCardIndex_ff9f = 0xFF9F
+DUT_hWhoseTurn = 0xFF97
+DUT_TURN = 0xC2
+DUT_wPlayerDeck = 0xC400
+DUT_wLoadedCard1 = 0xCC24
+DUT_wLCDC = 0xCABB
+DUT_rLCDC = 0xFF40
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3275,6 +3283,27 @@ CASES["OpenCardPage_FromCheckPlayArea"] = [
 ]
 # <<< factory OpenCardPage_FromCheckPlayArea
 
+# >>> factory DisplayUsedTrainerCardDetailScreen
+CONTRACT["DisplayUsedTrainerCardDetailScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["DisplayUsedTrainerCardDetailScreen"] = [
+    # hTempCardIndex_ff9f picks the deck slot whose card data gets loaded.
+    {"keys": [0x00, 0x01],
+     "wram": {DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
+      DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck: b"\x10",
+      DUT_hTempCardIndex_ff9f: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {DUT_wLoadedCard1: 64},
+     "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={DUT_wLCDC: b"\x80", DUT_rLCDC: b"\x80", DUT_wLoadedCard1: b"\x00",
+         DUT_hWhoseTurn: bytes((DUT_TURN,)), DUT_wPlayerDeck + 3: b"\x20",
+         DUT_hTempCardIndex_ff9f: b"\x03"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={DUT_wLoadedCard1: 64},
+         instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory DisplayUsedTrainerCardDetailScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4665,3 +4694,11 @@ MUTATIONS["OpenCardPage_FromHand"] = {"source_symbol": "OpenCardPage_FromHand", 
 # >>> factory-mutation OpenCardPage_FromCheckPlayArea
 MUTATIONS["OpenCardPage_FromCheckPlayArea"] = {"source_symbol": "OpenCardPage_FromCheckPlayArea", "before": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, PAD_B);", "after": "void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tgb_write8(wCardPageExitKeys_ADDR, 0u);", "case_ids": ["OpenCardPage_FromCheckPlayArea-0", "OpenCardPage_FromCheckPlayArea-1"]}
 # <<< factory-mutation OpenCardPage_FromCheckPlayArea
+# >>> factory-mutation DisplayUsedTrainerCardDetailScreen
+MUTATIONS["DisplayUsedTrainerCardDetailScreen"] = {
+ "source_symbol": "DisplayUsedTrainerCardDetailScreen",
+ "before": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen(hTempCardIndex_ff9f, UsedText);",
+ "after": "WaitResult DisplayUsedTrainerCardDetailScreen(void)\n{\n\treturn DisplayCardDetailScreen((uint8_t)(hTempCardIndex_ff9f + 1u), UsedText);",
+ "case_ids": ["DisplayUsedTrainerCardDetailScreen-0", "DisplayUsedTrainerCardDetailScreen-1"],
+}
+# <<< factory-mutation DisplayUsedTrainerCardDetailScreen

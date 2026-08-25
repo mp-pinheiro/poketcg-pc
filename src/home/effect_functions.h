@@ -1374,6 +1374,9 @@ PlayerPickFireEnergyCardToDiscardResult Ember_PlayerSelectEffect(void);
 /* >>> factory FireBlast_PlayerSelectEffect */
 PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void);
 /* <<< factory FireBlast_PlayerSelectEffect */
+/* >>> factory MagmarFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(void);
+/* <<< factory MagmarFlamethrower_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

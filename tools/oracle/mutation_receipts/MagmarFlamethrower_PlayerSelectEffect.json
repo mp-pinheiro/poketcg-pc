@@ -1,0 +1,9 @@
+{
+  "fn": "MagmarFlamethrower_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MagmarFlamethrower_PlayerSelectEffect\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49888\": \"00\", \"49894\": \"00\", \"49904\": \"00\", \"50448\": \"ff\", \"51892\": \"00\", \"51899\": \"80\", \"52218\": \"0100\", \"65431\": \"c205\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MagmarFlamethrower_PlayerSelectEffect\", \"mismatches\": {\"a\": [5, 0], \"f\": [144, 0], \"bus\": {\"address\": 51899, \"reference\": \"0000ff00800100c205\", \"native\": \"0000ff00000007c205\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49851, 1], [49864, 1], [49870, 1], [49888, 1], [49894, 1], [49904, 1], [50448, 1], [51892, 1], [51899, 1], [52218, 2], [65431, 2], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"MagmarFlamethrower_PlayerSelectEffect\", \"registers\": {\"a\": 5, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49864\": \"00\", \"49870\": \"00\", \"49888\": \"00\", \"49894\": \"00\", \"49904\": \"00\", \"50448\": \"ff\", \"51892\": \"00\", \"51899\": \"80\", \"52218\": \"0100\", \"65431\": \"c205\", \"65440\": \"05\"}}, \"status\": \"PASS\"}\n"
+}

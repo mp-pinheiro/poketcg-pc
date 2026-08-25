@@ -482,6 +482,14 @@ static void adapt_PrintFilteredCardList(ProbeState *s)
 }
 /* <<< factory PrintFilteredCardList */
 
+/* >>> factory Func_9ced */
+static void adapt_Func_9ced(ProbeState *s)
+{
+	(void)s;
+	Func_9ced();
+}
+/* <<< factory Func_9ced */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -539,5 +547,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintFilteredCardSelectionList", adapt_PrintFilteredCardSelectionList },
 	{ "PrintDeckBuildingCardList", adapt_PrintDeckBuildingCardList },
 	{ "PrintFilteredCardList", adapt_PrintFilteredCardList },
+	{ "Func_9ced", adapt_Func_9ced },
 	{ NULL, NULL },
 };

@@ -6016,3 +6016,10 @@ PlayerPickFireEnergyCardToDiscardResult FireBlast_PlayerSelectEffect(void)
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory FireBlast_PlayerSelectEffect */
+
+/* >>> factory MagmarFlamethrower_PlayerSelectEffect */
+PlayerPickFireEnergyCardToDiscardResult MagmarFlamethrower_PlayerSelectEffect(void)
+{
+	return PlayerPickFireEnergyCardToDiscard();
+}
+/* <<< factory MagmarFlamethrower_PlayerSelectEffect */

@@ -239,6 +239,16 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_selection.h"
 #include "home/switch_sram.h"
 #define NUM_FILTERED_LIST_VISIBLE_CARDS 0x06u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/process_text.h"
+#include "home/switch_rom.h"
+#include "mem.h"
+#define F9CED_TRUE 0x01u
+#define F9CED_BANK_DUEL_CORE 0x01u
 /* <<< factory statics */
 
 
@@ -1475,3 +1485,24 @@ PrintFilteredCardListResult PrintFilteredCardList(uint8_t a, uint8_t f, uint8_t 
 	return (PrintFilteredCardListResult){saved_a, saved_f, b, c, d, e, hl};
 }
 /* <<< factory PrintFilteredCardList */
+
+/* >>> factory Func_9ced */
+void Func_9ced(void)
+{
+	uint16_t hl = (uint16_t)(wVisibleListCardIDs_ADDR + wCardListCursorPos);
+	uint8_t e = gb_read8(hl);
+	/* `ld d, [hl]` reads the next byte, but `lb de, $38, $9f` overwrites d before
+	 * anything reads it, so only the card ID in e is live. */
+	LoadCardDataToBuffer1_FromCardID(e);
+	uint16_t text_hl = SetupText(0x38u, 0x9fu);
+	/* `bank1call` selects bank 1 for the callee and restores this routine's bank
+	 * on return. OpenCardPage consumes only a and b: a is forced to 0 inside
+	 * OpenCardPage_FromHand, and SetupText's counted $C600 clear loop exits with
+	 * b at 0, the same value `ld b, $00` put there. */
+	uint8_t saved = hBankROM;
+	BankswitchROM(F9CED_BANK_DUEL_CORE);
+	OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0x38u, 0x9fu, text_hl);
+	BankswitchROM(saved);
+	wVBlankOAMCopyToggle = F9CED_TRUE;
+}
+/* <<< factory Func_9ced */

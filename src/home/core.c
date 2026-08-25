@@ -1081,6 +1081,9 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6100,3 +6103,10 @@ void OpenCardPage_FromCheckPlayArea(uint8_t a, uint8_t f, uint8_t b, uint8_t c, 
 	OpenCardPage(1u, f, b, c, d, e, hl);
 }
 /* <<< factory OpenCardPage_FromCheckPlayArea */
+
+/* >>> factory DisplayUsedTrainerCardDetailScreen */
+WaitResult DisplayUsedTrainerCardDetailScreen(void)
+{
+	return DisplayCardDetailScreen(hTempCardIndex_ff9f, UsedText);
+}
+/* <<< factory DisplayUsedTrainerCardDetailScreen */

@@ -190,6 +190,13 @@ SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 wCardCollection = 0xA100
 wCardListCoords = 0xCED0
 wNumVisibleCardListEntries = 0xCECB
+
+F9_wVisibleListCardIDs = 0xCEC4
+F9_wCardListCursorPos = 0xCEA4
+F9_wVBlankOAMCopyToggle = 0xCAC0
+F9_wLCDC = 0xCABB
+F9_rLCDC = 0xFF40
+F9_wLoadedCard1 = 0xCC24
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -663,6 +670,33 @@ CASES["PrintFilteredCardList"] = [
 ]
 # <<< factory PrintFilteredCardList
 
+# >>> factory Func_9ced
+CONTRACT["Func_9ced"] = {"compare": (), "preserve": ()}
+CASES["Func_9ced"] = [
+    # B is the card page's exit key (wCardPageExitKeys), read through hDPadHeld.
+    # The card page selects OBJ 8x16, which only touches the wLCDC shadow; the
+    # reference's VBlank ISR then mirrors it into rLCDC, so both start at $84.
+    {"keys": [0x00, 0x02],
+     "wram": {F9_wLCDC: b"\x84", F9_rLCDC: b"\x84",
+      F9_wCardListCursorPos: b"\x00",
+      F9_wVisibleListCardIDs: b"\x08\x00",
+      F9_wVBlankOAMCopyToggle: b"\x00",
+      F9_wLoadedCard1: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {F9_wVBlankOAMCopyToggle: 1, F9_wLoadedCard1: 64},
+     "instruction_budget": 10000000, "cycle_budget": 40000000},
+    dict(POISON, keys=[0x00, 0x02],
+         wram={F9_wLCDC: b"\x84", F9_rLCDC: b"\x84",
+         F9_wCardListCursorPos: b"\x00",
+         F9_wVisibleListCardIDs: b"\x20\x00",
+         F9_wVBlankOAMCopyToggle: b"\x00",
+         F9_wLoadedCard1: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={F9_wVBlankOAMCopyToggle: 1, F9_wLoadedCard1: 64},
+         instruction_budget=10000000, cycle_budget=40000000),
+]
+# <<< factory Func_9ced
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -905,3 +939,11 @@ MUTATIONS["PrintFilteredCardList"] = {
     "case_ids": ["PrintFilteredCardList-0", "PrintFilteredCardList-1"],
 }
 # <<< factory-mutation PrintFilteredCardList
+# >>> factory-mutation Func_9ced
+MUTATIONS["Func_9ced"] = {
+ "source_symbol": "Func_9ced",
+ "before": "\tLoadCardDataToBuffer1_FromCardID(e);",
+ "after": "\tLoadCardDataToBuffer1_FromCardID((uint8_t)(e + 1u));",
+ "case_ids": ["Func_9ced-0", "Func_9ced-1"],
+}
+# <<< factory-mutation Func_9ced

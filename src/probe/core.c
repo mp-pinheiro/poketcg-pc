@@ -2151,6 +2151,14 @@ static void adapt_OpenCardPage_FromCheckPlayArea(ProbeState *s)
 }
 /* <<< factory OpenCardPage_FromCheckPlayArea */
 
+/* >>> factory DisplayUsedTrainerCardDetailScreen */
+static void adapt_DisplayUsedTrainerCardDetailScreen(ProbeState *s)
+{
+	WaitResult r = DisplayUsedTrainerCardDetailScreen();
+	s->f = r.f;
+}
+/* <<< factory DisplayUsedTrainerCardDetailScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2409,5 +2417,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardDetailScreen", adapt_DisplayCardDetailScreen },
 	{ "OpenCardPage_FromHand", adapt_OpenCardPage_FromHand },
 	{ "OpenCardPage_FromCheckPlayArea", adapt_OpenCardPage_FromCheckPlayArea },
+	{ "DisplayUsedTrainerCardDetailScreen", adapt_DisplayUsedTrainerCardDetailScreen },
 	{ NULL, NULL },
 };
