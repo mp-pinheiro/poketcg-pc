@@ -698,3 +698,8 @@ unblock = "read the recorded diagnostics under .factory/try/UnusedCopyrightScree
 name = "DisplayCardPage_PokemonOverview"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:4222 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case DisplayCardPage_PokemonOverview-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9100,\"sp\":65506,\"instructions\":49450,\"cycles\":400004}"
 unblock = "read the recorded diagnostics under .factory/try/DisplayCardPage_PokemonOverview/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "ShowPrinterConnectionErrorScene"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:64 (basename `printer`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ShowPrinterConnectionErrorScene-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":2472,\"sp\":65518,\"instructions\":53663,\"cycles\":400004}"
+unblock = "read the recorded diagnostics under .factory/try/ShowPrinterConnectionErrorScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
