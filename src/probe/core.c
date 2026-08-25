@@ -2084,6 +2084,15 @@ static void adapt_OpenAttackPage(ProbeState *s)
 }
 /* <<< factory OpenAttackPage */
 
+/* >>> factory HandleEnergyDiscardMenuInput */
+static void adapt_HandleEnergyDiscardMenuInput(ProbeState *s)
+{
+	HandleEnergyDiscardMenuInputResult result = HandleEnergyDiscardMenuInput();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleEnergyDiscardMenuInput */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2333,5 +2342,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayEnergyDiscardMenu", adapt_DisplayEnergyDiscardMenu },
 	{ "DisplayEnergyDiscardScreen", adapt_DisplayEnergyDiscardScreen },
 	{ "OpenAttackPage", adapt_OpenAttackPage },
+	{ "HandleEnergyDiscardMenuInput", adapt_HandleEnergyDiscardMenuInput },
 	{ NULL, NULL },
 };

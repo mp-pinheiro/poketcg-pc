@@ -933,4 +933,11 @@ void DisplayEnergyDiscardScreen(uint8_t a);
 /* >>> factory OpenAttackPage */
 void OpenAttackPage(void);
 /* <<< factory OpenAttackPage */
+/* >>> factory HandleEnergyDiscardMenuInput */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} HandleEnergyDiscardMenuInputResult;
+HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void);
+/* <<< factory HandleEnergyDiscardMenuInput */
 #endif

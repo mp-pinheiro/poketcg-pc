@@ -1708,6 +1708,9 @@ wPlayerDeck = 0xC400
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wLoadedCard1AttackDescriptions = 0xCEA0
+
+wEnergyDiscardMenuDenominator = 0xCBFA
+wEnergyDiscardMenuNumerator = 0xCBFB
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3166,6 +3169,15 @@ CASES["OpenAttackPage"] = [
 ]
 # <<< factory OpenAttackPage
 
+# >>> factory HandleEnergyDiscardMenuInput
+CONTRACT["HandleEnergyDiscardMenuInput"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleEnergyDiscardMenuInput"] = [
+    {"keys": 0x02, "wram": {wEnergyDiscardMenuDenominator: b"\x00", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, "vread": {0: {0x9A10: 4}}, "instruction_budget": 10000, "cycle_budget": 40000},
+    {"keys": 0x02, "wram": {wEnergyDiscardMenuDenominator: b"\x01", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, "vread": {0: {0x9A10: 4}}, "instruction_budget": 10000, "cycle_budget": 40000},
+    dict(POISON, keys=0x02, wram={wEnergyDiscardMenuDenominator: b"\x01", wEnergyDiscardMenuNumerator: b"\x07", 0xCABB: b"\x00"}, vread={0: {0x9A10: 4}}, instruction_budget=10000, cycle_budget=40000),
+]
+# <<< factory HandleEnergyDiscardMenuInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4514,3 +4526,11 @@ MUTATIONS["DisplayEnergyDiscardScreen"] = {"source_symbol": "DisplayEnergyDiscar
 # >>> factory-mutation OpenAttackPage
 MUTATIONS["OpenAttackPage"] = {"source_symbol": "OpenAttackPage", "before": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK2_1 : ATTACKPAGE_ATTACK1_1;", "after": "\twAttackPageNumber = (v != 0u) ? ATTACKPAGE_ATTACK1_1 : ATTACKPAGE_ATTACK2_1;", "case_ids": ["OpenAttackPage-0", "OpenAttackPage-1"]}
 # <<< factory-mutation OpenAttackPage
+# >>> factory-mutation HandleEnergyDiscardMenuInput
+MUTATIONS["HandleEnergyDiscardMenuInput"] = {
+    "source_symbol": "HandleEnergyDiscardMenuInput",
+    "before": "uint8_t denominator = gb_read8(wEnergyDiscardMenuDenominator_ADDR);",
+    "after": "uint8_t denominator = gb_read8(wEnergyDiscardMenuNumerator_ADDR);",
+    "case_ids": ["HandleEnergyDiscardMenuInput-1"],
+}
+# <<< factory-mutation HandleEnergyDiscardMenuInput

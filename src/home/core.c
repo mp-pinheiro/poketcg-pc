@@ -1043,6 +1043,15 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define ATTACKPAGE_ATTACK2_1 0x02u
 #define PAD_RIGHT 0x10u
 #define PAD_LEFT 0x20u
+
+#include "mem.h"
+#include "generated/wram.h"
+#include "home/frames.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/bg_map.h"
+#include "home/core.h"
+#define SYM_SLASH 0x2Eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -5883,3 +5892,32 @@ void OpenAttackPage(void)
 	}
 }
 /* <<< factory OpenAttackPage */
+
+/* >>> factory HandleEnergyDiscardMenuInput */
+HandleEnergyDiscardMenuInputResult HandleEnergyDiscardMenuInput(void)
+{
+	uint8_t b = 16u;
+	uint8_t c = 16u;
+	uint8_t denominator = gb_read8(wEnergyDiscardMenuDenominator_ADDR);
+	uint8_t numerator = gb_read8(wEnergyDiscardMenuNumerator_ADDR);
+	if (denominator != 0u) {
+		WriteByteToBGMap0((uint8_t)(numerator + SYM_0), b, c);
+		b = (uint8_t)(b + 1u);
+		WriteByteToBGMap0(SYM_SLASH, b, c);
+		b = (uint8_t)(b + 1u);
+		WriteByteToBGMap0((uint8_t)(denominator + SYM_0), b, c);
+	} else {
+		b = (uint8_t)(b + 1u);
+		WriteTwoDigitNumberInTxSymbol_PadSpace(numerator, b, c, 0u, 0u, 0u);
+	}
+	HandleCardListInputResult input;
+	do {
+		DoFrame();
+		input = HandleCardListInput();
+	} while ((input.f & 0x10u) == 0u);
+	if (input.a == MENU_CANCEL)
+		return (HandleEnergyDiscardMenuInputResult){input.a, 0x90u};
+	DeckCardResult card = GetCardInDuelTempList_OnlyDeckIndex(input.a, 0u);
+	return (HandleEnergyDiscardMenuInputResult){card.a, (card.a == 0u) ? 0x80u : 0u};
+}
+/* <<< factory HandleEnergyDiscardMenuInput */
