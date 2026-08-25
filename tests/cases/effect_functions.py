@@ -3994,6 +3994,14 @@ CASES["CharmeleonFlamethrower_PlayerSelectEffect"] = [
 ]
 # <<< factory CharmeleonFlamethrower_PlayerSelectEffect
 
+# >>> factory Barrier_PlayerSelectEffect
+CONTRACT["Barrier_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Barrier_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFF98: 1, 0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFF98: 1, 0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Barrier_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6161,3 +6169,6 @@ MUTATIONS["ArcanineFlamethrower_PlayerSelectEffect"] = {"source_symbol": "Arcani
 # >>> factory-mutation CharmeleonFlamethrower_PlayerSelectEffect
 MUTATIONS["CharmeleonFlamethrower_PlayerSelectEffect"] = {"source_symbol": "CharmeleonFlamethrower_PlayerSelectEffect", "before": "PlayerPickFireEnergyCardToDiscardResult CharmeleonFlamethrower_PlayerSelectEffect(void)\n{\n\treturn PlayerPickFireEnergyCardToDiscard();\n}", "after": "PlayerPickFireEnergyCardToDiscardResult CharmeleonFlamethrower_PlayerSelectEffect(void)\n{\n\treturn (PlayerPickFireEnergyCardToDiscardResult){0u, 0u};\n}", "case_ids": ["CharmeleonFlamethrower_PlayerSelectEffect-0", "CharmeleonFlamethrower_PlayerSelectEffect-1"]}
 # <<< factory-mutation CharmeleonFlamethrower_PlayerSelectEffect
+# >>> factory-mutation Barrier_PlayerSelectEffect
+MUTATIONS["Barrier_PlayerSelectEffect"] = {"source_symbol": "Barrier_PlayerSelectEffect", "before": "Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);\n\t\tBankswitchROM(saved);\n\t}\n\tHandleEnergyDiscardMenuInputResult menu;\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tmenu = HandleEnergyDiscardMenuInput();\n\t\tBankswitchROM(saved);\n\t}\n\tif (menu.f & 0x10)\n\t\treturn (Barrier_PlayerSelectEffectResult){menu.a, menu.f};\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)\n{\n\t(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tDisplayEnergyDiscardScreen(PLAY_AREA_ARENA);\n\t\tBankswitchROM(saved);\n\t}\n\tHandleEnergyDiscardMenuInputResult menu;\n\t{\n\t\tuint8_t saved = hBankROM;\n\t\tBankswitchROM(0x01);\n\t\tmenu = HandleEnergyDiscardMenuInput();\n\t\tBankswitchROM(saved);\n\t}\n\tif (menu.f & 0x10)\n\t\treturn (Barrier_PlayerSelectEffectResult){menu.a, menu.f};\n\thTemp_ffa0 = 0x00;", "case_ids": ["Barrier_PlayerSelectEffect-0", "Barrier_PlayerSelectEffect-1"]}
+# <<< factory-mutation Barrier_PlayerSelectEffect

@@ -3246,6 +3246,15 @@ static void adapt_CharmeleonFlamethrower_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory CharmeleonFlamethrower_PlayerSelectEffect */
 
+/* >>> factory Barrier_PlayerSelectEffect */
+static void adapt_Barrier_PlayerSelectEffect(ProbeState *s)
+{
+	Barrier_PlayerSelectEffectResult result = Barrier_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Barrier_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3647,5 +3656,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PlayerPickFireEnergyCardToDiscard", adapt_PlayerPickFireEnergyCardToDiscard },
 	{ "ArcanineFlamethrower_PlayerSelectEffect", adapt_ArcanineFlamethrower_PlayerSelectEffect },
 	{ "CharmeleonFlamethrower_PlayerSelectEffect", adapt_CharmeleonFlamethrower_PlayerSelectEffect },
+	{ "Barrier_PlayerSelectEffect", adapt_Barrier_PlayerSelectEffect },
 	{ NULL, NULL },
 };

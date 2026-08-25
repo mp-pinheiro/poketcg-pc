@@ -605,6 +605,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SR_PLAY_AREA_ARENA 0x00u
 #define SR_BANK_DUEL_CORE 0x01u
 #define SR_TYPE_ENERGY_WATER 0x0Bu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -5868,3 +5872,27 @@ PlayerPickFireEnergyCardToDiscardResult CharmeleonFlamethrower_PlayerSelectEffec
 	return PlayerPickFireEnergyCardToDiscard();
 }
 /* <<< factory CharmeleonFlamethrower_PlayerSelectEffect */
+
+/* >>> factory Barrier_PlayerSelectEffect */
+Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void)
+{
+	(void)CreateListOfEnergyAttachedToArena(TYPE_ENERGY_PSYCHIC);
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01);
+		DisplayEnergyDiscardScreen(PLAY_AREA_ARENA);
+		BankswitchROM(saved);
+	}
+	HandleEnergyDiscardMenuInputResult menu;
+	{
+		uint8_t saved = hBankROM;
+		BankswitchROM(0x01);
+		menu = HandleEnergyDiscardMenuInput();
+		BankswitchROM(saved);
+	}
+	if (menu.f & 0x10)
+		return (Barrier_PlayerSelectEffectResult){menu.a, menu.f};
+	hTemp_ffa0 = hTempCardIndex_ff98;
+	return (Barrier_PlayerSelectEffectResult){hTemp_ffa0, menu.f};
+}
+/* <<< factory Barrier_PlayerSelectEffect */

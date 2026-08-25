@@ -1349,6 +1349,10 @@ PlayerPickFireEnergyCardToDiscardResult ArcanineFlamethrower_PlayerSelectEffect(
 /* >>> factory CharmeleonFlamethrower_PlayerSelectEffect */
 PlayerPickFireEnergyCardToDiscardResult CharmeleonFlamethrower_PlayerSelectEffect(void);
 /* <<< factory CharmeleonFlamethrower_PlayerSelectEffect */
+/* >>> factory Barrier_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } Barrier_PlayerSelectEffectResult;
+Barrier_PlayerSelectEffectResult Barrier_PlayerSelectEffect(void);
+/* <<< factory Barrier_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
