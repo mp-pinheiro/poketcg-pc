@@ -1,6 +1,21 @@
 #include "home/sfx.h"
 #include "probe.h"
 
+/* >>> factory SFX_ApplyPitchOffset */
+static void adapt_SFX_ApplyPitchOffset(ProbeState *s)
+{
+	SFX_ApplyPitchOffset(s->c);
+}
+/* <<< factory SFX_ApplyPitchOffset */
+
+/* >>> factory Func_fc1cd */
+static void adapt_Func_fc1cd(ProbeState *s)
+{
+	(void)s;
+	Func_fc1cd();
+}
+/* <<< factory Func_fc1cd */
+
 static void adapt_SFX_PlaySFX(ProbeState *s)
 {
 	SFX_Play(s->a);
@@ -168,5 +183,7 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "Func_fc279", adapt_Func_fc279 },
 	{ "Func_fc26c", adapt_Func_fc26c },
 	{ "SFX_wait", adapt_SFX_wait },
+	{ "SFX_ApplyPitchOffset", adapt_SFX_ApplyPitchOffset },
+	{ "Func_fc1cd", adapt_Func_fc1cd },
 	{ NULL, NULL },
 };

@@ -62,4 +62,10 @@ void SFX_endloop(uint16_t bc, uint16_t caller_word);
 /* >>> factory SFX_wait */
 uint16_t SFX_wait(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_wait */
+/* >>> factory SFX_ApplyPitchOffset */
+void SFX_ApplyPitchOffset(uint8_t c);
+/* <<< factory SFX_ApplyPitchOffset */
+/* >>> factory Func_fc1cd */
+void Func_fc1cd(void);
+/* <<< factory Func_fc1cd */
 #endif

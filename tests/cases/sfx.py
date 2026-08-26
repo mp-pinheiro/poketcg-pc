@@ -254,6 +254,39 @@ CASES["SFX_wait"] = [
 ]
 # <<< factory SFX_wait
 
+# >>> factory SFX_ApplyPitchOffset
+# Channel-indexed: wSFXPitchOffsets+c, wde37+2*c, wde2b+c, rAUD1LEN+5*c.
+# c==3 lands on wde32/wde3d/wde2e/rAUD4LEN by address arithmetic.
+CONTRACT["SFX_ApplyPitchOffset"] = {"compare": (), "preserve": ()}
+CASES["SFX_ApplyPitchOffset"] = [
+    {"c": 0, "wram": {0xDE2F: b"\x00", 0xDE37: b"\x49\x00", 0xDE2B: b"\x20"},
+     "read": {0xDE37: 2, 0xDE2B: 1}},
+    {"c": 0, "wram": {0xDE2F: b"\x10", 0xDE37: b"\x49\x00", 0xDE2B: b"\x20"},
+     "hram": {0xFF11: b"\xC0"}, "read": {0xDE37: 2, 0xDE2B: 1}},
+    {"c": 0, "wram": {0xDE2F: b"\x80", 0xDE37: b"\x00\x01", 0xDE2B: b"\x00"},
+     "hram": {0xFF11: b"\x00"}, "read": {0xDE37: 2, 0xDE2B: 1}},
+    {"c": 3, "wram": {0xDE32: b"\x05", 0xDE3D: b"\xFE\x00", 0xDE2E: b"\x40"},
+     "hram": {0xFF20: b"\x80"}, "read": {0xDE3D: 2, 0xDE2E: 1}},
+    dict(POISON, b=0, c=1, wram={0xDE30: b"\x01", 0xDE39: b"\xFF\xFF", 0xDE2C: b"\x08"},
+         hram={0xFF16: b"\x3F"}, read={0xDE39: 2, 0xDE2C: 1}),
+]
+# <<< factory SFX_ApplyPitchOffset
+
+# >>> factory Func_fc1cd
+# Unlike SFX_ApplyPitchOffset the LEN register is zeroed outright, not masked.
+CONTRACT["Func_fc1cd"] = {"compare": (), "preserve": ()}
+CASES["Func_fc1cd"] = [
+    {"wram": {0xDE32: b"\x00", 0xDE3D: b"\x11", 0xDE2E: b"\x00"},
+     "read": {0xDE3D: 1, 0xDE2E: 1}},
+    {"wram": {0xDE32: b"\x04", 0xDE3D: b"\x0C", 0xDE2E: b"\x30"},
+     "hram": {0xFF20: b"\x00"}, "read": {0xDE3D: 1, 0xDE2E: 1}},
+    {"wram": {0xDE32: b"\xF8", 0xDE3D: b"\x20", 0xDE2E: b"\x01"},
+     "hram": {0xFF20: b"\x80"}, "read": {0xDE3D: 1, 0xDE2E: 1}},
+    dict(POISON, b=0, wram={0xDE32: b"\x10", 0xDE3D: b"\x00", 0xDE2E: b"\x00"},
+         hram={0xFF20: b"\x3F"}, read={0xDE3D: 1, 0xDE2E: 1}),
+]
+# <<< factory Func_fc1cd
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -332,3 +365,9 @@ MUTATIONS["Func_fc279"] = {"source_symbol": "Func_fc279", "before": "\tgb_read8(
 # >>> factory-mutation SFX_wait
 MUTATIONS["SFX_wait"] = {"source_symbol": "SFX_wait", "before": "\tgb_write8((uint16_t)(wde33_ADDR + bc), wait_val);", "after": "\tgb_write8((uint16_t)(wde33_ADDR + bc + 1u), wait_val);", "case_ids": ["SFX_wait-0", "SFX_wait-1", "SFX_wait-2"]}
 # <<< factory-mutation SFX_wait
+# >>> factory-mutation SFX_ApplyPitchOffset
+MUTATIONS["SFX_ApplyPitchOffset"] = {"source_symbol": "SFX_ApplyPitchOffset", "before": "\t\tnew_freq = (uint16_t)(freq + offset);", "after": "\t\tnew_freq = (uint16_t)(freq + offset + 1u);", "case_ids": ["SFX_ApplyPitchOffset-1", "SFX_ApplyPitchOffset-3"]}
+# <<< factory-mutation SFX_ApplyPitchOffset
+# >>> factory-mutation Func_fc1cd
+MUTATIONS["Func_fc1cd"] = {"source_symbol": "Func_fc1cd", "before": "\tgb_write8(freq_addr, new_low);", "after": "\tgb_write8(freq_addr, (uint8_t)(new_low + 1u));", "case_ids": ["Func_fc1cd-1", "Func_fc1cd-2"]}
+# <<< factory-mutation Func_fc1cd
