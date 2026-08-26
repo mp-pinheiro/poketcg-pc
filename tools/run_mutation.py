@@ -29,6 +29,37 @@ def load_case(path: Path):
     return module
 
 
+def resolve_anchor(source: str, source_symbol: str, before: str) -> tuple[int, int]:
+    """Locate the single anchor occurrence, scoped to the routine's own block.
+
+    A mutation belongs to exactly one routine, which is what ``source_symbol``
+    names, so the anchor only has to be unique inside that routine's
+    ``/* >>> factory <Fn> */`` .. ``/* <<< factory <Fn> */`` block.  Searching
+    the whole file instead made 184 of 1837 declared canaries ambiguous --
+    sibling effect handlers share short bodies like a bare ``return`` line, and
+    two of them matched 178 times.  Those canaries silently protected nothing.
+
+    Returns the (start, end) span of the region the anchor was found in, so the
+    caller can substitute the right occurrence rather than the first one in the
+    file, which may belong to a different routine entirely.
+
+    Routines with no marker block fall back to the whole file, where the anchor
+    must still be unique.
+    """
+    open_marker = f"/* >>> factory {source_symbol} */"
+    close_marker = f"/* <<< factory {source_symbol} */"
+    start, end = 0, len(source)
+    if open_marker in source:
+        start = source.index(open_marker)
+        end = source.index(close_marker, start) if close_marker in source[start:] else len(source)
+    found = source.count(before, start, end)
+    if found != 1:
+        raise SystemExit(
+            f"mutation anchor is not unique: {found} occurrences of the anchor "
+            f"for {source_symbol} in the searched region")
+    return start, end
+
+
 def comparison_status(result: subprocess.CompletedProcess[str]) -> str | None:
     for line in reversed(result.stdout.splitlines()):
         try:
@@ -62,8 +93,8 @@ def main() -> int:
         raise SystemExit("mutation source must be a relative src/home path")
     source_path = ROOT / source_rel
     original = source_path.read_text()
-    if original.count(mutation["before"]) != 1:
-        raise SystemExit("mutation anchor is not unique")
+    region = resolve_anchor(original, mutation.get("source_symbol", args.fn),
+                            mutation["before"])
 
     build_dir = args.build if args.build.is_absolute() else ROOT / args.build
     probe = build_dir / "poketcg_probe"
