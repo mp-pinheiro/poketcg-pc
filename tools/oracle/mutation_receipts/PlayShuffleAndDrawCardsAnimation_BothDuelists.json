@@ -1,0 +1,9 @@
+{
+  "fn": "PlayShuffleAndDrawCardsAnimation_BothDuelists",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayShuffleAndDrawCardsAnimation_BothDuelists\", \"registers\": {\"a\": 0, \"b\": 83, \"c\": 85, \"d\": 0, \"e\": 2, \"f\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"09\", \"51923\": \"0000\", \"52201\": \"00\", \"52233\": \"00\", \"52466\": \"01\", \"52807\": \"00\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayShuffleAndDrawCardsAnimation_BothDuelists\", \"mismatches\": {\"b\": [83, 84]}}\n",
+  "restored": "{\"fn\": \"PlayShuffleAndDrawCardsAnimation_BothDuelists\", \"registers\": {\"a\": 0, \"b\": 83, \"c\": 85, \"d\": 0, \"e\": 2, \"f\": 0, \"hl\": 1, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51906\": \"09\", \"51923\": \"0000\", \"52201\": \"00\", \"52233\": \"00\", \"52466\": \"01\", \"52807\": \"00\", \"54307\": \"ffffffffffffffff\", \"54444\": \"0000\", \"54464\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

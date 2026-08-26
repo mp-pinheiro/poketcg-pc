@@ -1371,6 +1371,24 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define OPP_METRONOME_CNF_SLP_PRZ 0x0Fu
 #define OPP_METRONOME_CONFUSED 0x01u
 #define OPP_METRONOME_ARENA_STATUS 0xF0u
+
+#include "home/core.h"
+#include "home/play_animation.h"
+#include "home/frames.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "home/empty_screen.h"
+#include "home/lcd.h"
+#include "home/script.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+
+#define DUEL_ANIM_BOTH_SHUFFLE 0x53u
+#define EachPlayerDraw7CardsText 0x0066u
+#define EachPlayerShuffleOpponentsDeckText 0x0065u
+#define ThisIsJustPracticeDoNotShuffleText 0x0064u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7749,3 +7767,19 @@ LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void
 	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
 }
 /* <<< factory LookForEnergyNeededForAttackInHand */
+
+/* >>> factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
+PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	b = DUEL_ANIM_BOTH_SHUFFLE;
+	c = DUEL_ANIM_BOTH_DRAW;
+	hl = EachPlayerShuffleOpponentsDeckText;
+	d = (uint8_t)(EachPlayerDraw7CardsText >> 8);
+	e = (uint8_t)EachPlayerDraw7CardsText;
+	if (wDuelType == DUELTYPE_PRACTICE)
+		hl = ThisIsJustPracticeDoNotShuffleText;
+	PlayShuffleAndDrawCardsAnimation(b, c, d, e, hl);
+	PlayShuffleAndDrawCardsAnimation_BothDuelistsResult result = {b, c};
+	return result;
+}
+/* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */

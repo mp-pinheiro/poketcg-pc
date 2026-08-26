@@ -998,6 +998,8 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel.h"
+
+#include "home/core.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8017,3 +8019,26 @@ void ProfessorOakEffect(void)
 	}
 }
 /* <<< factory ProfessorOakEffect */
+
+/* >>> factory Maintenance_ReturnToDeckAndDrawEffect */
+MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t first = hTempList;
+	RemoveCardFromHand(first);
+	ReturnCardToDeck(first);
+	uint8_t second = (uint8_t)gb_read8((uint16_t)(hTempList_ADDR + 1u));
+	RemoveCardFromHand(second);
+	ReturnCardToDeck(second);
+	ShuffleCardsInDeckResult shuffled = ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	DisplayDrawNCardsScreen(1u, shuffled.f, shuffled.b, shuffled.c, shuffled.d, shuffled.e, shuffled.hl);
+	DrawCardResult drawn = DrawCardFromDeck();
+	hTempCardIndex_ff98 = drawn.a;
+	AddCardToHand(drawn.a);
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) != 0u) {
+		WaitResult shown = DisplayPlayerDrawCardScreen();
+		return (MaintenanceReturnToDeckAndDrawEffectResult){turn.a, shown.f};
+	}
+	return (MaintenanceReturnToDeckAndDrawEffectResult){turn.a, turn.f};
+}
+/* <<< factory Maintenance_ReturnToDeckAndDrawEffect */

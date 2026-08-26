@@ -5463,6 +5463,14 @@ CASES["ProfessorOakEffect"] = [
 ]
 # <<< factory ProfessorOakEffect
 
+# >>> factory Maintenance_ReturnToDeckAndDrawEffect
+CONTRACT["Maintenance_ReturnToDeckAndDrawEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Maintenance_ReturnToDeckAndDrawEffect"] = [
+    {"wram": {0xFF97: b"\xC3", 0xC3F1: b"\x01", 0xC3BA: b"\x02", 0xC3EE: b"\x02", 0xC342: b"\x00\x01", 0xC300: b"\x20\x20", 0xC37E: b"\x00" * 60, 0xCABB: b"\x00"}, "read": {0xC3BA: 1, 0xC37E: 60, 0xC300: 2, 0xC3EE: 1, 0xC342: 1, 0xFF98: 1}, "keys": [0x00, 0x01], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC3", 0xC3F1: b"\x01", 0xC3BA: b"\x02", 0xC3EE: b"\x02", 0xC342: b"\x00\x01", 0xC300: b"\x20\x20", 0xC37E: b"\x00" * 60, 0xCABB: b"\x00"}, read={0xC3BA: 1, 0xC37E: 60, 0xC300: 2, 0xC3EE: 1, 0xC342: 1, 0xFF98: 1}, keys=[0x00, 0x01], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Maintenance_ReturnToDeckAndDrawEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7990,3 +7998,6 @@ MUTATIONS["FetchEffect"] = {"source_symbol": "FetchEffect", "before": "void Fetc
 # >>> factory-mutation ProfessorOakEffect
 MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "before": "\tuint8_t draw_count = 7u;", "after": "\tuint8_t draw_count = 6u;", "case_ids": ["ProfessorOakEffect-0", "ProfessorOakEffect-1"]}
 # <<< factory-mutation ProfessorOakEffect
+# >>> factory-mutation Maintenance_ReturnToDeckAndDrawEffect
+MUTATIONS["Maintenance_ReturnToDeckAndDrawEffect"] = {"source_symbol": "Maintenance_ReturnToDeckAndDrawEffect", "before": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = hTempList;", "after": "MaintenanceReturnToDeckAndDrawEffectResult Maintenance_ReturnToDeckAndDrawEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t first = (uint8_t)(hTempList + 1u);", "case_ids": ["Maintenance_ReturnToDeckAndDrawEffect-0", "Maintenance_ReturnToDeckAndDrawEffect-1"]}
+# <<< factory-mutation Maintenance_ReturnToDeckAndDrawEffect

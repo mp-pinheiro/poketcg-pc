@@ -126,4 +126,8 @@ typedef struct {
 
 TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void);
 /* <<< factory TryInitPrinterCommunications */
+/* >>> factory ShowPrinterIsNotConnected */
+typedef struct { uint8_t f; } ShowPrinterIsNotConnectedResult;
+ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory ShowPrinterIsNotConnected */
 #endif

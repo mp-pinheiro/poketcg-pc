@@ -4050,6 +4050,15 @@ static void adapt_ProfessorOakEffect(ProbeState *s)
 }
 /* <<< factory ProfessorOakEffect */
 
+/* >>> factory Maintenance_ReturnToDeckAndDrawEffect */
+static void adapt_Maintenance_ReturnToDeckAndDrawEffect(ProbeState *s)
+{
+	MaintenanceReturnToDeckAndDrawEffectResult r = Maintenance_ReturnToDeckAndDrawEffect(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Maintenance_ReturnToDeckAndDrawEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4541,5 +4550,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MewtwoEnergyAbsorption_PlayerSelectEffect", adapt_MewtwoEnergyAbsorption_PlayerSelectEffect },
 	{ "FetchEffect", adapt_FetchEffect },
 	{ "ProfessorOakEffect", adapt_ProfessorOakEffect },
+	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
 	{ NULL, NULL },
 };

@@ -69,6 +69,9 @@
 #define PRINTERPKT_NUL 0x0Fu
 #define PRINTER_STATUS_BUSY 0x01u
 #define PRINTER_STATUS_PRINTING 0x03u
+
+#include "home/printer.h"
+#define PrinterIsNotConnectedText 0x00d7u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -581,3 +584,12 @@ TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)
 	}
 }
 /* <<< factory TryInitPrinterCommunications */
+
+/* >>> factory ShowPrinterIsNotConnected */
+ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)
+{
+	a = 0x02u;
+	ShowPrinterConnectionErrorSceneResult result = ShowPrinterConnectionErrorScene(a, f, d, e, PrinterIsNotConnectedText);
+	return (ShowPrinterIsNotConnectedResult){result.f};
+}
+/* <<< factory ShowPrinterIsNotConnected */

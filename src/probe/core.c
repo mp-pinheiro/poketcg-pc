@@ -2526,6 +2526,15 @@ static void adapt_LookForEnergyNeededForAttackInHand(ProbeState *s)
 }
 /* <<< factory LookForEnergyNeededForAttackInHand */
 
+/* >>> factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
+static void adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists(ProbeState *s)
+{
+	PlayShuffleAndDrawCardsAnimation_BothDuelistsResult result = PlayShuffleAndDrawCardsAnimation_BothDuelists(s->b, s->c, s->d, s->e, s->hl);
+	s->b = result.b;
+	s->c = result.c;
+}
+/* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2828,5 +2837,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_ExecuteTrainerCardEffectCommands", adapt_OppAction_ExecuteTrainerCardEffectCommands },
 	{ "OppAction_UseMetronomeAttack", adapt_OppAction_UseMetronomeAttack },
 	{ "LookForEnergyNeededForAttackInHand", adapt_LookForEnergyNeededForAttackInHand },
+	{ "PlayShuffleAndDrawCardsAnimation_BothDuelists", adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists },
 	{ NULL, NULL },
 };

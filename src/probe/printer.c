@@ -169,6 +169,14 @@ static void adapt_TryInitPrinterCommunications(ProbeState *s)
 }
 /* <<< factory TryInitPrinterCommunications */
 
+/* >>> factory ShowPrinterIsNotConnected */
+static void adapt_ShowPrinterIsNotConnected(ProbeState *s)
+{
+	ShowPrinterIsNotConnectedResult result = ShowPrinterIsNotConnected(s->a, s->f, s->d, s->e, s->hl);
+	s->f = result.f;
+}
+/* <<< factory ShowPrinterIsNotConnected */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -188,5 +196,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "DrawBottomCardInfoInSRAMGfxBuffer0", adapt_DrawBottomCardInfoInSRAMGfxBuffer0 },
 	{ "ShowPrinterTransmitting", adapt_ShowPrinterTransmitting },
 	{ "TryInitPrinterCommunications", adapt_TryInitPrinterCommunications },
+	{ "ShowPrinterIsNotConnected", adapt_ShowPrinterIsNotConnected },
 	{ NULL, NULL },
 };

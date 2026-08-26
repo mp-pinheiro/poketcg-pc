@@ -3980,6 +3980,22 @@ CASES["LookForEnergyNeededForAttackInHand"] = [
 ]
 # <<< factory LookForEnergyNeededForAttackInHand
 
+# >>> factory PlayShuffleAndDrawCardsAnimation_BothDuelists
+CONTRACT["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"compare": ("b", "c"), "preserve": ()}
+CASES["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = [
+    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
+     "keys": 0x02, "wram": dict(PSDCA_SEED), "read": dict(PSDCA_READ),
+     "setup": PSDCA_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "keys": 0x02, "wram": dict(PSDCA_SEED), "read": dict(PSDCA_READ),
+     "setup": PSDCA_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
+     "keys": [0x00, 0x01], "wram": {**PSDCA_SEED, PSDCA_wDuelType: b"\x80"},
+     "read": dict(PSDCA_READ), "setup": PSDCA_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5567,3 +5583,6 @@ MUTATIONS["OppAction_UseMetronomeAttack"] = {"source_symbol": "OppAction_UseMetr
 # >>> factory-mutation LookForEnergyNeededForAttackInHand
 MUTATIONS["LookForEnergyNeededForAttackInHand"] = {"source_symbol": "LookForEnergyNeededForAttackInHand", "before": "LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)\n{\n\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t total = (uint8_t)(energy.b + energy.c);", "after": "LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)\n{\n\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t total = 0xFFu;", "case_ids": ["LookForEnergyNeededForAttackInHand-0", "LookForEnergyNeededForAttackInHand-1"]}
 # <<< factory-mutation LookForEnergyNeededForAttackInHand
+# >>> factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists
+MUTATIONS["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_BothDuelists", "before": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = DUEL_ANIM_BOTH_SHUFFLE;", "after": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = 0x54u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_BothDuelists-0", "PlayShuffleAndDrawCardsAnimation_BothDuelists-1"]}
+# <<< factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists

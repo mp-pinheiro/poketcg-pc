@@ -289,6 +289,22 @@ CASES["TryInitPrinterCommunications"] = [
 ]
 # <<< factory TryInitPrinterCommunications
 
+# >>> factory ShowPrinterIsNotConnected
+CONTRACT["ShowPrinterIsNotConnected"] = {"compare": ("f",), "preserve": ()}
+CASES["ShowPrinterIsNotConnected"] = [
+    {"keys": [0, 1],
+     "wram": {0xCABB: b"\x00"},
+     "setup": [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "read": {0xCE43: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0, 1],
+         wram={0xCABB: b"\x00"},
+         setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+         read={0xCE43: 2},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ShowPrinterIsNotConnected
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -386,3 +402,6 @@ MUTATIONS["TryInitPrinterCommunications"] = {
     "case_ids": ["TryInitPrinterCommunications-0", "TryInitPrinterCommunications-1"],
 }
 # <<< factory-mutation TryInitPrinterCommunications
+# >>> factory-mutation ShowPrinterIsNotConnected
+MUTATIONS["ShowPrinterIsNotConnected"] = {"source_symbol": "ShowPrinterIsNotConnected", "before": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x02u;", "after": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x03u;", "case_ids": ["ShowPrinterIsNotConnected-0", "ShowPrinterIsNotConnected-1"]}
+# <<< factory-mutation ShowPrinterIsNotConnected
