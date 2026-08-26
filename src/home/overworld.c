@@ -159,6 +159,8 @@
 #define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
 
 #include "home/status.h"
+
+#include "home/process_text.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -910,3 +912,11 @@ void Func_c251(void)
 	hffb0 = saved_hffb0;
 }
 /* <<< factory Func_c251 */
+
+/* >>> factory Func_c241 */
+void Func_c241(void)
+{
+	(void)SetupText(0x30u, 0x7Fu);
+	Func_c258();
+}
+/* <<< factory Func_c241 */

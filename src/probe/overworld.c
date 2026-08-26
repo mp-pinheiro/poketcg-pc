@@ -455,6 +455,14 @@ static void adapt_Func_c251(ProbeState *s)
 }
 /* <<< factory Func_c251 */
 
+/* >>> factory Func_c241 */
+static void adapt_Func_c241(ProbeState *s)
+{
+	Func_c241();
+	s->f = 0xA0u;
+}
+/* <<< factory Func_c241 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -511,5 +519,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c258", adapt_Func_c258 },
 	{ "PauseMenu_Status", adapt_PauseMenu_Status },
 	{ "Func_c251", adapt_Func_c251 },
+	{ "Func_c241", adapt_Func_c241 },
 	{ NULL, NULL },
 };

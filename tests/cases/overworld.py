@@ -736,6 +736,14 @@ CASES["Func_c251"] = [
 ]
 # <<< factory Func_c251
 
+# >>> factory Func_c241
+CONTRACT["Func_c241"] = {"compare": ("f",), "preserve": ()}
+CASES["Func_c241"] = [
+    {"f": 0x00, "wram": {0xFFB0: b"\x00", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xCD04: 1, 0xFFA8: 1, 0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xFFB0: b"\xEE", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xCD04: 1, 0xFFA8: 1, 0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_c241
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -980,3 +988,6 @@ MUTATIONS["Func_c258"] = {"source_symbol": "Func_c258", "before": "\tuint8_t sav
 # >>> factory-mutation Func_c251
 MUTATIONS["Func_c251"] = {"source_symbol": "Func_c251", "before": "/* >>> factory Func_c251 */\nvoid Func_c251(void)\n{\n\tuint8_t saved_hffb0 = hffb0;\n\thffb0 = 1u;", "after": "/* >>> factory Func_c251 */\nvoid Func_c251(void)\n{\n\tuint8_t saved_hffb0 = hffb0;\n\thffb0 = 2u;", "case_ids": ["Func_c251-0", "Func_c251-1", "Func_c251-2"]}
 # <<< factory-mutation Func_c251
+# >>> factory-mutation Func_c241
+MUTATIONS["Func_c241"] = {"source_symbol": "Func_c241", "before": "void Func_c241(void)\n{\n\t(void)SetupText(0x30u, 0x7Fu);", "after": "void Func_c241(void)\n{\n\t(void)SetupText(0x31u, 0x7Fu);", "case_ids": ["Func_c241-0", "Func_c241-1"]}
+# <<< factory-mutation Func_c241
