@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_JumpIfNPCLoaded",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_JumpIfNPCLoaded\", \"registers\": {\"a\": 18, \"b\": 18, \"c\": 4, \"d\": 52, \"e\": 86, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"1234\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_JumpIfNPCLoaded\", \"mismatches\": {\"a\": [18, 64], \"bus\": {\"address\": 54186, \"reference\": \"1234\", \"native\": \"4034\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[54186, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_JumpIfNPCLoaded\", \"registers\": {\"a\": 18, \"b\": 18, \"c\": 4, \"d\": 52, \"e\": 86, \"f\": 0, \"hl\": 50432, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54186\": \"1234\"}}, \"status\": \"PASS\"}\n"
+}

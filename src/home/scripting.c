@@ -235,6 +235,9 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/scripting.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "generated/wram.h"
+#include "home/map.h"
 /* <<< factory statics */
 
 
@@ -1668,3 +1671,21 @@ ScriptCommand_AskQuestionJumpResult ScriptCommand_AskQuestionJumpDefaultYes(uint
 	return ScriptCommand_AskQuestionJump(b, c);
 }
 /* <<< factory ScriptCommand_AskQuestionJumpDefaultYes */
+
+/* >>> factory ScriptCommand_JumpIfNPCLoaded */
+ScriptCommand_JumpIfNPCLoadedResult ScriptCommand_JumpIfNPCLoaded(uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_loaded = wLoadedNPCTempIndex;
+	uint8_t saved_temp = wTempNPC;
+	wTempNPC = c;
+	NPCSearchResult search = FindLoadedNPC();
+	ScriptCommand_JumpIfEventTrueResult result;
+	if (search.f & 0x10u)
+		result = script_jump_event_fail(b, hl);
+	else
+		result = script_jump_event_pass(hl);
+	wTempNPC = saved_temp;
+	wLoadedNPCTempIndex = saved_loaded;
+	return (ScriptCommand_JumpIfNPCLoadedResult){saved_loaded, f, result.b, result.c, d, e, result.hl};
+}
+/* <<< factory ScriptCommand_JumpIfNPCLoaded */

@@ -1018,6 +1018,20 @@ static void adapt_ScriptCommand_AskQuestionJumpDefaultYes(ProbeState *s)
 }
 /* <<< factory ScriptCommand_AskQuestionJumpDefaultYes */
 
+/* >>> factory ScriptCommand_JumpIfNPCLoaded */
+static void adapt_ScriptCommand_JumpIfNPCLoaded(ProbeState *s)
+{
+	ScriptCommand_JumpIfNPCLoadedResult result = ScriptCommand_JumpIfNPCLoaded(s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory ScriptCommand_JumpIfNPCLoaded */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
@@ -1118,5 +1132,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_StartChallengeHallDuel", adapt_ScriptCommand_StartChallengeHallDuel },
 	{ "ScriptCommand_AskQuestionJump", adapt_ScriptCommand_AskQuestionJump },
 	{ "ScriptCommand_AskQuestionJumpDefaultYes", adapt_ScriptCommand_AskQuestionJumpDefaultYes },
+	{ "ScriptCommand_JumpIfNPCLoaded", adapt_ScriptCommand_JumpIfNPCLoaded },
 	{ NULL, NULL },
 };

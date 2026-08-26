@@ -152,6 +152,9 @@ wScriptPointer = 0xD413
 wScriptControlByte = 0xD415
 def menu_state(default_yes=0):
     return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
+
+wLoadedNPCTempIndex = 0xD3AA
+wTempNPC = 0xD3AB
 # <<< factory-cases-statics
 
 
@@ -1205,6 +1208,15 @@ CASES["ScriptCommand_JumpIfEventFalse"] = [
 ]
 # <<< factory ScriptCommand_JumpIfEventFalse
 
+# >>> factory ScriptCommand_JumpIfNPCLoaded
+CONTRACT["ScriptCommand_JumpIfNPCLoaded"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfNPCLoaded"] = [
+    {"f": 0x00, "b": 0x12, "c": 0x01, "d": 0x34, "e": 0x56, "hl": 0xC500, "wram": {0xD3AA: b"\x12", 0xD3AB: b"\x34"}, "read": {0xD3AA: 1, 0xD3AB: 1}},
+    {"f": 0x40, "b": 0x00, "c": 0x02, "d": 0xAA, "e": 0xBB, "hl": 0xC520, "wram": {0xD3AA: b"\x00", 0xD3AB: b"\xFF"}, "read": {0xD3AA: 1, 0xD3AB: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD3AA: b"\x77", 0xD3AB: b"\x88"}, "read": {0xD3AA: 1, 0xD3AB: 1}},
+]
+# <<< factory ScriptCommand_JumpIfNPCLoaded
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1768,3 +1780,6 @@ MUTATIONS["ScriptCommand_AskQuestionJump"] = {"source_symbol": "ScriptCommand_As
 # >>> factory-mutation ScriptCommand_AskQuestionJumpDefaultYes
 MUTATIONS["ScriptCommand_AskQuestionJumpDefaultYes"] = {"source_symbol": "ScriptCommand_AskQuestionJumpDefaultYes", "before": "\twDefaultYesOrNo = 1u;", "after": "\twDefaultYesOrNo = 0u;", "case_ids": ["ScriptCommand_AskQuestionJumpDefaultYes-0", "ScriptCommand_AskQuestionJumpDefaultYes-1"]}
 # <<< factory-mutation ScriptCommand_AskQuestionJumpDefaultYes
+# >>> factory-mutation ScriptCommand_JumpIfNPCLoaded
+MUTATIONS["ScriptCommand_JumpIfNPCLoaded"] = {"source_symbol": "ScriptCommand_JumpIfNPCLoaded", "before": "\tuint8_t saved_loaded = wLoadedNPCTempIndex;", "after": "\tuint8_t saved_loaded = 0x40u;", "case_ids": ["ScriptCommand_JumpIfNPCLoaded-0", "ScriptCommand_JumpIfNPCLoaded-1", "ScriptCommand_JumpIfNPCLoaded-2"]}
+# <<< factory-mutation ScriptCommand_JumpIfNPCLoaded
