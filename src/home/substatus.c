@@ -52,6 +52,11 @@
 #define NoDamageOrEffectDueToNShieldText 0x010bu
 #define NoDamageOrEffectDueToTransparencyText 0x010cu
 #define TransparencyCheckText 0x00f6u
+
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/substatus.h"
+#define POKEMON_POWER 0x04u
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -707,3 +712,30 @@ HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
 	return (HandleNShieldAndTransparencyResult){card, card ? 0u : 0x80u, (uint8_t)(de >> 8), e, arena.hl};
 }
 /* <<< factory HandleNShieldAndTransparency */
+
+/* >>> factory HandleTransparency */
+HandleTransparencyResult HandleTransparency(uint16_t hl)
+{
+	uint8_t card = wTempNonTurnDuelistCardID;
+	if (card != HAUNTER_LV17)
+		return (HandleTransparencyResult){card, card ? 0u : 0x80u, hl};
+
+	uint8_t category = wLoadedAttackCategory;
+	if (category == POKEMON_POWER) {
+		return (HandleTransparencyResult){category, category ? 0u : 0x80u, hl};
+	}
+
+	uint8_t location = wTempPlayAreaLocation_cceb;
+	PkmnPowerIncapableResult incapable = CheckIsIncapableOfUsingPkmnPower(location);
+	if (incapable.f & 0x10u)
+		return (HandleTransparencyResult){location, location ? 0u : 0x80u, incapable.hl};
+
+	wDuelDisplayedScreen = 0u;
+	TossCoinRoutineResult toss = TossCoin(TransparencyCheckText, hl);
+	if (!(toss.f & 0x10u))
+		return (HandleTransparencyResult){toss.a, toss.f, toss.hl};
+
+	wNoDamageOrEffect = NO_DAMAGE_OR_EFFECT_TRANSPARENCY;
+	return (HandleTransparencyResult){NO_DAMAGE_OR_EFFECT_TRANSPARENCY, 0x10u, NoDamageOrEffectDueToTransparencyText};
+}
+/* <<< factory HandleTransparency */

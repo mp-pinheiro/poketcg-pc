@@ -1027,4 +1027,8 @@ typedef struct {
 
 TossCoinResult _TossCoin(uint8_t a);
 /* <<< factory _TossCoin */
+/* >>> factory AttemptRetreat */
+typedef struct { uint8_t a; uint8_t f; } AttemptRetreatResult;
+AttemptRetreatResult AttemptRetreat(void);
+/* <<< factory AttemptRetreat */
 #endif

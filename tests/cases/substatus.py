@@ -470,6 +470,14 @@ DB_OPP_ARENA_HP = 0xC3C8
 
 wDuelDisplayedScreen = 0xCAC2
 wNoDamageOrEffect = 0xCCC7
+
+wDuelDisplayedScreen = 0xCAC2
+wLoadedAttackCategory = 0xCCB1
+wNoDamageOrEffect = 0xCCC7
+wTempNonTurnDuelistCardID = 0xCCC4
+wTempPlayAreaLocation_cceb = 0xCCEB
+POKEMON_POWER = 0x04
+HAUNTER_LV17 = 0x96
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -518,6 +526,15 @@ CASES["HandleNShieldAndTransparency"] = [
 ]
 # <<< factory HandleNShieldAndTransparency
 
+# >>> factory HandleTransparency
+CONTRACT["HandleTransparency"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["HandleTransparency"] = [
+    {"wram": {wTempNonTurnDuelistCardID: b"\x00"}, "hl": 0x4567},
+    {"wram": {wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, "hl": 0xC100},
+    dict(POISON, wram={wTempNonTurnDuelistCardID: b"\x96", wLoadedAttackCategory: b"\x04"}, hl=0xC200)
+]
+# <<< factory HandleTransparency
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -541,3 +558,6 @@ MUTATIONS["HandleDestinyBondSubstatus"] = {"source_symbol": "HandleDestinyBondSu
 # >>> factory-mutation HandleNShieldAndTransparency
 MUTATIONS["HandleNShieldAndTransparency"] = {"source_symbol": "HandleNShieldAndTransparency", "before": "\t\t\tgb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);", "after": "\t\t\tgb_write8(wNoDamageOrEffect_ADDR, 0x40u);", "case_ids": ["HandleNShieldAndTransparency-1"]}
 # <<< factory-mutation HandleNShieldAndTransparency
+# >>> factory-mutation HandleTransparency
+MUTATIONS["HandleTransparency"] = {"source_symbol": "HandleTransparency", "before": "	if (category == POKEMON_POWER) {\n		return (HandleTransparencyResult){category, category ? 0u : 0x80u, hl};", "after": "	if (category == POKEMON_POWER) {\n		return (HandleTransparencyResult){0x05u, category ? 0u : 0x80u, hl};", "case_ids": ["HandleTransparency-1", "HandleTransparency-2"]}
+# <<< factory-mutation HandleTransparency

@@ -172,4 +172,12 @@ typedef struct {
 } HandleNShieldAndTransparencyResult;
 HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de);
 /* <<< factory HandleNShieldAndTransparency */
+/* >>> factory HandleTransparency */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} HandleTransparencyResult;
+HandleTransparencyResult HandleTransparency(uint16_t hl);
+/* <<< factory HandleTransparency */
 #endif

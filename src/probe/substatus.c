@@ -206,6 +206,16 @@ static void adapt_HandleNShieldAndTransparency(ProbeState *s)
 }
 /* <<< factory HandleNShieldAndTransparency */
 
+/* >>> factory HandleTransparency */
+static void adapt_HandleTransparency(ProbeState *s)
+{
+	HandleTransparencyResult result = HandleTransparency(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory HandleTransparency */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -235,5 +245,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "HandleStrikesBack_AgainstResidualAttack", adapt_HandleStrikesBack_AgainstResidualAttack },
 	{ "HandleDestinyBondSubstatus", adapt_HandleDestinyBondSubstatus },
 	{ "HandleNShieldAndTransparency", adapt_HandleNShieldAndTransparency },
+	{ "HandleTransparency", adapt_HandleTransparency },
 	{ NULL, NULL },
 };

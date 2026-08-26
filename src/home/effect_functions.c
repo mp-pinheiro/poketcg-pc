@@ -7235,3 +7235,11 @@ TossCoinATimes_BankBResult TossCoinATimes_BankB(uint8_t a, uint8_t f, uint8_t b,
 	return (TossCoinATimes_BankBResult){result.a, result.f, result.hl};
 }
 /* <<< factory TossCoinATimes_BankB */
+
+/* >>> factory Serial_TossZeroCoins */
+SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	return Serial_TossCoinATimes(0x00u, 0x80u, b, c, d, e, hl);
+}
+/* <<< factory Serial_TossZeroCoins */

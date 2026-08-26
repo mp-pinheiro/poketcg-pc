@@ -1258,6 +1258,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 		frames = (uint8_t)(frames - 1u);
 	} while (frames != 0u);
 }
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/coin_toss.h"
+#define ConfusionCheckRetreatText 0x00f8u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6773,3 +6779,20 @@ TossCoinResult _TossCoin(uint8_t a)
 	return (TossCoinResult){heads, heads ? FLAG_C_7847 : FLAG_Z_7847};
 }
 /* <<< factory _TossCoin */
+
+/* >>> factory AttemptRetreat */
+AttemptRetreatResult AttemptRetreat(void)
+{
+	DiscardRetreatCostCardsResult discard = DiscardRetreatCostCards();
+	if ((hTemp_ffa0 & CNF_SLP_PRZ) == CONFUSED) {
+		TossCoinRoutineResult toss = TossCoin(ConfusionCheckRetreatText, discard.hl);
+		if ((toss.f & 0x10u) == 0u) {
+			wConfusionRetreatCheckWasUnsuccessful = 1u;
+			return (AttemptRetreatResult){1u, 0x10u};
+		}
+	}
+	SwapArenaWithBenchPokemon(hTempPlayAreaLocation_ffa1);
+	wConfusionRetreatCheckWasUnsuccessful = 0u;
+	return (AttemptRetreatResult){0u, 0x80u};
+}
+/* <<< factory AttemptRetreat */

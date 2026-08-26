@@ -2300,6 +2300,15 @@ static void adapt__TossCoin(ProbeState *s)
 }
 /* <<< factory _TossCoin */
 
+/* >>> factory AttemptRetreat */
+static void adapt_AttemptRetreat(ProbeState *s)
+{
+	AttemptRetreatResult result = AttemptRetreat();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory AttemptRetreat */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2575,5 +2584,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PracticeDuel_PrintTurnInstructions", adapt_PracticeDuel_PrintTurnInstructions },
 	{ "Func_5a81", adapt_Func_5a81 },
 	{ "_TossCoin", adapt__TossCoin },
+	{ "AttemptRetreat", adapt_AttemptRetreat },
 	{ NULL, NULL },
 };

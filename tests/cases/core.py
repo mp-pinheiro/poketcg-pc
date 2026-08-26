@@ -3551,6 +3551,14 @@ CASES["_TossCoin"] = [
 ]
 # <<< factory _TossCoin
 
+# >>> factory AttemptRetreat
+CONTRACT["AttemptRetreat"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AttemptRetreat"] = [
+    {"wram": {0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\xFF", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC200: b"\x10", 0xC201: b"\x11", 0xC2F0: b"\x05"}, "read": {0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFFA2: b"\xFF", 0xC2BB: b"\x01", 0xC2BC: b"\x02", 0xC200: b"\x10", 0xC201: b"\x11", 0xC2F0: b"\x05"}, read={0xCC0C: 1, 0xC2BB: 1, 0xC2BC: 1, 0xC200: 1, 0xC201: 1, 0xC2F0: 1}),
+]
+# <<< factory AttemptRetreat
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5020,3 +5028,11 @@ MUTATIONS["_TossCoin"] = {
     "case_ids": ["_TossCoin-0", "_TossCoin-1"],
 }
 # <<< factory-mutation _TossCoin
+# >>> factory-mutation AttemptRetreat
+MUTATIONS["AttemptRetreat"] = {
+    "source_symbol": "AttemptRetreat",
+    "before": "return (AttemptRetreatResult){0u, 0x80u};",
+    "after": "return (AttemptRetreatResult){1u, 0x80u};",
+    "case_ids": ["AttemptRetreat-0", "AttemptRetreat-1"],
+}
+# <<< factory-mutation AttemptRetreat
