@@ -230,6 +230,33 @@ Required coverage per routine:
 call frame; the oracle raises if a case writes into it. Use `$C100-$CA00` for
 buffers, or the real pret WRAM symbol when the routine has one.
 
+That window is not free real estate: 24 live symbols resolve inside it
+(`wCurDeckCards` `$CF17`, `wCurDeckName` `$CFB9`, `wMaxNumCardsAllowed` `$CFD1`,
+`wNamingScreenBufferLength` `$CFFF`, ...), so every routine that touches deck or
+naming state is currently unobservable and ten `.factory/blocked.toml` stanzas
+cite it. Relocating the frame was measured on 2026-08-26 and is viable but not
+free, so record what it costs before trying again:
+
+- Only the PyBoy backend parks a frame there. The GBRT runner enters with
+  `ctx->sp = 0xfffe` and sentinel `0xfea0` (`tools/oracle/gbref/runner.c:589`),
+  both outside WRAM, so `state_exclusions.toml`'s `GBRT/native call-frame
+  scratch` label is inaccurate — moving PyBoy's frame alone does free the window.
+- The destination is already known: `src/wram.asm` leaves a bare `ds $6e4`
+  between `wd698` (`$D698`) and the WRAM Audio section (`$DD80`), so
+  `$D69C-$DD7F` carries no game symbol, and no existing case references
+  `$DC00-$DCFF`.
+- What blocks it is wide-sweep WRAM comparisons tuned to the *old* hole. Cases
+  that assert "nothing else in WRAM changed" read `$C100+3584` and `$D000+4096`
+  — every byte except `$CF00-$CFFF`. Moving the frame to `$DC00` landed it
+  inside their second span and reddened seven registered routines:
+  `DetectConsole`, `FlamesOfRage_AIEffect`, `ApplyRandomCountToNPCAnim`,
+  `Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`,
+  `UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
+- So the migration is one atomic change: move `RESERVED` in both
+  `tools/oracle/pyboy_oracle.py` and `tools/factory/verify.py`, move the
+  `state_exclusions.toml` region, and re-cut those seven routines' sweep spans
+  around the new window in the same commit.
+
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
 another documented dissolved execution context). Otherwise run the case against
