@@ -286,7 +286,9 @@ class Oracle:
 
         self._hit = None
         if stop_pc is None:
-            self._arm(SENTINEL)
+            # $D000-$DFFF is CGB WRAM banked memory. The synthesized frame is
+            # placed in bank 1, so its sentinel hook must name bank 1 as well.
+            self._arm(SENTINEL, 1)
         else:
             # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
             # hooked against the routine's own bank.
