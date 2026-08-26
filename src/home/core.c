@@ -4403,7 +4403,14 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 
 	a = wTempLoadedAttackEnergyNeededAmount;
 	if (a == 0u)
-		return (CheckEnergyNeededForAttackResult){0u, 0x80u, b, c, d, e, hl};
+		/* The `ret z` "enough energy" exit. Nothing between the .loop above and
+		 * this ret touches de, so the real ROM still holds the loop pointer,
+		 * wLoadedAttackEnergyCost + 3 = $CCA9 -- NOT the d/e set at entry.
+		 * Measured against the reference 2026-08-26; the landed body returned the
+		 * stale entry values here, which no existing case observed because they
+		 * all leave through the two not-enough exits below. */
+		return (CheckEnergyNeededForAttackResult){0u, 0x80u, b, c,
+			(uint8_t)(de >> 8), (uint8_t)de, hl};
 
 	uint8_t colorless_needed2 = (uint8_t)((uint8_t)(~(uint8_t)0u) + 1u);
 	uint8_t final_f = (uint8_t)(0x10u | (colorless_needed2 == 0u ? 0x80u : 0u));
