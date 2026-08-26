@@ -598,13 +598,16 @@ def stage_evidence_filter(state: dict[str, Any]) -> str:
         "no-primary evidence was not operationally blocked",
         unsupported,
     )
+    blockers = try_one.packet_mod.report_module().load_operational_blockers()
+    _require(bool(blockers), "blocked.toml has no operational blockers")
+    blocked_name = sorted(blockers)[0]
     try:
-        try_one.resolve("_TossCoin")
+        try_one._check_operational_blocker(blocked_name)
     except try_one.OperationalBlocker:
         pass
     else:
-        raise StageFailure("_TossCoin was not excluded by blocked.toml")
-    return "GBRT saw primary indices 0,2; no-primary was blocked"
+        raise StageFailure(f"{blocked_name} was not excluded by blocked.toml")
+    return f"GBRT saw primary indices 0,2; no-primary and {blocked_name} were blocked"
 
 
 def stage_retry_fairness(state: dict[str, Any]) -> str:
