@@ -4574,6 +4574,18 @@ CASES["CanArenaCardUseNonResidualAttack"] = [
 # <<< factory CanArenaCardUseNonResidualAttack
 
 # Keep schema-2 inventory after appended routine cases.
+
+# >>> factory PrintDeckAndHandIconsAndNumberOfCards
+_PRINT_DECK_COUNTS = {0xC2EE: b"\x02", 0xC2BA: b"\x0A", 0xC3EE: b"\x04", 0xC3BA: b"\x08", 0xCBE9: b"\x03"}
+_PRINT_DECK_VRAM = {0x9842: 0x2A, 0x9927: 0x2B}
+CONTRACT["PrintDeckAndHandIconsAndNumberOfCards"] = {"compare": (), "preserve": ()}
+CASES["PrintDeckAndHandIconsAndNumberOfCards"] = [
+    {"wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00"}, "vread": {0: dict(_PRINT_DECK_VRAM)}},
+    {"wram": {**_PRINT_DECK_COUNTS, 0xCAB4: b"\x02"}, "vread": {0: dict(_PRINT_DECK_VRAM), 1: dict(_PRINT_DECK_VRAM)}},
+    dict(POISON, wram={**_PRINT_DECK_COUNTS, 0xCAB4: b"\x00"}, vread={0: dict(_PRINT_DECK_VRAM)}),
+]
+# <<< factory PrintDeckAndHandIconsAndNumberOfCards
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # <<< factory-mutation PrintSortNumberInCardList_CallFromPointer# >>> factory-mutation PracticeDuel_VerifyInitialPlay
 MUTATIONS["PracticeDuel_VerifyInitialPlay"] = {"source_symbol": "PracticeDuel_VerifyInitialPlay", "before": "count == 2u", "after": "count == 3u", "case_ids": ["PracticeDuel_VerifyInitialPlay-0"]}
@@ -5350,3 +5362,6 @@ MUTATIONS["CanArenaCardUseNonResidualAttack"] = {"source_symbol": "CanArenaCardU
 # >>> factory-mutation DisplayPlaceInitialPokemonCardsScreen
 MUTATIONS["DisplayPlaceInitialPokemonCardsScreen"] = {"source_symbol": "DisplayPlaceInitialPokemonCardsScreen", "before": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(hl);", "after": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(PlayCheck1Text);", "case_ids": ["DisplayPlaceInitialPokemonCardsScreen-0", "DisplayPlaceInitialPokemonCardsScreen-1", "DisplayPlaceInitialPokemonCardsScreen-2"]}
 # <<< factory-mutation DisplayPlaceInitialPokemonCardsScreen
+# >>> factory-mutation PrintDeckAndHandIconsAndNumberOfCards
+MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {'source_symbol': 'PrintDeckAndHandIconsAndNumberOfCards', 'before': '\t\t0x08u, 0x02u, 0xF4u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,', 'after': '\t\t0x08u, 0x02u, 0xF3u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,', 'case_ids': ['PrintDeckAndHandIconsAndNumberOfCards-0', 'PrintDeckAndHandIconsAndNumberOfCards-1', 'PrintDeckAndHandIconsAndNumberOfCards-2']}
+# <<< factory-mutation PrintDeckAndHandIconsAndNumberOfCards
