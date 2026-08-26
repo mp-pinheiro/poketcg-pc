@@ -233,4 +233,7 @@ void DrawCardTypeIcons(void);
 /* >>> factory PrintPlayersCardsHeaderInfo */
 void PrintPlayersCardsHeaderInfo(void);
 /* <<< factory PrintPlayersCardsHeaderInfo */
+/* >>> factory PrintConfirmationCardList */
+void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl);
+/* <<< factory PrintConfirmationCardList */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -253,6 +253,16 @@ CASES["AnimationCommand_AnimScreen"] = [
 ]
 # <<< factory AnimationCommand_AnimScreen
 
+# >>> factory PlayAttackAnimationCommands
+CONTRACT["PlayAttackAnimationCommands"] = {"compare": ("b", "c", "d", "e"), "preserve": ("b", "c")}
+CASES["PlayAttackAnimationCommands"] = [
+    {"d": 0xC1, "e": 0x22, "wram": {0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
+    dict(POISON, wram={0xCCB8: b"\x00", 0xD4AE: b"\xA1", 0xD4B0: b"\xB2", 0xD4B3: b"\xC3"}, read={0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}),
+    {"d": 0xC1, "e": 0x24, "wram": {0xCCB8: b"\x8F", 0xFF80: b"\x06"}, "read": {0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}},
+    dict(POISON, wram={0xCCB8: b"\x8F", 0xFF80: b"\x06"}, read={0xD4AE: 1, 0xD4B0: 1, 0xD4B3: 1}),
+]
+# <<< factory PlayAttackAnimationCommands
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -338,3 +348,6 @@ MUTATIONS["AnimationCommand_AnimPlayArea"] = {"source_symbol": "AnimationCommand
 # >>> factory-mutation AnimationCommand_AnimScreen
 MUTATIONS["AnimationCommand_AnimScreen"] = {"source_symbol": "AnimationCommand_AnimScreen", "before": "\tgb_write8(wDuelAnimSetScreen_ADDR, screen);", "after": "\tgb_write8(wDuelAnimSetScreen_ADDR, (uint8_t)(screen + 1u));", "case_ids": ["AnimationCommand_AnimScreen-0", "AnimationCommand_AnimScreen-1", "AnimationCommand_AnimScreen-2"]}
 # <<< factory-mutation AnimationCommand_AnimScreen
+# >>> factory-mutation PlayAttackAnimationCommands
+MUTATIONS["PlayAttackAnimationCommands"] = {"source_symbol": "PlayAttackAnimationCommands", "before": "\t\treturn (PlayAttackAnimationCommands_NextCommandResult){d, e};", "after": "\t\treturn (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(d + 1u), e};", "case_ids": ["PlayAttackAnimationCommands-0", "PlayAttackAnimationCommands-1"]}
+# <<< factory-mutation PlayAttackAnimationCommands

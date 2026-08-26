@@ -7499,3 +7499,14 @@ void Twineedle_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory Twineedle_MultiplierEffect */
+
+/* >>> factory DragonairSlam_MultiplierEffect */
+void DragonairSlam_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory DragonairSlam_MultiplierEffect */

@@ -73,6 +73,12 @@
 #define DUEL_MAIN_SCENE 0x01u
 
 #include "home/duel_menus.h"
+
+#include "home/script.h"
+#define BANK_POINTER_TABLE_ATTACK_ANIMATION 6u
+#define POINTER_TABLE_ATTACK_ANIMATION 0x51A4u
+#define DUEL_ANIM_SET_SCREEN 0x96u
+#define TRUE 0x01u
 /* <<< factory statics */
 
 
@@ -419,3 +425,31 @@ void SetScreenForDuelAnimation(uint16_t hl)
 	(void)DrawWideTextBox();
 }
 /* <<< factory SetScreenForDuelAnimation */
+
+/* >>> factory PlayAttackAnimationCommands */
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t d, uint8_t e)
+{
+	(void)a;
+	uint8_t loaded_animation = wLoadedAttackAnimation;
+	if (loaded_animation == 0u)
+		return (PlayAttackAnimationCommands_NextCommandResult){d, e};
+
+	uint16_t table_address = (uint16_t)(POINTER_TABLE_ATTACK_ANIMATION
+		+ (uint16_t)loaded_animation * 2u);
+	const uint8_t *entry = rom_ptr(BANK_POINTER_TABLE_ATTACK_ANIMATION, table_address);
+	uint16_t de = (uint16_t)(entry[0] | (uint16_t)(entry[1] << 8));
+
+	if (wAttackAnimationIsPlaying == 0u) {
+		wAttackAnimationIsPlaying = TRUE;
+		ResetAnimationQueue();
+		wDuelAnimationScreen = DUEL_ANIM_SCREEN_MAIN_SCENE;
+		wDuelAnimSetScreen = SET_ANIM_SCREEN_MAIN;
+		wDuelAnimLocationParam = 0u;
+		if (gb_read8(de) != ANIMCMD_SET_SCREEN)
+			(void)PlayDuelAnimation(DUEL_ANIM_SET_SCREEN);
+	}
+
+	return PlayAttackAnimationCommands_NextCommand(0u,
+		(uint8_t)(de >> 8), (uint8_t)de);
+}
+/* <<< factory PlayAttackAnimationCommands */

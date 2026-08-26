@@ -3858,6 +3858,14 @@ static void adapt_Twineedle_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory Twineedle_MultiplierEffect */
 
+/* >>> factory DragonairSlam_MultiplierEffect */
+static void adapt_DragonairSlam_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	DragonairSlam_MultiplierEffect();
+}
+/* <<< factory DragonairSlam_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4327,5 +4335,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "JynxDoubleslap_MultiplierEffect", adapt_JynxDoubleslap_MultiplierEffect },
 	{ "PoliwhirlDoubleslap_MultiplierEffect", adapt_PoliwhirlDoubleslap_MultiplierEffect },
 	{ "Twineedle_MultiplierEffect", adapt_Twineedle_MultiplierEffect },
+	{ "DragonairSlam_MultiplierEffect", adapt_DragonairSlam_MultiplierEffect },
 	{ NULL, NULL },
 };

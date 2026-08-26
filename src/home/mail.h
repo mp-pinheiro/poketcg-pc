@@ -47,4 +47,8 @@ PrintPCPackNameResult PrintPCPackName(uint8_t a);
 /* >>> factory PrintObtainedPCPacks */
 void PrintObtainedPCPacks(void);
 /* <<< factory PrintObtainedPCPacks */
+/* >>> factory BlinkUnopenedPCPacks */
+/* >>> factory BlinkUnopenedPCPacks */
+void BlinkUnopenedPCPacks(void);
+/* <<< factory BlinkUnopenedPCPacks */
 #endif

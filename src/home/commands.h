@@ -80,4 +80,7 @@ void UpdateMainSceneHUD(void);
 /* >>> factory SetScreenForDuelAnimation */
 void SetScreenForDuelAnimation(uint16_t hl);
 /* <<< factory SetScreenForDuelAnimation */
+/* >>> factory PlayAttackAnimationCommands */
+PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands(uint8_t a, uint8_t d, uint8_t e);
+/* <<< factory PlayAttackAnimationCommands */
 #endif

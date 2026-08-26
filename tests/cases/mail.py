@@ -146,6 +146,17 @@ CASES["PrintObtainedPCPacks"] = [
 ]
 # <<< factory PrintObtainedPCPacks
 
+# >>> factory BlinkUnopenedPCPacks
+CONTRACT["BlinkUnopenedPCPacks"] = {"compare": (), "preserve": ()}
+CASES["BlinkUnopenedPCPacks"] = [
+    {"wram": {wPCPacks: bytes(15), wCursorBlinkTimer: b"\x00"}},
+    {"wram": {wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    {"wram": {wPCPacks: bytes(14) + b"\x80", wCursorBlinkTimer: b"\x0c", 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994e: 1}}},
+    {"wram": {wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x04"}},
+    dict(POISON, wram={wPCPacks: b"\x80" + bytes(14), wCursorBlinkTimer: b"\x00", 0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9842: 6}}),
+]
+# <<< factory BlinkUnopenedPCPacks
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -235,3 +246,6 @@ MUTATIONS["PrintPCPackName"] = {"source_symbol": "PrintPCPackName", "before": "P
 # >>> factory-mutation PrintObtainedPCPacks
 MUTATIONS["PrintObtainedPCPacks"] = {"source_symbol": "PrintObtainedPCPacks", "before": "\t\t\t(void)PrintPCPackName(index);", "after": "\t\t\t(void)PrintPCPackName(0u);", "case_ids": ["PrintObtainedPCPacks-2"]}
 # <<< factory-mutation PrintObtainedPCPacks
+# >>> factory-mutation BlinkUnopenedPCPacks
+MUTATIONS["BlinkUnopenedPCPacks"] = {"source_symbol": "BlinkUnopenedPCPacks", "before": "\t\tif ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) == 0u)", "after": "\t\tif ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) != 0u)", "case_ids": ["BlinkUnopenedPCPacks-1", "BlinkUnopenedPCPacks-2", "BlinkUnopenedPCPacks-4"]}
+# <<< factory-mutation BlinkUnopenedPCPacks

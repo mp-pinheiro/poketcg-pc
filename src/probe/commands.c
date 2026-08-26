@@ -154,6 +154,15 @@ static void adapt_SetScreenForDuelAnimation(ProbeState *s)
 }
 /* <<< factory SetScreenForDuelAnimation */
 
+/* >>> factory PlayAttackAnimationCommands */
+static void adapt_PlayAttackAnimationCommands(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = PlayAttackAnimationCommands(s->a, s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory PlayAttackAnimationCommands */
+
 const ProbeEntry probe_entries_commands[] = {
 	{ "UpdateDuelAnimationScreen", adapt_UpdateDuelAnimationScreen },
 	{ "DuelAnim153", adapt_DuelAnim153 },
@@ -173,5 +182,6 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "PrintDamageText", adapt_PrintDamageText },
 	{ "UpdateMainSceneHUD", adapt_UpdateMainSceneHUD },
 	{ "SetScreenForDuelAnimation", adapt_SetScreenForDuelAnimation },
+	{ "PlayAttackAnimationCommands", adapt_PlayAttackAnimationCommands },
 	{ NULL, NULL },
 };

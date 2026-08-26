@@ -280,6 +280,19 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_selection.h"
 #include "home/lcd.h"
 #define SYM_BOX_TOP 0x1Cu
+
+#define CONSOLE_CGB 0x02u
+#define SYM_CROSS 0x2Du
+#define TYPE_TRAINER 0x10u
+#define ICON_TILE_BASIC_POKEMON 0xD0u
+#define ICON_TILE_FIRE 0xE0u
+#define ICON_TILE_TRAINER 0xDCu
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+#include "home/menus.h"
+#include "home/tiles.h"
+#include "home/process_text.h"
+#include "home/card_data.h"
 /* <<< factory statics */
 
 
@@ -1735,3 +1748,55 @@ void PrintPlayersCardsHeaderInfo(void)
 	DrawCardTypeIcons();
 }
 /* <<< factory PrintPlayersCardsHeaderInfo */
+
+/* >>> factory PrintConfirmationCardList */
+void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
+{
+	uint8_t x = wCardListCoords;
+	uint8_t y = gb_read8((uint16_t)(wCardListCoords_ADDR + 1u));
+	uint8_t tile = wCardListVisibleOffset ? SYM_CURSOR_U : SYM_SPACE;
+	WriteByteToBGMap0(tile, 19u, (uint8_t)(x - 1u));
+	uint8_t offset = wCardListVisibleOffset;
+	uint16_t list = (uint16_t)(wOwnedCardsCountList_ADDR + offset);
+	uint8_t remaining = wNumVisibleCardListEntries;
+	while (remaining != 0u) {
+		uint8_t card = gb_read8(list++);
+		if (card == 0u) break;
+		uint8_t row = remaining;
+		AddCardIDToVisibleList(row, card);
+		LoadCardDataToBuffer1_FromCardID(card);
+		CopyCardNameAndLevelResult name = CopyCardNameAndLevel(13u, row, 0u, 0u, card);
+		uint16_t text = name.hl;
+		while (gb_read8(text) != 0u) text++;
+		GetCountOfCardInCurDeckResult count = GetCountOfCardInCurDeck(card);
+		gb_write8(text++, TX_SYMBOL);
+		gb_write8(text++, SYM_CROSS);
+		ConvertToNumericalDigitsResult digits = ConvertToNumericalDigits(count.d, text);
+		gb_write8(digits.hl, TX_END);
+		uint8_t icon;
+		if (wLoadedCard1Type < TYPE_ENERGY) icon = (uint8_t)(ICON_TILE_BASIC_POKEMON + (uint8_t)(wLoadedCard1Stage * 4u));
+		else if (wLoadedCard1Type < TYPE_TRAINER) icon = (uint8_t)(ICON_TILE_FIRE + (uint8_t)((wLoadedCard1Type - TYPE_ENERGY) * 4u));
+		else icon = ICON_TILE_TRAINER;
+		uint16_t de = (uint16_t)((uint16_t)(y - 1u) << 8 | (uint8_t)(x - 2u));
+		FillRectangle(icon, 2u, 2u, de, 0x0102u);
+		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(icon, 0u, 0u, 0u, 0u, 0u, de);
+		if (wConsole == CONSOLE_CGB) { gb_write8(0xFF4Fu, 1u); FillRectangle(palette.a, 2u, 2u, de, 0x0102u); gb_write8(0xFF4Fu, 0u); }
+		InitTextPrinting(0u, (uint8_t)(y + 2u));
+		uint16_t text_ptr = wDefaultText_ADDR;
+		ProcessText(&text_ptr);
+		remaining = (uint8_t)(row - 1u);
+		x = (uint8_t)(x + 2u);
+	}
+	if (gb_read8(list) == 0u) {
+		/* PrintConfirmationCardList: set scroll guard */
+		wUnableToScrollDown = 1u;
+		tile = SYM_SPACE;
+	} else {
+		/* PrintConfirmationCardList: clear scroll guard */
+		wUnableToScrollDown = 0u;
+		tile = SYM_CURSOR_D;
+	}
+	WriteByteToBGMap0(tile, 19u, (uint8_t)(y - 2u));
+	(void)a; (void)d; (void)e; (void)hl;
+}
+/* <<< factory PrintConfirmationCardList */

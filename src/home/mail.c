@@ -19,6 +19,8 @@
 #define NUM_MAILS 0x0Fu
 #define PAD_CTRL_PAD 0xF0u
 #define SFX_CURSOR 0x01u
+
+#define PACK_UNOPENED_F 0x07u
 /* <<< factory statics */
 
 #define NUM_PC_PACKS 15
@@ -212,3 +214,22 @@ void PrintObtainedPCPacks(void)
 	}
 }
 /* <<< factory PrintObtainedPCPacks */
+
+/* >>> factory BlinkUnopenedPCPacks */
+/* mail.asm:429-470 */
+void BlinkUnopenedPCPacks(void)
+{
+	for (uint8_t index = 0; index < NUM_PC_PACKS; index++) {
+		uint8_t pack = gb_read8((uint16_t)(wPCPacks_ADDR + index));
+		if (pack == 0u)
+			continue;
+		if ((pack & (uint8_t)(1u << PACK_UNOPENED_F)) == 0u)
+			continue;
+		uint8_t phase = (uint8_t)(wCursorBlinkTimer & 0x0cu);
+		if (phase == 0u)
+			(void)PrintPCPackName(index);
+		else if (phase == 0x0cu)
+			PrintEmptyPCPackName(index);
+	}
+}
+/* <<< factory BlinkUnopenedPCPacks */

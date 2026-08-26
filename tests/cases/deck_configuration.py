@@ -788,6 +788,14 @@ CASES["PrintPlayersCardsHeaderInfo"] = [
 ]
 # <<< factory PrintPlayersCardsHeaderInfo
 
+# >>> factory PrintConfirmationCardList
+CONTRACT["PrintConfirmationCardList"] = {"compare": (), "preserve": ()}
+CASES["PrintConfirmationCardList"] = [
+    {"a": 0x00, "d": 0x00, "e": 0x00, "hl": 0xC100, "wram": {0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "read": {0xCECD: 1}, "expect": {0xCECD: b"\x01"}},
+    dict(POISON, wram={0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, read={0xCECD: 1}, expect={0xCECD: b"\x01"}),
+]
+# <<< factory PrintConfirmationCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1061,3 +1069,6 @@ MUTATIONS["DrawCardTypeIcons"] = {
 # >>> factory-mutation PrintPlayersCardsHeaderInfo
 MUTATIONS["PrintPlayersCardsHeaderInfo"] = {"source_symbol": "PrintPlayersCardsHeaderInfo", "before": "\tFillBGMapLineWithA(0x1Cu, 0u, 4u);", "after": "\tFillBGMapLineWithA(0x1Du, 0u, 4u);", "case_ids": ["PrintPlayersCardsHeaderInfo-0", "PrintPlayersCardsHeaderInfo-1"]}
 # <<< factory-mutation PrintPlayersCardsHeaderInfo
+# >>> factory-mutation PrintConfirmationCardList
+MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCardList", "before": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 1u;", "after": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 0u;", "case_ids": ["PrintConfirmationCardList-0", "PrintConfirmationCardList-1"]}
+# <<< factory-mutation PrintConfirmationCardList

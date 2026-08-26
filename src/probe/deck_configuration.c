@@ -546,6 +546,13 @@ static void adapt_PrintPlayersCardsHeaderInfo(ProbeState *s)
 }
 /* <<< factory PrintPlayersCardsHeaderInfo */
 
+/* >>> factory PrintConfirmationCardList */
+static void adapt_PrintConfirmationCardList(ProbeState *s)
+{
+	PrintConfirmationCardList(s->a, s->d, s->e, &s->hl);
+}
+/* <<< factory PrintConfirmationCardList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -610,5 +617,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "GetCardTypeIconPalette", adapt_GetCardTypeIconPalette },
 	{ "DrawCardTypeIcons", adapt_DrawCardTypeIcons },
 	{ "PrintPlayersCardsHeaderInfo", adapt_PrintPlayersCardsHeaderInfo },
+	{ "PrintConfirmationCardList", adapt_PrintConfirmationCardList },
 	{ NULL, NULL },
 };
