@@ -264,6 +264,13 @@
 #include "home/core.h"
 #define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
 #define TrainerCardSuccessCheckText 0x00efu
+
+#include "home/core.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
+#include "home/random.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -2304,3 +2311,39 @@ AIDecideResult AIPlay_Recycle(void)
 	return (AIDecideResult){decision.f};
 }
 /* <<< factory AIPlay_Recycle */
+
+/* >>> factory AIDecide_PlusPower_Phase14 */
+AIDecideResult AIDecide_PlusPower_Phase14(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfSelectedAttackIsUnusableResult unusable =
+		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	if ((unusable.f & 0x10u) != 0u)
+		return (AIDecideResult){0u};
+
+	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint8_t remaining = (uint8_t)(hp.a - wDamage);
+	if (remaining == 0u || hp.a < wDamage)
+		return (AIDecideResult){0u};
+
+	CheckIfSelectedAttackIsUnusableResult random_unusable =
+		CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	if ((random_unusable.f & 0x10u) != 0u)
+		return (AIDecideResult){0u};
+	(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+	if (wAIMinDamage < 10u)
+		return (AIDecideResult){0u};
+	if (Random(10u) >= 3u)
+		return (AIDecideResult){0u};
+	if ((uint8_t)(wDamage + 10u) < 30u)
+		return (AIDecideResult){0u};
+	SwapTurn();
+	uint8_t arena_index = GetTurnDuelistVariable(DUELVARS_ARENA_CARD).a;
+	uint16_t card_id = GetCardIDFromDeckIndex(arena_index);
+	SwapTurn();
+	if ((uint8_t)card_id == MR_MIME)
+		return (AIDecideResult){0u};
+	return (AIDecideResult){0x10u};
+}
+/* <<< factory AIDecide_PlusPower_Phase14 */

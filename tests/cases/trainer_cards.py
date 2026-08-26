@@ -689,6 +689,15 @@ CASES["AIPlay_Recycle"] = [
 ]
 # <<< factory AIPlay_Recycle
 
+# >>> factory AIDecide_PlusPower_Phase14
+CONTRACT["AIDecide_PlusPower_Phase14"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_PlusPower_Phase14"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"}, "sram": {0: {}}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"}, "sram": {0: {}}, "instruction_budget": 20000000, "cycle_budget": 80000000, **POISON},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"}, "sram": {0: {}}, "instruction_budget": 20000000, "cycle_budget": 80000000, **POISON},
+]
+# <<< factory AIDecide_PlusPower_Phase14
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -921,3 +930,6 @@ MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "A
 # >>> factory-mutation AIPlay_Recycle
 MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_Recycle-0", "AIPlay_Recycle-1", "AIPlay_Recycle-2"]}
 # <<< factory-mutation AIPlay_Recycle
+# >>> factory-mutation AIDecide_PlusPower_Phase14
+MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_Phase14", "before": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0u};", "after": "\tCheckIfSelectedAttackIsUnusableResult unusable =\n\t\tCheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tif ((unusable.f & 0x10u) != 0u)\n\t\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_PlusPower_Phase14-0", "AIDecide_PlusPower_Phase14-1"]}
+# <<< factory-mutation AIDecide_PlusPower_Phase14

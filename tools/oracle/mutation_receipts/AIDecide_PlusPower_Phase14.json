@@ -1,0 +1,9 @@
+{
+  "fn": "AIDecide_PlusPower_Phase14",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIDecide_PlusPower_Phase14\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PlusPower_Phase14\", \"mismatches\": {\"f\": [0, 16]}}\n",
+  "restored": "{\"fn\": \"AIDecide_PlusPower_Phase14\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"00\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

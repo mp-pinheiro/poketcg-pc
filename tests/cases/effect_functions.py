@@ -5259,6 +5259,15 @@ CASES["IceBreath_RandomPokemonDamageEffect"] = [
 ]
 # <<< factory IceBreath_RandomPokemonDamageEffect
 
+# >>> factory HypnoDarkMind_DamageBenchEffect
+CONTRACT["HypnoDarkMind_DamageBenchEffect"] = {"compare": (), "preserve": ()}
+CASES["HypnoDarkMind_DamageBenchEffect"] = [
+    {"wram": {0xFFA0: b"\xFF"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
+]
+# <<< factory HypnoDarkMind_DamageBenchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7735,3 +7744,6 @@ MUTATIONS["StretchKick_BenchDamageEffect"] = {"source_symbol": "StretchKick_Benc
 # >>> factory-mutation IceBreath_RandomPokemonDamageEffect
 MUTATIONS["IceBreath_RandomPokemonDamageEffect"] = {"source_symbol": "IceBreath_RandomPokemonDamageEffect", "before": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["IceBreath_RandomPokemonDamageEffect-0", "IceBreath_RandomPokemonDamageEffect-1"]}
 # <<< factory-mutation IceBreath_RandomPokemonDamageEffect
+# >>> factory-mutation HypnoDarkMind_DamageBenchEffect
+MUTATIONS["HypnoDarkMind_DamageBenchEffect"] = {"source_symbol": "HypnoDarkMind_DamageBenchEffect", "before": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["HypnoDarkMind_DamageBenchEffect-1", "HypnoDarkMind_DamageBenchEffect-2"]}
+# <<< factory-mutation HypnoDarkMind_DamageBenchEffect

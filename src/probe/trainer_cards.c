@@ -367,6 +367,14 @@ static void adapt_AIPlay_Recycle(ProbeState *s)
 }
 /* <<< factory AIPlay_Recycle */
 
+/* >>> factory AIDecide_PlusPower_Phase14 */
+static void adapt_AIDecide_PlusPower_Phase14(ProbeState *s)
+{
+	AIDecideResult result = AIDecide_PlusPower_Phase14();
+	s->f = result.f;
+}
+/* <<< factory AIDecide_PlusPower_Phase14 */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -411,5 +419,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "_AIProcessHandTrainerCards", adapt__AIProcessHandTrainerCards },
 	{ "AIPlay_Pokeball", adapt_AIPlay_Pokeball },
 	{ "AIPlay_Recycle", adapt_AIPlay_Recycle },
+	{ "AIDecide_PlusPower_Phase14", adapt_AIDecide_PlusPower_Phase14 },
 	{ NULL, NULL },
 };

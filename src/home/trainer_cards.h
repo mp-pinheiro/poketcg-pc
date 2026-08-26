@@ -163,4 +163,7 @@ AIPlayPokeballResult AIPlay_Pokeball(void);
 /* >>> factory AIPlay_Recycle */
 AIDecideResult AIPlay_Recycle(void);
 /* <<< factory AIPlay_Recycle */
+/* >>> factory AIDecide_PlusPower_Phase14 */
+AIDecideResult AIDecide_PlusPower_Phase14(void);
+/* <<< factory AIDecide_PlusPower_Phase14 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

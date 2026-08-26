@@ -7565,3 +7565,15 @@ void IceBreath_RandomPokemonDamageEffect(void)
 	SwapTurn();
 }
 /* <<< factory IceBreath_RandomPokemonDamageEffect */
+
+/* >>> factory HypnoDarkMind_DamageBenchEffect */
+void HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t target = hTemp_ffa0;
+	if (target == 0xffu)
+		return;
+	SwapTurn();
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 10u, hl);
+	SwapTurn();
+}
+/* <<< factory HypnoDarkMind_DamageBenchEffect */
