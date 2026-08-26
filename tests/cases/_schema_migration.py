@@ -154,7 +154,14 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
             if not isinstance(legacy, Mapping):
                 raise TypeError(f"legacy case {function}[{index}] must be a mapping")
             registers = {name: int(legacy.get(name, 0)) for name in _REGISTERS if name != "sp"}
-            seeds: dict[str, Any] = {"wram": _wram(legacy.get("wram", {}))}
+            legacy_bus = legacy.get("wram", {})
+            legacy_hram = legacy.get("hram", {})
+            if not isinstance(legacy_bus, Mapping) or not isinstance(legacy_hram, Mapping):
+                raise TypeError(f"legacy case {function}[{index}] wram/hram seeds must be mappings")
+            # Both runners seed absolute bus addresses through the schema `wram`
+            # channel. Apply explicit HRAM/IO entries last so they patch any
+            # overlapping broad bus image exactly as legacy cases intend.
+            seeds: dict[str, Any] = {"wram": _wram({**legacy_bus, **legacy_hram})}
             if "sram" in legacy:
                 seeds["sram"] = _banked(legacy["sram"])
             if "vram" in legacy:
