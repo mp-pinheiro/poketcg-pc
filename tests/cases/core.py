@@ -1827,6 +1827,35 @@ wDuelDisplayedScreen = 0xCAC2
 wNumCardsBeingDrawn = 0xCBE9
 wNumCardsTryingToDraw = 0xCBE8
 wTurnCardsNotInDeck = 0xC2BA
+
+PSDCA_wDuelDisplayedScreen = 0xCAC2
+PSDCA_wNumCardsBeingDrawn = 0xCBE9
+PSDCA_wDuelType = 0xCC09
+PSDCA_wSkipDelayAllowed = 0xCCF2
+PSDCA_wLCDC = 0xCABB
+PSDCA_wTextSpeed = 0xCE47
+PSDCA_hWhoseTurn = 0xFF97
+# Same animation-idle image tests/cases/core.py already uses for
+# PlayTurnDuelistDrawAnimation: queue/screen-anim slots idle ($ff), the duel
+# animation ring empty, and wDoFrameFunction ($CAD3) pointing at
+# UpdateQueuedAnimations ($3BA2) - the value ResetAnimationQueue writes on both
+# sides, so every seeded byte here is one the two runs agree on at return.
+PSDCA_ANIM_SAFE = {0xD42A: b"\xff", 0xD4C0: b"\xff", 0xD423: b"\xff" * 7,
+                   0xCAD3: bytes([0xA2, 0x3B]), 0xD4AC: b"\x00", 0xD4AD: b"\x08"}
+# wSkipDelayAllowed non-zero plus B held makes CheckSkipDelayAllowed return
+# carry on its first call after every DoFrame, so both wait loops leave on the
+# frame they enter and neither side depends on when an animation happens to
+# finish. wLCDC starts off: the routine's own EnableLCD turns it on, which is
+# what makes real frames elapse, so CopyDMAFunction has to be installed or
+# VBlankHandler calls an uncopied hDMAFunction and the reference parks at $0271.
+PSDCA_SEED = {**PSDCA_ANIM_SAFE,
+              PSDCA_hWhoseTurn: b"\xC2",
+              PSDCA_wSkipDelayAllowed: b"\x01",
+              PSDCA_wDuelType: b"\x00",
+              PSDCA_wLCDC: b"\x00",
+              PSDCA_wTextSpeed: b"\x00"}
+PSDCA_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+PSDCA_READ = {PSDCA_wDuelDisplayedScreen: 1, PSDCA_wNumCardsBeingDrawn: 1}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3830,6 +3859,24 @@ CASES["DisplayDrawNCardsScreen"] = [
 ]
 # <<< factory DisplayDrawNCardsScreen
 
+# >>> factory PlayShuffleAndDrawCardsAnimation
+CONTRACT["PlayShuffleAndDrawCardsAnimation"] = {"compare": ("b", "c"), "preserve": ("b", "c")}
+CASES["PlayShuffleAndDrawCardsAnimation"] = [
+    {"b": 0x51, "c": 0x56, "d": 0x00, "e": 0x02, "hl": 0x0001,
+     "keys": 0x02,
+     "wram": dict(PSDCA_SEED),
+     "read": dict(PSDCA_READ),
+     "setup": PSDCA_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0x53, "c": 0x55, "d": 0xDD, "e": 0xEE, "hl": 0x0001,
+     "keys": 0x02,
+     "wram": dict(PSDCA_SEED),
+     "read": dict(PSDCA_READ),
+     "setup": PSDCA_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory PlayShuffleAndDrawCardsAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5394,3 +5441,6 @@ MUTATIONS["CheckDamageToMrMime"] = {"source_symbol": "CheckDamageToMrMime", "bef
 # >>> factory-mutation DisplayDrawNCardsScreen
 MUTATIONS["DisplayDrawNCardsScreen"] = {"source_symbol": "DisplayDrawNCardsScreen", "before": "\twNumCardsTryingToDraw = a;", "after": "\twNumCardsTryingToDraw = (uint8_t)(a + 1u);", "case_ids": ["DisplayDrawNCardsScreen-0", "DisplayDrawNCardsScreen-1", "DisplayDrawNCardsScreen-2"]}
 # <<< factory-mutation DisplayDrawNCardsScreen
+# >>> factory-mutation PlayShuffleAndDrawCardsAnimation
+MUTATIONS["PlayShuffleAndDrawCardsAnimation"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation", "before": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = SHUFFLE_DECK;", "after": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = 0u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation-0", "PlayShuffleAndDrawCardsAnimation-1"]}
+# <<< factory-mutation PlayShuffleAndDrawCardsAnimation

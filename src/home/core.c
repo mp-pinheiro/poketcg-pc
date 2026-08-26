@@ -1341,6 +1341,18 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define SHUFFLE_DECK 0x09u
 #define CannotDrawCardBecauseNoCardsInDeckText 0x0119u
 #define DrawCardsFromTheDeckText 0x0118u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/empty_screen.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/play_animation.h"
+#include "home/script.h"
+#include "home/tiles.h"
+
+#define DUEL_ANIM_BOTH_DRAW 0x55u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7537,3 +7549,95 @@ void DisplayDrawNCardsScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t
 	}
 }
 /* <<< factory DisplayDrawNCardsScreen */
+
+/* >>> factory PlayShuffleAndDrawCardsAnimation */
+/* duel/core.asm:2173-2266.
+ * The body reads its own frame twice: `ld hl, sp+$03` is the caller's pushed b
+ * (shuffling animation) and `ld hl, sp+$00` is the caller's pushed c (drawing
+ * animation), while the second `pop hl` reloads the pushed de as the drawing
+ * text id. Every push is matched by a pop before the `ret`, so the words are
+ * ordinary parameters here and the case module declares no `stack`.
+ * b and c are the only registers the routine hands back: `pop bc` restores
+ * them, everything else is left wherever FinishQueuedAnimations put it. */
+void PlayShuffleAndDrawCardsAnimation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t skipped = 0u;
+
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	DrawDuelistPortraitsAndNames();
+	(void)LoadDuelDrawCardsScreenTiles();
+	wDuelDisplayedScreen = SHUFFLE_DECK;
+	(void)DrawWideTextBox_PrintText(hl);
+	EnableLCD();
+
+	if (wDuelType == DUELTYPE_PRACTICE) {
+		(void)WaitForWideTextBoxInput();
+	} else {
+		ResetAnimationQueue();
+		(void)PlayDuelAnimation(b);
+		(void)PlayDuelAnimation(b);
+		(void)PlayDuelAnimation(b);
+		for (;;) {
+			DoFrame();
+			CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(0u, 0u, 0u, 0u, 0u, 0u);
+			if ((skip.f & FLAG_C) != 0u)
+				break;
+			AnimationStatusResult anim = CheckAnyAnimationPlaying();
+			if ((anim.f & FLAG_C) == 0u)
+				break;
+		}
+		FinishQueuedAnimations();
+	}
+
+	wNumCardsBeingDrawn = 0u;
+	PrintDeckAndHandIconsAndNumberOfCards();
+	ResetAnimationQueue();
+	/* the second `pop hl`: the caller's de is the text printed while drawing */
+	(void)DrawWideTextBox_PrintText((uint16_t)(((uint16_t)d << 8) | e));
+
+	for (;;) {
+		(void)PlayDuelAnimation(c);
+		for (;;) {
+			DoFrame();
+			CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(0u, 0u, 0u, 0u, 0u, 0u);
+			if ((skip.f & FLAG_C) != 0u) {
+				/* `jr c, .done`: straight to the epilogue, no card counted */
+				skipped = 1u;
+				break;
+			}
+			AnimationStatusResult anim = CheckAnyAnimationPlaying();
+			if ((anim.f & FLAG_C) == 0u)
+				break;
+		}
+		if (skipped != 0u)
+			break;
+		wNumCardsBeingDrawn = (uint8_t)(wNumCardsBeingDrawn + 1u);
+		if (c == DUEL_ANIM_BOTH_DRAW) {
+			/* PrintDeckAndHandIconsAndNumberOfCards.not_cgb: the tail that
+			 * skips the tile/palette reload and only reprints the counts */
+			PrintPlayerNumberOfHandAndDeckCards();
+			PrintOpponentNumberOfHandAndDeckCards();
+		} else {
+			PrintNumberOfHandAndDeckCards();
+		}
+		if (wNumCardsBeingDrawn >= 7u)
+			break;
+	}
+
+	if (skipped == 0u) {
+		uint8_t frames = 30u;
+
+		for (;;) {
+			DoFrame();
+			CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(0u, 0u, 0u, 0u, 0u, 0u);
+			if ((skip.f & FLAG_C) != 0u)
+				break;
+			frames = (uint8_t)(frames - 1u);
+			if (frames == 0u)
+				break;
+		}
+	}
+	FinishQueuedAnimations();
+}
+/* <<< factory PlayShuffleAndDrawCardsAnimation */
