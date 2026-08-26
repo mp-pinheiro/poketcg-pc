@@ -1,0 +1,9 @@
+{
+  "fn": "Script_d995",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_d995\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22920, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"330333\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_d995\", \"mismatches\": {\"c\": [2, 0], \"hl\": [22920, 22918], \"bus\": {\"address\": 52799, \"reference\": \"330333\", \"native\": \"320332\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52799, 3]]}}}\n",
+  "restored": "{\"fn\": \"Script_d995\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22920, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"330333\"}}, \"status\": \"PASS\"}\n"
+}

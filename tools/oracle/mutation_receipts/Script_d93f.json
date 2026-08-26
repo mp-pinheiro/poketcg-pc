@@ -1,0 +1,9 @@
+{
+  "fn": "Script_d93f",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_d93f\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22918, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"320332\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_d93f\", \"mismatches\": {\"c\": [0, 2], \"hl\": [22918, 22920], \"bus\": {\"address\": 52799, \"reference\": \"320332\", \"native\": \"330333\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52799, 3]]}}}\n",
+  "restored": "{\"fn\": \"Script_d93f\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22918, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"320332\"}}, \"status\": \"PASS\"}\n"
+}

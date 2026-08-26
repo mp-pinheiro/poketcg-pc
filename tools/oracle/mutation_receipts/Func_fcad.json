@@ -1,0 +1,9 @@
+{
+  "fn": "Func_fcad",
+  "case": "tests/cases/gift_center.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_fcad\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53518\": \"02\", \"54225\": \"fc\", \"54252\": \"0b\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_fcad\", \"mismatches\": {\"a\": [11, 7], \"bus\": {\"address\": 54252, \"reference\": \"02fc0b\", \"native\": \"02fc07\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53518, 1], [54225, 1], [54252, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_fcad\", \"registers\": {\"a\": 11, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53518\": \"02\", \"54225\": \"fc\", \"54252\": \"0b\"}}, \"status\": \"PASS\"}\n"
+}

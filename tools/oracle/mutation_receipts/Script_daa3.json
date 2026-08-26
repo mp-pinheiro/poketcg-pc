@@ -1,0 +1,9 @@
+{
+  "fn": "Script_daa3",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_daa3\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 14, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22932, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"390339\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_daa3\", \"mismatches\": {\"c\": [14, 12], \"hl\": [22932, 22930], \"bus\": {\"address\": 52799, \"reference\": \"390339\", \"native\": \"380338\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[52799, 3]]}}}\n",
+  "restored": "{\"fn\": \"Script_daa3\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 14, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 22932, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"52799\": \"390339\"}}, \"status\": \"PASS\"}\n"
+}
