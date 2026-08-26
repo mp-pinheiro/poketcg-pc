@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayPlayerNamingScreen",
+  "case": "tests/cases/naming.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayPlayerNamingScreen\", \"registers\": {\"a\": 27, \"b\": 0, \"c\": 16, \"d\": 160, \"e\": 16, \"f\": 0, \"hl\": 26859, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"40976\": \"033c03300341033a000000000000661b\"}}, \"vram\": {}, \"wram\": {\"50432\": \"00000000000000000000000000000000\", \"51914\": \"d7cc03\", \"53258\": \"18fe0018fe0018fe0018fe00\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayPlayerNamingScreen\", \"mismatches\": {\"sram\": {\"byte\": 0, \"reference\": \"033c033003\", \"native\": \"00033c0330\"}}}\n",
+  "restored": "{\"fn\": \"DisplayPlayerNamingScreen\", \"registers\": {\"a\": 27, \"b\": 0, \"c\": 16, \"d\": 160, \"e\": 16, \"f\": 0, \"hl\": 26859, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {\"0\": {\"40976\": \"033c03300341033a000000000000661b\"}}, \"vram\": {}, \"wram\": {\"50432\": \"00000000000000000000000000000000\", \"51914\": \"d7cc03\", \"53258\": \"18fe0018fe0018fe0018fe00\", \"65424\": \"41\"}}, \"status\": \"PASS\"}\n"
+}
