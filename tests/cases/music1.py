@@ -1099,6 +1099,47 @@ CASES["Music1_PlayNextNote"] = [
 ]
 # <<< factory Music1_PlayNextNote
 
+# >>> factory Music1_note
+# music1.asm:648 is reached by `jr c` from the dispatcher, which has already
+# done `ld a,[hli]` / `push hl` / `push af`. The runner pushes `stack` in list
+# order, so the deepest word comes first: [advanced_stream_ptr, command_word].
+# `pop af` (asm:732) takes the command word's high byte as the instrument
+# nibble, and `pop de` (asm:833) takes the stream pointer that the common exit
+# stores to wMusicChannelPointers.
+CONTRACT["Music1_note"] = {"compare": (), "preserve": ()}
+CASES["Music1_note"] = [
+    {"a": 0x05, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x0500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40"}, "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40",
+              0xDDAF: b"\x02\x02\x02\x02", 0xDDCB: b"\x01\x01\x01\x01"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\xD9", 0xDDBF: b"\x02\x02\x02\x02"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDBF: b"\x00\x00\x00\x00"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 1, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDBF: b"\x09\x09\x09\x09",
+              0xDDAF: b"\x01\x01\x01\x01"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 3, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40",
+              0xDDAF: b"\x01\x01\x01\x01", 0xDD84: b"\x00"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDD91: b"\x80\x80\x80\x80"},
+     "read": _NOTE_READ},
+    {"a": 0x35, "b": 0, "c": 0, "hl": 0xC200, "stack": [0xC200, 0x3500],
+     "wram": {**_NOTE_SEED, 0xC200: b"\x40", 0xDDEA: b"\x80\x80\x80\x80"},
+     "read": _NOTE_READ},
+    dict(POISON, a=0x7A, b=0, c=2, hl=0xC200, stack=[0xC200, 0x7A00],
+         wram={**_NOTE_SEED, 0xC200: b"\x40", 0xDDAF: b"\x03\x03\x03\x03"},
+         read=_NOTE_READ),
+]
+# <<< factory Music1_note
+
 # >>> factory Music1_PlayNextNote_pop
 CONTRACT["Music1_PlayNextNote_pop"] = {"compare": (), "preserve": ()}
 CASES["Music1_PlayNextNote_pop"] = [
