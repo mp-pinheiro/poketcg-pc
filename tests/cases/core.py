@@ -3899,6 +3899,24 @@ CASES["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = [
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist
 
+# >>> factory OppAction_ExecuteTrainerCardEffectCommands
+CONTRACT["OppAction_ExecuteTrainerCardEffectCommands"] = {"compare": (), "preserve": ()}
+CASES["OppAction_ExecuteTrainerCardEffectCommands"] = [
+    {"b": 0x12, "d": 0x34, "e": 0x56,
+     "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x03", 0xC203: b"\x01",
+              0xC2EE: b"\x01", 0xC242: b"\x03", 0xC2ED: b"\x00",
+              0xC2F1: b"\x00", 0xCAC2: b"\x01", 0xCCB2: b"\x00\xC1",
+              0xC100: b"\x00"},
+     "read": {0xC203: 1, 0xC2EE: 1, 0xC2ED: 1, 0xC27E: 1, 0xCAC2: 1}},
+    dict(POISON, b=0x12, d=0x34, e=0x56,
+         wram={0xFF97: b"\xC3", 0xFF9F: b"\x07", 0xC307: b"\x01",
+               0xC3EE: b"\x01", 0xC342: b"\x07", 0xC3ED: b"\x00",
+               0xC3F1: b"\x00", 0xCAC2: b"\x01", 0xCCB2: b"\x00\xC1",
+               0xC100: b"\x00"},
+         read={0xC307: 1, 0xC3EE: 1, 0xC3ED: 1, 0xC37E: 1, 0xCAC2: 1}),
+]
+# <<< factory OppAction_ExecuteTrainerCardEffectCommands
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5472,3 +5490,11 @@ MUTATIONS["DisplayDrawOneCardScreen"] = {"source_symbol": "DisplayDrawOneCardScr
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist
 MUTATIONS["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_TurnDuelist", "before": "\tPlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);", "after": "\treturn;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_TurnDuelist-0", "PlayShuffleAndDrawCardsAnimation_TurnDuelist-1"]}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist
+# >>> factory-mutation OppAction_ExecuteTrainerCardEffectCommands
+MUTATIONS["OppAction_ExecuteTrainerCardEffectCommands"] = {
+    "source_symbol": "OppAction_ExecuteTrainerCardEffectCommands",
+    "before": "\tuint8_t card_index = hTempCardIndex_ff9f;",
+    "after": "\tuint8_t card_index = (uint8_t)(hTempCardIndex_ff9f + 1u);",
+    "case_ids": ["OppAction_ExecuteTrainerCardEffectCommands-0", "OppAction_ExecuteTrainerCardEffectCommands-1"],
+}
+# <<< factory-mutation OppAction_ExecuteTrainerCardEffectCommands

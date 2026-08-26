@@ -1360,6 +1360,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel.h"
 #define BASIC 0x00u
 #define PlacedOnTheBenchText 0x0061u
+
+#include "home/effect_commands.h"
+#include "home/serial.h"
+#define OPP_EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
+#define OPP_EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7672,3 +7677,20 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
  	PlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);
  }
  /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+
+/* >>> factory OppAction_ExecuteTrainerCardEffectCommands */
+void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e)
+{
+	TryExecuteEffectCommandFunctionResult first =
+		TryExecuteEffectCommandFunction(OPP_EFFECTCMDTYPE_DISCARD_ENERGY, b, d, e);
+	TryExecuteEffectCommandFunctionResult second =
+		TryExecuteEffectCommandFunction(OPP_EFFECTCMDTYPE_BEFORE_DAMAGE,
+			first.b, first.d, first.e);
+	DrawDuelMainScene();
+	uint8_t card_index = hTempCardIndex_ff9f;
+	MoveCardResult moved = MoveHandCardToDiscardPile(card_index);
+	(void)ExchangeRNG(second.b, second.c,
+		(uint16_t)((uint16_t)second.d << 8 | second.e), moved.hl);
+	DrawDuelMainScene();
+}
+/* <<< factory OppAction_ExecuteTrainerCardEffectCommands */
