@@ -3891,13 +3891,13 @@ CASES["DisplayDrawOneCardScreen"] = [
 ]
 # <<< factory DisplayDrawOneCardScreen
 
-# >>> factory OppAction_PlayBasicPokemonCard
-CONTRACT["OppAction_PlayBasicPokemonCard"] = {"compare": (), "preserve": ()}
-CASES["OppAction_PlayBasicPokemonCard"] = [
-    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2F1: b"\x01", 0xCAC2: b"\x01", 0xFFA0: b"\x01", 0xFF98: b"\x01", 0xFF9D: b"\x01"}, "setup": [{"fn": "SetupRegisters"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xFF98: 1, 0xFF9D: 1}},
-    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2F1: b"\x01", 0xCAC2: b"\x01", 0xFFA0: b"\x01", 0xFF98: b"\x01", 0xFF9D: b"\x01"}, setup=[{"fn": "SetupRegisters"}, {"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000, read={0xFF98: 1, 0xFF9D: 1}),
+# >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist
+CONTRACT["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {"compare": (), "preserve": ()}
+CASES["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = [
+    {"wram": {**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCABB: b"\x00"}, "keys": 0x01, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCAC2: 1, 0xCBE9: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={**_ANIM_SAFE, 0xFF97: b"\xC2", 0xCABB: b"\x00"}, keys=0x01, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCAC2: 1, 0xCBE9: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
-# <<< factory OppAction_PlayBasicPokemonCard
+# <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -5469,6 +5469,6 @@ MUTATIONS["PlayShuffleAndDrawCardsAnimation"] = {"source_symbol": "PlayShuffleAn
 # >>> factory-mutation DisplayDrawOneCardScreen
 MUTATIONS["DisplayDrawOneCardScreen"] = {"source_symbol": "DisplayDrawOneCardScreen", "before": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 2u;", "case_ids": ["DisplayDrawOneCardScreen-0", "DisplayDrawOneCardScreen-1", "DisplayDrawOneCardScreen-3"]}
 # <<< factory-mutation DisplayDrawOneCardScreen
-# >>> factory-mutation OppAction_PlayBasicPokemonCard
-MUTATIONS["OppAction_PlayBasicPokemonCard"] = {"source_symbol": "OppAction_PlayBasicPokemonCard", "before": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t card = hTemp_ffa0;\n\thTempCardIndex_ff98 = card;", "after": "void OppAction_PlayBasicPokemonCard(void)\n{\n\tuint8_t card = hTemp_ffa0;\n\thTempCardIndex_ff98 = (uint8_t)(card + 1u);", "case_ids": ["OppAction_PlayBasicPokemonCard-0", "OppAction_PlayBasicPokemonCard-1"]}
-# <<< factory-mutation OppAction_PlayBasicPokemonCard
+# >>> factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist
+MUTATIONS["PlayShuffleAndDrawCardsAnimation_TurnDuelist"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_TurnDuelist", "before": "\tPlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);", "after": "\treturn;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_TurnDuelist-0", "PlayShuffleAndDrawCardsAnimation_TurnDuelist-1"]}
+# <<< factory-mutation PlayShuffleAndDrawCardsAnimation_TurnDuelist

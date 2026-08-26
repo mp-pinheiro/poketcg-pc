@@ -2495,13 +2495,13 @@ static void adapt_DisplayDrawOneCardScreen(ProbeState *s)
 }
 /* <<< factory DisplayDrawOneCardScreen */
 
-/* >>> factory OppAction_PlayBasicPokemonCard */
-static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
-{
-	OppAction_PlayBasicPokemonCard();
-}
-/* <<< factory OppAction_PlayBasicPokemonCard */
-
+ /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+ static void adapt_PlayShuffleAndDrawCardsAnimation_TurnDuelist(ProbeState *s)
+ {
+ 	PlayShuffleAndDrawCardsAnimation_TurnDuelist(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+ }
+ /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+ 
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2800,6 +2800,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayDrawNCardsScreen", adapt_DisplayDrawNCardsScreen },
 	{ "PlayShuffleAndDrawCardsAnimation", adapt_PlayShuffleAndDrawCardsAnimation },
 	{ "DisplayDrawOneCardScreen", adapt_DisplayDrawOneCardScreen },
-	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
+ 	{ "PlayShuffleAndDrawCardsAnimation_TurnDuelist", adapt_PlayShuffleAndDrawCardsAnimation_TurnDuelist },
 	{ NULL, NULL },
 };

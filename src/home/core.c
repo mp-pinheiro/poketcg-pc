@@ -5899,9 +5899,6 @@ void DrawDuelMainScene(void)
 	DrawDuelHUDs();
 	(void)DrawWideTextBox();
 	EnableLCD();
-	/* C helpers reuse wDuelDisplayedScreen internally; the asm leaves it as
-	 * DUEL_MAIN_SCENE after rebuilding the scene. */
-	gb_write8(wDuelDisplayedScreen_ADDR, DUEL_MAIN_SCENE);
 	if (restore_turn != 0u)
 		gb_write8(hWhoseTurn_ADDR, saved_turn);
 }
@@ -7659,18 +7656,18 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 }
 /* <<< factory DisplayDrawOneCardScreen */
 
-/* >>> factory OppAction_PlayBasicPokemonCard */
-void OppAction_PlayBasicPokemonCard(void)
-{
-	uint8_t card = hTemp_ffa0;
-	hTempCardIndex_ff98 = card;
-	PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(card, 0u);
-	hTempPlayAreaLocation_ff9d = placed.a;
-	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(placed.a + DUELVARS_ARENA_CARD_STAGE));
-	gb_write8(stage.hl, BASIC);
-	WaitResult displayed = DisplayCardDetailScreen(card, PlacedOnTheBenchText);
-	return;
-	(void)ProcessPlayedPokemonCard(card, displayed.f, 0u, 0u, 0u, 0u, 0u);
-	DrawDuelMainScene();
-}
-/* <<< factory OppAction_PlayBasicPokemonCard */
+ /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
+ void PlayShuffleAndDrawCardsAnimation_TurnDuelist(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+ {
+ 	uint8_t shuffle = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_SHUFFLE : DUEL_ANIM_OPP_SHUFFLE;
+ 	uint8_t draw = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;
+ 	(void)a;
+ 	(void)f;
+ 	(void)b;
+ 	(void)c;
+ 	(void)d;
+ 	(void)e;
+ 	(void)hl;
+ 	PlayShuffleAndDrawCardsAnimation(shuffle, draw, (uint8_t)(Drew7CardsText >> 8), (uint8_t)Drew7CardsText, ShufflesTheDeckText);
+ }
+ /* <<< factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
