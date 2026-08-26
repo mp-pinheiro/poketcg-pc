@@ -1132,6 +1132,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define CARD_PAGE_RETREAT_WR_TEXT_DATA 0x4000u
 #define CARD_PAGE_LV_HP_NO_TEXT_TILE_DATA 0x4004u
 #define CARD_PAGE_NO_TEXT_TILE_DATA 0x400Cu
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+#include "home/print_text.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6375,3 +6381,23 @@ void DisplayCardPage_PokemonOverview(void)
 	PrintCardPageWeaknessesOrResistances(e, 8u, 16u);
 }
 /* <<< factory DisplayCardPage_PokemonOverview */
+
+/* >>> factory DisplayEnergyOrTrainerCardPage */
+PrintAttackOrCardDescriptionResult DisplayEnergyOrTrainerCardPage(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t saved_hl = hl;
+	TileCopyResult tiles = LoadCardTypeHeaderTiles(a);
+	uint16_t box_hl = tiles.hl;
+	DrawRegularTextBox(&box_hl, 0u, 20u, 18u, 0u, 0u);
+	ProcessTextHeaderResult text = InitTextPrinting_ProcessTextFromPointerToID(4u, 3u, wLoadedCard1Name_ADDR);
+	a = text.a; d = text.d; e = text.e; f = text.f; hl = text.hl;
+	d = 6u; e = 4u;
+	SendCardAttrBlkPacketResult image = ApplyBGP6OrSGB3ToCardImage(a, f, b, c, d, e, hl);
+	a = image.a; f = image.f; b = image.b; c = image.c; d = image.d; e = image.e; hl = image.hl;
+	FillRectangle(0xE0u, 8u, 2u, 0x0601u, 0x0108u);
+	DrawCardPageSet2AndRarityIconsResult icons = DrawCardPageSet2AndRarityIcons();
+	hl = icons.hl;
+	d = 18u; e = 9u;
+	return PrintAttackOrNonPokemonCardDescription(saved_hl, d, e);
+}
+/* <<< factory DisplayEnergyOrTrainerCardPage */

@@ -1,0 +1,9 @@
+{
+  "fn": "DisplayEnergyOrTrainerCardPage",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DisplayEnergyOrTrainerCardPage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 9, \"f\": 128, \"hl\": 50433, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\", \"51899\": \"00\", \"52263\": \"3300\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DisplayEnergyOrTrainerCardPage\", \"mismatches\": {\"d\": [18, 1], \"e\": [9, 1]}}\n",
+  "restored": "{\"fn\": \"DisplayEnergyOrTrainerCardPage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 9, \"f\": 128, \"hl\": 50433, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"0000\", \"51899\": \"00\", \"52263\": \"3300\"}}, \"status\": \"PASS\"}\n"
+}
