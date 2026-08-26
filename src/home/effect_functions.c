@@ -7618,3 +7618,18 @@ void CatPunchEffect(void)
 	SwapTurn();
 }
 /* <<< factory CatPunchEffect */
+
+/* >>> factory Gigashock_BenchDamageEffect */
+void Gigashock_BenchDamageEffect(void)
+{
+	SwapTurn();
+	uint16_t hl = hTempList_ADDR;
+	for (;;) {
+		uint8_t target = gb_read8(hl++);
+		if (target == 0xffu)
+			break;
+		(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 10u, hl);
+	}
+	SwapTurn();
+}
+/* <<< factory Gigashock_BenchDamageEffect */

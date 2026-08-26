@@ -198,4 +198,8 @@ void PauseMenu_Status(void);
 /* >>> factory Func_c258 */
 void Func_c258(void);
 /* <<< factory Func_c258 */
+/* >>> factory Func_c251 */
+/* >>> factory Func_c251 */
+void Func_c251(void);
+/* <<< factory Func_c251 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

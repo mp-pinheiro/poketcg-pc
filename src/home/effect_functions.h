@@ -1623,6 +1623,9 @@ void Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_
 /* >>> factory CatPunchEffect */
 void CatPunchEffect(void);
 /* <<< factory CatPunchEffect */
+/* >>> factory Gigashock_BenchDamageEffect */
+void Gigashock_BenchDamageEffect(void);
+/* <<< factory Gigashock_BenchDamageEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

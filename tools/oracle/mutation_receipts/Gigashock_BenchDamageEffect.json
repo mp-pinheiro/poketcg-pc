@@ -1,0 +1,9 @@
+{
+  "fn": "Gigashock_BenchDamageEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Gigashock_BenchDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\", \"52459\": \"00\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Gigashock_BenchDamageEffect\", \"mismatches\": {\"bus\": {\"address\": 52423, \"reference\": \"010000ff\", \"native\": \"003200ff\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52423, 1], [52459, 1], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"Gigashock_BenchDamageEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\", \"52459\": \"00\", \"65440\": \"00ff\"}}, \"status\": \"PASS\"}\n"
+}

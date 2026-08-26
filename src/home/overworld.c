@@ -899,3 +899,14 @@ void Func_c258(void)
 	hffb0 = saved_hffb0;
 }
 /* <<< factory Func_c258 */
+
+/* >>> factory Func_c251 */
+/* >>> factory Func_c251 */
+void Func_c251(void)
+{
+	uint8_t saved_hffb0 = hffb0;
+	hffb0 = 1u;
+	Func_c268();
+	hffb0 = saved_hffb0;
+}
+/* <<< factory Func_c251 */

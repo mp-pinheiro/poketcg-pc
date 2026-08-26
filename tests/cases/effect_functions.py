@@ -2625,6 +2625,8 @@ wNoDamageOrEffect = 0xCCC7
 
 hTemp_ffa0 = 0xFFA0
 wDuelDisplayedScreen = 0xCAC2
+
+hTempList = 0xFFA0
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5294,6 +5296,15 @@ CASES["CatPunchEffect"] = [
 ]
 # <<< factory CatPunchEffect
 
+# >>> factory Gigashock_BenchDamageEffect
+CONTRACT["Gigashock_BenchDamageEffect"] = {"compare": (), "preserve": ()}
+CASES["Gigashock_BenchDamageEffect"] = [
+    {"wram": {0xFFA0: b"\xff"}},
+    {"wram": {0xFFA0: b"\x00\xff", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00\xff", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
+]
+# <<< factory Gigashock_BenchDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7782,3 +7793,6 @@ MUTATIONS["Spark_BenchDamageEffect"] = {"source_symbol": "Spark_BenchDamageEffec
 # >>> factory-mutation CatPunchEffect
 MUTATIONS["CatPunchEffect"] = {"source_symbol": "CatPunchEffect", "before": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = ATK_ANIM_CAT_PUNCH_PLAY_AREA;", "after": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_CAT_PUNCH_PLAY_AREA ^ 1u);", "case_ids": ["CatPunchEffect-0", "CatPunchEffect-1"]}
 # <<< factory-mutation CatPunchEffect
+# >>> factory-mutation Gigashock_BenchDamageEffect
+MUTATIONS["Gigashock_BenchDamageEffect"] = {"source_symbol": "Gigashock_BenchDamageEffect", "before": "void Gigashock_BenchDamageEffect(void)\n{\n\tSwapTurn();\n\tuint16_t hl = hTempList_ADDR;\n\tfor (;;) {\n\t\tuint8_t target = gb_read8(hl++);", "after": "void Gigashock_BenchDamageEffect(void)\n{\n\tSwapTurn();\n\tuint16_t hl = hTempList_ADDR;\n\tfor (;;) {\n\t\tuint8_t target = (uint8_t)(gb_read8(hl++) + 1u);", "case_ids": ["Gigashock_BenchDamageEffect-1", "Gigashock_BenchDamageEffect-2"]}
+# <<< factory-mutation Gigashock_BenchDamageEffect
