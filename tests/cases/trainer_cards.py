@@ -211,7 +211,7 @@ CASES["AIDecide_EnergyRetrieval"] = [
             0xC400: b"\x01",   # wPlayerDeck[0] = card id 1
         },
         "hram": {0xFF97: b"\xC2"},
-        "expect_regs": {"a": 0xFF, "f": 0x00},
+        "expect_regs": {"a": 0xFF, "f": 0x80},
     },
 ]
 # <<< factory AIDecide_EnergyRetrieval
@@ -227,7 +227,7 @@ CASES["AIDecide_SuperEnergyRetrieval"] = [
             0xC400: b"\x01",   # wPlayerDeck[0] = card id 1 (TYPE_ENERGY set on real ROM)
         },
         "hram": {0xFF97: b"\xC2"},
-        "expect_regs": {"a": 0xFF, "f": 0x00},
+        "expect_regs": {"a": 0xFF, "f": 0x80},
     },
 ]
 # <<< factory AIDecide_SuperEnergyRetrieval
@@ -833,16 +833,16 @@ MUTATIONS["AIDecide_ItemFinder"] = {"source_symbol": "AIDecide_ItemFinder", "bef
 # >>> factory-mutation AIDecide_EnergyRetrieval
 MUTATIONS["AIDecide_EnergyRetrieval"] = {
     "source_symbol": "AIDecide_EnergyRetrieval",
-    "before": "return (AIDecideEnergyRetrievalResult){dup.a, 0x00u};",
-    "after": "return (AIDecideEnergyRetrievalResult){0u, 0x00u};",
+    "before": "return (AIDecideEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u)};",
+    "after": "return (AIDecideEnergyRetrievalResult){hand_energy.a, 0u};",
     "case_ids": ["AIDecide_EnergyRetrieval-0"],
 }
 # <<< factory-mutation AIDecide_EnergyRetrieval
 # >>> factory-mutation AIDecide_SuperEnergyRetrieval
 MUTATIONS["AIDecide_SuperEnergyRetrieval"] = {
     "source_symbol": "AIDecide_SuperEnergyRetrieval",
-    "before": "return (AIDecideSuperEnergyRetrievalResult){dup1.a, 0x00u};",
-    "after": "return (AIDecideSuperEnergyRetrievalResult){0u, 0x00u};",
+    "before": "return (AIDecideSuperEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u)};",
+    "after": "return (AIDecideSuperEnergyRetrievalResult){hand_energy.a, 0u};",
     "case_ids": ["AIDecide_SuperEnergyRetrieval-0"],
 }
 # <<< factory-mutation AIDecide_SuperEnergyRetrieval

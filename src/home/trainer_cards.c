@@ -729,26 +729,26 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
 {
 	CoreCardListResult hand_energy = CreateEnergyCardListFromHand(a);
 	if (!(hand_energy.f & 0x10u))
-		return (AIDecideEnergyRetrievalResult){hand_energy.a, 0x00u};
+		return (AIDecideEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u)};
 
 	if (wOpponentDeckID == GO_GO_RAIN_DANCE_DECK_ID) {
 		PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 		if (!(muk.f & 0x10u)) {
 			PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
 			if (!(blastoise.f & 0x10u))
-				return (AIDecideEnergyRetrievalResult){blastoise.a, 0x00u};
+				return (AIDecideEnergyRetrievalResult){blastoise.a, (uint8_t)(blastoise.a == 0u ? 0x80u : 0u)};
 		}
 	}
 
 	(void)CreateHandCardList(0u);
 	FindDupResult dup = FindDuplicateCards(wDuelTempList_ADDR);
 	if (dup.f & 0x10u)
-		return (AIDecideEnergyRetrievalResult){dup.a, 0x00u};
+		return (AIDecideEnergyRetrievalResult){dup.a, (uint8_t)(dup.a == 0u ? 0x80u : 0u)};
 	uint8_t saved_card = dup.a;
 
 	FindBasicEnergyCardsInLocationResult discard = FindBasicEnergyCardsInLocation(CARD_LOCATION_DISCARD_PILE);
 	if (discard.f & 0x10u)
-		return (AIDecideEnergyRetrievalResult){discard.a, 0x00u};
+		return (AIDecideEnergyRetrievalResult){discard.a, (uint8_t)(discard.a == 0u ? 0x80u : 0u)};
 
 	wce1a = 0xFFu;
 	wce1b = 0xFFu;
@@ -799,7 +799,7 @@ AIDecideEnergyRetrievalResult AIDecide_EnergyRetrieval(uint8_t a)
 
 	if (wce1a != 0xFFu)
 		return (AIDecideEnergyRetrievalResult){saved_card, 0x10u};
-	return (AIDecideEnergyRetrievalResult){wce1a, 0x00u};
+	return (AIDecideEnergyRetrievalResult){wce1a, (uint8_t)(wce1a == 0u ? 0x80u : 0u)};
 }
 /* <<< factory AIDecide_EnergyRetrieval */
 
@@ -808,32 +808,32 @@ AIDecideSuperEnergyRetrievalResult AIDecide_SuperEnergyRetrieval(uint8_t a)
 {
 	CoreCardListResult hand_energy = CreateEnergyCardListFromHand(a);
 	if (!(hand_energy.f & 0x10u))
-		return (AIDecideSuperEnergyRetrievalResult){hand_energy.a, 0x00u};
+		return (AIDecideSuperEnergyRetrievalResult){hand_energy.a, (uint8_t)(hand_energy.a == 0u ? 0x80u : 0u)};
 
 	if (wOpponentDeckID == GO_GO_RAIN_DANCE_DECK_ID) {
 		PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
 		if (!(muk.f & 0x10u)) {
 			PkmnPowerCountResult blastoise = CountTurnDuelistPokemonWithActivePkmnPower(BLASTOISE);
 			if (!(blastoise.f & 0x10u))
-				return (AIDecideSuperEnergyRetrievalResult){blastoise.a, 0x00u};
+				return (AIDecideSuperEnergyRetrievalResult){blastoise.a, (uint8_t)(blastoise.a == 0u ? 0x80u : 0u)};
 		}
 	}
 
 	(void)CreateHandCardList(0u);
 	FindDupResult dup1 = FindDuplicateCards(wDuelTempList_ADDR);
 	if (dup1.f & 0x10u)
-		return (AIDecideSuperEnergyRetrievalResult){dup1.a, 0x00u};
+		return (AIDecideSuperEnergyRetrievalResult){dup1.a, (uint8_t)(dup1.a == 0u ? 0x80u : 0u)};
 	wce06 = dup1.a;
 
 	FindAndRemoveCardFromList(wce06, wDuelTempList_ADDR);
 	FindDupResult dup2 = FindDuplicateCards(wDuelTempList_ADDR);
 	if (dup2.f & 0x10u)
-		return (AIDecideSuperEnergyRetrievalResult){dup2.a, 0x00u};
+		return (AIDecideSuperEnergyRetrievalResult){dup2.a, (uint8_t)(dup2.a == 0u ? 0x80u : 0u)};
 	wce08 = dup2.a;
 
 	FindBasicEnergyCardsInLocationResult discard = FindBasicEnergyCardsInLocation(CARD_LOCATION_DISCARD_PILE);
 	if (discard.f & 0x10u)
-		return (AIDecideSuperEnergyRetrievalResult){discard.a, 0x00u};
+		return (AIDecideSuperEnergyRetrievalResult){discard.a, (uint8_t)(discard.a == 0u ? 0x80u : 0u)};
 
 	wce1b = 0xFFu;
 	wce1c = 0xFFu;
