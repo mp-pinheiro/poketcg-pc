@@ -1563,6 +1563,9 @@ void FuryAttack_MultiplierEffect(void);
 /* >>> factory Bonemerang_MultiplierEffect */
 void Bonemerang_MultiplierEffect(void);
 /* <<< factory Bonemerang_MultiplierEffect */
+/* >>> factory CloysterSpikeCannon_MultiplierEffect */
+void CloysterSpikeCannon_MultiplierEffect(void);
+/* <<< factory CloysterSpikeCannon_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -7409,3 +7409,15 @@ void Bonemerang_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage_multiplier));
 }
 /* <<< factory Bonemerang_MultiplierEffect */
+
+/* >>> factory CloysterSpikeCannon_MultiplierEffect */
+void CloysterSpikeCannon_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage = (uint8_t)(damage + damage);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory CloysterSpikeCannon_MultiplierEffect */

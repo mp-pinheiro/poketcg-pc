@@ -5066,6 +5066,22 @@ CASES["Bonemerang_MultiplierEffect"] = [
 ]
 # <<< factory Bonemerang_MultiplierEffect
 
+# >>> factory CloysterSpikeCannon_MultiplierEffect
+CONTRACT["CloysterSpikeCannon_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["CloysterSpikeCannon_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory CloysterSpikeCannon_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7503,3 +7519,6 @@ MUTATIONS["FuryAttack_MultiplierEffect"] = {"source_symbol": "FuryAttack_Multipl
 # >>> factory-mutation Bonemerang_MultiplierEffect
 MUTATIONS["Bonemerang_MultiplierEffect"] = {"source_symbol": "Bonemerang_MultiplierEffect", "before": "void Bonemerang_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);", "after": "void Bonemerang_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(1u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);", "case_ids": ["Bonemerang_MultiplierEffect-0", "Bonemerang_MultiplierEffect-1"]}
 # <<< factory-mutation Bonemerang_MultiplierEffect
+# >>> factory-mutation CloysterSpikeCannon_MultiplierEffect
+MUTATIONS["CloysterSpikeCannon_MultiplierEffect"] = {"source_symbol": "CloysterSpikeCannon_MultiplierEffect", "before": "void CloysterSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10(damage));\n}", "after": "void CloysterSpikeCannon_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = result.a;\n\tdamage = (uint8_t)(damage + damage);\n\tdamage = (uint8_t)(damage + result.a);\n\tSetDefiniteDamage(ATimes10((uint8_t)(damage + 1u)));\n}", "case_ids": ["CloysterSpikeCannon_MultiplierEffect-0", "CloysterSpikeCannon_MultiplierEffect-1"]}
+# <<< factory-mutation CloysterSpikeCannon_MultiplierEffect
