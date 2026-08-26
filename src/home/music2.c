@@ -495,17 +495,22 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 
 /* ── Note processing ────────────────────────────────────────────────── */
 
+/* music2.asm:648-840. Entered with the command byte in `note` and *hl already
+ * advanced past it, so gb_read8(*hl) is the note's operand byte. All three
+ * exits converge on the channel-pointer store at asm:832-840. */
 static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch)
 {
-	uint8_t duration, instrument, speed, cutoff;
+	uint8_t duration, instrument, speed, cutoff, oct, operand, lo, hi;
 	uint16_t addr;
-		uint8_t oct = 0;
-	uint8_t lo, hi;
 
-	instrument = note & 0xF0;
-	duration = gb_read8(*hl);  /* peek, don't advance yet */
+	/* OctaveOffsets/Pitches/NoiseInstruments live in the same bank as this
+	 * code, so the asm reads them with no switch; the port must say so. */
+	g_rom_bank = MUSIC2_BANK;
 
-	/* Tie check. */
+	instrument = note & 0xF0u;
+	operand = gb_read8(*hl);
+
+	/* asm:652-671 */
 	if (wMusicTie_PTR[ch] != 0x80) {
 		wMusicTie_PTR[ch] = 1;
 		wdddb_PTR[ch] = 0;
@@ -514,12 +519,15 @@ static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch)
 		wMusicVibratoType_PTR[ch] = wMusicVibratoType2_PTR[ch];
 	}
 
+	/* asm:675-695: the larger of (note&$F)+1 and speed, added the smaller
+	 * number of times, so a zero factor wraps to 256 additions. */
 	speed = wMusicSpeed_PTR[ch];
 	{
-		uint8_t n1 = (uint8_t)((note & 0x0F) + 1);
+		uint8_t n1 = (uint8_t)((note & 0x0Fu) + 1u);
 		uint8_t a, d;
+
 		if (n1 < speed) { a = speed; d = n1; }
-		else            { a = n1; d = speed; }
+		else            { a = n1;    d = speed; }
 		{
 			uint8_t prod = a;
 			while (--d) prod += a;
@@ -529,72 +537,75 @@ static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch)
 		duration = a;
 	}
 
-	/* $D9 = rest — skip pitch lookup entirely. */
-	if (note == 0xD9)
-		goto store_durations;
+	/* asm:698-701 compares the OPERAND byte against $D9, not the command. */
+	if (operand != 0xD9u) {
+		/* asm:703-727: entered unless cutoff is exactly 8, so cutoff 0
+		 * wraps the counter to 256 iterations. */
+		cutoff = wMusicCutoff_PTR[ch];
+		if (cutoff != 8u) {
+			uint16_t sum = 0;
+			uint8_t ct = cutoff;
 
-	cutoff = wMusicCutoff_PTR[ch];
-	if (cutoff != 0 && cutoff < 8) {
-		uint16_t sum = 0;
-		uint8_t c = duration;
-		uint8_t ct = cutoff;
-		do { sum += c; } while (--ct);
-		duration = (uint8_t)((sum >> 3) & 0xFF);
+			do { sum += duration; } while (--ct);
+			duration = (uint8_t)(sum >> 3);
+		}
 	}
 
-store_durations:
 	wddc3_PTR[ch] = duration;
 	wddb7_PTR[ch] = instrument;
 
-	if (instrument == 0)
-		goto advance_ptr;
+	if (instrument != 0) {
+		uint8_t idx = (uint8_t)((instrument >> 4) - 1u);
 
-	if (ch == 3) {
-		/* Channel 4: noise instrument lookup. */
-		uint16_t noise_idx = (uint16_t)((instrument >> 4) - 1) << 1;
-		addr = ADR_NoiseInstruments + noise_idx + (uint16_t)oct * 24;
-		uint16_t data_ptr = (uint16_t)gb_read8(addr + 1) << 8 | gb_read8(addr);
-		uint8_t flags = gb_read8(data_ptr++);
+		oct = wMusicOctave_PTR[ch];
+		if (ch == 3) {
+			/* asm:749-800. The octave stride is 24 computed in 8-bit
+			 * arithmetic (3*oct then three shifts). */
+			uint16_t p;
+			uint8_t flags;
 
-		wMusicStereoPanning = (uint8_t)((wMusicStereoPanning & 0x77) | (flags & 0x88));
-		wddab_PTR[0] = gb_read8(data_ptr++);
-		wddab_PTR[1] = gb_read8(data_ptr++);
-		lo = gb_read8(data_ptr++);
-		wddab_PTR[2] = gb_read8(data_ptr);
-		wddab_PTR[3] = lo;
-		wdded_PTR[0] = (uint8_t)data_ptr;
-		wdded_PTR[1] = (uint8_t)(data_ptr >> 8);
-		wddef = 1;
-	} else {
-		/* Channels 1-3: pitch table lookup. */
-		uint8_t oct_off = gb_read8(ADR_OctaveOffsets + oct);
-		uint8_t pitch_idx = (uint8_t)(oct_off + ((instrument >> 4) - 1));
-		uint8_t po = wMusicPitchOffset_PTR[ch];
-		pitch_idx = (uint8_t)(pitch_idx + po + po);
+			addr = (uint16_t)(ADR_NoiseInstruments
+				+ (uint16_t)(uint8_t)(idx * 2u)
+				+ (uint16_t)(uint8_t)(oct * 24u));
+			p = (uint16_t)(gb_read8(addr)
+				| ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8));
+			flags = gb_read8(p);
+			p = (uint16_t)(p + 1u);
+			/* asm:775-778 ORs the whole flags byte in. */
+			wMusicStereoPanning =
+				(uint8_t)((wMusicStereoPanning & 0x77u) | flags);
+			wddab_PTR[0] = gb_read8(p);
+			wddab_PTR[1] = gb_read8((uint16_t)(p + 1u));
+			lo = gb_read8((uint16_t)(p + 2u));
+			wddab_PTR[2] = gb_read8((uint16_t)(p + 3u));
+			wddab_PTR[3] = lo;
+			p = (uint16_t)(p + 4u);
+			wdded_PTR[0] = (uint8_t)p;
+			wdded_PTR[1] = (uint8_t)(p >> 8);
+			wddef = 1;
+		} else {
+			/* asm:802-831. asm:813 doubles idx before the offsets. */
+			uint8_t oct_off = gb_read8((uint16_t)(ADR_OctaveOffsets + oct));
+			uint8_t po = wMusicPitchOffset_PTR[ch];
+			uint8_t pitch_idx = (uint8_t)((uint8_t)(idx * 2u)
+				+ oct_off + po + po);
+			uint8_t fo = wMusicFrequencyOffset_PTR[ch];
+			uint16_t de;
 
-		addr = ADR_Pitches + (uint16_t)pitch_idx;
-		lo = gb_read8(addr);
-		hi = gb_read8(addr + 1);
-
-		/* Apply frequency offset. */
-		{
-			int16_t fo = wMusicFrequencyOffset_PTR[ch];
-			uint16_t de = (uint16_t)hi << 8 | lo;
-			if ((int8_t)fo < 0) {
-				de = (uint16_t)(de - (uint16_t)(fo ^ 0xFF));
-			} else {
+			addr = (uint16_t)(ADR_Pitches + pitch_idx);
+			lo = gb_read8(addr);
+			hi = gb_read8((uint16_t)(addr + 1u));
+			/* asm:1541-1562 subtracts ~fo rather than negating. */
+			de = (uint16_t)(((uint16_t)hi << 8) | lo);
+			if (fo & 0x80u)
+				de = (uint16_t)(de - (uint8_t)(fo ^ 0xFFu));
+			else
 				de = (uint16_t)(de + fo);
-			}
-			lo = (uint8_t)de;
-			hi = (uint8_t)(de >> 8);
+			wMusicCh1CurPitch_PTR[ch * 2] = (uint8_t)de;
+			wMusicCh1CurPitch_PTR[ch * 2 + 1] = (uint8_t)(de >> 8);
 		}
-		wMusicCh1CurPitch_PTR[ch * 2] = lo;
-		wMusicCh1CurPitch_PTR[ch * 2 + 1] = hi;
 	}
-	return;
 
-advance_ptr:
-	/* Store stream pointer into channel pointers. */
 	wMusicChannelPointers_PTR[ch * 2] = (uint8_t)*hl;
 	wMusicChannelPointers_PTR[ch * 2 + 1] = (uint8_t)(*hl >> 8);
 }
