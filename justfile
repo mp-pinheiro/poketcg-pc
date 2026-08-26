@@ -393,6 +393,23 @@ launch-port:
 launch-port-supervised:
     tools/factory/supervise.sh
 
+
+# Start N supervised loop sessions in a dedicated detached tmux session.
+fleet-start panes="4":
+    tools/factory/fleet.sh start {{panes}}
+
+# Graceful fleet stop: every loop session exits after its current pass.
+fleet-stop:
+    tools/factory/fleet.sh stop
+
+# Immediate fleet stop: also terminates in-flight sessions (state is safe).
+fleet-halt:
+    tools/factory/fleet.sh halt
+
+# Loop-session count, STOP-file state, and fleet tmux session state.
+fleet-status:
+    tools/factory/fleet.sh status
+
 # Print the next version git-cliff derives from unreleased Conventional Commits.
 next-version:
     @git cliff --bump --unreleased --context 2>/dev/null \
