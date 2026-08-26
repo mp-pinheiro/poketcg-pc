@@ -13,6 +13,7 @@
 #include "generated/wram.h"
 
 #include "home/fire_club_lobby.h"
+#include "home/grass_club_entrance.h"
 #define PokemonDomeAfterDuelTable 0x76E7u
 /* <<< factory statics */
 
