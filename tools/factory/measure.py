@@ -13,11 +13,14 @@ landing to now.
 
 from __future__ import annotations
 
+import contextlib
 import datetime
+import io
 import itertools
 import json
 import re
 import statistics
+import sys
 import tomllib
 from pathlib import Path
 
@@ -45,6 +48,23 @@ def _parse(value: str | int | float) -> datetime.datetime:
     if stamp.tzinfo is None:
         stamp = stamp.replace(tzinfo=datetime.UTC)
     return stamp
+
+
+def _frontier() -> tuple[int, int]:
+    """Rows and distinct basenames the selector can actually issue from."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    sink = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(sink):
+            import packet as packet_mod
+            report = packet_mod.report_module()
+            records = report.compute(report.load_inventory(),
+                                     report.load_routines()[0],
+                                     report.load_gate())["work_records"]
+    except Exception:
+        return -1, -1
+    rows = [r for r in records if r.get("state") == "ready"]
+    return len(rows), len({Path(r["source"]).stem for r in rows if r.get("source")})
 
 
 def _pending_artifacts() -> int:
@@ -237,6 +257,14 @@ def main() -> int:
     pool = _pool()
     for state in ("green", "red", "stale", "issued"):
         lines.append(f"pool_{state}={len(pool.get(state, []))}")
+
+    # Selection is per-basename exclusive, so distinct basenames among the
+    # selector's own `ready` work records is the hard ceiling on useful
+    # concurrent sessions. progress.json's `ready` flag counts routines whose
+    # artifacts are already staged and overstates that ceiling several-fold.
+    rows, basenames = _frontier()
+    lines.append(f"frontier_rows={rows}")
+    lines.append(f"frontier_basenames={basenames}")
 
     structural, translation, unknown = _classify_reds(pool.get("red", []))
     lines.append(f"red_structural={structural}")
