@@ -2376,12 +2376,35 @@ CASES["DrawDuelistPortraitsAndNames"] = [
 # <<< factory DrawDuelistPortraitsAndNames
 
 # >>> factory CheckEnergyNeededForAttack
+# Card-location page helper: 60 bytes at (hWhoseTurn << 8), one per deck index.
+# A slot holding PLAY_AREA_MASK (0x10) means "that card is at the arena location",
+# which is what GetPlayAreaCardAttachedEnergies scans for.
+def _cena_page(arena_slots):
+    page = bytearray(60)
+    for _i in arena_slots:
+        page[_i] = 0x10
+    return bytes(page)
+
 CONTRACT["CheckEnergyNeededForAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["CheckEnergyNeededForAttack"] = [
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
               0xCCC6: b"\x00", 0xCC23: b"\x00"}},
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
                         0xCCC6: b"\x00", 0xCC23: b"\x00"}),
+    # GetPlayAreaCardAttachedEnergies scans the whole 60-byte card-location page
+    # at (hWhoseTurn << 8) | l. Cases 0 and 1 leave it unseeded, so the tally is
+    # whatever the page happens to hold and the routine never reliably reaches
+    # its `ret z` "enough energy" exit. These two pin the page, which is what
+    # exposed the landed body returning STALE d/e on that exit instead of the
+    # loop pointer wLoadedAttackEnergyCost + 3 = $CCA9 (fixed 2026-08-26).
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+              0xCCC6: b"\x00", 0xCC23: b"\x00",
+              0xC200: _cena_page((3, 7))},
+     "read": {0xCC1B: 8, 0xCC23: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+              0xCCC6: b"\x00", 0xCC23: b"\x00",
+              0xC200: _cena_page(())},
+     "read": {0xCC1B: 8, 0xCC23: 1}},
 ]
 # <<< factory CheckEnergyNeededForAttack
 
@@ -4679,7 +4702,7 @@ MUTATIONS["DisplayDuelistTurnScreen"] = {"source_symbol": "DisplayDuelistTurnScr
 MUTATIONS["DrawDuelistPortraitsAndNames"] = {"source_symbol": "DrawDuelistPortraitsAndNames", "before": "DrawOpponentPortrait(wOpponentPortrait);", "after": "DrawOpponentPortrait(0);", "case_ids": ["DrawDuelistPortraitsAndNames-0", "DrawDuelistPortraitsAndNames-1"]}
 # <<< factory-mutation DrawDuelistPortraitsAndNames
 # >>> factory-mutation CheckEnergyNeededForAttack
-MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededForAttack", "before": "uint8_t e = wSelectedAttack;\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "after": "uint8_t e = (uint8_t)(wSelectedAttack + 1u);\n\t(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);", "case_ids": ["CheckEnergyNeededForAttack-0"]}
+MUTATIONS["CheckEnergyNeededForAttack"] = {"source_symbol": "CheckEnergyNeededForAttack", "before": "\t\t\t(uint8_t)(de >> 8), (uint8_t)de, hl};", "after": "\t\t\t(uint8_t)(de >> 4), (uint8_t)de, hl};", "case_ids": ["CheckEnergyNeededForAttack-2", "CheckEnergyNeededForAttack-3"]}
 # <<< factory-mutation CheckEnergyNeededForAttack
 # >>> factory-mutation CreateDamageCharSprite
 MUTATIONS["CreateDamageCharSprite"] = {"source_symbol": "CreateDamageCharSprite", "before": "gb_write8(de, wWhichSprite);", "after": "gb_write8(de, (uint8_t)(wWhichSprite + 1u));", "case_ids": ["CreateDamageCharSprite-0"]}
