@@ -848,6 +848,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/menus.h"
 #include "home/print_text.h"
 #define PokemonAndAllAttachedCardsWereReturnedToDeckText 0x016bu
+
+#include "home/serial.h"
+#include "home/coin_toss.h"
+#define OPPACTION_TOSS_COIN_A_TIMES 0x11u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7211,3 +7215,13 @@ ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory MrFuji_ReturnToDeckEffect */
+
+/* >>> factory Serial_TossCoinATimes */
+SerialTossCoinATimesResult Serial_TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)SetOppAction_SerialSendDuelData(OPPACTION_TOSS_COIN_A_TIMES, (uint16_t)((uint16_t)d << 8 | e));
+	SerialSend8Bytes(a, f, b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	TossCoinATimesResult result = TossCoinATimes(a, f, b, c, d, e, hl);
+	return (SerialTossCoinATimesResult){result.a, result.f, result.hl};
+}
+/* <<< factory Serial_TossCoinATimes */

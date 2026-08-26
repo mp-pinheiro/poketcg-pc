@@ -4741,6 +4741,44 @@ CASES["MrFuji_ReturnToDeckEffect"] = [
 ]
 # <<< factory MrFuji_ReturnToDeckEffect
 
+# >>> factory Serial_TossCoinATimes
+CONTRACT["Serial_TossCoinATimes"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["Serial_TossCoinATimes"] = [
+    dict(POISON, a=0x01, d=0x12, e=0x34,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0x00, "d": 0x12, "e": 0x34,
+     "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x80",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+     "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x01, d=0xDD, e=0xEE,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory Serial_TossCoinATimes
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7127,3 +7165,6 @@ MUTATIONS["Curse_PlayerSelectEffect"] = {"source_symbol": "Curse_PlayerSelectEff
 # >>> factory-mutation MrFuji_ReturnToDeckEffect
 MUTATIONS["MrFuji_ReturnToDeckEffect"] = {"source_symbol": "MrFuji_ReturnToDeckEffect", "before": "ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t location = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t location = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["MrFuji_ReturnToDeckEffect-0", "MrFuji_ReturnToDeckEffect-1"]}
 # <<< factory-mutation MrFuji_ReturnToDeckEffect
+# >>> factory-mutation Serial_TossCoinATimes
+MUTATIONS["Serial_TossCoinATimes"] = {"source_symbol": "Serial_TossCoinATimes", "before": "SerialTossCoinATimesResult Serial_TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_TOSS_COIN_A_TIMES, (uint16_t)((uint16_t)d << 8 | e));\n\tSerialSend8Bytes(a, f, b, c, (uint16_t)((uint16_t)d << 8 | e), hl);\n\tTossCoinATimesResult result = TossCoinATimes(a, f, b, c, d, e, hl);", "after": "SerialTossCoinATimesResult Serial_TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)SetOppAction_SerialSendDuelData(OPPACTION_TOSS_COIN_A_TIMES, (uint16_t)((uint16_t)d << 8 | e));\n\tSerialSend8Bytes(a, f, b, c, (uint16_t)((uint16_t)d << 8 | e), hl);\n\tTossCoinATimesResult result = TossCoinATimes((uint8_t)(a + 1u), f, b, c, d, e, hl);", "case_ids": ["Serial_TossCoinATimes-0", "Serial_TossCoinATimes-1", "Serial_TossCoinATimes-2"]}
+# <<< factory-mutation Serial_TossCoinATimes
