@@ -747,6 +747,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/switch_rom.h"
 #define DiscardOppDeckAsManyFireEnergyCardsText 0x0120u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define ChooseAndDiscard2EnergyCardsText 0x0121u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6551,3 +6558,29 @@ void Whirlpool_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory Whirlpool_PlayerSelectEffect */
+
+/* >>> factory FireSpin_PlayerSelectEffect */
+void FireSpin_PlayerSelectEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);
+	hCurSelectionItem = 0u;
+	(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);
+	(void)SortCardsInDuelTempListByID(0u, 0u, 0u);
+	{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }
+	uint8_t denominator = 2u;
+	wEnergyDiscardMenuDenominator = denominator;
+	for (;;) {
+		HandleEnergyDiscardMenuInputResult menu;
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); menu = HandleEnergyDiscardMenuInput(); BankswitchROM(saved); }
+		if ((menu.f & 0x10u) != 0u)
+			return;
+		uint16_t hl = GetNextPositionInTempList();
+		gb_write8(hl, hTempCardIndex_ff98);
+		wEnergyDiscardMenuNumerator++;
+		if (hCurSelectionItem >= 2u)
+			return;
+		(void)RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+		{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardMenu(); BankswitchROM(saved); }
+	}
+}
+/* <<< factory FireSpin_PlayerSelectEffect */

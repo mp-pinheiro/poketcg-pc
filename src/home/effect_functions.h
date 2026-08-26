@@ -1440,6 +1440,9 @@ Wildfire_PlayerSelectEffectResult Wildfire_PlayerSelectEffect(void);
 /* >>> factory Whirlpool_PlayerSelectEffect */
 void Whirlpool_PlayerSelectEffect(void);
 /* <<< factory Whirlpool_PlayerSelectEffect */
+/* >>> factory FireSpin_PlayerSelectEffect */
+void FireSpin_PlayerSelectEffect(void);
+/* <<< factory FireSpin_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

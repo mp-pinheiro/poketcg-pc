@@ -3493,6 +3493,14 @@ static void adapt_Whirlpool_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Whirlpool_PlayerSelectEffect */
 
+/* >>> factory FireSpin_PlayerSelectEffect */
+static void adapt_FireSpin_PlayerSelectEffect(ProbeState *s)
+{
+	(void)s;
+	FireSpin_PlayerSelectEffect();
+}
+/* <<< factory FireSpin_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3919,5 +3927,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BellsproutCallForFamily_PutInPlayAreaEffect", adapt_BellsproutCallForFamily_PutInPlayAreaEffect },
 	{ "Wildfire_PlayerSelectEffect", adapt_Wildfire_PlayerSelectEffect },
 	{ "Whirlpool_PlayerSelectEffect", adapt_Whirlpool_PlayerSelectEffect },
+	{ "FireSpin_PlayerSelectEffect", adapt_FireSpin_PlayerSelectEffect },
 	{ NULL, NULL },
 };

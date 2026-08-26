@@ -1,0 +1,9 @@
+{
+  "fn": "FireSpin_PlayerSelectEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FireSpin_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52192\": \"00\", \"52218\": \"02\", \"65431\": \"c2ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FireSpin_PlayerSelectEffect\", \"mismatches\": {\"bus\": {\"address\": 52218, \"reference\": \"ff800002c2ff02\", \"native\": \"ff800003c2ff02\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50448, 1], [51899, 1], [52192, 1], [52218, 1], [65431, 2], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"FireSpin_PlayerSelectEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff\", \"51899\": \"80\", \"52192\": \"00\", \"52218\": \"02\", \"65431\": \"c2ff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

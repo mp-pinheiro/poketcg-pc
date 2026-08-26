@@ -4506,6 +4506,14 @@ CASES["Whirlpool_PlayerSelectEffect"] = [
 ]
 # <<< factory Whirlpool_PlayerSelectEffect
 
+# >>> factory FireSpin_PlayerSelectEffect
+CONTRACT["FireSpin_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["FireSpin_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xFF98: 1, 0xFFB2: 1, 0xCBE0: 1, 0xCBFA: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFF98: 1, 0xFFB2: 1, 0xCBE0: 1, 0xCBFA: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory FireSpin_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6823,3 +6831,6 @@ MUTATIONS["Wildfire_PlayerSelectEffect"] = {"source_symbol": "Wildfire_PlayerSel
 # >>> factory-mutation Whirlpool_PlayerSelectEffect
 MUTATIONS["Whirlpool_PlayerSelectEffect"] = {"source_symbol": "Whirlpool_PlayerSelectEffect", "before": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0xffu;", "after": "void Whirlpool_PlayerSelectEffect(void)\n{\n\tSwapTurn();\n\tHandListResult list = CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\tif ((list.f & 0x10u) != 0u) {\n\t\tSwapTurn();\n\t\thTemp_ffa0 = 0x00u;", "case_ids": ["Whirlpool_PlayerSelectEffect-0", "Whirlpool_PlayerSelectEffect-1"]}
 # <<< factory-mutation Whirlpool_PlayerSelectEffect
+# >>> factory-mutation FireSpin_PlayerSelectEffect
+MUTATIONS["FireSpin_PlayerSelectEffect"] = {"source_symbol": "FireSpin_PlayerSelectEffect", "before": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 2u;", "after": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 3u;", "case_ids": ["FireSpin_PlayerSelectEffect-0"]}
+# <<< factory-mutation FireSpin_PlayerSelectEffect
