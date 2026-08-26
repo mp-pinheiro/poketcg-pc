@@ -252,10 +252,33 @@ free, so record what it costs before trying again:
   `DetectConsole`, `FlamesOfRage_AIEffect`, `ApplyRandomCountToNPCAnim`,
   `Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`,
   `UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
-- So the migration is one atomic change: move `RESERVED` in both
-  `tools/oracle/pyboy_oracle.py` and `tools/factory/verify.py`, move the
-  `state_exclusions.toml` region, and re-cut those seven routines' sweep spans
-  around the new window in the same commit.
+- So relocating *within* WRAM is not a fix on its own: it also needs those seven
+  routines' sweep spans re-cut around the new window, in the same commit that
+  moves `RESERVED` in both `tools/oracle/pyboy_oracle.py` and
+  `tools/factory/verify.py`.
+- Leaving WRAM does not help either. HRAM is the only region outside WRAM with
+  room (game symbols stop at `hffb7`, so `$FFB8-$FFFE` is unallocated and
+  executable), but cases already observe `$FFED`, `$FFEF`, `$FFFC`, `$FFFE`, and
+  `$FFFF` is the IE register. There is no free 256-byte window anywhere.
+- `tools/oracle/state_exclusions.toml` has NO consumer in `tools/` or `tests/`.
+  Nothing reads it, so editing it changes nothing; the compare spans come from
+  each case's own seeds (`tests/test_leaves.py:123` derives reads from the seed
+  map). Treat that file as documentation until something consumes it.
+
+The reservation, not the placement, is the real over-reach. The frame occupies
+three bytes — one NOP at `SENTINEL`, two for the `jr -2` at `SPIN` — plus
+however deep the routine under test drives the stack down from `STACK_TOP`
+(`$CFC0`). Reserving 256 bytes buys stack headroom, and it is that headroom, not
+the frame, that hides `wCurDeckCards` `$CF17` and the `$CF68` list symbols the
+stanzas actually need.
+
+So the cheap unblock is to shrink `RESERVED` from below rather than move it, and
+the one measurement that decides how far is the deepest stack any registered
+routine drives. Bound already known: the GBRT runner enters every one of them at
+`sp = 0xfffe` with only 126 bytes of HRAM beneath it before the IO block, and
+the whole corpus passes, so the true maximum is under that. Measure it exactly
+(record `min(SP)` per case across a full `oracle-audit-all` run), then set the
+floor to `worst frame base - measured depth` and free everything below.
 
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
