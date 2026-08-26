@@ -338,6 +338,12 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   Budget note for anyone re-measuring: `compare_one.py` kills the backend after
   **30 s**, which caps a probed call near ~1.6 B cycles (≈23,000 frames); a `keys`
   timeline costs extra wall time per frame and lowers that ceiling.
+  That 30 s only holds while the caller lives. `poketcg_probe` also bounds
+  itself: `arm_cpu_guard` (`src/probe.c`) sets `RLIMIT_CPU` to 60 s soft / 65 s
+  hard before reading the request, so a ported routine that loops forever ends
+  as `SIGXCPU` (exit 152) even when its driver is gone — an orphaned probe once
+  burned 4h17m. Raise or disable it with `POKETCG_PROBE_CPU_SECONDS` (`0` opts
+  out) when single-stepping a probe under a debugger.
 - **Triage recipe for this cluster, and its measured result.** These routines are
   unported, so `compare_one.py` cannot drive them (it resolves the native adapter
   first and exits `unknown routine`). Pipe a request JSON straight into

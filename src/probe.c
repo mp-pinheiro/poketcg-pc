@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
 
 #include "generated/hram.h"
 #include "mem.h"
@@ -167,8 +168,33 @@ static char *read_stdin(void)
 	return buf;
 }
 
+/* One request per process, and every caller wraps this binary in a 30 s
+ * subprocess timeout -- but that timeout only exists while the caller is alive.
+ * A ported routine that loops forever therefore pinned a core for 4h17m once,
+ * after the driver that would have killed it was itself killed. RLIMIT_CPU is
+ * enforced by the kernel against consumed CPU time, so it holds for an orphan,
+ * ignores load, and needs no signal handler: SIGXCPU's default action ends the
+ * process, and the hard limit turns any attempt to linger into SIGKILL.
+ * `POKETCG_PROBE_CPU_SECONDS=0` opts out for interactive debugging. */
+static void arm_cpu_guard(void)
+{
+	const char *raw = getenv("POKETCG_PROBE_CPU_SECONDS");
+	long seconds = 60;
+	if (raw && *raw) {
+		char *end = NULL;
+		long parsed = strtol(raw, &end, 10);
+		if (end && *end == '\0')
+			seconds = parsed;
+	}
+	if (seconds <= 0)
+		return;
+	struct rlimit limit = { (rlim_t)seconds, (rlim_t)seconds + 5 };
+	setrlimit(RLIMIT_CPU, &limit);
+}
+
 int main(void)
 {
+	arm_cpu_guard();
 	char *input = read_stdin();
 	js = input;
 
