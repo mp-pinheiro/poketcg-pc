@@ -852,6 +852,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/serial.h"
 #include "home/coin_toss.h"
 #define OPPACTION_TOSS_COIN_A_TIMES 0x11u
+
+#include "home/coin_toss.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7225,3 +7227,11 @@ SerialTossCoinATimesResult Serial_TossCoinATimes(uint8_t a, uint8_t f, uint8_t b
 	return (SerialTossCoinATimesResult){result.a, result.f, result.hl};
 }
 /* <<< factory Serial_TossCoinATimes */
+
+/* >>> factory TossCoinATimes_BankB */
+TossCoinATimes_BankBResult TossCoinATimes_BankB(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	TossCoinATimesResult result = TossCoinATimes(a, f, b, c, d, e, hl);
+	return (TossCoinATimes_BankBResult){result.a, result.f, result.hl};
+}
+/* <<< factory TossCoinATimes_BankB */

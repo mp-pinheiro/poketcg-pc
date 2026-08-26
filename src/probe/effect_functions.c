@@ -3661,6 +3661,16 @@ static void adapt_Serial_TossCoinATimes(ProbeState *s)
 }
 /* <<< factory Serial_TossCoinATimes */
 
+/* >>> factory TossCoinATimes_BankB */
+static void adapt_TossCoinATimes_BankB(ProbeState *s)
+{
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory TossCoinATimes_BankB */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4106,5 +4116,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Curse_PlayerSelectEffect", adapt_Curse_PlayerSelectEffect },
 	{ "MrFuji_ReturnToDeckEffect", adapt_MrFuji_ReturnToDeckEffect },
 	{ "Serial_TossCoinATimes", adapt_Serial_TossCoinATimes },
+	{ "TossCoinATimes_BankB", adapt_TossCoinATimes_BankB },
 	{ NULL, NULL },
 };
