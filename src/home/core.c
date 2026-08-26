@@ -1365,6 +1365,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #define OPP_EFFECTCMDTYPE_BEFORE_DAMAGE 0x03u
 #define OPP_EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
+
+#include "home/menus.h"
+#include "home/serial.h"
+#define OPP_METRONOME_CNF_SLP_PRZ 0x0Fu
+#define OPP_METRONOME_CONFUSED 0x01u
+#define OPP_METRONOME_ARENA_STATUS 0xF0u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7694,3 +7700,24 @@ void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e)
 	DrawDuelMainScene();
 }
 /* <<< factory OppAction_ExecuteTrainerCardEffectCommands */
+
+/* >>> factory OppAction_UseMetronomeAttack */
+void OppAction_UseMetronomeAttack(void)
+{
+	DrawDuelMainScene();
+	DuelistVarResult status = GetTurnDuelistVariable(OPP_METRONOME_ARENA_STATUS);
+	if ((status.a & OPP_METRONOME_CNF_SLP_PRZ) != OPP_METRONOME_CONFUSED)
+		(void)PrintPokemonsAttackText();
+	SerialRecv8BytesResult serial = SerialRecv8Bytes();
+	SwapTurn();
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(serial.d, serial.e);
+	SwapTurn();
+	wPlayerAttackingCardIndex = hTempCardIndex_ff9f;
+	wPlayerAttackingAttackIndex = wSelectedAttack;
+	wPlayerAttackingCardID = wTempCardID_ccc2;
+	(void)UpdateArenaCardIDsAndClearTwoTurnDuelVars(copy.a, copy.f, serial.b, copy.c, (uint8_t)(copy.de >> 8), (uint8_t)copy.de, copy.hl);
+	wMetronomeEnergyCost = serial.c;
+	if ((status.a & OPP_METRONOME_CNF_SLP_PRZ) != OPP_METRONOME_CONFUSED)
+		(void)WaitForWideTextBoxInput();
+}
+/* <<< factory OppAction_UseMetronomeAttack */

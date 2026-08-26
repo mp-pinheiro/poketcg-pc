@@ -1123,4 +1123,7 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 /* >>> factory OppAction_ExecuteTrainerCardEffectCommands */
 void OppAction_ExecuteTrainerCardEffectCommands(uint8_t b, uint8_t d, uint8_t e);
 /* <<< factory OppAction_ExecuteTrainerCardEffectCommands */
+/* >>> factory OppAction_UseMetronomeAttack */
+void OppAction_UseMetronomeAttack(void);
+/* <<< factory OppAction_UseMetronomeAttack */
 #endif

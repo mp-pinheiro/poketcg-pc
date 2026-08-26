@@ -2509,6 +2509,14 @@ static void adapt_OppAction_ExecuteTrainerCardEffectCommands(ProbeState *s)
 }
 /* <<< factory OppAction_ExecuteTrainerCardEffectCommands */
 
+/* >>> factory OppAction_UseMetronomeAttack */
+static void adapt_OppAction_UseMetronomeAttack(ProbeState *s)
+{
+	(void)s;
+	OppAction_UseMetronomeAttack();
+}
+/* <<< factory OppAction_UseMetronomeAttack */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2809,5 +2817,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayDrawOneCardScreen", adapt_DisplayDrawOneCardScreen },
  	{ "PlayShuffleAndDrawCardsAnimation_TurnDuelist", adapt_PlayShuffleAndDrawCardsAnimation_TurnDuelist },
 	{ "OppAction_ExecuteTrainerCardEffectCommands", adapt_OppAction_ExecuteTrainerCardEffectCommands },
+	{ "OppAction_UseMetronomeAttack", adapt_OppAction_UseMetronomeAttack },
 	{ NULL, NULL },
 };
