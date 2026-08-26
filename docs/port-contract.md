@@ -226,69 +226,39 @@ Required coverage per routine:
    no-op), plus counts of 1 and 256/257. 256/257 is where a port that decrements
    only the low byte breaks.
 
-**Reserved WRAM: `$CF00-$CFFF`.** That window holds the oracle's synthesized
-call frame; the oracle raises if a case writes into it. Use `$C100-$CA00` for
-buffers, or the real pret WRAM symbol when the routine has one.
+**Reserved WRAM: `$DC30-$DCFF`.** Only the PyBoy backend synthesizes a call
+frame in WRAM. Its return sentinel is `$DCF0`, parking loop is `$DCF4`, and
+entry stack grows down from `$DCC0`; cases must not seed or observe that
+window. The GBRT runner uses `sp=$FFFE` and sentinel `$FEA0`, both outside
+WRAM.
 
-That window is not free real estate: 24 live symbols resolve inside it
-(`wCurDeckCards` `$CF17`, `wCurDeckName` `$CFB9`, `wMaxNumCardsAllowed` `$CFD1`,
-`wNamingScreenBufferLength` `$CFFF`, ...), so every routine that touches deck or
-naming state is currently unobservable and ten `.factory/blocked.toml` stanzas
-cite it. Relocating the frame was measured on 2026-08-26 and is viable but not
-free, so record what it costs before trying again:
+The frame was moved from `$CF30-$CFFF` on 2026-08-26 because that range
+overlapped live deck and card symbols. The new window lies inside pret's
+unallocated `$D69C-$DD7F` gap. Stack depth was measured over the 31 largest
+registered routines: the deepest call used 86 bytes below entry SP, reaching
+`$DC68`; the `$DC30` floor leaves another 57 bytes of margin.
 
-- Only the PyBoy backend parks a frame there. The GBRT runner enters with
-  `ctx->sp = 0xfffe` and sentinel `0xfea0` (`tools/oracle/gbref/runner.c:589`),
-  both outside WRAM, so `state_exclusions.toml`'s `GBRT/native call-frame
-  scratch` label is inaccurate — moving PyBoy's frame alone does free the window.
-- The destination is already known: `src/wram.asm` leaves a bare `ds $6e4`
-  between `wd698` (`$D698`) and the WRAM Audio section (`$DD80`), so
-  `$D69C-$DD7F` carries no game symbol, and no existing case references
-  `$DC00-$DCFF`.
-- What blocks it is wide-sweep WRAM comparisons tuned to the *old* hole. Cases
-  that assert "nothing else in WRAM changed" read `$C100+3584` and `$D000+4096`
-  — every byte except `$CF00-$CFFF`. Moving the frame to `$DC00` landed it
-  inside their second span and reddened seven registered routines:
-  `DetectConsole`, `FlamesOfRage_AIEffect`, `ApplyRandomCountToNPCAnim`,
-  `Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`,
-  `UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
-- So relocating *within* WRAM is not a fix on its own: it also needs those seven
-  routines' sweep spans re-cut around the new window, in the same commit that
-  moves `RESERVED` in both `tools/oracle/pyboy_oracle.py` and
-  `tools/factory/verify.py`.
-- Leaving WRAM does not help either. HRAM is the only region outside WRAM with
-  room (game symbols stop at `hffb7`, so `$FFB8-$FFFE` is unallocated and
-  executable), but cases already observe `$FFED`, `$FFEF`, `$FFFC`, `$FFFE`, and
-  `$FFFF` is the IE register. There is no free 256-byte window anywhere.
-- `tools/oracle/state_exclusions.toml` has NO consumer in `tools/` or `tests/`.
-  Nothing reads it, so editing it changes nothing; the compare spans come from
-  each case's own seeds (`tests/test_leaves.py:123` derives reads from the seed
-  map). Treat that file as documentation until something consumes it.
+PyBoy cannot register executable hooks in switchable WRAM. Returning to
+`$DCF0` therefore executes `jp $DCF4`; `$DCF4` contains `jr -2`. Both
+instructions preserve registers and flags. The oracle detects the parked PC
+at the next frame boundary and snapshots it explicitly. ROM `pre-ret` hooks
+remain callback-based and bank-aware.
 
-The reservation, not the placement, is the real over-reach. The frame occupies
-three bytes — one NOP at `SENTINEL`, two for the `jr -2` at `SPIN` — plus
-however deep the routine under test drives the stack down from `STACK_TOP`
-(`$CFC0`). Reserving 256 bytes buys stack headroom, and it is that headroom, not
-the frame, that hides `wCurDeckCards` `$CF17` and the `$CF68` list symbols the
-stanzas actually need.
+Cases may use the entire `$CF00-$CFFF` range again, including
+`wCurDeckCards` `$CF17`, `wOwnedCardsCountList` / `wUniqueDeckCardList`
+`$CF68`, `wCurDeckName` `$CFB9`, `wMaxNumCardsAllowed` `$CFD1`, and
+`wSameNameCardsLimit` `$CFD2`. Both backends zero the range during reset, so
+its default content is identical. A direct PyBoy probe seeded and read back
+all of those locations unchanged.
 
-So the cheap unblock is to shrink `RESERVED` from below rather than move it, and
-how far is now measured rather than guessed. Seed a pattern across the window,
-run a routine through the PyBoy oracle, and read it back; the lowest clobbered
-byte is the stack's low-water mark. Measured 2026-08-26 over the 31 largest
-registered routines: the deepest is **86 bytes** below the entry SP (`$CFBE`),
-reaching **`$CF68`**, in `_AIProcessHandTrainerCards`. Text rendering is much
-shallower — 46 bytes for `DrawNarrowTextBox_PrintTextNoDelay`, 34 for
-`PrintTextNoDelay`.
-
-Two consequences. The floor at `$CF30` tolerates 143 bytes, so it clears the
-measured worst case by 57 bytes and is safe. And raising it much further is not
-available: a floor of `$CF69` would tolerate only 85 bytes, under the measured
-86. The low-water mark lands exactly on `wUniqueDeckCardList` /
-`wOwnedCardsCountList` (`$CF68`), which is why the deck-*list* routines cannot be
-unblocked by shrinking at all — the stack genuinely reaches their buffer. Those
-need the frame relocated; only routines whose data terminates below `$CF30`
-benefit from the floor.
+Relocation changes wide WRAM cases, not production code. `npc_core.py` omits
+`$DC30-$DCFF` from its poison sweep while preserving payload offsets on both
+sides. `Func_0bcb` moved its 4 KiB source buffer from `$D000` to `$C000`;
+simply omitting the frame would have changed bytes the routine intentionally
+reads. The seven measured regressions all pass after those re-cuts:
+`DetectConsole`, `FlamesOfRage_AIEffect`, `ApplyRandomCountToNPCAnim`,
+`Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`, and
+`UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
 
 Note when measuring: `compare_one.py` cannot show this. It runs GBRT plus the C
 probe, and GBRT enters at `sp = 0xfffe` with its stack in HRAM, so neither side
@@ -475,10 +445,11 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   37 of 84 probed returned `REFERENCE_OK`; only **6 stanzas** were deletable on that
   evidence, which is the ratio to expect. The rest hold for reasons a termination
   probe cannot see, and the recurring categories are worth knowing before probing:
-  - **Reserved window** — `TryAddCardToDeck`, `CreateCardSetList`,
-    `PrintCurDeckNumberAndName`, `DeckNamingScreen_CheckButtonState`,
-    `WriteCardListsTerminatorBytes`, `CreateCurDeckUniqueCardList` all live in
-    `$CF00-$CFFF`. `REFERENCE_OK` is irrelevant; the oracle rejects the seeds.
+  - **Former reserved-window blockers** — `TryAddCardToDeck`,
+    `CreateCardSetList`, `PrintCurDeckNumberAndName`,
+    `WriteCardListsTerminatorBytes`, and `CreateCurDeckUniqueCardList` were
+    blocked while the PyBoy frame occupied `$CF30-$CFFF`. The frame moved to
+    `$DC30-$DCFF` on 2026-08-26; their stanzas were deleted.
   - **Indirect trampolines** — `AIDoAction` (`JumpToFunctionInTable` with
     `DeckAIPointerTable`), `InitScreenAnimation` (`CallBC`/`retbc`),
     `HandleSelectUpAndDownInList` (`CallIndirect` on a WRAM function-pointer slot),
@@ -521,8 +492,9 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     (mismatch is an RNG-derived byte at `$FFA0`, non-deterministic);
     `CanArenaCardUseNonResidualAttack` (two-call structure, already root-caused);
     `PrintVisibleDeckMachineEntries` (stack-sensitive SRAM loop);
-    `WriteCardListsTerminatorBytes` and `CreateCurDeckUniqueCardList` (both sit
-    inside the reserved `$CF00-$CFFF` window).
+    `WriteCardListsTerminatorBytes` and `CreateCurDeckUniqueCardList` (at the
+    time, both overlapped the old PyBoy frame in `$CF30-$CFFF`; resolved by
+    the `$DC30-$DCFF` relocation on 2026-08-26).
   So the sweep is a good *filter* — a `BUDGET_EXHAUSTED` result confirms a
   termination blocker and a `REFERENCE_OK` refutes one — but the stanza's own stated
   reason decides whether the routine is portable. Three stanzas were deleted this way
@@ -900,8 +872,9 @@ that push and every later one until somebody republishes. The
   the asm tail before concluding a routine is blocked.
 - **A `_b`-suffixed pret symbol is a distinct adjacent field**, not the high
   byte of a pair.
-- **The oracle's synthesized call frame occupies `$CF00-$CFFF`**
-  (`tools/oracle/pyboy_oracle.py:33-38`). Cases must not write it.
+- **The oracle's synthesized call frame occupies `$DC30-$DCFF`**
+  (`tools/oracle/pyboy_oracle.py`). Cases must not write it; `$CF00-$CFFF`
+  is ordinary game WRAM and is fully case-addressable.
 
 
 ## Verification is not just the oracle
