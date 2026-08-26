@@ -438,6 +438,38 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **Sweep completed over all 90 `ready=True` stanza-blocked routines (2026-08-26).**
+  37 of 84 probed returned `REFERENCE_OK`; only **6 stanzas** were deletable on that
+  evidence, which is the ratio to expect. The rest hold for reasons a termination
+  probe cannot see, and the recurring categories are worth knowing before probing:
+  - **Reserved window** — `TryAddCardToDeck`, `CreateCardSetList`,
+    `PrintCurDeckNumberAndName`, `DeckNamingScreen_CheckButtonState`,
+    `WriteCardListsTerminatorBytes`, `CreateCurDeckUniqueCardList` all live in
+    `$CF00-$CFFF`. `REFERENCE_OK` is irrelevant; the oracle rejects the seeds.
+  - **Indirect trampolines** — `AIDoAction` (`JumpToFunctionInTable` with
+    `DeckAIPointerTable`), `InitScreenAnimation` (`CallBC`/`retbc`),
+    `HandleSelectUpAndDownInList` (`CallIndirect` on a WRAM function-pointer slot),
+    `Func_1f96`, `EnterScript` (`jp hl`). A short `REFERENCE_OK` here usually means
+    the *unseeded* pointer happened to reach the sentinel — `HandleSelectUpAndDownInList`
+    "passes" in 11 instructions and `TryAddCardToDeck` in 7, i.e. they early-returned
+    without doing their work. **Treat any `REFERENCE_OK` under ~100 instructions as
+    an early-exit artifact, not a portability proof.**
+  - **Stub-debt callees** — both `EstimateDamage_*` routines run fine (5.2M and 2.6M
+    instructions) but wait on `TryExecuteEffectCommandFunction` (P5).
+  - **Register threading** — `PrintPokemonCardWeight`, `LoadNPCForCreditsSequence`:
+    the register-clobber debt class documented below, not termination.
+  - **Genuinely expensive, not blocked** — `UnusedCopyrightScreen` needs
+    `instruction_budget ≥ 5.4M`; `ScriptCommand_WalkPlayerToMasonLaboratory` ≥ 12M;
+    `CreateCardSetList` 108,882; `EstimateDamage_VersusDefendingCard` 5.2M. Declare a
+    big budget rather than assuming a harness gap.
+  - **Tooling-only retirements** — a distinct and fully deletable class: the stanza's
+    recorded failure is a *candidate* bug, not a project blocker. Exactly two exist,
+    both `SurgeryError: cases module is not valid Python`:
+    `UnusedCopyrightScreen` (deleted — `REFERENCE_OK` proven) and
+    `PokemonTrader_TradeCardsEffect` (kept — it derails to `pc=0x0038`/RST 38 unseeded,
+    so portability is unproven). When an `AUTO-RETIRED` note cites `failure_class=schema`
+    or a Python syntax error, no capability gap was ever diagnosed there.
+
 - **Sweep results, and why `REFERENCE_OK` is necessary but NOT sufficient to delete a
   stanza (2026-08-26).** Probing every `ready=True` stanza-blocked routine with
   `setup=[{fn: SetupText, …}]` is cheap (~2 s each) and 19 of the first 40 returned
