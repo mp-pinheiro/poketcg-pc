@@ -14,4 +14,8 @@ typedef struct {
 DamageCalculationResult CalculateDamage_VersusDefendingPokemon(void);
 DamageCalculationResult CalculateDamage_FromDefendingPokemon(void);
 
+/* >>> factory EstimateDamage_VersusDefendingCard */
+DamageCalculationResult EstimateDamage_VersusDefendingCard(uint8_t a);
+/* <<< factory EstimateDamage_VersusDefendingCard */
+
 #endif

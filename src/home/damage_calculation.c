@@ -4,6 +4,7 @@
 #include "generated/wram.h"
 #include "home/card_color.h"
 #include "home/duel.h"
+#include "home/effect_commands.h"
 #include "home/substatus.h"
 
 #include <stdint.h>
@@ -16,6 +17,10 @@
 #define UNAFFECTED_BY_WEAKNESS_RESISTANCE_F 7u
 #define POISONED 0x80u
 #define DOUBLE_POISONED 0xC0u
+#define DUELVARS_ARENA_CARD_SUBSTATUS1 0xE7u
+#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
+#define POKEMON_POWER 0x04u
+#define EFFECTCMDTYPE_AI 0x09u
 
 
 static DamageCalculationResult finish_damage(uint16_t out, uint16_t value)
@@ -167,3 +172,65 @@ DamageCalculationResult CalculateDamage_FromDefendingPokemon(void)
     return result;
 }
 
+/* >>> factory EstimateDamage_VersusDefendingCard */
+/* damage_calculation.asm:6-84. Stores the estimated damage against the defending
+ * Pokemon in wDamage/wAIMinDamage/wAIMaxDamage. A Pokemon Power zeroes all three
+ * and returns d=e=0. Otherwise the attack's damage seeds the AI min/max, the
+ * card's own EFFECTCMDTYPE_AI command may adjust them, and the calculation runs --
+ * directly when the attacker is already active, otherwise with substatus1,
+ * substatus2 and changed-resistance temporarily zeroed and then restored.
+ * `ld l, DUELVARS_*` only replaces hl's low byte, so all three live on the page
+ * GetTurnDuelistVariable returned. */
+DamageCalculationResult EstimateDamage_VersusDefendingCard(uint8_t a)
+{
+	const uint8_t e_in = a;
+	gb_write8(wSelectedAttack_ADDR, a);
+	uint8_t location = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
+	DuelistVarResult arena =
+		GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	(void)CopyAttackDataAndDamage_FromDeckIndex(arena.a, e_in);
+
+	if (gb_read8(wLoadedAttackCategory_ADDR) == POKEMON_POWER) {
+		gb_write8(wDamage_ADDR, 0u);
+		gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+		gb_write8(wAIMinDamage_ADDR, 0u);
+		gb_write8(wAIMaxDamage_ADDR, 0u);
+		return (DamageCalculationResult){0u, 0x80u, 0u, 0u,
+			(uint16_t)(wDamage_ADDR + 1u)};
+	}
+
+	/* .is_attack */
+	uint8_t damage = gb_read8(wDamage_ADDR);
+	gb_write8(wAIMinDamage_ADDR, damage);
+	gb_write8(wAIMaxDamage_ADDR, damage);
+	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI);
+	if ((gb_read8(wAIMinDamage_ADDR) | gb_read8(wAIMaxDamage_ADDR)) == 0u) {
+		damage = gb_read8(wDamage_ADDR);
+		gb_write8(wAIMinDamage_ADDR, damage);
+		gb_write8(wAIMaxDamage_ADDR, damage);
+	}
+
+	/* .calculation */
+	if (gb_read8(hTempPlayAreaLocation_ff9d_ADDR) == 0u)
+		return CalculateDamage_VersusDefendingPokemon();
+
+	const uint16_t page = (uint16_t)(arena.hl & 0xFF00u);
+	const uint16_t sub1 = (uint16_t)(page | DUELVARS_ARENA_CARD_SUBSTATUS1);
+	const uint16_t sub2 = (uint16_t)(page | DUELVARS_ARENA_CARD_SUBSTATUS2);
+	const uint16_t resist = (uint16_t)(page | DUELVARS_ARENA_CARD_CHANGED_RESISTANCE);
+	DuelistVarResult saved1 = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);
+	const uint8_t v1 = saved1.a;
+	gb_write8(sub1, 0u);
+	const uint8_t v2 = gb_read8(sub2);
+	gb_write8(sub2, 0u);
+	const uint8_t v3 = gb_read8(resist);
+	gb_write8(resist, 0u);
+
+	(void)CalculateDamage_VersusDefendingPokemon();
+
+	gb_write8(resist, v3);
+	gb_write8(sub2, v2);
+	gb_write8(sub1, v1);
+	return (DamageCalculationResult){v1, 0x00u, 0u, 0u, sub1};
+}
+/* <<< factory EstimateDamage_VersusDefendingCard */

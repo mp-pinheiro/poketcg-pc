@@ -11,6 +11,18 @@ static void adapt_CalculateDamage_VersusDefendingPokemon(ProbeState *s)
     s->hl = r.hl;
 }
 
+/* >>> factory EstimateDamage_VersusDefendingCard */
+static void adapt_EstimateDamage_VersusDefendingCard(ProbeState *s)
+{
+    DamageCalculationResult r = EstimateDamage_VersusDefendingCard(s->a);
+    s->a = r.a;
+    s->f = r.f;
+    s->d = r.d;
+    s->e = r.e;
+    s->hl = r.hl;
+}
+/* <<< factory EstimateDamage_VersusDefendingCard */
+
 static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
 {
     DamageCalculationResult r = CalculateDamage_FromDefendingPokemon();
