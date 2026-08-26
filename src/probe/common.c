@@ -220,6 +220,14 @@ static void adapt_HandleAIAntiMewtwoDeckStrategy(ProbeState *s)
 }
 /* <<< factory HandleAIAntiMewtwoDeckStrategy */
 
+/* >>> factory OpenBoosterPack */
+static void adapt_OpenBoosterPack(ProbeState *s)
+{
+	(void)s;
+	OpenBoosterPack();
+}
+/* <<< factory OpenBoosterPack */
+
 const ProbeEntry probe_entries_common[] = {
 	{ "CountOppEnergyCardsInHand", adapt_CountOppEnergyCardsInHand },
 	{ "ConvertHPToDamageCounters_Bank8", adapt_ConvertHPToDamageCounters_Bank8 },
@@ -245,5 +253,6 @@ const ProbeEntry probe_entries_common[] = {
 	{ "FindDuplicatePokemonCards", adapt_FindDuplicatePokemonCards },
 	{ "AIPickEnergyCardToDiscard", adapt_AIPickEnergyCardToDiscard },
 	{ "HandleAIAntiMewtwoDeckStrategy", adapt_HandleAIAntiMewtwoDeckStrategy },
+	{ "OpenBoosterPack", adapt_OpenBoosterPack },
 	{ NULL, NULL },
 };

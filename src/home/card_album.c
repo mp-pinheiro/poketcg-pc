@@ -22,6 +22,10 @@
 #define SYM_BOX_BTM_R 0x1Du
 #define SYM_CURSOR_U 0x0Cu
 #define SYM_CURSOR_D 0x2Fu
+
+#include "home/deck_configuration.h"
+#include "home/card_data.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory GetFirstOwnedCardIndex */
@@ -75,3 +79,68 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void)
 	return (PrintCardSetListEntriesResult){ .hl = hl };
 }
 /* <<< factory PrintCardSetListEntries */
+
+/* >>> factory CreateCardSetList */
+void CreateCardSetList(uint8_t a)
+{
+	uint8_t set = a;
+	uint8_t l = 0;
+
+	ClearMemory_Bank2(0x3cu, 0xCEDAu);
+	ClearMemory_Bank2(0x3cu, 0xCF68u);
+	gb_write8(0xCFE2u, 0);
+
+	for (uint16_t card_id = 1; card_id <= 0xE4u; ++card_id) {
+		uint8_t e = (uint8_t)card_id;
+		LoadCardDataToBuffer1_FromCardID(e);
+		if (((gb_read8(0xCC2Au) & 0xF0u) >> 4) != set)
+			continue;
+
+		if (e == 0x0Au || e == 0xA1u) {
+			uint8_t bit = (e == 0x0Au) ? 0x01u : 0x02u;
+			if (gb_read8(0xC000u + e) != 0x80u) {
+				uint8_t flags = gb_read8(0xCFE2u);
+				gb_write8(0xCFE2u, (uint8_t)(flags | bit));
+			}
+			continue;
+		}
+
+		gb_write8(0xCEDAu + l, e);
+		gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
+		++l;
+	}
+
+	if (set == 0u) {
+		for (uint8_t e = 1; e < 7u; ++e) {
+			gb_write8(0xCEDAu + l, e);
+			gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
+			++l;
+		}
+	} else if (set == 0x02u) {
+		uint8_t e = 7u;
+		gb_write8(0xCEDAu + l, e);
+		gb_write8(0xCF68u + l, gb_read8(0xC000u + e));
+		++l;
+	}
+
+	uint8_t flags = gb_read8(0xCFE2u);
+	if (flags & 0x01u) {
+		gb_write8(0xCEDAu + l, 0x0Au);
+		gb_write8(0xCF68u + l, 1u);
+		++l;
+	}
+	if (flags & 0x02u) {
+		gb_write8(0xCEDAu + l, 0xA1u);
+		gb_write8(0xCF68u + l, 1u);
+		++l;
+	}
+
+	uint8_t c = (uint8_t)(l - 1u);
+	while (gb_read8(0xCF68u + c) == 0x80u)
+		--c;
+	++c;
+	gb_write8(0xCEAEu, c);
+	gb_write8(0xCEDAu + c, 0);
+	gb_write8(0xCF68u + c, 0xFFu);
+}
+/* <<< factory CreateCardSetList */

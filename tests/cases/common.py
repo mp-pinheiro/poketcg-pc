@@ -147,6 +147,9 @@ wDuelTempList = 0xC510
 IVYSAUR = 0x09
 
 wAIBarrierFlagCounter = 0xCDA7
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasCardIDInHand
@@ -350,6 +353,14 @@ CASES["HandleAIAntiMewtwoDeckStrategy"] = [
 ]
 # <<< factory HandleAIAntiMewtwoDeckStrategy
 
+# >>> factory OpenBoosterPack
+CONTRACT["OpenBoosterPack"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["OpenBoosterPack"] = [
+    {"wram": {0xC200: b"\xAA" * 0x3C, 0xC400: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x02], "read": {0xFF97: 1, 0xC200: 0x3C, 0xC510: 1, 0xCBD6: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xC200: b"\xAA" * 0x3C, 0xC400: b"\x00", 0xCABB: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x02], read={0xFF97: 1, 0xC200: 0x3C, 0xC510: 1, 0xCBD6: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OpenBoosterPack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -476,3 +487,6 @@ MUTATIONS["HandleAIAntiMewtwoDeckStrategy"] = {
     "case_ids": ["HandleAIAntiMewtwoDeckStrategy-0", "HandleAIAntiMewtwoDeckStrategy-1"],
 }
 # <<< factory-mutation HandleAIAntiMewtwoDeckStrategy
+# >>> factory-mutation OpenBoosterPack
+MUTATIONS["OpenBoosterPack"] = {"source_symbol": "OpenBoosterPack", "before": "void OpenBoosterPack(void)\n{\n\t_OpenBoosterPack();", "after": "void OpenBoosterPack(void)\n{\n\t(void)0;", "case_ids": ["OpenBoosterPack-0", "OpenBoosterPack-1"]}
+# <<< factory-mutation OpenBoosterPack

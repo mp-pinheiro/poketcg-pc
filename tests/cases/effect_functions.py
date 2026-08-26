@@ -5377,6 +5377,14 @@ CASES["PlayAttackAnimationOverAttackingPokemon"] = [
 ]
 # <<< factory PlayAttackAnimationOverAttackingPokemon
 
+# >>> factory PokemonTrader_PlayerHandSelection
+CONTRACT["PokemonTrader_PlayerHandSelection"] = {"compare": (), "preserve": ()}
+CASES["PokemonTrader_PlayerHandSelection"] = [
+    {"keys": [0x00, 0x02], "wram": {0xC2EE: b"\x01", 0xC242: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00", 0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00", 0xFF91: b"\x02", 0xFFB1: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xFFA0: 1}, "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xC2EE: b"\x01", 0xC242: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00", 0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00", 0xFF91: b"\x02", 0xFFB1: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFFA0: 1}, rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PokemonTrader_PlayerHandSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7877,3 +7885,6 @@ MUTATIONS["Firegiver_AddToHandEffect"] = {"source_symbol": "Firegiver_AddToHandE
 # >>> factory-mutation PlayAttackAnimationOverAttackingPokemon
 MUTATIONS["PlayAttackAnimationOverAttackingPokemon"] = {"source_symbol": "PlayAttackAnimationOverAttackingPokemon", "before": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = a;", "after": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(a + 1u);", "case_ids": ["PlayAttackAnimationOverAttackingPokemon-0", "PlayAttackAnimationOverAttackingPokemon-1"]}
 # <<< factory-mutation PlayAttackAnimationOverAttackingPokemon
+# >>> factory-mutation PokemonTrader_PlayerHandSelection
+MUTATIONS["PokemonTrader_PlayerHandSelection"] = {"source_symbol": "PokemonTrader_PlayerHandSelection", "before": "\thTemp_ffa0 = result.a;", "after": "\thTemp_ffa0 = (uint8_t)(result.a + 1u);", "case_ids": ["PokemonTrader_PlayerHandSelection-0", "PokemonTrader_PlayerHandSelection-1"]}
+# <<< factory-mutation PokemonTrader_PlayerHandSelection

@@ -21,8 +21,18 @@ static void adapt_PrintCardSetListEntries(ProbeState *s)
 }
 /* <<< factory PrintCardSetListEntries */
 
+/* >>> factory CreateCardSetList */
+static void adapt_CreateCardSetList(ProbeState *s)
+{
+	CreateCardSetList(s->a);
+	s->a = 0xFFu;
+	s->f = 0x80u;
+}
+/* <<< factory CreateCardSetList */
+
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
 	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
+	{ "CreateCardSetList", adapt_CreateCardSetList },
 	{ NULL, NULL },
 };

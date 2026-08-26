@@ -83,6 +83,8 @@
 #define AI_MEWTWO_MILL_F 0x07u
 #define AI_MEWTWO_MILL (1u << AI_MEWTWO_MILL_F)
 #define AI_TRAINER_CARD_PHASE_05 0x05u
+
+#include "home/booster_pack.h"
 /* <<< factory statics */
 
 /* >>> factory CountOppEnergyCardsInHand */
@@ -671,3 +673,10 @@ set_carry:
 	return (HandleAIAntiMewtwoDeckStrategyResult){a, f};
 }
 /* <<< factory HandleAIAntiMewtwoDeckStrategy */
+
+/* >>> factory OpenBoosterPack */
+void OpenBoosterPack(void)
+{
+	_OpenBoosterPack();
+}
+/* <<< factory OpenBoosterPack */

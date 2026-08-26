@@ -11,4 +11,7 @@ GetFirstOwnedCardIndexResult GetFirstOwnedCardIndex(void);
 typedef struct { uint16_t hl; } PrintCardSetListEntriesResult;
 PrintCardSetListEntriesResult PrintCardSetListEntries(void);
 /* <<< factory PrintCardSetListEntries */
+/* >>> factory CreateCardSetList */
+void CreateCardSetList(uint8_t a);
+/* <<< factory CreateCardSetList */
 #endif /* POKETCG_HOME_CARD_ALBUM_H */

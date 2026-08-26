@@ -3968,6 +3968,14 @@ static void adapt_PlayAttackAnimationOverAttackingPokemon(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimationOverAttackingPokemon */
 
+/* >>> factory PokemonTrader_PlayerHandSelection */
+static void adapt_PokemonTrader_PlayerHandSelection(ProbeState *s)
+{
+	(void)s;
+	PokemonTrader_PlayerHandSelection();
+}
+/* <<< factory PokemonTrader_PlayerHandSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4450,5 +4458,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ChainLightningEffect", adapt_ChainLightningEffect },
 	{ "Firegiver_AddToHandEffect", adapt_Firegiver_AddToHandEffect },
 	{ "PlayAttackAnimationOverAttackingPokemon", adapt_PlayAttackAnimationOverAttackingPokemon },
+	{ "PokemonTrader_PlayerHandSelection", adapt_PokemonTrader_PlayerHandSelection },
 	{ NULL, NULL },
 };

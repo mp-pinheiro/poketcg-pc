@@ -38,6 +38,15 @@ CASES["PrintCardSetListEntries"] = [
 ]
 # <<< factory PrintCardSetListEntries
 
+# >>> factory CreateCardSetList
+CONTRACT["CreateCardSetList"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CreateCardSetList"] = [
+    {"a": 0x00, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x02, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xC000: b"\x80" * 0xE5}, "read": {0xCEDA: 60, 0xCF68: 60, 0xCEAE: 1, 0xCFE2: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory CreateCardSetList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -53,3 +62,6 @@ MUTATIONS["GetFirstOwnedCardIndex"] = {
 # >>> factory-mutation PrintCardSetListEntries
 MUTATIONS["PrintCardSetListEntries"] = {"source_symbol": "PrintCardSetListEntries", "before": "gb_write8(wUnableToScrollDown_ADDR, TRUE);", "after": "gb_write8(wUnableToScrollDown_ADDR, FALSE);", "case_ids": ["PrintCardSetListEntries-0", "PrintCardSetListEntries-1"]}
 # <<< factory-mutation PrintCardSetListEntries
+# >>> factory-mutation CreateCardSetList
+MUTATIONS["CreateCardSetList"] = {"source_symbol": "CreateCardSetList", "before": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = a;", "after": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = 0u;", "case_ids": ["CreateCardSetList-1"]}
+# <<< factory-mutation CreateCardSetList

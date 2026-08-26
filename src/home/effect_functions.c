@@ -953,6 +953,14 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel_core.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#define ChooseCardFromYourHandToSwitchText 0x015eu
+#define ChooseCardToSwitchText 0x015fu
+#define DuelistHandText 0x00a7u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7820,3 +7828,15 @@ void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, ui
 	WaitAttackAnimation();
 }
 /* <<< factory PlayAttackAnimationOverAttackingPokemon */
+
+/* >>> factory PokemonTrader_PlayerHandSelection */
+void PokemonTrader_PlayerHandSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseCardFromYourHandToSwitchText);
+	(void)CreatePokemonCardListFromHand();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistHandText, ChooseCardToSwitchText);
+	DisplayCardListResult result = DisplayCardList();
+	hTemp_ffa0 = result.a;
+}
+/* <<< factory PokemonTrader_PlayerHandSelection */
