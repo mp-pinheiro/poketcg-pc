@@ -165,6 +165,94 @@ CASES["SetScreenForDuelAnimation"] = [
 ]
 # <<< factory SetScreenForDuelAnimation
 
+
+# >>> factory AnimationCommand_AnimNormal
+wDamageAnimPlayAreaLocation = 0xCE82
+# de points at the animation id; the chain then reads a terminating END (0).
+_hWhoseTurn = 0xFF97
+_wDuelAnimDuelistSide = 0xD4AF
+_wDuelAnimDamage = 0xD4B1
+_wDuelAnimEffectiveness = 0xD4B3
+_wDuelDisplayedScreen = 0xCAC2
+_STREAM = 0xC100
+CONTRACT["AnimationCommand_AnimNormal"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["AnimationCommand_AnimNormal"] = [
+    # plain id -> played as-is
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, "read": {_STREAM: 2}},
+    # SHAKE1 on the player's turn -> small shake X
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\xFA\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, "read": {_STREAM: 2}},
+    # SHAKE1 on the opponent's turn with a link duel -> small shake Y
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\xFA\x00", _hWhoseTurn: b"\xC3",
+        wDuelType: b"\x01"}, "read": {_STREAM: 2}},
+    # SHAKE3 swaps the pair
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\xFC\x00", _hWhoseTurn: b"\xC3",
+        wDuelType: b"\x01"}, "read": {_STREAM: 2}},
+    dict(POISON, d=0xC1, e=0x00, wram={_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, read={_STREAM: 2}),
+    # SHOW_DAMAGE: copies the damage pair and effectiveness into the anim state
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x09\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimAmount: b"\x2A\x01",
+        wDamageAnimEffectiveness: b"\x03", _wDuelDisplayedScreen: b"\x01"},
+     "read": {_STREAM: 2, _wDuelAnimDamage: 2}},
+]
+# <<< factory AnimationCommand_AnimNormal
+
+# >>> factory AnimationCommand_AnimPlayer
+CONTRACT["AnimationCommand_AnimPlayer"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["AnimationCommand_AnimPlayer"] = [
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, "read": {_STREAM: 2, _wDuelAnimDuelistSide: 1}},
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC3",
+        wDuelType: b"\x01"}, "read": {_STREAM: 2, _wDuelAnimDuelistSide: 1}},
+    dict(POISON, d=0xC1, e=0x00, wram={_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, read={_STREAM: 2, _wDuelAnimDuelistSide: 1}),
+]
+# <<< factory AnimationCommand_AnimPlayer
+
+# >>> factory AnimationCommand_AnimOpponent
+CONTRACT["AnimationCommand_AnimOpponent"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["AnimationCommand_AnimOpponent"] = [
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, "read": {_STREAM: 2, _wDuelAnimDuelistSide: 1}},
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC3",
+        wDuelType: b"\x01"}, "read": {_STREAM: 2, _wDuelAnimDuelistSide: 1}},
+    dict(POISON, d=0xC1, e=0x00, wram={_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00"}, read={_STREAM: 2, _wDuelAnimDuelistSide: 1}),
+]
+# <<< factory AnimationCommand_AnimOpponent
+
+# >>> factory AnimationCommand_AnimPlayArea
+CONTRACT["AnimationCommand_AnimPlayArea"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["AnimationCommand_AnimPlayArea"] = [
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\x83"},
+     "read": {_STREAM: 2, wDuelAnimLocationParam: 1}},
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\x05"},
+     "read": {_STREAM: 2, wDuelAnimLocationParam: 1}},
+    dict(POISON, d=0xC1, e=0x00, wram={_STREAM: b"\x20\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\xFF"},
+        read={_STREAM: 2, wDuelAnimLocationParam: 1}),
+]
+# <<< factory AnimationCommand_AnimPlayArea
+
+# >>> factory AnimationCommand_AnimScreen
+CONTRACT["AnimationCommand_AnimScreen"] = {"compare": ("d", "e"), "preserve": ()}
+CASES["AnimationCommand_AnimScreen"] = [
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x01\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\x00"},
+     "read": {_STREAM: 2, wDuelAnimSetScreen: 1, wDuelAnimLocationParam: 1}},
+    {"d": 0xC1, "e": 0x00, "wram": {_STREAM: b"\x04\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\x00"},
+     "read": {_STREAM: 2, wDuelAnimSetScreen: 1, wDuelAnimLocationParam: 1}},
+    dict(POISON, d=0xC1, e=0x00, wram={_STREAM: b"\x00\x00", _hWhoseTurn: b"\xC2",
+        wDuelType: b"\x00", wDamageAnimPlayAreaLocation: b"\x00"},
+        read={_STREAM: 2, wDuelAnimSetScreen: 1, wDuelAnimLocationParam: 1}),
+]
+# <<< factory AnimationCommand_AnimScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -235,3 +323,18 @@ MUTATIONS["UpdateMainSceneHUD"] = {"source_symbol": "UpdateMainSceneHUD", "befor
 # >>> factory-mutation SetScreenForDuelAnimation
 MUTATIONS["SetScreenForDuelAnimation"] = {"source_symbol": "SetScreenForDuelAnimation", "before": "\t\tgb_write8(wDuelDisplayedScreen_ADDR, saved_screen);", "after": "\t\tgb_write8(wDuelDisplayedScreen_ADDR, (uint8_t)(saved_screen ^ 1u));", "case_ids": ["SetScreenForDuelAnimation-2", "SetScreenForDuelAnimation-3"]}
 # <<< factory-mutation SetScreenForDuelAnimation
+# >>> factory-mutation AnimationCommand_AnimNormal
+MUTATIONS["AnimationCommand_AnimNormal"] = {"source_symbol": "AnimationCommand_AnimNormal", "before": "\t\tgb_write8(wDuelAnimDamage_ADDR, gb_read8(wDamageAnimAmount_ADDR));", "after": "\t\tgb_write8(wDuelAnimDamage_ADDR, (uint8_t)(gb_read8(wDamageAnimAmount_ADDR) + 1u));", "case_ids": ["AnimationCommand_AnimNormal-5"]}
+# <<< factory-mutation AnimationCommand_AnimNormal
+# >>> factory-mutation AnimationCommand_AnimPlayer
+MUTATIONS["AnimationCommand_AnimPlayer"] = {"source_symbol": "AnimationCommand_AnimPlayer", "before": "\t\tgb_write8(wDuelAnimDuelistSide_ADDR, PLAYER_TURN);", "after": "\t\tgb_write8(wDuelAnimDuelistSide_ADDR, OPPONENT_TURN);", "case_ids": ["AnimationCommand_AnimPlayer-0", "AnimationCommand_AnimPlayer-1", "AnimationCommand_AnimPlayer-2"]}
+# <<< factory-mutation AnimationCommand_AnimPlayer
+# >>> factory-mutation AnimationCommand_AnimOpponent
+MUTATIONS["AnimationCommand_AnimOpponent"] = {"source_symbol": "AnimationCommand_AnimOpponent", "before": "\t\tgb_write8(wDuelAnimDuelistSide_ADDR, OPPONENT_TURN);", "after": "\t\tgb_write8(wDuelAnimDuelistSide_ADDR, PLAYER_TURN);", "case_ids": ["AnimationCommand_AnimOpponent-0", "AnimationCommand_AnimOpponent-1", "AnimationCommand_AnimOpponent-2"]}
+# <<< factory-mutation AnimationCommand_AnimOpponent
+# >>> factory-mutation AnimationCommand_AnimPlayArea
+MUTATIONS["AnimationCommand_AnimPlayArea"] = {"source_symbol": "AnimationCommand_AnimPlayArea", "before": "& 0x7Fu);", "after": "& 0xFFu);", "case_ids": ["AnimationCommand_AnimPlayArea-0", "AnimationCommand_AnimPlayArea-1", "AnimationCommand_AnimPlayArea-2"]}
+# <<< factory-mutation AnimationCommand_AnimPlayArea
+# >>> factory-mutation AnimationCommand_AnimScreen
+MUTATIONS["AnimationCommand_AnimScreen"] = {"source_symbol": "AnimationCommand_AnimScreen", "before": "\tgb_write8(wDuelAnimSetScreen_ADDR, screen);", "after": "\tgb_write8(wDuelAnimSetScreen_ADDR, (uint8_t)(screen + 1u));", "case_ids": ["AnimationCommand_AnimScreen-0", "AnimationCommand_AnimScreen-1", "AnimationCommand_AnimScreen-2"]}
+# <<< factory-mutation AnimationCommand_AnimScreen
