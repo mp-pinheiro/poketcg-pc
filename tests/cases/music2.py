@@ -807,6 +807,73 @@ CASES["Music2_ret"] = [
 ]
 # <<< factory Music2_ret
 
+# >>> factory Music2_frequency_offset
+CONTRACT["Music2_frequency_offset"] = {"compare": (), "preserve": ()}
+CASES["Music2_frequency_offset"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDEA: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDEA: 1}},
+    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDEC: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDEB: 1}),
+]
+# <<< factory Music2_frequency_offset
+
+# >>> factory Music2_duty
+CONTRACT["Music2_duty"] = {"compare": (), "preserve": ()}
+CASES["Music2_duty"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDD86: 1}},
+    {"c": 1, "stack": [0xC100], "wram": {0xC100: b"\x3F\xFF"}, "read": {0xDD87: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x80\xFF"}, "read": {0xDD89: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC100], wram={0xC100: b"\xFF\xFF"},
+         read={0xDD88: 1}),
+]
+# <<< factory Music2_duty
+
+# >>> factory Music2_volume
+CONTRACT["Music2_volume"] = {"compare": (), "preserve": ()}
+CASES["Music2_volume"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x7F\xFF"}, "read": {0xDDE7: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDE7: 1}},
+    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDE9: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x11\xFF"},
+         read={0xDDE8: 1}),
+]
+# <<< factory Music2_volume
+
+# >>> factory Music2_wave
+CONTRACT["Music2_wave"] = {"compare": (), "preserve": ()}
+CASES["Music2_wave"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x05\xFF", 0xDD8A: b"\x00\x00"},
+     "read": {0xDD8A: 2}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDD8A: b"\xFF\xFF"},
+     "read": {0xDD8A: 2}},
+    dict(POISON, b=0, c=2, stack=[0xC100],
+         wram={0xC100: b"\xFF\xFF", 0xDD8A: b"\x00\x00"}, read={0xDD8A: 2}),
+]
+# <<< factory Music2_wave
+
+# >>> factory Music2_cutoff
+CONTRACT["Music2_cutoff"] = {"compare": (), "preserve": ()}
+CASES["Music2_cutoff"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDBF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDBF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDC2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDC0: 1}),
+]
+# <<< factory Music2_cutoff
+
+# >>> factory Music2_echo
+CONTRACT["Music2_echo"] = {"compare": (), "preserve": ()}
+CASES["Music2_echo"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDC7: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDC7: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDCA: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDC8: 1}),
+]
+# <<< factory Music2_echo
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 

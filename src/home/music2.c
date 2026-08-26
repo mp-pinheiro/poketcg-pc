@@ -743,12 +743,56 @@ void Music2_ret(uint16_t caller_stream, uint8_t ch)
 	Music2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));
 	Music2_PlayNextNote(&hl, ch);
 }
-void Music2_frequency_offset(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }
-void Music2_duty(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
-void Music2_volume(uint16_t *hl, uint8_t ch)        { Music2_PlayNextNote(hl, ch); }
-void Music2_wave(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
-void Music2_cutoff(uint16_t *hl, uint8_t ch)        { Music2_PlayNextNote(hl, ch); }
-void Music2_echo(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
+/* music2.asm:1007-1016. */
+void Music2_frequency_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1018-1028. The operand is masked to the duty bits. */
+void Music2_duty(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = (uint8_t)(gb_read8(caller_stream) & 0xC0u);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicDuty1_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1030-1039. */
+void Music2_volume(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVolume_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1041-1050. Wave is a single global byte, not per channel, and the
+ * handler also raises the wave-change flag. */
+void Music2_wave(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8(wMusicWave_ADDR, value);
+	gb_write8(wMusicWaveChange_ADDR, 0x01u);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1052-1061. */
+void Music2_cutoff(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1063-1072. */
+void Music2_echo(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
 void Music2_vibrato_type(uint16_t *hl, uint8_t ch)  { Music2_PlayNextNote(hl, ch); }
 void Music2_vibrato_delay(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }
 void Music2_pitch_offset(uint16_t *hl, uint8_t ch)  { Music2_PlayNextNote(hl, ch); }
