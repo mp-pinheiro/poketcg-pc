@@ -84,6 +84,15 @@ CASES["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = [
 ]
 # <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile
 
+# >>> factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile
+CONTRACT["OpenInPlayAreaScreen_NonTurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["OpenInPlayAreaScreen_NonTurnHolderDiscardPile"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC1", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC1"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC1ED: b"\x00", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xFF97: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation OpenInPlayAreaScreen_HandleInput
@@ -103,3 +112,6 @@ MUTATIONS["OpenInPlayAreaScreen_NonTurnHolderPlayArea"] = {"source_symbol": "Ope
 # >>> factory-mutation OpenInPlayAreaScreen_TurnHolderDiscardPile
 MUTATIONS["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = {"source_symbol": "OpenInPlayAreaScreen_TurnHolderDiscardPile", "before": "void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)OpenTurnHolderDiscardPileScreen(c);", "after": "void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)0;", "case_ids": ["OpenInPlayAreaScreen_TurnHolderDiscardPile-0", "OpenInPlayAreaScreen_TurnHolderDiscardPile-1", "OpenInPlayAreaScreen_TurnHolderDiscardPile-2"]}
 # <<< factory-mutation OpenInPlayAreaScreen_TurnHolderDiscardPile
+# >>> factory-mutation OpenInPlayAreaScreen_NonTurnHolderDiscardPile
+MUTATIONS["OpenInPlayAreaScreen_NonTurnHolderDiscardPile"] = {"source_symbol": "OpenInPlayAreaScreen_NonTurnHolderDiscardPile", "before": "void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenInPlayAreaScreen_NonTurnHolderDiscardPile-0", "OpenInPlayAreaScreen_NonTurnHolderDiscardPile-1", "OpenInPlayAreaScreen_NonTurnHolderDiscardPile-2"]}
+# <<< factory-mutation OpenInPlayAreaScreen_NonTurnHolderDiscardPile

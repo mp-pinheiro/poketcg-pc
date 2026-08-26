@@ -47,6 +47,18 @@
 #define PAD_DOWN    0x80u
 #define PAD_BUTTONS 0x0Fu
 #define SFX_CURSOR  0x01u
+
+#include "home/deck_configuration.h"
+#include "home/card_album.h"
+#include "home/switch_sram.h"
+#include "generated/wram.h"
+#include "generated/sram.h"
+#define CARD_COLLECTION_SIZE 0x100u
+#define CARD_SET_EVOLUTION 0x01u
+#define CARD_SET_LABORATORY 0x03u
+#define CARD_SET_MYSTERY 0x02u
+#define CARD_SET_PROMOTIONAL 0x04u
+#define NUM_CARD_ALBUM_VISIBLE_CARDS 0x07u
 /* <<< factory statics */
 
 /* >>> factory GetFirstOwnedCardIndex */
@@ -318,3 +330,31 @@ HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e)
 	return (HandleCardAlbumCardPageResult){ .a = a, .f = 0x20u };
 }
 /* <<< factory HandleCardAlbumCardPage */
+
+/* >>> factory CreateCardSetListAndInitListCoords */
+void CreateCardSetListAndInitListCoords(uint8_t a)
+{
+	uint16_t hl = sCardCollection_ADDR;
+	uint16_t de = wTempCardCollection_ADDR;
+	EnableSRAM();
+	CopyNBytesFromHLToDE(&hl, &de, (uint8_t)(CARD_COLLECTION_SIZE - 1u));
+	DisableSRAM();
+
+	uint8_t prefix = 0x30u;
+	if (a == CARD_SET_EVOLUTION)
+		prefix = 0x31u;
+	else if (a == CARD_SET_MYSTERY)
+		prefix = 0x32u;
+	else if (a == CARD_SET_LABORATORY)
+		prefix = 0x33u;
+	else if (a == CARD_SET_PROMOTIONAL)
+		prefix = 0x3Fu;
+	gb_write8(wCurDeckName_ADDR, 0x03u);
+	gb_write8((uint16_t)(wCurDeckName_ADDR + 1u), prefix);
+
+	CreateCardSetList(a);
+	wNumVisibleCardListEntries = NUM_CARD_ALBUM_VISIBLE_CARDS;
+	gb_write8(wCardListCoords_ADDR, 0x04u);
+	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);
+}
+/* <<< factory CreateCardSetListAndInitListCoords */

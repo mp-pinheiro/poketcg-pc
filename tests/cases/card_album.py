@@ -84,6 +84,14 @@ CASES["HandleCardAlbumCardPage"] = [
 ]
 # <<< factory HandleCardAlbumCardPage
 
+# >>> factory CreateCardSetListAndInitListCoords
+CONTRACT["CreateCardSetListAndInitListCoords"] = {"compare": ("a", "f"), "preserve": ("a", "f")}
+CASES["CreateCardSetListAndInitListCoords"] = [
+    {"a": 0x04, "sram": {0: {0xA100: bytes(0xFF)}}, "read": {0xC000: 0xFF, 0xCECB: 1, 0xCED0: 2, 0xCFB9: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, a=0x03, sram={0: {0xA100: bytes(0xFF)}}, read={0xC000: 0xFF, 0xCECB: 1, 0xCED0: 2, 0xCFB9: 2}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory CreateCardSetListAndInitListCoords
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -111,3 +119,11 @@ MUTATIONS["HandleCardAlbumCardPage"] = {
                  "HandleCardAlbumCardPage-2"],
 }
 # <<< factory-mutation HandleCardAlbumCardPage
+# >>> factory-mutation CreateCardSetListAndInitListCoords
+MUTATIONS["CreateCardSetListAndInitListCoords"] = {
+    "source_symbol": "CreateCardSetListAndInitListCoords",
+    "before": "\tgb_write8(wCardListCoords_ADDR, 0x04u);\n\tgb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);",
+    "after": "\tgb_write8(wCardListCoords_ADDR, 0x03u);\n\tgb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);",
+    "case_ids": ["CreateCardSetListAndInitListCoords-0", "CreateCardSetListAndInitListCoords-1"],
+}
+# <<< factory-mutation CreateCardSetListAndInitListCoords

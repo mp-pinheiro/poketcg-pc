@@ -532,4 +532,7 @@ CallMapScriptResult Func_c9c0(void);
 /* >>> factory Func_cc32 */
 void Func_cc32(uint16_t hl);
 /* <<< factory Func_cc32 */
+/* >>> factory Script_LegendaryCardRightSpark */
+void Script_LegendaryCardRightSpark(void);
+/* <<< factory Script_LegendaryCardRightSpark */
 #endif

@@ -1121,6 +1121,13 @@ static void adapt_Func_cc32(ProbeState *s)
 }
 /* <<< factory Func_cc32 */
 
+/* >>> factory Script_LegendaryCardRightSpark */
+static void adapt_Script_LegendaryCardRightSpark(ProbeState *s)
+{
+	Script_LegendaryCardRightSpark();
+}
+/* <<< factory Script_LegendaryCardRightSpark */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1231,5 +1238,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PrintText", adapt_ScriptCommand_PrintText },
 	{ "Func_c9c0", adapt_Func_c9c0 },
 	{ "Func_cc32", adapt_Func_cc32 },
+	{ "Script_LegendaryCardRightSpark", adapt_Script_LegendaryCardRightSpark },
 	{ NULL, NULL },
 };

@@ -1313,6 +1313,14 @@ CASES["Func_cc32"] = [
 ]
 # <<< factory Func_cc32
 
+# >>> factory Script_LegendaryCardRightSpark
+CONTRACT["Script_LegendaryCardRightSpark"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["Script_LegendaryCardRightSpark"] = [
+    {"wram": {0xD0BF: b"\x11", 0xD0C0: b"\x22", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x33", 0xD0C0: b"\x44", 0xD0C1: b"\x00"}, "read": {0xD0BF: 1, 0xD0C1: 1}},
+]
+# <<< factory Script_LegendaryCardRightSpark
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1985,3 +1993,6 @@ for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c0"], ({"mode": "return"}, {"mode":
 # >>> factory-mutation Func_cc32
 MUTATIONS["Func_cc32"] = {"source_symbol": "Func_cc32", "before": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = (uint16_t)wCurrentNPCNameTx |\n\t\t(uint16_t)((uint16_t)gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u)) << 8);", "after": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = 0u;", "case_ids": ["Func_cc32-1", "Func_cc32-2"]}
 # <<< factory-mutation Func_cc32
+# >>> factory-mutation Script_LegendaryCardRightSpark
+MUTATIONS["Script_LegendaryCardRightSpark"] = {"source_symbol": "Script_LegendaryCardRightSpark", "before": "void Script_LegendaryCardRightSpark(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_LegendaryCardRightSpark(void)\n{\n\t(void)0;", "case_ids": ["Script_LegendaryCardRightSpark-0", "Script_LegendaryCardRightSpark-1"]}
+# <<< factory-mutation Script_LegendaryCardRightSpark

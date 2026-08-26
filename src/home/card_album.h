@@ -18,4 +18,7 @@ void CreateCardSetList(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } HandleCardAlbumCardPageResult;
 HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e);
 /* <<< factory HandleCardAlbumCardPage */
+/* >>> factory CreateCardSetListAndInitListCoords */
+void CreateCardSetListAndInitListCoords(uint8_t a);
+/* <<< factory CreateCardSetListAndInitListCoords */
 #endif /* POKETCG_HOME_CARD_ALBUM_H */

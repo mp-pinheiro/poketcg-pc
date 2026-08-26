@@ -39,10 +39,18 @@ static void adapt_HandleCardAlbumCardPage(ProbeState *s)
 }
 /* <<< factory HandleCardAlbumCardPage */
 
+/* >>> factory CreateCardSetListAndInitListCoords */
+static void adapt_CreateCardSetListAndInitListCoords(ProbeState *s)
+{
+	CreateCardSetListAndInitListCoords(s->a);
+}
+/* <<< factory CreateCardSetListAndInitListCoords */
+
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
 	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
 	{ "CreateCardSetList", adapt_CreateCardSetList },
 	{ "HandleCardAlbumCardPage", adapt_HandleCardAlbumCardPage },
+	{ "CreateCardSetListAndInitListCoords", adapt_CreateCardSetListAndInitListCoords },
 	{ NULL, NULL },
 };

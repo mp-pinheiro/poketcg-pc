@@ -1808,3 +1808,10 @@ void Func_cc32(uint16_t hl)
 	Func_c8ba(hl, de);
 }
 /* <<< factory Func_cc32 */
+
+/* >>> factory Script_LegendaryCardRightSpark */
+void Script_LegendaryCardRightSpark(void)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory Script_LegendaryCardRightSpark */

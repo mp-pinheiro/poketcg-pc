@@ -196,3 +196,13 @@ void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)
 	hWhoseTurn = saved_hWhoseTurn;
 }
 /* <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile */
+
+/* >>> factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
+/* play_area.asm:301-310 */
+void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenNonTurnHolderDiscardPileScreen(c);
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
