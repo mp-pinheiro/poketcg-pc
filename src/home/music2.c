@@ -600,15 +600,74 @@ void Music2_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)
 	pnn_note(hl, note, ch);
 }
 
-/* Command handlers — just call PlayNextNote which handles the dispatch.
- * These are registered for oracle diff under their asm names. */
-void Music2_speed(uint16_t *hl, uint8_t ch)         { Music2_PlayNextNote(hl, ch); }
+/* Command handlers, reached by `jp` from Music2_CommandTable with the stream
+ * pointer on the stack. The one-line `{ Music2_PlayNextNote(hl, ch); }` bodies
+ * below are UNFAITHFUL aliases pending re-port: they skip their handler's own
+ * state write and misread the stream. Never register one for oracle diff
+ * before re-porting it - a registered unfaithful body reds the shared gate.
+ * music2.asm's handlers are byte-identical to music1.asm's modulo the `_2`
+ * entry-point names and the song data tables, and both engines share the same
+ * wMusic* WRAM, so each port here mirrors its music1 twin exactly. */
+/* music2.asm:842-849. */
+void Music2_speed(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint8_t value = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	gb_write8((uint16_t)(wMusicSpeed_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
 void Music2_octave(uint16_t *hl, uint8_t ch, uint8_t idx) { (void)idx; Music2_PlayNextNote(hl, ch); }
-void Music2_inc_octave(uint16_t *hl, uint8_t ch)    { Music2_PlayNextNote(hl, ch); }
-void Music2_dec_octave(uint16_t *hl, uint8_t ch)    { Music2_PlayNextNote(hl, ch); }
-void Music2_tie(uint16_t *hl, uint8_t ch)           { Music2_PlayNextNote(hl, ch); }
-void Music2_stereo_panning(uint16_t *hl, uint8_t ch){ Music2_PlayNextNote(hl, ch); }
-void Music2_MainLoop(uint16_t *hl, uint8_t ch)      { Music2_PlayNextNote(hl, ch); }
+/* music2.asm:869-873. Consumes no operand. */
+void Music2_inc_octave(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint16_t addr = (uint16_t)(wMusicOctave_ADDR + ch);
+	gb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:875-879. Consumes no operand. */
+void Music2_dec_octave(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint16_t addr = (uint16_t)(wMusicOctave_ADDR + ch);
+	gb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:881-885. Consumes no operand; the tie flag is a constant $80. */
+void Music2_tie(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	gb_write8((uint16_t)(wMusicTie_ADDR + ch), 0x80u);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:887-908. Operand and the %11101110 keep-mask are both rotated
+ * left `ch` times, then merged into the single global panning byte. */
+void Music2_stereo_panning(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint8_t value = gb_read8(hl);
+	hl = (uint16_t)(hl + 1u);
+	uint8_t mask = 0xEEu;
+	for (uint8_t spin = 0; spin < ch; spin++) {
+		value = (uint8_t)((value << 1) | (value >> 7));
+		mask = (uint8_t)((mask << 1) | (mask >> 7));
+	}
+	uint8_t merged = (uint8_t)((gb_read8(wMusicStereoPanning_ADDR) & mask) | value);
+	gb_write8(wMusicStereoPanning_ADDR, merged);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:910-920. Records the loop start as the byte BEFORE the
+ * continuation, then resumes at the unadvanced stream. */
+void Music2_MainLoop(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint16_t target = (uint16_t)(caller_stream - 1u);
+	uint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);
+	gb_write8(addr, (uint8_t)target);
+	gb_write8((uint16_t)(addr + 1u), (uint8_t)(target >> 8u));
+	Music2_PlayNextNote(&hl, ch);
+}
 void Music2_EndMainLoop(uint16_t *hl, uint8_t ch)   { Music2_PlayNextNote(hl, ch); }
 void Music2_Loop(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
 void Music2_EndLoop(uint16_t *hl, uint8_t ch)       { Music2_PlayNextNote(hl, ch); }
