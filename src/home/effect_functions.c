@@ -7054,3 +7054,12 @@ uint8_t HandlePlayerMetronomeEffect(uint8_t a)
 	return (uint8_t)(attacking_id == 0u ? 0x80u : 0x00u);
 }
 /* <<< factory HandlePlayerMetronomeEffect */
+
+/* >>> factory ClefairyMetronome_UseAttackEffect */
+/* effect_functions.asm:8080-8087 */
+uint8_t ClefairyMetronome_UseAttackEffect(void)
+{
+	uint8_t energy_cost = 3u;
+	return HandlePlayerMetronomeEffect(energy_cost);
+}
+/* <<< factory ClefairyMetronome_UseAttackEffect */

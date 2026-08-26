@@ -4690,6 +4690,14 @@ CASES["HandlePlayerMetronomeEffect"] = [
 ]
 # <<< factory HandlePlayerMetronomeEffect
 
+# >>> factory ClefairyMetronome_UseAttackEffect
+CONTRACT["ClefairyMetronome_UseAttackEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ClefairyMetronome_UseAttackEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\x00\x00", 0xCCC2: b"\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, "read": {0xCCF0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\x00\x00", 0xCCC2: b"\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, read={0xCCF0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ClefairyMetronome_UseAttackEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7064,3 +7072,6 @@ MUTATIONS["Shift_PlayerSelectEffect"] = {"source_symbol": "Shift_PlayerSelectEff
 # >>> factory-mutation HandlePlayerMetronomeEffect
 MUTATIONS["HandlePlayerMetronomeEffect"] = {"source_symbol": "HandlePlayerMetronomeEffect", "before": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = a;", "after": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = (uint8_t)(a + 1u);", "case_ids": ["HandlePlayerMetronomeEffect-0", "HandlePlayerMetronomeEffect-1", "HandlePlayerMetronomeEffect-2", "HandlePlayerMetronomeEffect-3"]}
 # <<< factory-mutation HandlePlayerMetronomeEffect
+# >>> factory-mutation ClefairyMetronome_UseAttackEffect
+MUTATIONS["ClefairyMetronome_UseAttackEffect"] = {"source_symbol": "ClefairyMetronome_UseAttackEffect", "before": "uint8_t ClefairyMetronome_UseAttackEffect(void)\n{\n\tuint8_t energy_cost = 3u;", "after": "uint8_t ClefairyMetronome_UseAttackEffect(void)\n{\n\tuint8_t energy_cost = 0u;", "case_ids": ["ClefairyMetronome_UseAttackEffect-0", "ClefairyMetronome_UseAttackEffect-1"]}
+# <<< factory-mutation ClefairyMetronome_UseAttackEffect

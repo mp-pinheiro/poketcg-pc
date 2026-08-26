@@ -1492,6 +1492,9 @@ HandleColorChangeScreenResult Shift_PlayerSelectEffect(void);
  * WaitResult does not carry, so a is not part of this contract. */
 uint8_t HandlePlayerMetronomeEffect(uint8_t a);
 /* <<< factory HandlePlayerMetronomeEffect */
+/* >>> factory ClefairyMetronome_UseAttackEffect */
+uint8_t ClefairyMetronome_UseAttackEffect(void);
+/* <<< factory ClefairyMetronome_UseAttackEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
