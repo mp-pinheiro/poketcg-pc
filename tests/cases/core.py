@@ -1760,6 +1760,12 @@ wPracticeDuelTurn = 0xCC00
 
 wConsole = 0xCAB4
 wTempSGBPacket = 0xCAE0
+
+hTempCardIndex_ff9f = 0xFF9F
+hTemp_ffa0 = 0xFFA0
+hWhoseTurn = 0xFF97
+wLCDC = 0xCABB
+wSkipDuelistIsThinkingDelay = 0xCBF9
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3559,6 +3565,14 @@ CASES["AttemptRetreat"] = [
 ]
 # <<< factory AttemptRetreat
 
+# >>> factory OppAction_BeginUseAttack
+CONTRACT["OppAction_BeginUseAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["OppAction_BeginUseAttack"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000, "keys": 0x00, "wram": {hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, "read": {wSkipDuelistIsThinkingDelay: 1}, "instruction_budget": 6000000, "cycle_budget": 24000000},
+    dict(POISON, keys=0x00, wram={hTempCardIndex_ff9f: b"\x00", hTemp_ffa0: b"\x00", hWhoseTurn: b"\x00", wLCDC: b"\x00", wSkipDuelistIsThinkingDelay: b"\x00"}, read={wSkipDuelistIsThinkingDelay: 1}, instruction_budget=6000000, cycle_budget=24000000),
+]
+# <<< factory OppAction_BeginUseAttack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5036,3 +5050,6 @@ MUTATIONS["AttemptRetreat"] = {
     "case_ids": ["AttemptRetreat-0", "AttemptRetreat-1"],
 }
 # <<< factory-mutation AttemptRetreat
+# >>> factory-mutation OppAction_BeginUseAttack
+MUTATIONS["OppAction_BeginUseAttack"] = {"source_symbol": "OppAction_BeginUseAttack", "before": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x01u;", "after": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x00u;", "case_ids": ["OppAction_BeginUseAttack-0", "OppAction_BeginUseAttack-1"]}
+# <<< factory-mutation OppAction_BeginUseAttack

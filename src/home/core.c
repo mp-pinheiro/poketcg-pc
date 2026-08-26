@@ -1264,6 +1264,14 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel.h"
 #include "home/coin_toss.h"
 #define ConfusionCheckRetreatText 0x00f8u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/substatus.h"
+#include "home/menus.h"
+#include "home/serial.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6796,3 +6804,70 @@ AttemptRetreatResult AttemptRetreat(void)
 	return (AttemptRetreatResult){0u, 0x80u};
 }
 /* <<< factory AttemptRetreat */
+
+/* >>> factory OppAction_BeginUseAttack */
+OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);
+	a = copy.a;
+	c = copy.c;
+	f = copy.f;
+	hl = copy.hl;
+	d = (uint8_t)(copy.de >> 8);
+	e = (uint8_t)copy.de;
+	DuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);
+	a = updated.a;
+	f = updated.f;
+	b = updated.b;
+	c = updated.c;
+	d = updated.d;
+	e = updated.e;
+	hl = updated.hl;
+wSkipDuelistIsThinkingDelay = 0x01u;
+	SandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus((uint16_t)((uint16_t)d << 8 | e));
+	a = check.a;
+	f = check.f;
+	d = (uint8_t)(check.de >> 8);
+	e = (uint8_t)check.de;
+	hl = check.hl;
+	if ((f & 0x10u) == 0u) {
+		DuelistVarResult status = GetTurnDuelistVariable(0xF0u);
+		a = (uint8_t)(status.a & CNF_SLP_PRZ);
+		hl = status.hl;
+		if (a != CONFUSED) {
+			ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+			return (OppActionBeginUseAttackResult){rng.a, rng.f, rng.b, rng.c, (uint8_t)(rng.de >> 8), (uint8_t)rng.de, rng.hl};
+		}
+	}
+	DrawDuelMainScene();
+	PrintPokemonsAttackTextResult text = PrintPokemonsAttackText();
+	a = text.a;
+	b = text.b;
+	c = text.c;
+	d = text.d;
+	e = text.e;
+	hl = text.hl;
+	WaitResult wait = WaitForWideTextBoxInput();
+	f = wait.f;
+	ExchangeRNGResult rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
+	a = rng.a;
+	f = rng.f;
+	b = rng.b;
+	c = rng.c;
+	d = (uint8_t)(rng.de >> 8);
+	e = (uint8_t)rng.de;
+	hl = rng.hl;
+	HandleSandAttackOrSmokescreenSubstatusResult handled = HandleSandAttackOrSmokescreenSubstatus((uint16_t)((uint16_t)d << 8 | e), hl);
+	a = handled.a;
+	f = handled.f;
+	d = (uint8_t)(handled.de >> 8);
+	e = (uint8_t)handled.de;
+	hl = handled.hl;
+	if ((f & 0x10u) == 0u)
+		return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
+	ClearNonTurnTemporaryDuelvars();
+	a = 1u;
+wOpponentTurnEnded = 0x01u;
+	return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory OppAction_BeginUseAttack */

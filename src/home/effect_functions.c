@@ -865,6 +865,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 #define DamageCheckIfHeadsXDamageText 0x00f4u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7297,3 +7301,12 @@ void DancingEmbers_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(result.a));
 }
 /* <<< factory DancingEmbers_MultiplierEffect */
+
+/* >>> factory NidoranFFurySwipes_MultiplierEffect */
+void NidoranFFurySwipes_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory NidoranFFurySwipes_MultiplierEffect */

@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_BeginUseAttack",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_BeginUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 50160, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52217\": \"01\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_BeginUseAttack\", \"mismatches\": {\"bus\": {\"address\": 52217, \"reference\": \"0001c30000\", \"native\": \"0000c30000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51899, 1], [52217, 1], [65431, 1], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_BeginUseAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 50160, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52217\": \"01\", \"65431\": \"c3\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

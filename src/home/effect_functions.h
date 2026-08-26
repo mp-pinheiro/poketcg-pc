@@ -1533,6 +1533,9 @@ void VictreebelLure_SwitchDefendingPokemon(void);
 /* >>> factory DancingEmbers_MultiplierEffect */
 void DancingEmbers_MultiplierEffect(void);
 /* <<< factory DancingEmbers_MultiplierEffect */
+/* >>> factory NidoranFFurySwipes_MultiplierEffect */
+void NidoranFFurySwipes_MultiplierEffect(void);
+/* <<< factory NidoranFFurySwipes_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
