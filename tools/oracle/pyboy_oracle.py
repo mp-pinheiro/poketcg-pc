@@ -178,20 +178,20 @@ class Oracle:
         )
         rf.PC = SPIN
 
-    def _arm(self, addr: int = SENTINEL, bank: int = 0) -> None:
-        # PyBoy keys hooks on (bank, address). A hook in the switchable
-        # $4000-$7FFF window only fires while that bank is mapped, so a pre-ret
-        # completion pc in banked ROM must be registered against the routine's
-        # own bank -- registering it under bank 0 silently never fires, because
-        # bank 0 is fixed at $0000-$3FFF. The sentinel lives in WRAM, where the
-        # bank is irrelevant.
+    def _disarm(self) -> None:
         if self._armed_addr is not None:
             try:
                 self.pyboy.hook_deregister(self._armed_bank, self._armed_addr)
             except (ValueError, KeyError):
                 pass
-        if addr == SENTINEL:
-            self.pyboy.memory[SENTINEL] = 0x00
+        self._armed_addr = None
+        self._armed_bank = 0
+
+    def _arm(self, addr: int, bank: int = 0) -> None:
+        # PyBoy keys ROM hooks on (bank, address). A hook in the switchable
+        # $4000-$7FFF window only fires while that bank is mapped, so a pre-ret
+        # completion pc in banked ROM must name the routine's own bank.
+        self._disarm()
         self.pyboy.hook_register(bank, addr, self._capture, None)
         self._armed_addr = addr
         self._armed_bank = bank
@@ -258,8 +258,14 @@ class Oracle:
         # $4000-$7FFF paging above.
         if hbank_rom is not None:
             pb.memory[0xFF80] = hbank_rom & 0xFF
-        pb.memory[SPIN] = 0x18  # jr
-        pb.memory[SPIN + 1] = 0xFE  # -2
+        # PyBoy cannot hook execution in switchable WRAM. Returning to SENTINEL
+        # therefore jumps to a register-transparent spin loop; the frame loop
+        # detects that parked PC and snapshots it explicitly.
+        pb.memory[SENTINEL] = 0xC3  # jp SPIN
+        pb.memory[SENTINEL + 1] = SPIN & 0xFF
+        pb.memory[SENTINEL + 2] = SPIN >> 8
+        pb.memory[SPIN] = 0x18  # jr -2
+        pb.memory[SPIN + 1] = 0xFE
         words = list(stack or ())
         if len(words) > 4:
             raise OracleError("stack declares more than 4 caller-pushed words")
@@ -286,9 +292,7 @@ class Oracle:
 
         self._hit = None
         if stop_pc is None:
-            # $D000-$DFFF is CGB WRAM banked memory. The synthesized frame is
-            # placed in bank 1, so its sentinel hook must name bank 1 as well.
-            self._arm(SENTINEL, 1)
+            self._disarm()
         else:
             # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
             # hooked against the routine's own bank.
@@ -311,6 +315,8 @@ class Oracle:
         # that time, so honour it here instead of failing at a fixed 240.
         for _ in range(frames or MAX_FRAMES):
             pb.tick(1, False, False)
+            if stop_pc is None and pb.register_file.PC == SPIN:
+                self._capture(None)
             if self._hit is not None:
                 try:
                     pb.hook_deregister(0, self._VBLANK_HALT)
