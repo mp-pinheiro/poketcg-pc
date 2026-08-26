@@ -547,3 +547,8 @@ unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/atte
 name = "SaveDeckConfiguration"
 reason = "AUTO-RETIRED: src/engine/menus/deck_configuration.asm:642 (basename `deck_configuration`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/SaveDeckConfiguration/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Func_1a080"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:333 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/Func_1a080/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
