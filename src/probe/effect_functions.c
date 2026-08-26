@@ -4329,12 +4329,12 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CloysterSpikeCannon_MultiplierEffect", adapt_CloysterSpikeCannon_MultiplierEffect },
 	{ "NidorinaDoubleKick_MultiplierEffect", adapt_NidorinaDoubleKick_MultiplierEffect },
 	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
-	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ "OmastarSpikeCannon_MultiplierEffect", adapt_OmastarSpikeCannon_MultiplierEffect },
 	{ "JynxDoubleslap_MultiplierEffect", adapt_JynxDoubleslap_MultiplierEffect },
 	{ "PoliwhirlDoubleslap_MultiplierEffect", adapt_PoliwhirlDoubleslap_MultiplierEffect },
 	{ "Twineedle_MultiplierEffect", adapt_Twineedle_MultiplierEffect },
 	{ "DragonairSlam_MultiplierEffect", adapt_DragonairSlam_MultiplierEffect },
 	{ "DragoniteLv41Slam_MultiplierEffect", adapt_DragoniteLv41Slam_MultiplierEffect },
+	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ NULL, NULL },
 };
