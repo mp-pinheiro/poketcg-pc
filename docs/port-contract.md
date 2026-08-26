@@ -295,6 +295,39 @@ probe, and GBRT enters at `sp = 0xfffe` with its stack in HRAM, so neither side
 touches `$CFxx` and any seeded pattern survives regardless. Only the PyBoy path
 (`tests/test_leaves.py`, `oracle-diff`) exercises the frame.
 
+**The frame boundary: what is already testable and what is not.** A large
+blocker cluster (51 stanzas, 3109 B as of 2026-08-26) cites
+`DoFrameIfLCDEnabled`/`DoFrame` and asks for "multi-frame VBlank simulation".
+That framing is too coarse; measured, the boundary sits elsewhere.
+
+- With the LCD **off** — which `seed_call_environment` guarantees by writing
+  `rLCDC = 0` — `DoFrameIfLCDEnabled` is a no-op: it does `bit
+  B_LCDC_ENABLE` / `jr z, .done` and returns without calling `DoFrame`
+  (`lcd_enable_frame.asm:1-15`). It cannot hang, and it is not a blocker.
+  `DoFrameIfLCDEnabled`, `DoFrame`, `ExecuteNPCMovement` and
+  `CheckIsAnNPCMoving` are all registered and green, and `ExecuteNPCMovement`'s
+  body *is* the `DoFrameIfLCDEnabled` wait loop.
+- With the LCD **on** the path is genuinely unavailable. `CASES["DoFrame"]`'s
+  third case seeds `0xFF40: 0x80` and is `oracle: False` with the reason "LCD-on
+  DoFrame reaches the dissolved VBlank boundary". That is the real gap: a
+  routine needing actual frame *progress* — an animation or NPC movement
+  completing, printer timing — cannot be oracle-run.
+- Arming does not help by itself. `runner.c` sets IE/IME when
+  `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
+  publishes no frames, and the synthetic 70224-cycle boundary only advances the
+  input timeline; it never raises the VBlank request. Declaring `input_events`
+  on an LCD-off case changed nothing measurably (identical pc and instruction
+  count).
+- Not every hang in this cluster is a frame wait. `pc=3085` resolves to
+  `Wait.loop` (`sgb.asm:258`), a busy delay of 1750 inner iterations times `bc`
+  — a cycle-budget/parameter matter, fixed by seeding `bc` small or raising
+  `instruction_budget`/`cycle_budget`, not by interrupts. Always resolve a
+  reported `pc` against `poketcg.sym` before believing a stanza's mechanism.
+
+So triage the cluster before building anything: a routine that merely *calls*
+`DoFrameIfLCDEnabled` is testable today, and only one that depends on frame
+progress needs the LCD-on work.
+
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
 another documented dissolved execution context). Otherwise run the case against
