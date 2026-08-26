@@ -30,4 +30,8 @@ while [ ! -e .factory/STOP ] && [ "$n" -lt 500 ]; do
   fi
   sleep 60
 done
-printf 'supervise: exit (STOP or restart budget spent)\n'
+if [ -e .factory/STOP ]; then
+  printf 'supervise: exit: .factory/STOP present (fleet-stop/halt); resume: just fleet-start\n'
+else
+  printf 'supervise: exit: restart budget spent (%d passes)\n' "$n"
+fi
