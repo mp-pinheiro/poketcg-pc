@@ -59,6 +59,10 @@
 #define CARD_SET_MYSTERY 0x02u
 #define CARD_SET_PROMOTIONAL 0x04u
 #define NUM_CARD_ALBUM_VISIBLE_CARDS 0x07u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory GetFirstOwnedCardIndex */
@@ -358,3 +362,15 @@ void CreateCardSetListAndInitListCoords(uint8_t a)
 	gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 0x02u);
 }
 /* <<< factory CreateCardSetListAndInitListCoords */
+
+/* >>> factory CardAlbum */
+void CardAlbum(void)
+{
+	uint8_t item = gb_read8(hCurMenuItem_ADDR);
+	if ((uint8_t)(item + 1u) == 0u) {
+		gb_write8(wLCDC_ADDR, 0x80u);
+		return;
+	}
+	gb_write8(wLCDC_ADDR, 0x00u);
+}
+/* <<< factory CardAlbum */

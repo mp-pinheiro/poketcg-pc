@@ -1,0 +1,9 @@
+{
+  "fn": "DuelCheckMenu_Glossary",
+  "case": "tests/cases/duel.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DuelCheckMenu_Glossary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"52818\": \"00\", \"52821\": \"ff\", \"52834\": \"00\", \"52899\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DuelCheckMenu_Glossary\", \"mismatches\": {\"bus\": {\"address\": 52834, \"reference\": \"0000ff0000\", \"native\": \"0000ff0100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51894, 1], [52818, 1], [52821, 1], [52834, 1], [52899, 1]]}}}\n",
+  "restored": "{\"fn\": \"DuelCheckMenu_Glossary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51894\": \"00\", \"52818\": \"00\", \"52821\": \"ff\", \"52834\": \"00\", \"52899\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

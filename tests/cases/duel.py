@@ -1750,6 +1750,15 @@ CASES["DealRecoilDamageToSelf"] = [
 ]
 # <<< factory DealRecoilDamageToSelf
 
+# >>> factory DuelCheckMenu_Glossary
+CONTRACT["DuelCheckMenu_Glossary"] = {"compare": (), "preserve": ()}
+CASES["DuelCheckMenu_Glossary"] = [
+    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x02], "wram": {0xCE62: b"\x01", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xCE62: b"\x00", 0xCE52: b"\x00", 0xCE55: b"\xFF", 0xCEA3: b"\x00", 0xCAB6: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory DuelCheckMenu_Glossary
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2057,3 +2066,6 @@ MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"source_symbol": "Ope
 # >>> factory-mutation DealRecoilDamageToSelf
 MUTATIONS["DealRecoilDamageToSelf"] = {"source_symbol": "DealRecoilDamageToSelf", "before": "\twLoadedAttackAnimation = ATK_ANIM_RECOIL_HIT;", "after": "\twLoadedAttackAnimation = 0u;", "case_ids": ["DealRecoilDamageToSelf-0", "DealRecoilDamageToSelf-2", "DealRecoilDamageToSelf-3"]}
 # <<< factory-mutation DealRecoilDamageToSelf
+# >>> factory-mutation DuelCheckMenu_Glossary
+MUTATIONS["DuelCheckMenu_Glossary"] = {"source_symbol": "DuelCheckMenu_Glossary", "before": "void DuelCheckMenu_Glossary(void)\n{\n\tOpenGlossaryScreen();", "after": "void DuelCheckMenu_Glossary(void)\n{", "case_ids": ["DuelCheckMenu_Glossary-1"]}
+# <<< factory-mutation DuelCheckMenu_Glossary

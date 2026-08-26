@@ -613,6 +613,8 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "generated/wram.h"
 #define ATK_ANIM_RECOIL_HIT 0x7Au
+
+#include "home/glossary.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3146,3 +3148,10 @@ DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f,
 	return DealConfusionDamageToSelf(a, f, d, e);
 }
 /* <<< factory DealRecoilDamageToSelf */
+
+/* >>> factory DuelCheckMenu_Glossary */
+void DuelCheckMenu_Glossary(void)
+{
+	OpenGlossaryScreen();
+}
+/* <<< factory DuelCheckMenu_Glossary */

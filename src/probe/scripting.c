@@ -1193,6 +1193,17 @@ static void adapt_ScriptCommand_PrintTextQuitFully(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PrintTextQuitFully */
 
+/* >>> factory ScriptCommand_QuitScriptFully */
+static void adapt_ScriptCommand_QuitScriptFully(ProbeState *s)
+{
+	ScriptCommand_QuitScriptFullyResult result = ScriptCommand_QuitScriptFully(s->stack[0]);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+	s->hl = result.hl;
+}
+/* <<< factory ScriptCommand_QuitScriptFully */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1310,5 +1321,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PrintVariableText", adapt_ScriptCommand_PrintVariableText },
 	{ "ScriptCommand_GiftCenter", adapt_ScriptCommand_GiftCenter },
 	{ "ScriptCommand_PrintTextQuitFully", adapt_ScriptCommand_PrintTextQuitFully },
+	{ "ScriptCommand_QuitScriptFully", adapt_ScriptCommand_QuitScriptFully },
 	{ NULL, NULL },
 };

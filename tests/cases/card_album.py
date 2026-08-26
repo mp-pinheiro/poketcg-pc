@@ -39,6 +39,9 @@ wOwnedCardsCountList = 0xCF68
 wTempCardListCursorPos = 0xCED4
 wVBlankOAMCopyToggle = 0xCAC0
 wced2 = 0xCED2
+
+hCurMenuItem = 0xFFB1
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory PrintCardSetListEntries
@@ -92,6 +95,22 @@ CASES["CreateCardSetListAndInitListCoords"] = [
 ]
 # <<< factory CreateCardSetListAndInitListCoords
 
+# >>> factory CardAlbum
+CONTRACT["CardAlbum"] = {"compare": (), "preserve": ()}
+CASES["CardAlbum"] = [
+    {
+        "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+        "keys": [0x02],
+        "wram": {0xFFB1: b"\xFF", 0xCABB: b"\x00"},
+        "read": {0xCABB: 1},
+        "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+        "instruction_budget": 20000000,
+        "cycle_budget": 80000000,
+    },
+    dict(POISON, keys=[0x02], wram={0xFFB1: b"\xFF", 0xCABB: b"\x00"}, read={0xCABB: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory CardAlbum
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -127,3 +146,11 @@ MUTATIONS["CreateCardSetListAndInitListCoords"] = {
     "case_ids": ["CreateCardSetListAndInitListCoords-0", "CreateCardSetListAndInitListCoords-1"],
 }
 # <<< factory-mutation CreateCardSetListAndInitListCoords
+# >>> factory-mutation CardAlbum
+MUTATIONS["CardAlbum"] = {
+    "source_symbol": "CardAlbum",
+    "before": "if ((uint8_t)(item + 1u) == 0u)",
+    "after": "if ((uint8_t)(item + 2u) == 0u)",
+    "case_ids": ["CardAlbum-0", "CardAlbum-1"],
+}
+# <<< factory-mutation CardAlbum

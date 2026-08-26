@@ -260,4 +260,13 @@ void HandlePlayerMoveModeInput(void);
 /* >>> factory PCMenu_Glossary */
 void PCMenu_Glossary(void);
 /* <<< factory PCMenu_Glossary */
+/* >>> factory Func_c17a */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} FuncC17aResult;
+
+FuncC17aResult Func_c17a(uint16_t hl);
+/* <<< factory Func_c17a */
 #endif /* POKETCG_HOME_OVERWORLD_H */

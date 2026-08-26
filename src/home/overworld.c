@@ -203,6 +203,9 @@
 #define PAD_A 0x01u
 
 #include "home/pc_glossary.h"
+
+#include "generated/wram.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1202,3 +1205,15 @@ void PCMenu_Glossary(void)
 	_PCMenu_Glossary();
 }
 /* <<< factory PCMenu_Glossary */
+
+/* >>> factory Func_c17a */
+FuncC17aResult Func_c17a(uint16_t hl)
+{
+	if (wOverworldMode == OWMODE_SCRIPT) {
+		FuncC17aResult result = {wOverworldMode, 0xC0u, hl};
+		return result;
+	}
+	CallMapScriptResult result = Func_c9b8();
+	return (FuncC17aResult){result.a, result.f, result.hl};
+}
+/* <<< factory Func_c17a */

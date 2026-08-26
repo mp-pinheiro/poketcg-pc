@@ -46,11 +46,20 @@ static void adapt_CreateCardSetListAndInitListCoords(ProbeState *s)
 }
 /* <<< factory CreateCardSetListAndInitListCoords */
 
+/* >>> factory CardAlbum */
+static void adapt_CardAlbum(ProbeState *s)
+{
+	(void)s;
+	CardAlbum();
+}
+/* <<< factory CardAlbum */
+
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
 	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
 	{ "CreateCardSetList", adapt_CreateCardSetList },
 	{ "HandleCardAlbumCardPage", adapt_HandleCardAlbumCardPage },
 	{ "CreateCardSetListAndInitListCoords", adapt_CreateCardSetListAndInitListCoords },
+	{ "CardAlbum", adapt_CardAlbum },
 	{ NULL, NULL },
 };

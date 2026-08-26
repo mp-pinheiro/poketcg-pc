@@ -565,6 +565,16 @@ static void adapt_PCMenu_Glossary(ProbeState *s)
 }
 /* <<< factory PCMenu_Glossary */
 
+/* >>> factory Func_c17a */
+static void adapt_Func_c17a(ProbeState *s)
+{
+	FuncC17aResult result = Func_c17a(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c17a */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -634,5 +644,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6dc", adapt_Func_c6dc },
 	{ "HandlePlayerMoveModeInput", adapt_HandlePlayerMoveModeInput },
 	{ "PCMenu_Glossary", adapt_PCMenu_Glossary },
+	{ "Func_c17a", adapt_Func_c17a },
 	{ NULL, NULL },
 };

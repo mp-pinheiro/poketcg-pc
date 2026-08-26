@@ -1000,6 +1000,14 @@ static void adapt_DealRecoilDamageToSelf(ProbeState *s)
 }
 /* <<< factory DealRecoilDamageToSelf */
 
+/* >>> factory DuelCheckMenu_Glossary */
+static void adapt_DuelCheckMenu_Glossary(ProbeState *s)
+{
+	(void)s;
+	DuelCheckMenu_Glossary();
+}
+/* <<< factory DuelCheckMenu_Glossary */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1121,5 +1129,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderHand },
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderHand },
 	{ "DealRecoilDamageToSelf", adapt_DealRecoilDamageToSelf },
+	{ "DuelCheckMenu_Glossary", adapt_DuelCheckMenu_Glossary },
 	{ NULL, NULL },
 };

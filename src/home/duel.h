@@ -708,4 +708,7 @@ uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void);
 /* >>> factory DealRecoilDamageToSelf */
 DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory DealRecoilDamageToSelf */
+/* >>> factory DuelCheckMenu_Glossary */
+void DuelCheckMenu_Glossary(void);
+/* <<< factory DuelCheckMenu_Glossary */
 #endif

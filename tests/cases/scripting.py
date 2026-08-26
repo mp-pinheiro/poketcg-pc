@@ -1454,6 +1454,14 @@ CASES["ScriptCommand_PrintTextQuitFully"] = [
 ]
 # <<< factory ScriptCommand_PrintTextQuitFully
 
+# >>> factory ScriptCommand_QuitScriptFully
+CONTRACT["ScriptCommand_QuitScriptFully"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e")}
+CASES["ScriptCommand_QuitScriptFully"] = [
+	{"stack": [0], "wram": {0xD412: b"\x00"}, "read": {0xD412: 1}},
+	dict(POISON, stack=[0x1234], wram={0xD412: b"\x00"}, read={0xD412: 1}),
+]
+# <<< factory ScriptCommand_QuitScriptFully
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2147,3 +2155,6 @@ MUTATIONS["ScriptCommand_GiftCenter"] = {"source_symbol": "ScriptCommand_GiftCen
 # >>> factory-mutation ScriptCommand_PrintTextQuitFully
 MUTATIONS["ScriptCommand_PrintTextQuitFully"] = {"source_symbol": "ScriptCommand_PrintTextQuitFully", "before": "ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)\n{\n\tFunc_cc32((uint16_t)(((uint16_t)b << 8) | c));\n\tCloseAdvancedDialogueBox();\n\twBreakScriptLoop = 0x01u;", "after": "ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)\n{\n\tFunc_cc32((uint16_t)(((uint16_t)b << 8) | c));\n\tCloseAdvancedDialogueBox();\n\t(void)0;", "case_ids": ["ScriptCommand_PrintTextQuitFully-0", "ScriptCommand_PrintTextQuitFully-1"]}
 # <<< factory-mutation ScriptCommand_PrintTextQuitFully
+# >>> factory-mutation ScriptCommand_QuitScriptFully
+MUTATIONS["ScriptCommand_QuitScriptFully"] = {"source_symbol": "ScriptCommand_QuitScriptFully", "before": "ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl)\n{\n\t(void)ScriptCommand_CloseAdvancedTextBox();\n\tIncreaseScriptPointerResult end = ScriptCommand_EndScript();", "after": "ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl)\n{\n\t(void)ScriptCommand_CloseAdvancedTextBox();\n\tIncreaseScriptPointerResult end = ScriptCommand_CloseAdvancedTextBox();", "case_ids": ["ScriptCommand_QuitScriptFully-0", "ScriptCommand_QuitScriptFully-1"]}
+# <<< factory-mutation ScriptCommand_QuitScriptFully

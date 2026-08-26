@@ -1902,3 +1902,12 @@ ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t 
 	return (ScriptCommand_PrintTextQuitFullyResult){pointer.a, pointer.f, 0u, pointer.c, 0x12u, 0x11u, saved_hl};
 }
 /* <<< factory ScriptCommand_PrintTextQuitFully */
+
+/* >>> factory ScriptCommand_QuitScriptFully */
+ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl)
+{
+	(void)ScriptCommand_CloseAdvancedTextBox();
+	IncreaseScriptPointerResult end = ScriptCommand_EndScript();
+	return (ScriptCommand_QuitScriptFullyResult){end.a, end.f, end.c, caller_hl};
+}
+/* <<< factory ScriptCommand_QuitScriptFully */

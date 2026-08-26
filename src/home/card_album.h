@@ -21,4 +21,7 @@ HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e);
 /* >>> factory CreateCardSetListAndInitListCoords */
 void CreateCardSetListAndInitListCoords(uint8_t a);
 /* <<< factory CreateCardSetListAndInitListCoords */
+/* >>> factory CardAlbum */
+void CardAlbum(void);
+/* <<< factory CardAlbum */
 #endif /* POKETCG_HOME_CARD_ALBUM_H */

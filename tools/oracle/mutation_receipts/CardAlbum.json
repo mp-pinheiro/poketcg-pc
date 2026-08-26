@@ -1,0 +1,9 @@
+{
+  "fn": "CardAlbum",
+  "case": "tests/cases/card_album.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CardAlbum\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CardAlbum\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"80ff\", \"native\": \"00ff\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[51899, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"CardAlbum\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

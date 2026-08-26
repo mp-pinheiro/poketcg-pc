@@ -848,6 +848,14 @@ CASES["PCMenu_Glossary"] = [
 ]
 # <<< factory PCMenu_Glossary
 
+# >>> factory Func_c17a
+CONTRACT["Func_c17a"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["Func_c17a"] = [
+    {"hl": 0x0000, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD0BF: b"\x03"}, "read": {0xD0BF: 1}}
+]
+# <<< factory Func_c17a
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1168,3 +1176,6 @@ MUTATIONS["HandlePlayerMoveModeInput"] = {"source_symbol": "HandlePlayerMoveMode
 # >>> factory-mutation PCMenu_Glossary
 MUTATIONS["PCMenu_Glossary"] = {"source_symbol": "PCMenu_Glossary", "before": "void PCMenu_Glossary(void)\n{\n\t_PCMenu_Glossary();", "after": "void PCMenu_Glossary(void)\n{\n\t(void)0;", "case_ids": ["PCMenu_Glossary-0", "PCMenu_Glossary-1"]}
 # <<< factory-mutation PCMenu_Glossary
+# >>> factory-mutation Func_c17a
+MUTATIONS["Func_c17a"] = {"source_symbol": "Func_c17a", "before": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode == OWMODE_SCRIPT) {", "after": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode != OWMODE_SCRIPT) {", "case_ids": ["Func_c17a-0", "Func_c17a-1"]}
+# <<< factory-mutation Func_c17a
