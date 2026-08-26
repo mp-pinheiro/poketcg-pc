@@ -3842,6 +3842,14 @@ static void adapt_JynxDoubleslap_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory JynxDoubleslap_MultiplierEffect */
 
+/* >>> factory PoliwhirlDoubleslap_MultiplierEffect */
+static void adapt_PoliwhirlDoubleslap_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	PoliwhirlDoubleslap_MultiplierEffect();
+}
+/* <<< factory PoliwhirlDoubleslap_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4309,5 +4317,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ "OmastarSpikeCannon_MultiplierEffect", adapt_OmastarSpikeCannon_MultiplierEffect },
 	{ "JynxDoubleslap_MultiplierEffect", adapt_JynxDoubleslap_MultiplierEffect },
+	{ "PoliwhirlDoubleslap_MultiplierEffect", adapt_PoliwhirlDoubleslap_MultiplierEffect },
 	{ NULL, NULL },
 };

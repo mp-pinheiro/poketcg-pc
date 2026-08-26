@@ -81,4 +81,9 @@ void PrintDeckNameFromInput(void);
 /* >>> factory DrawDeckNamingScreenBG */
 void DrawDeckNamingScreenBG(void);
 /* <<< factory DrawDeckNamingScreenBG */
+/* >>> factory DeckNamingScreen_ProcessInput */
+/* poketcg/src/engine/input_name.asm */
+typedef struct { uint8_t a; uint8_t f; } DeckNamingScreen_ProcessInputResult;
+DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void);
+/* <<< factory DeckNamingScreen_ProcessInput */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

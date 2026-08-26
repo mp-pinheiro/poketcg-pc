@@ -230,4 +230,7 @@ GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_
 /* >>> factory DrawCardTypeIcons */
 void DrawCardTypeIcons(void);
 /* <<< factory DrawCardTypeIcons */
+/* >>> factory PrintPlayersCardsHeaderInfo */
+void PrintPlayersCardsHeaderInfo(void);
+/* <<< factory PrintPlayersCardsHeaderInfo */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

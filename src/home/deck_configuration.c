@@ -275,6 +275,11 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/wram.h"
 #include "home/tiles.h"
 #include "mem.h"
+
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/lcd.h"
+#define SYM_BOX_TOP 0x1Cu
 /* <<< factory statics */
 
 
@@ -1718,3 +1723,15 @@ void DrawCardTypeIcons(void)
 	}
 }
 /* <<< factory DrawCardTypeIcons */
+
+/* >>> factory PrintPlayersCardsHeaderInfo */
+void PrintPlayersCardsHeaderInfo(void)
+{
+	Set_OBJ_8x8();
+	PrepareMenuGraphics();
+	FillBGMapLineWithA(0x1Cu, 0u, 4u);
+	PrintTotalNumberOfCardsInCollection();
+	PrintPlayersCardsText();
+	DrawCardTypeIcons();
+}
+/* <<< factory PrintPlayersCardsHeaderInfo */

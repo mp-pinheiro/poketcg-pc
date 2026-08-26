@@ -88,6 +88,10 @@
 #define V0TILES0_ADDR 0x8000u
 
 #define DeckNameKeyboardText 0x0222u
+
+#include "generated/wram.h"
+#include "home/input_name.h"
+#define TX_END 0x00u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -651,3 +655,31 @@ void DrawDeckNamingScreenBG(void)
 	EnableLCD();
 }
 /* <<< factory DrawDeckNamingScreenBG */
+
+/* >>> factory DeckNamingScreen_ProcessInput */
+DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)
+{
+	uint8_t cursor_x = wNamingScreenCursorX;
+	uint8_t cursor_y = wNamingScreenCursorY;
+	uint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)(((uint16_t)cursor_x << 8) | cursor_y));
+	uint8_t char_type = gb_read8((uint16_t)(char_info + 2u));
+	if (char_type == 1u) {
+		return (DeckNamingScreen_ProcessInputResult){1u, 0x10u};
+	}
+	uint8_t d = char_type;
+	uint8_t old_length = wNamingScreenBufferLength;
+	uint16_t length_addr = wNamingScreenBufferLength_ADDR;
+	if (old_length == wNamingScreenBufferMaxLength) {
+		uint16_t insert_addr = (uint16_t)(wNamingScreenBuffer_ADDR - 1u + old_length);
+		gb_write8(insert_addr, d);
+		gb_write8((uint16_t)(insert_addr + 1u), TX_END);
+	} else {
+		gb_write8(length_addr, (uint8_t)(old_length + 1u));
+		uint16_t insert_addr = (uint16_t)(wNamingScreenBuffer_ADDR + old_length);
+		gb_write8(insert_addr, d);
+		gb_write8((uint16_t)(insert_addr + 1u), TX_END);
+	}
+	PrintDeckNameFromInput();
+	return (DeckNamingScreen_ProcessInputResult){0u, 0x80u};
+}
+/* <<< factory DeckNamingScreen_ProcessInput */

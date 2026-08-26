@@ -774,6 +774,20 @@ CASES["DrawCardTypeIcons"] = [
 ]
 # <<< factory DrawCardTypeIcons
 
+# >>> factory PrintPlayersCardsHeaderInfo
+CONTRACT["PrintPlayersCardsHeaderInfo"] = {"compare": (), "preserve": ()}
+CASES["PrintPlayersCardsHeaderInfo"] = [
+    {"wram": {0xCAB4: b"\x00", 0xCAB6: b"\xFF", 0xCAC0: b"\x00", 0xCABB: b"\x00"},
+     "sram": {0: {0xA100: b"\x00" * 255, 0xA010: bytes([0x81, 0x82, 0x00] + [0] * 13)}},
+     "read": {0xCAB6: 1, 0xCAC0: 1, 0xCABB: 1},
+     "vread": {0: {0x9880: 20}}},
+    dict(POISON, wram={0xCAB4: b"\x00", 0xCAB6: b"\xFF", 0xCAC0: b"\x00", 0xCABB: b"\x00"},
+         sram={0: {0xA100: b"\x00\x01" + b"\x00" * 253, 0xA010: bytes([0x84, 0x85, 0x00] + [0] * 13)}},
+         read={0xCAB6: 1, 0xCAC0: 1, 0xCABB: 1},
+         vread={0: {0x9880: 20}}),
+]
+# <<< factory PrintPlayersCardsHeaderInfo
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1044,3 +1058,6 @@ MUTATIONS["DrawCardTypeIcons"] = {
     "case_ids": ["DrawCardTypeIcons-1"],
 }
 # <<< factory-mutation DrawCardTypeIcons
+# >>> factory-mutation PrintPlayersCardsHeaderInfo
+MUTATIONS["PrintPlayersCardsHeaderInfo"] = {"source_symbol": "PrintPlayersCardsHeaderInfo", "before": "\tFillBGMapLineWithA(0x1Cu, 0u, 4u);", "after": "\tFillBGMapLineWithA(0x1Du, 0u, 4u);", "case_ids": ["PrintPlayersCardsHeaderInfo-0", "PrintPlayersCardsHeaderInfo-1"]}
+# <<< factory-mutation PrintPlayersCardsHeaderInfo

@@ -538,6 +538,14 @@ static void adapt_DrawCardTypeIcons(ProbeState *s)
 }
 /* <<< factory DrawCardTypeIcons */
 
+/* >>> factory PrintPlayersCardsHeaderInfo */
+static void adapt_PrintPlayersCardsHeaderInfo(ProbeState *s)
+{
+	PrintPlayersCardsHeaderInfo();
+	(void)s;
+}
+/* <<< factory PrintPlayersCardsHeaderInfo */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -601,5 +609,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "SortCurDeckCardsByID", adapt_SortCurDeckCardsByID },
 	{ "GetCardTypeIconPalette", adapt_GetCardTypeIconPalette },
 	{ "DrawCardTypeIcons", adapt_DrawCardTypeIcons },
+	{ "PrintPlayersCardsHeaderInfo", adapt_PrintPlayersCardsHeaderInfo },
 	{ NULL, NULL },
 };

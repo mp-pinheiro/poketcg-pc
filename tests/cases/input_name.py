@@ -245,6 +245,20 @@ CASES["DrawDeckNamingScreenBG"] = [
 ]
 # <<< factory DrawDeckNamingScreenBG
 
+# >>> factory-cases-statics
+wNamingScreenCursorX = 0xD006
+wNamingScreenCursorY = 0xCEA4
+wNamingScreenKeyboardHeight = 0xCEA9
+# <<< factory-cases-statics
+
+# >>> factory DeckNamingScreen_ProcessInput
+CONTRACT["DeckNamingScreen_ProcessInput"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DeckNamingScreen_ProcessInput"] = [
+    {"wram": {wNamingScreenKeyboardHeight: b"\x05", wNamingScreenCursorX: b"\x05", wNamingScreenCursorY: b"\x04"}, "expect_regs": {"a": 0x01, "f": 0x10}},
+    dict(POISON, wram={wNamingScreenKeyboardHeight: b"\x05", wNamingScreenCursorX: b"\x05", wNamingScreenCursorY: b"\x04"}, expect_regs={"a": 0x01, "f": 0x10}),
+]
+# <<< factory DeckNamingScreen_ProcessInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -345,3 +359,6 @@ MUTATIONS["PrintDeckNameFromInput"] = {"source_symbol": "PrintDeckNameFromInput"
 # >>> factory-mutation DrawDeckNamingScreenBG
 MUTATIONS["DrawDeckNamingScreenBG"] = {"source_symbol": "DrawDeckNamingScreenBG", "before": "\t(void)ProcessTextFromID(DeckNameKeyboardText);", "after": "\t(void)ProcessTextFromID(0u);", "case_ids": ["DrawDeckNamingScreenBG-0", "DrawDeckNamingScreenBG-1"]}
 # <<< factory-mutation DrawDeckNamingScreenBG
+# >>> factory-mutation DeckNamingScreen_ProcessInput
+MUTATIONS["DeckNamingScreen_ProcessInput"] = {"source_symbol": "DeckNamingScreen_ProcessInput", "before": "DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)\n{\n\tuint8_t cursor_x = wNamingScreenCursorX;\n\tuint8_t cursor_y = wNamingScreenCursorY;\n\tuint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)(((uint16_t)cursor_x << 8) | cursor_y));\n\tuint8_t char_type = gb_read8((uint16_t)(char_info + 2u));\n\tif (char_type == 1u) {", "after": "DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)\n{\n\tuint8_t cursor_x = wNamingScreenCursorX;\n\tuint8_t cursor_y = wNamingScreenCursorY;\n\tuint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)(((uint16_t)cursor_x << 8) | cursor_y));\n\tuint8_t char_type = gb_read8((uint16_t)(char_info + 2u));\n\tif (char_type != 1u) {", "case_ids": ["DeckNamingScreen_ProcessInput-0", "DeckNamingScreen_ProcessInput-1"]}
+# <<< factory-mutation DeckNamingScreen_ProcessInput
