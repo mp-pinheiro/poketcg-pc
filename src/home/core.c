@@ -5899,6 +5899,9 @@ void DrawDuelMainScene(void)
 	DrawDuelHUDs();
 	(void)DrawWideTextBox();
 	EnableLCD();
+	/* C helpers reuse wDuelDisplayedScreen internally; the asm leaves it as
+	 * DUEL_MAIN_SCENE after rebuilding the scene. */
+	gb_write8(wDuelDisplayedScreen_ADDR, DUEL_MAIN_SCENE);
 	if (restore_turn != 0u)
 		gb_write8(hWhoseTurn_ADDR, saved_turn);
 }
