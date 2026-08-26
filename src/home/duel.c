@@ -2643,24 +2643,6 @@ PrintFailedEffectTextResult PrintFailedEffectText(void)
 }
 /* <<< factory PrintFailedEffectText */
 
-/* >>> factory Func_1bb4 */
-/* duel.asm:2214-2223. A straight call sequence; the returned registers are
- * ExchangeRNG's verbatim, which is what the recorded AUTO-RETIRED diagnostic
- * (`f: oracle $80 != C $70`) says earlier attempts got wrong. PrintFailedEffectText
- * and WaitForWideTextBoxInput both return only `f`, so b/c/de/hl reach ExchangeRNG
- * unchanged. */
-Func_1bb4Result Func_1bb4(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
-{
-	FinishQueuedAnimations();
-	DrawDuelMainScene();
-	DrawDuelHUDs();
-	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, 0u); /* xor a ; PLAY_AREA_ARENA */
-	(void)PrintFailedEffectText();
-	(void)WaitForWideTextBoxInput();
-	ExchangeRNGResult r = ExchangeRNG(b, c, de, hl);
-	return (Func_1bb4Result){r.a, r.b, r.c, r.f, r.hl, r.de};
-}
-/* <<< factory Func_1bb4 */
 
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void)

@@ -1591,6 +1591,9 @@ CASES["ApplyTransparencyIfApplicable"] = [
 ]
 # <<< factory ApplyTransparencyIfApplicable
 
+
+#
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1822,3 +1825,4 @@ MUTATIONS["CheckSelfConfusionDamage"] = {"source_symbol": "CheckSelfConfusionDam
 # >>> factory-mutation ApplyTransparencyIfApplicable
 MUTATIONS["ApplyTransparencyIfApplicable"] = {"source_symbol": "ApplyTransparencyIfApplicable", "before": "\tuint8_t loaded_category = wLoadedAttackCategory;", "after": "\tuint8_t loaded_category = 0x80u;", "case_ids": ["ApplyTransparencyIfApplicable-2"]}
 # <<< factory-mutation ApplyTransparencyIfApplicable
+#

@@ -641,10 +641,6 @@ PrintPokemonsAttackTextResult PrintPokemonsAttackText(void);
 typedef struct { uint8_t f; } PrintFailedEffectTextResult;
 PrintFailedEffectTextResult PrintFailedEffectText(void);
 /* <<< factory PrintFailedEffectText */
-/* >>> factory Func_1bb4 */
-typedef struct { uint8_t a; uint8_t b; uint8_t c; uint8_t f; uint16_t hl; uint16_t de; } Func_1bb4Result;
-Func_1bb4Result Func_1bb4(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
-/* <<< factory Func_1bb4 */
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void);
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
