@@ -234,7 +234,37 @@ def _feedback_for(fn: str, parent_attempt_id: str | None) -> str | None:
         if detail:
             blocks.append(f"phase={entry.get('phase')} "
                           f"failure_class={entry.get('failure_class')}\n{detail[:1500]}")
+            blocks.extend(_divergence_directive(detail))
     return "\n\n".join(blocks) or None
+
+
+_PRESERVE_MISMATCH = re.compile(r"preserve:([a-z]+)")
+
+
+def _divergence_directive(detail: str) -> list[str]:
+    """Spell out the one repair a REFERENCE_DIVERGENCE diagnostic admits.
+
+    compare_one.py raises this status before the candidate's C is ever executed,
+    so it is never a translation bug: the case declared `preserve` for a
+    register the real ROM clobbers. Left as raw JSON the class ate 9-17
+    generations per routine, so name the fix instead of restating the failure.
+    """
+    if "REFERENCE_DIVERGENCE" not in detail:
+        return []
+    regs = sorted(set(_PRESERVE_MISMATCH.findall(detail)))
+    if not regs:
+        return []
+    named = ", ".join(regs)
+    return [
+        "HOW TO FIX THE ABOVE: this is a CONTRACT error, not a translation bug."
+        " The oracle checks `preserve` against the real ROM before it ever runs"
+        f" your C, and the ROM does NOT preserve {named}. Each"
+        " `preserve:<reg>: [x, y]` pair is (the value the case entered with, the"
+        " value the ROM actually left). Remove"
+        f" {named} from this routine's `preserve` tuple and list"
+        " them in `compare` instead, so they are still checked against the"
+        " reference's output. Do not change the C to try to keep them."
+    ]
 
 
 def _diagnostic_signature(entry: dict[str, Any]) -> str:
