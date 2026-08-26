@@ -530,6 +530,22 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   `DrawCollectedMedals` pc=0x238D → 6,672 instr; `InitializeInputName`
   `REFERENCE_OK` in 155 instructions **bare**, its stanza having no basis at all).
 
+- **A script ENTRY POINT is portable via a `pre-ret` split, and PyBoy's pre-ret
+  hook was bank-blind until 2026-08-26.** `Script_BeatAaron`
+  (`deck_machine_room.asm:62`) is 8 bytes of real code followed by `rst $20`
+  script bytecode; `set_event_value` is `call SetStackEventValue` + `db <event>`,
+  and the callee returns PAST the db, so the code ends exactly at the `rst`.
+  Declaring `completion = {"mode": "pre-ret", "pc": <rst addr>}` verifies the whole
+  code portion faithfully — no simplification, no scene state, no frame budget.
+  Running past the `rst` needs ambient overworld state a probed call cannot supply.
+  The harness gap this exposed: `pyboy_oracle.py::_arm` registered every hook as
+  `hook_register(0, addr, …)`. PyBoy keys hooks on `(bank, address)`, and a hook in
+  the switchable `$4000-$7FFF` window only fires while that bank is mapped — so a
+  banked pre-ret pc **silently never fired** and the case died on the frame cap
+  instead. Every pre-existing pre-ret case used a home-bank pc (`copy.py` 0x0731 /
+  0x0744 / 0x073b, `setup.py` 0x0403), which is why it went unnoticed. `_arm` now
+  takes a bank and the call site passes `0 if stop_pc < 0x4000 else fn_bank`.
+
 - **`SetupText` in `setup` is the single highest-yield case ingredient, and it is
   routinely mistaken for a text-pipeline defect (measured 2026-08-26).** Without it
   the reference spins in `Func_235e`'s glyph cache around `pc=0x2380-0x238C`, which

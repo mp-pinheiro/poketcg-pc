@@ -83,6 +83,13 @@ CASES["Script_d9ef"] = [
 # preservation of the untouched bits is actually observed.
 CONTRACT["Script_BeatAaron"] = {"compare": ("a", "c"), "preserve": ("b", "d", "e", "hl")}
 CASES["Script_BeatAaron"] = [
+    # Index 0 must seed the untouched bits NON-ZERO, or the mutation flipping
+    # `& ~mask` to `& mask` is invisible: with the event var at 0x00 both forms
+    # yield 0 and the corrupted routine passes.
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x03",
+              EVENT_AARON_BOOSTER_REWARD: b"\xFC"},
+     "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
      "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x02",
               EVENT_AARON_BOOSTER_REWARD: b"\x00"},
@@ -90,10 +97,6 @@ CASES["Script_BeatAaron"] = [
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
      "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x00",
               EVENT_AARON_BOOSTER_REWARD: b"\x03"},
-     "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
-    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
-     "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x03",
-              EVENT_AARON_BOOSTER_REWARD: b"\xFC"},
      "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
     dict(POISON,
          wram={wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\xFF",
