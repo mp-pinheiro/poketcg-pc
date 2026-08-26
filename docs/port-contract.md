@@ -322,10 +322,21 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   raised**, and `ppu_ly` is frozen at **21** after 160M cycles. So the PPU does
   not advance to line 144 while the CPU is halted, and
   `service_pending_interrupt` only clears `halted` when `IF & IE` is nonzero.
-  The fix is not "simulate frames" in the abstract: it is to make the runner's
-  step loop advance the PPU (and set `IF` bit 0 at the frame boundary) while
-  halted. `runner.c`'s `gb_frame_complete`/`gb_reset_frame` handling already
-  detects boundaries but never raises the request.
+  **Synthesizing the interrupt does not work — measured and reverted.** Raising
+  `IF` bit 0 at a synthetic 70224-cycle boundary whenever the CPU is halted with
+  the LCD on does break the deadlock: instrumenting the runner showed 150
+  synthetic VBlanks, `ppu_ly` advancing again, `halted=0`, and
+  `DuelCheckMenu_OppPlayArea` executing 33M further instructions instead of
+  parking immediately. But it reddens the gate on four cases across
+  `CreditsSequenceCmd_FadeIn` and `FadeScreenFromWhite`: fade routines *count*
+  frames, so an interrupt delivered off-cadence changes their output. The
+  routine also re-deadlocks later at the same `pc=0x0271` once real boundaries
+  resume and the PPU stalls again, so the synthetic boundary is not even
+  sufficient. Any real fix must make the PPU genuinely advance while halted, at
+  the true 70224-cycle cadence, rather than injecting boundaries beside it —
+  `gb_frame_complete`/`gb_reset_frame` already detect real boundaries, and the
+  frame counters (`real_boundaries`, `synth_vblanks`) added for this experiment
+  are the way to tell the two apart.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
