@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c6dc",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c6dc\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 14, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"00\", \"54069\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c6dc\", \"mismatches\": {\"bus\": {\"address\": 54069, \"reference\": \"0000\", \"native\": \"0002\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53439, 1], [54069, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_c6dc\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 14, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"00\", \"54069\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

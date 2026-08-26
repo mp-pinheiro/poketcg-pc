@@ -702,4 +702,7 @@ void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
 /* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
 void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void);
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
+uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void);
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
 #endif

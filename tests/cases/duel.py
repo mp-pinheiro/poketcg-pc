@@ -1681,6 +1681,15 @@ CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand"] = [
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand
 
+# >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderHand
+CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"compare": ("a", "f"), "preserve": ("f",)}
+CASES["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC2"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC1", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "expect": {0xFF97: b"\xC1"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, read={0xFF97: 1}, expect={0xFF97: b"\xC2"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -1982,3 +1991,6 @@ MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = {"source_symbol
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderHand
 MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand", "before": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand-0", "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand-1"]}
 # <<< factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderHand
+# >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderHand
+MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderHand", "before": "uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderHand-0", "OpenYourOrOppPlayAreaScreen_TurnHolderHand-1", "OpenYourOrOppPlayAreaScreen_TurnHolderHand-2"]}
+# <<< factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderHand

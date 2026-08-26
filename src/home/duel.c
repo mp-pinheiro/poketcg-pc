@@ -3119,3 +3119,13 @@ void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void)
 	hWhoseTurn = saved_hWhoseTurn;
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
+uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenTurnHolderHandScreen_Simple();
+	hWhoseTurn = saved_hWhoseTurn;
+	return saved_hWhoseTurn;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */

@@ -819,6 +819,17 @@ CASES["FindNPCOrObject"] = [
 ]
 # <<< factory FindNPCOrObject
 
+# >>> factory Func_c6dc
+CONTRACT["Func_c6dc"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["Func_c6dc"] = [
+    {"hl": 0x1234, "wram": {0xD335: b"\x03", 0xD0BF: b"\x00"}, "read": {0xD335: 1, 0xD0BF: 1}},
+    {"hl": 0xC100, "wram": {0xD335: b"\xFF", 0xD0BF: b"\x01"}, "read": {0xD335: 1, 0xD0BF: 1}},
+    {"hl": 0xC200, "wram": {0xD335: b"\x00", 0xD0BF: b"\x02"}, "read": {0xD335: 1, 0xD0BF: 1}},
+    dict(POISON, hl=0xC300, wram={0xD335: b"\x03", 0xD0BF: b"\x00"}, read={0xD335: 1, 0xD0BF: 1}),
+    dict(POISON, hl=0xC400, wram={0xD335: b"\xFF", 0xD0BF: b"\x01"}, read={0xD335: 1, 0xD0BF: 1}),
+]
+# <<< factory Func_c6dc
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1130,3 +1141,6 @@ MUTATIONS["ReturnToOverworldWithCallback"] = {"source_symbol": "ReturnToOverworl
 # >>> factory-mutation FindNPCOrObject
 MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\twScriptNPC = 0xffu;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "after": "\twScriptNPC = 0x00u;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "case_ids": ["FindNPCOrObject-0", "FindNPCOrObject-1"]}
 # <<< factory-mutation FindNPCOrObject
+# >>> factory-mutation Func_c6dc
+MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);", "after": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x01u);", "case_ids": ["Func_c6dc-0", "Func_c6dc-1", "Func_c6dc-3", "Func_c6dc-4"]}
+# <<< factory-mutation Func_c6dc

@@ -190,6 +190,11 @@
 #include "home/script.h"
 #define OWMODE_SCRIPT 0x03u
 #define OWMODE_START_SCRIPT 0x02u
+
+#include "generated/wram.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
+#include "home/map.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1144,3 +1149,25 @@ FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	return (FindNPCOrObjectResult){OWMODE_SCRIPT, 0x10u, move.b, move.c, move.d, move.e, move.hl};
 }
 /* <<< factory FindNPCOrObject */
+
+/* >>> factory Func_c6dc */
+FuncC6dcResult Func_c6dc(uint16_t saved_hl)
+{
+	uint16_t movement_hl = 0xD335u;
+	wPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);
+	(void)Func_c6f7(&movement_hl);
+	HandleMapWarp();
+	(void)Func_c70d();
+	uint8_t mode = wOverworldMode;
+	if (mode == OWMODE_MOVE) {
+		CallMapScriptResult script = Func_c9c0();
+		return (FuncC6dcResult){script.a, script.f, 0x0Eu, saved_hl};
+	}
+	uint8_t flags = 0x40u;
+	if ((mode & 0x0Fu) < (OWMODE_MOVE & 0x0Fu))
+		flags |= 0x20u;
+	if (mode < OWMODE_MOVE)
+		flags |= 0x10u;
+	return (FuncC6dcResult){mode, flags, 0x0Eu, saved_hl};
+}
+/* <<< factory Func_c6dc */

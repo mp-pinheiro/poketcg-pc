@@ -1,0 +1,9 @@
+{
+  "fn": "AITryToRetreat",
+  "case": "tests/cases/retreat.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AITryToRetreat\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49904\": \"02\", \"50176\": \"01\", \"52695\": \"00\", \"65431\": \"c2\", \"65441\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AITryToRetreat\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"020100c203\", \"native\": \"020100c200\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[49851, 1], [49904, 1], [50176, 1], [52695, 1], [65431, 1], [65441, 1]]}}}\n",
+  "restored": "{\"fn\": \"AITryToRetreat\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"49904\": \"02\", \"50176\": \"01\", \"52695\": \"00\", \"65431\": \"c2\", \"65441\": \"03\"}}, \"status\": \"PASS\"}\n"
+}
