@@ -1,0 +1,9 @@
+{
+  "fn": "PlayTrainerEffectAnimation",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayTrainerEffectAnimation\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 32, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52862\": \"0020000000c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayTrainerEffectAnimation\", \"mismatches\": {\"bus\": {\"address\": 52866, \"reference\": \"0020000000c215c2\", \"native\": \"0020000001c215c2\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[52229, 1], [52408, 1], [52420, 1], [52862, 7], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayTrainerEffectAnimation\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 32, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52862\": \"0020000000c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

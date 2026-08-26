@@ -1288,6 +1288,16 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/commands.h"
 #define ATK_ANIM_BIG_HIT 0x02u
 #define ATK_ANIM_HIT 0x01u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/commands.h"
+#include "mem.h"
+#define ATK_ANIM_CONFUSION 0x7cu
+#define ATK_ANIM_OWN_CONFUSION 0x7fu
+#define ATK_ANIM_PARALYSIS 0x7du
+#define ATK_ANIM_POISON 0x7bu
+#define ATK_ANIM_SLEEP 0x7eu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6942,3 +6952,42 @@ void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, 
 	(void)hl;
 }
 /* <<< factory PlayAttackAnimation */
+
+/* >>> factory PlayStatusConditionQueueAnimations */
+void PlayStatusConditionQueueAnimations(void)
+{
+	uint8_t index = wStatusConditionQueueIndex;
+	if (index == 0u)
+		return;
+	gb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 0u);
+	uint16_t hl = wStatusConditionQueue_ADDR;
+	for (;;) {
+		uint8_t d = gb_read8(hl++);
+		if (d == 0u)
+			return;
+		hl++;
+		uint8_t condition = gb_read8(hl++);
+		uint8_t animation;
+		switch (condition) {
+		case ASLEEP:
+			animation = ATK_ANIM_SLEEP;
+			break;
+		case PARALYZED:
+			animation = ATK_ANIM_PARALYSIS;
+			break;
+		case POISONED:
+		case DOUBLE_POISONED:
+			animation = ATK_ANIM_POISON;
+			break;
+		case CONFUSED:
+			animation = (hWhoseTurn == d) ? ATK_ANIM_OWN_CONFUSION : ATK_ANIM_CONFUSION;
+			break;
+		default:
+			continue;
+		}
+		wLoadedAttackAnimation = animation;
+		wDuelAnimLocationParam = 0u;
+		(void)PlayAttackAnimationCommands(animation, d, animation);
+	}
+}
+/* <<< factory PlayStatusConditionQueueAnimations */

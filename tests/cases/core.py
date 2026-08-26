@@ -1786,6 +1786,10 @@ wDamageAnimCardID = 0xCE84
 wLoadedAttackAnimation = 0xCCB8
 wTempNonTurnDuelistCardID = 0xCCC4
 wWhoseTurn = 0xCC05
+
+hWhoseTurn = 0xFF97
+wStatusConditionQueueIndex = 0xCCCD
+wStatusConditionQueue = 0xCCCE
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3619,6 +3623,15 @@ CASES["PlayAttackAnimation"] = [
 ]
 # <<< factory PlayAttackAnimation
 
+# >>> factory PlayStatusConditionQueueAnimations
+CONTRACT["PlayStatusConditionQueueAnimations"] = {"compare": (), "preserve": ()}
+CASES["PlayStatusConditionQueueAnimations"] = [
+    {},
+    {"wram": {wStatusConditionQueueIndex: b"\x01", wStatusConditionQueue: b"\x00\xFF"}, "read": {wStatusConditionQueue + 1: 1}},
+    dict(POISON),
+]
+# <<< factory PlayStatusConditionQueueAnimations
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5108,3 +5121,6 @@ MUTATIONS["OppAction_AttemptRetreat"] = {"source_symbol": "OppAction_AttemptRetr
 # >>> factory-mutation PlayAttackAnimation
 MUTATIONS["PlayAttackAnimation"] = {"source_symbol": "PlayAttackAnimation", "before": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, c);", "after": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, (uint8_t)(c + 1u));", "case_ids": ["PlayAttackAnimation-0", "PlayAttackAnimation-1", "PlayAttackAnimation-2", "PlayAttackAnimation-3"]}
 # <<< factory-mutation PlayAttackAnimation
+# >>> factory-mutation PlayStatusConditionQueueAnimations
+MUTATIONS["PlayStatusConditionQueueAnimations"] = {"source_symbol": "PlayStatusConditionQueueAnimations", "before": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 0u);", "after": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 1u);", "case_ids": ["PlayStatusConditionQueueAnimations-1"]}
+# <<< factory-mutation PlayStatusConditionQueueAnimations

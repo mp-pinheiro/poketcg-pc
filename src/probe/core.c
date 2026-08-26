@@ -2342,6 +2342,14 @@ static void adapt_PlayAttackAnimation(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimation */
 
+/* >>> factory PlayStatusConditionQueueAnimations */
+static void adapt_PlayStatusConditionQueueAnimations(ProbeState *s)
+{
+	(void)s;
+	PlayStatusConditionQueueAnimations();
+}
+/* <<< factory PlayStatusConditionQueueAnimations */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2622,5 +2630,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_TossCoinATimes", adapt_OppAction_TossCoinATimes },
 	{ "OppAction_AttemptRetreat", adapt_OppAction_AttemptRetreat },
 	{ "PlayAttackAnimation", adapt_PlayAttackAnimation },
+	{ "PlayStatusConditionQueueAnimations", adapt_PlayStatusConditionQueueAnimations },
 	{ NULL, NULL },
 };

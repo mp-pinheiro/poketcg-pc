@@ -5227,6 +5227,22 @@ CASES["PetalDance_MultiplierEffect"] = [
 ]
 # <<< factory PetalDance_MultiplierEffect
 
+# >>> factory PlayTrainerEffectAnimation
+CONTRACT["PlayTrainerEffectAnimation"] = {"compare": (), "preserve": ()}
+CASES["PlayTrainerEffectAnimation"] = [
+    {"a": 0x00, "f": 0x00, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x20, "hl": 0xC200,
+     "wram": {0xFF97: b"\xC2", 0xCC05: b"\xC2", 0xCCC4: b"\x15"},
+     "read": {0xCCB8: 1, 0xCE7E: 1, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1, 0xCE7F: 2}},
+    {"a": 0x00, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x01, "e": 0x45, "hl": 0xC300,
+     "wram": {0xFF97: b"\xC2", 0xCC05: b"\xC3", 0xCCC4: b"\xA0"},
+     "read": {0xCCB8: 1, 0xCE7E: 1, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1, 0xCE7F: 2}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xFF97: b"\xC2", 0xCC05: b"\xC2", 0xCCC4: b"\xFE"},
+     "oracle": False, "why": "nonzero trainer animation enters the frame-driven animation wait outside the isolated primary oracle path",
+     "expect": {0xCCB8: b"\xAA"}}
+]
+# <<< factory PlayTrainerEffectAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7694,3 +7710,6 @@ MUTATIONS["DragonairSlam_MultiplierEffect"] = {"source_symbol": "DragonairSlam_M
 # >>> factory-mutation PetalDance_MultiplierEffect
 MUTATIONS["PetalDance_MultiplierEffect"] = {"source_symbol": "PetalDance_MultiplierEffect", "before": "void PetalDance_MultiplierEffect(void)\n{\n\tLoadTxRam3(40u);", "after": "void PetalDance_MultiplierEffect(void)\n{\n\tLoadTxRam3(0x40u);", "case_ids": ["PetalDance_MultiplierEffect-0", "PetalDance_MultiplierEffect-1"]}
 # <<< factory-mutation PetalDance_MultiplierEffect
+# >>> factory-mutation PlayTrainerEffectAnimation
+MUTATIONS["PlayTrainerEffectAnimation"] = {"source_symbol": "PlayTrainerEffectAnimation", "before": "\tPlayAttackAnimation(hWhoseTurn, f, 0u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "after": "\tPlayAttackAnimation(hWhoseTurn, f, 1u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "case_ids": ["PlayTrainerEffectAnimation-0"]}
+# <<< factory-mutation PlayTrainerEffectAnimation

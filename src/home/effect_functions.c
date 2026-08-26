@@ -881,6 +881,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/math.h"
 #include "home/print_text.h"
 #include "home/duel.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel_core.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7527,3 +7532,13 @@ void PetalDance_MultiplierEffect(void)
 	SwapTurn();
 }
 /* <<< factory PetalDance_MultiplierEffect */
+
+/* >>> factory PlayTrainerEffectAnimation */
+void PlayTrainerEffectAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	wLoadedAttackAnimation = a;
+	ResetAttackAnimationIsPlaying();
+	PlayAttackAnimation(hWhoseTurn, f, 0u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+}
+/* <<< factory PlayTrainerEffectAnimation */
