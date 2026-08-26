@@ -881,6 +881,18 @@ CASES["UpdateConfirmationCardScreen"] = [
 ]
 # <<< factory UpdateConfirmationCardScreen
 
+# >>> factory PrintSlashSixty
+CONTRACT["PrintSlashSixty"] = {"compare": (), "preserve": ()}
+CASES["PrintSlashSixty"] = [
+    {"d": 17, "e": 0, "read": {0xC590: 7}, "vread": {0: {0x9811: 3}},
+     "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]},
+    {"d": 16, "e": 1, "read": {0xC590: 7}, "vread": {0: {0x9830: 3}},
+     "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]},
+    dict(POISON, d=17, e=0, read={0xC590: 7}, vread={0: {0x9811: 3}},
+         setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}]),
+]
+# <<< factory PrintSlashSixty
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1180,3 +1192,6 @@ MUTATIONS["PrintCurDeckNumberAndName"] = {
 # >>> factory-mutation UpdateConfirmationCardScreen
 MUTATIONS["UpdateConfirmationCardScreen"] = {"source_symbol": "UpdateConfirmationCardScreen", "before": "\tPrintCurDeckNumberAndName();\n\n\thffb0 = 0u;", "after": "\tPrintCurDeckNumberAndName();\n\n\thffb0 = 1u;", "case_ids": ["UpdateConfirmationCardScreen-0", "UpdateConfirmationCardScreen-1", "UpdateConfirmationCardScreen-2"]}
 # <<< factory-mutation UpdateConfirmationCardScreen
+# >>> factory-mutation PrintSlashSixty
+MUTATIONS["PrintSlashSixty"] = {"source_symbol": "PrintSlashSixty", "before": "\tgb_write8(text++, (uint8_t)(SYM_0 + 6u));", "after": "\tgb_write8(text++, (uint8_t)(SYM_0 + 5u));", "case_ids": ["PrintSlashSixty-0", "PrintSlashSixty-1", "PrintSlashSixty-2"]}
+# <<< factory-mutation PrintSlashSixty
