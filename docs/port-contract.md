@@ -438,6 +438,31 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **`SetupText` in `setup` is the single highest-yield case ingredient, and it is
+  routinely mistaken for a text-pipeline defect (measured 2026-08-26).** Without it
+  the reference spins in `Func_235e`'s glyph cache around `pc=0x2380-0x238C`, which
+  reads as "the text pipeline hangs on real card data" and has had stanzas written
+  blaming `ProcessTextFromID` / `CountLinesOfTextFromID`. It is not those routines.
+  Proven this session by adding only `setup=[{fn: SetupText, d: 0x30, e: 0x7F}]`:
+  - `PrintFailedEffectText`'s two non-degenerate paths (`wEffectFailed` = 1 and 2 —
+    the second loads real card data through `LoadCardDataToBuffer1_FromCardID` and
+    `CopyCardNameAndLevel`) go from `BUDGET_EXHAUSTED` at `pc=0x2380` to **PASS**.
+    Its landed cases had only ever seeded `wEffectFailed=0`, the early `ret z`, so
+    the real-text path was documented as untestable when it simply lacked setup.
+    Both cases are now registered.
+  - `DisplayOpponentUsedAttackScreen` (`01:6635`, a P4 root): `BUDGET_EXHAUSTED` at
+    `pc=0x238C` → **`REFERENCE_OK` in 16,582 instructions**.
+  - `DisplayPCMenu`: `BUDGET_EXHAUSTED` at `pc=0x2381` → **`REFERENCE_OK` in 28,134
+    instructions**. Both stanzas were deleted as resolved.
+  **But do not over-apply it — there is a second, unrelated class.** The 26
+  `AIPlay_*` stanzas cite the same text routines yet hang at `DoFrame`
+  (`pc=0x0542`/`0x056E`/`0x0571`) or `CallIndirect` (`pc=0x05B7`), and adding
+  `SetupText` changes *nothing* — byte-identical pc and instruction count. Those are
+  genuinely frame-blocked and need the LCD-on/frame treatment, not setup. So when a
+  stanza blames the text pipeline, resolve the reported `pc` against `poketcg.sym`
+  first: `0x2380`-ish means `Func_235e` and `SetupText` fixes it; `0x05xx` means
+  `DoFrame` and it does not.
+
 - **Register-clobber debt is transitive, and `compare: ()` is where it hides
   (measured 2026-08-26).** A routine registered with a narrow `compare` was never
   checked on the registers it destroys, so its C body legitimately returns `void`.
