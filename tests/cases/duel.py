@@ -1630,6 +1630,40 @@ CASES["DealDamageToPlayAreaPokemon_RegularAnim"] = [
 ]
 # <<< factory DealDamageToPlayAreaPokemon_RegularAnim
 
+
+# >>> factory DealConfusionDamageToSelf
+# Needs SetupText: without it the reference spins in Func_235e's glyph cache at
+# pc=0x2380 (which is what the old AUTO-RETIRED "BUDGET_EXHAUSTED pc=9088" note
+# recorded), and the real run takes ~700k instructions so the default budget is
+# far too small.
+_dcdts_wDamage = 0xCCB9
+_dcdts_wNoDamageOrEffect = 0xCCC7
+_dcdts_wTempNonTurn = 0xCCC4
+_dcdts_wTempTurn = 0xCCC3
+_dcdts_wDamageEffectiveness = 0xCCC1
+_dcdts_arena_hp = 0xC2C8
+
+def _dcdts(**kw):
+    case = {"wram": {0xFF97: b"\xC2", _dcdts_arena_hp: b"\x40",
+                     _dcdts_wDamage: b"\x00\x00", _dcdts_wNoDamageOrEffect: b"\x00",
+                     _dcdts_wTempNonTurn: b"\x01", _dcdts_wTempTurn: b"\x01",
+                     _dcdts_wDamageEffectiveness: b"\x00"},
+            "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+            "instruction_budget": 8000000, "cycle_budget": 32000000,
+            "read": {_dcdts_wDamage: 2, _dcdts_wNoDamageOrEffect: 1,
+                     _dcdts_wTempNonTurn: 1, _dcdts_arena_hp: 1}}
+    case.update(kw)
+    return case
+
+CONTRACT["DealConfusionDamageToSelf"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DealConfusionDamageToSelf"] = [
+    _dcdts(a=0x10),   # ordinary damage
+    _dcdts(a=0x00),   # zero damage takes ApplyDamageModifiers' .no_damage path
+    _dcdts(a=0x50),   # exceeds HP: the knocked-out path
+    dict(POISON, **_dcdts()),
+]
+# <<< factory DealConfusionDamageToSelf
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1868,3 +1902,6 @@ MUTATIONS["DealDamageToPlayAreaPokemon"] = {"source_symbol": "DealDamageToPlayAr
 # >>> factory-mutation DealDamageToPlayAreaPokemon_RegularAnim
 MUTATIONS["DealDamageToPlayAreaPokemon_RegularAnim"] = {"source_symbol": "DealDamageToPlayAreaPokemon_RegularAnim", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = ATK_ANIM_BENCH_HIT;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_BENCH_HIT ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon_RegularAnim-0", "DealDamageToPlayAreaPokemon_RegularAnim-1"]}
 # <<< factory-mutation DealDamageToPlayAreaPokemon_RegularAnim
+# >>> factory-mutation DealConfusionDamageToSelf
+MUTATIONS["DealConfusionDamageToSelf"] = {"source_symbol": "DealConfusionDamageToSelf", "before": "\tgb_write8(wDamage_ADDR, a);\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);", "after": "\tgb_write8(wDamage_ADDR, (uint8_t)(a + 1u));\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);", "case_ids": ["DealConfusionDamageToSelf-0", "DealConfusionDamageToSelf-2", "DealConfusionDamageToSelf-3"]}
+# <<< factory-mutation DealConfusionDamageToSelf
