@@ -121,6 +121,7 @@ def main() -> int:
         mapper = dict(case["mapper"])
         native_vram_bank = int(mapper.pop("vram_bank"))
         mapper_mode = mapper.pop("mode", "fixed")
+        native_hbank_rom = mapper.pop("hbank_rom", None)
         seed_native_rom_bank = True
         if mapper_mode == "symbol" and entry >= 0x4000:
             mapper["rom_bank"] = symbols[args.fn][0]
@@ -311,8 +312,8 @@ def main() -> int:
         "ram_bank": int(case["mapper"]["ram_bank"]),
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         "vram_bank": native_vram_bank,
-        **({"hbank_rom": int(case["mapper"]["hbank_rom"])}
-           if "hbank_rom" in case["mapper"] else {}),
+        **({"hbank_rom": int(native_hbank_rom)}
+           if native_hbank_rom is not None else {}),
         "setup": resolved_setup,
         "input_events": case["input_events"],
         **registers,
