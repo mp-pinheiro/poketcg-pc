@@ -17,7 +17,18 @@ static void adapt_GrassClubAfterDuel(ProbeState *s)
 }
 /* <<< factory GrassClubAfterDuel */
 
+
+/* >>> factory Script_Nikki */
+static void adapt_Script_Nikki(ProbeState *s)
+{
+	ScriptNikkiResult r = Script_Nikki();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory Script_Nikki */
+
 const ProbeEntry probe_entries_grass_club[] = {
+	{ "Script_Nikki", adapt_Script_Nikki },
 	{ "GrassClubAfterDuel", adapt_GrassClubAfterDuel },
 	{ NULL, NULL },
 };
