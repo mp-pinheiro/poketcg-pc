@@ -404,6 +404,14 @@ static void adapt_Func_c8ed(ProbeState *s)
 }
 /* <<< factory Func_c8ed */
 
+/* >>> factory PauseMenu_Diary */
+static void adapt_PauseMenu_Diary(ProbeState *s)
+{
+	(void)s;
+	PauseMenu_Diary();
+}
+/* <<< factory PauseMenu_Diary */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -454,5 +462,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "UpdateOverworldMap", adapt_UpdateOverworldMap },
 	{ "Func_c8ed", adapt_Func_c8ed },
 	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
+	{ "PauseMenu_Diary", adapt_PauseMenu_Diary },
 	{ NULL, NULL },
 };

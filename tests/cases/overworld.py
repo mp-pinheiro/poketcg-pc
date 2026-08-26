@@ -675,6 +675,14 @@ CASES["Func_c8ed"] = [
 ]
 # <<< factory Func_c8ed
 
+# >>> factory PauseMenu_Diary
+CONTRACT["PauseMenu_Diary"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Diary"] = [
+    {"keys": [0x00, 0x01], "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "wram": {0xD291: b"\x5A"}, "read": {0xD291: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], wram={0xD291: b"\x5A"}, read={0xD291: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PauseMenu_Diary
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -896,3 +904,6 @@ MUTATIONS["DisplayPauseMenu"] = {"source_symbol": "DisplayPauseMenu", "before": 
 # >>> factory-mutation Func_c8ed
 MUTATIONS["Func_c8ed"] = {"source_symbol": "Func_c8ed", "before": "\tgb_write8(wd3b9_ADDR, 0u);", "after": "\tgb_write8(wd3b9_ADDR, 0xFFu);", "case_ids": ["Func_c8ed-1", "Func_c8ed-2"]}
 # <<< factory-mutation Func_c8ed
+# >>> factory-mutation PauseMenu_Diary
+MUTATIONS["PauseMenu_Diary"] = {"source_symbol": "PauseMenu_Diary", "before": "\t_PauseMenu_Diary();", "after": "\twd291 = 0xFFu;", "case_ids": ["PauseMenu_Diary-0", "PauseMenu_Diary-1"]}
+# <<< factory-mutation PauseMenu_Diary

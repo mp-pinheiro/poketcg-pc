@@ -1,0 +1,9 @@
+{
+  "fn": "PauseMenu_Diary",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PauseMenu_Diary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53905\": \"5a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PauseMenu_Diary\", \"mismatches\": {\"bus\": {\"address\": 53905, \"reference\": \"5a\", \"native\": \"ff\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[53905, 1]]}}}\n",
+  "restored": "{\"fn\": \"PauseMenu_Diary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53905\": \"5a\"}}, \"status\": \"PASS\"}\n"
+}

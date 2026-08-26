@@ -182,4 +182,7 @@ void DisplayPauseMenu(void);
 typedef struct { uint8_t a; uint8_t f; } FuncC8edResult;
 FuncC8edResult Func_c8ed(uint16_t hl);
 /* <<< factory Func_c8ed */
+/* >>> factory PauseMenu_Diary */
+void PauseMenu_Diary(void);
+/* <<< factory PauseMenu_Diary */
 #endif /* POKETCG_HOME_OVERWORLD_H */

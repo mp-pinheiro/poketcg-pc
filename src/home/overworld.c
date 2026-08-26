@@ -144,6 +144,9 @@
 #include "home/lcd_enable_frame.h"
 #include "home/menus.h"
 #include "mem.h"
+
+#include "home/diary.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -834,3 +837,10 @@ FuncC8edResult Func_c8ed(uint16_t hl)
 	return (FuncC8edResult){result.a, result.f};
 }
 /* <<< factory Func_c8ed */
+
+/* >>> factory PauseMenu_Diary */
+void PauseMenu_Diary(void)
+{
+	_PauseMenu_Diary();
+}
+/* <<< factory PauseMenu_Diary */
