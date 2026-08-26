@@ -22,4 +22,8 @@ void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
 void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c);
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
+/* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
+/* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
+void OpenInPlayAreaScreen_NonTurnHolderHand(void);
+/* <<< factory OpenInPlayAreaScreen_NonTurnHolderHand */
 #endif

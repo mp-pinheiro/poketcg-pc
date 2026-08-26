@@ -1321,6 +1321,22 @@ CASES["Script_LegendaryCardRightSpark"] = [
 ]
 # <<< factory Script_LegendaryCardRightSpark
 
+# >>> factory ScriptCommand_PrintNPCText
+CONTRACT["ScriptCommand_PrintNPCText"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PrintNPCText"] = [
+    {"b": 0x01, "c": 0xDB, "wram": {0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "read": {0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, b=0x01, c=0xDC, wram={0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000,
+         read={0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory ScriptCommand_PrintNPCText
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1996,3 +2012,6 @@ MUTATIONS["Func_cc32"] = {"source_symbol": "Func_cc32", "before": "void Func_cc3
 # >>> factory-mutation Script_LegendaryCardRightSpark
 MUTATIONS["Script_LegendaryCardRightSpark"] = {"source_symbol": "Script_LegendaryCardRightSpark", "before": "void Script_LegendaryCardRightSpark(void)\n{\n\tCloseAdvancedDialogueBox();", "after": "void Script_LegendaryCardRightSpark(void)\n{\n\t(void)0;", "case_ids": ["Script_LegendaryCardRightSpark-0", "Script_LegendaryCardRightSpark-1"]}
 # <<< factory-mutation Script_LegendaryCardRightSpark
+# >>> factory-mutation ScriptCommand_PrintNPCText
+MUTATIONS["ScriptCommand_PrintNPCText"] = {"source_symbol": "ScriptCommand_PrintNPCText", "before": "IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);", "after": "IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["ScriptCommand_PrintNPCText-0", "ScriptCommand_PrintNPCText-1"]}
+# <<< factory-mutation ScriptCommand_PrintNPCText

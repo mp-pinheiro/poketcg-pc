@@ -535,4 +535,7 @@ void Func_cc32(uint16_t hl);
 /* >>> factory Script_LegendaryCardRightSpark */
 void Script_LegendaryCardRightSpark(void);
 /* <<< factory Script_LegendaryCardRightSpark */
+/* >>> factory ScriptCommand_PrintNPCText */
+IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_PrintNPCText */
 #endif

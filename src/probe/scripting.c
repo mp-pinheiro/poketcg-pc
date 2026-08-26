@@ -1128,6 +1128,16 @@ static void adapt_Script_LegendaryCardRightSpark(ProbeState *s)
 }
 /* <<< factory Script_LegendaryCardRightSpark */
 
+/* >>> factory ScriptCommand_PrintNPCText */
+static void adapt_ScriptCommand_PrintNPCText(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PrintNPCText(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PrintNPCText */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1239,5 +1249,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9c0", adapt_Func_c9c0 },
 	{ "Func_cc32", adapt_Func_cc32 },
 	{ "Script_LegendaryCardRightSpark", adapt_Script_LegendaryCardRightSpark },
+	{ "ScriptCommand_PrintNPCText", adapt_ScriptCommand_PrintNPCText },
 	{ NULL, NULL },
 };

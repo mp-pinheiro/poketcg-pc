@@ -206,3 +206,12 @@ void OpenInPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)
 	hWhoseTurn = saved_hWhoseTurn;
 }
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderDiscardPile */
+
+/* >>> factory OpenInPlayAreaScreen_NonTurnHolderHand */
+void OpenInPlayAreaScreen_NonTurnHolderHand(void)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenNonTurnHolderHandScreen_Simple();
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenInPlayAreaScreen_NonTurnHolderHand */
