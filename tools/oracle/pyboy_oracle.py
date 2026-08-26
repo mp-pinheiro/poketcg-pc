@@ -27,22 +27,21 @@ from pathlib import Path
 
 from pyboy import PyBoy
 
-# The frame is confined to $CF00-$CFFF so the text-header block at $CE2B-$CE4B is
-# case-addressable and oracle-diffable. It deliberately does NOT move to the top of
-# WRAM: $DFFF is the last WRAM byte and several cases probe it as a boundary
-# (SetNextElementOfList walks a list pointer there, GetFarByte bus-reads it), so a
-# frame at $DF00-$DFFF would collide with the very addresses those cases exist to test.
-SENTINEL = 0xCFF0  # return address pushed for the routine under test
-SPIN = 0xCFF4  # `jr -2`, parked here once the snapshot is taken
-STACK_TOP = 0xCFC0  # frame grows down from here
+# The frame lives in the unallocated $D69C-$DD7F gap in pret's WRAM map.  It
+# used to occupy $CF30-$CFFF, hiding live deck/card scratch symbols from the
+# oracle (wCurDeckCards $CF17, wOwnedCardsCountList $CF68, wCurDeckName $CFB9,
+# and others).  Measured 2026-08-26 stack low-water over the 31 largest routines
+# was 86 bytes below entry SP; this window provides 143 bytes below STACK_TOP
+# while touching no game symbol.
+#
+# $DF00-$DFFF is not usable: registered boundary cases deliberately probe DFFF.
+SENTINEL = 0xDCF0  # return address pushed for the routine under test
+SPIN = 0xDCF4  # `jr -2`, parked here once the snapshot is taken
+STACK_TOP = 0xDCC0  # frame grows down from here
 
 # Cases must not use this window: it holds the synthesized frame and its stack.
-# The floor is set by stack headroom, not by the frame, which is three bytes at
-# SENTINEL/SPIN. Worst-case frame base is STACK_TOP-2-2*4 = $CFB6, so this leaves
-# 134 bytes below it -- more than the 126 the GBRT runner leaves under its own
-# sp=0xfffe before the IO block, and that backend runs the same corpus. Anything
-# below the floor is observable: it is where wCurDeckCards ($CF17) lives.
-RESERVED = range(0xCF30, 0xD000)
+# Keep this in lockstep with tools/factory/verify.py.
+RESERVED = range(0xDC30, 0xDD00)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000
