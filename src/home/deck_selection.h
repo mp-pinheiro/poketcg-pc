@@ -66,4 +66,8 @@ void EmptyScreenAndLoadFontDuelAndHandCardsIcons(void);
 /* >>> factory PrintThereIsNoDeckHereText */
 uint8_t PrintThereIsNoDeckHereText(void);
 /* <<< factory PrintThereIsNoDeckHereText */
+/* >>> factory WriteCardListsTerminatorBytes */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint16_t hl; } WriteCardListsTerminatorBytesResult;
+WriteCardListsTerminatorBytesResult WriteCardListsTerminatorBytes(void);
+/* <<< factory WriteCardListsTerminatorBytes */
 #endif /* POKETCG_HOME_DECK_SELECTION_H */

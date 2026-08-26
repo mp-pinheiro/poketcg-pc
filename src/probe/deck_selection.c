@@ -128,6 +128,18 @@ static void adapt_PrintThereIsNoDeckHereText(ProbeState *s)
 }
 /* <<< factory PrintThereIsNoDeckHereText */
 
+/* >>> factory WriteCardListsTerminatorBytes */
+static void adapt_WriteCardListsTerminatorBytes(ProbeState *s)
+{
+	WriteCardListsTerminatorBytesResult r = WriteCardListsTerminatorBytes();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory WriteCardListsTerminatorBytes */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -142,5 +154,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "PrepareMenuGraphics", adapt_PrepareMenuGraphics },
 	{ "EmptyScreenAndLoadFontDuelAndHandCardsIcons", adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons },
 	{ "PrintThereIsNoDeckHereText", adapt_PrintThereIsNoDeckHereText },
+	{ "WriteCardListsTerminatorBytes", adapt_WriteCardListsTerminatorBytes },
 	{ NULL, NULL },
 };

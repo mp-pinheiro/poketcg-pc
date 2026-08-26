@@ -32,6 +32,9 @@
 #define TRUE 0x01u
 
 #define ThereIsNoDeckHereText 0x022fu
+
+#include "generated/wram.h"
+#define DECK_CONFIG_BUFFER_SIZE 0x50u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -213,3 +216,14 @@ uint8_t PrintThereIsNoDeckHereText(void)
 	return wCurDeck;
 }
 /* <<< factory PrintThereIsNoDeckHereText */
+
+/* >>> factory WriteCardListsTerminatorBytes */
+WriteCardListsTerminatorBytesResult WriteCardListsTerminatorBytes(void)
+{
+	uint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + DECK_SIZE);
+	gb_write8(filtered_terminator, 0u);
+	uint16_t deck_terminator = (uint16_t)(wCurDeckCards_ADDR + DECK_CONFIG_BUFFER_SIZE);
+	gb_write8(deck_terminator, 0u);
+	return (WriteCardListsTerminatorBytesResult){0u, 0x80u, 0u, 0x50u, 0xCF67u};
+}
+/* <<< factory WriteCardListsTerminatorBytes */

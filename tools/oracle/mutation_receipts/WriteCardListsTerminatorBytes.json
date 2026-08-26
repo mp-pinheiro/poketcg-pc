@@ -1,0 +1,9 @@
+{
+  "fn": "WriteCardListsTerminatorBytes",
+  "case": "tests/cases/deck_selection.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"WriteCardListsTerminatorBytes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 80, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 53095, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53014\": \"00\", \"53095\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"WriteCardListsTerminatorBytes\", \"mismatches\": {\"bus\": {\"address\": 53014, \"reference\": \"0000\", \"native\": \"aa00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[53014, 1], [53095, 1]]}}}\n",
+  "restored": "{\"fn\": \"WriteCardListsTerminatorBytes\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 80, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 53095, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53014\": \"00\", \"53095\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

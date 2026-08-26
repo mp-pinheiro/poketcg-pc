@@ -148,6 +148,14 @@ CASES["PrintThereIsNoDeckHereText"] = [
 ]
 # <<< factory PrintThereIsNoDeckHereText
 
+# >>> factory WriteCardListsTerminatorBytes
+CONTRACT["WriteCardListsTerminatorBytes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["WriteCardListsTerminatorBytes"] = [
+    {"wram": {0xCF16: b"\xAA", 0xCF67: b"\xBB"}, "read": {0xCF16: 1, 0xCF67: 1}},
+    dict(POISON, wram={0xCF16: b"\x11", 0xCF67: b"\x22"}, read={0xCF16: 1, 0xCF67: 1}),
+]
+# <<< factory WriteCardListsTerminatorBytes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -191,3 +199,6 @@ MUTATIONS["EmptyScreenAndLoadFontDuelAndHandCardsIcons"] = {"source_symbol": "Em
 # >>> factory-mutation PrintThereIsNoDeckHereText
 MUTATIONS["PrintThereIsNoDeckHereText"] = {"source_symbol": "PrintThereIsNoDeckHereText", "before": "\treturn wCurDeck;", "after": "\treturn (uint8_t)(wCurDeck + 1u);", "case_ids": ["PrintThereIsNoDeckHereText-0", "PrintThereIsNoDeckHereText-1"]}
 # <<< factory-mutation PrintThereIsNoDeckHereText
+# >>> factory-mutation WriteCardListsTerminatorBytes
+MUTATIONS["WriteCardListsTerminatorBytes"] = {"source_symbol": "WriteCardListsTerminatorBytes", "before": "\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + DECK_SIZE);", "after": "\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + (DECK_SIZE - 1u));", "case_ids": ["WriteCardListsTerminatorBytes-0", "WriteCardListsTerminatorBytes-1"]}
+# <<< factory-mutation WriteCardListsTerminatorBytes
