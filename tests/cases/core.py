@@ -4546,9 +4546,9 @@ MUTATIONS["PrintSortNumberInCardList_CallFromPointer"] = {
 CONTRACT["CanArenaCardUseNonResidualAttack"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["CanArenaCardUseNonResidualAttack"] = [
     {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00", 0xCCB1: b"\x00"},
-     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+     "sram": {0: {}}, "read": {0xFF9D: 1}, "instruction_budget": 4000000, "cycle_budget": 20000000},
     dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00", 0xCCB1: b"\x00"},
-         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+         sram={0: {}}, read={0xFF9D: 1}, instruction_budget=4000000, cycle_budget=20000000),
 ]
 # <<< factory CanArenaCardUseNonResidualAttack
 
@@ -5324,5 +5324,5 @@ MUTATIONS["OpenNonTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenNonTurn
 MUTATIONS["OpenNonTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenNonTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\tSwapTurn();\n\tOpenDiscardPileScreenResult result = OpenDiscardPileScreen(c);\n\tSwapTurn();\n\treturn result;", "after": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenNonTurnHolderDiscardPileScreen-0"]}
 # <<< factory-mutation OpenNonTurnHolderDiscardPileScreen
 # >>> factory-mutation CanArenaCardUseNonResidualAttack
-MUTATIONS["CanArenaCardUseNonResidualAttack"] = {"source_symbol": "CanArenaCardUseNonResidualAttack", "before": "\t\tf = (uint8_t)(a == 0u ? 0x80u : 0x00u);", "after": "\t\tf = 0u;", "case_ids": ["CanArenaCardUseNonResidualAttack-0", "CanArenaCardUseNonResidualAttack-1"]}
+MUTATIONS["CanArenaCardUseNonResidualAttack"] = {"source_symbol": "CanArenaCardUseNonResidualAttack", "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "\thTempPlayAreaLocation_ff9d = 0x01u;", "case_ids": ["CanArenaCardUseNonResidualAttack-0", "CanArenaCardUseNonResidualAttack-1"]}
 # <<< factory-mutation CanArenaCardUseNonResidualAttack
