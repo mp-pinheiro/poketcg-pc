@@ -517,6 +517,13 @@ static void adapt_ReturnToOverworldNoCallback(ProbeState *s)
 }
 /* <<< factory ReturnToOverworldNoCallback */
 
+/* >>> factory ReturnToOverworldWithCallback */
+static void adapt_ReturnToOverworldWithCallback(ProbeState *s)
+{
+	s->a = ReturnToOverworldWithCallback(s->hl);
+}
+/* <<< factory ReturnToOverworldWithCallback */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -581,5 +588,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "CloseAdvancedDialogueBox", adapt_CloseAdvancedDialogueBox },
 	{ "Func_c8ba", adapt_Func_c8ba },
 	{ "ReturnToOverworldNoCallback", adapt_ReturnToOverworldNoCallback },
+	{ "ReturnToOverworldWithCallback", adapt_ReturnToOverworldWithCallback },
 	{ NULL, NULL },
 };

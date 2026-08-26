@@ -1148,6 +1148,16 @@ static void adapt_ScriptCommand_CloseAdvancedTextBox(ProbeState *s)
 }
 /* <<< factory ScriptCommand_CloseAdvancedTextBox */
 
+/* >>> factory ScriptCommand_PrintVariableNPCText */
+static void adapt_ScriptCommand_PrintVariableNPCText(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PrintVariableNPCText(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PrintVariableNPCText */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1261,5 +1271,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PrintNPCText", adapt_ScriptCommand_PrintNPCText },
 	{ "Func_cc32", adapt_Func_cc32 },
 	{ "ScriptCommand_CloseAdvancedTextBox", adapt_ScriptCommand_CloseAdvancedTextBox },
+	{ "ScriptCommand_PrintVariableNPCText", adapt_ScriptCommand_PrintVariableNPCText },
 	{ NULL, NULL },
 };

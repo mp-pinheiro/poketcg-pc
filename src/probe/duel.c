@@ -970,6 +970,13 @@ static void adapt_Func_82b6(ProbeState *s)
 }
 /* <<< factory Func_82b6 */
 
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+static void adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(ProbeState *s)
+{
+	OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(s->c);
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1087,5 +1094,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ApplyTransparencyIfApplicable", adapt_ApplyTransparencyIfApplicable },
 	{ "DealDamageToPlayAreaPokemon", adapt_DealDamageToPlayAreaPokemon },
 	{ "DealDamageToPlayAreaPokemon_RegularAnim", adapt_DealDamageToPlayAreaPokemon_RegularAnim },
+	{ "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile },
 	{ NULL, NULL },
 };

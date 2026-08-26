@@ -601,6 +601,13 @@ static void adapt_PrintCurDeckNumberAndName(ProbeState *s)
 }
 /* <<< factory PrintCurDeckNumberAndName */
 
+/* >>> factory UpdateConfirmationCardScreen */
+static void adapt_UpdateConfirmationCardScreen(ProbeState *s)
+{
+	UpdateConfirmationCardScreen();
+}
+/* <<< factory UpdateConfirmationCardScreen */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -671,5 +678,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "AddCardToDeckAndUpdateCount", adapt_AddCardToDeckAndUpdateCount },
 	{ "HandleDeckCardSelectionList", adapt_HandleDeckCardSelectionList },
 	{ "PrintCurDeckNumberAndName", adapt_PrintCurDeckNumberAndName },
+	{ "UpdateConfirmationCardScreen", adapt_UpdateConfirmationCardScreen },
 	{ NULL, NULL },
 };

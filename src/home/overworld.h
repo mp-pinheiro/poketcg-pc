@@ -228,4 +228,7 @@ void Func_c8ba(uint16_t hl, uint16_t de);
 /* >>> factory ReturnToOverworldNoCallback */
 uint8_t ReturnToOverworldNoCallback(void);
 /* <<< factory ReturnToOverworldNoCallback */
+/* >>> factory ReturnToOverworldWithCallback */
+uint8_t ReturnToOverworldWithCallback(uint16_t hl);
+/* <<< factory ReturnToOverworldWithCallback */
 #endif /* POKETCG_HOME_OVERWORLD_H */

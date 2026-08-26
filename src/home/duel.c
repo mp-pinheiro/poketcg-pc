@@ -605,6 +605,8 @@ static const uint8_t kCursorTileData[16] = {
 #define DUELVARS_ARENA_CARD_HP 0xC8u
 
 #define ATK_ANIM_BENCH_HIT 0x78u
+
+#include "home/core.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3096,3 +3098,12 @@ void Func_82b6(void)
 	DrawPlayArea_PrizeCards(scratch);
 }
 /* <<< factory Func_82b6 */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenTurnHolderDiscardPileScreen(c);
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */

@@ -1095,3 +1095,12 @@ uint8_t ReturnToOverworldNoCallback(void)
 	return ReturnToOverworld();
 }
 /* <<< factory ReturnToOverworldNoCallback */
+
+/* >>> factory ReturnToOverworldWithCallback */
+uint8_t ReturnToOverworldWithCallback(uint16_t hl)
+{
+	wReloadOverworldCallbackPtr = (uint8_t)hl;
+	gb_write8((uint16_t)(wReloadOverworldCallbackPtr_ADDR + 1u), (uint8_t)(hl >> 8));
+	return ReturnToOverworld();
+}
+/* <<< factory ReturnToOverworldWithCallback */

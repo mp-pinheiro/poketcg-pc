@@ -312,6 +312,9 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "mem.h"
 #define PRINT_CUR_DECK_NAME_SUFFIX_ADDR 0x52A7u
 #define PRINT_CUR_DECK_MIDDLE_DOT 0x77u
+
+#include "generated/hram.h"
+#include "home/deck_configuration.h"
 /* <<< factory statics */
 
 
@@ -1975,3 +1978,14 @@ void PrintCurDeckNumberAndName(void)
 	ProcessText(&name_text);
 }
 /* <<< factory PrintCurDeckNumberAndName */
+
+/* >>> factory UpdateConfirmationCardScreen */
+void UpdateConfirmationCardScreen(void)
+{
+	hffb0 = 1u;
+	PrintCurDeckNumberAndName();
+
+	hffb0 = 0u;
+	PrintConfirmationCardList(0u, 0u, 0u, (uint16_t *)0);
+}
+/* <<< factory UpdateConfirmationCardScreen */

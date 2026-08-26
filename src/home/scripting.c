@@ -1832,3 +1832,16 @@ IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_CloseAdvancedTextBox */
+
+/* >>> factory ScriptCommand_PrintVariableNPCText */
+IncreaseScriptPointerResult ScriptCommand_PrintVariableNPCText(uint8_t b, uint8_t c)
+{
+	uint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);
+	if (wScriptControlByte == 0u) {
+		GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+		text_pointer = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	}
+	Func_cc32(text_pointer);
+	return IncreaseScriptPointerBy5();
+}
+/* <<< factory ScriptCommand_PrintVariableNPCText */

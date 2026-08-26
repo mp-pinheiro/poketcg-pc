@@ -696,4 +696,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_
 /* >>> factory Func_82b6 */
 void Func_82b6(void);
 /* <<< factory Func_82b6 */
+/* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
+/* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
 #endif

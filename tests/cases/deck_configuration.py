@@ -872,6 +872,15 @@ CASES["PrintCurDeckNumberAndName"] = [
 ]
 # <<< factory PrintCurDeckNumberAndName
 
+# >>> factory UpdateConfirmationCardScreen
+CONTRACT["UpdateConfirmationCardScreen"] = {"compare": (), "preserve": ()}
+CASES["UpdateConfirmationCardScreen"] = [
+    {"rom_bank": 2, "wram": {0xCEB1: b"\xFF", 0xCFB9: b"\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "setup": SETUP_PCD, "read": {0xC590: 1, 0xCECD: 1, 0xFFB0: 1}},
+    {"rom_bank": 2, "wram": {0xCEB1: b"\x00", 0xCFB9: b"AB\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, "setup": SETUP_PCD, "read": {0xC590: 8, 0xCECD: 1, 0xFFB0: 1}},
+    dict(POISON, rom_bank=2, wram={0xCEB1: b"\xFF", 0xCFB9: b"\x00", 0xC590: b"\x00" * 16, 0xCECB: b"\x00", 0xCED0: b"\x05\x02"}, setup=SETUP_PCD, read={0xC590: 1, 0xCECD: 1, 0xFFB0: 1}),
+]
+# <<< factory UpdateConfirmationCardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1168,3 +1177,6 @@ MUTATIONS["PrintCurDeckNumberAndName"] = {
     "case_ids": ["PrintCurDeckNumberAndName-1", "PrintCurDeckNumberAndName-2", "PrintCurDeckNumberAndName-3"],
 }
 # <<< factory-mutation PrintCurDeckNumberAndName
+# >>> factory-mutation UpdateConfirmationCardScreen
+MUTATIONS["UpdateConfirmationCardScreen"] = {"source_symbol": "UpdateConfirmationCardScreen", "before": "\tPrintCurDeckNumberAndName();\n\n\thffb0 = 0u;", "after": "\tPrintCurDeckNumberAndName();\n\n\thffb0 = 1u;", "case_ids": ["UpdateConfirmationCardScreen-0", "UpdateConfirmationCardScreen-1", "UpdateConfirmationCardScreen-2"]}
+# <<< factory-mutation UpdateConfirmationCardScreen

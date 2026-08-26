@@ -255,4 +255,7 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void);
 /* >>> factory PrintCurDeckNumberAndName */
 void PrintCurDeckNumberAndName(void);
 /* <<< factory PrintCurDeckNumberAndName */
+/* >>> factory UpdateConfirmationCardScreen */
+void UpdateConfirmationCardScreen(void);
+/* <<< factory UpdateConfirmationCardScreen */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -1,0 +1,9 @@
+{
+  "fn": "UpdateConfirmationCardScreen",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UpdateConfirmationCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"00000000000000000000000000000000\", \"52913\": \"ff\", \"52939\": \"00\", \"52941\": \"01\", \"52944\": \"0502\", \"53177\": \"00\", \"65456\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UpdateConfirmationCardScreen\", \"mismatches\": {\"bus\": {\"address\": 65456, \"reference\": \"0105020000\", \"native\": \"0105020001\", \"reference_size\": 23, \"native_size\": 23, \"spans\": [[50576, 16], [52913, 1], [52939, 1], [52941, 1], [52944, 2], [53177, 1], [65456, 1]]}}}\n",
+  "restored": "{\"fn\": \"UpdateConfirmationCardScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"00000000000000000000000000000000\", \"52913\": \"ff\", \"52939\": \"00\", \"52941\": \"01\", \"52944\": \"0502\", \"53177\": \"00\", \"65456\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

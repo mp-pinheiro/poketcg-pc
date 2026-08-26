@@ -1664,6 +1664,15 @@ CASES["DealConfusionDamageToSelf"] = [
 ]
 # <<< factory DealConfusionDamageToSelf
 
+# >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
+CONTRACT["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -1959,3 +1968,6 @@ MUTATIONS["Func_1bb4"] = {
 # >>> factory-mutation Func_82b6
 MUTATIONS["Func_82b6"] = {'source_symbol': 'Func_82b6', 'before': '\tif (duelist == layout)', 'after': '\tif (duelist != layout)', 'case_ids': ['Func_82b6-0', 'Func_82b6-1', 'Func_82b6-2']}
 # <<< factory-mutation Func_82b6
+# >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
+MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile", "before": "void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)OpenTurnHolderDiscardPileScreen(c);", "after": "void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)0;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-0", "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-1", "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile-2"]}
+# <<< factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile
