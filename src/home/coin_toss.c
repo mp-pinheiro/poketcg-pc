@@ -1,4 +1,8 @@
 #include "home/coin_toss.h"
+/* >>> factory statics */
+#include "home/core.h"
+#include "generated/wram.h"
+/* <<< factory statics */
 
 static uint8_t cp_flags(uint8_t a, uint8_t n)
 {
@@ -15,3 +19,13 @@ uint8_t CompareDEtoBC(uint8_t d, uint8_t e, uint8_t b, uint8_t c)
 		return cp_flags(d, b);
 	return cp_flags(e, c);
 }
+
+/* >>> factory TossCoinATimes */
+TossCoinATimesResult TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	wCoinTossScreenTextID = e;
+	gb_write8((uint16_t)(wCoinTossScreenTextID_ADDR + 1u), d);
+	TossCoinResult result = _TossCoin(a);
+	return (TossCoinATimesResult){result.a, result.f, hl};
+}
+/* <<< factory TossCoinATimes */
