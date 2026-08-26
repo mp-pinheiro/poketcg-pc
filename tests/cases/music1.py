@@ -985,6 +985,67 @@ CASES["Music1_jp"] = [
 ]
 # <<< factory Music1_jp
 
+# >>> factory Music1_PlayNextNote
+# Channel arrives in c; hl is the stream pointer, read with `ld a,[hli]`.
+# Every stream ends in $FF (index 47 -> end) so the dispatcher loop terminates.
+# Case 6 uses $DA, which is index 10 -> end: the pre-2026-08-26 mapping ran an
+# inc_octave there instead, so that case pins the table alignment.
+_PNN_IDLE = {0xDD8D: b"\x01\x01\x01\x01"}
+CONTRACT["Music1_PlayNextNote"] = {"compare": (), "preserve": ()}
+CASES["Music1_PlayNextNote"] = [
+    # $D0 speed
+    {"c": 0, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD0\x2A\xFF", 0xDDCF: b"\x00\x00\x00\x00"}),
+     "read": {0xDDCF: 4, 0xDD8D: 4}},
+    # $D3 octave: (cmd & 7) - 1
+    {"c": 0, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD3\xFF", 0xDDAF: b"\x00\x00\x00\x00"}),
+     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    # $D3 octave on channel 2, which gets the decrement back
+    {"c": 2, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD3\xFF", 0xDDAF: b"\x00\x00\x00\x00"}),
+     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    # $D7 inc_octave
+    {"c": 1, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD7\xFF", 0xDDAF: b"\x05\x05\x05\x05"}),
+     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    # $D8 dec_octave
+    {"c": 1, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD8\xFF", 0xDDAF: b"\x05\x05\x05\x05"}),
+     "read": {0xDDAF: 4, 0xDD8D: 4}},
+    # $D9 tie
+    {"c": 3, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xD9\xFF", 0xDD91: b"\x00\x00\x00\x00"}),
+     "read": {0xDD91: 4, 0xDD8D: 4}},
+    # $DA end
+    {"c": 0, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xDA", 0xDDAF: b"\x07\x07\x07\x07"}),
+     "read": {0xDD8D: 4, 0xDDAF: 4}},
+    # $DC stereo_panning, rotated once for channel 1
+    {"c": 1, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xDC\x35\xFF", 0xDD84: b"\x00"}),
+     "read": {0xDD84: 1, 0xDD8D: 4}},
+    # $DD MainLoop records the byte before the continuation
+    {"c": 0, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{0xC100: b"\xDD\xFF",
+                                0xDD9D: b"\x00\x00\x00\x00\x00\x00\x00\x00"}),
+     "read": {0xDD9D: 8, 0xDD8D: 4}},
+    # every one-operand writer in a single stream
+    {"c": 2, "hl": 0xC100,
+     "wram": dict(_PNN_IDLE, **{
+         0xC100: b"\xE4\x11\xE5\xC3\xE6\x5A\xE7\x77\xE8\x33\xE9\x22"
+                 b"\xEA\x44\xEB\x66\xEC\x88\xED\x02\xFF"}),
+     "read": {0xDD86: 4, 0xDD8A: 1, 0xDD8B: 1, 0xDD8D: 4, 0xDDBF: 4,
+              0xDDC7: 4, 0xDDCB: 4, 0xDDD3: 4, 0xDDD7: 4, 0xDDDF: 4,
+              0xDDE7: 4, 0xDDEA: 4}},
+    dict(POISON, b=0, c=1, hl=0xC100,
+         wram=dict(_PNN_IDLE, **{0xC100: b"\xD0\x2A\xE6\x5A\xFF",
+                                 0xDDCF: b"\xFF\xFF\xFF\xFF",
+                                 0xDDE7: b"\xFF\xFF\xFF\xFF"}),
+         read={0xDDCF: 4, 0xDDE7: 4, 0xDD8D: 4}),
+]
+# <<< factory Music1_PlayNextNote
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1101,3 +1162,6 @@ MUTATIONS["Music1_EndMainLoop"] = {"source_symbol": "Music1_EndMainLoop", "befor
 # >>> factory-mutation Music1_jp
 MUTATIONS["Music1_jp"] = {"source_symbol": "Music1_jp", "before": "void Music1_jp(uint16_t caller_stream, uint8_t ch)\n{\n\tuint16_t hl = (uint16_t)(gb_read8(caller_stream)", "after": "void Music1_jp(uint16_t caller_stream, uint8_t ch)\n{\n\tuint16_t hl = (uint16_t)(gb_read8((uint16_t)(caller_stream + 1u))", "case_ids": ["Music1_jp-0", "Music1_jp-1"]}
 # <<< factory-mutation Music1_jp
+# >>> factory-mutation Music1_PlayNextNote
+MUTATIONS["Music1_PlayNextNote"] = {"source_symbol": "Music1_PlayNextNote", "before": "\t\t\twMusicSpeed_PTR[ch] = gb_read8((*hl)++);", "after": "\t\t\twMusicSpeed_PTR[ch] = (uint8_t)(gb_read8((*hl)++) + 1u);", "case_ids": ["Music1_PlayNextNote-0", "Music1_PlayNextNote-10"]}
+# <<< factory-mutation Music1_PlayNextNote
