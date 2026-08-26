@@ -353,11 +353,26 @@ above, stall at the *same* site: **`Func_235e`** (`process_text.asm:327`), at
 `DuelCheckMenu_OppPlayArea` 126), and it is not a frame wait at all.
 `Func_235e` walks a linked list held in parallel WRAM pages — key1 at `$C6xx`,
 key2 at `$C7xx`, next at `$C8xx`, prev at `$C9xx` — following `l <- next[l]`
-until key1 is NULL. It does not terminate, and seeding `hffa9`/`$C600` to zero
-does not change the path (byte-identical instruction counts), because these
-routines build the list themselves through `SetupText` before reaching the walk.
-Diagnose that non-termination before touching VBlank: it is the single largest
-root cause hiding in this cluster.
+until `key1[l]` is NULL. **The cause is a missing `setup` call, and the fix is
+case authoring, not a harness feature.**
+
+The glyph cache has a sentinel invariant: slot 0 must carry `key1[0] == 0`,
+because the search loop (`Func_235e.asm_238a`) only ever stops on a NULL key,
+while the *insert* loop (`Func_2325.asm_2337`) stops on `next[l] == 0`. New nodes
+are allocated from a counter in `wcd04`, so real data never lands in slot 0.
+`SetupText` (`process_text.asm:139-160`) establishes all of it: head
+`hffa9 = 0`, `wcd04 = d - 1`, and a 256-byte clear of the key1 page
+`$C600-$C6FF`. It does **not** touch the `next` page.
+
+Enter one of these routines without running `SetupText` first and the very first
+insert writes a real glyph pair into slot 0 with `next[0] = 0`, so the next
+search spins on a one-element cycle. Measured at the hang: `hffa9 = 0`,
+`key1[0] = 0x6F`, `next[0] = 0x00`. Adding
+`setup: [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]` fixes it — `OpenGlossaryScreen`
+then shows `hffa9 = 0x65` with `key1[0] = 0` and walks past `Func_235e`
+entirely, its hang relocating to `pc=0x1BD3`. So all four routines need
+`SetupText` in `setup` and then a fresh diagnosis of whatever they hit next;
+none of them is evidence for the VBlank feature.
 
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
