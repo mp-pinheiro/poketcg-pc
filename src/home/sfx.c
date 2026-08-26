@@ -135,7 +135,11 @@ static void apu_write_freq(uint8_t c, uint8_t low, uint8_t high)
 	gb_write8((uint16_t)(reg + 3u), high);
 }
 
-static void SFX_ApplyPitchOffset(uint8_t c)
+/* >>> factory SFX_ApplyPitchOffset */
+/* sfx.asm:297-350. Indexes wde37 by 2*c and wSFXPitchOffsets/wde2b by c; the
+ * helpers' c==3 special cases are address aliasing, not a simplification
+ * (0xDE37+6 == wde3d, 0xDE2F+3 == wde32, 0xDE2B+3 == wde2e). */
+void SFX_ApplyPitchOffset(uint8_t c)
 {
 	uint8_t offset = read_pitch_offset(c);
 	if (offset == 0u)
@@ -153,8 +157,12 @@ static void SFX_ApplyPitchOffset(uint8_t c)
 	write_wde2b(c, 0u);
 	apu_write_freq(c, (uint8_t)new_freq, (uint8_t)((new_freq >> 8) | env));
 }
+/* <<< factory SFX_ApplyPitchOffset */
 
-static void Func_fc1cd(void)
+/* >>> factory Func_fc1cd */
+/* sfx.asm:352-392. The noise channel's pitch update: only the low byte is
+ * tracked, and bit 3 of the delta is swapped into bit 7 of the high write. */
+void Func_fc1cd(void)
 {
 	uint8_t offset = gb_read8(wde32_ADDR);
 	if (offset == 0u)
@@ -179,6 +187,7 @@ static void Func_fc1cd(void)
 	gb_write8((uint16_t)(reg + 2u), new_low);
 	gb_write8((uint16_t)(reg + 3u), high);
 }
+/* <<< factory Func_fc1cd */
 
 static uint16_t SFX_Frequency(uint16_t cmd_ptr, uint8_t c, uint8_t high_nibble)
 {
