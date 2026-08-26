@@ -160,7 +160,15 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
             if m:
                 name = m.group(1)
                 if "." not in name:
-                    if cur_top and last_body is not None and prev_kind == "code":
+                    # `prev_kind` describes the FIRST body line, so a routine that
+                    # ends in a data table (`tx`/`db`/`dw`/`assert_table_length`)
+                    # still looked like code falling through into its neighbour.
+                    # Data is never executed, so require the LAST line to be code
+                    # too -- otherwise the phantom dep can close a dependency
+                    # cycle and starve both routines out of the frontier forever
+                    # (measured on GetPCPackNameTextID -> PrintPCPackName).
+                    if (cur_top and last_body is not None and prev_kind == "code"
+                            and classify_line(last_body) == "code"):
                         if not TERM_RE.match(last_body):
                             if cur_top in defs:
                                 defs[cur_top]["fallthrough"] = name
