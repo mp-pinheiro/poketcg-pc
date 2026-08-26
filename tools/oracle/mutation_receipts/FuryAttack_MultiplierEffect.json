@@ -1,0 +1,9 @@
+{
+  "fn": "FuryAttack_MultiplierEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FuryAttack_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"14\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FuryAttack_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"14\", \"native\": \"1e\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52409, 1]]}}}\n",
+  "restored": "{\"fn\": \"FuryAttack_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"14\"}}, \"status\": \"PASS\"}\n"
+}

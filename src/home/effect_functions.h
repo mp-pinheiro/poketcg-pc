@@ -1557,6 +1557,9 @@ void SandslashFurySwipes_MultiplierEffect(void);
 /* >>> factory DragoniteLv45Slam_MultiplierEffect */
 void DragoniteLv45Slam_MultiplierEffect(void);
 /* <<< factory DragoniteLv45Slam_MultiplierEffect */
+/* >>> factory FuryAttack_MultiplierEffect */
+void FuryAttack_MultiplierEffect(void);
+/* <<< factory FuryAttack_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
