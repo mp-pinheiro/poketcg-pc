@@ -3,7 +3,7 @@
   "case": "tests/cases/trainer_cards.py",
   "index": 0,
   "status": "RED",
-  "baseline": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "baseline": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49902\": \"00\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
   "output": "{\"status\": \"PORT\", \"fn\": \"AIDecide_PokemonBreeder\", \"mismatches\": {\"f\": [128, 0]}}\n",
-  "restored": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\"}}, \"status\": \"PASS\"}\n"
+  "restored": "{\"fn\": \"AIDecide_PokemonBreeder\", \"registers\": {\"a\": 0, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"49852\": \"ff\", \"49902\": \"00\", \"50108\": \"ff\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
 }
