@@ -1542,6 +1542,9 @@ void PsyduckFurySwipes_MultiplierEffect(void);
 /* >>> factory JolteonDoubleKick_MultiplierEffect */
 void JolteonDoubleKick_MultiplierEffect(void);
 /* <<< factory JolteonDoubleKick_MultiplierEffect */
+/* >>> factory CometPunch_MultiplierEffect */
+void CometPunch_MultiplierEffect(void);
+/* <<< factory CometPunch_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

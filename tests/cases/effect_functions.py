@@ -4957,6 +4957,18 @@ CASES["JolteonDoubleKick_MultiplierEffect"] = [
 ]
 # <<< factory JolteonDoubleKick_MultiplierEffect
 
+# >>> factory CometPunch_MultiplierEffect
+CONTRACT["CometPunch_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["CometPunch_MultiplierEffect"] = [
+    dict(POISON,
+         keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCCB9: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory CometPunch_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7373,3 +7385,6 @@ MUTATIONS["PsyduckFurySwipes_MultiplierEffect"] = {"source_symbol": "PsyduckFury
 # >>> factory-mutation JolteonDoubleKick_MultiplierEffect
 MUTATIONS["JolteonDoubleKick_MultiplierEffect"] = {"source_symbol": "JolteonDoubleKick_MultiplierEffect", "before": "void JolteonDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 10u);", "after": "void JolteonDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 10u);", "case_ids": ["JolteonDoubleKick_MultiplierEffect-0", "JolteonDoubleKick_MultiplierEffect-1"]}
 # <<< factory-mutation JolteonDoubleKick_MultiplierEffect
+# >>> factory-mutation CometPunch_MultiplierEffect
+MUTATIONS["CometPunch_MultiplierEffect"] = {"source_symbol": "CometPunch_MultiplierEffect", "before": "void CometPunch_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);", "after": "void CometPunch_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(5u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);", "case_ids": ["CometPunch_MultiplierEffect-0"]}
+# <<< factory-mutation CometPunch_MultiplierEffect

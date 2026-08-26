@@ -7333,3 +7333,13 @@ void JolteonDoubleKick_MultiplierEffect(void)
 	SetDefiniteDamage(damage);
 }
 /* <<< factory JolteonDoubleKick_MultiplierEffect */
+
+/* >>> factory CometPunch_MultiplierEffect */
+void CometPunch_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory CometPunch_MultiplierEffect */
