@@ -1,0 +1,9 @@
+{
+  "fn": "PrintSlashSixty",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintSlashSixty\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 17, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38929\": \"2e2620\"}}, \"wram\": {\"50576\": \"052e0526052000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintSlashSixty\", \"mismatches\": {\"bus\": {\"address\": 50579, \"reference\": \"052e0526052000\", \"native\": \"052e0525052000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[50576, 7]]}, \"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintSlashSixty\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 17, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38929\": \"2e2620\"}}, \"wram\": {\"50576\": \"052e0526052000\"}}, \"status\": \"PASS\"}\n"
+}
