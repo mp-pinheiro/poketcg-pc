@@ -73,6 +73,7 @@ def pyboy_frames(case: dict) -> int | None:
     budget = case.get("cycle_budget")
     if not budget:
         return None
+    from pyboy_oracle import MAX_FRAMES
     return max(MAX_FRAMES, int(budget) // 70224 + 1)
 
 
