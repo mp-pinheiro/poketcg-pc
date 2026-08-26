@@ -1272,6 +1272,10 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/substatus.h"
 #include "home/menus.h"
 #include "home/serial.h"
+
+#include "home/serial.h"
+#include "home/coin_toss.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6871,3 +6875,13 @@ wOpponentTurnEnded = 0x01u;
 	return (OppActionBeginUseAttackResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory OppAction_BeginUseAttack */
+
+/* >>> factory OppAction_TossCoinATimes */
+OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)
+{
+	SerialRecv8BytesResult recv = SerialRecv8Bytes();
+	TossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);
+	wSkipDuelistIsThinkingDelay = 1u;
+	return (OppAction_TossCoinATimesResult){1u, toss.f, 0x12u, 0u, 0x12u, 0x11u, toss.hl};
+}
+/* <<< factory OppAction_TossCoinATimes */

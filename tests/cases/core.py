@@ -3573,6 +3573,14 @@ CASES["OppAction_BeginUseAttack"] = [
 ]
 # <<< factory OppAction_BeginUseAttack
 
+# >>> factory OppAction_TossCoinATimes
+CONTRACT["OppAction_TossCoinATimes"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["OppAction_TossCoinATimes"] = [
+    dict(POISON, wram={0xCBED: b"\xA0\x01\x12\x34\xE4\xD5\xC6\xB7", 0xCBA2: b"\x08", 0xCBA5: b"\xA0\x01\x12\x34\xE4\xD5\xC6\xB7", 0xCB75: b"\x00", 0xCBA3: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xD5\xE4"}, read={0xCBED: 8, 0xCBF9: 1, 0xCE4E: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {0xCBED: b"\xB0\x01\x21\x43\xF4\xE5\xD6\xC7", 0xCBA2: b"\x08", 0xCBA5: b"\xB0\x01\x21\x43\xF4\xE5\xD6\xC7", 0xCB75: b"\x00", 0xCBA3: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xE5\xF4"}, "read": {0xCBED: 8, 0xCBF9: 1, 0xCE4E: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory OppAction_TossCoinATimes
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5053,3 +5061,6 @@ MUTATIONS["AttemptRetreat"] = {
 # >>> factory-mutation OppAction_BeginUseAttack
 MUTATIONS["OppAction_BeginUseAttack"] = {"source_symbol": "OppAction_BeginUseAttack", "before": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x01u;", "after": "OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tAttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);\n\ta = copy.a;\n\tc = copy.c;\n\tf = copy.f;\n\thl = copy.hl;\n\td = (uint8_t)(copy.de >> 8);\n\te = (uint8_t)copy.de;\n\tDuelRoutineResult updated = UpdateArenaCardIDsAndClearTwoTurnDuelVars(a, f, b, c, d, e, hl);\n\ta = updated.a;\n\tf = updated.f;\n\tb = updated.b;\n\tc = updated.c;\n\td = updated.d;\n\te = updated.e;\n\thl = updated.hl;\nwSkipDuelistIsThinkingDelay = 0x00u;", "case_ids": ["OppAction_BeginUseAttack-0", "OppAction_BeginUseAttack-1"]}
 # <<< factory-mutation OppAction_BeginUseAttack
+# >>> factory-mutation OppAction_TossCoinATimes
+MUTATIONS["OppAction_TossCoinATimes"] = {"source_symbol": "OppAction_TossCoinATimes", "before": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 1u;", "after": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 0u;", "case_ids": ["OppAction_TossCoinATimes-0", "OppAction_TossCoinATimes-1"]}
+# <<< factory-mutation OppAction_TossCoinATimes
