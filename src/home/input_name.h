@@ -75,4 +75,7 @@ typedef struct {
 
 LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c);
 /* <<< factory LoadHalfWidthTextCursorTile */
+/* >>> factory PrintDeckNameFromInput */
+void PrintDeckNameFromInput(void);
+/* <<< factory PrintDeckNameFromInput */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

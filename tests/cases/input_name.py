@@ -221,6 +221,18 @@ CASES["LoadHalfWidthTextCursorTile"] = [
 ]
 # <<< factory LoadHalfWidthTextCursorTile
 
+# >>> factory PrintDeckNameFromInput
+CONTRACT["PrintDeckNameFromInput"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintDeckNameFromInput"] = [
+    {"wram": {0xD007: b"\x00\x00"}, "rom_bank": 6,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "vread": {0: {0x9800: 11}}},
+    dict(POISON, wram={0xD007: b"\x00\x00"}, rom_bank=6,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         vread={0: {0x9800: 11}}),
+]
+# <<< factory PrintDeckNameFromInput
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -315,3 +327,6 @@ MUTATIONS["LoadHalfWidthTextCursorTile"] = {
     "case_ids": ["LoadHalfWidthTextCursorTile-0", "LoadHalfWidthTextCursorTile-1"],
 }
 # <<< factory-mutation LoadHalfWidthTextCursorTile
+# >>> factory-mutation PrintDeckNameFromInput
+MUTATIONS["PrintDeckNameFromInput"] = {"source_symbol": "PrintDeckNameFromInput", "before": "gb_write8(wDefaultText_ADDR, 0x06u);", "after": "gb_write8(wDefaultText_ADDR, 0x07u);", "case_ids": ["PrintDeckNameFromInput-0", "PrintDeckNameFromInput-1"]}
+# <<< factory-mutation PrintDeckNameFromInput

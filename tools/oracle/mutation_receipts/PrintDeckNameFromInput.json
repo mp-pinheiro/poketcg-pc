@@ -1,0 +1,9 @@
+{
+  "fn": "PrintDeckNameFromInput",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PrintDeckNameFromInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"2020202020202020202000\"}}, \"wram\": {\"53255\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PrintDeckNameFromInput\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"PrintDeckNameFromInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"38912\": \"2020202020202020202000\"}}, \"wram\": {\"53255\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

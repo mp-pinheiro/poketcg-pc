@@ -604,3 +604,27 @@ LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c)
 	return (LoadHalfWidthTextCursorTileResult){b, c};
 }
 /* <<< factory LoadHalfWidthTextCursorTile */
+
+/* >>> factory PrintDeckNameFromInput */
+void PrintDeckNameFromInput(void)
+{
+	uint8_t d = wNamingScreenNamePosition;
+	uint8_t e = gb_read8((uint16_t)(wNamingScreenNamePosition_ADDR + 1u));
+	InitTextPrinting(d, e);
+
+	gb_write8(wDefaultText_ADDR, 0x06u);
+	for (uint8_t i = 0u; i < 20u; ++i)
+		gb_write8((uint16_t)(wDefaultText_ADDR + 1u + i), 0x5Fu);
+	gb_write8((uint16_t)(wDefaultText_ADDR + 21u), 0u);
+
+	uint16_t src = wNamingScreenBuffer_ADDR;
+	uint16_t dest = wDefaultText_ADDR;
+	uint8_t a;
+	while ((a = gb_read8(src++)) != 0u) {
+		gb_write8(dest++, a);
+	}
+
+	uint16_t text = wDefaultText_ADDR;
+	ProcessText(&text);
+}
+/* <<< factory PrintDeckNameFromInput */
