@@ -5385,6 +5385,14 @@ CASES["PokemonTrader_PlayerHandSelection"] = [
 ]
 # <<< factory PokemonTrader_PlayerHandSelection
 
+# >>> factory EnergyRetrieval_PlayerDiscardPileSelection
+CONTRACT["EnergyRetrieval_PlayerDiscardPileSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergyRetrieval_PlayerDiscardPileSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFFB2: 1, 0xC510: 2}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFFB2: 1, 0xC510: 2}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EnergyRetrieval_PlayerDiscardPileSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7888,3 +7896,6 @@ MUTATIONS["PlayAttackAnimationOverAttackingPokemon"] = {"source_symbol": "PlayAt
 # >>> factory-mutation PokemonTrader_PlayerHandSelection
 MUTATIONS["PokemonTrader_PlayerHandSelection"] = {"source_symbol": "PokemonTrader_PlayerHandSelection", "before": "\thTemp_ffa0 = result.a;", "after": "\thTemp_ffa0 = (uint8_t)(result.a + 1u);", "case_ids": ["PokemonTrader_PlayerHandSelection-0", "PokemonTrader_PlayerHandSelection-1"]}
 # <<< factory-mutation PokemonTrader_PlayerHandSelection
+# >>> factory-mutation EnergyRetrieval_PlayerDiscardPileSelection
+MUTATIONS["EnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol": "EnergyRetrieval_PlayerDiscardPileSelection", "before": "EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)\n{\n\thCurSelectionItem = 1u;", "after": "EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)\n{\n\thCurSelectionItem = 2u;", "case_ids": ["EnergyRetrieval_PlayerDiscardPileSelection-0", "EnergyRetrieval_PlayerDiscardPileSelection-1"]}
+# <<< factory-mutation EnergyRetrieval_PlayerDiscardPileSelection

@@ -1643,6 +1643,10 @@ void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, ui
 /* >>> factory PokemonTrader_PlayerHandSelection */
 void PokemonTrader_PlayerHandSelection(void);
 /* <<< factory PokemonTrader_PlayerHandSelection */
+/* >>> factory EnergyRetrieval_PlayerDiscardPileSelection */
+typedef struct { uint8_t a; uint8_t f; } EnergyRetrieval_PlayerDiscardPileSelectionResult;
+EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void);
+/* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

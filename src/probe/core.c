@@ -2430,6 +2430,14 @@ static void adapt_OpenNonTurnHolderHandScreen_Simple(ProbeState *s)
 }
 /* <<< factory OpenNonTurnHolderHandScreen_Simple */
 
+/* >>> factory OpenNonTurnHolderDiscardPileScreen */
+static void adapt_OpenNonTurnHolderDiscardPileScreen(ProbeState *s)
+{
+	OpenDiscardPileScreenResult result = OpenNonTurnHolderDiscardPileScreen(s->c);
+	s->f = result.f;
+}
+/* <<< factory OpenNonTurnHolderDiscardPileScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2720,5 +2728,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenTurnHolderHandScreen_Simple", adapt_OpenTurnHolderHandScreen_Simple },
 	{ "OpenTurnHolderDiscardPileScreen", adapt_OpenTurnHolderDiscardPileScreen },
 	{ "OpenNonTurnHolderHandScreen_Simple", adapt_OpenNonTurnHolderHandScreen_Simple },
+	{ "OpenNonTurnHolderDiscardPileScreen", adapt_OpenNonTurnHolderDiscardPileScreen },
 	{ NULL, NULL },
 };

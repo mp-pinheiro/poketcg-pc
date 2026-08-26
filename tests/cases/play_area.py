@@ -75,6 +75,15 @@ CASES["OpenInPlayAreaScreen_NonTurnHolderPlayArea"] = [
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wInPlayAreaCurPosition: b"\x08", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wCurPlayAreaSlot: 1, wCurPlayAreaY: 1}, "expect": {wCurPlayAreaSlot: b"\x00", wCurPlayAreaY: b"\x00"}}]
 # <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea
 
+# >>> factory OpenInPlayAreaScreen_TurnHolderDiscardPile
+CONTRACT["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = {"compare": (), "preserve": ()}
+CASES["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation OpenInPlayAreaScreen_HandleInput
@@ -91,3 +100,6 @@ MUTATIONS["OpenInPlayAreaScreen_TurnHolderPlayArea"] = {"source_symbol": "OpenIn
 # >>> factory-mutation OpenInPlayAreaScreen_NonTurnHolderPlayArea
 MUTATIONS["OpenInPlayAreaScreen_NonTurnHolderPlayArea"] = {"source_symbol": "OpenInPlayAreaScreen_NonTurnHolderPlayArea", "before": "void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition - INPLAYAREA_OPP_ACTIVE);", "after": "void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)\n{\n\tuint8_t slot = (uint8_t)(wInPlayAreaCurPosition - INPLAYAREA_OPP_ACTIVE - 1u);", "case_ids": ["OpenInPlayAreaScreen_NonTurnHolderPlayArea-0", "OpenInPlayAreaScreen_NonTurnHolderPlayArea-1", "OpenInPlayAreaScreen_NonTurnHolderPlayArea-2"]}
 # <<< factory-mutation OpenInPlayAreaScreen_NonTurnHolderPlayArea
+# >>> factory-mutation OpenInPlayAreaScreen_TurnHolderDiscardPile
+MUTATIONS["OpenInPlayAreaScreen_TurnHolderDiscardPile"] = {"source_symbol": "OpenInPlayAreaScreen_TurnHolderDiscardPile", "before": "void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)OpenTurnHolderDiscardPileScreen(c);", "after": "void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;\n\t(void)0;", "case_ids": ["OpenInPlayAreaScreen_TurnHolderDiscardPile-0", "OpenInPlayAreaScreen_TurnHolderDiscardPile-1", "OpenInPlayAreaScreen_TurnHolderDiscardPile-2"]}
+# <<< factory-mutation OpenInPlayAreaScreen_TurnHolderDiscardPile

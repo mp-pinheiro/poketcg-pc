@@ -16,4 +16,7 @@ void OpenInPlayAreaScreen_TurnHolderPlayArea(void);
 /* >>> factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
 void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void);
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
+/* >>> factory OpenInPlayAreaScreen_TurnHolderDiscardPile */
+void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
+/* <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile */
 #endif

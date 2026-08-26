@@ -3773,6 +3773,15 @@ CASES["OpenNonTurnHolderHandScreen_Simple"] = [
 ]
 # <<< factory OpenNonTurnHolderHandScreen_Simple
 
+# >>> factory OpenNonTurnHolderDiscardPileScreen
+CONTRACT["OpenNonTurnHolderDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenNonTurnHolderDiscardPileScreen"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenNonTurnHolderDiscardPileScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5297,3 +5306,6 @@ MUTATIONS["OpenTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenTurnHolder
 # >>> factory-mutation OpenNonTurnHolderHandScreen_Simple
 MUTATIONS["OpenNonTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenNonTurnHolderHandScreen_Simple", "before": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\tSwapTurn();\n\tuint8_t result = OpenTurnHolderHandScreen_Simple();\n\tSwapTurn();\n\treturn result;", "after": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\treturn 0u;", "case_ids": ["OpenNonTurnHolderHandScreen_Simple-1"]}
 # <<< factory-mutation OpenNonTurnHolderHandScreen_Simple
+# >>> factory-mutation OpenNonTurnHolderDiscardPileScreen
+MUTATIONS["OpenNonTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenNonTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\tSwapTurn();\n\tOpenDiscardPileScreenResult result = OpenDiscardPileScreen(c);\n\tSwapTurn();\n\treturn result;", "after": "OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenNonTurnHolderDiscardPileScreen-0"]}
+# <<< factory-mutation OpenNonTurnHolderDiscardPileScreen

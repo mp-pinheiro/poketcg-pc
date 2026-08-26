@@ -56,6 +56,29 @@ CASES["GetNPCDuelConfigurations"] = [
 ]
 # <<< factory GetNPCDuelConfigurations
 
+# >>> factory-cases-statics
+wCurMap = 0xD32F
+wPlayerXCoord = 0xD330
+wPlayerYCoord = 0xD331
+wPlayerDirection = 0xD334
+hBankROM = 0xFF80
+wNextScript = 0xD0C6
+wDefaultObjectText = 0xD0CA
+wCurrentNPCNameTx = 0xD0C8
+# <<< factory-cases-statics
+
+# >>> factory HandleMoveModeAPress
+CONTRACT["HandleMoveModeAPress"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("e",)}
+CASES["HandleMoveModeAPress"] = [
+    {
+        "a": 0x11, "f": 0x00, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x4567,
+        "wram": {wCurMap: b"\x01", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x04", wPlayerDirection: b"\x00", hBankROM: b"\x01"},
+        "read": {wNextScript: 2, wDefaultObjectText: 2, wCurrentNPCNameTx: 2}
+    },
+    dict(POISON, wram={wCurMap: b"\x01", wPlayerXCoord: b"\x12", wPlayerYCoord: b"\x04", wPlayerDirection: b"\x00", hBankROM: b"\x01"}, read={wNextScript: 2, wDefaultObjectText: 2, wCurrentNPCNameTx: 2})
+]
+# <<< factory HandleMoveModeAPress
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -86,3 +109,6 @@ MUTATIONS["FinishQueuedAnimations"] = {
 # >>> factory-mutation GetNPCDuelConfigurations
 MUTATIONS["GetNPCDuelConfigurations"] = {"source_symbol": "GetNPCDuelConfigurations", "before": "\t_GetNPCDuelDuelConfigurationsResult result = _GetNPCDuelConfigurations(a, f, b, c, d, e, hl);", "after": "\t_GetNPCDuelDuelConfigurationsResult result = _GetNPCDuelConfigurations(a, f, b, c, d, 0u, hl);", "case_ids": ["GetNPCDuelConfigurations-1"]}
 # <<< factory-mutation GetNPCDuelConfigurations
+# >>> factory-mutation HandleMoveModeAPress
+MUTATIONS["HandleMoveModeAPress"] = {"source_symbol": "HandleMoveModeAPress", "before": "\tuint8_t object_direction = wPlayerDirection;", "after": "\tuint8_t object_direction = 0xffu;", "case_ids": ["HandleMoveModeAPress-0", "HandleMoveModeAPress-1"]}
+# <<< factory-mutation HandleMoveModeAPress

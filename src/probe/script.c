@@ -39,10 +39,25 @@ static void adapt_GetNPCDuelConfigurations(ProbeState *s)
 }
 /* <<< factory GetNPCDuelConfigurations */
 
+/* >>> factory HandleMoveModeAPress */
+static void adapt_HandleMoveModeAPress(ProbeState *s)
+{
+	HandleMoveModeAPressResult r = HandleMoveModeAPress(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory HandleMoveModeAPress */
+
 const ProbeEntry probe_entries_script[] = {
 	{ "GetMapScriptPointer", adapt_GetMapScriptPointer },
 	{ "ResetAnimationQueue", adapt_ResetAnimationQueue },
 	{ "FinishQueuedAnimations", adapt_FinishQueuedAnimations },
 	{ "GetNPCDuelConfigurations", adapt_GetNPCDuelConfigurations },
+	{ "HandleMoveModeAPress", adapt_HandleMoveModeAPress },
 	{ NULL, NULL },
 };

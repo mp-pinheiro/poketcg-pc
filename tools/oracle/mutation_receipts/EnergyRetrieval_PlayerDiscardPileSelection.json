@@ -1,0 +1,9 @@
+{
+  "fn": "EnergyRetrieval_PlayerDiscardPileSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EnergyRetrieval_PlayerDiscardPileSelection\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"80\", \"65431\": \"c2\", \"65458\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EnergyRetrieval_PlayerDiscardPileSelection\", \"mismatches\": {\"a\": [2, 3], \"bus\": {\"address\": 65458, \"reference\": \"ff0080c203\", \"native\": \"ff0080c204\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 2], [51899, 1], [65431, 1], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"EnergyRetrieval_PlayerDiscardPileSelection\", \"registers\": {\"a\": 2, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"80\", \"65431\": \"c2\", \"65458\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

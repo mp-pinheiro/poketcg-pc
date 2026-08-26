@@ -3976,6 +3976,15 @@ static void adapt_PokemonTrader_PlayerHandSelection(ProbeState *s)
 }
 /* <<< factory PokemonTrader_PlayerHandSelection */
 
+/* >>> factory EnergyRetrieval_PlayerDiscardPileSelection */
+static void adapt_EnergyRetrieval_PlayerDiscardPileSelection(ProbeState *s)
+{
+	EnergyRetrieval_PlayerDiscardPileSelectionResult result = EnergyRetrieval_PlayerDiscardPileSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4459,5 +4468,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Firegiver_AddToHandEffect", adapt_Firegiver_AddToHandEffect },
 	{ "PlayAttackAnimationOverAttackingPokemon", adapt_PlayAttackAnimationOverAttackingPokemon },
 	{ "PokemonTrader_PlayerHandSelection", adapt_PokemonTrader_PlayerHandSelection },
+	{ "EnergyRetrieval_PlayerDiscardPileSelection", adapt_EnergyRetrieval_PlayerDiscardPileSelection },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "HandleMoveModeAPress",
+  "case": "tests/cases/script.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"hl\": 31493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"53446\": \"254c9f04a004\", \"54063\": \"011204\", \"54068\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleMoveModeAPress\", \"mismatches\": {\"a\": [1, 117], \"d\": [0, 255], \"hl\": [31493, 21861], \"bus\": {\"address\": 53446, \"reference\": \"254c9f04a0\", \"native\": \"0000000000\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[53446, 6], [54063, 3], [54068, 1], [65408, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleMoveModeAPress\", \"registers\": {\"a\": 1, \"b\": 18, \"c\": 2, \"d\": 0, \"e\": 85, \"f\": 16, \"hl\": 31493, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"53446\": \"254c9f04a004\", \"54063\": \"011204\", \"54068\": \"00\", \"65408\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

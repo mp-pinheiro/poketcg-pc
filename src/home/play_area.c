@@ -187,3 +187,12 @@ void OpenInPlayAreaScreen_NonTurnHolderPlayArea(void)
 	SwapTurn();
 }
 /* <<< factory OpenInPlayAreaScreen_NonTurnHolderPlayArea */
+
+/* >>> factory OpenInPlayAreaScreen_TurnHolderDiscardPile */
+void OpenInPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenTurnHolderDiscardPileScreen(c);
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenInPlayAreaScreen_TurnHolderDiscardPile */

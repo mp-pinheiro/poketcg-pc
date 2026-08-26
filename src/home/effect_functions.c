@@ -961,6 +961,17 @@ static void chain_lightning_damage_same_color_bench(void)
 #define ChooseCardFromYourHandToSwitchText 0x015eu
 #define ChooseCardToSwitchText 0x015fu
 #define DuelistHandText 0x00a7u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#define Choose2BasicEnergyCardsFromDiscardPileText 0x0153u
+#define PlayerDiscardPileText 0x00a6u
+#define PleaseSelectCardText 0x00abu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7840,3 +7851,35 @@ void PokemonTrader_PlayerHandSelection(void)
 	hTemp_ffa0 = result.a;
 }
 /* <<< factory PokemonTrader_PlayerHandSelection */
+
+/* >>> factory EnergyRetrieval_PlayerDiscardPileSelection */
+EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)
+{
+	hCurSelectionItem = 1u;
+	(void)DrawWideTextBox_WaitForInput(Choose2BasicEnergyCardsFromDiscardPileText);
+	(void)CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t position = GetNextPositionInTempList_TrainerEffects();
+			gb_write8(position, hTempCardIndex_ff98);
+			TempListResult removed = RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+			if ((removed.f & 0x10u) != 0u)
+				break;
+			if (hCurSelectionItem >= 3u)
+				break;
+			continue;
+		}
+		AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(3u);
+		if ((quit.f & 0x10u) != 0u)
+			continue;
+		break;
+	}
+	uint16_t position = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(position, 0xffu);
+	uint8_t a = (uint8_t)(hCurSelectionItem - 1u);
+	return (EnergyRetrieval_PlayerDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
+}
+/* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
