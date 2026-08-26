@@ -196,7 +196,8 @@ def load_cases_module(lane: Path, basename: str):
 
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-RESERVED = range(0xCF00, 0xD000)
+# Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.
+RESERVED = range(0xCF30, 0xD000)
 
 
 def case_lint(lane: Path, basename: str, routine_names: list[str],

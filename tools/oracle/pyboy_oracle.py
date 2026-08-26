@@ -37,7 +37,12 @@ SPIN = 0xCFF4  # `jr -2`, parked here once the snapshot is taken
 STACK_TOP = 0xCFC0  # frame grows down from here
 
 # Cases must not use this window: it holds the synthesized frame and its stack.
-RESERVED = range(0xCF00, 0xD000)
+# The floor is set by stack headroom, not by the frame, which is three bytes at
+# SENTINEL/SPIN. Worst-case frame base is STACK_TOP-2-2*4 = $CFB6, so this leaves
+# 134 bytes below it -- more than the 126 the GBRT runner leaves under its own
+# sp=0xfffe before the IO block, and that backend runs the same corpus. Anything
+# below the floor is observable: it is where wCurDeckCards ($CF17) lives.
+RESERVED = range(0xCF30, 0xD000)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000
