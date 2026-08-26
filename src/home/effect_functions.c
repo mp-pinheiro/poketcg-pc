@@ -761,6 +761,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define AttachedEnergyToPokemonText 0x005fu
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#define PokemonWasReturnedFromArenaToHandText 0x016cu
+#define PokemonWasReturnedFromBenchToHandText 0x016du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6616,3 +6623,40 @@ ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, ui
 	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
 }
 /* <<< factory EnergySpike_AttachEnergyEffect */
+
+/* >>> factory ScoopUp_ReturnToHandEffect */
+void ScoopUp_ReturnToHandEffect(void)
+{
+	uint8_t location = hTemp_ffa0;
+	uint8_t selected = (uint8_t)(location | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t index = 0; index < DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations.hl + index)) != selected)
+			continue;
+		(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+		if (wLoadedCard2Type >= TYPE_ENERGY)
+			continue;
+		if (wLoadedCard2Stage != 0u)
+			continue;
+		hTempCardIndex_ff98 = index;
+		AddCardToHand(index);
+		break;
+	}
+	(void)MovePlayAreaCardToDiscardPile(location);
+	if (location == PLAY_AREA_ARENA)
+		ClearAllStatusConditions();
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	if ((turn.f & 0x10u) == 0u) {
+		uint16_t text = location == PLAY_AREA_ARENA ?
+			PokemonWasReturnedFromArenaToHandText :
+			PokemonWasReturnedFromBenchToHandText;
+		(void)DisplayCardDetailScreen(hTempCardIndex_ff98, text);
+	}
+	if (location != PLAY_AREA_ARENA) {
+		(void)ShiftAllPokemonToFirstPlayAreaSlots();
+		return;
+	}
+	(void)SwapPlayAreaPokemon(hTempPlayAreaLocation_ffa1, PLAY_AREA_ARENA);
+	(void)ShiftAllPokemonToFirstPlayAreaSlots();
+}
+/* <<< factory ScoopUp_ReturnToHandEffect */

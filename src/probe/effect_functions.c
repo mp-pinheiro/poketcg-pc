@@ -3515,6 +3515,14 @@ static void adapt_EnergySpike_AttachEnergyEffect(ProbeState *s)
 }
 /* <<< factory EnergySpike_AttachEnergyEffect */
 
+/* >>> factory ScoopUp_ReturnToHandEffect */
+static void adapt_ScoopUp_ReturnToHandEffect(ProbeState *s)
+{
+	(void)s;
+	ScoopUp_ReturnToHandEffect();
+}
+/* <<< factory ScoopUp_ReturnToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3943,5 +3951,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Whirlpool_PlayerSelectEffect", adapt_Whirlpool_PlayerSelectEffect },
 	{ "FireSpin_PlayerSelectEffect", adapt_FireSpin_PlayerSelectEffect },
 	{ "EnergySpike_AttachEnergyEffect", adapt_EnergySpike_AttachEnergyEffect },
+	{ "ScoopUp_ReturnToHandEffect", adapt_ScoopUp_ReturnToHandEffect },
 	{ NULL, NULL },
 };

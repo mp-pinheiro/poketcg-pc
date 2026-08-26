@@ -2602,6 +2602,12 @@ hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 wDuelType = 0xCC09
 hWhoseTurn = 0xFF97
+
+hTempCardIndex_ff98 = 0xFF98
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTemp_ffa0 = 0xFFA0
+wLoadedCard2Stage = 0xCC6E
+wLoadedCard2Type = 0xCC65
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4530,6 +4536,15 @@ CASES["EnergySpike_AttachEnergyEffect"] = [
          read={hTemp_ffa0: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
 ]
 # <<< factory EnergySpike_AttachEnergyEffect
+
+# >>> factory ScoopUp_ReturnToHandEffect
+CONTRACT["ScoopUp_ReturnToHandEffect"] = {"compare": (), "preserve": ()}
+CASES["ScoopUp_ReturnToHandEffect"] = [
+    {"wram": {0xFFA0: b"\x00", 0xFFA1: b"\x01", 0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xC200: b"\x10\x02\xFF\xFF\xFF\xFF\xFF", 0xC300: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\x01", 0xC400: b"\x01"}, "read": {0xFFA0: 1, 0xFFA1: 1, 0xFF98: 1, 0xC200: 7, 0xC2EF: 1}},
+    {"wram": {0xFFA0: b"\x01", 0xFFA1: b"\x02", 0xFF97: b"\xC2", 0xC2EF: b"\x02", 0xC200: b"\x11\x10\xFF\xFF\xFF\xFF\xFF", 0xC300: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\x01", 0xC400: b"\x01"}, "read": {0xFFA0: 1, 0xFFA1: 1, 0xFF98: 1, 0xC200: 7, 0xC2EF: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xFFA1: b"\x03", 0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC200: b"\x10\xFF\xFF\xFF\xFF\xFF\xFF", 0xC300: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\x01", 0xC400: b"\x01"}, read={0xFFA0: 1, 0xFFA1: 1, 0xFF98: 1, 0xC200: 7, 0xC2EF: 1}),
+]
+# <<< factory ScoopUp_ReturnToHandEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6854,3 +6869,6 @@ MUTATIONS["FireSpin_PlayerSelectEffect"] = {"source_symbol": "FireSpin_PlayerSel
 # >>> factory-mutation EnergySpike_AttachEnergyEffect
 MUTATIONS["EnergySpike_AttachEnergyEffect"] = {"source_symbol": "EnergySpike_AttachEnergyEffect", "before": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index != 0xFFu) {", "after": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index == 0xFFu) {", "case_ids": ["EnergySpike_AttachEnergyEffect-0", "EnergySpike_AttachEnergyEffect-1"]}
 # <<< factory-mutation EnergySpike_AttachEnergyEffect
+# >>> factory-mutation ScoopUp_ReturnToHandEffect
+MUTATIONS["ScoopUp_ReturnToHandEffect"] = {"source_symbol": "ScoopUp_ReturnToHandEffect", "before": "void ScoopUp_ReturnToHandEffect(void)\n{\n\tuint8_t location = hTemp_ffa0;", "after": "void ScoopUp_ReturnToHandEffect(void)\n{\n\tuint8_t location = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["ScoopUp_ReturnToHandEffect-0", "ScoopUp_ReturnToHandEffect-1", "ScoopUp_ReturnToHandEffect-2"]}
+# <<< factory-mutation ScoopUp_ReturnToHandEffect

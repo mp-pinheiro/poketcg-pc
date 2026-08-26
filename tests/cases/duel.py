@@ -1212,6 +1212,13 @@ wTxRam2 = 0xCE3F
 wPlayerDeck = 0xC400
 wOpponentDeck = 0xC480
 hWhoseTurn = 0xFF97
+
+wNumberOfPrizeCardsToSelect = 0xCE59
+wYourOrOppPlayAreaCurPosition = 0xCE52
+wSelectedPrizeCardListPtr = 0xCE5A
+hTemp_ffa0 = 0xFFA0
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1529,6 +1536,14 @@ CASES["ProcessPlayedPokemonCard"] = [
 ]
 # <<< factory ProcessPlayedPokemonCard
 
+# >>> factory _SelectPrizeCards
+CONTRACT["_SelectPrizeCards"] = {"compare": (), "preserve": ()}
+CASES["_SelectPrizeCards"] = [
+    {"a": 0x00, "f": 0x00, "wram": {0xCE59: b"\x00", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, "read": {0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}},
+    dict(POISON, wram={0xCE59: b"\x00", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, read={0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}),
+]
+# <<< factory _SelectPrizeCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1743,3 +1758,11 @@ MUTATIONS["DrawDuelMainScene_PrintPokemonsAttackText"] = {"source_symbol": "Draw
 # >>> factory-mutation ProcessPlayedPokemonCard
 MUTATIONS["ProcessPlayedPokemonCard"] = {"source_symbol": "ProcessPlayedPokemonCard", "before": "\twTempTurnDuelistCardID = e;", "after": "\twTempTurnDuelistCardID = d;", "case_ids": ["ProcessPlayedPokemonCard-0", "ProcessPlayedPokemonCard-1"]}
 # <<< factory-mutation ProcessPlayedPokemonCard
+# >>> factory-mutation _SelectPrizeCards
+MUTATIONS["_SelectPrizeCards"] = {
+    "source_symbol": "_SelectPrizeCards",
+    "before": "gb_write8(0xCE5Au, 0xA1u);",
+    "after": "gb_write8(0xCE5Au, 0xA2u);",
+    "case_ids": ["_SelectPrizeCards-0", "_SelectPrizeCards-1"]
+}
+# <<< factory-mutation _SelectPrizeCards

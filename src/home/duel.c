@@ -565,6 +565,11 @@ static const uint8_t kCursorTileData[16] = {
 #define HavePokemonPowerText 0x0082u
 #define UnableToUsePkmnPowerDueToToxicGasText 0x0083u
 #define WillUseThePokemonPowerText 0x005cu
+
+#include "home/duel.h"
+#include "mem.h"
+#define DUELVARS_PRIZE_CARDS 0x3Cu
+#define PleaseChooseAPrizeText 0x024Du
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2755,3 +2760,20 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	return (DuelRoutineResult){executed.a, executed.f, b, executed.c, d, e, executed.hl};
 }
 /* <<< factory ProcessPlayedPokemonCard */
+
+/* >>> factory _SelectPrizeCards */
+void _SelectPrizeCards(void)
+{
+	uint8_t first = GetFirstSetPrizeCard(0);
+	gb_write8(0xCE52u, first);
+	gb_write8(0xCE5Au, 0xA1u);
+	gb_write8(0xCE5Bu, 0xFFu);
+	if (gb_read8(0xCE59u) == 0u) {
+		DuelistVarResult prizes = GetTurnDuelistVariable(DUELVARS_PRIZES);
+		gb_write8(0xFFA0u, prizes.a);
+		gb_write8(0xFFA1u, 0xFFu);
+		return;
+	}
+	_DrawPlayAreaToPlacePrizeCards();
+}
+/* <<< factory _SelectPrizeCards */

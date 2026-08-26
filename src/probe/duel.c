@@ -887,6 +887,13 @@ static void adapt_ProcessPlayedPokemonCard(ProbeState *s)
 }
 /* <<< factory ProcessPlayedPokemonCard */
 
+/* >>> factory _SelectPrizeCards */
+static void adapt__SelectPrizeCards(ProbeState *s)
+{
+	_SelectPrizeCards();
+}
+/* <<< factory _SelectPrizeCards */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -995,5 +1002,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawInPlayAreaScreen", adapt_DrawInPlayAreaScreen },
 	{ "DrawDuelMainScene_PrintPokemonsAttackText", adapt_DrawDuelMainScene_PrintPokemonsAttackText },
 	{ "ProcessPlayedPokemonCard", adapt_ProcessPlayedPokemonCard },
+	{ "_SelectPrizeCards", adapt__SelectPrizeCards },
 	{ NULL, NULL },
 };

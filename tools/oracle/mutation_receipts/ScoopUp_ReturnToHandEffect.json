@@ -1,0 +1,9 @@
+{
+  "fn": "ScoopUp_ReturnToHandEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScoopUp_ReturnToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0202ffffffffff\", \"49790\": \"00\", \"49901\": \"01\", \"49903\": \"01\", \"49920\": \"ffffffffffff\", \"50176\": \"01\", \"65431\": \"c200\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScoopUp_ReturnToHandEffect\", \"mismatches\": {\"bus\": {\"address\": 49664, \"reference\": \"0202ffffff\", \"native\": \"1002ffffff\", \"reference_size\": 21, \"native_size\": 21, \"spans\": [[49664, 7], [49790, 1], [49901, 1], [49903, 1], [49920, 6], [50176, 1], [65431, 2], [65440, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScoopUp_ReturnToHandEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"0202ffffffffff\", \"49790\": \"00\", \"49901\": \"01\", \"49903\": \"01\", \"49920\": \"ffffffffffff\", \"50176\": \"01\", \"65431\": \"c200\", \"65440\": \"0001\"}}, \"status\": \"PASS\"}\n"
+}
