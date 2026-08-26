@@ -509,6 +509,14 @@ static void adapt_CheckIfThereAreAnyBasicCardsInDeck(ProbeState *s)
 }
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
 
+/* >>> factory SortCurDeckCardsByID */
+static void adapt_SortCurDeckCardsByID(ProbeState *s)
+{
+	SortCurDeckCardsByIDResult r = SortCurDeckCardsByID();
+	s->e = r.e;
+}
+/* <<< factory SortCurDeckCardsByID */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -569,5 +577,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "Func_9ced", adapt_Func_9ced },
 	{ "OpenCardPageFromCardList", adapt_OpenCardPageFromCardList },
 	{ "CheckIfThereAreAnyBasicCardsInDeck", adapt_CheckIfThereAreAnyBasicCardsInDeck },
+	{ "SortCurDeckCardsByID", adapt_SortCurDeckCardsByID },
 	{ NULL, NULL },
 };

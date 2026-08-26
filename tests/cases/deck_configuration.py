@@ -202,6 +202,12 @@ wCardListCursorPos = 0xCEA4
 wCardListVisibleOffset = 0xCEA1
 wMenuInputSFX = 0xCFE3
 wTempCardListCursorPos = 0xCED4
+
+hWhoseTurn = 0xFF97
+wCurDeckCards = 0xCF17
+wDuelTempList = 0xC510
+wOpponentDeck = 0xC480
+hTempListPtr_ff99 = 0xFF99
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -720,6 +726,20 @@ CASES["CheckIfThereAreAnyBasicCardsInDeck"] = [
 ]
 # <<< factory CheckIfThereAreAnyBasicCardsInDeck
 
+# >>> factory SortCurDeckCardsByID
+CONTRACT["SortCurDeckCardsByID"] = {"compare": ("e",), "preserve": ()}
+CASES["SortCurDeckCardsByID"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wCurDeckCards: b"\x03\x01\x02\x00", wOpponentDeck: b"\x99\x98\x97\x00", wDuelTempList: b"\xFF"},
+     "read": {hWhoseTurn: 1, wCurDeckCards: 4, wOpponentDeck: 4, wDuelTempList: 4, hTempListPtr_ff99: 2}},
+    {"wram": {hWhoseTurn: b"\xC3", wCurDeckCards: b"\x04\x00", wOpponentDeck: b"\xA0\x00", wDuelTempList: b"\xFF"},
+     "read": {hWhoseTurn: 1, wCurDeckCards: 2, wOpponentDeck: 2, wDuelTempList: 2, hTempListPtr_ff99: 2}},
+    {"wram": {hWhoseTurn: b"\xC2", wCurDeckCards: b"\x00", wOpponentDeck: b"\x55\x00", wDuelTempList: b"\xFF"},
+     "read": {hWhoseTurn: 1, wCurDeckCards: 1, wOpponentDeck: 2, wDuelTempList: 1, hTempListPtr_ff99: 2}},
+    dict(POISON, wram={hWhoseTurn: b"\xC3", wCurDeckCards: b"\x02\x03\x01\x00", wOpponentDeck: b"\xA0\xA1\xA2\x00", wDuelTempList: b"\xFF"},
+         read={hWhoseTurn: 1, wCurDeckCards: 4, wOpponentDeck: 4, wDuelTempList: 4, hTempListPtr_ff99: 2}),
+]
+# <<< factory SortCurDeckCardsByID
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -976,3 +996,6 @@ MUTATIONS["OpenCardPageFromCardList"] = {"source_symbol": "OpenCardPageFromCardL
 # >>> factory-mutation CheckIfThereAreAnyBasicCardsInDeck
 MUTATIONS["CheckIfThereAreAnyBasicCardsInDeck"] = {"source_symbol": "CheckIfThereAreAnyBasicCardsInDeck", "before": "CheckIfThereAreAnyBasicCardsInDeck(void)\n{\n\tuint16_t hl = wCurDeckCards_ADDR;\n\tfor (;;) {\n\t\tuint8_t card = gb_read8(hl++);\n\t\tif (card == 0u)", "after": "CheckIfThereAreAnyBasicCardsInDeck(void)\n{\n\tuint16_t hl = wCurDeckCards_ADDR;\n\tfor (;;) {\n\t\tuint8_t card = gb_read8(hl++);\n\t\tif (card == 8u)", "case_ids": ["CheckIfThereAreAnyBasicCardsInDeck-1", "CheckIfThereAreAnyBasicCardsInDeck-4"]}
 # <<< factory-mutation CheckIfThereAreAnyBasicCardsInDeck
+# >>> factory-mutation SortCurDeckCardsByID
+MUTATIONS["SortCurDeckCardsByID"] = {"source_symbol": "SortCurDeckCardsByID", "before": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wCurDeckCards_ADDR;", "after": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wOpponentDeck_ADDR;", "case_ids": ["SortCurDeckCardsByID-0", "SortCurDeckCardsByID-1", "SortCurDeckCardsByID-2", "SortCurDeckCardsByID-3"]}
+# <<< factory-mutation SortCurDeckCardsByID

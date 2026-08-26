@@ -265,6 +265,11 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 
 #include "generated/wram.h"
 #include "home/card_data.h"
+
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define OPPONENT_TURN 0xC3u
 /* <<< factory statics */
 
 
@@ -1615,3 +1620,40 @@ CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void
 	}
 }
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
+
+/* >>> factory SortCurDeckCardsByID */
+SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
+{
+	uint16_t src = wCurDeckCards_ADDR;
+	uint16_t dst = wOpponentDeck_ADDR;
+	uint16_t list = wDuelTempList_ADDR;
+	uint8_t index = 0u;
+
+	for (;;) {
+		uint8_t card = gb_read8(src++);
+		gb_write8(dst++, card);
+		if (card == 0u) {
+			gb_write8(list, 0xFFu);
+			break;
+		}
+		gb_write8(list++, index++);
+	}
+
+	uint8_t saved_turn = hWhoseTurn;
+	hWhoseTurn = OPPONENT_TURN;
+	(void)SortCardsInDuelTempListByID((uint8_t)(list >> 8), (uint8_t)list, dst);
+	hWhoseTurn = saved_turn;
+
+	uint16_t out = wCurDeckCards_ADDR;
+	uint16_t order = wDuelTempList_ADDR;
+	for (;;) {
+		uint8_t entry = gb_read8(order);
+		if (entry == 0xFFu)
+			break;
+		gb_write8(out++, gb_read8((uint16_t)(wOpponentDeck_ADDR + entry)));
+		order++;
+	}
+	gb_write8(out, 0u);
+	return (SortCurDeckCardsByIDResult){(uint8_t)order};
+}
+/* <<< factory SortCurDeckCardsByID */

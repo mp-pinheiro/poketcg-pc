@@ -219,4 +219,8 @@ void OpenCardPageFromCardList(void);
 typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } CheckIfThereAreAnyBasicCardsInDeckResult;
 CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void);
 /* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
+/* >>> factory SortCurDeckCardsByID */
+typedef struct { uint8_t e; } SortCurDeckCardsByIDResult;
+SortCurDeckCardsByIDResult SortCurDeckCardsByID(void);
+/* <<< factory SortCurDeckCardsByID */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
