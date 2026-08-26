@@ -334,6 +334,12 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
  *   $5e31 UpdateConfirmationCardScreen. */
 #define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR 0x5EAFu
 #define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR 0x5E31u
+
+#include "home/deck_configuration.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define FILTERS_CARD_SELECTION_PARAMS_ADDR 0x5EAfu
 /* <<< factory statics */
 
 
@@ -2168,3 +2174,20 @@ void HandleDeckConfirmationMenu(void)
 	}
 }
 /* <<< factory HandleDeckConfirmationMenu */
+
+/* >>> factory ConfirmDeckConfiguration */
+void ConfirmDeckConfiguration(void)
+{
+	uint8_t visible_offset = wCardListVisibleOffset;
+	wCardListVisibleOffsetBackup = visible_offset;
+	HandleDeckConfirmationMenu();
+	wCardListVisibleOffset = wCardListVisibleOffsetBackup;
+	DrawCardTypeIconsAndPrintCardCounts();
+	uint16_t params = FILTERS_CARD_SELECTION_PARAMS_ADDR;
+	(void)InitCardSelectionParams(0u, &params);
+	wTempCardTypeFilter = wCurCardTypeFilter;
+	(void)DrawHorizontalListCursor_Visible();
+	(void)PrintFilteredCardList(wCurCardTypeFilter, 0u, 0u, 0u, 0u, 0u, FILTERS_CARD_SELECTION_PARAMS_ADDR);
+	wCardListCursorPos = wced6;
+}
+/* <<< factory ConfirmDeckConfiguration */

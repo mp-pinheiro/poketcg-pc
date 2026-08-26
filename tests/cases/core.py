@@ -1860,6 +1860,11 @@ PSDCA_READ = {PSDCA_wDuelDisplayedScreen: 1, PSDCA_wNumCardsBeingDrawn: 1}
 hTemp_ffa0 = 0xFFA0
 hTempCardIndex_ff98 = 0xFF98
 hTempPlayAreaLocation_ff9d = 0xFF9D
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wAIFirstAttackDamage = 0xCE00
+wAISecondAttackDamage = 0xCE01
+wSelectedAttack = 0xCCC6
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3996,6 +4001,25 @@ CASES["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = [
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists
 
+# >>> factory CheckIfDefendingPokemonCanKnockOut
+CONTRACT["CheckIfDefendingPokemonCanKnockOut"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfDefendingPokemonCanKnockOut"] = [
+    {"wram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
+     "sram": {0: {}}, "read": {wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
+     "instruction_budget": 8000000, "cycle_budget": 40000000},
+    dict(POISON, wram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x03", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
+         sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
+         instruction_budget=8000000, cycle_budget=40000000),
+    {"a": 0x12, "b": 0x34, "c": 0x56, "d": 0x78, "e": 0x9A, "hl": 0xC100,
+     "wram": {0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x5A", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x00", 0xCC23: b"\x00"},
+     "sram": {0: {}}, "read": {wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
+     "instruction_budget": 8000000, "cycle_budget": 40000000},
+    dict(POISON, wram={0xFF97: b"\xC2", hTempPlayAreaLocation_ff9d: b"\x01", 0xC2BB: b"\x00", 0xC400: b"\x08", wSelectedAttack: b"\x01", 0xCC23: b"\x00"},
+         sram={0: {}}, read={wAIFirstAttackDamage: 1, wAISecondAttackDamage: 1, hTempPlayAreaLocation_ff9d: 1},
+         instruction_budget=8000000, cycle_budget=40000000),
+]
+# <<< factory CheckIfDefendingPokemonCanKnockOut
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5586,3 +5610,11 @@ MUTATIONS["LookForEnergyNeededForAttackInHand"] = {"source_symbol": "LookForEner
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists
 MUTATIONS["PlayShuffleAndDrawCardsAnimation_BothDuelists"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation_BothDuelists", "before": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = DUEL_ANIM_BOTH_SHUFFLE;", "after": "PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tb = 0x54u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation_BothDuelists-0", "PlayShuffleAndDrawCardsAnimation_BothDuelists-1"]}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation_BothDuelists
+# >>> factory-mutation CheckIfDefendingPokemonCanKnockOut
+MUTATIONS["CheckIfDefendingPokemonCanKnockOut"] = {
+    "source_symbol": "CheckIfDefendingPokemonCanKnockOut",
+    "before": "CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t saved_location = hTempPlayAreaLocation_ff9d;",
+    "after": "CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\t(void)f;\n\tuint8_t saved_location = 0u;",
+    "case_ids": ["CheckIfDefendingPokemonCanKnockOut-0", "CheckIfDefendingPokemonCanKnockOut-1"]
+}
+# <<< factory-mutation CheckIfDefendingPokemonCanKnockOut

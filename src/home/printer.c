@@ -72,6 +72,18 @@
 
 #include "home/printer.h"
 #define PrinterIsNotConnectedText 0x00d7u
+
+#include "generated/wram.h"
+#include "home/menus.h"
+#include "home/printer.h"
+#define PRINTER_ERROR_BATTERIES_LOST_CHARGE 0x07u
+#define PRINTER_ERROR_CABLE_PRINTER_SWITCH 0x06u
+#define PRINTER_ERROR_PAPER_JAMMED 0x05u
+#define BatteriesHaveLostTheirChargeText 0x00d8u
+#define CheckCableOrPrinterSwitchText 0x00dau
+#define PrinterPacketErrorText 0x00dbu
+#define PrinterPaperIsJammedText 0x00d9u
+#define PrintingWasInterruptedText 0x00dcu
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -593,3 +605,39 @@ ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, 
 	return (ShowPrinterIsNotConnectedResult){result.f};
 }
 /* <<< factory ShowPrinterIsNotConnected */
+
+/* >>> factory HandlePrinterError */
+HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e)
+{
+	(void)f;
+	uint8_t status = wPrinterStatus;
+
+	if (status == 0xFFu) {
+		ShowPrinterConnectionErrorSceneResult scene =
+			ShowPrinterConnectionErrorScene(0x02u, 0xC0u, d, e, CheckCableOrPrinterSwitchText);
+		return (HandlePrinterErrorResult){scene.f};
+	}
+	if (status == 0u) {
+		WaitResult wait = DrawWideTextBox_WaitForInput(PrintingWasInterruptedText);
+		return (HandlePrinterErrorResult){(uint8_t)(wait.f | 0x10u)};
+	}
+	if ((status & (uint8_t)(1u << PRINTER_ERROR_BATTERIES_LOST_CHARGE)) != 0u) {
+		ShowPrinterConnectionErrorSceneResult scene =
+			ShowPrinterConnectionErrorScene(0x01u, 0x20u, d, e, BatteriesHaveLostTheirChargeText);
+		return (HandlePrinterErrorResult){scene.f};
+	}
+	if ((status & (uint8_t)(1u << PRINTER_ERROR_CABLE_PRINTER_SWITCH)) != 0u) {
+		ShowPrinterConnectionErrorSceneResult scene =
+			ShowPrinterConnectionErrorScene(0x02u, 0x20u, d, e, CheckCableOrPrinterSwitchText);
+		return (HandlePrinterErrorResult){scene.f};
+	}
+	if ((status & (uint8_t)(1u << PRINTER_ERROR_PAPER_JAMMED)) != 0u) {
+		ShowPrinterConnectionErrorSceneResult scene =
+			ShowPrinterConnectionErrorScene(0x03u, 0x20u, d, e, PrinterPaperIsJammedText);
+		return (HandlePrinterErrorResult){scene.f};
+	}
+	ShowPrinterConnectionErrorSceneResult scene =
+		ShowPrinterConnectionErrorScene(0x04u, 0xA0u, d, e, PrinterPacketErrorText);
+	return (HandlePrinterErrorResult){scene.f};
+}
+/* <<< factory HandlePrinterError */

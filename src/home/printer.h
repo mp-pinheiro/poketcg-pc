@@ -130,4 +130,8 @@ TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void);
 typedef struct { uint8_t f; } ShowPrinterIsNotConnectedResult;
 ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory ShowPrinterIsNotConnected */
+/* >>> factory HandlePrinterError */
+typedef struct { uint8_t f; } HandlePrinterErrorResult;
+HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory HandlePrinterError */
 #endif

@@ -276,4 +276,7 @@ void ShowDeckInfoHeaderAndWaitForBButton(void);
 /* >>> factory HandleDeckConfirmationMenu */
 void HandleDeckConfirmationMenu(void);
 /* <<< factory HandleDeckConfirmationMenu */
+/* >>> factory ConfirmDeckConfiguration */
+void ConfirmDeckConfiguration(void);
+/* <<< factory ConfirmDeckConfiguration */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

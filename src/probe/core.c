@@ -2535,6 +2535,15 @@ static void adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists(ProbeState *s)
 }
 /* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
 
+/* >>> factory CheckIfDefendingPokemonCanKnockOut */
+static void adapt_CheckIfDefendingPokemonCanKnockOut(ProbeState *s)
+{
+	CheckIfDefendingPokemonCanKnockOutResult r = CheckIfDefendingPokemonCanKnockOut(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfDefendingPokemonCanKnockOut */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2838,5 +2847,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_UseMetronomeAttack", adapt_OppAction_UseMetronomeAttack },
 	{ "LookForEnergyNeededForAttackInHand", adapt_LookForEnergyNeededForAttackInHand },
 	{ "PlayShuffleAndDrawCardsAnimation_BothDuelists", adapt_PlayShuffleAndDrawCardsAnimation_BothDuelists },
+	{ "CheckIfDefendingPokemonCanKnockOut", adapt_CheckIfDefendingPokemonCanKnockOut },
 	{ NULL, NULL },
 };

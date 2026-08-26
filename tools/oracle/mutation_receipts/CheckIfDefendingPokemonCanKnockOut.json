@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfDefendingPokemonCanKnockOut",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfDefendingPokemonCanKnockOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"01\", \"52736\": \"0000\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfDefendingPokemonCanKnockOut\", \"mismatches\": {\"bus\": {\"address\": 65437, \"reference\": \"010000c201\", \"native\": \"010000c200\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49851, 1], [50176, 1], [52259, 1], [52422, 1], [52736, 2], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckIfDefendingPokemonCanKnockOut\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"01\", \"52736\": \"0000\", \"65431\": \"c2\", \"65437\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

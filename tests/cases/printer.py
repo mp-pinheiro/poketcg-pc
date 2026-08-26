@@ -106,6 +106,8 @@ wVBlankFunctionTrampoline = 0xCAD0
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wPrinterInitAttempts = 0xCE9E
+
+wTxRam3 = 0xCE43
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -305,6 +307,40 @@ CASES["ShowPrinterIsNotConnected"] = [
 ]
 # <<< factory ShowPrinterIsNotConnected
 
+# >>> factory HandlePrinterError
+CONTRACT["HandlePrinterError"] = {"compare": ("f",), "preserve": ()}
+CASES["HandlePrinterError"] = [
+    {"wram": {wPrinterStatus: b"\x00", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPrinterStatus: b"\xFF", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPrinterStatus: b"\x80", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPrinterStatus: b"\x40", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPrinterStatus: b"\x20", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wPrinterStatus: b"\x01", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x01], "read": {wTxRam3: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wPrinterStatus: b"\x01", 0xCE43: b"\xAA\x55", 0xCABB: b"\x80", 0xFF40: b"\x80"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x01], read={wTxRam3: 2},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandlePrinterError
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -405,3 +441,6 @@ MUTATIONS["TryInitPrinterCommunications"] = {
 # >>> factory-mutation ShowPrinterIsNotConnected
 MUTATIONS["ShowPrinterIsNotConnected"] = {"source_symbol": "ShowPrinterIsNotConnected", "before": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x02u;", "after": "ShowPrinterIsNotConnectedResult ShowPrinterIsNotConnected(uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0x03u;", "case_ids": ["ShowPrinterIsNotConnected-0", "ShowPrinterIsNotConnected-1"]}
 # <<< factory-mutation ShowPrinterIsNotConnected
+# >>> factory-mutation HandlePrinterError
+MUTATIONS["HandlePrinterError"] = {"source_symbol": "HandlePrinterError", "before": "\tShowPrinterConnectionErrorSceneResult scene =\n\t\tShowPrinterConnectionErrorScene(0x04u, 0xA0u, d, e, PrinterPacketErrorText);", "after": "\tShowPrinterConnectionErrorSceneResult scene =\n\t\tShowPrinterConnectionErrorScene(0x02u, 0xA0u, d, e, PrinterPacketErrorText);", "case_ids": ["HandlePrinterError-5", "HandlePrinterError-6"]}
+# <<< factory-mutation HandlePrinterError

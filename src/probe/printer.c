@@ -177,6 +177,14 @@ static void adapt_ShowPrinterIsNotConnected(ProbeState *s)
 }
 /* <<< factory ShowPrinterIsNotConnected */
 
+/* >>> factory HandlePrinterError */
+static void adapt_HandlePrinterError(ProbeState *s)
+{
+	HandlePrinterErrorResult result = HandlePrinterError(s->f, s->d, s->e);
+	s->f = result.f;
+}
+/* <<< factory HandlePrinterError */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -197,5 +205,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterTransmitting", adapt_ShowPrinterTransmitting },
 	{ "TryInitPrinterCommunications", adapt_TryInitPrinterCommunications },
 	{ "ShowPrinterIsNotConnected", adapt_ShowPrinterIsNotConnected },
+	{ "HandlePrinterError", adapt_HandlePrinterError },
 	{ NULL, NULL },
 };

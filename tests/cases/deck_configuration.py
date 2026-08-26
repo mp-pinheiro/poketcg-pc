@@ -281,6 +281,9 @@ HDCM_READ = {
     wNumCardListEntries: 1,  # the uncapped unique count
     hWhoseTurn: 1,
 }
+
+wTotalCardCount = 0xCECC
+wConsole = 0xCAB4
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -1012,6 +1015,14 @@ CASES["HandleDeckConfirmationMenu"] = [
 ]
 # <<< factory HandleDeckConfirmationMenu
 
+# >>> factory ConfirmDeckConfiguration
+CONTRACT["ConfirmDeckConfiguration"] = {"compare": (), "preserve": ()}
+CASES["ConfirmDeckConfiguration"] = [
+    {"a": 0x00, "f": 0x00, "wram": {0xCECC: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\x33", 0xCAB4: b"\x00"}, "sram": {0: {}}, "keys": [0x00, 0x02], "rom_bank": 2, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCEA1: 1, 0xCED8: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={0xCECC: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00", 0xCEA1: b"\x33", 0xCAB4: b"\x00"}, sram={0: {}}, keys=[0x00, 0x02], rom_bank=2, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCEA1: 1, 0xCED8: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory ConfirmDeckConfiguration
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1334,3 +1345,6 @@ MUTATIONS["ShowDeckInfoHeaderAndWaitForBButton"] = {"source_symbol": "ShowDeckIn
 # >>> factory-mutation HandleDeckConfirmationMenu
 MUTATIONS["HandleDeckConfirmationMenu"] = {"source_symbol": "HandleDeckConfirmationMenu", "before": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_CONFIRMATION_CARD_SCREEN_ADDR);", "after": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(UPDATE_CONFIRMATION_CARD_SCREEN_ADDR + 1u));", "case_ids": ["HandleDeckConfirmationMenu-1", "HandleDeckConfirmationMenu-2", "HandleDeckConfirmationMenu-3"]}
 # <<< factory-mutation HandleDeckConfirmationMenu
+# >>> factory-mutation ConfirmDeckConfiguration
+MUTATIONS["ConfirmDeckConfiguration"] = {"source_symbol": "ConfirmDeckConfiguration", "before": "ConfirmDeckConfiguration(void)\n{\n\tuint8_t visible_offset = wCardListVisibleOffset;", "after": "ConfirmDeckConfiguration(void)\n{\n\tuint8_t visible_offset = 0u;", "case_ids": ["ConfirmDeckConfiguration-0", "ConfirmDeckConfiguration-1"]}
+# <<< factory-mutation ConfirmDeckConfiguration

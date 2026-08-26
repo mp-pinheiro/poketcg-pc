@@ -1134,4 +1134,8 @@ LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void
 typedef struct { uint8_t b, c; } PlayShuffleAndDrawCardsAnimation_BothDuelistsResult;
 PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnimation_BothDuelists(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
+/* >>> factory CheckIfDefendingPokemonCanKnockOut */
+typedef struct { uint8_t a; uint8_t f; } CheckIfDefendingPokemonCanKnockOutResult;
+CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory CheckIfDefendingPokemonCanKnockOut */
 #endif

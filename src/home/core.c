@@ -1389,6 +1389,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define EachPlayerDraw7CardsText 0x0066u
 #define EachPlayerShuffleOpponentsDeckText 0x0065u
 #define ThisIsJustPracticeDoNotShuffleText 0x0064u
+
+#include "home/core.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7783,3 +7789,81 @@ PlayShuffleAndDrawCardsAnimation_BothDuelistsResult PlayShuffleAndDrawCardsAnima
 	return result;
 }
 /* <<< factory PlayShuffleAndDrawCardsAnimation_BothDuelists */
+
+/* >>> factory CheckIfDefendingPokemonCanKnockOut */
+CheckIfDefendingPokemonCanKnockOutResult CheckIfDefendingPokemonCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)a;
+	(void)f;
+	uint8_t saved_location = hTempPlayAreaLocation_ff9d;
+	uint8_t first_can_ko = 0u;
+	uint8_t second_can_ko = 0u;
+
+	wAIFirstAttackDamage = 0u;
+	wAISecondAttackDamage = 0u;
+
+	wSelectedAttack = 0u;
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	SwapTurn();
+	CheckIfSelectedAttackIsUnusableResult first =
+		CheckIfSelectedAttackIsUnusable(0u, 0x80u, b, c, d, e, hl);
+	SwapTurn();
+	hTempPlayAreaLocation_ff9d = saved_location;
+	b = saved_location;
+	c = 0x80u;
+	d = first.d;
+	e = first.e;
+	hl = first.hl;
+	if ((first.f & 0x10u) == 0u) {
+		DamageCalculationResult estimate =
+			EstimateDamage_FromDefendingPokemon(wSelectedAttack);
+		d = estimate.d;
+		e = estimate.e;
+		hl = estimate.hl;
+		DuelistVarResult hp =
+			GetTurnDuelistVariable((uint8_t)(saved_location + DUELVARS_ARENA_CARD_HP));
+		hl = wDamage_ADDR;
+		if (hp.a == wDamage)
+			first_can_ko = 1u;
+	}
+	if (first_can_ko)
+		wAIFirstAttackDamage = wDamage;
+
+	wSelectedAttack = SECOND_ATTACK;
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	SwapTurn();
+	CheckIfSelectedAttackIsUnusableResult second =
+		CheckIfSelectedAttackIsUnusable(0u, 0x80u, b, c, d, e, hl);
+	SwapTurn();
+	hTempPlayAreaLocation_ff9d = saved_location;
+	b = saved_location;
+	c = 0x80u;
+	d = second.d;
+	e = second.e;
+	hl = second.hl;
+	if ((second.f & 0x10u) == 0u) {
+		DamageCalculationResult estimate =
+			EstimateDamage_FromDefendingPokemon(wSelectedAttack);
+		d = estimate.d;
+		e = estimate.e;
+		hl = estimate.hl;
+		DuelistVarResult hp =
+			GetTurnDuelistVariable((uint8_t)(saved_location + DUELVARS_ARENA_CARD_HP));
+		hl = wDamage_ADDR;
+		if (hp.a == wDamage)
+			second_can_ko = 1u;
+	}
+	if (second_can_ko)
+		wAISecondAttackDamage = wDamage;
+
+	uint8_t first_damage = wAIFirstAttackDamage;
+	if (!second_can_ko && first_damage == 0u)
+		return (CheckIfDefendingPokemonCanKnockOutResult){0u, 0x80u};
+
+	uint8_t second_damage = wAISecondAttackDamage;
+	if (second_damage >= first_damage)
+		return (CheckIfDefendingPokemonCanKnockOutResult){second_damage,
+			(uint8_t)(second_damage == first_damage ? 0x90u : 0x10u)};
+	return (CheckIfDefendingPokemonCanKnockOutResult){first_damage, 0x10u};
+}
+/* <<< factory CheckIfDefendingPokemonCanKnockOut */
