@@ -623,6 +623,30 @@ static void adapt_ScriptCommand_JumpIfEventNonzero(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
 
+/* >>> factory ScriptCommand_JumpIfEventTrue */
+static void adapt_ScriptCommand_JumpIfEventTrue(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventTrueResult r = ScriptCommand_JumpIfEventTrue(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventTrue */
+
+/* >>> factory ScriptCommand_JumpIfEventFalse */
+static void adapt_ScriptCommand_JumpIfEventFalse(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventTrueResult r = ScriptCommand_JumpIfEventFalse(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventFalse */
+
 /* >>> factory ScriptCommand_IncrementEventValue */
 static void adapt_ScriptCommand_IncrementEventValue(ProbeState *s)
 {

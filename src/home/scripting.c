@@ -1064,6 +1064,53 @@ ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, 
 }
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
 
+/* >>> factory ScriptCommand_JumpIfEventTrue */
+/* scripting.asm:1990-2003. Owns `.pass_try_jump`/`.no_jump`; branches to
+ * ScriptCommand_JumpIfEventFalse.fail when the event is zero. The two routines
+ * jump into each other's sub-labels rather than calling each other's entry
+ * points, so each block is inlined here -- the same shape the already-verified
+ * JumpIfEventZero/JumpIfEventNonzero pair uses. */
+ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventTrue(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t event = GetEventValue(c);
+	if (event != 0u) {
+		(void)SetScriptControlBytePass();
+		GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+		if (args.f & 0x80u) {
+			IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+			return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, args.b, r.c, hl};
+		}
+		uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+		return (ScriptCommand_JumpIfEventTrueResult){args.a, args.f, args.b, args.c, next_hl};
+	}
+	(void)SetScriptControlByteFail();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, b, r.c, hl};
+}
+/* <<< factory ScriptCommand_JumpIfEventTrue */
+
+/* >>> factory ScriptCommand_JumpIfEventFalse */
+/* scripting.asm:2005-2012. Owns `.fail`; branches to
+ * ScriptCommand_JumpIfEventTrue.pass_try_jump when the event is zero. */
+ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventFalse(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t event = GetEventValue(c);
+	if (event == 0u) {
+		(void)SetScriptControlBytePass();
+		GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+		if (args.f & 0x80u) {
+			IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+			return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, args.b, r.c, hl};
+		}
+		uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+		return (ScriptCommand_JumpIfEventTrueResult){args.a, args.f, args.b, args.c, next_hl};
+	}
+	(void)SetScriptControlByteFail();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, b, r.c, hl};
+}
+/* <<< factory ScriptCommand_JumpIfEventFalse */
+
 /* >>> factory ScriptCommand_IncrementEventValue */
 IncreaseScriptPointerResult ScriptCommand_IncrementEventValue(uint8_t f, uint8_t b, uint8_t c)
 {
