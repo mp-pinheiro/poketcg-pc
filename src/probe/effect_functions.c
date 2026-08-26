@@ -4350,8 +4350,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Twineedle_MultiplierEffect", adapt_Twineedle_MultiplierEffect },
 	{ "DragonairSlam_MultiplierEffect", adapt_DragonairSlam_MultiplierEffect },
 	{ "DragoniteLv41Slam_MultiplierEffect", adapt_DragoniteLv41Slam_MultiplierEffect },
-	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ "PetalDance_MultiplierEffect", adapt_PetalDance_MultiplierEffect },
 	{ "PlayTrainerEffectAnimation", adapt_PlayTrainerEffectAnimation },
+	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ NULL, NULL },
 };
