@@ -337,14 +337,13 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     family, i.e. case authoring.
   - `_HandlePeekSelection`: A presses change nothing (byte-identical pc and
     instruction count) → it waits on some other edge or flag; find the predicate.
-  - `OpenGlossaryScreen`: not input-gated at all (byte-identical `instr=25018962`
-    with and without `keys`). It looks text-bound at small budgets, but **budget is
-    not the answer** — measured the same day, `pc=0x160B` is identical at 1.5 B and
-    at 4.2 B cycles (420 M instructions, ~5 min wall, the runner's `uint32` ceiling;
-    above ~4.29 B the request is rejected `SCHEMA`). `0x160B` is
-    `GetTurnDuelistVariable+0` / `CountCardIDInLocation.unmatching_card_location_or_ID+9`,
-    so it is an unbounded loop over unseeded *duel* state — same case-authoring
-    family as the deck-list spin above, not a cost problem.
+  - `OpenGlossaryScreen`: now fully terminates with real ambient state:
+    `SetupRegisters`, `SetupText(d=0x30,e=0x7F)`, `hWhoseTurn=$C2`, and input
+    timeline `[release, SELECT, release, B]` (`[0,$04,0,$02]`). This toggles
+    the glossary page, redraws it, and exits through the normal B path;
+    `REFERENCE_OK` reaches the `$FEA0` sentinel in under one second. The old
+    `$160B` `GetTurnDuelistVariable` loop was missing turn state, not a frame,
+    text, or budget limitation. The routine is ordinary translation work now.
   - `_DebugLookAtSprite`: unbounded copy at `CopyDataHLtoDE_SaveRegisters` over an
     unseeded length, and adding `keys` makes it *crash* to `pc=0x0038` (RST 38 —
     no symbol means it is executing `$FF` filler). Do not drive this one with input.
