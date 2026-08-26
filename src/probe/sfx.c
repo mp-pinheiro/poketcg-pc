@@ -101,6 +101,13 @@ static void adapt_SFX_envelope(ProbeState *s)
 }
 /* <<< factory SFX_envelope */
 
+/* >>> factory SFX_endloop */
+static void adapt_SFX_endloop(ProbeState *s)
+{
+	SFX_endloop((uint16_t)(s->b << 8 | s->c), s->stack[0]);
+}
+/* <<< factory SFX_endloop */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -115,5 +122,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_wave", adapt_SFX_wave },
 	{ "SFX_duty", adapt_SFX_duty },
 	{ "SFX_envelope", adapt_SFX_envelope },
+	{ "SFX_endloop", adapt_SFX_endloop },
 	{ NULL, NULL },
 };

@@ -3432,6 +3432,49 @@ CASES["DisplayCardPage_TrainerPage1"] = [
 ]
 # <<< factory DisplayCardPage_TrainerPage1
 
+# >>> factory PrintPracticeDuelInstructionsForCurrentTurn
+CONTRACT["PrintPracticeDuelInstructionsForCurrentTurn"] = {"compare": (), "preserve": ()}
+# wDuelTurns & $FE is a byte offset into PracticeDuelTextPointerTable (01:52C5).
+# $94 lands on 01:5359, the $14/$CD pair that `lb bc, 20, 12` (ld bc, $140C) and the
+# `call DrawRegularTextBox` after it leave inside DrawPracticeDuelInstructionsTextBox
+# (01:5351-535C, twelve bytes: call + ld de,nn + ld bc,nn + call, confirmed by the next
+# symbol landing on 01:535D). The routine therefore loads hl = $CD14 = wNumMenuItems,
+# a byte no text routine writes; seeding it $00 makes either printer stop on its first
+# read and print only PrintPracticeDuelLetsPlayTheGame - the exact shape the landed
+# PrintPracticeDuelInstructions and PrintPracticeDuelInstructions_Fast cases run.
+# wLCDC ($CABB) $00 keeps the reference out of the WaitForVBlank halt, and hBankROM
+# ($FF80) is seeded to the routine's own bank $01 - the value both references enter
+# with - so the native side restores the same bank after every text print.
+# $CBCA/$CC01 are seeded to values neither printer produces, so they show which branch
+# ran: the slow path writes $00 and $CD14 there, the fast path leaves the seeds.
+CASES["PrintPracticeDuelInstructionsForCurrentTurn"] = [
+    {"a": 0x00, "keys": 0x01,
+     "wram": {0xCC06: b"\x94", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
+              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCBCA: 1, 0xCC01: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x00, "keys": 0x01,
+     "wram": {0xCC06: b"\x95", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
+              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCBCA: 1, 0xCC01: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x01, "keys": 0x01,
+     "wram": {0xCC06: b"\x94", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
+              0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {0xCBCA: 1, 0xCC01: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x01,
+         wram={0xCC06: b"\x95", 0xCD14: b"\x00", 0xCBCA: b"\xFF",
+               0xCC01: b"\x34\x12", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCBCA: 1, 0xCC01: 2},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PrintPracticeDuelInstructionsForCurrentTurn
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4876,3 +4919,14 @@ MUTATIONS["DisplayCardPage_TrainerPage2"] = {"source_symbol": "DisplayCardPage_T
 # >>> factory-mutation DisplayCardPage_TrainerPage1
 MUTATIONS["DisplayCardPage_TrainerPage1"] = {"source_symbol": "DisplayCardPage_TrainerPage1", "before": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage1-0", "DisplayCardPage_TrainerPage1-1"]}
 # <<< factory-mutation DisplayCardPage_TrainerPage1
+# >>> factory-mutation PrintPracticeDuelInstructionsForCurrentTurn
+MUTATIONS["PrintPracticeDuelInstructionsForCurrentTurn"] = {
+    "source_symbol": "PrintPracticeDuelInstructionsForCurrentTurn",
+    "before": "\tif (a != 0u) {\n\t\tPrintPracticeDuelInstructions_Fast(hl);",
+    "after": "\tif (a == 0u) {\n\t\tPrintPracticeDuelInstructions_Fast(hl);",
+    "case_ids": ["PrintPracticeDuelInstructionsForCurrentTurn-0",
+                 "PrintPracticeDuelInstructionsForCurrentTurn-1",
+                 "PrintPracticeDuelInstructionsForCurrentTurn-2",
+                 "PrintPracticeDuelInstructionsForCurrentTurn-3"],
+}
+# <<< factory-mutation PrintPracticeDuelInstructionsForCurrentTurn

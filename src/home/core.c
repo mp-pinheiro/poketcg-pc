@@ -1140,6 +1140,12 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/print_text.h"
 
 /* HEADER_ENERGY is defined in the existing core statics. */
+
+/* 01:52c5 PracticeDuelTextPointerTable (poketcg/poketcg.sym). `ld hl,
+ * PracticeDuelTextPointerTable` resolves in the routine's own bank, which is
+ * bank $01 for every callsite, so the pointer pair is read from there. */
+#define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
+#define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR 0x52C5u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6427,3 +6433,24 @@ PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8
 	return result;
 }
 /* <<< factory DisplayCardPage_TrainerPage1 */
+
+/* >>> factory PrintPracticeDuelInstructionsForCurrentTurn */
+/* core.asm:2792-2807 */
+void PrintPracticeDuelInstructionsForCurrentTurn(uint8_t a)
+{
+	/* `push af / ld a, [wDuelTurns] / and %11111110 / ld e, a / ld d, $00 /
+	 * ld hl, PracticeDuelTextPointerTable / add hl, de / ld a, [hli] /
+	 * ld h, [hl] / ld l, a / pop af`: the entry `a` survives the table read
+	 * and only selects which printer the fallthrough runs. */
+	const uint8_t *entry = rom_ptr(PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK,
+		(uint16_t)(PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR
+			+ (uint16_t)(wDuelTurns & 0xFEu)));
+	uint16_t hl = (uint16_t)(entry[0] | (uint16_t)entry[1] << 8);
+
+	if (a != 0u) {
+		PrintPracticeDuelInstructions_Fast(hl);
+		return;
+	}
+	PrintPracticeDuelInstructions(hl);
+}
+/* <<< factory PrintPracticeDuelInstructionsForCurrentTurn */

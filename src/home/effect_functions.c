@@ -6856,3 +6856,12 @@ HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void)
 	return result;
 }
 /* <<< factory PidgeottoWhirlwind_SwitchEffect */
+
+/* >>> factory ButterfreeWhirlwind_SwitchEffect */
+ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void)
+{
+	uint8_t input = hTemp_ffa0;
+	HandleSwitchDefendingPokemonEffectResult callee = HandleSwitchDefendingPokemonEffect(input);
+	return (ButterfreeWhirlwind_SwitchEffectResult){callee.a, callee.f};
+}
+/* <<< factory ButterfreeWhirlwind_SwitchEffect */

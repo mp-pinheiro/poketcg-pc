@@ -567,3 +567,19 @@ void SFX_envelope(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_envelope */
+
+/* >>> factory SFX_endloop */
+void SFX_endloop(uint16_t bc, uint16_t caller_word)
+{
+	uint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));
+	count = (uint8_t)(count - 1u);
+	if (count != 0u) {
+		gb_write8((uint16_t)(wde3f_ADDR + bc), count);
+		uint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);
+		uint16_t loop_addr = (uint16_t)gb_read8(store_addr) | (uint16_t)(gb_read8((uint16_t)(store_addr + 1u)) << 8u);
+		ExecuteNextSFXCommand(loop_addr, bc);
+		return;
+	}
+	ExecuteNextSFXCommand(caller_word, bc);
+}
+/* <<< factory SFX_endloop */

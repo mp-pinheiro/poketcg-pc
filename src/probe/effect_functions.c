@@ -3563,6 +3563,15 @@ static void adapt_PidgeottoWhirlwind_SwitchEffect(ProbeState *s)
 }
 /* <<< factory PidgeottoWhirlwind_SwitchEffect */
 
+/* >>> factory ButterfreeWhirlwind_SwitchEffect */
+static void adapt_ButterfreeWhirlwind_SwitchEffect(ProbeState *s)
+{
+	ButterfreeWhirlwind_SwitchEffectResult result = ButterfreeWhirlwind_SwitchEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ButterfreeWhirlwind_SwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3997,5 +4006,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Gigashock_PlayerSelectEffect", adapt_Gigashock_PlayerSelectEffect },
 	{ "HandleSwitchDefendingPokemonEffect", adapt_HandleSwitchDefendingPokemonEffect },
 	{ "PidgeottoWhirlwind_SwitchEffect", adapt_PidgeottoWhirlwind_SwitchEffect },
+	{ "ButterfreeWhirlwind_SwitchEffect", adapt_ButterfreeWhirlwind_SwitchEffect },
 	{ NULL, NULL },
 };

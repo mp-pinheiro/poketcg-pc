@@ -175,6 +175,15 @@ CASES["SFX_envelope"] = [
 ]
 # <<< factory SFX_envelope
 
+# >>> factory SFX_endloop
+CONTRACT["SFX_endloop"] = {"compare": (), "preserve": ()}
+CASES["SFX_endloop"] = [
+    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDE3F: b"\x01"}, "read": {0xDE3F: 1}},
+    {"b": 0, "c": 1, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDE40: b"\x02", 0xDE45: b"\x00\xC2", 0xC200: b"\xF0"}, "read": {0xDE40: 1}},
+    dict(POISON, b=0, c=0, stack=[0xC300], wram={0xC300: b"\xF0", 0xDE3F: b"\x01"}, read={0xDE3F: 1}),
+]
+# <<< factory SFX_endloop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -235,3 +244,6 @@ MUTATIONS["SFX_duty"] = {"source_symbol": "SFX_duty", "before": "void SFX_duty(u
 # >>> factory-mutation SFX_envelope
 MUTATIONS["SFX_envelope"] = {"source_symbol": "SFX_envelope", "before": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc);", "after": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc + 1u);", "case_ids": ["SFX_envelope-0", "SFX_envelope-1", "SFX_envelope-2", "SFX_envelope-3"]}
 # <<< factory-mutation SFX_envelope
+# >>> factory-mutation SFX_endloop
+MUTATIONS["SFX_endloop"] = {"source_symbol": "SFX_endloop", "before": "void SFX_endloop(uint16_t bc, uint16_t caller_word)\n{\n\tuint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));\n\tcount = (uint8_t)(count - 1u);", "after": "void SFX_endloop(uint16_t bc, uint16_t caller_word)\n{\n\tuint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));\n\tcount = (uint8_t)(count - 2u);", "case_ids": ["SFX_endloop-0", "SFX_endloop-1", "SFX_endloop-2"]}
+# <<< factory-mutation SFX_endloop

@@ -2262,6 +2262,13 @@ static void adapt_DisplayCardPage_TrainerPage1(ProbeState *s)
 }
 /* <<< factory DisplayCardPage_TrainerPage1 */
 
+/* >>> factory PrintPracticeDuelInstructionsForCurrentTurn */
+static void adapt_PrintPracticeDuelInstructionsForCurrentTurn(ProbeState *s)
+{
+	PrintPracticeDuelInstructionsForCurrentTurn(s->a);
+}
+/* <<< factory PrintPracticeDuelInstructionsForCurrentTurn */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2533,5 +2540,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPage_Energy", adapt_DisplayCardPage_Energy },
 	{ "DisplayCardPage_TrainerPage2", adapt_DisplayCardPage_TrainerPage2 },
 	{ "DisplayCardPage_TrainerPage1", adapt_DisplayCardPage_TrainerPage1 },
+	{ "PrintPracticeDuelInstructionsForCurrentTurn", adapt_PrintPracticeDuelInstructionsForCurrentTurn },
 	{ NULL, NULL },
 };

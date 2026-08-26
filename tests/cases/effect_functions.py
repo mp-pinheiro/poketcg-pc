@@ -4611,6 +4611,15 @@ CASES["PidgeottoWhirlwind_SwitchEffect"] = [
 ]
 # <<< factory PidgeottoWhirlwind_SwitchEffect
 
+# >>> factory ButterfreeWhirlwind_SwitchEffect
+CONTRACT["ButterfreeWhirlwind_SwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ButterfreeWhirlwind_SwitchEffect"] = [
+    {"wram": {0xFFA0: b"\xFF", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}}
+]
+# <<< factory ButterfreeWhirlwind_SwitchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6957,3 +6966,11 @@ MUTATIONS["PidgeottoWhirlwind_SwitchEffect"] = {
     "case_ids": ["PidgeottoWhirlwind_SwitchEffect-1", "PidgeottoWhirlwind_SwitchEffect-2"]
 }
 # <<< factory-mutation PidgeottoWhirlwind_SwitchEffect
+# >>> factory-mutation ButterfreeWhirlwind_SwitchEffect
+MUTATIONS["ButterfreeWhirlwind_SwitchEffect"] = {
+    "source_symbol": "ButterfreeWhirlwind_SwitchEffect",
+    "before": "ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult callee = HandleSwitchDefendingPokemonEffect(input);",
+    "after": "ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult callee = HandleSwitchDefendingPokemonEffect(0xffu);",
+    "case_ids": ["ButterfreeWhirlwind_SwitchEffect-1", "ButterfreeWhirlwind_SwitchEffect-2"]
+}
+# <<< factory-mutation ButterfreeWhirlwind_SwitchEffect

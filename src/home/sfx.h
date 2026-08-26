@@ -50,4 +50,7 @@ void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl);
 /* >>> factory SFX_envelope */
 void SFX_envelope(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_envelope */
+/* >>> factory SFX_endloop */
+void SFX_endloop(uint16_t bc, uint16_t caller_word);
+/* <<< factory SFX_endloop */
 #endif
