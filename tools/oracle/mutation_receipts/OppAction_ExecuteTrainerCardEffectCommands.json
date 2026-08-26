@@ -1,0 +1,9 @@
+{
+  "fn": "OppAction_ExecuteTrainerCardEffectCommands",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OppAction_ExecuteTrainerCardEffectCommands\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 0, \"d\": 52, \"e\": 86, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00\", \"49667\": \"02\", \"49730\": \"03\", \"49790\": \"03\", \"49901\": \"0100\", \"49905\": \"00\", \"51906\": \"01\", \"52402\": \"00c1\", \"65431\": \"c2\", \"65439\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OppAction_ExecuteTrainerCardEffectCommands\", \"mismatches\": {\"bus\": {\"address\": 49667, \"reference\": \"000203030100\", \"native\": \"000103000001\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49408, 1], [49667, 1], [49730, 1], [49790, 1], [49901, 2], [49905, 1], [51906, 1], [52402, 2], [65431, 1], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"OppAction_ExecuteTrainerCardEffectCommands\", \"registers\": {\"a\": 0, \"b\": 18, \"c\": 0, \"d\": 52, \"e\": 86, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00\", \"49667\": \"02\", \"49730\": \"03\", \"49790\": \"03\", \"49901\": \"0100\", \"49905\": \"00\", \"51906\": \"01\", \"52402\": \"00c1\", \"65431\": \"c2\", \"65439\": \"03\"}}, \"status\": \"PASS\"}\n"
+}
