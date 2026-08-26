@@ -194,6 +194,18 @@ static void adapt_HandleDestinyBondSubstatus(ProbeState *s)
 }
 /* <<< factory HandleDestinyBondSubstatus */
 
+/* >>> factory HandleNShieldAndTransparency */
+static void adapt_HandleNShieldAndTransparency(ProbeState *s)
+{
+	HandleNShieldAndTransparencyResult result = HandleNShieldAndTransparency((uint16_t)(((uint16_t)s->d << 8u) | s->e));
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory HandleNShieldAndTransparency */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -222,5 +234,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "ApplyStrikesBack_AgainstResidualAttack", adapt_ApplyStrikesBack_AgainstResidualAttack },
 	{ "HandleStrikesBack_AgainstResidualAttack", adapt_HandleStrikesBack_AgainstResidualAttack },
 	{ "HandleDestinyBondSubstatus", adapt_HandleDestinyBondSubstatus },
+	{ "HandleNShieldAndTransparency", adapt_HandleNShieldAndTransparency },
 	{ NULL, NULL },
 };

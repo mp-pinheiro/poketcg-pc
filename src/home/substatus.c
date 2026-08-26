@@ -37,6 +37,21 @@
 #include "mem.h"
 #define SUBSTATUS1_DESTINY_BOND 0x16u
 #define KnockedOutDueToDestinyBondText 0x0104u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#define DUELVARS_ARENA_CARD 0xbbu
+#define DUELVARS_ARENA_CARD_STAGE 0xceu
+#define HAUNTER_LV17 0x96u
+#define MEW_LV8 0xa0u
+#define NO_DAMAGE_OR_EFFECT_NSHIELD 0x05u
+#define NO_DAMAGE_OR_EFFECT_TRANSPARENCY 0x04u
+#define NoDamageOrEffectDueToNShieldText 0x010bu
+#define NoDamageOrEffectDueToTransparencyText 0x010cu
+#define TransparencyCheckText 0x00f6u
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -663,3 +678,32 @@ DestinyBondResult HandleDestinyBondSubstatus(void)
 	return (DestinyBondResult){0u, waited.f, KnockedOutDueToDestinyBondText};
 }
 /* <<< factory HandleDestinyBondSubstatus */
+
+/* >>> factory HandleNShieldAndTransparency */
+HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de)
+{
+	uint8_t e = (uint8_t)de;
+	DuelistVarResult arena = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + e));
+	uint8_t card = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	if (card == MEW_LV8) {
+		DuelistVarResult stage = GetNonTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_STAGE + e));
+		if (stage.a != 0u) {
+			gb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);
+			(void)DrawWideTextBox_WaitForInput(NoDamageOrEffectDueToNShieldText);
+			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e, NoDamageOrEffectDueToNShieldText};
+		}
+		return (HandleNShieldAndTransparencyResult){stage.a, stage.a ? 0u : 0x80u, (uint8_t)(de >> 8), e, stage.hl};
+	}
+	if (card == HAUNTER_LV17) {
+		wDuelDisplayedScreen = 0u;
+		TossCoinRoutineResult toss = TossCoin(TransparencyCheckText, arena.hl);
+		if (toss.f & 0x10u) {
+			gb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_TRANSPARENCY);
+			(void)DrawWideTextBox_WaitForInput(NoDamageOrEffectDueToTransparencyText);
+			return (HandleNShieldAndTransparencyResult){0u, 0x90u, (uint8_t)(de >> 8), e, NoDamageOrEffectDueToTransparencyText};
+		}
+		return (HandleNShieldAndTransparencyResult){toss.a, toss.a ? 0u : 0x80u, (uint8_t)(de >> 8), e, toss.hl};
+	}
+	return (HandleNShieldAndTransparencyResult){card, card ? 0u : 0x80u, (uint8_t)(de >> 8), e, arena.hl};
+}
+/* <<< factory HandleNShieldAndTransparency */

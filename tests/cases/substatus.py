@@ -467,6 +467,9 @@ DB_PLAYER_ARENA_HP = 0xC2C8
 DB_OPP_SUBSTATUS1 = 0xC3E7
 DB_OPP_ARENA_CARD = 0xC3BB
 DB_OPP_ARENA_HP = 0xC3C8
+
+wDuelDisplayedScreen = 0xCAC2
+wNoDamageOrEffect = 0xCCC7
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -506,6 +509,15 @@ CASES["HandleDestinyBondSubstatus"] = [
 ]
 # <<< factory HandleDestinyBondSubstatus
 
+# >>> factory HandleNShieldAndTransparency
+CONTRACT["HandleNShieldAndTransparency"] = {"compare": ("d", "e", "f"), "preserve": ("d", "e")}
+CASES["HandleNShieldAndTransparency"] = [
+    {"e": 0, "d": 0x12, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\x01", 0xCCC7: b"\x00"}, "read": {0xCCC7: 1}},
+    {"e": 0, "d": 0x12, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\xA0", 0xC3CE: b"\x01", 0xCCC7: b"\x00", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xCCC7: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x01", 0xC401: b"\x01", 0xCCC7: b"\x00"}, "read": {0xCCC7: 1}}
+]
+# <<< factory HandleNShieldAndTransparency
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -526,3 +538,6 @@ MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "Handle
 # >>> factory-mutation HandleDestinyBondSubstatus
 MUTATIONS["HandleDestinyBondSubstatus"] = {"source_symbol": "HandleDestinyBondSubstatus", "before": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);", "after": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);", "case_ids": ["HandleDestinyBondSubstatus-0", "HandleDestinyBondSubstatus-4"]}
 # <<< factory-mutation HandleDestinyBondSubstatus
+# >>> factory-mutation HandleNShieldAndTransparency
+MUTATIONS["HandleNShieldAndTransparency"] = {"source_symbol": "HandleNShieldAndTransparency", "before": "\t\t\tgb_write8(wNoDamageOrEffect_ADDR, NO_DAMAGE_OR_EFFECT_NSHIELD);", "after": "\t\t\tgb_write8(wNoDamageOrEffect_ADDR, 0x40u);", "case_ids": ["HandleNShieldAndTransparency-1"]}
+# <<< factory-mutation HandleNShieldAndTransparency

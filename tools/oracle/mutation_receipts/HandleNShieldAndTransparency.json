@@ -1,0 +1,9 @@
+{
+  "fn": "HandleNShieldAndTransparency",
+  "case": "tests/cases/substatus.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleNShieldAndTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 0, \"f\": 144, \"hl\": 267, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"50126\": \"01\", \"50177\": \"a0\", \"50448\": \"ff\", \"51899\": \"80\", \"52423\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleNShieldAndTransparency\", \"mismatches\": {\"bus\": {\"address\": 52423, \"reference\": \"01a0ff8005c2\", \"native\": \"01a0ff8040c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [50126, 1], [50177, 1], [50448, 1], [51899, 1], [52423, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleNShieldAndTransparency\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 18, \"e\": 0, \"f\": 144, \"hl\": 267, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"01\", \"50126\": \"01\", \"50177\": \"a0\", \"50448\": \"ff\", \"51899\": \"80\", \"52423\": \"05\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

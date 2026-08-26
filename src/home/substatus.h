@@ -161,4 +161,15 @@ typedef struct {
 } DestinyBondResult;
 DestinyBondResult HandleDestinyBondSubstatus(void);
 /* <<< factory HandleDestinyBondSubstatus */
+/* >>> factory HandleNShieldAndTransparency */
+/* >>> factory HandleNShieldAndTransparency */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} HandleNShieldAndTransparencyResult;
+HandleNShieldAndTransparencyResult HandleNShieldAndTransparency(uint16_t de);
+/* <<< factory HandleNShieldAndTransparency */
 #endif
