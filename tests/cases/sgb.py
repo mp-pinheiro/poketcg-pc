@@ -66,8 +66,8 @@ CASES["DetectSGB"] = [
 # >>> factory Func_0bcb
 CONTRACT["Func_0bcb"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["Func_0bcb"] = [
-    {"hl": 0xC000, "wram": {0xCABB: b"\xC3", 0xFF40: b"\x80", 0xC000: bytes(range(256)) * 16}, "vread": {0: {0x8800: 0x1000, 0x9800: 0x1A0}}, "instruction_budget": 500000, "cycle_budget": 2000000},
-    dict(POISON, hl=0xC000, wram={0xCABB: b"\xC3", 0xFF40: b"\x80", 0xC000: bytes(range(256)) * 16}, vread={0: {0x8800: 0x1000, 0x9800: 0x1A0}}, instruction_budget=500000, cycle_budget=2000000),
+    {"hl": 0xA000, "ramg": True, "sram": {0: {0xA000: bytes(range(256)) * 16}}, "wram": {0xCABB: b"\xC3", 0xFF40: b"\x80"}, "vread": {0: {0x8800: 0x1000, 0x9800: 0x1A0}}, "instruction_budget": 500000, "cycle_budget": 2000000},
+    dict(POISON, hl=0xA000, ramg=True, sram={0: {0xA000: bytes(range(256)) * 16}}, wram={0xCABB: b"\xC3", 0xFF40: b"\x80"}, vread={0: {0x8800: 0x1000, 0x9800: 0x1A0}}, instruction_budget=500000, cycle_budget=2000000),
 ]
 # <<< factory Func_0bcb
 
