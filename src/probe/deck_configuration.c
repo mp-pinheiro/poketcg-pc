@@ -608,7 +608,16 @@ static void adapt_UpdateConfirmationCardScreen(ProbeState *s)
 }
 /* <<< factory UpdateConfirmationCardScreen */
 
+
+/* >>> factory PrintSlashSixty */
+static void adapt_PrintSlashSixty(ProbeState *s)
+{
+	PrintSlashSixty(s->d, s->e);
+}
+/* <<< factory PrintSlashSixty */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
+	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
 	{ "CopyListFromHLToDE", adapt_CopyListFromHLToDE },

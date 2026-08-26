@@ -258,4 +258,7 @@ void PrintCurDeckNumberAndName(void);
 /* >>> factory UpdateConfirmationCardScreen */
 void UpdateConfirmationCardScreen(void);
 /* <<< factory UpdateConfirmationCardScreen */
+/* >>> factory PrintSlashSixty */
+void PrintSlashSixty(uint8_t d, uint8_t e);
+/* <<< factory PrintSlashSixty */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

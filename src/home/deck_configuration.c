@@ -1989,3 +1989,22 @@ void UpdateConfirmationCardScreen(void)
 	PrintConfirmationCardList(0u, 0u, 0u, (uint16_t *)0);
 }
 /* <<< factory UpdateConfirmationCardScreen */
+
+/* >>> factory PrintSlashSixty */
+/* deck_configuration.asm:1017-1035. Builds the TX_SYMBOL encoding for "/60",
+ * then prints it at the caller-supplied d/e coordinates. */
+void PrintSlashSixty(uint8_t d, uint8_t e)
+{
+	uint16_t text = wDefaultText_ADDR;
+	gb_write8(text++, TX_SYMBOL);
+	gb_write8(text++, SYM_SLASH);
+	gb_write8(text++, TX_SYMBOL);
+	gb_write8(text++, (uint8_t)(SYM_0 + 6u));
+	gb_write8(text++, TX_SYMBOL);
+	gb_write8(text++, SYM_0);
+	gb_write8(text, TX_END);
+	InitTextPrinting(d, e);
+	text = wDefaultText_ADDR;
+	ProcessText(&text);
+}
+/* <<< factory PrintSlashSixty */
