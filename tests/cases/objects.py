@@ -59,8 +59,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "SetOneObjectAttributes": {
         "source_symbol": "SetOneObjectAttributes",
-        "before": "\tif (off >= OAM_SIZE)",
-        "after": "\tif (off > OAM_SIZE)",
+        "before": "void SetOneObjectAttributes(uint8_t e, uint8_t d, uint8_t c, uint8_t b)\n{\n\tuint8_t off = wOAMOffset;\n\tif (off >= OAM_SIZE)",
+        "after": "void SetOneObjectAttributes(uint8_t e, uint8_t d, uint8_t c, uint8_t b)\n{\n\tuint8_t off = wOAMOffset;\n\tif (off > OAM_SIZE)",
         "case_ids": ["SetOneObjectAttributes-0", "SetOneObjectAttributes-1", "SetOneObjectAttributes-2", "SetOneObjectAttributes-3"],
     },
 }

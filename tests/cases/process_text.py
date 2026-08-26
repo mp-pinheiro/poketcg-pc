@@ -166,8 +166,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "InitTextFormat": {
         "source_symbol": "InitTextFormat",
-        "before": "\thJapaneseSyllabary = TX_KATAKANA;",
-        "after": "\thJapaneseSyllabary = TX_HIRAGANA;",
+        "before": "\twHalfWidthPrintState = 0;\n\thJapaneseSyllabary = TX_KATAKANA;",
+        "after": "\twHalfWidthPrintState = 0;\n\thJapaneseSyllabary = TX_HIRAGANA;",
         "case_ids": ["InitTextFormat-0", "InitTextFormat-1"],
     },
 }

@@ -6603,7 +6603,7 @@ MUTATIONS["DreamEaterEffect"] = {"source_symbol": "DreamEaterEffect", "before": 
 MUTATIONS["JynxMeditate_DamageBoostEffect"] = {"source_symbol": "JynxMeditate_DamageBoostEffect", "before": "AddToDamage(damage.a);", "after": "AddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["JynxMeditate_DamageBoostEffect-0", "JynxMeditate_DamageBoostEffect-1"]}
 # <<< factory-mutation JynxMeditate_DamageBoostEffect
 # >>> factory-mutation KadabraRecover_CheckEnergyHP
-MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_CheckEnergyHP", "before": "if (energy < 1u)", "after": "if (energy < 2u)", "case_ids": ["KadabraRecover_CheckEnergyHP-0", "KadabraRecover_CheckEnergyHP-1"]}
+MUTATIONS["KadabraRecover_CheckEnergyHP"] = {"source_symbol": "KadabraRecover_CheckEnergyHP", "before": "\t\tf |= 0x20u;\n\tif (energy < 1u)", "after": "\t\tf |= 0x20u;\n\tif (energy < 2u)", "case_ids": ["KadabraRecover_CheckEnergyHP-0", "KadabraRecover_CheckEnergyHP-1"]}
 # <<< factory-mutation KadabraRecover_CheckEnergyHP
 # >>> factory-mutation MewtwoAltEnergyAbsorption_AddToHandEffect
 MUTATIONS["MewtwoAltEnergyAbsorption_AddToHandEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_AddToHandEffect", "before": "if (card == 0xffu)", "after": "if (card != 0xffu)", "case_ids": ["MewtwoAltEnergyAbsorption_AddToHandEffect-0", "MewtwoAltEnergyAbsorption_AddToHandEffect-1"]}
@@ -6756,7 +6756,7 @@ MUTATIONS["CheckIfCardIsBasicEnergy"] = {"source_symbol": "CheckIfCardIsBasicEne
 MUTATIONS["CopyPlayAreaHPToBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPToBackup_Unreferenced", "before": "wBackupPlayerAreaHP_ADDR + i", "after": "wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPToBackup_Unreferenced-0"]}
 # <<< factory-mutation CopyPlayAreaHPToBackup_Unreferenced
 # >>> factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
-MUTATIONS["CopyPlayAreaHPFromBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPFromBackup_Unreferenced", "before": "wBackupPlayerAreaHP_ADDR + i", "after": "wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPFromBackup_Unreferenced-0"]}
+MUTATIONS["CopyPlayAreaHPFromBackup_Unreferenced"] = {"source_symbol": "CopyPlayAreaHPFromBackup_Unreferenced", "before": "\t\tgb_write8((uint16_t)(wBackupPlayerAreaHP_ADDR + i", "after": "\t\tgb_write8((uint16_t)(wBackupPlayerAreaHP_ADDR + i + 1u", "case_ids": ["CopyPlayAreaHPFromBackup_Unreferenced-0"]}
 # <<< factory-mutation CopyPlayAreaHPFromBackup_Unreferenced
 # >>> factory-mutation EnergySearch_DeckCheck
 MUTATIONS["EnergySearch_DeckCheck"] = {"source_symbol": "EnergySearch_DeckCheck", "before": "count.a == DECK_SIZE", "after": "count.a != DECK_SIZE", "case_ids": ["EnergySearch_DeckCheck-0", "EnergySearch_DeckCheck-1"]}
@@ -6786,10 +6786,10 @@ MUTATIONS["Ember_DiscardEffect"] = {"source_symbol": "Ember_DiscardEffect", "bef
 MUTATIONS["FireBlast_DiscardEffect"] = {"source_symbol": "FireBlast_DiscardEffect", "before": "PutCardInDiscardPile(hTemp_ffa0);", "after": "PutCardInDiscardPile(0u);", "case_ids": ["FireBlast_DiscardEffect-0", "FireBlast_DiscardEffect-1"]}
 # <<< factory-mutation FireBlast_DiscardEffect
 # >>> factory-mutation FireSpin_AISelectEffect
-MUTATIONS["FireSpin_AISelectEffect"] = {"source_symbol": "FireSpin_AISelectEffect", "before": "wDuelTempList_ADDR", "after": "(uint16_t)(wDuelTempList_ADDR + 1u)", "case_ids": ["FireSpin_AISelectEffect-0", "FireSpin_AISelectEffect-1"]}
+MUTATIONS["FireSpin_AISelectEffect"] = {"source_symbol": "FireSpin_AISelectEffect", "before": "\tgb_write8(hTempList_ADDR, gb_read8(wDuelTempList_ADDR", "after": "\tgb_write8(hTempList_ADDR, gb_read8((uint16_t)(wDuelTempList_ADDR + 1u)", "case_ids": ["FireSpin_AISelectEffect-0", "FireSpin_AISelectEffect-1"]}
 # <<< factory-mutation FireSpin_AISelectEffect
 # >>> factory-mutation FireSpin_DiscardEffect
-MUTATIONS["FireSpin_DiscardEffect"] = {"source_symbol": "FireSpin_DiscardEffect", "before": "hTempList_ADDR", "after": "(uint16_t)(hTempList_ADDR + 1u)", "case_ids": ["FireSpin_DiscardEffect-0", "FireSpin_DiscardEffect-1"]}
+MUTATIONS["FireSpin_DiscardEffect"] = {"source_symbol": "FireSpin_DiscardEffect", "before": "\tPutCardInDiscardPile(gb_read8(hTempList_ADDR", "after": "\tPutCardInDiscardPile(gb_read8((uint16_t)(hTempList_ADDR + 1u)", "case_ids": ["FireSpin_DiscardEffect-0", "FireSpin_DiscardEffect-1"]}
 # <<< factory-mutation FireSpin_DiscardEffect
 # Keep schema-2 inventory after appended routine cases.
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)# >>> factory-mutation PidgeottoMirrorMove_InitialEffect1

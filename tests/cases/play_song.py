@@ -38,8 +38,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "ScriptPlaySong": {
         "source_symbol": "ScriptPlaySong",
-        "before": "\tPlaySong(a);",
-        "after": "\tPlaySong((uint8_t)(a + 1u));",
+        "before": "{\n\tPlaySong(a);",
+        "after": "{\n\tPlaySong((uint8_t)(a + 1u));",
         "case_ids": ["ScriptPlaySong-0", "ScriptPlaySong-1", "ScriptPlaySong-2", "ScriptPlaySong-3"],
     },
 }

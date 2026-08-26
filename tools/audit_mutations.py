@@ -10,6 +10,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
+
+from run_mutation import resolve_anchor  # noqa: E402  (shared anchor rule)
 
 
 def load(path: Path):
@@ -52,8 +55,15 @@ def main() -> int:
                 continue
             source_path = ROOT / source_value
             source = source_path.read_text() if source_path.is_file() else ""
-            if source.count(before) < 1:
-                print(f"MUTATION anchor {case_path}:{fn} occurrences={source.count(before)}")
+            # This used to accept `count < 1`, i.e. it only caught a MISSING
+            # anchor and silently tolerated an AMBIGUOUS one -- while
+            # run_mutation refuses to run an ambiguous anchor at all. That
+            # disagreement let 184 of 1837 canaries protect nothing while the
+            # release gate stayed green. Audit and runner now share one rule.
+            try:
+                resolve_anchor(source, mutation["source_symbol"], before)
+            except SystemExit as exc:
+                print(f"MUTATION anchor {case_path}:{fn} {exc}")
                 failures += 1
             if not isinstance(mutation["case_ids"], list) or not mutation["case_ids"]:
                 print(f"MUTATION cases {case_path}:{fn}")

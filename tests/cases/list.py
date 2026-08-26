@@ -46,8 +46,8 @@ SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "SetListPointer": {
         "source_symbol": "SetListPointer",
-        "before": "gb_write8(wListPointer_ADDR, (uint8_t)de);",
-        "after": "gb_write8(wListPointer_ADDR, (uint8_t)(de ^ 0xFF));",
+        "before": "{\n\tgb_write8(wListPointer_ADDR, (uint8_t)de);",
+        "after": "{\n\tgb_write8(wListPointer_ADDR, (uint8_t)(de ^ 0xFF));",
         "case_ids": ["SetListPointer-0", "SetListPointer-1", "SetListPointer-2", "SetListPointer-3"],
     },
 }

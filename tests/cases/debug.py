@@ -139,8 +139,8 @@ MUTATIONS = {
     },
     "DebugQuit": {
         "source_symbol": "DebugQuit",
-        "before": "a == 0",
-        "after": "a != 0",
+        "before": "\treturn (DebugQuitResult){a, (uint8_t)(a == 0",
+        "after": "\treturn (DebugQuitResult){a, (uint8_t)(a != 0",
         "case_ids": ["DebugQuit-0", "DebugQuit-1", "DebugQuit-2"],
     },
 }

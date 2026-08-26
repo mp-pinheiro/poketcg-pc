@@ -52,11 +52,17 @@ def resolve_anchor(source: str, source_symbol: str, before: str) -> tuple[int, i
     if open_marker in source:
         start = source.index(open_marker)
         end = source.index(close_marker, start) if close_marker in source[start:] else len(source)
+        if source.count(before, start, end) == 0:
+            # Some mutations legitimately target a static helper or a table row
+            # that sits outside the routine's own marker block. Fall back to the
+            # whole file for those, where the anchor must still be unique.
+            start, end = 0, len(source)
     found = source.count(before, start, end)
     if found != 1:
+        scope = "block" if (start, end) != (0, len(source)) else "file"
         raise SystemExit(
-            f"mutation anchor is not unique: {found} occurrences of the anchor "
-            f"for {source_symbol} in the searched region")
+            f"mutation anchor is not unique: {found} occurrences for "
+            f"{source_symbol} in the searched {scope}")
     return start, end
 
 
@@ -129,7 +135,13 @@ def main() -> int:
 
     result = None
     try:
-        source_path.write_text(original.replace(mutation["before"], mutation["after"], 1))
+        # Substitute inside the resolved region only. A file-wide replace would
+        # hit the first occurrence, which can belong to a sibling routine.
+        start, end = region
+        mutated = (original[:start]
+                   + original[start:end].replace(mutation["before"], mutation["after"], 1)
+                   + original[end:])
+        source_path.write_text(mutated)
         rebuild()
         result = compare()
     finally:
