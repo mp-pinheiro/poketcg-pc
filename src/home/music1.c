@@ -506,6 +506,10 @@ static void pnn_note(uint16_t *hl, uint8_t note, uint8_t ch)
 	uint8_t duration, instrument, speed, cutoff, oct, operand, lo, hi;
 	uint16_t addr;
 
+	/* OctaveOffsets/Pitches/NoiseInstruments live in the same bank as this
+	 * code, so the asm reads them with no switch; the port must say so. */
+	g_rom_bank = MUSIC1_BANK;
+
 	instrument = note & 0xF0u;
 	operand = gb_read8(*hl);
 
