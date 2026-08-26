@@ -188,4 +188,8 @@ typedef struct {
 } HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult;
 HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl);
 /* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+/* >>> factory HandleSandAttackOrSmokescreenSubstatus */
+typedef struct { uint8_t a; uint8_t f; uint16_t de; uint16_t hl; } HandleSandAttackOrSmokescreenSubstatusResult;
+HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl);
+/* <<< factory HandleSandAttackOrSmokescreenSubstatus */
 #endif

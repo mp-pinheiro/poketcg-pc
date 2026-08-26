@@ -57,6 +57,12 @@
 #include "home/coin_toss.h"
 #include "home/substatus.h"
 #define POKEMON_POWER 0x04u
+
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/menus.h"
+#include "home/substatus.h"
+#define AttackUnsuccessfulText 0x00fdu
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -771,3 +777,18 @@ HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionO
 	return (HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult){f, damage, hl};
 }
 /* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+
+/* >>> factory HandleSandAttackOrSmokescreenSubstatus */
+HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl)
+{
+	SandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus(de);
+	if ((check.f & 0x10u) == 0u)
+		return (HandleSandAttackOrSmokescreenSubstatusResult){check.a, check.f, check.de, check.hl};
+	TossCoinRoutineResult toss = TossCoin(check.de, check.hl);
+	wGotHeadsFromSandAttackOrSmokescreenCheck = toss.a;
+	if ((toss.f & 0x10u) != 0u)
+		return (HandleSandAttackOrSmokescreenSubstatusResult){toss.a, (uint8_t)(toss.f & 0x80u), check.de, toss.hl};
+	WaitResult wait = DrawWideTextBox_WaitForInput(AttackUnsuccessfulText);
+	return (HandleSandAttackOrSmokescreenSubstatusResult){0u, (uint8_t)((wait.f & 0x80u) | 0x10u), AttackUnsuccessfulText, AttackUnsuccessfulText};
+}
+/* <<< factory HandleSandAttackOrSmokescreenSubstatus */

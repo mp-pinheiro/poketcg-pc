@@ -480,6 +480,10 @@ POKEMON_POWER = 0x04
 HAUNTER_LV17 = 0x96
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hWhoseTurn = 0xFF97
+ARENA_SUBSTATUS2 = 0xC2E8
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -546,6 +550,16 @@ CASES["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = [
 ]
 # <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects
 
+# >>> factory HandleSandAttackOrSmokescreenSubstatus
+CONTRACT["HandleSandAttackOrSmokescreenSubstatus"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["HandleSandAttackOrSmokescreenSubstatus"] = [
+    {"d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
+    {"d": 0xAB, "e": 0xCD, "hl": 0x0000, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
+    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x80, "e": 0x01, "hl": 0xC000, "wram": {hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", ARENA_SUBSTATUS2: b"\x00"}),
+]
+# <<< factory HandleSandAttackOrSmokescreenSubstatus
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -575,3 +589,6 @@ MUTATIONS["HandleTransparency"] = {"source_symbol": "HandleTransparency", "befor
 # >>> factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects
 MUTATIONS["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = {"source_symbol": "HandleDamageReductionOrNoDamageFromPkmnPowerEffects", "before": "HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)\n{\n\tuint8_t category = wLoadedAttackCategory;", "after": "HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)\n{\n\tuint8_t category = 0u;", "case_ids": ["HandleDamageReductionOrNoDamageFromPkmnPowerEffects-0", "HandleDamageReductionOrNoDamageFromPkmnPowerEffects-1", "HandleDamageReductionOrNoDamageFromPkmnPowerEffects-2"]}
 # <<< factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects
+# >>> factory-mutation HandleSandAttackOrSmokescreenSubstatus
+MUTATIONS["HandleSandAttackOrSmokescreenSubstatus"] = {"source_symbol": "HandleSandAttackOrSmokescreenSubstatus", "before": "HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl)\n{\n\tSandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus(de);", "after": "HandleSandAttackOrSmokescreenSubstatusResult HandleSandAttackOrSmokescreenSubstatus(uint16_t de, uint16_t hl)\n{\n\tSandAttackCheckResult check = CheckSandAttackOrSmokescreenSubstatus(0u);", "case_ids": ["HandleSandAttackOrSmokescreenSubstatus-0", "HandleSandAttackOrSmokescreenSubstatus-1", "HandleSandAttackOrSmokescreenSubstatus-2", "HandleSandAttackOrSmokescreenSubstatus-3"]}
+# <<< factory-mutation HandleSandAttackOrSmokescreenSubstatus

@@ -228,6 +228,18 @@ static void adapt_HandleDamageReductionOrNoDamageFromPkmnPowerEffects(ProbeState
 }
 /* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
 
+/* >>> factory HandleSandAttackOrSmokescreenSubstatus */
+static void adapt_HandleSandAttackOrSmokescreenSubstatus(ProbeState *s)
+{
+	HandleSandAttackOrSmokescreenSubstatusResult result = HandleSandAttackOrSmokescreenSubstatus((uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->d = (uint8_t)(result.de >> 8);
+	s->e = (uint8_t)result.de;
+	s->hl = result.hl;
+}
+/* <<< factory HandleSandAttackOrSmokescreenSubstatus */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -259,5 +271,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "HandleNShieldAndTransparency", adapt_HandleNShieldAndTransparency },
 	{ "HandleTransparency", adapt_HandleTransparency },
 	{ "HandleDamageReductionOrNoDamageFromPkmnPowerEffects", adapt_HandleDamageReductionOrNoDamageFromPkmnPowerEffects },
+	{ "HandleSandAttackOrSmokescreenSubstatus", adapt_HandleSandAttackOrSmokescreenSubstatus },
 	{ NULL, NULL },
 };
