@@ -854,6 +854,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define OPPACTION_TOSS_COIN_A_TIMES 0x11u
 
 #include "home/coin_toss.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/substatus.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7251,3 +7256,16 @@ SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint
 	return Serial_TossCoinATimes(a, f, b, c, d, e, hl);
 }
 /* <<< factory Serial_TossCoin */
+
+/* >>> factory NinetalesLure_SwitchEffect */
+void NinetalesLure_SwitchEffect(void)
+{
+	SwapTurn();
+	uint8_t e = hTemp_ffa0;
+	HandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);
+	if (!(shield.f & 0x10u))
+		(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory NinetalesLure_SwitchEffect */

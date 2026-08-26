@@ -2622,6 +2622,9 @@ hTempPlayAreaLocation_ffa1 = 0xFFA1
 wDealtDamage = 0xCCBF
 wDuelDisplayedScreen = 0xCAC2
 wNoDamageOrEffect = 0xCCC7
+
+hTemp_ffa0 = 0xFFA0
+wDuelDisplayedScreen = 0xCAC2
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4871,6 +4874,15 @@ CASES["Serial_TossCoin"] = [
                 {"fn": "SetupText", "d": 0x20, "e": 0x40}],
          instruction_budget=20000000, cycle_budget=80000000)]
 # <<< factory Serial_TossCoin
+
+# >>> factory NinetalesLure_SwitchEffect
+CONTRACT["NinetalesLure_SwitchEffect"] = {"compare": (), "preserve": ()}
+CASES["NinetalesLure_SwitchEffect"] = [
+    {"wram": {hTemp_ffa0: b"\x00", wDuelDisplayedScreen: b"\xFF"}},
+    {"wram": {hTemp_ffa0: b"\x01", wDuelDisplayedScreen: b"\xFF"}},
+    dict(POISON, wram={hTemp_ffa0: b"\x02", wDuelDisplayedScreen: b"\xFF"}),
+]
+# <<< factory NinetalesLure_SwitchEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -7270,3 +7282,6 @@ MUTATIONS["Serial_TossZeroCoins"] = {"source_symbol": "Serial_TossZeroCoins", "b
 # >>> factory-mutation Serial_TossCoin
 MUTATIONS["Serial_TossCoin"] = {"source_symbol": "Serial_TossCoin", "before": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0u;", "case_ids": ["Serial_TossCoin-0", "Serial_TossCoin-1", "Serial_TossCoin-2"]}
 # <<< factory-mutation Serial_TossCoin
+# >>> factory-mutation NinetalesLure_SwitchEffect
+MUTATIONS["NinetalesLure_SwitchEffect"] = {"source_symbol": "NinetalesLure_SwitchEffect", "before": "NinetalesLure_SwitchEffect(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 0u;", "after": "NinetalesLure_SwitchEffect(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["NinetalesLure_SwitchEffect-0", "NinetalesLure_SwitchEffect-1"]}
+# <<< factory-mutation NinetalesLure_SwitchEffect

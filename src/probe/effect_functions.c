@@ -3691,6 +3691,14 @@ static void adapt_Serial_TossCoin(ProbeState *s)
 }
 /* <<< factory Serial_TossCoin */
 
+/* >>> factory NinetalesLure_SwitchEffect */
+static void adapt_NinetalesLure_SwitchEffect(ProbeState *s)
+{
+	(void)s;
+	NinetalesLure_SwitchEffect();
+}
+/* <<< factory NinetalesLure_SwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4139,5 +4147,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TossCoinATimes_BankB", adapt_TossCoinATimes_BankB },
 	{ "Serial_TossZeroCoins", adapt_Serial_TossZeroCoins },
 	{ "Serial_TossCoin", adapt_Serial_TossCoin },
+	{ "NinetalesLure_SwitchEffect", adapt_NinetalesLure_SwitchEffect },
 	{ NULL, NULL },
 };
