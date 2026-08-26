@@ -35,6 +35,9 @@ void RefreshMenuCursor(void);
 void DrawCardSymbol(uint8_t d, uint8_t e);
 uint16_t DrawNarrowTextBox(void);
 uint16_t DrawWideTextBox(void);
+/* >>> factory DrawTextBox_PrintTextNoDelay */
+TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl);
+/* <<< factory DrawTextBox_PrintTextNoDelay */
 TextResult DrawNarrowTextBox_PrintTextNoDelay(uint16_t hl);
 TextResult DrawWideTextBox_PrintTextNoDelay(uint16_t hl);
 TextResult DrawWideTextBox_PrintText(uint16_t hl);

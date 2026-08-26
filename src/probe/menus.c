@@ -112,6 +112,15 @@ static void adapt_DrawNarrowTextBox_PrintTextNoDelay(ProbeState *s)
 	s->hl = DrawNarrowTextBox_PrintTextNoDelay(s->hl).hl;
 }
 
+/* >>> factory DrawTextBox_PrintTextNoDelay */
+/* `a` is the box width the callers load; the caller-pushed hl is the case's
+ * stack[0], which the asm's `pop hl` consumes. */
+static void adapt_DrawTextBox_PrintTextNoDelay(ProbeState *s)
+{
+	s->hl = DrawTextBox_PrintTextNoDelay(s->a, s->stack[0]).hl;
+}
+/* <<< factory DrawTextBox_PrintTextNoDelay */
+
 static void adapt_DrawWideTextBox_PrintTextNoDelay(ProbeState *s)
 {
 	s->hl = DrawWideTextBox_PrintTextNoDelay(s->hl).hl;

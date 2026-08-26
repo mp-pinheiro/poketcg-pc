@@ -280,12 +280,12 @@ uint16_t DrawWideTextBox(void)
 	return hl;
 }
 
-/* menus.asm:775-784 is only ever reached by fallthrough from the two callers
- * below, both of which `push hl` first; a synthesized direct call has no such
- * value on the stack, so `pop hl` there grabs the return address and the
- * routine never reaches the oracle's sentinel (times out at MAX_FRAMES). Not
- * independently oracle-testable -- exercised transitively through both callers. */
-static TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)
+/* >>> factory DrawTextBox_PrintTextNoDelay */
+/* menus.asm:775-784. Reached by fallthrough from the two callers below, both of
+ * which `push hl` first, so the `pop hl` consumes a caller-pushed value rather
+ * than the return address. A probed call models that with the case's `stack`
+ * field, exactly as the music command handlers do for their stream pointer. */
+TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)
 {
 	uint8_t d = 1, e = 14;
 
