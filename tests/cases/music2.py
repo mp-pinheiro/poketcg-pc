@@ -874,6 +874,86 @@ CASES["Music2_echo"] = [
 ]
 # <<< factory Music2_echo
 
+# >>> factory Music2_vibrato_type
+CONTRACT["Music2_vibrato_type"] = {"compare": (), "preserve": ()}
+CASES["Music2_vibrato_type"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"},
+     "read": {0xDDD3: 1, 0xDDD7: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"},
+     "read": {0xDDD3: 1, 0xDDD7: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"},
+     "read": {0xDDD6: 1, 0xDDDA: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDD4: 1, 0xDDD8: 1}),
+]
+# <<< factory Music2_vibrato_type
+
+# >>> factory Music2_vibrato_delay
+CONTRACT["Music2_vibrato_delay"] = {"compare": (), "preserve": ()}
+CASES["Music2_vibrato_delay"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDDF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDDF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDE2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDE0: 1}),
+]
+# <<< factory Music2_vibrato_delay
+
+# >>> factory Music2_pitch_offset
+CONTRACT["Music2_pitch_offset"] = {"compare": (), "preserve": ()}
+CASES["Music2_pitch_offset"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF", 0xDDCB: b"\x00"},
+     "read": {0xDDCB: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDDCB: b"\xAA"},
+     "read": {0xDDCB: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF", 0xDDCE: b"\x00"},
+     "read": {0xDDCE: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF", 0xDDCC: b"\x11"},
+         read={0xDDCC: 1}),
+]
+# <<< factory Music2_pitch_offset
+
+# >>> factory Music2_adjust_pitch_offset
+CONTRACT["Music2_adjust_pitch_offset"] = {"compare": (), "preserve": ()}
+CASES["Music2_adjust_pitch_offset"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x05\xFF", 0xDDCB: b"\x10"},
+     "read": {0xDDCB: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x02\xFF", 0xDDCB: b"\xFF"},
+     "read": {0xDDCB: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDDCE: b"\x7F"},
+     "read": {0xDDCE: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x11\xFF", 0xDDCC: b"\x22"},
+         read={0xDDCC: 1}),
+]
+# <<< factory Music2_adjust_pitch_offset
+
+# >>> factory Music2_end
+CONTRACT["Music2_end"] = {"compare": (), "preserve": ()}
+CASES["Music2_end"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xDD8D: b"\x01"}, "read": {0xDD8D: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xDD90: b"\xFF"}, "read": {0xDD90: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xDD8E: b"\x7F"},
+         read={0xDD8E: 1}),
+]
+# <<< factory Music2_end
+
+# >>> factory Music2_octave
+# The octave value comes from the command byte in `a` ($D1-$D6), not the stream.
+CONTRACT["Music2_octave"] = {"compare": (), "preserve": ()}
+CASES["Music2_octave"] = [
+    {"a": 0xD1, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDAF: 1}},
+    {"a": 0xD6, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDAF: 1}},
+    {"a": 0xD3, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDB1: 1}},
+    {"a": 0xD1, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDB1: 1}},
+    dict(POISON, a=0xD4, b=0, c=3, stack=[0xC100], wram={0xC100: b"\xFF"},
+         read={0xDDB2: 1}),
+]
+# <<< factory Music2_octave
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -971,3 +1051,21 @@ MUTATIONS["Music2_cutoff"] = {"source_symbol": "Music2_cutoff", "before": "\tgb_
 # >>> factory-mutation Music2_echo
 MUTATIONS["Music2_echo"] = {"source_symbol": "Music2_echo", "before": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_echo-0", "Music2_echo-2"]}
 # <<< factory-mutation Music2_echo
+# >>> factory-mutation Music2_vibrato_type
+MUTATIONS["Music2_vibrato_type"] = {"source_symbol": "Music2_vibrato_type", "before": "\tgb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_vibrato_type-0", "Music2_vibrato_type-2"]}
+# <<< factory-mutation Music2_vibrato_type
+# >>> factory-mutation Music2_vibrato_delay
+MUTATIONS["Music2_vibrato_delay"] = {"source_symbol": "Music2_vibrato_delay", "before": "\tgb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_vibrato_delay-0", "Music2_vibrato_delay-2"]}
+# <<< factory-mutation Music2_vibrato_delay
+# >>> factory-mutation Music2_pitch_offset
+MUTATIONS["Music2_pitch_offset"] = {"source_symbol": "Music2_pitch_offset", "before": "\tgb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_pitch_offset-0", "Music2_pitch_offset-2"]}
+# <<< factory-mutation Music2_pitch_offset
+# >>> factory-mutation Music2_adjust_pitch_offset
+MUTATIONS["Music2_adjust_pitch_offset"] = {"source_symbol": "Music2_adjust_pitch_offset", "before": "\tgb_write8(addr, (uint8_t)(value + gb_read8(addr)));", "after": "\tgb_write8(addr, value);", "case_ids": ["Music2_adjust_pitch_offset-0", "Music2_adjust_pitch_offset-1"]}
+# <<< factory-mutation Music2_adjust_pitch_offset
+# >>> factory-mutation Music2_end
+MUTATIONS["Music2_end"] = {"source_symbol": "Music2_end", "before": "\tgb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x00u);", "after": "\tgb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x01u);", "case_ids": ["Music2_end-0", "Music2_end-1"]}
+# <<< factory-mutation Music2_end
+# >>> factory-mutation Music2_octave
+MUTATIONS["Music2_octave"] = {"source_symbol": "Music2_octave", "before": "\tif (ch == 2u)", "after": "\tif (ch == 3u)", "case_ids": ["Music2_octave-2", "Music2_octave-3"]}
+# <<< factory-mutation Music2_octave

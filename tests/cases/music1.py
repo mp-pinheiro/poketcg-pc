@@ -929,6 +929,23 @@ CASES["Music1_EndLoop"] = [
 ]
 # <<< factory Music1_EndLoop
 
+# >>> factory Music1_octave
+# The octave value comes from the command byte in `a` ($D1-$D6), not the stream.
+CONTRACT["Music1_octave"] = {"compare": (), "preserve": ()}
+CASES["Music1_octave"] = [
+    {"a": 0xD1, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDAF: 1}},
+    {"a": 0xD6, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDAF: 1}},
+    {"a": 0xD3, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDB1: 1}},
+    {"a": 0xD1, "c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF"},
+     "read": {0xDDB1: 1}},
+    dict(POISON, a=0xD4, b=0, c=3, stack=[0xC100], wram={0xC100: b"\xFF"},
+         read={0xDDB2: 1}),
+]
+# <<< factory Music1_octave
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1036,3 +1053,6 @@ MUTATIONS["Music1_f4015"] = {"source_symbol": "Music1_f4015", "before": "\tMusic
 # >>> factory-mutation Music1_EndLoop
 MUTATIONS["Music1_EndLoop"] = {"source_symbol": "Music1_EndLoop", "before": "\t\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 3u));", "after": "\t\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "case_ids": ["Music1_EndLoop-0", "Music1_EndLoop-1"]}
 # <<< factory-mutation Music1_EndLoop
+# >>> factory-mutation Music1_octave
+MUTATIONS["Music1_octave"] = {"source_symbol": "Music1_octave", "before": "\tif (ch == 2u)", "after": "\tif (ch == 3u)", "case_ids": ["Music1_octave-2", "Music1_octave-3"]}
+# <<< factory-mutation Music1_octave
