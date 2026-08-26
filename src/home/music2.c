@@ -668,12 +668,81 @@ void Music2_MainLoop(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(addr + 1u), (uint8_t)(target >> 8u));
 	Music2_PlayNextNote(&hl, ch);
 }
-void Music2_EndMainLoop(uint16_t *hl, uint8_t ch)   { Music2_PlayNextNote(hl, ch); }
-void Music2_Loop(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
-void Music2_EndLoop(uint16_t *hl, uint8_t ch)       { Music2_PlayNextNote(hl, ch); }
-void Music2_jp(uint16_t *hl, uint8_t ch)            { Music2_PlayNextNote(hl, ch); }
-void Music2_call(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
-void Music2_ret(uint16_t *hl, uint8_t ch)           { Music2_PlayNextNote(hl, ch); }
+/* music2.asm:922-930. Discards the popped stream and resumes at the recorded
+ * loop start, so the continuation address is its only observable. */
+void Music2_EndMainLoop(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	uint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);
+	uint16_t hl = (uint16_t)(gb_read8(addr)
+		| ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:932-947. Pushes a 3-byte frame - continuation address then loop
+ * count - onto this channel's stack and advances the stack pointer. */
+void Music2_Loop(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t count = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	uint16_t sp = Music2_GetChannelStackPointer(ch);
+	gb_write8(sp, (uint8_t)hl);
+	gb_write8((uint16_t)(sp + 1u), (uint8_t)(hl >> 8u));
+	gb_write8((uint16_t)(sp + 2u), count);
+	Music2_SetChannelStackPointer(ch, (uint16_t)(sp + 3u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:949-967. Decrements the count at sp-1: still nonzero jumps back to
+ * the address at sp-3/sp-2 with the count written back; reaching zero pops the
+ * 3-byte frame and falls through. The exhausted path deliberately does not
+ * write the decremented count back. */
+void Music2_EndLoop(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t sp = Music2_GetChannelStackPointer(ch);
+	uint8_t count = (uint8_t)(gb_read8((uint16_t)(sp - 1u)) - 1u);
+	uint16_t hl;
+	if (count != 0u) {
+		gb_write8((uint16_t)(sp - 1u), count);
+		hl = (uint16_t)(gb_read8((uint16_t)(sp - 3u))
+			| ((uint16_t)gb_read8((uint16_t)(sp - 2u)) << 8u));
+	} else {
+		Music2_SetChannelStackPointer(ch, (uint16_t)(sp - 3u));
+		hl = caller_stream;
+	}
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:969-974. Reads a little-endian target from the stream and resumes
+ * there; the jump is its only observable. */
+void Music2_jp(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = (uint16_t)(gb_read8(caller_stream)
+		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:976-992. Stores the popped stream pointer itself (which addresses
+ * the 2-byte target) as the return address, advances the stack pointer by 2,
+ * and resumes at the target. Music2_ret adds the 2 back. */
+void Music2_call(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t sp = Music2_GetChannelStackPointer(ch);
+	gb_write8(sp, (uint8_t)caller_stream);
+	gb_write8((uint16_t)(sp + 1u), (uint8_t)(caller_stream >> 8u));
+	uint16_t hl = (uint16_t)(gb_read8(caller_stream)
+		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
+	Music2_SetChannelStackPointer(ch, (uint16_t)(sp + 2u));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:994-1005. Pops the return address, skips the call operand it
+ * addresses, and resumes there. */
+void Music2_ret(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	uint16_t sp = Music2_GetChannelStackPointer(ch);
+	uint16_t target = (uint16_t)(gb_read8((uint16_t)(sp - 2u))
+		| ((uint16_t)gb_read8((uint16_t)(sp - 1u)) << 8u));
+	uint16_t hl = (uint16_t)(target + 2u);
+	Music2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));
+	Music2_PlayNextNote(&hl, ch);
+}
 void Music2_frequency_offset(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }
 void Music2_duty(uint16_t *hl, uint8_t ch)          { Music2_PlayNextNote(hl, ch); }
 void Music2_volume(uint16_t *hl, uint8_t ch)        { Music2_PlayNextNote(hl, ch); }

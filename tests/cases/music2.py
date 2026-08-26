@@ -743,6 +743,70 @@ CASES["Music2_MainLoop"] = [
 ]
 # <<< factory Music2_MainLoop
 
+# >>> factory Music2_Loop
+CONTRACT["Music2_Loop"] = {"compare": (), "preserve": ()}
+CASES["Music2_Loop"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\x03\xFF", 0xDDF3: b"\x00\xC2"},
+     "read": {0xC200: 3, 0xDDF3: 2}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xC100: b"\x01\xFF", 0xDDF5: b"\x00\xC3"},
+     "read": {0xC300: 3, 0xDDF5: 2}},
+    dict(POISON, b=0, c=2, stack=[0xC100],
+         wram={0xC100: b"\xFF\xFF", 0xDDF7: b"\x10\xC2"},
+         read={0xC210: 3, 0xDDF7: 2}),
+]
+# <<< factory Music2_Loop
+
+# >>> factory Music2_EndLoop
+# Exhausted-path cases only: the taken branch's sole observable is where the
+# dispatcher resumes, and Music2_PlayNextNote's command mapping is defective
+# (see the note above Music1_PlayNextNote). Reaching zero pops the frame, which
+# is observable through the channel stack pointer without executing a command.
+CONTRACT["Music2_EndLoop"] = {"compare": (), "preserve": ()}
+CASES["Music2_EndLoop"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\xFF", 0xDDF3: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
+     "read": {0xDDF3: 2, 0xC202: 1}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xC100: b"\xFF", 0xDDF5: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
+     "read": {0xDDF5: 2, 0xC202: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC100],
+         wram={0xC100: b"\xFF", 0xDDF7: b"\x13\xC2", 0xC210: b"\x00\xC3\x01"},
+         read={0xDDF7: 2, 0xC212: 1}),
+]
+# <<< factory Music2_EndLoop
+
+# >>> factory Music2_call
+CONTRACT["Music2_call"] = {"compare": (), "preserve": ()}
+CASES["Music2_call"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF3: b"\x00\xC3"},
+     "read": {0xC300: 2, 0xDDF3: 2}},
+    {"c": 1, "stack": [0xC110],
+     "wram": {0xC110: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF5: b"\x20\xC3"},
+     "read": {0xC320: 2, 0xDDF5: 2}},
+    dict(POISON, b=0, c=3, stack=[0xC100],
+         wram={0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF9: b"\x40\xC3"},
+         read={0xC340: 2, 0xDDF9: 2}),
+]
+# <<< factory Music2_call
+
+# >>> factory Music2_ret
+CONTRACT["Music2_ret"] = {"compare": (), "preserve": ()}
+CASES["Music2_ret"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xDDF3: b"\x02\xC3", 0xC300: b"\x00\xC2", 0xC202: b"\xFF"},
+     "read": {0xDDF3: 2}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xDDF5: b"\x22\xC3", 0xC320: b"\x00\xC2", 0xC202: b"\xFF"},
+     "read": {0xDDF5: 2}},
+    dict(POISON, b=0, c=3, stack=[0xC100],
+         wram={0xDDF9: b"\x42\xC3", 0xC340: b"\x00\xC2", 0xC202: b"\xFF"},
+         read={0xDDF9: 2}),
+]
+# <<< factory Music2_ret
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -810,3 +874,15 @@ MUTATIONS["Music2_stereo_panning"] = {"source_symbol": "Music2_stereo_panning", 
 # >>> factory-mutation Music2_MainLoop
 MUTATIONS["Music2_MainLoop"] = {"source_symbol": "Music2_MainLoop", "before": "\tuint16_t target = (uint16_t)(caller_stream - 1u);", "after": "\tuint16_t target = (uint16_t)(caller_stream - 2u);", "case_ids": ["Music2_MainLoop-0", "Music2_MainLoop-1"]}
 # <<< factory-mutation Music2_MainLoop
+# >>> factory-mutation Music2_Loop
+MUTATIONS["Music2_Loop"] = {"source_symbol": "Music2_Loop", "before": "\tgb_write8((uint16_t)(sp + 2u), count);", "after": "\tgb_write8((uint16_t)(sp + 2u), (uint8_t)(count + 1u));", "case_ids": ["Music2_Loop-0", "Music2_Loop-1"]}
+# <<< factory-mutation Music2_Loop
+# >>> factory-mutation Music2_EndLoop
+MUTATIONS["Music2_EndLoop"] = {"source_symbol": "Music2_EndLoop", "before": "\t\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 3u));", "after": "\t\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "case_ids": ["Music2_EndLoop-0", "Music2_EndLoop-1"]}
+# <<< factory-mutation Music2_EndLoop
+# >>> factory-mutation Music2_call
+MUTATIONS["Music2_call"] = {"source_symbol": "Music2_call", "before": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp + 2u));", "after": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp + 3u));", "case_ids": ["Music2_call-0", "Music2_call-1"]}
+# <<< factory-mutation Music2_call
+# >>> factory-mutation Music2_ret
+MUTATIONS["Music2_ret"] = {"source_symbol": "Music2_ret", "before": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "after": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 1u));", "case_ids": ["Music2_ret-0", "Music2_ret-1"]}
+# <<< factory-mutation Music2_ret

@@ -101,22 +101,22 @@ static void adapt_Music2_MainLoop(ProbeState *s)
 { Music2_MainLoop(s->stack[0], s->c); }
 
 static void adapt_Music2_EndMainLoop(ProbeState *s)
-{ Music2_EndMainLoop(&s->hl, s->a); }
+{ Music2_EndMainLoop(s->stack[0], s->c); }
 
 static void adapt_Music2_Loop(ProbeState *s)
-{ Music2_Loop(&s->hl, s->a); }
+{ Music2_Loop(s->stack[0], s->c); }
 
 static void adapt_Music2_EndLoop(ProbeState *s)
-{ Music2_EndLoop(&s->hl, s->a); }
+{ Music2_EndLoop(s->stack[0], s->c); }
 
 static void adapt_Music2_jp(ProbeState *s)
-{ Music2_jp(&s->hl, s->a); }
+{ Music2_jp(s->stack[0], s->c); }
 
 static void adapt_Music2_call(ProbeState *s)
-{ Music2_call(&s->hl, s->a); }
+{ Music2_call(s->stack[0], s->c); }
 
 static void adapt_Music2_ret(ProbeState *s)
-{ Music2_ret(&s->hl, s->a); }
+{ Music2_ret(s->stack[0], s->c); }
 
 static void adapt_Music2_frequency_offset(ProbeState *s)
 { Music2_frequency_offset(&s->hl, s->a); }
