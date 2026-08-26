@@ -1574,3 +1574,10 @@ void Music1_f4015(void)
 	Music1_f4066();
 }
 /* <<< factory Music1_f4015 */
+
+/* >>> factory Music1_PlayNextNote_pop */
+void Music1_PlayNextNote_pop(uint16_t *hl, uint8_t ch)
+{
+	Music1_PlayNextNote(hl, ch);
+}
+/* <<< factory Music1_PlayNextNote_pop */
