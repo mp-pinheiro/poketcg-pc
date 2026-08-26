@@ -619,7 +619,16 @@ void Music1_jp(uint16_t *hl, uint8_t ch)            { Music1_PlayNextNote(hl, ch
 void Music1_call(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
 void Music1_ret(uint16_t *hl, uint8_t ch)           { Music1_PlayNextNote(hl, ch); }
 void Music1_frequency_offset(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }
-void Music1_duty(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
+/* music1.asm:1018-1028. Entered by `jp` from the command table with the stream
+ * pointer on the stack, so the operand is read through the popped pointer, not
+ * through hl; the advanced pointer reaches the dispatcher by tail call. */
+void Music1_duty(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = (uint8_t)(gb_read8(caller_stream) & 0xC0u);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicDuty1_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
 void Music1_volume(uint16_t *hl, uint8_t ch)        { Music1_PlayNextNote(hl, ch); }
 void Music1_wave(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
 void Music1_cutoff(uint16_t *hl, uint8_t ch)        { Music1_PlayNextNote(hl, ch); }

@@ -49,7 +49,7 @@ void Music1_jp(uint16_t *hl, uint8_t ch);
 void Music1_call(uint16_t *hl, uint8_t ch);
 void Music1_ret(uint16_t *hl, uint8_t ch);
 void Music1_frequency_offset(uint16_t *hl, uint8_t ch);
-void Music1_duty(uint16_t *hl, uint8_t ch);
+void Music1_duty(uint16_t caller_stream, uint8_t ch);
 void Music1_volume(uint16_t *hl, uint8_t ch);
 void Music1_wave(uint16_t *hl, uint8_t ch);
 void Music1_cutoff(uint16_t *hl, uint8_t ch);

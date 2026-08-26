@@ -122,7 +122,7 @@ static void adapt_Music1_frequency_offset(ProbeState *s)
 { Music1_frequency_offset(&s->hl, s->a); }
 
 static void adapt_Music1_duty(ProbeState *s)
-{ Music1_duty(&s->hl, s->a); }
+{ Music1_duty(s->stack[0], s->c); }
 
 static void adapt_Music1_volume(ProbeState *s)
 { Music1_volume(&s->hl, s->a); }

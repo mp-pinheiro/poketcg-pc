@@ -658,6 +658,17 @@ CASES["Music1_f4015"] = [
 ]
 # <<< factory Music1_f4015
 
+# >>> factory Music1_duty
+CONTRACT["Music1_duty"] = {"compare": (), "preserve": ()}
+CASES["Music1_duty"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDD86: 1}},
+    {"c": 1, "stack": [0xC100], "wram": {0xC100: b"\x3F\xFF"}, "read": {0xDD87: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x80\xFF"}, "read": {0xDD89: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC100], wram={0xC100: b"\xFF\xFF"},
+         read={0xDD88: 1}),
+]
+# <<< factory Music1_duty
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -681,6 +692,9 @@ MUTATIONS["Music1_f400c"] = {"source_symbol": "Music1_f400c", "before": "Music1_
 # >>> factory-mutation Music1_f4018
 MUTATIONS["Music1_f4018"] = {"source_symbol": "Music1_f4018", "before": "\tMusic1_f406f(a);", "after": "\tMusic1_f406f((uint8_t)(a ^ 1u));", "case_ids": ["Music1_f4018-0", "Music1_f4018-1", "Music1_f4018-2", "Music1_f4018-3"]}
 # <<< factory-mutation Music1_f4018
+# >>> factory-mutation Music1_duty
+MUTATIONS["Music1_duty"] = {"source_symbol": "Music1_duty", "before": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0xC0u);", "after": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0x3Fu);", "case_ids": ["Music1_duty-0", "Music1_duty-2"]}
+# <<< factory-mutation Music1_duty
 # >>> factory-mutation _AssertSFXFinished
 MUTATIONS["_AssertSFXFinished"] = {"source_symbol": "_AssertSFXFinished", "before": "return Music1_AssertSFXFinished();", "after": "return (uint8_t)(Music1_AssertSFXFinished() ^ 1u);", "case_ids": ["_AssertSFXFinished-0", "_AssertSFXFinished-1", "_AssertSFXFinished-2"]};
 # <<< factory-mutation _AssertSFXFinished
