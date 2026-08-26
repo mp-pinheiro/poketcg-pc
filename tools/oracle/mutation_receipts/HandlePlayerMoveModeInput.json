@@ -1,0 +1,9 @@
+{
+  "fn": "HandlePlayerMoveModeInput",
+  "case": "tests/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandlePlayerMoveModeInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54198\": \"ff\", \"65424\": \"0001\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandlePlayerMoveModeInput\", \"mismatches\": {\"bus\": {\"address\": 54198, \"reference\": \"ff0001\", \"native\": \"5a0001\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54198, 1], [65424, 2]]}}}\n",
+  "restored": "{\"fn\": \"HandlePlayerMoveModeInput\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54198\": \"ff\", \"65424\": \"0001\"}}, \"status\": \"PASS\"}\n"
+}

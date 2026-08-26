@@ -549,4 +549,11 @@ IncreaseScriptPointerResult ScriptCommand_PrintVariableNPCText(uint8_t b, uint8_
 /* >>> factory ScriptCommand_PrintVariableText */
 IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintVariableText */
+/* >>> factory ScriptCommand_GiftCenter */
+/* scripting.asm:1788. c on entry selects the arm; both arms tail-jump to
+ * IncreaseScriptPointerBy2, so the shared IncreaseScriptPointerResult (a, f, c)
+ * is the exit contract. b/d/e/hl are not reported: the c == 0 arm runs
+ * GiftCenterMenu, which does not carry them out. */
+IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c);
+/* <<< factory ScriptCommand_GiftCenter */
 #endif

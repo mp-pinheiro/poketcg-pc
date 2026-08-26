@@ -254,4 +254,7 @@ typedef struct {
 } FuncC6dcResult;
 FuncC6dcResult Func_c6dc(uint16_t saved_hl);
 /* <<< factory Func_c6dc */
+/* >>> factory HandlePlayerMoveModeInput */
+void HandlePlayerMoveModeInput(void);
+/* <<< factory HandlePlayerMoveModeInput */
 #endif /* POKETCG_HOME_OVERWORLD_H */

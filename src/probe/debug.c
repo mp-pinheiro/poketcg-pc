@@ -88,6 +88,15 @@ static void adapt_DebugCGBTest(ProbeState *s)
 }
 /* <<< factory DebugCGBTest */
 
+/* >>> factory DebugCreateBoosterPack */
+static void adapt_DebugCreateBoosterPack(ProbeState *s)
+{
+	(void)s;
+	DebugCreateBoosterPack();
+	s->f = 0x10u;
+}
+/* <<< factory DebugCreateBoosterPack */
+
 const ProbeEntry probe_entries_debug[] = {
 	{"DebugSGBFrame", adapt_DebugSGBFrame},
 	{"DebugStandardBGCharacter", adapt_DebugStandardBGCharacter},
@@ -97,5 +106,6 @@ const ProbeEntry probe_entries_debug[] = {
 	{ "Func_80c64", adapt_Func_80c64 },
 	{ "DebugVEffect", adapt_DebugVEffectOuter },
 	{ "DebugCGBTest", adapt_DebugCGBTest },
+	{ "DebugCreateBoosterPack", adapt_DebugCreateBoosterPack },
 	{NULL, NULL},
 };

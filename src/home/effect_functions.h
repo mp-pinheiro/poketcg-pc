@@ -1647,6 +1647,9 @@ void PokemonTrader_PlayerHandSelection(void);
 typedef struct { uint8_t a; uint8_t f; } EnergyRetrieval_PlayerDiscardPileSelectionResult;
 EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void);
 /* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
+/* >>> factory EnergyRetrieval_PlayerHandSelection */
+void EnergyRetrieval_PlayerHandSelection(void);
+/* <<< factory EnergyRetrieval_PlayerHandSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -252,6 +252,12 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 
 #include "generated/wram.h"
 #include "home/overworld.h"
+
+#include "home/scripting.h"
+#include "home/gift_center.h"
+#include "generated/wram.h"
+#define EVENT_GIFT_CENTER_MENU_CHOICE 0x72u
+#define GAME_EVENT_GIFT_CENTER 0x03u
 /* <<< factory statics */
 
 
@@ -1859,3 +1865,28 @@ IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c
 	return IncreaseScriptPointerBy5();
 }
 /* <<< factory ScriptCommand_PrintVariableText */
+
+/* >>> factory ScriptCommand_GiftCenter */
+/* scripting.asm:1788-1805. `ld a, c` / `or a` picks the arm. c == 0 shows the
+ * gift-center menu and feeds the returned choice to set_event_value
+ * EVENT_GIFT_CENTER_MENU_CHOICE (SetStackEventValue reads the db'd event byte
+ * and falls through to SetEventValue, which preserves bc and hl); any other c
+ * takes .load_gift_center, which stores GAME_EVENT_GIFT_CENTER in wGameEvent
+ * and ORs bit 6 into wOverworldTransition -- `set 6, [hl]` leaves the other
+ * flags alone. Both arms join at .done and tail-jump to
+ * IncreaseScriptPointerBy2, so its exit (a = the new wScriptPointer high byte,
+ * f = the adc flags, c = 2) is the whole contract; the menu arm additionally
+ * clobbers b, d, e and hl inside GiftCenterMenu, which is why they are not
+ * reported. */
+IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c)
+{
+	if (c == 0u) {
+		GiftCenterMenuResult menu = GiftCenterMenu();
+		(void)SetEventValue(EVENT_GIFT_CENTER_MENU_CHOICE, 0u, 0u, menu.a);
+	} else {
+		wGameEvent = GAME_EVENT_GIFT_CENTER;
+		wOverworldTransition |= 0x40u;
+	}
+	return IncreaseScriptPointerBy2();
+}
+/* <<< factory ScriptCommand_GiftCenter */

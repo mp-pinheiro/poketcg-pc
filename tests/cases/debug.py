@@ -121,6 +121,46 @@ CASES["DebugCGBTest"] = [
 ]
 # <<< factory DebugCGBTest
 
+# >>> factory-cases-statics
+DEBUG_CREATE_WLCDC = 0xCABB
+DEBUG_CREATE_RLCDC = 0xFF40
+DEBUG_CREATE_DPAD = 0xFF8F
+DEBUG_CREATE_KEYS = 0xFF91
+DEBUG_CREATE_MENU_ITEM = 0xCD10
+DEBUG_CREATE_SELECTION = 0xD41A
+DEBUG_CREATE_CUR_MENU = 0xFFB1
+# <<< factory-cases-statics
+
+# >>> factory DebugCreateBoosterPack
+CONTRACT["DebugCreateBoosterPack"] = {"compare": ("f",), "preserve": ()}
+CASES["DebugCreateBoosterPack"] = [
+    {"rom_bank": 0x04,
+     "wram": {DEBUG_CREATE_WLCDC: b"\x00", DEBUG_CREATE_RLCDC: b"\x00",
+               DEBUG_CREATE_DPAD: b"\x00", DEBUG_CREATE_KEYS: b"\x02",
+               DEBUG_CREATE_SELECTION: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {DEBUG_CREATE_MENU_ITEM: 1, DEBUG_CREATE_CUR_MENU: 1,
+               DEBUG_CREATE_SELECTION: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"rom_bank": 0x04,
+     "wram": {DEBUG_CREATE_WLCDC: b"\x00", DEBUG_CREATE_RLCDC: b"\x00",
+               DEBUG_CREATE_DPAD: b"\x00", DEBUG_CREATE_KEYS: b"\x02",
+               DEBUG_CREATE_SELECTION: b"\x02"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "read": {DEBUG_CREATE_MENU_ITEM: 1, DEBUG_CREATE_CUR_MENU: 1,
+               DEBUG_CREATE_SELECTION: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, rom_bank=0x04,
+         wram={DEBUG_CREATE_WLCDC: b"\x00", DEBUG_CREATE_RLCDC: b"\x00",
+               DEBUG_CREATE_DPAD: b"\x00", DEBUG_CREATE_KEYS: b"\x02",
+               DEBUG_CREATE_SELECTION: b"\x03"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={DEBUG_CREATE_MENU_ITEM: 1, DEBUG_CREATE_CUR_MENU: 1,
+               DEBUG_CREATE_SELECTION: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DebugCreateBoosterPack
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -186,3 +226,6 @@ MUTATIONS["DebugCGBTest"] = {
     "case_ids": ["DebugCGBTest-0", "DebugCGBTest-1"],
 }
 # <<< factory-mutation DebugCGBTest
+# >>> factory-mutation DebugCreateBoosterPack
+MUTATIONS["DebugCreateBoosterPack"] = {"source_symbol": "DebugCreateBoosterPack", "before": "\tuint8_t selected = wDebugBoosterSelection;", "after": "\tuint8_t selected = (uint8_t)(wDebugBoosterSelection + 1u);", "case_ids": ["DebugCreateBoosterPack-0", "DebugCreateBoosterPack-1", "DebugCreateBoosterPack-2"]}
+# <<< factory-mutation DebugCreateBoosterPack

@@ -830,6 +830,16 @@ CASES["Func_c6dc"] = [
 ]
 # <<< factory Func_c6dc
 
+# >>> factory HandlePlayerMoveModeInput
+CONTRACT["HandlePlayerMoveModeInput"] = {"compare": (), "preserve": ()}
+CASES["HandlePlayerMoveModeInput"] = [
+    {"wram": {0xFF90: b"\x00", 0xFF91: b"\x00"}},
+    {"wram": {0xFF90: b"\x00", 0xFF91: b"\x01", 0xD3B6: b"\x5A"}, "read": {0xD3B6: 1}},
+    dict(POISON, wram={0xFF90: b"\x00", 0xFF91: b"\x01", 0xD3B6: b"\x5A"}, read={0xD3B6: 1}),
+    {"wram": {0xFF90: b"\x10", 0xFF91: b"\x00"}, "read": {0xD335: 1}},
+]
+# <<< factory HandlePlayerMoveModeInput
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1144,3 +1154,6 @@ MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\
 # >>> factory-mutation Func_c6dc
 MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x03u);", "after": "FuncC6dcResult Func_c6dc(uint16_t saved_hl)\n{\n\tuint16_t movement_hl = 0xD335u;\n\twPlayerCurrentlyMoving = (uint8_t)(wPlayerCurrentlyMoving & (uint8_t)~0x01u);", "case_ids": ["Func_c6dc-0", "Func_c6dc-1", "Func_c6dc-3", "Func_c6dc-4"]}
 # <<< factory-mutation Func_c6dc
+# >>> factory-mutation HandlePlayerMoveModeInput
+MUTATIONS["HandlePlayerMoveModeInput"] = {"source_symbol": "HandlePlayerMoveModeInput", "before": "\tif ((hKeysPressed & PAD_A) != 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "after": "\tif ((hKeysPressed & PAD_A) == 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "case_ids": ["HandlePlayerMoveModeInput-1", "HandlePlayerMoveModeInput-2"]}
+# <<< factory-mutation HandlePlayerMoveModeInput

@@ -5393,6 +5393,14 @@ CASES["EnergyRetrieval_PlayerDiscardPileSelection"] = [
 ]
 # <<< factory EnergyRetrieval_PlayerDiscardPileSelection
 
+# >>> factory EnergyRetrieval_PlayerHandSelection
+CONTRACT["EnergyRetrieval_PlayerHandSelection"] = {"compare": (), "preserve": ()}
+CASES["EnergyRetrieval_PlayerHandSelection"] = [
+    {"keys": [0x00, 0x02], "wram": {0xC2EE: b"\x02", 0xC242: b"\x00", 0xC243: b"\x01", 0xC510: b"\xFF", 0xCABB: b"\x00", 0xFF91: b"\x02", 0xFF98: b"\x00", 0xFF9F: b"\x00", 0xFFA0: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xC2EE: b"\x02", 0xC242: b"\x00", 0xC243: b"\x01", 0xC510: b"\xFF", 0xCABB: b"\x00", 0xFF91: b"\x02", 0xFF98: b"\x00", 0xFF9F: b"\x00", 0xFFA0: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory EnergyRetrieval_PlayerHandSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7899,3 +7907,6 @@ MUTATIONS["PokemonTrader_PlayerHandSelection"] = {"source_symbol": "PokemonTrade
 # >>> factory-mutation EnergyRetrieval_PlayerDiscardPileSelection
 MUTATIONS["EnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol": "EnergyRetrieval_PlayerDiscardPileSelection", "before": "EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)\n{\n\thCurSelectionItem = 1u;", "after": "EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPileSelection(void)\n{\n\thCurSelectionItem = 2u;", "case_ids": ["EnergyRetrieval_PlayerDiscardPileSelection-0", "EnergyRetrieval_PlayerDiscardPileSelection-1"]}
 # <<< factory-mutation EnergyRetrieval_PlayerDiscardPileSelection
+# >>> factory-mutation EnergyRetrieval_PlayerHandSelection
+MUTATIONS["EnergyRetrieval_PlayerHandSelection"] = {"source_symbol": "EnergyRetrieval_PlayerHandSelection", "before": "\thTempList = hTempCardIndex_ff98;", "after": "\thTempList = (uint8_t)(hTempCardIndex_ff98 + 1u);", "case_ids": ["EnergyRetrieval_PlayerHandSelection-0"]}
+# <<< factory-mutation EnergyRetrieval_PlayerHandSelection

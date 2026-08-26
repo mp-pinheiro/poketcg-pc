@@ -19,6 +19,26 @@
 #define FUNC_80C64_USE_DUELISTS_DECK_TEXT 0x0386u
 
 #include "home/debug_sprites.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/booster_packs.h"
+#include "home/common.h"
+#include "home/lcd_enable_frame.h"
+#include "home/labels.h"
+#include "home/menus.h"
+#include "mem.h"
+
+#define DEBUG_CREATE_BOOSTER_BANK 0x04u
+#define DEBUG_CREATE_BOOSTER_MENU_PARAMS 0x6919u
+#define DEBUG_CREATE_BOOSTER_MENU_POINTERS 0x67F1u
+#define DEBUG_CREATE_BOOSTER_TYPES 0x67FBu
+
+#define BOOSTER_COLOSSEUM_NEUTRAL 0x00u
+#define BOOSTER_EVOLUTION_NEUTRAL 0x07u
+#define BOOSTER_MYSTERY_NEUTRAL 0x0Eu
+#define BOOSTER_LABORATORY_NEUTRAL 0x14u
+#define BOOSTER_ENERGY_LIGHTNING_FIRE 0x19u
 /* <<< factory statics */
 
 DebugSGBFrameResult DebugSGBFrame(uint8_t b, uint8_t c, uint8_t d,
@@ -158,3 +178,50 @@ DebugCGBTestResult DebugCGBTest(uint8_t a, uint8_t f, uint8_t b,
 	return (DebugCGBTestResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory DebugCGBTest */
+
+/* >>> factory DebugCreateBoosterPack */
+void DebugCreateBoosterPack(void)
+{
+	uint8_t selected = wDebugBoosterSelection;
+	for (;;) {
+		InitAndPrintMenu(DEBUG_CREATE_BOOSTER_MENU_PARAMS, selected);
+
+		HandleMenuInputResult first;
+		do {
+			DoFrameIfLCDEnabled();
+			first = HandleMenuInput();
+		} while ((first.f & 0x10u) == 0u);
+
+		uint8_t item = hCurMenuItem;
+		if (item != first.e)
+			return;
+
+		wDebugBoosterSelection = item;
+		const uint8_t *menu_entry = rom_ptr(DEBUG_CREATE_BOOSTER_BANK,
+			(uint16_t)(DEBUG_CREATE_BOOSTER_MENU_POINTERS +
+			(uint16_t)item * 2u));
+		uint16_t menu = (uint16_t)(menu_entry[0] |
+			(uint16_t)menu_entry[1] << 8);
+		InitAndPrintMenu(menu, 0u);
+
+		HandleMenuInputResult second;
+		do {
+			DoFrameIfLCDEnabled();
+			second = HandleMenuInput();
+		} while ((second.f & 0x10u) == 0u);
+
+		item = hCurMenuItem;
+		if (item != second.e) {
+			selected = wDebugBoosterSelection;
+			continue;
+		}
+
+		const uint8_t *type_entry = rom_ptr(DEBUG_CREATE_BOOSTER_BANK,
+			(uint16_t)(DEBUG_CREATE_BOOSTER_TYPES + wDebugBoosterSelection));
+		uint8_t booster = (uint8_t)(type_entry[0] + second.e);
+		GenerateBoosterPack(booster);
+		OpenBoosterPack();
+		return;
+	}
+}
+/* <<< factory DebugCreateBoosterPack */

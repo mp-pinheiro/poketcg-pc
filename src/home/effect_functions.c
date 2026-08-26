@@ -972,6 +972,11 @@ static void chain_lightning_damage_same_color_bench(void)
 #define Choose2BasicEnergyCardsFromDiscardPileText 0x0153u
 #define PlayerDiscardPileText 0x00a6u
 #define PleaseSelectCardText 0x00abu
+
+#include "generated/hram.h"
+#include "home/core.h"
+#include "home/menus.h"
+#define ChooseCardToDiscardFromHandText 0x0151u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7883,3 +7888,15 @@ EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPi
 	return (EnergyRetrieval_PlayerDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u)};
 }
 /* <<< factory EnergyRetrieval_PlayerDiscardPileSelection */
+
+/* >>> factory EnergyRetrieval_PlayerHandSelection */
+void EnergyRetrieval_PlayerHandSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseCardToDiscardFromHandText);
+	(void)CreateHandCardList(0u);
+	(void)RemoveCardFromDuelTempList(hTempCardIndex_ff9f);
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	(void)DisplayCardList();
+	hTempList = hTempCardIndex_ff98;
+}
+/* <<< factory EnergyRetrieval_PlayerHandSelection */

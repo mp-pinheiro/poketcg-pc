@@ -1383,6 +1383,62 @@ CASES["ScriptCommand_PrintVariableText"] = [
 ]
 # <<< factory ScriptCommand_PrintVariableText
 
+# >>> factory ScriptCommand_GiftCenter
+wOverworldTransition = 0xD0B4
+wGameEvent = 0xD0B5
+wSelectedGiftCenterMenuItem = 0xD0BA
+wOverworldNPCFlags = 0xD0C1
+wGiftCenterChoice = 0xD10E
+wPermissionMap = 0xD133
+wLoadedEventBits = 0xD3D1
+wEventVars = 0xD3D2
+wScriptPointer = 0xD413
+wLCDC = 0xCABB
+wTxRam2 = 0xCE3F
+rLCDC = 0xFF40
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+hCurMenuItem = 0xFFB1
+PAD_A = 0x01
+# EVENT_GIFT_CENTER_MENU_CHOICE is EventVarMasks entry (0x1A, 0xFC) -- the same
+# var the landed Func_fcad cases pin down -- so the low two bits of the seeded
+# 0xFF must survive the write and the choice lands shifted left by two.
+GIFT_CENTER_CHOICE_VAR = wEventVars + 0x1A
+# Cases 0-2 take .load_gift_center (c != 0): only wGameEvent, wOverworldTransition
+# and wScriptPointer move, so they need no setup or budget. Case 3 takes the menu
+# arm and reuses the shape measured green for GiftCenterMenu itself: LCD off in
+# both wLCDC and rLCDC, so DoFrameIfLCDEnabled is a no-op, no frame elapses, the
+# seeded hKeysPressed survives into the first HandleMenuInput poll and the input
+# loop takes exactly one turn.
+CONTRACT["ScriptCommand_GiftCenter"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_GiftCenter"] = [
+    {"c": 0x01,
+     "wram": {wOverworldTransition: b"\x00", wGameEvent: b"\x00",
+              wScriptPointer: b"\x00\x00"},
+     "read": {wOverworldTransition: 1, wGameEvent: 1, wScriptPointer: 2}},
+    {"c": 0xFF,
+     "wram": {wOverworldTransition: b"\xBF", wGameEvent: b"\xAA",
+              wScriptPointer: b"\xFF\x12"},
+     "read": {wOverworldTransition: 1, wGameEvent: 1, wScriptPointer: 2}},
+    dict(POISON,
+         wram={wOverworldTransition: b"\x35", wGameEvent: b"\x99",
+               wScriptPointer: b"\xFE\xFF"},
+         read={wOverworldTransition: 1, wGameEvent: 1, wScriptPointer: 2}),
+    {"c": 0x00,
+     "wram": {wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+              hKeysPressed: bytes((PAD_A,)),
+              wSelectedGiftCenterMenuItem: b"\x02", wOverworldNPCFlags: b"\x00",
+              wTxRam2: b"\xAA\xBB", wPermissionMap: b"\x00" * 0x100,
+              GIFT_CENTER_CHOICE_VAR: b"\xFF", wScriptPointer: b"\x00\x00"},
+     "read": {wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+              wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1,
+              wLoadedEventBits: 1, GIFT_CENTER_CHOICE_VAR: 1,
+              wScriptPointer: 2},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory ScriptCommand_GiftCenter
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2070,3 +2126,6 @@ MUTATIONS["ScriptCommand_PrintVariableNPCText"] = {"source_symbol": "ScriptComma
 # >>> factory-mutation ScriptCommand_PrintVariableText
 MUTATIONS["ScriptCommand_PrintVariableText"] = {"source_symbol": "ScriptCommand_PrintVariableText", "before": "ScriptCommand_PrintVariableText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);", "after": "ScriptCommand_PrintVariableText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["ScriptCommand_PrintVariableText-0", "ScriptCommand_PrintVariableText-1"]}
 # <<< factory-mutation ScriptCommand_PrintVariableText
+# >>> factory-mutation ScriptCommand_GiftCenter
+MUTATIONS["ScriptCommand_GiftCenter"] = {"source_symbol": "ScriptCommand_GiftCenter", "before": "\t\twGameEvent = GAME_EVENT_GIFT_CENTER;\n\t\twOverworldTransition |= 0x40u;", "after": "\t\twGameEvent = GAME_EVENT_GIFT_CENTER;\n\t\twOverworldTransition &= (uint8_t)~0x40u;", "case_ids": ["ScriptCommand_GiftCenter-0", "ScriptCommand_GiftCenter-1", "ScriptCommand_GiftCenter-2"]}
+# <<< factory-mutation ScriptCommand_GiftCenter

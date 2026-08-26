@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_GiftCenter",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_GiftCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"4003\", \"54291\": \"0200\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_GiftCenter\", \"mismatches\": {\"bus\": {\"address\": 53428, \"reference\": \"40030200\", \"native\": \"00030200\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53428, 2], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_GiftCenter\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 2, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53428\": \"4003\", \"54291\": \"0200\"}}, \"status\": \"PASS\"}\n"
+}

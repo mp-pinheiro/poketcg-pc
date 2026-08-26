@@ -549,6 +549,14 @@ static void adapt_Func_c6dc(ProbeState *s)
 }
 /* <<< factory Func_c6dc */
 
+/* >>> factory HandlePlayerMoveModeInput */
+static void adapt_HandlePlayerMoveModeInput(ProbeState *s)
+{
+	(void)s;
+	HandlePlayerMoveModeInput();
+}
+/* <<< factory HandlePlayerMoveModeInput */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -616,5 +624,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "ReturnToOverworldWithCallback", adapt_ReturnToOverworldWithCallback },
 	{ "FindNPCOrObject", adapt_FindNPCOrObject },
 	{ "Func_c6dc", adapt_Func_c6dc },
+	{ "HandlePlayerMoveModeInput", adapt_HandlePlayerMoveModeInput },
 	{ NULL, NULL },
 };

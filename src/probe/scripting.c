@@ -1168,6 +1168,16 @@ static void adapt_ScriptCommand_PrintVariableText(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PrintVariableText */
 
+/* >>> factory ScriptCommand_GiftCenter */
+static void adapt_ScriptCommand_GiftCenter(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_GiftCenter(s->c);
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_GiftCenter */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1283,5 +1293,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_CloseAdvancedTextBox", adapt_ScriptCommand_CloseAdvancedTextBox },
 	{ "ScriptCommand_PrintVariableNPCText", adapt_ScriptCommand_PrintVariableNPCText },
 	{ "ScriptCommand_PrintVariableText", adapt_ScriptCommand_PrintVariableText },
+	{ "ScriptCommand_GiftCenter", adapt_ScriptCommand_GiftCenter },
 	{ NULL, NULL },
 };

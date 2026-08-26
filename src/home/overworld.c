@@ -195,6 +195,12 @@
 #include "home/overworld.h"
 #include "home/scripting.h"
 #include "home/map.h"
+
+#include "home/overworld.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define PAD_CTRL_PAD 0xF0u
+#define PAD_A 0x01u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1171,3 +1177,19 @@ FuncC6dcResult Func_c6dc(uint16_t saved_hl)
 	return (FuncC6dcResult){mode, flags, 0x0Eu, saved_hl};
 }
 /* <<< factory Func_c6dc */
+
+/* >>> factory HandlePlayerMoveModeInput */
+void HandlePlayerMoveModeInput(void)
+{
+	uint8_t held = hKeysHeld;
+	if ((held & PAD_CTRL_PAD) != 0u) {
+		UpdatePlayerDirectionFromDPad((uint8_t)(held & PAD_CTRL_PAD));
+		AttemptPlayerMovementFromDirection();
+		if ((wPlayerCurrentlyMoving & 1u) != 0u)
+			return;
+	}
+	if ((hKeysPressed & PAD_A) != 0u) {
+		(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);
+	}
+}
+/* <<< factory HandlePlayerMoveModeInput */
