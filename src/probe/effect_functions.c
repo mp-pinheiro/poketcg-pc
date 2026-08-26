@@ -3947,6 +3947,20 @@ static void adapt_ChainLightningEffect(ProbeState *s)
 }
 /* <<< factory ChainLightningEffect */
 
+/* >>> factory Firegiver_AddToHandEffect */
+static void adapt_Firegiver_AddToHandEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult r = Firegiver_AddToHandEffect(s->b);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory Firegiver_AddToHandEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4427,5 +4441,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CatPunchEffect", adapt_CatPunchEffect },
 	{ "Gigashock_BenchDamageEffect", adapt_Gigashock_BenchDamageEffect },
 	{ "ChainLightningEffect", adapt_ChainLightningEffect },
+	{ "Firegiver_AddToHandEffect", adapt_Firegiver_AddToHandEffect },
 	{ NULL, NULL },
 };

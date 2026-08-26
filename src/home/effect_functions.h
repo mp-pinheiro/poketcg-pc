@@ -1629,6 +1629,14 @@ void Gigashock_BenchDamageEffect(void);
 /* >>> factory ChainLightningEffect */
 void ChainLightningEffect(void);
 /* <<< factory ChainLightningEffect */
+/* >>> factory Firegiver_AddToHandEffect */
+/* Firegiver_AddToHandEffect (effect_functions.asm:4130): entry a, c, de and hl
+ * are overwritten before use, so only b reaches the shared ShuffleCardsInDeck
+ * tail that both exits end in; exit e is that tail's echoed input on the
+ * one-card shuffle path, which DrawWideTextBox_WaitForInput leaves undefined,
+ * so it is left out of the contract. */
+ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b);
+/* <<< factory Firegiver_AddToHandEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

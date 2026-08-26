@@ -240,6 +240,10 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/map.h"
 #include "home/script.h"
 #define MAP_SCRIPT_AFTER_DUEL 0x0Au
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/script.h"
 /* <<< factory statics */
 
 
@@ -1748,3 +1752,10 @@ CallMapScriptResult Func_c9bc(void)
 	return CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);
 }
 /* <<< factory Func_c9bc */
+
+/* >>> factory Func_c9c7 */
+CallMapScriptResult Func_c9c7(void)
+{
+	return CallMapScriptPointerIfExists(0x0eu);
+}
+/* <<< factory Func_c9c7 */

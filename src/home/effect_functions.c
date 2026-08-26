@@ -921,6 +921,33 @@ static void chain_lightning_damage_same_color_bench(void)
 			(void)DealDamageToPlayAreaPokemon_RegularAnim(d, 10u, 0u);
 	}
 }
+
+#include "home/card_data.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/random.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define DrewFireEnergyFromTheHandText 0x014du
+#define ThereWasNoFireEnergyText 0x017bu
+
+#define FG_ATK_ANIM_FIREGIVER_OPP 0x85u
+#define FG_ATK_ANIM_FIREGIVER_PLAYER 0x84u
+#define FG_CARD_LOCATION_DECK 0x00u
+#define FG_DECK_SIZE 60u
+#define FG_DUELIST_TYPE_PLAYER 0x00u
+#define FG_DUELVARS_CARD_LOCATIONS 0x00u
+#define FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND 0xEEu
+#define FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK 0xBAu
+#define FG_LIST_TERMINATOR 0xFFu
+#define FG_PLAY_AREA_ARENA 0x00u
+#define FG_TYPE_ENERGY_FIRE 0x08u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7689,3 +7716,91 @@ void ChainLightningEffect(void)
 	chain_lightning_damage_same_color_bench();
 }
 /* <<< factory ChainLightningEffect */
+
+/* >>> factory Firegiver_AddToHandEffect */
+/* effect_functions.asm:4130. Entry a, c, de and hl are all overwritten before
+ * they are read, so b is the only entry register that survives, and it rides
+ * through to the shared ShuffleCardsInDeck tail. Both exits are that tail call,
+ * so every exit register is ShuffleCardsInDeck's. */
+ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b)
+{
+	DuelistVarResult locations = GetTurnDuelistVariable(FG_DUELVARS_CARD_LOCATIONS);
+	uint16_t list = wDuelTempList_ADDR;
+	uint8_t c = 0u;
+	for (uint8_t index = 0u; index < FG_DECK_SIZE; index++) {
+		if (gb_read8((uint16_t)(locations.hl + index)) != FG_CARD_LOCATION_DECK)
+			continue;
+		uint16_t card_id = GetCardIDFromDeckIndex(index);
+		if (GetCardType((uint8_t)card_id) != FG_TYPE_ENERGY_FIRE)
+			continue;
+		gb_write8(list, index);
+		list++;
+		c++;
+	}
+	gb_write8(list, FG_LIST_TERMINATOR);
+
+	/* de is never reloaded after `ld de, wDuelTempList`, so it still points at
+	 * the terminator byte that was just stored. */
+	uint8_t d = (uint8_t)(list >> 8);
+	uint8_t e = (uint8_t)list;
+
+	if (c == 0u) {
+		(void)DrawWideTextBox_WaitForInput(ThereWasNoFireEnergyText);
+		return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e),
+					  ThereWasNoFireEnergyText);
+	}
+
+	/* Random returns 0-3, `inc a` makes that 1-4, and `cp c` / `jr c` keeps the
+	 * roll only while it is below the number of cards that were found. */
+	uint8_t picked = (uint8_t)(Random(4u) + 1u);
+	if (picked >= c)
+		picked = c;
+	hCurSelectionItem = picked;
+
+	d = FG_ATK_ANIM_FIREGIVER_PLAYER;
+	if (wDuelistType != FG_DUELIST_TYPE_PLAYER)
+		d = FG_ATK_ANIM_FIREGIVER_OPP;
+	wLoadedAttackAnimation = d;
+
+	uint8_t remaining = hCurSelectionItem;
+	list = wDuelTempList_ADDR;
+	do {
+		uint8_t turn = hWhoseTurn;
+		/* `ld h, a` only replaces the high byte: l still holds the low byte
+		 * of the wDuelTempList cursor. PlayAttackAnimation and
+		 * WaitAttackAnimation both push and pop de, so d and e survive. */
+		PlayAttackAnimation(turn, 0u, FG_PLAY_AREA_ARENA, 0u, d, e,
+				    (uint16_t)(((uint16_t)turn << 8) | (list & 0xffu)));
+		WaitAttackAnimation();
+
+		uint8_t x = 18u;
+		uint8_t y = 7u;
+		e = 3u;
+		if (wLoadedAttackAnimation != FG_ATK_ANIM_FIREGIVER_PLAYER) {
+			x = 4u;
+			y = 5u;
+			e = 10u;
+		}
+		DuelistVarResult hand =
+			GetTurnDuelistVariable(FG_DUELVARS_NUMBER_OF_CARDS_IN_HAND);
+		WriteTwoDigitNumberInTxSymbol_PadSpace((uint8_t)(hand.a + 1u), x, y, d, e,
+						       hand.hl);
+		DuelistVarResult deck =
+			GetTurnDuelistVariable(FG_DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+		/* `ld c, e` reuses the deck row as the y coordinate. */
+		WriteTwoDigitNumberInTxSymbol_PadSpace((uint8_t)(FG_DECK_SIZE - 1u - deck.a),
+						       x, e, d, e, deck.hl);
+
+		uint8_t deck_index = gb_read8(list);
+		list++;
+		SearchCardInDeckAndAddToHand(deck_index);
+		AddCardToHand(deck_index);
+		remaining--;
+	} while (remaining != 0u);
+
+	LoadTxRam3(hCurSelectionItem);
+	(void)DrawWideTextBox_WaitForInput(DrewFireEnergyFromTheHandText);
+	return ShuffleCardsInDeck(b, 0u, (uint16_t)(((uint16_t)d << 8) | e),
+				  DrewFireEnergyFromTheHandText);
+}
+/* <<< factory Firegiver_AddToHandEffect */

@@ -5331,6 +5331,32 @@ CASES["ChainLightningEffect"] = [
 ]
 # <<< factory ChainLightningEffect
 
+# >>> factory Firegiver_AddToHandEffect
+CONTRACT["Firegiver_AddToHandEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Firegiver_AddToHandEffect"] = [
+    # Every card location byte holds CARD_LOCATION_ARENA, so the scan never hits
+    # CARD_LOCATION_DECK, no Fire Energy is found, and the routine stores the
+    # $ff terminator at wDuelTempList and takes the ThereWasNoFireEnergy exit.
+    # keys taps A for the wide text box, wLCDC=0 keeps WaitForVBlank a no-op
+    # until EnableLCD, wDuelDisplayedScreen=SHUFFLE_DECK keeps
+    # PlayDeckShuffleAnimation out of EmptyScreen/portraits (so
+    # wVBlankOAMCopyToggle stays clear), and 59 cards not in the deck sends it
+    # down the one-card path instead of the shuffle animation.
+    {"b": 0x00, "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x09",
+              0xC2BA: b"\x3B", 0xC200: b"\x10" * 60, 0xC510: b"\x00"},
+     "read": {0xC510: 1}, "expect": {0xC510: b"\xFF"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x09",
+               0xC2BA: b"\x3B", 0xC200: b"\x10" * 60, 0xC510: b"\x00"},
+         read={0xC510: 1}, expect={0xC510: b"\xFF"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Firegiver_AddToHandEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7825,3 +7851,6 @@ MUTATIONS["Gigashock_BenchDamageEffect"] = {"source_symbol": "Gigashock_BenchDam
 # >>> factory-mutation ChainLightningEffect
 MUTATIONS["ChainLightningEffect"] = {"source_symbol": "ChainLightningEffect", "before": "\twIsDamageToSelf = TRUE;", "after": "\twIsDamageToSelf = 0u;", "case_ids": ["ChainLightningEffect-1", "ChainLightningEffect-2", "ChainLightningEffect-3"]}
 # <<< factory-mutation ChainLightningEffect
+# >>> factory-mutation Firegiver_AddToHandEffect
+MUTATIONS["Firegiver_AddToHandEffect"] = {"source_symbol": "Firegiver_AddToHandEffect", "before": "\tgb_write8(list, FG_LIST_TERMINATOR);", "after": "\tgb_write8(list, 0x00u);", "case_ids": ["Firegiver_AddToHandEffect-0", "Firegiver_AddToHandEffect-1"]}
+# <<< factory-mutation Firegiver_AddToHandEffect

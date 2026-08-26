@@ -1240,6 +1240,15 @@ CASES["ScriptCommand_WalkPlayerToMasonLaboratory"] = [
 ]
 # <<< factory ScriptCommand_WalkPlayerToMasonLaboratory
 
+# >>> factory Func_c9c7
+CONTRACT["Func_c9c7"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Func_c9c7"] = [
+    {"wram": {0xD32F: b"\x00"}, "read": {0xD32F: 1}},
+    {"wram": {0xD32F: b"\x01"}, "read": {0xD32F: 1}},
+    dict(POISON, wram={0xD32F: b"\x01"}, read={0xD32F: 1}),
+]
+# <<< factory Func_c9c7
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1882,3 +1891,10 @@ MUTATIONS["CallMapScriptPointerIfExists"] = {"source_symbol": "CallMapScriptPoin
 # >>> factory-mutation Func_c9bc
 MUTATIONS["Func_c9bc"] = {"source_symbol": "Func_c9bc", "before": "\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);", "after": "\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_AFTER_DUEL + 2u));", "case_ids": ["Func_c9bc-0"]}
 # <<< factory-mutation Func_c9bc
+# >>> factory-mutation Func_c9c7
+MUTATIONS["Func_c9c7"] = {"source_symbol": "Func_c9c7", "before": "CallMapScriptResult Func_c9c7(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0eu);", "after": "CallMapScriptResult Func_c9c7(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0fu);", "case_ids": ["Func_c9c7-1", "Func_c9c7-2"]}
+# <<< factory-mutation Func_c9c7
+# >>> factory-completion Func_c9c7
+for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c7"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x555E}, {"mode": "pre-ret", "pc": 0x555E})):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion Func_c9c7

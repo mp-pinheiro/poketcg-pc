@@ -513,4 +513,7 @@ CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l);
 /* >>> factory Func_c9bc */
 CallMapScriptResult Func_c9bc(void);
 /* <<< factory Func_c9bc */
+/* >>> factory Func_c9c7 */
+CallMapScriptResult Func_c9c7(void);
+/* <<< factory Func_c9c7 */
 #endif
