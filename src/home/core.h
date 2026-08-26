@@ -1114,4 +1114,7 @@ void DisplayDrawNCardsScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t
 /* >>> factory PlayShuffleAndDrawCardsAnimation */
 void PlayShuffleAndDrawCardsAnimation(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory PlayShuffleAndDrawCardsAnimation */
+/* >>> factory DisplayDrawOneCardScreen */
+void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory DisplayDrawOneCardScreen */
 #endif

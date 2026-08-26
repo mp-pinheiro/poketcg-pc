@@ -3877,6 +3877,16 @@ CASES["PlayShuffleAndDrawCardsAnimation"] = [
 ]
 # <<< factory PlayShuffleAndDrawCardsAnimation
 
+# >>> factory DisplayDrawOneCardScreen
+CONTRACT["DisplayDrawOneCardScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayDrawOneCardScreen"] = [
+    {"a": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x01, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x05, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {0xCAC2: 1, 0xCBE9: 1, 0xCBE8: 1}, "expect": {0xCAC2: b"\x07", 0xCBE9: b"\x01", 0xCBE8: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory DisplayDrawOneCardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5444,3 +5454,6 @@ MUTATIONS["DisplayDrawNCardsScreen"] = {"source_symbol": "DisplayDrawNCardsScree
 # >>> factory-mutation PlayShuffleAndDrawCardsAnimation
 MUTATIONS["PlayShuffleAndDrawCardsAnimation"] = {"source_symbol": "PlayShuffleAndDrawCardsAnimation", "before": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = SHUFFLE_DECK;", "after": "\t(void)LoadDuelDrawCardsScreenTiles();\n\twDuelDisplayedScreen = 0u;", "case_ids": ["PlayShuffleAndDrawCardsAnimation-0", "PlayShuffleAndDrawCardsAnimation-1"]}
 # <<< factory-mutation PlayShuffleAndDrawCardsAnimation
+# >>> factory-mutation DisplayDrawOneCardScreen
+MUTATIONS["DisplayDrawOneCardScreen"] = {"source_symbol": "DisplayDrawOneCardScreen", "before": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 2u;", "case_ids": ["DisplayDrawOneCardScreen-0", "DisplayDrawOneCardScreen-1", "DisplayDrawOneCardScreen-3"]}
+# <<< factory-mutation DisplayDrawOneCardScreen

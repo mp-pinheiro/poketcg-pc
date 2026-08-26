@@ -2488,6 +2488,13 @@ static void adapt_PlayShuffleAndDrawCardsAnimation(ProbeState *s)
 }
 /* <<< factory PlayShuffleAndDrawCardsAnimation */
 
+/* >>> factory DisplayDrawOneCardScreen */
+static void adapt_DisplayDrawOneCardScreen(ProbeState *s)
+{
+	DisplayDrawOneCardScreen(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory DisplayDrawOneCardScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2785,5 +2792,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckDamageToMrMime", adapt_CheckDamageToMrMime },
 	{ "DisplayDrawNCardsScreen", adapt_DisplayDrawNCardsScreen },
 	{ "PlayShuffleAndDrawCardsAnimation", adapt_PlayShuffleAndDrawCardsAnimation },
+	{ "DisplayDrawOneCardScreen", adapt_DisplayDrawOneCardScreen },
 	{ NULL, NULL },
 };
