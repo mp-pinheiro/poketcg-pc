@@ -486,3 +486,22 @@ void SFX_loop(uint16_t bc, uint16_t caller_de)
 	ExecuteNextSFXCommand(caller_de, bc);
 }
 /* <<< factory SFX_loop */
+
+/* >>> factory SFX_pan */
+void SFX_pan(uint16_t bc, uint16_t caller_hl)
+{
+	uint8_t pan_val = gb_read8(caller_hl);
+	caller_hl = (uint16_t)(caller_hl + 1u);
+	uint8_t rotate_count = (uint8_t)(bc + 1u);
+	uint8_t mask = 0xEEu;
+	for (;;) {
+		rotate_count = (uint8_t)(rotate_count - 1u);
+		if (rotate_count == 0u)
+			break;
+		pan_val = (uint8_t)((pan_val << 1u) | (pan_val >> 7u));
+		mask = (uint8_t)((mask << 1u) | (mask >> 7u));
+	}
+	wdd85 = (uint8_t)((wdd85 & mask) | pan_val);
+	ExecuteNextSFXCommand(caller_hl, bc);
+}
+/* <<< factory SFX_pan */

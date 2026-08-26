@@ -30,4 +30,8 @@ void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc);
 /* >>> factory SFX_loop */
 void SFX_loop(uint16_t bc, uint16_t caller_de);
 /* <<< factory SFX_loop */
+/* >>> factory SFX_pan */
+/* >>> factory SFX_pan */
+void SFX_pan(uint16_t bc, uint16_t caller_hl);
+/* <<< factory SFX_pan */
 #endif

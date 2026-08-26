@@ -117,6 +117,16 @@ CASES["SFX_loop"] = [
 ]
 # <<< factory SFX_loop
 
+# >>> factory SFX_pan
+CONTRACT["SFX_pan"] = {"compare": (), "preserve": ()}
+CASES["SFX_pan"] = [
+    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
+    {"b": 0, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
+    {"b": 0, "c": 3, "stack": [0xC300], "wram": {0xC300: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, "read": {0xDD85: 1, 0xDD8C: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC400], wram={0xC400: b"\xF0", 0xDD85: b"\xFF", 0xDD8C: b"\xFF"}, read={0xDD85: 1, 0xDD8C: 1}),
+]
+# <<< factory SFX_pan
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -159,3 +169,6 @@ MUTATIONS["ExecuteNextSFXCommand"] = {
 # >>> factory-mutation SFX_loop
 MUTATIONS["SFX_loop"] = {"source_symbol": "SFX_loop", "before": "void SFX_loop(uint16_t bc, uint16_t caller_de)\n{\n\tuint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);", "after": "void SFX_loop(uint16_t bc, uint16_t caller_de)\n{\n\tuint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc + 1u);", "case_ids": ["SFX_loop-0", "SFX_loop-1", "SFX_loop-2"]}
 # <<< factory-mutation SFX_loop
+# >>> factory-mutation SFX_pan
+MUTATIONS["SFX_pan"] = {"source_symbol": "SFX_pan", "before": "void SFX_pan(uint16_t bc, uint16_t caller_hl)\n{\n\tuint8_t pan_val = gb_read8(caller_hl);", "after": "void SFX_pan(uint16_t bc, uint16_t caller_hl)\n{\n\tuint8_t pan_val = 0u;", "case_ids": ["SFX_pan-0", "SFX_pan-1", "SFX_pan-2", "SFX_pan-3"]}
+# <<< factory-mutation SFX_pan
