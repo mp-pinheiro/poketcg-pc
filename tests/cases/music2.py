@@ -953,3 +953,21 @@ MUTATIONS["Music2_call"] = {"source_symbol": "Music2_call", "before": "\tMusic2_
 # >>> factory-mutation Music2_ret
 MUTATIONS["Music2_ret"] = {"source_symbol": "Music2_ret", "before": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "after": "\tMusic2_SetChannelStackPointer(ch, (uint16_t)(sp - 1u));", "case_ids": ["Music2_ret-0", "Music2_ret-1"]}
 # <<< factory-mutation Music2_ret
+# >>> factory-mutation Music2_frequency_offset
+MUTATIONS["Music2_frequency_offset"] = {"source_symbol": "Music2_frequency_offset", "before": "\tgb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_frequency_offset-0", "Music2_frequency_offset-2"]}
+# <<< factory-mutation Music2_frequency_offset
+# >>> factory-mutation Music2_duty
+MUTATIONS["Music2_duty"] = {"source_symbol": "Music2_duty", "before": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0xC0u);", "after": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0x3Fu);", "case_ids": ["Music2_duty-0", "Music2_duty-2"]}
+# <<< factory-mutation Music2_duty
+# >>> factory-mutation Music2_volume
+MUTATIONS["Music2_volume"] = {"source_symbol": "Music2_volume", "before": "\tgb_write8((uint16_t)(wMusicVolume_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVolume_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_volume-0", "Music2_volume-2"]}
+# <<< factory-mutation Music2_volume
+# >>> factory-mutation Music2_wave
+MUTATIONS["Music2_wave"] = {"source_symbol": "Music2_wave", "before": "\tgb_write8(wMusicWaveChange_ADDR, 0x01u);", "after": "\tgb_write8(wMusicWaveChange_ADDR, 0x00u);", "case_ids": ["Music2_wave-0", "Music2_wave-1"]}
+# <<< factory-mutation Music2_wave
+# >>> factory-mutation Music2_cutoff
+MUTATIONS["Music2_cutoff"] = {"source_symbol": "Music2_cutoff", "before": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_cutoff-0", "Music2_cutoff-2"]}
+# <<< factory-mutation Music2_cutoff
+# >>> factory-mutation Music2_echo
+MUTATIONS["Music2_echo"] = {"source_symbol": "Music2_echo", "before": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music2_echo-0", "Music2_echo-2"]}
+# <<< factory-mutation Music2_echo

@@ -910,6 +910,25 @@ CASES["Music1_end"] = [
 ]
 # <<< factory Music1_end
 
+# >>> factory Music1_EndLoop
+# Exhausted-path cases only: the taken branch's sole observable is where the
+# dispatcher resumes, and Music1_PlayNextNote's command mapping is defective
+# (see the note above it). Reaching zero pops the frame, which is observable
+# through the channel stack pointer without executing any command.
+CONTRACT["Music1_EndLoop"] = {"compare": (), "preserve": ()}
+CASES["Music1_EndLoop"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\xFF", 0xDDF3: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
+     "read": {0xDDF3: 2, 0xC202: 1}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xC100: b"\xFF", 0xDDF5: b"\x03\xC2", 0xC200: b"\x00\xC3\x01"},
+     "read": {0xDDF5: 2, 0xC202: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC100],
+         wram={0xC100: b"\xFF", 0xDDF7: b"\x13\xC2", 0xC210: b"\x00\xC3\x01"},
+         read={0xDDF7: 2, 0xC212: 1}),
+]
+# <<< factory Music1_EndLoop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1014,3 +1033,6 @@ MUTATIONS["SoundTimerHandler"] = {"source_symbol": "SoundTimerHandler", "before"
 # >>> factory-mutation Music1_f4015
 MUTATIONS["Music1_f4015"] = {"source_symbol": "Music1_f4015", "before": "\tMusic1_f4066();", "after": "\tMusic1_EmptyFunc();", "case_ids": ["Music1_f4015-0", "Music1_f4015-1", "Music1_f4015-2"]}
 # <<< factory-mutation Music1_f4015
+# >>> factory-mutation Music1_EndLoop
+MUTATIONS["Music1_EndLoop"] = {"source_symbol": "Music1_EndLoop", "before": "\t\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 3u));", "after": "\t\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "case_ids": ["Music1_EndLoop-0", "Music1_EndLoop-1"]}
+# <<< factory-mutation Music1_EndLoop
