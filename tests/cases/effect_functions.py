@@ -5420,6 +5420,14 @@ CASES["EnergyConversion_PlayerSelectEffect"] = [
 ]
 # <<< factory EnergyConversion_PlayerSelectEffect
 
+# >>> factory MewtwoAltEnergyAbsorption_PlayerSelectEffect
+CONTRACT["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFFB2: 1, 0xC510: 2}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFFB2: 1, 0xC510: 2}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MewtwoAltEnergyAbsorption_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7935,3 +7943,6 @@ MUTATIONS["HandleEnergyCardsInDiscardPileSelection"] = {"source_symbol": "Handle
 # >>> factory-mutation EnergyConversion_PlayerSelectEffect
 MUTATIONS["EnergyConversion_PlayerSelectEffect"] = {"source_symbol": "EnergyConversion_PlayerSelectEffect", "before": "HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffect(void)\n{\n\treturn HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileForHandText);\n}", "after": "HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffect(void)\n{\n\tHandleEnergyCardsInDiscardPileSelectionResult result = HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileForHandText);\n\tresult.a = (uint8_t)(result.a + 1u);\n\treturn result;\n}", "case_ids": ["EnergyConversion_PlayerSelectEffect-0", "EnergyConversion_PlayerSelectEffect-1"]}
 # <<< factory-mutation EnergyConversion_PlayerSelectEffect
+# >>> factory-mutation MewtwoAltEnergyAbsorption_PlayerSelectEffect
+MUTATIONS["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_PlayerSelectEffect", "before": "\treturn (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};", "after": "\treturn (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){0xffu, result.f, result.hl};", "case_ids": ["MewtwoAltEnergyAbsorption_PlayerSelectEffect-0", "MewtwoAltEnergyAbsorption_PlayerSelectEffect-1"]}
+# <<< factory-mutation MewtwoAltEnergyAbsorption_PlayerSelectEffect

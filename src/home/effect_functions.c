@@ -988,6 +988,8 @@ static void chain_lightning_damage_same_color_bench(void)
 
 #include "home/effect_functions.h"
 #define Choose2EnergyCardsFromDiscardPileForHandText 0x0133u
+
+#define Choose2EnergyCardsFromDiscardPileToAttachText 0x0132u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7954,3 +7956,12 @@ HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffec
 	return HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileForHandText);
 }
 /* <<< factory EnergyConversion_PlayerSelectEffect */
+
+/* >>> factory MewtwoAltEnergyAbsorption_PlayerSelectEffect */
+MewtwoAltEnergyAbsorption_PlayerSelectEffectResult MewtwoAltEnergyAbsorption_PlayerSelectEffect(void)
+{
+	HandleEnergyCardsInDiscardPileSelectionResult result =
+		HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileToAttachText);
+	return (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};
+}
+/* <<< factory MewtwoAltEnergyAbsorption_PlayerSelectEffect */

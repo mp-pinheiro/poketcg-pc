@@ -1,0 +1,9 @@
+{
+  "fn": "FinalizeInputName",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FinalizeInputName\", \"registers\": {\"a\": 3, \"b\": 3, \"c\": 3, \"d\": 207, \"e\": 235, \"f\": 112, \"hl\": 53223, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"61626300\", \"53223\": \"61626300\", \"53248\": \"00c2\", \"53252\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FinalizeInputName\", \"mismatches\": {\"e\": [235, 233], \"bus\": {\"address\": 49666, \"reference\": \"61626300616263\", \"native\": \"61620000616263\", \"reference_size\": 11, \"native_size\": 11, \"spans\": [[49664, 4], [53223, 4], [53248, 2], [53252, 1]]}}}\n",
+  "restored": "{\"fn\": \"FinalizeInputName\", \"registers\": {\"a\": 3, \"b\": 3, \"c\": 3, \"d\": 207, \"e\": 235, \"f\": 112, \"hl\": 53223, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"61626300\", \"53223\": \"61626300\", \"53248\": \"00c2\", \"53252\": \"03\"}}, \"status\": \"PASS\"}\n"
+}

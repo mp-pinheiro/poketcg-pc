@@ -624,6 +624,14 @@ static void adapt_ShowDeckInfoHeader(ProbeState *s)
 }
 /* <<< factory ShowDeckInfoHeader */
 
+/* >>> factory DrawCardTypeIconsAndPrintCardCounts */
+static void adapt_DrawCardTypeIconsAndPrintCardCounts(ProbeState *s)
+{
+	(void)s;
+	DrawCardTypeIconsAndPrintCardCounts();
+}
+/* <<< factory DrawCardTypeIconsAndPrintCardCounts */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -697,5 +705,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintCurDeckNumberAndName", adapt_PrintCurDeckNumberAndName },
 	{ "UpdateConfirmationCardScreen", adapt_UpdateConfirmationCardScreen },
 	{ "ShowDeckInfoHeader", adapt_ShowDeckInfoHeader },
+	{ "DrawCardTypeIconsAndPrintCardCounts", adapt_DrawCardTypeIconsAndPrintCardCounts },
 	{ NULL, NULL },
 };

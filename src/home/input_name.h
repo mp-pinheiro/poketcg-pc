@@ -101,4 +101,8 @@ typedef struct {
 InitializeInputNameResult InitializeInputName(uint8_t a, uint8_t b, uint8_t c,
 	uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory InitializeInputName */
+/* >>> factory FinalizeInputName */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } FinalizeInputNameResult;
+FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory FinalizeInputName */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

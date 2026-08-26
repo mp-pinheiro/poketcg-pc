@@ -1,0 +1,9 @@
+{
+  "fn": "DrawCardTypeIconsAndPrintCardCounts",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawCardTypeIconsAndPrintCardCounts\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39072\": \"1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c\"}}, \"wram\": {\"51892\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawCardTypeIconsAndPrintCardCounts\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawCardTypeIconsAndPrintCardCounts\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"39072\": \"1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c\"}}, \"wram\": {\"51892\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

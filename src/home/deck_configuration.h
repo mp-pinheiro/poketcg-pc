@@ -264,4 +264,7 @@ void PrintSlashSixty(uint8_t d, uint8_t e);
 /* >>> factory ShowDeckInfoHeader */
 void ShowDeckInfoHeader(void);
 /* <<< factory ShowDeckInfoHeader */
+/* >>> factory DrawCardTypeIconsAndPrintCardCounts */
+void DrawCardTypeIconsAndPrintCardCounts(void);
+/* <<< factory DrawCardTypeIconsAndPrintCardCounts */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

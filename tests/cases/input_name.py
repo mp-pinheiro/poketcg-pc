@@ -263,6 +263,10 @@ wNamingScreenKeyboardHeight = 0xCEA9
 def _naming_source(text):
     body = bytes(text) + b"\x00" * (24 - len(text))
     return body[:13] + b"\x18\xfe" + body[15:]
+
+wNamingScreenBuffer = 0xCFE7
+wNamingScreenDestPointer = 0xD000
+wNamingScreenBufferMaxLength = 0xD004
 # <<< factory-cases-statics
 
 # >>> factory DeckNamingScreen_ProcessInput
@@ -307,6 +311,15 @@ CASES["InitializeInputName"] = [
          read={0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}),
 ]
 # <<< factory InitializeInputName
+
+# >>> factory FinalizeInputName
+CONTRACT["FinalizeInputName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["FinalizeInputName"] = [
+    {"wram": {0xCFE7: b"\x61\x62\x63\x00", 0xD000: b"\x00\xC2", 0xD004: b"\x03"}, "read": {0xC200: 4}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCFE7: b"\x61\x00", 0xD000: b"\x00\xC3", 0xD004: b"\x01"}, "read": {0xC300: 2}},
+    {"wram": {0xCFE7: b"\x00", 0xD000: b"\x00\xC4", 0xD004: b"\x00"}, "read": {0xC400: 1}}
+]
+# <<< factory FinalizeInputName
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -431,3 +444,6 @@ MUTATIONS["InitializeInputName"] = {
 for _rec in SCHEMA2_CASES["InitializeInputName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x687F}
 # <<< factory-completion InitializeInputName
+# >>> factory-mutation FinalizeInputName
+MUTATIONS["FinalizeInputName"] = {"source_symbol": "FinalizeInputName", "before": "\tuint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;", "after": "\tuint16_t copy_count = 2u;", "case_ids": ["FinalizeInputName-0"]}
+# <<< factory-mutation FinalizeInputName

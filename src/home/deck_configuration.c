@@ -2038,3 +2038,17 @@ void ShowDeckInfoHeader(void)
 	EnableLCD();
 }
 /* <<< factory ShowDeckInfoHeader */
+
+/* >>> factory DrawCardTypeIconsAndPrintCardCounts */
+void DrawCardTypeIconsAndPrintCardCounts(void)
+{
+	Set_OBJ_8x8();
+	PrepareMenuGraphics();
+	FillBGMapLineWithA(SYM_BOX_TOP, 0u, 5u);
+	DrawCardTypeIcons();
+	PrintCardTypeCounts();
+	PrintTotalCardCount(15u, 0u);
+	PrintSlashSixty(17u, 0u);
+	EnableLCD();
+}
+/* <<< factory DrawCardTypeIconsAndPrintCardCounts */

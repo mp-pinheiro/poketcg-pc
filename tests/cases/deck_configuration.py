@@ -906,6 +906,14 @@ CASES["ShowDeckInfoHeader"] = [
 ]
 # <<< factory ShowDeckInfoHeader
 
+# >>> factory DrawCardTypeIconsAndPrintCardCounts
+CONTRACT["DrawCardTypeIconsAndPrintCardCounts"] = {"compare": (), "preserve": ()}
+CASES["DrawCardTypeIconsAndPrintCardCounts"] = [
+    {"wram": {wConsole: b"\x00"}, "setup": SETUP_TEXT, "vread": {0: {0x98A0: 20}}, "instruction_budget": 100000, "cycle_budget": 400000},
+    dict(POISON, wram={wConsole: b"\x00"}, setup=SETUP_TEXT, vread={0: {0x98A0: 20}}, instruction_budget=100000, cycle_budget=400000),
+]
+# <<< factory DrawCardTypeIconsAndPrintCardCounts
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1216,3 +1224,6 @@ MUTATIONS["ShowDeckInfoHeader"] = {
     "case_ids": ["ShowDeckInfoHeader-0", "ShowDeckInfoHeader-1"],
 }
 # <<< factory-mutation ShowDeckInfoHeader
+# >>> factory-mutation DrawCardTypeIconsAndPrintCardCounts
+MUTATIONS["DrawCardTypeIconsAndPrintCardCounts"] = {"source_symbol": "DrawCardTypeIconsAndPrintCardCounts", "before": "\tFillBGMapLineWithA(SYM_BOX_TOP, 0u, 5u);", "after": "\tFillBGMapLineWithA(0x1Du, 0u, 5u);", "case_ids": ["DrawCardTypeIconsAndPrintCardCounts-0", "DrawCardTypeIconsAndPrintCardCounts-1"]}
+# <<< factory-mutation DrawCardTypeIconsAndPrintCardCounts

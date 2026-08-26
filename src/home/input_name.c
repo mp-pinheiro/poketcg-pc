@@ -728,3 +728,17 @@ InitializeInputNameResult InitializeInputName(uint8_t a, uint8_t b, uint8_t c,
 		(uint8_t)(source >> 8), (uint8_t)source, wNamingScreenBuffer_ADDR};
 }
 /* <<< factory InitializeInputName */
+
+/* >>> factory FinalizeInputName */
+FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t destination = (uint16_t)((uint16_t)gb_read8(wNamingScreenDestPointer_ADDR + 1u) << 8 | gb_read8(wNamingScreenDestPointer_ADDR));
+	uint16_t source = wNamingScreenBuffer_ADDR;
+	uint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;
+	for (uint16_t i = 0; i < copy_count; i++)
+		gb_write8(destination++, gb_read8(source++));
+	TextLength length = GetTextLengthInTiles(wNamingScreenBuffer_ADDR);
+	wNamingScreenBufferLength = length.c;
+	return (FinalizeInputNameResult){length.c, length.b ? (uint8_t)(0x50u | ((length.b & 0x0Fu) ? 0x20u : 0x00u)) : 0xC0u, length.b, length.c, (uint8_t)(source >> 8), (uint8_t)source, wNamingScreenBuffer_ADDR};
+}
+/* <<< factory FinalizeInputName */
