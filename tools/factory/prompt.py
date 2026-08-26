@@ -166,6 +166,18 @@ def render(packet: dict, feedback: str | None = None,
         "\"conflicting types\" or duplicate-macro compile error, and the compile phase "
         "costs a whole generation. Your header fragment adds only what is missing; "
         "check the callee header before declaring its result type yourself.",
+        "A bare generated/wram.h or hram.h label is already a dereferenced lvalue "
+        "-- `#define wCoinTossTotalNum (*(uint8_t *)(g_wram + (0xCD9C - 0xC000)))` -- "
+        "not an address. Assign through it directly: `wCoinTossTotalNum = total;` and "
+        "`total = wCoinTossTotalNum;`, exactly like the landed HandleStartMenu does with "
+        "`wLineSeparation = DOUBLE_SPACED;`. Wrapping the bare label in gb_write8/gb_read8 "
+        "-- `gb_write8(wCoinTossTotalNum, total)` -- passes the byte it currently holds as "
+        "the address argument, silently corrupts wherever that stray value points, and "
+        "leaves the real variable at 0 forever; a loop that later compares against it never "
+        "converges and the native probe times out on a body with no real hang in any "
+        "callee. Use the paired `_ADDR` constant only where a numeric address is actually "
+        "required, e.g. `gb_write8(wCoinTossTotalNum_ADDR, total)` or building an offset "
+        "with `+`.",
         "Compute an assembler constant from the ROM, not from precedence intuition. "
         "rgbasm binds `<<` tighter than `+`, so core.asm's `2 << 0 + 2 << 2` assembles "
         "to (2<<0)+(2<<2) = $0A, and the oracle measured exactly that byte against "
