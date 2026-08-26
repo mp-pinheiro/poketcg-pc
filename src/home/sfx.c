@@ -48,7 +48,12 @@
 
 #define AUD1ENV_UP 0x08u
 
-static void Func_fc279(void)
+/* >>> factory Func_fc279 */
+/* sfx.asm:485-497. The asm is a documented ROM bug: it loads $8/$80 into `a`
+ * and then does `ldh a, [rAUDxENV/HIGH]`, reading the registers instead of
+ * writing them, so those loads are dead and the only surviving effect is
+ * clearing wdd8c. The reads are kept because they are observable bus traffic. */
+void Func_fc279(void)
 {
 	gb_read8(rAUD1ENV);
 	gb_read8(0xFF17u);
@@ -60,12 +65,17 @@ static void Func_fc279(void)
 	wdd8c = 0;
 }
 
-static void Func_fc26c(void)
+/* <<< factory Func_fc279 */
+
+/* >>> factory Func_fc26c */
+/* sfx.asm:475-481. */
+void Func_fc26c(void)
 {
 	wSFXIsPlaying = 0;
 	wSfxPriority = 0;
 	wCurSfxID = 0x80;
 }
+/* <<< factory Func_fc26c */
 
 static void StoreCmdPtr(uint8_t c, uint16_t ptr)
 {
