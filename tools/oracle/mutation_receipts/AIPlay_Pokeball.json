@@ -1,0 +1,9 @@
+{
+  "fn": "AIPlay_Pokeball",
+  "case": "tests/cases/trainer_cards.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIPlay_Pokeball\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51914\": \"000001\", \"52636\": \"01010001\", \"52758\": \"00\", \"52761\": \"34\", \"65439\": \"000134\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIPlay_Pokeball\", \"mismatches\": {\"bus\": {\"address\": 65439, \"reference\": \"00010034000134\", \"native\": \"00010034340134\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[51899, 1], [51914, 3], [52636, 4], [52758, 1], [52761, 1], [65439, 3]]}}}\n",
+  "restored": "{\"fn\": \"AIPlay_Pokeball\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 8, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"51914\": \"000001\", \"52636\": \"01010001\", \"52758\": \"00\", \"52761\": \"34\", \"65439\": \"000134\"}}, \"status\": \"PASS\"}\n"
+}

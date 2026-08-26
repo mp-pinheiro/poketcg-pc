@@ -156,4 +156,8 @@ AIDecideEnergySearchResult AIDecide_EnergySearch(uint8_t a);
 typedef struct { uint8_t a; uint8_t f; } AIProcessHandTrainerCardsResult;
 AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a);
 /* <<< factory _AIProcessHandTrainerCards */
+/* >>> factory AIPlay_Pokeball */
+typedef struct { uint8_t f; } AIPlayPokeballResult;
+AIPlayPokeballResult AIPlay_Pokeball(void);
+/* <<< factory AIPlay_Pokeball */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

@@ -351,6 +351,14 @@ static void adapt__AIProcessHandTrainerCards(ProbeState *s)
 }
 /* <<< factory _AIProcessHandTrainerCards */
 
+/* >>> factory AIPlay_Pokeball */
+static void adapt_AIPlay_Pokeball(ProbeState *s)
+{
+	AIPlayPokeballResult result = AIPlay_Pokeball();
+	s->f = result.f;
+}
+/* <<< factory AIPlay_Pokeball */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -393,5 +401,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_PokemonTrader", adapt_AIDecide_PokemonTrader },
 	{ "AIDecide_EnergySearch", adapt_AIDecide_EnergySearch },
 	{ "_AIProcessHandTrainerCards", adapt__AIProcessHandTrainerCards },
+	{ "AIPlay_Pokeball", adapt_AIPlay_Pokeball },
 	{ NULL, NULL },
 };

@@ -1536,6 +1536,9 @@ void DancingEmbers_MultiplierEffect(void);
 /* >>> factory NidoranFFurySwipes_MultiplierEffect */
 void NidoranFFurySwipes_MultiplierEffect(void);
 /* <<< factory NidoranFFurySwipes_MultiplierEffect */
+/* >>> factory PsyduckFurySwipes_MultiplierEffect */
+void PsyduckFurySwipes_MultiplierEffect(void);
+/* <<< factory PsyduckFurySwipes_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

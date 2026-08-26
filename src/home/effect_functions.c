@@ -7310,3 +7310,12 @@ void NidoranFFurySwipes_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(result.a));
 }
 /* <<< factory NidoranFFurySwipes_MultiplierEffect */
+
+/* >>> factory PsyduckFurySwipes_MultiplierEffect */
+void PsyduckFurySwipes_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory PsyduckFurySwipes_MultiplierEffect */

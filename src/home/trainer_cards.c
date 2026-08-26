@@ -257,6 +257,13 @@
 #define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
 #define OPPACTION_PLAY_TRAINER 0x06u
 #define SWITCH 0xd2u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/coin_toss.h"
+#include "home/core.h"
+#define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
+#define TrainerCardSuccessCheckText 0x00efu
 /* <<< factory statics */
 
 
@@ -2267,3 +2274,19 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a)
 	return (AIProcessHandTrainerCardsResult){0xffu, 0xc0u};
 }
 /* <<< factory _AIProcessHandTrainerCards */
+
+/* >>> factory AIPlay_Pokeball */
+AIPlayPokeballResult AIPlay_Pokeball(void)
+{
+	uint8_t card = wAITrainerCardToPlay;
+	hTempCardIndex_ff9f = card;
+	TossCoinRoutineResult toss = TossCoin(TrainerCardSuccessCheckText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) != 0u)
+		hTempPlayAreaLocation_ffa1 = wAITrainerCardParameter;
+	else
+		hTempPlayAreaLocation_ffa1 = 0xffu;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIPlayPokeballResult){decision.f};
+}
+/* <<< factory AIPlay_Pokeball */
