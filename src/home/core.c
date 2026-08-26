@@ -1146,6 +1146,8 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
  * bank $01 for every callsite, so the pointer pair is read from there. */
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_BANK 0x01u
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR 0x52C5u
+
+#define NeedPracticeAgainPracticeDuelText 0x01d9u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6454,3 +6456,22 @@ void PrintPracticeDuelInstructionsForCurrentTurn(uint8_t a)
 	PrintPracticeDuelInstructions(hl);
 }
 /* <<< factory PrintPracticeDuelInstructionsForCurrentTurn */
+
+/* >>> factory PracticeDuel_PrintTurnInstructions */
+void PracticeDuel_PrintTurnInstructions(void)
+{
+	DrawPracticeDuelInstructionsTextBox();
+	EnableLCD();
+	uint8_t turns = gb_read8(wDuelTurns_ADDR);
+	uint8_t previous_turn = gb_read8(wPracticeDuelTurn_ADDR);
+	gb_write8(wPracticeDuelTurn_ADDR, turns);
+	if (turns != previous_turn) {
+		TextResult text = PrintScrollableText_WithTextBoxLabel_NoWait(NeedPracticeAgainPracticeDuelText, DrMasonText);
+		(void)text;
+		HandleYesOrNoMenuResult menu = YesOrNoMenu();
+		PrintPracticeDuelInstructionsForCurrentTurn(menu.a);
+		return;
+	}
+	PrintPracticeDuelInstructionsForCurrentTurn(0u);
+}
+/* <<< factory PracticeDuel_PrintTurnInstructions */

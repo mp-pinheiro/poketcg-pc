@@ -1009,4 +1009,7 @@ PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8
 /* >>> factory PrintPracticeDuelInstructionsForCurrentTurn */
 void PrintPracticeDuelInstructionsForCurrentTurn(uint8_t a);
 /* <<< factory PrintPracticeDuelInstructionsForCurrentTurn */
+/* >>> factory PracticeDuel_PrintTurnInstructions */
+void PracticeDuel_PrintTurnInstructions(void);
+/* <<< factory PracticeDuel_PrintTurnInstructions */
 #endif

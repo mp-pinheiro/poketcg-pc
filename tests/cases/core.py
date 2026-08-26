@@ -1754,6 +1754,9 @@ wLoadedCard1Weakness = 0xCC57
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wLoadedCard1NonPokemonDescription = 0xCC2E
+
+wDuelTurns = 0xCC06
+wPracticeDuelTurn = 0xCC00
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3475,6 +3478,28 @@ CASES["PrintPracticeDuelInstructionsForCurrentTurn"] = [
 ]
 # <<< factory PrintPracticeDuelInstructionsForCurrentTurn
 
+# >>> factory PracticeDuel_PrintTurnInstructions
+CONTRACT["PracticeDuel_PrintTurnInstructions"] = {"compare": (), "preserve": ()}
+CASES["PracticeDuel_PrintTurnInstructions"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {wDuelTurns: b"\x00", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01],
+     "wram": {wDuelTurns: b"\x02", wPracticeDuelTurn: b"\x02", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01],
+     "wram": {wDuelTurns: b"\x03", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={wDuelTurns: b"\x04", wPracticeDuelTurn: b"\x00", 0xCABB: b"\x00", 0xFF80: b"\x01"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PracticeDuel_PrintTurnInstructions
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4930,3 +4955,6 @@ MUTATIONS["PrintPracticeDuelInstructionsForCurrentTurn"] = {
                  "PrintPracticeDuelInstructionsForCurrentTurn-3"],
 }
 # <<< factory-mutation PrintPracticeDuelInstructionsForCurrentTurn
+# >>> factory-mutation PracticeDuel_PrintTurnInstructions
+MUTATIONS["PracticeDuel_PrintTurnInstructions"] = {"source_symbol": "PracticeDuel_PrintTurnInstructions", "before": "\tgb_write8(wPracticeDuelTurn_ADDR, turns);", "after": "\tgb_write8(wPracticeDuelTurn_ADDR, (uint8_t)(turns ^ 0x01u));", "case_ids": ["PracticeDuel_PrintTurnInstructions-0", "PracticeDuel_PrintTurnInstructions-1"]}
+# <<< factory-mutation PracticeDuel_PrintTurnInstructions
