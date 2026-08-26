@@ -273,12 +273,27 @@ the frame, that hides `wCurDeckCards` `$CF17` and the `$CF68` list symbols the
 stanzas actually need.
 
 So the cheap unblock is to shrink `RESERVED` from below rather than move it, and
-the one measurement that decides how far is the deepest stack any registered
-routine drives. Bound already known: the GBRT runner enters every one of them at
-`sp = 0xfffe` with only 126 bytes of HRAM beneath it before the IO block, and
-the whole corpus passes, so the true maximum is under that. Measure it exactly
-(record `min(SP)` per case across a full `oracle-audit-all` run), then set the
-floor to `worst frame base - measured depth` and free everything below.
+how far is now measured rather than guessed. Seed a pattern across the window,
+run a routine through the PyBoy oracle, and read it back; the lowest clobbered
+byte is the stack's low-water mark. Measured 2026-08-26 over the 31 largest
+registered routines: the deepest is **86 bytes** below the entry SP (`$CFBE`),
+reaching **`$CF68`**, in `_AIProcessHandTrainerCards`. Text rendering is much
+shallower — 46 bytes for `DrawNarrowTextBox_PrintTextNoDelay`, 34 for
+`PrintTextNoDelay`.
+
+Two consequences. The floor at `$CF30` tolerates 143 bytes, so it clears the
+measured worst case by 57 bytes and is safe. And raising it much further is not
+available: a floor of `$CF69` would tolerate only 85 bytes, under the measured
+86. The low-water mark lands exactly on `wUniqueDeckCardList` /
+`wOwnedCardsCountList` (`$CF68`), which is why the deck-*list* routines cannot be
+unblocked by shrinking at all — the stack genuinely reaches their buffer. Those
+need the frame relocated; only routines whose data terminates below `$CF30`
+benefit from the floor.
+
+Note when measuring: `compare_one.py` cannot show this. It runs GBRT plus the C
+probe, and GBRT enters at `sp = 0xfffe` with its stack in HRAM, so neither side
+touches `$CFxx` and any seeded pattern survives regardless. Only the PyBoy path
+(`tests/test_leaves.py`, `oracle-diff`) exercises the frame.
 
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
