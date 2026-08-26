@@ -610,6 +610,9 @@ static const uint8_t kCursorTileData[16] = {
 
 #include "home/core.h"
 #include "generated/hram.h"
+
+#include "generated/wram.h"
+#define ATK_ANIM_RECOIL_HIT 0x7Au
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3129,3 +3132,17 @@ uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)
 	return saved_hWhoseTurn;
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
+
+/* >>> factory DealRecoilDamageToSelf */
+/* duel.asm:1807-1812. Loads the recoil animation, then falls through into
+ * DealConfusionDamageToSelf. The `push af` / `pop af` pair around the store
+ * exists only to keep the damage in `a` and the caller's flags across it, so
+ * the fallthrough receives exactly the registers this routine was entered
+ * with -- which is what returning the callee's result reproduces. */
+DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f,
+	uint8_t d, uint8_t e)
+{
+	wLoadedAttackAnimation = ATK_ANIM_RECOIL_HIT;
+	return DealConfusionDamageToSelf(a, f, d, e);
+}
+/* <<< factory DealRecoilDamageToSelf */

@@ -1247,6 +1247,54 @@ wNoDamageOrEffect = 0xCCC7
 wTempPlayAreaLocation_cceb = 0xCCEB
 
 wLoadedAttackAnimation = 0xCCB8
+
+# DealRecoilDamageToSelf reuses the confusion-damage fixture, but its own write
+# to wLoadedAttackAnimation means the recoil animation really plays, so the
+# fixture has to survive PlayAttackAnimation_DealAttackDamageSimple. Measured
+# against tools/oracle/gbref/build/gbref_runner, 2026-08-26:
+#   - wAnimationsDisabled ($D421) non-zero makes PlayLoadedDuelAnimation skip the
+#     hit sprite and makes InitScreenAnimation skip the screen shake. Without it
+#     the real ROM spends its whole budget inside bank 4 HandleAnimationFrame
+#     ($4:6B39) and never returns.
+#   - CopyDMAFunction is mandatory: the animation sets wVBlankOAMCopyToggle, so
+#     VBlankHandler starts calling hDMAFunction, and an uncopied HRAM routine
+#     derails the reference into junk (measured pc $FFC5, interrupts off).
+#   - hWhoseTurn is deliberately NOT seeded. The reference leaves $FF97 holding
+#     $47 once the animation's set-screen and damage-text commands have run, and
+#     every seed address is implicitly compared, so the turn byte is installed by
+#     a SwapTurn setup call instead: both sides start with $00 there and SwapTurn
+#     maps $00 to PLAYER_TURN.
+#   - wLCDC ($CABB) is not seeded either: it starts at $00 (WaitForVBlank returns
+#     at once) and the animation's own EnableLCD leaves it $80, which would
+#     diverge from the port.
+#   - Damage stays at or below $50. With a=$AA the damage number is three digits,
+#     DrawDamageAnimationNumbers then fills every damage-char slot and the
+#     reference burns its budget without returning, so the poisoned case poisons
+#     f/b/c/d/e/hl and keeps a at $50.
+_drdts_arena_hp = 0xC2C8
+_drdts_wLoadedAttackAnimation = 0xCCB8
+_drdts_wDamage = 0xCCB9
+_drdts_wDamageEffectiveness = 0xCCC1
+_drdts_wTempTurn = 0xCCC3
+_drdts_wTempNonTurn = 0xCCC4
+_drdts_wNoDamageOrEffect = 0xCCC7
+_drdts_wAnimationsDisabled = 0xD421
+
+def _drdts(**kw):
+    case = {"wram": {_drdts_arena_hp: b"\x40", _drdts_wDamage: b"\x00\x00",
+                     _drdts_wDamageEffectiveness: b"\x00",
+                     _drdts_wTempTurn: b"\x01", _drdts_wTempNonTurn: b"\x01",
+                     _drdts_wNoDamageOrEffect: b"\x00",
+                     _drdts_wAnimationsDisabled: b"\x01"},
+            "setup": [{"fn": "CopyDMAFunction"},
+                      {"fn": "SetupText", "d": 0x30, "e": 0x7F},
+                      {"fn": "SwapTurn"}],
+            "instruction_budget": 8000000, "cycle_budget": 32000000,
+            "read": {_drdts_arena_hp: 1, _drdts_wLoadedAttackAnimation: 1,
+                     _drdts_wDamage: 2, _drdts_wDamageEffectiveness: 1,
+                     _drdts_wTempNonTurn: 1, _drdts_wNoDamageOrEffect: 1}}
+    case.update(kw)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1690,6 +1738,18 @@ CASES["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = [
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand
 
+# >>> factory DealRecoilDamageToSelf
+CONTRACT["DealRecoilDamageToSelf"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DealRecoilDamageToSelf"] = [
+    _drdts(a=0x10),   # ordinary damage: HP $40 -> $30
+    _drdts(a=0x00),   # zero damage takes ApplyDamageModifiers' .no_damage path
+    _drdts(a=0x50),   # exceeds HP: the knocked-out path
+    # Six poisoned registers (f/b/c/d/e/hl); `a` is the damage byte and stays at
+    # $50 so the reference's damage-number animation terminates.
+    _drdts(a=0x50, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234),
+]
+# <<< factory DealRecoilDamageToSelf
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -1994,3 +2054,6 @@ MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderHand"] = {"source_symbol": "
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderHand
 MUTATIONS["OpenYourOrOppPlayAreaScreen_TurnHolderHand"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_TurnHolderHand", "before": "uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_TurnHolderHand-0", "OpenYourOrOppPlayAreaScreen_TurnHolderHand-1", "OpenYourOrOppPlayAreaScreen_TurnHolderHand-2"]}
 # <<< factory-mutation OpenYourOrOppPlayAreaScreen_TurnHolderHand
+# >>> factory-mutation DealRecoilDamageToSelf
+MUTATIONS["DealRecoilDamageToSelf"] = {"source_symbol": "DealRecoilDamageToSelf", "before": "\twLoadedAttackAnimation = ATK_ANIM_RECOIL_HIT;", "after": "\twLoadedAttackAnimation = 0u;", "case_ids": ["DealRecoilDamageToSelf-0", "DealRecoilDamageToSelf-2", "DealRecoilDamageToSelf-3"]}
+# <<< factory-mutation DealRecoilDamageToSelf

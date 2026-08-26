@@ -557,6 +557,14 @@ static void adapt_HandlePlayerMoveModeInput(ProbeState *s)
 }
 /* <<< factory HandlePlayerMoveModeInput */
 
+/* >>> factory PCMenu_Glossary */
+static void adapt_PCMenu_Glossary(ProbeState *s)
+{
+	(void)s;
+	PCMenu_Glossary();
+}
+/* <<< factory PCMenu_Glossary */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -625,5 +633,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "FindNPCOrObject", adapt_FindNPCOrObject },
 	{ "Func_c6dc", adapt_Func_c6dc },
 	{ "HandlePlayerMoveModeInput", adapt_HandlePlayerMoveModeInput },
+	{ "PCMenu_Glossary", adapt_PCMenu_Glossary },
 	{ NULL, NULL },
 };

@@ -705,4 +705,7 @@ void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void);
 /* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
 uint8_t OpenYourOrOppPlayAreaScreen_TurnHolderHand(void);
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
+/* >>> factory DealRecoilDamageToSelf */
+DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory DealRecoilDamageToSelf */
 #endif

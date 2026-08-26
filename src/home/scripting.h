@@ -556,4 +556,18 @@ IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c
  * GiftCenterMenu, which does not carry them out. */
 IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c);
 /* <<< factory ScriptCommand_GiftCenter */
+/* >>> factory ScriptCommand_PrintTextQuitFully */
+/* >>> factory ScriptCommand_PrintTextQuitFully */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} ScriptCommand_PrintTextQuitFullyResult;
+
+ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl);
+/* <<< factory ScriptCommand_PrintTextQuitFully */
 #endif

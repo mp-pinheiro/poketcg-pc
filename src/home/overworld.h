@@ -257,4 +257,7 @@ FuncC6dcResult Func_c6dc(uint16_t saved_hl);
 /* >>> factory HandlePlayerMoveModeInput */
 void HandlePlayerMoveModeInput(void);
 /* <<< factory HandlePlayerMoveModeInput */
+/* >>> factory PCMenu_Glossary */
+void PCMenu_Glossary(void);
+/* <<< factory PCMenu_Glossary */
 #endif /* POKETCG_HOME_OVERWORLD_H */

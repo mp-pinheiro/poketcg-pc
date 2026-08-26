@@ -1,0 +1,9 @@
+{
+  "fn": "DealRecoilDamageToSelf",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DealRecoilDamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"30\", \"52408\": \"7a1000\", \"52409\": \"1000\", \"52417\": \"00\", \"52419\": \"0101\", \"52423\": \"00\", \"54305\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DealRecoilDamageToSelf\", \"mismatches\": {\"bus\": {\"address\": 52408, \"reference\": \"307a10000001\", \"native\": \"300010000001\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49864, 1], [52408, 3], [52417, 1], [52419, 2], [52423, 1], [54305, 1]]}}}\n",
+  "restored": "{\"fn\": \"DealRecoilDamageToSelf\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"30\", \"52408\": \"7a1000\", \"52409\": \"1000\", \"52417\": \"00\", \"52419\": \"0101\", \"52423\": \"00\", \"54305\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

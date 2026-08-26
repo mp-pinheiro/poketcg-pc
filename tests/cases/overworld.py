@@ -840,6 +840,14 @@ CASES["HandlePlayerMoveModeInput"] = [
 ]
 # <<< factory HandlePlayerMoveModeInput
 
+# >>> factory PCMenu_Glossary
+CONTRACT["PCMenu_Glossary"] = {"compare": (), "preserve": ()}
+CASES["PCMenu_Glossary"] = [
+    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1, 0xCE55: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1, 0xCE55: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PCMenu_Glossary
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1157,3 +1165,6 @@ MUTATIONS["Func_c6dc"] = {"source_symbol": "Func_c6dc", "before": "FuncC6dcResul
 # >>> factory-mutation HandlePlayerMoveModeInput
 MUTATIONS["HandlePlayerMoveModeInput"] = {"source_symbol": "HandlePlayerMoveModeInput", "before": "\tif ((hKeysPressed & PAD_A) != 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "after": "\tif ((hKeysPressed & PAD_A) == 0u) {\n\t\t(void)FindNPCOrObject(1u, 0u, 0u, 0u, 0u, 0u, 0u);", "case_ids": ["HandlePlayerMoveModeInput-1", "HandlePlayerMoveModeInput-2"]}
 # <<< factory-mutation HandlePlayerMoveModeInput
+# >>> factory-mutation PCMenu_Glossary
+MUTATIONS["PCMenu_Glossary"] = {"source_symbol": "PCMenu_Glossary", "before": "void PCMenu_Glossary(void)\n{\n\t_PCMenu_Glossary();", "after": "void PCMenu_Glossary(void)\n{\n\t(void)0;", "case_ids": ["PCMenu_Glossary-0", "PCMenu_Glossary-1"]}
+# <<< factory-mutation PCMenu_Glossary

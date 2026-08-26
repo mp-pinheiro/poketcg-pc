@@ -1439,6 +1439,21 @@ CASES["ScriptCommand_GiftCenter"] = [
 ]
 # <<< factory ScriptCommand_GiftCenter
 
+# >>> factory ScriptCommand_PrintTextQuitFully
+CONTRACT["ScriptCommand_PrintTextQuitFully"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["ScriptCommand_PrintTextQuitFully"] = [
+    {"b": 0x01, "c": 0xDB, "stack": [0x0000], "wram": {0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00", 0xD412: b"\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "read": {0xD412: 1, 0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, b=0x01, c=0xDC, stack=[0x1234], wram={0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00", 0xD412: b"\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000,
+         read={0xD412: 1, 0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory ScriptCommand_PrintTextQuitFully
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2129,3 +2144,6 @@ MUTATIONS["ScriptCommand_PrintVariableText"] = {"source_symbol": "ScriptCommand_
 # >>> factory-mutation ScriptCommand_GiftCenter
 MUTATIONS["ScriptCommand_GiftCenter"] = {"source_symbol": "ScriptCommand_GiftCenter", "before": "\t\twGameEvent = GAME_EVENT_GIFT_CENTER;\n\t\twOverworldTransition |= 0x40u;", "after": "\t\twGameEvent = GAME_EVENT_GIFT_CENTER;\n\t\twOverworldTransition &= (uint8_t)~0x40u;", "case_ids": ["ScriptCommand_GiftCenter-0", "ScriptCommand_GiftCenter-1", "ScriptCommand_GiftCenter-2"]}
 # <<< factory-mutation ScriptCommand_GiftCenter
+# >>> factory-mutation ScriptCommand_PrintTextQuitFully
+MUTATIONS["ScriptCommand_PrintTextQuitFully"] = {"source_symbol": "ScriptCommand_PrintTextQuitFully", "before": "ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)\n{\n\tFunc_cc32((uint16_t)(((uint16_t)b << 8) | c));\n\tCloseAdvancedDialogueBox();\n\twBreakScriptLoop = 0x01u;", "after": "ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)\n{\n\tFunc_cc32((uint16_t)(((uint16_t)b << 8) | c));\n\tCloseAdvancedDialogueBox();\n\t(void)0;", "case_ids": ["ScriptCommand_PrintTextQuitFully-0", "ScriptCommand_PrintTextQuitFully-1"]}
+# <<< factory-mutation ScriptCommand_PrintTextQuitFully

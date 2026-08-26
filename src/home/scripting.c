@@ -1890,3 +1890,15 @@ IncreaseScriptPointerResult ScriptCommand_GiftCenter(uint8_t c)
 	return IncreaseScriptPointerBy2();
 }
 /* <<< factory ScriptCommand_GiftCenter */
+
+/* >>> factory ScriptCommand_PrintTextQuitFully */
+/* scripting.asm:806-823 */
+ScriptCommand_PrintTextQuitFullyResult ScriptCommand_PrintTextQuitFully(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t saved_hl)
+{
+	Func_cc32((uint16_t)(((uint16_t)b << 8) | c));
+	CloseAdvancedDialogueBox();
+	wBreakScriptLoop = 0x01u;
+	IncreaseScriptPointerResult pointer = IncreaseScriptPointerBy3();
+	return (ScriptCommand_PrintTextQuitFullyResult){pointer.a, pointer.f, 0u, pointer.c, 0x12u, 0x11u, saved_hl};
+}
+/* <<< factory ScriptCommand_PrintTextQuitFully */

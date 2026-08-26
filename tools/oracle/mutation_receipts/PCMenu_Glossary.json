@@ -1,0 +1,9 @@
+{
+  "fn": "PCMenu_Glossary",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PCMenu_Glossary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52821\": \"ff\", \"53905\": \"5a\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PCMenu_Glossary\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"80ff5a\", \"native\": \"00005a\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[51899, 1], [52821, 1], [53905, 1]]}}}\n",
+  "restored": "{\"fn\": \"PCMenu_Glossary\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"80\", \"52821\": \"ff\", \"53905\": \"5a\"}}, \"status\": \"PASS\"}\n"
+}

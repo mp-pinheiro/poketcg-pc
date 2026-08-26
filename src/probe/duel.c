@@ -991,6 +991,15 @@ static void adapt_OpenYourOrOppPlayAreaScreen_TurnHolderHand(ProbeState *s)
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderHand */
 
+/* >>> factory DealRecoilDamageToSelf */
+static void adapt_DealRecoilDamageToSelf(ProbeState *s)
+{
+	DealConfusionDamageToSelfResult r = DealRecoilDamageToSelf(s->a, s->f, s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DealRecoilDamageToSelf */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1111,5 +1120,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile },
 	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderHand },
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderHand },
+	{ "DealRecoilDamageToSelf", adapt_DealRecoilDamageToSelf },
 	{ NULL, NULL },
 };

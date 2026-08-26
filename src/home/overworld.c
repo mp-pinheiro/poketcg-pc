@@ -201,6 +201,8 @@
 #include "generated/wram.h"
 #define PAD_CTRL_PAD 0xF0u
 #define PAD_A 0x01u
+
+#include "home/pc_glossary.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1193,3 +1195,10 @@ void HandlePlayerMoveModeInput(void)
 	}
 }
 /* <<< factory HandlePlayerMoveModeInput */
+
+/* >>> factory PCMenu_Glossary */
+void PCMenu_Glossary(void)
+{
+	_PCMenu_Glossary();
+}
+/* <<< factory PCMenu_Glossary */
