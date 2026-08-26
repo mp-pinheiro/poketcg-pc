@@ -5268,6 +5268,15 @@ CASES["HypnoDarkMind_DamageBenchEffect"] = [
 ]
 # <<< factory HypnoDarkMind_DamageBenchEffect
 
+# >>> factory GengarDarkMind_DamageBenchEffect
+CONTRACT["GengarDarkMind_DamageBenchEffect"] = {"compare": (), "preserve": ()}
+CASES["GengarDarkMind_DamageBenchEffect"] = [
+    {"wram": {0xFFA0: b"\xFF"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
+]
+# <<< factory GengarDarkMind_DamageBenchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7747,3 +7756,6 @@ MUTATIONS["IceBreath_RandomPokemonDamageEffect"] = {"source_symbol": "IceBreath_
 # >>> factory-mutation HypnoDarkMind_DamageBenchEffect
 MUTATIONS["HypnoDarkMind_DamageBenchEffect"] = {"source_symbol": "HypnoDarkMind_DamageBenchEffect", "before": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "HypnoDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["HypnoDarkMind_DamageBenchEffect-1", "HypnoDarkMind_DamageBenchEffect-2"]}
 # <<< factory-mutation HypnoDarkMind_DamageBenchEffect
+# >>> factory-mutation GengarDarkMind_DamageBenchEffect
+MUTATIONS["GengarDarkMind_DamageBenchEffect"] = {"source_symbol": "GengarDarkMind_DamageBenchEffect", "before": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "GengarDarkMind_DamageBenchEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["GengarDarkMind_DamageBenchEffect-1", "GengarDarkMind_DamageBenchEffect-2"]}
+# <<< factory-mutation GengarDarkMind_DamageBenchEffect

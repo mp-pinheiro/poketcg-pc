@@ -3910,6 +3910,13 @@ static void adapt_HypnoDarkMind_DamageBenchEffect(ProbeState *s)
 }
 /* <<< factory HypnoDarkMind_DamageBenchEffect */
 
+/* >>> factory GengarDarkMind_DamageBenchEffect */
+static void adapt_GengarDarkMind_DamageBenchEffect(ProbeState *s)
+{
+	GengarDarkMind_DamageBenchEffect(s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory GengarDarkMind_DamageBenchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4385,5 +4392,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StretchKick_BenchDamageEffect", adapt_StretchKick_BenchDamageEffect },
 	{ "IceBreath_RandomPokemonDamageEffect", adapt_IceBreath_RandomPokemonDamageEffect },
 	{ "HypnoDarkMind_DamageBenchEffect", adapt_HypnoDarkMind_DamageBenchEffect },
+	{ "GengarDarkMind_DamageBenchEffect", adapt_GengarDarkMind_DamageBenchEffect },
 	{ NULL, NULL },
 };
