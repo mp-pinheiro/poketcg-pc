@@ -4893,6 +4893,22 @@ CASES["VictreebelLure_SwitchDefendingPokemon"] = [
 ]
 # <<< factory VictreebelLure_SwitchDefendingPokemon
 
+# >>> factory DancingEmbers_MultiplierEffect
+CONTRACT["DancingEmbers_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["DancingEmbers_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DancingEmbers_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7297,3 +7313,6 @@ MUTATIONS["NinetalesLure_SwitchEffect"] = {"source_symbol": "NinetalesLure_Switc
 # >>> factory-mutation VictreebelLure_SwitchDefendingPokemon
 MUTATIONS["VictreebelLure_SwitchDefendingPokemon"] = {"source_symbol": "VictreebelLure_SwitchDefendingPokemon", "before": "void VictreebelLure_SwitchDefendingPokemon(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 0u;\n}", "after": "void VictreebelLure_SwitchDefendingPokemon(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 1u;\n}", "case_ids": ["VictreebelLure_SwitchDefendingPokemon-0", "VictreebelLure_SwitchDefendingPokemon-1", "VictreebelLure_SwitchDefendingPokemon-2"]}
 # <<< factory-mutation VictreebelLure_SwitchDefendingPokemon
+# >>> factory-mutation DancingEmbers_MultiplierEffect
+MUTATIONS["DancingEmbers_MultiplierEffect"] = {"source_symbol": "DancingEmbers_MultiplierEffect", "before": "void DancingEmbers_MultiplierEffect(void)\n{\n\tLoadTxRam3(10u);", "after": "void DancingEmbers_MultiplierEffect(void)\n{\n\tLoadTxRam3(11u);", "case_ids": ["DancingEmbers_MultiplierEffect-0", "DancingEmbers_MultiplierEffect-1"]}
+# <<< factory-mutation DancingEmbers_MultiplierEffect

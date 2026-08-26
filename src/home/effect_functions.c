@@ -859,6 +859,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "home/substatus.h"
 #include "home/duel.h"
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#define DamageCheckIfHeadsXDamageText 0x00f4u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7282,3 +7288,12 @@ void VictreebelLure_SwitchDefendingPokemon(void)
 	wDuelDisplayedScreen = 0u;
 }
 /* <<< factory VictreebelLure_SwitchDefendingPokemon */
+
+/* >>> factory DancingEmbers_MultiplierEffect */
+void DancingEmbers_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(8u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory DancingEmbers_MultiplierEffect */

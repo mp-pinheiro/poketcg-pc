@@ -1530,6 +1530,9 @@ void NinetalesLure_SwitchEffect(void);
 /* >>> factory VictreebelLure_SwitchDefendingPokemon */
 void VictreebelLure_SwitchDefendingPokemon(void);
 /* <<< factory VictreebelLure_SwitchDefendingPokemon */
+/* >>> factory DancingEmbers_MultiplierEffect */
+void DancingEmbers_MultiplierEffect(void);
+/* <<< factory DancingEmbers_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -3707,6 +3707,14 @@ static void adapt_VictreebelLure_SwitchDefendingPokemon(ProbeState *s)
 }
 /* <<< factory VictreebelLure_SwitchDefendingPokemon */
 
+/* >>> factory DancingEmbers_MultiplierEffect */
+static void adapt_DancingEmbers_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	DancingEmbers_MultiplierEffect();
+}
+/* <<< factory DancingEmbers_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4157,5 +4165,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Serial_TossCoin", adapt_Serial_TossCoin },
 	{ "NinetalesLure_SwitchEffect", adapt_NinetalesLure_SwitchEffect },
 	{ "VictreebelLure_SwitchDefendingPokemon", adapt_VictreebelLure_SwitchDefendingPokemon },
+	{ "DancingEmbers_MultiplierEffect", adapt_DancingEmbers_MultiplierEffect },
 	{ NULL, NULL },
 };
