@@ -55,7 +55,7 @@ FireClubPressedAResult FireClubPressedA(void)
 /* <<< factory FireClubPressedA */
 
 /* >>> factory FireClubLobbyAfterDuel */
-FindEndOfDuelScriptResult FireClubLobbyAfterDuel(void)
+FireClubLobbyAfterDuelResult FireClubLobbyAfterDuel(void)
 {
 	return FindEndOfDuelScript(AFTER_DUEL_TABLE_830);
 }
