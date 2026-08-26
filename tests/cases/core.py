@@ -3416,6 +3416,14 @@ CASES["DisplayCardPage_Energy"] = [
 ]
 # <<< factory DisplayCardPage_Energy
 
+# >>> factory DisplayCardPage_TrainerPage2
+CONTRACT["DisplayCardPage_TrainerPage2"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CASES["DisplayCardPage_TrainerPage2"] = [
+    {"wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DisplayCardPage_TrainerPage2
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4854,3 +4862,6 @@ MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {
 # >>> factory-mutation DisplayCardPage_Energy
 MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_Energy-0", "DisplayCardPage_Energy-1"]}
 # <<< factory-mutation DisplayCardPage_Energy
+# >>> factory-mutation DisplayCardPage_TrainerPage2
+MUTATIONS["DisplayCardPage_TrainerPage2"] = {"source_symbol": "DisplayCardPage_TrainerPage2", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage2-0", "DisplayCardPage_TrainerPage2-1"]}
+# <<< factory-mutation DisplayCardPage_TrainerPage2

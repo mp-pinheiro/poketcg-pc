@@ -2246,6 +2246,14 @@ static void adapt_DisplayCardPage_Energy(ProbeState *s)
 }
 /* <<< factory DisplayCardPage_Energy */
 
+/* >>> factory DisplayCardPage_TrainerPage2 */
+static void adapt_DisplayCardPage_TrainerPage2(ProbeState *s)
+{
+	PrintAttackOrCardDescriptionResult r = DisplayCardPage_TrainerPage2(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->d = r.d; s->e = r.e; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory DisplayCardPage_TrainerPage2 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2515,5 +2523,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPage_PokemonOverview", adapt_DisplayCardPage_PokemonOverview },
 	{ "DisplayEnergyOrTrainerCardPage", adapt_DisplayEnergyOrTrainerCardPage },
 	{ "DisplayCardPage_Energy", adapt_DisplayCardPage_Energy },
+	{ "DisplayCardPage_TrainerPage2", adapt_DisplayCardPage_TrainerPage2 },
 	{ NULL, NULL },
 };
