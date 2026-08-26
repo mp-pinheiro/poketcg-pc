@@ -262,6 +262,9 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #define PAD_DOWN 0x80u
 #define B_PAD_UP 6u
 #define B_PAD_DOWN 7u
+
+#include "generated/wram.h"
+#include "home/card_data.h"
 /* <<< factory statics */
 
 
@@ -1594,3 +1597,21 @@ exit:
 	wTempCardListCursorPos = cursor;
 }
 /* <<< factory OpenCardPageFromCardList */
+
+/* >>> factory CheckIfThereAreAnyBasicCardsInDeck */
+CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void)
+{
+	uint16_t hl = wCurDeckCards_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		if (card == 0u)
+			return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x80u, 0u, hl};
+	LoadCardDataToBuffer1_FromCardID(card);
+		if ((uint8_t)(wLoadedCard1Type & TYPE_ENERGY) != 0u)
+			continue;
+		if (wLoadedCard1Stage != 0u)
+			continue;
+		return (CheckIfThereAreAnyBasicCardsInDeckResult){0u, 0x90u, card, hl};
+	}
+}
+/* <<< factory CheckIfThereAreAnyBasicCardsInDeck */

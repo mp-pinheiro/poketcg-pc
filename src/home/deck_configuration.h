@@ -215,4 +215,8 @@ void Func_9ced(void);
 /* >>> factory OpenCardPageFromCardList */
 void OpenCardPageFromCardList(void);
 /* <<< factory OpenCardPageFromCardList */
+/* >>> factory CheckIfThereAreAnyBasicCardsInDeck */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; uint16_t hl; } CheckIfThereAreAnyBasicCardsInDeckResult;
+CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void);
+/* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

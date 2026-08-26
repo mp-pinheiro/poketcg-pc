@@ -709,6 +709,17 @@ CASES["OpenCardPageFromCardList"] = [
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wCardListCursorPos: b"\x01", wCardListVisibleOffset: b"\x00", wCardListNumCursorPositions: b"\x02", 0xCABB: b"\x80", 0xFF40: b"\x84"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {wTempCardListCursorPos: 1}, "expect": {wTempCardListCursorPos: b"\x01"}}]
 # <<< factory OpenCardPageFromCardList
 
+# >>> factory CheckIfThereAreAnyBasicCardsInDeck
+CONTRACT["CheckIfThereAreAnyBasicCardsInDeck"] = {"compare": ("a", "f", "e", "hl"), "preserve": ()}
+CASES["CheckIfThereAreAnyBasicCardsInDeck"] = [
+    {"wram": {0xCF17: b"\x00"}, "read": {0xCF17: 1}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF18}},
+    {"wram": {0xCF17: b"\x08\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x90, "e": 0x08, "hl": 0xCF18}},
+    {"wram": {0xCF17: b"\x01\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF19}},
+    {"wram": {0xCF17: b"\x09\x00"}, "read": {0xCF17: 2}, "expect_regs": {"a": 0x00, "f": 0x80, "e": 0x00, "hl": 0xCF19}},
+    dict(POISON, wram={0xCF17: b"\x08\x00"}, read={0xCF17: 2}, expect_regs={"a": 0x00, "f": 0x90, "e": 0x08, "hl": 0xCF18}),
+]
+# <<< factory CheckIfThereAreAnyBasicCardsInDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -962,3 +973,6 @@ MUTATIONS["Func_9ced"] = {
 # >>> factory-mutation OpenCardPageFromCardList
 MUTATIONS["OpenCardPageFromCardList"] = {"source_symbol": "OpenCardPageFromCardList", "before": "\twTempCardListCursorPos = cursor;", "after": "\twTempCardListCursorPos = 0u;", "case_ids": ["OpenCardPageFromCardList-0", "OpenCardPageFromCardList-1"]}
 # <<< factory-mutation OpenCardPageFromCardList
+# >>> factory-mutation CheckIfThereAreAnyBasicCardsInDeck
+MUTATIONS["CheckIfThereAreAnyBasicCardsInDeck"] = {"source_symbol": "CheckIfThereAreAnyBasicCardsInDeck", "before": "CheckIfThereAreAnyBasicCardsInDeck(void)\n{\n\tuint16_t hl = wCurDeckCards_ADDR;\n\tfor (;;) {\n\t\tuint8_t card = gb_read8(hl++);\n\t\tif (card == 0u)", "after": "CheckIfThereAreAnyBasicCardsInDeck(void)\n{\n\tuint16_t hl = wCurDeckCards_ADDR;\n\tfor (;;) {\n\t\tuint8_t card = gb_read8(hl++);\n\t\tif (card == 8u)", "case_ids": ["CheckIfThereAreAnyBasicCardsInDeck-1", "CheckIfThereAreAnyBasicCardsInDeck-4"]}
+# <<< factory-mutation CheckIfThereAreAnyBasicCardsInDeck

@@ -498,6 +498,17 @@ static void adapt_OpenCardPageFromCardList(ProbeState *s)
 }
 /* <<< factory OpenCardPageFromCardList */
 
+/* >>> factory CheckIfThereAreAnyBasicCardsInDeck */
+static void adapt_CheckIfThereAreAnyBasicCardsInDeck(ProbeState *s)
+{
+	CheckIfThereAreAnyBasicCardsInDeckResult result = CheckIfThereAreAnyBasicCardsInDeck();
+	s->a = result.a;
+	s->f = result.f;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory CheckIfThereAreAnyBasicCardsInDeck */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -557,5 +568,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintFilteredCardList", adapt_PrintFilteredCardList },
 	{ "Func_9ced", adapt_Func_9ced },
 	{ "OpenCardPageFromCardList", adapt_OpenCardPageFromCardList },
+	{ "CheckIfThereAreAnyBasicCardsInDeck", adapt_CheckIfThereAreAnyBasicCardsInDeck },
 	{ NULL, NULL },
 };

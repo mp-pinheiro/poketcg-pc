@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfThereAreAnyBasicCardsInDeck",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"hl\": 53016, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53015\": \"0800\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"mismatches\": {\"f\": [144, 128], \"e\": [8, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfThereAreAnyBasicCardsInDeck\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 8, \"f\": 144, \"hl\": 53016, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"53015\": \"0800\"}}, \"status\": \"PASS\"}\n"
+}
