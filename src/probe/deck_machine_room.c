@@ -15,8 +15,9 @@ static void adapt_Func_d96c(ProbeState *s)
 /* >>> factory Script_BeatAaron */
 static void adapt_Script_BeatAaron(ProbeState *s)
 {
-	(void)s;
-	Script_BeatAaron();
+	ScriptBeatAaronResult r = Script_BeatAaron();
+	s->a = r.a;
+	s->c = r.c;
 }
 /* <<< factory Script_BeatAaron */
 

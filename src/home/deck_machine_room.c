@@ -43,7 +43,35 @@
 #define EVENT_AARON_BOOSTER_REWARD_OFFSET 0x1Au
 #define EVENT_AARON_BOOSTER_REWARD_MASK 0x03u
 FuncD96cResult Func_d96c(uint8_t a){uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);uint16_t hl=(uint16_t)(CLUB_MAP_NAMES+offset);const uint8_t *entry=rom_ptr(CLUB_MAP_NAMES_BANK,hl);uint8_t lo=entry[0],hi=entry[1];gb_write8(wTxRam2_ADDR,lo);gb_write8(wTxRam2_b_ADDR,lo);gb_write8((uint16_t)(wTxRam2_ADDR+1u),hi);return (FuncD96cResult){hi,0,offset,(uint16_t)(hl+1u)};}
-void Script_BeatAaron(void){uint8_t value=gb_read8(wMultichoiceTextboxResult_ChooseDeckToDuelAgainst_ADDR);uint16_t event_addr=(uint16_t)(wEventVars_ADDR+EVENT_AARON_BOOSTER_REWARD_OFFSET);uint8_t event=gb_read8(event_addr);gb_write8(wLoadedEventBits_ADDR,EVENT_AARON_BOOSTER_REWARD_MASK);gb_write8(event_addr,(uint8_t)((event&(uint8_t)~EVENT_AARON_BOOSTER_REWARD_MASK)|(value&EVENT_AARON_BOOSTER_REWARD_MASK)));}
+/* >>> factory Script_BeatAaron */
+/* deck_machine_room.asm:62-65 -- the routine's entire CODE portion, 8 bytes:
+ *   ld a, [wMultichoiceTextboxResult_ChooseDeckToDuelAgainst] / ld c, a
+ *   set_event_value EVENT_AARON_BOOSTER_REWARD
+ * The macro is `call SetStackEventValue` + `db $73`; SetStackEventValue consumes
+ * the db via GetByteAfterCall and returns PAST it, to the `rst $20` at $590B that
+ * begins the script bytecode. So $590B is the end of this routine's code, and the
+ * case declares completion pre-ret there. Full-script behaviour past the rst is
+ * scene-level replay territory, not a per-routine port.
+ *
+ * SetEventValue computes [hl] = (~mask & [hl]) | ((c << tz(mask)) & mask) after
+ * GetEventVar loads (offset, mask) from EventVarMasks[id*2]. Verified against the
+ * ROM 2026-08-26: EventVarMasks[0x73] = (0x1A, 0x03); mask 0x03 has bit 0 set, so
+ * the shift-alignment loop runs zero times and the value needs no shifting.
+ * `a` holds the byte written, `c` the value read (push/pop bc restores `ld c, a`);
+ * b, d, e and hl are preserved across the callee's push/pop pairs. */
+ScriptBeatAaronResult Script_BeatAaron(void)
+{
+	uint8_t value = gb_read8(wMultichoiceTextboxResult_ChooseDeckToDuelAgainst_ADDR);
+	uint16_t event_addr = (uint16_t)(wEventVars_ADDR + EVENT_AARON_BOOSTER_REWARD_OFFSET);
+	uint8_t event = gb_read8(event_addr);
+	uint8_t written;
+	gb_write8(wLoadedEventBits_ADDR, EVENT_AARON_BOOSTER_REWARD_MASK);
+	written = (uint8_t)((event & (uint8_t)~EVENT_AARON_BOOSTER_REWARD_MASK)
+	                    | (value & EVENT_AARON_BOOSTER_REWARD_MASK));
+	gb_write8(event_addr, written);
+	return (ScriptBeatAaronResult){written, value};
+}
+/* <<< factory Script_BeatAaron */
 
 /* >>> factory DeckMachineRoomCloseTextBox */
 void DeckMachineRoomCloseTextBox(void)
