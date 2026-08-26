@@ -11,7 +11,15 @@ static void adapt_LoadMapTilesAndPals(ProbeState *s)
 }
 /* <<< factory LoadMapTilesAndPals */
 
+/* >>> factory ReloadMapAfterTextClose */
+static void adapt_ReloadMapAfterTextClose(ProbeState *s)
+{
+	ReloadMapAfterTextClose();
+}
+/* <<< factory ReloadMapAfterTextClose */
+
 const ProbeEntry probe_entries_load_overworld[] = {
 	{ "LoadMapTilesAndPals", adapt_LoadMapTilesAndPals },
+	{ "ReloadMapAfterTextClose", adapt_ReloadMapAfterTextClose },
 	{ NULL, NULL },
 };

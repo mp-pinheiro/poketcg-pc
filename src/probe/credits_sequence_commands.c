@@ -154,6 +154,13 @@ static void adapt_CreditsSequenceCmd_LoadScene(ProbeState *s)
 }
 /* <<< factory CreditsSequenceCmd_LoadScene */
 
+/* >>> factory LoadOWMapForCreditsSequence */
+static void adapt_LoadOWMapForCreditsSequence(ProbeState *s)
+{
+	LoadOWMapForCreditsSequence(s->b, s->c, s->d, s->e);
+}
+/* <<< factory LoadOWMapForCreditsSequence */
+
 const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "SetCreditsSequenceCmdPtr", adapt_SetCreditsSequenceCmdPtr },
 	{ "ExecuteCreditsSequenceCmd", adapt_ExecuteCreditsSequenceCmd },
@@ -175,5 +182,6 @@ const ProbeEntry probe_entries_credits_sequence_commands[] = {
 	{ "CreditsSequenceCmd_LoadBooster", adapt_CreditsSequenceCmd_LoadBooster },
 	{ "CreditsSequenceCmd_FadeOut", adapt_CreditsSequenceCmd_FadeOut },
 	{ "CreditsSequenceCmd_LoadScene", adapt_CreditsSequenceCmd_LoadScene },
+	{ "LoadOWMapForCreditsSequence", adapt_LoadOWMapForCreditsSequence },
 	{ NULL, NULL },
 };

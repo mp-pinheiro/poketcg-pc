@@ -6,4 +6,7 @@
 /* >>> factory LoadMapTilesAndPals */
 void LoadMapTilesAndPals(void);
 /* <<< factory LoadMapTilesAndPals */
+/* >>> factory ReloadMapAfterTextClose */
+void ReloadMapAfterTextClose(void);
+/* <<< factory ReloadMapAfterTextClose */
 #endif /* POKETCG_HOME_LOAD_OVERWORLD_H */

@@ -7,6 +7,9 @@
 #include "home/load_gfx.h"
 #include "home/load_map_header.h"
 #include "generated/wram.h"
+
+#include "home/overworld.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 /* >>> factory LoadMapTilesAndPals */
@@ -29,3 +32,14 @@ void LoadMapTilesAndPals(void)
 		LoadBGPalette(pal);
 }
 /* <<< factory LoadMapTilesAndPals */
+
+/* >>> factory ReloadMapAfterTextClose */
+void ReloadMapAfterTextClose(void)
+{
+	ClearSRAMBGMaps();
+	LoadTilemap_ToSRAM(0u, 0u);
+	Func_c9c7();
+	SafelyCopyBGMapFromSRAMToVRAM();
+	Func_c3ee();
+}
+/* <<< factory ReloadMapAfterTextClose */

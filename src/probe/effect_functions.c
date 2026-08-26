@@ -3961,6 +3961,13 @@ static void adapt_Firegiver_AddToHandEffect(ProbeState *s)
 }
 /* <<< factory Firegiver_AddToHandEffect */
 
+/* >>> factory PlayAttackAnimationOverAttackingPokemon */
+static void adapt_PlayAttackAnimationOverAttackingPokemon(ProbeState *s)
+{
+	PlayAttackAnimationOverAttackingPokemon(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+}
+/* <<< factory PlayAttackAnimationOverAttackingPokemon */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4442,5 +4449,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Gigashock_BenchDamageEffect", adapt_Gigashock_BenchDamageEffect },
 	{ "ChainLightningEffect", adapt_ChainLightningEffect },
 	{ "Firegiver_AddToHandEffect", adapt_Firegiver_AddToHandEffect },
+	{ "PlayAttackAnimationOverAttackingPokemon", adapt_PlayAttackAnimationOverAttackingPokemon },
 	{ NULL, NULL },
 };

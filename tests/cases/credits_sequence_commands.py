@@ -183,6 +183,10 @@ wSequenceCmdPtr = 0xD631
 hSCX = 0xFF92
 hSCY = 0xFF93
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wCurMap = 0xD32F
+wWhichOBP = 0xD4CA
+wWhichOBPalIndex = 0xD4CB
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -306,6 +310,18 @@ CASES["CreditsSequenceCmd_LoadScene"] = [
     dict(POISON, e=0x00, wram={wSequenceCmdPtr: b"\x00\xc1", hSCX: b"\x7f", hSCY: b"\x7f"}, read={wSequenceCmdPtr: 2, hSCX: 1, hSCY: 1}, instruction_budget=4000000, cycle_budget=20000000),
 ]
 # <<< factory CreditsSequenceCmd_LoadScene
+
+# >>> factory LoadOWMapForCreditsSequence
+CONTRACT["LoadOWMapForCreditsSequence"] = {"compare": (), "preserve": ()}
+CASES["LoadOWMapForCreditsSequence"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00,
+     "read": {hSCX: 1, hSCY: 1, wCurMap: 1, wWhichOBP: 1, wWhichOBPalIndex: 1},
+     "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, e=0x02,
+         read={hSCX: 1, hSCY: 1, wCurMap: 1, wWhichOBP: 1, wWhichOBPalIndex: 1},
+         instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory LoadOWMapForCreditsSequence
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -443,3 +459,11 @@ MUTATIONS["CreditsSequenceCmd_LoadScene"] = {
     "case_ids": ["CreditsSequenceCmd_LoadScene-0", "CreditsSequenceCmd_LoadScene-1"],
 }
 # <<< factory-mutation CreditsSequenceCmd_LoadScene
+# >>> factory-mutation LoadOWMapForCreditsSequence
+MUTATIONS["LoadOWMapForCreditsSequence"] = {
+    "source_symbol": "LoadOWMapForCreditsSequence",
+    "before": "void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tEmptyScreen();\n\thSCX = c;",
+    "after": "void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tEmptyScreen();\n\thSCX = (uint8_t)(c + 1u);",
+    "case_ids": ["LoadOWMapForCreditsSequence-0", "LoadOWMapForCreditsSequence-1"],
+}
+# <<< factory-mutation LoadOWMapForCreditsSequence

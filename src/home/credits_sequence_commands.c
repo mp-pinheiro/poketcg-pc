@@ -41,6 +41,16 @@
 #include "home/empty_screen.h"
 #include "home/load_animation.h"
 #include "home/default_palettes.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/animation.h"
+#include "home/empty_screen.h"
+#include "home/scripting.h"
+#include "home/load_overworld.h"
+#include "home/load_gfx.h"
+
+#define PALETTE_OVERWORLD_OAM 0x1Du
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -285,3 +295,20 @@ CreditsSequenceCmdLoadSceneResult CreditsSequenceCmd_LoadScene(uint8_t a, uint8_
 	return (CreditsSequenceCmdLoadSceneResult){high, exit_f, loaded.b, loaded.c, loaded.d, loaded.e};
 }
 /* <<< factory CreditsSequenceCmd_LoadScene */
+
+/* >>> factory LoadOWMapForCreditsSequence */
+void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	EmptyScreen();
+	hSCX = c;
+	hSCY = b;
+	wCurMap = e;
+	LoadMapTilesAndPals();
+	(void)Func_c9c7();
+	SafelyCopyBGMapFromSRAMToVRAM();
+	DoMapOWFrame();
+	wWhichOBP = 0;
+	wWhichOBPalIndex = 0;
+	LoadOBPalette(PALETTE_OVERWORLD_OAM);
+}
+/* <<< factory LoadOWMapForCreditsSequence */

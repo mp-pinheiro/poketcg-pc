@@ -18,6 +18,14 @@ CASES["LoadMapTilesAndPals"] = [
 ]
 # <<< factory LoadMapTilesAndPals
 
+# >>> factory ReloadMapAfterTextClose
+CONTRACT["ReloadMapAfterTextClose"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["ReloadMapAfterTextClose"] = [
+    {"wram": {0xD133: b"\x00" * 0x100}, "read": {0xD133: 0x100}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD133: b"\xFF" * 0x100}, read={0xD133: 0x100}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ReloadMapAfterTextClose
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -25,3 +33,11 @@ MUTATIONS = {}
 # >>> factory-mutation LoadMapTilesAndPals
 MUTATIONS["LoadMapTilesAndPals"] = {"source_symbol": "LoadMapTilesAndPals", "before": "\twWhichBGPalIndex = wd291;\n\tuint8_t pal = wCurMapPalette;", "after": "\twWhichBGPalIndex = (uint8_t)(wd291 + 1u);\n\tuint8_t pal = wCurMapPalette;", "case_ids": ["LoadMapTilesAndPals-0", "LoadMapTilesAndPals-1"]}
 # <<< factory-mutation LoadMapTilesAndPals
+# >>> factory-mutation ReloadMapAfterTextClose
+MUTATIONS["ReloadMapAfterTextClose"] = {
+    "source_symbol": "ReloadMapAfterTextClose",
+    "before": "void ReloadMapAfterTextClose(void)\n{\n\tClearSRAMBGMaps();\n\tLoadTilemap_ToSRAM(0u, 0u);\n\tFunc_c9c7();\n\tSafelyCopyBGMapFromSRAMToVRAM();\n\tFunc_c3ee();",
+    "after": "void ReloadMapAfterTextClose(void)\n{\n\tClearSRAMBGMaps();\n\tLoadTilemap_ToSRAM(0u, 0u);\n\tFunc_c9c7();\n\tSafelyCopyBGMapFromSRAMToVRAM();\n\t(void)0;",
+    "case_ids": ["ReloadMapAfterTextClose-1"]
+}
+# <<< factory-mutation ReloadMapAfterTextClose

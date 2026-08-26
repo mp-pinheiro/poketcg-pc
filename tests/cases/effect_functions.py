@@ -2627,6 +2627,10 @@ hTemp_ffa0 = 0xFFA0
 wDuelDisplayedScreen = 0xCAC2
 
 hTempList = 0xFFA0
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+hWhoseTurn = 0xFF97
+wLoadedAttackAnimation = 0xCCB8
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5357,6 +5361,22 @@ CASES["Firegiver_AddToHandEffect"] = [
 ]
 # <<< factory Firegiver_AddToHandEffect
 
+# >>> factory PlayAttackAnimationOverAttackingPokemon
+CONTRACT["PlayAttackAnimationOverAttackingPokemon"] = {"compare": ("f",), "preserve": ()}
+CASES["PlayAttackAnimationOverAttackingPokemon"] = [
+    {"a": 0x00, "f": 0x80, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x20, "hl": 0xC200,
+     "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x02", 0xCC05: b"\xC2", 0xCCC4: b"\x15"},
+     "read": {0xCCB8: 1, 0xCE7E: 1, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1, 0xCE7F: 2}},
+    {"a": 0x00, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x01, "e": 0x45, "hl": 0xC300,
+     "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x05", 0xCC05: b"\xC3", 0xCCC4: b"\xA0"},
+     "read": {0xCCB8: 1, 0xCE7E: 1, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1, 0xCE7F: 2}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x02", 0xCC05: b"\xC2", 0xCCC4: b"\xFE"},
+     "oracle": False, "why": "nonzero attack animation enters the frame-driven animation wait outside the isolated primary oracle path",
+     "expect": {0xCCB8: b"\xAA"}}
+]
+# <<< factory PlayAttackAnimationOverAttackingPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7854,3 +7874,6 @@ MUTATIONS["ChainLightningEffect"] = {"source_symbol": "ChainLightningEffect", "b
 # >>> factory-mutation Firegiver_AddToHandEffect
 MUTATIONS["Firegiver_AddToHandEffect"] = {"source_symbol": "Firegiver_AddToHandEffect", "before": "\tgb_write8(list, FG_LIST_TERMINATOR);", "after": "\tgb_write8(list, 0x00u);", "case_ids": ["Firegiver_AddToHandEffect-0", "Firegiver_AddToHandEffect-1"]}
 # <<< factory-mutation Firegiver_AddToHandEffect
+# >>> factory-mutation PlayAttackAnimationOverAttackingPokemon
+MUTATIONS["PlayAttackAnimationOverAttackingPokemon"] = {"source_symbol": "PlayAttackAnimationOverAttackingPokemon", "before": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = a;", "after": "void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(a + 1u);", "case_ids": ["PlayAttackAnimationOverAttackingPokemon-0", "PlayAttackAnimationOverAttackingPokemon-1"]}
+# <<< factory-mutation PlayAttackAnimationOverAttackingPokemon

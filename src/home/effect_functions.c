@@ -948,6 +948,11 @@ static void chain_lightning_damage_same_color_bench(void)
 #define FG_LIST_TERMINATOR 0xFFu
 #define FG_PLAY_AREA_ARENA 0x00u
 #define FG_TYPE_ENERGY_FIRE 0x08u
+
+#include "home/core.h"
+#include "home/duel_core.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7804,3 +7809,14 @@ ShuffleCardsInDeckResult Firegiver_AddToHandEffect(uint8_t b)
 				  DrewFireEnergyFromTheHandText);
 }
 /* <<< factory Firegiver_AddToHandEffect */
+
+/* >>> factory PlayAttackAnimationOverAttackingPokemon */
+void PlayAttackAnimationOverAttackingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	wLoadedAttackAnimation = a;
+	uint8_t target = hTempPlayAreaLocation_ff9d;
+	uint8_t turn = hWhoseTurn;
+	PlayAttackAnimation(turn, f, target, 0u, d, e, (uint16_t)(((uint16_t)turn << 8) | (hl & 0xffu)));
+	WaitAttackAnimation();
+}
+/* <<< factory PlayAttackAnimationOverAttackingPokemon */
