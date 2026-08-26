@@ -246,7 +246,7 @@ CASES["OverworldMap_HandleDPad"] = [
 CONTRACT["OverworldMap_HandleKeyPress"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["OverworldMap_HandleKeyPress"] = [
     {"hram": {0xFF91: b"\x00"}, "wram": {0xD32E: b"\x00", 0xD334: b"\x00"}},
-    dict(POISON, hram={0xFF91: b"\x10"}, wram={0xD32E: b"\x00", 0xD334: b"\x00"}, expect={0xD334: b"\x01"}),
+    dict(POISON, hram={0xFF91: b"\x10"}, wram={0xD32E: b"\x00", 0xD334: b"\x00"}, expect={0xD334: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory OverworldMap_HandleKeyPress
 
