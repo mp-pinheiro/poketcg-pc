@@ -19,6 +19,10 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define rAUD1LEN 0xFF11u
+
+#include "home/sfx.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 #define SFX_BANK 0x3Fu
@@ -512,3 +516,12 @@ void SFX_unused(uint16_t hl, uint16_t bc)
 	ExecuteNextSFXCommand(hl, bc);
 }
 /* <<< factory SFX_unused */
+
+/* >>> factory SFX_pitch_offset */
+void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl)
+{
+	gb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), gb_read8(caller_hl));
+	caller_hl = (uint16_t)(caller_hl + 1u);
+	ExecuteNextSFXCommand(caller_hl, bc);
+}
+/* <<< factory SFX_pitch_offset */

@@ -71,6 +71,13 @@ static void adapt_SFX_unused(ProbeState *s)
 }
 /* <<< factory SFX_unused */
 
+/* >>> factory SFX_pitch_offset */
+static void adapt_SFX_pitch_offset(ProbeState *s)
+{
+	SFX_pitch_offset((uint16_t)(((uint16_t)s->b << 8u) | s->c), s->stack[0]);
+}
+/* <<< factory SFX_pitch_offset */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -81,5 +88,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_loop", adapt_SFX_loop },
 	{ "SFX_pan", adapt_SFX_pan },
 	{ "SFX_unused", adapt_SFX_unused },
+	{ "SFX_pitch_offset", adapt_SFX_pitch_offset },
 	{ NULL, NULL },
 };

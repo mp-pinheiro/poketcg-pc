@@ -37,4 +37,7 @@ void SFX_pan(uint16_t bc, uint16_t caller_hl);
 /* >>> factory SFX_unused */
 void SFX_unused(uint16_t hl, uint16_t bc);
 /* <<< factory SFX_unused */
+/* >>> factory SFX_pitch_offset */
+void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl);
+/* <<< factory SFX_pitch_offset */
 #endif

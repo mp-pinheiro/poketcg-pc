@@ -137,6 +137,15 @@ CASES["SFX_unused"] = [
 ]
 # <<< factory SFX_unused
 
+# >>> factory SFX_pitch_offset
+CONTRACT["SFX_pitch_offset"] = {"compare": (), "preserve": ()}
+CASES["SFX_pitch_offset"] = [
+    {"b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\x12\xF0"}, "read": {0xDE2F: 1}},
+    {"b": 0, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\x34\xF0"}, "read": {0xDE30: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC300], wram={0xC300: b"\x56\xF0"}, read={0xDE31: 1}),
+]
+# <<< factory SFX_pitch_offset
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -185,3 +194,6 @@ MUTATIONS["SFX_pan"] = {"source_symbol": "SFX_pan", "before": "void SFX_pan(uint
 # >>> factory-mutation SFX_unused
 MUTATIONS["SFX_unused"] = {"source_symbol": "SFX_unused", "before": "void SFX_unused(uint16_t hl, uint16_t bc)\n{\n\tExecuteNextSFXCommand(hl, bc);", "after": "void SFX_unused(uint16_t hl, uint16_t bc)\n{\n\tExecuteNextSFXCommand(hl, (uint16_t)(bc + 1u));", "case_ids": ["SFX_unused-0", "SFX_unused-1", "SFX_unused-2", "SFX_unused-3"]}
 # <<< factory-mutation SFX_unused
+# >>> factory-mutation SFX_pitch_offset
+MUTATIONS["SFX_pitch_offset"] = {"source_symbol": "SFX_pitch_offset", "before": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), gb_read8(caller_hl));", "after": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), 0u);", "case_ids": ["SFX_pitch_offset-0", "SFX_pitch_offset-1", "SFX_pitch_offset-2"]}
+# <<< factory-mutation SFX_pitch_offset
