@@ -3896,6 +3896,13 @@ static void adapt_StretchKick_BenchDamageEffect(ProbeState *s)
 }
 /* <<< factory StretchKick_BenchDamageEffect */
 
+/* >>> factory IceBreath_RandomPokemonDamageEffect */
+static void adapt_IceBreath_RandomPokemonDamageEffect(ProbeState *s)
+{
+	IceBreath_RandomPokemonDamageEffect();
+}
+/* <<< factory IceBreath_RandomPokemonDamageEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4369,5 +4376,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PlayTrainerEffectAnimation", adapt_PlayTrainerEffectAnimation },
 	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ "StretchKick_BenchDamageEffect", adapt_StretchKick_BenchDamageEffect },
+	{ "IceBreath_RandomPokemonDamageEffect", adapt_IceBreath_RandomPokemonDamageEffect },
 	{ NULL, NULL },
 };

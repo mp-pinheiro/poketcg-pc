@@ -27,4 +27,7 @@ CheckIfEvolutionNeedsEnergyForAttackResult CheckIfEvolutionNeedsEnergyForAttack(
 /* >>> factory AITryToPlayEnergyCard */
 uint8_t AITryToPlayEnergyCard(void);
 /* <<< factory AITryToPlayEnergyCard */
+/* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
+void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a);
+/* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
 #endif /* POKETCG_HOME_ENERGY_H */

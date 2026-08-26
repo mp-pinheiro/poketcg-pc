@@ -12,4 +12,7 @@ typedef struct {
 
 BasicPokemonDeckResult CheckIfAnyBasicPokemonInDeck(void);
 
+/* >>> factory CheckWhetherToSwitchToFirstAttack */
+void CheckWhetherToSwitchToFirstAttack(void);
+/* <<< factory CheckWhetherToSwitchToFirstAttack */
 #endif

@@ -1,0 +1,9 @@
+{
+  "fn": "CheckWhetherToSwitchToFirstAttack",
+  "case": "tests/cases/special_attacks.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckWhetherToSwitchToFirstAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52422\": \"01\", \"52671\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckWhetherToSwitchToFirstAttack\", \"mismatches\": {\"bus\": {\"address\": 52422, \"reference\": \"0100\", \"native\": \"0000\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52422, 1], [52671, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckWhetherToSwitchToFirstAttack\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"52422\": \"01\", \"52671\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

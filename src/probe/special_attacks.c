@@ -10,7 +10,16 @@ static void adapt_CheckIfAnyBasicPokemonInDeck(ProbeState *s)
 	s->hl = r.hl;
 }
 
+/* >>> factory CheckWhetherToSwitchToFirstAttack */
+static void adapt_CheckWhetherToSwitchToFirstAttack(ProbeState *s)
+{
+	(void)s;
+	CheckWhetherToSwitchToFirstAttack();
+}
+/* <<< factory CheckWhetherToSwitchToFirstAttack */
+
 const ProbeEntry probe_entries_special_attacks[] = {
 	{"CheckIfAnyBasicPokemonInDeck", adapt_CheckIfAnyBasicPokemonInDeck},
+	{ "CheckWhetherToSwitchToFirstAttack", adapt_CheckWhetherToSwitchToFirstAttack },
 	{NULL, NULL},
 };

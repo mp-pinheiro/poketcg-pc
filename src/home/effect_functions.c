@@ -7554,3 +7554,14 @@ StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uin
 	return (StretchKick_BenchDamageEffectResult){damage.a, damage.f, target, c, 0u, 20u, hl};
 }
 /* <<< factory StretchKick_BenchDamageEffect */
+
+/* >>> factory IceBreath_RandomPokemonDamageEffect */
+void IceBreath_RandomPokemonDamageEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 40u, 0u);
+	SwapTurn();
+}
+/* <<< factory IceBreath_RandomPokemonDamageEffect */

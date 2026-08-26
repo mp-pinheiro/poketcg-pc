@@ -53,6 +53,13 @@ BULBASAUR = 0x08
 IVYSAUR = 0x09
 ZAPDOS_LV64_ID = 0x75
 CHARIZARD_ID = 0x32
+
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wSelectedAttack = 0xCCC6
+wTempAI = 0xCDF1
+wLoadedAttackEffectParam = 0xCCB7
+wLoadedCard1ID = 0xCC2B
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory GetEnergyCardForDiscardOrEnergyBoostAttack
@@ -94,6 +101,15 @@ CASES["AITryToPlayEnergyCard"] = [
 ]
 # <<< factory AITryToPlayEnergyCard
 
+# >>> factory DetermineAIScoreOfAttackEnergyRequirement
+CONTRACT["DetermineAIScoreOfAttackEnergyRequirement"] = {"compare": (), "preserve": ()}
+CASES["DetermineAIScoreOfAttackEnergyRequirement"] = [
+    {"a": 0x00, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, "read": {0xCCC6: 1}},
+    {"a": 0x01, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, "read": {0xCCC6: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x07", 0xC200: b"\xFF" * 60, 0xCDF1: b"\xFF"}, read={0xCCC6: 1}),
+]
+# <<< factory DetermineAIScoreOfAttackEnergyRequirement
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -126,3 +142,6 @@ MUTATIONS["CheckIfEvolutionNeedsEnergyForAttack"] = {"source_symbol": "CheckIfEv
 # >>> factory-mutation AITryToPlayEnergyCard
 MUTATIONS["AITryToPlayEnergyCard"] = {"source_symbol": "AITryToPlayEnergyCard", "before": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 0u;", "after": "CheckIfEvolutionNeedsEnergyForAttackResult evo =\n\t\t\tCheckIfEvolutionNeedsEnergyForAttack(0u, 0u, 0u, 0u, 0u);\n\t\tif ((evo.f & 0x10u) == 0u)\n\t\t\treturn 1u;", "case_ids": ["AITryToPlayEnergyCard-0"]}
 # <<< factory-mutation AITryToPlayEnergyCard
+# >>> factory-mutation DetermineAIScoreOfAttackEnergyRequirement
+MUTATIONS["DetermineAIScoreOfAttackEnergyRequirement"] = {"source_symbol": "DetermineAIScoreOfAttackEnergyRequirement", "before": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = a;", "after": "void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)\n{\n\twSelectedAttack = (uint8_t)(a ^ 1u);", "case_ids": ["DetermineAIScoreOfAttackEnergyRequirement-0", "DetermineAIScoreOfAttackEnergyRequirement-1", "DetermineAIScoreOfAttackEnergyRequirement-2"]}
+# <<< factory-mutation DetermineAIScoreOfAttackEnergyRequirement

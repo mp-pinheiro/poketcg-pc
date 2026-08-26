@@ -69,6 +69,13 @@ static void adapt_AITryToPlayEnergyCard(ProbeState *s)
 }
 /* <<< factory AITryToPlayEnergyCard */
 
+/* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
+static void adapt_DetermineAIScoreOfAttackEnergyRequirement(ProbeState *s)
+{
+	DetermineAIScoreOfAttackEnergyRequirement(s->a);
+}
+/* <<< factory DetermineAIScoreOfAttackEnergyRequirement */
+
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
@@ -76,5 +83,6 @@ const ProbeEntry probe_entries_energy[] = {
 	{ "GetEnergyCardForDiscardOrEnergyBoostAttack", adapt_GetEnergyCardForDiscardOrEnergyBoostAttack },
 	{ "CheckIfEvolutionNeedsEnergyForAttack", adapt_CheckIfEvolutionNeedsEnergyForAttack },
 	{ "AITryToPlayEnergyCard", adapt_AITryToPlayEnergyCard },
+	{ "DetermineAIScoreOfAttackEnergyRequirement", adapt_DetermineAIScoreOfAttackEnergyRequirement },
 	{ NULL, NULL },
 };

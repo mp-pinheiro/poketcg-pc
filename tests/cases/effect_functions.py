@@ -5251,6 +5251,14 @@ CASES["StretchKick_BenchDamageEffect"] = [
 ]
 # <<< factory StretchKick_BenchDamageEffect
 
+# >>> factory IceBreath_RandomPokemonDamageEffect
+CONTRACT["IceBreath_RandomPokemonDamageEffect"] = {"compare": (), "preserve": ()}
+CASES["IceBreath_RandomPokemonDamageEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
+]
+# <<< factory IceBreath_RandomPokemonDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7724,3 +7732,6 @@ MUTATIONS["PlayTrainerEffectAnimation"] = {"source_symbol": "PlayTrainerEffectAn
 # >>> factory-mutation StretchKick_BenchDamageEffect
 MUTATIONS["StretchKick_BenchDamageEffect"] = {"source_symbol": "StretchKick_BenchDamageEffect", "before": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["StretchKick_BenchDamageEffect-0", "StretchKick_BenchDamageEffect-1"]}
 # <<< factory-mutation StretchKick_BenchDamageEffect
+# >>> factory-mutation IceBreath_RandomPokemonDamageEffect
+MUTATIONS["IceBreath_RandomPokemonDamageEffect"] = {"source_symbol": "IceBreath_RandomPokemonDamageEffect", "before": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "void IceBreath_RandomPokemonDamageEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["IceBreath_RandomPokemonDamageEffect-0", "IceBreath_RandomPokemonDamageEffect-1"]}
+# <<< factory-mutation IceBreath_RandomPokemonDamageEffect

@@ -66,6 +66,12 @@
 #define FIRST_ATTACK_OR_PKMN_POWER_600 0x00u
 #define SECOND_ATTACK_600 0x01u
 #define OPPACTION_PLAY_ENERGY_600 0x03u
+
+#define ATTACHED_ENERGY_BOOST_F 0x04u
+#define ATTACK_FLAG2_ADDRESS 0x08u
+#define DISCARD_ENERGY_F 0x03u
+#define IGNORE_THIS_ATTACK_F 0x05u
+#define MAX_ENERGY_BOOST_IS_LIMITED 0x02u
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -423,3 +429,68 @@ check_if_done:
 	return 0u;
 }
 /* <<< factory AITryToPlayEnergyCard */
+
+/* >>> factory DetermineAIScoreOfAttackEnergyRequirement */
+void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a)
+{
+	wSelectedAttack = a;
+	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	if (energy.f & 0x10u) {
+		uint8_t flag = ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F;
+		if (CheckLoadedAttackFlag(flag).f & 0x10u)
+			AIDiscourage(5u);
+		if (energy.b != 0u) {
+			CoreCardListResult hand = LookForCardIDInHand(energy.e);
+			if ((hand.f & 0x10u) == 0u)
+				AIEncourage(4u);
+		}
+		if (energy.c != 0u)
+			AIEncourage(3u);
+		if ((uint8_t)(energy.b + energy.c - 1u) == 0u)
+			AIEncourage(3u);
+	} else {
+		uint8_t flag = ATTACK_FLAG2_ADDRESS | ATTACHED_ENERGY_BOOST_F;
+		if (CheckLoadedAttackFlag(flag).f & 0x10u) {
+			if (wLoadedAttackEffectParam == MAX_ENERGY_BOOST_IS_LIMITED) {
+				CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
+				if ((surplus.f & 0x10u) != 0u || surplus.a < 3u)
+					AIEncourage(2u);
+				else
+					AIDiscourage(5u);
+			} else {
+				AIEncourage(0u);
+			}
+		}
+		flag = ATTACK_FLAG2_ADDRESS | DISCARD_ENERGY_F;
+		if (CheckLoadedAttackFlag(flag).f & 0x10u && wLoadedCard1ID != ZAPDOS_LV64) {
+			CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
+			if ((surplus.f & 0x10u) != 0u)
+				AIEncourage(2u);
+			else
+				AIDiscourage(5u);
+		}
+	}
+
+	uint8_t evolution = wTempAI;
+	if (evolution == 0xFFu)
+		return;
+	uint8_t location = hTempPlayAreaLocation_ff9d;
+	DuelistVarResult slot = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	uint8_t original = slot.a;
+	gb_write8(slot.hl, evolution);
+	CheckEnergyNeededForAttackResult evo_energy = CheckEnergyNeededForAttack();
+	if ((evo_energy.f & 0x10u) != 0u) {
+		uint8_t flag = ATTACK_FLAG2_ADDRESS | IGNORE_THIS_ATTACK_F;
+		if ((CheckLoadedAttackFlag(flag).f & 0x10u) == 0u) {
+			if (evo_energy.b != 0u) {
+				CoreCardListResult hand = LookForCardIDInHand(evo_energy.e);
+				if ((hand.f & 0x10u) == 0u)
+					AIEncourage(2u);
+			}
+			if (evo_energy.c != 0u)
+				AIEncourage(1u);
+		}
+	}
+	gb_write8(slot.hl, original);
+}
+/* <<< factory DetermineAIScoreOfAttackEnergyRequirement */

@@ -1,0 +1,9 @@
+{
+  "fn": "DetermineAIScoreOfAttackEnergyRequirement",
+  "case": "tests/cases/energy.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\", \"49851\": \"07\", \"52422\": \"00\", \"52721\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"mismatches\": {\"bus\": {\"address\": 52422, \"reference\": \"ffffff0700ffc200\", \"native\": \"ffffff0701ffc200\", \"reference_size\": 65, \"native_size\": 65, \"spans\": [[49664, 60], [49851, 1], [52422, 1], [52721, 1], [65431, 1], [65437, 1]]}}}\n",
+  "restored": "{\"fn\": \"DetermineAIScoreOfAttackEnergyRequirement\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49664\": \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\", \"49851\": \"07\", \"52422\": \"00\", \"52721\": \"ff\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
