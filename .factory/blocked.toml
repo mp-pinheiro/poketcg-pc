@@ -665,11 +665,6 @@ reason = "poketcg/src/engine/menus/start.asm:336: `ld a,[wHasSaveData]; or a; re
 unblock = "same as HandleStartMenu/PlayerPickAttackForAmnesia/PlayerPickFireEnergyCardToDiscard: land CopyDMAFunction support in tools/oracle/gbref/runner.c's setup-routine dispatch, then retry with `setup: [{\"fn\": \"CopyDMAFunction\"}, ...]` plus a cycling `keys` list for the save-data-present branch; the zero-save-data branch can then use a mutation anchored on the branch condition without risking a hang once the other branch completes normally instead of deadlocking."
 
 [[blocked]]
-name = "HandleStartMenu"
-reason = "AUTO-RETIRED: src/engine/menus/start.asm:104 (basename `start`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case HandleStartMenu-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":2299,\"sp\":65472,\"instructions\":65849,\"cycles\":400004,\"lcdc\":128,\"if\":254,\"ie\":1,\"ime\":0,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":29,\"ppu_mode\":3,\"bus\":\"0000\"}"
-unblock = "read the recorded diagnostics under .factory/try/HandleStartMenu/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "CloseIRCommunications"
 reason = "AUTO-RETIRED: src/engine/link/ir_core.asm:252 (basename `ir_core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=fail CloseIRCommunications[0] $CABB=80 $FF40=80 $FF00: oracle cf != C ff fail CloseIRCommunications[1] a=$AA f=$F0 b=$BB c=$CC d=$DD e=$EE hl=$1234 $CABB=80 $FF40=80 $FF00: oracle cf != C ff FAIL CloseIRCommunications: 2/2 cases differ"
 unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunications/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -723,19 +718,9 @@ reason = "AUTO-RETIRED: src/engine/duel/core.asm:3205 (basename `core`). 18 gene
 unblock = "read the recorded diagnostics under .factory/try/DisplayCardList/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "_HandlePeekSelection"
-reason = "AUTO-RETIRED: src/engine/menus/duel.asm:1376 (basename `duel`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _HandlePeekSelection-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9098,\"sp\":65512,\"instructions\":48846,\"cycles\":400000,\"lcdc\":0,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"010000000000c201\"}"
-unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "_ShowPromotionalCardScreen"
 reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1960,\"sp\":65520,\"instructions\":3348341,\"cycles\":40000008,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":122,\"ppu_mode\":0,\"bus\":\"807b08c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "_TossCoin"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:7847 (basename `core`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _TossCoin-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":42124,\"sp\":65450,\"instructions\":59800,\"cycles\":400008,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":106,\"ppu_mode\":0,\"bus\":\"06010001\"}"
-unblock = "read the recorded diagnostics under .factory/try/_TossCoin/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "Script_BeatAaron"
