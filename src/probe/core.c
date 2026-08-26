@@ -2326,6 +2326,14 @@ static void adapt_OppAction_TossCoinATimes(ProbeState *s)
 }
 /* <<< factory OppAction_TossCoinATimes */
 
+/* >>> factory OppAction_AttemptRetreat */
+static void adapt_OppAction_AttemptRetreat(ProbeState *s)
+{
+	WaitResult result = OppAction_AttemptRetreat();
+	s->f = result.f;
+}
+/* <<< factory OppAction_AttemptRetreat */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2604,5 +2612,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "AttemptRetreat", adapt_AttemptRetreat },
 	{ "OppAction_BeginUseAttack", adapt_OppAction_BeginUseAttack },
 	{ "OppAction_TossCoinATimes", adapt_OppAction_TossCoinATimes },
+	{ "OppAction_AttemptRetreat", adapt_OppAction_AttemptRetreat },
 	{ NULL, NULL },
 };

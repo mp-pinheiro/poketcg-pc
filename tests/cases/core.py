@@ -1766,6 +1766,16 @@ hTemp_ffa0 = 0xFFA0
 hWhoseTurn = 0xFF97
 wLCDC = 0xCABB
 wSkipDuelistIsThinkingDelay = 0xCBF9
+
+hWhoseTurn = 0xFF97
+hTemp_ffa0 = 0xFFA0
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+hTempRetreatCostCards = 0xFFA2
+wDuelDisplayedScreen = 0xCAC2
+wLCDC = 0xCABB
+rLCDC = 0xFF40
+FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+RETREAT_SEED = {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hTempRetreatCostCards: b"\xFF", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", rLCDC: b"\x00", 0xCC05: b"\xC2", 0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2F1: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC3BB: b"\xFF", 0xC3F1: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00"}
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3581,6 +3591,14 @@ CASES["OppAction_TossCoinATimes"] = [
 ]
 # <<< factory OppAction_TossCoinATimes
 
+# >>> factory OppAction_AttemptRetreat
+CONTRACT["OppAction_AttemptRetreat"] = {"compare": ("f",), "preserve": ()}
+CASES["OppAction_AttemptRetreat"] = [
+    {"keys": [0x00, 0x01], "wram": RETREAT_SEED, "read": {0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2}, "setup": FRAME_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram=RETREAT_SEED, read={0xCAC2: 1, 0xC2BB: 1, 0xC2BC: 1, 0xCE3F: 2}, setup=FRAME_SETUP, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory OppAction_AttemptRetreat
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5064,3 +5082,6 @@ MUTATIONS["OppAction_BeginUseAttack"] = {"source_symbol": "OppAction_BeginUseAtt
 # >>> factory-mutation OppAction_TossCoinATimes
 MUTATIONS["OppAction_TossCoinATimes"] = {"source_symbol": "OppAction_TossCoinATimes", "before": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 1u;", "after": "OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)\n{\n\tSerialRecv8BytesResult recv = SerialRecv8Bytes();\n\tTossCoinATimesResult toss = TossCoinATimes(recv.a, recv.f, recv.b, recv.c, recv.d, recv.e, recv.hl);\n\twSkipDuelistIsThinkingDelay = 0u;", "case_ids": ["OppAction_TossCoinATimes-0", "OppAction_TossCoinATimes-1"]}
 # <<< factory-mutation OppAction_TossCoinATimes
+# >>> factory-mutation OppAction_AttemptRetreat
+MUTATIONS["OppAction_AttemptRetreat"] = {"source_symbol": "OppAction_AttemptRetreat", "before": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = AttemptRetreat();", "after": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = (AttemptRetreatResult){1u, 0x10u};", "case_ids": ["OppAction_AttemptRetreat-0", "OppAction_AttemptRetreat-1"]}
+# <<< factory-mutation OppAction_AttemptRetreat

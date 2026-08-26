@@ -160,4 +160,7 @@ AIProcessHandTrainerCardsResult _AIProcessHandTrainerCards(uint8_t a);
 typedef struct { uint8_t f; } AIPlayPokeballResult;
 AIPlayPokeballResult AIPlay_Pokeball(void);
 /* <<< factory AIPlay_Pokeball */
+/* >>> factory AIPlay_Recycle */
+AIDecideResult AIPlay_Recycle(void);
+/* <<< factory AIPlay_Recycle */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

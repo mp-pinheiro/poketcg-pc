@@ -1276,6 +1276,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/serial.h"
 #include "home/coin_toss.h"
 #include "generated/wram.h"
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#define RetreatWasUnsuccessfulText 0x005bu
+#define RetreatedToTheBenchText 0x005au
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6885,3 +6891,21 @@ OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void)
 	return (OppAction_TossCoinATimesResult){1u, toss.f, 0x12u, 0u, 0x12u, 0x11u, toss.hl};
 }
 /* <<< factory OppAction_TossCoinATimes */
+
+/* >>> factory OppAction_AttemptRetreat */
+WaitResult OppAction_AttemptRetreat(void)
+{
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	AttemptRetreatResult retreat = AttemptRetreat();
+	uint16_t text;
+	if ((retreat.f & 0x10u) != 0u) {
+		text = RetreatWasUnsuccessfulText;
+	} else {
+		wDuelDisplayedScreen = 0u;
+		text = RetreatedToTheBenchText;
+	}
+	DrawDuelMainScene();
+	LoadCardNameToTxRam2(arena.a);
+	return DrawWideTextBox_WaitForInput_Bank1(text);
+}
+/* <<< factory OppAction_AttemptRetreat */

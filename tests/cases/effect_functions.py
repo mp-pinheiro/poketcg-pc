@@ -4969,6 +4969,22 @@ CASES["CometPunch_MultiplierEffect"] = [
 ]
 # <<< factory CometPunch_MultiplierEffect
 
+# >>> factory PinMissile_MultiplierEffect
+CONTRACT["PinMissile_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["PinMissile_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PinMissile_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7388,3 +7404,6 @@ MUTATIONS["JolteonDoubleKick_MultiplierEffect"] = {"source_symbol": "JolteonDoub
 # >>> factory-mutation CometPunch_MultiplierEffect
 MUTATIONS["CometPunch_MultiplierEffect"] = {"source_symbol": "CometPunch_MultiplierEffect", "before": "void CometPunch_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);", "after": "void CometPunch_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(5u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);", "case_ids": ["CometPunch_MultiplierEffect-0"]}
 # <<< factory-mutation CometPunch_MultiplierEffect
+# >>> factory-mutation PinMissile_MultiplierEffect
+MUTATIONS["PinMissile_MultiplierEffect"] = {"source_symbol": "PinMissile_MultiplierEffect", "before": "void PinMissile_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = ATimes10((uint8_t)(result.a + result.a));\n\tSetDefiniteDamage(damage);\n}", "after": "void PinMissile_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);\n\tuint8_t damage = ATimes10((uint8_t)(result.a + result.a + 1u));\n\tSetDefiniteDamage(damage);\n}", "case_ids": ["PinMissile_MultiplierEffect-0", "PinMissile_MultiplierEffect-1"]}
+# <<< factory-mutation PinMissile_MultiplierEffect

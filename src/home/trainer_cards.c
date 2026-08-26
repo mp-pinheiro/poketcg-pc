@@ -2290,3 +2290,17 @@ AIPlayPokeballResult AIPlay_Pokeball(void)
 	return (AIPlayPokeballResult){decision.f};
 }
 /* <<< factory AIPlay_Pokeball */
+
+/* >>> factory AIPlay_Recycle */
+AIDecideResult AIPlay_Recycle(void)
+{
+	hTempCardIndex_ff9f = wAITrainerCardToPlay;
+	TossCoinRoutineResult toss = TossCoin(TrainerCardSuccessCheckText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		hTemp_ffa0 = wAITrainerCardParameter;
+	else
+		hTemp_ffa0 = 0xffu;
+	AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_EXECUTE_TRAINER_EFFECTS);
+	return (AIDecideResult){decision.f};
+}
+/* <<< factory AIPlay_Recycle */

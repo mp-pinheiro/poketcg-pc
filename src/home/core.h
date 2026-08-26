@@ -1039,4 +1039,7 @@ OppActionBeginUseAttackResult OppAction_BeginUseAttack(uint8_t a, uint8_t f, uin
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } OppAction_TossCoinATimesResult;
 OppAction_TossCoinATimesResult OppAction_TossCoinATimes(void);
 /* <<< factory OppAction_TossCoinATimes */
+/* >>> factory OppAction_AttemptRetreat */
+WaitResult OppAction_AttemptRetreat(void);
+/* <<< factory OppAction_AttemptRetreat */
 #endif

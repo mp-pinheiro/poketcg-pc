@@ -282,6 +282,13 @@ wOpponentDeckID = 0xCC0E
 hWhoseTurn = 0xFF97
 
 wAITrainerCardPhase = 0xCE18
+
+hTempCardIndex_ff9f = 0xFF9F
+hTemp_ffa0 = 0xFFA0
+wAITrainerCardParameter = 0xCE19
+wAITrainerCardToPlay = 0xCE16
+SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -673,6 +680,15 @@ CASES["AIPlay_Pokeball"] = [
 ]
 # <<< factory AIPlay_Pokeball
 
+# >>> factory AIPlay_Recycle
+CONTRACT["AIPlay_Recycle"] = {"compare": ("f",), "preserve": ()}
+CASES["AIPlay_Recycle"] = [
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCE19: b"\x34", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(a=0x00, wram={0xCE16: b"\x00", 0xCE19: b"\x78", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x80"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+    dict(POISON, wram={0xCE16: b"\x00", 0xCE19: b"\xDD", 0xCABB: b"\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCACA: b"\x00\x00\x00"}, read={hTempCardIndex_ff9f: 1, hTemp_ffa0: 1}, keys=[0x00, 0x01], setup=SETUP, **BUDGET),
+]
+# <<< factory AIPlay_Recycle
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -902,3 +918,6 @@ MUTATIONS["_AIProcessHandTrainerCards"] = {
 # >>> factory-mutation AIPlay_Pokeball
 MUTATIONS["AIPlay_Pokeball"] = {"source_symbol": "AIPlay_Pokeball", "before": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardToPlay;\n\thTempCardIndex_ff9f = card;", "after": "AIPlayPokeballResult AIPlay_Pokeball(void)\n{\n\tuint8_t card = wAITrainerCardParameter;\n\thTempCardIndex_ff9f = card;", "case_ids": ["AIPlay_Pokeball-0", "AIPlay_Pokeball-1", "AIPlay_Pokeball-2"]}
 # <<< factory-mutation AIPlay_Pokeball
+# >>> factory-mutation AIPlay_Recycle
+MUTATIONS["AIPlay_Recycle"] = {"source_symbol": "AIPlay_Recycle", "before": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardToPlay;", "after": "AIDecideResult AIPlay_Recycle(void)\n{\n\thTempCardIndex_ff9f = wAITrainerCardParameter;", "case_ids": ["AIPlay_Recycle-0", "AIPlay_Recycle-1", "AIPlay_Recycle-2"]}
+# <<< factory-mutation AIPlay_Recycle

@@ -7343,3 +7343,13 @@ void CometPunch_MultiplierEffect(void)
 	SetDefiniteDamage(damage);
 }
 /* <<< factory CometPunch_MultiplierEffect */
+
+/* >>> factory PinMissile_MultiplierEffect */
+void PinMissile_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory PinMissile_MultiplierEffect */

@@ -3747,6 +3747,14 @@ static void adapt_CometPunch_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory CometPunch_MultiplierEffect */
 
+/* >>> factory PinMissile_MultiplierEffect */
+static void adapt_PinMissile_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	PinMissile_MultiplierEffect();
+}
+/* <<< factory PinMissile_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4202,5 +4210,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PsyduckFurySwipes_MultiplierEffect", adapt_PsyduckFurySwipes_MultiplierEffect },
 	{ "JolteonDoubleKick_MultiplierEffect", adapt_JolteonDoubleKick_MultiplierEffect },
 	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
+	{ "PinMissile_MultiplierEffect", adapt_PinMissile_MultiplierEffect },
 	{ NULL, NULL },
 };
