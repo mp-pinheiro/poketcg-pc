@@ -1053,7 +1053,19 @@ static void adapt_CallMapScriptPointerIfExists(ProbeState *s)
 }
 /* <<< factory CallMapScriptPointerIfExists */
 
+
+/* >>> factory Func_c9bc */
+static void adapt_Func_c9bc(ProbeState *s)
+{
+	CallMapScriptResult r = Func_c9bc();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Func_c9bc */
+
 const ProbeEntry probe_entries_scripting[] = {
+	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },

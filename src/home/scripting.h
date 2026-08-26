@@ -510,4 +510,7 @@ ScriptCommand_JumpIfNPCLoadedResult ScriptCommand_JumpIfNPCLoaded(uint8_t f, uin
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } CallMapScriptResult;
 CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l);
 /* <<< factory CallMapScriptPointerIfExists */
+/* >>> factory Func_c9bc */
+CallMapScriptResult Func_c9bc(void);
+/* <<< factory Func_c9bc */
 #endif

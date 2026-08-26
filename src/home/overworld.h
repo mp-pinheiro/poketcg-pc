@@ -205,4 +205,8 @@ void Func_c251(void);
 /* >>> factory Func_c241 */
 void Func_c241(void);
 /* <<< factory Func_c241 */
+/* >>> factory Func_c141 */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } Func_c141Result;
+Func_c141Result Func_c141(void);
+/* <<< factory Func_c141 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

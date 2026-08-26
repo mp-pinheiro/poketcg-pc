@@ -239,6 +239,7 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/script.h"
+#define MAP_SCRIPT_AFTER_DUEL 0x0Au
 /* <<< factory statics */
 
 
@@ -1734,3 +1735,16 @@ CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
 	return (CallMapScriptResult){r.a, r.f, r.hl};
 }
 /* <<< factory CallMapScriptPointerIfExists */
+
+/* >>> factory Func_c9bc */
+/* scripting.asm:91-93 -- four bytes:
+ *   ld l, MAP_SCRIPT_AFTER_DUEL / jr CallMapScriptPointerIfExists
+ * A tail call, so the exits are the callee's: an ordinary return when the map
+ * has no AFTER_DUEL script, or `jp hl` into the script entry when it does. The
+ * cases mix completion modes accordingly. Nothing between here and there touches
+ * a register, so the result is exactly the callee's. */
+CallMapScriptResult Func_c9bc(void)
+{
+	return CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);
+}
+/* <<< factory Func_c9bc */

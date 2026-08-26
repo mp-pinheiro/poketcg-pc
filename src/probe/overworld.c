@@ -463,7 +463,19 @@ static void adapt_Func_c241(ProbeState *s)
 }
 /* <<< factory Func_c241 */
 
+
+/* >>> factory Func_c141 */
+static void adapt_Func_c141(ProbeState *s)
+{
+	Func_c141Result r = Func_c141();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Func_c141 */
+
 const ProbeEntry probe_entries_overworld[] = {
+	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
 	{ "Func_c6f7", adapt_Func_c6f7 },
