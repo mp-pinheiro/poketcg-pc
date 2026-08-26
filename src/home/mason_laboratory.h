@@ -14,4 +14,8 @@ MasonLaboratoryAfterDuelResult MasonLaboratoryAfterDuel(void);
 /* >>> factory MasonLabCloseTextBox */
 void MasonLabCloseTextBox(void);
 /* <<< factory MasonLabCloseTextBox */
+/* >>> factory Script_Tech1 */
+typedef struct { uint8_t a; uint8_t b; uint8_t c; uint16_t hl; } ScriptTech1Result;
+ScriptTech1Result Script_Tech1(void);
+/* <<< factory Script_Tech1 */
 #endif /* POKETCG_HOME_MASON_LABORATORY_H */

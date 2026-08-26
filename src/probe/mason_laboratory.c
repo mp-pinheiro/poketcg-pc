@@ -34,7 +34,20 @@ static void adapt_MasonLabCloseTextBox(ProbeState *s)
 }
 /* <<< factory MasonLabCloseTextBox */
 
+
+/* >>> factory Script_Tech1 */
+static void adapt_Script_Tech1(ProbeState *s)
+{
+	ScriptTech1Result r = Script_Tech1();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory Script_Tech1 */
+
 const ProbeEntry probe_entries_mason_laboratory[] = {
+	{ "Script_Tech1", adapt_Script_Tech1 },
 	{ "Preload_DrMason", adapt_Preload_DrMason },
 	{ "MasonLaboratoryAfterDuel", adapt_MasonLaboratoryAfterDuel },
 	{ "MasonLabCloseTextBox", adapt_MasonLabCloseTextBox },
