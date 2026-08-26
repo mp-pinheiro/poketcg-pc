@@ -4706,6 +4706,21 @@ CASES["ClefableMetronome_UseAttackEffect"] = [
 ]
 # <<< factory ClefableMetronome_UseAttackEffect
 
+# >>> factory Curse_PlayerSelectEffect
+CONTRACT["Curse_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+# keys cycle modulo their length on both sides (runner.c input_index, src/mem.c
+# g_key_entries), so [0x00, 0x02] is a fresh B edge every other frame: one
+# dismisses DrawWholeScreenTextBox's WaitForWideTextBoxInput (A or B), the next
+# cancels the play area menu. Being edge-periodic, the exit is the same whatever
+# phase the two runners settle on. wLCDC ($CABB) starts clear so the reference
+# does not halt in WaitForVBlank before EnableLCD arms the PPU. hWhoseTurn is
+# swapped once on entry and once on the cancel exit, so it comes back as seeded.
+CASES["Curse_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00"}, "read": {0xFF97: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02], wram={0xFF97: b"\xC2", 0xCABB: b"\x00"}, read={0xFF97: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Curse_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7086,3 +7101,6 @@ MUTATIONS["ClefairyMetronome_UseAttackEffect"] = {"source_symbol": "ClefairyMetr
 # >>> factory-mutation ClefableMetronome_UseAttackEffect
 MUTATIONS["ClefableMetronome_UseAttackEffect"] = {"source_symbol": "ClefableMetronome_UseAttackEffect", "before": "uint8_t ClefableMetronome_UseAttackEffect(void)\n{\n\tuint8_t energy_cost = 1u;", "after": "uint8_t ClefableMetronome_UseAttackEffect(void)\n{\n\tuint8_t energy_cost = 0u;", "case_ids": ["ClefableMetronome_UseAttackEffect-0", "ClefableMetronome_UseAttackEffect-1"]}
 # <<< factory-mutation ClefableMetronome_UseAttackEffect
+# >>> factory-mutation Curse_PlayerSelectEffect
+MUTATIONS["Curse_PlayerSelectEffect"] = {"source_symbol": "Curse_PlayerSelectEffect", "before": "Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)\n{\n\tDrawWholeScreenTextBox(ProcedureForCurseText);\n\tSwapTurn();", "after": "Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)\n{\n\tDrawWholeScreenTextBox(ProcedureForCurseText);", "case_ids": ["Curse_PlayerSelectEffect-0", "Curse_PlayerSelectEffect-1"]}
+# <<< factory-mutation Curse_PlayerSelectEffect

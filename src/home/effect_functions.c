@@ -826,6 +826,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
 #define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
 #define OPPACTION_USE_METRONOME_ATTACK 0x14u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/sound.h"
+
+#define ProcedureForCurseText 0x0131u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7072,3 +7084,85 @@ uint8_t ClefableMetronome_UseAttackEffect(void)
 	return HandlePlayerMetronomeEffect(energy_cost);
 }
 /* <<< factory ClefableMetronome_UseAttackEffect */
+
+/* >>> factory Curse_PlayerSelectEffect */
+/* effect_functions.asm:4402. The turn is swapped for the whole selection so
+ * that the Curse user picks inside the defending player's Play Area; both exits
+ * swap it back.
+ *
+ * `.cancel` reaches its `ret` with Z still set from `cp MENU_CANCEL` (the branch
+ * that got there) and with carry freshly set by `scf`, which also clears N and
+ * H, so f is $90 on that exit, never merely $10.
+ *
+ * hl for InitializeMenuParameters is PlayAreaSelectionMenuParameters
+ * (effect_functions.asm:1419), the same $46e0 the landed
+ * DamageSwap_SelectAndSwapEffect and EnergyTrans_TransferEffect pass. */
+Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)
+{
+	DrawWholeScreenTextBox(ProcedureForCurseText);
+	SwapTurn();
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		/* .start: re-renders the list and re-seats the menu. */
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		uint8_t restart = 0u;
+		for (;;) {
+			/* .loop_input_first */
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL) {
+				SwapTurn();
+				return (Curse_PlayerSelectEffectResult){input.a, 0x90u};
+			}
+			hCurSelectionItem = input.a;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			CardDamageResult damage = GetCardDamageAndMaxHP(input.e);
+			if (damage.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			/* .picked_first: lend the card 10 HP, redraw, then take it back. */
+			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP));
+			uint8_t saved_hp = gb_read8(hp.hl);
+			gb_write8(hp.hl, (uint8_t)(saved_hp + 10u));
+			(void)PrintPlayAreaCardList_EnableLCD();
+			gb_write8(hp.hl, saved_hp);
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x17u); /* SYM_HP_NOK */
+			for (;;) {
+				/* .loop_input_second */
+				DoFrame();
+				HandleMenuInputResult target = HandleMenuInput();
+				if ((target.f & 0x10u) == 0u)
+					continue;
+				hPlayAreaEffectTarget = target.a;
+				if (target.a == MENU_CANCEL) {
+					/* B press: `jr .start`, so this has to leave BOTH inner
+					 * loops and re-enter the outer one at the redraw. */
+					DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x00u); /* SYM_SPACE */
+					EraseCursor();
+					restart = 1u;
+					break;
+				}
+				if (target.a == hTempPlayAreaLocation_ffa1)
+					continue;
+				/* .a_press with a different Pokemon: a is reloaded from
+				 * hTempPlayAreaLocation_ffa1, `or a` clears carry and sets Z
+				 * only when that first pick is the arena slot. */
+				uint8_t picked = hTempPlayAreaLocation_ffa1;
+				DrawSymbolOnPlayAreaCursor(picked, 0x00u); /* SYM_SPACE */
+				EraseCursor();
+				SwapTurn();
+				return (Curse_PlayerSelectEffectResult){picked, (uint8_t)(picked == 0u ? 0x80u : 0x00u)};
+			}
+			if (restart)
+				break;
+		}
+	}
+}
+/* <<< factory Curse_PlayerSelectEffect */
