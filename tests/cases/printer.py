@@ -234,11 +234,33 @@ CASES["SendPrinterPacket"] = [
 ]
 # <<< factory SendPrinterPacket
 
+# >>> factory ShowPrinterConnectionErrorScene
+CONTRACT["ShowPrinterConnectionErrorScene"] = {"compare": ("f",), "preserve": ()}
+CASES["ShowPrinterConnectionErrorScene"] = [
+    {"a": 0x02, "hl": 0x0120, "keys": [0, 1],
+     "wram": {0xCABB: b"\x00"},
+     "setup": [{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "read": {0xCE43: 2},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x02, hl=0x0120, keys=[0, 1],
+         wram={0xCABB: b"\x00"},
+         setup=[{"fn": "SetupRegisters"}, {"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+         read={0xCE43: 2},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ShowPrinterConnectionErrorScene
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 
 MUTATIONS = {
+    "ShowPrinterConnectionErrorScene": {
+        "source_symbol": "ShowPrinterConnectionErrorScene",
+        "before": "\tLoadTxRam3((uint16_t)a);",
+        "after": "\tLoadTxRam3((uint16_t)(a + 1u));",
+        "case_ids": ["ShowPrinterConnectionErrorScene-0", "ShowPrinterConnectionErrorScene-1"],
+    },
     "SendByteThroughSerialData": {
         "source_symbol": "SendByteThroughSerialData",
         "before": "\tgb_write8(rSB, a);",

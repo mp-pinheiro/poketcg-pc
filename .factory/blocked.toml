@@ -419,10 +419,6 @@ name = "ChallengeMachine_PrintDuelResultIcons"
 reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:580 (basename `challenge_machine`). 9 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case ChallengeMachine_PrintDuelResultIcons-0 {\"status\": \"PORT\", \"fn\": \"ChallengeMachine_PrintDuelResultIcons\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}"
 unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_PrintDuelResultIcons/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
-[[blocked]]
-name = "ShowPrinterConnectionErrorScene"
-reason = "AUTO-RETIRED: src/engine/link/printer.asm:64 (basename `printer`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ShowPrinterConnectionErrorScene-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":2472,\"sp\":65518,\"instructions\":53663,\"cycles\":400004}"
-unblock = "read the recorded diagnostics under .factory/try/ShowPrinterConnectionErrorScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "MagneticStormEffect"
