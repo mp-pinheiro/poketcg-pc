@@ -189,3 +189,14 @@ uint16_t GetPCPackNameTextID(uint8_t a)
 	return (uint16_t)(0x035Du + (uint16_t)a);
 }
 /* <<< factory GetPCPackNameTextID */
+
+/* >>> factory PrintPCPackName */
+PrintPCPackNameResult PrintPCPackName(uint8_t a)
+{
+	uint16_t text_id = GetPCPackNameTextID(a);
+	PCPackCoordinates coords = GetPCPackCoordinates(a);
+	InitTextPrinting(coords.b, coords.c);
+	TextResult printed = PrintTextNoDelay(text_id, coords.b, coords.c);
+	return (PrintPCPackNameResult){printed.a};
+}
+/* <<< factory PrintPCPackName */

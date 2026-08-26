@@ -7488,3 +7488,14 @@ void PoliwhirlDoubleslap_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory PoliwhirlDoubleslap_MultiplierEffect */
+
+/* >>> factory Twineedle_MultiplierEffect */
+void Twineedle_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory Twineedle_MultiplierEffect */

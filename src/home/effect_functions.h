@@ -1584,6 +1584,9 @@ void JynxDoubleslap_MultiplierEffect(void);
 /* >>> factory PoliwhirlDoubleslap_MultiplierEffect */
 void PoliwhirlDoubleslap_MultiplierEffect(void);
 /* <<< factory PoliwhirlDoubleslap_MultiplierEffect */
+/* >>> factory Twineedle_MultiplierEffect */
+void Twineedle_MultiplierEffect(void);
+/* <<< factory Twineedle_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

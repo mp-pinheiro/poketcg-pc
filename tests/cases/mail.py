@@ -89,6 +89,10 @@ wCursorBlinkTimer = 0xD11C
 
 hDPadHeld = 0xFF8F
 wPCLastDirectionPressed = 0xD12D
+
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -117,6 +121,15 @@ CASES["GetPCPackNameTextID"] = [
     dict(POISON, a=1, expect_regs={"b": 0xBB, "c": 0xCC, "d": 0x03, "e": 0x5E, "hl": 0x1234}),
 ]
 # <<< factory GetPCPackNameTextID
+
+# >>> factory PrintPCPackName
+CONTRACT["PrintPCPackName"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["PrintPCPackName"] = [
+    {"a": 0, "wram": {0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    {"a": 14, "wram": {0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x994E: 6}}},
+    dict(POISON, a=1, wram={0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9848: 6}}),
+]
+# <<< factory PrintPCPackName
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -201,3 +214,6 @@ MUTATIONS["PCMailHandleDPadInput"] = {"source_symbol": "PCMailHandleDPadInput", 
 # >>> factory-mutation GetPCPackNameTextID
 MUTATIONS["GetPCPackNameTextID"] = {"source_symbol": "GetPCPackNameTextID", "before": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn (uint16_t)(0x035Du + (uint16_t)a);\n}", "after": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn (uint16_t)(0x035Eu + (uint16_t)a);\n}", "case_ids": ["GetPCPackNameTextID-0", "GetPCPackNameTextID-1", "GetPCPackNameTextID-2"]}
 # <<< factory-mutation GetPCPackNameTextID
+# >>> factory-mutation PrintPCPackName
+MUTATIONS["PrintPCPackName"] = {"source_symbol": "PrintPCPackName", "before": "PrintPCPackNameResult PrintPCPackName(uint8_t a)\n{\n\tuint16_t text_id = GetPCPackNameTextID(a);", "after": "PrintPCPackNameResult PrintPCPackName(uint8_t a)\n{\n\tuint16_t text_id = (uint16_t)(GetPCPackNameTextID(a) + 1u);", "case_ids": ["PrintPCPackName-0", "PrintPCPackName-1", "PrintPCPackName-2"]}
+# <<< factory-mutation PrintPCPackName

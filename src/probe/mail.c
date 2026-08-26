@@ -97,6 +97,24 @@ static void adapt_GetPCPackNameTextID(ProbeState *s)
 }
 /* <<< factory GetPCPackNameTextID */
 
+/* >>> factory PrintPCPackName */
+static void adapt_PrintPCPackName(ProbeState *s)
+{
+	uint8_t b = s->b;
+	uint8_t c = s->c;
+	uint8_t d = s->d;
+	uint8_t e = s->e;
+	uint16_t hl = s->hl;
+	PrintPCPackNameResult result = PrintPCPackName(s->a);
+	s->a = result.a;
+	s->b = b;
+	s->c = c;
+	s->d = d;
+	s->e = e;
+	s->hl = hl;
+}
+/* <<< factory PrintPCPackName */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -109,5 +127,6 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "UpdateMailMenuCursor", adapt_UpdateMailMenuCursor },
 	{ "PCMailHandleDPadInput", adapt_PCMailHandleDPadInput },
 	{ "GetPCPackNameTextID", adapt_GetPCPackNameTextID },
+	{ "PrintPCPackName", adapt_PrintPCPackName },
 	{ NULL, NULL },
 };

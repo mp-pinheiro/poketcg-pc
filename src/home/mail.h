@@ -38,4 +38,10 @@ void PCMailHandleDPadInput(void);
 /* >>> factory GetPCPackNameTextID */
 uint16_t GetPCPackNameTextID(uint8_t a);
 /* <<< factory GetPCPackNameTextID */
+/* >>> factory PrintPCPackName */
+typedef struct {
+	uint8_t a;
+} PrintPCPackNameResult;
+PrintPCPackNameResult PrintPCPackName(uint8_t a);
+/* <<< factory PrintPCPackName */
 #endif

@@ -5179,6 +5179,22 @@ CASES["PoliwhirlDoubleslap_MultiplierEffect"] = [
 ]
 # <<< factory PoliwhirlDoubleslap_MultiplierEffect
 
+# >>> factory Twineedle_MultiplierEffect
+CONTRACT["Twineedle_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["Twineedle_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Twineedle_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7637,3 +7653,6 @@ MUTATIONS["JynxDoubleslap_MultiplierEffect"] = {"source_symbol": "JynxDoubleslap
 # >>> factory-mutation PoliwhirlDoubleslap_MultiplierEffect
 MUTATIONS["PoliwhirlDoubleslap_MultiplierEffect"] = {"source_symbol": "PoliwhirlDoubleslap_MultiplierEffect", "before": "void PoliwhirlDoubleslap_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);", "after": "void PoliwhirlDoubleslap_MultiplierEffect(void)\n{\n\tLoadTxRam3(31u);", "case_ids": ["PoliwhirlDoubleslap_MultiplierEffect-0", "PoliwhirlDoubleslap_MultiplierEffect-1"]}
 # <<< factory-mutation PoliwhirlDoubleslap_MultiplierEffect
+# >>> factory-mutation Twineedle_MultiplierEffect
+MUTATIONS["Twineedle_MultiplierEffect"] = {"source_symbol": "Twineedle_MultiplierEffect", "before": "void Twineedle_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);", "after": "void Twineedle_MultiplierEffect(void)\n{\n\tLoadTxRam3(31u);", "case_ids": ["Twineedle_MultiplierEffect-0", "Twineedle_MultiplierEffect-1"]}
+# <<< factory-mutation Twineedle_MultiplierEffect
