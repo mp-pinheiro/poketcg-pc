@@ -362,7 +362,9 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 				cbit = (mask >> 7) & 1;
 				mask = (uint8_t)((mask << 1) | cbit);
 			}
-			wMusicStereoPanning = (uint8_t)((wMusicStereoPanning & mask) | (pan & ~mask));
+			/* music2.asm:901-906 ORs the whole rotated operand
+			 * (`ld d, a` / `or d`); it never masks it. */
+			wMusicStereoPanning = (uint8_t)((wMusicStereoPanning & mask) | pan);
 			break;
 		}
 
