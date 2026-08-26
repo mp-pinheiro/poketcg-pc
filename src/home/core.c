@@ -3009,8 +3009,7 @@ RemoveCardIDResult RemoveCardIDInList(uint16_t *hl, uint8_t e)
 			if (value == 0xFFu)
 				break;
 		}
-		*hl = scan;
-		return (RemoveCardIDResult){index, 0x10u};
+		return (RemoveCardIDResult){index, 0x90u};
 	}
 }
 /* <<< factory RemoveCardIDInList */
