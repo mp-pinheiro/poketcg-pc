@@ -1,0 +1,9 @@
+{
+  "fn": "DragoniteLv41Slam_MultiplierEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"3c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"3c\", \"native\": \"5a\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52409, 1]]}}}\n",
+  "restored": "{\"fn\": \"DragoniteLv41Slam_MultiplierEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"52409\": \"3c\"}}, \"status\": \"PASS\"}\n"
+}

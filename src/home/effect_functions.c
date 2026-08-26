@@ -7432,3 +7432,15 @@ void NidorinaDoubleKick_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory NidorinaDoubleKick_MultiplierEffect */
+
+/* >>> factory DragoniteLv41Slam_MultiplierEffect */
+void DragoniteLv41Slam_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t c = result.a;
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + c);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory DragoniteLv41Slam_MultiplierEffect */

@@ -5098,6 +5098,23 @@ CASES["NidorinaDoubleKick_MultiplierEffect"] = [
 ]
 # <<< factory NidorinaDoubleKick_MultiplierEffect
 
+# >>> factory DragoniteLv41Slam_MultiplierEffect
+CONTRACT["DragoniteLv41Slam_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["DragoniteLv41Slam_MultiplierEffect"] = [
+    dict(POISON,
+         keys=[0x00, 0x01],
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         read={0xCCB9: 1},
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory DragoniteLv41Slam_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7541,3 +7558,6 @@ MUTATIONS["CloysterSpikeCannon_MultiplierEffect"] = {"source_symbol": "CloysterS
 # >>> factory-mutation NidorinaDoubleKick_MultiplierEffect
 MUTATIONS["NidorinaDoubleKick_MultiplierEffect"] = {"source_symbol": "NidorinaDoubleKick_MultiplierEffect", "before": "void NidorinaDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);", "after": "void NidorinaDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(31u);", "case_ids": ["NidorinaDoubleKick_MultiplierEffect-0", "NidorinaDoubleKick_MultiplierEffect-1"]}
 # <<< factory-mutation NidorinaDoubleKick_MultiplierEffect
+# >>> factory-mutation DragoniteLv41Slam_MultiplierEffect
+MUTATIONS["DragoniteLv41Slam_MultiplierEffect"] = {"source_symbol": "DragoniteLv41Slam_MultiplierEffect", "before": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "after": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "case_ids": ["DragoniteLv41Slam_MultiplierEffect-0", "DragoniteLv41Slam_MultiplierEffect-1"]}
+# <<< factory-mutation DragoniteLv41Slam_MultiplierEffect
