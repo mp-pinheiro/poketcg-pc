@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c141",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c141\", \"registers\": {\"a\": 188, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 18876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c141\", \"mismatches\": {\"a\": [188, 43], \"hl\": [18876, 31787]}}\n",
+  "restored": "{\"fn\": \"Func_c141\", \"registers\": {\"a\": 188, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 18876, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53442\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
