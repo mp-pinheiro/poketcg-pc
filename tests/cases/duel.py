@@ -1245,6 +1245,8 @@ wPlayerDuelVariables = 0xC200
 wPlayerDeck = 0xC400
 wNoDamageOrEffect = 0xCCC7
 wTempPlayAreaLocation_cceb = 0xCCEB
+
+wLoadedAttackAnimation = 0xCCB8
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1619,6 +1621,15 @@ CASES["DealDamageToPlayAreaPokemon"] = [
 ]
 # <<< factory DealDamageToPlayAreaPokemon
 
+# >>> factory DealDamageToPlayAreaPokemon_RegularAnim
+CONTRACT["DealDamageToPlayAreaPokemon_RegularAnim"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl"), "wram_out": True}
+CASES["DealDamageToPlayAreaPokemon_RegularAnim"] = [
+    {"b": 0x00, "d": 0x00, "e": 0x14, "wram": {0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCB8: 1, 0xCCEB: 1}},
+    dict(POISON, b=0x00, d=0x00, e=0x14, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCB8: 1, 0xCCEB: 1}),
+    {"b": 0x00, "d": 0x00, "e": 0x0A, "wram": {0xCCC7: b"\x02", 0xCCEB: b"\xAA"}, "read": {0xCCB8: 1, 0xCCEB: 1}},
+]
+# <<< factory DealDamageToPlayAreaPokemon_RegularAnim
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1854,3 +1865,6 @@ MUTATIONS["ApplyTransparencyIfApplicable"] = {"source_symbol": "ApplyTransparenc
 # >>> factory-mutation DealDamageToPlayAreaPokemon
 MUTATIONS["DealDamageToPlayAreaPokemon"] = {"source_symbol": "DealDamageToPlayAreaPokemon", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = b;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twTempPlayAreaLocation_cceb = (uint8_t)(b ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon-0", "DealDamageToPlayAreaPokemon-1"]}
 # <<< factory-mutation DealDamageToPlayAreaPokemon
+# >>> factory-mutation DealDamageToPlayAreaPokemon_RegularAnim
+MUTATIONS["DealDamageToPlayAreaPokemon_RegularAnim"] = {"source_symbol": "DealDamageToPlayAreaPokemon_RegularAnim", "before": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = ATK_ANIM_BENCH_HIT;", "after": "DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)\n{\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_BENCH_HIT ^ 1u);", "case_ids": ["DealDamageToPlayAreaPokemon_RegularAnim-0", "DealDamageToPlayAreaPokemon_RegularAnim-1"]}
+# <<< factory-mutation DealDamageToPlayAreaPokemon_RegularAnim

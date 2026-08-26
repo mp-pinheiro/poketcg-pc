@@ -683,6 +683,15 @@ CASES["PauseMenu_Diary"] = [
 ]
 # <<< factory PauseMenu_Diary
 
+# >>> factory DisplayPCMenu
+CONTRACT["DisplayPCMenu"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DisplayPCMenu"] = [
+    {"wram": {0xD0B9: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCD10: 1, 0xFFB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xD0B9: b"\x04", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCD10: 1, 0xFFB1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD0B9: b"\x02", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCD10: 1, 0xFFB1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayPCMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -907,3 +916,6 @@ MUTATIONS["Func_c8ed"] = {"source_symbol": "Func_c8ed", "before": "\tgb_write8(w
 # >>> factory-mutation PauseMenu_Diary
 MUTATIONS["PauseMenu_Diary"] = {"source_symbol": "PauseMenu_Diary", "before": "\t_PauseMenu_Diary();", "after": "\twd291 = 0xFFu;", "case_ids": ["PauseMenu_Diary-0", "PauseMenu_Diary-1"]}
 # <<< factory-mutation PauseMenu_Diary
+# >>> factory-mutation DisplayPCMenu
+MUTATIONS["DisplayPCMenu"] = {"source_symbol": "DisplayPCMenu", "before": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, selected);", "after": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPCMenu-0", "DisplayPCMenu-1", "DisplayPCMenu-2"]}
+# <<< factory-mutation DisplayPCMenu

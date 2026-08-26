@@ -682,4 +682,7 @@ ApplyTransparencyResult ApplyTransparencyIfApplicable(uint8_t initial_f, uint16_
 typedef struct { uint8_t a, f; } DealDamageToPlayAreaPokemonResult;
 DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl);
 /* <<< factory DealDamageToPlayAreaPokemon */
+/* >>> factory DealDamageToPlayAreaPokemon_RegularAnim */
+DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl);
+/* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
 #endif

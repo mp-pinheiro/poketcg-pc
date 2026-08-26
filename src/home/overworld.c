@@ -147,6 +147,13 @@
 
 #include "home/diary.h"
 #include "generated/wram.h"
+
+#include "home/labels.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PC_MENU_PARAMS 0x4DA9u
+#define PC_MENU_BANK 0x04u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -844,3 +851,14 @@ void PauseMenu_Diary(void)
 	_PauseMenu_Diary();
 }
 /* <<< factory PauseMenu_Diary */
+
+/* >>> factory DisplayPCMenu */
+void DisplayPCMenu(void)
+{
+	uint8_t selected = wSelectedPCMenuItem;
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(PC_MENU_BANK);
+	InitAndPrintMenu(PC_MENU_PARAMS, selected);
+	BankswitchROM(saved_bank);
+}
+/* <<< factory DisplayPCMenu */

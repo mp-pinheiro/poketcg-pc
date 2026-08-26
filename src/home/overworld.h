@@ -185,4 +185,8 @@ FuncC8edResult Func_c8ed(uint16_t hl);
 /* >>> factory PauseMenu_Diary */
 void PauseMenu_Diary(void);
 /* <<< factory PauseMenu_Diary */
+/* >>> factory DisplayPCMenu */
+void DisplayPCMenu(void);
+void BankswitchROM(uint8_t bank);
+/* <<< factory DisplayPCMenu */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -44,6 +44,17 @@ static const uint8_t kMedalCoordsAndTilemaps[24] = {
 #include "generated/wram.h"
 #include "mem.h"
 #define EVENT_MEDAL_COUNT 0x2Eu
+
+#include "home/text_box.h"
+#include "home/scripting.h"
+#include "home/process_text.h"
+#include "home/load_gfx.h"
+#include "home/print_text.h"
+#include "generated/wram.h"
+#define EVENT_MEDAL_FLAGS 0x10u
+#define NUM_MEDALS 0x08u
+#define PALETTE_MEDALS 0x76u
+#define PlayerStatusMedalsTitleText 0x0347u
 /* <<< factory statics */
 
 /* >>> factory DrawPauseMenuPlayerPortrait */
@@ -179,3 +190,37 @@ void PrintMedalCount(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 	SafeCopyDataHLtoDE(&src, &dest, 1u);
 }
 /* <<< factory PrintMedalCount */
+
+/* >>> factory DrawCollectedMedals */
+void DrawCollectedMedals(void)
+{
+	wd291 = 0u;
+	uint16_t hl = 0u;
+	uint8_t d = 0u;
+	uint8_t e = (uint8_t)(8u + wMedalScreenYOffset);
+	DrawRegularTextBox(&hl, 0u, 20u, 10u, d, e);
+	d = 6u;
+	e = (uint8_t)(9u + wMedalScreenYOffset);
+	AdjustCoordinatesForBGScroll(&d, &e);
+	InitTextPrinting(d, e);
+	(void)PrintTextNoDelay(PlayerStatusMedalsTitleText, d, e);
+	uint8_t a = GetEventValue(EVENT_MEDAL_FLAGS);
+	if (a == 0u)
+		return;
+	for (uint8_t i = 0u; i < NUM_MEDALS; i++) {
+		if (a & 0x80u) {
+			uint8_t x = kMedalCoordsAndTilemaps[(uint8_t)(i * 3u)];
+			uint8_t y = (uint8_t)(wMedalScreenYOffset + kMedalCoordsAndTilemaps[(uint8_t)(i * 3u + 1u)]);
+			wCurTilemap = kMedalCoordsAndTilemaps[(uint8_t)(i * 3u + 2u)];
+			LoadTilemap_ToVRAM(x, y);
+		}
+		a = (uint8_t)((a << 1) | (a >> 7));
+	}
+	wVRAMTileOffset = 0x80u;
+	wWhichVRAMBank = 0u;
+	LoadTilesetGfx();
+	wWhichOBP = 0u;
+	wWhichBGPalIndex = 1u;
+	LoadBGPalette(PALETTE_MEDALS);
+}
+/* <<< factory DrawCollectedMedals */

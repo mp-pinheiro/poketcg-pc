@@ -1,0 +1,9 @@
+{
+  "fn": "DrawCollectedMedals",
+  "case": "tests/cases/print_stats.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawCollectedMedals\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53524\": \"00\", \"53553\": \"00\", \"53905\": \"00\", \"54226\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawCollectedMedals\", \"mismatches\": {\"bus\": {\"address\": 53905, \"reference\": \"00000000\", \"native\": \"00000100\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[53524, 1], [53553, 1], [53905, 1], [54226, 1]]}}}\n",
+  "restored": "{\"fn\": \"DrawCollectedMedals\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {\"53524\": \"00\", \"53553\": \"00\", \"53905\": \"00\", \"54226\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

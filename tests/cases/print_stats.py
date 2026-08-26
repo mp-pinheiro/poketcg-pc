@@ -19,6 +19,10 @@ wWhichMedal = 0xD115
 wMedalScreenYOffset = 0xD114
 wMedalDisplayTimer = 0xD116
 wCurTilemap = 0xD131
+
+SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+wd291 = 0xD291
+event_flags = 0xD3D2
 # <<< factory-cases-statics
 
 # >>> factory FlashReceivedMedal
@@ -89,6 +93,15 @@ CASES["PrintMedalCount"] = [
 ]
 # <<< factory PrintMedalCount
 
+# >>> factory DrawCollectedMedals
+CONTRACT["DrawCollectedMedals"] = {"compare": (), "preserve": ()}
+CASES["DrawCollectedMedals"] = [
+    {"wram": {event_flags: b"\x00", wMedalScreenYOffset: b"\x00", wCurTilemap: b"\x00", wd291: b"\x55"}, "setup": SETUP_TEXT, "read": {wd291: 1, wMedalScreenYOffset: 1, wCurTilemap: 1}},
+    {"wram": {event_flags: b"\x00", wMedalScreenYOffset: b"\x03", wCurTilemap: b"\x77", wd291: b"\xAA"}, "setup": SETUP_TEXT, "read": {wd291: 1, wMedalScreenYOffset: 1, wCurTilemap: 1}},
+    dict(POISON, wram={event_flags: b"\x00", wMedalScreenYOffset: b"\x05", wCurTilemap: b"\x99", wd291: b"\xCC"}, setup=SETUP_TEXT, read={wd291: 1, wMedalScreenYOffset: 1, wCurTilemap: 1}),
+]
+# <<< factory DrawCollectedMedals
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -122,3 +135,6 @@ MUTATIONS["PrintPlayTime"] = {"source_symbol": "PrintPlayTime", "before": "gb_wr
 # >>> factory-mutation PrintMedalCount
 MUTATIONS["PrintMedalCount"] = {"source_symbol": "PrintMedalCount", "before": "uint16_t src = (uint16_t)(wDecimalChars_ADDR + 2u);", "after": "uint16_t src = (uint16_t)(wDecimalChars_ADDR + 1u);", "case_ids": ["PrintMedalCount-0", "PrintMedalCount-1"]}
 # <<< factory-mutation PrintMedalCount
+# >>> factory-mutation DrawCollectedMedals
+MUTATIONS["DrawCollectedMedals"] = {"source_symbol": "DrawCollectedMedals", "before": "void DrawCollectedMedals(void)\n{\n\twd291 = 0u;", "after": "void DrawCollectedMedals(void)\n{\n\twd291 = 1u;", "case_ids": ["DrawCollectedMedals-0"]}
+# <<< factory-mutation DrawCollectedMedals

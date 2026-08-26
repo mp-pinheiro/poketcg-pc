@@ -603,6 +603,8 @@ static const uint8_t kCursorTileData[16] = {
 #define CARD_LOCATION_ARENA 0x10u
 #define CARD_LOCATION_PLAY_AREA 0x01u
 #define DUELVARS_ARENA_CARD_HP 0xC8u
+
+#define ATK_ANIM_BENCH_HIT 0x78u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3002,3 +3004,11 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 	}
 }
 /* <<< factory DealDamageToPlayAreaPokemon */
+
+/* >>> factory DealDamageToPlayAreaPokemon_RegularAnim */
+DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl)
+{
+	wLoadedAttackAnimation = ATK_ANIM_BENCH_HIT;
+	return DealDamageToPlayAreaPokemon(b, de, hl);
+}
+/* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
