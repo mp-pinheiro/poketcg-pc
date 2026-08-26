@@ -193,13 +193,18 @@ HEAL status landed=<n> reaped=<n> revoked=<n> retired=<n> half_landed=<n> orphan
   write by hand rather than one `factory-heal` retires: rebuild with
   `python3 tools/progress/report.py build` first. The `enforce-derived-data.sh`
   PreToolUse guard blocks the one-sided commit.
-- **orphans** — factory compute whose driver is gone, killed with `SIGKILL`.
-  `run_bounded` starts every child in its own session, so a driver that dies
-  abruptly never runs `_stop_process_tree` and leaves PyBoy and probe processes
-  spinning against unlinked temp files nothing will read; one such fleet crash
-  cost 12 CPU-hours across seven processes. `just fleet-halt` sweeps them after
-  terminating the loop sessions, and `python3 tools/factory/heal.py
-  --sweep-only` does the sweep and touches no ledger.
+- **orphans** — factory compute and drivers whose session no longer has a live
+  driver above it, killed with `SIGKILL`. `run_bounded` detaches each child with
+  `start_new_session=True`, so a driver that dies abruptly never runs
+  `_stop_process_tree` and leaves PyBoy, probe and lander processes spinning
+  against unlinked temp files nothing will read; one such fleet crash cost 12
+  CPU-hours across seven processes. Orphanhood is decided by the *session*, not
+  the parent: the real worker is `uv run ... python tests/test_leaves.py`, whose
+  parent is the live `uv` wrapper, and only the wrapper — the session leader —
+  is reparented to init. Both are killed. The sweep runs on every
+  `factory-heal`, on every `supervise.sh` heartbeat (so a zombie lives at most
+  `POKETCG_FEED_INTERVAL`, 300 s by default), and in `just fleet-halt`;
+  `python3 tools/factory/heal.py --sweep-only` runs it alone, touching no ledger.
 
 `factory-next` performs the revoke and reap steps inline under `select.lock`, so
 a bare selection is self-healing; only retiring needs the explicit command.

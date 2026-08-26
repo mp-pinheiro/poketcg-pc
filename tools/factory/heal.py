@@ -302,11 +302,14 @@ def reap_stale_issued(states: dict[str, dict[str, Any]],
 # cores.
 #
 # Matched against the first two argv tokens, never the whole command line, so a
-# shell or editor that merely mentions a marker is not a candidate.
+# shell or editor that merely mentions a marker is not a candidate. The drivers
+# are here too, not just the compute: an orphaned `land.py` keeps running gates
+# and writing commits into a repository nobody is watching.
 ORPHAN_MARKERS = ("tests/test_leaves.py", "tools/oracle/fn_all.py",
-                  "gbref/compare_one.py", "poketcg_probe", "gbref_runner")
-# WSL reparents orphans to its own `/init`, not to pid 1, so orphanhood is the
-# parent's identity rather than its number.
+                  "gbref/compare_one.py", "poketcg_probe", "gbref_runner",
+                  "factory/land.py", "factory/try_one.py")
+# WSL reparents orphans to its own `/init`, not to pid 1, so a reaper is
+# recognised by identity rather than by number.
 REAPER_NAMES = frozenset({"init", "systemd"})
 
 
@@ -318,21 +321,45 @@ def _process_command(pid: int) -> str:
     return raw.replace(b"\0", b" ").decode(errors="replace").strip()
 
 
-def _process_parent(pid: int) -> int | None:
+def _process_stat(pid: int) -> tuple[int, int] | None:
+    """This process's `(ppid, session id)`, or None if it is already gone."""
     try:
-        for line in Path(f"/proc/{pid}/status").read_text().splitlines():
-            if line.startswith("PPid:"):
-                return int(line.split()[1])
-    except (OSError, ValueError):
+        raw = Path(f"/proc/{pid}/stat").read_text()
+    except OSError:
         return None
-    return None
+    try:
+        # `comm` is parenthesised and may itself contain spaces and parens, so
+        # the fixed fields only start after its final `)`.
+        fields = raw[raw.rindex(")") + 2:].split()
+        return int(fields[1]), int(fields[3])
+    except (ValueError, IndexError):
+        return None
 
 
-def _parent_is_reaper(pid: int) -> bool:
+def _is_reaper(pid: int) -> bool:
     if pid <= 1:
         return True
     command = _process_command(pid)
     return bool(command) and Path(command.split(" ")[0]).name in REAPER_NAMES
+
+
+def _is_orphaned(pid: int, ppid: int, sid: int) -> bool:
+    """True when no driver is left above this process.
+
+    The direct parent is the wrong thing to ask. `run_bounded` launches
+    `uv run ... python tests/test_leaves.py`, so the process that actually burns
+    the core is a grandchild: its parent is the `uv` wrapper, which is very much
+    alive, and only the wrapper is reparented to init when the driver dies. The
+    session is the unit that gets detached (`start_new_session=True` makes the
+    wrapper a session leader), so the session leader's parent is the driver, and
+    a leader that is gone or reparented means the driver is gone.
+    """
+    if sid == pid:
+        return _is_reaper(ppid)
+    leader = _process_stat(sid)
+    if leader is None:
+        return True
+    return _is_reaper(leader[0])
 
 
 def reap_orphan_processes(apply: bool = True) -> list[int]:
@@ -349,16 +376,21 @@ def reap_orphan_processes(apply: bool = True) -> list[int]:
         head = " ".join(command.split(" ")[:2])
         if not any(marker in head for marker in ORPHAN_MARKERS):
             continue
-        parent = _process_parent(pid)
-        if parent is None or not _parent_is_reaper(parent):
+        stat = _process_stat(pid)
+        if stat is None or not _is_orphaned(pid, *stat):
             continue
-        if apply:
-            try:
-                os.kill(pid, signal.SIGKILL)
-            except OSError:
-                continue
-        killed.append(pid)
-        print(f"{prefix}kill {pid} orphan={head}")
+        # The detached session leader is the `uv`/shell wrapper around this
+        # process. Killing the worker alone usually collapses it, but a wrapper
+        # that outlives its child would keep the session alive and hide the next
+        # sweep's evidence, so take the whole session down.
+        for victim in (pid, stat[1]) if stat[1] != pid else (pid,):
+            if apply:
+                try:
+                    os.kill(victim, signal.SIGKILL)
+                except OSError:
+                    continue
+            killed.append(victim)
+        print(f"{prefix}kill {pid} session={stat[1]} orphan={head}")
     return killed
 
 

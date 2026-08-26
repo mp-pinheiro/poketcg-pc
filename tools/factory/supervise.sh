@@ -18,6 +18,12 @@ while :; do
   stats=$(python3 tools/factory/measure.py 2>/dev/null \
     | grep -E "^(landings_per_hour_6h|bytes_per_hour_6h|ready_count|pool_issued|pool_green|pool_red)=" \
     | tr '\n' ' ')
+  # A pass can run for many minutes, and compute detached from a dead driver
+  # burns a core for all of it. The sweep is one /proc scan and kills only
+  # sessions whose driver is gone, so it is safe to run beside live lanes.
+  swept=$(python3 tools/factory/heal.py --sweep-only 2>/dev/null \
+    | grep -c '^HEAL kill ') || true
+  [ "${swept:-0}" -gt 0 ] && printf 'sweep      %s orphaned process(es) killed\n' "$swept"
   printf 'heartbeat  %s%%  %s%s\n' "${pct:-?}" "$stats" "$(date +%H:%M:%S)"
 done &
 beat=$!
