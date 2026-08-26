@@ -1,0 +1,9 @@
+{
+  "fn": "CheckSelfConfusionDamage",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckSelfConfusionDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 49904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"00\", \"52425\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckSelfConfusionDamage\", \"mismatches\": {\"bus\": {\"address\": 52425, \"reference\": \"0000c2\", \"native\": \"0040c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49904, 1], [52425, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"CheckSelfConfusionDamage\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 49904, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49904\": \"00\", \"52425\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

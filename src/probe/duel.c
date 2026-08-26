@@ -902,6 +902,16 @@ static void adapt_PlayTrainerCard(ProbeState *s)
 }
 /* <<< factory PlayTrainerCard */
 
+/* >>> factory CheckSelfConfusionDamage */
+static void adapt_CheckSelfConfusionDamage(ProbeState *s)
+{
+	CheckSelfConfusionDamageResult result = CheckSelfConfusionDamage();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory CheckSelfConfusionDamage */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -1012,5 +1022,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "ProcessPlayedPokemonCard", adapt_ProcessPlayedPokemonCard },
 	{ "_SelectPrizeCards", adapt__SelectPrizeCards },
 	{ "PlayTrainerCard", adapt_PlayTrainerCard },
+	{ "CheckSelfConfusionDamage", adapt_CheckSelfConfusionDamage },
 	{ NULL, NULL },
 };

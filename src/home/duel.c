@@ -583,6 +583,14 @@ static const uint8_t kCursorTileData[16] = {
 #define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
 #define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
 #define OPPACTION_PLAY_TRAINER 0x06u
+
+#include "home/coin_toss.h"
+#include "generated/wram.h"
+#define CNF_SLP_PRZ 0x0fu
+#define CONFUSED 0x01u
+#define DUELVARS_ARENA_CARD_STATUS 0xf0u
+#define FALSE 0x00u
+#define ConfusionCheckDamageText 0x00f7u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2880,3 +2888,19 @@ PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	return (PlayTrainerCardResult){f};
 }
 /* <<< factory PlayTrainerCard */
+
+/* >>> factory CheckSelfConfusionDamage */
+CheckSelfConfusionDamageResult CheckSelfConfusionDamage(void)
+{
+	wConfusionAttackCheckWasUnsuccessful = 0u;
+	DuelistVarResult status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	uint8_t masked = (uint8_t)(status.a & CNF_SLP_PRZ);
+	if (masked != CONFUSED)
+		return (CheckSelfConfusionDamageResult){masked, (uint8_t)(masked == 0u ? 0x80u : 0u), status.hl};
+	TossCoinRoutineResult toss = TossCoin(ConfusionCheckDamageText, status.hl);
+	if ((toss.f & 0x10u) != 0u)
+		return (CheckSelfConfusionDamageResult){toss.a, (uint8_t)(toss.a == 0u ? 0x80u : 0u), toss.hl};
+	wConfusionAttackCheckWasUnsuccessful = TRUE;
+	return (CheckSelfConfusionDamageResult){TRUE, (uint8_t)((toss.f & 0x80u) | 0x10u), toss.hl};
+}
+/* <<< factory CheckSelfConfusionDamage */
