@@ -6874,3 +6874,14 @@ HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void)
 	return result;
 }
 /* <<< factory PidgeyWhirlwind_SwitchEffect */
+
+/* >>> factory TerrorStrike_SwitchDefendingPokemon */
+HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void)
+{
+	uint8_t gate = hTemp_ffa0;
+	if (gate == 0u)
+		return (HandleSwitchDefendingPokemonEffectResult){0u, 0x80u};
+	uint8_t input = hTempPlayAreaLocation_ffa1;
+	return HandleSwitchDefendingPokemonEffect(input);
+}
+/* <<< factory TerrorStrike_SwitchDefendingPokemon */

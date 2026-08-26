@@ -1473,6 +1473,9 @@ ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void);
 /* >>> factory PidgeyWhirlwind_SwitchEffect */
 HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void);
 /* <<< factory PidgeyWhirlwind_SwitchEffect */
+/* >>> factory TerrorStrike_SwitchDefendingPokemon */
+HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void);
+/* <<< factory TerrorStrike_SwitchDefendingPokemon */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
