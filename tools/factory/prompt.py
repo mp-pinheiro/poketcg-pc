@@ -15,7 +15,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from common import ROOT
-from verify import POISON, RESERVED
+from verify import POISON, format_reserved
 
 
 def _marker_body(lines: list[str], open_mark: str, close_mark: str) -> str:
@@ -198,9 +198,8 @@ def render(packet: dict, feedback: str | None = None,
         "— list a preserved register in both, never in `preserve` alone.",
         f"At least one case in CASES[\"<name>\"] must poison four or more registers with "
         f"these exact values: {poison}.",
-        f"No case may seed, read, or expect an address in "
-        f"${RESERVED.start:04X}-${RESERVED.stop - 1:04X}: that range is the oracle's own "
-        f"call frame.",
+        f"No case may seed, read, or expect an address in {format_reserved()}: those "
+        f"ranges are the oracle's own call frame.",
         "The port has no interrupt handler; the reference ROM does. Its VBlank handler "
         "clears wVBlankOAMCopyToggle ($CAC0), flushes wFlushPaletteFlags ($CABF), and "
         "mirrors hSCX/hSCY/hWX/hWY and wLCDC into the LCD registers, so those bytes "

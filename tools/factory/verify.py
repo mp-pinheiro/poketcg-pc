@@ -204,6 +204,9 @@ def reserved_overlap(address: int, size: int) -> range | None:
     return next((region for region in RESERVED
                  if address < region.stop and address + size > region.start), None)
 
+def format_reserved() -> str:
+    return ", ".join(f"${region.start:04X}-${region.stop - 1:04X}" for region in RESERVED)
+
 def case_lint(lane: Path, basename: str, routine_names: list[str],
               module=None) -> dict[str, list[str]]:
     """Mechanical, PyBoy-free checks. Deliberately does not trust the case

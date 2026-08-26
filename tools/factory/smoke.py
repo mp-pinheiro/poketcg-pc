@@ -805,7 +805,7 @@ def stage_prompt(state: dict[str, Any]) -> str:
     poison = max(verify.POISON.values())
     _require(f"0x{poison:04X}" in rendered and "0xAA" in rendered,
              "prompt does not state the poisoned-register values case_lint enforces")
-    _require(f"${verify.RESERVED.start:04X}" in rendered,
+    _require(any(f"${region.start:04X}" in rendered for region in verify.RESERVED),
              "prompt does not state the reserved oracle call frame case_lint enforces")
     _require("case_ids" in rendered,
              "prompt does not state the mutation case-id rule case_lint enforces")
