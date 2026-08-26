@@ -1,0 +1,9 @@
+{
+  "fn": "Script_Specs2",
+  "case": "tests/cases/science_club_lobby.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_Specs2\", \"registers\": {\"a\": 190, \"b\": 0, \"c\": 3, \"d\": 8, \"e\": 190, \"f\": 0, \"hl\": 52800, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"038002\", \"52799\": \"be08ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_Specs2\", \"mismatches\": {\"a\": [190, 68], \"c\": [3, 1], \"d\": [8, 11], \"e\": [190, 68], \"bus\": {\"address\": 52799, \"reference\": \"038002be08ff\", \"native\": \"038002440bff\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51914, 3], [52799, 3]]}}}\n",
+  "restored": "{\"fn\": \"Script_Specs2\", \"registers\": {\"a\": 190, \"b\": 0, \"c\": 3, \"d\": 8, \"e\": 190, \"f\": 0, \"hl\": 52800, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"51914\": \"038002\", \"52799\": \"be08ff\"}}, \"status\": \"PASS\"}\n"
+}
