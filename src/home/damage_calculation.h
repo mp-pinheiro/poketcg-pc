@@ -17,5 +17,8 @@ DamageCalculationResult CalculateDamage_FromDefendingPokemon(void);
 /* >>> factory EstimateDamage_VersusDefendingCard */
 DamageCalculationResult EstimateDamage_VersusDefendingCard(uint8_t a);
 /* <<< factory EstimateDamage_VersusDefendingCard */
+/* >>> factory EstimateDamage_FromDefendingPokemon */
+DamageCalculationResult EstimateDamage_FromDefendingPokemon(uint8_t a);
+/* <<< factory EstimateDamage_FromDefendingPokemon */
 
 #endif

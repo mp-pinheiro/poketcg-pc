@@ -23,6 +23,18 @@ static void adapt_EstimateDamage_VersusDefendingCard(ProbeState *s)
 }
 /* <<< factory EstimateDamage_VersusDefendingCard */
 
+/* >>> factory EstimateDamage_FromDefendingPokemon */
+static void adapt_EstimateDamage_FromDefendingPokemon(ProbeState *s)
+{
+    DamageCalculationResult r = EstimateDamage_FromDefendingPokemon(s->a);
+    s->a = r.a;
+    s->f = r.f;
+    s->d = r.d;
+    s->e = r.e;
+    s->hl = r.hl;
+}
+/* <<< factory EstimateDamage_FromDefendingPokemon */
+
 static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
 {
     DamageCalculationResult r = CalculateDamage_FromDefendingPokemon();
@@ -36,6 +48,7 @@ static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
 const ProbeEntry probe_entries_damage_calculation[] = {
     {"CalculateDamage_VersusDefendingPokemon", adapt_CalculateDamage_VersusDefendingPokemon},
     {"EstimateDamage_VersusDefendingCard", adapt_EstimateDamage_VersusDefendingCard},
+    {"EstimateDamage_FromDefendingPokemon", adapt_EstimateDamage_FromDefendingPokemon},
     {"CalculateDamage_FromDefendingPokemon", adapt_CalculateDamage_FromDefendingPokemon},
     {NULL, NULL},
 };
