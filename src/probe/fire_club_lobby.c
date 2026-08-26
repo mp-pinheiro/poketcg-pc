@@ -32,7 +32,7 @@ static void adapt_FireClubPressedA(ProbeState *s)
 /* >>> factory FireClubLobbyAfterDuel */
 static void adapt_FireClubLobbyAfterDuel(ProbeState *s)
 {
-	FindEndOfDuelScriptResult r = FireClubLobbyAfterDuel();
+	FireClubLobbyAfterDuelResult r = FireClubLobbyAfterDuel();
 	s->a = r.a;
 	s->f = r.f;
 	s->b = r.b;

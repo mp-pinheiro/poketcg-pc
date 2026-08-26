@@ -13,6 +13,7 @@
 #include "mem.h"
 #define SLOWPOKE_PAINTING_OBJECT_TABLE_ADDR_520 0x6D5Eu
 
+#include "home/grass_club_entrance.h"
 #include "mem.h"
 #define AFTER_DUEL_TABLE_830 0x6D50u
 /* <<< factory statics */
@@ -57,6 +58,7 @@ FireClubPressedAResult FireClubPressedA(void)
 /* >>> factory FireClubLobbyAfterDuel */
 FireClubLobbyAfterDuelResult FireClubLobbyAfterDuel(void)
 {
-	return FindEndOfDuelScript(AFTER_DUEL_TABLE_830);
+	FindEndOfDuelScriptResult r = FindEndOfDuelScript(AFTER_DUEL_TABLE_830);
+	return (FireClubLobbyAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory FireClubLobbyAfterDuel */
