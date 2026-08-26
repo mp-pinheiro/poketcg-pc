@@ -946,6 +946,45 @@ CASES["Music1_octave"] = [
 ]
 # <<< factory Music1_octave
 
+# >>> factory Music1_EndMainLoop
+# The only observable is where the dispatcher resumes, so the loop-start points
+# at a $E6 (volume, table index 22) command followed by $FF to terminate: the
+# volume byte lands only if the resume address was read correctly.
+CONTRACT["Music1_EndMainLoop"] = {"compare": (), "preserve": ()}
+CASES["Music1_EndMainLoop"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xDD9D: b"\x10\xC1", 0xC110: b"\xE6\x5A\xFF",
+              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
+     "read": {0xDDE7: 4, 0xDD8D: 4}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xDD9F: b"\x18\xC1", 0xC118: b"\xE6\x77\xFF",
+              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
+     "read": {0xDDE7: 4, 0xDD8D: 4}},
+    dict(POISON, b=0, c=0, stack=[0xC100],
+         wram={0xDD9D: b"\x10\xC1", 0xC110: b"\xE6\xA5\xFF",
+               0xDDE7: b"\xFF\xFF\xFF\xFF", 0xDD8D: b"\x01\x01\x01\x01"},
+         read={0xDDE7: 4, 0xDD8D: 4}),
+]
+# <<< factory Music1_EndMainLoop
+
+# >>> factory Music1_jp
+CONTRACT["Music1_jp"] = {"compare": (), "preserve": ()}
+CASES["Music1_jp"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\x10\xC1", 0xC110: b"\xE6\x5A\xFF",
+              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
+     "read": {0xDDE7: 4, 0xDD8D: 4}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xC100: b"\x18\xC1", 0xC118: b"\xE6\x77\xFF",
+              0xDDE7: b"\x00\x00\x00\x00", 0xDD8D: b"\x01\x01\x01\x01"},
+     "read": {0xDDE7: 4, 0xDD8D: 4}},
+    dict(POISON, b=0, c=0, stack=[0xC100],
+         wram={0xC100: b"\x10\xC1", 0xC110: b"\xE6\xA5\xFF",
+               0xDDE7: b"\xFF\xFF\xFF\xFF", 0xDD8D: b"\x01\x01\x01\x01"},
+         read={0xDDE7: 4, 0xDD8D: 4}),
+]
+# <<< factory Music1_jp
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1056,3 +1095,9 @@ MUTATIONS["Music1_EndLoop"] = {"source_symbol": "Music1_EndLoop", "before": "\t\
 # >>> factory-mutation Music1_octave
 MUTATIONS["Music1_octave"] = {"source_symbol": "Music1_octave", "before": "\tif (ch == 2u)", "after": "\tif (ch == 3u)", "case_ids": ["Music1_octave-2", "Music1_octave-3"]}
 # <<< factory-mutation Music1_octave
+# >>> factory-mutation Music1_EndMainLoop
+MUTATIONS["Music1_EndMainLoop"] = {"source_symbol": "Music1_EndMainLoop", "before": "void Music1_EndMainLoop(uint16_t caller_stream, uint8_t ch)\n{\n\t(void)caller_stream;\n\tuint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);", "after": "void Music1_EndMainLoop(uint16_t caller_stream, uint8_t ch)\n{\n\t(void)caller_stream;\n\tuint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u + 1u);", "case_ids": ["Music1_EndMainLoop-0", "Music1_EndMainLoop-1"]}
+# <<< factory-mutation Music1_EndMainLoop
+# >>> factory-mutation Music1_jp
+MUTATIONS["Music1_jp"] = {"source_symbol": "Music1_jp", "before": "void Music1_jp(uint16_t caller_stream, uint8_t ch)\n{\n\tuint16_t hl = (uint16_t)(gb_read8(caller_stream)", "after": "void Music1_jp(uint16_t caller_stream, uint8_t ch)\n{\n\tuint16_t hl = (uint16_t)(gb_read8((uint16_t)(caller_stream + 1u))", "case_ids": ["Music1_jp-0", "Music1_jp-1"]}
+# <<< factory-mutation Music1_jp
