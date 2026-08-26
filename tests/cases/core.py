@@ -3746,6 +3746,15 @@ CASES["OpenDiscardPileScreen"] = [
 ]
 # <<< factory OpenDiscardPileScreen
 
+# >>> factory OpenTurnHolderHandScreen_Simple
+CONTRACT["OpenTurnHolderHandScreen_Simple"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenTurnHolderHandScreen_Simple"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": {**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x02", 0xC202: b"\x00"}, "read": {wNoItemSelectionMenuKeys: 1}, "expect": {wNoItemSelectionMenuKeys: b"\x09"}, "setup": DISPLAY_CARD_LIST_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000, "rom_bank": 1},
+    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram={**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x02", 0xC202: b"\x00"}, read={wNoItemSelectionMenuKeys: 1}, expect={wNoItemSelectionMenuKeys: b"\x09"}, setup=DISPLAY_CARD_LIST_SETUP, instruction_budget=20000000, cycle_budget=80000000, rom_bank=1),
+]
+# <<< factory OpenTurnHolderHandScreen_Simple
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5261,3 +5270,6 @@ MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {
 # >>> factory-mutation OpenDiscardPileScreen
 MUTATIONS["OpenDiscardPileScreen"] = {"source_symbol": "OpenDiscardPileScreen", "before": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x09u;", "after": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenDiscardPileScreen-1"]}
 # <<< factory-mutation OpenDiscardPileScreen
+# >>> factory-mutation OpenTurnHolderHandScreen_Simple
+MUTATIONS["OpenTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenTurnHolderHandScreen_Simple", "before": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = (uint8_t)(PAD_START + PAD_A);", "after": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenTurnHolderHandScreen_Simple-1", "OpenTurnHolderHandScreen_Simple-2"]}
+# <<< factory-mutation OpenTurnHolderHandScreen_Simple

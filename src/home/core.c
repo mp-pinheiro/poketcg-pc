@@ -1329,6 +1329,9 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/core.h"
 #include "home/menus.h"
 #define TheDiscardPileHasNoCardsText 0x00a5u
+
+#include "generated/wram.h"
+#define NoCardsInHandText 0x00a4u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7303,3 +7306,17 @@ OpenDiscardPileScreenResult OpenDiscardPileScreen(uint8_t c)
 	return (OpenDiscardPileScreenResult){(uint8_t)(display.a == 0u ? 0x80u : 0u)};
 }
 /* <<< factory OpenDiscardPileScreen */
+
+/* >>> factory OpenTurnHolderHandScreen_Simple */
+uint8_t OpenTurnHolderHandScreen_Simple(void)
+{
+	HandListResult hand = CreateHandCardList(0u);
+	if (hand.f & 0x10u) {
+		WaitResult waited = DrawWideTextBox_WaitForInput(NoCardsInHandText);
+		return waited.f;
+	}
+	(void)InitAndDrawCardListScreenLayout();
+	wNoItemSelectionMenuKeys = (uint8_t)(PAD_START + PAD_A);
+	return DisplayCardList().f;
+}
+/* <<< factory OpenTurnHolderHandScreen_Simple */

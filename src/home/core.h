@@ -1080,4 +1080,7 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 typedef struct { uint8_t f; } OpenDiscardPileScreenResult;
 OpenDiscardPileScreenResult OpenDiscardPileScreen(uint8_t c);
 /* <<< factory OpenDiscardPileScreen */
+/* >>> factory OpenTurnHolderHandScreen_Simple */
+uint8_t OpenTurnHolderHandScreen_Simple(void);
+/* <<< factory OpenTurnHolderHandScreen_Simple */
 #endif
