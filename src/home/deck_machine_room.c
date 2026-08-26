@@ -20,6 +20,19 @@
 #define EVENT_BEAT_NIKKI 0x08u
 #define EVENT_GRASS_DECK_MACHINE_ACTIVE 0x5eu
 #define MAP_EVENT_GRASS_DECK_MACHINE 0x06u
+
+#include "home/deck_machine_room.h"
+#include "home/scripting.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "home/map_events.h"
+#include "home/sound.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define EVENT_BEAT_AMY 0x0bu
+#define EVENT_WATER_DECK_MACHINE_ACTIVE 0x5cu
+#define MAP_EVENT_WATER_DECK_MACHINE 0x04u
+#define SFX_INTRO_ORB_TITLE 0x5au
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u
@@ -69,3 +82,28 @@ void Script_da1c(void)
 	(void)result;
 }
 /* <<< factory Script_da1c */
+
+/* >>> factory Script_d9c2 */
+void Script_d9c2(void)
+{
+	FuncD96cResult card = Func_d96c(4u);
+	(void)card;
+	(void)PrintScrollableText_NoTextBoxLabel(0x0607u);
+	if (GetEventValue(EVENT_WATER_DECK_MACHINE_ACTIVE) == 0u) {
+		(void)PrintScrollableText_NoTextBoxLabel(0x0608u);
+		if (GetEventValue(EVENT_BEAT_AMY) == 0u)
+			return;
+		HandleYesOrNoMenuResult first = YesOrNoMenuWithText(0x0609u);
+		if ((first.f & 0x10u) != 0u)
+			return;
+		(void)MaxOutEventValue(EVENT_WATER_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
+		SetOWMapEvent(MAP_EVENT_WATER_DECK_MACHINE);
+		(void)PrintScrollableText_NoTextBoxLabel(0x060au);
+	}
+	HandleYesOrNoMenuResult second = YesOrNoMenuWithText(0x060bu);
+	if ((second.f & 0x10u) != 0u)
+		return;
+	PlaySFX(SFX_INTRO_ORB_TITLE);
+	gb_write8(wLCDC_ADDR, 0x80u);
+}
+/* <<< factory Script_d9c2 */

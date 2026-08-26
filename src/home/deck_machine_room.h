@@ -16,4 +16,7 @@ void Script_da76(void);
 /* >>> factory Script_da1c */
 void Script_da1c(void);
 /* <<< factory Script_da1c */
+/* >>> factory Script_d9c2 */
+void Script_d9c2(void);
+/* <<< factory Script_d9c2 */
 #endif

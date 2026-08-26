@@ -58,6 +58,14 @@ static void adapt_Script_da1c(ProbeState *s)
 }
 /* <<< factory Script_da1c */
 
+/* >>> factory Script_d9c2 */
+static void adapt_Script_d9c2(ProbeState *s)
+{
+	(void)s;
+	Script_d9c2();
+}
+/* <<< factory Script_d9c2 */
+
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
@@ -65,5 +73,6 @@ const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "DeckMachineRoomAfterDuel", adapt_DeckMachineRoomAfterDuel },
 	{ "Script_da76", adapt_Script_da76 },
 	{ "Script_da1c", adapt_Script_da1c },
+	{ "Script_d9c2", adapt_Script_d9c2 },
 	{ NULL, NULL },
 };
