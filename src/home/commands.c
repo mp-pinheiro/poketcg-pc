@@ -1,5 +1,9 @@
 #include "home/commands.h"
 
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/play_animation.h"
+
 #include "generated/wram.h"
 #include "mem.h"
 
@@ -13,6 +17,30 @@
 #define DUEL_ANIM_SCREEN_OPP_PLAY_AREA 0x02u
 #define UNKNOWN_SCREEN_4 0x04u
 #define UNKNOWN_SCREEN_5 0x05u
+
+/* AnimationCommandPointerTable indices (commands.asm:162-171, table order). */
+#define ANIMCMD_END 0x00u
+#define ANIMCMD_NORMAL 0x01u
+#define ANIMCMD_PLAYER_SIDE 0x02u
+#define ANIMCMD_OPP_SIDE 0x03u
+#define ANIMCMD_SET_SCREEN 0x04u
+#define ANIMCMD_PLAY_AREA 0x05u
+#define ANIMCMD_END_UNUSED 0x06u
+#define NUM_ANIM_COMMANDS 0x07u
+
+/* animation_constants.asm: values are the file's own hex annotations. */
+#define DUEL_ANIM_SHOW_DAMAGE 0x09u
+#define DUEL_ANIM_SMALL_SHAKE_X 0x61u
+#define DUEL_ANIM_BIG_SHAKE_X 0x62u
+#define DUEL_ANIM_SMALL_SHAKE_Y 0x63u
+#define DUEL_ANIM_BIG_SHAKE_Y 0x64u
+#define DUEL_ANIM_DAMAGE_HUD 0x8Cu
+#define DUEL_ANIM_SET_SCREEN_CMD 0x96u
+#define DUEL_ANIM_PRINT_DAMAGE 0x97u
+#define DUEL_ANIM_UPDATE_HUD 0x98u
+#define DUEL_ANIM_SHAKE1 0xFAu
+#define DUEL_ANIM_SHAKE2 0xFBu
+#define DUEL_ANIM_SHAKE3 0xFCu
 
 #include "mem.h"
 
@@ -184,31 +212,143 @@ uint16_t GetDamageText(uint16_t hl)
 /* <<< factory GetDamageText */
 
 /* >>> factory PlayAttackAnimationCommands_NextCommand */
+/* commands.asm:41-45. `ld a, [de]` / `inc de` / dispatch through
+ * AnimationCommandPointerTable. The incoming `a` is dead: the real routine reads
+ * a fresh opcode from the command stream. Every handler continues the chain by
+ * re-entering here, which is how the asm's tail-jumps compose into a loop.
+ * Opcodes >= NUM_ANIM_COMMANDS index past the table in the real ROM, so they are
+ * outside the contract; they terminate here as the END entries do. */
 PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e)
 {
+	(void)a;
 	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+	uint8_t opcode = gb_read8(de);
 	de++;
-	switch (a) {
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-	case 5:
-	case 6:
-	case 7: {
-		SendNextPrinterPacketByteResult r = SendNextPrinterPacketByte();
-		return (PlayAttackAnimationCommands_NextCommandResult){r.d, r.e};
-	}
-	case 8:
-	case 9:
-	case 10:
-	case 11:
-	case 12:
+	uint8_t nd = (uint8_t)(de >> 8);
+	uint8_t ne = (uint8_t)de;
+	switch (opcode) {
+	case ANIMCMD_NORMAL:
+		return AnimationCommand_AnimNormal(nd, ne);
+	case ANIMCMD_PLAYER_SIDE:
+		return AnimationCommand_AnimPlayer(nd, ne);
+	case ANIMCMD_OPP_SIDE:
+		return AnimationCommand_AnimOpponent(nd, ne);
+	case ANIMCMD_SET_SCREEN:
+		return AnimationCommand_AnimScreen(nd, ne);
+	case ANIMCMD_PLAY_AREA:
+		return AnimationCommand_AnimPlayArea(nd, ne);
+	case ANIMCMD_END:
+	case ANIMCMD_END_UNUSED:
 	default:
-		return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)de};
+		return (PlayAttackAnimationCommands_NextCommandResult){nd, ne};
 	}
 }
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
+
+/* >>> factory AnimationCommand_AnimNormal */
+/* commands.asm:81-149. Reads the animation id from the stream; four ids take
+ * dedicated paths, everything else plays the id as-is. `.check_duelist` picks
+ * `c` when it is the player's turn or wDuelType is 0, otherwise `b`. */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t d, uint8_t e)
+{
+	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+	uint8_t cmd = gb_read8(de);
+	de++;
+	const uint8_t nd = (uint8_t)(de >> 8);
+	const uint8_t ne = (uint8_t)de;
+
+	if (cmd == DUEL_ANIM_SHOW_DAMAGE) {
+		/* .show_damage */
+		(void)PlayDuelAnimation(DUEL_ANIM_PRINT_DAMAGE);
+		gb_write8(wDuelAnimEffectiveness_ADDR,
+			gb_read8(wDamageAnimEffectiveness_ADDR));
+		gb_write8(wDuelAnimDamage_ADDR, gb_read8(wDamageAnimAmount_ADDR));
+		gb_write8((uint16_t)(wDuelAnimDamage_ADDR + 1u),
+			gb_read8((uint16_t)(wDamageAnimAmount_ADDR + 1u)));
+		(void)PlayDuelAnimation(DUEL_ANIM_DAMAGE_HUD);
+		if (gb_read8(wDuelDisplayedScreen_ADDR) == DUEL_MAIN_SCENE)
+			(void)PlayDuelAnimation(DUEL_ANIM_UPDATE_HUD);
+		return PlayAttackAnimationCommands_NextCommand(0u, nd, ne);
+	}
+
+	uint8_t anim = cmd;
+	if (cmd == DUEL_ANIM_SHAKE1 || cmd == DUEL_ANIM_SHAKE2
+			|| cmd == DUEL_ANIM_SHAKE3) {
+		uint8_t c, b;
+		if (cmd == DUEL_ANIM_SHAKE1) {
+			c = DUEL_ANIM_SMALL_SHAKE_X;
+			b = DUEL_ANIM_SMALL_SHAKE_Y;
+		} else if (cmd == DUEL_ANIM_SHAKE2) {
+			c = DUEL_ANIM_BIG_SHAKE_X;
+			b = DUEL_ANIM_BIG_SHAKE_Y;
+		} else {
+			c = DUEL_ANIM_SMALL_SHAKE_Y;
+			b = DUEL_ANIM_SMALL_SHAKE_X;
+		}
+		/* .check_duelist */
+		if (gb_read8(hWhoseTurn_ADDR) == PLAYER_TURN
+				|| gb_read8(wDuelType_ADDR) == 0u)
+			anim = c;
+		else
+			anim = b;
+	}
+
+	/* .play_anim */
+	(void)PlayDuelAnimation(anim);
+	return PlayAttackAnimationCommands_NextCommand(0u, nd, ne);
+}
+/* <<< factory AnimationCommand_AnimNormal */
+
+/* >>> factory AnimationCommand_AnimPlayer */
+/* commands.asm:50-58. Records the acting side then falls into AnimNormal. */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t d, uint8_t e)
+{
+	gb_write8(wDuelAnimDuelistSide_ADDR, gb_read8(hWhoseTurn_ADDR));
+	if (gb_read8(wDuelType_ADDR) == 0u)
+		gb_write8(wDuelAnimDuelistSide_ADDR, PLAYER_TURN);
+	return AnimationCommand_AnimNormal(d, e);
+}
+/* <<< factory AnimationCommand_AnimPlayer */
+
+/* >>> factory AnimationCommand_AnimOpponent */
+/* commands.asm:60-70. Same as AnimPlayer but reads hWhoseTurn between two
+ * SwapTurn calls, so it records the NON-turn holder. */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t d, uint8_t e)
+{
+	SwapTurn();
+	gb_write8(wDuelAnimDuelistSide_ADDR, gb_read8(hWhoseTurn_ADDR));
+	SwapTurn();
+	if (gb_read8(wDuelType_ADDR) == 0u)
+		gb_write8(wDuelAnimDuelistSide_ADDR, OPPONENT_TURN);
+	return AnimationCommand_AnimNormal(d, e);
+}
+/* <<< factory AnimationCommand_AnimOpponent */
+
+/* >>> factory AnimationCommand_AnimPlayArea */
+/* commands.asm:72-76. */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t d, uint8_t e)
+{
+	uint8_t location = (uint8_t)(gb_read8(wDamageAnimPlayAreaLocation_ADDR) & 0x7Fu);
+	gb_write8(wDuelAnimLocationParam_ADDR, location);
+	return AnimationCommand_AnimNormal(d, e);
+}
+/* <<< factory AnimationCommand_AnimPlayArea */
+
+/* >>> factory AnimationCommand_AnimScreen */
+/* commands.asm:151-160. */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t d, uint8_t e)
+{
+	uint16_t de = (uint16_t)(((uint16_t)d << 8) | e);
+	uint8_t screen = gb_read8(de);
+	de++;
+	gb_write8(wDuelAnimSetScreen_ADDR, screen);
+	gb_write8(wDuelAnimLocationParam_ADDR,
+		gb_read8(wDamageAnimPlayAreaLocation_ADDR));
+	(void)UpdateDuelAnimationScreen(0u);
+	(void)PlayDuelAnimation(DUEL_ANIM_SET_SCREEN_CMD);
+	return PlayAttackAnimationCommands_NextCommand(0u, (uint8_t)(de >> 8), (uint8_t)de);
+}
+/* <<< factory AnimationCommand_AnimScreen */
 
 /* >>> factory DuelAnim157 */
 void DuelAnim157(void)

@@ -74,6 +74,51 @@ static void adapt_PlayAttackAnimationCommands_NextCommand(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
 
+/* >>> factory AnimationCommand_AnimNormal */
+static void adapt_AnimationCommand_AnimNormal(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimNormal(s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory AnimationCommand_AnimNormal */
+
+/* >>> factory AnimationCommand_AnimPlayer */
+static void adapt_AnimationCommand_AnimPlayer(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayer(s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory AnimationCommand_AnimPlayer */
+
+/* >>> factory AnimationCommand_AnimOpponent */
+static void adapt_AnimationCommand_AnimOpponent(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimOpponent(s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory AnimationCommand_AnimOpponent */
+
+/* >>> factory AnimationCommand_AnimPlayArea */
+static void adapt_AnimationCommand_AnimPlayArea(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimPlayArea(s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory AnimationCommand_AnimPlayArea */
+
+/* >>> factory AnimationCommand_AnimScreen */
+static void adapt_AnimationCommand_AnimScreen(ProbeState *s)
+{
+	PlayAttackAnimationCommands_NextCommandResult r = AnimationCommand_AnimScreen(s->d, s->e);
+	s->d = r.d;
+	s->e = r.e;
+}
+/* <<< factory AnimationCommand_AnimScreen */
+
 /* >>> factory DuelAnim157 */
 static void adapt_DuelAnim157(ProbeState *s)
 {
@@ -119,6 +164,11 @@ const ProbeEntry probe_entries_commands[] = {
 	{ "DuelAnim156", adapt_DuelAnim156 },
 	{ "GetDamageText", adapt_GetDamageText },
 	{ "PlayAttackAnimationCommands_NextCommand", adapt_PlayAttackAnimationCommands_NextCommand },
+	{ "AnimationCommand_AnimNormal", adapt_AnimationCommand_AnimNormal },
+	{ "AnimationCommand_AnimPlayer", adapt_AnimationCommand_AnimPlayer },
+	{ "AnimationCommand_AnimOpponent", adapt_AnimationCommand_AnimOpponent },
+	{ "AnimationCommand_AnimPlayArea", adapt_AnimationCommand_AnimPlayArea },
+	{ "AnimationCommand_AnimScreen", adapt_AnimationCommand_AnimScreen },
 	{ "DuelAnim157", adapt_DuelAnim157 },
 	{ "PrintDamageText", adapt_PrintDamageText },
 	{ "UpdateMainSceneHUD", adapt_UpdateMainSceneHUD },

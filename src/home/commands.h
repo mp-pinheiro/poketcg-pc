@@ -43,6 +43,21 @@ typedef struct {
 
 PlayAttackAnimationCommands_NextCommandResult PlayAttackAnimationCommands_NextCommand(uint8_t a, uint8_t d, uint8_t e);
 /* <<< factory PlayAttackAnimationCommands_NextCommand */
+/* >>> factory AnimationCommand_AnimNormal */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimNormal(uint8_t d, uint8_t e);
+/* <<< factory AnimationCommand_AnimNormal */
+/* >>> factory AnimationCommand_AnimPlayer */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayer(uint8_t d, uint8_t e);
+/* <<< factory AnimationCommand_AnimPlayer */
+/* >>> factory AnimationCommand_AnimOpponent */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimOpponent(uint8_t d, uint8_t e);
+/* <<< factory AnimationCommand_AnimOpponent */
+/* >>> factory AnimationCommand_AnimPlayArea */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimPlayArea(uint8_t d, uint8_t e);
+/* <<< factory AnimationCommand_AnimPlayArea */
+/* >>> factory AnimationCommand_AnimScreen */
+PlayAttackAnimationCommands_NextCommandResult AnimationCommand_AnimScreen(uint8_t d, uint8_t e);
+/* <<< factory AnimationCommand_AnimScreen */
 /* >>> factory DuelAnim157 */
 /* poketcg/src/engine/duel/animations/commands.asm */
 void DuelAnim157(void);
