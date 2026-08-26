@@ -1219,6 +1219,12 @@ wSelectedPrizeCardListPtr = 0xCE5A
 hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
 hWhoseTurn = 0xFF97
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+hWhoseTurn = 0xFF97
+hTempCardIndex_ff98 = 0xFF98
+hTempCardIndex_ff9f = 0xFF9F
+wLCDC = 0xCABB
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1544,6 +1550,13 @@ CASES["_SelectPrizeCards"] = [
 ]
 # <<< factory _SelectPrizeCards
 
+# >>> factory PlayTrainerCard
+CONTRACT["PlayTrainerCard"] = {"compare": ("f",), "preserve": ()}
+CASES["PlayTrainerCard"] = [
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", 0xC2EB: b"\x02", hTempCardIndex_ff98: b"\x01", hTempCardIndex_ff9f: b"\x55", wLCDC: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={hTempCardIndex_ff9f: 1}, expect={hTempCardIndex_ff9f: b"\x55"}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PlayTrainerCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1766,3 +1779,6 @@ MUTATIONS["_SelectPrizeCards"] = {
     "case_ids": ["_SelectPrizeCards-0", "_SelectPrizeCards-1"]
 }
 # <<< factory-mutation _SelectPrizeCards
+# >>> factory-mutation PlayTrainerCard
+MUTATIONS["PlayTrainerCard"] = {"source_symbol": "PlayTrainerCard", "before": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) != 0u) {", "after": "PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tTrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();\n\tf = blocked.f;\n\thl = blocked.hl;\n\tif ((f & 0x10u) == 0u) {", "case_ids": ["PlayTrainerCard-0"]}
+# <<< factory-mutation PlayTrainerCard

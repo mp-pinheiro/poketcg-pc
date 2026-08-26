@@ -3538,6 +3538,13 @@ static void adapt_DamageSwap_SelectAndSwapEffect(ProbeState *s)
 }
 /* <<< factory DamageSwap_SelectAndSwapEffect */
 
+/* >>> factory Gigashock_PlayerSelectEffect */
+static void adapt_Gigashock_PlayerSelectEffect(ProbeState *s)
+{
+	Gigashock_PlayerSelectEffect();
+}
+/* <<< factory Gigashock_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3969,5 +3976,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ScoopUp_ReturnToHandEffect", adapt_ScoopUp_ReturnToHandEffect },
 	{ "EnergyTrans_TransferEffect", adapt_EnergyTrans_TransferEffect },
 	{ "DamageSwap_SelectAndSwapEffect", adapt_DamageSwap_SelectAndSwapEffect },
+	{ "Gigashock_PlayerSelectEffect", adapt_Gigashock_PlayerSelectEffect },
 	{ NULL, NULL },
 };

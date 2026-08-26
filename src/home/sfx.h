@@ -27,4 +27,7 @@ void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high);
 /* >>> factory ExecuteNextSFXCommand */
 void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc);
 /* <<< factory ExecuteNextSFXCommand */
+/* >>> factory SFX_loop */
+void SFX_loop(uint16_t bc, uint16_t caller_de);
+/* <<< factory SFX_loop */
 #endif

@@ -4585,6 +4585,14 @@ CASES["DamageSwap_SelectAndSwapEffect"] = [
 ]
 # <<< factory DamageSwap_SelectAndSwapEffect
 
+# >>> factory Gigashock_PlayerSelectEffect
+CONTRACT["Gigashock_PlayerSelectEffect"] = {"compare": (), "preserve": ()}
+CASES["Gigashock_PlayerSelectEffect"] = [
+    {"wram": {0xFF97: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01"}, "read": {0xFF97: 1, 0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\x00", 0xC2EF: b"\x01", 0xC3EF: b"\x01"}, read={0xFF97: 1, 0xFFA0: 1}),
+]
+# <<< factory Gigashock_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6917,3 +6925,6 @@ MUTATIONS["EnergyTrans_TransferEffect"] = {"source_symbol": "EnergyTrans_Transfe
 # >>> factory-mutation DamageSwap_SelectAndSwapEffect
 MUTATIONS["DamageSwap_SelectAndSwapEffect"] = {"source_symbol": "DamageSwap_SelectAndSwapEffect", "before": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();\n\t\t(void)PrintPlayAreaCardList_EnableLCD();", "after": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();", "case_ids": ["DamageSwap_SelectAndSwapEffect-0", "DamageSwap_SelectAndSwapEffect-1"]}
 # <<< factory-mutation DamageSwap_SelectAndSwapEffect
+# >>> factory-mutation Gigashock_PlayerSelectEffect
+MUTATIONS["Gigashock_PlayerSelectEffect"] = {"source_symbol": "Gigashock_PlayerSelectEffect", "before": "\t\thTempList = 0xffu;", "after": "\t\thTempList = 0x00u;", "case_ids": ["Gigashock_PlayerSelectEffect-0", "Gigashock_PlayerSelectEffect-1"]}
+# <<< factory-mutation Gigashock_PlayerSelectEffect

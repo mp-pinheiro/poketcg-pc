@@ -48,6 +48,14 @@ static void adapt_ExecuteNextSFXCommand(ProbeState *s)
 }
 /* <<< factory ExecuteNextSFXCommand */
 
+/* >>> factory SFX_loop */
+static void adapt_SFX_loop(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)((uint16_t)s->b << 8 | s->c);
+	SFX_loop(bc, s->stack[0]);
+}
+/* <<< factory SFX_loop */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -55,5 +63,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_end", adapt_SFX_end },
 	{ "SFX_frequency", adapt_SFX_frequency },
 	{ "ExecuteNextSFXCommand", adapt_ExecuteNextSFXCommand },
+	{ "SFX_loop", adapt_SFX_loop },
 	{ NULL, NULL },
 };

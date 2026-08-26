@@ -51,6 +51,13 @@
 #define SYM_SPACE 0x00u
 #define SYM_No 0x01u
 #define TYPE_ENERGY 0x08u
+
+#include "home/menus.h"
+#include "home/lcd.h"
+#include "home/load_animation.h"
+#include "home/sprite_vblank.h"
+#define SCENE_GAMEBOY_PRINTER_TRANSMITTING 0x11u
+#define NowPrintingPleaseWaitText 0x0195u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -453,3 +460,13 @@ void DrawBottomCardInfoInSRAMGfxBuffer0(void)
 	(void)SetOneLineSeparation();
 }
 /* <<< factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+
+/* >>> factory ShowPrinterTransmitting */
+void ShowPrinterTransmitting(void)
+{
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(SCENE_GAMEBOY_PRINTER_TRANSMITTING, 0u, 0u, 0u, 0u, 0u, 0u);
+	(void)DrawWideTextBox_PrintText(NowPrintingPleaseWaitText);
+	EnableLCD();
+}
+/* <<< factory ShowPrinterTransmitting */

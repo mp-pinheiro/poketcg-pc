@@ -570,6 +570,19 @@ static const uint8_t kCursorTileData[16] = {
 #include "mem.h"
 #define DUELVARS_PRIZE_CARDS 0x3Cu
 #define PleaseChooseAPrizeText 0x024Du
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/substatus.h"
+#define EFFECTCMDTYPE_DISCARD_ENERGY 0x06u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
+#define OPPACTION_EXECUTE_TRAINER_EFFECTS 0x07u
+#define OPPACTION_PLAY_TRAINER 0x06u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2777,3 +2790,93 @@ void _SelectPrizeCards(void)
 	_DrawPlayAreaToPlacePrizeCards();
 }
 /* <<< factory _SelectPrizeCards */
+
+/* >>> factory PlayTrainerCard */
+PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	TrainerEffectResult blocked = CheckCantUseTrainerDueToEffect();
+	f = blocked.f;
+	hl = blocked.hl;
+	if ((f & 0x10u) != 0u) {
+		WaitResult wait = DrawWideTextBox_WaitForInput(hl);
+		f = (uint8_t)(wait.f | 0x10u);
+		return (PlayTrainerCardResult){f};
+	}
+	hl = (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0x00FFu));
+	a = hTempCardIndex_ff98;
+	hTempCardIndex_ff9f = a;
+	LoadEffectResult loaded = LoadNonPokemonCardEffectCommands();
+	a = loaded.a;
+	d = (uint8_t)(loaded.de >> 8);
+	e = (uint8_t)loaded.de;
+	hl = loaded.hl;
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+	a = effect.a;
+	f = effect.f;
+	c = effect.c;
+	hl = effect.hl;
+	if ((f & 0x10u) != 0u) {
+		WaitResult wait = DrawWideTextBox_WaitForInput(hl);
+		f = (uint8_t)(wait.f | 0x10u);
+		return (PlayTrainerCardResult){f};
+	}
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	a = effect.a;
+	f = effect.f;
+	c = effect.c;
+	hl = effect.hl;
+	if ((f & 0x10u) != 0u) {
+		f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+		return (PlayTrainerCardResult){f};
+	}
+	SetOppActionSerialSendResult sent = SetOppAction_SerialSendDuelData(OPPACTION_PLAY_TRAINER, (uint16_t)(((uint16_t)d << 8) | e));
+	a = sent.a;
+	f = sent.f;
+	d = (uint8_t)(sent.de >> 8);
+	e = (uint8_t)sent.de;
+	(void)DisplayUsedTrainerCardDetailScreen();
+	ExchangeRNGResult rng = ExchangeRNG(b, c, sent.de, hl);
+	a = rng.a;
+	b = rng.b;
+	c = rng.c;
+	f = rng.f;
+	d = (uint8_t)(rng.de >> 8);
+	e = (uint8_t)rng.de;
+	hl = rng.hl;
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_DISCARD_ENERGY);
+	a = effect.a;
+	f = effect.f;
+	c = effect.c;
+	hl = effect.hl;
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION);
+	a = effect.a;
+	f = effect.f;
+	c = effect.c;
+	hl = effect.hl;
+	sent = SetOppAction_SerialSendDuelData(OPPACTION_EXECUTE_TRAINER_EFFECTS, (uint16_t)(((uint16_t)d << 8) | e));
+	a = sent.a;
+	f = sent.f;
+	d = (uint8_t)(sent.de >> 8);
+	e = (uint8_t)sent.de;
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE);
+	a = effect.a;
+	f = effect.f;
+	c = effect.c;
+	hl = effect.hl;
+	a = hTempCardIndex_ff9f;
+	MoveCardResult moved = MoveHandCardToDiscardPile(a);
+	a = moved.a;
+	f = moved.f;
+	hl = moved.hl;
+	rng = ExchangeRNG(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+	a = rng.a;
+	b = rng.b;
+	c = rng.c;
+	f = rng.f;
+	d = (uint8_t)(rng.de >> 8);
+	e = (uint8_t)rng.de;
+	hl = rng.hl;
+	f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+	return (PlayTrainerCardResult){f};
+}
+/* <<< factory PlayTrainerCard */

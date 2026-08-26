@@ -894,6 +894,14 @@ static void adapt__SelectPrizeCards(ProbeState *s)
 }
 /* <<< factory _SelectPrizeCards */
 
+/* >>> factory PlayTrainerCard */
+static void adapt_PlayTrainerCard(ProbeState *s)
+{
+	PlayTrainerCardResult r = PlayTrainerCard(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->f = r.f;
+}
+/* <<< factory PlayTrainerCard */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -1003,5 +1011,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DrawDuelMainScene_PrintPokemonsAttackText", adapt_DrawDuelMainScene_PrintPokemonsAttackText },
 	{ "ProcessPlayedPokemonCard", adapt_ProcessPlayedPokemonCard },
 	{ "_SelectPrizeCards", adapt__SelectPrizeCards },
+	{ "PlayTrainerCard", adapt_PlayTrainerCard },
 	{ NULL, NULL },
 };

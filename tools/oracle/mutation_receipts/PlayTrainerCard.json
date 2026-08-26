@@ -1,0 +1,9 @@
+{
+  "fn": "PlayTrainerCard",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayTrainerCard\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49899\": \"02\", \"51899\": \"80\", \"65431\": \"c201\", \"65439\": \"55\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayTrainerCard\", \"mismatches\": {\"f\": [144, 128], \"bus\": {\"address\": 65439, \"reference\": \"0280c20155\", \"native\": \"0280c20101\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49899, 1], [51899, 1], [65431, 2], [65439, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayTrainerCard\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 144, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49899\": \"02\", \"51899\": \"80\", \"65431\": \"c201\", \"65439\": \"55\"}}, \"status\": \"PASS\"}\n"
+}

@@ -1456,6 +1456,9 @@ uint8_t EnergyTrans_TransferEffect(void);
 /* >>> factory DamageSwap_SelectAndSwapEffect */
 void DamageSwap_SelectAndSwapEffect(void);
 /* <<< factory DamageSwap_SelectAndSwapEffect */
+/* >>> factory Gigashock_PlayerSelectEffect */
+void Gigashock_PlayerSelectEffect(void);
+/* <<< factory Gigashock_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

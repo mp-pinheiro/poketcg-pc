@@ -473,3 +473,16 @@ void SFX_frequency(uint16_t bc, uint16_t caller_hl, uint8_t high)
 	Func_fc105(bc, de);
 }
 /* <<< factory SFX_frequency */
+
+/* >>> factory SFX_loop */
+void SFX_loop(uint16_t bc, uint16_t caller_de)
+{
+	uint16_t store_addr = (uint16_t)(wde43_ADDR + bc + bc);
+	uint8_t a = gb_read8(caller_de);
+	caller_de = (uint16_t)(caller_de + 1u);
+	gb_write8(store_addr, (uint8_t)caller_de);
+	gb_write8((uint16_t)(store_addr + 1u), (uint8_t)(caller_de >> 8));
+	gb_write8((uint16_t)(wde3f_ADDR + bc), a);
+	ExecuteNextSFXCommand(caller_de, bc);
+}
+/* <<< factory SFX_loop */

@@ -782,6 +782,16 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SYM_SPACE 0x00u
 
 #define ProcedureForDamageSwapText 0x0137u
+
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/sound.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ChooseUpTo3PkmnOnBenchToGiveDamageText 0x011bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6792,3 +6802,17 @@ void DamageSwap_SelectAndSwapEffect(void)
 	}
 }
 /* <<< factory DamageSwap_SelectAndSwapEffect */
+
+/* >>> factory Gigashock_PlayerSelectEffect */
+void Gigashock_PlayerSelectEffect(void)
+{
+	SwapTurn();
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (count < 2u) {
+		SwapTurn();
+		hTempList = 0xffu;
+		return;
+	}
+	SwapTurn();
+}
+/* <<< factory Gigashock_PlayerSelectEffect */

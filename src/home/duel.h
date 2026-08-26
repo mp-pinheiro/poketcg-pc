@@ -656,4 +656,8 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 /* >>> factory _SelectPrizeCards */
 void _SelectPrizeCards(void);
 /* <<< factory _SelectPrizeCards */
+/* >>> factory PlayTrainerCard */
+typedef struct { uint8_t f; } PlayTrainerCardResult;
+PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory PlayTrainerCard */
 #endif

@@ -107,4 +107,7 @@ uint8_t PrinterMenu_QuitPrint(uint16_t w0);
 /* >>> factory DrawBottomCardInfoInSRAMGfxBuffer0 */
 void DrawBottomCardInfoInSRAMGfxBuffer0(void);
 /* <<< factory DrawBottomCardInfoInSRAMGfxBuffer0 */
+/* >>> factory ShowPrinterTransmitting */
+void ShowPrinterTransmitting(void);
+/* <<< factory ShowPrinterTransmitting */
 #endif

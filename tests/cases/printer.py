@@ -100,6 +100,10 @@ wPrinterTotalCardCount = 0xCE92
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wCardPageType = 0xCBD1
 wLoadedCard1Type = 0xCC24
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+wVBlankFunctionTrampoline = 0xCAD0
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -191,6 +195,21 @@ CASES["DrawBottomCardInfoInSRAMGfxBuffer0"] = [
 ]
 # <<< factory DrawBottomCardInfoInSRAMGfxBuffer0
 
+# >>> factory ShowPrinterTransmitting
+CONTRACT["ShowPrinterTransmitting"] = {"compare": (), "preserve": ()}
+CASES["ShowPrinterTransmitting"] = [
+    {"wram": {0xCABB: b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
+     "sram": {0: {}}, "setup": SETUP,
+     "read": {wVBlankFunctionTrampoline: 3},
+     "instruction_budget": 8000000, "cycle_budget": 32000000},
+    dict(POISON,
+         wram={0xCABB: b"\x00", wVBlankFunctionTrampoline: b"\x00\x00\x00"},
+         sram={0: {}}, setup=SETUP,
+         read={wVBlankFunctionTrampoline: 3},
+         instruction_budget=8000000, cycle_budget=32000000),
+]
+# <<< factory ShowPrinterTransmitting
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -262,3 +281,11 @@ MUTATIONS["DrawBottomCardInfoInSRAMGfxBuffer0"] = {
     "case_ids": ["DrawBottomCardInfoInSRAMGfxBuffer0-0", "DrawBottomCardInfoInSRAMGfxBuffer0-1"],
 }
 # <<< factory-mutation DrawBottomCardInfoInSRAMGfxBuffer0
+# >>> factory-mutation ShowPrinterTransmitting
+MUTATIONS["ShowPrinterTransmitting"] = {
+    "source_symbol": "ShowPrinterTransmitting",
+    "before": "\tSetSpriteAnimationsAsVBlankFunction();",
+    "after": "\t(void)0;",
+    "case_ids": ["ShowPrinterTransmitting-0", "ShowPrinterTransmitting-1"],
+}
+# <<< factory-mutation ShowPrinterTransmitting
