@@ -109,7 +109,11 @@ def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError("probe timed out after 30 seconds") from exc
     if out.returncode != 0:
-        raise RuntimeError(f"probe failed ({out.returncode}): {out.stderr.strip()}")
+        # `die()` in src/probe.c prints its {"error": ...} to STDOUT and exits 1,
+        # so stderr alone is empty and the real cause -- a rejected request key,
+        # a missing $POKETCG_ROM, an out-of-range bank -- gets thrown away.
+        detail = (out.stderr.strip() + " " + out.stdout.strip()).strip()
+        raise RuntimeError(f"probe failed ({out.returncode}): {detail}")
     try:
         result = json.loads(out.stdout)
     except json.JSONDecodeError:
