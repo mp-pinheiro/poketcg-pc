@@ -380,6 +380,37 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     no symbol means it is executing `$FF` filler). Do not drive this one with input.
   The lesson generalises: a park at `pc=0x0271` says only "idle", so vary setup and
   input before believing any stanza that blames frame simulation.
+- **The cluster's first REFERENCE_OK, and what it took (2026-08-26).**
+  `DuelCheckMenu_OppPlayArea` (`02:40da`) runs to the `0xFEA0` sentinel in
+  2,291,409 instructions with exactly two case ingredients:
+  `setup=[{fn=SetupText, d=0x30, e=0x7F}]` and `keys=[0x00, 0x02]`. Both details
+  matter and neither is guessable:
+  - **Press B, not A.** The menu tail is `cp MENU_CANCEL` / `ret z`, so B returns
+    while A dispatches through `.jump_table` into the hand/discard sub-screens.
+    An A-press probe therefore looks like an unrelated hang deep in
+    `CreateCardCollectionListWithDeckCards` — that is the A path working, not a
+    harness gap. `PAD_B = 1 << B_PAD_B = 0x02` (`hardware.inc:94-104`).
+  - **The press must be a new edge.** `keys=[0x02]` held from frame 0 still
+    `BUDGET_EXHAUSTED`s at `WaitForVBlank`, because `hKeysPressed` is
+    edge-triggered; frame 0 must be `0x00`. `ram_enable` changes nothing.
+  So a menu routine that parks at `WaitForVBlank` needs the *right button on the
+  right frame*, not frame simulation and not SRAM/deck seeding.
+- **`ready=true` is unreliable for indirect dispatch — measured, 7 routines.**
+  `site/data/progress.json` builds its callee graph from direct `call`/`jp`, so a
+  body that dispatches through `JumpToFunctionInTable` reports `ready=true` with
+  `blockers=[]` while its `dw` targets are still `status=todo` and have no C body.
+  A candidate issued for such a routine cannot compile a faithful port and must
+  not stub the table. Of the 164 `ready`+no-blocker todo routines, **7 dispatch
+  this way (1083 B)**: `_DebugLookAtSprite`, `_HandlePeekSelection`,
+  `Preload_Clerk9`, `DuelCheckMenu_OppPlayArea`, `AIDoAction`, `Func_c141`,
+  `_ExecuteGameEvent`. Three have confirmed unported targets —
+  `DuelCheckMenu_OppPlayArea` → `OpenYourOrOppPlayAreaScreen_NonTurnHolder{PlayArea,Hand,DiscardPile}`,
+  `Func_c141` → `Func_c9bc`/`Func_fcad`, `_ExecuteGameEvent` → the `GameEvent_*` set.
+  (The scan only sees `dw` rows inside the routine's own body, so routines whose
+  table sits elsewhere in the file — `_DebugLookAtSprite`, `_HandlePeekSelection` —
+  are undercounted, not exonerated.) Check the `dw` targets by hand before
+  trusting `ready` on any `JumpToFunctionInTable` user; P4's `OppActionTable` is
+  the same pattern at 32 stanzas' scale.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
