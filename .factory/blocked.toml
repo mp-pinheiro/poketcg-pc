@@ -437,8 +437,8 @@ unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DonePut
 
 [[blocked]]
 name = "OppAction_PlayEnergyCard"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:6529 (basename `core`). 12 generations exhausted (trapped=False); last diagnostic phase=infra-error failure_class=infrastructure detail=Traceback (most recent call last): File \"<path>\", line 561, in <module> raise SystemExit(main()) ^^^^^^ File \"<path>\", line 437, in main probe = subprocess.run( ^^^^^^^^^^^^^^^ File \"<path>\", line 550, in run stdout, stderr = process.communicate(input, timeout=timeout) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \""
-unblock = "read the recorded diagnostics under .factory/try/OppAction_PlayEnergyCard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+reason = "DIAGNOSED shared composite native non-termination with OppAction_EvolvePokemonCard, not an unclassified infrastructure failure. The latest generation's three candidates all implement core.asm:6529-6550 faithfully and all time out in the native probe after 33.27-33.28 seconds. The tail stages the card, calls DrawLargePictureOfCard, waits in PrintAttachedEnergyToPokemon, then calls DrawDuelMainScene -- the same arming-call/final-scene shape already reduced in the Evolve stanza. The candidate cases used SetupText and a held A; those are not sufficient grounds to blame translation because the reference phase completed and only the native subprocess timed out."
+unblock = "Use the existing OppAction_EvolvePokemonCard smallest reproducer: compare DrawDuelMainScene with setup [CopyDMAFunction, SetupText, LoadCardDataToBuffer1_FromDeckIndex a=1, DrawLargePictureOfCard] and the documented duel seeds, then fix the wrong composite state transition before retrying both routines. Do not spend more candidate generations on this routine or weaken completion."
 
 [[blocked]]
 name = "OppAction_UseMetronomeAttack"
