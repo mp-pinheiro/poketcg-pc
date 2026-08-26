@@ -4,6 +4,7 @@
 #include "generated/wram.h"
 #include "home/switch_rom.h"
 #include "mem.h"
+#include <stdlib.h>
 /* >>> factory statics */
 #include "home/effect_commands.h"
 #include "home/switch_rom.h"
@@ -45,13 +46,39 @@ EffectCmdLookup CheckMatchingCommand(uint8_t a, uint16_t hl)
 }
 
 /* >>> factory TryExecuteEffectCommandFunction */
-TryExecuteEffectCommandFunctionResult TryExecuteEffectCommandFunction(uint8_t a)
+TryExecuteEffectCommandFunctionResult TryExecuteEffectCommandFunction(
+	uint8_t command, uint8_t b, uint8_t d, uint8_t e)
 {
 	uint16_t list = (uint16_t)(gb_read8(wLoadedAttackEffectCommands_ADDR) |
 		((uint16_t)gb_read8((uint16_t)(wLoadedAttackEffectCommands_ADDR + 1u)) << 8));
-	EffectCmdLookup lookup = CheckMatchingCommand(a, list);
-	uint8_t result_a = (lookup.carry != 0u && lookup.hl == 0u) ? 0u : hBankROM;
-	uint8_t result_f = (uint8_t)(result_a == 0u ? 0x80u : 0x00u);
-	return (TryExecuteEffectCommandFunctionResult){result_a, result_f, a, lookup.hl};
+	EffectCmdLookup lookup = CheckMatchingCommand(command, list);
+	if (lookup.carry != 0u) {
+		uint8_t a = lookup.hl == 0u ? 0u : hBankROM;
+		uint8_t f = (uint8_t)(a == 0u ? 0x80u : 0u);
+		return (TryExecuteEffectCommandFunctionResult){
+			.a = a, .f = f, .b = b, .c = command, .d = d, .e = e, .hl = lookup.hl,
+		};
+	}
+
+	uint8_t saved_bank = hBankROM;
+	uint8_t effect_bank = wEffectFunctionsBank;
+	EffectDispatchFn function = EffectDispatchLookupAddress(lookup.hl);
+	if (function == NULL)
+		abort();
+	BankswitchROM(effect_bank);
+	TryExecuteEffectCommandFunctionResult state = {
+		.a = effect_bank,
+		.f = (uint8_t)(effect_bank == 0u ? 0x80u : 0u),
+		.b = b,
+		.c = command,
+		.d = d,
+		.e = e,
+		.hl = lookup.hl,
+	};
+	function(&state);
+	BankswitchROM(saved_bank);
+	state.b = state.a;
+	state.c = state.f;
+	return state;
 }
 /* <<< factory TryExecuteEffectCommandFunction */

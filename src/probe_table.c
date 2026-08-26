@@ -21,5 +21,5 @@ ProbeFn probe_lookup(const char *name)
 		for (const ProbeEntry *e = *g; e->name; e++)
 			if (strcmp(e->name, name) == 0)
 				return e->fn;
-	return EffectDispatchLookupName(name);
+	return NULL;
 }

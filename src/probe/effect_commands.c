@@ -20,10 +20,14 @@ static void adapt_CheckMatchingCommand(ProbeState *s)
 /* >>> factory TryExecuteEffectCommandFunction */
 static void adapt_TryExecuteEffectCommandFunction(ProbeState *s)
 {
-	TryExecuteEffectCommandFunctionResult r = TryExecuteEffectCommandFunction(s->a);
+	TryExecuteEffectCommandFunctionResult r =
+		TryExecuteEffectCommandFunction(s->a, s->b, s->d, s->e);
 	s->a = r.a;
 	s->f = r.f;
+	s->b = r.b;
 	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
 	s->hl = r.hl;
 }
 /* <<< factory TryExecuteEffectCommandFunction */

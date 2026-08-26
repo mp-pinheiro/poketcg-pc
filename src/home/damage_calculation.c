@@ -203,7 +203,7 @@ DamageCalculationResult EstimateDamage_VersusDefendingCard(uint8_t a)
 	uint8_t damage = gb_read8(wDamage_ADDR);
 	gb_write8(wAIMinDamage_ADDR, damage);
 	gb_write8(wAIMaxDamage_ADDR, damage);
-	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI);
+	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI, 0u, 0u, 0u);
 	if ((gb_read8(wAIMinDamage_ADDR) | gb_read8(wAIMaxDamage_ADDR)) == 0u) {
 		damage = gb_read8(wDamage_ADDR);
 		gb_write8(wAIMinDamage_ADDR, damage);
@@ -267,7 +267,7 @@ DamageCalculationResult EstimateDamage_FromDefendingPokemon(uint8_t a)
 	SwapTurn();
 	const uint8_t saved_location = gb_read8(hTempPlayAreaLocation_ff9d_ADDR);
 	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, 0u); /* PLAY_AREA_ARENA */
-	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI);
+	(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI, 0u, 0u, 0u);
 	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, saved_location);
 	SwapTurn();
 	if ((gb_read8(wAIMinDamage_ADDR) | gb_read8(wAIMaxDamage_ADDR)) == 0u) {

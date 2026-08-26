@@ -5356,7 +5356,7 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
 		if (blocked.f & 0x10u)
 			return (CheckIfCardCanBePlayedResult){0u, blocked.f};
 		LoadEffectResult loaded = LoadNonPokemonCardEffectCommands();
-		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, 0u, 0u);
 		return (CheckIfCardCanBePlayedResult){effect.a, effect.f};
 	}
 	uint8_t energy = wAlreadyPlayedEnergy;
@@ -5368,7 +5368,7 @@ CheckIfCardCanBePlayedResult CheckIfCardCanBePlayed(uint8_t a)
 /* >>> factory OppAction_6b15 */
 OppAction_6b15Result OppAction_6b15(void)
 {
-	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AFTER_DAMAGE);
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AFTER_DAMAGE, 0u, 0u, 0u);
 	wSkipDuelistIsThinkingDelay = 0x01u;
 	return (OppAction_6b15Result){0x01u, effect.f, effect.c, effect.hl};
 }
@@ -5378,7 +5378,7 @@ OppAction_6b15Result OppAction_6b15(void)
 OppAction_ExecutePokemonPowerEffectResult OppAction_ExecutePokemonPowerEffect(void)
 {
 	ResetAttackAnimationIsPlaying();
-	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE);
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, 0u, 0u, 0u);
 	wSkipDuelistIsThinkingDelay = 0x01u;
 	return (OppAction_ExecutePokemonPowerEffectResult){0x01u, effect.f, effect.c, effect.hl};
 }
@@ -5444,9 +5444,9 @@ CheckIfSelectedAttackIsUnusableResult CheckIfSelectedAttackIsUnusable(uint8_t a,
 		AmnesiaResult amnesia = HandleAmnesiaSubstatus();
 		if (amnesia.f & 0x10u)
 			return (CheckIfSelectedAttackIsUnusableResult){copy.a, amnesia.f, b, c, d, e, amnesia.hl};
-		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, b, d, e);
 		if (effect.f & 0x10u)
-			return (CheckIfSelectedAttackIsUnusableResult){effect.a, effect.f, b, effect.c, d, e, effect.hl};
+			return (CheckIfSelectedAttackIsUnusableResult){effect.a, effect.f, effect.b, effect.c, effect.d, effect.e, effect.hl};
 	}
 	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
 	if (energy.f & 0x10u)
@@ -6514,7 +6514,7 @@ draw_screen:
 		gb_write8(hTempCardIndex_ff98_ADDR, gb_read8((uint16_t)(list_entry - 1u)));
 		(void)CopyAttackDataAndDamage_FromDeckIndex(gb_read8(hTempCardIndex_ff98_ADDR), FIRST_ATTACK_OR_PKMN_POWER);
 		DisplayUsePokemonPowerScreen();
-		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+		TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, 0u, 0u);
 		if ((effect.f & 0x10u) != 0u) {
 			(void)DrawWideTextBox_WaitForInput(PokemonPowerSelectNotRequiredText);
 			goto draw_screen;

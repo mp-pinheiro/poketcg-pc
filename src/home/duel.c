@@ -2451,19 +2451,25 @@ void _DrawPlayAreaToPlacePrizeCards(void)
 UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
 {
 	ResetAttackAnimationIsPlaying();
-	TryExecuteEffectCommandFunctionResult initial = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	TryExecuteEffectCommandFunctionResult initial = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, b, d, e);
 	a = initial.a;
 	f = initial.f;
+	b = initial.b;
 	c = initial.c;
+	d = initial.d;
+	e = initial.e;
 	hl = initial.hl;
 	if ((f & 0x10u) != 0u) {
 		f = DisplayUsePokemonPowerScreen_WaitForInput(hl);
 		return (UsePokemonPowerResult){a, f, b, c, d, e, (uint16_t)hl};
 	}
-	TryExecuteEffectCommandFunctionResult selection = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION);
+	TryExecuteEffectCommandFunctionResult selection = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION, b, d, e);
 	a = selection.a;
 	f = selection.f;
+	b = selection.b;
 	c = selection.c;
+	d = selection.d;
+	e = selection.e;
 	hl = selection.hl;
 	if ((f & 0x10u) != 0u) {
 		f = ReturnCarry(f);
@@ -2487,10 +2493,13 @@ UsePokemonPowerResult UsePokemonPower(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	f = sent.f;
 	d = (uint8_t)(sent.de >> 8);
 	e = (uint8_t)sent.de;
-	TryExecuteEffectCommandFunctionResult before_damage = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE);
+	TryExecuteEffectCommandFunctionResult before_damage = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, b, d, e);
 	a = before_damage.a;
 	f = before_damage.f;
+	b = before_damage.b;
 	c = before_damage.c;
+	d = before_damage.d;
+	e = before_damage.e;
 	hl = before_damage.hl;
 	sent = SetOppAction_SerialSendDuelData(OPPACTION_DUEL_MAIN_SCENE, (uint16_t)((uint16_t)d << 8 | e));
 	a = sent.a;
@@ -2861,8 +2870,8 @@ DuelRoutineResult ProcessPlayedPokemonCard(uint8_t a, uint8_t f, uint8_t b, uint
 	wait = DrawWideTextBox_WaitForInput(hl); f = wait.f;
 	rng = ExchangeRNG(b, c, (uint16_t)((uint16_t)d << 8 | e), hl);
 	ResetAttackAnimationIsPlaying();
-	TryExecuteEffectCommandFunctionResult executed = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_PKMN_POWER_TRIGGER);
-	return (DuelRoutineResult){executed.a, executed.f, b, executed.c, d, e, executed.hl};
+	TryExecuteEffectCommandFunctionResult executed = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_PKMN_POWER_TRIGGER, b, d, e);
+	return (DuelRoutineResult){executed.a, executed.f, executed.b, executed.c, executed.d, executed.e, executed.hl};
 }
 /* <<< factory ProcessPlayedPokemonCard */
 
@@ -2902,20 +2911,26 @@ PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	d = (uint8_t)(loaded.de >> 8);
 	e = (uint8_t)loaded.de;
 	hl = loaded.hl;
-	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+	TryExecuteEffectCommandFunctionResult effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, b, d, e);
 	a = effect.a;
 	f = effect.f;
+	b = effect.b;
 	c = effect.c;
+	d = effect.d;
+	e = effect.e;
 	hl = effect.hl;
 	if ((f & 0x10u) != 0u) {
 		WaitResult wait = DrawWideTextBox_WaitForInput(hl);
 		f = (uint8_t)(wait.f | 0x10u);
 		return (PlayTrainerCardResult){f};
 	}
-	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, b, d, e);
 	a = effect.a;
 	f = effect.f;
+	b = effect.b;
 	c = effect.c;
+	d = effect.d;
+	e = effect.e;
 	hl = effect.hl;
 	if ((f & 0x10u) != 0u) {
 		f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
@@ -2935,25 +2950,34 @@ PlayTrainerCardResult PlayTrainerCard(uint8_t a, uint8_t f, uint8_t b, uint8_t c
 	d = (uint8_t)(rng.de >> 8);
 	e = (uint8_t)rng.de;
 	hl = rng.hl;
-	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_DISCARD_ENERGY);
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_DISCARD_ENERGY, b, d, e);
 	a = effect.a;
 	f = effect.f;
+	b = effect.b;
 	c = effect.c;
+	d = effect.d;
+	e = effect.e;
 	hl = effect.hl;
-	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION);
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_REQUIRE_SELECTION, b, d, e);
 	a = effect.a;
 	f = effect.f;
+	b = effect.b;
 	c = effect.c;
+	d = effect.d;
+	e = effect.e;
 	hl = effect.hl;
 	sent = SetOppAction_SerialSendDuelData(OPPACTION_EXECUTE_TRAINER_EFFECTS, (uint16_t)(((uint16_t)d << 8) | e));
 	a = sent.a;
 	f = sent.f;
 	d = (uint8_t)(sent.de >> 8);
 	e = (uint8_t)sent.de;
-	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE);
+	effect = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_BEFORE_DAMAGE, b, d, e);
 	a = effect.a;
 	f = effect.f;
+	b = effect.b;
 	c = effect.c;
+	d = effect.d;
+	e = effect.e;
 	hl = effect.hl;
 	a = hTempCardIndex_ff9f;
 	MoveCardResult moved = MoveHandCardToDiscardPile(a);

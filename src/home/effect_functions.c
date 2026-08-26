@@ -7180,7 +7180,7 @@ uint8_t HandlePlayerMetronomeEffect(uint8_t a)
 		return (uint8_t)((unable.f & 0x80u) | 0x10u);
 	}
 
-	TryExecuteEffectCommandFunctionResult initial1 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+	TryExecuteEffectCommandFunctionResult initial1 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1, 0u, 0u, 0u);
 	if ((initial1.f & 0x10u) != 0u) {
 		/* .failed is reached with hl still holding the text id the failing
 		 * command function loaded. */
@@ -7188,7 +7188,7 @@ uint8_t HandlePlayerMetronomeEffect(uint8_t a)
 		return (uint8_t)((refused.f & 0x80u) | 0x10u);
 	}
 
-	TryExecuteEffectCommandFunctionResult initial2 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	TryExecuteEffectCommandFunctionResult initial2 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2, 0u, 0u, 0u);
 	if ((initial2.f & 0x10u) != 0u)
 		return (uint8_t)((initial2.f & 0x80u) | 0x10u);
 

@@ -49,7 +49,7 @@ wLoadedAttackEffectCommands = 0xCCB2
 # <<< factory-cases-statics
 
 # >>> factory TryExecuteEffectCommandFunction
-CONTRACT["TryExecuteEffectCommandFunction"] = {"compare": ("a", "f", "c", "hl"), "preserve": ()}
+CONTRACT["TryExecuteEffectCommandFunction"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
 CASES["TryExecuteEffectCommandFunction"] = [
     {"a": 0x05, "hram": {hBankROM: b"\x01"}, "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x00", wEffectFunctionsBank: b"\x00"},
      "sram": {0: {}}, "expect_regs": {"a": 0x01, "f": 0x00, "c": 0x05, "hl": 0xC0E9},
@@ -60,6 +60,11 @@ CASES["TryExecuteEffectCommandFunction"] = [
     dict(POISON, a=0xAA, hram={hBankROM: b"\x01"}, wram={wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x00", wEffectFunctionsBank: b"\x00"},
          sram={0: {}}, expect_regs={"a": 0x01, "f": 0x00, "c": 0xAA, "hl": 0xC0E9},
          instruction_budget=2000000, cycle_budget=8000000),
+    {"a": 0x05, "b": 0x12, "d": 0x34, "e": 0x56,
+     "hram": {hBankROM: b"\x01", 0xFF97: b"\xC2"},
+     "wram": {wLoadedAttackEffectCommands: b"\xE8\xC0", 0xC0E8: b"\x05\xC7\x40\x00", 0xC2F1: b"\x00", wEffectFunctionsBank: b"\x00"},
+     "sram": {0: {}}, "expect_regs": {"a": 0x00, "f": 0x90, "b": 0x00, "c": 0x90, "d": 0x34, "e": 0x56, "hl": 0xC2F1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory TryExecuteEffectCommandFunction
 
@@ -77,8 +82,8 @@ MUTATIONS = {
 # >>> factory-mutation TryExecuteEffectCommandFunction
 MUTATIONS["TryExecuteEffectCommandFunction"] = {
     "source_symbol": "TryExecuteEffectCommandFunction",
-    "before": "\tuint8_t result_a = (lookup.carry != 0u && lookup.hl == 0u) ? 0u : hBankROM;",
-    "after": "\tuint8_t result_a = hBankROM;",
-    "case_ids": ["TryExecuteEffectCommandFunction-1", "TryExecuteEffectCommandFunction-0", "TryExecuteEffectCommandFunction-2"],
+    "before": "\tfunction(&state);",
+    "after": "\tstate.d = (uint8_t)(state.d + 1u);\n\tfunction(&state);",
+    "case_ids": ["TryExecuteEffectCommandFunction-3"],
 }
 # <<< factory-mutation TryExecuteEffectCommandFunction

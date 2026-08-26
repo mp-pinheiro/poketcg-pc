@@ -38,6 +38,22 @@ set(PORT_FILES "" CACHE STRING "semicolon-separated pret basenames to build; emp
 file(GLOB HOME_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/home/*.c")
 file(GLOB PROBE_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/probe/*.c")
 
+set(EFFECT_DISPATCH_SOURCE "${CMAKE_BINARY_DIR}/effect_dispatch_generated.c")
+add_custom_command(
+  OUTPUT "${EFFECT_DISPATCH_SOURCE}"
+  COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/gen_effect_dispatch.py"
+          --probe "${CMAKE_SOURCE_DIR}/src/probe/effect_functions.c"
+          --inventory "${CMAKE_SOURCE_DIR}/site/data/inventory.json"
+          --output "${EFFECT_DISPATCH_SOURCE}"
+  DEPENDS "${CMAKE_SOURCE_DIR}/tools/gen_effect_dispatch.py"
+          "${CMAKE_SOURCE_DIR}/src/probe/effect_functions.c"
+          "${CMAKE_SOURCE_DIR}/site/data/inventory.json"
+  COMMENT "gen_effect_dispatch: probe adapters -> production address table"
+  VERBATIM)
+if(NOT PORT_FILES)
+  list(APPEND HOME_SOURCES "${EFFECT_DISPATCH_SOURCE}")
+endif()
+
 if(PORT_FILES)
   set(KEEP ${PORT_FILES} switch_rom switch_sram)
   set(_home "")
