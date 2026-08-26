@@ -21,6 +21,50 @@ static void adapt_Script_BeatAaron(ProbeState *s)
 }
 /* <<< factory Script_BeatAaron */
 
+/* >>> factory Script_d93f */
+static void adapt_Script_d93f(ProbeState *s)
+{
+	FuncD96cResult r = Script_d93f();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory Script_d93f */
+
+/* >>> factory Script_d995 */
+static void adapt_Script_d995(ProbeState *s)
+{
+	FuncD96cResult r = Script_d995();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory Script_d995 */
+
+/* >>> factory Script_da49 */
+static void adapt_Script_da49(ProbeState *s)
+{
+	FuncD96cResult r = Script_da49();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory Script_da49 */
+
+/* >>> factory Script_daa3 */
+static void adapt_Script_daa3(ProbeState *s)
+{
+	FuncD96cResult r = Script_daa3();
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory Script_daa3 */
+
 /* >>> factory DeckMachineRoomCloseTextBox */
 static void adapt_DeckMachineRoomCloseTextBox(ProbeState *s)
 {
@@ -78,6 +122,10 @@ static void adapt_Script_d9ef(ProbeState *s)
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
+	{ "Script_d93f", adapt_Script_d93f },
+	{ "Script_d995", adapt_Script_d995 },
+	{ "Script_da49", adapt_Script_da49 },
+	{ "Script_daa3", adapt_Script_daa3 },
 	{ "DeckMachineRoomCloseTextBox", adapt_DeckMachineRoomCloseTextBox },
 	{ "DeckMachineRoomAfterDuel", adapt_DeckMachineRoomAfterDuel },
 	{ "Script_da76", adapt_Script_da76 },

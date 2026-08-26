@@ -7,6 +7,18 @@ FuncD96cResult Func_d96c(uint8_t a);
 typedef struct { uint8_t a; uint8_t c; } ScriptBeatAaronResult;
 ScriptBeatAaronResult Script_BeatAaron(void);
 /* <<< factory Script_BeatAaron */
+/* >>> factory Script_d93f */
+FuncD96cResult Script_d93f(void);
+/* <<< factory Script_d93f */
+/* >>> factory Script_d995 */
+FuncD96cResult Script_d995(void);
+/* <<< factory Script_d995 */
+/* >>> factory Script_da49 */
+FuncD96cResult Script_da49(void);
+/* <<< factory Script_da49 */
+/* >>> factory Script_daa3 */
+FuncD96cResult Script_daa3(void);
+/* <<< factory Script_daa3 */
 /* >>> factory DeckMachineRoomCloseTextBox */
 void DeckMachineRoomCloseTextBox(void);
 /* <<< factory DeckMachineRoomCloseTextBox */

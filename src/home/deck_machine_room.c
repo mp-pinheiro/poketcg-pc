@@ -73,6 +73,74 @@ ScriptBeatAaronResult Script_BeatAaron(void)
 }
 /* <<< factory Script_BeatAaron */
 
+/* >>> factory Script_d93f */
+/* deck_machine_room.asm:97-99 -- the routine's entire CODE portion, 5 bytes:
+ * `ld a, $02` / `call Func_d96c`. The `start_script` macro assembles to
+ * `rst $20` at $5944: that is where the code ends and the script bytecode
+ * begins, so the cases declare completion pre-ret there. RST20 pops its own
+ * return address as a bytecode pointer and interprets the data that follows,
+ * which needs ambient scene state a probed per-routine call cannot supply.
+ * Func_d96c is already verified; this routine contributes the argument and the
+ * call, and the pre-ret split is what makes those observable at all. Its outputs
+ * are exactly Func_d96c's, so it reuses that result type rather than declaring an
+ * identical one. */
+FuncD96cResult Script_d93f(void)
+{
+	return Func_d96c(0x02u);
+}
+/* <<< factory Script_d93f */
+
+/* >>> factory Script_d995 */
+/* deck_machine_room.asm:150-152 -- the routine's entire CODE portion, 5 bytes:
+ * `ld a, $03` / `call Func_d96c`. The `start_script` macro assembles to
+ * `rst $20` at $599A: that is where the code ends and the script bytecode
+ * begins, so the cases declare completion pre-ret there. RST20 pops its own
+ * return address as a bytecode pointer and interprets the data that follows,
+ * which needs ambient scene state a probed per-routine call cannot supply.
+ * Func_d96c is already verified; this routine contributes the argument and the
+ * call, and the pre-ret split is what makes those observable at all. Its outputs
+ * are exactly Func_d96c's, so it reuses that result type rather than declaring an
+ * identical one. */
+FuncD96cResult Script_d995(void)
+{
+	return Func_d96c(0x03u);
+}
+/* <<< factory Script_d995 */
+
+/* >>> factory Script_da49 */
+/* deck_machine_room.asm:262-264 -- the routine's entire CODE portion, 5 bytes:
+ * `ld a, $07` / `call Func_d96c`. The `start_script` macro assembles to
+ * `rst $20` at $5A4E: that is where the code ends and the script bytecode
+ * begins, so the cases declare completion pre-ret there. RST20 pops its own
+ * return address as a bytecode pointer and interprets the data that follows,
+ * which needs ambient scene state a probed per-routine call cannot supply.
+ * Func_d96c is already verified; this routine contributes the argument and the
+ * call, and the pre-ret split is what makes those observable at all. Its outputs
+ * are exactly Func_d96c's, so it reuses that result type rather than declaring an
+ * identical one. */
+FuncD96cResult Script_da49(void)
+{
+	return Func_d96c(0x07u);
+}
+/* <<< factory Script_da49 */
+
+/* >>> factory Script_daa3 */
+/* deck_machine_room.asm:318-320 -- the routine's entire CODE portion, 5 bytes:
+ * `ld a, $09` / `call Func_d96c`. The `start_script` macro assembles to
+ * `rst $20` at $5AA8: that is where the code ends and the script bytecode
+ * begins, so the cases declare completion pre-ret there. RST20 pops its own
+ * return address as a bytecode pointer and interprets the data that follows,
+ * which needs ambient scene state a probed per-routine call cannot supply.
+ * Func_d96c is already verified; this routine contributes the argument and the
+ * call, and the pre-ret split is what makes those observable at all. Its outputs
+ * are exactly Func_d96c's, so it reuses that result type rather than declaring an
+ * identical one. */
+FuncD96cResult Script_daa3(void)
+{
+	return Func_d96c(0x09u);
+}
+/* <<< factory Script_daa3 */
+
 /* >>> factory DeckMachineRoomCloseTextBox */
 void DeckMachineRoomCloseTextBox(void)
 {
