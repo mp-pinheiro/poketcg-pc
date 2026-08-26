@@ -526,10 +526,17 @@ def _score_rows(rows: list[dict[str, Any]], *, retry: bool) -> list[tuple[int, d
 
 
 DONE_STATES = frozenset({"awaiting-gate", "complete", "failing", "excluded"})
+# Registering is correct only when the existing body is a faithful port. Some
+# bodies are aliases or documented simplifications (the 52 Music1_*/Music2_*
+# command handlers delegate to the dispatcher instead of consuming their own
+# stack-passed operand; AIMakeDecision skips OppActionTable dispatch). Adding a
+# CONTRACT key registers the routine in tests/routines.py, so registering an
+# unfaithful body reds `oracle-release-gate` for every concurrent session.
 IMPLEMENTED_UNBLOCK = (
-    "register the existing C body (cases, probe, mutation) - the factory "
-    "preflight rejects this routine as already-implemented, so no candidate can "
-    "ever be issued for it"
+    "diff the existing C body against the asm FIRST, then either register it "
+    "(cases, probe, mutation) if it is faithful, or re-port it if it is an "
+    "alias or simplification - the factory preflight rejects this routine as "
+    "already-implemented, so no candidate can ever be issued for it"
 )
 
 
