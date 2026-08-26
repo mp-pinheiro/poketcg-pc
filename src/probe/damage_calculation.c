@@ -35,6 +35,7 @@ static void adapt_CalculateDamage_FromDefendingPokemon(ProbeState *s)
 
 const ProbeEntry probe_entries_damage_calculation[] = {
     {"CalculateDamage_VersusDefendingPokemon", adapt_CalculateDamage_VersusDefendingPokemon},
+    {"EstimateDamage_VersusDefendingCard", adapt_EstimateDamage_VersusDefendingCard},
     {"CalculateDamage_FromDefendingPokemon", adapt_CalculateDamage_FromDefendingPokemon},
     {NULL, NULL},
 };
