@@ -1217,6 +1217,29 @@ CASES["ScriptCommand_JumpIfNPCLoaded"] = [
 ]
 # <<< factory ScriptCommand_JumpIfNPCLoaded
 
+
+# >>> factory ScriptCommand_WalkPlayerToMasonLaboratory
+# The loop runs frames until wOverworldMapPlayerAnimationState reaches 2, so the
+# reference needs far more than the default budget; tests/test_leaves.py derives
+# PyBoy's frame allowance from cycle_budget.
+_wpml_selection = 0xD32E
+_wpml_state = 0xD33E
+
+def _wpml(**kw):
+    case = {"wram": {wScriptPointer: b"\x00\xC5", _wpml_state: b"\x00"},
+            "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+            "instruction_budget": 40000000, "cycle_budget": 160000000,
+            "read": {_wpml_selection: 1, _wpml_state: 1, wScriptPointer: 2}}
+    case.update(kw)
+    return case
+
+CONTRACT["ScriptCommand_WalkPlayerToMasonLaboratory"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_WalkPlayerToMasonLaboratory"] = [
+    _wpml(a=0),
+    dict(POISON, **_wpml()),
+]
+# <<< factory ScriptCommand_WalkPlayerToMasonLaboratory
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1783,3 +1806,6 @@ MUTATIONS["ScriptCommand_AskQuestionJumpDefaultYes"] = {"source_symbol": "Script
 # >>> factory-mutation ScriptCommand_JumpIfNPCLoaded
 MUTATIONS["ScriptCommand_JumpIfNPCLoaded"] = {"source_symbol": "ScriptCommand_JumpIfNPCLoaded", "before": "\tuint8_t saved_loaded = wLoadedNPCTempIndex;", "after": "\tuint8_t saved_loaded = 0x40u;", "case_ids": ["ScriptCommand_JumpIfNPCLoaded-0", "ScriptCommand_JumpIfNPCLoaded-1", "ScriptCommand_JumpIfNPCLoaded-2"]}
 # <<< factory-mutation ScriptCommand_JumpIfNPCLoaded
+# >>> factory-mutation ScriptCommand_WalkPlayerToMasonLaboratory
+MUTATIONS["ScriptCommand_WalkPlayerToMasonLaboratory"] = {"source_symbol": "ScriptCommand_WalkPlayerToMasonLaboratory", "before": "\tgb_write8(wOverworldMapSelection_ADDR, OWMAP_MASON_LABORATORY);", "after": "\tgb_write8(wOverworldMapSelection_ADDR, (uint8_t)(OWMAP_MASON_LABORATORY + 1u));", "case_ids": ["ScriptCommand_WalkPlayerToMasonLaboratory-0", "ScriptCommand_WalkPlayerToMasonLaboratory-1"]}
+# <<< factory-mutation ScriptCommand_WalkPlayerToMasonLaboratory
