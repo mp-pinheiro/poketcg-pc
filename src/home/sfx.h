@@ -40,4 +40,7 @@ void SFX_unused(uint16_t hl, uint16_t bc);
 /* >>> factory SFX_pitch_offset */
 void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_pitch_offset */
+/* >>> factory SFX_wave */
+void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl);
+/* <<< factory SFX_wave */
 #endif

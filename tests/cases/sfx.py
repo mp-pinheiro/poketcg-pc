@@ -146,6 +146,15 @@ CASES["SFX_pitch_offset"] = [
 ]
 # <<< factory SFX_pitch_offset
 
+# >>> factory SFX_wave
+CONTRACT["SFX_wave"] = {"compare": (), "preserve": ()}
+CASES["SFX_wave"] = [
+    {"a": 0, "b": 0, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0"}, "read": {0xDD8B: 1}},
+    {"a": 1, "b": 0, "c": 0, "stack": [0xC200], "wram": {0xC200: b"\xF0"}, "read": {0xDD8B: 1}},
+    dict(POISON, b=0, c=0, stack=[0xC300], wram={0xC300: b"\xF0"}, read={0xDD8B: 1}),
+]
+# <<< factory SFX_wave
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -197,3 +206,6 @@ MUTATIONS["SFX_unused"] = {"source_symbol": "SFX_unused", "before": "void SFX_un
 # >>> factory-mutation SFX_pitch_offset
 MUTATIONS["SFX_pitch_offset"] = {"source_symbol": "SFX_pitch_offset", "before": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), gb_read8(caller_hl));", "after": "\tgb_write8((uint16_t)(wSFXPitchOffsets_ADDR + bc), 0u);", "case_ids": ["SFX_pitch_offset-0", "SFX_pitch_offset-1", "SFX_pitch_offset-2"]}
 # <<< factory-mutation SFX_pitch_offset
+# >>> factory-mutation SFX_wave
+MUTATIONS["SFX_wave"] = {"source_symbol": "SFX_wave", "before": "void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);\n\tconst uint8_t *table = rom_ptr(SFX_BANK, table_addr);\n\tuint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);\n\tconst uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);\n\tgb_write8(0xFF1Au, 0u);\n\tfor (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)\n\t\tgb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);\n\twMusicWaveChange = 1u;", "after": "void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);\n\tconst uint8_t *table = rom_ptr(SFX_BANK, table_addr);\n\tuint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);\n\tconst uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);\n\tgb_write8(0xFF1Au, 0u);\n\tfor (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)\n\t\tgb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);\n\twMusicWaveChange = 0u;", "case_ids": ["SFX_wave-0", "SFX_wave-1", "SFX_wave-2"]}
+# <<< factory-mutation SFX_wave

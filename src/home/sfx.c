@@ -525,3 +525,19 @@ void SFX_pitch_offset(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_pitch_offset */
+
+/* >>> factory SFX_wave */
+void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)
+{
+	uint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);
+	const uint8_t *table = rom_ptr(SFX_BANK, table_addr);
+	uint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);
+	const uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);
+	gb_write8(0xFF1Au, 0u);
+	for (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)
+		gb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);
+	wMusicWaveChange = 1u;
+	gb_write8(0xFF1Au, AUD3ENA_ON);
+	ExecuteNextSFXCommand(caller_hl, bc);
+}
+/* <<< factory SFX_wave */
