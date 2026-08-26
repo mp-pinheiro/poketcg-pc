@@ -28,6 +28,8 @@ LAB_RE = re.compile(r'^([A-Za-z_][A-Za-z0-9_#@]*):{1,2}\s*$')
 CALL_RE = re.compile(r'^\s*(?:call|jp|jr|farcall|bank1call|homecall|callab|callba)\b(.*)$', re.I)
 TERM_RE = re.compile(r'^(ret|reti)\b(?!\s*,)|^(jp|jr)\s+(?!(z|nz|c|nc)\s*,)', re.I)
 TOKEN_RE = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+DW_RE = re.compile(r'^\s*dw\s+([A-Za-z_][A-Za-z0-9_.]*)')
+DATA_RE = re.compile(r'^\s*(?:dw|db|dn|table_width|dr|ds)\b', re.I)
 
 INSTR = set("""adc add and bit call ccf cp cpl daa dec di ei halt inc jp jr ld ldh ldi ldd
 nop or pop push res ret reti rl rla rlc rlca rr rra rrc rrca rst sbc scf set sla sra srl
@@ -230,6 +232,65 @@ def process_asm_files(map_labels: dict[str, dict]) -> tuple[dict[str, dict], dic
             callee = extract_callee(stripped, code_names, cur_top or "")
             if callee and cur_top and cur_top in defs:
                 defs[cur_top]["deps"].add(callee)
+
+    # Indirect dispatch. A body that reaches its callees through a `dw` pointer
+    # table (JumpToFunctionInTable, the `jumptable` macro, or hand-rolled
+    # LOW/HIGH pointer arithmetic) has real control-flow edges that `call`/`jp`
+    # scanning cannot see, so the routine would otherwise report ready with no
+    # blockers while its targets have no C body -- and a candidate issued for it
+    # can only compile by stubbing the table. Two sources count: a table under
+    # one of the routine's own sub-labels, and a top-level table the routine
+    # names. A table that merely *follows* a routine is not attributed to it.
+    table_cache: dict[str, set[str]] = {}
+
+    def table_targets(label: str) -> set[str]:
+        if label in table_cache:
+            return table_cache[label]
+        table_cache[label] = set()
+        entry = defs.get(label)
+        if not entry or not entry.get("file") or not entry.get("line"):
+            return table_cache[label]
+        lines_ = Path(PRET / entry["file"]).read_text(errors="replace").splitlines()
+        found: set[str] = set()
+        for raw in lines_[entry["line"]:]:
+            body = raw.split(";", 1)[0]
+            if not body.strip():
+                continue
+            if body[0] not in " \t." and LAB_RE.match(body.strip()):
+                break
+            m = DW_RE.match(body)
+            if m:
+                found.add(parent_name(m.group(1)))
+                continue
+            if not DATA_RE.match(body):
+                break
+        table_cache[label] = found
+        return found
+
+    for fp in files:
+        rel = str(Path(fp).relative_to(PRET))
+        lines = Path(fp).read_text(errors="replace").splitlines()
+        cur_top = None
+        for raw in lines:
+            body = raw.split(";", 1)[0]
+            if not body.strip():
+                continue
+            if body[0] not in " \t.":
+                m = LAB_RE.match(body.strip())
+                cur_top = m.group(1) if m else None
+                continue
+            if cur_top is None or cur_top not in defs:
+                continue
+            targets: set[str] = set()
+            m = DW_RE.match(body)
+            if m:
+                targets.add(parent_name(m.group(1)))
+            for token in TOKEN_RE.findall(body):
+                if token in defs and token != cur_top:
+                    targets |= table_targets(token)
+            for target in targets:
+                if target in code_names and target != cur_top:
+                    defs[cur_top]["deps"].add(target)
 
     unknown = sorted(n for n in map_labels if n not in defs)
     for n in unknown:
