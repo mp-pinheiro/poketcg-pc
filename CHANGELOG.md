@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.207.0 - 2026-08-26
+## v0.208.0 - 2026-08-26
 
 ### Features
 
@@ -10,6 +10,5 @@ This changelog is generated automatically from [Conventional Commits](https://ww
 
 ### Miscellaneous
 
-- *(factory)* Retire _HandlePeekSelection
 - *(progress)* Refresh port status
 
