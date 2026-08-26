@@ -31,9 +31,19 @@ static void adapt_Func_fcad(ProbeState *s)
 }
 /* <<< factory Func_fcad */
 
+/* >>> factory GiftCenterMenu */
+static void adapt_GiftCenterMenu(ProbeState *s)
+{
+	GiftCenterMenuResult r = GiftCenterMenu();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory GiftCenterMenu */
+
 const ProbeEntry probe_entries_gift_center[] = {
 	{ "Preload_GiftCenterClerk", adapt_Preload_GiftCenterClerk },
 	{ "Func_fc7a", adapt_Func_fc7a },
 	{ "Func_fcad", adapt_Func_fcad },
+	{ "GiftCenterMenu", adapt_GiftCenterMenu },
 	{ NULL, NULL },
 };

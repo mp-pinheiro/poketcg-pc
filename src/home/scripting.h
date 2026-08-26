@@ -519,4 +519,7 @@ CallMapScriptResult Func_c9c7(void);
 /* >>> factory Func_c9b8 */
 CallMapScriptResult Func_c9b8(void);
 /* <<< factory Func_c9b8 */
+/* >>> factory ScriptCommand_CloseTextBox */
+IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void);
+/* <<< factory ScriptCommand_CloseTextBox */
 #endif

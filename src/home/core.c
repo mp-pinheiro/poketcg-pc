@@ -1310,6 +1310,14 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/tiles.h"
 #include "home/card_data.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7055,3 +7063,150 @@ void DisplayOpponentUsedAttackScreen(void)
 	(void)PrintAttackOrCardDescription(wLoadedAttackDescription_ADDR, 1u, 4u);
 }
 /* <<< factory DisplayOpponentUsedAttackScreen */
+
+/* >>> factory DisplayCardList */
+DisplayCardListResult DisplayCardList(void)
+{
+	/* Both `jr c, DisplayCardList` (the item selection menu was cancelled) and
+	 * `jp DisplayCardList` (the card page was exited) re-enter at the top. */
+	for (;;) {
+		(void)DrawNarrowTextBox();
+		PrintCardListHeaderAndInfoBoxTexts();
+
+		uint8_t reenter = 0u;
+
+		while (reenter == 0u) {
+			/* .reload_list */
+			uint8_t count = CountCardsInDuelTempList().a;
+			uint8_t item = wSelectedDuelSubMenuItem;
+			uint8_t scroll = wSelectedDuelSubMenuScrollOffset;
+			uint16_t params = CARD_LIST_PARAMETERS;
+
+			PrintCardListItems(count, scroll, item, &params);
+			LoadSelectedCardGfx();
+			EnableLCD();
+
+			for (;;) {
+				/* .wait_button */
+				DoFrame();
+
+				/* .UpdateListOnDPadInput */
+				if ((hDPadHeld & PAD_CTRL_PAD) != 0u) {
+					hffb0 = 1u;
+					PrintCardListHeaderAndInfoBoxTexts();
+					hffb0 = 0u;
+				}
+
+				HandleCardListInputResult input = HandleCardListInput();
+				uint8_t list_item;
+				uint8_t list_scroll;
+
+				if ((input.f & FLAG_C) != 0u) {
+					list_scroll = input.d;
+					list_item = input.e;
+				} else {
+					/* CardListMenuFunction (home/menus.c) stops where the
+					 * asm does `jp hl` on wListFunctionPointer, so the
+					 * function PrintCardListItems armed out of
+					 * CardListParameters -- CardListFunction ($5719) -- is
+					 * called here, followed by the HandleMenuInput and
+					 * HandleCardListInput epilogues the ROM reaches through
+					 * it: draw the cursor, play the open/exit SFX, and
+					 * report the scroll offset and item it settled on. */
+					CardListFunctionResult list_fn = CardListFunction();
+
+					if ((list_fn.f & FLAG_C) == 0u)
+						continue;
+					DrawCursor2();
+					(void)PlayOpenOrExitScreenSFX(list_fn.a, list_fn.f);
+					list_scroll = wListScrollOffset;
+					list_item = wCurMenuItem;
+				}
+
+				/* refresh the position of the last checked card, so that the
+				 * cursor points to it when the list is reloaded */
+				wSelectedDuelSubMenuItem = list_item;
+				wSelectedDuelSubMenuScrollOffset = list_scroll;
+
+				uint8_t keys = hKeysPressed;
+
+				if ((keys & PAD_SELECT) != 0u) {
+					/* .select_pressed: sort the list by ID once, then start
+					 * over from its first item */
+					if (wSortCardListByID != 0u)
+						continue;
+					(void)SortCardsInDuelTempListByID(keys, 0u, (uint16_t)(((uint16_t)list_scroll << 8) | list_item));
+					wSelectedDuelSubMenuItem = 0u;
+					wSelectedDuelSubMenuScrollOffset = 0u;
+					wSortCardListByID = TRUE;
+					EraseCursor();
+					break;
+				}
+				if ((keys & PAD_B) != 0u) {
+					/* .b_pressed: hCurMenuItem is the MENU_CANCEL that
+					 * CardListFunction wrote on its way out */
+					return (DisplayCardListResult){hCurMenuItem, FLAG_C};
+				}
+				if ((wNoItemSelectionMenuKeys & keys) != 0u) {
+					/* .open_card_page: no item selection menu, and PAD_UP or
+					 * PAD_DOWN opens the card page of the card above or
+					 * below the current one */
+					for (;;) {
+						DeckEntryResult card = GetCardInDuelTempList(hCurMenuItem, wSelectedDuelSubMenuScrollOffset_ADDR);
+						uint8_t card_id = LoadCardDataToBuffer1_FromDeckIndex(card.a);
+
+						OpenCardPage_FromCheckHandOrDiscardPile(card_id, 0u, keys, 0u, card.d, card.e, card.hl);
+
+						uint8_t held = hDPadHeld;
+
+						if ((held & (PAD_UP | PAD_DOWN)) == 0u) {
+							/* B: leave the card page and reload the list */
+							(void)DrawCardListScreenLayout();
+							break;
+						}
+
+						uint8_t next = hCurMenuItem;
+
+						if ((held & PAD_UP) != 0u) {
+							/* .up_pressed */
+							if (next == 0u)
+								continue; /* reopen the current card */
+							next--;
+						} else {
+							/* .down_pressed */
+							uint8_t total = CountCardsInDuelTempList().a;
+
+							next++;
+							if (next >= total)
+								continue; /* reopen the current card */
+						}
+						/* .move_to_another_card: scroll the page to reflect
+						 * the movement instead of moving the cursor */
+						hCurMenuItem = next;
+						wSelectedDuelSubMenuItem = 0u;
+						wSelectedDuelSubMenuScrollOffset = next;
+					}
+					reenter = 1u;
+					break;
+				}
+
+				/* the item selection menu (PLAY|CHECK or SELECT|CHECK) for the
+				 * selected card, which opens the card page on CHECK */
+				(void)GetCardInDuelTempList_OnlyDeckIndex(hCurMenuItem, wSelectedDuelSubMenuScrollOffset_ADDR);
+
+				CardListItemSelectionMenuResult menu = CardListItemSelectionMenu();
+
+				if ((menu.f & FLAG_C) != 0u) {
+					/* B left the item selection menu: start over */
+					reenter = 1u;
+					break;
+				}
+
+				uint8_t selected = hTempCardIndex_ff98;
+
+				return (DisplayCardListResult){selected, (uint8_t)(selected == 0u ? FLAG_Z : 0u)};
+			}
+		}
+	}
+}
+/* <<< factory DisplayCardList */

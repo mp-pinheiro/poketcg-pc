@@ -305,6 +305,8 @@ SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 wMedalScreenYOffset = 0xD114
 
 wOverworldNPCFlags = 0xD0C1
+
+wd3b9 = 0xD3B9
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -755,6 +757,15 @@ CASES["CloseTextBox"] = [
 ]
 # <<< factory CloseTextBox
 
+# >>> factory Func_c891
+CONTRACT["Func_c891"] = {"compare": (), "preserve": ()}
+CASES["Func_c891"] = [
+    {"hl": 0x01DB, "wram": {wOverworldNPCFlags: b"\x00", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
+    {"hl": 0x01DC, "wram": {wOverworldNPCFlags: b"\x00", wd3b9: b"\x56\x78"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
+    dict(POISON, hl=0x01DB, wram={wOverworldNPCFlags: b"\x00", wd3b9: b"\x9A\xBC"}, setup=SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={wOverworldNPCFlags: 1, wd3b9: 2}),
+]
+# <<< factory Func_c891
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1045,3 +1056,6 @@ MUTATIONS["Func_c141"] = {"source_symbol": "Func_c141", "before": "\tidx2 = (uin
 # >>> factory-mutation CloseTextBox
 MUTATIONS["CloseTextBox"] = {"source_symbol": "CloseTextBox", "before": "\tflags = (uint8_t)(flags & (uint8_t)~(1u << AUTO_CLOSE_TEXTBOX));", "after": "\tflags = (uint8_t)(flags | (uint8_t)(1u << AUTO_CLOSE_TEXTBOX));", "case_ids": ["CloseTextBox-0", "CloseTextBox-1"]}
 # <<< factory-mutation CloseTextBox
+# >>> factory-mutation Func_c891
+MUTATIONS["Func_c891"] = {"source_symbol": "Func_c891", "before": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0u;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "after": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0xFFu;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "case_ids": ["Func_c891-0", "Func_c891-1", "Func_c891-2"]}
+# <<< factory-mutation Func_c891

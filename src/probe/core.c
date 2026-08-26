@@ -2366,6 +2366,16 @@ static void adapt_DisplayOpponentUsedAttackScreen(ProbeState *s)
 }
 /* <<< factory DisplayOpponentUsedAttackScreen */
 
+/* >>> factory DisplayCardList */
+static void adapt_DisplayCardList(ProbeState *s)
+{
+	DisplayCardListResult result = DisplayCardList();
+
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory DisplayCardList */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2649,5 +2659,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayStatusConditionQueueAnimations", adapt_PlayStatusConditionQueueAnimations },
 	{ "PlayAttackAnimation_DealAttackDamageSimple", adapt_PlayAttackAnimation_DealAttackDamageSimple },
 	{ "DisplayOpponentUsedAttackScreen", adapt_DisplayOpponentUsedAttackScreen },
+	{ "DisplayCardList", adapt_DisplayCardList },
 	{ NULL, NULL },
 };

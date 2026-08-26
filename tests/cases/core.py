@@ -1793,6 +1793,35 @@ wStatusConditionQueue = 0xCCCE
 
 wTempCardID_ccc2 = 0xCCC2
 wSelectedAttack = 0xCCC6
+
+wDuelTempList = 0xC510
+wLCDC = 0xCABB
+wSelectedDuelSubMenuItem = 0xCBCF
+wSelectedDuelSubMenuScrollOffset = 0xCBD0
+wNoItemSelectionMenuKeys = 0xCBD6
+wSortCardListByID = 0xCBDF
+hKeysPressed = 0xFF91
+hCurMenuItem = 0xFFB1
+
+# DisplayCardList with B tapped on the second frame: the temp list is empty, so
+# the reference walks the whole screen once and stops at .b_pressed. wLCDC starts
+# clear, which keeps WaitForVBlank a no-op until the routine's own EnableLCD arms
+# it, and the two-entry key cycle both arms the reference's VBlank scheduler and
+# keeps B edge-triggered (a held key is newly pressed only on frame one, which is
+# before the wait loop starts). wNoItemSelectionMenuKeys is 0 so no key opens the
+# card page, and wSortCardListByID is only read on the PAD_SELECT branch.
+DISPLAY_CARD_LIST_SEED = {
+    wDuelTempList: b"\xFF",
+    wLCDC: b"\x00",
+    wSelectedDuelSubMenuItem: b"\x00",
+    wSelectedDuelSubMenuScrollOffset: b"\x00",
+    wNoItemSelectionMenuKeys: b"\x00",
+    wSortCardListByID: b"\x00",
+    hKeysPressed: b"\x02",
+    hCurMenuItem: b"\x00",
+}
+DISPLAY_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+DISPLAY_CARD_LIST_KEYS = [0x00, 0x02]
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3676,6 +3705,20 @@ CASES["DisplayOpponentUsedAttackScreen"] = [
 ]
 # <<< factory DisplayOpponentUsedAttackScreen
 
+# >>> factory DisplayCardList
+CONTRACT["DisplayCardList"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DisplayCardList"] = [
+    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": dict(DISPLAY_CARD_LIST_SEED),
+     "setup": DISPLAY_CARD_LIST_SETUP, "read": {hCurMenuItem: 1},
+     "expect": {hCurMenuItem: b"\xFF"}, "rom_bank": 1,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram=dict(DISPLAY_CARD_LIST_SEED),
+         setup=DISPLAY_CARD_LIST_SETUP, read={hCurMenuItem: 1},
+         expect={hCurMenuItem: b"\xFF"}, rom_bank=1,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5174,3 +5217,6 @@ MUTATIONS["PlayAttackAnimation_DealAttackDamageSimple"] = {"source_symbol": "Pla
 # >>> factory-mutation DisplayOpponentUsedAttackScreen
 MUTATIONS["DisplayOpponentUsedAttackScreen"] = {"source_symbol": "DisplayOpponentUsedAttackScreen", "before": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "after": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = 0x02u;", "case_ids": ["DisplayOpponentUsedAttackScreen-0", "DisplayOpponentUsedAttackScreen-1", "DisplayOpponentUsedAttackScreen-2"]}
 # <<< factory-mutation DisplayOpponentUsedAttackScreen
+# >>> factory-mutation DisplayCardList
+MUTATIONS["DisplayCardList"] = {"source_symbol": "DisplayCardList", "before": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){hCurMenuItem, FLAG_C};", "after": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){0u, FLAG_C};", "case_ids": ["DisplayCardList-0", "DisplayCardList-1"]}
+# <<< factory-mutation DisplayCardList

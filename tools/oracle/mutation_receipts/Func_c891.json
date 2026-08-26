@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c891",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c891\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 475, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"01\", \"54201\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c891\", \"mismatches\": {\"bus\": {\"address\": 54201, \"reference\": \"010000\", \"native\": \"01ff00\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53441, 1], [54201, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c891\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 475, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"01\", \"54201\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

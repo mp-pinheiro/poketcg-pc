@@ -1769,3 +1769,11 @@ CallMapScriptResult Func_c9b8(void)
 	return CallMapScriptPointerIfExists(MAP_SCRIPT_LOAD_MAP);
 }
 /* <<< factory Func_c9b8 */
+
+/* >>> factory ScriptCommand_CloseTextBox */
+IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)
+{
+	CloseTextBox();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_CloseTextBox */

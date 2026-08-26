@@ -1268,6 +1268,15 @@ for _i, (_map, _comp) in enumerate(_C9B8_SEEDS):
     CASES["Func_c9b8"].append(_base)
 # <<< factory Func_c9b8
 
+# >>> factory ScriptCommand_CloseTextBox
+CONTRACT["ScriptCommand_CloseTextBox"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_CloseTextBox"] = [
+    {"wram": {0xD0C1: b"\x01"}, "read": {0xD0C1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xD0C1: b"\x00"}, "read": {0xD0C1: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD0C1: b"\xFF"}, read={0xD0C1: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_CloseTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1924,3 +1933,6 @@ MUTATIONS["Func_c9b8"] = {"source_symbol": "Func_c9b8", "before": "CallMapScript
 for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9b8"], _C9B8_SEEDS):
     _rec["completion"] = dict(_comp)
 # <<< factory-completion Func_c9b8
+# >>> factory-mutation ScriptCommand_CloseTextBox
+MUTATIONS["ScriptCommand_CloseTextBox"] = {"source_symbol": "ScriptCommand_CloseTextBox", "before": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\tCloseTextBox();", "after": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\t(void)0;", "case_ids": ["ScriptCommand_CloseTextBox-0", "ScriptCommand_CloseTextBox-2"]}
+# <<< factory-mutation ScriptCommand_CloseTextBox

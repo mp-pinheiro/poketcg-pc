@@ -1056,4 +1056,8 @@ PlayAttackAnimation_DealAttackDamageSimpleResult PlayAttackAnimation_DealAttackD
 /* >>> factory DisplayOpponentUsedAttackScreen */
 void DisplayOpponentUsedAttackScreen(void);
 /* <<< factory DisplayOpponentUsedAttackScreen */
+/* >>> factory DisplayCardList */
+typedef struct { uint8_t a; uint8_t f; } DisplayCardListResult;
+DisplayCardListResult DisplayCardList(void);
+/* <<< factory DisplayCardList */
 #endif

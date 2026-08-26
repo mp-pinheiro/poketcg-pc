@@ -6,6 +6,21 @@
 /* >>> factory statics */
 #define CONSOLE_CGB 0x02u
 #define NORTH 0x00u
+
+#include "home/labels.h"
+#include "home/lcd_enable_frame.h"
+#include "home/menus.h"
+#include "home/overworld.h"
+
+/* GiftCenterMenu assembles at 04:4dba (poketcg.sym), so both of its local
+ * tables resolve through ROM bank $04: .GiftCenterTextPointers at $4e0f and
+ * .GiftCenterMenuParams at $4e17. */
+#define GIFT_CENTER_BANK 0x04u
+#define GIFT_CENTER_TEXT_POINTERS 0x4E0Fu
+#define GIFT_CENTER_MENU_PARAMS 0x4E17u
+
+#define AUTO_CLOSE_TEXTBOX 0x00u
+#define GIFT_CENTER_MENU_EXIT 0x04u
 /* <<< factory statics */
 
 /* >>> factory Preload_GiftCenterClerk */
@@ -70,3 +85,66 @@ Func_fcadResult Func_fcad(void)
 	return (Func_fcadResult){written, value};
 }
 /* <<< factory Func_fcad */
+
+/* >>> factory GiftCenterMenu */
+/* gift_center.asm:31-105 (04:4dba, 110 bytes).
+ *
+ * `ld hl, .LoadTextPointerFunctionTable` / `call JumpToFunctionInTable` is a
+ * plain switch rather than a call into unported code: all five slots are local
+ * labels of this routine, and the first four are the SAME label
+ * (.LoadChoiceTextPointer), so only GIFT_CENTER_MENU_EXIT reaches the `.stub`
+ * ret. The dispatch index is wGiftCenterChoice, whose domain is [0,4] --
+ * .GiftCenterMenuParams declares 5 items, so HandleMenuInput's A exit hands
+ * back wCurMenuItem in [0,4], and its B exit leaves hCurMenuItem $ff, which the
+ * `cp e` below rewrites to GIFT_CENTER_MENU_EXIT.
+ *
+ * The returned af is the `push af` taken right after `ld [wGiftCenterChoice], a`
+ * and republished by the closing `pop af`: a is the choice, and f is still the
+ * `cp e` result because `ld a, n` and `ld [nn], a` touch no flags. `cp` always
+ * sets N, so f is N plus Z/H/C of hCurMenuItem - e.
+ *
+ * .GiftCenterTextPointers is read after HandleMenuInput, which reaches
+ * PlayOpenOrExitScreenSFX; the asm gets bank $04 back from its farcall and
+ * BankpushROM/BankpopROM pairs, but the ported SFX bodies latch their own bank
+ * and do not restore it, so the table is addressed with an explicit rom_ptr()
+ * instead of through the live $4000 window. */
+GiftCenterMenuResult GiftCenterMenu(void)
+{
+	(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));
+	uint8_t selected = wSelectedGiftCenterMenuItem;
+	InitAndPrintMenu(GIFT_CENTER_MENU_PARAMS, selected);
+
+	HandleMenuInputResult input;
+	do {
+		DoFrameIfLCDEnabled();
+		input = HandleMenuInput();
+	} while ((input.f & 0x10u) == 0u);
+
+	wSelectedGiftCenterMenuItem = input.e;
+
+	uint8_t item = hCurMenuItem;
+	uint8_t f = 0x40u;
+	if (item == input.e)
+		f = (uint8_t)(f | 0x80u);
+	if ((item & 0x0Fu) < (input.e & 0x0Fu))
+		f = (uint8_t)(f | 0x20u);
+	if (item < input.e)
+		f = (uint8_t)(f | 0x10u);
+
+	uint8_t choice = (item == input.e) ? item : GIFT_CENTER_MENU_EXIT;
+	wGiftCenterChoice = choice;
+
+	if (choice != GIFT_CENTER_MENU_EXIT) {
+		/* .LoadChoiceTextPointer, shared by all four non-exit slots. */
+		uint8_t offset = (uint8_t)(wGiftCenterChoice * 2u);
+		const uint8_t *entry = rom_ptr(GIFT_CENTER_BANK,
+			(uint16_t)(GIFT_CENTER_TEXT_POINTERS + offset));
+		gb_write8(wTxRam2_ADDR, entry[0]);
+		gb_write8((uint16_t)(wTxRam2_ADDR + 1u), entry[1]);
+	}
+
+	CloseTextBox();
+	DoFrameIfLCDEnabled();
+	return (GiftCenterMenuResult){choice, f};
+}
+/* <<< factory GiftCenterMenu */

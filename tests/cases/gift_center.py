@@ -30,6 +30,84 @@ CASES["Preload_GiftCenterClerk"] = [
 ]
 # <<< factory Preload_GiftCenterClerk
 
+# >>> factory-cases-statics
+# GiftCenterMenu (gift_center.asm:31) seeds and observations.
+wLCDC = 0xCABB
+wTxRam2 = 0xCE3F
+wSelectedGiftCenterMenuItem = 0xD0BA
+wOverworldNPCFlags = 0xD0C1
+wGiftCenterChoice = 0xD10E
+wPermissionMap = 0xD133
+rLCDC = 0xFF40
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+hCurMenuItem = 0xFFB1
+PAD_A = 0x01
+PAD_B = 0x02
+# <<< factory-cases-statics
+
+# >>> factory GiftCenterMenu
+CONTRACT["GiftCenterMenu"] = {"compare": ("a", "f"), "preserve": ()}
+# The routine's single exit is `pop af` / `ret`, and the two frame calls that
+# straddle the dispatch are void, so a and f are the whole register contract.
+#
+# Every case runs with the LCD off (wLCDC and rLCDC both $00). DoFrameIfLCDEnabled
+# is then a no-op on both sides, so no frame elapses, nothing calls ReadJoypad,
+# and the seeded hKeysPressed survives into the first HandleMenuInput poll -- the
+# input loop takes exactly one turn. On the A exit HandleMenuInput sets
+# hCurMenuItem = wCurMenuItem = e, so `cp e` is always Z (f = $C0) and the choice
+# is the seeded menu item; on the B exit hCurMenuItem is $ff, the compare misses
+# and the choice becomes GIFT_CENTER_MENU_EXIT.
+#
+# wTxRam2 is seeded $AA $BB so the four dispatching choices prove the text-pointer
+# write happened and the GIFT_CENTER_MENU_EXIT cases prove `.stub` wrote nothing.
+# wPermissionMap is seeded exactly as the landed CloseTextBox cases do, to pin
+# down the LoadTilemap_ToSRAM that CloseTextBox reaches.
+CASES["GiftCenterMenu"] = [
+    {"wram": {wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+              hKeysPressed: bytes((PAD_A,)),
+              wSelectedGiftCenterMenuItem: b"\x00", wOverworldNPCFlags: b"\x00",
+              wTxRam2: b"\xAA\xBB", wPermissionMap: b"\x00" * 0x100},
+     "read": {wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+              wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+              hKeysPressed: bytes((PAD_A,)),
+              wSelectedGiftCenterMenuItem: b"\x02", wOverworldNPCFlags: b"\x00",
+              wTxRam2: b"\xAA\xBB", wPermissionMap: b"\x00" * 0x100},
+     "read": {wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+              wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+              hKeysPressed: bytes((PAD_A,)),
+              wSelectedGiftCenterMenuItem: b"\x04", wOverworldNPCFlags: b"\x00",
+              wTxRam2: b"\xAA\xBB", wPermissionMap: b"\x00" * 0x100},
+     "read": {wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+              wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+               hKeysPressed: bytes((PAD_B,)),
+               wSelectedGiftCenterMenuItem: b"\x01", wOverworldNPCFlags: b"\x02",
+               wTxRam2: b"\xAA\xBB", wPermissionMap: b"\xFF" * 0x100},
+         read={wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+               wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"wram": {wLCDC: b"\x00", rLCDC: b"\x00", hDPadHeld: b"\x00",
+              hKeysPressed: bytes((PAD_A,)),
+              wSelectedGiftCenterMenuItem: b"\x03", wOverworldNPCFlags: b"\x00",
+              wTxRam2: b"\xAA\xBB", wPermissionMap: b"\x00" * 0x100},
+     "read": {wGiftCenterChoice: 1, wTxRam2: 2, hCurMenuItem: 1,
+              wSelectedGiftCenterMenuItem: 1, wOverworldNPCFlags: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory GiftCenterMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory gift-center event-value statics
@@ -114,3 +192,11 @@ MUTATIONS["Func_fc7a"] = {"source_symbol": "Func_fc7a", "before": "\twritten = (
 # >>> factory-mutation Func_fcad
 MUTATIONS["Func_fcad"] = {"source_symbol": "Func_fcad", "before": "\twritten = (uint8_t)((event & (uint8_t)~0xFCu) | ((uint8_t)(value << 2u) & 0xFCu));", "after": "\twritten = (uint8_t)((event & (uint8_t)~0xFCu) | ((uint8_t)(value << 1u) & 0xFCu));", "case_ids": ["Func_fcad-0", "Func_fcad-1", "Func_fcad-2"]}
 # <<< factory-mutation Func_fcad
+# >>> factory-mutation GiftCenterMenu
+MUTATIONS["GiftCenterMenu"] = {
+    "source_symbol": "GiftCenterMenu",
+    "before": "\tuint8_t selected = wSelectedGiftCenterMenuItem;\n\tInitAndPrintMenu(GIFT_CENTER_MENU_PARAMS, selected);",
+    "after": "\tuint8_t selected = wSelectedGiftCenterMenuItem;\n\tInitAndPrintMenu(GIFT_CENTER_MENU_PARAMS, (uint8_t)(selected ^ 1u));",
+    "case_ids": ["GiftCenterMenu-0", "GiftCenterMenu-1", "GiftCenterMenu-4"],
+}
+# <<< factory-mutation GiftCenterMenu

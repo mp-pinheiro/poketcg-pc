@@ -15,4 +15,14 @@ Func_fc7aResult Func_fc7a(void);
 typedef struct { uint8_t a; uint8_t c; } Func_fcadResult;
 Func_fcadResult Func_fcad(void);
 /* <<< factory Func_fcad */
+/* >>> factory GiftCenterMenu */
+/* poketcg/src/engine/menus/gift_center.asm:31. The closing `pop af`
+ * republishes the af pushed after `ld [wGiftCenterChoice], a`: a is the chosen
+ * menu item (GIFT_CENTER_MENU_EXIT when the menu was cancelled) and f is the
+ * `cp e` result. b/c/d/e/hl are deliberately not reported -- CloseTextBox and
+ * DoFrameIfLCDEnabled run after the dispatch and neither the asm nor the port
+ * carries their exit values out. */
+typedef struct { uint8_t a; uint8_t f; } GiftCenterMenuResult;
+GiftCenterMenuResult GiftCenterMenu(void);
+/* <<< factory GiftCenterMenu */
 #endif /* POKETCG_HOME_GIFT_CENTER_H */

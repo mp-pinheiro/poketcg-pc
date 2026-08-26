@@ -987,3 +987,20 @@ void CloseTextBox(void)
 	wOverworldNPCFlags = flags;
 }
 /* <<< factory CloseTextBox */
+
+/* >>> factory Func_c891 */
+void Func_c891(uint16_t hl)
+{
+	if ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&
+	    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {
+		CloseTextBox();
+	}
+	wd3b9 = 0u;
+	gb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);
+	(void)SetOverworldNPCFlags(1u << AUTO_CLOSE_TEXTBOX);
+	Func_c241();
+	(void)Func_c915();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(hl);
+}
+/* <<< factory Func_c891 */

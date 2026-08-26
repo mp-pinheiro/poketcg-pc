@@ -212,4 +212,7 @@ Func_c141Result Func_c141(void);
 /* >>> factory CloseTextBox */
 void CloseTextBox(void);
 /* <<< factory CloseTextBox */
+/* >>> factory Func_c891 */
+void Func_c891(uint16_t hl);
+/* <<< factory Func_c891 */
 #endif /* POKETCG_HOME_OVERWORLD_H */
