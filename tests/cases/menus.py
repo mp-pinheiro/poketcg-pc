@@ -498,6 +498,20 @@ CASES["YesOrNoMenuWithText_SetCursorToYes"] = [
 ]
 # <<< factory YesOrNoMenuWithText_SetCursorToYes
 
+# >>> factory DrawTextBox_PrintTextNoDelay
+CONTRACT["DrawTextBox_PrintTextNoDelay"] = {"compare": ("hl",), "preserve": ()}
+CASES["DrawTextBox_PrintTextNoDelay"] = [
+    {"a": 11, "stack": [0], "setup": SETUP,
+     "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": VRAM_READ},
+    {"a": 11, "stack": [1], "setup": SETUP,
+     "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": VRAM_READ},
+    {"a": 19, "stack": [1], "setup": SETUP,
+     "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": VRAM_READ},
+    dict(POISON, a=19, stack=[1], setup=SETUP,
+         read={**CACHE_READ, **PLACEMENT_READ}, vread=VRAM_READ),
+]
+# <<< factory DrawTextBox_PrintTextNoDelay
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -598,3 +612,6 @@ MUTATIONS["YesOrNoMenuWithText"] = {
 # >>> factory-mutation YesOrNoMenuWithText_SetCursorToYes
 MUTATIONS["YesOrNoMenuWithText_SetCursorToYes"] = {"source_symbol": "YesOrNoMenuWithText_SetCursorToYes", "before": "HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)\n{\n\twDefaultYesOrNo = 1u;", "after": "HandleYesOrNoMenuResult YesOrNoMenuWithText_SetCursorToYes(uint16_t hl)\n{\n\twDefaultYesOrNo = 0u;", "case_ids": ["YesOrNoMenuWithText_SetCursorToYes-0", "YesOrNoMenuWithText_SetCursorToYes-1"]}
 # <<< factory-mutation YesOrNoMenuWithText_SetCursorToYes
+# >>> factory-mutation DrawTextBox_PrintTextNoDelay
+MUTATIONS["DrawTextBox_PrintTextNoDelay"] = {"source_symbol": "DrawTextBox_PrintTextNoDelay", "before": "\tInitTextPrintingInTextbox(a, d, e);", "after": "\tInitTextPrintingInTextbox(a, d, (uint8_t)(e + 1u));", "case_ids": ["DrawTextBox_PrintTextNoDelay-1", "DrawTextBox_PrintTextNoDelay-2"]}
+# <<< factory-mutation DrawTextBox_PrintTextNoDelay
