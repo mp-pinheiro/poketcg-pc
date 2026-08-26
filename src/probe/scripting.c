@@ -1225,6 +1225,16 @@ static void adapt_Func_c943(ProbeState *s)
 }
 /* <<< factory Func_c943 */
 
+/* >>> factory ScriptCommand_MovePlayer */
+static void adapt_ScriptCommand_MovePlayer(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_MovePlayer(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_MovePlayer */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1345,5 +1355,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_QuitScriptFully", adapt_ScriptCommand_QuitScriptFully },
 	{ "PrintInteractableObjectText", adapt_PrintInteractableObjectText },
 	{ "Func_c943", adapt_Func_c943 },
+	{ "ScriptCommand_MovePlayer", adapt_ScriptCommand_MovePlayer },
 	{ NULL, NULL },
 };

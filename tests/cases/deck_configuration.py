@@ -893,6 +893,19 @@ CASES["PrintSlashSixty"] = [
 ]
 # <<< factory PrintSlashSixty
 
+# >>> factory ShowDeckInfoHeader
+CONTRACT["ShowDeckInfoHeader"] = {"compare": (), "preserve": ()}
+CASES["ShowDeckInfoHeader"] = [
+    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00"},
+     "sram": {0: {}}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "vread": {0: {0x9821: 4}}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCFB9: b"\x01\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"},
+         sram={0: {0xB700: b"\x00"}},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         vread={0: {0x9821: 4}}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ShowDeckInfoHeader
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1195,3 +1208,11 @@ MUTATIONS["UpdateConfirmationCardScreen"] = {"source_symbol": "UpdateConfirmatio
 # >>> factory-mutation PrintSlashSixty
 MUTATIONS["PrintSlashSixty"] = {"source_symbol": "PrintSlashSixty", "before": "\tgb_write8(text++, (uint8_t)(SYM_0 + 6u));", "after": "\tgb_write8(text++, (uint8_t)(SYM_0 + 5u));", "case_ids": ["PrintSlashSixty-0", "PrintSlashSixty-1", "PrintSlashSixty-2"]}
 # <<< factory-mutation PrintSlashSixty
+# >>> factory-mutation ShowDeckInfoHeader
+MUTATIONS["ShowDeckInfoHeader"] = {
+    "source_symbol": "ShowDeckInfoHeader",
+    "before": "ShowDeckInfoHeader(void)\n{\n\tEmptyScreenAndLoadFontDuelAndHandCardsIcons();\n\tuint16_t box = 0u;\n\tDrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);\n\tif (wCurDeckName != 0u) {",
+    "after": "ShowDeckInfoHeader(void)\n{\n\tEmptyScreenAndLoadFontDuelAndHandCardsIcons();\n\tuint16_t box = 0u;\n\tDrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);\n\tif (wCurDeckName == 0u) {",
+    "case_ids": ["ShowDeckInfoHeader-0", "ShowDeckInfoHeader-1"],
+}
+# <<< factory-mutation ShowDeckInfoHeader

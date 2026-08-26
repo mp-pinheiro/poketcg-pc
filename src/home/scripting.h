@@ -596,4 +596,8 @@ typedef struct {
 
 Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory Func_c943 */
+/* >>> factory ScriptCommand_MovePlayer */
+/* >>> factory ScriptCommand_MovePlayer */
+IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_MovePlayer */
 #endif

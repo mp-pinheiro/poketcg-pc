@@ -1495,6 +1495,14 @@ CASES["Func_c943"] = [
 ]
 # <<< factory Func_c943
 
+# >>> factory ScriptCommand_MovePlayer
+CONTRACT["ScriptCommand_MovePlayer"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_MovePlayer"] = [
+    {"b": 0x01, "c": 0x00, "wram": {0xD330: b"\x10", 0xD331: b"\x10", 0xD335: b"\x00", 0xD4CF: b"\x00", 0xD133: b"\x40" * 0x100, 0xCABB: b"\x00"}, "read": {0xD339: 1, 0xD33A: 1}},
+    dict(POISON, b=0xBB, c=0x00, wram={0xD330: b"\x10", 0xD331: b"\x10", 0xD335: b"\x00", 0xD4CF: b"\x00", 0xD133: b"\x40" * 0x100, 0xCABB: b"\x00"}, read={0xD339: 1, 0xD33A: 1}),
+]
+# <<< factory ScriptCommand_MovePlayer
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2197,3 +2205,6 @@ MUTATIONS["PrintInteractableObjectText"] = {"source_symbol": "PrintInteractableO
 # >>> factory-mutation Func_c943
 MUTATIONS["Func_c943"] = {"source_symbol": "Func_c943", "before": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};", "after": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, (uint16_t)(saved_hl + 1u)};", "case_ids": ["Func_c943-0", "Func_c943-1"]}
 # <<< factory-mutation Func_c943
+# >>> factory-mutation ScriptCommand_MovePlayer
+MUTATIONS["ScriptCommand_MovePlayer"] = {"source_symbol": "ScriptCommand_MovePlayer", "before": "IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)\n{\n\twd339 = c;", "after": "IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)\n{\n\twd339 = (uint8_t)(c + 1u);", "case_ids": ["ScriptCommand_MovePlayer-0", "ScriptCommand_MovePlayer-1"]}
+# <<< factory-mutation ScriptCommand_MovePlayer

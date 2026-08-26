@@ -261,4 +261,7 @@ void UpdateConfirmationCardScreen(void);
 /* >>> factory PrintSlashSixty */
 void PrintSlashSixty(uint8_t d, uint8_t e);
 /* <<< factory PrintSlashSixty */
+/* >>> factory ShowDeckInfoHeader */
+void ShowDeckInfoHeader(void);
+/* <<< factory ShowDeckInfoHeader */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

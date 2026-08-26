@@ -1336,6 +1336,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define YouCannotSelectThisCardText 0x0071u
 
 #define MR_MIME 0x9Bu
+
+#define DRAW_CARDS 0x07u
+#define SHUFFLE_DECK 0x09u
+#define CannotDrawCardBecauseNoCardsInDeckText 0x0119u
+#define DrawCardsFromTheDeckText 0x0118u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7483,3 +7488,52 @@ CheckDamageToMrMimeResult CheckDamageToMrMime(uint8_t a, uint8_t f, uint8_t b, u
 	return (CheckDamageToMrMimeResult){check.a, check.f};
 }
 /* <<< factory CheckDamageToMrMime */
+
+/* >>> factory DisplayDrawNCardsScreen */
+void DisplayDrawNCardsScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	(void)f;
+	wNumCardsTryingToDraw = a;
+	wNumCardsBeingDrawn = 0u;
+	DuelistVarResult cards = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t available = (uint8_t)(DECK_SIZE - gb_read8(cards.hl));
+	if (available < wNumCardsTryingToDraw)
+		wNumCardsTryingToDraw = available;
+
+	uint8_t displayed = wDuelDisplayedScreen;
+	if (displayed != DRAW_CARDS && displayed != SHUFFLE_DECK) {
+		EmptyScreen();
+		DrawDuelistPortraitsAndNames();
+	}
+	wDuelDisplayedScreen = DRAW_CARDS;
+	PrintDeckAndHandIconsAndNumberOfCards();
+	if (wNumCardsTryingToDraw == 0u) {
+		(void)DrawWideTextBox_WaitForInput(CannotDrawCardBecauseNoCardsInDeckText);
+		return;
+	}
+	LoadTxRam3((uint16_t)wNumCardsTryingToDraw);
+	(void)DrawWideTextBox_PrintText(DrawCardsFromTheDeckText);
+	EnableLCD();
+	while (wNumCardsBeingDrawn < wNumCardsTryingToDraw) {
+		PlayTurnDuelistDrawAnimationResult animation =
+			PlayTurnDuelistDrawAnimation(f, b, c, d, hl);
+		e = animation.e;
+		f = animation.f;
+		wNumCardsBeingDrawn = (uint8_t)(wNumCardsBeingDrawn + 1u);
+		PrintNumberOfHandAndDeckCards();
+	}
+	uint8_t delay = 30u;
+	while (delay != 0u) {
+		DoFrame();
+		CheckSkipDelayAllowedResult skip = CheckSkipDelayAllowed(f, b, delay, d, e, hl);
+		b = skip.b;
+		d = skip.d;
+		e = skip.e;
+		f = skip.f;
+		hl = skip.hl;
+		if ((f & 0x10u) != 0u)
+			break;
+		delay = (uint8_t)(delay - 1u);
+	}
+}
+/* <<< factory DisplayDrawNCardsScreen */

@@ -315,6 +315,14 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 
 #include "generated/hram.h"
 #include "home/deck_configuration.h"
+
+#include "generated/wram.h"
+#include "generated/sram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/lcd.h"
+#include "home/switch_sram.h"
+#include "home/text_box.h"
 /* <<< factory statics */
 
 
@@ -2008,3 +2016,25 @@ void PrintSlashSixty(uint8_t d, uint8_t e)
 	ProcessText(&text);
 }
 /* <<< factory PrintSlashSixty */
+
+/* >>> factory ShowDeckInfoHeader */
+void ShowDeckInfoHeader(void)
+{
+	EmptyScreenAndLoadFontDuelAndHandCardsIcons();
+	uint16_t box = 0u;
+	DrawRegularTextBox(&box, 0u, 20u, 4u, 0u, 0u);
+	if (wCurDeckName != 0u) {
+		PrintCurDeckNumberAndName();
+		uint8_t current_deck = wCurDeck;
+		EnableSRAM();
+		uint8_t selected_deck = sCurrentlySelectedDeck;
+		DisableSRAM();
+		if (selected_deck == current_deck)
+			DrawHandCardsTileAtDE(0x0201u);
+	}
+	PrintTotalCardCount(14u, 1u);
+	PrintSlashSixty(16u, 1u);
+	(void)TallyCardsInCardFilterLists(16u, 1u);
+	EnableLCD();
+}
+/* <<< factory ShowDeckInfoHeader */

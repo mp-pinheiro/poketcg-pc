@@ -1822,6 +1822,11 @@ DISPLAY_CARD_LIST_SEED = {
 }
 DISPLAY_CARD_LIST_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 DISPLAY_CARD_LIST_KEYS = [0x00, 0x02]
+
+wDuelDisplayedScreen = 0xCAC2
+wNumCardsBeingDrawn = 0xCBE9
+wNumCardsTryingToDraw = 0xCBE8
+wTurnCardsNotInDeck = 0xC2BA
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3815,6 +3820,16 @@ CASES["CheckDamageToMrMime"] = [
 ]
 # <<< factory CheckDamageToMrMime
 
+# >>> factory DisplayDrawNCardsScreen
+CONTRACT["DisplayDrawNCardsScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayDrawNCardsScreen"] = [
+    {"a": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x00", wNumCardsTryingToDraw: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x01, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x07", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x01", wNumCardsTryingToDraw: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x05, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xCABB: b"\x00"}, "read": {wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, "expect": {wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x01", wNumCardsTryingToDraw: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x05, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x00", 0xCAC2: b"\x00", 0xCABB: b"\x00"}, read={wDuelDisplayedScreen: 1, wNumCardsBeingDrawn: 1, wNumCardsTryingToDraw: 1}, expect={wDuelDisplayedScreen: b"\x07", wNumCardsBeingDrawn: b"\x00", wNumCardsTryingToDraw: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayDrawNCardsScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5376,3 +5391,6 @@ MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {'source_symbol': 'PrintDec
 # >>> factory-mutation CheckDamageToMrMime
 MUTATIONS["CheckDamageToMrMime"] = {"source_symbol": "CheckDamageToMrMime", "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x10u};", "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x00u};", "case_ids": ["CheckDamageToMrMime-0", "CheckDamageToMrMime-1"]}
 # <<< factory-mutation CheckDamageToMrMime
+# >>> factory-mutation DisplayDrawNCardsScreen
+MUTATIONS["DisplayDrawNCardsScreen"] = {"source_symbol": "DisplayDrawNCardsScreen", "before": "\twNumCardsTryingToDraw = a;", "after": "\twNumCardsTryingToDraw = (uint8_t)(a + 1u);", "case_ids": ["DisplayDrawNCardsScreen-0", "DisplayDrawNCardsScreen-1", "DisplayDrawNCardsScreen-2"]}
+# <<< factory-mutation DisplayDrawNCardsScreen

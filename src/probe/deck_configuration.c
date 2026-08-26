@@ -616,6 +616,14 @@ static void adapt_PrintSlashSixty(ProbeState *s)
 }
 /* <<< factory PrintSlashSixty */
 
+/* >>> factory ShowDeckInfoHeader */
+static void adapt_ShowDeckInfoHeader(ProbeState *s)
+{
+	(void)s;
+	ShowDeckInfoHeader();
+}
+/* <<< factory ShowDeckInfoHeader */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -688,5 +696,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "HandleDeckCardSelectionList", adapt_HandleDeckCardSelectionList },
 	{ "PrintCurDeckNumberAndName", adapt_PrintCurDeckNumberAndName },
 	{ "UpdateConfirmationCardScreen", adapt_UpdateConfirmationCardScreen },
+	{ "ShowDeckInfoHeader", adapt_ShowDeckInfoHeader },
 	{ NULL, NULL },
 };

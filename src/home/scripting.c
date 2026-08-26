@@ -293,6 +293,11 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #define MAP_SCRIPT_NPCS 0x00u
 #define MAP_SCRIPT_POST_NPC 0x02u
 #define NPC_MAP_SIZE 0x06u
+
+#include "generated/wram.h"
+#include "home/lcd_enable_frame.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -1987,3 +1992,21 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 	return (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};
 }
 /* <<< factory Func_c943 */
+
+/* >>> factory ScriptCommand_MovePlayer */
+/* scripting.asm:1247-1282 */
+IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)
+{
+	wd339 = c;
+	wd33a = b;
+	StartScriptedMovement();
+	while ((wPlayerCurrentlyMoving & 0x03u) != 0u) {
+		DoFrameIfLCDEnabled();
+		SetScreenScroll();
+		Func_c53d();
+	}
+	DoFrameIfLCDEnabled();
+	SetScreenScroll();
+	return IncreaseScriptPointerBy3();
+}
+/* <<< factory ScriptCommand_MovePlayer */
