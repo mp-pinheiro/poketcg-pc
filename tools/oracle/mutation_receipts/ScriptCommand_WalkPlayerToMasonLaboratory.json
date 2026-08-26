@@ -1,0 +1,9 @@
+{
+  "fn": "ScriptCommand_WalkPlayerToMasonLaboratory",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ScriptCommand_WalkPlayerToMasonLaboratory\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54078\": \"02\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ScriptCommand_WalkPlayerToMasonLaboratory\", \"mismatches\": {\"bus\": {\"address\": 54062, \"reference\": \"010201c5\", \"native\": \"020201c5\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[54062, 1], [54078, 1], [54291, 2]]}}}\n",
+  "restored": "{\"fn\": \"ScriptCommand_WalkPlayerToMasonLaboratory\", \"registers\": {\"a\": 197, \"b\": 0, \"c\": 1, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54062\": \"01\", \"54078\": \"02\", \"54291\": \"01c5\"}}, \"status\": \"PASS\"}\n"
+}
