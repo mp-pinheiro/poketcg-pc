@@ -200,8 +200,13 @@ def _reap_reason(fn: str, state: dict[str, Any], rows: dict[str, dict[str, Any]]
 
     attempt = _attempt_dir(fn, str(state["attempt_id"]))
     if attempt.is_dir():
-        if (attempt / "result.json").is_file() or any(attempt.glob("candidate-*.json")):
-            return None
+        # Age decides, candidates included. Exempting an attempt because it holds
+        # candidates made every claim a killed session left behind immortal: the
+        # candidates are written in minutes, the verification that consumes them
+        # takes minutes more, and nothing else ever clears the claim, so four
+        # routines sat `issued` with three candidates each and no session alive to
+        # verify them. A directory untouched for the whole TTL is a dead session
+        # whatever it contains; a live one is writing.
         newest = max((path.stat().st_mtime for path in attempt.rglob("*")),
                      default=attempt.stat().st_mtime)
     else:
