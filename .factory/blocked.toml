@@ -761,3 +761,8 @@ unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCard
 name = "_TossCoin"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:7847 (basename `core`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _TossCoin-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":42124,\"sp\":65450,\"instructions\":59800,\"cycles\":400008,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":106,\"ppu_mode\":0,\"bus\":\"06010001\"}"
 unblock = "read the recorded diagnostics under .factory/try/_TossCoin/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "Func_5a81"
+reason = "AUTO-RETIRED (cluster): matches CreditsSequenceCmd_LoadScene on REFERENCE_DIVERGENCE pc=65184 (2 stanzas). src/engine/duel/core.asm:4056 (basename `core`). generation=5; last diagnostic phase=primary failure_class=code detail=case Func_5a81-1 {\"cycles\": 291636, \"fn\": \"Func_5a81\", \"instructions\": 50436, \"mismatches\": {\"preserve:b\": [187, 0], \"preserve:c\": [204, 0], \"preserve:d\": [221, 0], \"preserve:e\": [238, 0], \"preserve:hl\": [4660, 51952]}, \"pc\": 65184, \"sp\": 65534, \"status\": \"REFERENCE_DIVERGENCE\"}"
+unblock = "read the recorded diagnostics under .factory/try/CreditsSequenceCmd_LoadScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
