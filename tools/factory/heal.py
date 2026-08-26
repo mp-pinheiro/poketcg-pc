@@ -16,6 +16,11 @@ retries them and `factory-next` reports work in flight forever:
   or the same diagnostic twice - with no blocker recorded, so it keeps inflating
   `ready` and its dependents stay stranded.
 
+Compute outlives its driver too: `run_bounded` detaches every child into its own
+session, so a driver that dies abruptly leaves PyBoy and probe processes pinned
+to a core with nothing left to read them. Those are killed on sight, and
+`--sweep-only` does that and nothing else.
+
 Every repair is derived from on-disk evidence, never from a heuristic about what
 a routine "should" be. Only `.factory/blocked.toml` is git-tracked under
 `.factory/`, so reaping and revoking never dirty the checkout and can run inline
@@ -29,6 +34,7 @@ import datetime
 import json
 import os
 import re
+import signal
 import sys
 import tomllib
 from pathlib import Path
@@ -281,6 +287,76 @@ def reap_stale_issued(states: dict[str, dict[str, Any]],
     return reaped
 
 
+# Factory compute is worth killing on sight once its driver is gone. `common.
+# run_bounded` starts every child in its own session (`start_new_session=True`)
+# so a killed session leader never drags the tree down with it, and its
+# `_stop_process_tree` only runs while the driver itself is alive. A driver that
+# dies abruptly -- SIGKILL, a cancelled tool call, a compacted session -- leaves
+# PyBoy and probe processes spinning against unlinked temp files that nothing
+# will ever read. One sweep of this class recovered 12 CPU-hours and two of six
+# cores.
+#
+# Matched against the first two argv tokens, never the whole command line, so a
+# shell or editor that merely mentions a marker is not a candidate.
+ORPHAN_MARKERS = ("tests/test_leaves.py", "tools/oracle/fn_all.py",
+                  "gbref/compare_one.py", "poketcg_probe", "gbref_runner")
+# WSL reparents orphans to its own `/init`, not to pid 1, so orphanhood is the
+# parent's identity rather than its number.
+REAPER_NAMES = frozenset({"init", "systemd"})
+
+
+def _process_command(pid: int) -> str:
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return ""
+    return raw.replace(b"\0", b" ").decode(errors="replace").strip()
+
+
+def _process_parent(pid: int) -> int | None:
+    try:
+        for line in Path(f"/proc/{pid}/status").read_text().splitlines():
+            if line.startswith("PPid:"):
+                return int(line.split()[1])
+    except (OSError, ValueError):
+        return None
+    return None
+
+
+def _parent_is_reaper(pid: int) -> bool:
+    if pid <= 1:
+        return True
+    command = _process_command(pid)
+    return bool(command) and Path(command.split(" ")[0]).name in REAPER_NAMES
+
+
+def reap_orphan_processes(apply: bool = True) -> list[int]:
+    """SIGKILL factory compute whose driver is no longer there to read it."""
+    prefix = "HEAL " if apply else "HEAL would-"
+    killed: list[int] = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        pid = int(entry.name)
+        if pid == os.getpid():
+            continue
+        command = _process_command(pid)
+        head = " ".join(command.split(" ")[:2])
+        if not any(marker in head for marker in ORPHAN_MARKERS):
+            continue
+        parent = _process_parent(pid)
+        if parent is None or not _parent_is_reaper(parent):
+            continue
+        if apply:
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except OSError:
+                continue
+        killed.append(pid)
+        print(f"{prefix}kill {pid} orphan={head}")
+    return killed
+
+
 def _last_diagnostic(fn: str, state: dict[str, Any]) -> tuple[str, str, str]:
     path = _attempt_dir(fn, str(state["attempt_id"])) / "result.json"
     try:
@@ -512,11 +588,20 @@ def main(argv: list[str] | None = None) -> int:
                         help="generation at which a red is retired to a blocker")
     parser.add_argument("--ttl-hours", type=float, default=DEFAULT_TTL_SECONDS / 3600,
                         help="age at which a candidate-less issued attempt is reaped")
+    parser.add_argument("--sweep-only", action="store_true",
+                        help="only kill orphaned factory compute, touch no ledger")
     arguments = parser.parse_args(argv)
     if arguments.retry_limit < 1:
         parser.error("--retry-limit must be at least 1")
     if arguments.ttl_hours <= 0:
         parser.error("--ttl-hours must be positive")
+
+    # Outside the lock: killing compute nobody is waiting on touches no ledger,
+    # and it must still happen when the ledger repairs below cannot run.
+    orphans = reap_orphan_processes(apply=arguments.apply or arguments.sweep_only)
+    if arguments.sweep_only:
+        print(f"HEAL status orphans_killed={len(orphans)}")
+        return 0
 
     import try_one
 
@@ -543,6 +628,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"HEAL status landed={len(landed)} reaped={len(reaped)} "
         f"revoked={len(revoked)} retired={len(retired)} half_landed={len(half)} "
+        f"orphans_killed={len(orphans)} "
         f"blocked_toml_dirty={1 if (retired and arguments.apply) else 0}"
     )
     return 0

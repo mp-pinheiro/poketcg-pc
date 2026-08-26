@@ -21,6 +21,9 @@ from __future__ import annotations
 
 import io
 import os
+import sys
+import threading
+import time
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -55,6 +58,62 @@ OAM_BASE, OAM_END = 0xFE00, 0xFEA0
 IO_BASE, IO_END = 0xFF00, 0xFF80
 
 MAX_FRAMES = 240  # a home-bank leaf that has not returned by now never will
+
+# Frames bound emulated time, not wall clock, and the two come apart when a
+# frame never finishes: `mb.tick` spins on `while not lcd.frame_done` while
+# `PyBoy._tick` re-enters it per breakpoint, and `PyBoy.tick` holds
+# `cython.nogil` throughout, so neither the frame loop below nor a Python
+# signal handler ever regains control. Seven such processes were once left
+# pinned to a core for 12 CPU-hours after their driver died.
+#
+# Two guards. The loop checks a deadline between frames, which is graceful: the
+# routine fails as a timeout and the run continues to the next case. The
+# watchdog thread covers the case the loop cannot see, a single frame that
+# never returns; it runs precisely because `nogil` released the GIL, and it
+# hard-exits rather than raising, because there is no thread left to raise on.
+#
+# The budget is per allotted frame (measured cost is ~10 ms/frame, so 0.25 s is
+# 25x headroom) with a floor for short cases, and stays under the 1800 s cap
+# `tools/factory/common.py:run_bounded` puts on the whole diff command.
+WALL_FLOOR = float(os.environ.get("POKETCG_ORACLE_WALL_FLOOR", "120"))
+WALL_PER_FRAME = 0.25
+WATCHDOG_GRACE = 30.0
+
+_watchdog_deadline = 0.0
+_watchdog_armed_at = 0.0
+_watchdog_symbol = ""
+_watchdog_running = False
+
+
+def _watchdog_loop() -> None:
+    while True:
+        time.sleep(1.0)
+        deadline = _watchdog_deadline
+        if deadline and time.monotonic() > deadline:
+            # Shaped for verify.py's TIMEOUT_MARK so the verdict names the spinner.
+            sys.stderr.write(
+                f"OracleError: {_watchdog_symbol} did not return within "
+                f"{deadline - _watchdog_armed_at:.0f}s of wall clock; the PyBoy "
+                f"frame is wedged and holds nogil, so the process is exiting\n")
+            sys.stderr.flush()
+            os._exit(3)
+
+
+def _arm_watchdog(symbol: str, cap: float) -> None:
+    global _watchdog_deadline, _watchdog_symbol, _watchdog_running, _watchdog_armed_at
+    if not _watchdog_running:
+        threading.Thread(target=_watchdog_loop, name="oracle-watchdog",
+                         daemon=True).start()
+        _watchdog_running = True
+    _watchdog_symbol = symbol
+    _watchdog_armed_at = time.monotonic()
+    _watchdog_deadline = _watchdog_armed_at + cap + WATCHDOG_GRACE
+
+
+def _disarm_watchdog() -> None:
+    global _watchdog_deadline
+    _watchdog_deadline = 0.0
+
 
 # hKeysHeld bit order (src/constants/hardware.inc): bit0 A, 1 B, 2 SELECT, 3 START,
 # 4 RIGHT, 5 LEFT, 6 UP, 7 DOWN.
@@ -311,25 +370,33 @@ class Oracle:
         # command: EstimateDamage_VersusDefendingCard needs millions of
         # instructions. A case that declares a large `cycle_budget` is asking for
         # that time, so honour it here instead of failing at a fixed 240.
-        for _ in range(frames or MAX_FRAMES):
-            pb.tick(1, False, False)
-            if self._hit is not None:
-                try:
-                    pb.hook_deregister(0, self._VBLANK_HALT)
-                except (ValueError, KeyError):
-                    pass
-                return self._hit
-            if len(timeline) > 1:
-                index = (index + 1) % len(timeline)
-                if timeline[index] != current:
-                    self._apply_keys(current, timeline[index])
-                    current = timeline[index]
+        budget = frames or MAX_FRAMES
+        cap = max(WALL_FLOOR, WALL_PER_FRAME * budget)
+        deadline = time.monotonic() + cap
+        _arm_watchdog(symbol, cap)
         try:
-            pb.hook_deregister(0, self._VBLANK_HALT)
-        except (ValueError, KeyError):
-            pass
-        raise OracleError(
-            f"{symbol} did not return within {frames or MAX_FRAMES} frames")
+            for _ in range(budget):
+                pb.tick(1, False, False)
+                if self._hit is not None:
+                    return self._hit
+                if time.monotonic() > deadline:
+                    raise OracleError(
+                        f"{symbol} did not return within {cap:.0f}s of wall clock "
+                        f"({budget} frames allotted)")
+                if len(timeline) > 1:
+                    index = (index + 1) % len(timeline)
+                    if timeline[index] != current:
+                        self._apply_keys(current, timeline[index])
+                        current = timeline[index]
+            raise OracleError(
+                f"{symbol} did not return within {budget} frames")
+        finally:
+            _disarm_watchdog()
+            try:
+                pb.hook_deregister(0, self._VBLANK_HALT)
+            except (ValueError, KeyError):
+                pass
+
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
              wram: dict[int, bytes] | None = None,
