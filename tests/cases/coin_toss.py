@@ -5,8 +5,6 @@ TossCoin and TossCoinATimes are not registered: both bank1call _TossCoin
 not ported and whose video/RNG side effects the differ cannot reproduce.
 """
 
-from tests.cases._schema_migration import legacy_to_schema
-
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 
 CONTRACT = {
@@ -27,6 +25,7 @@ CASES = {
     ],
 }
 
+from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
     "CompareDEtoBC": {
