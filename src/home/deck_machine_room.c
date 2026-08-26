@@ -33,6 +33,10 @@
 #define EVENT_WATER_DECK_MACHINE_ACTIVE 0x5cu
 #define MAP_EVENT_WATER_DECK_MACHINE 0x04u
 #define SFX_INTRO_ORB_TITLE 0x5au
+
+#define EVENT_BEAT_ISAAC 0x0cu
+#define EVENT_LIGHTNING_DECK_MACHINE_ACTIVE 0x5du
+#define MAP_EVENT_LIGHTNING_DECK_MACHINE 0x05u
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u
@@ -107,3 +111,28 @@ void Script_d9c2(void)
 	gb_write8(wLCDC_ADDR, 0x80u);
 }
 /* <<< factory Script_d9c2 */
+
+/* >>> factory Script_d9ef */
+void Script_d9ef(void)
+{
+	FuncD96cResult card = Func_d96c(5u);
+	(void)card;
+	(void)PrintScrollableText_NoTextBoxLabel(0x0607u);
+	if (GetEventValue(EVENT_LIGHTNING_DECK_MACHINE_ACTIVE) == 0u) {
+		(void)PrintScrollableText_NoTextBoxLabel(0x0608u);
+		if (GetEventValue(EVENT_BEAT_ISAAC) == 0u)
+			return;
+		HandleYesOrNoMenuResult first = YesOrNoMenuWithText(0x0609u);
+		if ((first.f & 0x10u) != 0u)
+			return;
+		(void)MaxOutEventValue(EVENT_LIGHTNING_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
+		SetOWMapEvent(MAP_EVENT_LIGHTNING_DECK_MACHINE);
+		(void)PrintScrollableText_NoTextBoxLabel(0x060au);
+	}
+	HandleYesOrNoMenuResult second = YesOrNoMenuWithText(0x060bu);
+	if ((second.f & 0x10u) != 0u)
+		return;
+	PlaySFX(SFX_INTRO_ORB_TITLE);
+	gb_write8(wLCDC_ADDR, 0x80u);
+}
+/* <<< factory Script_d9ef */

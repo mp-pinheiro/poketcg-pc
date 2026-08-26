@@ -1,0 +1,9 @@
+{
+  "fn": "DealDamageToPlayAreaPokemon",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DealDamageToPlayAreaPokemon\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\", \"52459\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DealDamageToPlayAreaPokemon\", \"mismatches\": {\"bus\": {\"address\": 52459, \"reference\": \"0100\", \"native\": \"0101\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52423, 1], [52459, 1]]}}}\n",
+  "restored": "{\"fn\": \"DealDamageToPlayAreaPokemon\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 20, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52423\": \"01\", \"52459\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

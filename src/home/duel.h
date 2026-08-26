@@ -678,4 +678,8 @@ typedef struct {
 } ApplyTransparencyResult;
 ApplyTransparencyResult ApplyTransparencyIfApplicable(uint8_t initial_f, uint16_t de, uint16_t hl);
 /* <<< factory ApplyTransparencyIfApplicable */
+/* >>> factory DealDamageToPlayAreaPokemon */
+typedef struct { uint8_t a, f; } DealDamageToPlayAreaPokemonResult;
+DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl);
+/* <<< factory DealDamageToPlayAreaPokemon */
 #endif

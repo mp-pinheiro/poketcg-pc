@@ -66,6 +66,14 @@ static void adapt_Script_d9c2(ProbeState *s)
 }
 /* <<< factory Script_d9c2 */
 
+/* >>> factory Script_d9ef */
+static void adapt_Script_d9ef(ProbeState *s)
+{
+	(void)s;
+	Script_d9ef();
+}
+/* <<< factory Script_d9ef */
+
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
@@ -74,5 +82,6 @@ const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Script_da76", adapt_Script_da76 },
 	{ "Script_da1c", adapt_Script_da1c },
 	{ "Script_d9c2", adapt_Script_d9c2 },
+	{ "Script_d9ef", adapt_Script_d9ef },
 	{ NULL, NULL },
 };

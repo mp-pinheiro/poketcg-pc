@@ -60,6 +60,14 @@ CASES["Script_d9c2"] = [
 ]
 # <<< factory Script_d9c2
 
+# >>> factory Script_d9ef
+CONTRACT["Script_d9ef"] = {"compare": (), "preserve": ()}
+CASES["Script_d9ef"] = [
+    {"keys": [0x00, 0x01, 0x00, 0x01], "wram": {wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, "read": {wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01, 0x00, 0x01], wram={wEventVars: b"\x00" * 0x40, wLCDC: b"\x00", wTxRam2: b"\x00\x00\x00"}, read={wEventVars: 0x40, wLCDC: 1, wTxRam2: 3}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Script_d9ef
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
 MUTATIONS={"Func_d96c":{"source_symbol":"Func_d96c","before":"uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);","after":"uint8_t offset=(uint8_t)((uint8_t)(a-1u)<<1);","case_ids":["Func_d96c-1","Func_d96c-2","Func_d96c-3"]}}
@@ -78,3 +86,6 @@ MUTATIONS["Script_da1c"] = {"source_symbol": "Script_da1c", "before": "\tFuncD96
 # >>> factory-mutation Script_d9c2
 MUTATIONS["Script_d9c2"] = {"source_symbol": "Script_d9c2", "before": "\tFuncD96cResult card = Func_d96c(4u);", "after": "\tFuncD96cResult card = Func_d96c(3u);", "case_ids": ["Script_d9c2-0", "Script_d9c2-1"]}
 # <<< factory-mutation Script_d9c2
+# >>> factory-mutation Script_d9ef
+MUTATIONS["Script_d9ef"] = {"source_symbol": "Script_d9ef", "before": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(5u);", "after": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(6u);", "case_ids": ["Script_d9ef-0", "Script_d9ef-1"]}
+# <<< factory-mutation Script_d9ef

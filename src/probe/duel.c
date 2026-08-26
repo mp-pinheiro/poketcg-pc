@@ -925,6 +925,15 @@ static void adapt_ApplyTransparencyIfApplicable(ProbeState *s)
 }
 /* <<< factory ApplyTransparencyIfApplicable */
 
+/* >>> factory DealDamageToPlayAreaPokemon */
+static void adapt_DealDamageToPlayAreaPokemon(ProbeState *s)
+{
+	DealDamageToPlayAreaPokemonResult r = DealDamageToPlayAreaPokemon(s->b, (uint16_t)(((uint16_t)s->d << 8u) | s->e), s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DealDamageToPlayAreaPokemon */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -1037,5 +1046,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "PlayTrainerCard", adapt_PlayTrainerCard },
 	{ "CheckSelfConfusionDamage", adapt_CheckSelfConfusionDamage },
 	{ "ApplyTransparencyIfApplicable", adapt_ApplyTransparencyIfApplicable },
+	{ "DealDamageToPlayAreaPokemon", adapt_DealDamageToPlayAreaPokemon },
 	{ NULL, NULL },
 };

@@ -595,6 +595,14 @@ static const uint8_t kCursorTileData[16] = {
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
 #define PLAY_AREA_ARENA 0x00u
 #define RESIDUAL_F 0x07u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#define CARD_LOCATION_ARENA 0x10u
+#define CARD_LOCATION_PLAY_AREA 0x01u
+#define DUELVARS_ARENA_CARD_HP 0xC8u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2940,3 +2948,57 @@ ApplyTransparencyResult ApplyTransparencyIfApplicable(uint8_t initial_f, uint16_
 	return (ApplyTransparencyResult){non_turn.a, non_turn.a ? 0x00u : 0x80u, 0x00u, 0x00u, non_turn.hl};
 }
 /* <<< factory ApplyTransparencyIfApplicable */
+
+/* >>> factory DealDamageToPlayAreaPokemon */
+DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_t de, uint16_t hl)
+{
+	wTempPlayAreaLocation_cceb = b;
+	if (b == 0u && wNoDamageOrEffect != 0u)
+		return (DealDamageToPlayAreaPokemonResult){wNoDamageOrEffect, 0x00u};
+	{
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + b));
+		hl = card.hl;
+		wTempNonTurnDuelistCardID = (uint8_t)GetCardIDFromDeckIndex(card.a);
+	}
+	wNoDamageOrEffect = 0u;
+	if (b == 0u && wIsDamageToSelf == 0u)
+		SwapTurn();
+	if (b == 0u) {
+		PowerModifierResult plus = ApplyAttachedPlusPower(CARD_LOCATION_ARENA, de);
+		de = plus.de;
+		if (wIsDamageToSelf == 0u)
+			SwapTurn();
+	} else {
+		PowerModifierResult defender = ApplyAttachedDefender((uint8_t)(b | CARD_LOCATION_PLAY_AREA), de);
+		de = defender.de;
+	}
+	if (b == 0u) {
+		NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus((uint8_t)de, hl);
+		hl = no_damage.hl;
+		de = HandleDamageReduction(de);
+	}
+	if (de & 0x8000u)
+		de = 0u;
+	{
+		HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult reduced = HandleDamageReductionOrNoDamageFromPkmnPowerEffects(de, hl);
+		de = reduced.de;
+		hl = reduced.hl;
+	}
+	if (b == 0u) {
+		uint16_t dealt = (uint16_t)(wDealtDamage | ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+		dealt = (uint16_t)(dealt + de);
+		gb_write8(wDealtDamage_ADDR, (uint8_t)dealt);
+		gb_write8((uint16_t)(wDealtDamage_ADDR + 1u), (uint8_t)(dealt >> 8));
+	}
+	{
+		DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + b));
+		PlayAttackAnimation_DealAttackDamageSimpleResult animation = PlayAttackAnimation_DealAttackDamageSimple(hp.a, 0u, b, 0u, (uint8_t)(de >> 8), (uint8_t)de, hp.hl);
+		if (animation.a != 0u)
+			(void)PrintKnockedOutIfHLZero(hp.hl);
+	}
+	{
+		StrikesBackResult strikes = HandleStrikesBack_AgainstDamagingAttack(de);
+		return (DealDamageToPlayAreaPokemonResult){strikes.a, strikes.f};
+	}
+}
+/* <<< factory DealDamageToPlayAreaPokemon */
