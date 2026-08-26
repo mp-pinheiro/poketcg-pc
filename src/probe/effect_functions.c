@@ -3590,6 +3590,14 @@ static void adapt_TerrorStrike_SwitchDefendingPokemon(ProbeState *s)
 }
 /* <<< factory TerrorStrike_SwitchDefendingPokemon */
 
+/* >>> factory Gale_SwitchEffect */
+static void adapt_Gale_SwitchEffect(ProbeState *s)
+{
+	GaleSwitchEffectResult result = Gale_SwitchEffect(s->hl);
+	s->f = result.f;
+}
+/* <<< factory Gale_SwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4027,5 +4035,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ButterfreeWhirlwind_SwitchEffect", adapt_ButterfreeWhirlwind_SwitchEffect },
 	{ "PidgeyWhirlwind_SwitchEffect", adapt_PidgeyWhirlwind_SwitchEffect },
 	{ "TerrorStrike_SwitchDefendingPokemon", adapt_TerrorStrike_SwitchDefendingPokemon },
+	{ "Gale_SwitchEffect", adapt_Gale_SwitchEffect },
 	{ NULL, NULL },
 };

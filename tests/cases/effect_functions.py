@@ -2618,6 +2618,10 @@ PLAYER_TURN = 0xC2
 
 hTemp_ffa0 = 0xFFA0
 hTempPlayAreaLocation_ffa1 = 0xFFA1
+
+wDealtDamage = 0xCCBF
+wDuelDisplayedScreen = 0xCAC2
+wNoDamageOrEffect = 0xCCC7
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4640,6 +4644,15 @@ CASES["TerrorStrike_SwitchDefendingPokemon"] = [
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {hTemp_ffa0: b"\x01", hTempPlayAreaLocation_ffa1: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}}
 ]
 # <<< factory TerrorStrike_SwitchDefendingPokemon
+
+# >>> factory Gale_SwitchEffect
+CONTRACT["Gale_SwitchEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Gale_SwitchEffect"] = [
+    {"hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC3C8: b"\x01", 0xC3EF: b"\x02", 0xC2EF: b"\x02", 0xCCBF: b"\x12\x34", 0xCAC2: b"\x55"}, "read": {0xCCBF: 2, 0xCAC2: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC3C8: b"\x01", 0xC3EF: b"\x02", 0xC2EF: b"\x02", 0xCCBF: b"\x12\x34", 0xCAC2: b"\x55"}, "read": {0xCCBF: 2, 0xCAC2: 1}},
+    {"hl": 0, "wram": {0xFF97: b"\xC2", 0xCCC7: b"\x80", 0xC2EF: b"\x02", 0xCAC2: b"\x55"}, "read": {0xCAC2: 1}}
+]
+# <<< factory Gale_SwitchEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -7006,3 +7019,6 @@ MUTATIONS["PidgeyWhirlwind_SwitchEffect"] = {
 # >>> factory-mutation TerrorStrike_SwitchDefendingPokemon
 MUTATIONS["TerrorStrike_SwitchDefendingPokemon"] = {"source_symbol": "TerrorStrike_SwitchDefendingPokemon", "before": "HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void)\n{\n\tuint8_t gate = hTemp_ffa0;\n\tif (gate == 0u)\n\t\treturn (HandleSwitchDefendingPokemonEffectResult){0u, 0x80u};\n\tuint8_t input = hTempPlayAreaLocation_ffa1;", "after": "HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void)\n{\n\tuint8_t gate = hTemp_ffa0;\n\tif (gate == 0u)\n\t\treturn (HandleSwitchDefendingPokemonEffectResult){0u, 0x80u};\n\tuint8_t input = 0xffu;", "case_ids": ["TerrorStrike_SwitchDefendingPokemon-2"]}
 # <<< factory-mutation TerrorStrike_SwitchDefendingPokemon
+# >>> factory-mutation Gale_SwitchEffect
+MUTATIONS["Gale_SwitchEffect"] = {"source_symbol": "Gale_SwitchEffect", "before": "\t\twDealtDamage = 0u;\n\t\t*(wDealtDamage_PTR + 1) = 0u;", "after": "\t\twDealtDamage = 1u;\n\t\t*(wDealtDamage_PTR + 1) = 0u;", "case_ids": ["Gale_SwitchEffect-0", "Gale_SwitchEffect-1"]}
+# <<< factory-mutation Gale_SwitchEffect

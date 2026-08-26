@@ -1,0 +1,9 @@
+{
+  "fn": "Gale_SwitchEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Gale_SwitchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"02\", \"50120\": \"00\", \"50159\": \"02\", \"51906\": \"00\", \"52415\": \"0000\", \"52423\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Gale_SwitchEffect\", \"mismatches\": {\"bus\": {\"address\": 52415, \"reference\": \"02000200000000c2\", \"native\": \"02000200010000c2\", \"reference_size\": 8, \"native_size\": 8, \"spans\": [[49903, 1], [50120, 1], [50159, 1], [51906, 1], [52415, 2], [52423, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"Gale_SwitchEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"02\", \"50120\": \"00\", \"50159\": \"02\", \"51906\": \"00\", \"52415\": \"0000\", \"52423\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

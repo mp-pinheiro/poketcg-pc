@@ -797,6 +797,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/substatus.h"
 #include "home/effect_functions.h"
 #include "generated/wram.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "home/random.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6885,3 +6892,37 @@ HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(voi
 	return HandleSwitchDefendingPokemonEffect(input);
 }
 /* <<< factory TerrorStrike_SwitchDefendingPokemon */
+
+/* >>> factory Gale_SwitchEffect */
+GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl)
+{
+	HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(hl);
+	if ((no_effect.f & 0x10u) != 0u) {
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		if (count.a < 2u)
+			return (GaleSwitchEffectResult){(count.a == 0u) ? 0x70u : 0x50u};
+		(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+		wDuelDisplayedScreen = 0u;
+		return (GaleSwitchEffectResult){0x80u};
+	}
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (hp.a == 0u)
+		(void)HandleDestinyBondSubstatus();
+	SwapTurn();
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a >= 2u) {
+		(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+		wDuelDisplayedScreen = 0u;
+		// xor a clears both bytes of the dealt-damage word.
+		wDealtDamage = 0u;
+		*(wDealtDamage_PTR + 1) = 0u;
+	}
+	SwapTurn();
+	count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	if (count.a < 2u)
+		return (GaleSwitchEffectResult){(count.a == 0u) ? 0x70u : 0x50u};
+	(void)SwapArenaWithBenchPokemon((uint8_t)(Random((uint8_t)(count.a - 1u)) + 1u));
+	wDuelDisplayedScreen = 0u;
+	return (GaleSwitchEffectResult){0x80u};
+}
+/* <<< factory Gale_SwitchEffect */

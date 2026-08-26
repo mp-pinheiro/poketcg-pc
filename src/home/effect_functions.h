@@ -1476,6 +1476,10 @@ HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void);
 /* >>> factory TerrorStrike_SwitchDefendingPokemon */
 HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(void);
 /* <<< factory TerrorStrike_SwitchDefendingPokemon */
+/* >>> factory Gale_SwitchEffect */
+typedef struct { uint8_t f; } GaleSwitchEffectResult;
+GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl);
+/* <<< factory Gale_SwitchEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
