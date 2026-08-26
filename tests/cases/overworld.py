@@ -745,7 +745,44 @@ CASES["Func_c241"] = [
 # <<< factory Func_c241
 
 from tests.cases._schema_migration import legacy_to_schema
+
+# >>> factory Func_c141
+# overworld.asm:156-166, seventeen bytes with FOUR exits, one completion each:
+#   wActiveGameEvent == 0 -> mode "return" (`ret z`, event NOT cleared)
+#   1 GAME_EVENT_DUEL          -> pre-ret $49BC (Func_c9bc)
+#   2 GAME_EVENT_BATTLE_CENTER -> pre-ret $7C2B (Func_fc2b)
+#   3 GAME_EVENT_GIFT_CENTER   -> pre-ret $7CAD (Func_fcad)
+# All three targets are verified routines, so this dispatch is the last piece.
+#
+# JumpToFunctionInTable is an excluded leaf-slice resolved in the C body. At the
+# target a = target & 0xFF and hl = target, while f comes from the `adc h` that
+# finishes the index add -- measured 0x00 for all three arms, since `ld` never
+# touches flags. Comparing hl is what verifies the dispatch chose the right arm.
+#
+# Index 0 must be event == 1: at event 0 the mutated index is never computed, so
+# dropping the `dec a` would be invisible there.
+_C141_EVENT = 0xD0C2
+_C141_SEEDS = (
+    (1, {"mode": "pre-ret", "pc": 0x49BC}),  # index 0: reds the mutation
+    (0, {"mode": "return"}),
+    (2, {"mode": "pre-ret", "pc": 0x7C2B}),
+    (3, {"mode": "pre-ret", "pc": 0x7CAD}),
+    (1, {"mode": "pre-ret", "pc": 0x49BC}),  # POISON registers
+)
+CONTRACT["Func_c141"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Func_c141"] = []
+for _i, (_ev, _comp) in enumerate(_C141_SEEDS):
+    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
+    _base["wram"] = {_C141_EVENT: bytes((_ev,))}
+    _base["read"] = {_C141_EVENT: 1}
+    CASES["Func_c141"].append(_base)
+# <<< factory Func_c141
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion Func_c141
+for _rec, (_ev, _comp) in zip(SCHEMA2_CASES["Func_c141"], _C141_SEEDS):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion Func_c141
 
 MUTATIONS = {}
 # >>> factory-mutation Func_c6cc
@@ -991,3 +1028,6 @@ MUTATIONS["Func_c251"] = {"source_symbol": "Func_c251", "before": "/* >>> factor
 # >>> factory-mutation Func_c241
 MUTATIONS["Func_c241"] = {"source_symbol": "Func_c241", "before": "void Func_c241(void)\n{\n\t(void)SetupText(0x30u, 0x7Fu);", "after": "void Func_c241(void)\n{\n\t(void)SetupText(0x31u, 0x7Fu);", "case_ids": ["Func_c241-0", "Func_c241-1"]}
 # <<< factory-mutation Func_c241
+# >>> factory-mutation Func_c141
+MUTATIONS["Func_c141"] = {"source_symbol": "Func_c141", "before": "\tidx2 = (uint8_t)((uint8_t)(event - 1u) << 1); /* dec a ; add a */", "after": "\tidx2 = (uint8_t)(event << 1); /* dec a ; add a */", "case_ids": ["Func_c141-0"]}
+# <<< factory-mutation Func_c141

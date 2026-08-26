@@ -1272,7 +1272,37 @@ for _i, (_map, _l, _comp) in enumerate(_CMSP_SEEDS):
     CASES["CallMapScriptPointerIfExists"].append(_base)
 # <<< factory CallMapScriptPointerIfExists
 
+
+# >>> factory Func_c9bc
+# scripting.asm:91-93 is `ld l, MAP_SCRIPT_AFTER_DUEL` / `jr
+# CallMapScriptPointerIfExists` -- a tail call, so the exits are the callee's and
+# the cases mix completion modes: mode "return" when the map has no AFTER_DUEL
+# script, pre-ret at the script entry when it does. Slot l=10 read off MapScripts
+# (04:562A) 2026-08-26: map 0 absent, map 1 $553B, map 2 $589F, map 4 $67F6.
+# Index 0 must be a map whose l=10 and l=12 slots differ, or retargeting the
+# constant to MAP_SCRIPT_MOVED_PLAYER is invisible; map 0 has both absent.
+_C9BC_CURMAP = 0xD32F
+_C9BC_SEEDS = (
+    (1, {"mode": "pre-ret", "pc": 0x553B}),  # index 0: reds the mutation
+    (0, {"mode": "return"}),                 # slot absent -> ret nc
+    (2, {"mode": "pre-ret", "pc": 0x589F}),
+    (4, {"mode": "pre-ret", "pc": 0x67F6}),
+    (1, {"mode": "pre-ret", "pc": 0x553B}),  # POISON registers
+)
+CONTRACT["Func_c9bc"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Func_c9bc"] = []
+for _i, (_map, _comp) in enumerate(_C9BC_SEEDS):
+    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
+    _base["wram"] = {_C9BC_CURMAP: bytes((_map,))}
+    _base["read"] = {_C9BC_CURMAP: 1}
+    CASES["Func_c9bc"].append(_base)
+# <<< factory Func_c9bc
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion Func_c9bc
+for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9bc"], _C9BC_SEEDS):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion Func_c9bc
 # >>> factory-completion CallMapScriptPointerIfExists
 # One completion per case, taken from that case's own _CMSP_SEEDS entry so the
 # seeded map/slot and the declared stop point cannot drift apart.
@@ -1849,3 +1879,6 @@ MUTATIONS["ScriptCommand_WalkPlayerToMasonLaboratory"] = {"source_symbol": "Scri
 # >>> factory-mutation CallMapScriptPointerIfExists
 MUTATIONS["CallMapScriptPointerIfExists"] = {"source_symbol": "CallMapScriptPointerIfExists", "before": "\tMapScriptResult r = GetMapScriptPointer(l);", "after": "\tMapScriptResult r = GetMapScriptPointer((uint8_t)(l + 1u));", "case_ids": ["CallMapScriptPointerIfExists-0"]}
 # <<< factory-mutation CallMapScriptPointerIfExists
+# >>> factory-mutation Func_c9bc
+MUTATIONS["Func_c9bc"] = {"source_symbol": "Func_c9bc", "before": "\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_AFTER_DUEL);", "after": "\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_AFTER_DUEL + 2u));", "case_ids": ["Func_c9bc-0"]}
+# <<< factory-mutation Func_c9bc
