@@ -4620,6 +4620,15 @@ CASES["ButterfreeWhirlwind_SwitchEffect"] = [
 ]
 # <<< factory ButterfreeWhirlwind_SwitchEffect
 
+# >>> factory PidgeyWhirlwind_SwitchEffect
+CONTRACT["PidgeyWhirlwind_SwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PidgeyWhirlwind_SwitchEffect"] = [
+    {"wram": {0xFFA0: b"\xFF", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}}
+]
+# <<< factory PidgeyWhirlwind_SwitchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6974,3 +6983,11 @@ MUTATIONS["ButterfreeWhirlwind_SwitchEffect"] = {
     "case_ids": ["ButterfreeWhirlwind_SwitchEffect-1", "ButterfreeWhirlwind_SwitchEffect-2"]
 }
 # <<< factory-mutation ButterfreeWhirlwind_SwitchEffect
+# >>> factory-mutation PidgeyWhirlwind_SwitchEffect
+MUTATIONS["PidgeyWhirlwind_SwitchEffect"] = {
+    "source_symbol": "PidgeyWhirlwind_SwitchEffect",
+    "before": "HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(input);",
+    "after": "HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(0xffu);",
+    "case_ids": ["PidgeyWhirlwind_SwitchEffect-1", "PidgeyWhirlwind_SwitchEffect-2"]
+}
+# <<< factory-mutation PidgeyWhirlwind_SwitchEffect

@@ -6865,3 +6865,12 @@ ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void)
 	return (ButterfreeWhirlwind_SwitchEffectResult){callee.a, callee.f};
 }
 /* <<< factory ButterfreeWhirlwind_SwitchEffect */
+
+/* >>> factory PidgeyWhirlwind_SwitchEffect */
+HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void)
+{
+	uint8_t input = hTemp_ffa0;
+	HandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(input);
+	return result;
+}
+/* <<< factory PidgeyWhirlwind_SwitchEffect */

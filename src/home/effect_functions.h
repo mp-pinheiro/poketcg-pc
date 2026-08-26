@@ -1470,6 +1470,9 @@ HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void);
 typedef struct { uint8_t a; uint8_t f; } ButterfreeWhirlwind_SwitchEffectResult;
 ButterfreeWhirlwind_SwitchEffectResult ButterfreeWhirlwind_SwitchEffect(void);
 /* <<< factory ButterfreeWhirlwind_SwitchEffect */
+/* >>> factory PidgeyWhirlwind_SwitchEffect */
+HandleSwitchDefendingPokemonEffectResult PidgeyWhirlwind_SwitchEffect(void);
+/* <<< factory PidgeyWhirlwind_SwitchEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
