@@ -3681,6 +3681,16 @@ static void adapt_Serial_TossZeroCoins(ProbeState *s)
 }
 /* <<< factory Serial_TossZeroCoins */
 
+/* >>> factory Serial_TossCoin */
+static void adapt_Serial_TossCoin(ProbeState *s)
+{
+	SerialTossCoinATimesResult result = Serial_TossCoin(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory Serial_TossCoin */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4128,5 +4138,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Serial_TossCoinATimes", adapt_Serial_TossCoinATimes },
 	{ "TossCoinATimes_BankB", adapt_TossCoinATimes_BankB },
 	{ "Serial_TossZeroCoins", adapt_Serial_TossZeroCoins },
+	{ "Serial_TossCoin", adapt_Serial_TossCoin },
 	{ NULL, NULL },
 };

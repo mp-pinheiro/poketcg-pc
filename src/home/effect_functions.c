@@ -7243,3 +7243,11 @@ SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b,
 	return Serial_TossCoinATimes(0x00u, 0x80u, b, c, d, e, hl);
 }
 /* <<< factory Serial_TossZeroCoins */
+
+/* >>> factory Serial_TossCoin */
+SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	a = 1u;
+	return Serial_TossCoinATimes(a, f, b, c, d, e, hl);
+}
+/* <<< factory Serial_TossCoin */

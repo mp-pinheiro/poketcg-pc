@@ -4834,6 +4834,44 @@ CASES["Serial_TossZeroCoins"] = [
          instruction_budget=20000000, cycle_budget=80000000)]
 # <<< factory Serial_TossZeroCoins
 
+# >>> factory Serial_TossCoin
+CONTRACT["Serial_TossCoin"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["Serial_TossCoin"] = [
+    dict(POISON, a=0x01, d=0x12, e=0x34,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0x00, "d": 0x12, "e": 0x34,
+     "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x80",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+     "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, a=0x01, d=0xDD, e=0xEE,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory Serial_TossCoin
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7229,3 +7267,6 @@ MUTATIONS["TossCoinATimes_BankB"] = {"source_symbol": "TossCoinATimes_BankB", "b
 # >>> factory-mutation Serial_TossZeroCoins
 MUTATIONS["Serial_TossZeroCoins"] = {"source_symbol": "Serial_TossZeroCoins", "before": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\treturn Serial_TossCoinATimes(0x00u, 0x80u, b, c, d, e, hl);", "after": "SerialTossCoinATimesResult Serial_TossZeroCoins(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\treturn Serial_TossCoinATimes(0x01u, 0x80u, b, c, d, e, hl);", "case_ids": ["Serial_TossZeroCoins-0", "Serial_TossZeroCoins-1"]}
 # <<< factory-mutation Serial_TossZeroCoins
+# >>> factory-mutation Serial_TossCoin
+MUTATIONS["Serial_TossCoin"] = {"source_symbol": "Serial_TossCoin", "before": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 1u;", "after": "SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\ta = 0u;", "case_ids": ["Serial_TossCoin-0", "Serial_TossCoin-1", "Serial_TossCoin-2"]}
+# <<< factory-mutation Serial_TossCoin
