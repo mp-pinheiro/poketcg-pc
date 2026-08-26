@@ -737,9 +737,41 @@ void Music1_jp(uint16_t caller_stream, uint8_t ch)
 		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
 	Music1_PlayNextNote(&hl, ch);
 }
-void Music1_call(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
-void Music1_ret(uint16_t *hl, uint8_t ch)           { Music1_PlayNextNote(hl, ch); }
-void Music1_frequency_offset(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }
+/* music1.asm:976-992. Pushes the popped stream pointer (which addresses the
+ * 2-byte call target) onto this channel's stack as the return address, advances
+ * the stack pointer by 2, and resumes the dispatcher at the target. Music1_ret
+ * skips the operand by adding 2 back. */
+void Music1_call(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t sp = Music1_GetChannelStackPointer(ch);
+	gb_write8(sp, (uint8_t)caller_stream);
+	gb_write8((uint16_t)(sp + 1u), (uint8_t)(caller_stream >> 8u));
+	uint16_t hl = (uint16_t)(gb_read8(caller_stream)
+		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
+	Music1_SetChannelStackPointer(ch, (uint16_t)(sp + 2u));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:994-1005. Pops the 2-byte return address this channel's stack
+ * holds, skips the call operand it points at (`inc de` twice), and resumes
+ * there. The popped stream pointer is discarded. */
+void Music1_ret(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	uint16_t sp = Music1_GetChannelStackPointer(ch);
+	uint16_t target = (uint16_t)(gb_read8((uint16_t)(sp - 2u))
+		| ((uint16_t)gb_read8((uint16_t)(sp - 1u)) << 8u));
+	uint16_t hl = (uint16_t)(target + 2u);
+	Music1_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1007-1016. */
+void Music1_frequency_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
 /* music1.asm:1018-1028. Entered by `jp` from the command table with the stream
  * pointer on the stack, so the operand is read through the popped pointer, not
  * through hl; the advanced pointer reaches the dispatcher by tail call. */
@@ -750,9 +782,32 @@ void Music1_duty(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicDuty1_ADDR + ch), value);
 	Music1_PlayNextNote(&hl, ch);
 }
-void Music1_volume(uint16_t *hl, uint8_t ch)        { Music1_PlayNextNote(hl, ch); }
-void Music1_wave(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
-void Music1_cutoff(uint16_t *hl, uint8_t ch)        { Music1_PlayNextNote(hl, ch); }
+/* music1.asm:1030-1039. */
+void Music1_volume(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVolume_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1041-1050. Wave is a single global byte, not per channel, and the
+ * handler also raises the wave-change flag. */
+void Music1_wave(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8(wMusicWave_ADDR, value);
+	gb_write8(wMusicWaveChange_ADDR, 0x01u);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1052-1061. */
+void Music1_cutoff(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
 void Music1_echo(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
 void Music1_vibrato_type(uint16_t *hl, uint8_t ch)  { Music1_PlayNextNote(hl, ch); }
 void Music1_vibrato_delay(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }
