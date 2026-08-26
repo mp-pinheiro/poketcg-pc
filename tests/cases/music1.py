@@ -761,6 +761,81 @@ CASES["Music1_Loop"] = [
 ]
 # <<< factory Music1_Loop
 
+# >>> factory Music1_call
+CONTRACT["Music1_call"] = {"compare": (), "preserve": ()}
+CASES["Music1_call"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF3: b"\x00\xC3"},
+     "read": {0xC300: 2, 0xDDF3: 2}},
+    {"c": 1, "stack": [0xC110],
+     "wram": {0xC110: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF5: b"\x20\xC3"},
+     "read": {0xC320: 2, 0xDDF5: 2}},
+    dict(POISON, b=0, c=3, stack=[0xC100],
+         wram={0xC100: b"\x00\xC2", 0xC200: b"\xFF", 0xDDF9: b"\x40\xC3"},
+         read={0xC340: 2, 0xDDF9: 2}),
+]
+# <<< factory Music1_call
+
+# >>> factory Music1_ret
+CONTRACT["Music1_ret"] = {"compare": (), "preserve": ()}
+CASES["Music1_ret"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xDDF3: b"\x02\xC3", 0xC300: b"\x00\xC2", 0xC202: b"\xFF"},
+     "read": {0xDDF3: 2}},
+    {"c": 1, "stack": [0xC100],
+     "wram": {0xDDF5: b"\x22\xC3", 0xC320: b"\x00\xC2", 0xC202: b"\xFF"},
+     "read": {0xDDF5: 2}},
+    dict(POISON, b=0, c=3, stack=[0xC100],
+         wram={0xDDF9: b"\x42\xC3", 0xC340: b"\x00\xC2", 0xC202: b"\xFF"},
+         read={0xDDF9: 2}),
+]
+# <<< factory Music1_ret
+
+# >>> factory Music1_frequency_offset
+CONTRACT["Music1_frequency_offset"] = {"compare": (), "preserve": ()}
+CASES["Music1_frequency_offset"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDEA: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDEA: 1}},
+    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDEC: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDEB: 1}),
+]
+# <<< factory Music1_frequency_offset
+
+# >>> factory Music1_volume
+CONTRACT["Music1_volume"] = {"compare": (), "preserve": ()}
+CASES["Music1_volume"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x7F\xFF"}, "read": {0xDDE7: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDE7: 1}},
+    {"c": 2, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDE9: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x11\xFF"},
+         read={0xDDE8: 1}),
+]
+# <<< factory Music1_volume
+
+# >>> factory Music1_wave
+CONTRACT["Music1_wave"] = {"compare": (), "preserve": ()}
+CASES["Music1_wave"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x05\xFF", 0xDD8A: b"\x00\x00"},
+     "read": {0xDD8A: 2}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDD8A: b"\xFF\xFF"},
+     "read": {0xDD8A: 2}},
+    dict(POISON, b=0, c=2, stack=[0xC100],
+         wram={0xC100: b"\xFF\xFF", 0xDD8A: b"\x00\x00"}, read={0xDD8A: 2}),
+]
+# <<< factory Music1_wave
+
+# >>> factory Music1_cutoff
+CONTRACT["Music1_cutoff"] = {"compare": (), "preserve": ()}
+CASES["Music1_cutoff"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDBF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDBF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDC2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDC0: 1}),
+]
+# <<< factory Music1_cutoff
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -808,6 +883,24 @@ MUTATIONS["Music1_MainLoop"] = {"source_symbol": "Music1_MainLoop", "before": "\
 # >>> factory-mutation Music1_Loop
 MUTATIONS["Music1_Loop"] = {"source_symbol": "Music1_Loop", "before": "\tgb_write8((uint16_t)(sp + 2u), count);", "after": "\tgb_write8((uint16_t)(sp + 2u), (uint8_t)(count + 1u));", "case_ids": ["Music1_Loop-0", "Music1_Loop-1"]}
 # <<< factory-mutation Music1_Loop
+# >>> factory-mutation Music1_call
+MUTATIONS["Music1_call"] = {"source_symbol": "Music1_call", "before": "\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp + 2u));", "after": "\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp + 3u));", "case_ids": ["Music1_call-0", "Music1_call-1"]}
+# <<< factory-mutation Music1_call
+# >>> factory-mutation Music1_ret
+MUTATIONS["Music1_ret"] = {"source_symbol": "Music1_ret", "before": "\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 2u));", "after": "\tMusic1_SetChannelStackPointer(ch, (uint16_t)(sp - 1u));", "case_ids": ["Music1_ret-0", "Music1_ret-1"]}
+# <<< factory-mutation Music1_ret
+# >>> factory-mutation Music1_frequency_offset
+MUTATIONS["Music1_frequency_offset"] = {"source_symbol": "Music1_frequency_offset", "before": "\tgb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicFrequencyOffset_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_frequency_offset-0", "Music1_frequency_offset-2"]}
+# <<< factory-mutation Music1_frequency_offset
+# >>> factory-mutation Music1_volume
+MUTATIONS["Music1_volume"] = {"source_symbol": "Music1_volume", "before": "\tgb_write8((uint16_t)(wMusicVolume_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVolume_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_volume-0", "Music1_volume-2"]}
+# <<< factory-mutation Music1_volume
+# >>> factory-mutation Music1_wave
+MUTATIONS["Music1_wave"] = {"source_symbol": "Music1_wave", "before": "\tgb_write8(wMusicWaveChange_ADDR, 0x01u);", "after": "\tgb_write8(wMusicWaveChange_ADDR, 0x00u);", "case_ids": ["Music1_wave-0", "Music1_wave-1"]}
+# <<< factory-mutation Music1_wave
+# >>> factory-mutation Music1_cutoff
+MUTATIONS["Music1_cutoff"] = {"source_symbol": "Music1_cutoff", "before": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_cutoff-0", "Music1_cutoff-2"]}
+# <<< factory-mutation Music1_cutoff
 # >>> factory-mutation _AssertSFXFinished
 MUTATIONS["_AssertSFXFinished"] = {"source_symbol": "_AssertSFXFinished", "before": "return Music1_AssertSFXFinished();", "after": "return (uint8_t)(Music1_AssertSFXFinished() ^ 1u);", "case_ids": ["_AssertSFXFinished-0", "_AssertSFXFinished-1", "_AssertSFXFinished-2"]};
 # <<< factory-mutation _AssertSFXFinished

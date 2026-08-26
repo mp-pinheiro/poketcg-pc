@@ -113,25 +113,25 @@ static void adapt_Music1_jp(ProbeState *s)
 { Music1_jp(s->stack[0], s->c); }
 
 static void adapt_Music1_call(ProbeState *s)
-{ Music1_call(&s->hl, s->a); }
+{ Music1_call(s->stack[0], s->c); }
 
 static void adapt_Music1_ret(ProbeState *s)
-{ Music1_ret(&s->hl, s->a); }
+{ Music1_ret(s->stack[0], s->c); }
 
 static void adapt_Music1_frequency_offset(ProbeState *s)
-{ Music1_frequency_offset(&s->hl, s->a); }
+{ Music1_frequency_offset(s->stack[0], s->c); }
 
 static void adapt_Music1_duty(ProbeState *s)
 { Music1_duty(s->stack[0], s->c); }
 
 static void adapt_Music1_volume(ProbeState *s)
-{ Music1_volume(&s->hl, s->a); }
+{ Music1_volume(s->stack[0], s->c); }
 
 static void adapt_Music1_wave(ProbeState *s)
-{ Music1_wave(&s->hl, s->a); }
+{ Music1_wave(s->stack[0], s->c); }
 
 static void adapt_Music1_cutoff(ProbeState *s)
-{ Music1_cutoff(&s->hl, s->a); }
+{ Music1_cutoff(s->stack[0], s->c); }
 
 static void adapt_Music1_echo(ProbeState *s)
 { Music1_echo(&s->hl, s->a); }
