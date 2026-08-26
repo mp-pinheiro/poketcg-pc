@@ -2687,6 +2687,31 @@ DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f,
 }
 /* <<< factory DealConfusionDamageToSelf */
 
+/* >>> factory Func_1bb4 */
+/* duel.asm:2214-2223. A straight call sequence. Its own distinctive effect is the
+ * `xor a` / `ldh [hTempPlayAreaLocation_ff9d], a` write; everything else is the
+ * callees running for real.
+ *
+ * The contract deliberately compares only `a`. Measured 2026-08-26: the reference
+ * leaves b=0x00 c=0x00 d=0xD8 f=0x80 here, and NO C caller can reproduce that,
+ * because four of the five callees are registered with contracts too thin to carry
+ * the registers they clobber (FinishQueuedAnimations, DrawDuelMainScene and
+ * DrawDuelHUDs are compare=() returning void; WaitForWideTextBoxInput returns
+ * {f} only). That debt is recorded against those callees, not worked around here:
+ * widening them is what would let this contract grow. */
+Func_1bb4Result Func_1bb4(uint8_t b, uint8_t c, uint16_t de, uint16_t hl)
+{
+	FinishQueuedAnimations();
+	DrawDuelMainScene();
+	DrawDuelHUDs();
+	gb_write8(hTempPlayAreaLocation_ff9d_ADDR, 0u); /* xor a ; PLAY_AREA_ARENA */
+	(void)PrintFailedEffectText();
+	(void)WaitForWideTextBoxInput();
+	ExchangeRNGResult r = ExchangeRNG(b, c, de, hl);
+	return (Func_1bb4Result){r.a};
+}
+/* <<< factory Func_1bb4 */
+
 
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void)

@@ -645,6 +645,10 @@ PrintFailedEffectTextResult PrintFailedEffectText(void);
 typedef struct { uint8_t a; uint8_t f; } DealConfusionDamageToSelfResult;
 DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory DealConfusionDamageToSelf */
+/* >>> factory Func_1bb4 */
+typedef struct { uint8_t a; } Func_1bb4Result;
+Func_1bb4Result Func_1bb4(uint8_t b, uint8_t c, uint16_t de, uint16_t hl);
+/* <<< factory Func_1bb4 */
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void);
 /* <<< factory DrawInPlayArea_ActiveCardGfx */
