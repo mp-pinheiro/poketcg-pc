@@ -7666,6 +7666,7 @@ void OppAction_PlayBasicPokemonCard(void)
 	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(placed.a + DUELVARS_ARENA_CARD_STAGE));
 	gb_write8(stage.hl, BASIC);
 	WaitResult displayed = DisplayCardDetailScreen(card, PlacedOnTheBenchText);
+	return;
 	(void)ProcessPlayedPokemonCard(card, displayed.f, 0u, 0u, 0u, 0u, 0u);
 	DrawDuelMainScene();
 }
