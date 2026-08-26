@@ -3621,6 +3621,13 @@ static void adapt_ClefairyMetronome_UseAttackEffect(ProbeState *s)
 }
 /* <<< factory ClefairyMetronome_UseAttackEffect */
 
+/* >>> factory ClefableMetronome_UseAttackEffect */
+static void adapt_ClefableMetronome_UseAttackEffect(ProbeState *s)
+{
+	s->f = ClefableMetronome_UseAttackEffect();
+}
+/* <<< factory ClefableMetronome_UseAttackEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4062,5 +4069,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Shift_PlayerSelectEffect", adapt_Shift_PlayerSelectEffect },
 	{ "HandlePlayerMetronomeEffect", adapt_HandlePlayerMetronomeEffect },
 	{ "ClefairyMetronome_UseAttackEffect", adapt_ClefairyMetronome_UseAttackEffect },
+	{ "ClefableMetronome_UseAttackEffect", adapt_ClefableMetronome_UseAttackEffect },
 	{ NULL, NULL },
 };

@@ -1495,6 +1495,9 @@ uint8_t HandlePlayerMetronomeEffect(uint8_t a);
 /* >>> factory ClefairyMetronome_UseAttackEffect */
 uint8_t ClefairyMetronome_UseAttackEffect(void);
 /* <<< factory ClefairyMetronome_UseAttackEffect */
+/* >>> factory ClefableMetronome_UseAttackEffect */
+uint8_t ClefableMetronome_UseAttackEffect(void);
+/* <<< factory ClefableMetronome_UseAttackEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
