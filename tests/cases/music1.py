@@ -1280,3 +1280,6 @@ MUTATIONS["Music1_PlayNextNote"] = {"source_symbol": "Music1_PlayNextNote", "bef
 # >>> factory-mutation Music1_PlayNextNote_pop
 MUTATIONS["Music1_PlayNextNote_pop"] = {"source_symbol": "Music1_PlayNextNote_pop", "before": "void Music1_PlayNextNote_pop(uint16_t *hl, uint8_t ch)\n{\n\tMusic1_PlayNextNote(hl, ch);", "after": "void Music1_PlayNextNote_pop(uint16_t *hl, uint8_t ch)\n{\n\tMusic1_PlayNextNote(hl, (uint8_t)(ch + 1u));", "case_ids": ["Music1_PlayNextNote_pop-0", "Music1_PlayNextNote_pop-2"]}
 # <<< factory-mutation Music1_PlayNextNote_pop
+# >>> factory-mutation Music1_note
+MUTATIONS["Music1_note"] = {"source_symbol": "Music1_note", "before": "void Music1_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, note, ch);", "after": "void Music1_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch)\n{\n\t(void)instrument;\n\tpnn_note(hl, (uint8_t)(note ^ 0x01u), ch);", "case_ids": ["Music1_note-1", "Music1_note-3"]}
+# <<< factory-mutation Music1_note
