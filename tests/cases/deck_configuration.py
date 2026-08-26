@@ -223,6 +223,20 @@ wUniqueDeckCardList = 0xCF68
 wNumUniqueCards = 0xCED9
 
 wMaxNumCardsAllowed = 0xCFD1
+
+hDPadHeld = 0xFF8F
+hKeysPressed = 0xFF91
+hffb3 = 0xFFB3
+wCardListCursorPos = 0xCEA4
+wCardListNumCursorPositions = 0xCEA9
+wCardListVisibleOffset = 0xCEA1
+wCheckMenuCursorBlinkCounter = 0xCEA3
+wCardListHandlerFunction = 0xCEAC
+wCardListUpdateFunction = 0xCECE
+wUnableToScrollDown = 0xCECD
+wced2 = 0xCED2
+wVisibleCursorTile = 0xCEAA
+wMenuInputSFX = 0xCFE3
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -829,6 +843,16 @@ CASES["AddCardToDeckAndUpdateCount"] = [
 ]
 # <<< factory AddCardToDeckAndUpdateCount
 
+# >>> factory HandleDeckCardSelectionList
+CONTRACT["HandleDeckCardSelectionList"] = {"compare": (), "preserve": ()}
+CASES["HandleDeckCardSelectionList"] = [
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x02", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x01"}, "read": {hffb3: 1}},
+    {"wram": {hDPadHeld: b"\x40", hKeysPressed: b"\x00", wCardListCursorPos: b"\x02", wCardListNumCursorPositions: b"\x04", wCardListVisibleOffset: b"\x01", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x01"}, "read": {hffb3: 1}},
+    {"wram": {hDPadHeld: b"\x00", hKeysPressed: b"\x01", wCardListCursorPos: b"\x03", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x01"}, "read": {hffb3: 1}},
+    dict(POISON, wram={hDPadHeld: b"\x00", hKeysPressed: b"\x00", wCardListCursorPos: b"\x03", wCardListHandlerFunction: b"\x00", wCheckMenuCursorBlinkCounter: b"\x09"}, read={hffb3: 1}),
+]
+# <<< factory HandleDeckCardSelectionList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1114,3 +1138,6 @@ MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": 
 # >>> factory-mutation AddCardToDeckAndUpdateCount
 MUTATIONS["AddCardToDeckAndUpdateCount"] = {"source_symbol": "AddCardToDeckAndUpdateCount", "before": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};", "after": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, r.a};", "case_ids": ["AddCardToDeckAndUpdateCount-0", "AddCardToDeckAndUpdateCount-1"]}
 # <<< factory-mutation AddCardToDeckAndUpdateCount
+# >>> factory-mutation HandleDeckCardSelectionList
+MUTATIONS["HandleDeckCardSelectionList"] = {"source_symbol": "HandleDeckCardSelectionList", "before": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;", "after": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;\n\twCardListCursorPos = 0x40u;", "case_ids": ["HandleDeckCardSelectionList-0", "HandleDeckCardSelectionList-2", "HandleDeckCardSelectionList-3"]}
+# <<< factory-mutation HandleDeckCardSelectionList

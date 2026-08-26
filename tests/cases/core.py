@@ -3764,6 +3764,15 @@ CASES["OpenTurnHolderDiscardPileScreen"] = [
 ]
 # <<< factory OpenTurnHolderDiscardPileScreen
 
+# >>> factory OpenNonTurnHolderHandScreen_Simple
+CONTRACT["OpenNonTurnHolderHandScreen_Simple"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenNonTurnHolderHandScreen_Simple"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC3EE: b"\x00", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": DISPLAY_CARD_LIST_KEYS, "wram": {**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC3EE: b"\x01", 0xC142: b"\x02", 0xC102: b"\x00"}, "read": {wNoItemSelectionMenuKeys: 1}, "expect": {wNoItemSelectionMenuKeys: b"\x09"}, "setup": DISPLAY_CARD_LIST_SETUP, "instruction_budget": 20000000, "cycle_budget": 80000000, "rom_bank": 1},
+    dict(POISON, keys=DISPLAY_CARD_LIST_KEYS, wram={**DISPLAY_CARD_LIST_SEED, 0xFF97: b"\xC2", 0xC3EE: b"\x01", 0xC142: b"\x02", 0xC102: b"\x00"}, read={wNoItemSelectionMenuKeys: 1}, expect={wNoItemSelectionMenuKeys: b"\x09"}, setup=DISPLAY_CARD_LIST_SETUP, instruction_budget=20000000, cycle_budget=80000000, rom_bank=1),
+]
+# <<< factory OpenNonTurnHolderHandScreen_Simple
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5285,3 +5294,6 @@ MUTATIONS["OpenTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenTurnHolder
 # >>> factory-mutation OpenTurnHolderDiscardPileScreen
 MUTATIONS["OpenTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn OpenDiscardPileScreen(c);", "after": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenTurnHolderDiscardPileScreen-0"]}
 # <<< factory-mutation OpenTurnHolderDiscardPileScreen
+# >>> factory-mutation OpenNonTurnHolderHandScreen_Simple
+MUTATIONS["OpenNonTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenNonTurnHolderHandScreen_Simple", "before": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\tSwapTurn();\n\tuint8_t result = OpenTurnHolderHandScreen_Simple();\n\tSwapTurn();\n\treturn result;", "after": "uint8_t OpenNonTurnHolderHandScreen_Simple(void)\n{\n\treturn 0u;", "case_ids": ["OpenNonTurnHolderHandScreen_Simple-1"]}
+# <<< factory-mutation OpenNonTurnHolderHandScreen_Simple

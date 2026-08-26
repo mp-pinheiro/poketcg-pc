@@ -249,6 +249,9 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #define MAP_SCRIPT_LOAD_MAP 0x08u
 
 #define MAP_SCRIPT_MOVED_PLAYER 0x0cu
+
+#include "generated/wram.h"
+#include "home/overworld.h"
 /* <<< factory statics */
 
 
@@ -1796,3 +1799,12 @@ CallMapScriptResult Func_c9c0(void)
 	return CallMapScriptPointerIfExists(MAP_SCRIPT_MOVED_PLAYER);
 }
 /* <<< factory Func_c9c0 */
+
+/* >>> factory Func_cc32 */
+void Func_cc32(uint16_t hl)
+{
+	uint16_t de = (uint16_t)wCurrentNPCNameTx |
+		(uint16_t)((uint16_t)gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u)) << 8);
+	Func_c8ba(hl, de);
+}
+/* <<< factory Func_cc32 */

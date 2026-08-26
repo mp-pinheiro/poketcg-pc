@@ -225,4 +225,7 @@ void CloseAdvancedDialogueBox(void);
 /* >>> factory Func_c8ba */
 void Func_c8ba(uint16_t hl, uint16_t de);
 /* <<< factory Func_c8ba */
+/* >>> factory ReturnToOverworldNoCallback */
+uint8_t ReturnToOverworldNoCallback(void);
+/* <<< factory ReturnToOverworldNoCallback */
 #endif /* POKETCG_HOME_OVERWORLD_H */

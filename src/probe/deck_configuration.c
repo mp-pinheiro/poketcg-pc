@@ -586,6 +586,13 @@ static void adapt_AddCardToDeckAndUpdateCount(ProbeState *s)
 }
 /* <<< factory AddCardToDeckAndUpdateCount */
 
+/* >>> factory HandleDeckCardSelectionList */
+static void adapt_HandleDeckCardSelectionList(ProbeState *s)
+{
+	HandleDeckCardSelectionListResult r = HandleDeckCardSelectionList(); s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory HandleDeckCardSelectionList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -654,5 +661,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "CreateCurDeckUniqueCardList", adapt_CreateCurDeckUniqueCardList },
 	{ "TryAddCardToDeck", adapt_TryAddCardToDeck },
 	{ "AddCardToDeckAndUpdateCount", adapt_AddCardToDeckAndUpdateCount },
+	{ "HandleDeckCardSelectionList", adapt_HandleDeckCardSelectionList },
 	{ NULL, NULL },
 };

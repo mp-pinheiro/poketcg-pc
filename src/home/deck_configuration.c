@@ -299,6 +299,12 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_configuration.h"
 #include "home/sound.h"
 #define TYPE_ENERGY_DOUBLE_COLORLESS 0x0eu
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_check.h"
+#include "home/sound.h"
 /* <<< factory statics */
 
 
@@ -1880,3 +1886,44 @@ AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e)
 	return (AddCardToDeckAndUpdateCountResult){r2.a, r2.f, e};
 }
 /* <<< factory AddCardToDeckAndUpdateCount */
+
+/* >>> factory HandleDeckCardSelectionList */
+HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
+{
+	wMenuInputSFX = FALSE;
+	uint8_t dpad = hDPadHeld;
+	uint8_t cursor = wCardListCursorPos;
+	uint8_t a = cursor;
+	HandleDeckCardSelectionListResult out = {0u, 0u, 0u, 0u, 0u, 0u, 0u};
+	if (dpad != 0u) {
+		uint8_t count = wCardListNumCursorPositions;
+		if ((dpad & (1u << B_PAD_UP)) != 0u) {
+			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor - 1u);
+			if ((a & 0x80u) != 0u && wCardListVisibleOffset != 0u) { --wCardListVisibleOffset; a = 0u; }
+		} else if ((dpad & (1u << B_PAD_DOWN)) != 0u) {
+			wMenuInputSFX = SFX_CURSOR; a = (uint8_t)(cursor + 1u);
+			if (a >= count) { if (wUnableToScrollDown == 0u) { ++wCardListVisibleOffset; --a; } else { --a; wMenuInputSFX = FALSE; } }
+		}
+		(void)DrawListCursor_Invisible(); wCardListCursorPos = a; wCheckMenuCursorBlinkCounter = 0u;
+	} else if (wced2 != 0u) {
+		if ((dpad & (1u << B_PAD_LEFT)) != 0u) {
+			uint8_t e = GetSelectedVisibleCardID(); RemoveCardFromDeckAndUpdateCount(out.b, out.c, out.d, e, out.hl);
+		} else if ((dpad & (1u << B_PAD_RIGHT)) != 0u) {
+			AddCardToDeckAndUpdateCount(GetSelectedVisibleCardID());
+		}
+	}
+	hffb3 = wCardListCursorPos;
+	if (wCardListHandlerFunction != 0u) {
+		DrawListCursor_Visible(); PlaySFXConfirmOrCancel(MENU_CONFIRM); out.a = MENU_CONFIRM; out.f = 0x10u; out.e = wCardListCursorPos; return out;
+	}
+	uint8_t keys = hKeysPressed;
+	if ((keys & (PAD_A | PAD_B)) != 0u) {
+		if ((keys & PAD_A) != 0u) { DrawListCursor_Visible(); PlaySFXConfirmOrCancel(MENU_CONFIRM); out.a = MENU_CONFIRM; out.f = 0x10u; out.e = wCardListCursorPos; return out; }
+		hffb3 = MENU_CANCEL; PlaySFXConfirmOrCancel(MENU_CANCEL); out.a = MENU_CANCEL; out.f = 0x10u; return out;
+	}
+	if (wMenuInputSFX != 0u) PlaySFX(wMenuInputSFX);
+	uint8_t counter = (uint8_t)(wCheckMenuCursorBlinkCounter + 1u); wCheckMenuCursorBlinkCounter = counter;
+	if ((counter & CURSOR_BLINK_PERIOD_MASK) == 0u) { if ((counter & (1u << B_CURSOR_BLINK_PERIOD)) == 0u) DrawListCursor(wVisibleCursorTile); else DrawListCursor_Invisible(); }
+	return out;
+}
+/* <<< factory HandleDeckCardSelectionList */

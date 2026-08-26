@@ -529,4 +529,7 @@ IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c);
 /* >>> factory Func_c9c0 */
 CallMapScriptResult Func_c9c0(void);
 /* <<< factory Func_c9c0 */
+/* >>> factory Func_cc32 */
+void Func_cc32(uint16_t hl);
+/* <<< factory Func_cc32 */
 #endif

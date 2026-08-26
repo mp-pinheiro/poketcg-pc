@@ -7327,3 +7327,13 @@ OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)
 	return OpenDiscardPileScreen(c);
 }
 /* <<< factory OpenTurnHolderDiscardPileScreen */
+
+/* >>> factory OpenNonTurnHolderHandScreen_Simple */
+uint8_t OpenNonTurnHolderHandScreen_Simple(void)
+{
+	SwapTurn();
+	uint8_t result = OpenTurnHolderHandScreen_Simple();
+	SwapTurn();
+	return result;
+}
+/* <<< factory OpenNonTurnHolderHandScreen_Simple */

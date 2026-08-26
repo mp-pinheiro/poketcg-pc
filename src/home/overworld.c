@@ -1086,3 +1086,12 @@ void Func_c8ba(uint16_t hl, uint16_t de)
 	(void)PrintScrollableText_WithTextBoxLabel(hl, de);
 }
 /* <<< factory Func_c8ba */
+
+/* >>> factory ReturnToOverworldNoCallback */
+uint8_t ReturnToOverworldNoCallback(void)
+{
+	wReloadOverworldCallbackPtr = 0u;
+	gb_write8((uint16_t)(wReloadOverworldCallbackPtr_ADDR + 1u), 0u);
+	return ReturnToOverworld();
+}
+/* <<< factory ReturnToOverworldNoCallback */

@@ -793,6 +793,15 @@ CASES["Func_c8ba"] = [
 ]
 # <<< factory Func_c8ba
 
+# >>> factory ReturnToOverworldNoCallback
+CONTRACT["ReturnToOverworldNoCallback"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ReturnToOverworldNoCallback"] = [
+    {"wram": {0xD0C1: b"\xFF", 0xD10F: b"\x12\x34", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xD0C1: b"\x80", 0xD10F: b"\xAB\xCD", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\xFE\xED", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD10F: 2, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ReturnToOverworldNoCallback
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1095,3 +1104,6 @@ MUTATIONS["CloseAdvancedDialogueBox"] = {"source_symbol": "CloseAdvancedDialogue
 # >>> factory-mutation Func_c8ba
 MUTATIONS["Func_c8ba"] = {"source_symbol": "Func_c8ba", "before": "\twd3b9 = de;", "after": "\twd3b9 = 0xFFu;", "case_ids": ["Func_c8ba-1", "Func_c8ba-2"]}
 # <<< factory-mutation Func_c8ba
+# >>> factory-mutation ReturnToOverworldNoCallback
+MUTATIONS["ReturnToOverworldNoCallback"] = {"source_symbol": "ReturnToOverworldNoCallback", "before": "uint8_t ReturnToOverworldNoCallback(void)\n{\n\twReloadOverworldCallbackPtr = 0u;", "after": "uint8_t ReturnToOverworldNoCallback(void)\n{\n\twReloadOverworldCallbackPtr = 0xFFu;", "case_ids": ["ReturnToOverworldNoCallback-0", "ReturnToOverworldNoCallback-1", "ReturnToOverworldNoCallback-2"]}
+# <<< factory-mutation ReturnToOverworldNoCallback

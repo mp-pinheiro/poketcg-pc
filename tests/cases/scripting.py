@@ -1304,6 +1304,15 @@ CASES["Func_c9c0"] = [
 ]
 # <<< factory Func_c9c0
 
+# >>> factory Func_cc32
+CONTRACT["Func_cc32"] = {"compare": (), "preserve": ()}
+CASES["Func_cc32"] = [
+    {"hl": 0x01DB, "wram": {0xD0C8: b"\x00\x00", 0xD0C1: b"\x00", 0xD3B9: b"\x12\x34", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xD0C1: 1, 0xD3B9: 2}},
+    {"hl": 0x01DC, "wram": {0xD0C8: b"\x56\x78", 0xD0C1: b"\x01", 0xD3B9: b"\x12\x34", 0xCABB: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {0xD0C1: 1, 0xD3B9: 2}},
+    dict(POISON, hl=0x01DB, wram={0xD0C8: b"\x9A\xBC", 0xD0C1: b"\x01", 0xD3B9: b"\x12\x34", 0xCABB: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={0xD0C1: 1, 0xD3B9: 2}),
+]
+# <<< factory Func_cc32
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1973,3 +1982,6 @@ MUTATIONS["Func_c9c0"] = {"source_symbol": "Func_c9c0", "before": "CallMapScript
 for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c0"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F}, {"mode": "pre-ret", "pc": 0x76C6}, {"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F})):
     _rec["completion"] = dict(_comp)
 # <<< factory-completion Func_c9c0
+# >>> factory-mutation Func_cc32
+MUTATIONS["Func_cc32"] = {"source_symbol": "Func_cc32", "before": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = (uint16_t)wCurrentNPCNameTx |\n\t\t(uint16_t)((uint16_t)gb_read8((uint16_t)(wCurrentNPCNameTx_ADDR + 1u)) << 8);", "after": "void Func_cc32(uint16_t hl)\n{\n\tuint16_t de = 0u;", "case_ids": ["Func_cc32-1", "Func_cc32-2"]}
+# <<< factory-mutation Func_cc32

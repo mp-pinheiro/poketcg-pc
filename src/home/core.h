@@ -1086,4 +1086,7 @@ uint8_t OpenTurnHolderHandScreen_Simple(void);
 /* >>> factory OpenTurnHolderDiscardPileScreen */
 OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c);
 /* <<< factory OpenTurnHolderDiscardPileScreen */
+/* >>> factory OpenNonTurnHolderHandScreen_Simple */
+uint8_t OpenNonTurnHolderHandScreen_Simple(void);
+/* <<< factory OpenNonTurnHolderHandScreen_Simple */
 #endif

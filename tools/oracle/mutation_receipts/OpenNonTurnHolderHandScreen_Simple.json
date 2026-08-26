@@ -1,0 +1,9 @@
+{
+  "fn": "OpenNonTurnHolderHandScreen_Simple",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenNonTurnHolderHandScreen_Simple\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49410\": \"00\", \"49474\": \"02\", \"50158\": \"01\", \"50448\": \"00\", \"51899\": \"80\", \"52175\": \"0000\", \"52182\": \"09\", \"52191\": \"00\", \"65425\": \"02\", \"65431\": \"c2\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenNonTurnHolderHandScreen_Simple\", \"mismatches\": {\"f\": [16, 0], \"bus\": {\"address\": 50448, \"reference\": \"0002010080000009\", \"native\": \"000201ff00000000\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49410, 1], [49474, 1], [50158, 1], [50448, 1], [51899, 1], [52175, 2], [52182, 1], [52191, 1], [65425, 1], [65431, 1], [65457, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenNonTurnHolderHandScreen_Simple\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49410\": \"00\", \"49474\": \"02\", \"50158\": \"01\", \"50448\": \"00\", \"51899\": \"80\", \"52175\": \"0000\", \"52182\": \"09\", \"52191\": \"00\", \"65425\": \"02\", \"65431\": \"c2\", \"65457\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}
