@@ -4,6 +4,8 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '15 3 * * *'
 permissions:
   contents: write
 concurrency:
@@ -99,7 +101,7 @@ jobs:
           exit 1
 
   release:
-    if: github.repository == 'fairfruit/poketcg-pc' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.repository == 'fairfruit/poketcg-pc' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     needs: [quality]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -131,20 +133,7 @@ jobs:
         run: |
           set -euo pipefail
           git fetch origin main --tags
-          current="$(git rev-parse origin/main)"
-          if [ "$current" != "$GITHUB_SHA" ]; then
-            echo "source $GITHUB_SHA was superseded by main $current; no release"
-            echo "cut=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          message="$(git log -1 --format=%s)"
-          case "$message" in
-            chore\(release\):*|chore\(progress\):\ daily\ snapshot)
-              echo "generated commit does not cut a release"
-              echo "cut=false" >> "$GITHUB_OUTPUT"
-              exit 0
-              ;;
-          esac
+          git reset --hard origin/main
           next=$(git cliff --bump --unreleased --context | jq -r 'map(select(.version != null and ((.commits // []) | length > 0))) | .[0].version // empty | ltrimstr("v")')
           cur=$(tr -d '[:space:]' < VERSION 2>/dev/null || echo none)
           {
@@ -164,7 +153,19 @@ jobs:
           git add VERSION CHANGELOG.md
           git commit -m "chore(release): v${next}"
           git tag "v${next}"
-          git push origin HEAD:main
+          # The fleet pushes main every couple of minutes; rebase the release
+          # commit onto whatever landed while this job ran, or the push races
+          # forever. VERSION/CHANGELOG.md are release-job-owned, so the rebase
+          # never conflicts.
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              break
+            fi
+            [ "$attempt" = 5 ] && exit 1
+            git fetch origin main
+            git rebase origin/main
+            git tag -f "v${next}"
+          done
           git push origin "v${next}"
       # The commit and tag are durable once pushed; the Release object needs
       # /api/v1, and one transient non-200 there used to orphan the tag for good
@@ -178,7 +179,11 @@ jobs:
           set -euo pipefail
           next="${{ steps.ver.outputs.next }}"
           api="${GITHUB_API_URL:-${GITHUB_SERVER_URL%/}/api/v1}"
-          git cliff --latest --strip header > /tmp/notes.md
+          pct=$(jq -r '(.measures.code * 10000 / .measures["code/total"] | floor) / 100' site/data/progress.json)
+          code=$(jq -r '"\(.measures.code)/\(.measures["code/total"])"' site/data/progress.json)
+          fns=$(jq -r '"\(.measures.functions)/\(.measures["functions/total"])"' site/data/progress.json)
+          printf '**Port progress: %s%% of code bytes (%s); functions %s.**\n\n' "$pct" "$code" "$fns" > /tmp/notes.md
+          git cliff --latest --strip header >> /tmp/notes.md
           jq -n --arg t "v${next}" --rawfile b /tmp/notes.md \
              '{tag_name:$t,name:$t,body:$b}' > /tmp/release-request.json
           for delay in 0 5 15 30 60; do
