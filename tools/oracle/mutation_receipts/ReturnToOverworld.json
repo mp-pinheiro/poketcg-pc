@@ -1,0 +1,9 @@
+{
+  "fn": "ReturnToOverworld",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ReturnToOverworld\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"7e\", \"53519\": \"000037\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ReturnToOverworld\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"7e000037c2\", \"native\": \"7e00003700\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53441, 1], [53519, 3], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ReturnToOverworld\", \"registers\": {\"a\": 8, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"7e\", \"53519\": \"000037\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

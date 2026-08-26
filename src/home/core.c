@@ -7210,3 +7210,16 @@ DisplayCardListResult DisplayCardList(void)
 	}
 }
 /* <<< factory DisplayCardList */
+
+/* >>> factory Func_5542 */
+Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)
+{
+	CardListResult discard = CreateDiscardPileCardList(c);
+	if (discard.f & 0x10u)
+		return (Func5542Result){discard.a, discard.b, discard.c, discard.d, discard.e, discard.f, discard.hl};
+	(void)InitAndDrawCardListScreenLayout();
+	SetDiscardPileScreenTexts();
+	DisplayCardListResult display = DisplayCardList();
+	return (Func5542Result){display.a, discard.b, discard.c, discard.d, discard.e, display.f, discard.hl};
+}
+/* <<< factory Func_5542 */

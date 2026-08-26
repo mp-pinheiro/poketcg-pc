@@ -3719,6 +3719,14 @@ CASES["DisplayCardList"] = [
 ]
 # <<< factory DisplayCardList
 
+# >>> factory Func_5542
+CONTRACT["Func_5542"] = {"compare": ("a", "b", "c", "d", "e", "f", "hl"), "preserve": ()}
+CASES["Func_5542"] = [
+    {"c": 0x00, "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00"}, "read": {0xC510: 2}},
+]
+# <<< factory Func_5542
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5220,3 +5228,6 @@ MUTATIONS["DisplayOpponentUsedAttackScreen"] = {"source_symbol": "DisplayOpponen
 # >>> factory-mutation DisplayCardList
 MUTATIONS["DisplayCardList"] = {"source_symbol": "DisplayCardList", "before": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){hCurMenuItem, FLAG_C};", "after": "\t\t\t\tif ((keys & PAD_B) != 0u) {\n\t\t\t\t\t/* .b_pressed: hCurMenuItem is the MENU_CANCEL that\n\t\t\t\t\t * CardListFunction wrote on its way out */\n\t\t\t\t\treturn (DisplayCardListResult){0u, FLAG_C};", "case_ids": ["DisplayCardList-0", "DisplayCardList-1"]}
 # <<< factory-mutation DisplayCardList
+# >>> factory-mutation Func_5542
+MUTATIONS["Func_5542"] = {"source_symbol": "Func_5542", "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);", "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));", "case_ids": ["Func_5542-0", "Func_5542-1"]}
+# <<< factory-mutation Func_5542

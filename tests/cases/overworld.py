@@ -766,6 +766,15 @@ CASES["Func_c891"] = [
 ]
 # <<< factory Func_c891
 
+# >>> factory ReturnToOverworld
+CONTRACT["ReturnToOverworld"] = {"compare": ("a", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["ReturnToOverworld"] = [
+    {"wram": {0xD0C1: b"\xFF", 0xD10F: b"\x00\x00", 0xD111: b"\x37"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xD0C1: b"\x80", 0xD10F: b"\x00\x00", 0xD111: b"\xA5"}, "read": {0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD0C1: b"\x55", 0xD10F: b"\x00\x00", 0xD111: b"\x00"}, read={0xFF97: 1, 0xD0C1: 1, 0xD111: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ReturnToOverworld
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1059,3 +1068,6 @@ MUTATIONS["CloseTextBox"] = {"source_symbol": "CloseTextBox", "before": "\tflags
 # >>> factory-mutation Func_c891
 MUTATIONS["Func_c891"] = {"source_symbol": "Func_c891", "before": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0u;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "after": "void Func_c891(uint16_t hl)\n{\n\tif ((wOverworldNPCFlags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u &&\n\t    (wd3b9 != 0u || gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != 0u)) {\n\t\tCloseTextBox();\n\t}\n\twd3b9 = 0xFFu;\n\tgb_write8((uint16_t)(wd3b9_ADDR + 1u), 0u);", "case_ids": ["Func_c891-0", "Func_c891-1", "Func_c891-2"]}
 # <<< factory-mutation Func_c891
+# >>> factory-mutation ReturnToOverworld
+MUTATIONS["ReturnToOverworld"] = {"source_symbol": "ReturnToOverworld", "before": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = PLAYER_TURN;", "after": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = 0x00u;", "case_ids": ["ReturnToOverworld-0", "ReturnToOverworld-1", "ReturnToOverworld-2"]}
+# <<< factory-mutation ReturnToOverworld

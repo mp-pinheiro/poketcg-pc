@@ -167,6 +167,20 @@
 #include "home/load_overworld.h"
 #include "generated/wram.h"
 #define AUTO_CLOSE_TEXTBOX 0x00u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/lcd.h"
+#include "home/credits_sequence_commands.h"
+#include "home/load_animation.h"
+#include "home/color.h"
+#include "home/sprite_animations.h"
+#include "home/overworld.h"
+#include "home/load_overworld.h"
+#include "home/npc_core.h"
+#define HIDE_ALL_NPC_SPRITES 0x07u
+#define PLAYER_TURN 0xC2u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1004,3 +1018,29 @@ void Func_c891(uint16_t hl)
 	(void)PrintScrollableText_NoTextBoxLabel(hl);
 }
 /* <<< factory Func_c891 */
+
+/* >>> factory ReturnToOverworld */
+uint8_t ReturnToOverworld(void)
+{
+	DisableLCD();
+	Set_OBJ_8x8();
+	EnableAndClearSpriteAnimations();
+	Func_12bcd();
+	hWhoseTurn = PLAYER_TURN;
+	Func_c241();
+	EmptyScreen();
+	uint8_t default_song = wDefaultSong;
+	LoadMapGfxAndPermissions();
+	wDefaultSong = default_song;
+	wOverworldNPCFlags &= (uint8_t)~(1u << AUTO_CLOSE_TEXTBOX);
+	RestoreObjectPalettes();
+	Func_12c5e();
+	SetAllNPCTilePermissions();
+	wOverworldNPCFlags &= (uint8_t)~(1u << HIDE_ALL_NPC_SPRITES);
+	uint8_t callback_lo = gb_read8(wReloadOverworldCallbackPtr_ADDR);
+	uint8_t callback_hi = gb_read8(wReloadOverworldCallbackPtr_ADDR + 1u);
+	(void)callback_lo;
+	(void)callback_hi;
+	return FadeScreenFromWhite();
+}
+/* <<< factory ReturnToOverworld */

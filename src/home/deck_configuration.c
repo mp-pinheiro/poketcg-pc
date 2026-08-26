@@ -1800,3 +1800,25 @@ void PrintConfirmationCardList(uint8_t a, uint8_t d, uint8_t e, uint16_t *hl)
 	(void)a; (void)d; (void)e; (void)hl;
 }
 /* <<< factory PrintConfirmationCardList */
+
+/* >>> factory CreateCurDeckUniqueCardList */
+CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)
+{
+	uint8_t count = 0u;
+	uint8_t previous = 0u;
+	uint16_t hl = wCurDeckCards_ADDR;
+	uint16_t de = wUniqueDeckCardList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		if (card == previous)
+			continue;
+		previous = card;
+		gb_write8(de++, card);
+		if (card == 0u)
+			break;
+		++count;
+	}
+	wNumUniqueCards = count;
+	return (CreateCurDeckUniqueCardListResult){count, 0x80u, count, previous, (uint8_t)(de >> 8), (uint8_t)de, hl};
+}
+/* <<< factory CreateCurDeckUniqueCardList */

@@ -217,6 +217,10 @@ V1_ROW3 = 0x9861
 ICON_ROW0 = bytes([0xE4, 0xE5, 0xE0, 0xE1, 0xEC, 0xED, 0xE8, 0xE9, 0xF0, 0xF1, 0xF4, 0xF5, 0xF8, 0xF9, 0xDC, 0xDD, 0xFC, 0xFD])
 ICON_ROW1 = bytes([0xE6, 0xE7, 0xE2, 0xE3, 0xEE, 0xEF, 0xEA, 0xEB, 0xF2, 0xF3, 0xF6, 0xF7, 0xFA, 0xFB, 0xDE, 0xDF, 0xFE, 0xFF])
 ATTR_ROW = bytes([2, 2, 1, 1, 2, 2, 1, 1, 3, 3, 3, 3, 0, 0, 2, 2, 2, 2])
+
+wCurDeckCards = 0xCF17
+wUniqueDeckCardList = 0xCF68
+wNumUniqueCards = 0xCED9
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -796,6 +800,16 @@ CASES["PrintConfirmationCardList"] = [
 ]
 # <<< factory PrintConfirmationCardList
 
+# >>> factory CreateCurDeckUniqueCardList
+CONTRACT["CreateCurDeckUniqueCardList"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CreateCurDeckUniqueCardList"] = [
+    {"wram": {wCurDeckCards: b"\x01\x00"}, "read": {wCurDeckCards: 2, wUniqueDeckCardList: 2, wNumUniqueCards: 1}},
+    {"wram": {wCurDeckCards: b"\x01\x01\x02\x02\x00"}, "read": {wCurDeckCards: 5, wUniqueDeckCardList: 3, wNumUniqueCards: 1}},
+    {"wram": {wCurDeckCards: b"\xE4\xE4\x03\x00"}, "read": {wCurDeckCards: 4, wUniqueDeckCardList: 3, wNumUniqueCards: 1}},
+    dict(POISON, wram={wCurDeckCards: b"\x05\x05\x07\x05\x00"}, read={wCurDeckCards: 5, wUniqueDeckCardList: 4, wNumUniqueCards: 1}),
+]
+# <<< factory CreateCurDeckUniqueCardList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1072,3 +1086,6 @@ MUTATIONS["PrintPlayersCardsHeaderInfo"] = {"source_symbol": "PrintPlayersCardsH
 # >>> factory-mutation PrintConfirmationCardList
 MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCardList", "before": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 1u;", "after": "/* PrintConfirmationCardList: set scroll guard */\n\t\twUnableToScrollDown = 0u;", "case_ids": ["PrintConfirmationCardList-0", "PrintConfirmationCardList-1"]}
 # <<< factory-mutation PrintConfirmationCardList
+# >>> factory-mutation CreateCurDeckUniqueCardList
+MUTATIONS["CreateCurDeckUniqueCardList"] = {"source_symbol": "CreateCurDeckUniqueCardList", "before": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 0u;", "after": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 1u;", "case_ids": ["CreateCurDeckUniqueCardList-0", "CreateCurDeckUniqueCardList-1"]}
+# <<< factory-mutation CreateCurDeckUniqueCardList

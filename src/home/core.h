@@ -1060,4 +1060,16 @@ void DisplayOpponentUsedAttackScreen(void);
 typedef struct { uint8_t a; uint8_t f; } DisplayCardListResult;
 DisplayCardListResult DisplayCardList(void);
 /* <<< factory DisplayCardList */
+/* >>> factory Func_5542 */
+typedef struct {
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint8_t f;
+	uint16_t hl;
+} Func5542Result;
+Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl);
+/* <<< factory Func_5542 */
 #endif

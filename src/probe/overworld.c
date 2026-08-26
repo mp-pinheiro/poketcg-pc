@@ -489,6 +489,13 @@ static void adapt_Func_c891(ProbeState *s)
 }
 /* <<< factory Func_c891 */
 
+/* >>> factory ReturnToOverworld */
+static void adapt_ReturnToOverworld(ProbeState *s)
+{
+	s->a = ReturnToOverworld();
+}
+/* <<< factory ReturnToOverworld */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -549,5 +556,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c241", adapt_Func_c241 },
 	{ "CloseTextBox", adapt_CloseTextBox },
 	{ "Func_c891", adapt_Func_c891 },
+	{ "ReturnToOverworld", adapt_ReturnToOverworld },
 	{ NULL, NULL },
 };

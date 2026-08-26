@@ -1,0 +1,9 @@
+{
+  "fn": "CreateCurDeckUniqueCardList",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreateCurDeckUniqueCardList\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 207, \"e\": 106, \"f\": 128, \"hl\": 53017, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52953\": \"01\", \"53015\": \"0100\", \"53096\": \"0100\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreateCurDeckUniqueCardList\", \"mismatches\": {\"a\": [1, 2], \"b\": [1, 2], \"bus\": {\"address\": 52953, \"reference\": \"0101000100\", \"native\": \"0201000100\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[52953, 1], [53015, 2], [53096, 2]]}}}\n",
+  "restored": "{\"fn\": \"CreateCurDeckUniqueCardList\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 207, \"e\": 106, \"f\": 128, \"hl\": 53017, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"52953\": \"01\", \"53015\": \"0100\", \"53096\": \"0100\"}}, \"status\": \"PASS\"}\n"
+}

@@ -2376,6 +2376,20 @@ static void adapt_DisplayCardList(ProbeState *s)
 }
 /* <<< factory DisplayCardList */
 
+/* >>> factory Func_5542 */
+static void adapt_Func_5542(ProbeState *s)
+{
+	Func5542Result r = Func_5542(s->a, s->b, s->c, s->d, s->e, s->f, s->hl);
+	s->a = r.a;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Func_5542 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2660,5 +2674,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayAttackAnimation_DealAttackDamageSimple", adapt_PlayAttackAnimation_DealAttackDamageSimple },
 	{ "DisplayOpponentUsedAttackScreen", adapt_DisplayOpponentUsedAttackScreen },
 	{ "DisplayCardList", adapt_DisplayCardList },
+	{ "Func_5542", adapt_Func_5542 },
 	{ NULL, NULL },
 };

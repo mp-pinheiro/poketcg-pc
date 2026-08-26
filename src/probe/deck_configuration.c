@@ -553,6 +553,20 @@ static void adapt_PrintConfirmationCardList(ProbeState *s)
 }
 /* <<< factory PrintConfirmationCardList */
 
+/* >>> factory CreateCurDeckUniqueCardList */
+static void adapt_CreateCurDeckUniqueCardList(ProbeState *s)
+{
+	CreateCurDeckUniqueCardListResult r = CreateCurDeckUniqueCardList();
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CreateCurDeckUniqueCardList */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -618,5 +632,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DrawCardTypeIcons", adapt_DrawCardTypeIcons },
 	{ "PrintPlayersCardsHeaderInfo", adapt_PrintPlayersCardsHeaderInfo },
 	{ "PrintConfirmationCardList", adapt_PrintConfirmationCardList },
+	{ "CreateCurDeckUniqueCardList", adapt_CreateCurDeckUniqueCardList },
 	{ NULL, NULL },
 };

@@ -215,4 +215,7 @@ void CloseTextBox(void);
 /* >>> factory Func_c891 */
 void Func_c891(uint16_t hl);
 /* <<< factory Func_c891 */
+/* >>> factory ReturnToOverworld */
+uint8_t ReturnToOverworld(void);
+/* <<< factory ReturnToOverworld */
 #endif /* POKETCG_HOME_OVERWORLD_H */
