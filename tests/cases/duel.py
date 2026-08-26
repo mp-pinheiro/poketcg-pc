@@ -1665,6 +1665,34 @@ CASES["DealConfusionDamageToSelf"] = [
 # <<< factory DealConfusionDamageToSelf
 
 from tests.cases._schema_migration import legacy_to_schema
+
+# >>> factory Func_1bb4
+# duel.asm:2214-2223, a straight call sequence. `compare` is ("a",) alone because
+# the reference leaves b=0x12 c=0x11 d=0x12 e=0x11 f=0x70 hl=0xCD12 here -- values
+# produced inside DrawDuelHUDs / DrawDuelMainScene / WaitForWideTextBoxInput, each
+# registered with a contract that returns void or {f} only. Measured 2026-08-26;
+# that debt belongs to those callees, and widening them is what lets this grow.
+# The `read` span on hTempPlayAreaLocation_ff9d keeps this non-vacuous: it verifies
+# this routine's own `xor a` write.
+#
+# The wram seed is the UNION of DrawDuelHUDs' and DrawDuelMainScene's own registered
+# case seeds. 0xC2BB/0xC3BB = 0xFF marks both arena slots empty; without that,
+# DrawDuelHUDs draws HP for card ID 0 and never terminates on the native probe.
+_F1BB4_HUD = {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF",
+              0xC2F1: b"\x00", 0xC2F0: b"\x00", 0xC3F1: b"\x00", 0xC3F0: b"\x00",
+              0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00",
+              0xCAC2: b"\x01"}
+_F1BB4_SETUP = [{"fn": "SetupText", "d": 0x30, "e": 0x7F}]
+CONTRACT["Func_1bb4"] = {"compare": ("a",), "preserve": ()}
+CASES["Func_1bb4"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00, "hl": 0x0000,
+     "keys": 0x01, "cycle_budget": 40_000_000, "wram": dict(_F1BB4_HUD),
+     "setup": list(_F1BB4_SETUP), "read": {0xFF9D: 1}},
+    dict(POISON, keys=0x01, cycle_budget=40_000_000, wram=dict(_F1BB4_HUD),
+         setup=list(_F1BB4_SETUP), read={0xFF9D: 1}),
+]
+# <<< factory Func_1bb4
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
@@ -1905,3 +1933,12 @@ MUTATIONS["DealDamageToPlayAreaPokemon_RegularAnim"] = {"source_symbol": "DealDa
 # >>> factory-mutation DealConfusionDamageToSelf
 MUTATIONS["DealConfusionDamageToSelf"] = {"source_symbol": "DealConfusionDamageToSelf", "before": "\tgb_write8(wDamage_ADDR, a);\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);", "after": "\tgb_write8(wDamage_ADDR, (uint8_t)(a + 1u));\n\tgb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);", "case_ids": ["DealConfusionDamageToSelf-0", "DealConfusionDamageToSelf-2", "DealConfusionDamageToSelf-3"]}
 # <<< factory-mutation DealConfusionDamageToSelf
+
+# >>> factory-mutation Func_1bb4
+MUTATIONS["Func_1bb4"] = {
+    "source_symbol": "Func_1bb4",
+    "before": "\tgb_write8(hTempPlayAreaLocation_ff9d_ADDR, 0u); /* xor a ; PLAY_AREA_ARENA */",
+    "after": "\tgb_write8(hTempPlayAreaLocation_ff9d_ADDR, 1u); /* xor a ; PLAY_AREA_ARENA */",
+    "case_ids": ["Func_1bb4-0"],
+}
+# <<< factory-mutation Func_1bb4
