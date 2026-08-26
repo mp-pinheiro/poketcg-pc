@@ -3523,6 +3523,13 @@ static void adapt_ScoopUp_ReturnToHandEffect(ProbeState *s)
 }
 /* <<< factory ScoopUp_ReturnToHandEffect */
 
+/* >>> factory EnergyTrans_TransferEffect */
+static void adapt_EnergyTrans_TransferEffect(ProbeState *s)
+{
+	s->a = EnergyTrans_TransferEffect();
+}
+/* <<< factory EnergyTrans_TransferEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3952,5 +3959,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FireSpin_PlayerSelectEffect", adapt_FireSpin_PlayerSelectEffect },
 	{ "EnergySpike_AttachEnergyEffect", adapt_EnergySpike_AttachEnergyEffect },
 	{ "ScoopUp_ReturnToHandEffect", adapt_ScoopUp_ReturnToHandEffect },
+	{ "EnergyTrans_TransferEffect", adapt_EnergyTrans_TransferEffect },
 	{ NULL, NULL },
 };

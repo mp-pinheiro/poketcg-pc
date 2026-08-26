@@ -1,0 +1,9 @@
+{
+  "fn": "EnergyTrans_TransferEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EnergyTrans_TransferEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52178\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EnergyTrans_TransferEffect\", \"mismatches\": {\"a\": [1, 0]}}\n",
+  "restored": "{\"fn\": \"EnergyTrans_TransferEffect\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"52178\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

@@ -768,6 +768,18 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #define PokemonWasReturnedFromArenaToHandText 0x016cu
 #define PokemonWasReturnedFromBenchToHandText 0x016du
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/frames.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "home/sound.h"
+#define SYM_GRASS 0xC8u
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6660,3 +6672,61 @@ void ScoopUp_ReturnToHandEffect(void)
 	(void)ShiftAllPokemonToFirstPlayAreaSlots();
 }
 /* <<< factory ScoopUp_ReturnToHandEffect */
+
+/* >>> factory EnergyTrans_TransferEffect */
+uint8_t EnergyTrans_TransferEffect(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (turn.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		uint8_t result = PrintPlayAreaCardList_EnableLCD().a;
+		return result;
+	}
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return input.a;
+			hAIPkmnPowerEffectParam = input.a;
+			hCurSelectionItem = input.a;
+			CheckIfCardHasGrassEnergyAttachedResult check = CheckIfCardHasGrassEnergyAttached(input.a);
+			if ((check.f & 0x10u) != 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			hAIEnergyTransEnergyCard = check.a;
+			AddCardToHand(check.a);
+			(void)PrintPlayAreaCardList_EnableLCD();
+			uint8_t location = hAIPkmnPowerEffectParam;
+			(void)PutHandCardInPlayArea(hAIEnergyTransEnergyCard, location);
+			DrawSymbolOnPlayAreaCursor(hAIPkmnPowerEffectParam, SYM_GRASS);
+			for (;;) {
+				DoFrame();
+				HandleMenuInputResult placement = HandleMenuInput();
+				if ((placement.f & 0x10u) == 0u)
+					continue;
+				if (placement.a == MENU_CANCEL)
+					break;
+				hCurSelectionItem = placement.a;
+				hAIEnergyTransPlayAreaLocation = placement.a;
+				(void)SetOppAction_SerialSendDuelData(OPPACTION_6B15, 0u);
+				AddCardToHand(hAIEnergyTransEnergyCard);
+				(void)PutHandCardInPlayArea(hAIEnergyTransEnergyCard, hAIEnergyTransPlayAreaLocation);
+				break;
+			}
+			DrawSymbolOnPlayAreaCursor(hAIPkmnPowerEffectParam, SYM_SPACE);
+			EraseCursor();
+			break;
+		}
+	}
+}
+/* <<< factory EnergyTrans_TransferEffect */

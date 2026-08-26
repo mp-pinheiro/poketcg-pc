@@ -1450,6 +1450,9 @@ ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, ui
 /* >>> factory ScoopUp_ReturnToHandEffect */
 void ScoopUp_ReturnToHandEffect(void);
 /* <<< factory ScoopUp_ReturnToHandEffect */
+/* >>> factory EnergyTrans_TransferEffect */
+uint8_t EnergyTrans_TransferEffect(void);
+/* <<< factory EnergyTrans_TransferEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

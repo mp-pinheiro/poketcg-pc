@@ -2608,6 +2608,13 @@ hTempPlayAreaLocation_ffa1 = 0xFFA1
 hTemp_ffa0 = 0xFFA0
 wLoadedCard2Stage = 0xCC6E
 wLoadedCard2Type = 0xCC65
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+wPlayerArenaCard = 0xC2BB
+wExcludeArenaPokemon = 0xCBD2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+PLAYER_TURN = 0xC2
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4545,6 +4552,30 @@ CASES["ScoopUp_ReturnToHandEffect"] = [
     dict(POISON, wram={0xFFA0: b"\x00", 0xFFA1: b"\x03", 0xFF97: b"\xC2", 0xC2EF: b"\x01", 0xC200: b"\x10\xFF\xFF\xFF\xFF\xFF\xFF", 0xC300: b"\xFF\xFF\xFF\xFF\xFF\xFF", 0xC2ED: b"\x00", 0xC27E: b"\x01", 0xC400: b"\x01"}, read={0xFFA0: 1, 0xFFA1: 1, 0xFF98: 1, 0xC200: 7, 0xC2EF: 1}),
 ]
 # <<< factory ScoopUp_ReturnToHandEffect
+
+# >>> factory EnergyTrans_TransferEffect
+CONTRACT["EnergyTrans_TransferEffect"] = {"compare": ("a",), "preserve": ()}
+CASES["EnergyTrans_TransferEffect"] = [
+    {"instruction_budget": 6000000, "cycle_budget": 20000000,
+     "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xF1: b"\x01",
+              wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+              wExcludeArenaPokemon: b"\x00"}},
+    dict(POISON, instruction_budget=6000000, cycle_budget=20000000,
+         wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xF1: b"\x01",
+               wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+               wExcludeArenaPokemon: b"\x00"}),
+    {"f": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xF1: b"\x01",
+              wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+              wExcludeArenaPokemon: b"\x00"}},
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xF1: b"\x01",
+              wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+              wExcludeArenaPokemon: b"\x00"}},
+    dict(POISON, instruction_budget=6000000, cycle_budget=20000000,
+         wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xF1: b"\x01",
+               wPlayerArenaCard: b"\xFF", wPlayerArenaCard + 0xEF - 0xBB: b"\x01",
+               wExcludeArenaPokemon: b"\x00"}),
+]
+# <<< factory EnergyTrans_TransferEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6872,3 +6903,6 @@ MUTATIONS["EnergySpike_AttachEnergyEffect"] = {"source_symbol": "EnergySpike_Att
 # >>> factory-mutation ScoopUp_ReturnToHandEffect
 MUTATIONS["ScoopUp_ReturnToHandEffect"] = {"source_symbol": "ScoopUp_ReturnToHandEffect", "before": "void ScoopUp_ReturnToHandEffect(void)\n{\n\tuint8_t location = hTemp_ffa0;", "after": "void ScoopUp_ReturnToHandEffect(void)\n{\n\tuint8_t location = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["ScoopUp_ReturnToHandEffect-0", "ScoopUp_ReturnToHandEffect-1", "ScoopUp_ReturnToHandEffect-2"]}
 # <<< factory-mutation ScoopUp_ReturnToHandEffect
+# >>> factory-mutation EnergyTrans_TransferEffect
+MUTATIONS["EnergyTrans_TransferEffect"] = {"source_symbol": "EnergyTrans_TransferEffect", "before": "\t\tuint8_t result = PrintPlayAreaCardList_EnableLCD().a;\n\t\treturn result;", "after": "\t\treturn 0u;", "case_ids": ["EnergyTrans_TransferEffect-0", "EnergyTrans_TransferEffect-1", "EnergyTrans_TransferEffect-2"]}
+# <<< factory-mutation EnergyTrans_TransferEffect
