@@ -3424,6 +3424,14 @@ CASES["DisplayCardPage_TrainerPage2"] = [
 ]
 # <<< factory DisplayCardPage_TrainerPage2
 
+# >>> factory DisplayCardPage_TrainerPage1
+CONTRACT["DisplayCardPage_TrainerPage1"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CASES["DisplayCardPage_TrainerPage1"] = [
+    {"wram": {0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCC2E: b"\x00\x00\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DisplayCardPage_TrainerPage1
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4865,3 +4873,6 @@ MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy"
 # >>> factory-mutation DisplayCardPage_TrainerPage2
 MUTATIONS["DisplayCardPage_TrainerPage2"] = {"source_symbol": "DisplayCardPage_TrainerPage2", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR + 2u);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage2-0", "DisplayCardPage_TrainerPage2-1"]}
 # <<< factory-mutation DisplayCardPage_TrainerPage2
+# >>> factory-mutation DisplayCardPage_TrainerPage1
+MUTATIONS["DisplayCardPage_TrainerPage1"] = {"source_symbol": "DisplayCardPage_TrainerPage1", "before": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "PrintAttackOrCardDescriptionResult DisplayCardPage_TrainerPage1(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_TRAINER, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_TrainerPage1-0", "DisplayCardPage_TrainerPage1-1"]}
+# <<< factory-mutation DisplayCardPage_TrainerPage1

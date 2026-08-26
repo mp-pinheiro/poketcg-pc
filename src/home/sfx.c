@@ -505,3 +505,10 @@ void SFX_pan(uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_pan */
+
+/* >>> factory SFX_unused */
+void SFX_unused(uint16_t hl, uint16_t bc)
+{
+	ExecuteNextSFXCommand(hl, bc);
+}
+/* <<< factory SFX_unused */

@@ -34,4 +34,7 @@ void SFX_loop(uint16_t bc, uint16_t caller_de);
 /* >>> factory SFX_pan */
 void SFX_pan(uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_pan */
+/* >>> factory SFX_unused */
+void SFX_unused(uint16_t hl, uint16_t bc);
+/* <<< factory SFX_unused */
 #endif

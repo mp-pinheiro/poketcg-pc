@@ -127,6 +127,16 @@ CASES["SFX_pan"] = [
 ]
 # <<< factory SFX_pan
 
+# >>> factory SFX_unused
+CONTRACT["SFX_unused"] = {"compare": (), "preserve": ()}
+CASES["SFX_unused"] = [
+    {"c": 0, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    {"c": 1, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    {"c": 3, "hl": 0xC100, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    dict(POISON, b=0, c=2, hl=0xC100, wram={0xC100: b"\xF0", 0xDD8C: b"\xFF"}, read={0xDD8C: 1}),
+]
+# <<< factory SFX_unused
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -172,3 +182,6 @@ MUTATIONS["SFX_loop"] = {"source_symbol": "SFX_loop", "before": "void SFX_loop(u
 # >>> factory-mutation SFX_pan
 MUTATIONS["SFX_pan"] = {"source_symbol": "SFX_pan", "before": "void SFX_pan(uint16_t bc, uint16_t caller_hl)\n{\n\tuint8_t pan_val = gb_read8(caller_hl);", "after": "void SFX_pan(uint16_t bc, uint16_t caller_hl)\n{\n\tuint8_t pan_val = 0u;", "case_ids": ["SFX_pan-0", "SFX_pan-1", "SFX_pan-2", "SFX_pan-3"]}
 # <<< factory-mutation SFX_pan
+# >>> factory-mutation SFX_unused
+MUTATIONS["SFX_unused"] = {"source_symbol": "SFX_unused", "before": "void SFX_unused(uint16_t hl, uint16_t bc)\n{\n\tExecuteNextSFXCommand(hl, bc);", "after": "void SFX_unused(uint16_t hl, uint16_t bc)\n{\n\tExecuteNextSFXCommand(hl, (uint16_t)(bc + 1u));", "case_ids": ["SFX_unused-0", "SFX_unused-1", "SFX_unused-2", "SFX_unused-3"]}
+# <<< factory-mutation SFX_unused

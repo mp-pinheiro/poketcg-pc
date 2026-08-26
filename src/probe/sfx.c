@@ -64,6 +64,13 @@ static void adapt_SFX_pan(ProbeState *s)
 }
 /* <<< factory SFX_pan */
 
+/* >>> factory SFX_unused */
+static void adapt_SFX_unused(ProbeState *s)
+{
+	SFX_unused(s->hl, (uint16_t)(((uint16_t)s->b << 8u) | s->c));
+}
+/* <<< factory SFX_unused */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -73,5 +80,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "ExecuteNextSFXCommand", adapt_ExecuteNextSFXCommand },
 	{ "SFX_loop", adapt_SFX_loop },
 	{ "SFX_pan", adapt_SFX_pan },
+	{ "SFX_unused", adapt_SFX_unused },
 	{ NULL, NULL },
 };

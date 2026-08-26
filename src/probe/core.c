@@ -2254,6 +2254,14 @@ static void adapt_DisplayCardPage_TrainerPage2(ProbeState *s)
 }
 /* <<< factory DisplayCardPage_TrainerPage2 */
 
+/* >>> factory DisplayCardPage_TrainerPage1 */
+static void adapt_DisplayCardPage_TrainerPage1(ProbeState *s)
+{
+	PrintAttackOrCardDescriptionResult r = DisplayCardPage_TrainerPage1(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->d = r.d; s->e = r.e; s->f = r.f; s->hl = r.hl;
+}
+/* <<< factory DisplayCardPage_TrainerPage1 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2524,5 +2532,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayEnergyOrTrainerCardPage", adapt_DisplayEnergyOrTrainerCardPage },
 	{ "DisplayCardPage_Energy", adapt_DisplayCardPage_Energy },
 	{ "DisplayCardPage_TrainerPage2", adapt_DisplayCardPage_TrainerPage2 },
+	{ "DisplayCardPage_TrainerPage1", adapt_DisplayCardPage_TrainerPage1 },
 	{ NULL, NULL },
 };
