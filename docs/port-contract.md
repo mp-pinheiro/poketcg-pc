@@ -343,6 +343,22 @@ routine with **no recorded hang evidence at all** and are the retest candidates:
 `_PauseMenu_Config`, `PlayCreditsSequence`. Retest those five before building
 anything; the LCD-on feature is worth roughly 400 B, not 3109 B.
 
+Those five were then retested by driving the reference directly (pipe a request
+into `tools/oracle/gbref/build/gbref_runner --rom ...`, which works on unported
+routines because it never resolves a native adapter). All five still hang, so
+none is stale — but three of them, plus `_HandlePeekSelection` from the group
+above, stall at the *same* site: **`Func_235e`** (`process_text.asm:327`), at
+`.asm_237d`/`.asm_238a`. That is **1182 B behind one routine**
+(`_DebugLookAtSprite` 387, `_HandlePeekSelection` 350, `OpenGlossaryScreen` 319,
+`DuelCheckMenu_OppPlayArea` 126), and it is not a frame wait at all.
+`Func_235e` walks a linked list held in parallel WRAM pages — key1 at `$C6xx`,
+key2 at `$C7xx`, next at `$C8xx`, prev at `$C9xx` — following `l <- next[l]`
+until key1 is NULL. It does not terminate, and seeding `hffa9`/`$C600` to zero
+does not change the path (byte-identical instruction counts), because these
+routines build the list themselves through `SetupText` before reaching the walk.
+Diagnose that non-termination before touching VBlank: it is the single largest
+root cause hiding in this cluster.
+
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
 another documented dissolved execution context). Otherwise run the case against
