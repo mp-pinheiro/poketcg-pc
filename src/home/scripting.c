@@ -238,6 +238,7 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 
 #include "generated/wram.h"
 #include "home/map.h"
+#include "home/script.h"
 /* <<< factory statics */
 
 
@@ -1713,3 +1714,23 @@ ScriptCommand_JumpIfNPCLoadedResult ScriptCommand_JumpIfNPCLoaded(uint8_t f, uin
 	return (ScriptCommand_JumpIfNPCLoadedResult){saved_loaded, f, result.b, result.c, d, e, result.hl};
 }
 /* <<< factory ScriptCommand_JumpIfNPCLoaded */
+
+/* >>> factory CallMapScriptPointerIfExists */
+/* scripting.asm:98-101 -- five bytes:
+ *   call GetMapScriptPointer / ret nc / jp hl
+ * Two exits, and they need DIFFERENT completion modes, which is why the cases
+ * mix them:
+ *   no script for this map slot (carry clear) -> `ret nc`, an ordinary return
+ *   script found (carry set)                  -> `jp hl` transfers to the map
+ *      script's own entry, so the case declares pre-ret at that address
+ *
+ * Neither `ret nc` nor `jp hl` touches a register, so both exits observe exactly
+ * what GetMapScriptPointer produced -- and because `hl` IS the jump target,
+ * comparing hl is what verifies the transfer. The target is ordinary script code,
+ * not a `rst $20`, so no bytecode interpreter is involved on this boundary. */
+CallMapScriptResult CallMapScriptPointerIfExists(uint8_t l)
+{
+	MapScriptResult r = GetMapScriptPointer(l);
+	return (CallMapScriptResult){r.a, r.f, r.hl};
+}
+/* <<< factory CallMapScriptPointerIfExists */

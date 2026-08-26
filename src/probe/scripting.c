@@ -1042,7 +1042,19 @@ static void adapt_ScriptCommand_JumpIfNPCLoaded(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfNPCLoaded */
 
+
+/* >>> factory CallMapScriptPointerIfExists */
+static void adapt_CallMapScriptPointerIfExists(ProbeState *s)
+{
+	CallMapScriptResult r = CallMapScriptPointerIfExists((uint8_t)s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory CallMapScriptPointerIfExists */
+
 const ProbeEntry probe_entries_scripting[] = {
+	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
 	{ "IncreaseScriptPointer", adapt_IncreaseScriptPointer },
 	{ "SetScriptPointer", adapt_SetScriptPointer },
 	{ "GetScriptArgsAfterPointer", adapt_GetScriptArgsAfterPointer },
