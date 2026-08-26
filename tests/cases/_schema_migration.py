@@ -158,10 +158,15 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
             legacy_hram = legacy.get("hram", {})
             if not isinstance(legacy_bus, Mapping) or not isinstance(legacy_hram, Mapping):
                 raise TypeError(f"legacy case {function}[{index}] wram/hram seeds must be mappings")
-            # Both runners seed absolute bus addresses through the schema `wram`
-            # channel. Apply explicit HRAM/IO entries last so they patch any
-            # overlapping broad bus image exactly as legacy cases intend.
-            seeds: dict[str, Any] = {"wram": _wram({**legacy_bus, **legacy_hram})}
+            # Schema-2 seeds true HRAM through the absolute bus map. Legacy
+            # `hram` was also used for $FF00-$FF7F hardware IO and $FFFF IE;
+            # those need register-specific hardware models, never plain RAM
+            # writes. Migrate only $FF80-$FFFE and preserve prior IO behavior.
+            true_hram = {
+                address: payload for address, payload in legacy_hram.items()
+                if 0xFF80 <= int(address) < 0xFFFF
+            }
+            seeds: dict[str, Any] = {"wram": _wram({**legacy_bus, **true_hram})}
             if "sram" in legacy:
                 seeds["sram"] = _banked(legacy["sram"])
             if "vram" in legacy:

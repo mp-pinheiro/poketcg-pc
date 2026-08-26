@@ -226,13 +226,13 @@ Required coverage per routine:
    no-op), plus counts of 1 and 256/257. 256/257 is where a port that decrements
    only the low byte breaks.
 
-**Legacy `hram` seeds are absolute bus writes.** Schema-2 has an HRAM
-*observation* region but both execution backends seed HRAM and IO through the
-absolute-address `wram` bus map. `legacy_to_schema` therefore merges
-`hram={0xFFxx: ...}` after `wram`, so explicit HRAM/IO values patch any
-overlapping broad seed. Before 2026-08-26 the converter silently dropped all
-legacy `hram` entries; this produced input-independent false hangs such as
-`AITryToRetreat`, whose `hWhoseTurn=$C2` case actually ran with zero.
+**Legacy `hram` seeds use absolute addresses.** Schema-2 seeds true HRAM
+through the absolute-address `wram` bus map, so `legacy_to_schema` merges
+`hram={$FF80..$FFFE: ...}` after `wram`. Before 2026-08-26 those entries were
+silently dropped; this produced false hangs such as `AITryToRetreat`, whose
+`hWhoseTurn=$C2` case actually ran with zero. Legacy cases also misuse `hram`
+for `$FF00-$FF7F` hardware IO and `$FFFF` IE; those are deliberately not
+migrated as plain RAM because their reads require register-specific masking.
 
 **Reserved WRAM: `$CFF0-$CFF5` and `$DC30-$DCFF`.** Only the PyBoy backend
 synthesizes a call frame in WRAM. Its return sentinel and parking loop remain
