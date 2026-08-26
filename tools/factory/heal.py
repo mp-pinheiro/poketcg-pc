@@ -318,14 +318,22 @@ def _context_is_stale(fn: str) -> bool:
 # failure identity (status, pc) already documented by several blocked.toml
 # stanzas is rediscovering a known root cause; retire it immediately instead of
 # burning its remaining generations (12 attempts were spent re-deriving the
-# AIPlay_* root cause on AITryToRetreat alone). Guards: only hang/divergence
-# statuses cluster (ordinary PORT mismatches also print a pc), the pc must
+# AIPlay_* root cause on AITryToRetreat alone). Guards: only hang statuses
+# cluster (ordinary PORT mismatches also print a pc), the pc must
 # match exactly and be nonzero (pc drifts across siblings of one root cause,
 # so an exact repeat at one nonzero pc across two routines is already strong;
 # pc=0 is a missing-value artifact), at least _CLUSTER_MIN_STANZAS stanzas
 # must already name the identity, and generations 0-1 always get their honest
 # retry.
-_CLUSTER_STATUS = re.compile(r"BUDGET_EXHAUSTED|REFERENCE_DIVERGENCE")
+#
+# REFERENCE_DIVERGENCE is deliberately NOT clustered. compare_one.py only
+# reaches that branch after the reference ran to completion, so its pc is the
+# sentinel rather than a hang site, and the mismatch is always the candidate's
+# own CONTRACT declaring `preserve` for a register the ROM clobbers. Clustering
+# it retired three fixable routines (CreditsSequenceCmd_LoadScene,
+# _PauseMenu_Diary, Func_5a81) at generation 2 instead of letting the corrected
+# feedback land.
+_CLUSTER_STATUS = re.compile(r"BUDGET_EXHAUSTED")
 _CLUSTER_PC = re.compile(r"[\"']?pc[\"']?\s*[:=]\s*(\d+)")
 _CLUSTER_MIN_STANZAS = 2
 _CLUSTER_MIN_GENERATION = 2

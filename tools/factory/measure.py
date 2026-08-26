@@ -34,9 +34,11 @@ STALL_GAP = datetime.timedelta(minutes=30)
 
 # Diagnostic signatures that name a harness/capability gap rather than a
 # translation bug; keep in sync with the recurring `.factory/blocked.toml`
-# stanza classes.
+# stanza classes. REFERENCE_DIVERGENCE is excluded on purpose: it means the
+# case declared `preserve` for a register the real ROM does not preserve, which
+# the candidate can repair from the diagnostic alone.
 STRUCTURAL = re.compile(
-    r"BUDGET_EXHAUSTED|REFERENCE_DIVERGENCE|hBankROM|DoFrameIfLCDEnabled"
+    r"BUDGET_EXHAUSTED|hBankROM|DoFrameIfLCDEnabled"
     r"|\$CF[0-9A-Fa-f]{2}|0xCF[0-9A-Fa-f]{2}|reserved window",
 )
 
