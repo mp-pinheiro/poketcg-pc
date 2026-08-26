@@ -1,0 +1,9 @@
+{
+  "fn": "JynxDoubleslap_MultiplierEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"JynxDoubleslap_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"0a000a0a\", \"52636\": \"02017e02\", \"52803\": \"0a00\", \"52814\": \"0000\", \"65431\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"JynxDoubleslap_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"02017e020a00000001\", \"native\": \"02017e020b00000001\", \"reference_size\": 20, \"native_size\": 20, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52233, 1], [52409, 4], [52636, 4], [52803, 2], [52814, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"JynxDoubleslap_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"0a000a0a\", \"52636\": \"02017e02\", \"52803\": \"0a00\", \"52814\": \"0000\", \"65431\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

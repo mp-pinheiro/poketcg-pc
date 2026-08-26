@@ -270,6 +270,11 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define OPPONENT_TURN 0xC3u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/tiles.h"
+#include "mem.h"
 /* <<< factory statics */
 
 
@@ -1691,3 +1696,25 @@ GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_
 	return (GetCardTypeIconPaletteResult){palette, f, b, c, d, e, hl};
 }
 /* <<< factory GetCardTypeIconPalette */
+
+/* >>> factory DrawCardTypeIcons */
+void DrawCardTypeIcons(void)
+{
+	static const uint8_t icons[] = {0xE4u, 0xE0u, 0xECu, 0xE8u, 0xF0u, 0xF4u, 0xF8u, 0xDCu, 0xFCu, 0x00u};
+	static const uint8_t xs[] = {1u, 3u, 5u, 7u, 9u, 11u, 13u, 15u, 17u};
+	for (uint8_t i = 0u; icons[i] != 0u; i++) {
+		uint8_t tile = icons[i];
+		uint8_t x = xs[i];
+		uint16_t de = (uint16_t)(((uint16_t)x << 8) | 2u);
+		FillRectangle(tile, 2u, 2u, de, 0x0102u);
+		GetCardTypeIconPaletteResult palette = GetCardTypeIconPalette(tile, 0u, 0u, 0u, 0u, 0u, 0u);
+		if (wConsole == 0x02u) {
+			hBankVRAM = 1u;
+			gb_write8(0xFF4Fu, 1u);
+			FillRectangle(palette.a, 2u, 2u, de, 0x0000u);
+			hBankVRAM = 0u;
+			gb_write8(0xFF4Fu, 0u);
+		}
+	}
+}
+/* <<< factory DrawCardTypeIcons */

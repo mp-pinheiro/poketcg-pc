@@ -3834,6 +3834,14 @@ static void adapt_OmastarSpikeCannon_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory OmastarSpikeCannon_MultiplierEffect */
 
+/* >>> factory JynxDoubleslap_MultiplierEffect */
+static void adapt_JynxDoubleslap_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	JynxDoubleslap_MultiplierEffect();
+}
+/* <<< factory JynxDoubleslap_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4300,5 +4308,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DragoniteLv41Slam_MultiplierEffect", adapt_DragoniteLv41Slam_MultiplierEffect },
 	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ "OmastarSpikeCannon_MultiplierEffect", adapt_OmastarSpikeCannon_MultiplierEffect },
+	{ "JynxDoubleslap_MultiplierEffect", adapt_JynxDoubleslap_MultiplierEffect },
 	{ NULL, NULL },
 };

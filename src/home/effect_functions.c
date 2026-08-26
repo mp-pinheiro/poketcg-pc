@@ -7467,3 +7467,12 @@ void OmastarSpikeCannon_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory OmastarSpikeCannon_MultiplierEffect */
+
+/* >>> factory JynxDoubleslap_MultiplierEffect */
+void JynxDoubleslap_MultiplierEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	SetDefiniteDamage(ATimes10(result.a));
+}
+/* <<< factory JynxDoubleslap_MultiplierEffect */

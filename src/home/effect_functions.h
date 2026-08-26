@@ -1578,6 +1578,9 @@ void NidorinoDoubleKick_MultiplierEffect(void);
 /* >>> factory OmastarSpikeCannon_MultiplierEffect */
 void OmastarSpikeCannon_MultiplierEffect(void);
 /* <<< factory OmastarSpikeCannon_MultiplierEffect */
+/* >>> factory JynxDoubleslap_MultiplierEffect */
+void JynxDoubleslap_MultiplierEffect(void);
+/* <<< factory JynxDoubleslap_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

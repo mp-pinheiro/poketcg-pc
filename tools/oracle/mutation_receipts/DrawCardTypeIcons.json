@@ -1,0 +1,9 @@
+{
+  "fn": "DrawCardTypeIcons",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawCardTypeIcons\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"e4e5e0e1ecede8e9f0f1f4f5f8f9dcddfcfd\", \"39009\": \"e6e7e2e3eeefeaebf2f3f6f7fafbdedffeff\"}, \"1\": {\"38977\": \"020201010202010103030303000002020202\", \"39009\": \"020201010202010103030303000002020202\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawCardTypeIcons\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"DrawCardTypeIcons\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {\"0\": {\"38977\": \"e4e5e0e1ecede8e9f0f1f4f5f8f9dcddfcfd\", \"39009\": \"e6e7e2e3eeefeaebf2f3f6f7fafbdedffeff\"}, \"1\": {\"38977\": \"020201010202010103030303000002020202\", \"39009\": \"020201010202010103030303000002020202\"}}, \"wram\": {\"51892\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

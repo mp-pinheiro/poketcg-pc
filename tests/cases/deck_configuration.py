@@ -208,6 +208,15 @@ wCurDeckCards = 0xCF17
 wDuelTempList = 0xC510
 wOpponentDeck = 0xC480
 hTempListPtr_ff99 = 0xFF99
+
+wConsole = 0xCAB4
+V0_ROW2 = 0x9841
+V0_ROW3 = 0x9861
+V1_ROW2 = 0x9841
+V1_ROW3 = 0x9861
+ICON_ROW0 = bytes([0xE4, 0xE5, 0xE0, 0xE1, 0xEC, 0xED, 0xE8, 0xE9, 0xF0, 0xF1, 0xF4, 0xF5, 0xF8, 0xF9, 0xDC, 0xDD, 0xFC, 0xFD])
+ICON_ROW1 = bytes([0xE6, 0xE7, 0xE2, 0xE3, 0xEE, 0xEF, 0xEA, 0xEB, 0xF2, 0xF3, 0xF6, 0xF7, 0xFA, 0xFB, 0xDE, 0xDF, 0xFE, 0xFF])
+ATTR_ROW = bytes([2, 2, 1, 1, 2, 2, 1, 1, 3, 3, 3, 3, 0, 0, 2, 2, 2, 2])
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -751,6 +760,20 @@ CASES["GetCardTypeIconPalette"] = [
 ]
 # <<< factory GetCardTypeIconPalette
 
+# >>> factory DrawCardTypeIcons
+CONTRACT["DrawCardTypeIcons"] = {"compare": (), "preserve": ()}
+CASES["DrawCardTypeIcons"] = [
+    {"wram": {wConsole: b"\x00"},
+     "vram": {0: {V0_ROW2: bytes(18), V0_ROW3: bytes(18)}},
+     "expect_vram": {0: {V0_ROW2: ICON_ROW0, V0_ROW3: ICON_ROW1}},
+     "instruction_budget": 100000, "cycle_budget": 400000},
+    dict(POISON, wram={wConsole: b"\x02"},
+         vram={0: {V0_ROW2: bytes(18), V0_ROW3: bytes(18)}, 1: {V1_ROW2: bytes(18), V1_ROW3: bytes(18)}},
+         expect_vram={0: {V0_ROW2: ICON_ROW0, V0_ROW3: ICON_ROW1}, 1: {V1_ROW2: ATTR_ROW, V1_ROW3: ATTR_ROW}},
+         instruction_budget=100000, cycle_budget=400000),
+]
+# <<< factory DrawCardTypeIcons
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1013,3 +1036,11 @@ MUTATIONS["SortCurDeckCardsByID"] = {"source_symbol": "SortCurDeckCardsByID", "b
 # >>> factory-mutation GetCardTypeIconPalette
 MUTATIONS["GetCardTypeIconPalette"] = {"source_symbol": "GetCardTypeIconPalette", "before": "\tuint8_t palette = 0xffu;", "after": "\tuint8_t palette = 0x00u;", "case_ids": ["GetCardTypeIconPalette-2", "GetCardTypeIconPalette-4"]}
 # <<< factory-mutation GetCardTypeIconPalette
+# >>> factory-mutation DrawCardTypeIcons
+MUTATIONS["DrawCardTypeIcons"] = {
+    "source_symbol": "DrawCardTypeIcons",
+    "before": "\t\tuint8_t tile = icons[i];",
+    "after": "\t\tuint8_t tile = icons[(uint8_t)(i + 1u)];",
+    "case_ids": ["DrawCardTypeIcons-1"],
+}
+# <<< factory-mutation DrawCardTypeIcons
