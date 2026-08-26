@@ -598,11 +598,6 @@ reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `ef
 unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes SWEPT 2026-08-26: this stanza records only a CANDIDATE TOOLING FAILURE (SurgeryError / cases module is not valid Python), i.e. no capability gap was ever diagnosed here, so the 10 exhausted generations say nothing about portability. Unlike UnusedCopyrightScreen -- whose stanza had the same shape and which was deleted after measuring REFERENCE_OK -- this one is NOT proven portable: driving the reference bare with setup=[{fn:SetupText,d:0x30,e:0x7F}] and no seeds gives BUDGET_EXHAUSTED at pc=0x0038 (RST 38, executing $FF filler), so it derails without proper seeds. Seed it first, confirm REFERENCE_OK, then delete this entry."
 
 [[blocked]]
-name = "DisplayCardList"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:3205 (basename `core`). 18 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayCardList-0 native probe did not terminate; the C body loops forever on state the reference resolves"
-unblock = "read the recorded diagnostics under .factory/try/DisplayCardList/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "_ShowPromotionalCardScreen"
 reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1960,\"sp\":65520,\"instructions\":3348341,\"cycles\":40000008,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":122,\"ppu_mode\":0,\"bus\":\"807b08c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
