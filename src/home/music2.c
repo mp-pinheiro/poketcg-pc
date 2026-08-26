@@ -1562,3 +1562,10 @@ void SoundTimerHandler_2(void)
 	Music2_Update();
 }
 /* <<< factory SoundTimerHandler_2 */
+
+/* >>> factory Music2_PlayNextNote_pop */
+void Music2_PlayNextNote_pop(uint16_t *hl, uint8_t ch)
+{
+	Music2_PlayNextNote(hl, ch);
+}
+/* <<< factory Music2_PlayNextNote_pop */

@@ -1051,6 +1051,24 @@ CASES["Music2_PlayNextNote"] = [
 ]
 # <<< factory Music2_PlayNextNote
 
+# >>> factory Music2_PlayNextNote_pop
+CONTRACT["Music2_PlayNextNote_pop"] = {"compare": (), "preserve": ()}
+CASES["Music2_PlayNextNote_pop"] = [
+    {"c": 0, "stack": [0xC100],
+     "wram": {0xC100: b"\xD0\x2A\xFF", 0xDD8D: b"\x01\x01\x01\x01",
+               0xDDCF: b"\x00\x00\x00\x00"},
+     "read": {0xDDCF: 4, 0xDD8D: 4}},
+    {"c": 1, "stack": [0xC200],
+     "wram": {0xC200: b"\xD0\x35\xFF", 0xDD8D: b"\x01\x01\x01\x01",
+               0xDDCF: b"\x00\x00\x00\x00"},
+     "read": {0xDDCF: 4, 0xDD8D: 4}},
+    dict(POISON, b=0, c=0, stack=[0xC300],
+         wram={0xC300: b"\xD0\x2A\xFF", 0xDD8D: b"\x01\x01\x01\x01",
+               0xDDCF: b"\xFF\xFF\xFF\xFF"},
+         read={0xDDCF: 4, 0xDD8D: 4}),
+]
+# <<< factory Music2_PlayNextNote_pop
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1175,3 +1193,6 @@ MUTATIONS["Music2_jp"] = {"source_symbol": "Music2_jp", "before": "void Music2_j
 # >>> factory-mutation Music2_PlayNextNote
 MUTATIONS["Music2_PlayNextNote"] = {"source_symbol": "Music2_PlayNextNote", "before": "\t\t\twMusicSpeed_PTR[ch] = gb_read8((*hl)++);", "after": "\t\t\twMusicSpeed_PTR[ch] = (uint8_t)(gb_read8((*hl)++) + 1u);", "case_ids": ["Music2_PlayNextNote-0", "Music2_PlayNextNote-10"]}
 # <<< factory-mutation Music2_PlayNextNote
+# >>> factory-mutation Music2_PlayNextNote_pop
+MUTATIONS["Music2_PlayNextNote_pop"] = {"source_symbol": "Music2_PlayNextNote_pop", "before": "void Music2_PlayNextNote_pop(uint16_t *hl, uint8_t ch)\n{\n\tMusic2_PlayNextNote(hl, ch);", "after": "void Music2_PlayNextNote_pop(uint16_t *hl, uint8_t ch)\n{\n\tMusic2_PlayNextNote(hl, (uint8_t)(ch + 1u));", "case_ids": ["Music2_PlayNextNote_pop-0", "Music2_PlayNextNote_pop-2"]}
+# <<< factory-mutation Music2_PlayNextNote_pop

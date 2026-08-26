@@ -312,6 +312,15 @@ static void adapt_SoundTimerHandler_2(ProbeState *s)
 }
 /* <<< factory SoundTimerHandler_2 */
 
+/* >>> factory Music2_PlayNextNote_pop */
+/* >>> factory Music2_PlayNextNote_pop */
+static void adapt_Music2_PlayNextNote_pop(ProbeState *s)
+{
+	s->hl = s->stack[0];
+	Music2_PlayNextNote_pop(&s->hl, s->c);
+}
+/* <<< factory Music2_PlayNextNote_pop */
+
 const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_EmptyFunc",         adapt_Music2_EmptyFunc },
 	{ "Music2_f404e",             adapt_Music2_f404e },
@@ -387,5 +396,6 @@ const ProbeEntry probe_entries_music2[] = {
 	{ "Music2_f4015_2", adapt_Music2_f4015_2 },
 	{ "_SetupSound_2", adapt__SetupSound_2 },
 	{ "SoundTimerHandler_2", adapt_SoundTimerHandler_2 },
+	{ "Music2_PlayNextNote_pop", adapt_Music2_PlayNextNote_pop },
 	{ NULL, NULL },
 };
