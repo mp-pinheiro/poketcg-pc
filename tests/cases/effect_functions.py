@@ -5243,6 +5243,14 @@ CASES["PlayTrainerEffectAnimation"] = [
 ]
 # <<< factory PlayTrainerEffectAnimation
 
+# >>> factory StretchKick_BenchDamageEffect
+CONTRACT["StretchKick_BenchDamageEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("c", "hl")}
+CASES["StretchKick_BenchDamageEffect"] = [
+    {"wram": {0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCEB: 1}},
+    dict(POISON, wram={0xFFA0: b"\x00", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCEB: 1}),
+]
+# <<< factory StretchKick_BenchDamageEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7713,3 +7721,6 @@ MUTATIONS["PetalDance_MultiplierEffect"] = {"source_symbol": "PetalDance_Multipl
 # >>> factory-mutation PlayTrainerEffectAnimation
 MUTATIONS["PlayTrainerEffectAnimation"] = {"source_symbol": "PlayTrainerEffectAnimation", "before": "\tPlayAttackAnimation(hWhoseTurn, f, 0u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "after": "\tPlayAttackAnimation(hWhoseTurn, f, 1u, 0u, d, e, (uint16_t)(((uint16_t)hWhoseTurn << 8) | (hl & 0xffu)));", "case_ids": ["PlayTrainerEffectAnimation-0"]}
 # <<< factory-mutation PlayTrainerEffectAnimation
+# >>> factory-mutation StretchKick_BenchDamageEffect
+MUTATIONS["StretchKick_BenchDamageEffect"] = {"source_symbol": "StretchKick_BenchDamageEffect", "before": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "StretchKick_BenchDamageEffectResult StretchKick_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["StretchKick_BenchDamageEffect-0", "StretchKick_BenchDamageEffect-1"]}
+# <<< factory-mutation StretchKick_BenchDamageEffect
