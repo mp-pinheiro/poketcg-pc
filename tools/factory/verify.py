@@ -196,10 +196,13 @@ def load_cases_module(lane: Path, basename: str):
 
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-# Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.  The
-# synthesized PyBoy frame lives in pret's unallocated $D69C-$DD7F WRAM gap.
-RESERVED = range(0xDC30, 0xDD00)
+# Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.
+RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
 
+
+def reserved_overlap(address: int, size: int) -> range | None:
+    return next((region for region in RESERVED
+                 if address < region.stop and address + size > region.start), None)
 
 def case_lint(lane: Path, basename: str, routine_names: list[str],
               module=None) -> dict[str, list[str]]:
@@ -240,10 +243,12 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
                      f"(need >=4 of a=0xAA f=0xF0 b=0xBB c=0xCC d=0xDD e=0xEE hl=0x1234)")
         for i, c in enumerate(fn_cases):
             for key in ("wram", "read", "expect"):
-                for addr in c.get(key, {}) or {}:
-                    if int(addr) in RESERVED:
-                        fail(fn, f"CASES[{fn!r}][{i}].{key} writes reserved "
-                                 f"${int(addr):04X} (oracle call frame $CF00-$CFFF)")
+                for addr, value in (c.get(key, {}) or {}).items():
+                    size = int(value) if key == "read" else len(value)
+                    overlap = reserved_overlap(int(addr), size)
+                    if overlap is not None:
+                        fail(fn, f"CASES[{fn!r}][{i}].{key} overlaps reserved "
+                                 f"${overlap.start:04X}-${overlap.stop - 1:04X}")
             if c.get("oracle") is False:
                 why = c.get("why")
                 expects = ("expect", "expect_regs", "expect_sram", "expect_vram")

@@ -27,21 +27,25 @@ from pathlib import Path
 
 from pyboy import PyBoy
 
-# The frame lives in the unallocated $D69C-$DD7F gap in pret's WRAM map.  It
-# used to occupy $CF30-$CFFF, hiding live deck/card scratch symbols from the
-# oracle (wCurDeckCards $CF17, wOwnedCardsCountList $CF68, wCurDeckName $CFB9,
-# and others).  Measured 2026-08-26 stack low-water over the 31 largest routines
-# was 86 bytes below entry SP; this window provides 143 bytes below STACK_TOP
-# while touching no game symbol.
+# The deep stack lives in the unallocated $D69C-$DD7F gap in pret's WRAM map.
+# It used to occupy $CF30-$CFFF, hiding live deck/card scratch symbols from the
+# oracle. Measured stack low-water over the 31 largest routines was 86 bytes
+# below entry SP; this window provides 143 bytes below STACK_TOP.
 #
-# $DF00-$DFFF is not usable: registered boundary cases deliberately probe DFFF.
-SENTINEL = 0xDCF0  # return address pushed for the routine under test
-SPIN = 0xDCF4  # `jr -2`, parked here once the snapshot is taken
-STACK_TOP = 0xDCC0  # frame grows down from here
+# PyBoy can hook execution only in fixed WRAM, not $D000-$DFFF. Keep the tiny
+# sentinel/spin stub at its original fixed-WRAM address for immediate capture;
+# only the stack moves. The stub overlaps six bytes of wNamingScreenBuffer, but
+# every deck/card blocker symbol through $CFD2 remains case-addressable.
+SENTINEL = 0xCFF0
+SPIN = 0xCFF4
+STACK_TOP = 0xDCC0
 
-# Cases must not use this window: it holds the synthesized frame and its stack.
-# Keep this in lockstep with tools/factory/verify.py.
-RESERVED = range(0xDC30, 0xDD00)
+RESERVED = (range(0xCFF0, 0xCFF6), range(0xDC30, 0xDD00))
+
+
+def _reserved_overlap(address: int, size: int) -> range | None:
+    return next((region for region in RESERVED
+                 if address < region.stop and address + size > region.start), None)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000
@@ -258,14 +262,8 @@ class Oracle:
         # $4000-$7FFF paging above.
         if hbank_rom is not None:
             pb.memory[0xFF80] = hbank_rom & 0xFF
-        # PyBoy cannot hook execution in switchable WRAM. Returning to SENTINEL
-        # therefore jumps to a register-transparent spin loop; the frame loop
-        # detects that parked PC and snapshots it explicitly.
-        pb.memory[SENTINEL] = 0xC3  # jp SPIN
-        pb.memory[SENTINEL + 1] = SPIN & 0xFF
-        pb.memory[SENTINEL + 2] = SPIN >> 8
-        pb.memory[SPIN] = 0x18  # jr -2
-        pb.memory[SPIN + 1] = 0xFE
+        pb.memory[SPIN] = 0x18  # jr
+        pb.memory[SPIN + 1] = 0xFE  # -2
         words = list(stack or ())
         if len(words) > 4:
             raise OracleError("stack declares more than 4 caller-pushed words")
@@ -292,7 +290,7 @@ class Oracle:
 
         self._hit = None
         if stop_pc is None:
-            self._disarm()
+            self._arm(SENTINEL)
         else:
             # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
             # hooked against the routine's own bank.
@@ -315,8 +313,6 @@ class Oracle:
         # that time, so honour it here instead of failing at a fixed 240.
         for _ in range(frames or MAX_FRAMES):
             pb.tick(1, False, False)
-            if stop_pc is None and pb.register_file.PC == SPIN:
-                self._capture(None)
             if self._hit is not None:
                 try:
                     pb.hook_deregister(0, self._VBLANK_HALT)
@@ -365,10 +361,11 @@ class Oracle:
 
         self._reset_ram()
         for at, data in (wram or {}).items():
-            if any(x in RESERVED for x in range(at, at + len(data))):
+            overlap = _reserved_overlap(at, len(data))
+            if overlap is not None:
                 raise OracleError(
                     f"${at:04X}+{len(data)} overlaps the synthesized call frame "
-                    f"(${RESERVED.start:04X}-${RESERVED.stop - 1:04X})")
+                    f"(${overlap.start:04X}-${overlap.stop - 1:04X})")
             for i, byte in enumerate(data):
                 pb.memory[at + i] = byte
 

@@ -226,36 +226,36 @@ Required coverage per routine:
    no-op), plus counts of 1 and 256/257. 256/257 is where a port that decrements
    only the low byte breaks.
 
-**Reserved WRAM: `$DC30-$DCFF`.** Only the PyBoy backend synthesizes a call
-frame in WRAM. Its return sentinel is `$DCF0`, parking loop is `$DCF4`, and
-entry stack grows down from `$DCC0`; cases must not seed or observe that
-window. The GBRT runner uses `sp=$FFFE` and sentinel `$FEA0`, both outside
-WRAM.
+**Reserved WRAM: `$CFF0-$CFF5` and `$DC30-$DCFF`.** Only the PyBoy backend
+synthesizes a call frame in WRAM. Its return sentinel and parking loop remain
+at `$CFF0` / `$CFF4` in fixed WRAM, where PyBoy execution hooks capture the
+exit immediately. Its stack grows down from `$DCC0` inside pret's unallocated
+`$D69C-$DD7F` gap. The GBRT runner uses `sp=$FFFE` and sentinel `$FEA0`, both
+outside WRAM.
 
-The frame was moved from `$CF30-$CFFF` on 2026-08-26 because that range
-overlapped live deck and card symbols. The new window lies inside pret's
-unallocated `$D69C-$DD7F` gap. Stack depth was measured over the 31 largest
-registered routines: the deepest call used 86 bytes below entry SP, reaching
-`$DC68`; the `$DC30` floor leaves another 57 bytes of margin.
+The deep stack was moved from `$CF30-$CFFF` on 2026-08-26 because that range
+overlapped live deck and card symbols. Stack depth was measured over the 31
+largest registered routines: the deepest call used 86 bytes below entry SP,
+reaching `$DC68`; the `$DC30` floor leaves another 57 bytes of margin.
 
-PyBoy cannot register executable hooks in switchable WRAM. Returning to
-`$DCF0` therefore executes `jp $DCF4`; `$DCF4` contains `jr -2`. Both
-instructions preserve registers and flags. The oracle detects the parked PC
-at the next frame boundary and snapshots it explicitly. ROM `pre-ret` hooks
-remain callback-based and bank-aware.
+PyBoy cannot hook execution in switchable WRAM, so moving the sentinel itself
+to `$DCF0` was rejected: parked-PC capture at the next frame boundary let
+serial interrupts mutate state after return. Keeping the six-byte hook stub in
+fixed WRAM preserves immediate snapshot semantics. It overlaps part of
+`wNamingScreenBuffer`, so `$CFF0-$CFF5` remains unavailable; no current
+reserved-window blocker uses that subrange.
 
-Cases may use the entire `$CF00-$CFFF` range again, including
+Cases may use all formerly-blocked symbols through `$CFD2`, including
 `wCurDeckCards` `$CF17`, `wOwnedCardsCountList` / `wUniqueDeckCardList`
 `$CF68`, `wCurDeckName` `$CFB9`, `wMaxNumCardsAllowed` `$CFD1`, and
-`wSameNameCardsLimit` `$CFD2`. Both backends zero the range during reset, so
-its default content is identical. A direct PyBoy probe seeded and read back
-all of those locations unchanged.
+`wSameNameCardsLimit` `$CFD2`. Both backends zero them during reset. A direct
+PyBoy probe seeded and read every one back unchanged.
 
-Relocation changes wide WRAM cases, not production code. `npc_core.py` omits
-`$DC30-$DCFF` from its poison sweep while preserving payload offsets on both
-sides. `Func_0bcb` moved its 4 KiB source buffer from `$D000` to `$C000`;
-simply omitting the frame would have changed bytes the routine intentionally
-reads. The seven measured regressions all pass after those re-cuts:
+Stack relocation changes wide WRAM cases, not production code. `npc_core.py`
+omits `$DC30-$DCFF` from its poison sweep while preserving payload offsets on
+both sides. `Func_0bcb` uses SRAM `$A000-$AFFF` as its timing-neutral 4 KiB
+source; `$C000-$CFFF` includes `wVBlankCounter`, which PyBoy advances during
+the copy. The seven measured regressions all pass after those changes:
 `DetectConsole`, `FlamesOfRage_AIEffect`, `ApplyRandomCountToNPCAnim`,
 `Func_0bcb`, `UpdateNPCAnimation`, `CometPunch_AIEffect`, and
 `UpdateArenaCardIDsAndClearTwoTurnDuelVars`.
@@ -872,9 +872,10 @@ that push and every later one until somebody republishes. The
   the asm tail before concluding a routine is blocked.
 - **A `_b`-suffixed pret symbol is a distinct adjacent field**, not the high
   byte of a pair.
-- **The oracle's synthesized call frame occupies `$DC30-$DCFF`**
-  (`tools/oracle/pyboy_oracle.py`). Cases must not write it; `$CF00-$CFFF`
-  is ordinary game WRAM and is fully case-addressable.
+- **The oracle's synthesized call frame uses `$CFF0-$CFF5` for its hooked
+  sentinel and `$DC30-$DCFF` for its stack** (`tools/oracle/pyboy_oracle.py`).
+  Cases must not write either span; the former deck/card symbols through
+  `$CFD2` are case-addressable.
 
 
 ## Verification is not just the oracle
