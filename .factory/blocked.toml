@@ -781,3 +781,13 @@ unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeC
 name = "DisplayCardList"
 reason = "AUTO-RETIRED: src/engine/duel/core.asm:3205 (basename `core`). 18 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayCardList-0 native probe did not terminate; the C body loops forever on state the reference resolves"
 unblock = "read the recorded diagnostics under .factory/try/DisplayCardList/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "_HandlePeekSelection"
+reason = "AUTO-RETIRED: src/engine/menus/duel.asm:1376 (basename `duel`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _HandlePeekSelection-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":9098,\"sp\":65512,\"instructions\":48846,\"cycles\":400000,\"lcdc\":0,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"010000000000c201\"}"
+unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "_ShowPromotionalCardScreen"
+reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1960,\"sp\":65520,\"instructions\":3348341,\"cycles\":40000008,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":122,\"ppu_mode\":0,\"bus\":\"807b08c2\"}"
+unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
