@@ -44,4 +44,7 @@ typedef struct {
 } PrintPCPackNameResult;
 PrintPCPackNameResult PrintPCPackName(uint8_t a);
 /* <<< factory PrintPCPackName */
+/* >>> factory PrintObtainedPCPacks */
+void PrintObtainedPCPacks(void);
+/* <<< factory PrintObtainedPCPacks */
 #endif

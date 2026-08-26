@@ -200,3 +200,15 @@ PrintPCPackNameResult PrintPCPackName(uint8_t a)
 	return (PrintPCPackNameResult){printed.a};
 }
 /* <<< factory PrintPCPackName */
+
+/* >>> factory PrintObtainedPCPacks */
+void PrintObtainedPCPacks(void)
+{
+	uint8_t *pack_ptr = &wPCPacks;
+	for (uint8_t index = 0; index < NUM_PC_PACKS; index++) {
+		uint8_t pack = *pack_ptr++;
+		if (pack != 0u)
+			(void)PrintPCPackName(index);
+	}
+}
+/* <<< factory PrintObtainedPCPacks */

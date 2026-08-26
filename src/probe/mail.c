@@ -115,6 +115,14 @@ static void adapt_PrintPCPackName(ProbeState *s)
 }
 /* <<< factory PrintPCPackName */
 
+/* >>> factory PrintObtainedPCPacks */
+static void adapt_PrintObtainedPCPacks(ProbeState *s)
+{
+	(void)s;
+	PrintObtainedPCPacks();
+}
+/* <<< factory PrintObtainedPCPacks */
+
 const ProbeEntry probe_entries_mail[] = {
 	{ "TryGivePCPack", adapt_TryGivePCPack },
 	{ "GePCPackSelectionCoordinates", adapt_GePCPackSelectionCoordinates },
@@ -128,5 +136,6 @@ const ProbeEntry probe_entries_mail[] = {
 	{ "PCMailHandleDPadInput", adapt_PCMailHandleDPadInput },
 	{ "GetPCPackNameTextID", adapt_GetPCPackNameTextID },
 	{ "PrintPCPackName", adapt_PrintPCPackName },
+	{ "PrintObtainedPCPacks", adapt_PrintObtainedPCPacks },
 	{ NULL, NULL },
 };

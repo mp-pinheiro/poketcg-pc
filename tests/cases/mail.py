@@ -93,6 +93,12 @@ wPCLastDirectionPressed = 0xD12D
 CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wPCPacks = 0xD11E
+CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
+PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1}
+SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory UpdateMailMenuCursor
@@ -130,6 +136,15 @@ CASES["PrintPCPackName"] = [
     dict(POISON, a=1, wram={0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x9848: 6}}),
 ]
 # <<< factory PrintPCPackName
+
+# >>> factory PrintObtainedPCPacks
+CONTRACT["PrintObtainedPCPacks"] = {"compare": (), "preserve": ()}
+CASES["PrintObtainedPCPacks"] = [
+    {"wram": {wPCPacks: bytes(15)}},
+    {"wram": {wPCPacks: b"\x01" + bytes(14), 0xFF80: b"\x04", 0xCABB: b"\x00"}, "setup": SETUP, "read": {**CACHE_READ, **PLACEMENT_READ}, "vread": {0: {0x9842: 6}}},
+    dict(POISON, wram={wPCPacks: bytes(14) + b"\x01", 0xFF80: b"\x04", 0xCABB: b"\x00"}, setup=SETUP, read={**CACHE_READ, **PLACEMENT_READ}, vread={0: {0x994E: 6}}),
+]
+# <<< factory PrintObtainedPCPacks
 
 from tests.cases._schema_migration import legacy_to_schema
 
@@ -217,3 +232,6 @@ MUTATIONS["GetPCPackNameTextID"] = {"source_symbol": "GetPCPackNameTextID", "bef
 # >>> factory-mutation PrintPCPackName
 MUTATIONS["PrintPCPackName"] = {"source_symbol": "PrintPCPackName", "before": "PrintPCPackNameResult PrintPCPackName(uint8_t a)\n{\n\tuint16_t text_id = GetPCPackNameTextID(a);", "after": "PrintPCPackNameResult PrintPCPackName(uint8_t a)\n{\n\tuint16_t text_id = (uint16_t)(GetPCPackNameTextID(a) + 1u);", "case_ids": ["PrintPCPackName-0", "PrintPCPackName-1", "PrintPCPackName-2"]}
 # <<< factory-mutation PrintPCPackName
+# >>> factory-mutation PrintObtainedPCPacks
+MUTATIONS["PrintObtainedPCPacks"] = {"source_symbol": "PrintObtainedPCPacks", "before": "\t\t\t(void)PrintPCPackName(index);", "after": "\t\t\t(void)PrintPCPackName(0u);", "case_ids": ["PrintObtainedPCPacks-2"]}
+# <<< factory-mutation PrintObtainedPCPacks
