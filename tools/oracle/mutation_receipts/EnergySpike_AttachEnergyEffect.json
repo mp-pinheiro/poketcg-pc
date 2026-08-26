@@ -1,0 +1,9 @@
+{
+  "fn": "EnergySpike_AttachEnergyEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EnergySpike_AttachEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52233\": \"00\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65440\": \"ff\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EnergySpike_AttachEnergyEffect\", \"mismatches\": {\"f\": [192, 128], \"bus\": {\"address\": 49850, \"reference\": \"3b00090000\", \"native\": \"3c00090000\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[49850, 1], [50688, 1], [51906, 1], [52233, 1], [52807, 1], [65424, 1], [65431, 1], [65440, 1], [65449, 1]]}}}\n",
+  "restored": "{\"fn\": \"EnergySpike_AttachEnergyEffect\", \"registers\": {\"a\": 0, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 0, \"f\": 192, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49850\": \"3b\", \"50688\": \"00\", \"51906\": \"09\", \"52233\": \"00\", \"52807\": \"00\", \"65424\": \"00\", \"65431\": \"c2\", \"65440\": \"ff\", \"65449\": \"29\"}}, \"status\": \"PASS\"}\n"
+}

@@ -2597,6 +2597,11 @@ wLCDC = 0xCABB
 wDuelTempList = 0xC510
 hTemp_ffa0 = 0xFFA0
 wEnergyDiscardPlayAreaLocation = 0xCBE0
+
+hTemp_ffa0 = 0xFFA0
+hTempPlayAreaLocation_ffa1 = 0xFFA1
+wDuelType = 0xCC09
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -4513,6 +4518,18 @@ CASES["FireSpin_PlayerSelectEffect"] = [
     dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xFF98: 1, 0xFFB2: 1, 0xCBE0: 1, 0xCBFA: 1}, instruction_budget=20000000, cycle_budget=80000000),
 ]
 # <<< factory FireSpin_PlayerSelectEffect
+
+# >>> factory EnergySpike_AttachEnergyEffect
+CONTRACT["EnergySpike_AttachEnergyEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["EnergySpike_AttachEnergyEffect"] = [
+    {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "keys": 0, "instruction_budget": 3000000, "cycle_budget": 10000000,
+     "wram": {hTemp_ffa0: b"\xFF", wDuelType: b"\x00", hWhoseTurn: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+     "read": {hTemp_ffa0: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, keys=0, instruction_budget=3000000, cycle_budget=10000000,
+         wram={hTemp_ffa0: b"\xFF", wDuelType: b"\x00", hWhoseTurn: b"\xC2", 0xC2BA: b"\x3B", 0xCAC2: b"\x09", 0xFF90: b"\x02", 0xCE47: b"\x00", 0xFFA9: b"\x00", 0xC600: b"\x00"},
+         read={hTemp_ffa0: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory EnergySpike_AttachEnergyEffect
 
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
@@ -6834,3 +6851,6 @@ MUTATIONS["Whirlpool_PlayerSelectEffect"] = {"source_symbol": "Whirlpool_PlayerS
 # >>> factory-mutation FireSpin_PlayerSelectEffect
 MUTATIONS["FireSpin_PlayerSelectEffect"] = {"source_symbol": "FireSpin_PlayerSelectEffect", "before": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 2u;", "after": "void FireSpin_PlayerSelectEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(ChooseAndDiscard2EnergyCardsText);\n\thCurSelectionItem = 0u;\n\t(void)CreateArenaOrBenchEnergyCardList(PLAY_AREA_ARENA);\n\t(void)SortCardsInDuelTempListByID(0u, 0u, 0u);\n\t{ uint8_t saved = hBankROM; BankswitchROM(0x01u); DisplayEnergyDiscardScreen(PLAY_AREA_ARENA); BankswitchROM(saved); }\n\tuint8_t denominator = 3u;", "case_ids": ["FireSpin_PlayerSelectEffect-0"]}
 # <<< factory-mutation FireSpin_PlayerSelectEffect
+# >>> factory-mutation EnergySpike_AttachEnergyEffect
+MUTATIONS["EnergySpike_AttachEnergyEffect"] = {"source_symbol": "EnergySpike_AttachEnergyEffect", "before": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index != 0xFFu) {", "after": "ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t index = hTemp_ffa0;\n\tif (index == 0xFFu) {", "case_ids": ["EnergySpike_AttachEnergyEffect-0", "EnergySpike_AttachEnergyEffect-1"]}
+# <<< factory-mutation EnergySpike_AttachEnergyEffect

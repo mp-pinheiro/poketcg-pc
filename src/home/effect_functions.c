@@ -754,6 +754,13 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "home/menus.h"
 #define ChooseAndDiscard2EnergyCardsText 0x0121u
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define AttachedEnergyToPokemonText 0x005fu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6584,3 +6591,28 @@ void FireSpin_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory FireSpin_PlayerSelectEffect */
+
+/* >>> factory EnergySpike_AttachEnergyEffect */
+ShuffleCardsInDeckResult EnergySpike_AttachEnergyEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t index = hTemp_ffa0;
+	if (index != 0xFFu) {
+		SearchCardInDeckAndAddToHand(index);
+		AddCardToHand(index);
+		PutHandResult placed = PutHandCardInPlayArea(index, hTempPlayAreaLocation_ffa1);
+		IsPlayerTurnResult turn = IsPlayerTurn();
+		if ((turn.f & 0x10u) == 0u) {
+			DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD));
+			(void)LoadCardDataToBuffer1_FromDeckIndex(card.a);
+			uint8_t first = gb_read8(wLoadedCard1Name_ADDR);
+			uint8_t second = gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u));
+			gb_write8(wTxRam2_b_ADDR, first);
+			gb_write8((uint16_t)(wTxRam2_b_ADDR + 1u), second);
+			(void)DisplayCardDetailScreen(index, AttachedEnergyToPokemonText);
+		}
+		(void)placed;
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory EnergySpike_AttachEnergyEffect */
