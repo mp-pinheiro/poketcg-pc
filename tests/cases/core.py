@@ -3914,6 +3914,20 @@ CASES["OppAction_ExecuteTrainerCardEffectCommands"] = [
                0xC3F1: b"\x00", 0xCAC2: b"\x01", 0xCCB2: b"\x00\xC1",
                0xC100: b"\x00"},
          read={0xC307: 1, 0xC3EE: 1, 0xC3ED: 1, 0xC37E: 1, 0xCAC2: 1}),
+    {"b": 0x12, "d": 0x34, "e": 0x56,
+     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xFF9F: b"\x03",
+              0xC203: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x03",
+              0xC2ED: b"\x00", 0xC2F1: b"\x00", 0xCAC2: b"\x01",
+              0xC0E8: b"\x06\x9C\x40\x00", 0xCCB2: b"\xE8\xC0",
+              0xCCED: b"\x00", 0xCE22: b"\x0B"},
+     "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1}},
+    {"b": 0x12, "d": 0x34, "e": 0x56,
+     "wram": {0xFF80: b"\x01", 0xFF97: b"\xC2", 0xFF9F: b"\x03",
+              0xC203: b"\x01", 0xC2EE: b"\x01", 0xC242: b"\x03",
+              0xC2ED: b"\x00", 0xC2F1: b"\x00", 0xCAC2: b"\x01",
+              0xC0E8: b"\x03\xA2\x40\x00", 0xCCB2: b"\xE8\xC0",
+              0xCCED: b"\x00", 0xCE22: b"\x0B"},
+     "read": {0xC203: 1, 0xC2ED: 1, 0xC27E: 1, 0xCCED: 1}},
 ]
 # <<< factory OppAction_ExecuteTrainerCardEffectCommands
 
