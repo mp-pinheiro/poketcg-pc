@@ -518,3 +518,19 @@ SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8
 	return (SendPrinterPacketResult){status, f};
 }
 /* <<< factory SendPrinterPacket */
+
+/* >>> factory ShowPrinterConnectionErrorScene */
+/* link/printer.asm:64-80. Displays the printer-not-connected scene, waits for
+ * input, restores the VBlank callback, and returns carry. */
+ShowPrinterConnectionErrorSceneResult ShowPrinterConnectionErrorScene(
+	uint8_t a, uint8_t f, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint16_t text = hl;
+	LoadTxRam3((uint16_t)a);
+	SetSpriteAnimationsAsVBlankFunction();
+	(void)LoadScene(0x12u, f, 0u, 0u, d, e, text);
+	(void)DrawWideTextBox_WaitForInput(text);
+	RestoreVBlankFunction();
+	return (ShowPrinterConnectionErrorSceneResult){0x90u};
+}
+/* <<< factory ShowPrinterConnectionErrorScene */

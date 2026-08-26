@@ -151,7 +151,17 @@ static void adapt_SendPrinterPacket(ProbeState *s)
 }
 /* <<< factory SendPrinterPacket */
 
+
+/* >>> factory ShowPrinterConnectionErrorScene */
+static void adapt_ShowPrinterConnectionErrorScene(ProbeState *s)
+{
+	ShowPrinterConnectionErrorSceneResult r = ShowPrinterConnectionErrorScene(s->a, s->f, s->d, s->e, s->hl);
+	s->f = r.f;
+}
+/* <<< factory ShowPrinterConnectionErrorScene */
+
 const ProbeEntry probe_entries_printer[] = {
+	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
