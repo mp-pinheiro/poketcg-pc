@@ -3071,3 +3071,19 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_
 	return DealDamageToPlayAreaPokemon(b, de, hl);
 }
 /* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
+
+/* >>> factory Func_82b6 */
+/* duel.asm:487-501. This routine and PrizeCardsCoordinateData_YourOrOppPlayArea
+ * both live in ROM bank 2, so DrawPlayArea_PrizeCards's gb_read8(hl) sees the
+ * real data directly: player at $44B4, opponent at $44C0. No WRAM copy or
+ * permanent transform is needed. */
+void Func_82b6(void)
+{
+	uint8_t duelist = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
+	uint8_t layout = gb_read8(wCheckMenuPlayAreaWhichLayout_ADDR);
+	if (duelist == layout)
+		DrawPlayArea_PrizeCards(0x44B4u);
+	else
+		DrawPlayArea_PrizeCards(0x44C0u);
+}
+/* <<< factory Func_82b6 */

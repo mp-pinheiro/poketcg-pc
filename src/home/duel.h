@@ -693,4 +693,7 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon(uint8_t b, uint16_
 /* >>> factory DealDamageToPlayAreaPokemon_RegularAnim */
 DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_t b, uint16_t de, uint16_t hl);
 /* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
+/* >>> factory Func_82b6 */
+void Func_82b6(void);
+/* <<< factory Func_82b6 */
 #endif

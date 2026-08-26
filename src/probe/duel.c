@@ -961,7 +961,17 @@ static void adapt_DealDamageToPlayAreaPokemon_RegularAnim(ProbeState *s)
 }
 /* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
 
+
+/* >>> factory Func_82b6 */
+static void adapt_Func_82b6(ProbeState *s)
+{
+	(void)s;
+	Func_82b6();
+}
+/* <<< factory Func_82b6 */
+
 const ProbeEntry probe_entries_duel[] = {
+	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
 	{ "GetTurnDuelistVariable", adapt_GetTurnDuelistVariable },
