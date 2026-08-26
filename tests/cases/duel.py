@@ -1517,6 +1517,15 @@ CONTRACT["PrintFailedEffectText"] = {"compare": ("f",), "preserve": ()}
 CASES["PrintFailedEffectText"] = [
     {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0, "wram": {wEffectFailed: b"\x00"}, "expect_regs": {"f": 0x80}},
     {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wEffectFailed: b"\x00"}, "expect_regs": {"f": 0x80}},
+    # Non-degenerate paths. Both were previously unexercised: without SetupText in
+    # `setup` the reference spins in Func_235e's glyph cache (pc~0x2380), which is
+    # what made the real-text path look untestable.
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "wram": {wEffectFailed: b"\x01", 0xFF9D: b"\x00"}, "expect_regs": {"f": 0x10}},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+     "wram": {wEffectFailed: b"\x02", 0xFF9D: b"\x00"}, "expect_regs": {"f": 0x10}},
 ]
 # <<< factory PrintFailedEffectText
 
