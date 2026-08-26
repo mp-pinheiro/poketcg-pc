@@ -167,7 +167,7 @@ iteration starts with `just factory-heal`, which repairs all three from on-disk
 evidence and prints
 
 ```text
-HEAL status reaped=<n> revoked=<n> retired=<n> half_landed=<n> blocked_toml_dirty=<0|1>
+HEAL status landed=<n> reaped=<n> revoked=<n> retired=<n> half_landed=<n> orphans=<n> blocked_toml_dirty=<0|1>
 ```
 
 - **revoked** — a landing recorded in `.factory/landings.jsonl` whose marker
@@ -193,6 +193,13 @@ HEAL status reaped=<n> revoked=<n> retired=<n> half_landed=<n> blocked_toml_dirt
   write by hand rather than one `factory-heal` retires: rebuild with
   `python3 tools/progress/report.py build` first. The `enforce-derived-data.sh`
   PreToolUse guard blocks the one-sided commit.
+- **orphans** — factory compute whose driver is gone, killed with `SIGKILL`.
+  `run_bounded` starts every child in its own session, so a driver that dies
+  abruptly never runs `_stop_process_tree` and leaves PyBoy and probe processes
+  spinning against unlinked temp files nothing will read; one such fleet crash
+  cost 12 CPU-hours across seven processes. `just fleet-halt` sweeps them after
+  terminating the loop sessions, and `python3 tools/factory/heal.py
+  --sweep-only` does the sweep and touches no ledger.
 
 `factory-next` performs the revoke and reap steps inline under `select.lock`, so
 a bare selection is self-healing; only retiring needs the explicit command.

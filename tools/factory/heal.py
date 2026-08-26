@@ -600,7 +600,7 @@ def main(argv: list[str] | None = None) -> int:
     # and it must still happen when the ledger repairs below cannot run.
     orphans = reap_orphan_processes(apply=arguments.apply or arguments.sweep_only)
     if arguments.sweep_only:
-        print(f"HEAL status orphans_killed={len(orphans)}")
+        print(f"HEAL status orphans={len(orphans)}")
         return 0
 
     import try_one
@@ -628,7 +628,7 @@ def main(argv: list[str] | None = None) -> int:
     print(
         f"HEAL status landed={len(landed)} reaped={len(reaped)} "
         f"revoked={len(revoked)} retired={len(retired)} half_landed={len(half)} "
-        f"orphans_killed={len(orphans)} "
+        f"orphans={len(orphans)} "
         f"blocked_toml_dirty={1 if (retired and arguments.apply) else 0}"
     )
     return 0

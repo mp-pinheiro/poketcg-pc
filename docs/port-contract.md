@@ -206,6 +206,17 @@ authoritative source:
   (`tools/oracle/gbref/runner.c`), PyBoy per tick (`tools/oracle/pyboy_oracle.py`),
   and the native probe per completed joypad poll (`src/mem.c`, which has no
   frames). A one-entry timeline never advances, so it is exactly a held scalar.
+  "Waits forever" is now bounded on the PyBoy lane. Frames cap emulated time,
+  not wall clock, and the two came apart badly: a wedged frame (`mb.tick` spins
+  on `while not lcd.frame_done` while `PyBoy._tick` re-enters it per breakpoint)
+  never returns, and `PyBoy.tick` holds `cython.nogil` throughout, so neither
+  the frame loop nor a signal could end it — seven such processes once burned 12
+  CPU-hours after their driver died. `_run` now checks a deadline of
+  `max(120 s, 0.25 s x allotted frames)` between frames and raises `OracleError`
+  (`verify.py` reads that as a `timeout` verdict naming the spinner), and a
+  watchdog thread — which runs because `nogil` released the GIL — hard-exits 30 s
+  later if a single frame never came back. Measured cost is ~10 ms/frame, so the
+  deadline is 25x headroom; `POKETCG_ORACLE_WALL_FLOOR` moves the floor.
 - `stack` — `[int, ...]`, at most four caller-pushed words below the synthesized
   return address, in push order (`stack[-1]` is what the routine's first `pop`
   reads). Declare it only for a routine entered mid-frame — a `jp` target whose

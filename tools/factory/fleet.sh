@@ -50,6 +50,11 @@ case "${1:-}" in
     else
       echo "fleet: STOP dropped; no in-flight loop sessions"
     fi
+    # A terminated session does not take its detached compute with it: every
+    # `run_bounded` child lives in its own session and keeps emulating against a
+    # driver that is already gone.
+    sleep 2
+    python3 tools/factory/heal.py --sweep-only
     ;;
   status)
     count=$(loop_children | wc -l)
