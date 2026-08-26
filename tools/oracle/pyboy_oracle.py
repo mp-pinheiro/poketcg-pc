@@ -237,7 +237,7 @@ class Oracle:
 
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
              stack: Sequence[int] | None = None, cycle: bool = False,
-             hbank_rom: int | None = None) -> Result:
+             hbank_rom: int | None = None, frames: int | None = None) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
@@ -290,7 +290,12 @@ class Oracle:
         # 0 across every setup call and starts cycling afterwards.
         timeline = self._key_timeline if cycle else [0]
         index, current = 0, timeline[0]
-        for _ in range(MAX_FRAMES):
+        # MAX_FRAMES's "a home-bank leaf that has not returned by now never will"
+        # assumption does not hold for routines that run a card's real effect
+        # command: EstimateDamage_VersusDefendingCard needs millions of
+        # instructions. A case that declares a large `cycle_budget` is asking for
+        # that time, so honour it here instead of failing at a fixed 240.
+        for _ in range(frames or MAX_FRAMES):
             pb.tick(1, False, False)
             if self._hit is not None:
                 try:
@@ -307,7 +312,8 @@ class Oracle:
             pb.hook_deregister(0, self._VBLANK_HALT)
         except (ValueError, KeyError):
             pass
-        raise OracleError(f"{symbol} did not return within {MAX_FRAMES} frames")
+        raise OracleError(
+            f"{symbol} did not return within {frames or MAX_FRAMES} frames")
     def call(self, symbol: str, *, a: int = 0, f: int = 0, b: int = 0, c: int = 0,
              d: int = 0, e: int = 0, hl: int = 0,
              wram: dict[int, bytes] | None = None,
@@ -317,7 +323,8 @@ class Oracle:
              keys: int | Sequence[int] = 0,
              stop_pc: int | None = None,
              stack: Sequence[int] | None = None,
-             hbank_rom: int | None = None) -> Result:
+             hbank_rom: int | None = None,
+             frames: int | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -375,4 +382,5 @@ class Oracle:
             stack,
             cycle=True,
             hbank_rom=hbank_rom,
+            frames=frames,
         )
