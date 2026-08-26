@@ -105,8 +105,85 @@ CASES["Script_BeatAaron"] = [
 ]
 # <<< factory Script_BeatAaron
 
+
+# >>> factory Script_d93f
+# deck_machine_room.asm:97-99 is `ld a, $02` / `call Func_d96c`, 5 bytes of
+# code, then `rst $20` at $5944 starts the script bytecode. Completion is
+# declared pre-ret at the rst -- the end of this routine's code. Running past
+# it enters the RST20 bytecode interpreter, which needs ambient scene state a
+# probed per-routine call cannot supply. Seeding wTxRam2 to 0xFF makes the
+# write observable instead of coinciding with a zeroed default; Func_d96c's
+# own cases use the same seed.
+CONTRACT["Script_d93f"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
+CASES["Script_d93f"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
+]
+# <<< factory Script_d93f
+
+# >>> factory Script_d995
+# deck_machine_room.asm:150-152 is `ld a, $03` / `call Func_d96c`, 5 bytes of
+# code, then `rst $20` at $599A starts the script bytecode. Completion is
+# declared pre-ret at the rst -- the end of this routine's code. Running past
+# it enters the RST20 bytecode interpreter, which needs ambient scene state a
+# probed per-routine call cannot supply. Seeding wTxRam2 to 0xFF makes the
+# write observable instead of coinciding with a zeroed default; Func_d96c's
+# own cases use the same seed.
+CONTRACT["Script_d995"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
+CASES["Script_d995"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
+]
+# <<< factory Script_d995
+
+# >>> factory Script_da49
+# deck_machine_room.asm:262-264 is `ld a, $07` / `call Func_d96c`, 5 bytes of
+# code, then `rst $20` at $5A4E starts the script bytecode. Completion is
+# declared pre-ret at the rst -- the end of this routine's code. Running past
+# it enters the RST20 bytecode interpreter, which needs ambient scene state a
+# probed per-routine call cannot supply. Seeding wTxRam2 to 0xFF makes the
+# write observable instead of coinciding with a zeroed default; Func_d96c's
+# own cases use the same seed.
+CONTRACT["Script_da49"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
+CASES["Script_da49"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
+]
+# <<< factory Script_da49
+
+# >>> factory Script_daa3
+# deck_machine_room.asm:318-320 is `ld a, $09` / `call Func_d96c`, 5 bytes of
+# code, then `rst $20` at $5AA8 starts the script bytecode. Completion is
+# declared pre-ret at the rst -- the end of this routine's code. Running past
+# it enters the RST20 bytecode interpreter, which needs ambient scene state a
+# probed per-routine call cannot supply. Seeding wTxRam2 to 0xFF makes the
+# write observable instead of coinciding with a zeroed default; Func_d96c's
+# own cases use the same seed.
+CONTRACT["Script_daa3"] = {"compare": ("a", "b", "c", "hl"), "preserve": ("d", "e")}
+CASES["Script_daa3"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wTxRam2: b"\xff\xff\xff"}, "read": {wTxRam2: 3}},
+    dict(POISON, wram={wTxRam2: b"\xff\xff\xff"}, read={wTxRam2: 3}),
+]
+# <<< factory Script_daa3
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
+# >>> factory-completion deck-machine script entries
+# legacy_to_schema always emits completion "return"; these four routines end at
+# their `rst $20`, so the split is applied after migration.
+for _fn, _pc in (
+        ("Script_d93f", 0x5944),
+        ("Script_d995", 0x599A),
+        ("Script_da49", 0x5A4E),
+        ("Script_daa3", 0x5AA8),
+):
+    for _rec in SCHEMA2_CASES[_fn]:
+        _rec["completion"] = {"mode": "pre-ret", "pc": _pc}
+# <<< factory-completion deck-machine script entries
 # >>> factory-completion Script_BeatAaron
 # $590B is the `rst $20` that begins Script_BeatAaron's script bytecode; the
 # routine's code ends there. legacy_to_schema always emits completion "return",
@@ -141,3 +218,15 @@ MUTATIONS["Script_BeatAaron"] = {
     "case_ids": ["Script_BeatAaron-0", "Script_BeatAaron-1", "Script_BeatAaron-2"],
 }
 # <<< factory-mutation Script_BeatAaron
+# >>> factory-mutation Script_d93f
+MUTATIONS["Script_d93f"] = {"source_symbol": "Script_d93f", "before": "\treturn Func_d96c(0x02u);", "after": "\treturn Func_d96c(0x03u);", "case_ids": ["Script_d93f-0", "Script_d93f-1"]}
+# <<< factory-mutation Script_d93f
+# >>> factory-mutation Script_d995
+MUTATIONS["Script_d995"] = {"source_symbol": "Script_d995", "before": "\treturn Func_d96c(0x03u);", "after": "\treturn Func_d96c(0x02u);", "case_ids": ["Script_d995-0", "Script_d995-1"]}
+# <<< factory-mutation Script_d995
+# >>> factory-mutation Script_da49
+MUTATIONS["Script_da49"] = {"source_symbol": "Script_da49", "before": "\treturn Func_d96c(0x07u);", "after": "\treturn Func_d96c(0x08u);", "case_ids": ["Script_da49-0", "Script_da49-1"]}
+# <<< factory-mutation Script_da49
+# >>> factory-mutation Script_daa3
+MUTATIONS["Script_daa3"] = {"source_symbol": "Script_daa3", "before": "\treturn Func_d96c(0x09u);", "after": "\treturn Func_d96c(0x08u);", "case_ids": ["Script_daa3-0", "Script_daa3-1"]}
+# <<< factory-mutation Script_daa3
