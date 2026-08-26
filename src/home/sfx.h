@@ -46,4 +46,8 @@ void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl);
 /* >>> factory SFX_duty */
 void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl);
 /* <<< factory SFX_duty */
+/* >>> factory SFX_envelope */
+/* >>> factory SFX_envelope */
+void SFX_envelope(uint16_t bc, uint16_t caller_hl);
+/* <<< factory SFX_envelope */
 #endif

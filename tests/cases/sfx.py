@@ -165,6 +165,16 @@ CASES["SFX_duty"] = [
 ]
 # <<< factory SFX_duty
 
+# >>> factory SFX_envelope
+CONTRACT["SFX_envelope"] = {"compare": (), "preserve": ()}
+CASES["SFX_envelope"] = [
+    {"b": 0x00, "c": 0x00, "stack": [0xC100], "wram": {0xC100: b"\x40\xF0"}, "read": {0xDE2B: 1}},
+    {"b": 0x00, "c": 0x01, "stack": [0xC200], "wram": {0xC200: b"\x55\xF0"}, "read": {0xDE2C: 1}},
+    {"b": 0x00, "c": 0x03, "stack": [0xC300], "wram": {0xC300: b"\xA5\xF0"}, "read": {0xDE2E: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "stack": [0xC400], "wram": {0xC400: b"\xF0\xF0"}, "read": {0xDEF7: 1}}
+]
+# <<< factory SFX_envelope
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -222,3 +232,6 @@ MUTATIONS["SFX_wave"] = {"source_symbol": "SFX_wave", "before": "void SFX_wave(u
 # >>> factory-mutation SFX_duty
 MUTATIONS["SFX_duty"] = {"source_symbol": "SFX_duty", "before": "void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tSFX_Duty((uint8_t)bc, a);\n\tExecuteNextSFXCommand(caller_hl, bc);", "after": "void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tSFX_Duty((uint8_t)bc, a);\n\tExecuteNextSFXCommand(caller_hl, (uint16_t)(bc + 1u));", "case_ids": ["SFX_duty-0", "SFX_duty-1", "SFX_duty-2", "SFX_duty-3"]}
 # <<< factory-mutation SFX_duty
+# >>> factory-mutation SFX_envelope
+MUTATIONS["SFX_envelope"] = {"source_symbol": "SFX_envelope", "before": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc);", "after": "void SFX_envelope(uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t store_addr = (uint16_t)(wde2b_ADDR + bc + 1u);", "case_ids": ["SFX_envelope-0", "SFX_envelope-1", "SFX_envelope-2", "SFX_envelope-3"]}
+# <<< factory-mutation SFX_envelope

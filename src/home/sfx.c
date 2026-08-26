@@ -23,6 +23,10 @@
 #include "home/sfx.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/sfx.h"
 /* <<< factory statics */
 
 #define SFX_BANK 0x3Fu
@@ -549,3 +553,17 @@ void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_duty */
+
+/* >>> factory SFX_envelope */
+void SFX_envelope(uint16_t bc, uint16_t caller_hl)
+{
+	uint16_t store_addr = (uint16_t)(wde2b_ADDR + bc);
+	gb_write8(store_addr, 0x80u);
+	uint8_t e = gb_read8(caller_hl);
+	caller_hl = (uint16_t)(caller_hl + 1u);
+	uint8_t c = (uint8_t)bc;
+	uint16_t reg = (uint16_t)(rAUD1ENV + (uint16_t)c * 5u);
+	gb_write8(reg, e);
+	ExecuteNextSFXCommand(caller_hl, bc);
+}
+/* <<< factory SFX_envelope */
