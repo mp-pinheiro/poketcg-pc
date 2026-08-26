@@ -1,0 +1,9 @@
+{
+  "fn": "Script_BeatAaron",
+  "case": "tests/cases/deck_machine_room.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Script_BeatAaron\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"03\", \"54252\": \"ff\", \"54933\": \"03\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Script_BeatAaron\", \"mismatches\": {\"a\": [255, 3], \"bus\": {\"address\": 54252, \"reference\": \"03ff03\", \"native\": \"030303\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[54225, 1], [54252, 1], [54933, 1]]}}}\n",
+  "restored": "{\"fn\": \"Script_BeatAaron\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 3, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54225\": \"03\", \"54252\": \"ff\", \"54933\": \"03\"}}, \"status\": \"PASS\"}\n"
+}
