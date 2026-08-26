@@ -1,9 +1,9 @@
 # Only call-frame bytes are masked by default. All other state is observable.
 [[exclusions]]
 region = "wram"
-start = "0xCF00"
-end = "0xCFFF"
-reason = "GBRT/native call-frame scratch"
+start = "0xDC00"
+end = "0xDCFF"
+reason = "PyBoy oracle synthesized call frame and its stack"
 
 # Timing registers are normalized only when the analyzer proves they are not
 # explicitly accessed by the routine under test.
