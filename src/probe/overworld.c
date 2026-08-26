@@ -582,6 +582,14 @@ static void adapt_Func_c53d(ProbeState *s)
 }
 /* <<< factory Func_c53d */
 
+/* >>> factory PCMenu_CardAlbum */
+static void adapt_PCMenu_CardAlbum(ProbeState *s)
+{
+	(void)s;
+	PCMenu_CardAlbum();
+}
+/* <<< factory PCMenu_CardAlbum */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -653,5 +661,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PCMenu_Glossary", adapt_PCMenu_Glossary },
 	{ "Func_c17a", adapt_Func_c17a },
 	{ "Func_c53d", adapt_Func_c53d },
+	{ "PCMenu_CardAlbum", adapt_PCMenu_CardAlbum },
 	{ NULL, NULL },
 };

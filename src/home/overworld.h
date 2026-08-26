@@ -272,4 +272,7 @@ FuncC17aResult Func_c17a(uint16_t hl);
 /* >>> factory Func_c53d */
 void Func_c53d(void);
 /* <<< factory Func_c53d */
+/* >>> factory PCMenu_CardAlbum */
+void PCMenu_CardAlbum(void);
+/* <<< factory PCMenu_CardAlbum */
 #endif /* POKETCG_HOME_OVERWORLD_H */

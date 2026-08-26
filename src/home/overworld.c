@@ -206,6 +206,11 @@
 
 #include "generated/wram.h"
 #include "home/scripting.h"
+
+#include "generated/hram.h"
+#include "home/card_album.h"
+#include "home/credits_sequence_commands.h"
+#include "home/lcd.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1228,3 +1233,15 @@ void Func_c53d(void)
 		(void)Func_c6dc(0u);
 }
 /* <<< factory Func_c53d */
+
+/* >>> factory PCMenu_CardAlbum */
+void PCMenu_CardAlbum(void)
+{
+	hSCX = 0u;
+	hSCY = 0u;
+	Set_OBJ_8x16();
+	SetDefaultPalettes();
+	CardAlbum();
+	Set_OBJ_8x8();
+}
+/* <<< factory PCMenu_CardAlbum */

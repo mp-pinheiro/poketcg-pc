@@ -865,6 +865,14 @@ CASES["Func_c53d"] = [
 ]
 # <<< factory Func_c53d
 
+# >>> factory PCMenu_CardAlbum
+CONTRACT["PCMenu_CardAlbum"] = {"compare": (), "preserve": ()}
+CASES["PCMenu_CardAlbum"] = [
+    {"keys": [0x00, 0x02], "setup": SETUP, "wram": {0xFF92: b"\x55", 0xFF93: b"\x66", 0xFFB1: b"\xFF", 0xCABB: b"\x00"}, "read": {0xFF92: 1, 0xFF93: 1, 0xCABB: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x02], setup=SETUP, wram={0xFF92: b"\x55", 0xFF93: b"\x66", 0xFFB1: b"\xFF", 0xCABB: b"\x00"}, read={0xFF92: 1, 0xFF93: 1, 0xCABB: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PCMenu_CardAlbum
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1191,3 +1199,6 @@ MUTATIONS["Func_c17a"] = {"source_symbol": "Func_c17a", "before": "FuncC17aResul
 # >>> factory-mutation Func_c53d
 MUTATIONS["Func_c53d"] = {"source_symbol": "Func_c53d", "before": "void Func_c53d(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void Func_c53d(void)\n{\n\twWhichSprite = (uint8_t)(wPlayerSpriteIndex ^ 0x01u);", "case_ids": ["Func_c53d-0", "Func_c53d-1", "Func_c53d-2"]}
 # <<< factory-mutation Func_c53d
+# >>> factory-mutation PCMenu_CardAlbum
+MUTATIONS["PCMenu_CardAlbum"] = {"source_symbol": "PCMenu_CardAlbum", "before": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 0u;", "after": "void PCMenu_CardAlbum(void)\n{\n\thSCX = 1u;", "case_ids": ["PCMenu_CardAlbum-0", "PCMenu_CardAlbum-1"]}
+# <<< factory-mutation PCMenu_CardAlbum
