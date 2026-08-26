@@ -378,6 +378,17 @@ def _reject_batch(
     return [], stale + [record]
 
 
+def _port_subject(routines: list[str]) -> str:
+    """<=50-char Conventional subject naming what landed, not how many."""
+    names = sorted(routines)
+    suffix = f" +{len(names) - 1}" if len(names) > 1 else ""
+    room = 50 - len("feat(port): ") - len(suffix)
+    name = names[0]
+    if len(name) > room:
+        name = name[:room - 1] + "~"
+    return f"feat(port): {name}{suffix}"
+
+
 def _land_batch(
     root: Path,
     artifacts: list[str],
@@ -417,7 +428,7 @@ def _land_batch(
                 rejection = ("marker-regression",
                              f"landing dropped landed markers: {dropped}")
         if rejection is None:
-            _run(["jj", "commit", "-m", f"feat(port): land {len(routines)} routines"], root, 120)
+            _run(["jj", "commit", "-m", _port_subject(routines)], root, 120)
             source_revision = _revision(root, "@-")
         else:
             # Nothing is committed yet, so discarding the graft is the entire
