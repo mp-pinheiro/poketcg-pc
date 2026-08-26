@@ -1,9 +1,12 @@
 """Factory lane provisioning: plain directory copies, no VCS, disposable.
 
 A lane is /tmp/poketcg-factory/lane-<n>/ holding an rsync of the buildable
-tree, a read-only ``poketcg`` symlink into the repo checkout, and a private
-``build/`` configured once with ``-DPORT_FILES=""`` (full tree, barrier
-semantics).  Refreshing a lane never touches its build dir, so steady-state
+tree, read-only ``poketcg`` and ``site`` symlinks into the repo checkout
+(``site`` carries derived data such as ``site/data/inventory.json`` that
+CMake reads at configure time and that churns on every landing), and a
+private ``build/`` configured once with ``-DPORT_FILES=""`` (full tree,
+barrier semantics).
+Refreshing a lane never touches its build dir, so steady-state
 rebuilds stay incremental.
 """
 
@@ -218,6 +221,11 @@ def ensure(index: int, deadline: float | None = None,
         if link.exists():
             raise RuntimeError(f"{link} exists and is not a symlink")
         link.symlink_to(ROOT / "poketcg")
+    site_link = lane / "site"
+    if not site_link.is_symlink():
+        if site_link.exists():
+            raise RuntimeError(f"{site_link} exists and is not a symlink")
+        site_link.symlink_to(ROOT / "site")
     (lane / "build").mkdir(exist_ok=True)
     return lane
 
