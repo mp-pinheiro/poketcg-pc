@@ -239,7 +239,7 @@ CASES["AIDecide_PokemonBreeder"] = [
         "a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
         "instruction_budget": 2000000,
         "cycle_budget": 8000000,
-        "wram": {0xC2EE: b"\x00"},   # wPlayerDuelVariables DUELVARS_NUMBER_OF_CARDS_IN_HAND = 0 (empty hand)
+        "wram": {0xC2EE: b"\x00", 0xC2BC: b"\xFF", 0xC3BC: b"\xFF"},
         "hram": {0xFF97: b"\xC2"},
         "expect_regs": {"a": 0x00, "f": 0x80},
     },
