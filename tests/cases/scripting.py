@@ -1241,7 +1241,44 @@ CASES["ScriptCommand_WalkPlayerToMasonLaboratory"] = [
 # <<< factory ScriptCommand_WalkPlayerToMasonLaboratory
 
 from tests.cases._schema_migration import legacy_to_schema
+
+# >>> factory CallMapScriptPointerIfExists
+# scripting.asm:98-101 is `call GetMapScriptPointer` / `ret nc` / `jp hl`.
+# The two exits need DIFFERENT completion MODES, so the cases mix them:
+#   no script in the slot (carry clear) -> mode "return"
+#   script found (carry set)            -> `jp hl`, so mode "pre-ret" at the
+#                                          map script's own entry address
+# Neither exit touches a register, so both observe GetMapScriptPointer's result.
+# hl IS the jump target, so comparing hl is what verifies the transfer.
+#
+# Entries come from MapScripts (04:562A), indexed wCurMap*16 + l, read off the
+# ROM 2026-08-26. The pointers are ordinary script code, not `rst $20`, so no
+# bytecode interpreter is involved at this boundary.
+_CMSP_CURMAP = 0xD32F
+_CMSP_SEEDS = (
+    (0, 8, {"mode": "pre-ret", "pc": 0x54EC}),  # index 0: found; reds the mutation
+    (0, 0, {"mode": "return"}),                 # slot empty -> ret nc
+    (1, 0, {"mode": "pre-ret", "pc": 0x772F}),
+    (1, 6, {"mode": "pre-ret", "pc": 0x5565}),
+    (0, 8, {"mode": "pre-ret", "pc": 0x54EC}),  # POISON registers
+)
+CONTRACT["CallMapScriptPointerIfExists"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["CallMapScriptPointerIfExists"] = []
+for _i, (_map, _l, _comp) in enumerate(_CMSP_SEEDS):
+    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0}
+    _base["hl"] = _l
+    _base["wram"] = {_CMSP_CURMAP: bytes((_map,))}
+    _base["read"] = {_CMSP_CURMAP: 1}
+    CASES["CallMapScriptPointerIfExists"].append(_base)
+# <<< factory CallMapScriptPointerIfExists
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion CallMapScriptPointerIfExists
+# One completion per case, taken from that case's own _CMSP_SEEDS entry so the
+# seeded map/slot and the declared stop point cannot drift apart.
+for _rec, (_map, _l, _comp) in zip(SCHEMA2_CASES["CallMapScriptPointerIfExists"], _CMSP_SEEDS):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion CallMapScriptPointerIfExists
 
 MUTATIONS = {}
 
@@ -1809,3 +1846,6 @@ MUTATIONS["ScriptCommand_JumpIfNPCLoaded"] = {"source_symbol": "ScriptCommand_Ju
 # >>> factory-mutation ScriptCommand_WalkPlayerToMasonLaboratory
 MUTATIONS["ScriptCommand_WalkPlayerToMasonLaboratory"] = {"source_symbol": "ScriptCommand_WalkPlayerToMasonLaboratory", "before": "\tgb_write8(wOverworldMapSelection_ADDR, OWMAP_MASON_LABORATORY);", "after": "\tgb_write8(wOverworldMapSelection_ADDR, (uint8_t)(OWMAP_MASON_LABORATORY + 1u));", "case_ids": ["ScriptCommand_WalkPlayerToMasonLaboratory-0", "ScriptCommand_WalkPlayerToMasonLaboratory-1"]}
 # <<< factory-mutation ScriptCommand_WalkPlayerToMasonLaboratory
+# >>> factory-mutation CallMapScriptPointerIfExists
+MUTATIONS["CallMapScriptPointerIfExists"] = {"source_symbol": "CallMapScriptPointerIfExists", "before": "\tMapScriptResult r = GetMapScriptPointer(l);", "after": "\tMapScriptResult r = GetMapScriptPointer((uint8_t)(l + 1u));", "case_ids": ["CallMapScriptPointerIfExists-0"]}
+# <<< factory-mutation CallMapScriptPointerIfExists

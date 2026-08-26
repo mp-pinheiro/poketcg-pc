@@ -82,7 +82,55 @@ CASES["MasonLabCloseTextBox"] = [
 # <<< factory MasonLabCloseTextBox
 
 from tests.cases._schema_migration import legacy_to_schema
+
+# >>> factory Script_Tech1
+# mason_laboratory.asm:58-90. Two paths, each ending in its own `rst $20`, so
+# each case declares the completion pc its seed reaches:
+#   total >= 10 -> the `start_script` rst at $5597
+#   total <  10 -> .low_on_energies grants 10 of each of the six energy cards,
+#                  then the rst at $55B5
+# The pc is derived from each case's own seeded counts, so the two cannot drift.
+#
+# Collection slots are CARD_SLOT(sCardCollection, id) = 0xA100 | id, so the six
+# energy cards (EnergyCardList 03:55C4 = 01..06) sit at 0xA101..0xA106 and the
+# count is the low 7 bits. The low path grants +10 per card, which the sread span
+# observes directly (01 -> 0x0B).
+#
+# Index 0 is the EXACT cp boundary, total == 10: widening `>= 10` to `> 10` is
+# invisible at every other total, so only this case reds the mutation.
+_TECH1_COLL = 0xA100
+_TECH1_BUDGET = {"instruction_budget": 60000000, "cycle_budget": 240000000}
+_TECH1_RST = {True: 0x5597, False: 0x55B5}  # keyed by "total >= 10"
+_TECH1_SEEDS = (
+    (2, 2, 2, 2, 1, 1),   # total 10 -- the exact cp boundary, high path
+    (2, 2, 2, 2, 2, 2),   # total 12 -- high path
+    (1, 1, 1, 1, 1, 1),   # total 6 -- low path, grants 60 cards
+    (2, 2, 2, 1, 1, 1),   # total 9 -- one below the boundary, low path
+    (2, 2, 2, 2, 2, 2),   # POISON registers, high path
+)
+
+def _tech1_page(counts):
+    page = bytearray(256)
+    for _i, _n in enumerate(counts, start=1):
+        page[_i] = _n
+    return bytes(page)
+
+CONTRACT["Script_Tech1"] = {"compare": ("a", "b", "c", "hl"), "preserve": ()}
+CASES["Script_Tech1"] = []
+for _i, _counts in enumerate(_TECH1_SEEDS):
+    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
+    _base["sram"] = {0: {_TECH1_COLL: _tech1_page(_counts)}}
+    _base["sread"] = {0: {_TECH1_COLL: 8}}
+    _base.update(_TECH1_BUDGET)
+    CASES["Script_Tech1"].append(_base)
+# <<< factory Script_Tech1
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+# >>> factory-completion Script_Tech1
+# One completion pc per case, derived from that case's own seeded total.
+for _rec, _counts in zip(SCHEMA2_CASES["Script_Tech1"], _TECH1_SEEDS):
+    _rec["completion"] = {"mode": "pre-ret", "pc": _TECH1_RST[sum(_counts) >= 10]}
+# <<< factory-completion Script_Tech1
 
 MUTATIONS = {}
 # >>> factory-mutation Preload_DrMason
@@ -100,3 +148,6 @@ MUTATIONS["MasonLaboratoryAfterDuel"] = {"source_symbol": "MasonLaboratoryAfterD
 # >>> factory-mutation MasonLabCloseTextBox
 MUTATIONS["MasonLabCloseTextBox"] = {"source_symbol": "MasonLabCloseTextBox", "before": "\tApplyOWMapEventChangeIfEventSet(MAP_EVENT_CHALLENGE_MACHINE);", "after": "\tApplyOWMapEventChangeIfEventSet((uint8_t)(MAP_EVENT_CHALLENGE_MACHINE + 1u));", "case_ids": ["MasonLabCloseTextBox-0", "MasonLabCloseTextBox-1"]}
 # <<< factory-mutation MasonLabCloseTextBox
+# >>> factory-mutation Script_Tech1
+MUTATIONS["Script_Tech1"] = {"source_symbol": "Script_Tech1", "before": "\tif (a >= 10u)", "after": "\tif (a > 10u)", "case_ids": ["Script_Tech1-0"]}
+# <<< factory-mutation Script_Tech1
