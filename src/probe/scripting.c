@@ -1204,6 +1204,13 @@ static void adapt_ScriptCommand_QuitScriptFully(ProbeState *s)
 }
 /* <<< factory ScriptCommand_QuitScriptFully */
 
+/* >>> factory PrintInteractableObjectText */
+static void adapt_PrintInteractableObjectText(ProbeState *s)
+{
+	PrintInteractableObjectText();
+}
+/* <<< factory PrintInteractableObjectText */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1322,5 +1329,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_GiftCenter", adapt_ScriptCommand_GiftCenter },
 	{ "ScriptCommand_PrintTextQuitFully", adapt_ScriptCommand_PrintTextQuitFully },
 	{ "ScriptCommand_QuitScriptFully", adapt_ScriptCommand_QuitScriptFully },
+	{ "PrintInteractableObjectText", adapt_PrintInteractableObjectText },
 	{ NULL, NULL },
 };

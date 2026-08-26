@@ -258,6 +258,10 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #define EVENT_GIFT_CENTER_MENU_CHOICE 0x72u
 #define GAME_EVENT_GIFT_CENTER 0x03u
+
+#include "generated/wram.h"
+#include "home/overworld.h"
+#include "home/scripting.h"
 /* <<< factory statics */
 
 
@@ -1911,3 +1915,13 @@ ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t calle
 	return (ScriptCommand_QuitScriptFullyResult){end.a, end.f, end.c, caller_hl};
 }
 /* <<< factory ScriptCommand_QuitScriptFully */
+
+/* >>> factory PrintInteractableObjectText */
+void PrintInteractableObjectText(void)
+{
+	uint16_t text_pointer = (uint16_t)wDefaultObjectText |
+		(uint16_t)((uint16_t)gb_read8((uint16_t)(wDefaultObjectText_ADDR + 1u)) << 8);
+	Func_cc32(text_pointer);
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory PrintInteractableObjectText */

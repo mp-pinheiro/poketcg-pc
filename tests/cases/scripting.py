@@ -164,6 +164,8 @@ _C9B8_SEEDS = (
     (4, {"mode": "pre-ret", "pc": 0x6809}),
     (1, {"mode": "pre-ret", "pc": 0x5549}),
 )
+
+wDefaultObjectText = 0xD0CA
 # <<< factory-cases-statics
 
 
@@ -1462,6 +1464,27 @@ CASES["ScriptCommand_QuitScriptFully"] = [
 ]
 # <<< factory ScriptCommand_QuitScriptFully
 
+# >>> factory PrintInteractableObjectText
+CONTRACT["PrintInteractableObjectText"] = {"compare": (), "preserve": ()}
+CASES["PrintInteractableObjectText"] = [
+    {"wram": {0xD0CA: b"\xDB\x01", 0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "read": {0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    {"wram": {0xD0CA: b"\xDC\x01", 0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "read": {0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, wram={0xD0CA: b"\xDB\x01", 0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", 0xD0C8: b"\x00\x00"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000,
+         read={0xD0C1: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory PrintInteractableObjectText
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2158,3 +2181,6 @@ MUTATIONS["ScriptCommand_PrintTextQuitFully"] = {"source_symbol": "ScriptCommand
 # >>> factory-mutation ScriptCommand_QuitScriptFully
 MUTATIONS["ScriptCommand_QuitScriptFully"] = {"source_symbol": "ScriptCommand_QuitScriptFully", "before": "ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl)\n{\n\t(void)ScriptCommand_CloseAdvancedTextBox();\n\tIncreaseScriptPointerResult end = ScriptCommand_EndScript();", "after": "ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl)\n{\n\t(void)ScriptCommand_CloseAdvancedTextBox();\n\tIncreaseScriptPointerResult end = ScriptCommand_CloseAdvancedTextBox();", "case_ids": ["ScriptCommand_QuitScriptFully-0", "ScriptCommand_QuitScriptFully-1"]}
 # <<< factory-mutation ScriptCommand_QuitScriptFully
+# >>> factory-mutation PrintInteractableObjectText
+MUTATIONS["PrintInteractableObjectText"] = {"source_symbol": "PrintInteractableObjectText", "before": "void PrintInteractableObjectText(void)\n{\n\tuint16_t text_pointer = (uint16_t)wDefaultObjectText |\n\t\t(uint16_t)((uint16_t)gb_read8((uint16_t)(wDefaultObjectText_ADDR + 1u)) << 8);", "after": "void PrintInteractableObjectText(void)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["PrintInteractableObjectText-0", "PrintInteractableObjectText-1"]}
+# <<< factory-mutation PrintInteractableObjectText

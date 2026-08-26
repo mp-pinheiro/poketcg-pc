@@ -580,4 +580,7 @@ typedef struct {
 
 ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t caller_hl);
 /* <<< factory ScriptCommand_QuitScriptFully */
+/* >>> factory PrintInteractableObjectText */
+void PrintInteractableObjectText(void);
+/* <<< factory PrintInteractableObjectText */
 #endif
