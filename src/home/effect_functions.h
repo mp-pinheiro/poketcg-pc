@@ -1548,6 +1548,9 @@ void CometPunch_MultiplierEffect(void);
 /* >>> factory PinMissile_MultiplierEffect */
 void PinMissile_MultiplierEffect(void);
 /* <<< factory PinMissile_MultiplierEffect */
+/* >>> factory PrimeapeFurySwipes_MultiplierEffect */
+void PrimeapeFurySwipes_MultiplierEffect(void);
+/* <<< factory PrimeapeFurySwipes_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
