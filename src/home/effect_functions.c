@@ -869,6 +869,10 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/math.h"
 #include "home/print_text.h"
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/math.h"
+#include "home/print_text.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7319,3 +7323,13 @@ void PsyduckFurySwipes_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(result.a));
 }
 /* <<< factory PsyduckFurySwipes_MultiplierEffect */
+
+/* >>> factory JolteonDoubleKick_MultiplierEffect */
+void JolteonDoubleKick_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 10u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory JolteonDoubleKick_MultiplierEffect */

@@ -1539,6 +1539,9 @@ void NidoranFFurySwipes_MultiplierEffect(void);
 /* >>> factory PsyduckFurySwipes_MultiplierEffect */
 void PsyduckFurySwipes_MultiplierEffect(void);
 /* <<< factory PsyduckFurySwipes_MultiplierEffect */
+/* >>> factory JolteonDoubleKick_MultiplierEffect */
+void JolteonDoubleKick_MultiplierEffect(void);
+/* <<< factory JolteonDoubleKick_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -3731,6 +3731,14 @@ static void adapt_PsyduckFurySwipes_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory PsyduckFurySwipes_MultiplierEffect */
 
+/* >>> factory JolteonDoubleKick_MultiplierEffect */
+static void adapt_JolteonDoubleKick_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	JolteonDoubleKick_MultiplierEffect();
+}
+/* <<< factory JolteonDoubleKick_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4184,5 +4192,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DancingEmbers_MultiplierEffect", adapt_DancingEmbers_MultiplierEffect },
 	{ "NidoranFFurySwipes_MultiplierEffect", adapt_NidoranFFurySwipes_MultiplierEffect },
 	{ "PsyduckFurySwipes_MultiplierEffect", adapt_PsyduckFurySwipes_MultiplierEffect },
+	{ "JolteonDoubleKick_MultiplierEffect", adapt_JolteonDoubleKick_MultiplierEffect },
 	{ NULL, NULL },
 };
