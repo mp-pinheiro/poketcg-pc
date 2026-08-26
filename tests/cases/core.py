@@ -1752,6 +1752,8 @@ wLoadedCard1Stage = 0xCC2D
 wLoadedCard1Weakness = 0xCC57
 
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wLoadedCard1NonPokemonDescription = 0xCC2E
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3406,6 +3408,14 @@ CASES["DisplayEnergyOrTrainerCardPage"] = [
 ]
 # <<< factory DisplayEnergyOrTrainerCardPage
 
+# >>> factory DisplayCardPage_Energy
+CONTRACT["DisplayCardPage_Energy"] = {"compare": ("a", "f", "hl", "d", "e"), "preserve": ()}
+CASES["DisplayCardPage_Energy"] = [
+    {"wram": {0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, "setup": SETUP_TEXT, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCC2E: b"\x00\x00", 0xCC27: b"\x33\x00", 0xCABB: b"\x00"}, setup=SETUP_TEXT, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory DisplayCardPage_Energy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4841,3 +4851,6 @@ MUTATIONS["DisplayEnergyOrTrainerCardPage"] = {
     "case_ids": ["DisplayEnergyOrTrainerCardPage-0", "DisplayEnergyOrTrainerCardPage-1"],
 }
 # <<< factory-mutation DisplayEnergyOrTrainerCardPage
+# >>> factory-mutation DisplayCardPage_Energy
+MUTATIONS["DisplayCardPage_Energy"] = {"source_symbol": "DisplayCardPage_Energy", "before": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, wLoadedCard1NonPokemonDescription_ADDR);", "after": "\tPrintAttackOrCardDescriptionResult result = DisplayEnergyOrTrainerCardPage(HEADER_ENERGY, f, b, c, d, e, 0u);", "case_ids": ["DisplayCardPage_Energy-0", "DisplayCardPage_Energy-1"]}
+# <<< factory-mutation DisplayCardPage_Energy
