@@ -438,6 +438,42 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **Mutual recursion permanently starves the frontier — 62 routines, 3,866 B,
+  measured 2026-08-26. This is the single largest structural blocker left and it
+  needs a human decision on issuance policy.** `report.py` computes
+  `ready = status == "todo" and not unported_blockers`. Two routines that call each
+  other therefore each wait on the other forever: no member of a dependency cycle
+  can ever be `ready`, so `factory-next` can never select one. Of the 62 trapped
+  routines exactly **one** has ever been issued an attempt
+  (`DuelCheckMenu_OppPlayArea`, and only while it was *falsely* ready before the
+  `dw`-table fix above corrected it). A further **50 routines / 3,038 B** are
+  directly gated by a cycle member, so **6,904 B — 15.4% of the remaining 44,879 B
+  — is unreachable**, dwarfing P4's 291 B. The ten components:
+  - **17 routines, 1187 B** (4 files): `OpenInPlayAreaScreen`, `DisplayPlayAreaScreen`, `SelectingBenchPokemonMenu`, `DuelCheckMenu_OppPlayArea`, +13 more
+  - **19 routines, 679 B** (same file): `DuelMenu_Attack`, `DuelMenu_Retreat`, `PrintDuelMenuAndHandleInput`, `PlayEnergyCard`, +15 more
+  - **10 routines, 1058 B** (same file): `HandleDeckBuildScreen`, `PrintConfirmationCardList`, `HandleSendDeckConfigurationMenu`, +7 more
+  - **3 routines, 347 B** (same file): `DeckSelectionSubMenu`, `DeckSelectionSubMenu_SelectOrCancel`, `DeckSelectionMenu`
+  - **3 routines, 162 B** (3 files): `GameLoop`, `Start`, `Reset` — the game's own entry point
+  - **2 routines, 137 B**: `HandlePrinterMenu`, `PrinterMenu_PrintQuality`
+  - **2 routines, 106 B**: `PrintDeckNameFromInput`, `DrawDeckNamingScreenBG`
+  - **2 routines, 87 B**: `HandleDeckConfigurationMenu`, `ModifyDeckConfiguration`
+  - **2 routines, 69 B**: `GetPCPackNameTextID`, `PrintPCPackName`
+  - **2 routines, 34 B**: `ScriptCommand_JumpIfEventTrue`, `ScriptCommand_JumpIfEventFalse`
+  Why it cannot be fixed by relaxing `ready` alone: C mutual recursion needs only
+  forward *declarations* to compile, but it needs both *definitions* to link, so a
+  candidate that ports one member while its peer has no C body cannot produce a
+  green artifact. The cycle must be ported as a unit. The mechanism for that
+  already exists — `packet.build_packets` groups ready routines **by file** into
+  multi-routine chunks — and **8 of the 10 components are single-file (2,517 B),
+  with 5 being mere pairs totalling 433 B**, so the small end is tractable today.
+  Two decisions are required before touching this, because the change alters what
+  every fleet session is issued: (a) readiness must become cycle-aware (ready when
+  every unported blocker lies inside the routine's own component) *and* the
+  component must be kept intact in one packet, which today's `max_routines` /
+  `max_asm_lines` chunking would happily split; (b) the 19- and 17-routine
+  components exceed any sane packet, so they need either a raised ceiling for
+  cycle packets or a documented decision to hand-port them outside the loop.
+  Start with the 433 B of pairs to prove the path before touching the big ones.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
