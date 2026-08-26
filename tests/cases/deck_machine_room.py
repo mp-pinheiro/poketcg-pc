@@ -39,6 +39,14 @@ CASES["Script_da76"] = [
 ]
 # <<< factory Script_da76
 
+# >>> factory Script_da1c
+CONTRACT["Script_da1c"] = {"compare": (), "preserve": ()}
+CASES["Script_da1c"] = [
+    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, "read": {0xCE3F: 3, 0xFF40: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, "read": {0xCE3F: 3, 0xFF40: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xCABB: b"\x00", 0xFF40: b"\x00", 0xCE3F: b"\xFF\xFF\xFF"}, read={0xCE3F: 3, 0xFF40: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)]
+# <<< factory Script_da1c
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
 MUTATIONS={"Func_d96c":{"source_symbol":"Func_d96c","before":"uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);","after":"uint8_t offset=(uint8_t)((uint8_t)(a-1u)<<1);","case_ids":["Func_d96c-1","Func_d96c-2","Func_d96c-3"]}}
@@ -51,3 +59,6 @@ MUTATIONS["DeckMachineRoomAfterDuel"] = {"source_symbol": "DeckMachineRoomAfterD
 # >>> factory-mutation Script_da76
 MUTATIONS["Script_da76"] = {"source_symbol": "Script_da76", "before": "\tuint8_t copy_length = PKMN_CARD_DATA_LENGTH;", "after": "\tuint8_t copy_length = 0x40u;", "case_ids": ["Script_da76-0", "Script_da76-1"]}
 # <<< factory-mutation Script_da76
+# >>> factory-mutation Script_da1c
+MUTATIONS["Script_da1c"] = {"source_symbol": "Script_da1c", "before": "\tFuncD96cResult result = Func_d96c(0x06u);", "after": "\tFuncD96cResult result = Func_d96c(0x07u);", "case_ids": ["Script_da1c-0", "Script_da1c-1", "Script_da1c-2"]}
+# <<< factory-mutation Script_da1c

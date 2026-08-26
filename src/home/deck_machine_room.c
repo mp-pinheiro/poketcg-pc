@@ -11,6 +11,15 @@
 
 #include "generated/wram.h"
 #define PKMN_CARD_DATA_LENGTH 0x41u
+
+#include "home/deck_machine_room.h"
+#include "home/scripting.h"
+#include "home/map_events.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define EVENT_BEAT_NIKKI 0x08u
+#define EVENT_GRASS_DECK_MACHINE_ACTIVE 0x5eu
+#define MAP_EVENT_GRASS_DECK_MACHINE 0x06u
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u
@@ -45,3 +54,18 @@ void Script_da76(void)
 	gb_write8(wLCDC_ADDR, (uint8_t)(0x80u | (uint8_t)(copy_length == PKMN_CARD_DATA_LENGTH ? 0u : 1u)));
 }
 /* <<< factory Script_da76 */
+
+/* >>> factory Script_da1c */
+void Script_da1c(void)
+{
+	FuncD96cResult result = Func_d96c(0x06u);
+	if (GetEventValue(EVENT_GRASS_DECK_MACHINE_ACTIVE) == 0u &&
+	    GetEventValue(EVENT_BEAT_NIKKI) != 0u) {
+		(void)MaxOutEventValue(EVENT_GRASS_DECK_MACHINE_ACTIVE, 0u, 0u, 0u);
+		ApplyOWMapEventChangeIfEventSet(MAP_EVENT_GRASS_DECK_MACHINE);
+	}
+	wLCDC = 0x80u;
+	gb_write8(0xff40u, 0x80u);
+	(void)result;
+}
+/* <<< factory Script_da1c */

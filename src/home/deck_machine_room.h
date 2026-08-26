@@ -13,4 +13,7 @@ DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void);
 /* >>> factory Script_da76 */
 void Script_da76(void);
 /* <<< factory Script_da76 */
+/* >>> factory Script_da1c */
+void Script_da1c(void);
+/* <<< factory Script_da1c */
 #endif
