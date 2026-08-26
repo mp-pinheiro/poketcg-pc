@@ -614,7 +614,6 @@ int main(int argc, char **argv) {
     uint64_t cycles = 0;
     size_t input_index = 0;
     uint64_t frame_cycles = 0;
-    uint64_t real_boundaries = 0, synth_vblanks = 0;
     g_joypad_buttons = input_count ? input_buttons[0] : 0xff;
     g_joypad_dpad = input_count ? input_dpad[0] : 0xff;
     for (size_t i = 0; i < setup_count; i++) {
@@ -679,14 +678,11 @@ int main(int argc, char **argv) {
             fprintf(stdout, "{\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
                     "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 ","
                     "\"lcdc\":%u,\"if\":%u,\"ie\":%u,\"ime\":%u,\"halted\":%u,"
-                    "\"frame_cycles\":%" PRIu64 ",\"real_boundaries\":%" PRIu64 ","
-                    "\"synth_vblanks\":%" PRIu64 ","
                     "\"ppu_lcdc\":%u,\"ppu_ly\":%u,\"ppu_mode\":%u,\"bus\":\"",
                     ctx->pc, ctx->sp, steps, cycles,
                     gb_read8(ctx, 0xff40), gb_read8(ctx, 0xff0f),
                     gb_read8(ctx, 0xffff), (unsigned)(ctx->ime ? 1 : 0),
                     (unsigned)(ctx->halted ? 1 : 0),
-                    frame_cycles, real_boundaries, synth_vblanks,
                     view ? view->lcdc : 0u, view ? view->ly : 0u,
                     view ? (unsigned)view->mode : 0u);
             print_bus_spans(ctx, bus_addresses, bus_sizes, bus_count);
@@ -729,22 +725,9 @@ int main(int argc, char **argv) {
         frame_cycles += delta;
         int boundary = gb_frame_complete(ctx);
         if (boundary) {
-            real_boundaries++;
             gb_reset_frame(ctx);
-        } else if (frame_cycles >= 70224u &&
-                   (!(gb_read8(ctx, 0xff40) & 0x80) || ctx->halted)) {
+        } else if (!(gb_read8(ctx, 0xff40) & 0x80) && frame_cycles >= 70224u) {
             boundary = 1;
-            /* The runtime does not advance the PPU while the CPU is halted, so
-             * gb_frame_complete never fires and a `halt` waiting on VBlank
-             * (WaitForVBlank: halt / nop / cp [hl]) deadlocks with rLY frozen
-             * mid-frame. Raise the request the PPU would have raised at line
-             * 144; service_pending_interrupt then clears `halted` and dispatches
-             * the ISR. Only the halted, LCD-on case is new -- LCD-off keeps its
-             * existing synthetic boundary and running code is untouched. */
-            if (ctx->halted && (gb_read8(ctx, 0xff40) & 0x80))
-                gb_write8(ctx, 0xff0f,
-                          (uint8_t)(gb_read8(ctx, 0xff0f) | 0x01));
-            synth_vblanks++;
         }
         if (boundary) {
             frame_cycles = 0;
