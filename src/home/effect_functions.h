@@ -1566,6 +1566,9 @@ void Bonemerang_MultiplierEffect(void);
 /* >>> factory CloysterSpikeCannon_MultiplierEffect */
 void CloysterSpikeCannon_MultiplierEffect(void);
 /* <<< factory CloysterSpikeCannon_MultiplierEffect */
+/* >>> factory NidorinaDoubleKick_MultiplierEffect */
+void NidorinaDoubleKick_MultiplierEffect(void);
+/* <<< factory NidorinaDoubleKick_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

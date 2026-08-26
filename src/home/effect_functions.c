@@ -7421,3 +7421,14 @@ void CloysterSpikeCannon_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory CloysterSpikeCannon_MultiplierEffect */
+
+/* >>> factory NidorinaDoubleKick_MultiplierEffect */
+void NidorinaDoubleKick_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = (uint8_t)(result.a + result.a);
+	damage = (uint8_t)(damage + result.a);
+	SetDefiniteDamage(ATimes10(damage));
+}
+/* <<< factory NidorinaDoubleKick_MultiplierEffect */

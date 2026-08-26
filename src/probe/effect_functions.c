@@ -3803,6 +3803,14 @@ static void adapt_CloysterSpikeCannon_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory CloysterSpikeCannon_MultiplierEffect */
 
+/* >>> factory NidorinaDoubleKick_MultiplierEffect */
+static void adapt_NidorinaDoubleKick_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	NidorinaDoubleKick_MultiplierEffect();
+}
+/* <<< factory NidorinaDoubleKick_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4265,5 +4273,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "FuryAttack_MultiplierEffect", adapt_FuryAttack_MultiplierEffect },
 	{ "Bonemerang_MultiplierEffect", adapt_Bonemerang_MultiplierEffect },
 	{ "CloysterSpikeCannon_MultiplierEffect", adapt_CloysterSpikeCannon_MultiplierEffect },
+	{ "NidorinaDoubleKick_MultiplierEffect", adapt_NidorinaDoubleKick_MultiplierEffect },
 	{ NULL, NULL },
 };
