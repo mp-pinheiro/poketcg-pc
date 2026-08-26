@@ -2350,6 +2350,15 @@ static void adapt_PlayStatusConditionQueueAnimations(ProbeState *s)
 }
 /* <<< factory PlayStatusConditionQueueAnimations */
 
+/* >>> factory PlayAttackAnimation_DealAttackDamageSimple */
+static void adapt_PlayAttackAnimation_DealAttackDamageSimple(ProbeState *s)
+{
+	PlayAttackAnimation_DealAttackDamageSimpleResult result = PlayAttackAnimation_DealAttackDamageSimple(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory PlayAttackAnimation_DealAttackDamageSimple */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2631,5 +2640,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_AttemptRetreat", adapt_OppAction_AttemptRetreat },
 	{ "PlayAttackAnimation", adapt_PlayAttackAnimation },
 	{ "PlayStatusConditionQueueAnimations", adapt_PlayStatusConditionQueueAnimations },
+	{ "PlayAttackAnimation_DealAttackDamageSimple", adapt_PlayAttackAnimation_DealAttackDamageSimple },
 	{ NULL, NULL },
 };

@@ -1298,6 +1298,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define ATK_ANIM_PARALYSIS 0x7du
 #define ATK_ANIM_POISON 0x7bu
 #define ATK_ANIM_SLEEP 0x7eu
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/duel_core.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6991,3 +6997,29 @@ void PlayStatusConditionQueueAnimations(void)
 	}
 }
 /* <<< factory PlayStatusConditionQueueAnimations */
+
+/* >>> factory PlayAttackAnimation_DealAttackDamageSimple */
+PlayAttackAnimation_DealAttackDamageSimpleResult PlayAttackAnimation_DealAttackDamageSimple(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	PlayAttackAnimation(a, f, b, c, d, e, hl);
+	WaitAttackAnimation();
+	uint16_t damage = (uint16_t)(((uint16_t)d << 8) | e);
+	SubtractHPResult hp = SubtractHP(hl, damage);
+	(void)hp;
+	uint8_t screen = wDuelDisplayedScreen;
+	if (screen == 1u) {
+		DrawDuelHUDs();
+	}
+	uint8_t result_f = 0x40u;
+	if ((screen & 0x0fu) == 0u) {
+		result_f |= 0x20u;
+	}
+	if (screen == 0u) {
+		result_f |= 0x10u;
+	}
+	if (screen == 1u) {
+		result_f = 0x80u;
+	}
+	return (PlayAttackAnimation_DealAttackDamageSimpleResult){screen, result_f};
+}
+/* <<< factory PlayAttackAnimation_DealAttackDamageSimple */

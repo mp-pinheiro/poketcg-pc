@@ -3632,6 +3632,15 @@ CASES["PlayStatusConditionQueueAnimations"] = [
 ]
 # <<< factory PlayStatusConditionQueueAnimations
 
+# >>> factory PlayAttackAnimation_DealAttackDamageSimple
+CONTRACT["PlayAttackAnimation_DealAttackDamageSimple"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PlayAttackAnimation_DealAttackDamageSimple"] = [
+    {"a": 0x10, "f": 0x00, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x02, "hl": 0xC100, "wram": {0xC100: b"\x0A", 0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC2", 0xCCC4: b"\x15", 0xFF97: b"\xC2"}, "read": {0xC100: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}},
+    {"a": 0x44, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x00, "e": 0x0A, "hl": 0xC200, "wram": {0xC200: b"\x05", 0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC3", 0xCCC4: b"\xA0", 0xFF97: b"\xC3"}, "read": {0xC200: 1, 0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCAC2: b"\x00", 0xCCB8: b"\x00", 0xCC05: b"\xC2", 0xCCC4: b"\xFE", 0xFF97: b"\xC2"}, "read": {0xCE7F: 2, 0xCE81: 1, 0xCE82: 1, 0xCE83: 1, 0xCE84: 1}}
+]
+# <<< factory PlayAttackAnimation_DealAttackDamageSimple
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5124,3 +5133,6 @@ MUTATIONS["PlayAttackAnimation"] = {"source_symbol": "PlayAttackAnimation", "bef
 # >>> factory-mutation PlayStatusConditionQueueAnimations
 MUTATIONS["PlayStatusConditionQueueAnimations"] = {"source_symbol": "PlayStatusConditionQueueAnimations", "before": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 0u);", "after": "\tgb_write8((uint16_t)(wStatusConditionQueue_ADDR + index), 1u);", "case_ids": ["PlayStatusConditionQueueAnimations-1"]}
 # <<< factory-mutation PlayStatusConditionQueueAnimations
+# >>> factory-mutation PlayAttackAnimation_DealAttackDamageSimple
+MUTATIONS["PlayAttackAnimation_DealAttackDamageSimple"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamageSimple", "before": "\tuint16_t damage = (uint16_t)(((uint16_t)d << 8) | e);", "after": "\tuint16_t damage = 0u;", "case_ids": ["PlayAttackAnimation_DealAttackDamageSimple-0", "PlayAttackAnimation_DealAttackDamageSimple-1", "PlayAttackAnimation_DealAttackDamageSimple-2"]}
+# <<< factory-mutation PlayAttackAnimation_DealAttackDamageSimple

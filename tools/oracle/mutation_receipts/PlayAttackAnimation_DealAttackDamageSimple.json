@@ -1,0 +1,9 @@
+{
+  "fn": "PlayAttackAnimation_DealAttackDamageSimple",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayAttackAnimation_DealAttackDamageSimple\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 2, \"f\": 112, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"08\", \"51906\": \"00\", \"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52863\": \"02000182c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayAttackAnimation_DealAttackDamageSimple\", \"mismatches\": {\"bus\": {\"address\": 49408, \"reference\": \"0800c20015\", \"native\": \"0a00c20015\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[49408, 1], [51906, 1], [52229, 1], [52408, 1], [52420, 1], [52863, 6], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayAttackAnimation_DealAttackDamageSimple\", \"registers\": {\"a\": 0, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 2, \"f\": 112, \"hl\": 49408, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"08\", \"51906\": \"00\", \"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52863\": \"02000182c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
