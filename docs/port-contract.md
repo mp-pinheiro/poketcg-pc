@@ -474,6 +474,28 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   components exceed any sane packet, so they need either a raised ceiling for
   cycle packets or a documented decision to hand-port them outside the loop.
   Start with the 433 B of pairs to prove the path before touching the big ones.
+  **Important refinement: some of these are not real function-level recursion.**
+  The inventory collapses a jump to `Target.sub_label` onto its parent `Target`, so
+  two routines that merely jump into each other's *sub-labels* manufacture a cycle
+  that does not exist between the function entries. `ScriptCommand_JumpIfEventTrue`
+  / `ScriptCommand_JumpIfEventFalse` (34 B) is confirmed by direct reading to be
+  exactly this: `True` does `jr z, ScriptCommand_JumpIfEventFalse.fail` and `False`
+  does `jr z, ScriptCommand_JumpIfEventTrue.pass_try_jump`. Neither ever calls the
+  other's entry point. Such a pair is **portable today with no factory change** —
+  factor the two shared sub-label blocks (`.pass_try_jump`, `.fail`) into `static`
+  helpers in the basename's `.c` and have both entries call them, which is what the
+  asm structure already means. All six callees
+  (`GetEventValue`, `SetScriptControlBytePass`, `GetScriptArgs2AfterPointer`,
+  `SetScriptPointer`, `IncreaseScriptPointerBy4`, `SetScriptControlByteFail`)
+  already exist in `src/home/scripting.h`.
+  How much of the 3,866 B is this artifact is **not yet measured**: a quick
+  classifier over intra-component edges is unreliable because `jr z, Target.sub`
+  makes a naive "first identifier after the mnemonic" regex capture the condition
+  token `z` rather than the target. Anyone continuing here should classify edges
+  properly (skip the `z`/`nz`/`c`/`nc` operand) before assuming a component needs
+  co-issuance at all — the real-recursion set may be much smaller than 10
+  components, and `Reset`/`Start`/`GameLoop` (3 bare edges) is the clearest case of
+  a genuine one.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
