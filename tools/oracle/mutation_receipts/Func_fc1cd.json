@@ -1,0 +1,9 @@
+{
+  "fn": "Func_fc1cd",
+  "case": "tests/cases/sfx.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_fc1cd\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56878\": \"00\", \"56882\": \"04\", \"56893\": \"10\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_fc1cd\", \"mismatches\": {\"bus\": {\"address\": 56893, \"reference\": \"000410\", \"native\": \"000411\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[56878, 1], [56882, 1], [56893, 1]]}}}\n",
+  "restored": "{\"fn\": \"Func_fc1cd\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 63, \"sram\": {}, \"vram\": {}, \"wram\": {\"56878\": \"00\", \"56882\": \"04\", \"56893\": \"10\"}}, \"status\": \"PASS\"}\n"
+}
