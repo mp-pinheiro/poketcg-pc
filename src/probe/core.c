@@ -2447,6 +2447,15 @@ static void adapt_CanArenaCardUseNonResidualAttack(ProbeState *s)
 }
 /* <<< factory CanArenaCardUseNonResidualAttack */
 
+/* >>> factory DisplayPlaceInitialPokemonCardsScreen */
+static void adapt_DisplayPlaceInitialPokemonCardsScreen(ProbeState *s)
+{
+	DisplayPlaceInitialPokemonCardsScreenResult r = DisplayPlaceInitialPokemonCardsScreen(s->a, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DisplayPlaceInitialPokemonCardsScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
@@ -2739,5 +2748,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenTurnHolderDiscardPileScreen", adapt_OpenTurnHolderDiscardPileScreen },
 	{ "OpenNonTurnHolderDiscardPileScreen", adapt_OpenNonTurnHolderDiscardPileScreen },
 	{ "OpenNonTurnHolderHandScreen_Simple", adapt_OpenNonTurnHolderHandScreen_Simple },
+	{ "DisplayPlaceInitialPokemonCardsScreen", adapt_DisplayPlaceInitialPokemonCardsScreen },
 	{ NULL, NULL },
 };

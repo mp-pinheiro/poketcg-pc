@@ -3786,6 +3786,27 @@ CASES["OpenNonTurnHolderDiscardPileScreen"] = [
 ]
 # <<< factory OpenNonTurnHolderDiscardPileScreen
 
+# >>> factory DisplayPlaceInitialPokemonCardsScreen
+CONTRACT["DisplayPlaceInitialPokemonCardsScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DisplayPlaceInitialPokemonCardsScreen"] = [
+    {"a": 0x01, "hl": 0x0071,
+     "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
+     "keys": DISPLAY_CARD_LIST_KEYS, "setup": DISPLAY_CARD_LIST_SETUP,
+     "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+     "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x02, "hl": 0x0071,
+     "wram": {**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
+     "keys": DISPLAY_CARD_LIST_KEYS, "setup": DISPLAY_CARD_LIST_SETUP,
+     "read": {0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+     "rom_bank": 1, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=0x0071,
+         wram={**DISPLAY_CARD_LIST_SEED, hWhoseTurn: b"\xC2", 0xC2EE: b"\x00"},
+         keys=DISPLAY_CARD_LIST_KEYS, setup=DISPLAY_CARD_LIST_SETUP,
+         read={0xCBFD: 1, wCardListInfoBoxText: 2, 0xCBDE: 1, hCurMenuItem: 1},
+         rom_bank=1, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayPlaceInitialPokemonCardsScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5326,3 +5347,6 @@ MUTATIONS["OpenNonTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenNonTurn
 # >>> factory-mutation CanArenaCardUseNonResidualAttack
 MUTATIONS["CanArenaCardUseNonResidualAttack"] = {"source_symbol": "CanArenaCardUseNonResidualAttack", "before": "\thTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;", "after": "\thTempPlayAreaLocation_ff9d = 0x01u;", "case_ids": ["CanArenaCardUseNonResidualAttack-0", "CanArenaCardUseNonResidualAttack-1"]}
 # <<< factory-mutation CanArenaCardUseNonResidualAttack
+# >>> factory-mutation DisplayPlaceInitialPokemonCardsScreen
+MUTATIONS["DisplayPlaceInitialPokemonCardsScreen"] = {"source_symbol": "DisplayPlaceInitialPokemonCardsScreen", "before": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(hl);", "after": "DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)\n{\n\twPlacingInitialBenchPokemon = a;\n\t(void)CreateHandCardList(a);\n\t(void)InitAndDrawCardListScreenLayout();\n\tSetCardListInfoBoxText(PlayCheck1Text);", "case_ids": ["DisplayPlaceInitialPokemonCardsScreen-0", "DisplayPlaceInitialPokemonCardsScreen-1", "DisplayPlaceInitialPokemonCardsScreen-2"]}
+# <<< factory-mutation DisplayPlaceInitialPokemonCardsScreen

@@ -1332,6 +1332,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 
 #include "generated/wram.h"
 #define NoCardsInHandText 0x00a4u
+
+#define YouCannotSelectThisCardText 0x0071u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7380,3 +7382,34 @@ CanArenaCardUseNonResidualAttackResult CanArenaCardUseNonResidualAttack(uint8_t 
 	return (CanArenaCardUseNonResidualAttackResult){a, f, b, c, d, e, hl};
 }
 /* <<< factory CanArenaCardUseNonResidualAttack */
+
+/* >>> factory DisplayPlaceInitialPokemonCardsScreen */
+DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl)
+{
+	wPlacingInitialBenchPokemon = a;
+	(void)CreateHandCardList(a);
+	(void)InitAndDrawCardListScreenLayout();
+	SetCardListInfoBoxText(hl);
+	wCardListItemSelectionMenuType = PLAY_CHECK;
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			uint8_t placing = wPlacingInitialBenchPokemon;
+			if (placing == 0u)
+				continue;
+			return (DisplayPlaceInitialPokemonCardsScreenResult){placing, 0x10u};
+		}
+		uint8_t card_index = hTempCardIndex_ff98;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card_index);
+		IsLoadedCard1BasicPokemonResult basic = IsLoadedCard1BasicPokemon();
+		if ((basic.f & 0x10u) != 0u) {
+			(void)DrawWideTextBox_WaitForInput(YouCannotSelectThisCardText);
+			(void)DrawCardListScreenLayout();
+			continue;
+		}
+		if (wSortCardListByID != 0u)
+			(void)SortHandCardsByID();
+		return (DisplayPlaceInitialPokemonCardsScreenResult){basic.a, basic.f};
+	}
+}
+/* <<< factory DisplayPlaceInitialPokemonCardsScreen */

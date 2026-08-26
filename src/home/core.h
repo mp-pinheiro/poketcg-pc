@@ -1096,4 +1096,8 @@ OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CanArenaCardUseNonResidualAttackResult;
 CanArenaCardUseNonResidualAttackResult CanArenaCardUseNonResidualAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory CanArenaCardUseNonResidualAttack */
+/* >>> factory DisplayPlaceInitialPokemonCardsScreen */
+typedef struct { uint8_t a; uint8_t f; } DisplayPlaceInitialPokemonCardsScreenResult;
+DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl);
+/* <<< factory DisplayPlaceInitialPokemonCardsScreen */
 #endif
