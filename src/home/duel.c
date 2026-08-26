@@ -3073,17 +3073,26 @@ DealDamageToPlayAreaPokemonResult DealDamageToPlayAreaPokemon_RegularAnim(uint8_
 /* <<< factory DealDamageToPlayAreaPokemon_RegularAnim */
 
 /* >>> factory Func_82b6 */
-/* duel.asm:487-501. This routine and PrizeCardsCoordinateData_YourOrOppPlayArea
- * both live in ROM bank 2, so DrawPlayArea_PrizeCards's gb_read8(hl) sees the
- * real data directly: player at $44B4, opponent at $44C0. No WRAM copy or
- * permanent transform is needed. */
+/* duel.asm:487-501. PrizeCardsCoordinateData_YourOrOppPlayArea is bank-2 ROM
+ * data at $44B4/$44C0. DrawPlayArea_PrizeCards intentionally reads coordinates
+ * through gb_read8, whose C probe path cannot represent a caller-owned banked
+ * ROM pointer. Copy the selected 12-byte table to WRAM exactly like the landed
+ * _DrawPlayersPrizeAndBenchCards caller of the same callee. */
 void Func_82b6(void)
 {
+	static const uint8_t player[] = {2u, 1u, 2u, 3u, 4u, 1u, 4u, 3u, 6u, 1u, 6u, 3u};
+	static const uint8_t opponent[] = {9u, 17u, 9u, 15u, 7u, 17u, 7u, 15u, 5u, 17u, 5u, 15u};
+	const uint8_t *coords;
+	const uint16_t scratch = 0xC100u;
 	uint8_t duelist = gb_read8(wCheckMenuPlayAreaWhichDuelist_ADDR);
 	uint8_t layout = gb_read8(wCheckMenuPlayAreaWhichLayout_ADDR);
+
 	if (duelist == layout)
-		DrawPlayArea_PrizeCards(0x44B4u);
+		coords = player;
 	else
-		DrawPlayArea_PrizeCards(0x44C0u);
+		coords = opponent;
+	for (uint8_t i = 0u; i < sizeof(player); i++)
+		gb_write8((uint16_t)(scratch + i), coords[i]);
+	DrawPlayArea_PrizeCards(scratch);
 }
 /* <<< factory Func_82b6 */

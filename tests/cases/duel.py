@@ -1693,6 +1693,20 @@ CASES["Func_1bb4"] = [
 ]
 # <<< factory Func_1bb4
 
+
+# >>> factory Func_82b6
+CONTRACT["Func_82b6"] = {"compare": (), "preserve": ()}
+CASES["Func_82b6"] = [
+    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+     "vread": {0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2}}},
+    {"wram": {0xCE50: b"\xC4", 0xCE51: b"\xC3", 0xC4EC: b"\x01", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+     "vread": {0: {0x99E9: 2, 0x9A09: 2, 0x9A29: 2, 0x9A49: 2}}},
+    dict(POISON,
+         wram={0xCE50: b"\xC4", 0xCE51: b"\xC4", 0xC4EC: b"\x02", 0xCC08: b"\x02", 0xCAB4: b"\x00"},
+         vread={0: {0x9822: 2, 0x9842: 2, 0x9862: 2, 0x9882: 2}}),
+]
+# <<< factory Func_82b6
+
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
 MUTATIONS = {
@@ -1942,3 +1956,6 @@ MUTATIONS["Func_1bb4"] = {
     "case_ids": ["Func_1bb4-0"],
 }
 # <<< factory-mutation Func_1bb4
+# >>> factory-mutation Func_82b6
+MUTATIONS["Func_82b6"] = {'source_symbol': 'Func_82b6', 'before': '\tif (duelist == layout)', 'after': '\tif (duelist != layout)', 'case_ids': ['Func_82b6-0', 'Func_82b6-1', 'Func_82b6-2']}
+# <<< factory-mutation Func_82b6
