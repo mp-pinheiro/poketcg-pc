@@ -17,4 +17,7 @@ PrintStartMenuDescriptionTextResult PrintStartMenuDescriptionText(uint8_t a, uin
 typedef struct { uint8_t a; uint8_t f; } AskToContinueFromDiaryWithDuelDataResult;
 AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void);
 /* <<< factory AskToContinueFromDiaryWithDuelData */
+/* >>> factory HandleStartMenu */
+void HandleStartMenu(void);
+/* <<< factory HandleStartMenu */
 #endif /* POKETCG_HOME_START_H */

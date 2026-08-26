@@ -34,6 +34,25 @@
 #include "generated/wram.h"
 #define ContinueFromDiaryText 0x0377u
 #define DataExistsWhenPowerWasTurnedOFFDuringDuelText 0x0376u
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "mem.h"
+#include "home/copy.h"
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/menus.h"
+#include "home/labels.h"
+#include "home/sound.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#define DOUBLE_SPACED 0x00u
+#define MUSIC_PC_MAIN_MENU 0x06u
+#define NULL 0x00u
+#define SYM_CURSOR_R 0x0Fu
+#define SYM_SPACE 0x00u
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -152,3 +171,63 @@ AskToContinueFromDiaryWithDuelDataResult AskToContinueFromDiaryWithDuelData(void
 	return (AskToContinueFromDiaryWithDuelDataResult){menu.a, menu.a == 0u ? 0x80u : 0u};
 }
 /* <<< factory AskToContinueFromDiaryWithDuelData */
+
+/* >>> factory HandleStartMenu */
+void HandleStartMenu(void)
+{
+	PlaySong(MUSIC_PC_MAIN_MENU);
+	DisableLCD();
+	(void)InitMenuScreen();
+	(void)SetupText(0x30u, 0x8Fu);
+	EnableAndClearSpriteAnimations();
+	wLineSeparation = DOUBLE_SPACED;
+	DrawPlayerPortrait();
+	static const uint8_t params[17] = {
+		0x00u, 0x00u, 0x0Eu, 0x04u, 0x02u, 0x02u,
+		0x6Cu, 0x03u, 0xFFu, 0x01u, 0x02u, 0x02u, 0x01u,
+		SYM_CURSOR_R, SYM_SPACE, NULL, 0x00u
+	};
+	for (uint8_t i = 0u; i < 17u; ++i)
+		gb_write8((uint16_t)(wStartMenuParams_ADDR + i), params[i]);
+	uint8_t item_count = 1u;
+	uint8_t box_height = 4u;
+	uint8_t text_id = 0x6Cu;
+	if (wHasSaveData != 0u) {
+		item_count = (uint8_t)(item_count + 2u);
+		box_height = (uint8_t)(box_height + 4u);
+		text_id = (uint8_t)(text_id + 1u);
+		if (wHasDuelSaveData != 0u) {
+			item_count = (uint8_t)(item_count + 1u);
+			box_height = (uint8_t)(box_height + 2u);
+			text_id = (uint8_t)(text_id + 1u);
+		}
+	}
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 12u), item_count);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 3u), box_height);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 6u), text_id);
+	gb_write8((uint16_t)(wStartMenuParams_ADDR + 7u), 0x03u);
+	wTitleScreenIgnoreInputCounter = 0xFFu;
+	uint8_t selected = wLastSelectedStartMenuItem;
+	if (selected >= 4u && wHasSaveData != 0u)
+		selected = 1u;
+	InitAndPrintMenu(wStartMenuParams_ADDR, selected);
+	(void)FlashWhiteScreen();
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		(void)UpdateRNGSources();
+		HandleMenuInputResult input = HandleMenuInput();
+		PrintStartMenuDescriptionTextResult description = PrintStartMenuDescriptionText(input.a, input.f, 0u, 0u, 0u, input.e, 0u);
+		(void)description;
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		if (hCurMenuItem != input.e)
+			continue;
+		wLastSelectedStartMenuItem = hCurMenuItem;
+		uint8_t choice = input.e;
+		if (wHasSaveData == 0u)
+			choice = (uint8_t)(choice + 2u);
+		wStartMenuChoice = choice;
+		return;
+	}
+}
+/* <<< factory HandleStartMenu */

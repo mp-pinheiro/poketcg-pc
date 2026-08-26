@@ -97,6 +97,14 @@ CASES["AskToContinueFromDiaryWithDuelData"] = [
 ]
 # <<< factory AskToContinueFromDiaryWithDuelData
 
+# >>> factory HandleStartMenu
+CONTRACT["HandleStartMenu"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["HandleStartMenu"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", 0xD624: b"\x00", 0xD625: b"\x00", 0xD627: b"\x00"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000, "read": {0xCD08: 1, 0xD624: 1, 0xD625: 1, 0xD626: 1, 0xD627: 1, 0xD628: 1, 0xD636: 17, 0xFFB1: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF", 0xD624: b"\x00", 0xD625: b"\x00", 0xD627: b"\x00"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000, read={0xCD08: 1, 0xD624: 1, 0xD625: 1, 0xD626: 1, 0xD627: 1, 0xD628: 1, 0xD636: 17, 0xFFB1: 1}),
+]
+# <<< factory HandleStartMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -108,3 +116,6 @@ MUTATIONS["PrintStartMenuDescriptionText"] = {"source_symbol": "PrintStartMenuDe
 # >>> factory-mutation AskToContinueFromDiaryWithDuelData
 MUTATIONS["AskToContinueFromDiaryWithDuelData"] = {"source_symbol": "AskToContinueFromDiaryWithDuelData", "before": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){a, 0x80u};", "after": "\t\treturn (AskToContinueFromDiaryWithDuelDataResult){0xFFu, 0x80u};", "case_ids": ["AskToContinueFromDiaryWithDuelData-0", "AskToContinueFromDiaryWithDuelData-1"]}
 # <<< factory-mutation AskToContinueFromDiaryWithDuelData
+# >>> factory-mutation HandleStartMenu
+MUTATIONS["HandleStartMenu"] = {"source_symbol": "HandleStartMenu", "before": "\t\twLastSelectedStartMenuItem = hCurMenuItem;", "after": "\t\twLastSelectedStartMenuItem = (uint8_t)(hCurMenuItem ^ 1u);", "case_ids": ["HandleStartMenu-0", "HandleStartMenu-1"]}
+# <<< factory-mutation HandleStartMenu
