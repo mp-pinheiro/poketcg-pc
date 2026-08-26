@@ -75,7 +75,9 @@ static void adapt_Music1_UpdateChannel4(ProbeState *s)
 /* ── PlayNextNote ────────────────────────────────────────────────────── */
 
 static void adapt_Music1_PlayNextNote(ProbeState *s)
-{ Music1_PlayNextNote(&s->hl, s->a); }
+/* music1.asm:578 `ld a,[hli]` overwrites a immediately; the channel arrives in
+ * c, which every handler indexes with `add hl, bc`. */
+{ Music1_PlayNextNote(&s->hl, s->c); }
 
 /* ── Command handlers ────────────────────────────────────────────────── */
 
