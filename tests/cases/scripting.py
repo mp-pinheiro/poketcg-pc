@@ -166,6 +166,8 @@ _C9B8_SEEDS = (
 )
 
 wDefaultObjectText = 0xD0CA
+
+wCurMap = 0xD32F
 # <<< factory-cases-statics
 
 
@@ -1485,6 +1487,14 @@ CASES["PrintInteractableObjectText"] = [
 ]
 # <<< factory PrintInteractableObjectText
 
+# >>> factory Func_c943
+CONTRACT["Func_c943"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c943"] = [
+    {"wram": {wCurMap: b"\x00"}, "read": {wCurMap: 1}},
+    dict(POISON, wram={wCurMap: b"\x00"}, read={wCurMap: 1}),
+]
+# <<< factory Func_c943
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2184,3 +2194,6 @@ MUTATIONS["ScriptCommand_QuitScriptFully"] = {"source_symbol": "ScriptCommand_Qu
 # >>> factory-mutation PrintInteractableObjectText
 MUTATIONS["PrintInteractableObjectText"] = {"source_symbol": "PrintInteractableObjectText", "before": "void PrintInteractableObjectText(void)\n{\n\tuint16_t text_pointer = (uint16_t)wDefaultObjectText |\n\t\t(uint16_t)((uint16_t)gb_read8((uint16_t)(wDefaultObjectText_ADDR + 1u)) << 8);", "after": "void PrintInteractableObjectText(void)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["PrintInteractableObjectText-0", "PrintInteractableObjectText-1"]}
 # <<< factory-mutation PrintInteractableObjectText
+# >>> factory-mutation Func_c943
+MUTATIONS["Func_c943"] = {"source_symbol": "Func_c943", "before": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};", "after": "\treturn (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, (uint16_t)(saved_hl + 1u)};", "case_ids": ["Func_c943-0", "Func_c943-1"]}
+# <<< factory-mutation Func_c943

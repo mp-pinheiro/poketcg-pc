@@ -2465,6 +2465,15 @@ static void adapt_PrintDeckAndHandIconsAndNumberOfCards(ProbeState *s)
 }
 /* <<< factory PrintDeckAndHandIconsAndNumberOfCards */
 
+/* >>> factory CheckDamageToMrMime */
+static void adapt_CheckDamageToMrMime(ProbeState *s)
+{
+	CheckDamageToMrMimeResult r = CheckDamageToMrMime(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckDamageToMrMime */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2759,5 +2768,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenNonTurnHolderDiscardPileScreen", adapt_OpenNonTurnHolderDiscardPileScreen },
 	{ "OpenNonTurnHolderHandScreen_Simple", adapt_OpenNonTurnHolderHandScreen_Simple },
 	{ "DisplayPlaceInitialPokemonCardsScreen", adapt_DisplayPlaceInitialPokemonCardsScreen },
+	{ "CheckDamageToMrMime", adapt_CheckDamageToMrMime },
 	{ NULL, NULL },
 };

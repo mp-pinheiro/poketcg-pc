@@ -1334,6 +1334,8 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #define NoCardsInHandText 0x00a4u
 
 #define YouCannotSelectThisCardText 0x0071u
+
+#define MR_MIME 0x9Bu
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7463,3 +7465,21 @@ void PrintDeckAndHandIconsAndNumberOfCards(void)
 	PrintOpponentNumberOfHandAndDeckCards();
 }
 /* <<< factory PrintDeckAndHandIconsAndNumberOfCards */
+
+/* >>> factory CheckDamageToMrMime */
+CheckDamageToMrMimeResult CheckDamageToMrMime(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t original_a = a;
+	DuelistVarResult arena = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	SwapTurn();
+	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	SwapTurn();
+	if (card_id != MR_MIME)
+		return (CheckDamageToMrMimeResult){card_id, 0x10u};
+	CheckIfCanDamageDefendingPokemonResult check =
+		CheckIfCanDamageDefendingPokemon(original_a, 0xC0u, original_a, f, d, e, arena.hl);
+	if ((check.f & 0x10u) != 0u)
+		return (CheckDamageToMrMimeResult){check.a, 0x10u};
+	return (CheckDamageToMrMimeResult){check.a, check.f};
+}
+/* <<< factory CheckDamageToMrMime */

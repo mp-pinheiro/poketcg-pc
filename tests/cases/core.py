@@ -3807,6 +3807,14 @@ CASES["DisplayPlaceInitialPokemonCardsScreen"] = [
 ]
 # <<< factory DisplayPlaceInitialPokemonCardsScreen
 
+# >>> factory CheckDamageToMrMime
+CONTRACT["CheckDamageToMrMime"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckDamageToMrMime"] = [
+    {"a": 0x42, "f": 0x00, "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC480: b"\x9A"}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC3BB: b"\x00", 0xC480: b"\x00"}},
+]
+# <<< factory CheckDamageToMrMime
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5365,3 +5373,6 @@ MUTATIONS["DisplayPlaceInitialPokemonCardsScreen"] = {"source_symbol": "DisplayP
 # >>> factory-mutation PrintDeckAndHandIconsAndNumberOfCards
 MUTATIONS["PrintDeckAndHandIconsAndNumberOfCards"] = {'source_symbol': 'PrintDeckAndHandIconsAndNumberOfCards', 'before': '\t\t0x08u, 0x02u, 0xF4u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,', 'after': '\t\t0x08u, 0x02u, 0xF3u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,', 'case_ids': ['PrintDeckAndHandIconsAndNumberOfCards-0', 'PrintDeckAndHandIconsAndNumberOfCards-1', 'PrintDeckAndHandIconsAndNumberOfCards-2']}
 # <<< factory-mutation PrintDeckAndHandIconsAndNumberOfCards
+# >>> factory-mutation CheckDamageToMrMime
+MUTATIONS["CheckDamageToMrMime"] = {"source_symbol": "CheckDamageToMrMime", "before": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x10u};", "after": "\tif (card_id != MR_MIME)\n\t\treturn (CheckDamageToMrMimeResult){card_id, 0x00u};", "case_ids": ["CheckDamageToMrMime-0", "CheckDamageToMrMime-1"]}
+# <<< factory-mutation CheckDamageToMrMime

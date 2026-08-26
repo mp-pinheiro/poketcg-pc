@@ -1211,6 +1211,20 @@ static void adapt_PrintInteractableObjectText(ProbeState *s)
 }
 /* <<< factory PrintInteractableObjectText */
 
+/* >>> factory Func_c943 */
+static void adapt_Func_c943(ProbeState *s)
+{
+	Func_c943Result result = Func_c943(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory Func_c943 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1330,5 +1344,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_PrintTextQuitFully", adapt_ScriptCommand_PrintTextQuitFully },
 	{ "ScriptCommand_QuitScriptFully", adapt_ScriptCommand_QuitScriptFully },
 	{ "PrintInteractableObjectText", adapt_PrintInteractableObjectText },
+	{ "Func_c943", adapt_Func_c943 },
 	{ NULL, NULL },
 };

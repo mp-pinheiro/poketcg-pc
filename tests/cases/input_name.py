@@ -249,6 +249,20 @@ CASES["DrawDeckNamingScreenBG"] = [
 wNamingScreenCursorX = 0xD006
 wNamingScreenCursorY = 0xCEA4
 wNamingScreenKeyboardHeight = 0xCEA9
+
+# InitializeInputName clears NAMING_SCREEN_BUFFER_LENGTH bytes at $CFE7, so it
+# writes straight through the PyBoy oracle's sentinel/spin stub at $CFF0-$CFF5
+# and then copies maxlen+1 bytes over the same span. Two consequences shape
+# every case below. Completion is declared pre-ret at the routine's own `ret`
+# so the capture hook lives in bank 6 ROM instead of the wiped WRAM stub, and
+# every case copies the whole 24-byte buffer (maxlen $17) with the stub's
+# `jr -2` put back at buffer offsets 13 and 14 ($CFF4/$CFF5), so the capture
+# callback's PC park lands on a real spin instead of a NOP slide through live
+# WRAM. Both bytes sit past the TX_END terminator, so the text walk in
+# GetTextLengthInTiles never reaches them and the measured length is unaffected.
+def _naming_source(text):
+    body = bytes(text) + b"\x00" * (24 - len(text))
+    return body[:13] + b"\x18\xfe" + body[15:]
 # <<< factory-cases-statics
 
 # >>> factory DeckNamingScreen_ProcessInput
@@ -258,6 +272,41 @@ CASES["DeckNamingScreen_ProcessInput"] = [
     dict(POISON, wram={wNamingScreenKeyboardHeight: b"\x05", wNamingScreenCursorX: b"\x05", wNamingScreenCursorY: b"\x04"}, expect_regs={"a": 0x01, "f": 0x10}),
 ]
 # <<< factory DeckNamingScreen_ProcessInput
+
+# >>> factory InitializeInputName
+CONTRACT["InitializeInputName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+# The buffer probe stops at $CFEF: $CFF0-$CFF5 is the oracle's own stub and may
+# never be observed, and the copy is long enough that the bytes past it are the
+# stub restoration rather than name data anyway. Every character used here is
+# >= $60, which ClassifyTextCharacterPair classifies from the character itself
+# instead of hJapaneseSyllabary, so the walk does not depend on an HRAM byte no
+# legacy case can seed.
+CASES["InitializeInputName"] = [
+    # empty initial name: buffer[0] is TX_END, so b = c = 0 and the callee's
+    # `xor a` / `sub b` tail exits with f = $C0 (Z and N, no borrow).
+    {"a": 0x17, "b": 0x01, "c": 0x02, "d": 0xC1, "e": 0x00, "hl": 0x4567,
+     "wram": {0xC100: _naming_source(b"\x00")},
+     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+    # three full-width characters: one tile and one byte each, b = c = 3.
+    {"a": 0x17, "b": 0x03, "c": 0x04, "d": 0xC2, "e": 0x00, "hl": 0xBEEF,
+     "wram": {0xC200: _naming_source(b"\x61\x62\x63\x00")},
+     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+    # TX_SYMBOL ($05) swallows the byte after it: b = 2 tiles over c = 3 bytes.
+    {"a": 0x17, "b": 0x05, "c": 0x06, "d": 0xC3, "e": 0x00, "hl": 0x7F80,
+     "wram": {0xC300: _naming_source(b"\x05\x61\x62\x00")},
+     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+    # TX_HALFWIDTH ($06) first takes the half-tile branch, which halves the
+    # count with `inc b` / `srl b`: 3 half-tiles over 4 bytes returns b = 2.
+    {"a": 0x17, "b": 0x07, "c": 0x08, "d": 0xC4, "e": 0x00, "hl": 0x0102,
+     "wram": {0xC400: _naming_source(b"\x06\x61\x62\x63\x00")},
+     "read": {0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}},
+    # poisoned entry: f, b, c, d, e and hl all carry their poison values, so de
+    # is the source $DDEE and bc the position bytes the routine stores.
+    dict(POISON, a=0x17,
+         wram={0xDDEE: _naming_source(b"\x61\x00")},
+         read={0xCFE7: 9, 0xCFFF: 1, 0xD000: 5, 0xD007: 2}),
+]
+# <<< factory InitializeInputName
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -362,3 +411,23 @@ MUTATIONS["DrawDeckNamingScreenBG"] = {"source_symbol": "DrawDeckNamingScreenBG"
 # >>> factory-mutation DeckNamingScreen_ProcessInput
 MUTATIONS["DeckNamingScreen_ProcessInput"] = {"source_symbol": "DeckNamingScreen_ProcessInput", "before": "DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)\n{\n\tuint8_t cursor_x = wNamingScreenCursorX;\n\tuint8_t cursor_y = wNamingScreenCursorY;\n\tuint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)(((uint16_t)cursor_x << 8) | cursor_y));\n\tuint8_t char_type = gb_read8((uint16_t)(char_info + 2u));\n\tif (char_type == 1u) {", "after": "DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)\n{\n\tuint8_t cursor_x = wNamingScreenCursorX;\n\tuint8_t cursor_y = wNamingScreenCursorY;\n\tuint16_t char_info = DeckNamingScreen_GetCharInfoFromPos((uint16_t)(((uint16_t)cursor_x << 8) | cursor_y));\n\tuint8_t char_type = gb_read8((uint16_t)(char_info + 2u));\n\tif (char_type != 1u) {", "case_ids": ["DeckNamingScreen_ProcessInput-0", "DeckNamingScreen_ProcessInput-1"]}
 # <<< factory-mutation DeckNamingScreen_ProcessInput
+# >>> factory-mutation InitializeInputName
+MUTATIONS["InitializeInputName"] = {
+    "source_symbol": "InitializeInputName",
+    "before": "\tuint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;\n\tfor (uint16_t i = 0; i < copy_count; i++)",
+    "after": "\tuint16_t copy_count = 0x40u;\n\tfor (uint16_t i = 0; i < copy_count; i++)",
+    "case_ids": ["InitializeInputName-0", "InitializeInputName-1", "InitializeInputName-2", "InitializeInputName-3", "InitializeInputName-4"],
+}
+# <<< factory-mutation InitializeInputName
+# >>> factory-completion InitializeInputName
+# The routine clears $CFE7-$CFFE, which covers the PyBoy oracle's sentinel stub
+# at $CFF0-$CFF5, so by the time it returns the injected breakpoint opcode at
+# the sentinel is a zero byte and the run never completes -- the reference dies
+# on the 240-frame allowance rather than on anything the port did. $687F is
+# this routine's own `ret`: entry $6846 plus its 58 bytes lands on
+# FinalizeInputName at $6880, so the last byte is $687F. Completing there puts
+# the hook in bank 6 ROM instead of the wiped WRAM stub, and every store the
+# contract observes (including wNamingScreenBufferLength) has already run.
+for _rec in SCHEMA2_CASES["InitializeInputName"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x687F}
+# <<< factory-completion InitializeInputName

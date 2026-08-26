@@ -583,4 +583,17 @@ ScriptCommand_QuitScriptFullyResult ScriptCommand_QuitScriptFully(uint16_t calle
 /* >>> factory PrintInteractableObjectText */
 void PrintInteractableObjectText(void);
 /* <<< factory PrintInteractableObjectText */
+/* >>> factory Func_c943 */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} Func_c943Result;
+
+Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory Func_c943 */
 #endif

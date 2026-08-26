@@ -4004,6 +4004,16 @@ static void adapt_HandleEnergyCardsInDiscardPileSelection(ProbeState *s)
 }
 /* <<< factory HandleEnergyCardsInDiscardPileSelection */
 
+/* >>> factory EnergyConversion_PlayerSelectEffect */
+static void adapt_EnergyConversion_PlayerSelectEffect(ProbeState *s)
+{
+	HandleEnergyCardsInDiscardPileSelectionResult result = EnergyConversion_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory EnergyConversion_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4490,5 +4500,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyRetrieval_PlayerDiscardPileSelection", adapt_EnergyRetrieval_PlayerDiscardPileSelection },
 	{ "EnergyRetrieval_PlayerHandSelection", adapt_EnergyRetrieval_PlayerHandSelection },
 	{ "HandleEnergyCardsInDiscardPileSelection", adapt_HandleEnergyCardsInDiscardPileSelection },
+	{ "EnergyConversion_PlayerSelectEffect", adapt_EnergyConversion_PlayerSelectEffect },
 	{ NULL, NULL },
 };

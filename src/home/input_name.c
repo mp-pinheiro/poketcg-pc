@@ -92,6 +92,12 @@
 #include "generated/wram.h"
 #include "home/input_name.h"
 #define TX_END 0x00u
+
+#include "home/input_name.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define NAMING_SCREEN_BUFFER_LENGTH 0x18u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -683,3 +689,42 @@ DeckNamingScreen_ProcessInputResult DeckNamingScreen_ProcessInput(void)
 	return (DeckNamingScreen_ProcessInputResult){0u, 0x80u};
 }
 /* <<< factory DeckNamingScreen_ProcessInput */
+
+/* >>> factory InitializeInputName */
+/* input_name.asm:155-183. Records the naming screen's parameters: a is the
+ * name's maximum length, b and c the two wNamingScreenNamePosition bytes, hl
+ * the question text pointer (stored little-endian) and de both the source of
+ * the initial name and the destination the finished name is written back to.
+ * The buffer is then cleared and maxlen+1 bytes of initial name copied into
+ * it; the count comes from `ld b, a` / `inc b` feeding a post-tested `dec b`
+ * loop, so a maximum length of $FF copies 256 bytes rather than none.
+ * GetTextLengthInTiles pushes de and hl, so de comes back advanced past the
+ * copied bytes and hl still points at the buffer, while b is the callee's tile
+ * count and c its byte count -- the byte count is what gets stored and what
+ * `ld a, c` returns. f is the callee's own exit: both of its paths end on
+ * `xor a` / `sub b`, so the flags are those of 0 - b. Z only when b is zero, N
+ * always, H whenever b's low nibble is set, carry whenever b is nonzero. */
+InitializeInputNameResult InitializeInputName(uint8_t a, uint8_t b, uint8_t c,
+	uint8_t d, uint8_t e, uint16_t hl)
+{
+	wNamingScreenBufferMaxLength = a;
+	wNamingScreenNamePosition = b;
+	gb_write8((uint16_t)(wNamingScreenNamePosition_ADDR + 1u), c);
+	wNamingScreenQuestionPointer = (uint8_t)hl;
+	gb_write8((uint16_t)(wNamingScreenQuestionPointer_ADDR + 1u), (uint8_t)(hl >> 8));
+	wNamingScreenDestPointer = e;
+	gb_write8((uint16_t)(wNamingScreenDestPointer_ADDR + 1u), d);
+	ClearMemory_Bank6(NAMING_SCREEN_BUFFER_LENGTH, wNamingScreenBuffer_ADDR);
+	uint16_t source = (uint16_t)((uint16_t)d << 8 | e);
+	uint16_t dest = wNamingScreenBuffer_ADDR;
+	uint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;
+	for (uint16_t i = 0; i < copy_count; i++)
+		gb_write8(dest++, gb_read8(source++));
+	TextLength length = GetTextLengthInTiles(wNamingScreenBuffer_ADDR);
+	wNamingScreenBufferLength = length.c;
+	uint8_t f = length.b ? (uint8_t)(0x50u | ((length.b & 0x0Fu) ? 0x20u : 0x00u))
+			     : 0xC0u;
+	return (InitializeInputNameResult){length.c, f, length.b, length.c,
+		(uint8_t)(source >> 8), (uint8_t)source, wNamingScreenBuffer_ADDR};
+}
+/* <<< factory InitializeInputName */

@@ -985,6 +985,9 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define ChooseAnEnergyCardText 0x0134u
+
+#include "home/effect_functions.h"
+#define Choose2EnergyCardsFromDiscardPileForHandText 0x0133u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7944,3 +7947,10 @@ HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSele
 	return (HandleEnergyCardsInDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), position};
 }
 /* <<< factory HandleEnergyCardsInDiscardPileSelection */
+
+/* >>> factory EnergyConversion_PlayerSelectEffect */
+HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffect(void)
+{
+	return HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileForHandText);
+}
+/* <<< factory EnergyConversion_PlayerSelectEffect */

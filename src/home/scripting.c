@@ -262,6 +262,37 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #include "home/overworld.h"
 #include "home/scripting.h"
+
+#include "home/challenge_hall.h"
+#include "home/deck_machine_room.h"
+#include "home/fighting_club.h"
+#include "home/fighting_club_lobby.h"
+#include "home/fire_club.h"
+#include "home/fire_club_lobby.h"
+#include "home/grass_club.h"
+#include "home/grass_club_entrance.h"
+#include "home/grass_club_lobby.h"
+#include "home/hall_of_honor.h"
+#include "home/lightning_club.h"
+#include "home/lightning_club_lobby.h"
+#include "home/mason_laboratory.h"
+#include "home/memory.h"
+#include "home/npc_core.h"
+#include "home/npc_data.h"
+#include "home/pokemon_dome.h"
+#include "home/pokemon_dome_entrance.h"
+#include "home/psychic_club.h"
+#include "home/psychic_club_entrance.h"
+#include "home/psychic_club_lobby.h"
+#include "home/rock_club.h"
+#include "home/rock_club_lobby.h"
+#include "home/science_club.h"
+#include "home/science_club_lobby.h"
+#include "home/script.h"
+#include "home/water_club.h"
+#define MAP_SCRIPT_NPCS 0x00u
+#define MAP_SCRIPT_POST_NPC 0x02u
+#define NPC_MAP_SIZE 0x06u
 /* <<< factory statics */
 
 
@@ -1925,3 +1956,34 @@ void PrintInteractableObjectText(void)
 	CloseAdvancedDialogueBox();
 }
 /* <<< factory PrintInteractableObjectText */
+
+/* >>> factory Func_c943 */
+Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_b = b;
+	uint8_t saved_c = c;
+	uint8_t saved_d = d;
+	uint8_t saved_e = e;
+	uint16_t saved_hl = hl;
+	MapScriptResult map = GetMapScriptPointer(MAP_SCRIPT_NPCS);
+	if (map.f & 0x10u) {
+		hl = map.hl;
+		for (;;) {
+			wTempPointer = (uint8_t)hl;
+			gb_write8((uint16_t)(wTempPointer_ADDR + 1u), (uint8_t)(hl >> 8));
+			wTempPointerBank = 4u;
+			CopyBankedDataToDE(NPC_MAP_SIZE, wTempNPC_ADDR);
+			if (wTempNPC == 0u)
+				break;
+			LoadNPCSpriteDataResult sprite = LoadNPCSpriteData(wTempNPC, b, c, d, e, hl);
+			a = sprite.a;
+			f = sprite.f;
+			(void)Func_c998();
+			(void)LoadNPC();
+			hl = (uint16_t)(hl + NPC_MAP_SIZE);
+		}
+	}
+	CallMapScriptResult post = CallMapScriptPointerIfExists(MAP_SCRIPT_POST_NPC);
+	return (Func_c943Result){post.a, post.f, saved_b, saved_c, saved_d, saved_e, saved_hl};
+}
+/* <<< factory Func_c943 */
