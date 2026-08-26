@@ -1304,6 +1304,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/duel_core.h"
 #include "generated/wram.h"
 #include "generated/hram.h"
+
+#include "home/core.h"
+#include "home/credits_sequence_commands.h"
+#include "home/tiles.h"
+#include "home/card_data.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7023,3 +7029,22 @@ PlayAttackAnimation_DealAttackDamageSimpleResult PlayAttackAnimation_DealAttackD
 	return (PlayAttackAnimation_DealAttackDamageSimpleResult){screen, result_f};
 }
 /* <<< factory PlayAttackAnimation_DealAttackDamageSimple */
+
+/* >>> factory DisplayOpponentUsedAttackScreen */
+void DisplayOpponentUsedAttackScreen(void)
+{
+	ZeroObjectPositionsAndToggleOAMCopy();
+	EmptyScreen();
+	(void)LoadDuelCardSymbolTiles();
+	(void)LoadDuelFaceDownCardTiles();
+	uint8_t cardid = wTempCardID_ccc2;
+	LoadCardDataToBuffer1_FromCardID(cardid);
+	wCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;
+	uint16_t hl = wLoadedCard1Atk1Name_ADDR;
+	if (wSelectedAttack != 0u) {
+		hl = wLoadedCard1Atk2Name_ADDR;
+	}
+	(void)PrintAttackOrPkmnPowerInformation(0u, 0u, 0u, 1u, hl);
+	(void)PrintAttackOrCardDescription(wLoadedAttackDescription_ADDR, 1u, 4u);
+}
+/* <<< factory DisplayOpponentUsedAttackScreen */

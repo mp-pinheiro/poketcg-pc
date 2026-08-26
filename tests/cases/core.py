@@ -1790,6 +1790,9 @@ wWhoseTurn = 0xCC05
 hWhoseTurn = 0xFF97
 wStatusConditionQueueIndex = 0xCCCD
 wStatusConditionQueue = 0xCCCE
+
+wTempCardID_ccc2 = 0xCCC2
+wSelectedAttack = 0xCCC6
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3641,6 +3644,15 @@ CASES["PlayAttackAnimation_DealAttackDamageSimple"] = [
 ]
 # <<< factory PlayAttackAnimation_DealAttackDamageSimple
 
+# >>> factory DisplayOpponentUsedAttackScreen
+CONTRACT["DisplayOpponentUsedAttackScreen"] = {"compare": (), "preserve": ()}
+CASES["DisplayOpponentUsedAttackScreen"] = [
+    {"wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"}, "read": {0xCBC7: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x01", 0xCABB: b"\x00"}, "read": {0xCBC7: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wTempCardID_ccc2: b"\x08", wSelectedAttack: b"\x00", 0xCABB: b"\x00"}, read={0xCBC7: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DisplayOpponentUsedAttackScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5136,3 +5148,6 @@ MUTATIONS["PlayStatusConditionQueueAnimations"] = {"source_symbol": "PlayStatusC
 # >>> factory-mutation PlayAttackAnimation_DealAttackDamageSimple
 MUTATIONS["PlayAttackAnimation_DealAttackDamageSimple"] = {"source_symbol": "PlayAttackAnimation_DealAttackDamageSimple", "before": "\tuint16_t damage = (uint16_t)(((uint16_t)d << 8) | e);", "after": "\tuint16_t damage = 0u;", "case_ids": ["PlayAttackAnimation_DealAttackDamageSimple-0", "PlayAttackAnimation_DealAttackDamageSimple-1", "PlayAttackAnimation_DealAttackDamageSimple-2"]}
 # <<< factory-mutation PlayAttackAnimation_DealAttackDamageSimple
+# >>> factory-mutation DisplayOpponentUsedAttackScreen
+MUTATIONS["DisplayOpponentUsedAttackScreen"] = {"source_symbol": "DisplayOpponentUsedAttackScreen", "before": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = CARDPAGE_POKEMON_OVERVIEW;", "after": "void DisplayOpponentUsedAttackScreen(void)\n{\n\tZeroObjectPositionsAndToggleOAMCopy();\n\tEmptyScreen();\n\t(void)LoadDuelCardSymbolTiles();\n\t(void)LoadDuelFaceDownCardTiles();\n\tuint8_t cardid = wTempCardID_ccc2;\n\tLoadCardDataToBuffer1_FromCardID(cardid);\n\twCardPageNumber = 0x02u;", "case_ids": ["DisplayOpponentUsedAttackScreen-0", "DisplayOpponentUsedAttackScreen-1", "DisplayOpponentUsedAttackScreen-2"]}
+# <<< factory-mutation DisplayOpponentUsedAttackScreen

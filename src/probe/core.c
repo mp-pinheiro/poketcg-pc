@@ -2359,6 +2359,13 @@ static void adapt_PlayAttackAnimation_DealAttackDamageSimple(ProbeState *s)
 }
 /* <<< factory PlayAttackAnimation_DealAttackDamageSimple */
 
+/* >>> factory DisplayOpponentUsedAttackScreen */
+static void adapt_DisplayOpponentUsedAttackScreen(ProbeState *s)
+{
+	DisplayOpponentUsedAttackScreen();
+}
+/* <<< factory DisplayOpponentUsedAttackScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2641,5 +2648,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "PlayAttackAnimation", adapt_PlayAttackAnimation },
 	{ "PlayStatusConditionQueueAnimations", adapt_PlayStatusConditionQueueAnimations },
 	{ "PlayAttackAnimation_DealAttackDamageSimple", adapt_PlayAttackAnimation_DealAttackDamageSimple },
+	{ "DisplayOpponentUsedAttackScreen", adapt_DisplayOpponentUsedAttackScreen },
 	{ NULL, NULL },
 };
