@@ -1463,6 +1463,9 @@ void Gigashock_PlayerSelectEffect(void);
 typedef struct { uint8_t a; uint8_t f; } HandleSwitchDefendingPokemonEffectResult;
 HandleSwitchDefendingPokemonEffectResult HandleSwitchDefendingPokemonEffect(uint8_t a);
 /* <<< factory HandleSwitchDefendingPokemonEffect */
+/* >>> factory PidgeottoWhirlwind_SwitchEffect */
+HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void);
+/* <<< factory PidgeottoWhirlwind_SwitchEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

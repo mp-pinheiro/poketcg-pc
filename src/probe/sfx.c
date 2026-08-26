@@ -86,6 +86,13 @@ static void adapt_SFX_wave(ProbeState *s)
 }
 /* <<< factory SFX_wave */
 
+/* >>> factory SFX_duty */
+static void adapt_SFX_duty(ProbeState *s)
+{
+	SFX_duty(s->a, (uint16_t)(((uint16_t)s->b << 8u) | s->c), s->stack[0]);
+}
+/* <<< factory SFX_duty */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -98,5 +105,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_unused", adapt_SFX_unused },
 	{ "SFX_pitch_offset", adapt_SFX_pitch_offset },
 	{ "SFX_wave", adapt_SFX_wave },
+	{ "SFX_duty", adapt_SFX_duty },
 	{ NULL, NULL },
 };

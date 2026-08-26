@@ -3554,6 +3554,15 @@ static void adapt_HandleSwitchDefendingPokemonEffect(ProbeState *s)
 }
 /* <<< factory HandleSwitchDefendingPokemonEffect */
 
+/* >>> factory PidgeottoWhirlwind_SwitchEffect */
+static void adapt_PidgeottoWhirlwind_SwitchEffect(ProbeState *s)
+{
+	HandleSwitchDefendingPokemonEffectResult r = PidgeottoWhirlwind_SwitchEffect();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PidgeottoWhirlwind_SwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3987,5 +3996,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DamageSwap_SelectAndSwapEffect", adapt_DamageSwap_SelectAndSwapEffect },
 	{ "Gigashock_PlayerSelectEffect", adapt_Gigashock_PlayerSelectEffect },
 	{ "HandleSwitchDefendingPokemonEffect", adapt_HandleSwitchDefendingPokemonEffect },
+	{ "PidgeottoWhirlwind_SwitchEffect", adapt_PidgeottoWhirlwind_SwitchEffect },
 	{ NULL, NULL },
 };

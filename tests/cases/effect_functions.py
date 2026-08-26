@@ -4602,6 +4602,15 @@ CASES["HandleSwitchDefendingPokemonEffect"] = [
 ]
 # <<< factory HandleSwitchDefendingPokemonEffect
 
+# >>> factory PidgeottoWhirlwind_SwitchEffect
+CONTRACT["PidgeottoWhirlwind_SwitchEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PidgeottoWhirlwind_SwitchEffect"] = [
+    {"wram": {0xFFA0: b"\xFF", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFFA0: b"\x01", 0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}}
+]
+# <<< factory PidgeottoWhirlwind_SwitchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6940,3 +6949,11 @@ MUTATIONS["Gigashock_PlayerSelectEffect"] = {"source_symbol": "Gigashock_PlayerS
 # >>> factory-mutation HandleSwitchDefendingPokemonEffect
 MUTATIONS["HandleSwitchDefendingPokemonEffect"] = {"source_symbol": "HandleSwitchDefendingPokemonEffect", "before": "\twDefendingWasForcedToSwitch = 1u;", "after": "\twDefendingWasForcedToSwitch = 0u;", "case_ids": ["HandleSwitchDefendingPokemonEffect-1", "HandleSwitchDefendingPokemonEffect-2"]}
 # <<< factory-mutation HandleSwitchDefendingPokemonEffect
+# >>> factory-mutation PidgeottoWhirlwind_SwitchEffect
+MUTATIONS["PidgeottoWhirlwind_SwitchEffect"] = {
+    "source_symbol": "PidgeottoWhirlwind_SwitchEffect",
+    "before": "HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(input);",
+    "after": "HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void)\n{\n\tuint8_t input = hTemp_ffa0;\n\tHandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(0xffu);",
+    "case_ids": ["PidgeottoWhirlwind_SwitchEffect-1", "PidgeottoWhirlwind_SwitchEffect-2"]
+}
+# <<< factory-mutation PidgeottoWhirlwind_SwitchEffect

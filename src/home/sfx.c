@@ -541,3 +541,11 @@ void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)
 	ExecuteNextSFXCommand(caller_hl, bc);
 }
 /* <<< factory SFX_wave */
+
+/* >>> factory SFX_duty */
+void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)
+{
+	SFX_Duty((uint8_t)bc, a);
+	ExecuteNextSFXCommand(caller_hl, bc);
+}
+/* <<< factory SFX_duty */

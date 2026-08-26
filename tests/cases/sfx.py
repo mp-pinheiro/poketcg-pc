@@ -155,6 +155,16 @@ CASES["SFX_wave"] = [
 ]
 # <<< factory SFX_wave
 
+# >>> factory SFX_duty
+CONTRACT["SFX_duty"] = {"compare": (), "preserve": ()}
+CASES["SFX_duty"] = [
+    {"a": 0x12, "c": 0, "stack": [0xC100], "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    {"a": 0xAB, "c": 1, "stack": [0xC200], "wram": {0xC200: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    {"a": 0x5E, "c": 3, "stack": [0xC400], "wram": {0xC400: b"\xF0", 0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    dict(POISON, stack=[0xC300], wram={0xC300: b"\xF0", 0xDD8C: b"\xFF"}, read={0xDD8C: 1}),
+]
+# <<< factory SFX_duty
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -209,3 +219,6 @@ MUTATIONS["SFX_pitch_offset"] = {"source_symbol": "SFX_pitch_offset", "before": 
 # >>> factory-mutation SFX_wave
 MUTATIONS["SFX_wave"] = {"source_symbol": "SFX_wave", "before": "void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);\n\tconst uint8_t *table = rom_ptr(SFX_BANK, table_addr);\n\tuint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);\n\tconst uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);\n\tgb_write8(0xFF1Au, 0u);\n\tfor (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)\n\t\tgb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);\n\twMusicWaveChange = 1u;", "after": "void SFX_wave(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tuint16_t table_addr = (uint16_t)(SFX_WaveInstruments_ADDR + (uint16_t)a * 2u);\n\tconst uint8_t *table = rom_ptr(SFX_BANK, table_addr);\n\tuint16_t wave_addr = (uint16_t)table[0] | (uint16_t)((uint16_t)table[1] << 8u);\n\tconst uint8_t *wave = rom_ptr(SFX_BANK, wave_addr);\n\tgb_write8(0xFF1Au, 0u);\n\tfor (uint8_t i = 0u; i < AUD3WAVE_SIZE; i++)\n\t\tgb_write8((uint16_t)(AUD3WAVERAM + i), wave[i]);\n\twMusicWaveChange = 0u;", "case_ids": ["SFX_wave-0", "SFX_wave-1", "SFX_wave-2"]}
 # <<< factory-mutation SFX_wave
+# >>> factory-mutation SFX_duty
+MUTATIONS["SFX_duty"] = {"source_symbol": "SFX_duty", "before": "void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tSFX_Duty((uint8_t)bc, a);\n\tExecuteNextSFXCommand(caller_hl, bc);", "after": "void SFX_duty(uint8_t a, uint16_t bc, uint16_t caller_hl)\n{\n\tSFX_Duty((uint8_t)bc, a);\n\tExecuteNextSFXCommand(caller_hl, (uint16_t)(bc + 1u));", "case_ids": ["SFX_duty-0", "SFX_duty-1", "SFX_duty-2", "SFX_duty-3"]}
+# <<< factory-mutation SFX_duty

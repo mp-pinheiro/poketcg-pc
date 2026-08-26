@@ -6847,3 +6847,12 @@ HandleSwitchDefendingPokemonEffectResult HandleSwitchDefendingPokemonEffect(uint
 	return (HandleSwitchDefendingPokemonEffectResult){1u, 0x00u};
 }
 /* <<< factory HandleSwitchDefendingPokemonEffect */
+
+/* >>> factory PidgeottoWhirlwind_SwitchEffect */
+HandleSwitchDefendingPokemonEffectResult PidgeottoWhirlwind_SwitchEffect(void)
+{
+	uint8_t input = hTemp_ffa0;
+	HandleSwitchDefendingPokemonEffectResult result = HandleSwitchDefendingPokemonEffect(input);
+	return result;
+}
+/* <<< factory PidgeottoWhirlwind_SwitchEffect */
