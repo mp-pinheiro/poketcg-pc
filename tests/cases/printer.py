@@ -211,7 +211,7 @@ CASES["ShowPrinterTransmitting"] = [
 # <<< factory ShowPrinterTransmitting
 
 # >>> factory SendPrinterPacket
-CONTRACT["SendPrinterPacket"] = {"compare": ("a", "f"), "preserve": ()}
+CONTRACT["SendPrinterPacket"] = {"compare": (), "preserve": ()}
 CASES["SendPrinterPacket"] = [
     {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": 0xC500,
      "wram": {0xC500: b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
@@ -228,11 +228,15 @@ CASES["SendPrinterPacket"] = [
          read={wPrinterPacketSequence: 15}, expect={wPrinterPacketSequence: b"\x00\x88\x33\x12\x34\x00\x00\x00\xC5\x46\x00\x81\xF0\x6A\xCE"},
          expect_regs={"a": 0xF0, "f": 0x10}, oracle=False, evidence="intentional-transform",
          why="PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"),
+    {"b": 0x00, "c": 0x00, "d": 0x12, "e": 0x34, "hl": 0xC500,
+     "wram": {0xC500: b"\x00", wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "read": {0xCE64: 8}, "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory SendPrinterPacket
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
+SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 
 MUTATIONS = {
     "SendByteThroughSerialData": {
@@ -311,5 +315,5 @@ MUTATIONS["ShowPrinterTransmitting"] = {
 }
 # <<< factory-mutation ShowPrinterTransmitting
 # >>> factory-mutation SendPrinterPacket
-MUTATIONS["SendPrinterPacket"] = {"source_symbol": "SendPrinterPacket", "before": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x88u);", "after": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x89u);", "case_ids": ["SendPrinterPacket-0", "SendPrinterPacket-1", "SendPrinterPacket-2"]}
+MUTATIONS["SendPrinterPacket"] = {"source_symbol": "SendPrinterPacket", "before": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x88u);", "after": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x89u);", "case_ids": ["SendPrinterPacket-3"]}
 # <<< factory-mutation SendPrinterPacket
