@@ -26,6 +26,12 @@
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define BANK__DrawAIPeekScreen 0x02u
+
+#include "home/switch_rom.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define BANK__SelectPrizeCards 0x02u
 /* <<< factory statics */
 
 /* >>> factory DrawPlayersPrizeAndBenchCards */
@@ -72,3 +78,14 @@ DrawAIPeekScreenResult DrawAIPeekScreen(uint8_t a, uint8_t f)
 	return (DrawAIPeekScreenResult){saved_bank, f};
 }
 /* <<< factory DrawAIPeekScreen */
+
+/* >>> factory SelectPrizeCards */
+void SelectPrizeCards(uint8_t a)
+{
+	wNumberOfPrizeCardsToSelect = a;
+	uint8_t saved_bank = hBankROM;
+	BankswitchROM(BANK__SelectPrizeCards);
+	_SelectPrizeCards();
+	BankswitchROM(saved_bank);
+}
+/* <<< factory SelectPrizeCards */

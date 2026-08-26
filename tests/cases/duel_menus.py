@@ -26,6 +26,8 @@ wVBlankOAMCopyToggle = 0xCAC0
 wYourOrOppPlayAreaCurPosition = 0xCE52
 wMenuInputTablePointer = 0xCE53
 wIsSwapTurnPending = 0xCE56
+
+wNumberOfPrizeCardsToSelect = 0xCE59
 # <<< factory-cases-statics
 
 # >>> factory DrawPlayersPrizeAndBenchCards
@@ -108,6 +110,14 @@ CASES["DrawAIPeekScreen"] = [
      "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]}]
 # <<< factory DrawAIPeekScreen
 
+# >>> factory SelectPrizeCards
+CONTRACT["SelectPrizeCards"] = {"compare": (), "preserve": ()}
+CASES["SelectPrizeCards"] = [
+    {"a": 0x00, "f": 0x00, "wram": {wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x01", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, "instruction_budget": 2000000, "cycle_budget": 8000000, "read": {wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1}},
+    dict(POISON, a=0x00, wram={wNumberOfPrizeCardsToSelect: b"\x00", hBankROM: b"\x37", 0xFF97: b"\xC2", 0xC2EC: b"\x00"}, instruction_budget=2000000, cycle_budget=8000000, read={wNumberOfPrizeCardsToSelect: 1, hBankROM: 1, 0xCE52: 1, 0xCE5A: 2, 0xFFA0: 1, 0xFFA1: 1})
+]
+# <<< factory SelectPrizeCards
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -129,3 +139,6 @@ MUTATIONS["DrawYourOrOppPlayAreaScreen_Bank0"] = {"source_symbol": "DrawYourOrOp
 # >>> factory-mutation DrawAIPeekScreen
 MUTATIONS["DrawAIPeekScreen"] = {"source_symbol": "DrawAIPeekScreen", "before": "\tBankswitchROM(saved_bank);\n\treturn (DrawAIPeekScreenResult){saved_bank, f};", "after": "\tBankswitchROM((uint8_t)(saved_bank ^ 1u));\n\treturn (DrawAIPeekScreenResult){saved_bank, f};", "case_ids": ["DrawAIPeekScreen-0", "DrawAIPeekScreen-1"]}
 # <<< factory-mutation DrawAIPeekScreen
+# >>> factory-mutation SelectPrizeCards
+MUTATIONS["SelectPrizeCards"] = {"source_symbol": "SelectPrizeCards", "before": "\t_SelectPrizeCards();\n\tBankswitchROM(saved_bank);", "after": "\t_SelectPrizeCards();\n\tBankswitchROM((uint8_t)(saved_bank ^ 1u));", "case_ids": ["SelectPrizeCards-0", "SelectPrizeCards-1"]}
+# <<< factory-mutation SelectPrizeCards

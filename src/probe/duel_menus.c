@@ -35,10 +35,18 @@ static void adapt_DrawAIPeekScreen(ProbeState *s)
 }
 /* <<< factory DrawAIPeekScreen */
 
+/* >>> factory SelectPrizeCards */
+static void adapt_SelectPrizeCards(ProbeState *s)
+{
+	SelectPrizeCards(s->a);
+}
+/* <<< factory SelectPrizeCards */
+
 const ProbeEntry probe_entries_duel_menus[] = {
 	{ "DrawPlayersPrizeAndBenchCards", adapt_DrawPlayersPrizeAndBenchCards },
 	{ "DrawPlayAreaToPlacePrizeCards", adapt_DrawPlayAreaToPlacePrizeCards },
 	{ "DrawYourOrOppPlayAreaScreen_Bank0", adapt_DrawYourOrOppPlayAreaScreen_Bank0 },
 	{ "DrawAIPeekScreen", adapt_DrawAIPeekScreen },
+	{ "SelectPrizeCards", adapt_SelectPrizeCards },
 	{ NULL, NULL },
 };
