@@ -311,11 +311,21 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   DisableLCD` — makes the call live and lands on the LCD-on boundary below.
   Merely *calling* `DoFrameIfLCDEnabled` is therefore not sufficient evidence
   either way; check whether anything on the path enables the LCD.
-- With the LCD **on** the path is genuinely unavailable. `CASES["DoFrame"]`'s
-  third case seeds `0xFF40: 0x80` and is `oracle: False` with the reason "LCD-on
-  DoFrame reaches the dissolved VBlank boundary". That is the real gap: a
-  routine needing actual frame *progress* — an animation or NPC movement
-  completing, printer timing — cannot be oracle-run.
+- With the LCD **on** the path is genuinely unavailable, and the mechanism is a
+  **HALT deadlock in the runner**, measured 2026-08-26. `WaitForVBlank`
+  (`lcd.asm:2-12`) checks `wLCDC`, then does `halt` / `nop` / `cp [hl]`, waiting
+  for the VBlank ISR to bump `wVBlankCounter`. Drive
+  `DuelCheckMenu_OppPlayArea` past `Func_235e` (see below) with a 40M
+  instruction / 160M cycle budget and it parks at `pc=0x0271`
+  (`WaitForVBlank.wait_vblank+1`) reporting `lcdc=128`, `ie=1`, `ime=1`,
+  `halted=1` — everything armed — but `if=224`, so **VBlank bit 0 is never
+  raised**, and `ppu_ly` is frozen at **21** after 160M cycles. So the PPU does
+  not advance to line 144 while the CPU is halted, and
+  `service_pending_interrupt` only clears `halted` when `IF & IE` is nonzero.
+  The fix is not "simulate frames" in the abstract: it is to make the runner's
+  step loop advance the PPU (and set `IF` bit 0 at the frame boundary) while
+  halted. `runner.c`'s `gb_frame_complete`/`gb_reset_frame` handling already
+  detects boundaries but never raises the request.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
