@@ -42,10 +42,19 @@ static void adapt_DeckMachineRoomAfterDuel(ProbeState *s)
 }
 /* <<< factory DeckMachineRoomAfterDuel */
 
+/* >>> factory Script_da76 */
+static void adapt_Script_da76(ProbeState *s)
+{
+	(void)s;
+	Script_da76();
+}
+/* <<< factory Script_da76 */
+
 const ProbeEntry probe_entries_deck_machine_room[] = {
 	{ "Func_d96c", adapt_Func_d96c },
 	{ "Script_BeatAaron", adapt_Script_BeatAaron },
 	{ "DeckMachineRoomCloseTextBox", adapt_DeckMachineRoomCloseTextBox },
 	{ "DeckMachineRoomAfterDuel", adapt_DeckMachineRoomAfterDuel },
+	{ "Script_da76", adapt_Script_da76 },
 	{ NULL, NULL },
 };

@@ -8,6 +8,9 @@
 #include "home/grass_club_entrance.h"
 
 #define DeckMachineRoomAfterDuelTable 0x58a6u
+
+#include "generated/wram.h"
+#define PKMN_CARD_DATA_LENGTH 0x41u
 /* <<< factory statics */
 #define CLUB_MAP_NAMES 0x5985u
 #define CLUB_MAP_NAMES_BANK 3u
@@ -33,3 +36,12 @@ DeckMachineRoomAfterDuelResult DeckMachineRoomAfterDuel(void)
 	return (DeckMachineRoomAfterDuelResult){r.a, r.f, r.b, r.c, r.d, r.e, r.hl};
 }
 /* <<< factory DeckMachineRoomAfterDuel */
+
+/* >>> factory Script_da76 */
+void Script_da76(void)
+{
+	(void)Func_d96c(0x08u);
+	uint8_t copy_length = PKMN_CARD_DATA_LENGTH;
+	gb_write8(wLCDC_ADDR, (uint8_t)(0x80u | (uint8_t)(copy_length == PKMN_CARD_DATA_LENGTH ? 0u : 1u)));
+}
+/* <<< factory Script_da76 */
