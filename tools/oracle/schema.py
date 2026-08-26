@@ -25,7 +25,7 @@ _CASE_KEYS = frozenset({
     "evidence", "reason", "stack",
 })
 _MAPPER_KEYS = frozenset({
-    "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode",
+    "rom_bank", "ram_bank", "vram_bank", "ram_enable", "mode", "hbank_rom",
 })
 _SEED_REGIONS = frozenset({"wram", "hram", "sram", "vram", "oam", "palette"})
 _REGISTER_NAMES = frozenset({"a", "f", "b", "c", "d", "e", "hl", "sp"})
@@ -223,6 +223,12 @@ def validate_case(case: Mapping[str, Any], *, case_id: str | None = None) -> Map
         _fail("case.mapper.ram_enable", "must be a boolean")
     if "mode" in mapper and not isinstance(mapper["mode"], str):
         _fail("case.mapper.mode", "must be a string")
+    # Both oracle backends otherwise force hBankROM ($FF80) to the probed
+    # routine's own bank, which a routine that re-reads it as data cannot be
+    # tested against. Declaring it here overrides that force without disturbing
+    # rom_bank, which still has to page $4000-$7FFF correctly.
+    if "hbank_rom" in mapper:
+        _integer(mapper["hbank_rom"], "case.mapper.hbank_rom", maximum=255)
 
     registers = _mapping(case.get("registers"), "case.registers")
     _check_unknown(registers, _REGISTER_NAMES, "case.registers")

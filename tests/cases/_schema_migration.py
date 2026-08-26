@@ -199,6 +199,9 @@ def legacy_to_schema(cases: Mapping[str, Sequence[Mapping[str, Any]]], contract:
                     "ram_bank": ram_bank,
                     "vram_bank": vram_bank,
                     "ram_enable": ram_enable,
+                    **({"hbank_rom": _integer(legacy["hbank_rom"],
+                                              "hbank_rom", maximum=0xFF)}
+                       if legacy.get("hbank_rom") is not None else {}),
                 },
                 "registers": registers,
                 "bus": _probes(legacy.get("read", {}), "read"),

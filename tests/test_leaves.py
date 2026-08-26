@@ -205,7 +205,7 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
                       ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case),
                       stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None,
-                      stack=case.get("stack"))
+                      stack=case.get("stack"), hbank_rom=case.get("hbank_rom"))
     reads, sreads, vreads = merged_spans(case)
     got = run_probe(probe, fn, case, reads, sreads, vreads)
     reference = {"registers": {field: getattr(ref, field) for field in fields},

@@ -236,7 +236,8 @@ class Oracle:
                 pb.button_release(button)
 
     def _run(self, symbol: str, regs: dict, stop_pc: int | None = None,
-             stack: Sequence[int] | None = None, cycle: bool = False) -> Result:
+             stack: Sequence[int] | None = None, cycle: bool = False,
+             hbank_rom: int | None = None) -> Result:
         """Drive one routine to its requested completion point."""
         pb = self.pyboy
         fn_bank, addr = pb.symbol_lookup(symbol)
@@ -245,6 +246,11 @@ class Oracle:
             pb.memory[0x2000] = fn_bank & 0xFF
             pb.memory[0x3000] = (fn_bank >> 8) & 1
             pb.memory[0xFF80] = fn_bank & 0xFF
+        # A routine that re-reads hBankROM as data cannot be tested against its
+        # own symbol bank, so let the case name the value without disturbing the
+        # $4000-$7FFF paging above.
+        if hbank_rom is not None:
+            pb.memory[0xFF80] = hbank_rom & 0xFF
         pb.memory[SPIN] = 0x18  # jr
         pb.memory[SPIN + 1] = 0xFE  # -2
         words = list(stack or ())
@@ -310,7 +316,8 @@ class Oracle:
              setup: list[dict] | None = None,
              keys: int | Sequence[int] = 0,
              stop_pc: int | None = None,
-             stack: Sequence[int] | None = None) -> Result:
+             stack: Sequence[int] | None = None,
+             hbank_rom: int | None = None) -> Result:
         pb = self.pyboy
         self._baseline.seek(0)
         pb.load_state(self._baseline)
@@ -367,4 +374,5 @@ class Oracle:
             stop_pc,
             stack,
             cycle=True,
+            hbank_rom=hbank_rom,
         )

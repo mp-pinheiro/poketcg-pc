@@ -502,10 +502,12 @@ int main(int argc, char **argv) {
                                         sizeof mapper_mode);
     uint64_t mapper_rom_bank = 1, mapper_ram_bank = 0;
     uint64_t mapper_vram_bank = 0, mapper_ram_enable = 0;
+    uint64_t mapper_hbank_rom = 0;
     int mapper_rom_state = json_number(request, "rom_bank", &mapper_rom_bank);
     int mapper_ram_state = json_number(request, "ram_bank", &mapper_ram_bank);
     int mapper_vram_state = json_number(request, "vram_bank", &mapper_vram_bank);
     int mapper_enable_state = json_number(request, "ram_enable", &mapper_ram_enable);
+    int mapper_hbank_state = json_number(request, "hbank_rom", &mapper_hbank_rom);
     if (mapper_mode_state == 0) mapper_mode_state = 1;
     SetupCall setup_calls[256];
     size_t setup_count = 0;
@@ -556,6 +558,7 @@ int main(int argc, char **argv) {
         (strcmp(mapper_mode, "reset") != 0 && strcmp(mapper_mode, "seeded") != 0) ||
         mapper_rom_state < 0 || mapper_ram_state < 0 || mapper_vram_state < 0 ||
         mapper_enable_state < 0 || mapper_rom_bank > 0x1ff ||
+        mapper_hbank_state < 0 || mapper_hbank_rom > 0xff ||
         mapper_ram_bank > 0xff || mapper_vram_bank > 1 || mapper_ram_enable > 1) {
         fail("SCHEMA", "entry, registers, mapper, and finite budgets are required");
     }
@@ -643,6 +646,11 @@ int main(int argc, char **argv) {
     }
     if (strcmp(mapper_mode, "seeded") == 0)
         seed_mapper_shadows(ctx, mapper_rom_bank, mapper_ram_bank, mapper_ram_enable);
+    /* seed_mapper_shadows ties hBankROM to rom_bank, which is right for paging
+     * but wrong for a routine that re-reads hBankROM as data. An explicit
+     * hbank_rom overrides it after the shadows are laid down. */
+    if (mapper_hbank_state == 1)
+        gb_write8(ctx, 0xFF80, (uint8_t)mapper_hbank_rom);
     int vblank_scheduler_armed = input_count > 0 || (gb_read8(ctx, 0xff40) & 0x80);
     if (vblank_scheduler_armed) {
         gb_write8(ctx, 0xffff, (uint8_t)(gb_read8(ctx, 0xffff) | 0x01));

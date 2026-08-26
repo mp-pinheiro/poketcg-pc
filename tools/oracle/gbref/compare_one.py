@@ -311,6 +311,8 @@ def main() -> int:
         "ram_bank": int(case["mapper"]["ram_bank"]),
         "ram_enable": int(bool(case["mapper"]["ram_enable"])),
         "vram_bank": native_vram_bank,
+        **({"hbank_rom": int(case["mapper"]["hbank_rom"])}
+           if "hbank_rom" in case["mapper"] else {}),
         "setup": resolved_setup,
         "input_events": case["input_events"],
         **registers,
