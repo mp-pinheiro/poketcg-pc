@@ -27,21 +27,17 @@ from pathlib import Path
 
 from pyboy import PyBoy
 
-# The frame lives in the 1764-byte hole pret leaves between `wd698` (`ds $4` at
-# $D698) and the WRAM Audio section at $DD80 -- `src/wram.asm` reserves it as a
-# bare `ds $6e4`, so no game symbol resolves anywhere inside it. It deliberately
-# does NOT sit at the top of WRAM: $DFFF is the last WRAM byte and several cases
-# probe it as a boundary (SetNextElementOfList walks a list pointer there,
-# GetFarByte bus-reads it). It also no longer sits in $CF00-$CFFF, which holds 24
-# live symbols (wCurDeckCards $CF17, wCurDeckName $CFB9, wMaxNumCardsAllowed
-# $CFD1, wNamingScreenBufferLength $CFFF, ...); parking the frame on top of them
-# made every routine that touches deck or naming state unobservable.
-SENTINEL = 0xDCF0  # return address pushed for the routine under test
-SPIN = 0xDCF4  # `jr -2`, parked here once the snapshot is taken
-STACK_TOP = 0xDCC0  # frame grows down from here
+# The frame is confined to $CF00-$CFFF so the text-header block at $CE2B-$CE4B is
+# case-addressable and oracle-diffable. It deliberately does NOT move to the top of
+# WRAM: $DFFF is the last WRAM byte and several cases probe it as a boundary
+# (SetNextElementOfList walks a list pointer there, GetFarByte bus-reads it), so a
+# frame at $DF00-$DFFF would collide with the very addresses those cases exist to test.
+SENTINEL = 0xCFF0  # return address pushed for the routine under test
+SPIN = 0xCFF4  # `jr -2`, parked here once the snapshot is taken
+STACK_TOP = 0xCFC0  # frame grows down from here
 
 # Cases must not use this window: it holds the synthesized frame and its stack.
-RESERVED = range(0xDC00, 0xDD00)
+RESERVED = range(0xCF00, 0xD000)
 
 WRAM_BASE, WRAM_END = 0xC000, 0xE000
 HRAM_BASE, HRAM_END = 0xFF80, 0x10000

@@ -196,8 +196,7 @@ def load_cases_module(lane: Path, basename: str):
 
 
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
-# Mirrors tools/oracle/pyboy_oracle.py RESERVED; keep the two in step.
-RESERVED = range(0xDC00, 0xDD00)
+RESERVED = range(0xCF00, 0xD000)
 
 
 def case_lint(lane: Path, basename: str, routine_names: list[str],
@@ -242,8 +241,7 @@ def case_lint(lane: Path, basename: str, routine_names: list[str],
                 for addr in c.get(key, {}) or {}:
                     if int(addr) in RESERVED:
                         fail(fn, f"CASES[{fn!r}][{i}].{key} writes reserved "
-                                 f"${int(addr):04X} (oracle call frame "
-                                 f"${RESERVED.start:04X}-${RESERVED.stop - 1:04X})")
+                                 f"${int(addr):04X} (oracle call frame $CF00-$CFFF)")
             if c.get("oracle") is False:
                 why = c.get("why")
                 expects = ("expect", "expect_regs", "expect_sram", "expect_vram")
