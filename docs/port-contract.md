@@ -349,6 +349,31 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   Budget note for anyone re-measuring: `compare_one.py` kills the backend after
   **30 s**, which caps a probed call near ~1.6 B cycles (≈23,000 frames); a `keys`
   timeline costs extra wall time per frame and lowers that ceiling.
+- **Triage recipe for this cluster, and its measured result.** These routines are
+  unported, so `compare_one.py` cannot drive them (it resolves the native adapter
+  first and exits `unknown routine`). Pipe a request JSON straight into
+  `tools/oracle/gbref/build/gbref_runner --rom <ABSOLUTE>` instead — that is the
+  whole CLI, everything else rides on stdin — and vary one thing at a time:
+  `bare`, then `setup=[{fn=SetupText, d=0x30, e=0x7F}]`, then the same plus
+  `keys=[0,1,0,1,...]`. Run against
+  `DuelCheckMenu_OppPlayArea`/`_HandlePeekSelection`/`OpenGlossaryScreen`/`_DebugLookAtSprite`
+  on 2026-08-26 this decomposed the "needs multi-frame VBlank" claim into four
+  *different*, non-frame blockers:
+  - All four hang bare at `Func_235e.asm_238a+2` (the glyph-cache linked-list
+    spin) and **all four are moved past it by `SetupText` in `setup`**. Solved.
+  - `DuelCheckMenu_OppPlayArea`: idle at `WaitForVBlank` until input, then
+    advances to `CreateCardCollectionListWithDeckCards.deck_4+2` (`02:6405`) and
+    spins over unseeded deck state → deck/card-list seeding, the `wCurDeckCards`
+    family, i.e. case authoring.
+  - `_HandlePeekSelection`: A presses change nothing (byte-identical pc and
+    instruction count) → it waits on some other edge or flag; find the predicate.
+  - `OpenGlossaryScreen`: not input-gated at all (byte-identical `instr=25018962`
+    with and without `keys`); cycle-bound inside `PrintFailedEffectText`.
+  - `_DebugLookAtSprite`: unbounded copy at `CopyDataHLtoDE_SaveRegisters` over an
+    unseeded length, and adding `keys` makes it *crash* to `pc=0x0038` (RST 38 —
+    no symbol means it is executing `$FF` filler). Do not drive this one with input.
+  The lesson generalises: a park at `pc=0x0271` says only "idle", so vary setup and
+  input before believing any stanza that blames frame simulation.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
