@@ -851,6 +851,15 @@ static void adapt_PrintFailedEffectText(ProbeState *s)
 }
 /* <<< factory PrintFailedEffectText */
 
+/* >>> factory DealConfusionDamageToSelf */
+static void adapt_DealConfusionDamageToSelf(ProbeState *s)
+{
+	DealConfusionDamageToSelfResult r = DealConfusionDamageToSelf(s->a, s->f, s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory DealConfusionDamageToSelf */
+
 
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 static void adapt_DrawInPlayArea_ActiveCardGfx(ProbeState *s)
@@ -1047,6 +1056,7 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "_DrawAIPeekScreen", adapt__DrawAIPeekScreen },
 	{ "PrintPokemonsAttackText", adapt_PrintPokemonsAttackText },
 	{ "PrintFailedEffectText", adapt_PrintFailedEffectText },
+	{ "DealConfusionDamageToSelf", adapt_DealConfusionDamageToSelf },
 	{ "DrawInPlayArea_ActiveCardGfx", adapt_DrawInPlayArea_ActiveCardGfx },
 	{ "DrawInPlayAreaScreen", adapt_DrawInPlayAreaScreen },
 	{ "DrawDuelMainScene_PrintPokemonsAttackText", adapt_DrawDuelMainScene_PrintPokemonsAttackText },

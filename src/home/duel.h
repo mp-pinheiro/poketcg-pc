@@ -641,6 +641,10 @@ PrintPokemonsAttackTextResult PrintPokemonsAttackText(void);
 typedef struct { uint8_t f; } PrintFailedEffectTextResult;
 PrintFailedEffectTextResult PrintFailedEffectText(void);
 /* <<< factory PrintFailedEffectText */
+/* >>> factory DealConfusionDamageToSelf */
+typedef struct { uint8_t a; uint8_t f; } DealConfusionDamageToSelfResult;
+DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f, uint8_t d, uint8_t e);
+/* <<< factory DealConfusionDamageToSelf */
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void);
 /* <<< factory DrawInPlayArea_ActiveCardGfx */

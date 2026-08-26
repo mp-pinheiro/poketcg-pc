@@ -2653,6 +2653,34 @@ PrintFailedEffectTextResult PrintFailedEffectText(void)
 }
 /* <<< factory PrintFailedEffectText */
 
+/* >>> factory DealConfusionDamageToSelf */
+/* duel.asm:1816-1841. Applies confusion self-damage: `a` is the raw damage, and
+ * wNoDamageOrEffect plus wTempNonTurnDuelistCardID are saved, overridden (the
+ * turn holder becomes its own target so the modifiers resolve against itself) and
+ * restored on the way out. The bank1call targets are plain calls here. */
+DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f,
+	uint8_t d, uint8_t e)
+{
+	gb_write8(wDamage_ADDR, a);
+	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
+	const uint8_t saved_no_damage = gb_read8(wNoDamageOrEffect_ADDR);
+	gb_write8(wNoDamageOrEffect_ADDR, 0u);
+	ResetAttackAnimationIsPlaying();
+	const uint8_t saved_non_turn = gb_read8(wTempNonTurnDuelistCardID_ADDR);
+	gb_write8(wTempNonTurnDuelistCardID_ADDR,
+		gb_read8(wTempTurnDuelistCardID_ADDR));
+	(void)ApplyDamageModifiers_DamageToSelf();
+	const uint8_t c = gb_read8(wDamageEffectiveness_ADDR);
+	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	(void)PlayAttackAnimation_DealAttackDamageSimple(hp.a, f, PLAY_AREA_ARENA,
+		c, d, e, hp.hl);
+	(void)PrintKnockedOutIfHLZero(hp.hl);
+	gb_write8(wTempNonTurnDuelistCardID_ADDR, saved_non_turn);
+	gb_write8(wNoDamageOrEffect_ADDR, saved_no_damage);
+	return (DealConfusionDamageToSelfResult){saved_no_damage, f};
+}
+/* <<< factory DealConfusionDamageToSelf */
+
 
 /* >>> factory DrawInPlayArea_ActiveCardGfx */
 void DrawInPlayArea_ActiveCardGfx(void)
