@@ -29,3 +29,14 @@ TossCoinATimesResult TossCoinATimes(uint8_t a, uint8_t f, uint8_t b, uint8_t c, 
 	return (TossCoinATimesResult){result.a, result.f, hl};
 }
 /* <<< factory TossCoinATimes */
+
+/* >>> factory TossCoin */
+TossCoinRoutineResult TossCoin(uint16_t de, uint16_t hl)
+{
+	wCoinTossScreenTextID = (uint8_t)de;
+	gb_write8((uint16_t)(wCoinTossScreenTextID_ADDR + 1u), (uint8_t)(de >> 8));
+	TossCoinResult result = _TossCoin(1u);
+	wDuelDisplayedScreen = 0u;
+	return (TossCoinRoutineResult){result.a, result.f, hl};
+}
+/* <<< factory TossCoin */
