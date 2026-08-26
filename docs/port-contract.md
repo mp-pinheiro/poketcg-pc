@@ -411,6 +411,33 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   are undercounted, not exonerated.) Check the `dw` targets by hand before
   trusting `ready` on any `JumpToFunctionInTable` user; P4's `OppActionTable` is
   the same pattern at 32 stanzas' scale.
+- **The graph now follows `dw` jump tables (`tools/progress/inventory.py`,
+  landed 2026-08-26), which finally names P4's real prerequisites.** Callee
+  scanning used to see only direct `call`/`jp`, so a body dispatching through a
+  pointer table reported `ready=true` with `blockers=[]` while its targets had no
+  C body. A third inventory pass now attributes two table sources to a routine: a
+  table under one of its own sub-labels, and a top-level table the routine *names*.
+  A table that merely *follows* a routine is deliberately not attributed — that
+  distinction is load-bearing, because `AnimationCommand_AnimScreen` is
+  immediately followed by `AnimationCommandPointerTable`, which belongs to the
+  dispatcher, and a naive "dw rows after the label" rule falsely blocks it.
+  Effect: 42 routines gained real deps; `ready` went 159 → 154 with **zero**
+  status, `code`, or `verified_functions` change — the five newly-blocked routines
+  (`DuelCheckMenu_OppPlayArea`, `RunOverworldScript`, `HandleOverworldMode`,
+  `Func_c141`, `_ExecuteGameEvent`) were all uncompilable-as-faithful already.
+  The payoff is scoping the two big clusters:
+  - **P4** — `AIMakeDecision` dispatches to **20** `OppAction_*` handlers, of which
+    only **9 are unported, 291 B total**, and 6 of those are `ready=true` today
+    (`OppAction_UseMetronomeAttack` 63 B, `OppAction_AttemptRetreat` 36 B,
+    `OppAction_PlayEnergyCard` 32 B, `OppAction_PlayBasicPokemonCard` 31 B,
+    `OppAction_EvolvePokemonCard` 27 B,
+    `OppAction_ExecuteTrainerCardEffectCommands` 25 B). So the 31 stanzas that cite
+    `AIMakeDecision` are gated on ~291 B of ordinary leaf ports, not on a dispatch
+    rewrite; the reviewed transform is the *last* step, as P4 always specified.
+  - **Script/overworld** — `RunOverworldScript` dispatches to **88**
+    `ScriptCommand_*` handlers, **26 unported, 617 B**.
+  Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
+  off `blockers`, which `report.py` clears for anything already ported.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
