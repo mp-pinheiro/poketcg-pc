@@ -438,6 +438,39 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **P5 and the whole indirect-dispatch class need ONE mechanism, and the expensive
+  half of it already exists (measured 2026-08-26).** `TryExecuteEffectCommandFunction`
+  (`effect_commands.asm:6`) is registered and `verified` with a stub body
+  (`effect_commands.c:48-56`) that folds `CheckMatchingCommand`'s carry/`hl` into
+  `a`/`f` and **never performs the `call CallHL`**. A faithful port needs to call an
+  effect function identified only by a runtime address, and neither `CallHL` nor any
+  address→function mapping exists in the tree. The same missing mechanism appears in
+  **23 stanzas / 1,216 B** (19 of them `ready=True`), citing `CallHL`, `CallIndirect`,
+  `CallBC`/`retbc`, `JumpToFunctionInTable`, `jp hl` or `rst $20` — including
+  `RunOverworldScript`, which additionally gates 617 B of `ScriptCommand_*` handlers.
+  Three measurements make this much cheaper than it looks:
+  1. **Addresses are unambiguous.** 469 of the 470 ported effect functions have a
+     symbol address, with **zero** `bank:addr` collisions *and* zero 16-bit address
+     collisions across banks — so a plain `uint16_t` key identifies a target exactly.
+  2. **The 155-signature problem is already solved.** Those 470 functions span 155
+     distinct `(return, params)` shapes, which rules out a naive uniform function
+     pointer — but `src/probe/effect_functions.c` already contains a uniform-signature
+     shim for **all 470** (`static void adapt_<Fn>(ProbeState *s)`), all 470 registered
+     in a name→adapter table. The register marshalling is written; only the *keying*
+     (name, not address) and the *linkage* (`static`, probe-local) are wrong for
+     runtime use.
+  3. **The reference side is not the blocker for P5's dependents.** Both
+     `EstimateDamage_*` routines run to completion — `REFERENCE_OK` after 2,623,510
+     and 5,223,651 instructions — so their stanzas' "raise the budget" option only
+     needs `instruction_budget ≥ 2.7M` / `≥ 5.3M`, with no card-ID investigation.
+  So the build is: generate an address→shim table from the existing adapter set, give
+  those shims external linkage, and implement `CallHL` on top. That is a real design
+  decision rather than a port — it changes how ported code reaches ported code and it
+  restructures a probe file all four fleet sessions depend on — so it wants explicit
+  sign-off before anyone starts. Do not attempt a per-callsite `switch` instead: with
+  470 possible targets keyed by ROM address, hand-written dispatch is how
+  `AIMakeDecision`-class stub debt gets recreated at scale.
+
 - **Sweep completed over all 90 `ready=True` stanza-blocked routines (2026-08-26).**
   37 of 84 probed returned `REFERENCE_OK`; only **6 stanzas** were deletable on that
   evidence, which is the ratio to expect. The rest hold for reasons a termination
