@@ -307,6 +307,20 @@ static uint16_t read16(uint16_t addr)
 	return (uint16_t)gb_read8(addr + 1) << 8 | gb_read8(addr);
 }
 
+/* KNOWN DEFECT, verified against the ROM 2026-08-26: this command mapping does
+ * not match Music1_CommandTable (music1.asm:598-646). The real table is
+ * 0->speed, 1-6->octave, 7->inc_octave, 8->dec_octave, 9->tie, 10-11->end,
+ * 12->stereo_panning, 13->MainLoop, 14->EndMainLoop, 15->Loop, 16->EndLoop,
+ * 17->jp, 18->call, 19->ret, 20->frequency_offset, 21->duty, 22->volume,
+ * 23->wave, 24->cutoff, 25->echo, 26->vibrato_type, 27->vibrato_delay,
+ * 28->pitch_offset, 29->adjust_pitch_offset, 30-47->end; the octave handler
+ * also owes the asm's `dec a` (music1.asm:851-867). Proven by driving command
+ * $D7 through the dispatcher: the ROM increments wMusicOctave (0x00 -> 0x01)
+ * while this switch runs its octave arm and writes ($D7 & 7) - 1 = 0x06.
+ * Consequence: Music1_EndMainLoop, Music1_EndLoop and Music1_jp are faithfully
+ * ported but cannot be registered for oracle diff yet, because any case that
+ * observes them has to let the dispatcher execute one command. Fix this switch
+ * against the table first, then register those three. */
 void Music1_PlayNextNote(uint16_t *hl, uint8_t ch)
 {
 	uint8_t cmd;

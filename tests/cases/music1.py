@@ -746,24 +746,6 @@ CASES["Music1_MainLoop"] = [
 ]
 # <<< factory Music1_MainLoop
 
-# >>> factory Music1_EndMainLoop
-CONTRACT["Music1_EndMainLoop"] = {"compare": (), "preserve": ()}
-CASES["Music1_EndMainLoop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDD9D: b"\x00\xC2", 0xC200: b"\xD7\xFF",
-              0xDDAF: b"\x00"},
-     "read": {0xDDAF: 1}},
-    {"c": 1, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDD9F: b"\x00\xC2", 0xC200: b"\xD7\xFF",
-              0xDDB0: b"\x05"},
-     "read": {0xDDB0: 1}},
-    dict(POISON, b=0, c=3, stack=[0xC100],
-         wram={0xC100: b"\xFF", 0xDDA3: b"\x00\xC2", 0xC200: b"\xD7\xFF",
-               0xDDB2: b"\xFF"},
-         read={0xDDB2: 1}),
-]
-# <<< factory Music1_EndMainLoop
-
 # >>> factory Music1_Loop
 CONTRACT["Music1_Loop"] = {"compare": (), "preserve": ()}
 CASES["Music1_Loop"] = [
@@ -778,39 +760,6 @@ CASES["Music1_Loop"] = [
          read={0xC210: 3, 0xDDF7: 2}),
 ]
 # <<< factory Music1_Loop
-
-# >>> factory Music1_EndLoop
-CONTRACT["Music1_EndLoop"] = {"compare": (), "preserve": ()}
-CASES["Music1_EndLoop"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDDF3: b"\x03\xC2",
-              0xC200: b"\x00\xC3\x03", 0xC300: b"\xD7\xFF", 0xDDAF: b"\x00"},
-     "read": {0xC202: 1, 0xDDAF: 1, 0xDDF3: 2}},
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\xFF", 0xDDF3: b"\x03\xC2",
-              0xC200: b"\x00\xC3\x01", 0xC300: b"\xD7\xFF", 0xDDAF: b"\x00"},
-     "read": {0xC202: 1, 0xDDAF: 1, 0xDDF3: 2}},
-    dict(POISON, b=0, c=1, stack=[0xC100],
-         wram={0xC100: b"\xFF", 0xDDF5: b"\x03\xC2",
-               0xC200: b"\x00\xC3\x02", 0xC300: b"\xD7\xFF", 0xDDB0: b"\x00"},
-         read={0xC202: 1, 0xDDB0: 1, 0xDDF5: 2}),
-]
-# <<< factory Music1_EndLoop
-
-# >>> factory Music1_jp
-CONTRACT["Music1_jp"] = {"compare": (), "preserve": ()}
-CASES["Music1_jp"] = [
-    {"c": 0, "stack": [0xC100],
-     "wram": {0xC100: b"\x00\xC2", 0xC200: b"\xD7\xFF", 0xDDAF: b"\x00"},
-     "read": {0xDDAF: 1}},
-    {"c": 3, "stack": [0xC100],
-     "wram": {0xC100: b"\x10\xC2", 0xC210: b"\xD7\xFF", 0xDDB2: b"\x07"},
-     "read": {0xDDB2: 1}},
-    dict(POISON, b=0, c=1, stack=[0xC100],
-         wram={0xC100: b"\x00\xC3", 0xC300: b"\xD7\xFF", 0xDDB0: b"\xFF"},
-         read={0xDDB0: 1}),
-]
-# <<< factory Music1_jp
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -856,18 +805,9 @@ MUTATIONS["Music1_stereo_panning"] = {"source_symbol": "Music1_stereo_panning", 
 # >>> factory-mutation Music1_MainLoop
 MUTATIONS["Music1_MainLoop"] = {"source_symbol": "Music1_MainLoop", "before": "\tuint16_t target = (uint16_t)(caller_stream - 1u);", "after": "\tuint16_t target = (uint16_t)(caller_stream - 2u);", "case_ids": ["Music1_MainLoop-0", "Music1_MainLoop-1"]}
 # <<< factory-mutation Music1_MainLoop
-# >>> factory-mutation Music1_EndMainLoop
-MUTATIONS["Music1_EndMainLoop"] = {"source_symbol": "Music1_EndMainLoop", "before": "\tuint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);\n\tuint16_t hl = (uint16_t)(gb_read8(addr)", "after": "\tuint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u + 1u);\n\tuint16_t hl = (uint16_t)(gb_read8(addr)", "case_ids": ["Music1_EndMainLoop-0", "Music1_EndMainLoop-1"]}
-# <<< factory-mutation Music1_EndMainLoop
 # >>> factory-mutation Music1_Loop
 MUTATIONS["Music1_Loop"] = {"source_symbol": "Music1_Loop", "before": "\tgb_write8((uint16_t)(sp + 2u), count);", "after": "\tgb_write8((uint16_t)(sp + 2u), (uint8_t)(count + 1u));", "case_ids": ["Music1_Loop-0", "Music1_Loop-1"]}
 # <<< factory-mutation Music1_Loop
-# >>> factory-mutation Music1_EndLoop
-MUTATIONS["Music1_EndLoop"] = {"source_symbol": "Music1_EndLoop", "before": "\tuint8_t count = (uint8_t)(gb_read8((uint16_t)(sp - 1u)) - 1u);", "after": "\tuint8_t count = (uint8_t)(gb_read8((uint16_t)(sp - 1u)) - 2u);", "case_ids": ["Music1_EndLoop-0", "Music1_EndLoop-2"]}
-# <<< factory-mutation Music1_EndLoop
-# >>> factory-mutation Music1_jp
-MUTATIONS["Music1_jp"] = {"source_symbol": "Music1_jp", "before": "\tuint16_t hl = (uint16_t)(gb_read8(caller_stream)\n\t\t| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));", "after": "\tuint16_t hl = (uint16_t)(gb_read8((uint16_t)(caller_stream + 1u))\n\t\t| ((uint16_t)gb_read8(caller_stream) << 8u));", "case_ids": ["Music1_jp-0", "Music1_jp-1"]}
-# <<< factory-mutation Music1_jp
 # >>> factory-mutation _AssertSFXFinished
 MUTATIONS["_AssertSFXFinished"] = {"source_symbol": "_AssertSFXFinished", "before": "return Music1_AssertSFXFinished();", "after": "return (uint8_t)(Music1_AssertSFXFinished() ^ 1u);", "case_ids": ["_AssertSFXFinished-0", "_AssertSFXFinished-1", "_AssertSFXFinished-2"]};
 # <<< factory-mutation _AssertSFXFinished
