@@ -1,0 +1,9 @@
+{
+  "fn": "AnimationCommand_AnimOpponent",
+  "case": "tests/cases/commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AnimationCommand_AnimOpponent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"2000\", \"52233\": \"00\", \"54447\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AnimationCommand_AnimOpponent\", \"mismatches\": {\"bus\": {\"address\": 54447, \"reference\": \"200000c3c2\", \"native\": \"200000c2c2\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[49408, 2], [52233, 1], [54447, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AnimationCommand_AnimOpponent\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"2000\", \"52233\": \"00\", \"54447\": \"c3\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

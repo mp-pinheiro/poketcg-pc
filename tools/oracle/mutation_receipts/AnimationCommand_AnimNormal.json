@@ -1,0 +1,9 @@
+{
+  "fn": "AnimationCommand_AnimNormal",
+  "case": "tests/cases/commands.py",
+  "index": 5,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AnimationCommand_AnimNormal\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0900\", \"51906\": \"01\", \"52233\": \"00\", \"52863\": \"2a0103\", \"54449\": \"2a01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AnimationCommand_AnimNormal\", \"mismatches\": {\"bus\": {\"address\": 54449, \"reference\": \"002a01032a01c2\", \"native\": \"002a01032b01c2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49408, 2], [51906, 1], [52233, 1], [52863, 3], [54449, 2], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AnimationCommand_AnimNormal\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 193, \"e\": 2, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"0900\", \"51906\": \"01\", \"52233\": \"00\", \"52863\": \"2a0103\", \"54449\": \"2a01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

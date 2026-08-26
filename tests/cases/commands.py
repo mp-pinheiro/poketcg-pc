@@ -304,7 +304,7 @@ MUTATIONS["GetDamageText"] = {
 }
 # <<< factory-mutation GetDamageText
 # >>> factory-mutation PlayAttackAnimationCommands_NextCommand
-MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAttackAnimationCommands_NextCommand", "before": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)de};", "after": "return (PlayAttackAnimationCommands_NextCommandResult){(uint8_t)(de >> 8), (uint8_t)(de + 1u)};", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0", "PlayAttackAnimationCommands_NextCommand-1", "PlayAttackAnimationCommands_NextCommand-2", "PlayAttackAnimationCommands_NextCommand-3", "PlayAttackAnimationCommands_NextCommand-4"]}
+MUTATIONS["PlayAttackAnimationCommands_NextCommand"] = {"source_symbol": "PlayAttackAnimationCommands_NextCommand", "before": "\tuint8_t opcode = gb_read8(de);\n\tde++;", "after": "\tuint8_t opcode = gb_read8(de);\n\tde += 2u;", "case_ids": ["PlayAttackAnimationCommands_NextCommand-0", "PlayAttackAnimationCommands_NextCommand-1", "PlayAttackAnimationCommands_NextCommand-2", "PlayAttackAnimationCommands_NextCommand-3", "PlayAttackAnimationCommands_NextCommand-4"]}
 # <<< factory-mutation PlayAttackAnimationCommands_NextCommand
 # >>> factory-mutation DuelAnim157
 MUTATIONS["DuelAnim157"] = {"source_symbol": "DuelAnim157", "before": "\treturn; /* DuelAnim157 */", "after": "\tgb_write8(0xC100u, 1u); /* DuelAnim157 */", "case_ids": ["DuelAnim157-2"]}
