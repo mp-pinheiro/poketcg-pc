@@ -2400,6 +2400,14 @@ static void adapt_CheckIfCanDamageDefendingPokemon(ProbeState *s)
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
 
+/* >>> factory OpenDiscardPileScreen */
+static void adapt_OpenDiscardPileScreen(ProbeState *s)
+{
+	OpenDiscardPileScreenResult result = OpenDiscardPileScreen(s->c);
+	s->f = result.f;
+}
+/* <<< factory OpenDiscardPileScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2686,5 +2694,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardList", adapt_DisplayCardList },
 	{ "Func_5542", adapt_Func_5542 },
 	{ "CheckIfCanDamageDefendingPokemon", adapt_CheckIfCanDamageDefendingPokemon },
+	{ "OpenDiscardPileScreen", adapt_OpenDiscardPileScreen },
 	{ NULL, NULL },
 };

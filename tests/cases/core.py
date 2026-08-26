@@ -3737,6 +3737,15 @@ CASES["CheckIfCanDamageDefendingPokemon"] = [
 ]
 # <<< factory CheckIfCanDamageDefendingPokemon
 
+# >>> factory OpenDiscardPileScreen
+CONTRACT["OpenDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenDiscardPileScreen"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenDiscardPileScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5249,3 +5258,6 @@ MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {
     "case_ids": ["CheckIfCanDamageDefendingPokemon-0"],
 }
 # <<< factory-mutation CheckIfCanDamageDefendingPokemon
+# >>> factory-mutation OpenDiscardPileScreen
+MUTATIONS["OpenDiscardPileScreen"] = {"source_symbol": "OpenDiscardPileScreen", "before": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x09u;", "after": "\tSetDiscardPileScreenTexts();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenDiscardPileScreen-1"]}
+# <<< factory-mutation OpenDiscardPileScreen

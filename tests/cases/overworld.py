@@ -784,6 +784,15 @@ CASES["CloseAdvancedDialogueBox"] = [
 ]
 # <<< factory CloseAdvancedDialogueBox
 
+# >>> factory Func_c8ba
+CONTRACT["Func_c8ba"] = {"compare": (), "preserve": ()}
+CASES["Func_c8ba"] = [
+    {"hl": 0x01DB, "d": 0x00, "e": 0x00, "wram": {wOverworldNPCFlags: b"\x00", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
+    {"hl": 0x01DC, "d": 0x56, "e": 0x78, "wram": {wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, "setup": SETUP, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000, "read": {wOverworldNPCFlags: 1, wd3b9: 2}},
+    dict(POISON, hl=0x01DB, d=0x9A, e=0xBC, wram={wOverworldNPCFlags: b"\x01", wd3b9: b"\x12\x34"}, setup=SETUP, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000, read={wOverworldNPCFlags: 1, wd3b9: 2}),
+]
+# <<< factory Func_c8ba
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1083,3 +1092,6 @@ MUTATIONS["ReturnToOverworld"] = {"source_symbol": "ReturnToOverworld", "before"
 # >>> factory-mutation CloseAdvancedDialogueBox
 MUTATIONS["CloseAdvancedDialogueBox"] = {"source_symbol": "CloseAdvancedDialogueBox", "before": "\twOverworldNPCFlags = 0u;\n\twOverworldMode = wOverworldModeBackup;", "after": "\twOverworldNPCFlags = 0xFFu;\n\twOverworldMode = wOverworldModeBackup;", "case_ids": ["CloseAdvancedDialogueBox-0", "CloseAdvancedDialogueBox-1", "CloseAdvancedDialogueBox-2"]}
 # <<< factory-mutation CloseAdvancedDialogueBox
+# >>> factory-mutation Func_c8ba
+MUTATIONS["Func_c8ba"] = {"source_symbol": "Func_c8ba", "before": "\twd3b9 = de;", "after": "\twd3b9 = 0xFFu;", "case_ids": ["Func_c8ba-1", "Func_c8ba-2"]}
+# <<< factory-mutation Func_c8ba

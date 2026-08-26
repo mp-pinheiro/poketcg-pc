@@ -1323,6 +1323,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #include "mem.h"
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/core.h"
+#include "home/menus.h"
+#define TheDiscardPileHasNoCardsText 0x00a5u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7281,3 +7287,19 @@ CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t 
 	return (CheckIfCanDamageDefendingPokemonResult){a, f};
 }
 /* <<< factory CheckIfCanDamageDefendingPokemon */
+
+/* >>> factory OpenDiscardPileScreen */
+OpenDiscardPileScreenResult OpenDiscardPileScreen(uint8_t c)
+{
+	CardListResult list = CreateDiscardPileCardList(c);
+	if ((list.f & 0x10u) != 0u) {
+		WaitResult wait = DrawWideTextBox_WaitForInput(TheDiscardPileHasNoCardsText);
+		return (OpenDiscardPileScreenResult){(uint8_t)((wait.f & 0x80u) | 0x10u)};
+	}
+	(void)InitAndDrawCardListScreenLayout();
+	SetDiscardPileScreenTexts();
+	wNoItemSelectionMenuKeys = 0x09u;
+	DisplayCardListResult display = DisplayCardList();
+	return (OpenDiscardPileScreenResult){(uint8_t)(display.a == 0u ? 0x80u : 0u)};
+}
+/* <<< factory OpenDiscardPileScreen */

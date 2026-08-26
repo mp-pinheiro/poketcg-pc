@@ -1293,6 +1293,17 @@ CASES["ScriptCommand_PrintText"] = [
 ]
 # <<< factory ScriptCommand_PrintText
 
+# >>> factory Func_c9c0
+CONTRACT["Func_c9c0"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Func_c9c0"] = [
+    {"wram": {0xD32F: b"\x00"}, "read": {0xD32F: 1}},
+    {"wram": {0xD32F: b"\x0c"}, "read": {0xD32F: 1}},
+    {"wram": {0xD32F: b"\x20"}, "read": {0xD32F: 1}},
+    {"wram": {0xD32F: b"\x01"}, "read": {0xD32F: 1}},
+    dict(POISON, wram={0xD32F: b"\x0c"}, read={0xD32F: 1}),
+]
+# <<< factory Func_c9c0
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1955,3 +1966,10 @@ MUTATIONS["ScriptCommand_CloseTextBox"] = {"source_symbol": "ScriptCommand_Close
 # >>> factory-mutation ScriptCommand_PrintText
 MUTATIONS["ScriptCommand_PrintText"] = {"source_symbol": "ScriptCommand_PrintText", "before": "IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);", "after": "IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["ScriptCommand_PrintText-0", "ScriptCommand_PrintText-1"]}
 # <<< factory-mutation ScriptCommand_PrintText
+# >>> factory-mutation Func_c9c0
+MUTATIONS["Func_c9c0"] = {"source_symbol": "Func_c9c0", "before": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_MOVED_PLAYER);", "after": "CallMapScriptResult Func_c9c0(void)\n{\n\treturn CallMapScriptPointerIfExists((uint8_t)(MAP_SCRIPT_MOVED_PLAYER + 2u));", "case_ids": ["Func_c9c0-1", "Func_c9c0-2", "Func_c9c0-4"]}
+# <<< factory-mutation Func_c9c0
+# >>> factory-completion Func_c9c0
+for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c0"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F}, {"mode": "pre-ret", "pc": 0x76C6}, {"mode": "return"}, {"mode": "pre-ret", "pc": 0x613F})):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion Func_c9c0

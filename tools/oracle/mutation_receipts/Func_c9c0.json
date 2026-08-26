@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c9c0",
+  "case": "tests/cases/scripting.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c9c0\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 24895, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"0c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c9c0\", \"mismatches\": {\"a\": [127, 0], \"f\": [16, 128], \"hl\": [24895, 0]}}\n",
+  "restored": "{\"fn\": \"Func_c9c0\", \"registers\": {\"a\": 127, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 24895, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"0c\"}}, \"status\": \"PASS\"}\n"
+}

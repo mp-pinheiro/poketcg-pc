@@ -526,4 +526,7 @@ IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void);
 /* poketcg/src/engine/overworld/scripting.asm */
 IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintText */
+/* >>> factory Func_c9c0 */
+CallMapScriptResult Func_c9c0(void);
+/* <<< factory Func_c9c0 */
 #endif

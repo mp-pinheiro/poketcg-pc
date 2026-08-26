@@ -1062,3 +1062,27 @@ void CloseAdvancedDialogueBox(void)
 	wOverworldMode = wOverworldModeBackup;
 }
 /* <<< factory CloseAdvancedDialogueBox */
+
+/* >>> factory Func_c8ba */
+void Func_c8ba(uint16_t hl, uint16_t de)
+{
+	if (de == 0u) {
+		Func_c891(hl);
+		return;
+	}
+	uint8_t flags = wOverworldNPCFlags;
+	if ((flags & (1u << AUTO_CLOSE_TEXTBOX)) != 0u) {
+		if (wd3b9 != (uint8_t)de ||
+		    gb_read8((uint16_t)(wd3b9_ADDR + 1u)) != (uint8_t)(de >> 8)) {
+			CloseTextBox();
+		}
+	}
+	wd3b9 = de;
+	gb_write8((uint16_t)(wd3b9_ADDR + 1u), (uint8_t)(de >> 8));
+	(void)SetOverworldNPCFlags(1u << AUTO_CLOSE_TEXTBOX);
+	Func_c241();
+	(void)Func_c915();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_WithTextBoxLabel(hl, de);
+}
+/* <<< factory Func_c8ba */

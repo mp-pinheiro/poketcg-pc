@@ -1104,6 +1104,16 @@ static void adapt_ScriptCommand_PrintText(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PrintText */
 
+/* >>> factory Func_c9c0 */
+static void adapt_Func_c9c0(ProbeState *s)
+{
+	CallMapScriptResult r = Func_c9c0();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory Func_c9c0 */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1212,5 +1222,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9b8", adapt_Func_c9b8 },
 	{ "ScriptCommand_CloseTextBox", adapt_ScriptCommand_CloseTextBox },
 	{ "ScriptCommand_PrintText", adapt_ScriptCommand_PrintText },
+	{ "Func_c9c0", adapt_Func_c9c0 },
 	{ NULL, NULL },
 };

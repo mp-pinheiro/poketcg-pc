@@ -247,6 +247,8 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 
 #include "home/scripting.h"
 #define MAP_SCRIPT_LOAD_MAP 0x08u
+
+#define MAP_SCRIPT_MOVED_PLAYER 0x0cu
 /* <<< factory statics */
 
 
@@ -1787,3 +1789,10 @@ IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_PrintText */
+
+/* >>> factory Func_c9c0 */
+CallMapScriptResult Func_c9c0(void)
+{
+	return CallMapScriptPointerIfExists(MAP_SCRIPT_MOVED_PLAYER);
+}
+/* <<< factory Func_c9c0 */

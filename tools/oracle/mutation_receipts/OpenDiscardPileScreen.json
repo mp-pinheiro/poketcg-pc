@@ -1,0 +1,9 @@
+{
+  "fn": "OpenDiscardPileScreen",
+  "case": "tests/cases/core.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenDiscardPileScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"1122\", \"49901\": \"02\", \"50448\": \"2211ff\", \"50576\": \"00\", \"51899\": \"80\", \"52182\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenDiscardPileScreen\", \"mismatches\": {\"bus\": {\"address\": 52182, \"reference\": \"11ff008009c2\", \"native\": \"11ff008000c2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49790, 2], [49901, 1], [50448, 3], [50576, 1], [51899, 1], [52182, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenDiscardPileScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49790\": \"1122\", \"49901\": \"02\", \"50448\": \"2211ff\", \"50576\": \"00\", \"51899\": \"80\", \"52182\": \"09\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

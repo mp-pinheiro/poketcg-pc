@@ -1,0 +1,9 @@
+{
+  "fn": "Func_c8ba",
+  "case": "tests/cases/overworld.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Func_c8ba\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 86, \"e\": 120, \"f\": 0, \"hl\": 476, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"01\", \"54201\": \"7856\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Func_c8ba\", \"mismatches\": {\"bus\": {\"address\": 54201, \"reference\": \"017856\", \"native\": \"01ff56\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53441, 1], [54201, 2]]}}}\n",
+  "restored": "{\"fn\": \"Func_c8ba\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 86, \"e\": 120, \"f\": 0, \"hl\": 476, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53441\": \"01\", \"54201\": \"7856\"}}, \"status\": \"PASS\"}\n"
+}
