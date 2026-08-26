@@ -975,6 +975,24 @@ MUTATIONS["Music1_wave"] = {"source_symbol": "Music1_wave", "before": "\tgb_writ
 # >>> factory-mutation Music1_cutoff
 MUTATIONS["Music1_cutoff"] = {"source_symbol": "Music1_cutoff", "before": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicCutoff_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_cutoff-0", "Music1_cutoff-2"]}
 # <<< factory-mutation Music1_cutoff
+# >>> factory-mutation Music1_echo
+MUTATIONS["Music1_echo"] = {"source_symbol": "Music1_echo", "before": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicEcho_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_echo-0", "Music1_echo-2"]}
+# <<< factory-mutation Music1_echo
+# >>> factory-mutation Music1_vibrato_type
+MUTATIONS["Music1_vibrato_type"] = {"source_symbol": "Music1_vibrato_type", "before": "\tgb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_vibrato_type-0", "Music1_vibrato_type-2"]}
+# <<< factory-mutation Music1_vibrato_type
+# >>> factory-mutation Music1_vibrato_delay
+MUTATIONS["Music1_vibrato_delay"] = {"source_symbol": "Music1_vibrato_delay", "before": "\tgb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_vibrato_delay-0", "Music1_vibrato_delay-2"]}
+# <<< factory-mutation Music1_vibrato_delay
+# >>> factory-mutation Music1_pitch_offset
+MUTATIONS["Music1_pitch_offset"] = {"source_symbol": "Music1_pitch_offset", "before": "\tgb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_pitch_offset-0", "Music1_pitch_offset-2"]}
+# <<< factory-mutation Music1_pitch_offset
+# >>> factory-mutation Music1_adjust_pitch_offset
+MUTATIONS["Music1_adjust_pitch_offset"] = {"source_symbol": "Music1_adjust_pitch_offset", "before": "\tgb_write8(addr, (uint8_t)(value + gb_read8(addr)));", "after": "\tgb_write8(addr, value);", "case_ids": ["Music1_adjust_pitch_offset-0", "Music1_adjust_pitch_offset-1"]}
+# <<< factory-mutation Music1_adjust_pitch_offset
+# >>> factory-mutation Music1_end
+MUTATIONS["Music1_end"] = {"source_symbol": "Music1_end", "before": "\tgb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x00u);", "after": "\tgb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x01u);", "case_ids": ["Music1_end-0", "Music1_end-1"]}
+# <<< factory-mutation Music1_end
 # >>> factory-mutation _AssertSFXFinished
 MUTATIONS["_AssertSFXFinished"] = {"source_symbol": "_AssertSFXFinished", "before": "return Music1_AssertSFXFinished();", "after": "return (uint8_t)(Music1_AssertSFXFinished() ^ 1u);", "case_ids": ["_AssertSFXFinished-0", "_AssertSFXFinished-1", "_AssertSFXFinished-2"]};
 # <<< factory-mutation _AssertSFXFinished
