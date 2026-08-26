@@ -1107,6 +1107,30 @@ ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventFalse(uint8_t b, ui
 }
 /* <<< factory ScriptCommand_JumpIfEventFalse */
 
+#include "home/lcd_enable_frame.h"
+#include "home/overworld_map.h"
+
+/* >>> factory ScriptCommand_WalkPlayerToMasonLaboratory */
+#define OWMAP_MASON_LABORATORY 0x01u
+
+/* scripting.asm:1830-1841. Drives the player's walk to the Mason Laboratory: the
+ * loop runs a frame and advances the walking animation until
+ * wOverworldMapPlayerAnimationState reaches 2. Bounded by the animation itself,
+ * not by a counter -- the reference needs ~11.5M instructions, so a case must
+ * declare a large budget. */
+IncreaseScriptPointerResult ScriptCommand_WalkPlayerToMasonLaboratory(void)
+{
+	gb_write8(wOverworldMapSelection_ADDR, OWMAP_MASON_LABORATORY);
+	OverworldMap_BeginPlayerMovement();
+	do {
+		DoFrameIfLCDEnabled();
+		OverworldMap_UpdatePlayerWalkingAnimation();
+	} while (gb_read8(wOverworldMapPlayerAnimationState_ADDR) != 2u);
+	OverworldMap_PrintMapName();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_WalkPlayerToMasonLaboratory */
+
 
 
 /* >>> factory ScriptCommand_IncrementEventValue */

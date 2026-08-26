@@ -647,6 +647,16 @@ static void adapt_ScriptCommand_JumpIfEventFalse(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfEventFalse */
 
+/* >>> factory ScriptCommand_WalkPlayerToMasonLaboratory */
+static void adapt_ScriptCommand_WalkPlayerToMasonLaboratory(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_WalkPlayerToMasonLaboratory();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_WalkPlayerToMasonLaboratory */
+
 
 
 /* >>> factory ScriptCommand_IncrementEventValue */
@@ -1095,6 +1105,7 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfEventNonzero", adapt_ScriptCommand_JumpIfEventNonzero },
 	{ "ScriptCommand_JumpIfEventTrue", adapt_ScriptCommand_JumpIfEventTrue },
 	{ "ScriptCommand_JumpIfEventFalse", adapt_ScriptCommand_JumpIfEventFalse },
+	{ "ScriptCommand_WalkPlayerToMasonLaboratory", adapt_ScriptCommand_WalkPlayerToMasonLaboratory },
 	{ "ScriptCommand_IncrementEventValue", adapt_ScriptCommand_IncrementEventValue },
 	{ "ScriptCommand_JumpIfPlayerCoordsMatch", adapt_ScriptCommand_JumpIfPlayerCoordsMatch },
 	{ "ScriptCommand_JumpIfActiveNPCCoordsMatch", adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch },
