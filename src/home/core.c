@@ -4364,7 +4364,9 @@ CheckEnergyNeededForAttackResult CheckEnergyNeededForAttack(void)
 	DuelistVarResult duelist = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ff9d + DUELVARS_ARENA_CARD));
 	uint8_t d = duelist.a;
 	uint8_t e = wSelectedAttack;
-	(void)CopyAttackDataAndDamage_FromDeckIndex(d, e);
+	AttackCopyResult copy = CopyAttackDataAndDamage_FromDeckIndex(d, e);
+	d = (uint8_t)(copy.de >> 8);
+	e = (uint8_t)copy.de;
 
 	uint8_t name0 = gb_read8(wLoadedAttackName_ADDR);
 	uint8_t name1 = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
@@ -7347,3 +7349,35 @@ OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c)
 	return result;
 }
 /* <<< factory OpenNonTurnHolderDiscardPileScreen */
+
+/* >>> factory CanArenaCardUseNonResidualAttack */
+/* ai/core.asm:1383-1407. Tries the first attack, then the second when the first
+ * is unusable or Residual. Carry means at least one usable non-Residual attack. */
+CanArenaCardUseNonResidualAttackResult CanArenaCardUseNonResidualAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+	CheckIfSelectedAttackIsUnusableResult first = CheckIfSelectedAttackIsUnusable(FIRST_ATTACK_OR_PKMN_POWER, 0x80u, b, c, d, e, hl);
+	a = first.a; f = first.f; b = first.b; c = first.c; d = first.d; e = first.e; hl = first.hl;
+	if (!(f & 0x10u)) {
+		a = (uint8_t)(wLoadedAttackCategory & RESIDUAL);
+		f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+		if (a == 0u) {
+			f = (uint8_t)((f & 0x80u) | 0x10u);
+			return (CanArenaCardUseNonResidualAttackResult){a, f, b, c, d, e, hl};
+		}
+	}
+	wSelectedAttack = SECOND_ATTACK;
+	CheckIfSelectedAttackIsUnusableResult second = CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, f, b, c, d, e, hl);
+	a = second.a; f = second.f; b = second.b; c = second.c; d = second.d; e = second.e; hl = second.hl;
+	if (!(f & 0x10u)) {
+		a = (uint8_t)(wLoadedAttackCategory & RESIDUAL);
+		if (a == 0u) {
+			f = (uint8_t)((f & 0x80u) | 0x10u);
+			return (CanArenaCardUseNonResidualAttackResult){a, f, b, c, d, e, hl};
+		}
+	}
+	f = (uint8_t)(a == 0u ? 0x80u : 0x00u);
+	return (CanArenaCardUseNonResidualAttackResult){a, f, b, c, d, e, hl};
+}
+/* <<< factory CanArenaCardUseNonResidualAttack */

@@ -1092,4 +1092,8 @@ uint8_t OpenNonTurnHolderHandScreen_Simple(void);
 /* >>> factory OpenNonTurnHolderDiscardPileScreen */
 OpenDiscardPileScreenResult OpenNonTurnHolderDiscardPileScreen(uint8_t c);
 /* <<< factory OpenNonTurnHolderDiscardPileScreen */
+/* >>> factory CanArenaCardUseNonResidualAttack */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } CanArenaCardUseNonResidualAttackResult;
+CanArenaCardUseNonResidualAttackResult CanArenaCardUseNonResidualAttack(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory CanArenaCardUseNonResidualAttack */
 #endif

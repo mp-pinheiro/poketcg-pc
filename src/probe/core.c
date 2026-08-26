@@ -2438,7 +2438,17 @@ static void adapt_OpenNonTurnHolderDiscardPileScreen(ProbeState *s)
 }
 /* <<< factory OpenNonTurnHolderDiscardPileScreen */
 
+
+/* >>> factory CanArenaCardUseNonResidualAttack */
+static void adapt_CanArenaCardUseNonResidualAttack(ProbeState *s)
+{
+	CanArenaCardUseNonResidualAttackResult r = CanArenaCardUseNonResidualAttack(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a; s->f = r.f; s->b = r.b; s->c = r.c; s->d = r.d; s->e = r.e; s->hl = r.hl;
+}
+/* <<< factory CanArenaCardUseNonResidualAttack */
+
 const ProbeEntry probe_entries_core[] = {
+	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
 	{ "DecideLinkDuelVariables", adapt_DecideLinkDuelVariables },
