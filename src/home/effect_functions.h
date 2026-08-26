@@ -1483,6 +1483,15 @@ GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl);
 /* >>> factory Shift_PlayerSelectEffect */
 HandleColorChangeScreenResult Shift_PlayerSelectEffect(void);
 /* <<< factory Shift_PlayerSelectEffect */
+/* >>> factory HandlePlayerMetronomeEffect */
+/* HandlePlayerMetronomeEffect (effect_functions.asm:8089-8166): a = the amount of
+ * colorless energy Metronome costs. f is the only output: the cancelled exit
+ * passes the selection routine's own carry back, both `scf` exits return carry
+ * over the preceding Z, and the success tail's `or a` reports wTempCardID_ccc2.
+ * Exit a is DrawWideTextBox_WaitForInput residue on the failing exits, which
+ * WaitResult does not carry, so a is not part of this contract. */
+uint8_t HandlePlayerMetronomeEffect(uint8_t a);
+/* <<< factory HandlePlayerMetronomeEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

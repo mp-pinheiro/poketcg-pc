@@ -3607,6 +3607,13 @@ static void adapt_Shift_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Shift_PlayerSelectEffect */
 
+/* >>> factory HandlePlayerMetronomeEffect */
+static void adapt_HandlePlayerMetronomeEffect(ProbeState *s)
+{
+	s->f = HandlePlayerMetronomeEffect(s->a);
+}
+/* <<< factory HandlePlayerMetronomeEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4046,5 +4053,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TerrorStrike_SwitchDefendingPokemon", adapt_TerrorStrike_SwitchDefendingPokemon },
 	{ "Gale_SwitchEffect", adapt_Gale_SwitchEffect },
 	{ "Shift_PlayerSelectEffect", adapt_Shift_PlayerSelectEffect },
+	{ "HandlePlayerMetronomeEffect", adapt_HandlePlayerMetronomeEffect },
 	{ NULL, NULL },
 };

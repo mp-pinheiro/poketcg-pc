@@ -812,6 +812,20 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #define ChoosePokemonWishToColorChangeText 0x0113u
 #define UnableToSelectText 0x0045u
+
+#include "home/duel.h"
+#include "home/effect_commands.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/serial.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define ChooseOppAttackToBeUsedWithMetronomeText 0x013au
+#define EFFECTCMDTYPE_INITIAL_EFFECT_1 0x01u
+#define EFFECTCMDTYPE_INITIAL_EFFECT_2 0x02u
+#define OPPACTION_USE_METRONOME_ATTACK 0x14u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6971,3 +6985,72 @@ HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory Shift_PlayerSelectEffect */
+
+/* >>> factory HandlePlayerMetronomeEffect */
+/* effect_functions.asm:8089-8166 */
+uint8_t HandlePlayerMetronomeEffect(uint8_t a)
+{
+	wMetronomeEnergyCost = a;
+	(void)DrawWideTextBox_WaitForInput(ChooseOppAttackToBeUsedWithMetronomeText);
+
+	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
+	if ((selection.f & 0x10u) != 0u)
+		return selection.f;
+
+	/* The asm takes the chosen card/attack pair out of the selection routine's
+	 * exit d/e. The ported callee reports only hl/f, so the pair is re-read from
+	 * the two wDuelTempList bytes its own asm loaded them out of: entry
+	 * hCurMenuItem, doubled with 8-bit wraparound. */
+	uint8_t index = (uint8_t)(hCurMenuItem + hCurMenuItem);
+	uint8_t card = gb_read8((uint16_t)(wDuelTempList_ADDR + index));
+	uint8_t attack = gb_read8((uint16_t)(wDuelTempList_ADDR + index + 1u));
+
+	wMetronomeSelectedAttack = card;
+	gb_write8((uint16_t)(wMetronomeSelectedAttack_ADDR + 1u), attack);
+
+	/* Metronome's own name, saved across the copy that overwrites it. */
+	uint8_t metronome_lo = gb_read8(wLoadedAttackName_ADDR);
+	uint8_t metronome_hi = gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u));
+	SwapTurn();
+	(void)CopyAttackDataAndDamage_FromDeckIndex(card, attack);
+	SwapTurn();
+	if (metronome_lo == gb_read8(wLoadedAttackName_ADDR) &&
+	    metronome_hi == gb_read8((uint16_t)(wLoadedAttackName_ADDR + 1u))) {
+		/* Metronome cannot be used on Metronome. `scf` keeps the wait's Z. */
+		WaitResult unable = DrawWideTextBox_WaitForInput(UnableToSelectText);
+		return (uint8_t)((unable.f & 0x80u) | 0x10u);
+	}
+
+	TryExecuteEffectCommandFunctionResult initial1 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_1);
+	if ((initial1.f & 0x10u) != 0u) {
+		/* .failed is reached with hl still holding the text id the failing
+		 * command function loaded. */
+		WaitResult refused = DrawWideTextBox_WaitForInput(initial1.hl);
+		return (uint8_t)((refused.f & 0x80u) | 0x10u);
+	}
+
+	TryExecuteEffectCommandFunctionResult initial2 = TryExecuteEffectCommandFunction(EFFECTCMDTYPE_INITIAL_EFFECT_2);
+	if ((initial2.f & 0x10u) != 0u)
+		return (uint8_t)((initial2.f & 0x80u) | 0x10u);
+
+	SendAttackDataToLinkOpponent();
+	/* de still holds the popped Metronome name word (d = high, e = low). */
+	SetOppActionSerialSendResult sent = SetOppAction_SerialSendDuelData(OPPACTION_USE_METRONOME_ATTACK,
+		(uint16_t)((uint16_t)metronome_hi << 8 | metronome_lo));
+	uint8_t chosen_card = gb_read8(wMetronomeSelectedAttack_ADDR);
+	uint8_t chosen_attack = gb_read8((uint16_t)(wMetronomeSelectedAttack_ADDR + 1u));
+	uint8_t cost = wMetronomeEnergyCost;
+	/* b is callee residue no ported callee reports, and SerialSend8Bytes stages
+	 * it into wTempSerialBuf only against a link opponent. hl is the second
+	 * wMetronomeSelectedAttack byte, where the asm's `inc hl` left it. */
+	SerialSend8Bytes(cost, sent.f, 0u, cost,
+		(uint16_t)((uint16_t)chosen_card << 8 | chosen_attack),
+		(uint16_t)(wMetronomeSelectedAttack_ADDR + 1u));
+
+	wPlayerAttackingCardIndex = hTempCardIndex_ff9f;
+	wPlayerAttackingAttackIndex = wSelectedAttack;
+	uint8_t attacking_id = wTempCardID_ccc2;
+	wPlayerAttackingCardID = attacking_id;
+	return (uint8_t)(attacking_id == 0u ? 0x80u : 0x00u);
+}
+/* <<< factory HandlePlayerMetronomeEffect */

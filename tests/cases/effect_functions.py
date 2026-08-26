@@ -4674,6 +4674,22 @@ CASES["Shift_PlayerSelectEffect"] = [
 ]
 # <<< factory Shift_PlayerSelectEffect
 
+# >>> factory HandlePlayerMetronomeEffect
+CONTRACT["HandlePlayerMetronomeEffect"] = {"compare": ("f",), "preserve": ()}
+# Seeds: $FF97 hWhoseTurn, $FF9F hTempCardIndex_ff9f, $C2F1 wPlayerDuelistType,
+# $CABB wLCDC (0 keeps WaitForVBlank a no-op), $CAC2 wDuelDisplayedScreen,
+# $CC10 wPlayerAttackingAttackIndex/CardIndex/CardID, $CCAA wLoadedAttackName,
+# $CCC2 wTempCardID_ccc2, $CCC6 wSelectedAttack, $CE73 wMetronomeSelectedAttack.
+# Read: $CCF0 wMetronomeEnergyCost. keys cycle release/press so the text box
+# wait and the attack menu each see an edge.
+CASES["HandlePlayerMetronomeEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\x00\x00", 0xCCC2: b"\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, "read": {0xCCF0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\x00\x00", 0xCCC2: b"\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, read={0xCCF0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0x03, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\x00\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, "read": {0xCCF0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xFF9F: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01", 0xCC10: b"\x00\x00\x00", 0xCCAA: b"\xC9\x00", 0xCCC2: b"\x00", 0xCCC6: b"\x00", 0xCE73: b"\x00\x00"}, "read": {0xCCF0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory HandlePlayerMetronomeEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7045,3 +7061,6 @@ MUTATIONS["Gale_SwitchEffect"] = {"source_symbol": "Gale_SwitchEffect", "before"
 # >>> factory-mutation Shift_PlayerSelectEffect
 MUTATIONS["Shift_PlayerSelectEffect"] = {"source_symbol": "Shift_PlayerSelectEffect", "before": "HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)\n{\n\tfor (;;) {\n\t\tHandleColorChangeScreenResult selected =\n\t\t\tHandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChoosePokemonWishToColorChangeText);\n\t\thAIPkmnPowerEffectParam = selected.a;\n\t\tif ((selected.f & 0x10u) != 0u)\n\t\t\treturn selected;\n\n\t\tuint8_t found = 0u;\n\t\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\tfound = 1u;\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (found == 0u) {\n\t\t\tSwapTurn();\n\t\t\tcount = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\t\tfound = 1u;\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t\tSwapTurn();\n\t\t}\n\t\tif (found != 0u)\n\t\t\treturn (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0xC0u};","after":"HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)\n{\n\tfor (;;) {\n\t\tHandleColorChangeScreenResult selected =\n\t\t\tHandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChoosePokemonWishToColorChangeText);\n\t\thAIPkmnPowerEffectParam = selected.a;\n\t\tif ((selected.f & 0x10u) != 0u)\n\t\t\treturn selected;\n\n\t\tuint8_t found = 0u;\n\t\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\tfound = 1u;\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (found == 0u) {\n\t\t\tSwapTurn();\n\t\t\tcount = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\t\tfound = 1u;\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t\tSwapTurn();\n\t\t}\n\t\tif (found != 0u)\n\t\t\treturn (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0x80u};","case_ids": ["Shift_PlayerSelectEffect-0", "Shift_PlayerSelectEffect-1"]}
 # <<< factory-mutation Shift_PlayerSelectEffect
+# >>> factory-mutation HandlePlayerMetronomeEffect
+MUTATIONS["HandlePlayerMetronomeEffect"] = {"source_symbol": "HandlePlayerMetronomeEffect", "before": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = a;", "after": "uint8_t HandlePlayerMetronomeEffect(uint8_t a)\n{\n\twMetronomeEnergyCost = (uint8_t)(a + 1u);", "case_ids": ["HandlePlayerMetronomeEffect-0", "HandlePlayerMetronomeEffect-1", "HandlePlayerMetronomeEffect-2", "HandlePlayerMetronomeEffect-3"]}
+# <<< factory-mutation HandlePlayerMetronomeEffect
