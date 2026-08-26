@@ -47,6 +47,31 @@ def _parse(value: str | int | float) -> datetime.datetime:
     return stamp
 
 
+def _pending_artifacts() -> int:
+    """Staged artifacts not yet landed or quarantined; revoked ones re-pend."""
+    art = ROOT / ".factory" / "artifacts"
+    if not art.is_dir():
+        return 0
+    excluded: set[str] = set()
+    revoked: set[str] = set()
+    for name, sink in (("landings.jsonl", excluded),
+                       ("quarantine.jsonl", excluded),
+                       ("revocations.jsonl", revoked)):
+        path = ROOT / ".factory" / name
+        if not path.is_file():
+            continue
+        for line in path.read_text().splitlines():
+            try:
+                sha = json.loads(line).get("artifact_sha256")
+            except json.JSONDecodeError:
+                continue
+            if isinstance(sha, str):
+                sink.add(sha)
+    excluded -= revoked
+    return sum(1 for p in art.iterdir()
+               if p.is_dir() and p.name not in excluded)
+
+
 def _load_landings() -> list[dict]:
     if not LANDINGS.is_file():
         return []
@@ -207,6 +232,7 @@ def main() -> int:
     blocked_bytes = sum(sizes.get(name, {}).get("size", 0) for name in blocked_names)
     lines.append(f"blocked_stanzas={len(stanzas)}")
     lines.append(f"blocked_bytes={blocked_bytes}")
+    lines.append(f"artifacts_pending={_pending_artifacts()}")
 
     pool = _pool()
     for state in ("green", "red", "stale", "issued"):
