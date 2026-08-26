@@ -438,9 +438,35 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **Dependency cycles: the 2026-08-26 escalation below is SUPERSEDED — most of it
+  was tooling artefact, not mutual recursion.** Three later measurements shrank it
+  from 62 routines / 3,866 B to **6 components / 46 routines / 2,599 B**, and the
+  part a co-issuance policy would actually unblock is **175 B**, not 3,866:
+  - **A phantom-fallthrough bug accounted for 3 components (14 routines, 1,233 B).**
+    `inventory.py` judged fallthrough by the kind of a routine's *first* body line,
+    so a routine ending in a data table (`tx`/`db`/`dw`/`assert_table_length`) still
+    looked like code running into its neighbour. `GetPCPackNameTextID` is the
+    worked example: it is a pure table lookup ending in `ret` followed by
+    `.PCPackNameTextIDs`, yet it "depended on" `PrintPCPackName` purely because
+    `assert_table_length NUM_MAILS` is not a terminator. Fixed by also requiring
+    the *last* body line to classify as code; that freed **10 routines** into the
+    frontier immediately, with no status/`verified_functions` change.
+  - **One component was a sub-label false cycle and is now landed.**
+    `ScriptCommand_JumpIfEventTrue`/`False` (34 B) — see the technique note below.
+  - **Only 2 of the remaining components are self-contained**, i.e. every unported
+    blocker lies inside the component: `GetPCPackNameTextID`/`PrintPCPackName`
+    (69 B) and `DrawDeckNamingScreenBG`/`PrintDeckNameFromInput` (106 B) — and both
+    were freed by the fallthrough fix anyway. The other 7 components are gated by
+    outside unported work regardless of any issuance change (`GameLoop`/`Start`/`Reset`
+    still waits on `_GameLoop`; the 19-routine duel-menu component waits on 12 more).
+  So **cycle-aware issuance is no longer the top structural item** — it would buy
+  175 B at most today. Before escalating a cycle again, re-measure with the edge
+  classifier that skips `z`/`nz`/`c`/`nc` operands, and check whether the component
+  is self-contained; a component gated from outside is ordinary dependency work.
+  Historical record follows.
 - **Mutual recursion permanently starves the frontier — 62 routines, 3,866 B,
-  measured 2026-08-26. This is the single largest structural blocker left and it
-  needs a human decision on issuance policy.** `report.py` computes
+  measured 2026-08-26 (SUPERSEDED, see above). This was reported as the single
+  largest structural blocker needing a human decision on issuance policy.** `report.py` computes
   `ready = status == "todo" and not unported_blockers`. Two routines that call each
   other therefore each wait on the other forever: no member of a dependency cycle
   can ever be `ready`, so `factory-next` can never select one. Of the 62 trapped
