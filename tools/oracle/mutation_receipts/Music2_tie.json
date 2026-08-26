@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_tie",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_tie\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"56721\": \"80\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_tie\", \"mismatches\": {\"bus\": {\"address\": 56721, \"reference\": \"ff80\", \"native\": \"ff40\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[49408, 1], [56721, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music2_tie\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"ff\", \"56721\": \"80\"}}, \"status\": \"PASS\"}\n"
+}

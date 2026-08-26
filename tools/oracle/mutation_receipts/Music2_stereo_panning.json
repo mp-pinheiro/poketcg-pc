@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_stereo_panning",
+  "case": "tests/cases/music2.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_stereo_panning\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00ff\", \"56708\": \"ee\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_stereo_panning\", \"mismatches\": {\"bus\": {\"address\": 56708, \"reference\": \"00ffee\", \"native\": \"00ffff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49408, 2], [56708, 1]]}}}\n",
+  "restored": "{\"fn\": \"Music2_stereo_panning\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"00ff\", \"56708\": \"ee\"}}, \"status\": \"PASS\"}\n"
+}
