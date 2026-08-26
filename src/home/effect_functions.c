@@ -7269,3 +7269,16 @@ void NinetalesLure_SwitchEffect(void)
 	wDuelDisplayedScreen = 0u;
 }
 /* <<< factory NinetalesLure_SwitchEffect */
+
+/* >>> factory VictreebelLure_SwitchDefendingPokemon */
+void VictreebelLure_SwitchDefendingPokemon(void)
+{
+	SwapTurn();
+	uint8_t e = hTemp_ffa0;
+	HandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);
+	if (!(shield.f & 0x10u))
+		(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory VictreebelLure_SwitchDefendingPokemon */

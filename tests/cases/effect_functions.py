@@ -4884,6 +4884,15 @@ CASES["NinetalesLure_SwitchEffect"] = [
 ]
 # <<< factory NinetalesLure_SwitchEffect
 
+# >>> factory VictreebelLure_SwitchDefendingPokemon
+CONTRACT["VictreebelLure_SwitchDefendingPokemon"] = {"compare": (), "preserve": ()}
+CASES["VictreebelLure_SwitchDefendingPokemon"] = [
+    {"wram": {0xFFA0: b"\x00", 0xCAC2: b"\xFF"}},
+    {"wram": {0xFFA0: b"\x01", 0xCAC2: b"\xFF"}},
+    dict(POISON, wram={0xFFA0: b"\x02", 0xCAC2: b"\xFF"}),
+]
+# <<< factory VictreebelLure_SwitchDefendingPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7285,3 +7294,6 @@ MUTATIONS["Serial_TossCoin"] = {"source_symbol": "Serial_TossCoin", "before": "S
 # >>> factory-mutation NinetalesLure_SwitchEffect
 MUTATIONS["NinetalesLure_SwitchEffect"] = {"source_symbol": "NinetalesLure_SwitchEffect", "before": "NinetalesLure_SwitchEffect(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 0u;", "after": "NinetalesLure_SwitchEffect(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["NinetalesLure_SwitchEffect-0", "NinetalesLure_SwitchEffect-1"]}
 # <<< factory-mutation NinetalesLure_SwitchEffect
+# >>> factory-mutation VictreebelLure_SwitchDefendingPokemon
+MUTATIONS["VictreebelLure_SwitchDefendingPokemon"] = {"source_symbol": "VictreebelLure_SwitchDefendingPokemon", "before": "void VictreebelLure_SwitchDefendingPokemon(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 0u;\n}", "after": "void VictreebelLure_SwitchDefendingPokemon(void)\n{\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\tHandleNShieldAndTransparencyResult shield = HandleNShieldAndTransparency((uint16_t)e);\n\tif (!(shield.f & 0x10u))\n\t\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\twDuelDisplayedScreen = 1u;\n}", "case_ids": ["VictreebelLure_SwitchDefendingPokemon-0", "VictreebelLure_SwitchDefendingPokemon-1", "VictreebelLure_SwitchDefendingPokemon-2"]}
+# <<< factory-mutation VictreebelLure_SwitchDefendingPokemon

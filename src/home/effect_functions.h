@@ -1526,6 +1526,10 @@ SerialTossCoinATimesResult Serial_TossCoin(uint8_t a, uint8_t f, uint8_t b, uint
 /* >>> factory NinetalesLure_SwitchEffect */
 void NinetalesLure_SwitchEffect(void);
 /* <<< factory NinetalesLure_SwitchEffect */
+/* >>> factory VictreebelLure_SwitchDefendingPokemon */
+/* >>> factory VictreebelLure_SwitchDefendingPokemon */
+void VictreebelLure_SwitchDefendingPokemon(void);
+/* <<< factory VictreebelLure_SwitchDefendingPokemon */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
