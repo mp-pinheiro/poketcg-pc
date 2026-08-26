@@ -7413,3 +7413,53 @@ DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScree
 	}
 }
 /* <<< factory DisplayPlaceInitialPokemonCardsScreen */
+
+/* >>> factory PrintDeckAndHandIconsAndNumberOfCards */
+/* duel/core.asm:1490-1504. The two data tables live in bank 1 and feed a
+ * gb_read8-based block writer, so copy them to WRAM before calling it. */
+void PrintDeckAndHandIconsAndNumberOfCards(void)
+{
+	static const uint8_t tiles[] = {
+		0x04u, 0x03u, 0x2Du, 0x00u, 0x0Au, 0x03u, 0x2Du, 0x00u,
+		0x08u, 0x02u, 0xF4u, 0xF5u, 0x00u, 0x08u, 0x03u, 0xF6u,
+		0xF7u, 0x00u, 0x02u, 0x02u, 0xF8u, 0xF9u, 0x00u, 0x02u,
+		0x03u, 0xFAu, 0xFBu, 0x00u, 0x09u, 0x0Au, 0x2Du, 0x00u,
+		0x0Fu, 0x0Au, 0x2Du, 0x00u, 0x07u, 0x09u, 0xF4u, 0xF5u,
+		0x00u, 0x07u, 0x0Au, 0xF6u, 0xF7u, 0x00u, 0x0Du, 0x09u,
+		0xF8u, 0xF9u, 0x00u, 0x0Du, 0x0Au, 0xFAu, 0xFBu, 0x00u,
+		0xFFu,
+	};
+	static const uint8_t palettes[] = {
+		0x08u, 0x02u, 0x02u, 0x02u, 0x00u, 0x08u, 0x03u, 0x02u,
+		0x02u, 0x00u, 0x02u, 0x02u, 0x02u, 0x02u, 0x00u, 0x02u,
+		0x03u, 0x02u, 0x02u, 0x00u, 0x07u, 0x09u, 0x02u, 0x02u,
+		0x00u, 0x07u, 0x0Au, 0x02u, 0x02u, 0x00u, 0x0Du, 0x09u,
+		0x02u, 0x02u, 0x00u, 0x0Du, 0x0Au, 0x02u, 0x02u, 0x00u,
+		0xFFu,
+	};
+	const uint16_t scratch = 0xC100u;
+	uint16_t hl;
+	uint16_t de;
+	uint8_t a;
+	uint8_t b;
+	uint8_t c;
+
+	(void)LoadDuelDrawCardsScreenTiles();
+	for (uint8_t i = 0u; i < sizeof(tiles); i++)
+		gb_write8((uint16_t)(scratch + i), tiles[i]);
+	hl = scratch; de = 0u; a = 0u; b = 0u; c = 0u;
+	WriteDataBlocksToBGMap0(&hl, &de, &a, &b, &c);
+	if (wConsole == CONSOLE_CGB) {
+		for (uint8_t i = 0u; i < sizeof(palettes); i++)
+			gb_write8((uint16_t)(scratch + i), palettes[i]);
+		hBankVRAM = 1u;
+		gb_write8(0xFF4Fu, 1u);
+		hl = scratch; de = 0u; a = 0u; b = 0u; c = 0u;
+		WriteDataBlocksToBGMap0(&hl, &de, &a, &b, &c);
+		hBankVRAM = 0u;
+		gb_write8(0xFF4Fu, 0u);
+	}
+	PrintPlayerNumberOfHandAndDeckCards();
+	PrintOpponentNumberOfHandAndDeckCards();
+}
+/* <<< factory PrintDeckAndHandIconsAndNumberOfCards */

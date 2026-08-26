@@ -2456,7 +2456,17 @@ static void adapt_DisplayPlaceInitialPokemonCardsScreen(ProbeState *s)
 }
 /* <<< factory DisplayPlaceInitialPokemonCardsScreen */
 
+
+/* >>> factory PrintDeckAndHandIconsAndNumberOfCards */
+static void adapt_PrintDeckAndHandIconsAndNumberOfCards(ProbeState *s)
+{
+	(void)s;
+	PrintDeckAndHandIconsAndNumberOfCards();
+}
+/* <<< factory PrintDeckAndHandIconsAndNumberOfCards */
+
 const ProbeEntry probe_entries_core[] = {
+	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },

@@ -1100,4 +1100,7 @@ CanArenaCardUseNonResidualAttackResult CanArenaCardUseNonResidualAttack(uint8_t 
 typedef struct { uint8_t a; uint8_t f; } DisplayPlaceInitialPokemonCardsScreenResult;
 DisplayPlaceInitialPokemonCardsScreenResult DisplayPlaceInitialPokemonCardsScreen(uint8_t a, uint16_t hl);
 /* <<< factory DisplayPlaceInitialPokemonCardsScreen */
+/* >>> factory PrintDeckAndHandIconsAndNumberOfCards */
+void PrintDeckAndHandIconsAndNumberOfCards(void);
+/* <<< factory PrintDeckAndHandIconsAndNumberOfCards */
 #endif
