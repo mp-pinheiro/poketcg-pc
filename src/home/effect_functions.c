@@ -7363,3 +7363,13 @@ void PrimeapeFurySwipes_MultiplierEffect(void)
 	SetDefiniteDamage(damage);
 }
 /* <<< factory PrimeapeFurySwipes_MultiplierEffect */
+
+/* >>> factory SandslashFurySwipes_MultiplierEffect */
+void SandslashFurySwipes_MultiplierEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = ATimes10((uint8_t)(result.a + result.a));
+	SetDefiniteDamage(damage);
+}
+/* <<< factory SandslashFurySwipes_MultiplierEffect */

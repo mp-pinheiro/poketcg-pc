@@ -5001,6 +5001,22 @@ CASES["PrimeapeFurySwipes_MultiplierEffect"] = [
 ]
 # <<< factory PrimeapeFurySwipes_MultiplierEffect
 
+# >>> factory SandslashFurySwipes_MultiplierEffect
+CONTRACT["SandslashFurySwipes_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["SandslashFurySwipes_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SandslashFurySwipes_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7426,3 +7442,6 @@ MUTATIONS["PinMissile_MultiplierEffect"] = {"source_symbol": "PinMissile_Multipl
 # >>> factory-mutation PrimeapeFurySwipes_MultiplierEffect
 MUTATIONS["PrimeapeFurySwipes_MultiplierEffect"] = {"source_symbol": "PrimeapeFurySwipes_MultiplierEffect", "before": "void PrimeapeFurySwipes_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "after": "void PrimeapeFurySwipes_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "case_ids": ["PrimeapeFurySwipes_MultiplierEffect-0", "PrimeapeFurySwipes_MultiplierEffect-1"]}
 # <<< factory-mutation PrimeapeFurySwipes_MultiplierEffect
+# >>> factory-mutation SandslashFurySwipes_MultiplierEffect
+MUTATIONS["SandslashFurySwipes_MultiplierEffect"] = {"source_symbol": "SandslashFurySwipes_MultiplierEffect", "before": "void SandslashFurySwipes_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "after": "void SandslashFurySwipes_MultiplierEffect(void)\n{\n\tLoadTxRam3(20u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(4u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "case_ids": ["SandslashFurySwipes_MultiplierEffect-0", "SandslashFurySwipes_MultiplierEffect-1"]}
+# <<< factory-mutation SandslashFurySwipes_MultiplierEffect

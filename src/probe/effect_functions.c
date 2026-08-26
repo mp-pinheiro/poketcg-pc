@@ -3763,6 +3763,14 @@ static void adapt_PrimeapeFurySwipes_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory PrimeapeFurySwipes_MultiplierEffect */
 
+/* >>> factory SandslashFurySwipes_MultiplierEffect */
+static void adapt_SandslashFurySwipes_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	SandslashFurySwipes_MultiplierEffect();
+}
+/* <<< factory SandslashFurySwipes_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4220,5 +4228,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
 	{ "PinMissile_MultiplierEffect", adapt_PinMissile_MultiplierEffect },
 	{ "PrimeapeFurySwipes_MultiplierEffect", adapt_PrimeapeFurySwipes_MultiplierEffect },
+	{ "SandslashFurySwipes_MultiplierEffect", adapt_SandslashFurySwipes_MultiplierEffect },
 	{ NULL, NULL },
 };
