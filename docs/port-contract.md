@@ -438,6 +438,35 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **Register-clobber debt is transitive, and `compare: ()` is where it hides
+  (measured 2026-08-26).** A routine registered with a narrow `compare` was never
+  checked on the registers it destroys, so its C body legitimately returns `void`.
+  That is invisible until some *caller* needs those values, at which point the
+  caller looks like a bad port when it is in fact faithful. `Func_1bb4`
+  (`duel.asm:2214`) is the worked example: a straight call sequence whose reference
+  returns `b=0x00 c=0x00 d=0xD8 f=0x80` while a faithful forwarding port returns its
+  own arguments. Probing each callee alone with `compare=(a,f,b,c,d,e,hl)` through
+  a throwaway `/tmp` case (registers nothing, costs seconds) gives the real effects:
+  - `FinishQueuedAnimations` → `PORT` (`a`=0x01, `c`=0x00, `hl`=0xCAA0)
+  - `DrawDuelMainScene` → `PORT` (`a`=0x01, `f`=0xC0, `hl`=0xC2F1)
+  - `DrawDuelHUDs` → `PORT` (`f`=0x40, `b`=0x0B, `c`=0x04, `d`=0x07, `e`=0x00, `hl`=0xC3F0)
+  - `WaitForWideTextBoxInput` → `PORT` (`f`=0x80, `b`=0x12, `c`=0x11, `d`=0x12, `e`=0x11, `hl`=0xCD12)
+  - `PrintFailedEffectText` → `PASS`, already faithful on every register; its
+    `compare: ("f",)` merely understates what it models.
+  **Two things make "just widen the callees" more expensive than it sounds.** First
+  it cascades: widening `FinishQueuedAnimations` needs *its* callees to carry
+  registers, and `ZeroObjectPositions` and `BankswitchROM` return `void` and are not
+  registered at all, so each widening pulls in a fresh subtree of ports. Second,
+  isolated probes do not compose — `ExchangeRNG` alone with `wDuelType=0` returns
+  `f=0x70` and `PASS`es, yet in `Func_1bb4`'s context the reference leaves `f=0x80`,
+  because the clobbered inputs change what the tail computes. So do not use one
+  callee's measured exit state to predict a caller's.
+  Practical rule: on a b/c/d/e mismatch in a trivial call-sequence port, grep the
+  callees for `compare: ()` before touching the caller, then decide deliberately
+  between widening the subtree and a narrower caller contract justified by these
+  measurements. Narrowing a contract until the oracle passes, without that
+  evidence, is how `AIMakeDecision`-class stub debt was created.
+
 - **The attack-animation command interpreter is ONE state machine, not 7 routines,
   and that is why its members deadlock (measured 2026-08-26).**
   `poketcg/src/engine/duel/animations/commands.asm` implements a command loop out
