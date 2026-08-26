@@ -311,32 +311,44 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   DisableLCD` — makes the call live and lands on the LCD-on boundary below.
   Merely *calling* `DoFrameIfLCDEnabled` is therefore not sufficient evidence
   either way; check whether anything on the path enables the LCD.
-- With the LCD **on** the path is genuinely unavailable, and the mechanism is a
-  **HALT deadlock in the runner**, measured 2026-08-26. `WaitForVBlank`
-  (`lcd.asm:2-12`) checks `wLCDC`, then does `halt` / `nop` / `cp [hl]`, waiting
-  for the VBlank ISR to bump `wVBlankCounter`. Drive
-  `DuelCheckMenu_OppPlayArea` past `Func_235e` (see below) with a 40M
-  instruction / 160M cycle budget and it parks at `pc=0x0271`
-  (`WaitForVBlank.wait_vblank+1`) reporting `lcdc=128`, `ie=1`, `ime=1`,
-  `halted=1` — everything armed — but `if=224`, so **VBlank bit 0 is never
-  raised**, and `ppu_ly` is frozen at **21** after 160M cycles. So the PPU does
-  not advance to line 144 while the CPU is halted, and
-  `service_pending_interrupt` only clears `halted` when `IF & IE` is nonzero.
-  **Synthesizing the interrupt does not work — measured and reverted.** Raising
-  `IF` bit 0 at a synthetic 70224-cycle boundary whenever the CPU is halted with
-  the LCD on does break the deadlock: instrumenting the runner showed 150
-  synthetic VBlanks, `ppu_ly` advancing again, `halted=0`, and
-  `DuelCheckMenu_OppPlayArea` executing 33M further instructions instead of
-  parking immediately. But it reddens the gate on four cases across
-  `CreditsSequenceCmd_FadeIn` and `FadeScreenFromWhite`: fade routines *count*
-  frames, so an interrupt delivered off-cadence changes their output. The
-  routine also re-deadlocks later at the same `pc=0x0271` once real boundaries
-  resume and the PPU stalls again, so the synthetic boundary is not even
-  sufficient. Any real fix must make the PPU genuinely advance while halted, at
-  the true 70224-cycle cadence, rather than injecting boundaries beside it —
-  `gb_frame_complete`/`gb_reset_frame` already detect real boundaries, and the
-  frame counters (`real_boundaries`, `synth_vblanks`) added for this experiment
-  are the way to tell the two apart.
+- With the LCD **on** a routine parks at `pc=0x0271`
+  (`WaitForVBlank.wait_vblank+1`) with `lcdc=128`, `ie=1`, `ime=1`, `halted=1`
+  and `if=224`. **This is NOT a runner HALT deadlock.** That diagnosis was
+  recorded here on 2026-08-26 and is disproven by measurement on the same day;
+  it cost one reverted runner change (below) and should not be re-derived.
+  Corrected findings, each measured on `Script_BeatAaron` (bank `03:5903`) via
+  `compare_one.py` with `read` spanning `wVBlankCounter` (`0xCAB8`):
+  - **The PPU does advance while halted.** `gb_debug_step` calls `gb_tick(ctx, 4)`
+    for a halted CPU (`gbrt.c:5485`), the two PPU-skipping fast paths are gated
+    behind `gbrt_benchmark_fast_tick_enabled` which is `false` (`gbrt.c:35`), so
+    the normal path reaches `gb_sync` → `ppu_tick`. `ppu_ly` samples 35 / 95 / 69
+    / 53 at rising budgets — it moves. The earlier "frozen at 21" claim was a
+    single sample mistaken for a constant.
+  - **VBlank is requested every frame.** `ppu.c:1669` does `ctx->io[0x0F] |= 0x01`
+    on entering VBlank. `if=224` in a report means the request was already
+    *consumed*, not that it never fired.
+  - **The ISR runs every frame.** Seed `wVBlankCounter = 0` and read it back:
+    114 frames → 112, 569 → 56, 1708 → 171, 5696 → 62, 23203 → 161. Every value
+    is `frames mod 256` — it is a one-byte counter and it increments on *every*
+    frame. Non-monotonic samples are wraparound, not a stalling interrupt.
+  - So `WaitForVBlank` exits correctly each time, and the routine still runs
+    23,000+ frames without completing. It is not blocked on frames: **nothing
+    ever presses a button.** `Script_BeatAaron` runs `print_npc_text`, whose text
+    box waits on edge-triggered `hKeysPressed`. Supplying a `keys` timeline moves
+    `pc` off `0x0271` entirely (to `0xEF7D`) and drops the frame-wait count from
+    153 to 14 — proof the wait loop was healthy and idle, not stuck.
+  - The input run then lands in WRAM (`0xEF7D` is past `wMusicCh1StackBackup`),
+    i.e. it executes garbage. A script *entry point* needs whole-scene ambient
+    state that a probed per-routine call does not provide. That is the real
+    blocker for this class — scene state and input, not frame simulation.
+  **The reverted experiment.** Raising `IF` bit 0 at a synthetic 70224-cycle
+  boundary whenever the CPU is halted with the LCD on was tried and reverted: it
+  reddens four cases across `CreditsSequenceCmd_FadeIn` and `FadeScreenFromWhite`,
+  because fade routines *count* frames and an off-cadence interrupt changes their
+  output. Given the corrected findings above it was also solving a non-problem.
+  Budget note for anyone re-measuring: `compare_one.py` kills the backend after
+  **30 s**, which caps a probed call near ~1.6 B cycles (≈23,000 frames); a `keys`
+  timeline costs extra wall time per frame and lowers that ceiling.
 - Arming does not help by itself. `runner.c` sets IE/IME when
   `input_events` is declared or `rLCDC & 0x80`, but with the LCD off the PPU
   publishes no frames, and the synthetic 70224-cycle boundary only advances the
