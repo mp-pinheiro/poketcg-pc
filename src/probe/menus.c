@@ -345,6 +345,7 @@ const ProbeEntry probe_entries_menus[] = {
 	{ "WaitForWideTextBoxInput", adapt_WaitForWideTextBoxInput },
 	{ "RefreshMenuCursor_CheckPlaySFX", adapt_RefreshMenuCursor_CheckPlaySFX },
 	{ "PlayOpenOrExitScreenSFX", adapt_PlayOpenOrExitScreenSFX },
+	{ "DrawTextBox_PrintTextNoDelay", adapt_DrawTextBox_PrintTextNoDelay },
 	{ "HandleYesOrNoMenu", adapt_HandleYesOrNoMenu },
 	{ "CopyCardNameAndLevel", adapt_CopyCardNameAndLevel },
 	{ "ReloadCardListItems", adapt_ReloadCardListItems },
