@@ -1,0 +1,9 @@
+{
+  "fn": "CallMapScriptPointerIfExists",
+  "case": "tests/cases/scripting.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CallMapScriptPointerIfExists\", \"registers\": {\"a\": 252, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 21740, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CallMapScriptPointerIfExists\", \"mismatches\": {\"a\": [252, 84], \"hl\": [21740, 84]}}\n",
+  "restored": "{\"fn\": \"CallMapScriptPointerIfExists\", \"registers\": {\"a\": 252, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 21740, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
