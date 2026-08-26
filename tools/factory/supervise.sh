@@ -12,7 +12,16 @@ touch .factory/landings.jsonl
 tail -Fn0 .factory/landings.jsonl 2>/dev/null \
   | jq --unbuffered -r '"landed  " + ((.routines // []) | join(",")) + "  gate=" + ((.seconds_gate // 0) | tostring) + "s"' &
 feed=$!
-trap 'kill "$feed" 2>/dev/null' EXIT
+while :; do
+  sleep "${POKETCG_FEED_INTERVAL:-300}"
+  pct=$(jq -r '.measures.code * 10000 / .measures["code/total"] | floor / 100' site/data/progress.json 2>/dev/null)
+  stats=$(python3 tools/factory/measure.py 2>/dev/null \
+    | grep -E "^(landings_per_hour_6h|bytes_per_hour_6h|ready_count|pool_issued|pool_green|pool_red)=" \
+    | tr '\n' ' ')
+  printf 'heartbeat  %s%%  %s%s\n' "${pct:-?}" "$stats" "$(date +%H:%M:%S)"
+done &
+beat=$!
+trap 'kill "$feed" "$beat" 2>/dev/null' EXIT
 # The orchestrator drives deterministic tooling; translation quality lives in
 # the repo-pinned candidate agents, so the session model stays on the
 # sustainable tier and opus is reserved for capability work and the gen-12+
