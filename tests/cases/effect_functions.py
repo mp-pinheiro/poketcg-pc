@@ -4654,6 +4654,26 @@ CASES["Gale_SwitchEffect"] = [
 ]
 # <<< factory Gale_SwitchEffect
 
+# >>> factory Shift_PlayerSelectEffect
+CONTRACT["Shift_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Shift_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xC2EF: b"\x01",
+      0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2D4: b"\x81",
+      0xC3BB: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\x08",
+      0xCABB: b"\x80", 0xFF40: b"\x80"},
+     "setup": FRAME_SETUP, "instruction_budget": 20000000,
+     "cycle_budget": 100000000, "read": {0xFFA1: 1}},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xC2EF: b"\x01",
+          0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2D4: b"\x81",
+          0xC3BB: b"\xFF", 0xC3BC: b"\xFF", 0xC400: b"\x08",
+          0xCABB: b"\x80", 0xFF40: b"\x80"},
+         setup=FRAME_SETUP, instruction_budget=20000000,
+         cycle_budget=100000000, read={0xFFA1: 1}),
+]
+# <<< factory Shift_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7022,3 +7042,6 @@ MUTATIONS["TerrorStrike_SwitchDefendingPokemon"] = {"source_symbol": "TerrorStri
 # >>> factory-mutation Gale_SwitchEffect
 MUTATIONS["Gale_SwitchEffect"] = {"source_symbol": "Gale_SwitchEffect", "before": "\t\twDealtDamage = 0u;\n\t\t*(wDealtDamage_PTR + 1) = 0u;", "after": "\t\twDealtDamage = 1u;\n\t\t*(wDealtDamage_PTR + 1) = 0u;", "case_ids": ["Gale_SwitchEffect-0", "Gale_SwitchEffect-1"]}
 # <<< factory-mutation Gale_SwitchEffect
+# >>> factory-mutation Shift_PlayerSelectEffect
+MUTATIONS["Shift_PlayerSelectEffect"] = {"source_symbol": "Shift_PlayerSelectEffect", "before": "HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)\n{\n\tfor (;;) {\n\t\tHandleColorChangeScreenResult selected =\n\t\t\tHandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChoosePokemonWishToColorChangeText);\n\t\thAIPkmnPowerEffectParam = selected.a;\n\t\tif ((selected.f & 0x10u) != 0u)\n\t\t\treturn selected;\n\n\t\tuint8_t found = 0u;\n\t\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\tfound = 1u;\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (found == 0u) {\n\t\t\tSwapTurn();\n\t\t\tcount = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\t\tfound = 1u;\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t\tSwapTurn();\n\t\t}\n\t\tif (found != 0u)\n\t\t\treturn (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0xC0u};","after":"HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)\n{\n\tfor (;;) {\n\t\tHandleColorChangeScreenResult selected =\n\t\t\tHandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,\n\t\t\t\tChoosePokemonWishToColorChangeText);\n\t\thAIPkmnPowerEffectParam = selected.a;\n\t\tif ((selected.f & 0x10u) != 0u)\n\t\t\treturn selected;\n\n\t\tuint8_t found = 0u;\n\t\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\tfound = 1u;\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (found == 0u) {\n\t\t\tSwapTurn();\n\t\t\tcount = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\t\t\tfor (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {\n\t\t\t\tif (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {\n\t\t\t\t\tfound = 1u;\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t\tSwapTurn();\n\t\t}\n\t\tif (found != 0u)\n\t\t\treturn (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0x80u};","case_ids": ["Shift_PlayerSelectEffect-0", "Shift_PlayerSelectEffect-1"]}
+# <<< factory-mutation Shift_PlayerSelectEffect

@@ -3598,6 +3598,15 @@ static void adapt_Gale_SwitchEffect(ProbeState *s)
 }
 /* <<< factory Gale_SwitchEffect */
 
+/* >>> factory Shift_PlayerSelectEffect */
+static void adapt_Shift_PlayerSelectEffect(ProbeState *s)
+{
+	HandleColorChangeScreenResult result = Shift_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Shift_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4036,5 +4045,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PidgeyWhirlwind_SwitchEffect", adapt_PidgeyWhirlwind_SwitchEffect },
 	{ "TerrorStrike_SwitchDefendingPokemon", adapt_TerrorStrike_SwitchDefendingPokemon },
 	{ "Gale_SwitchEffect", adapt_Gale_SwitchEffect },
+	{ "Shift_PlayerSelectEffect", adapt_Shift_PlayerSelectEffect },
 	{ NULL, NULL },
 };

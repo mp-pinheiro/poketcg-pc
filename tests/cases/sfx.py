@@ -60,6 +60,8 @@ CASES["Func_fc105"] = [
 # >>> factory-cases-statics
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 _STACK = [0x2468]
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory SFX_end
@@ -242,6 +244,16 @@ CASES["Func_fc279"] = [
 ]
 # <<< factory Func_fc279
 
+# >>> factory SFX_wait
+CONTRACT["SFX_wait"] = {"compare": ("b", "c", "hl"), "preserve": ("b", "c")}
+CASES["SFX_wait"] = [
+    {"stack": [0xC100], "wram": {0xC100: b"\x42", 0xDE33: b"\x00"}, "read": {0xDE33: 1, 0xDE4B: 2}},
+    {"c": 1, "stack": [0xC110], "wram": {0xC110: b"\x37", 0xDE34: b"\x00"}, "read": {0xDE34: 1, 0xDE4D: 2}},
+    {"c": 3, "stack": [0xC120], "wram": {0xC120: b"\x7E", 0xDE32: b"\x00", 0xDE36: b"\x00"}, "read": {0xDE36: 1, 0xDE51: 2}},
+    dict(POISON, stack=[0xC130], wram={0xC130: b"\x55"}),
+]
+# <<< factory SFX_wait
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -317,3 +329,6 @@ MUTATIONS["Func_fc26c"] = {"source_symbol": "Func_fc26c", "before": "\twCurSfxID
 # >>> factory-mutation Func_fc279
 MUTATIONS["Func_fc279"] = {"source_symbol": "Func_fc279", "before": "\tgb_read8(rAUD4GO);\n\twdd8c = 0;", "after": "\tgb_read8(rAUD4GO);\n\twdd8c = 1;", "case_ids": ["Func_fc279-0", "Func_fc279-1"]}
 # <<< factory-mutation Func_fc279
+# >>> factory-mutation SFX_wait
+MUTATIONS["SFX_wait"] = {"source_symbol": "SFX_wait", "before": "\tgb_write8((uint16_t)(wde33_ADDR + bc), wait_val);", "after": "\tgb_write8((uint16_t)(wde33_ADDR + bc + 1u), wait_val);", "case_ids": ["SFX_wait-0", "SFX_wait-1", "SFX_wait-2"]}
+# <<< factory-mutation SFX_wait

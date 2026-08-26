@@ -140,6 +140,14 @@ static void adapt_SFX_endloop(ProbeState *s)
 }
 /* <<< factory SFX_endloop */
 
+/* >>> factory SFX_wait */
+static void adapt_SFX_wait(ProbeState *s)
+{
+	uint16_t bc = (uint16_t)(((uint16_t)s->b << 8) | s->c);
+	s->hl = SFX_wait(bc, s->stack[0]);
+}
+/* <<< factory SFX_wait */
+
 const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_PlaySFX", adapt_SFX_PlaySFX },
 	{ "SFX_UpdateSFX", adapt_SFX_UpdateSFX },
@@ -159,5 +167,6 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_Update", adapt_SFX_Update },
 	{ "Func_fc279", adapt_Func_fc279 },
 	{ "Func_fc26c", adapt_Func_fc26c },
+	{ "SFX_wait", adapt_SFX_wait },
 	{ NULL, NULL },
 };

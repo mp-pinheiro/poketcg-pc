@@ -1480,6 +1480,9 @@ HandleSwitchDefendingPokemonEffectResult TerrorStrike_SwitchDefendingPokemon(voi
 typedef struct { uint8_t f; } GaleSwitchEffectResult;
 GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl);
 /* <<< factory Gale_SwitchEffect */
+/* >>> factory Shift_PlayerSelectEffect */
+HandleColorChangeScreenResult Shift_PlayerSelectEffect(void);
+/* <<< factory Shift_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

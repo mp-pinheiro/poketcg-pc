@@ -804,6 +804,14 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/substatus.h"
 #include "home/effect_functions.h"
 #include "home/random.h"
+
+#include "generated/hram.h"
+#include "home/menus.h"
+#include "home/card_color.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#define ChoosePokemonWishToColorChangeText 0x0113u
+#define UnableToSelectText 0x0045u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6926,3 +6934,40 @@ GaleSwitchEffectResult Gale_SwitchEffect(uint16_t hl)
 	return (GaleSwitchEffectResult){0x80u};
 }
 /* <<< factory Gale_SwitchEffect */
+
+/* >>> factory Shift_PlayerSelectEffect */
+HandleColorChangeScreenResult Shift_PlayerSelectEffect(void)
+{
+	for (;;) {
+		HandleColorChangeScreenResult selected =
+			HandleColorChangeScreen((uint8_t)(hTemp_ffa0 | 0x80u), 0u, 0u, 0u, 0u, 0u,
+				ChoosePokemonWishToColorChangeText);
+		hAIPkmnPowerEffectParam = selected.a;
+		if ((selected.f & 0x10u) != 0u)
+			return selected;
+
+		uint8_t found = 0u;
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		for (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {
+			if (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {
+				found = 1u;
+				break;
+			}
+		}
+		if (found == 0u) {
+			SwapTurn();
+			count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+			for (uint8_t slot = PLAY_AREA_ARENA; slot < count.a; ++slot) {
+				if (GetPlayAreaCardColor(slot) == hAIPkmnPowerEffectParam) {
+					found = 1u;
+					break;
+				}
+			}
+			SwapTurn();
+		}
+		if (found != 0u)
+			return (HandleColorChangeScreenResult){hAIPkmnPowerEffectParam, 0xC0u};
+		(void)DrawWideTextBox_WaitForInput(UnableToSelectText);
+	}
+}
+/* <<< factory Shift_PlayerSelectEffect */

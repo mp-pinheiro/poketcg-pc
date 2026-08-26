@@ -602,3 +602,18 @@ void SFX_endloop(uint16_t bc, uint16_t caller_word)
 	ExecuteNextSFXCommand(caller_word, bc);
 }
 /* <<< factory SFX_endloop */
+
+/* >>> factory SFX_wait */
+uint16_t SFX_wait(uint16_t bc, uint16_t caller_hl)
+{
+	uint8_t c = (uint8_t)bc;
+	if (c == 3u)
+		Func_fc1cd();
+	else
+		SFX_ApplyPitchOffset(c);
+	uint8_t wait_val = gb_read8(caller_hl);
+	caller_hl = (uint16_t)(caller_hl + 1u);
+	gb_write8((uint16_t)(wde33_ADDR + bc), wait_val);
+	return Func_fc105(bc, caller_hl);
+}
+/* <<< factory SFX_wait */
