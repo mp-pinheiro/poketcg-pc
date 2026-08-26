@@ -192,4 +192,7 @@ void BankswitchROM(uint8_t bank);
 /* >>> factory Func_c268 */
 void Func_c268(void);
 /* <<< factory Func_c268 */
+/* >>> factory PauseMenu_Status */
+void PauseMenu_Status(void);
+/* <<< factory PauseMenu_Status */
 #endif /* POKETCG_HOME_OVERWORLD_H */

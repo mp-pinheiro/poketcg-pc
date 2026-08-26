@@ -157,6 +157,8 @@
 
 #define PAUSE_MENU_TEXT_LIST_BANK 0x03u
 #define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
+
+#include "home/status.h"
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -880,3 +882,10 @@ void Func_c268(void)
 	}
 }
 /* <<< factory Func_c268 */
+
+/* >>> factory PauseMenu_Status */
+void PauseMenu_Status(void)
+{
+	_PauseMenu_Status();
+}
+/* <<< factory PauseMenu_Status */

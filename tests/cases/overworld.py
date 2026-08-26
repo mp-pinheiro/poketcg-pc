@@ -300,6 +300,9 @@ wSelectedPauseMenuItem = 0xD0B8
 
 def menu_state(default_yes=0):
     return {0xCABB: b"\x00", 0xCD0F: b"\x05", 0xCD10: b"\x01", 0xCD11: b"\x02", 0xCD12: b"\x00", 0xCD14: b"\x02", 0xCD98: b"\x02", 0xCD9A: bytes([default_yes]), 0xD133: b"\x00" * 0x100}
+
+SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+wMedalScreenYOffset = 0xD114
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -707,6 +710,14 @@ CASES["Func_c268"] = [
 ]
 # <<< factory Func_c268
 
+# >>> factory PauseMenu_Status
+CONTRACT["PauseMenu_Status"] = {"compare": (), "preserve": ()}
+CASES["PauseMenu_Status"] = [
+    {"keys": [0x00, 0x01], "setup": SETUP, "wram": {0xCABB: b"\x00", 0xD291: b"\x5A"}, "read": {0xD291: 1, wMedalScreenYOffset: 1}, "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, keys=[0x00, 0x01], setup=SETUP, wram={0xCABB: b"\x00", 0xD291: b"\x5A"}, read={0xD291: 1, wMedalScreenYOffset: 1}, instruction_budget=20000000, cycle_budget=100000000),
+]
+# <<< factory PauseMenu_Status
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -942,3 +953,6 @@ MUTATIONS["Func_c268"] = {
     "case_ids": ["Func_c268-0", "Func_c268-1"]
 }
 # <<< factory-mutation Func_c268
+# >>> factory-mutation PauseMenu_Status
+MUTATIONS["PauseMenu_Status"] = {"source_symbol": "PauseMenu_Status", "before": "\t_PauseMenu_Status();", "after": "\treturn;", "case_ids": ["PauseMenu_Status-0", "PauseMenu_Status-1"]}
+# <<< factory-mutation PauseMenu_Status
