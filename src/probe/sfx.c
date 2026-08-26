@@ -12,6 +12,38 @@ static void adapt_SFX_UpdateSFX(ProbeState *s)
 	SFX_Update();
 }
 
+/* >>> factory SFX_Play */
+/* SFX_PlaySFX is `jp SFX_Play`, so the body is entered identically. */
+static void adapt_SFX_Play(ProbeState *s)
+{
+	SFX_Play(s->a);
+}
+/* <<< factory SFX_Play */
+
+/* >>> factory SFX_Update */
+static void adapt_SFX_Update(ProbeState *s)
+{
+	(void)s;
+	SFX_Update();
+}
+/* <<< factory SFX_Update */
+
+/* >>> factory Func_fc279 */
+static void adapt_Func_fc279(ProbeState *s)
+{
+	(void)s;
+	Func_fc279();
+}
+/* <<< factory Func_fc279 */
+
+/* >>> factory Func_fc26c */
+static void adapt_Func_fc26c(ProbeState *s)
+{
+	(void)s;
+	Func_fc26c();
+}
+/* <<< factory Func_fc26c */
+
 /* >>> factory Func_fc105 */
 static void adapt_Func_fc105(ProbeState *s)
 {
@@ -123,5 +155,9 @@ const ProbeEntry probe_entries_sfx[] = {
 	{ "SFX_duty", adapt_SFX_duty },
 	{ "SFX_envelope", adapt_SFX_envelope },
 	{ "SFX_endloop", adapt_SFX_endloop },
+	{ "SFX_Play", adapt_SFX_Play },
+	{ "SFX_Update", adapt_SFX_Update },
+	{ "Func_fc279", adapt_Func_fc279 },
+	{ "Func_fc26c", adapt_Func_fc26c },
 	{ NULL, NULL },
 };

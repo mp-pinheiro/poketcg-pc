@@ -184,6 +184,64 @@ CASES["SFX_endloop"] = [
 ]
 # <<< factory SFX_endloop
 
+# >>> factory SFX_Play
+# `SFX_PlaySFX: jp SFX_Play`, so the body is entered identically and these
+# mirror the trampoline's cases.
+CONTRACT["SFX_Play"] = {"compare": (), "preserve": ()}
+CASES["SFX_Play"] = [
+    {"a": 0, "wram": {0xDE53: b"\x00"},
+     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
+    dict(POISON, a=0, wram={0xDE53: b"\x00"},
+         read={0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}),
+    {"a": 96, "wram": {0xDE53: b"\x00"},
+     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1}},
+    {"a": 1, "wram": {0xDE53: b"\x00"},
+     "read": {0xDE53: 1, 0xDD8C: 1, 0xDE54: 1, 0xDE4B: 8, 0xDE2F: 1, 0xDE33: 1}},
+]
+# <<< factory SFX_Play
+
+# >>> factory SFX_Update
+CONTRACT["SFX_Update"] = {"compare": (), "preserve": ()}
+CASES["SFX_Update"] = [
+    {"wram": {0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
+     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
+    dict(POISON, wram={0xDD8C: b"\x00", 0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
+         read={0xDE53: 1, 0xDD83: 1, 0xDD82: 1}),
+    {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
+              0xDD85: b"\xFF",
+              0xDE33: b"\x01\x00\x00\x00",
+              0xDE4B: b"\xDF\x44\x00\x00\x00\x00\x00\x00"},
+     "read": {0xDD8C: 1, 0xDD85: 1, 0xDE2B: 1, 0xDE37: 2, 0xDE4B: 8}},
+    {"wram": {0xDD8C: b"\x01", 0xDE54: b"\xff", 0xDE53: b"\x01",
+              0xDE33: b"\x01\x00\x00\x00",
+              0xDE4B: b"\x96\x40\x00\x00\x00\x00\x00\x00"},
+     "read": {0xDD8C: 1}},
+]
+# <<< factory SFX_Update
+
+# >>> factory Func_fc26c
+CONTRACT["Func_fc26c"] = {"compare": (), "preserve": ()}
+CASES["Func_fc26c"] = [
+    {"wram": {0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
+     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
+    {"wram": {0xDE53: b"\xFF", 0xDD83: b"\xFF", 0xDD82: b"\xFF"},
+     "read": {0xDE53: 1, 0xDD83: 1, 0xDD82: 1}},
+    dict(POISON, wram={0xDE53: b"\x01", 0xDD83: b"\x05", 0xDD82: b"\x04"},
+         read={0xDE53: 1, 0xDD83: 1, 0xDD82: 1}),
+]
+# <<< factory Func_fc26c
+
+# >>> factory Func_fc279
+# The asm's register loads are a documented ROM bug (reads, not writes), so
+# clearing wdd8c is the only surviving effect.
+CONTRACT["Func_fc279"] = {"compare": (), "preserve": ()}
+CASES["Func_fc279"] = [
+    {"wram": {0xDD8C: b"\x01"}, "read": {0xDD8C: 1}},
+    {"wram": {0xDD8C: b"\xFF"}, "read": {0xDD8C: 1}},
+    dict(POISON, wram={0xDD8C: b"\x0F"}, read={0xDD8C: 1}),
+]
+# <<< factory Func_fc279
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -247,3 +305,15 @@ MUTATIONS["SFX_envelope"] = {"source_symbol": "SFX_envelope", "before": "void SF
 # >>> factory-mutation SFX_endloop
 MUTATIONS["SFX_endloop"] = {"source_symbol": "SFX_endloop", "before": "void SFX_endloop(uint16_t bc, uint16_t caller_word)\n{\n\tuint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));\n\tcount = (uint8_t)(count - 1u);", "after": "void SFX_endloop(uint16_t bc, uint16_t caller_word)\n{\n\tuint8_t count = gb_read8((uint16_t)(wde3f_ADDR + bc));\n\tcount = (uint8_t)(count - 2u);", "case_ids": ["SFX_endloop-0", "SFX_endloop-1", "SFX_endloop-2"]}
 # <<< factory-mutation SFX_endloop
+# >>> factory-mutation SFX_Play
+MUTATIONS["SFX_Play"] = {"source_symbol": "SFX_Play", "before": "\tuint16_t offset = (uint16_t)sfx_id * 2u;", "after": "\tuint16_t offset = (uint16_t)sfx_id * 3u;", "case_ids": ["SFX_Play-3"]}
+# <<< factory-mutation SFX_Play
+# >>> factory-mutation SFX_Update
+MUTATIONS["SFX_Update"] = {"source_symbol": "SFX_Update", "before": "\twde54 = wdd8c;", "after": "\twde54 = (uint8_t)(wdd8c ^ 1u);", "case_ids": ["SFX_Update-2", "SFX_Update-3"]}
+# <<< factory-mutation SFX_Update
+# >>> factory-mutation Func_fc26c
+MUTATIONS["Func_fc26c"] = {"source_symbol": "Func_fc26c", "before": "\twCurSfxID = 0x80;", "after": "\twCurSfxID = 0x81;", "case_ids": ["Func_fc26c-0", "Func_fc26c-1"]}
+# <<< factory-mutation Func_fc26c
+# >>> factory-mutation Func_fc279
+MUTATIONS["Func_fc279"] = {"source_symbol": "Func_fc279", "before": "\tgb_read8(rAUD4GO);\n\twdd8c = 0;", "after": "\tgb_read8(rAUD4GO);\n\twdd8c = 1;", "case_ids": ["Func_fc279-0", "Func_fc279-1"]}
+# <<< factory-mutation Func_fc279
