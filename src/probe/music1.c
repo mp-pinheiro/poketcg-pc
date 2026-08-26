@@ -80,22 +80,22 @@ static void adapt_Music1_PlayNextNote(ProbeState *s)
 /* ── Command handlers ────────────────────────────────────────────────── */
 
 static void adapt_Music1_speed(ProbeState *s)
-{ Music1_speed(&s->hl, s->a); }
+{ Music1_speed(s->stack[0], s->c); }
 
 static void adapt_Music1_octave(ProbeState *s)
 { Music1_octave(&s->hl, s->a, s->b); }
 
 static void adapt_Music1_inc_octave(ProbeState *s)
-{ Music1_inc_octave(&s->hl, s->a); }
+{ Music1_inc_octave(s->stack[0], s->c); }
 
 static void adapt_Music1_dec_octave(ProbeState *s)
-{ Music1_dec_octave(&s->hl, s->a); }
+{ Music1_dec_octave(s->stack[0], s->c); }
 
 static void adapt_Music1_tie(ProbeState *s)
-{ Music1_tie(&s->hl, s->a); }
+{ Music1_tie(s->stack[0], s->c); }
 
 static void adapt_Music1_stereo_panning(ProbeState *s)
-{ Music1_stereo_panning(&s->hl, s->a); }
+{ Music1_stereo_panning(s->stack[0], s->c); }
 
 static void adapt_Music1_MainLoop(ProbeState *s)
 { Music1_MainLoop(&s->hl, s->a); }

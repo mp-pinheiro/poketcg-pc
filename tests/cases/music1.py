@@ -669,6 +669,73 @@ CASES["Music1_duty"] = [
 ]
 # <<< factory Music1_duty
 
+# >>> factory Music1_speed
+CONTRACT["Music1_speed"] = {"compare": (), "preserve": ()}
+CASES["Music1_speed"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x40\xFF"}, "read": {0xDDCF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF"}, "read": {0xDDCF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF\xFF"}, "read": {0xDDD2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\x7F\xFF"},
+         read={0xDDD0: 1}),
+]
+# <<< factory Music1_speed
+
+# >>> factory Music1_inc_octave
+CONTRACT["Music1_inc_octave"] = {"compare": (), "preserve": ()}
+CASES["Music1_inc_octave"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x00"},
+     "read": {0xDDAF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\xFF"},
+     "read": {0xDDAF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDB2: b"\x07"},
+     "read": {0xDDB2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDDB0: b"\x10"},
+         read={0xDDB0: 1}),
+]
+# <<< factory Music1_inc_octave
+
+# >>> factory Music1_dec_octave
+CONTRACT["Music1_dec_octave"] = {"compare": (), "preserve": ()}
+CASES["Music1_dec_octave"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x01"},
+     "read": {0xDDAF: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDAF: b"\x00"},
+     "read": {0xDDAF: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDDB2: b"\x07"},
+     "read": {0xDDB2: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDDB0: b"\x10"},
+         read={0xDDB0: 1}),
+]
+# <<< factory Music1_dec_octave
+
+# >>> factory Music1_tie
+CONTRACT["Music1_tie"] = {"compare": (), "preserve": ()}
+CASES["Music1_tie"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDD91: b"\x00"},
+     "read": {0xDD91: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\xFF", 0xDD94: b"\xFF"},
+     "read": {0xDD94: 1}},
+    dict(POISON, b=0, c=1, stack=[0xC100], wram={0xC100: b"\xFF", 0xDD92: b"\x7F"},
+         read={0xDD92: 1}),
+]
+# <<< factory Music1_tie
+
+# >>> factory Music1_stereo_panning
+CONTRACT["Music1_stereo_panning"] = {"compare": (), "preserve": ()}
+CASES["Music1_stereo_panning"] = [
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x11\xFF", 0xDD84: b"\x00"},
+     "read": {0xDD84: 1}},
+    {"c": 0, "stack": [0xC100], "wram": {0xC100: b"\x00\xFF", 0xDD84: b"\xFF"},
+     "read": {0xDD84: 1}},
+    {"c": 1, "stack": [0xC100], "wram": {0xC100: b"\x11\xFF", 0xDD84: b"\x00"},
+     "read": {0xDD84: 1}},
+    {"c": 3, "stack": [0xC100], "wram": {0xC100: b"\x81\xFF", 0xDD84: b"\x00"},
+     "read": {0xDD84: 1}},
+    dict(POISON, b=0, c=2, stack=[0xC100], wram={0xC100: b"\x11\xFF", 0xDD84: b"\xAA"},
+         read={0xDD84: 1}),
+]
+# <<< factory Music1_stereo_panning
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -695,6 +762,21 @@ MUTATIONS["Music1_f4018"] = {"source_symbol": "Music1_f4018", "before": "\tMusic
 # >>> factory-mutation Music1_duty
 MUTATIONS["Music1_duty"] = {"source_symbol": "Music1_duty", "before": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0xC0u);", "after": "\tuint8_t value = (uint8_t)(gb_read8(caller_stream) & 0x3Fu);", "case_ids": ["Music1_duty-0", "Music1_duty-2"]}
 # <<< factory-mutation Music1_duty
+# >>> factory-mutation Music1_speed
+MUTATIONS["Music1_speed"] = {"source_symbol": "Music1_speed", "before": "\tgb_write8((uint16_t)(wMusicSpeed_ADDR + ch), value);", "after": "\tgb_write8((uint16_t)(wMusicSpeed_ADDR + ch), (uint8_t)(value ^ 1u));", "case_ids": ["Music1_speed-0", "Music1_speed-2"]}
+# <<< factory-mutation Music1_speed
+# >>> factory-mutation Music1_inc_octave
+MUTATIONS["Music1_inc_octave"] = {"source_symbol": "Music1_inc_octave", "before": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 1u));", "after": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 2u));", "case_ids": ["Music1_inc_octave-0", "Music1_inc_octave-2"]}
+# <<< factory-mutation Music1_inc_octave
+# >>> factory-mutation Music1_dec_octave
+MUTATIONS["Music1_dec_octave"] = {"source_symbol": "Music1_dec_octave", "before": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) - 1u));", "after": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) - 2u));", "case_ids": ["Music1_dec_octave-0", "Music1_dec_octave-2"]}
+# <<< factory-mutation Music1_dec_octave
+# >>> factory-mutation Music1_tie
+MUTATIONS["Music1_tie"] = {"source_symbol": "Music1_tie", "before": "\tgb_write8((uint16_t)(wMusicTie_ADDR + ch), 0x80u);", "after": "\tgb_write8((uint16_t)(wMusicTie_ADDR + ch), 0x40u);", "case_ids": ["Music1_tie-0", "Music1_tie-1"]}
+# <<< factory-mutation Music1_tie
+# >>> factory-mutation Music1_stereo_panning
+MUTATIONS["Music1_stereo_panning"] = {"source_symbol": "Music1_stereo_panning", "before": "\tuint8_t mask = 0xEEu;", "after": "\tuint8_t mask = 0xFFu;", "case_ids": ["Music1_stereo_panning-1", "Music1_stereo_panning-4"]}
+# <<< factory-mutation Music1_stereo_panning
 # >>> factory-mutation _AssertSFXFinished
 MUTATIONS["_AssertSFXFinished"] = {"source_symbol": "_AssertSFXFinished", "before": "return Music1_AssertSFXFinished();", "after": "return (uint8_t)(Music1_AssertSFXFinished() ^ 1u);", "case_ids": ["_AssertSFXFinished-0", "_AssertSFXFinished-1", "_AssertSFXFinished-2"]};
 # <<< factory-mutation _AssertSFXFinished
