@@ -35,6 +35,11 @@
 
 #include "generated/wram.h"
 #define DECK_CONFIG_BUFFER_SIZE 0x50u
+
+#include "generated/wram.h"
+#include "home/deck_configuration.h"
+
+#define NUM_FILTERS 0x09u
 /* <<< factory statics */
 
 /* >>> factory GetPointerToDeckCards */
@@ -227,3 +232,19 @@ WriteCardListsTerminatorBytesResult WriteCardListsTerminatorBytes(void)
 	return (WriteCardListsTerminatorBytesResult){0u, 0x80u, 0u, 0x50u, 0xCF67u};
 }
 /* <<< factory WriteCardListsTerminatorBytes */
+
+/* >>> factory OpenDeckConfirmationMenu */
+void OpenDeckConfirmationMenu(uint16_t de, uint16_t hl)
+{
+	/* copy deck name */
+	CopyListFromHLToDEInSRAM(hl, wCurDeckName_ADDR);
+
+	/* copy deck cards */
+	CopyDeckFromSRAM(de, wCurDeckCards_ADDR);
+
+	ClearMemory_Bank2(NUM_FILTERS, wCardFilterCounts_ADDR);
+	wTotalCardCount = DECK_SIZE;
+	wCardFilterCounts = DECK_SIZE;
+	HandleDeckConfirmationMenu();
+}
+/* <<< factory OpenDeckConfirmationMenu */

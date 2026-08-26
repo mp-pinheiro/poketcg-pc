@@ -140,6 +140,13 @@ static void adapt_WriteCardListsTerminatorBytes(ProbeState *s)
 }
 /* <<< factory WriteCardListsTerminatorBytes */
 
+/* >>> factory OpenDeckConfirmationMenu */
+static void adapt_OpenDeckConfirmationMenu(ProbeState *s)
+{
+	OpenDeckConfirmationMenu((uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+}
+/* <<< factory OpenDeckConfirmationMenu */
+
 const ProbeEntry probe_entries_deck_selection[] = {
 	{ "GetPointerToDeckCards", adapt_GetPointerToDeckCards },
 	{ "ResetCheckMenuCursorPositionAndBlink", adapt_ResetCheckMenuCursorPositionAndBlink },
@@ -155,5 +162,6 @@ const ProbeEntry probe_entries_deck_selection[] = {
 	{ "EmptyScreenAndLoadFontDuelAndHandCardsIcons", adapt_EmptyScreenAndLoadFontDuelAndHandCardsIcons },
 	{ "PrintThereIsNoDeckHereText", adapt_PrintThereIsNoDeckHereText },
 	{ "WriteCardListsTerminatorBytes", adapt_WriteCardListsTerminatorBytes },
+	{ "OpenDeckConfirmationMenu", adapt_OpenDeckConfirmationMenu },
 	{ NULL, NULL },
 };

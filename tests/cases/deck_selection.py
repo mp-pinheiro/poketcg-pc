@@ -39,6 +39,68 @@ wVBlankOAMCopyToggle = 0xCAC0
 wLCDC = 0xCABB
 
 wCurDeck = 0xCEB1
+
+# OpenDeckConfirmationMenu (deck_selection.asm:188). The body fills
+# wCurDeckName and wCurDeckCards from the SRAM deck its de/hl point at,
+# zeroes wCardFilterCounts, stores DECK_SIZE in two places, then hands off
+# to HandleDeckConfirmationMenu, whose landed case this environment mirrors.
+sDeck1Name = 0xA200
+sDeck1Cards = 0xA218
+sCurrentlySelectedDeck = 0xB700
+wCurDeckCards = 0xCF17
+wCurDeckName = 0xCFB9
+wCardFilterCounts = 0xCEBB
+wTotalCardCount = 0xCECC
+wUniqueDeckCardList = 0xCF68
+wNumUniqueCards = 0xCED9
+wCardListVisibleOffset = 0xCEA1
+wCardListCursorPos = 0xCEA4
+wCardListNumCursorPositions = 0xCEA9
+wNumVisibleCardListEntries = 0xCECB
+wced2 = 0xCED2
+wCardListUpdateFunction = 0xCECE
+wNumCardListEntries = 0xCFE6
+wOpponentDeck = 0xC480
+wDuelTempList = 0xC510
+hWhoseTurn = 0xFF97
+hDPadHeld = 0xFF8F
+hffb3 = 0xFFB3
+
+ODCM_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# Frame one idles, frame two presses B: HandleDeckConfirmationMenu's
+# MENU_CANCEL exit, the same bounded cancel the landed case takes.
+ODCM_KEYS = [0x00, 0x02]
+# Only bytes both sides leave identical: the landed HandleDeckConfirmationMenu
+# menu-path seeds, plus wUniqueDeckCardList and wNumUniqueCards poisoned so
+# the empty-deck tail a wTotalCardCount mutation takes -- which writes
+# neither -- stays visible against the menu path that overwrites both.
+ODCM_WRAM = {
+    wLCDC: b"\x00",
+    hWhoseTurn: b"\xC2",
+    wOpponentDeck: b"\x99\x00",
+    wDuelTempList: b"\xFF",
+    wUniqueDeckCardList: b"\x77\x77",
+    wNumUniqueCards: b"\x09",
+    wCardListUpdateFunction: b"\x00\x00",
+}
+ODCM_READ = {
+    wCurDeckCards: 61,
+    wCurDeckName: 1,
+    wCardFilterCounts: 9,
+    wTotalCardCount: 1,
+    wUniqueDeckCardList: 2,
+    wNumUniqueCards: 1,
+    wCardListVisibleOffset: 1,
+    wCardListCursorPos: 1,
+    wCardListNumCursorPositions: 1,
+    wNumVisibleCardListEntries: 1,
+    wNumCardListEntries: 1,
+    wced2: 1,
+    wCardListUpdateFunction: 2,
+    hWhoseTurn: 1,
+    hDPadHeld: 1,
+    hffb3: 1,
+}
 # <<< factory-cases-statics
 
 # >>> factory GetPointerToDeckName
@@ -156,6 +218,39 @@ CASES["WriteCardListsTerminatorBytes"] = [
 ]
 # <<< factory WriteCardListsTerminatorBytes
 
+# >>> factory OpenDeckConfirmationMenu
+CONTRACT["OpenDeckConfirmationMenu"] = {"compare": (), "preserve": ()}
+CASES["OpenDeckConfirmationMenu"] = [
+    # sixty copies of card 1: the sort leaves the deck list alone, the
+    # unique list holds one card, and B cancels the confirmation menu on
+    # frame two
+    {"d": 0xA2, "e": 0x18, "hl": sDeck1Name, "wram": dict(ODCM_WRAM),
+     "sram": {0: {sDeck1Name: b"\x00", sDeck1Cards: b"\x01" * 60}},
+     "keys": ODCM_KEYS, "rom_bank": 2, "setup": ODCM_SETUP,
+     "read": dict(ODCM_READ), "vread": {0: {0x9821: 4}},
+     "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, d=0xA2, e=0x18, hl=sDeck1Name, wram=dict(ODCM_WRAM),
+         sram={0: {sDeck1Name: b"\x00", sDeck1Cards: b"\x01" * 60}},
+         keys=ODCM_KEYS, rom_bank=2, setup=ODCM_SETUP,
+         read=dict(ODCM_READ), vread={0: {0x9821: 4}},
+         instruction_budget=20000000, cycle_budget=100000000),
+    # a shuffled two-card deck (30x card 2 then 30x card 1) makes the sort
+    # reorder the list, and a non-empty deck name takes ShowDeckInfoHeader
+    # through PrintCurDeckNumberAndName with the wCurDeck and
+    # sCurrentlySelectedDeck seeds the landed
+    # ShowDeckInfoHeaderAndWaitForBButton case uses for that path
+    {"d": 0xA2, "e": 0x18, "hl": sDeck1Name,
+     "wram": {**ODCM_WRAM, wCurDeck: b"\x00"},
+     "sram": {0: {sDeck1Name: b"\x01\x00",
+                  sDeck1Cards: bytes([2] * 30 + [1] * 30),
+                  sCurrentlySelectedDeck: b"\x00"}},
+     "keys": ODCM_KEYS, "rom_bank": 2, "setup": ODCM_SETUP,
+     "read": {**ODCM_READ, wCurDeckName: 2, wUniqueDeckCardList: 3},
+     "vread": {0: {0x9821: 4}},
+     "instruction_budget": 20000000, "cycle_budget": 100000000},
+]
+# <<< factory OpenDeckConfirmationMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -202,3 +297,6 @@ MUTATIONS["PrintThereIsNoDeckHereText"] = {"source_symbol": "PrintThereIsNoDeckH
 # >>> factory-mutation WriteCardListsTerminatorBytes
 MUTATIONS["WriteCardListsTerminatorBytes"] = {"source_symbol": "WriteCardListsTerminatorBytes", "before": "\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + DECK_SIZE);", "after": "\tuint16_t filtered_terminator = (uint16_t)(wFilteredCardList_ADDR + (DECK_SIZE - 1u));", "case_ids": ["WriteCardListsTerminatorBytes-0", "WriteCardListsTerminatorBytes-1"]}
 # <<< factory-mutation WriteCardListsTerminatorBytes
+# >>> factory-mutation OpenDeckConfirmationMenu
+MUTATIONS["OpenDeckConfirmationMenu"] = {"source_symbol": "OpenDeckConfirmationMenu", "before": "\twTotalCardCount = DECK_SIZE;", "after": "\twTotalCardCount = 0u;", "case_ids": ["OpenDeckConfirmationMenu-0", "OpenDeckConfirmationMenu-1", "OpenDeckConfirmationMenu-2"]}
+# <<< factory-mutation OpenDeckConfirmationMenu
