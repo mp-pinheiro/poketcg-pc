@@ -9,11 +9,6 @@ reason = "poketcg/src/engine/duel/ai/retreat.asm:775 (basename `retreat`). Acros
 unblock = "attach a debugger to the native GBRT probe at real-ROM pc=1346 (bank/address from poketcg.sym) during a primary-phase run of this routine to identify the actual instruction loop, since case-seed changes provably do not affect the hang; or land a separately reviewed permanent transform for this routine verified by direct source inspection instead of oracle comparison, since its own control flow (the entry push-af/pop-af threading, the AIMakeDecision-preserves-a contract, and the discard-loop terminator) has already been fully worked out and verified correct by this investigation and is available in .factory/try/AITryToRetreat/attempts/c2c783bc-0561-46cd-895b-17b4b11fa304/ for reuse"
 
 [[blocked]]
-name = "_TossCoin"
-reason = "tests/cases/coin_toss.py intentionally leaves the full interactive animation/RNG/serial routine unregistered; no primary oracle case exists"
-unblock = "add at least one deterministic primary schema-2 case for _TossCoin and a terminating full implementation, or land a separately reviewed permanent transform for it and its callers"
-
-[[blocked]]
 name = "UnreferencedSaveSerialReturnAddress"
 reason = "0-callsite dead code (poketcg/src/home/serial.asm:459) whose entire observable output is the raw entry stack pointer (ld hl, sp+-2; pop hl) captured into wSerialReturnSP/wSerialReturnAddress. The factory's own verification phases run two different oracle backends with two different entry-SP conventions for an isolated probed call: tools/oracle/gbref/compare_one.py (primary phase) enters with sp=0xFFFC and a pushed return address of 0xFEA0, while tests/test_leaves.py (diff phase, PyBoy-backed) enters with sp=0xCFBE and a pushed sentinel of 0xCFF0. A single C body can only reproduce one of the two SP values, so it necessarily fails whichever phase it does not target -- confirmed by direct diagnostic evidence from both phases in this cycle."
 unblock = "add a project-wide abstraction that lets a ported routine query its own entry SP consistently across both oracle backends, or land a separately reviewed permanent transform that special-cases this routine (and any other sp-relative dead code) out of the dual-oracle comparison"
@@ -615,11 +610,6 @@ reason = "AUTO-RETIRED: src/engine/sequences/credits_sequence_commands.asm:81 (b
 unblock = "read the recorded diagnostics under .factory/try/CreditsSequenceCmd_LoadScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "MrFuji_ReturnToDeckEffect"
-reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:9532 (basename `effect_functions`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=translation detail={\"MrFuji_ReturnToDeckEffect\": [\"case module fails to import: read size must be an integer between 0 and 65536\"]}"
-unblock = "read the recorded diagnostics under .factory/try/MrFuji_ReturnToDeckEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "UnusedCopyrightScreen"
 reason = "AUTO-RETIRED: src/engine/unused_copyright.asm:3 (basename `unused_copyright`). 10 generations exhausted (trapped=False); last diagnostic phase=surgery failure_class=schema detail=SurgeryError: cases module is not valid Python: invalid hexadecimal literal (unused_copyright.py, line 11)"
 unblock = "read the recorded diagnostics under .factory/try/UnusedCopyrightScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -635,19 +625,9 @@ reason = "CAPABILITY: src/engine/menus/duel.asm:151 (basename `duel`) needs VBla
 unblock = "give the oracle runner a VBlank interrupt that advances wVBlankCounter, or add a case channel that steps frames, then delete this entry"
 
 [[blocked]]
-name = "ShowPrinterTransmitting"
-reason = "AUTO-RETIRED: src/engine/link/printer.asm:957 (basename `printer`). 10 generations exhausted (trapped=False); last diagnostic phase=mutation failure_class=code detail=MUTATION_GREEN: corrupted routine still passed {\"fn\": \"ShowPrinterTransmitting\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"39361\": \"38\"}}, \"wram\": {\"51899\": \"80\"}}, \"status\": \"PASS\"}"
-unblock = "read the recorded diagnostics under .factory/try/ShowPrinterTransmitting/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "MagneticStormEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:7149 (basename `effect_functions`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/MagneticStormEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "HandleDestinyBondSubstatus"
-reason = "AUTO-RETIRED: src/home/substatus.asm:746 (basename `substatus`). 9 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=translation detail={\"HandleDestinyBondSubstatus\": [\"case module fails to import: name 'MUTATIONS' is not defined\"]}"
-unblock = "read the recorded diagnostics under .factory/try/HandleDestinyBondSubstatus/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "PracticeDuel_PutStaryuInBench"
@@ -685,16 +665,6 @@ reason = "AUTO-RETIRED: src/engine/duel/core.asm:6611 (basename `core`). 3 gener
 unblock = "read the recorded diagnostics under .factory/try/OppAction_ExecuteTrainerCardEffectCommands/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "DisplayEnergyOrTrainerCardPage"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:4679 (basename `core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case DisplayEnergyOrTrainerCardPage-0 {\"status\": \"PORT\", \"fn\": \"DisplayEnergyOrTrainerCardPage\", \"mismatches\": {\"d\": [18, 6], \"e\": [9, 4], \"vram\": \"reference/native state differs\"}}"
-unblock = "read the recorded diagnostics under .factory/try/DisplayEnergyOrTrainerCardPage/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "Func_5a81"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:4056 (basename `core`). 4 generations exhausted (trapped=True); last diagnostic phase=primary failure_class=code detail=case Func_5a81-1 {\"status\": \"PORT\", \"fn\": \"Func_5a81\", \"mismatches\": {\"f\": [0, 64], \"b\": [8, 51], \"c\": [0, 68], \"hl\": [39148, 17767]}}"
-unblock = "read the recorded diagnostics under .factory/try/Func_5a81/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "Func_1bb4"
 reason = "AUTO-RETIRED: src/home/duel.asm:2214 (basename `duel`). 10 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=fail Func_1bb4[0] b=$11 c=$22 d=$33 e=$44 hl=$1234 $FF97=c2 $CAC2=01 $C2BB=ff $C3BB=ff $C2F1=00 $C2F0=00 $C3F1=00 $C3F0=00 $C2EC=00 $C2EF=00 $C3EC=00 $C3EF=00 $CCED=00 $CC09=00 keys=$01 f: oracle $80 != C $70 fail Func_1bb4[1] a=$AA f=$F0 b=$BB c=$CC d=$DD e=$EE hl=$1234 $FF97=c2 $CAC2=01 $C2BB=ff $C3BB=ff $C2F1=00 $C2F0=00 $C3F1=00 $C3F0=00 $C2EC=00 $C2EF=00 $C3EC=00 $C3EF=00 $CCED=00 $CC09=00 keys=$01 f: oracle $80 != C $70 FAIL Func_1bb4: 2/2 cases differ"
 unblock = "read the recorded diagnostics under .factory/try/Func_1bb4/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -728,11 +698,6 @@ unblock = "read the recorded diagnostics under .factory/try/CloseIRCommunication
 name = "DrawPlayerPortraitAndPrintNewGameText"
 reason = "AUTO-RETIRED: src/engine/menus/start.asm:403 (basename `start`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case DrawPlayerPortraitAndPrintNewGameText-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":15545,\"sp\":65508,\"instructions\":56124281,\"cycles\":240000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":149,\"ppu_mode\":1,\"bus\":\"b43c0001\"}"
 unblock = "read the recorded diagnostics under .factory/try/DrawPlayerPortraitAndPrintNewGameText/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
-name = "PrintPracticeDuelInstructionsForCurrentTurn"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:2792 (basename `core`). 9 generations exhausted (trapped=False); last diagnostic phase=diff failure_class=code detail=000000000000000202122232425262728292a242b2c2d00000000000000000000000000000000002e2f303132333435363738393a3b3c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000018242c2d2e2f30241c1c1c1c1c1c1c1c1c1c1c190000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e29332b343536373831323c3d3e00000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001e0000000000000000000000000000000000001f0000000000000000000000001a1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1b000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-unblock = "read the recorded diagnostics under .factory/try/PrintPracticeDuelInstructionsForCurrentTurn/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
 name = "MixUpEffect"
