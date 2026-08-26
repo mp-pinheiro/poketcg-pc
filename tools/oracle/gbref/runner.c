@@ -723,14 +723,17 @@ int main(int argc, char **argv) {
          * until its budget dies. One DMG frame is 70224 cycles.
          */
         frame_cycles += delta;
-        int boundary = gb_frame_complete(ctx);
-        if (boundary) {
+        int vblank_boundary = gb_frame_complete(ctx);
+        int boundary = vblank_boundary;
+        if (vblank_boundary) {
             gb_reset_frame(ctx);
         } else if (!(gb_read8(ctx, 0xff40) & 0x80) && frame_cycles >= 70224u) {
             boundary = 1;
         }
         if (boundary) {
             frame_cycles = 0;
+            if (vblank_boundary)
+                gb_write8(ctx, 0xff0f, (uint8_t)(gb_read8(ctx, 0xff0f) | 0x01));
             if (input_count > 1) {
                 input_index = (input_index + 1) % input_count;
                 g_joypad_buttons = input_buttons[input_index];
