@@ -2334,6 +2334,14 @@ static void adapt_OppAction_AttemptRetreat(ProbeState *s)
 }
 /* <<< factory OppAction_AttemptRetreat */
 
+/* >>> factory PlayAttackAnimation */
+static void adapt_PlayAttackAnimation(ProbeState *s)
+{
+	PlayAttackAnimation(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = hWhoseTurn;
+}
+/* <<< factory PlayAttackAnimation */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2613,5 +2621,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OppAction_BeginUseAttack", adapt_OppAction_BeginUseAttack },
 	{ "OppAction_TossCoinATimes", adapt_OppAction_TossCoinATimes },
 	{ "OppAction_AttemptRetreat", adapt_OppAction_AttemptRetreat },
+	{ "PlayAttackAnimation", adapt_PlayAttackAnimation },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "PlayAttackAnimation",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"PlayAttackAnimation\", \"registers\": {\"a\": 194, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 32, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52863\": \"20000102c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"PlayAttackAnimation\", \"mismatches\": {\"bus\": {\"address\": 52865, \"reference\": \"001520000102c215c2\", \"native\": \"001520000202c215c2\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[52229, 1], [52408, 1], [52420, 1], [52863, 6], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"PlayAttackAnimation\", \"registers\": {\"a\": 194, \"b\": 2, \"c\": 1, \"d\": 0, \"e\": 32, \"f\": 0, \"hl\": 49664, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52229\": \"c2\", \"52408\": \"00\", \"52420\": \"15\", \"52863\": \"20000102c215\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

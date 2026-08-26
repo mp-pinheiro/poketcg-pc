@@ -1776,6 +1776,16 @@ wLCDC = 0xCABB
 rLCDC = 0xFF40
 FRAME_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 RETREAT_SEED = {hWhoseTurn: b"\xC2", hTemp_ffa0: b"\x00", hTempPlayAreaLocation_ffa1: b"\x01", hTempRetreatCostCards: b"\xFF", wDuelDisplayedScreen: b"\x01", wLCDC: b"\x00", rLCDC: b"\x00", 0xCC05: b"\xC2", 0xC2BB: b"\x00", 0xC2BC: b"\xFF", 0xC2F1: b"\x00", 0xC2EC: b"\x00", 0xC2EF: b"\x00", 0xC2F0: b"\x00", 0xC3BB: b"\xFF", 0xC3F1: b"\x00", 0xC3EC: b"\x00", 0xC3EF: b"\x00", 0xC3F0: b"\x00"}
+
+hWhoseTurn = 0xFF97
+wDamageAnimAmount = 0xCE7F
+wDamageAnimEffectiveness = 0xCE81
+wDamageAnimPlayAreaLocation = 0xCE82
+wDamageAnimPlayAreaSide = 0xCE83
+wDamageAnimCardID = 0xCE84
+wLoadedAttackAnimation = 0xCCB8
+wTempNonTurnDuelistCardID = 0xCCC4
+wWhoseTurn = 0xCC05
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3599,6 +3609,16 @@ CASES["OppAction_AttemptRetreat"] = [
 ]
 # <<< factory OppAction_AttemptRetreat
 
+# >>> factory PlayAttackAnimation
+CONTRACT["PlayAttackAnimation"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("f", "b", "c", "d", "e", "hl")}
+CASES["PlayAttackAnimation"] = [
+    {"a": 0x10, "f": 0x00, "b": 0x02, "c": 0x01, "d": 0x00, "e": 0x20, "hl": 0xC200, "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC2", wTempNonTurnDuelistCardID: b"\x15", wLoadedAttackAnimation: b"\x00"}, "read": {wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}},
+    {"a": 0x44, "f": 0x80, "b": 0x05, "c": 0x07, "d": 0x01, "e": 0x45, "hl": 0xC300, "wram": {hWhoseTurn: b"\xC2", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xA0", wLoadedAttackAnimation: b"\x00"}, "read": {wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}},
+    dict(POISON, wram={hWhoseTurn: b"\xC3", wWhoseTurn: b"\xC3", wTempNonTurnDuelistCardID: b"\xFE", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
+    dict(POISON, b=0x7F, c=0xCC, d=0xAA, e=0x10, hl=0x7F00, wram={hWhoseTurn: b"\x80", wWhoseTurn: b"\x7F", wTempNonTurnDuelistCardID: b"\x42", wLoadedAttackAnimation: b"\x00"}, read={wDamageAnimEffectiveness: 1, wDamageAnimPlayAreaLocation: 1, wDamageAnimPlayAreaSide: 1, wDamageAnimCardID: 1, wDamageAnimAmount: 2}),
+]
+# <<< factory PlayAttackAnimation
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5085,3 +5105,6 @@ MUTATIONS["OppAction_TossCoinATimes"] = {"source_symbol": "OppAction_TossCoinATi
 # >>> factory-mutation OppAction_AttemptRetreat
 MUTATIONS["OppAction_AttemptRetreat"] = {"source_symbol": "OppAction_AttemptRetreat", "before": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = AttemptRetreat();", "after": "WaitResult OppAction_AttemptRetreat(void)\n{\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);\n\tAttemptRetreatResult retreat = (AttemptRetreatResult){1u, 0x10u};", "case_ids": ["OppAction_AttemptRetreat-0", "OppAction_AttemptRetreat-1"]}
 # <<< factory-mutation OppAction_AttemptRetreat
+# >>> factory-mutation PlayAttackAnimation
+MUTATIONS["PlayAttackAnimation"] = {"source_symbol": "PlayAttackAnimation", "before": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, c);", "after": "void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t saved_h_whose_turn = hWhoseTurn;\n\thWhoseTurn = wWhoseTurn;\n\tgb_write8(wDamageAnimEffectiveness_ADDR, (uint8_t)(c + 1u));", "case_ids": ["PlayAttackAnimation-0", "PlayAttackAnimation-1", "PlayAttackAnimation-2", "PlayAttackAnimation-3"]}
+# <<< factory-mutation PlayAttackAnimation

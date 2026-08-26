@@ -1590,6 +1590,9 @@ void Twineedle_MultiplierEffect(void);
 /* >>> factory DragonairSlam_MultiplierEffect */
 void DragonairSlam_MultiplierEffect(void);
 /* <<< factory DragonairSlam_MultiplierEffect */
+/* >>> factory PetalDance_MultiplierEffect */
+void PetalDance_MultiplierEffect(void);
+/* <<< factory PetalDance_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

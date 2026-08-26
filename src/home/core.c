@@ -1282,6 +1282,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #define RetreatWasUnsuccessfulText 0x005bu
 #define RetreatedToTheBenchText 0x005au
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/commands.h"
+#define ATK_ANIM_BIG_HIT 0x02u
+#define ATK_ANIM_HIT 0x01u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6909,3 +6915,30 @@ WaitResult OppAction_AttemptRetreat(void)
 	return DrawWideTextBox_WaitForInput_Bank1(text);
 }
 /* <<< factory OppAction_AttemptRetreat */
+
+/* >>> factory PlayAttackAnimation */
+void PlayAttackAnimation(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t saved_h_whose_turn = hWhoseTurn;
+	hWhoseTurn = wWhoseTurn;
+	gb_write8(wDamageAnimEffectiveness_ADDR, c);
+	if (hWhoseTurn != (uint8_t)(hl >> 8))
+		b |= 0x80u;
+	gb_write8(wDamageAnimPlayAreaLocation_ADDR, b);
+	gb_write8(wDamageAnimPlayAreaSide_ADDR, wWhoseTurn);
+	gb_write8(wDamageAnimCardID_ADDR, wTempNonTurnDuelistCardID);
+	gb_write8(wDamageAnimAmount_ADDR, e);
+	gb_write8(wDamageAnimAmount_ADDR + 1u, d);
+
+	uint8_t loaded_animation = wLoadedAttackAnimation;
+	if (loaded_animation == ATK_ANIM_HIT && e >= 70u) {
+		loaded_animation = ATK_ANIM_BIG_HIT;
+		wLoadedAttackAnimation = loaded_animation;
+	}
+	(void)PlayAttackAnimationCommands(wLoadedAttackAnimation, d, e);
+	hWhoseTurn = saved_h_whose_turn;
+	(void)a;
+	(void)f;
+	(void)hl;
+}
+/* <<< factory PlayAttackAnimation */

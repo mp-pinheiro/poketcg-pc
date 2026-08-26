@@ -876,6 +876,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 
 #include "home/math.h"
 #include "home/print_text.h"
+
+#include "home/effect_functions.h"
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7509,3 +7514,16 @@ void DragonairSlam_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(damage));
 }
 /* <<< factory DragonairSlam_MultiplierEffect */
+
+/* >>> factory PetalDance_MultiplierEffect */
+void PetalDance_MultiplierEffect(void)
+{
+	LoadTxRam3(40u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = ATimes10((uint8_t)(result.a << 2));
+	SetDefiniteDamage(damage);
+	SwapTurn();
+	(void)ConfusionEffect();
+	SwapTurn();
+}
+/* <<< factory PetalDance_MultiplierEffect */
