@@ -662,11 +662,67 @@ void Music1_stereo_panning(uint16_t caller_stream, uint8_t ch)
 	gb_write8(wMusicStereoPanning_ADDR, merged);
 	Music1_PlayNextNote(&hl, ch);
 }
-void Music1_MainLoop(uint16_t *hl, uint8_t ch)      { Music1_PlayNextNote(hl, ch); }
-void Music1_EndMainLoop(uint16_t *hl, uint8_t ch)   { Music1_PlayNextNote(hl, ch); }
-void Music1_Loop(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
-void Music1_EndLoop(uint16_t *hl, uint8_t ch)       { Music1_PlayNextNote(hl, ch); }
-void Music1_jp(uint16_t *hl, uint8_t ch)            { Music1_PlayNextNote(hl, ch); }
+/* music1.asm:910-920. Records the loop-start address as the byte BEFORE the
+ * continuation (`dec de`), then resumes at the unadvanced stream. */
+void Music1_MainLoop(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = caller_stream;
+	uint16_t target = (uint16_t)(caller_stream - 1u);
+	uint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);
+	gb_write8(addr, (uint8_t)target);
+	gb_write8((uint16_t)(addr + 1u), (uint8_t)(target >> 8u));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:922-930. Discards the popped stream and resumes the dispatcher at
+ * the recorded loop start, so the continuation address is the observable. */
+void Music1_EndMainLoop(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	uint16_t addr = (uint16_t)(wMusicMainLoopStart_ADDR + (uint16_t)ch * 2u);
+	uint16_t hl = (uint16_t)(gb_read8(addr)
+		| ((uint16_t)gb_read8((uint16_t)(addr + 1u)) << 8u));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:932-947. Pushes a 3-byte frame onto this channel's stack - the
+ * continuation address then the loop count - and advances the stack pointer. */
+void Music1_Loop(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t count = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	uint16_t sp = Music1_GetChannelStackPointer(ch);
+	gb_write8(sp, (uint8_t)hl);
+	gb_write8((uint16_t)(sp + 1u), (uint8_t)(hl >> 8u));
+	gb_write8((uint16_t)(sp + 2u), count);
+	Music1_SetChannelStackPointer(ch, (uint16_t)(sp + 3u));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:949-967. Decrements the count at sp-1: still nonzero means jump
+ * back to the address at sp-3/sp-2 with the count written back; reaching zero
+ * pops the 3-byte frame instead and falls through to the next command. The
+ * exhausted path deliberately does not write the decremented count back. */
+void Music1_EndLoop(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t sp = Music1_GetChannelStackPointer(ch);
+	uint8_t count = (uint8_t)(gb_read8((uint16_t)(sp - 1u)) - 1u);
+	uint16_t hl;
+	if (count != 0u) {
+		gb_write8((uint16_t)(sp - 1u), count);
+		hl = (uint16_t)(gb_read8((uint16_t)(sp - 3u))
+			| ((uint16_t)gb_read8((uint16_t)(sp - 2u)) << 8u));
+	} else {
+		Music1_SetChannelStackPointer(ch, (uint16_t)(sp - 3u));
+		hl = caller_stream;
+	}
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:969-974. Reads a little-endian target from the stream and resumes
+ * the dispatcher there. */
+void Music1_jp(uint16_t caller_stream, uint8_t ch)
+{
+	uint16_t hl = (uint16_t)(gb_read8(caller_stream)
+		| ((uint16_t)gb_read8((uint16_t)(caller_stream + 1u)) << 8u));
+	Music1_PlayNextNote(&hl, ch);
+}
 void Music1_call(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
 void Music1_ret(uint16_t *hl, uint8_t ch)           { Music1_PlayNextNote(hl, ch); }
 void Music1_frequency_offset(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }

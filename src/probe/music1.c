@@ -98,19 +98,19 @@ static void adapt_Music1_stereo_panning(ProbeState *s)
 { Music1_stereo_panning(s->stack[0], s->c); }
 
 static void adapt_Music1_MainLoop(ProbeState *s)
-{ Music1_MainLoop(&s->hl, s->a); }
+{ Music1_MainLoop(s->stack[0], s->c); }
 
 static void adapt_Music1_EndMainLoop(ProbeState *s)
-{ Music1_EndMainLoop(&s->hl, s->a); }
+{ Music1_EndMainLoop(s->stack[0], s->c); }
 
 static void adapt_Music1_Loop(ProbeState *s)
-{ Music1_Loop(&s->hl, s->a); }
+{ Music1_Loop(s->stack[0], s->c); }
 
 static void adapt_Music1_EndLoop(ProbeState *s)
-{ Music1_EndLoop(&s->hl, s->a); }
+{ Music1_EndLoop(s->stack[0], s->c); }
 
 static void adapt_Music1_jp(ProbeState *s)
-{ Music1_jp(&s->hl, s->a); }
+{ Music1_jp(s->stack[0], s->c); }
 
 static void adapt_Music1_call(ProbeState *s)
 { Music1_call(&s->hl, s->a); }
