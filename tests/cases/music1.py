@@ -991,6 +991,16 @@ CASES["Music1_jp"] = [
 # Case 6 uses $DA, which is index 10 -> end: the pre-2026-08-26 mapping ran an
 # inc_octave there instead, so that case pins the table alignment.
 _PNN_IDLE = {0xDD8D: b"\x01\x01\x01\x01"}
+# A cmd below $D0 is a note: high nibble selects the instrument, low nibble the
+# duration index. Its operand byte is peeked, never consumed, so the stream
+# pointer stored to wMusicChannelPointers is the operand's own address.
+_NOTE_SEED = {0xDDCF: b"\x03\x03\x03\x03", 0xDD91: b"\x00\x00\x00\x00",
+              0xDDBF: b"\x08\x08\x08\x08", 0xDDAF: b"\x00\x00\x00\x00",
+              0xDDCB: b"\x00\x00\x00\x00", 0xDDEA: b"\x00\x00\x00\x00",
+              0xDDD7: b"\x11\x22\x33\x44"}
+_NOTE_READ = {0xDD84: 1, 0xDD91: 4, 0xDD95: 8, 0xDDA5: 8, 0xDDAB: 4,
+              0xDDB7: 4, 0xDDBB: 4, 0xDDC3: 4, 0xDDD3: 4, 0xDDDB: 4,
+              0xDDE3: 4, 0xDDED: 2, 0xDDEF: 1}
 CONTRACT["Music1_PlayNextNote"] = {"compare": (), "preserve": ()}
 CASES["Music1_PlayNextNote"] = [
     # $D0 speed
@@ -1043,6 +1053,49 @@ CASES["Music1_PlayNextNote"] = [
                                  0xDDCF: b"\xFF\xFF\xFF\xFF",
                                  0xDDE7: b"\xFF\xFF\xFF\xFF"},
          read={0xDDCF: 4, 0xDDE7: 4, 0xDD8D: 4}),
+    # instrument 0 takes neither lookup but still stores the stream pointer
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x05\x40"},
+     "read": _NOTE_READ},
+    # pitch lookup with a non-zero octave and pitch offset
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDDAF: b"\x02\x02\x02\x02", 0xDDCB: b"\x01\x01\x01\x01"},
+     "read": _NOTE_READ},
+    # operand $D9 skips the cutoff scaling, so cutoff 2 must not be applied
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\xD9",
+              0xDDBF: b"\x02\x02\x02\x02"},
+     "read": _NOTE_READ},
+    # cutoff 0 is not a skip: the counter wraps to 256 additions
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDDBF: b"\x00\x00\x00\x00"},
+     "read": _NOTE_READ},
+    # cutoff above 8 also scales
+    {"c": 1, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDDBF: b"\x09\x09\x09\x09", 0xDDAF: b"\x01\x01\x01\x01"},
+     "read": _NOTE_READ},
+    # channel 3 takes the noise-instrument table
+    {"c": 3, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDDAF: b"\x01\x01\x01\x01", 0xDD84: b"\x00"},
+     "read": _NOTE_READ},
+    # a tie already latched at $80 skips the vibrato/flag reset
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDD91: b"\x80\x80\x80\x80"},
+     "read": _NOTE_READ},
+    # a negative frequency offset subtracts ~fo rather than negating it
+    {"c": 0, "hl": 0xC100,
+     "wram": {**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x35\x40",
+              0xDDEA: b"\x80\x80\x80\x80"},
+     "read": _NOTE_READ},
+    dict(POISON, b=0, c=2, hl=0xC100,
+         wram={**_PNN_IDLE, **_NOTE_SEED, 0xC100: b"\x7A\x40",
+               0xDDAF: b"\x03\x03\x03\x03"},
+         read=_NOTE_READ),
 ]
 # <<< factory Music1_PlayNextNote
 
