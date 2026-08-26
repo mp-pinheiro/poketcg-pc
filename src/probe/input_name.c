@@ -195,6 +195,13 @@ static void adapt_PrintDeckNameFromInput(ProbeState *s)
 }
 /* <<< factory PrintDeckNameFromInput */
 
+/* >>> factory DrawDeckNamingScreenBG */
+static void adapt_DrawDeckNamingScreenBG(ProbeState *s)
+{
+	DrawDeckNamingScreenBG();
+}
+/* <<< factory DrawDeckNamingScreenBG */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -217,5 +224,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "LoadTextCursorTile", adapt_LoadTextCursorTile },
 	{ "LoadHalfWidthTextCursorTile", adapt_LoadHalfWidthTextCursorTile },
 	{ "PrintDeckNameFromInput", adapt_PrintDeckNameFromInput },
+	{ "DrawDeckNamingScreenBG", adapt_DrawDeckNamingScreenBG },
 	{ NULL, NULL },
 };

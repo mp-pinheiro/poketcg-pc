@@ -233,6 +233,18 @@ CASES["PrintDeckNameFromInput"] = [
 ]
 # <<< factory PrintDeckNameFromInput
 
+# >>> factory DrawDeckNamingScreenBG
+CONTRACT["DrawDeckNamingScreenBG"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["DrawDeckNamingScreenBG"] = [
+    {"wram": {0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, "rom_bank": 6,
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "vread": {0: {0x9882: 32}}},
+    dict(POISON, wram={0xD002: b"\x00\x00", 0xD007: b"\x00\x00", 0xD004: b"\x14"}, rom_bank=6,
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         vread={0: {0x9882: 32}}),
+]
+# <<< factory DrawDeckNamingScreenBG
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -330,3 +342,6 @@ MUTATIONS["LoadHalfWidthTextCursorTile"] = {
 # >>> factory-mutation PrintDeckNameFromInput
 MUTATIONS["PrintDeckNameFromInput"] = {"source_symbol": "PrintDeckNameFromInput", "before": "gb_write8(wDefaultText_ADDR, 0x06u);", "after": "gb_write8(wDefaultText_ADDR, 0x07u);", "case_ids": ["PrintDeckNameFromInput-0", "PrintDeckNameFromInput-1"]}
 # <<< factory-mutation PrintDeckNameFromInput
+# >>> factory-mutation DrawDeckNamingScreenBG
+MUTATIONS["DrawDeckNamingScreenBG"] = {"source_symbol": "DrawDeckNamingScreenBG", "before": "\t(void)ProcessTextFromID(DeckNameKeyboardText);", "after": "\t(void)ProcessTextFromID(0u);", "case_ids": ["DrawDeckNamingScreenBG-0", "DrawDeckNamingScreenBG-1"]}
+# <<< factory-mutation DrawDeckNamingScreenBG

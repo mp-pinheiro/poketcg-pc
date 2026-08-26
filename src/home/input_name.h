@@ -78,4 +78,7 @@ LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c);
 /* >>> factory PrintDeckNameFromInput */
 void PrintDeckNameFromInput(void);
 /* <<< factory PrintDeckNameFromInput */
+/* >>> factory DrawDeckNamingScreenBG */
+void DrawDeckNamingScreenBG(void);
+/* <<< factory DrawDeckNamingScreenBG */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

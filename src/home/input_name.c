@@ -86,6 +86,8 @@
 #include "mem.h"
 #define TILE_SIZE 16u
 #define V0TILES0_ADDR 0x8000u
+
+#define DeckNameKeyboardText 0x0222u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -628,3 +630,24 @@ void PrintDeckNameFromInput(void)
 	ProcessText(&text);
 }
 /* <<< factory PrintDeckNameFromInput */
+
+/* >>> factory DrawDeckNamingScreenBG */
+void DrawDeckNamingScreenBG(void)
+{
+	uint16_t box_hl;
+	DrawTextboxForKeyboard(&box_hl, wd009);
+	PrintDeckNameFromInput();
+
+	uint8_t c = gb_read8(wNamingScreenQuestionPointer_ADDR);
+	uint8_t h = gb_read8((uint16_t)(wNamingScreenQuestionPointer_ADDR + 1u));
+	uint16_t question_hl = (uint16_t)(((uint16_t)h << 8) | c);
+	if (question_hl != 0u)
+		(void)PlaceTextItems(question_hl);
+
+	(void)PlaceTextItems(DRAW_PLAYER_NAMING_SCREEN_BG_DATA_ADDR);
+
+	InitTextPrinting(2u, 4u);
+	(void)ProcessTextFromID(DeckNameKeyboardText);
+	EnableLCD();
+}
+/* <<< factory DrawDeckNamingScreenBG */
