@@ -176,6 +176,18 @@ static void adapt_TryDeleteSavedDeck(ProbeState *s)
 }
 /* <<< factory TryDeleteSavedDeck */
 
+/* >>> factory HandleDeckMissingCardsList */
+static void adapt_HandleDeckMissingCardsList(ProbeState *s)
+{
+	/* ProbeState splits de into the d and e bytes; the routine takes the pair. */
+	uint16_t de = (uint16_t)(((uint16_t)s->d << 8) | s->e);
+	HandleDeckMissingCardsListResult r = HandleDeckMissingCardsList(s->hl, de);
+
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleDeckMissingCardsList */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -198,5 +210,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "ShowReceivedCardsList", adapt_ShowReceivedCardsList },
 	{ "Func_b088", adapt_Func_b088 },
 	{ "TryDeleteSavedDeck", adapt_TryDeleteSavedDeck },
+	{ "HandleDeckMissingCardsList", adapt_HandleDeckMissingCardsList },
 	{ NULL, NULL },
 };

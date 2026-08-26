@@ -524,6 +524,20 @@ static void adapt_ReturnToOverworldWithCallback(ProbeState *s)
 }
 /* <<< factory ReturnToOverworldWithCallback */
 
+/* >>> factory FindNPCOrObject */
+static void adapt_FindNPCOrObject(ProbeState *s)
+{
+	FindNPCOrObjectResult result = FindNPCOrObject(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory FindNPCOrObject */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -589,5 +603,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c8ba", adapt_Func_c8ba },
 	{ "ReturnToOverworldNoCallback", adapt_ReturnToOverworldNoCallback },
 	{ "ReturnToOverworldWithCallback", adapt_ReturnToOverworldWithCallback },
+	{ "FindNPCOrObject", adapt_FindNPCOrObject },
 	{ NULL, NULL },
 };

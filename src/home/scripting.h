@@ -545,4 +545,8 @@ IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void);
 /* poketcg/src/engine/overworld/scripting.asm */
 IncreaseScriptPointerResult ScriptCommand_PrintVariableNPCText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintVariableNPCText */
+/* >>> factory ScriptCommand_PrintVariableText */
+/* >>> factory ScriptCommand_PrintVariableText */
+IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_PrintVariableText */
 #endif

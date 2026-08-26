@@ -607,6 +607,9 @@ static const uint8_t kCursorTileData[16] = {
 #define ATK_ANIM_BENCH_HIT 0x78u
 
 #include "home/core.h"
+
+#include "home/core.h"
+#include "generated/hram.h"
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3107,3 +3110,12 @@ void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c)
 	hWhoseTurn = saved_hWhoseTurn;
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenNonTurnHolderHandScreen_Simple();
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */

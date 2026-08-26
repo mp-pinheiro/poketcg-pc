@@ -1845,3 +1845,17 @@ IncreaseScriptPointerResult ScriptCommand_PrintVariableNPCText(uint8_t b, uint8_
 	return IncreaseScriptPointerBy5();
 }
 /* <<< factory ScriptCommand_PrintVariableNPCText */
+
+/* >>> factory ScriptCommand_PrintVariableText */
+/* scripting.asm:794-810 */
+IncreaseScriptPointerResult ScriptCommand_PrintVariableText(uint8_t b, uint8_t c)
+{
+	uint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);
+	if (wScriptControlByte == 0u) {
+		GetScriptArgsAfterPointerResult args = GetScriptArgs3AfterPointer();
+		text_pointer = (uint16_t)(((uint16_t)args.b << 8) | args.c);
+	}
+	Func_c891(text_pointer);
+	return IncreaseScriptPointerBy5();
+}
+/* <<< factory ScriptCommand_PrintVariableText */

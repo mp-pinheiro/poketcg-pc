@@ -977,6 +977,13 @@ static void adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(ProbeState *
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
 
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+static void adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(ProbeState *s)
+{
+	OpenYourOrOppPlayAreaScreen_NonTurnHolderHand();
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1095,5 +1102,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DealDamageToPlayAreaPokemon", adapt_DealDamageToPlayAreaPokemon },
 	{ "DealDamageToPlayAreaPokemon_RegularAnim", adapt_DealDamageToPlayAreaPokemon_RegularAnim },
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile },
+	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderHand },
 	{ NULL, NULL },
 };

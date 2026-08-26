@@ -183,6 +183,13 @@
 #define PLAYER_TURN 0xC2u
 
 #define RESTORE_FACING_DIRECTION 0x01u
+
+#include "generated/wram.h"
+#include "home/map.h"
+#include "home/npc_core.h"
+#include "home/script.h"
+#define OWMODE_SCRIPT 0x03u
+#define OWMODE_START_SCRIPT 0x02u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1104,3 +1111,36 @@ uint8_t ReturnToOverworldWithCallback(uint16_t hl)
 	return ReturnToOverworld();
 }
 /* <<< factory ReturnToOverworldWithCallback */
+
+/* >>> factory FindNPCOrObject */
+FindNPCOrObjectResult FindNPCOrObject(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	wScriptNPC = 0xffu;
+	FindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();
+	uint8_t permission = GetPermissionOfMapPosition(movement.b, movement.c);
+	uint8_t next_a = (uint8_t)(permission & 0x40u);
+	uint8_t next_f = (next_a == 0u) ? 0xa0u : 0x20u;
+	uint8_t next_b = movement.b;
+	uint8_t next_c = movement.c;
+	if (next_a != 0u) {
+		FindNPCAtLocationResult npc = FindNPCAtLocation(next_b, next_c, d, e, hl);
+		if ((npc.f & 0x10u) == 0u) {
+			wScriptNPC = wLoadedNPCTempIndex;
+			wOverworldMode = OWMODE_START_SCRIPT;
+			return (FindNPCOrObjectResult){OWMODE_START_SCRIPT, 0x10u, npc.b, npc.c, npc.d, npc.e, npc.hl};
+		}
+		next_a = npc.a;
+		next_f = npc.f;
+		next_b = npc.b;
+		next_c = npc.c;
+		d = npc.d;
+		e = npc.e;
+		hl = npc.hl;
+	}
+	HandleMoveModeAPressResult move = HandleMoveModeAPress(next_a, next_f, next_b, next_c, d, e, hl);
+	if ((move.f & 0x10u) == 0u)
+		return (FindNPCOrObjectResult){move.a, (move.a == 0u) ? 0x80u : 0u, move.b, move.c, move.d, move.e, move.hl};
+	wOverworldMode = OWMODE_SCRIPT;
+	return (FindNPCOrObjectResult){OWMODE_SCRIPT, 0x10u, move.b, move.c, move.d, move.e, move.hl};
+}
+/* <<< factory FindNPCOrObject */

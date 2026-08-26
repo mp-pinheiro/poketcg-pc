@@ -699,4 +699,7 @@ void Func_82b6(void);
 /* >>> factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
 void OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile(uint8_t c);
 /* <<< factory OpenYourOrOppPlayAreaScreen_TurnHolderDiscardPile */
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderHand(void);
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderHand */
 #endif

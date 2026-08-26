@@ -1,0 +1,9 @@
+{
+  "fn": "OpenYourOrOppPlayAreaScreen_NonTurnHolderHand",
+  "case": "tests/cases/duel.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"OpenYourOrOppPlayAreaScreen_NonTurnHolderHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50158\": \"00\", \"51899\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"OpenYourOrOppPlayAreaScreen_NonTurnHolderHand\", \"mismatches\": {\"bus\": {\"address\": 65431, \"reference\": \"0080c2\", \"native\": \"008000\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[50158, 1], [51899, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"OpenYourOrOppPlayAreaScreen_NonTurnHolderHand\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"50158\": \"00\", \"51899\": \"80\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

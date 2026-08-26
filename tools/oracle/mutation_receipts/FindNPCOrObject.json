@@ -1,0 +1,9 @@
+{
+  "fn": "FindNPCOrObject",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"FindNPCOrObject\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 254, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"55\", \"54064\": \"0000\", \"54068\": \"00\", \"54198\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"FindNPCOrObject\", \"mismatches\": {\"bus\": {\"address\": 54198, \"reference\": \"55000000ff\", \"native\": \"5500000000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[53439, 1], [54064, 2], [54068, 1], [54198, 1]]}}}\n",
+  "restored": "{\"fn\": \"FindNPCOrObject\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 254, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"55\", \"54064\": \"0000\", \"54068\": \"00\", \"54198\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

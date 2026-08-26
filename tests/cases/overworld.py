@@ -811,6 +811,14 @@ CASES["ReturnToOverworldWithCallback"] = [
 ]
 # <<< factory ReturnToOverworldWithCallback
 
+# >>> factory FindNPCOrObject
+CONTRACT["FindNPCOrObject"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["FindNPCOrObject"] = [
+    {"keys": [0x00], "wram": {0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, "read": {0xD3B6: 1, 0xD0BF: 1}},
+    dict(POISON, keys=[0x00], wram={0xD3B6: b"\x00", 0xD0BF: b"\x55", 0xD334: b"\x00", 0xD330: b"\x00", 0xD331: b"\x00"}, read={0xD3B6: 1, 0xD0BF: 1}),
+]
+# <<< factory FindNPCOrObject
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1119,3 +1127,6 @@ MUTATIONS["ReturnToOverworldNoCallback"] = {"source_symbol": "ReturnToOverworldN
 # >>> factory-mutation ReturnToOverworldWithCallback
 MUTATIONS["ReturnToOverworldWithCallback"] = {"source_symbol": "ReturnToOverworldWithCallback", "before": "uint8_t ReturnToOverworldWithCallback(uint16_t hl)\n{\n\twReloadOverworldCallbackPtr = (uint8_t)hl;", "after": "uint8_t ReturnToOverworldWithCallback(uint16_t hl)\n{\n\twReloadOverworldCallbackPtr = 0xFFu;", "case_ids": ["ReturnToOverworldWithCallback-0", "ReturnToOverworldWithCallback-1", "ReturnToOverworldWithCallback-2"]}
 # <<< factory-mutation ReturnToOverworldWithCallback
+# >>> factory-mutation FindNPCOrObject
+MUTATIONS["FindNPCOrObject"] = {"source_symbol": "FindNPCOrObject", "before": "\twScriptNPC = 0xffu;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "after": "\twScriptNPC = 0x00u;\n\tFindPlayerMovementWithOffsetResult movement = FindPlayerMovementFromDirection();", "case_ids": ["FindNPCOrObject-0", "FindNPCOrObject-1"]}
+# <<< factory-mutation FindNPCOrObject

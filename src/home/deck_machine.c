@@ -84,6 +84,35 @@
 #include "generated/wram.h"
 #define DeletedTheConfigurationForText 0x0267u
 #define DoYouReallyWishToDeleteText 0x0266u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/deck_check.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/process_text.h"
+#include "mem.h"
+
+#define NUM_FILTERS 0x09u
+#define MENU_CANCEL 0xFFu
+#define MENU_CONFIRM 0x01u
+#define PAD_START 0x08u
+#define CARRY_FLAG 0x10u
+#define NUM_CONFIRMATION_CURSOR_POSITIONS 0x05u
+/* charmaps.asm:319 gives the fullwidth middle dot the value $77 and
+ * macros/text.asm:81-89 shows `ldfw` is a plain `ld`, so deck_machine.asm:143
+ * assembles to `ld [hl], $77`. */
+#define FW_MIDDLE_DOT 0x77u
+/* Bank-2 addresses this routine reads as data (poketcg.sym):
+ * 02:52a7 DeckNameSuffix,
+ * 02:6e91 HandleDeckMissingCardsList.DeckConfirmationCardSelectionParams,
+ * 02:6e9a HandleDeckMissingCardsList.CardListUpdateFunction. */
+#define DeckNameSuffix_ADDR 0x52A7u
+#define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR 0x6E91u
+#define CARD_LIST_UPDATE_FUNCTION_ADDR 0x6E9Au
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -472,3 +501,126 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void)
 	return (TryDeleteSavedDeckResult){0u, waited.f};
 }
 /* <<< factory TryDeleteSavedDeck */
+
+/* >>> factory HandleDeckMissingCardsList */
+/* deck_machine.asm:6-165. hl = the deck's name in SRAM, de = its 60 card ids.
+ * The `call .HandleList / ret` tail is inlined: .HandleList has a single exit,
+ * the `ret z` in .selection_made, so every return leaves a = [hffb3] =
+ * MENU_CANCEL and f = $C0 (`cp` against an equal value sets Z and N and clears
+ * H and C).
+ *
+ * .CardListUpdateFunction is stored, never called here: the asm only parks its
+ * address in wCardListUpdateFunction for CallIndirect, and this tree does not
+ * dispatch that pointer (see the note on HandleLeftRightInCardList in
+ * src/home/deck_configuration.c). The two bytes written are the real bank-2
+ * address, so the WRAM still matches the reference. */
+HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_t de)
+{
+	(void)CopyListFromHLToDEInSRAM(hl, wCurDeckName_ADDR);
+	(void)CopyDeckFromSRAM(de, wCurDeckCards_ADDR);
+
+	ClearMemory_Bank2(NUM_FILTERS, wCardFilterCounts_ADDR);
+	wTotalCardCount = DECK_SIZE;
+	wCardFilterCounts = DECK_SIZE;
+
+	/* .HandleList */
+	(void)SortCurDeckCardsByID();
+	(void)CreateCurDeckUniqueCardList();
+	wCardListVisibleOffset = 0u;
+
+	/* The `xor a` above is the cursor .loop hands InitCardSelectionParams on
+	 * first entry; the `jr .loop` from .open_card_pge re-enters with the a
+	 * OpenCardPageFromCardList's .exit leaves, [wCardListCursorPos]
+	 * (deck_configuration.asm:2085-2089). */
+	uint8_t cursor = 0u;
+
+	for (;;) { /* .loop */
+		uint16_t params = DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR;
+
+		(void)InitCardSelectionParams(cursor, &params);
+
+		uint8_t entries = wNumUniqueCards;
+
+		wNumCardListEntries = entries;
+		if (entries >= NUM_CONFIRMATION_CURSOR_POSITIONS)
+			entries = NUM_CONFIRMATION_CURSOR_POSITIONS;
+		wCardListNumCursorPositions = entries;
+		wNumVisibleCardListEntries = entries;
+
+		/* .PrintTitleAndList -> .ClearScreenAndPrintDeckTitle */
+		EmptyScreenAndLoadFontDuelAndHandCardsIcons();
+		if (wCurDeckName != 0u) { /* .PrintDeckIndexAndName */
+			InitTextPrinting(0u, 1u);
+
+			ConvertToNumericalDigitsResult digits =
+				ConvertToNumericalDigits((uint8_t)(wCurDeck + 1u),
+							 wDefaultText_ADDR);
+
+			gb_write8(digits.hl, FW_MIDDLE_DOT);
+			gb_write8((uint16_t)(digits.hl + 1u), TX_END);
+
+			uint16_t text = wDefaultText_ADDR;
+
+			ProcessText(&text);
+
+			uint16_t name = wCurDeckName_ADDR;
+			uint16_t name_dst = wDefaultText_ADDR;
+
+			CopyListFromHLToDE(&name, &name_dst);
+
+			/* `ld b, $0 / add hl, bc` appends the suffix at the tile
+			 * length GetTextLengthInTiles returns in c. */
+			TextLength length = GetTextLengthInTiles(wDefaultText_ADDR);
+			uint16_t suffix = DeckNameSuffix_ADDR;
+			uint16_t suffix_dst = (uint16_t)(wDefaultText_ADDR + length.c);
+
+			CopyListFromHLToDE(&suffix, &suffix_dst);
+			InitTextPrinting(3u, 1u);
+			text = wDefaultText_ADDR;
+			ProcessText(&text);
+		}
+		EnableLCD();
+
+		wCardListCoords = 3u;
+		gb_write8((uint16_t)(wCardListCoords_ADDR + 1u), 3u);
+		/* PrintConfirmationCardList takes its coordinates from
+		 * wCardListCoords and ignores a, de and hl, so the asm's
+		 * `lb de, 3, 3` and wCardListCoords pointer carry no state. */
+		PrintConfirmationCardList(0u, 3u, 3u, (uint16_t *)0);
+
+		uint16_t confirmation = (uint16_t)(wCardConfirmationText
+			| ((uint16_t)gb_read8((uint16_t)(wCardConfirmationText_ADDR + 1u)) << 8));
+
+		(void)DrawWideTextBox_PrintText(confirmation);
+
+		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)CARD_LIST_UPDATE_FUNCTION_ADDR);
+		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+			  (uint8_t)(CARD_LIST_UPDATE_FUNCTION_ADDR >> 8));
+		wced2 = 0u;
+
+		for (;;) { /* .loop_input */
+			DoFrame();
+			if (HandleDeckCardSelectionList().f & CARRY_FLAG) {
+				uint8_t selected = hffb3; /* .selection_made */
+
+				if (selected == MENU_CANCEL)
+					return (HandleDeckMissingCardsListResult){selected, 0xC0u};
+				break;
+			}
+			if (HandleLeftRightInCardList().f & CARRY_FLAG)
+				continue;
+			if (hDPadHeld & PAD_START)
+				break;
+		}
+
+		/* .open_card_pge */
+		PlaySFXConfirmOrCancel(MENU_CONFIRM);
+		wced7 = wCardListCursorPos;
+		gb_write8(wCurCardListPtr_ADDR, (uint8_t)wUniqueDeckCardList_ADDR);
+		gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+			  (uint8_t)(wUniqueDeckCardList_ADDR >> 8));
+		OpenCardPageFromCardList();
+		cursor = wCardListCursorPos;
+	}
+}
+/* <<< factory HandleDeckMissingCardsList */

@@ -157,6 +157,55 @@ CACHE_READ = {0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4, 0xCD05: 2, 0xCD0A: 1}
 PLACEMENT_READ = {0xFFAA: 2, 0xFFAD: 1, 0xFFAE: 1}
 VRAM_READ = {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9980: 192}, 1: {0x9980: 192}}
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+# HandleDeckMissingCardsList (deck_machine.asm:6): one saved-deck struct in
+# SRAM -- the name, then the 60 card ids at offset $18 -- is the whole input.
+HDMC_NAME_SRAM = 0xA800
+HDMC_CARDS_SRAM = 0xA818
+# Seeds every case shares. A seed address is compared as well as written, so
+# this lists only bytes the reference and the port both leave identical: the
+# state the body reads, plus the buffers it overwrites end to end (pre-zeroed,
+# so no byte the routine never writes can differ). wLCDC ($CABB) is absent on
+# purpose -- the body calls EnableLCD and the reference VBlank handler then
+# keeps mirroring it, which makes it uncomparable.
+HDMC_SEEDS = {
+    0xCAB4: b"\x00",       # wConsole = CONSOLE_DMG
+    0xCAD0: b"\xc9",       # wVBlankFunctionTrampoline: a bare `ret`, which the
+                           # reference VBlank handler calls every frame
+    0xCFDA: b"\x6f\x02",   # wCardConfirmationText = TheseCardsAreNeededToBuildThisDeckText
+    0xCEA5: b"\x00" * 9,   # wCardListCursorXPos..wCardListHandlerFunction, filled from $6E91
+    0xCEBB: b"\x00" * 9,   # wCardFilterCounts
+    0xCECE: b"\x00\x00",   # wCardListUpdateFunction
+    0xCED0: b"\x00\x00",   # wCardListCoords
+    0xCED2: b"\x00",       # wced2
+    0xCF17: b"\x00" * 61,  # wCurDeckCards and its terminator
+    0xCF68: b"\x00" * 8,   # wUniqueDeckCardList
+    0xCFB9: b"\x00" * 8,   # wCurDeckName
+}
+# Everything else this routine's own asm writes. Nothing the reference VBlank
+# handler touches (hSCX/hSCY/hWX/hWY, wLCDC, wFlushPaletteFlags,
+# wVBlankOAMCopyToggle) and no VRAM: the LCD is on for the second half of the
+# body, so PPU-timed VRAM writes are not comparable.
+HDMC_READ = {
+    0xCEA1: 1,  # wCardListVisibleOffset
+    0xCEA4: 1,  # wCardListCursorPos
+    0xCECB: 1,  # wNumVisibleCardListEntries
+    0xCECC: 1,  # wTotalCardCount
+    0xCFE6: 1,  # wNumCardListEntries
+    0xFF8F: 1,  # hDPadHeld
+    0xFFB3: 1,  # hffb3
+}
+# The body reaches DoFrame with the LCD on, so real frames elapse: the reference
+# needs the game's DMA routine installed (EmptyScreenAndLoadFontDuelAndHandCards
+# Icons sets wVBlankOAMCopyToggle, and VBlankHandler then calls hDMAFunction)
+# and a text setup before any glyph is cached.
+HDMC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# Frame one presses nothing, frame two presses B, and both sides cycle the pair,
+# so the edge-triggered hKeysPressed read inside HandleDeckCardSelectionList
+# always catches a fresh B press: that is the MENU_CANCEL write to hffb3 the
+# `ret z` in .selection_made returns through. A (0x01) instead falls into
+# .open_card_pge and loops back to .loop forever.
+HDMC_KEYS = [0x00, 0x02]
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -309,6 +358,42 @@ CASES["TryDeleteSavedDeck"] = [
 ]
 # <<< factory TryDeleteSavedDeck
 
+# >>> factory HandleDeckMissingCardsList
+CONTRACT["HandleDeckMissingCardsList"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+# rom_bank 2 is mandatory, not decoration: the routine reads
+# .DeckConfirmationCardSelectionParams ($6E91) and DeckNameSuffix ($52A7) out of
+# its own bank, and with bank 1 mapped the params become garbage,
+# wCardListHandlerFunction turns non-zero and the run falls into
+# OpenCardPageFromCardList forever.
+CASES["HandleDeckMissingCardsList"] = [
+    # Empty deck name: .PrintDeckIndexAndName takes its `ret z` exit, so the
+    # title is skipped and only the confirmation list is printed.
+    {"hl": HDMC_NAME_SRAM, "d": HDMC_CARDS_SRAM >> 8, "e": HDMC_CARDS_SRAM & 0xFF,
+     "keys": HDMC_KEYS, "rom_bank": 2, "ramg": True,
+     "wram": {**HDMC_SEEDS, 0xCEB1: b"\x00"},
+     "sram": {0: {HDMC_NAME_SRAM: b"\x00", HDMC_CARDS_SRAM: b"\x01" * 60}},
+     "read": dict(HDMC_READ), "setup": HDMC_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # Named deck: the full "X.<NAME> deck" path runs, so wCurDeck feeds
+    # ConvertToNumericalDigits and DeckNameSuffix is appended past the name.
+    {"hl": HDMC_NAME_SRAM, "d": HDMC_CARDS_SRAM >> 8, "e": HDMC_CARDS_SRAM & 0xFF,
+     "keys": HDMC_KEYS, "rom_bank": 2, "ramg": True,
+     "wram": {**HDMC_SEEDS, 0xCEB1: b"\x02"},
+     "sram": {0: {HDMC_NAME_SRAM: b"ABC\x00", HDMC_CARDS_SRAM: b"\x01" * 60}},
+     "read": dict(HDMC_READ), "setup": HDMC_SETUP,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # Poisoned a/f/b/c (d/e/hl carry the SRAM pointers the routine dereferences)
+    # over a two-id deck, so the sort reorders it and wNumUniqueCards is 2.
+    dict(POISON, hl=HDMC_NAME_SRAM, d=HDMC_CARDS_SRAM >> 8, e=HDMC_CARDS_SRAM & 0xFF,
+         keys=HDMC_KEYS, rom_bank=2, ramg=True,
+         wram={**HDMC_SEEDS, 0xCEB1: b"\x09"},
+         sram={0: {HDMC_NAME_SRAM: b"DECK\x00",
+                   HDMC_CARDS_SRAM: b"\x0a" * 30 + b"\x05" * 30}},
+         read=dict(HDMC_READ), setup=HDMC_SETUP,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleDeckMissingCardsList
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -406,3 +491,18 @@ MUTATIONS["TryDeleteSavedDeck"] = {
     "case_ids": ["TryDeleteSavedDeck-0", "TryDeleteSavedDeck-1"],
 }
 # <<< factory-mutation TryDeleteSavedDeck
+# >>> factory-mutation HandleDeckMissingCardsList
+MUTATIONS["HandleDeckMissingCardsList"] = {
+    "source_symbol": "HandleDeckMissingCardsList",
+    # wCardListUpdateFunction ($CECE) is seeded, so both of its bytes are
+    # compared: corrupting the low half of the stored $6E9A is visible to every
+    # case, and no sibling in deck_machine.c names this constant.
+    "before": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)CARD_LIST_UPDATE_FUNCTION_ADDR);",
+    "after": "gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(CARD_LIST_UPDATE_FUNCTION_ADDR + 1u));",
+    "case_ids": [
+        "HandleDeckMissingCardsList-0",
+        "HandleDeckMissingCardsList-1",
+        "HandleDeckMissingCardsList-2",
+    ],
+}
+# <<< factory-mutation HandleDeckMissingCardsList
