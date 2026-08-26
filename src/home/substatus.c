@@ -28,6 +28,15 @@
 #include "home/substatus.h"
 #define MACHAMP 0x7fu
 #define RESIDUAL 0x80u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "mem.h"
+#define SUBSTATUS1_DESTINY_BOND 0x16u
+#define KnockedOutDueToDestinyBondText 0x0104u
 /* <<< factory statics */
 
 #define DUELVARS_ARENA_CARD_SUBSTATUS2 0xe8u
@@ -611,3 +620,46 @@ HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void)
 	return (HandleStrikesBackResidualResult){applied.a, applied.f};
 }
 /* <<< factory HandleStrikesBack_AgainstResidualAttack */
+
+/* >>> factory HandleDestinyBondSubstatus */
+/* substatus.asm:746-809. Destiny Bond: when the defending (non-turn) arena
+ * Pokemon carries the substatus and has just been knocked out, the attacking
+ * (turn holder's) arena Pokemon is knocked out with it. Neither duelvar helper
+ * pushes hl, so every early exit reports the address its own lookup left
+ * behind, with the flags of the test that took that exit. */
+DestinyBondResult HandleDestinyBondSubstatus(void)
+{
+	DuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);
+	if (substatus.a != SUBSTATUS1_DESTINY_BOND)
+		return (DestinyBondResult){substatus.a,
+			f_cp(substatus.a, SUBSTATUS1_DESTINY_BOND), substatus.hl};
+
+	/* `cp -1`: an empty arena slot means there is nothing to bond with. */
+	DuelistVarResult defending = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	if (defending.a == 0xFFu)
+		return (DestinyBondResult){defending.a, f_cp(defending.a, 0xFFu), defending.hl};
+
+	DuelistVarResult defending_hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (defending_hp.a != 0u)
+		return (DestinyBondResult){defending_hp.a, f_or(defending_hp.a), defending_hp.hl};
+
+	DuelistVarResult attacking_hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	if (attacking_hp.a == 0u)
+		return (DestinyBondResult){attacking_hp.a, f_or(attacking_hp.a), attacking_hp.hl};
+
+	gb_write8(attacking_hp.hl, 0u);
+	DrawDuelMainScene();
+	DrawDuelHUDs();
+	/* `pop hl` restores the HP duelvar and `ld l, DUELVARS_ARENA_CARD` rewrites
+	 * only the low byte, so this stays on the turn holder's duelvar page. */
+	uint16_t attacking_card = (uint16_t)((attacking_hp.hl & 0xFF00u) | DUELVARS_ARENA_CARD);
+	(void)LoadCardDataToBuffer2_FromDeckIndex(gb_read8(attacking_card));
+	uint16_t name = (uint16_t)(gb_read8(wLoadedCard2Name_ADDR)
+		| (uint16_t)gb_read8((uint16_t)(wLoadedCard2Name_ADDR + 1u)) << 8);
+	LoadTxRam2(name);
+	WaitResult waited = DrawWideTextBox_WaitForInput(KnockedOutDueToDestinyBondText);
+	/* The text-box wait clobbers a and hl in the ROM; the ported WaitResult
+	 * carries only f, so this exit reports the last hl this routine loads. */
+	return (DestinyBondResult){0u, waited.f, KnockedOutDueToDestinyBondText};
+}
+/* <<< factory HandleDestinyBondSubstatus */

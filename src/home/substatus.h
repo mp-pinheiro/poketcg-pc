@@ -150,4 +150,15 @@ ApplyStrikesBackResult ApplyStrikesBack_AgainstResidualAttack(uint16_t hl);
 typedef struct { uint8_t a, f; } HandleStrikesBackResidualResult;
 HandleStrikesBackResidualResult HandleStrikesBack_AgainstResidualAttack(void);
 /* <<< factory HandleStrikesBack_AgainstResidualAttack */
+/* >>> factory HandleDestinyBondSubstatus */
+/* substatus.asm:746-809. a/f are the register state of the test that returned;
+ * hl is the duelvar address the last lookup left in it, since nothing on the
+ * early-exit paths preserves hl. b/c/d/e are never observed. */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint16_t hl;
+} DestinyBondResult;
+DestinyBondResult HandleDestinyBondSubstatus(void);
+/* <<< factory HandleDestinyBondSubstatus */
 #endif

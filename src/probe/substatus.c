@@ -184,6 +184,16 @@ static void adapt_HandleStrikesBack_AgainstResidualAttack(ProbeState *s)
 }
 /* <<< factory HandleStrikesBack_AgainstResidualAttack */
 
+/* >>> factory HandleDestinyBondSubstatus */
+static void adapt_HandleDestinyBondSubstatus(ProbeState *s)
+{
+	DestinyBondResult r = HandleDestinyBondSubstatus();
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory HandleDestinyBondSubstatus */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -211,5 +221,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "HandleStrikesBack_AgainstDamagingAttack", adapt_HandleStrikesBack_AgainstDamagingAttack },
 	{ "ApplyStrikesBack_AgainstResidualAttack", adapt_ApplyStrikesBack_AgainstResidualAttack },
 	{ "HandleStrikesBack_AgainstResidualAttack", adapt_HandleStrikesBack_AgainstResidualAttack },
+	{ "HandleDestinyBondSubstatus", adapt_HandleDestinyBondSubstatus },
 	{ NULL, NULL },
 };

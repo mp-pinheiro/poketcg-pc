@@ -460,6 +460,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 wTempNonTurnDuelistCardID = 0xCCC4
 wLoadedAttackCategory = 0xCCB1
 wDealtDamage = 0xCCBF
+
+DB_hWhoseTurn = 0xFF97
+DB_PLAYER_SUBSTATUS1 = 0xC2E7
+DB_PLAYER_ARENA_HP = 0xC2C8
+DB_OPP_SUBSTATUS1 = 0xC3E7
+DB_OPP_ARENA_CARD = 0xC3BB
+DB_OPP_ARENA_HP = 0xC3C8
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -482,6 +489,23 @@ CASES["HandleStrikesBack_AgainstResidualAttack"] = [
 ]
 # <<< factory HandleStrikesBack_AgainstResidualAttack
 
+# >>> factory HandleDestinyBondSubstatus
+CONTRACT["HandleDestinyBondSubstatus"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["HandleDestinyBondSubstatus"] = [
+    # No Destiny Bond: `cp $16` on $00 exits with N/H/C set, hl at $C3E7.
+    # $C3C8 is seeded too so the declared mutation stays deterministic.
+    {"wram": {DB_hWhoseTurn: b"\xC2", DB_OPP_SUBSTATUS1: b"\x00", DB_OPP_ARENA_HP: b"\x00"}},
+    # Bond active but the defending arena slot is empty: `cp -1` exits Z set.
+    {"wram": {DB_hWhoseTurn: b"\xC2", DB_OPP_SUBSTATUS1: b"\x16", DB_OPP_ARENA_CARD: b"\xFF"}},
+    # Defender still has HP: `or a / ret nz`, hl at the defender's HP duelvar.
+    {"wram": {DB_hWhoseTurn: b"\xC2", DB_OPP_SUBSTATUS1: b"\x16", DB_OPP_ARENA_CARD: b"\x00", DB_OPP_ARENA_HP: b"\x0A"}},
+    # Defender knocked out but the attacker is already at 0 HP: `or a / ret z`.
+    {"wram": {DB_hWhoseTurn: b"\xC2", DB_OPP_SUBSTATUS1: b"\x16", DB_OPP_ARENA_CARD: b"\x00", DB_OPP_ARENA_HP: b"\x00", DB_PLAYER_ARENA_HP: b"\x00"}},
+    # Poisoned, opponent's turn: the non-turn lookups read the $C2 page.
+    dict(POISON, wram={DB_hWhoseTurn: b"\xC3", DB_PLAYER_SUBSTATUS1: b"\x20", DB_PLAYER_ARENA_HP: b"\x00"}),
+]
+# <<< factory HandleDestinyBondSubstatus
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -499,3 +523,6 @@ MUTATIONS["ApplyStrikesBack_AgainstResidualAttack"] = {"source_symbol": "ApplySt
 # >>> factory-mutation HandleStrikesBack_AgainstResidualAttack
 MUTATIONS["HandleStrikesBack_AgainstResidualAttack"] = {"source_symbol": "HandleStrikesBack_AgainstResidualAttack", "before": "\tuint8_t card_id = wTempNonTurnDuelistCardID;", "after": "\tuint8_t card_id = 0u;", "case_ids": ["HandleStrikesBack_AgainstResidualAttack-0", "HandleStrikesBack_AgainstResidualAttack-1", "HandleStrikesBack_AgainstResidualAttack-2", "HandleStrikesBack_AgainstResidualAttack-3", "HandleStrikesBack_AgainstResidualAttack-4"]}
 # <<< factory-mutation HandleStrikesBack_AgainstResidualAttack
+# >>> factory-mutation HandleDestinyBondSubstatus
+MUTATIONS["HandleDestinyBondSubstatus"] = {"source_symbol": "HandleDestinyBondSubstatus", "before": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS1);", "after": "DestinyBondResult HandleDestinyBondSubstatus(void)\n{\n\tDuelistVarResult substatus = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);", "case_ids": ["HandleDestinyBondSubstatus-0", "HandleDestinyBondSubstatus-4"]}
+# <<< factory-mutation HandleDestinyBondSubstatus

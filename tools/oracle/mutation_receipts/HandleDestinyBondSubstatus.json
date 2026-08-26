@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDestinyBondSubstatus",
+  "case": "tests/cases/substatus.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDestinyBondSubstatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 50151, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50120\": \"00\", \"50151\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDestinyBondSubstatus\", \"mismatches\": {\"hl\": [50151, 50120]}}\n",
+  "restored": "{\"fn\": \"HandleDestinyBondSubstatus\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 112, \"hl\": 50151, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50120\": \"00\", \"50151\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
