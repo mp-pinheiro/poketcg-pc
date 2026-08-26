@@ -180,4 +180,12 @@ typedef struct {
 } HandleTransparencyResult;
 HandleTransparencyResult HandleTransparency(uint16_t hl);
 /* <<< factory HandleTransparency */
+/* >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+typedef struct {
+	uint8_t f;
+	uint16_t de;
+	uint16_t hl;
+} HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult;
+HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl);
+/* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
 #endif

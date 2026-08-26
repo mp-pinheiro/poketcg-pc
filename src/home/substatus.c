@@ -739,3 +739,35 @@ HandleTransparencyResult HandleTransparency(uint16_t hl)
 	return (HandleTransparencyResult){NO_DAMAGE_OR_EFFECT_TRANSPARENCY, 0x10u, NoDamageOrEffectDueToTransparencyText};
 }
 /* <<< factory HandleTransparency */
+
+/* >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)
+{
+	uint8_t category = wLoadedAttackCategory;
+	if (category == POKEMON_POWER)
+		return (HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult){0xC0u, de, hl};
+
+	PkmnPowerCountResult powers = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (powers.f & 0x10u)
+		return (HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult){powers.f, de, hl};
+
+	uint8_t location = wTempPlayAreaLocation_cceb;
+	if (location != 0)
+		de = HandleDamageReductionExceptSubstatus2(de);
+
+	uint16_t damage = de;
+	NoDamageOrEffectResult no_damage = HandleNoDamageOrEffectSubstatus(location, hl);
+	uint8_t f = no_damage.f;
+	hl = no_damage.hl;
+	if (!(f & 0x10u)) {
+		HandleTransparencyResult transparency = HandleTransparency(hl);
+		f = transparency.f;
+		hl = transparency.hl;
+		if (f & 0x10u)
+			damage = 0;
+	} else {
+		damage = 0;
+	}
+	return (HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult){f, damage, hl};
+}
+/* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */

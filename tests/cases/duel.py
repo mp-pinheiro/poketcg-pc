@@ -1231,6 +1231,13 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
 hWhoseTurn = 0xFF97
 wPlayerArenaCardStatus = 0xC2F0
 wConfusionAttackCheckWasUnsuccessful = 0xCCC9
+
+wLoadedAttackCategory = 0xCCB1
+wNoDamageOrEffect = 0xCCC7
+wStatusConditionQueueIndex = 0xCCCD
+wTempPlayAreaLocation_cceb = 0xCCEB
+wTempNonTurnDuelistCardID = 0xCCC4
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1575,6 +1582,15 @@ CASES["CheckSelfConfusionDamage"] = [
 ]
 # <<< factory CheckSelfConfusionDamage
 
+# >>> factory ApplyTransparencyIfApplicable
+CONTRACT["ApplyTransparencyIfApplicable"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c")}
+CASES["ApplyTransparencyIfApplicable"] = [
+    {"f": 0x00, "d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {wLoadedAttackCategory: b"\x80", wNoDamageOrEffect: b"\x00", hWhoseTurn: b"\xC2"}, "expect_regs": {"a": 0x80, "f": 0x20, "d": 0x12, "e": 0x34, "hl": 0x4567}},
+    {"f": 0x00, "d": 0x00, "e": 0x00, "hl": 0x4567, "wram": {wLoadedAttackCategory: b"\x00", wNoDamageOrEffect: b"\x01", hWhoseTurn: b"\xC2"}, "expect_regs": {"a": 0x01, "f": 0x00, "d": 0x00, "e": 0x00, "hl": 0x4567}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {wLoadedAttackCategory: b"\x00", wNoDamageOrEffect: b"\x00", wStatusConditionQueueIndex: b"\x00", wTempNonTurnDuelistCardID: b"\x01", wTempPlayAreaLocation_cceb: b"\xAA", hWhoseTurn: b"\xC2"}, "read": {wTempPlayAreaLocation_cceb: 1}, "expect_regs": {"a": 0x01, "f": 0x00, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}, "expect": {wTempPlayAreaLocation_cceb: b"\x00"}}
+]
+# <<< factory ApplyTransparencyIfApplicable
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1803,3 +1819,6 @@ MUTATIONS["PlayTrainerCard"] = {"source_symbol": "PlayTrainerCard", "before": "P
 # >>> factory-mutation CheckSelfConfusionDamage
 MUTATIONS["CheckSelfConfusionDamage"] = {"source_symbol": "CheckSelfConfusionDamage", "before": "\twConfusionAttackCheckWasUnsuccessful = 0u;", "after": "\twConfusionAttackCheckWasUnsuccessful = 0x40u;", "case_ids": ["CheckSelfConfusionDamage-0", "CheckSelfConfusionDamage-2"]}
 # <<< factory-mutation CheckSelfConfusionDamage
+# >>> factory-mutation ApplyTransparencyIfApplicable
+MUTATIONS["ApplyTransparencyIfApplicable"] = {"source_symbol": "ApplyTransparencyIfApplicable", "before": "\tuint8_t loaded_category = wLoadedAttackCategory;", "after": "\tuint8_t loaded_category = 0x80u;", "case_ids": ["ApplyTransparencyIfApplicable-2"]}
+# <<< factory-mutation ApplyTransparencyIfApplicable

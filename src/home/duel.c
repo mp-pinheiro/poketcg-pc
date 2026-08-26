@@ -591,6 +591,10 @@ static const uint8_t kCursorTileData[16] = {
 #define DUELVARS_ARENA_CARD_STATUS 0xf0u
 #define FALSE 0x00u
 #define ConfusionCheckDamageText 0x00f7u
+
+#define DUELVARS_ARENA_CARD_SUBSTATUS2 0xE8u
+#define PLAY_AREA_ARENA 0x00u
+#define RESIDUAL_F 0x07u
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -2904,3 +2908,34 @@ CheckSelfConfusionDamageResult CheckSelfConfusionDamage(void)
 	return (CheckSelfConfusionDamageResult){TRUE, (uint8_t)((toss.f & 0x80u) | 0x10u), toss.hl};
 }
 /* <<< factory CheckSelfConfusionDamage */
+
+/* >>> factory ApplyTransparencyIfApplicable */
+ApplyTransparencyResult ApplyTransparencyIfApplicable(uint8_t initial_f, uint16_t de, uint16_t hl)
+{
+	uint8_t loaded_category = wLoadedAttackCategory;
+	if ((loaded_category & (uint8_t)(1u << RESIDUAL_F)) != 0u)
+		return (ApplyTransparencyResult){loaded_category, (uint8_t)((initial_f & 0x10u) | 0x20u), (uint8_t)(de >> 8), (uint8_t)de, hl};
+	uint8_t no_damage = wNoDamageOrEffect;
+	if (no_damage != 0u)
+		return (ApplyTransparencyResult){no_damage, 0x00u, (uint8_t)(de >> 8), (uint8_t)de, hl};
+	if (de == 0u) {
+		DuelistVarResult non_turn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
+		if (non_turn.a == 0u) {
+			uint8_t queue = wStatusConditionQueueIndex;
+			if (queue == 0u)
+				return (ApplyTransparencyResult){queue, 0x80u, (uint8_t)(de >> 8), (uint8_t)de, hl};
+			hl = non_turn.hl;
+		}
+	}
+	SwapTurn();
+	wTempPlayAreaLocation_cceb = PLAY_AREA_ARENA;
+	HandleTransparencyResult transparency = HandleTransparency(hl);
+	SwapTurn();
+	if ((transparency.f & 0x10u) == 0u)
+		return (ApplyTransparencyResult){transparency.a, transparency.f, (uint8_t)(de >> 8), (uint8_t)de, transparency.hl};
+	DrawDuelMainScene();
+	DuelistVarResult non_turn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_SUBSTATUS2);
+	gb_write8(non_turn.hl, 0u);
+	return (ApplyTransparencyResult){non_turn.a, non_turn.a ? 0x00u : 0x80u, 0x00u, 0x00u, non_turn.hl};
+}
+/* <<< factory ApplyTransparencyIfApplicable */

@@ -478,6 +478,8 @@ wTempNonTurnDuelistCardID = 0xCCC4
 wTempPlayAreaLocation_cceb = 0xCCEB
 POKEMON_POWER = 0x04
 HAUNTER_LV17 = 0x96
+
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory ApplyStrikesBack_AgainstResidualAttack
@@ -535,6 +537,15 @@ CASES["HandleTransparency"] = [
 ]
 # <<< factory HandleTransparency
 
+# >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects
+CONTRACT["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = {"compare": ("f", "d", "e", "hl"), "preserve": ("d", "e", "hl")}
+CASES["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = [
+    {"d": 0x12, "e": 0x34, "hl": 0x4567, "wram": {0xCCB1: b"\x04"}},
+    {"d": 0x80, "e": 0x00, "hl": 0x0000, "wram": {0xCCB1: b"\x04"}},
+    dict(POISON, wram={0xCCB1: b"\x04"}),
+]
+# <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -561,3 +572,6 @@ MUTATIONS["HandleNShieldAndTransparency"] = {"source_symbol": "HandleNShieldAndT
 # >>> factory-mutation HandleTransparency
 MUTATIONS["HandleTransparency"] = {"source_symbol": "HandleTransparency", "before": "	if (category == POKEMON_POWER) {\n		return (HandleTransparencyResult){category, category ? 0u : 0x80u, hl};", "after": "	if (category == POKEMON_POWER) {\n		return (HandleTransparencyResult){0x05u, category ? 0u : 0x80u, hl};", "case_ids": ["HandleTransparency-1", "HandleTransparency-2"]}
 # <<< factory-mutation HandleTransparency
+# >>> factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects
+MUTATIONS["HandleDamageReductionOrNoDamageFromPkmnPowerEffects"] = {"source_symbol": "HandleDamageReductionOrNoDamageFromPkmnPowerEffects", "before": "HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)\n{\n\tuint8_t category = wLoadedAttackCategory;", "after": "HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult HandleDamageReductionOrNoDamageFromPkmnPowerEffects(uint16_t de, uint16_t hl)\n{\n\tuint8_t category = 0u;", "case_ids": ["HandleDamageReductionOrNoDamageFromPkmnPowerEffects-0", "HandleDamageReductionOrNoDamageFromPkmnPowerEffects-1", "HandleDamageReductionOrNoDamageFromPkmnPowerEffects-2"]}
+# <<< factory-mutation HandleDamageReductionOrNoDamageFromPkmnPowerEffects

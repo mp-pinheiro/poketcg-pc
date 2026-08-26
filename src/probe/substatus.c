@@ -216,6 +216,18 @@ static void adapt_HandleTransparency(ProbeState *s)
 }
 /* <<< factory HandleTransparency */
 
+/* >>> factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+static void adapt_HandleDamageReductionOrNoDamageFromPkmnPowerEffects(ProbeState *s)
+{
+	uint16_t de = (uint16_t)((uint16_t)s->d << 8 | s->e);
+	HandleDamageReductionOrNoDamageFromPkmnPowerEffectsResult r = HandleDamageReductionOrNoDamageFromPkmnPowerEffects(de, s->hl);
+	s->f = r.f;
+	s->d = (uint8_t)(r.de >> 8);
+	s->e = (uint8_t)r.de;
+	s->hl = r.hl;
+}
+/* <<< factory HandleDamageReductionOrNoDamageFromPkmnPowerEffects */
+
 const ProbeEntry probe_entries_substatus[] = {
 	{ "CheckSandAttackOrSmokescreenSubstatus", adapt_CheckSandAttackOrSmokescreenSubstatus },
 	{ "CountTurnDuelistPokemonWithActivePkmnPower", adapt_CountTurnDuelistPokemonWithActivePkmnPower },
@@ -246,5 +258,6 @@ const ProbeEntry probe_entries_substatus[] = {
 	{ "HandleDestinyBondSubstatus", adapt_HandleDestinyBondSubstatus },
 	{ "HandleNShieldAndTransparency", adapt_HandleNShieldAndTransparency },
 	{ "HandleTransparency", adapt_HandleTransparency },
+	{ "HandleDamageReductionOrNoDamageFromPkmnPowerEffects", adapt_HandleDamageReductionOrNoDamageFromPkmnPowerEffects },
 	{ NULL, NULL },
 };

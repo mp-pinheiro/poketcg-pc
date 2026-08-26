@@ -912,6 +912,18 @@ static void adapt_CheckSelfConfusionDamage(ProbeState *s)
 }
 /* <<< factory CheckSelfConfusionDamage */
 
+/* >>> factory ApplyTransparencyIfApplicable */
+static void adapt_ApplyTransparencyIfApplicable(ProbeState *s)
+{
+	ApplyTransparencyResult result = ApplyTransparencyIfApplicable(s->f, (uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory ApplyTransparencyIfApplicable */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "CopyPlayerName", adapt_CopyPlayerName },
 	{ "CopyOpponentName", adapt_CopyOpponentName },
@@ -1023,5 +1035,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "_SelectPrizeCards", adapt__SelectPrizeCards },
 	{ "PlayTrainerCard", adapt_PlayTrainerCard },
 	{ "CheckSelfConfusionDamage", adapt_CheckSelfConfusionDamage },
+	{ "ApplyTransparencyIfApplicable", adapt_ApplyTransparencyIfApplicable },
 	{ NULL, NULL },
 };

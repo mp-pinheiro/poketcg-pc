@@ -1,0 +1,9 @@
+{
+  "fn": "ApplyTransparencyIfApplicable",
+  "case": "tests/cases/duel.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ApplyTransparencyIfApplicable\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52401\": \"00\", \"52420\": \"01\", \"52423\": \"00\", \"52429\": \"00\", \"52459\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ApplyTransparencyIfApplicable\", \"mismatches\": {\"a\": [1, 128], \"f\": [0, 48], \"bus\": {\"address\": 52459, \"reference\": \"0001000000c2\", \"native\": \"00010000aac2\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[52401, 1], [52420, 1], [52423, 1], [52429, 1], [52459, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"ApplyTransparencyIfApplicable\", \"registers\": {\"a\": 1, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 0, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"52401\": \"00\", \"52420\": \"01\", \"52423\": \"00\", \"52429\": \"00\", \"52459\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

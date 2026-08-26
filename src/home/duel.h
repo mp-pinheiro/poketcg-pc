@@ -668,4 +668,14 @@ typedef struct {
 } CheckSelfConfusionDamageResult;
 CheckSelfConfusionDamageResult CheckSelfConfusionDamage(void);
 /* <<< factory CheckSelfConfusionDamage */
+/* >>> factory ApplyTransparencyIfApplicable */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t d;
+	uint8_t e;
+	uint16_t hl;
+} ApplyTransparencyResult;
+ApplyTransparencyResult ApplyTransparencyIfApplicable(uint8_t initial_f, uint16_t de, uint16_t hl);
+/* <<< factory ApplyTransparencyIfApplicable */
 #endif
