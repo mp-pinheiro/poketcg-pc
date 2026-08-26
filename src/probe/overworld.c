@@ -420,6 +420,14 @@ static void adapt_DisplayPCMenu(ProbeState *s)
 }
 /* <<< factory DisplayPCMenu */
 
+/* >>> factory Func_c268 */
+static void adapt_Func_c268(ProbeState *s)
+{
+	(void)s;
+	Func_c268();
+}
+/* <<< factory Func_c268 */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c6cc", adapt_Func_c6cc },
 	{ "Func_c6d4", adapt_Func_c6d4 },
@@ -472,5 +480,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "DisplayPauseMenu", adapt_DisplayPauseMenu },
 	{ "PauseMenu_Diary", adapt_PauseMenu_Diary },
 	{ "DisplayPCMenu", adapt_DisplayPCMenu },
+	{ "Func_c268", adapt_Func_c268 },
 	{ NULL, NULL },
 };

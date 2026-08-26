@@ -154,6 +154,9 @@
 #include "mem.h"
 #define PC_MENU_PARAMS 0x4DA9u
 #define PC_MENU_BANK 0x04u
+
+#define PAUSE_MENU_TEXT_LIST_BANK 0x03u
+#define PAUSE_MENU_TEXT_LIST_ADDR 0x427Cu
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -862,3 +865,18 @@ void DisplayPCMenu(void)
 	BankswitchROM(saved_bank);
 }
 /* <<< factory DisplayPCMenu */
+
+/* >>> factory Func_c268 */
+void Func_c268(void)
+{
+	uint16_t hl = PAUSE_MENU_TEXT_LIST_ADDR;
+	for (;;) {
+		const uint8_t *entry = rom_ptr(PAUSE_MENU_TEXT_LIST_BANK, hl);
+		uint16_t text_id = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));
+		hl = (uint16_t)(hl + 2u);
+		if (text_id == 0u)
+			break;
+		(void)ProcessTextFromID(text_id);
+	}
+}
+/* <<< factory Func_c268 */

@@ -189,4 +189,7 @@ void PauseMenu_Diary(void);
 void DisplayPCMenu(void);
 void BankswitchROM(uint8_t bank);
 /* <<< factory DisplayPCMenu */
+/* >>> factory Func_c268 */
+void Func_c268(void);
+/* <<< factory Func_c268 */
 #endif /* POKETCG_HOME_OVERWORLD_H */

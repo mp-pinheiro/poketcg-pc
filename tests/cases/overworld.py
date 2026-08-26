@@ -692,6 +692,21 @@ CASES["DisplayPCMenu"] = [
 ]
 # <<< factory DisplayPCMenu
 
+# >>> factory Func_c268
+CONTRACT["Func_c268"] = {"compare": (), "preserve": ()}
+CASES["Func_c268"] = [
+    {"setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7f}],
+     "wram": {0xFFAA: b"\x00", 0xFFAB: b"\x98"},
+     "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON,
+         setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7f}],
+         wram={0xFFAA: b"\x00", 0xFFAB: b"\x98"},
+         read={0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_c268
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -919,3 +934,11 @@ MUTATIONS["PauseMenu_Diary"] = {"source_symbol": "PauseMenu_Diary", "before": "\
 # >>> factory-mutation DisplayPCMenu
 MUTATIONS["DisplayPCMenu"] = {"source_symbol": "DisplayPCMenu", "before": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, selected);", "after": "void DisplayPCMenu(void)\n{\n\tuint8_t selected = wSelectedPCMenuItem;\n\tuint8_t saved_bank = hBankROM;\n\tBankswitchROM(PC_MENU_BANK);\n\tInitAndPrintMenu(PC_MENU_PARAMS, (uint8_t)(selected ^ 1u));", "case_ids": ["DisplayPCMenu-0", "DisplayPCMenu-1", "DisplayPCMenu-2"]}
 # <<< factory-mutation DisplayPCMenu
+# >>> factory-mutation Func_c268
+MUTATIONS["Func_c268"] = {
+    "source_symbol": "Func_c268",
+    "before": "void Func_c268(void)\n{\n\tuint16_t hl = PAUSE_MENU_TEXT_LIST_ADDR;\n\tfor (;;) {\n\t\tconst uint8_t *entry = rom_ptr(PAUSE_MENU_TEXT_LIST_BANK, hl);\n\t\tuint16_t text_id = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));\n\t\thl = (uint16_t)(hl + 2u);\n\t\tif (text_id == 0u)\n\t\t\tbreak;\n\t\t(void)ProcessTextFromID(text_id);",
+    "after": "void Func_c268(void)\n{\n\tuint16_t hl = PAUSE_MENU_TEXT_LIST_ADDR;\n\tfor (;;) {\n\t\tconst uint8_t *entry = rom_ptr(PAUSE_MENU_TEXT_LIST_BANK, hl);\n\t\tuint16_t text_id = (uint16_t)(entry[0] | ((uint16_t)entry[1] << 8));\n\t\thl = (uint16_t)(hl + 2u);\n\t\tif (text_id == 0u)\n\t\t\tbreak;\n\t\t(void)ProcessTextFromID(0u);",
+    "case_ids": ["Func_c268-0", "Func_c268-1"]
+}
+# <<< factory-mutation Func_c268
