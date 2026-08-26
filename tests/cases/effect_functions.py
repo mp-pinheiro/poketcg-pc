@@ -4577,6 +4577,14 @@ CASES["EnergyTrans_TransferEffect"] = [
 ]
 # <<< factory EnergyTrans_TransferEffect
 
+# >>> factory DamageSwap_SelectAndSwapEffect
+CONTRACT["DamageSwap_SelectAndSwapEffect"] = {"compare": (), "preserve": ()}
+CASES["DamageSwap_SelectAndSwapEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2EF: b"\x01", 0xCBD2: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00"}, "read": {0xCBC8: 1}, "instruction_budget": 6000000, "cycle_budget": 20000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\xFF", 0xC2EF: b"\x01", 0xCBD2: b"\x00", 0xC2F1: b"\x01", 0xCABB: b"\x00"}, "read": {0xCBC8: 1}, "instruction_budget": 6000000, "cycle_budget": 20000000}
+]
+# <<< factory DamageSwap_SelectAndSwapEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6906,3 +6914,6 @@ MUTATIONS["ScoopUp_ReturnToHandEffect"] = {"source_symbol": "ScoopUp_ReturnToHan
 # >>> factory-mutation EnergyTrans_TransferEffect
 MUTATIONS["EnergyTrans_TransferEffect"] = {"source_symbol": "EnergyTrans_TransferEffect", "before": "\t\tuint8_t result = PrintPlayAreaCardList_EnableLCD().a;\n\t\treturn result;", "after": "\t\treturn 0u;", "case_ids": ["EnergyTrans_TransferEffect-0", "EnergyTrans_TransferEffect-1", "EnergyTrans_TransferEffect-2"]}
 # <<< factory-mutation EnergyTrans_TransferEffect
+# >>> factory-mutation DamageSwap_SelectAndSwapEffect
+MUTATIONS["DamageSwap_SelectAndSwapEffect"] = {"source_symbol": "DamageSwap_SelectAndSwapEffect", "before": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();\n\t\t(void)PrintPlayAreaCardList_EnableLCD();", "after": "void DamageSwap_SelectAndSwapEffect(void)\n{\n\tDuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);\n\tif (turn.a != DUELIST_TYPE_PLAYER) {\n\t\tSetupPlayAreaScreen();", "case_ids": ["DamageSwap_SelectAndSwapEffect-0", "DamageSwap_SelectAndSwapEffect-1"]}
+# <<< factory-mutation DamageSwap_SelectAndSwapEffect

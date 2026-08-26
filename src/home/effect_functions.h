@@ -1453,6 +1453,9 @@ void ScoopUp_ReturnToHandEffect(void);
 /* >>> factory EnergyTrans_TransferEffect */
 uint8_t EnergyTrans_TransferEffect(void);
 /* <<< factory EnergyTrans_TransferEffect */
+/* >>> factory DamageSwap_SelectAndSwapEffect */
+void DamageSwap_SelectAndSwapEffect(void);
+/* <<< factory DamageSwap_SelectAndSwapEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

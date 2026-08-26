@@ -1,0 +1,9 @@
+{
+  "fn": "DamageSwap_SelectAndSwapEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DamageSwap_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"51899\": \"80\", \"52168\": \"01\", \"52178\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DamageSwap_SelectAndSwapEffect\", \"mismatches\": {\"bus\": {\"address\": 51899, \"reference\": \"ff0101800100c2\", \"native\": \"ff0101000000c2\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49851, 1], [49903, 1], [49905, 1], [51899, 1], [52168, 1], [52178, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"DamageSwap_SelectAndSwapEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"ff\", \"49903\": \"01\", \"49905\": \"01\", \"51899\": \"80\", \"52168\": \"01\", \"52178\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

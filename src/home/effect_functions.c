@@ -780,6 +780,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/sound.h"
 #define SYM_GRASS 0xC8u
 #define SYM_SPACE 0x00u
+
+#define ProcedureForDamageSwapText 0x0137u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6730,3 +6732,63 @@ uint8_t EnergyTrans_TransferEffect(void)
 	}
 }
 /* <<< factory EnergyTrans_TransferEffect */
+
+/* >>> factory DamageSwap_SelectAndSwapEffect */
+void DamageSwap_SelectAndSwapEffect(void)
+{
+	DuelistVarResult turn = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE);
+	if (turn.a != DUELIST_TYPE_PLAYER) {
+		SetupPlayAreaScreen();
+		(void)PrintPlayAreaCardList_EnableLCD();
+		return;
+	}
+	DrawWholeScreenTextBox(ProcedureForDamageSwapText);
+	hCurSelectionItem = 0u;
+	SetupPlayAreaScreen();
+	for (;;) {
+		uint8_t count = PrintPlayAreaCardList_EnableLCD().a;
+		uint16_t menu_parameters = 0x46e0u;
+		InitializeMenuParameters(hCurSelectionItem, &menu_parameters);
+		wNumMenuItems = count;
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (input.a == MENU_CANCEL)
+				return;
+			hTempPlayAreaLocation_ffa1 = input.a;
+			hCurSelectionItem = input.a;
+			CardDamageResult damage = GetCardDamageAndMaxHP(input.e);
+			if (damage.a == 0u) {
+				PlaySFX_InvalidChoice();
+				continue;
+			}
+			DuelistVarResult hp = GetTurnDuelistVariable((uint8_t)(hTempPlayAreaLocation_ffa1 + DUELVARS_ARENA_CARD_HP));
+			uint8_t saved_hp = gb_read8(hp.hl);
+			gb_write8(hp.hl, (uint8_t)(saved_hp + 10u));
+			(void)PrintPlayAreaCardList_EnableLCD();
+			gb_write8(hp.hl, saved_hp);
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x17u);
+			for (;;) {
+				DoFrame();
+				HandleMenuInputResult target = HandleMenuInput();
+				if ((target.f & 0x10u) == 0u)
+					continue;
+				if (target.a == MENU_CANCEL)
+					break;
+				hPlayAreaEffectTarget = target.a;
+				hCurSelectionItem = target.a;
+				TryGiveDamageCounter_DamageSwapResult result = TryGiveDamageCounter_DamageSwap();
+				if ((result.f & 0x10u) != 0u)
+					continue;
+				(void)SetOppAction_SerialSendDuelData(OPPACTION_6B15, result.hl);
+				break;
+			}
+			DrawSymbolOnPlayAreaCursor(hTempPlayAreaLocation_ffa1, 0x00u);
+			EraseCursor();
+			break;
+		}
+	}
+}
+/* <<< factory DamageSwap_SelectAndSwapEffect */
