@@ -1,0 +1,9 @@
+{
+  "fn": "TryInitPrinterCommunications",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"TryInitPrinterCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52847\": \"00\", \"52894\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"TryInitPrinterCommunications\", \"mismatches\": {\"bus\": {\"address\": 52847, \"reference\": \"0000\", \"native\": \"ff00\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52847, 1], [52894, 1]]}}}\n",
+  "restored": "{\"fn\": \"TryInitPrinterCommunications\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 144, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52847\": \"00\", \"52894\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

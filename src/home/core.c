@@ -7721,3 +7721,31 @@ void OppAction_UseMetronomeAttack(void)
 		(void)WaitForWideTextBoxInput();
 }
 /* <<< factory OppAction_UseMetronomeAttack */
+
+/* >>> factory LookForEnergyNeededForAttackInHand */
+LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)
+{
+	CheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();
+	uint8_t total = (uint8_t)(energy.b + energy.c);
+	if (total == 1u) {
+		if (energy.b == 0u) {
+			CoreCardListResult list = CreateEnergyCardListFromHand(0u);
+			if ((list.f & 0x10u) != 0u)
+				return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
+			return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)((list.f & 0x80u) | 0x10u)};
+		}
+		CoreCardListResult list = LookForCardIDInHandList_Bank5(energy.e);
+		if ((list.f & 0x10u) != 0u)
+			return (LookForEnergyNeededForAttackInHandResult){list.a, list.f};
+		return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
+	}
+	if (total != 2u)
+		return (LookForEnergyNeededForAttackInHandResult){total, (uint8_t)(total == 0u ? 0x80u : 0u)};
+	if (energy.c != 2u)
+		return (LookForEnergyNeededForAttackInHandResult){energy.c, (uint8_t)(energy.c == 0u ? 0x80u : 0u)};
+	CoreCardListResult list = LookForCardIDInHandList_Bank5(DOUBLE_COLORLESS_ENERGY);
+	if ((list.f & 0x10u) != 0u)
+		return (LookForEnergyNeededForAttackInHandResult){list.a, list.f};
+	return (LookForEnergyNeededForAttackInHandResult){list.a, (uint8_t)(list.a == 0u ? 0x80u : 0u)};
+}
+/* <<< factory LookForEnergyNeededForAttackInHand */

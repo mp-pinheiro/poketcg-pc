@@ -104,6 +104,8 @@ wLoadedCard1Type = 0xCC24
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 wVBlankFunctionTrampoline = 0xCAD0
 SETUP = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wPrinterInitAttempts = 0xCE9E
 # <<< factory-cases-statics
 
 # >>> factory Func_1a14b
@@ -250,6 +252,43 @@ CASES["ShowPrinterConnectionErrorScene"] = [
 ]
 # <<< factory ShowPrinterConnectionErrorScene
 
+# >>> factory TryInitPrinterCommunications
+CONTRACT["TryInitPrinterCommunications"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TryInitPrinterCommunications"] = [
+    # B held on the first frame is the only exit the real ROM reaches: every
+    # packet path parks it inside SendPrinterPacket's transmission wait
+    # because the oracles never complete a serial transfer.
+    {"keys": [0x02], "wram": {wPrinterStatus: b"\x77", wPrinterInitAttempts: b"\xAA"},
+     "read": {wPrinterStatus: 1, wPrinterInitAttempts: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=[0x02],
+         wram={wPrinterStatus: b"\xAA", wPrinterInitAttempts: b"\x55"},
+         read={wPrinterStatus: 1, wPrinterInitAttempts: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {wSerialTransferData: b"\x81", wPrinterStatus: b"\x00", wPrinterInitAttempts: b"\xFF"},
+     "expect": {wPrinterStatus: b"\x00", wPrinterInitAttempts: b"\x00"},
+     "expect_regs": {"a": 0x00, "f": 0x80},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "an idle printer lets the NUL probe fall straight through to the INIT packet, which the PC runtime's synchronous packet engine answers without carry"},
+    {"wram": {wSerialTransferData: b"\x81", wPrinterStatus: b"\x04"},
+     "expect": {wPrinterStatus: b"\x04", wPrinterInitAttempts: b"\x00"},
+     "expect_regs": {"a": 0x04, "f": 0x80},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "a status byte outside the error nibble and the busy bits rides out unchanged through the successful INIT packet"},
+    {"wram": {wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
+     "expect": {wPrinterStatus: b"\xFF", wPrinterInitAttempts: b"\x03"},
+     "expect_regs": {"a": 0x03, "f": 0x90},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "the wrong device number fails every packet, so the delay and retry ladder climbs to the three-attempt time-out that the parked reference can never reach"},
+    {"keys": [0x00, 0x02],
+     "wram": {wSerialTransferData: b"\x81", wPrinterStatus: b"\x0A"},
+     "expect": {wPrinterStatus: b"\x00", wPrinterInitAttempts: b"\x00"},
+     "expect_regs": {"a": 0x00, "f": 0x90},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "the busy bits keep the port polling DoFrame until B is held on the second frame, which aborts with carry"},
+]
+# <<< factory TryInitPrinterCommunications
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -339,3 +378,11 @@ MUTATIONS["ShowPrinterTransmitting"] = {
 # >>> factory-mutation SendPrinterPacket
 MUTATIONS["SendPrinterPacket"] = {"source_symbol": "SendPrinterPacket", "before": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x88u);", "after": "\tgb_write8(wPrinterPacketPreamble_ADDR, 0x89u);", "case_ids": ["SendPrinterPacket-3"]}
 # <<< factory-mutation SendPrinterPacket
+# >>> factory-mutation TryInitPrinterCommunications
+MUTATIONS["TryInitPrinterCommunications"] = {
+    "source_symbol": "TryInitPrinterCommunications",
+    "before": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0u;",
+    "after": "TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)\n{\n\twPrinterInitAttempts = 0u;\n\tfor (;;) {\n\t\tDoFrame();\n\t\tif ((hKeysHeld & PAD_B) != 0u) {\n\t\t\twPrinterStatus = 0xFFu;",
+    "case_ids": ["TryInitPrinterCommunications-0", "TryInitPrinterCommunications-1"],
+}
+# <<< factory-mutation TryInitPrinterCommunications

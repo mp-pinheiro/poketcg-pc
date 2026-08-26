@@ -2517,6 +2517,15 @@ static void adapt_OppAction_UseMetronomeAttack(ProbeState *s)
 }
 /* <<< factory OppAction_UseMetronomeAttack */
 
+/* >>> factory LookForEnergyNeededForAttackInHand */
+static void adapt_LookForEnergyNeededForAttackInHand(ProbeState *s)
+{
+	LookForEnergyNeededForAttackInHandResult result = LookForEnergyNeededForAttackInHand();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory LookForEnergyNeededForAttackInHand */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2818,5 +2827,6 @@ const ProbeEntry probe_entries_core[] = {
  	{ "PlayShuffleAndDrawCardsAnimation_TurnDuelist", adapt_PlayShuffleAndDrawCardsAnimation_TurnDuelist },
 	{ "OppAction_ExecuteTrainerCardEffectCommands", adapt_OppAction_ExecuteTrainerCardEffectCommands },
 	{ "OppAction_UseMetronomeAttack", adapt_OppAction_UseMetronomeAttack },
+	{ "LookForEnergyNeededForAttackInHand", adapt_LookForEnergyNeededForAttackInHand },
 	{ NULL, NULL },
 };

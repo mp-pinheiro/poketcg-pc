@@ -994,6 +994,10 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "home/menus.h"
 #define Draw1CardFromTheDeckText 0x0117u
+
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7994,3 +7998,22 @@ void FetchEffect(void)
 	OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
 }
 /* <<< factory FetchEffect */
+
+/* >>> factory ProfessorOakEffect */
+void ProfessorOakEffect(void)
+{
+	HandListResult hand = CreateHandCardList(0u);
+	uint16_t de = (uint16_t)(((uint16_t)hand.d << 8) | hand.e);
+	SortResult sorted = SortCardsInDuelTempListByID(hand.b, hand.c, de);
+	uint8_t draw_count = 7u;
+	DisplayDrawNCardsScreen(draw_count, sorted.f, sorted.b, sorted.c, sorted.d, sorted.e, sorted.hl);
+	uint8_t remaining = 7u;
+	while (remaining != 0u) {
+		DrawCardResult card = DrawCardFromDeck();
+		if (card.f & 0x10u)
+			break;
+		AddCardToHand(card.a);
+		--remaining;
+	}
+}
+/* <<< factory ProfessorOakEffect */

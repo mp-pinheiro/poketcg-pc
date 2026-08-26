@@ -3970,6 +3970,16 @@ CASES["OppAction_UseMetronomeAttack"] = [
 ]
 # <<< factory OppAction_UseMetronomeAttack
 
+# >>> factory LookForEnergyNeededForAttackInHand
+CONTRACT["LookForEnergyNeededForAttackInHand"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["LookForEnergyNeededForAttackInHand"] = [
+    {"wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+              0xCCC6: b"\x00", 0xCC23: b"\x00", 0xC200: b"\x00" * 0x3C}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08",
+                        0xCCC6: b"\x00", 0xCC23: b"\x00", 0xC200: b"\x00" * 0x3C}),
+]
+# <<< factory LookForEnergyNeededForAttackInHand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5554,3 +5564,6 @@ MUTATIONS["OppAction_ExecuteTrainerCardEffectCommands"] = {
 # >>> factory-mutation OppAction_UseMetronomeAttack
 MUTATIONS["OppAction_UseMetronomeAttack"] = {"source_symbol": "OppAction_UseMetronomeAttack", "before": "\twMetronomeEnergyCost = serial.c;", "after": "\twMetronomeEnergyCost = 0u;", "case_ids": ["OppAction_UseMetronomeAttack-0", "OppAction_UseMetronomeAttack-1"]}
 # <<< factory-mutation OppAction_UseMetronomeAttack
+# >>> factory-mutation LookForEnergyNeededForAttackInHand
+MUTATIONS["LookForEnergyNeededForAttackInHand"] = {"source_symbol": "LookForEnergyNeededForAttackInHand", "before": "LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)\n{\n\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t total = (uint8_t)(energy.b + energy.c);", "after": "LookForEnergyNeededForAttackInHandResult LookForEnergyNeededForAttackInHand(void)\n{\n\tCheckEnergyNeededForAttackResult energy = CheckEnergyNeededForAttack();\n\tuint8_t total = 0xFFu;", "case_ids": ["LookForEnergyNeededForAttackInHand-0", "LookForEnergyNeededForAttackInHand-1"]}
+# <<< factory-mutation LookForEnergyNeededForAttackInHand

@@ -640,6 +640,14 @@ static void adapt_ShowConfirmationCardScreen(ProbeState *s)
 }
 /* <<< factory ShowConfirmationCardScreen */
 
+/* >>> factory ShowDeckInfoHeaderAndWaitForBButton */
+static void adapt_ShowDeckInfoHeaderAndWaitForBButton(ProbeState *s)
+{
+	(void)s;
+	ShowDeckInfoHeaderAndWaitForBButton();
+}
+/* <<< factory ShowDeckInfoHeaderAndWaitForBButton */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "PrintSlashSixty", adapt_PrintSlashSixty },
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
@@ -715,5 +723,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "ShowDeckInfoHeader", adapt_ShowDeckInfoHeader },
 	{ "DrawCardTypeIconsAndPrintCardCounts", adapt_DrawCardTypeIconsAndPrintCardCounts },
 	{ "ShowConfirmationCardScreen", adapt_ShowConfirmationCardScreen },
+	{ "ShowDeckInfoHeaderAndWaitForBButton", adapt_ShowDeckInfoHeaderAndWaitForBButton },
 	{ NULL, NULL },
 };

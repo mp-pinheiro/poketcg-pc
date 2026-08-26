@@ -922,6 +922,25 @@ CASES["ShowConfirmationCardScreen"] = [
 ]
 # <<< factory ShowConfirmationCardScreen
 
+# >>> factory ShowDeckInfoHeaderAndWaitForBButton
+CONTRACT["ShowDeckInfoHeaderAndWaitForBButton"] = {"compare": (), "preserve": ()}
+CASES["ShowDeckInfoHeaderAndWaitForBButton"] = [
+    {"wram": {0xCFB9: b"\x00", 0xCABB: b"\x00"},
+     "sram": {0: {}},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "keys": [0x00, 0x02],
+     "vread": {0: {0x9821: 4}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON,
+         wram={0xCFB9: b"\x01\x00", 0xCEB1: b"\x00", 0xCABB: b"\x00"},
+         sram={0: {0xB700: b"\x00"}},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         keys=[0x00, 0x02],
+         vread={0: {0x9821: 4}},
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ShowDeckInfoHeaderAndWaitForBButton
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1238,3 +1257,6 @@ MUTATIONS["DrawCardTypeIconsAndPrintCardCounts"] = {"source_symbol": "DrawCardTy
 # >>> factory-mutation ShowConfirmationCardScreen
 MUTATIONS["ShowConfirmationCardScreen"] = {"source_symbol": "ShowConfirmationCardScreen", "before": "ShowConfirmationCardScreen(void)\n{\n\tShowDeckInfoHeader();\n\twCardListCoords = 5u;", "after": "ShowConfirmationCardScreen(void)\n{\n\tShowDeckInfoHeader();\n\twCardListCoords = 4u;", "case_ids": ["ShowConfirmationCardScreen-0", "ShowConfirmationCardScreen-1"]}
 # <<< factory-mutation ShowConfirmationCardScreen
+# >>> factory-mutation ShowDeckInfoHeaderAndWaitForBButton
+MUTATIONS["ShowDeckInfoHeaderAndWaitForBButton"] = {"source_symbol": "ShowDeckInfoHeaderAndWaitForBButton", "before": "void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\tShowDeckInfoHeader();", "after": "void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\t(void)0;", "case_ids": ["ShowDeckInfoHeaderAndWaitForBButton-0", "ShowDeckInfoHeaderAndWaitForBButton-1"]}
+# <<< factory-mutation ShowDeckInfoHeaderAndWaitForBButton

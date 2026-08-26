@@ -4042,6 +4042,14 @@ static void adapt_FetchEffect(ProbeState *s)
 }
 /* <<< factory FetchEffect */
 
+/* >>> factory ProfessorOakEffect */
+static void adapt_ProfessorOakEffect(ProbeState *s)
+{
+	(void)s;
+	ProfessorOakEffect();
+}
+/* <<< factory ProfessorOakEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4532,5 +4540,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MewtwoAltEnergyAbsorption_PlayerSelectEffect", adapt_MewtwoAltEnergyAbsorption_PlayerSelectEffect },
 	{ "MewtwoEnergyAbsorption_PlayerSelectEffect", adapt_MewtwoEnergyAbsorption_PlayerSelectEffect },
 	{ "FetchEffect", adapt_FetchEffect },
+	{ "ProfessorOakEffect", adapt_ProfessorOakEffect },
 	{ NULL, NULL },
 };

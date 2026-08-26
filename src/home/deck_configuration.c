@@ -323,6 +323,11 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/lcd.h"
 #include "home/switch_sram.h"
 #include "home/text_box.h"
+
+#include "generated/hram.h"
+#include "home/deck_configuration.h"
+#include "home/deck_check.h"
+#include "home/frames.h"
 /* <<< factory statics */
 
 
@@ -2062,3 +2067,16 @@ void ShowConfirmationCardScreen(void)
 	PrintConfirmationCardList(0u, 3u, 5u, (uint16_t *)(wCardListCoords_ADDR + 1u));
 }
 /* <<< factory ShowConfirmationCardScreen */
+
+/* >>> factory ShowDeckInfoHeaderAndWaitForBButton */
+void ShowDeckInfoHeaderAndWaitForBButton(void)
+{
+	ShowDeckInfoHeader();
+	for (;;) {
+		DoFrame();
+		if ((hKeysPressed & 0x02u) != 0u)
+			break;
+	}
+	PlaySFXConfirmOrCancel(MENU_CANCEL);
+}
+/* <<< factory ShowDeckInfoHeaderAndWaitForBButton */

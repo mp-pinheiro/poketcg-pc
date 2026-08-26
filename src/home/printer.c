@@ -58,6 +58,17 @@
 #include "home/sprite_vblank.h"
 #define SCENE_GAMEBOY_PRINTER_TRANSMITTING 0x11u
 #define NowPrintingPleaseWaitText 0x0195u
+
+#include "home/printer.h"
+#include "home/frames.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define PAD_B 0x02u
+#define FALSE 0x00u
+#define PRINTERPKT_INIT 0x01u
+#define PRINTERPKT_NUL 0x0Fu
+#define PRINTER_STATUS_BUSY 0x01u
+#define PRINTER_STATUS_PRINTING 0x03u
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -534,3 +545,39 @@ ShowPrinterConnectionErrorSceneResult ShowPrinterConnectionErrorScene(
 	return (ShowPrinterConnectionErrorSceneResult){0x90u};
 }
 /* <<< factory ShowPrinterConnectionErrorScene */
+
+/* >>> factory TryInitPrinterCommunications */
+/* engine/link/printer.asm:342. B aborts with carry and a zeroed status byte;
+ * otherwise NUL packets poll the printer until it answers idle (status bits
+ * 1/3 clear), then an INIT packet goes out, restarted from the top up to
+ * three times before the time-out exit. Neither oracle ever completes a
+ * serial transfer, so only the B exit returns on the reference; the packet
+ * paths below run on the PC runtime's synchronous SendPrinterPacket. */
+TryInitPrinterCommunicationsResult TryInitPrinterCommunications(void)
+{
+	wPrinterInitAttempts = 0u;
+	for (;;) {
+		DoFrame();
+		if ((hKeysHeld & PAD_B) != 0u) {
+			wPrinterStatus = 0u;
+			/* xor a leaves zero set, scf adds carry: a = 0, f = $90 */
+			return (TryInitPrinterCommunicationsResult){0x00u, 0x90u};
+		}
+		SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_NUL, FALSE, 0u);
+		if ((packet.f & 0x10u) != 0u) {
+			for (uint8_t frames = 10u; frames != 0u; frames--)
+				DoFrame();
+		} else if ((packet.a & (uint8_t)((1u << PRINTER_STATUS_BUSY) | (1u << PRINTER_STATUS_PRINTING))) != 0u) {
+			continue;
+		}
+		packet = SendPrinterPacket(0u, 0u, PRINTERPKT_INIT, FALSE, 0u);
+		if ((packet.f & 0x10u) == 0u)
+			return (TryInitPrinterCommunicationsResult){packet.a, packet.f};
+		wPrinterInitAttempts = (uint8_t)(wPrinterInitAttempts + 1u);
+		if (wPrinterInitAttempts < 3u)
+			continue;
+		/* cp 3 sets zero at the limit, scf adds carry: a = attempts, f = $90 */
+		return (TryInitPrinterCommunicationsResult){wPrinterInitAttempts, 0x90u};
+	}
+}
+/* <<< factory TryInitPrinterCommunications */

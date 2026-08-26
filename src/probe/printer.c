@@ -160,6 +160,15 @@ static void adapt_ShowPrinterConnectionErrorScene(ProbeState *s)
 }
 /* <<< factory ShowPrinterConnectionErrorScene */
 
+/* >>> factory TryInitPrinterCommunications */
+static void adapt_TryInitPrinterCommunications(ProbeState *s)
+{
+	TryInitPrinterCommunicationsResult r = TryInitPrinterCommunications();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory TryInitPrinterCommunications */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -178,5 +187,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "PrinterMenu_QuitPrint", adapt_PrinterMenu_QuitPrint },
 	{ "DrawBottomCardInfoInSRAMGfxBuffer0", adapt_DrawBottomCardInfoInSRAMGfxBuffer0 },
 	{ "ShowPrinterTransmitting", adapt_ShowPrinterTransmitting },
+	{ "TryInitPrinterCommunications", adapt_TryInitPrinterCommunications },
 	{ NULL, NULL },
 };

@@ -5449,6 +5449,20 @@ CASES["FetchEffect"] = [
 ]
 # <<< factory FetchEffect
 
+# >>> factory ProfessorOakEffect
+CONTRACT["ProfessorOakEffect"] = {"compare": (), "preserve": ()}
+CASES["ProfessorOakEffect"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC2BA: b"\x00", 0xCABB: b"\x00"},
+     "read": {0xC510: 2, 0xCBE8: 1, 0xCBE9: 1},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xC2BA: b"\x00", 0xCABB: b"\x00"},
+         read={0xC510: 2, 0xCBE8: 1, 0xCBE9: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ProfessorOakEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7973,3 +7987,6 @@ MUTATIONS["MewtwoEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "Mewt
 # >>> factory-mutation FetchEffect
 MUTATIONS["FetchEffect"] = {"source_symbol": "FetchEffect", "before": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand(draw.a);", "after": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand((uint8_t)(draw.a + 1u));", "case_ids": ["FetchEffect-0", "FetchEffect-1", "FetchEffect-2"]}
 # <<< factory-mutation FetchEffect
+# >>> factory-mutation ProfessorOakEffect
+MUTATIONS["ProfessorOakEffect"] = {"source_symbol": "ProfessorOakEffect", "before": "\tuint8_t draw_count = 7u;", "after": "\tuint8_t draw_count = 6u;", "case_ids": ["ProfessorOakEffect-0", "ProfessorOakEffect-1"]}
+# <<< factory-mutation ProfessorOakEffect

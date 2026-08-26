@@ -1668,6 +1668,9 @@ MewtwoEnergyAbsorption_PlayerSelectEffectResult MewtwoEnergyAbsorption_PlayerSel
 /* >>> factory FetchEffect */
 void FetchEffect(void);
 /* <<< factory FetchEffect */
+/* >>> factory ProfessorOakEffect */
+void ProfessorOakEffect(void);
+/* <<< factory ProfessorOakEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
