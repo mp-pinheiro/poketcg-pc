@@ -676,11 +676,12 @@ int main(int argc, char **argv) {
              * with halted say whether the wake condition is merely masked. */
             const GBPPU *view = (const GBPPU *)ctx->ppu;
             fprintf(stdout, "{\"status\":\"BUDGET_EXHAUSTED\",\"pc\":%u,\"sp\":%u,"
+                    "\"rom_bank\":%u,\"hbank_rom\":%u,"
                     "\"instructions\":%" PRIu64 ",\"cycles\":%" PRIu64 ","
                     "\"lcdc\":%u,\"if\":%u,\"ie\":%u,\"ime\":%u,\"halted\":%u,"
                     "\"ppu_lcdc\":%u,\"ppu_ly\":%u,\"ppu_mode\":%u,\"bus\":\"",
-                    ctx->pc, ctx->sp, steps, cycles,
-                    gb_read8(ctx, 0xff40), gb_read8(ctx, 0xff0f),
+                    ctx->pc, ctx->sp, ctx->rom_bank, gb_read8(ctx, 0xff80),
+                    steps, cycles, gb_read8(ctx, 0xff40), gb_read8(ctx, 0xff0f),
                     gb_read8(ctx, 0xffff), (unsigned)(ctx->ime ? 1 : 0),
                     (unsigned)(ctx->halted ? 1 : 0),
                     view ? view->lcdc : 0u, view ? view->ly : 0u,
@@ -732,8 +733,6 @@ int main(int argc, char **argv) {
         }
         if (boundary) {
             frame_cycles = 0;
-            if (vblank_boundary)
-                gb_write8(ctx, 0xff0f, (uint8_t)(gb_read8(ctx, 0xff0f) | 0x01));
             if (input_count > 1) {
                 input_index = (input_index + 1) % input_count;
                 g_joypad_buttons = input_buttons[input_index];
