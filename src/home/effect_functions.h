@@ -1626,6 +1626,9 @@ void CatPunchEffect(void);
 /* >>> factory Gigashock_BenchDamageEffect */
 void Gigashock_BenchDamageEffect(void);
 /* <<< factory Gigashock_BenchDamageEffect */
+/* >>> factory ChainLightningEffect */
+void ChainLightningEffect(void);
+/* <<< factory ChainLightningEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

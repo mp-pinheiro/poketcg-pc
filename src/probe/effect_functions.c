@@ -3939,6 +3939,14 @@ static void adapt_Gigashock_BenchDamageEffect(ProbeState *s)
 }
 /* <<< factory Gigashock_BenchDamageEffect */
 
+/* >>> factory ChainLightningEffect */
+static void adapt_ChainLightningEffect(ProbeState *s)
+{
+	(void)s;
+	ChainLightningEffect();
+}
+/* <<< factory ChainLightningEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4418,5 +4426,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Spark_BenchDamageEffect", adapt_Spark_BenchDamageEffect },
 	{ "CatPunchEffect", adapt_CatPunchEffect },
 	{ "Gigashock_BenchDamageEffect", adapt_Gigashock_BenchDamageEffect },
+	{ "ChainLightningEffect", adapt_ChainLightningEffect },
 	{ NULL, NULL },
 };

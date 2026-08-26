@@ -891,6 +891,36 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/effect_functions.h"
 #include "generated/wram.h"
 #define ATK_ANIM_CAT_PUNCH_PLAY_AREA 0x83u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/card_color.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+
+#define TRUE 0x01u
+
+/* effect_functions.asm:6753-6779, ChainLightningEffect.DamageSameColorBench.
+ * The entry jumps straight to .next_bench, so `inc d` / `dec e` both run
+ * before the first color check: the arena slot is never examined, and a play
+ * area count of 1 damages nothing. Both counters stay 8-bit and wrap exactly
+ * like the asm, so a count of 0 walks 255 slots just as the ROM does.
+ * hl at the DealDamageToPlayAreaPokemon_RegularAnim call is dead - that
+ * routine reloads hl from DUELVARS_ARENA_CARD + b before any use. */
+static void chain_lightning_damage_same_color_bench(void)
+{
+	DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t e = count.a;
+	uint8_t d = PLAY_AREA_ARENA;
+	for (;;) {
+		++d;
+		--e;
+		if (e == 0u)
+			return;
+		if (GetPlayAreaCardColor(d) == hCurSelectionItem)
+			(void)DealDamageToPlayAreaPokemon_RegularAnim(d, 10u, 0u);
+	}
+}
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7633,3 +7663,29 @@ void Gigashock_BenchDamageEffect(void)
 	SwapTurn();
 }
 /* <<< factory Gigashock_BenchDamageEffect */
+
+/* >>> factory ChainLightningEffect */
+/* effect_functions.asm:6733-6751 */
+void ChainLightningEffect(void)
+{
+	SetDefiniteDamage(10u);
+	/* the color that selects the targets is the DEFENDING card's, so the
+	 * read happens with the turn swapped; SwapTurn preserves af, which is
+	 * why the asm can store the color after swapping back. */
+	SwapTurn();
+	uint8_t color = GetArenaCardColor();
+	SwapTurn();
+	hCurSelectionItem = color;
+	if (color == COLORLESS)
+		return; /* don't damage if colorless */
+
+	/* opponent's Bench */
+	SwapTurn();
+	chain_lightning_damage_same_color_bench();
+	SwapTurn();
+
+	/* own Bench */
+	wIsDamageToSelf = TRUE;
+	chain_lightning_damage_same_color_bench();
+}
+/* <<< factory ChainLightningEffect */

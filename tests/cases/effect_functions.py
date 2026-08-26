@@ -5305,6 +5305,32 @@ CASES["Gigashock_BenchDamageEffect"] = [
 ]
 # <<< factory Gigashock_BenchDamageEffect
 
+# >>> factory ChainLightningEffect
+CONTRACT["ChainLightningEffect"] = {"compare": (), "preserve": ()}
+CASES["ChainLightningEffect"] = [
+    # defending card is PIDGEY ($A3, TYPE_PKMN_COLORLESS): the routine stores
+    # the color and returns before touching either Bench.
+    {"wram": {0xFF97: b"\xC2", 0xC3D4: b"\x00", 0xC3BB: b"\x00", 0xC480: b"\xA3", 0xCCE6: b"\x00"},
+     "read": {0xFFB2: 1, 0xCCE6: 1}},
+    # defending card is BULBASAUR ($08, TYPE_PKMN_GRASS); both play areas hold
+    # one Pokemon, so each Bench walk exits on its first `dec e`.
+    {"wram": {0xFF97: b"\xC2", 0xC3D4: b"\x00", 0xC3BB: b"\x00", 0xC480: b"\x08",
+              0xC3EF: b"\x01", 0xC2EF: b"\x01", 0xCCE6: b"\x00"},
+     "read": {0xFFB2: 1, 0xCCE6: 1}},
+    # one Bench card on each side, CHARMANDER ($30, TYPE_PKMN_FIRE): both
+    # colors miss the stored GRASS, so no damage is dealt.
+    {"wram": {0xFF97: b"\xC2", 0xC3D4: b"\x00\x00", 0xC3BB: b"\x00\x01",
+              0xC480: b"\x08\x30", 0xC2D5: b"\x00", 0xC2BC: b"\x01", 0xC401: b"\x30",
+              0xC3EF: b"\x02", 0xC2EF: b"\x02", 0xCCE6: b"\x00"},
+     "read": {0xFFB2: 1, 0xCCE6: 1}},
+    dict(POISON,
+         wram={0xFF97: b"\xC2", 0xC3D4: b"\x00\x00", 0xC3BB: b"\x00\x01",
+               0xC480: b"\x08\x30", 0xC2D5: b"\x00", 0xC2BC: b"\x01", 0xC401: b"\x30",
+               0xC3EF: b"\x02", 0xC2EF: b"\x02", 0xCCE6: b"\x00"},
+         read={0xFFB2: 1, 0xCCE6: 1}),
+]
+# <<< factory ChainLightningEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7796,3 +7822,6 @@ MUTATIONS["CatPunchEffect"] = {"source_symbol": "CatPunchEffect", "before": "voi
 # >>> factory-mutation Gigashock_BenchDamageEffect
 MUTATIONS["Gigashock_BenchDamageEffect"] = {"source_symbol": "Gigashock_BenchDamageEffect", "before": "void Gigashock_BenchDamageEffect(void)\n{\n\tSwapTurn();\n\tuint16_t hl = hTempList_ADDR;\n\tfor (;;) {\n\t\tuint8_t target = gb_read8(hl++);", "after": "void Gigashock_BenchDamageEffect(void)\n{\n\tSwapTurn();\n\tuint16_t hl = hTempList_ADDR;\n\tfor (;;) {\n\t\tuint8_t target = (uint8_t)(gb_read8(hl++) + 1u);", "case_ids": ["Gigashock_BenchDamageEffect-1", "Gigashock_BenchDamageEffect-2"]}
 # <<< factory-mutation Gigashock_BenchDamageEffect
+# >>> factory-mutation ChainLightningEffect
+MUTATIONS["ChainLightningEffect"] = {"source_symbol": "ChainLightningEffect", "before": "\twIsDamageToSelf = TRUE;", "after": "\twIsDamageToSelf = 0u;", "case_ids": ["ChainLightningEffect-1", "ChainLightningEffect-2", "ChainLightningEffect-3"]}
+# <<< factory-mutation ChainLightningEffect
