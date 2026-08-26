@@ -53,12 +53,12 @@ void Music1_duty(uint16_t caller_stream, uint8_t ch);
 void Music1_volume(uint16_t caller_stream, uint8_t ch);
 void Music1_wave(uint16_t caller_stream, uint8_t ch);
 void Music1_cutoff(uint16_t caller_stream, uint8_t ch);
-void Music1_echo(uint16_t *hl, uint8_t ch);
-void Music1_vibrato_type(uint16_t *hl, uint8_t ch);
-void Music1_vibrato_delay(uint16_t *hl, uint8_t ch);
-void Music1_pitch_offset(uint16_t *hl, uint8_t ch);
-void Music1_adjust_pitch_offset(uint16_t *hl, uint8_t ch);
-void Music1_end(uint16_t *hl, uint8_t ch);
+void Music1_echo(uint16_t caller_stream, uint8_t ch);
+void Music1_vibrato_type(uint16_t caller_stream, uint8_t ch);
+void Music1_vibrato_delay(uint16_t caller_stream, uint8_t ch);
+void Music1_pitch_offset(uint16_t caller_stream, uint8_t ch);
+void Music1_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch);
+void Music1_end(uint16_t caller_stream, uint8_t ch);
 
 /* Channel output to APU. */
 void Music1_f4714(void);

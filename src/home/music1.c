@@ -808,12 +808,57 @@ void Music1_cutoff(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicCutoff_ADDR + ch), value);
 	Music1_PlayNextNote(&hl, ch);
 }
-void Music1_echo(uint16_t *hl, uint8_t ch)          { Music1_PlayNextNote(hl, ch); }
-void Music1_vibrato_type(uint16_t *hl, uint8_t ch)  { Music1_PlayNextNote(hl, ch); }
-void Music1_vibrato_delay(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }
-void Music1_pitch_offset(uint16_t *hl, uint8_t ch)  { Music1_PlayNextNote(hl, ch); }
-void Music1_adjust_pitch_offset(uint16_t *hl, uint8_t ch) { Music1_PlayNextNote(hl, ch); }
-void Music1_end(uint16_t *hl, uint8_t ch)           { Music1_PlayNextNote(hl, ch); }
+/* music1.asm:1063-1072. */
+void Music1_echo(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1074-1086. One operand, written to BOTH vibrato tables. */
+void Music1_vibrato_type(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVibratoType_ADDR + ch), value);
+	gb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1088-1097. */
+void Music1_vibrato_delay(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1099-1108. */
+void Music1_pitch_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), value);
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1110-1120. `add [hl]` makes this additive against the current
+ * pitch offset rather than a plain store. */
+void Music1_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	uint16_t addr = (uint16_t)(wMusicPitchOffset_ADDR + ch);
+	gb_write8(addr, (uint8_t)(value + gb_read8(addr)));
+	Music1_PlayNextNote(&hl, ch);
+}
+/* music1.asm:1122-1127. Clears this channel's playing flag and RETURNS to its
+ * caller (`pop hl; ret`) instead of tail-calling the dispatcher, so the stream
+ * stops here and no further command is consumed. */
+void Music1_end(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	gb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x00u);
+}
 
 /* ======================================================================
  * Channel updaters

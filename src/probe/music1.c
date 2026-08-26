@@ -134,22 +134,22 @@ static void adapt_Music1_cutoff(ProbeState *s)
 { Music1_cutoff(s->stack[0], s->c); }
 
 static void adapt_Music1_echo(ProbeState *s)
-{ Music1_echo(&s->hl, s->a); }
+{ Music1_echo(s->stack[0], s->c); }
 
 static void adapt_Music1_vibrato_type(ProbeState *s)
-{ Music1_vibrato_type(&s->hl, s->a); }
+{ Music1_vibrato_type(s->stack[0], s->c); }
 
 static void adapt_Music1_vibrato_delay(ProbeState *s)
-{ Music1_vibrato_delay(&s->hl, s->a); }
+{ Music1_vibrato_delay(s->stack[0], s->c); }
 
 static void adapt_Music1_pitch_offset(ProbeState *s)
-{ Music1_pitch_offset(&s->hl, s->a); }
+{ Music1_pitch_offset(s->stack[0], s->c); }
 
 static void adapt_Music1_adjust_pitch_offset(ProbeState *s)
-{ Music1_adjust_pitch_offset(&s->hl, s->a); }
+{ Music1_adjust_pitch_offset(s->stack[0], s->c); }
 
 static void adapt_Music1_end(ProbeState *s)
-{ Music1_end(&s->hl, s->a); }
+{ Music1_end(s->stack[0], s->c); }
 
 static void adapt_Music1_note(ProbeState *s)
 { Music1_note(&s->hl, s->a, s->b, s->c); }
