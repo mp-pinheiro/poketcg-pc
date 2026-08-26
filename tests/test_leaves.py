@@ -62,6 +62,20 @@ def load_cases() -> tuple[dict[str, list[dict]], dict[str, tuple[str, ...]]]:
     return cases, contracts
 
 
+def pyboy_frames(case: dict) -> int | None:
+    """Frame allowance for the PyBoy backend, derived from the case's own budget.
+
+    gbref bounds a run by `cycle_budget`; PyBoy bounds it by ticks. A case that
+    declares a large cycle budget is asking for that much time on BOTH backends,
+    so convert it (70224 cycles per DMG frame, the same boundary runner.c uses)
+    and let the default 240 stand for everything else.
+    """
+    budget = case.get("cycle_budget")
+    if not budget:
+        return None
+    return max(MAX_FRAMES, int(budget) // 70224 + 1)
+
+
 def run_probe(probe: Path, fn: str, case: dict, reads: dict[int, int],
               sreads: dict[int, dict[int, int]] | None = None,
               vreads: dict[int, dict[int, int]] | None = None) -> dict:
@@ -209,7 +223,8 @@ def direct_case(oracle: Oracle, probe: Path, fn: str, fields: tuple[str, ...], c
                       hl=case.get("hl", 0), wram=case.get("wram"), sram=case.get("sram"),
                       ramg=case.get("ramg"), setup=case.get("setup"), keys=key_timeline(case),
                       stop_pc=completion.get("pc") if completion.get("mode") == "pre-ret" else None,
-                      stack=case.get("stack"), hbank_rom=case.get("hbank_rom"))
+                      stack=case.get("stack"), hbank_rom=case.get("hbank_rom"),
+                      frames=pyboy_frames(case))
     reads, sreads, vreads = merged_spans(case)
     got = run_probe(probe, fn, case, reads, sreads, vreads)
     reference = {"registers": {field: getattr(ref, field) for field in fields},
