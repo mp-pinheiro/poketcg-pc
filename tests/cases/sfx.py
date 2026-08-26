@@ -82,6 +82,31 @@ CASES["SFX_frequency"] = [
 ]
 # <<< factory SFX_frequency
 
+# >>> factory ExecuteNextSFXCommand
+CONTRACT["ExecuteNextSFXCommand"] = {"compare": (), "preserve": ()}
+CASES["ExecuteNextSFXCommand"] = [
+    {"hl": 0xC100, "c": 0, "wram": {0xC100: b"\xF0", 0xDD8C: b"\xFF"},
+     "read": {0xDD8C: 1}, "hram": {0xFF12: b"\x00", 0xFF14: b"\x00"}},
+    dict(POISON, b=0, c=1, hl=0xC100, wram={0xC100: b"\xF0", 0xDD8C: b"\xFF"},
+         read={0xDD8C: 1}, hram={0xFF17: b"\x00", 0xFF19: b"\x00"}),
+    {"hl": 0xC100, "c": 0,
+     "wram": {0xC100: b"\x01\x23", 0xDE37: b"\x00\x00", 0xDE2B: b"\x20"},
+     "read": {0xDE4B: 2, 0xDE37: 2, 0xDE2B: 1},
+     "hram": {0xFF11: b"\xC0", 0xFF13: b"\x00", 0xFF14: b"\x00"}},
+    {"hl": 0xC100, "c": 1, "wram": {0xC100: b"\x27\xF0", 0xDD8C: b"\xFF"},
+     "read": {0xDD8C: 1},
+     "hram": {0xFF16: b"\x00", 0xFF17: b"\x00", 0xFF19: b"\x00"}},
+    {"hl": 0xC100, "c": 3,
+     "wram": {0xC100: b"\x08\x88", 0xDE3D: b"\x00\x00", 0xDE2E: b"\x00"},
+     "read": {0xDE51: 2, 0xDE3D: 2, 0xDE2E: 1},
+     "hram": {0xFF20: b"\x00", 0xFF22: b"\x00", 0xFF23: b"\x00"}},
+    {"hl": 0xC100, "c": 2,
+     "wram": {0xC100: b"\x10\xAB\xF0", 0xDD8C: b"\xFF"},
+     "read": {0xDE2D: 1, 0xDD8C: 1},
+     "hram": {0xFF1C: b"\x00", 0xFF1E: b"\x00"}},
+]
+# <<< factory ExecuteNextSFXCommand
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -112,3 +137,12 @@ MUTATIONS["SFX_end"] = {
 # >>> factory-mutation SFX_frequency
 MUTATIONS["SFX_frequency"] = {"source_symbol": "SFX_frequency", "before": "\tuint16_t de = caller_hl;", "after": "\tuint16_t de = (uint16_t)(caller_hl + 2u);", "case_ids": ["SFX_frequency-0", "SFX_frequency-1", "SFX_frequency-2"]}
 # <<< factory-mutation SFX_frequency
+# >>> factory-mutation ExecuteNextSFXCommand
+MUTATIONS["ExecuteNextSFXCommand"] = {
+    "source_symbol": "ExecuteNextSFXCommand",
+    "before": "\t\tcase 15u:",
+    "after": "\t\tcase 14u:",
+    "case_ids": ["ExecuteNextSFXCommand-0", "ExecuteNextSFXCommand-1",
+                 "ExecuteNextSFXCommand-3"],
+}
+# <<< factory-mutation ExecuteNextSFXCommand

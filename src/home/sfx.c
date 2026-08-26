@@ -291,8 +291,12 @@ static void SFX_End(uint8_t c)
 	gb_write8((uint16_t)(reg + 2u), 0x80u);
 }
 
-static void ExecuteNextSFXCommand(uint16_t cmd_ptr, uint8_t c)
+/* >>> factory ExecuteNextSFXCommand */
+/* sfx.asm:103-138 */
+void ExecuteNextSFXCommand(uint16_t hl, uint16_t bc)
 {
+	uint16_t cmd_ptr = hl;
+	uint8_t c = (uint8_t)bc;
 	for (;;) {
 		uint8_t cmd = gb_read8(cmd_ptr);
 		cmd_ptr = (uint16_t)(cmd_ptr + 1u);
@@ -336,6 +340,7 @@ static void ExecuteNextSFXCommand(uint16_t cmd_ptr, uint8_t c)
 		}
 	}
 }
+/* <<< factory ExecuteNextSFXCommand */
 
 void SFX_Play(uint8_t sfx_id)
 {
