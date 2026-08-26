@@ -1,0 +1,9 @@
+{
+  "fn": "UnusedCopyrightScreen",
+  "case": "tests/cases/unused_copyright.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"UnusedCopyrightScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"00\", \"54812\": \"0810\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"UnusedCopyrightScreen\", \"mismatches\": {\"bus\": {\"address\": 54812, \"reference\": \"0000081000\", \"native\": \"0000101000\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[51892, 1], [51899, 1], [54812, 2], [65344, 1]]}}}\n",
+  "restored": "{\"fn\": \"UnusedCopyrightScreen\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"51892\": \"00\", \"51899\": \"00\", \"54812\": \"0810\", \"65344\": \"00\"}}, \"status\": \"PASS\"}\n"
+}
