@@ -7320,3 +7320,10 @@ uint8_t OpenTurnHolderHandScreen_Simple(void)
 	return DisplayCardList().f;
 }
 /* <<< factory OpenTurnHolderHandScreen_Simple */
+
+/* >>> factory OpenTurnHolderDiscardPileScreen */
+OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)
+{
+	return OpenDiscardPileScreen(c);
+}
+/* <<< factory OpenTurnHolderDiscardPileScreen */

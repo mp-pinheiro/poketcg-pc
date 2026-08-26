@@ -1866,3 +1866,17 @@ TryAddCardToDeckResult TryAddCardToDeck(uint8_t e)
 	return (TryAddCardToDeckResult){0u, 0u};
 }
 /* <<< factory TryAddCardToDeck */
+
+/* >>> factory AddCardToDeckAndUpdateCount */
+AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e)
+{
+	TryAddCardToDeckResult r = TryAddCardToDeck(e);
+	if (r.f & 0x10u)
+		return (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};
+	PrintCardTypeCounts();
+	PrintTotalCardCount(15u, 0u);
+	GetCountOfCardInCurDeckResult r2 = GetCountOfCardInCurDeck(e);
+	PrintNumberValueInCursorYPos(r2.a);
+	return (AddCardToDeckAndUpdateCountResult){r2.a, r2.f, e};
+}
+/* <<< factory AddCardToDeckAndUpdateCount */

@@ -1,0 +1,9 @@
+{
+  "fn": "HandleCardAlbumCardPage",
+  "case": "tests/cases/card_album.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleCardAlbumCardPage\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"52897\": \"02\", \"52900\": \"03\", \"52948\": \"03\", \"53101\": \"80\", \"65423\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleCardAlbumCardPage\", \"mismatches\": {\"bus\": {\"address\": 51904, \"reference\": \"0102030380\", \"native\": \"0002030480\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[51904, 1], [52897, 1], [52900, 1], [52948, 1], [53101, 1], [65423, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleCardAlbumCardPage\", \"registers\": {\"a\": 3, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 32, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {\"51904\": \"01\", \"52897\": \"02\", \"52900\": \"03\", \"52948\": \"03\", \"53101\": \"80\", \"65423\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

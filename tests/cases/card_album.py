@@ -28,6 +28,17 @@ wFilteredCardList = 0xCEDA
 wNumVisibleCardListEntries = 0xCECB
 wUnableToScrollDown = 0xCECD
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hDPadHeld = 0xFF8F
+wCardListCursorPos = 0xCEA4
+wCardListNumCursorPositions = 0xCEA9
+wCurCardListPtr = 0xCFD8
+wFirstOwnedCardIndex = 0xCFE5
+wMenuInputSFX = 0xCFE3
+wOwnedCardsCountList = 0xCF68
+wTempCardListCursorPos = 0xCED4
+wVBlankOAMCopyToggle = 0xCAC0
+wced2 = 0xCED2
 # <<< factory-cases-statics
 
 # >>> factory PrintCardSetListEntries
@@ -47,6 +58,32 @@ CASES["CreateCardSetList"] = [
 ]
 # <<< factory CreateCardSetList
 
+# >>> factory HandleCardAlbumCardPage
+# The bounded path: the entry under the cursor is CARD_NOT_OWNED, so the card
+# page (and every frame-driven callee behind it) is skipped, and hDPadHeld holds
+# a PAD_BUTTONS bit, so .handle_input exits on its first test. No call, no frame,
+# no VBlank -- the reference leaves rLCDC at the runner's 0 and never services an
+# interrupt, so wVBlankOAMCopyToggle is safe to observe.
+CONTRACT["HandleCardAlbumCardPage"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleCardAlbumCardPage"] = [
+    {"d": 0x00, "e": 0x00,
+     "wram": {wCardListCursorPos: b"\x03", wCardListVisibleOffset: b"\x02",
+              wOwnedCardsCountList + 0x05: b"\x80", hDPadHeld: b"\x01"},
+     "read": {wVBlankOAMCopyToggle: 1, wTempCardListCursorPos: 1},
+     "instruction_budget": 200000, "cycle_budget": 800000},
+    dict(POISON,
+         wram={wCardListCursorPos: b"\x05", wCardListVisibleOffset: b"\x00",
+               wOwnedCardsCountList + 0x05: b"\x80", hDPadHeld: b"\x0F"},
+         read={wVBlankOAMCopyToggle: 1, wTempCardListCursorPos: 1},
+         instruction_budget=200000, cycle_budget=800000),
+    {"d": 0xDD, "e": 0xEE,
+     "wram": {wCardListCursorPos: b"\x00", wCardListVisibleOffset: b"\x00",
+              wOwnedCardsCountList: b"\x80", hDPadHeld: b"\x08"},
+     "read": {wVBlankOAMCopyToggle: 1, wTempCardListCursorPos: 1},
+     "instruction_budget": 200000, "cycle_budget": 800000},
+]
+# <<< factory HandleCardAlbumCardPage
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -65,3 +102,12 @@ MUTATIONS["PrintCardSetListEntries"] = {"source_symbol": "PrintCardSetListEntrie
 # >>> factory-mutation CreateCardSetList
 MUTATIONS["CreateCardSetList"] = {"source_symbol": "CreateCardSetList", "before": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = a;", "after": "void CreateCardSetList(uint8_t a)\n{\n\tuint8_t set = 0u;", "case_ids": ["CreateCardSetList-1"]}
 # <<< factory-mutation CreateCardSetList
+# >>> factory-mutation HandleCardAlbumCardPage
+MUTATIONS["HandleCardAlbumCardPage"] = {
+    "source_symbol": "HandleCardAlbumCardPage",
+    "before": "wVBlankOAMCopyToggle = TRUE;\n\ta = wCardListCursorPos;\n\twTempCardListCursorPos = a;",
+    "after": "wVBlankOAMCopyToggle = FALSE;\n\ta = wCardListCursorPos;\n\twTempCardListCursorPos = (uint8_t)(a + 1u);",
+    "case_ids": ["HandleCardAlbumCardPage-0", "HandleCardAlbumCardPage-1",
+                 "HandleCardAlbumCardPage-2"],
+}
+# <<< factory-mutation HandleCardAlbumCardPage

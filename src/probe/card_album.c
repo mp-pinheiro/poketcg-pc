@@ -30,9 +30,19 @@ static void adapt_CreateCardSetList(ProbeState *s)
 }
 /* <<< factory CreateCardSetList */
 
+/* >>> factory HandleCardAlbumCardPage */
+static void adapt_HandleCardAlbumCardPage(ProbeState *s)
+{
+	HandleCardAlbumCardPageResult r = HandleCardAlbumCardPage(s->d, s->e);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleCardAlbumCardPage */
+
 const ProbeEntry probe_entries_card_album[] = {
 	{ "GetFirstOwnedCardIndex", adapt_GetFirstOwnedCardIndex },
 	{ "PrintCardSetListEntries", adapt_PrintCardSetListEntries },
 	{ "CreateCardSetList", adapt_CreateCardSetList },
+	{ "HandleCardAlbumCardPage", adapt_HandleCardAlbumCardPage },
 	{ NULL, NULL },
 };

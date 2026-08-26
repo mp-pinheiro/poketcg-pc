@@ -2415,6 +2415,14 @@ static void adapt_OpenTurnHolderHandScreen_Simple(ProbeState *s)
 }
 /* <<< factory OpenTurnHolderHandScreen_Simple */
 
+/* >>> factory OpenTurnHolderDiscardPileScreen */
+static void adapt_OpenTurnHolderDiscardPileScreen(ProbeState *s)
+{
+	OpenDiscardPileScreenResult result = OpenTurnHolderDiscardPileScreen(s->c);
+	s->f = result.f;
+}
+/* <<< factory OpenTurnHolderDiscardPileScreen */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2703,5 +2711,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfCanDamageDefendingPokemon", adapt_CheckIfCanDamageDefendingPokemon },
 	{ "OpenDiscardPileScreen", adapt_OpenDiscardPileScreen },
 	{ "OpenTurnHolderHandScreen_Simple", adapt_OpenTurnHolderHandScreen_Simple },
+	{ "OpenTurnHolderDiscardPileScreen", adapt_OpenTurnHolderDiscardPileScreen },
 	{ NULL, NULL },
 };

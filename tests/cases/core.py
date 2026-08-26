@@ -3755,6 +3755,15 @@ CASES["OpenTurnHolderHandScreen_Simple"] = [
 ]
 # <<< factory OpenTurnHolderHandScreen_Simple
 
+# >>> factory OpenTurnHolderDiscardPileScreen
+CONTRACT["OpenTurnHolderDiscardPileScreen"] = {"compare": ("f",), "preserve": ()}
+CASES["OpenTurnHolderDiscardPileScreen"] = [
+    {"c": 0x00, "keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, "read": {0xC510: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"c": 0x00, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xC2ED: b"\x02", 0xC27E: b"\x11\x22", 0xCABB: b"\x00", 0xC590: b"\x00", 0xC510: b"\xFF", 0xCBD6: b"\x00"}, "read": {0xCBD6: 1, 0xC510: 3}, "expect": {0xCBD6: b"\x09"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, c=0x00, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2ED: b"\x00", 0xCABB: b"\x00", 0xC590: b"\x00"}, read={0xC510: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OpenTurnHolderDiscardPileScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5273,3 +5282,6 @@ MUTATIONS["OpenDiscardPileScreen"] = {"source_symbol": "OpenDiscardPileScreen", 
 # >>> factory-mutation OpenTurnHolderHandScreen_Simple
 MUTATIONS["OpenTurnHolderHandScreen_Simple"] = {"source_symbol": "OpenTurnHolderHandScreen_Simple", "before": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = (uint8_t)(PAD_START + PAD_A);", "after": "\t(void)InitAndDrawCardListScreenLayout();\n\twNoItemSelectionMenuKeys = 0x00u;", "case_ids": ["OpenTurnHolderHandScreen_Simple-1", "OpenTurnHolderHandScreen_Simple-2"]}
 # <<< factory-mutation OpenTurnHolderHandScreen_Simple
+# >>> factory-mutation OpenTurnHolderDiscardPileScreen
+MUTATIONS["OpenTurnHolderDiscardPileScreen"] = {"source_symbol": "OpenTurnHolderDiscardPileScreen", "before": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn OpenDiscardPileScreen(c);", "after": "OpenDiscardPileScreenResult OpenTurnHolderDiscardPileScreen(uint8_t c)\n{\n\treturn (OpenDiscardPileScreenResult){0u};", "case_ids": ["OpenTurnHolderDiscardPileScreen-0"]}
+# <<< factory-mutation OpenTurnHolderDiscardPileScreen

@@ -14,4 +14,8 @@ PrintCardSetListEntriesResult PrintCardSetListEntries(void);
 /* >>> factory CreateCardSetList */
 void CreateCardSetList(uint8_t a);
 /* <<< factory CreateCardSetList */
+/* >>> factory HandleCardAlbumCardPage */
+typedef struct { uint8_t a; uint8_t f; } HandleCardAlbumCardPageResult;
+HandleCardAlbumCardPageResult HandleCardAlbumCardPage(uint8_t d, uint8_t e);
+/* <<< factory HandleCardAlbumCardPage */
 #endif /* POKETCG_HOME_CARD_ALBUM_H */

@@ -244,4 +244,8 @@ CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void);
 typedef struct { uint8_t a; uint8_t f; } TryAddCardToDeckResult;
 TryAddCardToDeckResult TryAddCardToDeck(uint8_t e);
 /* <<< factory TryAddCardToDeck */
+/* >>> factory AddCardToDeckAndUpdateCount */
+typedef struct { uint8_t a; uint8_t f; uint8_t e; } AddCardToDeckAndUpdateCountResult;
+AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e);
+/* <<< factory AddCardToDeckAndUpdateCount */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -221,6 +221,8 @@ ATTR_ROW = bytes([2, 2, 1, 1, 2, 2, 1, 1, 3, 3, 3, 3, 0, 0, 2, 2, 2, 2])
 wCurDeckCards = 0xCF17
 wUniqueDeckCardList = 0xCF68
 wNumUniqueCards = 0xCED9
+
+wMaxNumCardsAllowed = 0xCFD1
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -819,6 +821,14 @@ CASES["TryAddCardToDeck"] = [
 ]
 # <<< factory TryAddCardToDeck
 
+# >>> factory AddCardToDeckAndUpdateCount
+CONTRACT["AddCardToDeckAndUpdateCount"] = {"compare": ("a", "f", "e"), "preserve": ("e",)}
+CASES["AddCardToDeckAndUpdateCount"] = [
+    {"e": 0x01, "wram": {0xCECC: b"\x00", 0xCFD1: b"\x00"}},
+    dict(POISON, e=0x01, wram={0xCECC: b"\x00", 0xCFD1: b"\x00"}),
+]
+# <<< factory AddCardToDeckAndUpdateCount
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1101,3 +1111,6 @@ MUTATIONS["CreateCurDeckUniqueCardList"] = {"source_symbol": "CreateCurDeckUniqu
 # >>> factory-mutation TryAddCardToDeck
 MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": "\treturn (TryAddCardToDeckResult){0u, 0x90u};", "after": "\treturn (TryAddCardToDeckResult){0u, 0u};", "case_ids": ["TryAddCardToDeck-0", "TryAddCardToDeck-1", "TryAddCardToDeck-2"]}
 # <<< factory-mutation TryAddCardToDeck
+# >>> factory-mutation AddCardToDeckAndUpdateCount
+MUTATIONS["AddCardToDeckAndUpdateCount"] = {"source_symbol": "AddCardToDeckAndUpdateCount", "before": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, e};", "after": "\t\treturn (AddCardToDeckAndUpdateCountResult){r.a, r.f, r.a};", "case_ids": ["AddCardToDeckAndUpdateCount-0", "AddCardToDeckAndUpdateCount-1"]}
+# <<< factory-mutation AddCardToDeckAndUpdateCount
