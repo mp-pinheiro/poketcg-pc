@@ -538,4 +538,7 @@ void Script_LegendaryCardRightSpark(void);
 /* >>> factory ScriptCommand_PrintNPCText */
 IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_PrintNPCText */
+/* >>> factory ScriptCommand_CloseAdvancedTextBox */
+IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void);
+/* <<< factory ScriptCommand_CloseAdvancedTextBox */
 #endif

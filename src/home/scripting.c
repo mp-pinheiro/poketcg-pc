@@ -1824,3 +1824,11 @@ IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c)
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_PrintNPCText */
+
+/* >>> factory ScriptCommand_CloseAdvancedTextBox */
+IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void)
+{
+	CloseAdvancedDialogueBox();
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_CloseAdvancedTextBox */

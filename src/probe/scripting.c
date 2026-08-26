@@ -1138,6 +1138,16 @@ static void adapt_ScriptCommand_PrintNPCText(ProbeState *s)
 }
 /* <<< factory ScriptCommand_PrintNPCText */
 
+/* >>> factory ScriptCommand_CloseAdvancedTextBox */
+static void adapt_ScriptCommand_CloseAdvancedTextBox(ProbeState *s)
+{
+	IncreaseScriptPointerResult r = ScriptCommand_CloseAdvancedTextBox();
+	s->a = r.a;
+	s->f = r.f;
+	s->c = r.c;
+}
+/* <<< factory ScriptCommand_CloseAdvancedTextBox */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1250,5 +1260,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Script_LegendaryCardRightSpark", adapt_Script_LegendaryCardRightSpark },
 	{ "ScriptCommand_PrintNPCText", adapt_ScriptCommand_PrintNPCText },
 	{ "Func_cc32", adapt_Func_cc32 },
+	{ "ScriptCommand_CloseAdvancedTextBox", adapt_ScriptCommand_CloseAdvancedTextBox },
 	{ NULL, NULL },
 };

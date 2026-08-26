@@ -1337,6 +1337,14 @@ CASES["ScriptCommand_PrintNPCText"] = [
 ]
 # <<< factory ScriptCommand_PrintNPCText
 
+# >>> factory ScriptCommand_CloseAdvancedTextBox
+CONTRACT["ScriptCommand_CloseAdvancedTextBox"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_CloseAdvancedTextBox"] = [
+	{},
+	dict(POISON),
+]
+# <<< factory ScriptCommand_CloseAdvancedTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2015,3 +2023,6 @@ MUTATIONS["Script_LegendaryCardRightSpark"] = {"source_symbol": "Script_Legendar
 # >>> factory-mutation ScriptCommand_PrintNPCText
 MUTATIONS["ScriptCommand_PrintNPCText"] = {"source_symbol": "ScriptCommand_PrintNPCText", "before": "IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);", "after": "IncreaseScriptPointerResult ScriptCommand_PrintNPCText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["ScriptCommand_PrintNPCText-0", "ScriptCommand_PrintNPCText-1"]}
 # <<< factory-mutation ScriptCommand_PrintNPCText
+# >>> factory-mutation ScriptCommand_CloseAdvancedTextBox
+MUTATIONS["ScriptCommand_CloseAdvancedTextBox"] = {"source_symbol": "ScriptCommand_CloseAdvancedTextBox", "before": "IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void)\n{\n\tCloseAdvancedDialogueBox();\n\treturn IncreaseScriptPointerBy1();", "after": "IncreaseScriptPointerResult ScriptCommand_CloseAdvancedTextBox(void)\n{\n\tCloseAdvancedDialogueBox();\n\treturn IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_CloseAdvancedTextBox-0", "ScriptCommand_CloseAdvancedTextBox-1"]}
+# <<< factory-mutation ScriptCommand_CloseAdvancedTextBox
