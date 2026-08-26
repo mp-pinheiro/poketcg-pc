@@ -2661,6 +2661,8 @@ PrintFailedEffectTextResult PrintFailedEffectText(void)
 DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f,
 	uint8_t d, uint8_t e)
 {
+	(void)d;
+	(void)e;
 	gb_write8(wDamage_ADDR, a);
 	gb_write8((uint16_t)(wDamage_ADDR + 1u), 0u);
 	const uint8_t saved_no_damage = gb_read8(wNoDamageOrEffect_ADDR);
@@ -2669,11 +2671,15 @@ DealConfusionDamageToSelfResult DealConfusionDamageToSelf(uint8_t a, uint8_t f,
 	const uint8_t saved_non_turn = gb_read8(wTempNonTurnDuelistCardID_ADDR);
 	gb_write8(wTempNonTurnDuelistCardID_ADDR,
 		gb_read8(wTempTurnDuelistCardID_ADDR));
-	(void)ApplyDamageModifiers_DamageToSelf();
+	/* ApplyDamageModifiers_DamageToSelf builds the modified damage in `de`
+	 * (duel.asm:1940 `ld d, [hl]`), and DealAttackDamageSimple reads its damage
+	 * from that pair -- so the return value has to be threaded through, not
+	 * dropped in favour of the incoming d/e. */
+	const uint16_t modified = ApplyDamageModifiers_DamageToSelf();
 	const uint8_t c = gb_read8(wDamageEffectiveness_ADDR);
 	DuelistVarResult hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
 	(void)PlayAttackAnimation_DealAttackDamageSimple(hp.a, f, PLAY_AREA_ARENA,
-		c, d, e, hp.hl);
+		c, (uint8_t)(modified >> 8), (uint8_t)modified, hp.hl);
 	(void)PrintKnockedOutIfHLZero(hp.hl);
 	gb_write8(wTempNonTurnDuelistCardID_ADDR, saved_non_turn);
 	gb_write8(wNoDamageOrEffect_ADDR, saved_no_damage);
