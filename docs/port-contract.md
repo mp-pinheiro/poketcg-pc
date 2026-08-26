@@ -438,6 +438,45 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **The attack-animation command interpreter is ONE state machine, not 7 routines,
+  and that is why its members deadlock (measured 2026-08-26).**
+  `poketcg/src/engine/duel/animations/commands.asm` implements a command loop out
+  of mutual tail-jumps: `PlayAttackAnimationCommands_NextCommand` (`asm:41`) is
+  `ld a, [de]` / `inc de` / `ld hl, AnimationCommandPointerTable` /
+  `jp JumpToFunctionInTable`, every handler tail-jumps back into it, and
+  `AnimPlayArea`/`AnimPlayer`/`AnimOpponent` additionally `jr` straight into
+  `AnimNormal`. Ported label-at-a-time this cannot converge, and the three stanzas
+  involved each point at one of the others:
+  - `AnimationCommand_AnimNormal` / `AnimScreen` say their remaining obstacle is
+    that they tail-call `NextCommand`, whose landed C body is wrong. That is a
+    **verification** block: the reference walks the real command chain while the C
+    switches on its incoming `a`.
+  - `PlayAttackAnimationCommands` asks for a reviewed transform of `NextCommand`.
+    But writing the faithful dispatch needs all **7** table targets *defined* to
+    link, and 5 are unported — a **compilation** block. 3 of those 5
+    (`AnimPlayer` 19 B, `AnimOpponent` 25 B, `AnimPlayArea` 10 B) are blocked
+    solely on `AnimNormal`.
+  So neither side can move alone. The resolution is a **single co-port commit**, and
+  the boundary is provably closed: the only routines the family reaches outside
+  itself are `PlayDuelAnimation`, `UpdateDuelAnimationScreen` and `SwapTurn` (all
+  `verified`) plus `JumpToFunctionInTable` (`excluded`), and `AnimEnd`/`AnimEnd2`
+  are already ported. The unit is therefore exactly six routines, ~177 B plus the
+  transform:
+  `PlayAttackAnimationCommands_NextCommand` (8 B, **re-port** — it is registered
+  and `verified` today with a wrong body, so this is stub debt, not a new port),
+  `AnimationCommand_AnimNormal` (101 B, the hub),
+  `AnimationCommand_AnimScreen` (22 B), `AnimationCommand_AnimOpponent` (25 B),
+  `AnimationCommand_AnimPlayer` (19 B), `AnimationCommand_AnimPlayArea` (10 B).
+  Natural C shape: one interpreter that reads the opcode from `de` and switches,
+  with the handlers as functions that return to the loop rather than tail-calling
+  it — the same "shared blocks become helpers" move that landed
+  `ScriptCommand_JumpIfEventTrue`/`False`. The hBankROM knob those stanzas needed
+  already exists and is behaviourally proven, so the harness is not the obstacle.
+  Downstream payoff: this unblocks `PlayAttackAnimationCommands` (56 B) →
+  `PlayAttackAnimation` → `PlayAttackAnimation_DealAttackDamageSimple` →
+  `DealConfusionDamageToSelf` → `HandleConfusionDamageToSelf` →
+  `OppAction_UseAttack`, i.e. it is on P4's critical path.
+
 - **Dependency cycles: the 2026-08-26 escalation below is SUPERSEDED — most of it
   was tooling artefact, not mutual recursion.** Three later measurements shrank it
   from 62 routines / 3,866 B to **6 components / 46 routines / 2,599 B**, and the
