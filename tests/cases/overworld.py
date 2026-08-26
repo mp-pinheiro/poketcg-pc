@@ -718,6 +718,15 @@ CASES["PauseMenu_Status"] = [
 ]
 # <<< factory PauseMenu_Status
 
+# >>> factory Func_c258
+CONTRACT["Func_c258"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "d", "e", "hl")}
+CASES["Func_c258"] = [
+    {"f": 0x00, "wram": {0xFFB0: b"\x00", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"f": 0xF0, "wram": {0xFFB0: b"\x01", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}], "read": {0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, f=0x0F, wram={0xFFB0: b"\xEE", 0xFFAA: b"\x00", 0xFFAB: b"\x98"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], read={0xC630: 1, 0xC730: 1, 0xC830: 1, 0xC900: 1, 0xFFA9: 1}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_c258
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -956,3 +965,6 @@ MUTATIONS["Func_c268"] = {
 # >>> factory-mutation PauseMenu_Status
 MUTATIONS["PauseMenu_Status"] = {"source_symbol": "PauseMenu_Status", "before": "\t_PauseMenu_Status();", "after": "\treturn;", "case_ids": ["PauseMenu_Status-0", "PauseMenu_Status-1"]}
 # <<< factory-mutation PauseMenu_Status
+# >>> factory-mutation Func_c258
+MUTATIONS["Func_c258"] = {"source_symbol": "Func_c258", "before": "\tuint8_t saved_hffb0 = hffb0;\n\thffb0 = 2u;", "after": "\tuint8_t saved_hffb0 = hffb0;\n\thffb0 = 1u;", "case_ids": ["Func_c258-0", "Func_c258-1", "Func_c258-2"]}
+# <<< factory-mutation Func_c258

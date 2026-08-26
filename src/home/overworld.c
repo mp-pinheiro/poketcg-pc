@@ -889,3 +889,13 @@ void PauseMenu_Status(void)
 	_PauseMenu_Status();
 }
 /* <<< factory PauseMenu_Status */
+
+/* >>> factory Func_c258 */
+void Func_c258(void)
+{
+	uint8_t saved_hffb0 = hffb0;
+	hffb0 = 2u;
+	Func_c268();
+	hffb0 = saved_hffb0;
+}
+/* <<< factory Func_c258 */
