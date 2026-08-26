@@ -5428,6 +5428,14 @@ CASES["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = [
 ]
 # <<< factory MewtwoAltEnergyAbsorption_PlayerSelectEffect
 
+# >>> factory MewtwoEnergyAbsorption_PlayerSelectEffect
+CONTRACT["MewtwoEnergyAbsorption_PlayerSelectEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["MewtwoEnergyAbsorption_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFFB2: 1, 0xC510: 2}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFFB2: 1, 0xC510: 2}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7946,3 +7954,6 @@ MUTATIONS["EnergyConversion_PlayerSelectEffect"] = {"source_symbol": "EnergyConv
 # >>> factory-mutation MewtwoAltEnergyAbsorption_PlayerSelectEffect
 MUTATIONS["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "MewtwoAltEnergyAbsorption_PlayerSelectEffect", "before": "\treturn (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};", "after": "\treturn (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){0xffu, result.f, result.hl};", "case_ids": ["MewtwoAltEnergyAbsorption_PlayerSelectEffect-0", "MewtwoAltEnergyAbsorption_PlayerSelectEffect-1"]}
 # <<< factory-mutation MewtwoAltEnergyAbsorption_PlayerSelectEffect
+# >>> factory-mutation MewtwoEnergyAbsorption_PlayerSelectEffect
+MUTATIONS["MewtwoEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_PlayerSelectEffect", "before": "\treturn (MewtwoEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};", "after": "\treturn (MewtwoEnergyAbsorption_PlayerSelectEffectResult){0xffu, result.f, result.hl};", "case_ids": ["MewtwoEnergyAbsorption_PlayerSelectEffect-0", "MewtwoEnergyAbsorption_PlayerSelectEffect-1"]}
+# <<< factory-mutation MewtwoEnergyAbsorption_PlayerSelectEffect

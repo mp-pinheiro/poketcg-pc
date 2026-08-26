@@ -7965,3 +7965,12 @@ MewtwoAltEnergyAbsorption_PlayerSelectEffectResult MewtwoAltEnergyAbsorption_Pla
 	return (MewtwoAltEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};
 }
 /* <<< factory MewtwoAltEnergyAbsorption_PlayerSelectEffect */
+
+/* >>> factory MewtwoEnergyAbsorption_PlayerSelectEffect */
+MewtwoEnergyAbsorption_PlayerSelectEffectResult MewtwoEnergyAbsorption_PlayerSelectEffect(void)
+{
+	HandleEnergyCardsInDiscardPileSelectionResult result =
+		HandleEnergyCardsInDiscardPileSelection(Choose2EnergyCardsFromDiscardPileToAttachText);
+	return (MewtwoEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};
+}
+/* <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect */

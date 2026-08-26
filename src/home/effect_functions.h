@@ -1661,6 +1661,10 @@ HandleEnergyCardsInDiscardPileSelectionResult EnergyConversion_PlayerSelectEffec
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MewtwoAltEnergyAbsorption_PlayerSelectEffectResult;
 MewtwoAltEnergyAbsorption_PlayerSelectEffectResult MewtwoAltEnergyAbsorption_PlayerSelectEffect(void);
 /* <<< factory MewtwoAltEnergyAbsorption_PlayerSelectEffect */
+/* >>> factory MewtwoEnergyAbsorption_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MewtwoEnergyAbsorption_PlayerSelectEffectResult;
+MewtwoEnergyAbsorption_PlayerSelectEffectResult MewtwoEnergyAbsorption_PlayerSelectEffect(void);
+/* <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
