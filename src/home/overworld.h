@@ -209,4 +209,7 @@ void Func_c241(void);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } Func_c141Result;
 Func_c141Result Func_c141(void);
 /* <<< factory Func_c141 */
+/* >>> factory CloseTextBox */
+void CloseTextBox(void);
+/* <<< factory CloseTextBox */
 #endif /* POKETCG_HOME_OVERWORLD_H */

@@ -163,6 +163,10 @@
 #include "home/process_text.h"
 #define POINTER_TABLE_C152 0x4152u
 #define POINTER_TABLE_C152_BANK 3u
+
+#include "home/load_overworld.h"
+#include "generated/wram.h"
+#define AUTO_CLOSE_TEXTBOX 0x00u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -973,3 +977,13 @@ Func_c141Result Func_c141(void)
 	return (Func_c141Result){(uint8_t)(target & 0xFFu), f, target};
 }
 /* <<< factory Func_c141 */
+
+/* >>> factory CloseTextBox */
+void CloseTextBox(void)
+{
+	ReloadMapAfterTextClose();
+	uint8_t flags = wOverworldNPCFlags;
+	flags = (uint8_t)(flags & (uint8_t)~(1u << AUTO_CLOSE_TEXTBOX));
+	wOverworldNPCFlags = flags;
+}
+/* <<< factory CloseTextBox */

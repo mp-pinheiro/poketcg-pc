@@ -244,6 +244,9 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #include "home/map.h"
 #include "home/script.h"
+
+#include "home/scripting.h"
+#define MAP_SCRIPT_LOAD_MAP 0x08u
 /* <<< factory statics */
 
 
@@ -1759,3 +1762,10 @@ CallMapScriptResult Func_c9c7(void)
 	return CallMapScriptPointerIfExists(0x0eu);
 }
 /* <<< factory Func_c9c7 */
+
+/* >>> factory Func_c9b8 */
+CallMapScriptResult Func_c9b8(void)
+{
+	return CallMapScriptPointerIfExists(MAP_SCRIPT_LOAD_MAP);
+}
+/* <<< factory Func_c9b8 */

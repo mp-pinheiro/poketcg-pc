@@ -312,3 +312,12 @@ void LoadOWMapForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	LoadOBPalette(PALETTE_OVERWORLD_OAM);
 }
 /* <<< factory LoadOWMapForCreditsSequence */
+
+/* >>> factory CreditsSequenceCmd_LoadOWMap */
+/* credits_sequence_commands.asm:294-299 */
+void CreditsSequenceCmd_LoadOWMap(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
+{
+	LoadOWMapForCreditsSequence(b, c, d, e);
+	AdvanceCreditsSequenceCmdPtrBy5();
+}
+/* <<< factory CreditsSequenceCmd_LoadOWMap */

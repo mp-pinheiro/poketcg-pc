@@ -516,4 +516,7 @@ CallMapScriptResult Func_c9bc(void);
 /* >>> factory Func_c9c7 */
 CallMapScriptResult Func_c9c7(void);
 /* <<< factory Func_c9c7 */
+/* >>> factory Func_c9b8 */
+CallMapScriptResult Func_c9b8(void);
+/* <<< factory Func_c9b8 */
 #endif

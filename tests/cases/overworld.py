@@ -303,6 +303,8 @@ def menu_state(default_yes=0):
 
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 wMedalScreenYOffset = 0xD114
+
+wOverworldNPCFlags = 0xD0C1
 # <<< factory-cases-statics
 
 # >>> factory Func_c41c
@@ -744,6 +746,15 @@ CASES["Func_c241"] = [
 ]
 # <<< factory Func_c241
 
+# >>> factory CloseTextBox
+CONTRACT["CloseTextBox"] = {"compare": ("hl",), "preserve": ("hl",)}
+CASES["CloseTextBox"] = [
+    {"hl": 0x4567, "wram": {wOverworldNPCFlags: b"\x01", 0xD133: b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, hl=0x1357, wram={wOverworldNPCFlags: b"\xFF", 0xD133: b"\xFF" * 0x100}, read={wOverworldNPCFlags: 1}, instruction_budget=20000000, cycle_budget=80000000),
+    {"hl": 0x2468, "wram": {wOverworldNPCFlags: b"\x00", 0xD133: b"\x00" * 0x100}, "read": {wOverworldNPCFlags: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory CloseTextBox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1031,3 +1042,6 @@ MUTATIONS["Func_c241"] = {"source_symbol": "Func_c241", "before": "void Func_c24
 # >>> factory-mutation Func_c141
 MUTATIONS["Func_c141"] = {"source_symbol": "Func_c141", "before": "\tidx2 = (uint8_t)((uint8_t)(event - 1u) << 1); /* dec a ; add a */", "after": "\tidx2 = (uint8_t)(event << 1); /* dec a ; add a */", "case_ids": ["Func_c141-0"]}
 # <<< factory-mutation Func_c141
+# >>> factory-mutation CloseTextBox
+MUTATIONS["CloseTextBox"] = {"source_symbol": "CloseTextBox", "before": "\tflags = (uint8_t)(flags & (uint8_t)~(1u << AUTO_CLOSE_TEXTBOX));", "after": "\tflags = (uint8_t)(flags | (uint8_t)(1u << AUTO_CLOSE_TEXTBOX));", "case_ids": ["CloseTextBox-0", "CloseTextBox-1"]}
+# <<< factory-mutation CloseTextBox

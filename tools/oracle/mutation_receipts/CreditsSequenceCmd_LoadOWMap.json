@@ -1,0 +1,9 @@
+{
+  "fn": "CreditsSequenceCmd_LoadOWMap",
+  "case": "tests/cases/credits_sequence_commands.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CreditsSequenceCmd_LoadOWMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"00\", \"54474\": \"0000\", \"54833\": \"0500\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CreditsSequenceCmd_LoadOWMap\", \"mismatches\": {\"bus\": {\"address\": 54833, \"reference\": \"00000005000000\", \"native\": \"00000004000000\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[54063, 1], [54474, 2], [54833, 2], [65426, 2]]}}}\n",
+  "restored": "{\"fn\": \"CreditsSequenceCmd_LoadOWMap\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 7, \"sram\": {}, \"vram\": {}, \"wram\": {\"54063\": \"00\", \"54474\": \"0000\", \"54833\": \"0500\", \"65426\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

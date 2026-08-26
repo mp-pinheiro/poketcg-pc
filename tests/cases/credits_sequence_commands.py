@@ -323,6 +323,20 @@ CASES["LoadOWMapForCreditsSequence"] = [
 ]
 # <<< factory LoadOWMapForCreditsSequence
 
+# >>> factory CreditsSequenceCmd_LoadOWMap
+CONTRACT["CreditsSequenceCmd_LoadOWMap"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_LoadOWMap"] = [
+    {"b": 0x00, "c": 0x00, "d": 0x00, "e": 0x00,
+     "wram": {wSequenceCmdPtr: b"\x00\x00"},
+     "read": {hSCX: 1, hSCY: 1, wCurMap: 1, wWhichOBP: 1, wWhichOBPalIndex: 1, wSequenceCmdPtr: 2},
+     "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, e=0x02,
+         wram={wSequenceCmdPtr: b"\x00\xc1"},
+         read={hSCX: 1, hSCY: 1, wCurMap: 1, wWhichOBP: 1, wWhichOBPalIndex: 1, wSequenceCmdPtr: 2},
+         instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory CreditsSequenceCmd_LoadOWMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -467,3 +481,11 @@ MUTATIONS["LoadOWMapForCreditsSequence"] = {
     "case_ids": ["LoadOWMapForCreditsSequence-0", "LoadOWMapForCreditsSequence-1"],
 }
 # <<< factory-mutation LoadOWMapForCreditsSequence
+# >>> factory-mutation CreditsSequenceCmd_LoadOWMap
+MUTATIONS["CreditsSequenceCmd_LoadOWMap"] = {
+    "source_symbol": "CreditsSequenceCmd_LoadOWMap",
+    "before": "void CreditsSequenceCmd_LoadOWMap(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadOWMapForCreditsSequence(b, c, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy5();\n}",
+    "after": "void CreditsSequenceCmd_LoadOWMap(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadOWMapForCreditsSequence(b, c, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy4();\n}",
+    "case_ids": ["CreditsSequenceCmd_LoadOWMap-0", "CreditsSequenceCmd_LoadOWMap-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_LoadOWMap

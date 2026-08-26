@@ -1,0 +1,9 @@
+{
+  "fn": "LoadMapGfxAndPermissions",
+  "case": "tests/cases/load_overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadMapGfxAndPermissions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"52467\": \"00\", \"54063\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadMapGfxAndPermissions\", \"mismatches\": {\"bus\": {\"address\": 52467, \"reference\": \"0001\", \"native\": \"0101\", \"reference_size\": 2, \"native_size\": 2, \"spans\": [[52467, 1], [54063, 1]]}}}\n",
+  "restored": "{\"fn\": \"LoadMapGfxAndPermissions\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 32, \"sram\": {}, \"vram\": {}, \"wram\": {\"52467\": \"00\", \"54063\": \"01\"}}, \"status\": \"PASS\"}\n"
+}

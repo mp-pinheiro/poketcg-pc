@@ -155,6 +155,15 @@ def menu_state(default_yes=0):
 
 wLoadedNPCTempIndex = 0xD3AA
 wTempNPC = 0xD3AB
+
+_C9B8_CURMAP = 0xD32F
+_C9B8_SEEDS = (
+    (0, {"mode": "pre-ret", "pc": 0x54EC}),
+    (1, {"mode": "pre-ret", "pc": 0x5549}),
+    (2, {"mode": "return"}),
+    (4, {"mode": "pre-ret", "pc": 0x6809}),
+    (1, {"mode": "pre-ret", "pc": 0x5549}),
+)
 # <<< factory-cases-statics
 
 
@@ -1249,6 +1258,16 @@ CASES["Func_c9c7"] = [
 ]
 # <<< factory Func_c9c7
 
+# >>> factory Func_c9b8
+CONTRACT["Func_c9b8"] = {"compare": ("a", "f", "hl"), "preserve": ("b", "c", "d", "e")}
+CASES["Func_c9b8"] = []
+for _i, (_map, _comp) in enumerate(_C9B8_SEEDS):
+    _base = dict(POISON) if _i == 4 else {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0}
+    _base["wram"] = {_C9B8_CURMAP: bytes((_map,))}
+    _base["read"] = {_C9B8_CURMAP: 1}
+    CASES["Func_c9b8"].append(_base)
+# <<< factory Func_c9b8
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1898,3 +1917,10 @@ MUTATIONS["Func_c9c7"] = {"source_symbol": "Func_c9c7", "before": "CallMapScript
 for _rec, _comp in zip(SCHEMA2_CASES["Func_c9c7"], ({"mode": "return"}, {"mode": "pre-ret", "pc": 0x555E}, {"mode": "pre-ret", "pc": 0x555E})):
     _rec["completion"] = dict(_comp)
 # <<< factory-completion Func_c9c7
+# >>> factory-mutation Func_c9b8
+MUTATIONS["Func_c9b8"] = {"source_symbol": "Func_c9b8", "before": "CallMapScriptResult Func_c9b8(void)\n{\n\treturn CallMapScriptPointerIfExists(MAP_SCRIPT_LOAD_MAP);", "after": "CallMapScriptResult Func_c9b8(void)\n{\n\treturn CallMapScriptPointerIfExists(0x0Au);", "case_ids": ["Func_c9b8-0", "Func_c9b8-1", "Func_c9b8-3"]}
+# <<< factory-mutation Func_c9b8
+# >>> factory-completion Func_c9b8
+for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9b8"], _C9B8_SEEDS):
+    _rec["completion"] = dict(_comp)
+# <<< factory-completion Func_c9b8

@@ -474,6 +474,14 @@ static void adapt_Func_c141(ProbeState *s)
 }
 /* <<< factory Func_c141 */
 
+/* >>> factory CloseTextBox */
+static void adapt_CloseTextBox(ProbeState *s)
+{
+	(void)s;
+	CloseTextBox();
+}
+/* <<< factory CloseTextBox */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -532,5 +540,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PauseMenu_Status", adapt_PauseMenu_Status },
 	{ "Func_c251", adapt_Func_c251 },
 	{ "Func_c241", adapt_Func_c241 },
+	{ "CloseTextBox", adapt_CloseTextBox },
 	{ NULL, NULL },
 };

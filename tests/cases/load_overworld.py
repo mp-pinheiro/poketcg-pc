@@ -26,6 +26,15 @@ CASES["ReloadMapAfterTextClose"] = [
 ]
 # <<< factory ReloadMapAfterTextClose
 
+# >>> factory LoadMapGfxAndPermissions
+CONTRACT["LoadMapGfxAndPermissions"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["LoadMapGfxAndPermissions"] = [
+    {"wram": {0xD32F: b"\x01"}, "read": {0xCCF3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xD32F: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCCF3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xD32F: b"\x01"}, read={0xCCF3: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LoadMapGfxAndPermissions
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -41,3 +50,6 @@ MUTATIONS["ReloadMapAfterTextClose"] = {
     "case_ids": ["ReloadMapAfterTextClose-1"]
 }
 # <<< factory-mutation ReloadMapAfterTextClose
+# >>> factory-mutation LoadMapGfxAndPermissions
+MUTATIONS["LoadMapGfxAndPermissions"] = {"source_symbol": "LoadMapGfxAndPermissions", "before": "void LoadMapGfxAndPermissions(void)\n{\n\tClearSRAMBGMaps();\n\twTextBoxFrameType = 0u;", "after": "void LoadMapGfxAndPermissions(void)\n{\n\tClearSRAMBGMaps();\n\twTextBoxFrameType = 1u;", "case_ids": ["LoadMapGfxAndPermissions-0", "LoadMapGfxAndPermissions-1", "LoadMapGfxAndPermissions-2"]}
+# <<< factory-mutation LoadMapGfxAndPermissions

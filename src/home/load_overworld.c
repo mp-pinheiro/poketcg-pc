@@ -10,6 +10,9 @@
 
 #include "home/overworld.h"
 #include "home/scripting.h"
+
+#include "home/overworld_map.h"
+#define OVERWORLD_MAP 0x00u
 /* <<< factory statics */
 
 /* >>> factory LoadMapTilesAndPals */
@@ -43,3 +46,20 @@ void ReloadMapAfterTextClose(void)
 	Func_c3ee();
 }
 /* <<< factory ReloadMapAfterTextClose */
+
+/* >>> factory LoadMapGfxAndPermissions */
+void LoadMapGfxAndPermissions(void)
+{
+	ClearSRAMBGMaps();
+	wTextBoxFrameType = 0u;
+	LoadMapTilesAndPals();
+	LoadPermissionMap();
+	Func_c9c7();
+	SafelyCopyBGMapFromSRAMToVRAM();
+	Func_c3ff();
+	if (wCurMap != OVERWORLD_MAP)
+		return;
+	OverworldMap_PrintMapName();
+	OverworldMap_InitVolcanoSprite(0u);
+}
+/* <<< factory LoadMapGfxAndPermissions */

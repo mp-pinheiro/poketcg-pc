@@ -18,8 +18,16 @@ static void adapt_ReloadMapAfterTextClose(ProbeState *s)
 }
 /* <<< factory ReloadMapAfterTextClose */
 
+/* >>> factory LoadMapGfxAndPermissions */
+static void adapt_LoadMapGfxAndPermissions(ProbeState *s)
+{
+	LoadMapGfxAndPermissions();
+}
+/* <<< factory LoadMapGfxAndPermissions */
+
 const ProbeEntry probe_entries_load_overworld[] = {
 	{ "LoadMapTilesAndPals", adapt_LoadMapTilesAndPals },
 	{ "ReloadMapAfterTextClose", adapt_ReloadMapAfterTextClose },
+	{ "LoadMapGfxAndPermissions", adapt_LoadMapGfxAndPermissions },
 	{ NULL, NULL },
 };

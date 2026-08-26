@@ -9,4 +9,7 @@ void LoadMapTilesAndPals(void);
 /* >>> factory ReloadMapAfterTextClose */
 void ReloadMapAfterTextClose(void);
 /* <<< factory ReloadMapAfterTextClose */
+/* >>> factory LoadMapGfxAndPermissions */
+void LoadMapGfxAndPermissions(void);
+/* <<< factory LoadMapGfxAndPermissions */
 #endif /* POKETCG_HOME_LOAD_OVERWORLD_H */
