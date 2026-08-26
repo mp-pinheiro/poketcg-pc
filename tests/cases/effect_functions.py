@@ -4593,6 +4593,15 @@ CASES["Gigashock_PlayerSelectEffect"] = [
 ]
 # <<< factory Gigashock_PlayerSelectEffect
 
+# >>> factory HandleSwitchDefendingPokemonEffect
+CONTRACT["HandleSwitchDefendingPokemonEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleSwitchDefendingPokemonEffect"] = [
+    {"a": 0xFF, "wram": {0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"a": 1, "wram": {0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xFF97: b"\xC2", 0xCCC7: b"\x00", 0xC300: b"\x00" * 0xC8 + b"\x20", 0xCCEF: b"\x00", 0xCAC2: b"\x55", 0xCCC5: b"\x77"}, "read": {0xFF97: 1, 0xCCEF: 1, 0xCAC2: 1, 0xCCC5: 1}}
+]
+# <<< factory HandleSwitchDefendingPokemonEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -6928,3 +6937,6 @@ MUTATIONS["DamageSwap_SelectAndSwapEffect"] = {"source_symbol": "DamageSwap_Sele
 # >>> factory-mutation Gigashock_PlayerSelectEffect
 MUTATIONS["Gigashock_PlayerSelectEffect"] = {"source_symbol": "Gigashock_PlayerSelectEffect", "before": "\t\thTempList = 0xffu;", "after": "\t\thTempList = 0x00u;", "case_ids": ["Gigashock_PlayerSelectEffect-0", "Gigashock_PlayerSelectEffect-1"]}
 # <<< factory-mutation Gigashock_PlayerSelectEffect
+# >>> factory-mutation HandleSwitchDefendingPokemonEffect
+MUTATIONS["HandleSwitchDefendingPokemonEffect"] = {"source_symbol": "HandleSwitchDefendingPokemonEffect", "before": "\twDefendingWasForcedToSwitch = 1u;", "after": "\twDefendingWasForcedToSwitch = 0u;", "case_ids": ["HandleSwitchDefendingPokemonEffect-1", "HandleSwitchDefendingPokemonEffect-2"]}
+# <<< factory-mutation HandleSwitchDefendingPokemonEffect

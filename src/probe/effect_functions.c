@@ -3545,6 +3545,15 @@ static void adapt_Gigashock_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Gigashock_PlayerSelectEffect */
 
+/* >>> factory HandleSwitchDefendingPokemonEffect */
+static void adapt_HandleSwitchDefendingPokemonEffect(ProbeState *s)
+{
+	HandleSwitchDefendingPokemonEffectResult r = HandleSwitchDefendingPokemonEffect(s->a);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleSwitchDefendingPokemonEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -3977,5 +3986,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyTrans_TransferEffect", adapt_EnergyTrans_TransferEffect },
 	{ "DamageSwap_SelectAndSwapEffect", adapt_DamageSwap_SelectAndSwapEffect },
 	{ "Gigashock_PlayerSelectEffect", adapt_Gigashock_PlayerSelectEffect },
+	{ "HandleSwitchDefendingPokemonEffect", adapt_HandleSwitchDefendingPokemonEffect },
 	{ NULL, NULL },
 };

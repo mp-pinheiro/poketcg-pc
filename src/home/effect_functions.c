@@ -792,6 +792,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define ChooseUpTo3PkmnOnBenchToGiveDamageText 0x011bu
+
+#include "home/duel.h"
+#include "home/substatus.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -6816,3 +6821,29 @@ void Gigashock_PlayerSelectEffect(void)
 	SwapTurn();
 }
 /* <<< factory Gigashock_PlayerSelectEffect */
+
+/* >>> factory HandleSwitchDefendingPokemonEffect */
+HandleSwitchDefendingPokemonEffectResult HandleSwitchDefendingPokemonEffect(uint8_t a)
+{
+	uint8_t e = a;
+	if (e == 0xFFu)
+		return (HandleSwitchDefendingPokemonEffectResult){e, 0xC0u};
+	DuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);
+	uint16_t hl = hp.hl;
+	if (hp.a == 0u) {
+		DestinyBondResult bond = HandleDestinyBondSubstatus();
+		a = bond.a;
+		hl = bond.hl;
+	}
+	HandleNoDamageOrEffectResult no_effect = HandleNoDamageOrEffect(hl);
+	if ((no_effect.f & 0x10u) != 0u)
+		return (HandleSwitchDefendingPokemonEffectResult){a, no_effect.f};
+	SwapTurn();
+	(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	wUnused_DefendingPkmnStatus = 0u;
+	wDuelDisplayedScreen = 0u;
+	wDefendingWasForcedToSwitch = 1u;
+	return (HandleSwitchDefendingPokemonEffectResult){1u, 0x00u};
+}
+/* <<< factory HandleSwitchDefendingPokemonEffect */

@@ -1459,6 +1459,10 @@ void DamageSwap_SelectAndSwapEffect(void);
 /* >>> factory Gigashock_PlayerSelectEffect */
 void Gigashock_PlayerSelectEffect(void);
 /* <<< factory Gigashock_PlayerSelectEffect */
+/* >>> factory HandleSwitchDefendingPokemonEffect */
+typedef struct { uint8_t a; uint8_t f; } HandleSwitchDefendingPokemonEffectResult;
+HandleSwitchDefendingPokemonEffectResult HandleSwitchDefendingPokemonEffect(uint8_t a);
+/* <<< factory HandleSwitchDefendingPokemonEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
