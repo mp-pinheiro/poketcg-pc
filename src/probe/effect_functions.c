@@ -3924,6 +3924,14 @@ static void adapt_Spark_BenchDamageEffect(ProbeState *s)
 }
 /* <<< factory Spark_BenchDamageEffect */
 
+/* >>> factory CatPunchEffect */
+static void adapt_CatPunchEffect(ProbeState *s)
+{
+	(void)s;
+	CatPunchEffect();
+}
+/* <<< factory CatPunchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4401,5 +4409,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HypnoDarkMind_DamageBenchEffect", adapt_HypnoDarkMind_DamageBenchEffect },
 	{ "GengarDarkMind_DamageBenchEffect", adapt_GengarDarkMind_DamageBenchEffect },
 	{ "Spark_BenchDamageEffect", adapt_Spark_BenchDamageEffect },
+	{ "CatPunchEffect", adapt_CatPunchEffect },
 	{ NULL, NULL },
 };

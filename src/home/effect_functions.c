@@ -886,6 +886,11 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "generated/wram.h"
 #include "home/core.h"
 #include "home/duel_core.h"
+
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "generated/wram.h"
+#define ATK_ANIM_CAT_PUNCH_PLAY_AREA 0x83u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7601,3 +7606,15 @@ void Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_
 	SwapTurn();
 }
 /* <<< factory Spark_BenchDamageEffect */
+
+/* >>> factory CatPunchEffect */
+void CatPunchEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	wLoadedAttackAnimation = ATK_ANIM_CAT_PUNCH_PLAY_AREA;
+	(void)DealDamageToPlayAreaPokemon(target, 20u, 0u);
+	SwapTurn();
+}
+/* <<< factory CatPunchEffect */

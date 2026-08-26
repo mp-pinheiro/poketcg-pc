@@ -5286,6 +5286,14 @@ CASES["Spark_BenchDamageEffect"] = [
 ]
 # <<< factory Spark_BenchDamageEffect
 
+# >>> factory CatPunchEffect
+CONTRACT["CatPunchEffect"] = {"compare": (), "preserve": ()}
+CASES["CatPunchEffect"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, "read": {0xCCB8: 1, 0xCCEB: 1}},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC3EF: b"\x01", 0xCCC7: b"\x01", 0xCCEB: b"\xAA"}, read={0xCCB8: 1, 0xCCEB: 1}),
+]
+# <<< factory CatPunchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7771,3 +7779,6 @@ MUTATIONS["GengarDarkMind_DamageBenchEffect"] = {"source_symbol": "GengarDarkMin
 # >>> factory-mutation Spark_BenchDamageEffect
 MUTATIONS["Spark_BenchDamageEffect"] = {"source_symbol": "Spark_BenchDamageEffect", "before": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = hTemp_ffa0;", "after": "Spark_BenchDamageEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t target = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["Spark_BenchDamageEffect-1", "Spark_BenchDamageEffect-2"]}
 # <<< factory-mutation Spark_BenchDamageEffect
+# >>> factory-mutation CatPunchEffect
+MUTATIONS["CatPunchEffect"] = {"source_symbol": "CatPunchEffect", "before": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = ATK_ANIM_CAT_PUNCH_PLAY_AREA;", "after": "void CatPunchEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;\n\twLoadedAttackAnimation = (uint8_t)(ATK_ANIM_CAT_PUNCH_PLAY_AREA ^ 1u);", "case_ids": ["CatPunchEffect-0", "CatPunchEffect-1"]}
+# <<< factory-mutation CatPunchEffect

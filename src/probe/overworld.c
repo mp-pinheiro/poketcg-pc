@@ -498,7 +498,7 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "PauseMenu_Diary", adapt_PauseMenu_Diary },
 	{ "DisplayPCMenu", adapt_DisplayPCMenu },
 	{ "Func_c268", adapt_Func_c268 },
-	{ "PauseMenu_Status", adapt_PauseMenu_Status },
 	{ "Func_c258", adapt_Func_c258 },
+	{ "PauseMenu_Status", adapt_PauseMenu_Status },
 	{ NULL, NULL },
 };
