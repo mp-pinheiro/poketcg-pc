@@ -1,0 +1,9 @@
+{
+  "fn": "LoadHalfWidthTextCursorTile",
+  "case": "tests/cases/input_name.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LoadHalfWidthTextCursorTile\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"32768\": \"f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LoadHalfWidthTextCursorTile\", \"mismatches\": {\"vram\": \"reference/native state differs\"}}\n",
+  "restored": "{\"fn\": \"LoadHalfWidthTextCursorTile\", \"registers\": {\"a\": 0, \"b\": 16, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {\"0\": {\"32768\": \"f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0\"}}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

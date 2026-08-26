@@ -179,6 +179,15 @@ static void adapt_LoadTextCursorTile(ProbeState *s)
 }
 /* <<< factory LoadTextCursorTile */
 
+/* >>> factory LoadHalfWidthTextCursorTile */
+static void adapt_LoadHalfWidthTextCursorTile(ProbeState *s)
+{
+	LoadHalfWidthTextCursorTileResult r = LoadHalfWidthTextCursorTile(s->c);
+	s->b = r.b;
+	s->c = r.c;
+}
+/* <<< factory LoadHalfWidthTextCursorTile */
+
 const ProbeEntry probe_entries_input_name[] = {
 	{ "DeckNamingScreen_GetCharInfoFromPos", adapt_DeckNamingScreen_GetCharInfoFromPos },
 	{ "ClearMemory_Bank6", adapt_ClearMemory_Bank6 },
@@ -199,5 +208,6 @@ const ProbeEntry probe_entries_input_name[] = {
 	{ "DrawPlayerNamingScreenBG", adapt_DrawPlayerNamingScreenBG },
 	{ "PlayerNamingScreen_ProcessInput", adapt_PlayerNamingScreen_ProcessInput },
 	{ "LoadTextCursorTile", adapt_LoadTextCursorTile },
+	{ "LoadHalfWidthTextCursorTile", adapt_LoadHalfWidthTextCursorTile },
 	{ NULL, NULL },
 };

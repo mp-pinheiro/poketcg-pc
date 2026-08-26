@@ -35,4 +35,7 @@ void UpdateMailMenuCursor(void);
 /* >>> factory PCMailHandleDPadInput */
 void PCMailHandleDPadInput(void);
 /* <<< factory PCMailHandleDPadInput */
+/* >>> factory GetPCPackNameTextID */
+uint16_t GetPCPackNameTextID(uint8_t a);
+/* <<< factory GetPCPackNameTextID */
 #endif

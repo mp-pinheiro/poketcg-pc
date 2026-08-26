@@ -5115,6 +5115,22 @@ CASES["DragoniteLv41Slam_MultiplierEffect"] = [
 ]
 # <<< factory DragoniteLv41Slam_MultiplierEffect
 
+# >>> factory NidorinoDoubleKick_MultiplierEffect
+CONTRACT["NidorinoDoubleKick_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["NidorinoDoubleKick_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory NidorinoDoubleKick_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7561,3 +7577,6 @@ MUTATIONS["NidorinaDoubleKick_MultiplierEffect"] = {"source_symbol": "NidorinaDo
 # >>> factory-mutation DragoniteLv41Slam_MultiplierEffect
 MUTATIONS["DragoniteLv41Slam_MultiplierEffect"] = {"source_symbol": "DragoniteLv41Slam_MultiplierEffect", "before": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "after": "void DragoniteLv41Slam_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoinATimes_BankBResult result = TossCoinATimes_BankB(3u, 0u, 0u, 0u, 0x00u, DamageCheckIfHeadsXDamageText, 0u);", "case_ids": ["DragoniteLv41Slam_MultiplierEffect-0", "DragoniteLv41Slam_MultiplierEffect-1"]}
 # <<< factory-mutation DragoniteLv41Slam_MultiplierEffect
+# >>> factory-mutation NidorinoDoubleKick_MultiplierEffect
+MUTATIONS["NidorinoDoubleKick_MultiplierEffect"] = {"source_symbol": "NidorinoDoubleKick_MultiplierEffect", "before": "void NidorinoDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(30u);", "after": "void NidorinoDoubleKick_MultiplierEffect(void)\n{\n\tLoadTxRam3(31u);", "case_ids": ["NidorinoDoubleKick_MultiplierEffect-0", "NidorinoDoubleKick_MultiplierEffect-1"]}
+# <<< factory-mutation NidorinoDoubleKick_MultiplierEffect

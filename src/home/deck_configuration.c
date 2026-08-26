@@ -1657,3 +1657,37 @@ SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)
 	return (SortCurDeckCardsByIDResult){(uint8_t)order};
 }
 /* <<< factory SortCurDeckCardsByID */
+
+/* >>> factory GetCardTypeIconPalette */
+GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t palette = 0xffu;
+	f = 0x80u;
+	if (a == 0xe0u) {
+		palette = 1u;
+		f = 0xc0u;
+	} else if (a == 0xe4u) {
+		palette = 2u;
+		f = 0xc0u;
+	} else if (a == 0xe8u) {
+		palette = 1u;
+		f = 0xc0u;
+	} else if (a == 0xecu) {
+		palette = 2u;
+		f = 0xc0u;
+	} else if (a == 0xf0u) {
+		palette = 3u;
+		f = 0xc0u;
+	} else if (a == 0xf4u) {
+		palette = 3u;
+		f = 0xc0u;
+	} else if (a == 0xf8u) {
+		palette = 0u;
+		f = 0xc0u;
+	} else if (a == 0xfcu || a == 0xd0u || a == 0xd4u || a == 0xd8u || a == 0xdcu) {
+		palette = (a == 0xd8u) ? 1u : 2u;
+		f = 0xc0u;
+	}
+	return (GetCardTypeIconPaletteResult){palette, f, b, c, d, e, hl};
+}
+/* <<< factory GetCardTypeIconPalette */

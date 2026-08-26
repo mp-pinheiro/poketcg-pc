@@ -67,4 +67,12 @@ PlayerNamingScreen_ProcessInputResult PlayerNamingScreen_ProcessInput(void);
 /* >>> factory LoadTextCursorTile */
 void LoadTextCursorTile(void);
 /* <<< factory LoadTextCursorTile */
+/* >>> factory LoadHalfWidthTextCursorTile */
+typedef struct {
+	uint8_t b;
+	uint8_t c;
+} LoadHalfWidthTextCursorTileResult;
+
+LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c);
+/* <<< factory LoadHalfWidthTextCursorTile */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

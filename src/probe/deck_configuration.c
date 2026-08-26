@@ -517,6 +517,20 @@ static void adapt_SortCurDeckCardsByID(ProbeState *s)
 }
 /* <<< factory SortCurDeckCardsByID */
 
+/* >>> factory GetCardTypeIconPalette */
+static void adapt_GetCardTypeIconPalette(ProbeState *s)
+{
+	GetCardTypeIconPaletteResult result = GetCardTypeIconPalette(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory GetCardTypeIconPalette */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -578,5 +592,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "OpenCardPageFromCardList", adapt_OpenCardPageFromCardList },
 	{ "CheckIfThereAreAnyBasicCardsInDeck", adapt_CheckIfThereAreAnyBasicCardsInDeck },
 	{ "SortCurDeckCardsByID", adapt_SortCurDeckCardsByID },
+	{ "GetCardTypeIconPalette", adapt_GetCardTypeIconPalette },
 	{ NULL, NULL },
 };

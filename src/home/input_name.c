@@ -590,3 +590,17 @@ void LoadTextCursorTile(void)
 	}
 }
 /* <<< factory LoadTextCursorTile */
+
+/* >>> factory LoadHalfWidthTextCursorTile */
+LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c)
+{
+	uint16_t hl = V0TILES0_ADDR;
+	uint8_t b = 0;
+	while (b != TILE_SIZE) {
+		gb_write8(hl, 0xF0u);
+		hl = (uint16_t)(hl + 1u);
+		b = (uint8_t)(b + 1u);
+	}
+	return (LoadHalfWidthTextCursorTileResult){b, c};
+}
+/* <<< factory LoadHalfWidthTextCursorTile */

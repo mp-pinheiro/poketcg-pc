@@ -740,6 +740,17 @@ CASES["SortCurDeckCardsByID"] = [
 ]
 # <<< factory SortCurDeckCardsByID
 
+# >>> factory GetCardTypeIconPalette
+CONTRACT["GetCardTypeIconPalette"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")}
+CASES["GetCardTypeIconPalette"] = [
+    {"a": 0xe0, "f": 0x00, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0xc100, "expect_regs": {"a": 0x01, "f": 0xc0, "b": 0x12, "c": 0x34, "d": 0x56, "e": 0x78, "hl": 0xc100}},
+    {"a": 0xf8, "f": 0xf0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": 0xc200, "expect_regs": {"a": 0x00, "f": 0xc0, "b": 0xaa, "c": 0xbb, "d": 0xcc, "e": 0xdd, "hl": 0xc200}},
+    {"a": 0x01, "f": 0x10, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0xc300, "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0xc300}},
+    {"a": 0x00, "f": 0xff, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": 0xc400, "expect_regs": {"a": 0xff, "f": 0x80, "b": 0x01, "c": 0x02, "d": 0x03, "e": 0x04, "hl": 0xc400}},
+    dict(POISON, expect_regs={"a": 0xff, "f": 0x80, "b": 0xbb, "c": 0xcc, "d": 0xdd, "e": 0xee, "hl": 0x1234}),
+]
+# <<< factory GetCardTypeIconPalette
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -999,3 +1010,6 @@ MUTATIONS["CheckIfThereAreAnyBasicCardsInDeck"] = {"source_symbol": "CheckIfTher
 # >>> factory-mutation SortCurDeckCardsByID
 MUTATIONS["SortCurDeckCardsByID"] = {"source_symbol": "SortCurDeckCardsByID", "before": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wCurDeckCards_ADDR;", "after": "SortCurDeckCardsByIDResult SortCurDeckCardsByID(void)\n{\n\tuint16_t src = wOpponentDeck_ADDR;", "case_ids": ["SortCurDeckCardsByID-0", "SortCurDeckCardsByID-1", "SortCurDeckCardsByID-2", "SortCurDeckCardsByID-3"]}
 # <<< factory-mutation SortCurDeckCardsByID
+# >>> factory-mutation GetCardTypeIconPalette
+MUTATIONS["GetCardTypeIconPalette"] = {"source_symbol": "GetCardTypeIconPalette", "before": "\tuint8_t palette = 0xffu;", "after": "\tuint8_t palette = 0x00u;", "case_ids": ["GetCardTypeIconPalette-2", "GetCardTypeIconPalette-4"]}
+# <<< factory-mutation GetCardTypeIconPalette

@@ -1572,6 +1572,9 @@ void NidorinaDoubleKick_MultiplierEffect(void);
 /* >>> factory DragoniteLv41Slam_MultiplierEffect */
 void DragoniteLv41Slam_MultiplierEffect(void);
 /* <<< factory DragoniteLv41Slam_MultiplierEffect */
+/* >>> factory NidorinoDoubleKick_MultiplierEffect */
+void NidorinoDoubleKick_MultiplierEffect(void);
+/* <<< factory NidorinoDoubleKick_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

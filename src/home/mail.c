@@ -182,3 +182,10 @@ void PCMailHandleDPadInput(void)
 	gb_write8(wCursorBlinkTimer_ADDR, 0u);
 }
 /* <<< factory PCMailHandleDPadInput */
+
+/* >>> factory GetPCPackNameTextID */
+uint16_t GetPCPackNameTextID(uint8_t a)
+{
+	return (uint16_t)(0x035Du + (uint16_t)a);
+}
+/* <<< factory GetPCPackNameTextID */

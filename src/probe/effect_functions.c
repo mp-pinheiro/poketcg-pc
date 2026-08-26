@@ -3818,6 +3818,14 @@ static void adapt_DragoniteLv41Slam_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory DragoniteLv41Slam_MultiplierEffect */
 
+/* >>> factory NidorinoDoubleKick_MultiplierEffect */
+static void adapt_NidorinoDoubleKick_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	NidorinoDoubleKick_MultiplierEffect();
+}
+/* <<< factory NidorinoDoubleKick_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4282,5 +4290,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidorinaDoubleKick_MultiplierEffect", adapt_NidorinaDoubleKick_MultiplierEffect },
 	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
 	{ "DragoniteLv41Slam_MultiplierEffect", adapt_DragoniteLv41Slam_MultiplierEffect },
+	{ "NidorinoDoubleKick_MultiplierEffect", adapt_NidorinoDoubleKick_MultiplierEffect },
 	{ NULL, NULL },
 };

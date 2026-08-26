@@ -1,0 +1,9 @@
+{
+  "fn": "GetCardTypeIconPalette",
+  "case": "tests/cases/deck_configuration.py",
+  "index": 2,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetCardTypeIconPalette\", \"registers\": {\"a\": 255, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"hl\": 49920, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetCardTypeIconPalette\", \"mismatches\": {\"a\": [255, 0]}}\n",
+  "restored": "{\"fn\": \"GetCardTypeIconPalette\", \"registers\": {\"a\": 255, \"b\": 34, \"c\": 51, \"d\": 68, \"e\": 85, \"f\": 128, \"hl\": 49920, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 2, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

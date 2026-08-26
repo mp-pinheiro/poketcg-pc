@@ -1,0 +1,9 @@
+{
+  "fn": "GetPCPackNameTextID",
+  "case": "tests/cases/mail.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetPCPackNameTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 3, \"e\": 93, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetPCPackNameTextID\", \"mismatches\": {\"e\": [93, 94]}}\n",
+  "restored": "{\"fn\": \"GetPCPackNameTextID\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 3, \"e\": 93, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 4, \"sram\": {}, \"vram\": {}, \"wram\": {}}, \"status\": \"PASS\"}\n"
+}

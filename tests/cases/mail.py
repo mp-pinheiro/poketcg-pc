@@ -109,6 +109,15 @@ CASES["PCMailHandleDPadInput"] = [
 ]
 # <<< factory PCMailHandleDPadInput
 
+# >>> factory GetPCPackNameTextID
+CONTRACT["GetPCPackNameTextID"] = {"compare": ("b", "c", "d", "e", "hl"), "preserve": ("b", "c", "hl")}
+CASES["GetPCPackNameTextID"] = [
+    {"a": 0, "expect_regs": {"b": 0, "c": 0, "d": 0x03, "e": 0x5D, "hl": 0}},
+    {"a": 0x0E, "expect_regs": {"b": 0, "c": 0, "d": 0x03, "e": 0x6B, "hl": 0}},
+    dict(POISON, a=1, expect_regs={"b": 0xBB, "c": 0xCC, "d": 0x03, "e": 0x5E, "hl": 0x1234}),
+]
+# <<< factory GetPCPackNameTextID
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -189,3 +198,6 @@ MUTATIONS["UpdateMailMenuCursor"] = {
 # >>> factory-mutation PCMailHandleDPadInput
 MUTATIONS["PCMailHandleDPadInput"] = {"source_symbol": "PCMailHandleDPadInput", "before": "if ((gb_read8(hDPadHeld_ADDR) & PAD_CTRL_PAD) == 0u)", "after": "if ((gb_read8(hDPadHeld_ADDR) & 0x00u) == 0u)", "case_ids": ["PCMailHandleDPadInput-1", "PCMailHandleDPadInput-2"]}
 # <<< factory-mutation PCMailHandleDPadInput
+# >>> factory-mutation GetPCPackNameTextID
+MUTATIONS["GetPCPackNameTextID"] = {"source_symbol": "GetPCPackNameTextID", "before": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn (uint16_t)(0x035Du + (uint16_t)a);\n}", "after": "uint16_t GetPCPackNameTextID(uint8_t a)\n{\n\treturn (uint16_t)(0x035Eu + (uint16_t)a);\n}", "case_ids": ["GetPCPackNameTextID-0", "GetPCPackNameTextID-1", "GetPCPackNameTextID-2"]}
+# <<< factory-mutation GetPCPackNameTextID

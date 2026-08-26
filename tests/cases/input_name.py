@@ -213,6 +213,14 @@ CASES["LoadTextCursorTile"] = [
 ]
 # <<< factory LoadTextCursorTile
 
+# >>> factory LoadHalfWidthTextCursorTile
+CONTRACT["LoadHalfWidthTextCursorTile"] = {"compare": ("b", "c"), "preserve": ("c",)}
+CASES["LoadHalfWidthTextCursorTile"] = [
+    {"vread": {0: {0x8000: 16}}},
+    dict(POISON, vread={0: {0x8000: 16}}),
+]
+# <<< factory LoadHalfWidthTextCursorTile
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -299,3 +307,11 @@ MUTATIONS["PlayerNamingScreen_ProcessInput"] = {"source_symbol": "PlayerNamingSc
 # >>> factory-mutation LoadTextCursorTile
 MUTATIONS["LoadTextCursorTile"] = {"source_symbol": "LoadTextCursorTile", "before": "for (uint8_t b = 0; b < TILE_SIZE; b++) {", "after": "for (uint8_t b = 0; b < (uint8_t)(TILE_SIZE - 1u); b++) {", "case_ids": ["LoadTextCursorTile-0", "LoadTextCursorTile-1"]}
 # <<< factory-mutation LoadTextCursorTile
+# >>> factory-mutation LoadHalfWidthTextCursorTile
+MUTATIONS["LoadHalfWidthTextCursorTile"] = {
+    "source_symbol": "LoadHalfWidthTextCursorTile",
+    "before": "LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c)\n{\n\tuint16_t hl = V0TILES0_ADDR;",
+    "after": "LoadHalfWidthTextCursorTileResult LoadHalfWidthTextCursorTile(uint8_t c)\n{\n\tuint16_t hl = (uint16_t)(V0TILES0_ADDR + 1u);",
+    "case_ids": ["LoadHalfWidthTextCursorTile-0", "LoadHalfWidthTextCursorTile-1"],
+}
+# <<< factory-mutation LoadHalfWidthTextCursorTile

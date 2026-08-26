@@ -223,4 +223,8 @@ CheckIfThereAreAnyBasicCardsInDeckResult CheckIfThereAreAnyBasicCardsInDeck(void
 typedef struct { uint8_t e; } SortCurDeckCardsByIDResult;
 SortCurDeckCardsByIDResult SortCurDeckCardsByID(void);
 /* <<< factory SortCurDeckCardsByID */
+/* >>> factory GetCardTypeIconPalette */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } GetCardTypeIconPaletteResult;
+GetCardTypeIconPaletteResult GetCardTypeIconPalette(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory GetCardTypeIconPalette */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */
