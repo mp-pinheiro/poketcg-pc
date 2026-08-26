@@ -769,6 +769,7 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define FLAG_C_490 0x10u
 #define DeckHasXCardsText 0x0068u
 #define ShufflesTheDeckText 0x0063u
+#define Drew7CardsText 0x0067u
 
 #include "home/core.h"
 #include "home/duel.h"
@@ -7659,7 +7660,7 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
  /* >>> factory PlayShuffleAndDrawCardsAnimation_TurnDuelist */
  void PlayShuffleAndDrawCardsAnimation_TurnDuelist(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
  {
- 	uint8_t shuffle = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_SHUFFLE : DUEL_ANIM_OPP_SHUFFLE;
+ 	uint8_t shuffle = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_SHUFFLE_490 : DUEL_ANIM_OPP_SHUFFLE_490;
  	uint8_t draw = (hWhoseTurn == PLAYER_TURN) ? DUEL_ANIM_PLAYER_DRAW : DUEL_ANIM_OPP_DRAW;
  	(void)a;
  	(void)f;
