@@ -2737,7 +2737,7 @@ const ProbeEntry probe_entries_core[] = {
 	{ "OpenDiscardPileScreen", adapt_OpenDiscardPileScreen },
 	{ "OpenTurnHolderHandScreen_Simple", adapt_OpenTurnHolderHandScreen_Simple },
 	{ "OpenTurnHolderDiscardPileScreen", adapt_OpenTurnHolderDiscardPileScreen },
-	{ "OpenNonTurnHolderHandScreen_Simple", adapt_OpenNonTurnHolderHandScreen_Simple },
 	{ "OpenNonTurnHolderDiscardPileScreen", adapt_OpenNonTurnHolderDiscardPileScreen },
+	{ "OpenNonTurnHolderHandScreen_Simple", adapt_OpenNonTurnHolderHandScreen_Simple },
 	{ NULL, NULL },
 };

@@ -593,6 +593,14 @@ static void adapt_HandleDeckCardSelectionList(ProbeState *s)
 }
 /* <<< factory HandleDeckCardSelectionList */
 
+/* >>> factory PrintCurDeckNumberAndName */
+static void adapt_PrintCurDeckNumberAndName(ProbeState *s)
+{
+	(void)s;
+	PrintCurDeckNumberAndName();
+}
+/* <<< factory PrintCurDeckNumberAndName */
+
 const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "DecrementDeckCardsInCollection", adapt_DecrementDeckCardsInCollection },
 	{ "AddDeckToCollection", adapt_AddDeckToCollection },
@@ -662,5 +670,6 @@ const ProbeEntry probe_entries_deck_configuration[] = {
 	{ "TryAddCardToDeck", adapt_TryAddCardToDeck },
 	{ "AddCardToDeckAndUpdateCount", adapt_AddCardToDeckAndUpdateCount },
 	{ "HandleDeckCardSelectionList", adapt_HandleDeckCardSelectionList },
+	{ "PrintCurDeckNumberAndName", adapt_PrintCurDeckNumberAndName },
 	{ NULL, NULL },
 };

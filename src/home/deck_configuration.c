@@ -305,6 +305,13 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_configuration.h"
 #include "home/deck_check.h"
 #include "home/sound.h"
+
+#include "home/deck_configuration.h"
+#include "home/process_text.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define PRINT_CUR_DECK_NAME_SUFFIX_ADDR 0x52A7u
+#define PRINT_CUR_DECK_MIDDLE_DOT 0x77u
 /* <<< factory statics */
 
 
@@ -1927,3 +1934,44 @@ HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)
 	return out;
 }
 /* <<< factory HandleDeckCardSelectionList */
+
+/* >>> factory PrintCurDeckNumberAndName */
+void PrintCurDeckNumberAndName(void)
+{
+	uint8_t current_deck = wCurDeck;
+	if (current_deck != 0xFFu) {
+		InitTextPrinting(3u, 2u);
+		uint8_t deck_numeral = current_deck;
+		if (deck_numeral & 0x80u)
+			deck_numeral = (uint8_t)(deck_numeral & 0x7Fu);
+		else
+			deck_numeral = (uint8_t)(deck_numeral + 1u);
+		ConvertToNumericalDigitsResult digits =
+			ConvertToNumericalDigits(deck_numeral, wDefaultText_ADDR);
+		gb_write8(digits.hl, PRINT_CUR_DECK_MIDDLE_DOT);
+		gb_write8((uint16_t)(digits.hl + 1u), 0u);
+		uint16_t numeral_text = wDefaultText_ADDR;
+		ProcessText(&numeral_text);
+	}
+
+	uint16_t name_src = wCurDeckName_ADDR;
+	uint16_t name_dst = wDefaultText_ADDR;
+	CopyListFromHLToDE(&name_src, &name_dst);
+
+	if (wCurDeck == 0xFFu) {
+		InitTextPrinting(2u, 2u);
+		uint16_t blank_text = wDefaultText_ADDR;
+		ProcessText(&blank_text);
+		return;
+	}
+
+	TextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);
+	uint16_t suffix_base = wDefaultText_ADDR;
+	uint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c);
+	uint16_t suffix_source = PRINT_CUR_DECK_NAME_SUFFIX_ADDR;
+	CopyListFromHLToDE(&suffix_source, &suffix_destination);
+	InitTextPrinting(6u, 2u);
+	uint16_t name_text = wDefaultText_ADDR;
+	ProcessText(&name_text);
+}
+/* <<< factory PrintCurDeckNumberAndName */

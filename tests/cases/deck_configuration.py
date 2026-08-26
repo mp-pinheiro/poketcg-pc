@@ -237,6 +237,11 @@ wUnableToScrollDown = 0xCECD
 wced2 = 0xCED2
 wVisibleCursorTile = 0xCEAA
 wMenuInputSFX = 0xCFE3
+
+wCurDeck_PCD = 0xCEB1
+wCurDeckName_PCD = 0xCFB9
+wDefaultText_PCD = 0xC590
+SETUP_PCD = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -853,6 +858,20 @@ CASES["HandleDeckCardSelectionList"] = [
 ]
 # <<< factory HandleDeckCardSelectionList
 
+# >>> factory PrintCurDeckNumberAndName
+CONTRACT["PrintCurDeckNumberAndName"] = {"compare": (), "preserve": (), "wram_out": True}
+CASES["PrintCurDeckNumberAndName"] = [
+    {"rom_bank": 2, "wram": {wCurDeck_PCD: b"\xFF", wCurDeckName_PCD: b"\x00", wDefaultText_PCD: b"\x00" * 16},
+     "setup": SETUP_PCD, "read": {wDefaultText_PCD: 1}},
+    {"rom_bank": 2, "wram": {wCurDeck_PCD: b"\x00", wCurDeckName_PCD: b"AB\x00", wDefaultText_PCD: b"\x00" * 16},
+     "setup": SETUP_PCD, "read": {wDefaultText_PCD: 8}},
+    {"rom_bank": 2, "wram": {wCurDeck_PCD: b"\x80", wCurDeckName_PCD: b"CDE\x00", wDefaultText_PCD: b"\x00" * 16},
+     "setup": SETUP_PCD, "read": {wDefaultText_PCD: 9}},
+    dict(POISON, rom_bank=2, wram={wCurDeck_PCD: b"\x01", wCurDeckName_PCD: b"XY\x00", wDefaultText_PCD: b"\x00" * 16},
+         setup=SETUP_PCD, read={wDefaultText_PCD: 8}),
+]
+# <<< factory PrintCurDeckNumberAndName
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1141,3 +1160,11 @@ MUTATIONS["AddCardToDeckAndUpdateCount"] = {"source_symbol": "AddCardToDeckAndUp
 # >>> factory-mutation HandleDeckCardSelectionList
 MUTATIONS["HandleDeckCardSelectionList"] = {"source_symbol": "HandleDeckCardSelectionList", "before": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;", "after": "HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void)\n{\n\twMenuInputSFX = FALSE;\n\twCardListCursorPos = 0x40u;", "case_ids": ["HandleDeckCardSelectionList-0", "HandleDeckCardSelectionList-2", "HandleDeckCardSelectionList-3"]}
 # <<< factory-mutation HandleDeckCardSelectionList
+# >>> factory-mutation PrintCurDeckNumberAndName
+MUTATIONS["PrintCurDeckNumberAndName"] = {
+    "source_symbol": "PrintCurDeckNumberAndName",
+    "before": "\tTextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);\n\tuint16_t suffix_base = wDefaultText_ADDR;\n\tuint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c);",
+    "after": "\tTextLength name_length = GetTextLengthInTiles(wDefaultText_ADDR);\n\tuint16_t suffix_base = wDefaultText_ADDR;\n\tuint16_t suffix_destination = (uint16_t)(suffix_base + name_length.c + 1u);",
+    "case_ids": ["PrintCurDeckNumberAndName-1", "PrintCurDeckNumberAndName-2", "PrintCurDeckNumberAndName-3"],
+}
+# <<< factory-mutation PrintCurDeckNumberAndName

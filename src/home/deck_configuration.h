@@ -252,4 +252,7 @@ AddCardToDeckAndUpdateCountResult AddCardToDeckAndUpdateCount(uint8_t e);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } HandleDeckCardSelectionListResult;
 HandleDeckCardSelectionListResult HandleDeckCardSelectionList(void);
 /* <<< factory HandleDeckCardSelectionList */
+/* >>> factory PrintCurDeckNumberAndName */
+void PrintCurDeckNumberAndName(void);
+/* <<< factory PrintCurDeckNumberAndName */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

@@ -1247,8 +1247,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_CloseTextBox", adapt_ScriptCommand_CloseTextBox },
 	{ "ScriptCommand_PrintText", adapt_ScriptCommand_PrintText },
 	{ "Func_c9c0", adapt_Func_c9c0 },
-	{ "Func_cc32", adapt_Func_cc32 },
 	{ "Script_LegendaryCardRightSpark", adapt_Script_LegendaryCardRightSpark },
 	{ "ScriptCommand_PrintNPCText", adapt_ScriptCommand_PrintNPCText },
+	{ "Func_cc32", adapt_Func_cc32 },
 	{ NULL, NULL },
 };
