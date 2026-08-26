@@ -298,6 +298,7 @@ TextResult DrawTextBox_PrintTextNoDelay(uint8_t a, uint16_t hl)
 	ProcessText(&ptr);
 	return (TextResult){0, 0, 0, d, e, ptr};
 }
+/* <<< factory DrawTextBox_PrintTextNoDelay */
 
 TextResult DrawNarrowTextBox_PrintTextNoDelay(uint16_t hl)
 {
