@@ -68,8 +68,49 @@ CASES["Script_d9ef"] = [
 ]
 # <<< factory Script_d9ef
 
+# >>> factory Script_BeatAaron
+# The routine's code is 8 bytes; `set_event_value` is `call SetStackEventValue` +
+# `db $73`, and the callee returns PAST the db to the `rst $20` at $590B that
+# starts the script bytecode. $590B is therefore the end of this routine's code,
+# and every case declares completion pre-ret there. Running past the rst enters
+# the overworld script interpreter, which needs ambient scene state a per-routine
+# probed call cannot supply -- that is scene-level replay, not a port.
+#
+# SetEventValue writes (~mask & [hl]) | ((c << tz(mask)) & mask). Verified against
+# the ROM 2026-08-26: EventVarMasks[0x73] = (offset 0x1A, mask 0x03), so the
+# shift-alignment loop runs zero times. Cases cover both mask bits, the all-clear
+# value, the 0xFF truncation, and a pre-set neighbour nibble so the ~mask
+# preservation of the untouched bits is actually observed.
+CONTRACT["Script_BeatAaron"] = {"compare": ("a", "c"), "preserve": ("b", "d", "e", "hl")}
+CASES["Script_BeatAaron"] = [
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x02",
+              EVENT_AARON_BOOSTER_REWARD: b"\x00"},
+     "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x00",
+              EVENT_AARON_BOOSTER_REWARD: b"\x03"},
+     "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
+    {"a": 0, "f": 0, "b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\x03",
+              EVENT_AARON_BOOSTER_REWARD: b"\xFC"},
+     "read": {wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}},
+    dict(POISON,
+         wram={wMultichoiceTextboxResult_ChooseDeckToDuelAgainst: b"\xFF",
+               EVENT_AARON_BOOSTER_REWARD: b"\xF0"},
+         read={wLoadedEventBits: 1, EVENT_AARON_BOOSTER_REWARD: 1}),
+]
+# <<< factory Script_BeatAaron
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES=legacy_to_schema(CASES,CONTRACT)
+# >>> factory-completion Script_BeatAaron
+# $590B is the `rst $20` that begins Script_BeatAaron's script bytecode; the
+# routine's code ends there. legacy_to_schema always emits completion "return",
+# so the split is applied after migration.
+for _rec in SCHEMA2_CASES["Script_BeatAaron"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x590B}
+# <<< factory-completion Script_BeatAaron
 MUTATIONS={"Func_d96c":{"source_symbol":"Func_d96c","before":"uint8_t offset=(uint8_t)((uint8_t)(a-2u)<<1);","after":"uint8_t offset=(uint8_t)((uint8_t)(a-1u)<<1);","case_ids":["Func_d96c-1","Func_d96c-2","Func_d96c-3"]}}
 # >>> factory-mutation DeckMachineRoomCloseTextBox
 MUTATIONS["DeckMachineRoomCloseTextBox"] = {"source_symbol": "DeckMachineRoomCloseTextBox", "before": "\tfor (uint8_t a = MAP_EVENT_FIGHTING_DECK_MACHINE; a <= MAP_EVENT_FIRE_DECK_MACHINE; a++)", "after": "\tfor (uint8_t a = MAP_EVENT_FIGHTING_DECK_MACHINE; a < MAP_EVENT_FIRE_DECK_MACHINE; a++)", "case_ids": ["DeckMachineRoomCloseTextBox-0", "DeckMachineRoomCloseTextBox-1"]}
@@ -89,3 +130,11 @@ MUTATIONS["Script_d9c2"] = {"source_symbol": "Script_d9c2", "before": "\tFuncD96
 # >>> factory-mutation Script_d9ef
 MUTATIONS["Script_d9ef"] = {"source_symbol": "Script_d9ef", "before": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(5u);", "after": "void Script_d9ef(void)\n{\n\tFuncD96cResult card = Func_d96c(6u);", "case_ids": ["Script_d9ef-0", "Script_d9ef-1"]}
 # <<< factory-mutation Script_d9ef
+# >>> factory-mutation Script_BeatAaron
+MUTATIONS["Script_BeatAaron"] = {
+    "source_symbol": "Script_BeatAaron",
+    "before": "\twritten = (uint8_t)((event & (uint8_t)~EVENT_AARON_BOOSTER_REWARD_MASK)",
+    "after": "\twritten = (uint8_t)((event & (uint8_t)EVENT_AARON_BOOSTER_REWARD_MASK)",
+    "case_ids": ["Script_BeatAaron-0", "Script_BeatAaron-1", "Script_BeatAaron-2"],
+}
+# <<< factory-mutation Script_BeatAaron

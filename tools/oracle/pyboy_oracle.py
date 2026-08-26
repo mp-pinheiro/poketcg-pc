@@ -146,6 +146,7 @@ class Oracle:
         )
         self._hit: Result | None = None
         self._armed_addr: int | None = None
+        self._armed_bank: int = 0
         self._key_timeline: list[int] = [0]
         self._baseline = io.BytesIO()
         self._reset_ram()
@@ -178,16 +179,23 @@ class Oracle:
         )
         rf.PC = SPIN
 
-    def _arm(self, addr: int = SENTINEL) -> None:
+    def _arm(self, addr: int = SENTINEL, bank: int = 0) -> None:
+        # PyBoy keys hooks on (bank, address). A hook in the switchable
+        # $4000-$7FFF window only fires while that bank is mapped, so a pre-ret
+        # completion pc in banked ROM must be registered against the routine's
+        # own bank -- registering it under bank 0 silently never fires, because
+        # bank 0 is fixed at $0000-$3FFF. The sentinel lives in WRAM, where the
+        # bank is irrelevant.
         if self._armed_addr is not None:
             try:
-                self.pyboy.hook_deregister(0, self._armed_addr)
+                self.pyboy.hook_deregister(self._armed_bank, self._armed_addr)
             except (ValueError, KeyError):
                 pass
         if addr == SENTINEL:
             self.pyboy.memory[SENTINEL] = 0x00
-        self.pyboy.hook_register(0, addr, self._capture, None)
+        self.pyboy.hook_register(bank, addr, self._capture, None)
         self._armed_addr = addr
+        self._armed_bank = bank
 
     def _reset_ram(self) -> None:
         pb = self.pyboy
@@ -278,7 +286,12 @@ class Oracle:
         rf.HL = regs.get("hl", 0)
 
         self._hit = None
-        self._arm(SENTINEL if stop_pc is None else stop_pc)
+        if stop_pc is None:
+            self._arm(SENTINEL)
+        else:
+            # Home bank ($0000-$3FFF) is always mapped; a banked stop pc must be
+            # hooked against the routine's own bank.
+            self._arm(stop_pc, 0 if stop_pc < 0x4000 else fn_bank)
         try:
             pb.hook_deregister(0, self._VBLANK_HALT)
         except (ValueError, KeyError):
