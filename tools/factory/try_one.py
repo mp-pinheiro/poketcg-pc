@@ -441,6 +441,35 @@ def _artifact_attempted_names() -> set[str]:
     return names
 
 
+def _pending_artifact_basenames() -> set[str]:
+    """Basenames with a verified artifact staged but not yet landed.
+
+    Landing such an artifact rewrites its basename's case module, so issuing a
+    sibling against the current tree wastes its candidates on a context about
+    to go stale. Green attempt state is no proxy: it persists after landing.
+    """
+    landed: set[str] = set()
+    path = common.FACTORY / "landings.jsonl"
+    if path.is_file():
+        for line in path.read_text().splitlines():
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            sha = entry.get("artifact_sha256")
+            if isinstance(sha, str):
+                landed.add(sha)
+    excluded = (landed | _quarantined_artifacts()) - heal.revoked_artifacts()
+    basenames: set[str] = set()
+    for record in workers.artifact_records():
+        if record.get("artifact_sha256") in excluded:
+            continue
+        basename = (record.get("identity") or {}).get("basename")
+        if isinstance(basename, str):
+            basenames.add(basename)
+    return basenames
+
+
 def _green_attempt_is_quarantined(fn: str, current: dict[str, Any],
                                   quarantined: set[str]) -> bool:
     if current.get("state") != "green":
@@ -637,16 +666,12 @@ def subcommand_next(count: int, retry_red: bool, retry_limit: int) -> int:
         }
         scored = list(_score_rows(pool, retry=retry_red))
         if not retry_red:
-            # A staged green artifact rewrites its basename's case module at
-            # landing, so a sibling issued now spends its candidates on a
+            # A staged, unlanded artifact rewrites its basename's case module
+            # at landing, so a sibling issued now spends its candidates on a
             # context about to go stale (44 of the last 64 stales were
             # same-basename). Stable sort: pending basenames only fill what
             # the rest of the frontier cannot.
-            pending = {
-                Path(by_name[name]["source"]).stem
-                for name, state in current.items()
-                if state["state"] == "green" and name in by_name
-            }
+            pending = _pending_artifact_basenames()
             scored.sort(key=lambda item: Path(item[1]["source"]).stem in pending)
         for cascade, row in scored:
             if prepared >= count:
