@@ -273,4 +273,7 @@ void ShowConfirmationCardScreen(void);
 /* >>> factory ShowDeckInfoHeaderAndWaitForBButton */
 void ShowDeckInfoHeaderAndWaitForBButton(void);
 /* <<< factory ShowDeckInfoHeaderAndWaitForBButton */
+/* >>> factory HandleDeckConfirmationMenu */
+void HandleDeckConfirmationMenu(void);
+/* <<< factory HandleDeckConfirmationMenu */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

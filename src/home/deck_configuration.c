@@ -328,6 +328,12 @@ static const uint8_t card_type_filters[9] = {0x01u, 0x00u, 0x03u, 0x02u, 0x04u, 
 #include "home/deck_configuration.h"
 #include "home/deck_check.h"
 #include "home/frames.h"
+
+/* poketcg.sym / poketcg.map, bank 02:
+ *   $5eaf HandleDeckConfirmationMenu.CardSelectionParams,
+ *   $5e31 UpdateConfirmationCardScreen. */
+#define DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR 0x5EAFu
+#define UPDATE_CONFIRMATION_CARD_SCREEN_ADDR 0x5E31u
 /* <<< factory statics */
 
 
@@ -2080,3 +2086,85 @@ void ShowDeckInfoHeaderAndWaitForBButton(void)
 	PlaySFXConfirmOrCancel(MENU_CANCEL);
 }
 /* <<< factory ShowDeckInfoHeaderAndWaitForBButton */
+
+/* >>> factory HandleDeckConfirmationMenu */
+/* deck_configuration.asm:2364-2438. The opening `jp z,
+ * ShowDeckInfoHeaderAndWaitForBButton` is a tail call: its `ret` returns
+ * straight to this routine's caller, so the port calls it and returns behind
+ * it. That exit leaves the callee's registers while the cancel `ret z` in
+ * .selection_made leaves a = [hffb3] = MENU_CANCEL and f = $C0; the two
+ * disagree, so the contract observes no registers.
+ *
+ * The `jr .init_params` from .selected_card re-enters past the `xor a`, so
+ * InitCardSelectionParams takes the a OpenCardPageFromCardList's .exit
+ * leaves, [wCardListCursorPos] (deck_configuration.asm:2084-2089) -- the
+ * same handoff HandleDeckMissingCardsList records. UpdateConfirmationCard
+ * Screen is only parked in wCardListUpdateFunction for CallIndirect, which
+ * this tree does not dispatch (see the note on HandleLeftRightInCardList);
+ * the two bytes stored are the real bank-2 address, so the WRAM still
+ * matches the reference. */
+void HandleDeckConfirmationMenu(void)
+{
+	if (wTotalCardCount == 0u) { /* if deck is empty, just show deck info header with empty card list */
+		ShowDeckInfoHeaderAndWaitForBButton();
+		return;
+	}
+
+	/* create list of all unique cards */
+	(void)SortCurDeckCardsByID();
+	(void)CreateCurDeckUniqueCardList();
+
+	wCardListVisibleOffset = 0u;
+	uint8_t cursor = 0u; /* the `xor a` before .init_params */
+
+	for (;;) { /* .init_params */
+		uint16_t params = DECK_CONFIRMATION_MENU_CARD_SELECTION_PARAMS_ADDR;
+
+		(void)InitCardSelectionParams(cursor, &params);
+
+		uint8_t entries = wNumUniqueCards;
+
+		wNumCardListEntries = entries;
+		if (entries >= NUM_DECK_CONFIRMATION_VISIBLE_CARDS) /* jr c, .no_cap */
+			entries = NUM_DECK_CONFIRMATION_VISIBLE_CARDS;
+		wCardListNumCursorPositions = entries;
+		wNumVisibleCardListEntries = entries;
+
+		ShowConfirmationCardScreen();
+
+		gb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_CONFIRMATION_CARD_SCREEN_ADDR);
+		gb_write8((uint16_t)(wCardListUpdateFunction_ADDR + 1u),
+			  (uint8_t)(UPDATE_CONFIRMATION_CARD_SCREEN_ADDR >> 8));
+
+		wced2 = 0u;
+
+		for (;;) { /* .loop_input */
+			DoFrame();
+			HandleDeckCardSelectionListResult selection = HandleDeckCardSelectionList();
+			if (selection.f & 0x10u) { /* .selection_made */
+				uint8_t selected = hffb3;
+
+				if (selected == MENU_CANCEL)
+					return; /* operation cancelled */
+				break;
+			}
+			if ((HandleLeftRightInCardList().f & 0x10u) != 0u)
+				continue;
+			if ((hDPadHeld & PAD_START) == 0u)
+				continue;
+			break; /* .selected_card */
+		}
+
+		PlaySFXConfirmOrCancel(MENU_CONFIRM);
+		wced7 = wCardListCursorPos;
+
+		/* set wUniqueDeckCardList as current card list
+		 * and show card page screen */
+		gb_write8(wCurCardListPtr_ADDR, (uint8_t)wUniqueDeckCardList_ADDR);
+		gb_write8((uint16_t)(wCurCardListPtr_ADDR + 1u),
+			  (uint8_t)(wUniqueDeckCardList_ADDR >> 8));
+		OpenCardPageFromCardList();
+		cursor = wCardListCursorPos; /* jr .init_params */
+	}
+}
+/* <<< factory HandleDeckConfirmationMenu */

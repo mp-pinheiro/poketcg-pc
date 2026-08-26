@@ -242,6 +242,45 @@ wCurDeck_PCD = 0xCEB1
 wCurDeckName_PCD = 0xCFB9
 wDefaultText_PCD = 0xC590
 SETUP_PCD = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
+
+wNumCardListEntries = 0xCFE6
+
+# HandleDeckConfirmationMenu (deck_configuration.asm:2364). A seed address is
+# compared as well as written, so this lists only bytes the reference and the
+# port both leave identical: state the body reads, plus buffers it overwrites
+# end to end. Nothing the reference VBlank handler touches once EnableLCD
+# raises wLCDC ($CABB, seeded 0, raised to $80 on both sides) is seeded or
+# read: wVBlankOAMCopyToggle, wFlushPaletteFlags, wVBlankCounter. rom_bank 2
+# is the bank the params table ($5EAF) lives in.
+HDCM_SEEDS = {
+    wTotalCardCount: b"\x01",  # nonzero: takes the menu path, not the empty-deck tail
+    0xCFB9: b"\x00",  # wCurDeckName empty skips the deck-name print
+    0xCABB: b"\x00",
+    hWhoseTurn: b"\xC2",  # saved and restored around SortCurDeckCardsByID
+    wCurDeckCards: b"\x01\x00",  # rewritten in place by the sort
+    wOpponentDeck: b"\x99\x00",  # sort scratch, overwritten end to end
+    wDuelTempList: b"\xFF",
+    wCardFilterCounts: b"\x00" * 9,  # PrintTotalCardCount rewrites wTotalCardCount to 0
+    wCardListUpdateFunction: b"\x00\x00",
+}
+HDCM_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# Frame one idles, frame two presses B: the MENU_CANCEL write to hffb3 that
+# the `ret z` in .selection_made returns through. A (0x01) instead falls into
+# .selected_card and re-enters .init_params forever.
+HDCM_KEYS = [0x00, 0x02]
+HDCM_READ = {
+    wCardListVisibleOffset: 1,  # cleared before .init_params; the re-entry must not clear it again
+    wCardListCursorPos: 1,
+    wCardListNumCursorPositions: 1,  # clamped to 7 by the .no_cap branch
+    hDPadHeld: 1,  # B is still held on the frame the ret fires on
+    hffb3: 1,  # MENU_CANCEL at the ret
+    wNumVisibleCardListEntries: 1,  # clamped to 7 by the .no_cap branch
+    wced2: 1,
+    wNumUniqueCards: 1,
+    wCardListUpdateFunction: 2,  # $5E31 parked for CallIndirect
+    wNumCardListEntries: 1,  # the uncapped unique count
+    hWhoseTurn: 1,
+}
 # <<< factory-cases-statics
 
 # >>> factory IncrementDeckCardsInTempCollection
@@ -941,6 +980,38 @@ CASES["ShowDeckInfoHeaderAndWaitForBButton"] = [
 ]
 # <<< factory ShowDeckInfoHeaderAndWaitForBButton
 
+# >>> factory HandleDeckConfirmationMenu
+CONTRACT["HandleDeckConfirmationMenu"] = {"compare": (), "preserve": ()}
+CASES["HandleDeckConfirmationMenu"] = [
+    # Empty deck: the `jp z` hands the whole body to
+    # ShowDeckInfoHeaderAndWaitForBButton, whose callee-`ret` returns straight
+    # to this routine's caller.
+    {"wram": {wTotalCardCount: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"},
+     "sram": {0: {}}, "keys": HDCM_KEYS, "rom_bank": 2, "setup": HDCM_SETUP,
+     "vread": {0: {0x9821: 4}},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # One-card deck: sort + unique list + one visible entry; B cancels on
+    # frame two and the `ret z` fires with hffb3 = MENU_CANCEL.
+    {"wram": {**HDCM_SEEDS}, "sram": {0: {}}, "keys": HDCM_KEYS, "rom_bank": 2,
+     "setup": HDCM_SETUP,
+     "read": {**HDCM_READ, wCurDeckCards: 2, wUniqueDeckCardList: 2},
+     "vread": {0: {0x9821: 4}},
+     "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={**HDCM_SEEDS}, sram={0: {}}, keys=HDCM_KEYS, rom_bank=2,
+         setup=HDCM_SETUP,
+         read={**HDCM_READ, wCurDeckCards: 2, wUniqueDeckCardList: 2},
+         vread={0: {0x9821: 4}},
+         instruction_budget=20000000, cycle_budget=100000000),
+    # Eight unique cards: wNumUniqueCards ($08) crosses
+    # NUM_DECK_CONFIRMATION_VISIBLE_CARDS, so .no_cap is skipped, both cursor
+    # byte stores clamp to 7 while wNumCardListEntries keeps the raw 8.
+    {"wram": {**HDCM_SEEDS, wCurDeckCards: bytes([8, 1, 2, 3, 4, 5, 6, 7, 0])},
+     "sram": {0: {}}, "keys": HDCM_KEYS, "rom_bank": 2, "setup": HDCM_SETUP,
+     "read": {**HDCM_READ, wCurDeckCards: 9, wUniqueDeckCardList: 9},
+     "instruction_budget": 20000000, "cycle_budget": 100000000},
+]
+# <<< factory HandleDeckConfirmationMenu
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1260,3 +1331,6 @@ MUTATIONS["ShowConfirmationCardScreen"] = {"source_symbol": "ShowConfirmationCar
 # >>> factory-mutation ShowDeckInfoHeaderAndWaitForBButton
 MUTATIONS["ShowDeckInfoHeaderAndWaitForBButton"] = {"source_symbol": "ShowDeckInfoHeaderAndWaitForBButton", "before": "void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\tShowDeckInfoHeader();", "after": "void ShowDeckInfoHeaderAndWaitForBButton(void)\n{\n\t(void)0;", "case_ids": ["ShowDeckInfoHeaderAndWaitForBButton-0", "ShowDeckInfoHeaderAndWaitForBButton-1"]}
 # <<< factory-mutation ShowDeckInfoHeaderAndWaitForBButton
+# >>> factory-mutation HandleDeckConfirmationMenu
+MUTATIONS["HandleDeckConfirmationMenu"] = {"source_symbol": "HandleDeckConfirmationMenu", "before": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)UPDATE_CONFIRMATION_CARD_SCREEN_ADDR);", "after": "\tgb_write8(wCardListUpdateFunction_ADDR, (uint8_t)(UPDATE_CONFIRMATION_CARD_SCREEN_ADDR + 1u));", "case_ids": ["HandleDeckConfirmationMenu-1", "HandleDeckConfirmationMenu-2", "HandleDeckConfirmationMenu-3"]}
+# <<< factory-mutation HandleDeckConfirmationMenu
