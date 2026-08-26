@@ -977,6 +977,14 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "home/menus.h"
 #define ChooseCardToDiscardFromHandText 0x0151u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/menus.h"
+#include "home/duel.h"
+#include "generated/wram.h"
+#include "generated/hram.h"
+#define ChooseAnEnergyCardText 0x0134u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7900,3 +7908,39 @@ void EnergyRetrieval_PlayerHandSelection(void)
 	hTempList = hTempCardIndex_ff98;
 }
 /* <<< factory EnergyRetrieval_PlayerHandSelection */
+
+/* >>> factory HandleEnergyCardsInDiscardPileSelection */
+HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSelection(uint16_t hl)
+{
+	hCurSelectionItem = 0u;
+	CreateEnergyCardListFromDiscardPileResult list =
+		CreateEnergyCardListFromDiscardPile_AllEnergy();
+	if ((list.f & 0x10u) == 0u) {
+		(void)DrawWideTextBox_WaitForInput(hl);
+		for (;;) {
+			(void)InitAndDrawCardListScreenLayout();
+			SetCardListHeaderText(PlayerDiscardPileText, ChooseAnEnergyCardText);
+			DisplayCardListResult display = DisplayCardList();
+			if ((display.f & 0x10u) == 0u) {
+				uint16_t position = GetNextPositionInTempList();
+				gb_write8(position, hTempCardIndex_ff98);
+				TempListResult removed = RemoveCardFromDuelTempList(hTempCardIndex_ff98);
+				if (removed.a == 0u)
+					break;
+				if (hCurSelectionItem >= 2u)
+					break;
+				continue;
+			}
+			AskWhetherToQuitSelectingCardsResult quit =
+				AskWhetherToQuitSelectingCards(2u);
+			if ((quit.f & 0x10u) != 0u)
+				continue;
+			break;
+		}
+	}
+	uint8_t a = hCurSelectionItem;
+	uint16_t position = GetNextPositionInTempList();
+	gb_write8(position, 0xffu);
+	return (HandleEnergyCardsInDiscardPileSelectionResult){a, (uint8_t)(a == 0u ? 0x80u : 0x00u), position};
+}
+/* <<< factory HandleEnergyCardsInDiscardPileSelection */

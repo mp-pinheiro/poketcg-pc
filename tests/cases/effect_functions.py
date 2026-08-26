@@ -2631,6 +2631,9 @@ hTempList = 0xFFA0
 hTempPlayAreaLocation_ff9d = 0xFF9D
 hWhoseTurn = 0xFF97
 wLoadedAttackAnimation = 0xCCB8
+
+hCurSelectionItem = 0xFFB2
+wDuelTempList = 0xC510
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5401,6 +5404,14 @@ CASES["EnergyRetrieval_PlayerHandSelection"] = [
 ]
 # <<< factory EnergyRetrieval_PlayerHandSelection
 
+# >>> factory HandleEnergyCardsInDiscardPileSelection
+CONTRACT["HandleEnergyCardsInDiscardPileSelection"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["HandleEnergyCardsInDiscardPileSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, "read": {0xFFB2: 1, 0xC510: 2}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"}, read={0xFFB2: 1, 0xC510: 2}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleEnergyCardsInDiscardPileSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7910,3 +7921,6 @@ MUTATIONS["EnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol": "Ene
 # >>> factory-mutation EnergyRetrieval_PlayerHandSelection
 MUTATIONS["EnergyRetrieval_PlayerHandSelection"] = {"source_symbol": "EnergyRetrieval_PlayerHandSelection", "before": "\thTempList = hTempCardIndex_ff98;", "after": "\thTempList = (uint8_t)(hTempCardIndex_ff98 + 1u);", "case_ids": ["EnergyRetrieval_PlayerHandSelection-0"]}
 # <<< factory-mutation EnergyRetrieval_PlayerHandSelection
+# >>> factory-mutation HandleEnergyCardsInDiscardPileSelection
+MUTATIONS["HandleEnergyCardsInDiscardPileSelection"] = {"source_symbol": "HandleEnergyCardsInDiscardPileSelection", "before": "HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSelection(uint16_t hl)\n{\n\thCurSelectionItem = 0u;", "after": "HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSelection(uint16_t hl)\n{\n\thCurSelectionItem = 1u;", "case_ids": ["HandleEnergyCardsInDiscardPileSelection-0", "HandleEnergyCardsInDiscardPileSelection-1"]}
+# <<< factory-mutation HandleEnergyCardsInDiscardPileSelection

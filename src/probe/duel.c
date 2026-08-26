@@ -1008,6 +1008,13 @@ static void adapt_DuelCheckMenu_Glossary(ProbeState *s)
 }
 /* <<< factory DuelCheckMenu_Glossary */
 
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+static void adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(ProbeState *s)
+{
+	OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(s->c);
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1130,5 +1137,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "OpenYourOrOppPlayAreaScreen_TurnHolderHand", adapt_OpenYourOrOppPlayAreaScreen_TurnHolderHand },
 	{ "DealRecoilDamageToSelf", adapt_DealRecoilDamageToSelf },
 	{ "DuelCheckMenu_Glossary", adapt_DuelCheckMenu_Glossary },
+	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile },
 	{ NULL, NULL },
 };

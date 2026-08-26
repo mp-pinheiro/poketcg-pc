@@ -3155,3 +3155,12 @@ void DuelCheckMenu_Glossary(void)
 	OpenGlossaryScreen();
 }
 /* <<< factory DuelCheckMenu_Glossary */
+
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)
+{
+	uint8_t saved_hWhoseTurn = hWhoseTurn;
+	(void)OpenNonTurnHolderDiscardPileScreen(c);
+	hWhoseTurn = saved_hWhoseTurn;
+}
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */

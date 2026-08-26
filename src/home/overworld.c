@@ -1217,3 +1217,14 @@ FuncC17aResult Func_c17a(uint16_t hl)
 	return (FuncC17aResult){result.a, result.f, result.hl};
 }
 /* <<< factory Func_c17a */
+
+/* >>> factory Func_c53d */
+void Func_c53d(void)
+{
+	wWhichSprite = wPlayerSpriteIndex;
+	if ((wPlayerCurrentlyMoving & 0x01u) != 0u)
+		Func_c687();
+	if ((wPlayerCurrentlyMoving & 0x02u) != 0u)
+		(void)Func_c6dc(0u);
+}
+/* <<< factory Func_c53d */

@@ -1650,6 +1650,10 @@ EnergyRetrieval_PlayerDiscardPileSelectionResult EnergyRetrieval_PlayerDiscardPi
 /* >>> factory EnergyRetrieval_PlayerHandSelection */
 void EnergyRetrieval_PlayerHandSelection(void);
 /* <<< factory EnergyRetrieval_PlayerHandSelection */
+/* >>> factory HandleEnergyCardsInDiscardPileSelection */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } HandleEnergyCardsInDiscardPileSelectionResult;
+HandleEnergyCardsInDiscardPileSelectionResult HandleEnergyCardsInDiscardPileSelection(uint16_t hl);
+/* <<< factory HandleEnergyCardsInDiscardPileSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

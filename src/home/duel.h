@@ -711,4 +711,7 @@ DealConfusionDamageToSelfResult DealRecoilDamageToSelf(uint8_t a, uint8_t f, uin
 /* >>> factory DuelCheckMenu_Glossary */
 void DuelCheckMenu_Glossary(void);
 /* <<< factory DuelCheckMenu_Glossary */
+/* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c);
+/* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
 #endif

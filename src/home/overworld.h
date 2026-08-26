@@ -269,4 +269,7 @@ typedef struct {
 
 FuncC17aResult Func_c17a(uint16_t hl);
 /* <<< factory Func_c17a */
+/* >>> factory Func_c53d */
+void Func_c53d(void);
+/* <<< factory Func_c53d */
 #endif /* POKETCG_HOME_OVERWORLD_H */

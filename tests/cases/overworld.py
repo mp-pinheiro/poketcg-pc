@@ -856,6 +856,15 @@ CASES["Func_c17a"] = [
 ]
 # <<< factory Func_c17a
 
+# >>> factory Func_c53d
+CONTRACT["Func_c53d"] = {"compare": ("b", "d", "e", "hl"), "preserve": ("b", "d", "e", "hl")}
+CASES["Func_c53d"] = [
+	{"wram": {0xD335: b"\x00", 0xD336: b"\x00"}, "read": {0xD4CF: 1}},
+	{"wram": {0xD335: b"\x00", 0xD336: b"\xA5"}, "read": {0xD4CF: 1}},
+	{"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xD335: b"\x00", 0xD336: b"\x5A"}, "read": {0xD4CF: 1}},
+]
+# <<< factory Func_c53d
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1179,3 +1188,6 @@ MUTATIONS["PCMenu_Glossary"] = {"source_symbol": "PCMenu_Glossary", "before": "v
 # >>> factory-mutation Func_c17a
 MUTATIONS["Func_c17a"] = {"source_symbol": "Func_c17a", "before": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode == OWMODE_SCRIPT) {", "after": "FuncC17aResult Func_c17a(uint16_t hl)\n{\n\tif (wOverworldMode != OWMODE_SCRIPT) {", "case_ids": ["Func_c17a-0", "Func_c17a-1"]}
 # <<< factory-mutation Func_c17a
+# >>> factory-mutation Func_c53d
+MUTATIONS["Func_c53d"] = {"source_symbol": "Func_c53d", "before": "void Func_c53d(void)\n{\n\twWhichSprite = wPlayerSpriteIndex;", "after": "void Func_c53d(void)\n{\n\twWhichSprite = (uint8_t)(wPlayerSpriteIndex ^ 0x01u);", "case_ids": ["Func_c53d-0", "Func_c53d-1", "Func_c53d-2"]}
+# <<< factory-mutation Func_c53d

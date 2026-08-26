@@ -1,0 +1,9 @@
+{
+  "fn": "HandleEnergyCardsInDiscardPileSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleEnergyCardsInDiscardPileSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleEnergyCardsInDiscardPileSelection\", \"mismatches\": {\"a\": [0, 1], \"f\": [128, 0], \"hl\": [65440, 65441], \"bus\": {\"address\": 65458, \"reference\": \"ff0000c201\", \"native\": \"ff0000c202\", \"reference_size\": 5, \"native_size\": 5, \"spans\": [[50448, 2], [51899, 1], [65431, 1], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleEnergyCardsInDiscardPileSelection\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 65440, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"50448\": \"ff00\", \"51899\": \"00\", \"65431\": \"c2\", \"65458\": \"01\"}}, \"status\": \"PASS\"}\n"
+}
