@@ -246,7 +246,8 @@ CASES["OverworldMap_HandleDPad"] = [
 CONTRACT["OverworldMap_HandleKeyPress"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["OverworldMap_HandleKeyPress"] = [
     {"hram": {0xFF91: b"\x00"}, "wram": {0xD32E: b"\x00", 0xD334: b"\x00"}},
-    dict(POISON, hram={0xFF91: b"\x10"}, wram={0xD32E: b"\x00", 0xD334: b"\x00"}, expect={0xD334: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=60000000, cycle_budget=240000000),
+    dict(POISON, hram={0xFF91: b"\x10"}, wram={0xD32E: b"\x00", 0xD334: b"\x00"}, expect={0xD334: b"\x01"}, oracle=False, why="D-pad input enters the whole overworld movement scene and does not return in an isolated ROM call"),
+    dict(POISON, hram={0xFF91: b"\x01"}, wram={wOverworldMapCursorSprite: b"\x03", wPlayerSpriteIndex: b"\x07", wOverworldMapStartingPosition: b"\x01", wOverworldMapSelection: b"\x01", wWhichSprite: b"\x00"}, read={wWhichSprite: 1}, expect={wWhichSprite: b"\x07"}, setup=[{"fn": "SetupText", "d": 0x30, "e": 0x7F}], instruction_budget=2000000, cycle_budget=8000000),
 ]
 # <<< factory OverworldMap_HandleKeyPress
 
@@ -320,7 +321,7 @@ MUTATIONS["OverworldMap_HandleDPad"] = {
 }
 # <<< factory-mutation OverworldMap_HandleDPad
 # >>> factory-mutation OverworldMap_HandleKeyPress
-MUTATIONS["OverworldMap_HandleKeyPress"] = {"source_symbol": "OverworldMap_HandleKeyPress", "before": "\tif ((keys & PAD_CTRL_PAD) != 0u) {", "after": "\tif ((keys & PAD_CTRL_PAD) == 0u) {", "case_ids": ["OverworldMap_HandleKeyPress-1"]}
+MUTATIONS["OverworldMap_HandleKeyPress"] = {"source_symbol": "OverworldMap_HandleKeyPress", "before": "\t} else if ((keys & PAD_A) != 0u) {", "after": "\t} else if ((keys & PAD_A) == 0u) {", "case_ids": ["OverworldMap_HandleKeyPress-2"]}
 # <<< factory-mutation OverworldMap_HandleKeyPress
 # >>> factory-mutation OverworldMap_Update
 MUTATIONS["OverworldMap_Update"] = {
