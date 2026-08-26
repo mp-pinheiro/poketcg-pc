@@ -3787,6 +3787,14 @@ static void adapt_FuryAttack_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory FuryAttack_MultiplierEffect */
 
+/* >>> factory Bonemerang_MultiplierEffect */
+static void adapt_Bonemerang_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	Bonemerang_MultiplierEffect();
+}
+/* <<< factory Bonemerang_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4247,5 +4255,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DragoniteLv45Slam_MultiplierEffect", adapt_DragoniteLv45Slam_MultiplierEffect },
 	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
 	{ "FuryAttack_MultiplierEffect", adapt_FuryAttack_MultiplierEffect },
+	{ "Bonemerang_MultiplierEffect", adapt_Bonemerang_MultiplierEffect },
 	{ NULL, NULL },
 };

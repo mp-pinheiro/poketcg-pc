@@ -7398,3 +7398,14 @@ void FuryAttack_MultiplierEffect(void)
 	SetDefiniteDamage(ATimes10(result.a));
 }
 /* <<< factory FuryAttack_MultiplierEffect */
+
+/* >>> factory Bonemerang_MultiplierEffect */
+void Bonemerang_MultiplierEffect(void)
+{
+	LoadTxRam3(30u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage_multiplier = (uint8_t)(result.a + result.a);
+	damage_multiplier = (uint8_t)(damage_multiplier + result.a);
+	SetDefiniteDamage(ATimes10(damage_multiplier));
+}
+/* <<< factory Bonemerang_MultiplierEffect */

@@ -1560,6 +1560,9 @@ void DragoniteLv45Slam_MultiplierEffect(void);
 /* >>> factory FuryAttack_MultiplierEffect */
 void FuryAttack_MultiplierEffect(void);
 /* <<< factory FuryAttack_MultiplierEffect */
+/* >>> factory Bonemerang_MultiplierEffect */
+void Bonemerang_MultiplierEffect(void);
+/* <<< factory Bonemerang_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
