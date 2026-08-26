@@ -633,7 +633,19 @@ void Music1_speed(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicSpeed_ADDR + ch), value);
 	Music1_PlayNextNote(&hl, ch);
 }
-void Music1_octave(uint16_t *hl, uint8_t ch, uint8_t idx) { (void)idx; Music1_PlayNextNote(hl, ch); }
+/* music1.asm:851-867. Reached from six table slots ($D1-$D6), so the octave
+ * comes from the COMMAND BYTE, not from the stream: the dispatcher's `pop af`
+ * restores it in `a` before `jp hl`. `and $7` then `dec a`, except channel 2
+ * which gets the `inc a` back. Consumes no stream byte. */
+void Music1_octave(uint16_t caller_stream, uint8_t ch, uint8_t cmd)
+{
+	uint16_t hl = caller_stream;
+	uint8_t oct = (uint8_t)((cmd & 0x07u) - 1u);
+	if (ch == 2u)
+		oct = (uint8_t)(oct + 1u);
+	gb_write8((uint16_t)(wMusicOctave_ADDR + ch), oct);
+	Music1_PlayNextNote(&hl, ch);
+}
 /* music1.asm:869-873. Consumes no operand, so the stream pointer reaches the
  * dispatcher unadvanced. */
 void Music1_inc_octave(uint16_t caller_stream, uint8_t ch)

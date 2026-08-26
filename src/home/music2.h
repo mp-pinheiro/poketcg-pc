@@ -36,7 +36,7 @@ void Music2_UpdateChannel4(void);
 void Music2_PlayNextNote(uint16_t *hl, uint8_t ch);
 void Music2_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch);
 void Music2_speed(uint16_t caller_stream, uint8_t ch);
-void Music2_octave(uint16_t *hl, uint8_t ch, uint8_t idx);
+void Music2_octave(uint16_t caller_stream, uint8_t ch, uint8_t cmd);
 void Music2_inc_octave(uint16_t caller_stream, uint8_t ch);
 void Music2_dec_octave(uint16_t caller_stream, uint8_t ch);
 void Music2_tie(uint16_t caller_stream, uint8_t ch);
@@ -54,11 +54,11 @@ void Music2_volume(uint16_t caller_stream, uint8_t ch);
 void Music2_wave(uint16_t caller_stream, uint8_t ch);
 void Music2_cutoff(uint16_t caller_stream, uint8_t ch);
 void Music2_echo(uint16_t caller_stream, uint8_t ch);
-void Music2_vibrato_type(uint16_t *hl, uint8_t ch);
-void Music2_vibrato_delay(uint16_t *hl, uint8_t ch);
-void Music2_pitch_offset(uint16_t *hl, uint8_t ch);
-void Music2_adjust_pitch_offset(uint16_t *hl, uint8_t ch);
-void Music2_end(uint16_t *hl, uint8_t ch);
+void Music2_vibrato_type(uint16_t caller_stream, uint8_t ch);
+void Music2_vibrato_delay(uint16_t caller_stream, uint8_t ch);
+void Music2_pitch_offset(uint16_t caller_stream, uint8_t ch);
+void Music2_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch);
+void Music2_end(uint16_t caller_stream, uint8_t ch);
 
 /* Channel output to APU. */
 void Music2_f4714(void);

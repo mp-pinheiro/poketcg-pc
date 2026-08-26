@@ -617,7 +617,19 @@ void Music2_speed(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicSpeed_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
-void Music2_octave(uint16_t *hl, uint8_t ch, uint8_t idx) { (void)idx; Music2_PlayNextNote(hl, ch); }
+/* music2.asm:851-867. Reached from six table slots ($D1-$D6), so the octave
+ * comes from the COMMAND BYTE, not from the stream: the dispatcher's `pop af`
+ * restores it in `a` before `jp hl`. `and $7` then `dec a`, except channel 2
+ * which gets the `inc a` back. Consumes no stream byte. */
+void Music2_octave(uint16_t caller_stream, uint8_t ch, uint8_t cmd)
+{
+	uint16_t hl = caller_stream;
+	uint8_t oct = (uint8_t)((cmd & 0x07u) - 1u);
+	if (ch == 2u)
+		oct = (uint8_t)(oct + 1u);
+	gb_write8((uint16_t)(wMusicOctave_ADDR + ch), oct);
+	Music2_PlayNextNote(&hl, ch);
+}
 /* music2.asm:869-873. Consumes no operand. */
 void Music2_inc_octave(uint16_t caller_stream, uint8_t ch)
 {
@@ -793,11 +805,48 @@ void Music2_echo(uint16_t caller_stream, uint8_t ch)
 	gb_write8((uint16_t)(wMusicEcho_ADDR + ch), value);
 	Music2_PlayNextNote(&hl, ch);
 }
-void Music2_vibrato_type(uint16_t *hl, uint8_t ch)  { Music2_PlayNextNote(hl, ch); }
-void Music2_vibrato_delay(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }
-void Music2_pitch_offset(uint16_t *hl, uint8_t ch)  { Music2_PlayNextNote(hl, ch); }
-void Music2_adjust_pitch_offset(uint16_t *hl, uint8_t ch) { Music2_PlayNextNote(hl, ch); }
-void Music2_end(uint16_t *hl, uint8_t ch)           { Music2_PlayNextNote(hl, ch); }
+/* music2.asm:1074-1086. One operand, written to BOTH vibrato tables. */
+void Music2_vibrato_type(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVibratoType_ADDR + ch), value);
+	gb_write8((uint16_t)(wMusicVibratoType2_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1088-1097. */
+void Music2_vibrato_delay(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicVibratoDelay_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1099-1108. */
+void Music2_pitch_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	gb_write8((uint16_t)(wMusicPitchOffset_ADDR + ch), value);
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1110-1120. `add [hl]` makes this additive against the current
+ * pitch offset rather than a plain store. */
+void Music2_adjust_pitch_offset(uint16_t caller_stream, uint8_t ch)
+{
+	uint8_t value = gb_read8(caller_stream);
+	uint16_t hl = (uint16_t)(caller_stream + 1u);
+	uint16_t addr = (uint16_t)(wMusicPitchOffset_ADDR + ch);
+	gb_write8(addr, (uint8_t)(value + gb_read8(addr)));
+	Music2_PlayNextNote(&hl, ch);
+}
+/* music2.asm:1122-1127. Clears this channel's playing flag and RETURNS to its
+ * caller (`pop hl; ret`) instead of tail-calling the dispatcher. */
+void Music2_end(uint16_t caller_stream, uint8_t ch)
+{
+	(void)caller_stream;
+	gb_write8((uint16_t)(wMusicIsPlaying_ADDR + ch), 0x00u);
+}
 
 /* ======================================================================
  * Channel updaters

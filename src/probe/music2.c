@@ -83,7 +83,7 @@ static void adapt_Music2_speed(ProbeState *s)
 { Music2_speed(s->stack[0], s->c); }
 
 static void adapt_Music2_octave(ProbeState *s)
-{ Music2_octave(&s->hl, s->a, s->b); }
+{ Music2_octave(s->stack[0], s->c, s->a); }
 
 static void adapt_Music2_inc_octave(ProbeState *s)
 { Music2_inc_octave(s->stack[0], s->c); }
@@ -137,19 +137,19 @@ static void adapt_Music2_echo(ProbeState *s)
 { Music2_echo(s->stack[0], s->c); }
 
 static void adapt_Music2_vibrato_type(ProbeState *s)
-{ Music2_vibrato_type(&s->hl, s->a); }
+{ Music2_vibrato_type(s->stack[0], s->c); }
 
 static void adapt_Music2_vibrato_delay(ProbeState *s)
-{ Music2_vibrato_delay(&s->hl, s->a); }
+{ Music2_vibrato_delay(s->stack[0], s->c); }
 
 static void adapt_Music2_pitch_offset(ProbeState *s)
-{ Music2_pitch_offset(&s->hl, s->a); }
+{ Music2_pitch_offset(s->stack[0], s->c); }
 
 static void adapt_Music2_adjust_pitch_offset(ProbeState *s)
-{ Music2_adjust_pitch_offset(&s->hl, s->a); }
+{ Music2_adjust_pitch_offset(s->stack[0], s->c); }
 
 static void adapt_Music2_end(ProbeState *s)
-{ Music2_end(&s->hl, s->a); }
+{ Music2_end(s->stack[0], s->c); }
 
 static void adapt_Music2_note(ProbeState *s)
 { Music2_note(&s->hl, s->a, s->b, s->c); }

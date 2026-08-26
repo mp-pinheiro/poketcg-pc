@@ -83,7 +83,7 @@ static void adapt_Music1_speed(ProbeState *s)
 { Music1_speed(s->stack[0], s->c); }
 
 static void adapt_Music1_octave(ProbeState *s)
-{ Music1_octave(&s->hl, s->a, s->b); }
+{ Music1_octave(s->stack[0], s->c, s->a); }
 
 static void adapt_Music1_inc_octave(ProbeState *s)
 { Music1_inc_octave(s->stack[0], s->c); }

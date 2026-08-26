@@ -36,7 +36,7 @@ void Music1_UpdateChannel4(void);
 void Music1_PlayNextNote(uint16_t *hl, uint8_t ch);
 void Music1_note(uint16_t *hl, uint8_t note, uint8_t instrument, uint8_t ch);
 void Music1_speed(uint16_t caller_stream, uint8_t ch);
-void Music1_octave(uint16_t *hl, uint8_t ch, uint8_t idx);
+void Music1_octave(uint16_t caller_stream, uint8_t ch, uint8_t cmd);
 void Music1_inc_octave(uint16_t caller_stream, uint8_t ch);
 void Music1_dec_octave(uint16_t caller_stream, uint8_t ch);
 void Music1_tie(uint16_t caller_stream, uint8_t ch);
