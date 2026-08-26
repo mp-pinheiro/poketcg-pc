@@ -4269,10 +4269,10 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PrimeapeFurySwipes_MultiplierEffect", adapt_PrimeapeFurySwipes_MultiplierEffect },
 	{ "SandslashFurySwipes_MultiplierEffect", adapt_SandslashFurySwipes_MultiplierEffect },
 	{ "DragoniteLv45Slam_MultiplierEffect", adapt_DragoniteLv45Slam_MultiplierEffect },
-	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
 	{ "FuryAttack_MultiplierEffect", adapt_FuryAttack_MultiplierEffect },
 	{ "Bonemerang_MultiplierEffect", adapt_Bonemerang_MultiplierEffect },
 	{ "CloysterSpikeCannon_MultiplierEffect", adapt_CloysterSpikeCannon_MultiplierEffect },
 	{ "NidorinaDoubleKick_MultiplierEffect", adapt_NidorinaDoubleKick_MultiplierEffect },
+	{ "CometPunch_MultiplierEffect", adapt_CometPunch_MultiplierEffect },
 	{ NULL, NULL },
 };
