@@ -141,7 +141,18 @@ static void adapt_ShowPrinterTransmitting(ProbeState *s)
 }
 /* <<< factory ShowPrinterTransmitting */
 
+
+/* >>> factory SendPrinterPacket */
+static void adapt_SendPrinterPacket(ProbeState *s)
+{
+	SendPrinterPacketResult r = SendPrinterPacket(s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory SendPrinterPacket */
+
 const ProbeEntry probe_entries_printer[] = {
+	{ "SendPrinterPacket", adapt_SendPrinterPacket },
 	{ "SendNextPrinterPacketByte", adapt_SendNextPrinterPacketByte },
 	{ "SendByteThroughSerialData", adapt_SendByteThroughSerialData },
 	{ "ExecutePrinterPacketSequence", adapt_ExecutePrinterPacketSequence },

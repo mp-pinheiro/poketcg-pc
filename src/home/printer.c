@@ -470,3 +470,51 @@ void ShowPrinterTransmitting(void)
 	EnableLCD();
 }
 /* <<< factory ShowPrinterTransmitting */
+
+/* >>> factory SendPrinterPacket */
+/* printer.asm:5-77. The hardware serial ISR normally advances the 12-state
+ * printer sequence asynchronously. The PC runtime executes that already-ported
+ * state machine synchronously; wSerialTransferData/wPrinterStatus provide the
+ * injected device responses at states 11/12. */
+SendPrinterPacketResult SendPrinterPacket(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t device_response = gb_read8(wSerialTransferData_ADDR);
+	uint8_t status_response = gb_read8(wPrinterStatus_ADDR);
+	gb_write8(wPrinterPacketPreamble_ADDR, 0x88u);
+	gb_write8((uint16_t)(wPrinterPacketPreamble_ADDR + 1u), 0x33u);
+	gb_write8(wPrinterPacketInstructions_ADDR, d);
+	gb_write8((uint16_t)(wPrinterPacketInstructions_ADDR + 1u), e);
+	gb_write8(wPrinterPacketDataSize_ADDR, c);
+	gb_write8((uint16_t)(wPrinterPacketDataSize_ADDR + 1u), b);
+	gb_write8(wPrinterPacketDataPtr_ADDR, (uint8_t)hl);
+	gb_write8((uint16_t)(wPrinterPacketDataPtr_ADDR + 1u), (uint8_t)(hl >> 8));
+	gb_write8(wPrinterPacketChecksum_ADDR, 0x45u);
+	gb_write8((uint16_t)(wPrinterPacketChecksum_ADDR + 1u), 0xFFu);
+	gb_write8(wSerialDataPtr_ADDR, (uint8_t)wPrinterPacket_ADDR);
+	gb_write8((uint16_t)(wSerialDataPtr_ADDR + 1u), (uint8_t)(wPrinterPacket_ADDR >> 8));
+	(void)Func_0e8e();
+	gb_write8(wPrinterPacketSequence_ADDR, 1u);
+	SendNextPrinterPacketByteResult first = SendNextPrinterPacketByte();
+	uint8_t step_d = first.d;
+	uint8_t step_e = first.e;
+	while (gb_read8(wPrinterPacketSequence_ADDR) != 0u) {
+		uint8_t sequence = gb_read8(wPrinterPacketSequence_ADDR);
+		if (sequence == 11u)
+			gb_write8(rSB, device_response);
+		else if (sequence == 12u)
+			gb_write8(rSB, status_response);
+		ExecutePrinterPacketSequenceResult step = ExecutePrinterPacketSequence(sequence, step_d, step_e);
+		step_d = step.d;
+		step_e = step.e;
+	}
+	ResetSerial();
+	uint8_t device = gb_read8(wSerialTransferData_ADDR);
+	if (device != 0x81u) {
+		gb_write8(wPrinterStatus_ADDR, 0xFFu);
+		return (SendPrinterPacketResult){0xFFu, 0x10u};
+	}
+	uint8_t status = gb_read8(wPrinterStatus_ADDR);
+	uint8_t f = (uint8_t)((status & 0xF1u) == 0u ? 0x80u : 0x10u);
+	return (SendPrinterPacketResult){status, f};
+}
+/* <<< factory SendPrinterPacket */
