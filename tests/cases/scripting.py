@@ -1632,12 +1632,8 @@ MUTATIONS["ScriptCommand_JumpIfCardOwned"] = {"source_symbol": "ScriptCommand_Ju
 # >>> factory-mutation ScriptCommand_WaitForSongToFinish
 MUTATIONS["ScriptCommand_WaitForSongToFinish"] = {"source_symbol": "ScriptCommand_WaitForSongToFinish", "before": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy1();", "after": "\tWaitForSongToFinish();\n\treturn IncreaseScriptPointerBy2();", "case_ids": ["ScriptCommand_WaitForSongToFinish-0", "ScriptCommand_WaitForSongToFinish-1"]}
 # <<< factory-mutation ScriptCommand_WaitForSongToFinish
-# >>> factory-mutation ScriptCommand_JumpIfEventTrue
-MUTATIONS["ScriptCommand_JumpIfEventTrue"] = {"source_symbol": "ScriptCommand_JumpIfEventTrue", "before": "if (event == 0u) return script_jump_event_fail(b, hl);", "after": "if (event != 0u) return script_jump_event_fail(b, hl);", "case_ids": ["ScriptCommand_JumpIfEventTrue-0", "ScriptCommand_JumpIfEventTrue-1", "ScriptCommand_JumpIfEventTrue-2", "ScriptCommand_JumpIfEventTrue-3"]}
-# <<< factory-mutation ScriptCommand_JumpIfEventTrue
-# >>> factory-mutation ScriptCommand_JumpIfEventFalse
-MUTATIONS["ScriptCommand_JumpIfEventFalse"] = {"source_symbol": "ScriptCommand_JumpIfEventFalse", "before": "if (event == 0u) return script_jump_event_pass(hl);", "after": "if (event != 0u) return script_jump_event_pass(hl);", "case_ids": ["ScriptCommand_JumpIfEventFalse-0", "ScriptCommand_JumpIfEventFalse-1", "ScriptCommand_JumpIfEventFalse-2", "ScriptCommand_JumpIfEventFalse-3"]}
-# <<< factory-mutation ScriptCommand_JumpIfEventFalse
+#
+#
 # >>> factory-mutation ScriptCommand_SaveGame
 MUTATIONS["ScriptCommand_SaveGame"] = {"source_symbol": "ScriptCommand_SaveGame", "before": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy3();", "case_ids": ["ScriptCommand_SaveGame-0", "ScriptCommand_SaveGame-1"]}
 # <<< factory-mutation ScriptCommand_SaveGame
