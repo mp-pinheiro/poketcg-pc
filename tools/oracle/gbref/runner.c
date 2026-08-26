@@ -726,8 +726,19 @@ int main(int argc, char **argv) {
         int boundary = gb_frame_complete(ctx);
         if (boundary) {
             gb_reset_frame(ctx);
-        } else if (!(gb_read8(ctx, 0xff40) & 0x80) && frame_cycles >= 70224u) {
+        } else if (frame_cycles >= 70224u &&
+                   (!(gb_read8(ctx, 0xff40) & 0x80) || ctx->halted)) {
             boundary = 1;
+            /* The runtime does not advance the PPU while the CPU is halted, so
+             * gb_frame_complete never fires and a `halt` waiting on VBlank
+             * (WaitForVBlank: halt / nop / cp [hl]) deadlocks with rLY frozen
+             * mid-frame. Raise the request the PPU would have raised at line
+             * 144; service_pending_interrupt then clears `halted` and dispatches
+             * the ISR. Only the halted, LCD-on case is new -- LCD-off keeps its
+             * existing synthetic boundary and running code is untouched. */
+            if (ctx->halted && (gb_read8(ctx, 0xff40) & 0x80))
+                gb_write8(ctx, 0xff0f,
+                          (uint8_t)(gb_read8(ctx, 0xff0f) | 0x01));
         }
         if (boundary) {
             frame_cycles = 0;
