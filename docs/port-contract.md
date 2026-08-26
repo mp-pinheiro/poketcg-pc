@@ -438,6 +438,33 @@ That framing is too coarse; measured, the boundary sits elsewhere.
     `ScriptCommand_*` handlers, **26 unported, 617 B**.
   Read these numbers off `site/data/inventory.json` (`functions.<Fn>.deps`), not
   off `blockers`, which `report.py` clears for anything already ported.
+- **Sweep results, and why `REFERENCE_OK` is necessary but NOT sufficient to delete a
+  stanza (2026-08-26).** Probing every `ready=True` stanza-blocked routine with
+  `setup=[{fn: SetupText, …}]` is cheap (~2 s each) and 19 of the first 40 returned
+  `REFERENCE_OK`. Deleting those 19 would have been a mistake: most of them block for
+  reasons orthogonal to termination, and the reference terminating says nothing about
+  them. Reading each stanza before acting found only **one** genuine contradiction:
+  - `ScriptCommand_WalkPlayerToMasonLaboratory` — stanza claims an *unbounded*
+    `DoFrameIfLCDEnabled` walk loop; measured **`REFERENCE_OK` after 11,559,566
+    instructions**. It completes, just expensively, so it needs a case declaring a
+    large `instruction_budget` (≥12M), not frame simulation. Stanza corrected.
+  - Genuinely unaffected by termination: `EnterScript` (ends `jp hl` into
+    `wNextScript`, a computed-jump trampoline that never returns to its caller — a
+    short `REFERENCE_OK` just means the unseeded jump happened to reach the
+    sentinel); `StartIRCommunications` (`di`, then `stop` for the CGB speed switch,
+    then raw `rJOYP`/`rRP` IR hardware — no C equivalent); `PokeBall_AddToHandEffect`
+    (mismatch is an RNG-derived byte at `$FFA0`, non-deterministic);
+    `CanArenaCardUseNonResidualAttack` (two-call structure, already root-caused);
+    `PrintVisibleDeckMachineEntries` (stack-sensitive SRAM loop);
+    `WriteCardListsTerminatorBytes` and `CreateCurDeckUniqueCardList` (both sit
+    inside the reserved `$CF00-$CFFF` window).
+  So the sweep is a good *filter* — a `BUDGET_EXHAUSTED` result confirms a
+  termination blocker and a `REFERENCE_OK` refutes one — but the stanza's own stated
+  reason decides whether the routine is portable. Three stanzas were deleted this way
+  on solid evidence (`Func_c268` pc=0x2385 → `REFERENCE_OK` 9,007 instr;
+  `DrawCollectedMedals` pc=0x238D → 6,672 instr; `InitializeInputName`
+  `REFERENCE_OK` in 155 instructions **bare**, its stanza having no basis at all).
+
 - **`SetupText` in `setup` is the single highest-yield case ingredient, and it is
   routinely mistaken for a text-pipeline defect (measured 2026-08-26).** Without it
   the reference spins in `Func_235e`'s glyph cache around `pc=0x2380-0x238C`, which
