@@ -2495,6 +2495,13 @@ static void adapt_DisplayDrawOneCardScreen(ProbeState *s)
 }
 /* <<< factory DisplayDrawOneCardScreen */
 
+/* >>> factory OppAction_PlayBasicPokemonCard */
+static void adapt_OppAction_PlayBasicPokemonCard(ProbeState *s)
+{
+	OppAction_PlayBasicPokemonCard();
+}
+/* <<< factory OppAction_PlayBasicPokemonCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2793,5 +2800,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayDrawNCardsScreen", adapt_DisplayDrawNCardsScreen },
 	{ "PlayShuffleAndDrawCardsAnimation", adapt_PlayShuffleAndDrawCardsAnimation },
 	{ "DisplayDrawOneCardScreen", adapt_DisplayDrawOneCardScreen },
+	{ "OppAction_PlayBasicPokemonCard", adapt_OppAction_PlayBasicPokemonCard },
 	{ NULL, NULL },
 };

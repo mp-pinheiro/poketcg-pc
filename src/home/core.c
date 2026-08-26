@@ -1353,6 +1353,12 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/tiles.h"
 
 #define DUEL_ANIM_BOTH_DRAW 0x55u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/duel.h"
+#define BASIC 0x00u
+#define PlacedOnTheBenchText 0x0061u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7649,3 +7655,18 @@ void DisplayDrawOneCardScreen(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_
 	DisplayDrawNCardsScreen(a, f, b, c, d, e, hl);
 }
 /* <<< factory DisplayDrawOneCardScreen */
+
+/* >>> factory OppAction_PlayBasicPokemonCard */
+void OppAction_PlayBasicPokemonCard(void)
+{
+	uint8_t card = hTemp_ffa0;
+	hTempCardIndex_ff98 = card;
+	PutHandPokemonResult placed = PutHandPokemonCardInPlayArea(card, 0u);
+	hTempPlayAreaLocation_ff9d = placed.a;
+	DuelistVarResult stage = GetTurnDuelistVariable((uint8_t)(placed.a + DUELVARS_ARENA_CARD_STAGE));
+	gb_write8(stage.hl, BASIC);
+	WaitResult displayed = DisplayCardDetailScreen(card, PlacedOnTheBenchText);
+	(void)ProcessPlayedPokemonCard(card, displayed.f, 0u, 0u, 0u, 0u, 0u);
+	DrawDuelMainScene();
+}
+/* <<< factory OppAction_PlayBasicPokemonCard */
