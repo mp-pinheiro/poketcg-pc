@@ -2390,6 +2390,16 @@ static void adapt_Func_5542(ProbeState *s)
 }
 /* <<< factory Func_5542 */
 
+/* >>> factory CheckIfCanDamageDefendingPokemon */
+static void adapt_CheckIfCanDamageDefendingPokemon(ProbeState *s)
+{
+	CheckIfCanDamageDefendingPokemonResult r =
+		CheckIfCanDamageDefendingPokemon(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory CheckIfCanDamageDefendingPokemon */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2675,5 +2685,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayOpponentUsedAttackScreen", adapt_DisplayOpponentUsedAttackScreen },
 	{ "DisplayCardList", adapt_DisplayCardList },
 	{ "Func_5542", adapt_Func_5542 },
+	{ "CheckIfCanDamageDefendingPokemon", adapt_CheckIfCanDamageDefendingPokemon },
 	{ NULL, NULL },
 };

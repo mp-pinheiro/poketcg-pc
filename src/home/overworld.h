@@ -218,4 +218,7 @@ void Func_c891(uint16_t hl);
 /* >>> factory ReturnToOverworld */
 uint8_t ReturnToOverworld(void);
 /* <<< factory ReturnToOverworld */
+/* >>> factory CloseAdvancedDialogueBox */
+void CloseAdvancedDialogueBox(void);
+/* <<< factory CloseAdvancedDialogueBox */
 #endif /* POKETCG_HOME_OVERWORLD_H */

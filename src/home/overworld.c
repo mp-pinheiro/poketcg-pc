@@ -181,6 +181,8 @@
 #include "home/npc_core.h"
 #define HIDE_ALL_NPC_SPRITES 0x07u
 #define PLAYER_TURN 0xC2u
+
+#define RESTORE_FACING_DIRECTION 0x01u
 /* <<< factory statics */
 
 /* >>> factory Func_c6cc */
@@ -1044,3 +1046,19 @@ uint8_t ReturnToOverworld(void)
 	return FadeScreenFromWhite();
 }
 /* <<< factory ReturnToOverworld */
+
+/* >>> factory CloseAdvancedDialogueBox */
+void CloseAdvancedDialogueBox(void)
+{
+	uint8_t flags = wOverworldNPCFlags;
+	if (flags & (uint8_t)(1u << AUTO_CLOSE_TEXTBOX))
+		CloseTextBox();
+	flags = wOverworldNPCFlags;
+	if (flags & (uint8_t)(1u << RESTORE_FACING_DIRECTION)) {
+		wLoadedNPCTempIndex = wScriptNPC;
+		(void)Func_1c5e9();
+	}
+	wOverworldNPCFlags = 0u;
+	wOverworldMode = wOverworldModeBackup;
+}
+/* <<< factory CloseAdvancedDialogueBox */

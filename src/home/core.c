@@ -1318,6 +1318,11 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "home/frames.h"
 #include "home/lcd.h"
 #include "home/menus.h"
+
+#include "home/damage_calculation.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7223,3 +7228,56 @@ Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, 
 	return (Func5542Result){display.a, discard.b, discard.c, discard.d, discard.e, display.f, discard.hl};
 }
 /* <<< factory Func_5542 */
+
+/* >>> factory CheckIfCanDamageDefendingPokemon */
+/* core.asm:2310-2355. Stores the caller's a in hTempPlayAreaLocation_ff9d, tries
+ * the first attack and, failing that, the second one, and reports in a the damage
+ * the last EstimateDamage_VersusDefendingCard left in wDamage. The body itself
+ * touches no register but a -- b/c/d/e/hl only travel from one callee to the next,
+ * and neither their values nor d's are part of what this routine computes -- and
+ * both exits are plain flag work: `or a` on the fallthrough, `scf` as soon as
+ * either attack deals damage. a and the flags are the whole output contract. */
+CheckIfCanDamageDefendingPokemonResult CheckIfCanDamageDefendingPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	hTempPlayAreaLocation_ff9d = a;
+	wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+	/* `xor a` hands the call a = 0 with Z set. */
+	CheckIfSelectedAttackIsUnusableResult first =
+		CheckIfSelectedAttackIsUnusable(FIRST_ATTACK_OR_PKMN_POWER, 0x80u, b, c, d, e, hl);
+	a = first.a;
+	f = first.f;
+	b = first.b;
+	c = first.c;
+	d = first.d;
+	e = first.e;
+	hl = first.hl;
+	if ((f & 0x10u) == 0u) {
+		DamageCalculationResult estimate =
+			EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
+		d = estimate.d;
+		e = estimate.e;
+		hl = estimate.hl;
+		a = wDamage;
+		if (a != 0u)
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u};
+		f = 0x80u; /* `or a` on a zero damage byte */
+	}
+
+	/* .second_attack */
+	wSelectedAttack = SECOND_ATTACK;
+	CheckIfSelectedAttackIsUnusableResult second =
+		CheckIfSelectedAttackIsUnusable(SECOND_ATTACK, f, b, c, d, e, hl);
+	a = second.a;
+	f = second.f;
+	if ((f & 0x10u) == 0u) {
+		(void)EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+		a = wDamage;
+		if (a != 0u)
+			return (CheckIfCanDamageDefendingPokemonResult){a, 0x10u};
+	}
+
+	/* .no_carry */
+	f = (a == 0u) ? 0x80u : 0x00u;
+	return (CheckIfCanDamageDefendingPokemonResult){a, f};
+}
+/* <<< factory CheckIfCanDamageDefendingPokemon */

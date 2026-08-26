@@ -775,6 +775,15 @@ CASES["ReturnToOverworld"] = [
 ]
 # <<< factory ReturnToOverworld
 
+# >>> factory CloseAdvancedDialogueBox
+CONTRACT["CloseAdvancedDialogueBox"] = {"compare": (), "preserve": ()}
+CASES["CloseAdvancedDialogueBox"] = [
+	{"wram": {0xD0C1: b"\x00", 0xD0C0: b"\x00", 0xD0BF: b"\x00"}, "read": {0xD0C1: 1, 0xD0BF: 1}},
+	{"wram": {0xD0C1: b"\x00", 0xD0C0: b"\x5A", 0xD0BF: b"\x00"}, "read": {0xD0C1: 1, 0xD0BF: 1}},
+	dict(POISON, wram={0xD0C1: b"\x00", 0xD0C0: b"\xA5", 0xD0BF: b"\x11"}, read={0xD0C1: 1, 0xD0BF: 1}),
+]
+# <<< factory CloseAdvancedDialogueBox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_c141
@@ -1071,3 +1080,6 @@ MUTATIONS["Func_c891"] = {"source_symbol": "Func_c891", "before": "void Func_c89
 # >>> factory-mutation ReturnToOverworld
 MUTATIONS["ReturnToOverworld"] = {"source_symbol": "ReturnToOverworld", "before": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = PLAYER_TURN;", "after": "uint8_t ReturnToOverworld(void)\n{\n\tDisableLCD();\n\tSet_OBJ_8x8();\n\tEnableAndClearSpriteAnimations();\n\tFunc_12bcd();\n\thWhoseTurn = 0x00u;", "case_ids": ["ReturnToOverworld-0", "ReturnToOverworld-1", "ReturnToOverworld-2"]}
 # <<< factory-mutation ReturnToOverworld
+# >>> factory-mutation CloseAdvancedDialogueBox
+MUTATIONS["CloseAdvancedDialogueBox"] = {"source_symbol": "CloseAdvancedDialogueBox", "before": "\twOverworldNPCFlags = 0u;\n\twOverworldMode = wOverworldModeBackup;", "after": "\twOverworldNPCFlags = 0xFFu;\n\twOverworldMode = wOverworldModeBackup;", "case_ids": ["CloseAdvancedDialogueBox-0", "CloseAdvancedDialogueBox-1", "CloseAdvancedDialogueBox-2"]}
+# <<< factory-mutation CloseAdvancedDialogueBox

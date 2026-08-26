@@ -1277,6 +1277,22 @@ CASES["ScriptCommand_CloseTextBox"] = [
 ]
 # <<< factory ScriptCommand_CloseTextBox
 
+# >>> factory ScriptCommand_PrintText
+CONTRACT["ScriptCommand_PrintText"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_PrintText"] = [
+    {"b": 0x01, "c": 0xDB, "wram": {0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", wScriptPointer: b"\x00\xC1"},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000,
+     "read": {wScriptPointer: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+     "vread": {0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}},
+    dict(POISON, b=0x01, c=0xDC, wram={0xD0C1: b"\x00", 0xD3B9: b"\x00\x00", 0xCABB: b"\x00", wScriptPointer: b"\x00\xC1"},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000,
+         read={wScriptPointer: 2, 0xC620: 4, 0xC720: 4, 0xC820: 4, 0xC920: 4},
+         vread={0: {0x8000: 0x1000, 0x9000: 0x800, 0x9800: 0x400}, 1: {0x9800: 0x400}}),
+]
+# <<< factory ScriptCommand_PrintText
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -1936,3 +1952,6 @@ for _rec, (_map, _comp) in zip(SCHEMA2_CASES["Func_c9b8"], _C9B8_SEEDS):
 # >>> factory-mutation ScriptCommand_CloseTextBox
 MUTATIONS["ScriptCommand_CloseTextBox"] = {"source_symbol": "ScriptCommand_CloseTextBox", "before": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\tCloseTextBox();", "after": "IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)\n{\n\t(void)0;", "case_ids": ["ScriptCommand_CloseTextBox-0", "ScriptCommand_CloseTextBox-2"]}
 # <<< factory-mutation ScriptCommand_CloseTextBox
+# >>> factory-mutation ScriptCommand_PrintText
+MUTATIONS["ScriptCommand_PrintText"] = {"source_symbol": "ScriptCommand_PrintText", "before": "IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);", "after": "IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)\n{\n\tuint16_t text_pointer = 0u;", "case_ids": ["ScriptCommand_PrintText-0", "ScriptCommand_PrintText-1"]}
+# <<< factory-mutation ScriptCommand_PrintText

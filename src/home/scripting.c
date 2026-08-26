@@ -1777,3 +1777,13 @@ IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_CloseTextBox */
+
+/* >>> factory ScriptCommand_PrintText */
+/* scripting.asm:674-681 */
+IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c)
+{
+	uint16_t text_pointer = (uint16_t)(((uint16_t)b << 8) | c);
+	Func_c891(text_pointer);
+	return IncreaseScriptPointerBy3();
+}
+/* <<< factory ScriptCommand_PrintText */

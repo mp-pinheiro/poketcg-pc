@@ -496,6 +496,13 @@ static void adapt_ReturnToOverworld(ProbeState *s)
 }
 /* <<< factory ReturnToOverworld */
 
+/* >>> factory CloseAdvancedDialogueBox */
+static void adapt_CloseAdvancedDialogueBox(ProbeState *s)
+{
+	CloseAdvancedDialogueBox();
+}
+/* <<< factory CloseAdvancedDialogueBox */
+
 const ProbeEntry probe_entries_overworld[] = {
 	{ "Func_c141", adapt_Func_c141 },
 	{ "Func_c6cc", adapt_Func_c6cc },
@@ -557,5 +564,6 @@ const ProbeEntry probe_entries_overworld[] = {
 	{ "CloseTextBox", adapt_CloseTextBox },
 	{ "Func_c891", adapt_Func_c891 },
 	{ "ReturnToOverworld", adapt_ReturnToOverworld },
+	{ "CloseAdvancedDialogueBox", adapt_CloseAdvancedDialogueBox },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "CheckIfCanDamageDefendingPokemon",
+  "case": "tests/cases/core.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CheckIfCanDamageDefendingPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CheckIfCanDamageDefendingPokemon\", \"mismatches\": {\"f\": [128, 0]}}\n",
+  "restored": "{\"fn\": \"CheckIfCanDamageDefendingPokemon\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49851\": \"00\", \"50176\": \"08\", \"52259\": \"00\", \"52422\": \"01\", \"65431\": \"c2\", \"65437\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

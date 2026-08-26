@@ -1,0 +1,9 @@
+{
+  "fn": "CloseAdvancedDialogueBox",
+  "case": "tests/cases/overworld.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"CloseAdvancedDialogueBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"CloseAdvancedDialogueBox\", \"mismatches\": {\"bus\": {\"address\": 53441, \"reference\": \"000000\", \"native\": \"0000ff\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[53439, 3]]}}}\n",
+  "restored": "{\"fn\": \"CloseAdvancedDialogueBox\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 3, \"sram\": {}, \"vram\": {}, \"wram\": {\"53439\": \"000000\"}}, \"status\": \"PASS\"}\n"
+}

@@ -3727,6 +3727,16 @@ CASES["Func_5542"] = [
 ]
 # <<< factory Func_5542
 
+# >>> factory CheckIfCanDamageDefendingPokemon
+CONTRACT["CheckIfCanDamageDefendingPokemon"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["CheckIfCanDamageDefendingPokemon"] = [
+    {"a": 0x00, "wram": {0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
+     "sram": {0: {}}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xFF9D: b"\x00", 0xC2BB: b"\x00", 0xC400: b"\x08", 0xCCC6: b"\x00", 0xCC23: b"\x00"},
+         sram={0: {}}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory CheckIfCanDamageDefendingPokemon
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5231,3 +5241,11 @@ MUTATIONS["DisplayCardList"] = {"source_symbol": "DisplayCardList", "before": "\
 # >>> factory-mutation Func_5542
 MUTATIONS["Func_5542"] = {"source_symbol": "Func_5542", "before": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList(c);", "after": "Func5542Result Func_5542(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f, uint16_t hl)\n{\n\tCardListResult discard = CreateDiscardPileCardList((uint8_t)(c + 1u));", "case_ids": ["Func_5542-0", "Func_5542-1"]}
 # <<< factory-mutation Func_5542
+# >>> factory-mutation CheckIfCanDamageDefendingPokemon
+MUTATIONS["CheckIfCanDamageDefendingPokemon"] = {
+    "source_symbol": "CheckIfCanDamageDefendingPokemon",
+    "before": "\tf = (a == 0u) ? 0x80u : 0x00u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f};",
+    "after": "\tf = (a == 0u) ? 0x00u : 0x80u;\n\treturn (CheckIfCanDamageDefendingPokemonResult){a, f};",
+    "case_ids": ["CheckIfCanDamageDefendingPokemon-0"],
+}
+# <<< factory-mutation CheckIfCanDamageDefendingPokemon

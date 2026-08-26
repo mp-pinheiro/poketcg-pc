@@ -810,6 +810,15 @@ CASES["CreateCurDeckUniqueCardList"] = [
 ]
 # <<< factory CreateCurDeckUniqueCardList
 
+# >>> factory TryAddCardToDeck
+CONTRACT["TryAddCardToDeck"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["TryAddCardToDeck"] = [
+    {"wram": {0xCECC: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
+    {"e": 0x01, "wram": {0xCECC: b"\x00"}, "expect_regs": {"a": 0x00, "f": 0x90}},
+    dict(POISON, e=0xE4, wram={0xCECC: b"\x00"}, expect_regs={"a": 0x00, "f": 0x90}),
+]
+# <<< factory TryAddCardToDeck
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1089,3 +1098,6 @@ MUTATIONS["PrintConfirmationCardList"] = {"source_symbol": "PrintConfirmationCar
 # >>> factory-mutation CreateCurDeckUniqueCardList
 MUTATIONS["CreateCurDeckUniqueCardList"] = {"source_symbol": "CreateCurDeckUniqueCardList", "before": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 0u;", "after": "CreateCurDeckUniqueCardListResult CreateCurDeckUniqueCardList(void)\n{\n\tuint8_t count = 1u;", "case_ids": ["CreateCurDeckUniqueCardList-0", "CreateCurDeckUniqueCardList-1"]}
 # <<< factory-mutation CreateCurDeckUniqueCardList
+# >>> factory-mutation TryAddCardToDeck
+MUTATIONS["TryAddCardToDeck"] = {"source_symbol": "TryAddCardToDeck", "before": "\treturn (TryAddCardToDeckResult){0u, 0x90u};", "after": "\treturn (TryAddCardToDeckResult){0u, 0u};", "case_ids": ["TryAddCardToDeck-0", "TryAddCardToDeck-1", "TryAddCardToDeck-2"]}
+# <<< factory-mutation TryAddCardToDeck

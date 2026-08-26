@@ -522,4 +522,8 @@ CallMapScriptResult Func_c9b8(void);
 /* >>> factory ScriptCommand_CloseTextBox */
 IncreaseScriptPointerResult ScriptCommand_CloseTextBox(void);
 /* <<< factory ScriptCommand_CloseTextBox */
+/* >>> factory ScriptCommand_PrintText */
+/* poketcg/src/engine/overworld/scripting.asm */
+IncreaseScriptPointerResult ScriptCommand_PrintText(uint8_t b, uint8_t c);
+/* <<< factory ScriptCommand_PrintText */
 #endif

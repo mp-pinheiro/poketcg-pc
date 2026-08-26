@@ -1094,6 +1094,16 @@ static void adapt_ScriptCommand_CloseTextBox(ProbeState *s)
 }
 /* <<< factory ScriptCommand_CloseTextBox */
 
+/* >>> factory ScriptCommand_PrintText */
+static void adapt_ScriptCommand_PrintText(ProbeState *s)
+{
+	IncreaseScriptPointerResult result = ScriptCommand_PrintText(s->b, s->c);
+	s->a = result.a;
+	s->f = result.f;
+	s->c = result.c;
+}
+/* <<< factory ScriptCommand_PrintText */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1201,5 +1211,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9c7", adapt_Func_c9c7 },
 	{ "Func_c9b8", adapt_Func_c9b8 },
 	{ "ScriptCommand_CloseTextBox", adapt_ScriptCommand_CloseTextBox },
+	{ "ScriptCommand_PrintText", adapt_ScriptCommand_PrintText },
 	{ NULL, NULL },
 };
