@@ -1,0 +1,9 @@
+{
+  "fn": "Music1_jp",
+  "case": "tests/cases/music1.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music1_jp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"10c1\", \"49424\": \"e65aff\", \"56717\": \"00010101\", \"56807\": \"5a000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music1_jp\", \"mismatches\": {\"bus\": {\"address\": 56717, \"reference\": \"c1e65aff000101015a\", \"native\": \"c1e65aff0101010100\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[49408, 2], [49424, 3], [56717, 4], [56807, 4]]}}}\n",
+  "restored": "{\"fn\": \"Music1_jp\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49408\": \"10c1\", \"49424\": \"e65aff\", \"56717\": \"00010101\", \"56807\": \"5a000000\"}}, \"status\": \"PASS\"}\n"
+}

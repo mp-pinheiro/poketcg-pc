@@ -1,0 +1,9 @@
+{
+  "fn": "Music2_EndMainLoop",
+  "case": "tests/cases/music2.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"Music2_EndMainLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"e65aff\", \"56717\": \"00010101\", \"56733\": \"10c1\", \"56807\": \"5a000000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"Music2_EndMainLoop\", \"mismatches\": {\"bus\": {\"address\": 56717, \"reference\": \"e65aff0001010110\", \"native\": \"e65aff0101010110\", \"reference_size\": 13, \"native_size\": 13, \"spans\": [[49424, 3], [56717, 4], [56733, 2], [56807, 4]]}}}\n",
+  "restored": "{\"fn\": \"Music2_EndMainLoop\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 62, \"sram\": {}, \"vram\": {}, \"wram\": {\"49424\": \"e65aff\", \"56717\": \"00010101\", \"56733\": \"10c1\", \"56807\": \"5a000000\"}}, \"status\": \"PASS\"}\n"
+}
