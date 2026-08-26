@@ -7373,3 +7373,16 @@ void SandslashFurySwipes_MultiplierEffect(void)
 	SetDefiniteDamage(damage);
 }
 /* <<< factory SandslashFurySwipes_MultiplierEffect */
+
+/* >>> factory DragoniteLv45Slam_MultiplierEffect */
+void DragoniteLv45Slam_MultiplierEffect(void)
+{
+	LoadTxRam3(40u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(2u, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 0u);
+	uint8_t damage = result.a;
+	damage += damage;
+	damage += damage;
+	damage = ATimes10(damage);
+	SetDefiniteDamage(damage);
+}
+/* <<< factory DragoniteLv45Slam_MultiplierEffect */

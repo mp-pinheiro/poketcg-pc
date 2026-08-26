@@ -3771,6 +3771,14 @@ static void adapt_SandslashFurySwipes_MultiplierEffect(ProbeState *s)
 }
 /* <<< factory SandslashFurySwipes_MultiplierEffect */
 
+/* >>> factory DragoniteLv45Slam_MultiplierEffect */
+static void adapt_DragoniteLv45Slam_MultiplierEffect(ProbeState *s)
+{
+	(void)s;
+	DragoniteLv45Slam_MultiplierEffect();
+}
+/* <<< factory DragoniteLv45Slam_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4229,5 +4237,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PinMissile_MultiplierEffect", adapt_PinMissile_MultiplierEffect },
 	{ "PrimeapeFurySwipes_MultiplierEffect", adapt_PrimeapeFurySwipes_MultiplierEffect },
 	{ "SandslashFurySwipes_MultiplierEffect", adapt_SandslashFurySwipes_MultiplierEffect },
+	{ "DragoniteLv45Slam_MultiplierEffect", adapt_DragoniteLv45Slam_MultiplierEffect },
 	{ NULL, NULL },
 };

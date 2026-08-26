@@ -1554,6 +1554,9 @@ void PrimeapeFurySwipes_MultiplierEffect(void);
 /* >>> factory SandslashFurySwipes_MultiplierEffect */
 void SandslashFurySwipes_MultiplierEffect(void);
 /* <<< factory SandslashFurySwipes_MultiplierEffect */
+/* >>> factory DragoniteLv45Slam_MultiplierEffect */
+void DragoniteLv45Slam_MultiplierEffect(void);
+/* <<< factory DragoniteLv45Slam_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
