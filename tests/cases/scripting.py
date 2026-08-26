@@ -1184,6 +1184,27 @@ CASES["ScriptCommand_AskQuestionJumpDefaultYes"] = [
 ]
 # <<< factory ScriptCommand_AskQuestionJumpDefaultYes
 
+
+# >>> factory ScriptCommand_JumpIfEventTrue
+CONTRACT["ScriptCommand_JumpIfEventTrue"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEventTrue"] = [
+    {"b": 0x42, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x00", wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC502: b"\x00\x00"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC502: b"\x34\x12"}, "read": {wScriptPointer: 2}},
+    dict(POISON, b=0x80, c=0x00, wram={0xD411: b"\x80", wScriptPointer: b"\x00\xC5", 0xC502: b"\x00\x00"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEventTrue
+
+# >>> factory ScriptCommand_JumpIfEventFalse
+CONTRACT["ScriptCommand_JumpIfEventFalse"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ("d", "e")}
+CASES["ScriptCommand_JumpIfEventFalse"] = [
+    {"b": 0x42, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x80", wScriptPointer: b"\x00\xC5"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x00", wScriptPointer: b"\x00\xC5", 0xC502: b"\x00\x00"}, "read": {wScriptPointer: 2}},
+    {"b": 0x80, "c": 0x00, "hl": 0x4567, "wram": {0xD411: b"\x00", wScriptPointer: b"\x00\xC5", 0xC502: b"\x34\x12"}, "read": {wScriptPointer: 2}},
+    dict(POISON, b=0x80, c=0x00, wram={0xD411: b"\x00", wScriptPointer: b"\x00\xC5", 0xC502: b"\x00\x00"}, read={wScriptPointer: 2}),
+]
+# <<< factory ScriptCommand_JumpIfEventFalse
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1634,6 +1655,12 @@ MUTATIONS["ScriptCommand_WaitForSongToFinish"] = {"source_symbol": "ScriptComman
 # <<< factory-mutation ScriptCommand_WaitForSongToFinish
 #
 #
+# >>> factory-mutation ScriptCommand_JumpIfEventTrue
+MUTATIONS["ScriptCommand_JumpIfEventTrue"] = {"source_symbol": "ScriptCommand_JumpIfEventTrue", "before": "if (event == 0u) return script_jump_event_fail(b, hl);", "after": "if (event != 0u) return script_jump_event_fail(b, hl);", "case_ids": ["ScriptCommand_JumpIfEventTrue-0", "ScriptCommand_JumpIfEventTrue-1", "ScriptCommand_JumpIfEventTrue-2", "ScriptCommand_JumpIfEventTrue-3"]}
+# <<< factory-mutation ScriptCommand_JumpIfEventTrue
+# >>> factory-mutation ScriptCommand_JumpIfEventFalse
+MUTATIONS["ScriptCommand_JumpIfEventFalse"] = {"source_symbol": "ScriptCommand_JumpIfEventFalse", "before": "if (event == 0u) return script_jump_event_pass(hl);", "after": "if (event != 0u) return script_jump_event_pass(hl);", "case_ids": ["ScriptCommand_JumpIfEventFalse-0", "ScriptCommand_JumpIfEventFalse-1", "ScriptCommand_JumpIfEventFalse-2", "ScriptCommand_JumpIfEventFalse-3"]}
+# <<< factory-mutation ScriptCommand_JumpIfEventFalse
 # >>> factory-mutation ScriptCommand_SaveGame
 MUTATIONS["ScriptCommand_SaveGame"] = {"source_symbol": "ScriptCommand_SaveGame", "before": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy2();", "after": "\t_SaveGame(c);\n\treturn IncreaseScriptPointerBy3();", "case_ids": ["ScriptCommand_SaveGame-0", "ScriptCommand_SaveGame-1"]}
 # <<< factory-mutation ScriptCommand_SaveGame

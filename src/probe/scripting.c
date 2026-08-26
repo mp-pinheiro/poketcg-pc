@@ -623,6 +623,30 @@ static void adapt_ScriptCommand_JumpIfEventNonzero(ProbeState *s)
 }
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
 
+/* >>> factory ScriptCommand_JumpIfEventTrue */
+static void adapt_ScriptCommand_JumpIfEventTrue(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventTrueResult r = ScriptCommand_JumpIfEventTrue(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventTrue */
+
+/* >>> factory ScriptCommand_JumpIfEventFalse */
+static void adapt_ScriptCommand_JumpIfEventFalse(ProbeState *s)
+{
+	ScriptCommand_JumpIfEventTrueResult r = ScriptCommand_JumpIfEventFalse(s->b, s->c, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->hl = r.hl;
+}
+/* <<< factory ScriptCommand_JumpIfEventFalse */
+
 
 
 /* >>> factory ScriptCommand_IncrementEventValue */
@@ -1055,6 +1079,8 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "ScriptCommand_JumpIfEventLessThan", adapt_ScriptCommand_JumpIfEventLessThan },
 	{ "ScriptCommand_JumpIfEventNotEqual", adapt_ScriptCommand_JumpIfEventNotEqual },
 	{ "ScriptCommand_JumpIfEventNonzero", adapt_ScriptCommand_JumpIfEventNonzero },
+	{ "ScriptCommand_JumpIfEventTrue", adapt_ScriptCommand_JumpIfEventTrue },
+	{ "ScriptCommand_JumpIfEventFalse", adapt_ScriptCommand_JumpIfEventFalse },
 	{ "ScriptCommand_IncrementEventValue", adapt_ScriptCommand_IncrementEventValue },
 	{ "ScriptCommand_JumpIfPlayerCoordsMatch", adapt_ScriptCommand_JumpIfPlayerCoordsMatch },
 	{ "ScriptCommand_JumpIfActiveNPCCoordsMatch", adapt_ScriptCommand_JumpIfActiveNPCCoordsMatch },

@@ -1064,6 +1064,46 @@ ScriptCommand_JumpIfEventZeroResult ScriptCommand_JumpIfEventNonzero(uint8_t b, 
 }
 /* <<< factory ScriptCommand_JumpIfEventNonzero */
 
+/* >>> factory ScriptCommand_JumpIfEventTrue */
+/* scripting.asm:1990-2012. The pair jumps into each other's sub-labels rather
+ * than calling each other's entry points, so the two shared blocks are static
+ * helpers here and each entry point selects between them. */
+static ScriptCommand_JumpIfEventTrueResult script_jump_event_pass(uint16_t hl)
+{
+	(void)SetScriptControlBytePass();
+	GetScriptArgsAfterPointerResult args = GetScriptArgs2AfterPointer();
+	if (args.f & 0x80u) {
+		IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+		return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, args.b, r.c, hl};
+	}
+	uint16_t next_hl = SetScriptPointer((uint16_t)(((uint16_t)args.b << 8) | args.c));
+	return (ScriptCommand_JumpIfEventTrueResult){args.a, args.f, args.b, args.c, next_hl};
+}
+
+static ScriptCommand_JumpIfEventTrueResult script_jump_event_fail(uint8_t b, uint16_t hl)
+{
+	(void)SetScriptControlByteFail();
+	IncreaseScriptPointerResult r = IncreaseScriptPointerBy4();
+	return (ScriptCommand_JumpIfEventTrueResult){r.a, r.f, b, r.c, hl};
+}
+
+ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventTrue(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t event = GetEventValue(c);
+	if (event == 0u) return script_jump_event_fail(b, hl);
+	return script_jump_event_pass(hl);
+}
+/* <<< factory ScriptCommand_JumpIfEventTrue */
+
+/* >>> factory ScriptCommand_JumpIfEventFalse */
+ScriptCommand_JumpIfEventTrueResult ScriptCommand_JumpIfEventFalse(uint8_t b, uint8_t c, uint16_t hl)
+{
+	uint8_t event = GetEventValue(c);
+	if (event == 0u) return script_jump_event_pass(hl);
+	return script_jump_event_fail(b, hl);
+}
+/* <<< factory ScriptCommand_JumpIfEventFalse */
+
 
 
 /* >>> factory ScriptCommand_IncrementEventValue */
