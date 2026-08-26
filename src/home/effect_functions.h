@@ -1502,6 +1502,9 @@ uint8_t ClefableMetronome_UseAttackEffect(void);
 typedef struct { uint8_t a; uint8_t f; } Curse_PlayerSelectEffectResult;
 Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void);
 /* <<< factory Curse_PlayerSelectEffect */
+/* >>> factory MrFuji_ReturnToDeckEffect */
+ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
+/* <<< factory MrFuji_ReturnToDeckEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

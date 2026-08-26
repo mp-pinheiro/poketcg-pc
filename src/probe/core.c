@@ -2277,6 +2277,20 @@ static void adapt_PracticeDuel_PrintTurnInstructions(ProbeState *s)
 }
 /* <<< factory PracticeDuel_PrintTurnInstructions */
 
+/* >>> factory Func_5a81 */
+static void adapt_Func_5a81(ProbeState *s)
+{
+	Func5a81Result result = Func_5a81(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory Func_5a81 */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "ApplyCardCGBAttributes", adapt_ApplyCardCGBAttributes },
 	{ "CheckIfEnoughEnergiesToRetreat", adapt_CheckIfEnoughEnergiesToRetreat },
@@ -2550,5 +2564,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "DisplayCardPage_TrainerPage1", adapt_DisplayCardPage_TrainerPage1 },
 	{ "PrintPracticeDuelInstructionsForCurrentTurn", adapt_PrintPracticeDuelInstructionsForCurrentTurn },
 	{ "PracticeDuel_PrintTurnInstructions", adapt_PracticeDuel_PrintTurnInstructions },
+	{ "Func_5a81", adapt_Func_5a81 },
 	{ NULL, NULL },
 };

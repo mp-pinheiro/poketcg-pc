@@ -1,0 +1,9 @@
+{
+  "fn": "MrFuji_ReturnToDeckEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"MrFuji_ReturnToDeckEffect\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 6, \"f\": 192, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49849\": \"013b00ffffffff\", \"49850\": \"3b00ffffffff\", \"49903\": \"01\", \"49905\": \"00\", \"51906\": \"09\", \"65431\": \"c201\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"MrFuji_ReturnToDeckEffect\", \"mismatches\": {\"a\": [1, 0], \"f\": [192, 128], \"bus\": {\"address\": 49665, \"reference\": \"00013b00ff\", \"native\": \"10003c0100\", \"reference_size\": 14, \"native_size\": 14, \"spans\": [[49665, 1], [49849, 7], [49903, 1], [49905, 1], [51906, 1], [65431, 2], [65440, 1]]}}}\n",
+  "restored": "{\"fn\": \"MrFuji_ReturnToDeckEffect\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 194, \"e\": 6, \"f\": 192, \"hl\": 49849, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49665\": \"00\", \"49849\": \"013b00ffffffff\", \"49850\": \"3b00ffffffff\", \"49903\": \"01\", \"49905\": \"00\", \"51906\": \"09\", \"65431\": \"c201\", \"65440\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

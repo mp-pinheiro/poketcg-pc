@@ -299,6 +299,14 @@ CASES["CreditsSequenceCmd_FadeOut"] = [
 ]
 # <<< factory CreditsSequenceCmd_FadeOut
 
+# >>> factory CreditsSequenceCmd_LoadScene
+CONTRACT["CreditsSequenceCmd_LoadScene"] = {"compare": ("a", "f", "b", "c", "d", "e"), "preserve": ("d", "e")}
+CASES["CreditsSequenceCmd_LoadScene"] = [
+    {"e": 0x00, "wram": {wSequenceCmdPtr: b"\x00\x00", hSCX: b"\x7f", hSCY: b"\x7f"}, "read": {wSequenceCmdPtr: 2, hSCX: 1, hSCY: 1}, "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, e=0x00, wram={wSequenceCmdPtr: b"\x00\xc1", hSCX: b"\x7f", hSCY: b"\x7f"}, read={wSequenceCmdPtr: 2, hSCX: 1, hSCY: 1}, instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory CreditsSequenceCmd_LoadScene
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -427,3 +435,11 @@ MUTATIONS["CreditsSequenceCmd_LoadBooster"] = {
 # >>> factory-mutation CreditsSequenceCmd_FadeOut
 MUTATIONS["CreditsSequenceCmd_FadeOut"] = {"source_symbol": "CreditsSequenceCmd_FadeOut", "before": "\tSetWindowOff();", "after": "\tSetWindowOn();", "case_ids": ["CreditsSequenceCmd_FadeOut-0", "CreditsSequenceCmd_FadeOut-1"]}
 # <<< factory-mutation CreditsSequenceCmd_FadeOut
+# >>> factory-mutation CreditsSequenceCmd_LoadScene
+MUTATIONS["CreditsSequenceCmd_LoadScene"] = {
+    "source_symbol": "CreditsSequenceCmd_LoadScene",
+    "before": "\tuint8_t high = (uint8_t)high_sum;",
+    "after": "\tuint8_t high = (uint8_t)(high_sum + 1u);",
+    "case_ids": ["CreditsSequenceCmd_LoadScene-0", "CreditsSequenceCmd_LoadScene-1"],
+}
+# <<< factory-mutation CreditsSequenceCmd_LoadScene

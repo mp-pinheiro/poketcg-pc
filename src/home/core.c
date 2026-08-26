@@ -1148,6 +1148,10 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #define PRACTICE_DUEL_TEXT_POINTER_TABLE_ADDR 0x52C5u
 
 #define NeedPracticeAgainPracticeDuelText 0x01d9u
+
+#include "home/core.h"
+#include "home/sgb.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6475,3 +6479,38 @@ void PracticeDuel_PrintTurnInstructions(void)
 	PrintPracticeDuelInstructionsForCurrentTurn(0u);
 }
 /* <<< factory PracticeDuel_PrintTurnInstructions */
+
+/* >>> factory Func_5a81 */
+Func5a81Result Func_5a81(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	uint8_t console = gb_read8(wConsole_ADDR);
+	a = console;
+	if (console == CONSOLE_DMG) {
+		f = 0x80u;
+		return (Func5a81Result){a, f, b, c, d, e, hl};
+	}
+	if (console == CONSOLE_SGB) {
+		/* 2 << 0 + 2 << 2 binds as (2 << 0) + (2 << 2), yielding 0x0A. */
+		a = 0x0Au;
+		d = 0u;
+		e = 5u;
+		uint16_t packet = CreateCardAttrBlkPacket(a, d, e);
+		gb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 2u);
+		/* 3 << 0 + 3 << 2 binds as (3 << 0) + (3 << 2), yielding 0x0F. */
+		hl = (uint16_t)(wTempSGBPacket_ADDR + 8u);
+		a = 0x0Fu;
+		d = 12u;
+		e = 1u;
+		(void)CreateCardAttrBlkPacket_DataSet(hl, a, d, e);
+		SendSGBResult result = SendSGB(a, f, b, c, d, e, packet);
+		return (Func5a81Result){result.a, result.f, result.b, result.c, result.d, result.e, result.hl};
+	}
+	d = 0u;
+	e = 5u;
+	SendCardAttrBlkPacketResult first = ApplyBGP7OrSGB2ToCardImage(a, f, b, c, d, e, hl);
+	d = 12u;
+	e = 1u;
+	SendCardAttrBlkPacketResult second = ApplyBGP6OrSGB3ToCardImage(first.a, first.f, first.b, first.c, d, e, first.hl);
+	return (Func5a81Result){second.a, second.f, second.b, second.c, second.d, second.e, second.hl};
+}
+/* <<< factory Func_5a81 */

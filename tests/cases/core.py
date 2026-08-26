@@ -1757,6 +1757,9 @@ wLoadedCard1NonPokemonDescription = 0xCC2E
 
 wDuelTurns = 0xCC06
 wPracticeDuelTurn = 0xCC00
+
+wConsole = 0xCAB4
+wTempSGBPacket = 0xCAE0
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -3500,6 +3503,15 @@ CASES["PracticeDuel_PrintTurnInstructions"] = [
 ]
 # <<< factory PracticeDuel_PrintTurnInstructions
 
+# >>> factory Func_5a81
+CONTRACT["Func_5a81"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["Func_5a81"] = [
+    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x4567, "wram": {wConsole: b"\x00"}},
+    {"a": 0x11, "f": 0x22, "b": 0x33, "c": 0x44, "d": 0x55, "e": 0x66, "hl": 0x4567, "wram": {wConsole: b"\x01", wTempSGBPacket: b"\xAA" * 32}, "read": {wTempSGBPacket: 16}},
+    dict(POISON, wram={wConsole: b"\x00"}),
+]
+# <<< factory Func_5a81
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4958,3 +4970,6 @@ MUTATIONS["PrintPracticeDuelInstructionsForCurrentTurn"] = {
 # >>> factory-mutation PracticeDuel_PrintTurnInstructions
 MUTATIONS["PracticeDuel_PrintTurnInstructions"] = {"source_symbol": "PracticeDuel_PrintTurnInstructions", "before": "\tgb_write8(wPracticeDuelTurn_ADDR, turns);", "after": "\tgb_write8(wPracticeDuelTurn_ADDR, (uint8_t)(turns ^ 0x01u));", "case_ids": ["PracticeDuel_PrintTurnInstructions-0", "PracticeDuel_PrintTurnInstructions-1"]}
 # <<< factory-mutation PracticeDuel_PrintTurnInstructions
+# >>> factory-mutation Func_5a81
+MUTATIONS["Func_5a81"] = {"source_symbol": "Func_5a81", "before": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 2u);", "after": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 1u);", "case_ids": ["Func_5a81-1"]}
+# <<< factory-mutation Func_5a81

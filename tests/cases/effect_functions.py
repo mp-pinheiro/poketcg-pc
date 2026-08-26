@@ -4721,6 +4721,26 @@ CASES["Curse_PlayerSelectEffect"] = [
 ]
 # <<< factory Curse_PlayerSelectEffect
 
+# >>> factory MrFuji_ReturnToDeckEffect
+CONTRACT["MrFuji_ReturnToDeckEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["MrFuji_ReturnToDeckEffect"] = [
+    {"b": 0, "c": 0, "d": 0, "e": 0, "hl": 0,
+     "wram": {0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xC2F1: b"\x00",
+               0xC2BA: b"\x3C", 0xC2BB: b"\x01", 0xC2BC: b"\xFF\xFF\xFF\xFF",
+               0xC201: b"\x10", 0xC2EF: b"\x02", 0xCAC2: b"\x09"},
+     "read": {0xFF98: 1, 0xC201: 1, 0xC2B9: 1, 0xC2BA: 1, 0xC2BB: 5, 0xC2EF: 1},
+     "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 4000000, "cycle_budget": 16000000},
+    dict(POISON, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234,
+         wram={0xFF97: b"\xC2", 0xFFA0: b"\x00", 0xC2F1: b"\x00",
+               0xC2BA: b"\x3C", 0xC2BB: b"\x01", 0xC2BC: b"\xFF\xFF\xFF\xFF",
+               0xC201: b"\x10", 0xC2EF: b"\x02", 0xCAC2: b"\x09"},
+         read={0xFF98: 1, 0xC201: 1, 0xC2B9: 1, 0xC2BA: 1, 0xC2BB: 5, 0xC2EF: 1},
+         setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=4000000, cycle_budget=16000000),
+]
+# <<< factory MrFuji_ReturnToDeckEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7104,3 +7124,6 @@ MUTATIONS["ClefableMetronome_UseAttackEffect"] = {"source_symbol": "ClefableMetr
 # >>> factory-mutation Curse_PlayerSelectEffect
 MUTATIONS["Curse_PlayerSelectEffect"] = {"source_symbol": "Curse_PlayerSelectEffect", "before": "Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)\n{\n\tDrawWholeScreenTextBox(ProcedureForCurseText);\n\tSwapTurn();", "after": "Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)\n{\n\tDrawWholeScreenTextBox(ProcedureForCurseText);", "case_ids": ["Curse_PlayerSelectEffect-0", "Curse_PlayerSelectEffect-1"]}
 # <<< factory-mutation Curse_PlayerSelectEffect
+# >>> factory-mutation MrFuji_ReturnToDeckEffect
+MUTATIONS["MrFuji_ReturnToDeckEffect"] = {"source_symbol": "MrFuji_ReturnToDeckEffect", "before": "ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t location = hTemp_ffa0;", "after": "ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,\n\t\t\t\t\t\t\t   uint8_t e, uint16_t hl)\n{\n\tuint8_t location = (uint8_t)(hTemp_ffa0 + 1u);", "case_ids": ["MrFuji_ReturnToDeckEffect-0", "MrFuji_ReturnToDeckEffect-1"]}
+# <<< factory-mutation MrFuji_ReturnToDeckEffect

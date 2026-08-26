@@ -34,6 +34,13 @@
 
 #include "home/load_animation.h"
 #include "home/lcd_enable_frame.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/animation.h"
+#include "home/empty_screen.h"
+#include "home/load_animation.h"
+#include "home/default_palettes.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -255,3 +262,26 @@ void CreditsSequenceCmd_FadeOut(void)
 	AdvanceCreditsSequenceCmdPtrBy2();
 }
 /* <<< factory CreditsSequenceCmd_FadeOut */
+
+/* >>> factory CreditsSequenceCmd_LoadScene */
+CreditsSequenceCmdLoadSceneResult CreditsSequenceCmd_LoadScene(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	ClearNumLoadedFramesetSubgroups();
+	EmptyScreen();
+	hSCX = 0;
+	hSCY = 0;
+	SetDefaultPalettes();
+	LoadSceneResult loaded = LoadScene(e, f, c, b, d, e, hl);
+	uint8_t low_before = gb_read8(wSequenceCmdPtr_ADDR);
+	uint8_t high_before = gb_read8((uint16_t)(wSequenceCmdPtr_ADDR + 1u));
+	uint16_t low_sum = (uint16_t)low_before + 5u;
+	uint8_t carry = (uint8_t)(low_sum > 0xFFu);
+	uint16_t high_sum = (uint16_t)high_before + carry;
+	AdvanceCreditsSequenceCmdPtrBy5();
+	uint8_t high = (uint8_t)high_sum;
+	uint8_t exit_f = (uint8_t)((high == 0u ? 0x80u : 0u) |
+		(((uint8_t)((high_before & 0x0Fu) + carry) > 0x0Fu) ? 0x20u : 0u) |
+		(high_sum > 0xFFu ? 0x10u : 0u));
+	return (CreditsSequenceCmdLoadSceneResult){high, exit_f, loaded.b, loaded.c, loaded.d, loaded.e};
+}
+/* <<< factory CreditsSequenceCmd_LoadScene */

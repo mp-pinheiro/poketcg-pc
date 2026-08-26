@@ -838,6 +838,16 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/sound.h"
 
 #define ProcedureForCurseText 0x0131u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#define PokemonAndAllAttachedCardsWereReturnedToDeckText 0x016bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7166,3 +7176,38 @@ Curse_PlayerSelectEffectResult Curse_PlayerSelectEffect(void)
 	}
 }
 /* <<< factory Curse_PlayerSelectEffect */
+
+/* >>> factory MrFuji_ReturnToDeckEffect */
+ShuffleCardsInDeckResult MrFuji_ReturnToDeckEffect(uint8_t b, uint8_t c, uint8_t d,
+							   uint8_t e, uint16_t hl)
+{
+	uint8_t location = hTemp_ffa0;
+	DuelistVarResult arena_card = GetTurnDuelistVariable((uint8_t)(location + DUELVARS_ARENA_CARD));
+	hTempCardIndex_ff98 = arena_card.a;
+
+	uint8_t play_area_location = (uint8_t)(location | CARD_LOCATION_PLAY_AREA);
+	DuelistVarResult card_locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+	for (uint8_t deck_index = 0; deck_index < DECK_SIZE; deck_index++) {
+		if (gb_read8((uint16_t)(card_locations.hl + deck_index)) == play_area_location)
+			ReturnCardToDeck(deck_index);
+	}
+
+	EmptySlotResult empty = EmptyPlayAreaSlot(location);
+	uint16_t count_addr = (uint16_t)((empty.hl & 0xFF00u) | DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	gb_write8(count_addr, (uint8_t)(gb_read8(count_addr) - 1u));
+	ShiftResult shifted = ShiftAllPokemonToFirstPlayAreaSlots();
+	d = shifted.d;
+	e = shifted.e;
+	IsPlayerTurnResult turn = IsPlayerTurn();
+	hl = turn.hl;
+	if ((turn.f & 0x10u) == 0u) {
+		(void)LoadCardDataToBuffer1_FromDeckIndex(hTempCardIndex_ff98);
+		uint16_t name = (uint16_t)(gb_read8(wLoadedCard1Name_ADDR) |
+			((uint16_t)gb_read8((uint16_t)(wLoadedCard1Name_ADDR + 1u)) << 8));
+		LoadTxRam2(name);
+		DrawLargePictureOfCard();
+		(void)DrawWideTextBox_WaitForInput(PokemonAndAllAttachedCardsWereReturnedToDeckText);
+	}
+	return ShuffleCardsInDeck(b, c, (uint16_t)(((uint16_t)d << 8) | e), hl);
+}
+/* <<< factory MrFuji_ReturnToDeckEffect */

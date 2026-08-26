@@ -3637,6 +3637,20 @@ static void adapt_Curse_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory Curse_PlayerSelectEffect */
 
+/* >>> factory MrFuji_ReturnToDeckEffect */
+static void adapt_MrFuji_ReturnToDeckEffect(ProbeState *s)
+{
+	ShuffleCardsInDeckResult result = MrFuji_ReturnToDeckEffect(s->b, s->c, s->d, s->e, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->d = result.d;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory MrFuji_ReturnToDeckEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4080,5 +4094,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ClefairyMetronome_UseAttackEffect", adapt_ClefairyMetronome_UseAttackEffect },
 	{ "ClefableMetronome_UseAttackEffect", adapt_ClefableMetronome_UseAttackEffect },
 	{ "Curse_PlayerSelectEffect", adapt_Curse_PlayerSelectEffect },
+	{ "MrFuji_ReturnToDeckEffect", adapt_MrFuji_ReturnToDeckEffect },
 	{ NULL, NULL },
 };
