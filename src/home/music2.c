@@ -304,6 +304,10 @@ static uint16_t read16(uint16_t addr)
 	return (uint16_t)gb_read8(addr + 1) << 8 | gb_read8(addr);
 }
 
+/* Command mapping is Music2_CommandTable (music2.asm:598-646), indexed by
+ * `cmd - $D0`. The arms stay inlined rather than calling the ported
+ * Music2_<cmd> handlers, because each of those tail-calls this dispatcher: in
+ * asm that is a `jp`, but in C it would be real mutual recursion. */
 void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 {
 	uint8_t cmd;
@@ -318,34 +322,37 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 
 		switch (cmd - 0xD0) {
 
-		/* $D0-$D9: octave — AND 7 for ch 1-3; ch 3 gets +1 */
-		case 0: case 1: case 2: case 3: case 4:
-		case 5: case 6: case 7: case 8: case 9: {
-			uint8_t oct = (cmd - 0xD0) & 0x07;
-			if (ch == 2) {
-				wMusicOctave_PTR[ch] = oct;
-			} else {
-				wMusicOctave_PTR[ch] = (uint8_t)(oct - 1);
-			}
+		/* $D0: speed */
+		case 0:
+			wMusicSpeed_PTR[ch] = gb_read8((*hl)++);
+			break;
+
+		/* $D1-$D6: octave, from the command byte's low 3 bits less one;
+		 * channel 2 gets the decrement back (music1.asm:851-867). */
+		case 1: case 2: case 3: case 4: case 5: case 6: {
+			uint8_t oct = (uint8_t)((cmd & 0x07u) - 1u);
+			if (ch == 2)
+				oct = (uint8_t)(oct + 1u);
+			wMusicOctave_PTR[ch] = oct;
 			break;
 		}
 
-		/* $DA: inc_octave */
-		case 10: wMusicOctave_PTR[ch]++; break;
+		/* $D7: inc_octave */
+		case 7: wMusicOctave_PTR[ch]++; break;
 
-		/* $DB: dec_octave */
-		case 11: wMusicOctave_PTR[ch]--; break;
+		/* $D8: dec_octave */
+		case 8: wMusicOctave_PTR[ch]--; break;
 
-		/* $DC: tie */
-		case 12: wMusicTie_PTR[ch] = 0x80; break;
+		/* $D9: tie */
+		case 9: wMusicTie_PTR[ch] = 0x80; break;
 
-		/* $DD-$DE: end */
-		case 13: case 14:
+		/* $DA-$DB: end */
+		case 10: case 11:
 			wMusicIsPlaying_PTR[ch] = 0;
 			return;
 
-		/* $DF: stereo_panning — consumes 1 byte */
-		case 15: {
+		/* $DC: stereo_panning — consumes 1 byte */
+		case 12: {
 			uint8_t pan = gb_read8((*hl)++);
 			uint8_t mask = 0xEE;
 			uint8_t rot;
@@ -359,22 +366,22 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 			break;
 		}
 
-		/* $E0: MainLoop — store current position as loop start */
-		case 16: {
+		/* $DD: MainLoop — store current position as loop start */
+		case 13: {
 			uint16_t pos = *hl - 1;
 			wMusicMainLoopStart_PTR[ch * 2] = (uint8_t)pos;
 			wMusicMainLoopStart_PTR[ch * 2 + 1] = (uint8_t)(pos >> 8);
 			break;
 		}
 
-		/* $E1: EndMainLoop — jump to stored loop start */
-		case 17:
+		/* $DE: EndMainLoop — jump to stored loop start */
+		case 14:
 			*hl = (uint16_t)wMusicMainLoopStart_PTR[ch * 2 + 1] << 8
 			      | wMusicMainLoopStart_PTR[ch * 2];
 			break;
 
-		/* $E2: Loop — consume loop count, push state onto channel stack */
-		case 18: {
+		/* $DF: Loop — consume loop count, push state onto channel stack */
+		case 15: {
 			uint8_t count = gb_read8((*hl)++);
 			uint16_t sp = Music2_GetChannelStackPointer(ch);
 			gb_write8(sp, (uint8_t)*hl);
@@ -384,8 +391,8 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 			break;
 		}
 
-		/* $E3: EndLoop — decrement count, jump back if not zero */
-		case 19: {
+		/* $E0: EndLoop — decrement count, jump back if not zero */
+		case 16: {
 			uint16_t sp = Music2_GetChannelStackPointer(ch) - 1;
 			uint8_t count = gb_read8(sp);
 			if (--count) {
@@ -397,13 +404,13 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 			break;
 		}
 
-		/* $E4: jp — consume 2 bytes as jump target */
-		case 20:
+		/* $E1: jp — consume 2 bytes as jump target */
+		case 17:
 			*hl = read16(*hl);
 			break;
 
-		/* $E5: call — push return addr, jump to 2-byte target */
-		case 21: {
+		/* $E2: call — push return addr, jump to 2-byte target */
+		case 18: {
 			uint16_t sp = Music2_GetChannelStackPointer(ch);
 			uint16_t ret_addr = *hl + 2;
 			uint16_t target = read16(*hl);
@@ -414,69 +421,69 @@ void Music2_PlayNextNote(uint16_t *hl, uint8_t ch)
 			break;
 		}
 
-		/* $E6: ret — pop return address from channel stack */
-		case 22: {
+		/* $E3: ret — pop return address from channel stack */
+		case 19: {
 			uint16_t sp = Music2_GetChannelStackPointer(ch) - 2;
 			*hl = (uint16_t)gb_read8(sp + 1) << 8 | gb_read8(sp);
 			Music2_SetChannelStackPointer(ch, sp);
 			break;
 		}
 
-		/* $E7: frequency_offset — consume 1 byte */
-		case 23:
+		/* $E4: frequency_offset — consume 1 byte */
+		case 20:
 			wMusicFrequencyOffset_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $E8: duty — consume 1 byte, mask to $C0 */
-		case 24:
+		/* $E5: duty — consume 1 byte, mask to $C0 */
+		case 21:
 			gb_write8(wMusicDuty1_ADDR + ch, gb_read8((*hl)++) & 0xC0);
 			break;
 
-		/* $E9: volume — consume 1 byte */
-		case 25:
+		/* $E6: volume — consume 1 byte */
+		case 22:
 			wMusicVolume_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $EA: wave — consume 1 byte, set wave change flag */
-		case 26:
+		/* $E7: wave — consume 1 byte, set wave change flag */
+		case 23:
 			wMusicWave = gb_read8((*hl)++);
 			wMusicWaveChange = 1;
 			break;
 
-		/* $EB: cutoff — consume 1 byte */
-		case 27:
+		/* $E8: cutoff — consume 1 byte */
+		case 24:
 			wMusicCutoff_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $EC: echo — consume 1 byte */
-		case 28:
+		/* $E9: echo — consume 1 byte */
+		case 25:
 			wMusicEcho_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $ED: vibrato_type — consume 1 byte */
-		case 29: {
+		/* $EA: vibrato_type — consume 1 byte */
+		case 26: {
 			uint8_t v = gb_read8((*hl)++);
 			wMusicVibratoType2_PTR[ch] = v;
 			wMusicVibratoType_PTR[ch] = v;
 			break;
 		}
 
-		/* $EE: vibrato_delay — consume 1 byte */
-		case 30:
+		/* $EB: vibrato_delay — consume 1 byte */
+		case 27:
 			wMusicVibratoDelay_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $EF: pitch_offset — consume 1 byte */
-		case 31:
+		/* $EC: pitch_offset — consume 1 byte */
+		case 28:
 			wMusicPitchOffset_PTR[ch] = gb_read8((*hl)++);
 			break;
 
-		/* $F0: adjust_pitch_offset — consume 1 byte, add to existing */
-		case 32:
+		/* $ED: adjust_pitch_offset — consume 1 byte, add to existing */
+		case 29:
 			wMusicPitchOffset_PTR[ch] += gb_read8((*hl)++);
 			break;
 
-		/* $F1-$FF: end */
+		/* $EE-$FF: end */
 		default:
 			wMusicIsPlaying_PTR[ch] = 0;
 			return;
