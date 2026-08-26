@@ -3512,6 +3512,45 @@ CASES["Func_5a81"] = [
 ]
 # <<< factory Func_5a81
 
+# >>> factory _TossCoin
+CONTRACT["_TossCoin"] = {"compare": ("a", "f"), "preserve": ()}
+# Both cases take the local (non-link) player path: hWhoseTurn = PLAYER_TURN with
+# wPlayerDuelVariables+DUELVARS_DUELIST_TYPE = DUELIST_TYPE_PLAYER, wDuelType not
+# DUELTYPE_LINK (so ExchangeRNG and .SendSerialByte are no-ops and no serial
+# hardware is needed), wDuelDisplayedScreen = COIN_TOSS to skip EmptyScreen, and
+# wCoinTossNumTossed non-zero so the one-shot DrawLabeledTextBox/PrintText header
+# is skipped. wLCDC starts off: the routine's own EnableLCD turns it on, which is
+# what makes real frames elapse for the DoFrame/CheckAnyAnimationPlaying wait, so
+# CopyDMAFunction has to be installed for VBlankHandler's hDMAFunction call.
+# wRNG1/wRNG2/wRNGCounter are seeded so UpdateRNGSources is deterministic:
+# 00/00/00 returns bit0 = 0 (heads), 00/00/80 returns bit0 = 1 (tails).
+CASES["_TossCoin"] = [
+    dict(POISON,
+         a=0x01,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    {"a": 0x00,
+     "keys": [0x00, 0x01],
+     "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+              0xCAC2: b"\x06", 0xCABB: b"\x00",
+              0xCACA: b"\x00\x00\x80",
+              0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+              0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+     "read": {0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"},
+               {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory _TossCoin
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -4973,3 +5012,11 @@ MUTATIONS["PracticeDuel_PrintTurnInstructions"] = {"source_symbol": "PracticeDue
 # >>> factory-mutation Func_5a81
 MUTATIONS["Func_5a81"] = {"source_symbol": "Func_5a81", "before": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 2u);", "after": "\tgb_write8((uint16_t)(wTempSGBPacket_ADDR + 1u), 1u);", "case_ids": ["Func_5a81-1"]}
 # <<< factory-mutation Func_5a81
+# >>> factory-mutation _TossCoin
+MUTATIONS["_TossCoin"] = {
+    "source_symbol": "_TossCoin",
+    "before": "TossCoinResult _TossCoin(uint8_t a)\n{\n\tuint8_t heads;\n\n\twCoinTossTotalNum = a;",
+    "after": "TossCoinResult _TossCoin(uint8_t a)\n{\n\tuint8_t heads;\n\n\twCoinTossTotalNum = (uint8_t)(a + 1u);",
+    "case_ids": ["_TossCoin-0", "_TossCoin-1"],
+}
+# <<< factory-mutation _TossCoin

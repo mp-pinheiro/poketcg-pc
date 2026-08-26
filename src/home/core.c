@@ -1152,6 +1152,112 @@ static const uint8_t kFaceDownCardTileNumbers[8] = {
 #include "home/core.h"
 #include "home/sgb.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/bg_map.h"
+#include "home/duel.h"
+#include "home/empty_screen.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/play_animation.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#include "home/script.h"
+#include "home/serial.h"
+#include "home/sound.h"
+#include "home/text_box.h"
+#include "home/tiles.h"
+
+#define COIN_TOSS_7847 0x06u
+#define DUELIST_TYPE_PLAYER_7847 0x00u
+#define DUELTYPE_LINK_7847 0x01u
+#define DUELVARS_DUELIST_TYPE_7847 0xF1u
+#define DUEL_ANIM_COIN_SPIN_7847 0x58u
+#define DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847 0x59u
+#define DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847 0x5Au
+#define DUEL_ANIM_COIN_TAILS_7847 0x5Bu
+#define DUEL_ANIM_COIN_HEADS_7847 0x5Cu
+#define SFX_COIN_TOSS_HEADS_7847 0x54u
+#define SFX_COIN_TOSS_TAILS_7847 0x55u
+#define HEADS_7847 0x01u
+#define TAILS_7847 0x00u
+#define SYM_SLASH_7847 0x2Eu
+#define TILE_CROSS_7847 0x34u
+#define TILE_CIRCLE_7847 0x30u
+#define FLAG_C_7847 0x10u
+#define FLAG_Z_7847 0x80u
+
+/* core.asm:8046-8054 (_TossCoin.CheckTransmissionError). The ROM's error
+ * branch never pops the `push af` it entered with: DuelTransmissionError
+ * reloads sp from wDuelReturnAddress and returns into the outer duel loop, so
+ * that unbalanced frame is never observed from here. */
+static void TossCoin_CheckTransmissionError(void)
+{
+	if (wSerialFlags == 0u)
+		return;
+	FinishQueuedAnimations();
+	DuelTransmissionError();
+}
+
+/* core.asm:8041-8045 (_TossCoin.wait_serial_byte_recv): one frame at a time
+ * until the link partner's byte has arrived; returns that byte. */
+static uint8_t TossCoin_WaitSerialByteRecv(void)
+{
+	SerialByteResult recv;
+	do {
+		DoFrame();
+		recv = SerialRecvByte();
+	} while (recv.f & FLAG_C_7847);
+	TossCoin_CheckTransmissionError();
+	return recv.a;
+}
+
+/* core.asm:7999-8006 (_TossCoin.SendSerialByte): stash the byte in hff96 and,
+ * in a link duel only, hand it to the serial ring. */
+static void TossCoin_SendSerialByte(uint8_t a)
+{
+	hff96 = a;
+	if (wDuelType != DUELTYPE_LINK_7847)
+		return;
+	(void)SerialSendByte(hff96);
+	TossCoin_CheckTransmissionError();
+}
+
+/* core.asm:8008-8022 (_TossCoin.GetOpponentCoinResult): an AI opponent waits
+ * out the toss animation and keeps the result generated beforehand, a link
+ * opponent sends its own result over serial. */
+static uint8_t TossCoin_GetOpponentCoinResult(uint8_t a)
+{
+	hff96 = a;
+	if (wDuelType == DUELTYPE_LINK_7847)
+		return TossCoin_WaitSerialByteRecv();
+	do {
+		DoFrame();
+	} while (CheckAnyAnimationPlaying().f & FLAG_C_7847);
+	return hff96;
+}
+
+/* core.asm:8027-8039 (_TossCoin.WaitForOpponent): the AI delays 30 frames, a
+ * link opponent announces itself with a serial byte. Both callsites drop the
+ * returned hff96, so this reports nothing. */
+static void TossCoin_WaitForOpponent(uint8_t a)
+{
+	uint8_t frames;
+	hff96 = a;
+	if (wDuelType == DUELTYPE_LINK_7847) {
+		(void)TossCoin_WaitSerialByteRecv();
+		return;
+	}
+	frames = 30u;
+	do {
+		DoFrame();
+		frames = (uint8_t)(frames - 1u);
+	} while (frames != 0u);
+}
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -6514,3 +6620,156 @@ Func5a81Result Func_5a81(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, 
 	return (Func5a81Result){second.a, second.f, second.b, second.c, second.d, second.e, second.hl};
 }
 /* <<< factory Func_5a81 */
+
+/* >>> factory _TossCoin */
+/* core.asm:7847-7997. Drives the coin toss screen: one animated toss per
+ * coin, synchronised with the opponent (30-frame AI delay or a link serial
+ * byte), tallying heads in wCoinTossNumHeads. The four local subroutines live
+ * as TossCoin_* statics above. Returns a = the heads count, carry set when it
+ * is non-zero and Z when it is not. */
+TossCoinResult _TossCoin(uint8_t a)
+{
+	uint8_t heads;
+
+	wCoinTossTotalNum = a;
+	if (wDuelDisplayedScreen != COIN_TOSS_7847) {
+		wCoinTossNumTossed = 0u;
+		EmptyScreen();
+		(void)LoadDuelCoinTossResultTiles();
+	}
+
+	/* no need to print text if this is not the first coin toss */
+	if (wCoinTossNumTossed == 0u) {
+		uint16_t box = 0u; /* ld hl, NULL: the box carries no label */
+		uint16_t text_id;
+
+		wDuelDisplayedScreen = COIN_TOSS_7847;
+		DrawLabeledTextBox(&box, COIN_TOSS_7847, 20u, 6u, 0u, 12u);
+		EnableLCD();
+		InitTextPrintingInTextbox(19u, 1u, 14u);
+		text_id = (uint16_t)(gb_read8(wCoinTossScreenTextID_ADDR)
+			| (uint16_t)gb_read8((uint16_t)(wCoinTossScreenTextID_ADDR + 1u)) << 8);
+		(void)PrintText(text_id, 1u, 14u);
+	}
+
+	gb_write8(wCoinTossScreenTextID_ADDR, 0u);
+	gb_write8((uint16_t)(wCoinTossScreenTextID_ADDR + 1u), 0u);
+
+	/* store duelist type and reset number of heads */
+	EnableLCD();
+	wCoinTossDuelistType = GetTurnDuelistVariable(DUELVARS_DUELIST_TYPE_7847).a;
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	wCoinTossNumHeads = 0u;
+
+	do {
+		uint8_t anim;
+		uint8_t result;
+		uint8_t tile;
+
+		/* skip the tally if it's only one coin toss */
+		if (wCoinTossTotalNum >= 2u) {
+			/* write "#coin/#total coins" */
+			WriteTwoDigitNumberInTxSymbol_PadSpace(
+				(uint8_t)(wCoinTossNumTossed + 1u), 15u, 11u, 0u, 0u, 0u);
+			WriteByteToBGMap0(SYM_SLASH_7847, 17u, 11u);
+			WriteTwoDigitNumberInTxSymbol_PadSpace(
+				wCoinTossTotalNum, 18u, 11u, 0u, 0u, 0u);
+		}
+
+		ResetAnimationQueue();
+		(void)PlayDuelAnimation(DUEL_ANIM_COIN_SPIN_7847);
+
+		if (wCoinTossDuelistType == DUELIST_TYPE_PLAYER_7847) {
+			/* wait for input, and send a byte once the player is ready */
+			(void)WaitForWideTextBoxInput();
+			/* its EraseCursor tail exits WriteByteToBGMap0 with a = 0,
+			 * which is the byte the ROM forwards here */
+			TossCoin_SendSerialByte(0u);
+		} else {
+			TossCoin_WaitForOpponent(wCoinTossDuelistType);
+		}
+
+		ResetAnimationQueue();
+		anim = DUEL_ANIM_COIN_TOSS_GOING_TAILS_7847;
+		result = TAILS_7847;
+		if (!(UpdateRNGSources() & 0x01u)) { /* rra: carry = bit 0 */
+			anim = DUEL_ANIM_COIN_TOSS_GOING_HEADS_7847;
+			result = HEADS_7847;
+		}
+
+		/* play the tossing animation and wait for it to finish */
+		(void)PlayDuelAnimation(anim);
+		if (wCoinTossDuelistType == DUELIST_TYPE_PLAYER_7847) {
+			do {
+				DoFrame();
+			} while (CheckAnyAnimationPlaying().f & FLAG_C_7847);
+			TossCoin_SendSerialByte(result);
+		} else {
+			result = TossCoin_GetOpponentCoinResult(result);
+		}
+
+		anim = DUEL_ANIM_COIN_HEADS_7847;
+		tile = TILE_CROSS_7847;
+		if (result != 0u) {
+			anim = DUEL_ANIM_COIN_TAILS_7847;
+			tile = TILE_CIRCLE_7847;
+			wCoinTossNumHeads = (uint8_t)(wCoinTossNumHeads + 1u);
+		}
+		(void)PlayDuelAnimation(anim);
+
+		/* the result sound depends on whether it was the Player or the
+		 * Opponent who got heads/tails */
+		if (wCoinTossDuelistType != DUELIST_TYPE_PLAYER_7847)
+			result ^= 0x01u;
+		PlaySFX(result != 0u ? SFX_COIN_TOSS_HEADS_7847
+				     : SFX_COIN_TOSS_TAILS_7847);
+
+		/* on a multiple coin toss the result is registered on screen with
+		 * a circle (o) or a cross (x) */
+		if ((uint8_t)(wCoinTossTotalNum - 1u) != 0u) {
+			uint8_t y = 0u;
+			uint8_t x = wCoinTossNumTossed;
+
+			/* below 10 the offset is wCoinTossNumTossed * 2, above it a
+			 * y-offset is added for each multiple of 10 */
+			while (x >= 10u) {
+				y = (uint8_t)(y + 2u);
+				x = (uint8_t)(x - 10u);
+			}
+			FillRectangle(tile, 2u, 2u,
+				(uint16_t)((uint16_t)(uint8_t)(x * 2u) << 8 | y), 0x0102u);
+		}
+
+		wCoinTossNumTossed = (uint8_t)(wCoinTossNumTossed + 1u);
+
+		if (wCoinTossDuelistType != DUELIST_TYPE_PLAYER_7847) {
+			uint8_t sent = wCoinTossNumTossed;
+
+			/* wait for input once every coin has been tossed */
+			if (wCoinTossNumTossed == wCoinTossTotalNum) {
+				(void)WaitForWideTextBoxInput();
+				sent = 0u;
+			}
+			/* delay/wait for link opp input */
+			TossCoin_WaitForOpponent(sent);
+			/* "tossing until tails" (wCoinTossTotalNum == 0) with no heads
+			 * yet also waits for input */
+			if ((uint8_t)(wCoinTossTotalNum | wCoinTossNumHeads) == 0u)
+				(void)WaitForWideTextBoxInput();
+		} else {
+			(void)WaitForWideTextBoxInput();
+			TossCoin_SendSerialByte(0u);
+		}
+
+		FinishQueuedAnimations();
+	} while (wCoinTossNumTossed < wCoinTossTotalNum);
+
+	(void)ExchangeRNG(0u, 0u, 0u, 0u);
+	FinishQueuedAnimations();
+	ResetAnimationQueue();
+
+	/* return carry if at least 1 heads */
+	heads = wCoinTossNumHeads;
+	return (TossCoinResult){heads, heads ? FLAG_C_7847 : FLAG_Z_7847};
+}
+/* <<< factory _TossCoin */

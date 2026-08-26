@@ -1016,4 +1016,15 @@ void PracticeDuel_PrintTurnInstructions(void);
 typedef struct { uint8_t a, f, b, c, d, e; uint16_t hl; } Func5a81Result;
 Func5a81Result Func_5a81(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory Func_5a81 */
+/* >>> factory _TossCoin */
+/* _TossCoin (core.asm:7847) ends on `ld a, [wCoinTossNumHeads] / or a / ret z`
+ * plus `scf / ret`, so a is the heads count and f is Z when that count is zero,
+ * carry when it is not. */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} TossCoinResult;
+
+TossCoinResult _TossCoin(uint8_t a);
+/* <<< factory _TossCoin */
 #endif
