@@ -73,7 +73,12 @@ def pyboy_frames(case: dict) -> int | None:
     budget = case.get("cycle_budget")
     if not budget:
         return None
-    from pyboy_oracle import MAX_FRAMES
+    try:
+        from pyboy_oracle import MAX_FRAMES
+    except ImportError:
+        # Some gate shards import this module without PyBoy available; they never
+        # reach a reference call, so the default is only needed for the arithmetic.
+        MAX_FRAMES = 240
     return max(MAX_FRAMES, int(budget) // 70224 + 1)
 
 
