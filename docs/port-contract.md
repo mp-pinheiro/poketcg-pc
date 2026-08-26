@@ -303,10 +303,14 @@ That framing is too coarse; measured, the boundary sits elsewhere.
 - With the LCD **off** — which `seed_call_environment` guarantees by writing
   `rLCDC = 0` — `DoFrameIfLCDEnabled` is a no-op: it does `bit
   B_LCDC_ENABLE` / `jr z, .done` and returns without calling `DoFrame`
-  (`lcd_enable_frame.asm:1-15`). It cannot hang, and it is not a blocker.
-  `DoFrameIfLCDEnabled`, `DoFrame`, `ExecuteNPCMovement` and
-  `CheckIsAnNPCMoving` are all registered and green, and `ExecuteNPCMovement`'s
-  body *is* the `DoFrameIfLCDEnabled` wait loop.
+  (`lcd_enable_frame.asm:1-15`). `DoFrameIfLCDEnabled`, `DoFrame`,
+  `ExecuteNPCMovement` and `CheckIsAnNPCMoving` are all registered and green,
+  and `ExecuteNPCMovement`'s body *is* the `DoFrameIfLCDEnabled` wait loop.
+- **But that only holds while the LCD stays off.** A routine that calls
+  `EnableLCD` itself — `Func_c2a3` does `EnableLCD -> DoFrameIfLCDEnabled ->
+  DisableLCD` — makes the call live and lands on the LCD-on boundary below.
+  Merely *calling* `DoFrameIfLCDEnabled` is therefore not sufficient evidence
+  either way; check whether anything on the path enables the LCD.
 - With the LCD **on** the path is genuinely unavailable. `CASES["DoFrame"]`'s
   third case seeds `0xFF40: 0x80` and is `oracle: False` with the reason "LCD-on
   DoFrame reaches the dissolved VBlank boundary". That is the real gap: a
@@ -322,11 +326,22 @@ That framing is too coarse; measured, the boundary sits elsewhere.
   `Wait.loop` (`sgb.asm:258`), a busy delay of 1750 inner iterations times `bc`
   — a cycle-budget/parameter matter, fixed by seeding `bc` small or raising
   `instruction_budget`/`cycle_budget`, not by interrupts. Always resolve a
-  reported `pc` against `poketcg.sym` before believing a stanza's mechanism.
+  reported `pc` against `poketcg.sym` before believing a stanza's mechanism, and
+  note stanzas write it both as `"pc": 3085` and as prose `pc=0x51a4`.
 
-So triage the cluster before building anything: a routine that merely *calls*
-`DoFrameIfLCDEnabled` is testable today, and only one that depends on frame
-progress needs the LCD-on work.
+Measured decomposition of the 51 (2026-08-26): only **13 stanzas / 1451 B**
+actually name a frame routine in their `reason`; the other 38 matched on
+`unblock` boilerplate and belong to other classes, mostly the `AIPlay_*` P4
+cluster. Of the 13: 4 (139 B) enable the LCD themselves and genuinely need the
+LCD-on work (`Func_c2a3`, `DeleteSaveDataForNewGame`,
+`ScriptCommand_WalkPlayerToMasonLaboratory`, `StartIRCommunications`); 4 (276 B)
+have a measured hang or an unbounded frame loop (`Duel_Init`, `SendPrinterPacket`,
+`DebugDuelMode`, `ExecuteArbitraryNPCMovementFromStack` — whose cited pc is the
+`Wait.loop` busy delay, so it is mis-attributed); and 5 (1036 B) name a frame
+routine with **no recorded hang evidence at all** and are the retest candidates:
+`_DebugLookAtSprite`, `OpenGlossaryScreen`, `DuelCheckMenu_OppPlayArea`,
+`_PauseMenu_Config`, `PlayCreditsSequence`. Retest those five before building
+anything; the LCD-on feature is worth roughly 400 B, not 3109 B.
 
 **`bc == 0` on a 16-bit counted routine is not automatically excluded.** Use
 `oracle: False` only when the actual path overwrites `$CF00-$CFFF` (or reaches
