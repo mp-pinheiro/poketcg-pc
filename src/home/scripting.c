@@ -298,6 +298,15 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "home/lcd_enable_frame.h"
 #include "home/overworld.h"
 #include "home/scripting.h"
+
+#include "generated/wram.h"
+#include "generated/hram.h"
+#include "home/lcd_enable_frame.h"
+#include "home/overworld.h"
+#include "home/menus.h"
+#include "home/labels.h"
+#include "mem.h"
+#define AUTO_CLOSE_TEXTBOX 0x00u
 /* <<< factory statics */
 
 
@@ -2010,3 +2019,63 @@ IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)
 	return IncreaseScriptPointerBy3();
 }
 /* <<< factory ScriptCommand_MovePlayer */
+
+/* >>> factory ShowMultichoiceTextbox */
+ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)
+{
+	wd416 = a;
+	uint16_t base = hl;
+
+	Func_c241();
+	(void)Func_c915();
+	DoFrameIfLCDEnabled();
+
+	uint8_t e = gb_read8(base);
+	uint8_t d = gb_read8((uint16_t)(base + 1u));
+	uint16_t text = (uint16_t)(gb_read8((uint16_t)(base + 2u)) |
+		((uint16_t)gb_read8((uint16_t)(base + 3u)) << 8));
+	if (text != 0u)
+		Func_c8ba(text, (uint16_t)(((uint16_t)d << 8) | e));
+
+	(void)SetOverworldNPCFlags((uint8_t)(1u << AUTO_CLOSE_TEXTBOX));
+	uint16_t menu = (uint16_t)(gb_read8((uint16_t)(base + 4u)) |
+		((uint16_t)gb_read8((uint16_t)(base + 5u)) << 8));
+	InitAndPrintMenu(menu, wd416);
+	wd417 = gb_read8((uint16_t)(base + 6u));
+
+	uint8_t selected;
+	for (;;) {
+		DoFrameIfLCDEnabled();
+		HandleMenuInputResult input = HandleMenuInput();
+		if ((input.f & 0x10u) == 0u)
+			continue;
+		selected = input.e;
+		if (hCurMenuItem == selected)
+			break;
+		if (wd417 == 0u)
+			continue;
+		selected = wd417;
+		hCurMenuItem = selected;
+	}
+
+	uint16_t result_ptr = (uint16_t)(gb_read8((uint16_t)(base + 7u)) |
+		((uint16_t)gb_read8((uint16_t)(base + 8u)) << 8));
+	gb_write8(result_ptr, selected);
+	uint8_t doubled = (uint8_t)(selected << 1);
+	uint16_t table = (uint16_t)(gb_read8((uint16_t)(base + 9u)) |
+		((uint16_t)gb_read8((uint16_t)(base + 10u)) << 8));
+	if (table == 0u)
+		return (ShowMultichoiceTextboxResult){0u, 0x80u, 0u, doubled, selected, table};
+
+	uint16_t entry = (uint16_t)(table + doubled);
+	uint8_t out_f = (uint8_t)(((table >> 8) == 0u) ? 0x80u : 0u);
+	if (((table & 0x0FFFu) + doubled) > 0x0FFFu)
+		out_f |= 0x20u;
+	if ((uint32_t)table + doubled > 0xFFFFu)
+		out_f |= 0x10u;
+	uint8_t out_a = gb_read8((uint16_t)(entry + 1u));
+	wTxRam2 = gb_read8(entry);
+	gb_write8((uint16_t)(wTxRam2_ADDR + 1u), out_a);
+	return (ShowMultichoiceTextboxResult){out_a, out_f, 0u, doubled, selected, (uint16_t)(entry + 1u)};
+}
+/* <<< factory ShowMultichoiceTextbox */

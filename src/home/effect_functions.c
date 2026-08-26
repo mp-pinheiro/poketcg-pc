@@ -990,6 +990,10 @@ static void chain_lightning_damage_same_color_bench(void)
 #define Choose2EnergyCardsFromDiscardPileForHandText 0x0133u
 
 #define Choose2EnergyCardsFromDiscardPileToAttachText 0x0132u
+
+#include "home/core.h"
+#include "home/menus.h"
+#define Draw1CardFromTheDeckText 0x0117u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -7974,3 +7978,19 @@ MewtwoEnergyAbsorption_PlayerSelectEffectResult MewtwoEnergyAbsorption_PlayerSel
 	return (MewtwoEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};
 }
 /* <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect */
+
+/* >>> factory FetchEffect */
+void FetchEffect(void)
+{
+	(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);
+	DisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	DrawCardResult draw = DrawCardFromDeck();
+	if ((draw.f & 0x10u) != 0u)
+		return;
+	AddCardToHand(draw.a);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(draw.a);
+	if (wDuelistType != DUELIST_TYPE_PLAYER)
+		return;
+	OpenCardPage_FromHand(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+}
+/* <<< factory FetchEffect */

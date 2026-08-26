@@ -168,6 +168,15 @@ _C9B8_SEEDS = (
 wDefaultObjectText = 0xD0CA
 
 wCurMap = 0xD32F
+
+SHOW_MULTI_BASE = 0xC500
+SHOW_MULTI_MENU = 0xC510
+SHOW_MULTI_RESULT = 0xC520
+SHOW_MULTI_KEYS = [0x00, 0x01]
+SHOW_MULTI_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+SHOW_MULTI_DATA = b"\x00\x00\x00\x00\x10\xC5\x00\x20\xC5\x00\x00"
+SHOW_MULTI_MENU_DATA = b"\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00"
+SHOW_MULTI_POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -1503,6 +1512,27 @@ CASES["ScriptCommand_MovePlayer"] = [
 ]
 # <<< factory ScriptCommand_MovePlayer
 
+# >>> factory ShowMultichoiceTextbox
+CONTRACT["ShowMultichoiceTextbox"] = {"compare": ("a", "f", "b", "c", "e", "hl"), "preserve": ()}
+CASES["ShowMultichoiceTextbox"] = [
+    {"a": 0x00, "hl": SHOW_MULTI_BASE, "keys": SHOW_MULTI_KEYS,
+     "setup": SHOW_MULTI_SETUP,
+     "wram": {SHOW_MULTI_BASE: SHOW_MULTI_DATA, SHOW_MULTI_MENU: SHOW_MULTI_MENU_DATA,
+               SHOW_MULTI_RESULT: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF91: b"\x01"},
+     "read": {0xD416: 1, 0xD417: 1, SHOW_MULTI_RESULT: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0x01, "hl": SHOW_MULTI_BASE, "keys": SHOW_MULTI_KEYS,
+     "setup": SHOW_MULTI_SETUP,
+     "wram": {SHOW_MULTI_BASE: SHOW_MULTI_DATA, SHOW_MULTI_MENU: SHOW_MULTI_MENU_DATA,
+               SHOW_MULTI_RESULT: b"\x00", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF91: b"\x01"},
+     "read": {0xD416: 1, 0xD417: 1, SHOW_MULTI_RESULT: 1},
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(SHOW_MULTI_POISON, oracle=False,
+         why="The isolated poisoned pointer intentionally has no valid multichoice table.",
+         expect_regs={"a": 0x00})
+]
+# <<< factory ShowMultichoiceTextbox
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2208,3 +2238,6 @@ MUTATIONS["Func_c943"] = {"source_symbol": "Func_c943", "before": "\treturn (Fun
 # >>> factory-mutation ScriptCommand_MovePlayer
 MUTATIONS["ScriptCommand_MovePlayer"] = {"source_symbol": "ScriptCommand_MovePlayer", "before": "IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)\n{\n\twd339 = c;", "after": "IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c)\n{\n\twd339 = (uint8_t)(c + 1u);", "case_ids": ["ScriptCommand_MovePlayer-0", "ScriptCommand_MovePlayer-1"]}
 # <<< factory-mutation ScriptCommand_MovePlayer
+# >>> factory-mutation ShowMultichoiceTextbox
+MUTATIONS["ShowMultichoiceTextbox"] = {"source_symbol": "ShowMultichoiceTextbox", "before": "ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)\n{\n\twd416 = a;", "after": "ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl)\n{\n\twd416 = (uint8_t)(a ^ 1u);", "case_ids": ["ShowMultichoiceTextbox-0", "ShowMultichoiceTextbox-1"]}
+# <<< factory-mutation ShowMultichoiceTextbox

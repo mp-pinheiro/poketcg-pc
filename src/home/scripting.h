@@ -600,4 +600,15 @@ Func_c943Result Func_c943(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d,
 /* >>> factory ScriptCommand_MovePlayer */
 IncreaseScriptPointerResult ScriptCommand_MovePlayer(uint8_t b, uint8_t c);
 /* <<< factory ScriptCommand_MovePlayer */
+/* >>> factory ShowMultichoiceTextbox */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+	uint8_t b;
+	uint8_t c;
+	uint8_t e;
+	uint16_t hl;
+} ShowMultichoiceTextboxResult;
+ShowMultichoiceTextboxResult ShowMultichoiceTextbox(uint8_t a, uint16_t hl);
+/* <<< factory ShowMultichoiceTextbox */
 #endif

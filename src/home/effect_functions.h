@@ -1665,6 +1665,9 @@ MewtwoAltEnergyAbsorption_PlayerSelectEffectResult MewtwoAltEnergyAbsorption_Pla
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } MewtwoEnergyAbsorption_PlayerSelectEffectResult;
 MewtwoEnergyAbsorption_PlayerSelectEffectResult MewtwoEnergyAbsorption_PlayerSelectEffect(void);
 /* <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect */
+/* >>> factory FetchEffect */
+void FetchEffect(void);
+/* <<< factory FetchEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

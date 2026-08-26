@@ -1235,6 +1235,19 @@ static void adapt_ScriptCommand_MovePlayer(ProbeState *s)
 }
 /* <<< factory ScriptCommand_MovePlayer */
 
+/* >>> factory ShowMultichoiceTextbox */
+static void adapt_ShowMultichoiceTextbox(ProbeState *s)
+{
+	ShowMultichoiceTextboxResult result = ShowMultichoiceTextbox(s->a, s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->c = result.c;
+	s->e = result.e;
+	s->hl = result.hl;
+}
+/* <<< factory ShowMultichoiceTextbox */
+
 const ProbeEntry probe_entries_scripting[] = {
 	{ "Func_c9bc", adapt_Func_c9bc },
 	{ "CallMapScriptPointerIfExists", adapt_CallMapScriptPointerIfExists },
@@ -1356,5 +1369,6 @@ const ProbeEntry probe_entries_scripting[] = {
 	{ "PrintInteractableObjectText", adapt_PrintInteractableObjectText },
 	{ "Func_c943", adapt_Func_c943 },
 	{ "ScriptCommand_MovePlayer", adapt_ScriptCommand_MovePlayer },
+	{ "ShowMultichoiceTextbox", adapt_ShowMultichoiceTextbox },
 	{ NULL, NULL },
 };

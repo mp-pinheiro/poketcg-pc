@@ -914,6 +914,14 @@ CASES["DrawCardTypeIconsAndPrintCardCounts"] = [
 ]
 # <<< factory DrawCardTypeIconsAndPrintCardCounts
 
+# >>> factory ShowConfirmationCardScreen
+CONTRACT["ShowConfirmationCardScreen"] = {"compare": (), "preserve": ()}
+CASES["ShowConfirmationCardScreen"] = [
+    {"wram": {0xCEBB: b"\x00" * 9, 0xCECB: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"}, "setup": SETUP_PCD, "read": {0xCED0: 2}, "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, wram={0xCEBB: b"\x00" * 9, 0xCECB: b"\x00", 0xCFB9: b"\x00", 0xCABB: b"\x00"}, setup=SETUP_PCD, read={0xCED0: 2}, instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory ShowConfirmationCardScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1227,3 +1235,6 @@ MUTATIONS["ShowDeckInfoHeader"] = {
 # >>> factory-mutation DrawCardTypeIconsAndPrintCardCounts
 MUTATIONS["DrawCardTypeIconsAndPrintCardCounts"] = {"source_symbol": "DrawCardTypeIconsAndPrintCardCounts", "before": "\tFillBGMapLineWithA(SYM_BOX_TOP, 0u, 5u);", "after": "\tFillBGMapLineWithA(0x1Du, 0u, 5u);", "case_ids": ["DrawCardTypeIconsAndPrintCardCounts-0", "DrawCardTypeIconsAndPrintCardCounts-1"]}
 # <<< factory-mutation DrawCardTypeIconsAndPrintCardCounts
+# >>> factory-mutation ShowConfirmationCardScreen
+MUTATIONS["ShowConfirmationCardScreen"] = {"source_symbol": "ShowConfirmationCardScreen", "before": "ShowConfirmationCardScreen(void)\n{\n\tShowDeckInfoHeader();\n\twCardListCoords = 5u;", "after": "ShowConfirmationCardScreen(void)\n{\n\tShowDeckInfoHeader();\n\twCardListCoords = 4u;", "case_ids": ["ShowConfirmationCardScreen-0", "ShowConfirmationCardScreen-1"]}
+# <<< factory-mutation ShowConfirmationCardScreen

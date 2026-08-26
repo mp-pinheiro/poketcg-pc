@@ -105,4 +105,11 @@ InitializeInputNameResult InitializeInputName(uint8_t a, uint8_t b, uint8_t c,
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } FinalizeInputNameResult;
 FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory FinalizeInputName */
+/* >>> factory InputPlayerName */
+/* input_name.asm:68 (poketcg.sym 06:67a3). hl is the only input -- the buffer
+ * the finished name is written back to -- and the single exit is
+ * `call FinalizeInputName` / `ret`, so the result struct is the callee's,
+ * already typedef'd above. */
+FinalizeInputNameResult InputPlayerName(uint16_t hl);
+/* <<< factory InputPlayerName */
 #endif /* POKETCG_HOME_INPUT_NAME_H */

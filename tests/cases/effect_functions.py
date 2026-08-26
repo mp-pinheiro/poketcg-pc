@@ -2634,6 +2634,10 @@ wLoadedAttackAnimation = 0xCCB8
 
 hCurSelectionItem = 0xFFB2
 wDuelTempList = 0xC510
+
+wPlayerDeck = 0xC27E
+hWhoseTurn = 0xFF97
+wDuelistType = 0xCC0D
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5436,6 +5440,15 @@ CASES["MewtwoEnergyAbsorption_PlayerSelectEffect"] = [
 ]
 # <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect
 
+# >>> factory FetchEffect
+CONTRACT["FetchEffect"] = {"compare": (), "preserve": ()}
+CASES["FetchEffect"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x01", 0xC2BA: b"\x00", 0xC2EE: b"\x00", 0xCC0D: b"\x01", 0xC201: b"\x00"}, "read": {0xC2BA: 1, 0xC2EE: 1, 0xC201: 1, 0xC242: 1}, "expect": {0xC2BA: b"\x01", 0xC2EE: b"\x01", 0xC201: b"\x01", 0xC242: b"\x01"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", wPlayerDeck: b"\x02", 0xC2BA: b"\x00", 0xC2EE: b"\x01", 0xC242: b"\x01", 0xCC0D: b"\x01", 0xC202: b"\x00"}, "read": {0xC2BA: 1, 0xC2EE: 1, 0xC202: 1, 0xC243: 1}, "expect": {0xC2BA: b"\x01", 0xC2EE: b"\x02", 0xC202: b"\x01", 0xC243: b"\x02"}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", wPlayerDeck: b"\x03", 0xC2BA: b"\x00", 0xC2EE: b"\x00", 0xCC0D: b"\x01", 0xC203: b"\x00"}, read={0xC2BA: 1, 0xC2EE: 1, 0xC203: 1, 0xC242: 1}, expect={0xC2BA: b"\x01", 0xC2EE: b"\x01", 0xC203: b"\x01", 0xC242: b"\x01"}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory FetchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -7957,3 +7970,6 @@ MUTATIONS["MewtwoAltEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "M
 # >>> factory-mutation MewtwoEnergyAbsorption_PlayerSelectEffect
 MUTATIONS["MewtwoEnergyAbsorption_PlayerSelectEffect"] = {"source_symbol": "MewtwoEnergyAbsorption_PlayerSelectEffect", "before": "\treturn (MewtwoEnergyAbsorption_PlayerSelectEffectResult){result.a, result.f, result.hl};", "after": "\treturn (MewtwoEnergyAbsorption_PlayerSelectEffectResult){0xffu, result.f, result.hl};", "case_ids": ["MewtwoEnergyAbsorption_PlayerSelectEffect-0", "MewtwoEnergyAbsorption_PlayerSelectEffect-1"]}
 # <<< factory-mutation MewtwoEnergyAbsorption_PlayerSelectEffect
+# >>> factory-mutation FetchEffect
+MUTATIONS["FetchEffect"] = {"source_symbol": "FetchEffect", "before": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand(draw.a);", "after": "void FetchEffect(void)\n{\n\t(void)DrawWideTextBox_WaitForInput(Draw1CardFromTheDeckText);\n\tDisplayDrawOneCardScreen(0u, 0u, 0u, 0u, 0u, 0u, 0u);\n\tDrawCardResult draw = DrawCardFromDeck();\n\tif ((draw.f & 0x10u) != 0u)\n\t\treturn;\n\tAddCardToHand((uint8_t)(draw.a + 1u));", "case_ids": ["FetchEffect-0", "FetchEffect-1", "FetchEffect-2"]}
+# <<< factory-mutation FetchEffect

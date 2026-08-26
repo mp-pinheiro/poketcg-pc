@@ -4034,6 +4034,14 @@ static void adapt_MewtwoEnergyAbsorption_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory MewtwoEnergyAbsorption_PlayerSelectEffect */
 
+/* >>> factory FetchEffect */
+static void adapt_FetchEffect(ProbeState *s)
+{
+	(void)s;
+	FetchEffect();
+}
+/* <<< factory FetchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4523,5 +4531,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "EnergyConversion_PlayerSelectEffect", adapt_EnergyConversion_PlayerSelectEffect },
 	{ "MewtwoAltEnergyAbsorption_PlayerSelectEffect", adapt_MewtwoAltEnergyAbsorption_PlayerSelectEffect },
 	{ "MewtwoEnergyAbsorption_PlayerSelectEffect", adapt_MewtwoEnergyAbsorption_PlayerSelectEffect },
+	{ "FetchEffect", adapt_FetchEffect },
 	{ NULL, NULL },
 };

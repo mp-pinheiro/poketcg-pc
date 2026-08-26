@@ -267,4 +267,7 @@ void ShowDeckInfoHeader(void);
 /* >>> factory DrawCardTypeIconsAndPrintCardCounts */
 void DrawCardTypeIconsAndPrintCardCounts(void);
 /* <<< factory DrawCardTypeIconsAndPrintCardCounts */
+/* >>> factory ShowConfirmationCardScreen */
+void ShowConfirmationCardScreen(void);
+/* <<< factory ShowConfirmationCardScreen */
 #endif /* POKETCG_HOME_DECK_CONFIGURATION_H */

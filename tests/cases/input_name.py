@@ -267,6 +267,40 @@ def _naming_source(text):
 wNamingScreenBuffer = 0xCFE7
 wNamingScreenDestPointer = 0xD000
 wNamingScreenBufferMaxLength = 0xD004
+
+# InitializeInputName clears NAMING_SCREEN_BUFFER_LENGTH ($18) bytes at $CFE7,
+# which erases the PyBoy oracle's `jr -2` park stub at $CFF4/$CFF5, and
+# MAX_PLAYER_NAME_LENGTH ($0C) makes the name copy only 13 bytes long, so
+# InputPlayerName can never write those two bytes back the way this module's
+# InitializeInputName cases do with _naming_source (they get to pick maxlen
+# $17). After the capture hook fires, pyboy_oracle parks PC on the wiped stub
+# and the CPU decodes live WRAM for the rest of the frame; that is the wedge a
+# previous generation died on. The slide is deterministic: $CFF4-$CFFF are
+# eleven cleared bytes plus a zero wNamingScreenBufferLength (NOPs), then the
+# ten bytes this routine itself wrote at $D000-$D009 -- $00 / dest-high / $5E /
+# $67 / $0C / $09 / $00 / $0C / $01 / $02 -- whose last opcode ($01, LD BC,d16)
+# swallows $D009 and $D00A and resumes at $D00B. `18 fe 00` spins at every one
+# of its three alignments: the JR lands on itself, the CP steps two bytes onto
+# the next JR, the NOP steps one, so any landing inside this seed parks the CPU
+# harmlessly instead of running into a HALT or an rLCDC write. Nothing in this
+# routine's call graph writes $D00A-$D015 (wMachineDeckPtrs is deck-machine
+# only), so the implicit comparison on the seed is a free identity check.
+IPN_PARK = b"\x18\xfe\x00" * 4
+
+# Destination high bytes are restricted to one-byte opcodes for the same slide:
+# $C1 is POP BC and $C5 is PUSH BC, while $C2/$C4 would decode as a three-byte
+# JP/CALL over the question pointer and leave the bank-6 data stream.
+IPN_DEST_NAME_BUFFER = 0xC500
+IPN_DEST_SCRATCH = 0xC100
+IPN_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# wTileMapFill, wNamingScreenCursorY, wNamingScreenKeyboardHeight, the two
+# cursor tiles, the name buffer up to (never into) the reserved $CFF0-$CFF5
+# frame, its length byte, and the ten-byte $D000 block this routine fills:
+# destination pointer, question pointer, max length, column count, cursor x,
+# name position and wd009. Deliberately absent: wVBlankOAMCopyToggle ($CAC0)
+# and wFlushPaletteFlags ($CABF), which the reference's VBlank handler clears
+# and the port never does.
+IPN_READ = {0xCAB6: 1, 0xCEA4: 1, 0xCEA9: 1, 0xCEAA: 2, 0xCFE7: 9, 0xCFFF: 1, 0xD000: 10}
 # <<< factory-cases-statics
 
 # >>> factory DeckNamingScreen_ProcessInput
@@ -320,6 +354,50 @@ CASES["FinalizeInputName"] = [
     {"wram": {0xCFE7: b"\x00", 0xD000: b"\x00\xC4", 0xD004: b"\x00"}, "read": {0xC400: 1}}
 ]
 # <<< factory FinalizeInputName
+
+# >>> factory InputPlayerName
+CONTRACT["InputPlayerName"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+# `keys` is a single held value and never a cycle. The reference advances its
+# input timeline once per rendered frame while the native probe advances it once
+# per completed joypad poll, and this routine's scene build (EmptyScreen,
+# LoadSymbolsFont, a whole text page) burns several frames before its first
+# DoFrame -- so any multi-entry cycle enters the loop on a different phase on the
+# two backends. That is exactly how the previous generation diverged: the
+# reference typed one "A" ($0330) at (0,0) before reaching End while the port,
+# still on entry 0, typed none. A one-entry timeline cannot drift.
+#
+# Holding UP|A ($41) exits on the first pass. hKeysHeld goes 0 -> $41 on that
+# single DoFrame, so hKeysPressed is $41 and, because a d-pad bit is held,
+# hDPadHeld mirrors it whole. PAD_START is clear, so the else branch runs:
+# PlayerNamingScreen_CheckButtonState takes its UP branch, wraps y = 0 - 1 to
+# wNamingScreenKeyboardHeight - 1 = 5 and keeps x = 0, then sees PAD_A in
+# hKeysPressed and returns. PlayerNamingScreen_KeyboardData entry 5 ($6BAF + 30
+# = $6BCD) is `kbitem $10, $0f, $01, $09` -- the "End" key, repeated on every
+# column's bottom row -- so PlayerNamingScreen_ProcessInput reads type2 = $09,
+# returns carry, and the routine takes its only `ret`. Never DOWN|A: (0,1) is
+# "J", which appends a character, and the held d-pad then walks the cursor every
+# frame with no further A edge, so the loop never ends.
+#
+# wLCDC ($CABB) and rLCDC ($FF40) are deliberately unseeded: the real EmptyScreen
+# is DisableLCD / FillTileMap / EnableLCD / SendSGB / DisableLCD while the ported
+# one touches no LCD register at all, so seeding either address would compare a
+# byte the two sides reach differently. DrawPlayerNamingScreenBG's own
+# `call EnableLCD` is what turns the screen on before the frame loop, which is
+# why CopyDMAFunction has to be installed -- wVBlankOAMCopyToggle is TRUE by
+# then, so VBlankHandler jumps through hDMAFunction and, without the real
+# routine there, leaves wReentrancyFlag set and parks WaitForVBlank at $0271.
+CASES["InputPlayerName"] = [
+    {"hl": IPN_DEST_SCRATCH, "rom_bank": 6, "keys": 0x41,
+     "wram": {IPN_DEST_SCRATCH: b"\x00" * 13, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+     "setup": IPN_SETUP, "read": IPN_READ,
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    # wNameBuffer, the address the game's own callsite passes in hl.
+    dict(POISON, hl=IPN_DEST_NAME_BUFFER, rom_bank=6, keys=0x41,
+         wram={IPN_DEST_NAME_BUFFER: b"\x00" * 13, 0xFF90: b"\x00", 0xD00A: IPN_PARK},
+         setup=IPN_SETUP, read=IPN_READ,
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory InputPlayerName
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -447,3 +525,24 @@ for _rec in SCHEMA2_CASES["InitializeInputName"]:
 # >>> factory-mutation FinalizeInputName
 MUTATIONS["FinalizeInputName"] = {"source_symbol": "FinalizeInputName", "before": "\tuint16_t copy_count = (uint16_t)wNamingScreenBufferMaxLength + 1u;", "after": "\tuint16_t copy_count = 2u;", "case_ids": ["FinalizeInputName-0"]}
 # <<< factory-mutation FinalizeInputName
+# >>> factory-mutation InputPlayerName
+MUTATIONS["InputPlayerName"] = {
+    "source_symbol": "InputPlayerName",
+    "before": "\twNamingScreenNumColumns = 9u;\n\twNamingScreenKeyboardHeight = 6u;",
+    "after": "\twNamingScreenNumColumns = 8u;\n\twNamingScreenKeyboardHeight = 6u;",
+    "case_ids": ["InputPlayerName-0", "InputPlayerName-1"],
+}
+# <<< factory-mutation InputPlayerName
+# >>> factory-completion InputPlayerName
+# InitializeInputName clears $CFE7-$CFFE, so by the time this routine returns the
+# PyBoy oracle's sentinel at $CFF0 is a zero byte and the injected hook never
+# fires -- the run dies on the watchdog rather than on anything the port did.
+# $682A is this routine's own `ret`: `06:67a3 InputPlayerName` plus its 163
+# bytes lands on `06:6846 InitializeInputName`, and `06:682b
+# InputPlayerName.on_b_button` is the byte straight after the `ret`. Completing
+# there puts the hook in bank 6 ROM, which nothing can wipe, and every store the
+# contract observes -- including FinalizeInputName's copy into the destination --
+# has already run.
+for _rec in SCHEMA2_CASES["InputPlayerName"]:
+    _rec["completion"] = {"mode": "pre-ret", "pc": 0x682A}
+# <<< factory-completion InputPlayerName

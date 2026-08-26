@@ -98,6 +98,39 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define NAMING_SCREEN_BUFFER_LENGTH 0x18u
+
+#include "home/input_name.h"
+#include "home/credits_sequence_commands.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/objects.h"
+#include "home/process_text.h"
+#include "home/random.h"
+#include "home/tiles.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+/* poketcg.sym: `06:675e WhatIsYourNameData`, `06:67a3 InputPlayerName`. The
+ * label is the first byte of the bank-6 section, $45 bytes ahead of the
+ * routine (WhatIsYourNameData $05 + four deck datas $09 each + ClearMemory_Bank6
+ * $0d + PlaySFXConfirmOrCancel_Bank6 $0f). InitializeInputName stores it in
+ * wNamingScreenQuestionPointer and DrawPlayerNamingScreenBG walks it as a
+ * textitem list. */
+#define WHAT_IS_YOUR_NAME_DATA 0x675Eu
+
+/* Suffixed _IPN because this module's statics block already carries MENU_CANCEL,
+ * TX_END and a PAD_* set for the sibling fragments; redefining those names with
+ * different spellings is what makes an append collide. */
+#define MAX_PLAYER_NAME_LENGTH_IPN 0x0Cu
+#define MENU_CONFIRM_IPN 0x01u
+#define TRUE_IPN 0x01u
+#define TX_END_IPN 0x00u
+#define SYM_CURSOR_R_IPN 0x0Fu
+#define SYM_SPACE_IPN 0x00u
+#define PAD_START_IPN 0x08u
+#define PAD_A_IPN 0x01u
+#define PAD_B_IPN 0x02u
 /* <<< factory statics */
 
 /* >>> factory DeckNamingScreen_GetCharInfoFromPos */
@@ -742,3 +775,88 @@ FinalizeInputNameResult FinalizeInputName(uint8_t a, uint8_t f, uint8_t b, uint8
 	return (FinalizeInputNameResult){length.c, length.b ? (uint8_t)(0x50u | ((length.b & 0x0Fu) ? 0x20u : 0x00u)) : 0xC0u, length.b, length.c, (uint8_t)(source >> 8), (uint8_t)source, wNamingScreenBuffer_ADDR};
 }
 /* <<< factory FinalizeInputName */
+
+/* >>> factory InputPlayerName */
+/* input_name.asm:68-143 (poketcg.sym 06:67a3, 163 bytes). Builds the Player
+ * naming screen from hl -- the buffer the finished name is written back to --
+ * and then runs one frame per pass until the "End" key is chosen.
+ *
+ * Three of the four branches inside the loop fall back to `.loop`: START jumps
+ * the cursor onto the End key at (6,5), the B button erases the last two-byte
+ * character (its `dec [hl]` pair is a byte count, not a character count), and
+ * an A press that PlayerNamingScreen_ProcessInput answers without carry has
+ * merely typed a character. Only the carry answer leaves, through
+ * `call FinalizeInputName` / `ret` at $682A, so this routine's whole register
+ * result is that callee's.
+ *
+ * The asm decides between those branches from what
+ * PlayerNamingScreen_CheckButtonState returns: `jr nc` for "nothing pressed"
+ * and `cp MENU_CANCEL` for B. The landed callee reports its
+ * PlayerNamingScreen_DrawVisibleCursor tail rather than the `pop af` / `scf`
+ * pair the asm ends on, so its a and f cannot carry that decision at all --
+ * f comes back with bit 4 clear on every path. hKeysPressed ($FF91) is the
+ * exact byte the callee itself tested (`ldh a, [hKeysPressed]` /
+ * `and PAD_A | PAD_B`), DoFrame is the only thing in the tree that rewrites it,
+ * and no DoFrame runs between that test and the return, so the same two
+ * branches are re-derived from it here and land on the identical path the real
+ * ROM takes. */
+FinalizeInputNameResult InputPlayerName(uint16_t hl)
+{
+	(void)InitializeInputName(MAX_PLAYER_NAME_LENGTH_IPN, 12u, 1u,
+				  (uint8_t)(hl >> 8), (uint8_t)hl,
+				  WHAT_IS_YOUR_NAME_DATA);
+	Set_OBJ_8x8();
+	wTileMapFill = 0u;
+	EmptyScreen();
+	ZeroObjectPositions();
+	wVBlankOAMCopyToggle = TRUE_IPN;
+	(void)LoadSymbolsFont();
+	(void)SetupText(0x38u, 0xBFu);
+	LoadTextCursorTile();
+	wd009 = 0x02u;
+	DrawPlayerNamingScreenBG();
+	wNamingScreenCursorX = 0u;
+	wNamingScreenCursorY = 0u;
+	wNamingScreenNumColumns = 9u;
+	wNamingScreenKeyboardHeight = 6u;
+	wVisibleCursorTile = SYM_CURSOR_R_IPN;
+	wInvisibleCursorTile = SYM_SPACE_IPN;
+
+	for (;;) {
+		wVBlankOAMCopyToggle = TRUE_IPN;
+		DoFrame();
+		(void)UpdateRNGSources();
+
+		if ((hDPadHeld & PAD_START_IPN) != 0u) {
+			PlaySFXConfirmOrCancel_Bank6(MENU_CONFIRM_IPN);
+			(void)PlayerNamingScreen_DrawInvisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+			wNamingScreenCursorX = 6u;
+			wNamingScreenCursorY = 5u;
+			(void)PlayerNamingScreen_DrawVisibleCursor(0u, 0u, 0u, 0u, 0u, 0u);
+			continue;
+		}
+
+		(void)PlayerNamingScreen_CheckButtonState();
+		uint8_t pressed = (uint8_t)(hKeysPressed & (PAD_A_IPN | PAD_B_IPN));
+
+		if (pressed == 0u)
+			continue;
+		if ((pressed & PAD_A_IPN) != 0u) {
+			PlayerNamingScreen_ProcessInputResult input =
+				PlayerNamingScreen_ProcessInput();
+
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			return FinalizeInputName(input.a, input.f, 0u, 0u, 0u, 0u, 0u);
+		}
+
+		uint8_t length = wNamingScreenBufferLength;
+
+		if (length == 0u)
+			continue;
+		gb_write8((uint16_t)(wNamingScreenBuffer_ADDR + length - 2u), TX_END_IPN);
+		wNamingScreenBufferLength = (uint8_t)(length - 2u);
+		PrintPlayerNameFromInput();
+	}
+}
+/* <<< factory InputPlayerName */
