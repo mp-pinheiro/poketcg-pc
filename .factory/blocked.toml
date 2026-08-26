@@ -456,11 +456,6 @@ reason = "AUTO-RETIRED: src/engine/duel/core.asm:2643 (basename `core`). 9 gener
 unblock = "read the recorded diagnostics under .factory/try/PracticeDuel_DrawSevenCards/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "OppAction_ExecuteTrainerCardEffectCommands"
-reason = "AUTO-RETIRED: src/engine/duel/core.asm:6611 (basename `core`). 3 generations exhausted (trapped=True); last diagnostic phase=infra-error failure_class=infrastructure detail=Traceback (most recent call last): File \"<path>\", line 561, in <module> raise SystemExit(main()) ^^^^^^ File \"<path>\", line 437, in main probe = subprocess.run( ^^^^^^^^^^^^^^^ File \"<path>\", line 550, in run stdout, stderr = process.communicate(input, timeout=timeout) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ File \""
-unblock = "read the recorded diagnostics under .factory/try/OppAction_ExecuteTrainerCardEffectCommands/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "Func_12661"
 reason = "AUTO-RETIRED: src/engine/menus/debug_main.asm:2 (basename `debug_main`). 10 generations exhausted (trapped=True); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/Func_12661/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
