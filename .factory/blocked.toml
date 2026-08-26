@@ -540,11 +540,6 @@ reason = "AUTO-RETIRED: src/engine/challenge_machine.asm:580 (basename `challeng
 unblock = "read the recorded diagnostics under .factory/try/ChallengeMachine_PrintDuelResultIcons/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
 
 [[blocked]]
-name = "UnusedCopyrightScreen"
-reason = "AUTO-RETIRED: src/engine/unused_copyright.asm:3 (basename `unused_copyright`). 10 generations exhausted (trapped=False); last diagnostic phase=surgery failure_class=schema detail=SurgeryError: cases module is not valid Python: invalid hexadecimal literal (unused_copyright.py, line 11)"
-unblock = "read the recorded diagnostics under .factory/try/UnusedCopyrightScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
-
-[[blocked]]
 name = "ShowPrinterConnectionErrorScene"
 reason = "AUTO-RETIRED: src/engine/link/printer.asm:64 (basename `printer`). 9 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case ShowPrinterConnectionErrorScene-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":2472,\"sp\":65518,\"instructions\":53663,\"cycles\":400004}"
 unblock = "read the recorded diagnostics under .factory/try/ShowPrinterConnectionErrorScene/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
@@ -660,7 +655,7 @@ workaround = "SUPERSEDED IN PRACTICE: the premise 'it cannot be left unseeded, b
 [[blocked]]
 name = "PokemonTrader_TradeCardsEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10078 (basename `effect_functions`). 17 generations exhausted (trapped=False); last diagnostic phase=surgery failure_class=schema detail=SurgeryError: cases module is not valid Python: '[' was never closed (effect_functions.py, line 4473)"
-unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+unblock = "read the recorded diagnostics under .factory/try/PokemonTrader_TradeCardsEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes SWEPT 2026-08-26: this stanza records only a CANDIDATE TOOLING FAILURE (SurgeryError / cases module is not valid Python), i.e. no capability gap was ever diagnosed here, so the 10 exhausted generations say nothing about portability. Unlike UnusedCopyrightScreen -- whose stanza had the same shape and which was deleted after measuring REFERENCE_OK -- this one is NOT proven portable: driving the reference bare with setup=[{fn:SetupText,d:0x30,e:0x7F}] and no seeds gives BUDGET_EXHAUSTED at pc=0x0038 (RST 38, executing $FF filler), so it derails without proper seeds. Seed it first, confirm REFERENCE_OK, then delete this entry."
 
 [[blocked]]
 name = "DisplayCardList"
