@@ -65,6 +65,36 @@ CASES = {
     ],
 }
 
+
+# >>> factory EstimateDamage_VersusDefendingCard
+_edvdc_wDamage = 0xCCB9
+_edvdc_wAIMinDamage = 0xCCBB
+_edvdc_wAIMaxDamage = 0xCCBC
+_edvdc_wLoadedAttackCategory = 0xCCB1
+# The reference runs the seeded card's real EFFECTCMDTYPE_AI command, so these cases
+# need a budget far above the defaults on BOTH backends; tests/test_leaves.py derives
+# PyBoy's frame allowance from cycle_budget.
+def _edvdc(location, extra=None, **kw):
+    wram = {0xFF97: b"\xC2", 0xFF9D: location, 0xC2BB: b"\x00",
+            _edvdc_wDamage: b"\x00\x00", _edvdc_wAIMinDamage: b"\x00",
+            _edvdc_wAIMaxDamage: b"\x00"}
+    if extra:
+        wram.update(extra)
+    case = {"wram": wram, "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+            "instruction_budget": 40000000, "cycle_budget": 160000000,
+            "read": {_edvdc_wDamage: 2, _edvdc_wAIMinDamage: 1, _edvdc_wAIMaxDamage: 1}}
+    case.update(kw)
+    return case
+
+CONTRACT["EstimateDamage_VersusDefendingCard"] = {"compare": ("a", "f", "d", "e", "hl"), "preserve": ()}
+CASES["EstimateDamage_VersusDefendingCard"] = [
+    _edvdc(b"\x00", a=0),
+    _edvdc(b"\x01", extra={0xC2BC: b"\x00"}, a=0),
+    _edvdc(b"\x00", extra={_edvdc_wLoadedAttackCategory: b"\x04"}, a=0),
+    dict(POISON, **_edvdc(b"\x00")),
+]
+# <<< factory EstimateDamage_VersusDefendingCard
+
 from tests.cases._schema_migration import legacy_to_schema
 
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -83,3 +113,6 @@ MUTATIONS = {
         "case_ids": ["CalculateDamage_FromDefendingPokemon-1"],
     },
 }
+# >>> factory-mutation EstimateDamage_VersusDefendingCard
+MUTATIONS["EstimateDamage_VersusDefendingCard"] = {"source_symbol": "EstimateDamage_VersusDefendingCard", "before": "\tgb_write8(wAIMinDamage_ADDR, damage);\n\tgb_write8(wAIMaxDamage_ADDR, damage);\n\t(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI);", "after": "\tgb_write8(wAIMinDamage_ADDR, (uint8_t)(damage + 1u));\n\tgb_write8(wAIMaxDamage_ADDR, damage);\n\t(void)TryExecuteEffectCommandFunction(EFFECTCMDTYPE_AI);", "case_ids": ["EstimateDamage_VersusDefendingCard-0", "EstimateDamage_VersusDefendingCard-1", "EstimateDamage_VersusDefendingCard-3"]}
+# <<< factory-mutation EstimateDamage_VersusDefendingCard
