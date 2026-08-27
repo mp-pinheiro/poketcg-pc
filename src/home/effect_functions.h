@@ -1732,6 +1732,10 @@ Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
 typedef struct { uint8_t a; uint8_t f; } RaichuThunder_RecoilEffectResult;
 RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e);
 /* <<< factory RaichuThunder_RecoilEffect */
+/* >>> factory BigEggsplosion_MultiplierEffect */
+/* >>> factory BigEggsplosion_MultiplierEffect */
+void BigEggsplosion_MultiplierEffect(void);
+/* <<< factory BigEggsplosion_MultiplierEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

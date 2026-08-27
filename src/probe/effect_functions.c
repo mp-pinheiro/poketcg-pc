@@ -4193,6 +4193,13 @@ static void adapt_RaichuThunder_RecoilEffect(ProbeState *s)
 }
 /* <<< factory RaichuThunder_RecoilEffect */
 
+/* >>> factory BigEggsplosion_MultiplierEffect */
+static void adapt_BigEggsplosion_MultiplierEffect(ProbeState *s)
+{
+	BigEggsplosion_MultiplierEffect();
+}
+/* <<< factory BigEggsplosion_MultiplierEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4700,5 +4707,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Pokedex_PlayerSelection", adapt_Pokedex_PlayerSelection },
 	{ "Thrash_RecoilEffect", adapt_Thrash_RecoilEffect },
 	{ "RaichuThunder_RecoilEffect", adapt_RaichuThunder_RecoilEffect },
+	{ "BigEggsplosion_MultiplierEffect", adapt_BigEggsplosion_MultiplierEffect },
 	{ NULL, NULL },
 };

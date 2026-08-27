@@ -1058,6 +1058,11 @@ static void chain_lightning_damage_same_color_bench(void)
 #define DuelistDeckText 0x00a9u
 #define IsThisOKText 0x002eu
 #define RearrangeThe5CardsAtTopOfDeckText 0x0162u
+
+#include "generated/wram.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8456,3 +8461,14 @@ RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d
 	return (RaichuThunder_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory RaichuThunder_RecoilEffect */
+
+/* >>> factory BigEggsplosion_MultiplierEffect */
+/* effect_functions.asm:1836-1850 */
+void BigEggsplosion_MultiplierEffect(void)
+{
+	GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+	LoadTxRam3(20u);
+	TossCoinATimes_BankBResult result = TossCoinATimes_BankB(wTotalAttachedEnergies, 0u, 0u, 0u, 0u, DamageCheckIfHeadsXDamageText, 20u);
+	SetDamageToATimes20(result.a);
+}
+/* <<< factory BigEggsplosion_MultiplierEffect */

@@ -1,0 +1,9 @@
+{
+  "fn": "BigEggsplosion_MultiplierEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"BigEggsplosion_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"14000000\", \"52636\": \"00010002\", \"52803\": \"1400\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"BigEggsplosion_MultiplierEffect\", \"mismatches\": {\"bus\": {\"address\": 52803, \"reference\": \"0001000214000000\", \"native\": \"0001000215000000\", \"reference_size\": 19, \"native_size\": 19, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52233, 1], [52409, 4], [52636, 4], [52803, 2], [52814, 2]]}}}\n",
+  "restored": "{\"fn\": \"BigEggsplosion_MultiplierEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"06\", \"51914\": \"000001\", \"52233\": \"00\", \"52409\": \"14000000\", \"52636\": \"00010002\", \"52803\": \"1400\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

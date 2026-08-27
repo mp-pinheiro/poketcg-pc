@@ -5642,6 +5642,22 @@ CASES["RaichuThunder_RecoilEffect"] = [
 ]
 # <<< factory RaichuThunder_RecoilEffect
 
+# >>> factory BigEggsplosion_MultiplierEffect
+CONTRACT["BigEggsplosion_MultiplierEffect"] = {"compare": (), "preserve": ()}
+CASES["BigEggsplosion_MultiplierEffect"] = [
+    {"keys": [0x00, 0x01],
+     "wram": {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+     "read": {0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00", 0xCACA: b"\x00\x00\x80", 0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x00\x00"},
+         read={0xCCB9: 3, 0xCCBB: 1, 0xCCBC: 1, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE43: 2, 0xCE4E: 2},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory BigEggsplosion_MultiplierEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8217,3 +8233,6 @@ MUTATIONS["Thrash_RecoilEffect"] = {"source_symbol": "Thrash_RecoilEffect", "bef
 # >>> factory-mutation RaichuThunder_RecoilEffect
 MUTATIONS["RaichuThunder_RecoilEffect"] = {"source_symbol": "RaichuThunder_RecoilEffect", "before": "RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(30u);", "after": "RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(31u);", "case_ids": ["RaichuThunder_RecoilEffect-0", "RaichuThunder_RecoilEffect-1"]}
 # <<< factory-mutation RaichuThunder_RecoilEffect
+# >>> factory-mutation BigEggsplosion_MultiplierEffect
+MUTATIONS["BigEggsplosion_MultiplierEffect"] = {"source_symbol": "BigEggsplosion_MultiplierEffect", "before": "void BigEggsplosion_MultiplierEffect(void)\n{\n\tGetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);\n\tLoadTxRam3(20u);", "after": "void BigEggsplosion_MultiplierEffect(void)\n{\n\tGetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);\n\tLoadTxRam3(21u);", "case_ids": ["BigEggsplosion_MultiplierEffect-0", "BigEggsplosion_MultiplierEffect-1"]}
+# <<< factory-mutation BigEggsplosion_MultiplierEffect
