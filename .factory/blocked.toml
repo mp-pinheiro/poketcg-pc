@@ -535,3 +535,13 @@ unblock = "land OppAction_UseAttack and OppAction_PlayAttackAnimationDealAttackD
 name = "GiveBoosterPack"
 reason = "AUTO-RETIRED: src/engine/menus/give_booster_pack.asm:1 (basename `give_booster_pack`). 21 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case GiveBoosterPack-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65504,\"rom_bank\":4,\"hbank_rom\":4,\"instructions\":18754305,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":40,\"ppu_mode\":2,\"bus\":\"800000a80301000037\"}"
 unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "JigglypuffDoubleEdgeEffect"
+reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (2 stanzas). src/engine/duel/effect_functions.asm:8192 (basename `effect_functions`). generation=5; last diagnostic phase=primary failure_class=code detail=case JigglypuffDoubleEdgeEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":7800454,\"cycles\":32000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":8,\"ppu_mode\":3,\"bus\":\"40807a14000001010001\"}"
+unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "TakeDownEffect"
+reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (2 stanzas). src/engine/duel/effect_functions.asm:3554 (basename `effect_functions`). generation=6; last diagnostic phase=primary failure_class=code detail=case TakeDownEffect-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65470,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":19759473,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":89,\"ppu_mode\":3,\"bus\":\"40807a1e000001010001\"}"
+unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"

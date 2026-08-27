@@ -273,6 +273,11 @@ CASES["SendTilesToPrinter"] = [
      "expect_regs": {"a": 0xFF, "f": 0x10, "hl": 0xC540},
      "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
+    {"hl": 0xC500,
+     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "sram": _SENDTILES_SR, "ramg": True,
+     "sread": {0: {SGFXBUFFER5: 0x280, SGFXBUFFER5 + 0x280: 0x50}},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
 ]
 # <<< factory SendTilesToPrinter
 
@@ -598,6 +603,12 @@ MUTATIONS["SendTilesToPrinter"] = {
     "source_symbol": "SendTilesToPrinter",
     "before": "\t\thl = (uint16_t)(hl + 32u);",
     "after": "\t\thl = (uint16_t)(hl + 31u);",
-    "case_ids": ["SendTilesToPrinter-0", "SendTilesToPrinter-1"],
+    "case_ids": ["SendTilesToPrinter-3"],
 }
 # <<< factory-mutation SendTilesToPrinter
+
+# >>> factory-completion SendTilesToPrinter
+for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
+    if _record.get("evidence") == "primary":
+        _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion SendTilesToPrinter
