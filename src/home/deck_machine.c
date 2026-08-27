@@ -136,6 +136,20 @@
 #include "home/print_text.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "home/deck_machine.h"
+#include "home/deck_configuration.h"
+#include "home/deck_selection.h"
+#include "home/deck_check.h"
+#include "home/frames.h"
+#include "home/sound.h"
+#include "home/switch_sram.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define SFX_CURSOR 0x01u
+#define PAD_RIGHT 0x10u
+#define PAD_LEFT 0x20u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -774,3 +788,44 @@ DrawDeckMachineScreenResult DrawDeckMachineScreen(void)
 	return (DrawDeckMachineScreenResult){entries.a, entries.f};
 }
 /* <<< factory DrawDeckMachineScreen */
+
+/* >>> factory HandleDeckMachineSelection */
+HandleDeckMachineSelectionResult HandleDeckMachineSelection(void)
+{
+	for (;;) {
+		DoFrame();
+		HandleDeckCardSelectionListResult r = HandleDeckCardSelectionList();
+		if (r.f & CARRY_FLAG) {
+			DrawListCursor_Visible();
+			wTempCardListVisibleOffset = wCardListVisibleOffset;
+			wTempDeckMachineCursorPos = wCardListCursorPos;
+			uint8_t v = hffb3;
+			return (HandleDeckMachineSelectionResult){v, v ? 0u : 0x80u};
+		}
+		uint8_t held = hDPadHeld;
+		uint8_t old = wCardListVisibleOffset;
+		if (held == PAD_RIGHT || held == PAD_LEFT) {
+			uint8_t next = old;
+			if (held == PAD_RIGHT) { next = (uint8_t)(old + NUM_DECK_MACHINE_SLOTS); if ((uint8_t)(next + NUM_DECK_MACHINE_SLOTS) >= wNumDeckMachineEntries) next = (uint8_t)(wNumDeckMachineEntries - NUM_DECK_MACHINE_SLOTS); }
+			else if (old >= NUM_DECK_MACHINE_SLOTS) next = (uint8_t)(old - NUM_DECK_MACHINE_SLOTS);
+			wCardListVisibleOffset = next;
+			if (next != old) { PlaySFX(SFX_CURSOR); DrawDeckMachineScreen(); PrintNumSavedDecks(); }
+			continue;
+		}
+		if (!(held & PAD_START)) continue;
+		wTempCardListVisibleOffset = wCardListVisibleOffset;
+		wTempDeckMachineCursorPos = wCardListCursorPos;
+		uint8_t i = (uint8_t)(wCardListVisibleOffset + wCardListCursorPos);
+		wCurDeck = (uint8_t)((i + 1u) | 0x80u);
+		uint16_t p = (uint16_t)(wMachineDeckPtrs_ADDR + (uint16_t)i * 2u);
+		uint16_t deck = (uint16_t)(gb_read8(p) | ((uint16_t)gb_read8((uint16_t)(p + 1u)) << 8));
+		EnableSRAM(); uint8_t n = gb_read8((uint16_t)(deck + DECK_NAME_SIZE)); DisableSRAM();
+		if (!n) continue;
+		PlaySFXConfirmOrCancel(MENU_CONFIRM); OpenDeckConfirmationMenu((uint16_t)(deck + DECK_NAME_SIZE), deck);
+		wCardListVisibleOffset = wTempCardListVisibleOffset;
+		ClearScreenAndDrawDeckMachineScreen(); DrawListScrollArrows(); PrintNumSavedDecks();
+		wCardListCursorPos = wTempDeckMachineCursorPos;
+		return (HandleDeckMachineSelectionResult){0u, CARRY_FLAG};
+	}
+}
+/* <<< factory HandleDeckMachineSelection */

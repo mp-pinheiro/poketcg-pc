@@ -1,0 +1,9 @@
+{
+  "fn": "HandleDeckMachineSelection",
+  "case": "tests/cases/deck_machine.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"HandleDeckMachineSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52897\": \"03\", \"52900\": \"00\", \"52913\": \"00\", \"53261\": \"00c0\", \"53382\": \"0003\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"HandleDeckMachineSelection\", \"mismatches\": {\"bus\": {\"address\": 53383, \"reference\": \"0000c00003ff\", \"native\": \"0000c00000ff\", \"reference_size\": 9, \"native_size\": 9, \"spans\": [[51899, 1], [52897, 1], [52900, 1], [52913, 1], [53261, 2], [53382, 2], [65459, 1]]}}}\n",
+  "restored": "{\"fn\": \"HandleDeckMachineSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 1, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"51899\": \"00\", \"52897\": \"03\", \"52900\": \"00\", \"52913\": \"00\", \"53261\": \"00c0\", \"53382\": \"0003\", \"65459\": \"ff\"}}, \"status\": \"PASS\"}\n"
+}

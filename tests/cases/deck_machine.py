@@ -215,6 +215,13 @@ wDeckMachineTitleText = 0xD0A2
 
 wDeckMachineText = 0xD0A7
 wMachineDeckPtrs = 0xD00D
+
+wCardListVisibleOffset = 0xCEA1
+wCardListCursorPos = 0xCEA4
+wMachineDeckPtrs = 0xD00D
+wTempCardListVisibleOffset = 0xD087
+wTempDeckMachineCursorPos = 0xD086
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -445,6 +452,14 @@ CASES["DrawDeckMachineScreen"] = [
 ]
 # <<< factory DrawDeckMachineScreen
 
+# >>> factory HandleDeckMachineSelection
+CONTRACT["HandleDeckMachineSelection"] = {"compare": ("f",), "preserve": ()}
+CASES["HandleDeckMachineSelection"] = [
+    {"wram": {0xCABB: b"\x00", 0xCEA1: b"\x03", 0xCEA4: b"\x00", 0xD087: b"\x00", 0xD086: b"\x00", 0xD00D: b"\x00\xC0", 0xFFB3: b"\x00"}, "sram": {0: {}}, "keys": [0x00, 0x02], "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "read": {0xCEA1: 1, 0xCEA4: 1, 0xD087: 1, 0xD086: 1, 0xCEB1: 1, 0xFFB3: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCABB: b"\x00", 0xCEA1: b"\x03", 0xCEA4: b"\x00", 0xD087: b"\x00", 0xD086: b"\x00", 0xD00D: b"\x00\xC0", 0xFFB3: b"\x00"}, sram={0: {}}, keys=[0x00, 0x02], setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], read={0xCEA1: 1, 0xCEA4: 1, 0xD087: 1, 0xD086: 1, 0xCEB1: 1, 0xFFB3: 1}, instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory HandleDeckMachineSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -574,3 +589,6 @@ MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScree
 # >>> factory-mutation DrawDeckMachineScreen
 MUTATIONS["DrawDeckMachineScreen"] = {"source_symbol": "DrawDeckMachineScreen", "before": "\thffb0 = 0x00u;", "after": "\thffb0 = 0x01u;", "case_ids": ["DrawDeckMachineScreen-0", "DrawDeckMachineScreen-1"]}
 # <<< factory-mutation DrawDeckMachineScreen
+# >>> factory-mutation HandleDeckMachineSelection
+MUTATIONS["HandleDeckMachineSelection"] = {"source_symbol": "HandleDeckMachineSelection", "before": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = wCardListVisibleOffset;", "after": "\t\t\tDrawListCursor_Visible();\n\t\t\twTempCardListVisibleOffset = 0u;", "case_ids": ["HandleDeckMachineSelection-0", "HandleDeckMachineSelection-1"]}
+# <<< factory-mutation HandleDeckMachineSelection

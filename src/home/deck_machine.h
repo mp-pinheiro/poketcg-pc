@@ -95,4 +95,8 @@ void ClearScreenAndDrawDeckMachineScreen(void);
 typedef struct { uint8_t a; uint8_t f; } DrawDeckMachineScreenResult;
 DrawDeckMachineScreenResult DrawDeckMachineScreen(void);
 /* <<< factory DrawDeckMachineScreen */
+/* >>> factory HandleDeckMachineSelection */
+typedef struct { uint8_t a; uint8_t f; } HandleDeckMachineSelectionResult;
+HandleDeckMachineSelectionResult HandleDeckMachineSelection(void);
+/* <<< factory HandleDeckMachineSelection */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

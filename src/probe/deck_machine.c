@@ -223,6 +223,15 @@ static void adapt_DrawDeckMachineScreen(ProbeState *s)
 }
 /* <<< factory DrawDeckMachineScreen */
 
+/* >>> factory HandleDeckMachineSelection */
+static void adapt_HandleDeckMachineSelection(ProbeState *s)
+{
+	HandleDeckMachineSelectionResult r = HandleDeckMachineSelection();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleDeckMachineSelection */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -250,5 +259,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "PrintVisibleDeckMachineEntries", adapt_PrintVisibleDeckMachineEntries },
 	{ "ClearScreenAndDrawDeckMachineScreen", adapt_ClearScreenAndDrawDeckMachineScreen },
 	{ "DrawDeckMachineScreen", adapt_DrawDeckMachineScreen },
+	{ "HandleDeckMachineSelection", adapt_HandleDeckMachineSelection },
 	{ NULL, NULL },
 };
