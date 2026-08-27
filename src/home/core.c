@@ -1418,21 +1418,34 @@ void DrawHPBar(uint8_t d, uint8_t e)
 	for (uint8_t i = 0u; i < HP_BAR_LENGTH; i++)
 		gb_write8((uint16_t)(wDefaultText_ADDR + i), SYM_SPACE);
 
+	/* core.asm .fill_hp_bar bounds: `dec b / ret z` caps every fill at
+	 * HP_BAR_LENGTH writes. `a` alone is not a terminator -- an HP value not
+	 * divisible by gcd(MAX_HP / HP_BAR_LENGTH, 256) wraps mod 256 forever and
+	 * walks dst out of WRAM, which is how DrawDuelMainScene hung natively
+	 * after DrawLargePictureOfCard loaded real card HP. */
+	uint8_t b = HP_BAR_LENGTH;
 	a = d;
 	uint8_t tile = SYM_HP_OK;
 	uint16_t dst = wDefaultText_ADDR;
 	while (a != 0u) {
 		gb_write8(dst, tile);
 		dst++;
+		b = (uint8_t)(b - 1u);
+		if (b == 0u)
+			break;
 		a = (uint8_t)(a - (MAX_HP / HP_BAR_LENGTH));
 	}
 
+	b = HP_BAR_LENGTH;
 	a = (uint8_t)(d - e);
 	tile = SYM_HP_NOK;
 	dst = wDefaultText_ADDR;
 	while (a != 0u) {
 		gb_write8(dst, tile);
 		dst++;
+		b = (uint8_t)(b - 1u);
+		if (b == 0u)
+			break;
 		a = (uint8_t)(a - (MAX_HP / HP_BAR_LENGTH));
 	}
 }

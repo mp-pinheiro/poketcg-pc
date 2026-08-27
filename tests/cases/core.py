@@ -859,6 +859,7 @@ CASES["DrawHPBar"] = [
     {"d": 120, "e": 120, "read": {0xC590: 12}},
     {"d": 120, "e": 70, "wram": {0xC590: b"\xaa" * 12}, "read": {0xC590: 12}},
     dict(POISON, d=80, e=0, wram={0xC590: b"\xaa" * 12}, read={0xC590: 12}),
+    dict(POISON, d=45, e=35, wram={0xC590: b"\xaa" * 12}, read={0xC590: 12}),
 ]
 # <<< factory DrawHPBar
 # >>> factory ValidateSavedDuelDataFromHL
@@ -4597,7 +4598,7 @@ MUTATIONS["DrawHPBar"] = {
     "source_symbol": "DrawHPBar",
     "before": "uint8_t tile = SYM_HP_OK;",
     "after": "uint8_t tile = SYM_HP_NOK;",
-    "case_ids": ["DrawHPBar-0", "DrawHPBar-1"],
+    "case_ids": ["DrawHPBar-0", "DrawHPBar-1", "DrawHPBar-3"],
 }
 # <<< factory-mutation DrawHPBar
 # >>> factory-mutation ValidateSavedDuelDataFromHL

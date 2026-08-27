@@ -1,0 +1,9 @@
+{
+  "fn": "DrawHPBar",
+  "case": "tests/cases/core.py",
+  "index": 3,
+  "status": "RED",
+  "baseline": "{\"fn\": \"DrawHPBar\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 45, \"e\": 35, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"171616161616161616161616\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"DrawHPBar\", \"mismatches\": {\"bus\": {\"address\": 50577, \"reference\": \"171616161616\", \"native\": \"171717171717\", \"reference_size\": 12, \"native_size\": 12, \"spans\": [[50576, 12]]}}}\n",
+  "restored": "{\"fn\": \"DrawHPBar\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 45, \"e\": 35, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 1, \"sram\": {}, \"vram\": {}, \"wram\": {\"50576\": \"171616161616161616161616\"}}, \"status\": \"PASS\"}\n"
+}
