@@ -2655,6 +2655,11 @@ wDuelTempList = 0xC510
 hTemp_ffa0 = 0xFFA0
 wDuelDisplayedScreen = 0xCAC2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+HPS_KEYS = [0x00, 0x01]
+HPS_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+HPS_SEED = {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xCBD0: b"\x00", 0xCD9A: b"\x01", 0xC2BA: b"\x3B", 0xC2B9: b"\x01", 0xC401: b"\x08"}
+HPS_READ = {0xCE75: 1, 0xC510: 2, 0xC51A: 2, 0xFFA1: 2, 0xFFB2: 1}
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5714,6 +5719,14 @@ CASES["DealDamageToAllBenchedPokemon"] = [
 ]
 # <<< factory DealDamageToAllBenchedPokemon
 
+# >>> factory HandleProphecyScreen
+CONTRACT["HandleProphecyScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleProphecyScreen"] = [
+    {"keys": HPS_KEYS, "wram": dict(HPS_SEED), "setup": HPS_SETUP, "read": dict(HPS_READ), "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=HPS_KEYS, wram=dict(HPS_SEED), setup=HPS_SETUP, read=dict(HPS_READ), instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleProphecyScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8304,3 +8317,6 @@ MUTATIONS["MarowakCallForFamily_PlayerSelectEffect"] = {"source_symbol": "Marowa
 # >>> factory-mutation DealDamageToAllBenchedPokemon
 MUTATIONS["DealDamageToAllBenchedPokemon"] = {"source_symbol": "DealDamageToAllBenchedPokemon", "before": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = count_value;", "after": "DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t animation = a;\n\tDuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);\n\tuint8_t count_value = count.a;\n\ta = 0u;", "case_ids": ["DealDamageToAllBenchedPokemon-0", "DealDamageToAllBenchedPokemon-1"]}
 # <<< factory-mutation DealDamageToAllBenchedPokemon
+# >>> factory-mutation HandleProphecyScreen
+MUTATIONS["HandleProphecyScreen"] = {"source_symbol": "HandleProphecyScreen", "before": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + 1u + written), 0xffu);", "after": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0xffu);", "case_ids": ["HandleProphecyScreen-0", "HandleProphecyScreen-1"]}
+# <<< factory-mutation HandleProphecyScreen

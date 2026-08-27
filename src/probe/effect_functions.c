@@ -4238,6 +4238,15 @@ static void adapt_DealDamageToAllBenchedPokemon(ProbeState *s)
 }
 /* <<< factory DealDamageToAllBenchedPokemon */
 
+/* >>> factory HandleProphecyScreen */
+static void adapt_HandleProphecyScreen(ProbeState *s)
+{
+	ProphecyScreenResult result = HandleProphecyScreen();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandleProphecyScreen */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4750,5 +4759,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "DevolutionBeam_DevolveEffect", adapt_DevolutionBeam_DevolveEffect },
 	{ "MarowakCallForFamily_PlayerSelectEffect", adapt_MarowakCallForFamily_PlayerSelectEffect },
 	{ "DealDamageToAllBenchedPokemon", adapt_DealDamageToAllBenchedPokemon },
+	{ "HandleProphecyScreen", adapt_HandleProphecyScreen },
 	{ NULL, NULL },
 };

@@ -1093,6 +1093,15 @@ static void chain_lightning_damage_same_color_bench(void)
 #define ChooseBasicFightingPokemonFromDeckText 0x0125u
 #define ChooseBasicFightingPokemonText 0x012cu
 #define FightingPokemonDeckText 0x0143u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "mem.h"
+#define HandleProphecyScreen_BANK_DUEL_CORE 0x01u
+void BankswitchROM(uint8_t bank);
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8649,3 +8658,64 @@ DealDamageToAllBenchedPokemonResult DealDamageToAllBenchedPokemon(uint8_t a, uin
 	return (DealDamageToAllBenchedPokemonResult){a, f, b, c, d, e, count.hl};
 }
 /* <<< factory DealDamageToAllBenchedPokemon */
+
+/* >>> factory HandleProphecyScreen */
+ProphecyScreenResult HandleProphecyScreen(void)
+{
+	DuelistVarResult deck = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_CARDS_NOT_IN_DECK);
+	uint8_t not_in_deck = deck.a;
+	uint8_t cards_in_deck = (uint8_t)(DECK_SIZE - not_in_deck);
+	uint8_t to_order = 3u;
+	if (cards_in_deck < to_order)
+		to_order = cards_in_deck;
+	wNumberOfCardsToOrder = (uint8_t)(to_order + 1u);
+	uint16_t src = (uint16_t)((deck.hl & 0xff00u) | (uint8_t)(not_in_deck + DUELVARS_DECK_CARDS));
+	uint16_t dst = wDuelTempList_ADDR;
+	uint8_t left = to_order;
+	do {
+		gb_write8(dst, gb_read8(src));
+		dst = (uint16_t)(dst + 1u);
+		src = (uint16_t)(src + 1u);
+		left--;
+	} while (left != 0u);
+	gb_write8(dst, 0xffu);
+	for (;;) {
+		uint8_t count = CountCardsInDuelTempList().a;
+		hCurSelectionItem = 1u;
+		uint16_t order = (uint16_t)(wDuelTempList_ADDR + 10u);
+		uint16_t p = order;
+		uint8_t n = count;
+		while (n != 0u) { gb_write8(p, 0u); p = (uint16_t)(p + 1u); n--; }
+		gb_write8(p, 0xffu);
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); (void)InitAndDrawCardListScreenLayout(); BankswitchROM(bank); }
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); SetCardListHeaderText(DuelistDeckText, ChooseTheOrderOfTheCardsText); BankswitchROM(bank); }
+		{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_SetPointer(); BankswitchROM(bank); }
+		for (;;) {
+			DisplayCardListResult shown;
+			{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); shown = DisplayCardList(); BankswitchROM(bank); }
+			if ((shown.f & 0x10u) != 0u) {
+				if (hCurSelectionItem == 1u) continue;
+				hCurSelectionItem--;
+				uint8_t sort = hCurSelectionItem;
+				p = order;
+				while (gb_read8(p) != sort) p = (uint16_t)(p + 1u);
+				gb_write8(p, 0u);
+				{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_CallFromPointer(); BankswitchROM(bank); }
+				continue;
+			}
+			p = (uint16_t)(order + hCurMenuItem);
+			if (gb_read8(p) != 0u) continue;
+			gb_write8(p, hCurSelectionItem);
+			hCurSelectionItem++;
+			{ uint8_t bank = hBankROM; BankswitchROM(HandleProphecyScreen_BANK_DUEL_CORE); PrintSortNumberInCardList_CallFromPointer(); BankswitchROM(bank); }
+			if (hCurSelectionItem < wNumberOfCardsToOrder) continue;
+			EraseCursor();
+			if ((YesOrNoMenuWithText_LeftAligned(IsThisOKText, 0u, 0u).f & 0x10u) != 0u) break;
+			p = order; dst = wDuelTempList_ADDR; uint8_t written = 0u; uint8_t a;
+			for (;;) { a = gb_read8(p); p = (uint16_t)(p + 1u); if (a == 0xffu) break; gb_write8((uint16_t)(hTempList_ADDR + a), gb_read8(dst)); dst = (uint16_t)(dst + 1u); written++; }
+			gb_write8((uint16_t)(hTempList_ADDR + 1u + written), 0xffu);
+			return (ProphecyScreenResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+		}
+	}
+}
+/* <<< factory HandleProphecyScreen */
