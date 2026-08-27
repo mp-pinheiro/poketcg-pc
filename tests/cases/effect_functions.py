@@ -6458,6 +6458,62 @@ CASES["LeerEffect"] = [
 ]
 # <<< factory LeerEffect
 
+# >>> factory Fly_Success50PercentEffect
+CONTRACT["Fly_Success50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Fly_Success50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Fly_Success50PercentEffect
+
+# >>> factory MoltresLv35DiveBomb_Success50PercentEffect
+CONTRACT["MoltresLv35DiveBomb_Success50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["MoltresLv35DiveBomb_Success50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MoltresLv35DiveBomb_Success50PercentEffect
+
+# >>> factory MoltresLv37DiveBomb_Success50PercentEffect
+CONTRACT["MoltresLv37DiveBomb_Success50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["MoltresLv37DiveBomb_Success50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MoltresLv37DiveBomb_Success50PercentEffect
+
+# >>> factory HornHazard_NoDamage50PercentEffect
+CONTRACT["HornHazard_NoDamage50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["HornHazard_NoDamage50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", 0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCB9: 2, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HornHazard_NoDamage50PercentEffect
+
 # >>> factory Thunderpunch_ModifierEffect
 CONTRACT["Thunderpunch_ModifierEffect"] = {"compare": (), "preserve": ()}
 CASES["Thunderpunch_ModifierEffect"] = [

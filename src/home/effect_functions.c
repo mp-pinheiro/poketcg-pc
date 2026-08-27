@@ -877,10 +877,12 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define ATK_ANIM_PROTECT 0x4fu
 #define ATK_ANIM_LEER 0x74u
 #define SUBSTATUS1_AGILITY 0x0cu
-#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
+#define SUBSTATUS1_FLY 0x0du
 #define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
 #define SUBSTATUS2_LEER 0x06u
 #define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define DamageCheckIfTailsNoDamageText 0x00e6u
+#define ATK_ANIM_DIVE_BOMB 0x11u
 #include "home/math.h"
 #include "home/print_text.h"
 #include "home/effect_functions.h"
@@ -9559,3 +9561,67 @@ void Thunderpunch_ModifierEffect(void)
 	AddToDamage(10u);
 }
 /* <<< factory Thunderpunch_ModifierEffect */
+
+/* >>> factory Fly_Success50PercentEffect */
+/* effect_functions.asm:6639-6663. Tails: the xor-a zero-flags exit
+ * (anim reset, zero damage, unsuccessful); heads: FLY substatus. */
+uint8_t Fly_Success50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_NONE;
+		SetDefiniteDamage(0u);
+		SetWasUnsuccessful();
+		return 0x80u;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_FLY);
+	return toss.f;
+}
+/* <<< factory Fly_Success50PercentEffect */
+
+/* >>> factory MoltresLv35DiveBomb_Success50PercentEffect */
+/* effect_functions.asm:3845-3859. Heads only plays the animation; the tails
+ * xor-a zero-flags exit survives both calls untouched. */
+uint8_t MoltresLv35DiveBomb_Success50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_DIVE_BOMB;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory MoltresLv35DiveBomb_Success50PercentEffect */
+
+/* >>> factory MoltresLv37DiveBomb_Success50PercentEffect */
+/* effect_functions.asm:4258-4272. Byte-identical twin of the Lv35 effect. */
+uint8_t MoltresLv37DiveBomb_Success50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_DIVE_BOMB;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory MoltresLv37DiveBomb_Success50PercentEffect */
+
+/* >>> factory HornHazard_NoDamage50PercentEffect */
+/* effect_functions.asm:2055-2069. Same two-exit shape; toss text differs. */
+uint8_t HornHazard_NoDamage50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);
+	if ((toss.f & 0x10u) != 0u) {
+		wLoadedAttackAnimation = ATK_ANIM_HIT;
+		return toss.f;
+	}
+	SetDefiniteDamage(0u);
+	SetWasUnsuccessful();
+	return 0x80u;
+}
+/* <<< factory HornHazard_NoDamage50PercentEffect */

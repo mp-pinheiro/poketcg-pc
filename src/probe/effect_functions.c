@@ -4570,6 +4570,34 @@ static void adapt_LeerEffect(ProbeState *s)
 }
 /* <<< factory LeerEffect */
 
+/* >>> factory Fly_Success50PercentEffect */
+static void adapt_Fly_Success50PercentEffect(ProbeState *s)
+{
+	s->f = Fly_Success50PercentEffect();
+}
+/* <<< factory Fly_Success50PercentEffect */
+
+/* >>> factory MoltresLv35DiveBomb_Success50PercentEffect */
+static void adapt_MoltresLv35DiveBomb_Success50PercentEffect(ProbeState *s)
+{
+	s->f = MoltresLv35DiveBomb_Success50PercentEffect();
+}
+/* <<< factory MoltresLv35DiveBomb_Success50PercentEffect */
+
+/* >>> factory MoltresLv37DiveBomb_Success50PercentEffect */
+static void adapt_MoltresLv37DiveBomb_Success50PercentEffect(ProbeState *s)
+{
+	s->f = MoltresLv37DiveBomb_Success50PercentEffect();
+}
+/* <<< factory MoltresLv37DiveBomb_Success50PercentEffect */
+
+/* >>> factory HornHazard_NoDamage50PercentEffect */
+static void adapt_HornHazard_NoDamage50PercentEffect(ProbeState *s)
+{
+	s->f = HornHazard_NoDamage50PercentEffect();
+}
+/* <<< factory HornHazard_NoDamage50PercentEffect */
+
 /* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
 static void adapt_PoliwhirlAmnesia_PlayerSelectEffect(ProbeState *s)
 {
@@ -5208,6 +5236,10 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KakunaStiffenEffect", adapt_KakunaStiffenEffect },
 	{ "MetapodStiffenEffect", adapt_MetapodStiffenEffect },
 	{ "LeerEffect", adapt_LeerEffect },
+	{ "Fly_Success50PercentEffect", adapt_Fly_Success50PercentEffect },
+	{ "MoltresLv35DiveBomb_Success50PercentEffect", adapt_MoltresLv35DiveBomb_Success50PercentEffect },
+	{ "MoltresLv37DiveBomb_Success50PercentEffect", adapt_MoltresLv37DiveBomb_Success50PercentEffect },
+	{ "HornHazard_NoDamage50PercentEffect", adapt_HornHazard_NoDamage50PercentEffect },
 	{ "Thunderpunch_ModifierEffect", adapt_Thunderpunch_ModifierEffect },
 	{ NULL, NULL },
 };

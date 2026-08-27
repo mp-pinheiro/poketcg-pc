@@ -1907,6 +1907,18 @@ uint8_t MetapodStiffenEffect(void);
 /* >>> factory LeerEffect */
 uint8_t LeerEffect(uint16_t hl);
 /* <<< factory LeerEffect */
+/* >>> factory Fly_Success50PercentEffect */
+uint8_t Fly_Success50PercentEffect(void);
+/* <<< factory Fly_Success50PercentEffect */
+/* >>> factory MoltresLv35DiveBomb_Success50PercentEffect */
+uint8_t MoltresLv35DiveBomb_Success50PercentEffect(void);
+/* <<< factory MoltresLv35DiveBomb_Success50PercentEffect */
+/* >>> factory MoltresLv37DiveBomb_Success50PercentEffect */
+uint8_t MoltresLv37DiveBomb_Success50PercentEffect(void);
+/* <<< factory MoltresLv37DiveBomb_Success50PercentEffect */
+/* >>> factory HornHazard_NoDamage50PercentEffect */
+uint8_t HornHazard_NoDamage50PercentEffect(void);
+/* <<< factory HornHazard_NoDamage50PercentEffect */
 /* >>> factory Thunderpunch_ModifierEffect */
 void Thunderpunch_ModifierEffect(void);
 /* <<< factory Thunderpunch_ModifierEffect */
