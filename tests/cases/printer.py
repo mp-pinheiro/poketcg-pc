@@ -420,6 +420,32 @@ CASES["SendPrinterInstructionPacket_1Sheet"] = [
 ]
 # <<< factory SendPrinterInstructionPacket_1Sheet
 
+# >>> factory SendPrinterInstructionPacket_1Sheet_3LineFeeds
+# Same wait shape as SendPrinterInstructionPacket_1Sheet above: the reference
+# parks in SendPrinterPacket's DoFrame loop ($315D) and completion is declared
+# pre-ret there. This routine writes nothing of its own (the line-feed count
+# is the constant $0301, not a wPrinterNumberLineFeeds read), so the primary
+# cases observe only the contrast seed; the synchronous port's full run is
+# checked by the intentional-transform case below, whose exit hl is the
+# contrast word (level 0 -> $00E4, level 2 -> $40E4) and whose packet staging
+# carries the second packet's PRINT_INSTRUCTION bytes.
+CONTRACT["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = {"compare": (), "preserve": ()}
+CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
+    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "read": {0xCE99: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON,
+         wram={0xCE99: b"\x02", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         read={0xCE99: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+    {"wram": {0xCE99: b"\x00", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "read": {0xCE6B: 2},
+     "expect_regs": {"a": 0x00, "f": 0x80, "hl": 0x00E4},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
+]
+# <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds
+
 # >>> factory _PreparePrinterConnection
 # The reference never returns from here: SendPrinterPacket parks in its
 # .wait_printer_packet_transmission DoFrame loop ($315D) because no printer
@@ -612,3 +638,21 @@ for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
     if _record.get("evidence") == "primary":
         _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion SendTilesToPrinter
+
+# >>> factory-mutation SendPrinterInstructionPacket_1Sheet_3LineFeeds
+MUTATIONS["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = {
+    "source_symbol": "SendPrinterInstructionPacket_1Sheet_3LineFeeds",
+    "before": "\t\tSendPrinterInstructionPacket(0x0301u, contrast.hl);",
+    "after": "\t\tSendPrinterInstructionPacket(0x0301u, (uint16_t)(contrast.hl + 1u));",
+    "case_ids": ["SendPrinterInstructionPacket_1Sheet_3LineFeeds-2"],
+}
+# <<< factory-mutation SendPrinterInstructionPacket_1Sheet_3LineFeeds
+# >>> factory-completion SendPrinterInstructionPacket_1Sheet_3LineFeeds
+# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm),
+# the DoFrame loop the reference can never leave without a printer answering on
+# the serial line. legacy_to_schema always emits completion "return", so the
+# split is applied after migration to the primary records only.
+for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"]:
+    if _record["evidence"] == "primary":
+        _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion SendPrinterInstructionPacket_1Sheet_3LineFeeds
