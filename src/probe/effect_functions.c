@@ -4491,6 +4491,36 @@ static void adapt_Sleep50PercentEffect(ProbeState *s)
 }
 /* <<< factory Sleep50PercentEffect */
 
+/* >>> factory KadabraRecover_HealEffect */
+static void adapt_KadabraRecover_HealEffect(ProbeState *s)
+{
+	(void)s;
+	KadabraRecover_HealEffect();
+}
+/* <<< factory KadabraRecover_HealEffect */
+
+/* >>> factory StarmieRecover_HealEffect */
+static void adapt_StarmieRecover_HealEffect(ProbeState *s)
+{
+	(void)s;
+	StarmieRecover_HealEffect();
+}
+/* <<< factory StarmieRecover_HealEffect */
+
+/* >>> factory SingEffect */
+static void adapt_SingEffect(ProbeState *s)
+{
+	s->f = SingEffect();
+}
+/* <<< factory SingEffect */
+
+/* >>> factory SleepingGasEffect */
+static void adapt_SleepingGasEffect(ProbeState *s)
+{
+	s->f = SleepingGasEffect();
+}
+/* <<< factory SleepingGasEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5033,5 +5063,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LickitungSupersonicEffect", adapt_LickitungSupersonicEffect },
 	{ "NidorinaSupersonicEffect", adapt_NidorinaSupersonicEffect },
 	{ "Sleep50PercentEffect", adapt_Sleep50PercentEffect },
+	{ "KadabraRecover_HealEffect", adapt_KadabraRecover_HealEffect },
+	{ "StarmieRecover_HealEffect", adapt_StarmieRecover_HealEffect },
+	{ "SingEffect", adapt_SingEffect },
+	{ "SleepingGasEffect", adapt_SleepingGasEffect },
 	{ NULL, NULL },
 };

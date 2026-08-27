@@ -1848,6 +1848,18 @@ uint8_t NidorinaSupersonicEffect(void);
 /* >>> factory Sleep50PercentEffect */
 uint8_t Sleep50PercentEffect(void);
 /* <<< factory Sleep50PercentEffect */
+/* >>> factory KadabraRecover_HealEffect */
+void KadabraRecover_HealEffect(void);
+/* <<< factory KadabraRecover_HealEffect */
+/* >>> factory StarmieRecover_HealEffect */
+void StarmieRecover_HealEffect(void);
+/* <<< factory StarmieRecover_HealEffect */
+/* >>> factory SingEffect */
+uint8_t SingEffect(void);
+/* <<< factory SingEffect */
+/* >>> factory SleepingGasEffect */
+uint8_t SleepingGasEffect(void);
+/* <<< factory SleepingGasEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

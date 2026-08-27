@@ -6167,6 +6167,72 @@ CASES["Sleep50PercentEffect"] = [
 ]
 # <<< factory Sleep50PercentEffect
 
+# >>> factory KadabraRecover_HealEffect
+CONTRACT["KadabraRecover_HealEffect"] = {"compare": (), "preserve": ()}
+CASES["KadabraRecover_HealEffect"] = [
+    _hp_recovery_case(0x50),
+    _hp_recovery_case(0x10),
+    _hp_recovery_case(0x08),
+    _hp_recovery_case(0x30, **POISON),
+]
+# <<< factory KadabraRecover_HealEffect
+
+# >>> factory StarmieRecover_HealEffect
+CONTRACT["StarmieRecover_HealEffect"] = {"compare": (), "preserve": ()}
+CASES["StarmieRecover_HealEffect"] = [
+    _hp_recovery_case(0x50),
+    _hp_recovery_case(0x10),
+    _hp_recovery_case(0x08),
+    _hp_recovery_case(0x30, **POISON),
+]
+# <<< factory StarmieRecover_HealEffect
+
+# >>> factory SingEffect
+CONTRACT["SingEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["SingEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2,
+               0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2,
+               0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SingEffect
+
+# >>> factory SleepingGasEffect
+CONTRACT["SleepingGasEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["SleepingGasEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SleepingGasEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8849,3 +8915,15 @@ MUTATIONS["NidorinaSupersonicEffect"] = {"source_symbol": "NidorinaSupersonicEff
 # >>> factory-mutation Sleep50PercentEffect
 MUTATIONS["Sleep50PercentEffect"] = {"source_symbol": "Sleep50PercentEffect", "before": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn SleepEffect().f;", "after": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(SleepEffect().f ^ 0x10u);", "case_ids": ["Sleep50PercentEffect-0", "Sleep50PercentEffect-1"]}
 # <<< factory-mutation Sleep50PercentEffect
+# >>> factory-mutation KadabraRecover_HealEffect
+MUTATIONS["KadabraRecover_HealEffect"] = {"source_symbol": "KadabraRecover_HealEffect", "before": "void KadabraRecover_HealEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tApplyAndAnimateHPRecovery(0u, damage.a);", "after": "void KadabraRecover_HealEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tApplyAndAnimateHPRecovery(0u, 0u);", "case_ids": ["KadabraRecover_HealEffect-0", "KadabraRecover_HealEffect-1", "KadabraRecover_HealEffect-2", "KadabraRecover_HealEffect-3"]}
+# <<< factory-mutation KadabraRecover_HealEffect
+# >>> factory-mutation StarmieRecover_HealEffect
+MUTATIONS["StarmieRecover_HealEffect"] = {"source_symbol": "StarmieRecover_HealEffect", "before": "void StarmieRecover_HealEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tApplyAndAnimateHPRecovery(0u, damage.a);", "after": "void StarmieRecover_HealEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tApplyAndAnimateHPRecovery(0u, (uint8_t)(damage.a + 1u));", "case_ids": ["StarmieRecover_HealEffect-0", "StarmieRecover_HealEffect-1", "StarmieRecover_HealEffect-2", "StarmieRecover_HealEffect-3"]}
+# <<< factory-mutation StarmieRecover_HealEffect
+# >>> factory-mutation SingEffect
+MUTATIONS["SingEffect"] = {"source_symbol": "SingEffect", "before": "uint8_t SingEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "after": "uint8_t SingEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) != 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "case_ids": ["SingEffect-0", "SingEffect-1"]}
+# <<< factory-mutation SingEffect
+# >>> factory-mutation SleepingGasEffect
+MUTATIONS["SleepingGasEffect"] = {"source_symbol": "SleepingGasEffect", "before": "uint8_t SleepingGasEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "after": "uint8_t SleepingGasEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn (uint8_t)(f ^ 0x01u);\n}", "case_ids": ["SleepingGasEffect-0", "SleepingGasEffect-1"]}
+# <<< factory-mutation SleepingGasEffect

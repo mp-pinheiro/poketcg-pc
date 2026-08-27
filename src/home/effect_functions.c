@@ -9281,3 +9281,39 @@ uint8_t Sleep50PercentEffect(void)
 	return SleepEffect().f;
 }
 /* <<< factory Sleep50PercentEffect */
+
+/* >>> factory KadabraRecover_HealEffect */
+void KadabraRecover_HealEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	ApplyAndAnimateHPRecovery(0u, damage.a);
+}
+/* <<< factory KadabraRecover_HealEffect */
+
+/* >>> factory StarmieRecover_HealEffect */
+void StarmieRecover_HealEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	ApplyAndAnimateHPRecovery(0u, damage.a);
+}
+/* <<< factory StarmieRecover_HealEffect */
+
+/* >>> factory SingEffect */
+uint8_t SingEffect(void)
+{
+	uint8_t f = Sleep50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory SingEffect */
+
+/* >>> factory SleepingGasEffect */
+uint8_t SleepingGasEffect(void)
+{
+	uint8_t f = Sleep50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory SleepingGasEffect */
