@@ -1736,6 +1736,9 @@ RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d
 /* >>> factory BigEggsplosion_MultiplierEffect */
 void BigEggsplosion_MultiplierEffect(void);
 /* <<< factory BigEggsplosion_MultiplierEffect */
+/* >>> factory PokemonFlute_PlayerSelection */
+void PokemonFlute_PlayerSelection(void);
+/* <<< factory PokemonFlute_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -5658,6 +5658,34 @@ CASES["BigEggsplosion_MultiplierEffect"] = [
 ]
 # <<< factory BigEggsplosion_MultiplierEffect
 
+# >>> factory PokemonFlute_PlayerSelection
+CONTRACT["PokemonFlute_PlayerSelection"] = {"compare": (), "preserve": ()}
+CASES["PokemonFlute_PlayerSelection"] = [
+    {"keys": [0x00, 0x02],
+     "wram": {0xFF97: b"\xC2", 0xC37E: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00",
+              0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00",
+              0xFF91: b"\x02", 0xFFB1: b"\x00", 0xFF98: b"\x05", 0xFFA0: b"\x00"},
+     "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x05"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234,
+     "keys": [0x00, 0x02],
+     "wram": {0xFF97: b"\xC2", 0xC37E: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00",
+              0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00",
+              0xFF91: b"\x02", 0xFFB1: b"\x00", 0xFF98: b"\x05", 0xFFA0: b"\x00"},
+     "read": {0xFFA0: 1}, "expect": {0xFFA0: b"\x05"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         wram={0xFF97: b"\xC2", 0xC37E: b"\x00", 0xC510: b"\xFF", 0xCABB: b"\x00",
+               0xCBCF: b"\x00", 0xCBD0: b"\x00", 0xCBD6: b"\x00", 0xCBDF: b"\x00",
+               0xFF91: b"\x02", 0xFFB1: b"\x00", 0xFF98: b"\x05", 0xFFA0: b"\x00"},
+         read={0xFFA0: 1}, expect={0xFFA0: b"\x05"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PokemonFlute_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8236,3 +8264,6 @@ MUTATIONS["RaichuThunder_RecoilEffect"] = {"source_symbol": "RaichuThunder_Recoi
 # >>> factory-mutation BigEggsplosion_MultiplierEffect
 MUTATIONS["BigEggsplosion_MultiplierEffect"] = {"source_symbol": "BigEggsplosion_MultiplierEffect", "before": "void BigEggsplosion_MultiplierEffect(void)\n{\n\tGetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);\n\tLoadTxRam3(20u);", "after": "void BigEggsplosion_MultiplierEffect(void)\n{\n\tGetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);\n\tLoadTxRam3(21u);", "case_ids": ["BigEggsplosion_MultiplierEffect-0", "BigEggsplosion_MultiplierEffect-1"]}
 # <<< factory-mutation BigEggsplosion_MultiplierEffect
+# >>> factory-mutation PokemonFlute_PlayerSelection
+MUTATIONS["PokemonFlute_PlayerSelection"] = {"source_symbol": "PokemonFlute_PlayerSelection", "before": "void PokemonFlute_PlayerSelection(void)\n{\n\tSwapTurn();\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);\n\t(void)DisplayCardList();\n\tSwapTurn();\n\thTemp_ffa0 = hTempCardIndex_ff98;", "after": "void PokemonFlute_PlayerSelection(void)\n{\n\tSwapTurn();\n\t(void)CreateBasicPokemonCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);\n\t(void)DisplayCardList();\n\tSwapTurn();\n\thTemp_ffa0 = 0u;", "case_ids": ["PokemonFlute_PlayerSelection-0", "PokemonFlute_PlayerSelection-1", "PokemonFlute_PlayerSelection-2"]}
+# <<< factory-mutation PokemonFlute_PlayerSelection

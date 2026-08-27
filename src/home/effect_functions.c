@@ -1063,6 +1063,13 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "home/print_text.h"
 #include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ChoosePokemonToPlaceInPlayText 0x015bu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8472,3 +8479,16 @@ void BigEggsplosion_MultiplierEffect(void)
 	SetDamageToATimes20(result.a);
 }
 /* <<< factory BigEggsplosion_MultiplierEffect */
+
+/* >>> factory PokemonFlute_PlayerSelection */
+void PokemonFlute_PlayerSelection(void)
+{
+	SwapTurn();
+	(void)CreateBasicPokemonCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, ChoosePokemonToPlaceInPlayText);
+	(void)DisplayCardList();
+	SwapTurn();
+	hTemp_ffa0 = hTempCardIndex_ff98;
+}
+/* <<< factory PokemonFlute_PlayerSelection */
