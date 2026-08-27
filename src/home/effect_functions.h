@@ -1742,6 +1742,10 @@ void PokemonFlute_PlayerSelection(void);
 /* >>> factory DevolutionBeam_DevolveEffect */
 void DevolutionBeam_DevolveEffect(void);
 /* <<< factory DevolutionBeam_DevolveEffect */
+/* >>> factory MarowakCallForFamily_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } MarowakCallForFamily_PlayerSelectEffectResult;
+MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void);
+/* <<< factory MarowakCallForFamily_PlayerSelectEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

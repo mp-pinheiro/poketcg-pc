@@ -4215,6 +4215,15 @@ static void adapt_DevolutionBeam_DevolveEffect(ProbeState *s)
 }
 /* <<< factory DevolutionBeam_DevolveEffect */
 
+/* >>> factory MarowakCallForFamily_PlayerSelectEffect */
+static void adapt_MarowakCallForFamily_PlayerSelectEffect(ProbeState *s)
+{
+	MarowakCallForFamily_PlayerSelectEffectResult result = MarowakCallForFamily_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory MarowakCallForFamily_PlayerSelectEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4725,5 +4734,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BigEggsplosion_MultiplierEffect", adapt_BigEggsplosion_MultiplierEffect },
 	{ "PokemonFlute_PlayerSelection", adapt_PokemonFlute_PlayerSelection },
 	{ "DevolutionBeam_DevolveEffect", adapt_DevolutionBeam_DevolveEffect },
+	{ "MarowakCallForFamily_PlayerSelectEffect", adapt_MarowakCallForFamily_PlayerSelectEffect },
 	{ NULL, NULL },
 };

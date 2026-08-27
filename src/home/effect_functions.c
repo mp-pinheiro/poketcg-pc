@@ -1080,6 +1080,19 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "home/effect_functions.h"
 #define ATK_ANIM_DEVOLUTION_BEAM 0x5du
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/effect_functions.h"
+#include "home/sound.h"
+#include "mem.h"
+#define CARD_LOCATION_DECK 0x00u
+#define FIGHTING 0x04u
+#define ChooseBasicFightingPokemonFromDeckText 0x0125u
+#define ChooseBasicFightingPokemonText 0x012cu
+#define FightingPokemonDeckText 0x0143u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8558,3 +8571,51 @@ void DevolutionBeam_DevolveEffect(void)
 	(void)deck_index;
 }
 /* <<< factory DevolutionBeam_DevolveEffect */
+
+/* >>> factory MarowakCallForFamily_PlayerSelectEffect */
+MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(
+		deck.a, (uint8_t)(FightingPokemonDeckText >> 8),
+		(uint8_t)FightingPokemonDeckText, SEARCHEFFECT_BASIC_FIGHTING,
+		0u, ChooseBasicFightingPokemonFromDeckText);
+	if ((search.f & 0x10u) != 0u)
+		return (MarowakCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(DuelistDeckText, ChooseBasicFightingPokemonText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+			uint16_t hl = locations.hl;
+			for (;;) {
+				if (gb_read8(hl) == CARD_LOCATION_DECK) {
+					uint8_t index = (uint8_t)hl;
+					(void)LoadCardDataToBuffer2_FromDeckIndex(index);
+					if (wLoadedCard1Type == FIGHTING && wLoadedCard1Stage == 0u)
+						break;
+				}
+				hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+				if ((uint8_t)hl >= DECK_SIZE) {
+					hTemp_ffa0 = 0xffu;
+					return (MarowakCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u};
+				}
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		(void)LoadCardDataToBuffer2_FromDeckIndex(display.a);
+		if (wLoadedCard2Type != FIGHTING || wLoadedCard2Stage != 0u) {
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		hTemp_ffa0 = selected;
+		return (MarowakCallForFamily_PlayerSelectEffectResult){selected,
+			(uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+	}
+}
+/* <<< factory MarowakCallForFamily_PlayerSelectEffect */

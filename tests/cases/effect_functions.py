@@ -5698,6 +5698,14 @@ CASES["DevolutionBeam_DevolveEffect"] = [
 ]
 # <<< factory DevolutionBeam_DevolveEffect
 
+# >>> factory MarowakCallForFamily_PlayerSelectEffect
+CONTRACT["MarowakCallForFamily_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["MarowakCallForFamily_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory MarowakCallForFamily_PlayerSelectEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8282,3 +8290,6 @@ MUTATIONS["PokemonFlute_PlayerSelection"] = {"source_symbol": "PokemonFlute_Play
 # >>> factory-mutation DevolutionBeam_DevolveEffect
 MUTATIONS["DevolutionBeam_DevolveEffect"] = {"source_symbol": "DevolutionBeam_DevolveEffect", "before": "void DevolutionBeam_DevolveEffect(void)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\treturn;\n\t}", "after": "void DevolutionBeam_DevolveEffect(void)\n{\n\tuint8_t target = hTemp_ffa0;\n\tif (target == 0xffu) {\n\t\twDuelDisplayedScreen = 1u;\n\t\treturn;\n\t}", "case_ids": ["DevolutionBeam_DevolveEffect-0", "DevolutionBeam_DevolveEffect-1"]}
 # <<< factory-mutation DevolutionBeam_DevolveEffect
+# >>> factory-mutation MarowakCallForFamily_PlayerSelectEffect
+MUTATIONS["MarowakCallForFamily_PlayerSelectEffect"] = {"source_symbol": "MarowakCallForFamily_PlayerSelectEffect", "before": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "MarowakCallForFamily_PlayerSelectEffectResult MarowakCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MarowakCallForFamily_PlayerSelectEffect-0", "MarowakCallForFamily_PlayerSelectEffect-1"]}
+# <<< factory-mutation MarowakCallForFamily_PlayerSelectEffect
