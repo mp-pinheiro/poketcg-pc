@@ -226,6 +226,26 @@ static void adapt_SendPrinterInstructionPacket_1Sheet_3LineFeeds(ProbeState *s)
 }
 /* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
 
+/* >>> factory LoadGfxBufferForPrinter */
+static void adapt_LoadGfxBufferForPrinter(ProbeState *s)
+{
+	LoadGfxBufferForPrinterResult result = LoadGfxBufferForPrinter(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory LoadGfxBufferForPrinter */
+
+/* >>> factory AddToPrinterGfxBuffer */
+static void adapt_AddToPrinterGfxBuffer(ProbeState *s)
+{
+	AddToPrinterGfxBufferResult result = AddToPrinterGfxBuffer(s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory AddToPrinterGfxBuffer */
+
 /* >>> factory _PreparePrinterConnection */
 static void adapt__PreparePrinterConnection(ProbeState *s)
 {
@@ -259,6 +279,8 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "SendPrinterInstructionPacket", adapt_SendPrinterInstructionPacket },
 	{ "SendPrinterInstructionPacket_1Sheet", adapt_SendPrinterInstructionPacket_1Sheet },
 	{ "SendPrinterInstructionPacket_1Sheet_3LineFeeds", adapt_SendPrinterInstructionPacket_1Sheet_3LineFeeds },
+	{ "LoadGfxBufferForPrinter", adapt_LoadGfxBufferForPrinter },
+	{ "AddToPrinterGfxBuffer", adapt_AddToPrinterGfxBuffer },
 	{ "_PreparePrinterConnection", adapt__PreparePrinterConnection },
 	{ NULL, NULL },
 };

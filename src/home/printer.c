@@ -722,6 +722,57 @@ SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet_3L
 }
 /* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
 
+/* >>> factory LoadGfxBufferForPrinter */
+/* engine/link/printer.asm:615-643. The fallthrough continuation of
+ * AddToPrinterGfxBuffer. `srl a` on the horizontal offset is the packet
+ * count; each SendTilesToPrinter call consumes 64 map entries, so the map
+ * walks sGfxBuffer0 in 64-byte strides. The success exit is `ld a, 1` then
+ * `or a`: a=1, f=0x00. */
+LoadGfxBufferForPrinterResult LoadGfxBufferForPrinter(uint16_t hl)
+{
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	if ((init.f & 0x10u) != 0u)
+		return (LoadGfxBufferForPrinterResult){init.a, init.f, hl};
+
+	uint8_t count = (uint8_t)(gb_read8(wPrinterHorizontalOffset_ADDR) >> 1u);
+	uint16_t map = sGfxBuffer0_ADDR;
+	do {
+		SendTilesToPrinterResult sent = SendTilesToPrinter(map, 0u, 0u);
+		if ((sent.f & 0x10u) != 0u)
+			return (LoadGfxBufferForPrinterResult){sent.a, sent.f, hl};
+		map = (uint16_t)(map + 64u);
+		count = (uint8_t)(count - 1u);
+	} while (count != 0u);
+
+	SendPrinterInstructionPacket_1SheetResult instruction = SendPrinterInstructionPacket_1Sheet();
+	if ((instruction.f & 0x10u) != 0u)
+		return (LoadGfxBufferForPrinterResult){instruction.a, instruction.f, hl};
+
+	(void)ClearPrinterGfxBuffer(instruction.a, instruction.f, 0u, 0u, 0u, 0u, instruction.hl);
+	gb_write8(wPrinterHorizontalOffset_ADDR, 1u);
+	return (LoadGfxBufferForPrinterResult){1u, 0x00u, hl};
+}
+/* <<< factory LoadGfxBufferForPrinter */
+
+/* >>> factory AddToPrinterGfxBuffer */
+/* engine/link/printer.asm:601-613. `cp 18 / ccf / ret nc`: the no-carry
+ * return fires while the doubled offset stays below 18, carrying cp's N and
+ * H ((offset & $0F) < 2) with C cleared by ccf; at 18 or above the routine
+ * falls through into LoadGfxBufferForPrinter above. */
+AddToPrinterGfxBufferResult AddToPrinterGfxBuffer(uint16_t hl)
+{
+	uint16_t addr = wPrinterHorizontalOffset_ADDR;
+	gb_write8(addr, (uint8_t)(gb_read8(addr) + 2u));
+	uint8_t offset = gb_read8(addr);
+	if (offset < 18u) {
+		uint8_t f = (uint8_t)(0x40u | (((offset & 0x0Fu) < 2u) ? 0x20u : 0x00u));
+		return (AddToPrinterGfxBufferResult){offset, f, hl};
+	}
+	LoadGfxBufferForPrinterResult flushed = LoadGfxBufferForPrinter(hl);
+	return (AddToPrinterGfxBufferResult){flushed.a, flushed.f, flushed.hl};
+}
+/* <<< factory AddToPrinterGfxBuffer */
+
 /* >>> factory _PreparePrinterConnection */
 /* engine/link/printer.asm:4-19, falls through into HandlePrinterError::21.
  * Sends an empty PRINTERPKT_DATA packet for the caller's buffer (bc = 0,

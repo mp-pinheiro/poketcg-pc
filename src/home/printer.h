@@ -160,6 +160,24 @@ SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(vo
  * contrast word GetPrinterContrastSerialData pushed. */
 SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet_3LineFeeds(void);
 /* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+/* >>> factory LoadGfxBufferForPrinter */
+/* engine/link/printer.asm:615-643. The fallthrough continuation of
+ * AddToPrinterGfxBuffer: offset/2 SendTilesToPrinter packets walk sGfxBuffer0
+ * 64 map entries at a time, then the print instruction goes out, the Gfx
+ * buffer clears, and the horizontal offset resets to 1. Entry hl survives;
+ * carry is the only failure signal. */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } LoadGfxBufferForPrinterResult;
+LoadGfxBufferForPrinterResult LoadGfxBufferForPrinter(uint16_t hl);
+/* <<< factory LoadGfxBufferForPrinter */
+/* >>> factory AddToPrinterGfxBuffer */
+/* engine/link/printer.asm:601-613. Bumps wPrinterHorizontalOffset by 2 and
+ * returns no carry while it stays below 18; at 18 or above it falls through
+ * into LoadGfxBufferForPrinter (printer.asm:617), which is called directly
+ * here. The no-carry exit reports cp 18 / ccf flags: N always, H when the
+ * offset's low nybble underflows 18's. */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } AddToPrinterGfxBufferResult;
+AddToPrinterGfxBufferResult AddToPrinterGfxBuffer(uint16_t hl);
+/* <<< factory AddToPrinterGfxBuffer */
 /* >>> factory _PreparePrinterConnection */
 /* engine/link/printer.asm:4, falls through into HandlePrinterError::21.
  * Entry hl is the buffer the data packet points at; entry a/f are dead and
