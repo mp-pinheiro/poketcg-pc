@@ -880,11 +880,17 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SUBSTATUS1_FLY 0x0du
 #define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
 #define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
-#define SUBSTATUS2_LEER 0x06u
+#define SUBSTATUS1_NO_DAMAGE_SCRUNCH 0x17u
 #define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
 #define DamageCheckIfTailsNoDamageText 0x00e6u
 #define ATK_ANIM_DIVE_BOMB 0x11u
 #include "home/math.h"
+#define SUBSTATUS1_NO_DAMAGE_WITHDRAW 0x10u
+#define SUBSTATUS2_TAIL_WAG 0x05u
+#define ATK_ANIM_SCRUNCH 0x6bu
+#define ATK_ANIM_LURE 0x46u
+#define ATK_ANIM_MULTIPLE_SLASH 0x29u
+#define IfTailsYourPokemonBecomesConfusedText 0x00e5u
 #include "home/print_text.h"
 #include "home/effect_functions.h"
 
@@ -9659,3 +9665,95 @@ uint16_t RapidashAgilityEffect(void)
 	return ApplySubstatus1ToAttackingCard(SUBSTATUS1_AGILITY);
 }
 /* <<< factory RapidashAgilityEffect */
+
+/* >>> factory RapidashStomp_DamageBoostEffect */
+/* effect_functions.asm:3633-3643. Same shape as the QuickAttack_DamageBoost
+ * family but AddToDamage carries 10, not 20. */
+void RapidashStomp_DamageBoostEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory RapidashStomp_DamageBoostEffect */
+
+/* >>> factory ScrunchEffect */
+/* effect_functions.asm:8421-8430. Tails keeps TossCoin's flags; heads keeps
+ * them too (ApplySubstatus1's pop-af restores the call-site flags). */
+uint8_t ScrunchEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_SCRUNCH;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_SCRUNCH);
+	return toss.f;
+}
+/* <<< factory ScrunchEffect */
+
+/* >>> factory SquirtleWithdrawEffect */
+/* effect_functions.asm:3156-3165. Same body as Scrunch with WITHDRAW. */
+uint8_t SquirtleWithdrawEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);
+	return toss.f;
+}
+/* <<< factory SquirtleWithdrawEffect */
+
+/* >>> factory TailWagEffect */
+/* effect_functions.asm:7424-7433. Tails -> unsuccessful; heads -> LURE anim
+ * plus the defending card's TAIL_WAG substatus through the caller's hl. */
+uint8_t TailWagEffect(uint16_t hl)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_LURE;
+	ApplySubstatus2ToDefendingCard(SUBSTATUS2_TAIL_WAG, hl);
+	return toss.f;
+}
+/* <<< factory TailWagEffect */
+
+/* >>> factory TantrumEffect */
+/* effect_functions.asm:5923-5934. Heads returns TossCoin's flags; tails
+ * plays the confusion animation with the sides swapped for the queue. */
+uint8_t TantrumEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfTailsYourPokemonBecomesConfusedText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return toss.f;
+	wLoadedAttackAnimation = ATK_ANIM_MULTIPLE_SLASH;
+	SwapTurn();
+	ConfusionEffect();
+	SwapTurn();
+	return toss.f;
+}
+/* <<< factory TantrumEffect */
+
+/* >>> factory Rampage_Confusion50PercentEffect */
+/* effect_functions.asm:7831-7843. Adds the dealt damage back to wDamage, then
+ * on tails queues CONFUSED against the non-turn duelist (side swapped). */
+void Rampage_Confusion50PercentEffect(void)
+{
+	CardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);
+	AddToDamage(damage.a);
+	TossCoin_BankBResult toss = TossCoin_BankB(IfTailsYourPokemonBecomesConfusedText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return;
+	SwapTurn();
+	ConfusionEffect();
+	SwapTurn();
+}
+/* <<< factory Rampage_Confusion50PercentEffect */
