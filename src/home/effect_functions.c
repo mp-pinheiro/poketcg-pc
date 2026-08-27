@@ -9149,3 +9149,88 @@ PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void)
 	return (PlayerPickAttackForAmnesiaResult){attack_index, f};
 }
 /* <<< factory PlayerPickAttackForAmnesia */
+
+/* >>> factory ZubatSupersonicEffect */
+uint8_t ZubatSupersonicEffect(void)
+{
+	uint8_t f = Confusion50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory ZubatSupersonicEffect */
+
+/* >>> factory ShellderSupersonicEffect */
+uint8_t ShellderSupersonicEffect(void)
+{
+	uint8_t f = Confusion50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory ShellderSupersonicEffect */
+
+/* >>> factory TentacruelSupersonicEffect */
+uint8_t TentacruelSupersonicEffect(void)
+{
+	uint8_t f = Confusion50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory TentacruelSupersonicEffect */
+
+/* >>> factory FirstAid_HealEffect */
+void FirstAid_HealEffect(void)
+{
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory FirstAid_HealEffect */
+
+/* >>> factory GolbatLeechLifeEffect */
+void GolbatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory GolbatLeechLifeEffect */
+
+/* >>> factory VenonatLeechLifeEffect */
+void VenonatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory VenonatLeechLifeEffect */
+
+/* >>> factory ZubatLeechLifeEffect */
+void ZubatLeechLifeEffect(void)
+{
+	uint8_t e = gb_read8(wDealtDamage_ADDR);
+	uint8_t d = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	ApplyAndAnimateHPRecovery(d, e);
+}
+/* <<< factory ZubatLeechLifeEffect */
+
+/* >>> factory ExeggcuteLeechSeedEffect */
+void ExeggcuteLeechSeedEffect(void)
+{
+	uint8_t a = gb_read8(wDealtDamage_ADDR);
+	if (a == 0u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory ExeggcuteLeechSeedEffect */
+
+/* >>> factory BulbasaurLeechSeedEffect */
+void BulbasaurLeechSeedEffect(void)
+{
+	uint8_t a = gb_read8(wDealtDamage_ADDR);
+	uint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));
+	if ((a | h) == 0u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory BulbasaurLeechSeedEffect */

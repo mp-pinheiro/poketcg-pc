@@ -1806,6 +1806,33 @@ uint8_t Paralysis50PercentEffect(void);
 typedef struct { uint8_t a, f; } PlayerPickAttackForAmnesiaResult;
 PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void);
 /* <<< factory PlayerPickAttackForAmnesia */
+/* >>> factory ZubatSupersonicEffect */
+uint8_t ZubatSupersonicEffect(void);
+/* <<< factory ZubatSupersonicEffect */
+/* >>> factory ShellderSupersonicEffect */
+uint8_t ShellderSupersonicEffect(void);
+/* <<< factory ShellderSupersonicEffect */
+/* >>> factory TentacruelSupersonicEffect */
+uint8_t TentacruelSupersonicEffect(void);
+/* <<< factory TentacruelSupersonicEffect */
+/* >>> factory FirstAid_HealEffect */
+void FirstAid_HealEffect(void);
+/* <<< factory FirstAid_HealEffect */
+/* >>> factory GolbatLeechLifeEffect */
+void GolbatLeechLifeEffect(void);
+/* <<< factory GolbatLeechLifeEffect */
+/* >>> factory VenonatLeechLifeEffect */
+void VenonatLeechLifeEffect(void);
+/* <<< factory VenonatLeechLifeEffect */
+/* >>> factory ZubatLeechLifeEffect */
+void ZubatLeechLifeEffect(void);
+/* <<< factory ZubatLeechLifeEffect */
+/* >>> factory ExeggcuteLeechSeedEffect */
+void ExeggcuteLeechSeedEffect(void);
+/* <<< factory ExeggcuteLeechSeedEffect */
+/* >>> factory BulbasaurLeechSeedEffect */
+void BulbasaurLeechSeedEffect(void);
+/* <<< factory BulbasaurLeechSeedEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

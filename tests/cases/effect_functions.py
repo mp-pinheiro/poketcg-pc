@@ -2692,6 +2692,8 @@ def _hp_recovery_case(hp, **kwargs):
     wram = {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC400: b"\x01",
             0xC2C8: bytes([hp]), 0xCCB8: b"\x00", 0xCCBD: b"\x00\x00"}
     wram.update(ANIM_IDLE)
+    if "wram" in kwargs:
+        wram.update(kwargs.pop("wram"))
     case = {"wram": wram,
             "read": {0xC2C8: 1, 0xCCB8: 1, 0xCCBD: 2},
             "instruction_budget": 20000000,
@@ -5972,6 +5974,121 @@ CASES["PlayerPickAttackForAmnesia"] = [
 ]
 # <<< factory PlayerPickAttackForAmnesia
 
+# >>> factory ZubatSupersonicEffect
+CONTRACT["ZubatSupersonicEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ZubatSupersonicEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ZubatSupersonicEffect
+
+# >>> factory ShellderSupersonicEffect
+CONTRACT["ShellderSupersonicEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ShellderSupersonicEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ShellderSupersonicEffect
+
+# >>> factory TentacruelSupersonicEffect
+CONTRACT["TentacruelSupersonicEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["TentacruelSupersonicEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TentacruelSupersonicEffect
+
+# >>> factory FirstAid_HealEffect
+CONTRACT["FirstAid_HealEffect"] = {"compare": (), "preserve": ()}
+CASES["FirstAid_HealEffect"] = [
+    _hp_recovery_case(0x50),
+    _hp_recovery_case(0x10),
+    _hp_recovery_case(0x08),
+    _hp_recovery_case(0x30, **POISON),
+]
+# <<< factory FirstAid_HealEffect
+
+# >>> factory GolbatLeechLifeEffect
+CONTRACT["GolbatLeechLifeEffect"] = {"compare": (), "preserve": ()}
+CASES["GolbatLeechLifeEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x14\x00"}),
+    _hp_recovery_case(0x10, wram={0xCCBF: b"\x01\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x14\x00"}),
+]
+# <<< factory GolbatLeechLifeEffect
+
+# >>> factory VenonatLeechLifeEffect
+CONTRACT["VenonatLeechLifeEffect"] = {"compare": (), "preserve": ()}
+CASES["VenonatLeechLifeEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x14\x00"}),
+    _hp_recovery_case(0x10, wram={0xCCBF: b"\x01\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x14\x00"}),
+]
+# <<< factory VenonatLeechLifeEffect
+
+# >>> factory ZubatLeechLifeEffect
+CONTRACT["ZubatLeechLifeEffect"] = {"compare": (), "preserve": ()}
+CASES["ZubatLeechLifeEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x14\x00"}),
+    _hp_recovery_case(0x10, wram={0xCCBF: b"\x01\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x14\x00"}),
+]
+# <<< factory ZubatLeechLifeEffect
+
+# >>> factory ExeggcuteLeechSeedEffect
+CONTRACT["ExeggcuteLeechSeedEffect"] = {"compare": (), "preserve": ()}
+CASES["ExeggcuteLeechSeedEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x14\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x00\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x14\x00"}),
+]
+# <<< factory ExeggcuteLeechSeedEffect
+
+# >>> factory BulbasaurLeechSeedEffect
+CONTRACT["BulbasaurLeechSeedEffect"] = {"compare": (), "preserve": ()}
+CASES["BulbasaurLeechSeedEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x14\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x00\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x14\x00"}),
+]
+# <<< factory BulbasaurLeechSeedEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8610,3 +8727,32 @@ MUTATIONS["Paralysis50PercentEffect"] = {"source_symbol": "Paralysis50PercentEff
 # >>> factory-mutation PlayerPickAttackForAmnesia
 MUTATIONS["PlayerPickAttackForAmnesia"] = {"source_symbol": "PlayerPickAttackForAmnesia", "before": "\tuint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));", "after": "\tuint8_t attack_index = (uint8_t)(gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u)) ^ 0xFFu);", "case_ids": ["PlayerPickAttackForAmnesia-0", "PlayerPickAttackForAmnesia-1"]}
 # <<< factory-mutation PlayerPickAttackForAmnesia
+
+# >>> factory-mutation ZubatSupersonicEffect
+MUTATIONS["ZubatSupersonicEffect"] = {"source_symbol": "ZubatSupersonicEffect", "before": "uint8_t ZubatSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();", "after": "uint8_t ZubatSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) != 0u)\n\t\tSetNoEffectFromStatus();", "case_ids": ["ZubatSupersonicEffect-0", "ZubatSupersonicEffect-1"]}
+# <<< factory-mutation ZubatSupersonicEffect
+# >>> factory-mutation ShellderSupersonicEffect
+MUTATIONS["ShellderSupersonicEffect"] = {"source_symbol": "ShellderSupersonicEffect", "before": "uint8_t ShellderSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();", "after": "uint8_t ShellderSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) != 0u)\n\t\tSetNoEffectFromStatus();", "case_ids": ["ShellderSupersonicEffect-0", "ShellderSupersonicEffect-1"]}
+# <<< factory-mutation ShellderSupersonicEffect
+# >>> factory-mutation TentacruelSupersonicEffect
+MUTATIONS["TentacruelSupersonicEffect"] = {"source_symbol": "TentacruelSupersonicEffect", "before": "uint8_t TentacruelSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();", "after": "uint8_t TentacruelSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) != 0u)\n\t\tSetNoEffectFromStatus();", "case_ids": ["TentacruelSupersonicEffect-0", "TentacruelSupersonicEffect-1"]}
+# <<< factory-mutation TentacruelSupersonicEffect
+
+# >>> factory-mutation FirstAid_HealEffect
+MUTATIONS["FirstAid_HealEffect"] = {"source_symbol": "FirstAid_HealEffect", "before": "void FirstAid_HealEffect(void)\n{\n\tApplyAndAnimateHPRecovery(0u, 10u);", "after": "void FirstAid_HealEffect(void)\n{\n\tApplyAndAnimateHPRecovery(0u, 20u);", "case_ids": ["FirstAid_HealEffect-0", "FirstAid_HealEffect-1", "FirstAid_HealEffect-2", "FirstAid_HealEffect-3"]}
+# <<< factory-mutation FirstAid_HealEffect
+# >>> factory-mutation GolbatLeechLifeEffect
+MUTATIONS["GolbatLeechLifeEffect"] = {"source_symbol": "GolbatLeechLifeEffect", "before": "void GolbatLeechLifeEffect(void)\n{\n\tuint8_t e = gb_read8(wDealtDamage_ADDR);", "after": "void GolbatLeechLifeEffect(void)\n{\n\tuint8_t e = (uint8_t)(gb_read8(wDealtDamage_ADDR) + 1u);", "case_ids": ["GolbatLeechLifeEffect-0", "GolbatLeechLifeEffect-1", "GolbatLeechLifeEffect-2"]}
+# <<< factory-mutation GolbatLeechLifeEffect
+# >>> factory-mutation VenonatLeechLifeEffect
+MUTATIONS["VenonatLeechLifeEffect"] = {"source_symbol": "VenonatLeechLifeEffect", "before": "void VenonatLeechLifeEffect(void)\n{\n\tuint8_t e = gb_read8(wDealtDamage_ADDR);", "after": "void VenonatLeechLifeEffect(void)\n{\n\tuint8_t e = (uint8_t)(gb_read8(wDealtDamage_ADDR) + 1u);", "case_ids": ["VenonatLeechLifeEffect-0", "VenonatLeechLifeEffect-1", "VenonatLeechLifeEffect-2"]}
+# <<< factory-mutation VenonatLeechLifeEffect
+# >>> factory-mutation ZubatLeechLifeEffect
+MUTATIONS["ZubatLeechLifeEffect"] = {"source_symbol": "ZubatLeechLifeEffect", "before": "void ZubatLeechLifeEffect(void)\n{\n\tuint8_t e = gb_read8(wDealtDamage_ADDR);", "after": "void ZubatLeechLifeEffect(void)\n{\n\tuint8_t e = (uint8_t)(gb_read8(wDealtDamage_ADDR) + 1u);", "case_ids": ["ZubatLeechLifeEffect-0", "ZubatLeechLifeEffect-1", "ZubatLeechLifeEffect-2"]}
+# <<< factory-mutation ZubatLeechLifeEffect
+# >>> factory-mutation ExeggcuteLeechSeedEffect
+MUTATIONS["ExeggcuteLeechSeedEffect"] = {"source_symbol": "ExeggcuteLeechSeedEffect", "before": "void ExeggcuteLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tif (a == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 10u);", "after": "void ExeggcuteLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tif (a == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 20u);", "case_ids": ["ExeggcuteLeechSeedEffect-0", "ExeggcuteLeechSeedEffect-2"]}
+# <<< factory-mutation ExeggcuteLeechSeedEffect
+# >>> factory-mutation BulbasaurLeechSeedEffect
+MUTATIONS["BulbasaurLeechSeedEffect"] = {"source_symbol": "BulbasaurLeechSeedEffect", "before": "void BulbasaurLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tuint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));\n\tif ((a | h) == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 10u);", "after": "void BulbasaurLeechSeedEffect(void)\n{\n\tuint8_t a = gb_read8(wDealtDamage_ADDR);\n\tuint8_t h = gb_read8((uint16_t)(wDealtDamage_ADDR + 1u));\n\tif ((a | h) == 0u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 20u);", "case_ids": ["BulbasaurLeechSeedEffect-0", "BulbasaurLeechSeedEffect-2"]}
+# <<< factory-mutation BulbasaurLeechSeedEffect

@@ -4383,6 +4383,75 @@ static void adapt_PlayerPickAttackForAmnesia(ProbeState *s)
 }
 /* <<< factory PlayerPickAttackForAmnesia */
 
+/* >>> factory ZubatSupersonicEffect */
+static void adapt_ZubatSupersonicEffect(ProbeState *s)
+{
+	s->f = ZubatSupersonicEffect();
+}
+/* <<< factory ZubatSupersonicEffect */
+
+/* >>> factory ShellderSupersonicEffect */
+static void adapt_ShellderSupersonicEffect(ProbeState *s)
+{
+	s->f = ShellderSupersonicEffect();
+}
+/* <<< factory ShellderSupersonicEffect */
+
+/* >>> factory TentacruelSupersonicEffect */
+static void adapt_TentacruelSupersonicEffect(ProbeState *s)
+{
+	s->f = TentacruelSupersonicEffect();
+}
+/* <<< factory TentacruelSupersonicEffect */
+
+/* >>> factory FirstAid_HealEffect */
+static void adapt_FirstAid_HealEffect(ProbeState *s)
+{
+	(void)s;
+	FirstAid_HealEffect();
+}
+/* <<< factory FirstAid_HealEffect */
+
+/* >>> factory GolbatLeechLifeEffect */
+static void adapt_GolbatLeechLifeEffect(ProbeState *s)
+{
+	(void)s;
+	GolbatLeechLifeEffect();
+}
+/* <<< factory GolbatLeechLifeEffect */
+
+/* >>> factory VenonatLeechLifeEffect */
+static void adapt_VenonatLeechLifeEffect(ProbeState *s)
+{
+	(void)s;
+	VenonatLeechLifeEffect();
+}
+/* <<< factory VenonatLeechLifeEffect */
+
+/* >>> factory ZubatLeechLifeEffect */
+static void adapt_ZubatLeechLifeEffect(ProbeState *s)
+{
+	(void)s;
+	ZubatLeechLifeEffect();
+}
+/* <<< factory ZubatLeechLifeEffect */
+
+/* >>> factory ExeggcuteLeechSeedEffect */
+static void adapt_ExeggcuteLeechSeedEffect(ProbeState *s)
+{
+	(void)s;
+	ExeggcuteLeechSeedEffect();
+}
+/* <<< factory ExeggcuteLeechSeedEffect */
+
+/* >>> factory BulbasaurLeechSeedEffect */
+static void adapt_BulbasaurLeechSeedEffect(ProbeState *s)
+{
+	(void)s;
+	BulbasaurLeechSeedEffect();
+}
+/* <<< factory BulbasaurLeechSeedEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4911,5 +4980,14 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ApplyAndAnimateHPRecovery", adapt_ApplyAndAnimateHPRecovery },
 	{ "Paralysis50PercentEffect", adapt_Paralysis50PercentEffect },
 	{ "PlayerPickAttackForAmnesia", adapt_PlayerPickAttackForAmnesia },
+	{ "ZubatSupersonicEffect", adapt_ZubatSupersonicEffect },
+	{ "ShellderSupersonicEffect", adapt_ShellderSupersonicEffect },
+	{ "TentacruelSupersonicEffect", adapt_TentacruelSupersonicEffect },
+	{ "FirstAid_HealEffect", adapt_FirstAid_HealEffect },
+	{ "GolbatLeechLifeEffect", adapt_GolbatLeechLifeEffect },
+	{ "VenonatLeechLifeEffect", adapt_VenonatLeechLifeEffect },
+	{ "ZubatLeechLifeEffect", adapt_ZubatLeechLifeEffect },
+	{ "ExeggcuteLeechSeedEffect", adapt_ExeggcuteLeechSeedEffect },
+	{ "BulbasaurLeechSeedEffect", adapt_BulbasaurLeechSeedEffect },
 	{ NULL, NULL },
 };
