@@ -344,6 +344,10 @@ PLAYER_DECK = 0xC400
 
 hWhoseTurn = 0xFF97
 hTempPlayAreaLocation_ff9d = 0xFF9D
+
+wArena = 0xC2BB
+wOpponentArena = 0xC3BB
+wScratch = 0xCE00
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -806,6 +810,14 @@ CASES["AIDecide_FullHeal"] = [
 ]
 # <<< factory AIDecide_FullHeal
 
+# >>> factory AIDecide_EnergyRemoval
+CONTRACT["AIDecide_EnergyRemoval"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_EnergyRemoval"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF" * 60, 0xC3BB: b"\xFF" * 60}, "read": {0xCE0F: 1, 0xCE1A: 1, 0xCC23: 1, 0xFF9D: 1}, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF" * 60, 0xC3BB: b"\xFF" * 60}, read={0xCE0F: 1, 0xCE1A: 1, 0xCC23: 1, 0xFF9D: 1}, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AIDecide_EnergyRemoval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1059,3 +1071,6 @@ MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": 
 # >>> factory-mutation AIDecide_FullHeal
 MUTATIONS["AIDecide_FullHeal"] = {"source_symbol": "AIDecide_FullHeal", "before": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;", "after": "AIDecideFullHealResult AIDecide_FullHeal(void)\n{\n\tuint8_t status = 0u;", "case_ids": ["AIDecide_FullHeal-1", "AIDecide_FullHeal-2"]}
 # <<< factory-mutation AIDecide_FullHeal
+# >>> factory-mutation AIDecide_EnergyRemoval
+MUTATIONS["AIDecide_EnergyRemoval"] = {"source_symbol": "AIDecide_EnergyRemoval", "before": "\tuint8_t start = PLAY_AREA_ARENA;\n\tif (ko.f & 0x10u) {", "after": "\tuint8_t start = PLAY_AREA_BENCH_1;\n\tif (ko.f & 0x10u) {", "case_ids": ["AIDecide_EnergyRemoval-0"]}
+# <<< factory-mutation AIDecide_EnergyRemoval

@@ -316,6 +316,13 @@
 #define HAUNTER_LV22 0x97u
 #define PARALYZED 0x03u
 #define SCOOP_UP 0xD5u
+
+#include "home/core.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
+#include "home/common.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -2569,3 +2576,89 @@ AIDecideFullHealResult AIDecide_FullHeal(void)
 	return (AIDecideFullHealResult){status, 0x10u};
 }
 /* <<< factory AIDecide_FullHeal */
+
+/* >>> factory AIDecide_EnergyRemoval */
+AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfAnyAttackKnocksOutDefendingCardResult ko = CheckIfAnyAttackKnocksOutDefendingCard();
+	uint8_t start = PLAY_AREA_ARENA;
+	if (ko.f & 0x10u) {
+		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if (unusable.f & 0x10u) {
+			LookForEnergyNeededForAttackInHandResult hand = LookForEnergyNeededForAttackInHand();
+			if (hand.f & 0x10u)
+				start = PLAY_AREA_BENCH_1;
+		} else {
+			start = PLAY_AREA_BENCH_1;
+		}
+	}
+	wce0f = start;
+	SwapTurn();
+	for (uint8_t loc = start;; loc++) {
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc));
+		if (card.a == 0xFFu)
+			break;
+		hTempPlayAreaLocation_ff9d = loc;
+		(void)GetPlayAreaCardAttachedEnergies(loc);
+		if (wTotalAttachedEnergies == 0u)
+			continue;
+		wSelectedAttack = FIRST_ATTACK_OR_PKMN_POWER;
+		CheckEnergyNeededForAttackResult first = CheckEnergyNeededForAttack();
+		uint8_t enough = (uint8_t)((first.f & 0x10u) == 0u);
+		if (!enough) {
+			wSelectedAttack = SECOND_ATTACK;
+			CheckEnergyNeededForAttackResult second = CheckEnergyNeededForAttack();
+			if ((second.f & 0x10u) == 0u) {
+				CheckIfNoSurplusEnergyResult surplus = CheckIfNoSurplusEnergyForAttack();
+				enough = (uint8_t)((surplus.f & 0x10u) != 0u);
+			}
+		}
+		if (enough) {
+			wce1a = PickAttachedEnergyCardToRemove(loc);
+			SwapTurn();
+			return (AIDecideEnergyRemovalResult){loc, 0x10u};
+		}
+	}
+	if (start == PLAY_AREA_ARENA) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		(void)GetPlayAreaCardAttachedEnergies(PLAY_AREA_ARENA);
+		if (wTotalAttachedEnergies != 0u) {
+			wce1a = PickAttachedEnergyCardToRemove(PLAY_AREA_ARENA);
+			SwapTurn();
+			return (AIDecideEnergyRemovalResult){PLAY_AREA_ARENA, 0x10u};
+		}
+	}
+	wce06 = 0u;
+	wce08 = 0u;
+	for (uint8_t loc = PLAY_AREA_BENCH_1;; loc++) {
+		DuelistVarResult card = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + loc));
+		if (card.a == 0xFFu)
+			break;
+		hTempPlayAreaLocation_ff9d = loc;
+		(void)GetPlayAreaCardAttachedEnergies(loc);
+		if (wTotalAttachedEnergies == 0u)
+			continue;
+		DamageCalculationResult first_damage = EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);
+		(void)first_damage;
+		if (wDamage > wce06) {
+			wce06 = wDamage;
+			wce08 = loc;
+		}
+		DamageCalculationResult second_damage = EstimateDamage_VersusDefendingCard(SECOND_ATTACK);
+		(void)second_damage;
+		if (wDamage > wce06) {
+			wce06 = wDamage;
+			wce08 = loc;
+		}
+	}
+	if (wce08 != 0u) {
+		uint8_t loc = wce08;
+		wce1a = PickAttachedEnergyCardToRemove(loc);
+		SwapTurn();
+		return (AIDecideEnergyRemovalResult){loc, 0x10u};
+	}
+	SwapTurn();
+	return (AIDecideEnergyRemovalResult){0u, 0x80u};
+}
+/* <<< factory AIDecide_EnergyRemoval */

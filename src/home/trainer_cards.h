@@ -188,4 +188,8 @@ AIDecide_ScoopUpResult AIDecide_ScoopUp(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecideFullHealResult;
 AIDecideFullHealResult AIDecide_FullHeal(void);
 /* <<< factory AIDecide_FullHeal */
+/* >>> factory AIDecide_EnergyRemoval */
+typedef struct { uint8_t a; uint8_t f; } AIDecideEnergyRemovalResult;
+AIDecideEnergyRemovalResult AIDecide_EnergyRemoval(void);
+/* <<< factory AIDecide_EnergyRemoval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
