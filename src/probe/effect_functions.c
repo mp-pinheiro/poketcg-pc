@@ -4346,6 +4346,13 @@ static void adapt_GustOfWind_SwitchEffect(ProbeState *s)
 }
 /* <<< factory GustOfWind_SwitchEffect */
 
+/* >>> factory Confusion50PercentEffect */
+static void adapt_Confusion50PercentEffect(ProbeState *s)
+{
+	s->f = Confusion50PercentEffect();
+}
+/* <<< factory Confusion50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4869,5 +4876,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "NidoranFCallForFamily_PlayerSelectEffect", adapt_NidoranFCallForFamily_PlayerSelectEffect },
 	{ "TossCoin_BankB", adapt_TossCoin_BankB },
 	{ "GustOfWind_SwitchEffect", adapt_GustOfWind_SwitchEffect },
+	{ "Confusion50PercentEffect", adapt_Confusion50PercentEffect },
 	{ NULL, NULL },
 };

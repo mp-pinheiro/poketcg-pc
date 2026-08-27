@@ -1790,6 +1790,9 @@ TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl);
 /* >>> factory GustOfWind_SwitchEffect */
 void GustOfWind_SwitchEffect(void);
 /* <<< factory GustOfWind_SwitchEffect */
+/* >>> factory Confusion50PercentEffect */
+uint8_t Confusion50PercentEffect(void);
+/* <<< factory Confusion50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

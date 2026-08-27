@@ -4146,6 +4146,14 @@ CASES["AISelectSpecialAttackParameters"] = [
 ]
 # <<< factory AISelectSpecialAttackParameters
 
+# >>> factory OppAction_EvolvePokemonCard
+CONTRACT["OppAction_EvolvePokemonCard"] = {"compare": (), "preserve": ()}
+CASES["OppAction_EvolvePokemonCard"] = [
+    {"keys": 0x01, "wram": {0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA0: b"\x00", 0xC400: b"\x08", 0xC2C0: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xCAC2: b"\x01", 0xCABB: b"\x00", 0xCCEE: b"\x01"}, "read": {0xFF98: 1, 0xFF9D: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=0x01, wram={0xFF97: b"\xC2", 0xFFA1: b"\x05", 0xFFA0: b"\x00", 0xC400: b"\x08", 0xC2C0: b"\xFF", 0xC2F1: b"\x00", 0xC3F1: b"\x01", 0xC2BB: b"\xFF", 0xC3BB: b"\xFF", 0xCAC2: b"\x01", 0xCABB: b"\x00", 0xCCEE: b"\x01"}, read={0xFF98: 1, 0xFF9D: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory OppAction_EvolvePokemonCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5761,3 +5769,6 @@ MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
 # >>> factory-mutation AISelectSpecialAttackParameters
 MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecialAttackParameters", "before": "\tuint8_t selected_attack = wSelectedAttack;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "after": "\tuint8_t selected_attack = 0u;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "case_ids": ["AISelectSpecialAttackParameters-1", "AISelectSpecialAttackParameters-2"]}
 # <<< factory-mutation AISelectSpecialAttackParameters
+# >>> factory-mutation OppAction_EvolvePokemonCard
+MUTATIONS["OppAction_EvolvePokemonCard"] = {"source_symbol": "OppAction_EvolvePokemonCard", "before": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = hTempPlayAreaLocation_ffa1;", "after": "void OppAction_EvolvePokemonCard(void)\n{\n\tuint8_t play_area = 0u;", "case_ids": ["OppAction_EvolvePokemonCard-0", "OppAction_EvolvePokemonCard-1"]}
+# <<< factory-mutation OppAction_EvolvePokemonCard

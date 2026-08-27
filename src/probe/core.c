@@ -2585,6 +2585,13 @@ static void adapt_AISelectSpecialAttackParameters(ProbeState *s)
 }
 /* <<< factory AISelectSpecialAttackParameters */
 
+/* >>> factory OppAction_EvolvePokemonCard */
+static void adapt_OppAction_EvolvePokemonCard(ProbeState *s)
+{
+	OppAction_EvolvePokemonCard();
+}
+/* <<< factory OppAction_EvolvePokemonCard */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2893,5 +2900,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfAnyAttackKnocksOutDefendingCard", adapt_CheckIfAnyAttackKnocksOutDefendingCard },
 	{ "CheckIfActiveCardCanKnockOut", adapt_CheckIfActiveCardCanKnockOut },
 	{ "AISelectSpecialAttackParameters", adapt_AISelectSpecialAttackParameters },
+	{ "OppAction_EvolvePokemonCard", adapt_OppAction_EvolvePokemonCard },
 	{ NULL, NULL },
 };

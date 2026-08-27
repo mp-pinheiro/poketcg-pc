@@ -8038,3 +8038,21 @@ AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
 	return (AISelectSpecialAttackParametersResult){selected_attack, flags};
 }
 /* <<< factory AISelectSpecialAttackParameters */
+
+/* >>> factory OppAction_EvolvePokemonCard */
+void OppAction_EvolvePokemonCard(void)
+{
+	uint8_t play_area = hTempPlayAreaLocation_ffa1;
+	hTempPlayAreaLocation_ff9d = play_area;
+	uint8_t card_index = hTemp_ffa0;
+	hTempCardIndex_ff98 = card_index;
+	uint8_t loaded = LoadCardDataToBuffer1_FromDeckIndex(card_index);
+	DrawLargePictureOfCard();
+	EvolveResult evolution = EvolvePokemonCardIfPossible(0u);
+	PrintPokemonEvolvedIntoPokemon();
+	DuelRoutineResult processed = ProcessPlayedPokemonCard(evolution.a, evolution.f, 0u, evolution.c, evolution.d, evolution.e, evolution.hl);
+	DrawDuelMainScene();
+	(void)loaded;
+	(void)processed;
+}
+/* <<< factory OppAction_EvolvePokemonCard */

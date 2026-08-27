@@ -1155,6 +1155,8 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 #include "generated/wram.h"
 #define ATK_ANIM_GUST_OF_WIND 0x8du
+
+#define ConfusionCheckText 0x00e3u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9036,3 +9038,13 @@ void GustOfWind_SwitchEffect(void)
 	wDuelDisplayedScreen = 0u;
 }
 /* <<< factory GustOfWind_SwitchEffect */
+
+/* >>> factory Confusion50PercentEffect */
+uint8_t Confusion50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(ConfusionCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return ConfusionEffect().f;
+}
+/* <<< factory Confusion50PercentEffect */

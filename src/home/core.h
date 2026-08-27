@@ -1154,4 +1154,7 @@ CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8
 typedef struct { uint8_t a; uint8_t f; } AISelectSpecialAttackParametersResult;
 AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void);
 /* <<< factory AISelectSpecialAttackParameters */
+/* >>> factory OppAction_EvolvePokemonCard */
+void OppAction_EvolvePokemonCard(void);
+/* <<< factory OppAction_EvolvePokemonCard */
 #endif

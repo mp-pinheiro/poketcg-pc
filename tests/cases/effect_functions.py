@@ -5854,6 +5854,26 @@ CASES["GustOfWind_SwitchEffect"] = [
 ]
 # <<< factory GustOfWind_SwitchEffect
 
+# >>> factory Confusion50PercentEffect
+CONTRACT["Confusion50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Confusion50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Confusion50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8477,3 +8497,6 @@ MUTATIONS["TossCoin_BankB"] = {"source_symbol": "TossCoin_BankB", "before": "Tos
 # >>> factory-mutation GustOfWind_SwitchEffect
 MUTATIONS["GustOfWind_SwitchEffect"] = {"source_symbol": "GustOfWind_SwitchEffect", "before": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 0u;", "after": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["GustOfWind_SwitchEffect-0", "GustOfWind_SwitchEffect-1", "GustOfWind_SwitchEffect-2"]}
 # <<< factory-mutation GustOfWind_SwitchEffect
+# >>> factory-mutation Confusion50PercentEffect
+MUTATIONS["Confusion50PercentEffect"] = {"source_symbol": "Confusion50PercentEffect", "before": "uint8_t Confusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ConfusionCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn ConfusionEffect().f;", "after": "uint8_t Confusion50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ConfusionCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(ConfusionEffect().f ^ 0x10u);", "case_ids": ["Confusion50PercentEffect-0", "Confusion50PercentEffect-1"]}
+# <<< factory-mutation Confusion50PercentEffect
