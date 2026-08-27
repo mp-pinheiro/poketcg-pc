@@ -119,6 +119,9 @@
 #define DismantleThisDeckText 0x023du
 #define DismantledDeckText 0x026au
 #define YouMayOnlyCarry4DecksText 0x0268u
+
+#include "home/deck_machine.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -696,3 +699,22 @@ HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
 	}
 }
 /* <<< factory HandleDismantleDeckToMakeSpace */
+
+/* >>> factory PrintVisibleDeckMachineEntries */
+PrintVisibleDeckMachineEntriesResult PrintVisibleDeckMachineEntries(uint8_t f)
+{
+	uint8_t a = wCardListVisibleOffset;
+	uint8_t b = NUM_DECK_MACHINE_VISIBLE_DECKS;
+	uint8_t e = 2u;
+	for (;;) {
+		(void)PrintDeckMachineEntry(a, 2u, e);
+		if (f & 0x10u)
+			return (PrintVisibleDeckMachineEntriesResult){a, f};
+		b--;
+		if (b == 0u)
+			return (PrintVisibleDeckMachineEntriesResult){a, (uint8_t)((f & 0x10u) | 0xE0u)};
+		a++;
+		e = (uint8_t)(e + 2u);
+	}
+}
+/* <<< factory PrintVisibleDeckMachineEntries */

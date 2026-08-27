@@ -1015,6 +1015,16 @@ static void adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(ProbeStat
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
 
+/* >>> factory _HandlePeekSelection */
+static void adapt__HandlePeekSelection(ProbeState *s)
+{
+	HandlePeekSelectionResult r = _HandlePeekSelection();
+
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory _HandlePeekSelection */
+
 const ProbeEntry probe_entries_duel[] = {
 	{ "Func_82b6", adapt_Func_82b6 },
 	{ "CopyPlayerName", adapt_CopyPlayerName },
@@ -1138,5 +1148,6 @@ const ProbeEntry probe_entries_duel[] = {
 	{ "DealRecoilDamageToSelf", adapt_DealRecoilDamageToSelf },
 	{ "DuelCheckMenu_Glossary", adapt_DuelCheckMenu_Glossary },
 	{ "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile", adapt_OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile },
+	{ "_HandlePeekSelection", adapt__HandlePeekSelection },
 	{ NULL, NULL },
 };

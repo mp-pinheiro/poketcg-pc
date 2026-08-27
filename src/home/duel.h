@@ -714,4 +714,17 @@ void DuelCheckMenu_Glossary(void);
 /* >>> factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
 void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c);
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+/* >>> factory _HandlePeekSelection */
+/* _HandlePeekSelection (engine/menus/duel.asm:1376) has one exit, the
+ * .ShowSelectedCard tail: a = [wce5c], with bit 7 set when the pending turn swap
+ * fired, and f from that tail's own flag setter -- $80 on the no-swap path (the
+ * `or a` that tested the zero wIsSwapTurnPending left Z, and `ld a, [wce5c]`
+ * does not touch flags), $00 on the swap path (`or $80` can never be zero).
+ * Every other register is jump-table and callee residue, so none is declared. */
+typedef struct {
+	uint8_t a;
+	uint8_t f;
+} HandlePeekSelectionResult;
+HandlePeekSelectionResult _HandlePeekSelection(void);
+/* <<< factory _HandlePeekSelection */
 #endif

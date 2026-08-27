@@ -59,6 +59,9 @@
 #include "generated/wram.h"
 #include "mem.h"
 #define SPRITE_ANIM_COORD_X 0x02u
+
+#include "home/credits_sequence_commands.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 #define CREDITS_SEQUENCE_ADDR 0x5AEFu
@@ -357,3 +360,33 @@ void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)
 	AdvanceCreditsSequenceCmdPtrBy6();
 }
 /* <<< factory CreditsSequenceCmd_LoadNPC */
+
+/* >>> factory CreditsSequenceCmd_LoadClubMap */
+void CreditsSequenceCmd_LoadClubMap(uint8_t c)
+{
+	uint8_t beaten = gb_read8((uint16_t)(wMastersBeatenList_ADDR + c));
+	uint8_t club = (uint8_t)(beaten == 0u ? 0u : beaten - 1u);
+	static const uint8_t map_data[10][3] = {
+		{16, 0, 0x06}, {32, 0, 0x09}, {64, 0, 0x0C},
+		{32, 0, 0x0F}, {32, 0, 0x12}, {32, 16, 0x15},
+		{0, 0, 0x18}, {32, 0, 0x1B}, {32, 0, 0x1E},
+		{48, 0, 0x20}
+	};
+	static const uint8_t npc_data[10][6][4] = {
+		{{0x17, 4, 8, 2}, {0x18, 14, 10, 2}, {0x19, 18, 6, 1}, {0x1A, 10, 4, 2}, {0x73, 10, 6, 0}},
+		{{0x1C, 20, 14, 1}, {0x1E, 12, 6, 2}, {0x73, 12, 8, 0}},
+		{{0x21, 22, 8, 2}, {0x22, 22, 4, 0}, {0x73, 18, 10, 0}},
+		{{0x24, 6, 10, 2}, {0x25, 22, 12, 0}, {0x26, 12, 4, 0}, {0x73, 12, 10, 0}},
+		{{0x28, 4, 10, 1}, {0x29, 14, 16, 2}, {0x2A, 12, 4, 2}, {0x73, 12, 6, 0}},
+		{{0x2C, 8, 8, 0}, {0x2D, 22, 12, 1}, {0x2E, 12, 6, 2}, {0x73, 12, 8, 0}},
+		{{0x2F, 10, 10, 3}, {0x32, 4, 4, 2}, {0x73, 4, 6, 0}},
+		{{0x34, 8, 14, 2}, {0x35, 18, 10, 2}, {0x36, 14, 4, 2}, {0x73, 14, 6, 0}},
+		{{0x4A, 14, 4, 2}, {0x02, 18, 8, 3}, {0x73, 12, 8, 1}},
+		{{0x37, 18, 4, 2}, {0x38, 22, 4, 2}, {0x39, 8, 4, 2}, {0x3A, 14, 6, 2}, {0x73, 14, 10, 0}}
+	};
+	LoadOWMapForCreditsSequence(map_data[club][1], map_data[club][0], 0u, map_data[club][2]);
+	for (uint8_t i = 0; npc_data[club][i][0] != 0u; ++i)
+		LoadNPCForCreditsSequence(npc_data[club][i][2], npc_data[club][i][1], npc_data[club][i][0], npc_data[club][i][3]);
+	AdvanceCreditsSequenceCmdPtrBy3();
+}
+/* <<< factory CreditsSequenceCmd_LoadClubMap */

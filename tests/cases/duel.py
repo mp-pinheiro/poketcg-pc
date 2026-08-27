@@ -1295,6 +1295,28 @@ def _drdts(**kw):
                      _drdts_wTempNonTurn: 1, _drdts_wNoDamageOrEffect: 1}}
     case.update(kw)
     return case
+
+# _HandlePeekSelection (engine/menus/duel.asm:1376) runs a menu, a play-area
+# cursor and a card page, so it needs the frame-routine setup pair: CopyDMAFunction
+# installs the HRAM DMA routine VBlankHandler calls once wVBlankOAMCopyToggle is
+# set (without it the reference halts forever in WaitForVBlank at pc $0271), and
+# SetupText initialises the glyph cache the text printing walks.
+_hps_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+# Player turn; wLCDC clear so the waits before the first EnableLCD are no-ops;
+# all six prizes still face down so the cursor's prize slot is selectable; prize
+# card 0 is deck index 0 and that deck slot holds BULBASAUR, so a real card page
+# renders and pages out under the A taps instead of running on garbage card data.
+_hps_wram = {
+    0xFF97: b"\xC2",
+    0xC23C: b"\x00",
+    0xC2EC: b"\x3F",
+    0xC400: b"\x08",
+    0xCABB: b"\x00",
+}
+# wYourOrOppPlayAreaCurPosition, wTransitionTablePtr (2), wIsSwapTurnPending and
+# wce5c: exactly the bytes this routine writes itself. Nothing here is touched by
+# the VBlank handler or by anything inside the card page.
+_hps_read = {0xCE52: 1, 0xCE53: 2, 0xCE56: 1, 0xCE5C: 1}
 # <<< factory-cases-statics
 
 # >>> factory DrawYourOrOppPlayArea_EraseArrows
@@ -1768,6 +1790,20 @@ CASES["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile"] = [
 ]
 # <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
 
+# >>> factory _HandlePeekSelection
+CONTRACT["_HandlePeekSelection"] = {"compare": ("a", "f"), "preserve": (), "wram_out": True}
+CASES["_HandlePeekSelection"] = [
+    # keys=[0x00, 0x01] taps A: it selects item 0 ("your" Play Area) out of the
+    # first menu, confirms prize slot 0 in the play-area cursor, and then pages
+    # the card page out until DisplayFirstOrNextCardPage runs out of pages, so
+    # the run reaches .ShowSelectedCard's ret with a = $40 = [wce5c].
+    {"keys": [0x00, 0x01], "wram": dict(_hps_wram), "read": dict(_hps_read),
+     "setup": _hps_setup, "instruction_budget": 30000000, "cycle_budget": 120000000},
+    dict(POISON, keys=[0x00, 0x01], wram=dict(_hps_wram), read=dict(_hps_read),
+         setup=_hps_setup, instruction_budget=30000000, cycle_budget=120000000),
+]
+# <<< factory _HandlePeekSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory Func_1bb4
@@ -2081,3 +2117,11 @@ MUTATIONS["DuelCheckMenu_Glossary"] = {"source_symbol": "DuelCheckMenu_Glossary"
 # >>> factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
 MUTATIONS["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile"] = {"source_symbol": "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile", "before": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = hWhoseTurn;", "after": "void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)\n{\n\tuint8_t saved_hWhoseTurn = 0u;", "case_ids": ["OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-0", "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-1", "OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile-2"]}
 # <<< factory-mutation OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile
+# >>> factory-mutation _HandlePeekSelection
+MUTATIONS["_HandlePeekSelection"] = {
+    "source_symbol": "_HandlePeekSelection",
+    "before": "\t\t\t\twce5c = (uint8_t)(position + 0x40u);",
+    "after": "\t\t\t\twce5c = (uint8_t)(position + 0x41u);",
+    "case_ids": ["_HandlePeekSelection-0", "_HandlePeekSelection-1"],
+}
+# <<< factory-mutation _HandlePeekSelection

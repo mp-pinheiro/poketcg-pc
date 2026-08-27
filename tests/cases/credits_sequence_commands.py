@@ -195,6 +195,17 @@ wLoadNPCYPos = 0xD3AD
 wLoadNPCDirection = 0xD3AE
 wSpriteAnimBuffer = 0xD4D0
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+wMastersBeatenList = 0xD3BB
+wMastersBeatenListNext = 0xD3BC
+wSequenceCmdPtr = 0xD631
+wCurMap = 0xD32F
+wLoadNPCXPos = 0xD3AC
+wLoadNPCYPos = 0xD3AD
+wLoadNPCDirection = 0xD3AE
+wSpriteAnimBuffer = 0xD4D0
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC,
+          "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 # >>> factory CreditsSequenceCmd_TransformOverlay
@@ -365,6 +376,18 @@ CASES["CreditsSequenceCmd_LoadNPC"] = [
 ]
 # <<< factory CreditsSequenceCmd_LoadNPC
 
+# >>> factory CreditsSequenceCmd_LoadClubMap
+CONTRACT["CreditsSequenceCmd_LoadClubMap"] = {"compare": (), "preserve": ()}
+CASES["CreditsSequenceCmd_LoadClubMap"] = [
+    {"c": 0, "wram": {wMastersBeatenList: b"\x02", wSequenceCmdPtr: b"\x00\x00"},
+     "read": {wCurMap: 1, wSequenceCmdPtr: 2},
+     "instruction_budget": 4000000, "cycle_budget": 20000000},
+    dict(POISON, c=1, wram={wMastersBeatenListNext: b"\x02", wSequenceCmdPtr: b"\x00\x00"},
+         read={wCurMap: 1, wSequenceCmdPtr: 2},
+         instruction_budget=4000000, cycle_budget=20000000),
+]
+# <<< factory CreditsSequenceCmd_LoadClubMap
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {
@@ -523,3 +546,6 @@ MUTATIONS["LoadNPCForCreditsSequence"] = {"source_symbol": "LoadNPCForCreditsSeq
 # >>> factory-mutation CreditsSequenceCmd_LoadNPC
 MUTATIONS["CreditsSequenceCmd_LoadNPC"] = {"source_symbol": "CreditsSequenceCmd_LoadNPC", "before": "void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadNPCForCreditsSequence(b, c, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy6();\n}", "after": "void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e)\n{\n\tLoadNPCForCreditsSequence(b, b, d, e);\n\tAdvanceCreditsSequenceCmdPtrBy6();\n}", "case_ids": ["CreditsSequenceCmd_LoadNPC-0", "CreditsSequenceCmd_LoadNPC-1", "CreditsSequenceCmd_LoadNPC-2", "CreditsSequenceCmd_LoadNPC-3"]}
 # <<< factory-mutation CreditsSequenceCmd_LoadNPC
+# >>> factory-mutation CreditsSequenceCmd_LoadClubMap
+MUTATIONS["CreditsSequenceCmd_LoadClubMap"] = {"source_symbol": "CreditsSequenceCmd_LoadClubMap", "before": "void CreditsSequenceCmd_LoadClubMap(uint8_t c)\n{\n\tuint8_t beaten = gb_read8((uint16_t)(wMastersBeatenList_ADDR + c));", "after": "void CreditsSequenceCmd_LoadClubMap(uint8_t c)\n{\n\tuint8_t beaten = 0u;", "case_ids": ["CreditsSequenceCmd_LoadClubMap-0", "CreditsSequenceCmd_LoadClubMap-1"]}
+# <<< factory-mutation CreditsSequenceCmd_LoadClubMap

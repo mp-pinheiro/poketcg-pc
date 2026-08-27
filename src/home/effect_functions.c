@@ -1222,6 +1222,15 @@ void BankswitchROM(uint8_t bank);
 #include "generated/hram.h"
 
 #define IfHeadPlus10IfTails10ToYourselfText 0x00e9u
+
+#include "home/math.h"
+#include "home/print_text.h"
+#include "home/effect_functions.h"
+
+#include "home/effect_functions.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ATK_ANIM_RECOVER 0x58u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9788,3 +9797,16 @@ void VenusaurMegaDrainEffect(void)
 	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
 }
 /* <<< factory VenusaurMegaDrainEffect */
+
+/* >>> factory SpacingOut_Success50PercentEffect */
+void SpacingOut_Success50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);
+	hTemp_ffa0 = toss.a;
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_RECOVER;
+}
+/* <<< factory SpacingOut_Success50PercentEffect */

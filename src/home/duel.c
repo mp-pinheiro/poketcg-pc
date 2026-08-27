@@ -615,6 +615,37 @@ static const uint8_t kCursorTileData[16] = {
 #define ATK_ANIM_RECOIL_HIT 0x7Au
 
 #include "home/glossary.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/frames.h"
+#include "home/lcd.h"
+#include "home/menus.h"
+#include "home/print_text.h"
+#include "home/process_text.h"
+/* engine/menus/duel.asm:1376-1544. The four PEEK_ addresses are this routine's
+ * own bank-2 ROM data, read through the bank window like _DrawAIPeekScreen's
+ * transition tables: .PlayAreaMenuParameters 02:4811, .YourOrOppPlayAreaData
+ * 02:4808, PeekYourPlayAreaTransitionTable 02:48c2, PeekOppPlayAreaTransitionTable
+ * 02:48fa (poketcg.sym). Every constant is prefixed because duel.c already
+ * defines TRUE, MENU_CANCEL, PAD_A/PAD_B, PLAYER_TURN, DUELVARS_PRIZES and
+ * DUELVARS_PRIZE_CARDS for earlier routines. */
+#define PEEK_MENU_PARAMETERS 0x4811u
+#define PEEK_MENU_TEXT_ITEMS 0x4808u
+#define PEEK_YOUR_TRANSITION_TABLE 0x48C2u
+#define PEEK_OPP_TRANSITION_TABLE 0x48FAu
+#define PEEK_WHICH_CARD_TEXT 0x024Cu
+#define PEEK_MENU_CANCEL 0xFFu
+#define PEEK_PLAYER_TURN 0xC2u
+#define PEEK_OPPONENT_TURN 0xC3u
+#define PEEK_TRUE 0x01u
+#define PEEK_PAD_A 0x01u
+#define PEEK_PAD_B 0x02u
+#define PEEK_DUELVARS_PRIZES 0xECu
+#define PEEK_DUELVARS_PRIZE_CARDS 0x3Cu
 /* <<< factory statics */
 
 /* duel.asm:541-563. `or a / ret z` on entry; otherwise swap each of the first a
@@ -3188,3 +3219,162 @@ void OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile(uint8_t c)
 	hWhoseTurn = saved_hWhoseTurn;
 }
 /* <<< factory OpenYourOrOppPlayAreaScreen_NonTurnHolderDiscardPile */
+
+/* >>> factory _HandlePeekSelection */
+/* engine/menus/duel.asm:1376-1544 (bank 2). Peek screen: choose one of the two
+ * Play Areas, then a slot inside it, and open the card page of whatever the
+ * cursor landed on. The ROM tables the asm addresses stay bank-2 ROM reads,
+ * exactly as _DrawAIPeekScreen materialises its transition tables.
+ *
+ * All eight .SelectionFunctionTable targets are local labels, so the dispatch is
+ * a plain switch on the cursor position. Their early `ret`s return into
+ * .loop_input_2 through the JumpToFunctionInTable frame (a `continue` here);
+ * only .ShowSelectedCard leaves the routine, discarding that frame with `pop af`
+ * before its own `ret`, which makes it the single exit. */
+HandlePeekSelectionResult _HandlePeekSelection(void)
+{
+	uint8_t turn;
+
+	Set_OBJ_8x8();
+	LoadCursorTile();
+	wce5c = 0u;
+	wIsSwapTurnPending = 0u;
+	turn = hWhoseTurn;
+	DrawYourOrOppPlayAreaScreen((uint16_t)(((uint16_t)turn << 8) | turn));
+
+	for (;;) {
+		/* .check_swap */
+		if (wIsSwapTurnPending != 0u) {
+			SwapTurn();
+			wIsSwapTurnPending = 0u;
+		}
+
+		/* .draw_menu_1 */
+		uint16_t parameters = PEEK_MENU_PARAMETERS;
+
+		InitializeMenuParameters(0u, &parameters);
+		(void)DrawWideTextBox();
+		(void)PlaceTextItems(PEEK_MENU_TEXT_ITEMS);
+
+		/* .loop_input_1: B cannot leave this menu */
+		for (;;) {
+			DoFrame();
+			HandleMenuInputResult input = HandleMenuInput();
+
+			if ((input.f & 0x10u) != 0u && input.a != PEEK_MENU_CANCEL)
+				break;
+		}
+		EraseCursor();
+
+		if (hCurMenuItem == 0u) {
+			/* the turn holder's own Play Area */
+			turn = hWhoseTurn;
+			if (wCheckMenuPlayAreaWhichDuelist != turn) {
+				DrawYourOrOppPlayAreaScreen(
+					(uint16_t)(((uint16_t)turn << 8) | turn));
+				wIsSwapTurnPending = 0u;
+			}
+			/* .text_1 */
+			(void)DrawWideTextBox();
+			InitTextPrinting(1u, 14u);
+			(void)ProcessTextFromID(PEEK_WHICH_CARD_TEXT);
+			wYourOrOppPlayAreaCurPosition = 0u;
+			wTransitionTablePtr = (uint8_t)PEEK_YOUR_TRANSITION_TABLE;
+			gb_write8((uint16_t)(wTransitionTablePtr_ADDR + 1u),
+				  (uint8_t)(PEEK_YOUR_TRANSITION_TABLE >> 8));
+		} else {
+			/* .PrepareYourPlayAreaSelection: the other Play Area */
+			turn = hWhoseTurn;
+			if (wCheckMenuPlayAreaWhichDuelist == turn) {
+				uint8_t other = (turn == PEEK_PLAYER_TURN) ?
+					PEEK_OPPONENT_TURN : PEEK_PLAYER_TURN;
+
+				DrawYourOrOppPlayAreaScreen(
+					(uint16_t)(((uint16_t)other << 8) | turn));
+			}
+			/* .text_2 */
+			(void)DrawWideTextBox();
+			InitTextPrinting(1u, 14u);
+			(void)ProcessTextFromID(PEEK_WHICH_CARD_TEXT);
+			wYourOrOppPlayAreaCurPosition = 0u;
+			wTransitionTablePtr = (uint8_t)PEEK_OPP_TRANSITION_TABLE;
+			gb_write8((uint16_t)(wTransitionTablePtr_ADDR + 1u),
+				  (uint8_t)(PEEK_OPP_TRANSITION_TABLE >> 8));
+			SwapTurn();
+			wIsSwapTurnPending = PEEK_TRUE;
+		}
+
+		/* .loop_input_2 */
+		for (;;) {
+			wVBlankOAMCopyToggle = PEEK_TRUE;
+			DoFrame();
+			YourOrOppPlayAreaScreen_HandleInput();
+			/* That callee is void here, so its carry/a exit is rebuilt from
+			 * the state it leaves behind: carry iff A or B became pressed
+			 * this frame, a = MENU_CANCEL for B and the cursor position it
+			 * has just settled on for A. */
+			uint8_t pressed =
+				(uint8_t)(hKeysPressed & (PEEK_PAD_A | PEEK_PAD_B));
+
+			if (pressed == 0u)
+				continue;
+
+			uint8_t selection = (pressed & PEEK_PAD_A) != 0u ?
+				wYourOrOppPlayAreaCurPosition : PEEK_MENU_CANCEL;
+			uint8_t deck_index;
+
+			if (selection == PEEK_MENU_CANCEL) {
+				/* .selection_cancelled */
+				ZeroObjectPositionsWithCopyToggleOn();
+				break;
+			}
+			if (selection < 6u) {
+				/* .SelectedPrize: six table entries, one handler */
+				uint8_t position = wYourOrOppPlayAreaCurPosition;
+				uint8_t bitmask = 1u;
+
+				for (uint8_t shift = position; shift != 0u; shift--)
+					bitmask = (uint8_t)(bitmask << 1);
+				if ((uint8_t)(GetTurnDuelistVariable(PEEK_DUELVARS_PRIZES).a
+					      & bitmask) == 0u)
+					continue; /* that prize has been taken */
+				wce5c = (uint8_t)(position + 0x40u);
+				deck_index = GetTurnDuelistVariable((uint8_t)(position
+					+ PEEK_DUELVARS_PRIZE_CARDS)).a;
+			} else if (selection == 6u) {
+				/* .SelectedOppsHand */
+				HandListResult hand = CreateHandCardList(0u);
+
+				if ((hand.f & 0x10u) != 0u)
+					continue;
+				(void)ShuffleCards(hand.a, wDuelTempList_ADDR);
+				deck_index = wDuelTempList;
+			} else {
+				/* .SelectedDeck */
+				CardListResult deck = CreateDeckCardList(0u, 0u);
+
+				if ((deck.f & 0x10u) != 0u)
+					continue;
+				wce5c = 0x7Fu;
+				deck_index = wDuelTempList;
+			}
+
+			/* .ShowSelectedCard */
+			if (wce5c == 0u)
+				wce5c = deck_index;
+			(void)LoadCardDataToBuffer1_FromDeckIndex(deck_index);
+			Set_OBJ_8x16();
+			/* bank1call: Bank1Call never touches bc, so the callee still
+			 * sees b = the deck index .ShowSelectedCard put there. */
+			OpenCardPage_FromHand(0u, 0u, deck_index, 0u, 0u, 0u, 0u);
+			wVBlankOAMCopyToggle = PEEK_TRUE;
+			if (wIsSwapTurnPending != 0u) {
+				SwapTurn();
+				return (HandlePeekSelectionResult){
+					(uint8_t)(wce5c | 0x80u), 0x00u};
+			}
+			return (HandlePeekSelectionResult){wce5c, 0x80u};
+		}
+	}
+}
+/* <<< factory _HandlePeekSelection */

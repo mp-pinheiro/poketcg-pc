@@ -4755,6 +4755,14 @@ static void adapt_VenusaurMegaDrainEffect(ProbeState *s)
 }
 /* <<< factory VenusaurMegaDrainEffect */
 
+/* >>> factory SpacingOut_Success50PercentEffect */
+static void adapt_SpacingOut_Success50PercentEffect(ProbeState *s)
+{
+	(void)s;
+	SpacingOut_Success50PercentEffect();
+}
+/* <<< factory SpacingOut_Success50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5332,5 +5340,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SeadraAgilityEffect", adapt_SeadraAgilityEffect },
 	{ "RaichuAgilityEffect", adapt_RaichuAgilityEffect },
 	{ "RapidashAgilityEffect", adapt_RapidashAgilityEffect },
+	{ "SpacingOut_Success50PercentEffect", adapt_SpacingOut_Success50PercentEffect },
 	{ NULL, NULL },
 };

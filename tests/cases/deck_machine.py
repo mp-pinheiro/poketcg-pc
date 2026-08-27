@@ -206,6 +206,8 @@ HDMC_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x4
 # `ret z` in .selection_made returns through. A (0x01) instead falls into
 # .open_card_pge and loops back to .loop forever.
 HDMC_KEYS = [0x00, 0x02]
+
+wCardListVisibleOffset = 0xCEA1
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -411,6 +413,15 @@ CASES["HandleDismantleDeckToMakeSpace"] = [
 ]
 # <<< factory HandleDismantleDeckToMakeSpace
 
+# >>> factory PrintVisibleDeckMachineEntries
+CONTRACT["PrintVisibleDeckMachineEntries"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PrintVisibleDeckMachineEntries"] = [
+    {"f": 0x10, "wram": {wCardListVisibleOffset: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    {"f": 0x11, "wram": {wCardListVisibleOffset: b"\xE4"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}]},
+    dict(POISON, wram={wCardListVisibleOffset: b"\x01"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}]),
+]
+# <<< factory PrintVisibleDeckMachineEntries
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -531,3 +542,6 @@ MUTATIONS["HandleDismantleDeckToMakeSpace"] = {
     "case_ids": ["HandleDismantleDeckToMakeSpace-0", "HandleDismantleDeckToMakeSpace-1"],
 }
 # <<< factory-mutation HandleDismantleDeckToMakeSpace
+# >>> factory-mutation PrintVisibleDeckMachineEntries
+MUTATIONS["PrintVisibleDeckMachineEntries"] = {"source_symbol": "PrintVisibleDeckMachineEntries", "before": "\tuint8_t a = wCardListVisibleOffset;", "after": "\tuint8_t a = (uint8_t)(wCardListVisibleOffset + 1u);", "case_ids": ["PrintVisibleDeckMachineEntries-0", "PrintVisibleDeckMachineEntries-1", "PrintVisibleDeckMachineEntries-2"]}
+# <<< factory-mutation PrintVisibleDeckMachineEntries

@@ -6694,6 +6694,28 @@ CASES["RapidashAgilityEffect"] = [
 ]
 # <<< factory RapidashAgilityEffect
 
+# >>> factory SpacingOut_Success50PercentEffect
+CONTRACT["SpacingOut_Success50PercentEffect"] = {"compare": (), "preserve": ()}
+CASES["SpacingOut_Success50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCD9C: b"\xFF",
+               0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\x00",
+               0xFFA0: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00"},
+         read={0xFFA0: 1, 0xCCB8: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCD9C: b"\xFF",
+               0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\x00",
+               0xFFA0: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00"},
+         read={0xFFA0: 1, 0xCCB8: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory SpacingOut_Success50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9491,3 +9513,6 @@ MUTATIONS["WartortleWithdrawEffect"] = {"source_symbol": "WartortleWithdrawEffec
 # >>> factory-mutation VenusaurMegaDrainEffect
 MUTATIONS["VenusaurMegaDrainEffect"] = {"source_symbol": "VenusaurMegaDrainEffect", "before": "\tdealt = (uint16_t)(dealt >> 1);", "after": "\tdealt = (uint16_t)(dealt >> 2);", "case_ids": ["VenusaurMegaDrainEffect-0", "VenusaurMegaDrainEffect-1", "VenusaurMegaDrainEffect-3"]}
 # <<< factory-mutation VenusaurMegaDrainEffect
+# >>> factory-mutation SpacingOut_Success50PercentEffect
+MUTATIONS["SpacingOut_Success50PercentEffect"] = {"source_symbol": "SpacingOut_Success50PercentEffect", "before": "void SpacingOut_Success50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) == 0u) {", "after": "void SpacingOut_Success50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SuccessCheckIfHeadsAttackIsSuccessfulText, 0u);\n\thTemp_ffa0 = toss.a;\n\tif ((toss.f & 0x10u) != 0u) {", "case_ids": ["SpacingOut_Success50PercentEffect-0", "SpacingOut_Success50PercentEffect-1"]}
+# <<< factory-mutation SpacingOut_Success50PercentEffect

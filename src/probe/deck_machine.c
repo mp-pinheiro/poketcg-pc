@@ -197,6 +197,15 @@ static void adapt_HandleDismantleDeckToMakeSpace(ProbeState *s)
 }
 /* <<< factory HandleDismantleDeckToMakeSpace */
 
+/* >>> factory PrintVisibleDeckMachineEntries */
+static void adapt_PrintVisibleDeckMachineEntries(ProbeState *s)
+{
+	PrintVisibleDeckMachineEntriesResult r = PrintVisibleDeckMachineEntries(s->f);
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PrintVisibleDeckMachineEntries */
+
 const ProbeEntry probe_entries_deck_machine[] = {
 	{ "CheckIfSelectedDeckMachineEntryIsEmpty", adapt_CheckIfSelectedDeckMachineEntryIsEmpty },
 	{ "SafelySwitchToSRAM1", adapt_SafelySwitchToSRAM1 },
@@ -221,5 +230,6 @@ const ProbeEntry probe_entries_deck_machine[] = {
 	{ "TryDeleteSavedDeck", adapt_TryDeleteSavedDeck },
 	{ "HandleDeckMissingCardsList", adapt_HandleDeckMissingCardsList },
 	{ "HandleDismantleDeckToMakeSpace", adapt_HandleDismantleDeckToMakeSpace },
+	{ "PrintVisibleDeckMachineEntries", adapt_PrintVisibleDeckMachineEntries },
 	{ NULL, NULL },
 };

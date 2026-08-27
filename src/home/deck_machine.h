@@ -84,4 +84,8 @@ HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_
 typedef struct { uint8_t a; uint8_t f; } HandleDismantleDeckToMakeSpaceResult;
 HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void);
 /* <<< factory HandleDismantleDeckToMakeSpace */
+/* >>> factory PrintVisibleDeckMachineEntries */
+typedef struct { uint8_t a; uint8_t f; } PrintVisibleDeckMachineEntriesResult;
+PrintVisibleDeckMachineEntriesResult PrintVisibleDeckMachineEntries(uint8_t f);
+/* <<< factory PrintVisibleDeckMachineEntries */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

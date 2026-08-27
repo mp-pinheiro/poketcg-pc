@@ -1956,6 +1956,9 @@ uint8_t WartortleWithdrawEffect(void);
 /* >>> factory VenusaurMegaDrainEffect */
 void VenusaurMegaDrainEffect(void);
 /* <<< factory VenusaurMegaDrainEffect */
+/* >>> factory SpacingOut_Success50PercentEffect */
+void SpacingOut_Success50PercentEffect(void);
+/* <<< factory SpacingOut_Success50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -79,4 +79,8 @@ void LoadNPCForCreditsSequence(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* >>> factory CreditsSequenceCmd_LoadNPC */
 void CreditsSequenceCmd_LoadNPC(uint8_t b, uint8_t c, uint8_t d, uint8_t e);
 /* <<< factory CreditsSequenceCmd_LoadNPC */
+/* >>> factory CreditsSequenceCmd_LoadClubMap */
+/* poketcg/src/engine/sequences/credits_sequence_commands.asm:117 */
+void CreditsSequenceCmd_LoadClubMap(uint8_t c);
+/* <<< factory CreditsSequenceCmd_LoadClubMap */
 #endif
