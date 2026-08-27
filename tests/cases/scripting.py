@@ -197,6 +197,8 @@ SAM_RULES_KEYS = [0x00, 0x01]
 wLoadedEventBits = 0xD3D1
 wEventVars = 0xD3D2
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+MENU_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 # <<< factory-cases-statics
 
 
@@ -1606,6 +1608,18 @@ CASES["ScriptCommand_ShowSamRulesMultichoice"] = [
 ]
 # <<< factory ScriptCommand_ShowSamRulesMultichoice
 
+# >>> factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice
+CONTRACT["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = {"compare": ("c",), "preserve": ()}
+CASES["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"},
+     "setup": MENU_SETUP, "keys": [0x00, 0x01],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC510: b"\xFF"},
+         setup=MENU_SETUP, keys=[0x00, 0x01],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2323,3 +2337,6 @@ MUTATIONS["ScriptCommand_ShowSamNormalMultichoice"] = {"source_symbol": "ScriptC
 # >>> factory-mutation ScriptCommand_ShowSamRulesMultichoice
 MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamRulesMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC500u);", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC501u);", "case_ids": ["ScriptCommand_ShowSamRulesMultichoice-0", "ScriptCommand_ShowSamRulesMultichoice-1"]}
 # <<< factory-mutation ScriptCommand_ShowSamRulesMultichoice
+# >>> factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice
+MUTATIONS["ScriptCommand_ChooseDeckToDuelAgainstMultichoice"] = {"source_symbol": "ScriptCommand_ChooseDeckToDuelAgainstMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy1();\n}", "after": "IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)\n{\n\tBankswitchROM(3u);\n\t(void)ShowMultichoiceTextbox(0u, 0x525Eu);\n\tuint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;\n\t(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);\n\treturn IncreaseScriptPointerBy3();\n}", "case_ids": ["ScriptCommand_ChooseDeckToDuelAgainstMultichoice-0", "ScriptCommand_ChooseDeckToDuelAgainstMultichoice-1"]}
+# <<< factory-mutation ScriptCommand_ChooseDeckToDuelAgainstMultichoice

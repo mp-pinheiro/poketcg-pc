@@ -621,4 +621,7 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void);
 /* >>> factory ScriptCommand_ShowSamRulesMultichoice */
 IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void);
 /* <<< factory ScriptCommand_ShowSamRulesMultichoice */
+/* >>> factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void);
+/* <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
 #endif

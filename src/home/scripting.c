@@ -313,6 +313,10 @@ static const uint8_t sAaronDeckIDs[] = {0x00u, 0x01u, 0x02u, 0x03u};
 #include "generated/wram.h"
 #define SCRIPT_COMMAND_CHOOSE_STARTER_DECK_BANK 0x03u
 #define MULTICHOICE_MENU_ARGS 0x527Bu
+
+#include "home/scripting.h"
+#include "generated/wram.h"
+#define EVENT_AARON_DECK_MENU_CHOICE 0x76u
 /* <<< factory statics */
 
 
@@ -2118,3 +2122,14 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ShowSamRulesMultichoice */
+
+/* >>> factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ChooseDeckToDuelAgainstMultichoice(void)
+{
+	BankswitchROM(3u);
+	(void)ShowMultichoiceTextbox(0u, 0x525Eu);
+	uint8_t choice = wMultichoiceTextboxResult_ChooseDeckToDuelAgainst;
+	(void)SetEventValue(EVENT_AARON_DECK_MENU_CHOICE, 0u, 0u, choice);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_ChooseDeckToDuelAgainstMultichoice */
