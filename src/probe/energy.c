@@ -98,6 +98,14 @@ static void adapt_AIProcessButDontPlayEnergy_SkipEvolution(ProbeState *s)
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
 
+/* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
+static void adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena(ProbeState *s)
+{
+	(void)s;
+	AIProcessButDontPlayEnergy_SkipEvolutionAndArena();
+}
+/* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
+
 const ProbeEntry probe_entries_energy[] = {
 	{ "RetrievePlayAreaAIScoreFromBackup1", adapt_RetrievePlayAreaAIScoreFromBackup1 },
 	{ "FindPlayAreaCardWithHighestAIScore", adapt_FindPlayAreaCardWithHighestAIScore },
@@ -109,5 +117,6 @@ const ProbeEntry probe_entries_energy[] = {
 	{ "AIProcessEnergyCards", adapt_AIProcessEnergyCards },
 	{ "AIProcessAndTryToPlayEnergy", adapt_AIProcessAndTryToPlayEnergy },
 	{ "AIProcessButDontPlayEnergy_SkipEvolution", adapt_AIProcessButDontPlayEnergy_SkipEvolution },
+	{ "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena },
 	{ NULL, NULL },
 };

@@ -4068,6 +4068,16 @@ static void adapt_ThunderJolt_RecoilEffect(ProbeState *s)
 }
 /* <<< factory ThunderJolt_RecoilEffect */
 
+/* >>> factory ZapdosThunder_RecoilEffect */
+static void adapt_ZapdosThunder_RecoilEffect(ProbeState *s)
+{
+	ZapdosThunder_RecoilEffectResult result =
+		ZapdosThunder_RecoilEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ZapdosThunder_RecoilEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4561,5 +4571,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ProfessorOakEffect", adapt_ProfessorOakEffect },
 	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
 	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
+	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ NULL, NULL },
 };

@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessButDontPlayEnergy_SkipEvolutionAndArena",
+  "case": "tests/cases/energy.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessButDontPlayEnergy_SkipEvolutionAndArena\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"00\", \"49903\": \"01\", \"50448\": \"ff\", \"51899\": \"00\", \"52647\": \"00\", \"52658\": \"0000\", \"52670\": \"1110203040506070\", \"52696\": \"83\", \"52701\": \"10203040506011808080808080\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessButDontPlayEnergy_SkipEvolutionAndArena\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"000000001110203040\", \"native\": \"000000008585203040\", \"reference_size\": 30, \"native_size\": 30, \"spans\": [[49864, 1], [49903, 1], [50448, 1], [51899, 1], [52647, 1], [52658, 2], [52670, 8], [52696, 1], [52701, 13], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessButDontPlayEnergy_SkipEvolutionAndArena\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 240, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49864\": \"00\", \"49903\": \"01\", \"50448\": \"ff\", \"51899\": \"00\", \"52647\": \"00\", \"52658\": \"0000\", \"52670\": \"1110203040506070\", \"52696\": \"83\", \"52701\": \"10203040506011808080808080\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

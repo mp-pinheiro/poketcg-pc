@@ -1004,6 +1004,12 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/duel.h"
 #include "home/print_text.h"
 #include "generated/hram.h"
+
+#include "home/effect_functions.h"
+#include "home/duel.h"
+#include "home/print_text.h"
+#include "generated/hram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8059,3 +8065,16 @@ ThunderJolt_RecoilEffectResult ThunderJolt_RecoilEffect(uint8_t f, uint8_t d, ui
 	return (ThunderJolt_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory ThunderJolt_RecoilEffect */
+
+/* >>> factory ZapdosThunder_RecoilEffect */
+ZapdosThunder_RecoilEffectResult ZapdosThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	LoadTxRam3(30u);
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (ZapdosThunder_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(30u, f, d, e);
+	return (ZapdosThunder_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory ZapdosThunder_RecoilEffect */

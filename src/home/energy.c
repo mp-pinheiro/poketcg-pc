@@ -93,6 +93,10 @@
 #include "generated/wram.h"
 #include "generated/hram.h"
 #define AI_ENERGY_FLAG_DONT_PLAY 0x01u
+
+#include "home/energy.h"
+#include "generated/wram.h"
+#include "mem.h"
 /* <<< factory statics */
 
 /* >>> factory RetrievePlayAreaAIScoreFromBackup1 */
@@ -567,3 +571,20 @@ void AIProcessButDontPlayEnergy_SkipEvolution(void)
 	AIProcessEnergyCards();
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolution */
+
+/* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
+/* energy.asm:48-70 */
+void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
+{
+	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;
+	uint16_t de = wTempPlayAreaAIScore_ADDR;
+	uint16_t hl = wPlayAreaAIScore_ADDR;
+	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
+		gb_write8(de, gb_read8(hl));
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(de + 1u);
+	}
+	gb_write8(de, wAIScore);
+	AIProcessEnergyCards();
+}
+/* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */

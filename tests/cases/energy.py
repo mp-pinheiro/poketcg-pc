@@ -145,6 +145,14 @@ CASES["AIProcessButDontPlayEnergy_SkipEvolution"] = [
 ]
 # <<< factory AIProcessButDontPlayEnergy_SkipEvolution
 
+# >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena
+CONTRACT["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = {"compare": (), "preserve": ()}
+CASES["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = [
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "wram": {0xCDBE: b"\x11\x10\x20\x30\x40\x50\x60\x70", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xCDBE: b"\x7f\x81\x00\x00\x00\x00\x00\x00", 0xCDB2: b"\0\0", 0xCDA7: b"\0", 0xC2EF: b"\1", 0xC2C8: b"\0", 0xFF97: b"\xC2", 0xCABB: b"\0", 0xC510: b"\xff"}, "read": {0xCDD8: 1, 0xCDDD: 7, 0xCDE4: 6}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+]
+# <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -189,3 +197,6 @@ MUTATIONS["AIProcessAndTryToPlayEnergy"] = {"source_symbol": "AIProcessAndTryToP
 # >>> factory-mutation AIProcessButDontPlayEnergy_SkipEvolution
 MUTATIONS["AIProcessButDontPlayEnergy_SkipEvolution"] = {"source_symbol": "AIProcessButDontPlayEnergy_SkipEvolution", "before": "void AIProcessButDontPlayEnergy_SkipEvolution(void)\n{\n\twAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION;", "after": "void AIProcessButDontPlayEnergy_SkipEvolution(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "case_ids": ["AIProcessButDontPlayEnergy_SkipEvolution-0"]}
 # <<< factory-mutation AIProcessButDontPlayEnergy_SkipEvolution
+# >>> factory-mutation AIProcessButDontPlayEnergy_SkipEvolutionAndArena
+MUTATIONS["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = {"source_symbol": "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", "before": "void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)\n{\n\twAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;", "after": "void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "case_ids": ["AIProcessButDontPlayEnergy_SkipEvolutionAndArena-0", "AIProcessButDontPlayEnergy_SkipEvolutionAndArena-1"]}
+# <<< factory-mutation AIProcessButDontPlayEnergy_SkipEvolutionAndArena
