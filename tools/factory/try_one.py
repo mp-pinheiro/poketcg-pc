@@ -235,6 +235,7 @@ def _feedback_for(fn: str, parent_attempt_id: str | None) -> str | None:
             blocks.append(f"phase={entry.get('phase')} "
                           f"failure_class={entry.get('failure_class')}\n{detail[:1500]}")
             blocks.extend(_divergence_directive(detail))
+            blocks.extend(_budget_directive(detail))
     return "\n\n".join(blocks) or None
 
 
@@ -265,6 +266,117 @@ def _divergence_directive(detail: str) -> list[str]:
         " them in `compare` instead, so they are still checked against the"
         " reference's output. Do not change the C to try to keep them."
     ]
+
+
+_BUDGET_FIELD = r'\\?"{}\\?"\s*:\s*(\d+)'
+
+
+def _budget_field(name: str, detail: str) -> int | None:
+    match = re.search(_BUDGET_FIELD.format(name), detail)
+    return int(match.group(1)) if match else None
+
+
+def _budget_directive(detail: str) -> list[str]:
+    """Name the one remedy a BUDGET_EXHAUSTED payload admits.
+
+    The payload is a reference-side machine state, so the candidate cannot read
+    it as a translation bug; every remedy is a case-authoring change, and which
+    one applies is decided by pc/halted alone. Left as raw JSON this class burnt
+    3-7 generations per routine while the same prose sat unmatched in prompt.py,
+    so decode the payload here. Values must agree with prompt.py:228-310.
+    """
+    if "BUDGET_EXHAUSTED" not in detail:
+        return []
+    pc = _budget_field("pc", detail)
+    halted = _budget_field("halted", detail)
+    instructions = _budget_field("instructions", detail)
+    cycles = _budget_field("cycles", detail)
+    prefix = "HOW TO FIX THE ABOVE: this is a CASE contract error, not a translation bug."
+
+    if halted == 1:
+        if pc == 0x0271:
+            where = "pc $0271 is WaitForVBlank.wait_vblank"
+        elif pc is None:
+            where = "the reference is halted"
+        else:
+            where = (f"pc ${pc:04X} is halted -- resolve it against poketcg/poketcg.sym"
+                     " before assuming this remedy")
+        return [
+            f"{prefix} The reference is stopped in HALT waiting for a VBlank that never"
+            f" arrives ({where}). WaitForVBlank reads the wLCDC shadow at $CABB: if the"
+            " LCD-enable bit is clear it returns at once, if it is set it halts until a"
+            " VBlank interrupt bumps wVBlankCounter. Pick one of two case shapes."
+            " (a) The routine needs no real frames: seed wram={0xCABB: b\"\\x00\"} and the"
+            " wait becomes a no-op, exactly as tests/cases/copy.py does."
+            " (b) Frames must elapse: seed the hardware register TOGETHER with the shadow,"
+            " wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"}, because"
+            " tools/oracle/gbref/runner.c arms the VBlank scheduler off rLCDC ($FF40) and"
+            " NOT off the $CABB shadow -- seeding only the shadow produces precisely this"
+            " halt. Shape (b) additionally needs setup=[{\"fn\": \"CopyDMAFunction\"},"
+            " {\"fn\": \"SetupText\", \"d\": 0x20, \"e\": 0x40}], because VBlankHandler"
+            " calls hDMAFunction and no synthetic call frame has copied it into HRAM, and"
+            " input driven as a cycle rather than a hold, keys=[0x00, 0x01], because the"
+            " ROM's waits read edge-triggered hKeysPressed ($FF91) and a held key is"
+            " invisible to any loop starting after the first frame. Declare"
+            " instruction_budget=20000000, cycle_budget=80000000. Landed precedent:"
+            " Barrier_PlayerSelectEffect, DestinyBond_PlayerSelectEffect,"
+            " FlamesOfRage_PlayerSelectEffect."
+        ]
+
+    # poketcg.sym: Func_235e.asm_237d $237D through the byte before .asm_238f $238F
+    # is the glyph-cache walk; 0x237D and 0x238A are both observed on this frontier.
+    if pc is not None and 0x237D <= pc <= 0x238E:
+        return [
+            f"{prefix} pc ${pc:04X} is inside Func_235e, which walks a glyph cache (key1"
+            " $C6xx, key2 $C7xx, next $C8xx, head index hffa9 at $FFA9) and cycles"
+            " forever on an uninitialised chain. Run the game's own initialiser:"
+            " setup=[{\"fn\": \"SetupText\", \"d\": 0x20, \"e\": 0x40}]. Never hand-seed"
+            " the $C6xx/$C7xx/$C8xx pages -- a zeroed byte survives only until the cache"
+            " interns its first glyph. If the routine also lets frames elapse, the full"
+            " setup list is [{\"fn\": \"CopyDMAFunction\"}, {\"fn\": \"SetupText\","
+            " \"d\": 0x20, \"e\": 0x40}]; CopyDMAFunction does not replace SetupText."
+        ]
+
+    if pc is not None and 0x0C00 <= pc <= 0x0C40:
+        return [
+            f"{prefix} pc ${pc:04X} is HblankCopyDataHLtoDE.loop, which waits for an"
+            " HBlank that only arrives with the PPU running. Seed the register together"
+            " with the shadow, wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} --"
+            " tools/oracle/gbref/runner.c drives the PPU off rLCDC ($FF40), not off the"
+            " $CABB shadow -- add setup=[{\"fn\": \"CopyDMAFunction\"}, {\"fn\":"
+            " \"SetupText\", \"d\": 0x20, \"e\": 0x40}] so VBlankHandler's hDMAFunction"
+            " call is real, and declare instruction_budget=20000000,"
+            " cycle_budget=80000000."
+        ]
+
+    if (cycles is not None and instructions is not None
+            and cycles <= 400012 and instructions <= 100000):
+        return [
+            f"{prefix} instructions={instructions} against cycles={cycles} is not the ROM"
+            " spinning -- it is legacy_to_schema's own fallback"
+            " (tests/cases/_schema_migration.py:223-232) firing because the case declared"
+            " neither instruction_budget nor cycle_budget and silently got 100000/400000."
+            " One DMG frame alone is 70224 cycles, so any DoFrame / HandleMenuInput /"
+            " CheckAnyAnimationPlaying / frame-count wait exceeds 400000 regardless of"
+            " whether the port is correct. Declare instruction_budget=20000000 and"
+            " cycle_budget=80000000 explicitly on this case."
+        ]
+
+    if instructions is not None and instructions >= 1000000:
+        return [
+            f"{prefix} instructions={instructions} with pc parked"
+            f"{f' at ${pc:04X}' if pc is not None else ''} is a genuine spin in the real"
+            " ROM, and no budget fixes it. Two known causes. (1) A list the ROM walks has"
+            " no terminator -- seed the terminator (GetCardIDFromDeckIndex spins this way"
+            " on an unterminated card list). (2) A menu or input wait was handed a held"
+            " key instead of a cycled one: keys=0x01 is newly pressed exactly once, so use"
+            " keys=[0x00, 0x01], which taps A every other frame against edge-triggered"
+            " hKeysPressed ($FF91). Never pick 0x02: B cancels and the routine takes its"
+            " `ret c` exit before the line under test runs. Resolve pc against"
+            " poketcg/poketcg.sym to identify the loop before spending a generation."
+        ]
+
+    return []
 
 
 def _diagnostic_signature(entry: dict[str, Any]) -> str:

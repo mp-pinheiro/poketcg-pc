@@ -63,6 +63,10 @@ DEFAULT_TTL_SECONDS = 21600.0  # 6h; a live wave settles in minutes
 # those a wave or two before they were done.
 DEFAULT_RETRY_LIMIT = 16
 RETIRED_PREFIX = "AUTO-RETIRED: "
+CLUSTER_RETIRED_PREFIX = "AUTO-RETIRED (cluster): "
+# Both machine-written reasons share this stem; a hand-diagnosed blocker never
+# starts with it, which is what makes an auto-retirement safe to undo in bulk.
+RETIRED_STEM = "AUTO-RETIRED"
 
 # Both markers require a space after `factory`, so `factory-mutation`,
 # `factory-completion` and `factory-cases-statics` never match. The statics
@@ -593,7 +597,7 @@ def retire_exhausted_reds(states: dict[str, dict[str, Any]],
             entries.append({
                 "name": fn,
                 "reason": (
-                    f"AUTO-RETIRED (cluster): matches {matched['name']} on "
+                    f"{CLUSTER_RETIRED_PREFIX}matches {matched['name']} on "
                     f"{status} pc={pc} ({matched['count']} stanzas). "
                     f"{source}:{row.get('line')} (basename `{Path(source).stem}`). "
                     f"generation={generation}; last diagnostic phase={phase} "
@@ -716,6 +720,140 @@ def append_blockers(entries: list[dict[str, Any]],
     os.replace(temp, path)
 
 
+_BLOCKED_NAME_LINE = re.compile(r'^\s*name\s*=\s*"(.*?)"\s*$')
+# Every diagnostic this un-retirement class can undo, keyed by the subcommand
+# value. The value is matched against the machine-written `reason`, which
+# quotes the failing payload verbatim.
+UNRETIRE_DIAGNOSTICS = {"budget": "BUDGET_EXHAUSTED"}
+
+
+def _stanza_groups(text: str) -> list[list[str]]:
+    """Split blocked.toml into line groups, one per `[[blocked]]` stanza.
+
+    Grouped by lines rather than parsed and re-serialised: the file is 230 KB of
+    hand-written diagnosis, and a rewrite would normalise prose only a human
+    should touch. Every stanza uses single-line values (name/reason/unblock plus
+    a handful of note/workaround), so a group boundary is exactly a line equal
+    to `[[blocked]]`. Anything before the first one stays in the leading group.
+    """
+    groups: list[list[str]] = []
+    for line in text.splitlines():
+        if line.strip() == "[[blocked]]" or not groups:
+            groups.append([])
+        groups[-1].append(line)
+    return groups
+
+
+def _group_name(group: list[str]) -> str | None:
+    for line in group:
+        match = _BLOCKED_NAME_LINE.match(line)
+        if match:
+            return match.group(1)
+    return None
+
+
+def _drop_stanzas(text: str, names: set[str]) -> tuple[str, list[str]]:
+    keep: list[list[str]] = []
+    removed: list[str] = []
+    for group in _stanza_groups(text):
+        name = _group_name(group)
+        if name is not None and name in names:
+            removed.append(name)
+            continue
+        keep.append(group)
+    body = "\n\n".join("\n".join(group).strip("\n") for group in keep if any(group))
+    return (body + "\n" if body else ""), removed
+
+
+def remove_blockers(names: set[str], root: Path = common.ROOT) -> list[str]:
+    """Delete whole `[[blocked]]` stanzas by name, atomically.
+
+    Mirrors append_blockers: the result is re-parsed before it replaces the
+    original, so a stanza whose shape line grouping cannot see is skipped by
+    name rather than allowed to corrupt 118 others.
+    """
+    path = root / ".factory" / BLOCKED_NAME
+    if not path.is_file() or not names:
+        return []
+    original = path.read_text()
+    text, removed = _drop_stanzas(original, set(names))
+    if not removed:
+        return []
+    try:
+        tomllib.loads(text)
+    except tomllib.TOMLDecodeError:
+        text, removed = original, []
+        for name in sorted(names):
+            candidate, dropped = _drop_stanzas(text, {name})
+            if not dropped:
+                continue
+            try:
+                tomllib.loads(candidate)
+            except tomllib.TOMLDecodeError:
+                print(f"HEAL unretire-skip {name} "
+                      f"reason=stanza is not a single-line group")
+                continue
+            text = candidate
+            removed.extend(dropped)
+        if not removed:
+            return []
+    temp = path.with_name(path.name + ".heal-tmp")
+    temp.write_text(text)
+    os.replace(temp, path)
+    return removed
+
+
+def unretire_class(diagnostic: str, rows: dict[str, dict[str, Any]], *,
+                   root: Path = common.ROOT,
+                   apply: bool = True) -> list[str]:
+    """Return every routine auto-retired on one diagnostic to the fresh pool.
+
+    Deleting the stanza alone is not enough: a red at or above --retry-limit is
+    in neither pool (the fresh one wants None/stale, the retry one wants
+    generation < limit), so it would sit `ready` and unselectable until heal
+    re-retired it. Those ladders were spent on prompts that never named the
+    fix, so the attempt state moves with the stanza - exactly as
+    reap_stale_issued does - and issue_attempt carries generation + 1 from a
+    stale parent, which buys each routine one directive-informed draw and no
+    more. Raising --retry-limit instead would hand every unrelated red eight
+    more blind generations.
+    """
+    import try_one
+
+    marker = UNRETIRE_DIAGNOSTICS[diagnostic]
+    path = root / ".factory" / BLOCKED_NAME
+    if not path.is_file():
+        return []
+    names = {
+        str(stanza.get("name") or "")
+        for stanza in tomllib.loads(path.read_text()).get("blocked", [])
+        if str(stanza.get("reason") or "").startswith(RETIRED_STEM)
+        and marker in str(stanza.get("reason") or "")
+    } - {""}
+    prefix = "HEAL " if apply else "HEAL would-"
+    states = try_one._current_states()
+    if not apply:
+        for name in sorted(names):
+            print(f"{prefix}unretire {name} "
+                  f"generation={states.get(name, {}).get('generation', 0)}")
+        return sorted(names)
+    removed = remove_blockers(names, root)
+    for name in sorted(removed):
+        state = states.get(name)
+        generation = int((state or {}).get("generation", 0))
+        # `rows` was computed before the stanza was removed, so a routine
+        # un-retired here still reads `blocked` there; only an already-landed
+        # `complete` row must keep its red, since replaying it would claim work
+        # the tree has settled.
+        if (state is not None and state.get("state") == "red"
+                and rows.get(name, {}).get("state") != "complete"):
+            refreshed = dict(state)
+            refreshed["state"] = "stale"
+            try_one._store_current(refreshed)
+        print(f"{prefix}unretire {name} generation={generation}")
+    return removed
+
+
 def _work_records() -> list[dict[str, Any]]:
     report = packet_mod.report_module()
     return report.compute(report.load_inventory(), report.load_routines()[0],
@@ -732,11 +870,16 @@ def main(argv: list[str] | None = None) -> int:
                         help="age at which a candidate-less issued attempt is reaped")
     parser.add_argument("--sweep-only", action="store_true",
                         help="only kill orphaned factory compute, touch no ledger")
+    parser.add_argument("--unretire-class", choices=sorted(UNRETIRE_DIAGNOSTICS),
+                        help="return routines auto-retired on one diagnostic to "
+                             "the fresh pool, once the prompt names its remedy")
     arguments = parser.parse_args(argv)
     if arguments.retry_limit < 1:
         parser.error("--retry-limit must be at least 1")
     if arguments.ttl_hours <= 0:
         parser.error("--ttl-hours must be positive")
+    if arguments.sweep_only and arguments.unretire_class:
+        parser.error("--sweep-only touches no ledger; it cannot un-retire")
 
     # Outside the lock: killing compute nobody is waiting on touches no ledger,
     # and it must still happen when the ledger repairs below cannot run.
@@ -762,6 +905,14 @@ def main(argv: list[str] | None = None) -> int:
             apply=arguments.apply,
         )
         revoked = revoke_lost_landings(root, apply=arguments.apply)
+        # Before retiring: an un-retired routine leaves `red`, so this run's
+        # retire pass no longer sees it, and the cluster index it reads is the
+        # one this removal produced.
+        unretired = (
+            unretire_class(arguments.unretire_class, rows, root=root,
+                           apply=arguments.apply)
+            if arguments.unretire_class else []
+        )
         retired = retire_exhausted_reds(
             try_one._current_states(), rows,
             retry_limit=arguments.retry_limit, root=root, apply=arguments.apply,
@@ -770,12 +921,13 @@ def main(argv: list[str] | None = None) -> int:
             rows, root=root, apply=arguments.apply,
         )
     _lost, half = lost_landings(root)
+    dirty = 1 if ((retired or unretired) and arguments.apply) else 0
     print(
         f"HEAL status landed={len(landed)} reaped={len(reaped)} "
         f"revoked={len(revoked)} retired={len(retired)} "
-        f"superseded={len(superseded)} half_landed={len(half)} "
-        f"orphans={len(orphans)} "
-        f"blocked_toml_dirty={1 if (retired and arguments.apply) else 0}"
+        f"superseded={len(superseded)} unretired={len(unretired)} "
+        f"half_landed={len(half)} orphans={len(orphans)} "
+        f"blocked_toml_dirty={dirty}"
     )
     return 0
 
