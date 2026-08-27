@@ -1948,6 +1948,11 @@ def _kaod_case(location=b"\x00", extra=None, **overrides):
     }
     case.update(overrides)
     return case
+
+wPlayerDuelVariables = 0xC200
+wPlayerDeck = 0xC400
+wSelectedAttack = 0xCCC6
+hWhoseTurn = 0xFF97
 # <<< factory-cases-statics
 
 # >>> factory CheckIfEnoughEnergiesForGivenAttack
@@ -4131,6 +4136,15 @@ CASES["CheckIfActiveCardCanKnockOut"] = [
 ]
 # <<< factory CheckIfActiveCardCanKnockOut
 
+# >>> factory AISelectSpecialAttackParameters
+CONTRACT["AISelectSpecialAttackParameters"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AISelectSpecialAttackParameters"] = [
+    {"a": 0x00, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x00", wSelectedAttack: b"\x00"}},
+    {"a": 0x01, "wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + 0xBB: b"\x00", wPlayerDeck: b"\x01", wSelectedAttack: b"\x01"})
+]
+# <<< factory AISelectSpecialAttackParameters
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5743,3 +5757,6 @@ MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
     "case_ids": ["CheckIfActiveCardCanKnockOut-0", "CheckIfActiveCardCanKnockOut-1"]
 }
 # <<< factory-mutation CheckIfActiveCardCanKnockOut
+# >>> factory-mutation AISelectSpecialAttackParameters
+MUTATIONS["AISelectSpecialAttackParameters"] = {"source_symbol": "AISelectSpecialAttackParameters", "before": "\tuint8_t selected_attack = wSelectedAttack;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "after": "\tuint8_t selected_attack = 0u;\n\tDuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);", "case_ids": ["AISelectSpecialAttackParameters-1", "AISelectSpecialAttackParameters-2"]}
+# <<< factory-mutation AISelectSpecialAttackParameters

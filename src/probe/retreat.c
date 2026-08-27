@@ -26,9 +26,20 @@ static void adapt_AIDecideBenchPokemonToSwitchTo(ProbeState *s)
 }
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
 
+/* >>> factory AIDecideWhetherToRetreat */
+/* >>> factory AIDecideWhetherToRetreat */
+static void adapt_AIDecideWhetherToRetreat(ProbeState *s)
+{
+	AIDecideWhetherToRetreatResult r = AIDecideWhetherToRetreat();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecideWhetherToRetreat */
+
 const ProbeEntry probe_entries_retreat[] = {
 	{ "SetAIRetreatFlags", adapt_SetAIRetreatFlags },
 	{ "AITryToRetreat", adapt_AITryToRetreat },
 	{ "AIDecideBenchPokemonToSwitchTo", adapt_AIDecideBenchPokemonToSwitchTo },
+	{ "AIDecideWhetherToRetreat", adapt_AIDecideWhetherToRetreat },
 	{ NULL, NULL },
 };

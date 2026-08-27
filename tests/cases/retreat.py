@@ -68,6 +68,8 @@ DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
 hWhoseTurn = 0xFF97
 wPlayerDuelVariables = 0xC200
 DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
+
+W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL = 0xCC0C
 # <<< factory-cases-statics
 
 # >>> factory AITryToRetreat
@@ -153,6 +155,16 @@ CASES["AIDecideBenchPokemonToSwitchTo"] = [
 ]
 # <<< factory AIDecideBenchPokemonToSwitchTo
 
+# >>> factory AIDecideWhetherToRetreat
+CONTRACT["AIDecideWhetherToRetreat"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecideWhetherToRetreat"] = [
+    {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00}},
+    {"wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x80"}, "expect_regs": {"a": 0x80, "f": 0x00}},
+    dict(POISON, wram={W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\x01"}, expect_regs={"a": 0x01, "f": 0x00}),
+    {"a": 0x5c, "f": 0x40, "b": 0x11, "c": 0x22, "d": 0x33, "e": 0x44, "hl": 0x89ab, "wram": {W_CONFUSION_RETREAT_CHECK_WAS_UNSUCCESSFUL: b"\xff"}, "expect_regs": {"a": 0xff, "f": 0x00}}
+]
+# <<< factory AIDecideWhetherToRetreat
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -177,3 +189,6 @@ MUTATIONS["AITryToRetreat"] = {
 # >>> factory-mutation AIDecideBenchPokemonToSwitchTo
 MUTATIONS["AIDecideBenchPokemonToSwitchTo"] = {"source_symbol": "AIDecideBenchPokemonToSwitchTo", "before": "\tuint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;", "after": "\tuint8_t count = 0u;", "case_ids": ["AIDecideBenchPokemonToSwitchTo-0", "AIDecideBenchPokemonToSwitchTo-1"]}
 # <<< factory-mutation AIDecideBenchPokemonToSwitchTo
+# >>> factory-mutation AIDecideWhetherToRetreat
+MUTATIONS["AIDecideWhetherToRetreat"] = {"source_symbol": "AIDecideWhetherToRetreat", "before": "\t\treturn (AIDecideWhetherToRetreatResult){a, 0u};", "after": "\t\treturn (AIDecideWhetherToRetreatResult){0u, 0x80u};", "case_ids": ["AIDecideWhetherToRetreat-0", "AIDecideWhetherToRetreat-1", "AIDecideWhetherToRetreat-2", "AIDecideWhetherToRetreat-3"]}
+# <<< factory-mutation AIDecideWhetherToRetreat

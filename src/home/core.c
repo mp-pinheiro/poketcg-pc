@@ -1400,6 +1400,15 @@ static void TossCoin_WaitForOpponent(uint8_t a)
 #include "generated/wram.h"
 #include "home/damage_calculation.h"
 #include "home/duel.h"
+
+#include "home/retreat.h"
+#include "home/energy.h"
+#include "home/effect_functions.h"
+#define CARD_LOCATION_DISCARD_PILE 0x02u
+#define ELECTRODE_LV35 0x6Eu
+#define MEWTWO_ALT_LV60 0x9Fu
+#define MEWTWO_LV60 0x9Eu
+#define MEW_LV23 0xA2u
 /* <<< factory statics */
 
 /* >>> factory DrawHPBar */
@@ -7959,3 +7968,60 @@ CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8
 	return (CheckIfActiveCardCanKnockOutResult){selected.a, 0x10u, selected.b, selected.c, selected.d, selected.e, selected.hl};
 }
 /* <<< factory CheckIfActiveCardCanKnockOut */
+
+/* >>> factory AISelectSpecialAttackParameters */
+AISelectSpecialAttackParametersResult AISelectSpecialAttackParameters(void)
+{
+	uint8_t selected_attack = wSelectedAttack;
+	DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+	uint8_t flags = 0x00u;
+
+	if (card_id == MEW_LV23) {
+		if (selected_attack != 0u) {
+			hTemp_ffa0 = 0x01u;
+			LookForCardThatIsKnockedOutOnDevolutionResult r = LookForCardThatIsKnockedOutOnDevolution(0x00u);
+			hTempPlayAreaLocation_ffa1 = r.a;
+			flags = 0x10u;
+		}
+	} else if (card_id == MEWTWO_ALT_LV60 || card_id == MEWTWO_LV60) {
+		if (selected_attack == 0u) {
+			hTempPlayAreaLocation_ffa1 = 0xFFu;
+			hTempRetreatCostCards = 0xFFu;
+			LookForCardIDInLocationResult psychic = LookForCardIDInLocation_Bank5(CARD_LOCATION_DISCARD_PILE, PSYCHIC_ENERGY);
+			hTemp_ffa0 = psychic.a;
+			(void)CreateEnergyCardListFromDiscardPile_AllEnergy();
+			for (uint8_t i = 0u; i != 0xFFu; ++i) {
+				uint8_t entry = gb_read8((uint16_t)(wDuelTempList_ADDR + i));
+				if (entry == 0xFFu)
+					break;
+				if (entry != hTemp_ffa0)
+					hTempPlayAreaLocation_ffa1 = entry;
+			}
+			flags = 0x10u;
+		}
+	} else if (card_id == EXEGGUTOR) {
+		if (selected_attack == 0u) {
+			AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
+			if (!(r.f & 0x10u)) {
+				hTemp_ffa0 = r.a;
+				flags = 0x10u;
+			}
+		}
+	} else if (card_id == ELECTRODE_LV35) {
+		if (selected_attack != 0u) {
+			LookForCardIDInLocationResult lightning = LookForCardIDInLocation_Bank5(CARD_LOCATION_DECK, LIGHTNING_ENERGY);
+			hTemp_ffa0 = lightning.a;
+			if (lightning.f & 0x10u) {
+				AIProcessButDontPlayEnergy_SkipEvolution();
+				hTempPlayAreaLocation_ffa1 = hTempPlayAreaLocation_ff9d;
+				flags = 0x10u;
+			}
+		}
+	}
+	wSelectedAttack = selected_attack;
+	if (flags == 0u)
+		flags = selected_attack == 0u ? 0x80u : 0x00u;
+	return (AISelectSpecialAttackParametersResult){selected_attack, flags};
+}
+/* <<< factory AISelectSpecialAttackParameters */

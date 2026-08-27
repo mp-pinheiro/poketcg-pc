@@ -36,6 +36,15 @@
 #define MEW_LV8 0xA0u
 #define DUELVARS_ARENA_CARD_HP 0xC8u
 #define AI_INFO_BENCH_UTILITY 0x01u
+
+#include "home/card_color.h"
+#define CONFUSED 0x01u
+#define DOUBLE_POISONED 0xC0u
+#define DUELVARS_BENCH 0xBCu
+#define HITMONLEE 0x87u
+#define PLAY_AREA_BENCH_1 0x01u
+#define PORYGON 0xBDu
+#define TRUE 0x01u
 /* <<< factory statics */
 
 #define POKEMON_POWER 0x04u
@@ -284,3 +293,332 @@ AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void)
 	return (AIDecideBenchPokemonToSwitchToResult){best.a, best.f};
 }
 /* <<< factory AIDecideBenchPokemonToSwitchTo */
+
+/* >>> factory AIDecideWhetherToRetreat */
+AIDecideWhetherToRetreatResult AIDecideWhetherToRetreat(void)
+{
+	uint8_t a = wConfusionRetreatCheckWasUnsuccessful;
+	uint8_t f;
+	uint8_t b = 0u;
+	uint8_t c = 0u;
+	uint8_t d = 0u;
+	uint8_t e = 0u;
+	uint16_t hl = 0u;
+	if (a != 0u) {
+		/* .no_carry: the second `or a` clears carry and sets Z only for zero. */
+		return (AIDecideWhetherToRetreatResult){a, 0u};
+	}
+	wAIPlayEnergyCardForRetreat = 0u;
+	LoadDefendingPokemonColorWRAndPrizeCards();
+	wAIScore = 0x80u;
+	a = wAIRetreatScore;
+	if (a != 0u) {
+		a = (uint8_t)((a >> 2) << 1);
+		AIEncourageResult r = AIEncourage(a);
+		a = r.a;
+		f = r.f;
+	}
+	DuelistVarResult v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS);
+	a = v.a;
+	hl = v.hl;
+	if (a != 0u) {
+		a &= DOUBLE_POISONED;
+		if (a != 0u) {
+			AIEncourageResult r = AIEncourage(2u);
+			a = r.a;
+			f = r.f;
+		}
+		a = gb_read8(hl);
+		a &= CNF_SLP_PRZ;
+		if (a == CONFUSED) {
+			AIEncourageResult r = AIEncourage(1u);
+			a = r.a;
+			f = r.f;
+		}
+	}
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	CheckIfAnyAttackKnocksOutDefendingCardResult any = CheckIfAnyAttackKnocksOutDefendingCard();
+	a = any.a;
+	f = any.f;
+	if ((f & 0x10u) != 0u) {
+		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
+		a = unusable.a; f = unusable.f; b = unusable.b; c = unusable.c; d = unusable.d; e = unusable.e; hl = unusable.hl;
+		if ((f & 0x10u) != 0u) {
+			LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+			a = energy.a; f = energy.f;
+			if ((f & 0x10u) != 0u)
+				goto active_cant_use_atk;
+		}
+	}
+	goto active_cant_ko_1;
+
+active_cant_use_atk:
+	AIDiscourage(5u);
+	if (wAIOpponentPrizeCount < 2u)
+		AIDiscourage(35u);
+
+active_cant_ko_1:
+	{
+		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
+		a = ko.a; f = ko.f;
+		if ((f & 0x10u) != 0u) {
+			AIEncourageResult r = AIEncourage(2u);
+			a = r.a; f = r.f;
+			CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
+			a = boss.a; f = boss.carry ? 0x10u : 0u;
+			if (!boss.carry && wAIPlayerPrizeCount < 2u)
+				wAIPlayEnergyCardForRetreat = TRUE;
+		}
+	}
+	{
+		CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
+		a = boss.a; f = boss.carry ? 0x10u : 0u;
+		if (!boss.carry && wAIPlayerPrizeCount < 2u) {
+			AIEncourageResult r = AIEncourage(2u);
+			a = r.a; f = r.f;
+		}
+	}
+	if (wAIOpponentPrizeCount < 2u)
+		AIDiscourage(2u);
+
+check_resistance_1:
+	a = TranslateColorToWR(GetArenaCardColor());
+	b = a;
+	a = wAIPlayerResistance;
+	if ((a & b) != 0u) {
+		AIEncourageResult r = AIEncourage(1u);
+		a = r.a; f = r.f;
+		b = wAIPlayerResistance;
+		v = GetTurnDuelistVariable(DUELVARS_BENCH);
+		hl = v.hl;
+		for (;;) {
+			a = gb_read8(hl++);
+			if (a == 0xFFu) {
+				AIDiscourage(2u);
+				break;
+			}
+			LoadCardDataToBuffer1_FromDeckIndex(a);
+			if ((TranslateColorToWR(wLoadedCard1Type) & b) == 0u)
+				break;
+		}
+	}
+
+check_weakness_1:
+	b = wAIPlayerColor;
+	a = GetArenaCardWeakness();
+	if ((a & b) != 0u) {
+		AIEncourageResult r = AIEncourage(2u);
+		a = r.a; f = r.f;
+		b = wAIPlayerColor;
+		v = GetTurnDuelistVariable(DUELVARS_BENCH);
+		hl = v.hl;
+		for (;;) {
+			a = gb_read8(hl++);
+			if (a == 0xFFu) {
+				AIDiscourage(3u);
+				break;
+			}
+			LoadCardDataToBuffer1_FromDeckIndex(a);
+			if ((wLoadedCard1Weakness & b) == 0u)
+				break;
+		}
+	}
+
+check_resistance_2:
+	b = wAIPlayerColor;
+	a = GetArenaCardResistance();
+	if ((a & b) != 0u)
+		AIDiscourage(3u);
+
+check_weakness_2:
+	b = wAIPlayerWeakness;
+	v = GetTurnDuelistVariable(DUELVARS_BENCH);
+	hl = v.hl;
+	e = PLAY_AREA_BENCH_1 - 1u;
+	for (;;) {
+		++e;
+		a = gb_read8(hl++);
+		if (a == 0xFFu)
+			break;
+		uint8_t saved_e = e;
+		LoadCardDataToBuffer1_FromDeckIndex(a);
+		a = TranslateColorToWR(wLoadedCard1Type);
+		e = saved_e;
+		if ((a & b) == 0u)
+			continue;
+		AIEncourageResult r = AIEncourage(2u);
+		(a = r.a); f = r.f;
+		DuelistVarResult arena = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		uint8_t arena_id = (uint8_t)GetCardIDFromDeckIndex(arena.a);
+		if (arena_id == PORYGON) {
+			CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
+			a = damage.a; f = damage.f;
+			if ((f & 0x10u) != 0u) {
+				r = AIEncourage(10u);
+				a = r.a; f = r.f;
+				break;
+			}
+		}
+	}
+
+check_weakness_3:
+	b = TranslateColorToWR(GetArenaCardColor());
+	a = wAIPlayerWeakness;
+	if ((a & b) != 0u)
+		AIDiscourage(3u);
+
+check_resistance_3:
+	b = wAIPlayerColor;
+	v = GetTurnDuelistVariable(DUELVARS_BENCH);
+	hl = v.hl;
+	for (;;) {
+		a = gb_read8(hl++);
+		if (a == 0xFFu)
+			break;
+		LoadCardDataToBuffer1_FromDeckIndex(a);
+		if ((wLoadedCard1Resistance & b) != 0u) {
+			AIEncourageResult r = AIEncourage(1u);
+			a = r.a; f = r.f;
+			break;
+		}
+	}
+
+check_ko_2:
+	v = GetTurnDuelistVariable(DUELVARS_BENCH);
+	hl = v.hl;
+	c = 0u;
+	for (;;) {
+		++c;
+		a = gb_read8(hl++);
+		if (a == 0xFFu)
+			break;
+		hTempPlayAreaLocation_ff9d = c;
+		CheckIfAnyAttackKnocksOutDefendingCardResult k = CheckIfAnyAttackKnocksOutDefendingCard();
+		a = k.a; f = k.f;
+		if ((f & 0x10u) == 0u)
+			continue;
+		CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
+		a = u.a; f = u.f; b = u.b; c = u.c; d = u.d; e = u.e; hl = u.hl;
+		if ((f & 0x10u) == 0u)
+			goto bench_ko_success;
+		LookForEnergyNeededForAttackInHandResult need = LookForEnergyNeededForAttackInHand();
+		a = need.a; f = need.f;
+		if ((f & 0x10u) != 0u)
+			goto bench_ko_success;
+	}
+	goto check_defending_id;
+
+bench_ko_success:
+	{
+		AIEncourageResult r = AIEncourage(2u);
+		a = r.a; f = r.f;
+	}
+	if (wAIOpponentPrizeCount < 2u) {
+		CheckIfNotABossDeckIDResult boss = CheckIfNotABossDeckID();
+		a = boss.a; f = boss.carry ? 0x10u : 0u;
+		if (!boss.carry) {
+			hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+			CheckIfAnyAttackKnocksOutDefendingCardResult k = CheckIfAnyAttackKnocksOutDefendingCard();
+			a = k.a; f = k.f;
+			if ((f & 0x10u) == 0u)
+				goto check_defending_id;
+			CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(a, f, b, c, d, e, hl);
+			a = u.a; f = u.f; b = u.b; c = u.c; d = u.d; e = u.e; hl = u.hl;
+			if ((f & 0x10u) == 0u)
+				goto check_defending_id;
+			AIEncourageResult r = AIEncourage(40u);
+			a = r.a; f = r.f;
+			wAIPlayEnergyCardForRetreat = TRUE;
+		}
+	}
+
+check_defending_id:
+	v = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	SwapTurn();
+	uint8_t defending_id = (uint8_t)GetCardIDFromDeckIndex(v.a);
+	SwapTurn();
+	if (defending_id == MR_MIME || defending_id == HITMONLEE) {
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(0u, f, b, c, d, e, hl);
+		a = damage.a; f = damage.f;
+		if ((f & 0x10u) == 0u) {
+			v = GetTurnDuelistVariable(DUELVARS_BENCH);
+			hl = v.hl; c = 0u;
+			for (;;) {
+				++c; a = gb_read8(hl++);
+				if (a == 0xFFu)
+					break;
+				CheckIfCanDamageDefendingPokemonResult bd = CheckIfCanDamageDefendingPokemon(c, f, b, c, d, e, hl);
+				a = bd.a; f = bd.f;
+				if ((f & 0x10u) != 0u) {
+					AIEncourageResult r = AIEncourage(5u);
+					a = r.a; f = r.f;
+					wAIPlayEnergyCardForRetreat = TRUE;
+					break;
+				}
+			}
+		}
+	}
+
+check_retreat_cost:
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	a = GetPlayAreaCardRetreatCost();
+	if (a == 2u)
+		AIDiscourage(1u);
+	else if (a >= 3u)
+		AIDiscourage(2u);
+	CheckIfArenaCardIsFullyPoweredResult powered = CheckIfArenaCardIsFullyPowered();
+	a = powered.a; f = powered.f;
+	if ((f & 0x10u) == 0u) {
+		CountNumberOfSetUpBenchPokemonResult count = CountNumberOfSetUpBenchPokemon(a, f, b, c, d, e, hl);
+		a = count.a; f = count.f; b = count.b; c = count.c; d = count.d; e = count.e; hl = count.hl;
+		if (a >= 2u)
+			AIEncourage(1u);
+	}
+	v = GetTurnDuelistVariable(DUELVARS_BENCH);
+	hl = v.hl; e = 0u;
+	for (;;) {
+		++e; a = gb_read8(hl++);
+		if (a == 0xFFu) {
+			AIDiscourage(20u);
+			break;
+		}
+		uint8_t saved_e = e;
+		LoadCardDataToBuffer2_FromDeckIndex(a);
+		e = saved_e;
+		if (wLoadedCard2ID == MYSTERIOUS_FOSSIL || wLoadedCard2ID == CLEFAIRY_DOLL)
+			continue;
+		hTempPlayAreaLocation_ff9d = e;
+		CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
+		a = ko.a; f = ko.f;
+		if ((f & 0x10u) == 0u)
+			goto check_active_id;
+	}
+
+check_active_id:
+	v = GetTurnDuelistVariable(DUELVARS_ARENA_CARD);
+	uint8_t active_id = (uint8_t)GetCardIDFromDeckIndex(v.a);
+	if (active_id == MYSTERIOUS_FOSSIL || active_id == CLEFAIRY_DOLL) {
+		e = 0u;
+		for (;;) {
+			++e;
+			v = GetTurnDuelistVariable((uint8_t)(e + DUELVARS_ARENA_CARD));
+			if (v.a == 0xFFu)
+				return (AIDecideWhetherToRetreatResult){0xFFu, 0u};
+			hTempPlayAreaLocation_ff9d = e;
+			CheckIfDefendingPokemonCanKnockOutResult ko = CheckIfDefendingPokemonCanKnockOut(a, f, b, c, d, e, hl);
+			a = ko.a; f = ko.f;
+			if ((f & 0x10u) != 0u)
+				continue;
+			CheckIfCanDamageDefendingPokemonResult damage = CheckIfCanDamageDefendingPokemon(e, f, b, c, d, e, hl);
+			a = damage.a; f = damage.f;
+			if ((f & 0x10u) != 0u)
+				return (AIDecideWhetherToRetreatResult){a, (uint8_t)((f & 0x80u) | 0x10u)};
+		}
+	}
+	a = wAIScore;
+	if (a >= 131u)
+		return (AIDecideWhetherToRetreatResult){a, (uint8_t)((a == 131u ? 0x80u : 0u) | 0x10u)};
+	return (AIDecideWhetherToRetreatResult){a, (uint8_t)(a == 0u ? 0x80u : 0u)};
+}
+/* <<< factory AIDecideWhetherToRetreat */

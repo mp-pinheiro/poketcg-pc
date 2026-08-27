@@ -2576,6 +2576,15 @@ static void adapt_CheckIfActiveCardCanKnockOut(ProbeState *s)
 }
 /* <<< factory CheckIfActiveCardCanKnockOut */
 
+/* >>> factory AISelectSpecialAttackParameters */
+static void adapt_AISelectSpecialAttackParameters(ProbeState *s)
+{
+	AISelectSpecialAttackParametersResult r = AISelectSpecialAttackParameters();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AISelectSpecialAttackParameters */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2883,5 +2892,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP },
 	{ "CheckIfAnyAttackKnocksOutDefendingCard", adapt_CheckIfAnyAttackKnocksOutDefendingCard },
 	{ "CheckIfActiveCardCanKnockOut", adapt_CheckIfActiveCardCanKnockOut },
+	{ "AISelectSpecialAttackParameters", adapt_AISelectSpecialAttackParameters },
 	{ NULL, NULL },
 };
