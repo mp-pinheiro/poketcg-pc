@@ -532,3 +532,17 @@ void AIProcessEnergyCards(void)
 	AIScoreResult best=FindPlayAreaCardWithHighestAIScore(0,0,0,0,0);if(best.f&0x10){if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();else{(void)CreateEnergyCardListFromHand(best.a);(void)AITryToPlayEnergyCard();}}else if(wAIEnergyAttachLogicFlags)(void)RetrievePlayAreaAIScoreFromBackup1();
 }
 /* <<< factory AIProcessEnergyCards */
+
+/* >>> factory AIProcessAndTryToPlayEnergy */
+void AIProcessAndTryToPlayEnergy(void)
+{
+	wAIEnergyAttachLogicFlags = 0u;
+	CoreCardListResult list = CreateEnergyCardListFromHand(0u);
+	if ((list.f & 0x10u) == 0u) {
+		AIProcessEnergyCards();
+		return;
+	}
+	if (wAIEnergyAttachLogicFlags != 0u)
+		(void)RetrievePlayAreaAIScoreFromBackup1();
+}
+/* <<< factory AIProcessAndTryToPlayEnergy */

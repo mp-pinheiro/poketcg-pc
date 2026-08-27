@@ -33,4 +33,7 @@ void DetermineAIScoreOfAttackEnergyRequirement(uint8_t a);
 /* >>> factory AIProcessEnergyCards */
 void AIProcessEnergyCards(void);
 /* <<< factory AIProcessEnergyCards */
+/* >>> factory AIProcessAndTryToPlayEnergy */
+void AIProcessAndTryToPlayEnergy(void);
+/* <<< factory AIProcessAndTryToPlayEnergy */
 #endif /* POKETCG_HOME_ENERGY_H */

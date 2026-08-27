@@ -80,4 +80,8 @@ TryDeleteSavedDeckResult TryDeleteSavedDeck(void);
 typedef struct { uint8_t a; uint8_t f; } HandleDeckMissingCardsListResult;
 HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_t de);
 /* <<< factory HandleDeckMissingCardsList */
+/* >>> factory HandleDismantleDeckToMakeSpace */
+typedef struct { uint8_t a; uint8_t f; } HandleDismantleDeckToMakeSpaceResult;
+HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void);
+/* <<< factory HandleDismantleDeckToMakeSpace */
 #endif /* POKETCG_HOME_DECK_MACHINE_H */

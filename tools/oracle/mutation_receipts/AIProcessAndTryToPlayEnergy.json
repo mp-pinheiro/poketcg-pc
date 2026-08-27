@@ -1,0 +1,9 @@
+{
+  "fn": "AIProcessAndTryToPlayEnergy",
+  "case": "tests/cases/energy.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AIProcessAndTryToPlayEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\", \"52670\": \"1000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AIProcessAndTryToPlayEnergy\", \"mismatches\": {\"bus\": {\"address\": 52670, \"reference\": \"001000000000\", \"native\": \"000000000000\", \"reference_size\": 10, \"native_size\": 10, \"spans\": [[49902, 1], [52670, 8], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"AIProcessAndTryToPlayEnergy\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49902\": \"00\", \"52670\": \"1000000000000000\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}

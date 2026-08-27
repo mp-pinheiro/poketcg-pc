@@ -394,6 +394,23 @@ CASES["HandleDeckMissingCardsList"] = [
 ]
 # <<< factory HandleDeckMissingCardsList
 
+# >>> factory HandleDismantleDeckToMakeSpace
+CONTRACT["HandleDismantleDeckToMakeSpace"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleDismantleDeckToMakeSpace"] = [
+    {"keys": [0x00, 0x02],
+     "ramg": True,
+     "sram": {0: {}},
+     "wram": {0xCABB: b"\x00", 0xFF81: b"\x00", 0xD0A4: b"\x00"},
+     "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+     "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x02],
+         ramg=True, sram={0: {}},
+         wram={0xCABB: b"\x00", 0xFF81: b"\x00", 0xD0A4: b"\x00"},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory HandleDismantleDeckToMakeSpace
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -506,3 +523,11 @@ MUTATIONS["HandleDeckMissingCardsList"] = {
     ],
 }
 # <<< factory-mutation HandleDeckMissingCardsList
+# >>> factory-mutation HandleDismantleDeckToMakeSpace
+MUTATIONS["HandleDismantleDeckToMakeSpace"] = {
+    "source_symbol": "HandleDismantleDeckToMakeSpace",
+    "before": "\t\t\t\treturn (HandleDismantleDeckToMakeSpaceResult){hCurMenuItem, 0x90u};",
+    "after": "\t\t\t\treturn (HandleDismantleDeckToMakeSpaceResult){0u, 0x90u};",
+    "case_ids": ["HandleDismantleDeckToMakeSpace-0", "HandleDismantleDeckToMakeSpace-1"],
+}
+# <<< factory-mutation HandleDismantleDeckToMakeSpace

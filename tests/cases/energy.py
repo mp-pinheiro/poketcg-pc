@@ -129,6 +129,14 @@ CASES["AIProcessEnergyCards"]=[
 ]
 # <<< factory AIProcessEnergyCards
 
+# >>> factory AIProcessAndTryToPlayEnergy
+CONTRACT["AIProcessAndTryToPlayEnergy"] = {"compare": (), "preserve": ()}
+CASES["AIProcessAndTryToPlayEnergy"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x10" * 7, 0xCDBF: b"\x00" * 7}, "read": {0xCDBF: 7}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00", 0xCDBE: b"\x20" * 7, 0xCDBF: b"\x00" * 7}, read={0xCDBF: 7}),
+]
+# <<< factory AIProcessAndTryToPlayEnergy
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -167,3 +175,6 @@ MUTATIONS["DetermineAIScoreOfAttackEnergyRequirement"] = {"source_symbol": "Dete
 # >>> factory-mutation AIProcessEnergyCards
 MUTATIONS["AIProcessEnergyCards"]={"source_symbol":"AIProcessEnergyCards","before":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x80u);","after":"\tfor (uint8_t i=0; i<MAX_PLAY_AREA_POKEMON; ++i) gb_write8((uint16_t)(wPlayAreaEnergyAIScore_ADDR+i),0x81u);","case_ids":["AIProcessEnergyCards-0"]}
 # <<< factory-mutation AIProcessEnergyCards
+# >>> factory-mutation AIProcessAndTryToPlayEnergy
+MUTATIONS["AIProcessAndTryToPlayEnergy"] = {"source_symbol": "AIProcessAndTryToPlayEnergy", "before": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "after": "void AIProcessAndTryToPlayEnergy(void)\n{\n\twAIEnergyAttachLogicFlags = 1u;", "case_ids": ["AIProcessAndTryToPlayEnergy-0", "AIProcessAndTryToPlayEnergy-1"]}
+# <<< factory-mutation AIProcessAndTryToPlayEnergy

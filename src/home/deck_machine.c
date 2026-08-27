@@ -113,6 +113,12 @@
 #define DeckNameSuffix_ADDR 0x52A7u
 #define DECK_CONFIRMATION_CARD_SELECTION_PARAMS_ADDR 0x6E91u
 #define CARD_LIST_UPDATE_FUNCTION_ADDR 0x6E9Au
+
+#define ALL_DECKS 0xffu
+#define ChooseADeckToDismantleText 0x0269u
+#define DismantleThisDeckText 0x023du
+#define DismantledDeckText 0x026au
+#define YouMayOnlyCarry4DecksText 0x0268u
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -624,3 +630,69 @@ HandleDeckMissingCardsListResult HandleDeckMissingCardsList(uint16_t hl, uint16_
 	}
 }
 /* <<< factory HandleDeckMissingCardsList */
+
+/* >>> factory HandleDismantleDeckToMakeSpace */
+HandleDismantleDeckToMakeSpaceResult HandleDismantleDeckToMakeSpace(void)
+{
+	WaitResult initial_wait = DrawWideTextBox_WaitForInput(YouMayOnlyCarry4DecksText);
+	(void)initial_wait;
+
+	SafelySwitchToSRAM0();
+	DrawDecksScreen(ALL_DECKS);
+
+	uint8_t cursor = 0u;
+	for (;;) {
+		uint16_t menu_parameters = 0x7609u;
+		InitializeMenuParameters(cursor, &menu_parameters);
+		(void)DrawWideTextBox_PrintText(ChooseADeckToDismantleText);
+
+		for (;;) {
+			DoFrame();
+			HandleStartButtonInDeckSelectionMenuResult start =
+				HandleStartButtonInDeckSelectionMenu();
+			if ((start.f & 0x10u) != 0u) {
+				cursor = start.a;
+				break;
+			}
+
+			HandleMenuInputResult input = HandleMenuInput();
+			if ((input.f & 0x10u) == 0u)
+				continue;
+			if (hCurMenuItem == MENU_CANCEL) {
+				SafelySwitchToTempSRAMBank();
+				return (HandleDismantleDeckToMakeSpaceResult){hCurMenuItem, 0x90u};
+			}
+
+			wCurDeck = hCurMenuItem;
+			HandleYesOrNoMenuResult choice =
+				YesOrNoMenuWithText(DismantleThisDeckText);
+			if ((choice.f & 0x10u) != 0u) {
+				cursor = wCurDeck;
+				break;
+			}
+
+			uint16_t deck_name = GetPointerToDeckName();
+			uint16_t source = deck_name;
+			uint16_t destination = wDismantledDeckName_ADDR;
+			EnableSRAM();
+			CopyListFromHLToDE(&source, &destination);
+			(void)AddDeckToCollection((uint16_t)(deck_name + DECK_NAME_SIZE));
+			ClearMemory_Bank2(DECK_STRUCT_SIZE, deck_name);
+			DisableSRAM();
+
+			DrawDecksScreen(ALL_DECKS);
+			cursor = wCurDeck;
+			menu_parameters = 0x7609u;
+			InitializeMenuParameters(cursor, &menu_parameters);
+			DrawCursor2();
+			SafelySwitchToTempSRAMBank();
+			(void)CopyDeckName(wDismantledDeckName_ADDR);
+			wTxRam2 = 0u;
+			gb_write8((uint16_t)(wTxRam2_ADDR + 1u), 0u);
+			WaitResult final_wait =
+				DrawWideTextBox_WaitForInput(DismantledDeckText);
+			return (HandleDismantleDeckToMakeSpaceResult){wCurDeck, final_wait.f};
+		}
+	}
+}
+/* <<< factory HandleDismantleDeckToMakeSpace */
