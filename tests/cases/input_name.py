@@ -173,6 +173,53 @@ CASES["PlayerNamingScreen_CheckButtonState"] = [
 ]
 # <<< factory PlayerNamingScreen_CheckButtonState
 
+# >>> factory DeckNamingScreen_CheckButtonState
+# The read spans are the wrapper's EARLY state (cursor x/y, blink counter,
+# menu SFX) rather than the final d register, so a PyBoy-vs-gbref divergence
+# anywhere in the composite path localizes to the first differing byte
+# instead of hiding behind the char lookup. Case 0 is the exact shape the old
+# stanza diverged on (dpad UP, cursor x=0 y=1, height=5 -> y=0 -> datum 0,
+# char 'A' $41). Blink seeds are nonzero so the early return avoids the
+# cursor-redraw chain; cases 5/6 take the A/B path, which skips the blink
+# entirely and reports the visible tile.
+CONTRACT["DeckNamingScreen_CheckButtonState"] = {"compare": ("a",), "preserve": ()}
+_DECK_BTN_READ = {0xD006: 1, 0xCEA4: 1, 0xCEA3: 1, 0xCFE3: 1}
+CASES["DeckNamingScreen_CheckButtonState"] = [
+    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": _DECK_BTN_READ},
+    dict(POISON, wram={0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+                       0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x01", 0xCEA9: b"\x05",
+                       0xD005: b"\x06"},
+         read=_DECK_BTN_READ),
+    {"wram": {0xFF8F: b"\x40", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x00", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": _DECK_BTN_READ},
+    {"wram": {0xFF8F: b"\x80", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x04", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": _DECK_BTN_READ},
+    {"wram": {0xFF8F: b"\x20", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+              0xCEAA: b"\x17", 0xD006: b"\x00", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": _DECK_BTN_READ},
+    {"wram": {0xFF8F: b"\x10", 0xFF91: b"\x00", 0xCEA3: b"\x01",
+              0xCEAA: b"\x17", 0xD006: b"\x02", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": _DECK_BTN_READ},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x01", 0xCEA3: b"\x11",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": {0xCFE3: 1}},
+    {"wram": {0xFF8F: b"\x00", 0xFF91: b"\x02", 0xCEA3: b"\x11",
+              0xCEAA: b"\x17", 0xD006: b"\x03", 0xCEA4: b"\x02", 0xCEA9: b"\x05",
+              0xD005: b"\x06"},
+     "read": {0xCFE3: 1}},
+]
+# <<< factory DeckNamingScreen_CheckButtonState
+
 # >>> factory PrintPlayerNameFromInput
 CONTRACT["PrintPlayerNameFromInput"] = {"compare": (), "preserve": (), "wram_out": True}
 CASES["PrintPlayerNameFromInput"] = [
@@ -546,3 +593,7 @@ MUTATIONS["InputPlayerName"] = {
 for _rec in SCHEMA2_CASES["InputPlayerName"]:
     _rec["completion"] = {"mode": "pre-ret", "pc": 0x682A}
 # <<< factory-completion InputPlayerName
+
+# >>> factory-mutation DeckNamingScreen_CheckButtonState
+MUTATIONS["DeckNamingScreen_CheckButtonState"] = {"source_symbol": "DeckNamingScreen_CheckButtonState", "before": "\t\tif (d_reg == 2u)", "after": "\t\tif (d_reg == 0x41u)", "case_ids": ["DeckNamingScreen_CheckButtonState-0"]}
+# <<< factory-mutation DeckNamingScreen_CheckButtonState

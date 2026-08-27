@@ -544,9 +544,17 @@ DeckNamingScreen_DrawCursorResult DeckNamingScreen_CheckButtonState(void)
 	{
 		uint8_t keys = gb_read8(hKeysPressed_ADDR);
 		if (keys & (PAD_A_800 | PAD_B_800)) {
-			uint8_t press_a = (keys & PAD_A_800) ? 0u : MENU_CANCEL_800;
+			/* input_name.asm:1313-1326: `and PAD_A` leaves a = keys & PAD_A
+			 * (1) for A and a = MENU_CANCEL for B, and the push af / pop af
+			 * sandwich around DrawVisibleCursor returns exactly that a (the
+			 * callee preserves registers), with carry set: f = 0x10 for A
+			 * (Z clear) and 0x90 for B (Z set by `and PAD_A` on zero). */
+			uint8_t press_a = (keys & PAD_A_800) ? (uint8_t)(keys & PAD_A_800) : MENU_CANCEL_800;
 			(void)PlaySFXConfirmOrCancel_Bank6(press_a);
-			return DeckNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+			(void)DeckNamingScreen_DrawVisibleCursor(0x10u, 0u, 0u, 0u, 0u, 0u);
+			return (DeckNamingScreen_DrawCursorResult){press_a,
+				(uint8_t)(((keys & PAD_A_800) ? 0x00u : 0x80u) | 0x10u),
+				0u, 0u, 0u, 0u, 0u};
 		}
 		uint8_t sfx = gb_read8(wMenuInputSFX_ADDR);
 		if (sfx != 0u)
