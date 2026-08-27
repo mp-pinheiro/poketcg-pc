@@ -6602,6 +6602,30 @@ CASES["Rampage_Confusion50PercentEffect"] = [
 ]
 # <<< factory Rampage_Confusion50PercentEffect
 
+# >>> factory WartortleWithdrawEffect
+CONTRACT["WartortleWithdrawEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["WartortleWithdrawEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory WartortleWithdrawEffect
+
+# >>> factory VenusaurMegaDrainEffect
+CONTRACT["VenusaurMegaDrainEffect"] = {"compare": (), "preserve": ()}
+CASES["VenusaurMegaDrainEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x1e\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x19\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x00\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x1e\x00"}),
+]
+# <<< factory VenusaurMegaDrainEffect
+
 # >>> factory Thunderpunch_ModifierEffect
 CONTRACT["Thunderpunch_ModifierEffect"] = {"compare": (), "preserve": ()}
 CASES["Thunderpunch_ModifierEffect"] = [
@@ -9461,3 +9485,9 @@ MUTATIONS["TantrumEffect"] = {"source_symbol": "TantrumEffect", "before": "uint8
 # >>> factory-mutation Rampage_Confusion50PercentEffect
 MUTATIONS["Rampage_Confusion50PercentEffect"] = {"source_symbol": "Rampage_Confusion50PercentEffect", "before": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage(damage.a);", "after": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["Rampage_Confusion50PercentEffect-0", "Rampage_Confusion50PercentEffect-1"]}
 # <<< factory-mutation Rampage_Confusion50PercentEffect
+# >>> factory-mutation WartortleWithdrawEffect
+MUTATIONS["WartortleWithdrawEffect"] = {"source_symbol": "WartortleWithdrawEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_PROTECT;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);", "after": "\twLoadedAttackAnimation = 0x50u;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);", "case_ids": ["WartortleWithdrawEffect-0"]}
+# <<< factory-mutation WartortleWithdrawEffect
+# >>> factory-mutation VenusaurMegaDrainEffect
+MUTATIONS["VenusaurMegaDrainEffect"] = {"source_symbol": "VenusaurMegaDrainEffect", "before": "\tdealt = (uint16_t)(dealt >> 1);", "after": "\tdealt = (uint16_t)(dealt >> 2);", "case_ids": ["VenusaurMegaDrainEffect-0", "VenusaurMegaDrainEffect-1", "VenusaurMegaDrainEffect-3"]}
+# <<< factory-mutation VenusaurMegaDrainEffect

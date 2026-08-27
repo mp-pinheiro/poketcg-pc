@@ -4740,6 +4740,21 @@ static void adapt_Rampage_Confusion50PercentEffect(ProbeState *s)
 }
 /* <<< factory Rampage_Confusion50PercentEffect */
 
+/* >>> factory WartortleWithdrawEffect */
+static void adapt_WartortleWithdrawEffect(ProbeState *s)
+{
+	s->f = WartortleWithdrawEffect();
+}
+/* <<< factory WartortleWithdrawEffect */
+
+/* >>> factory VenusaurMegaDrainEffect */
+static void adapt_VenusaurMegaDrainEffect(ProbeState *s)
+{
+	(void)s;
+	VenusaurMegaDrainEffect();
+}
+/* <<< factory VenusaurMegaDrainEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5311,6 +5326,8 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "TailWagEffect", adapt_TailWagEffect },
 	{ "TantrumEffect", adapt_TantrumEffect },
 	{ "Rampage_Confusion50PercentEffect", adapt_Rampage_Confusion50PercentEffect },
+	{ "WartortleWithdrawEffect", adapt_WartortleWithdrawEffect },
+	{ "VenusaurMegaDrainEffect", adapt_VenusaurMegaDrainEffect },
 	{ "Thunderpunch_ModifierEffect", adapt_Thunderpunch_ModifierEffect },
 	{ "SeadraAgilityEffect", adapt_SeadraAgilityEffect },
 	{ "RaichuAgilityEffect", adapt_RaichuAgilityEffect },

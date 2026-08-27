@@ -1950,6 +1950,12 @@ uint8_t TantrumEffect(void);
 /* >>> factory Rampage_Confusion50PercentEffect */
 void Rampage_Confusion50PercentEffect(void);
 /* <<< factory Rampage_Confusion50PercentEffect */
+/* >>> factory WartortleWithdrawEffect */
+uint8_t WartortleWithdrawEffect(void);
+/* <<< factory WartortleWithdrawEffect */
+/* >>> factory VenusaurMegaDrainEffect */
+void VenusaurMegaDrainEffect(void);
+/* <<< factory VenusaurMegaDrainEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);
