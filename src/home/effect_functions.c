@@ -1247,6 +1247,12 @@ void BankswitchROM(uint8_t bank);
 #include "home/print_text.h"
 #include "home/effect_functions.h"
 #include "generated/hram.h"
+
+#include "generated/wram.h"
+#include "home/effect_functions.h"
+#include "home/print_text.h"
+
+#define DamageToOppBenchIfHeadsDamageToYoursIfTailsText 0x00eau
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9890,3 +9896,42 @@ PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)
 	return (PlayerPickAttackForAmnesiaResult){effect.a, 0x00u};
 }
 /* <<< factory MirrorMove_InitialEffect2 */
+
+/* >>> factory MysteryAttack_RecoverEffect */
+void MysteryAttack_RecoverEffect(void)
+{
+	uint8_t effect = hTemp_ffa0;
+	if (effect != 4u)
+		return;
+	ApplyAndAnimateHPRecovery(0u, 10u);
+}
+/* <<< factory MysteryAttack_RecoverEffect */
+
+/* >>> factory ThunderJolt_Recoil50PercentEffect */
+ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 10u);
+	hTemp_ffa0 = toss.a;
+	return (ThunderJolt_Recoil50PercentEffectResult){toss.a, toss.f, 18u, toss.hl};
+}
+/* <<< factory ThunderJolt_Recoil50PercentEffect */
+
+/* >>> factory LeekSlap_NoDamage50PercentEffect */
+uint8_t LeekSlap_NoDamage50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);
+	if ((toss.f & 0x10u) != 0u)
+		return toss.f;
+	SetDefiniteDamage(0u);
+	return 0x80u;
+}
+/* <<< factory LeekSlap_NoDamage50PercentEffect */
+
+/* >>> factory Blizzard_BenchDamage50PercentEffect */
+void Blizzard_BenchDamage50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);
+	hTemp_ffa0 = toss.a;
+}
+/* <<< factory Blizzard_BenchDamage50PercentEffect */

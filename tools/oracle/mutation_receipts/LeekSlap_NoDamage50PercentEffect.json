@@ -1,0 +1,9 @@
+{
+  "fn": "LeekSlap_NoDamage50PercentEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 1,
+  "status": "RED",
+  "baseline": "{\"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52233\": \"00\", \"52409\": \"00000000\", \"52636\": \"01000002\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"mismatches\": {\"bus\": {\"address\": 52409, \"reference\": \"000181000000000001\", \"native\": \"000181000100010101\", \"reference_size\": 17, \"native_size\": 17, \"spans\": [[49905, 1], [51899, 1], [51906, 1], [51914, 3], [52233, 1], [52409, 4], [52636, 4], [52814, 2]]}}}\n",
+  "restored": "{\"fn\": \"LeekSlap_NoDamage50PercentEffect\", \"registers\": {\"a\": 170, \"b\": 187, \"c\": 204, \"d\": 221, \"e\": 238, \"f\": 128, \"hl\": 4660, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49905\": \"00\", \"51899\": \"80\", \"51906\": \"00\", \"51914\": \"000181\", \"52233\": \"00\", \"52409\": \"00000000\", \"52636\": \"01000002\", \"52814\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

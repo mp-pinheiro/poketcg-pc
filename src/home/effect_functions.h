@@ -1977,6 +1977,19 @@ void TaurosStomp_DamageBoostEffect(void);
 /* >>> factory MirrorMove_InitialEffect2 */
 PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void);
 /* <<< factory MirrorMove_InitialEffect2 */
+/* >>> factory MysteryAttack_RecoverEffect */
+void MysteryAttack_RecoverEffect(void);
+/* <<< factory MysteryAttack_RecoverEffect */
+/* >>> factory ThunderJolt_Recoil50PercentEffect */
+typedef struct { uint8_t a; uint8_t f; uint8_t b; uint16_t hl; } ThunderJolt_Recoil50PercentEffectResult;
+ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void);
+/* <<< factory ThunderJolt_Recoil50PercentEffect */
+/* >>> factory LeekSlap_NoDamage50PercentEffect */
+uint8_t LeekSlap_NoDamage50PercentEffect(void);
+/* <<< factory LeekSlap_NoDamage50PercentEffect */
+/* >>> factory Blizzard_BenchDamage50PercentEffect */
+void Blizzard_BenchDamage50PercentEffect(void);
+/* <<< factory Blizzard_BenchDamage50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

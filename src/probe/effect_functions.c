@@ -4811,6 +4811,40 @@ static void adapt_MirrorMove_InitialEffect2(ProbeState *s)
 }
 /* <<< factory MirrorMove_InitialEffect2 */
 
+/* >>> factory MysteryAttack_RecoverEffect */
+static void adapt_MysteryAttack_RecoverEffect(ProbeState *s)
+{
+	(void)s;
+	MysteryAttack_RecoverEffect();
+}
+/* <<< factory MysteryAttack_RecoverEffect */
+
+/* >>> factory ThunderJolt_Recoil50PercentEffect */
+static void adapt_ThunderJolt_Recoil50PercentEffect(ProbeState *s)
+{
+	ThunderJolt_Recoil50PercentEffectResult result = ThunderJolt_Recoil50PercentEffect();
+	s->a = result.a;
+	s->f = result.f;
+	s->b = result.b;
+	s->hl = result.hl;
+}
+/* <<< factory ThunderJolt_Recoil50PercentEffect */
+
+/* >>> factory LeekSlap_NoDamage50PercentEffect */
+static void adapt_LeekSlap_NoDamage50PercentEffect(ProbeState *s)
+{
+	s->f = LeekSlap_NoDamage50PercentEffect();
+}
+/* <<< factory LeekSlap_NoDamage50PercentEffect */
+
+/* >>> factory Blizzard_BenchDamage50PercentEffect */
+static void adapt_Blizzard_BenchDamage50PercentEffect(ProbeState *s)
+{
+	(void)s;
+	Blizzard_BenchDamage50PercentEffect();
+}
+/* <<< factory Blizzard_BenchDamage50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5395,5 +5429,9 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "RaichuThunder_Recoil50PercentEffect", adapt_RaichuThunder_Recoil50PercentEffect },
 	{ "TaurosStomp_DamageBoostEffect", adapt_TaurosStomp_DamageBoostEffect },
 	{ "MirrorMove_InitialEffect2", adapt_MirrorMove_InitialEffect2 },
+	{ "MysteryAttack_RecoverEffect", adapt_MysteryAttack_RecoverEffect },
+	{ "ThunderJolt_Recoil50PercentEffect", adapt_ThunderJolt_Recoil50PercentEffect },
+	{ "LeekSlap_NoDamage50PercentEffect", adapt_LeekSlap_NoDamage50PercentEffect },
+	{ "Blizzard_BenchDamage50PercentEffect", adapt_Blizzard_BenchDamage50PercentEffect },
 	{ NULL, NULL },
 };

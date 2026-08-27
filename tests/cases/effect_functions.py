@@ -6793,6 +6793,67 @@ CASES["MirrorMove_InitialEffect2"] = [
 ]
 # <<< factory MirrorMove_InitialEffect2
 
+# >>> factory MysteryAttack_RecoverEffect
+CONTRACT["MysteryAttack_RecoverEffect"] = {"compare": (), "preserve": ()}
+CASES["MysteryAttack_RecoverEffect"] = [
+    _hp_recovery_case(0x50, wram={hTemp_ffa0: b"\x04"}),
+    _hp_recovery_case(0x10, wram={hTemp_ffa0: b"\x03"}),
+    _hp_recovery_case(0x08, wram={hTemp_ffa0: b"\x00"}),
+    _hp_recovery_case(0x30, a=0xAA, f=0xF0, b=0xBB, c=0xCC, d=0xDD, e=0xEE, hl=0x1234, wram={hTemp_ffa0: b"\x04"}),
+]
+# <<< factory MysteryAttack_RecoverEffect
+
+# >>> factory ThunderJolt_Recoil50PercentEffect
+CONTRACT["ThunderJolt_Recoil50PercentEffect"] = {"compare": ("a", "f", "b", "hl"), "preserve": ()}
+CASES["ThunderJolt_Recoil50PercentEffect"] = [
+    dict(keys=[0x00, 0x01], wram={0xFFA0: b"\x00", **_acid_toss_fix}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(keys=[0x00, 0x01], wram={0xFFA0: b"\x00", **_acid_toss_fix_tail}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01], wram={0xFFA0: b"\x77", **_acid_toss_fix}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ThunderJolt_Recoil50PercentEffect
+
+# >>> factory LeekSlap_NoDamage50PercentEffect
+CONTRACT["LeekSlap_NoDamage50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["LeekSlap_NoDamage50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", 0xCCBB: b"\x10", 0xCCBC: b"\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", 0xCCBB: b"\x10", 0xCCBC: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCCBB: 1, 0xCCBC: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory LeekSlap_NoDamage50PercentEffect
+
+# >>> factory Blizzard_BenchDamage50PercentEffect
+CONTRACT["Blizzard_BenchDamage50PercentEffect"] = {"compare": (), "preserve": ()}
+CASES["Blizzard_BenchDamage50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1,
+               0xCE4E: 2, 0xCAC2: 1, 0xFFA0: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1,
+               0xCE4E: 2, 0xCAC2: 1, 0xFFA0: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Blizzard_BenchDamage50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9616,3 +9677,15 @@ MUTATIONS["TaurosStomp_DamageBoostEffect"] = {"source_symbol": "TaurosStomp_Dama
 # >>> factory-mutation MirrorMove_InitialEffect2
 MUTATIONS["MirrorMove_InitialEffect2"] = {"source_symbol": "MirrorMove_InitialEffect2", "before": "PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MirrorMove_InitialEffect2-0", "MirrorMove_InitialEffect2-1", "MirrorMove_InitialEffect2-2"]}
 # <<< factory-mutation MirrorMove_InitialEffect2
+# >>> factory-mutation MysteryAttack_RecoverEffect
+MUTATIONS["MysteryAttack_RecoverEffect"] = {"source_symbol": "MysteryAttack_RecoverEffect", "before": "void MysteryAttack_RecoverEffect(void)\n{\n\tuint8_t effect = hTemp_ffa0;\n\tif (effect != 4u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 10u);", "after": "void MysteryAttack_RecoverEffect(void)\n{\n\tuint8_t effect = hTemp_ffa0;\n\tif (effect != 4u)\n\t\treturn;\n\tApplyAndAnimateHPRecovery(0u, 20u);", "case_ids": ["MysteryAttack_RecoverEffect-0", "MysteryAttack_RecoverEffect-3"]}
+# <<< factory-mutation MysteryAttack_RecoverEffect
+# >>> factory-mutation ThunderJolt_Recoil50PercentEffect
+MUTATIONS["ThunderJolt_Recoil50PercentEffect"] = {"source_symbol": "ThunderJolt_Recoil50PercentEffect", "before": "ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 10u);\n\thTemp_ffa0 = toss.a;", "after": "ThunderJolt_Recoil50PercentEffectResult ThunderJolt_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsDamageToYourselfTooText, 10u);\n\thTemp_ffa0 = (uint8_t)(toss.a + 1u);", "case_ids": ["ThunderJolt_Recoil50PercentEffect-0", "ThunderJolt_Recoil50PercentEffect-1", "ThunderJolt_Recoil50PercentEffect-2"]}
+# <<< factory-mutation ThunderJolt_Recoil50PercentEffect
+# >>> factory-mutation LeekSlap_NoDamage50PercentEffect
+MUTATIONS["LeekSlap_NoDamage50PercentEffect"] = {"source_symbol": "LeekSlap_NoDamage50PercentEffect", "before": "uint8_t LeekSlap_NoDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\tSetDefiniteDamage(0u);", "after": "uint8_t LeekSlap_NoDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfTailsNoDamageText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\tSetDefiniteDamage(1u);", "case_ids": ["LeekSlap_NoDamage50PercentEffect-1"]}
+# <<< factory-mutation LeekSlap_NoDamage50PercentEffect
+# >>> factory-mutation Blizzard_BenchDamage50PercentEffect
+MUTATIONS["Blizzard_BenchDamage50PercentEffect"] = {"source_symbol": "Blizzard_BenchDamage50PercentEffect", "before": "void Blizzard_BenchDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);\n\thTemp_ffa0 = toss.a;", "after": "void Blizzard_BenchDamage50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageToOppBenchIfHeadsDamageToYoursIfTailsText, 0u);\n\thTemp_ffa0 = (uint8_t)(toss.a ^ 0x01u);", "case_ids": ["Blizzard_BenchDamage50PercentEffect-0", "Blizzard_BenchDamage50PercentEffect-1"]}
+# <<< factory-mutation Blizzard_BenchDamage50PercentEffect
