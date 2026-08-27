@@ -6233,6 +6233,83 @@ CASES["SleepingGasEffect"] = [
 ]
 # <<< factory SleepingGasEffect
 
+# >>> factory AbsorbEffect
+CONTRACT["AbsorbEffect"] = {"compare": (), "preserve": ()}
+CASES["AbsorbEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x1e\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x19\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x00\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x1e\x00"}),
+]
+# <<< factory AbsorbEffect
+
+# >>> factory ButterfreeMegaDrainEffect
+CONTRACT["ButterfreeMegaDrainEffect"] = {"compare": (), "preserve": ()}
+CASES["ButterfreeMegaDrainEffect"] = [
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x1e\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x19\x00"}),
+    _hp_recovery_case(0x50, wram={0xCCBF: b"\x00\x00"}),
+    _hp_recovery_case(0x30, **POISON, wram={0xCCBF: b"\x1e\x00"}),
+]
+# <<< factory ButterfreeMegaDrainEffect
+
+# >>> factory AcidEffect
+_acid_toss_fix = {0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06",
+                  0xCABB: b"\x00", 0xCACA: b"\x00\x00\x00",
+                  0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+                  0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"}
+_acid_toss_fix_tail = dict(_acid_toss_fix)
+_acid_toss_fix_tail[0xCACA] = b"\x00\x00\x80"
+_acid_setup = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+CONTRACT["AcidEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["AcidEffect"] = [
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", **_acid_toss_fix},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x55", 0xC2F6: b"\x66", **_acid_toss_fix_tail},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, hl=0xC240, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x12", 0xC2F6: b"\x34", **_acid_toss_fix},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory AcidEffect
+
+# >>> factory BoneAttackEffect
+CONTRACT["BoneAttackEffect"] = {"compare": ("a", "f", "hl"), "preserve": ()}
+CASES["BoneAttackEffect"] = [
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", **_acid_toss_fix},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x55", 0xC2F6: b"\x66", **_acid_toss_fix_tail},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, hl=0xC240, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x12", 0xC2F6: b"\x34", **_acid_toss_fix},
+         read={0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory BoneAttackEffect
+
+# >>> factory ArcanineQuickAttack_DamageBoostEffect
+CONTRACT["ArcanineQuickAttack_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["ArcanineQuickAttack_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ArcanineQuickAttack_DamageBoostEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8927,3 +9004,19 @@ MUTATIONS["SingEffect"] = {"source_symbol": "SingEffect", "before": "uint8_t Sin
 # >>> factory-mutation SleepingGasEffect
 MUTATIONS["SleepingGasEffect"] = {"source_symbol": "SleepingGasEffect", "before": "uint8_t SleepingGasEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "after": "uint8_t SleepingGasEffect(void)\n{\n\tuint8_t f = Sleep50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn (uint8_t)(f ^ 0x01u);\n}", "case_ids": ["SleepingGasEffect-0", "SleepingGasEffect-1"]}
 # <<< factory-mutation SleepingGasEffect
+
+# >>> factory-mutation AbsorbEffect
+MUTATIONS["AbsorbEffect"] = {"source_symbol": "AbsorbEffect", "before": "\tdealt = (uint16_t)(dealt >> 1);", "after": "\tdealt = (uint16_t)(dealt >> 2);", "case_ids": ["AbsorbEffect-0", "AbsorbEffect-1", "AbsorbEffect-3"]}
+# <<< factory-mutation AbsorbEffect
+# >>> factory-mutation ButterfreeMegaDrainEffect
+MUTATIONS["ButterfreeMegaDrainEffect"] = {"source_symbol": "ButterfreeMegaDrainEffect", "before": "\tdealt = (uint16_t)(dealt >> 1);", "after": "\tdealt = (uint16_t)(dealt >> 2);", "case_ids": ["ButterfreeMegaDrainEffect-0", "ButterfreeMegaDrainEffect-1", "ButterfreeMegaDrainEffect-3"]}
+# <<< factory-mutation ButterfreeMegaDrainEffect
+# >>> factory-mutation AcidEffect
+MUTATIONS["AcidEffect"] = {"source_symbol": "AcidEffect", "before": "\tuint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_ACID, hl);", "after": "\tuint16_t written = ApplySubstatus2ToDefendingCard(0x0cu, hl);", "case_ids": ["AcidEffect-0", "AcidEffect-2"]}
+# <<< factory-mutation AcidEffect
+# >>> factory-mutation BoneAttackEffect
+MUTATIONS["BoneAttackEffect"] = {"source_symbol": "BoneAttackEffect", "before": "\tuint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_BONE_ATTACK, hl);", "after": "\tuint16_t written = ApplySubstatus2ToDefendingCard(0x0cu, hl);", "case_ids": ["BoneAttackEffect-0", "BoneAttackEffect-2"]}
+# <<< factory-mutation BoneAttackEffect
+# >>> factory-mutation ArcanineQuickAttack_DamageBoostEffect
+MUTATIONS["ArcanineQuickAttack_DamageBoostEffect"] = {"source_symbol": "ArcanineQuickAttack_DamageBoostEffect", "before": "\tAddToDamage(20u);", "after": "\tAddToDamage(21u);", "case_ids": ["ArcanineQuickAttack_DamageBoostEffect-0"]}
+# <<< factory-mutation ArcanineQuickAttack_DamageBoostEffect

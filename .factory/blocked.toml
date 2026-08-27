@@ -525,3 +525,18 @@ unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection
 name = "SaveDeckConfiguration"
 reason = "DIAGNOSED mixed failure set at gen 16, none a harness gap. (1) primary: BUDGET_EXHAUSTED pc=$0C33 with 15.4M instructions at 80M cycles - HblankCopyDataHLtoDE's HBlank wait (the $0C00-$0C40 class): the case seeds lcdc=$C3 but not the required wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} pair that arms the PPU the HBlank source actually comes from (runner drives the PPU off rLCDC $FF40, not the $CABB shadow); the retry prompt's budget directive names exactly this rule. (2) validate: `header fragment must not contain preprocessor directives` - #define lines belong in STATICS. (3) `no primary oracle case` on some attempts - case authoring, covered once (1) is shaped."
 unblock = "retry with the R3 seed pair wram={0xCABB: b\"\\x80\", 0xFF40: b\"\\x80\"} plus generous instruction_budget/cycle_budget (20M/80M), keep #defines out of the header fragment, and author at least one primary case."
+
+[[blocked]]
+name = "_RequestToPrintCard"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:83 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/_RequestToPrintCard/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "MainMenu_NewGame"
+reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (5 stanzas). src/engine/menus/main_menu.asm:32 (basename `main_menu`). generation=4; last diagnostic phase=primary failure_class=code detail=case MainMenu_NewGame-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65510,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":17302535,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":77,\"ppu_mode\":2,\"bus\":\"8000000000\"}"
+unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "OppAction_PlayEnergyCard"
+reason = "AUTO-RETIRED (cluster): matches _HandlePeekSelection on BUDGET_EXHAUSTED pc=625 (5 stanzas). src/engine/duel/core.asm:6529 (basename `core`). generation=12; last diagnostic phase=primary failure_class=code detail=case OppAction_PlayEnergyCard-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65514,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":19594795,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":122,\"ppu_mode\":3,\"bus\":\"1510800001af053708011010500132080000002026083808000000803e4700040000000200000011083408000014004247010000003702800029080e00170200dc00390880c200050005\"}"
+unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"

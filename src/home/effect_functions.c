@@ -513,6 +513,8 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #include "home/duel.h"
 #include "mem.h"
 #define SUBSTATUS2_CONVERSION2 0x08u
+#define SUBSTATUS2_ACID 0x09u
+#define SUBSTATUS2_BONE_ATTACK 0x0bu
 
 #include "generated/hram.h"
 #include "generated/wram.h"
@@ -9320,3 +9322,66 @@ uint8_t SleepingGasEffect(void)
 	return f;
 }
 /* <<< factory SleepingGasEffect */
+
+/* >>> factory AbsorbEffect */
+/* effect_functions.asm:5943-5961 */
+void AbsorbEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory AbsorbEffect */
+
+/* >>> factory ButterfreeMegaDrainEffect */
+/* effect_functions.asm:2129-2147 */
+void ButterfreeMegaDrainEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory ButterfreeMegaDrainEffect */
+
+/* >>> factory AcidEffect */
+/* effect_functions.asm:1539-1546. TossCoin preserves hl, so the substatus
+ * write lands through the caller's original pointer. */
+AcidEffectResult AcidEffect(uint16_t hl)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(AcidCheckText, hl);
+	if ((toss.f & 0x10u) == 0u)
+		return (AcidEffectResult){toss.a, toss.f, toss.hl};
+	uint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_ACID, hl);
+	return (AcidEffectResult){SUBSTATUS2_ACID, toss.f, written};
+}
+/* <<< factory AcidEffect */
+
+/* >>> factory BoneAttackEffect */
+/* effect_functions.asm:6329-6336 */
+BoneAttackEffectResult BoneAttackEffect(uint16_t hl)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsOpponentCannotAttackText, hl);
+	if ((toss.f & 0x10u) == 0u)
+		return (BoneAttackEffectResult){toss.a, toss.f, toss.hl};
+	uint16_t written = ApplySubstatus2ToDefendingCard(SUBSTATUS2_BONE_ATTACK, hl);
+	return (BoneAttackEffectResult){SUBSTATUS2_BONE_ATTACK, toss.f, written};
+}
+/* <<< factory BoneAttackEffect */
+
+/* >>> factory ArcanineQuickAttack_DamageBoostEffect */
+/* effect_functions.asm:3564-3575 */
+void ArcanineQuickAttack_DamageBoostEffect(void)
+{
+	LoadTxRam3(20u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(20u);
+}
+/* <<< factory ArcanineQuickAttack_DamageBoostEffect */

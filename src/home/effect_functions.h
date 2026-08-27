@@ -1860,6 +1860,23 @@ uint8_t SingEffect(void);
 /* >>> factory SleepingGasEffect */
 uint8_t SleepingGasEffect(void);
 /* <<< factory SleepingGasEffect */
+/* >>> factory AbsorbEffect */
+void AbsorbEffect(void);
+/* <<< factory AbsorbEffect */
+/* >>> factory ButterfreeMegaDrainEffect */
+void ButterfreeMegaDrainEffect(void);
+/* <<< factory ButterfreeMegaDrainEffect */
+/* >>> factory AcidEffect */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } AcidEffectResult;
+AcidEffectResult AcidEffect(uint16_t hl);
+/* <<< factory AcidEffect */
+/* >>> factory BoneAttackEffect */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } BoneAttackEffectResult;
+BoneAttackEffectResult BoneAttackEffect(uint16_t hl);
+/* <<< factory BoneAttackEffect */
+/* >>> factory ArcanineQuickAttack_DamageBoostEffect */
+void ArcanineQuickAttack_DamageBoostEffect(void);
+/* <<< factory ArcanineQuickAttack_DamageBoostEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

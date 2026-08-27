@@ -4452,6 +4452,50 @@ static void adapt_BulbasaurLeechSeedEffect(ProbeState *s)
 }
 /* <<< factory BulbasaurLeechSeedEffect */
 
+/* >>> factory AbsorbEffect */
+static void adapt_AbsorbEffect(ProbeState *s)
+{
+	(void)s;
+	AbsorbEffect();
+}
+/* <<< factory AbsorbEffect */
+
+/* >>> factory ButterfreeMegaDrainEffect */
+static void adapt_ButterfreeMegaDrainEffect(ProbeState *s)
+{
+	(void)s;
+	ButterfreeMegaDrainEffect();
+}
+/* <<< factory ButterfreeMegaDrainEffect */
+
+/* >>> factory AcidEffect */
+static void adapt_AcidEffect(ProbeState *s)
+{
+	AcidEffectResult r = AcidEffect(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory AcidEffect */
+
+/* >>> factory BoneAttackEffect */
+static void adapt_BoneAttackEffect(ProbeState *s)
+{
+	BoneAttackEffectResult r = BoneAttackEffect(s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->hl = r.hl;
+}
+/* <<< factory BoneAttackEffect */
+
+/* >>> factory ArcanineQuickAttack_DamageBoostEffect */
+static void adapt_ArcanineQuickAttack_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	ArcanineQuickAttack_DamageBoostEffect();
+}
+/* <<< factory ArcanineQuickAttack_DamageBoostEffect */
+
 /* >>> factory PoliwhirlAmnesia_PlayerSelectEffect */
 static void adapt_PoliwhirlAmnesia_PlayerSelectEffect(ProbeState *s)
 {
@@ -5067,5 +5111,10 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "StarmieRecover_HealEffect", adapt_StarmieRecover_HealEffect },
 	{ "SingEffect", adapt_SingEffect },
 	{ "SleepingGasEffect", adapt_SleepingGasEffect },
+	{ "AbsorbEffect", adapt_AbsorbEffect },
+	{ "ButterfreeMegaDrainEffect", adapt_ButterfreeMegaDrainEffect },
+	{ "AcidEffect", adapt_AcidEffect },
+	{ "BoneAttackEffect", adapt_BoneAttackEffect },
+	{ "ArcanineQuickAttack_DamageBoostEffect", adapt_ArcanineQuickAttack_DamageBoostEffect },
 	{ NULL, NULL },
 };
