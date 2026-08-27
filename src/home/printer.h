@@ -146,4 +146,14 @@ SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uin
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterInstructionPacket_1SheetResult;
 SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(void);
 /* <<< factory SendPrinterInstructionPacket_1Sheet */
+/* >>> factory _PreparePrinterConnection */
+/* engine/link/printer.asm:4, falls through into HandlePrinterError::21.
+ * Entry hl is the buffer the data packet points at; entry a/f are dead and
+ * b/c/d/e are loaded by the routine itself. The result is carry only: the
+ * single caller farcalls this through PreparePrinterConnection and acts on
+ * carry, and both error exits end in ShowPrinterConnectionErrorScene, whose
+ * ported result is f alone. */
+typedef struct { uint8_t f; } PreparePrinterConnectionResult;
+PreparePrinterConnectionResult _PreparePrinterConnection(uint16_t hl);
+/* <<< factory _PreparePrinterConnection */
 #endif

@@ -673,3 +673,44 @@ SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(vo
 	return (SendPrinterInstructionPacket_1SheetResult){packet.a, packet.f, packet.hl};
 }
 /* <<< factory SendPrinterInstructionPacket_1Sheet */
+
+/* >>> factory _PreparePrinterConnection */
+/* engine/link/printer.asm:4-19, falls through into HandlePrinterError::21.
+ * Sends an empty PRINTERPKT_DATA packet for the caller's buffer (bc = 0,
+ * de = PRINTERPKT_DATA/FALSE) and returns on the spot when SendPrinterPacket
+ * reports no error. On error a wPrinterStatus of zero -- a printer that
+ * answered nothing at all -- is rewritten to $ff, and $ff then routes to
+ * ShowPrinterIsNotConnected while every other status falls through into
+ * HandlePrinterError.
+ *
+ * Only f is returned. The one callsite is the farcall wrapper
+ * PreparePrinterConnection (menus/common.asm:26), whose own caller
+ * (HandlePrinterMenu, engine/menus/printer.asm:232) tests carry alone, and
+ * both error exits end inside ShowPrinterConnectionErrorScene, whose ported
+ * result is f only -- exit a is residue on two of the three paths, so it is
+ * omitted uniformly instead of being guessed on the one path that knows it.
+ *
+ * d/e reach the error callees as SendPrinterPacket's residue, which its ported
+ * result does not carry, so zero is passed; both callees only forward them to
+ * LoadScene. hl at the fallthrough is wPrinterStatus (`ld hl, wPrinterStatus`),
+ * and ShowPrinterIsNotConnected overwrites it with its text id before use. */
+PreparePrinterConnectionResult _PreparePrinterConnection(uint16_t hl)
+{
+	SendPrinterPacketResult packet = SendPrinterPacket(0u, 0u, PRINTERPKT_DATA, FALSE, hl);
+	if ((packet.f & 0x10u) == 0u)
+		return (PreparePrinterConnectionResult){packet.f};
+	if (wPrinterStatus == 0u)
+		wPrinterStatus = 0xFFu;
+	uint8_t status = wPrinterStatus;
+	if (status == 0xFFu) {
+		/* cp $ff with a == $ff: Z and N set, no half-carry, no carry. */
+		ShowPrinterIsNotConnectedResult shown =
+			ShowPrinterIsNotConnected(status, 0xC0u, 0u, 0u, wPrinterStatus_ADDR);
+		return (PreparePrinterConnectionResult){shown.f};
+	}
+	/* cp $ff with a < $ff: N and C always; H unless the low nibble is $f. */
+	uint8_t cp_flags = (uint8_t)(0x50u | ((status & 0x0Fu) == 0x0Fu ? 0x00u : 0x20u));
+	HandlePrinterErrorResult handled = HandlePrinterError(cp_flags, 0u, 0u);
+	return (PreparePrinterConnectionResult){handled.f};
+}
+/* <<< factory _PreparePrinterConnection */
