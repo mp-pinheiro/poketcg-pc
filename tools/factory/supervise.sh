@@ -32,7 +32,7 @@ trap 'kill "$feed" "$beat" 2>/dev/null' EXIT
 # the repo-pinned candidate agents, so the session model stays on the
 # sustainable tier and opus is reserved for capability work and the gen-12+
 # retry ladder.
-model="${POKETCG_LOOP_MODEL:-anthropic/claude-sonnet-5:medium}"
+model="${POKETCG_LOOP_MODEL:-openai-codex/gpt-5.6-luna:medium}"
 n=0
 while [ ! -e .factory/STOP ] && [ "$n" -lt 500 ]; do
   n=$((n+1))
