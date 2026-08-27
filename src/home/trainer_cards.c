@@ -285,6 +285,12 @@
 #define MEW_LV23 0xA2u
 #define POKEMON_POWER 0x04u
 #define SECOND_ATTACK 0x01u
+
+#include "home/core.h"
+#include "home/damage_calculation.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 
@@ -2375,3 +2381,51 @@ AIDecideResult AIDecide_GustOfWind(void)
 	return (AIDecideResult){0x10u};
 }
 /* <<< factory AIDecide_GustOfWind */
+
+/* >>> factory AIDecide_Defender_Phase13 */
+AIDecideResult AIDecide_Defender_Phase13(void)
+{
+	hTempPlayAreaLocation_ff9d = 0u;
+	CheckIfAnyAttackKnocksOutDefendingCardResult ko = CheckIfAnyAttackKnocksOutDefendingCard();
+	if (ko.f & 0x10u) {
+		CheckIfSelectedAttackIsUnusableResult unusable = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if (unusable.f & 0x10u) {
+			LookForEnergyNeededForAttackInHandResult energy = LookForEnergyNeededForAttackInHand();
+			if (energy.f & 0x10u)
+				return (AIDecideResult){0u, 0x80u};
+		}
+	}
+	CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHPResult same = CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP();
+	if (!(same.f & 0x10u))
+		return (AIDecideResult){0u, 0x80u};
+	SwapTurn();
+	CheckIfSelectedAttackIsUnusableResult selected = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	if (selected.f & 0x10u)
+		return (AIDecideResult){0u, 0x80u};
+	uint8_t selected_attack = wSelectedAttack;
+	(void)EstimateDamage_FromDefendingPokemon(selected_attack);
+	wce06 = wDamage;
+	uint8_t selected_damage = wDamage;
+	wSelectedAttack = (uint8_t)(SECOND_ATTACK - selected_attack);
+	SwapTurn();
+	CheckIfSelectedAttackIsUnusableResult other = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	if (other.f & 0x10u) {
+		wSelectedAttack = (uint8_t)(SECOND_ATTACK - wSelectedAttack);
+		wDamage = wce06;
+	} else {
+		uint8_t other_attack = wSelectedAttack;
+		(void)EstimateDamage_FromDefendingPokemon(other_attack);
+		if (wDamage < selected_damage) {
+			wSelectedAttack = (uint8_t)(SECOND_ATTACK - wSelectedAttack);
+			wDamage = wce06;
+		}
+	}
+	uint8_t damage_after_defender = (uint8_t)(wDamage - 20u);
+	uint8_t hp = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_HP).a;
+	if (hp > damage_after_defender)
+		return (AIDecideResult){0u, 0x10u};
+	return (AIDecideResult){0u, 0x80u};
+}
+/* <<< factory AIDecide_Defender_Phase13 */

@@ -17,8 +17,18 @@ static void adapt_AITryToRetreat(ProbeState *s)
 }
 /* <<< factory AITryToRetreat */
 
+/* >>> factory AIDecideBenchPokemonToSwitchTo */
+static void adapt_AIDecideBenchPokemonToSwitchTo(ProbeState *s)
+{
+	AIDecideBenchPokemonToSwitchToResult r = AIDecideBenchPokemonToSwitchTo();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecideBenchPokemonToSwitchTo */
+
 const ProbeEntry probe_entries_retreat[] = {
 	{ "SetAIRetreatFlags", adapt_SetAIRetreatFlags },
 	{ "AITryToRetreat", adapt_AITryToRetreat },
+	{ "AIDecideBenchPokemonToSwitchTo", adapt_AIDecideBenchPokemonToSwitchTo },
 	{ NULL, NULL },
 };

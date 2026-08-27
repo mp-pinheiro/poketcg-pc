@@ -64,6 +64,10 @@ wAIPlayEnergyCardForRetreat = 0xCDD7
 DUELVARS_ARENA_CARD = 0xBB
 DUELVARS_ARENA_CARD_STATUS = 0xF0
 DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
+
+hWhoseTurn = 0xFF97
+wPlayerDuelVariables = 0xC200
+DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA = 0xEF
 # <<< factory-cases-statics
 
 # >>> factory AITryToRetreat
@@ -141,6 +145,14 @@ CASES["AITryToRetreat"] = [
 ]
 # <<< factory AITryToRetreat
 
+# >>> factory AIDecideBenchPokemonToSwitchTo
+CONTRACT["AIDecideBenchPokemonToSwitchTo"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecideBenchPokemonToSwitchTo"] = [
+    {"wram": {hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, "expect_regs": {"a": 1, "f": 0x70}},
+    dict(POISON, wram={hWhoseTurn: b"\xC2", wPlayerDuelVariables + DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA: b"\x01"}, expect_regs={"a": 1, "f": 0x70})
+]
+# <<< factory AIDecideBenchPokemonToSwitchTo
+
 from tests.cases._schema_migration import legacy_to_schema
 
 MUTATIONS = {
@@ -162,3 +174,6 @@ MUTATIONS["AITryToRetreat"] = {
                  "AITryToRetreat-5"],
 }
 # <<< factory-mutation AITryToRetreat
+# >>> factory-mutation AIDecideBenchPokemonToSwitchTo
+MUTATIONS["AIDecideBenchPokemonToSwitchTo"] = {"source_symbol": "AIDecideBenchPokemonToSwitchTo", "before": "\tuint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;", "after": "\tuint8_t count = 0u;", "case_ids": ["AIDecideBenchPokemonToSwitchTo-0", "AIDecideBenchPokemonToSwitchTo-1"]}
+# <<< factory-mutation AIDecideBenchPokemonToSwitchTo

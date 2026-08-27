@@ -19,4 +19,8 @@ typedef struct {
 } AITryToRetreatResult;
 AITryToRetreatResult AITryToRetreat(uint8_t entry_a, uint8_t entry_f);
 /* <<< factory AITryToRetreat */
+/* >>> factory AIDecideBenchPokemonToSwitchTo */
+typedef struct { uint8_t a; uint8_t f; } AIDecideBenchPokemonToSwitchToResult;
+AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void);
+/* <<< factory AIDecideBenchPokemonToSwitchTo */
 #endif /* POKETCG_HOME_RETREAT_H */

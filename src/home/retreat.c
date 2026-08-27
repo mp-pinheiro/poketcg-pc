@@ -26,6 +26,16 @@
 #define PARALYZED 0x03u
 #define PLAY_AREA_ARENA 0x00u
 #define TYPE_ENERGY 0x08u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#define FIRST_ATTACK_OR_PKMN_POWER 0x00u
+#define SECOND_ATTACK 0x01u
+#define MR_MIME 0x9Bu
+#define MEW_LV8 0xA0u
+#define DUELVARS_ARENA_CARD_HP 0xC8u
+#define AI_INFO_BENCH_UTILITY 0x01u
 /* <<< factory statics */
 
 #define POKEMON_POWER 0x04u
@@ -207,3 +217,70 @@ end_retreat_list:
 	return (AITryToRetreatResult){OPPACTION_ATTEMPT_RETREAT, 0x00u};
 }
 /* <<< factory AITryToRetreat */
+
+/* >>> factory AIDecideBenchPokemonToSwitchTo */
+AIDecideBenchPokemonToSwitchToResult AIDecideBenchPokemonToSwitchTo(void)
+{
+	hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+	uint8_t count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;
+	if (count < 2u)
+		return (AIDecideBenchPokemonToSwitchToResult){count, 0x70u};
+	(void)SetAIRetreatFlags();
+	LoadDefendingPokemonColorWRAndPrizeCards();
+	for (uint8_t location = 0u; location < count; ++location) {
+		hTempPlayAreaLocation_ff9d = location;
+		wAIScore = 50u;
+		CheckIfAnyAttackKnocksOutDefendingCardResult ko = CheckIfAnyAttackKnocksOutDefendingCard();
+		if ((ko.f & 0x10u) != 0u) {
+			CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+			if ((u.f & 0x10u) == 0u) {
+				(void)AIEncourage(10u);
+				wAIRetreatFlags |= 1u;
+				if (CountPrizes() < 2u) (void)AIEncourage(10u);
+			}
+		}
+		for (uint8_t attack = FIRST_ATTACK_OR_PKMN_POWER; attack <= SECOND_ATTACK; ++attack) {
+			wSelectedAttack = attack;
+			CheckIfSelectedAttackIsUnusableResult u = CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+			if ((u.f & 0x10u) == 0u) {
+				(void)EstimateDamage_VersusDefendingCard(attack);
+				(void)AIEncourage((uint8_t)(ConvertHPToDamageCounters_Bank5(wDamage).a + 1u));
+			}
+		}
+		if ((LookForEnergyNeededInHand() & 0x10u) != 0u) {
+			(void)EstimateDamage_VersusDefendingCard(wSelectedAttack);
+			(void)AIEncourage((uint8_t)(ConvertHPToDamageCounters_Bank5(wDamage).a >> 1));
+		}
+		(void)GetPlayAreaCardAttachedEnergies(hTempPlayAreaLocation_ff9d);
+		if (wTotalAttachedEnergies == 0u) AIDiscourage(1u);
+		DuelistVarResult nonturn = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD);
+		SwapTurn();
+		uint8_t opposing = LoadCardDataToBuffer2_FromDeckIndex(nonturn.a);
+		SwapTurn();
+		if (opposing == MR_MIME) (void)AIEncourage(5u);
+		DuelistVarResult cardvar = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + location));
+		uint8_t card = LoadCardDataToBuffer1_FromDeckIndex(cardvar.a);
+		uint8_t mask = TranslateColorToWR(wLoadedCard1Type);
+		if (mask & wAIPlayerWeakness) (void)AIEncourage(3u);
+		if (mask & wAIPlayerResistance) AIDiscourage(2u);
+		uint8_t cost = GetPlayAreaCardRetreatCost();
+		if (cost < 2u) (void)AIEncourage(1u);
+		else if (cost > 2u) AIDiscourage(1u);
+		uint8_t hp = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD_HP + location)).a;
+		if (hp == 0u) wAIScore = 0u;
+		else { CalculateBDividedByAResult q = CalculateBDividedByA_Bank5(4u, hp); (void)AIEncourage(ConvertHPToDamageCounters_Bank5(q.a).a); }
+		if (card == MR_MIME || card == MEW_LV8) (void)AIEncourage(5u);
+		if (wLoadedCard1AIInfo == AI_INFO_BENCH_UTILITY) AIDiscourage(2u);
+		if (wLoadedCard1ID == MYSTERIOUS_FOSSIL || wLoadedCard1ID == CLEFAIRY_DOLL) AIDiscourage(10u);
+		uint8_t hi = gb_read8((uint16_t)(wAICardListRetreatBonus_ADDR + 1u));
+		if (hi != 0u) {
+			uint16_t p = (uint16_t)(((uint16_t)hi << 8) | gb_read8(wAICardListRetreatBonus_ADDR));
+			for (;;) { uint8_t listed = gb_read8(p++); if (listed == 0u) break; if (listed == card) { uint8_t bonus = gb_read8(p); if (bonus >= 0x80u) (void)AIEncourage((uint8_t)(bonus - 0x80u)); else AIDiscourage((uint8_t)(0x80u - bonus)); } }
+		}
+		gb_write8((uint16_t)(wPlayAreaAIScore_ADDR + location), wAIScore);
+	}
+	wAIRetreatScore = 0u;
+	FindHighestBenchScoreResult best = FindHighestBenchScore();
+	return (AIDecideBenchPokemonToSwitchToResult){best.a, best.f};
+}
+/* <<< factory AIDecideBenchPokemonToSwitchTo */

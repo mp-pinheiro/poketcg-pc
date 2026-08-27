@@ -170,4 +170,7 @@ AIDecideResult AIDecide_PlusPower_Phase14(void);
 /* >>> factory AIDecide_GustOfWind */
 AIDecideResult AIDecide_GustOfWind(void);
 /* <<< factory AIDecide_GustOfWind */
+/* >>> factory AIDecide_Defender_Phase13 */
+AIDecideResult AIDecide_Defender_Phase13(void);
+/* <<< factory AIDecide_Defender_Phase13 */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

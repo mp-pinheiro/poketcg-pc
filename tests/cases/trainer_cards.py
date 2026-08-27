@@ -289,6 +289,51 @@ wAITrainerCardParameter = 0xCE19
 wAITrainerCardToPlay = 0xCE16
 SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
 BUDGET = dict(instruction_budget=20000000, cycle_budget=80000000)
+
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
+wPlayerCardLocations = 0xC200
+wPlayerArenaCard = 0xC2BB
+wPlayerBench = 0xC2BC
+wOpponentCardLocations = 0xC300
+wOpponentArenaCard = 0xC3BB
+wOpponentArenaCardHP = 0xC3C8
+wPlayerDeck = 0xC400
+wOpponentDeck = 0xC480
+wDamage = 0xCCB9
+wAIMinDamage = 0xCCBB
+wAIMaxDamage = 0xCCBC
+wSelectedAttack = 0xCCC6
+wce06 = 0xCE06
+
+def _defender13_case(location=b"\x00", extra=None, **overrides):
+    wram = {
+        hWhoseTurn: b"\xC2",
+        hTempPlayAreaLocation_ff9d: location,
+        wPlayerCardLocations: b"\x10",
+        wOpponentCardLocations: b"\x10",
+        wPlayerArenaCard: b"\x00",
+        wOpponentArenaCard: b"\x00",
+        wPlayerDeck: b"\xBE",
+        wOpponentDeck: b"\xBE",
+        wOpponentArenaCardHP: b"\x00",
+        wDamage: b"\x00",
+        wAIMinDamage: b"\x00",
+        wAIMaxDamage: b"\x00",
+        wSelectedAttack: b"\x00",
+        wce06: b"\x00",
+    }
+    if extra:
+        wram.update(extra)
+    case = {
+        "wram": wram,
+        "setup": [{"fn": "SetupText", "d": 0x30, "e": 0x7F}],
+        "instruction_budget": 40000000,
+        "cycle_budget": 160000000,
+        "read": {hTempPlayAreaLocation_ff9d: 1, wDamage: 1, wSelectedAttack: 1, wce06: 1},
+    }
+    case.update(overrides)
+    return case
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -707,6 +752,15 @@ CASES["AIDecide_GustOfWind"] = [
 ]
 # <<< factory AIDecide_GustOfWind
 
+# >>> factory AIDecide_Defender_Phase13
+CONTRACT["AIDecide_Defender_Phase13"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_Defender_Phase13"] = [
+    _defender13_case(),
+    _defender13_case(b"\x01"),
+    dict(POISON, **_defender13_case()),
+]
+# <<< factory AIDecide_Defender_Phase13
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -945,3 +999,6 @@ MUTATIONS["AIDecide_PlusPower_Phase14"] = {"source_symbol": "AIDecide_PlusPower_
 # >>> factory-mutation AIDecide_GustOfWind
 MUTATIONS["AIDecide_GustOfWind"] = {"source_symbol": "AIDecide_GustOfWind", "before": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count == 1u)", "after": "AIDecideResult AIDecide_GustOfWind(void)\n{\n\tuint8_t bench_count = GetNonTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA).a;\n\tif (bench_count < 1u)", "case_ids": ["AIDecide_GustOfWind-0"]}
 # <<< factory-mutation AIDecide_GustOfWind
+# >>> factory-mutation AIDecide_Defender_Phase13
+MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Phase13", "before": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecideResult AIDecide_Defender_Phase13(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_Defender_Phase13-0", "AIDecide_Defender_Phase13-1"]}
+# <<< factory-mutation AIDecide_Defender_Phase13
