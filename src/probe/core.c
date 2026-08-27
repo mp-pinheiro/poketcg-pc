@@ -2562,6 +2562,20 @@ static void adapt_CheckIfAnyAttackKnocksOutDefendingCard(ProbeState *s)
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
 
+/* >>> factory CheckIfActiveCardCanKnockOut */
+static void adapt_CheckIfActiveCardCanKnockOut(ProbeState *s)
+{
+	CheckIfActiveCardCanKnockOutResult r = CheckIfActiveCardCanKnockOut(s->a, s->f, s->b, s->c, s->d, s->e, s->hl);
+	s->a = r.a;
+	s->f = r.f;
+	s->b = r.b;
+	s->c = r.c;
+	s->d = r.d;
+	s->e = r.e;
+	s->hl = r.hl;
+}
+/* <<< factory CheckIfActiveCardCanKnockOut */
+
 const ProbeEntry probe_entries_core[] = {
 	{ "PrintDeckAndHandIconsAndNumberOfCards", adapt_PrintDeckAndHandIconsAndNumberOfCards },
 	{ "CanArenaCardUseNonResidualAttack", adapt_CanArenaCardUseNonResidualAttack },
@@ -2868,5 +2882,6 @@ const ProbeEntry probe_entries_core[] = {
 	{ "CheckIfDefendingPokemonCanKnockOut", adapt_CheckIfDefendingPokemonCanKnockOut },
 	{ "CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP", adapt_CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP },
 	{ "CheckIfAnyAttackKnocksOutDefendingCard", adapt_CheckIfAnyAttackKnocksOutDefendingCard },
+	{ "CheckIfActiveCardCanKnockOut", adapt_CheckIfActiveCardCanKnockOut },
 	{ NULL, NULL },
 };

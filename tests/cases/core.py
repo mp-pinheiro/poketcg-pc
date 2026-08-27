@@ -4123,6 +4123,14 @@ CASES["CheckIfAnyAttackKnocksOutDefendingCard"] = [
 ]
 # <<< factory CheckIfAnyAttackKnocksOutDefendingCard
 
+# >>> factory CheckIfActiveCardCanKnockOut
+CONTRACT["CheckIfActiveCardCanKnockOut"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["CheckIfActiveCardCanKnockOut"] = [
+    _kaod_case(read={hTempPlayAreaLocation_ff9d: 1}),
+    dict(POISON, **_kaod_case(read={hTempPlayAreaLocation_ff9d: 1})),
+]
+# <<< factory CheckIfActiveCardCanKnockOut
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 MUTATIONS = {}
@@ -5727,3 +5735,11 @@ MUTATIONS["CheckIfAnyDefendingPokemonAttackDealsSameDamageAsHP"] = {"source_symb
 # >>> factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
 MUTATIONS["CheckIfAnyAttackKnocksOutDefendingCard"] = {"source_symbol": "CheckIfAnyAttackKnocksOutDefendingCard", "before": "CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)\n{\n\t(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = wDamage;", "after": "CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingCard(void)\n{\n\t(void)EstimateDamage_VersusDefendingCard(FIRST_ATTACK_OR_PKMN_POWER);\n\tDuelistVarResult hp = GetNonTurnDuelistVariable(DUELVARS_ARENA_CARD_HP);\n\tuint8_t damage = (uint8_t)(wDamage + 1u);", "case_ids": ["CheckIfAnyAttackKnocksOutDefendingCard-0", "CheckIfAnyAttackKnocksOutDefendingCard-1", "CheckIfAnyAttackKnocksOutDefendingCard-2", "CheckIfAnyAttackKnocksOutDefendingCard-3"]}
 # <<< factory-mutation CheckIfAnyAttackKnocksOutDefendingCard
+# >>> factory-mutation CheckIfActiveCardCanKnockOut
+MUTATIONS["CheckIfActiveCardCanKnockOut"] = {
+    "source_symbol": "CheckIfActiveCardCanKnockOut",
+    "before": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 0u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
+    "after": "CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\thTempPlayAreaLocation_ff9d = 1u;\n\tCheckIfAnyAttackKnocksOutDefendingCardResult any =",
+    "case_ids": ["CheckIfActiveCardCanKnockOut-0", "CheckIfActiveCardCanKnockOut-1"]
+}
+# <<< factory-mutation CheckIfActiveCardCanKnockOut

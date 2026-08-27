@@ -7944,3 +7944,18 @@ CheckIfAnyAttackKnocksOutDefendingCardResult CheckIfAnyAttackKnocksOutDefendingC
 	return (CheckIfAnyAttackKnocksOutDefendingCardResult){difference, flags};
 }
 /* <<< factory CheckIfAnyAttackKnocksOutDefendingCard */
+
+/* >>> factory CheckIfActiveCardCanKnockOut */
+CheckIfActiveCardCanKnockOutResult CheckIfActiveCardCanKnockOut(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)
+{
+	hTempPlayAreaLocation_ff9d = 0u;
+	CheckIfAnyAttackKnocksOutDefendingCardResult any = CheckIfAnyAttackKnocksOutDefendingCard();
+	if ((any.f & 0x10u) == 0u)
+		return (CheckIfActiveCardCanKnockOutResult){any.a, (uint8_t)(any.a == 0u ? 0x80u : 0u), b, c, d, e, hl};
+	CheckIfSelectedAttackIsUnusableResult selected =
+		CheckIfSelectedAttackIsUnusable(any.a, any.f, b, c, d, e, hl);
+	if ((selected.f & 0x10u) != 0u)
+		return (CheckIfActiveCardCanKnockOutResult){selected.a, (uint8_t)(selected.a == 0u ? 0x80u : 0u), selected.b, selected.c, selected.d, selected.e, selected.hl};
+	return (CheckIfActiveCardCanKnockOutResult){selected.a, 0x10u, selected.b, selected.c, selected.d, selected.e, selected.hl};
+}
+/* <<< factory CheckIfActiveCardCanKnockOut */
