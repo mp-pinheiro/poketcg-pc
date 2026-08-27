@@ -879,6 +879,7 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SUBSTATUS1_AGILITY 0x0cu
 #define SUBSTATUS1_FLY 0x0du
 #define SUBSTATUS1_NO_DAMAGE_HIDE_IN_SHELL 0x11u
+#define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
 #define SUBSTATUS2_LEER 0x06u
 #define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
 #define DamageCheckIfTailsNoDamageText 0x00e6u
