@@ -186,6 +186,17 @@ wScriptPointer = 0xD413
 wLoadedEventBits = 0xD3D1
 wEventVars = 0xD3D2
 wMultichoiceTextboxResult_Sam = 0xD694
+
+SAM_RULES_ARGS = 0xC500
+SAM_RULES_MENU = 0xC510
+SAM_RULES_RESULT = 0xD694
+SAM_RULES_ARGS_DATA = b"\x00\x00\x00\x00\x10\xC5\x07\x94\xD6\x00\x00"
+SAM_RULES_MENU_DATA = b"\x00\x00\x14\x06\x80\x00\x00\x00\x00\x00\x00\x00"
+SAM_RULES_SETUP = [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}]
+SAM_RULES_KEYS = [0x00, 0x01]
+wLoadedEventBits = 0xD3D1
+wEventVars = 0xD3D2
+POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
 # <<< factory-cases-statics
 
 
@@ -1582,6 +1593,19 @@ CASES["ScriptCommand_ShowSamNormalMultichoice"] = [
 ]
 # <<< factory ScriptCommand_ShowSamNormalMultichoice
 
+# >>> factory ScriptCommand_ShowSamRulesMultichoice
+CONTRACT["ScriptCommand_ShowSamRulesMultichoice"] = {"compare": ("a", "f", "c"), "preserve": ()}
+CASES["ScriptCommand_ShowSamRulesMultichoice"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF91: b"\x01", SAM_RULES_ARGS: SAM_RULES_ARGS_DATA, SAM_RULES_MENU: SAM_RULES_MENU_DATA, wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, SAM_RULES_RESULT: b"\x00", 0xD413: b"\x00\xC5"},
+     "read": {wEventVars: 0x40, wLoadedEventBits: 1, SAM_RULES_RESULT: 1, 0xD413: 2, 0xD416: 1, 0xD417: 1},
+     "setup": SAM_RULES_SETUP, "keys": SAM_RULES_KEYS, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF91: b"\x01", SAM_RULES_ARGS: SAM_RULES_ARGS_DATA, SAM_RULES_MENU: SAM_RULES_MENU_DATA, wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, SAM_RULES_RESULT: b"\x01", 0xD413: b"\x00\xC5"},
+     "read": {wEventVars: 0x40, wLoadedEventBits: 1, SAM_RULES_RESULT: 1, 0xD413: 2, 0xD416: 1, 0xD417: 1},
+     "setup": SAM_RULES_SETUP, "keys": SAM_RULES_KEYS, "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xFF40: b"\x00", 0xFF91: b"\x01", SAM_RULES_ARGS: SAM_RULES_ARGS_DATA, SAM_RULES_MENU: SAM_RULES_MENU_DATA, wLoadedEventBits: b"\x01", wEventVars: b"\x00" * 0x40, SAM_RULES_RESULT: b"\x00", 0xD413: b"\x00\xC5"}, read={wEventVars: 0x40, wLoadedEventBits: 1, SAM_RULES_RESULT: 1, 0xD413: 2, 0xD416: 1, 0xD417: 1}, setup=SAM_RULES_SETUP, keys=SAM_RULES_KEYS, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScriptCommand_ShowSamRulesMultichoice
+
 from tests.cases._schema_migration import legacy_to_schema
 
 # >>> factory CallMapScriptPointerIfExists
@@ -2296,3 +2320,6 @@ MUTATIONS["ScriptCommand_ChooseStarterDeckMultichoice"] = {"source_symbol": "Scr
 # >>> factory-mutation ScriptCommand_ShowSamNormalMultichoice
 MUTATIONS["ScriptCommand_ShowSamNormalMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamNormalMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = wMultichoiceTextboxResult_Sam;", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)\n{\n\tBankswitchROM(3u);\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(0u, 0x530Cu);\n\tuint8_t choice = (uint8_t)(wMultichoiceTextboxResult_Sam ^ 1u);", "case_ids": ["ScriptCommand_ShowSamNormalMultichoice-0", "ScriptCommand_ShowSamNormalMultichoice-1", "ScriptCommand_ShowSamNormalMultichoice-2"]}
 # <<< factory-mutation ScriptCommand_ShowSamNormalMultichoice
+# >>> factory-mutation ScriptCommand_ShowSamRulesMultichoice
+MUTATIONS["ScriptCommand_ShowSamRulesMultichoice"] = {"source_symbol": "ScriptCommand_ShowSamRulesMultichoice", "before": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC500u);", "after": "IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)\n{\n\tShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC501u);", "case_ids": ["ScriptCommand_ShowSamRulesMultichoice-0", "ScriptCommand_ShowSamRulesMultichoice-1"]}
+# <<< factory-mutation ScriptCommand_ShowSamRulesMultichoice

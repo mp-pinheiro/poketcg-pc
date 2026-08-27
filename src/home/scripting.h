@@ -618,4 +618,7 @@ IncreaseScriptPointerResult ScriptCommand_ChooseStarterDeckMultichoice(void);
 void BankswitchROM(uint8_t bank);
 IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void);
 /* <<< factory ScriptCommand_ShowSamNormalMultichoice */
+/* >>> factory ScriptCommand_ShowSamRulesMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void);
+/* <<< factory ScriptCommand_ShowSamRulesMultichoice */
 #endif

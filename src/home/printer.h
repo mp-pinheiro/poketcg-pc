@@ -138,4 +138,12 @@ HandlePrinterErrorResult HandlePrinterError(uint8_t f, uint8_t d, uint8_t e);
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterInstructionPacketResult;
 SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uint16_t saved_hl);
 /* <<< factory SendPrinterInstructionPacket */
+/* >>> factory SendPrinterInstructionPacket_1Sheet */
+/* SendPrinterInstructionPacket_1Sheet:: engine/link/printer.asm:450, falls
+ * through into SendPrinterInstructionPacket::465. Exit a/f are the last
+ * packet's result and exit hl is the contrast word this routine pushed,
+ * which the fallthrough target's second `pop hl` returns. */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterInstructionPacket_1SheetResult;
+SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(void);
+/* <<< factory SendPrinterInstructionPacket_1Sheet */
 #endif

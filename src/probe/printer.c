@@ -195,6 +195,16 @@ static void adapt_SendPrinterInstructionPacket(ProbeState *s)
 }
 /* <<< factory SendPrinterInstructionPacket */
 
+/* >>> factory SendPrinterInstructionPacket_1Sheet */
+static void adapt_SendPrinterInstructionPacket_1Sheet(ProbeState *s)
+{
+	SendPrinterInstructionPacket_1SheetResult result = SendPrinterInstructionPacket_1Sheet();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory SendPrinterInstructionPacket_1Sheet */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -217,5 +227,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterIsNotConnected", adapt_ShowPrinterIsNotConnected },
 	{ "HandlePrinterError", adapt_HandlePrinterError },
 	{ "SendPrinterInstructionPacket", adapt_SendPrinterInstructionPacket },
+	{ "SendPrinterInstructionPacket_1Sheet", adapt_SendPrinterInstructionPacket_1Sheet },
 	{ NULL, NULL },
 };

@@ -2107,3 +2107,14 @@ IncreaseScriptPointerResult ScriptCommand_ShowSamNormalMultichoice(void)
 	return IncreaseScriptPointerBy1();
 }
 /* <<< factory ScriptCommand_ShowSamNormalMultichoice */
+
+/* >>> factory ScriptCommand_ShowSamRulesMultichoice */
+IncreaseScriptPointerResult ScriptCommand_ShowSamRulesMultichoice(void)
+{
+	ShowMultichoiceTextboxResult menu = ShowMultichoiceTextbox(wMultichoiceTextboxResult_Sam, 0xC500u);
+	uint8_t choice = wMultichoiceTextboxResult_Sam;
+	(void)menu;
+	(void)SetEventValue(0x75u, 0u, 0u, choice);
+	return IncreaseScriptPointerBy1();
+}
+/* <<< factory ScriptCommand_ShowSamRulesMultichoice */

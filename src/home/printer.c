@@ -653,3 +653,23 @@ SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uin
 	return (SendPrinterInstructionPacketResult){packet.a, packet.f, saved_hl};
 }
 /* <<< factory SendPrinterInstructionPacket */
+
+/* >>> factory SendPrinterInstructionPacket_1Sheet */
+/* engine/link/printer.asm:450. Takes the pending line-feed nybbles out of
+ * wPrinterNumberLineFeeds, clears that byte, and falls through into
+ * SendPrinterInstructionPacket with h = line feeds and l = 1 sheet. The
+ * contrast word pushed here is the caller-pushed word the fallthrough
+ * target's second `pop hl` consumes, so it is passed as that routine's
+ * saved_hl and comes back as exit hl. b/c/d/e are clobbered by the packet
+ * calls (`ld bc, 0` / `lb de, ...`) and are not reported. */
+SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(void)
+{
+	GetPrinterContrastSerialDataResult contrast = GetPrinterContrastSerialData();
+	uint8_t line_feeds = wPrinterNumberLineFeeds;
+	wPrinterNumberLineFeeds = 0x00u;
+	uint16_t instruction = (uint16_t)(((uint16_t)line_feeds << 8) | 0x01u);
+	SendPrinterInstructionPacketResult packet =
+		SendPrinterInstructionPacket(instruction, contrast.hl);
+	return (SendPrinterInstructionPacket_1SheetResult){packet.a, packet.f, packet.hl};
+}
+/* <<< factory SendPrinterInstructionPacket_1Sheet */

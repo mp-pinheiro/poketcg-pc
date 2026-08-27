@@ -1,0 +1,9 @@
+{
+  "fn": "SendPrinterInstructionPacket_1Sheet",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SendPrinterInstructionPacket_1Sheet\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 228, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52846\": \"8100\", \"52889\": \"00\", \"52891\": \"00\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SendPrinterInstructionPacket_1Sheet\", \"mismatches\": {\"bus\": {\"address\": 52891, \"reference\": \"81000000\", \"native\": \"81000001\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[52846, 2], [52889, 1], [52891, 1]]}}}\n",
+  "restored": "{\"fn\": \"SendPrinterInstructionPacket_1Sheet\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 128, \"hl\": 228, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52846\": \"8100\", \"52889\": \"00\", \"52891\": \"00\"}}, \"status\": \"PASS\"}\n"
+}

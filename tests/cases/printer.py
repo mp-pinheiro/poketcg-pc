@@ -353,6 +353,30 @@ CASES["SendPrinterInstructionPacket"] = [
 ]
 # <<< factory SendPrinterInstructionPacket
 
+# >>> factory SendPrinterInstructionPacket_1Sheet
+# The reference never returns from here: SendPrinterPacket parks in its
+# .wait_printer_packet_transmission DoFrame loop ($315D) because no printer
+# hardware raises the serial interrupt that advances wPrinterPacketSequence.
+# Completion is therefore declared pre-ret at that loop head, exactly as the
+# already-landed SendPrinterInstructionPacket cases do, so the reference stops
+# inside the first packet. Only bytes that agree between that stop and the
+# port's fully synchronous run are observed: wPrinterNumberLineFeeds (this
+# routine's own write, zero on both sides), wPrinterContrastLevel (read, never
+# written), and the seeded device/status bytes the port's state machine writes
+# back unchanged. Registers are mid-flight on the reference, so nothing is
+# compared; the packet buffer diverges after the second packet and is not read.
+CONTRACT["SendPrinterInstructionPacket_1Sheet"] = {"compare": (), "preserve": ()}
+CASES["SendPrinterInstructionPacket_1Sheet"] = [
+    {"wram": {0xCE99: b"\x00", 0xCE9B: b"\x23", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "read": {0xCE9B: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON,
+         wram={0xCE99: b"\x02", 0xCE9B: b"\x45", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+         read={0xCE9B: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory SendPrinterInstructionPacket_1Sheet
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -468,3 +492,19 @@ MUTATIONS["SendPrinterInstructionPacket"] = {
 for _record in SCHEMA2_CASES["SendPrinterInstructionPacket"]:
     _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion SendPrinterInstructionPacket
+# >>> factory-mutation SendPrinterInstructionPacket_1Sheet
+MUTATIONS["SendPrinterInstructionPacket_1Sheet"] = {
+    "source_symbol": "SendPrinterInstructionPacket_1Sheet",
+    "before": "\tuint8_t line_feeds = wPrinterNumberLineFeeds;\n\twPrinterNumberLineFeeds = 0x00u;",
+    "after": "\tuint8_t line_feeds = wPrinterNumberLineFeeds;\n\twPrinterNumberLineFeeds = 0x01u;",
+    "case_ids": ["SendPrinterInstructionPacket_1Sheet-0", "SendPrinterInstructionPacket_1Sheet-1"],
+}
+# <<< factory-mutation SendPrinterInstructionPacket_1Sheet
+# >>> factory-completion SendPrinterInstructionPacket_1Sheet
+# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm),
+# the DoFrame loop the reference can never leave without a printer answering on
+# the serial line. legacy_to_schema always emits completion "return", so the
+# split is applied after migration.
+for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet"]:
+    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
+# <<< factory-completion SendPrinterInstructionPacket_1Sheet
