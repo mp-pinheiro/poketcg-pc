@@ -5557,6 +5557,14 @@ CASES["Maintenance_PlayerSelection"] = [
 ]
 # <<< factory Maintenance_PlayerSelection
 
+# >>> factory ItemFinder_PlayerSelection
+CONTRACT["ItemFinder_PlayerSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["ItemFinder_PlayerSelection"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", 0xFF98: b"\x00", 0xFF9F: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", 0xFF98: b"\x00", 0xFF9F: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory ItemFinder_PlayerSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8111,3 +8119,6 @@ MUTATIONS["SuperEnergyRetrieval_PlayerHandSelection"] = {"source_symbol": "Super
 # >>> factory-mutation Maintenance_PlayerSelection
 MUTATIONS["Maintenance_PlayerSelection"] = {"source_symbol": "Maintenance_PlayerSelection", "before": "HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)\n{\n\treturn HandlePlayerSelection2HandCards(ChooseTheCardToPutBackText, Choose2HandCardsFromHandToReturnToDeckText);", "after": "HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};", "case_ids": ["Maintenance_PlayerSelection-0", "Maintenance_PlayerSelection-1"]}
 # <<< factory-mutation Maintenance_PlayerSelection
+# >>> factory-mutation ItemFinder_PlayerSelection
+MUTATIONS["ItemFinder_PlayerSelection"] = {"source_symbol": "ItemFinder_PlayerSelection", "before": "ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)\n{\n\tHandlePlayerSelection2HandCardsResult hand = HandlePlayerSelection2HandCardsToDiscard();\n\tif ((hand.f & 0x10u) != 0u)\n\t\treturn (ItemFinderPlayerSelectionResult){hand.a, hand.f};\n\t(void)CreateTrainerCardListFromDiscardPile();\n\t(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();\n\tSetCardListHeaderText(PlayerDiscardPileText, ChooseCardToPlaceInHandText);\n\tDisplayCardListResult display = DisplayCardList();\n\tgb_write8(hTempList_ADDR + 2u, display.a);\n\treturn (ItemFinderPlayerSelectionResult){display.a, display.f};\n}", "after": "ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)\n{\n\treturn (ItemFinderPlayerSelectionResult){0u, 0u};\n}", "case_ids": ["ItemFinder_PlayerSelection-0", "ItemFinder_PlayerSelection-1"]}
+# <<< factory-mutation ItemFinder_PlayerSelection

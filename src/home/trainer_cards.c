@@ -297,6 +297,13 @@
 #include "home/duel.h"
 #include "generated/hram.h"
 #include "generated/wram.h"
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "home/common.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/retreat.h"
 /* <<< factory statics */
 
 
@@ -2476,3 +2483,35 @@ AIDecideResult AIDecide_SuperEnergyRemoval(void)
 	return (AIDecideResult){0x00u};
 }
 /* <<< factory AIDecide_SuperEnergyRemoval */
+
+/* >>> factory AIDecide_ScoopUp */
+AIDecide_ScoopUpResult AIDecide_ScoopUp(void)
+{
+	hTempPlayAreaLocation_ff9d = 0u;
+	DuelistVarResult count = GetTurnDuelistVariable(0xEFu);
+	if (count.a < 2u)
+		return (AIDecide_ScoopUpResult){count.a, count.a == 0u ? 0x80u : 0u};
+	if (wOpponentDeckID == 0x0Eu || wOpponentDeckID == 0x1Bu)
+		return (AIDecide_ScoopUpResult){0u, 0x80u};
+	CheckIfAnyAttackKnocksOutDefendingCardResult any = CheckIfAnyAttackKnocksOutDefendingCard();
+	if ((any.f & 0x10u) && !(CheckIfSelectedAttackIsUnusable(0u, 0u, 0u, 0u, 0u, 0u, 0u).f & 0x10u))
+		return (AIDecide_ScoopUpResult){0u, 0x80u};
+	uint8_t status = GetTurnDuelistVariable(0xF0u).a & 0x0Fu;
+	if (status == 2u || status == 3u)
+		return (AIDecide_ScoopUpResult){0u, 0x80u};
+	uint8_t cost = GetPlayAreaCardRetreatCost();
+	if (CountNumberOfEnergyCardsAttached(0u).a < cost)
+		return (AIDecide_ScoopUpResult){0u, 0x80u};
+	DuelistVarResult arena = GetTurnDuelistVariable(0xBBu);
+	(void)LoadCardDataToBuffer1_FromDeckIndex(arena.a);
+	uint8_t damage = ConvertHPToDamageCounters_Bank8(wLoadedCard1HP);
+	CardDamageResult remaining = GetCardDamageAndMaxHP(0u);
+	if (remaining.a == 0u || CalculateBDividedByA_Bank8(damage, remaining.a).a < 7u)
+		return (AIDecide_ScoopUpResult){0u, 0x80u};
+	AIDecideBenchPokemonToSwitchToResult choice = AIDecideBenchPokemonToSwitchTo();
+	if (choice.f & 0x10u)
+		return (AIDecide_ScoopUpResult){choice.a, choice.a == 0u ? 0x80u : 0u};
+	wce1a = choice.a;
+	return (AIDecide_ScoopUpResult){0u, 0x10u};
+}
+/* <<< factory AIDecide_ScoopUp */

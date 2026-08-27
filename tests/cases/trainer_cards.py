@@ -341,6 +341,9 @@ ARENA_VARS = 0xC200
 ARENA_CARD = 0xC2BB
 ARENA_COUNT = 0xC2EF
 PLAYER_DECK = 0xC400
+
+hWhoseTurn = 0xFF97
+hTempPlayAreaLocation_ff9d = 0xFF9D
 # <<< factory-cases-statics
 
 # >>> factory AIDecide_PokemonTrader_LegendaryMoltres
@@ -785,6 +788,15 @@ CASES["AIDecide_SuperEnergyRemoval"] = [
 ]
 # <<< factory AIDecide_SuperEnergyRemoval
 
+# >>> factory AIDecide_ScoopUp
+CONTRACT["AIDecide_ScoopUp"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecide_ScoopUp"] = [
+    {"wram": {0xFF97: b"\xC5", 0xC5EF: b"\x01"}, "read": {0xFF9D: 1}, "expect_regs": {"a": 1, "f": 0}, "expect": {0xFF9D: b"\x00"}},
+    dict(POISON, wram={0xFF97: b"\xC5", 0xC5EF: b"\x01"}, read={0xFF9D: 1}, expect_regs={"a": 1, "f": 0}, expect={0xFF9D: b"\x00"}),
+    {"wram": {0xFF97: b"\xC5", 0xC5EF: b"\x00"}, "read": {0xFF9D: 1}, "expect_regs": {"a": 0, "f": 0x80}, "expect": {0xFF9D: b"\x00"}},
+]
+# <<< factory AIDecide_ScoopUp
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1032,3 +1044,6 @@ MUTATIONS["AIDecide_Switch"] = {"source_symbol": "AIDecide_Switch", "before": "\
 # >>> factory-mutation AIDecide_SuperEnergyRemoval
 MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEnergyRemoval", "before": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x00u};", "after": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_SuperEnergyRemoval-0", "AIDecide_SuperEnergyRemoval-1"]}
 # <<< factory-mutation AIDecide_SuperEnergyRemoval
+# >>> factory-mutation AIDecide_ScoopUp
+MUTATIONS["AIDecide_ScoopUp"] = {"source_symbol": "AIDecide_ScoopUp", "before": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 0u;", "after": "AIDecide_ScoopUpResult AIDecide_ScoopUp(void)\n{\n\thTempPlayAreaLocation_ff9d = 1u;", "case_ids": ["AIDecide_ScoopUp-0", "AIDecide_ScoopUp-1"]}
+# <<< factory-mutation AIDecide_ScoopUp

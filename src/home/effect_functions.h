@@ -1702,6 +1702,10 @@ HandlePlayerSelection2HandCardsResult SuperEnergyRetrieval_PlayerHandSelection(v
 /* >>> factory Maintenance_PlayerSelection */
 HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void);
 /* <<< factory Maintenance_PlayerSelection */
+/* >>> factory ItemFinder_PlayerSelection */
+typedef struct { uint8_t a; uint8_t f; } ItemFinderPlayerSelectionResult;
+ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void);
+/* <<< factory ItemFinder_PlayerSelection */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

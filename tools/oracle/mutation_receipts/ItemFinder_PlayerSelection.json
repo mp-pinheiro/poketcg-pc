@@ -1,0 +1,9 @@
+{
+  "fn": "ItemFinder_PlayerSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"ItemFinder_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"51899\": \"80\", \"65431\": \"c2ff\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"ItemFinder_PlayerSelection\", \"mismatches\": {\"a\": [255, 0], \"f\": [16, 0], \"bus\": {\"address\": 51899, \"reference\": \"ff80c2ff0000\", \"native\": \"ff00c2000000\", \"reference_size\": 6, \"native_size\": 6, \"spans\": [[50432, 1], [51899, 1], [65431, 2], [65439, 2]]}}}\n",
+  "restored": "{\"fn\": \"ItemFinder_PlayerSelection\", \"registers\": {\"a\": 255, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 16, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"50432\": \"ff\", \"51899\": \"80\", \"65431\": \"c2ff\", \"65439\": \"0000\"}}, \"status\": \"PASS\"}\n"
+}

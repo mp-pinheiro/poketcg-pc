@@ -1020,6 +1020,11 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/effect_functions.h"
 #define Choose2HandCardsFromHandToReturnToDeckText 0x0156u
 #define ChooseTheCardToPutBackText 0x0172u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "generated/hram.h"
+#define ChooseCardToPlaceInHandText 0x0157u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8183,3 +8188,18 @@ HandlePlayerSelection2HandCardsResult Maintenance_PlayerSelection(void)
 	return HandlePlayerSelection2HandCards(ChooseTheCardToPutBackText, Choose2HandCardsFromHandToReturnToDeckText);
 }
 /* <<< factory Maintenance_PlayerSelection */
+
+/* >>> factory ItemFinder_PlayerSelection */
+ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)
+{
+	HandlePlayerSelection2HandCardsResult hand = HandlePlayerSelection2HandCardsToDiscard();
+	if ((hand.f & 0x10u) != 0u)
+		return (ItemFinderPlayerSelectionResult){hand.a, hand.f};
+	(void)CreateTrainerCardListFromDiscardPile();
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(PlayerDiscardPileText, ChooseCardToPlaceInHandText);
+	DisplayCardListResult display = DisplayCardList();
+	gb_write8(hTempList_ADDR + 2u, display.a);
+	return (ItemFinderPlayerSelectionResult){display.a, display.f};
+}
+/* <<< factory ItemFinder_PlayerSelection */

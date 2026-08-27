@@ -4129,6 +4129,15 @@ static void adapt_Maintenance_PlayerSelection(ProbeState *s)
 }
 /* <<< factory Maintenance_PlayerSelection */
 
+/* >>> factory ItemFinder_PlayerSelection */
+static void adapt_ItemFinder_PlayerSelection(ProbeState *s)
+{
+	ItemFinderPlayerSelectionResult result = ItemFinder_PlayerSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory ItemFinder_PlayerSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4629,5 +4638,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "HandlePlayerSelection2HandCardsToDiscard", adapt_HandlePlayerSelection2HandCardsToDiscard },
 	{ "SuperEnergyRetrieval_PlayerHandSelection", adapt_SuperEnergyRetrieval_PlayerHandSelection },
 	{ "Maintenance_PlayerSelection", adapt_Maintenance_PlayerSelection },
+	{ "ItemFinder_PlayerSelection", adapt_ItemFinder_PlayerSelection },
 	{ NULL, NULL },
 };

@@ -406,6 +406,15 @@ static void adapt_AIDecide_SuperEnergyRemoval(ProbeState *s)
 }
 /* <<< factory AIDecide_SuperEnergyRemoval */
 
+/* >>> factory AIDecide_ScoopUp */
+static void adapt_AIDecide_ScoopUp(ProbeState *s)
+{
+	AIDecide_ScoopUpResult r = AIDecide_ScoopUp();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory AIDecide_ScoopUp */
+
 const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "FindAndRemoveCardFromList", adapt_FindAndRemoveCardFromList },
 	{ "PickPokedexCards", adapt_PickPokedexCards },
@@ -455,5 +464,6 @@ const ProbeEntry probe_entries_trainer_cards[] = {
 	{ "AIDecide_Defender_Phase13", adapt_AIDecide_Defender_Phase13 },
 	{ "AIDecide_Switch", adapt_AIDecide_Switch },
 	{ "AIDecide_SuperEnergyRemoval", adapt_AIDecide_SuperEnergyRemoval },
+	{ "AIDecide_ScoopUp", adapt_AIDecide_ScoopUp },
 	{ NULL, NULL },
 };

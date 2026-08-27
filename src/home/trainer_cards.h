@@ -180,4 +180,8 @@ AIDecide_SwitchResult AIDecide_Switch(void);
 /* >>> factory AIDecide_SuperEnergyRemoval */
 AIDecideResult AIDecide_SuperEnergyRemoval(void);
 /* <<< factory AIDecide_SuperEnergyRemoval */
+/* >>> factory AIDecide_ScoopUp */
+typedef struct { uint8_t a; uint8_t f; } AIDecide_ScoopUpResult;
+AIDecide_ScoopUpResult AIDecide_ScoopUp(void);
+/* <<< factory AIDecide_ScoopUp */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */
