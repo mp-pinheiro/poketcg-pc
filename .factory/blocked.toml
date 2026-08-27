@@ -572,3 +572,8 @@ unblock = "read the recorded diagnostics under .factory/try/SendPrinterInstructi
 name = "LassEffect"
 reason = "AUTO-RETIRED: src/engine/duel/effect_functions.asm:10338 (basename `effect_functions`). 17 generations exhausted (trapped=False); last diagnostic phase=mutation failure_class=code detail=MUTATION_GREEN: corrupted routine still passed {\"fn\": \"LassEffect\", \"registers\": {\"a\": 0, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"01\", \"50448\": \"ff\", \"51899\": \"80\", \"52233\": \"00\", \"65431\": \"c2\", \"65439\": \"00\"}}, \"status\": \"PASS\"}"
 unblock = "read the recorded diagnostics under .factory/try/LassEffect/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "AITryUseAttack"
+reason = "AUTO-RETIRED: src/engine/duel/ai/core.asm:133 (basename `core`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case AITryUseAttack-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":26569,\"sp\":65526,\"rom_bank\":1,\"hbank_rom\":1,\"instructions\":707539,\"cycles\":8000008,\"lcdc\":0,\"if\":224,\"ie\":0,\"ime\":0,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"0000\"}"
+unblock = "read the recorded diagnostics under .factory/try/AITryUseAttack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
