@@ -551,3 +551,13 @@ unblock = "read the recorded diagnostics under .factory/try/ChanseyDoubleEdgeEff
 name = "_HandlePeekSelection"
 reason = "AUTO-RETIRED: src/engine/menus/duel.asm:1376 (basename `duel`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _HandlePeekSelection-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":625,\"sp\":65518,\"rom_bank\":2,\"hbank_rom\":2,\"instructions\":19126515,\"cycles\":80000000,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":1,\"ppu_lcdc\":128,\"ppu_ly\":54,\"ppu_mode\":3,\"bus\":\"00000000000080c20000c2\"}"
 unblock = "read the recorded diagnostics under .factory/try/_HandlePeekSelection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "AITryUseAttack"
+reason = "AUTO-RETIRED: src/engine/duel/ai/core.asm:133 (basename `core`). 19 generations exhausted (trapped=False); last diagnostic phase=compile failure_class=code detail=/tmp/poketcg-factory/lane-700/src/home/core.c: In function \u2018AITryUseAttack\u2019: /tmp/poketcg-factory/lane-700/src/home/core.c:8056:163: error: \u2018AIMakeDecisionResult\u2019 has no member named \u2018hl\u2019 8056 | decision=AIMakeDecision(OPPACTION_ATTACK_ANIM_AND_DAMAGE); return (AITryUseAttackResult){a,decision.f,decision.b,decision.c,decision.d,decision.e,decision.hl}; | ^"
+unblock = "read the recorded diagnostics under .factory/try/AITryUseAttack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "SendTilesToPrinter"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:391 (basename `printer`). 19 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case SendTilesToPrinter-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1398,\"sp\":65514,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":713616,\"cycles\":8000000,\"lcdc\":0,\"if\":224,\"ie\":8,\"ime\":0,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"8100\"}"
+unblock = "read the recorded diagnostics under .factory/try/SendTilesToPrinter/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
