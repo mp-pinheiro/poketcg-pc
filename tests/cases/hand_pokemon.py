@@ -19,6 +19,11 @@ wPlayerDuelVariables = 0xC200
 wOpponentDuelVariables = 0xC300
 wLoadedCard1ID = 0xCC2B
 wAIScore = 0xCDBE
+
+wDuelTempList = 0xC510
+wHandTempList = 0xCEDA
+hWhoseTurn = 0xFF97
+DUELVARS_NUMBER_OF_CARDS_IN_HAND = 0xEE
 # <<< factory-cases-statics
 
 # >>> factory AIDecideSpecialEvolutions
@@ -50,6 +55,14 @@ CASES["AIDecidePlayLegendaryBirds"] = [
 ]
 # <<< factory AIDecidePlayLegendaryBirds
 
+# >>> factory AIDecidePlayPokemonCard
+CONTRACT["AIDecidePlayPokemonCard"] = {"compare": (), "preserve": ()}
+CASES["AIDecidePlayPokemonCard"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x00"}, "read": {0xC510: 1, 0xCEDA: 1}, "expect": {0xC510: b"\xFF", 0xCEDA: b"\xFF"}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x00"}, read={0xC510: 1, 0xCEDA: 1}, expect={0xC510: b"\xFF", 0xCEDA: b"\xFF"}),
+]
+# <<< factory AIDecidePlayPokemonCard
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -68,3 +81,6 @@ MUTATIONS["AIDecideEvolution"] = {"source_symbol": "AIDecideEvolution", "before"
 # >>> factory-mutation AIDecidePlayLegendaryBirds
 MUTATIONS["AIDecidePlayLegendaryBirds"] = {"source_symbol": "AIDecidePlayLegendaryBirds", "before": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = wOpponentDeckID;", "after": "void AIDecidePlayLegendaryBirds(void)\n{\n\tuint8_t deck = (uint8_t)(wOpponentDeckID + 1u);", "case_ids": ["AIDecidePlayLegendaryBirds-2"]}
 # <<< factory-mutation AIDecidePlayLegendaryBirds
+# >>> factory-mutation AIDecidePlayPokemonCard
+MUTATIONS["AIDecidePlayPokemonCard"] = {"source_symbol": "AIDecidePlayPokemonCard", "before": "void AIDecidePlayPokemonCard(void)\n{\n\t(void)CreateHandCardList(0u);\n\t(void)SortTempHandByIDList();\n\tuint16_t hl = wDuelTempList_ADDR;\n\tuint16_t de = wHandTempList_ADDR;", "after": "void AIDecidePlayPokemonCard(void)\n{\n\t(void)CreateHandCardList(0u);\n\t(void)SortTempHandByIDList();\n\tuint16_t hl = wDuelTempList_ADDR;\n\tuint16_t de = wDuelTempList_ADDR;", "case_ids": ["AIDecidePlayPokemonCard-0", "AIDecidePlayPokemonCard-1"]}
+# <<< factory-mutation AIDecidePlayPokemonCard

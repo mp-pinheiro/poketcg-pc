@@ -37,6 +37,14 @@
 #define POKEMON_POWER 0x04u
 #define SNORLAX 0xBEu
 #define ZAPDOS_LV68 0x76u
+
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#include "home/core.h"
+#include "home/duel.h"
+#define OPPACTION_PLAY_BASIC_PKMN 0x01u
+#define TYPE_ENERGY 0x08u
 /* <<< factory statics */
 
 /* >>> factory AIDecideSpecialEvolutions */
@@ -205,3 +213,67 @@ void AIDecidePlayLegendaryBirds(void)
 		AIDiscourage(100u);
 }
 /* <<< factory AIDecidePlayLegendaryBirds */
+
+/* >>> factory AIDecidePlayPokemonCard */
+void AIDecidePlayPokemonCard(void)
+{
+	(void)CreateHandCardList(0u);
+	(void)SortTempHandByIDList();
+	uint16_t hl = wDuelTempList_ADDR;
+	uint16_t de = wHandTempList_ADDR;
+	(void)CopyListWithFFTerminatorFromHLToDE_Bank5(&hl, &de);
+	hl = wHandTempList_ADDR;
+	for (;;) {
+		uint8_t card = gb_read8(hl++);
+		if (card == 0xFFu) {
+			(void)AIDecideEvolution();
+			return;
+		}
+		wTempAIPokemonCard = card;
+		uint16_t saved_hl = hl;
+		(void)LoadCardDataToBuffer1_FromDeckIndex(card);
+		if (wLoadedCard1Type >= TYPE_ENERGY || wLoadedCard1Stage != 0u) {
+			hl = saved_hl;
+			continue;
+		}
+		wAIScore = 130u;
+		AIDecidePlayLegendaryBirds();
+		DuelistVarResult count = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+		if (count.a >= 4u)
+			AIDiscourage(20u);
+		else
+			(void)AIEncourage(50u);
+		hTempPlayAreaLocation_ff9d = PLAY_AREA_ARENA;
+		CheckIfDefendingPokemonCanKnockOutResult ko =
+			CheckIfDefendingPokemonCanKnockOut(0u, 0u, 0u, 0u, 0u, 0u, 0u);
+		if (ko.f & 0x10u)
+			(void)AIEncourage(20u);
+		EnergyCostBitsResult cost = GetAttacksEnergyCostBits(wTempAIPokemonCard);
+		EnergyFlagsResult energy = CheckEnergyFlagsNeededInList(cost.a);
+		if (energy.carry)
+			(void)AIEncourage(20u);
+		CheckForEvolutionInListResult hand_evo =
+			CheckForEvolutionInList(wTempAIPokemonCard, 0u);
+		if (hand_evo.f & 0x10u)
+			(void)AIEncourage(20u);
+		CheckForEvolutionInDeckResult deck_evo =
+			CheckForEvolutionInDeck(wTempAIPokemonCard, 0u);
+		if (deck_evo.f & 0x10u)
+			(void)AIEncourage(10u);
+		if (wAIScore < 180u) {
+			hl = saved_hl;
+			continue;
+		}
+		hTemp_ffa0 = wTempAIPokemonCard;
+		CheckIfCardCanBePlayedResult playable = CheckIfCardCanBePlayed(wTempAIPokemonCard);
+		if (playable.f & 0x10u) {
+			hl = saved_hl;
+			continue;
+		}
+		AIMakeDecisionResult decision = AIMakeDecision(OPPACTION_PLAY_BASIC_PKMN);
+		if (decision.f & 0x10u)
+			return;
+		hl = saved_hl;
+	}
+}
+/* <<< factory AIDecidePlayPokemonCard */

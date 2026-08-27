@@ -1010,6 +1010,9 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/print_text.h"
 #include "generated/hram.h"
 #include "mem.h"
+
+#include "home/core.h"
+#include "home/menus.h"
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8127,3 +8130,28 @@ void ImposterProfessorOakEffect(void)
 	SwapTurn();
 }
 /* <<< factory ImposterProfessorOakEffect */
+
+/* >>> factory HandlePlayerSelection2HandCards */
+HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t de, uint16_t hl)
+{
+	(void)DrawWideTextBox_WaitForInput(hl);
+	(void)CreateHandCardList(0u);
+	uint8_t trainer = hTempCardIndex_ff9f;
+	(void)RemoveCardFromDuelTempList(trainer);
+	hCurSelectionItem = 0u;
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+		SetCardListInfoBoxText(de);
+		DisplayCardListResult displayed = DisplayCardList();
+		if ((displayed.f & 0x10u) != 0u)
+			return (HandlePlayerSelection2HandCardsResult){displayed.a, 0x10u};
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		uint8_t selected = hTempCardIndex_ff98;
+		gb_write8(position, selected);
+		(void)RemoveCardFromDuelTempList(selected);
+		if (hCurSelectionItem < 2u)
+			continue;
+		return (HandlePlayerSelection2HandCardsResult){hCurSelectionItem, 0x00u};
+	}
+}
+/* <<< factory HandlePlayerSelection2HandCards */

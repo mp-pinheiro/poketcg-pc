@@ -4093,6 +4093,15 @@ static void adapt_ImposterProfessorOakEffect(ProbeState *s)
 }
 /* <<< factory ImposterProfessorOakEffect */
 
+/* >>> factory HandlePlayerSelection2HandCards */
+static void adapt_HandlePlayerSelection2HandCards(ProbeState *s)
+{
+	HandlePlayerSelection2HandCardsResult result = HandlePlayerSelection2HandCards((uint16_t)(((uint16_t)s->d << 8) | s->e), s->hl);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandlePlayerSelection2HandCards */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4589,5 +4598,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
 	{ "BillEffect", adapt_BillEffect },
 	{ "ImposterProfessorOakEffect", adapt_ImposterProfessorOakEffect },
+	{ "HandlePlayerSelection2HandCards", adapt_HandlePlayerSelection2HandCards },
 	{ NULL, NULL },
 };

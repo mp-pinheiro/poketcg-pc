@@ -14,4 +14,7 @@ uint8_t AIDecideEvolution(void);
 /* >>> factory AIDecidePlayLegendaryBirds */
 void AIDecidePlayLegendaryBirds(void);
 /* <<< factory AIDecidePlayLegendaryBirds */
+/* >>> factory AIDecidePlayPokemonCard */
+void AIDecidePlayPokemonCard(void);
+/* <<< factory AIDecidePlayPokemonCard */
 #endif /* POKETCG_HOME_HAND_POKEMON_H */
