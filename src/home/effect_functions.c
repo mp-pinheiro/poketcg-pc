@@ -1148,6 +1148,13 @@ void BankswitchROM(uint8_t bank);
 #define ChooseNidoranFromDeckText 0x012au
 #define ChooseNidoranText 0x012bu
 #define NidoranMNidoranFText 0x013fu
+
+#include "home/effect_functions.h"
+#include "home/substatus.h"
+#include "home/duel.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define ATK_ANIM_GUST_OF_WIND 0x8du
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9016,3 +9023,16 @@ TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)
 	return (TossCoin_BankBResult){result.a, result.f, result.hl};
 }
 /* <<< factory TossCoin_BankB */
+
+/* >>> factory GustOfWind_SwitchEffect */
+void GustOfWind_SwitchEffect(void)
+{
+	PlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	uint8_t e = hTemp_ffa0;
+	(void)SwapArenaWithBenchPokemon(e);
+	SwapTurn();
+	ClearDamageReductionSubstatus2();
+	wDuelDisplayedScreen = 0u;
+}
+/* <<< factory GustOfWind_SwitchEffect */

@@ -4338,6 +4338,14 @@ static void adapt_TossCoin_BankB(ProbeState *s)
 }
 /* <<< factory TossCoin_BankB */
 
+/* >>> factory GustOfWind_SwitchEffect */
+static void adapt_GustOfWind_SwitchEffect(ProbeState *s)
+{
+	(void)s;
+	GustOfWind_SwitchEffect();
+}
+/* <<< factory GustOfWind_SwitchEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4860,5 +4868,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "KrabbyCallForFamily_PlayerSelectEffect", adapt_KrabbyCallForFamily_PlayerSelectEffect },
 	{ "NidoranFCallForFamily_PlayerSelectEffect", adapt_NidoranFCallForFamily_PlayerSelectEffect },
 	{ "TossCoin_BankB", adapt_TossCoin_BankB },
+	{ "GustOfWind_SwitchEffect", adapt_GustOfWind_SwitchEffect },
 	{ NULL, NULL },
 };

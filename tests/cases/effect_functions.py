@@ -5845,6 +5845,15 @@ CASES["TossCoin_BankB"] = [
 ]
 # <<< factory TossCoin_BankB
 
+# >>> factory GustOfWind_SwitchEffect
+CONTRACT["GustOfWind_SwitchEffect"] = {"compare": (), "preserve": ()}
+CASES["GustOfWind_SwitchEffect"] = [
+    {"wram": {0xCAC2: b"\x05", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"wram": {0xCAC2: b"\xFF", 0xCABB: b"\x80", 0xFF40: b"\x80"}, "read": {0xCAC2: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xCAC2: b"\x03", 0xCABB: b"\x80", 0xFF40: b"\x80"}, read={0xCAC2: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory GustOfWind_SwitchEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8465,3 +8474,6 @@ MUTATIONS["NidoranFCallForFamily_PlayerSelectEffect"] = {"source_symbol": "Nidor
 # >>> factory-mutation TossCoin_BankB
 MUTATIONS["TossCoin_BankB"] = {"source_symbol": "TossCoin_BankB", "before": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){result.a, result.f, result.hl};", "after": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){(uint8_t)(result.a + 1u), result.f, result.hl};", "case_ids": ["TossCoin_BankB-0", "TossCoin_BankB-1", "TossCoin_BankB-2"]}
 # <<< factory-mutation TossCoin_BankB
+# >>> factory-mutation GustOfWind_SwitchEffect
+MUTATIONS["GustOfWind_SwitchEffect"] = {"source_symbol": "GustOfWind_SwitchEffect", "before": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 0u;", "after": "void GustOfWind_SwitchEffect(void)\n{\n\tPlayTrainerEffectAnimation(ATK_ANIM_GUST_OF_WIND, 0u, 0u, 0u, 0u, 0u, 0u);\n\tSwapTurn();\n\tuint8_t e = hTemp_ffa0;\n\t(void)SwapArenaWithBenchPokemon(e);\n\tSwapTurn();\n\tClearDamageReductionSubstatus2();\n\twDuelDisplayedScreen = 1u;", "case_ids": ["GustOfWind_SwitchEffect-0", "GustOfWind_SwitchEffect-1", "GustOfWind_SwitchEffect-2"]}
+# <<< factory-mutation GustOfWind_SwitchEffect
