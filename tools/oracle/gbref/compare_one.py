@@ -185,7 +185,7 @@ def main() -> int:
     }
     # `stack` is optional: only a routine entered mid-frame declares caller-pushed
     # words, so demanding the key everywhere would invalidate every landed case.
-    optional = {"stack"}
+    optional = {"stack", "reason", "why"}
     if mode == "pre-ret":
         required.add("stop_pc" if isinstance(completion, str) else "completion")
     if mode == "event":

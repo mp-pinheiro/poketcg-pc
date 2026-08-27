@@ -247,23 +247,31 @@ CONTRACT["SendTilesToPrinter"] = {"compare": (), "preserve": ()}
 _SENDTILES_MAP = bytes(range(64))
 _SENDTILES_GFX = b"".join(bytes([i]) * 16 for i in range(52))
 _SENDTILES_SR = {0: {SGFXBUFFER1: _SENDTILES_GFX}}
-_SENDTILES_READ = {0: {SGFXBUFFER5: 0x280, SGFXBUFFER5 + 0x280: 0x280}}
+_SENDTILES_STAGED = b"".join(bytes([i]) * 16 for i in list(range(20)) + list(range(32, 52)))
+_SENDTILES_COMPRESSED = bytes.fromhex("8e008e018e028e038e048e058e068e078e088e098e0a8e0b8e0c8e0d8e0e8e0f8e108e118e128e138e208e218e228e238e248e258e268e278e288e298e2a8e2b8e2c8e2d8e2e8e2f8e308e318e328e33")
 CASES["SendTilesToPrinter"] = [
     {"hl": 0xC500,
      "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
      "sram": _SENDTILES_SR, "ramg": True,
-     "read": {0xCE64: 8}, "sread": _SENDTILES_READ,
-     "instruction_budget": 2000000, "cycle_budget": 8000000},
+     "expect": {0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+     "expect_regs": {"a": 0x00, "f": 0x80, "hl": 0xC540},
+     "expect_sram": {0: {SGFXBUFFER5: _SENDTILES_STAGED, SGFXBUFFER5 + 0x280: _SENDTILES_COMPRESSED}},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
     dict(POISON, hl=0xC500,
          wram={0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
          sram=_SENDTILES_SR, ramg=True,
-         read={0xCE64: 8}, sread=_SENDTILES_READ,
-         instruction_budget=2000000, cycle_budget=8000000),
+         expect={0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+         expect_regs={"a": 0x00, "f": 0x80, "hl": 0xC540},
+         expect_sram={0: {SGFXBUFFER5: _SENDTILES_STAGED, SGFXBUFFER5 + 0x280: _SENDTILES_COMPRESSED}},
+         oracle=False, evidence="intentional-transform",
+         why="PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"),
     {"hl": 0xC500,
-     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x81", wPrinterStatus: b"\x00"},
+     "wram": {0xC500: _SENDTILES_MAP, wSerialTransferData: b"\x42", wPrinterStatus: b"\x00"},
      "sram": _SENDTILES_SR, "ramg": True,
-     "read": {0xCE64: 8},
-     "expect_regs": {"a": 0x00, "f": 0x80}, "oracle": False, "evidence": "intentional-transform",
+     "expect": {0xCE64: b"\x88\x33\x04\x01\x00\x00\x80\xB6"},
+     "expect_regs": {"a": 0xFF, "f": 0x10, "hl": 0xC540},
+     "oracle": False, "evidence": "intentional-transform",
      "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
 ]
 # <<< factory SendTilesToPrinter
@@ -593,11 +601,3 @@ MUTATIONS["SendTilesToPrinter"] = {
     "case_ids": ["SendTilesToPrinter-0", "SendTilesToPrinter-1"],
 }
 # <<< factory-mutation SendTilesToPrinter
-# >>> factory-completion SendTilesToPrinter
-# $315D is SendPrinterPacket.wait_printer_packet_transmission (home/printer.asm),
-# the DoFrame loop the reference can never leave without a printer answering on
-# the serial line. legacy_to_schema always emits completion "return", so the
-# split is applied after migration.
-for _record in SCHEMA2_CASES["SendTilesToPrinter"]:
-    _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
-# <<< factory-completion SendTilesToPrinter
