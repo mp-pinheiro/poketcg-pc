@@ -1,0 +1,9 @@
+{
+  "fn": "AddToPrinterGfxBuffer",
+  "case": "tests/cases/printer.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"AddToPrinterGfxBuffer\", \"registers\": {\"a\": 12, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 64, \"hl\": 48879, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52880\": \"0c\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"AddToPrinterGfxBuffer\", \"mismatches\": {\"a\": [12, 13], \"bus\": {\"address\": 52880, \"reference\": \"0c\", \"native\": \"0d\", \"reference_size\": 1, \"native_size\": 1, \"spans\": [[52880, 1]]}}}\n",
+  "restored": "{\"fn\": \"AddToPrinterGfxBuffer\", \"registers\": {\"a\": 12, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 64, \"hl\": 48879, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 6, \"sram\": {}, \"vram\": {}, \"wram\": {\"52880\": \"0c\"}}, \"status\": \"PASS\"}\n"
+}

@@ -446,6 +446,57 @@ CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"] = [
 ]
 # <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds
 
+# >>> factory LoadGfxBufferForPrinter
+# The B-exit primary case is the one path the real ROM finishes: TryInitPrinter
+# Communications returns carry with B held, before any packet parks in the
+# $315D transmission wait. The success path runs 10 synchronous packets on the
+# port only (transform case below); its final state is the offset reset to 1
+# with a=1, f=0x00 (`ld a, 1` / `or a`).
+CONTRACT["LoadGfxBufferForPrinter"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["LoadGfxBufferForPrinter"] = [
+    {"hl": 0xBEEF, "keys": [0x02],
+     "wram": {0xCE90: b"\x14", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
+     "read": {0xCE90: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0xBEEF, keys=[0x02],
+         wram={0xCE90: b"\x14", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
+         read={0xCE90: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+    {"hl": 0xBEEF,
+     "wram": {0xCE90: b"\x14", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "sram": {0: {0xA000: bytes([1] * 64), 0xA410: b"\xab" * 16}}, "ramg": True,
+     "read": {0xCE90: 1},
+     "expect": {0xCE90: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
+]
+# <<< factory LoadGfxBufferForPrinter
+
+# >>> factory AddToPrinterGfxBuffer
+# Below 18 the routine is pure arithmetic and returns fully on both backends;
+# case 1 covers the H-flag shape ((offset & $0F) < 2). Case 2 crosses the
+# boundary with B held, so the fallthrough continuation exits through
+# TryInitPrinterCommunications' carry before any packet wait.
+CONTRACT["AddToPrinterGfxBuffer"] = {"compare": ("a", "hl"), "preserve": ("hl",)}
+CASES["AddToPrinterGfxBuffer"] = [
+    {"hl": 0xBEEF, "wram": {0xCE90: b"\x0A"}, "read": {0xCE90: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, hl=0xBEEF, wram={0xCE90: b"\x0E"}, read={0xCE90: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+    {"hl": 0xBEEF, "keys": [0x02],
+     "wram": {0xCE90: b"\x12", 0xCE6F: b"\x77", 0xCE9B: b"\xAA"},
+     "read": {0xCE90: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    {"hl": 0xBEEF,
+     "wram": {0xCE90: b"\x11", 0xCE6E: b"\x81", 0xCE6F: b"\x00"},
+     "sram": {0: {0xA000: bytes([1] * 64), 0xA410: b"\xab" * 16}}, "ramg": True,
+     "read": {0xCE90: 1},
+     "expect": {0xCE90: b"\x01"}, "expect_regs": {"a": 0x01, "f": 0x00},
+     "oracle": False, "evidence": "intentional-transform",
+     "why": "PC runtime executes the verified printer state machine synchronously because no Game Boy Printer hardware raises serial interrupts"},
+]
+# <<< factory AddToPrinterGfxBuffer
+
 # >>> factory _PreparePrinterConnection
 # The reference never returns from here: SendPrinterPacket parks in its
 # .wait_printer_packet_transmission DoFrame loop ($315D) because no printer
@@ -656,3 +707,20 @@ for _record in SCHEMA2_CASES["SendPrinterInstructionPacket_1Sheet_3LineFeeds"]:
     if _record["evidence"] == "primary":
         _record["completion"] = {"mode": "pre-ret", "pc": 0x315D}
 # <<< factory-completion SendPrinterInstructionPacket_1Sheet_3LineFeeds
+
+# >>> factory-mutation LoadGfxBufferForPrinter
+MUTATIONS["LoadGfxBufferForPrinter"] = {
+    "source_symbol": "LoadGfxBufferForPrinter",
+    "before": "\tgb_write8(wPrinterHorizontalOffset_ADDR, 1u);",
+    "after": "\tgb_write8(wPrinterHorizontalOffset_ADDR, 2u);",
+    "case_ids": ["LoadGfxBufferForPrinter-2"],
+}
+# <<< factory-mutation LoadGfxBufferForPrinter
+# >>> factory-mutation AddToPrinterGfxBuffer
+MUTATIONS["AddToPrinterGfxBuffer"] = {
+    "source_symbol": "AddToPrinterGfxBuffer",
+    "before": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 2u));",
+    "after": "\tgb_write8(addr, (uint8_t)(gb_read8(addr) + 3u));",
+    "case_ids": ["AddToPrinterGfxBuffer-0"],
+}
+# <<< factory-mutation AddToPrinterGfxBuffer
