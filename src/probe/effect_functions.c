@@ -4184,6 +4184,15 @@ static void adapt_Thrash_RecoilEffect(ProbeState *s)
 }
 /* <<< factory Thrash_RecoilEffect */
 
+/* >>> factory RaichuThunder_RecoilEffect */
+static void adapt_RaichuThunder_RecoilEffect(ProbeState *s)
+{
+	RaichuThunder_RecoilEffectResult result = RaichuThunder_RecoilEffect(s->f, s->d, s->e);
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory RaichuThunder_RecoilEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4690,5 +4699,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "ComputerSearch_PlayerDiscardHandSelection", adapt_ComputerSearch_PlayerDiscardHandSelection },
 	{ "Pokedex_PlayerSelection", adapt_Pokedex_PlayerSelection },
 	{ "Thrash_RecoilEffect", adapt_Thrash_RecoilEffect },
+	{ "RaichuThunder_RecoilEffect", adapt_RaichuThunder_RecoilEffect },
 	{ NULL, NULL },
 };

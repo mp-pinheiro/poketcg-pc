@@ -5632,6 +5632,16 @@ CASES["Thrash_RecoilEffect"] = [
 ]
 # <<< factory Thrash_RecoilEffect
 
+# >>> factory RaichuThunder_RecoilEffect
+CONTRACT["RaichuThunder_RecoilEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["RaichuThunder_RecoilEffect"] = [
+    {"f": 0x00, "wram": {hTemp_ffa0: b"\x01"},
+     "read": {hTemp_ffa0: 1, _wram_txram3: 2}},
+    dict(POISON, wram={hTemp_ffa0: b"\x01"},
+         read={hTemp_ffa0: 1, _wram_txram3: 2}),
+]
+# <<< factory RaichuThunder_RecoilEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8204,3 +8214,6 @@ MUTATIONS["Pokedex_PlayerSelection"] = {"source_symbol": "Pokedex_PlayerSelectio
 # >>> factory-mutation Thrash_RecoilEffect
 MUTATIONS["Thrash_RecoilEffect"] = {"source_symbol": "Thrash_RecoilEffect", "before": "Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thrash_RecoilEffectResult){coin, 0x00u};", "after": "Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tuint8_t coin = hTemp_ffa0;\n\tif (coin != 0u)\n\t\treturn (Thrash_RecoilEffectResult){(uint8_t)(coin + 1u), 0x00u};", "case_ids": ["Thrash_RecoilEffect-0", "Thrash_RecoilEffect-1"]}
 # <<< factory-mutation Thrash_RecoilEffect
+# >>> factory-mutation RaichuThunder_RecoilEffect
+MUTATIONS["RaichuThunder_RecoilEffect"] = {"source_symbol": "RaichuThunder_RecoilEffect", "before": "RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(30u);", "after": "RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)\n{\n\tLoadTxRam3(31u);", "case_ids": ["RaichuThunder_RecoilEffect-0", "RaichuThunder_RecoilEffect-1"]}
+# <<< factory-mutation RaichuThunder_RecoilEffect

@@ -8443,3 +8443,16 @@ Thrash_RecoilEffectResult Thrash_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
 	return (Thrash_RecoilEffectResult){result.a, result.f};
 }
 /* <<< factory Thrash_RecoilEffect */
+
+/* >>> factory RaichuThunder_RecoilEffect */
+RaichuThunder_RecoilEffectResult RaichuThunder_RecoilEffect(uint8_t f, uint8_t d, uint8_t e)
+{
+	LoadTxRam3(30u);
+	uint8_t coin = hTemp_ffa0;
+	if (coin != 0u)
+		return (RaichuThunder_RecoilEffectResult){coin, 0x00u};
+	DealConfusionDamageToSelfResult result =
+		DealRecoilDamageToSelf(30u, f, d, e);
+	return (RaichuThunder_RecoilEffectResult){result.a, result.f};
+}
+/* <<< factory RaichuThunder_RecoilEffect */
