@@ -75,6 +75,15 @@ static void adapt_HandleAIGoGoRainDanceEnergy(ProbeState *s)
 }
 /* <<< factory HandleAIGoGoRainDanceEnergy */
 
+/* >>> factory HandleAICowardice */
+static void adapt_HandleAICowardice(ProbeState *s)
+{
+	HandleAICowardiceResult r = HandleAICowardice();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory HandleAICowardice */
+
 const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIShift", adapt_HandleAIShift },
 	{ "HandleAIPeek", adapt_HandleAIPeek },
@@ -84,5 +93,6 @@ const ProbeEntry probe_entries_pkmn_powers[] = {
 	{ "HandleAIHeal", adapt_HandleAIHeal },
 	{ "HandleAIPkmnPowers", adapt_HandleAIPkmnPowers },
 	{ "HandleAIGoGoRainDanceEnergy", adapt_HandleAIGoGoRainDanceEnergy },
+	{ "HandleAICowardice", adapt_HandleAICowardice },
 	{ NULL, NULL },
 };

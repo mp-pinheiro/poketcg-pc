@@ -109,6 +109,14 @@ static uint8_t check_turn_duelist_has_color(uint8_t b, uint8_t *f)
 #include "home/substatus.h"
 #define GO_GO_RAIN_DANCE_DECK_ID 0x12u
 #define BLASTOISE 0x43u
+
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/retreat.h"
+#include "home/substatus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#define TENTACOOL 0x49u
 /* <<< factory statics */
 
 /* >>> factory HandleAIShift */
@@ -466,3 +474,57 @@ HandleAIGoGoRainDanceEnergyResult HandleAIGoGoRainDanceEnergy(void)
 	return (HandleAIGoGoRainDanceEnergyResult){0u, 0u};
 }
 /* <<< factory HandleAIGoGoRainDanceEnergy */
+
+/* >>> factory HandleAICowardice */
+HandleAICowardiceResult HandleAICowardice(void)
+{
+	PkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);
+	if (muk.f & 0x10u)
+		return (HandleAICowardiceResult){muk.a, muk.f};
+
+	AIChooseRandomlyNotToDoActionResult skip = AIChooseRandomlyNotToDoAction();
+	if (skip.f & 0x10u)
+		return (HandleAICowardiceResult){skip.a, skip.f};
+
+	DuelistVarResult count_result = GetTurnDuelistVariable(DUELVARS_NUMBER_OF_POKEMON_IN_PLAY_AREA);
+	uint8_t count = count_result.a;
+	uint8_t count_flags = (uint8_t)(0x40u | (count == 1u ? 0x80u : 0u) | (count < 1u ? 0x30u : 0u));
+	if (count == 1u)
+		return (HandleAICowardiceResult){count, count_flags};
+
+	uint8_t b = count;
+	uint8_t c = PLAY_AREA_ARENA;
+	uint8_t status = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_STATUS).a;
+	if (status & CNF_SLP_PRZ)
+		c++;
+	for (;;) {
+		if (c == b)
+			return (HandleAICowardiceResult){c, 0x80u};
+		uint8_t deck_index = GetTurnDuelistVariable((uint8_t)(DUELVARS_ARENA_CARD + c)).a;
+		wce08 = deck_index;
+		uint8_t card_id = (uint8_t)GetCardIDFromDeckIndex(deck_index);
+		if (card_id == TENTACOOL) {
+			hTemp_ffa0 = c;
+			CardDamageResult damage = GetCardDamageAndMaxHP(c);
+			if (damage.a != 0u) {
+				uint8_t effect_param;
+				if (c != PLAY_AREA_ARENA) {
+					effect_param = 0xffu;
+				} else {
+					AIDecideBenchPokemonToSwitchToResult retreat = AIDecideBenchPokemonToSwitchTo();
+					if (retreat.f & 0x10u)
+						continue;
+					effect_param = 0u;
+				}
+				hTempCardIndex_ff9f = wce08;
+				(void)AIMakeDecision(OPPACTION_USE_PKMN_POWER);
+				hAIPkmnPowerEffectParam = effect_param;
+				(void)AIMakeDecision(OPPACTION_EXECUTE_PKMN_POWER_EFFECT);
+				(void)AIMakeDecision(OPPACTION_DUEL_MAIN_SCENE);
+				return (HandleAICowardiceResult){OPPACTION_DUEL_MAIN_SCENE, 0x10u};
+			}
+		}
+		c++;
+	}
+}
+/* <<< factory HandleAICowardice */

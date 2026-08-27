@@ -71,6 +71,11 @@ POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl"
 
 wOpponentDeckID = 0xCC0E
 POISON = {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234}
+
+hAIPkmnPowerEffectParam = 0xFFA1
+hTempCardIndex_ff9f = 0xFF9F
+hTemp_ffa0 = 0xFFA0
+wce08 = 0xCE08
 # <<< factory-cases-statics
 
 # >>> factory HandleAIDamageSwap
@@ -110,6 +115,15 @@ CASES["HandleAIGoGoRainDanceEnergy"] = [
 	dict(POISON, wram={wOpponentDeckID: b"\x00"}),
 ]
 # <<< factory HandleAIGoGoRainDanceEnergy
+
+# >>> factory HandleAICowardice
+CONTRACT["HandleAICowardice"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandleAICowardice"] = [
+	{"wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
+	{"a": 0x11, "f": 0xE0, "b": 0x22, "c": 0x33, "d": 0x44, "e": 0x55, "hl": 0x6789, "wram": {0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, "read": {0xCE7C: 1}},
+	dict(POISON, wram={0xFF97: b"\xC2", 0xC2BB: b"\x00", 0xC3BB: b"\x00", 0xC2BC: b"\x00\xC5", 0xC3BC: b"\x01\xC5", 0xC400: b"\x27", 0xC480: b"\x27", 0xC500: b"\xFF", 0xC501: b"\xFF"}, read={0xCE7C: 1}),
+]
+# <<< factory HandleAICowardice
 
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
@@ -159,3 +173,6 @@ MUTATIONS["HandleAIPkmnPowers"] = {"source_symbol": "HandleAIPkmnPowers", "befor
 # >>> factory-mutation HandleAIGoGoRainDanceEnergy
 MUTATIONS["HandleAIGoGoRainDanceEnergy"] = {"source_symbol": "HandleAIGoGoRainDanceEnergy", "before": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, f};", "after": "\t\treturn (HandleAIGoGoRainDanceEnergyResult){deck, (uint8_t)(f ^ 0x10u)};", "case_ids": ["HandleAIGoGoRainDanceEnergy-0", "HandleAIGoGoRainDanceEnergy-1", "HandleAIGoGoRainDanceEnergy-2", "HandleAIGoGoRainDanceEnergy-3"]}
 # <<< factory-mutation HandleAIGoGoRainDanceEnergy
+# >>> factory-mutation HandleAICowardice
+MUTATIONS["HandleAICowardice"] = {"source_symbol": "HandleAICowardice", "before": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(MUK);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "after": "HandleAICowardiceResult HandleAICowardice(void)\n{\n\tPkmnPowerCountResult muk = CountPokemonWithActivePkmnPowerInBothPlayAreas(TENTACOOL);\n\tif (muk.f & 0x10u)\n\t\treturn (HandleAICowardiceResult){muk.a, muk.f};", "case_ids": ["HandleAICowardice-0", "HandleAICowardice-1", "HandleAICowardice-2"]}
+# <<< factory-mutation HandleAICowardice
