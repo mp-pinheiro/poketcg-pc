@@ -4319,6 +4319,25 @@ static void adapt_KrabbyCallForFamily_PlayerSelectEffect(ProbeState *s)
 }
 /* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
 
+/* >>> factory NidoranFCallForFamily_PlayerSelectEffect */
+static void adapt_NidoranFCallForFamily_PlayerSelectEffect(ProbeState *s)
+{
+	NidoranFCallForFamily_PlayerSelectEffectResult result = NidoranFCallForFamily_PlayerSelectEffect();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory NidoranFCallForFamily_PlayerSelectEffect */
+
+/* >>> factory TossCoin_BankB */
+static void adapt_TossCoin_BankB(ProbeState *s)
+{
+	TossCoin_BankBResult result = TossCoin_BankB((uint16_t)(((uint16_t)s->d << 8u) | s->e), s->hl);
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory TossCoin_BankB */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4839,5 +4858,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BellsproutCallForFamily_PlayerSelectEffect", adapt_BellsproutCallForFamily_PlayerSelectEffect },
 	{ "EnergySearch_PlayerSelection", adapt_EnergySearch_PlayerSelection },
 	{ "KrabbyCallForFamily_PlayerSelectEffect", adapt_KrabbyCallForFamily_PlayerSelectEffect },
+	{ "NidoranFCallForFamily_PlayerSelectEffect", adapt_NidoranFCallForFamily_PlayerSelectEffect },
+	{ "TossCoin_BankB", adapt_TossCoin_BankB },
 	{ NULL, NULL },
 };

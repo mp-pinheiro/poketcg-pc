@@ -5798,6 +5798,53 @@ CASES["KrabbyCallForFamily_PlayerSelectEffect"] = [
 ]
 # <<< factory KrabbyCallForFamily_PlayerSelectEffect
 
+# >>> factory NidoranFCallForFamily_PlayerSelectEffect
+CONTRACT["NidoranFCallForFamily_PlayerSelectEffect"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["NidoranFCallForFamily_PlayerSelectEffect"] = [
+    {"keys": [0x00, 0x10, 0x01], "wram": {0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x10, 0x01], wram={0xFF97: b"\xC2", 0xC2BA: b"\x3C", 0xCABB: b"\x00"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory NidoranFCallForFamily_PlayerSelectEffect
+
+# >>> factory TossCoin_BankB
+CONTRACT["TossCoin_BankB"] = {"compare": ("a", "f", "hl"), "preserve": ("hl",)}
+CASES["TossCoin_BankB"] = [
+    dict(POISON, d=0x12, e=0x34,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, d=0x56, e=0x78,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x80",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\x78\x56"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, d=0xDD, e=0xEE,
+         keys=[0x00, 0x01],
+         wram={0xFF97: b"\xC2", 0xC2F1: b"\x00", 0xCC09: b"\x00",
+               0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF",
+               0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"},
+                {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TossCoin_BankB
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8412,3 +8459,9 @@ MUTATIONS["EnergySearch_PlayerSelection"] = {"source_symbol": "EnergySearch_Play
 # >>> factory-mutation KrabbyCallForFamily_PlayerSelectEffect
 MUTATIONS["KrabbyCallForFamily_PlayerSelectEffect"] = {"source_symbol": "KrabbyCallForFamily_PlayerSelectEffect", "before": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["KrabbyCallForFamily_PlayerSelectEffect-0", "KrabbyCallForFamily_PlayerSelectEffect-1"]}
 # <<< factory-mutation KrabbyCallForFamily_PlayerSelectEffect
+# >>> factory-mutation NidoranFCallForFamily_PlayerSelectEffect
+MUTATIONS["NidoranFCallForFamily_PlayerSelectEffect"] = {"source_symbol": "NidoranFCallForFamily_PlayerSelectEffect", "before": "NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["NidoranFCallForFamily_PlayerSelectEffect-0", "NidoranFCallForFamily_PlayerSelectEffect-1"]}
+# <<< factory-mutation NidoranFCallForFamily_PlayerSelectEffect
+# >>> factory-mutation TossCoin_BankB
+MUTATIONS["TossCoin_BankB"] = {"source_symbol": "TossCoin_BankB", "before": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){result.a, result.f, result.hl};", "after": "TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)\n{\n\tTossCoinRoutineResult result = TossCoin(de, hl);\n\treturn (TossCoin_BankBResult){(uint8_t)(result.a + 1u), result.f, result.hl};", "case_ids": ["TossCoin_BankB-0", "TossCoin_BankB-1", "TossCoin_BankB-2"]}
+# <<< factory-mutation TossCoin_BankB

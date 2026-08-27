@@ -1779,6 +1779,14 @@ EnergySearch_PlayerSelectionResult EnergySearch_PlayerSelection(void);
 typedef struct { uint8_t a; uint8_t f; } KrabbyCallForFamily_PlayerSelectEffectResult;
 KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEffect(void);
 /* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
+/* >>> factory NidoranFCallForFamily_PlayerSelectEffect */
+typedef struct { uint8_t a; uint8_t f; } NidoranFCallForFamily_PlayerSelectEffectResult;
+NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void);
+/* <<< factory NidoranFCallForFamily_PlayerSelectEffect */
+/* >>> factory TossCoin_BankB */
+typedef struct { uint8_t a; uint8_t f; uint16_t hl; } TossCoin_BankBResult;
+TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl);
+/* <<< factory TossCoin_BankB */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

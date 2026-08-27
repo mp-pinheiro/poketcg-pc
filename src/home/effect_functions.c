@@ -1144,6 +1144,10 @@ void BankswitchROM(uint8_t bank);
 #define ChooseAKrabbyFromDeckText 0x0122u
 #define ChooseAKrabbyText 0x0128u
 #define KrabbyText 0x0142u
+
+#define ChooseNidoranFromDeckText 0x012au
+#define ChooseNidoranText 0x012bu
+#define NidoranMNidoranFText 0x013fu
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8961,3 +8965,54 @@ KrabbyCallForFamily_PlayerSelectEffectResult KrabbyCallForFamily_PlayerSelectEff
 	}
 }
 /* <<< factory KrabbyCallForFamily_PlayerSelectEffect */
+
+/* >>> factory NidoranFCallForFamily_PlayerSelectEffect */
+NidoranFCallForFamily_PlayerSelectEffectResult NidoranFCallForFamily_PlayerSelectEffect(void)
+{
+	hTemp_ffa0 = 0xffu;
+	CardListResult deck = CreateDeckCardList(0u, 0u);
+	LookForCardsInDeckResult search = LookForCardsInDeck(deck.a,
+		(uint8_t)(ChooseNidoranFromDeckText >> 8),
+		(uint8_t)ChooseNidoranFromDeckText, SEARCHEFFECT_NIDORAN, 0u,
+		NidoranMNidoranFText);
+	if ((search.f & 0x10u) != 0u)
+		return (NidoranFCallForFamily_PlayerSelectEffectResult){search.a, search.f};
+	(void)InitAndDrawCardListScreenLayout_WithSelectCheckMenu();
+	SetCardListHeaderText(NidoranMNidoranFText, ChooseNidoranText);
+	for (;;) {
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) == 0u) {
+			uint16_t card_id = GetCardIDFromDeckIndex(display.a);
+			uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+			uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
+			if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) {
+				uint8_t selected = hTempCardIndex_ff98;
+				hTemp_ffa0 = selected;
+				return (NidoranFCallForFamily_PlayerSelectEffectResult){selected, (uint8_t)(selected == 0u ? 0x80u : 0x00u)};
+			}
+			PlaySFX_InvalidChoice();
+			continue;
+		}
+		DuelistVarResult locations = GetTurnDuelistVariable(DUELVARS_CARD_LOCATIONS);
+		uint16_t hl = locations.hl;
+		for (;;) {
+			if (gb_read8(hl) == CARD_LOCATION_DECK) {
+				uint16_t card_id = GetCardIDFromDeckIndex((uint8_t)hl);
+				uint8_t is_f = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANF);
+				uint8_t is_m = CompareDEtoBC((uint8_t)(card_id >> 8), (uint8_t)card_id, 0u, NIDORANM);
+				if ((is_f & 0x80u) != 0u || (is_m & 0x80u) != 0u) { PlaySFX_InvalidChoice(); break; }
+			}
+			hl = (uint16_t)((hl & 0xff00u) | (uint8_t)(hl + 1u));
+			if ((uint8_t)hl >= DECK_SIZE) { hTemp_ffa0 = 0xffu; return (NidoranFCallForFamily_PlayerSelectEffectResult){0xffu, 0x00u}; }
+		}
+	}
+}
+/* <<< factory NidoranFCallForFamily_PlayerSelectEffect */
+
+/* >>> factory TossCoin_BankB */
+TossCoin_BankBResult TossCoin_BankB(uint16_t de, uint16_t hl)
+{
+	TossCoinRoutineResult result = TossCoin(de, hl);
+	return (TossCoin_BankBResult){result.a, result.f, result.hl};
+}
+/* <<< factory TossCoin_BankB */
