@@ -1178,6 +1178,9 @@ void BankswitchROM(uint8_t bank);
 #include "mem.h"
 
 #define ChooseAttackOpponentWillNotBeAbleToUseText 0x0124u
+
+#include "home/effect_functions.h"
+#define SleepCheckText 0x00e1u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9258,3 +9261,23 @@ uint8_t LickitungSupersonicEffect(void)
 	return f;
 }
 /* <<< factory LickitungSupersonicEffect */
+
+/* >>> factory NidorinaSupersonicEffect */
+uint8_t NidorinaSupersonicEffect(void)
+{
+	uint8_t f = Confusion50PercentEffect();
+	if ((f & 0x10u) == 0u)
+		SetNoEffectFromStatus();
+	return f;
+}
+/* <<< factory NidorinaSupersonicEffect */
+
+/* >>> factory Sleep50PercentEffect */
+uint8_t Sleep50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(SleepCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return SleepEffect().f;
+}
+/* <<< factory Sleep50PercentEffect */

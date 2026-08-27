@@ -871,3 +871,25 @@ Func_1a011Result Func_1a011(void)
 	return (Func_1a011Result){packet.a, packet.f};
 }
 /* <<< factory Func_1a011 */
+
+/* >>> factory Func_19f99 */
+Func_19f99Result Func_19f99(void)
+{
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	if ((init.f & 0x10u) != 0u)
+		return (Func_19f99Result){init.a, init.f};
+
+	uint16_t hl = (uint16_t)(sGfxBuffer0_ADDR + 128u);
+	uint8_t c = 6u;
+	while (c != 0u) {
+		SendTilesToPrinterResult tiles = SendTilesToPrinter(hl, 0u, c);
+		if ((tiles.f & 0x10u) != 0u)
+			return (Func_19f99Result){tiles.a, tiles.f};
+		hl = tiles.hl;
+		c--;
+	}
+
+	SendPrinterInstructionPacket_1SheetResult packet = SendPrinterInstructionPacket_1Sheet();
+	return (Func_19f99Result){packet.a, packet.f};
+}
+/* <<< factory Func_19f99 */

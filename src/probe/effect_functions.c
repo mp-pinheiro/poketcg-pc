@@ -4477,6 +4477,20 @@ static void adapt_LickitungSupersonicEffect(ProbeState *s)
 }
 /* <<< factory LickitungSupersonicEffect */
 
+/* >>> factory NidorinaSupersonicEffect */
+static void adapt_NidorinaSupersonicEffect(ProbeState *s)
+{
+	s->f = NidorinaSupersonicEffect();
+}
+/* <<< factory NidorinaSupersonicEffect */
+
+/* >>> factory Sleep50PercentEffect */
+static void adapt_Sleep50PercentEffect(ProbeState *s)
+{
+	s->f = Sleep50PercentEffect();
+}
+/* <<< factory Sleep50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5017,5 +5031,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "PoliwhirlAmnesia_PlayerSelectEffect", adapt_PoliwhirlAmnesia_PlayerSelectEffect },
 	{ "SlowpokeAmnesia_PlayerSelectEffect", adapt_SlowpokeAmnesia_PlayerSelectEffect },
 	{ "LickitungSupersonicEffect", adapt_LickitungSupersonicEffect },
+	{ "NidorinaSupersonicEffect", adapt_NidorinaSupersonicEffect },
+	{ "Sleep50PercentEffect", adapt_Sleep50PercentEffect },
 	{ NULL, NULL },
 };

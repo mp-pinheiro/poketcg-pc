@@ -1842,6 +1842,12 @@ PlayerPickAttackForAmnesiaResult SlowpokeAmnesia_PlayerSelectEffect(void);
 /* >>> factory LickitungSupersonicEffect */
 uint8_t LickitungSupersonicEffect(void);
 /* <<< factory LickitungSupersonicEffect */
+/* >>> factory NidorinaSupersonicEffect */
+uint8_t NidorinaSupersonicEffect(void);
+/* <<< factory NidorinaSupersonicEffect */
+/* >>> factory Sleep50PercentEffect */
+uint8_t Sleep50PercentEffect(void);
+/* <<< factory Sleep50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

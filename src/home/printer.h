@@ -200,4 +200,8 @@ Func_19f87Result Func_19f87(void);
 typedef struct { uint8_t a; uint8_t f; } Func_1a011Result;
 Func_1a011Result Func_1a011(void);
 /* <<< factory Func_1a011 */
+/* >>> factory Func_19f99 */
+typedef struct { uint8_t a; uint8_t f; } Func_19f99Result;
+Func_19f99Result Func_19f99(void);
+/* <<< factory Func_19f99 */
 #endif

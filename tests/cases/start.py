@@ -63,6 +63,8 @@ wTxRam3 = 0xCE43
 SETUP_TEXT = [{"fn": "SetupText", "d": 0x20, "e": 0x40}]
 
 wHasDuelSaveData = 0xD625
+
+wHasSaveData = 0xD624
 # <<< factory-cases-statics
 
 # >>> factory CheckIfHasSaveData
@@ -119,6 +121,16 @@ CASES["DrawPlayerPortraitAndPrintNewGameText"] = [
 ]
 # <<< factory DrawPlayerPortraitAndPrintNewGameText
 
+# >>> factory DeleteSaveDataForNewGame
+CONTRACT["DeleteSaveDataForNewGame"] = {"compare": (), "preserve": ()}
+CASES["DeleteSaveDataForNewGame"] = [
+    {"wram": {wHasSaveData: b"\x00"}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={wHasSaveData: b"\x00"}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=100000000),
+    {"wram": {wHasSaveData: b"\x01", 0xCABB: b"\x00"}, "ramg": True, "sram": {2: {0xB800: b"\x00\x00"}}, "sread": {2: {0xB800: 2}}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 100000000},
+    dict(POISON, wram={wHasSaveData: b"\x01", 0xCABB: b"\x00"}, ramg=True, sram={2: {0xB800: b"\x00\x00"}}, sread={2: {0xB800: 2}}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=100000000)
+]
+# <<< factory DeleteSaveDataForNewGame
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 # >>> factory-mutation CheckIfHasSaveData
@@ -136,3 +148,6 @@ MUTATIONS["HandleStartMenu"] = {"source_symbol": "HandleStartMenu", "before": "\
 # >>> factory-mutation DrawPlayerPortraitAndPrintNewGameText
 MUTATIONS["DrawPlayerPortraitAndPrintNewGameText"] = {"source_symbol": "DrawPlayerPortraitAndPrintNewGameText", "before": "\tLoadConsolePaletteData();", "after": "\t(void)0;", "case_ids": ["DrawPlayerPortraitAndPrintNewGameText-0", "DrawPlayerPortraitAndPrintNewGameText-1"]}
 # <<< factory-mutation DrawPlayerPortraitAndPrintNewGameText
+# >>> factory-mutation DeleteSaveDataForNewGame
+MUTATIONS["DeleteSaveDataForNewGame"] = {"source_symbol": "DeleteSaveDataForNewGame", "before": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData == 0u)\n", "after": "void DeleteSaveDataForNewGame(void)\n{\n\tif (wHasSaveData != 0u)\n", "case_ids": ["DeleteSaveDataForNewGame-2"]}
+# <<< factory-mutation DeleteSaveDataForNewGame

@@ -23,4 +23,7 @@ void HandleStartMenu(void);
 /* >>> factory DrawPlayerPortraitAndPrintNewGameText */
 void DrawPlayerPortraitAndPrintNewGameText(void);
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
+/* >>> factory DeleteSaveDataForNewGame */
+void DeleteSaveDataForNewGame(void);
+/* <<< factory DeleteSaveDataForNewGame */
 #endif /* POKETCG_HOME_START_H */

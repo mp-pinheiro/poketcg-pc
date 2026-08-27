@@ -6125,6 +6125,48 @@ CASES["LickitungSupersonicEffect"] = [
 ]
 # <<< factory LickitungSupersonicEffect
 
+# >>> factory NidorinaSupersonicEffect
+CONTRACT["NidorinaSupersonicEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["NidorinaSupersonicEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCC4: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00", 0xCCC4: b"\x00", 0xCCED: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1, 0xCCED: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory NidorinaSupersonicEffect
+
+# >>> factory Sleep50PercentEffect
+CONTRACT["Sleep50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Sleep50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01",
+               0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCE4E: 2, 0xCAC2: 1, 0xCCCD: 1, 0xCCCE: 3},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Sleep50PercentEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8801,3 +8843,9 @@ MUTATIONS["SlowpokeAmnesia_PlayerSelectEffect"] = {"source_symbol": "SlowpokeAmn
 # >>> factory-mutation LickitungSupersonicEffect
 MUTATIONS["LickitungSupersonicEffect"] = {"source_symbol": "LickitungSupersonicEffect", "before": "uint8_t LickitungSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn f;\n}", "after": "uint8_t LickitungSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();\n\treturn (uint8_t)(f ^ 0x01u);\n}", "case_ids": ["LickitungSupersonicEffect-0", "LickitungSupersonicEffect-1"]}
 # <<< factory-mutation LickitungSupersonicEffect
+# >>> factory-mutation NidorinaSupersonicEffect
+MUTATIONS["NidorinaSupersonicEffect"] = {"source_symbol": "NidorinaSupersonicEffect", "before": "uint8_t NidorinaSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) == 0u)\n\t\tSetNoEffectFromStatus();", "after": "uint8_t NidorinaSupersonicEffect(void)\n{\n\tuint8_t f = Confusion50PercentEffect();\n\tif ((f & 0x10u) != 0u)\n\t\tSetNoEffectFromStatus();", "case_ids": ["NidorinaSupersonicEffect-0", "NidorinaSupersonicEffect-1"]}
+# <<< factory-mutation NidorinaSupersonicEffect
+# >>> factory-mutation Sleep50PercentEffect
+MUTATIONS["Sleep50PercentEffect"] = {"source_symbol": "Sleep50PercentEffect", "before": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn SleepEffect().f;", "after": "uint8_t Sleep50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(SleepCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(SleepEffect().f ^ 0x10u);", "case_ids": ["Sleep50PercentEffect-0", "Sleep50PercentEffect-1"]}
+# <<< factory-mutation Sleep50PercentEffect

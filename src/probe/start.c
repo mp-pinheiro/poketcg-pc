@@ -53,6 +53,14 @@ static void adapt_DrawPlayerPortraitAndPrintNewGameText(ProbeState *s)
 }
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
 
+/* >>> factory DeleteSaveDataForNewGame */
+static void adapt_DeleteSaveDataForNewGame(ProbeState *s)
+{
+	(void)s;
+	DeleteSaveDataForNewGame();
+}
+/* <<< factory DeleteSaveDataForNewGame */
+
 const ProbeEntry probe_entries_start[] = {
 	{ "ShowCardPopCGBDisclaimer", adapt_ShowCardPopCGBDisclaimer },
 	{ "CheckIfHasSaveData", adapt_CheckIfHasSaveData },
@@ -60,5 +68,6 @@ const ProbeEntry probe_entries_start[] = {
 	{ "AskToContinueFromDiaryWithDuelData", adapt_AskToContinueFromDiaryWithDuelData },
 	{ "HandleStartMenu", adapt_HandleStartMenu },
 	{ "DrawPlayerPortraitAndPrintNewGameText", adapt_DrawPlayerPortraitAndPrintNewGameText },
+	{ "DeleteSaveDataForNewGame", adapt_DeleteSaveDataForNewGame },
 	{ NULL, NULL },
 };

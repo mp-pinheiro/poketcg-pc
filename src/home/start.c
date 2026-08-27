@@ -58,6 +58,18 @@
 #include "home/play_animation.h"
 #define IsCrazyAboutPokemonAndPokemonCardCollectingText 0x0379u
 #define HANDLEALLSPRITEANIMATIONS_ADDR 0x3CB4u
+
+#include "home/lcd.h"
+#include "home/lcd_enable_frame.h"
+#include "home/load_animation.h"
+#include "home/init_menu.h"
+#include "home/save.h"
+#include "home/print_text.h"
+#include "home/menus.h"
+#include "generated/wram.h"
+#define AllDataWasDeletedText 0x0375u
+#define OKToDeleteTheDataText 0x0374u
+#define SavedDataAlreadyExistsText 0x0373u
 /* <<< factory statics */
 
 #define CONSOLE_CGB 0x02u
@@ -253,3 +265,23 @@ void DrawPlayerPortraitAndPrintNewGameText(void)
 	EnableAndClearSpriteAnimations();
 }
 /* <<< factory DrawPlayerPortraitAndPrintNewGameText */
+
+/* >>> factory DeleteSaveDataForNewGame */
+void DeleteSaveDataForNewGame(void)
+{
+	if (wHasSaveData == 0u)
+		return;
+
+	DisableLCD();
+	(void)InitMenuScreen();
+	EnableAndClearSpriteAnimations();
+	(void)FlashWhiteScreen();
+	DoFrameIfLCDEnabled();
+	(void)PrintScrollableText_NoTextBoxLabel(SavedDataAlreadyExistsText);
+	HandleYesOrNoMenuResult result = YesOrNoMenuWithText(OKToDeleteTheDataText);
+	if ((result.f & 0x10u) != 0u)
+		return;
+	InvalidateSaveData();
+	(void)PrintScrollableText_NoTextBoxLabel(AllDataWasDeletedText);
+}
+/* <<< factory DeleteSaveDataForNewGame */
