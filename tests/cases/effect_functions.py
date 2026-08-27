@@ -5727,6 +5727,14 @@ CASES["HandleProphecyScreen"] = [
 ]
 # <<< factory HandleProphecyScreen
 
+# >>> factory EarthquakeEffect
+CONTRACT["EarthquakeEffect"] = {"compare": ("a", "f", "b", "c", "d", "e", "hl"), "preserve": ()}
+CASES["EarthquakeEffect"] = [
+    {"f": 0x00, "wram": {0xFF97: b"\xC2", 0xC2EF: b"\x01"}, "read": {0xCCE6: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EF: b"\x01"}, read={0xCCE6: 1}),
+]
+# <<< factory EarthquakeEffect
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8320,3 +8328,6 @@ MUTATIONS["DealDamageToAllBenchedPokemon"] = {"source_symbol": "DealDamageToAllB
 # >>> factory-mutation HandleProphecyScreen
 MUTATIONS["HandleProphecyScreen"] = {"source_symbol": "HandleProphecyScreen", "before": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + 1u + written), 0xffu);", "after": "\t\t\tgb_write8((uint16_t)(hTempList_ADDR + written), 0xffu);", "case_ids": ["HandleProphecyScreen-0", "HandleProphecyScreen-1"]}
 # <<< factory-mutation HandleProphecyScreen
+# >>> factory-mutation EarthquakeEffect
+MUTATIONS["EarthquakeEffect"] = {"source_symbol": "EarthquakeEffect", "before": "DealDamageToAllBenchedPokemonResult EarthquakeEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twIsDamageToSelf = TRUE;", "after": "DealDamageToAllBenchedPokemonResult EarthquakeEffect(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\t(void)a;\n\twIsDamageToSelf = 0u;", "case_ids": ["EarthquakeEffect-0", "EarthquakeEffect-1"]}
+# <<< factory-mutation EarthquakeEffect

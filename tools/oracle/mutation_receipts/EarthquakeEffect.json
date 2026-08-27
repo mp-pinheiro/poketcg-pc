@@ -1,0 +1,9 @@
+{
+  "fn": "EarthquakeEffect",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"EarthquakeEffect\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 192, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"01\", \"52454\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"EarthquakeEffect\", \"mismatches\": {\"bus\": {\"address\": 52454, \"reference\": \"0101c2\", \"native\": \"0100c2\", \"reference_size\": 3, \"native_size\": 3, \"spans\": [[49903, 1], [52454, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"EarthquakeEffect\", \"registers\": {\"a\": 1, \"b\": 1, \"c\": 0, \"d\": 0, \"e\": 10, \"f\": 192, \"hl\": 49903, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 11, \"sram\": {}, \"vram\": {}, \"wram\": {\"49903\": \"01\", \"52454\": \"01\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
