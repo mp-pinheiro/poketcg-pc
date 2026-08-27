@@ -1693,6 +1693,9 @@ void ImposterProfessorOakEffect(void);
 typedef struct { uint8_t a; uint8_t f; } HandlePlayerSelection2HandCardsResult;
 HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t de, uint16_t hl);
 /* <<< factory HandlePlayerSelection2HandCards */
+/* >>> factory HandlePlayerSelection2HandCardsToDiscard */
+HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void);
+/* <<< factory HandlePlayerSelection2HandCardsToDiscard */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

@@ -5533,6 +5533,14 @@ CASES["HandlePlayerSelection2HandCards"] = [
 ]
 # <<< factory HandlePlayerSelection2HandCards
 
+# >>> factory HandlePlayerSelection2HandCardsToDiscard
+CONTRACT["HandlePlayerSelection2HandCardsToDiscard"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["HandlePlayerSelection2HandCardsToDiscard"] = [
+    {"keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", hTempCardIndex_ff98: b"\x00", hTempCardIndex_ff9f: b"\x00"}, "read": {hCurSelectionItem: 1, wDuelTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    {"a": 0xAA, "f": 0xF0, "b": 0xBB, "c": 0xCC, "d": 0xDD, "e": 0xEE, "hl": 0x1234, "keys": [0x00, 0x02], "wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC500: b"\xFF", hTempCardIndex_ff98: b"\x00", hTempCardIndex_ff9f: b"\x00"}, "read": {hCurSelectionItem: 1, wDuelTempList: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000}
+]
+# <<< factory HandlePlayerSelection2HandCardsToDiscard
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8078,3 +8086,6 @@ MUTATIONS["ImposterProfessorOakEffect"] = {"source_symbol": "ImposterProfessorOa
 # >>> factory-mutation HandlePlayerSelection2HandCards
 MUTATIONS["HandlePlayerSelection2HandCards"] = {"source_symbol": "HandlePlayerSelection2HandCards", "before": "HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t de, uint16_t hl)\n{\n\t(void)DrawWideTextBox_WaitForInput(hl);\n\t(void)CreateHandCardList(0u);\n\tuint8_t trainer = hTempCardIndex_ff9f;\n\t(void)RemoveCardFromDuelTempList(trainer);", "after": "HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t de, uint16_t hl)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};", "case_ids": ["HandlePlayerSelection2HandCards-0", "HandlePlayerSelection2HandCards-1"]}
 # <<< factory-mutation HandlePlayerSelection2HandCards
+# >>> factory-mutation HandlePlayerSelection2HandCardsToDiscard
+MUTATIONS["HandlePlayerSelection2HandCardsToDiscard"] = {"source_symbol": "HandlePlayerSelection2HandCardsToDiscard", "before": "HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void)\n{\n\treturn HandlePlayerSelection2HandCards(ChooseTheCardToDiscardText, Choose2CardsFromHandToDiscardText);\n}", "after": "HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void)\n{\n\treturn (HandlePlayerSelection2HandCardsResult){0u, 0u};\n}", "case_ids": ["HandlePlayerSelection2HandCardsToDiscard-0", "HandlePlayerSelection2HandCardsToDiscard-1"]}
+# <<< factory-mutation HandlePlayerSelection2HandCardsToDiscard

@@ -3,4 +3,7 @@
 
 void RetrievePlayAreaAIScoreFromBackup2(void);
 
+/* >>> factory GetAIScoreOfAttack */
+void GetAIScoreOfAttack(unsigned char a);
+/* <<< factory GetAIScoreOfAttack */
 #endif

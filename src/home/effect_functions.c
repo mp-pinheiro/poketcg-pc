@@ -1013,6 +1013,9 @@ static void chain_lightning_damage_same_color_bench(void)
 
 #include "home/core.h"
 #include "home/menus.h"
+
+#define Choose2CardsFromHandToDiscardText 0x0155u
+#define ChooseTheCardToDiscardText 0x0173u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8155,3 +8158,10 @@ HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCards(uint16_t d
 	}
 }
 /* <<< factory HandlePlayerSelection2HandCards */
+
+/* >>> factory HandlePlayerSelection2HandCardsToDiscard */
+HandlePlayerSelection2HandCardsResult HandlePlayerSelection2HandCardsToDiscard(void)
+{
+	return HandlePlayerSelection2HandCards(ChooseTheCardToDiscardText, Choose2CardsFromHandToDiscardText);
+}
+/* <<< factory HandlePlayerSelection2HandCardsToDiscard */

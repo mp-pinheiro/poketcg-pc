@@ -4102,6 +4102,15 @@ static void adapt_HandlePlayerSelection2HandCards(ProbeState *s)
 }
 /* <<< factory HandlePlayerSelection2HandCards */
 
+/* >>> factory HandlePlayerSelection2HandCardsToDiscard */
+static void adapt_HandlePlayerSelection2HandCardsToDiscard(ProbeState *s)
+{
+	HandlePlayerSelection2HandCardsResult result = HandlePlayerSelection2HandCardsToDiscard();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory HandlePlayerSelection2HandCardsToDiscard */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4599,5 +4608,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BillEffect", adapt_BillEffect },
 	{ "ImposterProfessorOakEffect", adapt_ImposterProfessorOakEffect },
 	{ "HandlePlayerSelection2HandCards", adapt_HandlePlayerSelection2HandCards },
+	{ "HandlePlayerSelection2HandCardsToDiscard", adapt_HandlePlayerSelection2HandCardsToDiscard },
 	{ NULL, NULL },
 };

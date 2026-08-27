@@ -1,0 +1,9 @@
+{
+  "fn": "GetAIScoreOfAttack",
+  "case": "tests/cases/attacks.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"GetAIScoreOfAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49896\": \"05\", \"52422\": \"01\", \"52670\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"GetAIScoreOfAttack\", \"mismatches\": {\"bus\": {\"address\": 52422, \"reference\": \"050100c2\", \"native\": \"050000c2\", \"reference_size\": 4, \"native_size\": 4, \"spans\": [[49896, 1], [52422, 1], [52670, 1], [65431, 1]]}}}\n",
+  "restored": "{\"fn\": \"GetAIScoreOfAttack\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 5, \"sram\": {}, \"vram\": {}, \"wram\": {\"49896\": \"05\", \"52422\": \"01\", \"52670\": \"00\", \"65431\": \"c2\"}}, \"status\": \"PASS\"}\n"
+}
