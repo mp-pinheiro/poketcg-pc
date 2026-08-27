@@ -125,7 +125,7 @@ const ProbeEntry probe_entries_energy[] = {
 	{ "AIProcessEnergyCards", adapt_AIProcessEnergyCards },
 	{ "AIProcessAndTryToPlayEnergy", adapt_AIProcessAndTryToPlayEnergy },
 	{ "AIProcessButDontPlayEnergy_SkipEvolution", adapt_AIProcessButDontPlayEnergy_SkipEvolution },
-	{ "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena },
 	{ "Func_16488", adapt_Func_16488 },
+	{ "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", adapt_AIProcessButDontPlayEnergy_SkipEvolutionAndArena },
 	{ NULL, NULL },
 };

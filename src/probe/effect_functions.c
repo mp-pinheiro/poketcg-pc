@@ -4639,7 +4639,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Maintenance_ReturnToDeckAndDrawEffect", adapt_Maintenance_ReturnToDeckAndDrawEffect },
 	{ "ThunderJolt_RecoilEffect", adapt_ThunderJolt_RecoilEffect },
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
-	{ "BillEffect", adapt_BillEffect },
 	{ "ImposterProfessorOakEffect", adapt_ImposterProfessorOakEffect },
 	{ "HandlePlayerSelection2HandCards", adapt_HandlePlayerSelection2HandCards },
 	{ "HandlePlayerSelection2HandCardsToDiscard", adapt_HandlePlayerSelection2HandCardsToDiscard },
@@ -4647,5 +4646,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Maintenance_PlayerSelection", adapt_Maintenance_PlayerSelection },
 	{ "ItemFinder_PlayerSelection", adapt_ItemFinder_PlayerSelection },
 	{ "SlicingWindEffect", adapt_SlicingWindEffect },
+	{ "BillEffect", adapt_BillEffect },
 	{ NULL, NULL },
 };
