@@ -566,3 +566,8 @@ unblock = "read the recorded diagnostics under .factory/try/SendTilesToPrinter/a
 name = "GiveBoosterPack"
 reason = "AUTO-RETIRED: src/engine/menus/give_booster_pack.asm:1 (basename `give_booster_pack`). 20 generations exhausted (trapped=False); last diagnostic phase=validate failure_class=schema detail=GiveBoosterPack: header fragment must not contain preprocessor directives"
 unblock = "read the recorded diagnostics under .factory/try/GiveBoosterPack/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "_ShowPromotionalCardScreen"
+reason = "AUTO-RETIRED: src/engine/promotional_card.asm:5 (basename `promotional_card`). 18 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _ShowPromotionalCardScreen-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1955,\"sp\":65518,\"rom_bank\":61,\"hbank_rom\":61,\"instructions\":6688236,\"cycles\":80000012,\"lcdc\":128,\"if\":224,\"ie\":1,\"ime\":1,\"halted\":0,\"ppu_lcdc\":128,\"ppu_ly\":62,\"ppu_mode\":3,\"bus\":\"801c09c2\"}"
+unblock = "read the recorded diagnostics under .factory/try/_ShowPromotionalCardScreen/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
