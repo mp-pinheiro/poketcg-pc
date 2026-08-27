@@ -777,6 +777,14 @@ CASES["AIDecide_Switch"] = [
 ]
 # <<< factory AIDecide_Switch
 
+# >>> factory AIDecide_SuperEnergyRemoval
+CONTRACT["AIDecide_SuperEnergyRemoval"] = {"compare": ("f",), "preserve": ()}
+CASES["AIDecide_SuperEnergyRemoval"] = [
+    {"wram": {0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF\xFF\xFF\xFF\xFF", 0xC510: b"\xFF"}, "keys": [0x00, 0x01], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xCABB: b"\x00", 0xC2BB: b"\xFF\xFF\xFF\xFF\xFF", 0xC510: b"\xFF"}, keys=[0x00, 0x01], instruction_budget=20000000, cycle_budget=80000000)
+]
+# <<< factory AIDecide_SuperEnergyRemoval
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -1021,3 +1029,6 @@ MUTATIONS["AIDecide_Defender_Phase13"] = {"source_symbol": "AIDecide_Defender_Ph
 # >>> factory-mutation AIDecide_Switch
 MUTATIONS["AIDecide_Switch"] = {"source_symbol": "AIDecide_Switch", "before": "\t\treturn (AIDecide_SwitchResult){r.a, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "after": "\t\treturn (AIDecide_SwitchResult){0u, (uint8_t)((r.f & 0x80u) | ((r.f & 0x10u) ? 0u : 0x10u))};", "case_ids": ["AIDecide_Switch-0", "AIDecide_Switch-1", "AIDecide_Switch-2"]}
 # <<< factory-mutation AIDecide_Switch
+# >>> factory-mutation AIDecide_SuperEnergyRemoval
+MUTATIONS["AIDecide_SuperEnergyRemoval"] = {"source_symbol": "AIDecide_SuperEnergyRemoval", "before": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x00u};", "after": "AIDecideResult AIDecide_SuperEnergyRemoval(void)\n{\n\treturn (AIDecideResult){0x10u};", "case_ids": ["AIDecide_SuperEnergyRemoval-0", "AIDecide_SuperEnergyRemoval-1"]}
+# <<< factory-mutation AIDecide_SuperEnergyRemoval

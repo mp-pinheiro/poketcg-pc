@@ -177,4 +177,7 @@ AIDecideResult AIDecide_Defender_Phase13(void);
 typedef struct { uint8_t a; uint8_t f; } AIDecide_SwitchResult;
 AIDecide_SwitchResult AIDecide_Switch(void);
 /* <<< factory AIDecide_Switch */
+/* >>> factory AIDecide_SuperEnergyRemoval */
+AIDecideResult AIDecide_SuperEnergyRemoval(void);
+/* <<< factory AIDecide_SuperEnergyRemoval */
 #endif /* POKETCG_HOME_TRAINER_CARDS_H */

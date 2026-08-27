@@ -2469,3 +2469,10 @@ do_switch:
 	}
 }
 /* <<< factory AIDecide_Switch */
+
+/* >>> factory AIDecide_SuperEnergyRemoval */
+AIDecideResult AIDecide_SuperEnergyRemoval(void)
+{
+	return (AIDecideResult){0x00u};
+}
+/* <<< factory AIDecide_SuperEnergyRemoval */
