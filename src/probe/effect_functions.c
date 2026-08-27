@@ -4147,6 +4147,15 @@ static void adapt_SlicingWindEffect(ProbeState *s)
 }
 /* <<< factory SlicingWindEffect */
 
+/* >>> factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+static void adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection(ProbeState *s)
+{
+	SuperEnergyRetrievalPlayerDiscardPileSelectionResult result = SuperEnergyRetrieval_PlayerDiscardPileSelection();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4649,5 +4658,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "BillEffect", adapt_BillEffect },
 	{ "SlicingWindEffect", adapt_SlicingWindEffect },
 	{ "ZapdosThunder_RecoilEffect", adapt_ZapdosThunder_RecoilEffect },
+	{ "SuperEnergyRetrieval_PlayerDiscardPileSelection", adapt_SuperEnergyRetrieval_PlayerDiscardPileSelection },
 	{ NULL, NULL },
 };

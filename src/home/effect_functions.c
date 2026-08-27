@@ -1025,6 +1025,15 @@ static void chain_lightning_damage_same_color_bench(void)
 #include "home/core.h"
 #include "generated/hram.h"
 #define ChooseCardToPlaceInHandText 0x0157u
+
+#include "home/effect_functions.h"
+#include "home/core.h"
+#include "home/duel.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+#define ChooseUpTo4FromDiscardPileText 0x0169u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -8216,3 +8225,35 @@ SlicingWindEffectResult SlicingWindEffect(void)
 	return (SlicingWindEffectResult){0u, 30u};
 }
 /* <<< factory SlicingWindEffect */
+
+/* >>> factory SuperEnergyRetrieval_PlayerDiscardPileSelection */
+SuperEnergyRetrievalPlayerDiscardPileSelectionResult SuperEnergyRetrieval_PlayerDiscardPileSelection(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseUpTo4FromDiscardPileText);
+	(void)CreateEnergyCardListFromDiscardPile_OnlyBasic();
+	for (;;) {
+		(void)InitAndDrawCardListScreenLayout();
+		SetCardListHeaderText(PlayerDiscardPileText, PleaseSelectCardText);
+		DisplayCardListResult display = DisplayCardList();
+		if ((display.f & 0x10u) != 0u) {
+			AskWhetherToQuitSelectingCardsResult quit = AskWhetherToQuitSelectingCards(6u);
+			if ((quit.f & 0x10u) != 0u)
+				continue;
+			break;
+		}
+		uint8_t selected = hTempCardIndex_ff98;
+		(void)GetTurnDuelistVariable(selected);
+		uint16_t position = GetNextPositionInTempList_TrainerEffects();
+		gb_write8(position, selected);
+		TempListResult removed = RemoveCardFromDuelTempList(selected);
+		if ((removed.f & 0x10u) != 0u)
+			break;
+		if (hCurSelectionItem >= 6u)
+			break;
+	}
+	uint8_t final_a = hCurSelectionItem;
+	uint16_t terminator = GetNextPositionInTempList_TrainerEffects();
+	gb_write8(terminator, 0xffu);
+	return (SuperEnergyRetrievalPlayerDiscardPileSelectionResult){final_a, (final_a == 0u) ? 0x80u : 0x00u};
+}
+/* <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection */

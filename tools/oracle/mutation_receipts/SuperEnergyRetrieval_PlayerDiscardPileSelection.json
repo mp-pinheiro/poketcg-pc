@@ -1,0 +1,9 @@
+{
+  "fn": "SuperEnergyRetrieval_PlayerDiscardPileSelection",
+  "case": "tests/cases/effect_functions.py",
+  "index": 0,
+  "status": "RED",
+  "baseline": "{\"fn\": \"SuperEnergyRetrieval_PlayerDiscardPileSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"00\", \"50448\": \"ff\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"ffff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n",
+  "output": "{\"status\": \"PORT\", \"fn\": \"SuperEnergyRetrieval_PlayerDiscardPileSelection\", \"mismatches\": {\"bus\": {\"address\": 65441, \"reference\": \"ff80c2ffff02\", \"native\": \"ff80c2ff0002\", \"reference_size\": 7, \"native_size\": 7, \"spans\": [[49901, 1], [50448, 1], [51899, 1], [65431, 1], [65440, 2], [65458, 1]]}}}\n",
+  "restored": "{\"fn\": \"SuperEnergyRetrieval_PlayerDiscardPileSelection\", \"registers\": {\"a\": 1, \"b\": 0, \"c\": 0, \"d\": 0, \"e\": 0, \"f\": 0, \"hl\": 0, \"palette\": {}, \"ram_bank\": 0, \"ram_enable\": 0, \"rom_bank\": 61, \"sram\": {}, \"vram\": {}, \"wram\": {\"49901\": \"00\", \"50448\": \"ff\", \"51899\": \"80\", \"65431\": \"c2\", \"65440\": \"ffff\", \"65458\": \"02\"}}, \"status\": \"PASS\"}\n"
+}

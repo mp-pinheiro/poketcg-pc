@@ -2646,6 +2646,11 @@ hCurSelectionItem = 0xFFB2
 hTempCardIndex_ff98 = 0xFF98
 hTempCardIndex_ff9f = 0xFF9F
 wDuelTempList = 0xC500
+
+hCurSelectionItem = 0xFFB2
+hTempCardIndex_ff98 = 0xFF98
+hWhoseTurn = 0xFF97
+wDuelTempList = 0xC510
 # <<< factory-cases-statics
 
 # >>> factory AIPickAttackForAmnesia
@@ -5570,6 +5575,14 @@ CASES["SlicingWindEffect"] = [
 ]
 # <<< factory SlicingWindEffect
 
+# >>> factory SuperEnergyRetrieval_PlayerDiscardPileSelection
+CONTRACT["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = [
+    {"keys": [0x00, 0x01], "wram": {hWhoseTurn: b"\xC2", hCurSelectionItem: b"\x00", wDuelTempList: b"\xFF", 0xC2ED: b"\x00", 0xCABB: b"\x00"}, "read": {0xFFA0: 2}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={hWhoseTurn: b"\xC2", hCurSelectionItem: b"\x00", wDuelTempList: b"\xFF", 0xC2ED: b"\x00", 0xCABB: b"\x00"}, read={0xFFA0: 2}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SuperEnergyRetrieval_PlayerDiscardPileSelection
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8130,3 +8143,6 @@ MUTATIONS["ItemFinder_PlayerSelection"] = {"source_symbol": "ItemFinder_PlayerSe
 # >>> factory-mutation SlicingWindEffect
 MUTATIONS["SlicingWindEffect"] = {"source_symbol": "SlicingWindEffect", "before": "SlicingWindEffectResult SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = random.a;", "after": "SlicingWindEffectResult SlicingWindEffect(void)\n{\n\tSwapTurn();\n\tPickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();\n\tuint8_t target = (uint8_t)(random.a + 1u);", "case_ids": ["SlicingWindEffect-0"]}
 # <<< factory-mutation SlicingWindEffect
+# >>> factory-mutation SuperEnergyRetrieval_PlayerDiscardPileSelection
+MUTATIONS["SuperEnergyRetrieval_PlayerDiscardPileSelection"] = {"source_symbol": "SuperEnergyRetrieval_PlayerDiscardPileSelection", "before": "\tgb_write8(terminator, 0xffu);", "after": "\tgb_write8(terminator, 0u);", "case_ids": ["SuperEnergyRetrieval_PlayerDiscardPileSelection-0"]}
+# <<< factory-mutation SuperEnergyRetrieval_PlayerDiscardPileSelection
