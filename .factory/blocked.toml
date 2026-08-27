@@ -557,3 +557,8 @@ unblock = "read the recorded diagnostics under .factory/try/SendTilesToPrinter/a
 name = "_PreparePrinterConnection"
 reason = "AUTO-RETIRED: src/engine/link/printer.asm:4 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=primary failure_class=code detail=case _PreparePrinterConnection-0 [GBRT] Allocated 32768 bytes for External RAM {\"status\":\"BUDGET_EXHAUSTED\",\"pc\":1391,\"sp\":65524,\"rom_bank\":6,\"hbank_rom\":6,\"instructions\":7105467,\"cycles\":80000000,\"lcdc\":0,\"if\":224,\"ie\":8,\"ime\":0,\"halted\":0,\"ppu_lcdc\":0,\"ppu_ly\":0,\"ppu_mode\":0,\"bus\":\"8100\"}"
 unblock = "read the recorded diagnostics under .factory/try/_PreparePrinterConnection/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "TryBuildDeckMachineDeck"
+reason = "AUTO-RETIRED: src/engine/menus/deck_machine.asm:1509 (basename `deck_machine`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/TryBuildDeckMachineDeck/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
