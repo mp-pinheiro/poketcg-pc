@@ -2,13 +2,676 @@
 
 All notable changes to this project are documented here.
 This changelog is generated automatically from [Conventional Commits](https://www.conventionalcommits.org) by [git-cliff](https://github.com/orhun/git-cliff).
-## v0.213.0 - 2026-08-26
+## v0.214.0 - 2026-08-27
+
+### Bug Fixes
+
+- *(ci)* Decouple release cadence from push events
+- *(factory)* Defer basenames with any staged artifact
+- *(factory)* Pending-artifact deferral and metric
+- *(factory)* Correct already-implemented advice
+- *(port)* Faithful Music1_duty command handler
+- *(port)* Faithful music1 speed/octave/tie/pan
+- *(port)* Faithful music1 speed/octave/tie/pan
+- *(port)* Faithful music1 loop and jump group
+- *(port)* Faithful music1 call/ret and writers
+- *(port)* Faithful music1 vibrato/pitch/end
+- *(port)* Faithful music2 writers and MainLoop
+- *(port)* Faithful music2 loop/call/ret group
+- *(port)* Music2 writers plus Music1_EndLoop cases
+- *(port)* Finish music alias clusters
+- *(port)* Register four sfx engine routines
+- *(port)* Export DrawTextBox_PrintTextNoDelay
+- *(port)* Close DrawTextBox marker pair
+- *(port)* Add DrawTextBox_PrintTextNoDelay cases
+- *(port)* Register DrawTextBox probe entry
+- *(factory)* Remove duplicate Script_BeatAaron blocker
+- *(port)* Restore sfx pitch offset registration
+- *(port)* Correct music1 command table mapping
+- *(port)* Register EndMainLoop and jp handlers
+- *(port)* Correct music2 command table mapping
+- *(port)* Stop masking rotated panning operand
+- *(port)* Dispatcher channel comes from c
+- *(port)* Register music command dispatchers
+- *(port)* Use dict unpacking for wram seeds
+- *(port)* Re-port music1 note handler
+- *(port)* Add note path dispatcher cases
+- *(port)* Bank in for note table reads
+- *(port)* Re-port music2 note handler
+- *(port)* Mirror note path cases to music2
+- *(port)* Register music note handlers
+- *(factory)* Make divergence reds retryable
+- *(oracle)* Move call frame out of live wram
+- *(factory)* Flag default-budget DoFrame wait loops
+- *(factory)* Clarify wram/hram macro is a direct lvalue
+- *(oracle)* Shrink reserved window from below
+- *(oracle)* Measure stack depth, free CF17 users
+- *(oracle)* Pop hbank_rom before mapper check
+- *(oracle)* Raise VBlank when halted with LCD on
+- *(progress)* Follow dw jump tables as deps
+- *(oracle)* Surface probe die message in errors
+- *(progress)* No fallthrough from a data tail
+- *(port)* Real attack-animation command loop
+- *(oracle)* Re-anchor NextCommand mutation
+- *(oracle)* Allow long-running frame budgets
+- *(oracle)* Derive pyboy frame budget from cycle_budget
+- *(oracle)* Derive PyBoy frames from cycle_budget
+- *(port)* Thread modified damage through de
+- *(oracle)* Tolerate pyboy-less gate shards
+- *(port)* Func_1bb4 restore full call sequence
+- *(port)* Script_BeatAaron return observables
+- *(oracle)* Bank-aware pre-ret completion hook
+- *(port)* CheckEnergyNeededForAttack de on ret-z exit
+- *(oracle)* Seed play-area page, revive dead canary
+- *(oracle)* Scope mutation anchors to routine block
+- *(oracle)* Relocate PyBoy frame out of live WRAM
+- *(home)* Resolve FindEndOfDuelScriptResult typedef collision
+- *(oracle)* Recut WRAM sweeps around relocated frame
+- *(port)* Include duel-script result declaration
+- *(oracle)* Hook relocated sentinel in WRAM bank 1
+- *(oracle)* Detect relocated WRAM sentinel by parked PC
+- *(oracle)* Use timing-neutral SRAM for SGB copy case
+- *(oracle)* Split hooked sentinel from relocated stack
+- *(oracle)* Repair FireClubLobby mutation anchor
+- *(factory)* Finish RESERVED tuple migration in prompt/smoke
+- *(oracle)* Publish VBlank interrupt at GBRT frame boundary
+- *(oracle)* Report ROM bank in budget diagnostics
+- *(factory)* Bank-qualify budget diagnostics and P3 blockers
+- *(port)* Thread attack-copy registers and register CanArena
+- *(oracle)* Migrate legacy HRAM seeds
+- *(oracle)* Migrate only true HRAM seeds
+- *(port)* Honor true-HRAM case register flow
+- *(port)* Honor true-HRAM case register flow
+- *(port)* Preserve RemoveCardID list pointer and Z flag
+- *(oracle)* Initialize text for HandleKeyPress D-pad case
+- *(oracle)* Raise HandleKeyPress case budget
+- *(oracle)* Split HandleKeyPress scene and bounded cases
+- *(oracle)* Terminate PokemonBreeder prehistoric scan
+- *(oracle)* Bound wedged runs, reap orphan procs
+- *(factory)* Age out dead claims with candidates
+- *(probe)* Cap runaway routines with RLIMIT_CPU
+- *(factory)* Sweep orphans by session, not parent
+- *(factory)* Make blocker smoke independent of port progress
+- *(factory)* Symlink site into lanes for build
+- *(oracle)* Restore printer pre-ret primary case
+- *(port)* Repair draw-seven animation
+- *(factory)* Tolerate unresolvable main after abandon
+
+### Documentation
+
+- *(port)* Record music1 dispatcher mapping defect
+- *(factory)* Record Script_BeatAaron blocker
+- *(factory)* Record note handler stub debt
+- *(factory)* Diagnose note handler stub debt
+- *(factory)* Correct note stanza instrument claim
+- *(factory)* Complete pnn_note defect spec
+- *(factory)* Note handler re-ported and proven
+- *(port)* Record call-frame relocation cost
+- *(port)* Complete call-frame placement analysis
+- *(factory)* Hbank_rom knob now available
+- *(factory)* Hbank_rom knob proven behaviourally
+- *(port)* Triage the VBlank blocker cluster
+- *(port)* Correct and quantify VBlank triage
+- *(port)* Find Func_235e root cause in cluster
+- *(port)* Func_235e needs SetupText in setup
+- *(port)* Pin VBlank HALT deadlock mechanism
+- *(port)* Synthetic VBlank fails on fade routines
+- *(port)* Correct VBlank HALT misdiagnosis
+- *(port)* Retriage VBlank cluster per measurement
+- *(port)* Glossary loops on unseeded duel state
+- *(port)* First REFERENCE_OK plus ready=true gap
+- *(port)* Scope P4 from the dw dependency graph
+- *(port)* Measure dependency cycle starvation
+- *(port)* Distinguish sub-label false cycles
+- *(port)* Supersede the cycle escalation
+- *(port)* Specify the animation co-port unit
+- *(port)* Transitive register-clobber debt
+- *(port)* SetupText yield vs DoFrame class
+- *(port)* Sweep filter and its limits
+- *(port)* Completed stanza sweep taxonomy
+- *(port)* Cost the indirect-dispatch mechanism
+- *(port)* Document runtime effect dispatch
 
 ### Features
 
-- *(port)* Land 1 routines
+- *(factory)* Shorter land commit subjects
+- *(port)* Gigashock_PlayerSelectEffect +3
+- *(factory)* Name routines in landing subjects
+- *(ci)* Nightly releases with progress notes
+- *(port)* DisplayEnergyOrTrainerCardPage
+- *(port)* SFX_pan
+- *(factory)* Frontier ceiling metric
+- *(port)* DisplayCardPage_Energy
+- *(port)* DisplayCardPage_TrainerPage2
+- *(port)* DisplayCardPage_TrainerPage1 +1
+- *(port)* SFX_pitch_offset
+- *(port)* HandleDestinyBondSubstatus
+- *(port)* HandleSwitchDefendingPokemonEffect
+- *(port)* SFX_wave
+- *(port)* PidgeottoWhirlwind_SwitchEffect +1
+- *(port)* SFX_envelope
+- *(port)* ButterfreeWhirlwind_SwitchEffect +2
+- *(port)* PidgeyWhirlwind_SwitchEffect
+- *(port)* TerrorStrike_SwitchDefendingPokemon
+- *(port)* Gale_SwitchEffect
+- *(port)* PracticeDuel_PrintTurnInstructions
+- *(port)* SFX_wait +1
+- *(port)* Music2_PlayNextNote_pop
+- *(port)* Music1_PlayNextNote_pop
+- *(port)* HandlePlayerMetronomeEffect
+- *(port)* HandlePlayerMetronomeEffect
+- *(port)* ClefairyMetronome_UseAttackEffect
+- *(port)* ClefableMetronome_UseAttackEffect
+- *(port)* Curse_PlayerSelectEffect
+- *(port)* CreditsSequenceCmd_LoadScene +2
+- *(port)* HandleStartMenu
+- *(port)* _PauseMenu_Diary
+- *(port)* PauseMenu_Diary
+- *(oracle)* Add hbank_rom case override
+- *(port)* CheckIfThereAreAnyBasicCardsInDeck
+- *(port)* _TossCoin
+- *(port)* SortCurDeckCardsByID
+- *(port)* TossCoinATimes
+- *(port)* TossCoin
+- *(port)* CheckSelfConfusionDamage
+- *(port)* Serial_TossCoinATimes
+- *(port)* TossCoinATimes_BankB
+- *(port)* HandleNShieldAndTransparency
+- *(oracle)* Report frame boundary counters
+- *(port)* AttemptRetreat +2
+- *(port)* Serial_TossCoin
+- *(port)* ApplyTransparencyIfApplicable +1
+- *(port)* ApplyTransparencyIfApplicable +1
+- *(port)* NinetalesLure_SwitchEffect
+- *(port)* VictreebelLure_SwitchDefendingPokemon
+- *(port)* HandleSandAttackOrSmokescreenSubstatus
+- *(port)* DancingEmbers_MultiplierEffect
+- *(port)* NidoranFFurySwipes_MultiplierEffect +1
+- *(port)* OppAction_TossCoinATimes
+- *(port)* AIPlay_Pokeball +1
+- *(port)* JolteonDoubleKick_MultiplierEffect
+- *(port)* CometPunch_MultiplierEffect
+- *(port)* AIPlay_Recycle +2
+- *(port)* PrimeapeFurySwipes_MultiplierEffect
+- *(port)* SandslashFurySwipes_MultiplierEffect
+- *(port)* DragoniteLv45Slam_MultiplierEffect
+- *(port)* CometPunch_MultiplierEffect
+- *(port)* FuryAttack_MultiplierEffect
+- *(port)* Bonemerang_MultiplierEffect
+- *(port)* CloysterSpikeCannon_MultiplierEffect
+- *(port)* ScriptCommand_JumpIfEventTrue/False
+- *(port)* NidorinaDoubleKick_MultiplierEffect
+- *(port)* CometPunch_MultiplierEffect
+- *(port)* DragoniteLv41Slam_MultiplierEffect
+- *(port)* ScriptCommand_JumpIfNPCLoaded
+- *(port)* GetCardTypeIconPalette +3
+- *(port)* OmastarSpikeCannon_MultiplierEffect +1
+- *(port)* DrawDeckNamingScreenBG
+- *(port)* DrawCardTypeIcons +1
+- *(port)* DeckNamingScreen_ProcessInput +2
+- *(port)* Animation command handlers
+- *(port)* PrintPCPackName +1
+- *(port)* PrintObtainedPCPacks
+- *(port)* Func_1bb4 call sequence
+- *(port)* BlinkUnopenedPCPacks +3
+- *(port)* DragoniteLv41Slam_MultiplierEffect
+- *(port)* NidorinoDoubleKick_MultiplierEffect
+- *(port)* PetalDance_MultiplierEffect +1
+- *(port)* Script_da76
+- *(port)* PlayStatusConditionQueueAnimations +1
+- *(port)* PlayAttackAnimation_DealAttackDamageS~
+- *(port)* NidorinoDoubleKick_MultiplierEffect
+- *(port)* Script_da1c
+- *(port)* Script_d9c2
+- *(port)* DisplayOpponentUsedAttackScreen
+- *(port)* DealDamageToPlayAreaPokemon +1
+- *(port)* DealDamageToPlayAreaPokemon_Regula~ +2
+- *(port)* UnusedCopyrightScreen
+- *(port)* StretchKick_BenchDamageEffect +1
+- *(port)* EstimateDamage_VersusDefendingCard
+- *(probe)* Register EstimateDamage adapter
+- *(port)* Func_c268
+- *(port)* EstimateDamage cases and mutation
+- *(port)* PauseMenu_Status
+- *(port)* CheckWhetherToSwitchToFirstAttack +2
+- *(port)* EstimateDamage_FromDefendingPokemon
+- *(port)* EstimateDamage sibling cases
+- *(port)* AIDecide_PlusPower_Phase14 +1
+- *(port)* GengarDarkMind_DamageBenchEffect
+- *(port)* DealConfusionDamageToSelf
+- *(port)* DealConfusionDamageToSelf cases
+- *(port)* ScriptCommand_WalkPlayerToMasonLaboratory
+- *(port)* Walk-to-lab cases
+- *(port)* Func_c258 +1
+- *(port)* CatPunchEffect +1
+- *(port)* Func_1bb4 narrow contract
+- *(port)* Func_c251 +1
+- *(port)* Func_1bb4 cases
+- *(port)* ChainLightningEffect
+- *(port)* Func_c241
+- *(port)* Script_BeatAaron pre-ret split
+- *(port)* Four deck-machine script entries
+- *(port)* Gift-center event-value script entries
+- *(port)* Six script-entry pre-ret cases
+- *(port)* Script_Specs2 card-name script entry
+- *(port)* Script_Nikki two-exit script entry
+- *(port)* Two-exit and RNG script entry cases
+- *(port)* Script_Tech1 energy count and grant
+- *(port)* CallMapScriptPointerIfExists tail jump
+- *(port)* Script tail-jump and energy grant cases
+- *(port)* Game-event dispatch and after-duel hook
+- *(port)* Game-event dispatch cases
+- *(port)* Firegiver_AddToHandEffect +1
+- *(port)* LoadOWMapForCreditsSequence +2
+- *(port)* CloseTextBox +3
+- *(port)* DisplayCardList +3
+- *(port)* CreateCurDeckUniqueCardList +3
+- *(port)* CheckIfCanDamageDefendingPokemon +3
+- *(port)* CreateCardSetList +3
+- *(port)* CheckIfCanDamageDefendingPokemon +3
+- *(port)* Func_c8ba +2
+- *(port)* OpenTurnHolderHandScreen_Simple
+- *(port)* AddCardToDeckAndUpdateCount +2
+- *(port)* Func_82b6 prize layout dispatch
+- *(port)* Func_82b6 prize coordinates
+- *(port)* Func_cc32 +3
+- *(port)* EnergyRetrieval_PlayerDiscardPileS~ +3
+- *(port)* CreateCardSetListAndInitListCoords +2
+- *(port)* CanArenaCardUseNonResidualAttack
+- *(port)* HandleDeckCardSelectionList +3
+- *(port)* CanArena cases and second-attack coverage
+- *(port)* Func_cc32 +3
+- *(port)* OpenGlossaryScreen +1
+- *(port)* OpenYourOrOppPlayAreaScreen_TurnHo~ +3
+- *(port)* FindNPCOrObject +3
+- *(port)* AITryToRetreat +3
+- *(port)* DebugCreateBoosterPack +3
+- *(port)* DisplayPlaceInitialPokemonCardsScr~ +3
+- *(port)* DealRecoilDamageToSelf +3
+- *(port)* CardAlbum +3
+- *(port)* Func_c53d +2
+- *(port)* PrintInteractableObjectText
+- *(port)* PCMenu_CardAlbum
+- *(runtime)* Promote effect adapters to shared dispatch
+- *(runtime)* Execute effect commands by ROM address
+- *(port)* PrintSlashSixty text
+- *(port)* PrintSlashSixty cases
+- *(port)* Deck and hand icon screen
+- *(port)* Deck and hand icon screen cases
+- *(port)* CheckDamageToMrMime +3
+- *(port)* Synchronous printer packet transport
+- *(port)* DisplayDrawNCardsScreen +2
+- *(port)* Synchronous printer packet cases
+- *(port)* DrawCardTypeIconsAndPrintCardCounts +2
+- *(port)* MewtwoEnergyAbsorption_PlayerSelectEf~
+- *(port)* Printer connection error scene
+- *(port)* PlayShuffleAndDrawCardsAnimation
+- *(port)* DisplayDrawOneCardScreen
+- *(port)* Play basic Pokemon action
+- *(port)* Execute trainer card effects
+- *(port)* Use metronome attack
+- *(port)* FetchEffect +3
+- *(port)* LookForEnergyNeededForAttackInHand +3
+- *(port)* Maintenance_ReturnToDeckAndDrawEff~ +2
+- *(port)* HandleDeckConfirmationMenu
+- *(port)* DisplayPlayerNamingScreen
+- *(port)* OpenDeckConfirmationMenu
+- *(port)* CheckIfDefendingPokemonCanKnockOut +2
+- *(port)* HandleStartButtonInDeckSelectionMenu
+- *(port)* HandleAIHeal
+- *(port)* HandleAIPkmnPowers
+- *(port)* SendPrinterInstructionPacket
+- *(port)* AIProcessEnergyCards +1
+- *(port)* CheckIfAnyDefendingPokemonAttackDeals~
+- *(port)* AIProcessAndTryToPlayEnergy +1
+- *(port)* AIProcessButDontPlayEnergy_SkipEvo~ +1
+- *(port)* ScriptCommand_ShowSamNormalMultich~ +1
+- *(port)* AIProcessButDontPlayEnergy_SkipEvo~ +1
+- *(port)* BillEffect
+- *(port)* Func_16488
+- *(port)* CheckIfAnyAttackKnocksOutDefending~ +1
+- *(port)* CheckIfActiveCardCanKnockOut
+- *(port)* ScriptCommand_ShowSamRulesMulticho~ +1
+- *(port)* AIDecideEvolution
+- *(port)* AIDecide_GustOfWind
+- *(port)* ScriptCommand_ChooseDeckToDuelAgainst~
+- *(port)* AIDecideBenchPokemonToSwitchTo +1
 
 ### Miscellaneous
 
+- *(factory)* Retire exhausted _TossCoin attempt
 - *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire Func_5a81
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Add sfx mutation receipts
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Unblock music note handlers
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Release divergence-retired routines
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Reset diary retry budget
+- *(factory)* Refresh gate and progress
+- *(factory)* Unblock coin-toss/menu budget defaults
+- *(factory)* Refresh gate and progress
+- *(factory)* Retire _TossCoin
+- *(factory)* Retire exhausted _HandlePeekSelection
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Unblock TossCoin after macro-footgun fix
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Migrate coin_toss to legacy-appendable
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh blocked reasons and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Retire exhausted reds
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Cross-ref animation co-port unit
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh progress and mutation receipts
+- *(factory)* Refresh gate and progress
+- *(factory)* Clear animation cluster stanzas
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Diagnose Func_1bb4 callee debt
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Cost the callee-widening path
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Clear two SetupText-resolved stanzas
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Sweep text-pipeline stanzas
+- *(progress)* Refresh port status
+- *(factory)* Walk script terminates at 11.5M
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Clear tooling-only retirement
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Measure EstimateDamage budgets
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Retire DealConfusionDamageToSelf
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Clear landed EstimateDamage stanzas
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Clear landed script stanzas
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Diagnose DisplayCardList blocker
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Clear relocated-frame blockers
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Clear solved DuelCheckMenu blocker
+- *(factory)* Refresh gate and progress
+- *(factory)* Clear solved glossary blocker
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate report
+- *(factory)* Refresh gate report
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh progress
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(factory)* Refresh gate and progress
+- *(factory)* Retire exhausted routines
+- *(factory)* Retire SaveDeckConfiguration blocker
+- *(factory)* Refresh gate and progress
+- *(factory)* Diagnose energy action
+- *(factory)* Retire Func_1a080
+- *(factory)* Unblock trainer action
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(factory)* Retire exhausted routines
+- *(progress)* Refresh port status
+- *(factory)* Default supervise loop to medium
+- *(progress)* Refresh port status
+- *(factory)* Refresh gate and progress
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire printer connection
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire deck builder
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire SendPrinterInstructionPacket_1Sheet_3LineFeeds
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(progress)* Refresh port status
+- *(factory)* Retire LassEffect
+- *(progress)* Refresh port status
+
+### Reverts
+
+- *(oracle)* Restore call frame location
+- *(oracle)* Drop synthetic VBlank experiment
+- *(port)* Drop unverified JumpIfEvent pair
+- *(port)* Drop unverifiable Func_1bb4
+- *(port)* Basic Pokemon action
+
+### Tests
+
+- *(oracle)* Exercise PrintFailedEffectText text paths
+- *(port)* Verify printer error scene
+- *(port)* Cover trainer effect dispatch
+- *(port)* Refine metronome action cases
 
