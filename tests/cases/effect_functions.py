@@ -5944,6 +5944,34 @@ CASES["ApplyAndAnimateHPRecovery"] = [
 ]
 # <<< factory ApplyAndAnimateHPRecovery
 
+# >>> factory Paralysis50PercentEffect
+CONTRACT["Paralysis50PercentEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["Paralysis50PercentEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\x34\x12"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xC2F1: b"\x00", 0xCC09: b"\x00", 0xCAC2: b"\x06", 0xCABB: b"\x00",
+               0xCACA: b"\x00\x00\x00", 0xCCCD: b"\x00",
+               0xCD9C: b"\xFF", 0xCD9D: b"\xFF", 0xCD9E: b"\xFF", 0xCD9F: b"\x01", 0xCE4E: b"\xEE\xDD"},
+         read={0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCE4E: 2, 0xCAC2: 1},
+         setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}],
+         instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Paralysis50PercentEffect
+
+# >>> factory PlayerPickAttackForAmnesia
+CONTRACT["PlayerPickAttackForAmnesia"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["PlayerPickAttackForAmnesia"] = [
+    {"keys": [0x00, 0x01], "wram": {0xFF97: b"\xC2", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01"}, "read": {0xFFA0: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, keys=[0x00, 0x01], wram={0xFF97: b"\xC2", 0xC2F1: b"\x01", 0xCABB: b"\x00", 0xCAC2: b"\x01"}, read={0xFFA0: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory PlayerPickAttackForAmnesia
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -8576,3 +8604,9 @@ MUTATIONS["Poison50PercentEffect"] = {"source_symbol": "Poison50PercentEffect", 
 # >>> factory-mutation ApplyAndAnimateHPRecovery
 MUTATIONS["ApplyAndAnimateHPRecovery"] = {"source_symbol": "ApplyAndAnimateHPRecovery", "before": "void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e)\n{\n\twUnused_HPRecoverAmount = e;", "after": "void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e)\n{\n\twUnused_HPRecoverAmount = d;", "case_ids": ["ApplyAndAnimateHPRecovery-0", "ApplyAndAnimateHPRecovery-1", "ApplyAndAnimateHPRecovery-2", "ApplyAndAnimateHPRecovery-3"]}
 # <<< factory-mutation ApplyAndAnimateHPRecovery
+# >>> factory-mutation Paralysis50PercentEffect
+MUTATIONS["Paralysis50PercentEffect"] = {"source_symbol": "Paralysis50PercentEffect", "before": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn ParalysisEffect().f;", "after": "uint8_t Paralysis50PercentEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn toss.f;\n\treturn (uint8_t)(ParalysisEffect().f ^ 0x10u);", "case_ids": ["Paralysis50PercentEffect-0", "Paralysis50PercentEffect-1"]}
+# <<< factory-mutation Paralysis50PercentEffect
+# >>> factory-mutation PlayerPickAttackForAmnesia
+MUTATIONS["PlayerPickAttackForAmnesia"] = {"source_symbol": "PlayerPickAttackForAmnesia", "before": "\tuint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));", "after": "\tuint8_t attack_index = (uint8_t)(gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u)) ^ 0xFFu);", "case_ids": ["PlayerPickAttackForAmnesia-0", "PlayerPickAttackForAmnesia-1"]}
+# <<< factory-mutation PlayerPickAttackForAmnesia

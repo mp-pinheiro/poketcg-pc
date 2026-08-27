@@ -1799,6 +1799,13 @@ uint8_t Poison50PercentEffect(void);
 /* >>> factory ApplyAndAnimateHPRecovery */
 void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e);
 /* <<< factory ApplyAndAnimateHPRecovery */
+/* >>> factory Paralysis50PercentEffect */
+uint8_t Paralysis50PercentEffect(void);
+/* <<< factory Paralysis50PercentEffect */
+/* >>> factory PlayerPickAttackForAmnesia */
+typedef struct { uint8_t a, f; } PlayerPickAttackForAmnesiaResult;
+PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void);
+/* <<< factory PlayerPickAttackForAmnesia */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

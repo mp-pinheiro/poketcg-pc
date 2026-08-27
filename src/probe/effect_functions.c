@@ -4367,6 +4367,22 @@ static void adapt_ApplyAndAnimateHPRecovery(ProbeState *s)
 }
 /* <<< factory ApplyAndAnimateHPRecovery */
 
+/* >>> factory Paralysis50PercentEffect */
+static void adapt_Paralysis50PercentEffect(ProbeState *s)
+{
+	s->f = Paralysis50PercentEffect();
+}
+/* <<< factory Paralysis50PercentEffect */
+
+/* >>> factory PlayerPickAttackForAmnesia */
+static void adapt_PlayerPickAttackForAmnesia(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult r = PlayerPickAttackForAmnesia();
+	s->a = r.a;
+	s->f = r.f;
+}
+/* <<< factory PlayerPickAttackForAmnesia */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4893,5 +4909,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Confusion50PercentEffect", adapt_Confusion50PercentEffect },
 	{ "Poison50PercentEffect", adapt_Poison50PercentEffect },
 	{ "ApplyAndAnimateHPRecovery", adapt_ApplyAndAnimateHPRecovery },
+	{ "Paralysis50PercentEffect", adapt_Paralysis50PercentEffect },
+	{ "PlayerPickAttackForAmnesia", adapt_PlayerPickAttackForAmnesia },
 	{ NULL, NULL },
 };

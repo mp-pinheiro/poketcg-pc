@@ -1168,6 +1168,16 @@ void BankswitchROM(uint8_t bank);
 #include "home/duel.h"
 #include "home/duel_core.h"
 #define ATK_ANIM_HEAL 0x79u
+
+#define ParalysisCheckText 0x00e0u
+
+#include "home/effect_functions.h"
+#include "home/menus.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
+#include "mem.h"
+
+#define ChooseAttackOpponentWillNotBeAbleToUseText 0x0124u
 /* <<< factory statics */
 
 /* >>> factory SleepEffect */
@@ -9104,3 +9114,38 @@ void ApplyAndAnimateHPRecovery(uint8_t d, uint8_t e)
 	(void)d;
 }
 /* <<< factory ApplyAndAnimateHPRecovery */
+
+/* >>> factory Paralysis50PercentEffect */
+uint8_t Paralysis50PercentEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(ParalysisCheckText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return toss.f;
+	return ParalysisEffect().f;
+}
+/* <<< factory Paralysis50PercentEffect */
+
+/* >>> factory PlayerPickAttackForAmnesia */
+/* effect_functions.asm:3217-3223 */
+PlayerPickAttackForAmnesiaResult PlayerPickAttackForAmnesia(void)
+{
+	(void)DrawWideTextBox_WaitForInput(ChooseAttackOpponentWillNotBeAbleToUseText);
+
+	HandleDefendingPokemonAttackSelectionResult selection = HandleDefendingPokemonAttackSelection();
+
+	/* The asm stores the selection routine's exit e. The ported callee reports
+	 * only hl/f, so the attack index is re-read from the wDuelTempList entry its
+	 * own asm loaded e out of - exit hCurMenuItem, doubled with 8-bit
+	 * wraparound - exactly as HandlePlayerMetronomeEffect does. */
+	uint8_t selected = (uint8_t)(hCurMenuItem + hCurMenuItem);
+	uint8_t attack_index = gb_read8((uint16_t)(wDuelTempList_ADDR + selected + 1u));
+	hTemp_ffa0 = attack_index;
+
+	/* `ld a, e` / `ldh [hTemp_ffa0], a` touch no flag, so f is whatever the
+	 * callee returned: its `scf` on the cancelled exit, and its `or a` over
+	 * a = the doubled menu item on the selected exit. */
+	uint8_t f = ((selection.f & 0x10u) != 0u) ? selection.f
+	                                          : (uint8_t)((selected == 0u) ? 0x80u : 0x00u);
+	return (PlayerPickAttackForAmnesiaResult){attack_index, f};
+}
+/* <<< factory PlayerPickAttackForAmnesia */
