@@ -588,3 +588,23 @@ void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)
 	AIProcessEnergyCards();
 }
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
+
+/* >>> factory Func_16488 */
+void Func_16488(void)
+{
+	wAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY;
+	uint16_t de = wTempPlayAreaAIScore_ADDR;
+	uint16_t hl = wPlayAreaAIScore_ADDR;
+	for (uint8_t b = MAX_PLAY_AREA_POKEMON; b != 0u; b--) {
+		gb_write8(de, gb_read8(hl));
+		hl = (uint16_t)(hl + 1u);
+		de = (uint16_t)(de + 1u);
+	}
+	gb_write8(de, wAIScore);
+	CoreCardListResult list = CreateEnergyCardListFromHand(0u);
+	if ((list.f & 0x10u) == 0u)
+		AIProcessEnergyCards();
+	else if (wAIEnergyAttachLogicFlags != 0u)
+		(void)RetrievePlayAreaAIScoreFromBackup1();
+}
+/* <<< factory Func_16488 */

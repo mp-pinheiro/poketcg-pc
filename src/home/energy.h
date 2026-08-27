@@ -43,4 +43,7 @@ void AIProcessButDontPlayEnergy_SkipEvolution(void);
 /* >>> factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
 void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void);
 /* <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena */
+/* >>> factory Func_16488 */
+void Func_16488(void);
+/* <<< factory Func_16488 */
 #endif /* POKETCG_HOME_ENERGY_H */

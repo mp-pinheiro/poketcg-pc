@@ -153,6 +153,14 @@ CASES["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = [
 ]
 # <<< factory AIProcessButDontPlayEnergy_SkipEvolutionAndArena
 
+# >>> factory Func_16488
+CONTRACT["Func_16488"] = {"compare": (), "preserve": ()}
+CASES["Func_16488"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x01", 0xC2EF: b"\x01", 0xC2C8: b"\x00", 0xCDB2: b"\x00\x00", 0xCDA7: b"\x00", 0xCABB: b"\x00", 0xC510: b"\xff", 0xCDBE: b"\x10" * 7, 0xCDBF: b"\x00" * 7}, "read": {0xCDBF: 7, 0xCDDD: 7, 0xCDD8: 1}, "setup": [{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2EE: b"\x01", 0xC242: b"\x00", 0xC400: b"\x01", 0xC2EF: b"\x01", 0xC2C8: b"\x00", 0xCDB2: b"\x00\x00", 0xCDA7: b"\x00", 0xCABB: b"\x00", 0xC510: b"\xff", 0xCDBE: b"\x20" * 7, 0xCDBF: b"\x00" * 7}, read={0xCDBF: 7, 0xCDDD: 7, 0xCDD8: 1}, setup=[{"fn": "CopyDMAFunction"}, {"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Func_16488
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -200,3 +208,6 @@ MUTATIONS["AIProcessButDontPlayEnergy_SkipEvolution"] = {"source_symbol": "AIPro
 # >>> factory-mutation AIProcessButDontPlayEnergy_SkipEvolutionAndArena
 MUTATIONS["AIProcessButDontPlayEnergy_SkipEvolutionAndArena"] = {"source_symbol": "AIProcessButDontPlayEnergy_SkipEvolutionAndArena", "before": "void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)\n{\n\twAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY | AI_ENERGY_FLAG_SKIP_EVOLUTION | AI_ENERGY_FLAG_SKIP_ARENA_CARD;", "after": "void AIProcessButDontPlayEnergy_SkipEvolutionAndArena(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "case_ids": ["AIProcessButDontPlayEnergy_SkipEvolutionAndArena-0", "AIProcessButDontPlayEnergy_SkipEvolutionAndArena-1"]}
 # <<< factory-mutation AIProcessButDontPlayEnergy_SkipEvolutionAndArena
+# >>> factory-mutation Func_16488
+MUTATIONS["Func_16488"] = {"source_symbol": "Func_16488", "before": "void Func_16488(void)\n{\n\twAIEnergyAttachLogicFlags = AI_ENERGY_FLAG_DONT_PLAY;", "after": "void Func_16488(void)\n{\n\twAIEnergyAttachLogicFlags = 0u;", "case_ids": ["Func_16488-0", "Func_16488-1"]}
+# <<< factory-mutation Func_16488
