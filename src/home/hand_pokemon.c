@@ -109,3 +109,11 @@ void AIDecideSpecialEvolutions(void)
 		(void)AIEncourage(10u);
 }
 /* <<< factory AIDecideSpecialEvolutions */
+
+/* >>> factory AIDecideEvolution */
+uint8_t AIDecideEvolution(void)
+{
+	uint8_t result = 0xffu;
+	return result;
+}
+/* <<< factory AIDecideEvolution */

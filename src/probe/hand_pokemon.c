@@ -11,7 +11,16 @@ static void adapt_AIDecideSpecialEvolutions(ProbeState *s)
 }
 /* <<< factory AIDecideSpecialEvolutions */
 
+/* >>> factory AIDecideEvolution */
+static void adapt_AIDecideEvolution(ProbeState *s)
+{
+	s->a = AIDecideEvolution();
+	s->f = 0u;
+}
+/* <<< factory AIDecideEvolution */
+
 const ProbeEntry probe_entries_hand_pokemon[] = {
 	{ "AIDecideSpecialEvolutions", adapt_AIDecideSpecialEvolutions },
+	{ "AIDecideEvolution", adapt_AIDecideEvolution },
 	{ NULL, NULL },
 };

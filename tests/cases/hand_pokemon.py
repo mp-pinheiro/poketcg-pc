@@ -25,6 +25,14 @@ CASES["AIDecideSpecialEvolutions"] = [
 ]
 # <<< factory AIDecideSpecialEvolutions
 
+# >>> factory AIDecideEvolution
+CONTRACT["AIDecideEvolution"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["AIDecideEvolution"] = [
+    {"expect_regs": {"a": 0xff, "f": 0x00}},
+    dict(POISON, expect_regs={"a": 0xff, "f": 0x00})
+]
+# <<< factory AIDecideEvolution
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -37,3 +45,6 @@ MUTATIONS["AIDecideSpecialEvolutions"] = {
     "case_ids": ["AIDecideSpecialEvolutions-1", "AIDecideSpecialEvolutions-2", "AIDecideSpecialEvolutions-3"],
 }
 # <<< factory-mutation AIDecideSpecialEvolutions
+# >>> factory-mutation AIDecideEvolution
+MUTATIONS["AIDecideEvolution"] = {"source_symbol": "AIDecideEvolution", "before": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0xffu;", "after": "uint8_t AIDecideEvolution(void)\n{\n\tuint8_t result = 0u;", "case_ids": ["AIDecideEvolution-0", "AIDecideEvolution-1"]}
+# <<< factory-mutation AIDecideEvolution
