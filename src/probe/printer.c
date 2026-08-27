@@ -268,6 +268,16 @@ static void adapt_SendCardListToPrinter(ProbeState *s)
 }
 /* <<< factory SendCardListToPrinter */
 
+/* >>> factory Func_19f87 */
+static void adapt_Func_19f87(ProbeState *s)
+{
+	(void)s;
+	Func_19f87Result result = Func_19f87();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory Func_19f87 */
+
 const ProbeEntry probe_entries_printer[] = {
 	{ "ShowPrinterConnectionErrorScene", adapt_ShowPrinterConnectionErrorScene },
 	{ "SendPrinterPacket", adapt_SendPrinterPacket },
@@ -297,5 +307,6 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "AddToPrinterGfxBuffer", adapt_AddToPrinterGfxBuffer },
 	{ "_PreparePrinterConnection", adapt__PreparePrinterConnection },
 	{ "SendCardListToPrinter", adapt_SendCardListToPrinter },
+	{ "Func_19f87", adapt_Func_19f87 },
 	{ NULL, NULL },
 };

@@ -545,6 +545,19 @@ CASES["SendCardListToPrinter"] = [
 ]
 # <<< factory SendCardListToPrinter
 
+# >>> factory Func_19f87
+CONTRACT["Func_19f87"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["Func_19f87"] = [
+    {"keys": [0x02], "wram": {wPrinterStatus: b"\x77", wPrinterInitAttempts: b"\xAA"},
+     "read": {wPrinterStatus: 1, wPrinterInitAttempts: 1},
+     "instruction_budget": 2000000, "cycle_budget": 8000000},
+    dict(POISON, keys=[0x02],
+         wram={wPrinterStatus: b"\xAA", wPrinterInitAttempts: b"\x55"},
+         read={wPrinterStatus: 1, wPrinterInitAttempts: 1},
+         instruction_budget=2000000, cycle_budget=8000000),
+]
+# <<< factory Func_19f87
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 SCHEMA2_CASES["SendPrinterPacket"][3]["completion"] = {"mode": "pre-ret", "pc": 0x315D}
@@ -745,3 +758,11 @@ MUTATIONS["AddToPrinterGfxBuffer"] = {
 # >>> factory-mutation SendCardListToPrinter
 MUTATIONS["SendCardListToPrinter"] = {"source_symbol": "SendCardListToPrinter", "before": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)", "after": "SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl)\n{\n\tuint8_t offset = wPrinterHorizontalOffset;\n\tif (offset != 1u) {\n\t\tLoadGfxBufferForPrinterResult loaded = LoadGfxBufferForPrinter(hl);\n\t\tif ((loaded.f & 0x10u) != 0u)\n\t\t\treturn (SendCardListToPrinterResult){loaded.a, loaded.f, b, c, d, e, loaded.hl};\n\t\thl = loaded.hl;\n\t}\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)", "case_ids": ["SendCardListToPrinter-0", "SendCardListToPrinter-1", "SendCardListToPrinter-2"]}
 # <<< factory-mutation SendCardListToPrinter
+# >>> factory-mutation Func_19f87
+MUTATIONS["Func_19f87"] = {
+    "source_symbol": "Func_19f87",
+    "before": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) != 0u)",
+    "after": "Func_19f87Result Func_19f87(void)\n{\n\tTryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();\n\tif ((init.f & 0x10u) == 0u)",
+    "case_ids": ["Func_19f87-0", "Func_19f87-1"],
+}
+# <<< factory-mutation Func_19f87

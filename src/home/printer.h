@@ -192,4 +192,8 @@ PreparePrinterConnectionResult _PreparePrinterConnection(uint16_t hl);
 typedef struct { uint8_t a; uint8_t f; uint8_t b; uint8_t c; uint8_t d; uint8_t e; uint16_t hl; } SendCardListToPrinterResult;
 SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint16_t hl);
 /* <<< factory SendCardListToPrinter */
+/* >>> factory Func_19f87 */
+typedef struct { uint8_t a; uint8_t f; } Func_19f87Result;
+Func_19f87Result Func_19f87(void);
+/* <<< factory Func_19f87 */
 #endif

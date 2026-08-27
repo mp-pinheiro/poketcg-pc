@@ -86,6 +86,9 @@
 #define PrintingWasInterruptedText 0x00dcu
 
 #define PRINTERPKT_PRINT_INSTRUCTION 0x02u
+
+#include "home/printer.h"
+#include "generated/sram.h"
 /* <<< factory statics */
 
 #define rSB 0xFF01u
@@ -831,3 +834,20 @@ SendCardListToPrinterResult SendCardListToPrinter(uint8_t a, uint8_t f, uint8_t 
 	return (SendCardListToPrinterResult){packet.a, packet.f, b, c, d, e, packet.hl};
 }
 /* <<< factory SendCardListToPrinter */
+
+/* >>> factory Func_19f87 */
+Func_19f87Result Func_19f87(void)
+{
+	TryInitPrinterCommunicationsResult init = TryInitPrinterCommunications();
+	if ((init.f & 0x10u) != 0u)
+		return (Func_19f87Result){init.a, init.f};
+
+	SendTilesToPrinterResult first = SendTilesToPrinter(sGfxBuffer0_ADDR, 0u, 0u);
+	if ((first.f & 0x10u) != 0u)
+		return (Func_19f87Result){first.a, first.f};
+
+	SendTilesToPrinter(first.hl, 0u, 0u);
+	SendPrinterInstructionPacket_1SheetResult packet = SendPrinterInstructionPacket_1Sheet();
+	return (Func_19f87Result){packet.a, packet.f};
+}
+/* <<< factory Func_19f87 */
