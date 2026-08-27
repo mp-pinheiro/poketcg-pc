@@ -4795,6 +4795,22 @@ static void adapt_RaichuThunder_Recoil50PercentEffect(ProbeState *s)
 }
 /* <<< factory RaichuThunder_Recoil50PercentEffect */
 
+/* >>> factory TaurosStomp_DamageBoostEffect */
+static void adapt_TaurosStomp_DamageBoostEffect(ProbeState *s)
+{
+	TaurosStomp_DamageBoostEffect();
+}
+/* <<< factory TaurosStomp_DamageBoostEffect */
+
+/* >>> factory MirrorMove_InitialEffect2 */
+static void adapt_MirrorMove_InitialEffect2(ProbeState *s)
+{
+	PlayerPickAttackForAmnesiaResult result = MirrorMove_InitialEffect2();
+	s->a = result.a;
+	s->f = result.f;
+}
+/* <<< factory MirrorMove_InitialEffect2 */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5377,5 +5393,7 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "Thrash_ModifierEffect", adapt_Thrash_ModifierEffect },
 	{ "ZapdosThunder_Recoil50PercentEffect", adapt_ZapdosThunder_Recoil50PercentEffect },
 	{ "RaichuThunder_Recoil50PercentEffect", adapt_RaichuThunder_Recoil50PercentEffect },
+	{ "TaurosStomp_DamageBoostEffect", adapt_TaurosStomp_DamageBoostEffect },
+	{ "MirrorMove_InitialEffect2", adapt_MirrorMove_InitialEffect2 },
 	{ NULL, NULL },
 };

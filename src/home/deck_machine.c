@@ -130,6 +130,12 @@
 #include "home/duel_core.h"
 #include "home/process_text.h"
 #include "home/objects.h"
+
+#include "home/deck_machine.h"
+#include "home/process_text.h"
+#include "home/print_text.h"
+#include "generated/hram.h"
+#include "generated/wram.h"
 /* <<< factory statics */
 
 /* >>> factory CheckIfSelectedDeckMachineEntryIsEmpty */
@@ -749,3 +755,22 @@ void ClearScreenAndDrawDeckMachineScreen(void)
 	EnableLCD();
 }
 /* <<< factory ClearScreenAndDrawDeckMachineScreen */
+
+/* >>> factory DrawDeckMachineScreen */
+DrawDeckMachineScreenResult DrawDeckMachineScreen(void)
+{
+	DrawListScrollArrows();
+	hffb0 = 0x01u;
+	(void)SetDeckMachineTitleText();
+	InitTextPrinting(1u, 14u);
+	uint16_t text = (uint16_t)(gb_read8(wDeckMachineText_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDeckMachineText_ADDR + 1u)) << 8));
+	ProcessTextHeaderResult text_result = ProcessTextFromID(text);
+	hffb0 = 0x00u;
+	PrintVisibleDeckMachineEntriesResult entries =
+		PrintVisibleDeckMachineEntries(text_result.f);
+	if (!(text_result.f & 0x10u) && entries.f == 0xE0u)
+		entries.f = 0xC0u;
+	return (DrawDeckMachineScreenResult){entries.a, entries.f};
+}
+/* <<< factory DrawDeckMachineScreen */

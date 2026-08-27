@@ -6770,6 +6770,29 @@ CASES["RaichuThunder_Recoil50PercentEffect"] = [
 ]
 # <<< factory RaichuThunder_Recoil50PercentEffect
 
+# >>> factory TaurosStomp_DamageBoostEffect
+CONTRACT["TaurosStomp_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["TaurosStomp_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TaurosStomp_DamageBoostEffect
+
+# >>> factory MirrorMove_InitialEffect2
+CONTRACT["MirrorMove_InitialEffect2"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["MirrorMove_InitialEffect2"] = [
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x00"}, "read": {0xFFA0: 1}},
+    {"wram": {0xFF97: b"\xC2", 0xC2F8: b"\x01"}, "read": {0xFFA0: 1}},
+    dict(POISON, wram={0xFF97: b"\xC2", 0xC2F8: b"\x01"}, read={0xFFA0: 1}),
+]
+# <<< factory MirrorMove_InitialEffect2
+
 from tests.cases._schema_migration import legacy_to_schema
 # >>> factory CheckIfCardIsBasicEnergy
 CONTRACT["CheckIfCardIsBasicEnergy"] = {"compare": ("f",), "preserve": ()}
@@ -9587,3 +9610,9 @@ MUTATIONS["ZapdosThunder_Recoil50PercentEffect"] = {"source_symbol": "ZapdosThun
 # >>> factory-mutation RaichuThunder_Recoil50PercentEffect
 MUTATIONS["RaichuThunder_Recoil50PercentEffect"] = {"source_symbol": "RaichuThunder_Recoil50PercentEffect", "before": "void RaichuThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult result = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = result.a;", "after": "void RaichuThunder_Recoil50PercentEffect(void)\n{\n\tLoadTxRam3(30u);\n\tTossCoin_BankBResult result = TossCoin_BankB(IfTailsDamageToYourselfTooText, 0u);\n\thTemp_ffa0 = 0u;", "case_ids": ["RaichuThunder_Recoil50PercentEffect-0", "RaichuThunder_Recoil50PercentEffect-1"]}
 # <<< factory-mutation RaichuThunder_Recoil50PercentEffect
+# >>> factory-mutation TaurosStomp_DamageBoostEffect
+MUTATIONS["TaurosStomp_DamageBoostEffect"] = {"source_symbol": "TaurosStomp_DamageBoostEffect", "before": "void TaurosStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);", "after": "void TaurosStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(11u);", "case_ids": ["TaurosStomp_DamageBoostEffect-0"]}
+# <<< factory-mutation TaurosStomp_DamageBoostEffect
+# >>> factory-mutation MirrorMove_InitialEffect2
+MUTATIONS["MirrorMove_InitialEffect2"] = {"source_symbol": "MirrorMove_InitialEffect2", "before": "PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)\n{\n\thTemp_ffa0 = 0xffu;", "after": "PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)\n{\n\thTemp_ffa0 = 0x00u;", "case_ids": ["MirrorMove_InitialEffect2-0", "MirrorMove_InitialEffect2-1", "MirrorMove_InitialEffect2-2"]}
+# <<< factory-mutation MirrorMove_InitialEffect2

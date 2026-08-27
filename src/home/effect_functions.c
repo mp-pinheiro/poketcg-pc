@@ -9866,3 +9866,27 @@ void RaichuThunder_Recoil50PercentEffect(void)
 	hTemp_ffa0 = result.a;
 }
 /* <<< factory RaichuThunder_Recoil50PercentEffect */
+
+/* >>> factory TaurosStomp_DamageBoostEffect */
+void TaurosStomp_DamageBoostEffect(void)
+{
+	LoadTxRam3(10u);
+	TossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);
+	if ((toss.f & 0x10u) == 0u)
+		return;
+	AddToDamage(10u);
+}
+/* <<< factory TaurosStomp_DamageBoostEffect */
+
+/* >>> factory MirrorMove_InitialEffect2 */
+PlayerPickAttackForAmnesiaResult MirrorMove_InitialEffect2(void)
+{
+	hTemp_ffa0 = 0xffu;
+	DuelistVarResult effect = GetTurnDuelistVariable(DUELVARS_ARENA_CARD_LAST_TURN_EFFECT);
+	if (effect.a == 0u)
+		return (PlayerPickAttackForAmnesiaResult){0u, 0x80u};
+	if (effect.a == LAST_TURN_EFFECT_AMNESIA)
+		return PlayerPickAttackForAmnesia();
+	return (PlayerPickAttackForAmnesiaResult){effect.a, 0x00u};
+}
+/* <<< factory MirrorMove_InitialEffect2 */

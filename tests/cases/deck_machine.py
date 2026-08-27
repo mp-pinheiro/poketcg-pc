@@ -212,6 +212,9 @@ wCardListVisibleOffset = 0xCEA1
 wTileMapFill = 0xCAB6
 wVBlankOAMCopyToggle = 0xCAC0
 wDeckMachineTitleText = 0xD0A2
+
+wDeckMachineText = 0xD0A7
+wMachineDeckPtrs = 0xD00D
 # <<< factory-cases-statics
 
 # >>> factory DrawListScrollArrows
@@ -434,6 +437,14 @@ CASES["ClearScreenAndDrawDeckMachineScreen"] = [
 ]
 # <<< factory ClearScreenAndDrawDeckMachineScreen
 
+# >>> factory DrawDeckMachineScreen
+CONTRACT["DrawDeckMachineScreen"] = {"compare": ("a", "f"), "preserve": ()}
+CASES["DrawDeckMachineScreen"] = [
+    {"wram": {wDeckMachineText: b"\x00\x00", wMachineDeckPtrs: b"\x50\xA3" * 5}, "sram": {0: {0xA368: b"\x01"}}, "read": {0xFFB0: 1}, "setup": [{"fn": "SetupText", "d": 0x20, "e": 0x40}], "instruction_budget": 20000000, "cycle_budget": 80000000},
+    dict(POISON, wram={wDeckMachineText: b"\x00\x00", wMachineDeckPtrs: b"\x50\xA3" * 5}, sram={0: {0xA368: b"\x01"}}, read={0xFFB0: 1}, setup=[{"fn": "SetupText", "d": 0x20, "e": 0x40}], instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory DrawDeckMachineScreen
+
 from tests.cases._schema_migration import legacy_to_schema
 SCHEMA2_CASES = legacy_to_schema(CASES, CONTRACT)
 
@@ -560,3 +571,6 @@ MUTATIONS["PrintVisibleDeckMachineEntries"] = {"source_symbol": "PrintVisibleDec
 # >>> factory-mutation ClearScreenAndDrawDeckMachineScreen
 MUTATIONS["ClearScreenAndDrawDeckMachineScreen"] = {"source_symbol": "ClearScreenAndDrawDeckMachineScreen", "before": "\twTileMapFill = 0u;", "after": "\twTileMapFill = 1u;", "case_ids": ["ClearScreenAndDrawDeckMachineScreen-0", "ClearScreenAndDrawDeckMachineScreen-1"]}
 # <<< factory-mutation ClearScreenAndDrawDeckMachineScreen
+# >>> factory-mutation DrawDeckMachineScreen
+MUTATIONS["DrawDeckMachineScreen"] = {"source_symbol": "DrawDeckMachineScreen", "before": "\thffb0 = 0x00u;", "after": "\thffb0 = 0x01u;", "case_ids": ["DrawDeckMachineScreen-0", "DrawDeckMachineScreen-1"]}
+# <<< factory-mutation DrawDeckMachineScreen
