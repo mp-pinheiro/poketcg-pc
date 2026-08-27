@@ -562,3 +562,8 @@ unblock = "read the recorded diagnostics under .factory/try/_PreparePrinterConne
 name = "TryBuildDeckMachineDeck"
 reason = "AUTO-RETIRED: src/engine/menus/deck_machine.asm:1509 (basename `deck_machine`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
 unblock = "read the recorded diagnostics under .factory/try/TryBuildDeckMachineDeck/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
+
+[[blocked]]
+name = "SendPrinterInstructionPacket_1Sheet_3LineFeeds"
+reason = "AUTO-RETIRED: src/engine/link/printer.asm:442 (basename `printer`). 17 generations exhausted (trapped=False); last diagnostic phase=cases failure_class=unsupported-evidence detail=no primary oracle case"
+unblock = "read the recorded diagnostics under .factory/try/SendPrinterInstructionPacket_1Sheet_3LineFeeds/attempts/ and replace this machine-generated note with a diagnosed capability blocker, or delete the entry to retry once that gap closes"
