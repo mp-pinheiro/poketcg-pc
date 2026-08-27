@@ -6514,6 +6514,94 @@ CASES["HornHazard_NoDamage50PercentEffect"] = [
 ]
 # <<< factory HornHazard_NoDamage50PercentEffect
 
+# >>> factory RapidashStomp_DamageBoostEffect
+CONTRACT["RapidashStomp_DamageBoostEffect"] = {"compare": (), "preserve": ()}
+CASES["RapidashStomp_DamageBoostEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCD9C: 1, 0xCD9D: 1, 0xCD9E: 1, 0xCD9F: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory RapidashStomp_DamageBoostEffect
+
+# >>> factory ScrunchEffect
+CONTRACT["ScrunchEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["ScrunchEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory ScrunchEffect
+
+# >>> factory SquirtleWithdrawEffect
+CONTRACT["SquirtleWithdrawEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["SquirtleWithdrawEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory SquirtleWithdrawEffect
+
+# >>> factory TailWagEffect
+CONTRACT["TailWagEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["TailWagEffect"] = [
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCED: 1, 0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(hl=0xC200, keys=[0x00, 0x01],
+         wram={0xC2E8: b"\x00", 0xC2F6: b"\x00", 0xCCB8: b"\x00", 0xCCED: b"\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCED: 1, 0xC2E8: 1, 0xC2F6: 1, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TailWagEffect
+
+# >>> factory TantrumEffect
+CONTRACT["TantrumEffect"] = {"compare": ("f",), "preserve": ()}
+CASES["TantrumEffect"] = [
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix},
+         read={0xCCB8: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB8: b"\x00", 0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix_tail},
+         read={0xCCB8: 1, 0xCCCD: 1, 0xCCCE: 3, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory TantrumEffect
+
+# >>> factory Rampage_Confusion50PercentEffect
+CONTRACT["Rampage_Confusion50PercentEffect"] = {"compare": (), "preserve": ()}
+CASES["Rampage_Confusion50PercentEffect"] = [
+    # No duelist seeds: the reference toss path leaves hWhoseTurn elsewhere
+    # (known harness asymmetry), and any seeded address is compared at exit.
+    # AddToDamage(damage.a) still runs deterministically on both sides; the
+    # mutation's +1 shows up in wDamage ($CCB9) whether or not damage is 0.
+    dict(keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", 0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix},
+         read={0xCCB9: 2, 0xCCCD: 1, 0xCCCE: 3, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+    dict(POISON, keys=[0x00, 0x01],
+         wram={0xCCB9: b"\x10\x00", 0xCCCD: b"\x00", 0xCCCE: b"\x00\x00\x00", **_acid_toss_fix_tail},
+         read={0xCCB9: 2, 0xCCCD: 1, 0xCCCE: 3, 0xCAC2: 1},
+         setup=_acid_setup, instruction_budget=20000000, cycle_budget=80000000),
+]
+# <<< factory Rampage_Confusion50PercentEffect
+
 # >>> factory Thunderpunch_ModifierEffect
 CONTRACT["Thunderpunch_ModifierEffect"] = {"compare": (), "preserve": ()}
 CASES["Thunderpunch_ModifierEffect"] = [
@@ -9354,3 +9442,22 @@ MUTATIONS["RaichuAgilityEffect"] = {"source_symbol": "RaichuAgilityEffect", "bef
 # >>> factory-mutation RapidashAgilityEffect
 MUTATIONS["RapidashAgilityEffect"] = {"source_symbol": "RapidashAgilityEffect", "before": "uint16_t RapidashAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = ATK_ANIM_AGILITY_PROTECT;", "after": "uint16_t RapidashAgilityEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsDoNotReceiveDamageOrEffectText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn 0u;\n\twLoadedAttackAnimation = 0x53u;", "case_ids": ["RapidashAgilityEffect-0", "RapidashAgilityEffect-1", "RapidashAgilityEffect-2"]}
 # <<< factory-mutation RapidashAgilityEffect
+
+# >>> factory-mutation RapidashStomp_DamageBoostEffect
+MUTATIONS["RapidashStomp_DamageBoostEffect"] = {"source_symbol": "RapidashStomp_DamageBoostEffect", "before": "void RapidashStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(10u);", "after": "void RapidashStomp_DamageBoostEffect(void)\n{\n\tLoadTxRam3(10u);\n\tTossCoin_BankBResult toss = TossCoin_BankB(DamageCheckIfHeadsPlusDamageText, 0u);\n\tif ((toss.f & 0x10u) == 0u)\n\t\treturn;\n\tAddToDamage(11u);", "case_ids": ["RapidashStomp_DamageBoostEffect-0"]}
+# <<< factory-mutation RapidashStomp_DamageBoostEffect
+# >>> factory-mutation ScrunchEffect
+MUTATIONS["ScrunchEffect"] = {"source_symbol": "ScrunchEffect", "before": "uint8_t ScrunchEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\treturn toss.f;\n\t}\n\twLoadedAttackAnimation = ATK_ANIM_SCRUNCH;", "after": "uint8_t ScrunchEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);\n\tif ((toss.f & 0x10u) == 0u) {\n\t\tSetWasUnsuccessful();\n\t\treturn toss.f;\n\t}\n\twLoadedAttackAnimation = 0x6cu;", "case_ids": ["ScrunchEffect-0"]}
+# <<< factory-mutation ScrunchEffect
+# >>> factory-mutation SquirtleWithdrawEffect
+MUTATIONS["SquirtleWithdrawEffect"] = {"source_symbol": "SquirtleWithdrawEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_PROTECT;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);", "after": "\twLoadedAttackAnimation = 0x50u;\n\tApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);", "case_ids": ["SquirtleWithdrawEffect-0"]}
+# <<< factory-mutation SquirtleWithdrawEffect
+# >>> factory-mutation TailWagEffect
+MUTATIONS["TailWagEffect"] = {"source_symbol": "TailWagEffect", "before": "\twLoadedAttackAnimation = ATK_ANIM_LURE;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_TAIL_WAG, hl);", "after": "\twLoadedAttackAnimation = 0x47u;\n\tApplySubstatus2ToDefendingCard(SUBSTATUS2_TAIL_WAG, hl);", "case_ids": ["TailWagEffect-0"]}
+# <<< factory-mutation TailWagEffect
+# >>> factory-mutation TantrumEffect
+MUTATIONS["TantrumEffect"] = {"source_symbol": "TantrumEffect", "before": "uint8_t TantrumEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsYourPokemonBecomesConfusedText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\twLoadedAttackAnimation = ATK_ANIM_MULTIPLE_SLASH;", "after": "uint8_t TantrumEffect(void)\n{\n\tTossCoin_BankBResult toss = TossCoin_BankB(IfTailsYourPokemonBecomesConfusedText, 0u);\n\tif ((toss.f & 0x10u) != 0u)\n\t\treturn toss.f;\n\twLoadedAttackAnimation = 0x2au;", "case_ids": ["TantrumEffect-1"]}
+# <<< factory-mutation TantrumEffect
+# >>> factory-mutation Rampage_Confusion50PercentEffect
+MUTATIONS["Rampage_Confusion50PercentEffect"] = {"source_symbol": "Rampage_Confusion50PercentEffect", "before": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage(damage.a);", "after": "void Rampage_Confusion50PercentEffect(void)\n{\n\tCardDamageResult damage = GetCardDamageAndMaxHP(PLAY_AREA_ARENA);\n\tAddToDamage((uint8_t)(damage.a + 1u));", "case_ids": ["Rampage_Confusion50PercentEffect-0", "Rampage_Confusion50PercentEffect-1"]}
+# <<< factory-mutation Rampage_Confusion50PercentEffect

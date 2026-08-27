@@ -1932,6 +1932,24 @@ uint16_t RaichuAgilityEffect(void);
 /* >>> factory RapidashAgilityEffect */
 uint16_t RapidashAgilityEffect(void);
 /* <<< factory RapidashAgilityEffect */
+/* >>> factory RapidashStomp_DamageBoostEffect */
+void RapidashStomp_DamageBoostEffect(void);
+/* <<< factory RapidashStomp_DamageBoostEffect */
+/* >>> factory ScrunchEffect */
+uint8_t ScrunchEffect(void);
+/* <<< factory ScrunchEffect */
+/* >>> factory SquirtleWithdrawEffect */
+uint8_t SquirtleWithdrawEffect(void);
+/* <<< factory SquirtleWithdrawEffect */
+/* >>> factory TailWagEffect */
+uint8_t TailWagEffect(uint16_t hl);
+/* <<< factory TailWagEffect */
+/* >>> factory TantrumEffect */
+uint8_t TantrumEffect(void);
+/* <<< factory TantrumEffect */
+/* >>> factory Rampage_Confusion50PercentEffect */
+void Rampage_Confusion50PercentEffect(void);
+/* <<< factory Rampage_Confusion50PercentEffect */
 #endif /* POKETCG_HOME_EFFECT_FUNCTIONS_H */
 /* >>> factory Barrier_DiscardEffect */
 uint8_t Barrier_DiscardEffect(void);

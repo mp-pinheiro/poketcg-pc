@@ -4696,6 +4696,50 @@ static void adapt_RapidashAgilityEffect(ProbeState *s)
 }
 /* <<< factory RapidashAgilityEffect */
 
+/* >>> factory RapidashStomp_DamageBoostEffect */
+static void adapt_RapidashStomp_DamageBoostEffect(ProbeState *s)
+{
+	(void)s;
+	RapidashStomp_DamageBoostEffect();
+}
+/* <<< factory RapidashStomp_DamageBoostEffect */
+
+/* >>> factory ScrunchEffect */
+static void adapt_ScrunchEffect(ProbeState *s)
+{
+	s->f = ScrunchEffect();
+}
+/* <<< factory ScrunchEffect */
+
+/* >>> factory SquirtleWithdrawEffect */
+static void adapt_SquirtleWithdrawEffect(ProbeState *s)
+{
+	s->f = SquirtleWithdrawEffect();
+}
+/* <<< factory SquirtleWithdrawEffect */
+
+/* >>> factory TailWagEffect */
+static void adapt_TailWagEffect(ProbeState *s)
+{
+	s->f = TailWagEffect(s->hl);
+}
+/* <<< factory TailWagEffect */
+
+/* >>> factory TantrumEffect */
+static void adapt_TantrumEffect(ProbeState *s)
+{
+	s->f = TantrumEffect();
+}
+/* <<< factory TantrumEffect */
+
+/* >>> factory Rampage_Confusion50PercentEffect */
+static void adapt_Rampage_Confusion50PercentEffect(ProbeState *s)
+{
+	(void)s;
+	Rampage_Confusion50PercentEffect();
+}
+/* <<< factory Rampage_Confusion50PercentEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -5261,6 +5305,12 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "MoltresLv35DiveBomb_Success50PercentEffect", adapt_MoltresLv35DiveBomb_Success50PercentEffect },
 	{ "MoltresLv37DiveBomb_Success50PercentEffect", adapt_MoltresLv37DiveBomb_Success50PercentEffect },
 	{ "HornHazard_NoDamage50PercentEffect", adapt_HornHazard_NoDamage50PercentEffect },
+	{ "RapidashStomp_DamageBoostEffect", adapt_RapidashStomp_DamageBoostEffect },
+	{ "ScrunchEffect", adapt_ScrunchEffect },
+	{ "SquirtleWithdrawEffect", adapt_SquirtleWithdrawEffect },
+	{ "TailWagEffect", adapt_TailWagEffect },
+	{ "TantrumEffect", adapt_TantrumEffect },
+	{ "Rampage_Confusion50PercentEffect", adapt_Rampage_Confusion50PercentEffect },
 	{ "Thunderpunch_ModifierEffect", adapt_Thunderpunch_ModifierEffect },
 	{ "SeadraAgilityEffect", adapt_SeadraAgilityEffect },
 	{ "RaichuAgilityEffect", adapt_RaichuAgilityEffect },

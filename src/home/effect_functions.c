@@ -882,7 +882,9 @@ static uint8_t effect_compare(uint8_t lhs, uint8_t rhs)
 #define SUBSTATUS1_NO_DAMAGE_STIFFEN 0x0fu
 #define SUBSTATUS1_NO_DAMAGE_SCRUNCH 0x17u
 #define SuccessCheckIfHeadsAttackIsSuccessfulText 0x00eeu
+#define SUBSTATUS2_LEER 0x06u
 #define DamageCheckIfTailsNoDamageText 0x00e6u
+#define PLAY_AREA_BENCH 0x01u
 #define ATK_ANIM_DIVE_BOMB 0x11u
 #include "home/math.h"
 #define SUBSTATUS1_NO_DAMAGE_WITHDRAW 0x10u
@@ -9736,9 +9738,9 @@ uint8_t TantrumEffect(void)
 		return toss.f;
 	wLoadedAttackAnimation = ATK_ANIM_MULTIPLE_SLASH;
 	SwapTurn();
-	ConfusionEffect();
+	QueueStatusConditionResult confused = ConfusionEffect();
 	SwapTurn();
-	return toss.f;
+	return confused.f;
 }
 /* <<< factory TantrumEffect */
 
