@@ -215,6 +215,17 @@ static void adapt_SendPrinterInstructionPacket_1Sheet(ProbeState *s)
 }
 /* <<< factory SendPrinterInstructionPacket_1Sheet */
 
+/* >>> factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+static void adapt_SendPrinterInstructionPacket_1Sheet_3LineFeeds(ProbeState *s)
+{
+	SendPrinterInstructionPacket_1SheetResult result =
+		SendPrinterInstructionPacket_1Sheet_3LineFeeds();
+	s->a = result.a;
+	s->f = result.f;
+	s->hl = result.hl;
+}
+/* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+
 /* >>> factory _PreparePrinterConnection */
 static void adapt__PreparePrinterConnection(ProbeState *s)
 {
@@ -247,6 +258,7 @@ const ProbeEntry probe_entries_printer[] = {
 	{ "SendTilesToPrinter", adapt_SendTilesToPrinter },
 	{ "SendPrinterInstructionPacket", adapt_SendPrinterInstructionPacket },
 	{ "SendPrinterInstructionPacket_1Sheet", adapt_SendPrinterInstructionPacket_1Sheet },
+	{ "SendPrinterInstructionPacket_1Sheet_3LineFeeds", adapt_SendPrinterInstructionPacket_1Sheet_3LineFeeds },
 	{ "_PreparePrinterConnection", adapt__PreparePrinterConnection },
 	{ NULL, NULL },
 };

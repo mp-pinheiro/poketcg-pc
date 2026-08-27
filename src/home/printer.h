@@ -153,6 +153,13 @@ SendPrinterInstructionPacketResult SendPrinterInstructionPacket(uint16_t hl, uin
 typedef struct { uint8_t a; uint8_t f; uint16_t hl; } SendPrinterInstructionPacket_1SheetResult;
 SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(void);
 /* <<< factory SendPrinterInstructionPacket_1Sheet */
+/* >>> factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+/* engine/link/printer.asm:442. The SendPrinterInstructionPacket_1Sheet twin
+ * with a constant instruction word: `lb hl, 3, 1` (three line feeds in h,
+ * one sheet in l) replaces the wPrinterNumberLineFeeds read. Exit hl is the
+ * contrast word GetPrinterContrastSerialData pushed. */
+SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet_3LineFeeds(void);
+/* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
 /* >>> factory _PreparePrinterConnection */
 /* engine/link/printer.asm:4, falls through into HandlePrinterError::21.
  * Entry hl is the buffer the data packet points at; entry a/f are dead and

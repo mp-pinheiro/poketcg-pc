@@ -707,6 +707,21 @@ SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet(vo
 }
 /* <<< factory SendPrinterInstructionPacket_1Sheet */
 
+/* >>> factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+/* engine/link/printer.asm:442-446. The _1Sheet twin with a constant
+ * instruction word: `lb hl, 3, 1` builds h = $03 (line feeds) and l = $01
+ * (sheet), replacing the wPrinterNumberLineFeeds read; the contrast word
+ * GetPrinterContrastSerialData returns is the pushed word the instruction
+ * packet sends as its data and returns as exit hl. */
+SendPrinterInstructionPacket_1SheetResult SendPrinterInstructionPacket_1Sheet_3LineFeeds(void)
+{
+	GetPrinterContrastSerialDataResult contrast = GetPrinterContrastSerialData();
+	SendPrinterInstructionPacketResult packet =
+		SendPrinterInstructionPacket(0x0301u, contrast.hl);
+	return (SendPrinterInstructionPacket_1SheetResult){packet.a, packet.f, packet.hl};
+}
+/* <<< factory SendPrinterInstructionPacket_1Sheet_3LineFeeds */
+
 /* >>> factory _PreparePrinterConnection */
 /* engine/link/printer.asm:4-19, falls through into HandlePrinterError::21.
  * Sends an empty PRINTERPKT_DATA packet for the caller's buffer (bc = 0,
