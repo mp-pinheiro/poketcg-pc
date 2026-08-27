@@ -4138,6 +4138,13 @@ static void adapt_ItemFinder_PlayerSelection(ProbeState *s)
 }
 /* <<< factory ItemFinder_PlayerSelection */
 
+/* >>> factory SlicingWindEffect */
+static void adapt_SlicingWindEffect(ProbeState *s)
+{
+	SlicingWindEffect();
+}
+/* <<< factory SlicingWindEffect */
+
 const ProbeEntry probe_entries_effect_functions[] = {
 	{ "LeekSlap_OncePerDuelCheck", adapt_LeekSlap_OncePerDuelCheck },
 	{ "LeekSlap_SetUsedThisDuelFlag", adapt_LeekSlap_SetUsedThisDuelFlag },
@@ -4639,5 +4646,6 @@ const ProbeEntry probe_entries_effect_functions[] = {
 	{ "SuperEnergyRetrieval_PlayerHandSelection", adapt_SuperEnergyRetrieval_PlayerHandSelection },
 	{ "Maintenance_PlayerSelection", adapt_Maintenance_PlayerSelection },
 	{ "ItemFinder_PlayerSelection", adapt_ItemFinder_PlayerSelection },
+	{ "SlicingWindEffect", adapt_SlicingWindEffect },
 	{ NULL, NULL },
 };

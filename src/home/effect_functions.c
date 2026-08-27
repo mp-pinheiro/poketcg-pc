@@ -8203,3 +8203,14 @@ ItemFinderPlayerSelectionResult ItemFinder_PlayerSelection(void)
 	return (ItemFinderPlayerSelectionResult){display.a, display.f};
 }
 /* <<< factory ItemFinder_PlayerSelection */
+
+/* >>> factory SlicingWindEffect */
+void SlicingWindEffect(void)
+{
+	SwapTurn();
+	PickRandomPlayAreaCardResult random = PickRandomPlayAreaCard();
+	uint8_t target = random.a;
+	(void)DealDamageToPlayAreaPokemon_RegularAnim(target, 30u, 0u);
+	SwapTurn();
+}
+/* <<< factory SlicingWindEffect */
