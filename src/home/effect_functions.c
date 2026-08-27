@@ -9759,3 +9759,88 @@ void Rampage_Confusion50PercentEffect(void)
 	SwapTurn();
 }
 /* <<< factory Rampage_Confusion50PercentEffect */
+
+/* >>> factory WartortleWithdrawEffect */
+/* effect_functions.asm:2844-2853. Byte-identical twin of SquirtleWithdrawEffect. */
+uint8_t WartortleWithdrawEffect(void)
+{
+	TossCoin_BankBResult toss = TossCoin_BankB(IfHeadsNoDamageNextTurnText, 0u);
+	if ((toss.f & 0x10u) == 0u) {
+		SetWasUnsuccessful();
+		return toss.f;
+	}
+	wLoadedAttackAnimation = ATK_ANIM_PROTECT;
+	ApplySubstatus1ToAttackingCard(SUBSTATUS1_NO_DAMAGE_WITHDRAW);
+	return toss.f;
+}
+/* <<< factory WartortleWithdrawEffect */
+
+/* >>> factory VenusaurMegaDrainEffect */
+/* effect_functions.asm:2737-2755. Halving-wDealtDamage body shared with the
+ * Absorb/ButterfreeMegaDrain family. */
+void VenusaurMegaDrainEffect(void)
+{
+	uint16_t dealt = (uint16_t)(gb_read8(wDealtDamage_ADDR)
+		| ((uint16_t)gb_read8((uint16_t)(wDealtDamage_ADDR + 1u)) << 8));
+	dealt = (uint16_t)(dealt >> 1);
+	if ((dealt & 1u) != 0u)
+		dealt = (uint16_t)(dealt + 5u);
+	ApplyAndAnimateHPRecovery((uint8_t)(dealt >> 8), (uint8_t)dealt);
+}
+/* <<< factory VenusaurMegaDrainEffect */
+
+/* >>> factory MagnemiteSelfdestructEffect */
+/* effect_functions.asm:6456-6473. Recoil to self, then 10 to both benches. */
+void MagnemiteSelfdestructEffect(void)
+{
+	DealRecoilDamageToSelf(40u, 0u, 0u, 0u);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemon(10u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = 0x00u;
+	DealDamageToAllBenchedPokemon(10u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+}
+/* <<< factory MagnemiteSelfdestructEffect */
+
+/* >>> factory WeezingSelfdestructEffect */
+/* effect_functions.asm:2457-2477. 60 to self, then 10 to both benches. */
+void WeezingSelfdestructEffect(void)
+{
+	DealRecoilDamageToSelf(60u, 0u, 0u, 0u);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemon(10u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = 0x00u;
+	DealDamageToAllBenchedPokemon(10u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+}
+/* <<< factory WeezingSelfdestructEffect */
+
+/* >>> factory MagnetonLv28SelfdestructEffect */
+/* effect_functions.asm:7041-7066. 80 to self, then 20 to both benches. */
+void MagnetonLv28SelfdestructEffect(void)
+{
+	DealRecoilDamageToSelf(80u, 0u, 0u, 0u);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemon(20u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = 0x00u;
+	DealDamageToAllBenchedPokemon(20u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+}
+/* <<< factory MagnetonLv28SelfdestructEffect */
+
+/* >>> factory MagnetonLv35SelfdestructEffect */
+/* effect_functions.asm:7068-7093. 100 to self, then 20 to both benches. */
+void MagnetonLv35SelfdestructEffect(void)
+{
+	DealRecoilDamageToSelf(100u, 0u, 0u, 0u);
+	wIsDamageToSelf = TRUE;
+	DealDamageToAllBenchedPokemon(20u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+	wIsDamageToSelf = 0x00u;
+	DealDamageToAllBenchedPokemon(20u, 0u, 0u, 0u, 0u, 0u, 0u);
+	SwapTurn();
+}
+/* <<< factory MagnetonLv35SelfdestructEffect */
